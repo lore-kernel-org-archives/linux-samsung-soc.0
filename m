@@ -1,55 +1,118 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [RFC PATCH 1/8] drm: exynos/dp: fix code style
-Date: Thu, 6 Aug 2015 23:20:48 +0800
-Message-ID: <55C37B50.6050706@rock-chips.com>
-References: <1438868947-22132-1-git-send-email-ykk@rock-chips.com>
- <1438869866-23028-1-git-send-email-ykk@rock-chips.com>
- <1438873536.2679.61.camel@perches.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Fri, 07 Aug 2015 08:53:18 +0900
+Message-ID: <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1438873536.2679.61.camel@perches.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joe Perches <joe@perches.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>, dianders@google.com, linux-arm-kernel@lists.infradead.org, Fabio Estevam <fabio.estevam@freescale.com>, Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, djkurtz@google.com, Andy Yan <andy.yan@rock-chips.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:53237 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752882AbbHFXxZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Aug 2015 19:53:25 -0400
+In-reply-to: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Sm9lLAoK5ZyoIDIwMTUvOC82IDIzOjA1LCBKb2UgUGVyY2hlcyDlhpnpgZM6Cj4gT24gVGh1LCAy
-MDE1LTA4LTA2IGF0IDA5OjA0IC0wNTAwLCBZYWtpciBZYW5nIHdyb3RlOgo+PiBtYWtlIGNoZWNr
-cGF0Y2gucGwgc2NyaXB0IGhhcHB5Cj4gVGhhdCBzaG91bGQgbm90IGJlIHRoZSBwcmltYXJ5IHJl
-YXNvbiB0byBzdWJtaXQgYSBwYXRjaC4KPgo+IE1ha2luZyBpdCBlYXNpZXIgZm9yIGh1bWFuIGNv
-ZGUgcmVhZGVyIHRvIHVuZGVyc3RhbmQKPiB3aGF0IHRoZSBjb2RlIGRvZXMgc2hvdWxkIGJlIHRo
-b3VnaC4KVGhhbmtzIGZvciB5b3VyIHJlcGx5LCBidXQgSSBkbyB0aGluayB0aGF0IGZpeCBjb2Rl
-IHN0eWxlIGFuZCBtYWtlIApjaGVja3BhdGNoLnBsIHBhc3NlZCBpcyBteSBwcmltYXJ5IHJlYXNv
-biB0byBzdWJtaXQgdGhpcyBwYXRjaC4gSSBjYW4ndCAKdGhpbmsgb3V0IG1vcmUgZGlyZWN0bHkg
-d29yZHMgOyggLAoKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+IFtd
-Cj4+IEBAIC0xMjMsMTAgKzEyMywxMSBAQCBzdGF0aWMgaW50IGV4eW5vc19kcF9yZWFkX2VkaWQo
-c3RydWN0IGV4eW5vc19kcF9kZXZpY2UgKmRwKQo+PiAgIAkJZGV2X2RiZyhkcC0+ZGV2LCAiRURJ
-RCBkYXRhIGluY2x1ZGVzIGEgc2luZ2xlIGV4dGVuc2lvbiFcbiIpOwo+PiAgIAo+PiAgIAkJLyog
-UmVhZCBFRElEIGRhdGEgKi8KPj4gLQkJcmV0dmFsID0gZXh5bm9zX2RwX3JlYWRfYnl0ZXNfZnJv
-bV9pMmMoZHAsIEkyQ19FRElEX0RFVklDRV9BRERSLAo+PiAtCQkJCQkJRURJRF9IRUFERVJfUEFU
-VEVSTiwKPj4gLQkJCQkJCUVESURfQkxPQ0tfTEVOR1RILAo+PiAtCQkJCQkJJmVkaWRbRURJRF9I
-RUFERVJfUEFUVEVSTl0pOwo+PiArCQlyZXR2YWwgPQo+PiArCQlleHlub3NfZHBfcmVhZF9ieXRl
-c19mcm9tX2kyYyhkcCwgSTJDX0VESURfREVWSUNFX0FERFIsCj4+ICsJCQkJCSAgICAgIEVESURf
-SEVBREVSX1BBVFRFUk4sCj4+ICsJCQkJCSAgICAgIEVESURfQkxPQ0tfTEVOR1RILAo+PiArCQkJ
-CQkgICAgICAmZWRpZFtFRElEX0hFQURFUl9QQVRURVJOXSk7Cj4gVGhpcyBpcyBhIHJlbGF0aXZl
-bHkgdW5jb21tb24gc3R5bGUuCj4KPiBCZWNhdXNlIHRoZSBjb2RlIHVzZXMgcmVsYXRpdmVseSBs
-b25nIHZhcmlhYmxlIGFuZAo+IGZ1bmN0aW9uIG5hbWVzIGFzIHdlbGwgYXMgbG9uZ2lzaCBtYWNy
-byAjZGVmaW5lcywKPiBwcmVmZXIgdG8gaWdub3JlIHRoZSA4MCBjb2x1bW4gbGltaXQuCk9rYXks
-IEkgdGhpbmsgaXQgd291bGQgYmUgYmV0dGVyIHRvIG1vZGlmeSBsaWtlIHRob3NlOgoKcmV0dmFs
-ID0gZXh5bm9zX2RwX3JlYWRfYnl0ZXNfZnJvbV9pMmMoCgkJZHAsIEkyQ19FRElEX0RFVklDRV9B
-RERSLAoJCUVESURfSEVBREVSX1BBVFRFUk4sCgkJRURJRF9CTE9DS19MRU5HVEgsCgkJJmVkaWRb
-RURJRF9IRUFERVJfUEFUVEVSTl0pOwoKCklzIGl0IG9rYXkgPwoKLSBZYWtpcgo+Cj4KPgo+CgoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+Hi Bart,
+
+> This patch series removes the use of Exynos4x12 specific support
+> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+> for this platform.
+> 
+Thanks for this series.
+
+> This patch series has been tested on Exynos4412 based Odroid-U3 and
+> Trats2 boards.
+> 
+Sounds good.
+
+> Depends on:
+> - next-20150806 branch of linux-next kernel tree
+> - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
+>   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
+> 
+BTW, hmm...how can we see this series in v4.3?...to be honest, I don't think it
+can be done in v4.3 because of dependencies with PM / OPP series and previous
+exynos CPU OPP series in each cross trees...maybe that's why you created based
+on linux-next...any idea?
+
+Thanks,
+Kukjin
+
+> Changes since v3
+> (http://thread.gmane.org/gmane.linux.power-management.general/63464):
+> - rebased on top of next-20150806 branch of linux-next kernel tree
+> - made ARCH_EXYNOS config option select thermal support
+> - made scaling_boost_freqs sysfs attribute available only when boost
+>   support is enabled
+> - added Acked-by tag from Viresh to patches #3, #4 and #5
+> - added Tested-by tag from Tobias to patches #2-5
+> - added Reviewed-by tag from Krzysztof to patch #4
+> 
+> Changes since v2
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
+> - rebased on top of next-20150730 branch of linux-next kernel tree
+> - ported over V3 of opp-v2 bindings support patch series
+> - put cpu0 nodes in alphabetical order in dts files
+> - added Reviewed-by tags from Javier and Krzysztof
+> - added Acked-by tag from Sylwester
+> 
+> Changes since v1
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
+> - rebased on top of next-20150629 branch of linux-next kernel tree
+> - rebased on top of Exynos5250 cpufreq-dt support patch series
+> - fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
+> - ported over opp-v2 bindings (requested by Viresh Kumar)
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> Bartlomiej Zolnierkiewicz (6):
+>   cpufreq: make scaling_boost_freqs sysfs attr available when boost is
+>     enabled
+>   clk: samsung: exynos4x12: add cpu clock configuration data and
+>     instantiate cpu clock
+>   ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
+>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
+>   cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+>   cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
+> 
+>  arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+>  arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
+>  arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
+>  arch/arm/mach-exynos/Kconfig                    |   2 +
+>  arch/arm/mach-exynos/exynos.c                   |   2 +
+>  drivers/clk/samsung/clk-exynos4.c               |  50 +++++
+>  drivers/cpufreq/Kconfig                         |   4 -
+>  drivers/cpufreq/Kconfig.arm                     |  38 ----
+>  drivers/cpufreq/Makefile                        |   2 -
+>  drivers/cpufreq/cpufreq-dt.c                    |   3 +
+>  drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
+>  drivers/cpufreq/exynos-cpufreq.h                |  72 --------
+>  drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
+>  drivers/cpufreq/freq_table.c                    |  10 +-
+>  include/linux/cpufreq.h                         |   1 +
+>  17 files changed, 241 insertions(+), 591 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+>  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+> 
+> --
+> 1.9.1
