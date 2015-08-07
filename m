@@ -1,83 +1,39 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3] cpufreq-dt: make scaling_boost_freqs sysfs attr available
- when boost is enabled
-Date: Fri, 07 Aug 2015 13:59:16 +0200
-Message-ID: <2130756.euuUs9t9I5@amdc1976>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 11/11] drm/exynos: remove struct exynos_drm_encoder layer
+Date: Fri, 7 Aug 2015 14:28:49 +0200
+Message-ID: <CAKMK7uFsh=PN0Mvb2kzBsDZr-ZhDnbJqcWHLr3_sagETZ+xUhg@mail.gmail.com>
+References: <1438817060-22164-10-git-send-email-gustavo@padovan.org>
+	<1438867908-18975-1-git-send-email-gustavo@padovan.org>
+	<1438867908-18975-2-git-send-email-gustavo@padovan.org>
+	<55C49B8A.4090009@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:36342 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539AbbHGM2u (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Aug 2015 08:28:50 -0400
+Received: by obnw1 with SMTP id w1so77631834obn.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Aug 2015 05:28:50 -0700 (PDT)
+In-Reply-To: <55C49B8A.4090009@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
 
-Make scaling_boost_freqs sysfs attribute is available when
-cpufreq-dt driver is used and boost support is enabled.
+On Fri, Aug 7, 2015 at 1:50 PM, Inki Dae <inki.dae@samsung.com> wrote:
+>
+> Booting is locked up here. This patch looks good to me so I tried to
+> find why locked up and I found the booting is locked up as soon as
+> console_lock function is called. Can you and other guys look into this
+> issue?
 
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v2: Removed leftover prototype.
-v3: added missing Acked-by
-Sorry for two resends, this is not my day..
-Rafael, please apply for v4.3.
-
- drivers/cpufreq/cpufreq-dt.c | 9 ++++++++-
- include/linux/cpufreq.h      | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index b9259ab..c3583cd 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -36,6 +36,12 @@ struct private_data {
- 	unsigned int voltage_tolerance; /* in percentage */
- };
- 
-+static struct freq_attr *cpufreq_dt_attr[] = {
-+	&cpufreq_freq_attr_scaling_available_freqs,
-+	NULL,   /* Extra space for boost-attr if required */
-+	NULL,
-+};
-+
- static int set_target(struct cpufreq_policy *policy, unsigned int index)
- {
- 	struct dev_pm_opp *opp;
-@@ -336,6 +342,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 		ret = cpufreq_enable_boost_support();
- 		if (ret)
- 			goto out_free_cpufreq_table;
-+		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
- 	}
- 
- 	policy->cpuinfo.transition_latency = transition_latency;
-@@ -411,7 +418,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.exit = cpufreq_exit,
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
--	.attr = cpufreq_generic_attr,
-+	.attr = cpufreq_dt_attr,
- };
- 
- static int dt_cpufreq_probe(struct platform_device *pdev)
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 95f0186..657542d 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -609,6 +609,7 @@ struct cpufreq_frequency_table *cpufreq_frequency_get_table(unsigned int cpu);
- 
- /* the following are really really optional */
- extern struct freq_attr cpufreq_freq_attr_scaling_available_freqs;
-+extern struct freq_attr cpufreq_freq_attr_scaling_boost_freqs;
- extern struct freq_attr *cpufreq_generic_attr[];
- int cpufreq_table_validate_and_show(struct cpufreq_policy *policy,
- 				      struct cpufreq_frequency_table *table);
+It's not locked up, you simply won't see any dmesg output after that.
+Use Archit's Kconfig support in drm-misc to disable fbdev emulation
+and try again.
+-Daniel
 -- 
-1.9.1
-
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
