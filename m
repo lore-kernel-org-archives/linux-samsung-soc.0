@@ -1,105 +1,120 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/4] drm/panel: Add Samsung prefix to panel drivers
-Date: Fri,  7 Aug 2015 18:27:34 +0200
-Message-ID: <1438964855-16989-3-git-send-email-thierry.reding@gmail.com>
-References: <1438964855-16989-1-git-send-email-thierry.reding@gmail.com>
+From: Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v4 1/9] mmc: dw_mmc: Add external dma interface support
+Date: Fri, 7 Aug 2015 23:32:05 +0200
+Message-ID: <CAGhQ9VxUYvgGD=K3J3cQ0CNpCC-RfGE9cxhBHnTeAU2CmWkiKA@mail.gmail.com>
+References: <1438843469-23807-1-git-send-email-shawn.lin@rock-chips.com>
+	<1438843491-23853-1-git-send-email-shawn.lin@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1438964855-16989-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1438843491-23853-1-git-send-email-shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Vineet.Gupta1-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jun Nie <jun.nie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Govindraj Raja <govindraj.raja-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBsaWtlbGlob29k
-IG9mIGdldHRpbmcgYSBsYXJnZSBudW1iZXIgb2YgcGFuZWwgZHJpdmVycyBmcm9tIGRpZmZlcmVu
-dAp2ZW5kb3JzIGlzIHF1aXRlIGhpZ2guIEFkZCBhIHByZWZpeCB0byB0aGUgdHdvIGV4aXN0aW5n
-IFNhbXN1bmcgcGFuZWwKZHJpdmVycyB0byBzZXQgYSBndWlkZWxpbmUgZm9yIGZ1dHVyZSBwYXRj
-aCBzdWJtaXNzaW9ucy4gVXNpbmcgdmVuZG9yCnByZWZpeGVzIGNvbnNpc3RlbnRseSBzaG91bGQg
-YWxsb3cgYSBjbGVhbmVyIG9yZ2FuaXphdGlvbiBvZiB0aGUgdHJlZS4KClNpZ25lZC1vZmYtYnk6
-IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogYXJjaC9hcm0vY29uZmln
-cy9leHlub3NfZGVmY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAyICst
-CiBhcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2RlZmNvbmZpZyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICB8IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9LY29uZmlnICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgOCArKysrLS0tLQogZHJpdmVycy9ncHUvZHJt
-L3BhbmVsL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA0ICsr
-LS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC97cGFuZWwtbGQ5MDQwLmMgPT4gcGFuZWwtc2Ftc3Vu
-Zy1sZDkwNDAuY30gIHwgMiArLQogLi4uL2dwdS9kcm0vcGFuZWwve3BhbmVsLXM2ZThhYTAuYyA9
-PiBwYW5lbC1zYW1zdW5nLXM2ZThhYTAuY30gICAgfCAyICstCiA2IGZpbGVzIGNoYW5nZWQsIDEw
-IGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQogcmVuYW1lIGRyaXZlcnMvZ3B1L2RybS9w
-YW5lbC97cGFuZWwtbGQ5MDQwLmMgPT4gcGFuZWwtc2Ftc3VuZy1sZDkwNDAuY30gKDk5JSkKIHJl
-bmFtZSBkcml2ZXJzL2dwdS9kcm0vcGFuZWwve3BhbmVsLXM2ZThhYTAuYyA9PiBwYW5lbC1zYW1z
-dW5nLXM2ZThhYTAuY30gKDk5JSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9jb25maWdzL2V4eW5v
-c19kZWZjb25maWcgYi9hcmNoL2FybS9jb25maWdzL2V4eW5vc19kZWZjb25maWcKaW5kZXggMDk5
-NDM4ZTE5ZjA1Li4zNTQxMjRjM2VkMmMgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2NvbmZpZ3MvZXh5
-bm9zX2RlZmNvbmZpZworKysgYi9hcmNoL2FybS9jb25maWdzL2V4eW5vc19kZWZjb25maWcKQEAg
-LTEzMiw3ICsxMzIsNyBAQCBDT05GSUdfRFJNX0VYWU5PU19GSU1EPXkKIENPTkZJR19EUk1fRVhZ
-Tk9TX0RTST15CiBDT05GSUdfRFJNX0VYWU5PU19IRE1JPXkKIENPTkZJR19EUk1fUEFORUxfU0lN
-UExFPXkKLUNPTkZJR19EUk1fUEFORUxfUzZFOEFBMD15CitDT05GSUdfRFJNX1BBTkVMX1NBTVNV
-TkdfUzZFOEFBMD15CiBDT05GSUdfRkJfU0lNUExFPXkKIENPTkZJR19FWFlOT1NfVklERU89eQog
-Q09ORklHX0VYWU5PU19NSVBJX0RTST15CmRpZmYgLS1naXQgYS9hcmNoL2FybS9jb25maWdzL211
-bHRpX3Y3X2RlZmNvbmZpZyBiL2FyY2gvYXJtL2NvbmZpZ3MvbXVsdGlfdjdfZGVmY29uZmlnCmlu
-ZGV4IDI5YmU3NzcyNmVjOC4uNmJhOTYwODc5OGFiIDEwMDY0NAotLS0gYS9hcmNoL2FybS9jb25m
-aWdzL211bHRpX3Y3X2RlZmNvbmZpZworKysgYi9hcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2Rl
-ZmNvbmZpZwpAQCAtNDQ2LDcgKzQ0Niw3IEBAIENPTkZJR19EUk1fRVhZTk9TX0ZJTUQ9eQogQ09O
-RklHX0RSTV9FWFlOT1NfSERNST15CiBDT05GSUdfRFJNX1JDQVJfRFU9bQogQ09ORklHX0RSTV9U
-RUdSQT15Ci1DT05GSUdfRFJNX1BBTkVMX1M2RThBQTA9bQorQ09ORklHX0RSTV9QQU5FTF9TQU1T
-VU5HX1M2RThBQTA9bQogQ09ORklHX0RSTV9QQU5FTF9TSU1QTEU9eQogQ09ORklHX0ZCX0FSTUNM
-Q0Q9eQogQ09ORklHX0ZCX1dNODUwNT15CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGFu
-ZWwvS2NvbmZpZyBiL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9LY29uZmlnCmluZGV4IDZkNjRjN2Ji
-OTA4Yi4uNWJlMjVkOTI4MmUzIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2Nv
-bmZpZworKysgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2NvbmZpZwpAQCAtMTgsMTMgKzE4LDEz
-IEBAIGNvbmZpZyBEUk1fUEFORUxfU0lNUExFCiAJICB0aGF0IGl0IGNhbiBiZSBhdXRvbWF0aWNh
-bGx5IHR1cm5lZCBvZmYgd2hlbiB0aGUgcGFuZWwgZ29lcyBpbnRvIGEKIAkgIGxvdyBwb3dlciBz
-dGF0ZS4KIAotY29uZmlnIERSTV9QQU5FTF9MRDkwNDAKLQl0cmlzdGF0ZSAiTEQ5MDQwIFJHQi9T
-UEkgcGFuZWwiCitjb25maWcgRFJNX1BBTkVMX1NBTVNVTkdfTEQ5MDQwCisJdHJpc3RhdGUgIlNh
-bXN1bmcgTEQ5MDQwIFJHQi9TUEkgcGFuZWwiCiAJZGVwZW5kcyBvbiBPRiAmJiBTUEkKIAlzZWxl
-Y3QgVklERU9NT0RFX0hFTFBFUlMKIAotY29uZmlnIERSTV9QQU5FTF9TNkU4QUEwCi0JdHJpc3Rh
-dGUgIlM2RThBQTAgRFNJIHZpZGVvIG1vZGUgcGFuZWwiCitjb25maWcgRFJNX1BBTkVMX1NBTVNV
-TkdfUzZFOEFBMAorCXRyaXN0YXRlICJTYW1zdW5nIFM2RThBQTAgRFNJIHZpZGVvIG1vZGUgcGFu
-ZWwiCiAJZGVwZW5kcyBvbiBPRgogCXNlbGVjdCBEUk1fTUlQSV9EU0kKIAlzZWxlY3QgVklERU9N
-T0RFX0hFTFBFUlMKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9NYWtlZmlsZSBi
-L2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9NYWtlZmlsZQppbmRleCA0YjJhMDQzMDgwNGIuLjgwMjZj
-ZTVkMThiNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxlCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9NYWtlZmlsZQpAQCAtMSw0ICsxLDQgQEAKIG9iai0kKENP
-TkZJR19EUk1fUEFORUxfU0lNUExFKSArPSBwYW5lbC1zaW1wbGUubwotb2JqLSQoQ09ORklHX0RS
-TV9QQU5FTF9MRDkwNDApICs9IHBhbmVsLWxkOTA0MC5vCi1vYmotJChDT05GSUdfRFJNX1BBTkVM
-X1M2RThBQTApICs9IHBhbmVsLXM2ZThhYTAubworb2JqLSQoQ09ORklHX0RSTV9QQU5FTF9TQU1T
-VU5HX0xEOTA0MCkgKz0gcGFuZWwtc2Ftc3VuZy1sZDkwNDAubworb2JqLSQoQ09ORklHX0RSTV9Q
-QU5FTF9TQU1TVU5HX1M2RThBQTApICs9IHBhbmVsLXNhbXN1bmctczZlOGFhMC5vCiBvYmotJChD
-T05GSUdfRFJNX1BBTkVMX1NIQVJQX0xRMTAxUjFTWDAxKSArPSBwYW5lbC1zaGFycC1scTEwMXIx
-c3gwMS5vCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbGQ5MDQwLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1sZDkwNDAuYwpzaW1pbGFyaXR5
-IGluZGV4IDk5JQpyZW5hbWUgZnJvbSBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbGQ5MDQw
-LmMKcmVuYW1lIHRvIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLWxkOTA0MC5j
-CmluZGV4IGJiYTM1MDFjNTgyMS4uZmNiODI3MDAzYThjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vcGFuZWwvcGFuZWwtbGQ5MDQwLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
-bmVsLXNhbXN1bmctbGQ5MDQwLmMKQEAgLTM3OCw3ICszNzgsNyBAQCBzdGF0aWMgc3RydWN0IHNw
-aV9kcml2ZXIgbGQ5MDQwX2RyaXZlciA9IHsKIAkucHJvYmUgPSBsZDkwNDBfcHJvYmUsCiAJLnJl
-bW92ZSA9IGxkOTA0MF9yZW1vdmUsCiAJLmRyaXZlciA9IHsKLQkJLm5hbWUgPSAibGQ5MDQwIiwK
-KwkJLm5hbWUgPSAicGFuZWwtc2Ftc3VuZy1sZDkwNDAiLAogCQkub3duZXIgPSBUSElTX01PRFVM
-RSwKIAkJLm9mX21hdGNoX3RhYmxlID0gbGQ5MDQwX29mX21hdGNoLAogCX0sCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtczZlOGFhMC5jIGIvZHJpdmVycy9ncHUvZHJt
-L3BhbmVsL3BhbmVsLXNhbXN1bmctczZlOGFhMC5jCnNpbWlsYXJpdHkgaW5kZXggOTklCnJlbmFt
-ZSBmcm9tIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zNmU4YWEwLmMKcmVuYW1lIHRvIGRy
-aXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLXM2ZThhYTAuYwppbmRleCA5ZTc5YmM0
-M2IwNDcuLjZiMTFlNzVmZjY0NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
-bmVsLXM2ZThhYTAuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1z
-NmU4YWEwLmMKQEAgLTEwNTIsNyArMTA1Miw3IEBAIHN0YXRpYyBzdHJ1Y3QgbWlwaV9kc2lfZHJp
-dmVyIHM2ZThhYTBfZHJpdmVyID0gewogCS5wcm9iZSA9IHM2ZThhYTBfcHJvYmUsCiAJLnJlbW92
-ZSA9IHM2ZThhYTBfcmVtb3ZlLAogCS5kcml2ZXIgPSB7Ci0JCS5uYW1lID0gInBhbmVsX3M2ZThh
-YTAiLAorCQkubmFtZSA9ICJwYW5lbC1zYW1zdW5nLXM2ZThhYTAiLAogCQkub2ZfbWF0Y2hfdGFi
-bGUgPSBzNmU4YWEwX29mX21hdGNoLAogCX0sCiB9OwotLSAKMi40LjUKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Shawn,
+
+On 6 August 2015 at 08:44, Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+> DesignWare MMC Controller can supports two types of DMA
+> mode: external dma and internal dma. We get a RK312x platform
+> integrated dw_mmc and ARM pl330 dma controller. This patch add
+> edmac ops to support these platforms. I've tested it on RK312x
+> platform with edmac mode and RK3288 platform with idmac mode.
+>
+> Signed-off-by: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+
+> @@ -2256,26 +2373,30 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
+>
+>         }
+>
+> -#ifdef CONFIG_MMC_DW_IDMAC
+> -       /* Handle DMA interrupts */
+> -       if (host->dma_64bit_address == 1) {
+> -               pending = mci_readl(host, IDSTS64);
+> -               if (pending & (SDMMC_IDMAC_INT_TI | SDMMC_IDMAC_INT_RI)) {
+> -                       mci_writel(host, IDSTS64, SDMMC_IDMAC_INT_TI |
+> -                                                       SDMMC_IDMAC_INT_RI);
+> -                       mci_writel(host, IDSTS64, SDMMC_IDMAC_INT_NI);
+> -                       host->dma_ops->complete(host);
+> -               }
+> -       } else {
+> -               pending = mci_readl(host, IDSTS);
+> -               if (pending & (SDMMC_IDMAC_INT_TI | SDMMC_IDMAC_INT_RI)) {
+> -                       mci_writel(host, IDSTS, SDMMC_IDMAC_INT_TI |
+> -                                                       SDMMC_IDMAC_INT_RI);
+> -                       mci_writel(host, IDSTS, SDMMC_IDMAC_INT_NI);
+> -                       host->dma_ops->complete(host);
+> +       if (host->use_dma == TRANS_MODE_IDMAC) {
+
+Doing:
+if (host->use_dma != TRANS_MODE_IDMAC)
+    return IRQ_HANDLED;
+
+Could save you the extra level of identation you add below.
+
+> +               /* Handle DMA interrupts */
+> +               if (host->dma_64bit_address == 1) {
+> +                       pending = mci_readl(host, IDSTS64);
+> +                       if (pending & (SDMMC_IDMAC_INT_TI |
+> +                                      SDMMC_IDMAC_INT_RI)) {
+> +                               mci_writel(host, IDSTS64,
+> +                                          SDMMC_IDMAC_INT_TI |
+> +                                          SDMMC_IDMAC_INT_RI);
+> +                               mci_writel(host, IDSTS64, SDMMC_IDMAC_INT_NI);
+> +                               host->dma_ops->complete((void *)host);
+> +                       }
+> +               } else {
+> +                       pending = mci_readl(host, IDSTS);
+> +                       if (pending & (SDMMC_IDMAC_INT_TI |
+> +                                      SDMMC_IDMAC_INT_RI)) {
+> +                               mci_writel(host, IDSTS,
+> +                                          SDMMC_IDMAC_INT_TI |
+> +                                          SDMMC_IDMAC_INT_RI);
+> +                               mci_writel(host, IDSTS, SDMMC_IDMAC_INT_NI);
+> +                               host->dma_ops->complete((void *)host);
+> +                       }
+>                 }
+>         }
+> -#endif
+>
+>         return IRQ_HANDLED;
+>  }
+
+
+> @@ -2437,6 +2567,21 @@ static void dw_mci_cleanup_slot(struct dw_mci_slot *slot, unsigned int id)
+>  static void dw_mci_init_dma(struct dw_mci *host)
+>  {
+>         int addr_config;
+> +       int trans_mode;
+> +       struct device *dev = host->dev;
+> +       struct device_node *np = dev->of_node;
+> +
+> +       /* Check tansfer mode */
+> +       trans_mode = (mci_readl(host, HCON) >> 16) & 0x3;
+
+I think it would be nice if you could add some defines for 16 and 0x03
+or add a macro like SDMMC_GET_FCNT() that is in dw_mmc.h.
+
+> +       if (trans_mode == 0) {
+> +               trans_mode = TRANS_MODE_IDMAC;
+> +       } else if (trans_mode == 1 || trans_mode == 2) {
+> +               trans_mode = TRANS_MODE_EDMAC;
+> +       } else {
+> +               trans_mode = TRANS_MODE_PIO;
+> +               goto no_dma;
+> +       }
+> +
+>         /* Check ADDR_CONFIG bit in HCON to find IDMAC address bus width */
+>         addr_config = (mci_readl(host, HCON) >> 27) & 0x01;
+
+I'll try to get this patch tested on my lpc18xx platform soon.
+btw, the HCON reg on lpc18xx reads as 0x00e42cc1 (address 0x40004070).
+
+
+regard,
+Joachim Eastwood
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
