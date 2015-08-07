@@ -1,72 +1,71 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [RFC PATCH 2/8] drm: exynos/dp: convert to drm bridge mode
-Date: Fri, 7 Aug 2015 13:25:35 +0200
-Message-ID: <20150807112535.GK17734@phenom.ffwll.local>
-References: <1438868947-22132-1-git-send-email-ykk@rock-chips.com>
- <1438870041-23130-1-git-send-email-ykk@rock-chips.com>
- <000001d0d052$f44fa3a0$dceeeae0$@com>
- <55C36F49.6020207@rock-chips.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Fri, 07 Aug 2015 13:31:15 +0200
+Message-ID: <2061119.GBaoSb4YSL@amdc1976>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <55C43971.5010504@samsung.com> <20150807051826.GJ6325@linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:38686 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752292AbbHGLZk (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:53927 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752052AbbHGLcU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Aug 2015 07:25:40 -0400
-Received: by wibxm9 with SMTP id xm9so61692977wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Aug 2015 04:25:38 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <55C36F49.6020207@rock-chips.com>
+	Fri, 7 Aug 2015 07:32:20 -0400
+In-reply-to: <20150807051826.GJ6325@linux>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Fabio Estevam' <fabio.estevam@freescale.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, 'Andrzej Hajda' <a.hajda@samsung.com>, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Vincent Palatin' <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, 'Kukjin Kim' <kgene@kernel.org>, 'Thierry Reding' <treding@nvidia.com>, dianders@google.com, linux-arm-kernel@lists.infradead.org, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, djkurtz@google.com, 'Andy Yan' <andy.yan@rock-chips.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd.bergmann@linaro.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 06, 2015 at 10:29:29PM +0800, Yakir Yang wrote:
-> Hi Jingoo,
->=20
-> =E5=9C=A8 2015/8/6 22:19, Jingoo Han =E5=86=99=E9=81=93:
-> >On Thursday, August 06, 2015 11:07 PM, Yakir Yang wrote:
-> >>In order to move exynos dp code to bridge directory,
-> >>we need to convert driver drm bridge mode first. As
-> >>dp driver already have a ptn3460 bridge, so we need
-> >>to move ptn bridge to the next bridge of dp bridge.
-> >>
-> >>Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> >>---
-> >>  drivers/gpu/drm/exynos/exynos_dp_core.c | 196 +++++++++++++++++++=
-+------------
-> >>  drivers/gpu/drm/exynos/exynos_dp_core.h |   2 +
-> >>  2 files changed, 126 insertions(+), 72 deletions(-)
-> >>
-> >>diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/=
-drm/exynos/exynos_dp_core.c
-> >>index a8097a4..aa99e23 100644
-> >>--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> >>+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> >>@@ -3,6 +3,7 @@
-> >>   *
-> >>   * Copyright (C) 2012 Samsung Electronics Co., Ltd.
-> >>   * Author: Jingoo Han <jg1.han@samsung.com>
-> >>+ *         Yakir Yang <ykk@rock-chips.com>
-> >Please don't add this.
-> >You just fixed some parts of this code. I don't find the reason
-> >why you have to be added to author for this file.
-> >If you want the title for an author, please send the patch
-> >for a new IP, instead of modifying the exiting codes.
->=20
-> Okay, thanks for your remind ;)
 
-tbh the author lines are completely irrelevant, git blame/log is the
-authoritative source for that. Copyright is a bit a different matter
-entirely, but in general we seem to be not too good at updating.
+Hi,
 
-Really if that's all you have to comment and no substantial technical
-concerns or questions then just can such a bikeshed mail.
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On Friday, August 07, 2015 10:48:26 AM Viresh Kumar wrote:
+> On 07-08-15, 13:52, Krzysztof Kozlowski wrote:
+> > Thanks for explanation. As fair as I understand, Bartlomiej wanted to
+> > merge this in a way which would avoid loosing the boost mode. Kukjin
+> > prepared topic branches for previous cpu-freq/clk stuff so maybe
+> > everything could go through PM?
+> 
+> We aren't loosing anything at all. There can be two cases here:
+> 
+> 1. Patch 1/6 and 6/6 make it to 4.3 (with suggested changes) via PM tree:
+> - All will work fine in this case, no issues at all..
+> 
+> 2. They don't make it:
+> - Even in this case, nothing will break. Users can just enable a
+>   config option and that's all..
+
+Users don't need to enable the config option to get boost
+functionality working.  It is only needed to get scaling_boost_freqs
+sysfs attribute visible (which lists available boost freqs) when
+using cpufreq-dt driver.  Also the config option in question is not
+user visible.
+
+The worst thing that happens if these 2 PM patches don't make it
+in time is that there will be no scaling_boost_freqs available
+when using cpufreq-dt driver.  Which is not very important from
+Exynos4x12 POV as it only supports single boost freq currently.
+
+> So, no need to divert things into another tree this late.
+
+I agree.
+
+> Over that, Rafael will not be around for 2 weeks now (Plumbers and
+> other stuff) ..
+> 
+> So, just target the cpufreq core changes via PM tree.. rest is just
+> fine.
+> 
+> I hope that makes sense :)
+
+Yes. :)
+ 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
