@@ -1,118 +1,57 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Fri, 07 Aug 2015 08:53:18 +0900
-Message-ID: <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 0/3] mfd: ChromeOS EC Kconfig dependency cleanup
+Date: Fri, 7 Aug 2015 02:03:13 +0200
+Message-ID: <CABxcv=kG=pSprUdoscAFgCF=S5CccvHO0mP+tjnumNeEjsVckg@mail.gmail.com>
+References: <1435191645-6022-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:53237 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752882AbbHFXxZ (ORCPT
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:36155 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753215AbbHGADO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Aug 2015 19:53:25 -0400
-In-reply-to: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
-Content-language: ko
+	Thu, 6 Aug 2015 20:03:14 -0400
+Received: by ykeo23 with SMTP id o23so76269725yke.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Aug 2015 17:03:13 -0700 (PDT)
+In-Reply-To: <1435191645-6022-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, Gwendal Grignou <gwendal@google.com>, Doug Anderson <dianders@chromium.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>
 
-Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-Hi Bart,
+Hello Lee,
 
-> This patch series removes the use of Exynos4x12 specific support
-> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
-> for this platform.
-> 
-Thanks for this series.
+On Thu, Jun 25, 2015 at 2:20 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+>
+> This is a trivial series that do some changes to the dependency for the
+> ChromeOS EC drivers Kconfig symbols. The patches are on top of Paul's
+> patch "mfd: fix dependency warning for CHROME_PLATFORMS on !X86, !ARM":
+> https://lkml.org/lkml/2015/6/20/219.
+>
+> Paul fixed a warning about unmet dependencies but I think the correct fix
+> is to remove unneded dependencies. So that is what this series do and are
+> composed of the following patches:
+>
+>
+> Javier Martinez Canillas (3):
+>   platform/chrome: Don't make CHROME_PLATFORMS depends on X86 || ARM
+>   mfd: Remove MFD_CROS_EC depends on X86 || ARM
+>   mfd: Remove MFD_CROS_EC_SPI depends on OF
+>
+>  drivers/mfd/Kconfig             | 3 +--
+>  drivers/platform/chrome/Kconfig | 1 -
+>  2 files changed, 1 insertion(+), 3 deletions(-)
+>
 
-> This patch series has been tested on Exynos4412 based Odroid-U3 and
-> Trats2 boards.
-> 
-Sounds good.
+The warning that this series fixes has appeared again in linux-next.
+You said some time ago that applied the patches for 4.3 [0] and indeed
+I remember the warning going away at some point.
 
-> Depends on:
-> - next-20150806 branch of linux-next kernel tree
-> - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
->   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
-> 
-BTW, hmm...how can we see this series in v4.3?...to be honest, I don't think it
-can be done in v4.3 because of dependencies with PM / OPP series and previous
-exynos CPU OPP series in each cross trees...maybe that's why you created based
-on linux-next...any idea?
+Do you know what happened with this patches? I see 3/3 in linux-next
+but no 1/3 and 2/3.
 
-Thanks,
-Kukjin
+[0]: https://lkml.org/lkml/2015/6/25/115
 
-> Changes since v3
-> (http://thread.gmane.org/gmane.linux.power-management.general/63464):
-> - rebased on top of next-20150806 branch of linux-next kernel tree
-> - made ARCH_EXYNOS config option select thermal support
-> - made scaling_boost_freqs sysfs attribute available only when boost
->   support is enabled
-> - added Acked-by tag from Viresh to patches #3, #4 and #5
-> - added Tested-by tag from Tobias to patches #2-5
-> - added Reviewed-by tag from Krzysztof to patch #4
-> 
-> Changes since v2
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
-> - rebased on top of next-20150730 branch of linux-next kernel tree
-> - ported over V3 of opp-v2 bindings support patch series
-> - put cpu0 nodes in alphabetical order in dts files
-> - added Reviewed-by tags from Javier and Krzysztof
-> - added Acked-by tag from Sylwester
-> 
-> Changes since v1
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
-> - rebased on top of next-20150629 branch of linux-next kernel tree
-> - rebased on top of Exynos5250 cpufreq-dt support patch series
-> - fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
-> - ported over opp-v2 bindings (requested by Viresh Kumar)
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (6):
->   cpufreq: make scaling_boost_freqs sysfs attr available when boost is
->     enabled
->   clk: samsung: exynos4x12: add cpu clock configuration data and
->     instantiate cpu clock
->   ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
->   ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
->   cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
->   cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
-> 
->  arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
->  arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
->  arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
->  arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
->  arch/arm/mach-exynos/Kconfig                    |   2 +
->  arch/arm/mach-exynos/exynos.c                   |   2 +
->  drivers/clk/samsung/clk-exynos4.c               |  50 +++++
->  drivers/cpufreq/Kconfig                         |   4 -
->  drivers/cpufreq/Kconfig.arm                     |  38 ----
->  drivers/cpufreq/Makefile                        |   2 -
->  drivers/cpufreq/cpufreq-dt.c                    |   3 +
->  drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
->  drivers/cpufreq/exynos-cpufreq.h                |  72 --------
->  drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
->  drivers/cpufreq/freq_table.c                    |  10 +-
->  include/linux/cpufreq.h                         |   1 +
->  17 files changed, 241 insertions(+), 591 deletions(-)
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
->  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
-> 
-> --
-> 1.9.1
+Thanks a lot and best regards,
+Javier
