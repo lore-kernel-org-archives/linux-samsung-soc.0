@@ -1,90 +1,218 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v2 5/8] drm: bridge/analogix_dp: add platform device type
- support
-Date: Fri,  7 Aug 2015 05:46:35 -0500
-Message-ID: <1438944396-18951-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v2 6/8] drm: bridge: analogix_dp: add some rk3288 special registers setting
+Date: Fri,  7 Aug 2015 05:49:24 -0500
+Message-ID: <1438944564-19010-1-git-send-email-ykk@rock-chips.com>
 References: <1438943674-18191-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1438943674-18191-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, djkurtz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH5qZ5pVbMyqKg@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.135]:54038 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751437AbbHGKvk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Aug 2015 06:51:40 -0400
+In-Reply-To: <1438943674-18191-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>, Russell King <rmk+kernel@arm.linux.org.uk>, Fabio Estevam <fabio.estevam@freescale.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>
+Cc: djkurtz@google.com, dianders@google.com, seanpaul@google.com, joe@perches.com, Takashi Iwai <tiwai@suse.de>, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <treding@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, ajaynumb@gmail.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yakir Yang <ykk@rock-c>
 
-Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+RK3288 need some special registers setting, we can separate
+them out by the dev_type of plat_data.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 ---
 Changes in v2:
-- Add GNU license v2 declared and samsung copyright
+- Fix compile failed dut to phy_pd_addr variable misspell error
 
- drivers/gpu/drm/exynos/analogix_dp-exynos.c     |  1 +
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c |  1 +
- include/drm/bridge/analogix_dp.h                | 16 ++++++++++++++++
- 3 files changed, 18 insertions(+)
+ drivers/gpu/drm/bridge/analogix_dp_reg.c | 76 ++++++++++++++++++++------------
+ drivers/gpu/drm/bridge/analogix_dp_reg.h | 12 +++++
+ 2 files changed, 60 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/analogix_dp-exynos.c b/drivers/gpu/drm/exynos/analogix_dp-exynos.c
-index 1468ce7..5a2027d 100644
---- a/drivers/gpu/drm/exynos/analogix_dp-exynos.c
-+++ b/drivers/gpu/drm/exynos/analogix_dp-exynos.c
-@@ -122,6 +122,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	dp->dev = dev;
- 	dp->drm_dev = drm_dev;
+diff --git a/drivers/gpu/drm/bridge/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix_dp_reg.c
+index cc5cdbf..a0fc1fb 100644
+--- a/drivers/gpu/drm/bridge/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix_dp_reg.c
+@@ -15,6 +15,8 @@
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
  
-+	dp->plat_data.dev_type = EXYNOS_DP;
- 	dp->plat_data.power_on = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 2f86e5e..e7cf9ab 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -312,6 +312,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
- 
-+	dp->plat_data.dev_type = RK3288_DP;
- 	dp->plat_data.attach = NULL;
- 	dp->plat_data.power_on = rockchip_dp_poweron;
- 	dp->plat_data.power_off = rockchip_dp_poweroff;
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 9a207f8..d5f9a5b 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -1,9 +1,25 @@
-+/*
-+ * Analogix Core DP (Display Port) interface driver.
-+ *
-+ * Copyright (C) 2012 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation; either version 2 of the License, or (at your
-+ * option) any later version.
-+ */
- #ifndef _ANALOGIX_DP_H_
- #define _ANALOGIX_DP_H_
- 
- #include <drm/drm_crtc.h>
- 
-+enum analogix_dp_devtype {
-+	EXYNOS_DP,
-+	RK3288_DP,
-+};
++#include <drm/bridge/analogix_dp.h>
 +
- struct analogix_dp_plat_data {
-+	enum analogix_dp_devtype dev_type;
- 	struct drm_panel *panel;
+ #include "analogix_dp_core.h"
+ #include "analogix_dp_reg.h"
  
- 	int (*power_on)(struct analogix_dp_plat_data *);
+@@ -72,6 +74,14 @@ void analogix_dp_init_analog_param(struct analogix_dp_device *dp)
+ 	reg = SEL_24M | TX_DVDD_BIT_1_0625V;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_ANALOG_CTL_2);
+ 
++	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP)) {
++		writel(REF_CLK_24M, dp->reg_base + ANALOGIX_DP_PLL_REG_1);
++		writel(0x95, dp->reg_base + ANALOGIX_DP_PLL_REG_2);
++		writel(0x40, dp->reg_base + ANALOGIX_DP_PLL_REG_3);
++		writel(0x58, dp->reg_base + ANALOGIX_DP_PLL_REG_4);
++		writel(0x22, dp->reg_base + ANALOGIX_DP_PLL_REG_5);
++	}
++
+ 	reg = DRIVE_DVDD_BIT_1_0625V | VCO_BIT_600_MICRO;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_ANALOG_CTL_3);
+ 
+@@ -206,81 +216,85 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 				       bool enable)
+ {
+ 	u32 reg;
++	u32 phy_pd_addr = ANALOGIX_DP_PHY_PD;
++
++	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
++		phy_pd_addr = ANALOGIX_DP_PD;
+ 
+ 	switch (block) {
+ 	case AUX_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= AUX_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~AUX_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH0_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH0_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH0_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH1_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH1_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH1_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH2_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH2_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH2_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH3_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH3_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH3_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case ANALOG_TOTAL:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= DP_PHY_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~DP_PHY_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case POWER_ALL:
+ 		if (enable) {
+ 			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
+ 				CH1_PD | CH0_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			writel(0x00, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(0x00, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	default:
+@@ -399,8 +413,14 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
+ 	analogix_dp_reset_aux(dp);
+ 
+ 	/* Disable AUX transaction H/W retry */
+-	reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) | AUX_HW_RETRY_COUNT_SEL(0) |
+-	      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
++		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
++		      AUX_HW_RETRY_COUNT_SEL(3) |
++		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++	else
++		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
++		      AUX_HW_RETRY_COUNT_SEL(0) |
++		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
+ 
+ 	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
+diff --git a/drivers/gpu/drm/bridge/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix_dp_reg.h
+index bed226f..e38af21 100644
+--- a/drivers/gpu/drm/bridge/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix_dp_reg.h
+@@ -22,6 +22,14 @@
+ #define ANALOGIX_DP_VIDEO_CTL_8			0x3C
+ #define ANALOGIX_DP_VIDEO_CTL_10			0x44
+ 
++#define ANALOGIX_DP_PLL_REG_1			0xfc
++#define ANALOGIX_DP_PLL_REG_2			0x9e4
++#define ANALOGIX_DP_PLL_REG_3			0x9e8
++#define ANALOGIX_DP_PLL_REG_4			0x9ec
++#define ANALOGIX_DP_PLL_REG_5			0xa00
++
++#define ANALOGIX_DP_PD                          0x12c
++
+ #define ANALOGIX_DP_LANE_MAP			0x35C
+ 
+ #define ANALOGIX_DP_ANALOG_CTL_1			0x370
+@@ -154,6 +162,10 @@
+ #define VSYNC_POLARITY_CFG			(0x1 << 1)
+ #define HSYNC_POLARITY_CFG			(0x1 << 0)
+ 
++/* ANALOGIX_DP_PLL_REG_1 */
++#define REF_CLK_24M				(0x1 << 1)
++#define REF_CLK_27M				(0x0 << 1)
++
+ /* ANALOGIX_DP_LANE_MAP */
+ #define LANE3_MAP_LOGIC_LANE_0			(0x0 << 6)
+ #define LANE3_MAP_LOGIC_LANE_1			(0x1 << 6)
 -- 
 1.9.1
