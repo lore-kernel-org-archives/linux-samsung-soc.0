@@ -1,54 +1,68 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 11/11] drm/exynos: remove struct exynos_drm_encoder layer
-Date: Fri, 07 Aug 2015 22:22:41 +0900
-Message-ID: <55C4B121.7070200@samsung.com>
-References: <1438817060-22164-10-git-send-email-gustavo@padovan.org>
- <1438867908-18975-1-git-send-email-gustavo@padovan.org>
- <1438867908-18975-2-git-send-email-gustavo@padovan.org>
- <55C49B8A.4090009@samsung.com>
- <CAKMK7uFsh=PN0Mvb2kzBsDZr-ZhDnbJqcWHLr3_sagETZ+xUhg@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] clk: s5pv210: add missing call to
+ samsung_clk_of_add_provider()
+Date: Fri, 07 Aug 2015 16:10:43 +0200
+Message-ID: <55C4BC63.6090203@samsung.com>
+References: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51564 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753039AbbHGNWo convert rfc822-to-8bit (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44081 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753341AbbHGOKr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Aug 2015 09:22:44 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NSP00S09RTULBA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Aug 2015 22:22:42 +0900 (KST)
-In-reply-to: <CAKMK7uFsh=PN0Mvb2kzBsDZr-ZhDnbJqcWHLr3_sagETZ+xUhg@mail.gmail.com>
+	Fri, 7 Aug 2015 10:10:47 -0400
+In-reply-to: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>
 
-Hi Daniel,
+Hello,
 
-On 2015=EB=85=84 08=EC=9B=94 07=EC=9D=BC 21:28, Daniel Vetter wrote:
-> On Fri, Aug 7, 2015 at 1:50 PM, Inki Dae <inki.dae@samsung.com> wrote=
-:
->>
->> Booting is locked up here. This patch looks good to me so I tried to
->> find why locked up and I found the booting is locked up as soon as
->> console_lock function is called. Can you and other guys look into th=
-is
->> issue?
->=20
-> It's not locked up, you simply won't see any dmesg output after that.
-> Use Archit's Kconfig support in drm-misc to disable fbdev emulation
-> and try again.
+On 2014-09-19 11:00, Marek Szyprowski wrote:
+> Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
+> clk provider only after registering its all clocks", merged to v3.17-rc1)
+> modified a way that driver registers registers to core framework. This
+> change has not been applied to s5pv210 clocks driver, which has been
+> merged in parallel to that commit. This patch adds a missing call to
+> samsung_clk_of_add_provider(), so the driver is operational again.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Hello!
+>
+> This is an important fix to v3.17-rcX. Without it support for Samsung
+> S5PV210 SoCs is not functional.
+>
+> Mike, could you take it to the fixes branch?
 
-I didn't really look into this patch series. I will check it with this
-patch series next week and give Acked-by to you.
+Mike: could you handle this patch? It looks it got missed for a few 
+releases...
 
-Thanks,
-Inki Dae
+> Best regards
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> ---
+>   drivers/clk/samsung/clk-s5pv210.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
+> index d270a20..f41b017 100644
+> --- a/drivers/clk/samsung/clk-s5pv210.c
+> +++ b/drivers/clk/samsung/clk-s5pv210.c
+> @@ -828,6 +828,8 @@ static void __init __s5pv210_clk_init(struct device_node *np,
+>   
+>   	s5pv210_clk_sleep_init();
+>   
+> +	samsung_clk_of_add_provider(np, ctx);
+> +
+>   	pr_info("%s clocks: mout_apll = %ld, mout_mpll = %ld\n"
+>   		"\tmout_epll = %ld, mout_vpll = %ld\n",
+>   		is_s5p6442 ? "S5P6442" : "S5PV210",
 
-> -Daniel
->=20
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
