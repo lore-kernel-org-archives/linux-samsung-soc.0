@@ -1,96 +1,105 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4/4] drm/bridge: Put Kconfig entries in a separate menu
-Date: Fri,  7 Aug 2015 18:27:35 +0200
-Message-ID: <1438964855-16989-4-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 3/4] drm/panel: Add Samsung prefix to panel drivers
+Date: Fri,  7 Aug 2015 18:27:34 +0200
+Message-ID: <1438964855-16989-3-git-send-email-thierry.reding@gmail.com>
 References: <1438964855-16989-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:37684 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1945928AbbHGQ21 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Aug 2015 12:28:27 -0400
-Received: by wibhh20 with SMTP id hh20so72594049wib.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Aug 2015 09:28:26 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1438964855-16989-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
-
-Put the Kconfig entries for bridge drivers into a separate menu so that
-they are automatically grouped and don't clutter up the top-level menu.
-
-While at it, move the bridge menu towards the end of the top-level menu
-where the panel menu is already located.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpu/drm/Kconfig        |  4 ++--
- drivers/gpu/drm/bridge/Kconfig | 14 +++++++++++---
- 2 files changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 06ae5008c5ed..86191586340f 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -99,8 +99,6 @@ config DRM_KMS_CMA_HELPER
- 
- source "drivers/gpu/drm/i2c/Kconfig"
- 
--source "drivers/gpu/drm/bridge/Kconfig"
--
- config DRM_TDFX
- 	tristate "3dfx Banshee/Voodoo3+"
- 	depends on DRM && PCI
-@@ -255,6 +253,8 @@ source "drivers/gpu/drm/tegra/Kconfig"
- 
- source "drivers/gpu/drm/panel/Kconfig"
- 
-+source "drivers/gpu/drm/bridge/Kconfig"
-+
- source "drivers/gpu/drm/sti/Kconfig"
- 
- source "drivers/gpu/drm/amd/amdkfd/Kconfig"
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index adac3250684b..2de52a53a803 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -1,11 +1,18 @@
-+config DRM_BRIDGE
-+	def_bool y
-+	depends on DRM
-+	help
-+	  Bridge registration and lookup framework.
-+
-+menu "Display Interface Bridges"
-+	depends on DRM && DRM_BRIDGE
-+
- config DRM_DW_HDMI
- 	tristate
--	depends on DRM
- 	select DRM_KMS_HELPER
- 
- config DRM_NXP_PTN3460
- 	tristate "NXP PTN3460 DP/LVDS bridge"
--	depends on DRM
- 	depends on OF
- 	select DRM_KMS_HELPER
- 	select DRM_PANEL
-@@ -14,7 +21,6 @@ config DRM_NXP_PTN3460
- 
- config DRM_PARADE_PS8622
- 	tristate "Parade eDP/LVDS bridge"
--	depends on DRM
- 	depends on OF
- 	select DRM_PANEL
- 	select DRM_KMS_HELPER
-@@ -22,3 +28,5 @@ config DRM_PARADE_PS8622
- 	select BACKLIGHT_CLASS_DEVICE
- 	---help---
- 	  Parade eDP-LVDS bridge chip driver.
-+
-+endmenu
--- 
-2.4.5
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBsaWtlbGlob29k
+IG9mIGdldHRpbmcgYSBsYXJnZSBudW1iZXIgb2YgcGFuZWwgZHJpdmVycyBmcm9tIGRpZmZlcmVu
+dAp2ZW5kb3JzIGlzIHF1aXRlIGhpZ2guIEFkZCBhIHByZWZpeCB0byB0aGUgdHdvIGV4aXN0aW5n
+IFNhbXN1bmcgcGFuZWwKZHJpdmVycyB0byBzZXQgYSBndWlkZWxpbmUgZm9yIGZ1dHVyZSBwYXRj
+aCBzdWJtaXNzaW9ucy4gVXNpbmcgdmVuZG9yCnByZWZpeGVzIGNvbnNpc3RlbnRseSBzaG91bGQg
+YWxsb3cgYSBjbGVhbmVyIG9yZ2FuaXphdGlvbiBvZiB0aGUgdHJlZS4KClNpZ25lZC1vZmYtYnk6
+IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogYXJjaC9hcm0vY29uZmln
+cy9leHlub3NfZGVmY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAyICst
+CiBhcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2RlZmNvbmZpZyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICB8IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9LY29uZmlnICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgOCArKysrLS0tLQogZHJpdmVycy9ncHUvZHJt
+L3BhbmVsL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA0ICsr
+LS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC97cGFuZWwtbGQ5MDQwLmMgPT4gcGFuZWwtc2Ftc3Vu
+Zy1sZDkwNDAuY30gIHwgMiArLQogLi4uL2dwdS9kcm0vcGFuZWwve3BhbmVsLXM2ZThhYTAuYyA9
+PiBwYW5lbC1zYW1zdW5nLXM2ZThhYTAuY30gICAgfCAyICstCiA2IGZpbGVzIGNoYW5nZWQsIDEw
+IGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQogcmVuYW1lIGRyaXZlcnMvZ3B1L2RybS9w
+YW5lbC97cGFuZWwtbGQ5MDQwLmMgPT4gcGFuZWwtc2Ftc3VuZy1sZDkwNDAuY30gKDk5JSkKIHJl
+bmFtZSBkcml2ZXJzL2dwdS9kcm0vcGFuZWwve3BhbmVsLXM2ZThhYTAuYyA9PiBwYW5lbC1zYW1z
+dW5nLXM2ZThhYTAuY30gKDk5JSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9jb25maWdzL2V4eW5v
+c19kZWZjb25maWcgYi9hcmNoL2FybS9jb25maWdzL2V4eW5vc19kZWZjb25maWcKaW5kZXggMDk5
+NDM4ZTE5ZjA1Li4zNTQxMjRjM2VkMmMgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2NvbmZpZ3MvZXh5
+bm9zX2RlZmNvbmZpZworKysgYi9hcmNoL2FybS9jb25maWdzL2V4eW5vc19kZWZjb25maWcKQEAg
+LTEzMiw3ICsxMzIsNyBAQCBDT05GSUdfRFJNX0VYWU5PU19GSU1EPXkKIENPTkZJR19EUk1fRVhZ
+Tk9TX0RTST15CiBDT05GSUdfRFJNX0VYWU5PU19IRE1JPXkKIENPTkZJR19EUk1fUEFORUxfU0lN
+UExFPXkKLUNPTkZJR19EUk1fUEFORUxfUzZFOEFBMD15CitDT05GSUdfRFJNX1BBTkVMX1NBTVNV
+TkdfUzZFOEFBMD15CiBDT05GSUdfRkJfU0lNUExFPXkKIENPTkZJR19FWFlOT1NfVklERU89eQog
+Q09ORklHX0VYWU5PU19NSVBJX0RTST15CmRpZmYgLS1naXQgYS9hcmNoL2FybS9jb25maWdzL211
+bHRpX3Y3X2RlZmNvbmZpZyBiL2FyY2gvYXJtL2NvbmZpZ3MvbXVsdGlfdjdfZGVmY29uZmlnCmlu
+ZGV4IDI5YmU3NzcyNmVjOC4uNmJhOTYwODc5OGFiIDEwMDY0NAotLS0gYS9hcmNoL2FybS9jb25m
+aWdzL211bHRpX3Y3X2RlZmNvbmZpZworKysgYi9hcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2Rl
+ZmNvbmZpZwpAQCAtNDQ2LDcgKzQ0Niw3IEBAIENPTkZJR19EUk1fRVhZTk9TX0ZJTUQ9eQogQ09O
+RklHX0RSTV9FWFlOT1NfSERNST15CiBDT05GSUdfRFJNX1JDQVJfRFU9bQogQ09ORklHX0RSTV9U
+RUdSQT15Ci1DT05GSUdfRFJNX1BBTkVMX1M2RThBQTA9bQorQ09ORklHX0RSTV9QQU5FTF9TQU1T
+VU5HX1M2RThBQTA9bQogQ09ORklHX0RSTV9QQU5FTF9TSU1QTEU9eQogQ09ORklHX0ZCX0FSTUNM
+Q0Q9eQogQ09ORklHX0ZCX1dNODUwNT15CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGFu
+ZWwvS2NvbmZpZyBiL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9LY29uZmlnCmluZGV4IDZkNjRjN2Ji
+OTA4Yi4uNWJlMjVkOTI4MmUzIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2Nv
+bmZpZworKysgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2NvbmZpZwpAQCAtMTgsMTMgKzE4LDEz
+IEBAIGNvbmZpZyBEUk1fUEFORUxfU0lNUExFCiAJICB0aGF0IGl0IGNhbiBiZSBhdXRvbWF0aWNh
+bGx5IHR1cm5lZCBvZmYgd2hlbiB0aGUgcGFuZWwgZ29lcyBpbnRvIGEKIAkgIGxvdyBwb3dlciBz
+dGF0ZS4KIAotY29uZmlnIERSTV9QQU5FTF9MRDkwNDAKLQl0cmlzdGF0ZSAiTEQ5MDQwIFJHQi9T
+UEkgcGFuZWwiCitjb25maWcgRFJNX1BBTkVMX1NBTVNVTkdfTEQ5MDQwCisJdHJpc3RhdGUgIlNh
+bXN1bmcgTEQ5MDQwIFJHQi9TUEkgcGFuZWwiCiAJZGVwZW5kcyBvbiBPRiAmJiBTUEkKIAlzZWxl
+Y3QgVklERU9NT0RFX0hFTFBFUlMKIAotY29uZmlnIERSTV9QQU5FTF9TNkU4QUEwCi0JdHJpc3Rh
+dGUgIlM2RThBQTAgRFNJIHZpZGVvIG1vZGUgcGFuZWwiCitjb25maWcgRFJNX1BBTkVMX1NBTVNV
+TkdfUzZFOEFBMAorCXRyaXN0YXRlICJTYW1zdW5nIFM2RThBQTAgRFNJIHZpZGVvIG1vZGUgcGFu
+ZWwiCiAJZGVwZW5kcyBvbiBPRgogCXNlbGVjdCBEUk1fTUlQSV9EU0kKIAlzZWxlY3QgVklERU9N
+T0RFX0hFTFBFUlMKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9NYWtlZmlsZSBi
+L2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9NYWtlZmlsZQppbmRleCA0YjJhMDQzMDgwNGIuLjgwMjZj
+ZTVkMThiNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxlCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9NYWtlZmlsZQpAQCAtMSw0ICsxLDQgQEAKIG9iai0kKENP
+TkZJR19EUk1fUEFORUxfU0lNUExFKSArPSBwYW5lbC1zaW1wbGUubwotb2JqLSQoQ09ORklHX0RS
+TV9QQU5FTF9MRDkwNDApICs9IHBhbmVsLWxkOTA0MC5vCi1vYmotJChDT05GSUdfRFJNX1BBTkVM
+X1M2RThBQTApICs9IHBhbmVsLXM2ZThhYTAubworb2JqLSQoQ09ORklHX0RSTV9QQU5FTF9TQU1T
+VU5HX0xEOTA0MCkgKz0gcGFuZWwtc2Ftc3VuZy1sZDkwNDAubworb2JqLSQoQ09ORklHX0RSTV9Q
+QU5FTF9TQU1TVU5HX1M2RThBQTApICs9IHBhbmVsLXNhbXN1bmctczZlOGFhMC5vCiBvYmotJChD
+T05GSUdfRFJNX1BBTkVMX1NIQVJQX0xRMTAxUjFTWDAxKSArPSBwYW5lbC1zaGFycC1scTEwMXIx
+c3gwMS5vCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbGQ5MDQwLmMg
+Yi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1sZDkwNDAuYwpzaW1pbGFyaXR5
+IGluZGV4IDk5JQpyZW5hbWUgZnJvbSBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbGQ5MDQw
+LmMKcmVuYW1lIHRvIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLWxkOTA0MC5j
+CmluZGV4IGJiYTM1MDFjNTgyMS4uZmNiODI3MDAzYThjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vcGFuZWwvcGFuZWwtbGQ5MDQwLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
+bmVsLXNhbXN1bmctbGQ5MDQwLmMKQEAgLTM3OCw3ICszNzgsNyBAQCBzdGF0aWMgc3RydWN0IHNw
+aV9kcml2ZXIgbGQ5MDQwX2RyaXZlciA9IHsKIAkucHJvYmUgPSBsZDkwNDBfcHJvYmUsCiAJLnJl
+bW92ZSA9IGxkOTA0MF9yZW1vdmUsCiAJLmRyaXZlciA9IHsKLQkJLm5hbWUgPSAibGQ5MDQwIiwK
+KwkJLm5hbWUgPSAicGFuZWwtc2Ftc3VuZy1sZDkwNDAiLAogCQkub3duZXIgPSBUSElTX01PRFVM
+RSwKIAkJLm9mX21hdGNoX3RhYmxlID0gbGQ5MDQwX29mX21hdGNoLAogCX0sCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtczZlOGFhMC5jIGIvZHJpdmVycy9ncHUvZHJt
+L3BhbmVsL3BhbmVsLXNhbXN1bmctczZlOGFhMC5jCnNpbWlsYXJpdHkgaW5kZXggOTklCnJlbmFt
+ZSBmcm9tIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zNmU4YWEwLmMKcmVuYW1lIHRvIGRy
+aXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLXM2ZThhYTAuYwppbmRleCA5ZTc5YmM0
+M2IwNDcuLjZiMTFlNzVmZjY0NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
+bmVsLXM2ZThhYTAuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1z
+NmU4YWEwLmMKQEAgLTEwNTIsNyArMTA1Miw3IEBAIHN0YXRpYyBzdHJ1Y3QgbWlwaV9kc2lfZHJp
+dmVyIHM2ZThhYTBfZHJpdmVyID0gewogCS5wcm9iZSA9IHM2ZThhYTBfcHJvYmUsCiAJLnJlbW92
+ZSA9IHM2ZThhYTBfcmVtb3ZlLAogCS5kcml2ZXIgPSB7Ci0JCS5uYW1lID0gInBhbmVsX3M2ZThh
+YTAiLAorCQkubmFtZSA9ICJwYW5lbC1zYW1zdW5nLXM2ZThhYTAiLAogCQkub2ZfbWF0Y2hfdGFi
+bGUgPSBzNmU4YWEwX29mX21hdGNoLAogCX0sCiB9OwotLSAKMi40LjUKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
