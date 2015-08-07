@@ -1,39 +1,43 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 11/11] drm/exynos: remove struct exynos_drm_encoder layer
-Date: Fri, 7 Aug 2015 14:28:49 +0200
-Message-ID: <CAKMK7uFsh=PN0Mvb2kzBsDZr-ZhDnbJqcWHLr3_sagETZ+xUhg@mail.gmail.com>
-References: <1438817060-22164-10-git-send-email-gustavo@padovan.org>
-	<1438867908-18975-1-git-send-email-gustavo@padovan.org>
-	<1438867908-18975-2-git-send-email-gustavo@padovan.org>
-	<55C49B8A.4090009@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2] cpufreq-dt: make scaling_boost_freqs sysfs attr
+ available when boost is enabled
+Date: Fri, 7 Aug 2015 18:13:10 +0530
+Message-ID: <20150807124310.GI6939@linux>
+References: <3835403.gWyHpfh1Gz@amdc1976>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:36342 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752539AbbHGM2u (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:34235 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752370AbbHGMnP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Aug 2015 08:28:50 -0400
-Received: by obnw1 with SMTP id w1so77631834obn.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Aug 2015 05:28:50 -0700 (PDT)
-In-Reply-To: <55C49B8A.4090009@samsung.com>
+	Fri, 7 Aug 2015 08:43:15 -0400
+Received: by pawu10 with SMTP id u10so88245501paw.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Aug 2015 05:43:14 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <3835403.gWyHpfh1Gz@amdc1976>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Aug 7, 2015 at 1:50 PM, Inki Dae <inki.dae@samsung.com> wrote:
->
-> Booting is locked up here. This patch looks good to me so I tried to
-> find why locked up and I found the booting is locked up as soon as
-> console_lock function is called. Can you and other guys look into this
-> issue?
+On 07-08-15, 13:56, Bartlomiej Zolnierkiewicz wrote:
+> Make scaling_boost_freqs sysfs attribute is available when
+> cpufreq-dt driver is used and boost support is enabled.
+> 
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> v2: Removed leftover prototype.
+> 
+>  drivers/cpufreq/cpufreq-dt.c | 9 ++++++++-
+>  include/linux/cpufreq.h      | 1 +
+>  2 files changed, 9 insertions(+), 1 deletion(-)
 
-It's not locked up, you simply won't see any dmesg output after that.
-Use Archit's Kconfig support in drm-misc to disable fbdev emulation
-and try again.
--Daniel
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+viresh
