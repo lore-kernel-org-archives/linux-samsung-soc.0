@@ -1,49 +1,28 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
- Exynos4x12 platform
-Date: Fri, 7 Aug 2015 10:48:26 +0530
-Message-ID: <20150807051826.GJ6325@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
- <20150807035018.GF6325@linux>
- <20150807035156.GG6325@linux>
- <55C43085.8090506@samsung.com>
- <20150807043037.GH6325@linux>
- <55C43971.5010504@samsung.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: Re: [RFC PATCH v4 4/9] arc: axs10x_defconfig: remove
+ CONFIG_MMC_DW_IDMAC
+Date: Fri, 7 Aug 2015 05:48:32 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075665B17BF@IN01WEMBXB.internal.synopsys.com>
+References: <1438843469-23807-1-git-send-email-shawn.lin@rock-chips.com>
+ <1438843526-23976-1-git-send-email-shawn.lin@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55C43971.5010504@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd.bergmann@linaro.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-mmc-owner@vger.kernel.org
+To: Shawn Lin <shawn.lin@rock-chips.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+Cc: "heiko@sntech.de" <heiko@sntech.de>, "dianders@chromium.org" <dianders@chromium.org>, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "devicetree@vger.kernel.org" <device>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07-08-15, 13:52, Krzysztof Kozlowski wrote:
-> Thanks for explanation. As fair as I understand, Bartlomiej wanted to
-> merge this in a way which would avoid loosing the boost mode. Kukjin
-> prepared topic branches for previous cpu-freq/clk stuff so maybe
-> everything could go through PM?
+On Thursday 06 August 2015 12:19 PM, Shawn Lin wrote:
+> DesignWare MMC Controller's transfer mode should be decided
+> at runtime instead of compile-time. So we remove this config
+> option and read dw_mmc's register to select DMA master.
+>
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-We aren't loosing anything at all. There can be two cases here:
+Acked-by: Vineet Gupta <vgupta@synopsys.com>
 
-1. Patch 1/6 and 6/6 make it to 4.3 (with suggested changes) via PM tree:
-- All will work fine in this case, no issues at all..
-
-2. They don't make it:
-- Even in this case, nothing will break. Users can just enable a
-  config option and that's all..
-
-So, no need to divert things into another tree this late.
-
-Over that, Rafael will not be around for 2 weeks now (Plumbers and
-other stuff) ..
-
-So, just target the cpufreq core changes via PM tree.. rest is just
-fine.
-
-I hope that makes sense :)
-
--- 
-viresh
+Thx,
+-Vineet
