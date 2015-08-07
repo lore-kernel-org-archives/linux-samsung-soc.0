@@ -1,142 +1,99 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
- available when boost is enabled
-Date: Fri, 07 Aug 2015 12:34:23 +0200
-Message-ID: <5184469.cOpIkgzX4h@amdc1976>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <1438868514-8814-2-git-send-email-b.zolnierkie@samsung.com>
- <20150807034128.GE6325@linux>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v2 0/8] Add Analogix Core Display Port Driver
+Date: Fri,  7 Aug 2015 05:34:34 -0500
+Message-ID: <1438943674-18191-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150807034128.GE6325@linux>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, djkurtz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH5qZ5pVbMyqKg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi all,
+   The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
+share the same IP, so a lot of parts can be re-used. I split the common
+code into bridge directory, then rk3288 and exynos only need to keep
+some platform code. Cause I can't find the exact IP name of exynos dp
+controller, so I decide to name dp core driver with "analogix" which I
+find in rk3288 eDP TRM ;)
 
-Hi,
+Beyond that, there are three light registers setting differents bewteen
+exynos and rk3288.
+1. RK3288 have five special pll resigters which not indicata in exynos
+   dp controller.
+2. The address of DP_PHY_PD(dp phy power manager register) are different
+   between rk3288 and exynos.
+3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
+   register).
 
-On Friday, August 07, 2015 09:11:28 AM Viresh Kumar wrote:
-> Hi,
-> 
-> I would suggest you sending such patches as reply to the earlier
-> threads only, instead of a new chain. This will save your time.
+My series patches can be divider into two parts: One for spliting the
+analogix_dp code from exynos dp driver. Another are trying to add rk3288
+platform special code.
 
-Please explain it more.  This patch needs to be first for cpufreq-dt
-switch to be complete.  scaling_boost_freqs is available currently
-for exynos-cpufreq users when boost is enabled and ideally we would
-like it to be available immediately after the switch to cpufreq-dt.
+Thanks,
+- Yakir
 
-> For example, you will need to resend other patches unnecessarily if I
-> NAK this patch :)
-> 
-> On 06-08-15, 15:41, Bartlomiej Zolnierkiewicz wrote:
-> > Add cpufreq_boost_enabled_generic_attr table and use it in
-> > cpufreq-dt driver instead of cpufreq_generic_attr one when
-> > boost support is enabled.  As a result scaling_boost_freqs
-> > sysfs attribute is available when cpufreq-dt driver is
-> > used and boost support is enabled.
-> > 
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/cpufreq/cpufreq-dt.c | 3 +++
-> >  drivers/cpufreq/freq_table.c | 7 +++++++
-> >  include/linux/cpufreq.h      | 1 +
-> >  3 files changed, 11 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> > index b9259ab..7b091c0 100644
-> > --- a/drivers/cpufreq/cpufreq-dt.c
-> > +++ b/drivers/cpufreq/cpufreq-dt.c
-> > @@ -182,6 +182,8 @@ try_again:
-> >  	return ret;
-> >  }
-> >  
-> > +static struct cpufreq_driver dt_cpufreq_driver;
-> > +
-> >  static int cpufreq_init(struct cpufreq_policy *policy)
-> >  {
-> >  	struct cpufreq_frequency_table *freq_table;
-> > @@ -336,6 +338,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
-> >  		ret = cpufreq_enable_boost_support();
-> >  		if (ret)
-> >  			goto out_free_cpufreq_table;
-> > +		dt_cpufreq_driver.attr = cpufreq_boost_enabled_generic_attr;
-> >  	}
-> >  
-> >  	policy->cpuinfo.transition_latency = transition_latency;
-> > diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-> > index a8f1daf..5a00a09 100644
-> > --- a/drivers/cpufreq/freq_table.c
-> > +++ b/drivers/cpufreq/freq_table.c
-> > @@ -300,6 +300,13 @@ struct freq_attr *cpufreq_generic_attr[] = {
-> >  };
-> >  EXPORT_SYMBOL_GPL(cpufreq_generic_attr);
-> >  
-> > +struct freq_attr *cpufreq_boost_enabled_generic_attr[] = {
-> > +	&cpufreq_freq_attr_scaling_available_freqs,
-> > +	&cpufreq_freq_attr_scaling_boost_freqs,
-> > +	NULL,
-> > +};
-> > +EXPORT_SYMBOL_GPL(cpufreq_boost_enabled_generic_attr);
-> 
-> This isn't scalable. We can't create a new generic structure every time
-> a entry comes in. Rather we should leave the generic attr for
+Changes in v2:
+- Take Joe Preches advise, improved commit message more readable, and
+  avoid using some uncommon style like bellow:
+  -  retval = exynos_dp_read_bytes_from_i2c(...
+				...)
+  +  retval =
+  +  exynos_dp_read_bytes_from_i2c(......);
+- Take Jingoo Han suggest, cause I jsut improve parts
+  of the code, so just remove my name from author list.
+- Take Jingoo Han suggest, remove new copyright
+- Fix compiled failed dut to analogix_dp_device misspell
+- Add GNU license v2 declared and samsung copyright
+- Fix compile failed dut to phy_pd_addr variable misspell error
 
-boost entry is rather generic one so I imagine that other cpufreq
-drivers that add support for boost would also like to use it.
+Yakir Yang (8):
+  drm: exynos/dp: fix code style
+  drm: exynos/dp: convert to drm bridge mode
+  drm: bridge: analogix_dp: split exynos dp driver to bridge dir
+  drm: rockchip/dp: add rockchip platform dp driver
+  drm: bridge/analogix_dp: add platform device type support
+  drm: bridge: analogix_dp: add some rk3288 special registers setting
+  drm: bridge: analogix_dp: try force hpd after plug in lookup failed
+  drm: bridge/analogix_dp: expand the delay time for hpd detect
 
-Anyway since there are no such drivers currently I agree that
-making a new generic structure may be premature and I will re-do
-this patch according to your request.
+ drivers/gpu/drm/bridge/Kconfig                     |    5 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/analogix_dp_core.c          | 1397 +++++++++++++++++++
+ drivers/gpu/drm/bridge/analogix_dp_core.h          |  286 ++++
+ drivers/gpu/drm/bridge/analogix_dp_reg.c           | 1294 ++++++++++++++++++
+ .../exynos_dp_reg.h => bridge/analogix_dp_reg.h}   |  270 ++--
+ drivers/gpu/drm/exynos/Kconfig                     |    5 +-
+ drivers/gpu/drm/exynos/Makefile                    |    2 +-
+ drivers/gpu/drm/exynos/analogix_dp-exynos.c        |  238 ++++
+ drivers/gpu/drm/exynos/exynos_dp_core.c            | 1416 --------------------
+ drivers/gpu/drm/exynos/exynos_dp_core.h            |  282 ----
+ drivers/gpu/drm/exynos/exynos_dp_reg.c             | 1263 -----------------
+ drivers/gpu/drm/rockchip/Kconfig                   |   10 +
+ drivers/gpu/drm/rockchip/Makefile                  |    1 +
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  420 ++++++
+ include/drm/bridge/analogix_dp.h                   |   38 +
+ 16 files changed, 3835 insertions(+), 3093 deletions(-)
+ create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.c
+ create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.h
+ create mode 100644 drivers/gpu/drm/bridge/analogix_dp_reg.c
+ rename drivers/gpu/drm/{exynos/exynos_dp_reg.h => bridge/analogix_dp_reg.h} (62%)
+ create mode 100644 drivers/gpu/drm/exynos/analogix_dp-exynos.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.h
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_reg.c
+ create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+ create mode 100644 include/drm/bridge/analogix_dp.h
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> cpufreq-dt and do something like this in the cpufreq-dt driver (And
-> that patch should rather go via cpufreq tree and not ARM SoC)..
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> index a5b6a854661f..e229258ad791 100644
-> --- a/drivers/cpufreq/cpufreq-dt.c
-> +++ b/drivers/cpufreq/cpufreq-dt.c
-> @@ -36,6 +36,12 @@ struct private_data {
->  	unsigned int voltage_tolerance; /* in percentage */
->  };
->  
-> +static struct freq_attr *cpufreq_dt_attr[] = {
-> +	&cpufreq_freq_attr_scaling_available_freqs,
-> +	NULL,	/* Extra space for boost-attr if required */
-> +	NULL,
-> +};
-> +
->  static int set_target(struct cpufreq_policy *policy, unsigned int index)
->  {
->  	struct dev_pm_opp *opp;
-> @@ -337,6 +343,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->  		ret = cpufreq_enable_boost_support();
->  		if (ret)
->  			goto out_free_cpufreq_table;
-> +		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
->  	}
->  
->  	policy->cpuinfo.transition_latency = transition_latency;
-> @@ -412,7 +419,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
->  	.exit = cpufreq_exit,
->  	.ready = cpufreq_ready,
->  	.name = "cpufreq-dt",
-> -	.attr = cpufreq_generic_attr,
-> +	.attr = cpufreq_dt_attr,
->  };
->  
->  static int dt_cpufreq_probe(struct platform_device *pdev)
+-- 
+1.9.1
