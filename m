@@ -1,55 +1,44 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] cpufreq: exynos: Fix for memory leak in case SoC name
- does not match
-Date: Sat, 08 Aug 2015 16:36:34 +0900
-Message-ID: <55C5B182.6000509@samsung.com>
-References: <04f401d0ce89$81073900$8315ab00$@kernel.org> <9283770.jQmuxWnYst@vostro.rjw.lan>
+Subject: Re: [PATCH] clk: s5pv210: add missing call to samsung_clk_of_add_provider()
+Date: Sat, 8 Aug 2015 17:18:02 +0900
+Message-ID: <CAJKOXPcMWy=7ppdhZuuowW40EV9fQ_uZOc590oD53Lpu8bczbA@mail.gmail.com>
+References: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
+	<55C4BC63.6090203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:33108 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932287AbbHHHgj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Aug 2015 03:36:39 -0400
-In-Reply-To: <9283770.jQmuxWnYst@vostro.rjw.lan>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55C4BC63.6090203@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, shailendra.capricorn@gmail.com
 
-W dniu 06.08.2015 o 09:23, Rafael J. Wysocki pisze:
-> On Tuesday, August 04, 2015 04:45:16 PM Kukjin Kim wrote:
->> From: Shailendra Verma <shailendra.capricorn@gmail.com>
+2015-08-07 23:10 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Hello,
+>
+> On 2014-09-19 11:00, Marek Szyprowski wrote:
 >>
->> During probe free the memory allocated to "exynos_info" in case of
->> unknown SoC type.
+>> Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
+>> clk provider only after registering its all clocks", merged to v3.17-rc1)
+>> modified a way that driver registers registers to core framework. This
+>> change has not been applied to s5pv210 clocks driver, which has been
+>> merged in parallel to that commit. This patch adds a missing call to
+>> samsung_clk_of_add_provider(), so the driver is operational again.
 >>
->> Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
->> [k.kozlowski: Rebased the patch around if(of_machine_is_compatible)]
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Signed-off-by: Kukjin Kim <kgene@kernel.org>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >> ---
->> Hi Rafael and Viresh,
+>> Hello!
 >>
->> Since this is a fix to prevent memory leak, it would be better if
->> this could be sent to linus during -rc via cpufreq tree.
-> 
-> I'm not planning more pull requests for 4.2 and this one doesn't seem to be
-> a good enough reason for a pull request of its own, though.
-> 
-> Of course, if there are more urgent fixes, I can push it along with them,
-> but there are none so far.
+>> This is an important fix to v3.17-rcX. Without it support for Samsung
+>> S5PV210 SoCs is not functional.
+>>
+>> Mike, could you take it to the fixes branch?
+>
+>
+> Mike: could you handle this patch? It looks it got missed for a few
+> releases...
 
-The cpufreq driver will be removed completely in v4.3 or v4.4 with
-patchset adding cpufreq-dt support for Exynos 4x12. This means that this
-patch makes sense only for 4.2 and as a stable backport (but it was not
-marked as such).
-
-Anyone thinks that the patch will be worth stable back-porting?
+So maybe now it is worth backporting to stable?
 
 Best regards,
 Krzysztof
