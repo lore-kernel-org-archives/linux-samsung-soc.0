@@ -1,44 +1,30 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk: s5pv210: add missing call to samsung_clk_of_add_provider()
-Date: Sat, 8 Aug 2015 17:18:02 +0900
-Message-ID: <CAJKOXPcMWy=7ppdhZuuowW40EV9fQ_uZOc590oD53Lpu8bczbA@mail.gmail.com>
-References: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
-	<55C4BC63.6090203@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: exynos: Fix for memory leak in case SoC name
+ does not match
+Date: Sat, 8 Aug 2015 18:59:15 +0530
+Message-ID: <20150808132915.GP6939@linux>
+References: <04f401d0ce89$81073900$8315ab00$@kernel.org>
+ <9283770.jQmuxWnYst@vostro.rjw.lan>
+ <55C5B182.6000509@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55C4BC63.6090203@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <55C5B182.6000509@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, shailendra.capricorn@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-08-07 23:10 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Hello,
->
-> On 2014-09-19 11:00, Marek Szyprowski wrote:
->>
->> Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
->> clk provider only after registering its all clocks", merged to v3.17-rc1)
->> modified a way that driver registers registers to core framework. This
->> change has not been applied to s5pv210 clocks driver, which has been
->> merged in parallel to that commit. This patch adds a missing call to
->> samsung_clk_of_add_provider(), so the driver is operational again.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->> Hello!
->>
->> This is an important fix to v3.17-rcX. Without it support for Samsung
->> S5PV210 SoCs is not functional.
->>
->> Mike, could you take it to the fixes branch?
->
->
-> Mike: could you handle this patch? It looks it got missed for a few
-> releases...
+On 08-08-15, 16:36, Krzysztof Kozlowski wrote:
+> The cpufreq driver will be removed completely in v4.3 or v4.4 with
+> patchset adding cpufreq-dt support for Exynos 4x12. This means that this
+> patch makes sense only for 4.2 and as a stable backport (but it was not
+> marked as such).
+> 
+> Anyone thinks that the patch will be worth stable back-porting?
 
-So maybe now it is worth backporting to stable?
+Doesn't look worth enough to me..
 
-Best regards,
-Krzysztof
+-- 
+viresh
