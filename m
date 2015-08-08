@@ -1,48 +1,33 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/4] drm/panel: Add Samsung prefix to panel drivers
-Date: Sat, 08 Aug 2015 15:54:43 +0900
-Message-ID: <55C5A7B3.2010701@samsung.com>
-References: <1438964855-16989-1-git-send-email-thierry.reding@gmail.com> <1438964855-16989-3-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Sat, 08 Aug 2015 16:27:10 +0900
+Message-ID: <55C5AF4E.3010500@samsung.com>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com> <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux> <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:36638 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754153AbbHHGyu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Aug 2015 02:54:50 -0400
-Received: by pdco4 with SMTP id o4so52810525pdc.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Aug 2015 23:54:50 -0700 (PDT)
-In-Reply-To: <1438964855-16989-3-git-send-email-thierry.reding@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150808020740.GM6939@linux>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, 'Anand Moon' <linux.amoon@gmail.com>, 'Kevin Hilman' <khilman@linaro.org>, linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd.bergmann@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-W dniu 08.08.2015 o 01:27, Thierry Reding pisze:
-> From: Thierry Reding <treding@nvidia.com>
+W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
+> On 08-08-15, 00:24, Rafael J. Wysocki wrote:
+>> OK, so please let me know which patches you want me to pick up.
+>>
+>> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
+>> with a cover letter clearly stating whose tree they are being targeted at.
 > 
-> The likelihood of getting a large number of panel drivers from different
-> vendors is quite high. Add a prefix to the two existing Samsung panel
-> drivers to set a guideline for future patch submissions. Using vendor
-> prefixes consistently should allow a cleaner organization of the tree.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm/configs/exynos_defconfig                                 | 2 +-
->  arch/arm/configs/multi_v7_defconfig                               | 2 +-
+> He already sent it separately, let me send a confirmatory mail in
+> reply to that.
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Dear Kukjin,
+
+Can you apply the 2-5 of this series to v4.3? It's getting late but
+maybe they still could go?
 
 Best regards,
 Krzysztof
-
-
->  drivers/gpu/drm/panel/Kconfig                                     | 8 ++++----
->  drivers/gpu/drm/panel/Makefile                                    | 4 ++--
->  drivers/gpu/drm/panel/{panel-ld9040.c => panel-samsung-ld9040.c}  | 2 +-
->  .../gpu/drm/panel/{panel-s6e8aa0.c => panel-samsung-s6e8aa0.c}    | 2 +-
->  6 files changed, 10 insertions(+), 10 deletions(-)
->  rename drivers/gpu/drm/panel/{panel-ld9040.c => panel-samsung-ld9040.c} (99%)
->  rename drivers/gpu/drm/panel/{panel-s6e8aa0.c => panel-samsung-s6e8aa0.c} (99%)
