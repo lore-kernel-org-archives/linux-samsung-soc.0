@@ -1,167 +1,41 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [RFC PATCH v4 1/9] mmc: dw_mmc: Add external dma interface
- support
-Date: Sat, 8 Aug 2015 07:37:55 +0800
-Message-ID: <55C54153.2070709@rock-chips.com>
-References: <1438843469-23807-1-git-send-email-shawn.lin@rock-chips.com>
- <1438843491-23853-1-git-send-email-shawn.lin@rock-chips.com>
- <CAGhQ9VxUYvgGD=K3J3cQ0CNpCC-RfGE9cxhBHnTeAU2CmWkiKA@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
+ available when boost is enabled
+Date: Sat, 8 Aug 2015 07:36:42 +0530
+Message-ID: <20150808020642.GL6939@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <1594902.Dv5JKhve0y@amdc1976>
+ <20150807113739.GF6939@linux>
+ <11605783.uxKCOKbq1D@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-        format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <CAGhQ9VxUYvgGD=K3J3cQ0CNpCC-RfGE9cxhBHnTeAU2CmWkiKA@mail.gmail.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: lintao@rock-chips.com, jh80.chung@samsung.com, Ulf Hansson <ulf.hansson@linaro.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Doug Anderson <dianders@chromium.org>, Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infrade
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:33055 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1946662AbbHHCGq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Aug 2015 22:06:46 -0400
+Received: by pabyb7 with SMTP id yb7so66941070pab.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Aug 2015 19:06:46 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <11605783.uxKCOKbq1D@vostro.rjw.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-=E5=9C=A8 2015/8/8 5:32, Joachim Eastwood =E5=86=99=E9=81=93:
-> Hi Shawn,
->
-> On 6 August 2015 at 08:44, Shawn Lin <shawn.lin@rock-chips.com> wrote=
-:
->> DesignWare MMC Controller can supports two types of DMA
->> mode: external dma and internal dma. We get a RK312x platform
->> integrated dw_mmc and ARM pl330 dma controller. This patch add
->> edmac ops to support these platforms. I've tested it on RK312x
->> platform with edmac mode and RK3288 platform with idmac mode.
->>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->
->> @@ -2256,26 +2373,30 @@ static irqreturn_t dw_mci_interrupt(int irq,=
- void *dev_id)
->>
->>          }
->>
->> -#ifdef CONFIG_MMC_DW_IDMAC
->> -       /* Handle DMA interrupts */
->> -       if (host->dma_64bit_address =3D=3D 1) {
->> -               pending =3D mci_readl(host, IDSTS64);
->> -               if (pending & (SDMMC_IDMAC_INT_TI | SDMMC_IDMAC_INT_=
-RI)) {
->> -                       mci_writel(host, IDSTS64, SDMMC_IDMAC_INT_TI=
- |
->> -                                                       SDMMC_IDMAC_=
-INT_RI);
->> -                       mci_writel(host, IDSTS64, SDMMC_IDMAC_INT_NI=
-);
->> -                       host->dma_ops->complete(host);
->> -               }
->> -       } else {
->> -               pending =3D mci_readl(host, IDSTS);
->> -               if (pending & (SDMMC_IDMAC_INT_TI | SDMMC_IDMAC_INT_=
-RI)) {
->> -                       mci_writel(host, IDSTS, SDMMC_IDMAC_INT_TI |
->> -                                                       SDMMC_IDMAC_=
-INT_RI);
->> -                       mci_writel(host, IDSTS, SDMMC_IDMAC_INT_NI);
->> -                       host->dma_ops->complete(host);
->> +       if (host->use_dma =3D=3D TRANS_MODE_IDMAC) {
->
-> Doing:
-> if (host->use_dma !=3D TRANS_MODE_IDMAC)
->      return IRQ_HANDLED;
->
+On 08-08-15, 00:21, Rafael J. Wysocki wrote:
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> And what exactly am I supposed to do with this?
+> 
+> Have a robot that will pick up all patches ACKed by you magically or what?
 
-Okay.
+:)
 
-> Could save you the extra level of identation you add below.
->
->> +               /* Handle DMA interrupts */
->> +               if (host->dma_64bit_address =3D=3D 1) {
->> +                       pending =3D mci_readl(host, IDSTS64);
->> +                       if (pending & (SDMMC_IDMAC_INT_TI |
->> +                                      SDMMC_IDMAC_INT_RI)) {
->> +                               mci_writel(host, IDSTS64,
->> +                                          SDMMC_IDMAC_INT_TI |
->> +                                          SDMMC_IDMAC_INT_RI);
->> +                               mci_writel(host, IDSTS64, SDMMC_IDMA=
-C_INT_NI);
->> +                               host->dma_ops->complete((void *)host=
-);
->> +                       }
->> +               } else {
->> +                       pending =3D mci_readl(host, IDSTS);
->> +                       if (pending & (SDMMC_IDMAC_INT_TI |
->> +                                      SDMMC_IDMAC_INT_RI)) {
->> +                               mci_writel(host, IDSTS,
->> +                                          SDMMC_IDMAC_INT_TI |
->> +                                          SDMMC_IDMAC_INT_RI);
->> +                               mci_writel(host, IDSTS, SDMMC_IDMAC_=
-INT_NI);
->> +                               host->dma_ops->complete((void *)host=
-);
->> +                       }
->>                  }
->>          }
->> -#endif
->>
->>          return IRQ_HANDLED;
->>   }
->
->
->> @@ -2437,6 +2567,21 @@ static void dw_mci_cleanup_slot(struct dw_mci=
-_slot *slot, unsigned int id)
->>   static void dw_mci_init_dma(struct dw_mci *host)
->>   {
->>          int addr_config;
->> +       int trans_mode;
->> +       struct device *dev =3D host->dev;
->> +       struct device_node *np =3D dev->of_node;
->> +
->> +       /* Check tansfer mode */
->> +       trans_mode =3D (mci_readl(host, HCON) >> 16) & 0x3;
->
-> I think it would be nice if you could add some defines for 16 and 0x0=
-3
-> or add a macro like SDMMC_GET_FCNT() that is in dw_mmc.h.
->
+That's why I have asked Bartlomiej specifically to send it separately
+to the pm list as a cpufreq patch. I wasn't expecting you to apply
+right from here.
 
-yes, it's better to avoid magic number for register operation to make
-others understand w/o checking databook for details. And might more tha=
-n=20
-one (e.g "Check ADDR_CONFIG bit in HCON to find IDMAC address bus=20
-width") should be modified.
-
-Although one patch only do one thing, I will drop by to make it in v5.
-
->> +       if (trans_mode =3D=3D 0) {
->> +               trans_mode =3D TRANS_MODE_IDMAC;
->> +       } else if (trans_mode =3D=3D 1 || trans_mode =3D=3D 2) {
->> +               trans_mode =3D TRANS_MODE_EDMAC;
->> +       } else {
->> +               trans_mode =3D TRANS_MODE_PIO;
->> +               goto no_dma;
->> +       }
->> +
->>          /* Check ADDR_CONFIG bit in HCON to find IDMAC address bus =
-width */
->>          addr_config =3D (mci_readl(host, HCON) >> 27) & 0x01;
->
-> I'll try to get this patch tested on my lpc18xx platform soon.
-> btw, the HCON reg on lpc18xx reads as 0x00e42cc1 (address 0x40004070)=
-=2E
->
-
-yes, HCON[17:16] is 2b'00 means your lpc18xx use IDMAC.
-
->
-> regard,
-> Joachim Eastwood
->
->
->
-
-
---=20
-Shawn Lin
+-- 
+viresh
