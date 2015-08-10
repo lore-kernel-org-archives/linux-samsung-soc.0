@@ -1,87 +1,194 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 08/74] clockevents/drivers/exynos_mct: Remove unneeded container_of()
-Date: Mon, 10 Aug 2015 11:51:25 +0200
-Message-ID: <1439200352-26767-8-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH 51/74] clockevents/drivers/exynos_mct: Migrate to new 'set-state' interface
+Date: Mon, 10 Aug 2015 11:52:08 +0200
+Message-ID: <1439200352-26767-51-git-send-email-daniel.lezcano@linaro.org>
 References: <55C87382.4070309@linaro.org>
  <1439200352-26767-1-git-send-email-daniel.lezcano@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:34740 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933349AbbHJJyj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 10 Aug 2015 05:54:39 -0400
+Received: by wicne3 with SMTP id ne3so128875361wic.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Aug 2015 02:54:38 -0700 (PDT)
 In-Reply-To: <1439200352-26767-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mingo@kernel.org
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "moderated list:ARM/SAMSUNG
-	EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: mingo@kernel.org
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "moderated list:ARM/SAMSUNG
+	EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
 
-From: Alexey Klimov <klimov.linux@gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-Patch removes unneeded container_of() macro in exynos4_local_timer_setup().
-Instead let's pass mevt pointer to setup and stop functions from
-exynos4_mct_cpu_notify() and let them get evt pointer.
+Migrate exynos_mct driver to the new 'set-state' interface provided by
+clockevents core, the earlier 'set-mode' interface is marked obsolete
+now.
 
-Tested on odroid-xu3.
+This also enables us to implement callbacks for new states of clockevent
+devices, for example: ONESHOT_STOPPED.
 
-Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clocksource/exynos_mct.c | 85 +++++++++++++++++++---------------------
+ 1 file changed, 40 insertions(+), 45 deletions(-)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 9064ff7..4d2330a 100644
+index 4d2330a..029f96a 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -442,13 +442,11 @@ static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
+@@ -257,15 +257,14 @@ static void exynos4_mct_comp0_stop(void)
+ 	exynos4_mct_write(0, EXYNOS4_MCT_G_INT_ENB);
  }
  
--static int exynos4_local_timer_setup(struct clock_event_device *evt)
-+static int exynos4_local_timer_setup(struct mct_clock_event_device *mevt)
+-static void exynos4_mct_comp0_start(enum clock_event_mode mode,
+-				    unsigned long cycles)
++static void exynos4_mct_comp0_start(bool periodic, unsigned long cycles)
  {
--	struct mct_clock_event_device *mevt;
-+	struct clock_event_device *evt = &mevt->evt;
- 	unsigned int cpu = smp_processor_id();
+ 	unsigned int tcon;
+ 	cycle_t comp_cycle;
  
--	mevt = container_of(evt, struct mct_clock_event_device, evt);
--
- 	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
- 	snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
+ 	tcon = readl_relaxed(reg_base + EXYNOS4_MCT_G_TCON);
  
-@@ -477,8 +475,10 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+-	if (mode == CLOCK_EVT_MODE_PERIODIC) {
++	if (periodic) {
+ 		tcon |= MCT_G_TCON_COMP0_AUTO_INC;
+ 		exynos4_mct_write(cycles, EXYNOS4_MCT_G_COMP0_ADD_INCR);
+ 	}
+@@ -283,38 +282,38 @@ static void exynos4_mct_comp0_start(enum clock_event_mode mode,
+ static int exynos4_comp_set_next_event(unsigned long cycles,
+ 				       struct clock_event_device *evt)
+ {
+-	exynos4_mct_comp0_start(evt->mode, cycles);
++	exynos4_mct_comp0_start(false, cycles);
+ 
  	return 0;
  }
  
--static void exynos4_local_timer_stop(struct clock_event_device *evt)
-+static void exynos4_local_timer_stop(struct mct_clock_event_device *mevt)
+-static void exynos4_comp_set_mode(enum clock_event_mode mode,
+-				  struct clock_event_device *evt)
++static int mct_set_state_shutdown(struct clock_event_device *evt)
  {
-+	struct clock_event_device *evt = &mevt->evt;
+-	unsigned long cycles_per_jiffy;
+ 	exynos4_mct_comp0_stop();
++	return 0;
++}
+ 
+-	switch (mode) {
+-	case CLOCK_EVT_MODE_PERIODIC:
+-		cycles_per_jiffy =
+-			(((unsigned long long) NSEC_PER_SEC / HZ * evt->mult) >> evt->shift);
+-		exynos4_mct_comp0_start(mode, cycles_per_jiffy);
+-		break;
++static int mct_set_state_periodic(struct clock_event_device *evt)
++{
++	unsigned long cycles_per_jiffy;
+ 
+-	case CLOCK_EVT_MODE_ONESHOT:
+-	case CLOCK_EVT_MODE_UNUSED:
+-	case CLOCK_EVT_MODE_SHUTDOWN:
+-	case CLOCK_EVT_MODE_RESUME:
+-		break;
+-	}
++	cycles_per_jiffy = (((unsigned long long)NSEC_PER_SEC / HZ * evt->mult)
++			    >> evt->shift);
++	exynos4_mct_comp0_stop();
++	exynos4_mct_comp0_start(true, cycles_per_jiffy);
++	return 0;
+ }
+ 
+ static struct clock_event_device mct_comp_device = {
+-	.name		= "mct-comp",
+-	.features       = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+-	.rating		= 250,
+-	.set_next_event	= exynos4_comp_set_next_event,
+-	.set_mode	= exynos4_comp_set_mode,
++	.name			= "mct-comp",
++	.features		= CLOCK_EVT_FEAT_PERIODIC |
++				  CLOCK_EVT_FEAT_ONESHOT,
++	.rating			= 250,
++	.set_next_event		= exynos4_comp_set_next_event,
++	.set_state_periodic	= mct_set_state_periodic,
++	.set_state_shutdown	= mct_set_state_shutdown,
++	.set_state_oneshot	= mct_set_state_shutdown,
++	.tick_resume		= mct_set_state_shutdown,
+ };
+ 
+ static irqreturn_t exynos4_mct_comp_isr(int irq, void *dev_id)
+@@ -390,39 +389,32 @@ static int exynos4_tick_set_next_event(unsigned long cycles,
+ 	return 0;
+ }
+ 
+-static inline void exynos4_tick_set_mode(enum clock_event_mode mode,
+-					 struct clock_event_device *evt)
++static int set_state_shutdown(struct clock_event_device *evt)
++{
++	exynos4_mct_tick_stop(this_cpu_ptr(&percpu_mct_tick));
++	return 0;
++}
 +
- 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
++static int set_state_periodic(struct clock_event_device *evt)
+ {
+ 	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
+ 	unsigned long cycles_per_jiffy;
+ 
++	cycles_per_jiffy = (((unsigned long long)NSEC_PER_SEC / HZ * evt->mult)
++			    >> evt->shift);
+ 	exynos4_mct_tick_stop(mevt);
+-
+-	switch (mode) {
+-	case CLOCK_EVT_MODE_PERIODIC:
+-		cycles_per_jiffy =
+-			(((unsigned long long) NSEC_PER_SEC / HZ * evt->mult) >> evt->shift);
+-		exynos4_mct_tick_start(cycles_per_jiffy, mevt);
+-		break;
+-
+-	case CLOCK_EVT_MODE_ONESHOT:
+-	case CLOCK_EVT_MODE_UNUSED:
+-	case CLOCK_EVT_MODE_SHUTDOWN:
+-	case CLOCK_EVT_MODE_RESUME:
+-		break;
+-	}
++	exynos4_mct_tick_start(cycles_per_jiffy, mevt);
++	return 0;
+ }
+ 
+ static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
+ {
+-	struct clock_event_device *evt = &mevt->evt;
+-
+ 	/*
+ 	 * This is for supporting oneshot mode.
+ 	 * Mct would generate interrupt periodically
+ 	 * without explicit stopping.
+ 	 */
+-	if (evt->mode != CLOCK_EVT_MODE_PERIODIC)
++	if (!clockevent_state_periodic(&mevt->evt))
+ 		exynos4_mct_tick_stop(mevt);
+ 
+ 	/* Clear the MCT tick interrupt */
+@@ -453,7 +445,10 @@ static int exynos4_local_timer_setup(struct mct_clock_event_device *mevt)
+ 	evt->name = mevt->name;
+ 	evt->cpumask = cpumask_of(cpu);
+ 	evt->set_next_event = exynos4_tick_set_next_event;
+-	evt->set_mode = exynos4_tick_set_mode;
++	evt->set_state_periodic = set_state_periodic;
++	evt->set_state_shutdown = set_state_shutdown;
++	evt->set_state_oneshot = set_state_shutdown;
++	evt->tick_resume = set_state_shutdown;
+ 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+ 	evt->rating = 450;
+ 
+@@ -479,7 +474,7 @@ static void exynos4_local_timer_stop(struct mct_clock_event_device *mevt)
+ {
+ 	struct clock_event_device *evt = &mevt->evt;
+ 
+-	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
++	evt->set_state_shutdown(evt);
  	if (mct_int_type == MCT_INT_SPI) {
  		if (evt->irq != -1)
-@@ -500,11 +500,11 @@ static int exynos4_mct_cpu_notify(struct notifier_block *self,
- 	switch (action & ~CPU_TASKS_FROZEN) {
- 	case CPU_STARTING:
- 		mevt = this_cpu_ptr(&percpu_mct_tick);
--		exynos4_local_timer_setup(&mevt->evt);
-+		exynos4_local_timer_setup(mevt);
- 		break;
- 	case CPU_DYING:
- 		mevt = this_cpu_ptr(&percpu_mct_tick);
--		exynos4_local_timer_stop(&mevt->evt);
-+		exynos4_local_timer_stop(mevt);
- 		break;
- 	}
- 
-@@ -570,7 +570,7 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
- 		goto out_irq;
- 
- 	/* Immediately configure the timer on the boot CPU */
--	exynos4_local_timer_setup(&mevt->evt);
-+	exynos4_local_timer_setup(mevt);
- 	return;
- 
- out_irq:
+ 			disable_irq_nosync(evt->irq);
 -- 
 1.9.1
