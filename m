@@ -1,43 +1,49 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Mon, 10 Aug 2015 10:27:18 +0900
-Message-ID: <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
- <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
- <55C5AF4E.3010500@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <55C5AF4E.3010500@samsung.com>
-Content-language: ko
-Sender: linux-pm-owner@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, 'Anand Moon' <linux.amoon@gmail.com>, 'Kevin Hilman' <khilman@linaro.org>, linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd.bergmann@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL] Samsung mach fixes for 4.2
+Date: Mon, 10 Aug 2015 10:52:10 +0900
+Message-ID: <1439171530-971-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:38762 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120AbbHJBwX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 9 Aug 2015 21:52:23 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Krzysztof Kozlowski wrote:
-> 
-> W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
-> > On 08-08-15, 00:24, Rafael J. Wysocki wrote:
-> >> OK, so please let me know which patches you want me to pick up.
-> >>
-> >> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
-> >> with a cover letter clearly stating whose tree they are being targeted at.
-> >
-> > He already sent it separately, let me send a confirmatory mail in
-> > reply to that.
-> 
-> Dear Kukjin,
-> 
-> Can you apply the 2-5 of this series to v4.3? It's getting late but
-> maybe they still could go?
-> 
-Once my previous pull-request landed into arm-soc, I'll try to send out this
-series 2-5 for v4.3.
+Dear Kukjin,
 
-Thanks,
-Kukjin
+Please find latest two fixes for v4.2 cycle. You can find more detailed
+description with the tag.
 
+Best regards,
+Krzysztof
+
+
+The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+
+  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+
+are available in the git repository at:
+
+  https://github.com/krzk/linux.git tags/samsung-mach-fixes-4.2
+
+for you to fetch changes up to 3e9f798784b30293012682021d5a0352f78658b8:
+
+  ARM: EXYNOS: fix double of_node_put() on error path (2015-07-31 10:12:17 +0900)
+
+----------------------------------------------------------------
+Two fixes for bugs in Exynos power domain error exit path:
+1. kfree() of read-only memory (name of power domain returned
+   by kstrdup_const()),
+2. Doubled of_node_put() leading to invalid ref count for OF node.
+
+----------------------------------------------------------------
+Vladimir Zapolskiy (2):
+      ARM: EXYNOS: Fix potentian kfree() of ro memory
+      ARM: EXYNOS: fix double of_node_put() on error path
+
+ arch/arm/mach-exynos/pm_domains.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
