@@ -1,181 +1,477 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] mfd: s2mps11: Add manual shutdown method for Odroid XU3
-Date: Tue, 11 Aug 2015 08:45:23 +0900
-Message-ID: <55C93793.2090400@samsung.com>
-References: <1438605447-6836-1-git-send-email-k.kozlowski.k@gmail.com>
- <1438605447-6836-2-git-send-email-k.kozlowski.k@gmail.com>
- <20150810154910.GA12631@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 01/11] drm/exynos: split display's .dpms() into .enable() and .disable()
+Date: Mon, 10 Aug 2015 21:37:04 -0300
+Message-ID: <1439253424-1878-1-git-send-email-gustavo@padovan.org>
+References: <1438817060-22164-2-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:25534 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754847AbbHJXp3 (ORCPT
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:36742 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932670AbbHKAhM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Aug 2015 19:45:29 -0400
-In-reply-to: <20150810154910.GA12631@x1>
+	Mon, 10 Aug 2015 20:37:12 -0400
+Received: by ykeo23 with SMTP id o23so153973877yke.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Aug 2015 17:37:11 -0700 (PDT)
+In-Reply-To: <1438817060-22164-2-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Anand Moon <linux.amoon@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On 11.08.2015 00:49, Lee Jones wrote:
-> On Mon, 03 Aug 2015, Krzysztof Kozlowski wrote:
-> 
->> On Odroid XU3 board (with S2MPS11 PMIC) the PWRHOLD bit in CTRL1
->> register must be manually set to 0 before initiating power off sequence.
->>
->> One of usual power down methods for Exynos based devices looks like:
->> 1. PWRHOLD pin of PMIC is connected to PSHOLD of Exynos.
->> 2. Exynos holds up this pin during system operation.
->> 3. ACOKB pin of PMIC is pulled up to VBATT and optionally to pin in
->>    other device.
->> 4. When PWRHOLD/PSHOLD goes low, the PMIC will turn off the power if
->>    ACOKB goes high.
->>
->> On Odroid XU3 family the difference is in (3) - the ACOKB is grounded.
->> This means that PMIC must manually set PWRHOLD field to low and then
->> wait for signal from Application Processor (the usual change in
->> PWRHOLD/PSHOLD pin will actually cut off the power).
->>
->> The patch adds respective binding allowing Odroid XU3 device to be
->> powered off.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
->> Reported-by: Anand Moon <linux.amoon@gmail.com>
->>
->> ---
->>
->> Patch is losely based on patch in Hardkernel repository [0] and previous
->> work of Anand Moon [1].
->>
->> [0] https://github.com/hardkernel/linux/commit/6897e62ba328bd1c8c095d918101863250cd73e7
->> [1] http://www.spinics.net/lists/linux-samsung-soc/msg45959.html
->> ---
->>  Documentation/devicetree/bindings/mfd/s2mps11.txt |  4 +++
->>  drivers/mfd/sec-core.c                            | 31 +++++++++++++++++++++++
->>  include/linux/mfd/samsung/core.h                  |  2 ++
->>  include/linux/mfd/samsung/s2mps11.h               |  1 +
->>  4 files changed, 38 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> index 57a045016fca..90eaef393325 100644
->> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> @@ -15,6 +15,10 @@ Optional properties:
->>  - interrupt-parent: Specifies the phandle of the interrupt controller to which
->>    the interrupts from s2mps11 are delivered to.
->>  - interrupts: Interrupt specifiers for interrupt sources.
-> 
->> +- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
->> +  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
->> +  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
->> +  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
-> 
-> Binding looks fine.  Please seperate it into a different patch and
-> apply my Ack:
-> 
-> Acked-by: Lee Jones <lee.jones@linaro.org>
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-OK
+The DRM Core doesn't have a dpms() operation anymore, everything
+now is enable() or disable().
 
-> 
->>  Optional nodes:
->>  - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
->> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
->> index d206a3e8fe87..a56ab2102a32 100644
->> --- a/drivers/mfd/sec-core.c
->> +++ b/drivers/mfd/sec-core.c
->> @@ -278,6 +278,8 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
->>  	 * not parsed here.
->>  	 */
->>  
->> +	pd->manual_poweroff = of_property_read_bool(dev->of_node,
->> +						"samsung,s2mps11-acokb-ground");
->>  	return pd;
->>  }
->>  #else
->> @@ -440,6 +442,34 @@ static int sec_pmic_remove(struct i2c_client *i2c)
->>  	return 0;
->>  }
->>  
->> +static void sec_pmic_shutdown(struct i2c_client *i2c)
->> +{
->> +	struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
->> +	unsigned int reg, mask;
->> +
->> +	if (!sec_pmic->pdata->manual_poweroff)
->> +		return;
->> +
->> +	switch (sec_pmic->device_type) {
->> +	case S2MPS11X:
->> +		reg = S2MPS11_REG_CTRL1;
->> +		mask = S2MPS11_CTRL1_PWRHOLD_MASK;
->> +		break;
->> +	default:
->> +		/*
->> +		 * Currently only one board with S2MPS11 needs this, so just
->> +		 * ignore the rest.
->> +		 */
->> +		dev_warn(sec_pmic->dev,
->> +			"Unsupported device %lu for manual power off\n",
->> +			sec_pmic->device_type);
->> +		return;
->> +	}
->> +
->> +	regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
->> +}
->> +
->> +
-> 
-> Remove the extra '\n'.
-> 
-> When you resubmit, apply my Ack:
-> 
-> Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Sure, I'll resend. The patch may go through your tree because there are
-no external dependencies.
+---
+v2: set dp->dpms_mode after enable/disable
+---
+ drivers/gpu/drm/exynos/exynos_dp_core.c     | 36 ++++++----------
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c     | 36 ++++------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |  6 ++-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 44 ++++++-------------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c |  8 ++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c        | 65 ++++++++++-------------------
+ 6 files changed, 65 insertions(+), 130 deletions(-)
 
-Best regards,
-Krzysztof
-
-> 
->>  #ifdef CONFIG_PM_SLEEP
->>  static int sec_pmic_suspend(struct device *dev)
->>  {
->> @@ -491,6 +521,7 @@ static struct i2c_driver sec_pmic_driver = {
->>  	},
->>  	.probe = sec_pmic_probe,
->>  	.remove = sec_pmic_remove,
->> +	.shutdown = sec_pmic_shutdown,
->>  	.id_table = sec_pmic_id,
->>  };
->>  
->> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
->> index 75115384f3fc..aa78957e092f 100644
->> --- a/include/linux/mfd/samsung/core.h
->> +++ b/include/linux/mfd/samsung/core.h
->> @@ -132,6 +132,8 @@ struct sec_platform_data {
->>  	int				buck2_init;
->>  	int				buck3_init;
->>  	int				buck4_init;
->> +	/* Whether or not manually set PWRHOLD to low during shutdown. */
->> +	bool				manual_poweroff;
->>  };
->>  
->>  /**
->> diff --git a/include/linux/mfd/samsung/s2mps11.h b/include/linux/mfd/samsung/s2mps11.h
->> index 7981a9d77d3f..b288965e8101 100644
->> --- a/include/linux/mfd/samsung/s2mps11.h
->> +++ b/include/linux/mfd/samsung/s2mps11.h
->> @@ -179,6 +179,7 @@ enum s2mps11_regulators {
->>  #define S2MPS11_BUCK_N_VOLTAGES (S2MPS11_BUCK_VSEL_MASK + 1)
->>  #define S2MPS11_RAMP_DELAY	25000		/* uV/us */
->>  
->> +#define S2MPS11_CTRL1_PWRHOLD_MASK	BIT(4)
->>  
->>  #define S2MPS11_BUCK2_RAMP_SHIFT	6
->>  #define S2MPS11_BUCK34_RAMP_SHIFT	4
-> 
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 172b800..ef24952 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -1066,8 +1066,9 @@ static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
+ 		phy_power_off(dp->phy);
+ }
+ 
+-static void exynos_dp_poweron(struct exynos_dp_device *dp)
++static void exynos_dp_enable(struct exynos_drm_display *display)
+ {
++	struct exynos_dp_device *dp = display_to_dp(display);
+ 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
+ 
+ 	if (dp->dpms_mode == DRM_MODE_DPMS_ON)
+@@ -1088,10 +1089,13 @@ static void exynos_dp_poweron(struct exynos_dp_device *dp)
+ 	exynos_dp_init_dp(dp);
+ 	enable_irq(dp->irq);
+ 	exynos_dp_commit(&dp->display);
++
++	dp->dpms_mode = DRM_MODE_DPMS_ON;
+ }
+ 
+-static void exynos_dp_poweroff(struct exynos_dp_device *dp)
++static void exynos_dp_disable(struct exynos_drm_display *display)
+ {
++	struct exynos_dp_device *dp = display_to_dp(display);
+ 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
+ 
+ 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
+@@ -1116,30 +1120,14 @@ static void exynos_dp_poweroff(struct exynos_dp_device *dp)
+ 		if (drm_panel_unprepare(dp->panel))
+ 			DRM_ERROR("failed to turnoff the panel\n");
+ 	}
+-}
+-
+-static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
+-{
+-	struct exynos_dp_device *dp = display_to_dp(display);
+ 
+-	switch (mode) {
+-	case DRM_MODE_DPMS_ON:
+-		exynos_dp_poweron(dp);
+-		break;
+-	case DRM_MODE_DPMS_STANDBY:
+-	case DRM_MODE_DPMS_SUSPEND:
+-	case DRM_MODE_DPMS_OFF:
+-		exynos_dp_poweroff(dp);
+-		break;
+-	default:
+-		break;
+-	}
+-	dp->dpms_mode = mode;
++	dp->dpms_mode = DRM_MODE_DPMS_OFF;
+ }
+ 
+ static struct exynos_drm_display_ops exynos_dp_display_ops = {
+ 	.create_connector = exynos_dp_create_connector,
+-	.dpms = exynos_dp_dpms,
++	.enable = exynos_dp_enable,
++	.disable = exynos_dp_disable,
+ 	.commit = exynos_dp_commit,
+ };
+ 
+@@ -1319,7 +1307,7 @@ static void exynos_dp_unbind(struct device *dev, struct device *master,
+ {
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+ 
+-	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_OFF);
++	exynos_dp_disable(&dp->display);
+ }
+ 
+ static const struct component_ops exynos_dp_ops = {
+@@ -1377,7 +1365,7 @@ static int exynos_dp_suspend(struct device *dev)
+ {
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+ 
+-	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_OFF);
++	exynos_dp_disable(&dp->display);
+ 	return 0;
+ }
+ 
+@@ -1385,7 +1373,7 @@ static int exynos_dp_resume(struct device *dev)
+ {
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+ 
+-	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_ON);
++	exynos_dp_enable(&dp->display);
+ 	return 0;
+ }
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 7cb6595..e042670 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -32,7 +32,6 @@ struct exynos_dpi {
+ 	struct drm_encoder *encoder;
+ 
+ 	struct videomode *vm;
+-	int dpms_mode;
+ };
+ 
+ #define connector_to_dpi(c) container_of(c, struct exynos_dpi, connector)
+@@ -133,46 +132,30 @@ static int exynos_dpi_create_connector(struct exynos_drm_display *display,
+ 	return 0;
+ }
+ 
+-static void exynos_dpi_poweron(struct exynos_dpi *ctx)
++static void exynos_dpi_enable(struct exynos_drm_display *display)
+ {
++	struct exynos_dpi *ctx = display_to_dpi(display);
++
+ 	if (ctx->panel) {
+ 		drm_panel_prepare(ctx->panel);
+ 		drm_panel_enable(ctx->panel);
+ 	}
+ }
+ 
+-static void exynos_dpi_poweroff(struct exynos_dpi *ctx)
++static void exynos_dpi_disable(struct exynos_drm_display *display)
+ {
++	struct exynos_dpi *ctx = display_to_dpi(display);
++
+ 	if (ctx->panel) {
+ 		drm_panel_disable(ctx->panel);
+ 		drm_panel_unprepare(ctx->panel);
+ 	}
+ }
+ 
+-static void exynos_dpi_dpms(struct exynos_drm_display *display, int mode)
+-{
+-	struct exynos_dpi *ctx = display_to_dpi(display);
+-
+-	switch (mode) {
+-	case DRM_MODE_DPMS_ON:
+-		if (ctx->dpms_mode != DRM_MODE_DPMS_ON)
+-				exynos_dpi_poweron(ctx);
+-			break;
+-	case DRM_MODE_DPMS_STANDBY:
+-	case DRM_MODE_DPMS_SUSPEND:
+-	case DRM_MODE_DPMS_OFF:
+-		if (ctx->dpms_mode == DRM_MODE_DPMS_ON)
+-			exynos_dpi_poweroff(ctx);
+-		break;
+-	default:
+-		break;
+-	}
+-	ctx->dpms_mode = mode;
+-}
+-
+ static struct exynos_drm_display_ops exynos_dpi_display_ops = {
+ 	.create_connector = exynos_dpi_create_connector,
+-	.dpms = exynos_dpi_dpms
++	.enable = exynos_dpi_enable,
++	.disable = exynos_dpi_disable,
+ };
+ 
+ /* of_* functions will be removed after merge of of_graph patches */
+@@ -311,7 +294,6 @@ struct exynos_drm_display *exynos_dpi_probe(struct device *dev)
+ 	ctx->display.type = EXYNOS_DISPLAY_TYPE_LCD;
+ 	ctx->display.ops = &exynos_dpi_display_ops;
+ 	ctx->dev = dev;
+-	ctx->dpms_mode = DRM_MODE_DPMS_OFF;
+ 
+ 	ret = exynos_dpi_parse_dt(ctx);
+ 	if (ret < 0) {
+@@ -332,7 +314,7 @@ int exynos_dpi_remove(struct exynos_drm_display *display)
+ {
+ 	struct exynos_dpi *ctx = display_to_dpi(display);
+ 
+-	exynos_dpi_dpms(&ctx->display, DRM_MODE_DPMS_OFF);
++	exynos_dpi_disable(&ctx->display);
+ 
+ 	if (ctx->panel)
+ 		drm_panel_detach(ctx->panel);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 9f23db4..5c55606 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -86,7 +86,8 @@ struct exynos_drm_plane {
+  * @mode_set: convert drm_display_mode to hw specific display mode and
+  *	      would be called by encoder->mode_set().
+  * @check_mode: check if mode is valid or not.
+- * @dpms: display device on or off.
++ * @enable: display device on.
++ * @disable: display device off.
+  * @commit: apply changes to hw
+  */
+ struct exynos_drm_display;
+@@ -102,7 +103,8 @@ struct exynos_drm_display_ops {
+ 				struct drm_display_mode *mode);
+ 	int (*check_mode)(struct exynos_drm_display *display,
+ 				struct drm_display_mode *mode);
+-	void (*dpms)(struct exynos_drm_display *display, int mode);
++	void (*enable)(struct exynos_drm_display *display);
++	void (*disable)(struct exynos_drm_display *display);
+ 	void (*commit)(struct exynos_drm_display *display);
+ };
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 0e58b36..281b97d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1518,16 +1518,17 @@ static void exynos_dsi_poweroff(struct exynos_dsi *dsi)
+ 		dev_err(dsi->dev, "cannot disable regulators %d\n", ret);
+ }
+ 
+-static int exynos_dsi_enable(struct exynos_dsi *dsi)
++static void exynos_dsi_enable(struct exynos_drm_display *display)
+ {
++	struct exynos_dsi *dsi = display_to_dsi(display);
+ 	int ret;
+ 
+ 	if (dsi->state & DSIM_STATE_ENABLED)
+-		return 0;
++		return;
+ 
+ 	ret = exynos_dsi_poweron(dsi);
+ 	if (ret < 0)
+-		return ret;
++		return;
+ 
+ 	dsi->state |= DSIM_STATE_ENABLED;
+ 
+@@ -1535,7 +1536,7 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
+ 	if (ret < 0) {
+ 		dsi->state &= ~DSIM_STATE_ENABLED;
+ 		exynos_dsi_poweroff(dsi);
+-		return ret;
++		return;
+ 	}
+ 
+ 	exynos_dsi_set_display_mode(dsi);
+@@ -1547,16 +1548,16 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
+ 		exynos_dsi_set_display_enable(dsi, false);
+ 		drm_panel_unprepare(dsi->panel);
+ 		exynos_dsi_poweroff(dsi);
+-		return ret;
++		return;
+ 	}
+ 
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+-
+-	return 0;
+ }
+ 
+-static void exynos_dsi_disable(struct exynos_dsi *dsi)
++static void exynos_dsi_disable(struct exynos_drm_display *display)
+ {
++	struct exynos_dsi *dsi = display_to_dsi(display);
++
+ 	if (!(dsi->state & DSIM_STATE_ENABLED))
+ 		return;
+ 
+@@ -1571,26 +1572,6 @@ static void exynos_dsi_disable(struct exynos_dsi *dsi)
+ 	exynos_dsi_poweroff(dsi);
+ }
+ 
+-static void exynos_dsi_dpms(struct exynos_drm_display *display, int mode)
+-{
+-	struct exynos_dsi *dsi = display_to_dsi(display);
+-
+-	if (dsi->panel) {
+-		switch (mode) {
+-		case DRM_MODE_DPMS_ON:
+-			exynos_dsi_enable(dsi);
+-			break;
+-		case DRM_MODE_DPMS_STANDBY:
+-		case DRM_MODE_DPMS_SUSPEND:
+-		case DRM_MODE_DPMS_OFF:
+-			exynos_dsi_disable(dsi);
+-			break;
+-		default:
+-			break;
+-		}
+-	}
+-}
+-
+ static enum drm_connector_status
+ exynos_dsi_detect(struct drm_connector *connector, bool force)
+ {
+@@ -1604,7 +1585,7 @@ exynos_dsi_detect(struct drm_connector *connector, bool force)
+ 		struct exynos_drm_display *display;
+ 
+ 		display = platform_get_drvdata(to_platform_device(dsi->dev));
+-		exynos_dsi_dpms(display, DRM_MODE_DPMS_OFF);
++		exynos_dsi_disable(display);
+ 		drm_panel_detach(dsi->panel);
+ 		dsi->panel = NULL;
+ 	}
+@@ -1698,7 +1679,8 @@ static void exynos_dsi_mode_set(struct exynos_drm_display *display,
+ static struct exynos_drm_display_ops exynos_dsi_display_ops = {
+ 	.create_connector = exynos_dsi_create_connector,
+ 	.mode_set = exynos_dsi_mode_set,
+-	.dpms = exynos_dsi_dpms
++	.enable = exynos_dsi_enable,
++	.disable = exynos_dsi_disable,
+ };
+ 
+ MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
+@@ -1849,7 +1831,7 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
+ 	struct exynos_drm_display *display = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = display_to_dsi(display);
+ 
+-	exynos_dsi_dpms(display, DRM_MODE_DPMS_OFF);
++	exynos_dsi_disable(display);
+ 
+ 	mipi_dsi_host_unregister(&dsi->dsi_host);
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+index 7b89fd5..0aa4a58 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+@@ -70,8 +70,8 @@ static void exynos_drm_encoder_enable(struct drm_encoder *encoder)
+ 	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+ 	struct exynos_drm_display *display = exynos_encoder->display;
+ 
+-	if (display->ops->dpms)
+-		display->ops->dpms(display, DRM_MODE_DPMS_ON);
++	if (display->ops->enable)
++		display->ops->enable(display);
+ 
+ 	if (display->ops->commit)
+ 		display->ops->commit(display);
+@@ -82,8 +82,8 @@ static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
+ 	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+ 	struct exynos_drm_display *display = exynos_encoder->display;
+ 
+-	if (display->ops->dpms)
+-		display->ops->dpms(display, DRM_MODE_DPMS_OFF);
++	if (display->ops->disable)
++		display->ops->disable(display);
+ }
+ 
+ static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 448f534..9b9396a 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1723,8 +1723,9 @@ static void hdmi_commit(struct exynos_drm_display *display)
+ 	hdmi_conf_apply(hdata);
+ }
+ 
+-static void hdmi_poweron(struct hdmi_context *hdata)
++static void hdmi_enable(struct exynos_drm_display *display)
+ {
++	struct hdmi_context *hdata = display_to_hdmi(display);
+ 	struct hdmi_resources *res = &hdata->res;
+ 
+ 	if (hdata->powered)
+@@ -1745,16 +1746,33 @@ static void hdmi_poweron(struct hdmi_context *hdata)
+ 	clk_prepare_enable(res->sclk_hdmi);
+ 
+ 	hdmiphy_poweron(hdata);
+-	hdmi_commit(&hdata->display);
++	hdmi_commit(display);
+ }
+ 
+-static void hdmi_poweroff(struct hdmi_context *hdata)
++static void hdmi_disable(struct exynos_drm_display *display)
+ {
++	struct hdmi_context *hdata = display_to_hdmi(display);
+ 	struct hdmi_resources *res = &hdata->res;
++	struct drm_crtc *crtc = hdata->encoder->crtc;
++	const struct drm_crtc_helper_funcs *funcs = NULL;
+ 
+ 	if (!hdata->powered)
+ 		return;
+ 
++	/*
++	 * The SFRs of VP and Mixer are updated by Vertical Sync of
++	 * Timing generator which is a part of HDMI so the sequence
++	 * to disable TV Subsystem should be as following,
++	 *	VP -> Mixer -> HDMI
++	 *
++	 * Below codes will try to disable Mixer and VP(if used)
++	 * prior to disabling HDMI.
++	 */
++	if (crtc)
++		funcs = crtc->helper_private;
++	if (funcs && funcs->disable)
++		(*funcs->disable)(crtc);
++
+ 	/* HDMI System Disable */
+ 	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
+ 
+@@ -1776,49 +1794,12 @@ static void hdmi_poweroff(struct hdmi_context *hdata)
+ 	hdata->powered = false;
+ }
+ 
+-static void hdmi_dpms(struct exynos_drm_display *display, int mode)
+-{
+-	struct hdmi_context *hdata = display_to_hdmi(display);
+-	struct drm_encoder *encoder = hdata->encoder;
+-	struct drm_crtc *crtc = encoder->crtc;
+-	const struct drm_crtc_helper_funcs *funcs = NULL;
+-
+-	DRM_DEBUG_KMS("mode %d\n", mode);
+-
+-	switch (mode) {
+-	case DRM_MODE_DPMS_ON:
+-		hdmi_poweron(hdata);
+-		break;
+-	case DRM_MODE_DPMS_STANDBY:
+-	case DRM_MODE_DPMS_SUSPEND:
+-	case DRM_MODE_DPMS_OFF:
+-		/*
+-		 * The SFRs of VP and Mixer are updated by Vertical Sync of
+-		 * Timing generator which is a part of HDMI so the sequence
+-		 * to disable TV Subsystem should be as following,
+-		 *	VP -> Mixer -> HDMI
+-		 *
+-		 * Below codes will try to disable Mixer and VP(if used)
+-		 * prior to disabling HDMI.
+-		 */
+-		if (crtc)
+-			funcs = crtc->helper_private;
+-		if (funcs && funcs->disable)
+-			(*funcs->disable)(crtc);
+-
+-		hdmi_poweroff(hdata);
+-		break;
+-	default:
+-		DRM_DEBUG_KMS("unknown dpms mode: %d\n", mode);
+-		break;
+-	}
+-}
+-
+ static struct exynos_drm_display_ops hdmi_display_ops = {
+ 	.create_connector = hdmi_create_connector,
+ 	.mode_fixup	= hdmi_mode_fixup,
+ 	.mode_set	= hdmi_mode_set,
+-	.dpms		= hdmi_dpms,
++	.enable		= hdmi_enable,
++	.disable	= hdmi_disable,
+ 	.commit		= hdmi_commit,
+ };
+ 
+-- 
+2.1.0
