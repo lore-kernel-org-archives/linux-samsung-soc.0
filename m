@@ -1,28 +1,72 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 0/4] ARM: dts: exynos3250: Add UART2 and MMC2 dt node with
- related clocks
-Date: Tue, 11 Aug 2015 12:46:20 +0900
-Message-ID: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 3/4] ARM: dts: Add UART2 dt node for Exynos3250 SoC
+Date: Tue, 11 Aug 2015 12:46:23 +0900
+Message-ID: <1439264784-30322-4-git-send-email-cw00.choi@samsung.com>
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
 Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add the UART2 / MMC2 devicetree node for Exynos3250 SoC and add
-the related clocks (mux, divider, gate) of UART2 / MMC2 device.
+This patch add the uart2 devicetree node for Exynos3250 SoC.
 
-Chanwoo Choi (4):
-  clk: samsung: exynos3250: Add UART2 clock
-  clk: samsung: exynos3250: Add MMC2 clock
-  ARM: dts: Add UART2 dt node for Exynos3250 SoC
-  ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  7 +++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 12 ++++++++++++
+ 2 files changed, 19 insertions(+)
 
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 42 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos3250.dtsi         | 25 ++++++++++++++++++
- drivers/clk/samsung/clk-exynos3250.c      | 15 +++++++++++
- include/dt-bindings/clock/exynos3250.h    | 11 +++++++-
- 4 files changed, 92 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index 5ab81c39e2c9..eac1d21c10d4 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -120,6 +120,13 @@
+ 		samsung,pin-drv = <0>;
+ 	};
+ 
++	uart2_data: uart2-data {
++		samsung,pins = "gpa1-0", "gpa1-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
+ 	i2c3_bus: i2c3-bus {
+ 		samsung,pins = "gpa1-2", "gpa1-3";
+ 		samsung,pin-function = <3>;
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 2db99433e17f..02f3250766c9 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -42,6 +42,7 @@
+ 		i2c7 = &i2c_7;
+ 		serial0 = &serial_0;
+ 		serial1 = &serial_1;
++		serial2 = &serial_2;
+ 	};
+ 
+ 	cpus {
+@@ -435,6 +436,17 @@
+ 			status = "disabled";
+ 		};
+ 
++		serial_2: serial@13820000 {
++			compatible = "samsung,exynos4210-uart";
++			reg = <0x13820000 0x100>;
++			interrupts = <0 111 0>;
++			clocks = <&cmu CLK_UART2>, <&cmu CLK_SCLK_UART2>;
++			clock-names = "uart", "clk_uart_baud0";
++			pinctrl-names = "default";
++			pinctrl-0 = <&uart2_data>;
++			status = "disabled";
++		};
++
+ 		i2c_0: i2c@13860000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 1.8.5.5
