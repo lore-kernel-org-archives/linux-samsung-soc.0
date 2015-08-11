@@ -1,102 +1,28 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
-Date: Tue, 11 Aug 2015 12:46:24 +0900
-Message-ID: <1439264784-30322-5-git-send-email-cw00.choi@samsung.com>
-References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 0/4] ARM: dts: exynos3250: Add UART2 and MMC2 dt node with
+ related clocks
+Date: Tue, 11 Aug 2015 12:46:20 +0900
+Message-ID: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
 Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add the MSHC2 (Mobile Storage Host Controller) devicetree node for
-Exynos3250 SoC.
+This patch add the UART2 / MMC2 devicetree node for Exynos3250 SoC and add
+the related clocks (mux, divider, gate) of UART2 / MMC2 device.
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 35 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos3250.dtsi         | 13 ++++++++++++
- 2 files changed, 48 insertions(+)
+Chanwoo Choi (4):
+  clk: samsung: exynos3250: Add UART2 clock
+  clk: samsung: exynos3250: Add MMC2 clock
+  ARM: dts: Add UART2 dt node for Exynos3250 SoC
+  ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index eac1d21c10d4..78b995fed6c7 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -452,6 +452,41 @@
- 		samsung,pin-drv = <3>;
- 	};
- 
-+	sd2_clk: sd2-clk {
-+		samsung,pins = "gpk2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_cmd: sd2-cmd {
-+		samsung,pins = "gpk2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_cd: sd2-cd {
-+		samsung,pins = "gpk2-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus1: sd2-bus-width1 {
-+		samsung,pins = "gpk2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus4: sd2-bus-width4 {
-+		samsung,pins = "gpk2-4", "gpk2-5", "gpk2-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
- 	cam_port_b_io: cam-port-b-io {
- 		samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
- 				"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 02f3250766c9..5a91eaa26565 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -30,6 +30,7 @@
- 		pinctrl1 = &pinctrl_1;
- 		mshc0 = &mshc_0;
- 		mshc1 = &mshc_1;
-+		mshc2 = &mshc_2;
- 		spi0 = &spi_0;
- 		spi1 = &spi_1;
- 		i2c0 = &i2c_0;
-@@ -341,6 +342,18 @@
- 			status = "disabled";
- 		};
- 
-+		mshc_2: mshc@12530000 {
-+			compatible = "samsung,exynos5250-dw-mshc";
-+			reg = <0x12530000 0x1000>;
-+			interrupts = <0 144 0>;
-+			clocks = <&cmu CLK_SDMMC2>, <&cmu CLK_SCLK_MMC2>;
-+			clock-names = "biu", "ciu";
-+			fifo-depth = <0x80>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		exynos_usbphy: exynos-usbphy@125B0000 {
- 			compatible = "samsung,exynos3250-usb2-phy";
- 			reg = <0x125B0000 0x100>;
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 42 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 25 ++++++++++++++++++
+ drivers/clk/samsung/clk-exynos3250.c      | 15 +++++++++++
+ include/dt-bindings/clock/exynos3250.h    | 11 +++++++-
+ 4 files changed, 92 insertions(+), 1 deletion(-)
+
 -- 
 1.8.5.5
