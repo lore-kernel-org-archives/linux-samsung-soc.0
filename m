@@ -1,53 +1,35 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 0/4] mfd: Improve DT binding docs for max77686 and
- max77802
-Date: Tue, 11 Aug 2015 12:26:14 +0200
-Message-ID: <55C9CDC6.9030903@osg.samsung.com>
-References: <1438252327-28427-1-git-send-email-javier@osg.samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH 0/4] modify clock codes of rtc-s3c driver
+Date: Tue, 11 Aug 2015 20:28:05 +0900
+Message-ID: <55C9DC45.4090102@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:57125 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932079AbbHKK0T (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:59288 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933911AbbHKL2G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Aug 2015 06:26:19 -0400
-In-Reply-To: <1438252327-28427-1-git-send-email-javier@osg.samsung.com>
+	Tue, 11 Aug 2015 07:28:06 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: rtc-linux@googlegroups.com
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, =?UTF-8?B?Iuy1nOywrOyasC9TL1cgUGxhdGZvcm0gTGFiKERNQ+yXsCkvUzQo7ISg7J6EKS8=?= =?UTF-8?B?7IK87ISx7KCE7J6QIg==?= <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hello Lee and Mark,
+Hi,
 
-On 07/30/2015 12:32 PM, Javier Martinez Canillas wrote:
-> Hello Lee,
-> 
-> This series contains some improvements for the Device Tree bindings of
-> the Maxim MAX77686 and MAX77802 multi-function devices.
-> 
-> This is the third version of the series that addresses issues pointed
-> out by Sergei Shtylyov and you.
-> 
-> Patch #1 changes the max77686 binding to not suggest using a deprecated
-> property of the regulator DT binding.
-> 
-> Patch #2 changes the max77686 example to use a generic node name instead
-> of the chip's name.
-> 
-> Patch #3 adds a DT binding for the mfd portion of the max77802 that was
-> missing.
-> 
-> Patch #4 moves the regulator portion of the max77686 to the regulator's
-> DT binding sub-directory since it is a better fit for this information.
-> This fourth patch needs an ack from the regulator sub-system maintainer.
->
+This patchset modifies clock codes of rtc-s3c driver. Main change is to
+fix the problem that alarm interrupt can't happen. Also there are some
+fixes incluing cleanup.
 
-Any comments on this series?
+Thanks.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+----------------------------------------------------------------
+Joonyoung Shim (4):
+      rtc: s3c: add missing clk control
+      rtc: s3c: remove unnecessary NULL assignment
+      rtc: s3c: use unified functions for enable/disable of clk
+      rtc: s3c: enable/disable clocks for alarm
+
+ drivers/rtc/rtc-s3c.c | 40 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
