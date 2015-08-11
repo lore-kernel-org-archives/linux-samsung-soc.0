@@ -1,41 +1,52 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: exynos_defconfig: Enable cpufreq-dt driver
-Date: Tue, 11 Aug 2015 11:15:54 +0900
-Message-ID: <1439259354-32055-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Tue, 11 Aug 2015 11:20:06 +0900
+Message-ID: <55C95BD6.7010200@samsung.com>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
+ <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
+ <55C5AF4E.3010500@samsung.com> <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:29591 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752265AbbHKCQH (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:24257 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933181AbbHKCUR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Aug 2015 22:16:07 -0400
+	Mon, 10 Aug 2015 22:20:17 -0400
+In-reply-to: <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, 'Anand Moon' <linux.amoon@gmail.com>, 'Kevin Hilman' <khilman@linaro.org>, linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd.bergmann@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org
 
-With the latest patches the cpufreq-dt can be used on multiple
-Exynos SoCs: 3250, 4210, 4212, 4412 and 5250.
+On 10.08.2015 10:27, Kukjin Kim wrote:
+> Krzysztof Kozlowski wrote:
+>>
+>> W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
+>>> On 08-08-15, 00:24, Rafael J. Wysocki wrote:
+>>>> OK, so please let me know which patches you want me to pick up.
+>>>>
+>>>> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
+>>>> with a cover letter clearly stating whose tree they are being targeted at.
+>>>
+>>> He already sent it separately, let me send a confirmatory mail in
+>>> reply to that.
+>>
+>> Dear Kukjin,
+>>
+>> Can you apply the 2-5 of this series to v4.3? It's getting late but
+>> maybe they still could go?
+>>
+> Once my previous pull-request landed into arm-soc, I'll try to send out this
+> series 2-5 for v4.3.
 
-Enable it along with default ondemand governor to conserve the energy,
-reduce temperature while maintaining acceptable performance.
+Additionally (better late than never):
+Patches 2-5 tested on Trats2 board (Exynos4412)
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/exynos_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 67965cedeb69..2263cd94cb93 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -27,6 +27,8 @@ CONFIG_ARM_APPENDED_DTB=y
- CONFIG_ARM_ATAG_DTB_COMPAT=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
- CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
- CONFIG_ARM_EXYNOS_CPUIDLE=y
- CONFIG_VFP=y
--- 
-1.9.1
+Best regards,
+Krzysztof
