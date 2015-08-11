@@ -1,45 +1,72 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/5] Samsung non-critical-fixes for v4.3
-Date: Tue, 11 Aug 2015 14:39:28 +0200
-Message-ID: <20150811123928.GA24495@localhost>
-References: <55C06995.2030600@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH RESEND v6 1/3] Documentation: dts: Documentation entry to
+ explain how to use PWM FAN as a cooling device
+Date: Tue, 11 Aug 2015 15:07:18 +0200
+Message-ID: <1439298440-15882-2-git-send-email-l.majewski@samsung.com>
+References: <1425470624-25793-1-git-send-email-l.majewski@samsung.com>
+ <1439298440-15882-1-git-send-email-l.majewski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:34831 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934378AbbHKMzf (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:54909 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964989AbbHKNHg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Aug 2015 08:55:35 -0400
-Received: by lahi9 with SMTP id i9so39938326lah.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Aug 2015 05:55:33 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <55C06995.2030600@kernel.org>
+	Tue, 11 Aug 2015 09:07:36 -0400
+In-reply-to: <1439298440-15882-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Eduardo Valentin <edubezval@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Lukasz Majewski <l.majewski@samsung.com>
 
-On Tue, Aug 04, 2015 at 04:28:21PM +0900, Kukjin Kim wrote:
-> Hi Arnd, Olof, Kevin,
-> 
-> Here is Samsung non-critical-fixes for v4.3.
-> Please pull.
-> 
-> Thanks,
-> Kukjin
-> 
-> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
-> 
->   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-non-critical-1
+Explanation of several properties, which allow PWM fan working as a cooling
+device, have been embraced in this commit.
 
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
+---
+ .../devicetree/bindings/hwmon/pwm-fan.txt          | 29 ++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-Merged, thanks.
-
-
--Olof
+diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+index 610757c..c6d5332 100644
+--- a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
++++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+@@ -3,10 +3,35 @@ Bindings for a fan connected to the PWM lines
+ Required properties:
+ - compatible	: "pwm-fan"
+ - pwms		: the PWM that is used to control the PWM fan
++- cooling-levels      : PWM duty cycle values in a range from 0 to 255
++			which correspond to thermal cooling states
+ 
+ Example:
+-	pwm-fan {
++	fan0: pwm-fan {
+ 		compatible = "pwm-fan";
+-		status = "okay";
++		cooling-min-state = <0>;
++		cooling-max-state = <3>;
++		#cooling-cells = <2>;
+ 		pwms = <&pwm 0 10000 0>;
++		cooling-levels = <0 102 170 230>;
+ 	};
++
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			     thermal-sensors = <&tmu 0>;
++			     polling-delay-passive = <0>;
++			     polling-delay = <0>;
++			     trips {
++					cpu_alert1: cpu-alert1 {
++						    temperature = <100000>; /* millicelsius */
++						    hysteresis = <2000>; /* millicelsius */
++						    type = "passive";
++					};
++			     };
++			     cooling-maps {
++					map0 {
++						    trip = <&cpu_alert1>;
++						    cooling-device = <&fan0 0 1>;
++					};
++			     };
++		};
+-- 
+2.0.0.rc2
