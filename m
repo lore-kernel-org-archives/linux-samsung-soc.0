@@ -1,54 +1,52 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: exynos_defconfig: Enable cpufreq-dt driver
-Date: Tue, 11 Aug 2015 16:51:36 +0900
-Message-ID: <057e01d0d40a$8c3a3210$a4ae9630$@kernel.org>
-References: <1439259354-32055-1-git-send-email-k.kozlowski@samsung.com>
- <55C98E17.9040303@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <55C98E17.9040303@osg.samsung.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@osg.samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH v2 1/3] mfd: documentation: dt: Document grounded ACOKB pin on S2MPS11
+Date: Tue, 11 Aug 2015 19:09:04 +0900
+Message-ID: <1439287746-14034-2-git-send-email-k.kozlowski.k@gmail.com>
+References: <1439287746-14034-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:36288 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933911AbbHKKKQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Aug 2015 06:10:16 -0400
+In-Reply-To: <1439287746-14034-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-Javier Martinez Canillas wrote:
-> 
-> Hello Krzysztof,
-> 
-> On 08/11/2015 04:15 AM, Krzysztof Kozlowski wrote:
-> > With the latest patches the cpufreq-dt can be used on multiple
-> > Exynos SoCs: 3250, 4210, 4212, 4412 and 5250.
-> >
-> > Enable it along with default ondemand governor to conserve the energy,
-> > reduce temperature while maintaining acceptable performance.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  arch/arm/configs/exynos_defconfig | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> > index 67965cedeb69..2263cd94cb93 100644
-> > --- a/arch/arm/configs/exynos_defconfig
-> > +++ b/arch/arm/configs/exynos_defconfig
-> > @@ -27,6 +27,8 @@ CONFIG_ARM_APPENDED_DTB=y
-> >  CONFIG_ARM_ATAG_DTB_COMPAT=y
-> >  CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200
-> init=/linuxrc mem=256M"
-> >  CONFIG_CPU_FREQ=y
-> > +CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-> > +CONFIG_CPUFREQ_DT=y
-> >  CONFIG_CPU_IDLE=y
-> >  CONFIG_ARM_EXYNOS_CPUIDLE=y
-> >  CONFIG_VFP=y
-> >
-> 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-Thanks, applied.
+Document a new Device Tree property 'samsung,s2mps11-acokb-ground'
+indicating that ACOKB pin of S2MPS11 PMIC is connected to the ground so
+the PMIC must manually set PWRHOLD bit in CTRL1 register to turn off the
+power.
 
-- Kukjin
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+---
+
+Changes since v1:
+1. Split bindings documentation to separate patch (suggested by Lee).
+2. Add Javier's reviewed-by and Lee's acked-by.
+---
+ Documentation/devicetree/bindings/mfd/s2mps11.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+index 57a045016fca..90eaef393325 100644
+--- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
++++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+@@ -15,6 +15,10 @@ Optional properties:
+ - interrupt-parent: Specifies the phandle of the interrupt controller to which
+   the interrupts from s2mps11 are delivered to.
+ - interrupts: Interrupt specifiers for interrupt sources.
++- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
++  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
++  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
++  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
+ 
+ Optional nodes:
+ - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+-- 
+2.1.4
