@@ -1,87 +1,116 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 11/11] drm/exynos: remove struct exynos_drm_encoder
- layer
-Date: Tue, 11 Aug 2015 17:03:08 +0200
-Message-ID: <20150811150308.GZ17734@phenom.ffwll.local>
-References: <1438817060-22164-10-git-send-email-gustavo@padovan.org>
- <1438867908-18975-1-git-send-email-gustavo@padovan.org>
- <1438867908-18975-2-git-send-email-gustavo@padovan.org>
- <55C49B8A.4090009@samsung.com> <20150811003833.GE8125@joana>
- <55C9E702.8060603@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 3/4] mfd: Add DT binding for Maxim MAX77802 IC
+Date: Tue, 11 Aug 2015 17:25:21 +0200
+Message-ID: <55CA13E1.9090403@osg.samsung.com>
+References: <1438252327-28427-1-git-send-email-javier@osg.samsung.com>
+ <1438252327-28427-4-git-send-email-javier@osg.samsung.com>
+ <20150811114736.GB18282@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <55C9E702.8060603@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:57189 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965062AbbHKPZ2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Aug 2015 11:25:28 -0400
+In-Reply-To: <20150811114736.GB18282@x1>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-T24gVHVlLCBBdWcgMTEsIDIwMTUgYXQgMDk6MTM6NTRQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
-Cj4gT24gMjAxNeuFhCAwOOyblCAxMeydvCAwOTozOCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+
-ID4gSGkgSW5raSwKPiA+IAo+ID4gMjAxNS0wOC0wNyBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3Vu
-Zy5jb20+Ogo+ID4gCj4gPj4gSGkgR3VzdGF2bywKPiA+Pgo+ID4+IE9uIDIwMTXrhYQgMDjsm5Qg
-MDbsnbwgMjI6MzEsIEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiA+Pj4gRnJvbTogR3VzdGF2byBQ
-YWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+ID4+Pgo+ID4+PiBzdHJ1
-Y3QgZXh5bm9zX2RybV9lbmNvZGVyIHdhcyBqdXN0aW5nIHdyYXBwaW5nIHN0cnVjdCBkcm1fZW5j
-b2RlciwgaXQgaGFkCj4gPj4+IG9ubHkgYSBkcm1fZW5jb2RlciBtZW1iZXIgYW5kIHRoZSBpbnRl
-cm5hbCBleHlub3NfZHJtX2VuY29kZXJzIG9wcyB0aGF0Cj4gPj4+IHdhcyBkaXJlY3RseSBtYXBw
-ZWQgdG8gdGhlIGRybV9lbmNvZGVyIGhlbHBlciBmdW5jcy4KPiA+Pj4KPiA+Pj4gU28gbm93IGV4
-eW5vcyBEUk0gdXNlcyBzdHJ1Y3QgZHJtX2VuY29kZXIgZGlyZWN0bHksIHRoaXMgcmVtb3Zlcwo+
-ID4+PiBjb21wbGV0ZWx5IHRoZSBzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyLgo+ID4+Pgo+ID4+
-Cj4gPj4gVHJhdHMyIGJvYXJkLCB3aGljaCB1c2VzIEV4eW5vczQ0MTIgU29jLCBkb2Vzbid0IHdv
-cmsgYWZ0ZXIgdGhpcyBwYXRjaAo+ID4+IGlzIGFwcGxpZWQuIEJlbG93IGlzIHRoZSBib290aW5n
-IGxvZ3MsCj4gPj4gWyAgICAxLjE3MTMxOF0gY29uc29sZSBbdHR5U0FDMl0gZW5hYmxlZAo+ID4+
-IFsgICAgMS4xNzU1MjJdIDEzODMwMDAwLnNlcmlhbDogdHR5U0FDMyBhdCBNTUlPIDB4MTM4MzAw
-MDAgKGlycSA9IDYwLAo+ID4+IGJhc2VfYmF1ZCA9IDApIGlzIGEgUzNDNjQwMC8xMAo+ID4+IFsg
-ICAgMS4xODU1NDVdIFtkcm1dIEluaXRpYWxpemVkIGRybSAxLjEuMCAyMDA2MDgxMAo+ID4+IFsg
-ICAgMS4xOTQxMDRdIGV4eW5vcy1kcm0gZXh5bm9zLWRybTogYm91bmQgMTFjMDAwMDAuZmltZCAo
-b3BzCj4gPj4gZmltZF9jb21wb25lbnRfb3BzKQo+ID4+IFsgICAgMS4yMDAzNTJdIGV4eW5vcy1k
-cm0gZXh5bm9zLWRybTogYm91bmQgMTFjODAwMDAuZHNpIChvcHMKPiA+PiBleHlub3NfZHNpX2Nv
-bXBvbmVudF9vcHMpCj4gPj4gWyAgICAxLjIwNzY4OF0gW2RybV0gU3VwcG9ydHMgdmJsYW5rIHRp
-bWVzdGFtcCBjYWNoaW5nIFJldiAyICgyMS4xMC4yMDEzKS4KPiA+PiBbICAgIDEuMjE0MzEzXSBb
-ZHJtXSBObyBkcml2ZXIgc3VwcG9ydCBmb3IgdmJsYW5rIHRpbWVzdGFtcCBxdWVyeS4KPiA+PiBb
-ICAgIDEuMjIwMjE4XSBbZHJtXSBJbml0aWFsaXplZCBleHlub3MgMS4wLjAgMjAxMTA1MzAgb24g
-bWlub3IgMAo+ID4+Cj4gPj4gQm9vdGluZyBpcyBsb2NrZWQgdXAgaGVyZS4gVGhpcyBwYXRjaCBs
-b29rcyBnb29kIHRvIG1lIHNvIEkgdHJpZWQgdG8KPiA+PiBmaW5kIHdoeSBsb2NrZWQgdXAgYW5k
-IEkgZm91bmQgdGhlIGJvb3RpbmcgaXMgbG9ja2VkIHVwIGFzIHNvb24gYXMKPiA+PiBjb25zb2xl
-X2xvY2sgZnVuY3Rpb24gaXMgY2FsbGVkLiBDYW4geW91IGFuZCBvdGhlciBndXlzIGxvb2sgaW50
-byB0aGlzCj4gPj4gaXNzdWU/Cj4gPiAKPiA+IEkndmUgcmVhbGl6ZWQgdGhhdCBJIGxlZnQgYSBm
-aXggZm9yIHBhdGNoIDAxIGJlaGluZCwgaXQgY291bGQgYmUgdGhlCj4gPiBjYXVzZSBvZiB0aGlz
-IGlzc3VlLiBJJ3ZlIGp1c3QgcmVzZW50IHRoaXMgcGF0Y2ggd2l0aCB0aGUgYWRkZWQgdjIgZml4
-Cj4gPiB1cC4KPiAKPiBXaXRoIGFib3ZlIGNoYW5nZSwgc3RpbGwgbG9ja2VkIHVwLiBTbyB5b3Vy
-IHVwZGF0ZWQgcGF0Y2ggZG9lc24ndAo+IHJlc29sdmUgdGhpcyBpc3N1ZS4KPiAKPiBBbnl3YXks
-IEkgdGVzdGVkIGl0IHdpdGggZmJkZXYgZW11bGF0aW9uIHJlbGV2YW50IHBhdGNoIHNlcmllc1sx
-XSBhbmQKPiB0aGUgYm9vdGluZyB3YXMgb2sgd2l0aCBkaXNhYmxpbmcgZmJkZXYgZW11bGF0aW9u
-IGFzIERhbmllbCBjb21tZW50ZWQuCj4gSG93ZXZlciwgSSB0aGluayB0aGUgYm9vdGluZyBzaG91
-bGQgYWxzbyBiZSBvayB3aXRoIGZiZGV2IGVtdWxhdGlvbiBzbyBJCj4gZG9uJ3Qgd2FudCBmb3Ig
-eW91ciBsYXN0IHBhdGNoIHRvIGJlIG1lcmdlZCB0byBtYWlubGluZSB1bnRpbCB0aGUgaXNzdWUK
-PiBpcyByZXNvbHZlZC4KCldpdGhvdXQgZmJkZXYgeW91IG5lZWQgdG8gc3RhcnQgYSBrbXMgY2xp
-ZW50IChYLCB3aGF0ZXZlcikgdG8gZm9yY2UgYQptb2Rlc2V0LiBPdGhlcndpc2UgeW91IHdvbid0
-IHJlcHJvZHVjZSBhbnl0aGluZy4gQW5kIHNvbWV0aW1lcyBpdCByZXF1aXJlcwphIGJpdCBvZiB0
-cmlja2VyeSB0byBjcmVhdGUgYSBzZXF1ZW5jZSBvZiBtb2Rlc2V0IGNhbGxzIHdoaWNoIGV4YWN0
-bHkKbWF0Y2ggd2hhdCBmYmNvbiB3b3VsZCBkby4KLURhbmllbAoKPiAKPiBbMV0gaHR0cDovL3d3
-dy5zcGluaWNzLm5ldC9saXN0cy9kcmktZGV2ZWwvbXNnODY2MTcuaHRtbAo+ICAgICBodHRwOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1LU1hcmNoLzA3ODk3
-NS5odG1sCj4gCj4gVGhhbmtzLAo+IElua2kgRGFlCj4gCj4gPiAKPiA+IAlHdXN0YXZvCj4gPiAt
-LQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vi
-c2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+ID4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
-IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiA+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0
-dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+ID4gCj4gCj4gX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwg
-VmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5m
-ZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hello Lee,
+
+On 08/11/2015 01:47 PM, Lee Jones wrote:
+> On Thu, 30 Jul 2015, Javier Martinez Canillas wrote:
+> 
+>> The MAX77802 is a chip that contains regulators, 2 32kHz clocks,
+>> a RTC and an I2C interface to program the individual components.
+>>
+>> The are already DT bindings for the regulators and clocks and
+>> these reference to a bindings/mfd/max77802.txt file, that didn't
+>> exist, for the details about the PMIC.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>
+>> ---
+>>
+>> Changes in v3:
+>> - Add Krzysztof Kozlowski Reviewed-by tag to patch #3.
+>> - Capitalise all acronyms. Suggested by Lee Jones.
+>> - Use relative path to refer other bindings. Suggested by Lee Jones.
+>> - Use IRQ_TYPE_NONE instead of 0 in example. Suggested by Lee Jones.
+>>
+>> Changes in v2:
+>> - Use the correct "maxim,max77802" compatible string.
+>>   Suggested by Krzysztof Kozlowski
+>> - Use a pmic generic node name for the max77802 node example.
+>>   Suggested by Sergei Shtylyov.
+>>
+>>  Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
+>> new file mode 100644
+>> index 000000000000..911ec5fcaefd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/max77802.txt
+>> @@ -0,0 +1,26 @@
+>> +Maxim MAX77802 multi-function device
+>> +
+>> +The Maxim MAX77802 is a Power Management IC (PMIC) that contains 10 high
+>> +efficiency Buck regulators, 32 Low-DropOut (LDO) regulators used to power
+>> +up application processors and peripherals, a 2-channel 32kHz clock outputs,
+>> +a Real-Time-Clock (RTC) and a I2C interface to program the individual
+>> +regulators, clocks outputs and the RTC.
+>> +
+>> +Binding for the built-in 32k clock generator block is defined separately
+>> +in the ../clk/maxim,max77802.txt file and binding for the regulators
+>> +is defined in the ../regulator/max77802.txt file.
+> 
+>   "Bindings for the built-in 32k clock generator block and
+>    regulators are defined in ../clk/maxim,max77802.txt and
+>    ../regulator/max77802.txt respectively."
+> 
+>> +Required properties:
+>> +- compatible : Must be "maxim,max77802";
+> 
+> ';' ?
+>
+
+err... I've no idea how that ended there. It seems I didn't completely
+context switch from coding :-)
+ 
+>> +- reg : Specifies the I2C slave address of PMIC block.
+>> +- interrupts : This I2C device has an IRQ line connected to the main SoC.
+>> +- interrupt-parent : The parent interrupt controller.
+> 
+> I always find this easier on the eye when you:
+>
+> Required properties:
+> - compatible		: Must be "maxim,max77802"
+> - reg			: Specifies the I2C slave address of PMIC block.
+> - interrupts		: This I2C device has an IRQ line connected to the main SoC.
+> - interrupt-parent	: The parent interrupt controller.
+>
+
+Ok, I'll wait for Mark's feedback and repost with your suggestions. Thanks!
+
+>> +Example:
+>> +
+>> +	max77802: pmic@09 {
+>> +		compatible = "maxim,max77802";
+>> +		interrupt-parent = <&intc>;
+>> +		interrupts = <26 IRQ_TYPE_NONE>;
+>> +		reg = <0x09>;
+>> +	};
+> 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
