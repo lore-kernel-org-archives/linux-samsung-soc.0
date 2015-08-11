@@ -1,52 +1,102 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Tue, 11 Aug 2015 11:20:06 +0900
-Message-ID: <55C95BD6.7010200@samsung.com>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
- <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
- <55C5AF4E.3010500@samsung.com> <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:24257 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933181AbbHKCUR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Aug 2015 22:20:17 -0400
-In-reply-to: <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+Date: Tue, 11 Aug 2015 12:46:24 +0900
+Message-ID: <1439264784-30322-5-git-send-email-cw00.choi@samsung.com>
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, 'Anand Moon' <linux.amoon@gmail.com>, 'Kevin Hilman' <khilman@linaro.org>, linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd.bergmann@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org
 
-On 10.08.2015 10:27, Kukjin Kim wrote:
-> Krzysztof Kozlowski wrote:
->>
->> W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
->>> On 08-08-15, 00:24, Rafael J. Wysocki wrote:
->>>> OK, so please let me know which patches you want me to pick up.
->>>>
->>>> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
->>>> with a cover letter clearly stating whose tree they are being targeted at.
->>>
->>> He already sent it separately, let me send a confirmatory mail in
->>> reply to that.
->>
->> Dear Kukjin,
->>
->> Can you apply the 2-5 of this series to v4.3? It's getting late but
->> maybe they still could go?
->>
-> Once my previous pull-request landed into arm-soc, I'll try to send out this
-> series 2-5 for v4.3.
+This patch add the MSHC2 (Mobile Storage Host Controller) devicetree node for
+Exynos3250 SoC.
 
-Additionally (better late than never):
-Patches 2-5 tested on Trats2 board (Exynos4412)
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 35 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 13 ++++++++++++
+ 2 files changed, 48 insertions(+)
 
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index eac1d21c10d4..78b995fed6c7 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -452,6 +452,41 @@
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
++	sd2_clk: sd2-clk {
++		samsung,pins = "gpk2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cmd: sd2-cmd {
++		samsung,pins = "gpk2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cd: sd2-cd {
++		samsung,pins = "gpk2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus1: sd2-bus-width1 {
++		samsung,pins = "gpk2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus4: sd2-bus-width4 {
++		samsung,pins = "gpk2-4", "gpk2-5", "gpk2-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
+ 	cam_port_b_io: cam-port-b-io {
+ 		samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
+ 				"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 02f3250766c9..5a91eaa26565 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -30,6 +30,7 @@
+ 		pinctrl1 = &pinctrl_1;
+ 		mshc0 = &mshc_0;
+ 		mshc1 = &mshc_1;
++		mshc2 = &mshc_2;
+ 		spi0 = &spi_0;
+ 		spi1 = &spi_1;
+ 		i2c0 = &i2c_0;
+@@ -341,6 +342,18 @@
+ 			status = "disabled";
+ 		};
+ 
++		mshc_2: mshc@12530000 {
++			compatible = "samsung,exynos5250-dw-mshc";
++			reg = <0x12530000 0x1000>;
++			interrupts = <0 144 0>;
++			clocks = <&cmu CLK_SDMMC2>, <&cmu CLK_SCLK_MMC2>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x80>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		exynos_usbphy: exynos-usbphy@125B0000 {
+ 			compatible = "samsung,exynos3250-usb2-phy";
+ 			reg = <0x125B0000 0x100>;
+-- 
+1.8.5.5
