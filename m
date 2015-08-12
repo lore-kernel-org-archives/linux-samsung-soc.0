@@ -1,90 +1,33 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 11/11] drm/exynos: remove struct exynos_drm_encoder
- layer
-Date: Wed, 12 Aug 2015 11:53:14 +0900
-Message-ID: <55CAB51A.4080400@samsung.com>
-References: <1438817060-22164-10-git-send-email-gustavo@padovan.org>
- <1438867908-18975-1-git-send-email-gustavo@padovan.org>
- <1438867908-18975-2-git-send-email-gustavo@padovan.org>
- <55C49B8A.4090009@samsung.com> <20150811003833.GE8125@joana>
- <55C9E702.8060603@samsung.com> <20150811150308.GZ17734@phenom.ffwll.local>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH RESEND] clk: s5pv210: add missing call to samsung_clk_of_add_provider()
+Date: Wed, 12 Aug 2015 18:00:17 +0900
+Message-ID: <CA+Ln22HnquKYKfY2cJBnFpn4zVO1pbkE5w1RtpmDEcNOQBnYpg@mail.gmail.com>
+References: <1439369908-17665-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20150811150308.GZ17734@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1439369908-17665-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Mike Turquette <mturquette@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwOOyblCAxMuydvCAwMDowMywgRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBU
-dWUsIEF1ZyAxMSwgMjAxNSBhdCAwOToxMzo1NFBNICswOTAwLCBJbmtpIERhZSB3cm90ZToKPj4g
-T24gMjAxNeuFhCAwOOyblCAxMeydvCAwOTozOCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+Pj4g
-SGkgSW5raSwKPj4+Cj4+PiAyMDE1LTA4LTA3IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNv
-bT46Cj4+Pgo+Pj4+IEhpIEd1c3Rhdm8sCj4+Pj4KPj4+PiBPbiAyMDE164WEIDA47JuUIDA27J28
-IDIyOjMxLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4+Pj4+IEZyb206IEd1c3Rhdm8gUGFkb3Zh
-biA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPj4+Pj4KPj4+Pj4gc3RydWN0IGV4
-eW5vc19kcm1fZW5jb2RlciB3YXMganVzdGluZyB3cmFwcGluZyBzdHJ1Y3QgZHJtX2VuY29kZXIs
-IGl0IGhhZAo+Pj4+PiBvbmx5IGEgZHJtX2VuY29kZXIgbWVtYmVyIGFuZCB0aGUgaW50ZXJuYWwg
-ZXh5bm9zX2RybV9lbmNvZGVycyBvcHMgdGhhdAo+Pj4+PiB3YXMgZGlyZWN0bHkgbWFwcGVkIHRv
-IHRoZSBkcm1fZW5jb2RlciBoZWxwZXIgZnVuY3MuCj4+Pj4+Cj4+Pj4+IFNvIG5vdyBleHlub3Mg
-RFJNIHVzZXMgc3RydWN0IGRybV9lbmNvZGVyIGRpcmVjdGx5LCB0aGlzIHJlbW92ZXMKPj4+Pj4g
-Y29tcGxldGVseSB0aGUgc3RydWN0IGV4eW5vc19kcm1fZW5jb2Rlci4KPj4+Pj4KPj4+Pgo+Pj4+
-IFRyYXRzMiBib2FyZCwgd2hpY2ggdXNlcyBFeHlub3M0NDEyIFNvYywgZG9lc24ndCB3b3JrIGFm
-dGVyIHRoaXMgcGF0Y2gKPj4+PiBpcyBhcHBsaWVkLiBCZWxvdyBpcyB0aGUgYm9vdGluZyBsb2dz
-LAo+Pj4+IFsgICAgMS4xNzEzMThdIGNvbnNvbGUgW3R0eVNBQzJdIGVuYWJsZWQKPj4+PiBbICAg
-IDEuMTc1NTIyXSAxMzgzMDAwMC5zZXJpYWw6IHR0eVNBQzMgYXQgTU1JTyAweDEzODMwMDAwIChp
-cnEgPSA2MCwKPj4+PiBiYXNlX2JhdWQgPSAwKSBpcyBhIFMzQzY0MDAvMTAKPj4+PiBbICAgIDEu
-MTg1NTQ1XSBbZHJtXSBJbml0aWFsaXplZCBkcm0gMS4xLjAgMjAwNjA4MTAKPj4+PiBbICAgIDEu
-MTk0MTA0XSBleHlub3MtZHJtIGV4eW5vcy1kcm06IGJvdW5kIDExYzAwMDAwLmZpbWQgKG9wcwo+
-Pj4+IGZpbWRfY29tcG9uZW50X29wcykKPj4+PiBbICAgIDEuMjAwMzUyXSBleHlub3MtZHJtIGV4
-eW5vcy1kcm06IGJvdW5kIDExYzgwMDAwLmRzaSAob3BzCj4+Pj4gZXh5bm9zX2RzaV9jb21wb25l
-bnRfb3BzKQo+Pj4+IFsgICAgMS4yMDc2ODhdIFtkcm1dIFN1cHBvcnRzIHZibGFuayB0aW1lc3Rh
-bXAgY2FjaGluZyBSZXYgMiAoMjEuMTAuMjAxMykuCj4+Pj4gWyAgICAxLjIxNDMxM10gW2RybV0g
-Tm8gZHJpdmVyIHN1cHBvcnQgZm9yIHZibGFuayB0aW1lc3RhbXAgcXVlcnkuCj4+Pj4gWyAgICAx
-LjIyMDIxOF0gW2RybV0gSW5pdGlhbGl6ZWQgZXh5bm9zIDEuMC4wIDIwMTEwNTMwIG9uIG1pbm9y
-IDAKPj4+Pgo+Pj4+IEJvb3RpbmcgaXMgbG9ja2VkIHVwIGhlcmUuIFRoaXMgcGF0Y2ggbG9va3Mg
-Z29vZCB0byBtZSBzbyBJIHRyaWVkIHRvCj4+Pj4gZmluZCB3aHkgbG9ja2VkIHVwIGFuZCBJIGZv
-dW5kIHRoZSBib290aW5nIGlzIGxvY2tlZCB1cCBhcyBzb29uIGFzCj4+Pj4gY29uc29sZV9sb2Nr
-IGZ1bmN0aW9uIGlzIGNhbGxlZC4gQ2FuIHlvdSBhbmQgb3RoZXIgZ3V5cyBsb29rIGludG8gdGhp
-cwo+Pj4+IGlzc3VlPwo+Pj4KPj4+IEkndmUgcmVhbGl6ZWQgdGhhdCBJIGxlZnQgYSBmaXggZm9y
-IHBhdGNoIDAxIGJlaGluZCwgaXQgY291bGQgYmUgdGhlCj4+PiBjYXVzZSBvZiB0aGlzIGlzc3Vl
-LiBJJ3ZlIGp1c3QgcmVzZW50IHRoaXMgcGF0Y2ggd2l0aCB0aGUgYWRkZWQgdjIgZml4Cj4+PiB1
-cC4KPj4KPj4gV2l0aCBhYm92ZSBjaGFuZ2UsIHN0aWxsIGxvY2tlZCB1cC4gU28geW91ciB1cGRh
-dGVkIHBhdGNoIGRvZXNuJ3QKPj4gcmVzb2x2ZSB0aGlzIGlzc3VlLgo+Pgo+PiBBbnl3YXksIEkg
-dGVzdGVkIGl0IHdpdGggZmJkZXYgZW11bGF0aW9uIHJlbGV2YW50IHBhdGNoIHNlcmllc1sxXSBh
-bmQKPj4gdGhlIGJvb3Rpbmcgd2FzIG9rIHdpdGggZGlzYWJsaW5nIGZiZGV2IGVtdWxhdGlvbiBh
-cyBEYW5pZWwgY29tbWVudGVkLgo+PiBIb3dldmVyLCBJIHRoaW5rIHRoZSBib290aW5nIHNob3Vs
-ZCBhbHNvIGJlIG9rIHdpdGggZmJkZXYgZW11bGF0aW9uIHNvIEkKPj4gZG9uJ3Qgd2FudCBmb3Ig
-eW91ciBsYXN0IHBhdGNoIHRvIGJlIG1lcmdlZCB0byBtYWlubGluZSB1bnRpbCB0aGUgaXNzdWUK
-Pj4gaXMgcmVzb2x2ZWQuCj4gCj4gV2l0aG91dCBmYmRldiB5b3UgbmVlZCB0byBzdGFydCBhIGtt
-cyBjbGllbnQgKFgsIHdoYXRldmVyKSB0byBmb3JjZSBhCgpPZiBjb3Vyc2UgSSBrbm93LiBXaXRo
-b3V0IGZiZGV2LCBtb2Rlc2V0IG5ldmVyIGJlIHBlcmZvcm1lZCBhdCBib290aW5nCnRpbWUuIEhv
-d2V2ZXIsIHdpdGhvdXQgZmJkZXYsIHdlIGNhbm5vdCB1c2UgdGV4dCBjb25zb2xlIGFuZCB0aGF0
-IGlzCmRlZmluaXRlbHkgYSBwcm9ibGVtLgoKVGhhbmtzLApJbmtpIERhZQoKPiBtb2Rlc2V0LiBP
-dGhlcndpc2UgeW91IHdvbid0IHJlcHJvZHVjZSBhbnl0aGluZy4gQW5kIHNvbWV0aW1lcyBpdCBy
-ZXF1aXJlcwo+IGEgYml0IG9mIHRyaWNrZXJ5IHRvIGNyZWF0ZSBhIHNlcXVlbmNlIG9mIG1vZGVz
-ZXQgY2FsbHMgd2hpY2ggZXhhY3RseQo+IG1hdGNoIHdoYXQgZmJjb24gd291bGQgZG8uCj4gLURh
-bmllbAo+IAo+Pgo+PiBbMV0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9kcmktZGV2ZWwv
-bXNnODY2MTcuaHRtbAo+PiAgICAgaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZl
-cy9kcmktZGV2ZWwvMjAxNS1NYXJjaC8wNzg5NzUuaHRtbAo+Pgo+PiBUaGFua3MsCj4+IElua2kg
-RGFlCj4+Cj4+Pgo+Pj4gCUd1c3Rhdm8KPj4+IC0tCj4+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRo
-aXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGlu
-Cj4+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+
-Pj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1sCj4+Pgo+Pgo+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IGRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+2015-08-12 17:58 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
+> clk provider only after registering its all clocks", merged to v3.17-rc1)
+> modified a way that driver registers registers to core framework. This
+> change has not been applied to s5pv210 clocks driver, which has been
+> merged in parallel to that commit. This patch adds a missing call to
+> samsung_clk_of_add_provider(), so the driver is operational again.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> CC: stable@vger.kernel.org  # v3.17+
+> ---
+>  drivers/clk/samsung/clk-s5pv210.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Best regards,
+Tomasz
