@@ -1,426 +1,1131 @@
 From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH RFC v3 10/16] media: rename link source/sink to pad0_source/pad1_sink
-Date: Wed, 12 Aug 2015 17:14:54 -0300
-Message-ID: <30472f0a7f52ee834978c70cbecc5c035ce20f71.1439410053.git.mchehab@osg.samsung.com>
+Subject: [PATCH RFC v3 07/16] media: get rid of unused "extra_links" param on media_entity_init()
+Date: Wed, 12 Aug 2015 17:14:51 -0300
+Message-ID: <7b9f2654888f0fd54c290c50f50248a367768da7.1439410053.git.mchehab@osg.samsung.com>
 References: <cover.1439410053.git.mchehab@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=true
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:53020 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.9]:53109 "EHLO
 	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752079AbbHLUPL (ORCPT
+	with ESMTP id S1752101AbbHLUPO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Aug 2015 16:15:11 -0400
+	Wed, 12 Aug 2015 16:15:14 -0400
 In-Reply-To: <cover.1439410053.git.mchehab@osg.samsung.com>
 In-Reply-To: <cover.1439410053.git.mchehab@osg.samsung.com>
 References: <cover.1439410053.git.mchehab@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Akihiro Tsukada <tskd08@gmail.com>, Tina Ruchandani <ruchandani.tina@gmail.com>, Antti Palosaari <crope@iki.fi>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Hans Verkuil <hans.verkuil@cisco.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Boris BREZILLON <boris.brezillon@free-electrons.com>, Lars-Peter Clausen <lars@metafoo.de>, Markus Elfring <elfring@users.sourceforge.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@iki.fi>, Lars-Peter Clausen <lars@metafoo.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kyungmin Park <kyungmin.park@samsung.com>, Heungjun Kim <riverful.kim@samsung.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Mats Randgaard <matrandg@cisco.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>
 
-Change the internal namespace for links between two pads to
-have the "pad" there.
+Currently, media_entity_init() creates an array with the links,
+allocated at init time. It provides a parameter (extra_links)
+that would allocate more links than the current needs, but this
+is not used by any driver.
 
-We're also numbering it, as a common constructor is to do
-things like:
-
- 	if (link->port1.type != MEDIA_GRAPH_PAD)
- 		continue;
- 	if (link->pad1_sink->entity == entity)
-		/* do something */
-
-by preserving the number, we keep consistency between
-port1 and pad1_sink, and port0 and pad0_source.
-
-This was generated via this script:
-	for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed "s,link->sink,link->pad1_sink,g; s,link->source,link->pad0_source,g;" <$i >a && mv a $i; done
+As we want to be able to do dynamic link allocation/removal,
+we'll need to change the implementation of the links. So,
+before doing that, let's first remove that extra unused
+parameter, in order to cleanup the interface first.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index 3c97ebdf9f2a..e673f6f7c398 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -637,7 +637,7 @@ static int dvb_enable_media_tuner(struct dvb_frontend *fe)
- 		link = &entity->links[i];
- 		if (link->port1.type != MEDIA_GRAPH_PAD)
- 			continue;
--		if (link->sink->entity == entity) {
-+		if (link->pad1_sink->entity == entity) {
- 			found_link = link;
- 			n_links++;
- 			if (link->flags & MEDIA_LNK_FL_ENABLED)
-@@ -660,7 +660,7 @@ static int dvb_enable_media_tuner(struct dvb_frontend *fe)
- 		return -EINVAL;
+diff --git a/Documentation/media-framework.txt b/Documentation/media-fr=
+amework.txt
+index f552a75c0e70..2cc6019f7147 100644
+--- a/Documentation/media-framework.txt
++++ b/Documentation/media-framework.txt
+@@ -104,7 +104,7 @@ although drivers can allocate entities directly.
+ Drivers initialize entities by calling
+=20
+ 	media_entity_init(struct media_entity *entity, u16 num_pads,
+-			  struct media_pad *pads, u16 extra_links);
++			  struct media_pad *pads);
+=20
+ The media_entity name, type, flags, revision and group_id fields can b=
+e
+ initialized before or after calling media_entity_init. Entities embedd=
+ed in
+diff --git a/Documentation/video4linux/v4l2-framework.txt b/Documentati=
+on/video4linux/v4l2-framework.txt
+index 75d5c18d689a..109cc3792534 100644
+--- a/Documentation/video4linux/v4l2-framework.txt
++++ b/Documentation/video4linux/v4l2-framework.txt
+@@ -300,7 +300,7 @@ calling media_entity_init():
+ 	struct media_pad *pads =3D &my_sd->pads;
+ 	int err;
+=20
+-	err =3D media_entity_init(&sd->entity, npads, pads, 0);
++	err =3D media_entity_init(&sd->entity, npads, pads);
+=20
+ The pads array must have been previously initialized. There is no need=
+ to
+ manually set the struct media_entity type and name fields, but the rev=
+ision
+@@ -700,7 +700,7 @@ calling media_entity_init():
+ 	struct media_pad *pad =3D &my_vdev->pad;
+ 	int err;
+=20
+-	err =3D media_entity_init(&vdev->entity, 1, pad, 0);
++	err =3D media_entity_init(&vdev->entity, 1, pad);
+=20
+ The pads array must have been previously initialized. There is no need=
+ to
+ manually set the struct media_entity type and name fields.
+diff --git a/Documentation/zh_CN/video4linux/v4l2-framework.txt b/Docum=
+entation/zh_CN/video4linux/v4l2-framework.txt
+index 2b828e631e31..ff815cb92031 100644
+--- a/Documentation/zh_CN/video4linux/v4l2-framework.txt
++++ b/Documentation/zh_CN/video4linux/v4l2-framework.txt
+@@ -295,7 +295,7 @@ owner =E5=9F=9F=E3=80=82=E8=8B=A5=E4=BD=BF=E7=94=A8=
+ i2c =E8=BE=85=E5=8A=A9=E5=87=BD=E6=95=B0=EF=BC=8C=E8=BF=99=E4=BA=9B=E9=
+=83=BD=E4=BC=9A=E5=B8=AE=E4=BD=A0=E5=A4=84=E7=90=86=E5=A5=BD=E3=80=82
+ 	struct media_pad *pads =3D &my_sd->pads;
+ 	int err;
+=20
+-	err =3D media_entity_init(&sd->entity, npads, pads, 0);
++	err =3D media_entity_init(&sd->entity, npads, pads);
+=20
+ pads =E6=95=B0=E7=BB=84=E5=BF=85=E9=A1=BB=E9=A2=84=E5=85=88=E5=88=9D=E5=
+=A7=8B=E5=8C=96=E3=80=82=E6=97=A0=E9=A1=BB=E6=89=8B=E5=8A=A8=E8=AE=BE=E7=
+=BD=AE media_entity =E7=9A=84 type =E5=92=8C
+ name =E5=9F=9F=EF=BC=8C=E4=BD=86=E5=A6=82=E6=9C=89=E5=BF=85=E8=A6=81=EF=
+=BC=8Crevision =E5=9F=9F=E5=BF=85=E9=A1=BB=E5=88=9D=E5=A7=8B=E5=8C=96=E3=
+=80=82
+@@ -602,7 +602,7 @@ v4l2_file_operations =E7=BB=93=E6=9E=84=E4=BD=93=E6=
+=98=AF file_operations =E7=9A=84=E4=B8=80=E4=B8=AA=E5=AD=90=E9=9B=86=E3=
+=80=82=E5=85=B6=E4=B8=BB=E8=A6=81
+ 	struct media_pad *pad =3D &my_vdev->pad;
+ 	int err;
+=20
+-	err =3D media_entity_init(&vdev->entity, 1, pad, 0);
++	err =3D media_entity_init(&vdev->entity, 1, pad);
+=20
+ pads =E6=95=B0=E7=BB=84=E5=BF=85=E9=A1=BB=E9=A2=84=E5=85=88=E5=88=9D=E5=
+=A7=8B=E5=8C=96=E3=80=82=E6=B2=A1=E6=9C=89=E5=BF=85=E8=A6=81=E6=89=8B=E5=
+=8A=A8=E8=AE=BE=E7=BD=AE media_entity =E7=9A=84 type =E5=92=8C
+ name =E5=9F=9F=E3=80=82
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/d=
+vbdev.c
+index 13bb57f0457f..2fdcbb5f000a 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -249,7 +249,7 @@ static void dvb_register_media_device(struct dvb_de=
+vice *dvbdev,
  	}
- 
--	source = found_link->source->entity;
-+	source = found_link->pad0_source->entity;
- 	fepriv->pipe_start_entity = source;
- 	for (i = 0; i < source->num_links; i++) {
- 		struct media_entity *sink;
-@@ -669,7 +669,7 @@ static int dvb_enable_media_tuner(struct dvb_frontend *fe)
- 		link = &source->links[i];
- 		if (link->port1.type != MEDIA_GRAPH_PAD)
- 			continue;
--		sink = link->sink->entity;
-+		sink = link->pad1_sink->entity;
- 
- 		if (sink == entity)
- 			flags = MEDIA_LNK_FL_ENABLED;
-diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index b4bd718ad736..2c29c4600c3a 100644
---- a/drivers/media/media-device.c
-+++ b/drivers/media/media-device.c
-@@ -160,13 +160,13 @@ static long __media_device_enum_links(struct media_device *mdev,
- 			    ent_link->port1->type != MEDIA_GRAPH_PAD)
- 				continue;
- 			/* Ignore backlinks. */
--			if (ent_link->source->entity != entity)
-+			if (ent_link->pad0_source->entity != entity)
- 				continue;
- 
- 			memset(&link, 0, sizeof(link));
--			media_device_kpad_to_upad(ent_link->source,
-+			media_device_kpad_to_upad(ent_link->pad0_source,
- 						  &link.source);
--			media_device_kpad_to_upad(ent_link->sink,
-+			media_device_kpad_to_upad(ent_link->pad1_sink,
- 						  &link.sink);
- 			link.flags = ent_link->flags;
- 			if (copy_to_user(ulink, &link, sizeof(*ulink)))
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index fc2e4886c830..aafa1119fba7 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -125,10 +125,10 @@ media_entity_other(struct media_entity *entity, struct media_link *link)
- 	if (link->port0->type != MEDIA_GRAPH_PAD ||
- 	    link->port1->type != MEDIA_GRAPH_PAD)
- 		return NULL;
--	if (link->source->entity == entity)
--		return link->sink->entity;
-+	if (link->pad0_source->entity == entity)
-+		return link->pad1_sink->entity;
- 	else
--		return link->source->entity;
-+		return link->pad0_source->entity;
- }
- 
- /* push an entity to traversal stack */
-@@ -299,8 +299,8 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
- 			if (link->port0->type != MEDIA_GRAPH_PAD)
- 				continue;
- 
--			pad = link->sink->entity == entity
--				? link->sink : link->source;
-+			pad = link->pad1_sink->entity == entity
-+				? link->pad1_sink : link->pad0_source;
- 
- 			/* Mark that a pad is connected by a link. */
- 			bitmap_clear(has_no_links, pad->index, 1);
-@@ -318,7 +318,7 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
- 			 * Link validation will only take place for
- 			 * sink ends of the link that are enabled.
- 			 */
--			if (link->sink != pad ||
-+			if (link->pad1_sink != pad ||
- 			    !(link->flags & MEDIA_LNK_FL_ENABLED))
- 				continue;
- 
-@@ -326,9 +326,9 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
- 			if (ret < 0 && ret != -ENOIOCTLCMD) {
- 				dev_dbg(entity->parent->dev,
- 					"link validation failed for \"%s\":%u -> \"%s\":%u, error %d\n",
--					entity->name, link->source->index,
--					link->sink->entity->name,
--					link->sink->index, ret);
-+					entity->name, link->pad0_source->index,
-+					link->pad1_sink->entity->name,
-+					link->pad1_sink->index, ret);
- 				goto error;
- 			}
- 		}
-@@ -493,8 +493,8 @@ media_entity_create_link(struct media_entity *source, u16 source_pad,
- 	if (link == NULL)
- 		return -ENOMEM;
- 
--	link->source = &source->pads[source_pad];
--	link->sink = &sink->pads[sink_pad];
-+	link->pad0_source = &source->pads[source_pad];
-+	link->pad1_sink = &sink->pads[sink_pad];
- 	link->flags = flags;
- 
- 	/* Create the backlink. Backlinks are used to help graph traversal and
-@@ -506,8 +506,8 @@ media_entity_create_link(struct media_entity *source, u16 source_pad,
- 		return -ENOMEM;
- 	}
- 
--	backlink->source = &source->pads[source_pad];
--	backlink->sink = &sink->pads[sink_pad];
-+	backlink->pad0_source = &source->pads[source_pad];
-+	backlink->pad1_sink = &sink->pads[sink_pad];
- 	backlink->flags = flags;
- 
- 	link->reverse = backlink;
-@@ -526,10 +526,10 @@ static void __media_entity_remove_link(struct media_entity *entity,
- 	struct media_entity *remote;
- 	unsigned int r = 0;
- 
--	if (link->source->entity == entity)
--		remote = link->sink->entity;
-+	if (link->pad0_source->entity == entity)
-+		remote = link->pad1_sink->entity;
- 	else
--		remote = link->source->entity;
-+		remote = link->pad0_source->entity;
- 
- 	list_for_each_entry_safe(rlink, tmp, &remote->links, list) {
- 		if (rlink != link->reverse) {
-@@ -537,7 +537,7 @@ static void __media_entity_remove_link(struct media_entity *entity,
- 			continue;
- 		}
- 
--		if (link->source->entity == entity)
-+		if (link->pad0_source->entity == entity)
- 			remote->num_backlinks--;
- 
- 		if (--remote->num_links == 0)
-@@ -580,16 +580,16 @@ static int __media_entity_setup_link_notify(struct media_link *link, u32 flags)
- 	int ret;
- 
- 	/* Notify both entities. */
--	ret = media_entity_call(link->source->entity, link_setup,
--				link->source, link->sink, flags);
-+	ret = media_entity_call(link->pad0_source->entity, link_setup,
-+				link->pad0_source, link->pad1_sink, flags);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
- 		return ret;
- 
--	ret = media_entity_call(link->sink->entity, link_setup,
--				link->sink, link->source, flags);
-+	ret = media_entity_call(link->pad1_sink->entity, link_setup,
-+				link->pad1_sink, link->pad0_source, flags);
- 	if (ret < 0 && ret != -ENOIOCTLCMD) {
--		media_entity_call(link->source->entity, link_setup,
--				  link->source, link->sink, link->flags);
-+		media_entity_call(link->pad0_source->entity, link_setup,
-+				  link->pad0_source, link->pad1_sink, link->flags);
- 		return ret;
- 	}
- 
-@@ -610,7 +610,7 @@ static int __media_entity_setup_link_notify(struct media_link *link, u32 flags)
-  * If the link is immutable or if the current and new configuration are
-  * identical, return immediately.
-  *
-- * The user is expected to hold link->source->parent->mutex. If not,
-+ * The user is expected to hold link->pad0_source->parent->mutex. If not,
-  * media_entity_setup_link() should be used instead.
-  */
- int __media_entity_setup_link(struct media_link *link, u32 flags)
-@@ -633,8 +633,8 @@ int __media_entity_setup_link(struct media_link *link, u32 flags)
- 	if (link->flags == flags)
- 		return 0;
- 
--	source = link->source->entity;
--	sink = link->sink->entity;
-+	source = link->pad0_source->entity;
-+	sink = link->pad1_sink->entity;
- 
- 	if (!(link->flags & MEDIA_LNK_FL_DYNAMIC) &&
- 	    (source->stream_count || sink->stream_count))
-@@ -661,9 +661,9 @@ int media_entity_setup_link(struct media_link *link, u32 flags)
- {
- 	int ret;
- 
--	mutex_lock(&link->source->entity->parent->graph_mutex);
-+	mutex_lock(&link->pad0_source->entity->parent->graph_mutex);
- 	ret = __media_entity_setup_link(link, flags);
--	mutex_unlock(&link->source->entity->parent->graph_mutex);
-+	mutex_unlock(&link->pad0_source->entity->parent->graph_mutex);
- 
- 	return ret;
- }
-@@ -683,10 +683,10 @@ media_entity_find_link(struct media_pad *source, struct media_pad *sink)
- 	struct media_link *link;
- 
- 	list_for_each_entry(link, &source->entity->links, list) {
--		if (link->source->entity == source->entity &&
--		    link->source->index == source->index &&
--		    link->sink->entity == sink->entity &&
--		    link->sink->index == sink->index)
-+		if (link->pad0_source->entity == source->entity &&
-+		    link->pad0_source->index == source->index &&
-+		    link->pad1_sink->entity == sink->entity &&
-+		    link->pad1_sink->index == sink->index)
- 			return link;
- 	}
- 
-@@ -712,11 +712,11 @@ struct media_pad *media_entity_remote_pad(struct media_pad *pad)
- 		if (!(link->flags & MEDIA_LNK_FL_ENABLED))
- 			continue;
- 
--		if (link->source == pad)
--			return link->sink;
-+		if (link->pad0_source == pad)
-+			return link->pad1_sink;
- 
--		if (link->sink == pad)
--			return link->source;
-+		if (link->pad1_sink == pad)
-+			return link->pad0_source;
- 	}
- 
- 	return NULL;
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 4f5586a4cbff..3cafcf85cafc 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1091,7 +1091,7 @@ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable)
- static int fimc_md_link_notify(struct media_link *link, unsigned int flags,
- 				unsigned int notification)
- {
--	struct media_entity *sink = link->sink->entity;
-+	struct media_entity *sink = link->pad1_sink->entity;
- 	int ret = 0;
- 
- 	/* Before link disconnection */
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 12be830d704f..cbd22a422bd3 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -822,8 +822,8 @@ int omap3isp_pipeline_pm_use(struct media_entity *entity, int use)
- static int isp_pipeline_link_notify(struct media_link *link, u32 flags,
- 				    unsigned int notification)
- {
--	struct media_entity *source = link->source->entity;
--	struct media_entity *sink = link->sink->entity;
-+	struct media_entity *source = link->pad0_source->entity;
-+	struct media_entity *sink = link->pad1_sink->entity;
- 	int source_use = isp_pipeline_pm_use_count(source);
- 	int sink_use = isp_pipeline_pm_use_count(sink);
- 	int ret;
-diff --git a/drivers/media/platform/omap3isp/ispccdc.c b/drivers/media/platform/omap3isp/ispccdc.c
-index 3b10304b580b..cb236b54d770 100644
---- a/drivers/media/platform/omap3isp/ispccdc.c
-+++ b/drivers/media/platform/omap3isp/ispccdc.c
-@@ -2419,7 +2419,7 @@ static int ccdc_link_validate(struct v4l2_subdev *sd,
- 	if (ccdc->input == CCDC_INPUT_PARALLEL) {
- 		struct isp_parallel_cfg *parcfg =
- 			&((struct isp_bus_cfg *)
--			  media_entity_to_v4l2_subdev(link->source->entity)
-+			  media_entity_to_v4l2_subdev(link->pad0_source->entity)
- 			  ->host_priv)->bus.parallel;
- 		parallel_shift = parcfg->data_lane_shift * 2;
- 	} else {
-diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
-index e8baff4d6290..9416a8b7d575 100644
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -128,7 +128,7 @@ static int cx231xx_enable_analog_tuner(struct cx231xx *dev)
- 		return 0;
- 
- 	list_for_each_entry(link, &decoder->links, list) {
--		if (link->sink->entity == decoder) {
-+		if (link->pad1_sink->entity == decoder) {
- 			found_link = link;
- 			if (link->flags & MEDIA_LNK_FL_ENABLED)
- 				active_links++;
-@@ -139,12 +139,12 @@ static int cx231xx_enable_analog_tuner(struct cx231xx *dev)
- 	if (active_links == 1 || !found_link)
- 		return 0;
- 
--	source = found_link->source->entity;
-+	source = found_link->pad0_source->entity;
- 	list_for_each_entry(link, &source->links, list) {
- 		struct media_entity *sink;
- 		int flags = 0;
- 
--		sink = link->sink->entity;
-+		sink = link->pad1_sink->entity;
- 
- 		if (sink == entity)
- 			flags = MEDIA_LNK_FL_ENABLED;
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index 83615b8fb46a..53729ccdea80 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -549,16 +549,16 @@ int v4l2_subdev_link_validate(struct media_link *link)
- 	int rval;
- 
- 	rval = v4l2_subdev_link_validate_get_format(
--		link->source, &source_fmt);
-+		link->pad0_source, &source_fmt);
- 	if (rval < 0)
- 		return 0;
- 
- 	rval = v4l2_subdev_link_validate_get_format(
--		link->sink, &sink_fmt);
-+		link->pad1_sink, &sink_fmt);
- 	if (rval < 0)
- 		return 0;
- 
--	sink = media_entity_to_v4l2_subdev(link->sink->entity);
-+	sink = media_entity_to_v4l2_subdev(link->pad1_sink->entity);
- 
- 	rval = v4l2_subdev_call(sink, pad, link_validate, link,
- 				&source_fmt, &sink_fmt);
-diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
-index 9bfb725b9986..37694999d189 100644
---- a/drivers/staging/media/omap4iss/iss.c
-+++ b/drivers/staging/media/omap4iss/iss.c
-@@ -140,9 +140,9 @@ int omap4iss_get_external_info(struct iss_pipeline *pipe,
- 
- 	memset(&fmt, 0, sizeof(fmt));
- 
--	fmt.pad = link->source->index;
-+	fmt.pad = link->pad0_source->index;
- 	fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
--	ret = v4l2_subdev_call(media_entity_to_v4l2_subdev(link->sink->entity),
-+	ret = v4l2_subdev_call(media_entity_to_v4l2_subdev(link->pad1_sink->entity),
- 			       pad, get_fmt, NULL, &fmt);
+=20
+ 	if (npads)
+-		ret =3D media_entity_init(dvbdev->entity, npads, dvbdev->pads, 0);
++		ret =3D media_entity_init(dvbdev->entity, npads, dvbdev->pads);
+ 	if (!ret)
+ 		ret =3D media_device_register_entity(dvbdev->adapter->mdev,
+ 						   dvbdev->entity);
+diff --git a/drivers/media/i2c/ad9389b.c b/drivers/media/i2c/ad9389b.c
+index 69094ab047b1..39d6ee681aeb 100644
+--- a/drivers/media/i2c/ad9389b.c
++++ b/drivers/media/i2c/ad9389b.c
+@@ -1158,7 +1158,7 @@ static int ad9389b_probe(struct i2c_client *clien=
+t, const struct i2c_device_id *
+ 	state->rgb_quantization_range_ctrl->is_private =3D true;
+=20
+ 	state->pad.flags =3D MEDIA_PAD_FL_SINK;
+-	err =3D media_entity_init(&sd->entity, 1, &state->pad, 0);
++	err =3D media_entity_init(&sd->entity, 1, &state->pad);
+ 	if (err)
+ 		goto err_hdl;
+=20
+diff --git a/drivers/media/i2c/adp1653.c b/drivers/media/i2c/adp1653.c
+index c70ababce954..5f76997f6e07 100644
+--- a/drivers/media/i2c/adp1653.c
++++ b/drivers/media/i2c/adp1653.c
+@@ -512,7 +512,7 @@ static int adp1653_probe(struct i2c_client *client,
+ 	if (ret)
+ 		goto free_and_quit;
+=20
+-	ret =3D media_entity_init(&flash->subdev.entity, 0, NULL, 0);
++	ret =3D media_entity_init(&flash->subdev.entity, 0, NULL);
  	if (ret < 0)
- 		return -EPIPE;
-@@ -526,8 +526,8 @@ int omap4iss_pipeline_pm_use(struct media_entity *entity, int use)
- static int iss_pipeline_link_notify(struct media_link *link, u32 flags,
- 				    unsigned int notification)
- {
--	struct media_entity *source = link->source->entity;
--	struct media_entity *sink = link->sink->entity;
-+	struct media_entity *source = link->pad0_source->entity;
-+	struct media_entity *sink = link->pad1_sink->entity;
- 	int source_use = iss_pipeline_pm_use_count(source);
- 	int sink_use = iss_pipeline_pm_use_count(sink);
- 	int ret;
-diff --git a/drivers/staging/media/omap4iss/iss_csi2.c b/drivers/staging/media/omap4iss/iss_csi2.c
-index e936cfc218cb..e39f1bbbdae1 100644
---- a/drivers/staging/media/omap4iss/iss_csi2.c
-+++ b/drivers/staging/media/omap4iss/iss_csi2.c
-@@ -1026,7 +1026,7 @@ static int csi2_link_validate(struct v4l2_subdev *sd, struct media_link *link,
- 	struct iss_pipeline *pipe = to_iss_pipeline(&csi2->subdev.entity);
- 	int rval;
- 
--	pipe->external = media_entity_to_v4l2_subdev(link->source->entity);
-+	pipe->external = media_entity_to_v4l2_subdev(link->pad0_source->entity);
- 	rval = omap4iss_get_external_info(pipe, link);
+ 		goto free_and_quit;
+=20
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index 09a96df170d1..cd15336260a3 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -1214,7 +1214,7 @@ static int adv7180_probe(struct i2c_client *clien=
+t,
+=20
+ 	state->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.flags |=3D MEDIA_ENT_T_V4L2_SUBDEV_DECODER;
+-	ret =3D media_entity_init(&sd->entity, 1, &state->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &state->pad);
+ 	if (ret)
+ 		goto err_free_ctrl;
+=20
+diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511.c
+index 95bcd4026451..e70aa56a0b11 100644
+--- a/drivers/media/i2c/adv7511.c
++++ b/drivers/media/i2c/adv7511.c
+@@ -1482,7 +1482,7 @@ static int adv7511_probe(struct i2c_client *clien=
+t, const struct i2c_device_id *
+ 	state->rgb_quantization_range_ctrl->is_private =3D true;
+=20
+ 	state->pad.flags =3D MEDIA_PAD_FL_SINK;
+-	err =3D media_entity_init(&sd->entity, 1, &state->pad, 0);
++	err =3D media_entity_init(&sd->entity, 1, &state->pad);
+ 	if (err)
+ 		goto err_hdl;
+=20
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index bfb0b6a72bbc..dcefa810c8ac 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -3198,7 +3198,7 @@ static int adv76xx_probe(struct i2c_client *clien=
+t,
+ 	state->pads[state->source_pad].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	err =3D media_entity_init(&sd->entity, state->source_pad + 1,
+-				state->pads, 0);
++				state->pads);
+ 	if (err)
+ 		goto err_work_queues;
+=20
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 897d68c78b06..8a1ecc6ab36c 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -3309,7 +3309,7 @@ static int adv7842_probe(struct i2c_client *clien=
+t,
+ 			adv7842_delayed_work_enable_hotplug);
+=20
+ 	state->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	err =3D media_entity_init(&sd->entity, 1, &state->pad, 0);
++	err =3D media_entity_init(&sd->entity, 1, &state->pad);
+ 	if (err)
+ 		goto err_work_queues;
+=20
+diff --git a/drivers/media/i2c/as3645a.c b/drivers/media/i2c/as3645a.c
+index 301084b07887..9d579a836f79 100644
+--- a/drivers/media/i2c/as3645a.c
++++ b/drivers/media/i2c/as3645a.c
+@@ -827,7 +827,7 @@ static int as3645a_probe(struct i2c_client *client,
+ 	if (ret < 0)
+ 		goto done;
+=20
+-	ret =3D media_entity_init(&flash->subdev.entity, 0, NULL, 0);
++	ret =3D media_entity_init(&flash->subdev.entity, 0, NULL);
+ 	if (ret < 0)
+ 		goto done;
+=20
+diff --git a/drivers/media/i2c/cx25840/cx25840-core.c b/drivers/media/i=
+2c/cx25840/cx25840-core.c
+index e15a789ad596..7a2cf352d9c5 100644
+--- a/drivers/media/i2c/cx25840/cx25840-core.c
++++ b/drivers/media/i2c/cx25840/cx25840-core.c
+@@ -5211,7 +5211,7 @@ static int cx25840_probe(struct i2c_client *clien=
+t,
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_DECODER;
+=20
+ 	ret =3D media_entity_init(&sd->entity, ARRAY_SIZE(state->pads),
+-				state->pads, 0);
++				state->pads);
+ 	if (ret < 0) {
+ 		v4l_info(client, "failed to initialize media entity!\n");
+ 		return ret;
+diff --git a/drivers/media/i2c/lm3560.c b/drivers/media/i2c/lm3560.c
+index d9ece4b2d047..9bd9def0852c 100644
+--- a/drivers/media/i2c/lm3560.c
++++ b/drivers/media/i2c/lm3560.c
+@@ -365,7 +365,7 @@ static int lm3560_subdev_init(struct lm3560_flash *=
+flash,
+ 	rval =3D lm3560_init_controls(flash, led_no);
+ 	if (rval)
+ 		goto err_out;
+-	rval =3D media_entity_init(&flash->subdev_led[led_no].entity, 0, NULL=
+, 0);
++	rval =3D media_entity_init(&flash->subdev_led[led_no].entity, 0, NULL=
+);
+ 	if (rval < 0)
+ 		goto err_out;
+ 	flash->subdev_led[led_no].entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_FLA=
+SH;
+diff --git a/drivers/media/i2c/lm3646.c b/drivers/media/i2c/lm3646.c
+index 626fb4679c02..4160e18af607 100644
+--- a/drivers/media/i2c/lm3646.c
++++ b/drivers/media/i2c/lm3646.c
+@@ -282,7 +282,7 @@ static int lm3646_subdev_init(struct lm3646_flash *=
+flash)
+ 	rval =3D lm3646_init_controls(flash);
+ 	if (rval)
+ 		goto err_out;
+-	rval =3D media_entity_init(&flash->subdev_led.entity, 0, NULL, 0);
++	rval =3D media_entity_init(&flash->subdev_led.entity, 0, NULL);
+ 	if (rval < 0)
+ 		goto err_out;
+ 	flash->subdev_led.entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_FLASH;
+diff --git a/drivers/media/i2c/m5mols/m5mols_core.c b/drivers/media/i2c=
+/m5mols/m5mols_core.c
+index 6404c0d93e7a..f718a1009e4c 100644
+--- a/drivers/media/i2c/m5mols/m5mols_core.c
++++ b/drivers/media/i2c/m5mols/m5mols_core.c
+@@ -975,7 +975,7 @@ static int m5mols_probe(struct i2c_client *client,
+=20
+ 	sd->internal_ops =3D &m5mols_subdev_internal_ops;
+ 	info->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	ret =3D media_entity_init(&sd->entity, 1, &info->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &info->pad);
+ 	if (ret < 0)
+ 		return ret;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
+diff --git a/drivers/media/i2c/mt9m032.c b/drivers/media/i2c/mt9m032.c
+index c7747bd0cabb..1493ab6e7fb3 100644
+--- a/drivers/media/i2c/mt9m032.c
++++ b/drivers/media/i2c/mt9m032.c
+@@ -799,7 +799,7 @@ static int mt9m032_probe(struct i2c_client *client,
+=20
+ 	sensor->subdev.ctrl_handler =3D &sensor->ctrls;
+ 	sensor->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	ret =3D media_entity_init(&sensor->subdev.entity, 1, &sensor->pad, 0)=
+;
++	ret =3D media_entity_init(&sensor->subdev.entity, 1, &sensor->pad);
+ 	if (ret < 0)
+ 		goto error_ctrl;
+=20
+diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
+index 0db15f528ac1..e3c5af82b7c1 100644
+--- a/drivers/media/i2c/mt9p031.c
++++ b/drivers/media/i2c/mt9p031.c
+@@ -1112,7 +1112,7 @@ static int mt9p031_probe(struct i2c_client *clien=
+t,
+ 	mt9p031->subdev.internal_ops =3D &mt9p031_subdev_internal_ops;
+=20
+ 	mt9p031->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	ret =3D media_entity_init(&mt9p031->subdev.entity, 1, &mt9p031->pad, =
+0);
++	ret =3D media_entity_init(&mt9p031->subdev.entity, 1, &mt9p031->pad);
+ 	if (ret < 0)
+ 		goto done;
+=20
+diff --git a/drivers/media/i2c/mt9t001.c b/drivers/media/i2c/mt9t001.c
+index 8ae99f7f254c..1dae1a98bc85 100644
+--- a/drivers/media/i2c/mt9t001.c
++++ b/drivers/media/i2c/mt9t001.c
+@@ -933,7 +933,7 @@ static int mt9t001_probe(struct i2c_client *client,
+ 	mt9t001->subdev.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+=20
+ 	mt9t001->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	ret =3D media_entity_init(&mt9t001->subdev.entity, 1, &mt9t001->pad, =
+0);
++	ret =3D media_entity_init(&mt9t001->subdev.entity, 1, &mt9t001->pad);
+=20
+ done:
+ 	if (ret < 0) {
+diff --git a/drivers/media/i2c/mt9v032.c b/drivers/media/i2c/mt9v032.c
+index 977f4006edbd..980011aa039d 100644
+--- a/drivers/media/i2c/mt9v032.c
++++ b/drivers/media/i2c/mt9v032.c
+@@ -1046,7 +1046,7 @@ static int mt9v032_probe(struct i2c_client *clien=
+t,
+ 	mt9v032->subdev.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+=20
+ 	mt9v032->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	ret =3D media_entity_init(&mt9v032->subdev.entity, 1, &mt9v032->pad, =
+0);
++	ret =3D media_entity_init(&mt9v032->subdev.entity, 1, &mt9v032->pad);
+ 	if (ret < 0)
+ 		goto err;
+=20
+diff --git a/drivers/media/i2c/noon010pc30.c b/drivers/media/i2c/noon01=
+0pc30.c
+index f197b6cbd407..a9761251b970 100644
+--- a/drivers/media/i2c/noon010pc30.c
++++ b/drivers/media/i2c/noon010pc30.c
+@@ -780,7 +780,7 @@ static int noon010_probe(struct i2c_client *client,
+=20
+ 	info->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
+-	ret =3D media_entity_init(&sd->entity, 1, &info->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &info->pad);
+ 	if (ret < 0)
+ 		goto np_err;
+=20
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index 6edffc7b74e3..39f2d2cfdc9c 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -1450,7 +1450,7 @@ static int ov2659_probe(struct i2c_client *client=
+,
+ #if defined(CONFIG_MEDIA_CONTROLLER)
+ 	ov2659->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
+-	ret =3D media_entity_init(&sd->entity, 1, &ov2659->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &ov2659->pad);
+ 	if (ret < 0) {
+ 		v4l2_ctrl_handler_free(&ov2659->ctrls);
+ 		return ret;
+diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
+index 2bc473385c91..6a6747343512 100644
+--- a/drivers/media/i2c/ov9650.c
++++ b/drivers/media/i2c/ov9650.c
+@@ -1501,7 +1501,7 @@ static int ov965x_probe(struct i2c_client *client=
+,
+=20
+ 	ov965x->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
+-	ret =3D media_entity_init(&sd->entity, 1, &ov965x->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &ov965x->pad);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/i2c/s5c73m3/s5c73m3-core.c b/drivers/media/i=
+2c/s5c73m3/s5c73m3-core.c
+index 53c5ea89f0b9..6d167428727d 100644
+--- a/drivers/media/i2c/s5c73m3/s5c73m3-core.c
++++ b/drivers/media/i2c/s5c73m3/s5c73m3-core.c
+@@ -1691,7 +1691,7 @@ static int s5c73m3_probe(struct i2c_client *clien=
+t,
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV;
+=20
+ 	ret =3D media_entity_init(&sd->entity, S5C73M3_NUM_PADS,
+-							state->sensor_pads, 0);
++							state->sensor_pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+@@ -1707,7 +1707,7 @@ static int s5c73m3_probe(struct i2c_client *clien=
+t,
+ 	oif_sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV;
+=20
+ 	ret =3D media_entity_init(&oif_sd->entity, OIF_NUM_PADS,
+-							state->oif_pads, 0);
++							state->oif_pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/i2c/s5k4ecgx.c b/drivers/media/i2c/s5k4ecgx.=
+c
+index 97084237275d..d207ddce31b6 100644
+--- a/drivers/media/i2c/s5k4ecgx.c
++++ b/drivers/media/i2c/s5k4ecgx.c
+@@ -962,7 +962,7 @@ static int s5k4ecgx_probe(struct i2c_client *client=
+,
+=20
+ 	priv->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
+-	ret =3D media_entity_init(&sd->entity, 1, &priv->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &priv->pad);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/media/i2c/s5k5baf.c b/drivers/media/i2c/s5k5baf.c
+index 774e0d0c94cb..30a9ca62e034 100644
+--- a/drivers/media/i2c/s5k5baf.c
++++ b/drivers/media/i2c/s5k5baf.c
+@@ -1905,7 +1905,7 @@ static int s5k5baf_configure_subdevs(struct s5k5b=
+af *state,
+=20
+ 	state->cis_pad.flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
+-	ret =3D media_entity_init(&sd->entity, NUM_CIS_PADS, &state->cis_pad,=
+ 0);
++	ret =3D media_entity_init(&sd->entity, NUM_CIS_PADS, &state->cis_pad)=
+;
+ 	if (ret < 0)
+ 		goto err;
+=20
+@@ -1920,7 +1920,7 @@ static int s5k5baf_configure_subdevs(struct s5k5b=
+af *state,
+ 	state->pads[PAD_CIS].flags =3D MEDIA_PAD_FL_SINK;
+ 	state->pads[PAD_OUT].flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV;
+-	ret =3D media_entity_init(&sd->entity, NUM_ISP_PADS, state->pads, 0);
++	ret =3D media_entity_init(&sd->entity, NUM_ISP_PADS, state->pads);
+=20
+ 	if (!ret)
+ 		return 0;
+diff --git a/drivers/media/i2c/s5k6a3.c b/drivers/media/i2c/s5k6a3.c
+index bc389d5e42ae..617a065bde6f 100644
+--- a/drivers/media/i2c/s5k6a3.c
++++ b/drivers/media/i2c/s5k6a3.c
+@@ -333,7 +333,7 @@ static int s5k6a3_probe(struct i2c_client *client,
+ 	sensor->format.height =3D S5K6A3_DEFAULT_HEIGHT;
+=20
+ 	sensor->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	ret =3D media_entity_init(&sd->entity, 1, &sensor->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &sensor->pad);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/i2c/s5k6aa.c b/drivers/media/i2c/s5k6aa.c
+index d0ad6a25bdab..39a461f9d9bb 100644
+--- a/drivers/media/i2c/s5k6aa.c
++++ b/drivers/media/i2c/s5k6aa.c
+@@ -1578,7 +1578,7 @@ static int s5k6aa_probe(struct i2c_client *client=
+,
+=20
+ 	s5k6aa->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+ 	sd->entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
+-	ret =3D media_entity_init(&sd->entity, 1, &s5k6aa->pad, 0);
++	ret =3D media_entity_init(&sd->entity, 1, &s5k6aa->pad);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/media/i2c/smiapp/smiapp-core.c b/drivers/media/i2c=
+/smiapp/smiapp-core.c
+index 636ebd6fe5dc..308613ea0aed 100644
+--- a/drivers/media/i2c/smiapp/smiapp-core.c
++++ b/drivers/media/i2c/smiapp/smiapp-core.c
+@@ -2488,7 +2488,7 @@ static int smiapp_register_subdevs(struct smiapp_=
+sensor *sensor)
+ 			continue;
+=20
+ 		rval =3D media_entity_init(&this->sd.entity,
+-					 this->npads, this->pads, 0);
++					 this->npads, this->pads);
+ 		if (rval) {
+ 			dev_err(&client->dev,
+ 				"media_entity_init failed\n");
+@@ -3078,7 +3078,7 @@ static int smiapp_probe(struct i2c_client *client=
+,
+=20
+ 	sensor->src->pads[0].flags =3D MEDIA_PAD_FL_SOURCE;
+ 	rval =3D media_entity_init(&sensor->src->sd.entity, 2,
+-				 sensor->src->pads, 0);
++				 sensor->src->pads);
  	if (rval < 0)
  		return rval;
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index a6464499902e..412cf5d00315 100644
+=20
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.=
+c
+index d0dd83d7a38e..39f47044af24 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -1880,7 +1880,7 @@ static int tc358743_probe(struct i2c_client *clie=
+nt,
+ 	}
+=20
+ 	state->pad.flags =3D MEDIA_PAD_FL_SOURCE;
+-	err =3D media_entity_init(&sd->entity, 1, &state->pad, 0);
++	err =3D media_entity_init(&sd->entity, 1, &state->pad);
+ 	if (err < 0)
+ 		goto err_hdl;
+=20
+diff --git a/drivers/media/i2c/tvp514x.c b/drivers/media/i2c/tvp514x.c
+index a93985a9b070..11801636d901 100644
+--- a/drivers/media/i2c/tvp514x.c
++++ b/drivers/media/i2c/tvp514x.c
+@@ -1097,7 +1097,7 @@ tvp514x_probe(struct i2c_client *client, const st=
+ruct i2c_device_id *id)
+ 	decoder->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+ 	decoder->sd.entity.flags |=3D MEDIA_ENT_T_V4L2_SUBDEV_DECODER;
+=20
+-	ret =3D media_entity_init(&decoder->sd.entity, 1, &decoder->pad, 0);
++	ret =3D media_entity_init(&decoder->sd.entity, 1, &decoder->pad);
+ 	if (ret < 0) {
+ 		v4l2_err(sd, "%s decoder driver failed to register !!\n",
+ 			 sd->name);
+diff --git a/drivers/media/i2c/tvp7002.c b/drivers/media/i2c/tvp7002.c
+index f617d8b745ee..3630f3e2a4c7 100644
+--- a/drivers/media/i2c/tvp7002.c
++++ b/drivers/media/i2c/tvp7002.c
+@@ -1014,7 +1014,7 @@ static int tvp7002_probe(struct i2c_client *c, co=
+nst struct i2c_device_id *id)
+ 	device->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+ 	device->sd.entity.flags |=3D MEDIA_ENT_T_V4L2_SUBDEV_DECODER;
+=20
+-	error =3D media_entity_init(&device->sd.entity, 1, &device->pad, 0);
++	error =3D media_entity_init(&device->sd.entity, 1, &device->pad);
+ 	if (error < 0)
+ 		return error;
+ #endif
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.=
+c
+index 6985d5c53632..e8451a4a403b 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -68,7 +68,6 @@ void graph_obj_remove(struct media_graph_obj *gobj)
+  * media_entity_init - Initialize a media entity
+  *
+  * @num_pads: Total number of sink and source pads.
+- * @extra_links: Initial estimate of the number of extra links.
+  * @pads: Array of 'num_pads' pads.
+  *
+  * The total number of pads is an intrinsic property of entities known=
+ by the
+@@ -90,10 +89,10 @@ void graph_obj_remove(struct media_graph_obj *gobj)
+  */
+ int
+ media_entity_init(struct media_entity *entity, u16 num_pads,
+-		  struct media_pad *pads, u16 extra_links)
++		  struct media_pad *pads)
+ {
+ 	struct media_link *links;
+-	unsigned int max_links =3D num_pads + extra_links;
++	unsigned int max_links =3D num_pads;
+ 	unsigned int i;
+=20
+ 	links =3D kzalloc(max_links * sizeof(links[0]), GFP_KERNEL);
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers=
+/media/platform/exynos4-is/fimc-capture.c
+index cfebf292e15a..0627a93b2f3b 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -1804,7 +1804,7 @@ static int fimc_register_capture_device(struct fi=
+mc_dev *fimc,
+ 	vid_cap->wb_fmt.code =3D fmt->mbus_code;
+=20
+ 	vid_cap->vd_pad.flags =3D MEDIA_PAD_FL_SINK;
+-	ret =3D media_entity_init(&vfd->entity, 1, &vid_cap->vd_pad, 0);
++	ret =3D media_entity_init(&vfd->entity, 1, &vid_cap->vd_pad);
+ 	if (ret)
+ 		goto err_free_ctx;
+=20
+@@ -1897,7 +1897,7 @@ int fimc_initialize_capture_subdev(struct fimc_de=
+v *fimc)
+ 	fimc->vid_cap.sd_pads[FIMC_SD_PAD_SINK_FIFO].flags =3D MEDIA_PAD_FL_S=
+INK;
+ 	fimc->vid_cap.sd_pads[FIMC_SD_PAD_SOURCE].flags =3D MEDIA_PAD_FL_SOUR=
+CE;
+ 	ret =3D media_entity_init(&sd->entity, FIMC_SD_PADS_NUM,
+-				fimc->vid_cap.sd_pads, 0);
++				fimc->vid_cap.sd_pads);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drive=
+rs/media/platform/exynos4-is/fimc-isp-video.c
+index 76b6b4d14616..b7dc5ac66e36 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -618,7 +618,7 @@ int fimc_isp_video_device_register(struct fimc_isp =
+*isp,
+ 	vdev->lock =3D &isp->video_lock;
+=20
+ 	iv->pad.flags =3D MEDIA_PAD_FL_SINK;
+-	ret =3D media_entity_init(&vdev->entity, 1, &iv->pad, 0);
++	ret =3D media_entity_init(&vdev->entity, 1, &iv->pad);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/med=
+ia/platform/exynos4-is/fimc-isp.c
+index 5d78f5716f3b..f52eebf765c1 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+@@ -709,7 +709,7 @@ int fimc_isp_subdev_create(struct fimc_isp *isp)
+ 	isp->subdev_pads[FIMC_ISP_SD_PAD_SRC_FIFO].flags =3D MEDIA_PAD_FL_SOU=
+RCE;
+ 	isp->subdev_pads[FIMC_ISP_SD_PAD_SRC_DMA].flags =3D MEDIA_PAD_FL_SOUR=
+CE;
+ 	ret =3D media_entity_init(&sd->entity, FIMC_ISP_SD_PADS_NUM,
+-				isp->subdev_pads, 0);
++				isp->subdev_pads);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/me=
+dia/platform/exynos4-is/fimc-lite.c
+index ca6261a86a5f..e8f707d1729b 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -1322,7 +1322,7 @@ static int fimc_lite_subdev_registered(struct v4l=
+2_subdev *sd)
+ 		return ret;
+=20
+ 	fimc->vd_pad.flags =3D MEDIA_PAD_FL_SINK;
+-	ret =3D media_entity_init(&vfd->entity, 1, &fimc->vd_pad, 0);
++	ret =3D media_entity_init(&vfd->entity, 1, &fimc->vd_pad);
+ 	if (ret < 0)
+ 		return ret;
+=20
+@@ -1437,7 +1437,7 @@ static int fimc_lite_create_capture_subdev(struct=
+ fimc_lite *fimc)
+ 	fimc->subdev_pads[FLITE_SD_PAD_SOURCE_DMA].flags =3D MEDIA_PAD_FL_SOU=
+RCE;
+ 	fimc->subdev_pads[FLITE_SD_PAD_SOURCE_ISP].flags =3D MEDIA_PAD_FL_SOU=
+RCE;
+ 	ret =3D media_entity_init(&sd->entity, FLITE_SD_PADS_NUM,
+-				fimc->subdev_pads, 0);
++				fimc->subdev_pads);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/med=
+ia/platform/exynos4-is/fimc-m2m.c
+index 0ad1b6f84a27..b57daec48b21 100644
+--- a/drivers/media/platform/exynos4-is/fimc-m2m.c
++++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
+@@ -738,7 +738,7 @@ int fimc_register_m2m_device(struct fimc_dev *fimc,
+ 		return PTR_ERR(fimc->m2m.m2m_dev);
+ 	}
+=20
+-	ret =3D media_entity_init(&vfd->entity, 0, NULL, 0);
++	ret =3D media_entity_init(&vfd->entity, 0, NULL);
+ 	if (ret)
+ 		goto err_me;
+=20
+diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/me=
+dia/platform/exynos4-is/mipi-csis.c
+index d74e1bec3d86..cf10cd783a86 100644
+--- a/drivers/media/platform/exynos4-is/mipi-csis.c
++++ b/drivers/media/platform/exynos4-is/mipi-csis.c
+@@ -866,7 +866,7 @@ static int s5pcsis_probe(struct platform_device *pd=
+ev)
+ 	state->pads[CSIS_PAD_SINK].flags =3D MEDIA_PAD_FL_SINK;
+ 	state->pads[CSIS_PAD_SOURCE].flags =3D MEDIA_PAD_FL_SOURCE;
+ 	ret =3D media_entity_init(&state->sd.entity,
+-				CSIS_PADS_NUM, state->pads, 0);
++				CSIS_PADS_NUM, state->pads);
+ 	if (ret < 0)
+ 		goto e_clkdis;
+=20
+diff --git a/drivers/media/platform/omap3isp/ispccdc.c b/drivers/media/=
+platform/omap3isp/ispccdc.c
+index a6a61cce43dd..3b10304b580b 100644
+--- a/drivers/media/platform/omap3isp/ispccdc.c
++++ b/drivers/media/platform/omap3isp/ispccdc.c
+@@ -2650,7 +2650,7 @@ static int ccdc_init_entities(struct isp_ccdc_dev=
+ice *ccdc)
+ 	pads[CCDC_PAD_SOURCE_OF].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	me->ops =3D &ccdc_media_ops;
+-	ret =3D media_entity_init(me, CCDC_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, CCDC_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/omap3isp/ispccp2.c b/drivers/media/=
+platform/omap3isp/ispccp2.c
+index 38e6a974c5b1..e1b5f5bea541 100644
+--- a/drivers/media/platform/omap3isp/ispccp2.c
++++ b/drivers/media/platform/omap3isp/ispccp2.c
+@@ -1071,7 +1071,7 @@ static int ccp2_init_entities(struct isp_ccp2_dev=
+ice *ccp2)
+ 	pads[CCP2_PAD_SOURCE].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	me->ops =3D &ccp2_media_ops;
+-	ret =3D media_entity_init(me, CCP2_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, CCP2_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/omap3isp/ispcsi2.c b/drivers/media/=
+platform/omap3isp/ispcsi2.c
+index a78338d012b4..6fff92f0813a 100644
+--- a/drivers/media/platform/omap3isp/ispcsi2.c
++++ b/drivers/media/platform/omap3isp/ispcsi2.c
+@@ -1245,7 +1245,7 @@ static int csi2_init_entities(struct isp_csi2_dev=
+ice *csi2)
+ 				    | MEDIA_PAD_FL_MUST_CONNECT;
+=20
+ 	me->ops =3D &csi2_media_ops;
+-	ret =3D media_entity_init(me, CSI2_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, CSI2_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/omap3isp/isppreview.c b/drivers/med=
+ia/platform/omap3isp/isppreview.c
+index 13803270d104..b440c6342ca4 100644
+--- a/drivers/media/platform/omap3isp/isppreview.c
++++ b/drivers/media/platform/omap3isp/isppreview.c
+@@ -2282,7 +2282,7 @@ static int preview_init_entities(struct isp_prev_=
+device *prev)
+ 	pads[PREV_PAD_SOURCE].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	me->ops =3D &preview_media_ops;
+-	ret =3D media_entity_init(me, PREV_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, PREV_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/omap3isp/ispresizer.c b/drivers/med=
+ia/platform/omap3isp/ispresizer.c
+index 7cfb43dc0ffd..3deb1ec4a973 100644
+--- a/drivers/media/platform/omap3isp/ispresizer.c
++++ b/drivers/media/platform/omap3isp/ispresizer.c
+@@ -1728,7 +1728,7 @@ static int resizer_init_entities(struct isp_res_d=
+evice *res)
+ 	pads[RESZ_PAD_SOURCE].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	me->ops =3D &resizer_media_ops;
+-	ret =3D media_entity_init(me, RESZ_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, RESZ_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/=
+platform/omap3isp/ispstat.c
+index 20434e83e801..92a31dd28ace 100644
+--- a/drivers/media/platform/omap3isp/ispstat.c
++++ b/drivers/media/platform/omap3isp/ispstat.c
+@@ -1029,7 +1029,7 @@ static int isp_stat_init_entities(struct ispstat =
+*stat, const char *name,
+ 	stat->pad.flags =3D MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_MUST_CONNECT;
+ 	me->ops =3D NULL;
+=20
+-	return media_entity_init(me, 1, &stat->pad, 0);
++	return media_entity_init(me, 1, &stat->pad);
+ }
+=20
+ int omap3isp_stat_init(struct ispstat *stat, const char *name,
+diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media=
+/platform/omap3isp/ispvideo.c
+index d285af18df7f..1809e52d2df9 100644
+--- a/drivers/media/platform/omap3isp/ispvideo.c
++++ b/drivers/media/platform/omap3isp/ispvideo.c
+@@ -1368,7 +1368,7 @@ int omap3isp_video_init(struct isp_video *video, =
+const char *name)
+ 	if (IS_ERR(video->alloc_ctx))
+ 		return PTR_ERR(video->alloc_ctx);
+=20
+-	ret =3D media_entity_init(&video->video.entity, 1, &video->pad, 0);
++	ret =3D media_entity_init(&video->video.entity, 1, &video->pad);
+ 	if (ret < 0) {
+ 		vb2_dma_contig_cleanup_ctx(video->alloc_ctx);
+ 		return ret;
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers=
+/media/platform/s3c-camif/camif-capture.c
+index 76e6289a5612..eae667eab1b9 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -1159,7 +1159,7 @@ int s3c_camif_register_video_node(struct camif_de=
+v *camif, int idx)
+ 		goto err_vd_rel;
+=20
+ 	vp->pad.flags =3D MEDIA_PAD_FL_SINK;
+-	ret =3D media_entity_init(&vfd->entity, 1, &vp->pad, 0);
++	ret =3D media_entity_init(&vfd->entity, 1, &vp->pad);
+ 	if (ret)
+ 		goto err_vd_rel;
+=20
+@@ -1575,7 +1575,7 @@ int s3c_camif_create_subdev(struct camif_dev *cam=
+if)
+ 	camif->pads[CAMIF_SD_PAD_SOURCE_P].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	ret =3D media_entity_init(&sd->entity, CAMIF_SD_PADS_NUM,
+-				camif->pads, 0);
++				camif->pads);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/=
+platform/vsp1/vsp1_entity.c
+index fd95a75b04f4..619942ff2058 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/vsp1/vsp1_entity.c
+@@ -220,7 +220,7 @@ int vsp1_entity_init(struct vsp1_device *vsp1, stru=
+ct vsp1_entity *entity,
+=20
+ 	/* Initialize the media entity. */
+ 	return media_entity_init(&entity->subdev.entity, num_pads,
+-				 entity->pads, 0);
++				 entity->pads);
+ }
+=20
+ void vsp1_entity_destroy(struct vsp1_entity *entity)
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/p=
+latform/vsp1/vsp1_video.c
+index 3c124c14ce14..17f08973f835 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -1221,7 +1221,7 @@ int vsp1_video_init(struct vsp1_video *video, str=
+uct vsp1_entity *rwpf)
+ 	video->pipe.state =3D VSP1_PIPELINE_STOPPED;
+=20
+ 	/* Initialize the media entity... */
+-	ret =3D media_entity_init(&video->video.entity, 1, &video->pad, 0);
++	ret =3D media_entity_init(&video->video.entity, 1, &video->pad);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media=
+/platform/xilinx/xilinx-dma.c
+index e779c93cb015..f7f9aa353a55 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -676,7 +676,7 @@ int xvip_dma_init(struct xvip_composite_device *xde=
+v, struct xvip_dma *dma,
+ 	dma->pad.flags =3D type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE
+ 		       ? MEDIA_PAD_FL_SINK : MEDIA_PAD_FL_SOURCE;
+=20
+-	ret =3D media_entity_init(&dma->video.entity, 1, &dma->pad, 0);
++	ret =3D media_entity_init(&dma->video.entity, 1, &dma->pad);
+ 	if (ret < 0)
+ 		goto error;
+=20
+diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media=
+/platform/xilinx/xilinx-tpg.c
+index b5f7d5ecb7f6..285976aa0f4d 100644
+--- a/drivers/media/platform/xilinx/xilinx-tpg.c
++++ b/drivers/media/platform/xilinx/xilinx-tpg.c
+@@ -836,7 +836,7 @@ static int xtpg_probe(struct platform_device *pdev)
+ 	subdev->flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+ 	subdev->entity.ops =3D &xtpg_media_ops;
+=20
+-	ret =3D media_entity_init(&subdev->entity, xtpg->npads, xtpg->pads, 0=
+);
++	ret =3D media_entity_init(&subdev->entity, xtpg->npads, xtpg->pads);
+ 	if (ret < 0)
+ 		goto error;
+=20
+diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/=
+usb/cx231xx/cx231xx-video.c
+index c6ff8968286a..8f04b125486f 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-video.c
++++ b/drivers/media/usb/cx231xx/cx231xx-video.c
+@@ -2175,7 +2175,7 @@ int cx231xx_register_analog_devices(struct cx231x=
+x *dev)
+ 	cx231xx_vdev_init(dev, &dev->vdev, &cx231xx_video_template, "video");
+ #if defined(CONFIG_MEDIA_CONTROLLER)
+ 	dev->video_pad.flags =3D MEDIA_PAD_FL_SINK;
+-	ret =3D media_entity_init(&dev->vdev.entity, 1, &dev->video_pad, 0);
++	ret =3D media_entity_init(&dev->vdev.entity, 1, &dev->video_pad);
+ 	if (ret < 0)
+ 		dev_err(dev->dev, "failed to initialize video media entity!\n");
+ #endif
+@@ -2202,7 +2202,7 @@ int cx231xx_register_analog_devices(struct cx231x=
+x *dev)
+=20
+ #if defined(CONFIG_MEDIA_CONTROLLER)
+ 	dev->vbi_pad.flags =3D MEDIA_PAD_FL_SINK;
+-	ret =3D media_entity_init(&dev->vbi_dev.entity, 1, &dev->vbi_pad, 0);
++	ret =3D media_entity_init(&dev->vbi_dev.entity, 1, &dev->vbi_pad);
+ 	if (ret < 0)
+ 		dev_err(dev->dev, "failed to initialize vbi media entity!\n");
+ #endif
+diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc=
+/uvc_entity.c
+index dc56a59ecadc..245445491516 100644
+--- a/drivers/media/usb/uvc/uvc_entity.c
++++ b/drivers/media/usb/uvc/uvc_entity.c
+@@ -89,10 +89,10 @@ static int uvc_mc_init_entity(struct uvc_entity *en=
+tity)
+ 			sizeof(entity->subdev.name));
+=20
+ 		ret =3D media_entity_init(&entity->subdev.entity,
+-					entity->num_pads, entity->pads, 0);
++					entity->num_pads, entity->pads);
+ 	} else if (entity->vdev !=3D NULL) {
+ 		ret =3D media_entity_init(&entity->vdev->entity,
+-					entity->num_pads, entity->pads, 0);
++					entity->num_pads, entity->pads);
+ 		if (entity->flags & UVC_ENTITY_FLAG_DEFAULT)
+ 			entity->vdev->entity.flags |=3D MEDIA_ENT_FL_DEFAULT;
+ 	} else
+diff --git a/drivers/media/v4l2-core/tuner-core.c b/drivers/media/v4l2-=
+core/tuner-core.c
+index abdcffabcb59..0ccf9a903e1e 100644
+--- a/drivers/media/v4l2-core/tuner-core.c
++++ b/drivers/media/v4l2-core/tuner-core.c
+@@ -699,7 +699,7 @@ register_client:
+ 	t->sd.entity.type =3D MEDIA_ENT_T_V4L2_SUBDEV_TUNER;
+ 	t->sd.entity.name =3D t->name;
+=20
+-	ret =3D media_entity_init(&t->sd.entity, 1, &t->pad, 0);
++	ret =3D media_entity_init(&t->sd.entity, 1, &t->pad);
+ 	if (ret < 0) {
+ 		tuner_err("failed to initialize media entity!\n");
+ 		kfree(t);
+diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/m=
+edia/v4l2-core/v4l2-flash-led-class.c
+index 5bdfb8d5263a..34c489fed55e 100644
+--- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
++++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+@@ -651,7 +651,7 @@ struct v4l2_flash *v4l2_flash_init(
+ 	sd->flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+ 	strlcpy(sd->name, config->dev_name, sizeof(sd->name));
+=20
+-	ret =3D media_entity_init(&sd->entity, 0, NULL, 0);
++	ret =3D media_entity_init(&sd->entity, 0, NULL);
+ 	if (ret < 0)
+ 		return ERR_PTR(ret);
+=20
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers=
+/staging/media/davinci_vpfe/dm365_ipipe.c
+index 1bbb90ce0086..b89a057b8b7e 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -1839,7 +1839,7 @@ vpfe_ipipe_init(struct vpfe_ipipe_device *ipipe, =
+struct platform_device *pdev)
+ 	v4l2_ctrl_handler_setup(&ipipe->ctrls);
+ 	sd->ctrl_handler =3D &ipipe->ctrls;
+=20
+-	return media_entity_init(me, IPIPE_PADS_NUM, pads, 0);
++	return media_entity_init(me, IPIPE_PADS_NUM, pads);
+ }
+=20
+ /*
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c b/drive=
+rs/staging/media/davinci_vpfe/dm365_ipipeif.c
+index 8b230541b1d1..8fb676186898 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c
+@@ -1026,7 +1026,7 @@ int vpfe_ipipeif_init(struct vpfe_ipipeif_device =
+*ipipeif,
+ 	ipipeif->output =3D IPIPEIF_OUTPUT_NONE;
+ 	me->ops =3D &ipipeif_media_ops;
+=20
+-	ret =3D media_entity_init(me, IPIPEIF_NUM_PADS, pads, 0);
++	ret =3D media_entity_init(me, IPIPEIF_NUM_PADS, pads);
+ 	if (ret)
+ 		goto fail;
+=20
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_isif.c b/drivers/=
+staging/media/davinci_vpfe/dm365_isif.c
+index 80907b464412..b1f01adfa7c8 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_isif.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_isif.c
+@@ -2052,7 +2052,7 @@ int vpfe_isif_init(struct vpfe_isif_device *isif,=
+ struct platform_device *pdev)
+ 	isif->input =3D ISIF_INPUT_NONE;
+ 	isif->output =3D ISIF_OUTPUT_NONE;
+ 	me->ops =3D &isif_media_ops;
+-	status =3D media_entity_init(me, ISIF_PADS_NUM, pads, 0);
++	status =3D media_entity_init(me, ISIF_PADS_NUM, pads);
+ 	if (status)
+ 		goto isif_fail;
+ 	isif->video_out.type =3D V4L2_BUF_TYPE_VIDEO_CAPTURE;
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drive=
+rs/staging/media/davinci_vpfe/dm365_resizer.c
+index acb293ed9c91..692789aa22f4 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+@@ -1915,7 +1915,7 @@ int vpfe_resizer_init(struct vpfe_resizer_device =
+*vpfe_rsz,
+ 	vpfe_rsz->crop_resizer.output2 =3D RESIZER_CROP_OUTPUT_NONE;
+ 	vpfe_rsz->crop_resizer.rsz_device =3D vpfe_rsz;
+ 	me->ops =3D &resizer_media_ops;
+-	ret =3D media_entity_init(me, RESIZER_CROP_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, RESIZER_CROP_PADS_NUM, pads);
+ 	if (ret)
+ 		return ret;
+=20
+@@ -1937,7 +1937,7 @@ int vpfe_resizer_init(struct vpfe_resizer_device =
+*vpfe_rsz,
+ 	vpfe_rsz->resizer_a.output =3D RESIZER_OUTPUT_NONE;
+ 	vpfe_rsz->resizer_a.rsz_device =3D vpfe_rsz;
+ 	me->ops =3D &resizer_media_ops;
+-	ret =3D media_entity_init(me, RESIZER_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, RESIZER_PADS_NUM, pads);
+ 	if (ret)
+ 		return ret;
+=20
+@@ -1959,7 +1959,7 @@ int vpfe_resizer_init(struct vpfe_resizer_device =
+*vpfe_rsz,
+ 	vpfe_rsz->resizer_b.output =3D RESIZER_OUTPUT_NONE;
+ 	vpfe_rsz->resizer_b.rsz_device =3D vpfe_rsz;
+ 	me->ops =3D &resizer_media_ops;
+-	ret =3D media_entity_init(me, RESIZER_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, RESIZER_PADS_NUM, pads);
+ 	if (ret)
+ 		return ret;
+=20
+diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/=
+staging/media/davinci_vpfe/vpfe_video.c
+index 87048a14c34d..61a8d5beff58 100644
+--- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
++++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+@@ -1594,7 +1594,7 @@ int vpfe_video_init(struct vpfe_video_device *vid=
+eo, const char *name)
+ 	spin_lock_init(&video->dma_queue_lock);
+ 	mutex_init(&video->lock);
+ 	ret =3D media_entity_init(&video->video_dev.entity,
+-				1, &video->pad, 0);
++				1, &video->pad);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/staging/media/omap4iss/iss_csi2.c b/drivers/stagin=
+g/media/omap4iss/iss_csi2.c
+index bc83f8246101..e936cfc218cb 100644
+--- a/drivers/staging/media/omap4iss/iss_csi2.c
++++ b/drivers/staging/media/omap4iss/iss_csi2.c
+@@ -1271,7 +1271,7 @@ static int csi2_init_entities(struct iss_csi2_dev=
+ice *csi2, const char *subname)
+ 	pads[CSI2_PAD_SINK].flags =3D MEDIA_PAD_FL_SINK;
+=20
+ 	me->ops =3D &csi2_media_ops;
+-	ret =3D media_entity_init(me, CSI2_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, CSI2_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/staging/media/omap4iss/iss_ipipe.c b/drivers/stagi=
+ng/media/omap4iss/iss_ipipe.c
+index f94a59299a83..e1a7b7ba7362 100644
+--- a/drivers/staging/media/omap4iss/iss_ipipe.c
++++ b/drivers/staging/media/omap4iss/iss_ipipe.c
+@@ -513,7 +513,7 @@ static int ipipe_init_entities(struct iss_ipipe_dev=
+ice *ipipe)
+ 	pads[IPIPE_PAD_SOURCE_VP].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	me->ops =3D &ipipe_media_ops;
+-	ret =3D media_entity_init(me, IPIPE_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, IPIPE_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/staging/media/omap4iss/iss_ipipeif.c b/drivers/sta=
+ging/media/omap4iss/iss_ipipeif.c
+index c0da13d55865..be5f80d7b5dc 100644
+--- a/drivers/staging/media/omap4iss/iss_ipipeif.c
++++ b/drivers/staging/media/omap4iss/iss_ipipeif.c
+@@ -743,7 +743,7 @@ static int ipipeif_init_entities(struct iss_ipipeif=
+_device *ipipeif)
+ 	pads[IPIPEIF_PAD_SOURCE_VP].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	me->ops =3D &ipipeif_media_ops;
+-	ret =3D media_entity_init(me, IPIPEIF_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, IPIPEIF_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/staging/media/omap4iss/iss_resizer.c b/drivers/sta=
+ging/media/omap4iss/iss_resizer.c
+index 5030cf3cd34c..91e724085dba 100644
+--- a/drivers/staging/media/omap4iss/iss_resizer.c
++++ b/drivers/staging/media/omap4iss/iss_resizer.c
+@@ -787,7 +787,7 @@ static int resizer_init_entities(struct iss_resizer=
+_device *resizer)
+ 	pads[RESIZER_PAD_SOURCE_MEM].flags =3D MEDIA_PAD_FL_SOURCE;
+=20
+ 	me->ops =3D &resizer_media_ops;
+-	ret =3D media_entity_init(me, RESIZER_PADS_NUM, pads, 0);
++	ret =3D media_entity_init(me, RESIZER_PADS_NUM, pads);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/stagi=
+ng/media/omap4iss/iss_video.c
+index 40405d8710a6..bae67742706f 100644
+--- a/drivers/staging/media/omap4iss/iss_video.c
++++ b/drivers/staging/media/omap4iss/iss_video.c
+@@ -1104,7 +1104,7 @@ int omap4iss_video_init(struct iss_video *video, =
+const char *name)
+ 		return -EINVAL;
+ 	}
+=20
+-	ret =3D media_entity_init(&video->video.entity, 1, &video->pad, 0);
++	ret =3D media_entity_init(&video->video.entity, 1, &video->pad);
+ 	if (ret < 0)
+ 		return ret;
+=20
+diff --git a/include/media/media-entity.h b/include/media/media-entity.=
+h
+index 738e1d5d25dc..be6885e7c8ed 100644
 --- a/include/media/media-entity.h
 +++ b/include/media/media-entity.h
-@@ -87,12 +87,12 @@ struct media_link {
- 	enum media_graph_link_dir	dir;
- 	union {
- 		struct media_graph_obj *port0;
--		struct media_pad *source;
-+		struct media_pad *pad0_source;
- 		struct media_interface *port0_intf;
- 	};
- 	union {
- 		struct media_graph_obj *port1;
--		struct media_pad *sink;
-+		struct media_pad *pad1_sink;
- 		struct media_entity *port1_entity;
- 	};
- 	struct media_link *reverse;	/* Link in the reverse direction */
--- 
+@@ -177,7 +177,7 @@ void graph_obj_init(struct media_device *mdev,
+ void graph_obj_remove(struct media_graph_obj *gobj);
+=20
+ int media_entity_init(struct media_entity *entity, u16 num_pads,
+-		struct media_pad *pads, u16 extra_links);
++		struct media_pad *pads);
+ void media_entity_cleanup(struct media_entity *entity);
+=20
+ int media_entity_create_link(struct media_entity *source, u16 source_p=
+ad,
+--=20
 2.4.3
