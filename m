@@ -1,116 +1,34 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 3/4] mfd: Add DT binding for Maxim MAX77802 IC
-Date: Tue, 11 Aug 2015 17:25:21 +0200
-Message-ID: <55CA13E1.9090403@osg.samsung.com>
-References: <1438252327-28427-1-git-send-email-javier@osg.samsung.com>
- <1438252327-28427-4-git-send-email-javier@osg.samsung.com>
- <20150811114736.GB18282@x1>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/4] rtc: s3c: add missing clk control
+Date: Wed, 12 Aug 2015 09:06:29 +0900
+Message-ID: <55CA8E05.1000704@samsung.com>
+References: <1439292502-22912-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:57189 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965062AbbHKPZ2 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:15616 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932265AbbHLAGe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Aug 2015 11:25:28 -0400
-In-Reply-To: <20150811114736.GB18282@x1>
+	Tue, 11 Aug 2015 20:06:34 -0400
+In-reply-to: <1439292502-22912-1-git-send-email-jy0922.shim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>, rtc-linux@googlegroups.com
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, cw00.choi@samsung.com
 
-Hello Lee,
+On 11.08.2015 20:28, Joonyoung Shim wrote:
+> It's missed to call clk_unprepare() about info->rtc_src_clk in
+> s3c_rtc_remove and to call clk_disable_unprepare about info->rtc_clk in
+> error routine of s3c_rtc_probe.
+> 
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> ---
+>  drivers/rtc/rtc-s3c.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-On 08/11/2015 01:47 PM, Lee Jones wrote:
-> On Thu, 30 Jul 2015, Javier Martinez Canillas wrote:
-> 
->> The MAX77802 is a chip that contains regulators, 2 32kHz clocks,
->> a RTC and an I2C interface to program the individual components.
->>
->> The are already DT bindings for the regulators and clocks and
->> these reference to a bindings/mfd/max77802.txt file, that didn't
->> exist, for the details about the PMIC.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
->> ---
->>
->> Changes in v3:
->> - Add Krzysztof Kozlowski Reviewed-by tag to patch #3.
->> - Capitalise all acronyms. Suggested by Lee Jones.
->> - Use relative path to refer other bindings. Suggested by Lee Jones.
->> - Use IRQ_TYPE_NONE instead of 0 in example. Suggested by Lee Jones.
->>
->> Changes in v2:
->> - Use the correct "maxim,max77802" compatible string.
->>   Suggested by Krzysztof Kozlowski
->> - Use a pmic generic node name for the max77802 node example.
->>   Suggested by Sergei Shtylyov.
->>
->>  Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
->> new file mode 100644
->> index 000000000000..911ec5fcaefd
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/max77802.txt
->> @@ -0,0 +1,26 @@
->> +Maxim MAX77802 multi-function device
->> +
->> +The Maxim MAX77802 is a Power Management IC (PMIC) that contains 10 high
->> +efficiency Buck regulators, 32 Low-DropOut (LDO) regulators used to power
->> +up application processors and peripherals, a 2-channel 32kHz clock outputs,
->> +a Real-Time-Clock (RTC) and a I2C interface to program the individual
->> +regulators, clocks outputs and the RTC.
->> +
->> +Binding for the built-in 32k clock generator block is defined separately
->> +in the ../clk/maxim,max77802.txt file and binding for the regulators
->> +is defined in the ../regulator/max77802.txt file.
-> 
->   "Bindings for the built-in 32k clock generator block and
->    regulators are defined in ../clk/maxim,max77802.txt and
->    ../regulator/max77802.txt respectively."
-> 
->> +Required properties:
->> +- compatible : Must be "maxim,max77802";
-> 
-> ';' ?
->
-
-err... I've no idea how that ended there. It seems I didn't completely
-context switch from coding :-)
- 
->> +- reg : Specifies the I2C slave address of PMIC block.
->> +- interrupts : This I2C device has an IRQ line connected to the main SoC.
->> +- interrupt-parent : The parent interrupt controller.
-> 
-> I always find this easier on the eye when you:
->
-> Required properties:
-> - compatible		: Must be "maxim,max77802"
-> - reg			: Specifies the I2C slave address of PMIC block.
-> - interrupts		: This I2C device has an IRQ line connected to the main SoC.
-> - interrupt-parent	: The parent interrupt controller.
->
-
-Ok, I'll wait for Mark's feedback and repost with your suggestions. Thanks!
-
->> +Example:
->> +
->> +	max77802: pmic@09 {
->> +		compatible = "maxim,max77802";
->> +		interrupt-parent = <&intc>;
->> +		interrupts = <26 IRQ_TYPE_NONE>;
->> +		reg = <0x09>;
->> +	};
-> 
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
