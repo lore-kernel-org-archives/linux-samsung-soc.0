@@ -1,55 +1,91 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos4*: add iommu property to JPEG device
-Date: Wed, 12 Aug 2015 12:14:45 +0200
-Message-ID: <55CB1C95.8020309@osg.samsung.com>
-References: <1439372399-20033-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:57318 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754877AbbHLKOu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Aug 2015 06:14:50 -0400
-In-Reply-To: <1439372399-20033-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH v2] rtc: s3c: fix disabled clocks for alarm
+Date: Wed, 12 Aug 2015 19:21:46 +0900
+Message-ID: <1439374906-27841-1-git-send-email-jy0922.shim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rtc-linux@googlegroups.com
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, cw00.choi@samsung.com, k.kozlowski@samsung.com, jy0922.shim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hello Marek,
+The clock enable/disable codes for alarm have been removed from
+commit 24e1455493da ("drivers/rtc/rtc-s3c.c: delete duplicate clock
+control") and the clocks are disabled even if alarm is set, so alarm
+interrupt can't happen.
 
-On 08/12/2015 11:39 AM, Marek Szyprowski wrote:
-> JPEG codec node has been added in parallel to the patch, which added
-> support for IOMMU to Exynos platform, so JPEG device for Exynos4 series
-> lacked IOMMU property. This patch fixes this issue.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index b0d52b1..98c0a36 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -702,6 +702,7 @@
->  		clocks = <&clock CLK_JPEG>;
->  		clock-names = "jpeg";
->  		power-domains = <&pd_cam>;
-> +		iommus = <&sysmmu_jpeg>;
->  	};
->  
->  	hdmi: hdmi@12D00000 {
-> 
+The s3c_rtc_setaie function can be called several times with 'enabled'
+argument having same value, so it needs to check whether clocks are
+enabled or not.
 
-Looks good to me.
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: <stable@vger.kernel.org> # v4.1
+---
+This is v2 of prior patch "[PATCH 4/4] rtc: s3c: enable/disable clocks
+for alarm".
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Changelog for v2:
+- commit messages is modified by Krzysztof suggestion
+- make to backportable patch
+- add Cc-stable
 
-Best regards,
+ drivers/rtc/rtc-s3c.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 44b2921..7cc8f73 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -39,6 +39,7 @@ struct s3c_rtc {
+ 	void __iomem *base;
+ 	struct clk *rtc_clk;
+ 	struct clk *rtc_src_clk;
++	bool clk_disabled;
+ 
+ 	struct s3c_rtc_data *data;
+ 
+@@ -71,9 +72,12 @@ static void s3c_rtc_enable_clk(struct s3c_rtc *info)
+ 	unsigned long irq_flags;
+ 
+ 	spin_lock_irqsave(&info->alarm_clk_lock, irq_flags);
+-	clk_enable(info->rtc_clk);
+-	if (info->data->needs_src_clk)
+-		clk_enable(info->rtc_src_clk);
++	if (info->clk_disabled) {
++		clk_enable(info->rtc_clk);
++		if (info->data->needs_src_clk)
++			clk_enable(info->rtc_src_clk);
++		info->clk_disabled = false;
++	}
+ 	spin_unlock_irqrestore(&info->alarm_clk_lock, irq_flags);
+ }
+ 
+@@ -82,9 +86,12 @@ static void s3c_rtc_disable_clk(struct s3c_rtc *info)
+ 	unsigned long irq_flags;
+ 
+ 	spin_lock_irqsave(&info->alarm_clk_lock, irq_flags);
+-	if (info->data->needs_src_clk)
+-		clk_disable(info->rtc_src_clk);
+-	clk_disable(info->rtc_clk);
++	if (!info->clk_disabled) {
++		if (info->data->needs_src_clk)
++			clk_disable(info->rtc_src_clk);
++		clk_disable(info->rtc_clk);
++		info->clk_disabled = true;
++	}
+ 	spin_unlock_irqrestore(&info->alarm_clk_lock, irq_flags);
+ }
+ 
+@@ -128,6 +135,11 @@ static int s3c_rtc_setaie(struct device *dev, unsigned int enabled)
+ 
+ 	s3c_rtc_disable_clk(info);
+ 
++	if (enabled)
++		s3c_rtc_enable_clk(info);
++	else
++		s3c_rtc_disable_clk(info);
++
+ 	return 0;
+ }
+ 
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
