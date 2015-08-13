@@ -1,36 +1,52 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH RESEND v6 2/3] ARM: dts: Add pwm-fan node to the Odroid-U3
- board
-Date: Thu, 13 Aug 2015 09:35:53 +0900
-Message-ID: <55CBE669.6040109@samsung.com>
-References: <1425470624-25793-1-git-send-email-l.majewski@samsung.com>
- <1439298899-17645-1-git-send-email-l.majewski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos4412-odroidu3: Enable SPI1.
+Date: Thu, 13 Aug 2015 09:38:10 +0900
+Message-ID: <55CBE6F2.9030405@samsung.com>
+References: <1439378871-28117-1-git-send-email-aballier@gentoo.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1439298899-17645-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:8776 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750953AbbHMAiP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Aug 2015 20:38:15 -0400
+In-reply-to: <1439378871-28117-1-git-send-email-aballier@gentoo.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alexis Ballier <aballier@gentoo.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11.08.2015 22:14, Lukasz Majewski wrote:
-> From: Kamil Debski <k.debski@samsung.com>
+On 12.08.2015 20:27, Alexis Ballier wrote:
+> SPI1 is available on IO Port #2 (as depicted on their website) in
+> PCB Revision 0.5 of Hardkernel Odroid U3 board.
+> The shield connects a 256KiB spi-nor flash on that bus.
 > 
-> Add pwm-fan node to the Odroid-U3 board file to enable PWM control of the
-> cooling fan. In addition, add the "pwm" label to the pwm@139D0000 node
-> in the exynos4412.dtsi.
-> 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Alexis Ballier <aballier@gentoo.org>
 > ---
->  arch/arm/boot/dts/exynos4412-odroidu3.dts | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
+> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> index 44684e5..37698e4 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> @@ -61,3 +61,10 @@
+>  		"Speakers", "SPKL",
+>  		"Speakers", "SPKR";
+>  };
+> +
+> +&spi_1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&spi1_bus>;
+> +	cs-gpios = <&gpb 5 0>;
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Please use GPIO_ACTIVE_HIGH.
 
 Best regards,
 Krzysztof
 
+> +	status = "okay";
+> +};
+> 
