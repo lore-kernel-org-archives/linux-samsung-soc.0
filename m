@@ -1,69 +1,63 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v2] Remove unselectable rule for arm-exynos-cpufreq.o
-Date: Thu, 13 Aug 2015 22:01:23 +0900
-Message-ID: <00c701d0d5c8$28186fd0$78494f70$@kernel.org>
-References: <1439461941-13953-1-git-send-email-jonas.rabenstein@studium.uni-erlangen.de>
- <1439465318-18108-1-git-send-email-jonas.rabenstein@studium.uni-erlangen.de>
- <20150813113300.GU20238@linux>
- <CAJKOXPcxk3J0vmczJ7eOtUhzKxQW0Za0ZmgUAdX=jiT+eRxyKw@mail.gmail.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
+Date: Thu, 13 Aug 2015 09:40:07 -0700
+Message-ID: <CAL1qeaE-UJD3CBx=6feF=Hu4=gu5AtQiWwQAZmbg+6qYLhOy2Q@mail.gmail.com>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
+	<1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44483 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751373AbbHMNB0 (ORCPT
+Received: from mail-io0-f170.google.com ([209.85.223.170]:36069 "EHLO
+	mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752588AbbHMQkI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 09:01:26 -0400
-In-reply-to: <CAJKOXPcxk3J0vmczJ7eOtUhzKxQW0Za0ZmgUAdX=jiT+eRxyKw@mail.gmail.com>
-Content-language: ko
+	Thu, 13 Aug 2015 12:40:08 -0400
+Received: by iodv127 with SMTP id v127so42120557iod.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Aug 2015 09:40:07 -0700 (PDT)
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Jonas Rabenstein' <jonas.rabenstein@studium.uni-erlangen.de>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Krzysztof Kozlowski wrote:
-> 
-> 2015-08-13 20:33 GMT+09:00 Viresh Kumar <viresh.kumar@linaro.org>:
-> > On 13-08-15, 13:28, Jonas Rabenstein wrote:
-> >> Commit "cpufreq: exynos: remove Exynos4x12 specific cpufreq driver
-> >> support" deleted option ARM_EXYNOS_CPUFREQ but missed to delete a rule
-> >> in drivers/cpufreq/Makefile which depends on that option.
-> >>
-> >> Remove unselectable rule for arm-exynos-cpufreq.o from
-> >> drivers/cpufreq/Makefile.
-> >>
-> >> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-> >> ---
-> >> I found this inconsistency using the undertaker and
-> >> undertaker-checkpatch tools (https://undertaker.cs.fau.de/).
-> >>
-> >>  drivers/cpufreq/Makefile | 1 -
-> >>  1 file changed, 1 deletion(-)
-> >>
-> >> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> >> index bbc4a9f..958be2b 100644
-> >> --- a/drivers/cpufreq/Makefile
-> >> +++ b/drivers/cpufreq/Makefile
-> >> @@ -52,7 +52,6 @@ obj-$(CONFIG_ARM_DT_BL_CPUFREQ)             += arm_big_little_dt.o
-> >>
-> >>  obj-$(CONFIG_ARCH_DAVINCI)           += davinci-cpufreq.o
-> >>  obj-$(CONFIG_UX500_SOC_DB8500)               += dbx500-cpufreq.o
-> >> -obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)     += arm-exynos-cpufreq.o
-> >>  obj-$(CONFIG_ARM_EXYNOS5440_CPUFREQ) += exynos5440-cpufreq.o
-> >>  obj-$(CONFIG_ARM_HIGHBANK_CPUFREQ)   += highbank-cpufreq.o
-> >>  obj-$(CONFIG_ARM_HISI_ACPU_CPUFREQ)  += hisi-acpu-cpufreq.o
-> >
-> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> And again from me:
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> Dear Kukjin,
-> Can you take it and send in (updated) pull request with Exynos4x12
-> cpufreq patches?
-> 
-OK, sure. I'll take this.
+On Wed, Aug 12, 2015 at 4:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+>
+> @@
+> struct clk_hw *E;
+> @@
+>
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Andrew Bresticker <abrestic@chromium.org>
+> Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Kevin Cernekee <cernekee@chromium.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Thanks,
-Kukjin
+>  drivers/clk/pistachio/clk-pll.c      |  4 ++--
+
+For Pistachio,
+
+Acked-by: Andrew Bresticker <abrestic@chromium.org>
