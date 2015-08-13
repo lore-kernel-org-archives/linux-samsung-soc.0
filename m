@@ -1,63 +1,53 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
-Date: Thu, 13 Aug 2015 10:56:31 +0200
-Message-ID: <55CC5BBF.9060600@gmail.com>
-References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org> <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Alexis Ballier <aballier@gentoo.org>
+Subject: [PATCH v2] ARM: dts: exynos4412-odroidu3: Enable SPI1.
+Date: Thu, 13 Aug 2015 11:06:53 +0200
+Message-ID: <1439456813-4918-1-git-send-email-aballier@gentoo.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:35117 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751869AbbHMI4i (ORCPT
+Received: from smtp.gentoo.org ([140.211.166.183]:46243 "EHLO smtp.gentoo.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750908AbbHMJHn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 04:56:38 -0400
-In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+	Thu, 13 Aug 2015 05:07:43 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Alexis Ballier <aballier@gentoo.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
 
-On 08/13/2015 01:12 AM, Stephen Boyd wrote:
-> Use the provider based method to get a clock's name so that we
-> can get rid of the clk member in struct clk_hw one day. Mostly
-> converted with the following coccinelle script.
->
-> @@
-> struct clk_hw *E;
-> @@
->
-> -__clk_get_name(E->clk)
-> +clk_hw_get_name(E)
-[...]
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->   drivers/clk/berlin/berlin2-pll.c     |  4 ++--
+SPI1 is available on IO Port #2 (as depicted on their website) in
+PCB Revision 0.5 of Hardkernel Odroid U3 board.
+The shield connects a 256KiB spi-nor flash on that bus.
 
-For Berlin,
+Signed-off-by: Alexis Ballier <aballier@gentoo.org>
 
-Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+---
 
-Thanks!
+Changes in v2: Use GPIO_ACTIVE_HIGH (Krzysztof Kozlowski)
 
-[...]
-> diff --git a/drivers/clk/berlin/berlin2-pll.c b/drivers/clk/berlin/berlin2-pll.c
-> index f4b8d324b083..1c2294d3ba85 100644
-> --- a/drivers/clk/berlin/berlin2-pll.c
-> +++ b/drivers/clk/berlin/berlin2-pll.c
-> @@ -61,7 +61,7 @@ berlin2_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->   	fbdiv = (val >> map->fbdiv_shift) & FBDIV_MASK;
->   	rfdiv = (val >> map->rfdiv_shift) & RFDIV_MASK;
->   	if (rfdiv == 0) {
-> -		pr_warn("%s has zero rfdiv\n", __clk_get_name(hw->clk));
-> +		pr_warn("%s has zero rfdiv\n", clk_hw_get_name(hw));
->   		rfdiv = 1;
->   	}
->
-> @@ -70,7 +70,7 @@ berlin2_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->   	vcodiv = map->vcodiv[vcodivsel];
->   	if (vcodiv == 0) {
->   		pr_warn("%s has zero vcodiv (index %d)\n",
-> -			__clk_get_name(hw->clk), vcodivsel);
-> +			clk_hw_get_name(hw), vcodivsel);
->   		vcodiv = 1;
->   	}
+ arch/arm/boot/dts/exynos4412-odroidu3.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+index 44684e5..8632f35 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+@@ -13,6 +13,7 @@
+ 
+ /dts-v1/;
+ #include "exynos4412-odroid-common.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Hardkernel ODROID-U3 board based on Exynos4412";
+@@ -61,3 +62,10 @@
+ 		"Speakers", "SPKL",
+ 		"Speakers", "SPKR";
+ };
++
++&spi_1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi1_bus>;
++	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
++	status = "okay";
++};
+-- 
+2.5.0
