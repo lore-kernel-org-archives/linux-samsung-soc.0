@@ -1,59 +1,57 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung mach fixes for 4.2
-Date: Thu, 13 Aug 2015 12:19:04 +0200
-Message-ID: <20150813101904.GT30160@localhost>
-References: <1439171530-971-1-git-send-email-k.kozlowski@samsung.com>
- <040901d0d310$e233fde0$a69bf9a0$@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] Remove unselectable rule for arm-exynos-cpufreq.o
+Date: Thu, 13 Aug 2015 20:39:51 +0900
+Message-ID: <CAJKOXPcxk3J0vmczJ7eOtUhzKxQW0Za0ZmgUAdX=jiT+eRxyKw@mail.gmail.com>
+References: <1439461941-13953-1-git-send-email-jonas.rabenstein@studium.uni-erlangen.de>
+	<1439465318-18108-1-git-send-email-jonas.rabenstein@studium.uni-erlangen.de>
+	<20150813113300.GU20238@linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:35839 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751006AbbHMKnU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 06:43:20 -0400
-Received: by lahi9 with SMTP id i9so23664559lah.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Aug 2015 03:43:18 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <040901d0d310$e233fde0$a69bf9a0$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150813113300.GU20238@linux>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>
+Cc: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Mon, Aug 10, 2015 at 11:04:25AM +0900, Kukjin Kim wrote:
-> Hi arm-soc guys,
-> 
-> Can you please pull this into arm-soc fixes for v4.2 directly?
-> I don't have other samsung fixes in my tree at this moment.
-> 
-> Thanks,
-> Kukjin
-> 
-> Krzysztof Kozlowski wrote:
-> > 
-> > Dear Kukjin,
-> > 
-> > Please find latest two fixes for v4.2 cycle. You can find more detailed
-> > description with the tag.
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
-> > 
-> > The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
-> > 
-> >   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   https://github.com/krzk/linux.git tags/samsung-mach-fixes-4.2
-> > 
-> > for you to fetch changes up to 3e9f798784b30293012682021d5a0352f78658b8:
-> > 
-> >   ARM: EXYNOS: fix double of_node_put() on error path (2015-07-31 10:12:17 +0900)
+2015-08-13 20:33 GMT+09:00 Viresh Kumar <viresh.kumar@linaro.org>:
+> On 13-08-15, 13:28, Jonas Rabenstein wrote:
+>> Commit "cpufreq: exynos: remove Exynos4x12 specific cpufreq driver
+>> support" deleted option ARM_EXYNOS_CPUFREQ but missed to delete a rule
+>> in drivers/cpufreq/Makefile which depends on that option.
+>>
+>> Remove unselectable rule for arm-exynos-cpufreq.o from
+>> drivers/cpufreq/Makefile.
+>>
+>> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+>> ---
+>> I found this inconsistency using the undertaker and
+>> undertaker-checkpatch tools (https://undertaker.cs.fau.de/).
+>>
+>>  drivers/cpufreq/Makefile | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+>> index bbc4a9f..958be2b 100644
+>> --- a/drivers/cpufreq/Makefile
+>> +++ b/drivers/cpufreq/Makefile
+>> @@ -52,7 +52,6 @@ obj-$(CONFIG_ARM_DT_BL_CPUFREQ)             += arm_big_little_dt.o
+>>
+>>  obj-$(CONFIG_ARCH_DAVINCI)           += davinci-cpufreq.o
+>>  obj-$(CONFIG_UX500_SOC_DB8500)               += dbx500-cpufreq.o
+>> -obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)     += arm-exynos-cpufreq.o
+>>  obj-$(CONFIG_ARM_EXYNOS5440_CPUFREQ) += exynos5440-cpufreq.o
+>>  obj-$(CONFIG_ARM_HIGHBANK_CPUFREQ)   += highbank-cpufreq.o
+>>  obj-$(CONFIG_ARM_HISI_ACPU_CPUFREQ)  += hisi-acpu-cpufreq.o
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Merged, thanks.
+And again from me:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+Dear Kukjin,
+Can you take it and send in (updated) pull request with Exynos4x12
+cpufreq patches?
 
--Olof
+BR,
+Krzysztof
