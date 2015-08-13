@@ -1,53 +1,40 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 2nd 4/4] Samsung defconfig 2nd update for v4.3
-Date: Thu, 13 Aug 2015 09:13:12 +0900
-Message-ID: <55CBE118.7060000@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH RESEND v6 1/3] Documentation: dts: Documentation entry to
+ explain how to use PWM FAN as a cooling device
+Date: Thu, 13 Aug 2015 09:17:36 +0900
+Message-ID: <55CBE220.1010301@samsung.com>
+References: <1425470624-25793-1-git-send-email-l.majewski@samsung.com>
+ <1439298440-15882-1-git-send-email-l.majewski@samsung.com>
+ <1439298440-15882-2-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56922 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751693AbbHMANS (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:14392 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751866AbbHMARj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Aug 2015 20:13:18 -0400
+	Wed, 12 Aug 2015 20:17:39 -0400
+In-reply-to: <1439298440-15882-2-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>
 
-Here is enable cpufreq-dt driver for exynos stuff.
+On 11.08.2015 22:07, Lukasz Majewski wrote:
+> Explanation of several properties, which allow PWM fan working as a cooling
+> device, have been embraced in this commit.
+> 
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Acked-by: Eduardo Valentin <edubezval@gmail.com>
+> ---
+>  .../devicetree/bindings/hwmon/pwm-fan.txt          | 29 ++++++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+> 
 
-Please pull and sorry for little bit confused branches in this time...
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Thanks,
-Kukjin
+I'll take care of it and send it to Kukjin for v4.4.
 
-
-The following changes since commit c3e71f4b5f580b43e0eb3be18059c8844d8713e7:
-
-  ARM: multi_v7_defconfig: Enable max77802 regulator (2015-08-12
-08:15:02 +0900)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-defconfig-2
-
-for you to fetch changes up to 2b347c6494cbc6bfdc81b5201b8aa34afb2c3500:
-
-  ARM: exynos_defconfig: Enable cpufreq-dt driver (2015-08-12 08:17:31
-+0900)
-
-----------------------------------------------------------------
-Samsung 2nd defconfig updates for v4.3
-
-- enable cpufreq-dt driver with ONDEMAND governor
-  for Exynos SoCs 3250, 4210, 4212, 4412 and 5250
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      ARM: exynos_defconfig: Enable cpufreq-dt driver
-
- arch/arm/configs/exynos_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Best regards,
+Krzysztof
