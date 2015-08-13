@@ -1,22 +1,22 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL v2 4/5] Samsung cpufreq driver updates for v4.3
-Date: Fri, 14 Aug 2015 03:52:49 +0900
-Message-ID: <55CCE781.1090007@kernel.org>
+Subject: [GIT PULL v2 5/5] Samsung defconfig updates for v4.3
+Date: Fri, 14 Aug 2015 03:53:51 +0900
+Message-ID: <55CCE7BF.2070407@kernel.org>
 References: <55CCE517.2070003@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57528 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:57607 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932121AbbHMSwz (ORCPT
+	id S1752790AbbHMSyA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 14:52:55 -0400
+	Thu, 13 Aug 2015 14:54:00 -0400
 In-Reply-To: <55CCE517.2070003@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
 The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 
@@ -25,41 +25,41 @@ The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 are available in the git repository at:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-late-cpufreq-driver
+tags/samsung-defconfig-new
 
-for you to fetch changes up to 5e3863a74fb70d6a432504ba2fa16a998cd3736b:
+for you to fetch changes up to 2b347c6494cbc6bfdc81b5201b8aa34afb2c3500:
 
-  cpufreq: exynos: Remove unselectable rule for arm-exynos-cpufreq.o
-(2015-08-14 02:36:33 +0900)
-
-----------------------------------------------------------------
-Samsung cpufreq driver updates for v4.3
-
-- remove exynos4 SoCs and exynos5250 specific cpufreq driver support
-  and unselectable rule for arm-exynos-cpufreq.o because of supporting
-  generic cpufreq driver for the exynos SoCs
-
-* Note this is depending on tags/samsung-clk-driver, tags/samsung-soc
-  and tags/samsung-late-dt
+  ARM: exynos_defconfig: Enable cpufreq-dt driver (2015-08-12 08:17:31
++0900)
 
 ----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (2):
-      cpufreq: exynos: remove exynos5250 specific cpufreq driver support
-      cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+Samsung defconfig updates for v4.3
 
-Jonas Rabenstein (1):
-      cpufreq: exynos: Remove unselectable rule for arm-exynos-cpufreq.o
+- for exynos_defconfig
+  : enable SND_SOC_ODROIDX2 and SND_SIMPLE_CARD for
+    Odroid-XU3 to use max98090 audio codec
+  : enalbe SENSORS_NTC_THERMISTOR for Peach boards
+  : enable cpufreq-dt driver with ONDEMAND governor
+    for Exynos SoCs 3250, 4210, 4212, 4412 and 5250
 
- drivers/cpufreq/Kconfig.arm          |  49 --------
- drivers/cpufreq/Makefile             |   4 -
- drivers/cpufreq/exynos-cpufreq.c     | 237
------------------------------------
- drivers/cpufreq/exynos-cpufreq.h     |  89 -------------
- drivers/cpufreq/exynos4x12-cpufreq.c | 236
-----------------------------------
- drivers/cpufreq/exynos5250-cpufreq.c | 210 -------------------------------
- 6 files changed, 825 deletions(-)
- delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
- delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
- delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
- delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+- for multi_v7_defconfig:
+  : remove SAMSUNG_USB2PHY and SAMSUNG_USB3PHY are not used now
+  : enable SENSORS_NTC_THERMISTOR and EXYNOS_ADC for Peach boards
+  : enable REGULATOR_MAX77802 for Peach boards
+
+----------------------------------------------------------------
+Anand Moon (1):
+      ARM: exynos_defconfig: Enable CONFIG_SND_SOC_ODROIDX2 for Odroid-XU3
+
+Javier Martinez Canillas (4):
+      ARM: multi_v7_defconfig: Remove old Samsung USB PHY configs
+      ARM: multi_v7_defconfig: Enable NTC Thermistors support
+      ARM: exynos_defconfig: Enable NTC Thermistors support
+      ARM: multi_v7_defconfig: Enable max77802 regulator
+
+Krzysztof Kozlowski (1):
+      ARM: exynos_defconfig: Enable cpufreq-dt driver
+
+ arch/arm/configs/exynos_defconfig   | 5 +++++
+ arch/arm/configs/multi_v7_defconfig | 5 +++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
