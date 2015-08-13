@@ -1,41 +1,77 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2nd 3/4] Samsung driver 2nd updates for v4.3
-Date: Thu, 13 Aug 2015 11:21:44 +0200
-Message-ID: <20150813092144.GD30160@localhost>
-References: <55CBE10B.2030103@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [rtc-linux] [PATCH] rtc: s5m: fix to update ctrl register
+Date: Thu, 13 Aug 2015 19:02:16 +0900
+Message-ID: <55CC6B28.5010707@samsung.com>
+References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:36084 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752391AbbHMJbS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 05:31:18 -0400
-Received: by lagz9 with SMTP id z9so22893981lag.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Aug 2015 02:31:17 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <55CBE10B.2030103@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: rtc-linux@googlegroups.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, sbkim73@samsung.com, jy0922.shim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Mike Turquette <mturquette@linaro.org>
 
-On Thu, Aug 13, 2015 at 09:12:59AM +0900, Kukjin Kim wrote:
-> Hi,
+W dniu 13.08.2015 o 17:49, Joonyoung Shim pisze:
+> According to datasheet, the S2MPS13X and S2MPS14X should update write
+> buffer via setting WUDR bit to high after ctrl register is updated.
+
+Hi,
+
+I cannot find this information in S2MPS14 datasheet. On which page is it?
+
+
 > 
-> I've created the signed tag based on previous tags/samsung-driver so you
-> can see several merge in there. To support cpufreq-dt driver requires
-> clk/cpufreq/exynos changes together and clk/cpufreq maintainers are
-> aware of this changes. And we can remove exynos cpufreq driver at last.
+> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
+> tools/testing/selftests/timers/rtctest.c test program and hour format is
+> used to 12 hour mode in Odroid-XU3 board.
+
+Two questions here:
+1. Earlier you mentioned S2MPS1[34], now Odroid XU3 which has S2MPS11.
+Are you sure that this applies to all of them (S2MPS11, S2MPS13 and
+S2MP14)? There are some minor differences between them so I would not be
+surprised if only some of them required this action.
+
+2. The driver operates in 24-hour omode. Actually it sets the 24-hour
+mode just before your new regmap_update_bits() call. What do you mean by
+12-hour mode?
+
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> Cc: <stable@vger.kernel.org>
+
+Thanks for putting a cc-stable tag. How far this should be ported? If
+this is needed only for S2MPS11 then v4.1. If all of them then probably
+for earlier version?
+
+Best regards,
+Krzysztof
+
+> ---
+>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> Note this drivers update is including previous dependencies and if
-> you're OK, please pull.
-
-Again, this needs to be revisited.
-
-Please try to keep the dependency only driver->dt if you can,
-and we can merge drivers before DT this release cycle. If you do
-driver->dt->driver->dt like here then things get messy.
-
-
--Olof
+> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+> index 8c70d78..03828bb 100644
+> --- a/drivers/rtc/rtc-s5m.c
+> +++ b/drivers/rtc/rtc-s5m.c
+> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>  	case S2MPS13X:
+>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
+> +		if (ret < 0)
+> +			break;
+> +
+> +		ret = regmap_update_bits(info->regmap,
+> +				info->regs->rtc_udr_update,
+> +				info->regs->rtc_udr_mask,
+> +				info->regs->rtc_udr_mask);
+> +		if (ret < 0)
+> +			break;
+> +
+> +		ret = s5m8767_wait_for_udr_update(info);
+> +
+>  		break;
+>  
+>  	default:
+> 
