@@ -1,48 +1,63 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH] rtc: s5m: fix to update ctrl register
-Date: Thu, 13 Aug 2015 17:49:24 +0900
-Message-ID: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, sbkim73@samsung.com, k.kozlowski@samsung.com, jy0922.shim@samsung.com
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
+Date: Thu, 13 Aug 2015 10:56:31 +0200
+Message-ID: <55CC5BBF.9060600@gmail.com>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org> <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:35117 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751869AbbHMI4i (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Aug 2015 04:56:38 -0400
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
 
-According to datasheet, the S2MPS13X and S2MPS14X should update write
-buffer via setting WUDR bit to high after ctrl register is updated.
+On 08/13/2015 01:12 AM, Stephen Boyd wrote:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+>
+> @@
+> struct clk_hw *E;
+> @@
+>
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+[...]
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>   drivers/clk/berlin/berlin2-pll.c     |  4 ++--
 
-If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
-tools/testing/selftests/timers/rtctest.c test program and hour format is
-used to 12 hour mode in Odroid-XU3 board.
+For Berlin,
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: <stable@vger.kernel.org>
----
- drivers/rtc/rtc-s5m.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index 8c70d78..03828bb 100644
---- a/drivers/rtc/rtc-s5m.c
-+++ b/drivers/rtc/rtc-s5m.c
-@@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
- 	case S2MPS13X:
- 		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
- 		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
-+		if (ret < 0)
-+			break;
-+
-+		ret = regmap_update_bits(info->regmap,
-+				info->regs->rtc_udr_update,
-+				info->regs->rtc_udr_mask,
-+				info->regs->rtc_udr_mask);
-+		if (ret < 0)
-+			break;
-+
-+		ret = s5m8767_wait_for_udr_update(info);
-+
- 		break;
- 
- 	default:
--- 
-1.9.1
+Thanks!
+
+[...]
+> diff --git a/drivers/clk/berlin/berlin2-pll.c b/drivers/clk/berlin/berlin2-pll.c
+> index f4b8d324b083..1c2294d3ba85 100644
+> --- a/drivers/clk/berlin/berlin2-pll.c
+> +++ b/drivers/clk/berlin/berlin2-pll.c
+> @@ -61,7 +61,7 @@ berlin2_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>   	fbdiv = (val >> map->fbdiv_shift) & FBDIV_MASK;
+>   	rfdiv = (val >> map->rfdiv_shift) & RFDIV_MASK;
+>   	if (rfdiv == 0) {
+> -		pr_warn("%s has zero rfdiv\n", __clk_get_name(hw->clk));
+> +		pr_warn("%s has zero rfdiv\n", clk_hw_get_name(hw));
+>   		rfdiv = 1;
+>   	}
+>
+> @@ -70,7 +70,7 @@ berlin2_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>   	vcodiv = map->vcodiv[vcodivsel];
+>   	if (vcodiv == 0) {
+>   		pr_warn("%s has zero vcodiv (index %d)\n",
+> -			__clk_get_name(hw->clk), vcodivsel);
+> +			clk_hw_get_name(hw), vcodivsel);
+>   		vcodiv = 1;
+>   	}
