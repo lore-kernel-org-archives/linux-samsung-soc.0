@@ -1,65 +1,43 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL v2 5/5] Samsung defconfig updates for v4.3
-Date: Fri, 14 Aug 2015 03:53:51 +0900
-Message-ID: <55CCE7BF.2070407@kernel.org>
-References: <55CCE517.2070003@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 1/2] drm/exynos: remove legacy ->suspend()/resume()
+Date: Thu, 13 Aug 2015 17:06:38 -0300
+Message-ID: <1439496399-25791-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57607 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752790AbbHMSyA (ORCPT
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:35463 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752847AbbHMUGq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 14:54:00 -0400
-In-Reply-To: <55CCE517.2070003@kernel.org>
+	Thu, 13 Aug 2015 16:06:46 -0400
+Received: by qgj62 with SMTP id 62so38975496qgj.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Aug 2015 13:06:45 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, daniel@ffwll.ch, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+These legacy helpers should only be used by shadow-attaching drivers.
+KMS drivers has its own way to handle suspend/resume and don't need to
+use these two helpers.
 
-are available in the git repository at:
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-defconfig-new
-
-for you to fetch changes up to 2b347c6494cbc6bfdc81b5201b8aa34afb2c3500:
-
-  ARM: exynos_defconfig: Enable cpufreq-dt driver (2015-08-12 08:17:31
-+0900)
-
-----------------------------------------------------------------
-Samsung defconfig updates for v4.3
-
-- for exynos_defconfig
-  : enable SND_SOC_ODROIDX2 and SND_SIMPLE_CARD for
-    Odroid-XU3 to use max98090 audio codec
-  : enalbe SENSORS_NTC_THERMISTOR for Peach boards
-  : enable cpufreq-dt driver with ONDEMAND governor
-    for Exynos SoCs 3250, 4210, 4212, 4412 and 5250
-
-- for multi_v7_defconfig:
-  : remove SAMSUNG_USB2PHY and SAMSUNG_USB3PHY are not used now
-  : enable SENSORS_NTC_THERMISTOR and EXYNOS_ADC for Peach boards
-  : enable REGULATOR_MAX77802 for Peach boards
-
-----------------------------------------------------------------
-Anand Moon (1):
-      ARM: exynos_defconfig: Enable CONFIG_SND_SOC_ODROIDX2 for Odroid-XU3
-
-Javier Martinez Canillas (4):
-      ARM: multi_v7_defconfig: Remove old Samsung USB PHY configs
-      ARM: multi_v7_defconfig: Enable NTC Thermistors support
-      ARM: exynos_defconfig: Enable NTC Thermistors support
-      ARM: multi_v7_defconfig: Enable max77802 regulator
-
-Krzysztof Kozlowski (1):
-      ARM: exynos_defconfig: Enable cpufreq-dt driver
-
- arch/arm/configs/exynos_defconfig   | 5 +++++
- arch/arm/configs/multi_v7_defconfig | 5 +++--
- 2 files changed, 8 insertions(+), 2 deletions(-)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index f1d6966..9bcf679 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -280,8 +280,6 @@ static struct drm_driver exynos_drm_driver = {
+ 	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME,
+ 	.load			= exynos_drm_load,
+ 	.unload			= exynos_drm_unload,
+-	.suspend		= exynos_drm_suspend,
+-	.resume			= exynos_drm_resume,
+ 	.open			= exynos_drm_open,
+ 	.preclose		= exynos_drm_preclose,
+ 	.lastclose		= exynos_drm_lastclose,
+-- 
+2.1.0
