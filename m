@@ -1,53 +1,68 @@
-From: Alexis Ballier <aballier@gentoo.org>
-Subject: [PATCH v2] ARM: dts: exynos4412-odroidu3: Enable SPI1.
-Date: Thu, 13 Aug 2015 11:06:53 +0200
-Message-ID: <1439456813-4918-1-git-send-email-aballier@gentoo.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to
+ clk_hw_get_name(hw)
+Date: Thu, 13 Aug 2015 11:07:32 +0200
+Message-ID: <20150813090731.GC21716@ulmo>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
+ <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.gentoo.org ([140.211.166.183]:46243 "EHLO smtp.gentoo.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750908AbbHMJHn (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:38909 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750908AbbHMJI2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 05:07:43 -0400
+	Thu, 13 Aug 2015 05:08:28 -0400
+Content-Disposition: inline
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Alexis Ballier <aballier@gentoo.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.orglinu
 
-SPI1 is available on IO Port #2 (as depicted on their website) in
-PCB Revision 0.5 of Hardkernel Odroid U3 board.
-The shield connects a 256KiB spi-nor flash on that bus.
 
-Signed-off-by: Alexis Ballier <aballier@gentoo.org>
+--oJ71EGRlYNjSvfq7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
+On Wed, Aug 12, 2015 at 04:12:41PM -0700, Stephen Boyd wrote:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+>=20
+> @@
+> struct clk_hw *E;
+> @@
+>=20
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+>=20
+[...]
+>  drivers/clk/tegra/clk-pll.c          |  8 ++++----
 
-Changes in v2: Use GPIO_ACTIVE_HIGH (Krzysztof Kozlowski)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
- arch/arm/boot/dts/exynos4412-odroidu3.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+--oJ71EGRlYNjSvfq7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 44684e5..8632f35 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -13,6 +13,7 @@
- 
- /dts-v1/;
- #include "exynos4412-odroid-common.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Hardkernel ODROID-U3 board based on Exynos4412";
-@@ -61,3 +62,10 @@
- 		"Speakers", "SPKL",
- 		"Speakers", "SPKR";
- };
-+
-+&spi_1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi1_bus>;
-+	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
--- 
-2.5.0
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVzF5SAAoJEN0jrNd/PrOhHT0P/iJrUUYIutPfBNvH8txerL+7
+xnmwuEmllVmcxsJsk8a+CogZtFbkZQvYifmGh2IlSy9XcsOsDruHgdsp1330NSr0
+Fuh7nla7Ygt7L98jGh+8Dplpiy9le6F3n4Wr5YWgsXZ2cUgpihp8hSRynx4arTYn
+zmK//oqvSarKhzChh4bjUwHH0f5GZwt9amftL1QY1nwinuVHN3VTz2j6GFoGki3J
+KC6+PD9KvHiqxjmZbiDe8PNk3gph6qZj2g6g9BZAn1oHy2HwIYPyG964kgjuVwSw
+g4wfSg51pDuQW/LQgh53bRo9wrnbCc3Lb8DwlWzlc99fwIKuPC09A7pC01/8sQl8
+09WOSh9v9O5+Df+lMzp0wV0021KrfEWeZTHlMo5zKHVF5yTbF6q0pxrJ5kysxkKz
+MtbpCqWXtpER0OVPl7Ekj0l3f3b7N4ZeqWvqcaHD3WTPrS9h2tmE4SLyErtfEaMH
+NW7icXmC3vZ2keQL6ffjQgrNs110h3zSy1yC0znHl2ofFsJSmlGvk5qiS81oW0j5
+QE5pSbT5tacz6EvOQA92waF4rDPn2gWzy0vyPhhHHIEQUmDrkGotzGyorAgULLqO
+s1ka0NDRwZ+DswuRd+KEKU/XC5IyBp/9EK2fAIzx5qG4spBwj5pN3gDEmY7WzuiG
+IYTtgeucC9Ose6KTNzjn
+=QsVn
+-----END PGP SIGNATURE-----
+
+--oJ71EGRlYNjSvfq7--
