@@ -1,63 +1,123 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
-Date: Thu, 13 Aug 2015 09:40:07 -0700
-Message-ID: <CAL1qeaE-UJD3CBx=6feF=Hu4=gu5AtQiWwQAZmbg+6qYLhOy2Q@mail.gmail.com>
-References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
-	<1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL v2 0/5] Samsung updates for v4.3
+Date: Fri, 14 Aug 2015 03:42:31 +0900
+Message-ID: <55CCE517.2070003@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:36069 "EHLO
-	mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752588AbbHMQkI (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:57034 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752680AbbHMSmt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Aug 2015 12:40:08 -0400
-Received: by iodv127 with SMTP id v127so42120557iod.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Aug 2015 09:40:07 -0700 (PDT)
-In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+	Thu, 13 Aug 2015 14:42:49 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On Wed, Aug 12, 2015 at 4:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Use the provider based method to get a clock's name so that we
-> can get rid of the clk member in struct clk_hw one day. Mostly
-> converted with the following coccinelle script.
->
-> @@
-> struct clk_hw *E;
-> @@
->
-> -__clk_get_name(E->clk)
-> +clk_hw_get_name(E)
->
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Andrew Bresticker <abrestic@chromium.org>
-> Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Kevin Cernekee <cernekee@chromium.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Hello Arnd, Olof, Kevin
 
->  drivers/clk/pistachio/clk-pll.c      |  4 ++--
+Here is re-spin of pull request for Samsung stuff for v4.3 as per Olof's
+suggestion.
 
-For Pistachio,
+Most of this pull-requests are to switch to support generic cpufreq
+driver for exynos3250, 4210, 4412 and 5250 and several exynos dt updates.
 
-Acked-by: Andrew Bresticker <abrestic@chromium.org>
+Note as I commented in each tag, each pull-request(signed tag) has a
+dependency with each other, so please keep the ordering in this time.
+
+1) tags/samsung-clk-driver
+2) tags/samsung-late-dt
+3) tags/samsung-soc
+4) tags/samsung-late-cpufreq-driver
+5) tags/samsung-defconfig-new
+
+If any problems, please kindly let me know.
+
+Thanks,
+Kukjin
+
+Alexis Ballier (1):
+      ARM: dts: enable SPI1 for exynos4412-odroidu3
+
+Anand Moon (1):
+      ARM: exynos_defconfig: Enable CONFIG_SND_SOC_ODROIDX2 for Odroid-XU3
+
+Bartlomiej Zolnierkiewicz (5):
+      cpufreq: exynos: remove exynos5250 specific cpufreq driver support
+      clk: exynos4x12: add cpu clock configuration data and instantiate
+cpu clock
+      cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+      ARM: dts: add CPU OPP and regulator supply property for exynos4x12
+      ARM: EXYNOS: switch to using generic cpufreq driver for exynos4x12
+
+Chanho Park (1):
+      ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
+
+Chanwoo Choi (4):
+      clk: exynos3250: Add cpu clock configuration data and instaniate
+cpu clock
+      ARM: EXYNOS: Add exynos3250 compatible to use generic cpufreq driver
+      ARM: dts: Add CPU OPP and regulator supply property for exynos3250
+      ARM: dts: Add CPU cooling binding for exynos3250 boards
+
+Javier Martinez Canillas (4):
+      ARM: multi_v7_defconfig: Remove old Samsung USB PHY configs
+      ARM: multi_v7_defconfig: Enable NTC Thermistors support
+      ARM: exynos_defconfig: Enable NTC Thermistors support
+      ARM: multi_v7_defconfig: Enable max77802 regulator
+
+Jonas Rabenstein (1):
+      cpufreq: exynos: Remove unselectable rule for arm-exynos-cpufreq.o
+
+Krzysztof Kozlowski (1):
+      ARM: exynos_defconfig: Enable cpufreq-dt driver
+
+Marek Szyprowski (1):
+      ARM: dts: add iommu property to JPEG device for exynos4
+
+Michal Suchanek (1):
+      ARM: dts: Add SPI CS on exynos5250-snow
+
+Thomas Abraham (3):
+      clk: exynos5250: add cpu clock configuration data and instantiate
+cpu clock
+      ARM: EXYNOS: switch to using generic cpufreq driver for exynos5250
+      ARM: dts: add CPU OPP and regulator supply property for exynos5250
+
+ arch/arm/boot/dts/exynos3250-monk.dts              |  19 ++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  19 ++
+ arch/arm/boot/dts/exynos3250.dtsi                  |  16 ++
+ arch/arm/boot/dts/exynos4.dtsi                     |   1 +
+ arch/arm/boot/dts/exynos4212.dtsi                  |  81 +++++++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   4 +
+ arch/arm/boot/dts/exynos4412-odroidu3.dts          |   8 +
+ arch/arm/boot/dts/exynos4412-origen.dts            |   4 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |   4 +
+ arch/arm/boot/dts/exynos4412.dtsi                  |  83 ++++++++
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   4 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   4 +
+ arch/arm/boot/dts/exynos5250-snow.dts              |   5 +
+ arch/arm/boot/dts/exynos5250-spring.dts            |   4 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |  22 ++
+ arch/arm/boot/dts/exynos5422-cpus.dtsi             |  81 +++++++
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   1 +
+ arch/arm/configs/exynos_defconfig                  |   5 +
+ arch/arm/configs/multi_v7_defconfig                |   5 +-
+ arch/arm/mach-exynos/Kconfig                       |   2 +
+ arch/arm/mach-exynos/exynos.c                      |   4 +
+ drivers/clk/samsung/clk-exynos3250.c               |  32 ++-
+ drivers/clk/samsung/clk-exynos4.c                  |  50 +++++
+ drivers/clk/samsung/clk-exynos5250.c               |  31 +++
+ drivers/cpufreq/Kconfig.arm                        |  49 -----
+ drivers/cpufreq/Makefile                           |   4 -
+ drivers/cpufreq/exynos-cpufreq.c                   | 237
+---------------------
+ drivers/cpufreq/exynos-cpufreq.h                   |  89 --------
+ drivers/cpufreq/exynos4x12-cpufreq.c               | 236
+--------------------
+ drivers/cpufreq/exynos5250-cpufreq.c               | 210 ------------------
+ include/dt-bindings/clock/exynos3250.h             |   1 +
+ include/dt-bindings/clock/exynos5250.h             |   1 +
+ 32 files changed, 487 insertions(+), 829 deletions(-)
