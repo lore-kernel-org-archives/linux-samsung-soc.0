@@ -1,66 +1,64 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v2 1/3] mfd: documentation: dt: Document grounded ACOKB pin
- on S2MPS11
-Date: Fri, 14 Aug 2015 18:47:08 +0900
-Message-ID: <02a201d0d676$2fbe73c0$8f3b5b40$@kernel.org>
-References: <1439287746-14034-1-git-send-email-k.kozlowski.k@gmail.com>
- <1439287746-14034-2-git-send-email-k.kozlowski.k@gmail.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH RFC v3 07/16] media: get rid of unused "extra_links"
+ param on media_entity_init()
+Date: Fri, 14 Aug 2015 13:33:48 +0300
+Message-ID: <20150814103348.GC19840@valkosipuli.retiisi.org.uk>
+References: <cover.1439410053.git.mchehab@osg.samsung.com>
+ <7b9f2654888f0fd54c290c50f50248a367768da7.1439410053.git.mchehab@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42590 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753742AbbHNJrM (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:42044 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755042AbbHNKeW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Aug 2015 05:47:12 -0400
-In-reply-to: <1439287746-14034-2-git-send-email-k.kozlowski.k@gmail.com>
-Content-language: ko
+	Fri, 14 Aug 2015 06:34:22 -0400
+Content-Disposition: inline
+In-Reply-To: <7b9f2654888f0fd54c290c50f50248a367768da7.1439410053.git.mchehab@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski.k@gmail.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Samuel Ortiz' <sameo@linux.intel.com>, 'Lee Jones' <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: 'Anand Moon' <linux.amoon@gmail.com>, 'Javier Martinez Canillas' <javier@osg.samsung.com>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Lars-Peter Clausen <lars@metafoo.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kyungmin Park <kyungmin.park@samsung.com>, Heungjun Kim <riverful.kim@samsung.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Mats Randgaard <matrandg@cisco.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Boris BREZILLON <boris.brezill>
 
-Krzysztof Kozlowski wrote:
-> 
-> Document a new Device Tree property 'samsung,s2mps11-acokb-ground'
-> indicating that ACOKB pin of S2MPS11 PMIC is connected to the ground so
-> the PMIC must manually set PWRHOLD bit in CTRL1 register to turn off the
-> power.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Split bindings documentation to separate patch (suggested by Lee).
-> 2. Add Javier's reviewed-by and Lee's acked-by.
-> ---
->  Documentation/devicetree/bindings/mfd/s2mps11.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> index 57a045016fca..90eaef393325 100644
-> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> @@ -15,6 +15,10 @@ Optional properties:
->  - interrupt-parent: Specifies the phandle of the interrupt controller to which
->    the interrupts from s2mps11 are delivered to.
->  - interrupts: Interrupt specifiers for interrupt sources.
-> +- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
-> +  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
-> +  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
-> +  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
-> 
->  Optional nodes:
->  - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
-> --
-> 2.1.4
+Hi Mauro,
 
-Applied 1/3 and 3/3.
+On Wed, Aug 12, 2015 at 05:14:51PM -0300, Mauro Carvalho Chehab wrote:
+> Currently, media_entity_init() creates an array with the links,
+> allocated at init time. It provides a parameter (extra_links)
+> that would allocate more links than the current needs, but this
+> is not used by any driver.
+> 
+> As we want to be able to do dynamic link allocation/removal,
+> we'll need to change the implementation of the links. So,
+> before doing that, let's first remove that extra unused
+> parameter, in order to cleanup the interface first.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> 
+...
 
-Thanks,
-Kukjin
+
+> diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> index 738e1d5d25dc..be6885e7c8ed 100644
+> --- a/include/media/media-entity.h
+> +++ b/include/media/media-entity.h
+> @@ -177,7 +177,7 @@ void graph_obj_init(struct media_device *mdev,
+>  void graph_obj_remove(struct media_graph_obj *gobj);
+>  
+>  int media_entity_init(struct media_entity *entity, u16 num_pads,
+> -		struct media_pad *pads, u16 extra_links);
+> +		struct media_pad *pads);
+>  void media_entity_cleanup(struct media_entity *entity);
+>  
+>  int media_entity_create_link(struct media_entity *source, u16 source_pad,
+
+How about putting this in front of the set? It has no dependencies to the
+other patches, does it?
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+-- 
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
