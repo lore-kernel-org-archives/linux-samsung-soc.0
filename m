@@ -1,47 +1,100 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 2/2] drm: WARN_ON if a modeset driver uses legacy
- suspend/resume helpers
-Date: Thu, 13 Aug 2015 23:19:08 +0200
-Message-ID: <20150813211908.GF17734@phenom.ffwll.local>
-References: <1439496399-25791-1-git-send-email-gustavo@padovan.org>
- <1439496399-25791-2-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1439496399-25791-2-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [RFC PATCH v5 0/9] Add external dma support for Synopsys MSHC
+Date: Fri, 14 Aug 2015 16:33:52 +0800
+Message-ID: <1439541232-30100-1-git-send-email-shawn.lin@rock-chips.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: jh80.chung@samsung.com, ulf.hansson@linaro.org
+Cc: Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Zhangfei Gao <zhangfei.gao@linaro.org>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, heiko@sntech.de, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shawn Lin <shawn.lin@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBBdWcgMTMsIDIwMTUgYXQgMDU6MDY6MzlQTSAtMDMwMCwgR3VzdGF2byBQYWRvdmFu
-IHdyb3RlOgo+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9y
-YS5jby51az4KPiAKPiBMZWdhY3kgcy9yIGhvb2tzIGFyZSBvbmx5IHVzZWQgZm9yIHNoYWRvdy1h
-dHRhY2hpbmcgZHJpdmVycywgd2Fybgo+IHdoZW4gYSBLTVMgZHJpdmVyIHRyaWVzIHRvIHVzZSB0
-aGVtLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
-QGNvbGxhYm9yYS5jby51az4KCkFzc3VtaW5nIHRoYXQgSW5raSBwaWNrcyB1cCB0aGUgZXh5bm9z
-IHBhdGNoIEkndmUgYXBwbGllZCB0aGlzIHRvCmRybS1taXNjLgoKVGhhbmtzLCBEYW5pZWwKCj4g
-LS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMgfCAyICsrCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCAyIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9k
-cnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMKPiBpbmRleCBiN2JmNGNlLi40ZTc2MTkz
-IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMKPiArKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZHJtX2Rydi5jCj4gQEAgLTU2Nyw2ICs1NjcsOCBAQCBzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZHJtX2Rldl9hbGxvYyhzdHJ1Y3QgZHJtX2RyaXZlciAqZHJpdmVyLAo+ICAJCXJldCA9IGRy
-bV9taW5vcl9hbGxvYyhkZXYsIERSTV9NSU5PUl9DT05UUk9MKTsKPiAgCQlpZiAocmV0KQo+ICAJ
-CQlnb3RvIGVycl9taW5vcnM7Cj4gKwo+ICsJCVdBUk5fT04oZHJpdmVyLT5zdXNwZW5kIHx8IGRy
-aXZlci0+cmVzdW1lKTsKPiAgCX0KPiAgCj4gIAlpZiAoZHJtX2NvcmVfY2hlY2tfZmVhdHVyZShk
-ZXYsIERSSVZFUl9SRU5ERVIpKSB7Cj4gLS0gCj4gMi4xLjAKPiAKCi0tIApEYW5pZWwgVmV0dGVy
-ClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5j
-aApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+Synopsys DesignWare mobile storage host controller supports three
+types of transfer mode: pio, internal dma and external dma. However,
+dw_mmc can only supports pio and internal dma now. Thus some platforms
+using dw-mshc integrated with generic dma can't work in dma mode. So we
+submit this patch to achieve it.
+
+And the config option, CONFIG_MMC_DW_IDMAC, was added by Will Newton
+(commit:f95f3850) for the first version of dw_mmc and never be touched since
+then. At that time dt-bindings hadn't been introduced into dw_mmc yet means
+we should select CONFIG_MMC_DW_IDMAC to enable internal dma mode at compile
+time. Nowadays, device-tree helps us to support a variety of boards with one
+kernel. That's why we need to remove it and decide the transfer mode by reading
+dw_mmc's HCON reg at runtime.
+
+This RFC patch needs lots of ACKs. I know it's hard, but it does need someone
+to make the running.
+
+Patch does the following things:
+- remove CONFIG_MMC_DW_IDMAC config option
+- add bindings for edmac used by synopsys-dw-mshc
+  at runtime
+- add edmac support for synopsys-dw-mshc
+
+Patch v1~v4 is based on next of git://git.linaro.org/people/ulf.hansson/mmc
+Patch v5 is rebased on dw-mmc-for-ulf-v4.2 of https://github.com/jh80chung/dw-mmc.git
+
+
+Changes in v5:
+- add the title of cover letter
+- fix typo of comment
+- add macro for reading HCON register
+- add "Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>" for exynos_defconfig patch
+- add "Acked-by: Vineet Gupta <vgupta@synopsys.com>" for axs10x_defconfig patch
+- add "Acked-by: Govindraj Raja <govindraj.raja@imgtec.com>" and
+  "Acked-by: Ralf Baechle <ralf@linux-mips.org>" for pistachio_defconfig patch
+- add "Acked-by: Joachim Eastwood <manabian@gmail.com>" for lpc18xx_defconfig patch
+- add "Acked-by: Wei Xu <xuwei5@hisilicon.com>" for hisi_defconfig patch
+- rebase on "https://github.com/jh80chung/dw-mmc.git tags/dw-mmc-for-ulf-v4.2" for merging easily
+
+Changes in v4:
+- remove "host->trans_mode" and use "host->use_dma" to indicate
+  transfer mode.
+- remove all bt-bindings' changes since we don't need new properities.
+- check transfer mode at runtime by reading HCON reg
+- spilt defconfig changes for each sub-architecture
+- fix the title of cover letter
+- reuse some code for reducing code size
+
+Changes in v3:
+- choose transfer mode at runtime
+- remove all CONFIG_MMC_DW_IDMAC config option
+- add supports-idmac property for some platforms
+
+Changes in v2:
+- Fix typo of dev_info msg
+- remove unused dmach from declaration of dw_mci_dma_slave
+
+Shawn Lin (9):
+  mmc: dw_mmc: Add external dma interface support
+  Documentation: synopsys-dw-mshc: add bindings for idmac and edmac
+  mips: pistachio_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arc: axs10x_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: exynos_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: hisi_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: lpc18xx_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: multi_v7_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: zx_defconfig: remove CONFIG_MMC_DW_IDMAC
+
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |  25 +++
+ arch/arc/configs/axs101_defconfig                  |   1 -
+ arch/arc/configs/axs103_defconfig                  |   1 -
+ arch/arc/configs/axs103_smp_defconfig              |   1 -
+ arch/arm/configs/exynos_defconfig                  |   1 -
+ arch/arm/configs/hisi_defconfig                    |   1 -
+ arch/arm/configs/lpc18xx_defconfig                 |   1 -
+ arch/arm/configs/multi_v7_defconfig                |   1 -
+ arch/arm/configs/zx_defconfig                      |   1 -
+ arch/mips/configs/pistachio_defconfig              |   1 -
+ drivers/mmc/host/Kconfig                           |  11 +-
+ drivers/mmc/host/dw_mmc-pltfm.c                    |   2 +
+ drivers/mmc/host/dw_mmc.c                          | 209 ++++++++++++++++++---
+ drivers/mmc/host/dw_mmc.h                          |   5 +
+ include/linux/mmc/dw_mmc.h                         |  27 ++-
+ 15 files changed, 235 insertions(+), 53 deletions(-)
+
+-- 
+2.3.7
+
+
