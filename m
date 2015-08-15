@@ -1,47 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3] spi: bitbang: Replace spinlock by mutex when calling
- chipselect
-Date: Fri, 14 Aug 2015 20:19:20 +0100
-Message-ID: <20150814191920.GK10748@sirena.org.uk>
-References: <CANMq1KB2zxPPCbxh4K-REUgp-83s=MPcGRjz-p1fK1PQMzyLdw@mail.gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Issues with HW RNG on Exynos 5422
+Date: Sat, 15 Aug 2015 13:19:03 +0200
+Message-ID: <55CF2027.2050707@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m699nQIRt8EJjqXo"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CANMq1KB2zxPPCbxh4K-REUgp-83s=MPcGRjz-p1fK1PQMzyLdw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Boichat <drinkcat@chromium.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc: "Naveen Krishna Chatradhi <ch.naveen@samsung.com; Jonghwa Lee" <jonghwa3.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+I'm having issues making the hardware RNG work on a Samsung Exynos 5422 (Odroid XU4) with kernel 4.2rc6.
+No random number generation is started if I write the appropriate value (0x18) to the hash control register.
 
---m699nQIRt8EJjqXo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What I did so far:
+Splitted the sss DT node in exynos5420.dtsi into one for the s5p-sss driver and one for the exynos-rng driver.
+(s5p-sss doesn't seem to need the hash registers from offset 0x400)
 
-On Wed, Aug 05, 2015 at 06:24:05PM +0800, Nicolas Boichat wrote:
+sss: sss@10830000 {
+	icompatible = "samsung,exynos4210-secss";
+	reg = <0x10830000 0x400>;
+	interrupts = <0 112 0>;
+	clocks = <&clock CLK_SSS>;
+	clock-names = "secss";
+};
 
-> Anyway, the "safer" way to fix this would be to keep the
-> prepare/unprepare functions, busy variable, and just protect it with a
-> mutex instead of a spinlock...
+rng: rng@10830400 {
+	compatible = "samsung,exynosrng-secss";
+	reg = <0x10830400 0x300>;
+	clocks = <&clock CLK_SSS>;
+	clock-names = "secss";
+};
 
-OK, that seems reasonable.
+The DT binding is just for testing and after adding some DT glue logic (of_device_id table) to the exynos-rng driver
+it binds to the rng platform device.
+The clock also seems to be ok with a rate of 266 MHz.
+As is the driver hangs in a loop because the PRNG_DONE in the status register bit never gets set.
 
---m699nQIRt8EJjqXo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I traced it back to the hash control register not accepting value 0x8 (or 0x18 incl. the start bit) for the PRNG.
+Writing a value and reading it back works for values from 0 to 5 only.
+As I have no SSS datasheet my only other reference is drivers/crypto/ace_sha.h in the uboot source code
+which also uses the HW RNG.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVzj83AAoJECTWi3JdVIfQWuUH/19SfPqefeJoOALciub7mK2U
-r23lPEHb1/6LVTG3s4dCMe0plCO8fob2XZKnAOHDbo289jCCZAy8Sa8a3S99fa6L
-6rphlxrPXRKPD//6b2crahJWRvFer4gFt2+HZsdg/NNBu97ugkcUkORArVKKXNDu
-R4e6JGyPLgRaxOxHt62XkQjvzqtSmiSCsxxxadCkUu/wzy4TCPM/YTnhaW6SzGJh
-bSPo++svP+f9S3lQKVAVSwHoAphRn96JjTUvSGcW2r4CHDQQG3rki5tXlFHiHJIw
-j1x+45g5IPHmj/3hfVLc6RjCOGknNq1wpiicXsY9BWU8dwHLXbUf0N3X0M6YzQ8=
-=Wqn0
------END PGP SIGNATURE-----
-
---m699nQIRt8EJjqXo--
+Any hint would be appreciated.
