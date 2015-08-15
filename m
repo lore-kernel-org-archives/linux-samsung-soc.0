@@ -1,140 +1,65 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH v2 11/11] drm/exynos: remove struct exynos_drm_encoder
- layer
-Date: Sat, 15 Aug 2015 12:22:30 -0300
-Message-ID: <20150815152230.GD22987@joana>
-References: <1438817060-22164-10-git-send-email-gustavo@padovan.org>
- <1438867908-18975-1-git-send-email-gustavo@padovan.org>
- <1438867908-18975-2-git-send-email-gustavo@padovan.org>
- <55C49B8A.4090009@samsung.com>
- <20150811003833.GE8125@joana>
- <55C9E702.8060603@samsung.com>
- <20150812154900.GA16747@joana>
- <20150812155406.GA6769@joana>
- <CAAQKjZNRLVLR8mcnzY29XigDiL9DJfz6k=v1rF5wFE85TgOBAQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH 00/11] drm/exynos: improve atomic modesetting
+Date: Sat, 15 Aug 2015 13:26:09 -0300
+Message-ID: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f174.google.com ([209.85.160.174]:34453 "EHLO
-	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751408AbbHOPWe convert rfc822-to-8bit (ORCPT
+Received: from mail-yk0-f196.google.com ([209.85.160.196]:34086 "EHLO
+	mail-yk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216AbbHOQ02 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Aug 2015 11:22:34 -0400
-Received: by ykdt205 with SMTP id t205so92186420ykd.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Aug 2015 08:22:33 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAAQKjZNRLVLR8mcnzY29XigDiL9DJfz6k=v1rF5wFE85TgOBAQ@mail.gmail.com>
+	Sat, 15 Aug 2015 12:26:28 -0400
+Received: by ykel23 with SMTP id l23so2888442yke.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Aug 2015 09:26:27 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi Inki,
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-2015-08-15 Inki Dae <inki.dae@samsung.com>:
+Hi,
 
-> 2015-08-13 0:54 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
-> > 2015-08-12 Gustavo Padovan <gustavo.padovan@collabora.co.uk>:
-> >
-> >> Hi Inki,
-> >>
-> >> 2015-08-11 Inki Dae <inki.dae@samsung.com>:
-> >>
-> >> > On 2015=EB=85=84 08=EC=9B=94 11=EC=9D=BC 09:38, Gustavo Padovan =
-wrote:
-> >> > > Hi Inki,
-> >> > >
-> >> > > 2015-08-07 Inki Dae <inki.dae@samsung.com>:
-> >> > >
-> >> > >> Hi Gustavo,
-> >> > >>
-> >> > >> On 2015=EB=85=84 08=EC=9B=94 06=EC=9D=BC 22:31, Gustavo Padov=
-an wrote:
-> >> > >>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >> > >>>
-> >> > >>> struct exynos_drm_encoder was justing wrapping struct drm_en=
-coder, it had
-> >> > >>> only a drm_encoder member and the internal exynos_drm_encode=
-rs ops that
-> >> > >>> was directly mapped to the drm_encoder helper funcs.
-> >> > >>>
-> >> > >>> So now exynos DRM uses struct drm_encoder directly, this rem=
-oves
-> >> > >>> completely the struct exynos_drm_encoder.
-> >> > >>>
-> >> > >>
-> >> > >> Trats2 board, which uses Exynos4412 Soc, doesn't work after t=
-his patch
-> >> > >> is applied. Below is the booting logs,
-> >> > >> [    1.171318] console [ttySAC2] enabled
-> >> > >> [    1.175522] 13830000.serial: ttySAC3 at MMIO 0x13830000 (i=
-rq =3D 60,
-> >> > >> base_baud =3D 0) is a S3C6400/10
-> >> > >> [    1.185545] [drm] Initialized drm 1.1.0 20060810
-> >> > >> [    1.194104] exynos-drm exynos-drm: bound 11c00000.fimd (op=
-s
-> >> > >> fimd_component_ops)
-> >> > >> [    1.200352] exynos-drm exynos-drm: bound 11c80000.dsi (ops
-> >> > >> exynos_dsi_component_ops)
-> >> > >> [    1.207688] [drm] Supports vblank timestamp caching Rev 2 =
-(21.10.2013).
-> >> > >> [    1.214313] [drm] No driver support for vblank timestamp q=
-uery.
-> >> > >> [    1.220218] [drm] Initialized exynos 1.0.0 20110530 on min=
-or 0
-> >> > >>
-> >> > >> Booting is locked up here. This patch looks good to me so I t=
-ried to
-> >> > >> find why locked up and I found the booting is locked up as so=
-on as
-> >> > >> console_lock function is called. Can you and other guys look =
-into this
-> >> > >> issue?
-> >> > >
-> >> > > I've realized that I left a fix for patch 01 behind, it could =
-be the
-> >> > > cause of this issue. I've just resent this patch with the adde=
-d v2 fix
-> >> > > up.
-> >> >
-> >> > With above change, still locked up. So your updated patch doesn'=
-t
-> >> > resolve this issue.
-> >> >
-> >> > Anyway, I tested it with fbdev emulation relevant patch series[1=
-] and
-> >> > the booting was ok with disabling fbdev emulation as Daniel comm=
-ented.
-> >> > However, I think the booting should also be ok with fbdev emulat=
-ion so I
-> >> > don't want for your last patch to be merged to mainline until th=
-e issue
-> >> > is resolved.
-> >>
-> >> I've tried to reproduce your issue with these patches on a odroid-=
-x2
-> >> (exynos4412) but it seems to work fine for me with fbdev emulation
-> >> enabled. In snow and peach-pi it also works fine. We would need
-> >> to debug better on your side to figure out what is breaking for yo=
-u.
-> >
-> > Can you please git bisect this? So we can figure out which commit i=
-s
-> > causing the issue. That would be great.
->=20
-> I already commented above, your last patch - 11/11. Without 11/11, it
-> worked well. Did you test odroid-x2 with LVDS based Display panel? If
-> so, it's not different because I tested it with Trats2 board with
-> MIPI-DSI + Display panel. AFAIK, Odroid-x2 board doesn't support
-> MIPI-DSI panel. I will have a pull request soon without 11/11. After
-> that, I think we could find and resolve the issue later.
+This patchset adds a couple of changes to improve atomic modesetting:
 
-Ah, I thougth your talking about whole patchset! I think I figured out
-what was happend the .mode_fixup() and .mode_set() helpers for the DSI
-drm_encoder was not set and leading to a null pointer at some pointer.
-That is problably what you were experiencing. Could you please try the
-new version of patch 11/11 that I've just sent to the mailing list?
-And thanks for merging these patches!
+ * add check for the START shadow register for FIMD to only finish the update
+ when the screen was actually updated.
+ * add asynchronous atomic commit, so now page flips can be run asynchronously.
+ It also add infrastructure to serialize commits for the same CRTC and wait all
+ plane updates to finish.
+ * enable the DRIVER_ATOMIC feature to enable userspace to use atomic IOCTL with
+ exynos.
+
+Please review.
 
 	Gustavo
+
+---
+Gustavo Padovan (11):
+  drm/exynos: don't track enabled state at exynos_crtc
+  drm/exynos: fimd: unify call to exynos_drm_crtc_finish_pageflip()
+  drm/exynos: add prepare and cleanup phases for planes
+  drm/exynos: fimd: move window protect code to prepare/cleanup_plane
+  drm/exynos: check for pending fb before finish update
+  drm/exynos: add macro to get the address of START_S reg
+  drm/exynos: fimd: only finish update if START == START_S
+  drm/exynos: add atomic asynchronous commit
+  drm/exynos: wait all planes updates to finish
+  drm/exynos: remove wait queue for pending page flip
+  drm/exynos: Enable atomic modesetting feature
+
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  10 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  10 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      |  69 +++++------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h      |   4 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c       | 158 +++++++++++++++++++++++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  24 +++-
+ drivers/gpu/drm/exynos/exynos_drm_fb.c        |  35 ------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  81 ++++++++-----
+ drivers/gpu/drm/exynos/exynos_drm_plane.c     |   2 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  10 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  10 +-
+ include/video/samsung_fimd.h                  |   1 +
+ 12 files changed, 309 insertions(+), 105 deletions(-)
+
+-- 
+2.1.0
