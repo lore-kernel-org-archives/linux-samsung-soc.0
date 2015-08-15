@@ -1,46 +1,93 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Issues with HW RNG on Exynos 5422
-Date: Sat, 15 Aug 2015 13:19:03 +0200
-Message-ID: <55CF2027.2050707@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 11/11] drm/exynos: remove struct exynos_drm_encoder
+ layer
+Date: Sat, 15 Aug 2015 23:33:08 +0900
+Message-ID: <CAAQKjZNRLVLR8mcnzY29XigDiL9DJfz6k=v1rF5wFE85TgOBAQ@mail.gmail.com>
+References: <1438817060-22164-10-git-send-email-gustavo@padovan.org>
+ <1438867908-18975-1-git-send-email-gustavo@padovan.org>
+ <1438867908-18975-2-git-send-email-gustavo@padovan.org>
+ <55C49B8A.4090009@samsung.com> <20150811003833.GE8125@joana>
+ <55C9E702.8060603@samsung.com> <20150812154900.GA16747@joana>
+ <20150812155406.GA6769@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc: "Naveen Krishna Chatradhi <ch.naveen@samsung.com; Jonghwa Lee" <jonghwa3.lee@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150812155406.GA6769@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-I'm having issues making the hardware RNG work on a Samsung Exynos 5422 (Odroid XU4) with kernel 4.2rc6.
-No random number generation is started if I write the appropriate value (0x18) to the hash control register.
-
-What I did so far:
-Splitted the sss DT node in exynos5420.dtsi into one for the s5p-sss driver and one for the exynos-rng driver.
-(s5p-sss doesn't seem to need the hash registers from offset 0x400)
-
-sss: sss@10830000 {
-	icompatible = "samsung,exynos4210-secss";
-	reg = <0x10830000 0x400>;
-	interrupts = <0 112 0>;
-	clocks = <&clock CLK_SSS>;
-	clock-names = "secss";
-};
-
-rng: rng@10830400 {
-	compatible = "samsung,exynosrng-secss";
-	reg = <0x10830400 0x300>;
-	clocks = <&clock CLK_SSS>;
-	clock-names = "secss";
-};
-
-The DT binding is just for testing and after adding some DT glue logic (of_device_id table) to the exynos-rng driver
-it binds to the rng platform device.
-The clock also seems to be ok with a rate of 266 MHz.
-As is the driver hangs in a loop because the PRNG_DONE in the status register bit never gets set.
-
-I traced it back to the hash control register not accepting value 0x8 (or 0x18 incl. the start bit) for the PRNG.
-Writing a value and reading it back works for values from 0 to 5 only.
-As I have no SSS datasheet my only other reference is drivers/crypto/ace_sha.h in the uboot source code
-which also uses the HW RNG.
-
-Any hint would be appreciated.
+MjAxNS0wOC0xMyAwOjU0IEdNVCswOTowMCBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm9AcGFkb3Zh
+bi5vcmc+Ogo+IDIwMTUtMDgtMTIgR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
+bGFib3JhLmNvLnVrPjoKPgo+PiBIaSBJbmtpLAo+Pgo+PiAyMDE1LTA4LTExIElua2kgRGFlIDxp
+bmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4+Cj4+ID4gT24gMjAxNeuFhCAwOOyblCAxMeydvCAwOToz
+OCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+PiA+ID4gSGkgSW5raSwKPj4gPiA+Cj4+ID4gPiAy
+MDE1LTA4LTA3IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4+ID4gPgo+PiA+ID4+
+IEhpIEd1c3Rhdm8sCj4+ID4gPj4KPj4gPiA+PiBPbiAyMDE164WEIDA47JuUIDA27J28IDIyOjMx
+LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4+ID4gPj4+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8
+Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPj4gPiA+Pj4KPj4gPiA+Pj4gc3RydWN0
+IGV4eW5vc19kcm1fZW5jb2RlciB3YXMganVzdGluZyB3cmFwcGluZyBzdHJ1Y3QgZHJtX2VuY29k
+ZXIsIGl0IGhhZAo+PiA+ID4+PiBvbmx5IGEgZHJtX2VuY29kZXIgbWVtYmVyIGFuZCB0aGUgaW50
+ZXJuYWwgZXh5bm9zX2RybV9lbmNvZGVycyBvcHMgdGhhdAo+PiA+ID4+PiB3YXMgZGlyZWN0bHkg
+bWFwcGVkIHRvIHRoZSBkcm1fZW5jb2RlciBoZWxwZXIgZnVuY3MuCj4+ID4gPj4+Cj4+ID4gPj4+
+IFNvIG5vdyBleHlub3MgRFJNIHVzZXMgc3RydWN0IGRybV9lbmNvZGVyIGRpcmVjdGx5LCB0aGlz
+IHJlbW92ZXMKPj4gPiA+Pj4gY29tcGxldGVseSB0aGUgc3RydWN0IGV4eW5vc19kcm1fZW5jb2Rl
+ci4KPj4gPiA+Pj4KPj4gPiA+Pgo+PiA+ID4+IFRyYXRzMiBib2FyZCwgd2hpY2ggdXNlcyBFeHlu
+b3M0NDEyIFNvYywgZG9lc24ndCB3b3JrIGFmdGVyIHRoaXMgcGF0Y2gKPj4gPiA+PiBpcyBhcHBs
+aWVkLiBCZWxvdyBpcyB0aGUgYm9vdGluZyBsb2dzLAo+PiA+ID4+IFsgICAgMS4xNzEzMThdIGNv
+bnNvbGUgW3R0eVNBQzJdIGVuYWJsZWQKPj4gPiA+PiBbICAgIDEuMTc1NTIyXSAxMzgzMDAwMC5z
+ZXJpYWw6IHR0eVNBQzMgYXQgTU1JTyAweDEzODMwMDAwIChpcnEgPSA2MCwKPj4gPiA+PiBiYXNl
+X2JhdWQgPSAwKSBpcyBhIFMzQzY0MDAvMTAKPj4gPiA+PiBbICAgIDEuMTg1NTQ1XSBbZHJtXSBJ
+bml0aWFsaXplZCBkcm0gMS4xLjAgMjAwNjA4MTAKPj4gPiA+PiBbICAgIDEuMTk0MTA0XSBleHlu
+b3MtZHJtIGV4eW5vcy1kcm06IGJvdW5kIDExYzAwMDAwLmZpbWQgKG9wcwo+PiA+ID4+IGZpbWRf
+Y29tcG9uZW50X29wcykKPj4gPiA+PiBbICAgIDEuMjAwMzUyXSBleHlub3MtZHJtIGV4eW5vcy1k
+cm06IGJvdW5kIDExYzgwMDAwLmRzaSAob3BzCj4+ID4gPj4gZXh5bm9zX2RzaV9jb21wb25lbnRf
+b3BzKQo+PiA+ID4+IFsgICAgMS4yMDc2ODhdIFtkcm1dIFN1cHBvcnRzIHZibGFuayB0aW1lc3Rh
+bXAgY2FjaGluZyBSZXYgMiAoMjEuMTAuMjAxMykuCj4+ID4gPj4gWyAgICAxLjIxNDMxM10gW2Ry
+bV0gTm8gZHJpdmVyIHN1cHBvcnQgZm9yIHZibGFuayB0aW1lc3RhbXAgcXVlcnkuCj4+ID4gPj4g
+WyAgICAxLjIyMDIxOF0gW2RybV0gSW5pdGlhbGl6ZWQgZXh5bm9zIDEuMC4wIDIwMTEwNTMwIG9u
+IG1pbm9yIDAKPj4gPiA+Pgo+PiA+ID4+IEJvb3RpbmcgaXMgbG9ja2VkIHVwIGhlcmUuIFRoaXMg
+cGF0Y2ggbG9va3MgZ29vZCB0byBtZSBzbyBJIHRyaWVkIHRvCj4+ID4gPj4gZmluZCB3aHkgbG9j
+a2VkIHVwIGFuZCBJIGZvdW5kIHRoZSBib290aW5nIGlzIGxvY2tlZCB1cCBhcyBzb29uIGFzCj4+
+ID4gPj4gY29uc29sZV9sb2NrIGZ1bmN0aW9uIGlzIGNhbGxlZC4gQ2FuIHlvdSBhbmQgb3RoZXIg
+Z3V5cyBsb29rIGludG8gdGhpcwo+PiA+ID4+IGlzc3VlPwo+PiA+ID4KPj4gPiA+IEkndmUgcmVh
+bGl6ZWQgdGhhdCBJIGxlZnQgYSBmaXggZm9yIHBhdGNoIDAxIGJlaGluZCwgaXQgY291bGQgYmUg
+dGhlCj4+ID4gPiBjYXVzZSBvZiB0aGlzIGlzc3VlLiBJJ3ZlIGp1c3QgcmVzZW50IHRoaXMgcGF0
+Y2ggd2l0aCB0aGUgYWRkZWQgdjIgZml4Cj4+ID4gPiB1cC4KPj4gPgo+PiA+IFdpdGggYWJvdmUg
+Y2hhbmdlLCBzdGlsbCBsb2NrZWQgdXAuIFNvIHlvdXIgdXBkYXRlZCBwYXRjaCBkb2Vzbid0Cj4+
+ID4gcmVzb2x2ZSB0aGlzIGlzc3VlLgo+PiA+Cj4+ID4gQW55d2F5LCBJIHRlc3RlZCBpdCB3aXRo
+IGZiZGV2IGVtdWxhdGlvbiByZWxldmFudCBwYXRjaCBzZXJpZXNbMV0gYW5kCj4+ID4gdGhlIGJv
+b3Rpbmcgd2FzIG9rIHdpdGggZGlzYWJsaW5nIGZiZGV2IGVtdWxhdGlvbiBhcyBEYW5pZWwgY29t
+bWVudGVkLgo+PiA+IEhvd2V2ZXIsIEkgdGhpbmsgdGhlIGJvb3Rpbmcgc2hvdWxkIGFsc28gYmUg
+b2sgd2l0aCBmYmRldiBlbXVsYXRpb24gc28gSQo+PiA+IGRvbid0IHdhbnQgZm9yIHlvdXIgbGFz
+dCBwYXRjaCB0byBiZSBtZXJnZWQgdG8gbWFpbmxpbmUgdW50aWwgdGhlIGlzc3VlCj4+ID4gaXMg
+cmVzb2x2ZWQuCj4+Cj4+IEkndmUgdHJpZWQgdG8gcmVwcm9kdWNlIHlvdXIgaXNzdWUgd2l0aCB0
+aGVzZSBwYXRjaGVzIG9uIGEgb2Ryb2lkLXgyCj4+IChleHlub3M0NDEyKSBidXQgaXQgc2VlbXMg
+dG8gd29yayBmaW5lIGZvciBtZSB3aXRoIGZiZGV2IGVtdWxhdGlvbgo+PiBlbmFibGVkLiBJbiBz
+bm93IGFuZCBwZWFjaC1waSBpdCBhbHNvIHdvcmtzIGZpbmUuIFdlIHdvdWxkIG5lZWQKPj4gdG8g
+ZGVidWcgYmV0dGVyIG9uIHlvdXIgc2lkZSB0byBmaWd1cmUgb3V0IHdoYXQgaXMgYnJlYWtpbmcg
+Zm9yIHlvdS4KPgo+IENhbiB5b3UgcGxlYXNlIGdpdCBiaXNlY3QgdGhpcz8gU28gd2UgY2FuIGZp
+Z3VyZSBvdXQgd2hpY2ggY29tbWl0IGlzCj4gY2F1c2luZyB0aGUgaXNzdWUuIFRoYXQgd291bGQg
+YmUgZ3JlYXQuCgpJIGFscmVhZHkgY29tbWVudGVkIGFib3ZlLCB5b3VyIGxhc3QgcGF0Y2ggLSAx
+MS8xMS4gV2l0aG91dCAxMS8xMSwgaXQKd29ya2VkIHdlbGwuIERpZCB5b3UgdGVzdCBvZHJvaWQt
+eDIgd2l0aCBMVkRTIGJhc2VkIERpc3BsYXkgcGFuZWw/IElmCnNvLCBpdCdzIG5vdCBkaWZmZXJl
+bnQgYmVjYXVzZSBJIHRlc3RlZCBpdCB3aXRoIFRyYXRzMiBib2FyZCB3aXRoCk1JUEktRFNJICsg
+RGlzcGxheSBwYW5lbC4gQUZBSUssIE9kcm9pZC14MiBib2FyZCBkb2Vzbid0IHN1cHBvcnQKTUlQ
+SS1EU0kgcGFuZWwuIEkgd2lsbCBoYXZlIGEgcHVsbCByZXF1ZXN0IHNvb24gd2l0aG91dCAxMS8x
+MS4gQWZ0ZXIKdGhhdCwgSSB0aGluayB3ZSBjb3VsZCBmaW5kIGFuZCByZXNvbHZlIHRoZSBpc3N1
+ZSBsYXRlci4KClRoYW5rcywKSW5raSBEYWUKCj4KPiAgICAgICAgIEd1c3Rhdm8KPiBfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
