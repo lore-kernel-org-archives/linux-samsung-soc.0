@@ -1,60 +1,264 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 07/11] drm/exynos: fimd: only finish update if START == START_S
-Date: Sat, 15 Aug 2015 13:26:16 -0300
-Message-ID: <1439655980-32146-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 08/11] drm/exynos: add atomic asynchronous commit
+Date: Sat, 15 Aug 2015 13:26:17 -0300
+Message-ID: <1439655980-32146-9-git-send-email-gustavo@padovan.org>
 References: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:32973 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216AbbHOQ0r (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 15 Aug 2015 12:26:47 -0400
+Received: by ykll84 with SMTP id l84so29599138ykl.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Aug 2015 09:26:46 -0700 (PDT)
 In-Reply-To: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-ZmltZF91cGRhdGVfcGxhbmUoKSBwcm9ncmFtcyBCVUZfU1RBUlRbd2luXSBhbmQgZHVyaW5nIHRo
-ZSB1cGRhdGUKQlVGX1NUQVJUW3dpbl0gaXMgY29waWVkIHRvIEJVRl9TVEFSVF9TW3dpbl0gKGl0
-cyBzaGFkb3cgcmVnaXN0ZXIpCmFuZCBzdGFydHMgc2Nhbm5pbmcgb3V0LCB0aGVuIGl0IHJhaXNl
-cyBhIGlycS4KClRoZSBmaW1kX2lycV9oYW5kbGVyLCBpbiB0aGUgY2FzZSB3ZSBoYXZlIGEgcGVu
-ZGluZ19mYiwgd2lsbCBjaGVjawp0aGUgZmIgdmFsdWUgd2FzIGNvcGllZCB0byBTVEFSVF9TIHJl
-Z2lzdGVyIGFuZCBmaW5pc2ggdGhlIHVwZGF0ZQppbiBjYXNlIG9mIHN1Y2Nlc3MuCgpCYXNlZCBv
-biBwYXRjaCBmcm9tIERhbmllbCBLdXJ0eiA8ZGprdXJ0ekBjaHJvbWl1bS5vcmc+CgpTaWduZWQt
-b2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+
-Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8IDggKysrKysr
-LS0KIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKaW5kZXggZDQxYWE2YS4uYzg3Yjc5
-MSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwor
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCkBAIC01OSw2ICs1
-OSw3IEBACiAjZGVmaW5lIFZJRFduQUxQSEExKHdpbikJKFZJRFdfQUxQSEEgKyAweDA0ICsgKHdp
-bikgKiA4KQogCiAjZGVmaW5lIFZJRFd4X0JVRl9TVEFSVCh3aW4sIGJ1ZikJKFZJRFdfQlVGX1NU
-QVJUKGJ1ZikgKyAod2luKSAqIDgpCisjZGVmaW5lIFZJRFd4X0JVRl9TVEFSVF9TKHdpbiwgYnVm
-KQkoVklEV19CVUZfU1RBUlRfUyhidWYpICsgKHdpbikgKiA4KQogI2RlZmluZSBWSURXeF9CVUZf
-RU5EKHdpbiwgYnVmKQkJKFZJRFdfQlVGX0VORChidWYpICsgKHdpbikgKiA4KQogI2RlZmluZSBW
-SURXeF9CVUZfU0laRSh3aW4sIGJ1ZikJKFZJRFdfQlVGX1NJWkUoYnVmKSArICh3aW4pICogNCkK
-IApAQCAtODk1LDcgKzg5Niw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRj
-X29wcyBmaW1kX2NydGNfb3BzID0gewogc3RhdGljIGlycXJldHVybl90IGZpbWRfaXJxX2hhbmRs
-ZXIoaW50IGlycSwgdm9pZCAqZGV2X2lkKQogewogCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9
-IChzdHJ1Y3QgZmltZF9jb250ZXh0ICopZGV2X2lkOwotCXUzMiB2YWwsIGNsZWFyX2JpdDsKKwl1
-MzIgdmFsLCBjbGVhcl9iaXQsIHN0YXJ0LCBzdGFydF9zOwogCWludCB3aW47CiAKIAl2YWwgPSBy
-ZWFkbChjdHgtPnJlZ3MgKyBWSURJTlRDT04xKTsKQEAgLTkxNyw3ICs5MTgsMTAgQEAgc3RhdGlj
-IGlycXJldHVybl90IGZpbWRfaXJxX2hhbmRsZXIoaW50IGlycSwgdm9pZCAqZGV2X2lkKQogCQlp
-ZiAoIXBsYW5lLT5wZW5kaW5nX2ZiKQogCQkJY29udGludWU7CiAKLQkJZXh5bm9zX2RybV9jcnRj
-X2ZpbmlzaF91cGRhdGUoY3R4LT5jcnRjLCBwbGFuZSk7CisJCXN0YXJ0ID0gcmVhZGwoY3R4LT5y
-ZWdzICsgVklEV3hfQlVGX1NUQVJUKHdpbiwgMCkpOworCQlzdGFydF9zID0gcmVhZGwoY3R4LT5y
-ZWdzICsgVklEV3hfQlVGX1NUQVJUX1Mod2luLCAwKSk7CisJCWlmIChzdGFydCA9PSBzdGFydF9z
-KQorCQkJZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF91cGRhdGUoY3R4LT5jcnRjLCBwbGFuZSk7CiAJ
-fQogCiAJaWYgKGN0eC0+aTgwX2lmKSB7Ci0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+The atomic modesetting interfaces supports async commits that should be
+implemented by the drivers. If drm core requests an async commit
+exynos_atomic_commit() will now schedule a work task to run the update later.
+
+It also serializes commits that needs to run on the same crtc, putting the
+following commit to wait until the current one is finished.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 113 ++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h |  11 ++++
+ drivers/gpu/drm/exynos/exynos_drm_fb.c  |  35 ----------
+ 3 files changed, 124 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index e8db234..a4937b5 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -13,6 +13,8 @@
+ 
+ #include <linux/pm_runtime.h>
+ #include <drm/drmP.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc_helper.h>
+ 
+ #include <linux/component.h>
+@@ -37,6 +39,56 @@
+ #define DRIVER_MAJOR	1
+ #define DRIVER_MINOR	0
+ 
++struct exynos_atomic_commit {
++	struct work_struct	work;
++	struct drm_device	*dev;
++	struct drm_atomic_state *state;
++	u32			crtcs;
++};
++
++static void exynos_atomic_commit_complete(struct exynos_atomic_commit *commit)
++{
++	struct drm_device *dev = commit->dev;
++	struct exynos_drm_private *priv = dev->dev_private;
++	struct drm_atomic_state *state = commit->state;
++
++	drm_atomic_helper_commit_modeset_disables(dev, state);
++
++	drm_atomic_helper_commit_modeset_enables(dev, state);
++
++	/*
++	 * Exynos can't update planes with CRTCs and encoders disabled,
++	 * its updates routines, specially for FIMD, requires the clocks
++	 * to be enabled. So it is necessary to handle the modeset operations
++	 * *before* the commit_planes() step, this way it will always
++	 * have the relevant clocks enabled to perform the update.
++	 */
++
++	drm_atomic_helper_commit_planes(dev, state);
++
++	drm_atomic_helper_wait_for_vblanks(dev, state);
++
++	drm_atomic_helper_cleanup_planes(dev, state);
++
++	drm_atomic_state_free(state);
++
++	spin_lock(&priv->lock);
++	priv->pending &= ~commit->crtcs;
++	spin_unlock(&priv->lock);
++
++	wake_up_all(&priv->wait);
++
++	kfree(commit);
++}
++
++static void exynos_drm_atomic_work(struct work_struct *work)
++{
++	struct exynos_atomic_commit *commit = container_of(work,
++				struct exynos_atomic_commit, work);
++
++	exynos_atomic_commit_complete(commit);
++}
++
+ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ {
+ 	struct exynos_drm_private *private;
+@@ -48,6 +100,9 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 	if (!private)
+ 		return -ENOMEM;
+ 
++	init_waitqueue_head(&private->wait);
++	spin_lock_init(&private->lock);
++
+ 	dev_set_drvdata(dev->dev, dev);
+ 	dev->dev_private = (void *)private;
+ 
+@@ -150,6 +205,64 @@ static int exynos_drm_unload(struct drm_device *dev)
+ 	return 0;
+ }
+ 
++static int commit_is_pending(struct exynos_drm_private *priv, u32 crtcs)
++{
++	bool pending;
++
++	spin_lock(&priv->lock);
++	pending = priv->pending & crtcs;
++	spin_unlock(&priv->lock);
++
++	return pending;
++}
++
++int exynos_atomic_commit(struct drm_device *dev, struct drm_atomic_state *state,
++			 bool async)
++{
++	struct exynos_drm_private *priv = dev->dev_private;
++	struct exynos_atomic_commit *commit;
++	int i, ret;
++
++	commit = kzalloc(sizeof(*commit), GFP_KERNEL);
++	if (!commit)
++		return -ENOMEM;
++
++	ret = drm_atomic_helper_prepare_planes(dev, state);
++	if (ret) {
++		kfree(commit);
++		return ret;
++	}
++
++	/* This is the point of no return */
++
++	INIT_WORK(&commit->work, exynos_drm_atomic_work);
++	commit->dev = dev;
++	commit->state = state;
++
++	/* Wait until all affected CRTCs have completed previous commits and
++	 * mark them as pending.
++	 */
++	for (i = 0; i < dev->mode_config.num_crtc; ++i) {
++		if (state->crtcs[i])
++			commit->crtcs |= 1 << drm_crtc_index(state->crtcs[i]);
++	}
++
++	wait_event(priv->wait, !commit_is_pending(priv, commit->crtcs));
++
++	spin_lock(&priv->lock);
++	priv->pending |= commit->crtcs;
++	spin_unlock(&priv->lock);
++
++	drm_atomic_helper_swap_state(dev, state);
++
++	if (async)
++		schedule_work(&commit->work);
++	else
++		exynos_atomic_commit_complete(commit);
++
++	return 0;
++}
++
+ static int exynos_drm_suspend(struct drm_device *dev, pm_message_t state)
+ {
+ 	struct drm_connector *connector;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index de10cd1..406b278 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -170,6 +170,9 @@ struct drm_exynos_file_private {
+  * @da_space_size: size of device address space.
+  *	if 0 then default value is used for it.
+  * @pipe: the pipe number for this crtc/manager.
++ * @pending: the crtcs that have pending updates to finish
++ * @lock: protect access to @pending
++ * @wait: wait an atomic commit to finish
+  */
+ struct exynos_drm_private {
+ 	struct drm_fb_helper *fb_helper;
+@@ -185,6 +188,11 @@ struct exynos_drm_private {
+ 	unsigned long da_space_size;
+ 
+ 	unsigned int pipe;
++
++	/* for atomic commit */
++	u32			pending;
++	spinlock_t		lock;
++	wait_queue_head_t	wait;
+ };
+ 
+ /*
+@@ -243,6 +251,9 @@ static inline int exynos_dpi_bind(struct drm_device *dev,
+ }
+ #endif
+ 
++int exynos_atomic_commit(struct drm_device *dev, struct drm_atomic_state *state,
++			 bool async);
++
+ 
+ extern struct platform_driver fimd_driver;
+ extern struct platform_driver exynos5433_decon_driver;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index 2b6320e..edaccfb 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -267,41 +267,6 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
+ 		exynos_drm_fbdev_init(dev);
+ }
+ 
+-static int exynos_atomic_commit(struct drm_device *dev,
+-				struct drm_atomic_state *state,
+-				bool async)
+-{
+-	int ret;
+-
+-	ret = drm_atomic_helper_prepare_planes(dev, state);
+-	if (ret)
+-		return ret;
+-
+-	/* This is the point of no return */
+-
+-	drm_atomic_helper_swap_state(dev, state);
+-
+-	drm_atomic_helper_commit_modeset_disables(dev, state);
+-
+-	drm_atomic_helper_commit_modeset_enables(dev, state);
+-
+-	/*
+-	 * Exynos can't update planes with CRTCs and encoders disabled,
+-	 * its updates routines, specially for FIMD, requires the clocks
+-	 * to be enabled. So it is necessary to handle the modeset operations
+-	 * *before* the commit_planes() step, this way it will always
+-	 * have the relevant clocks enabled to perform the update.
+-	 */
+-
+-	drm_atomic_helper_commit_planes(dev, state);
+-
+-	drm_atomic_helper_cleanup_planes(dev, state);
+-
+-	drm_atomic_state_free(state);
+-
+-	return 0;
+-}
+-
+ static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+ 	.fb_create = exynos_user_fb_create,
+ 	.output_poll_changed = exynos_drm_output_poll_changed,
+-- 
+2.1.0
