@@ -1,65 +1,83 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 00/11] drm/exynos: improve atomic modesetting
-Date: Sat, 15 Aug 2015 13:26:09 -0300
-Message-ID: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f196.google.com ([209.85.160.196]:34086 "EHLO
-	mail-yk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753216AbbHOQ02 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Aug 2015 12:26:28 -0400
-Received: by ykel23 with SMTP id l23so2888442yke.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Aug 2015 09:26:27 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 03/11] drm/exynos: add prepare and cleanup phases for planes
+Date: Sat, 15 Aug 2015 13:26:12 -0300
+Message-ID: <1439655980-32146-4-git-send-email-gustavo@padovan.org>
+References: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Hi,
-
-This patchset adds a couple of changes to improve atomic modesetting:
-
- * add check for the START shadow register for FIMD to only finish the update
- when the screen was actually updated.
- * add asynchronous atomic commit, so now page flips can be run asynchronously.
- It also add infrastructure to serialize commits for the same CRTC and wait all
- plane updates to finish.
- * enable the DRIVER_ATOMIC feature to enable userspace to use atomic IOCTL with
- exynos.
-
-Please review.
-
-	Gustavo
-
----
-Gustavo Padovan (11):
-  drm/exynos: don't track enabled state at exynos_crtc
-  drm/exynos: fimd: unify call to exynos_drm_crtc_finish_pageflip()
-  drm/exynos: add prepare and cleanup phases for planes
-  drm/exynos: fimd: move window protect code to prepare/cleanup_plane
-  drm/exynos: check for pending fb before finish update
-  drm/exynos: add macro to get the address of START_S reg
-  drm/exynos: fimd: only finish update if START == START_S
-  drm/exynos: add atomic asynchronous commit
-  drm/exynos: wait all planes updates to finish
-  drm/exynos: remove wait queue for pending page flip
-  drm/exynos: Enable atomic modesetting feature
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  10 +-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  10 +-
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      |  69 +++++------
- drivers/gpu/drm/exynos/exynos_drm_crtc.h      |   4 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.c       | 158 +++++++++++++++++++++++++-
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  24 +++-
- drivers/gpu/drm/exynos/exynos_drm_fb.c        |  35 ------
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  81 ++++++++-----
- drivers/gpu/drm/exynos/exynos_drm_plane.c     |   2 +
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  10 +-
- drivers/gpu/drm/exynos/exynos_mixer.c         |  10 +-
- include/video/samsung_fimd.h                  |   1 +
- 12 files changed, 309 insertions(+), 105 deletions(-)
-
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+LnByZXBhcmVfcGxhbmUoKSBhbmQgLmNsZWFudXBfcGxhbmUoKSBhbGxvd3MgdG8gcGVyZm9ybSBl
+eHRyYSBvcGVyYXRpb25zCmJlZm9yZSBhbmQgYWZ0ZXIgdGhlIHVwZGF0ZSBvZiBwbGFuZXMuIEZv
+ciBGSU1EIGZvciBleGFtcGxlIHRoaXMgd2lsbApiZSB1c2VkIHRvIGVuYWJsZSBkaXNhYmxlIHRo
+ZSBzaGFkb3cgcHJvdGVjdGlvbiBiaXQuCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4g
+PGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDE5ICsrKysrKysrKysrKysrKysrKysKIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgfCAgNiArKysrKysKIDIgZmlsZXMgY2hh
+bmdlZCwgMjUgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Y3J0Yy5jCmluZGV4IDVhMTllMTYuLjNhODlmYzkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2NydGMuYwpAQCAtNzIsMTUgKzcyLDM0IEBAIGV4eW5vc19kcm1fY3J0Y19tb2Rl
+X3NldF9ub2ZiKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKIHN0YXRpYyB2b2lkIGV4eW5vc19jcnRj
+X2F0b21pY19iZWdpbihzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IGV4eW5vc19k
+cm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsKKwlzdHJ1Y3QgZHJt
+X3BsYW5lICpwbGFuZTsKIAogCWlmIChjcnRjLT5zdGF0ZS0+ZXZlbnQpIHsKIAkJV0FSTl9PTihk
+cm1fY3J0Y192YmxhbmtfZ2V0KGNydGMpICE9IDApOwogCQlleHlub3NfY3J0Yy0+ZXZlbnQgPSBj
+cnRjLT5zdGF0ZS0+ZXZlbnQ7CiAJfQorCisJZHJtX2F0b21pY19jcnRjX2Zvcl9lYWNoX3BsYW5l
+KHBsYW5lLCBjcnRjKSB7CisJCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUg
+PSB0b19leHlub3NfcGxhbmUocGxhbmUpOworCisJCWlmIChleHlub3NfY3J0Yy0+b3BzLT5wcmVw
+YXJlX3BsYW5lKQorCQkJZXh5bm9zX2NydGMtPm9wcy0+cHJlcGFyZV9wbGFuZShleHlub3NfY3J0
+YywKKwkJCQkJCQlleHlub3NfcGxhbmUpOworCX0KIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX2Ny
+dGNfYXRvbWljX2ZsdXNoKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKIHsKKwlzdHJ1Y3QgZXh5bm9z
+X2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOworCXN0cnVjdCBk
+cm1fcGxhbmUgKnBsYW5lOworCisJZHJtX2F0b21pY19jcnRjX2Zvcl9lYWNoX3BsYW5lKHBsYW5l
+LCBjcnRjKSB7CisJCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19l
+eHlub3NfcGxhbmUocGxhbmUpOworCisJCWlmIChleHlub3NfY3J0Yy0+b3BzLT5jbGVhbnVwX3Bs
+YW5lKQorCQkJZXh5bm9zX2NydGMtPm9wcy0+Y2xlYW51cF9wbGFuZShleHlub3NfY3J0YywKKwkJ
+CQkJCQlleHlub3NfcGxhbmUpOworCX0KIH0KIAogc3RhdGljIHN0cnVjdCBkcm1fY3J0Y19oZWxw
+ZXJfZnVuY3MgZXh5bm9zX2NydGNfaGVscGVyX2Z1bmNzID0gewpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2Rydi5oCmluZGV4IGE5OTNhYWMuLjlmMmI1YzkgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAorKysgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTg3LDYgKzg3LDggQEAgc3RydWN0IGV4eW5v
+c19kcm1fcGxhbmUgewogICogQGRpc2FibGVfdmJsYW5rOiBzcGVjaWZpYyBkcml2ZXIgY2FsbGJh
+Y2sgZm9yIGRpc2FibGluZyB2YmxhbmsgaW50ZXJydXB0LgogICogQHdhaXRfZm9yX3ZibGFuazog
+d2FpdCBmb3IgdmJsYW5rIGludGVycnVwdCB0byBtYWtlIHN1cmUgdGhhdAogICoJaGFyZHdhcmUg
+b3ZlcmxheSBpcyB1cGRhdGVkLgorICogQHByZXBhcmVfcGxhbmU6IHByZXBhcmUgYSB3aW5kb3cg
+dG8gcmVjZWl2ZSBhIHVwZGF0ZQorICogQGNsZWFudXBfcGxhbmU6IG1hcmsgdGhlIGVuZCBvZiBh
+IHdpbmRvdyB1cGRhdGUKICAqIEB1cGRhdGVfcGxhbmU6IGFwcGx5IGhhcmR3YXJlIHNwZWNpZmlj
+IG92ZXJsYXkgZGF0YSB0byByZWdpc3RlcnMuCiAgKiBAZGlzYWJsZV9wbGFuZTogZGlzYWJsZSBo
+YXJkd2FyZSBzcGVjaWZpYyBvdmVybGF5LgogICogQHRlX2hhbmRsZXI6IHRyaWdnZXIgdG8gdHJh
+bnNmZXIgdmlkZW8gaW1hZ2UgYXQgdGhlIHRlYXJpbmcgZWZmZWN0CkBAIC0xMDcsMTAgKzEwOSwx
+NCBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyB7CiAJaW50ICgqZW5hYmxlX3ZibGFuayko
+c3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yyk7CiAJdm9pZCAoKmRpc2FibGVfdmJsYW5rKShz
+dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKTsKIAl2b2lkICgqd2FpdF9mb3JfdmJsYW5rKShz
+dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKTsKKwl2b2lkICgqcHJlcGFyZV9wbGFuZSkoc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKKwkJCSAgICAgIHN0cnVjdCBleHlub3NfZHJtX3Bs
+YW5lICpwbGFuZSk7CiAJdm9pZCAoKnVwZGF0ZV9wbGFuZSkoc3RydWN0IGV4eW5vc19kcm1fY3J0
+YyAqY3J0YywKIAkJCSAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBsYW5lKTsKIAl2b2lk
+ICgqZGlzYWJsZV9wbGFuZSkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKIAkJCSAgICAg
+IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpwbGFuZSk7CisJdm9pZCAoKmNsZWFudXBfcGxhbmUp
+KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCisJCQkgICAgICBzdHJ1Y3QgZXh5bm9zX2Ry
+bV9wbGFuZSAqcGxhbmUpOwogCXZvaWQgKCp0ZV9oYW5kbGVyKShzdHJ1Y3QgZXh5bm9zX2RybV9j
+cnRjICpjcnRjKTsKIAl2b2lkICgqY2xvY2tfZW5hYmxlKShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRj
+ICpjcnRjLCBib29sIGVuYWJsZSk7CiB9OwotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
