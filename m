@@ -1,50 +1,102 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 02/11] drm/exynos: fimd: unify call to
- exynos_drm_crtc_finish_pageflip()
-Date: Sat, 15 Aug 2015 13:26:11 -0300
-Message-ID: <1439655980-32146-3-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 01/11] drm/exynos: don't track enabled state at exynos_crtc
+Date: Sat, 15 Aug 2015 13:26:10 -0300
+Message-ID: <1439655980-32146-2-git-send-email-gustavo@padovan.org>
 References: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f196.google.com ([209.85.160.196]:34091 "EHLO
+	mail-yk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216AbbHOQ0a (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 15 Aug 2015 12:26:30 -0400
+Received: by ykel23 with SMTP id l23so2888536yke.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Aug 2015 09:26:29 -0700 (PDT)
 In-Reply-To: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VW5pZnkgaGFuZGxpbmcgb2YgZmluaXNoZWQgcGxhbmUgdXBkYXRlIHRvIHByZXBhcmUgZm9yIGEg
-Zm9sbG93aW5nIHBhdGNoCnRoYXQgd2lsbCBjaGVjayBmb3IgdGhlIFNUQVJUIGFuZCBTVEFSVF9T
-IHJlZ3MgdG8gcmVhbGx5IG1ha2Ugc3VyZSB0aGF0CnRoZSBwbGFuZSB3YXMgdXBkYXRlZC4KClNp
-Z25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5j
-by51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgMTAg
-KysrKystLS0tLQogMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMo
-LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCA1ZGVmNmJj
-Li4zMGMxNDA5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAg
-LTg5NiwxNSArODk2LDE1IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBmaW1kX2lycV9oYW5kbGVyKGlu
-dCBpcnEsIHZvaWQgKmRldl9pZCkKIAlpZiAoY3R4LT5waXBlIDwgMCB8fCAhY3R4LT5kcm1fZGV2
-KQogCQlnb3RvIG91dDsKIAotCWlmIChjdHgtPmk4MF9pZikgewotCQlleHlub3NfZHJtX2NydGNf
-ZmluaXNoX3BhZ2VmbGlwKGN0eC0+Y3J0Yyk7CisJaWYgKCFjdHgtPmk4MF9pZikKKwkJZHJtX2Ny
-dGNfaGFuZGxlX3ZibGFuaygmY3R4LT5jcnRjLT5iYXNlKTsKKworCWV4eW5vc19kcm1fY3J0Y19m
-aW5pc2hfcGFnZWZsaXAoY3R4LT5jcnRjKTsKIAorCWlmIChjdHgtPmk4MF9pZikgewogCQkvKiBF
-eGl0cyB0cmlnZ2VyaW5nIG1vZGUgKi8KIAkJYXRvbWljX3NldCgmY3R4LT50cmlnZ2VyaW5nLCAw
-KTsKIAl9IGVsc2UgewotCQlkcm1fY3J0Y19oYW5kbGVfdmJsYW5rKCZjdHgtPmNydGMtPmJhc2Up
-OwotCQlleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKGN0eC0+Y3J0Yyk7Ci0KIAkJLyog
-c2V0IHdhaXQgdnN5bmMgZXZlbnQgdG8gemVybyBhbmQgd2FrZSB1cCBxdWV1ZS4gKi8KIAkJaWYg
-KGF0b21pY19yZWFkKCZjdHgtPndhaXRfdnN5bmNfZXZlbnQpKSB7CiAJCQlhdG9taWNfc2V0KCZj
-dHgtPndhaXRfdnN5bmNfZXZlbnQsIDApOwotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+struct drm_crtc already stores the enabled state of the crtc
+thus we don't need to replicate enabled in exynos_drm_crtc.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 16 ----------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  1 -
+ 2 files changed, 17 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index b9b0e9c..5a19e16 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -25,14 +25,9 @@ static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 
+-	if (exynos_crtc->enabled)
+-		return;
+-
+ 	if (exynos_crtc->ops->enable)
+ 		exynos_crtc->ops->enable(exynos_crtc);
+ 
+-	exynos_crtc->enabled = true;
+-
+ 	drm_crtc_vblank_on(crtc);
+ }
+ 
+@@ -40,9 +35,6 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 
+-	if (!exynos_crtc->enabled)
+-		return;
+-
+ 	/* wait for the completion of page flip. */
+ 	if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+ 				(exynos_crtc->event == NULL), HZ/20))
+@@ -52,8 +44,6 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ 
+ 	if (exynos_crtc->ops->disable)
+ 		exynos_crtc->ops->disable(exynos_crtc);
+-
+-	exynos_crtc->enabled = false;
+ }
+ 
+ static bool
+@@ -170,9 +160,6 @@ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe)
+ 	struct exynos_drm_crtc *exynos_crtc =
+ 		to_exynos_crtc(private->crtc[pipe]);
+ 
+-	if (!exynos_crtc->enabled)
+-		return -EPERM;
+-
+ 	if (exynos_crtc->ops->enable_vblank)
+ 		return exynos_crtc->ops->enable_vblank(exynos_crtc);
+ 
+@@ -185,9 +172,6 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe)
+ 	struct exynos_drm_crtc *exynos_crtc =
+ 		to_exynos_crtc(private->crtc[pipe]);
+ 
+-	if (!exynos_crtc->enabled)
+-		return;
+-
+ 	if (exynos_crtc->ops->disable_vblank)
+ 		exynos_crtc->ops->disable_vblank(exynos_crtc);
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 6b8a30f..a993aac 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -136,7 +136,6 @@ struct exynos_drm_crtc {
+ 	struct drm_crtc			base;
+ 	enum exynos_drm_output_type	type;
+ 	unsigned int			pipe;
+-	bool				enabled;
+ 	wait_queue_head_t		pending_flip_queue;
+ 	struct drm_pending_vblank_event	*event;
+ 	const struct exynos_drm_crtc_ops	*ops;
+-- 
+2.1.0
