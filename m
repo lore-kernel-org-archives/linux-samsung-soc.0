@@ -1,60 +1,68 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: Issues with HW RNG / SSS on Exynos 5422
-Date: Sun, 16 Aug 2015 13:18:19 +0200
-Message-ID: <55D0717B.1060706@gmail.com>
-References: <55CF2027.2050707@gmail.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: drm/exynos: g2d userptr memory corruption
+Date: Sun, 16 Aug 2015 14:48:17 +0200
+Message-ID: <55D08691.3040405@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:33124 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751244AbbHPLSZ (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55151 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751198AbbHPMsY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Aug 2015 07:18:25 -0400
-In-Reply-To: <55CF2027.2050707@gmail.com>
+	Sun, 16 Aug 2015 08:48:24 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc: "Naveen Krishna Chatradhi <ch.naveen@samsung.com>; Jonghwa Lee" <jonghwa3.lee@samsung.com>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.sourceforge.net, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Am 15.08.2015 um 13:19 schrieb Heiner Kallweit:
-> I'm having issues making the hardware RNG work on a Samsung Exynos 5422 (Odroid XU4) with kernel 4.2rc6.
-> No random number generation is started if I write the appropriate value (0x18) to the hash control register.
-> 
-> What I did so far:
-> Splitted the sss DT node in exynos5420.dtsi into one for the s5p-sss driver and one for the exynos-rng driver.
-> (s5p-sss doesn't seem to need the hash registers from offset 0x400)
-> 
-> sss: sss@10830000 {
-> 	icompatible = "samsung,exynos4210-secss";
-> 	reg = <0x10830000 0x400>;
-> 	interrupts = <0 112 0>;
-> 	clocks = <&clock CLK_SSS>;
-> 	clock-names = "secss";
-> };
-> 
-> rng: rng@10830400 {
-> 	compatible = "samsung,exynosrng-secss";
-> 	reg = <0x10830400 0x300>;
-> 	clocks = <&clock CLK_SSS>;
-> 	clock-names = "secss";
-> };
-> 
-> The DT binding is just for testing and after adding some DT glue logic (of_device_id table) to the exynos-rng driver
-> it binds to the rng platform device.
-> The clock also seems to be ok with a rate of 266 MHz.
-> As is the driver hangs in a loop because the PRNG_DONE in the status register bit never gets set.
-> 
-> I traced it back to the hash control register not accepting value 0x8 (or 0x18 incl. the start bit) for the PRNG.
-> Writing a value and reading it back works for values from 0 to 5 only.
-> As I have no SSS datasheet my only other reference is drivers/crypto/ace_sha.h in the uboot source code
-> which also uses the HW RNG.
-> 
-> Any hint would be appreciated.
-> 
-After some more testing it seems like SSS in general has problems on Exynos 5422.
-Also the AES implementation in s5p-sss doesn't work. dmesg output:
+Hello,
 
-[    7.116739] alg: skcipher: encryption failed on chunk test 1 for ecb-aes-s5p: ret=22
-[    7.123673] s5p-sss driver registered
+some time ago I checked whether I could use the userptr functionality to
+do zero-copy from userspace allocated buffers via the G2D. This didn't
+work out so well, so kinda put this to the bottom of my TODO list.
+
+Now that IOMMU support has landed and Jan Kara has rewrote page pinning
+using frame vectors (see [1]) I gave userptr another try.
+
+The results are much better. I'm not experiencing any kernel lockups or
+sysmmu pagefaults anymore. However the image now suffers from visual
+artifacts. These images show the nature of the artifacts:
+http://i.imgur.com/nzT6g3Y.jpg
+http://i.imgur.com/wkuYI6X.jpg
+
+The corruption always manifests itself in these pixel lines of fixed
+size and wrong color.
+
+I have written a testcase as part of libdrm for this issue:
+https://github.com/tobiasjakobi/libdrm/commit/db8bf6844436598251f67a71fc334b929bfb2b71
+
+It allocates N (N an even number) buffers which are aligned to the
+system pagesize. Then it does this each iteration:
+1) Fill the first N/2 buffers with random data
+2) Copy the first half to the second half of the buffers
+3) memcmp() first and second half (verification pass)
+
+Usually this verification already fails on the first iteration. An
+interesting observation is that increasing (!) the buffer size (so the
+amount of pixels that have to copied per buffer grows) makes this issue
+less likely to happen.
+
+With the default 512x512 buffers however it happens, like I said above,
+almost immediately.
+
+I first suspected that the clock rate of the G2D was too high (I
+overclock the engine from 200MHz to 400MHz here), but even with the
+default clock there is no change to the behaviour.
+
+While looking at the issue I remember this discussion [2] so while ago.
+
+Adding Marek to Cc since I guess that this could be related to the IOMMU
+as well (some missing flushing?).
+
+
+With best wishes,
+Tobias
+
+
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg45931.html
+[2] http://lists.freedesktop.org/archives/dri-devel/2014-July/062675.html
