@@ -1,42 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH RESEND v6 1/3] Documentation: dts: Documentation entry
- to explain how to use PWM FAN as a cooling device
-Date: Sun, 16 Aug 2015 18:35:27 +0900
-Message-ID: <55D0595F.4050506@samsung.com>
-References: <1425470624-25793-1-git-send-email-l.majewski@samsung.com> <1439298440-15882-1-git-send-email-l.majewski@samsung.com> <1439298440-15882-2-git-send-email-l.majewski@samsung.com> <55CBE220.1010301@samsung.com> <025f01d0d674$bd5c0820$38141860$@kernel.org>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: Issues with HW RNG / SSS on Exynos 5422
+Date: Sun, 16 Aug 2015 13:18:19 +0200
+Message-ID: <55D0717B.1060706@gmail.com>
+References: <55CF2027.2050707@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <025f01d0d674$bd5c0820$38141860$@kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Eduardo Valentin' <edubezval@gmail.com>
-Cc: 'Linux PM list' <linux-pm@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'Lukasz Majewski' <l.majewski@majess.pl>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:33124 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751244AbbHPLSZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Aug 2015 07:18:25 -0400
+In-Reply-To: <55CF2027.2050707@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc: "Naveen Krishna Chatradhi <ch.naveen@samsung.com>; Jonghwa Lee" <jonghwa3.lee@samsung.com>
 
-W dniu 14.08.2015 o 18:36, Kukjin Kim pisze:
-> Krzysztof Kozlowski wrote:
->> On 11.08.2015 22:07, Lukasz Majewski wrote:
->>> Explanation of several properties, which allow PWM fan working as a cooling
->>> device, have been embraced in this commit.
->>>
->>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->>> Acked-by: Eduardo Valentin <edubezval@gmail.com>
->>> ---
->>>  .../devicetree/bindings/hwmon/pwm-fan.txt          | 29 ++++++++++++++++++++--
->>>  1 file changed, 27 insertions(+), 2 deletions(-)
->>>
->>
->> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
->> I'll take care of it and send it to Kukjin for v4.4.
->>
-> Hi, Krzysztof
+Am 15.08.2015 um 13:19 schrieb Heiner Kallweit:
+> I'm having issues making the hardware RNG work on a Samsung Exynos 5422 (Odroid XU4) with kernel 4.2rc6.
+> No random number generation is started if I write the appropriate value (0x18) to the hash control register.
 > 
-> If you're ok, I'll take this series into samsung tree directly for v4.3.
+> What I did so far:
+> Splitted the sss DT node in exynos5420.dtsi into one for the s5p-sss driver and one for the exynos-rng driver.
+> (s5p-sss doesn't seem to need the hash registers from offset 0x400)
+> 
+> sss: sss@10830000 {
+> 	icompatible = "samsung,exynos4210-secss";
+> 	reg = <0x10830000 0x400>;
+> 	interrupts = <0 112 0>;
+> 	clocks = <&clock CLK_SSS>;
+> 	clock-names = "secss";
+> };
+> 
+> rng: rng@10830400 {
+> 	compatible = "samsung,exynosrng-secss";
+> 	reg = <0x10830400 0x300>;
+> 	clocks = <&clock CLK_SSS>;
+> 	clock-names = "secss";
+> };
+> 
+> The DT binding is just for testing and after adding some DT glue logic (of_device_id table) to the exynos-rng driver
+> it binds to the rng platform device.
+> The clock also seems to be ok with a rate of 266 MHz.
+> As is the driver hangs in a loop because the PRNG_DONE in the status register bit never gets set.
+> 
+> I traced it back to the hash control register not accepting value 0x8 (or 0x18 incl. the start bit) for the PRNG.
+> Writing a value and reading it back works for values from 0 to 5 only.
+> As I have no SSS datasheet my only other reference is drivers/crypto/ace_sha.h in the uboot source code
+> which also uses the HW RNG.
+> 
+> Any hint would be appreciated.
+> 
+After some more testing it seems like SSS in general has problems on Exynos 5422.
+Also the AES implementation in s5p-sss doesn't work. dmesg output:
 
-Sure, please go ahead.
-
-Best regards,
-Krzysztof
-
+[    7.116739] alg: skcipher: encryption failed on chunk test 1 for ecb-aes-s5p: ret=22
+[    7.123673] s5p-sss driver registered
