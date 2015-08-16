@@ -1,68 +1,67 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: drm/exynos: g2d userptr memory corruption
-Date: Sun, 16 Aug 2015 14:48:17 +0200
-Message-ID: <55D08691.3040405@math.uni-bielefeld.de>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [RFC PATCH v5 1/9] mmc: dw_mmc: Add external dma interface support
+Date: Sun, 16 Aug 2015 14:10:46 -0700
+Message-ID: <CAD=FV=W1dzqoJuJtJsD5TPKmSBpUbBcifGz654o9x8J1rX6-GQ@mail.gmail.com>
+References: <1439541232-30100-1-git-send-email-shawn.lin@rock-chips.com>
+	<1439541275-30146-1-git-send-email-shawn.lin@rock-chips.com>
+	<1522710.BT6Gc0L6oH@diego>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55151 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751198AbbHPMsY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Aug 2015 08:48:24 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1522710.BT6Gc0L6oH@diego>
+Sender: linux-mmc-owner@vger.kernel.org
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Zhangfei Gao <zhangfei.gao@linaro.org>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mips@linux-mips.org, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.sourceforge.net, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hello,
+Heiko,
 
-some time ago I checked whether I could use the userptr functionality to
-do zero-copy from userspace allocated buffers via the G2D. This didn't
-work out so well, so kinda put this to the bottom of my TODO list.
+On Fri, Aug 14, 2015 at 3:13 PM, Heiko St=C3=BCbner <heiko@sntech.de> w=
+rote:
+> Hi Shawn,
+>
+> Am Freitag, 14. August 2015, 16:34:35 schrieb Shawn Lin:
+>> DesignWare MMC Controller can supports two types of DMA
+>> mode: external dma and internal dma. We get a RK312x platform
+>> integrated dw_mmc and ARM pl330 dma controller. This patch add
+>> edmac ops to support these platforms. I've tested it on RK312x
+>> platform with edmac mode and RK3288 platform with idmac mode.
+>>
+>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>
+> judging by your "from", I guess you're running this on some older Roc=
+kchip soc
+> without the idma? Because I tried testing this on a Radxa Rock, but o=
+nly got
+> failures, from the start (failed to read card status register). In PI=
+O mode
+> everything works again.
+>
+>
+> I guess I overlooked just some tiny detail, but to me the dma channel=
+ ids seem
+> correct after all. Maybe you have any hints what I'm doing wrong?
 
-Now that IOMMU support has landed and Jan Kara has rewrote page pinning
-using frame vectors (see [1]) I gave userptr another try.
+If I were a guessing man (which I'm not), I'd guess that perhaps
+you're running into troubles with our friend the PL330.
 
-The results are much better. I'm not experiencing any kernel lockups or
-sysmmu pagefaults anymore. However the image now suffers from visual
-artifacts. These images show the nature of the artifacts:
-http://i.imgur.com/nzT6g3Y.jpg
-http://i.imgur.com/wkuYI6X.jpg
+There appear to be strange issues with the PL330 on Rockchip SoCs.  I
+was only peripherally involved with them, but I know at least about
+some of the patches in our tree, like:
 
-The corruption always manifests itself in these pixel lines of fixed
-size and wrong color.
+https://chromium-review.googlesource.com/237607
+=46ROMLIST: DMA: pl330: support burst mode for dev-to-mem and mem-to-de=
+v transmit
 
-I have written a testcase as part of libdrm for this issue:
-https://github.com/tobiasjakobi/libdrm/commit/db8bf6844436598251f67a71fc334b929bfb2b71
+https://chromium-review.googlesource.com/237393
+CHROMIUM: dmaengine: pl330: support quirks for some broken
 
-It allocates N (N an even number) buffers which are aligned to the
-system pagesize. Then it does this each iteration:
-1) Fill the first N/2 buffers with random data
-2) Copy the first half to the second half of the buffers
-3) memcmp() first and second half (verification pass)
+https://chromium-review.googlesource.com/237396
+CHROMIUM: dmaengine: pl330: add quirk for broken no flushp
 
-Usually this verification already fails on the first iteration. An
-interesting observation is that increasing (!) the buffer size (so the
-amount of pixels that have to copied per buffer grows) makes this issue
-less likely to happen.
+https://chromium-review.googlesource.com/237394
+CHROMIUM: ARM: dts: rockchip: Add broken-no-flushp into rk3288.dtsi
 
-With the default 512x512 buffers however it happens, like I said above,
-almost immediately.
-
-I first suspected that the clock rate of the G2D was too high (I
-overclock the engine from 200MHz to 400MHz here), but even with the
-default clock there is no change to the behaviour.
-
-While looking at the issue I remember this discussion [2] so while ago.
-
-Adding Marek to Cc since I guess that this could be related to the IOMMU
-as well (some missing flushing?).
-
-
-With best wishes,
-Tobias
-
-
-[1] http://www.spinics.net/lists/linux-samsung-soc/msg45931.html
-[2] http://lists.freedesktop.org/archives/dri-devel/2014-July/062675.html
+https://chromium-review.googlesource.com/242063
+CHROMIUM: ASoC: rockchip_i2s: modify DMA max burst to 1
