@@ -1,91 +1,65 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: drm/exynos: g2d userptr memory corruption
-Date: Mon, 17 Aug 2015 17:41:26 +0200
-Message-ID: <55D200A6.4070304@gmx.net>
-References: <55D08691.3040405@math.uni-bielefeld.de> <1439807175.3050.30.camel@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: drm/exynos: remove superfluous checks in g2d_check_reg_offset()
+Date: Tue, 18 Aug 2015 00:51:23 +0200
+Message-ID: <1439851884-3346-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:53822 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755806AbbHQPlu (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57084 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752000AbbHQWvh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Aug 2015 11:41:50 -0400
-In-Reply-To: <1439807175.3050.30.camel@pengutronix.de>
+	Mon, 17 Aug 2015 18:51:37 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.sourceforge.net, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Thanks Lucas for the explanation!
+The cases of the switch statement ensure that reg_type
+can never be REG_TYPE_NONE here.
 
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Lucas Stach wrote:
-> Hi Tobias,
-> 
-> Am Sonntag, den 16.08.2015, 14:48 +0200 schrieb Tobias Jakobi:
->> Hello,
->>
->> some time ago I checked whether I could use the userptr functionality to
->> do zero-copy from userspace allocated buffers via the G2D. This didn't
->> work out so well, so kinda put this to the bottom of my TODO list.
->>
->> Now that IOMMU support has landed and Jan Kara has rewrote page pinning
->> using frame vectors (see [1]) I gave userptr another try.
->>
->> The results are much better. I'm not experiencing any kernel lockups or
->> sysmmu pagefaults anymore. However the image now suffers from visual
->> artifacts. These images show the nature of the artifacts:
->> http://i.imgur.com/nzT6g3Y.jpg
->> http://i.imgur.com/wkuYI6X.jpg
->>
->> The corruption always manifests itself in these pixel lines of fixed
->> size and wrong color.
->>
->> I have written a testcase as part of libdrm for this issue:
->> https://github.com/tobiasjakobi/libdrm/commit/db8bf6844436598251f67a71fc334b929bfb2b71
->>
->> It allocates N (N an even number) buffers which are aligned to the
->> system pagesize. Then it does this each iteration:
->> 1) Fill the first N/2 buffers with random data
->> 2) Copy the first half to the second half of the buffers
->> 3) memcmp() first and second half (verification pass)
->>
->> Usually this verification already fails on the first iteration. An
->> interesting observation is that increasing (!) the buffer size (so the
->> amount of pixels that have to copied per buffer grows) makes this issue
->> less likely to happen.
->>
->> With the default 512x512 buffers however it happens, like I said above,
->> almost immediately.
->>
-> This is obviously a cache flush missing. The memory you get from
-> userspace is normal cached memory, so to make it visible to the GPU you
-> need to flush parts of the cache out to main memory.
-> 
-> The corruption you are seeing is just unflushed cachelines. This also
-> explains why increasing the buffer size helps: the more memory the CPU
-> touches the more cachelines will be flushed out to be replaced with new
-> data.
-I should point out that the snapshots I uploaded were done with a
-different setup. There only the source memory of the G2D operation is a
-userspace allocated buffer. The destination is a GEM buffer allocated
-through libdrm, which is then used as framebuffer. So the issue already
-appears when just the source is userspace allocated.
-
-What works however is an operation between GEM to GEM. However this
-might be related to the default allocation flags libdrm uses.
-
-
-
-> So you need to go and have a look at dma_map() and dma_sync_*_for_*()
-> and friends.
-> 
-> Regards,
-> Lucas
-> 
-
-
-With best wishes,
-Tobias
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index ba00839..211af37 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -973,8 +973,6 @@ static int g2d_check_reg_offset(struct device *dev,
+ 				goto err;
+ 
+ 			reg_type = g2d_get_reg_type(reg_offset);
+-			if (reg_type == REG_TYPE_NONE)
+-				goto err;
+ 
+ 			/* check userptr buffer type. */
+ 			if ((cmdlist->data[index] & ~0x7fffffff) >> 31) {
+@@ -989,8 +987,6 @@ static int g2d_check_reg_offset(struct device *dev,
+ 				goto err;
+ 
+ 			reg_type = g2d_get_reg_type(reg_offset);
+-			if (reg_type == REG_TYPE_NONE)
+-				goto err;
+ 
+ 			buf_desc = &buf_info->descs[reg_type];
+ 			value = cmdlist->data[index + 1];
+@@ -1003,8 +999,6 @@ static int g2d_check_reg_offset(struct device *dev,
+ 				goto err;
+ 
+ 			reg_type = g2d_get_reg_type(reg_offset);
+-			if (reg_type == REG_TYPE_NONE)
+-				goto err;
+ 
+ 			buf_desc = &buf_info->descs[reg_type];
+ 			value = cmdlist->data[index + 1];
+@@ -1018,8 +1012,6 @@ static int g2d_check_reg_offset(struct device *dev,
+ 				goto err;
+ 
+ 			reg_type = g2d_get_reg_type(reg_offset);
+-			if (reg_type == REG_TYPE_NONE)
+-				goto err;
+ 
+ 			buf_desc = &buf_info->descs[reg_type];
+ 			value = cmdlist->data[index + 1];
+-- 
+2.0.5
