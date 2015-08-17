@@ -1,41 +1,133 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/4] clk: samsung: exynos3250: Add MMC2 clock
-Date: Mon, 17 Aug 2015 10:48:05 +0900
-Message-ID: <55D13D55.5030207@samsung.com>
-References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
- <1439264784-30322-3-git-send-email-cw00.choi@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [rtc-linux] [PATCH] rtc: s5m: fix to update ctrl register
+Date: Mon, 17 Aug 2015 10:47:53 +0900
+Message-ID: <55D13D49.1040504@samsung.com>
+References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
+ <55CC6B28.5010707@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:24882 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753196AbbHQBsQ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:35409 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751924AbbHQBsK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Aug 2015 21:48:16 -0400
-In-reply-to: <1439264784-30322-3-git-send-email-cw00.choi@samsung.com>
+	Sun, 16 Aug 2015 21:48:10 -0400
+In-reply-to: <55CC6B28.5010707@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, sbkim73@samsung.com
 
-On 11.08.2015 12:46, Chanwoo Choi wrote:
-> This patch add the MMC2 clocks (mux, divider, gate) of Exynos3250 SoC.
+Hi,
+
+On 08/13/2015 07:02 PM, Krzysztof Kozlowski wrote:
+> W dniu 13.08.2015 o 17:49, Joonyoung Shim pisze:
+>> According to datasheet, the S2MPS13X and S2MPS14X should update write
+>> buffer via setting WUDR bit to high after ctrl register is updated.
 > 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos3250.c   | 9 +++++++++
->  include/dt-bindings/clock/exynos3250.h | 7 ++++++-
->  2 files changed, 15 insertions(+), 1 deletion(-)
+> Hi,
+> 
+> I cannot find this information in S2MPS14 datasheet. On which page is it?
+> 
 
+I got below information from S2MPS14_Data Sheet_REV0.1 document.
 
+5.2.2.3 RTC_UPDATE
+...
 
-Assuming that numbers/addresses are good (reserved in my datasheet) the
-code itself looks good:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+NOTE: 
+1.  For write Time Registers (0x00, 0x04~0x0A) & Alarm 0&1 Registers 
+(0x0B~0x18), set WUDR bit to high.
 
+> 
+>>
+>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
+>> tools/testing/selftests/timers/rtctest.c test program and hour format is
+>> used to 12 hour mode in Odroid-XU3 board.
+> 
+> Two questions here:
+> 1. Earlier you mentioned S2MPS1[34], now Odroid XU3 which has S2MPS11.
+> Are you sure that this applies to all of them (S2MPS11, S2MPS13 and
+> S2MP14)? There are some minor differences between them so I would not be
+> surprised if only some of them required this action.
+> 
 
-Best regards,
-Krzysztof
+I'm not sure about that because i don't have S2MPS11 datasheet. I just
+got the information that S2MPS11 also use S2MPS14 rtc from sec-core mfd
+driver,
+
+static const struct mfd_cell s2mps11_devs[] = {                                                                       
+        {                                                                                                             
+                .name = "s2mps11-pmic",                                                                               
+        }, {                                                                                                          
+                .name = "s2mps14-rtc",                                                                                
+        }, {                                                                                                          
+                .name = "s2mps11-clk",                                                                                
+                .of_compatible = "samsung,s2mps11-clk",                                                               
+        }                                                                                                             
+};
+
+> 2. The driver operates in 24-hour omode. Actually it sets the 24-hour
+> mode just before your new regmap_update_bits() call. What do you mean by
+> 12-hour mode?
+> 
+
+RTC_CTRL register value is 0 until write buffer is updated, so it is
+used to 12-hour mode.
+
+>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>> Cc: <stable@vger.kernel.org>
+> 
+> Thanks for putting a cc-stable tag. How far this should be ported? If
+> this is needed only for S2MPS11 then v4.1. If all of them then probably
+> for earlier version?
+> 
+
+If find exact version, i think it will be a version after below commit
+was applied.
+
+The commit 0c5deb1ea92f("rtc: s5m: add support for S2MPS14 RTC")
+
+$ git name-rev 0c5deb1ea92f
+0c5deb1ea92f tags/v3.16-rc1~53^2~1
+
+Thanks.
+
+> Best regards,
+> Krzysztof
+> 
+>> ---
+>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>> index 8c70d78..03828bb 100644
+>> --- a/drivers/rtc/rtc-s5m.c
+>> +++ b/drivers/rtc/rtc-s5m.c
+>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>>  	case S2MPS13X:
+>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
+>> +		if (ret < 0)
+>> +			break;
+>> +
+>> +		ret = regmap_update_bits(info->regmap,
+>> +				info->regs->rtc_udr_update,
+>> +				info->regs->rtc_udr_mask,
+>> +				info->regs->rtc_udr_mask);
+>> +		if (ret < 0)
+>> +			break;
+>> +
+>> +		ret = s5m8767_wait_for_udr_update(info);
+>> +
+>>  		break;
+>>  
+>>  	default:
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
