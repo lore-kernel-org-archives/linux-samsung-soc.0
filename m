@@ -1,171 +1,128 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [rtc-linux] [PATCH] rtc: s5m: fix to update ctrl register
-Date: Mon, 17 Aug 2015 11:28:35 +0900
-Message-ID: <55D146D3.3000500@samsung.com>
-References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
- <55CC6B28.5010707@samsung.com> <55D13D49.1040504@samsung.com>
- <55D14033.1000000@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [1/4] clk: samsung: exynos3250: Add UART2 clock
+Date: Mon, 17 Aug 2015 08:59:38 +0530
+Message-ID: <55D15522.7080603@samsung.com>
+References: <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <55D14033.1000000@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, sbkim73@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:45704 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752607AbbHQD3b (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Aug 2015 23:29:31 -0400
+In-reply-to: <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On 08/17/2015 11:00 AM, Krzysztof Kozlowski wrote:
-> On 17.08.2015 10:47, Joonyoung Shim wrote:
->> Hi,
->>
->> On 08/13/2015 07:02 PM, Krzysztof Kozlowski wrote:
->>> W dniu 13.08.2015 o 17:49, Joonyoung Shim pisze:
->>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
->>>> buffer via setting WUDR bit to high after ctrl register is updated.
->>>
->>> Hi,
->>>
->>> I cannot find this information in S2MPS14 datasheet. On which page is it?
->>>
->>
->> I got below information from S2MPS14_Data Sheet_REV0.1 document.
->>
->> 5.2.2.3 RTC_UPDATE
->> ...
->>
->> NOTE: 
->> 1.  For write Time Registers (0x00, 0x04~0x0A) & Alarm 0&1 Registers 
->> (0x0B~0x18), set WUDR bit to high.
-> 
-> Right, I have too but it does not say anything about control register.
-> It mentions only time, alarm 0 and alarm 1 registers, not control.
-> 
+Hi Chanwoo,
 
-Address 0x00 is RTC_CTRL, so i don't know what you say.
+Thanks for this patch. Similar patch[1] was posted long back, and there 
+were some concern from your side, if you think those concerns are fixed, 
+then my patch [1] are still valid and can be taken. If it needs to be 
+rebase I am happy to do that.
 
->>
->>>
->>>>
->>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
->>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
->>>> used to 12 hour mode in Odroid-XU3 board.
->>>
->>> Two questions here:
->>> 1. Earlier you mentioned S2MPS1[34], now Odroid XU3 which has S2MPS11.
->>> Are you sure that this applies to all of them (S2MPS11, S2MPS13 and
->>> S2MP14)? There are some minor differences between them so I would not be
->>> surprised if only some of them required this action.
->>>
->>
->> I'm not sure about that because i don't have S2MPS11 datasheet. I just
->> got the information that S2MPS11 also use S2MPS14 rtc from sec-core mfd
->> driver,
-> 
-> Yeah, I added it. But these RTC modules are slightly different,
-> especially S2MPS14, so you cannot assume that they are the same after
-> looking at mainline code.
-> 
+[1] 
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/291239.html
 
-OK, could you check this issue from different things?
 
-Thanks.
-
->>
->> static const struct mfd_cell s2mps11_devs[] = {                                                                       
->>         {                                                                                                             
->>                 .name = "s2mps11-pmic",                                                                               
->>         }, {                                                                                                          
->>                 .name = "s2mps14-rtc",                                                                                
->>         }, {                                                                                                          
->>                 .name = "s2mps11-clk",                                                                                
->>                 .of_compatible = "samsung,s2mps11-clk",                                                               
->>         }                                                                                                             
->> };
->>
->>> 2. The driver operates in 24-hour omode. Actually it sets the 24-hour
->>> mode just before your new regmap_update_bits() call. What do you mean by
->>> 12-hour mode?
->>>
->>
->> RTC_CTRL register value is 0 until write buffer is updated, so it is
->> used to 12-hour mode.
-> 
-> I mean what do you have in mind by saying:
-> "... and hour format is used to 12 hour mode in Odroid-XU3 board."
-> The hour format is set by driver to 24h mode.
-> 
-> 
->>
->>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
->>>> Cc: <stable@vger.kernel.org>
->>>
->>> Thanks for putting a cc-stable tag. How far this should be ported? If
->>> this is needed only for S2MPS11 then v4.1. If all of them then probably
->>> for earlier version?
->>>
->>
->> If find exact version, i think it will be a version after below commit
->> was applied.
->>
->> The commit 0c5deb1ea92f("rtc: s5m: add support for S2MPS14 RTC")
->>
->> $ git name-rev 0c5deb1ea92f
->> 0c5deb1ea92f tags/v3.16-rc1~53^2~1
-> 
-> Hmmm... I am not against the patch (especially that it matches source
-> code of SM-G900H with S2MPS11) but I have doubts about affected
-> chipsets. My Odroid (probably because of bootloader), S2MPS13 and
-> S2MPS14 do not need it. This confuses me...
-> 
-> Best regards,
-> Krzysztof
-> 
->>
->> Thanks.
->>
->>> Best regards,
->>> Krzysztof
->>>
->>>> ---
->>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
->>>>  1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
->>>> index 8c70d78..03828bb 100644
->>>> --- a/drivers/rtc/rtc-s5m.c
->>>> +++ b/drivers/rtc/rtc-s5m.c
->>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->>>>  	case S2MPS13X:
->>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
->>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
->>>> +		if (ret < 0)
->>>> +			break;
->>>> +
->>>> +		ret = regmap_update_bits(info->regmap,
->>>> +				info->regs->rtc_udr_update,
->>>> +				info->regs->rtc_udr_mask,
->>>> +				info->regs->rtc_udr_mask);
->>>> +		if (ret < 0)
->>>> +			break;
->>>> +
->>>> +		ret = s5m8767_wait_for_udr_update(info);
->>>> +
->>>>  		break;
->>>>  
->>>>  	default:
->>>>
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Thanks,
+Pankaj Dubey
+On Tuesday 11 August 2015 09:16 AM, Chanwoo Choi wrote:
+> This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
+>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> ---
+> drivers/clk/samsung/clk-exynos3250.c   | 6 ++++++
+>   include/dt-bindings/clock/exynos3250.h | 6 +++++-
+>   2 files changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+> index 538de66a759e..2105863a3ace 100644
+> --- a/drivers/clk/samsung/clk-exynos3250.c
+> +++ b/drivers/clk/samsung/clk-exynos3250.c
+> @@ -307,6 +307,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+>   	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
+>
+>   	/* SRC_PERIL0 */
+> +	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
+>   	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
+>   	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
+>
+> @@ -389,6 +390,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
+>   	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+>
+>   	/* DIV_PERIL0 */
+> +	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
+>   	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+>   	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
+>
+> @@ -551,6 +553,9 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+>   		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
+>   	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
+>   		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
+> +
+> +	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
+> +		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
+>   	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
+>   		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
+>   	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+> @@ -648,6 +653,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+>   	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
+>   	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
+>   	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
+> +	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
+>   	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
+>   	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
+>   };
+> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+> index aab088d30199..89a7d97b002c 100644
+> --- a/include/dt-bindings/clock/exynos3250.h
+> +++ b/include/dt-bindings/clock/exynos3250.h
+> @@ -78,6 +78,7 @@
+>   #define CLK_MOUT_CORE			58
+>   #define CLK_MOUT_APLL			59
+>   #define CLK_MOUT_ACLK_266_SUB		60
+> +#define CLK_MOUT_UART2			61
+>
+>   /* Dividers */
+>   #define CLK_DIV_GPL			64
+> @@ -126,6 +127,7 @@
+>   #define CLK_DIV_CORE			107
+>   #define CLK_DIV_HPM			108
+>   #define CLK_DIV_COPY			109
+> +#define CLK_DIV_UART2			110
+>
+>   /* Gates */
+>   #define CLK_ASYNC_G3D			128
+> @@ -222,6 +224,7 @@
+>   #define CLK_BLOCK_MFC			219
+>   #define CLK_BLOCK_CAM			220
+>   #define CLK_SMIES			221
+> +#define CLK_UART2			222
+>
+>   /* Special clocks */
+>   #define CLK_SCLK_JPEG			224
+> @@ -248,12 +251,13 @@
+>   #define CLK_SCLK_SPI0			245
+>   #define CLK_SCLK_UART1			246
+>   #define CLK_SCLK_UART0			247
+> +#define CLK_SCLK_UART2			248
+>
+>   /*
+>    * Total number of clocks of main CMU.
+>    * NOTE: Must be equal to last clock ID increased by one.
+>    */
+> -#define CLK_NR_CLKS			248
+> +#define CLK_NR_CLKS			249
+>
+>   /*
+>    * CMU DMC
+>
