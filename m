@@ -1,87 +1,184 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [3/4] ARM: dts: Add UART2 dt node for Exynos3250 SoC
-Date: Mon, 17 Aug 2015 09:03:48 +0530
-Message-ID: <55D1561C.90805@samsung.com>
-References: <1439264784-30322-4-git-send-email-cw00.choi@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [rtc-linux] [PATCH] rtc: s5m: fix to update ctrl register
+Date: Mon, 17 Aug 2015 12:51:54 +0900
+Message-ID: <55D15A5A.4010203@samsung.com>
+References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
+ <55CC6B28.5010707@samsung.com> <55D13D49.1040504@samsung.com>
+ <55D14033.1000000@samsung.com> <55D146D3.3000500@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1439264784-30322-4-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <55D146D3.3000500@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>, rtc-linux@googlegroups.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, sbkim73@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
+On 17.08.2015 11:28, Joonyoung Shim wrote:
+> On 08/17/2015 11:00 AM, Krzysztof Kozlowski wrote:
+>> On 17.08.2015 10:47, Joonyoung Shim wrote:
+>>> Hi,
+>>>
+>>> On 08/13/2015 07:02 PM, Krzysztof Kozlowski wrote:
+>>>> W dniu 13.08.2015 o 17:49, Joonyoung Shim pisze:
+>>>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
+>>>>> buffer via setting WUDR bit to high after ctrl register is updated.
+>>>>
+>>>> Hi,
+>>>>
+>>>> I cannot find this information in S2MPS14 datasheet. On which page is it?
+>>>>
+>>>
+>>> I got below information from S2MPS14_Data Sheet_REV0.1 document.
+>>>
+>>> 5.2.2.3 RTC_UPDATE
+>>> ...
+>>>
+>>> NOTE: 
+>>> 1.  For write Time Registers (0x00, 0x04~0x0A) & Alarm 0&1 Registers 
+>>> (0x0B~0x18), set WUDR bit to high.
+>>
+>> Right, I have too but it does not say anything about control register.
+>> It mentions only time, alarm 0 and alarm 1 registers, not control.
+>>
+> 
+> Address 0x00 is RTC_CTRL, so i don't know what you say.
 
-Similar patch was posted here[1].
+Ah, I see now!
+You're right, the datasheet mentions control register as time register.
 
-[1]: 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/291023.html
+In this case before reading the RUDR should be set high (for all
+S2MPS1[134]).
 
-Thanks,
-Pankaj Dubey
+BR,
+Krzysztof
 
-On Tuesday 11 August 2015 09:16 AM, Chanwoo Choi wrote:
-> This patch add the uart2 devicetree node for Exynos3250 SoC.
->
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> ---
-> arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  7 +++++++
->   arch/arm/boot/dts/exynos3250.dtsi         | 12 ++++++++++++
->   2 files changed, 19 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-> index 5ab81c39e2c9..eac1d21c10d4 100644
-> --- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-> @@ -120,6 +120,13 @@
->   		samsung,pin-drv = <0>;
->   	};
->
-> +	uart2_data: uart2-data {
-> +		samsung,pins = "gpa1-0", "gpa1-1";
-> +		samsung,pin-function = <2>;
-> +		samsung,pin-pud = <0>;
-> +		samsung,pin-drv = <0>;
-> +	};
-> +
->   	i2c3_bus: i2c3-bus {
->   		samsung,pins = "gpa1-2", "gpa1-3";
->   		samsung,pin-function = <3>;
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 2db99433e17f..02f3250766c9 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -42,6 +42,7 @@
->   		i2c7 = &i2c_7;
->   		serial0 = &serial_0;
->   		serial1 = &serial_1;
-> +		serial2 = &serial_2;
->   	};
->
->   	cpus {
-> @@ -435,6 +436,17 @@
->   			status = "disabled";
->   		};
->
-> +		serial_2: serial@13820000 {
-> +			compatible = "samsung,exynos4210-uart";
-> +			reg = <0x13820000 0x100>;
-> +			interrupts = <0 111 0>;
-> +			clocks = <&cmu CLK_UART2>, <&cmu CLK_SCLK_UART2>;
-> +			clock-names = "uart", "clk_uart_baud0";
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&uart2_data>;
-> +			status = "disabled";
-> +		};
-> +
->   		i2c_0: i2c@13860000 {
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->
+> 
+>>>
+>>>>
+>>>>>
+>>>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
+>>>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
+>>>>> used to 12 hour mode in Odroid-XU3 board.
+>>>>
+>>>> Two questions here:
+>>>> 1. Earlier you mentioned S2MPS1[34], now Odroid XU3 which has S2MPS11.
+>>>> Are you sure that this applies to all of them (S2MPS11, S2MPS13 and
+>>>> S2MP14)? There are some minor differences between them so I would not be
+>>>> surprised if only some of them required this action.
+>>>>
+>>>
+>>> I'm not sure about that because i don't have S2MPS11 datasheet. I just
+>>> got the information that S2MPS11 also use S2MPS14 rtc from sec-core mfd
+>>> driver,
+>>
+>> Yeah, I added it. But these RTC modules are slightly different,
+>> especially S2MPS14, so you cannot assume that they are the same after
+>> looking at mainline code.
+>>
+> 
+> OK, could you check this issue from different things?
+> 
+> Thanks.
+> 
+>>>
+>>> static const struct mfd_cell s2mps11_devs[] = {                                                                       
+>>>         {                                                                                                             
+>>>                 .name = "s2mps11-pmic",                                                                               
+>>>         }, {                                                                                                          
+>>>                 .name = "s2mps14-rtc",                                                                                
+>>>         }, {                                                                                                          
+>>>                 .name = "s2mps11-clk",                                                                                
+>>>                 .of_compatible = "samsung,s2mps11-clk",                                                               
+>>>         }                                                                                                             
+>>> };
+>>>
+>>>> 2. The driver operates in 24-hour omode. Actually it sets the 24-hour
+>>>> mode just before your new regmap_update_bits() call. What do you mean by
+>>>> 12-hour mode?
+>>>>
+>>>
+>>> RTC_CTRL register value is 0 until write buffer is updated, so it is
+>>> used to 12-hour mode.
+>>
+>> I mean what do you have in mind by saying:
+>> "... and hour format is used to 12 hour mode in Odroid-XU3 board."
+>> The hour format is set by driver to 24h mode.
+>>
+>>
+>>>
+>>>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>>>>> Cc: <stable@vger.kernel.org>
+>>>>
+>>>> Thanks for putting a cc-stable tag. How far this should be ported? If
+>>>> this is needed only for S2MPS11 then v4.1. If all of them then probably
+>>>> for earlier version?
+>>>>
+>>>
+>>> If find exact version, i think it will be a version after below commit
+>>> was applied.
+>>>
+>>> The commit 0c5deb1ea92f("rtc: s5m: add support for S2MPS14 RTC")
+>>>
+>>> $ git name-rev 0c5deb1ea92f
+>>> 0c5deb1ea92f tags/v3.16-rc1~53^2~1
+>>
+>> Hmmm... I am not against the patch (especially that it matches source
+>> code of SM-G900H with S2MPS11) but I have doubts about affected
+>> chipsets. My Odroid (probably because of bootloader), S2MPS13 and
+>> S2MPS14 do not need it. This confuses me...
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>>
+>>> Thanks.
+>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>>> ---
+>>>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
+>>>>>  1 file changed, 12 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>>>>> index 8c70d78..03828bb 100644
+>>>>> --- a/drivers/rtc/rtc-s5m.c
+>>>>> +++ b/drivers/rtc/rtc-s5m.c
+>>>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>>>>>  	case S2MPS13X:
+>>>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+>>>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
+>>>>> +		if (ret < 0)
+>>>>> +			break;
+>>>>> +
+>>>>> +		ret = regmap_update_bits(info->regmap,
+>>>>> +				info->regs->rtc_udr_update,
+>>>>> +				info->regs->rtc_udr_mask,
+>>>>> +				info->regs->rtc_udr_mask);
+>>>>> +		if (ret < 0)
+>>>>> +			break;
+>>>>> +
+>>>>> +		ret = s5m8767_wait_for_udr_update(info);
+>>>>> +
+>>>>>  		break;
+>>>>>  
+>>>>>  	default:
+>>>>>
+>>>>
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>
+>>>
+>>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> 
