@@ -1,67 +1,70 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [RFC PATCH v5 1/9] mmc: dw_mmc: Add external dma interface support
-Date: Sun, 16 Aug 2015 14:10:46 -0700
-Message-ID: <CAD=FV=W1dzqoJuJtJsD5TPKmSBpUbBcifGz654o9x8J1rX6-GQ@mail.gmail.com>
-References: <1439541232-30100-1-git-send-email-shawn.lin@rock-chips.com>
-	<1439541275-30146-1-git-send-email-shawn.lin@rock-chips.com>
-	<1522710.BT6Gc0L6oH@diego>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: Issues with HW RNG / SSS on Exynos 5422
+Date: Mon, 17 Aug 2015 09:19:48 +0900
+Message-ID: <CAJKOXPdVh2jFYURjO9Bubti-4wd6nJNGoR+B4Re0LQUtnn2xMA@mail.gmail.com>
+References: <55CF2027.2050707@gmail.com>
+	<55D0717B.1060706@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1522710.BT6Gc0L6oH@diego>
-Sender: linux-mmc-owner@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Zhangfei Gao <zhangfei.gao@linaro.org>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mips@linux-mips.org, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:35261 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752040AbbHQATt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Aug 2015 20:19:49 -0400
+In-Reply-To: <55D0717B.1060706@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, "Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Jonghwa Lee" <jonghwa3.lee@samsung.com>
 
-Heiko,
-
-On Fri, Aug 14, 2015 at 3:13 PM, Heiko St=C3=BCbner <heiko@sntech.de> w=
-rote:
-> Hi Shawn,
->
-> Am Freitag, 14. August 2015, 16:34:35 schrieb Shawn Lin:
->> DesignWare MMC Controller can supports two types of DMA
->> mode: external dma and internal dma. We get a RK312x platform
->> integrated dw_mmc and ARM pl330 dma controller. This patch add
->> edmac ops to support these platforms. I've tested it on RK312x
->> platform with edmac mode and RK3288 platform with idmac mode.
+2015-08-16 20:18 GMT+09:00 Heiner Kallweit <hkallweit1@gmail.com>:
+> Am 15.08.2015 um 13:19 schrieb Heiner Kallweit:
+>> I'm having issues making the hardware RNG work on a Samsung Exynos 5422 (Odroid XU4) with kernel 4.2rc6.
+>> No random number generation is started if I write the appropriate value (0x18) to the hash control register.
 >>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>> What I did so far:
+>> Splitted the sss DT node in exynos5420.dtsi into one for the s5p-sss driver and one for the exynos-rng driver.
+>> (s5p-sss doesn't seem to need the hash registers from offset 0x400)
+>>
+>> sss: sss@10830000 {
+>>       icompatible = "samsung,exynos4210-secss";
+>>       reg = <0x10830000 0x400>;
+>>       interrupts = <0 112 0>;
+>>       clocks = <&clock CLK_SSS>;
+>>       clock-names = "secss";
+>> };
+>>
+>> rng: rng@10830400 {
+>>       compatible = "samsung,exynosrng-secss";
+>>       reg = <0x10830400 0x300>;
+>>       clocks = <&clock CLK_SSS>;
+>>       clock-names = "secss";
+>> };
+>>
+>> The DT binding is just for testing and after adding some DT glue logic (of_device_id table) to the exynos-rng driver
+>> it binds to the rng platform device.
+>> The clock also seems to be ok with a rate of 266 MHz.
+>> As is the driver hangs in a loop because the PRNG_DONE in the status register bit never gets set.
+>>
+>> I traced it back to the hash control register not accepting value 0x8 (or 0x18 incl. the start bit) for the PRNG.
+>> Writing a value and reading it back works for values from 0 to 5 only.
+>> As I have no SSS datasheet my only other reference is drivers/crypto/ace_sha.h in the uboot source code
+>> which also uses the HW RNG.
+>>
+>> Any hint would be appreciated.
+>>
+> After some more testing it seems like SSS in general has problems on Exynos 5422.
+> Also the AES implementation in s5p-sss doesn't work. dmesg output:
 >
-> judging by your "from", I guess you're running this on some older Roc=
-kchip soc
-> without the idma? Because I tried testing this on a Radxa Rock, but o=
-nly got
-> failures, from the start (failed to read card status register). In PI=
-O mode
-> everything works again.
->
->
-> I guess I overlooked just some tiny detail, but to me the dma channel=
- ids seem
-> correct after all. Maybe you have any hints what I'm doing wrong?
+> [    7.116739] alg: skcipher: encryption failed on chunk test 1 for ecb-aes-s5p: ret=22
+> [    7.123673] s5p-sss driver registered
 
-If I were a guessing man (which I'm not), I'd guess that perhaps
-you're running into troubles with our friend the PL330.
+Have you tried or looked at vendor code for Samsung mobile devices?
+The code can be downloaded from opensource.samsung.com. I think the
+model with Exynos5422 is SM-G900H.
 
-There appear to be strange issues with the PL330 on Rockchip SoCs.  I
-was only peripherally involved with them, but I know at least about
-some of the patches in our tree, like:
+I don't have any other hints...
 
-https://chromium-review.googlesource.com/237607
-=46ROMLIST: DMA: pl330: support burst mode for dev-to-mem and mem-to-de=
-v transmit
-
-https://chromium-review.googlesource.com/237393
-CHROMIUM: dmaengine: pl330: support quirks for some broken
-
-https://chromium-review.googlesource.com/237396
-CHROMIUM: dmaengine: pl330: add quirk for broken no flushp
-
-https://chromium-review.googlesource.com/237394
-CHROMIUM: ARM: dts: rockchip: Add broken-no-flushp into rk3288.dtsi
-
-https://chromium-review.googlesource.com/242063
-CHROMIUM: ASoC: rockchip_i2s: modify DMA max burst to 1
+Best regards,
+Krzysztof
