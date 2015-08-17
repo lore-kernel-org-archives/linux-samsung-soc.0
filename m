@@ -1,168 +1,96 @@
-From: Nicolas Boichat <drinkcat-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2] spi: bitbang: Replace spinlock by mutex
-Date: Mon, 17 Aug 2015 11:52:54 +0800
-Message-ID: <1439783574-5933-1-git-send-email-drinkcat@chromium.org>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [2/2] ARM: dts: Add missing irq pinctrl for max77686 on smdk5250
+Date: Mon, 17 Aug 2015 14:50:31 +0900
+Message-ID: <CAJKOXPdzhqXFWT0=eXpr+jjs8R4kFAMq2DSSsFHVEZq_PdAN2w@mail.gmail.com>
+References: <1416312509-11530-2-git-send-email-yadi.brar@samsung.com>
+	<553F68CC.6030504@samsung.com>
+	<5544657A.7010006@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:33100 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750710AbbHQFuc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Aug 2015 01:50:32 -0400
+In-Reply-To: <5544657A.7010006@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
+Cc: robh+dt@kernel.org, yadi.brar01@gmail.com
 
-chipselect (in the case of spi-gpio: spi_gpio_chipselect, which
-calls gpiod_set_raw_value_cansleep) can sleep, so we should not
-hold a spinlock while calling it from spi_bitbang_setup.
+2015-05-02 14:49 GMT+09:00 Krzysztof Kozlowski <k.kozlowski.k@gmail.com>:
+> W dniu 28.04.2015 o 20:02, Pankaj Dubey pisze:
+>> Hi Kukjin,
+>>
+>> Any updated for this patch. Without this PMIC RTC is not working on
+>> SMDK5250.
+>>
+>
+> Could you resend the patch after rebasing it?
+>
+> Best regards,
+> Krzysztof
 
-This issue was introduced by this commit, which converted spi-gpio
-to cansleep variants:
-d9dda5a191 "spi: spi-gpio: Use 'cansleep' variants to access GPIO"
+Dear Pankaj and Yadwinder,
 
-Replacing the lock variable by a mutex fixes the issue: This is
-safe as all instances where the lock is used are called from
-contexts that can sleep.
+Do you plan to do anything with this patch?
 
-Finally, update spi-ppc4xx and and spi-s3c24xx to use mutex
-functions, as they directly hold the lock for similar purpose.
+Best regards,
+Krzysztof
 
-Signed-off-by: Nicolas Boichat <drinkcat-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
-Going the "safer" way and just replacing the spinlock by a
-mutex.
 
-Applies on top of broonie-sound/for-next, and compile-tested on
-x86-64/arm (allyesconfig) and ppc44x (defconfig+SPI driver),
-and runtime-tested on an arm platform.
-
-Thanks!
-
- drivers/spi/spi-bitbang.c       | 17 +++++++----------
- drivers/spi/spi-ppc4xx.c        |  4 ++--
- drivers/spi/spi-s3c24xx.c       |  4 ++--
- include/linux/spi/spi_bitbang.h |  2 +-
- 4 files changed, 12 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
-index 840a498..ef43ef5 100644
---- a/drivers/spi/spi-bitbang.c
-+++ b/drivers/spi/spi-bitbang.c
-@@ -180,7 +180,6 @@ int spi_bitbang_setup(struct spi_device *spi)
- {
- 	struct spi_bitbang_cs	*cs = spi->controller_state;
- 	struct spi_bitbang	*bitbang;
--	unsigned long		flags;
- 
- 	bitbang = spi_master_get_devdata(spi->master);
- 
-@@ -210,12 +209,12 @@ int spi_bitbang_setup(struct spi_device *spi)
- 	 */
- 
- 	/* deselect chip (low or high) */
--	spin_lock_irqsave(&bitbang->lock, flags);
-+	mutex_lock(&bitbang->lock);
- 	if (!bitbang->busy) {
- 		bitbang->chipselect(spi, BITBANG_CS_INACTIVE);
- 		ndelay(cs->nsecs);
- 	}
--	spin_unlock_irqrestore(&bitbang->lock, flags);
-+	mutex_unlock(&bitbang->lock);
- 
- 	return 0;
- }
-@@ -255,13 +254,12 @@ static int spi_bitbang_bufs(struct spi_device *spi, struct spi_transfer *t)
- static int spi_bitbang_prepare_hardware(struct spi_master *spi)
- {
- 	struct spi_bitbang	*bitbang;
--	unsigned long		flags;
- 
- 	bitbang = spi_master_get_devdata(spi);
- 
--	spin_lock_irqsave(&bitbang->lock, flags);
-+	mutex_lock(&bitbang->lock);
- 	bitbang->busy = 1;
--	spin_unlock_irqrestore(&bitbang->lock, flags);
-+	mutex_unlock(&bitbang->lock);
- 
- 	return 0;
- }
-@@ -378,13 +376,12 @@ static int spi_bitbang_transfer_one(struct spi_master *master,
- static int spi_bitbang_unprepare_hardware(struct spi_master *spi)
- {
- 	struct spi_bitbang	*bitbang;
--	unsigned long		flags;
- 
- 	bitbang = spi_master_get_devdata(spi);
- 
--	spin_lock_irqsave(&bitbang->lock, flags);
-+	mutex_lock(&bitbang->lock);
- 	bitbang->busy = 0;
--	spin_unlock_irqrestore(&bitbang->lock, flags);
-+	mutex_unlock(&bitbang->lock);
- 
- 	return 0;
- }
-@@ -427,7 +424,7 @@ int spi_bitbang_start(struct spi_bitbang *bitbang)
- 	if (!master || !bitbang->chipselect)
- 		return -EINVAL;
- 
--	spin_lock_init(&bitbang->lock);
-+	mutex_init(&bitbang->lock);
- 
- 	if (!master->mode_bits)
- 		master->mode_bits = SPI_CPOL | SPI_CPHA | bitbang->flags;
-diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
-index 54fb984..dd3d0a2 100644
---- a/drivers/spi/spi-ppc4xx.c
-+++ b/drivers/spi/spi-ppc4xx.c
-@@ -210,12 +210,12 @@ static int spi_ppc4xx_setupxfer(struct spi_device *spi, struct spi_transfer *t)
- 	if (in_8(&hw->regs->cdm) != cdm)
- 		out_8(&hw->regs->cdm, cdm);
- 
--	spin_lock(&hw->bitbang.lock);
-+	mutex_lock(&hw->bitbang.lock);
- 	if (!hw->bitbang.busy) {
- 		hw->bitbang.chipselect(spi, BITBANG_CS_INACTIVE);
- 		/* Need to ndelay here? */
- 	}
--	spin_unlock(&hw->bitbang.lock);
-+	mutex_unlock(&hw->bitbang.lock);
- 
- 	return 0;
- }
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index f36bc32..4e7d1bf 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -198,12 +198,12 @@ static int s3c24xx_spi_setup(struct spi_device *spi)
- 	if (ret)
- 		return ret;
- 
--	spin_lock(&hw->bitbang.lock);
-+	mutex_lock(&hw->bitbang.lock);
- 	if (!hw->bitbang.busy) {
- 		hw->bitbang.chipselect(spi, BITBANG_CS_INACTIVE);
- 		/* need to ndelay for 0.5 clocktick ? */
- 	}
--	spin_unlock(&hw->bitbang.lock);
-+	mutex_unlock(&hw->bitbang.lock);
- 
- 	return 0;
- }
-diff --git a/include/linux/spi/spi_bitbang.h b/include/linux/spi/spi_bitbang.h
-index 85578d4..154788e 100644
---- a/include/linux/spi/spi_bitbang.h
-+++ b/include/linux/spi/spi_bitbang.h
-@@ -4,7 +4,7 @@
- #include <linux/workqueue.h>
- 
- struct spi_bitbang {
--	spinlock_t		lock;
-+	struct mutex		lock;
- 	u8			busy;
- 	u8			use_dma;
- 	u8			flags;		/* extra spi->mode support */
--- 
-2.5.0.276.gf5e568e
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Thanks,
+>> Pankaj Dubey
+>>
+>> On Tuesday 18 November 2014 05:38 PM, Yadwinder Singh Brar wrote:
+>>> This patch adds pinctrl configuration for using configuring gpx3-2 as an
+>>> external interrupt from max77686. Though max77686 RTC is enabled and gets
+>>> probed by default, it doesnt work as its unable to get interrupt.
+>>>
+>>> This patch makes max77686 RTC work and also configures it as wakeup
+>>> source.
+>>>
+>>> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+>>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>>>
+>>> ---
+>>> arch/arm/boot/dts/exynos5250-smdk5250.dts |   12 ++++++++++++
+>>>   1 files changed, 12 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>> index 95b5b51..19cd918 100644
+>>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>> @@ -131,6 +131,9 @@
+>>>           reg = <0x09>;
+>>>           interrupt-parent = <&gpx3>;
+>>>           interrupts = <2 IRQ_TYPE_NONE>;
+>>> +        pinctrl-names = "default";
+>>> +        pinctrl-0 = <&max77686_irq>;
+>>> +        wakeup-source;
+>>>
+>>>           voltage-regulators {
+>>>               ldo1_reg: LDO1 {
+>>> @@ -411,3 +414,12 @@
+>>>           };
+>>>       };
+>>>   };
+>>> +
+>>> +&pinctrl_0 {
+>>> +    max77686_irq: max77686-irq {
+>>> +        samsung,pins = "gpx3-2";
+>>> +        samsung,pin-function = <0xf>;
+>>> +        samsung,pin-pud = <0>;
+>>> +        samsung,pin-drv = <0>;
+>>> +    };
+>>> +};
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe
+>> linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
