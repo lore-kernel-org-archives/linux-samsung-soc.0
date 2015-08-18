@@ -1,76 +1,46 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCHv2 0/4] cec-ctl/compliance: new CEC utilities
-Date: Tue, 18 Aug 2015 10:46:24 +0200
-Message-ID: <55D2F0E0.7080604@xs4all.nl>
-References: <cover.1439886496.git.hans.verkuil@cisco.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <cover.1439886496.git.hans.verkuil@cisco.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, kamil@wypas.org, dri-devel@lists.freedesktop.org, lars@opdenkamp.eu, linux-input@vger.kernel.org, m.szyprowski@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: Enable DWC2 USB driver and USB ethernet
+ gadget
+Date: Tue, 18 Aug 2015 11:15:33 +0200
+Message-ID: <1439889333-11990-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31207 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751883AbbHRJPt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Aug 2015 05:15:49 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NT9002UKTQAZ050@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Aug 2015 10:15:46 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-T29wcywgdGhpcyBjb3ZlciBsZXR0ZXIgaXMgaW5jb21wbGV0ZSwgaGVyZSBpcyB0aGUgZnVsbCBj
-b3ZlciBsZXR0ZXI6CgpUaGlzIHBhdGNoIHNlcmllcyBhZGRzIHR3byBuZXcgdXRpbGl0aWVzIHRv
-IHRoZSB2NGwtdXRpbHMgZ2l0IHJlcG9zaXRvcnkKKGh0dHA6Ly9naXQubGludXh0di5vcmcvY2dp
-dC5jZ2kvdjRsLXV0aWxzLmdpdC8pLiBJdCBhc3N1bWVzIHRoYXQgdGhlIG5ldwpDRUMgZnJhbWV3
-b3JrICh2OCkgaXMgYXZhaWxhYmxlIGluIHRoZSBrZXJuZWw6CgpodHRwOi8vd3d3Lm1haWwtYXJj
-aGl2ZS5jb20vbGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnL21zZzkxMjg1Lmh0bWwKClRoZSBm
-aXJzdCBwYXRjaCBhZGRzIHRoZSBuZXcgY2VjIGhlYWRlcnMgdG8gdGhlICdzeW5jLXdpdGgta2Vy
-bmVsJyB0YXJnZXQsCnRoZSBzZWNvbmQgc3luY3Mgd2l0aCB0aGUga2VybmVsIGFuZCBhZGRzIHRo
-ZSBuZXcgY2VjIGhlYWRlcnMgdG8gdjRsLXV0aWxzLAp0aGUgdGhpcmQgYWRkcyB0aGUgY29tcGxp
-YW5jZSB1dGlsaXR5IGFuZCB0aGUgbGFzdCBhZGRzIHRoZSBjZWMtY3RsIHV0aWxpdHkuCgpUaGUg
-Y2VjLWNvbXBsaWFuY2UgdXRpbGl0eSBpcyBieSBubyBtZWFucyAxMDAlIGNvdmVyYWdlLCBpbiBw
-YXJ0aWN1bGFyIHRoZQpldmVudCBBUEkgYW5kIG5vbi1ibG9ja2luZyBpb2N0bHMgYXJlIHVudGVz
-dGVkLiBCdXQgaXQgaXMgYSBzdGFydGluZyBwb2ludCwKYW5kIGEgY29tcGxleCBwcm90b2NvbCBs
-aWtlIENFQyByZWFsbHkgbmVlZHMgYSBjb21wbGlhbmNlIHRvb2wuCgpUaGUgY2VjLWN0bCB1dGls
-aXR5IGhhcyBhbG1vc3QgZnVsbCBDRUMgbWVzc2FnZSBjb3ZlcmFnZTogYWxsIGdlbmVyYXRlZCBm
-cm9tCnRoZSBjZWMgaGVhZGVycywgc28gdGhpcyBpcyBlYXN5IHRvIGtlZXAgdXAgdG8gZGF0ZS4K
-ClJlZ2FyZHMsCgogICAgICAgIEhhbnMKCkNoYW5nZXMgc2luY2UgdjE6CgotIGNlYy1jdGw6IGFk
-ZGVkIENFQyBtZXNzYWdlIGxvZ2dpbmcvbW9uaXRvcmluZy4KLSBjZWMtY3RsOiBhZGQgc3VwcG9y
-dCB0byBjbGVhciB0aGUgbG9naWNhbCBhZGRyZXNzZXMuCi0gY2VjLWN0bDogbG9nIGV2ZW50cy4K
-CgoKT24gMDgvMTgvMTUgMTA6MzYsIEhhbnMgVmVya3VpbCB3cm90ZToKPiBIYW5zIFZlcmt1aWwg
-KDQpOgo+ICAgTWFrZWZpbGUuYW06IGNvcHkgY2VjIGhlYWRlcnMgd2l0aCBtYWtlIHN5bmMtd2l0
-aC1rZXJuZWwKPiAgIHN5bmMtd2l0aC1rZXJuZWwKPiAgIGNlYy1jb21wbGlhbmNlOiBhZGQgbmV3
-IENFQyBjb21wbGlhbmNlIHV0aWxpdHkKPiAgIGNlYy1jdGw6IENFQyBjb250cm9sIHV0aWxpdHkK
-PiAKPiAgTWFrZWZpbGUuYW0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAg
-NCArCj4gIGNvbmZpZ3VyZS5hYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAg
-IDIgKwo+ICBjb250cmliL2ZyZWVic2QvaW5jbHVkZS9saW51eC9pbnB1dC5oICAgICAgICAgfCAg
-IDI5ICsKPiAgY29udHJpYi9mcmVlYnNkL2luY2x1ZGUvbGludXgvdjRsMi1jb250cm9scy5oIHwg
-ICAgNCArCj4gIGluY2x1ZGUvbGludXgvY2VjLWZ1bmNzLmggICAgICAgICAgICAgICAgICAgICB8
-IDE3NzEgKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICBpbmNsdWRlL2xpbnV4L2NlYy5oICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgfCAgNzgxICsrKysrKysrKysrCj4gIGluY2x1ZGUvbGlu
-dXgvdjRsMi1jb250cm9scy5oICAgICAgICAgICAgICAgICB8ICAgIDQgKwo+ICB1dGlscy9NYWtl
-ZmlsZS5hbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAyICsKPiAgdXRpbHMvY2Vj
-LWNvbXBsaWFuY2UvTWFrZWZpbGUuYW0gICAgICAgICAgICAgIHwgICAgMyArCj4gIHV0aWxzL2Nl
-Yy1jb21wbGlhbmNlL2NlYy1jb21wbGlhbmNlLmNwcCAgICAgICB8ICA5MjYgKysrKysrKysrKysr
-Kwo+ICB1dGlscy9jZWMtY29tcGxpYW5jZS9jZWMtY29tcGxpYW5jZS5oICAgICAgICAgfCAgIDg3
-ICsrCj4gIHV0aWxzL2NlYy1jdGwvTWFrZWZpbGUuYW0gICAgICAgICAgICAgICAgICAgICB8ICAg
-IDggKwo+ICB1dGlscy9jZWMtY3RsL2NlYy1jdGwuY3BwICAgICAgICAgICAgICAgICAgICAgfCAx
-Mjk2ICsrKysrKysrKysrKysrKysrKwo+ICB1dGlscy9jZWMtY3RsL21zZzJjdGwucGwgICAgICAg
-ICAgICAgICAgICAgICAgfCAgNDMwICsrKysrKwo+ICB1dGlscy9rZXl0YWJsZS9wYXJzZS5oICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAgIDE4ICsKPiAgdXRpbHMva2V5dGFibGUvcmNfa2V5bWFw
-cy9sbWUyNTEwICAgICAgICAgICAgIHwgIDEzMiArLQo+ICB1dGlscy9rZXl0YWJsZS9yY19tYXBz
-LmNmZyAgICAgICAgICAgICAgICAgICAgfCAgICAxICsKPiAgMTcgZmlsZXMgY2hhbmdlZCwgNTQz
-MiBpbnNlcnRpb25zKCspLCA2NiBkZWxldGlvbnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGlu
-Y2x1ZGUvbGludXgvY2VjLWZ1bmNzLmgKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvbGlu
-dXgvY2VjLmgKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IHV0aWxzL2NlYy1jb21wbGlhbmNlL01ha2Vm
-aWxlLmFtCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCB1dGlscy9jZWMtY29tcGxpYW5jZS9jZWMtY29t
-cGxpYW5jZS5jcHAKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IHV0aWxzL2NlYy1jb21wbGlhbmNlL2Nl
-Yy1jb21wbGlhbmNlLmgKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IHV0aWxzL2NlYy1jdGwvTWFrZWZp
-bGUuYW0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IHV0aWxzL2NlYy1jdGwvY2VjLWN0bC5jcHAKPiAg
-Y3JlYXRlIG1vZGUgMTAwNjQ0IHV0aWxzL2NlYy1jdGwvbXNnMmN0bC5wbAo+IApfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+DWC2 (s3c-hsotg) hardware module is available on many Exynos based boards,
+so enable DWC2 driver as well as the most common USB Ethernet gadget.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 1ff2bfa..729e2fa 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -158,8 +158,10 @@ CONFIG_USB_OHCI_HCD=y
+ CONFIG_USB_OHCI_EXYNOS=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_DWC3=y
++CONFIG_USB_DWC2=y
+ CONFIG_USB_HSIC_USB3503=y
+ CONFIG_USB_GADGET=y
++CONFIG_USB_ETH=y
+ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_SDHCI=y
+-- 
+1.9.2
