@@ -1,66 +1,63 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable DWC2 USB driver and USB
- ethernet gadget
-Date: Tue, 18 Aug 2015 12:04:03 +0200
-Message-ID: <55D30313.7080107@osg.samsung.com>
-References: <1439891799-15302-1-git-send-email-m.szyprowski@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] s5p-mfc: fix state check from encoder queue_setup
+Date: Tue, 18 Aug 2015 15:31:59 +0200
+Message-ID: <55D333CF.9000504@samsung.com>
+References: <1431501925-16905-1-git-send-email-sw0312.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:58266 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751060AbbHRKEI (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:52096 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751826AbbHRNcE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Aug 2015 06:04:08 -0400
-In-Reply-To: <1439891799-15302-1-git-send-email-m.szyprowski@samsung.com>
+	Tue, 18 Aug 2015 09:32:04 -0400
+In-reply-to: <1431501925-16905-1-git-send-email-sw0312.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Seung-Woo Kim <sw0312.kim@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, mchehab@osg.samsung.com
+Cc: m.szyprowski@samsung.com, s.nawrocki@samsung.com
 
-Hello Marek,
-
-On 08/18/2015 11:56 AM, Marek Szyprowski wrote:
-> DWC2 (s3c-hsotg) hardware module is available on many Exynos based boards,
-> so enable DWC2 driver as well as the most common USB Ethernet gadget.
+On 05/13/2015 09:25 AM, Seung-Woo Kim wrote:
+> MFCINST_GOT_INST state is set to encoder context with set_format
+> only for catpure buffer. In queue_setup of encoder called during
+> reqbufs, it is checked MFCINST_GOT_INST state for both capture
+> and output buffer. So this patch fixes to encoder to check
+> MFCINST_GOT_INST state only for capture buffer from queue_setup.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+
+Looks OK.
+
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+Regards
+Andrzej
+
+
 > ---
->  arch/arm/configs/multi_v7_defconfig | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |    9 +++++----
+>  1 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index b2facab..d15f719 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -506,6 +506,7 @@ CONFIG_USB_R8A66597_HCD=m
->  CONFIG_USB_RENESAS_USBHS=m
->  CONFIG_USB_STORAGE=y
->  CONFIG_USB_DWC3=y
-> +CONFIG_USB_DWC2=y
->  CONFIG_USB_CHIPIDEA=y
->  CONFIG_USB_CHIPIDEA_HOST=y
->  CONFIG_AB8500_USB=y
-> @@ -517,6 +518,7 @@ CONFIG_USB_MXS_PHY=y
->  CONFIG_USB_RCAR_PHY=m
->  CONFIG_USB_GADGET=y
->  CONFIG_USB_RENESAS_USBHS_UDC=m
-> +CONFIG_USB_ETH=y
->  CONFIG_MMC=y
->  CONFIG_MMC_BLOCK_MINORS=16
->  CONFIG_MMC_ARMMMCI=y
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> index e65993f..2e57e9f 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> @@ -1819,11 +1819,12 @@ static int s5p_mfc_queue_setup(struct vb2_queue *vq,
+>  	struct s5p_mfc_ctx *ctx = fh_to_ctx(vq->drv_priv);
+>  	struct s5p_mfc_dev *dev = ctx->dev;
+>  
+> -	if (ctx->state != MFCINST_GOT_INST) {
+> -		mfc_err("inavlid state: %d\n", ctx->state);
+> -		return -EINVAL;
+> -	}
+>  	if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+> +		if (ctx->state != MFCINST_GOT_INST) {
+> +			mfc_err("inavlid state: %d\n", ctx->state);
+> +			return -EINVAL;
+> +		}
+> +
+>  		if (ctx->dst_fmt)
+>  			*plane_count = ctx->dst_fmt->num_planes;
+>  		else
 > 
-
-Both are tristate Kconfig symbols and the current multi_v7 policy is
-to build as much as possible as a module.
-
-Other than that the patch looks good to me. So if you change that:
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
