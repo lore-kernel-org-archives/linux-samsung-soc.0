@@ -1,7 +1,7 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
 Subject: Re: [2/2] ARM: dts: Add missing irq pinctrl for max77686 on smdk5250
-Date: Tue, 18 Aug 2015 11:43:28 +0530
-Message-ID: <55D2CD08.7050106@samsung.com>
+Date: Tue, 18 Aug 2015 11:57:13 +0530
+Message-ID: <55D2D041.9020700@samsung.com>
 References: <1416312509-11530-2-git-send-email-yadi.brar@samsung.com>
  <553F68CC.6030504@samsung.com> <5544657A.7010006@gmail.com>
  <CAJKOXPdzhqXFWT0=eXpr+jjs8R4kFAMq2DSSsFHVEZq_PdAN2w@mail.gmail.com>
@@ -9,11 +9,11 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54262 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751543AbbHRGNK (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:57245 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751133AbbHRG07 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Aug 2015 02:13:10 -0400
+	Tue, 18 Aug 2015 02:26:59 -0400
 In-reply-to: <CAJKOXPdzhqXFWT0=eXpr+jjs8R4kFAMq2DSSsFHVEZq_PdAN2w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -40,17 +40,20 @@ On Monday 17 August 2015 11:20 AM, Krzysztof Kozlowski wrote:
 >
 > Do you plan to do anything with this patch?
 >
-
-Thanks for reminding us. Somehow I missed this.
-I will resend the patch shortly after rebasing and testing.
-
-Thanks,
-Pankaj Dubey
-
 > Best regards,
 > Krzysztof
 >
 >
+
+Just noticed that the patch in subject is already merged in kgene tree.
+There was another patch "[1/2]: ARM: dts: Fix bootup issue on smdk5250" 
+which was posted along with this is still not merged. Resending it once 
+again.
+
+[1]: http://www.spinics.net/lists/linux-samsung-soc/msg39100.html
+
+Thanks,
+Pankaj Dubey
 >>> Thanks,
 >>> Pankaj Dubey
 >>>
