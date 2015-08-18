@@ -1,158 +1,51 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: drm/exynos: fix size check in g2d_check_buf_desc_is_valid()
-Date: Tue, 18 Aug 2015 00:51:24 +0200
-Message-ID: <1439851884-3346-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1439851884-3346-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [patch] PM / devfreq: exynos-ppmu: fix load_count calculation
+Date: Tue, 18 Aug 2015 00:52:26 +0000 (GMT)
+Message-ID: <1584679179.174361439859146206.JavaMail.weblogic@ep2mlwas01a>
+Reply-To: myungjoo.ham@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57088 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751985AbbHQWvi (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:37298 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbbHRAw3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Aug 2015 18:51:38 -0400
-In-Reply-To: <1439851884-3346-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Mon, 17 Aug 2015 20:52:29 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NT9014RY6FEWA90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Aug 2015 09:52:26 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Dan Carpenter <dan.carpenter@oracle.com>, =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, =?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linux-pm@lists.linux-foundation.org
 
-The size check was incomplete. It only computed the
-size of area of the drawing rectangle and checked if
-the size still fit inside the buffer.
-
-The correct check is to compute the position of the
-last byte that the G2D engine is going to access and
-then check if that position is still contained in the
-buffer. In particular we need the stride information
-to determine this.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 51 ++++++++++++++++++++++++++-------
- 1 file changed, 41 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 211af37..535b4ad 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -48,11 +48,13 @@
- 
- /* registers for base address */
- #define G2D_SRC_BASE_ADDR		0x0304
-+#define G2D_SRC_STRIDE_REG		0x0308
- #define G2D_SRC_COLOR_MODE		0x030C
- #define G2D_SRC_LEFT_TOP		0x0310
- #define G2D_SRC_RIGHT_BOTTOM		0x0314
- #define G2D_SRC_PLANE2_BASE_ADDR	0x0318
- #define G2D_DST_BASE_ADDR		0x0404
-+#define G2D_DST_STRIDE_REG		0x0408
- #define G2D_DST_COLOR_MODE		0x040C
- #define G2D_DST_LEFT_TOP		0x0410
- #define G2D_DST_RIGHT_BOTTOM		0x0414
-@@ -148,6 +150,7 @@ struct g2d_cmdlist {
-  * A structure of buffer description
-  *
-  * @format: color format
-+ * @stride: buffer stride/pitch in bytes
-  * @left_x: the x coordinates of left top corner
-  * @top_y: the y coordinates of left top corner
-  * @right_x: the x coordinates of right bottom corner
-@@ -156,6 +159,7 @@ struct g2d_cmdlist {
-  */
- struct g2d_buf_desc {
- 	unsigned int	format;
-+	unsigned int	stride;
- 	unsigned int	left_x;
- 	unsigned int	top_y;
- 	unsigned int	right_x;
-@@ -589,6 +593,7 @@ static enum g2d_reg_type g2d_get_reg_type(int reg_offset)
- 
- 	switch (reg_offset) {
- 	case G2D_SRC_BASE_ADDR:
-+	case G2D_SRC_STRIDE_REG:
- 	case G2D_SRC_COLOR_MODE:
- 	case G2D_SRC_LEFT_TOP:
- 	case G2D_SRC_RIGHT_BOTTOM:
-@@ -598,6 +603,7 @@ static enum g2d_reg_type g2d_get_reg_type(int reg_offset)
- 		reg_type = REG_TYPE_SRC_PLANE2;
- 		break;
- 	case G2D_DST_BASE_ADDR:
-+	case G2D_DST_STRIDE_REG:
- 	case G2D_DST_COLOR_MODE:
- 	case G2D_DST_LEFT_TOP:
- 	case G2D_DST_RIGHT_BOTTOM:
-@@ -652,8 +658,8 @@ static bool g2d_check_buf_desc_is_valid(struct g2d_buf_desc *buf_desc,
- 						enum g2d_reg_type reg_type,
- 						unsigned long size)
- {
--	unsigned int width, height;
--	unsigned long area;
-+	int width, height;
-+	unsigned long bpp, last_pos;
- 
- 	/*
- 	 * check source and destination buffers only.
-@@ -662,22 +668,37 @@ static bool g2d_check_buf_desc_is_valid(struct g2d_buf_desc *buf_desc,
- 	if (reg_type != REG_TYPE_SRC && reg_type != REG_TYPE_DST)
- 		return true;
- 
--	width = buf_desc->right_x - buf_desc->left_x;
-+	/* This check also makes sure that right_x > left_x. */
-+	width = (int)buf_desc->right_x - (int)buf_desc->left_x;
- 	if (width < G2D_LEN_MIN || width > G2D_LEN_MAX) {
--		DRM_ERROR("width[%u] is out of range!\n", width);
-+		DRM_ERROR("width[%d] is out of range!\n", width);
- 		return false;
- 	}
- 
--	height = buf_desc->bottom_y - buf_desc->top_y;
-+	/* This check also makes sure that bottom_y > top_y. */
-+	height = (int)buf_desc->bottom_y - (int)buf_desc->top_y;
- 	if (height < G2D_LEN_MIN || height > G2D_LEN_MAX) {
--		DRM_ERROR("height[%u] is out of range!\n", height);
-+		DRM_ERROR("height[%d] is out of range!\n", height);
- 		return false;
- 	}
- 
--	area = (unsigned long)width * (unsigned long)height *
--					g2d_get_buf_bpp(buf_desc->format);
--	if (area > size) {
--		DRM_ERROR("area[%lu] is out of range[%lu]!\n", area, size);
-+	bpp = g2d_get_buf_bpp(buf_desc->format);
-+
-+	/* Compute the position of the last byte that the engine accesses. */
-+	last_pos = ((unsigned long)buf_desc->bottom_y - 1) *
-+		(unsigned long)buf_desc->stride +
-+		(unsigned long)buf_desc->right_x * bpp - 1;
-+
-+	/*
-+	 * Since right_x > left_x and bottom_y > top_y we already know
-+	 * that the first_pos < last_pos (first_pos being the position
-+	 * of the first byte the engine accesses), it just remains to
-+	 * check if last_pos is smaller then the buffer size.
-+	 */
-+
-+	if (last_pos >= size) {
-+		DRM_ERROR("last engine access position [%lu] "
-+			"is out of range [%lu]!\n", last_pos, size);
- 		return false;
- 	}
- 
-@@ -981,6 +1002,16 @@ static int g2d_check_reg_offset(struct device *dev,
- 			} else
- 				buf_info->types[reg_type] = BUF_TYPE_GEM;
- 			break;
-+		case G2D_SRC_STRIDE_REG:
-+		case G2D_DST_STRIDE_REG:
-+			if (for_addr)
-+				goto err;
-+
-+			reg_type = g2d_get_reg_type(reg_offset);
-+
-+			buf_desc = &buf_info->descs[reg_type];
-+			buf_desc->stride = cmdlist->data[index + 1];
-+			break;
- 		case G2D_SRC_COLOR_MODE:
- 		case G2D_DST_COLOR_MODE:
- 			if (for_addr)
--- 
-2.0.5
+PiAicG1jbnRfaGlnaCAmIDB4ZmYiIGlzIGEgdTMyIHNvIHdlIHNoaWZ0aW5nIGl0IDMyIHNwYWNl
+cyBpcyB6ZXJvLiAgR0NDDQo+IGNhdGNoZXMgdGhpcyBidWc6DQo+IA0KPiBkcml2ZXJzL2RldmZy
+ZXEvZXZlbnQvZXh5bm9zLXBwbXUuYzogSW4gZnVuY3Rpb24g4oCYZXh5bm9zX3BwbXVfdjJfZ2V0
+X2V2ZW504oCZOg0KPiBkcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYzozMjI6Mzog
+d2FybmluZzogbGVmdCBzaGlmdCBjb3VudCA+PSB3aWR0aCBvZiB0eXBlDQo+ICAgIGxvYWRfY291
+bnQgPSAodTY0KSgocG1jbnRfaGlnaCAmIDB4ZmYpIDw8IDMyKSArICh1NjQpcG1jbnRfbG93Ow0K
+PiANCj4gRml4ZXM6IDNkODdiMDIyODFhMiAoJ1BNIC8gZGV2ZnJlcTogZXh5bm9zLXBwbXU6IEFk
+ZCB0aGUgc3VwcG9ydCBvZiBQUE1VdjIgZm9yIEV4eW5vczU0MzMnKQ0KPiBTaWduZWQtb2ZmLWJ5
+OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQoNClRoaXMgcGF0Y2gg
+aGFzIGJlZW4gd2FpdGluZyBpbiBkZXZmcmVxIHRyZWUgZm9yIHNvbWUgZGF5cy4NCkl0IHdpbGwg
+YmUgc2VudCB3aXRoIHRoZSBuZXh0IHB1bGwgcmVxdWVzdC4NCg0KaHR0cHM6Ly9naXQua2VybmVs
+Lm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvbXp4L2RldmZyZXEuZ2l0L2NvbW1pdC8/aD1mb3It
+cmFmYWVsJmlkPThlMjlhYmViYmRiMzJhMzBkODdhNTgyMDFhYzliNzdmOGE4N2ZkODQNCg0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZGV2ZnJlcS9ldmVudC9leHlub3MtcHBtdS5jIGIvZHJp
+dmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4gaW5kZXggZjk5MDFmNS4uZGFmMmNk
+YiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4g
+KysrIGIvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4gQEAgLTMxOSw3ICsz
+MTksNyBAQCBzdGF0aWMgaW50IGV4eW5vc19wcG11X3YyX2dldF9ldmVudChzdHJ1Y3QgZGV2ZnJl
+cV9ldmVudF9kZXYgKmVkZXYsDQo+ICAJY2FzZSBQUE1VX1BNTkNOVDM6DQo+ICAJCXBtY250X2hp
+Z2ggPSBfX3Jhd19yZWFkbChpbmZvLT5wcG11LmJhc2UgKyBQUE1VX1YyX1BNQ05UM19ISUdIKTsN
+Cj4gIAkJcG1jbnRfbG93ID0gX19yYXdfcmVhZGwoaW5mby0+cHBtdS5iYXNlICsgUFBNVV9WMl9Q
+TUNOVDNfTE9XKTsNCj4gLQkJbG9hZF9jb3VudCA9ICh1NjQpKChwbWNudF9oaWdoICYgMHhmZikg
+PDwgMzIpICsgKHU2NClwbWNudF9sb3c7DQo+ICsJCWxvYWRfY291bnQgPSAoKCh1NjQpcG1jbnRf
+aGlnaCAmIDB4ZmYpIDw8IDMyKSArIHBtY250X2xvdzsNCj4gIAkJYnJlYWs7DQo+ICAJfQ0KPiAg
+CWVkYXRhLT5sb2FkX2NvdW50ID0gbG9hZF9jb3VudDsNCj4gDQo=
