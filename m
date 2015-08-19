@@ -1,90 +1,52 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/3] spi: s3c64xx: extend driver to make full use of
- runtime PM autosuspend
-Date: Thu, 20 Aug 2015 08:46:22 +0900
-Message-ID: <55D5154E.3090502@samsung.com>
-References: <55D4DF0C.8080104@gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v3 0/14] Add Analogix Core Display Port Driver
+Date: Thu, 20 Aug 2015 09:54:04 +1000
+Message-ID: <CAPM=9tx6qMnHEfYpi5_+Ay9P5fy=JqthMp6-t0fxFPfm8E4k7Q@mail.gmail.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <55D4DF0C.8080104-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f45.google.com ([209.85.215.45]:35056 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750767AbbHSXyH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Aug 2015 19:54:07 -0400
+In-Reply-To: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>, Daniel Kurtz <djkurtz@google.com>, dianders@google.com, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon
 
-On 20.08.2015 04:54, Heiner Kallweit wrote:
-> Extend the driver to make full use of runtime PM autosuspend.
-> Before only the SPI core was instructed to use autosuspend
-> by setting master->auto_runtime_pm. Nevertheless due to the missing
-> pm_runtime_use_autosuspend call autosuspend wasn't active.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/spi/spi-s3c64xx.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+On 20 August 2015 at 00:48, Yakir Yang <ykk@rock-chips.com> wrote:
+>
+> Hi all,
+>    The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
+> share the same IP, so a lot of parts can be re-used. I split the common
+> code into bridge directory, then rk3288 and exynos only need to keep
+> some platform code. Cause I can't find the exact IP name of exynos dp
+> controller, so I decide to name dp core driver with "analogix" which I
+> find in rk3288 eDP TRM ;)
+>
+> Beyond that, there are three light registers setting differents bewteen
+> exynos and rk3288.
+> 1. RK3288 have five special pll resigters which not indicata in exynos
+>    dp controller.
+> 2. The address of DP_PHY_PD(dp phy power manager register) are different
+>    between rk3288 and exynos.
+> 3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
+>    register).
+>
+> I have verified this series on two kinds of rockchip platform board, one
+> is rk3288 sdk board which connect with a 2K display port monitor, the other
+> is google jerry chromebook which connect with a eDP screen "cnm,n116bgeea2",
+> both of them works rightlly.
+>
+> I haven't verified the dp function on samsung platform, cause I haven't got
+> exynos boards. I can only ensure that there are no build error on samsung
+> platform, wish some samsung guys help to test. ;)
 
+I'd like to pull this in, but it probably needs an ack from Samsung,
 
-I am a little bit confused... it's the same patch? It's not marked as
-resend, not marked as v2 and there is no changelog...
+Inki can you guys find some time to test this?
 
-Best regards,
-Krzysztof
-
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 8a6ab88..8365c88 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -32,6 +32,7 @@
->  #define MAX_SPI_PORTS		6
->  #define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
->  #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
-> +#define AUTOSUSPEND_TIMEOUT	2000
->  
->  /* Registers and bit-fields */
->  
-> @@ -859,13 +860,15 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
->  		}
->  	}
->  
-> -	pm_runtime_put(&sdd->pdev->dev);
-> +	pm_runtime_mark_last_busy(&sdd->pdev->dev);
-> +	pm_runtime_put_autosuspend(&sdd->pdev->dev);
->  	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
->  		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
->  	return 0;
->  
->  setup_exit:
-> -	pm_runtime_put(&sdd->pdev->dev);
-> +	pm_runtime_mark_last_busy(&sdd->pdev->dev);
-> +	pm_runtime_put_autosuspend(&sdd->pdev->dev);
->  	/* setup() returns with device de-selected */
->  	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
->  		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-> @@ -1180,6 +1183,8 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  	       S3C64XX_SPI_INT_TX_OVERRUN_EN | S3C64XX_SPI_INT_TX_UNDERRUN_EN,
->  	       sdd->regs + S3C64XX_SPI_INT_EN);
->  
-> +	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
-> +	pm_runtime_use_autosuspend(&pdev->dev);
->  	pm_runtime_set_active(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
->  
-> @@ -1195,6 +1200,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1,
->  					sdd->rx_dma.dmach, sdd->tx_dma.dmach);
->  
-> +	pm_runtime_mark_last_busy(&pdev->dev);
-> +	pm_runtime_autosuspend(&pdev->dev);
-> +
->  	return 0;
->  
->  err4:
-> 
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Dave.
