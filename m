@@ -1,127 +1,351 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3 05/14] drm: bridge/analogix_dp: fix link_rate & lane_count bug
-Date: Wed, 19 Aug 2015 09:50:24 -0500
-Message-ID: <1439995824-18312-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v3 06/14] Documentation: drm/bridge: add document for analogix_dp
+Date: Wed, 19 Aug 2015 09:50:34 -0500
+Message-ID: <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
 References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.138]:35385 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932187AbbHSOuj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Aug 2015 10:50:39 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>
 Cc: djkurtz@google.com, dianders@google.com, seanpaul@google.com, Takashi Iwai <tiwai@suse.de>, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-link_rate and lane_count already configed in analogix_dp_set_link_train(),
-so we don't need to config those repeatly after training finished, just
-remove them out.
+Analogix dp driver is split from exynos dp driver, so we just
+make an copy of exynos_dp.txt, and then simplify exynos_dp.txt
 
-Beside Display Port 1.2 already support 5.4Gbps link rate, the maximum sets
-would change from {1.62Gbps, 2.7Gbps} to {1.62Gbps, 2.7Gbps, 5.4Gbps}.
+Beside update some exynos dtsi file with the latest change
+according to the devicetree binding documents.
 
 Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 ---
 Changes in v3:
-- Take Thierry Reding suggest, link_rate and lane_count shouldn't config to
-  the DT property value directly, but we can take those as hardware limite.
-  For example, RK3288 only support 4 physical lanes of 2.7/1.62 Gbps/lane,
-  so DT property would like "link-rate = 0x0a" "lane-count = 4".
+- Take Heiko suggest, add devicetree binding documents.
+- Take Thierry Reding suggest, remove sync pol & colorimetry properies
+  from the new analogix dp driver devicetree binding.
+- Update the exist exynos dtsi file with the latest DP DT properies.
 
 Changes in v2: None
 
- drivers/gpu/drm/bridge/analogix_dp_core.c | 16 ++++++++--------
- drivers/gpu/drm/bridge/analogix_dp_core.h |  9 +++++----
- 2 files changed, 13 insertions(+), 12 deletions(-)
+ .../devicetree/bindings/drm/bridge/analogix_dp.txt | 70 ++++++++++++++++++++++
+ .../devicetree/bindings/video/exynos_dp.txt        | 50 ++++++----------
+ arch/arm/boot/dts/exynos5250-arndale.dts           | 10 ++--
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          | 10 ++--
+ arch/arm/boot/dts/exynos5250-snow.dts              | 12 ++--
+ arch/arm/boot/dts/exynos5250-spring.dts            | 12 ++--
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 12 ++--
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          | 10 ++--
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          | 12 ++--
+ 9 files changed, 119 insertions(+), 79 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
 
-diff --git a/drivers/gpu/drm/bridge/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix_dp_core.c
-index 480cc13..1778e0a 100644
---- a/drivers/gpu/drm/bridge/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix_dp_core.c
-@@ -635,6 +635,8 @@ static void analogix_dp_get_max_rx_bandwidth(struct analogix_dp_device *dp,
- 	/*
- 	 * For DP rev.1.1, Maximum link rate of Main Link lanes
- 	 * 0x06 = 1.62 Gbps, 0x0a = 2.7 Gbps
-+	 * For DP rev.1.2, Maximum link rate of Main Link lanes
-+	 * 0x06 = 1.62 Gbps, 0x0a = 2.7 Gbps, 0x14 = 5.4Gbps
- 	 */
- 	analogix_dp_read_byte_from_dpcd(dp, DP_MAX_LINK_RATE, &data);
- 	*bandwidth = data;
-@@ -668,7 +670,8 @@ static void analogix_dp_init_training(struct analogix_dp_device *dp,
- 	analogix_dp_get_max_rx_lane_count(dp, &dp->link_train.lane_count);
+diff --git a/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
+new file mode 100644
+index 0000000..6127018
+--- /dev/null
++++ b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
+@@ -0,0 +1,70 @@
++Analogix Display Port bridge bindings
++
++Required properties for dp-controller:
++	-compatible:
++		platform specific such as:
++		 * "samsung,exynos5-dp"
++		 * "rockchip,rk3288-dp"
++	-reg:
++		physical base address of the controller and length
++		of memory mapped region.
++	-interrupts:
++		interrupt combiner values.
++	-clocks:
++		from common clock binding: handle to dp clock.
++	-clock-names:
++		from common clock binding: Shall be "dp".
++	-interrupt-parent:
++		phandle to Interrupt combiner node.
++	-phys:
++		from general PHY binding: the phandle for the PHY device.
++	-phy-names:
++		from general PHY binding: Should be "dp".
++	-analogix,color-space:
++		input video data format.
++			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
++	-analogix,color-depth:
++		number of bits per colour component.
++			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
++	-analogix,link-rate:
++		max link rate supported by the eDP controller.
++			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A,
++			LINK_RATE_5_40GBPS = 0x14
++	-analogix,lane-count:
++		max number of lanes supported by the eDP contoller.
++			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
++	-port@[X]: SoC specific port nodes with endpoint definitions as defined
++		in Documentation/devicetree/bindings/media/video-interfaces.txt,
++		please refer to the SoC specific binding document:
++		* Documentation/devicetree/bindings/video/exynos_dp.txt
++		* Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
++
++Optional properties for dp-controller:
++	-analogix,hpd-gpio:
++		Hotplug detect GPIO.
++			Indicates which GPIO should be used for hotplug
++			detection
++	-video interfaces: Device node can contain video interface port
++			    nodes according to [1].
++
++[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
++-------------------------------------------------------------------------------
++
++Example:
++
++	dp-controller {
++		compatible = "samsung,exynos5-dp";
++		reg = <0x145b0000 0x10000>;
++		interrupts = <10 3>;
++		interrupt-parent = <&combiner>;
++		clocks = <&clock 342>;
++		clock-names = "dp";
++
++		phys = <&dp_phy>;
++		phy-names = "dp";
++
++		analogix,color-space = <0>;
++		analogix,color-depth = <1>;
++		analogix,link-rate = <0x0a>;
++		analogix,lane-count = <4>;
++	};
+diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
+index 7a3a9cd..177506f 100644
+--- a/Documentation/devicetree/bindings/video/exynos_dp.txt
++++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+@@ -31,28 +31,10 @@ Required properties for dp-controller:
+ 		from general PHY binding: the phandle for the PHY device.
+ 	-phy-names:
+ 		from general PHY binding: Should be "dp".
+-	-samsung,color-space:
+-		input video data format.
+-			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+-	-samsung,dynamic-range:
+-		dynamic range for input video data.
+-			VESA = 0, CEA = 1
+-	-samsung,ycbcr-coeff:
+-		YCbCr co-efficients for input video.
+-			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+-	-samsung,color-depth:
+-		number of bits per colour component.
+-			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+-	-samsung,link-rate:
+-		link rate supported by the panel.
+-			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+-	-samsung,lane-count:
+-		number of lanes supported by the panel.
+-			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+-	- display-timings: timings for the connected panel as described by
+-		Documentation/devicetree/bindings/video/display-timing.txt
  
- 	if ((dp->link_train.link_rate != LINK_RATE_1_62GBPS) &&
--	    (dp->link_train.link_rate != LINK_RATE_2_70GBPS)) {
-+	    (dp->link_train.link_rate != LINK_RATE_2_70GBPS) &&
-+	    (dp->link_train.link_rate != LINK_RATE_5_40GBPS)) {
- 		dev_err(dp->dev, "Rx Max Link Rate is abnormal :%x !\n",
- 			dp->link_train.link_rate);
- 		dp->link_train.link_rate = LINK_RATE_1_62GBPS;
-@@ -901,8 +904,8 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 		return;
- 	}
+ Optional properties for dp-controller:
++	- display-timings: timings for the connected panel as described by
++		Documentation/devicetree/bindings/video/display-timing.txt
+ 	-interlaced:
+ 		interlace scan mode.
+ 			Progressive if defined, Interlaced if not defined
+@@ -62,14 +44,18 @@ Optional properties for dp-controller:
+ 	-hsync-active-high:
+ 		HSYNC polarity configuration.
+ 			High if defined, Low if not defined
+-	-samsung,hpd-gpio:
+-		Hotplug detect GPIO.
+-			Indicates which GPIO should be used for hotplug
+-			detection
+-	-video interfaces: Device node can contain video interface port
+-			    nodes according to [1].
  
--	ret = analogix_dp_set_link_train(dp, dp->video_info->lane_count,
--					 dp->video_info->link_rate);
-+	ret = analogix_dp_set_link_train(dp, dp->video_info->max_lane_count,
-+					 dp->video_info->max_link_rate);
- 	if (ret) {
- 		dev_err(dp->dev, "unable to do link train\n");
- 		return;
-@@ -912,9 +915,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 	analogix_dp_enable_rx_to_enhanced_mode(dp, 1);
- 	analogix_dp_enable_enhanced_mode(dp, 1);
+-[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
++For the below properties, please refer to Analogix DP binding document:
++ * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
++	-phys (required)
++	-phy-names (required)
++	-analogix,color-space (required)
++	-analogix,color-depth (required)
++	-analogix,link-rate (required)
++	-analogix,lane-count (required)
++	-analogix,hpd-gpio (optional)
++	-video interfaces (optional)
++-------------------------------------------------------------------------------
  
--	analogix_dp_set_lane_count(dp, dp->video_info->lane_count);
--	analogix_dp_set_link_bandwidth(dp, dp->video_info->link_rate);
--
- 	analogix_dp_init_video(dp);
- 	ret = analogix_dp_config_video(dp);
- 	if (ret)
-@@ -1198,13 +1198,13 @@ static struct video_info *analogix_dp_dt_parse_pdata(struct device *dev)
- 	}
+ Example:
  
- 	if (of_property_read_u32(dp_node, "analogix,link-rate",
--				 &dp_video_config->link_rate)) {
-+				 &dp_video_config->max_link_rate)) {
- 		dev_err(dev, "failed to get link-rate\n");
- 		return ERR_PTR(-EINVAL);
- 	}
+@@ -88,12 +74,10 @@ SOC specific portion:
  
- 	if (of_property_read_u32(dp_node, "analogix,lane-count",
--				 &dp_video_config->lane_count)) {
-+				 &dp_video_config->max_lane_count)) {
- 		dev_err(dev, "failed to get lane-count\n");
- 		return ERR_PTR(-EINVAL);
- 	}
-diff --git a/drivers/gpu/drm/bridge/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix_dp_core.h
-index 2cefde9..941b34f 100644
---- a/drivers/gpu/drm/bridge/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix_dp_core.h
-@@ -21,8 +21,9 @@
- #define MAX_EQ_LOOP 5
+ Board Specific portion:
+ 	dp-controller {
+-		samsung,color-space = <0>;
+-		samsung,dynamic-range = <0>;
+-		samsung,ycbcr-coeff = <0>;
+-		samsung,color-depth = <1>;
+-		samsung,link-rate = <0x0a>;
+-		samsung,lane-count = <4>;
++		analogix,color-space = <0>;
++		analogix,color-depth = <1>;
++		analogix,link-rate = <0x0a>;
++		analogix,lane-count = <4>;
  
- enum link_rate_type {
--	LINK_RATE_1_62GBPS = 0x06,
--	LINK_RATE_2_70GBPS = 0x0a
-+	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
-+	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
-+	LINK_RATE_5_40GBPS = DP_LINK_BW_5_4,
+ 		display-timings {
+ 			native-mode = <&lcd_timing>;
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 7e728a1..e48798d 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -119,12 +119,10 @@
+ 
+ &dp {
+ 	status = "okay";
+-	samsung,color-space = <0>;
+-	samsung,dynamic-range = <0>;
+-	samsung,ycbcr-coeff = <0>;
+-	samsung,color-depth = <1>;
+-	samsung,link-rate = <0x0a>;
+-	samsung,lane-count = <4>;
++	analogix,color-space = <0>;
++	analogix,color-depth = <1>;
++	analogix,link-rate = <0x0a>;
++	analogix,lane-count = <4>;
  };
  
- enum link_lane_count_type {
-@@ -128,8 +129,8 @@ struct video_info {
- 	enum color_coefficient ycbcr_coeff;
- 	enum color_depth color_depth;
- 
--	enum link_rate_type link_rate;
--	enum link_lane_count_type lane_count;
-+	enum link_rate_type       max_link_rate;
-+	enum link_lane_count_type max_lane_count;
+ &fimd {
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 4fe186d..b8c6b8b 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -75,12 +75,10 @@
  };
  
- struct link_train {
+ &dp {
+-	samsung,color-space = <0>;
+-	samsung,dynamic-range = <0>;
+-	samsung,ycbcr-coeff = <0>;
+-	samsung,color-depth = <1>;
+-	samsung,link-rate = <0x0a>;
+-	samsung,lane-count = <4>;
++	analogix,color-space = <0>;
++	analogix,color-depth = <1>;
++	analogix,link-rate = <0x0a>;
++	analogix,lane-count = <4>;
+ 
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dp_hpd>;
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index b7f4122..9ce2b89 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -239,13 +239,11 @@
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dp_hpd>;
+-	samsung,color-space = <0>;
+-	samsung,dynamic-range = <0>;
+-	samsung,ycbcr-coeff = <0>;
+-	samsung,color-depth = <1>;
+-	samsung,link-rate = <0x0a>;
+-	samsung,lane-count = <2>;
+-	samsung,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
++	analogix,color-space = <0>;
++	analogix,color-depth = <1>;
++	analogix,link-rate = <0x0a>;
++	analogix,lane-count = <2>;
++	analogix,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
+ 
+ 	ports {
+ 		port@0 {
+diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
+index d03f9b8..9288ae6 100644
+--- a/arch/arm/boot/dts/exynos5250-spring.dts
++++ b/arch/arm/boot/dts/exynos5250-spring.dts
+@@ -69,13 +69,11 @@
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dp_hpd_gpio>;
+-	samsung,color-space = <0>;
+-	samsung,dynamic-range = <0>;
+-	samsung,ycbcr-coeff = <0>;
+-	samsung,color-depth = <1>;
+-	samsung,link-rate = <0x0a>;
+-	samsung,lane-count = <1>;
+-	samsung,hpd-gpio = <&gpc3 0 GPIO_ACTIVE_HIGH>;
++	analogix,color-space = <0>;
++	analogix,color-depth = <1>;
++	analogix,link-rate = <0x0a>;
++	analogix,lane-count = <1>;
++	analogix,hpd-gpio = <&gpc3 0 GPIO_ACTIVE_HIGH>;
+ };
+ 
+ &ehci {
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 8f4d76c..695a380 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -147,13 +147,11 @@
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dp_hpd_gpio>;
+-	samsung,color-space = <0>;
+-	samsung,dynamic-range = <0>;
+-	samsung,ycbcr-coeff = <0>;
+-	samsung,color-depth = <1>;
+-	samsung,link-rate = <0x06>;
+-	samsung,lane-count = <2>;
+-	samsung,hpd-gpio = <&gpx2 6 0>;
++	analogix,color-space = <0>;
++	analogix,color-depth = <1>;
++	analogix,link-rate = <0x06>;
++	analogix,lane-count = <2>;
++	analogix,hpd-gpio = <&gpx2 6 0>;
+ 
+ 	ports {
+ 		port@0 {
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 98871f9..fd46714 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -91,12 +91,10 @@
+ &dp {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dp_hpd>;
+-	samsung,color-space = <0>;
+-	samsung,dynamic-range = <0>;
+-	samsung,ycbcr-coeff = <0>;
+-	samsung,color-depth = <1>;
+-	samsung,link-rate = <0x0a>;
+-	samsung,lane-count = <4>;
++	analogix,color-space = <0>;
++	analogix,color-depth = <1>;
++	analogix,link-rate = <0x0a>;
++	analogix,lane-count = <4>;
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 7d5b386..54b4c63 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -141,13 +141,11 @@
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dp_hpd_gpio>;
+-	samsung,color-space = <0>;
+-	samsung,dynamic-range = <0>;
+-	samsung,ycbcr-coeff = <0>;
+-	samsung,color-depth = <1>;
+-	samsung,link-rate = <0x0a>;
+-	samsung,lane-count = <2>;
+-	samsung,hpd-gpio = <&gpx2 6 0>;
++	analogix,color-space = <0>;
++	analogix,color-depth = <1>;
++	analogix,link-rate = <0x0a>;
++	analogix,lane-count = <2>;
++	analogix,hpd-gpio = <&gpx2 6 0>;
+ 	panel = <&panel>;
+ };
+ 
 -- 
 1.9.1
