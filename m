@@ -1,170 +1,274 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: Properly report supported formats for each device
-Date: Wed, 19 Aug 2015 15:02:34 +0200
-Message-ID: <1439989354-17326-1-git-send-email-m.szyprowski@samsung.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH] drm/exynos: Properly report supported formats for
+ each device
+Date: Wed, 19 Aug 2015 15:49:31 +0200
+Message-ID: <55D4896B.5030200@gmx.net>
+References: <1439989354-17326-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.17.21]:51455 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751042AbbHSNtj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Aug 2015 09:49:39 -0400
+In-Reply-To: <1439989354-17326-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-RXh5bm9zIERSTSByZXBvcnRlZCB0aGF0IGFsbCBwbGFuZXMgZm9yIGFsbCBzdXBwb3J0ZWQgc3Vi
-LWRldmljZXMgc3VwcG9ydHMKb25seSB0aHJlZSBwaXhlbCBmb3JtYXRzOiBYUkdCMjQsIEFSR0Iy
-NCBhbmQgTlYxMi4gVGhpcyBwYXRjaCBsZXRzIGVhY2gKRXh5bm9zIERSTSBzdWItZHJpdmVycyB0
-byBwcm92aWRlIHRoZSBsaXN0IG9mIHN1cHBvcnRlZCBwaXhlbCBmb3JtYXRzCmFuZCByZWdpc3Rl
-cnMgdGhpcyBsaXN0IHRvIERSTSBjb3JlLgoKU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3Nr
-aSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8IDEwICsrKysrKysrLQogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3M3X2RybV9kZWNvbi5jICAgIHwgMTUgKysrKysrKysrKysrKy0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICAgICB8IDExICsrKysrKysrKy0KIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8IDExICsrKy0tLS0t
-LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oICAgICB8ICAxICsK
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgICB8ICA5ICsrKysr
-KystCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAzMCAr
-KysrKysrKysrKysrKysrKysrKysrKysrLS0KIDcgZmlsZXMgY2hhbmdlZCwgNzMgaW5zZXJ0aW9u
-cygrKSwgMTQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1
-NDMzX2RybV9kZWNvbi5jCmluZGV4IDhiMTIyNWYuLmZjODg0NzEgMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYworKysgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKQEAgLTU0LDYgKzU0LDEzIEBAIHN0
-YXRpYyBjb25zdCBjaGFyICogY29uc3QgZGVjb25fY2xrc19uYW1lW10gPSB7CiAJInNjbGtfZGVj
-b25fZWNsayIsCiB9OwogCitzdGF0aWMgY29uc3QgdWludDMyX3QgZGVjb25fZm9ybWF0c1tdID0g
-eworCURSTV9GT1JNQVRfWFJHQjE1NTUsCisJRFJNX0ZPUk1BVF9SR0I1NjUsCisJRFJNX0ZPUk1B
-VF9YUkdCODg4OCwKKwlEUk1fRk9STUFUX0FSR0I4ODg4LAorfTsKKwogc3RhdGljIGludCBkZWNv
-bl9lbmFibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0
-IGRlY29uX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKQEAgLTQ4Myw3ICs0OTAsOCBAQCBzdGF0
-aWMgaW50IGRlY29uX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0
-ZXIsIHZvaWQgKmRhdGEpCiAJCXR5cGUgPSAoenBvcyA9PSBjdHgtPmRlZmF1bHRfd2luKSA/IERS
-TV9QTEFORV9UWVBFX1BSSU1BUlkgOgogCQkJCQkJCURSTV9QTEFORV9UWVBFX09WRVJMQVk7CiAJ
-CXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKLQkJ
-CQkxIDw8IGN0eC0+cGlwZSwgdHlwZSwgenBvcyk7CisJCQkJMSA8PCBjdHgtPnBpcGUsIHR5cGUs
-IGRlY29uX2Zvcm1hdHMsCisJCQkJQVJSQVlfU0laRShkZWNvbl9mb3JtYXRzKSwgenBvcyk7CiAJ
-CWlmIChyZXQpCiAJCQlyZXR1cm4gcmV0OwogCX0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zN19kcm1fZGVjb24uYwppbmRleCAzNjI1MzJhLi5jNTYyYTBjIDEwMDY0NAotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCkBAIC03MCw2ICs3MCwxOCBAQCBzdGF0aWMg
-Y29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBkZWNvbl9kcml2ZXJfZHRfbWF0Y2hbXSA9IHsKIH07
-CiBNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBkZWNvbl9kcml2ZXJfZHRfbWF0Y2gpOwogCitzdGF0
-aWMgY29uc3QgdWludDMyX3QgZGVjb25fZm9ybWF0c1tdID0geworCURSTV9GT1JNQVRfUkdCNTY1
-LAorCURSTV9GT1JNQVRfWFJHQjg4ODgsCisJRFJNX0ZPUk1BVF9YQkdSODg4OCwKKwlEUk1fRk9S
-TUFUX1JHQlg4ODg4LAorCURSTV9GT1JNQVRfQkdSWDg4ODgsCisJRFJNX0ZPUk1BVF9BUkdCODg4
-OCwKKwlEUk1fRk9STUFUX0FCR1I4ODg4LAorCURSTV9GT1JNQVRfUkdCQTg4ODgsCisJRFJNX0ZP
-Uk1BVF9CR1JBODg4OCwKK307CisKIHN0YXRpYyB2b2lkIGRlY29uX3dhaXRfZm9yX3ZibGFuayhz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogewogCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpj
-dHggPSBjcnRjLT5jdHg7CkBAIC02NzUsNyArNjg3LDggQEAgc3RhdGljIGludCBkZWNvbl9iaW5k
-KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQog
-CQl0eXBlID0gKHpwb3MgPT0gY3R4LT5kZWZhdWx0X3dpbikgPyBEUk1fUExBTkVfVFlQRV9QUklN
-QVJZIDoKIAkJCQkJCURSTV9QTEFORV9UWVBFX09WRVJMQVk7CiAJCXJldCA9IGV4eW5vc19wbGFu
-ZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKLQkJCQkJMSA8PCBjdHgtPnBpcGUs
-IHR5cGUsIHpwb3MpOworCQkJCQkxIDw8IGN0eC0+cGlwZSwgdHlwZSwgZGVjb25fZm9ybWF0cywK
-KwkJCQkJQVJSQVlfU0laRShkZWNvbl9mb3JtYXRzKSwgenBvcyk7CiAJCWlmIChyZXQpCiAJCQly
-ZXR1cm4gcmV0OwogCX0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmlu
-ZGV4IDc5NGU1NmMuLjhiOWVmNzUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2ZpbWQuYwpAQCAtMTg3LDYgKzE4NywxNCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldmlj
-ZV9pZCBmaW1kX2RyaXZlcl9kdF9tYXRjaFtdID0gewogfTsKIE1PRFVMRV9ERVZJQ0VfVEFCTEUo
-b2YsIGZpbWRfZHJpdmVyX2R0X21hdGNoKTsKIAorc3RhdGljIGNvbnN0IHVpbnQzMl90IGZpbWRf
-Zm9ybWF0c1tdID0geworCURSTV9GT1JNQVRfQzgsCisJRFJNX0ZPUk1BVF9YUkdCMTU1NSwKKwlE
-Uk1fRk9STUFUX1JHQjU2NSwKKwlEUk1fRk9STUFUX1hSR0I4ODg4LAorCURSTV9GT1JNQVRfQVJH
-Qjg4ODgsCit9OworCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBmaW1kX2RyaXZlcl9kYXRhICpkcm1f
-ZmltZF9nZXRfZHJpdmVyX2RhdGEoCiAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIHsK
-QEAgLTk0OSw3ICs5NTcsOCBAQCBzdGF0aWMgaW50IGZpbWRfYmluZChzdHJ1Y3QgZGV2aWNlICpk
-ZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKIAkJdHlwZSA9ICh6cG9zID09
-IGN0eC0+ZGVmYXVsdF93aW4pID8gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA6CiAJCQkJCQlEUk1f
-UExBTkVfVFlQRV9PVkVSTEFZOwogCQlyZXQgPSBleHlub3NfcGxhbmVfaW5pdChkcm1fZGV2LCAm
-Y3R4LT5wbGFuZXNbenBvc10sCi0JCQkJCTEgPDwgY3R4LT5waXBlLCB0eXBlLCB6cG9zKTsKKwkJ
-CQkJMSA8PCBjdHgtPnBpcGUsIHR5cGUsIGZpbWRfZm9ybWF0cywKKwkJCQkJQVJSQVlfU0laRShm
-aW1kX2Zvcm1hdHMpLCB6cG9zKTsKIAkJaWYgKHJldCkKIAkJCXJldHVybiByZXQ7CiAJfQpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBhNzI5OTgwLi5iZTQy
-ZjIxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMjAs
-MTIgKzIwLDYgQEAKICNpbmNsdWRlICJleHlub3NfZHJtX2dlbS5oIgogI2luY2x1ZGUgImV4eW5v
-c19kcm1fcGxhbmUuaCIKIAotc3RhdGljIGNvbnN0IHVpbnQzMl90IGZvcm1hdHNbXSA9IHsKLQlE
-Uk1fRk9STUFUX1hSR0I4ODg4LAotCURSTV9GT1JNQVRfQVJHQjg4ODgsCi0JRFJNX0ZPUk1BVF9O
-VjEyLAotfTsKLQogLyoKICAqIFRoaXMgZnVuY3Rpb24gaXMgdG8gZ2V0IFggb3IgWSBzaXplIHNo
-b3duIHZpYSBzY3JlZW4uIFRoaXMgbmVlZHMgbGVuZ3RoIGFuZAogICogc3RhcnQgcG9zaXRpb24g
-b2YgQ1JUQy4KQEAgLTIyNiwxMyArMjIwLDE0IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9h
-dHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKIGludCBleHlub3Nf
-cGxhbmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkgICAgICBzdHJ1Y3QgZXh5bm9z
-X2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lLAogCQkgICAgICB1bnNpZ25lZCBsb25nIHBvc3NpYmxl
-X2NydGNzLCBlbnVtIGRybV9wbGFuZV90eXBlIHR5cGUsCisJCSAgICAgIGNvbnN0IHVpbnQzMl90
-ICpmb3JtYXRzLCB1bnNpZ25lZCBpbnQgZmNvdW50LAogCQkgICAgICB1bnNpZ25lZCBpbnQgenBv
-cykKIHsKIAlpbnQgZXJyOwogCiAJZXJyID0gZHJtX3VuaXZlcnNhbF9wbGFuZV9pbml0KGRldiwg
-JmV4eW5vc19wbGFuZS0+YmFzZSwgcG9zc2libGVfY3J0Y3MsCi0JCQkJICAgICAgICZleHlub3Nf
-cGxhbmVfZnVuY3MsIGZvcm1hdHMsCi0JCQkJICAgICAgIEFSUkFZX1NJWkUoZm9ybWF0cyksIHR5
-cGUpOworCQkJCSAgICAgICAmZXh5bm9zX3BsYW5lX2Z1bmNzLCBmb3JtYXRzLCBmY291bnQsCisJ
-CQkJICAgICAgIHR5cGUpOwogCWlmIChlcnIpIHsKIAkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gaW5p
-dGlhbGl6ZSBwbGFuZVxuIik7CiAJCXJldHVybiBlcnI7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9wbGFuZS5oCmluZGV4IDhjODhhZTkuLjQ3NmM5MzQgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCkBAIC0xMiw0ICsxMiw1IEBACiBpbnQgZXh5
-bm9zX3BsYW5lX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAkJICAgICAgc3RydWN0IGV4
-eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSwKIAkJICAgICAgdW5zaWduZWQgbG9uZyBwb3Nz
-aWJsZV9jcnRjcywgZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlLAorCQkgICAgICBjb25zdCB1aW50
-MzJfdCAqZm9ybWF0cywgdW5zaWduZWQgaW50IGZjb3VudCwKIAkJICAgICAgdW5zaWduZWQgaW50
-IHpwb3MpOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Zp
-ZGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggMzQx
-MzM5My4uZmUxMTA1MyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX3ZpZGkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5j
-CkBAIC04NSw2ICs4NSwxMiBAQCBzdGF0aWMgY29uc3QgY2hhciBmYWtlX2VkaWRfaW5mb1tdID0g
-ewogCTB4MDAsIDB4MDAsIDB4MDAsIDB4MDYKIH07CiAKK3N0YXRpYyBjb25zdCB1aW50MzJfdCBm
-b3JtYXRzW10gPSB7CisJRFJNX0ZPUk1BVF9YUkdCODg4OCwKKwlEUk1fRk9STUFUX0FSR0I4ODg4
-LAorCURSTV9GT1JNQVRfTlYxMiwKK307CisKIHN0YXRpYyBpbnQgdmlkaV9lbmFibGVfdmJsYW5r
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IHZpZGlfY29udGV4dCAq
-Y3R4ID0gY3J0Yy0+Y3R4OwpAQCAtNDMzLDcgKzQzOSw4IEBAIHN0YXRpYyBpbnQgdmlkaV9iaW5k
-KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQog
-CQl0eXBlID0gKHpwb3MgPT0gY3R4LT5kZWZhdWx0X3dpbikgPyBEUk1fUExBTkVfVFlQRV9QUklN
-QVJZIDoKIAkJCQkJCURSTV9QTEFORV9UWVBFX09WRVJMQVk7CiAJCXJldCA9IGV4eW5vc19wbGFu
-ZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKLQkJCQkJMSA8PCBjdHgtPnBpcGUs
-IHR5cGUsIHpwb3MpOworCQkJCQkxIDw8IGN0eC0+cGlwZSwgdHlwZSwgZm9ybWF0cywKKwkJCQkJ
-QVJSQVlfU0laRShmb3JtYXRzKSwgenBvcyk7CiAJCWlmIChyZXQpCiAJCQlyZXR1cm4gcmV0Owog
-CX0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IDQ3MDZiNTYuLmJmZWI2
-ZTYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNDMsNiArNDMsNyBA
-QAogCiAjZGVmaW5lIE1JWEVSX1dJTl9OUgkJMwogI2RlZmluZSBNSVhFUl9ERUZBVUxUX1dJTgkw
-CisjZGVmaW5lIFZQX0RFRkFVTFRfV0lOCQkyCiAKIC8qIFRoZSBwaXhlbGZvcm1hdHMgdGhhdCBh
-cmUgbmF0aXZlbHkgc3VwcG9ydGVkIGJ5IHRoZSBtaXhlci4gKi8KICNkZWZpbmUgTVhSX0ZPUk1B
-VF9SR0I1NjUJNApAQCAtNjksNiArNzAsMTkgQEAgZW51bSBtaXhlcl92ZXJzaW9uX2lkIHsKIAlN
-WFJfVkVSXzEyOF8wXzBfMTg0LAogfTsKIAorc3RhdGljIGNvbnN0IHVpbnQzMl90IG1peGVyX2Zv
-cm1hdHNbXSA9IHsKKwlEUk1fRk9STUFUX1hSR0I0NDQ0LAorCURSTV9GT1JNQVRfWFJHQjE1NTUs
-CisJRFJNX0ZPUk1BVF9SR0I1NjUsCisJRFJNX0ZPUk1BVF9YUkdCODg4OCwKKwlEUk1fRk9STUFU
-X0FSR0I4ODg4LAorfTsKKworc3RhdGljIGNvbnN0IHVpbnQzMl90IHZwX2Zvcm1hdHNbXSA9IHsK
-KwlEUk1fRk9STUFUX05WMTIsCisJRFJNX0ZPUk1BVF9OVjIxLAorfTsKKwogc3RydWN0IG1peGVy
-X2NvbnRleHQgewogCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXY7CiAJc3RydWN0IGRldmlj
-ZQkJKmRldjsKQEAgLTExODQsNyArMTE5OCw2IEBAIHN0YXRpYyBpbnQgbWl4ZXJfYmluZChzdHJ1
-Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hbmFnZXIsIHZvaWQgKmRhdGEpCiAJc3Ry
-dWN0IG1peGVyX2NvbnRleHQgKmN0eCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwogCXN0cnVjdCBk
-cm1fZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5
-bm9zX3BsYW5lOwotCWVudW0gZHJtX3BsYW5lX3R5cGUgdHlwZTsKIAl1bnNpZ25lZCBpbnQgenBv
-czsKIAlpbnQgcmV0OwogCkBAIC0xMTkzLDEwICsxMjA2LDIzIEBAIHN0YXRpYyBpbnQgbWl4ZXJf
-YmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hbmFnZXIsIHZvaWQgKmRh
-dGEpCiAJCXJldHVybiByZXQ7CiAKIAlmb3IgKHpwb3MgPSAwOyB6cG9zIDwgTUlYRVJfV0lOX05S
-OyB6cG9zKyspIHsKKwkJZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlOworCQljb25zdCB1aW50MzJf
-dCAqZm9ybWF0czsKKwkJdW5zaWduZWQgaW50IGZjb3VudDsKKwogCQl0eXBlID0gKHpwb3MgPT0g
-TUlYRVJfREVGQVVMVF9XSU4pID8gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA6CiAJCQkJCQlEUk1f
-UExBTkVfVFlQRV9PVkVSTEFZOworCQlpZiAoenBvcyA8IFZQX0RFRkFVTFRfV0lOKSB7CisJCQlm
-b3JtYXRzID0gbWl4ZXJfZm9ybWF0czsKKwkJCWZjb3VudCA9IEFSUkFZX1NJWkUobWl4ZXJfZm9y
-bWF0cyk7CisJCX0gZWxzZSB7CisJCQlmb3JtYXRzID0gdnBfZm9ybWF0czsKKwkJCWZjb3VudCA9
-IEFSUkFZX1NJWkUodnBfZm9ybWF0cyk7CisJCX0KKwogCQlyZXQgPSBleHlub3NfcGxhbmVfaW5p
-dChkcm1fZGV2LCAmY3R4LT5wbGFuZXNbenBvc10sCi0JCQkJCTEgPDwgY3R4LT5waXBlLCB0eXBl
-LCB6cG9zKTsKKwkJCQkJMSA8PCBjdHgtPnBpcGUsIHR5cGUsIGZvcm1hdHMsIGZjb3VudCwKKwkJ
-CQkJenBvcyk7CiAJCWlmIChyZXQpCiAJCQlyZXR1cm4gcmV0OwogCX0KLS0gCjEuOS4yCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hmm,
+
+this looks a lot like my patch from some time ago:
+http://www.spinics.net/lists/linux-samsung-soc/msg43677.html
+
+With best wishes,
+Tobias
+
+
+Marek Szyprowski wrote:
+> Exynos DRM reported that all planes for all supported sub-devices supports
+> only three pixel formats: XRGB24, ARGB24 and NV12. This patch lets each
+> Exynos DRM sub-drivers to provide the list of supported pixel formats
+> and registers this list to DRM core.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 10 ++++++++-
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 15 +++++++++++++-
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 11 +++++++++-
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 11 +++-------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.h     |  1 +
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  9 +++++++-
+>  drivers/gpu/drm/exynos/exynos_mixer.c         | 30 +++++++++++++++++++++++++--
+>  7 files changed, 73 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> index 8b1225f..fc88471 100644
+> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> @@ -54,6 +54,13 @@ static const char * const decon_clks_name[] = {
+>  	"sclk_decon_eclk",
+>  };
+>  
+> +static const uint32_t decon_formats[] = {
+> +	DRM_FORMAT_XRGB1555,
+> +	DRM_FORMAT_RGB565,
+> +	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ARGB8888,
+> +};
+> +
+>  static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+>  {
+>  	struct decon_context *ctx = crtc->ctx;
+> @@ -483,7 +490,8 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+>  		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+>  							DRM_PLANE_TYPE_OVERLAY;
+>  		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> -				1 << ctx->pipe, type, zpos);
+> +				1 << ctx->pipe, type, decon_formats,
+> +				ARRAY_SIZE(decon_formats), zpos);
+>  		if (ret)
+>  			return ret;
+>  	}
+> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> index 362532a..c562a0c 100644
+> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> @@ -70,6 +70,18 @@ static const struct of_device_id decon_driver_dt_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, decon_driver_dt_match);
+>  
+> +static const uint32_t decon_formats[] = {
+> +	DRM_FORMAT_RGB565,
+> +	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_XBGR8888,
+> +	DRM_FORMAT_RGBX8888,
+> +	DRM_FORMAT_BGRX8888,
+> +	DRM_FORMAT_ARGB8888,
+> +	DRM_FORMAT_ABGR8888,
+> +	DRM_FORMAT_RGBA8888,
+> +	DRM_FORMAT_BGRA8888,
+> +};
+> +
+>  static void decon_wait_for_vblank(struct exynos_drm_crtc *crtc)
+>  {
+>  	struct decon_context *ctx = crtc->ctx;
+> @@ -675,7 +687,8 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+>  		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+>  						DRM_PLANE_TYPE_OVERLAY;
+>  		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> -					1 << ctx->pipe, type, zpos);
+> +					1 << ctx->pipe, type, decon_formats,
+> +					ARRAY_SIZE(decon_formats), zpos);
+>  		if (ret)
+>  			return ret;
+>  	}
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 794e56c..8b9ef75 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -187,6 +187,14 @@ static const struct of_device_id fimd_driver_dt_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, fimd_driver_dt_match);
+>  
+> +static const uint32_t fimd_formats[] = {
+> +	DRM_FORMAT_C8,
+> +	DRM_FORMAT_XRGB1555,
+> +	DRM_FORMAT_RGB565,
+> +	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ARGB8888,
+> +};
+> +
+>  static inline struct fimd_driver_data *drm_fimd_get_driver_data(
+>  	struct platform_device *pdev)
+>  {
+> @@ -949,7 +957,8 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+>  		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+>  						DRM_PLANE_TYPE_OVERLAY;
+>  		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> -					1 << ctx->pipe, type, zpos);
+> +					1 << ctx->pipe, type, fimd_formats,
+> +					ARRAY_SIZE(fimd_formats), zpos);
+>  		if (ret)
+>  			return ret;
+>  	}
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> index a729980..be42f21 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> @@ -20,12 +20,6 @@
+>  #include "exynos_drm_gem.h"
+>  #include "exynos_drm_plane.h"
+>  
+> -static const uint32_t formats[] = {
+> -	DRM_FORMAT_XRGB8888,
+> -	DRM_FORMAT_ARGB8888,
+> -	DRM_FORMAT_NV12,
+> -};
+> -
+>  /*
+>   * This function is to get X or Y size shown via screen. This needs length and
+>   * start position of CRTC.
+> @@ -226,13 +220,14 @@ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+>  int exynos_plane_init(struct drm_device *dev,
+>  		      struct exynos_drm_plane *exynos_plane,
+>  		      unsigned long possible_crtcs, enum drm_plane_type type,
+> +		      const uint32_t *formats, unsigned int fcount,
+>  		      unsigned int zpos)
+>  {
+>  	int err;
+>  
+>  	err = drm_universal_plane_init(dev, &exynos_plane->base, possible_crtcs,
+> -				       &exynos_plane_funcs, formats,
+> -				       ARRAY_SIZE(formats), type);
+> +				       &exynos_plane_funcs, formats, fcount,
+> +				       type);
+>  	if (err) {
+>  		DRM_ERROR("failed to initialize plane\n");
+>  		return err;
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+> index 8c88ae9..476c934 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+> @@ -12,4 +12,5 @@
+>  int exynos_plane_init(struct drm_device *dev,
+>  		      struct exynos_drm_plane *exynos_plane,
+>  		      unsigned long possible_crtcs, enum drm_plane_type type,
+> +		      const uint32_t *formats, unsigned int fcount,
+>  		      unsigned int zpos);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> index 3413393..fe11053 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -85,6 +85,12 @@ static const char fake_edid_info[] = {
+>  	0x00, 0x00, 0x00, 0x06
+>  };
+>  
+> +static const uint32_t formats[] = {
+> +	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ARGB8888,
+> +	DRM_FORMAT_NV12,
+> +};
+> +
+>  static int vidi_enable_vblank(struct exynos_drm_crtc *crtc)
+>  {
+>  	struct vidi_context *ctx = crtc->ctx;
+> @@ -433,7 +439,8 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+>  		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+>  						DRM_PLANE_TYPE_OVERLAY;
+>  		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> -					1 << ctx->pipe, type, zpos);
+> +					1 << ctx->pipe, type, formats,
+> +					ARRAY_SIZE(formats), zpos);
+>  		if (ret)
+>  			return ret;
+>  	}
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 4706b56..bfeb6e6 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -43,6 +43,7 @@
+>  
+>  #define MIXER_WIN_NR		3
+>  #define MIXER_DEFAULT_WIN	0
+> +#define VP_DEFAULT_WIN		2
+>  
+>  /* The pixelformats that are natively supported by the mixer. */
+>  #define MXR_FORMAT_RGB565	4
+> @@ -69,6 +70,19 @@ enum mixer_version_id {
+>  	MXR_VER_128_0_0_184,
+>  };
+>  
+> +static const uint32_t mixer_formats[] = {
+> +	DRM_FORMAT_XRGB4444,
+> +	DRM_FORMAT_XRGB1555,
+> +	DRM_FORMAT_RGB565,
+> +	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ARGB8888,
+> +};
+> +
+> +static const uint32_t vp_formats[] = {
+> +	DRM_FORMAT_NV12,
+> +	DRM_FORMAT_NV21,
+> +};
+> +
+>  struct mixer_context {
+>  	struct platform_device *pdev;
+>  	struct device		*dev;
+> @@ -1184,7 +1198,6 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+>  	struct mixer_context *ctx = dev_get_drvdata(dev);
+>  	struct drm_device *drm_dev = data;
+>  	struct exynos_drm_plane *exynos_plane;
+> -	enum drm_plane_type type;
+>  	unsigned int zpos;
+>  	int ret;
+>  
+> @@ -1193,10 +1206,23 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+>  		return ret;
+>  
+>  	for (zpos = 0; zpos < MIXER_WIN_NR; zpos++) {
+> +		enum drm_plane_type type;
+> +		const uint32_t *formats;
+> +		unsigned int fcount;
+> +
+>  		type = (zpos == MIXER_DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+>  						DRM_PLANE_TYPE_OVERLAY;
+> +		if (zpos < VP_DEFAULT_WIN) {
+> +			formats = mixer_formats;
+> +			fcount = ARRAY_SIZE(mixer_formats);
+> +		} else {
+> +			formats = vp_formats;
+> +			fcount = ARRAY_SIZE(vp_formats);
+> +		}
+> +
+>  		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> -					1 << ctx->pipe, type, zpos);
+> +					1 << ctx->pipe, type, formats, fcount,
+> +					zpos);
+>  		if (ret)
+>  			return ret;
+>  	}
+> 
