@@ -1,44 +1,44 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH RFC v5 8/8] [media] media: rename the function that create
- pad links
-Date: Wed, 19 Aug 2015 10:38:26 +0200
-Message-ID: <55D44082.6000600@xs4all.nl>
-References: <cover.1439927113.git.mchehab@osg.samsung.com>
- <4b0c0aa7604f5202401997f946297c0b35c1b692.1439927113.git.mchehab@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: multi_v7_defconfig: Enable DWC2 USB driver and USB
+ ethernet gadget
+Date: Wed, 19 Aug 2015 17:44:02 +0900
+Message-ID: <55D441D2.4070506@samsung.com>
+References: <55D30313.7080107@osg.samsung.com>
+ <1439972377-22683-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <4b0c0aa7604f5202401997f946297c0b35c1b692.1439927113.git.mchehab@osg.samsung.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Jiayi Ye <yejiayily@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Matthias Schwarzott <zzam@gentoo.org>, Olli Salonen <olli.salonen@iki.fi>, Heena Sirwani <heenasirwani@gmail.com>, devel@driverdev.osuosl.org, Boris BREZILLON <boris.brezillon@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-sh@vger.kernel.org, linux-doc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Antti Palosaari <crope@iki.fi>, linux-arm-kernel@lists.infradead.org, Navya Sri Nizamkari <navyasri.tech@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, =?windows-1252?Q?S=F6
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:21796 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752144AbbHSIoF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Aug 2015 04:44:05 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NTB00DUHMXETK20@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Aug 2015 09:44:02 +0100 (BST)
+In-reply-to: <1439972377-22683-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 08/18/2015 10:04 PM, Mauro Carvalho Chehab wrote:
-> Now that a link can be either between two different graph
-> objects, we'll need to add more functions to create links.
-> So, rename the existing one that create links only between
-> two pads as media_create_pad_link().
+On 19.08.2015 17:19, Marek Szyprowski wrote:
+> DWC2 (s3c-hsotg) hardware module is available on many Exynos based boards,
+> so enable DWC2 driver as well as the most common USB Ethernet gadget.
 > 
-> No functional changes.
-> 
-> This patch was created via this shell script:
-> 	for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
->
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> Changes since v1: build DWC2 and USB gadget as modules
+> ---
+>  arch/arm/configs/multi_v7_defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Thanks Marek for the patch.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Thanks!
-
-	Hans
+Best regards,
+Krzysztof
