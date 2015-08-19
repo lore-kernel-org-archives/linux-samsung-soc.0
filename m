@@ -1,68 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: re: drm/exynos: merge exynos_drm_buf.c to exynos_drm_gem.c
-Date: Wed, 19 Aug 2015 11:35:46 +0300
-Message-ID: <20150819083546.GA5271@mwanda>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH RFC v5 8/8] [media] media: rename the function that create
+ pad links
+Date: Wed, 19 Aug 2015 10:38:26 +0200
+Message-ID: <55D44082.6000600@xs4all.nl>
+References: <cover.1439927113.git.mchehab@osg.samsung.com>
+ <4b0c0aa7604f5202401997f946297c0b35c1b692.1439927113.git.mchehab@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:24277 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751847AbbHSIf4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Aug 2015 04:35:56 -0400
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <4b0c0aa7604f5202401997f946297c0b35c1b692.1439927113.git.mchehab@osg.samsung.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Jiayi Ye <yejiayily@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Matthias Schwarzott <zzam@gentoo.org>, Olli Salonen <olli.salonen@iki.fi>, Heena Sirwani <heenasirwani@gmail.com>, devel@driverdev.osuosl.org, Boris BREZILLON <boris.brezillon@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-sh@vger.kernel.org, linux-doc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Antti Palosaari <crope@iki.fi>, linux-arm-kernel@lists.infradead.org, Navya Sri Nizamkari <navyasri.tech@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, =?windows-1252?Q?S=F6
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jy0922.shim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
 
-Hello Joonyoung Shim,
+On 08/18/2015 10:04 PM, Mauro Carvalho Chehab wrote:
+> Now that a link can be either between two different graph
+> objects, we'll need to add more functions to create links.
+> So, rename the existing one that create links only between
+> two pads as media_create_pad_link().
+> 
+> No functional changes.
+> 
+> This patch was created via this shell script:
+> 	for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+>
 
-The patch 2a8cb4894540: "drm/exynos: merge exynos_drm_buf.c to
-exynos_drm_gem.c" from Aug 16, 2015, leads to the following static
-checker warning:
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-	drivers/gpu/drm/exynos/exynos_drm_gem.c:610 exynos_drm_gem_prime_import_sg_table()
-	error: 'exynos_gem_obj' dereferencing possible ERR_PTR()
+Thanks!
 
-drivers/gpu/drm/exynos/exynos_drm_gem.c
-   562  struct drm_gem_object *
-   563  exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
-   564                                       struct dma_buf_attachment *attach,
-   565                                       struct sg_table *sgt)
-   566  {
-   567          struct exynos_drm_gem_obj *exynos_gem_obj;
-   568          int npages;
-   569          int ret;
-   570  
-   571          exynos_gem_obj = exynos_drm_gem_init(dev, attach->dmabuf->size);
-   572          if (IS_ERR(exynos_gem_obj)) {
-   573                  ret = PTR_ERR(exynos_gem_obj);
-
-exynos_gem_obj is an ERR_PTR.
-
-   574                  goto err;
-   575          }
-   576  
-   577          exynos_gem_obj->dma_addr = sg_dma_address(sgt->sgl);
-
-   603  
-   604          return &exynos_gem_obj->base;
-   605  
-   606  err_free_large:
-   607          drm_free_large(exynos_gem_obj->pages);
-   608  err:
-   609          drm_gem_object_release(&exynos_gem_obj->base);
-   610          kfree(exynos_gem_obj);
-
-So both the drm_gem_object_release() and kfree() will crash.  Do we
-really need both?  I feel like there should be a single free function
-which undoes the exynos_drm_gem_init() function.  Also the
-exynos_drm_gem_init() has no documentation about how it is supposed to
-be freed.
-
-   611          return ERR_PTR(ret);
-   612  }
-
-regards,
-dan carpenter
+	Hans
