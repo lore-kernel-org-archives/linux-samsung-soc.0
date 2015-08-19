@@ -1,57 +1,56 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH V3] Watchdog: Fix parent of watchdog_devices
-Date: Wed, 19 Aug 2015 08:44:19 +0200
-Message-ID: <20150819064419.GC9999@pengutronix.de>
-References: <db7db9102158b87a4a7169e84e2272b3ba03f9f7.1439954581.git.panand@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] ARM: multi_v7_defconfig: Enable DWC2 USB driver and USB
+ ethernet gadget
+Date: Wed, 19 Aug 2015 10:19:37 +0200
+Message-ID: <1439972377-22683-1-git-send-email-m.szyprowski@samsung.com>
+References: <55D30313.7080107@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:58234 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752687AbbHSGoo (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28770 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753060AbbHSITp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Aug 2015 02:44:44 -0400
-Content-Disposition: inline
-In-Reply-To: <db7db9102158b87a4a7169e84e2272b3ba03f9f7.1439954581.git.panand@redhat.com>
+	Wed, 19 Aug 2015 04:19:45 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NTB00G7SLSUFP20@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Aug 2015 09:19:42 +0100 (BST)
+In-reply-to: <55D30313.7080107@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pratyush Anand <panand@redhat.com>
-Cc: linux@roeck-us.net, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, Linus Walleij <linus.walleij@linaro.org>, Baruch Siach <baruch@tkos.co.il>, "open list:INTEL MANAGEMENT ENGINE mei" <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee@kernel.org>, Kukjin Kim <kgene@kernel.org>, Tomas Winkler <tomas.winkler@intel.com>, linux-watchdog@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hello,
+DWC2 (s3c-hsotg) hardware module is available on many Exynos based boards,
+so enable DWC2 driver as well as the most common USB Ethernet gadget.
 
-On Wed, Aug 19, 2015 at 08:58:24AM +0530, Pratyush Anand wrote:
-> /sys/class/watchdog/watchdogn/device/modalias can help to identify th=
-e
-> driver/module for a given watchdog node. However, many wdt devices do=
-es not set
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+Changes since v1: build DWC2 and USB gadget as modules
+---
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-s/es//
-
-> its parent and so, we do not see an entry for device in sysfs for suc=
-h devices.
->=20
-> This patch fixes parent of watchdog_device so that
-> /sys/class/watchdog/watchdogn/device is populated.
->=20
-> Exceptions: booke, diag288, mpc8xxx, octeon, softdog and w83627hf -- =
-They do not
-> have any parent. Not sure, how we can we identify driver for these de=
-vices.
-
-I don't see why you don't use the platform device as parent for mpc8xxx=
-=2E
-
-Note however that I did several updates to the mpc8xxx driver which
-probably conflict with setting the parent. I'll take care of that.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index b2facab..d15f719 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -506,6 +506,7 @@ CONFIG_USB_R8A66597_HCD=m
+ CONFIG_USB_RENESAS_USBHS=m
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_DWC3=y
++CONFIG_USB_DWC2=m
+ CONFIG_USB_CHIPIDEA=y
+ CONFIG_USB_CHIPIDEA_HOST=y
+ CONFIG_AB8500_USB=y
+@@ -517,6 +518,7 @@ CONFIG_USB_MXS_PHY=y
+ CONFIG_USB_RCAR_PHY=m
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_RENESAS_USBHS_UDC=m
++CONFIG_USB_ETH=m
+ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_ARMMMCI=y
+-- 
+1.9.2
