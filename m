@@ -1,56 +1,68 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ARM: multi_v7_defconfig: Enable DWC2 USB driver and USB
- ethernet gadget
-Date: Wed, 19 Aug 2015 10:19:37 +0200
-Message-ID: <1439972377-22683-1-git-send-email-m.szyprowski@samsung.com>
-References: <55D30313.7080107@osg.samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: re: drm/exynos: merge exynos_drm_buf.c to exynos_drm_gem.c
+Date: Wed, 19 Aug 2015 11:35:46 +0300
+Message-ID: <20150819083546.GA5271@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:28770 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753060AbbHSITp (ORCPT
+Received: from aserp1040.oracle.com ([141.146.126.69]:24277 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751847AbbHSIf4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Aug 2015 04:19:45 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NTB00G7SLSUFP20@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Aug 2015 09:19:42 +0100 (BST)
-In-reply-to: <55D30313.7080107@osg.samsung.com>
+	Wed, 19 Aug 2015 04:35:56 -0400
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: jy0922.shim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org
 
-DWC2 (s3c-hsotg) hardware module is available on many Exynos based boards,
-so enable DWC2 driver as well as the most common USB Ethernet gadget.
+Hello Joonyoung Shim,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
-Changes since v1: build DWC2 and USB gadget as modules
----
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+The patch 2a8cb4894540: "drm/exynos: merge exynos_drm_buf.c to
+exynos_drm_gem.c" from Aug 16, 2015, leads to the following static
+checker warning:
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index b2facab..d15f719 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -506,6 +506,7 @@ CONFIG_USB_R8A66597_HCD=m
- CONFIG_USB_RENESAS_USBHS=m
- CONFIG_USB_STORAGE=y
- CONFIG_USB_DWC3=y
-+CONFIG_USB_DWC2=m
- CONFIG_USB_CHIPIDEA=y
- CONFIG_USB_CHIPIDEA_HOST=y
- CONFIG_AB8500_USB=y
-@@ -517,6 +518,7 @@ CONFIG_USB_MXS_PHY=y
- CONFIG_USB_RCAR_PHY=m
- CONFIG_USB_GADGET=y
- CONFIG_USB_RENESAS_USBHS_UDC=m
-+CONFIG_USB_ETH=m
- CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=16
- CONFIG_MMC_ARMMMCI=y
--- 
-1.9.2
+	drivers/gpu/drm/exynos/exynos_drm_gem.c:610 exynos_drm_gem_prime_import_sg_table()
+	error: 'exynos_gem_obj' dereferencing possible ERR_PTR()
+
+drivers/gpu/drm/exynos/exynos_drm_gem.c
+   562  struct drm_gem_object *
+   563  exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+   564                                       struct dma_buf_attachment *attach,
+   565                                       struct sg_table *sgt)
+   566  {
+   567          struct exynos_drm_gem_obj *exynos_gem_obj;
+   568          int npages;
+   569          int ret;
+   570  
+   571          exynos_gem_obj = exynos_drm_gem_init(dev, attach->dmabuf->size);
+   572          if (IS_ERR(exynos_gem_obj)) {
+   573                  ret = PTR_ERR(exynos_gem_obj);
+
+exynos_gem_obj is an ERR_PTR.
+
+   574                  goto err;
+   575          }
+   576  
+   577          exynos_gem_obj->dma_addr = sg_dma_address(sgt->sgl);
+
+   603  
+   604          return &exynos_gem_obj->base;
+   605  
+   606  err_free_large:
+   607          drm_free_large(exynos_gem_obj->pages);
+   608  err:
+   609          drm_gem_object_release(&exynos_gem_obj->base);
+   610          kfree(exynos_gem_obj);
+
+So both the drm_gem_object_release() and kfree() will crash.  Do we
+really need both?  I feel like there should be a single free function
+which undoes the exynos_drm_gem_init() function.  Also the
+exynos_drm_gem_init() has no documentation about how it is supposed to
+be freed.
+
+   611          return ERR_PTR(ret);
+   612  }
+
+regards,
+dan carpenter
