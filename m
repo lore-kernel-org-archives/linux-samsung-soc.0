@@ -1,108 +1,57 @@
-From: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] spi: s3c64xx: fix runtime PM handling
-Date: Wed, 19 Aug 2015 07:54:20 +0200
-Message-ID: <55D41A0C.2060107@gmail.com>
-References: <55D39E41.8010908@gmail.com> <55D3CF4B.5060208@samsung.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH V3] Watchdog: Fix parent of watchdog_devices
+Date: Wed, 19 Aug 2015 08:44:19 +0200
+Message-ID: <20150819064419.GC9999@pengutronix.de>
+References: <db7db9102158b87a4a7169e84e2272b3ba03f9f7.1439954581.git.panand@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55D3CF4B.5060208-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:58234 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752687AbbHSGoo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Aug 2015 02:44:44 -0400
+Content-Disposition: inline
+In-Reply-To: <db7db9102158b87a4a7169e84e2272b3ba03f9f7.1439954581.git.panand@redhat.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pratyush Anand <panand@redhat.com>
+Cc: linux@roeck-us.net, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, Linus Walleij <linus.walleij@linaro.org>, Baruch Siach <baruch@tkos.co.il>, "open list:INTEL MANAGEMENT ENGINE mei" <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee@kernel.org>, Kukjin Kim <kgene@kernel.org>, Tomas Winkler <tomas.winkler@intel.com>, linux-watchdog@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra>
 
-Am 19.08.2015 um 02:35 schrieb Krzysztof Kozlowski:
-> On 19.08.2015 06:06, Heiner Kallweit wrote:
->> The patch fixes / extends the runtime PM handling.
->> - Currently the driver instructs the SPI core to use auto-suspend
->>   but doesn't configure it. Add the necessary calls and let it
->>   autosuspend after probe.
-> 
-> After quick look at the driver I think it does not use autosuspend
-> fully. It just sets master->auto_runtime_pm (so the core code will use
-> autosuspend) but its own calls to pm_runtime_put() are regular ones.
-> Shouldn't this be enhanced as well?
-Right, the pm_runtime_put calls in s3c64xx_spi_setup should be
-replaced as well. Will provide an updated patch.
-> 
->> - In case the driver registration fails runtime PM needs to be
->>   properly disabled.
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/spi/spi-s3c64xx.c | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
->> index c4d3b06..15a6de1 100644
->> --- a/drivers/spi/spi-s3c64xx.c
->> +++ b/drivers/spi/spi-s3c64xx.c
->> @@ -32,6 +32,7 @@
->>  #define MAX_SPI_PORTS		6
->>  #define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
->>  #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
->> +#define AUTOSUSPEND_TIMEOUT     2000
->>  
->>  /* Registers and bit-fields */
->>  
->> @@ -1180,13 +1181,15 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->>  	       S3C64XX_SPI_INT_TX_OVERRUN_EN | S3C64XX_SPI_INT_TX_UNDERRUN_EN,
->>  	       sdd->regs + S3C64XX_SPI_INT_EN);
->>  
->> +	pm_runtime_set_autosuspend_delay(dev, AUTOSUSPEND_TIMEOUT);
->> +	pm_runtime_use_autosuspend(dev);
->>  	pm_runtime_set_active(dev);
->>  	pm_runtime_enable(dev);
->>  
->>  	ret = devm_spi_register_master(dev, master);
->>  	if (ret != 0) {
->>  		dev_err(dev, "cannot register SPI master: %d\n", ret);
->> -		goto err3;
->> +		goto err4;
->>  	}
->>  
->>  	dev_dbg(dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
->> @@ -1195,8 +1198,14 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->>  					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1,
->>  					sdd->rx_dma.dmach, sdd->tx_dma.dmach);
->>  
->> +	pm_runtime_mark_last_busy(dev);
->> +	pm_runtime_autosuspend(dev);
-> 
-> There is a high chance that device will be suspended already at this
-> point because pm_runtime_put() in setup. In most cases (when SPI is
-> started) this won't do anything so we are back at first of my questions
-> - shouldn't you update pm_runtime_put() calls?
-Yes, these calls should be updated.
-> 
-> Additionally (which is not related to your patch) shouldn't we
-> pm_runtime_get() at some point in probe() to be sure that it won't be
-> suspended to early?
-Not 100% sure at this moment, I will check.
-> 
->> +
->>  	return 0;
->>  
->> +err4:
->> +	pm_runtime_disable(dev);
->> +	pm_runtime_set_suspended(dev);
-> 
-> Please separate fixes from enhancements into different patches.
-OK, will do so.
-> 
-> Best regards,
-> Krzysztof
-> 
->>  err3:
->>  	clk_disable_unprepare(sdd->src_clk);
->>  err2:
->>
-> 
-> 
+Hello,
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wed, Aug 19, 2015 at 08:58:24AM +0530, Pratyush Anand wrote:
+> /sys/class/watchdog/watchdogn/device/modalias can help to identify th=
+e
+> driver/module for a given watchdog node. However, many wdt devices do=
+es not set
+
+s/es//
+
+> its parent and so, we do not see an entry for device in sysfs for suc=
+h devices.
+>=20
+> This patch fixes parent of watchdog_device so that
+> /sys/class/watchdog/watchdogn/device is populated.
+>=20
+> Exceptions: booke, diag288, mpc8xxx, octeon, softdog and w83627hf -- =
+They do not
+> have any parent. Not sure, how we can we identify driver for these de=
+vices.
+
+I don't see why you don't use the platform device as parent for mpc8xxx=
+=2E
+
+Note however that I did several updates to the mpc8xxx driver which
+probably conflict with setting the parent. I'll take care of that.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
