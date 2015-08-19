@@ -1,141 +1,75 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3 14/14] drm: bridge/analogix_dp: add edid modes parse in get_modes method
-Date: Wed, 19 Aug 2015 09:52:29 -0500
-Message-ID: <1439995949-18821-1-git-send-email-ykk@rock-chips.com>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: djkurtz@google.com, dianders@google.com, seanpaul@google.com, Takashi Iwai <tiwai@suse.de>, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/4] [media] Media entity cleanups and build fixes
+Date: Wed, 19 Aug 2015 17:35:18 +0200
+Message-ID: <1439998526-12832-1-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, linux-sh@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, "Prabhakar\"" <prabhakar.csengg@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Display Port monitor could support kinds of mode which indicate
-in monitor edid, not just one single display resolution which
-defined in panel or devivetree property display timing.
+Hello,
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v3:
-- Add edid modes parse support
+This series contains a couple of build fixes and cleanups for the
+Media Controller framework. The goal of the series is to get rid of
+the struct media_entity .parent member since now that a media_gobj is
+embedded into entities, the media_gobj .mdev member can be used to
+store a pointer to the parent struct media_device.
 
-Changes in v2: None
+So the .parent field becomes redundant and can be removed after all
+the users are converted to use entity .graph_obj.mdev instead.
 
- drivers/gpu/drm/bridge/analogix_dp_core.c | 17 +++++++-----
- drivers/gpu/drm/bridge/analogix_dp_core.h | 45 ++++++++++++++++---------------
- 2 files changed, 33 insertions(+), 29 deletions(-)
+Patches 1/4 and 2/4 are build fixes I found while build testing if no
+regressions were introduced by the conversion. Patch 3/4 converts
+all the drivers and the MC core to use .mdev instead of .parent and
+finally patch 4/4 removes the .parent field since now is unused.
 
-diff --git a/drivers/gpu/drm/bridge/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix_dp_core.c
-index 052b9b3..83698c6 100644
---- a/drivers/gpu/drm/bridge/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix_dp_core.c
-@@ -111,7 +111,7 @@ static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
- 
- static int analogix_dp_read_edid(struct analogix_dp_device *dp)
- {
--	unsigned char edid[EDID_BLOCK_LENGTH * 2];
-+	unsigned char *edid = dp->edid;
- 	unsigned int extend_block = 0;
- 	unsigned char sum;
- 	unsigned char test_vector;
-@@ -915,12 +915,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 			DRM_ERROR("failed to disable the panel\n");
- 	}
- 
--	ret = analogix_dp_handle_edid(dp);
--	if (ret) {
--		dev_err(dp->dev, "unable to handle edid\n");
--		return;
--	}
--
- 	ret = analogix_dp_set_link_train(dp, dp->video_info->max_lane_count,
- 					 dp->video_info->max_link_rate);
- 	if (ret) {
-@@ -976,8 +970,17 @@ static int analogix_dp_get_modes(struct drm_connector *connector)
- {
- 	struct analogix_dp_device *dp = connector_to_dp(connector);
- 	struct analogix_dp_plat_data *plat_data = dp->plat_data;
-+	struct edid *edid = (struct edid *)dp->edid;
- 	int num_modes = 0;
- 
-+	if (analogix_dp_handle_edid(dp)) {
-+		dev_err(dp->dev, "unable to handle edid\n");
-+		return -EINVAL;
-+	}
-+
-+	drm_mode_connector_update_edid_property(connector, edid);
-+	num_modes += drm_add_edid_modes(connector, edid);
-+
- 	if (plat_data && plat_data->panel)
- 		num_modes += drm_panel_get_modes(plat_data->panel);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix_dp_core.h
-index 2405155..950b6ca 100644
---- a/drivers/gpu/drm/bridge/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix_dp_core.h
-@@ -20,6 +20,28 @@
- #define MAX_CR_LOOP 5
- #define MAX_EQ_LOOP 5
- 
-+/* I2C EDID Chip ID, Slave Address */
-+#define I2C_EDID_DEVICE_ADDR			0x50
-+#define I2C_E_EDID_DEVICE_ADDR			0x30
-+
-+#define EDID_BLOCK_LENGTH			0x80
-+#define EDID_HEADER_PATTERN			0x00
-+#define EDID_EXTENSION_FLAG			0x7e
-+#define EDID_CHECKSUM				0x7f
-+
-+/* DP_MAX_LANE_COUNT */
-+#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
-+#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-+
-+/* DP_LANE_COUNT_SET */
-+#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
-+
-+/* DP_TRAINING_LANE0_SET */
-+#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
-+#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
-+#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
-+#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
-+
- enum link_rate_type {
- 	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
- 	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
-@@ -161,6 +183,7 @@ struct analogix_dp_device {
- 	int			dpms_mode;
- 	int			hpd_gpio;
- 	bool                    need_force_hpd;
-+	unsigned char           edid[EDID_BLOCK_LENGTH * 2];
- 
- 	struct analogix_dp_plat_data *plat_data;
- };
-@@ -260,26 +283,4 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
- 
--/* I2C EDID Chip ID, Slave Address */
--#define I2C_EDID_DEVICE_ADDR			0x50
--#define I2C_E_EDID_DEVICE_ADDR			0x30
--
--#define EDID_BLOCK_LENGTH			0x80
--#define EDID_HEADER_PATTERN			0x00
--#define EDID_EXTENSION_FLAG			0x7e
--#define EDID_CHECKSUM				0x7f
--
--/* DP_MAX_LANE_COUNT */
--#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
--#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
--
--/* DP_LANE_COUNT_SET */
--#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
--
--/* DP_TRAINING_LANE0_SET */
--#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
--#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
--#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
--#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
--
- #endif /* _ANALOGIX_DP_CORE_H */
+The series depend on Mauro's "[PATCH v6 0/8] MC preparation patches
+series" [0].
+
+The transformation were automated using a coccinelle semantic patch
+and the drivers were build tested using allyesconfig and x-building
+the ARM Exynos and OMAP defconfigs + the needed media config options.
+
+Best regards,
+Javier
+
+[0]: http://www.mail-archive.com/linux-media@vger.kernel.org/msg91330.html
+
+
+Javier Martinez Canillas (4):
+  [media] staging: omap4iss: get entity ID using media_entity_id()
+  [media] omap3isp: get entity ID using media_entity_id()
+  [media] media: use entity.graph_obj.mdev instead of .parent
+  [media] media: remove media entity .parent field
+
+ drivers/media/media-device.c                       |  8 ++---
+ drivers/media/media-entity.c                       | 34 ++++++++++++----------
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |  6 ++--
+ drivers/media/platform/exynos4-is/fimc-lite.c      |  8 ++---
+ drivers/media/platform/exynos4-is/media-dev.c      |  2 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |  8 ++---
+ drivers/media/platform/omap3isp/isp.c              | 11 ++++---
+ drivers/media/platform/omap3isp/ispccdc.c          |  2 +-
+ drivers/media/platform/omap3isp/ispvideo.c         | 10 ++++---
+ drivers/media/platform/vsp1/vsp1_video.c           |  2 +-
+ drivers/media/platform/xilinx/xilinx-dma.c         |  2 +-
+ drivers/staging/media/davinci_vpfe/vpfe_video.c    |  6 ++--
+ drivers/staging/media/omap4iss/iss.c               |  6 ++--
+ drivers/staging/media/omap4iss/iss_video.c         |  4 +--
+ include/media/media-entity.h                       |  1 -
+ 15 files changed, 58 insertions(+), 52 deletions(-)
+
 -- 
-1.9.1
+2.4.3
