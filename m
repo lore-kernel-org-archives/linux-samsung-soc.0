@@ -1,718 +1,170 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH v6 8/8] [media] media: rename the function that create pad links
-Date: Wed, 19 Aug 2015 08:01:55 -0300
-Message-ID: <457d0f95f932b0f8e035d0500788fe4046ff95ca.1439981515.git.mchehab@osg.samsung.com>
-References: <cover.1439981515.git.mchehab@osg.samsung.com>
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <cover.1439981515.git.mchehab@osg.samsung.com>
-In-Reply-To: <cover.1439981515.git.mchehab@osg.samsung.com>
-References: <cover.1439981515.git.mchehab@osg.samsung.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?q?Rafael=20Louren=C3=A7o=20de=20Lima=20Chehab?= <chehabrafael@gmail.com>, Shuah Khan <shuahkh@osg.samsung.com>, Matthias Schwarzott <zzam@gentoo.org>, Antti Palosaari <crope@iki.fi>, Olli Salonen <olli.salonen@iki.fi>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: Properly report supported formats for each device
+Date: Wed, 19 Aug 2015 15:02:34 +0200
+Message-ID: <1439989354-17326-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Now that a link can be either between two different graph
-objects, we'll need to add more functions to create links.
-So, rename the existing one that create links only between
-two pads as media_create_pad_link().
-
-No functional changes.
-
-This patch was created via this shell script:
-	for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-diff --git a/Documentation/media-framework.txt b/Documentation/media-framework.txt
-index 6903b2503577..b424de6c3bb3 100644
---- a/Documentation/media-framework.txt
-+++ b/Documentation/media-framework.txt
-@@ -199,7 +199,7 @@ pre-allocated and grows dynamically as needed.
- 
- Drivers create links by calling
- 
--	media_entity_create_link(struct media_entity *source, u16 source_pad,
-+	media_create_pad_link(struct media_entity *source, u16 source_pad,
- 				 struct media_entity *sink,   u16 sink_pad,
- 				 u32 flags);
- 
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index 2fdcbb5f000a..65f59f2124b4 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -412,16 +412,16 @@ void dvb_create_media_graph(struct dvb_adapter *adap)
- 	}
- 
- 	if (tuner && fe)
--		media_entity_create_link(tuner, 0, fe, 0, 0);
-+		media_create_pad_link(tuner, 0, fe, 0, 0);
- 
- 	if (fe && demux)
--		media_entity_create_link(fe, 1, demux, 0, MEDIA_LNK_FL_ENABLED);
-+		media_create_pad_link(fe, 1, demux, 0, MEDIA_LNK_FL_ENABLED);
- 
- 	if (demux && dvr)
--		media_entity_create_link(demux, 1, dvr, 0, MEDIA_LNK_FL_ENABLED);
-+		media_create_pad_link(demux, 1, dvr, 0, MEDIA_LNK_FL_ENABLED);
- 
- 	if (demux && ca)
--		media_entity_create_link(demux, 1, ca, 0, MEDIA_LNK_FL_ENABLED);
-+		media_create_pad_link(demux, 1, ca, 0, MEDIA_LNK_FL_ENABLED);
- }
- EXPORT_SYMBOL_GPL(dvb_create_media_graph);
- #endif
-diff --git a/drivers/media/i2c/s5c73m3/s5c73m3-core.c b/drivers/media/i2c/s5c73m3/s5c73m3-core.c
-index 6d167428727d..c81bfbfea32f 100644
---- a/drivers/media/i2c/s5c73m3/s5c73m3-core.c
-+++ b/drivers/media/i2c/s5c73m3/s5c73m3-core.c
-@@ -1482,11 +1482,11 @@ static int s5c73m3_oif_registered(struct v4l2_subdev *sd)
- 		return ret;
- 	}
- 
--	ret = media_entity_create_link(&state->sensor_sd.entity,
-+	ret = media_create_pad_link(&state->sensor_sd.entity,
- 			S5C73M3_ISP_PAD, &state->oif_sd.entity, OIF_ISP_PAD,
- 			MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
- 
--	ret = media_entity_create_link(&state->sensor_sd.entity,
-+	ret = media_create_pad_link(&state->sensor_sd.entity,
- 			S5C73M3_JPEG_PAD, &state->oif_sd.entity, OIF_JPEG_PAD,
- 			MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
- 
-diff --git a/drivers/media/i2c/s5k5baf.c b/drivers/media/i2c/s5k5baf.c
-index 30a9ca62e034..d3bff30bcb6f 100644
---- a/drivers/media/i2c/s5k5baf.c
-+++ b/drivers/media/i2c/s5k5baf.c
-@@ -1756,7 +1756,7 @@ static int s5k5baf_registered(struct v4l2_subdev *sd)
- 		v4l2_err(sd, "failed to register subdev %s\n",
- 			 state->cis_sd.name);
- 	else
--		ret = media_entity_create_link(&state->cis_sd.entity, PAD_CIS,
-+		ret = media_create_pad_link(&state->cis_sd.entity, PAD_CIS,
- 					       &state->sd.entity, PAD_CIS,
- 					       MEDIA_LNK_FL_IMMUTABLE |
- 					       MEDIA_LNK_FL_ENABLED);
-diff --git a/drivers/media/i2c/smiapp/smiapp-core.c b/drivers/media/i2c/smiapp/smiapp-core.c
-index 308613ea0aed..5aa49eb393a9 100644
---- a/drivers/media/i2c/smiapp/smiapp-core.c
-+++ b/drivers/media/i2c/smiapp/smiapp-core.c
-@@ -2495,7 +2495,7 @@ static int smiapp_register_subdevs(struct smiapp_sensor *sensor)
- 			return rval;
- 		}
- 
--		rval = media_entity_create_link(&this->sd.entity,
-+		rval = media_create_pad_link(&this->sd.entity,
- 						this->source_pad,
- 						&last->sd.entity,
- 						last->sink_pad,
-@@ -2503,7 +2503,7 @@ static int smiapp_register_subdevs(struct smiapp_sensor *sensor)
- 						MEDIA_LNK_FL_IMMUTABLE);
- 		if (rval) {
- 			dev_err(&client->dev,
--				"media_entity_create_link failed\n");
-+				"media_create_pad_link failed\n");
- 			return rval;
- 		}
- 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 6d515e149d7f..35e52cd1fc5a 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -542,7 +542,7 @@ static struct media_link *media_entity_add_link(struct media_entity *entity)
- }
- 
- int
--media_entity_create_link(struct media_entity *source, u16 source_pad,
-+media_create_pad_link(struct media_entity *source, u16 source_pad,
- 			 struct media_entity *sink, u16 sink_pad, u32 flags)
- {
- 	struct media_link *link;
-@@ -586,7 +586,7 @@ media_entity_create_link(struct media_entity *source, u16 source_pad,
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(media_entity_create_link);
-+EXPORT_SYMBOL_GPL(media_create_pad_link);
- 
- void __media_entity_remove_links(struct media_entity *entity)
- {
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 4f5586a4cbff..3ba76940eef5 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -729,7 +729,7 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 		flags = ((1 << i) & link_mask) ? MEDIA_LNK_FL_ENABLED : 0;
- 
- 		sink = &fmd->fimc[i]->vid_cap.subdev.entity;
--		ret = media_entity_create_link(source, pad, sink,
-+		ret = media_create_pad_link(source, pad, sink,
- 					      FIMC_SD_PAD_SINK_CAM, flags);
- 		if (ret)
- 			return ret;
-@@ -749,7 +749,7 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 			continue;
- 
- 		sink = &fmd->fimc_lite[i]->subdev.entity;
--		ret = media_entity_create_link(source, pad, sink,
-+		ret = media_create_pad_link(source, pad, sink,
- 					       FLITE_SD_PAD_SINK, 0);
- 		if (ret)
- 			return ret;
-@@ -781,13 +781,13 @@ static int __fimc_md_create_flite_source_links(struct fimc_md *fmd)
- 		source = &fimc->subdev.entity;
- 		sink = &fimc->ve.vdev.entity;
- 		/* FIMC-LITE's subdev and video node */
--		ret = media_entity_create_link(source, FLITE_SD_PAD_SOURCE_DMA,
-+		ret = media_create_pad_link(source, FLITE_SD_PAD_SOURCE_DMA,
- 					       sink, 0, 0);
- 		if (ret)
- 			break;
- 		/* Link from FIMC-LITE to IS-ISP subdev */
- 		sink = &fmd->fimc_is->isp.subdev.entity;
--		ret = media_entity_create_link(source, FLITE_SD_PAD_SOURCE_ISP,
-+		ret = media_create_pad_link(source, FLITE_SD_PAD_SOURCE_ISP,
- 					       sink, 0, 0);
- 		if (ret)
- 			break;
-@@ -811,7 +811,7 @@ static int __fimc_md_create_fimc_is_links(struct fimc_md *fmd)
- 
- 		/* Link from FIMC-IS-ISP subdev to FIMC */
- 		sink = &fmd->fimc[i]->vid_cap.subdev.entity;
--		ret = media_entity_create_link(source, FIMC_ISP_SD_PAD_SRC_FIFO,
-+		ret = media_create_pad_link(source, FIMC_ISP_SD_PAD_SRC_FIFO,
- 					       sink, FIMC_SD_PAD_SINK_FIFO, 0);
- 		if (ret)
- 			return ret;
-@@ -824,7 +824,7 @@ static int __fimc_md_create_fimc_is_links(struct fimc_md *fmd)
- 	if (sink->num_pads == 0)
- 		return 0;
- 
--	return media_entity_create_link(source, FIMC_ISP_SD_PAD_SRC_DMA,
-+	return media_create_pad_link(source, FIMC_ISP_SD_PAD_SRC_DMA,
- 					sink, 0, 0);
- }
- 
-@@ -873,7 +873,7 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- 				return -EINVAL;
- 
- 			pad = sensor->entity.num_pads - 1;
--			ret = media_entity_create_link(&sensor->entity, pad,
-+			ret = media_create_pad_link(&sensor->entity, pad,
- 					      &csis->entity, CSIS_PAD_SINK,
- 					      MEDIA_LNK_FL_IMMUTABLE |
- 					      MEDIA_LNK_FL_ENABLED);
-@@ -927,7 +927,7 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- 		source = &fmd->fimc[i]->vid_cap.subdev.entity;
- 		sink = &fmd->fimc[i]->vid_cap.ve.vdev.entity;
- 
--		ret = media_entity_create_link(source, FIMC_SD_PAD_SOURCE,
-+		ret = media_create_pad_link(source, FIMC_SD_PAD_SOURCE,
- 					      sink, 0, flags);
- 		if (ret)
- 			break;
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 56e683b19a73..d6b2922ed55c 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -1862,7 +1862,7 @@ static int isp_link_entity(
- 		return -EINVAL;
- 	}
- 
--	return media_entity_create_link(entity, i, input, pad, flags);
-+	return media_create_pad_link(entity, i, input, pad, flags);
- }
- 
- static int isp_register_entities(struct isp_device *isp)
-@@ -2001,51 +2001,51 @@ static int isp_initialize_modules(struct isp_device *isp)
- 	}
- 
- 	/* Connect the submodules. */
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_csi2a.subdev.entity, CSI2_PAD_SOURCE,
- 			&isp->isp_ccdc.subdev.entity, CCDC_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_ccp2.subdev.entity, CCP2_PAD_SOURCE,
- 			&isp->isp_ccdc.subdev.entity, CCDC_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_ccdc.subdev.entity, CCDC_PAD_SOURCE_VP,
- 			&isp->isp_prev.subdev.entity, PREV_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_ccdc.subdev.entity, CCDC_PAD_SOURCE_OF,
- 			&isp->isp_res.subdev.entity, RESZ_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_prev.subdev.entity, PREV_PAD_SOURCE,
- 			&isp->isp_res.subdev.entity, RESZ_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_ccdc.subdev.entity, CCDC_PAD_SOURCE_VP,
- 			&isp->isp_aewb.subdev.entity, 0,
- 			MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_ccdc.subdev.entity, CCDC_PAD_SOURCE_VP,
- 			&isp->isp_af.subdev.entity, 0,
- 			MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&isp->isp_ccdc.subdev.entity, CCDC_PAD_SOURCE_VP,
- 			&isp->isp_hist.subdev.entity, 0,
- 			MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE);
-diff --git a/drivers/media/platform/omap3isp/ispccdc.c b/drivers/media/platform/omap3isp/ispccdc.c
-index 3b10304b580b..3fe425f254bb 100644
---- a/drivers/media/platform/omap3isp/ispccdc.c
-+++ b/drivers/media/platform/omap3isp/ispccdc.c
-@@ -2667,7 +2667,7 @@ static int ccdc_init_entities(struct isp_ccdc_device *ccdc)
- 		goto error_video;
- 
- 	/* Connect the CCDC subdev to the video node. */
--	ret = media_entity_create_link(&ccdc->subdev.entity, CCDC_PAD_SOURCE_OF,
-+	ret = media_create_pad_link(&ccdc->subdev.entity, CCDC_PAD_SOURCE_OF,
- 			&ccdc->video_out.video.entity, 0, 0);
- 	if (ret < 0)
- 		goto error_link;
-diff --git a/drivers/media/platform/omap3isp/ispccp2.c b/drivers/media/platform/omap3isp/ispccp2.c
-index e1b5f5bea541..b215eb5049d6 100644
---- a/drivers/media/platform/omap3isp/ispccp2.c
-+++ b/drivers/media/platform/omap3isp/ispccp2.c
-@@ -1100,7 +1100,7 @@ static int ccp2_init_entities(struct isp_ccp2_device *ccp2)
- 		goto error_video;
- 
- 	/* Connect the video node to the ccp2 subdev. */
--	ret = media_entity_create_link(&ccp2->video_in.video.entity, 0,
-+	ret = media_create_pad_link(&ccp2->video_in.video.entity, 0,
- 				       &ccp2->subdev.entity, CCP2_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
-diff --git a/drivers/media/platform/omap3isp/ispcsi2.c b/drivers/media/platform/omap3isp/ispcsi2.c
-index 6fff92f0813a..fcefc1e74881 100644
---- a/drivers/media/platform/omap3isp/ispcsi2.c
-+++ b/drivers/media/platform/omap3isp/ispcsi2.c
-@@ -1265,7 +1265,7 @@ static int csi2_init_entities(struct isp_csi2_device *csi2)
- 		goto error_video;
- 
- 	/* Connect the CSI2 subdev to the video node. */
--	ret = media_entity_create_link(&csi2->subdev.entity, CSI2_PAD_SOURCE,
-+	ret = media_create_pad_link(&csi2->subdev.entity, CSI2_PAD_SOURCE,
- 				       &csi2->video_out.video.entity, 0, 0);
- 	if (ret < 0)
- 		goto error_link;
-diff --git a/drivers/media/platform/omap3isp/isppreview.c b/drivers/media/platform/omap3isp/isppreview.c
-index b440c6342ca4..ad38d20c7770 100644
---- a/drivers/media/platform/omap3isp/isppreview.c
-+++ b/drivers/media/platform/omap3isp/isppreview.c
-@@ -2312,12 +2312,12 @@ static int preview_init_entities(struct isp_prev_device *prev)
- 		goto error_video_out;
- 
- 	/* Connect the video nodes to the previewer subdev. */
--	ret = media_entity_create_link(&prev->video_in.video.entity, 0,
-+	ret = media_create_pad_link(&prev->video_in.video.entity, 0,
- 			&prev->subdev.entity, PREV_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(&prev->subdev.entity, PREV_PAD_SOURCE,
-+	ret = media_create_pad_link(&prev->subdev.entity, PREV_PAD_SOURCE,
- 			&prev->video_out.video.entity, 0, 0);
- 	if (ret < 0)
- 		goto error_link;
-diff --git a/drivers/media/platform/omap3isp/ispresizer.c b/drivers/media/platform/omap3isp/ispresizer.c
-index 3deb1ec4a973..b48ad4d4b834 100644
---- a/drivers/media/platform/omap3isp/ispresizer.c
-+++ b/drivers/media/platform/omap3isp/ispresizer.c
-@@ -1756,12 +1756,12 @@ static int resizer_init_entities(struct isp_res_device *res)
- 	res->video_out.video.entity.flags |= MEDIA_ENT_FL_DEFAULT;
- 
- 	/* Connect the video nodes to the resizer subdev. */
--	ret = media_entity_create_link(&res->video_in.video.entity, 0,
-+	ret = media_create_pad_link(&res->video_in.video.entity, 0,
- 			&res->subdev.entity, RESZ_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(&res->subdev.entity, RESZ_PAD_SOURCE,
-+	ret = media_create_pad_link(&res->subdev.entity, RESZ_PAD_SOURCE,
- 			&res->video_out.video.entity, 0, 0);
- 	if (ret < 0)
- 		goto error_link;
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index f47b332f0418..3e33c60be004 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -263,7 +263,7 @@ static int camif_create_media_links(struct camif_dev *camif)
- {
- 	int i, ret;
- 
--	ret = media_entity_create_link(&camif->sensor.sd->entity, 0,
-+	ret = media_create_pad_link(&camif->sensor.sd->entity, 0,
- 				&camif->subdev.entity, CAMIF_SD_PAD_SINK,
- 				MEDIA_LNK_FL_IMMUTABLE |
- 				MEDIA_LNK_FL_ENABLED);
-@@ -271,7 +271,7 @@ static int camif_create_media_links(struct camif_dev *camif)
- 		return ret;
- 
- 	for (i = 1; i < CAMIF_SD_PADS_NUM && !ret; i++) {
--		ret = media_entity_create_link(&camif->subdev.entity, i,
-+		ret = media_create_pad_link(&camif->subdev.entity, i,
- 				&camif->vp[i - 1].vdev.entity, 0,
- 				MEDIA_LNK_FL_IMMUTABLE |
- 				MEDIA_LNK_FL_ENABLED);
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 4e61886384e3..9cd94a76a9ed 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -101,7 +101,7 @@ static int vsp1_create_links(struct vsp1_device *vsp1, struct vsp1_entity *sink)
- 			if (!(entity->pads[pad].flags & MEDIA_PAD_FL_SINK))
- 				continue;
- 
--			ret = media_entity_create_link(&source->subdev.entity,
-+			ret = media_create_pad_link(&source->subdev.entity,
- 						       source->source_pad,
- 						       entity, pad, flags);
- 			if (ret < 0)
-@@ -262,7 +262,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 	}
- 
- 	if (vsp1->pdata.features & VSP1_HAS_LIF) {
--		ret = media_entity_create_link(
-+		ret = media_create_pad_link(
- 			&vsp1->wpf[0]->entity.subdev.entity, RWPF_PAD_SOURCE,
- 			&vsp1->lif->entity.subdev.entity, LIF_PAD_SINK, 0);
- 		if (ret < 0)
-diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
-index 3294529a3108..b60a528a8fe8 100644
---- a/drivers/media/platform/vsp1/vsp1_rpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_rpf.c
-@@ -278,7 +278,7 @@ struct vsp1_rwpf *vsp1_rpf_create(struct vsp1_device *vsp1, unsigned int index)
- 	rpf->entity.video = video;
- 
- 	/* Connect the video device to the RPF. */
--	ret = media_entity_create_link(&rpf->video.video.entity, 0,
-+	ret = media_create_pad_link(&rpf->video.video.entity, 0,
- 				       &rpf->entity.subdev.entity,
- 				       RWPF_PAD_SINK,
- 				       MEDIA_LNK_FL_ENABLED |
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 1d2b3a2f1573..d39aa4b8aea1 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -284,7 +284,7 @@ struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index)
- 	if (!(vsp1->pdata.features & VSP1_HAS_LIF) || index != 0)
- 		flags |= MEDIA_LNK_FL_IMMUTABLE;
- 
--	ret = media_entity_create_link(&wpf->entity.subdev.entity,
-+	ret = media_create_pad_link(&wpf->entity.subdev.entity,
- 				       RWPF_PAD_SOURCE,
- 				       &wpf->video.video.entity, 0, flags);
- 	if (ret < 0)
-diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
-index 7b7cb9c28d2c..79d4be7ce9a5 100644
---- a/drivers/media/platform/xilinx/xilinx-vipp.c
-+++ b/drivers/media/platform/xilinx/xilinx-vipp.c
-@@ -156,7 +156,7 @@ static int xvip_graph_build_one(struct xvip_composite_device *xdev,
- 			local->name, local_pad->index,
- 			remote->name, remote_pad->index);
- 
--		ret = media_entity_create_link(local, local_pad->index,
-+		ret = media_create_pad_link(local, local_pad->index,
- 					       remote, remote_pad->index,
- 					       link_flags);
- 		if (ret < 0) {
-@@ -270,7 +270,7 @@ static int xvip_graph_build_dma(struct xvip_composite_device *xdev)
- 			source->name, source_pad->index,
- 			sink->name, sink_pad->index);
- 
--		ret = media_entity_create_link(source, source_pad->index,
-+		ret = media_create_pad_link(source, source_pad->index,
- 					       sink, sink_pad->index,
- 					       link_flags);
- 		if (ret < 0) {
-diff --git a/drivers/media/usb/au0828/au0828-core.c b/drivers/media/usb/au0828/au0828-core.c
-index 0378a2c99ebb..a55eb524ea21 100644
---- a/drivers/media/usb/au0828/au0828-core.c
-+++ b/drivers/media/usb/au0828/au0828-core.c
-@@ -260,13 +260,13 @@ static void au0828_create_media_graph(struct au0828_dev *dev)
- 		return;
- 
- 	if (tuner)
--		media_entity_create_link(tuner, 0, decoder, 0,
-+		media_create_pad_link(tuner, 0, decoder, 0,
- 					 MEDIA_LNK_FL_ENABLED);
- 	if (dev->vdev.entity.links)
--		media_entity_create_link(decoder, 1, &dev->vdev.entity, 0,
-+		media_create_pad_link(decoder, 1, &dev->vdev.entity, 0,
- 				 MEDIA_LNK_FL_ENABLED);
- 	if (dev->vbi_dev.entity.links)
--		media_entity_create_link(decoder, 2, &dev->vbi_dev.entity, 0,
-+		media_create_pad_link(decoder, 2, &dev->vbi_dev.entity, 0,
- 				 MEDIA_LNK_FL_ENABLED);
- #endif
- }
-diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index 4a117a58c39a..3b5c9ae39ad3 100644
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -1264,11 +1264,11 @@ static void cx231xx_create_media_graph(struct cx231xx *dev)
- 		return;
- 
- 	if (tuner)
--		media_entity_create_link(tuner, 0, decoder, 0,
-+		media_create_pad_link(tuner, 0, decoder, 0,
- 					 MEDIA_LNK_FL_ENABLED);
--	media_entity_create_link(decoder, 1, &dev->vdev.entity, 0,
-+	media_create_pad_link(decoder, 1, &dev->vdev.entity, 0,
- 				 MEDIA_LNK_FL_ENABLED);
--	media_entity_create_link(decoder, 2, &dev->vbi_dev.entity, 0,
-+	media_create_pad_link(decoder, 2, &dev->vbi_dev.entity, 0,
- 				 MEDIA_LNK_FL_ENABLED);
- #endif
- }
-diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-index 245445491516..429e428ccd93 100644
---- a/drivers/media/usb/uvc/uvc_entity.c
-+++ b/drivers/media/usb/uvc/uvc_entity.c
-@@ -56,7 +56,7 @@ static int uvc_mc_register_entity(struct uvc_video_chain *chain,
- 			continue;
- 
- 		remote_pad = remote->num_pads - 1;
--		ret = media_entity_create_link(source, remote_pad,
-+		ret = media_create_pad_link(source, remote_pad,
- 					       sink, i, flags);
- 		if (ret < 0)
- 			return ret;
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c b/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c
-index 8fb676186898..d96bdaaae50e 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c
-@@ -971,7 +971,7 @@ vpfe_ipipeif_register_entities(struct vpfe_ipipeif_device *ipipeif,
- 	ipipeif->video_in.vpfe_dev = vpfe_dev;
- 
- 	flags = 0;
--	ret = media_entity_create_link(&ipipeif->video_in.video_dev.entity, 0,
-+	ret = media_create_pad_link(&ipipeif->video_in.video_dev.entity, 0,
- 					&ipipeif->subdev.entity, 0, flags);
- 	if (ret < 0)
- 		goto fail;
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_isif.c b/drivers/staging/media/davinci_vpfe/dm365_isif.c
-index b1f01adfa7c8..df77288b0ec0 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_isif.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_isif.c
-@@ -1817,7 +1817,7 @@ int vpfe_isif_register_entities(struct vpfe_isif_device *isif,
- 	isif->video_out.vpfe_dev = vpfe_dev;
- 	flags = 0;
- 	/* connect isif to video node */
--	ret = media_entity_create_link(&isif->subdev.entity, 1,
-+	ret = media_create_pad_link(&isif->subdev.entity, 1,
- 				       &isif->video_out.video_dev.entity,
- 				       0, flags);
- 	if (ret < 0)
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-index 692789aa22f4..ae942de3a23d 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-@@ -1831,27 +1831,27 @@ int vpfe_resizer_register_entities(struct vpfe_resizer_device *resizer,
- 	resizer->resizer_b.video_out.vpfe_dev = vpfe_dev;
- 
- 	/* create link between Resizer Crop----> Resizer A*/
--	ret = media_entity_create_link(&resizer->crop_resizer.subdev.entity, 1,
-+	ret = media_create_pad_link(&resizer->crop_resizer.subdev.entity, 1,
- 				&resizer->resizer_a.subdev.entity,
- 				0, flags);
- 	if (ret < 0)
- 		goto out_create_link;
- 
- 	/* create link between Resizer Crop----> Resizer B*/
--	ret = media_entity_create_link(&resizer->crop_resizer.subdev.entity, 2,
-+	ret = media_create_pad_link(&resizer->crop_resizer.subdev.entity, 2,
- 				&resizer->resizer_b.subdev.entity,
- 				0, flags);
- 	if (ret < 0)
- 		goto out_create_link;
- 
- 	/* create link between Resizer A ----> video out */
--	ret = media_entity_create_link(&resizer->resizer_a.subdev.entity, 1,
-+	ret = media_create_pad_link(&resizer->resizer_a.subdev.entity, 1,
- 		&resizer->resizer_a.video_out.video_dev.entity, 0, flags);
- 	if (ret < 0)
- 		goto out_create_link;
- 
- 	/* create link between Resizer B ----> video out */
--	ret = media_entity_create_link(&resizer->resizer_b.subdev.entity, 1,
-+	ret = media_create_pad_link(&resizer->resizer_b.subdev.entity, 1,
- 		&resizer->resizer_b.video_out.video_dev.entity, 0, flags);
- 	if (ret < 0)
- 		goto out_create_link;
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-index 57426199ad7a..08c8a5f967d3 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-@@ -445,32 +445,32 @@ static int vpfe_register_entities(struct vpfe_device *vpfe_dev)
- 		/* if entity has no pads (ex: amplifier),
- 		   cant establish link */
- 		if (vpfe_dev->sd[i]->entity.num_pads) {
--			ret = media_entity_create_link(&vpfe_dev->sd[i]->entity,
-+			ret = media_create_pad_link(&vpfe_dev->sd[i]->entity,
- 				0, &vpfe_dev->vpfe_isif.subdev.entity,
- 				0, flags);
- 			if (ret < 0)
- 				goto out_resizer_register;
- 		}
- 
--	ret = media_entity_create_link(&vpfe_dev->vpfe_isif.subdev.entity, 1,
-+	ret = media_create_pad_link(&vpfe_dev->vpfe_isif.subdev.entity, 1,
- 				       &vpfe_dev->vpfe_ipipeif.subdev.entity,
- 				       0, flags);
- 	if (ret < 0)
- 		goto out_resizer_register;
- 
--	ret = media_entity_create_link(&vpfe_dev->vpfe_ipipeif.subdev.entity, 1,
-+	ret = media_create_pad_link(&vpfe_dev->vpfe_ipipeif.subdev.entity, 1,
- 				       &vpfe_dev->vpfe_ipipe.subdev.entity,
- 				       0, flags);
- 	if (ret < 0)
- 		goto out_resizer_register;
- 
--	ret = media_entity_create_link(&vpfe_dev->vpfe_ipipe.subdev.entity,
-+	ret = media_create_pad_link(&vpfe_dev->vpfe_ipipe.subdev.entity,
- 			1, &vpfe_dev->vpfe_resizer.crop_resizer.subdev.entity,
- 			0, flags);
- 	if (ret < 0)
- 		goto out_resizer_register;
- 
--	ret = media_entity_create_link(&vpfe_dev->vpfe_ipipeif.subdev.entity, 1,
-+	ret = media_create_pad_link(&vpfe_dev->vpfe_ipipeif.subdev.entity, 1,
- 			&vpfe_dev->vpfe_resizer.crop_resizer.subdev.entity,
- 			0, flags);
- 	if (ret < 0)
-diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
-index 9bfb725b9986..f32ab7b98ae2 100644
---- a/drivers/staging/media/omap4iss/iss.c
-+++ b/drivers/staging/media/omap4iss/iss.c
-@@ -1259,7 +1259,7 @@ static int iss_register_entities(struct iss_device *iss)
- 			goto done;
- 		}
- 
--		ret = media_entity_create_link(&sensor->entity, 0, input, pad,
-+		ret = media_create_pad_link(&sensor->entity, 0, input, pad,
- 					       flags);
- 		if (ret < 0)
- 			goto done;
-@@ -1317,31 +1317,31 @@ static int iss_initialize_modules(struct iss_device *iss)
- 	}
- 
- 	/* Connect the submodules. */
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&iss->csi2a.subdev.entity, CSI2_PAD_SOURCE,
- 			&iss->ipipeif.subdev.entity, IPIPEIF_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&iss->csi2b.subdev.entity, CSI2_PAD_SOURCE,
- 			&iss->ipipeif.subdev.entity, IPIPEIF_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&iss->ipipeif.subdev.entity, IPIPEIF_PAD_SOURCE_VP,
- 			&iss->resizer.subdev.entity, RESIZER_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&iss->ipipeif.subdev.entity, IPIPEIF_PAD_SOURCE_VP,
- 			&iss->ipipe.subdev.entity, IPIPE_PAD_SINK, 0);
- 	if (ret < 0)
- 		goto error_link;
- 
--	ret = media_entity_create_link(
-+	ret = media_create_pad_link(
- 			&iss->ipipe.subdev.entity, IPIPE_PAD_SOURCE_VP,
- 			&iss->resizer.subdev.entity, RESIZER_PAD_SINK, 0);
- 	if (ret < 0)
-diff --git a/drivers/staging/media/omap4iss/iss_csi2.c b/drivers/staging/media/omap4iss/iss_csi2.c
-index e936cfc218cb..6b4dcbfa9425 100644
---- a/drivers/staging/media/omap4iss/iss_csi2.c
-+++ b/drivers/staging/media/omap4iss/iss_csi2.c
-@@ -1291,7 +1291,7 @@ static int csi2_init_entities(struct iss_csi2_device *csi2, const char *subname)
- 		goto error_video;
- 
- 	/* Connect the CSI2 subdev to the video node. */
--	ret = media_entity_create_link(&csi2->subdev.entity, CSI2_PAD_SOURCE,
-+	ret = media_create_pad_link(&csi2->subdev.entity, CSI2_PAD_SOURCE,
- 				       &csi2->video_out.video.entity, 0, 0);
- 	if (ret < 0)
- 		goto error_link;
-diff --git a/drivers/staging/media/omap4iss/iss_ipipeif.c b/drivers/staging/media/omap4iss/iss_ipipeif.c
-index be5f80d7b5dc..44c432ef2ac5 100644
---- a/drivers/staging/media/omap4iss/iss_ipipeif.c
-+++ b/drivers/staging/media/omap4iss/iss_ipipeif.c
-@@ -762,7 +762,7 @@ static int ipipeif_init_entities(struct iss_ipipeif_device *ipipeif)
- 		return ret;
- 
- 	/* Connect the IPIPEIF subdev to the video node. */
--	ret = media_entity_create_link(&ipipeif->subdev.entity,
-+	ret = media_create_pad_link(&ipipeif->subdev.entity,
- 				       IPIPEIF_PAD_SOURCE_ISIF_SF,
- 				       &ipipeif->video_out.video.entity, 0, 0);
- 	if (ret < 0)
-diff --git a/drivers/staging/media/omap4iss/iss_resizer.c b/drivers/staging/media/omap4iss/iss_resizer.c
-index 91e724085dba..b659e465cb56 100644
---- a/drivers/staging/media/omap4iss/iss_resizer.c
-+++ b/drivers/staging/media/omap4iss/iss_resizer.c
-@@ -806,7 +806,7 @@ static int resizer_init_entities(struct iss_resizer_device *resizer)
- 		return ret;
- 
- 	/* Connect the RESIZER subdev to the video node. */
--	ret = media_entity_create_link(&resizer->subdev.entity,
-+	ret = media_create_pad_link(&resizer->subdev.entity,
- 				       RESIZER_PAD_SOURCE_MEM,
- 				       &resizer->video_out.video.entity, 0, 0);
- 	if (ret < 0)
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index bdd5e565ae76..3b653e9321f2 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -208,7 +208,7 @@ int media_entity_init(struct media_entity *entity, u16 num_pads,
- 		struct media_pad *pads);
- void media_entity_cleanup(struct media_entity *entity);
- 
--int media_entity_create_link(struct media_entity *source, u16 source_pad,
-+int media_create_pad_link(struct media_entity *source, u16 source_pad,
- 		struct media_entity *sink, u16 sink_pad, u32 flags);
- void __media_entity_remove_links(struct media_entity *entity);
- void media_entity_remove_links(struct media_entity *entity);
--- 
-2.4.3
-
+RXh5bm9zIERSTSByZXBvcnRlZCB0aGF0IGFsbCBwbGFuZXMgZm9yIGFsbCBzdXBwb3J0ZWQgc3Vi
+LWRldmljZXMgc3VwcG9ydHMKb25seSB0aHJlZSBwaXhlbCBmb3JtYXRzOiBYUkdCMjQsIEFSR0Iy
+NCBhbmQgTlYxMi4gVGhpcyBwYXRjaCBsZXRzIGVhY2gKRXh5bm9zIERSTSBzdWItZHJpdmVycyB0
+byBwcm92aWRlIHRoZSBsaXN0IG9mIHN1cHBvcnRlZCBwaXhlbCBmb3JtYXRzCmFuZCByZWdpc3Rl
+cnMgdGhpcyBsaXN0IHRvIERSTSBjb3JlLgoKU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3Nr
+aSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8IDEwICsrKysrKysrLQogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3M3X2RybV9kZWNvbi5jICAgIHwgMTUgKysrKysrKysrKysrKy0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICAgICB8IDExICsrKysrKysrKy0KIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8IDExICsrKy0tLS0t
+LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oICAgICB8ICAxICsK
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgICB8ICA5ICsrKysr
+KystCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAzMCAr
+KysrKysrKysrKysrKysrKysrKysrKysrLS0KIDcgZmlsZXMgY2hhbmdlZCwgNzMgaW5zZXJ0aW9u
+cygrKSwgMTQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1
+NDMzX2RybV9kZWNvbi5jCmluZGV4IDhiMTIyNWYuLmZjODg0NzEgMTAwNjQ0Ci0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYworKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKQEAgLTU0LDYgKzU0LDEzIEBAIHN0
+YXRpYyBjb25zdCBjaGFyICogY29uc3QgZGVjb25fY2xrc19uYW1lW10gPSB7CiAJInNjbGtfZGVj
+b25fZWNsayIsCiB9OwogCitzdGF0aWMgY29uc3QgdWludDMyX3QgZGVjb25fZm9ybWF0c1tdID0g
+eworCURSTV9GT1JNQVRfWFJHQjE1NTUsCisJRFJNX0ZPUk1BVF9SR0I1NjUsCisJRFJNX0ZPUk1B
+VF9YUkdCODg4OCwKKwlEUk1fRk9STUFUX0FSR0I4ODg4LAorfTsKKwogc3RhdGljIGludCBkZWNv
+bl9lbmFibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0
+IGRlY29uX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKQEAgLTQ4Myw3ICs0OTAsOCBAQCBzdGF0
+aWMgaW50IGRlY29uX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0
+ZXIsIHZvaWQgKmRhdGEpCiAJCXR5cGUgPSAoenBvcyA9PSBjdHgtPmRlZmF1bHRfd2luKSA/IERS
+TV9QTEFORV9UWVBFX1BSSU1BUlkgOgogCQkJCQkJCURSTV9QTEFORV9UWVBFX09WRVJMQVk7CiAJ
+CXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKLQkJ
+CQkxIDw8IGN0eC0+cGlwZSwgdHlwZSwgenBvcyk7CisJCQkJMSA8PCBjdHgtPnBpcGUsIHR5cGUs
+IGRlY29uX2Zvcm1hdHMsCisJCQkJQVJSQVlfU0laRShkZWNvbl9mb3JtYXRzKSwgenBvcyk7CiAJ
+CWlmIChyZXQpCiAJCQlyZXR1cm4gcmV0OwogCX0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zN19kcm1fZGVjb24uYwppbmRleCAzNjI1MzJhLi5jNTYyYTBjIDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCkBAIC03MCw2ICs3MCwxOCBAQCBzdGF0aWMg
+Y29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBkZWNvbl9kcml2ZXJfZHRfbWF0Y2hbXSA9IHsKIH07
+CiBNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBkZWNvbl9kcml2ZXJfZHRfbWF0Y2gpOwogCitzdGF0
+aWMgY29uc3QgdWludDMyX3QgZGVjb25fZm9ybWF0c1tdID0geworCURSTV9GT1JNQVRfUkdCNTY1
+LAorCURSTV9GT1JNQVRfWFJHQjg4ODgsCisJRFJNX0ZPUk1BVF9YQkdSODg4OCwKKwlEUk1fRk9S
+TUFUX1JHQlg4ODg4LAorCURSTV9GT1JNQVRfQkdSWDg4ODgsCisJRFJNX0ZPUk1BVF9BUkdCODg4
+OCwKKwlEUk1fRk9STUFUX0FCR1I4ODg4LAorCURSTV9GT1JNQVRfUkdCQTg4ODgsCisJRFJNX0ZP
+Uk1BVF9CR1JBODg4OCwKK307CisKIHN0YXRpYyB2b2lkIGRlY29uX3dhaXRfZm9yX3ZibGFuayhz
+dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogewogCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpj
+dHggPSBjcnRjLT5jdHg7CkBAIC02NzUsNyArNjg3LDggQEAgc3RhdGljIGludCBkZWNvbl9iaW5k
+KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQog
+CQl0eXBlID0gKHpwb3MgPT0gY3R4LT5kZWZhdWx0X3dpbikgPyBEUk1fUExBTkVfVFlQRV9QUklN
+QVJZIDoKIAkJCQkJCURSTV9QTEFORV9UWVBFX09WRVJMQVk7CiAJCXJldCA9IGV4eW5vc19wbGFu
+ZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKLQkJCQkJMSA8PCBjdHgtPnBpcGUs
+IHR5cGUsIHpwb3MpOworCQkJCQkxIDw8IGN0eC0+cGlwZSwgdHlwZSwgZGVjb25fZm9ybWF0cywK
+KwkJCQkJQVJSQVlfU0laRShkZWNvbl9mb3JtYXRzKSwgenBvcyk7CiAJCWlmIChyZXQpCiAJCQly
+ZXR1cm4gcmV0OwogCX0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmlu
+ZGV4IDc5NGU1NmMuLjhiOWVmNzUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYwpAQCAtMTg3LDYgKzE4NywxNCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldmlj
+ZV9pZCBmaW1kX2RyaXZlcl9kdF9tYXRjaFtdID0gewogfTsKIE1PRFVMRV9ERVZJQ0VfVEFCTEUo
+b2YsIGZpbWRfZHJpdmVyX2R0X21hdGNoKTsKIAorc3RhdGljIGNvbnN0IHVpbnQzMl90IGZpbWRf
+Zm9ybWF0c1tdID0geworCURSTV9GT1JNQVRfQzgsCisJRFJNX0ZPUk1BVF9YUkdCMTU1NSwKKwlE
+Uk1fRk9STUFUX1JHQjU2NSwKKwlEUk1fRk9STUFUX1hSR0I4ODg4LAorCURSTV9GT1JNQVRfQVJH
+Qjg4ODgsCit9OworCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBmaW1kX2RyaXZlcl9kYXRhICpkcm1f
+ZmltZF9nZXRfZHJpdmVyX2RhdGEoCiAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIHsK
+QEAgLTk0OSw3ICs5NTcsOCBAQCBzdGF0aWMgaW50IGZpbWRfYmluZChzdHJ1Y3QgZGV2aWNlICpk
+ZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKIAkJdHlwZSA9ICh6cG9zID09
+IGN0eC0+ZGVmYXVsdF93aW4pID8gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA6CiAJCQkJCQlEUk1f
+UExBTkVfVFlQRV9PVkVSTEFZOwogCQlyZXQgPSBleHlub3NfcGxhbmVfaW5pdChkcm1fZGV2LCAm
+Y3R4LT5wbGFuZXNbenBvc10sCi0JCQkJCTEgPDwgY3R4LT5waXBlLCB0eXBlLCB6cG9zKTsKKwkJ
+CQkJMSA8PCBjdHgtPnBpcGUsIHR5cGUsIGZpbWRfZm9ybWF0cywKKwkJCQkJQVJSQVlfU0laRShm
+aW1kX2Zvcm1hdHMpLCB6cG9zKTsKIAkJaWYgKHJldCkKIAkJCXJldHVybiByZXQ7CiAJfQpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBhNzI5OTgwLi5iZTQy
+ZjIxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMjAs
+MTIgKzIwLDYgQEAKICNpbmNsdWRlICJleHlub3NfZHJtX2dlbS5oIgogI2luY2x1ZGUgImV4eW5v
+c19kcm1fcGxhbmUuaCIKIAotc3RhdGljIGNvbnN0IHVpbnQzMl90IGZvcm1hdHNbXSA9IHsKLQlE
+Uk1fRk9STUFUX1hSR0I4ODg4LAotCURSTV9GT1JNQVRfQVJHQjg4ODgsCi0JRFJNX0ZPUk1BVF9O
+VjEyLAotfTsKLQogLyoKICAqIFRoaXMgZnVuY3Rpb24gaXMgdG8gZ2V0IFggb3IgWSBzaXplIHNo
+b3duIHZpYSBzY3JlZW4uIFRoaXMgbmVlZHMgbGVuZ3RoIGFuZAogICogc3RhcnQgcG9zaXRpb24g
+b2YgQ1JUQy4KQEAgLTIyNiwxMyArMjIwLDE0IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9h
+dHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKIGludCBleHlub3Nf
+cGxhbmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkgICAgICBzdHJ1Y3QgZXh5bm9z
+X2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lLAogCQkgICAgICB1bnNpZ25lZCBsb25nIHBvc3NpYmxl
+X2NydGNzLCBlbnVtIGRybV9wbGFuZV90eXBlIHR5cGUsCisJCSAgICAgIGNvbnN0IHVpbnQzMl90
+ICpmb3JtYXRzLCB1bnNpZ25lZCBpbnQgZmNvdW50LAogCQkgICAgICB1bnNpZ25lZCBpbnQgenBv
+cykKIHsKIAlpbnQgZXJyOwogCiAJZXJyID0gZHJtX3VuaXZlcnNhbF9wbGFuZV9pbml0KGRldiwg
+JmV4eW5vc19wbGFuZS0+YmFzZSwgcG9zc2libGVfY3J0Y3MsCi0JCQkJICAgICAgICZleHlub3Nf
+cGxhbmVfZnVuY3MsIGZvcm1hdHMsCi0JCQkJICAgICAgIEFSUkFZX1NJWkUoZm9ybWF0cyksIHR5
+cGUpOworCQkJCSAgICAgICAmZXh5bm9zX3BsYW5lX2Z1bmNzLCBmb3JtYXRzLCBmY291bnQsCisJ
+CQkJICAgICAgIHR5cGUpOwogCWlmIChlcnIpIHsKIAkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gaW5p
+dGlhbGl6ZSBwbGFuZVxuIik7CiAJCXJldHVybiBlcnI7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9wbGFuZS5oCmluZGV4IDhjODhhZTkuLjQ3NmM5MzQgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCisrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCkBAIC0xMiw0ICsxMiw1IEBACiBpbnQgZXh5
+bm9zX3BsYW5lX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAkJICAgICAgc3RydWN0IGV4
+eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSwKIAkJICAgICAgdW5zaWduZWQgbG9uZyBwb3Nz
+aWJsZV9jcnRjcywgZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlLAorCQkgICAgICBjb25zdCB1aW50
+MzJfdCAqZm9ybWF0cywgdW5zaWduZWQgaW50IGZjb3VudCwKIAkJICAgICAgdW5zaWduZWQgaW50
+IHpwb3MpOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Zp
+ZGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggMzQx
+MzM5My4uZmUxMTA1MyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX3ZpZGkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5j
+CkBAIC04NSw2ICs4NSwxMiBAQCBzdGF0aWMgY29uc3QgY2hhciBmYWtlX2VkaWRfaW5mb1tdID0g
+ewogCTB4MDAsIDB4MDAsIDB4MDAsIDB4MDYKIH07CiAKK3N0YXRpYyBjb25zdCB1aW50MzJfdCBm
+b3JtYXRzW10gPSB7CisJRFJNX0ZPUk1BVF9YUkdCODg4OCwKKwlEUk1fRk9STUFUX0FSR0I4ODg4
+LAorCURSTV9GT1JNQVRfTlYxMiwKK307CisKIHN0YXRpYyBpbnQgdmlkaV9lbmFibGVfdmJsYW5r
+KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IHZpZGlfY29udGV4dCAq
+Y3R4ID0gY3J0Yy0+Y3R4OwpAQCAtNDMzLDcgKzQzOSw4IEBAIHN0YXRpYyBpbnQgdmlkaV9iaW5k
+KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQog
+CQl0eXBlID0gKHpwb3MgPT0gY3R4LT5kZWZhdWx0X3dpbikgPyBEUk1fUExBTkVfVFlQRV9QUklN
+QVJZIDoKIAkJCQkJCURSTV9QTEFORV9UWVBFX09WRVJMQVk7CiAJCXJldCA9IGV4eW5vc19wbGFu
+ZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKLQkJCQkJMSA8PCBjdHgtPnBpcGUs
+IHR5cGUsIHpwb3MpOworCQkJCQkxIDw8IGN0eC0+cGlwZSwgdHlwZSwgZm9ybWF0cywKKwkJCQkJ
+QVJSQVlfU0laRShmb3JtYXRzKSwgenBvcyk7CiAJCWlmIChyZXQpCiAJCQlyZXR1cm4gcmV0Owog
+CX0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IDQ3MDZiNTYuLmJmZWI2
+ZTYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNDMsNiArNDMsNyBA
+QAogCiAjZGVmaW5lIE1JWEVSX1dJTl9OUgkJMwogI2RlZmluZSBNSVhFUl9ERUZBVUxUX1dJTgkw
+CisjZGVmaW5lIFZQX0RFRkFVTFRfV0lOCQkyCiAKIC8qIFRoZSBwaXhlbGZvcm1hdHMgdGhhdCBh
+cmUgbmF0aXZlbHkgc3VwcG9ydGVkIGJ5IHRoZSBtaXhlci4gKi8KICNkZWZpbmUgTVhSX0ZPUk1B
+VF9SR0I1NjUJNApAQCAtNjksNiArNzAsMTkgQEAgZW51bSBtaXhlcl92ZXJzaW9uX2lkIHsKIAlN
+WFJfVkVSXzEyOF8wXzBfMTg0LAogfTsKIAorc3RhdGljIGNvbnN0IHVpbnQzMl90IG1peGVyX2Zv
+cm1hdHNbXSA9IHsKKwlEUk1fRk9STUFUX1hSR0I0NDQ0LAorCURSTV9GT1JNQVRfWFJHQjE1NTUs
+CisJRFJNX0ZPUk1BVF9SR0I1NjUsCisJRFJNX0ZPUk1BVF9YUkdCODg4OCwKKwlEUk1fRk9STUFU
+X0FSR0I4ODg4LAorfTsKKworc3RhdGljIGNvbnN0IHVpbnQzMl90IHZwX2Zvcm1hdHNbXSA9IHsK
+KwlEUk1fRk9STUFUX05WMTIsCisJRFJNX0ZPUk1BVF9OVjIxLAorfTsKKwogc3RydWN0IG1peGVy
+X2NvbnRleHQgewogCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXY7CiAJc3RydWN0IGRldmlj
+ZQkJKmRldjsKQEAgLTExODQsNyArMTE5OCw2IEBAIHN0YXRpYyBpbnQgbWl4ZXJfYmluZChzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hbmFnZXIsIHZvaWQgKmRhdGEpCiAJc3Ry
+dWN0IG1peGVyX2NvbnRleHQgKmN0eCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwogCXN0cnVjdCBk
+cm1fZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5
+bm9zX3BsYW5lOwotCWVudW0gZHJtX3BsYW5lX3R5cGUgdHlwZTsKIAl1bnNpZ25lZCBpbnQgenBv
+czsKIAlpbnQgcmV0OwogCkBAIC0xMTkzLDEwICsxMjA2LDIzIEBAIHN0YXRpYyBpbnQgbWl4ZXJf
+YmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hbmFnZXIsIHZvaWQgKmRh
+dGEpCiAJCXJldHVybiByZXQ7CiAKIAlmb3IgKHpwb3MgPSAwOyB6cG9zIDwgTUlYRVJfV0lOX05S
+OyB6cG9zKyspIHsKKwkJZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlOworCQljb25zdCB1aW50MzJf
+dCAqZm9ybWF0czsKKwkJdW5zaWduZWQgaW50IGZjb3VudDsKKwogCQl0eXBlID0gKHpwb3MgPT0g
+TUlYRVJfREVGQVVMVF9XSU4pID8gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA6CiAJCQkJCQlEUk1f
+UExBTkVfVFlQRV9PVkVSTEFZOworCQlpZiAoenBvcyA8IFZQX0RFRkFVTFRfV0lOKSB7CisJCQlm
+b3JtYXRzID0gbWl4ZXJfZm9ybWF0czsKKwkJCWZjb3VudCA9IEFSUkFZX1NJWkUobWl4ZXJfZm9y
+bWF0cyk7CisJCX0gZWxzZSB7CisJCQlmb3JtYXRzID0gdnBfZm9ybWF0czsKKwkJCWZjb3VudCA9
+IEFSUkFZX1NJWkUodnBfZm9ybWF0cyk7CisJCX0KKwogCQlyZXQgPSBleHlub3NfcGxhbmVfaW5p
+dChkcm1fZGV2LCAmY3R4LT5wbGFuZXNbenBvc10sCi0JCQkJCTEgPDwgY3R4LT5waXBlLCB0eXBl
+LCB6cG9zKTsKKwkJCQkJMSA8PCBjdHgtPnBpcGUsIHR5cGUsIGZvcm1hdHMsIGZjb3VudCwKKwkJ
+CQkJenBvcyk7CiAJCWlmIChyZXQpCiAJCQlyZXR1cm4gcmV0OwogCX0KLS0gCjEuOS4yCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
