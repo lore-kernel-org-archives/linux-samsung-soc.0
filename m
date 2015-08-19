@@ -1,85 +1,283 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v3 09/14] drm: bridge/analogix_dp: add platform device type support
-Date: Wed, 19 Aug 2015 09:51:28 -0500
-Message-ID: <1439995888-18548-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v3 08/14] phy: Add driver for rockchip Display Port PHY
+Date: Wed, 19 Aug 2015 09:51:17 -0500
+Message-ID: <1439995877-18496-1-git-send-email-ykk@rock-chips.com>
 References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1439995728-18046-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: djkurtz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: djkurtz@google.com, dianders@google.com, seanpaul@google.com, Takashi Iwai <tiwai@suse.de>, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 ---
-Changes in v3: None
-Changes in v2:
-- Add GNU license v2 declared and samsung copyright
+Changes in v3:
+- Take Heiko suggest, add rockchip dp phy driver,
+  collect the phy clocks and power control.
 
- drivers/gpu/drm/exynos/analogix_dp-exynos.c     |  1 +
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c |  1 +
- include/drm/bridge/analogix_dp.h                | 16 ++++++++++++++++
- 3 files changed, 18 insertions(+)
+Changes in v2: None
 
-diff --git a/drivers/gpu/drm/exynos/analogix_dp-exynos.c b/drivers/gpu/drm/exynos/analogix_dp-exynos.c
-index 17da2c8..b160159 100644
---- a/drivers/gpu/drm/exynos/analogix_dp-exynos.c
-+++ b/drivers/gpu/drm/exynos/analogix_dp-exynos.c
-@@ -220,6 +220,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	dp->dev = dev;
- 	dp->drm_dev = drm_dev;
+ .../devicetree/bindings/phy/rockchip-dp-phy.txt    |  26 +++
+ drivers/phy/Kconfig                                |   7 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-rockchip-dp.c                      | 185 +++++++++++++++++++++
+ 4 files changed, 219 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+ create mode 100644 drivers/phy/phy-rockchip-dp.c
+
+diff --git a/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+new file mode 100644
+index 0000000..5de1088
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+@@ -0,0 +1,26 @@
++Rockchip Soc Seroes Display Port PHY
++------------------------------------
++
++Required properties:
++- compatible : should be one of the following supported values:
++	 - "rockchip.rk3288-dp-phy"
++
++- reg : a list of registers used by phy driver
++- clocks: from common clock binding: handle to dp clock.
++	of memory mapped region.
++- clock-names: from common clock binding:
++	Required elements: "sclk_dp" "sclk_dp_24m"
++
++- rockchip,grf: this soc should set GRF regs, so need get grf here.
++- #phy-cells : from the generic PHY bindings, must be 0;
++
++Example:
++
++edp_phy: phy@ff770274 {
++	compatilble = "rockchip,rk3288-dp-phy";
++	reg = <0xff770274 4>;
++	rockchip,grf = <&grf>;
++	clocks = <&cru SCLK_EDP_24M>;
++	clock-names = "24m";
++	#phy-cells = <0>;
++}
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 6b8dd16..da00440 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -297,6 +297,13 @@ config PHY_ROCKCHIP_USB
+ 	help
+ 	  Enable this to support the Rockchip USB 2.0 PHY.
  
-+	dp->plat_data.dev_type = EXYNOS_DP;
- 	dp->plat_data.power_on = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index cebff9e..f2c5c26 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -267,6 +267,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
- 
-+	dp->plat_data.dev_type = RK3288_DP;
- 	dp->plat_data.attach = NULL;
- 	dp->plat_data.get_modes = NULL;
- 	dp->plat_data.power_on = rockchip_dp_poweron;
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 8b4ffad..7209a64 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -1,9 +1,25 @@
++config PHY_ROCKCHIP_DP
++	tristate "Rockchip Display Port PHY Driver"
++	depends on ARCH_ROCKCHIP && OF
++	select GENERIC_PHY
++	help
++	  Enable this to support the Rockchip Display Port PHY.
++
+ config PHY_ST_SPEAR1310_MIPHY
+ 	tristate "ST SPEAR1310-MIPHY driver"
+ 	select GENERIC_PHY
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index f344e1b..35e3ce6 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -33,6 +33,7 @@ phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
+ obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
+ obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
+ obj-$(CONFIG_PHY_ROCKCHIP_USB) += phy-rockchip-usb.o
++obj-$(CONFIG_PHY_ROCKCHIP_DP)		+= phy-rockchip-dp.o
+ obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
+ obj-$(CONFIG_PHY_ST_SPEAR1310_MIPHY)	+= phy-spear1310-miphy.o
+ obj-$(CONFIG_PHY_ST_SPEAR1340_MIPHY)	+= phy-spear1340-miphy.o
+diff --git a/drivers/phy/phy-rockchip-dp.c b/drivers/phy/phy-rockchip-dp.c
+new file mode 100644
+index 0000000..4759111
+--- /dev/null
++++ b/drivers/phy/phy-rockchip-dp.c
+@@ -0,0 +1,185 @@
 +/*
-+ * Analogix Core DP (Display Port) interface driver.
++ * Rockchip DP PHY driver
 + *
-+ * Copyright (C) 2012 Samsung Electronics Co., Ltd.
++ * Copyright (C) 2015 FuZhou Rockchip Co., Ltd.
++ * Author: Yakir Yang <ykk@@rock-chips.com>
 + *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation; either version 2 of the License, or (at your
-+ * option) any later version.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License.
 + */
- #ifndef _ANALOGIX_DP_H_
- #define _ANALOGIX_DP_H_
- 
- #include <drm/drm_crtc.h>
- 
-+enum analogix_dp_devtype {
-+	EXYNOS_DP,
-+	RK3288_DP,
++
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/clk.h>
++#include <linux/phy/phy.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
++
++#define GRF_SOC_CON12                   0x0274
++#define GRF_EDP_REF_CLK_SEL_INTER       BIT(4)
++
++#define DP_PHY_SIDDQ_WRITE_EN           BIT(21)
++#define DP_PHY_SIDDQ_ON                 0
++#define DP_PHY_SIDDQ_OFF                BIT(5)
++
++struct rockchip_dp_phy {
++	struct device  *dev;
++	struct regmap  *grf;
++	void __iomem   *regs;
++	struct clk     *phy_24m;
 +};
 +
- struct analogix_dp_plat_data {
-+	enum analogix_dp_devtype dev_type;
- 	struct drm_panel *panel;
- 
- 	int (*power_on)(struct analogix_dp_plat_data *);
++static int rockchip_dp_phy_clk_enable(struct rockchip_dp_phy *dp)
++{
++	int ret = 0;
++
++	ret = clk_set_rate(dp->phy_24m, 24000000);
++	if (ret < 0) {
++		dev_err(dp->dev, "cannot set clock phy_24m %d\n", ret);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(dp->phy_24m);
++	if (ret < 0) {
++		dev_err(dp->dev, "cannot enable clock phy_24m %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int rockchip_dp_phy_clk_disable(struct rockchip_dp_phy *dp)
++{
++	clk_disable_unprepare(dp->phy_24m);
++
++	return 0;
++}
++
++static int rockchip_set_phy_state(struct phy *phy, bool enable)
++{
++	struct rockchip_dp_phy *dp = phy_get_drvdata(phy);
++
++	if (enable) {
++		rockchip_dp_phy_clk_enable(dp);
++		writel(DP_PHY_SIDDQ_WRITE_EN | DP_PHY_SIDDQ_ON, dp->regs);
++	} else {
++		rockchip_dp_phy_clk_disable(dp);
++		writel(DP_PHY_SIDDQ_WRITE_EN | DP_PHY_SIDDQ_OFF, dp->regs);
++	}
++
++	return 0;
++}
++
++static int rockchip_dp_phy_power_on(struct phy *phy)
++{
++	return rockchip_set_phy_state(phy, true);
++}
++
++static int rockchip_dp_phy_power_off(struct phy *phy)
++{
++	return rockchip_set_phy_state(phy, false);
++}
++
++static struct phy_ops rockchip_dp_phy_ops = {
++	.power_on	= rockchip_dp_phy_power_on,
++	.power_off	= rockchip_dp_phy_power_off,
++	.owner		= THIS_MODULE,
++};
++
++static int rockchip_dp_phy_init(struct rockchip_dp_phy *dp)
++{
++	struct device *dev = dp->dev;
++	struct device_node *np = dev->of_node;
++	int ret;
++
++	dp->phy_24m = devm_clk_get(dev, "24m");
++	if (IS_ERR(dp->phy_24m)) {
++		dev_err(dev, "cannot get clock 24m\n");
++		return PTR_ERR(dp->phy_24m);
++	}
++
++	ret = rockchip_dp_phy_clk_enable(dp);
++	if (ret < 0) {
++		dev_err(dp->dev, "cannot enable dp phy clk %d\n", ret);
++		return ret;
++	}
++
++	dp->grf = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
++	if (IS_ERR(dp->grf)) {
++		dev_err(dev, "rk3288-dp needs rockchip,grf property\n");
++		return PTR_ERR(dp->grf);
++	}
++
++	ret = regmap_write(dp->grf, GRF_SOC_CON12,
++			   GRF_EDP_REF_CLK_SEL_INTER |
++			   (GRF_EDP_REF_CLK_SEL_INTER << 16));
++	if (ret != 0) {
++		dev_err(dp->dev, "Could not config GRF edp ref clk: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int rockchip_dp_phy_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct phy_provider *phy_provider;
++	struct rockchip_dp_phy *dp;
++	struct resource *res;
++	struct phy *phy;
++	int ret;
++
++	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
++	if (IS_ERR(dp))
++		return -ENOMEM;
++
++	dp->dev = dev;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	dp->regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(dp->regs))
++		return PTR_ERR(dp->regs);
++
++	ret = rockchip_dp_phy_init(dp);
++	if (ret)
++		return ret;
++
++	phy = devm_phy_create(dev, NULL, &rockchip_dp_phy_ops, NULL);
++	if (IS_ERR(phy)) {
++		dev_err(dev, "failed to create phy\n");
++		return PTR_ERR(phy);
++	}
++	phy_set_drvdata(phy, dp);
++
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static const struct of_device_id rockchip_dp_phy_dt_ids[] = {
++	{ .compatible = "rockchip,rk3288-dp-phy" },
++	{}
++};
++
++MODULE_DEVICE_TABLE(of, rockchip_dp_phy_dt_ids);
++
++static struct platform_driver rockchip_dp_phy_driver = {
++	.probe		= rockchip_dp_phy_probe,
++	.driver		= {
++		.name	= "rockchip-dp-phy",
++		.owner	= THIS_MODULE,
++		.of_match_table = rockchip_dp_phy_dt_ids,
++	},
++};
++
++module_platform_driver(rockchip_dp_phy_driver);
++
++MODULE_AUTHOR("Yakir Yang <ykk@rock-chips.com>");
++MODULE_DESCRIPTION("Rockchip DP PHY driver");
++MODULE_LICENSE("GPL v2");
 -- 
 1.9.1
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
