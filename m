@@ -1,128 +1,97 @@
-From: Jerome Glisse <jglisse@redhat.com>
+From: Rob Clark <robdclark@gmail.com>
 Subject: Re: drm/exynos: g2d userptr memory corruption
-Date: Wed, 19 Aug 2015 10:08:38 -0400
-Message-ID: <20150819140838.GA3276@redhat.com>
+Date: Wed, 19 Aug 2015 10:41:18 -0400
+Message-ID: <CAF6AEGsa7cmo2G6=Lk_s-PR0KOg8oAPO6oHAr7S827r0cMLp1A@mail.gmail.com>
 References: <55D08691.3040405@math.uni-bielefeld.de>
  <1439807175.3050.30.camel@pengutronix.de>
- <55D200A6.4070304@gmx.net>
- <55D48A68.5090009@math.uni-bielefeld.de>
+ <55D200A6.4070304@gmx.net> <55D48A68.5090009@math.uni-bielefeld.de>
+ <20150819140838.GA3276@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44886 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753997AbbHSOIm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Aug 2015 10:08:42 -0400
-Content-Disposition: inline
-In-Reply-To: <55D48A68.5090009@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150819140838.GA3276@redhat.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Tobias Jakobi <liquid.acid@gmx.net>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Tobias Jakobi <liquid.acid@gmx.net>, Lucas Stach <l.stach@pengutronix.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>
 
-On Wed, Aug 19, 2015 at 03:53:44PM +0200, Tobias Jakobi wrote:
-> Adding J=E9r=F4me to Cc. I think he looked the userptr code before, s=
-o maybe
-> he has some idea what is going wrong here.
->=20
-> I also had a look at the code, but my knowledge about the DMA API is
-> almost nonexistant. However I can see that before doing any DMA via t=
-he
-> G2D on the buffer the code calls dma_map() on it, and also unmaps it
-> when the commandlist is finished.
->=20
->=20
-> With best wishes,
-> Tobias
->=20
->=20
-> Tobias Jakobi wrote:
-> > Thanks Lucas for the explanation!
-> >=20
-> >=20
-> > Lucas Stach wrote:
-> >> Hi Tobias,
-> >>
-> >> Am Sonntag, den 16.08.2015, 14:48 +0200 schrieb Tobias Jakobi:
-> >>> Hello,
-> >>>
-> >>> some time ago I checked whether I could use the userptr functiona=
-lity to
-> >>> do zero-copy from userspace allocated buffers via the G2D. This d=
-idn't
-> >>> work out so well, so kinda put this to the bottom of my TODO list=
-=2E
-> >>>
-> >>> Now that IOMMU support has landed and Jan Kara has rewrote page p=
-inning
-> >>> using frame vectors (see [1]) I gave userptr another try.
-> >>>
-> >>> The results are much better. I'm not experiencing any kernel lock=
-ups or
-> >>> sysmmu pagefaults anymore. However the image now suffers from vis=
-ual
-> >>> artifacts. These images show the nature of the artifacts:
-> >>> http://i.imgur.com/nzT6g3Y.jpg
-> >>> http://i.imgur.com/wkuYI6X.jpg
-> >>>
-> >>> The corruption always manifests itself in these pixel lines of fi=
-xed
-> >>> size and wrong color.
-> >>>
-> >>> I have written a testcase as part of libdrm for this issue:
-> >>> https://github.com/tobiasjakobi/libdrm/commit/db8bf6844436598251f=
-67a71fc334b929bfb2b71
-> >>>
-> >>> It allocates N (N an even number) buffers which are aligned to th=
-e
-> >>> system pagesize. Then it does this each iteration:
-> >>> 1) Fill the first N/2 buffers with random data
-> >>> 2) Copy the first half to the second half of the buffers
-> >>> 3) memcmp() first and second half (verification pass)
-> >>>
-> >>> Usually this verification already fails on the first iteration. A=
-n
-> >>> interesting observation is that increasing (!) the buffer size (s=
-o the
-> >>> amount of pixels that have to copied per buffer grows) makes this=
- issue
-> >>> less likely to happen.
-> >>>
-> >>> With the default 512x512 buffers however it happens, like I said =
-above,
-> >>> almost immediately.
-> >>>
-> >> This is obviously a cache flush missing. The memory you get from
-> >> userspace is normal cached memory, so to make it visible to the GP=
-U you
-> >> need to flush parts of the cache out to main memory.
-> >>
-> >> The corruption you are seeing is just unflushed cachelines. This a=
-lso
-> >> explains why increasing the buffer size helps: the more memory the=
- CPU
-> >> touches the more cachelines will be flushed out to be replaced wit=
-h new
-> >> data.
-> > I should point out that the snapshots I uploaded were done with a
-> > different setup. There only the source memory of the G2D operation =
-is a
-> > userspace allocated buffer. The destination is a GEM buffer allocat=
-ed
-> > through libdrm, which is then used as framebuffer. So the issue alr=
-eady
-> > appears when just the source is userspace allocated.
-> >=20
-
-This is still consistent with cachelines issue. Is your GPU & IOMMU cac=
-he
-coherent with the CPU ? If not then it means you need to cache flush th=
-e
-buffer before you use it with the GPU. The dma API provide few helpers =
-for
-that.
-
-Cheers,
-J=E9r=F4me
+T24gV2VkLCBBdWcgMTksIDIwMTUgYXQgMTA6MDggQU0sIEplcm9tZSBHbGlzc2UgPGpnbGlzc2VA
+cmVkaGF0LmNvbT4gd3JvdGU6Cj4gT24gV2VkLCBBdWcgMTksIDIwMTUgYXQgMDM6NTM6NDRQTSAr
+MDIwMCwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4gQWRkaW5nIErDqXLDtG1lIHRvIENjLiBJIHRo
+aW5rIGhlIGxvb2tlZCB0aGUgdXNlcnB0ciBjb2RlIGJlZm9yZSwgc28gbWF5YmUKPj4gaGUgaGFz
+IHNvbWUgaWRlYSB3aGF0IGlzIGdvaW5nIHdyb25nIGhlcmUuCj4+Cj4+IEkgYWxzbyBoYWQgYSBs
+b29rIGF0IHRoZSBjb2RlLCBidXQgbXkga25vd2xlZGdlIGFib3V0IHRoZSBETUEgQVBJIGlzCj4+
+IGFsbW9zdCBub25leGlzdGFudC4gSG93ZXZlciBJIGNhbiBzZWUgdGhhdCBiZWZvcmUgZG9pbmcg
+YW55IERNQSB2aWEgdGhlCj4+IEcyRCBvbiB0aGUgYnVmZmVyIHRoZSBjb2RlIGNhbGxzIGRtYV9t
+YXAoKSBvbiBpdCwgYW5kIGFsc28gdW5tYXBzIGl0Cj4+IHdoZW4gdGhlIGNvbW1hbmRsaXN0IGlz
+IGZpbmlzaGVkLgo+Pgo+Pgo+PiBXaXRoIGJlc3Qgd2lzaGVzLAo+PiBUb2JpYXMKPj4KPj4KPj4g
+VG9iaWFzIEpha29iaSB3cm90ZToKPj4gPiBUaGFua3MgTHVjYXMgZm9yIHRoZSBleHBsYW5hdGlv
+biEKPj4gPgo+PiA+Cj4+ID4gTHVjYXMgU3RhY2ggd3JvdGU6Cj4+ID4+IEhpIFRvYmlhcywKPj4g
+Pj4KPj4gPj4gQW0gU29ubnRhZywgZGVuIDE2LjA4LjIwMTUsIDE0OjQ4ICswMjAwIHNjaHJpZWIg
+VG9iaWFzIEpha29iaToKPj4gPj4+IEhlbGxvLAo+PiA+Pj4KPj4gPj4+IHNvbWUgdGltZSBhZ28g
+SSBjaGVja2VkIHdoZXRoZXIgSSBjb3VsZCB1c2UgdGhlIHVzZXJwdHIgZnVuY3Rpb25hbGl0eSB0
+bwo+PiA+Pj4gZG8gemVyby1jb3B5IGZyb20gdXNlcnNwYWNlIGFsbG9jYXRlZCBidWZmZXJzIHZp
+YSB0aGUgRzJELiBUaGlzIGRpZG4ndAo+PiA+Pj4gd29yayBvdXQgc28gd2VsbCwgc28ga2luZGEg
+cHV0IHRoaXMgdG8gdGhlIGJvdHRvbSBvZiBteSBUT0RPIGxpc3QuCj4+ID4+Pgo+PiA+Pj4gTm93
+IHRoYXQgSU9NTVUgc3VwcG9ydCBoYXMgbGFuZGVkIGFuZCBKYW4gS2FyYSBoYXMgcmV3cm90ZSBw
+YWdlIHBpbm5pbmcKPj4gPj4+IHVzaW5nIGZyYW1lIHZlY3RvcnMgKHNlZSBbMV0pIEkgZ2F2ZSB1
+c2VycHRyIGFub3RoZXIgdHJ5Lgo+PiA+Pj4KPj4gPj4+IFRoZSByZXN1bHRzIGFyZSBtdWNoIGJl
+dHRlci4gSSdtIG5vdCBleHBlcmllbmNpbmcgYW55IGtlcm5lbCBsb2NrdXBzIG9yCj4+ID4+PiBz
+eXNtbXUgcGFnZWZhdWx0cyBhbnltb3JlLiBIb3dldmVyIHRoZSBpbWFnZSBub3cgc3VmZmVycyBm
+cm9tIHZpc3VhbAo+PiA+Pj4gYXJ0aWZhY3RzLiBUaGVzZSBpbWFnZXMgc2hvdyB0aGUgbmF0dXJl
+IG9mIHRoZSBhcnRpZmFjdHM6Cj4+ID4+PiBodHRwOi8vaS5pbWd1ci5jb20vbnpUNmczWS5qcGcK
+Pj4gPj4+IGh0dHA6Ly9pLmltZ3VyLmNvbS93a3VZSTZYLmpwZwo+PiA+Pj4KPj4gPj4+IFRoZSBj
+b3JydXB0aW9uIGFsd2F5cyBtYW5pZmVzdHMgaXRzZWxmIGluIHRoZXNlIHBpeGVsIGxpbmVzIG9m
+IGZpeGVkCj4+ID4+PiBzaXplIGFuZCB3cm9uZyBjb2xvci4KPj4gPj4+Cj4+ID4+PiBJIGhhdmUg
+d3JpdHRlbiBhIHRlc3RjYXNlIGFzIHBhcnQgb2YgbGliZHJtIGZvciB0aGlzIGlzc3VlOgo+PiA+
+Pj4gaHR0cHM6Ly9naXRodWIuY29tL3RvYmlhc2pha29iaS9saWJkcm0vY29tbWl0L2RiOGJmNjg0
+NDQzNjU5ODI1MWY2N2E3MWZjMzM0YjkyOWJmYjJiNzEKPj4gPj4+Cj4+ID4+PiBJdCBhbGxvY2F0
+ZXMgTiAoTiBhbiBldmVuIG51bWJlcikgYnVmZmVycyB3aGljaCBhcmUgYWxpZ25lZCB0byB0aGUK
+Pj4gPj4+IHN5c3RlbSBwYWdlc2l6ZS4gVGhlbiBpdCBkb2VzIHRoaXMgZWFjaCBpdGVyYXRpb246
+Cj4+ID4+PiAxKSBGaWxsIHRoZSBmaXJzdCBOLzIgYnVmZmVycyB3aXRoIHJhbmRvbSBkYXRhCj4+
+ID4+PiAyKSBDb3B5IHRoZSBmaXJzdCBoYWxmIHRvIHRoZSBzZWNvbmQgaGFsZiBvZiB0aGUgYnVm
+ZmVycwo+PiA+Pj4gMykgbWVtY21wKCkgZmlyc3QgYW5kIHNlY29uZCBoYWxmICh2ZXJpZmljYXRp
+b24gcGFzcykKPj4gPj4+Cj4+ID4+PiBVc3VhbGx5IHRoaXMgdmVyaWZpY2F0aW9uIGFscmVhZHkg
+ZmFpbHMgb24gdGhlIGZpcnN0IGl0ZXJhdGlvbi4gQW4KPj4gPj4+IGludGVyZXN0aW5nIG9ic2Vy
+dmF0aW9uIGlzIHRoYXQgaW5jcmVhc2luZyAoISkgdGhlIGJ1ZmZlciBzaXplIChzbyB0aGUKPj4g
+Pj4+IGFtb3VudCBvZiBwaXhlbHMgdGhhdCBoYXZlIHRvIGNvcGllZCBwZXIgYnVmZmVyIGdyb3dz
+KSBtYWtlcyB0aGlzIGlzc3VlCj4+ID4+PiBsZXNzIGxpa2VseSB0byBoYXBwZW4uCj4+ID4+Pgo+
+PiA+Pj4gV2l0aCB0aGUgZGVmYXVsdCA1MTJ4NTEyIGJ1ZmZlcnMgaG93ZXZlciBpdCBoYXBwZW5z
+LCBsaWtlIEkgc2FpZCBhYm92ZSwKPj4gPj4+IGFsbW9zdCBpbW1lZGlhdGVseS4KPj4gPj4+Cj4+
+ID4+IFRoaXMgaXMgb2J2aW91c2x5IGEgY2FjaGUgZmx1c2ggbWlzc2luZy4gVGhlIG1lbW9yeSB5
+b3UgZ2V0IGZyb20KPj4gPj4gdXNlcnNwYWNlIGlzIG5vcm1hbCBjYWNoZWQgbWVtb3J5LCBzbyB0
+byBtYWtlIGl0IHZpc2libGUgdG8gdGhlIEdQVSB5b3UKPj4gPj4gbmVlZCB0byBmbHVzaCBwYXJ0
+cyBvZiB0aGUgY2FjaGUgb3V0IHRvIG1haW4gbWVtb3J5Lgo+PiA+Pgo+PiA+PiBUaGUgY29ycnVw
+dGlvbiB5b3UgYXJlIHNlZWluZyBpcyBqdXN0IHVuZmx1c2hlZCBjYWNoZWxpbmVzLiBUaGlzIGFs
+c28KPj4gPj4gZXhwbGFpbnMgd2h5IGluY3JlYXNpbmcgdGhlIGJ1ZmZlciBzaXplIGhlbHBzOiB0
+aGUgbW9yZSBtZW1vcnkgdGhlIENQVQo+PiA+PiB0b3VjaGVzIHRoZSBtb3JlIGNhY2hlbGluZXMg
+d2lsbCBiZSBmbHVzaGVkIG91dCB0byBiZSByZXBsYWNlZCB3aXRoIG5ldwo+PiA+PiBkYXRhLgo+
+PiA+IEkgc2hvdWxkIHBvaW50IG91dCB0aGF0IHRoZSBzbmFwc2hvdHMgSSB1cGxvYWRlZCB3ZXJl
+IGRvbmUgd2l0aCBhCj4+ID4gZGlmZmVyZW50IHNldHVwLiBUaGVyZSBvbmx5IHRoZSBzb3VyY2Ug
+bWVtb3J5IG9mIHRoZSBHMkQgb3BlcmF0aW9uIGlzIGEKPj4gPiB1c2Vyc3BhY2UgYWxsb2NhdGVk
+IGJ1ZmZlci4gVGhlIGRlc3RpbmF0aW9uIGlzIGEgR0VNIGJ1ZmZlciBhbGxvY2F0ZWQKPj4gPiB0
+aHJvdWdoIGxpYmRybSwgd2hpY2ggaXMgdGhlbiB1c2VkIGFzIGZyYW1lYnVmZmVyLiBTbyB0aGUg
+aXNzdWUgYWxyZWFkeQo+PiA+IGFwcGVhcnMgd2hlbiBqdXN0IHRoZSBzb3VyY2UgaXMgdXNlcnNw
+YWNlIGFsbG9jYXRlZC4KPj4gPgo+Cj4gVGhpcyBpcyBzdGlsbCBjb25zaXN0ZW50IHdpdGggY2Fj
+aGVsaW5lcyBpc3N1ZS4gSXMgeW91ciBHUFUgJiBJT01NVSBjYWNoZQo+IGNvaGVyZW50IHdpdGgg
+dGhlIENQVSA/IElmIG5vdCB0aGVuIGl0IG1lYW5zIHlvdSBuZWVkIHRvIGNhY2hlIGZsdXNoIHRo
+ZQo+IGJ1ZmZlciBiZWZvcmUgeW91IHVzZSBpdCB3aXRoIHRoZSBHUFUuIFRoZSBkbWEgQVBJIHBy
+b3ZpZGUgZmV3IGhlbHBlcnMgZm9yCj4gdGhhdC4KCmFsdGhvdWdoIEkgc3VzcGVjdCBkbWEtYXBp
+IHByb2JhYmx5IG5vdCBhd2FyZSBvZiBhbnkgZGV2aWNlIGNhY2hlcwooYW5kIEkgc3VzcGVjdCBh
+IGJpdCB3ZWFrIHdoZW4gaXQgY29tZXMgdG8gZGV2aWNlcyB0aGF0IHN1cHBvcnQgbWl4IG9mCmNv
+aGVyZW50IGFuZCBub24tY29oZXJlbnQgbWFwcGluZ3MpLi4KCkJSLAotUgoKPiBDaGVlcnMsCj4g
+SsOpcsO0bWUKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Xwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
