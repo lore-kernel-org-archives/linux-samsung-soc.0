@@ -1,293 +1,245 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3 02/14] drm: exynos/dp: convert to drm bridge mode
-Date: Wed, 19 Aug 2015 09:49:50 -0500
-Message-ID: <1439995790-18155-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v3 04/14] drm: bridge/analogix_dp: dynamic parse sync_pol & interlace & colorimetry
+Date: Wed, 19 Aug 2015 09:50:13 -0500
+Message-ID: <1439995813-18261-1-git-send-email-ykk@rock-chips.com>
 References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.138]:35351 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932187AbbHSOu2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Aug 2015 10:50:28 -0400
 In-Reply-To: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>
 Cc: djkurtz@google.com, dianders@google.com, seanpaul@google.com, Takashi Iwai <tiwai@suse.de>, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-In order to move exynos dp code to bridge directory,
-we need to convert driver drm bridge mode first. As
-dp driver already have a ptn3460 bridge, so we need
-to move ptn bridge to the next bridge of dp bridge.
+Both hsync/vsync polarity and interlace mode can be parsed from
+drm display mode, and dynamic_range and ycbcr_coeff can be judge
+by the video code.
+
+But presumably Exynos still relaies on the DT properties, so take
+good use of mode_fixup() in to achieve the compatibility hacks.
 
 Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 ---
-Changes in v3: None
-Changes in v2:
-- Take Jingoo Han suggest, just remove my name from author list.
+Changes in v3:
+- Take Thierry Reding suggest, dynamic parse video timing info from
+  struct drm_display_mode and struct drm_display_info.
 
- drivers/gpu/drm/exynos/exynos_dp_core.c | 194 ++++++++++++++++++++------------
- drivers/gpu/drm/exynos/exynos_dp_core.h |   1 +
- 2 files changed, 123 insertions(+), 72 deletions(-)
+Changes in v2: None
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 562f4a8..2b87406 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -997,59 +997,6 @@ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
- 	.best_encoder = exynos_dp_best_encoder,
+ drivers/gpu/drm/bridge/analogix_dp_core.c   | 50 ++++++++++++----------
+ drivers/gpu/drm/exynos/analogix_dp-exynos.c | 65 ++++++++++++++++++++++++++---
+ 2 files changed, 89 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix_dp_core.c
+index 6c15e20..480cc13 100644
+--- a/drivers/gpu/drm/bridge/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix_dp_core.c
+@@ -1110,11 +1110,40 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
+ }
+ 
++static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
++					struct drm_display_mode *orig_mode,
++					struct drm_display_mode *mode)
++{
++	struct analogix_dp_device *dp = bridge->driver_private;
++	struct video_info *video_info = dp->video_info;
++	int vic;
++
++	/* interlaces & hsync pol & vsync pol */
++	video_info->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
++	video_info->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
++	video_info->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
++
++	/* dynamic_range & colorimetry */
++	vic = drm_match_cea_mode(mode);
++	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
++	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
++		video_info->dynamic_range = CEA;
++		video_info->ycbcr_coeff = COLOR_YCBCR601;
++	} else if (vic) {
++		video_info->dynamic_range = CEA;
++		video_info->ycbcr_coeff = COLOR_YCBCR709;
++	} else {
++		video_info->dynamic_range = VESA;
++		video_info->ycbcr_coeff = COLOR_YCBCR709;
++	}
++}
++
+ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.enable = analogix_dp_bridge_enable,
+ 	.disable = analogix_dp_bridge_disable,
+ 	.pre_enable = analogix_dp_bridge_nop,
+ 	.post_disable = analogix_dp_bridge_nop,
++	.mode_set = analogix_dp_bridge_mode_set,
+ 	.attach = analogix_dp_bridge_attach,
  };
  
--/* returns the number of bridges attached */
--static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
--					struct drm_encoder *encoder)
--{
--	int ret;
--
--	encoder->bridge = dp->bridge;
--	dp->bridge->encoder = encoder;
--	ret = drm_bridge_attach(encoder->dev, dp->bridge);
--	if (ret) {
--		DRM_ERROR("Failed to attach bridge to drm\n");
--		return ret;
--	}
--
--	return 0;
--}
--
--static int exynos_dp_create_connector(struct exynos_drm_display *display,
--				      struct drm_encoder *encoder)
--{
--	struct exynos_dp_device *dp = display_to_dp(display);
--	struct drm_connector *connector = &dp->connector;
--	int ret;
--
--	dp->encoder = encoder;
--
--	/* Pre-empt DP connector creation if there's a bridge */
--	if (dp->bridge) {
--		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
--		if (!ret)
--			return 0;
--	}
--
--	connector->polled = DRM_CONNECTOR_POLL_HPD;
--
--	ret = drm_connector_init(dp->drm_dev, connector,
--				 &exynos_dp_connector_funcs,
--				 DRM_MODE_CONNECTOR_eDP);
--	if (ret) {
--		DRM_ERROR("Failed to initialize connector with drm\n");
--		return ret;
--	}
--
--	drm_connector_helper_add(connector, &exynos_dp_connector_helper_funcs);
--	drm_connector_register(connector);
--	drm_mode_connector_attach_encoder(connector, encoder);
--
--	if (dp->panel)
--		ret = drm_panel_attach(dp->panel, &dp->connector);
--
--	return ret;
--}
--
- static void exynos_dp_phy_init(struct exynos_dp_device *dp)
- {
- 	if (dp->phy)
-@@ -1114,23 +1061,126 @@ static void exynos_dp_poweroff(struct exynos_dp_device *dp)
- 	}
- }
+@@ -1156,33 +1185,12 @@ static struct video_info *analogix_dp_dt_parse_pdata(struct device *dev)
+ 	if (!dp_video_config)
+ 		return ERR_PTR(-ENOMEM);
  
--static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
-+/* returns the number of bridges attached */
-+static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
-+		struct drm_encoder *encoder)
-+{
-+	int ret;
+-	dp_video_config->h_sync_polarity =
+-		of_property_read_bool(dp_node, "hsync-active-high");
+-
+-	dp_video_config->v_sync_polarity =
+-		of_property_read_bool(dp_node, "vsync-active-high");
+-
+-	dp_video_config->interlaced =
+-		of_property_read_bool(dp_node, "interlaced");
+-
+ 	if (of_property_read_u32(dp_node, "analogix,color-space",
+ 				 &dp_video_config->color_space)) {
+ 		dev_err(dev, "failed to get color-space\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	if (of_property_read_u32(dp_node, "analogix,dynamic-range",
+-				 &dp_video_config->dynamic_range)) {
+-		dev_err(dev, "failed to get dynamic-range\n");
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+-	if (of_property_read_u32(dp_node, "analogix,ycbcr-coeff",
+-				 &dp_video_config->ycbcr_coeff)) {
+-		dev_err(dev, "failed to get ycbcr-coeff\n");
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	if (of_property_read_u32(dp_node, "analogix,color-depth",
+ 				 &dp_video_config->color_depth)) {
+ 		dev_err(dev, "failed to get color-depth\n");
+diff --git a/drivers/gpu/drm/exynos/analogix_dp-exynos.c b/drivers/gpu/drm/exynos/analogix_dp-exynos.c
+index d5631c2..17da2c8 100644
+--- a/drivers/gpu/drm/exynos/analogix_dp-exynos.c
++++ b/drivers/gpu/drm/exynos/analogix_dp-exynos.c
+@@ -26,11 +26,17 @@
+ #include <drm/exynos_drm.h>
+ #include "exynos_drm_drv.h"
+ 
+-#define plat_data_to_dp(pd) \
+-		container_of(pd, struct exynos_dp_device, plat_data)
++#define to_dp(nm)	container_of(nm, struct exynos_dp_device, nm)
 +
-+	dp->bridge->next = dp->ptn_bridge;
-+	dp->bridge->encoder = encoder;
-+	ret = drm_bridge_attach(encoder->dev, dp->bridge);
-+	if (ret) {
-+		DRM_ERROR("Failed to attach ptn bridge to drm\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int exynos_dp_bridge_attach(struct drm_bridge *bridge)
-+{
-+
-+	struct exynos_dp_device *dp = bridge->driver_private;
-+	struct drm_encoder *encoder = dp->encoder;
-+	struct drm_connector *connector = &dp->connector;
-+	int ret;
-+
-+	if (!bridge->encoder) {
-+		DRM_ERROR("Parent encoder object not found");
-+		return -ENODEV;
-+	}
-+
-+	encoder->bridge = bridge;
-+
-+	/* Pre-empt DP connector creation if there's a bridge */
-+	if (dp->ptn_bridge) {
-+		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
-+		if (ret)
-+			return -ENODEV;
-+	}
-+
-+	connector->polled = DRM_CONNECTOR_POLL_HPD;
-+
-+	ret = drm_connector_init(dp->drm_dev, connector,
-+			&exynos_dp_connector_funcs, DRM_MODE_CONNECTOR_eDP);
-+	if (ret) {
-+		DRM_ERROR("Failed to initialize connector with drm\n");
-+		return ret;
-+	}
-+
-+	drm_connector_helper_add(connector, &exynos_dp_connector_helper_funcs);
-+	drm_connector_register(connector);
-+	drm_mode_connector_attach_encoder(connector, encoder);
-+
-+	if (dp->panel)
-+		ret = drm_panel_attach(dp->panel, &dp->connector);
-+
-+	return ret;
-+}
-+
-+static void exynos_dp_bridge_nop(struct drm_bridge *bridge)
-+{
-+	/* do nothing */
-+}
-+
-+static void exynos_dp_bridge_enable(struct drm_bridge *bridge)
-+{
-+	struct exynos_dp_device *dp = bridge->driver_private;
-+
-+	exynos_dp_poweron(dp);
-+	dp->dpms_mode = DRM_MODE_DPMS_ON;
-+}
-+
-+static void exynos_dp_bridge_disable(struct drm_bridge *bridge)
-+{
-+	struct exynos_dp_device *dp = bridge->driver_private;
-+
-+	exynos_dp_poweroff(dp);
-+	dp->dpms_mode = DRM_MODE_DPMS_OFF;
-+}
-+
-+static const struct drm_bridge_funcs exynos_dp_bridge_funcs = {
-+	.enable = exynos_dp_bridge_enable,
-+	.disable = exynos_dp_bridge_disable,
-+	.pre_enable = exynos_dp_bridge_nop,
-+	.post_disable = exynos_dp_bridge_nop,
-+	.attach = exynos_dp_bridge_attach,
++struct video_info {
++	bool h_sync_polarity;
++	bool v_sync_polarity;
++	bool interlaced;
 +};
-+
-+static int exynos_dp_create_connector(struct exynos_drm_display *display,
-+				struct drm_encoder *encoder)
- {
- 	struct exynos_dp_device *dp = display_to_dp(display);
-+	struct drm_device *drm_dev = dp->drm_dev;
-+	struct drm_bridge *bridge;
-+	int ret;
  
--	switch (mode) {
--	case DRM_MODE_DPMS_ON:
--		exynos_dp_poweron(dp);
--		break;
--	case DRM_MODE_DPMS_STANDBY:
--	case DRM_MODE_DPMS_SUSPEND:
--	case DRM_MODE_DPMS_OFF:
--		exynos_dp_poweroff(dp);
--		break;
--	default:
--		break;
-+	bridge = devm_kzalloc(drm_dev->dev, sizeof(*bridge), GFP_KERNEL);
-+	if (!bridge) {
-+		DRM_ERROR("failed to allocate for drm bridge\n");
-+		return -ENOMEM;
- 	}
--	dp->dpms_mode = mode;
+ struct exynos_dp_device {
+ 	struct exynos_drm_display  display;
++	struct video_info          video_info;
+ 	struct drm_bridge          *ptn_bridge;
+ 	struct drm_device          *drm_dev;
+ 	struct device              *dev;
+@@ -42,7 +48,7 @@ struct exynos_dp_device {
+ int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
+ 				bool enable)
+ {
+-	struct exynos_dp_device *dp = plat_data_to_dp(plat_data);
++	struct exynos_dp_device *dp = to_dp(plat_data);
+ 	struct drm_encoder *encoder = dp->display.encoder;
+ 	struct exynos_drm_crtc *crtc;
+ 
+@@ -69,7 +75,7 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+ static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+ 			       struct drm_connector *connector)
+ {
+-	struct exynos_dp_device *dp = plat_data_to_dp(plat_data);
++	struct exynos_dp_device *dp = to_dp(plat_data);
+ 	struct drm_display_mode *mode;
+ 
+ 	if (dp->plat_data.panel)
+@@ -97,7 +103,7 @@ static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+ 				   struct drm_bridge *bridge)
+ {
+-	struct exynos_dp_device *dp = plat_data_to_dp(plat_data);
++	struct exynos_dp_device *dp = to_dp(plat_data);
+ 	struct drm_encoder *encoder = dp->display.encoder;
+ 	int ret;
+ 
+@@ -116,6 +122,34 @@ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+ 	return 0;
+ }
+ 
++static void exynos_dp_mode_fixup(struct exynos_drm_display *display,
++				 struct drm_connector *connector,
++				 const struct drm_display_mode *mode,
++				 struct drm_display_mode *adjusted_mode)
++{
++	struct exynos_dp_device *dp = to_dp(display);
++	int flags = adjusted_mode->flags;
 +
-+	dp->bridge = bridge;
-+	dp->encoder = encoder;
++	flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_NHSYNC |
++		   DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC |
++		   DRM_MODE_FLAG_INTERLACE);
 +
-+	bridge->driver_private = dp;
-+	bridge->encoder = dp->encoder;
-+	bridge->funcs = &exynos_dp_bridge_funcs;
++	if (dp->video_info.h_sync_polarity)
++		flags |= DRM_MODE_FLAG_PHSYNC;
++	else
++		flags |= DRM_MODE_FLAG_NHSYNC;
 +
-+	ret = drm_bridge_attach(drm_dev, bridge);
-+	if (ret) {
-+		DRM_ERROR("failed to attach drm bridge\n");
-+		return -EINVAL;
-+	}
++	if (dp->video_info.v_sync_polarity)
++		flags |= DRM_MODE_FLAG_PVSYNC;
++	else
++		flags |= DRM_MODE_FLAG_NVSYNC;
++
++	if (dp->video_info.interlaced)
++		flags |= DRM_MODE_FLAG_INTERLACE;
++
++	adjusted_mode->flags = flags;
++}
++
+ static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
+ {
+ 	/* do nothing */
+@@ -137,6 +171,7 @@ static struct exynos_drm_display_ops exynos_dp_display_ops = {
+ 	.create_connector = exynos_dp_create_connector,
+ 	.dpms = exynos_dp_dpms,
+ 	.commit = exynos_dp_commit,
++	.mode_fixup = exynos_dp_mode_fixup,
+ };
+ 
+ static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
+@@ -153,6 +188,22 @@ static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
+ 	return 0;
+ }
+ 
++static int exynos_dp_dt_parse_video_info(struct exynos_dp_device *dp)
++{
++	struct device_node *dp_node = dp->dev->of_node;
++
++	dp->video_info.h_sync_polarity =
++		of_property_read_bool(dp_node, "hsync-active-high");
++
++	dp->video_info.v_sync_polarity =
++		of_property_read_bool(dp_node, "vsync-active-high");
++
++	dp->video_info.interlaced =
++		of_property_read_bool(dp_node, "interlaced");
 +
 +	return 0;
 +}
 +
-+static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
-+{
-+	/* do nothing */
- }
- 
- static struct exynos_drm_display_ops exynos_dp_display_ops = {
-@@ -1242,7 +1292,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 		}
+ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+@@ -180,6 +231,10 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 			return ret;
  	}
  
--	if (!dp->panel && !dp->bridge) {
-+	if (!dp->panel && !dp->ptn_bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
- 			return ret;
-@@ -1315,7 +1365,7 @@ static void exynos_dp_unbind(struct device *dev, struct device *master,
- {
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
--	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_OFF);
-+	exynos_dp_bridge_disable(dp->bridge);
- }
- 
- static const struct component_ops exynos_dp_ops = {
-@@ -1350,9 +1400,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	if (endpoint) {
- 		bridge_node = of_graph_get_remote_port_parent(endpoint);
- 		if (bridge_node) {
--			dp->bridge = of_drm_find_bridge(bridge_node);
-+			dp->ptn_bridge = of_drm_find_bridge(bridge_node);
- 			of_node_put(bridge_node);
--			if (!dp->bridge)
-+			if (!dp->ptn_bridge)
- 				return -EPROBE_DEFER;
- 		} else {
- 			return -EPROBE_DEFER;
-@@ -1374,7 +1424,7 @@ static int exynos_dp_suspend(struct device *dev)
- {
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
--	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_OFF);
-+	exynos_dp_bridge_disable(dp->bridge);
- 	return 0;
- }
- 
-@@ -1382,7 +1432,7 @@ static int exynos_dp_resume(struct device *dev)
- {
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
--	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_ON);
-+	exynos_dp_bridge_enable(dp->bridge);
- 	return 0;
- }
- #endif
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index c321ad5..29bd56e 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -154,6 +154,7 @@ struct exynos_dp_device {
- 	struct drm_encoder	*encoder;
- 	struct drm_panel	*panel;
- 	struct drm_bridge	*bridge;
-+	struct drm_bridge	*ptn_bridge;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
++	ret = exynos_dp_dt_parse_video_info(dp);
++	if (ret)
++		return ret;
++
+ 	ret = exynos_drm_create_enc_conn(dp->drm_dev, &dp->display);
+ 	if (ret) {
+ 		DRM_ERROR("exynos dp create enc_conn failed\n");
 -- 
 1.9.1
