@@ -1,59 +1,34 @@
 From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v2] rtc: s3c: fix disabled clocks for alarm
-Date: Fri, 21 Aug 2015 00:59:47 +0200
-Message-ID: <20150820225947.GB3769@piout.net>
-References: <1439374906-27841-1-git-send-email-jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/4] rtc: s3c: add missing clk control
+Date: Fri, 21 Aug 2015 01:06:50 +0200
+Message-ID: <20150820230650.GC3769@piout.net>
+References: <1439292502-22912-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:48966 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751699AbbHTXGv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Aug 2015 19:06:51 -0400
 Content-Disposition: inline
-In-Reply-To: <1439374906-27841-1-git-send-email-jy0922.shim@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, cw00.choi@samsung.com, k.kozlowski@samsung.com
+In-Reply-To: <1439292502-22912-1-git-send-email-jy0922.shim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, cw00.choi@samsung.com, k.kozlowski@samsung.com
 
-On 12/08/2015 at 19:21:46 +0900, Joonyoung Shim wrote :
-> The clock enable/disable codes for alarm have been removed from
-> commit 24e1455493da ("drivers/rtc/rtc-s3c.c: delete duplicate clock
-> control") and the clocks are disabled even if alarm is set, so alarm
-> interrupt can't happen.
-> 
-> The s3c_rtc_setaie function can be called several times with 'enabled'
-> argument having same value, so it needs to check whether clocks are
-> enabled or not.
+On 11/08/2015 at 20:28:19 +0900, Joonyoung Shim wrote :
+> It's missed to call clk_unprepare() about info->rtc_src_clk in
+> s3c_rtc_remove and to call clk_disable_unprepare about info->rtc_clk in
+> error routine of s3c_rtc_probe.
 > 
 > Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Cc: <stable@vger.kernel.org> # v4.1
 > ---
-> This is v2 of prior patch "[PATCH 4/4] rtc: s3c: enable/disable clocks
-> for alarm".
+>  drivers/rtc/rtc-s3c.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Changelog for v2:
-> - commit messages is modified by Krzysztof suggestion
-> - make to backportable patch
-> - add Cc-stable
-> 
->  drivers/rtc/rtc-s3c.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
-> 
-
 Applied, thanks.
-
-However, ...
-
-> @@ -39,6 +39,7 @@ struct s3c_rtc {
->  	void __iomem *base;
->  	struct clk *rtc_clk;
->  	struct clk *rtc_src_clk;
-> +	bool clk_disabled;
->  
-
-This is quite unusual and I would say the principle of least
-astonishment would require using clk_enabled and explicitly set it to
-true in the probe. I don't expect a lot of changes regarding the clocks
-in the probe so this is probably OK but doing so will require extra
-carefulness.
 
 -- 
 Alexandre Belloni, Free Electrons
