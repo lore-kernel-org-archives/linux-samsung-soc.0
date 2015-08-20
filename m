@@ -1,61 +1,61 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 4/4 RESEND] spi: s3c64xx: replace clock disabling with runtime
- PM suspend call in remove function
-Date: Thu, 20 Aug 2015 22:11:03 +0200
-Message-ID: <55D63457.5060901@gmail.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH v2] rtc: s3c: fix disabled clocks for alarm
+Date: Fri, 21 Aug 2015 00:59:47 +0200
+Message-ID: <20150820225947.GB3769@piout.net>
+References: <1439374906-27841-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:33987 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752452AbbHTUNp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Aug 2015 16:13:45 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1439374906-27841-1-git-send-email-jy0922.shim@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, cw00.choi@samsung.com, k.kozlowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
 
-Simplify s3c64xx_spi_remove by replacing the clock disabling with calling
-runtime PM suspend which does the same.
-Waking up the device if it was suspended wouldn't be strictly needed
-for this driver but using pm_runtime_get_sync is cleaner and makes
-s3c64xx_spi_remove more consistent with the runtime PM handling in
-s3c64xx_spi_setup.
+On 12/08/2015 at 19:21:46 +0900, Joonyoung Shim wrote :
+> The clock enable/disable codes for alarm have been removed from
+> commit 24e1455493da ("drivers/rtc/rtc-s3c.c: delete duplicate clock
+> control") and the clocks are disabled even if alarm is set, so alarm
+> interrupt can't happen.
+> 
+> The s3c_rtc_setaie function can be called several times with 'enabled'
+> argument having same value, so it needs to check whether clocks are
+> enabled or not.
+> 
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> Cc: <stable@vger.kernel.org> # v4.1
+> ---
+> This is v2 of prior patch "[PATCH 4/4] rtc: s3c: enable/disable clocks
+> for alarm".
+> 
+> Changelog for v2:
+> - commit messages is modified by Krzysztof suggestion
+> - make to backportable patch
+> - add Cc-stable
+> 
+>  drivers/rtc/rtc-s3c.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
+> 
 
-pm_runtime_force_suspend does most of the work for us:
-disabling the clocks, disabling runtime PM and setting it to
-"suspended" state.
+Applied, thanks.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-Changed:
-- Added to the patch set
+However, ...
 
- drivers/spi/spi-s3c64xx.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+> @@ -39,6 +39,7 @@ struct s3c_rtc {
+>  	void __iomem *base;
+>  	struct clk *rtc_clk;
+>  	struct clk *rtc_src_clk;
+> +	bool clk_disabled;
+>  
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 735b7f5..4a91a6c 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1225,13 +1225,12 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
- 
--	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_get_sync(&pdev->dev);
- 
- 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
- 
--	clk_disable_unprepare(sdd->src_clk);
--
--	clk_disable_unprepare(sdd->clk);
-+	pm_runtime_put_noidle(&pdev->dev);
-+	pm_runtime_force_suspend(&pdev->dev);
- 
- 	return 0;
- }
+This is quite unusual and I would say the principle of least
+astonishment would require using clk_enabled and explicitly set it to
+true in the probe. I don't expect a lot of changes regarding the clocks
+in the probe so this is probably OK but doing so will require extra
+carefulness.
+
 -- 
-2.5.0
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
