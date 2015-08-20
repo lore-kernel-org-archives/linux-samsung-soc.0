@@ -1,52 +1,63 @@
-From: Dave Airlie <airlied@gmail.com>
+From: Yakir Yang <ykk@rock-chips.com>
 Subject: Re: [PATCH v3 0/14] Add Analogix Core Display Port Driver
-Date: Thu, 20 Aug 2015 09:54:04 +1000
-Message-ID: <CAPM=9tx6qMnHEfYpi5_+Ay9P5fy=JqthMp6-t0fxFPfm8E4k7Q@mail.gmail.com>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+Date: Wed, 19 Aug 2015 20:02:57 -0500
+Message-ID: <55D52741.3080709@rock-chips.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com> <CAPM=9tx6qMnHEfYpi5_+Ay9P5fy=JqthMp6-t0fxFPfm8E4k7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:35056 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750767AbbHSXyH (ORCPT
+Received: from regular1.263xmail.com ([211.150.99.139]:49497 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751558AbbHTBDM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Aug 2015 19:54:07 -0400
-In-Reply-To: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+	Wed, 19 Aug 2015 21:03:12 -0400
+In-Reply-To: <CAPM=9tx6qMnHEfYpi5_+Ay9P5fy=JqthMp6-t0fxFPfm8E4k7Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
+To: Dave Airlie <airlied@gmail.com>
 Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>, Daniel Kurtz <djkurtz@google.com>, dianders@google.com, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon
 
-On 20 August 2015 at 00:48, Yakir Yang <ykk@rock-chips.com> wrote:
->
-> Hi all,
->    The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
-> share the same IP, so a lot of parts can be re-used. I split the common
-> code into bridge directory, then rk3288 and exynos only need to keep
-> some platform code. Cause I can't find the exact IP name of exynos dp
-> controller, so I decide to name dp core driver with "analogix" which I
-> find in rk3288 eDP TRM ;)
->
-> Beyond that, there are three light registers setting differents bewteen
-> exynos and rk3288.
-> 1. RK3288 have five special pll resigters which not indicata in exynos
->    dp controller.
-> 2. The address of DP_PHY_PD(dp phy power manager register) are different
->    between rk3288 and exynos.
-> 3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
->    register).
->
-> I have verified this series on two kinds of rockchip platform board, one
-> is rk3288 sdk board which connect with a 2K display port monitor, the other
-> is google jerry chromebook which connect with a eDP screen "cnm,n116bgeea2",
-> both of them works rightlly.
->
-> I haven't verified the dp function on samsung platform, cause I haven't got
-> exynos boards. I can only ensure that there are no build error on samsung
-> platform, wish some samsung guys help to test. ;)
+Hi Dave,
 
-I'd like to pull this in, but it probably needs an ack from Samsung,
+On 08/19/2015 06:54 PM, Dave Airlie wrote:
+> On 20 August 2015 at 00:48, Yakir Yang <ykk@rock-chips.com> wrote:
+>> Hi all,
+>>     The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
+>> share the same IP, so a lot of parts can be re-used. I split the common
+>> code into bridge directory, then rk3288 and exynos only need to keep
+>> some platform code. Cause I can't find the exact IP name of exynos dp
+>> controller, so I decide to name dp core driver with "analogix" which I
+>> find in rk3288 eDP TRM ;)
+>>
+>> Beyond that, there are three light registers setting differents bewteen
+>> exynos and rk3288.
+>> 1. RK3288 have five special pll resigters which not indicata in exynos
+>>     dp controller.
+>> 2. The address of DP_PHY_PD(dp phy power manager register) are different
+>>     between rk3288 and exynos.
+>> 3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
+>>     register).
+>>
+>> I have verified this series on two kinds of rockchip platform board, one
+>> is rk3288 sdk board which connect with a 2K display port monitor, the other
+>> is google jerry chromebook which connect with a eDP screen "cnm,n116bgeea2",
+>> both of them works rightlly.
+>>
+>> I haven't verified the dp function on samsung platform, cause I haven't got
+>> exynos boards. I can only ensure that there are no build error on samsung
+>> platform, wish some samsung guys help to test. ;)
+> I'd like to pull this in, but it probably needs an ack from Samsung,
+>
+> Inki can you guys find some time to test this?
+>
+> Dave.
 
-Inki can you guys find some time to test this?
+Wow, thanks a lots  :-)
 
-Dave.
+Still waiting for some reviews and acks.
+
+Best regards,
+- Yakir
+>
+>
