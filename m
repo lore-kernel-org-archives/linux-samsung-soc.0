@@ -1,314 +1,141 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v2 4/8] drm: rockchip/dp: add rockchip platform dp driver
-Date: Wed, 19 Aug 2015 18:23:39 +0800
-Message-ID: <55D4592B.2000704@rock-chips.com>
-References: <1438943674-18191-1-git-send-email-ykk@rock-chips.com>
- <1438944380-18897-1-git-send-email-ykk@rock-chips.com>
- <1730542.s7otqjtiXD@diego> <55C57D7E.6080800@rock-chips.com>
- <20150810100055.GB7850@ulmo.nvidia.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL v2 0/5] Samsung updates for v4.3
+Date: Thu, 20 Aug 2015 11:25:44 +0900
+Message-ID: <023501d0daef$86d21c20$94765460$@kernel.org>
+References: <55CCE517.2070003@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2032496654=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150810100055.GB7850@ulmo.nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <treding@nvidia.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, seanpaul@google.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-arm-ker@NULL.NULL, linux-samsung-soc@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>, dianders@google.com, ajaynumb@gmail.com, Fabio Estevam <fabio.estevam@freescale.com>, nel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, djkurtz@google.com, joe@perches.com, Andy Yan <andy.yan@rock-chips.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:39887 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750874AbbHTCZy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Aug 2015 22:25:54 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NTD01ALP031FF00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Aug 2015 11:25:49 +0900 (KST)
+In-reply-to: <55CCE517.2070003@kernel.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene@kernel.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Michael Turquette' <mturquette@baylibre.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@sisk.pl>
 
-This is a multi-part message in MIME format.
---===============2032496654==
-Content-Type: multipart/alternative;
- boundary="------------060409070306030501020306"
+Kukjin Kim wrote:
+> 
+> Hello Arnd, Olof, Kevin
+> 
+Hi,
 
-This is a multi-part message in MIME format.
---------------060409070306030501020306
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-
-Hi Thierry
-
-When I'm preparing v3 series, I meet some trobules from your comment,=20
-wish you could give some advise?  ;)
-
-=E5=9C=A8 2015/8/10 18:00, Thierry Reding =E5=86=99=E9=81=93:
-> On Sat, Aug 08, 2015 at 11:54:38AM +0800, Yakir Yang wrote:
-> [...]
->>          edp: edp@ff970000 {
-> [...]
->>                  samsung,color-space =3D <0>;
->>                  samsung,dynamic-range =3D <0>;
->>                  samsung,ycbcr-coeff =3D <0>;
-> I think these should also come from EDID, though I'm not sure if we
-> store this in internal data structures yet.
->
->>                  samsung,color-depth =3D <1>;
-> This is probably drm_display_info.bpc.
-"samsung,color_space" and "samsung,color-depth"
-
-The drm_display_info's color_formats and bpc indicate the monitor=20
-display ability, but
-the edp driver could not take it as input video format directly.
-
-For example, with my DP TV I would found "RGB444 & YCRCB422 & & YCRCB444"
-support in drm_display_info.color_formats and 16bit bpc support, but=20
-RK3288 crtc
-driver could only output RGB & ITU formats, so finally=20
-analogix_dp-rockchip driver
-config crtc to RGBaaa 10bpc mode.
-
-In this sutiation, the analogix_dp core driver would pazzled by the=20
-drm_display_info,
-can't chose the right color_space and bpc.
-
-And this is the place that confused me, wish you could give some ideas=20
-about this one :-)
--------------------------------------------------------------------------=
-------------------------
-
-Besides, The dynamic_range and ycbcr_coeff haven't been record in=20
-drm_display_info, but
-I though we can parse it by the video code.
-
-The dynamic_range would have two values "CEA range" and "VESA range", so=20
-I though if
-the currect mode have a no-zero vic (drm_match_cea_mode()) then config=20
-it to "CEA range",
-otherwhise config it to "VESA range".
-
-YCbCr Coefficients would have two values "ITU709" and "ITU601". I see=20
-dw_hdmi driver have
-been set the colorimetry to ITU_601 when vic is 6/7/21/22/2/3/17/18, I=20
-thouht we can stole this
-to analogix_dp driver.
-
-    /* dynamic_range & colorimetry */
-         vic =3D drm_match_cea_mode(mode);
-         if ((vic =3D=3D 6) || (vic =3D=3D 7) || (vic =3D=3D 21) || (vic =
-=3D=3D 22) ||
-             (vic =3D=3D 2) || (vic =3D=3D 3) || (vic =3D=3D 17) || (vic =
-=3D=3D 18)) {
-                 video_info->dynamic_range =3D CEA;
-                 video_info->ycbcr_coeff =3D COLOR_YCBCR601;
-         } else if (vic) {
-                 video_info->dynamic_range =3D CEA;
-                 video_info->ycbcr_coeff =3D COLOR_YCBCR709;
-         } else {
-                 video_info->dynamic_range =3D VESA;
-                 video_info->ycbcr_coeff =3D COLOR_YCBCR709;
-         }
-
-I'm not sure whether this is right, also wish you could give some=20
-suggests ;)
-
-
->>                  samsung,link-rate =3D <0x0a>;
->>                  samsung,lane-count =3D <1>;
-> And these should really be derived from values in the DPCD and adjusted
-> (if necessary) during link training.
->
-> Why would you ever want to hard-code the above?
->
-
-And I though we should keep those DT properties now. I try to remove=20
-those DT
-property, so analogix dp driver would always use the max link_rate and=20
-lane_count
-which read from dpcd. For my 2K DP TV, link rate would reach to 5.4Gbps,=20
-lane cout
-would reach 4 lances, if so analogix dp driver could not light my DP TV=20
-up any more.
-
-After that I found that RK3288 eDP TRM have indicated some limites about=20
-those
-that RK3288 only support 4 physical lanes of 2.7/1.62 Gbps/lane, which=20
-means 5.4Gbps
-link rate is too high for RK3288.
-
-So I think we could treate them as hardware max values, is it okay?
+Please pull and if any comments, please kindly let me know.
 
 Thanks,
-- Yakir
+Kukjin
 
---------------060409070306030501020306
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-  <head>
-    <meta content=3D"text/html; charset=3DUTF-8" http-equiv=3D"Content-Ty=
-pe">
-  </head>
-  <body bgcolor=3D"#FFFFFF" text=3D"#000000">
-    Hi Thierry<br>
-    <br>
-    When I'm preparing v3 series, I meet some trobules from your
-    comment, wish you could give some advise?=C2=A0 ;)<br>
-    <br>
-    <div class=3D"moz-cite-prefix">=E5=9C=A8 2015/8/10 18:00, Thierry Red=
-ing =E5=86=99=E9=81=93:<br>
-    </div>
-    <blockquote cite=3D"mid:20150810100055.GB7850@ulmo.nvidia.com"
-      type=3D"cite">
-      <pre wrap=3D"">On Sat, Aug 08, 2015 at 11:54:38AM +0800, Yakir Yang=
- wrote:
-[...]
-</pre>
-      <blockquote type=3D"cite">
-        <pre wrap=3D"">        edp: edp@ff970000 {
-</pre>
-      </blockquote>
-      <pre wrap=3D"">[...]
-</pre>
-      <blockquote type=3D"cite">
-        <pre wrap=3D"">                samsung,color-space =3D &lt;0&gt;;
-                samsung,dynamic-range =3D &lt;0&gt;;
-                samsung,ycbcr-coeff =3D &lt;0&gt;;
-</pre>
-      </blockquote>
-      <pre wrap=3D"">
-I think these should also come from EDID, though I'm not sure if we
-store this in internal data structures yet.
-
-</pre>
-      <blockquote type=3D"cite">
-        <pre wrap=3D"">                samsung,color-depth =3D &lt;1&gt;;
-</pre>
-      </blockquote>
-      <pre wrap=3D"">
-This is probably drm_display_info.bpc.
-</pre>
-    </blockquote>
-    "samsung,color_space" and "samsung,color-depth" <br>
-    <br>
-    The drm_display_info's color_formats and bpc indicate the monitor
-    display ability, but<br>
-    the edp driver could not take it as input video format directly.<br>
-    <br>
-    For example, with my DP TV I would found "RGB444 &amp; YCRCB422
-    &amp; &amp; YCRCB444"<br>
-    support in drm_display_info.color_formats and 16bit bpc support, but
-    RK3288 crtc<br>
-    driver could only output RGB &amp; ITU formats, so finally
-    analogix_dp-rockchip driver<br>
-    config crtc to RGBaaa 10bpc mode.<br>
-    <br>
-    In this sutiation, the analogix_dp core driver would pazzled by the
-    drm_display_info,<br>
-    can't chose the right color_space and bpc.<br>
-    <br>
-    And this is the place that confused me, wish you could give some
-    ideas about this one :-)<br>
--------------------------------------------------------------------------=
-------------------------<br>
-    <br>
-    Besides, The dynamic_range and ycbcr_coeff haven't been record in
-    drm_display_info, but<br>
-    I though we can parse it by the video code.<br>
-    <br>
-    The dynamic_range would have two values "CEA range" and "VESA
-    range", so I though if<br>
-    the currect mode have a no-zero vic (drm_match_cea_mode()) then
-    config it to "CEA range",<br>
-    otherwhise config it to "VESA range".<br>
-    <br>
-    YCbCr Coefficients would have two values "ITU709" and "ITU601". I
-    see dw_hdmi driver have<br>
-    been set the colorimetry to ITU_601 when vic is 6/7/21/22/2/3/17/18,
-    I thouht we can stole this<br>
-    to analogix_dp driver.<br>
-    <span style=3D"font-family:
-      ;font-size:9pt;color:rgb(0,0,0);font-style:normal;font-variant:norm=
-al;"><br>
-      =C2=A0=C2=A0 /* dynamic_range &amp; colorimetry */<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vic =3D drm_match_cea_mo=
-de(mode);<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ((vic =3D=3D 6) || (v=
-ic =3D=3D 7) || (vic =3D=3D 21) || (vic =3D=3D 22)
-      ||<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-(vic =3D=3D 2) || (vic =3D=3D 3) || (vic =3D=3D 17) || (vic =3D=3D
-      18)) {<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 video_info-&gt;dynamic_range =3D CEA;<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 video_info-&gt;ycbcr_coeff =3D COLOR_YCBCR601;<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else if (vic) {<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 video_info-&gt;dynamic_range =3D CEA;<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 video_info-&gt;ycbcr_coeff =3D COLOR_YCBCR709;<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 video_info-&gt;dynamic_range =3D VESA;<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 video_info-&gt;ycbcr_coeff =3D COLOR_YCBCR709;<br>
-      =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }<br>
-    </span><br>
-    I'm not sure whether this is right, also wish you could give some
-    suggests ;)<br>
-    <br>
-    <br>
-    <blockquote cite=3D"mid:20150810100055.GB7850@ulmo.nvidia.com"
-      type=3D"cite">
-      <pre wrap=3D"">
-</pre>
-      <blockquote type=3D"cite">
-        <pre wrap=3D"">                samsung,link-rate =3D &lt;0x0a&gt;=
-;
-                samsung,lane-count =3D &lt;1&gt;;
-</pre>
-      </blockquote>
-      <pre wrap=3D"">
-And these should really be derived from values in the DPCD and adjusted
-(if necessary) during link training.
-
-Why would you ever want to hard-code the above?
-
-</pre>
-    </blockquote>
-    <br>
-    And I though we should keep those DT properties now. I try to remove
-    those DT<br>
-    property, so analogix dp driver would always use the max link_rate
-    and lane_count<br>
-    which read from dpcd. For my 2K DP TV, link rate would reach to
-    5.4Gbps, lane cout<br>
-    would reach 4 lances, if so analogix dp driver could not light my DP
-    TV up any more.<br>
-    <br>
-    After that I found that RK3288 eDP TRM have indicated some limites
-    about those<br>
-    that RK3288 only support 4 physical lanes of 2.7/1.62 Gbps/lane,
-    which means 5.4Gbps<br>
-    link rate is too high for RK3288.<br>
-    <br>
-    So I think we could=C2=A0treate them as hardware max values, is it ok=
-ay?<br>
-    <br>
-    Thanks,<br>
-    - Yakir<br>
-  </body>
-</html>
-
---------------060409070306030501020306--
-
-
---===============2032496654==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============2032496654==--
+> Here is re-spin of pull request for Samsung stuff for v4.3 as per Olof's
+> suggestion.
+> 
+> Most of this pull-requests are to switch to support generic cpufreq
+> driver for exynos3250, 4210, 4412 and 5250 and several exynos dt updates.
+> 
+> Note as I commented in each tag, each pull-request(signed tag) has a
+> dependency with each other, so please keep the ordering in this time.
+> 
+> 1) tags/samsung-clk-driver
+> 2) tags/samsung-late-dt
+> 3) tags/samsung-soc
+> 4) tags/samsung-late-cpufreq-driver
+> 5) tags/samsung-defconfig-new
+> 
+> If any problems, please kindly let me know.
+> 
+> Thanks,
+> Kukjin
+> 
+> Alexis Ballier (1):
+>       ARM: dts: enable SPI1 for exynos4412-odroidu3
+> 
+> Anand Moon (1):
+>       ARM: exynos_defconfig: Enable CONFIG_SND_SOC_ODROIDX2 for Odroid-XU3
+> 
+> Bartlomiej Zolnierkiewicz (5):
+>       cpufreq: exynos: remove exynos5250 specific cpufreq driver support
+>       clk: exynos4x12: add cpu clock configuration data and instantiate
+> cpu clock
+>       cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+>       ARM: dts: add CPU OPP and regulator supply property for exynos4x12
+>       ARM: EXYNOS: switch to using generic cpufreq driver for exynos4x12
+> 
+> Chanho Park (1):
+>       ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
+> 
+> Chanwoo Choi (4):
+>       clk: exynos3250: Add cpu clock configuration data and instaniate
+> cpu clock
+>       ARM: EXYNOS: Add exynos3250 compatible to use generic cpufreq driver
+>       ARM: dts: Add CPU OPP and regulator supply property for exynos3250
+>       ARM: dts: Add CPU cooling binding for exynos3250 boards
+> 
+> Javier Martinez Canillas (4):
+>       ARM: multi_v7_defconfig: Remove old Samsung USB PHY configs
+>       ARM: multi_v7_defconfig: Enable NTC Thermistors support
+>       ARM: exynos_defconfig: Enable NTC Thermistors support
+>       ARM: multi_v7_defconfig: Enable max77802 regulator
+> 
+> Jonas Rabenstein (1):
+>       cpufreq: exynos: Remove unselectable rule for arm-exynos-cpufreq.o
+> 
+> Krzysztof Kozlowski (1):
+>       ARM: exynos_defconfig: Enable cpufreq-dt driver
+> 
+> Marek Szyprowski (1):
+>       ARM: dts: add iommu property to JPEG device for exynos4
+> 
+> Michal Suchanek (1):
+>       ARM: dts: Add SPI CS on exynos5250-snow
+> 
+> Thomas Abraham (3):
+>       clk: exynos5250: add cpu clock configuration data and instantiate
+> cpu clock
+>       ARM: EXYNOS: switch to using generic cpufreq driver for exynos5250
+>       ARM: dts: add CPU OPP and regulator supply property for exynos5250
+> 
+>  arch/arm/boot/dts/exynos3250-monk.dts              |  19 ++
+>  arch/arm/boot/dts/exynos3250-rinato.dts            |  19 ++
+>  arch/arm/boot/dts/exynos3250.dtsi                  |  16 ++
+>  arch/arm/boot/dts/exynos4.dtsi                     |   1 +
+>  arch/arm/boot/dts/exynos4212.dtsi                  |  81 +++++++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   4 +
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts          |   8 +
+>  arch/arm/boot/dts/exynos4412-origen.dts            |   4 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |   4 +
+>  arch/arm/boot/dts/exynos4412.dtsi                  |  83 ++++++++
+>  arch/arm/boot/dts/exynos5250-arndale.dts           |   4 +
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   4 +
+>  arch/arm/boot/dts/exynos5250-snow.dts              |   5 +
+>  arch/arm/boot/dts/exynos5250-spring.dts            |   4 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |  22 ++
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi             |  81 +++++++
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   1 +
+>  arch/arm/configs/exynos_defconfig                  |   5 +
+>  arch/arm/configs/multi_v7_defconfig                |   5 +-
+>  arch/arm/mach-exynos/Kconfig                       |   2 +
+>  arch/arm/mach-exynos/exynos.c                      |   4 +
+>  drivers/clk/samsung/clk-exynos3250.c               |  32 ++-
+>  drivers/clk/samsung/clk-exynos4.c                  |  50 +++++
+>  drivers/clk/samsung/clk-exynos5250.c               |  31 +++
+>  drivers/cpufreq/Kconfig.arm                        |  49 -----
+>  drivers/cpufreq/Makefile                           |   4 -
+>  drivers/cpufreq/exynos-cpufreq.c                   | 237
+> ---------------------
+>  drivers/cpufreq/exynos-cpufreq.h                   |  89 --------
+>  drivers/cpufreq/exynos4x12-cpufreq.c               | 236
+> --------------------
+>  drivers/cpufreq/exynos5250-cpufreq.c               | 210 ------------------
+>  include/dt-bindings/clock/exynos3250.h             |   1 +
+>  include/dt-bindings/clock/exynos5250.h             |   1 +
+>  32 files changed, 487 insertions(+), 829 deletions(-)
