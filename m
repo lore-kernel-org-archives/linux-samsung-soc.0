@@ -1,58 +1,51 @@
-From: Vaishali Thakkar <vthakkar1994@gmail.com>
-Subject: [PATCH] ASoC: Samsung: Remove redundant arndale_audio_remove
-Date: Thu, 20 Aug 2015 22:11:15 +0530
-Message-ID: <20150820164115.GA19191@localhost>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
+Date: Thu, 20 Aug 2015 23:45:14 +0530
+Message-ID: <CANAwSgRHEXuNt1PJY89ujificXj70BhbGhSOpL16yKsKr6hWcQ@mail.gmail.com>
+References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
+ <55D5FBDB.4040904@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:33192 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308AbbHTQlX (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:34554 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750986AbbHTSPf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Aug 2015 12:41:23 -0400
-Content-Disposition: inline
+	Thu, 20 Aug 2015 14:15:35 -0400
+Received: by wicne3 with SMTP id ne3so343377wic.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2015 11:15:34 -0700 (PDT)
+In-Reply-To: <55D5FBDB.4040904@free.fr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@free.fr>
+Cc: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-There is no use of snd_soc_unregister_card in remove function
-as devm_snd_soc_register_card in probe function automatically
-handles it. So, remove use of snd_soc_unregister_card and with
-this change remove arndale_audio_remove as it is now redundant.
+Hi Daniel,
 
-Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
----
- sound/soc/samsung/arndale_rt5631.c | 10 ----------
- 1 file changed, 10 deletions(-)
+On 20 August 2015 at 21:40, Daniel Lezcano <daniel.lezcano@free.fr> wrote:
+> On 08/20/2015 12:54 PM, Anand Moon wrote:
+>>
+>> Hello Krzysztof/Kukjim,
+>>
+>> CPUIdle seen to be not working for Exynos5422 Odroid boards.
+>>
+>> Is their any way this feature will be implemented in the future.
+>
+>
+> Yeah a good willing to fix the bl1. More than one year asking for that !
+> nooo way !!
+>
+> Your answer is at the end of
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
+>
+>
 
-diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
-index 8bf2e2c..9e371eb 100644
---- a/sound/soc/samsung/arndale_rt5631.c
-+++ b/sound/soc/samsung/arndale_rt5631.c
-@@ -116,15 +116,6 @@ static int arndale_audio_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int arndale_audio_remove(struct platform_device *pdev)
--{
--	struct snd_soc_card *card = platform_get_drvdata(pdev);
--
--	snd_soc_unregister_card(card);
--
--	return 0;
--}
--
- static const struct of_device_id samsung_arndale_rt5631_of_match[] __maybe_unused = {
- 	{ .compatible = "samsung,arndale-rt5631", },
- 	{ .compatible = "samsung,arndale-alc5631", },
-@@ -139,7 +130,6 @@ static struct platform_driver arndale_audio_driver = {
- 		.of_match_table = of_match_ptr(samsung_arndale_rt5631_of_match),
- 	},
- 	.probe = arndale_audio_probe,
--	.remove = arndale_audio_remove,
- };
- 
- module_platform_driver(arndale_audio_driver);
--- 
-1.9.1
+Thanks for the explanation.
+
+I was just referring following the source code.
+
+https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/arch/arm/mach-exynos/cpuidle-exynos5422.c
+
+It seem that cpufreq and cpuidle go hand in hand.
+
+-Anand Moon
