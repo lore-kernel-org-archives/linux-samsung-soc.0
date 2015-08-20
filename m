@@ -1,73 +1,141 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 3/4 RESEND v2] spi: s3c64xx: simplify suspend / resume handlers
-Date: Fri, 21 Aug 2015 19:31:54 +0200
-Message-ID: <55D7608A.7010800@gmail.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v3 08/14] phy: Add driver for rockchip Display Port PHY
+Date: Thu, 20 Aug 2015 02:01:19 -0500
+Message-ID: <55D57B3F.2070507@rock-chips.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+ <1439995877-18496-1-git-send-email-ykk@rock-chips.com>
+ <55D55A3E.8090905@ti.com> <55D57A19.7020205@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:37736 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752038AbbHURkT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Aug 2015 13:40:19 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1264559325=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <55D57A19.7020205@rock-chips.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: seanpaul@google.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, dianders@google.com, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, djkurtz@google.com, Kumar Gala <galak@codeaurora.org>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
 
-The runtime PM suspend / resume handlers take care of the enabling/
-disabling the clocks already. Therefore replace the duplicated
-clock handling with pm_runtime_force_suspend/resume.
+This is a multi-part message in MIME format.
+--===============1264559325==
+Content-Type: multipart/alternative;
+ boundary="------------030706050500000405080505"
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
-Changed:
-- Replaced pm_runtime_suspend/resume calls with their
-  .._force_.. equivalents.
-v2:
-- Added "Reviewed-by"
+This is a multi-part message in MIME format.
+--------------030706050500000405080505
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 
- drivers/spi/spi-s3c64xx.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Hi Kishon,
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index edeac06..735b7f5 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1246,10 +1246,9 @@ static int s3c64xx_spi_suspend(struct device *dev)
- 	if (ret)
- 		return ret;
- 
--	if (!pm_runtime_suspended(dev)) {
--		clk_disable_unprepare(sdd->clk);
--		clk_disable_unprepare(sdd->src_clk);
--	}
-+	ret = pm_runtime_force_suspend(dev);
-+	if (ret < 0)
-+		return ret;
- 
- 	sdd->cur_speed = 0; /* Output Clock is stopped */
- 
-@@ -1261,14 +1260,14 @@ static int s3c64xx_spi_resume(struct device *dev)
- 	struct spi_master *master = dev_get_drvdata(dev);
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
- 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
-+	int ret;
- 
- 	if (sci->cfg_gpio)
- 		sci->cfg_gpio();
- 
--	if (!pm_runtime_suspended(dev)) {
--		clk_prepare_enable(sdd->src_clk);
--		clk_prepare_enable(sdd->clk);
--	}
-+	ret = pm_runtime_force_resume(dev);
-+	if (ret < 0)
-+		return ret;
- 
- 	s3c64xx_spi_hwinit(sdd, sdd->port_id);
- 
--- 
-2.5.0
+On 08/20/2015 01:56 AM, Yakir Yang wrote:
+> Hi Kishon,
+>
+> On 08/19/2015 11:40 PM, Kishon Vijay Abraham I wrote:
+> [...]
+>>> [...]
+>>> +MODULE_DEVICE_TABLE(of, rockchip_dp_phy_dt_ids);
+>>> +
+>>> +static struct platform_driver rockchip_dp_phy_driver = {
+>>> +	.probe		= rockchip_dp_phy_probe,
+>>> +	.driver		= {
+>>> +		.name	= "rockchip-dp-phy",
+>>> +		.owner	= THIS_MODULE,
+>> owner is not required here.
+
+Whoops, forget to reply this one.
+
+Done.
+
+- Yakir
+>>
+>> Thanks
+>> Kishon
+>>
+>>
+>>
+>
+
+
+--------------030706050500000405080505
+Content-Type: text/html; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+  </head>
+  <body bgcolor="#FFFFFF" text="#000000">
+    Hi Kishon,<br>
+    <br>
+    <div class="moz-cite-prefix">On 08/20/2015 01:56 AM, Yakir Yang
+      wrote:<br>
+    </div>
+    <blockquote cite="mid:55D57A19.7020205@rock-chips.com" type="cite">
+      <meta content="text/html; charset=windows-1252"
+        http-equiv="Content-Type">
+      Hi Kishon,<br>
+      <br>
+      <div class="moz-cite-prefix">On 08/19/2015 11:40 PM, Kishon Vijay
+        Abraham I wrote:<br>
+      </div>
+      [...]<br>
+      <blockquote cite="mid:55D55A3E.8090905@ti.com" type="cite">
+        <blockquote type="cite">
+          <pre wrap="">[...]
++MODULE_DEVICE_TABLE(of, rockchip_dp_phy_dt_ids);
++
++static struct platform_driver rockchip_dp_phy_driver = {
++	.probe		= rockchip_dp_phy_probe,
++	.driver		= {
++		.name	= "rockchip-dp-phy",
++		.owner	= THIS_MODULE,
+</pre>
+        </blockquote>
+        <pre wrap="">owner is not required here.</pre>
+      </blockquote>
+    </blockquote>
+    <br>
+    Whoops, forget to reply this one.<br>
+    <br>
+    Done.<br>
+    <br>
+    - Yakir<br>
+    <blockquote cite="mid:55D57A19.7020205@rock-chips.com" type="cite">
+      <blockquote cite="mid:55D55A3E.8090905@ti.com" type="cite">
+        <pre wrap="">
+
+Thanks
+Kishon
+
+
+
+</pre>
+      </blockquote>
+      <br>
+    </blockquote>
+    <br>
+  </body>
+</html>
+
+--------------030706050500000405080505--
+
+
+--===============1264559325==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============1264559325==--
