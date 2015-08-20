@@ -1,42 +1,79 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [RFC PATCH v6 9/9] arm: zx_defconfig: remove CONFIG_MMC_DW_IDMAC
-Date: Thu, 20 Aug 2015 16:46:08 +0800
-Message-ID: <1440060368-26576-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1440060204-26203-1-git-send-email-shawn.lin@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1440060204-26203-1-git-send-email-shawn.lin@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jh80.chung@samsung.com, ulf.hansson@linaro.org
-Cc: Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Zhangfei Gao <zhangfei.gao@linaro.org>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, heiko@sntech.de, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shawn Lin <shawn.lin@rock-chips.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH] s5p-mfc: fix state check from encoder queue_setup
+Date: Thu, 20 Aug 2015 12:17:53 +0200
+Message-ID: <001a01d0db31$7a636880$6f2a3980$@samsung.com>
+References: <1431501925-16905-1-git-send-email-sw0312.kim@samsung.com>
+ <55D333CF.9000504@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24417 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750874AbbHTKR5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Aug 2015 06:17:57 -0400
+In-reply-to: <55D333CF.9000504@samsung.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Andrzej Hajda' <a.hajda@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mchehab@osg.samsung.com
+Cc: m.szyprowski@samsung.com, s.nawrocki@samsung.com
 
-DesignWare MMC Controller's transfer mode should be decided
-at runtime instead of compile-time. So we remove this config
-option and read dw_mmc's register to select DMA master.
+Hi,
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+> From: Andrzej Hajda [mailto:a.hajda@samsung.com]
+> Sent: Tuesday, August 18, 2015 3:32 PM
+> 
+> On 05/13/2015 09:25 AM, Seung-Woo Kim wrote:
+> > MFCINST_GOT_INST state is set to encoder context with set_format only
+> > for catpure buffer. In queue_setup of encoder called during reqbufs,
+> > it is checked MFCINST_GOT_INST state for both capture and output
+> > buffer. So this patch fixes to encoder to check MFCINST_GOT_INST state
+> > only for capture buffer from queue_setup.
+> >
+> > Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+> 
+> Looks OK.
+> 
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+Acked-by: Kamil Debski <k.debski@samsung.com>
 
- arch/arm/configs/zx_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+> 
+> Regards
+> Andrzej
 
-diff --git a/arch/arm/configs/zx_defconfig b/arch/arm/configs/zx_defconfig
-index b200bb0..ab683fb 100644
---- a/arch/arm/configs/zx_defconfig
-+++ b/arch/arm/configs/zx_defconfig
-@@ -83,7 +83,6 @@ CONFIG_MMC=y
- CONFIG_MMC_UNSAFE_RESUME=y
- CONFIG_MMC_BLOCK_MINORS=16
- CONFIG_MMC_DW=y
--CONFIG_MMC_DW_IDMAC=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
--- 
-2.3.7
+Best wishes,
+Kamil Debski
+
+> 
+> 
+> > ---
+> >  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |    9 +++++----
+> >  1 files changed, 5 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> > b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> > index e65993f..2e57e9f 100644
+> > --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> > +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> > @@ -1819,11 +1819,12 @@ static int s5p_mfc_queue_setup(struct
+> vb2_queue *vq,
+> >  	struct s5p_mfc_ctx *ctx = fh_to_ctx(vq->drv_priv);
+> >  	struct s5p_mfc_dev *dev = ctx->dev;
+> >
+> > -	if (ctx->state != MFCINST_GOT_INST) {
+> > -		mfc_err("inavlid state: %d\n", ctx->state);
+> > -		return -EINVAL;
+> > -	}
+> >  	if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+> > +		if (ctx->state != MFCINST_GOT_INST) {
+> > +			mfc_err("inavlid state: %d\n", ctx->state);
+> > +			return -EINVAL;
+> > +		}
+> > +
+> >  		if (ctx->dst_fmt)
+> >  			*plane_count = ctx->dst_fmt->num_planes;
+> >  		else
+> >
