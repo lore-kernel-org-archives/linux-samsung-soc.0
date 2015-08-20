@@ -1,61 +1,87 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 5/5] Documentation: dt-bindings: add exynos-srom binding
- information
-Date: Thu, 20 Aug 2015 17:09:45 +0530
-Message-ID: <55D5BC81.9050304@samsung.com>
-References: <1430296712-10287-1-git-send-email-pankaj.dubey@samsung.com>
- <1430296712-10287-6-git-send-email-pankaj.dubey@samsung.com>
- <CAJKOXPfpu+k-3u3kFzeKL4b9bkh+iwWHak2ea+9QLtGUEZGWdA@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 0/4] [media] Media entity cleanups and build fixes
+Date: Thu, 20 Aug 2015 14:41:40 +0200
+Message-ID: <55D5CB04.50508@xs4all.nl>
+References: <1439998526-12832-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55119 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751284AbbHTLkJ (ORCPT
+Received: from lb3-smtp-cloud3.xs4all.net ([194.109.24.30]:40783 "EHLO
+	lb3-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751249AbbHTMoY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Aug 2015 07:40:09 -0400
-In-reply-to: <CAJKOXPfpu+k-3u3kFzeKL4b9bkh+iwWHak2ea+9QLtGUEZGWdA@mail.gmail.com>
+	Thu, 20 Aug 2015 08:44:24 -0400
+In-Reply-To: <1439998526-12832-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, linux@arm.linux.org.uk, heiko@sntech.de, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, thomas.ab@samsung.com, kgene@kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-sh@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Hyun Kwon <hyun.kwon@xilinx.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "Prabhakar\"" <prabhakar.csengg@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Hi Krzysztof,
+On 08/19/15 17:35, Javier Martinez Canillas wrote:
+> Hello,
+> 
+> This series contains a couple of build fixes and cleanups for the
+> Media Controller framework. The goal of the series is to get rid of
+> the struct media_entity .parent member since now that a media_gobj is
+> embedded into entities, the media_gobj .mdev member can be used to
+> store a pointer to the parent struct media_device.
+> 
+> So the .parent field becomes redundant and can be removed after all
+> the users are converted to use entity .graph_obj.mdev instead.
+> 
+> Patches 1/4 and 2/4 are build fixes I found while build testing if no
+> regressions were introduced by the conversion. Patch 3/4 converts
+> all the drivers and the MC core to use .mdev instead of .parent and
+> finally patch 4/4 removes the .parent field since now is unused.
 
-On Wednesday 27 May 2015 04:51 PM, Krzysztof Kozlowski wrote:
-> 2015-04-29 17:38 GMT+09:00 Pankaj Dubey <pankaj.dubey@samsung.com>:
->> This patch adds exynos-srom binding information for SROM Controller
->> driver on Exynos SoCs.
->>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: Mark Rutland <mark.rutland@arm.com>
->> CC: Ian Campbell <ijc+devicetree@hellion.org.uk>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>   .../devicetree/bindings/arm/samsung/exynos-srom.txt          | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
->>
->> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
->> new file mode 100644
->> index 0000000..482d1cd
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
->> @@ -0,0 +1,12 @@
->> +SAMSUNG Exynos SoCs SROM Controller driver.
->> +
->> +Required properties:
->> +- compatible : Should at least contain "samsung,exynos-srom".
->
-> "At least" - do you already expect other compatibles?
->
+Regarding patches 1 and 2: these should of course be merged with Mauro's
+patches that make this particular change (patch 3/8), otherwise it would
+break git bisect.
 
-Nope, as of now I do not expect any other compatible, so I will change 
-this to "Should contain "samsung,exynos-srom"."
+Anyway,
 
-Thanks,
-Pankaj Dubey
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com> for the changes in patch
+1 and 2, as long as they are added to Mauro's patch 3/8.
+
+Regards,
+
+	Hans
+
+> 
+> The series depend on Mauro's "[PATCH v6 0/8] MC preparation patches
+> series" [0].
+> 
+> The transformation were automated using a coccinelle semantic patch
+> and the drivers were build tested using allyesconfig and x-building
+> the ARM Exynos and OMAP defconfigs + the needed media config options.
+> 
 > Best regards,
-> Krzysztof
->
+> Javier
+> 
+> [0]: http://www.mail-archive.com/linux-media@vger.kernel.org/msg91330.html
+> 
+> 
+> Javier Martinez Canillas (4):
+>   [media] staging: omap4iss: get entity ID using media_entity_id()
+>   [media] omap3isp: get entity ID using media_entity_id()
+>   [media] media: use entity.graph_obj.mdev instead of .parent
+>   [media] media: remove media entity .parent field
+> 
+>  drivers/media/media-device.c                       |  8 ++---
+>  drivers/media/media-entity.c                       | 34 ++++++++++++----------
+>  drivers/media/platform/exynos4-is/fimc-isp-video.c |  6 ++--
+>  drivers/media/platform/exynos4-is/fimc-lite.c      |  8 ++---
+>  drivers/media/platform/exynos4-is/media-dev.c      |  2 +-
+>  drivers/media/platform/exynos4-is/media-dev.h      |  8 ++---
+>  drivers/media/platform/omap3isp/isp.c              | 11 ++++---
+>  drivers/media/platform/omap3isp/ispccdc.c          |  2 +-
+>  drivers/media/platform/omap3isp/ispvideo.c         | 10 ++++---
+>  drivers/media/platform/vsp1/vsp1_video.c           |  2 +-
+>  drivers/media/platform/xilinx/xilinx-dma.c         |  2 +-
+>  drivers/staging/media/davinci_vpfe/vpfe_video.c    |  6 ++--
+>  drivers/staging/media/omap4iss/iss.c               |  6 ++--
+>  drivers/staging/media/omap4iss/iss_video.c         |  4 +--
+>  include/media/media-entity.h                       |  1 -
+>  15 files changed, 58 insertions(+), 52 deletions(-)
+> 
