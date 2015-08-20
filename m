@@ -1,89 +1,57 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: Re: [PATCH v3 13/14] drm: bridge/analogix_dp: move hpd detect to
- connector detect function
-Date: Thu, 20 Aug 2015 03:18:30 -0500
-Message-ID: <55D58D56.5070505@rock-chips.com>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com> <1439995939-18770-1-git-send-email-ykk@rock-chips.com> <6E5CEF9B-19D4-4AC4-B5B1-BC667979302D@gmail.com>
+From: "Opensource [Adam Thomson]" <Adam.Thomson.Opensource@diasemi.com>
+Subject: RE: [PATCH V3] Watchdog: Fix parent of watchdog_devices
+Date: Thu, 20 Aug 2015 08:30:35 +0000
+Message-ID: <2E89032DDAA8B9408CB92943514A0337AB56C694@SW-EX-MBX01.diasemi.com>
+References: <db7db9102158b87a4a7169e84e2272b3ba03f9f7.1439954581.git.panand@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6E5CEF9B-19D4-4AC4-B5B1-BC667979302D-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org" <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "djkurtz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <djkurtz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, "ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <db7db9102158b87a4a7169e84e2272b3ba03f9f7.1439954581.git.panand@redhat.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pratyush Anand <panand@redhat.com>, "linux@roeck-us.net" <linux@roeck-us.net>
+Cc: "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, kbuild test robot <fengguang.wu@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Andreas Werner <andreas.werner@men.de>, Barry Song <baohua@kernel.org>, Baruch Siach <baruch@tkos.co.il>, Johannes Thumshirn <morbidrsa@gmail.com>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "moderated list:ARM/U300 MACHINE SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:INTEL MANAGEMENT ENGINE (mei)" <linux-kernel@vger.kernel.org>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, open list:TEGRA ARCHITECTURE SUP
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jingoo,
-
-On 08/20/2015 02:49 AM, Jingoo Han wrote:
-> On 2015. 8. 19., at PM 11:52, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
->
-> What is the reason to make this patch?
->
-> Please make commit message including the reason.
-
-Okay, I think the below words would be okay :)
-
-"This change just make a little clean to make code more like
-drm core expect, move hdp detect code from bridge->enable(),
-and place them into connector->detect()."
-
-Thanks,
-- Yakir
-
-> Best regards,
-> Jingoo Han
->
->> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
->> ---
->> Changes in v3:
->> - move dp hpd detect to connector detect function.
->>
->> Changes in v2: None
->>
->> drivers/gpu/drm/bridge/analogix_dp_core.c | 12 ++++++------
->> 1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix_dp_core.c
->> index 75dd44a..052b9b3 100644
->> --- a/drivers/gpu/drm/bridge/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix_dp_core.c
->> @@ -915,12 +915,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
->>             DRM_ERROR("failed to disable the panel\n");
->>     }
->>
->> -    ret = analogix_dp_detect_hpd(dp);
->> -    if (ret) {
->> -        /* Cable has been disconnected, we're done */
->> -        return;
->> -    }
->> -
->>     ret = analogix_dp_handle_edid(dp);
->>     if (ret) {
->>         dev_err(dp->dev, "unable to handle edid\n");
->> @@ -953,6 +947,12 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
->> static enum drm_connector_status analogix_dp_detect(
->>                 struct drm_connector *connector, bool force)
->> {
->> +    struct analogix_dp_device *dp = connector_to_dp(connector);
->> +
->> +    if (analogix_dp_detect_hpd(dp))
->> +        /* Cable has been disconnected, we're done */
->> +        return connector_status_disconnected;
->> +
->>     return connector_status_connected;
->> }
->>
->> -- 
->> 1.9.1
->>
->>
->
->
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gQXVndXN0IDE5LCAyMDE1IDA0OjI4LCBQcmF0eXVzaCBBbmFuZCB3cm90ZToNCg0KPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy93YXRjaGRvZy9kYTkwNTJfd2R0LmMgYi9kcml2ZXJzL3dhdGNoZG9n
+L2RhOTA1Ml93ZHQuYw0KPiBpbmRleCAyZTk1ODk2NTJlMWUuLjY3ZTY3OTc3YmQyOSAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy93YXRjaGRvZy9kYTkwNTJfd2R0LmMNCj4gKysrIGIvZHJpdmVycy93
+YXRjaGRvZy9kYTkwNTJfd2R0LmMNCj4gQEAgLTE5NSw2ICsxOTUsNyBAQCBzdGF0aWMgaW50IGRh
+OTA1Ml93ZHRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIAlkYTkwNTJf
+d2R0LT50aW1lb3V0ID0gREE5MDUyX0RFRl9USU1FT1VUOw0KPiAgCWRhOTA1Ml93ZHQtPmluZm8g
+PSAmZGE5MDUyX3dkdF9pbmZvOw0KPiAgCWRhOTA1Ml93ZHQtPm9wcyA9ICZkYTkwNTJfd2R0X29w
+czsNCj4gKwlkYTkwNTJfd2R0LT5wYXJlbnQgPSAmcGRldi0+ZGV2Ow0KPiAgCXdhdGNoZG9nX3Nl
+dF9kcnZkYXRhKGRhOTA1Ml93ZHQsIGRyaXZlcl9kYXRhKTsNCj4gDQo+ICAJa3JlZl9pbml0KCZk
+cml2ZXJfZGF0YS0+a3JlZik7DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3dhdGNoZG9nL2RhOTA1
+NV93ZHQuYyBiL2RyaXZlcnMvd2F0Y2hkb2cvZGE5MDU1X3dkdC5jDQo+IGluZGV4IDQ5NTA4OWQ4
+ZGJmZS4uMDRkMTQzMGQ5M2QyIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3dhdGNoZG9nL2RhOTA1
+NV93ZHQuYw0KPiArKysgYi9kcml2ZXJzL3dhdGNoZG9nL2RhOTA1NV93ZHQuYw0KPiBAQCAtMTYx
+LDYgKzE2MSw3IEBAIHN0YXRpYyBpbnQgZGE5MDU1X3dkdF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpwZGV2KQ0KPiAgCWRhOTA1NV93ZHQtPnRpbWVvdXQgPSBEQTkwNTVfREVGX1RJTUVP
+VVQ7DQo+ICAJZGE5MDU1X3dkdC0+aW5mbyA9ICZkYTkwNTVfd2R0X2luZm87DQo+ICAJZGE5MDU1
+X3dkdC0+b3BzID0gJmRhOTA1NV93ZHRfb3BzOw0KPiArCWRhOTA1NV93ZHQtPnBhcmVudCA9ICZw
+ZGV2LT5kZXY7DQo+ICAJd2F0Y2hkb2dfc2V0X25vd2F5b3V0KGRhOTA1NV93ZHQsIG5vd2F5b3V0
+KTsNCj4gIAl3YXRjaGRvZ19zZXRfZHJ2ZGF0YShkYTkwNTVfd2R0LCBkcml2ZXJfZGF0YSk7DQo+
+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy93YXRjaGRvZy9kYTkwNjJfd2R0LmMgYi9kcml2ZXJz
+L3dhdGNoZG9nL2RhOTA2Ml93ZHQuYw0KPiBpbmRleCBiM2E4NzBjZTg1YmUuLjczODYxMTEyMjBk
+NSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy93YXRjaGRvZy9kYTkwNjJfd2R0LmMNCj4gKysrIGIv
+ZHJpdmVycy93YXRjaGRvZy9kYTkwNjJfd2R0LmMNCj4gQEAgLTIxMCw2ICsyMTAsNyBAQCBzdGF0
+aWMgaW50IGRhOTA2Ml93ZHRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4g
+IAl3ZHQtPndkdGRldi5tYXhfdGltZW91dCA9IERBOTA2Ml9XRFRfTUFYX1RJTUVPVVQ7DQo+ICAJ
+d2R0LT53ZHRkZXYudGltZW91dCA9IERBOTA2Ml9XREdfREVGQVVMVF9USU1FT1VUOw0KPiAgCXdk
+dC0+d2R0ZGV2LnN0YXR1cyA9IFdBVENIRE9HX05PV0FZT1VUX0lOSVRfU1RBVFVTOw0KPiArCXdk
+dC0+d2R0ZGV2LnBhcmVudCA9ICZwZGV2LT5kZXY7DQo+IA0KPiAgCXdhdGNoZG9nX3NldF9kcnZk
+YXRhKCZ3ZHQtPndkdGRldiwgd2R0KTsNCj4gIAlkZXZfc2V0X2RydmRhdGEoJnBkZXYtPmRldiwg
+d2R0KTsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvd2F0Y2hkb2cvZGE5MDYzX3dkdC5jIGIvZHJp
+dmVycy93YXRjaGRvZy9kYTkwNjNfd2R0LmMNCj4gaW5kZXggZTJmZTJlYmRlYmQ0Li42YmYxMzBi
+ZDg2M2QgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvd2F0Y2hkb2cvZGE5MDYzX3dkdC5jDQo+ICsr
+KyBiL2RyaXZlcnMvd2F0Y2hkb2cvZGE5MDYzX3dkdC5jDQo+IEBAIC0xNzUsNiArMTc1LDcgQEAg
+c3RhdGljIGludCBkYTkwNjNfd2R0X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+DQo+ICAJd2R0LT53ZHRkZXYubWluX3RpbWVvdXQgPSBEQTkwNjNfV0RUX01JTl9USU1FT1VUOw0K
+PiAgCXdkdC0+d2R0ZGV2Lm1heF90aW1lb3V0ID0gREE5MDYzX1dEVF9NQVhfVElNRU9VVDsNCj4g
+IAl3ZHQtPndkdGRldi50aW1lb3V0ID0gREE5MDYzX1dER19USU1FT1VUOw0KPiArCXdkdC0+d2R0
+ZGV2LnBhcmVudCA9ICZwZGV2LT5kZXY7DQo+IA0KPiAgCXdkdC0+d2R0ZGV2LnN0YXR1cyA9IFdB
+VENIRE9HX05PV0FZT1VUX0lOSVRfU1RBVFVTOw0KPiANCg0KQWNrZWQtYnk6IEFkYW0gVGhvbXNv
+biA8QWRhbS5UaG9tc29uLk9wZW5zb3VyY2VAZGlhc2VtaS5jb20+DQo=
