@@ -1,140 +1,125 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 1/7] phy: exynos-usb2: add vbus regulator support
-Date: Fri, 21 Aug 2015 18:14:46 +0530
-Message-ID: <55D71D3E.3010807@ti.com>
-References: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com> <1440160723-6636-2-git-send-email-m.szyprowski@samsung.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v3 0/14] Add Analogix Core Display Port Driver
+Date: Fri, 21 Aug 2015 15:16:33 +0200
+Message-ID: <20150821131631.GC22118@ulmo.nvidia.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+ <105A0032-83A0-4B75-AE94-258F12451670@gmail.com>
+ <55D6F6F8.70504@rock-chips.com>
+ <8384E112-E1F4-4CD3-85BF-A2A25989783F@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="WplhKdTI2c8ulnbP"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:53702 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752068AbbHUMo4 (ORCPT
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11370 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751863AbbHUNRv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Aug 2015 08:44:56 -0400
-In-Reply-To: <1440160723-6636-2-git-send-email-m.szyprowski@samsung.com>
+	Fri, 21 Aug 2015 09:17:51 -0400
+In-Reply-To: <8384E112-E1F4-4CD3-85BF-A2A25989783F@gmail.com>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kamil Debski <k.debski@samsung.com>
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, "joe@perches.com" <joe@perches.com>, Russell King <rmk+kernel@arm.linux.org.uk>, "djkurtz@google.com" <djkurtz@google.com>, "dianders@google.com" <dianders@google.com>, "seanpaul@google.com" <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, "ajaynumb@gmail.com" <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel
 
-Hi,
+--WplhKdTI2c8ulnbP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 21 August 2015 06:08 PM, Marek Szyprowski wrote:
-> Exynos USB2 PHY has separate power supply, which is usually provided by
-> VBUS regulator. This patch adds support for it. VBUS regulator is
-> optional, to keep compatibility with boards, which have VBUS provided
-> from some always-on power source.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  .../devicetree/bindings/phy/samsung-phy.txt        |  3 +++
->  drivers/phy/phy-samsung-usb2.c                     | 25 ++++++++++++++++++++--
->  drivers/phy/phy-samsung-usb2.h                     |  2 ++
->  3 files changed, 28 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index 60c6f2a633e0..0289d3b07853 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -44,6 +44,9 @@ Required properties:
->  	- the "ref" clock is used to get the rate of the clock provided to the
->  	  PHY module
->  
-> +Optional properties:
-> +- vbus-supply: power-supply phandle for vbus power source
+On Fri, Aug 21, 2015 at 08:24:16PM +0900, Jingoo Han wrote:
+> On 2015. 8. 21., at PM 7:01, Yakir Yang <ykk@rock-chips.com> wrote:
+> >=20
+> > Hi Jingoo,
+> >=20
+> >> =E5=9C=A8 2015/8/21 16:20, Jingoo Han =E5=86=99=E9=81=93:
+> >>> On 2015. 8. 19., at PM 11:48, Yakir Yang <ykk@rock-chips.com> wrote:
+> >>=20
+> >> .....
+> >>=20
+> >>> .../bindings/video/analogix_dp-rockchip.txt        |   83 ++
+> >>> .../devicetree/bindings/video/exynos_dp.txt        |   51 +-
+> >>> arch/arm/boot/dts/exynos5250-arndale.dts           |   10 +-
+> >>> arch/arm/boot/dts/exynos5250-smdk5250.dts          |   10 +-
+> >>> arch/arm/boot/dts/exynos5250-snow.dts              |   12 +-
+> >>> arch/arm/boot/dts/exynos5250-spring.dts            |   12 +-
+> >>> arch/arm/boot/dts/exynos5420-peach-pit.dts         |   12 +-
+> >>> arch/arm/boot/dts/exynos5420-smdk5420.dts          |   10 +-
+> >>> arch/arm/boot/dts/exynos5800-peach-pi.dts          |   12 +-
+> >>> drivers/gpu/drm/bridge/Kconfig                     |    5 +
+> >>> drivers/gpu/drm/bridge/Makefile                    |    1 +
+> >>> drivers/gpu/drm/bridge/analogix_dp_core.c          | 1382 +++++++++++=
+++++++++
+> >>> drivers/gpu/drm/bridge/analogix_dp_core.h          |  286 ++++
+> >>> drivers/gpu/drm/bridge/analogix_dp_reg.c           | 1294 +++++++++++=
++++++++
+> >>> .../exynos_dp_reg.h =3D> bridge/analogix_dp_reg.h}   |  270 ++--
+> >>> drivers/gpu/drm/exynos/Kconfig                     |    5 +-
+> >>> drivers/gpu/drm/exynos/Makefile                    |    2 +-
+> >>> drivers/gpu/drm/exynos/analogix_dp-exynos.c        |  347 +++++
+> >> Would you change this file name to "exynos_dp.c"?
+> >=20
+> > Sorry, I don't think so  ;(
+> >=20
+> > I think IP_name+Soc_name would be better in this re-use case.
+>=20
+> So? Is there the naming rule such as "IP_name+SoC_name"?
+>=20
+> > Beside I see
+> > there are lots of driver named with this format in kernel, such as dw_h=
+dmi & dw_mmc
+>=20
+> Please look at other dw cases.
+> For example, look at dw_pcie.
+>=20
+> drivers/pci/host/
+> pcie-designware.c
+> pci-spear13xx.c
+> pci-exynos.c
+>=20
+> In this case, pci-spear13xx.c and pci-exynos.c do not use "IP_name+SoC_na=
+me", even though these are dw IPs.
+>=20
+> Also, naming consistency is more important.
+> Now, Exynos DRM files are using "exynos_drm_" prefix.
+>=20
+> drivers/gpu/drm/exynos/
+> exynos_drm_buf.c
+> exynos_drm_core.c
+> ....
+>=20
+> However, "analogix_dp-exynos.c" looks very inconsistent.
+>=20
+> If there is no strict naming rule, please use "exynos_dp.c"
+> or "exynos_drm_dp.c".=20
 
-how about using phy-supply?
+Exynos DRM maintainers get to pick their filenames, so Yakir, please
+rename as Jingoo suggested.
 
-Thanks
-Kishon
+Even if you didn't the first thing that would go into the Exynos DRM
+driver tree after this is merged is a rename patch anyway.
 
-> +
->  The first phandle argument in the PHY specifier identifies the PHY, its
->  meaning is compatible dependent. For the currently supported SoCs (Exynos 4210
->  and Exynos 4212) it is as follows:
-> diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-usb2.c
-> index f278a9c547e1..1d22d93b552d 100644
-> --- a/drivers/phy/phy-samsung-usb2.c
-> +++ b/drivers/phy/phy-samsung-usb2.c
-> @@ -27,6 +27,13 @@ static int samsung_usb2_phy_power_on(struct phy *phy)
->  
->  	dev_dbg(drv->dev, "Request to power_on \"%s\" usb phy\n",
->  		inst->cfg->label);
-> +
-> +	if (drv->vbus) {
-> +		ret = regulator_enable(drv->vbus);
-> +		if (ret)
-> +			goto err_regulator;
-> +	}
-> +
->  	ret = clk_prepare_enable(drv->clk);
->  	if (ret)
->  		goto err_main_clk;
-> @@ -48,6 +55,9 @@ err_power_on:
->  err_instance_clk:
->  	clk_disable_unprepare(drv->clk);
->  err_main_clk:
-> +	if (drv->vbus)
-> +		regulator_disable(drv->vbus);
-> +err_regulator:
->  	return ret;
->  }
->  
-> @@ -55,7 +65,7 @@ static int samsung_usb2_phy_power_off(struct phy *phy)
->  {
->  	struct samsung_usb2_phy_instance *inst = phy_get_drvdata(phy);
->  	struct samsung_usb2_phy_driver *drv = inst->drv;
-> -	int ret;
-> +	int ret = 0;
->  
->  	dev_dbg(drv->dev, "Request to power_off \"%s\" usb phy\n",
->  		inst->cfg->label);
-> @@ -68,7 +78,10 @@ static int samsung_usb2_phy_power_off(struct phy *phy)
->  	}
->  	clk_disable_unprepare(drv->ref_clk);
->  	clk_disable_unprepare(drv->clk);
-> -	return 0;
-> +	if (drv->vbus)
-> +		ret = regulator_disable(drv->vbus);
-> +
-> +	return ret;
->  }
->  
->  static const struct phy_ops samsung_usb2_phy_ops = {
-> @@ -203,6 +216,14 @@ static int samsung_usb2_phy_probe(struct platform_device *pdev)
->  			return ret;
->  	}
->  
-> +	drv->vbus = devm_regulator_get(dev, "vbus");
-> +	if (IS_ERR(drv->vbus)) {
-> +		ret = PTR_ERR(drv->vbus);
-> +		if (ret == -EPROBE_DEFER)
-> +			return ret;
-> +		drv->vbus = NULL;
-> +	}
-> +
->  	for (i = 0; i < drv->cfg->num_phys; i++) {
->  		char *label = drv->cfg->phys[i].label;
->  		struct samsung_usb2_phy_instance *p = &drv->instances[i];
-> diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
-> index 44bead9b8f34..6563e7ca0ac4 100644
-> --- a/drivers/phy/phy-samsung-usb2.h
-> +++ b/drivers/phy/phy-samsung-usb2.h
-> @@ -17,6 +17,7 @@
->  #include <linux/device.h>
->  #include <linux/regmap.h>
->  #include <linux/spinlock.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #define KHZ 1000
->  #define MHZ (KHZ * KHZ)
-> @@ -37,6 +38,7 @@ struct samsung_usb2_phy_driver {
->  	const struct samsung_usb2_phy_config *cfg;
->  	struct clk *clk;
->  	struct clk *ref_clk;
-> +	struct regulator *vbus;
->  	unsigned long ref_rate;
->  	u32 ref_reg_val;
->  	struct device *dev;
-> 
+Thierry
+
+--WplhKdTI2c8ulnbP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJV1ySsAAoJEN0jrNd/PrOh/r0QAKWnKrpi02YDSdKHNyfDs75b
+PzIpRa+QMZJwFdbA1XEpEsxgR4nNM5vZXzbNnTAWcXeqcjx+7lWCaxYx+gXES3OI
+gl/EDZ2UQrIoK4V3QFL78z0NPj9CwnoUFlXVmJyaFXR6IXD1n/T1wHO/2I7uXwL7
+VCttBFLU4dSB8Sff6nqJ6lOT2eogyWbrMmwq2CMrnu6KCmb22rsT60YZ9LcKTwVM
+RGbD/voyTVKLjlEoNqwNrkqR+Ys5aLIE+jv7v+wR4ilNWzICgzFoCVyXwYW/+BF7
+v6UkyJZLGF2lswTV22PjctXeRmeWfBSgTrzZTaFW890KMQuqvAchAt8z1+PRCgxa
+12fBsHWXswnTJAe94zrCl9efY2MASYfp4AxhLZkssqwXlOypmyUf5FSlsRdwvsl0
++5hX9Pc993HJuXSO6FtciH439TsTGUDadKEy+tyGWR4mciScnAFDwNlweEw7DvZ0
+k5dZ/BwDs5Ntv60fk0Ewqokya819UBa0Q13/zEJzlVr82mTQiVPIdBvyqVPpi9E+
+sjUl2eRT/zaMdaoMr7ThaDc4Y1tkgoXPRn5QcuLxXlE0IvJk+IFrxO1PWrTuqpfi
+3YwfNlSdfO0gPh+5wJD8pvJtrLiP6tX7RoTKJMf/OoObwdiYGlt/RBBFtAMRN/4j
+jRAljPme1sKX9EW5ONTF
+=YEy4
+-----END PGP SIGNATURE-----
+
+--WplhKdTI2c8ulnbP--
