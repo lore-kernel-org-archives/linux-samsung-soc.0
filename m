@@ -1,145 +1,121 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] rtc: s5m: fix to update ctrl register
-Date: Fri, 21 Aug 2015 15:58:36 +0900
-Message-ID: <55D6CC1C.9040402@samsung.com>
-References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
- <20150820231551.GE3769@piout.net> <55D67487.3040503@samsung.com>
- <55D67838.6080902@samsung.com> <55D67D14.9060809@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
+Date: Fri, 21 Aug 2015 09:21:41 +0200
+Message-ID: <55D6D185.5070909@osg.samsung.com>
+References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
+ <55D5FBDB.4040904@free.fr>
+ <CANAwSgRHEXuNt1PJY89ujificXj70BhbGhSOpL16yKsKr6hWcQ@mail.gmail.com>
+ <55D676E8.8020802@samsung.com>
+ <CANAwSgR-d-mPnvmi19fiyt89g_B1UkuCya9=4e_19muv-UZrCQ@mail.gmail.com>
+ <55D6A23C.5020403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54682 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751302AbbHUG6m (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:58989 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750798AbbHUHVq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Aug 2015 02:58:42 -0400
-In-reply-to: <55D67D14.9060809@samsung.com>
+	Fri, 21 Aug 2015 03:21:46 -0400
+In-Reply-To: <55D6A23C.5020403@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, sbkim73@samsung.com
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>
 
-On 08/21/2015 10:21 AM, Krzysztof Kozlowski wrote:
-> On 21.08.2015 10:00, Joonyoung Shim wrote:
->> On 08/21/2015 09:44 AM, Krzysztof Kozlowski wrote:
->>> On 21.08.2015 08:15, Alexandre Belloni wrote:
->>>> Hi,
->>>>
->>>> On 13/08/2015 at 17:49:24 +0900, Joonyoung Shim wrote :
->>>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
->>>>> buffer via setting WUDR bit to high after ctrl register is updated.
->>>>>
->>>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
->>>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
->>>>> used to 12 hour mode in Odroid-XU3 board.
->>>>>
->>>>
->>>> >From what I understood, I should expect a v2 of tihat patch also setting
->>>> RUDR, is that right? OR would you prefer that I apply that one and then
->>>> fix RUDR in a following patch?
->>>
->>> Right, I would expect that as well... or a comment if this is not needed.
->>>
+[Adding Przemyslaw Marczak who was working on porting Odroid BL1/BL2/SPL]
+
+Hello,
+
+On 08/21/2015 05:59 AM, Krzysztof Kozlowski wrote:
+> On 21.08.2015 12:41, Anand Moon wrote:
+>> Hi Krzysztof,
 >>
->> Hmm, the driver only writes control register now, so i don't feel the
->> need of patch setting RUDR for control register.
+>> On 21 August 2015 at 06:25, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+>>> On 21.08.2015 03:15, Anand Moon wrote:
+>>>> Hi Daniel,
+>>>>
+>>>> On 20 August 2015 at 21:40, Daniel Lezcano <daniel.lezcano@free.fr> wrote:
+>>>>> On 08/20/2015 12:54 PM, Anand Moon wrote:
+>>>>>>
+>>>>>> Hello Krzysztof/Kukjim,
+>>>>>>
+>>>>>> CPUIdle seen to be not working for Exynos5422 Odroid boards.
+>>>>>>
+>>>>>> Is their any way this feature will be implemented in the future.
+>>>>>
+>>>>>
+>>>>> Yeah a good willing to fix the bl1. More than one year asking for that !
+>>>>> nooo way !!
+>>>>>
+>>>>> Your answer is at the end of
+>>>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
+>>>>>
+>>>>>
+>>>>
+>>>> Thanks for the explanation.
+>>>>
+>>>> I was just referring following the source code.
+>>>>
+>>>> https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/arch/arm/mach-exynos/cpuidle-exynos5422.c
+>>>>
+>>>> It seem that cpufreq and cpuidle go hand in hand.
+>>>
+>>> Bartlomiej was working on cpufreq for Exynos542x:
+>>> http://lkml.iu.edu/hypermail/linux/kernel/1504.2/03139.html
+>>>
+>>> It would be nice to have also cpuidle and suspend features working on
+>>> Exynos542x family but this depends on firmware. Some time ago I
+>>> struggled with suspend on Arndale Octa (Exynos5420) and I failed. I
+>>> think the firmware is the issue here.
+
+There were a lot of Suspend-to-RAM bug fixes lately mostly related to
+critical clocks being gated. It would be nice to give a try on recent
+kernels and see if is still not working.
+
+>>>
+>>> Actually I am not sure what is your question Anand. You are asking if
+>>> someone plans to do this?
+>>
+>> Yes I am asking are their plans to implement cpufreq and cpuidle simultaneously.
 > 
-> Yes, you're right. There is only regmap_write() (not
-> remap_update_bits()) so your patch is completely fine. Thanks for
-> explanation.
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
+> There are no obstacles for implementing them simultaneously so the
+> question is rather who plans to do the cpuidle driver for Exynos542x? I
 
-Thanks for review.
+If the firmware is in a good shape (unfortunately as mentioned by Daniel,
+the one in the Odroids are not) then the generic ARM big.LITTLE CPUidle
+driver (CONFIG_ARM_BIG_LITTLE_CPUIDLE) should work.
 
-I found one more issue, the RTC doesn't keep time on Odroid-XU3 board
-when i turn on board after power off even if RTC battery is connected.
+It is at least working for me on the Exynos5800 based Peach Pi Chromebook:
 
-A difference with RTC driver of hardkernel kernel is that it sets
-not only WUDR bit but also RUDR bit to high at the same time after
-RTC_CTRL register is written. It's same with condition of only writing
-ALARM registers like below description.
+$ cat /sys/devices/system/cpu/cpuidle/current_driver
+big_idle
 
-from S2MPS14 datasheet:
-"3.  For write only Alarm 0&1 Registers (0x0B~0x18), set WUDR & RUDR
-bits to high."
+$ cat /sys/devices/system/cpu/cpu0/cpuidle/state*/name
+WFI
+C1
 
-So i tried it and it works well with keeping time. I'm not sure RTC of
-S2MPS13 type also has a similar issue because it differs a little bit.
+$ cat /sys/devices/system/cpu/cpu0/cpuidle/state*/usage
+7745
+10578
 
-from S2MPS13 datasheet:
-"3.  For write only Alarm 0&1 Registers (0x0B~0x18), set WUDR & A_UDR
-bits to high."
+> don't... at least in nearby future. If I had some spare time then
+> probably I would try to make suspend working.
+>
 
-If S2MPS13 also has same issue, we can fix the problem via just below
-patch.
+Suspend-to-RAM is at least working on the Exynos5420 and Exynos5800
+Chromebooks.
 
-diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index 8c70d78..bb8e888 100644
---- a/drivers/rtc/rtc-s5m.c
-+++ b/drivers/rtc/rtc-s5m.c
-@@ -635,6 +635,10 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
- 	case S2MPS13X:
- 		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
- 		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
-+		if (ret < 0)
-+			break;
-+
-+		ret = s5m8767_rtc_set_alarm_reg(info);
- 		break;
- 
- 	default:
-
-But i can't find any reasonable reason about this fix from datasheet,
-
-Thanks.
+As you mentioned it may depend on the firmware so that does not hold
+true for all the Exynos5420/5422/5800 boards but it would be good to
+know what is the causing S2R to fail.
 
 > Best regards,
 > Krzysztof
 > 
->>
->>> Best regards,
->>> Krzysztof
->>>
->>>
->>>>
->>>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
->>>>> Cc: <stable@vger.kernel.org>
->>>>
->>>> can you update the stable tag with the kernel version introducing the
->>>> issue?
->>
->> Sure, i think it should be v3.16.
->>
->>>>
->>>>> ---
->>>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
->>>>>  1 file changed, 12 insertions(+)
->>>>
->>>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
->>>>> index 8c70d78..03828bb 100644
->>>>> --- a/drivers/rtc/rtc-s5m.c
->>>>> +++ b/drivers/rtc/rtc-s5m.c
->>>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->>>>>  	case S2MPS13X:
->>>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
->>>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
->>>>> +		if (ret < 0)
->>>>> +			break;
->>>>> +
->>>>> +		ret = regmap_update_bits(info->regmap,
->>>>> +				info->regs->rtc_udr_update,
->>>>> +				info->regs->rtc_udr_mask,
->>>>> +				info->regs->rtc_udr_mask);
->>>>
->>>> Very small indentation issue here, it should be aligned with the open
->>>> parenthesis.
->>
->> OK, i will.
->>
->> Thanks.
->>
-> 
-> 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
