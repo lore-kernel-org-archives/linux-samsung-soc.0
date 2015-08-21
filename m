@@ -1,124 +1,63 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/7] phy: exynos-usb2: add vbus regulator support
-Date: Fri, 21 Aug 2015 14:38:37 +0200
-Message-ID: <1440160723-6636-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 5/7] usb: dwc2: remove non-functional clock gating
+Date: Fri, 21 Aug 2015 14:38:41 +0200
+Message-ID: <1440160723-6636-6-git-send-email-m.szyprowski@samsung.com>
 References: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kamil Debski <k.debski@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos USB2 PHY has separate power supply, which is usually provided by
-VBUS regulator. This patch adds support for it. VBUS regulator is
-optional, to keep compatibility with boards, which have VBUS provided
-from some always-on power source.
+During typical gadget operation, dwc2 clock was enabled 3 times: from
+dwc2_gadget_init(), s3c_hsotg_udc_start() and s3c_hsotg_pullup(), and then
+disabled in s3c_hsotg_pullup(), s3c_hsotg_udc_stop() and
+s3c_hsotg_remove(). This really makes no sense, so leave clock control
+code only in dwc2_gadget_init/remove functions.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- .../devicetree/bindings/phy/samsung-phy.txt        |  3 +++
- drivers/phy/phy-samsung-usb2.c                     | 25 ++++++++++++++++++++--
- drivers/phy/phy-samsung-usb2.h                     |  2 ++
- 3 files changed, 28 insertions(+), 2 deletions(-)
+ drivers/usb/dwc2/gadget.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 60c6f2a633e0..0289d3b07853 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -44,6 +44,9 @@ Required properties:
- 	- the "ref" clock is used to get the rate of the clock provided to the
- 	  PHY module
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 47960787f572..bccb60fcdd70 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -3068,8 +3068,6 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
+ 	hsotg->gadget.dev.of_node = hsotg->dev->of_node;
+ 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
  
-+Optional properties:
-+- vbus-supply: power-supply phandle for vbus power source
-+
- The first phandle argument in the PHY specifier identifies the PHY, its
- meaning is compatible dependent. For the currently supported SoCs (Exynos 4210
- and Exynos 4212) it is as follows:
-diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-usb2.c
-index f278a9c547e1..1d22d93b552d 100644
---- a/drivers/phy/phy-samsung-usb2.c
-+++ b/drivers/phy/phy-samsung-usb2.c
-@@ -27,6 +27,13 @@ static int samsung_usb2_phy_power_on(struct phy *phy)
+-	clk_enable(hsotg->clk);
+-
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(hsotg->supplies),
+ 				    hsotg->supplies);
+ 	if (ret) {
+@@ -3139,8 +3137,6 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget)
  
- 	dev_dbg(drv->dev, "Request to power_on \"%s\" usb phy\n",
- 		inst->cfg->label);
-+
-+	if (drv->vbus) {
-+		ret = regulator_enable(drv->vbus);
-+		if (ret)
-+			goto err_regulator;
-+	}
-+
- 	ret = clk_prepare_enable(drv->clk);
- 	if (ret)
- 		goto err_main_clk;
-@@ -48,6 +55,9 @@ err_power_on:
- err_instance_clk:
- 	clk_disable_unprepare(drv->clk);
- err_main_clk:
-+	if (drv->vbus)
-+		regulator_disable(drv->vbus);
-+err_regulator:
- 	return ret;
- }
+ 	regulator_bulk_disable(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
  
-@@ -55,7 +65,7 @@ static int samsung_usb2_phy_power_off(struct phy *phy)
- {
- 	struct samsung_usb2_phy_instance *inst = phy_get_drvdata(phy);
- 	struct samsung_usb2_phy_driver *drv = inst->drv;
--	int ret;
-+	int ret = 0;
+-	clk_disable(hsotg->clk);
+-
+ 	mutex_unlock(&hsotg->init_mutex);
  
- 	dev_dbg(drv->dev, "Request to power_off \"%s\" usb phy\n",
- 		inst->cfg->label);
-@@ -68,7 +78,10 @@ static int samsung_usb2_phy_power_off(struct phy *phy)
- 	}
- 	clk_disable_unprepare(drv->ref_clk);
- 	clk_disable_unprepare(drv->clk);
--	return 0;
-+	if (drv->vbus)
-+		ret = regulator_disable(drv->vbus);
-+
-+	return ret;
- }
- 
- static const struct phy_ops samsung_usb2_phy_ops = {
-@@ -203,6 +216,14 @@ static int samsung_usb2_phy_probe(struct platform_device *pdev)
- 			return ret;
+ 	return 0;
+@@ -3174,7 +3170,6 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
+ 	mutex_lock(&hsotg->init_mutex);
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+ 	if (is_on) {
+-		clk_enable(hsotg->clk);
+ 		hsotg->enabled = 1;
+ 		s3c_hsotg_core_init_disconnected(hsotg, false);
+ 		s3c_hsotg_core_connect(hsotg);
+@@ -3182,7 +3177,6 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
+ 		s3c_hsotg_core_disconnect(hsotg);
+ 		s3c_hsotg_disconnect(hsotg);
+ 		hsotg->enabled = 0;
+-		clk_disable(hsotg->clk);
  	}
  
-+	drv->vbus = devm_regulator_get(dev, "vbus");
-+	if (IS_ERR(drv->vbus)) {
-+		ret = PTR_ERR(drv->vbus);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+		drv->vbus = NULL;
-+	}
-+
- 	for (i = 0; i < drv->cfg->num_phys; i++) {
- 		char *label = drv->cfg->phys[i].label;
- 		struct samsung_usb2_phy_instance *p = &drv->instances[i];
-diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
-index 44bead9b8f34..6563e7ca0ac4 100644
---- a/drivers/phy/phy-samsung-usb2.h
-+++ b/drivers/phy/phy-samsung-usb2.h
-@@ -17,6 +17,7 @@
- #include <linux/device.h>
- #include <linux/regmap.h>
- #include <linux/spinlock.h>
-+#include <linux/regulator/consumer.h>
- 
- #define KHZ 1000
- #define MHZ (KHZ * KHZ)
-@@ -37,6 +38,7 @@ struct samsung_usb2_phy_driver {
- 	const struct samsung_usb2_phy_config *cfg;
- 	struct clk *clk;
- 	struct clk *ref_clk;
-+	struct regulator *vbus;
- 	unsigned long ref_rate;
- 	u32 ref_reg_val;
- 	struct device *dev;
+ 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
 -- 
 1.9.2
