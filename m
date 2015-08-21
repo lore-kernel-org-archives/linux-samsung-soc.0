@@ -1,155 +1,226 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] rtc: s5m: fix to update ctrl register
-Date: Fri, 21 Aug 2015 16:25:00 +0900
-Message-ID: <55D6D24C.3010109@samsung.com>
-References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
- <20150820231551.GE3769@piout.net> <55D67487.3040503@samsung.com>
- <55D67838.6080902@samsung.com> <55D67D14.9060809@samsung.com>
- <55D6CC1C.9040402@samsung.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Subject: Re: [RFC PATCH v6 1/9] mmc: dw_mmc: Add external dma interface
+ support
+Date: Fri, 21 Aug 2015 15:27:43 +0800
+Message-ID: <55D6D2EF.7010501@rock-chips.com>
+References: <1440060204-26203-1-git-send-email-shawn.lin@rock-chips.com>
+ <1440060233-26244-1-git-send-email-shawn.lin@rock-chips.com>
+ <55D6C4D4.8010005@samsung.com> <55D6C57D.4070402@rock-chips.com>
+ <55D6C6B6.3060706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <55D6CC1C.9040402@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, sbkim73@samsung.com
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <55D6C6B6.3060706@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, ulf.hansson@linaro.org
+Cc: shawn.lin@rock-chips.com, Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Zhangfei Gao <zhangfei.gao@linaro.org>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, heiko@sntech.de, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, CPGS <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 21.08.2015 15:58, Joonyoung Shim wrote:
-> On 08/21/2015 10:21 AM, Krzysztof Kozlowski wrote:
->> On 21.08.2015 10:00, Joonyoung Shim wrote:
->>> On 08/21/2015 09:44 AM, Krzysztof Kozlowski wrote:
->>>> On 21.08.2015 08:15, Alexandre Belloni wrote:
->>>>> Hi,
->>>>>
->>>>> On 13/08/2015 at 17:49:24 +0900, Joonyoung Shim wrote :
->>>>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
->>>>>> buffer via setting WUDR bit to high after ctrl register is updated.
->>>>>>
->>>>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
->>>>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
->>>>>> used to 12 hour mode in Odroid-XU3 board.
->>>>>>
->>>>>
->>>>> >From what I understood, I should expect a v2 of tihat patch also setting
->>>>> RUDR, is that right? OR would you prefer that I apply that one and then
->>>>> fix RUDR in a following patch?
->>>>
->>>> Right, I would expect that as well... or a comment if this is not needed.
->>>>
+On 2015/8/21 14:35, Jaehoon Chung wrote:
+> On 08/21/2015 03:30 PM, Shawn Lin wrote:
+>> On 2015/8/21 14:27, Jaehoon Chung wrote:
+>>> Hi, Shawn.
 >>>
->>> Hmm, the driver only writes control register now, so i don't feel the
->>> need of patch setting RUDR for control register.
+>>> Is this based on Ulf's repository?
 >>
->> Yes, you're right. There is only regmap_write() (not
->> remap_update_bits()) so your patch is completely fine. Thanks for
->> explanation.
 >>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
-> 
-> Thanks for review.
-> 
-> I found one more issue, the RTC doesn't keep time on Odroid-XU3 board
-> when i turn on board after power off even if RTC battery is connected.
-> 
-> A difference with RTC driver of hardkernel kernel is that it sets
-> not only WUDR bit but also RUDR bit to high at the same time after
-> RTC_CTRL register is written. It's same with condition of only writing
-> ALARM registers like below description.
+>> no, it's based on "https://github.com/jh80chung/dw-mmc.git tags/dw-m=
+mc-for-ulf-v4.2" =EF=BC=9A=EF=BC=89
+>
+> Oh..I will rebase to Ulf's next branch on this weekend.
+> Then could you rebase this patch? And i added more comments at below.=
+=2E :)
+>
 
-It seems that setting RUDR to high is needed...  but it shouldn't. For
-example in SM-G900H with S2MPS11 it is set before reading RTC_CTRL
-register. Mainline driver does not perform read.
+Okay, I will rebase to Ulf's next.
 
-Maybe RUDR is not set high properly before some next time read and your
-code is a coincidence, a work-around?
-
-Best regards,
-Krzysztof
-
-> 
-> from S2MPS14 datasheet:
-> "3.  For write only Alarm 0&1 Registers (0x0B~0x18), set WUDR & RUDR
-> bits to high."
-> 
-> So i tried it and it works well with keeping time. I'm not sure RTC of
-> S2MPS13 type also has a similar issue because it differs a little bit.
-> 
-> from S2MPS13 datasheet:
-> "3.  For write only Alarm 0&1 Registers (0x0B~0x18), set WUDR & A_UDR
-> bits to high."
-> 
-> If S2MPS13 also has same issue, we can fix the problem via just below
-> patch.
-> 
-> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> index 8c70d78..bb8e888 100644
-> --- a/drivers/rtc/rtc-s5m.c
-> +++ b/drivers/rtc/rtc-s5m.c
-> @@ -635,6 +635,10 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->  	case S2MPS13X:
->  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
->  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
-> +		if (ret < 0)
-> +			break;
-> +
-> +		ret = s5m8767_rtc_set_alarm_reg(info);
->  		break;
->  
->  	default:
-> 
-> But i can't find any reasonable reason about this fix from datasheet,
-> 
-> Thanks.
-> 
->> Best regards,
->> Krzysztof
+> Best Regards,
+> Jaehoon Chung
+>
 >>
->>>
->>>> Best regards,
->>>> Krzysztof
+
+[...]
+
+>>>> index ec6dbcd..7e1d13b 100644
+>>>> --- a/drivers/mmc/host/dw_mmc-pltfm.c
+>>>> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
+>>>> @@ -59,6 +59,8 @@ int dw_mci_pltfm_register(struct platform_device=
+ *pdev,
+>>>>        host->pdata =3D pdev->dev.platform_data;
 >>>>
+>>>>        regs =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>>> +    /* Get registers' physical base address */
+>>>> +    host->phy_regs =3D (void *)(regs->start);
+>>>>        host->regs =3D devm_ioremap_resource(&pdev->dev, regs);
+>>>>        if (IS_ERR(host->regs))
+>>>>            return PTR_ERR(host->regs);
+>>>
+>>> Is this board specific code? If so, separate the patch.
+
+It's might not board specific code.
+dmaengine need dw_mmc's *physical* fifo address for data transfer, so I=
+=20
+get controller physical address  here in order to calculate physical=20
+fifo address.
+
+regs is from dt-bindings, for instance:
+          dwmmc0@12200000 {
+                  compatible =3D "snps,dw-mshc";
+                   clocks =3D <&clock 351>, <&clock 132>;
+                  clock-names =3D "biu", "ciu";
+                  reg =3D <0x12200000 0x1000>;
+                  interrupts =3D <0 75 0>;
+                  #address-cells =3D <1>;
+                  #size-cells =3D <0>;
+          };
+
+so, host->phy_regs will be 0x12200000 .
+
+[...]
+
+>>>> +static void dw_mci_dmac_complete_dma(void *arg)
+>>>>    {
+>>>> +    struct dw_mci *host =3D arg;
+>>>>        struct mmc_data *data =3D host->data;
 >>>>
->>>>>
->>>>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
->>>>>> Cc: <stable@vger.kernel.org>
->>>>>
->>>>> can you update the stable tag with the kernel version introducing the
->>>>> issue?
+>>>>        dev_vdbg(host->dev, "DMA complete\n");
+>>>>
+>>>> +    if (host->use_dma =3D=3D TRANS_MODE_EDMAC)
+>>>> +        if (data && (data->flags & MMC_DATA_READ))
 >>>
->>> Sure, i think it should be v3.16.
+>>> Combine one condition.
+
+okay.
+
+[...]
+
+>>>> +    u32 fifo_offset =3D host->fifo_reg - host->regs;
+>>>> +    int ret =3D 0;
+>>>> +
+>>>> +    /* Set external dma config: burst size, burst width */
+>>>> +    cfg.dst_addr =3D (dma_addr_t)(host->phy_regs + fifo_offset);
 >>>
->>>>>
->>>>>> ---
->>>>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
->>>>>>  1 file changed, 12 insertions(+)
->>>>>
->>>>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
->>>>>> index 8c70d78..03828bb 100644
->>>>>> --- a/drivers/rtc/rtc-s5m.c
->>>>>> +++ b/drivers/rtc/rtc-s5m.c
->>>>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->>>>>>  	case S2MPS13X:
->>>>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
->>>>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
->>>>>> +		if (ret < 0)
->>>>>> +			break;
->>>>>> +
->>>>>> +		ret = regmap_update_bits(info->regmap,
->>>>>> +				info->regs->rtc_udr_update,
->>>>>> +				info->regs->rtc_udr_mask,
->>>>>> +				info->regs->rtc_udr_mask);
->>>>>
->>>>> Very small indentation issue here, it should be aligned with the open
->>>>> parenthesis.
+>>> host->phy_regs is not assigned?
+
+we got it at dw_mci_pltfm_register. See comments above. :)
+
+[...]
+
+>>>>            mmc->max_blk_count =3D mmc->max_req_size / 512;
+>>>> +    } else if (host->use_dma =3D=3D TRANS_MODE_EDMAC) {
+>>>> +            mmc->max_segs =3D 64;
+>>>> +            mmc->max_blk_size =3D 65536;
+>>>> +            mmc->max_blk_count =3D 65535;
+>>>> +            mmc->max_req_size =3D
+>>>> +                    mmc->max_blk_size * mmc->max_blk_count;
+>>>> +            mmc->max_seg_size =3D mmc->max_req_size;
 >>>
->>> OK, i will.
+>>> Fix the indention
+
+Hmm..I check it attentively but can't find the indention . Might it's=20
+because you apply it against Ulf's repo?
+
 >>>
->>> Thanks.
+
+[...]
+
+>>>>
+>>>> -    /* Alloc memory for sg translation */
+>>>> -    host->sg_cpu =3D dmam_alloc_coherent(host->dev, PAGE_SIZE,
+>>>> -                      &host->sg_dma, GFP_KERNEL);
+>>>> -    if (!host->sg_cpu) {
+>>>> -        dev_err(host->dev, "%s: could not alloc DMA memory\n",
+>>>> -            __func__);
+>>>> +    /* Check tansfer mode */
+>>>> +    trans_mode =3D SDMMC_GET_TRANS_MODE(mci_readl(host, HCON));
+>>>> +    if (trans_mode =3D=3D 0) {
+>>>> +        trans_mode =3D TRANS_MODE_IDMAC;
+>>>> +    } else if (trans_mode =3D=3D 1 || trans_mode =3D=3D 2) {
+>>>> +        trans_mode =3D TRANS_MODE_EDMAC;
+>>>> +    } else {
+>>>> +        trans_mode =3D TRANS_MODE_PIO;
 >>>
->>
->>
-> 
-> 
+>>> what are trans_mode "0, 1, 2"?
+>>> (00 - none) is NO-DMA interface, isn't? is it IDMAC mode?
+>>>
+
+No, I guess the databook's ambiguous description confuse everybody.
+
+I got double comfirm from my ASCI team as well as Synoposys
+2b'00: NO-DMA interface -->  It support IDMAC actually
+2b'01 & 2b'02: DW_DMA & GENERIC_DMA --> Support 2 types of external dma=
+=2E
+2b'02: NON-DW-DMA --> only support PIO
+
+refer to the description below:
+Parameter Name: DMA_INTERFACE
+Legal Values: 0-3
+Default Value: 0
+Description:
+  0- No DMA Interface
+  1- DesignWare DMA Interface
+  2- Generic DMA Interface
+  3- Non DW DMA Interface
+In DesignWare DMA mode, request/acknowledge protocol meets DW_ahb_dmac
+controller protocol. In this mode, host data bus is also used for DMA=20
+transfers.Generic DMA-type interface has simpler request/acknowledge=20
+handshake and has dedicated read/write data bus for DMA transfers. Non=20
+DW DMAC interface uses dw_dma_single interface in addition to the=20
+existing interface and uses host data bus for DMA transfers. This is=20
+configurable only if INTERNAL_DMAC=3D0.
+
+>>>>            goto no_dma;
+>>>>        }
+>
+>>>> +        dev_info(host->dev, "Using external DMA controller.\n");
+>>>> +    }
+>>>>
+>>>>        if (!host->dma_ops)
+>>>>            goto no_dma;
+>>>> @@ -2562,12 +2720,12 @@ static void dw_mci_init_dma(struct dw_mci =
+*host)
+>>>>            goto no_dma;
+>>>>        }
+>>>>
+>>>> -    host->use_dma =3D 1;
+>>>> +    host->use_dma =3D trans_mode;
+>>>
+>>> Also confuse, if trans_mode is assigned host->use_dma, can mode val=
+ue be directly assigned to host->use_dma?
+>>>
+
+Good idea, I will do it.  :)
+
+>>> trans_mode =3D TRAMS_MODE_PIO;
+>>> host->use_dma =3D trans_mode;
+>>>
+
+[...]
+
+>>>>
+>>>> @@ -2890,7 +3047,7 @@ int dw_mci_probe(struct dw_mci *host)
+>>>>         * Get the host data width - this assumes that HCON has bee=
+n set with
+>>>>         * the correct values.
+>>>>         */
+>>>> -    i =3D (mci_readl(host, HCON) >> 7) & 0x7;
+>>>> +    i =3D SDMMC_GET_HDATA_WIDTH(mci_readl(host, HCON));
+>>>
+>>> This is not related with supporting external dma interface.
+>>> Separate this.
+>>>
+
+Okay, It will be split into another one.
+
+>>>>        if (!i) {
+>>>>            host->push_data =3D dw_mci_push_data16;
+>>>>            host->pull_data =3D dw_mci_pull_data16;
+
+
+
+--=20
+Best Regards
+Shawn Lin
+
