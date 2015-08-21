@@ -1,97 +1,105 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] rtc: s5m: fix to update ctrl register
-Date: Fri, 21 Aug 2015 10:21:24 +0900
-Message-ID: <55D67D14.9060809@samsung.com>
-References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
- <20150820231551.GE3769@piout.net> <55D67487.3040503@samsung.com>
- <55D67838.6080902@samsung.com>
+Subject: Re: [PATCH 1/5] drivers: soc: add support for exynos SROM driver
+Date: Fri, 21 Aug 2015 10:27:53 +0900
+Message-ID: <55D67E99.60505@samsung.com>
+References: <1430296712-10287-1-git-send-email-pankaj.dubey@samsung.com>
+ <1430296712-10287-2-git-send-email-pankaj.dubey@samsung.com>
+ <5565AFE6.5030106@samsung.com> <55D5BB56.1030405@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55315 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:55367 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752142AbbHUBVZ (ORCPT
+	with ESMTP id S1752111AbbHUB1y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Aug 2015 21:21:25 -0400
-In-reply-to: <55D67838.6080902@samsung.com>
+	Thu, 20 Aug 2015 21:27:54 -0400
+In-reply-to: <55D5BB56.1030405@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, sbkim73@samsung.com
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: thomas.ab@samsung.com, kgene@kernel.org, linux@arm.linux.org.uk, heiko@sntech.de
 
-On 21.08.2015 10:00, Joonyoung Shim wrote:
-> On 08/21/2015 09:44 AM, Krzysztof Kozlowski wrote:
->> On 21.08.2015 08:15, Alexandre Belloni wrote:
->>> Hi,
+On 20.08.2015 20:34, Pankaj Dubey wrote:
+> Hi Krzysztof,
+> 
+> Sorry for delay in reply, as I got busy in some other official
+> assignments and could not take this series further at that time.
+> 
+> On Wednesday 27 May 2015 05:22 PM, Krzysztof Kozlowski wrote:
+>> W dniu 29.04.2015 o 17:38, Pankaj Dubey pisze:
+>>> This patch adds Exynos SROM controller driver which will handle
+>>> save restore of SROM registers during S2R.
 >>>
->>> On 13/08/2015 at 17:49:24 +0900, Joonyoung Shim wrote :
->>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
->>>> buffer via setting WUDR bit to high after ctrl register is updated.
->>>>
->>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
->>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
->>>> used to 12 hour mode in Odroid-XU3 board.
->>>>
->>>
->>> >From what I understood, I should expect a v2 of tihat patch also setting
->>> RUDR, is that right? OR would you prefer that I apply that one and then
->>> fix RUDR in a following patch?
+>>> Change-Id: Iaddaaebc1d7090c9889e948e68e886519562c43c
 >>
->> Right, I would expect that as well... or a comment if this is not needed.
+>> Please remove it.
+> 
+> Will do it.
+> 
+>>
+>>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>>> ---
+>>>   drivers/soc/Kconfig               |   1 +
+>>>   drivers/soc/Makefile              |   1 +
+>>>   drivers/soc/samsung/Kconfig       |  14 ++++
+>>>   drivers/soc/samsung/Makefile      |   1 +
+>>>   drivers/soc/samsung/exynos-srom.c | 142
+>>> ++++++++++++++++++++++++++++++++++++++
+>>>   drivers/soc/samsung/exynos-srom.h |  51 ++++++++++++++
+>>>   6 files changed, 210 insertions(+)
+>>>   create mode 100644 drivers/soc/samsung/Kconfig
+>>>   create mode 100644 drivers/soc/samsung/Makefile
+>>>   create mode 100644 drivers/soc/samsung/exynos-srom.c
+>>>   create mode 100644 drivers/soc/samsung/exynos-srom.h
+>>>
+>>> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+>>> index 76d6bd4..c3abfbe 100644
+>>> --- a/drivers/soc/Kconfig
+>>> +++ b/drivers/soc/Kconfig
+>>> @@ -1,6 +1,7 @@
+>>>   menu "SOC (System On Chip) specific Drivers"
+>>>
+>>>   source "drivers/soc/qcom/Kconfig"
+>>> +source "drivers/soc/samsung/Kconfig"
+>>>   source "drivers/soc/ti/Kconfig"
+>>>   source "drivers/soc/versatile/Kconfig"
+>>>
+>>> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+>>> index 063113d..620366f 100644
+>>> --- a/drivers/soc/Makefile
+>>> +++ b/drivers/soc/Makefile
+>>> @@ -3,6 +3,7 @@
+>>>   #
+>>>
+>>>   obj-$(CONFIG_ARCH_QCOM)        += qcom/
+>>> +obj-$(CONFIG_SOC_SAMSUNG)    += samsung/
+>>>   obj-$(CONFIG_ARCH_TEGRA)    += tegra/
+>>>   obj-$(CONFIG_SOC_TI)        += ti/
+>>>   obj-$(CONFIG_PLAT_VERSATILE)    += versatile/
+>>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+>>> new file mode 100644
+>>> index 0000000..b6fa4e6
+>>> --- /dev/null
+>>> +++ b/drivers/soc/samsung/Kconfig
+>>> @@ -0,0 +1,14 @@
+>>> +#
+>>> +# SAMSUNG SoC drivers
+>>> +#
+>>> +menu "Samsung SOC driver support"
+>>> +
+>>> +config SOC_SAMSUNG
+>>> +    bool
+>>
+>> Any reason for not using menuconfig?
 >>
 > 
-> Hmm, the driver only writes control register now, so i don't feel the
-> need of patch setting RUDR for control register.
+> For one of my Exynos PMU patchset [1] this suggestion came from Russel
+> King, not to use user-visible sysmbol if not required.
+> [1]:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/304451.html
 
-Yes, you're right. There is only regmap_write() (not
-remap_update_bits()) so your patch is completely fine. Thanks for
-explanation.
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Okay, thanks. I'm fine with that.
 
 Best regards,
 Krzysztof
-
-> 
->> Best regards,
->> Krzysztof
->>
->>
->>>
->>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
->>>> Cc: <stable@vger.kernel.org>
->>>
->>> can you update the stable tag with the kernel version introducing the
->>> issue?
-> 
-> Sure, i think it should be v3.16.
-> 
->>>
->>>> ---
->>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
->>>>  1 file changed, 12 insertions(+)
->>>
->>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
->>>> index 8c70d78..03828bb 100644
->>>> --- a/drivers/rtc/rtc-s5m.c
->>>> +++ b/drivers/rtc/rtc-s5m.c
->>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->>>>  	case S2MPS13X:
->>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
->>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
->>>> +		if (ret < 0)
->>>> +			break;
->>>> +
->>>> +		ret = regmap_update_bits(info->regmap,
->>>> +				info->regs->rtc_udr_update,
->>>> +				info->regs->rtc_udr_mask,
->>>> +				info->regs->rtc_udr_mask);
->>>
->>> Very small indentation issue here, it should be aligned with the open
->>> parenthesis.
-> 
-> OK, i will.
-> 
-> Thanks.
-> 
