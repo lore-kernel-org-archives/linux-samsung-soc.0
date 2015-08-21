@@ -1,73 +1,97 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 4/4 RESEND] spi: s3c64xx: replace clock disabling with
- runtime PM suspend call in remove function
-Date: Fri, 21 Aug 2015 10:17:07 +0900
-Message-ID: <55D67C13.8000909@samsung.com>
-References: <55D63457.5060901@gmail.com>
+Subject: Re: [PATCH] rtc: s5m: fix to update ctrl register
+Date: Fri, 21 Aug 2015 10:21:24 +0900
+Message-ID: <55D67D14.9060809@samsung.com>
+References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
+ <20150820231551.GE3769@piout.net> <55D67487.3040503@samsung.com>
+ <55D67838.6080902@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:52599 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752111AbbHUBRG (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:55315 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752142AbbHUBVZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Aug 2015 21:17:06 -0400
-In-reply-to: <55D63457.5060901@gmail.com>
+	Thu, 20 Aug 2015 21:21:25 -0400
+In-reply-to: <55D67838.6080902@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, sbkim73@samsung.com
 
-On 21.08.2015 05:11, Heiner Kallweit wrote:
-> Simplify s3c64xx_spi_remove by replacing the clock disabling with calling
-> runtime PM suspend which does the same.
-> Waking up the device if it was suspended wouldn't be strictly needed
-> for this driver but using pm_runtime_get_sync is cleaner and makes
-> s3c64xx_spi_remove more consistent with the runtime PM handling in
-> s3c64xx_spi_setup.
+On 21.08.2015 10:00, Joonyoung Shim wrote:
+> On 08/21/2015 09:44 AM, Krzysztof Kozlowski wrote:
+>> On 21.08.2015 08:15, Alexandre Belloni wrote:
+>>> Hi,
+>>>
+>>> On 13/08/2015 at 17:49:24 +0900, Joonyoung Shim wrote :
+>>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
+>>>> buffer via setting WUDR bit to high after ctrl register is updated.
+>>>>
+>>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
+>>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
+>>>> used to 12 hour mode in Odroid-XU3 board.
+>>>>
+>>>
+>>> >From what I understood, I should expect a v2 of tihat patch also setting
+>>> RUDR, is that right? OR would you prefer that I apply that one and then
+>>> fix RUDR in a following patch?
+>>
+>> Right, I would expect that as well... or a comment if this is not needed.
+>>
 > 
-> pm_runtime_force_suspend does most of the work for us:
-> disabling the clocks, disabling runtime PM and setting it to
-> "suspended" state.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> Changed:
-> - Added to the patch set
-> 
->  drivers/spi/spi-s3c64xx.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 735b7f5..4a91a6c 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1225,13 +1225,12 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
->  	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
->  	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
->  
-> -	pm_runtime_disable(&pdev->dev);
-> +	pm_runtime_get_sync(&pdev->dev);
->  
->  	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
->  
-> -	clk_disable_unprepare(sdd->src_clk);
-> -
-> -	clk_disable_unprepare(sdd->clk);
-> +	pm_runtime_put_noidle(&pdev->dev);
-> +	pm_runtime_force_suspend(&pdev->dev);
->  
->  	return 0;
->  }
+> Hmm, the driver only writes control register now, so i don't feel the
+> need of patch setting RUDR for control register.
 
-The get+put_noidle looks good. But replacing this with
-pm_runtime_force_suspend() does not.
+Yes, you're right. There is only regmap_write() (not
+remap_update_bits()) so your patch is completely fine. Thanks for
+explanation.
 
-The device is going to be removed so we do not want to do anything with
-it any more. We do not want to suspend it. Probably this would work fine
-but it is not intuitive. I think it's better to just:
-get(), disable(), set_suspended(), put_noidle()
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
+
+> 
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>>>
+>>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>>>> Cc: <stable@vger.kernel.org>
+>>>
+>>> can you update the stable tag with the kernel version introducing the
+>>> issue?
+> 
+> Sure, i think it should be v3.16.
+> 
+>>>
+>>>> ---
+>>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
+>>>>  1 file changed, 12 insertions(+)
+>>>
+>>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>>>> index 8c70d78..03828bb 100644
+>>>> --- a/drivers/rtc/rtc-s5m.c
+>>>> +++ b/drivers/rtc/rtc-s5m.c
+>>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>>>>  	case S2MPS13X:
+>>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+>>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
+>>>> +		if (ret < 0)
+>>>> +			break;
+>>>> +
+>>>> +		ret = regmap_update_bits(info->regmap,
+>>>> +				info->regs->rtc_udr_update,
+>>>> +				info->regs->rtc_udr_mask,
+>>>> +				info->regs->rtc_udr_mask);
+>>>
+>>> Very small indentation issue here, it should be aligned with the open
+>>> parenthesis.
+> 
+> OK, i will.
+> 
+> Thanks.
+> 
