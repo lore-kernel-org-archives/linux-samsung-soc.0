@@ -1,61 +1,110 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH v2] rtc: s5m: fix to update ctrl register
-Date: Fri, 21 Aug 2015 18:43:41 +0900
-Message-ID: <1440150221-2609-1-git-send-email-jy0922.shim@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, alexandre.belloni@free-electrons.com, a.zummo@towertech.it, sbkim73@samsung.com, k.kozlowski@samsung.com, jy0922.shim@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/7] arm: dts: exynos: add vbus regulator to USB2 phy nodes
+Date: Fri, 21 Aug 2015 14:38:38 +0200
+Message-ID: <1440160723-6636-3-git-send-email-m.szyprowski@samsung.com>
+References: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:22196 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751769AbbHUMjQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Aug 2015 08:39:16 -0400
+In-reply-to: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-According to datasheet, the S2MPS13X and S2MPS14X should update write
-buffer via setting WUDR bit to high after ctrl register is written.
+Exynos USB2 PHY driver now supports VBUS regulator, so add it to all
+boards which have it available. This also fixes commit
+7eec1266751bd3a25e35ce88686634c768fedc24 ("ARM: dts: Add Maxim 77693
+PMIC to exynos4412-trats2"), which added new regulators to Trats2 board,
+but without linking them to the consumers.
 
-If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
-tools/testing/selftests/timers/rtctest.c test program and hour format is
-used to 12 hour mode in Odroid-XU3 board.
-
-One more issue is the RTC doesn't keep time on Odroid-XU3 board when i
-turn on board after power off even if RTC battery is connected. It can
-be solved as setting WUDR & RUDR bits to high at the same time after
-RTC_CTRL register is written. It's same with condition of only writing
-ALARM registers, so this is for only S2MPS14 and we should set WUDR &
-A_UDR bits to high on S2MPS13.
-
-I can't find any reasonable description about this like fix from
-datasheet, but can find similar codes from rtc driver source of
-hardkernel kernel and vender kernel.
-
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: <stable@vger.kernel.org> # v3.16
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-Changelog for v2:
-- update commit description and code to fix time keeping problem
-- update the stable tag with the kernel version
+ arch/arm/boot/dts/exynos3250-monk.dts           | 1 +
+ arch/arm/boot/dts/exynos3250-rinato.dts         | 1 +
+ arch/arm/boot/dts/exynos4210-trats.dts          | 2 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts         | 1 +
+ 5 files changed, 5 insertions(+), 2 deletions(-)
 
- drivers/rtc/rtc-s5m.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index 8c70d78..646bf45 100644
---- a/drivers/rtc/rtc-s5m.c
-+++ b/drivers/rtc/rtc-s5m.c
-@@ -635,6 +635,16 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
- 	case S2MPS13X:
- 		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
- 		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
-+		if (ret < 0)
-+			break;
-+
-+		/*
-+		 * Should set WUDR & (RUDR or AUDR) bits to high after writing
-+		 * RTC_CTRL register like writing Alarm registers. We can't find
-+		 * the description from datasheet but vender code does that
-+		 * really.
-+		 */
-+		ret = s5m8767_rtc_set_alarm_reg(info);
- 		break;
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index 540a0adf2be6..35b39d2255d3 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -161,6 +161,7 @@
+ };
  
- 	default:
+ &exynos_usbphy {
++	vbus-supply = <&safeout_reg>;
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 41a5fafb9aa9..23623cd3ebd9 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -153,6 +153,7 @@
+ 
+ &exynos_usbphy {
+ 	status = "okay";
++	vbus-supply = <&safeout_reg>;
+ };
+ 
+ &hsotg {
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index ba34886f8b65..01d38f2145b9 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -251,6 +251,7 @@
+ 
+ &exynos_usbphy {
+ 	status = "okay";
++	vbus-supply = <&safe1_sreg>;
+ };
+ 
+ &fimd {
+@@ -448,7 +449,6 @@
+ 
+ 			safe1_sreg: ESAFEOUT1 {
+ 			     regulator-name = "SAFEOUT1";
+-			     regulator-always-on;
+ 			};
+ 
+ 			safe2_sreg: ESAFEOUT2 {
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index eb379526e234..2c04297825fe 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -248,6 +248,7 @@
+ 
+ &exynos_usbphy {
+ 	status = "okay";
++	vbus-supply = <&safeout1_reg>;
+ };
+ 
+ &fimd {
+@@ -486,7 +487,6 @@
+ 
+ 			safeout1_reg: ESAFEOUT1 {
+ 				regulator-name = "SAFEOUT1";
+-				regulator-always-on;
+ 			};
+ 
+ 			safeout2_reg: ESAFEOUT2 {
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 2a1ebb76ebe0..50a5e8a85283 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -391,6 +391,7 @@
+ };
+ 
+ &exynos_usbphy {
++	vbus-supply = <&esafeout1_reg>;
+ 	status = "okay";
+ };
+ 
 -- 
-1.9.1
+1.9.2
