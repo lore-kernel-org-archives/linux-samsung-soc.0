@@ -1,105 +1,69 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/5] drivers: soc: add support for exynos SROM driver
-Date: Fri, 21 Aug 2015 10:27:53 +0900
-Message-ID: <55D67E99.60505@samsung.com>
-References: <1430296712-10287-1-git-send-email-pankaj.dubey@samsung.com>
- <1430296712-10287-2-git-send-email-pankaj.dubey@samsung.com>
- <5565AFE6.5030106@samsung.com> <55D5BB56.1030405@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL v2 2/5] Samsung 2nd DT updates for v4.3
+Date: Thu, 20 Aug 2015 18:37:26 -0700
+Message-ID: <20150821013726.GE4865@localhost>
+References: <55CCE517.2070003@kernel.org>
+ <55CCE6F6.1090001@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55367 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752111AbbHUB1y (ORCPT
+Received: from mail-pa0-f68.google.com ([209.85.220.68]:36025 "EHLO
+	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752793AbbHUCHs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Aug 2015 21:27:54 -0400
-In-reply-to: <55D5BB56.1030405@samsung.com>
+	Thu, 20 Aug 2015 22:07:48 -0400
+Received: by pawq9 with SMTP id q9so3017866paw.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2015 19:07:48 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <55CCE6F6.1090001@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: thomas.ab@samsung.com, kgene@kernel.org, linux@arm.linux.org.uk, heiko@sntech.de
+To: Kukjin Kim <kgene@kernel.org>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 20.08.2015 20:34, Pankaj Dubey wrote:
-> Hi Krzysztof,
+On Fri, Aug 14, 2015 at 03:50:30AM +0900, Kukjin Kim wrote:
+> The following changes since commit 5e080b078fa1f929d9aa5586985d5e7c0739d207:
 > 
-> Sorry for delay in reply, as I got busy in some other official
-> assignments and could not take this series further at that time.
+>   ARM: dts: Extend exynos5420-pinctrl nodes using labels instead of
+> paths (2015-07-21 13:01:23 +0900)
 > 
-> On Wednesday 27 May 2015 05:22 PM, Krzysztof Kozlowski wrote:
->> W dniu 29.04.2015 o 17:38, Pankaj Dubey pisze:
->>> This patch adds Exynos SROM controller driver which will handle
->>> save restore of SROM registers during S2R.
->>>
->>> Change-Id: Iaddaaebc1d7090c9889e948e68e886519562c43c
->>
->> Please remove it.
+> are available in the git repository at:
 > 
-> Will do it.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-late-dt
 > 
->>
->>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->>> ---
->>>   drivers/soc/Kconfig               |   1 +
->>>   drivers/soc/Makefile              |   1 +
->>>   drivers/soc/samsung/Kconfig       |  14 ++++
->>>   drivers/soc/samsung/Makefile      |   1 +
->>>   drivers/soc/samsung/exynos-srom.c | 142
->>> ++++++++++++++++++++++++++++++++++++++
->>>   drivers/soc/samsung/exynos-srom.h |  51 ++++++++++++++
->>>   6 files changed, 210 insertions(+)
->>>   create mode 100644 drivers/soc/samsung/Kconfig
->>>   create mode 100644 drivers/soc/samsung/Makefile
->>>   create mode 100644 drivers/soc/samsung/exynos-srom.c
->>>   create mode 100644 drivers/soc/samsung/exynos-srom.h
->>>
->>> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
->>> index 76d6bd4..c3abfbe 100644
->>> --- a/drivers/soc/Kconfig
->>> +++ b/drivers/soc/Kconfig
->>> @@ -1,6 +1,7 @@
->>>   menu "SOC (System On Chip) specific Drivers"
->>>
->>>   source "drivers/soc/qcom/Kconfig"
->>> +source "drivers/soc/samsung/Kconfig"
->>>   source "drivers/soc/ti/Kconfig"
->>>   source "drivers/soc/versatile/Kconfig"
->>>
->>> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
->>> index 063113d..620366f 100644
->>> --- a/drivers/soc/Makefile
->>> +++ b/drivers/soc/Makefile
->>> @@ -3,6 +3,7 @@
->>>   #
->>>
->>>   obj-$(CONFIG_ARCH_QCOM)        += qcom/
->>> +obj-$(CONFIG_SOC_SAMSUNG)    += samsung/
->>>   obj-$(CONFIG_ARCH_TEGRA)    += tegra/
->>>   obj-$(CONFIG_SOC_TI)        += ti/
->>>   obj-$(CONFIG_PLAT_VERSATILE)    += versatile/
->>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
->>> new file mode 100644
->>> index 0000000..b6fa4e6
->>> --- /dev/null
->>> +++ b/drivers/soc/samsung/Kconfig
->>> @@ -0,0 +1,14 @@
->>> +#
->>> +# SAMSUNG SoC drivers
->>> +#
->>> +menu "Samsung SOC driver support"
->>> +
->>> +config SOC_SAMSUNG
->>> +    bool
->>
->> Any reason for not using menuconfig?
->>
+> for you to fetch changes up to ba032795463bfc461937dbde7a345103a47f969b:
 > 
-> For one of my Exynos PMU patchset [1] this suggestion came from Russel
-> King, not to use user-visible sysmbol if not required.
-> [1]:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/304451.html
+>   ARM: dts: add iommu property to JPEG device for exynos4 (2015-08-14
+> 02:30:58 +0900)
+> 
+> ----------------------------------------------------------------
+> Samsung 2nd DT updates for v4.3
+> 
+> - for exynos3250, 4212, 4412 and 5250
+>   : add CPU OPP and regulator supply property
+> 
+> - for exynos3250
+>   : add CPU cooling binding for exynos3250 boards
+> 
+> - for exynos4 SoCs
+>   : add iommu property to JPEG device
+> 
+> - for exynos4412-odroidu3
+>   : enable SPI1
+> 
+> - for exynos5250-snow
+>   : add SPI CS
+> 
+> - for exynos5422
+>   : add exynos5422-cpus.dtsi to correct cpu order
+> 
+> * Note this branch is depending on tags/samsung-clk-driver
 
-Okay, thanks. I'm fine with that.
+It's not depending on it, it contains it -- which is what's required here or
+bisectability would be broken.
 
-Best regards,
-Krzysztof
+Merged into next/late.
+
+
+-Olof
