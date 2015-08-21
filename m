@@ -1,80 +1,179 @@
-From: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 0/14] Add Analogix Core Display Port Driver
-Date: Fri, 21 Aug 2015 17:20:57 +0900
-Message-ID: <105A0032-83A0-4B75-AE94-258F12451670@gmail.com>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1439995728-18046-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org" <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "djkurtz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <djkurtz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, "ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] rtc: s5m: fix to update ctrl register
+Date: Fri, 21 Aug 2015 17:49:43 +0900
+Message-ID: <55D6E627.8060908@samsung.com>
+References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
+ <20150820231551.GE3769@piout.net> <55D67487.3040503@samsung.com>
+ <55D67838.6080902@samsung.com> <55D67D14.9060809@samsung.com>
+ <55D6CC1C.9040402@samsung.com> <55D6D24C.3010109@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <55D6D24C.3010109@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, sbkim73@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2015. 8. 19., at PM 11:48, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+On 08/21/2015 04:25 PM, Krzysztof Kozlowski wrote:
+> On 21.08.2015 15:58, Joonyoung Shim wrote:
+>> On 08/21/2015 10:21 AM, Krzysztof Kozlowski wrote:
+>>> On 21.08.2015 10:00, Joonyoung Shim wrote:
+>>>> On 08/21/2015 09:44 AM, Krzysztof Kozlowski wrote:
+>>>>> On 21.08.2015 08:15, Alexandre Belloni wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 13/08/2015 at 17:49:24 +0900, Joonyoung Shim wrote :
+>>>>>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
+>>>>>>> buffer via setting WUDR bit to high after ctrl register is updated.
+>>>>>>>
+>>>>>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
+>>>>>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
+>>>>>>> used to 12 hour mode in Odroid-XU3 board.
+>>>>>>>
+>>>>>>
+>>>>>> >From what I understood, I should expect a v2 of tihat patch also setting
+>>>>>> RUDR, is that right? OR would you prefer that I apply that one and then
+>>>>>> fix RUDR in a following patch?
+>>>>>
+>>>>> Right, I would expect that as well... or a comment if this is not needed.
+>>>>>
+>>>>
+>>>> Hmm, the driver only writes control register now, so i don't feel the
+>>>> need of patch setting RUDR for control register.
+>>>
+>>> Yes, you're right. There is only regmap_write() (not
+>>> remap_update_bits()) so your patch is completely fine. Thanks for
+>>> explanation.
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>
+>>
+>> Thanks for review.
+>>
+>> I found one more issue, the RTC doesn't keep time on Odroid-XU3 board
+>> when i turn on board after power off even if RTC battery is connected.
+>>
+>> A difference with RTC driver of hardkernel kernel is that it sets
+>> not only WUDR bit but also RUDR bit to high at the same time after
+>> RTC_CTRL register is written. It's same with condition of only writing
+>> ALARM registers like below description.
 > 
+> It seems that setting RUDR to high is needed...  but it shouldn't. For
+> example in SM-G900H with S2MPS11 it is set before reading RTC_CTRL
+> register. Mainline driver does not perform read.
 > 
+> Maybe RUDR is not set high properly before some next time read and your
+> code is a coincidence, a work-around?
 
-.....
+As you know, the driver sets RUDR bit to high always before reads time.
+I'm not sure whether any delay time needs to guarantee that RUDR bit is
+set properly, but it fails keeping time.
 
-> .../bindings/video/analogix_dp-rockchip.txt        |   83 ++
-> .../devicetree/bindings/video/exynos_dp.txt        |   51 +-
-> arch/arm/boot/dts/exynos5250-arndale.dts           |   10 +-
-> arch/arm/boot/dts/exynos5250-smdk5250.dts          |   10 +-
-> arch/arm/boot/dts/exynos5250-snow.dts              |   12 +-
-> arch/arm/boot/dts/exynos5250-spring.dts            |   12 +-
-> arch/arm/boot/dts/exynos5420-peach-pit.dts         |   12 +-
-> arch/arm/boot/dts/exynos5420-smdk5420.dts          |   10 +-
-> arch/arm/boot/dts/exynos5800-peach-pi.dts          |   12 +-
-> drivers/gpu/drm/bridge/Kconfig                     |    5 +
-> drivers/gpu/drm/bridge/Makefile                    |    1 +
-> drivers/gpu/drm/bridge/analogix_dp_core.c          | 1382 +++++++++++++++++++
-> drivers/gpu/drm/bridge/analogix_dp_core.h          |  286 ++++
-> drivers/gpu/drm/bridge/analogix_dp_reg.c           | 1294 ++++++++++++++++++
-> .../exynos_dp_reg.h => bridge/analogix_dp_reg.h}   |  270 ++--
-> drivers/gpu/drm/exynos/Kconfig                     |    5 +-
-> drivers/gpu/drm/exynos/Makefile                    |    2 +-
-> drivers/gpu/drm/exynos/analogix_dp-exynos.c        |  347 +++++
+I tried setting RUDR bit to high after or before setting WUDR bit to
+high for writing of RTC_CTRL register but it also fails keeping time.
+If achieve keeping time, i should set WUDR & RUDR bits to high at the
+same time.
 
-Would you change this file name to "exynos_dp.c"?
+I'm referring also rtc-sec driver source of SM-N910U_SEA(Samsung Note4)
+from SM-N910U_SEA_KK_Opensource.zip file[1]. It also does the same
+operation setting WUDR & RUDR bits to high for writing of RTC_CTRL
+register.
 
-Best regards,
-Jingoo Han
+[1] http://opensource.samsung.com/reception/receptionSub.do?method=sub&sub=F&searchValue=N910U
 
-> drivers/gpu/drm/exynos/exynos_dp_core.c            | 1416 --------------------
-> drivers/gpu/drm/exynos/exynos_dp_core.h            |  282 ----
-> drivers/gpu/drm/exynos/exynos_dp_reg.c             | 1263 -----------------
-> drivers/gpu/drm/rockchip/Kconfig                   |    9 +
-> drivers/gpu/drm/rockchip/Makefile                  |    1 +
-> drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  390 ++++++
-> drivers/phy/Kconfig                                |    7 +
-> drivers/phy/Makefile                               |    1 +
-> drivers/phy/phy-rockchip-dp.c                      |  185 +++
-> include/drm/bridge/analogix_dp.h                   |   40 +
-> 30 files changed, 4325 insertions(+), 3172 deletions(-)
-> create mode 100644 Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-> create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
-> create mode 100644 Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-> create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.c
-> create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.h
-> create mode 100644 drivers/gpu/drm/bridge/analogix_dp_reg.c
-> rename drivers/gpu/drm/{exynos/exynos_dp_reg.h => bridge/analogix_dp_reg.h} (62%)
-> create mode 100644 drivers/gpu/drm/exynos/analogix_dp-exynos.c
-> delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.c
-> delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.h
-> delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_reg.c
-> create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> create mode 100644 drivers/phy/phy-rockchip-dp.c
-> create mode 100644 include/drm/bridge/analogix_dp.h
 > 
-> -- 
-> 1.9.1
+> Best regards,
+> Krzysztof
 > 
+>>
+>> from S2MPS14 datasheet:
+>> "3.  For write only Alarm 0&1 Registers (0x0B~0x18), set WUDR & RUDR
+>> bits to high."
+>>
+>> So i tried it and it works well with keeping time. I'm not sure RTC of
+>> S2MPS13 type also has a similar issue because it differs a little bit.
+>>
+>> from S2MPS13 datasheet:
+>> "3.  For write only Alarm 0&1 Registers (0x0B~0x18), set WUDR & A_UDR
+>> bits to high."
+>>
+>> If S2MPS13 also has same issue, we can fix the problem via just below
+>> patch.
+>>
+>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>> index 8c70d78..bb8e888 100644
+>> --- a/drivers/rtc/rtc-s5m.c
+>> +++ b/drivers/rtc/rtc-s5m.c
+>> @@ -635,6 +635,10 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>>  	case S2MPS13X:
+>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
+>> +		if (ret < 0)
+>> +			break;
+>> +
+>> +		ret = s5m8767_rtc_set_alarm_reg(info);
+>>  		break;
+>>  
+>>  	default:
+>>
+>> But i can't find any reasonable reason about this fix from datasheet,
+>>
+>> Thanks.
+>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>>
+>>>>>
+>>>>>>
+>>>>>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>>>>>>> Cc: <stable@vger.kernel.org>
+>>>>>>
+>>>>>> can you update the stable tag with the kernel version introducing the
+>>>>>> issue?
+>>>>
+>>>> Sure, i think it should be v3.16.
+>>>>
+>>>>>>
+>>>>>>> ---
+>>>>>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
+>>>>>>>  1 file changed, 12 insertions(+)
+>>>>>>
+>>>>>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>>>>>>> index 8c70d78..03828bb 100644
+>>>>>>> --- a/drivers/rtc/rtc-s5m.c
+>>>>>>> +++ b/drivers/rtc/rtc-s5m.c
+>>>>>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>>>>>>>  	case S2MPS13X:
+>>>>>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+>>>>>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
+>>>>>>> +		if (ret < 0)
+>>>>>>> +			break;
+>>>>>>> +
+>>>>>>> +		ret = regmap_update_bits(info->regmap,
+>>>>>>> +				info->regs->rtc_udr_update,
+>>>>>>> +				info->regs->rtc_udr_mask,
+>>>>>>> +				info->regs->rtc_udr_mask);
+>>>>>>
+>>>>>> Very small indentation issue here, it should be aligned with the open
+>>>>>> parenthesis.
+>>>>
+>>>> OK, i will.
+>>>>
+>>>> Thanks.
+>>>>
+>>>
+>>>
+>>
+>>
 > 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
