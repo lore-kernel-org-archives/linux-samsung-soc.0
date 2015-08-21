@@ -1,140 +1,79 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/4 RESEND] spi: s3c64xx: extend driver to make full use of
- runtime PM autosuspend
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] rtc: s5m: fix to update ctrl register
 Date: Fri, 21 Aug 2015 10:00:40 +0900
-Message-ID: <55D67838.4090906@samsung.com>
-References: <55D63292.9070703@gmail.com>
+Message-ID: <55D67838.6080902@samsung.com>
+References: <1439455764-23526-1-git-send-email-jy0922.shim@samsung.com>
+ <20150820231551.GE3769@piout.net> <55D67487.3040503@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <55D63292.9070703-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <55D67487.3040503@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, a.zummo@towertech.it, sbkim73@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 21.08.2015 05:03, Heiner Kallweit wrote:
-> Extend the driver to make full use of runtime PM autosuspend.
-> Before only the SPI core was instructed to use autosuspend
-> by setting master->auto_runtime_pm. Nevertheless due to the missing
-> pm_runtime_use_autosuspend call autosuspend wasn't active.
+On 08/21/2015 09:44 AM, Krzysztof Kozlowski wrote:
+> On 21.08.2015 08:15, Alexandre Belloni wrote:
+>> Hi,
+>>
+>> On 13/08/2015 at 17:49:24 +0900, Joonyoung Shim wrote :
+>>> According to datasheet, the S2MPS13X and S2MPS14X should update write
+>>> buffer via setting WUDR bit to high after ctrl register is updated.
+>>>
+>>> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
+>>> tools/testing/selftests/timers/rtctest.c test program and hour format is
+>>> used to 12 hour mode in Odroid-XU3 board.
+>>>
+>>
+>> >From what I understood, I should expect a v2 of tihat patch also setting
+>> RUDR, is that right? OR would you prefer that I apply that one and then
+>> fix RUDR in a following patch?
 > 
-> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
-> Changed:
-> - Let driver autosuspend also after leaving s3c64xx_spi_setup
-> - Enable runtime PM earlier in s3c64xx_spi_probe and prevent
->   suspending in the relevant part of probe
-> 
->  drivers/spi/spi-s3c64xx.c | 32 +++++++++++++++++++++-----------
->  1 file changed, 21 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 8a6ab88..edeac06 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -32,6 +32,7 @@
->  #define MAX_SPI_PORTS		6
->  #define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
->  #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
-> +#define AUTOSUSPEND_TIMEOUT	2000
->  
->  /* Registers and bit-fields */
->  
-> @@ -859,13 +860,15 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
->  		}
->  	}
->  
-> -	pm_runtime_put(&sdd->pdev->dev);
-> +	pm_runtime_mark_last_busy(&sdd->pdev->dev);
-> +	pm_runtime_put_autosuspend(&sdd->pdev->dev);
->  	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
->  		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
->  	return 0;
->  
->  setup_exit:
-> -	pm_runtime_put(&sdd->pdev->dev);
-> +	pm_runtime_mark_last_busy(&sdd->pdev->dev);
-> +	pm_runtime_put_autosuspend(&sdd->pdev->dev);
->  	/* setup() returns with device de-selected */
->  	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
->  		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-> @@ -1133,18 +1136,24 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  		goto err0;
->  	}
->  
-> +	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
-> +	pm_runtime_use_autosuspend(&pdev->dev);
-> +	pm_runtime_set_active(&pdev->dev);
-> +	pm_runtime_enable(&pdev->dev);
-
-I think you should not enable the PM runtime too early. The PM runtime
-callbacks can be fired now but driver did not get references to clocks yet.
-
-Best regards,
-Krzysztof
-
-> +	pm_runtime_get_noresume(&pdev->dev);
-> +
->  	/* Setup clocks */
->  	sdd->clk = devm_clk_get(&pdev->dev, "spi");
->  	if (IS_ERR(sdd->clk)) {
->  		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
->  		ret = PTR_ERR(sdd->clk);
-> -		goto err0;
-> +		goto err1;
->  	}
->  
->  	if (clk_prepare_enable(sdd->clk)) {
->  		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
->  		ret = -EBUSY;
-> -		goto err0;
-> +		goto err1;
->  	}
->  
->  	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-> @@ -1180,13 +1189,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  	       S3C64XX_SPI_INT_TX_OVERRUN_EN | S3C64XX_SPI_INT_TX_UNDERRUN_EN,
->  	       sdd->regs + S3C64XX_SPI_INT_EN);
->  
-> -	pm_runtime_set_active(&pdev->dev);
-> -	pm_runtime_enable(&pdev->dev);
-> -
->  	ret = devm_spi_register_master(&pdev->dev, master);
->  	if (ret != 0) {
->  		dev_err(&pdev->dev, "cannot register SPI master: %d\n", ret);
-> -		goto err4;
-> +		goto err3;
->  	}
->  
->  	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
-> @@ -1195,15 +1201,19 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1,
->  					sdd->rx_dma.dmach, sdd->tx_dma.dmach);
->  
-> +	pm_runtime_mark_last_busy(&pdev->dev);
-> +	pm_runtime_put_autosuspend(&pdev->dev);
-> +
->  	return 0;
->  
-> -err4:
-> -	pm_runtime_disable(&pdev->dev);
-> -	pm_runtime_set_suspended(&pdev->dev);
->  err3:
->  	clk_disable_unprepare(sdd->src_clk);
->  err2:
->  	clk_disable_unprepare(sdd->clk);
-> +err1:
-> +	pm_runtime_put_noidle(&pdev->dev);
-> +	pm_runtime_disable(&pdev->dev);
-> +	pm_runtime_set_suspended(&pdev->dev);
->  err0:
->  	spi_master_put(master);
->  
+> Right, I would expect that as well... or a comment if this is not needed.
 > 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hmm, the driver only writes control register now, so i don't feel the
+need of patch setting RUDR for control register.
+
+> Best regards,
+> Krzysztof
+> 
+> 
+>>
+>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>>> Cc: <stable@vger.kernel.org>
+>>
+>> can you update the stable tag with the kernel version introducing the
+>> issue?
+
+Sure, i think it should be v3.16.
+
+>>
+>>> ---
+>>>  drivers/rtc/rtc-s5m.c | 12 ++++++++++++
+>>>  1 file changed, 12 insertions(+)
+>>
+>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>>> index 8c70d78..03828bb 100644
+>>> --- a/drivers/rtc/rtc-s5m.c
+>>> +++ b/drivers/rtc/rtc-s5m.c
+>>> @@ -635,6 +635,18 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>>>  	case S2MPS13X:
+>>>  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+>>>  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
+>>> +		if (ret < 0)
+>>> +			break;
+>>> +
+>>> +		ret = regmap_update_bits(info->regmap,
+>>> +				info->regs->rtc_udr_update,
+>>> +				info->regs->rtc_udr_mask,
+>>> +				info->regs->rtc_udr_mask);
+>>
+>> Very small indentation issue here, it should be aligned with the open
+>> parenthesis.
+
+OK, i will.
+
+Thanks.
