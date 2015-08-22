@@ -1,460 +1,362 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH v7 28/44] [media] media: use macros to check for V4L2 subdev entities
-Date: Sun, 23 Aug 2015 17:17:45 -0300
-Message-ID: <dd6ce157dc49ac77fd54145cc25c76fce51a3cdc.1440359643.git.mchehab@osg.samsung.com>
-References: <cover.1440359643.git.mchehab@osg.samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <cover.1440359643.git.mchehab@osg.samsung.com>
-In-Reply-To: <cover.1440359643.git.mchehab@osg.samsung.com>
-References: <cover.1440359643.git.mchehab@osg.samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Markus Elfring <elfring@users.sourceforge.net>, Lars-Peter Clausen <lars@metafoo.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, devel@d
+From: Yakir Yang <yakir.yang.rk@gmail.com>
+Subject: Re: [PATCH v3 0/14] Add Analogix Core Display Port Driver
+Date: Sat, 22 Aug 2015 05:42:53 -0400
+Message-ID: <CADTe4T5PnyDJ_MCP21Cv6v_Y=0DqfMzB8xK+Bz4y4Pf+LCei7A@mail.gmail.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+ <105A0032-83A0-4B75-AE94-258F12451670@gmail.com>
+ <55D6F6F8.70504@rock-chips.com>
+ <8384E112-E1F4-4CD3-85BF-A2A25989783F@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0971767239=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <8384E112-E1F4-4CD3-85BF-A2A25989783F@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: "seanpaul@google.com" <seanpaul@google.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Yakir Yang <ykk@rock-chips.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, Kishon Vijay Abraham I <kishon@ti.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "dianders@google.com" <dianders@google.com>, "joe@perches.com" <joe@perches.com>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Fab
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Instead of relying on media subtype, use the new macros to detect
-if an entity is a subdev or an A/V DMA entity.
+--===============0971767239==
+Content-Type: multipart/alternative; boundary=047d7bea35c06196f9051de335bb
 
-Please note that most drivers assume that there's just AV_DMA or
-V4L2 subdevs. This is not true anymore, as we've added MC support
-for DVB, and there are plans to add support for ALSA and FB/DRM
-too.
+--047d7bea35c06196f9051de335bb
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Ok, on the current pipelines supported by those drivers, just V4L
-stuff are there, but, assuming that some day a pipeline that also
-works with other subsystems will ever added, it is better to add
-explicit checks for the AV_DMA stuff.
+Hi Jingoo,
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 
-diff --git a/drivers/media/platform/exynos4-is/common.c b/drivers/media/platform/exynos4-is/common.c
-index 0eb34ecb8ee4..1f1b9a56e24e 100644
---- a/drivers/media/platform/exynos4-is/common.c
-+++ b/drivers/media/platform/exynos4-is/common.c
-@@ -22,8 +22,7 @@ struct v4l2_subdev *fimc_find_remote_sensor(struct media_entity *entity)
- 	while (pad->flags & MEDIA_PAD_FL_SINK) {
- 		/* source pad */
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		sd = media_entity_to_v4l2_subdev(pad->entity);
-diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-index 0627a93b2f3b..79b43b89266a 100644
---- a/drivers/media/platform/exynos4-is/fimc-capture.c
-+++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-@@ -1141,8 +1141,7 @@ static int fimc_pipeline_validate(struct fimc_dev *fimc)
- 			}
- 		}
- 
--		if (src_pad == NULL ||
--		    media_entity_type(src_pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(src_pad->entity))
- 			break;
- 
- 		/* Don't call FIMC subdev operation to avoid nested locking */
-@@ -1397,7 +1396,7 @@ static int fimc_link_setup(struct media_entity *entity,
- 	struct fimc_vid_cap *vc = &fimc->vid_cap;
- 	struct v4l2_subdev *sensor;
- 
--	if (media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+	if (!is_media_entity_v4l2_subdev(remote->entity))
- 		return -EINVAL;
- 
- 	if (WARN_ON(fimc == NULL))
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index 3d9ccbf5f10f..0ea948ad668c 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -467,8 +467,7 @@ static int isp_video_pipeline_validate(struct fimc_isp *isp)
- 
- 		/* Retrieve format at the source pad */
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		sd = media_entity_to_v4l2_subdev(pad->entity);
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index b2607da4ad14..df2ac6b0afd1 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -814,8 +814,7 @@ static int fimc_pipeline_validate(struct fimc_lite *fimc)
- 		}
- 		/* Retrieve format at the source pad */
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		sd = media_entity_to_v4l2_subdev(pad->entity);
-@@ -988,7 +987,6 @@ static int fimc_lite_link_setup(struct media_entity *entity,
- {
- 	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
- 	struct fimc_lite *fimc = v4l2_get_subdevdata(sd);
--	unsigned int remote_ent_type = media_entity_type(remote->entity);
- 	int ret = 0;
- 
- 	if (WARN_ON(fimc == NULL))
-@@ -1000,7 +998,7 @@ static int fimc_lite_link_setup(struct media_entity *entity,
- 
- 	switch (local->index) {
- 	case FLITE_SD_PAD_SINK:
--		if (remote_ent_type != MEDIA_ENT_T_V4L2_SUBDEV) {
-+		if (!is_media_entity_v4l2_subdev(remote->entity)) {
- 			ret = -EINVAL;
- 			break;
- 		}
-@@ -1018,7 +1016,7 @@ static int fimc_lite_link_setup(struct media_entity *entity,
- 	case FLITE_SD_PAD_SOURCE_DMA:
- 		if (!(flags & MEDIA_LNK_FL_ENABLED))
- 			atomic_set(&fimc->out_path, FIMC_IO_NONE);
--		else if (remote_ent_type == MEDIA_ENT_T_DEVNODE)
-+		else if (is_media_v4l2_io(remote->entity))
- 			atomic_set(&fimc->out_path, FIMC_IO_DMA);
- 		else
- 			ret = -EINVAL;
-@@ -1027,7 +1025,7 @@ static int fimc_lite_link_setup(struct media_entity *entity,
- 	case FLITE_SD_PAD_SOURCE_ISP:
- 		if (!(flags & MEDIA_LNK_FL_ENABLED))
- 			atomic_set(&fimc->out_path, FIMC_IO_NONE);
--		else if (remote_ent_type == MEDIA_ENT_T_V4L2_SUBDEV)
-+		else if (is_media_entity_v4l2_subdev(remote->entity)))
- 			atomic_set(&fimc->out_path, FIMC_IO_ISP);
- 		else
- 			ret = -EINVAL;
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 92dbade2fffc..428fead69095 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -88,8 +88,7 @@ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
- 				break;
- 		}
- 
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 		sd = media_entity_to_v4l2_subdev(pad->entity);
- 
-@@ -1062,7 +1061,7 @@ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable)
- 	media_entity_graph_walk_start(&graph, entity);
- 
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
--		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
-+		if (!is_media_entity_v4l2_io(entity))
- 			continue;
- 
- 		ret  = __fimc_md_modify_pipeline(entity, enable);
-@@ -1076,7 +1075,7 @@ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable)
- 	media_entity_graph_walk_start(&graph, entity_err);
- 
- 	while ((entity_err = media_entity_graph_walk_next(&graph))) {
--		if (media_entity_type(entity_err) != MEDIA_ENT_T_DEVNODE)
-+		if (!is_media_entity_v4l2_io(entity_err))
- 			continue;
- 
- 		__fimc_md_modify_pipeline(entity_err, !enable);
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index aa13b17d19a0..fe29e56528ed 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -691,7 +691,7 @@ static int isp_pipeline_pm_use_count(struct media_entity *entity)
- 	media_entity_graph_walk_start(&graph, entity);
- 
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
--		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
-+		if (is_media_entity_v4l2_io(entity))
- 			use += entity->use_count;
- 	}
- 
-@@ -714,7 +714,7 @@ static int isp_pipeline_pm_power_one(struct media_entity *entity, int change)
- 	struct v4l2_subdev *subdev;
- 	int ret;
- 
--	subdev = media_entity_type(entity) == MEDIA_ENT_T_V4L2_SUBDEV
-+	subdev = is_media_entity_v4l2_subdev(entity))
- 	       ? media_entity_to_v4l2_subdev(entity) : NULL;
- 
- 	if (entity->use_count == 0 && change > 0 && subdev != NULL) {
-@@ -754,7 +754,7 @@ static int isp_pipeline_pm_power(struct media_entity *entity, int change)
- 	media_entity_graph_walk_start(&graph, entity);
- 
- 	while (!ret && (entity = media_entity_graph_walk_next(&graph)))
--		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
-+		if (is_media_entity_v4l2_subdev(entity))
- 			ret = isp_pipeline_pm_power_one(entity, change);
- 
- 	if (!ret)
-@@ -764,7 +764,7 @@ static int isp_pipeline_pm_power(struct media_entity *entity, int change)
- 
- 	while ((first = media_entity_graph_walk_next(&graph))
- 	       && first != entity)
--		if (media_entity_type(first) != MEDIA_ENT_T_DEVNODE)
-+		if (is_media_entity_v4l2_subdev(first))
- 			isp_pipeline_pm_power_one(first, -change);
- 
- 	return ret;
-@@ -897,8 +897,7 @@ static int isp_pipeline_enable(struct isp_pipeline *pipe,
- 			break;
- 
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		entity = pad->entity;
-@@ -988,8 +987,7 @@ static int isp_pipeline_disable(struct isp_pipeline *pipe)
- 			break;
- 
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		entity = pad->entity;
-diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-index 4c367352b1f7..3518c7d283d0 100644
---- a/drivers/media/platform/omap3isp/ispvideo.c
-+++ b/drivers/media/platform/omap3isp/ispvideo.c
-@@ -210,8 +210,7 @@ isp_video_remote_subdev(struct isp_video *video, u32 *pad)
- 
- 	remote = media_entity_remote_pad(&video->pad);
- 
--	if (remote == NULL ||
--	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+	if (!is_media_entity_v4l2_subdev(remote->entity))
- 		return NULL;
- 
- 	if (pad)
-@@ -243,7 +242,7 @@ static int isp_video_get_graph_data(struct isp_video *video,
- 		if (entity == &video->video.entity)
- 			continue;
- 
--		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
-+		if (!is_media_entity_v4l2_io(entity))
- 			continue;
- 
- 		__video = to_isp_video(media_entity_to_video_device(entity));
-@@ -917,7 +916,7 @@ static int isp_video_check_external_subdevs(struct isp_video *video,
- 		return -EINVAL;
- 	}
- 
--	if (media_entity_type(source) != MEDIA_ENT_T_V4L2_SUBDEV)
-+	if (!is_media_entity_v4l2_subdev(source->entity))
- 		return 0;
- 
- 	pipe->external = media_entity_to_v4l2_subdev(source);
-diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
-index eae667eab1b9..50f511439e67 100644
---- a/drivers/media/platform/s3c-camif/camif-capture.c
-+++ b/drivers/media/platform/s3c-camif/camif-capture.c
-@@ -837,7 +837,7 @@ static int camif_pipeline_validate(struct camif_dev *camif)
- 
- 	/* Retrieve format at the sensor subdev source pad */
- 	pad = media_entity_remote_pad(&camif->pads[0]);
--	if (!pad || media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+	if (!is_media_entity_v4l2_subdev(pad->entity))
- 		return -EPIPE;
- 
- 	src_fmt.pad = pad->index;
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 1f94c1a54e00..8d202f42b318 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -160,8 +160,7 @@ vsp1_video_remote_subdev(struct media_pad *local, u32 *pad)
- 	struct media_pad *remote;
- 
- 	remote = media_entity_remote_pad(local);
--	if (remote == NULL ||
--	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+	if (!is_media_entity_v4l2_subdev(remote->entity))
- 		return NULL;
- 
- 	if (pad)
-@@ -326,7 +325,7 @@ static int vsp1_pipeline_validate_branch(struct vsp1_pipeline *pipe,
- 			return -EPIPE;
- 
- 		/* We've reached a video node, that shouldn't have happened. */
--		if (media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			return -EPIPE;
- 
- 		entity = to_vsp1_entity(media_entity_to_v4l2_subdev(pad->entity));
-@@ -423,7 +422,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline *pipe,
- 		struct vsp1_rwpf *rwpf;
- 		struct vsp1_entity *e;
- 
--		if (media_entity_type(entity) != MEDIA_ENT_T_V4L2_SUBDEV) {
-+		if (is_media_entity_v4l2_io(entity)) {
- 			pipe->num_video++;
- 			continue;
- 		}
-@@ -692,7 +691,7 @@ void vsp1_pipeline_propagate_alpha(struct vsp1_pipeline *pipe,
- 	pad = media_entity_remote_pad(&input->pads[RWPF_PAD_SOURCE]);
- 
- 	while (pad) {
--		if (media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		entity = to_vsp1_entity(media_entity_to_v4l2_subdev(pad->entity));
-diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
-index 88cd789cdaf7..bbbde73c05b8 100644
---- a/drivers/media/platform/xilinx/xilinx-dma.c
-+++ b/drivers/media/platform/xilinx/xilinx-dma.c
-@@ -49,8 +49,7 @@ xvip_dma_remote_subdev(struct media_pad *local, u32 *pad)
- 	struct media_pad *remote;
- 
- 	remote = media_entity_remote_pad(local);
--	if (remote == NULL ||
--	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+	if (!is_media_entity_v4l2_subdev(remote->entity))
- 		return NULL;
- 
- 	if (pad)
-@@ -113,8 +112,7 @@ static int xvip_pipeline_start_stop(struct xvip_pipeline *pipe, bool start)
- 			break;
- 
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		entity = pad->entity;
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index e6e1115d8215..60da43772de9 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -526,7 +526,7 @@ static int
- v4l2_subdev_link_validate_get_format(struct media_pad *pad,
- 				     struct v4l2_subdev_format *fmt)
- {
--	if (media_entity_type(pad->entity) == MEDIA_ENT_T_V4L2_SUBDEV) {
-+	if (is_media_entity_v4l2_subdev(pad->entity)) {
- 		struct v4l2_subdev *sd =
- 			media_entity_to_v4l2_subdev(pad->entity);
- 
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-index 92573fa852a9..16763e0831f2 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-@@ -148,7 +148,7 @@ static void vpfe_prepare_pipeline(struct vpfe_video_device *video)
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
- 		if (entity == &video->video_dev.entity)
- 			continue;
--		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
-+		if ((!is_media_entity_v4l2_io(remote->entity))
- 			continue;
- 		far_end = to_vpfe_video(media_entity_to_video_device(entity));
- 		if (far_end->type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
-@@ -293,7 +293,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline *pipe)
- 	media_entity_graph_walk_start(&graph, entity);
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
- 
--		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
-+		if !is_media_entity_v4l2_subdev(entity))
- 			continue;
- 		subdev = media_entity_to_v4l2_subdev(entity);
- 		ret = v4l2_subdev_call(subdev, video, s_stream, 1);
-@@ -334,7 +334,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline *pipe)
- 
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
- 
--		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
-+		if (!is_media_entity_v4l2_subdev(entity))
- 			continue;
- 		subdev = media_entity_to_v4l2_subdev(entity);
- 		ret = v4l2_subdev_call(subdev, video, s_stream, 0);
-diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
-index 40591963b42b..fc7d329a06bd 100644
---- a/drivers/staging/media/omap4iss/iss.c
-+++ b/drivers/staging/media/omap4iss/iss.c
-@@ -397,7 +397,7 @@ static int iss_pipeline_pm_use_count(struct media_entity *entity)
- 	media_entity_graph_walk_start(&graph, entity);
- 
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
--		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
-+		if (is_media_entity_v4l2_io(entity))
- 			use += entity->use_count;
- 	}
- 
-@@ -419,7 +419,7 @@ static int iss_pipeline_pm_power_one(struct media_entity *entity, int change)
- {
- 	struct v4l2_subdev *subdev;
- 
--	subdev = media_entity_type(entity) == MEDIA_ENT_T_V4L2_SUBDEV
-+	subdev = is_media_entity_v4l2_subdev(entity))
- 	       ? media_entity_to_v4l2_subdev(entity) : NULL;
- 
- 	if (entity->use_count == 0 && change > 0 && subdev != NULL) {
-@@ -461,7 +461,7 @@ static int iss_pipeline_pm_power(struct media_entity *entity, int change)
- 	media_entity_graph_walk_start(&graph, entity);
- 
- 	while (!ret && (entity = media_entity_graph_walk_next(&graph)))
--		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
-+		if (is_media_entity_v4l2_subdev(entity))
- 			ret = iss_pipeline_pm_power_one(entity, change);
- 
- 	if (!ret)
-@@ -471,7 +471,7 @@ static int iss_pipeline_pm_power(struct media_entity *entity, int change)
- 
- 	while ((first = media_entity_graph_walk_next(&graph))
- 	       && first != entity)
--		if (media_entity_type(first) != MEDIA_ENT_T_DEVNODE)
-+		if (is_media_entity_v4l2_subdev(first))
- 			iss_pipeline_pm_power_one(first, -change);
- 
- 	return ret;
-@@ -590,8 +590,7 @@ static int iss_pipeline_disable(struct iss_pipeline *pipe,
- 			break;
- 
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if !is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		entity = pad->entity;
-@@ -658,8 +657,7 @@ static int iss_pipeline_enable(struct iss_pipeline *pipe,
- 			break;
- 
- 		pad = media_entity_remote_pad(pad);
--		if (pad == NULL ||
--		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+		if (!is_media_entity_v4l2_subdev(pad->entity))
- 			break;
- 
- 		entity = pad->entity;
-diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
-index 45a3f2d778fc..9aae72bc24a0 100644
---- a/drivers/staging/media/omap4iss/iss_video.c
-+++ b/drivers/staging/media/omap4iss/iss_video.c
-@@ -191,8 +191,7 @@ iss_video_remote_subdev(struct iss_video *video, u32 *pad)
- 
- 	remote = media_entity_remote_pad(&video->pad);
- 
--	if (remote == NULL ||
--	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
-+	if ((!is_media_entity_v4l2_subdev(remote->entity))
- 		return NULL;
- 
- 	if (pad)
-@@ -217,7 +216,7 @@ iss_video_far_end(struct iss_video *video)
- 		if (entity == &video->video.entity)
- 			continue;
- 
--		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
-+		if (!is_media_entity_v4l2_io(entity))
- 			continue;
- 
- 		far_end = to_iss_video(media_entity_to_video_device(entity));
--- 
-2.4.3
+2015-08-21 7:24 GMT-04:00 Jingoo Han <jingoohan1@gmail.com>:
+
+> On 2015. 8. 21., at PM 7:01, Yakir Yang <ykk@rock-chips.com> wrote:
+>
+> Hi Jingoo,
+>
+> =E5=9C=A8 2015/8/21 16:20, Jingoo Han =E5=86=99=E9=81=93:
+>
+> On 2015. 8. 19., at PM 11:48, Yakir Yang <ykk@rock-chips.com> <ykk@rock-c=
+hips.com> wrote:
+>
+> .....
+>
+>
+> .../bindings/video/analogix_dp-rockchip.txt        |   83 ++
+> .../devicetree/bindings/video/exynos_dp.txt        |   51 +-
+> arch/arm/boot/dts/exynos5250-arndale.dts           |   10 +-
+> arch/arm/boot/dts/exynos5250-smdk5250.dts          |   10 +-
+> arch/arm/boot/dts/exynos5250-snow.dts              |   12 +-
+> arch/arm/boot/dts/exynos5250-spring.dts            |   12 +-
+> arch/arm/boot/dts/exynos5420-peach-pit.dts         |   12 +-
+> arch/arm/boot/dts/exynos5420-smdk5420.dts          |   10 +-
+> arch/arm/boot/dts/exynos5800-peach-pi.dts          |   12 +-
+> drivers/gpu/drm/bridge/Kconfig                     |    5 +
+> drivers/gpu/drm/bridge/Makefile                    |    1 +
+> drivers/gpu/drm/bridge/analogix_dp_core.c          | 1382 +++++++++++++++=
+++++
+> drivers/gpu/drm/bridge/analogix_dp_core.h          |  286 ++++
+> drivers/gpu/drm/bridge/analogix_dp_reg.c           | 1294 +++++++++++++++=
++++
+> .../exynos_dp_reg.h =3D> bridge/analogix_dp_reg.h}   |  270 ++--
+> drivers/gpu/drm/exynos/Kconfig                     |    5 +-
+> drivers/gpu/drm/exynos/Makefile                    |    2 +-
+> drivers/gpu/drm/exynos/analogix_dp-exynos.c        |  347 +++++
+>
+> Would you change this file name to "exynos_dp.c"?
+>
+>
+> Sorry, I don't think so  ;(
+>
+> I think IP_name+Soc_name would be better in this re-use case.
+>
+>
+> So? Is there the naming rule such as "IP_name+SoC_name"?
+>
+> Beside I see
+> there are lots of driver named with this format in kernel, such as dw_hdm=
+i
+> & dw_mmc
+>
+>
+> Please look at other dw cases.
+> For example, look at dw_pcie.
+>
+> drivers/pci/host/
+> pcie-designware.c
+> pci-spear13xx.c
+> pci-exynos.c
+>
+> In this case, pci-spear13xx.c and pci-exynos.c do not use
+> "IP_name+SoC_name", even though these are dw IPs.
+>
+> Also, naming consistency is more important.
+> Now, Exynos DRM files are using "exynos_drm_" prefix.
+>
+> drivers/gpu/drm/exynos/
+> exynos_drm_buf.c
+> exynos_drm_core.c
+> ....
+>
+> However, "analogix_dp-exynos.c" looks very inconsistent.
+>
+> If there is no strict naming rule, please use "exynos_dp.c"
+> or "exynos_drm_dp.c".
+>
+>
+Sorry for the delay :-)
+
+Okay, it is little bit inconsistent, but I just want to make the IP name
+more clearly.
+
+Anyway I should follow your suggest with =E2=80=9Cexynos_*=E2=80=9D style f=
+or now, so done,
+I would change the filename to "exynos_dp.c"  ;)
+
+Thanks,
+- Yakir
+
+
+> Best regards,
+> Jingoo Han
+>
+>
+>  (cr) (chromeos-3.14) yakir@server ~/trunk/src/third_party/kernel/v3.14 $
+> ls drivers/gpu/drm/imx/
+> dw_hdmi-imx.c   imx-drm.h  imx-tve.c     ipuv3-plane.c  Kconfig
+> parallel-display.c
+>
+> (cr) (chromeos-3.14) yakir@server ~/trunk/src/third_party/kernel/v3.14 $
+> ls drivers/mmc/host/dw_mmc*
+> drivers/mmc/host/dw_mmc.c         drivers/mmc/host/dw_mmc.h
+> drivers/mmc/host/dw_mmc-pci.c    drivers/mmc/host/dw_mmc-pltfm.h
+> drivers/mmc/host/dw_mmc-exynos.c  drivers/mmc/host/dw_mmc-k3.c
+> drivers/mmc/host/dw_mmc-pltfm.c  drivers/mmc/host/dw_mmc-rockchip.c
+>
+> Thanks,
+> - Yakir
+>
+>
+> Best regards,
+> Jingoo Han
+>
+>
+> drivers/gpu/drm/exynos/exynos_dp_core.c            | 1416 ---------------=
+-----
+> drivers/gpu/drm/exynos/exynos_dp_core.h            |  282 ----
+> drivers/gpu/drm/exynos/exynos_dp_reg.c             | 1263 ---------------=
+--
+> drivers/gpu/drm/rockchip/Kconfig                   |    9 +
+> drivers/gpu/drm/rockchip/Makefile                  |    1 +
+> drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  390 ++++++
+> drivers/phy/Kconfig                                |    7 +
+> drivers/phy/Makefile                               |    1 +
+> drivers/phy/phy-rockchip-dp.c                      |  185 +++
+> include/drm/bridge/analogix_dp.h                   |   40 +
+> 30 files changed, 4325 insertions(+), 3172 deletions(-)
+> create mode 100644 Documentation/devicetree/bindings/drm/bridge/analogix_=
+dp.txt
+> create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.=
+txt
+> create mode 100644 Documentation/devicetree/bindings/video/analogix_dp-ro=
+ckchip.txt
+> create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.c
+> create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.h
+> create mode 100644 drivers/gpu/drm/bridge/analogix_dp_reg.c
+> rename drivers/gpu/drm/{exynos/exynos_dp_reg.h =3D> bridge/analogix_dp_re=
+g.h} (62%)
+> create mode 100644 drivers/gpu/drm/exynos/analogix_dp-exynos.c
+> delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.c
+> delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.h
+> delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_reg.c
+> create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> create mode 100644 drivers/phy/phy-rockchip-dp.c
+> create mode 100644 include/drm/bridge/analogix_dp.h
+>
+> --
+> 1.9.1
+>
+>
+>
+>
+>
+
+--047d7bea35c06196f9051de335bb
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Jingoo,<div><br><div class=3D"gmail_extra"><br><div cla=
+ss=3D"gmail_quote">2015-08-21 7:24 GMT-04:00 Jingoo Han <span dir=3D"ltr">&=
+lt;<a href=3D"mailto:jingoohan1@gmail.com" target=3D"_blank">jingoohan1@gma=
+il.com</a>&gt;</span>:<br><blockquote class=3D"gmail_quote" style=3D"margin=
+:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><div dir=3D"auto">=
+<div>On 2015. 8. 21., at PM 7:01, Yakir Yang &lt;<a href=3D"mailto:ykk@rock=
+-chips.com" target=3D"_blank">ykk@rock-chips.com</a>&gt; wrote:</div><div><=
+br></div><blockquote type=3D"cite"><div>
+ =20
+   =20
+ =20
+ =20
+    Hi Jingoo,<span class=3D""><br>
+    <br>
+    <div>=E5=9C=A8 2015/8/21 16:20, Jingoo Han =E5=86=99=E9=81=93:<br>
+    </div>
+    <blockquote type=3D"cite">
+      <pre>On 2015. 8. 19., at PM 11:48, Yakir Yang <a href=3D"mailto:ykk@r=
+ock-chips.com" target=3D"_blank">&lt;ykk@rock-chips.com&gt;</a> wrote:
+</pre>
+      <blockquote type=3D"cite">
+        <pre></pre>
+      </blockquote>
+      <pre>.....
+
+</pre>
+      <blockquote type=3D"cite">
+        <pre>.../bindings/video/analogix_dp-rockchip.txt        |   83 ++
+.../devicetree/bindings/video/exynos_dp.txt        |   51 +-
+arch/arm/boot/dts/exynos5250-arndale.dts           |   10 +-
+arch/arm/boot/dts/exynos5250-smdk5250.dts          |   10 +-
+arch/arm/boot/dts/exynos5250-snow.dts              |   12 +-
+arch/arm/boot/dts/exynos5250-spring.dts            |   12 +-
+arch/arm/boot/dts/exynos5420-peach-pit.dts         |   12 +-
+arch/arm/boot/dts/exynos5420-smdk5420.dts          |   10 +-
+arch/arm/boot/dts/exynos5800-peach-pi.dts          |   12 +-
+drivers/gpu/drm/bridge/Kconfig                     |    5 +
+drivers/gpu/drm/bridge/Makefile                    |    1 +
+drivers/gpu/drm/bridge/analogix_dp_core.c          | 1382 +++++++++++++++++=
+++
+drivers/gpu/drm/bridge/analogix_dp_core.h          |  286 ++++
+drivers/gpu/drm/bridge/analogix_dp_reg.c           | 1294 +++++++++++++++++=
++
+.../exynos_dp_reg.h =3D&gt; bridge/analogix_dp_reg.h}   |  270 ++--
+drivers/gpu/drm/exynos/Kconfig                     |    5 +-
+drivers/gpu/drm/exynos/Makefile                    |    2 +-
+drivers/gpu/drm/exynos/analogix_dp-exynos.c        |  347 +++++
+</pre>
+      </blockquote>
+      <pre>Would you change this file name to &quot;exynos_dp.c&quot;?
+</pre>
+    </blockquote>
+    <br></span>
+    Sorry, I don&#39;t think so=C2=A0 ;(<br>
+    <br>
+    I think IP_name+Soc_name would be better in this re-use case.</div></bl=
+ockquote><div><br></div><div>So? Is there the naming rule such as &quot;IP_=
+name+SoC_name&quot;?</div><br><blockquote type=3D"cite"><div> Beside
+    I see<br>
+    there are lots of driver named with this format in kernel, such as
+    dw_hdmi &amp; dw_mmc<br></div></blockquote><div><br></div><div>Please l=
+ook at other dw cases.</div><div>For example, look at dw_pcie.</div><div><b=
+r></div><div>drivers/pci/host/</div><div>pcie-designware.c</div><div>pci-sp=
+ear13xx.c</div><div>pci-exynos.c</div><div><br></div><div>In this case, pci=
+-spear13xx.c and pci-exynos.c do not use &quot;IP_name+SoC_name&quot;, even=
+ though these are dw IPs.</div><div><br></div><div>Also, naming consistency=
+ is more important.</div><div>Now, Exynos DRM files are using &quot;exynos_=
+drm_&quot; prefix.</div><div><br></div><div>drivers/gpu/drm/exynos/</div><d=
+iv>exynos_drm_buf.c</div><div>exynos_drm_core.c</div><div>....</div><div><b=
+r></div><div>However, &quot;analogix_dp-exynos.c&quot; looks very inconsist=
+ent.</div><div><br></div><div>If there is no strict naming rule, please use=
+ &quot;exynos_dp.c&quot;</div><div>or &quot;exynos_drm_dp.c&quot;.=C2=A0</d=
+iv><div><br></div></div></blockquote><div><br></div><div>Sorry for the dela=
+y :-)</div><div><br></div><div>Okay, it is little bit inconsistent, but I j=
+ust want to make the IP name more clearly.</div><div><br></div><div>Anyway =
+I should follow your suggest with =E2=80=9Cexynos_*=E2=80=9D style for now,=
+ so done,=C2=A0</div><div>I would change the filename to &quot;exynos_dp.c&=
+quot; =C2=A0;)</div><div><br></div><div>Thanks,</div><div>- Yakir</div><div=
+>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;b=
+order-left:1px #ccc solid;padding-left:1ex"><div dir=3D"auto"><div></div><d=
+iv>Best regards,</div><div>Jingoo Han</div><div><br></div><blockquote type=
+=3D"cite"><div>
+    <br>
+    =C2=A0(cr) (chromeos-3.14) yakir@server
+    ~/trunk/src/third_party/kernel/v3.14 $<font color=3D"#000099"> ls
+      drivers/gpu/drm/imx/</font><br>
+    <font color=3D"#990000">dw_hdmi-imx.c</font>=C2=A0=C2=A0 imx-drm.h=C2=
+=A0
+    imx-tve.c=C2=A0=C2=A0=C2=A0=C2=A0 ipuv3-plane.c=C2=A0 Kconfig=C2=A0=C2=
+=A0 parallel-display.c<br>
+    <br>
+    (cr) (chromeos-3.14) yakir@server
+    ~/trunk/src/third_party/kernel/v3.14 $<font color=3D"#000099"> ls
+      drivers/mmc/host/dw_mmc*</font><br>
+    drivers/mmc/host/dw_mmc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 drivers/mmc/host/dw_mmc.h=C2=A0=C2=A0=C2=A0=C2=A0
+    drivers/mmc/host/dw_mmc-pci.c=C2=A0=C2=A0=C2=A0 drivers/mmc/host/dw_mmc=
+-pltfm.h<br>
+    <font color=3D"#cc0000">drivers/mmc/host/dw_mmc-exynos.c</font>=C2=A0 <=
+font color=3D"#cc0000">drivers/mmc/host/dw_mmc-k3.c=C2=A0</font>
+    drivers/mmc/host/dw_mmc-pltfm.c=C2=A0 <font color=3D"#cc0000">drivers/m=
+mc/host/dw_mmc-rockchip.c</font><br>
+    <br>
+    Thanks,<br>
+    - Yakir<div><div class=3D"h5"><br>
+    <br>
+    <blockquote type=3D"cite">
+      <pre>Best regards,
+Jingoo Han
+
+</pre>
+      <blockquote type=3D"cite">
+        <pre>drivers/gpu/drm/exynos/exynos_dp_core.c            | 1416 ----=
+----------------
+drivers/gpu/drm/exynos/exynos_dp_core.h            |  282 ----
+drivers/gpu/drm/exynos/exynos_dp_reg.c             | 1263 -----------------
+drivers/gpu/drm/rockchip/Kconfig                   |    9 +
+drivers/gpu/drm/rockchip/Makefile                  |    1 +
+drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  390 ++++++
+drivers/phy/Kconfig                                |    7 +
+drivers/phy/Makefile                               |    1 +
+drivers/phy/phy-rockchip-dp.c                      |  185 +++
+include/drm/bridge/analogix_dp.h                   |   40 +
+30 files changed, 4325 insertions(+), 3172 deletions(-)
+create mode 100644 Documentation/devicetree/bindings/drm/bridge/analogix_dp=
+.txt
+create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.tx=
+t
+create mode 100644 Documentation/devicetree/bindings/video/analogix_dp-rock=
+chip.txt
+create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.c
+create mode 100644 drivers/gpu/drm/bridge/analogix_dp_core.h
+create mode 100644 drivers/gpu/drm/bridge/analogix_dp_reg.c
+rename drivers/gpu/drm/{exynos/exynos_dp_reg.h =3D&gt; bridge/analogix_dp_r=
+eg.h} (62%)
+create mode 100644 drivers/gpu/drm/exynos/analogix_dp-exynos.c
+delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.c
+delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.h
+delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_reg.c
+create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+create mode 100644 drivers/phy/phy-rockchip-dp.c
+create mode 100644 include/drm/bridge/analogix_dp.h
+
+--=20
+1.9.1
+
+
+</pre>
+      </blockquote>
+      <pre></pre>
+    </blockquote>
+    <br>
+ =20
+
+</div></div></div></blockquote></div></blockquote></div><br></div></div></d=
+iv>
+
+--047d7bea35c06196f9051de335bb--
+
+--===============0971767239==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0971767239==--
