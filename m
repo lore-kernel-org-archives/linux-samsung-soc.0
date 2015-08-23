@@ -1,7 +1,7 @@
 From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH v7 11/44] [media] media: use entity.graph_obj.mdev instead of .parent
-Date: Sun, 23 Aug 2015 17:17:28 -0300
-Message-ID: <dc1be98277c46ddd87e431148fc7e332176828ab.1440359643.git.mchehab@osg.samsung.com>
+Subject: [PATCH v7 28/44] [media] media: use macros to check for V4L2 subdev entities
+Date: Sun, 23 Aug 2015 17:17:45 -0300
+Message-ID: <dd6ce157dc49ac77fd54145cc25c76fce51a3cdc.1440359643.git.mchehab@osg.samsung.com>
 References: <cover.1440359643.git.mchehab@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1440359643.git.mchehab@osg.samsung.com>
@@ -9,436 +9,452 @@ In-Reply-To: <cover.1440359643.git.mchehab@osg.samsung.com>
 References: <cover.1440359643.git.mchehab@osg.samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, devel@driverdev.osuosl.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Markus Elfring <elfring@users.sourceforge.net>, Lars-Peter Clausen <lars@metafoo.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, devel@d
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Javier Martinez Canillas <javier@osg.samsung.com>
+Instead of relying on media subtype, use the new macros to detect
+if an entity is a subdev or an A/V DMA entity.
 
-The struct media_entity has a .parent field that stores a pointer
-to the parent struct media_device. But recently a media_gobj was
-embedded into the entities and since struct media_gojb already has
-a pointer to a struct media_device in the .mdev field, the .parent
-field becomes redundant and can be removed.
+Please note that most drivers assume that there's just AV_DMA or
+V4L2 subdevs. This is not true anymore, as we've added MC support
+for DVB, and there are plans to add support for ALSA and FB/DRM
+too.
 
-This patch replaces all the usage of .parent by .graph_obj.mdev so
-that field will become unused and can be removed on a later patch.
+Ok, on the current pipelines supported by those drivers, just V4L
+stuff are there, but, assuming that some day a pipeline that also
+works with other subsystems will ever added, it is better to add
+explicit checks for the AV_DMA stuff.
 
-No functional changes.
-
-The transformation was made using the following coccinelle spatch:
-
-@@
-struct media_entity *me;
-@@
-
-- me->parent
-+ me->graph_obj.mdev
-
-@@
-struct media_entity *link;
-@@
-
-- link->source->entity->parent
-+ link->source->entity->graph_obj.mdev
-
-@@
-struct exynos_video_entity *ve;
-@@
-
-- ve->vdev.entity.parent
-+ ve->vdev.entity.graph_obj.mdev
-
-Suggested-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 
-diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index 0f3844470147..138b18416460 100644
---- a/drivers/media/media-device.c
-+++ b/drivers/media/media-device.c
-@@ -435,8 +435,8 @@ int __must_check media_device_register_entity(struct media_device *mdev,
- 	int i;
+diff --git a/drivers/media/platform/exynos4-is/common.c b/drivers/media/platform/exynos4-is/common.c
+index 0eb34ecb8ee4..1f1b9a56e24e 100644
+--- a/drivers/media/platform/exynos4-is/common.c
++++ b/drivers/media/platform/exynos4-is/common.c
+@@ -22,8 +22,7 @@ struct v4l2_subdev *fimc_find_remote_sensor(struct media_entity *entity)
+ 	while (pad->flags & MEDIA_PAD_FL_SINK) {
+ 		/* source pad */
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
  
- 	/* Warn if we apparently re-register an entity */
--	WARN_ON(entity->parent != NULL);
--	entity->parent = mdev;
-+	WARN_ON(entity->graph_obj.mdev != NULL);
-+	entity->graph_obj.mdev = mdev;
+ 		sd = media_entity_to_v4l2_subdev(pad->entity);
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+index 0627a93b2f3b..79b43b89266a 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -1141,8 +1141,7 @@ static int fimc_pipeline_validate(struct fimc_dev *fimc)
+ 			}
+ 		}
  
- 	spin_lock(&mdev->lock);
- 	/* Initialize media_gobj embedded at the entity */
-@@ -471,7 +471,7 @@ EXPORT_SYMBOL_GPL(media_device_register_entity);
- void media_device_unregister_entity(struct media_entity *entity)
- {
- 	int i;
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
+-		if (src_pad == NULL ||
+-		    media_entity_type(src_pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(src_pad->entity))
+ 			break;
  
- 	if (mdev == NULL)
- 		return;
-@@ -484,7 +484,7 @@ void media_device_unregister_entity(struct media_entity *entity)
- 	media_gobj_remove(&entity->graph_obj);
- 	list_del(&entity->list);
- 	spin_unlock(&mdev->lock);
--	entity->parent = NULL;
-+	entity->graph_obj.mdev = NULL;
- }
- EXPORT_SYMBOL_GPL(media_device_unregister_entity);
+ 		/* Don't call FIMC subdev operation to avoid nested locking */
+@@ -1397,7 +1396,7 @@ static int fimc_link_setup(struct media_entity *entity,
+ 	struct fimc_vid_cap *vc = &fimc->vid_cap;
+ 	struct v4l2_subdev *sensor;
  
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 35e52cd1fc5a..a23c93369a04 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -332,7 +332,7 @@ EXPORT_SYMBOL_GPL(media_entity_graph_walk_next);
- __must_check int media_entity_pipeline_start(struct media_entity *entity,
- 					     struct media_pipeline *pipe)
- {
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 	struct media_entity_graph graph;
- 	struct media_entity *entity_err = entity;
- 	int ret;
-@@ -387,7 +387,7 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
+-	if (media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++	if (!is_media_entity_v4l2_subdev(remote->entity))
+ 		return -EINVAL;
  
- 			ret = entity->ops->link_validate(link);
- 			if (ret < 0 && ret != -ENOIOCTLCMD) {
--				dev_dbg(entity->parent->dev,
-+				dev_dbg(entity->graph_obj.mdev->dev,
- 					"link validation failed for \"%s\":%u -> \"%s\":%u, error %d\n",
- 					link->source->entity->name,
- 					link->source->index,
-@@ -401,7 +401,7 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
- 
- 		if (!bitmap_full(active, entity->num_pads)) {
- 			ret = -EPIPE;
--			dev_dbg(entity->parent->dev,
-+			dev_dbg(entity->graph_obj.mdev->dev,
- 				"\"%s\":%u must be connected by an enabled link\n",
- 				entity->name,
- 				(unsigned)find_first_zero_bit(
-@@ -454,7 +454,7 @@ EXPORT_SYMBOL_GPL(media_entity_pipeline_start);
-  */
- void media_entity_pipeline_stop(struct media_entity *entity)
- {
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 	struct media_entity_graph graph;
- 
- 	mutex_lock(&mdev->graph_mutex);
-@@ -490,8 +490,8 @@ struct media_entity *media_entity_get(struct media_entity *entity)
- 	if (entity == NULL)
- 		return NULL;
- 
--	if (entity->parent->dev &&
--	    !try_module_get(entity->parent->dev->driver->owner))
-+	if (entity->graph_obj.mdev->dev &&
-+	    !try_module_get(entity->graph_obj.mdev->dev->driver->owner))
- 		return NULL;
- 
- 	return entity;
-@@ -511,8 +511,8 @@ void media_entity_put(struct media_entity *entity)
- 	if (entity == NULL)
- 		return;
- 
--	if (entity->parent->dev)
--		module_put(entity->parent->dev->driver->owner);
-+	if (entity->graph_obj.mdev->dev)
-+		module_put(entity->graph_obj.mdev->dev->driver->owner);
- }
- EXPORT_SYMBOL_GPL(media_entity_put);
- 
-@@ -561,7 +561,8 @@ media_create_pad_link(struct media_entity *source, u16 source_pad,
- 	link->flags = flags;
- 
- 	/* Initialize graph object embedded at the new link */
--	media_gobj_init(source->parent, MEDIA_GRAPH_LINK, &link->graph_obj);
-+	media_gobj_init(source->graph_obj.mdev, MEDIA_GRAPH_LINK,
-+			&link->graph_obj);
- 
- 	/* Create the backlink. Backlinks are used to help graph traversal and
- 	 * are not reported to userspace.
-@@ -577,7 +578,8 @@ media_create_pad_link(struct media_entity *source, u16 source_pad,
- 	backlink->flags = flags;
- 
- 	/* Initialize graph object embedded at the new link */
--	media_gobj_init(sink->parent, MEDIA_GRAPH_LINK, &backlink->graph_obj);
-+	media_gobj_init(sink->graph_obj.mdev, MEDIA_GRAPH_LINK,
-+			&backlink->graph_obj);
- 
- 	link->reverse = backlink;
- 	backlink->reverse = link;
-@@ -629,12 +631,12 @@ EXPORT_SYMBOL_GPL(__media_entity_remove_links);
- void media_entity_remove_links(struct media_entity *entity)
- {
- 	/* Do nothing if the entity is not registered. */
--	if (entity->parent == NULL)
-+	if (entity->graph_obj.mdev == NULL)
- 		return;
- 
--	mutex_lock(&entity->parent->graph_mutex);
-+	mutex_lock(&entity->graph_obj.mdev->graph_mutex);
- 	__media_entity_remove_links(entity);
--	mutex_unlock(&entity->parent->graph_mutex);
-+	mutex_unlock(&entity->graph_obj.mdev->graph_mutex);
- }
- EXPORT_SYMBOL_GPL(media_entity_remove_links);
- 
-@@ -703,7 +705,7 @@ int __media_entity_setup_link(struct media_link *link, u32 flags)
- 	    (source->stream_count || sink->stream_count))
- 		return -EBUSY;
- 
--	mdev = source->parent;
-+	mdev = source->graph_obj.mdev;
- 
- 	if (mdev->link_notify) {
- 		ret = mdev->link_notify(link, flags,
-@@ -724,9 +726,9 @@ int media_entity_setup_link(struct media_link *link, u32 flags)
- {
- 	int ret;
- 
--	mutex_lock(&link->source->entity->parent->graph_mutex);
-+	mutex_lock(&link->source->entity->graph_obj.mdev->graph_mutex);
- 	ret = __media_entity_setup_link(link, flags);
--	mutex_unlock(&link->source->entity->parent->graph_mutex);
-+	mutex_unlock(&link->source->entity->graph_obj.mdev->graph_mutex);
- 
- 	return ret;
- }
+ 	if (WARN_ON(fimc == NULL))
 diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index b7dc5ac66e36..3d9ccbf5f10f 100644
+index 3d9ccbf5f10f..0ea948ad668c 100644
 --- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
 +++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -288,7 +288,7 @@ static int isp_video_open(struct file *file)
- 		goto rel_fh;
+@@ -467,8 +467,7 @@ static int isp_video_pipeline_validate(struct fimc_isp *isp)
  
- 	if (v4l2_fh_is_singular_file(file)) {
--		mutex_lock(&me->parent->graph_mutex);
-+		mutex_lock(&me->graph_obj.mdev->graph_mutex);
+ 		/* Retrieve format at the source pad */
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
  
- 		ret = fimc_pipeline_call(ve, open, me, true);
- 
-@@ -296,7 +296,7 @@ static int isp_video_open(struct file *file)
- 		if (ret == 0)
- 			me->use_count++;
- 
--		mutex_unlock(&me->parent->graph_mutex);
-+		mutex_unlock(&me->graph_obj.mdev->graph_mutex);
- 	}
- 	if (!ret)
- 		goto unlock;
-@@ -312,7 +312,7 @@ static int isp_video_release(struct file *file)
- 	struct fimc_isp *isp = video_drvdata(file);
- 	struct fimc_is_video *ivc = &isp->video_capture;
- 	struct media_entity *entity = &ivc->ve.vdev.entity;
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 
- 	mutex_lock(&isp->video_lock);
- 
+ 		sd = media_entity_to_v4l2_subdev(pad->entity);
 diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index e8f707d1729b..b2607da4ad14 100644
+index b2607da4ad14..df2ac6b0afd1 100644
 --- a/drivers/media/platform/exynos4-is/fimc-lite.c
 +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -500,7 +500,7 @@ static int fimc_lite_open(struct file *file)
- 	    atomic_read(&fimc->out_path) != FIMC_IO_DMA)
- 		goto unlock;
+@@ -814,8 +814,7 @@ static int fimc_pipeline_validate(struct fimc_lite *fimc)
+ 		}
+ 		/* Retrieve format at the source pad */
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
  
--	mutex_lock(&me->parent->graph_mutex);
-+	mutex_lock(&me->graph_obj.mdev->graph_mutex);
+ 		sd = media_entity_to_v4l2_subdev(pad->entity);
+@@ -988,7 +987,6 @@ static int fimc_lite_link_setup(struct media_entity *entity,
+ {
+ 	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+ 	struct fimc_lite *fimc = v4l2_get_subdevdata(sd);
+-	unsigned int remote_ent_type = media_entity_type(remote->entity);
+ 	int ret = 0;
  
- 	ret = fimc_pipeline_call(&fimc->ve, open, me, true);
+ 	if (WARN_ON(fimc == NULL))
+@@ -1000,7 +998,7 @@ static int fimc_lite_link_setup(struct media_entity *entity,
  
-@@ -508,7 +508,7 @@ static int fimc_lite_open(struct file *file)
- 	if (ret == 0)
- 		me->use_count++;
- 
--	mutex_unlock(&me->parent->graph_mutex);
-+	mutex_unlock(&me->graph_obj.mdev->graph_mutex);
- 
- 	if (!ret) {
- 		fimc_lite_clear_event_counters(fimc);
-@@ -541,9 +541,9 @@ static int fimc_lite_release(struct file *file)
- 		fimc_pipeline_call(&fimc->ve, close);
- 		clear_bit(ST_FLITE_IN_USE, &fimc->state);
- 
--		mutex_lock(&entity->parent->graph_mutex);
-+		mutex_lock(&entity->graph_obj.mdev->graph_mutex);
- 		entity->use_count--;
--		mutex_unlock(&entity->parent->graph_mutex);
-+		mutex_unlock(&entity->graph_obj.mdev->graph_mutex);
- 	}
- 
- 	_vb2_fop_release(file, NULL);
+ 	switch (local->index) {
+ 	case FLITE_SD_PAD_SINK:
+-		if (remote_ent_type != MEDIA_ENT_T_V4L2_SUBDEV) {
++		if (!is_media_entity_v4l2_subdev(remote->entity)) {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+@@ -1018,7 +1016,7 @@ static int fimc_lite_link_setup(struct media_entity *entity,
+ 	case FLITE_SD_PAD_SOURCE_DMA:
+ 		if (!(flags & MEDIA_LNK_FL_ENABLED))
+ 			atomic_set(&fimc->out_path, FIMC_IO_NONE);
+-		else if (remote_ent_type == MEDIA_ENT_T_DEVNODE)
++		else if (is_media_v4l2_io(remote->entity))
+ 			atomic_set(&fimc->out_path, FIMC_IO_DMA);
+ 		else
+ 			ret = -EINVAL;
+@@ -1027,7 +1025,7 @@ static int fimc_lite_link_setup(struct media_entity *entity,
+ 	case FLITE_SD_PAD_SOURCE_ISP:
+ 		if (!(flags & MEDIA_LNK_FL_ENABLED))
+ 			atomic_set(&fimc->out_path, FIMC_IO_NONE);
+-		else if (remote_ent_type == MEDIA_ENT_T_V4L2_SUBDEV)
++		else if (is_media_entity_v4l2_subdev(remote->entity)))
+ 			atomic_set(&fimc->out_path, FIMC_IO_ISP);
+ 		else
+ 			ret = -EINVAL;
 diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 3ba76940eef5..92dbade2fffc 100644
+index 92dbade2fffc..428fead69095 100644
 --- a/drivers/media/platform/exynos4-is/media-dev.c
 +++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1046,7 +1046,7 @@ static int __fimc_md_modify_pipeline(struct media_entity *entity, bool enable)
- 	return ret;
- }
+@@ -88,8 +88,7 @@ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+ 				break;
+ 		}
  
--/* Locking: called with entity->parent->graph_mutex mutex held. */
-+/* Locking: called with entity->graph_obj.mdev->graph_mutex mutex held. */
- static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable)
- {
- 	struct media_entity *entity_err = entity;
-diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-index 03214541f149..9a69913b31cb 100644
---- a/drivers/media/platform/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/exynos4-is/media-dev.h
-@@ -164,8 +164,8 @@ struct fimc_sensor_info *source_to_sensor_info(struct fimc_source_info *si)
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
+ 		sd = media_entity_to_v4l2_subdev(pad->entity);
  
- static inline struct fimc_md *entity_to_fimc_mdev(struct media_entity *me)
- {
--	return me->parent == NULL ? NULL :
--		container_of(me->parent, struct fimc_md, media_dev);
-+	return me->graph_obj.mdev == NULL ? NULL :
-+		container_of(me->graph_obj.mdev, struct fimc_md, media_dev);
- }
+@@ -1062,7 +1061,7 @@ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable)
+ 	media_entity_graph_walk_start(&graph, entity);
  
- static inline struct fimc_md *notifier_to_fimc_md(struct v4l2_async_notifier *n)
-@@ -175,12 +175,12 @@ static inline struct fimc_md *notifier_to_fimc_md(struct v4l2_async_notifier *n)
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+-		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
++		if (!is_media_entity_v4l2_io(entity))
+ 			continue;
  
- static inline void fimc_md_graph_lock(struct exynos_video_entity *ve)
- {
--	mutex_lock(&ve->vdev.entity.parent->graph_mutex);
-+	mutex_lock(&ve->vdev.entity.graph_obj.mdev->graph_mutex);
- }
+ 		ret  = __fimc_md_modify_pipeline(entity, enable);
+@@ -1076,7 +1075,7 @@ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable)
+ 	media_entity_graph_walk_start(&graph, entity_err);
  
- static inline void fimc_md_graph_unlock(struct exynos_video_entity *ve)
- {
--	mutex_unlock(&ve->vdev.entity.parent->graph_mutex);
-+	mutex_unlock(&ve->vdev.entity.graph_obj.mdev->graph_mutex);
- }
+ 	while ((entity_err = media_entity_graph_walk_next(&graph))) {
+-		if (media_entity_type(entity_err) != MEDIA_ENT_T_DEVNODE)
++		if (!is_media_entity_v4l2_io(entity_err))
+ 			continue;
  
- int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on);
+ 		__fimc_md_modify_pipeline(entity_err, !enable);
 diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 6351f35b0a65..aa13b17d19a0 100644
+index aa13b17d19a0..fe29e56528ed 100644
 --- a/drivers/media/platform/omap3isp/isp.c
 +++ b/drivers/media/platform/omap3isp/isp.c
-@@ -787,7 +787,7 @@ int omap3isp_pipeline_pm_use(struct media_entity *entity, int use)
- 	int change = use ? 1 : -1;
+@@ -691,7 +691,7 @@ static int isp_pipeline_pm_use_count(struct media_entity *entity)
+ 	media_entity_graph_walk_start(&graph, entity);
+ 
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+-		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
++		if (is_media_entity_v4l2_io(entity))
+ 			use += entity->use_count;
+ 	}
+ 
+@@ -714,7 +714,7 @@ static int isp_pipeline_pm_power_one(struct media_entity *entity, int change)
+ 	struct v4l2_subdev *subdev;
  	int ret;
  
--	mutex_lock(&entity->parent->graph_mutex);
-+	mutex_lock(&entity->graph_obj.mdev->graph_mutex);
+-	subdev = media_entity_type(entity) == MEDIA_ENT_T_V4L2_SUBDEV
++	subdev = is_media_entity_v4l2_subdev(entity))
+ 	       ? media_entity_to_v4l2_subdev(entity) : NULL;
  
- 	/* Apply use count to node. */
- 	entity->use_count += change;
-@@ -798,7 +798,7 @@ int omap3isp_pipeline_pm_use(struct media_entity *entity, int use)
- 	if (ret < 0)
- 		entity->use_count -= change;
+ 	if (entity->use_count == 0 && change > 0 && subdev != NULL) {
+@@ -754,7 +754,7 @@ static int isp_pipeline_pm_power(struct media_entity *entity, int change)
+ 	media_entity_graph_walk_start(&graph, entity);
  
--	mutex_unlock(&entity->parent->graph_mutex);
-+	mutex_unlock(&entity->graph_obj.mdev->graph_mutex);
+ 	while (!ret && (entity = media_entity_graph_walk_next(&graph)))
+-		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
++		if (is_media_entity_v4l2_subdev(entity))
+ 			ret = isp_pipeline_pm_power_one(entity, change);
+ 
+ 	if (!ret)
+@@ -764,7 +764,7 @@ static int isp_pipeline_pm_power(struct media_entity *entity, int change)
+ 
+ 	while ((first = media_entity_graph_walk_next(&graph))
+ 	       && first != entity)
+-		if (media_entity_type(first) != MEDIA_ENT_T_DEVNODE)
++		if (is_media_entity_v4l2_subdev(first))
+ 			isp_pipeline_pm_power_one(first, -change);
  
  	return ret;
- }
+@@ -897,8 +897,7 @@ static int isp_pipeline_enable(struct isp_pipeline *pipe,
+ 			break;
+ 
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
+ 
+ 		entity = pad->entity;
+@@ -988,8 +987,7 @@ static int isp_pipeline_disable(struct isp_pipeline *pipe)
+ 			break;
+ 
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
+ 
+ 		entity = pad->entity;
 diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-index 6c89dc40df85..4c367352b1f7 100644
+index 4c367352b1f7..3518c7d283d0 100644
 --- a/drivers/media/platform/omap3isp/ispvideo.c
 +++ b/drivers/media/platform/omap3isp/ispvideo.c
-@@ -226,7 +226,7 @@ static int isp_video_get_graph_data(struct isp_video *video,
- {
- 	struct media_entity_graph graph;
- 	struct media_entity *entity = &video->video.entity;
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 	struct isp_video *far_end = NULL;
+@@ -210,8 +210,7 @@ isp_video_remote_subdev(struct isp_video *video, u32 *pad)
  
- 	mutex_lock(&mdev->graph_mutex);
+ 	remote = media_entity_remote_pad(&video->pad);
+ 
+-	if (remote == NULL ||
+-	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++	if (!is_media_entity_v4l2_subdev(remote->entity))
+ 		return NULL;
+ 
+ 	if (pad)
+@@ -243,7 +242,7 @@ static int isp_video_get_graph_data(struct isp_video *video,
+ 		if (entity == &video->video.entity)
+ 			continue;
+ 
+-		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
++		if (!is_media_entity_v4l2_io(entity))
+ 			continue;
+ 
+ 		__video = to_isp_video(media_entity_to_video_device(entity));
+@@ -917,7 +916,7 @@ static int isp_video_check_external_subdevs(struct isp_video *video,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (media_entity_type(source) != MEDIA_ENT_T_V4L2_SUBDEV)
++	if (!is_media_entity_v4l2_subdev(source->entity))
+ 		return 0;
+ 
+ 	pipe->external = media_entity_to_v4l2_subdev(source);
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+index eae667eab1b9..50f511439e67 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -837,7 +837,7 @@ static int camif_pipeline_validate(struct camif_dev *camif)
+ 
+ 	/* Retrieve format at the sensor subdev source pad */
+ 	pad = media_entity_remote_pad(&camif->pads[0]);
+-	if (!pad || media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++	if (!is_media_entity_v4l2_subdev(pad->entity))
+ 		return -EPIPE;
+ 
+ 	src_fmt.pad = pad->index;
 diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index debe4e539df6..1f94c1a54e00 100644
+index 1f94c1a54e00..8d202f42b318 100644
 --- a/drivers/media/platform/vsp1/vsp1_video.c
 +++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -409,7 +409,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline *pipe,
- {
- 	struct media_entity_graph graph;
- 	struct media_entity *entity = &video->video.entity;
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 	unsigned int i;
- 	int ret;
+@@ -160,8 +160,7 @@ vsp1_video_remote_subdev(struct media_pad *local, u32 *pad)
+ 	struct media_pad *remote;
  
+ 	remote = media_entity_remote_pad(local);
+-	if (remote == NULL ||
+-	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++	if (!is_media_entity_v4l2_subdev(remote->entity))
+ 		return NULL;
+ 
+ 	if (pad)
+@@ -326,7 +325,7 @@ static int vsp1_pipeline_validate_branch(struct vsp1_pipeline *pipe,
+ 			return -EPIPE;
+ 
+ 		/* We've reached a video node, that shouldn't have happened. */
+-		if (media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			return -EPIPE;
+ 
+ 		entity = to_vsp1_entity(media_entity_to_v4l2_subdev(pad->entity));
+@@ -423,7 +422,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline *pipe,
+ 		struct vsp1_rwpf *rwpf;
+ 		struct vsp1_entity *e;
+ 
+-		if (media_entity_type(entity) != MEDIA_ENT_T_V4L2_SUBDEV) {
++		if (is_media_entity_v4l2_io(entity)) {
+ 			pipe->num_video++;
+ 			continue;
+ 		}
+@@ -692,7 +691,7 @@ void vsp1_pipeline_propagate_alpha(struct vsp1_pipeline *pipe,
+ 	pad = media_entity_remote_pad(&input->pads[RWPF_PAD_SOURCE]);
+ 
+ 	while (pad) {
+-		if (media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
+ 
+ 		entity = to_vsp1_entity(media_entity_to_v4l2_subdev(pad->entity));
 diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
-index f7f9aa353a55..92e8116dc28f 100644
+index 88cd789cdaf7..bbbde73c05b8 100644
 --- a/drivers/media/platform/xilinx/xilinx-dma.c
 +++ b/drivers/media/platform/xilinx/xilinx-dma.c
-@@ -181,7 +181,7 @@ static int xvip_pipeline_validate(struct xvip_pipeline *pipe,
+@@ -49,8 +49,7 @@ xvip_dma_remote_subdev(struct media_pad *local, u32 *pad)
+ 	struct media_pad *remote;
+ 
+ 	remote = media_entity_remote_pad(local);
+-	if (remote == NULL ||
+-	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++	if (!is_media_entity_v4l2_subdev(remote->entity))
+ 		return NULL;
+ 
+ 	if (pad)
+@@ -113,8 +112,7 @@ static int xvip_pipeline_start_stop(struct xvip_pipeline *pipe, bool start)
+ 			break;
+ 
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
+ 
+ 		entity = pad->entity;
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index e6e1115d8215..60da43772de9 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -526,7 +526,7 @@ static int
+ v4l2_subdev_link_validate_get_format(struct media_pad *pad,
+ 				     struct v4l2_subdev_format *fmt)
  {
- 	struct media_entity_graph graph;
- 	struct media_entity *entity = &start->video.entity;
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 	unsigned int num_inputs = 0;
- 	unsigned int num_outputs = 0;
+-	if (media_entity_type(pad->entity) == MEDIA_ENT_T_V4L2_SUBDEV) {
++	if (is_media_entity_v4l2_subdev(pad->entity)) {
+ 		struct v4l2_subdev *sd =
+ 			media_entity_to_v4l2_subdev(pad->entity);
  
 diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-index 61a8d5beff58..92573fa852a9 100644
+index 92573fa852a9..16763e0831f2 100644
 --- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
 +++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-@@ -130,7 +130,7 @@ __vpfe_video_get_format(struct vpfe_video_device *video,
- static void vpfe_prepare_pipeline(struct vpfe_video_device *video)
- {
- 	struct media_entity *entity = &video->video_dev.entity;
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 	struct vpfe_pipeline *pipe = &video->pipe;
- 	struct vpfe_video_device *far_end = NULL;
- 	struct media_entity_graph graph;
-@@ -288,7 +288,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline *pipe)
- 	else
- 		entity = &pipe->inputs[0]->video_dev.entity;
- 
--	mdev = entity->parent;
-+	mdev = entity->graph_obj.mdev;
- 	mutex_lock(&mdev->graph_mutex);
+@@ -148,7 +148,7 @@ static void vpfe_prepare_pipeline(struct vpfe_video_device *video)
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+ 		if (entity == &video->video_dev.entity)
+ 			continue;
+-		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
++		if ((!is_media_entity_v4l2_io(remote->entity))
+ 			continue;
+ 		far_end = to_vpfe_video(media_entity_to_video_device(entity));
+ 		if (far_end->type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
+@@ -293,7 +293,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline *pipe)
  	media_entity_graph_walk_start(&graph, entity);
  	while ((entity = media_entity_graph_walk_next(&graph))) {
-@@ -328,7 +328,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline *pipe)
- 	else
- 		entity = &pipe->inputs[0]->video_dev.entity;
  
--	mdev = entity->parent;
-+	mdev = entity->graph_obj.mdev;
- 	mutex_lock(&mdev->graph_mutex);
- 	media_entity_graph_walk_start(&graph, entity);
+-		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
++		if !is_media_entity_v4l2_subdev(entity))
+ 			continue;
+ 		subdev = media_entity_to_v4l2_subdev(entity);
+ 		ret = v4l2_subdev_call(subdev, video, s_stream, 1);
+@@ -334,7 +334,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline *pipe)
  
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+ 
+-		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
++		if (!is_media_entity_v4l2_subdev(entity))
+ 			continue;
+ 		subdev = media_entity_to_v4l2_subdev(entity);
+ 		ret = v4l2_subdev_call(subdev, video, s_stream, 0);
 diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
-index 7226553ceb2f..40591963b42b 100644
+index 40591963b42b..fc7d329a06bd 100644
 --- a/drivers/staging/media/omap4iss/iss.c
 +++ b/drivers/staging/media/omap4iss/iss.c
-@@ -494,7 +494,7 @@ int omap4iss_pipeline_pm_use(struct media_entity *entity, int use)
- 	int change = use ? 1 : -1;
- 	int ret;
+@@ -397,7 +397,7 @@ static int iss_pipeline_pm_use_count(struct media_entity *entity)
+ 	media_entity_graph_walk_start(&graph, entity);
  
--	mutex_lock(&entity->parent->graph_mutex);
-+	mutex_lock(&entity->graph_obj.mdev->graph_mutex);
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+-		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
++		if (is_media_entity_v4l2_io(entity))
+ 			use += entity->use_count;
+ 	}
  
- 	/* Apply use count to node. */
- 	entity->use_count += change;
-@@ -505,7 +505,7 @@ int omap4iss_pipeline_pm_use(struct media_entity *entity, int use)
- 	if (ret < 0)
- 		entity->use_count -= change;
+@@ -419,7 +419,7 @@ static int iss_pipeline_pm_power_one(struct media_entity *entity, int change)
+ {
+ 	struct v4l2_subdev *subdev;
  
--	mutex_unlock(&entity->parent->graph_mutex);
-+	mutex_unlock(&entity->graph_obj.mdev->graph_mutex);
+-	subdev = media_entity_type(entity) == MEDIA_ENT_T_V4L2_SUBDEV
++	subdev = is_media_entity_v4l2_subdev(entity))
+ 	       ? media_entity_to_v4l2_subdev(entity) : NULL;
+ 
+ 	if (entity->use_count == 0 && change > 0 && subdev != NULL) {
+@@ -461,7 +461,7 @@ static int iss_pipeline_pm_power(struct media_entity *entity, int change)
+ 	media_entity_graph_walk_start(&graph, entity);
+ 
+ 	while (!ret && (entity = media_entity_graph_walk_next(&graph)))
+-		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
++		if (is_media_entity_v4l2_subdev(entity))
+ 			ret = iss_pipeline_pm_power_one(entity, change);
+ 
+ 	if (!ret)
+@@ -471,7 +471,7 @@ static int iss_pipeline_pm_power(struct media_entity *entity, int change)
+ 
+ 	while ((first = media_entity_graph_walk_next(&graph))
+ 	       && first != entity)
+-		if (media_entity_type(first) != MEDIA_ENT_T_DEVNODE)
++		if (is_media_entity_v4l2_subdev(first))
+ 			iss_pipeline_pm_power_one(first, -change);
  
  	return ret;
- }
+@@ -590,8 +590,7 @@ static int iss_pipeline_disable(struct iss_pipeline *pipe,
+ 			break;
+ 
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if !is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
+ 
+ 		entity = pad->entity;
+@@ -658,8 +657,7 @@ static int iss_pipeline_enable(struct iss_pipeline *pipe,
+ 			break;
+ 
+ 		pad = media_entity_remote_pad(pad);
+-		if (pad == NULL ||
+-		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++		if (!is_media_entity_v4l2_subdev(pad->entity))
+ 			break;
+ 
+ 		entity = pad->entity;
 diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
-index 25e9e7a6b99d..45a3f2d778fc 100644
+index 45a3f2d778fc..9aae72bc24a0 100644
 --- a/drivers/staging/media/omap4iss/iss_video.c
 +++ b/drivers/staging/media/omap4iss/iss_video.c
-@@ -207,7 +207,7 @@ iss_video_far_end(struct iss_video *video)
- {
- 	struct media_entity_graph graph;
- 	struct media_entity *entity = &video->video.entity;
--	struct media_device *mdev = entity->parent;
-+	struct media_device *mdev = entity->graph_obj.mdev;
- 	struct iss_video *far_end = NULL;
+@@ -191,8 +191,7 @@ iss_video_remote_subdev(struct iss_video *video, u32 *pad)
  
- 	mutex_lock(&mdev->graph_mutex);
+ 	remote = media_entity_remote_pad(&video->pad);
+ 
+-	if (remote == NULL ||
+-	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
++	if ((!is_media_entity_v4l2_subdev(remote->entity))
+ 		return NULL;
+ 
+ 	if (pad)
+@@ -217,7 +216,7 @@ iss_video_far_end(struct iss_video *video)
+ 		if (entity == &video->video.entity)
+ 			continue;
+ 
+-		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
++		if (!is_media_entity_v4l2_io(entity))
+ 			continue;
+ 
+ 		far_end = to_iss_video(media_entity_to_video_device(entity));
 -- 
 2.4.3
