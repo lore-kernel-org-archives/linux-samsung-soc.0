@@ -1,139 +1,68 @@
-From: Przemyslaw Marczak <p.marczak@samsung.com>
-Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
-Date: Mon, 24 Aug 2015 09:06:47 +0200
-Message-ID: <55DAC287.9000000@samsung.com>
-References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
- <55D5FBDB.4040904@free.fr>
- <CANAwSgRHEXuNt1PJY89ujificXj70BhbGhSOpL16yKsKr6hWcQ@mail.gmail.com>
- <55D676E8.8020802@samsung.com>
- <CANAwSgR-d-mPnvmi19fiyt89g_B1UkuCya9=4e_19muv-UZrCQ@mail.gmail.com>
- <55D6A23C.5020403@samsung.com> <55D6D185.5070909@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 0/7] Exynos4412-based Trats2 USB gadget (DWC2) fixes
+Date: Mon, 24 Aug 2015 16:16:59 +0900
+Message-ID: <55DAC4EB.9030304@samsung.com>
+References: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:20019 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:20678 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751906AbbHXHG5 (ORCPT
+	with ESMTP id S1751906AbbHXHRJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Aug 2015 03:06:57 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NTK0057WRRIJS30@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Aug 2015 08:06:54 +0100 (BST)
-In-reply-to: <55D6D185.5070909@osg.samsung.com>
+	Mon, 24 Aug 2015 03:17:09 -0400
+In-reply-to: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Kamil Debski <k.debski@samsung.com>, Mark Brown <broonie@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>
 
-Hi all,
+On 21.08.2015 21:38, Marek Szyprowski wrote:
+> Dear All,
+> 
+> Since v3.19 s3c-hsotg (DWC2) USB controller stopped working on
+> Exynos4412-based Trats2 platform. However on Odroid-U3 (which is also
+> Exynos4412-based) it worked fine all the time. After long investigation
+> it turned out that this was caused by 2 independent issues.
+> 
+> First issue was caused by patch 7eec1266751bd3a25e35ce88686634c768fedc24
+> ("ARM: dts: Add Maxim 77693 PMIC to exynos4412-trats2") added support
+> for Maxim 77693 regulators, but without defining consumers for them.
+> This causes regulator core to disable them. However SAFEOUT1 regulator
+> provides power supply to VBUS signal, which also power some USB phy
+> related parts of Exynos SoC core. This has been fixed by patches 1-3,
+> which adds support for VBUS regulator, defines them in DTS for all
+> Exynos platforms and changes probe sequence of the drivers to ensure no
+> deferred probe occurs (USB gadget subsystem doesn't support deferred
+> probe yet).
+> 
+> Second issue is related to DWC2 driver rewrite and host/gadget/dual-role
+> integration code. DWC2 module on some platforms needs three additional
+> hardware resources: phy, clock and power supply. All of them must be
+> enabled/activated to properly initialize and operate. This was initially
+> handled in s3c-hsotg driver, which has been converted to 'gadget' part
+> of dwc2 driver. Unfortunately, not all of this code got moved to common
+> platform code, what resulted in accessing DWC2 registers without
+> enabling power supply regulators and clock. This caused initialization
+> failure on Exynos4412-based Trats2. Odroid U3 board worked fine, because
+> power supplies used by DWC2 module are marked there as 'always-on',
+> because they are also used by other modules (USB hub) and clock was
+> shared with USB2 PHY, so it was already enabled. This initialization
+> issue has been fixed by the last patch. While preparing it I've also
+> fixed a few minor issues found in nearby code (patches 4-6).
+> 
+> I would like to get those patches merged separately to respective
+> subsystem trees:
+> patch 1: phy subsystem tree
+> patch 2: Samsung Exynos tree
+> patch 3: regulator subsystem tree
+> patch 4-7: USB gadget subsystem tree
+> 
+> Patches have been prepared on top of linux-next from 20150821.
 
-On 08/21/2015 09:21 AM, Javier Martinez Canillas wrote:
-> [Adding Przemyslaw Marczak who was working on porting Odroid BL1/BL2/SPL]
-
-This work is currently on hold, but the mainline spl support will not 
-solve early-boot issues caused by cpu running in a non-secure state.
-But I think, that still some hacking is possible, and will continue a 
-research on it later, when I finish some more important tasks.
+Entire patchset tested on Trats2 board:
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
--- 
-Przemyslaw Marczak
-Samsung R&D Institute Poland
-Samsung Electronics
-p.marczak@samsung.com
-
->
-> Hello,
->
-> On 08/21/2015 05:59 AM, Krzysztof Kozlowski wrote:
->> On 21.08.2015 12:41, Anand Moon wrote:
->>> Hi Krzysztof,
->>>
->>> On 21 August 2015 at 06:25, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
->>>> On 21.08.2015 03:15, Anand Moon wrote:
->>>>> Hi Daniel,
->>>>>
->>>>> On 20 August 2015 at 21:40, Daniel Lezcano <daniel.lezcano@free.fr> wrote:
->>>>>> On 08/20/2015 12:54 PM, Anand Moon wrote:
->>>>>>>
->>>>>>> Hello Krzysztof/Kukjim,
->>>>>>>
->>>>>>> CPUIdle seen to be not working for Exynos5422 Odroid boards.
->>>>>>>
->>>>>>> Is their any way this feature will be implemented in the future.
->>>>>>
->>>>>>
->>>>>> Yeah a good willing to fix the bl1. More than one year asking for that !
->>>>>> nooo way !!
->>>>>>
->>>>>> Your answer is at the end of
->>>>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
->>>>>>
->>>>>>
->>>>>
->>>>> Thanks for the explanation.
->>>>>
->>>>> I was just referring following the source code.
->>>>>
->>>>> https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/arch/arm/mach-exynos/cpuidle-exynos5422.c
->>>>>
->>>>> It seem that cpufreq and cpuidle go hand in hand.
->>>>
->>>> Bartlomiej was working on cpufreq for Exynos542x:
->>>> http://lkml.iu.edu/hypermail/linux/kernel/1504.2/03139.html
->>>>
->>>> It would be nice to have also cpuidle and suspend features working on
->>>> Exynos542x family but this depends on firmware. Some time ago I
->>>> struggled with suspend on Arndale Octa (Exynos5420) and I failed. I
->>>> think the firmware is the issue here.
->
-> There were a lot of Suspend-to-RAM bug fixes lately mostly related to
-> critical clocks being gated. It would be nice to give a try on recent
-> kernels and see if is still not working.
->
->>>>
->>>> Actually I am not sure what is your question Anand. You are asking if
->>>> someone plans to do this?
->>>
->>> Yes I am asking are their plans to implement cpufreq and cpuidle simultaneously.
->>
->> There are no obstacles for implementing them simultaneously so the
->> question is rather who plans to do the cpuidle driver for Exynos542x? I
->
-> If the firmware is in a good shape (unfortunately as mentioned by Daniel,
-> the one in the Odroids are not) then the generic ARM big.LITTLE CPUidle
-> driver (CONFIG_ARM_BIG_LITTLE_CPUIDLE) should work.
->
-> It is at least working for me on the Exynos5800 based Peach Pi Chromebook:
->
-> $ cat /sys/devices/system/cpu/cpuidle/current_driver
-> big_idle
->
-> $ cat /sys/devices/system/cpu/cpu0/cpuidle/state*/name
-> WFI
-> C1
->
-> $ cat /sys/devices/system/cpu/cpu0/cpuidle/state*/usage
-> 7745
-> 10578
->
->> don't... at least in nearby future. If I had some spare time then
->> probably I would try to make suspend working.
->>
->
-> Suspend-to-RAM is at least working on the Exynos5420 and Exynos5800
-> Chromebooks.
->
-> As you mentioned it may depend on the firmware so that does not hold
-> true for all the Exynos5420/5422/5800 boards but it would be good to
-> know what is the causing S2R to fail.
->
->> Best regards,
->> Krzysztof
->>
->
-> Best regards,
->
+Krzysztof
