@@ -1,51 +1,86 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v4 2/4] mfd: max77686: Use a generic name for the PMIC node in the example
-Date: Mon, 24 Aug 2015 10:47:19 +0200
-Message-ID: <1440406041-25071-3-git-send-email-javier@osg.samsung.com>
-References: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH 1/4] clk: samsung: exynos7: Update CMU TOPC block clock
+Date: Mon, 24 Aug 2015 16:35:53 +0530
+Message-ID: <1440414356-1805-2-git-send-email-alim.akhtar@samsung.com>
+References: <1440414356-1805-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:53539 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751834AbbHXLPD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 07:15:03 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NTL01RNE390CM00@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Aug 2015 20:15:00 +0900 (KST)
+In-reply-to: <1440414356-1805-1-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com
 
-The ePAPR standard says that: "the name of a node should be somewhat
-generic, reflecting the function of the device and not its precise
-programming model."
+This patch fixes some of the bit field and
+update the TOPC block clock as per the latest UM.
 
-So, change the max77686 binding document example to use a generic
-node name instead of using the chip's name.
-
-Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
+ drivers/clk/samsung/clk-exynos7.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-Changes in v4:
-- Add Lee Jones Acked-by tag to patch #2.
-
-Changes in v3:
-- Fix typo in ePAPR document name. Suggested by Sergei Shtylyov
-
-Changes in v2: None
-
- Documentation/devicetree/bindings/mfd/max77686.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index 8221102d3fc2..d2ed3c20a5c3 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -48,7 +48,7 @@ to get matched with their hardware counterparts as follow:
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index 03d36e8..cbf1bd2 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -87,6 +87,7 @@ static unsigned long topc_clk_regs[] __initdata = {
+ 	DIV_TOPC0,
+ 	DIV_TOPC1,
+ 	DIV_TOPC3,
++	ENABLE_ACLK_TOPC1,
+ };
  
- Example:
+ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+@@ -104,9 +105,9 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+ 	MUX(0, "mout_sclk_mfc_pll_cmuc", mout_sclk_mfc_pll_cmuc_p,
+ 		MUX_SEL_TOPC0, 28, 1),
  
--	max77686@09 {
-+	max77686: pmic@09 {
- 		compatible = "maxim,max77686";
- 		interrupt-parent = <&wakeup_eint>;
- 		interrupts = <26 0>;
++	MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
+ 	MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
+ 		MUX_SEL_TOPC1, 16, 1),
+-	MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
+ 
+ 	MUX(0, "mout_aclk_ccore_133", mout_topc_group2,	MUX_SEL_TOPC2, 4, 2),
+ 
+@@ -116,7 +117,7 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+ 
+ static struct samsung_div_clock topc_div_clks[] __initdata = {
+ 	DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
+-		DIV_TOPC0, 4, 4),
++		DIV_TOPC0, 4, 5),
+ 
+ 	DIV(DOUT_ACLK_MSCL_532, "dout_aclk_mscl_532", "mout_aclk_mscl_532",
+ 		DIV_TOPC1, 20, 4),
+@@ -124,15 +125,15 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
+ 		DIV_TOPC1, 24, 4),
+ 
+ 	DIV(DOUT_SCLK_BUS0_PLL, "dout_sclk_bus0_pll", "mout_sclk_bus0_pll_out",
+-		DIV_TOPC3, 0, 3),
++		DIV_TOPC3, 0, 4),
+ 	DIV(DOUT_SCLK_BUS1_PLL, "dout_sclk_bus1_pll", "mout_bus1_pll_ctrl",
+-		DIV_TOPC3, 8, 3),
++		DIV_TOPC3, 8, 4),
+ 	DIV(DOUT_SCLK_CC_PLL, "dout_sclk_cc_pll", "mout_cc_pll_ctrl",
+-		DIV_TOPC3, 12, 3),
++		DIV_TOPC3, 12, 4),
+ 	DIV(DOUT_SCLK_MFC_PLL, "dout_sclk_mfc_pll", "mout_mfc_pll_ctrl",
+-		DIV_TOPC3, 16, 3),
++		DIV_TOPC3, 16, 4),
+ 	DIV(DOUT_SCLK_AUD_PLL, "dout_sclk_aud_pll", "mout_aud_pll_ctrl",
+-		DIV_TOPC3, 28, 3),
++		DIV_TOPC3, 28, 4),
+ };
+ 
+ static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
 -- 
-2.4.3
+1.7.10.4
