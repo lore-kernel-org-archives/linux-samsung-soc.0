@@ -1,114 +1,55 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 06/14] exynos/fimg2d: check buffer space in g2d_copy_with_scale()
-Date: Mon, 24 Aug 2015 16:14:01 +0200
-Message-ID: <1440425649-9768-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 07/14] exynos/fimg2d: add g2d_validate_xyz() functions
+Date: Mon, 24 Aug 2015 16:14:02 +0200
+Message-ID: <1440425649-9768-8-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50093 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753921AbbHXOPJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Aug 2015 10:15:09 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Parameter validation goes to the top. Repeat mode is
-checked first to make computation of space easier.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/exynos_fimg2d.c | 53 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 23 deletions(-)
-
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 185aa80..2e04f4a 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -467,23 +467,12 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
- {
- 	union g2d_rop4_val rop4;
- 	union g2d_point_val pt;
--	unsigned int scale;
-+	unsigned int scale, repeat_pad;
- 	unsigned int scale_x, scale_y;
- 
--	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
--	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
--	g2d_add_base_addr(ctx, dst, g2d_dst);
--	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
--
--	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
--	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
--
--	g2d_add_cmd(ctx, SRC_REPEAT_MODE_REG, src->repeat_mode);
--	if (src->repeat_mode == G2D_REPEAT_MODE_PAD)
--		g2d_add_cmd(ctx, SRC_PAD_VALUE_REG, dst->color);
--
--	g2d_add_base_addr(ctx, src, g2d_src);
--	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
-+	/* Sanitize this parameter to facilitate space computation below. */
-+	if (negative)
-+		negative = 1;
- 
- 	if (src_w == dst_w && src_h == dst_h)
- 		scale = 0;
-@@ -493,6 +482,8 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
- 		scale_y = g2d_get_scaling(src_h, dst_h);
- 	}
- 
-+	repeat_pad = src->repeat_mode == G2D_REPEAT_MODE_PAD ? 1 : 0;
-+
- 	if (src_x + src_w > src->width)
- 		src_w = src->width - src_x;
- 	if (src_y + src_h > src->height)
-@@ -505,21 +496,37 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
- 
- 	if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
- 		fprintf(stderr, "invalid width or height.\n");
--		g2d_reset(ctx);
- 		return -EINVAL;
- 	}
- 
-+	if (g2d_check_space(ctx, 12 + scale * 3 + negative + repeat_pad, 2))
-+		return -ENOSPC;
-+
-+	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
-+	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
-+	g2d_add_base_addr(ctx, dst, g2d_dst);
-+	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
-+
-+	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
-+	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
-+
-+	g2d_add_cmd(ctx, SRC_REPEAT_MODE_REG, src->repeat_mode);
-+	if (repeat_pad)
-+		g2d_add_cmd(ctx, SRC_PAD_VALUE_REG, dst->color);
-+
-+	g2d_add_base_addr(ctx, src, g2d_src);
-+	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
-+
-+	rop4.val = 0;
-+	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
-+
- 	if (negative) {
- 		g2d_add_cmd(ctx, BG_COLOR_REG, 0x00FFFFFF);
--		rop4.val = 0;
--		rop4.data.unmasked_rop3 = G2D_ROP3_SRC^G2D_ROP3_DST;
--		g2d_add_cmd(ctx, ROP4_REG, rop4.val);
--	} else {
--		rop4.val = 0;
--		rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
--		g2d_add_cmd(ctx, ROP4_REG, rop4.val);
-+		rop4.data.unmasked_rop3 ^= G2D_ROP3_DST;
- 	}
- 
-+	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
-+
- 	if (scale) {
- 		g2d_add_cmd(ctx, SRC_SCALE_CTRL_REG, G2D_SCALE_MODE_BILINEAR);
- 		g2d_add_cmd(ctx, SRC_XSCALE_REG, scale_x);
--- 
-2.0.5
+VGhlIEcyRCBoZWFkZXJzIGRlZmluZSBhIG51bWJlciBvZiBtb2RlcyB0aHJvdWdoIGVudW1zCihs
+aWtlIGUuZy4gY29sb3IsIHNlbGVjdCwgcmVwZWF0LCBldGMuKS4KClRoaXMgaW50cm9kdWNlcyBn
+MmRfdmFsaWRhdGVfc2VsZWN0X21vZGUoKSBhbmQKZzJkX3ZhbGlkYXRlX2JsZW5kaW5nX29wKCkg
+d2hpY2ggdmFsaWRhdGUgYQpzZWxlY3QgbW9kZSBvciBibGVuZGluZyBvcGVyYXRpb24gcmVzcGVj
+dGl2ZWx5LgoKU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1i
+aWVsZWZlbGQuZGU+Ci0tLQogZXh5bm9zL2V4eW5vc19maW1nMmQuYyB8IDQ0ICsrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgNDQgaW5z
+ZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2V4eW5vcy9leHlub3NfZmltZzJkLmMgYi9leHlub3Mv
+ZXh5bm9zX2ZpbWcyZC5jCmluZGV4IDJlMDRmNGEuLjc4MWFmZjUgMTAwNjQ0Ci0tLSBhL2V4eW5v
+cy9leHlub3NfZmltZzJkLmMKKysrIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuYwpAQCAtMTE5LDYg
+KzExOSw1MCBAQCBzdGF0aWMgdW5zaWduZWQgaW50IGcyZF9jaGVja19zcGFjZShjb25zdCBzdHJ1
+Y3QgZzJkX2NvbnRleHQgKmN0eCwKIH0KIAogLyoKKyAqIGcyZF92YWxpZGF0ZV9zZWxlY3RfbW9k
+ZSAtIHZhbGlkYXRlIHNlbGVjdCBtb2RlLgorICoKKyAqIEBtb2RlOiB0aGUgbW9kZSB0byB2YWxp
+ZGF0ZQorICovCitzdGF0aWMgdW5zaWduZWQgaW50IGcyZF92YWxpZGF0ZV9zZWxlY3RfbW9kZSgK
+KwllbnVtIGVfZzJkX3NlbGVjdF9tb2RlIG1vZGUpCit7CisJc3dpdGNoIChtb2RlKSB7CisJY2Fz
+ZSBHMkRfU0VMRUNUX01PREVfTk9STUFMOgorCWNhc2UgRzJEX1NFTEVDVF9NT0RFX0ZHQ09MT1I6
+CisJY2FzZSBHMkRfU0VMRUNUX01PREVfQkdDT0xPUjoKKwkJcmV0dXJuIDA7CisJfQorCisJcmV0
+dXJuIDE7Cit9CisKKy8qCisgKiBnMmRfdmFsaWRhdGVfYmxlbmRpbmdfb3AgLSB2YWxpZGF0ZSBi
+bGVuZGluZyBvcGVyYXRpb24uCisgKgorICogQG9wZXJhdGlvbjogdGhlIG9wZXJhdGlvbiB0byB2
+YWxpZGF0ZQorICovCitzdGF0aWMgdW5zaWduZWQgaW50IGcyZF92YWxpZGF0ZV9ibGVuZGluZ19v
+cCgKKwllbnVtIGVfZzJkX29wIG9wZXJhdGlvbikKK3sKKwlzd2l0Y2ggKG9wZXJhdGlvbikgewor
+CWNhc2UgRzJEX09QX0NMRUFSOgorCWNhc2UgRzJEX09QX1NSQzoKKwljYXNlIEcyRF9PUF9EU1Q6
+CisJY2FzZSBHMkRfT1BfT1ZFUjoKKwljYXNlIEcyRF9PUF9JTlRFUlBPTEFURToKKwljYXNlIEcy
+RF9PUF9ESVNKT0lOVF9DTEVBUjoKKwljYXNlIEcyRF9PUF9ESVNKT0lOVF9TUkM6CisJY2FzZSBH
+MkRfT1BfRElTSk9JTlRfRFNUOgorCWNhc2UgRzJEX09QX0NPTkpPSU5UX0NMRUFSOgorCWNhc2Ug
+RzJEX09QX0NPTkpPSU5UX1NSQzoKKwljYXNlIEcyRF9PUF9DT05KT0lOVF9EU1Q6CisJCXJldHVy
+biAwOworCX0KKworCXJldHVybiAxOworfQorCisvKgogICogZzJkX2FkZF9jbWQgLSBzZXQgZ2l2
+ZW4gY29tbWFuZCBhbmQgdmFsdWUgdG8gdXNlciBzaWRlIGNvbW1hbmQgYnVmZmVyLgogICoKICAq
+IEBjdHg6IGEgcG9pbnRlciB0byBnMmRfY29udGV4dCBzdHJ1Y3R1cmUuCi0tIAoyLjAuNQoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
