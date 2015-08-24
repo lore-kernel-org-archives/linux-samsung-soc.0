@@ -1,70 +1,113 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 08/14] exynos/fimg2d: check buffer space in g2d_blend()
-Date: Mon, 24 Aug 2015 16:14:03 +0200
-Message-ID: <1440425649-9768-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 09/14] exynos/fimg2d: check buffer space in g2d_scale_and_blend()
+Date: Mon, 24 Aug 2015 16:14:04 +0200
+Message-ID: <1440425649-9768-10-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50193 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754687AbbHXOQQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 10:16:16 -0400
 In-Reply-To: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-TW92ZSBwYXJhbWV0ZXIgdmFsaWRhdGlvbiB0byB0aGUgdG9wIGFuZCBhbHNvIHZhbGlkYXRlCnRo
-ZSBzZWxlY3QgbW9kZSBvZiB0aGUgc291cmNlIGltYWdlIGFuZCB0aGUgcmVxdWVzdGVkCmJsZW5k
-aW5nIG9wZXJhdGlvbiBiZWZvcmUgc3RhcnRpbmcgY29tbWFuZCBzdWJtaXNzaW9uLgoKU2lnbmVk
-LW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ci0t
-LQogZXh5bm9zL2V4eW5vc19maW1nMmQuYyB8IDY2ICsrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMzkgaW5zZXJ0aW9ucygr
-KSwgMjcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYyBi
-L2V4eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggNzgxYWZmNS4uNWFjY2NmOCAxMDA2NDQKLS0t
-IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5jCkBA
-IC02MjMsNyArNjIzLDQ1IEBAIGcyZF9ibGVuZChzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwgc3Ry
-dWN0IGcyZF9pbWFnZSAqc3JjLAogCXVuaW9uIGcyZF9wb2ludF92YWwgcHQ7CiAJdW5pb24gZzJk
-X2JpdGJsdF9jbWRfdmFsIGJpdGJsdDsKIAl1bmlvbiBnMmRfYmxlbmRfZnVuY192YWwgYmxlbmQ7
-Ci0JdW5zaWduZWQgaW50IHNyY193ID0gMCwgc3JjX2ggPSAwLCBkc3RfdyA9IDAsIGRzdF9oID0g
-MDsKKwl1bnNpZ25lZCBpbnQgZ2VtX3NwYWNlOworCXVuc2lnbmVkIGludCBzcmNfdywgc3JjX2gs
-IGRzdF93LCBkc3RfaDsKKworCXNyY193ID0gdzsKKwlzcmNfaCA9IGg7CisJaWYgKHNyY194ICsg
-dyA+IHNyYy0+d2lkdGgpCisJCXNyY193ID0gc3JjLT53aWR0aCAtIHNyY194OworCWlmIChzcmNf
-eSArIGggPiBzcmMtPmhlaWdodCkKKwkJc3JjX2ggPSBzcmMtPmhlaWdodCAtIHNyY195OworCisJ
-ZHN0X3cgPSB3OworCWRzdF9oID0gaDsKKwlpZiAoZHN0X3ggKyB3ID4gZHN0LT53aWR0aCkKKwkJ
-ZHN0X3cgPSBkc3QtPndpZHRoIC0gZHN0X3g7CisJaWYgKGRzdF95ICsgaCA+IGRzdC0+aGVpZ2h0
-KQorCQlkc3RfaCA9IGRzdC0+aGVpZ2h0IC0gZHN0X3k7CisKKwl3ID0gTUlOKHNyY193LCBkc3Rf
-dyk7CisJaCA9IE1JTihzcmNfaCwgZHN0X2gpOworCisJaWYgKHcgPD0gMCB8fCBoIDw9IDApIHsK
-KwkJZnByaW50ZihzdGRlcnIsICJpbnZhbGlkIHdpZHRoIG9yIGhlaWdodC5cbiIpOworCQlyZXR1
-cm4gLUVJTlZBTDsKKwl9CisKKwlpZiAoZzJkX3ZhbGlkYXRlX3NlbGVjdF9tb2RlKHNyYy0+c2Vs
-ZWN0X21vZGUpKSB7CisJCWZwcmludGYoc3RkZXJyICwgImludmFsaWQgc2VsZWN0IG1vZGUgZm9y
-IHNvdXJjZS5cbiIpOworCQlyZXR1cm4gLUVJTlZBTDsKKwl9CisKKwlpZiAoZzJkX3ZhbGlkYXRl
-X2JsZW5kaW5nX29wKG9wKSkgeworCQlmcHJpbnRmKHN0ZGVyciAsICJ1bnN1cHBvcnRlZCBibGVu
-ZGluZyBvcGVyYXRpb24uXG4iKTsKKwkJcmV0dXJuIC1FSU5WQUw7CisJfQorCisJZ2VtX3NwYWNl
-ID0gc3JjLT5zZWxlY3RfbW9kZSA9PSBHMkRfU0VMRUNUX01PREVfTk9STUFMID8gMiA6IDE7CisK
-KwlpZiAoZzJkX2NoZWNrX3NwYWNlKGN0eCwgMTIsIGdlbV9zcGFjZSkpCisJCXJldHVybiAtRU5P
-U1BDOwogCiAJYml0Ymx0LnZhbCA9IDA7CiAJYmxlbmQudmFsID0gMDsKQEAgLTY1MSwzMiArNjg5
-LDYgQEAgZzJkX2JsZW5kKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdl
-ICpzcmMsCiAJY2FzZSBHMkRfU0VMRUNUX01PREVfQkdDT0xPUjoKIAkJZzJkX2FkZF9jbWQoY3R4
-LCBCR19DT0xPUl9SRUcsIHNyYy0+Y29sb3IpOwogCQlicmVhazsKLQlkZWZhdWx0OgotCQlmcHJp
-bnRmKHN0ZGVyciAsICJmYWlsZWQgdG8gc2V0IHNyYy5cbiIpOwotCQlyZXR1cm4gLUVJTlZBTDsK
-LQl9Ci0KLQlzcmNfdyA9IHc7Ci0Jc3JjX2ggPSBoOwotCWlmIChzcmNfeCArIHcgPiBzcmMtPndp
-ZHRoKQotCQlzcmNfdyA9IHNyYy0+d2lkdGggLSBzcmNfeDsKLQlpZiAoc3JjX3kgKyBoID4gc3Jj
-LT5oZWlnaHQpCi0JCXNyY19oID0gc3JjLT5oZWlnaHQgLSBzcmNfeTsKLQotCWRzdF93ID0gdzsK
-LQlkc3RfaCA9IGg7Ci0JaWYgKGRzdF94ICsgdyA+IGRzdC0+d2lkdGgpCi0JCWRzdF93ID0gZHN0
-LT53aWR0aCAtIGRzdF94OwotCWlmIChkc3RfeSArIGggPiBkc3QtPmhlaWdodCkKLQkJZHN0X2gg
-PSBkc3QtPmhlaWdodCAtIGRzdF95OwotCi0JdyA9IE1JTihzcmNfdywgZHN0X3cpOwotCWggPSBN
-SU4oc3JjX2gsIGRzdF9oKTsKLQotCWlmICh3IDw9IDAgfHwgaCA8PSAwKSB7Ci0JCWZwcmludGYo
-c3RkZXJyLCAiaW52YWxpZCB3aWR0aCBvciBoZWlnaHQuXG4iKTsKLQkJZzJkX3Jlc2V0KGN0eCk7
-Ci0JCXJldHVybiAtRUlOVkFMOwogCX0KIAogCWJpdGJsdC5kYXRhLmFscGhhX2JsZW5kX21vZGUg
-PSBHMkRfQUxQSEFfQkxFTkRfTU9ERV9FTkFCTEU7Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Apply the same transformation as in g2d_blend().
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 67 +++++++++++++++++++++++++++++---------------------
+ 1 file changed, 39 insertions(+), 28 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 5acccf8..4274a94 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -745,9 +745,47 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 	union g2d_point_val pt;
+ 	union g2d_bitblt_cmd_val bitblt;
+ 	union g2d_blend_func_val blend;
+-	unsigned int scale;
++	unsigned int scale, gem_space;
+ 	unsigned int scale_x, scale_y;
+ 
++	if (src_w == dst_w && src_h == dst_h)
++		scale = 0;
++	else {
++		scale = 1;
++		scale_x = g2d_get_scaling(src_w, dst_w);
++		scale_y = g2d_get_scaling(src_h, dst_h);
++	}
++
++	if (src_x + src_w > src->width)
++		src_w = src->width - src_x;
++	if (src_y + src_h > src->height)
++		src_h = src->height - src_y;
++
++	if (dst_x + dst_w > dst->width)
++		dst_w = dst->width - dst_x;
++	if (dst_y + dst_h > dst->height)
++		dst_h = dst->height - dst_y;
++
++	if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
++		fprintf(stderr, "invalid width or height.\n");
++		return -EINVAL;
++	}
++
++	if (g2d_validate_select_mode(src->select_mode)) {
++		fprintf(stderr , "invalid select mode for source.\n");
++		return -EINVAL;
++	}
++
++	if (g2d_validate_blending_op(op)) {
++		fprintf(stderr , "unsupported blending operation.\n");
++		return -EINVAL;
++	}
++
++	gem_space = src->select_mode == G2D_SELECT_MODE_NORMAL ? 2 : 1;
++
++	if (g2d_check_space(ctx, 12 + scale * 3, gem_space))
++		return -ENOSPC;
++
+ 	bitblt.val = 0;
+ 	blend.val = 0;
+ 
+@@ -774,33 +812,6 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 	case G2D_SELECT_MODE_BGCOLOR:
+ 		g2d_add_cmd(ctx, BG_COLOR_REG, src->color);
+ 		break;
+-	default:
+-		fprintf(stderr , "failed to set src.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (src_w == dst_w && src_h == dst_h)
+-		scale = 0;
+-	else {
+-		scale = 1;
+-		scale_x = g2d_get_scaling(src_w, dst_w);
+-		scale_y = g2d_get_scaling(src_h, dst_h);
+-	}
+-
+-	if (src_x + src_w > src->width)
+-		src_w = src->width - src_x;
+-	if (src_y + src_h > src->height)
+-		src_h = src->height - src_y;
+-
+-	if (dst_x + dst_w > dst->width)
+-		dst_w = dst->width - dst_x;
+-	if (dst_y + dst_h > dst->height)
+-		dst_h = dst->height - dst_y;
+-
+-	if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
+-		fprintf(stderr, "invalid width or height.\n");
+-		g2d_reset(ctx);
+-		return -EINVAL;
+ 	}
+ 
+ 	if (scale) {
+-- 
+2.0.5
