@@ -1,11 +1,14 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 00/18] ARM: use const and __initconst for smp_operations
-Date: Mon, 24 Aug 2015 13:36:00 +0900
-Message-ID: <1440390978-22796-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 07/18] ARM: EXYNOS: use const and __initconst for
+ smp_operations
+Date: Mon, 24 Aug 2015 13:36:07 +0900
+Message-ID: <1440390978-22796-8-git-send-email-yamada.masahiro@socionext.com>
+References: <1440390978-22796-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1440390978-22796-1-git-send-email-yamada.masahiro@socionext.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,74 +19,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: arm@kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Frederic Weisbecker <fweisbec@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Dinh Nguyen <dinguyen@opensource.altera.com>, Pavel Machek <pavel@ucw.cz>, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>, Michal Simek <michal.simek@xilinx.com>, Wei Xu <xuwei5@hisilicon.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, David Brown <davidb@codeaurora.org>, Tsahee Zidenberg <tsahee@anna>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+The smp_operations structure is not over-written, so add const
+qualifier and replace __initdata with __initconst.
 
-Currently, SoC code can not add const qualifier to smp_operations
-structures although they are never over-written.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-01/18 and 02/18 add small changes to the ARM core to fix that.
-The rest of this series replace "__initdata" with "const ... __initconst"
-for each of SoC code.
+ arch/arm/mach-exynos/common.h  | 2 +-
+ arch/arm/mach-exynos/platsmp.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I split this series into per-SoC so that each sub-arch maintainer
-can easily give their Acked-by.  (Is this better?)
-
-Russell, Olof, and Arnd:
-
-How should this series be applied (if it looks good)?
-The first two are ARM-tree wide and looks like in the field of Russell.
-The rest are highly SoC-related.
-
-
-
-Masahiro Yamada (18):
-  ARM: add const qualifier to the argument of smp_set_ops()
-  ARM: add const qualifier to smp_operations member in structures
-  ARM: alpine: use const and __initconst for smp_operations
-  ARM: axxia: use const and __initconst for smp_operations
-  ARM: BCM: use const and __initconst for smp_operations
-  ARM: berlin: use const and __initconst for smp_operations
-  ARM: EXYNOS: use const and __initconst for smp_operations
-  ARM: hisi: do not export smp_operations structures
-  ARM: hisi: use const and __initconst for smp_operations
-  ARM: mvebu: use const and __initconst for smp_operations
-  ARM: qcom: use const and __initconst for smp_operations
-  ARM: rockchip: use const and __initconst for smp_operations
-  ARM: socfpga: use const and __initconst for smp_operations
-  ARM: sunxi: use const and __initconst for smp_operations
-  ARM: uniphier: use const and __initconst for smp_operations
-  ARM: zx: use const and __initconst for smp_operations
-  ARM: zynq: use const and __initconst for smp_operations
-  ARM: mcpm: use const and __initconst for smp_operations
-
- arch/arm/common/mcpm_platsmp.c      | 2 +-
- arch/arm/include/asm/mach/arch.h    | 2 +-
- arch/arm/include/asm/smp.h          | 4 ++--
- arch/arm/kernel/smp.c               | 2 +-
- arch/arm/mach-alpine/platsmp.c      | 2 +-
- arch/arm/mach-axxia/platsmp.c       | 2 +-
- arch/arm/mach-bcm/bcm63xx_smp.c     | 2 +-
- arch/arm/mach-bcm/kona_smp.c        | 2 +-
- arch/arm/mach-bcm/platsmp-brcmstb.c | 2 +-
- arch/arm/mach-berlin/platsmp.c      | 2 +-
- arch/arm/mach-exynos/common.h       | 2 +-
- arch/arm/mach-exynos/platsmp.c      | 2 +-
- arch/arm/mach-hisi/core.h           | 3 ---
- arch/arm/mach-hisi/platsmp.c        | 6 +++---
- arch/arm/mach-mvebu/armada-370-xp.h | 2 +-
- arch/arm/mach-mvebu/platsmp-a9.c    | 4 ++--
- arch/arm/mach-mvebu/platsmp.c       | 2 +-
- arch/arm/mach-qcom/platsmp.c        | 6 +++---
- arch/arm/mach-rockchip/platsmp.c    | 2 +-
- arch/arm/mach-socfpga/platsmp.c     | 4 ++--
- arch/arm/mach-sunxi/platsmp.c       | 4 ++--
- arch/arm/mach-uniphier/platsmp.c    | 2 +-
- arch/arm/mach-zx/platsmp.c          | 2 +-
- arch/arm/mach-zynq/common.h         | 2 +-
- arch/arm/mach-zynq/platsmp.c        | 2 +-
- 25 files changed, 32 insertions(+), 35 deletions(-)
-
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 1534925..e349a03 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -149,7 +149,7 @@ static inline void exynos_pm_init(void) {}
+ extern void exynos_cpu_resume(void);
+ extern void exynos_cpu_resume_ns(void);
+ 
+-extern struct smp_operations exynos_smp_ops;
++extern const struct smp_operations exynos_smp_ops;
+ 
+ extern void exynos_cpu_power_down(int cpu);
+ extern void exynos_cpu_power_up(int cpu);
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 98a2c0c..5bd9559 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -479,7 +479,7 @@ static void exynos_cpu_die(unsigned int cpu)
+ }
+ #endif /* CONFIG_HOTPLUG_CPU */
+ 
+-struct smp_operations exynos_smp_ops __initdata = {
++const struct smp_operations exynos_smp_ops __initconst = {
+ 	.smp_init_cpus		= exynos_smp_init_cpus,
+ 	.smp_prepare_cpus	= exynos_smp_prepare_cpus,
+ 	.smp_secondary_init	= exynos_secondary_init,
 -- 
 1.9.1
