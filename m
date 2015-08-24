@@ -1,418 +1,140 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for analogix_dp
-Date: Mon, 24 Aug 2015 09:43:32 +0900
-Message-ID: <CAJKOXPeEm8exg_UG0tDnaEGO40ejBKZ-ok=bKbVrwYvXnDaMdg@mail.gmail.com>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
-	<1439995834-18363-1-git-send-email-ykk@rock-chips.com>
-	<CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>, Yakir Yang <ykk@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, David Airlie <airlied@linux.ie>, Doug Anderson <dianders@google.com>, Inki Dae <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.i>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [RFC PATCH v7 0/10] Add external dma support for Synopsys MSHC
+Date: Mon, 24 Aug 2015 09:24:39 +0800
+Message-ID: <1440379479-24308-1-git-send-email-shawn.lin@rock-chips.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: jh80.chung@samsung.com, ulf.hansson@linaro.org
+Cc: Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Zhangfei Gao <zhangfei.gao@linaro.org>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, heiko@sntech.de, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shawn Lin <shawn.lin@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-08-24 8:23 GMT+09:00 Rob Herring <robherring2@gmail.com>:
-> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk@rock-chips.com> wrote:
->> Analogix dp driver is split from exynos dp driver, so we just
->> make an copy of exynos_dp.txt, and then simplify exynos_dp.txt
->>
->> Beside update some exynos dtsi file with the latest change
->> according to the devicetree binding documents.
->
-> You can't just change the exynos bindings and break compatibility. Is
-> there some agreement with exynos folks to do this?
 
-No, there is no agreement. This wasn't even sent to Exynos maintainers.
-Additionally the patchset did not look interesting to me because of
-misleading subject - Documentation instead of "ARM: dts:".
+Synopsys DesignWare mobile storage host controller supports three
+types of transfer mode: pio, internal dma and external dma. However,
+dw_mmc can only supports pio and internal dma now. Thus some platforms
+using dw-mshc integrated with generic dma can't work in dma mode. So we
+submit this patch to achieve it.
 
-Yakir, please:
-1. Provide backward compatibility. Mark old properties as deprecated
-but still support them.
-2. Separate all DTS changes to a separate patch, unless bisectability
-would be hurt. Anyway you should prepare it in a such way that
-separation would be possible without breaking bisectability.
-3. Use proper subject for the patch changing DTS. This is not
-documentation change!
-4. Please use script get_maintainers to obtain list of valid
-maintainers and CC-them with at least cover letter and patches
-requiring their attention.
+And the config option, CONFIG_MMC_DW_IDMAC, was added by Will Newton
+(commit:f95f3850) for the first version of dw_mmc and never be touched since
+then. At that time dt-bindings hadn't been introduced into dw_mmc yet means
+we should select CONFIG_MMC_DW_IDMAC to enable internal dma mode at compile
+time. Nowadays, device-tree helps us to support a variety of boards with one
+kernel. That's why we need to remove it and decide the transfer mode by reading
+dw_mmc's HCON reg at runtime.
 
-Best regards,
-Krzysztof
+This RFC patch needs lots of ACKs. I know it's hard, but it does need someone
+to make the running.
+
+Patch does the following things:
+- remove CONFIG_MMC_DW_IDMAC config option
+- add bindings for edmac used by synopsys-dw-mshc
+  at runtime
+- add edmac support for synopsys-dw-mshc
+
+Patch is based on next of git://git.linaro.org/people/ulf.hansson/mmc
+
+Test emmc throughput on my platform with edmac support and without edmac support(pio only)
+iozone -L64 -S32 -azecwI -+n -r4k -r64k -r128k -s1g -i0 -i1 -i2 -f datafile -Rb out.xls > /mnt/result.txt
+(light cpu loading, Direct IO, fixed line size, all pattern recycle, 1GB data in total)
+ ___________________________________________________________
+|                   external dma mode                       |
+|-----------------------------------------------------------|
+|blksz | Random Read | Random Write | Seq Read   | Seq Write|
+|-----------------------------------------------------------|
+|4kB   |  13953kB/s  |    8602kB/s  | 13672kB/s  |  9785kB/s|
+|-----------------------------------------------------------|
+|64kB  |  46058kB/s  |   24794kB/s  | 48058kB/s  | 25418kB/s|
+|-----------------------------------------------------------|
+|128kB |  57026kB/s  |   35117kB/s  | 57375kB/s  | 35183kB/s|
+|-----------------------------------------------------------|
+                           VS
+ ___________________________________________________________
+|                          pio mode                         |
+|-----------------------------------------------------------|
+|blksz | Random Read  | Random Write | Seq Read  | Seq Write|
+|-----------------------------------------------------------|
+|4kB   |  11720kB/s   |    8644kB/s  | 11549kB/s |  9624kB/s|
+|-----------------------------------------------------------|
+|64kB  |  21869kB/s   |   24414kB/s  | 22031kB/s | 27986kB/s|
+|-----------------------------------------------------------|
+|128kB |  23718kB/s   |   34495kB/s  | 24698kB/s | 34637kB/s|
+|-----------------------------------------------------------|
 
 
->
->
->> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->> ---
->> Changes in v3:
->> - Take Heiko suggest, add devicetree binding documents.
->> - Take Thierry Reding suggest, remove sync pol & colorimetry properies
->>   from the new analogix dp driver devicetree binding.
->> - Update the exist exynos dtsi file with the latest DP DT properies.
->>
->> Changes in v2: None
->>
->>  .../devicetree/bindings/drm/bridge/analogix_dp.txt | 70 ++++++++++++++++++++++
->>  .../devicetree/bindings/video/exynos_dp.txt        | 50 ++++++----------
->>  arch/arm/boot/dts/exynos5250-arndale.dts           | 10 ++--
->>  arch/arm/boot/dts/exynos5250-smdk5250.dts          | 10 ++--
->>  arch/arm/boot/dts/exynos5250-snow.dts              | 12 ++--
->>  arch/arm/boot/dts/exynos5250-spring.dts            | 12 ++--
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts         | 12 ++--
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts          | 10 ++--
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts          | 12 ++--
->>  9 files changed, 119 insertions(+), 79 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
->>
->> diff --git a/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
->> new file mode 100644
->> index 0000000..6127018
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
->> @@ -0,0 +1,70 @@
->> +Analogix Display Port bridge bindings
->> +
->> +Required properties for dp-controller:
->> +       -compatible:
->> +               platform specific such as:
->> +                * "samsung,exynos5-dp"
->> +                * "rockchip,rk3288-dp"
->> +       -reg:
->> +               physical base address of the controller and length
->> +               of memory mapped region.
->> +       -interrupts:
->> +               interrupt combiner values.
->> +       -clocks:
->> +               from common clock binding: handle to dp clock.
->> +       -clock-names:
->> +               from common clock binding: Shall be "dp".
->> +       -interrupt-parent:
->> +               phandle to Interrupt combiner node.
->> +       -phys:
->> +               from general PHY binding: the phandle for the PHY device.
->> +       -phy-names:
->> +               from general PHY binding: Should be "dp".
->> +       -analogix,color-space:
->> +               input video data format.
->> +                       COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
->> +       -analogix,color-depth:
->> +               number of bits per colour component.
->> +                       COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
->
-> This seems pretty generic. Just use 6, 8, 10, or 12 for values. And
-> drop the vendor prefix.
->
->> +       -analogix,link-rate:
->> +               max link rate supported by the eDP controller.
->> +                       LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A,
->> +                       LINK_RATE_5_40GBPS = 0x14
->
-> Same here. I'd rather see something like "link-rate-mbps" and use the
-> actual rate.
->
->> +       -analogix,lane-count:
->> +               max number of lanes supported by the eDP contoller.
->> +                       LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
->
-> And drop the vendor prefix here.
->
->> +       -port@[X]: SoC specific port nodes with endpoint definitions as defined
->> +               in Documentation/devicetree/bindings/media/video-interfaces.txt,
->> +               please refer to the SoC specific binding document:
->> +               * Documentation/devicetree/bindings/video/exynos_dp.txt
->> +               * Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
->> +
->> +Optional properties for dp-controller:
->> +       -analogix,hpd-gpio:
->> +               Hotplug detect GPIO.
->> +                       Indicates which GPIO should be used for hotplug
->> +                       detection
->
-> We should align with "hpd-gpios" used by HDMI connector binding. Or do
-> we need a DP connector binding that this should be defined in?
-> Probably so.
->
-> The DRM related bindings are such a cluster f*ck with everyone picking
-> their own way to do things. Just grep hpd in bindings for starters.
-> That is just the tip.
->
->> +       -video interfaces: Device node can contain video interface port
->> +                           nodes according to [1].
->
-> Isn't this the same as ports above? How are they optional? 0 ports
-> would be pretty useless.
->
->> +
->> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
->> +-------------------------------------------------------------------------------
->> +
->> +Example:
->> +
->> +       dp-controller {
->> +               compatible = "samsung,exynos5-dp";
->> +               reg = <0x145b0000 0x10000>;
->> +               interrupts = <10 3>;
->> +               interrupt-parent = <&combiner>;
->> +               clocks = <&clock 342>;
->> +               clock-names = "dp";
->> +
->> +               phys = <&dp_phy>;
->> +               phy-names = "dp";
->> +
->> +               analogix,color-space = <0>;
->> +               analogix,color-depth = <1>;
->> +               analogix,link-rate = <0x0a>;
->> +               analogix,lane-count = <4>;
->> +       };
->> diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
->> index 7a3a9cd..177506f 100644
->> --- a/Documentation/devicetree/bindings/video/exynos_dp.txt
->> +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
->> @@ -31,28 +31,10 @@ Required properties for dp-controller:
->>                 from general PHY binding: the phandle for the PHY device.
->>         -phy-names:
->>                 from general PHY binding: Should be "dp".
->> -       -samsung,color-space:
->> -               input video data format.
->> -                       COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
->> -       -samsung,dynamic-range:
->> -               dynamic range for input video data.
->> -                       VESA = 0, CEA = 1
->> -       -samsung,ycbcr-coeff:
->> -               YCbCr co-efficients for input video.
->> -                       COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
->> -       -samsung,color-depth:
->> -               number of bits per colour component.
->> -                       COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
->> -       -samsung,link-rate:
->> -               link rate supported by the panel.
->> -                       LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
->> -       -samsung,lane-count:
->> -               number of lanes supported by the panel.
->> -                       LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
->> -       - display-timings: timings for the connected panel as described by
->> -               Documentation/devicetree/bindings/video/display-timing.txt
->>
->>  Optional properties for dp-controller:
->> +       - display-timings: timings for the connected panel as described by
->> +               Documentation/devicetree/bindings/video/display-timing.txt
->>         -interlaced:
->>                 interlace scan mode.
->>                         Progressive if defined, Interlaced if not defined
->> @@ -62,14 +44,18 @@ Optional properties for dp-controller:
->>         -hsync-active-high:
->>                 HSYNC polarity configuration.
->>                         High if defined, Low if not defined
->> -       -samsung,hpd-gpio:
->> -               Hotplug detect GPIO.
->> -                       Indicates which GPIO should be used for hotplug
->> -                       detection
->> -       -video interfaces: Device node can contain video interface port
->> -                           nodes according to [1].
->>
->> -[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
->> +For the below properties, please refer to Analogix DP binding document:
->> + * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
->> +       -phys (required)
->> +       -phy-names (required)
->> +       -analogix,color-space (required)
->> +       -analogix,color-depth (required)
->> +       -analogix,link-rate (required)
->> +       -analogix,lane-count (required)
->> +       -analogix,hpd-gpio (optional)
->> +       -video interfaces (optional)
->> +-------------------------------------------------------------------------------
->>
->>  Example:
->>
->> @@ -88,12 +74,10 @@ SOC specific portion:
->>
->>  Board Specific portion:
->>         dp-controller {
->> -               samsung,color-space = <0>;
->> -               samsung,dynamic-range = <0>;
->> -               samsung,ycbcr-coeff = <0>;
->> -               samsung,color-depth = <1>;
->> -               samsung,link-rate = <0x0a>;
->> -               samsung,lane-count = <4>;
->> +               analogix,color-space = <0>;
->> +               analogix,color-depth = <1>;
->> +               analogix,link-rate = <0x0a>;
->> +               analogix,lane-count = <4>;
->>
->>                 display-timings {
->>                         native-mode = <&lcd_timing>;
->> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
->> index 7e728a1..e48798d 100644
->> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
->> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
->> @@ -119,12 +119,10 @@
->>
->>  &dp {
->>         status = "okay";
->> -       samsung,color-space = <0>;
->> -       samsung,dynamic-range = <0>;
->> -       samsung,ycbcr-coeff = <0>;
->> -       samsung,color-depth = <1>;
->> -       samsung,link-rate = <0x0a>;
->> -       samsung,lane-count = <4>;
->> +       analogix,color-space = <0>;
->> +       analogix,color-depth = <1>;
->> +       analogix,link-rate = <0x0a>;
->> +       analogix,lane-count = <4>;
->>  };
->>
->>  &fimd {
->> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> index 4fe186d..b8c6b8b 100644
->> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> @@ -75,12 +75,10 @@
->>  };
->>
->>  &dp {
->> -       samsung,color-space = <0>;
->> -       samsung,dynamic-range = <0>;
->> -       samsung,ycbcr-coeff = <0>;
->> -       samsung,color-depth = <1>;
->> -       samsung,link-rate = <0x0a>;
->> -       samsung,lane-count = <4>;
->> +       analogix,color-space = <0>;
->> +       analogix,color-depth = <1>;
->> +       analogix,link-rate = <0x0a>;
->> +       analogix,lane-count = <4>;
->>
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&dp_hpd>;
->> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
->> index b7f4122..9ce2b89 100644
->> --- a/arch/arm/boot/dts/exynos5250-snow.dts
->> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
->> @@ -239,13 +239,11 @@
->>         status = "okay";
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&dp_hpd>;
->> -       samsung,color-space = <0>;
->> -       samsung,dynamic-range = <0>;
->> -       samsung,ycbcr-coeff = <0>;
->> -       samsung,color-depth = <1>;
->> -       samsung,link-rate = <0x0a>;
->> -       samsung,lane-count = <2>;
->> -       samsung,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
->> +       analogix,color-space = <0>;
->> +       analogix,color-depth = <1>;
->> +       analogix,link-rate = <0x0a>;
->> +       analogix,lane-count = <2>;
->> +       analogix,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
->>
->>         ports {
->>                 port@0 {
->> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
->> index d03f9b8..9288ae6 100644
->> --- a/arch/arm/boot/dts/exynos5250-spring.dts
->> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
->> @@ -69,13 +69,11 @@
->>         status = "okay";
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&dp_hpd_gpio>;
->> -       samsung,color-space = <0>;
->> -       samsung,dynamic-range = <0>;
->> -       samsung,ycbcr-coeff = <0>;
->> -       samsung,color-depth = <1>;
->> -       samsung,link-rate = <0x0a>;
->> -       samsung,lane-count = <1>;
->> -       samsung,hpd-gpio = <&gpc3 0 GPIO_ACTIVE_HIGH>;
->> +       analogix,color-space = <0>;
->> +       analogix,color-depth = <1>;
->> +       analogix,link-rate = <0x0a>;
->> +       analogix,lane-count = <1>;
->> +       analogix,hpd-gpio = <&gpc3 0 GPIO_ACTIVE_HIGH>;
->>  };
->>
->>  &ehci {
->> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> index 8f4d76c..695a380 100644
->> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> @@ -147,13 +147,11 @@
->>         status = "okay";
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&dp_hpd_gpio>;
->> -       samsung,color-space = <0>;
->> -       samsung,dynamic-range = <0>;
->> -       samsung,ycbcr-coeff = <0>;
->> -       samsung,color-depth = <1>;
->> -       samsung,link-rate = <0x06>;
->> -       samsung,lane-count = <2>;
->> -       samsung,hpd-gpio = <&gpx2 6 0>;
->> +       analogix,color-space = <0>;
->> +       analogix,color-depth = <1>;
->> +       analogix,link-rate = <0x06>;
->> +       analogix,lane-count = <2>;
->> +       analogix,hpd-gpio = <&gpx2 6 0>;
->>
->>         ports {
->>                 port@0 {
->> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> index 98871f9..fd46714 100644
->> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> @@ -91,12 +91,10 @@
->>  &dp {
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&dp_hpd>;
->> -       samsung,color-space = <0>;
->> -       samsung,dynamic-range = <0>;
->> -       samsung,ycbcr-coeff = <0>;
->> -       samsung,color-depth = <1>;
->> -       samsung,link-rate = <0x0a>;
->> -       samsung,lane-count = <4>;
->> +       analogix,color-space = <0>;
->> +       analogix,color-depth = <1>;
->> +       analogix,link-rate = <0x0a>;
->> +       analogix,lane-count = <4>;
->>         status = "okay";
->>  };
->>
->> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> index 7d5b386..54b4c63 100644
->> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> @@ -141,13 +141,11 @@
->>         status = "okay";
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&dp_hpd_gpio>;
->> -       samsung,color-space = <0>;
->> -       samsung,dynamic-range = <0>;
->> -       samsung,ycbcr-coeff = <0>;
->> -       samsung,color-depth = <1>;
->> -       samsung,link-rate = <0x0a>;
->> -       samsung,lane-count = <2>;
->> -       samsung,hpd-gpio = <&gpx2 6 0>;
->> +       analogix,color-space = <0>;
->> +       analogix,color-depth = <1>;
->> +       analogix,link-rate = <0x0a>;
->> +       analogix,lane-count = <2>;
->> +       analogix,hpd-gpio = <&gpx2 6 0>;
->>         panel = <&panel>;
->>  };
->>
->> --
->> 1.9.1
->>
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Changes in v7:
+- rebased on Ulf's next
+- combine condition state
+- elaborate more about DMA_INTERFACE
+- define some macro for DMA_INERFACE value
+- spilt HCON ops' changes into another patch
+
+Changes in v6:
+- add trans_mode condition for IDMAC initialization
+  suggested by Heiko
+- re-test my patch on rk3188 platform and update commit msg
+- update performance of pio vs edmac in cover letter
+
+Changes in v5:
+- add the title of cover letter
+- fix typo of comment
+- add macro for reading HCON register
+- add "Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>" for exynos_defconfig patch
+- add "Acked-by: Vineet Gupta <vgupta@synopsys.com>" for axs10x_defconfig patch
+- add "Acked-by: Govindraj Raja <govindraj.raja@imgtec.com>" and
+  "Acked-by: Ralf Baechle <ralf@linux-mips.org>" for pistachio_defconfig patch
+- add "Acked-by: Joachim Eastwood <manabian@gmail.com>" for lpc18xx_defconfig patch
+- add "Acked-by: Wei Xu <xuwei5@hisilicon.com>" for hisi_defconfig patch
+- rebase on "https://github.com/jh80chung/dw-mmc.git tags/dw-mmc-for-ulf-v4.2" for merging easily
+
+Changes in v4:
+- remove "host->trans_mode" and use "host->use_dma" to indicate
+  transfer mode.
+- remove all bt-bindings' changes since we don't need new properities.
+- check transfer mode at runtime by reading HCON reg
+- spilt defconfig changes for each sub-architecture
+- fix the title of cover letter
+- reuse some code for reducing code size
+
+Changes in v3:
+- choose transfer mode at runtime
+- remove all CONFIG_MMC_DW_IDMAC config option
+- add supports-idmac property for some platforms
+
+Changes in v2:
+- Fix typo of dev_info msg
+- remove unused dmach from declaration of dw_mci_dma_slave
+
+Shawn Lin (10):
+  mmc: dw_mmc: Add external dma interface support
+  mmc: dw_mmc: use macro for HCON register operations
+  Documentation: synopsys-dw-mshc: add bindings for idmac and edmac
+  mips: pistachio_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arc: axs10x_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: exynos_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: hisi_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: lpc18xx_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: multi_v7_defconfig: remove CONFIG_MMC_DW_IDMAC
+  arm: zx_defconfig: remove CONFIG_MMC_DW_IDMAC
+
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |  25 ++
+ arch/arc/configs/axs101_defconfig                  |   1 -
+ arch/arc/configs/axs103_defconfig                  |   1 -
+ arch/arc/configs/axs103_smp_defconfig              |   1 -
+ arch/arm/configs/exynos_defconfig                  |   1 -
+ arch/arm/configs/hisi_defconfig                    |   1 -
+ arch/arm/configs/lpc18xx_defconfig                 |   1 -
+ arch/arm/configs/multi_v7_defconfig                |   1 -
+ arch/arm/configs/zx_defconfig                      |   1 -
+ arch/mips/configs/pistachio_defconfig              |   1 -
+ drivers/mmc/host/Kconfig                           |  11 +-
+ drivers/mmc/host/dw_mmc-pltfm.c                    |   2 +
+ drivers/mmc/host/dw_mmc.c                          | 277 +++++++++++++++++----
+ drivers/mmc/host/dw_mmc.h                          |   9 +
+ include/linux/mmc/dw_mmc.h                         |  23 +-
+ 15 files changed, 283 insertions(+), 73 deletions(-)
+
+-- 
+2.3.7
+
+
