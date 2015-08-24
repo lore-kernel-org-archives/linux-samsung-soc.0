@@ -1,89 +1,71 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 1/4] mfd: max77686: Don't suggest in binding to use a
- deprecated property
-Date: Mon, 24 Aug 2015 12:48:33 +0100
-Message-ID: <20150824114833.GA3237@x1>
+Subject: Re: [PATCH v4 2/4] mfd: max77686: Use a generic name for the PMIC
+ node in the example
+Date: Mon, 24 Aug 2015 12:48:48 +0100
+Message-ID: <20150824114848.GB3237@x1>
 References: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
- <1440406041-25071-2-git-send-email-javier@osg.samsung.com>
+ <1440406041-25071-3-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:33987 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754100AbbHXLsw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 07:48:52 -0400
+Received: by widdq5 with SMTP id dq5so47549963wid.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2015 04:48:51 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1440406041-25071-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1440406041-25071-3-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
 On Mon, 24 Aug 2015, Javier Martinez Canillas wrote:
 
-> The regulator-compatible property from the regulator DT binding was
-> deprecated. But the max77686 DT binding doc still suggest to use it
-> instead of the regulator node name's which is the correct approach.
+> The ePAPR standard says that: "the name of a node should be somewhat
+> generic, reflecting the function of the device and not its precise
+> programming model."
 >=20
+> So, change the max77686 binding document example to use a generic
+> node name instead of using the chip's name.
+>=20
+> Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > Acked-by: Lee Jones <lee.jones@linaro.org>
 >=20
 > ---
 >=20
 > Changes in v4:
-> - Add Lee Jones Acked-by tag to patch #1.
+> - Add Lee Jones Acked-by tag to patch #2.
 >=20
-> Changes in v3: None
-> Changes in v2:
-> - Add Krzysztof Kozlowski Reviewed-by tag to patch #1.
+> Changes in v3:
+> - Fix typo in ePAPR document name. Suggested by Sergei Shtylyov
 >=20
->  Documentation/devicetree/bindings/mfd/max77686.txt | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
+> Changes in v2: None
+>=20
+>  Documentation/devicetree/bindings/mfd/max77686.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Applied, thanks.
 
 > diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Doc=
 umentation/devicetree/bindings/mfd/max77686.txt
-> index 163bd81a4607..8221102d3fc2 100644
+> index 8221102d3fc2..d2ed3c20a5c3 100644
 > --- a/Documentation/devicetree/bindings/mfd/max77686.txt
 > +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> @@ -26,7 +26,7 @@ Optional node:
->  	};
->  	refer Documentation/devicetree/bindings/regulator/regulator.txt
+> @@ -48,7 +48,7 @@ to get matched with their hardware counterparts as =
+follow:
 > =20
-> -  The regulator-compatible property of regulator should initialized =
-with string
-> +  The regulator node's name should be initialized with a string
->  to get matched with their hardware counterparts as follow:
+>  Example:
 > =20
->  	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
-> @@ -55,16 +55,14 @@ Example:
->  		reg =3D <0x09>;
-> =20
->  		voltage-regulators {
-> -			ldo11_reg {
-> -				regulator-compatible =3D "LDO11";
-> +			ldo11_reg: LDO11 {
->  				regulator-name =3D "vdd_ldo11";
->  				regulator-min-microvolt =3D <1900000>;
->  				regulator-max-microvolt =3D <1900000>;
->  				regulator-always-on;
->  			};
-> =20
-> -			buck1_reg {
-> -				regulator-compatible =3D "BUCK1";
-> +			buck1_reg: BUCK1 {
->  				regulator-name =3D "vdd_mif";
->  				regulator-min-microvolt =3D <950000>;
->  				regulator-max-microvolt =3D <1300000>;
-> @@ -72,8 +70,7 @@ Example:
->  				regulator-boot-on;
->  			};
-> =20
-> -			buck9_reg {
-> -				regulator-compatible =3D "BUCK9";
-> +			buck9_reg: BUCK9 {
->  				regulator-name =3D "CAM_ISP_CORE_1.2V";
->  				regulator-min-microvolt =3D <1000000>;
->  				regulator-max-microvolt =3D <1200000>;
+> -	max77686@09 {
+> +	max77686: pmic@09 {
+>  		compatible =3D "maxim,max77686";
+>  		interrupt-parent =3D <&wakeup_eint>;
+>  		interrupts =3D <26 0>;
 
 --=20
 Lee Jones
