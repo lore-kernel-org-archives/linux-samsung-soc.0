@@ -1,71 +1,234 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 2/4] mfd: max77686: Use a generic name for the PMIC
- node in the example
-Date: Mon, 24 Aug 2015 12:48:48 +0100
-Message-ID: <20150824114848.GB3237@x1>
+Subject: Re: [PATCH v4 4/4] mfd: max77686: Split out regulator part from the
+ DT binding
+Date: Mon, 24 Aug 2015 12:49:14 +0100
+Message-ID: <20150824114914.GD3237@x1>
 References: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
- <1440406041-25071-3-git-send-email-javier@osg.samsung.com>
+ <1440406041-25071-5-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:33987 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754100AbbHXLsw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Aug 2015 07:48:52 -0400
-Received: by widdq5 with SMTP id dq5so47549963wid.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2015 04:48:51 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1440406041-25071-3-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1440406041-25071-5-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On Mon, 24 Aug 2015, Javier Martinez Canillas wrote:
 
-> The ePAPR standard says that: "the name of a node should be somewhat
-> generic, reflecting the function of the device and not its precise
-> programming model."
+> The Maxim MAX77686 PMIC is a multi-function device with regulators,
+> clocks and a RTC. The DT bindings for the clocks are in a separate
+> file but the bindings for the regulators are inside the mfd part.
 >=20
-> So, change the max77686 binding document example to use a generic
-> node name instead of using the chip's name.
+> To make it consistent with the clocks portion of the binding and
+> because is more natural to look for regulator bindings under the
+> bindings/regulator sub-directory, split the regulator portion of
+> the DT binding and add it as a separate file.
 >=20
-> Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > Acked-by: Lee Jones <lee.jones@linaro.org>
 >=20
 > ---
 >=20
-> Changes in v4:
-> - Add Lee Jones Acked-by tag to patch #2.
->=20
+> Changes in v4: None
 > Changes in v3:
-> - Fix typo in ePAPR document name. Suggested by Sergei Shtylyov
+> - Add Krzysztof Kozlowski Reviewed-by tag to patch #4.
+> - Add Lee Jones Acked-by tag to patch #4.
 >=20
-> Changes in v2: None
+> Changes in v2:
+> - Use a generic name for the max77686 node in the regulator example.
 >=20
->  Documentation/devicetree/bindings/mfd/max77686.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/mfd/max77686.txt | 60 ++----------=
+------
+>  .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++=
+++++++++++
+>  2 files changed, 75 insertions(+), 56 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/max77=
+686.txt
 
 Applied, thanks.
 
 > diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Doc=
 umentation/devicetree/bindings/mfd/max77686.txt
-> index 8221102d3fc2..d2ed3c20a5c3 100644
+> index d2ed3c20a5c3..741e76688cf2 100644
 > --- a/Documentation/devicetree/bindings/mfd/max77686.txt
 > +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> @@ -48,7 +48,7 @@ to get matched with their hardware counterparts as =
-follow:
+> @@ -7,8 +7,9 @@ different i2c slave address,presently for which we ar=
+e statically creating i2c
+>  client while probing.This document describes the binding for mfd dev=
+ice and
+>  PMIC submodule.
 > =20
+> -Binding for the built-in 32k clock generator block is defined separa=
+tely
+> -in bindings/clk/maxim,max77686.txt file.
+> +Bindings for the built-in 32k clock generator block and
+> +regulators are defined in ../clk/maxim,max77686.txt and
+> +../regulator/max77686.txt respectively.
+> =20
+>  Required properties:
+>  - compatible : Must be "maxim,max77686";
+> @@ -16,36 +17,6 @@ Required properties:
+>  - interrupts : This i2c device has an IRQ line connected to the main=
+ SoC.
+>  - interrupt-parent : The parent interrupt controller.
+> =20
+> -Optional node:
+> -- voltage-regulators : The regulators of max77686 have to be instant=
+iated
+> -  under subnode named "voltage-regulators" using the following forma=
+t.
+> -
+> -	regulator_name {
+> -		regulator-compatible =3D LDOn/BUCKn
+> -		standard regulator constraints....
+> -	};
+> -	refer Documentation/devicetree/bindings/regulator/regulator.txt
+> -
+> -  The regulator node's name should be initialized with a string
+> -to get matched with their hardware counterparts as follow:
+> -
+> -	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
+> -		 	example: LDO1, LDO2, LDO26.
+> -	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
+> -			example: BUCK1, BUCK5, BUCK9.
+> -
+> -  Regulators which can be turned off during system suspend:
+> -	-LDOn	:	2, 6-8, 10-12, 14-16,
+> -	-BUCKn	:	1-4.
+> -  Use standard regulator bindings for it ('regulator-off-in-suspend'=
+).
+> -
+> -  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO ena=
+ble
+> -  control. To turn this feature on this property must be added to th=
+e regulator
+> -  sub-node:
+> -	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
+> -				flags are actually ignored and always
+> -				ACTIVE_HIGH is used)
+> -
 >  Example:
 > =20
-> -	max77686@09 {
-> +	max77686: pmic@09 {
->  		compatible =3D "maxim,max77686";
+>  	max77686: pmic@09 {
+> @@ -53,27 +24,4 @@ Example:
 >  		interrupt-parent =3D <&wakeup_eint>;
 >  		interrupts =3D <26 0>;
+>  		reg =3D <0x09>;
+> -
+> -		voltage-regulators {
+> -			ldo11_reg: LDO11 {
+> -				regulator-name =3D "vdd_ldo11";
+> -				regulator-min-microvolt =3D <1900000>;
+> -				regulator-max-microvolt =3D <1900000>;
+> -				regulator-always-on;
+> -			};
+> -
+> -			buck1_reg: BUCK1 {
+> -				regulator-name =3D "vdd_mif";
+> -				regulator-min-microvolt =3D <950000>;
+> -				regulator-max-microvolt =3D <1300000>;
+> -				regulator-always-on;
+> -				regulator-boot-on;
+> -			};
+> -
+> -			buck9_reg: BUCK9 {
+> -				regulator-name =3D "CAM_ISP_CORE_1.2V";
+> -				regulator-min-microvolt =3D <1000000>;
+> -				regulator-max-microvolt =3D <1200000>;
+> -				maxim,ena-gpios =3D <&gpm0 3 GPIO_ACTIVE_HIGH>;
+> -			};
+> -	}
+> +	};
+> diff --git a/Documentation/devicetree/bindings/regulator/max77686.txt=
+ b/Documentation/devicetree/bindings/regulator/max77686.txt
+> new file mode 100644
+> index 000000000000..0dded64d89d3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/max77686.txt
+> @@ -0,0 +1,71 @@
+> +Binding for Maxim MAX77686 regulators
+> +
+> +This is a part of the device tree bindings of MAX77686 multi-functio=
+n device.
+> +More information can be found in ../mfd/max77686.txt file.
+> +
+> +The MAX77686 PMIC has 9 high-efficiency Buck and 26 Low-DropOut (LDO=
+)
+> +regulators that can be controlled over I2C.
+> +
+> +Following properties should be present in main device node of the MF=
+D chip.
+> +
+> +Optional node:
+> +- voltage-regulators : The regulators of max77686 have to be instant=
+iated
+> +  under subnode named "voltage-regulators" using the following forma=
+t.
+> +
+> +	regulator_name {
+> +		regulator-compatible =3D LDOn/BUCKn
+> +		standard regulator constraints....
+> +	};
+> +	refer Documentation/devicetree/bindings/regulator/regulator.txt
+> +
+> +  The regulator node's name should be initialized with a string
+> +to get matched with their hardware counterparts as follow:
+> +
+> +	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
+> +			example: LDO1, LDO2, LDO26.
+> +	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
+> +			example: BUCK1, BUCK5, BUCK9.
+> +
+> +  Regulators which can be turned off during system suspend:
+> +	-LDOn	:	2, 6-8, 10-12, 14-16,
+> +	-BUCKn	:	1-4.
+> +  Use standard regulator bindings for it ('regulator-off-in-suspend'=
+).
+> +
+> +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO ena=
+ble
+> +  control. To turn this feature on this property must be added to th=
+e regulator
+> +  sub-node:
+> +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
+> +				flags are actually ignored and always
+> +				ACTIVE_HIGH is used)
+> +
+> +Example:
+> +
+> +	max77686: pmic@09 {
+> +		compatible =3D "maxim,max77686";
+> +		interrupt-parent =3D <&wakeup_eint>;
+> +		interrupts =3D <26 IRQ_TYPE_NONE>;
+> +		reg =3D <0x09>;
+> +
+> +		voltage-regulators {
+> +			ldo11_reg: LDO11 {
+> +				regulator-name =3D "vdd_ldo11";
+> +				regulator-min-microvolt =3D <1900000>;
+> +				regulator-max-microvolt =3D <1900000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			buck1_reg: BUCK1 {
+> +				regulator-name =3D "vdd_mif";
+> +				regulator-min-microvolt =3D <950000>;
+> +				regulator-max-microvolt =3D <1300000>;
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +			};
+> +
+> +			buck9_reg: BUCK9 {
+> +				regulator-name =3D "CAM_ISP_CORE_1.2V";
+> +				regulator-min-microvolt =3D <1000000>;
+> +				regulator-max-microvolt =3D <1200000>;
+> +				maxim,ena-gpios =3D <&gpm0 3 GPIO_ACTIVE_HIGH>;
+> +			};
+> +	};
 
 --=20
 Lee Jones
