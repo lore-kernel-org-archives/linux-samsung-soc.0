@@ -1,122 +1,71 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 03/11] drm/exynos: add prepare and cleanup phases for planes
-Date: Mon, 24 Aug 2015 21:56:19 +0900
-Message-ID: <55DB1473.40109@samsung.com>
-References: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
- <1439655980-32146-4-git-send-email-gustavo@padovan.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
+ analogix_dp
+Date: Mon, 24 Aug 2015 13:57:58 +0100
+Message-ID: <20150824125758.GA7557@n2100.arm.linux.org.uk>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+ <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
+ <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60058 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754136AbbHXM4V convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Aug 2015 08:56:21 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NTL01RVM7XVCM40@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Aug 2015 21:56:19 +0900 (KST)
-In-reply-to: <1439655980-32146-4-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On 2015=EB=85=84 08=EC=9B=94 16=EC=9D=BC 01:26, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->=20
-> .prepare_plane() and .cleanup_plane() allows to perform extra operati=
-ons
-> before and after the update of planes. For FIMD for example this will
-> be used to enable disable the shadow protection bit.
->=20
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 19 +++++++++++++++++++
->  drivers/gpu/drm/exynos/exynos_drm_drv.h  |  6 ++++++
->  2 files changed, 25 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_crtc.c
-> index 5a19e16..3a89fc9 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -72,15 +72,34 @@ exynos_drm_crtc_mode_set_nofb(struct drm_crtc *cr=
-tc)
->  static void exynos_crtc_atomic_begin(struct drm_crtc *crtc)
->  {
->  	struct exynos_drm_crtc *exynos_crtc =3D to_exynos_crtc(crtc);
-> +	struct drm_plane *plane;
-> =20
->  	if (crtc->state->event) {
->  		WARN_ON(drm_crtc_vblank_get(crtc) !=3D 0);
->  		exynos_crtc->event =3D crtc->state->event;
->  	}
-> +
-> +	drm_atomic_crtc_for_each_plane(plane, crtc) {
-> +		struct exynos_drm_plane *exynos_plane =3D to_exynos_plane(plane);
-> +
-> +		if (exynos_crtc->ops->prepare_plane)
-> +			exynos_crtc->ops->prepare_plane(exynos_crtc,
-> +							exynos_plane);
+On Sun, Aug 23, 2015 at 06:23:14PM -0500, Rob Herring wrote:
+> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+> > +       -analogix,color-depth:
+> > +               number of bits per colour component.
+> > +                       COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+> 
+> This seems pretty generic. Just use 6, 8, 10, or 12 for values. And
+> drop the vendor prefix.
 
-There is no any reason to use prepare_plane/cleanup_plane callback
-names. How about using atomic_begin/atomic_flush callback names instead
-for consistency between framework and device drivers?
+Please think about this some more.  What does "color-depth" mean?  Does it
+mean the number of bits per colour _component_, or does it mean the total
+number of bits to represent a particular colour.  It's confusing as it
+stands.
 
-Thanks,
-Inki Dae
+> > +Optional properties for dp-controller:
+> > +       -analogix,hpd-gpio:
+> > +               Hotplug detect GPIO.
+> > +                       Indicates which GPIO should be used for hotplug
+> > +                       detection
+> 
+> We should align with "hpd-gpios" used by HDMI connector binding. Or do
+> we need a DP connector binding that this should be defined in?
+> Probably so.
+> 
+> The DRM related bindings are such a cluster f*ck with everyone picking
+> their own way to do things. Just grep hpd in bindings for starters.
+> That is just the tip.
 
-> +	}
->  }
-> =20
->  static void exynos_crtc_atomic_flush(struct drm_crtc *crtc)
->  {
-> +	struct exynos_drm_crtc *exynos_crtc =3D to_exynos_crtc(crtc);
-> +	struct drm_plane *plane;
-> +
-> +	drm_atomic_crtc_for_each_plane(plane, crtc) {
-> +		struct exynos_drm_plane *exynos_plane =3D to_exynos_plane(plane);
-> +
-> +		if (exynos_crtc->ops->cleanup_plane)
-> +			exynos_crtc->ops->cleanup_plane(exynos_crtc,
-> +							exynos_plane);
-> +	}
->  }
-> =20
->  static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs =3D {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/dr=
-m/exynos/exynos_drm_drv.h
-> index a993aac..9f2b5c9 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -87,6 +87,8 @@ struct exynos_drm_plane {
->   * @disable_vblank: specific driver callback for disabling vblank in=
-terrupt.
->   * @wait_for_vblank: wait for vblank interrupt to make sure that
->   *	hardware overlay is updated.
-> + * @prepare_plane: prepare a window to receive a update
-> + * @cleanup_plane: mark the end of a window update
->   * @update_plane: apply hardware specific overlay data to registers.
->   * @disable_plane: disable hardware specific overlay.
->   * @te_handler: trigger to transfer video image at the tearing effec=
-t
-> @@ -107,10 +109,14 @@ struct exynos_drm_crtc_ops {
->  	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
->  	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
->  	void (*wait_for_vblank)(struct exynos_drm_crtc *crtc);
-> +	void (*prepare_plane)(struct exynos_drm_crtc *crtc,
-> +			      struct exynos_drm_plane *plane);
->  	void (*update_plane)(struct exynos_drm_crtc *crtc,
->  			     struct exynos_drm_plane *plane);
->  	void (*disable_plane)(struct exynos_drm_crtc *crtc,
->  			      struct exynos_drm_plane *plane);
-> +	void (*cleanup_plane)(struct exynos_drm_crtc *crtc,
-> +			      struct exynos_drm_plane *plane);
->  	void (*te_handler)(struct exynos_drm_crtc *crtc);
->  	void (*clock_enable)(struct exynos_drm_crtc *crtc, bool enable);
->  };
->=20
+I'm not surprised one iota that DRM bindings are a mess.  There's no one
+overlooking the adoption of DRM bindings, so surprise surprise, everyone
+does their own thing.  This is exactly what happens every time in that
+scenario.  It's not a new problem.
+
+When we adopted the graph bindings for iMX DRM, I thought exactly at that
+time "it would be nice if this could become the standard for binding DRM
+components together" but I don't have the authority from either the DT
+perspective or the DRM perspective to mandate that.  Neither does anyone
+else.  That's the _real_ problem here.
+
+I've seen several DRM bindings go by which don't use the of-graph stuff,
+which means that they'll never be compatible with generic components
+which do use the of-graph stuff.
+
+Like you say, it's a mess, but it's a mess of our own making, because no
+one has the authority to regulate this.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
