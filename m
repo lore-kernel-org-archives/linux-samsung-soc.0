@@ -1,80 +1,62 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] rtc: s5m: fix to update ctrl register
-Date: Mon, 24 Aug 2015 08:56:58 +0900
-Message-ID: <55DA5DCA.6080802@samsung.com>
-References: <1440150221-2609-1-git-send-email-jy0922.shim@samsung.com>
+Subject: Re: Issues with HW RNG / SSS on Exynos 5422
+Date: Mon, 24 Aug 2015 09:33:09 +0900
+Message-ID: <CAJKOXPfBwSau-6c=4+V4OHOc9SbFneGnMNOD=XrJ8=66rNGhLQ@mail.gmail.com>
+References: <55CF2027.2050707@gmail.com>
+	<55D0717B.1060706@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <1440150221-2609-1-git-send-email-jy0922.shim@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, rtc-linux@googlegroups.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, alexandre.belloni@free-electrons.com, a.zummo@towertech.it, sbkim73@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f177.google.com ([209.85.220.177]:36263 "EHLO
+	mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752500AbbHXAdK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 23 Aug 2015 20:33:10 -0400
+In-Reply-To: <55D0717B.1060706@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, "Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Jonghwa Lee" <jonghwa3.lee@samsung.com>
 
-On 21.08.2015 18:43, Joonyoung Shim wrote:
-> According to datasheet, the S2MPS13X and S2MPS14X should update write
-> buffer via setting WUDR bit to high after ctrl register is written.
-> 
-> If not, ALARM interrupt of rtc-s5m doesn't happen first time when i use
-> tools/testing/selftests/timers/rtctest.c test program and hour format is
-> used to 12 hour mode in Odroid-XU3 board.
-> 
-> One more issue is the RTC doesn't keep time on Odroid-XU3 board when i
-> turn on board after power off even if RTC battery is connected. It can
-> be solved as setting WUDR & RUDR bits to high at the same time after
-> RTC_CTRL register is written. It's same with condition of only writing
-> ALARM registers, so this is for only S2MPS14 and we should set WUDR &
-> A_UDR bits to high on S2MPS13.
-> 
-> I can't find any reasonable description about this like fix from
-> datasheet, but can find similar codes from rtc driver source of
-> hardkernel kernel and vender kernel.
+2015-08-16 20:18 GMT+09:00 Heiner Kallweit <hkallweit1@gmail.com>:
+> Am 15.08.2015 um 13:19 schrieb Heiner Kallweit:
+>> I'm having issues making the hardware RNG work on a Samsung Exynos 5422 (Odroid XU4) with kernel 4.2rc6.
+>> No random number generation is started if I write the appropriate value (0x18) to the hash control register.
+>>
+>> What I did so far:
+>> Splitted the sss DT node in exynos5420.dtsi into one for the s5p-sss driver and one for the exynos-rng driver.
+>> (s5p-sss doesn't seem to need the hash registers from offset 0x400)
+>>
+>> sss: sss@10830000 {
+>>       icompatible = "samsung,exynos4210-secss";
+>>       reg = <0x10830000 0x400>;
+>>       interrupts = <0 112 0>;
+>>       clocks = <&clock CLK_SSS>;
+>>       clock-names = "secss";
+>> };
+>>
+>> rng: rng@10830400 {
+>>       compatible = "samsung,exynosrng-secss";
+>>       reg = <0x10830400 0x300>;
+>>       clocks = <&clock CLK_SSS>;
+>>       clock-names = "secss";
+>> };
+>>
+>> The DT binding is just for testing and after adding some DT glue logic (of_device_id table) to the exynos-rng driver
+>> it binds to the rng platform device.
+>> The clock also seems to be ok with a rate of 266 MHz.
+>> As is the driver hangs in a loop because the PRNG_DONE in the status register bit never gets set.
 
-s/vender/vendor/
+Indeed... Status has value 0x3 which means that buffer is not full,
+seed setup is done and PRNG engine is idle. I tried this also on
+Trats2 board (Exynos 4412) with exactly the same result. No idea.
 
-> 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Cc: <stable@vger.kernel.org> # v3.16
-> ---
-> Changelog for v2:
-> - update commit description and code to fix time keeping problem
-> - update the stable tag with the kernel version
-> 
->  drivers/rtc/rtc-s5m.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> index 8c70d78..646bf45 100644
-> --- a/drivers/rtc/rtc-s5m.c
-> +++ b/drivers/rtc/rtc-s5m.c
-> @@ -635,6 +635,16 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->  	case S2MPS13X:
->  		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
->  		ret = regmap_write(info->regmap, info->regs->ctrl, data[0]);
-> +		if (ret < 0)
-> +			break;
-> +
-> +		/*
-> +		 * Should set WUDR & (RUDR or AUDR) bits to high after writing
-> +		 * RTC_CTRL register like writing Alarm registers. We can't find
-> +		 * the description from datasheet but vender code does that
+>>
+>> I traced it back to the hash control register not accepting value 0x8 (or 0x18 incl. the start bit) for the PRNG.
+>> Writing a value and reading it back works for values from 0 to 5 only.
 
-s/vender/vendor/
-
-> +		 * really.
-> +		 */
-> +		ret = s5m8767_rtc_set_alarm_reg(info);
->  		break;
->  
->  	default:
-> 
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Tested on S2MPS14 and S2MPS11:
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+It's okay. Accepted values for engine are only from 0 to 5. The bit no
+4 (start init bit) is automatically cleared by hardware.
 
 Best regards,
 Krzysztof
