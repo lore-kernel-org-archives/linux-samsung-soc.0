@@ -1,40 +1,58 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 01/14] exynos/fimg2d: fix empty buffer handling in g2d_flush()
-Date: Mon, 24 Aug 2015 16:13:56 +0200
-Message-ID: <1440425649-9768-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50063 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754332AbbHXOO2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Aug 2015 10:14:28 -0400
-In-Reply-To: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 00/14] drm/exynos: rewrite fimg2d error handling
+Date: Mon, 24 Aug 2015 16:13:55 +0200
+Message-ID: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Empty command buffers are no error, we just don't have
-anything to do for flushing then.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/exynos_fimg2d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 24a06d0..4a88e0c 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -191,7 +191,7 @@ static int g2d_flush(struct g2d_context *ctx)
- 	struct drm_exynos_g2d_set_cmdlist cmdlist = {0};
- 
- 	if (ctx->cmd_nr == 0 && ctx->cmd_buf_nr == 0)
--		return -1;
-+		return 0;
- 
- 	if (ctx->cmdlist_nr >= G2D_MAX_CMD_LIST_NR) {
- 		fprintf(stderr, "Overflow cmdlist.\n");
--- 
-2.0.5
+SGVsbG8sCgpkdXJpbmcgdGhlIGRpc2N1c3Npb24gYWJvdXQgdGhlIGxhc3QgcGF0Y2hzZXQgdG91
+Y2hpbmcgdGhlCmZpbWcyZCBjb2RlLCBpdCBiZWNhbWUgYXBwYXJlbnQgdGhhdCB0aGUgZXJyb3Ig
+aGFuZGxpbmcgZm9yCnRoZSBjb21tYW5kIHN1Ym1pc3Npb24gaXMgY3VycmVudGx5IHVuc2F0aXNm
+YWN0b3J5LgoKVGhpcyBzZXJpZXMgcmV3cml0ZXMgdGhlIGhhbmRsaW5nLiBBbGwgZnVuY3Rpb25z
+IHRoYXQgc3VibWl0CmNvbW1hbmQgYnVmZmVycyBub3cgZmlyc3QgY2hlY2sgaWYgZW5vdWdoIHNw
+YWNlIGlzIGF2YWlsYWJsZQphbmQgb25seSB0aGVuIHByb2NlZWQgdG8gYnVpbGQgdGhlIGNvbW1h
+bmQgYnVmZmVycy4KCkluIHBhcnRpY3VsYXIgdGhlIGNvbW1hbmQgYnVmZmVyIGlzIG5vIGxvbmdl
+ciBsZWZ0IGluIGEKaGFsZi1maW5pc2hlZCBzdGF0ZSwgc2luY2UgcGFyYW1ldGVycyBwYXNzZWQg
+dG8gdGhlIGZ1bmN0aW9ucwphcmUgbm93IHZhbGlkYXRlZCBiZWZvcmUgY29tbWFuZCBzdWJtaXNz
+aW9uLiBGb3IgdGhpcyBzb21lCnZhbGlkYXRpb24gZnVuY3Rpb25zIGFyZSBpbnRyb2R1Y2VkLgoK
+VGhpcyBzaG91bGQgYWxzbyBpbmNyZWFzZSBwZXJmb3JtYW5jZSBpZiB0aGUgYm90dGxlbmVjayBp
+cwp0aGUgc3VibWlzc2lvbiBwYXJ0LCBzaW5jZSBhZGRpbmcgY29tbWFuZHMgdG8gdGhlIGJ1ZmZl
+cgppcyBub3cgbW9yZSBsaWdodHdlaWdodC4KCkxhc3QgYnV0IG5vdCBsZWFzdCBzb21lIHByZWZp
+eCB3YXMgYWRkZWQgdG8gbWVzc2FnZXMgcHJpbnRlZApieSBmcHJpbnRmIGFuZCBwcmludGYsIGFu
+ZCB0aGUgRzJEIGNvbnRleHQgc3RydWN0IHdhcyBtb3ZlZApvdXQgb2YgdGhlIHB1YmxpYyBoZWFk
+ZXIuCgoKUGxlYXNlIHJldmlldyBhbmQgbGV0IG1lIGtub3cgaWYgSSBjYW4gaW1wcm92ZSBhbnl0
+aGluZyEKCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoKVG9iaWFzIEpha29iaSAoMTQpOgogIGV4
+eW5vcy9maW1nMmQ6IGZpeCBlbXB0eSBidWZmZXIgaGFuZGxpbmcgaW4gZzJkX2ZsdXNoKCkKICBl
+eHlub3MvZmltZzJkOiBzaW1wbGlmeSBiYXNlIGFkZHJlc3Mgc3VibWlzc2lvbiBpbgogICAgZzJk
+X3NjYWxlX2FuZF9ibGVuZCgpCiAgZXh5bm9zL2ZpbWcyZDogYWRkIGcyZF9jaGVja19zcGFjZSgp
+CiAgZXh5bm9zL2ZpbWcyZDogY2hlY2sgYnVmZmVyIHNwYWNlIGluIGcyZF9zb2xpZF9maWxsKCkK
+ICBleHlub3MvZmltZzJkOiBjaGVjayBidWZmZXIgc3BhY2UgaW4gZzJkX2NvcHkoKQogIGV4eW5v
+cy9maW1nMmQ6IGNoZWNrIGJ1ZmZlciBzcGFjZSBpbiBnMmRfY29weV93aXRoX3NjYWxlKCkKICBl
+eHlub3MvZmltZzJkOiBhZGQgZzJkX3ZhbGlkYXRlX3h5eigpIGZ1bmN0aW9ucwogIGV4eW5vcy9m
+aW1nMmQ6IGNoZWNrIGJ1ZmZlciBzcGFjZSBpbiBnMmRfYmxlbmQoKQogIGV4eW5vcy9maW1nMmQ6
+IGNoZWNrIGJ1ZmZlciBzcGFjZSBpbiBnMmRfc2NhbGVfYW5kX2JsZW5kKCkKICBleHlub3MvZmlt
+ZzJkOiByZW1vdmUgZGVmYXVsdCBjYXNlIGZyb20gZzJkX2dldF9ibGVuZF9vcCgpCiAgZXh5bm9z
+L2ZpbWcyZDogcmVtb3ZlIHN1cGVyZmx1b3VzIGluaXRpYWxpemF0aW9uIG9mIGcyZF9wb2ludF92
+YWwKICBleHlub3MvZmltZzJkOiBtYWtlIGcyZF9hZGRfY21kKCkgbGVzcyBoZWF2eQogIGV4eW5v
+cy9maW1nMmQ6IGFkZCBtZXNzYWdlIHByZWZpeAogIGV4eW5vcy9maW1nMmQ6IHJlbW92ZSBnMmRf
+Y29udGV4dCBmcm9tIHB1YmxpYyBoZWFkZXIKCiBleHlub3MvZXh5bm9zX2ZpbWcyZC5jIHwgMzY3
+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGV4eW5v
+cy9leHlub3NfZmltZzJkLmggfCAgMTQgKy0KIDIgZmlsZXMgY2hhbmdlZCwgMjIyIGluc2VydGlv
+bnMoKyksIDE1OSBkZWxldGlvbnMoLSkKCi0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
