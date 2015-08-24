@@ -1,78 +1,184 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 3/4] mfd: Add DT binding for Maxim MAX77802 IC
-Date: Mon, 24 Aug 2015 12:49:01 +0100
-Message-ID: <20150824114901.GC3237@x1>
-References: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
- <1440406041-25071-4-git-send-email-javier@osg.samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
+ analogix_dp
+Date: Mon, 24 Aug 2015 20:48:01 +0800
+Message-ID: <55DB1281.9070502@rock-chips.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com> <1439995834-18363-1-git-send-email-ykk@rock-chips.com> <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com> <CAJKOXPeEm8exg_UG0tDnaEGO40ejBKZ-ok=bKbVrwYvXnDaMdg@mail.gmail.com> <55DA8486.1000803@rock-chips.com> <55DA9B72.1030804@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1440406041-25071-4-git-send-email-javier@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.139]:37270 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753847AbbHXMsP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 08:48:15 -0400
+In-Reply-To: <55DA9B72.1030804@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robherring2@gmail.com>
+Cc: heiko@sntech.de, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, David Airlie <airlied@linux.ie>, Doug Anderson <dianders@google.com>, Inki Dae <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>M
 
-T24gTW9uLCAyNCBBdWcgMjAxNSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgoKPiBU
-aGUgTUFYNzc4MDIgaXMgYSBjaGlwIHRoYXQgY29udGFpbnMgcmVndWxhdG9ycywgMiAzMmtIeiBj
-bG9ja3MsCj4gYSBSVEMgYW5kIGFuIEkyQyBpbnRlcmZhY2UgdG8gcHJvZ3JhbSB0aGUgaW5kaXZp
-ZHVhbCBjb21wb25lbnRzLgo+IAo+IFRoZSBhcmUgYWxyZWFkeSBEVCBiaW5kaW5ncyBmb3IgdGhl
-IHJlZ3VsYXRvcnMgYW5kIGNsb2NrcyBhbmQKPiB0aGVzZSByZWZlcmVuY2UgdG8gYSBiaW5kaW5n
-cy9tZmQvbWF4Nzc4MDIudHh0IGZpbGUsIHRoYXQgZGlkbid0Cj4gZXhpc3QsIGZvciB0aGUgZGV0
-YWlscyBhYm91dCB0aGUgUE1JQy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBKYXZpZXIgTWFydGluZXog
-Q2FuaWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+Cj4gUmV2aWV3ZWQtYnk6IEtyenlzenRv
-ZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+IAo+IC0tLQo+IAo+IENoYW5n
-ZXMgaW4gdjQ6Cj4gLSBSZXdvcmQgc2VjdGlvbiBhYm91dCBtYXg3NzgwMiBjbG9jayBhbmQgcmVn
-dWxhdG9yIERUIGJpbmRpbmcgZG9jcy4KPiAgIFN1Z2dlc3RlZCBieSBMZWUgSm9uZXMuCj4gLSBB
-bGlnbiBtYXg3NzgwMiBtZmQgcmVxdWlyZWQgcHJvcGVydGllcy4gU3VnZ2VzdGVkIGJ5IExlZSBK
-b25lcy4KPiAKPiBDaGFuZ2VzIGluIHYzOgo+IC0gQWRkIEtyenlzenRvZiBLb3psb3dza2kgUmV2
-aWV3ZWQtYnkgdGFnIHRvIHBhdGNoICMzLgo+IC0gQ2FwaXRhbGlzZSBhbGwgYWNyb255bXMuIFN1
-Z2dlc3RlZCBieSBMZWUgSm9uZXMuCj4gLSBVc2UgcmVsYXRpdmUgcGF0aCB0byByZWZlciBvdGhl
-ciBiaW5kaW5ncy4gU3VnZ2VzdGVkIGJ5IExlZSBKb25lcy4KPiAtIFVzZSBJUlFfVFlQRV9OT05F
-IGluc3RlYWQgb2YgMCBpbiBleGFtcGxlLiBTdWdnZXN0ZWQgYnkgTGVlIEpvbmVzLgo+IAo+IENo
-YW5nZXMgaW4gdjI6Cj4gLSBVc2UgdGhlIGNvcnJlY3QgIm1heGltLG1heDc3ODAyIiBjb21wYXRp
-YmxlIHN0cmluZy4KPiAgIFN1Z2dlc3RlZCBieSBLcnp5c3p0b2YgS296bG93c2tpCj4gLSBVc2Ug
-YSBwbWljIGdlbmVyaWMgbm9kZSBuYW1lIGZvciB0aGUgbWF4Nzc4MDIgbm9kZSBleGFtcGxlLgo+
-ICAgU3VnZ2VzdGVkIGJ5IFNlcmdlaSBTaHR5bHlvdi4KPiAKPiAgRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL21mZC9tYXg3NzgwMi50eHQgfCAyNiArKysrKysrKysrKysrKysrKysr
-KysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAyNiBpbnNlcnRpb25zKCspCj4gIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL21heDc3ODAyLnR4dAoK
-QXBwbGllZCwgdGhhbmtzLgoKPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL21mZC9tYXg3NzgwMi50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL21heDc3ODAyLnR4dAo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAw
-MDAwMDAwMDAwLi41MWZjMWE2MGNhYTUKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9tYXg3NzgwMi50eHQKPiBAQCAtMCwwICsxLDI2
-IEBACj4gK01heGltIE1BWDc3ODAyIG11bHRpLWZ1bmN0aW9uIGRldmljZQo+ICsKPiArVGhlIE1h
-eGltIE1BWDc3ODAyIGlzIGEgUG93ZXIgTWFuYWdlbWVudCBJQyAoUE1JQykgdGhhdCBjb250YWlu
-cyAxMCBoaWdoCj4gK2VmZmljaWVuY3kgQnVjayByZWd1bGF0b3JzLCAzMiBMb3ctRHJvcE91dCAo
-TERPKSByZWd1bGF0b3JzIHVzZWQgdG8gcG93ZXIKPiArdXAgYXBwbGljYXRpb24gcHJvY2Vzc29y
-cyBhbmQgcGVyaXBoZXJhbHMsIGEgMi1jaGFubmVsIDMya0h6IGNsb2NrIG91dHB1dHMsCj4gK2Eg
-UmVhbC1UaW1lLUNsb2NrIChSVEMpIGFuZCBhIEkyQyBpbnRlcmZhY2UgdG8gcHJvZ3JhbSB0aGUg
-aW5kaXZpZHVhbAo+ICtyZWd1bGF0b3JzLCBjbG9ja3Mgb3V0cHV0cyBhbmQgdGhlIFJUQy4KPiAr
-Cj4gK0JpbmRpbmdzIGZvciB0aGUgYnVpbHQtaW4gMzJrIGNsb2NrIGdlbmVyYXRvciBibG9jayBh
-bmQKPiArcmVndWxhdG9ycyBhcmUgZGVmaW5lZCBpbiAuLi9jbGsvbWF4aW0sbWF4Nzc4MDIudHh0
-IGFuZAo+ICsuLi9yZWd1bGF0b3IvbWF4Nzc4MDIudHh0IHJlc3BlY3RpdmVseS4KPiArCj4gK1Jl
-cXVpcmVkIHByb3BlcnRpZXM6Cj4gKy0gY29tcGF0aWJsZQkJOiBNdXN0IGJlICJtYXhpbSxtYXg3
-NzgwMiIKPiArLSByZWcJCQk6IFNwZWNpZmllcyB0aGUgSTJDIHNsYXZlIGFkZHJlc3Mgb2YgUE1J
-QyBibG9jay4KPiArLSBpbnRlcnJ1cHRzCQk6IEkyQyBkZXZpY2UgSVJRIGxpbmUgY29ubmVjdGVk
-IHRvIHRoZSBtYWluIFNvQy4KPiArLSBpbnRlcnJ1cHQtcGFyZW50CTogVGhlIHBhcmVudCBpbnRl
-cnJ1cHQgY29udHJvbGxlci4KPiArCj4gK0V4YW1wbGU6Cj4gKwo+ICsJbWF4Nzc4MDI6IHBtaWNA
-MDkgewo+ICsJCWNvbXBhdGlibGUgPSAibWF4aW0sbWF4Nzc4MDIiOwo+ICsJCWludGVycnVwdC1w
-YXJlbnQgPSA8JmludGM+Owo+ICsJCWludGVycnVwdHMgPSA8MjYgSVJRX1RZUEVfTk9ORT47Cj4g
-KwkJcmVnID0gPDB4MDk+Owo+ICsJfTsKCi0tIApMZWUgSm9uZXMKTGluYXJvIFNUTWljcm9lbGVj
-dHJvbmljcyBMYW5kaW5nIFRlYW0gTGVhZApMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0
-d2FyZSBmb3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxv
-ZwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
-YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
-LWtlcm5lbAo=
+Hi Krzysztof,
+
+=E5=9C=A8 08/24/2015 12:20 PM, Krzysztof Kozlowski =E5=86=99=E9=81=93:
+> On 24.08.2015 11:42, Yakir Yang wrote:
+>> Hi Krzysztof,
+>>
+>> =E5=9C=A8 08/23/2015 07:43 PM, Krzysztof Kozlowski =E5=86=99=E9=81=93=
+:
+>>> 2015-08-24 8:23 GMT+09:00 Rob Herring <robherring2@gmail.com>:
+>>>> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk@rock-chips.com> w=
+rote:
+>>>>> Analogix dp driver is split from exynos dp driver, so we just
+>>>>> make an copy of exynos_dp.txt, and then simplify exynos_dp.txt
+>>>>>
+>>>>> Beside update some exynos dtsi file with the latest change
+>>>>> according to the devicetree binding documents.
+>>>> You can't just change the exynos bindings and break compatibility.=
+ Is
+>>>> there some agreement with exynos folks to do this?
+>>> No, there is no agreement. This wasn't even sent to Exynos maintain=
+ers.
+>> Sorry about this one, actually I have add Exynos maintainers in vers=
+ion
+>> 1 & version 2,
+>> but lose some maintainers in version 3, I would fix it in bellow ver=
+sions.
+>>
+>>> Additionally the patchset did not look interesting to me because of
+>>> misleading subject - Documentation instead of "ARM: dts:".
+>>>
+>>> Yakir, please:
+>>> 1. Provide backward compatibility. Mark old properties as deprecate=
+d
+>>> but still support them.
+>> Do you mean that I should keep the old properties declare in exynos-=
+dp.txt,
+>> but just mark them as deprecated flag.
+> That is one of ways how to do this. However more important is that
+> driver should still support old bindings so such code:
+> -       if (of_property_read_u32(dp_node, "samsung,color-space",
+> +       if (of_property_read_u32(dp_node, "analogix,color-space",
+>
+> is probably wrong. Will the driver support old DTB in the same way as=
+ it
+> was supporting before the change?
+
+Okay, I got your means. So document is not the focus, the most importan=
+t=20
+is that
+driver should support the old dts prop. If so the new analogix dp drive=
+r=20
+should keep
+the "samsung,color-space", rather then just mark it with [DEPRECATED] f=
+lag.
+
+But from your follow suggest, I think you agree to update driver code,=20
+and just mark
+old prop with deprecated flag. If so I think such code would not be wro=
+ng
+
+-       if (of_property_read_u32(dp_node, "samsung,color-space",
++      if (of_property_read_u32(dp_node, "analogix,color-space",
+
+And actually @Rob have suggest me to remove the prefix, just use=20
+"color-space" here.
+
+>
+>> Let me show same examples, make
+>> me understand your suggest rightly.
+> exynos-dp already contains deprecated properties. Other ways of doing
+> this would be:
+> Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+> Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+>
+> It depends up to you. The "touchscreen" looks good because it organiz=
+es
+> old properties in a common section. In case of exynos-dp.txt you can =
+add
+> at beginning of file information about new bindings and mark everythi=
+ng
+> deprecated.
+
+Whoops, thanks for your remind, I prefer the "touchscreen" style.
+
+>> 1. "samsung,ycbcr-coeff" is abandoned in latest analogix-dp driver,
+>> absolutely
+>>      I should not carry this to analogix-dp.txt document. But I shou=
+ld
+>> keep this in
+>>      exynos-dp.txt document, and mark them with an little "deprecate=
+d" flag.
+>>
+>> [Documentation/devicetree/bindings/video/exynos_dp.txt]
+>> Required properties for dp-controller:
+>>     [...]
+>>      -samsung,ycbcr-coeff (DEPRECATED):
+>>          YCbCr co-efficients for input video.
+>>              COLOR_YCBCR601 =3D 0, COLOR_YCBCR709 =3D 1
+>>
+>> Is it right ?
+> Yes, this is right.
+>
+>>> 2. Separate all DTS changes to a separate patch, unless bisectabili=
+ty
+>>> would be hurt. Anyway you should prepare it in a such way that
+>>> separation would be possible without breaking bisectability.
+>> So I should separate this patch into two parts, one is name "Documen=
+t:",
+>> the other is "ARM: dts: ".
+> Yes.
+>
+>> Honestly, I don't understand what the "bisectability" means in this =
+case.
+> I was referring to bisectability in general. The patchset should be
+> fully bisectable which means that it does not introduce any issues
+> during "git bisect". This effectively means that at each intermediate
+> step (after applying each patch, one by one) every existing stuff wor=
+ks
+> the same as previously without any regression. Including booting with
+> old DTB.
+
+Oh, thanks for your careful explain, so I guess your first comment is=20
+talking about
+the "bisectability" that if I only apply the 01 - 05 patches, kernel=20
+could not bootup
+normally, cause driver need "analogix,color-space" but DTB only have=20
+"samsung,color-space".
+
+>
+>>> 3. Use proper subject for the patch changing DTS. This is not
+>>> documentation change!
+>> Hmm... when I separate this patch into two parts, I though I can kee=
+p
+>> "Documentation" proper subject in this patch, and the other is the "=
+ARM:
+>> dts"
+>> proper subject. Am I right ?
+> Yes, you're right.
+>
+>>> 4. Please use script get_maintainers to obtain list of valid
+>>> maintainers and CC-them with at least cover letter and patches
+>>> requiring their attention.
+>> Yeah, thanks.
+> Sure. Now I found older versions of the patchset but previously there
+> were no changes to the bindings. Again the prefix in subject is
+> important to easily filter out and find necessary emails.
+>
+> BTW, I like the patchset because I like in general works which merge
+> code and reduce duplicate stuff.
+
+Aha, thanks  :-D
+
+Best regards,
+- Yakir
+
+> Best regards,
+> Krzysztof
+>
+>
+>
+>
+>
