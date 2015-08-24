@@ -1,61 +1,114 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 05/14] exynos/fimg2d: check buffer space in g2d_copy()
-Date: Mon, 24 Aug 2015 16:14:00 +0200
-Message-ID: <1440425649-9768-6-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 06/14] exynos/fimg2d: check buffer space in g2d_copy_with_scale()
+Date: Mon, 24 Aug 2015 16:14:01 +0200
+Message-ID: <1440425649-9768-7-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50093 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753921AbbHXOPJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 10:15:09 -0400
 In-Reply-To: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-TW92ZSB0aGUgcGFyYW1ldGVyIHZhbGlkYXRpb24gYmVmb3JlIGJ1ZmZlciBzcGFjZSBjaGVja2lu
-ZwpzbyB0aGF0IHdlIGNhbiBleGl0IGVhcmx5IGlmIGl0IGZhaWxzLgpBbHNvIGRvbid0IHJlc2V0
-IHRoZSBHMkQgY29udGV4dCBhbnltb3JlIGluIHRoaXMgc2l0dWF0aW9uCihzaW5jZSB0aGUgYnVm
-ZmVycyBhcmUgbm90IHBhcnRpYWxseSBzdWJtaXR0ZWQpLgoKU2lnbmVkLW9mZi1ieTogVG9iaWFz
-IEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ci0tLQogZXh5bm9zL2V4eW5v
-c19maW1nMmQuYyB8IDI2ICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdl
-ZCwgMTQgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZXh5bm9z
-L2V4eW5vc19maW1nMmQuYyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggOWI3YmNjZS4u
-MTg1YWE4MCAxMDA2NDQKLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9leHlub3Mv
-ZXh5bm9zX2ZpbWcyZC5jCkBAIC0zNzUsMTcgKzM3NSw3IEBAIGcyZF9jb3B5KHN0cnVjdCBnMmRf
-Y29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICpzcmMsCiB7CiAJdW5pb24gZzJkX3JvcDRf
-dmFsIHJvcDQ7CiAJdW5pb24gZzJkX3BvaW50X3ZhbCBwdDsKLQl1bnNpZ25lZCBpbnQgc3JjX3cg
-PSAwLCBzcmNfaCA9IDAsIGRzdF93ID0gMCwgZHN0X2ggPSAwOwotCi0JZzJkX2FkZF9jbWQoY3R4
-LCBEU1RfU0VMRUNUX1JFRywgRzJEX1NFTEVDVF9NT0RFX0JHQ09MT1IpOwotCWcyZF9hZGRfY21k
-KGN0eCwgRFNUX0NPTE9SX01PREVfUkVHLCBkc3QtPmNvbG9yX21vZGUpOwotCWcyZF9hZGRfYmFz
-ZV9hZGRyKGN0eCwgZHN0LCBnMmRfZHN0KTsKLQlnMmRfYWRkX2NtZChjdHgsIERTVF9TVFJJREVf
-UkVHLCBkc3QtPnN0cmlkZSk7Ci0KLQlnMmRfYWRkX2NtZChjdHgsIFNSQ19TRUxFQ1RfUkVHLCBH
-MkRfU0VMRUNUX01PREVfTk9STUFMKTsKLQlnMmRfYWRkX2NtZChjdHgsIFNSQ19DT0xPUl9NT0RF
-X1JFRywgc3JjLT5jb2xvcl9tb2RlKTsKLQlnMmRfYWRkX2Jhc2VfYWRkcihjdHgsIHNyYywgZzJk
-X3NyYyk7Ci0JZzJkX2FkZF9jbWQoY3R4LCBTUkNfU1RSSURFX1JFRywgc3JjLT5zdHJpZGUpOwor
-CXVuc2lnbmVkIGludCBzcmNfdywgc3JjX2gsIGRzdF93LCBkc3RfaDsKIAogCXNyY193ID0gdzsK
-IAlzcmNfaCA9IGg7CkBAIC00MDYsMTAgKzM5NiwyMiBAQCBnMmRfY29weShzdHJ1Y3QgZzJkX2Nv
-bnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqc3JjLAogCiAJaWYgKHcgPD0gMCB8fCBoIDw9
-IDApIHsKIAkJZnByaW50ZihzdGRlcnIsICJpbnZhbGlkIHdpZHRoIG9yIGhlaWdodC5cbiIpOwot
-CQlnMmRfcmVzZXQoY3R4KTsKIAkJcmV0dXJuIC1FSU5WQUw7CiAJfQogCisJaWYgKGcyZF9jaGVj
-a19zcGFjZShjdHgsIDExLCAyKSkKKwkJcmV0dXJuIC1FTk9TUEM7CisKKwlnMmRfYWRkX2NtZChj
-dHgsIERTVF9TRUxFQ1RfUkVHLCBHMkRfU0VMRUNUX01PREVfQkdDT0xPUik7CisJZzJkX2FkZF9j
-bWQoY3R4LCBEU1RfQ09MT1JfTU9ERV9SRUcsIGRzdC0+Y29sb3JfbW9kZSk7CisJZzJkX2FkZF9i
-YXNlX2FkZHIoY3R4LCBkc3QsIGcyZF9kc3QpOworCWcyZF9hZGRfY21kKGN0eCwgRFNUX1NUUklE
-RV9SRUcsIGRzdC0+c3RyaWRlKTsKKworCWcyZF9hZGRfY21kKGN0eCwgU1JDX1NFTEVDVF9SRUcs
-IEcyRF9TRUxFQ1RfTU9ERV9OT1JNQUwpOworCWcyZF9hZGRfY21kKGN0eCwgU1JDX0NPTE9SX01P
-REVfUkVHLCBzcmMtPmNvbG9yX21vZGUpOworCWcyZF9hZGRfYmFzZV9hZGRyKGN0eCwgc3JjLCBn
-MmRfc3JjKTsKKwlnMmRfYWRkX2NtZChjdHgsIFNSQ19TVFJJREVfUkVHLCBzcmMtPnN0cmlkZSk7
-CisKIAlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194OwogCXB0LmRhdGEueSA9IHNyY195
-OwotLSAKMi4wLjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+Parameter validation goes to the top. Repeat mode is
+checked first to make computation of space easier.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 53 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 185aa80..2e04f4a 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -467,23 +467,12 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ {
+ 	union g2d_rop4_val rop4;
+ 	union g2d_point_val pt;
+-	unsigned int scale;
++	unsigned int scale, repeat_pad;
+ 	unsigned int scale_x, scale_y;
+ 
+-	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
+-	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+-	g2d_add_base_addr(ctx, dst, g2d_dst);
+-	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
+-
+-	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+-	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
+-
+-	g2d_add_cmd(ctx, SRC_REPEAT_MODE_REG, src->repeat_mode);
+-	if (src->repeat_mode == G2D_REPEAT_MODE_PAD)
+-		g2d_add_cmd(ctx, SRC_PAD_VALUE_REG, dst->color);
+-
+-	g2d_add_base_addr(ctx, src, g2d_src);
+-	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
++	/* Sanitize this parameter to facilitate space computation below. */
++	if (negative)
++		negative = 1;
+ 
+ 	if (src_w == dst_w && src_h == dst_h)
+ 		scale = 0;
+@@ -493,6 +482,8 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 		scale_y = g2d_get_scaling(src_h, dst_h);
+ 	}
+ 
++	repeat_pad = src->repeat_mode == G2D_REPEAT_MODE_PAD ? 1 : 0;
++
+ 	if (src_x + src_w > src->width)
+ 		src_w = src->width - src_x;
+ 	if (src_y + src_h > src->height)
+@@ -505,21 +496,37 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 
+ 	if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
+ 		fprintf(stderr, "invalid width or height.\n");
+-		g2d_reset(ctx);
+ 		return -EINVAL;
+ 	}
+ 
++	if (g2d_check_space(ctx, 12 + scale * 3 + negative + repeat_pad, 2))
++		return -ENOSPC;
++
++	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
++	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
++	g2d_add_base_addr(ctx, dst, g2d_dst);
++	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
++
++	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
++	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
++
++	g2d_add_cmd(ctx, SRC_REPEAT_MODE_REG, src->repeat_mode);
++	if (repeat_pad)
++		g2d_add_cmd(ctx, SRC_PAD_VALUE_REG, dst->color);
++
++	g2d_add_base_addr(ctx, src, g2d_src);
++	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
++
++	rop4.val = 0;
++	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
++
+ 	if (negative) {
+ 		g2d_add_cmd(ctx, BG_COLOR_REG, 0x00FFFFFF);
+-		rop4.val = 0;
+-		rop4.data.unmasked_rop3 = G2D_ROP3_SRC^G2D_ROP3_DST;
+-		g2d_add_cmd(ctx, ROP4_REG, rop4.val);
+-	} else {
+-		rop4.val = 0;
+-		rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
+-		g2d_add_cmd(ctx, ROP4_REG, rop4.val);
++		rop4.data.unmasked_rop3 ^= G2D_ROP3_DST;
+ 	}
+ 
++	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
++
+ 	if (scale) {
+ 		g2d_add_cmd(ctx, SRC_SCALE_CTRL_REG, G2D_SCALE_MODE_BILINEAR);
+ 		g2d_add_cmd(ctx, SRC_XSCALE_REG, scale_x);
+-- 
+2.0.5
