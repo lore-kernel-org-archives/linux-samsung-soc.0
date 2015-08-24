@@ -1,59 +1,46 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 02/14] exynos/fimg2d: simplify base address submission in g2d_scale_and_blend()
-Date: Mon, 24 Aug 2015 16:13:57 +0200
-Message-ID: <1440425649-9768-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 03/14] exynos/fimg2d: add g2d_check_space()
+Date: Mon, 24 Aug 2015 16:13:58 +0200
+Message-ID: <1440425649-9768-4-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50070 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754323AbbHXOO1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Aug 2015 10:14:27 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Use g2d_add_base_addr() for source and destination base
-address just like all other calls.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/exynos_fimg2d.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 4a88e0c..85b2317 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -672,12 +672,7 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
- 		g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_NORMAL);
- 
- 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
--	if (dst->buf_type == G2D_IMGBUF_USERPTR)
--		g2d_add_cmd(ctx, DST_BASE_ADDR_REG | G2D_BUF_USERPTR,
--				(unsigned long)&dst->user_ptr[0]);
--	else
--		g2d_add_cmd(ctx, DST_BASE_ADDR_REG, dst->bo[0]);
--
-+	g2d_add_base_addr(ctx, dst, g2d_dst);
- 	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
- 
- 	g2d_add_cmd(ctx, SRC_SELECT_REG, src->select_mode);
-@@ -685,12 +680,7 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
- 
- 	switch (src->select_mode) {
- 	case G2D_SELECT_MODE_NORMAL:
--		if (src->buf_type == G2D_IMGBUF_USERPTR)
--			g2d_add_cmd(ctx, SRC_BASE_ADDR_REG | G2D_BUF_USERPTR,
--					(unsigned long)&src->user_ptr[0]);
--		else
--			g2d_add_cmd(ctx, SRC_BASE_ADDR_REG, src->bo[0]);
--
-+		g2d_add_base_addr(ctx, src, g2d_src);
- 		g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
- 		break;
- 	case G2D_SELECT_MODE_FGCOLOR:
--- 
-2.0.5
+VGhpcyBpcyBnb2luZyB0byBiZSB1c2VkIHRvIGNoZWNrIGlmIHRoZSBjb21tYW5kIGJ1ZmZlcnMg
+aGF2ZQplbm91Z2ggc3BhY2UgbGVmdCBwcmlvciB0byBhY3R1YWwgc3VibWlzc2lvbiBvZiB0aGUg
+Y29tbWFuZHMuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5p
+LWJpZWxlZmVsZC5kZT4KLS0tCiBleHlub3MvZXh5bm9zX2ZpbWcyZC5jIHwgMTcgKysrKysrKysr
+KysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEv
+ZXh5bm9zL2V4eW5vc19maW1nMmQuYyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggODVi
+MjMxNy4uMWFlOGFkZiAxMDA2NDQKLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9l
+eHlub3MvZXh5bm9zX2ZpbWcyZC5jCkBAIC0xMDIsNiArMTAyLDIzIEBAIHN0YXRpYyB1bnNpZ25l
+ZCBpbnQgZzJkX2dldF9ibGVuZF9vcChlbnVtIGVfZzJkX29wIG9wKQogfQogCiAvKgorICogZzJk
+X2NoZWNrX3NwYWNlIC0gY2hlY2sgaWYgY29tbWFuZCBidWZmZXJzIGhhdmUgZW5vdWdoIHNwYWNl
+IGxlZnQuCisgKgorICogQGN0eDogYSBwb2ludGVyIHRvIGcyZF9jb250ZXh0IHN0cnVjdHVyZS4K
+KyAqIEBudW1fY21kczogbnVtYmVyIG9mIChyZWd1bGFyKSBjb21tYW5kcy4KKyAqIEBudW1fZ2Vt
+X2NtZHM6IG51bWJlciBvZiBHRU0gY29tbWFuZHMuCisgKi8KK3N0YXRpYyB1bnNpZ25lZCBpbnQg
+ZzJkX2NoZWNrX3NwYWNlKGNvbnN0IHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LAorCXVuc2lnbmVk
+IGludCBudW1fY21kcywgdW5zaWduZWQgaW50IG51bV9nZW1fY21kcykKK3sKKwlpZiAoY3R4LT5j
+bWRfbnIgKyBudW1fY21kcyA+PSBHMkRfTUFYX0NNRF9OUiB8fAorCSAgICBjdHgtPmNtZF9idWZf
+bnIgKyBudW1fZ2VtX2NtZHMgPj0gRzJEX01BWF9HRU1fQ01EX05SKQorCQlyZXR1cm4gMTsKKwll
+bHNlCisJCXJldHVybiAwOworfQorCisvKgogICogZzJkX2FkZF9jbWQgLSBzZXQgZ2l2ZW4gY29t
+bWFuZCBhbmQgdmFsdWUgdG8gdXNlciBzaWRlIGNvbW1hbmQgYnVmZmVyLgogICoKICAqIEBjdHg6
+IGEgcG9pbnRlciB0byBnMmRfY29udGV4dCBzdHJ1Y3R1cmUuCi0tIAoyLjAuNQoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
