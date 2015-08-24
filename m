@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v4 4/4] mfd: max77686: Split out regulator part from the DT binding
-Date: Mon, 24 Aug 2015 10:47:21 +0200
-Message-ID: <1440406041-25071-5-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH v4 1/4] mfd: max77686: Don't suggest in binding to use a deprecated property
+Date: Mon, 24 Aug 2015 10:47:18 +0200
+Message-ID: <1440406041-25071-2-git-send-email-javier@osg.samsung.com>
 References: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
@@ -10,14 +10,9 @@ To: Lee Jones <lee.jones@linaro.org>
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Maxim MAX77686 PMIC is a multi-function device with regulators,
-clocks and a RTC. The DT bindings for the clocks are in a separate
-file but the bindings for the regulators are inside the mfd part.
-
-To make it consistent with the clocks portion of the binding and
-because is more natural to look for regulator bindings under the
-bindings/regulator sub-directory, split the regulator portion of
-the DT binding and add it as a separate file.
+The regulator-compatible property from the regulator DT binding was
+deprecated. But the max77686 DT binding doc still suggest to use it
+instead of the regulator node name's which is the correct approach.
 
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
@@ -25,177 +20,57 @@ Acked-by: Lee Jones <lee.jones@linaro.org>
 
 ---
 
-Changes in v4: None
-Changes in v3:
-- Add Krzysztof Kozlowski Reviewed-by tag to patch #4.
-- Add Lee Jones Acked-by tag to patch #4.
+Changes in v4:
+- Add Lee Jones Acked-by tag to patch #1.
 
+Changes in v3: None
 Changes in v2:
-- Use a generic name for the max77686 node in the regulator example.
+- Add Krzysztof Kozlowski Reviewed-by tag to patch #1.
 
- Documentation/devicetree/bindings/mfd/max77686.txt | 60 ++----------------
- .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++++++++++++
- 2 files changed, 75 insertions(+), 56 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/max77686.txt
+ Documentation/devicetree/bindings/mfd/max77686.txt | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index d2ed3c20a5c3..741e76688cf2 100644
+index 163bd81a4607..8221102d3fc2 100644
 --- a/Documentation/devicetree/bindings/mfd/max77686.txt
 +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -7,8 +7,9 @@ different i2c slave address,presently for which we are statically creating i2c
- client while probing.This document describes the binding for mfd device and
- PMIC submodule.
+@@ -26,7 +26,7 @@ Optional node:
+ 	};
+ 	refer Documentation/devicetree/bindings/regulator/regulator.txt
  
--Binding for the built-in 32k clock generator block is defined separately
--in bindings/clk/maxim,max77686.txt file.
-+Bindings for the built-in 32k clock generator block and
-+regulators are defined in ../clk/maxim,max77686.txt and
-+../regulator/max77686.txt respectively.
- 
- Required properties:
- - compatible : Must be "maxim,max77686";
-@@ -16,36 +17,6 @@ Required properties:
- - interrupts : This i2c device has an IRQ line connected to the main SoC.
- - interrupt-parent : The parent interrupt controller.
- 
--Optional node:
--- voltage-regulators : The regulators of max77686 have to be instantiated
--  under subnode named "voltage-regulators" using the following format.
--
--	regulator_name {
--		regulator-compatible = LDOn/BUCKn
--		standard regulator constraints....
--	};
--	refer Documentation/devicetree/bindings/regulator/regulator.txt
--
--  The regulator node's name should be initialized with a string
--to get matched with their hardware counterparts as follow:
--
--	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
--		 	example: LDO1, LDO2, LDO26.
--	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
--			example: BUCK1, BUCK5, BUCK9.
--
--  Regulators which can be turned off during system suspend:
--	-LDOn	:	2, 6-8, 10-12, 14-16,
--	-BUCKn	:	1-4.
--  Use standard regulator bindings for it ('regulator-off-in-suspend').
--
--  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
--  control. To turn this feature on this property must be added to the regulator
--  sub-node:
--	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
--				flags are actually ignored and always
--				ACTIVE_HIGH is used)
--
- Example:
- 
- 	max77686: pmic@09 {
-@@ -53,27 +24,4 @@ Example:
- 		interrupt-parent = <&wakeup_eint>;
- 		interrupts = <26 0>;
- 		reg = <0x09>;
--
--		voltage-regulators {
--			ldo11_reg: LDO11 {
--				regulator-name = "vdd_ldo11";
--				regulator-min-microvolt = <1900000>;
--				regulator-max-microvolt = <1900000>;
--				regulator-always-on;
--			};
--
--			buck1_reg: BUCK1 {
--				regulator-name = "vdd_mif";
--				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt = <1300000>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			buck9_reg: BUCK9 {
--				regulator-name = "CAM_ISP_CORE_1.2V";
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <1200000>;
--				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
--			};
--	}
-+	};
-diff --git a/Documentation/devicetree/bindings/regulator/max77686.txt b/Documentation/devicetree/bindings/regulator/max77686.txt
-new file mode 100644
-index 000000000000..0dded64d89d3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/max77686.txt
-@@ -0,0 +1,71 @@
-+Binding for Maxim MAX77686 regulators
-+
-+This is a part of the device tree bindings of MAX77686 multi-function device.
-+More information can be found in ../mfd/max77686.txt file.
-+
-+The MAX77686 PMIC has 9 high-efficiency Buck and 26 Low-DropOut (LDO)
-+regulators that can be controlled over I2C.
-+
-+Following properties should be present in main device node of the MFD chip.
-+
-+Optional node:
-+- voltage-regulators : The regulators of max77686 have to be instantiated
-+  under subnode named "voltage-regulators" using the following format.
-+
-+	regulator_name {
-+		regulator-compatible = LDOn/BUCKn
-+		standard regulator constraints....
-+	};
-+	refer Documentation/devicetree/bindings/regulator/regulator.txt
-+
+-  The regulator-compatible property of regulator should initialized with string
 +  The regulator node's name should be initialized with a string
-+to get matched with their hardware counterparts as follow:
-+
-+	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
-+			example: LDO1, LDO2, LDO26.
-+	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
-+			example: BUCK1, BUCK5, BUCK9.
-+
-+  Regulators which can be turned off during system suspend:
-+	-LDOn	:	2, 6-8, 10-12, 14-16,
-+	-BUCKn	:	1-4.
-+  Use standard regulator bindings for it ('regulator-off-in-suspend').
-+
-+  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
-+  control. To turn this feature on this property must be added to the regulator
-+  sub-node:
-+	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-+				flags are actually ignored and always
-+				ACTIVE_HIGH is used)
-+
-+Example:
-+
-+	max77686: pmic@09 {
-+		compatible = "maxim,max77686";
-+		interrupt-parent = <&wakeup_eint>;
-+		interrupts = <26 IRQ_TYPE_NONE>;
-+		reg = <0x09>;
-+
-+		voltage-regulators {
+ to get matched with their hardware counterparts as follow:
+ 
+ 	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
+@@ -55,16 +55,14 @@ Example:
+ 		reg = <0x09>;
+ 
+ 		voltage-regulators {
+-			ldo11_reg {
+-				regulator-compatible = "LDO11";
 +			ldo11_reg: LDO11 {
-+				regulator-name = "vdd_ldo11";
-+				regulator-min-microvolt = <1900000>;
-+				regulator-max-microvolt = <1900000>;
-+				regulator-always-on;
-+			};
-+
+ 				regulator-name = "vdd_ldo11";
+ 				regulator-min-microvolt = <1900000>;
+ 				regulator-max-microvolt = <1900000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			buck1_reg {
+-				regulator-compatible = "BUCK1";
 +			buck1_reg: BUCK1 {
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+
+ 				regulator-name = "vdd_mif";
+ 				regulator-min-microvolt = <950000>;
+ 				regulator-max-microvolt = <1300000>;
+@@ -72,8 +70,7 @@ Example:
+ 				regulator-boot-on;
+ 			};
+ 
+-			buck9_reg {
+-				regulator-compatible = "BUCK9";
 +			buck9_reg: BUCK9 {
-+				regulator-name = "CAM_ISP_CORE_1.2V";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1200000>;
-+				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
-+			};
-+	};
+ 				regulator-name = "CAM_ISP_CORE_1.2V";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1200000>;
 -- 
 2.4.3
