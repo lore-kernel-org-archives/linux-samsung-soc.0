@@ -1,71 +1,110 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
- analogix_dp
-Date: Mon, 24 Aug 2015 13:57:58 +0100
-Message-ID: <20150824125758.GA7557@n2100.arm.linux.org.uk>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
- <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
- <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for analogix_dp
+Date: Mon, 24 Aug 2015 15:03:05 +0200
+Message-ID: <18468783.Lfl8UEMQ1s@phil>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com> <55DA9B72.1030804@samsung.com> <55DB1281.9070502@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:44838 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754378AbbHXNDl convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 09:03:41 -0400
+In-Reply-To: <55DB1281.9070502@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robherring2@gmail.com>, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, David Airlie <airlied@linux.ie>, Doug Anderson <dianders@google.com>, Inki Dae <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, Rob Herring <robh+dt@kernel.org>, linux-arm-kern
 
-On Sun, Aug 23, 2015 at 06:23:14PM -0500, Rob Herring wrote:
-> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
-> > +       -analogix,color-depth:
-> > +               number of bits per colour component.
-> > +                       COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
-> 
-> This seems pretty generic. Just use 6, 8, 10, or 12 for values. And
-> drop the vendor prefix.
+Hi Yakir,
 
-Please think about this some more.  What does "color-depth" mean?  Does it
-mean the number of bits per colour _component_, or does it mean the total
-number of bits to represent a particular colour.  It's confusing as it
-stands.
+Am Montag, 24. August 2015, 20:48:01 schrieb Yakir Yang:
+> =E5=9C=A8 08/24/2015 12:20 PM, Krzysztof Kozlowski =E5=86=99=E9=81=93=
+:
+> > On 24.08.2015 11:42, Yakir Yang wrote:
+> >> Hi Krzysztof,
+> >>=20
+> >> =E5=9C=A8 08/23/2015 07:43 PM, Krzysztof Kozlowski =E5=86=99=E9=81=
+=93:
+> >>> 2015-08-24 8:23 GMT+09:00 Rob Herring <robherring2@gmail.com>:
+> >>>> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk@rock-chips.com>=
+ wrote:
+> >>>>> Analogix dp driver is split from exynos dp driver, so we just
+> >>>>> make an copy of exynos_dp.txt, and then simplify exynos_dp.txt
+> >>>>>=20
+> >>>>> Beside update some exynos dtsi file with the latest change
+> >>>>> according to the devicetree binding documents.
+> >>>>=20
+> >>>> You can't just change the exynos bindings and break compatibilit=
+y. Is
+> >>>> there some agreement with exynos folks to do this?
+> >>>=20
+> >>> No, there is no agreement. This wasn't even sent to Exynos mainta=
+iners.
+> >>=20
+> >> Sorry about this one, actually I have add Exynos maintainers in ve=
+rsion
+> >> 1 & version 2,
+> >> but lose some maintainers in version 3, I would fix it in bellow
+> >> versions.
+> >>=20
+> >>> Additionally the patchset did not look interesting to me because =
+of
+> >>> misleading subject - Documentation instead of "ARM: dts:".
+> >>>=20
+> >>> Yakir, please:
+> >>> 1. Provide backward compatibility. Mark old properties as depreca=
+ted
+> >>> but still support them.
+> >>=20
+> >> Do you mean that I should keep the old properties declare in
+> >> exynos-dp.txt,
+> >> but just mark them as deprecated flag.
+> >=20
+> > That is one of ways how to do this. However more important is that
+> > driver should still support old bindings so such code:
+> > -       if (of_property_read_u32(dp_node, "samsung,color-space",
+> > +       if (of_property_read_u32(dp_node, "analogix,color-space",
+> >=20
+> > is probably wrong. Will the driver support old DTB in the same way =
+as it
+> > was supporting before the change?
+>=20
+> Okay, I got your means. So document is not the focus, the most import=
+ant
+> is that
+> driver should support the old dts prop. If so the new analogix dp dri=
+ver
+> should keep
+> the "samsung,color-space", rather then just mark it with [DEPRECATED]=
+ flag.
+>=20
+> But from your follow suggest, I think you agree to update driver code=
+,
+> and just mark
+> old prop with deprecated flag. If so I think such code would not be w=
+rong
+>=20
+> -       if (of_property_read_u32(dp_node, "samsung,color-space",
+> +      if (of_property_read_u32(dp_node, "analogix,color-space",
 
-> > +Optional properties for dp-controller:
-> > +       -analogix,hpd-gpio:
-> > +               Hotplug detect GPIO.
-> > +                       Indicates which GPIO should be used for hotplug
-> > +                       detection
-> 
-> We should align with "hpd-gpios" used by HDMI connector binding. Or do
-> we need a DP connector binding that this should be defined in?
-> Probably so.
-> 
-> The DRM related bindings are such a cluster f*ck with everyone picking
-> their own way to do things. Just grep hpd in bindings for starters.
-> That is just the tip.
+In a generic driver, the property should have either none, or the analo=
+gix=20
+prefix. But DT-properties need to be backwards compatible, meaning an o=
+lder=20
+Exynos devicetree should run unmodified with a newer kernel.
 
-I'm not surprised one iota that DRM bindings are a mess.  There's no one
-overlooking the adoption of DRM bindings, so surprise surprise, everyone
-does their own thing.  This is exactly what happens every time in that
-scenario.  It's not a new problem.
+So the common course of action is to mark the old one as deprecated but=
+ still=20
+test for both, so something like:
 
-When we adopted the graph bindings for iMX DRM, I thought exactly at that
-time "it would be nice if this could become the standard for binding DRM
-components together" but I don't have the authority from either the DT
-perspective or the DRM perspective to mandate that.  Neither does anyone
-else.  That's the _real_ problem here.
+       if (of_property_read_u32(dp_node, "analogix,color-space",
+                                 &dp_video_config->color_space))
+	       if (of_property_read_u32(dp_node, "samsung,color-space",
+                	                 &dp_video_config->color_space)) {
 
-I've seen several DRM bindings go by which don't use the of-graph stuff,
-which means that they'll never be compatible with generic components
-which do use the of-graph stuff.
-
-Like you say, it's a mess, but it's a mess of our own making, because no
-one has the authority to regulate this.
-
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+                	dev_err(dev, "failed to get color-space\n");
+                	return ERR_PTR(-EINVAL);
+        	}
