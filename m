@@ -1,45 +1,75 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2 7/7] Documentation: dt-bindings: add exynos-srom binding
- information
-Date: Mon, 24 Aug 2015 13:32:28 +0530
-Message-ID: <1440403348-8974-8-git-send-email-pankaj.dubey@samsung.com>
-References: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, heiko@sntech.de, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v4 0/4] mfd: Improve DT binding docs for max77686 and max77802
+Date: Mon, 24 Aug 2015 10:47:17 +0200
+Message-ID: <1440406041-25071-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:59404 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754089AbbHXIrm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 04:47:42 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-This patch adds exynos-srom binding information for SROM Controller
-driver on Exynos SoCs.
+Hello,
 
-CC: Rob Herring <robh+dt@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>
-CC: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- .../devicetree/bindings/arm/samsung/exynos-srom.txt          | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+This series contains some improvements for the Device Tree bindings of
+the Maxim MAX77686 and MAX77802 multi-function devices.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-new file mode 100644
-index 0000000..33886d5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-@@ -0,0 +1,12 @@
-+SAMSUNG Exynos SoCs SROM Controller driver.
-+
-+Required properties:
-+- compatible : Should contain "samsung,exynos-srom".
-+
-+- reg: offset and length of the register set
-+
-+Example:
-+	sromc@12570000 {
-+		compatible = "samsung,exynos-srom";
-+		reg = <0x12570000 0x10>;
-+	};
+This is the fourth version of the series that addresses issues pointed
+out by Lee Jones in v3.
+
+Patch #1 changes the max77686 binding to not suggest using a deprecated
+property of the regulator DT binding.
+
+Patch #2 changes the max77686 example to use a generic node name instead
+of the chip's name.
+
+Patch #3 adds a DT binding for the mfd portion of the max77802 that was
+missing.
+
+Patch #4 moves the regulator portion of the max77686 to the regulator's
+DT binding sub-directory since it is a better fit for this information.
+Patch #4 needs to be acked by Mark Brown to get it through the mfd tree.
+
+Changes in v4:
+- Add Lee Jones Acked-by tag to patch #1.
+- Add Lee Jones Acked-by tag to patch #2.
+- Reword section about max77802 clock and regulator DT binding docs.
+  Suggested by Lee Jones.
+- Align max77802 mfd required properties. Suggested by Lee Jones.
+
+Changes in v3:
+- Fix typo in ePAPR document name. Suggested by Sergei Shtylyov
+- Add Krzysztof Kozlowski Reviewed-by tag to patch #3.
+- Capitalise all acronyms. Suggested by Lee Jones.
+- Use relative path to refer other bindings. Suggested by Lee Jones.
+- Use IRQ_TYPE_NONE instead of 0 in example. Suggested by Lee Jones.
+- Add Krzysztof Kozlowski Reviewed-by tag to patch #4.
+- Add Lee Jones Acked-by tag to patch #4.
+
+Changes in v2:
+- Add Krzysztof Kozlowski Reviewed-by tag to patch #1.
+- Use the correct "maxim,max77802" compatible string.
+  Suggested by Krzysztof Kozlowski
+- Use a pmic generic node name for the max77802 node example.
+  Suggested by Sergei Shtylyov.
+- Use a generic name for the max77686 node in the regulator example.
+
+Javier Martinez Canillas (4):
+  mfd: max77686: Don't suggest in binding to use a deprecated property
+  mfd: max77686: Use a generic name for the PMIC node in the example
+  mfd: Add DT binding for Maxim MAX77802 IC
+  mfd: max77686: Split out regulator part from the DT binding
+
+ Documentation/devicetree/bindings/mfd/max77686.txt | 65 ++------------------
+ Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++
+ .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++++++++++++
+ 3 files changed, 102 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/max77686.txt
+
 -- 
-2.4.5
+2.4.3
