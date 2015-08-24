@@ -1,99 +1,89 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 13/14] exynos/fimg2d: add message prefix
-Date: Mon, 24 Aug 2015 16:14:08 +0200
-Message-ID: <1440425649-9768-14-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Subject: [PATCH 14/14] exynos/fimg2d: remove g2d_context from public header
+Date: Mon, 24 Aug 2015 16:34:28 +0200
+Message-ID: <1440426868-10082-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50260 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753713AbbHXOea (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Aug 2015 10:34:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-QWRkIGEgcHJlZml4IHRvIHRoZSBtZXNzYWdlcyBwcmludGVkIHRvIHRoZSBjb25zb2xlIHZpYQpw
-cmludGYoKSBhbmQgZnByaW50ZigpIHNvIHRoYXQgb25lIGNhbiBlYXNpbHkgc2VlIHdoZXJlCnRo
-ZSBtZXNzYWdlIGNvbWVzIGZyb20uCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFr
-b2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBleHlub3MvZXh5bm9zX2ZpbWcyZC5jIHwg
-MzAgKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTYgaW5z
-ZXJ0aW9ucygrKSwgMTQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19m
-aW1nMmQuYyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggYWQ0NDk5OC4uOTFkZjQ0MSAx
-MDA2NDQKLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9leHlub3MvZXh5bm9zX2Zp
-bWcyZC5jCkBAIC00Miw2ICs0Miw4IEBACiAKICNkZWZpbmUgTUlOKGEsIGIpCSgoYSkgPCAoYikg
-PyAoYSkgOiAoYikpCiAKKyNkZWZpbmUgTVNHX1BSRUZJWCAiZXh5bm9zL2ZpbWcyZDogIgorCiBl
-bnVtIGcyZF9iYXNlX2FkZHJfcmVnIHsKIAlnMmRfZHN0ID0gMCwKIAlnMmRfc3JjCkBAIC0yNDYs
-NyArMjQ4LDcgQEAgc3RhdGljIGludCBnMmRfZmx1c2goc3RydWN0IGcyZF9jb250ZXh0ICpjdHgp
-CiAJCXJldHVybiAwOwogCiAJaWYgKGN0eC0+Y21kbGlzdF9uciA+PSBHMkRfTUFYX0NNRF9MSVNU
-X05SKSB7Ci0JCWZwcmludGYoc3RkZXJyLCAiT3ZlcmZsb3cgY21kbGlzdC5cbiIpOworCQlmcHJp
-bnRmKHN0ZGVyciwgTVNHX1BSRUZJWCAiY29tbWFuZCBsaXN0IG92ZXJmbG93LlxuIik7CiAJCXJl
-dHVybiAtRUlOVkFMOwogCX0KIApAQCAtMjYyLDcgKzI2NCw3IEBAIHN0YXRpYyBpbnQgZzJkX2Zs
-dXNoKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4KQogCiAJcmV0ID0gZHJtSW9jdGwoY3R4LT5mZCwg
-RFJNX0lPQ1RMX0VYWU5PU19HMkRfU0VUX0NNRExJU1QsICZjbWRsaXN0KTsKIAlpZiAocmV0IDwg
-MCkgewotCQlmcHJpbnRmKHN0ZGVyciwgImZhaWxlZCB0byBzZXQgY21kbGlzdC5cbiIpOworCQlm
-cHJpbnRmKHN0ZGVyciwgTVNHX1BSRUZJWCAiZmFpbGVkIHRvIHNldCBjbWRsaXN0LlxuIik7CiAJ
-CXJldHVybiByZXQ7CiAJfQogCkBAIC0yODQsNyArMjg2LDcgQEAgc3RydWN0IGcyZF9jb250ZXh0
-ICpnMmRfaW5pdChpbnQgZmQpCiAKIAljdHggPSBjYWxsb2MoMSwgc2l6ZW9mKCpjdHgpKTsKIAlp
-ZiAoIWN0eCkgewotCQlmcHJpbnRmKHN0ZGVyciwgImZhaWxlZCB0byBhbGxvY2F0ZSBjb250ZXh0
-LlxuIik7CisJCWZwcmludGYoc3RkZXJyLCBNU0dfUFJFRklYICJmYWlsZWQgdG8gYWxsb2NhdGUg
-Y29udGV4dC5cbiIpOwogCQlyZXR1cm4gTlVMTDsKIAl9CiAKQEAgLTI5Miw3ICsyOTQsNyBAQCBz
-dHJ1Y3QgZzJkX2NvbnRleHQgKmcyZF9pbml0KGludCBmZCkKIAogCXJldCA9IGRybUlvY3RsKGZk
-LCBEUk1fSU9DVExfRVhZTk9TX0cyRF9HRVRfVkVSLCAmdmVyKTsKIAlpZiAocmV0IDwgMCkgewot
-CQlmcHJpbnRmKHN0ZGVyciwgImZhaWxlZCB0byBnZXQgdmVyc2lvbi5cbiIpOworCQlmcHJpbnRm
-KHN0ZGVyciwgTVNHX1BSRUZJWCAiZmFpbGVkIHRvIGdldCB2ZXJzaW9uLlxuIik7CiAJCWZyZWUo
-Y3R4KTsKIAkJcmV0dXJuIE5VTEw7CiAJfQpAQCAtMzAwLDcgKzMwMiw3IEBAIHN0cnVjdCBnMmRf
-Y29udGV4dCAqZzJkX2luaXQoaW50IGZkKQogCWN0eC0+bWFqb3IgPSB2ZXIubWFqb3I7CiAJY3R4
-LT5taW5vciA9IHZlci5taW5vcjsKIAotCXByaW50ZigiZzJkIHZlcnNpb24oJWQuJWQpLlxuIiwg
-Y3R4LT5tYWpvciwgY3R4LT5taW5vcik7CisJcHJpbnRmKE1TR19QUkVGSVggIkcyRCB2ZXJzaW9u
-ICglZC4lZCkuXG4iLCBjdHgtPm1ham9yLCBjdHgtPm1pbm9yKTsKIAlyZXR1cm4gY3R4OwogfQog
-CkBAIC0zMjYsNyArMzI4LDcgQEAgaW50IGcyZF9leGVjKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4
-KQogCiAJcmV0ID0gZHJtSW9jdGwoY3R4LT5mZCwgRFJNX0lPQ1RMX0VYWU5PU19HMkRfRVhFQywg
-JmV4ZWMpOwogCWlmIChyZXQgPCAwKSB7Ci0JCWZwcmludGYoc3RkZXJyLCAiZmFpbGVkIHRvIGV4
-ZWN1dGUuXG4iKTsKKwkJZnByaW50ZihzdGRlcnIsIE1TR19QUkVGSVggImZhaWxlZCB0byBleGVj
-dXRlLlxuIik7CiAJCXJldHVybiByZXQ7CiAJfQogCkBAIC00MjcsNyArNDI5LDcgQEAgZzJkX2Nv
-cHkoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1hZ2UgKnNyYywKIAloID0g
-TUlOKHNyY19oLCBkc3RfaCk7CiAKIAlpZiAodyA8PSAwIHx8IGggPD0gMCkgewotCQlmcHJpbnRm
-KHN0ZGVyciwgImludmFsaWQgd2lkdGggb3IgaGVpZ2h0LlxuIik7CisJCWZwcmludGYoc3RkZXJy
-LCBNU0dfUFJFRklYICJpbnZhbGlkIHdpZHRoIG9yIGhlaWdodC5cbiIpOwogCQlyZXR1cm4gLUVJ
-TlZBTDsKIAl9CiAKQEAgLTUyMyw3ICs1MjUsNyBAQCBnMmRfY29weV93aXRoX3NjYWxlKHN0cnVj
-dCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICpzcmMsCiAJCWRzdF9oID0gZHN0
-LT5oZWlnaHQgLSBkc3RfeTsKIAogCWlmIChzcmNfdyA8PSAwIHx8IHNyY19oIDw9IDAgfHwgZHN0
-X3cgPD0gMCB8fCBkc3RfaCA8PSAwKSB7Ci0JCWZwcmludGYoc3RkZXJyLCAiaW52YWxpZCB3aWR0
-aCBvciBoZWlnaHQuXG4iKTsKKwkJZnByaW50ZihzdGRlcnIsIE1TR19QUkVGSVggImludmFsaWQg
-d2lkdGggb3IgaGVpZ2h0LlxuIik7CiAJCXJldHVybiAtRUlOVkFMOwogCX0KIApAQCAtNjI0LDE3
-ICs2MjYsMTcgQEAgZzJkX2JsZW5kKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJk
-X2ltYWdlICpzcmMsCiAJaCA9IE1JTihzcmNfaCwgZHN0X2gpOwogCiAJaWYgKHcgPD0gMCB8fCBo
-IDw9IDApIHsKLQkJZnByaW50ZihzdGRlcnIsICJpbnZhbGlkIHdpZHRoIG9yIGhlaWdodC5cbiIp
-OworCQlmcHJpbnRmKHN0ZGVyciwgTVNHX1BSRUZJWCAiaW52YWxpZCB3aWR0aCBvciBoZWlnaHQu
-XG4iKTsKIAkJcmV0dXJuIC1FSU5WQUw7CiAJfQogCiAJaWYgKGcyZF92YWxpZGF0ZV9zZWxlY3Rf
-bW9kZShzcmMtPnNlbGVjdF9tb2RlKSkgewotCQlmcHJpbnRmKHN0ZGVyciAsICJpbnZhbGlkIHNl
-bGVjdCBtb2RlIGZvciBzb3VyY2UuXG4iKTsKKwkJZnByaW50ZihzdGRlcnIgLCBNU0dfUFJFRklY
-ICJpbnZhbGlkIHNlbGVjdCBtb2RlIGZvciBzb3VyY2UuXG4iKTsKIAkJcmV0dXJuIC1FSU5WQUw7
-CiAJfQogCiAJaWYgKGcyZF92YWxpZGF0ZV9ibGVuZGluZ19vcChvcCkpIHsKLQkJZnByaW50Zihz
-dGRlcnIgLCAidW5zdXBwb3J0ZWQgYmxlbmRpbmcgb3BlcmF0aW9uLlxuIik7CisJCWZwcmludGYo
-c3RkZXJyICwgTVNHX1BSRUZJWCAidW5zdXBwb3J0ZWQgYmxlbmRpbmcgb3BlcmF0aW9uLlxuIik7
-CiAJCXJldHVybiAtRUlOVkFMOwogCX0KIApAQCAtNzQzLDE3ICs3NDUsMTcgQEAgZzJkX3NjYWxl
-X2FuZF9ibGVuZChzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqc3Jj
-LAogCQlkc3RfaCA9IGRzdC0+aGVpZ2h0IC0gZHN0X3k7CiAKIAlpZiAoc3JjX3cgPD0gMCB8fCBz
-cmNfaCA8PSAwIHx8IGRzdF93IDw9IDAgfHwgZHN0X2ggPD0gMCkgewotCQlmcHJpbnRmKHN0ZGVy
-ciwgImludmFsaWQgd2lkdGggb3IgaGVpZ2h0LlxuIik7CisJCWZwcmludGYoc3RkZXJyLCBNU0df
-UFJFRklYICJpbnZhbGlkIHdpZHRoIG9yIGhlaWdodC5cbiIpOwogCQlyZXR1cm4gLUVJTlZBTDsK
-IAl9CiAKIAlpZiAoZzJkX3ZhbGlkYXRlX3NlbGVjdF9tb2RlKHNyYy0+c2VsZWN0X21vZGUpKSB7
-Ci0JCWZwcmludGYoc3RkZXJyICwgImludmFsaWQgc2VsZWN0IG1vZGUgZm9yIHNvdXJjZS5cbiIp
-OworCQlmcHJpbnRmKHN0ZGVyciAsIE1TR19QUkVGSVggImludmFsaWQgc2VsZWN0IG1vZGUgZm9y
-IHNvdXJjZS5cbiIpOwogCQlyZXR1cm4gLUVJTlZBTDsKIAl9CiAKIAlpZiAoZzJkX3ZhbGlkYXRl
-X2JsZW5kaW5nX29wKG9wKSkgewotCQlmcHJpbnRmKHN0ZGVyciAsICJ1bnN1cHBvcnRlZCBibGVu
-ZGluZyBvcGVyYXRpb24uXG4iKTsKKwkJZnByaW50ZihzdGRlcnIgLCBNU0dfUFJFRklYICJ1bnN1
-cHBvcnRlZCBibGVuZGluZyBvcGVyYXRpb24uXG4iKTsKIAkJcmV0dXJuIC1FSU5WQUw7CiAJfQog
-Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+All functions from the public API only operation on
+struct g2d_context*, so this shouldn't break too much.
+
+Make the context private since we don't want the
+user to modify its content directly. Also remove
+the defines that were only used for fields of
+g2d_context.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 15 +++++++++++++++
+ exynos/exynos_fimg2d.h | 14 +-------------
+ 2 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 91df441..00019e9 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -44,6 +44,21 @@
+ 
+ #define MSG_PREFIX "exynos/fimg2d: "
+ 
++#define G2D_MAX_CMD_NR		64
++#define G2D_MAX_GEM_CMD_NR	64
++#define G2D_MAX_CMD_LIST_NR	64
++
++struct g2d_context {
++	int				fd;
++	unsigned int			major;
++	unsigned int			minor;
++	struct drm_exynos_g2d_cmd	cmd[G2D_MAX_CMD_NR];
++	struct drm_exynos_g2d_cmd	cmd_buf[G2D_MAX_GEM_CMD_NR];
++	unsigned int			cmd_nr;
++	unsigned int			cmd_buf_nr;
++	unsigned int			cmdlist_nr;
++};
++
+ enum g2d_base_addr_reg {
+ 	g2d_dst = 0,
+ 	g2d_src
+diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
+index 9db0c88..4aa1568 100644
+--- a/exynos/exynos_fimg2d.h
++++ b/exynos/exynos_fimg2d.h
+@@ -13,9 +13,6 @@
+ #ifndef _FIMG2D_H_
+ #define _FIMG2D_H_
+ 
+-#define G2D_MAX_CMD_NR		64
+-#define G2D_MAX_GEM_CMD_NR	64
+-#define G2D_MAX_CMD_LIST_NR	64
+ #define G2D_PLANE_MAX_NR	2
+ 
+ enum e_g2d_color_mode {
+@@ -289,16 +286,7 @@ struct g2d_image {
+ 	void				*mapped_ptr[G2D_PLANE_MAX_NR];
+ };
+ 
+-struct g2d_context {
+-	int				fd;
+-	unsigned int			major;
+-	unsigned int			minor;
+-	struct drm_exynos_g2d_cmd	cmd[G2D_MAX_CMD_NR];
+-	struct drm_exynos_g2d_cmd	cmd_buf[G2D_MAX_GEM_CMD_NR];
+-	unsigned int			cmd_nr;
+-	unsigned int			cmd_buf_nr;
+-	unsigned int			cmdlist_nr;
+-};
++struct g2d_context;
+ 
+ struct g2d_context *g2d_init(int fd);
+ void g2d_fini(struct g2d_context *ctx);
+-- 
+2.0.5
