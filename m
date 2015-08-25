@@ -1,131 +1,104 @@
-From: Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] drivers: i2c: exynos5: irq spinlock rt-safe
-Date: Tue, 25 Aug 2015 09:52:05 +0200
-Message-ID: <1440489125-20082-1-git-send-email-anders.roxell@linaro.org>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
+ analogix_dp
+Date: Tue, 25 Aug 2015 11:12:48 +0200
+Message-ID: <20150825091246.GA14034@ulmo.nvidia.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+ <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
+ <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
+ <20150824125758.GA7557@n2100.arm.linux.org.uk>
+ <CAL_JsqKZYMMzV9Sc2r3K_rnM0FNuyb1TyJEhjGq1Hf7dTiWFKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene@kernel.org, k.kozlowski@samsung.com, wsa@the-dreams.de
-Cc: khilman@linaro.org, Anders Roxell <anders.roxell@linaro.org>, linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqKZYMMzV9Sc2r3K_rnM0FNuyb1TyJEhjGq1Hf7dTiWFKQ@mail.gmail.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, David Airlie <airlied@linux.ie>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Doug Anderson <dianders@google.com>, Rob Herring <robh>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The exynos5_i2c_message_start enables interrupts while holding the i2c
-lock which is sought by the irq handler. If an IRQ is received before
-this lock is released then a deadlock occurs.
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is only seen on an RT patched kernel, due to the transformation of
-spinlocks into sleeping locks. By using raw_spinlocks here the same code
-can run in mainline or an RT patched kernel. No change for !RT kenrels
+On Mon, Aug 24, 2015 at 09:48:27AM -0500, Rob Herring wrote:
+> On Mon, Aug 24, 2015 at 7:57 AM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Sun, Aug 23, 2015 at 06:23:14PM -0500, Rob Herring wrote:
+> >> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+> >> > +       -analogix,color-depth:
+> >> > +               number of bits per colour component.
+> >> > +                       COLOR_6 =3D 0, COLOR_8 =3D 1, COLOR_10 =3D 2=
+, COLOR_12 =3D 3
+> >>
+> >> This seems pretty generic. Just use 6, 8, 10, or 12 for values. And
+> >> drop the vendor prefix.
+> >
+> > Please think about this some more.  What does "color-depth" mean?  Does=
+ it
+> > mean the number of bits per colour _component_, or does it mean the tot=
+al
+> > number of bits to represent a particular colour.  It's confusing as it
+> > stands.
+>=20
+> Then "component-color-bpp" perhaps?
 
-[   10.992238] kernel BUG at ../kernel/locking/rtmutex.c:998!
-[   10.992243] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-[   10.992250] Modules linked in:
-[   10.992258] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.1.5-rt5
-[   10.992263] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   10.992268] task: ed880000 ti: ed888000 task.ti: ed888000
-[   10.992281] PC is at rt_spin_lock_slowlock+0xa4/0x2ec
-[   10.992288] LR is at rt_spin_lock_slowlock+0x54/0x2ec
-[   10.992296] pc : [<c099e1bc>]    lr : [<c099e16c>]    psr: 60000193
-[   10.992296] sp : ed889a28  ip : ed880001  fp : 00000089
-[   10.992300] r10: ed889a28  r9 : c0f55654  r8 : 00000060
-[   10.992305] r7 : ed880000  r6 : 00000000  r5 : 00000001  r4 : ed9f7288
-[   10.992310] r3 : ed880000  r2 : 00000000  r1 : ed880000  r0 : 00000000
-[   10.992316] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
-Segment kernel
-...
-...
-[   10.992662] [<c099e1bc>] (rt_spin_lock_slowlock) from [<c07bc794>]
-(exynos5_i2c_irq+0x20/0x2b0)
-[   10.992678] [<c07bc794>] (exynos5_i2c_irq) from [<c028c8b4>]
-(handle_irq_event_percpu+0x68/0x158)
-[   10.992690] [<c028c8b4>] (handle_irq_event_percpu) from [<c028ca0c>]
-(handle_irq_event+0x68/0xa8)
-[   10.992702] [<c028ca0c>] (handle_irq_event) from [<c028f9c4>]
-(handle_fasteoi_irq+0x11c/0x1d4)
-[   10.992713] [<c028f9c4>] (handle_fasteoi_irq) from [<c028c17c>]
-(generic_handle_irq+0x20/0x30)
-[   10.992724] [<c028c17c>] (generic_handle_irq) from [<c028c290>]
-(__handle_domain_irq+0x6c/0xe4)
-[   10.992734] [<c028c290>] (__handle_domain_irq) from [<c020a71c>]
-(gic_handle_irq+0x2c/0x68)
-[   10.992744] [<c020a71c>] (gic_handle_irq) from [<c0214140>]
-(__irq_svc+0x40/0x88)
-[   10.992749] Exception stack(0xed889b28 to 0xed889b70)
-...
-...
+There should be no need to have this in DT at all. The BPC is a property
+of the attached panel and it should come from the panel (either the
+panel driver or parsed from EDID if available).
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/i2c/busses/i2c-exynos5.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> > When we adopted the graph bindings for iMX DRM, I thought exactly at th=
+at
+> > time "it would be nice if this could become the standard for binding DRM
+> > components together" but I don't have the authority from either the DT
+> > perspective or the DRM perspective to mandate that.  Neither does anyone
+> > else.  That's the _real_ problem here.
+> >
+> > I've seen several DRM bindings go by which don't use the of-graph stuff,
+> > which means that they'll never be compatible with generic components
+> > which do use the of-graph stuff.
+>=20
+> It goes beyond bindings IMO. The use of the component framework or not
+> has been at the whim of driver writers as well. It is either used or
+> private APIs are created. I'm using components and my need for it
+> boils down to passing the struct drm_device pointer to the encoder.
+> Other components like panels and bridges have different ways to attach
+> to the DRM driver.
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index b29c750..b12e77e 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -170,7 +170,7 @@ struct exynos5_i2c {
- 	struct device		*dev;
- 	int			state;
- 
--	spinlock_t		lock;		/* IRQ synchronization */
-+	raw_spinlock_t		lock;		/* IRQ synchronization */
- 
- 	/*
- 	 * Since the TRANS_DONE bit is cleared on read, and we may read it
-@@ -433,7 +433,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
- 
- 	i2c->state = -EINVAL;
- 
--	spin_lock(&i2c->lock);
-+	raw_spin_lock(&i2c->lock);
- 
- 	int_status = readl(i2c->regs + HSI2C_INT_STATUS);
- 	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
-@@ -521,7 +521,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
- 		complete(&i2c->msg_complete);
- 	}
- 
--	spin_unlock(&i2c->lock);
-+	raw_spin_unlock(&i2c->lock);
- 
- 	return IRQ_HANDLED;
- }
-@@ -610,7 +610,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	 * Enable interrupts before starting the transfer so that we don't
- 	 * miss any INT_I2C interrupts.
- 	 */
--	spin_lock_irqsave(&i2c->lock, flags);
-+	raw_spin_lock_irqsave(&i2c->lock, flags);
- 	writel(int_en, i2c->regs + HSI2C_INT_ENABLE);
- 
- 	if (stop == 1)
-@@ -618,7 +618,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	i2c_auto_conf |= i2c->msg->len;
- 	i2c_auto_conf |= HSI2C_MASTER_RUN;
- 	writel(i2c_auto_conf, i2c->regs + HSI2C_AUTO_CONF);
--	spin_unlock_irqrestore(&i2c->lock, flags);
-+	raw_spin_unlock_irqrestore(&i2c->lock, flags);
- }
- 
- static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
-@@ -763,7 +763,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	/* Clear pending interrupts from u-boot or misc causes */
- 	exynos5_i2c_clr_pend_irq(i2c);
- 
--	spin_lock_init(&i2c->lock);
-+	raw_spin_lock_init(&i2c->lock);
- 	init_completion(&i2c->msg_complete);
- 
- 	i2c->irq = ret = platform_get_irq(pdev, 0);
--- 
-2.1.4
+I certainly support unification, but it needs to be reasonable. There
+are cases where a different structure for the binding work better than
+another and I think this always needs to be evaluated on a case by case
+basis.
+
+Because of that I think it makes sense to make all these framework bits
+opt-in, otherwise we could easily end up in a situation where drivers
+have to be rearchitected (or even DT bindings altered!) in order to be
+able to reuse code.
+
+Thierry
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJV3DGKAAoJEN0jrNd/PrOhqWYP/3FRXe2MSV8sTOWQTSyYsUJI
+OoBNmVhZ4V1bRtgeCX5gO2pqWMDeRIjm0Z/s8o0YhyVBoantkrcpdvaj/+1ek3iy
+vS6qOuhwZi5lw4api9pxEsq0qBk55JFWPlRmAs33M8ZUt/6vfGilPXfjYXO7M5L6
+uj3iUgv3ALNW8FBx0JJ6Pgq/AcXMHa/hov+DmmlpD0EboGcrE2E9kqkc4eQu+p74
+n+kX32xEfR6H2OAeQhjXhnJzqeHRtCjGAVvrigyUtRBfFi+0WiguVxZMUGyzgtLm
+4CTHRNfTYtBjfe1arqeRA/LCOqk3d5yT/6eeuoPgPc5Yf1Ew2gQi3V7XVMVHSvdE
+Ie34FcCrsJM/GEbiTHPzXniEvbNtCzFEAjd4FlUjYRcyW3KAHjS7zLqqdomO54kV
+nT2SpaF0QIPCFLD9h/6AM0e3fpEwUm3n66XktgAnWb94FzsP6KA7REhMM8X046aw
+omTjjRsy5HWScdICMDlXLVKjJ5/nOVpphY2UzYY4yD3IJ62tlH7q3J8KjbZAgeym
+Yjd7uRA+x1RWwz/jcGG37EG4vGW/dsQfNlmXT+x70kypKO171wbcVG93f6gKraGu
+YVK9sXXxwd1wdRR2Uwj2ybuaLZqm9KAwVF/vgME4Kke5veWffFddp373e2i4UGGW
+nkFvaNNFwlZhuW07YruI
+=74cw
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
