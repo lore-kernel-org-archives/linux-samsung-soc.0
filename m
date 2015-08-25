@@ -1,58 +1,118 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
- analogix_dp
-Date: Tue, 25 Aug 2015 16:57:52 +0100
-Message-ID: <20150825155752.GU7557@n2100.arm.linux.org.uk>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
- <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
- <20150825095817.GC14034@ulmo.nvidia.com>
- <55DC75C8.209@rock-chips.com>
- <20150825142150.GB3820@ulmo.nvidia.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH 1/4] clk: samsung: exynos7: Update CMU TOPC block clock
+Date: Tue, 25 Aug 2015 21:29:55 +0530
+Message-ID: <CAGOxZ529RXyph5rB6Rcc3CsyZSavK1_M7Cjm1SW8a1GDLM-9zA@mail.gmail.com>
+References: <1440414356-1805-1-git-send-email-alim.akhtar@samsung.com>
+ <1440414356-1805-2-git-send-email-alim.akhtar@samsung.com> <55DC12FE.80009@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:55992 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755058AbbHYP60 (ORCPT
+Received: from mail-io0-f171.google.com ([209.85.223.171]:36439 "EHLO
+	mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755879AbbHYQAg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 11:58:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20150825142150.GB3820@ulmo.nvidia.com>
+	Tue, 25 Aug 2015 12:00:36 -0400
+Received: by iodv127 with SMTP id v127so191719846iod.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2015 09:00:35 -0700 (PDT)
+In-Reply-To: <55DC12FE.80009@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, djkurtz@google.com, dianders@google.com, seanpaul@google.com, Takashi Iwai <tiwai@suse.de>, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.orgl
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, kgene <kgene@kernel.org>, mturquette@baylibre.com, "amit.daniel@samsung.com" <amit.daniel@samsung.com>
 
-On Tue, Aug 25, 2015 at 04:21:51PM +0200, Thierry Reding wrote:
-> You cited code from dw_hdmi.c earlier, it looks like it might be correct
-> even though it doesn't cite a reference for why this was done. Perhaps
-> someone on this thread, or someone involved with dw_hdmi can answer
-> where that code came from.
+Hello Krzysztof,
 
-dw_hdmi doesn't do any format conversion - it's hard coded to RGB, 8
-bits per colour component.  That's a requirement for all HDMI sinks.
+On Tue, Aug 25, 2015 at 12:32 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 24.08.2015 20:05, Alim Akhtar wrote:
+>> This patch fixes some of the bit field and
+>> update the TOPC block clock as per the latest UM.
+>
+> Description is not entirely correct. The "ENABLE_ACLK_TOPC1" register
+> was present already both in driver and in first user manual. That means
+> it was just forgotten to be saved/restored during sleep. There is no
+> update for manual because manual did not change anything.
+>
+> The same for widths of bit fields - the 0.00 manual specifies them as 4
+> bit wide. Where is the change from latest UM?
+>
+Thanks for your review, will update the commit message and remove
+ENABLE_ACLK_TOPC1 for now.
+> Please describe the change as it is - clock driver was bogus and has to
+> be fixed :) .
+>
 
-The reason it's hard-coded in dw_hdmi is that (a) no one has yet decided
-its worth the effort to get the dw_hdmi hardware to do the colourspace
-conversion to the YUV spaces and verify that it works, and (b) I really
-don't see the point when we're talking about computer like devices which
-work primerily with RGB and RGB is always supported by the sink.
+> Best regards,
+> Krzysztof
+>
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos7.c |   15 ++++++++-------
+>>  1 file changed, 8 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+>> index 03d36e8..cbf1bd2 100644
+>> --- a/drivers/clk/samsung/clk-exynos7.c
+>> +++ b/drivers/clk/samsung/clk-exynos7.c
+>> @@ -87,6 +87,7 @@ static unsigned long topc_clk_regs[] __initdata = {
+>>       DIV_TOPC0,
+>>       DIV_TOPC1,
+>>       DIV_TOPC3,
+>> +     ENABLE_ACLK_TOPC1,
+>>  };
+>>
+>>  static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+>> @@ -104,9 +105,9 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+>>       MUX(0, "mout_sclk_mfc_pll_cmuc", mout_sclk_mfc_pll_cmuc_p,
+>>               MUX_SEL_TOPC0, 28, 1),
+>>
+>> +     MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
+>>       MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
+>>               MUX_SEL_TOPC1, 16, 1),
+>> -     MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
+>>
+>>       MUX(0, "mout_aclk_ccore_133", mout_topc_group2, MUX_SEL_TOPC2, 4, 2),
+>>
+>> @@ -116,7 +117,7 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+>>
+>>  static struct samsung_div_clock topc_div_clks[] __initdata = {
+>>       DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
+>> -             DIV_TOPC0, 4, 4),
+>> +             DIV_TOPC0, 4, 5),
+>>
+>>       DIV(DOUT_ACLK_MSCL_532, "dout_aclk_mscl_532", "mout_aclk_mscl_532",
+>>               DIV_TOPC1, 20, 4),
+>> @@ -124,15 +125,15 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
+>>               DIV_TOPC1, 24, 4),
+>>
+>>       DIV(DOUT_SCLK_BUS0_PLL, "dout_sclk_bus0_pll", "mout_sclk_bus0_pll_out",
+>> -             DIV_TOPC3, 0, 3),
+>> +             DIV_TOPC3, 0, 4),
+>>       DIV(DOUT_SCLK_BUS1_PLL, "dout_sclk_bus1_pll", "mout_bus1_pll_ctrl",
+>> -             DIV_TOPC3, 8, 3),
+>> +             DIV_TOPC3, 8, 4),
+>>       DIV(DOUT_SCLK_CC_PLL, "dout_sclk_cc_pll", "mout_cc_pll_ctrl",
+>> -             DIV_TOPC3, 12, 3),
+>> +             DIV_TOPC3, 12, 4),
+>>       DIV(DOUT_SCLK_MFC_PLL, "dout_sclk_mfc_pll", "mout_mfc_pll_ctrl",
+>> -             DIV_TOPC3, 16, 3),
+>> +             DIV_TOPC3, 16, 4),
+>>       DIV(DOUT_SCLK_AUD_PLL, "dout_sclk_aud_pll", "mout_aud_pll_ctrl",
+>> -             DIV_TOPC3, 28, 3),
+>> +             DIV_TOPC3, 28, 4),
+>>  };
+>>
+>>  static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-As far as greater colour depths go, the driver came from the Freescale
-iMX6 code base, and the hardware which feeds dw_hdmi can't do more than
-8 bits per component - so going to 10, 12 or 16 bits per component is
-beyond what iMX6 can cope with.  Hence, no one on the iMX6 side has a
-need for the deep colour stuff.
 
-In any case, I view this as a very low priority issue - it would be nice
-to have audio support on HDMI for iMX6 at some point in the next 20 years,
-preferably before the hardware becomes obsolete.  I've been maintaining
-patches for this for 1.5 years now... how much longer is it going to take?
-My pull request to David from 15th July was ignored.  My re-send of that
-after he returned was ignored.  My reminder of it has been ignored.  What's
-going on in DRM land?  It would be nice to get _some_ kind of feedback so
-I know why they're not being taken, so I can fix whatever the issue is.
 
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+Regards,
+Alim
