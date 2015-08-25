@@ -1,74 +1,71 @@
-From: Thierry Reding <treding@nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
  analogix_dp
-Date: Tue, 25 Aug 2015 11:15:36 +0200
-Message-ID: <20150825091534.GB14034@ulmo.nvidia.com>
+Date: Tue, 25 Aug 2015 10:29:39 +0100
+Message-ID: <20150825092939.GM7557@n2100.arm.linux.org.uk>
 References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
  <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
  <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
+ <20150824125758.GA7557@n2100.arm.linux.org.uk>
+ <CAL_JsqKZYMMzV9Sc2r3K_rnM0FNuyb1TyJEhjGq1Hf7dTiWFKQ@mail.gmail.com>
+ <20150825091246.GA14034@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, David Airlie <airlied@linux.ie>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Doug Anderson <dianders@google.com>, Rob Herring <robh+d>
+In-Reply-To: <20150825091246.GA14034-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---LpQ9ahxlCli8rRTG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 25, 2015 at 11:12:48AM +0200, Thierry Reding wrote:
+> On Mon, Aug 24, 2015 at 09:48:27AM -0500, Rob Herring wrote:
+> > It goes beyond bindings IMO. The use of the component framework or not
+> > has been at the whim of driver writers as well. It is either used or
+> > private APIs are created. I'm using components and my need for it
+> > boils down to passing the struct drm_device pointer to the encoder.
+> > Other components like panels and bridges have different ways to attach
+> > to the DRM driver.
+> 
+> I certainly support unification, but it needs to be reasonable. There
+> are cases where a different structure for the binding work better than
+> another and I think this always needs to be evaluated on a case by case
+> basis.
 
-On Sun, Aug 23, 2015 at 06:23:14PM -0500, Rob Herring wrote:
-> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk@rock-chips.com> wrote:
-[...]
-> > +       -analogix,link-rate:
-> > +               max link rate supported by the eDP controller.
-> > +                       LINK_RATE_1_62GBPS =3D 0x6, LINK_RATE_2_70GBPS =
-=3D 0x0A,
-> > +                       LINK_RATE_5_40GBPS =3D 0x14
->=20
-> Same here. I'd rather see something like "link-rate-mbps" and use the
-> actual rate.
+It can't be a case-by-case basis.
 
-There is no need whatsoever to hard-code this in DT. (e)DP provides the
-means to detect what rate the link supports and the specification
-provides guidance on how to select an appropriate one.
+The TDA998x encoder/connector is going to be component only.  This is
+a generic chip, which can be attached to the output of any parallel
+RGB+sync+clock bus.  In other words, it could appear anywhere.
 
->=20
-> > +       -analogix,lane-count:
-> > +               max number of lanes supported by the eDP contoller.
-> > +                       LANE_COUNT1 =3D 1, LANE_COUNT2 =3D 2, LANE_COUN=
-T4 =3D 4
->=20
-> And drop the vendor prefix here.
+Are you really saying that we need to support multiple schemes of
+attaching the driver to DRM?  That's totally insane IMHO.
 
-Same as for the link rate.
+The problem with the drm_encoder_slave stuff is that you can't sanely
+attach of-nodes to the drm-created i2c device.  Yes, you can parse
+them from the DT file as a sub-node of the upper device, but that
+then goes against the principle of the I2C bindings, which is to
+list the I2C devices as a child below the I2C adapter node.  If you
+try and put the DT node there, then the OF code will create the I2C
+device for you, and the drm_encoder_slave stuff won't have the
+control it needs to communicate through the wrapped i2c_driver
+stuff.
 
-Thierry
+So, tda998x is going component-only, as that's the _only_ sane solution
+for it.
 
---LpQ9ahxlCli8rRTG
-Content-Type: application/pgp-signature; name="signature.asc"
+Now, what happens when some other DRM driver wants to use the tda998x
+driver, and its bindings are not compatible with the component helpers?
+They're pretty much stuck up the creek without a paddle.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Case by case doesn't work unless you're talking about truely isolated
+hardware where no one shares anything.
 
-iQIcBAABCAAGBQJV3DI2AAoJEN0jrNd/PrOheHcQAL+hYy/6ngJeDtGcRbKZ9G/p
-67283GWjCncy/MFcGvKFQIVUZQ4xlug14Uh5ngFc6dlBDIEphnCHDbiwqSEB8Jgy
-fcs1g09QS3fWsoiYuxGTTC5dEFRr90QtnR6H/Y5//2+GiLHYmhjNoXpWcU7nmRtV
-0+w/XqJyBVXJe4XYx/xpJbDn7IO6vsFLcahrytAu9duVFy69R6y4h5D2PfCm0qHx
-Rj20lN17LzLmcLFj2Mupwl1H8NP4ilFMWdXdO9KFb78LCXKif3fl4cyQA7QfEG5T
-/cfogIGuvw6SdsrJJ8DwdIUwTDRli51ngkGiXaNlhVhXubYptuKEU/I/yREMoZBU
-pN5WSZv3Z3kUykvPi09schEQvP6p3rJNyg3WPO1QsXcxMYU6XeHNmTRxuDl2tH1y
-UO3XXusZ4XbyJa/zjKvkIIt2cHgNGev+zrdlPdZAClsUIjnSQH+StJEglozD5vqY
-3VF58LGw5nBzO87ivUl406dIJS4COW0ChKO6SVDAA7OdD4DN4a5qYiB1OlMc5lCc
-JaNkKPFG3X5mBRAYxC1KgWpyNGwb/XKb1WYLX7WiyzstTSTycSRxIqPUC9tiexn/
-PpTU2axWiq4pE2ugJm1kJP4hPhFnQYVPqUgN6fI0ip8xmVLCCTC4UhijIlPGchCz
-xu5j5PdWAfzHUeNwx4KB
-=Sage
------END PGP SIGNATURE-----
-
---LpQ9ahxlCli8rRTG--
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
