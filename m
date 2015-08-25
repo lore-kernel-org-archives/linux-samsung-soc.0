@@ -1,55 +1,72 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH v7 10/44] [media] media: rename the function that create
- pad links
-Date: Tue, 25 Aug 2015 12:55:41 -0600
-Message-ID: <55DCBA2D.9090901@osg.samsung.com>
+From: Shuah Khan <shuahkhan@gmail.com>
+Subject: Re: [PATCH v7 11/44] [media] media: use entity.graph_obj.mdev instead
+ of .parent
+Date: Tue, 25 Aug 2015 13:25:15 -0600
+Message-ID: <CAKocOOM7_mgp1ORz1mLzso9AZxSTuEcHAef64_LQ-NZVp5FASw@mail.gmail.com>
 References: <cover.1440359643.git.mchehab@osg.samsung.com>
- <f095b87884d435e296a455ab07a9951a74c0c3a6.1440359643.git.mchehab@osg.samsung.com>
+	<dc1be98277c46ddd87e431148fc7e332176828ab.1440359643.git.mchehab@osg.samsung.com>
+	<55DC0D08.10504@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <f095b87884d435e296a455ab07a9951a74c0c3a6.1440359643.git.mchehab@osg.samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?Q?Rafael_Louren=c3=a7o_de_Lima_Chehab?= <chehabrafael@gmail.com>, Matthias Schwarzott <zzam@gentoo.org>, Antti Palosaari <crope@iki.fi>, Olli Salonen <olli.salonen@iki.fi>, Tommi Rantala <tt.rantala@gmail.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, Boris
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-io0-f176.google.com ([209.85.223.176]:35578 "EHLO
+	mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751400AbbHYTZR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Aug 2015 15:25:17 -0400
+In-Reply-To: <55DC0D08.10504@xs4all.nl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, devel@driverdev.osuosl.org, shuahkh@osg.samsung.com
 
-On 08/23/2015 02:17 PM, Mauro Carvalho Chehab wrote:
-> Now that a link can be either between two different graph
-> objects, we'll need to add more functions to create links.
-
-Is this an incomplete sentence. Should it read: "either between
-two different graph objects or two pads" ?
-
-> So, rename the existing one that create links only between
-> two pads as media_create_pad_link().
-
-> 
-> No functional changes.
-> 
-> This patch was created via this shell script:
-> 	for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
-> 
-
-Didn't want to experiment with Coccinelle?? :)
-
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+On Tue, Aug 25, 2015 at 12:36 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 08/23/2015 10:17 PM, Mauro Carvalho Chehab wrote:
+>> From: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> The struct media_entity has a .parent field that stores a pointer
+>> to the parent struct media_device. But recently a media_gobj was
+>> embedded into the entities and since struct media_gojb already has
+>> a pointer to a struct media_device in the .mdev field, the .parent
+>> field becomes redundant and can be removed.
+>>
+>> This patch replaces all the usage of .parent by .graph_obj.mdev so
+>> that field will become unused and can be removed on a later patch.
+>>
+>> No functional changes.
+>>
+>> The transformation was made using the following coccinelle spatch:
+>>
+>> @@
+>> struct media_entity *me;
+>> @@
+>>
+>> - me->parent
+>> + me->graph_obj.mdev
+>>
+>> @@
+>> struct media_entity *link;
+>> @@
+>>
+>> - link->source->entity->parent
+>> + link->source->entity->graph_obj.mdev
+>>
+>> @@
+>> struct exynos_video_entity *ve;
+>> @@
+>>
+>> - ve->vdev.entity.parent
+>> + ve->vdev.entity.graph_obj.mdev
+>>
+>> Suggested-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+>
 > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-> 
 
-Changes look good to me. After fixing the commit log:
-
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+The change looks good to me. I would really like to see a before and after
+media graph with these changes, this patch and series in general.
 
 thanks,
 -- Shuah
-
-
--- 
-Shuah Khan
-Sr. Linux Kernel Developer
-Open Source Innovation Group
-Samsung Research America (Silicon Valley)
-shuahkh@osg.samsung.com | (970) 217-8978
