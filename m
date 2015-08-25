@@ -1,79 +1,55 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 0/7] Add support for Exynos SROM Controller driver
-Date: Tue, 25 Aug 2015 11:18:11 +0900
-Message-ID: <55DBD063.5040703@samsung.com>
-References: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/7] phy: exynos-usb2: add vbus regulator support
+Date: Tue, 25 Aug 2015 07:47:31 +0200
+Message-ID: <55DC0173.9030702@samsung.com>
+References: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
+ <1440160723-6636-2-git-send-email-m.szyprowski@samsung.com>
+ <55D71D3E.3010807@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:63686 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751839AbbHYCSS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Aug 2015 22:18:18 -0400
-In-reply-to: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <55D71D3E.3010807@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kamil Debski <k.debski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene@kernel.org, heiko@sntech.de, thomas.ab@samsung.com
 
-On 24.08.2015 17:02, Pankaj Dubey wrote:
-> This patch set adds support for Exynos SROM controller DT based driver.
-> Currently SROM register sets are used only during S2R, so driver
-> basically added for taking care of S2R. It will help us in removing
-> static mapping from exynos.c and other extra code handline during S2R.
-> 
-> This patch set also updated exynos4 and exynos5 dtsi files for with device
-> node for srom, and added binding documentation for the same.
-> 
-> First two patches are some minor cleanup in mach-exynos.
-> 
-> Patchset v1 was posted here[1]
-> [1]: https://lkml.org/lkml/2015/4/29/98
-> 
-> Changes since v1:
->  - Rebased to latest kgene tree.
->  - Addressed review comments from Krzysztof Kozlowski.
->  - Add two new patches for minor cleanup in exynos.c and map.h
-> 
-> Pankaj Dubey (7):
->   ARM: EXYNOS: remove unused static mapping of CMU for exynos5
->   ARM: EXYNOS: code cleanup in map.h
->   drivers: soc: add support for exynos SROM driver
->   ARM: EXYNOS: Remove SROM related register settings from mach-exynos
->   ARM: dts: add SROM device node for exynos4
->   ARM: dts: add SROM device node for exynos5
->   Documentation: dt-bindings: add exynos-srom binding information
+Hello,
 
-One more thing: please update the existing Exynos entry in maintainers
-so it would cover drivers/soc/samsung.
+On 2015-08-21 14:44, Kishon Vijay Abraham I wrote:
+> On Friday 21 August 2015 06:08 PM, Marek Szyprowski wrote:
+>> Exynos USB2 PHY has separate power supply, which is usually provided by
+>> VBUS regulator. This patch adds support for it. VBUS regulator is
+>> optional, to keep compatibility with boards, which have VBUS provided
+>> from some always-on power source.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   .../devicetree/bindings/phy/samsung-phy.txt        |  3 +++
+>>   drivers/phy/phy-samsung-usb2.c                     | 25 ++++++++++++++++++++--
+>>   drivers/phy/phy-samsung-usb2.h                     |  2 ++
+>>   3 files changed, 28 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> index 60c6f2a633e0..0289d3b07853 100644
+>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> @@ -44,6 +44,9 @@ Required properties:
+>>   	- the "ref" clock is used to get the rate of the clock provided to the
+>>   	  PHY module
+>>   
+>> +Optional properties:
+>> +- vbus-supply: power-supply phandle for vbus power source
+> how about using phy-supply?
 
-Best regards,
-Krzysztof
+I wanted to make it a bit more descriptive (vbus-supply is rather self 
+explaining name)
+and keep it in line with Exynos usb3-drd phy, which already supports 
+vbus-supply.
+If you think that this is a bad idea, a will use phy-supply then.
 
-> 
->  .../bindings/arm/samsung/exynos-srom.txt           |  12 ++
->  arch/arm/boot/dts/exynos4.dtsi                     |   5 +
->  arch/arm/boot/dts/exynos5.dtsi                     |   5 +
->  arch/arm/mach-exynos/Kconfig                       |   2 +
->  arch/arm/mach-exynos/common.h                      |   2 -
->  arch/arm/mach-exynos/exynos.c                      |  22 ----
->  arch/arm/mach-exynos/include/mach/map.h            |   8 --
->  arch/arm/mach-exynos/regs-srom.h                   |  53 --------
->  arch/arm/mach-exynos/suspend.c                     |  20 +--
->  arch/arm/plat-samsung/include/plat/map-s5p.h       |   1 -
->  drivers/soc/Kconfig                                |   1 +
->  drivers/soc/Makefile                               |   1 +
->  drivers/soc/samsung/Kconfig                        |  13 ++
->  drivers/soc/samsung/Makefile                       |   1 +
->  drivers/soc/samsung/exynos-srom.c                  | 143 +++++++++++++++++++++
->  drivers/soc/samsung/exynos-srom.h                  |  51 ++++++++
->  16 files changed, 236 insertions(+), 104 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
->  delete mode 100644 arch/arm/mach-exynos/regs-srom.h
->  create mode 100644 drivers/soc/samsung/Kconfig
->  create mode 100644 drivers/soc/samsung/Makefile
->  create mode 100644 drivers/soc/samsung/exynos-srom.c
->  create mode 100644 drivers/soc/samsung/exynos-srom.h
-> 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
