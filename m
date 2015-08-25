@@ -1,20 +1,20 @@
 From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH 1/4] clk: samsung: exynos7: Update CMU TOPC block clock
-Date: Tue, 25 Aug 2015 21:29:55 +0530
-Message-ID: <CAGOxZ529RXyph5rB6Rcc3CsyZSavK1_M7Cjm1SW8a1GDLM-9zA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: samsung: exynos7: Update CMU TOP1 block
+Date: Tue, 25 Aug 2015 21:30:56 +0530
+Message-ID: <CAGOxZ528Xaa3GvWExAQ-1n8nSArPcfD0jaMEdb0=SDVy5iP_EA@mail.gmail.com>
 References: <1440414356-1805-1-git-send-email-alim.akhtar@samsung.com>
- <1440414356-1805-2-git-send-email-alim.akhtar@samsung.com> <55DC12FE.80009@samsung.com>
+ <1440414356-1805-3-git-send-email-alim.akhtar@samsung.com> <55DC13B5.7080804@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:36439 "EHLO
-	mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755879AbbHYQAg (ORCPT
+Received: from mail-io0-f172.google.com ([209.85.223.172]:32803 "EHLO
+	mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752291AbbHYQBi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 12:00:36 -0400
-Received: by iodv127 with SMTP id v127so191719846iod.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2015 09:00:35 -0700 (PDT)
-In-Reply-To: <55DC12FE.80009@samsung.com>
+	Tue, 25 Aug 2015 12:01:38 -0400
+Received: by iods203 with SMTP id s203so192070279iod.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2015 09:01:38 -0700 (PDT)
+In-Reply-To: <55DC13B5.7080804@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
@@ -22,88 +22,110 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <
 
 Hello Krzysztof,
 
-On Tue, Aug 25, 2015 at 12:32 PM, Krzysztof Kozlowski
+On Tue, Aug 25, 2015 at 12:35 PM, Krzysztof Kozlowski
 <k.kozlowski@samsung.com> wrote:
 > On 24.08.2015 20:05, Alim Akhtar wrote:
->> This patch fixes some of the bit field and
->> update the TOPC block clock as per the latest UM.
+>> This updates CMU TOP1 block clock as per latest UM.
 >
-> Description is not entirely correct. The "ENABLE_ACLK_TOPC1" register
-> was present already both in driver and in first user manual. That means
-> it was just forgotten to be saved/restored during sleep. There is no
-> update for manual because manual did not change anything.
+> I think description is not entirely correct. Some of the changes here
+> were present in the first manual. Please describe it more, what exactly
+> is being fixed and updated to latest UM.
 >
-> The same for widths of bit fields - the 0.00 manual specifies them as 4
-> bit wide. Where is the change from latest UM?
->
-Thanks for your review, will update the commit message and remove
-ENABLE_ACLK_TOPC1 for now.
-> Please describe the change as it is - clock driver was bogus and has to
-> be fixed :) .
->
-
+Ok, will add details and update the commit message.
 > Best regards,
 > Krzysztof
 >
 >>
 >> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 >> ---
->>  drivers/clk/samsung/clk-exynos7.c |   15 ++++++++-------
->>  1 file changed, 8 insertions(+), 7 deletions(-)
+>>  drivers/clk/samsung/clk-exynos7.c |   24 +++++++++++++++---------
+>>  1 file changed, 15 insertions(+), 9 deletions(-)
 >>
 >> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
->> index 03d36e8..cbf1bd2 100644
+>> index cbf1bd2..d6c4548 100644
 >> --- a/drivers/clk/samsung/clk-exynos7.c
 >> +++ b/drivers/clk/samsung/clk-exynos7.c
->> @@ -87,6 +87,7 @@ static unsigned long topc_clk_regs[] __initdata = {
->>       DIV_TOPC0,
->>       DIV_TOPC1,
->>       DIV_TOPC3,
->> +     ENABLE_ACLK_TOPC1,
+>> @@ -368,12 +368,15 @@ CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
+>>  #define MUX_SEL_TOP13                        0x020C
+>>  #define MUX_SEL_TOP1_FSYS0           0x0224
+>>  #define MUX_SEL_TOP1_FSYS1           0x0228
+>> +#define MUX_SEL_TOP1_FSYS11          0x022C
+>>  #define DIV_TOP13                    0x060C
+>>  #define DIV_TOP1_FSYS0                       0x0624
+>>  #define DIV_TOP1_FSYS1                       0x0628
+>> +#define DIV_TOP1_FSYS11                      0x062C
+>>  #define ENABLE_ACLK_TOP13            0x080C
+>>  #define ENABLE_SCLK_TOP1_FSYS0               0x0A24
+>>  #define ENABLE_SCLK_TOP1_FSYS1               0x0A28
+>> +#define ENABLE_SCLK_TOP1_FSYS11              0x0A2C
+>>
+>>  /* List of parent clocks for Muxes in CMU_TOP1 */
+>>  PNAME(mout_top1_bus0_pll_p)  = { "fin_pll", "dout_sclk_bus0_pll" };
+>> @@ -400,12 +403,15 @@ static unsigned long top1_clk_regs[] __initdata = {
+>>       MUX_SEL_TOP13,
+>>       MUX_SEL_TOP1_FSYS0,
+>>       MUX_SEL_TOP1_FSYS1,
+>> +     MUX_SEL_TOP1_FSYS11,
+>>       DIV_TOP13,
+>>       DIV_TOP1_FSYS0,
+>>       DIV_TOP1_FSYS1,
+>> +     DIV_TOP1_FSYS11,
+>>       ENABLE_ACLK_TOP13,
+>>       ENABLE_SCLK_TOP1_FSYS0,
+>>       ENABLE_SCLK_TOP1_FSYS1,
+>> +     ENABLE_SCLK_TOP1_FSYS11,
 >>  };
 >>
->>  static struct samsung_mux_clock topc_mux_clks[] __initdata = {
->> @@ -104,9 +105,9 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
->>       MUX(0, "mout_sclk_mfc_pll_cmuc", mout_sclk_mfc_pll_cmuc_p,
->>               MUX_SEL_TOPC0, 28, 1),
+>>  static struct samsung_mux_clock top1_mux_clks[] __initdata = {
+>> @@ -428,12 +434,12 @@ static struct samsung_mux_clock top1_mux_clks[] __initdata = {
+>>       MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
+>>       MUX(0, "mout_aclk_fsys0_200", mout_top1_group1, MUX_SEL_TOP13, 28, 2),
 >>
->> +     MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
->>       MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
->>               MUX_SEL_TOPC1, 16, 1),
->> -     MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
+>> -     MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 24, 2),
+>> +     MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 16, 2),
+>>       MUX(0, "mout_sclk_usbdrd300", mout_top1_group1,
+>>               MUX_SEL_TOP1_FSYS0, 28, 2),
 >>
->>       MUX(0, "mout_aclk_ccore_133", mout_topc_group2, MUX_SEL_TOPC2, 4, 2),
->>
->> @@ -116,7 +117,7 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
->>
->>  static struct samsung_div_clock topc_div_clks[] __initdata = {
->>       DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
->> -             DIV_TOPC0, 4, 4),
->> +             DIV_TOPC0, 4, 5),
->>
->>       DIV(DOUT_ACLK_MSCL_532, "dout_aclk_mscl_532", "mout_aclk_mscl_532",
->>               DIV_TOPC1, 20, 4),
->> @@ -124,15 +125,15 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
->>               DIV_TOPC1, 24, 4),
->>
->>       DIV(DOUT_SCLK_BUS0_PLL, "dout_sclk_bus0_pll", "mout_sclk_bus0_pll_out",
->> -             DIV_TOPC3, 0, 3),
->> +             DIV_TOPC3, 0, 4),
->>       DIV(DOUT_SCLK_BUS1_PLL, "dout_sclk_bus1_pll", "mout_bus1_pll_ctrl",
->> -             DIV_TOPC3, 8, 3),
->> +             DIV_TOPC3, 8, 4),
->>       DIV(DOUT_SCLK_CC_PLL, "dout_sclk_cc_pll", "mout_cc_pll_ctrl",
->> -             DIV_TOPC3, 12, 3),
->> +             DIV_TOPC3, 12, 4),
->>       DIV(DOUT_SCLK_MFC_PLL, "dout_sclk_mfc_pll", "mout_mfc_pll_ctrl",
->> -             DIV_TOPC3, 16, 3),
->> +             DIV_TOPC3, 16, 4),
->>       DIV(DOUT_SCLK_AUD_PLL, "dout_sclk_aud_pll", "mout_aud_pll_ctrl",
->> -             DIV_TOPC3, 28, 3),
->> +             DIV_TOPC3, 28, 4),
+>> -     MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 24, 2),
+>> -     MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 28, 2),
+>> +     MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 0, 2),
+>> +     MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 12, 2),
 >>  };
 >>
->>  static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
+>>  static struct samsung_div_clock top1_div_clks[] __initdata = {
+>> @@ -443,26 +449,26 @@ static struct samsung_div_clock top1_div_clks[] __initdata = {
+>>               DIV_TOP13, 28, 4),
+>>
+>>       DIV(DOUT_SCLK_MMC2, "dout_sclk_mmc2", "mout_sclk_mmc2",
+>> -             DIV_TOP1_FSYS0, 24, 4),
+>> +             DIV_TOP1_FSYS0, 16, 10),
+>>       DIV(0, "dout_sclk_usbdrd300", "mout_sclk_usbdrd300",
+>>               DIV_TOP1_FSYS0, 28, 4),
+>>
+>>       DIV(DOUT_SCLK_MMC1, "dout_sclk_mmc1", "mout_sclk_mmc1",
+>> -             DIV_TOP1_FSYS1, 24, 4),
+>> +             DIV_TOP1_FSYS11, 0, 10),
+>>       DIV(DOUT_SCLK_MMC0, "dout_sclk_mmc0", "mout_sclk_mmc0",
+>> -             DIV_TOP1_FSYS1, 28, 4),
+>> +             DIV_TOP1_FSYS11, 12, 10),
+>>  };
+>>
+>>  static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+>>       GATE(CLK_SCLK_MMC2, "sclk_mmc2", "dout_sclk_mmc2",
+>> -             ENABLE_SCLK_TOP1_FSYS0, 24, CLK_SET_RATE_PARENT, 0),
+>> +             ENABLE_SCLK_TOP1_FSYS0, 16, CLK_SET_RATE_PARENT, 0),
+>>       GATE(0, "sclk_usbdrd300", "dout_sclk_usbdrd300",
+>>               ENABLE_SCLK_TOP1_FSYS0, 28, 0, 0),
+>>
+>>       GATE(CLK_SCLK_MMC1, "sclk_mmc1", "dout_sclk_mmc1",
+>> -             ENABLE_SCLK_TOP1_FSYS1, 24, CLK_SET_RATE_PARENT, 0),
+>> +             ENABLE_SCLK_TOP1_FSYS11, 0, CLK_SET_RATE_PARENT, 0),
+>>       GATE(CLK_SCLK_MMC0, "sclk_mmc0", "dout_sclk_mmc0",
+>> -             ENABLE_SCLK_TOP1_FSYS1, 28, CLK_SET_RATE_PARENT, 0),
+>> +             ENABLE_SCLK_TOP1_FSYS11, 12, CLK_SET_RATE_PARENT, 0),
+>>  };
+>>
+>>  static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
 >>
 >
 > --
