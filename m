@@ -1,94 +1,61 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
-Date: Tue, 25 Aug 2015 11:43:38 +0200
-Message-ID: <55DC38CA.9090202@osg.samsung.com>
-References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
- <55D5FBDB.4040904@free.fr>
- <CANAwSgRHEXuNt1PJY89ujificXj70BhbGhSOpL16yKsKr6hWcQ@mail.gmail.com>
- <55D676E8.8020802@samsung.com>
- <CANAwSgR-d-mPnvmi19fiyt89g_B1UkuCya9=4e_19muv-UZrCQ@mail.gmail.com>
- <55D6A23C.5020403@samsung.com> <55D6D185.5070909@osg.samsung.com>
- <CAJKOXPeFVwmRzP3YPSaJ_PtNf3L3pzXSXVqHwyYfWDYwhTmsBQ@mail.gmail.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
+ analogix_dp
+Date: Tue, 25 Aug 2015 11:58:19 +0200
+Message-ID: <20150825095817.GC14034@ulmo.nvidia.com>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+ <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DIOMP1UsTsWJauNi"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:59708 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752103AbbHYJnn (ORCPT
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7748 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932068AbbHYJ7q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 05:43:43 -0400
-In-Reply-To: <CAJKOXPeFVwmRzP3YPSaJ_PtNf3L3pzXSXVqHwyYfWDYwhTmsBQ@mail.gmail.com>
+	Tue, 25 Aug 2015 05:59:46 -0400
+In-Reply-To: <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>, Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Kevin Hilman <khilman@linaro.org>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@google.com, dianders@google.com, seanpaul@google.com, Takashi Iwai <tiwai@suse.de>, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, dri-devel@lists.freedesktop.org
 
-[adding Kevin Hilman as cc who was also interested in CPUidle for Exynos]
+--DIOMP1UsTsWJauNi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello Krzysztof,
+On Wed, Aug 19, 2015 at 09:50:34AM -0500, Yakir Yang wrote:
+[...]
+> +	-analogix,color-space:
+> +		input video data format.
+> +			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
 
-On 08/23/2015 03:26 AM, Krzysztof Kozlowski wrote:
+I don't think DT is an appropriate place to set this. To my knowledge
+this depends on the display and/or mode, so I don't think hard-coding
+it here is the right thing to do.
 
-[snip]
+Thierry
 
-> 2015-08-21 16:21 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
-> 
-> The big.LITTLE cpuidle driver is not a typical Exynos cpuidle driver.
-> It only executes CPU suspend on a cluster which essentially is a power
-> down operation.
->
+--DIOMP1UsTsWJauNi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You are correct, looking at the the big.LITTLE CPUidle driver I see that
-it only has two C-states: C0 (normal WFI) and C1 (single CPU power-down)
-which as you said, places the CPU into power-down mode by using the MCPM
-infrastructure so it's basically a CPU suspend AFAIU.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-So what you are saying is that there are deeper C-states supported by the
-Exynos 542x SoC family but these are not handled by the b.L CPUidle driver.
- 
-> When we talk about cpuidle on Exynos, we have in mind one of sleep
-> modes: AFTR or LPA (sometimes instead of LPA there is LPD or W-AFTR).
-> Actually this is more like a system idle mode, not CPU idle. The power
-> savings are much bigger than disabling only one cluster.
->
+iQIcBAABCAAGBQJV3Dw3AAoJEN0jrNd/PrOhGrwP/jxesiLBaWdKfQFx/BVhH8BD
+A6KSCSt6hKpAqQ9b2vm6//KhmWIkZElEe/dJP3+/83h0aN3fIKcO036VrJASJPuK
+5+0MzPw/et+A8RfrYbgGChK1jq7DsNpJt60VV8MUkesFcAmxyUMLnMyRibHdlK6F
+wuwN/66ddyl1Hj3B6p2N1Ut4E8Pl1tUaf2zzLoGbN5RtW8/cYrjbeXY89w2PLMQS
+EffX825BtK0vg9bsAL+CNy4rT02ptJXtzVlhNROtubfxGpUkKD45idxT7oMcB3Fl
+gzeMOjPvHgjfILJIVOunHR/EWN3kWawvKo+kcQsy7t//SKT8CbUfFQiWmqX+VlUG
+3iCpAnPZYn9DxwbR8CefG+n5rZobkru30mghjdoGcl0DSMjz4ReTw3pCSb7c2RiI
+WFay+e/JAQOicAkPg6b42BgHJo7C+PBhSmqnaPvM1sSAobfjbK+UQ8ik8UHiJVgf
+8vaGox1wwG3mJQg4EFr1N1m6hCbWPTgqnKRO8Bh1FIJr7F7u8GdiqU7VUv0xx9Z0
+NWoHwf03/Pr/+dZ9qqzYiTVw1zm6mms2Hz9dRRgFFYwQ+JhqqKgFulrobxNCJFK5
+zeA2OBQE7o9uRqg8DikYLf8Gj+QBtHqMHosQBHvc7YfVw0e6gNc5hEeO+UBv46y8
+ESrsRdjStmZ+ULRo//ml
+=LWKC
+-----END PGP SIGNATURE-----
 
-Interesting, I was not aware of AFTR and LPA but I looked in the manual now.
-Thanks a lot for the information.
-
-I see that the Exynos CPUidle driver (drivers/cpuidle/cpuidle-exynos.c) also
-has only two C-states (WFI and C1) but C1 makes the system to enter in AFTR
-(system-level power gating).
-
-This is similar to what the downstream ChromiumOS 3.8 kernel CPUidle driver
-does IIUC [0].
-
-> So the question is still valid - whether someone wants or plans to
-> implement cpuidle for Exynos 542x family. Odroid XU3 is not a priority
-> here because energy consumption is not an issue there. This is not a
-> mobile device.
->
-
-That's true but it will be interesting for the 5420 and 5800 based
-Chromebooks since optimizing power consumption would be useful there.
-
-I thought that big.LITTLE platforms were encouraged to use the generic b.L
-CPUidle driver just like DT platforms should use the generic CPUFreq DT
-driver but I guess I misunderstood.
-
-So the b.L CPUidle driver is only to have minimum CPUidle support but a SoC
-specific driver is needed to fine tune and get most out of the platform?
-
-Or should the b.L CPUidle driver be extended to add per platform C-states?
-
-> Best regards,
-> Krzysztof
->
-
-[0]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/arch/arm/mach-exynos/cpuidle.c
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--DIOMP1UsTsWJauNi--
