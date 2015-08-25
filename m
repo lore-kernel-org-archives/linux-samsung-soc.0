@@ -1,180 +1,58 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: drm/exynos: fix size check in =?UTF-8?Q?g=32d=5Fcheck=5Fbuf?=
- =?UTF-8?Q?=5Fdesc=5Fis=5Fvalid=28=29?=
-Date: Tue, 25 Aug 2015 17:51:33 +0200
-Message-ID: <27fcb02bc8d4f7ba9aed7e785b657185@math.uni-bielefeld.de>
-References: <1439851884-3346-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1439851884-3346-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
+ analogix_dp
+Date: Tue, 25 Aug 2015 16:57:52 +0100
+Message-ID: <20150825155752.GU7557@n2100.arm.linux.org.uk>
+References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
+ <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
+ <20150825095817.GC14034@ulmo.nvidia.com>
+ <55DC75C8.209@rock-chips.com>
+ <20150825142150.GB3820@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:52009 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751726AbbHYPvf (ORCPT
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:55992 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755058AbbHYP60 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 11:51:35 -0400
-In-Reply-To: <1439851884-3346-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Tue, 25 Aug 2015 11:58:26 -0400
+Content-Disposition: inline
+In-Reply-To: <20150825142150.GB3820@ulmo.nvidia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com
+To: Thierry Reding <treding@nvidia.com>
+Cc: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, djkurtz@google.com, dianders@google.com, seanpaul@google.com, Takashi Iwai <tiwai@suse.de>, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Mark Yao <mark.yao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.orgl
 
-Gentle ping!
+On Tue, Aug 25, 2015 at 04:21:51PM +0200, Thierry Reding wrote:
+> You cited code from dw_hdmi.c earlier, it looks like it might be correct
+> even though it doesn't cite a reference for why this was done. Perhaps
+> someone on this thread, or someone involved with dw_hdmi can answer
+> where that code came from.
 
-Also please note that this is a critical fix. With the
-incomplete check pagefaults can happen when the engine
-accesses a invalid buffer position.
+dw_hdmi doesn't do any format conversion - it's hard coded to RGB, 8
+bits per colour component.  That's a requirement for all HDMI sinks.
 
-With best wishes,
-Tobias
+The reason it's hard-coded in dw_hdmi is that (a) no one has yet decided
+its worth the effort to get the dw_hdmi hardware to do the colourspace
+conversion to the YUV spaces and verify that it works, and (b) I really
+don't see the point when we're talking about computer like devices which
+work primerily with RGB and RGB is always supported by the sink.
 
+As far as greater colour depths go, the driver came from the Freescale
+iMX6 code base, and the hardware which feeds dw_hdmi can't do more than
+8 bits per component - so going to 10, 12 or 16 bits per component is
+beyond what iMX6 can cope with.  Hence, no one on the iMX6 side has a
+need for the deep colour stuff.
 
-On 2015-08-18 00:51, Tobias Jakobi wrote:
-> The size check was incomplete. It only computed the
-> size of area of the drawing rectangle and checked if
-> the size still fit inside the buffer.
-> 
-> The correct check is to compute the position of the
-> last byte that the G2D engine is going to access and
-> then check if that position is still contained in the
-> buffer. In particular we need the stride information
-> to determine this.
-> 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 51 
-> ++++++++++++++++++++++++++-------
->  1 file changed, 41 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> index 211af37..535b4ad 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -48,11 +48,13 @@
-> 
->  /* registers for base address */
->  #define G2D_SRC_BASE_ADDR		0x0304
-> +#define G2D_SRC_STRIDE_REG		0x0308
->  #define G2D_SRC_COLOR_MODE		0x030C
->  #define G2D_SRC_LEFT_TOP		0x0310
->  #define G2D_SRC_RIGHT_BOTTOM		0x0314
->  #define G2D_SRC_PLANE2_BASE_ADDR	0x0318
->  #define G2D_DST_BASE_ADDR		0x0404
-> +#define G2D_DST_STRIDE_REG		0x0408
->  #define G2D_DST_COLOR_MODE		0x040C
->  #define G2D_DST_LEFT_TOP		0x0410
->  #define G2D_DST_RIGHT_BOTTOM		0x0414
-> @@ -148,6 +150,7 @@ struct g2d_cmdlist {
->   * A structure of buffer description
->   *
->   * @format: color format
-> + * @stride: buffer stride/pitch in bytes
->   * @left_x: the x coordinates of left top corner
->   * @top_y: the y coordinates of left top corner
->   * @right_x: the x coordinates of right bottom corner
-> @@ -156,6 +159,7 @@ struct g2d_cmdlist {
->   */
->  struct g2d_buf_desc {
->  	unsigned int	format;
-> +	unsigned int	stride;
->  	unsigned int	left_x;
->  	unsigned int	top_y;
->  	unsigned int	right_x;
-> @@ -589,6 +593,7 @@ static enum g2d_reg_type g2d_get_reg_type(int 
-> reg_offset)
-> 
->  	switch (reg_offset) {
->  	case G2D_SRC_BASE_ADDR:
-> +	case G2D_SRC_STRIDE_REG:
->  	case G2D_SRC_COLOR_MODE:
->  	case G2D_SRC_LEFT_TOP:
->  	case G2D_SRC_RIGHT_BOTTOM:
-> @@ -598,6 +603,7 @@ static enum g2d_reg_type g2d_get_reg_type(int 
-> reg_offset)
->  		reg_type = REG_TYPE_SRC_PLANE2;
->  		break;
->  	case G2D_DST_BASE_ADDR:
-> +	case G2D_DST_STRIDE_REG:
->  	case G2D_DST_COLOR_MODE:
->  	case G2D_DST_LEFT_TOP:
->  	case G2D_DST_RIGHT_BOTTOM:
-> @@ -652,8 +658,8 @@ static bool g2d_check_buf_desc_is_valid(struct
-> g2d_buf_desc *buf_desc,
->  						enum g2d_reg_type reg_type,
->  						unsigned long size)
->  {
-> -	unsigned int width, height;
-> -	unsigned long area;
-> +	int width, height;
-> +	unsigned long bpp, last_pos;
-> 
->  	/*
->  	 * check source and destination buffers only.
-> @@ -662,22 +668,37 @@ static bool g2d_check_buf_desc_is_valid(struct
-> g2d_buf_desc *buf_desc,
->  	if (reg_type != REG_TYPE_SRC && reg_type != REG_TYPE_DST)
->  		return true;
-> 
-> -	width = buf_desc->right_x - buf_desc->left_x;
-> +	/* This check also makes sure that right_x > left_x. */
-> +	width = (int)buf_desc->right_x - (int)buf_desc->left_x;
->  	if (width < G2D_LEN_MIN || width > G2D_LEN_MAX) {
-> -		DRM_ERROR("width[%u] is out of range!\n", width);
-> +		DRM_ERROR("width[%d] is out of range!\n", width);
->  		return false;
->  	}
-> 
-> -	height = buf_desc->bottom_y - buf_desc->top_y;
-> +	/* This check also makes sure that bottom_y > top_y. */
-> +	height = (int)buf_desc->bottom_y - (int)buf_desc->top_y;
->  	if (height < G2D_LEN_MIN || height > G2D_LEN_MAX) {
-> -		DRM_ERROR("height[%u] is out of range!\n", height);
-> +		DRM_ERROR("height[%d] is out of range!\n", height);
->  		return false;
->  	}
-> 
-> -	area = (unsigned long)width * (unsigned long)height *
-> -					g2d_get_buf_bpp(buf_desc->format);
-> -	if (area > size) {
-> -		DRM_ERROR("area[%lu] is out of range[%lu]!\n", area, size);
-> +	bpp = g2d_get_buf_bpp(buf_desc->format);
-> +
-> +	/* Compute the position of the last byte that the engine accesses. */
-> +	last_pos = ((unsigned long)buf_desc->bottom_y - 1) *
-> +		(unsigned long)buf_desc->stride +
-> +		(unsigned long)buf_desc->right_x * bpp - 1;
-> +
-> +	/*
-> +	 * Since right_x > left_x and bottom_y > top_y we already know
-> +	 * that the first_pos < last_pos (first_pos being the position
-> +	 * of the first byte the engine accesses), it just remains to
-> +	 * check if last_pos is smaller then the buffer size.
-> +	 */
-> +
-> +	if (last_pos >= size) {
-> +		DRM_ERROR("last engine access position [%lu] "
-> +			"is out of range [%lu]!\n", last_pos, size);
->  		return false;
->  	}
-> 
-> @@ -981,6 +1002,16 @@ static int g2d_check_reg_offset(struct device 
-> *dev,
->  			} else
->  				buf_info->types[reg_type] = BUF_TYPE_GEM;
->  			break;
-> +		case G2D_SRC_STRIDE_REG:
-> +		case G2D_DST_STRIDE_REG:
-> +			if (for_addr)
-> +				goto err;
-> +
-> +			reg_type = g2d_get_reg_type(reg_offset);
-> +
-> +			buf_desc = &buf_info->descs[reg_type];
-> +			buf_desc->stride = cmdlist->data[index + 1];
-> +			break;
->  		case G2D_SRC_COLOR_MODE:
->  		case G2D_DST_COLOR_MODE:
->  			if (for_addr)
+In any case, I view this as a very low priority issue - it would be nice
+to have audio support on HDMI for iMX6 at some point in the next 20 years,
+preferably before the hardware becomes obsolete.  I've been maintaining
+patches for this for 1.5 years now... how much longer is it going to take?
+My pull request to David from 15th July was ignored.  My re-send of that
+after he returned was ignored.  My reminder of it has been ignored.  What's
+going on in DRM land?  It would be nice to get _some_ kind of feedback so
+I know why they're not being taken, so I can fix whatever the issue is.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
