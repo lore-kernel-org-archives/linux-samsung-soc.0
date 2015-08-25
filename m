@@ -1,72 +1,56 @@
-From: Shuah Khan <shuahkhan@gmail.com>
-Subject: Re: [PATCH v7 11/44] [media] media: use entity.graph_obj.mdev instead
- of .parent
-Date: Tue, 25 Aug 2015 13:25:15 -0600
-Message-ID: <CAKocOOM7_mgp1ORz1mLzso9AZxSTuEcHAef64_LQ-NZVp5FASw@mail.gmail.com>
-References: <cover.1440359643.git.mchehab@osg.samsung.com>
-	<dc1be98277c46ddd87e431148fc7e332176828ab.1440359643.git.mchehab@osg.samsung.com>
-	<55DC0D08.10504@xs4all.nl>
+From: Tyler Baker <tyler.baker@linaro.org>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Enable DWC2 USB driver and USB
+ ethernet gadget
+Date: Tue, 25 Aug 2015 14:00:15 -0700
+Message-ID: <CANMBJr4gwDg8iNcKmVKXqeKBkDhh36BFxeSnCSe0ny4E+LqmFg@mail.gmail.com>
+References: <1439889333-11990-1-git-send-email-m.szyprowski@samsung.com>
+	<55D2FC8D.2020007@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:35578 "EHLO
+Received: from mail-io0-f176.google.com ([209.85.223.176]:36140 "EHLO
 	mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751400AbbHYTZR (ORCPT
+	with ESMTP id S1752588AbbHYVAQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 15:25:17 -0400
-In-Reply-To: <55DC0D08.10504@xs4all.nl>
+	Tue, 25 Aug 2015 17:00:16 -0400
+Received: by iodv127 with SMTP id v127so202469401iod.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2015 14:00:15 -0700 (PDT)
+In-Reply-To: <55D2FC8D.2020007@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, devel@driverdev.osuosl.org, shuahkh@osg.samsung.com
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Kevin Hilman <khilman@linaro.org>
 
-On Tue, Aug 25, 2015 at 12:36 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 08/23/2015 10:17 PM, Mauro Carvalho Chehab wrote:
->> From: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> The struct media_entity has a .parent field that stores a pointer
->> to the parent struct media_device. But recently a media_gobj was
->> embedded into the entities and since struct media_gojb already has
->> a pointer to a struct media_device in the .mdev field, the .parent
->> field becomes redundant and can be removed.
->>
->> This patch replaces all the usage of .parent by .graph_obj.mdev so
->> that field will become unused and can be removed on a later patch.
->>
->> No functional changes.
->>
->> The transformation was made using the following coccinelle spatch:
->>
->> @@
->> struct media_entity *me;
->> @@
->>
->> - me->parent
->> + me->graph_obj.mdev
->>
->> @@
->> struct media_entity *link;
->> @@
->>
->> - link->source->entity->parent
->> + link->source->entity->graph_obj.mdev
->>
->> @@
->> struct exynos_video_entity *ve;
->> @@
->>
->> - ve->vdev.entity.parent
->> + ve->vdev.entity.graph_obj.mdev
->>
->> Suggested-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
->
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Hi Marek/Krzysztof,
 
-The change looks good to me. I would really like to see a before and after
-media graph with these changes, this patch and series in general.
+On 18 August 2015 at 02:36, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> On 18.08.2015 18:15, Marek Szyprowski wrote:
+>> DWC2 (s3c-hsotg) hardware module is available on many Exynos based boards,
+>> so enable DWC2 driver as well as the most common USB Ethernet gadget.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-thanks,
--- Shuah
+The kernelci.org bot recently reported a handful of exynos boot
+failures in next-20150825[1] only when using exynos_defconfig. I went
+ahead and bisected[2] the failure and found this patch was the
+offender. Looking a bit closer, the kernelci.org boot tests typically
+pass ip=dhcp or ip=<ipaddr> as a kernel argument so that networking is
+setup by the kernel. These boot failures are due to the kernel network
+initialization timing out. Previously, in next-20150821[3] all the
+exynos platforms failing in next-20150825 initialized their network
+interfaces successfully, so this seems like a regression. Please have
+a closer look at the boot logs[4][5] for comparison. Kevin pointed out
+that  "asix 3-3.2.4:1.0 eth0: register 'asix' at
+usb-12110000.usb-3.2.4, ASIX AX88772 USB 2.0 Ethernet" is missing from
+the failed boot logs. Anyways, as a summary it looks like this change
+broke networking support on the arndale, arndale-octa, odroid xu3, and
+odroid x2.
+
+Cheers,
+
+Tyler
+[1] http://kernelci.org/boot/?next-20150825&exynos_defconfig&fail
+[2] http://hastebin.com/otafedoxig.vala
+[3] http://kernelci.org/boot/?next-20150821&exynos_defconfig
+[4] http://storage.kernelci.org/next/next-20150825/arm-exynos_defconfig/lab-khilman/boot-exynos5250-arndale.html
+[5] http://storage.kernelci.org/next/next-20150821/arm-exynos_defconfig/lab-khilman/boot-exynos5250-arndale.html
