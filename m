@@ -1,102 +1,103 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 06/14] Documentation: drm/bridge: add document for
- analogix_dp
-Date: Tue, 25 Aug 2015 22:23:24 +0800
-Message-ID: <55DC7A5C.1010108@rock-chips.com>
-References: <1439995728-18046-1-git-send-email-ykk@rock-chips.com>
- <1439995834-18363-1-git-send-email-ykk@rock-chips.com>
- <CAL_JsqLz+8RtBucctUj4euXZ3Ac0DvB52N9ONpAerh5T9BiTJg@mail.gmail.com>
- <20150825091534.GB14034@ulmo.nvidia.com>
- <CAL_Jsq++RLZo4gvEUTKO8MfEPwSqT2R+bqG22Jsgb2qLgDQFpw@mail.gmail.com>
- <55DC7211.9080601@rock-chips.com> <20150825141642.GA3820@ulmo.nvidia.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
+Date: Tue, 25 Aug 2015 16:35:29 +0200
+Message-ID: <4468206.R1amSm9GHX@amdc1976>
+References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
+ <CAJKOXPeFVwmRzP3YPSaJ_PtNf3L3pzXSXVqHwyYfWDYwhTmsBQ@mail.gmail.com>
+ <55DC38CA.9090202@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150825141642.GA3820@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: Rob Herring <robherring2@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Sean Paul <seanpaul@google.com>, Takashi Iwai <tiwai@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, David Airlie <airlied@linux.ie>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@k>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <55DC38CA.9090202@osg.samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Kevin Hilman <khilman@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thierry,
 
-=E5=9C=A8 2015/8/25 22:16, Thierry Reding =E5=86=99=E9=81=93:
-> On Tue, Aug 25, 2015 at 09:48:01PM +0800, Yakir Yang wrote:
->> Hi Thierry & Rob,
->>
->> =E5=9C=A8 2015/8/25 21:27, Rob Herring =E5=86=99=E9=81=93:
->>> On Tue, Aug 25, 2015 at 4:15 AM, Thierry Reding <treding@nvidia.com=
-> wrote:
->>>> On Sun, Aug 23, 2015 at 06:23:14PM -0500, Rob Herring wrote:
->>>>> On Wed, Aug 19, 2015 at 9:50 AM, Yakir Yang <ykk@rock-chips.com> =
-wrote:
->>>> [...]
->>>>>> +       -analogix,link-rate:
->>>>>> +               max link rate supported by the eDP controller.
->>>>>> +                       LINK_RATE_1_62GBPS =3D 0x6, LINK_RATE_2_=
-70GBPS =3D 0x0A,
->>>>>> +                       LINK_RATE_5_40GBPS =3D 0x14
->>>>> Same here. I'd rather see something like "link-rate-mbps" and use=
- the
->>>>> actual rate.
->>>> There is no need whatsoever to hard-code this in DT. (e)DP provide=
-s the
->>>> means to detect what rate the link supports and the specification
->>>> provides guidance on how to select an appropriate one.
->>> Good, even better.
->> I do think we still need keep this DT prop yet.
->>
->> I think drm_dp_help.c could get the "panel" max link-rate and lane-c=
-ount,
->> but it's not enough, we still need knew the "eDP controller" max lin=
-k-rate
->> and lane-count.
->>
->> Let me show the exact example that happened in my side. When I conne=
-ct
->> my board to my 2K DP-1.2 TV. Analogix dp driver would get the max li=
-nk-rate
->> from dpcd, and the max link-rate is 5.4Gbps. So if I just set eDP co=
-ntroller
->> link-rate
->> to 5.4Gbps, the DP TV just broken, do not light up normally.
->>
->> This reason why TV broken is the max link-rate which support by RK32=
-88 eDP
->> controller is 2.7Gbps. Here are the exact words that RK3288 eDP TRM =
-said:
->>
->> *=EF=81=AC=EF=80=A0Compliant with DisplayPortTM Specification, Versi=
-on 1.2.
->> =EF=81=AC=EF=80=A0Compliant with eDPTM Specification, Version 1.3.
->> =EF=81=AC=EF=80=A0HDCP v1.3 amendment for DisplayPortTM Revision 1.0=
-=2E
->> =EF=81=AC=EF=80=A0Main link containing 4 physical lanes of 2.7/1.62 =
-Gbps/lane
->> *
->> **
->>
->>
->> Beside I haven't found there are some registers would indicate the e=
-DP
->> controller
->> max link-rate and lane-count, so this is why I still instance that w=
-e need
->> this DT
->> prop to indicata "Max rate controller support".
->>
->> So, I wish you could agree with me on this point.
-> Your driver should know what link rates it supports and restrict itse=
-lf
-> to use those. This is implied by the compatible string and doesn't ne=
-ed
-> to be duplicated into device tree.
+[ added Lorenzo and linux-pm to Cc: ]
 
-Oh, yeah, good idea   :-D
-Thanks for your point out.
+Hi,
 
-- Yakir
+On Tuesday, August 25, 2015 11:43:38 AM Javier Martinez Canillas wrote:
+> [adding Kevin Hilman as cc who was also interested in CPUidle for Exynos]
+> 
+> Hello Krzysztof,
+> 
+> On 08/23/2015 03:26 AM, Krzysztof Kozlowski wrote:
+> 
+> [snip]
+> 
+> > 2015-08-21 16:21 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+> > 
+> > The big.LITTLE cpuidle driver is not a typical Exynos cpuidle driver.
+> > It only executes CPU suspend on a cluster which essentially is a power
+> > down operation.
+> >
+> 
+> You are correct, looking at the the big.LITTLE CPUidle driver I see that
+> it only has two C-states: C0 (normal WFI) and C1 (single CPU power-down)
+> which as you said, places the CPU into power-down mode by using the MCPM
+> infrastructure so it's basically a CPU suspend AFAIU.
+> 
+> So what you are saying is that there are deeper C-states supported by the
+> Exynos 542x SoC family but these are not handled by the b.L CPUidle driver.
+>  
+> > When we talk about cpuidle on Exynos, we have in mind one of sleep
+> > modes: AFTR or LPA (sometimes instead of LPA there is LPD or W-AFTR).
+> > Actually this is more like a system idle mode, not CPU idle. The power
+> > savings are much bigger than disabling only one cluster.
+> >
+> 
+> Interesting, I was not aware of AFTR and LPA but I looked in the manual now.
+> Thanks a lot for the information.
+> 
+> I see that the Exynos CPUidle driver (drivers/cpuidle/cpuidle-exynos.c) also
+> has only two C-states (WFI and C1) but C1 makes the system to enter in AFTR
+> (system-level power gating).
+> 
+> This is similar to what the downstream ChromiumOS 3.8 kernel CPUidle driver
+> does IIUC [0].
 
-> Thierry
+Yes but upstream does it in a clean way, has support for platforms
+requiring secure firmware operations and also implements coupled
+AFTR mode on a few platforms.
+
+> > So the question is still valid - whether someone wants or plans to
+> > implement cpuidle for Exynos 542x family. Odroid XU3 is not a priority
+> > here because energy consumption is not an issue there. This is not a
+> > mobile device.
+> >
+> 
+> That's true but it will be interesting for the 5420 and 5800 based
+> Chromebooks since optimizing power consumption would be useful there.
+
+I would be happy to help with reviewing patches etc. but personally
+I don't have any plans for doing this work.  I may look into adding
+support for newer ARM64 SoCs (Exynos5433) if I find some extra time
+(quite unlikely currently).
+
+> I thought that big.LITTLE platforms were encouraged to use the generic b.L
+> CPUidle driver just like DT platforms should use the generic CPUFreq DT
+> driver but I guess I misunderstood.
+> 
+> So the b.L CPUidle driver is only to have minimum CPUidle support but a SoC
+> specific driver is needed to fine tune and get most out of the platform?
+> 
+> Or should the b.L CPUidle driver be extended to add per platform C-states?
+
+This is a good question. Daniel/Lorenzo?
+
+> > Best regards,
+> > Krzysztof
+> >
+> 
+> [0]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/arch/arm/mach-exynos/cpuidle.c
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
