@@ -1,123 +1,115 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
-Date: Tue, 25 Aug 2015 17:09:32 +0100
-Message-ID: <20150825160932.GD20070@red-moon>
-References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
- <CAJKOXPeFVwmRzP3YPSaJ_PtNf3L3pzXSXVqHwyYfWDYwhTmsBQ@mail.gmail.com>
- <55DC38CA.9090202@osg.samsung.com>
- <4468206.R1amSm9GHX@amdc1976>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v4 2/6] clk: samsung: exynos4x12: add cpu clock configuration
+ data and instantiate cpu clock
+Date: Tue, 25 Aug 2015 11:40:13 -0700
+Message-ID: <20150825184013.31346.67214@quantum>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <1438868514-8814-3-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:41773 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755837AbbHYQJe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 12:09:34 -0400
-Content-Disposition: inline
-In-Reply-To: <4468206.R1amSm9GHX@amdc1976>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1438868514-8814-3-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-On Tue, Aug 25, 2015 at 03:35:29PM +0100, Bartlomiej Zolnierkiewicz wrote:
+Quoting Bartlomiej Zolnierkiewicz (2015-08-06 06:41:50)
+> With the addition of the new Samsung specific cpu-clock type, the
+> arm clock can be represented as a cpu-clock type. Add the CPU clock
+> configuration data and instantiate the CPU clock type for Exynos4x12.
 > 
-> [ added Lorenzo and linux-pm to Cc: ]
+> Based on the earlier work by Thomas Abraham.
 > 
-> Hi,
-> 
-> On Tuesday, August 25, 2015 11:43:38 AM Javier Martinez Canillas wrote:
-> > [adding Kevin Hilman as cc who was also interested in CPUidle for Exynos]
-> > 
-> > Hello Krzysztof,
-> > 
-> > On 08/23/2015 03:26 AM, Krzysztof Kozlowski wrote:
-> > 
-> > [snip]
-> > 
-> > > 2015-08-21 16:21 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
-> > > 
-> > > The big.LITTLE cpuidle driver is not a typical Exynos cpuidle driver.
-> > > It only executes CPU suspend on a cluster which essentially is a power
-> > > down operation.
-> > >
-> > 
-> > You are correct, looking at the the big.LITTLE CPUidle driver I see that
-> > it only has two C-states: C0 (normal WFI) and C1 (single CPU power-down)
-> > which as you said, places the CPU into power-down mode by using the MCPM
-> > infrastructure so it's basically a CPU suspend AFAIU.
-> > 
-> > So what you are saying is that there are deeper C-states supported by the
-> > Exynos 542x SoC family but these are not handled by the b.L CPUidle driver.
-> >  
-> > > When we talk about cpuidle on Exynos, we have in mind one of sleep
-> > > modes: AFTR or LPA (sometimes instead of LPA there is LPD or W-AFTR).
-> > > Actually this is more like a system idle mode, not CPU idle. The power
-> > > savings are much bigger than disabling only one cluster.
-> > >
-> > 
-> > Interesting, I was not aware of AFTR and LPA but I looked in the manual now.
-> > Thanks a lot for the information.
-> > 
-> > I see that the Exynos CPUidle driver (drivers/cpuidle/cpuidle-exynos.c) also
-> > has only two C-states (WFI and C1) but C1 makes the system to enter in AFTR
-> > (system-level power gating).
-> > 
-> > This is similar to what the downstream ChromiumOS 3.8 kernel CPUidle driver
-> > does IIUC [0].
-> 
-> Yes but upstream does it in a clean way, has support for platforms
-> requiring secure firmware operations and also implements coupled
-> AFTR mode on a few platforms.
-> 
-> > > So the question is still valid - whether someone wants or plans to
-> > > implement cpuidle for Exynos 542x family. Odroid XU3 is not a priority
-> > > here because energy consumption is not an issue there. This is not a
-> > > mobile device.
-> > >
-> > 
-> > That's true but it will be interesting for the 5420 and 5800 based
-> > Chromebooks since optimizing power consumption would be useful there.
-> 
-> I would be happy to help with reviewing patches etc. but personally
-> I don't have any plans for doing this work.  I may look into adding
-> support for newer ARM64 SoCs (Exynos5433) if I find some extra time
-> (quite unlikely currently).
-> 
-> > I thought that big.LITTLE platforms were encouraged to use the generic b.L
-> > CPUidle driver just like DT platforms should use the generic CPUFreq DT
-> > driver but I guess I misunderstood.
-> > 
-> > So the b.L CPUidle driver is only to have minimum CPUidle support but a SoC
-> > specific driver is needed to fine tune and get most out of the platform?
-> > 
-> > Or should the b.L CPUidle driver be extended to add per platform C-states?
-> 
-> This is a good question. Daniel/Lorenzo?
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-To move the b.L driver to multiple C-states we should first convert it to
-the generic CPUidle driver (by defining an MCPM enable-method):
+Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/cpuidle/cpuidle-arm.c?id=refs/tags/v4.2-rc8
-
-Then we have to figure out how to determine how many CPUidle drivers we
-have to create (since idle states are different on different CPUs), since
-using the MIDR does not really scale.
-
-For certain I won't support coupled C-states in the DT idle states code,
-and every platform requiring them is considered buggy and not worth
-merging in the mainline kernel from now onwards, HW should be fixed,
-eventually, I am not willing to see code like
-drivers/cpuidle/cpuidle-exynos.c in the mainline kernel anymore,
-I am sorry.
-
-I think it is time to draw a line with CPUidle on ARM, take stock, clean
-it up and find a way forward, current situation is a potpourri of solutions
-that all differ in a slightly incompatible way.
-
-Support on ARM64 SoC must be PSCI based and for that there is already
-support in the mainline kernel (through the PSCI back-end and the DT
-idle states bindings).
-
-Lorenzo
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 251f48d..7f370d3 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -1398,6 +1398,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
+>         {  0 },
+>  };
+>  
+> +static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
+> +       { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+> +       { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+> +       { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+> +       { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+> +       { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
+> +       { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
+> +       {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+> +       {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+> +       {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> +       {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> +       {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> +       {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> +       {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+> +       {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
+> +       {  0 },
+> +};
+> +
+> +#define E4412_CPU_DIV1(cores, hpm, copy)                               \
+> +               (((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
+> +
+> +static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
+> +       { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
+> +       { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
+> +       { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
+> +       { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
+> +       { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
+> +       { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
+> +       {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
+> +       {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
+> +       {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
+> +       {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
+> +       {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
+> +       {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
+> +       {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
+> +       {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
+> +       {  0 },
+> +};
+> +
+>  /* register exynos4 clocks */
+>  static void __init exynos4_clk_init(struct device_node *np,
+>                                     enum exynos4_soc soc)
+> @@ -1491,6 +1530,17 @@ static void __init exynos4_clk_init(struct device_node *np,
+>                 samsung_clk_register_fixed_factor(ctx,
+>                         exynos4x12_fixed_factor_clks,
+>                         ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+> +               if (of_machine_is_compatible("samsung,exynos4412")) {
+> +                       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+> +                               mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+> +                               e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
+> +                               CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+> +               } else {
+> +                       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+> +                               mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+> +                               e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
+> +                               CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+> +               }
+>         }
+>  
+>         samsung_clk_register_alias(ctx, exynos4_aliases,
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
