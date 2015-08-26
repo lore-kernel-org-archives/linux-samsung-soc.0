@@ -1,66 +1,50 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 00/11] drm/exynos: improve atomic modesetting
-Date: Wed, 26 Aug 2015 14:43:16 -0300
-Message-ID: <1440611008-3473-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f67.google.com ([209.85.192.67]:36824 "EHLO
-	mail-qg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751895AbbHZRnf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Aug 2015 13:43:35 -0400
-Received: by qgss36 with SMTP id s36so10842150qgs.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2015 10:43:35 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 02/11] drm/exynos: fimd: unify call to
+ exynos_drm_crtc_finish_pageflip()
+Date: Wed, 26 Aug 2015 14:43:19 -0300
+Message-ID: <1440611008-3473-4-git-send-email-gustavo@padovan.org>
+References: <1440611008-3473-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1440611008-3473-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Hi,
-
-This patchset adds a couple of changes to improve atomic modesetting:
-
- * add check for the START shadow register for FIMD to only finish the update
- when the screen was actually updated.
- * add asynchronous atomic commit, so now page flips can be run asynchronously.
- It also add infrastructure to serialize commits for the same CRTC and wait all
- plane updates to finish.
- * enable the DRIVER_ATOMIC feature to enable userspace to use atomic IOCTL with
- exynos.
-
-v2: rename prepare_plane/cleanup_plane to atomic_begin/atomic_flush
-
-Please review.
-
-        Gustavo
-
-Gustavo Padovan (11):
-  drm/exynos: don't track enabled state at exynos_crtc
-  drm/exynos: fimd: unify call to exynos_drm_crtc_finish_pageflip()
-  drm/exynos: add begin and flush phases for planes
-  drm/exynos: fimd: move window protect code to atomic_begin/flush
-  drm/exynos: check for pending fb before finish update
-  drm/exynos: add macro to get the address of START_S reg
-  drm/exynos: fimd: only finish update if START == START_S
-  drm/exynos: add atomic asynchronous commit
-  drm/exynos: wait all planes updates to finish
-  drm/exynos: remove wait queue for pending page flip
-  drm/exynos: Enable atomic modesetting feature
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  10 +-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  10 +-
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      |  69 +++++------
- drivers/gpu/drm/exynos/exynos_drm_crtc.h      |   4 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.c       | 158 +++++++++++++++++++++++++-
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  24 +++-
- drivers/gpu/drm/exynos/exynos_drm_fb.c        |  35 ------
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  81 ++++++++-----
- drivers/gpu/drm/exynos/exynos_drm_plane.c     |   2 +
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  10 +-
- drivers/gpu/drm/exynos/exynos_mixer.c         |  10 +-
- include/video/samsung_fimd.h                  |   1 +
- 12 files changed, 309 insertions(+), 105 deletions(-)
-
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VW5pZnkgaGFuZGxpbmcgb2YgZmluaXNoZWQgcGxhbmUgdXBkYXRlIHRvIHByZXBhcmUgZm9yIGEg
+Zm9sbG93aW5nIHBhdGNoCnRoYXQgd2lsbCBjaGVjayBmb3IgdGhlIFNUQVJUIGFuZCBTVEFSVF9T
+IHJlZ3MgdG8gcmVhbGx5IG1ha2Ugc3VyZSB0aGF0CnRoZSBwbGFuZSB3YXMgdXBkYXRlZC4KClNp
+Z25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5j
+by51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgMTAg
+KysrKystLS0tLQogMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMo
+LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5j
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCA1ZGVmNmJj
+Li4zMGMxNDA5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAg
+LTg5NiwxNSArODk2LDE1IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBmaW1kX2lycV9oYW5kbGVyKGlu
+dCBpcnEsIHZvaWQgKmRldl9pZCkKIAlpZiAoY3R4LT5waXBlIDwgMCB8fCAhY3R4LT5kcm1fZGV2
+KQogCQlnb3RvIG91dDsKIAotCWlmIChjdHgtPmk4MF9pZikgewotCQlleHlub3NfZHJtX2NydGNf
+ZmluaXNoX3BhZ2VmbGlwKGN0eC0+Y3J0Yyk7CisJaWYgKCFjdHgtPmk4MF9pZikKKwkJZHJtX2Ny
+dGNfaGFuZGxlX3ZibGFuaygmY3R4LT5jcnRjLT5iYXNlKTsKKworCWV4eW5vc19kcm1fY3J0Y19m
+aW5pc2hfcGFnZWZsaXAoY3R4LT5jcnRjKTsKIAorCWlmIChjdHgtPmk4MF9pZikgewogCQkvKiBF
+eGl0cyB0cmlnZ2VyaW5nIG1vZGUgKi8KIAkJYXRvbWljX3NldCgmY3R4LT50cmlnZ2VyaW5nLCAw
+KTsKIAl9IGVsc2UgewotCQlkcm1fY3J0Y19oYW5kbGVfdmJsYW5rKCZjdHgtPmNydGMtPmJhc2Up
+OwotCQlleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKGN0eC0+Y3J0Yyk7Ci0KIAkJLyog
+c2V0IHdhaXQgdnN5bmMgZXZlbnQgdG8gemVybyBhbmQgd2FrZSB1cCBxdWV1ZS4gKi8KIAkJaWYg
+KGF0b21pY19yZWFkKCZjdHgtPndhaXRfdnN5bmNfZXZlbnQpKSB7CiAJCQlhdG9taWNfc2V0KCZj
+dHgtPndhaXRfdnN5bmNfZXZlbnQsIDApOwotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
