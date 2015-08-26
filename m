@@ -1,94 +1,83 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 04/11] drm/exynos: fimd: move window protect code to
- atomic_begin/flush
-Date: Wed, 26 Aug 2015 14:43:21 -0300
-Message-ID: <1440611008-3473-6-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v2 10/11] drm/exynos: remove wait queue for pending page flip
+Date: Wed, 26 Aug 2015 14:43:27 -0300
+Message-ID: <1440611008-3473-12-git-send-email-gustavo@padovan.org>
 References: <1440611008-3473-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:36233 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752307AbbHZRoD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Aug 2015 13:44:03 -0400
+Received: by qgeb6 with SMTP id b6so130896016qge.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2015 10:44:02 -0700 (PDT)
 In-Reply-To: <1440611008-3473-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-T25seSBzZXQvY2xlYXIgdGhlIHVwZGF0ZSBiaXQgaW4gdGhlIENSVEMncyAuYXRvbWljX2JlZ2lu
-KCkvZmx1c2goKQpzbyBhbGwgcGxhbmVzIGFyZSByZWFsbHkgY29tbWl0dGVkIGF0IHRoZSBzYW1l
-IHRpbWUuCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
-b2xsYWJvcmEuY28udWs+CgotLS0KdjI6IHJlbmFtZSBwcmVwYXJlX3BsYW5lL2NsZWFudXBfcGxh
-bmUgdG8gYXRvbWljX2JlZ2luL2F0b21pY19mbHVzaAotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9maW1kLmMgfCA1NyArKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
-LQogMSBmaWxlIGNoYW5nZWQsIDM0IGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQoKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4IDMwYzE0MDkuLjAwNWE5
-OTYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMK
-KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpAQCAtNTkxLDYg
-KzU5MSwxNiBAQCBzdGF0aWMgdm9pZCBmaW1kX3NoYWRvd19wcm90ZWN0X3dpbihzdHJ1Y3QgZmlt
-ZF9jb250ZXh0ICpjdHgsCiB7CiAJdTMyIHJlZywgYml0cywgdmFsOwogCisJLyoKKwkgKiBTSEFE
-T1dDT04vUFJUQ09OIHJlZ2lzdGVyIGlzIHVzZWQgZm9yIGVuYWJsaW5nIHRpbWluZy4KKwkgKgor
-CSAqIGZvciBleGFtcGxlLCBvbmNlIG9ubHkgd2lkdGggdmFsdWUgb2YgYSByZWdpc3RlciBpcyBz
-ZXQsCisJICogaWYgdGhlIGRtYSBpcyBzdGFydGVkIHRoZW4gZmltZCBoYXJkd2FyZSBjb3VsZCBt
-YWxmdW5jdGlvbiBzbworCSAqIHdpdGggcHJvdGVjdCB3aW5kb3cgc2V0dGluZywgdGhlIHJlZ2lz
-dGVyIGZpZWxkcyB3aXRoIHByZWZpeCAnX0YnCisJICogd291bGRuJ3QgYmUgdXBkYXRlZCBhdCB2
-c3luYyBhbHNvIGJ1dCB1cGRhdGVkIG9uY2UgdW5wcm90ZWN0IHdpbmRvdworCSAqIGlzIHNldC4K
-KwkgKi8KKwogCWlmIChjdHgtPmRyaXZlcl9kYXRhLT5oYXNfc2hhZG93Y29uKSB7CiAJCXJlZyA9
-IFNIQURPV0NPTjsKIAkJYml0cyA9IFNIQURPV0NPTl9XSU54X1BST1RFQ1Qod2luKTsKQEAgLTYw
-Nyw2ICs2MTcsMjggQEAgc3RhdGljIHZvaWQgZmltZF9zaGFkb3dfcHJvdGVjdF93aW4oc3RydWN0
-IGZpbWRfY29udGV4dCAqY3R4LAogCXdyaXRlbCh2YWwsIGN0eC0+cmVncyArIHJlZyk7CiB9CiAK
-K3N0YXRpYyB2b2lkIGZpbWRfYXRvbWljX2JlZ2luKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNy
-dGMsCisJCQkgICAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBsYW5lKQoreworCXN0cnVj
-dCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKKworCWlmIChjdHgtPnN1c3BlbmRlZCkK
-KwkJcmV0dXJuOworCisJZmltZF9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCBwbGFuZS0+enBvcywg
-dHJ1ZSk7Cit9CisKK3N0YXRpYyB2b2lkIGZpbWRfYXRvbWljX2ZsdXNoKHN0cnVjdCBleHlub3Nf
-ZHJtX2NydGMgKmNydGMsCisJCQkgICAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBsYW5l
-KQoreworCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKKworCWlmIChjdHgt
-PnN1c3BlbmRlZCkKKwkJcmV0dXJuOworCisJZmltZF9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCBw
-bGFuZS0+enBvcywgZmFsc2UpOworfQorCiBzdGF0aWMgdm9pZCBmaW1kX3VwZGF0ZV9wbGFuZShz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogCQkJICAgICAgc3RydWN0IGV4eW5vc19kcm1f
-cGxhbmUgKnBsYW5lKQogewpAQCAtNjIyLDIwICs2NTQsNiBAQCBzdGF0aWMgdm9pZCBmaW1kX3Vw
-ZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogCWlmIChjdHgtPnN1c3Bl
-bmRlZCkKIAkJcmV0dXJuOwogCi0JLyoKLQkgKiBTSEFET1dDT04vUFJUQ09OIHJlZ2lzdGVyIGlz
-IHVzZWQgZm9yIGVuYWJsaW5nIHRpbWluZy4KLQkgKgotCSAqIGZvciBleGFtcGxlLCBvbmNlIG9u
-bHkgd2lkdGggdmFsdWUgb2YgYSByZWdpc3RlciBpcyBzZXQsCi0JICogaWYgdGhlIGRtYSBpcyBz
-dGFydGVkIHRoZW4gZmltZCBoYXJkd2FyZSBjb3VsZCBtYWxmdW5jdGlvbiBzbwotCSAqIHdpdGgg
-cHJvdGVjdCB3aW5kb3cgc2V0dGluZywgdGhlIHJlZ2lzdGVyIGZpZWxkcyB3aXRoIHByZWZpeCAn
-X0YnCi0JICogd291bGRuJ3QgYmUgdXBkYXRlZCBhdCB2c3luYyBhbHNvIGJ1dCB1cGRhdGVkIG9u
-Y2UgdW5wcm90ZWN0IHdpbmRvdwotCSAqIGlzIHNldC4KLQkgKi8KLQotCS8qIHByb3RlY3Qgd2lu
-ZG93cyAqLwotCWZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCB0cnVlKTsKLQotCiAJ
-b2Zmc2V0ID0gcGxhbmUtPnNyY194ICogYnBwOwogCW9mZnNldCArPSBwbGFuZS0+c3JjX3kgKiBw
-aXRjaDsKIApAQCAtNzA3LDkgKzcyNSw2IEBAIHN0YXRpYyB2b2lkIGZpbWRfdXBkYXRlX3BsYW5l
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCiAJaWYgKGN0eC0+ZHJpdmVyX2RhdGEtPmhh
-c19zaGFkb3djb24pCiAJCWZpbWRfZW5hYmxlX3NoYWRvd19jaGFubmVsX3BhdGgoY3R4LCB3aW4s
-IHRydWUpOwogCi0JLyogRW5hYmxlIERNQSBjaGFubmVsIGFuZCB1bnByb3RlY3Qgd2luZG93cyAq
-LwotCWZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCBmYWxzZSk7Ci0KIAlpZiAoY3R4
-LT5pODBfaWYpCiAJCWF0b21pY19zZXQoJmN0eC0+d2luX3VwZGF0ZWQsIDEpOwogfQpAQCAtNzIz
-LDE2ICs3MzgsMTAgQEAgc3RhdGljIHZvaWQgZmltZF9kaXNhYmxlX3BsYW5lKHN0cnVjdCBleHlu
-b3NfZHJtX2NydGMgKmNydGMsCiAJaWYgKGN0eC0+c3VzcGVuZGVkKQogCQlyZXR1cm47CiAKLQkv
-KiBwcm90ZWN0IHdpbmRvd3MgKi8KLQlmaW1kX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIHdpbiwg
-dHJ1ZSk7Ci0KIAlmaW1kX2VuYWJsZV92aWRlb19vdXRwdXQoY3R4LCB3aW4sIGZhbHNlKTsKIAog
-CWlmIChjdHgtPmRyaXZlcl9kYXRhLT5oYXNfc2hhZG93Y29uKQogCQlmaW1kX2VuYWJsZV9zaGFk
-b3dfY2hhbm5lbF9wYXRoKGN0eCwgd2luLCBmYWxzZSk7Ci0KLQkvKiB1bnByb3RlY3Qgd2luZG93
-cyAqLwotCWZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCBmYWxzZSk7CiB9CiAKIHN0
-YXRpYyB2b2lkIGZpbWRfZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCkBAIC04
-NzUsOCArODg0LDEwIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyBm
-aW1kX2NydGNfb3BzID0gewogCS5lbmFibGVfdmJsYW5rID0gZmltZF9lbmFibGVfdmJsYW5rLAog
-CS5kaXNhYmxlX3ZibGFuayA9IGZpbWRfZGlzYWJsZV92YmxhbmssCiAJLndhaXRfZm9yX3ZibGFu
-ayA9IGZpbWRfd2FpdF9mb3JfdmJsYW5rLAorCS5hdG9taWNfYmVnaW4gPSBmaW1kX2F0b21pY19i
-ZWdpbiwKIAkudXBkYXRlX3BsYW5lID0gZmltZF91cGRhdGVfcGxhbmUsCiAJLmRpc2FibGVfcGxh
-bmUgPSBmaW1kX2Rpc2FibGVfcGxhbmUsCisJLmF0b21pY19mbHVzaCA9IGZpbWRfYXRvbWljX2Zs
-dXNoLAogCS50ZV9oYW5kbGVyID0gZmltZF90ZV9oYW5kbGVyLAogCS5jbG9ja19lbmFibGUgPSBm
-aW1kX2RwX2Nsb2NrX2VuYWJsZSwKIH07Ci0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Exynos atomic commit procedures already does this job of waiting for
+pending updates to finish, that means using pending_flip_queue is
+pointless now because the disable CRTC procedure will never happen
+during a page_flip.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 11 +----------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  1 -
+ 2 files changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index d6c2c3f..0872aa2f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -35,11 +35,6 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 
+-	/* wait for the completion of page flip. */
+-	if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+-				(exynos_crtc->event == NULL), HZ/20))
+-		exynos_crtc->event = NULL;
+-
+ 	drm_crtc_vblank_off(crtc);
+ 
+ 	if (exynos_crtc->ops->disable)
+@@ -146,8 +141,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+ 	if (!exynos_crtc)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	init_waitqueue_head(&exynos_crtc->pending_flip_queue);
+-
+ 	exynos_crtc->pipe = pipe;
+ 	exynos_crtc->type = type;
+ 	exynos_crtc->ops = ops;
+@@ -215,10 +208,8 @@ void exynos_drm_crtc_finish_update(struct exynos_drm_crtc *exynos_crtc,
+ 		wake_up(&exynos_crtc->wait_update);
+ 
+ 	spin_lock_irqsave(&crtc->dev->event_lock, flags);
+-	if (exynos_crtc->event) {
++	if (exynos_crtc->event)
+ 		drm_crtc_send_vblank_event(crtc, exynos_crtc->event);
+-		wake_up(&exynos_crtc->pending_flip_queue);
+-	}
+ 
+ 	exynos_crtc->event = NULL;
+ 	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 7193d94..b7ba21d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -145,7 +145,6 @@ struct exynos_drm_crtc {
+ 	struct drm_crtc			base;
+ 	enum exynos_drm_output_type	type;
+ 	unsigned int			pipe;
+-	wait_queue_head_t		pending_flip_queue;
+ 	struct drm_pending_vblank_event	*event;
+ 	wait_queue_head_t		wait_update;
+ 	atomic_t			pending_update;
+-- 
+2.1.0
