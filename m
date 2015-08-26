@@ -1,80 +1,58 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 03/11] drm/exynos: add prepare and cleanup phases for
- planes
-Date: Wed, 26 Aug 2015 12:45:13 -0300
-Message-ID: <20150826154513.GB1991@joana>
-References: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
- <1439655980-32146-4-git-send-email-gustavo@padovan.org>
- <55DB1473.40109@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: remove legacy ->suspend()/resume()
+Date: Wed, 26 Aug 2015 12:50:44 -0300
+Message-ID: <20150826155044.GC1991@joana>
+References: <1439496399-25791-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f68.google.com ([209.85.192.68]:35230 "EHLO
-	mail-qg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751859AbbHZPpS convert rfc822-to-8bit (ORCPT
+Received: from mail-qg0-f52.google.com ([209.85.192.52]:35793 "EHLO
+	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751690AbbHZPus (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Aug 2015 11:45:18 -0400
-Received: by qgeb6 with SMTP id b6so12765478qge.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2015 08:45:17 -0700 (PDT)
+	Wed, 26 Aug 2015 11:50:48 -0400
+Received: by qgj62 with SMTP id 62so128781065qgj.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2015 08:50:48 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <55DB1473.40109@samsung.com>
+In-Reply-To: <1439496399-25791-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, daniel@ffwll.ch, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi Inki,
+Hi,
 
-2015-08-24 Inki Dae <inki.dae@samsung.com>:
-
-> On 2015=EB=85=84 08=EC=9B=94 16=EC=9D=BC 01:26, Gustavo Padovan wrote=
-:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >
-> > .prepare_plane() and .cleanup_plane() allows to perform extra opera=
-tions
-> > before and after the update of planes. For FIMD for example this wi=
-ll
-> > be used to enable disable the shadow protection bit.
-> >
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 19 +++++++++++++++++++
-> >  drivers/gpu/drm/exynos/exynos_drm_drv.h  |  6 ++++++
-> >  2 files changed, 25 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu=
-/drm/exynos/exynos_drm_crtc.c
-> > index 5a19e16..3a89fc9 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > @@ -72,15 +72,34 @@ exynos_drm_crtc_mode_set_nofb(struct drm_crtc *=
-crtc)
-> >  static void exynos_crtc_atomic_begin(struct drm_crtc *crtc)
-> >  {
-> >  	struct exynos_drm_crtc *exynos_crtc =3D to_exynos_crtc(crtc);
-> > +	struct drm_plane *plane;
-> >
-> >  	if (crtc->state->event) {
-> >  		WARN_ON(drm_crtc_vblank_get(crtc) !=3D 0);
-> >  		exynos_crtc->event =3D crtc->state->event;
-> >  	}
-> > +
-> > +	drm_atomic_crtc_for_each_plane(plane, crtc) {
-> > +		struct exynos_drm_plane *exynos_plane =3D to_exynos_plane(plane)=
-;
-> > +
-> > +		if (exynos_crtc->ops->prepare_plane)
-> > +			exynos_crtc->ops->prepare_plane(exynos_crtc,
-> > +							exynos_plane);
->=20
-> There is no any reason to use prepare_plane/cleanup_plane callback
-> names. How about using atomic_begin/atomic_flush callback names inste=
-ad
-> for consistency between framework and device drivers?
-
-Either names are fine for me. So let's go with atomic_begin/flush. I'll
-send an updated patchset.
+What about this patch? We need it to avoid the WARN_ON added by patch
+2/2 that was already picked up by Daniel.
 
 	Gustavo
+
+2015-08-13 Gustavo Padovan <gustavo@padovan.org>:
+
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> These legacy helpers should only be used by shadow-attaching drivers.
+> KMS drivers has its own way to handle suspend/resume and don't need to
+> use these two helpers.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index f1d6966..9bcf679 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -280,8 +280,6 @@ static struct drm_driver exynos_drm_driver = {
+>  	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME,
+>  	.load			= exynos_drm_load,
+>  	.unload			= exynos_drm_unload,
+> -	.suspend		= exynos_drm_suspend,
+> -	.resume			= exynos_drm_resume,
+>  	.open			= exynos_drm_open,
+>  	.preclose		= exynos_drm_preclose,
+>  	.lastclose		= exynos_drm_lastclose,
+> -- 
+> 2.1.0
+> 
