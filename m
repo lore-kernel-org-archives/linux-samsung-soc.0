@@ -1,54 +1,34 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 1/2] drm/exynos: remove legacy ->suspend()/resume()
-Date: Wed, 26 Aug 2015 21:12:24 +0200
-Message-ID: <20150826191224.GY1367@phenom.ffwll.local>
-References: <1439496399-25791-1-git-send-email-gustavo@padovan.org>
- <20150826155044.GC1991@joana>
+From: "Mrs. Linda Yong" <spam@practicenet.co.uk>
+Subject: Pls provide the following details
+Date: Wed, 26 Aug 2015 16:56:42 +0200
+Message-ID: <DEXSERV1RAluo3npvqn00002951__18157.7104413465$1440617740$gmane$org@dexam.co.uk>
+Reply-To: <bencook551127@yahoo.co.id>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20150826155044.GC1991@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, daniel@ffwll.ch, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-am1hn0246.outbound.protection.outlook.com ([157.56.112.246]:49460
+	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751788AbbHZTfE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Aug 2015 15:35:04 -0400
+Content-Class: urn:content-classes:message
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBBdWcgMjYsIDIwMTUgYXQgMTI6NTA6NDRQTSAtMDMwMCwgR3VzdGF2byBQYWRvdmFu
-IHdyb3RlOgo+IEhpLAo+IAo+IFdoYXQgYWJvdXQgdGhpcyBwYXRjaD8gV2UgbmVlZCBpdCB0byBh
-dm9pZCB0aGUgV0FSTl9PTiBhZGRlZCBieSBwYXRjaAo+IDIvMiB0aGF0IHdhcyBhbHJlYWR5IHBp
-Y2tlZCB1cCBieSBEYW5pZWwuCgpUaGF0IHBhdGNoIGlzIG9ubHkgZm9yIDQuNCwgc28gbm90IHRv
-byB0aW1lIGNyaXRpY2FsIHRvIGdldCB0aGUgZXh5bm9zIG9uZQppbi4gQnV0IG1pZ2h0IGJlIGdv
-b2QgdG8gZ2V0IGl0IGludG8gNC4zLgotRGFuaWVsCgo+IAo+IAlHdXN0YXZvCj4gCj4gMjAxNS0w
-OC0xMyBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm9AcGFkb3Zhbi5vcmc+Ogo+IAo+ID4gRnJvbTog
-R3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+ID4gCj4g
-PiBUaGVzZSBsZWdhY3kgaGVscGVycyBzaG91bGQgb25seSBiZSB1c2VkIGJ5IHNoYWRvdy1hdHRh
-Y2hpbmcgZHJpdmVycy4KPiA+IEtNUyBkcml2ZXJzIGhhcyBpdHMgb3duIHdheSB0byBoYW5kbGUg
-c3VzcGVuZC9yZXN1bWUgYW5kIGRvbid0IG5lZWQgdG8KPiA+IHVzZSB0aGVzZSB0d28gaGVscGVy
-cy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92
-YW5AY29sbGFib3JhLmNvLnVrPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2Rydi5jIHwgMiAtLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGRlbGV0aW9ucygt
-KQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gPiBpbmRl
-eCBmMWQ2OTY2Li45YmNmNjc5IDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5jCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmMKPiA+IEBAIC0yODAsOCArMjgwLDYgQEAgc3RhdGljIHN0cnVjdCBkcm1fZHJp
-dmVyIGV4eW5vc19kcm1fZHJpdmVyID0gewo+ID4gIAkuZHJpdmVyX2ZlYXR1cmVzCT0gRFJJVkVS
-X01PREVTRVQgfCBEUklWRVJfR0VNIHwgRFJJVkVSX1BSSU1FLAo+ID4gIAkubG9hZAkJCT0gZXh5
-bm9zX2RybV9sb2FkLAo+ID4gIAkudW5sb2FkCQkJPSBleHlub3NfZHJtX3VubG9hZCwKPiA+IC0J
-LnN1c3BlbmQJCT0gZXh5bm9zX2RybV9zdXNwZW5kLAo+ID4gLQkucmVzdW1lCQkJPSBleHlub3Nf
-ZHJtX3Jlc3VtZSwKPiA+ICAJLm9wZW4JCQk9IGV4eW5vc19kcm1fb3BlbiwKPiA+ICAJLnByZWNs
-b3NlCQk9IGV4eW5vc19kcm1fcHJlY2xvc2UsCj4gPiAgCS5sYXN0Y2xvc2UJCT0gZXh5bm9zX2Ry
-bV9sYXN0Y2xvc2UsCj4gPiAtLSAKPiA+IDIuMS4wCj4gPiAKCi0tIApEYW5pZWwgVmV0dGVyClNv
-ZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Dear Sir / Madam,
+
+I am interested in purchasing your products ,  which  sample image is attached to below Login link.
+
+Please follow the link below Login link to view the sample image I am interested to order from your company, and we sincerely hope to establish a long-term business relation with your esteemed company.
+
+Click Here to login:  http://www.ptss.edu.my/v6/administrator/templates/system/documents.html
+
+
+If so kindly, provide the following details, send me your latest catalog. Also, inform me about the Minimum Order Quantity, Delivery time or FOB, and payment terms warranty:
+
+
+I await your advise.
+Best Wishes,
+Mrs. Linda Yong
