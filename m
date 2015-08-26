@@ -1,122 +1,118 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 2/4] clk: samsung: exynos7: Fix CMU TOP1 block
-Date: Wed, 26 Aug 2015 09:00:42 +0530
-Message-ID: <1440559844-12572-3-git-send-email-alim.akhtar@samsung.com>
-References: <1440559844-12572-1-git-send-email-alim.akhtar@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Enable DWC2 USB driver and USB
+ ethernet gadget
+Date: Wed, 26 Aug 2015 12:43:42 +0900
+Message-ID: <55DD35EE.7030105@samsung.com>
+References: <1439889333-11990-1-git-send-email-m.szyprowski@samsung.com>
+ <55D2FC8D.2020007@samsung.com>
+ <CANMBJr4gwDg8iNcKmVKXqeKBkDhh36BFxeSnCSe0ny4E+LqmFg@mail.gmail.com>
+ <55DD19E6.6040501@samsung.com>
+ <CANMBJr50FdYvJVKf08zcPGO+SUOHjq5-e7Panv-FK8VhLGN5dg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:41546 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751951AbbHZDjc (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:64411 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751872AbbHZDnq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 23:39:32 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NTO008577HT0WD0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Aug 2015 12:39:29 +0900 (KST)
-In-reply-to: <1440559844-12572-1-git-send-email-alim.akhtar@samsung.com>
+	Tue, 25 Aug 2015 23:43:46 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NTO00CJN7OVM280@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Aug 2015 04:43:43 +0100 (BST)
+In-reply-to: <CANMBJr50FdYvJVKf08zcPGO+SUOHjq5-e7Panv-FK8VhLGN5dg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com
+To: Tyler Baker <tyler.baker@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Kevin Hilman <khilman@linaro.org>
 
-As per UM, sclk_mmc2 is bit 16 of SEL_TOP1_FSYS0. Also the DIV
-and the GATE clocks are at bit 16 in their respective registers.
-For mmc1 and mmc0 clock MUXs are in TOP1_FSYS11 instead of TOP1_FSYS1.
-And their DIV and GATE clks are in xxx_TOP1_FSYS11 instead of TOP1_FSYS1.
-This patch corrects it.
-This also adds xxx_FSYS11 to be saved/restore during s2r cycles.
+On 26.08.2015 10:58, Tyler Baker wrote:
+> Hi Krzysztof,
+> 
+> On 25 August 2015 at 18:44, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+>> On 26.08.2015 06:00, Tyler Baker wrote:
+>>> Hi Marek/Krzysztof,
+>>>
+>>> On 18 August 2015 at 02:36, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+>>>> On 18.08.2015 18:15, Marek Szyprowski wrote:
+>>>>> DWC2 (s3c-hsotg) hardware module is available on many Exynos based boards,
+>>>>> so enable DWC2 driver as well as the most common USB Ethernet gadget.
+>>>>>
+>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>
+>>> The kernelci.org bot recently reported a handful of exynos boot
+>>> failures in next-20150825[1] only when using exynos_defconfig.
+>>
+>> I noticed the issue too but I fought it was a temporary network problem.
+>> Apparently it's not temporary. :)
+> 
+> I thought the same as well :)
+> 
+>>
+>>> I went
+>>> ahead and bisected[2] the failure and found this patch was the
+>>> offender. Looking a bit closer, the kernelci.org boot tests typically
+>>> pass ip=dhcp or ip=<ipaddr> as a kernel argument so that networking is
+>>> setup by the kernel. These boot failures are due to the kernel network
+>>> initialization timing out. Previously, in next-20150821[3] all the
+>>> exynos platforms failing in next-20150825 initialized their network
+>>> interfaces successfully, so this seems like a regression. Please have
+>>> a closer look at the boot logs[4][5] for comparison. Kevin pointed out
+>>> that  "asix 3-3.2.4:1.0 eth0: register 'asix' at
+>>> usb-12110000.usb-3.2.4, ASIX AX88772 USB 2.0 Ethernet" is missing from
+>>> the failed boot logs. Anyways, as a summary it looks like this change
+>>> broke networking support on the arndale, arndale-octa, odroid xu3, and
+>>> odroid x2.
+>>
+>> I don't have such problem on my Odroid XU3 which also performs netboot
+>> (Arch ARM Linux):
+> 
+> Doh. I just realized the odroid-u3 is failing not the odroid-xu3,
+> sorry for the confusion!
+> 
+>> netboot=tftpboot 0x40008000 zImage; tftpboot 0x44000000
+>> exynos5422-odroidxu3-lite.dtb; bootz 0x40008000 - 0x44000000
+>>
+>> TFTP from server 192.168.1.10; our IP address is 192.168.1.11
+>>
+>> [    0.000000] Kernel command line: console=tty1
+>> console=ttySAC2,115200n8 root=/dev/mmcblk0p1 rootwait rw
+>> no_console_suspend smsc95xx.macaddr=00:1e:06:61:7a:93
+>>
+>>
+>> Do you have anything connected to USB ports of the devices?
+> 
+> Nope, nothing connected to the USB ports in my lab.
+> 
+>> For example on boot-exynos5250-arndale.html I see:
+>> [    2.792934] using random self ethernet address
+>> [    2.797209] using random host ethernet address
+>> [    2.802244] usb0: HOST MAC 46:52:cf:b5:0f:e8
+>> [    2.805923] usb0: MAC a2:04:5d:a6:2c:fa
+>> [    2.809720] using random self ethernet address
+>> [    2.814137] using random host ethernet address
+>> [    2.818599] g_ether gadget: Ethernet Gadget, version: Memorial Day 2008
+>> [    2.825159] g_ether gadget: g_ether ready
+>>
+>> It looks like that's the difference.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+Two issues seem strange to me:
+1. Why on these boards (except Odroid XU3) appears an usb0 interface
+(after adding gadget support)? If they don't have the USB cable attached
+then it shouldn't?
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index eddfd1d..3975465 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -367,12 +367,15 @@ CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
- #define MUX_SEL_TOP13			0x020C
- #define MUX_SEL_TOP1_FSYS0		0x0224
- #define MUX_SEL_TOP1_FSYS1		0x0228
-+#define MUX_SEL_TOP1_FSYS11		0x022C
- #define DIV_TOP13			0x060C
- #define DIV_TOP1_FSYS0			0x0624
- #define DIV_TOP1_FSYS1			0x0628
-+#define DIV_TOP1_FSYS11			0x062C
- #define ENABLE_ACLK_TOP13		0x080C
- #define ENABLE_SCLK_TOP1_FSYS0		0x0A24
- #define ENABLE_SCLK_TOP1_FSYS1		0x0A28
-+#define ENABLE_SCLK_TOP1_FSYS11		0x0A2C
- 
- /* List of parent clocks for Muxes in CMU_TOP1 */
- PNAME(mout_top1_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
-@@ -399,12 +402,15 @@ static unsigned long top1_clk_regs[] __initdata = {
- 	MUX_SEL_TOP13,
- 	MUX_SEL_TOP1_FSYS0,
- 	MUX_SEL_TOP1_FSYS1,
-+	MUX_SEL_TOP1_FSYS11,
- 	DIV_TOP13,
- 	DIV_TOP1_FSYS0,
- 	DIV_TOP1_FSYS1,
-+	DIV_TOP1_FSYS11,
- 	ENABLE_ACLK_TOP13,
- 	ENABLE_SCLK_TOP1_FSYS0,
- 	ENABLE_SCLK_TOP1_FSYS1,
-+	ENABLE_SCLK_TOP1_FSYS11,
- };
- 
- static struct samsung_mux_clock top1_mux_clks[] __initdata = {
-@@ -427,12 +433,12 @@ static struct samsung_mux_clock top1_mux_clks[] __initdata = {
- 	MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
- 	MUX(0, "mout_aclk_fsys0_200", mout_top1_group1, MUX_SEL_TOP13, 28, 2),
- 
--	MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 24, 2),
-+	MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 16, 2),
- 	MUX(0, "mout_sclk_usbdrd300", mout_top1_group1,
- 		MUX_SEL_TOP1_FSYS0, 28, 2),
- 
--	MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 24, 2),
--	MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 28, 2),
-+	MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 0, 2),
-+	MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 12, 2),
- };
- 
- static struct samsung_div_clock top1_div_clks[] __initdata = {
-@@ -442,26 +448,26 @@ static struct samsung_div_clock top1_div_clks[] __initdata = {
- 		DIV_TOP13, 28, 4),
- 
- 	DIV(DOUT_SCLK_MMC2, "dout_sclk_mmc2", "mout_sclk_mmc2",
--		DIV_TOP1_FSYS0, 24, 4),
-+		DIV_TOP1_FSYS0, 16, 10),
- 	DIV(0, "dout_sclk_usbdrd300", "mout_sclk_usbdrd300",
- 		DIV_TOP1_FSYS0, 28, 4),
- 
- 	DIV(DOUT_SCLK_MMC1, "dout_sclk_mmc1", "mout_sclk_mmc1",
--		DIV_TOP1_FSYS1, 24, 4),
-+		DIV_TOP1_FSYS11, 0, 10),
- 	DIV(DOUT_SCLK_MMC0, "dout_sclk_mmc0", "mout_sclk_mmc0",
--		DIV_TOP1_FSYS1, 28, 4),
-+		DIV_TOP1_FSYS11, 12, 10),
- };
- 
- static struct samsung_gate_clock top1_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "dout_sclk_mmc2",
--		ENABLE_SCLK_TOP1_FSYS0, 24, CLK_SET_RATE_PARENT, 0),
-+		ENABLE_SCLK_TOP1_FSYS0, 16, CLK_SET_RATE_PARENT, 0),
- 	GATE(0, "sclk_usbdrd300", "dout_sclk_usbdrd300",
- 		ENABLE_SCLK_TOP1_FSYS0, 28, 0, 0),
- 
- 	GATE(CLK_SCLK_MMC1, "sclk_mmc1", "dout_sclk_mmc1",
--		ENABLE_SCLK_TOP1_FSYS1, 24, CLK_SET_RATE_PARENT, 0),
-+		ENABLE_SCLK_TOP1_FSYS11, 0, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "dout_sclk_mmc0",
--		ENABLE_SCLK_TOP1_FSYS1, 28, CLK_SET_RATE_PARENT, 0),
-+		ENABLE_SCLK_TOP1_FSYS11, 12, CLK_SET_RATE_PARENT, 0),
- };
- 
- static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
--- 
-1.7.10.4
+2. ip=dhcp should send DCHP requests on all interfaces:
+
+   Otherwise the device is determined using
+   autoconfiguration. This is done by sending
+   autoconfiguration requests out of all devices,
+   and using the device that received the first reply.
+
+So why it is not sent on eth0? Maybe there is no eth0 interface now
+because of some conflict in USB drivers? Or maybe there was no eth0
+interface also before and everything booted from MMC?
+
+Best regards,
+Krzysztof
