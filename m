@@ -1,48 +1,122 @@
 From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 4/4] clk: samsung: exynos7: Correct nr_clk_ids for fsys1
-Date: Wed, 26 Aug 2015 09:00:44 +0530
-Message-ID: <1440559844-12572-5-git-send-email-alim.akhtar@samsung.com>
+Subject: [PATCH v2 2/4] clk: samsung: exynos7: Fix CMU TOP1 block
+Date: Wed, 26 Aug 2015 09:00:42 +0530
+Message-ID: <1440559844-12572-3-git-send-email-alim.akhtar@samsung.com>
 References: <1440559844-12572-1-git-send-email-alim.akhtar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51549 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751951AbbHZDje (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:41546 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751951AbbHZDjc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Aug 2015 23:39:34 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+	Tue, 25 Aug 2015 23:39:32 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0NTO0248B7HXKE50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Aug 2015 12:39:33 +0900 (KST)
+ with ESMTP id <0NTO008577HT0WD0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Aug 2015 12:39:29 +0900 (KST)
 In-reply-to: <1440559844-12572-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com
 
-nr_clk_ids for FSYS1 block is wrongly set as TOP1 block,
-this patch corrects it.
+As per UM, sclk_mmc2 is bit 16 of SEL_TOP1_FSYS0. Also the DIV
+and the GATE clocks are at bit 16 in their respective registers.
+For mmc1 and mmc0 clock MUXs are in TOP1_FSYS11 instead of TOP1_FSYS1.
+And their DIV and GATE clks are in xxx_TOP1_FSYS11 instead of TOP1_FSYS1.
+This patch corrects it.
+This also adds xxx_FSYS11 to be saved/restore during s2r cycles.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos7.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos7.c |   24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 9245a25..380608b 100644
+index eddfd1d..3975465 100644
 --- a/drivers/clk/samsung/clk-exynos7.c
 +++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -937,7 +937,7 @@ static struct samsung_cmu_info fsys1_cmu_info __initdata = {
- 	.nr_mux_clks		= ARRAY_SIZE(fsys1_mux_clks),
- 	.gate_clks		= fsys1_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(fsys1_gate_clks),
--	.nr_clk_ids		= TOP1_NR_CLK,
-+	.nr_clk_ids		= FSYS1_NR_CLK,
- 	.clk_regs		= fsys1_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(fsys1_clk_regs),
+@@ -367,12 +367,15 @@ CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
+ #define MUX_SEL_TOP13			0x020C
+ #define MUX_SEL_TOP1_FSYS0		0x0224
+ #define MUX_SEL_TOP1_FSYS1		0x0228
++#define MUX_SEL_TOP1_FSYS11		0x022C
+ #define DIV_TOP13			0x060C
+ #define DIV_TOP1_FSYS0			0x0624
+ #define DIV_TOP1_FSYS1			0x0628
++#define DIV_TOP1_FSYS11			0x062C
+ #define ENABLE_ACLK_TOP13		0x080C
+ #define ENABLE_SCLK_TOP1_FSYS0		0x0A24
+ #define ENABLE_SCLK_TOP1_FSYS1		0x0A28
++#define ENABLE_SCLK_TOP1_FSYS11		0x0A2C
+ 
+ /* List of parent clocks for Muxes in CMU_TOP1 */
+ PNAME(mout_top1_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
+@@ -399,12 +402,15 @@ static unsigned long top1_clk_regs[] __initdata = {
+ 	MUX_SEL_TOP13,
+ 	MUX_SEL_TOP1_FSYS0,
+ 	MUX_SEL_TOP1_FSYS1,
++	MUX_SEL_TOP1_FSYS11,
+ 	DIV_TOP13,
+ 	DIV_TOP1_FSYS0,
+ 	DIV_TOP1_FSYS1,
++	DIV_TOP1_FSYS11,
+ 	ENABLE_ACLK_TOP13,
+ 	ENABLE_SCLK_TOP1_FSYS0,
+ 	ENABLE_SCLK_TOP1_FSYS1,
++	ENABLE_SCLK_TOP1_FSYS11,
  };
+ 
+ static struct samsung_mux_clock top1_mux_clks[] __initdata = {
+@@ -427,12 +433,12 @@ static struct samsung_mux_clock top1_mux_clks[] __initdata = {
+ 	MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
+ 	MUX(0, "mout_aclk_fsys0_200", mout_top1_group1, MUX_SEL_TOP13, 28, 2),
+ 
+-	MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 24, 2),
++	MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 16, 2),
+ 	MUX(0, "mout_sclk_usbdrd300", mout_top1_group1,
+ 		MUX_SEL_TOP1_FSYS0, 28, 2),
+ 
+-	MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 24, 2),
+-	MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 28, 2),
++	MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 0, 2),
++	MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 12, 2),
+ };
+ 
+ static struct samsung_div_clock top1_div_clks[] __initdata = {
+@@ -442,26 +448,26 @@ static struct samsung_div_clock top1_div_clks[] __initdata = {
+ 		DIV_TOP13, 28, 4),
+ 
+ 	DIV(DOUT_SCLK_MMC2, "dout_sclk_mmc2", "mout_sclk_mmc2",
+-		DIV_TOP1_FSYS0, 24, 4),
++		DIV_TOP1_FSYS0, 16, 10),
+ 	DIV(0, "dout_sclk_usbdrd300", "mout_sclk_usbdrd300",
+ 		DIV_TOP1_FSYS0, 28, 4),
+ 
+ 	DIV(DOUT_SCLK_MMC1, "dout_sclk_mmc1", "mout_sclk_mmc1",
+-		DIV_TOP1_FSYS1, 24, 4),
++		DIV_TOP1_FSYS11, 0, 10),
+ 	DIV(DOUT_SCLK_MMC0, "dout_sclk_mmc0", "mout_sclk_mmc0",
+-		DIV_TOP1_FSYS1, 28, 4),
++		DIV_TOP1_FSYS11, 12, 10),
+ };
+ 
+ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "dout_sclk_mmc2",
+-		ENABLE_SCLK_TOP1_FSYS0, 24, CLK_SET_RATE_PARENT, 0),
++		ENABLE_SCLK_TOP1_FSYS0, 16, CLK_SET_RATE_PARENT, 0),
+ 	GATE(0, "sclk_usbdrd300", "dout_sclk_usbdrd300",
+ 		ENABLE_SCLK_TOP1_FSYS0, 28, 0, 0),
+ 
+ 	GATE(CLK_SCLK_MMC1, "sclk_mmc1", "dout_sclk_mmc1",
+-		ENABLE_SCLK_TOP1_FSYS1, 24, CLK_SET_RATE_PARENT, 0),
++		ENABLE_SCLK_TOP1_FSYS11, 0, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "dout_sclk_mmc0",
+-		ENABLE_SCLK_TOP1_FSYS1, 28, CLK_SET_RATE_PARENT, 0),
++		ENABLE_SCLK_TOP1_FSYS11, 12, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
 -- 
 1.7.10.4
