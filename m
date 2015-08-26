@@ -1,58 +1,66 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 1/2] drm/exynos: remove legacy ->suspend()/resume()
-Date: Wed, 26 Aug 2015 12:50:44 -0300
-Message-ID: <20150826155044.GC1991@joana>
-References: <1439496399-25791-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH v2 00/11] drm/exynos: improve atomic modesetting
+Date: Wed, 26 Aug 2015 14:43:16 -0300
+Message-ID: <1440611008-3473-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f52.google.com ([209.85.192.52]:35793 "EHLO
-	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751690AbbHZPus (ORCPT
+Received: from mail-qg0-f67.google.com ([209.85.192.67]:36824 "EHLO
+	mail-qg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751895AbbHZRnf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Aug 2015 11:50:48 -0400
-Received: by qgj62 with SMTP id 62so128781065qgj.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2015 08:50:48 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1439496399-25791-1-git-send-email-gustavo@padovan.org>
+	Wed, 26 Aug 2015 13:43:35 -0400
+Received: by qgss36 with SMTP id s36so10842150qgs.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2015 10:43:35 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, daniel@ffwll.ch, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
 Hi,
 
-What about this patch? We need it to avoid the WARN_ON added by patch
-2/2 that was already picked up by Daniel.
+This patchset adds a couple of changes to improve atomic modesetting:
 
-	Gustavo
+ * add check for the START shadow register for FIMD to only finish the update
+ when the screen was actually updated.
+ * add asynchronous atomic commit, so now page flips can be run asynchronously.
+ It also add infrastructure to serialize commits for the same CRTC and wait all
+ plane updates to finish.
+ * enable the DRIVER_ATOMIC feature to enable userspace to use atomic IOCTL with
+ exynos.
 
-2015-08-13 Gustavo Padovan <gustavo@padovan.org>:
+v2: rename prepare_plane/cleanup_plane to atomic_begin/atomic_flush
 
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> These legacy helpers should only be used by shadow-attaching drivers.
-> KMS drivers has its own way to handle suspend/resume and don't need to
-> use these two helpers.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index f1d6966..9bcf679 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -280,8 +280,6 @@ static struct drm_driver exynos_drm_driver = {
->  	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME,
->  	.load			= exynos_drm_load,
->  	.unload			= exynos_drm_unload,
-> -	.suspend		= exynos_drm_suspend,
-> -	.resume			= exynos_drm_resume,
->  	.open			= exynos_drm_open,
->  	.preclose		= exynos_drm_preclose,
->  	.lastclose		= exynos_drm_lastclose,
-> -- 
-> 2.1.0
-> 
+Please review.
+
+        Gustavo
+
+Gustavo Padovan (11):
+  drm/exynos: don't track enabled state at exynos_crtc
+  drm/exynos: fimd: unify call to exynos_drm_crtc_finish_pageflip()
+  drm/exynos: add begin and flush phases for planes
+  drm/exynos: fimd: move window protect code to atomic_begin/flush
+  drm/exynos: check for pending fb before finish update
+  drm/exynos: add macro to get the address of START_S reg
+  drm/exynos: fimd: only finish update if START == START_S
+  drm/exynos: add atomic asynchronous commit
+  drm/exynos: wait all planes updates to finish
+  drm/exynos: remove wait queue for pending page flip
+  drm/exynos: Enable atomic modesetting feature
+
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  10 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  10 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      |  69 +++++------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h      |   4 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c       | 158 +++++++++++++++++++++++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  24 +++-
+ drivers/gpu/drm/exynos/exynos_drm_fb.c        |  35 ------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  81 ++++++++-----
+ drivers/gpu/drm/exynos/exynos_drm_plane.c     |   2 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  10 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  10 +-
+ include/video/samsung_fimd.h                  |   1 +
+ 12 files changed, 309 insertions(+), 105 deletions(-)
+
+-- 
+2.1.0
