@@ -1,62 +1,54 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 03/11] drm/exynos: add prepare and cleanup phases for
- planes
-Date: Thu, 27 Aug 2015 17:14:35 +0900
-Message-ID: <55DEC6EB.4020305@samsung.com>
-References: <1439655980-32146-1-git-send-email-gustavo@padovan.org>
- <1439655980-32146-4-git-send-email-gustavo@padovan.org>
- <55DB1473.40109@samsung.com> <20150826154513.GB1991@joana>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20150826154513.GB1991@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH] ARM: dts: use vqmmc-supply of emmc/sd for
+ exynos4412-odroid-common
+Date: Thu, 27 Aug 2015 18:29:18 +0900
+Message-ID: <1440667758-14960-1-git-send-email-jh80.chung@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:55848 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751601AbbH0J3q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Aug 2015 05:29:46 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-T24gMjAxNeuFhCAwOOyblCAyN+ydvCAwMDo0NSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEhp
-IElua2ksCj4gCj4gMjAxNS0wOC0yNCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ogo+
-IAo+PiBPbiAyMDE164WEIDA47JuUIDE27J28IDAxOjI2LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6
-Cj4+PiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
-dWs+Cj4+Pgo+Pj4gLnByZXBhcmVfcGxhbmUoKSBhbmQgLmNsZWFudXBfcGxhbmUoKSBhbGxvd3Mg
-dG8gcGVyZm9ybSBleHRyYSBvcGVyYXRpb25zCj4+PiBiZWZvcmUgYW5kIGFmdGVyIHRoZSB1cGRh
-dGUgb2YgcGxhbmVzLiBGb3IgRklNRCBmb3IgZXhhbXBsZSB0aGlzIHdpbGwKPj4+IGJlIHVzZWQg
-dG8gZW5hYmxlIGRpc2FibGUgdGhlIHNoYWRvdyBwcm90ZWN0aW9uIGJpdC4KPj4+Cj4+PiBTaWdu
-ZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
-dWs+Cj4+PiAtLS0KPj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
-IHwgMTkgKysrKysrKysrKysrKysrKysrKwo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kcnYuaCAgfCAgNiArKysrKysKPj4+ICAyIGZpbGVzIGNoYW5nZWQsIDI1IGluc2Vy
-dGlvbnMoKykKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMK
-Pj4+IGluZGV4IDVhMTllMTYuLjNhODlmYzkgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+PiBAQCAtNzIsMTUgKzcyLDM0IEBAIGV4eW5vc19kcm1f
-Y3J0Y19tb2RlX3NldF9ub2ZiKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPj4+ICBzdGF0aWMgdm9p
-ZCBleHlub3NfY3J0Y19hdG9taWNfYmVnaW4oc3RydWN0IGRybV9jcnRjICpjcnRjKQo+Pj4gIHsK
-Pj4+ICAJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0
-YyhjcnRjKTsKPj4+ICsJc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Cj4+Pgo+Pj4gIAlpZiAoY3J0
-Yy0+c3RhdGUtPmV2ZW50KSB7Cj4+PiAgCQlXQVJOX09OKGRybV9jcnRjX3ZibGFua19nZXQoY3J0
-YykgIT0gMCk7Cj4+PiAgCQlleHlub3NfY3J0Yy0+ZXZlbnQgPSBjcnRjLT5zdGF0ZS0+ZXZlbnQ7
-Cj4+PiAgCX0KPj4+ICsKPj4+ICsJZHJtX2F0b21pY19jcnRjX2Zvcl9lYWNoX3BsYW5lKHBsYW5l
-LCBjcnRjKSB7Cj4+PiArCQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0g
-dG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKPj4+ICsKPj4+ICsJCWlmIChleHlub3NfY3J0Yy0+b3Bz
-LT5wcmVwYXJlX3BsYW5lKQo+Pj4gKwkJCWV4eW5vc19jcnRjLT5vcHMtPnByZXBhcmVfcGxhbmUo
-ZXh5bm9zX2NydGMsCj4+PiArCQkJCQkJCWV4eW5vc19wbGFuZSk7Cj4+Cj4+IFRoZXJlIGlzIG5v
-IGFueSByZWFzb24gdG8gdXNlIHByZXBhcmVfcGxhbmUvY2xlYW51cF9wbGFuZSBjYWxsYmFjawo+
-PiBuYW1lcy4gSG93IGFib3V0IHVzaW5nIGF0b21pY19iZWdpbi9hdG9taWNfZmx1c2ggY2FsbGJh
-Y2sgbmFtZXMgaW5zdGVhZAo+PiBmb3IgY29uc2lzdGVuY3kgYmV0d2VlbiBmcmFtZXdvcmsgYW5k
-IGRldmljZSBkcml2ZXJzPwo+IAo+IEVpdGhlciBuYW1lcyBhcmUgZmluZSBmb3IgbWUuIFNvIGxl
-dCdzIGdvIHdpdGggYXRvbWljX2JlZ2luL2ZsdXNoLiBJJ2xsCj4gc2VuZCBhbiB1cGRhdGVkIHBh
-dGNoc2V0LgoKTWVyZ2VkLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAJR3VzdGF2bwo+IAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Currently vmmc's property is wrong.
+If it needs to control two supplies, then it has to use vmmc/vqmmc-supply.
+(Card supply power and I/O Line supply Power.)
+
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index ca7d168..4ddabfd 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -461,10 +461,10 @@
+ &mshc_0 {
+ 	pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
+ 	pinctrl-names = "default";
+-	vmmc-supply = <&ldo20_reg &buck8_reg>;
++	vmmc-supply = <&ldo20_reg>;
++	vqmmc-supply = <&buck8_reg>;
+ 	mmc-pwrseq = <&emmc_pwrseq>;
+ 	status = "okay";
+-
+ 	num-slots = <1>;
+ 	broken-cd;
+ 	card-detect-delay = <200>;
+@@ -485,7 +485,8 @@
+ 	bus-width = <4>;
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+ 	pinctrl-names = "default";
+-	vmmc-supply = <&ldo4_reg &ldo21_reg>;
++	vmmc-supply = <&ldo21_reg>;
++	vqmmc-supply = <&ldo4_reg>;
+ 	cd-gpios = <&gpk2 2 0>;
+ 	cd-inverted;
+ 	status = "okay";
+-- 
+1.9.1
