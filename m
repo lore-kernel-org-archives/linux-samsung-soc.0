@@ -1,73 +1,47 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 00/14] drm/exynos: rewrite fimg2d error handling
-Date: Thu, 27 Aug 2015 22:46:45 +0200
-Message-ID: <55DF7735.7040502@math.uni-bielefeld.de>
-References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de> <CACvgo51Je-ACgn36cUpRF8XKrftYhk12Pf0NuvGGZWoPp8EDCQ@mail.gmail.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH RESEND] clk: s5pv210: add missing call to
+ samsung_clk_of_add_provider()
+Date: Thu, 27 Aug 2015 15:50:27 -0700
+Message-ID: <20150827225027.30921.88982@quantum>
+References: <1439369908-17665-1-git-send-email-m.szyprowski@samsung.com>
+ <CA+Ln22HnquKYKfY2cJBnFpn4zVO1pbkE5w1RtpmDEcNOQBnYpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55382 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751728AbbH0Uqu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Aug 2015 16:46:50 -0400
-In-Reply-To: <CACvgo51Je-ACgn36cUpRF8XKrftYhk12Pf0NuvGGZWoPp8EDCQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+Ln22HnquKYKfY2cJBnFpn4zVO1pbkE5w1RtpmDEcNOQBnYpg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, gustavo.padovan@collabora.co.uk, Inki Dae <inki.dae@samsung.com>
 
-Hey Emil,
-
-
-Emil Velikov wrote:
-> Hi Tobias,
+Quoting Tomasz Figa (2015-08-12 02:00:17)
+> 2015-08-12 17:58 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> > Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
+> > clk provider only after registering its all clocks", merged to v3.17-rc1)
+> > modified a way that driver registers registers to core framework. This
+> > change has not been applied to s5pv210 clocks driver, which has been
+> > merged in parallel to that commit. This patch adds a missing call to
+> > samsung_clk_of_add_provider(), so the driver is operational again.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > CC: stable@vger.kernel.org  # v3.17+
+> > ---
+> >  drivers/clk/samsung/clk-s5pv210.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
 > 
-> On 24 August 2015 at 15:13, Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
->> Hello,
->>
->> during the discussion about the last patchset touching the
->> fimg2d code, it became apparent that the error handling for
->> the command submission is currently unsatisfactory.
->>
->> This series rewrites the handling. All functions that submit
->> command buffers now first check if enough space is available
->> and only then proceed to build the command buffers.
->>
->> In particular the command buffer is no longer left in a
->> half-finished state, since parameters passed to the functions
->> are now validated before command submission. For this some
->> validation functions are introduced.
->>
->> This should also increase performance if the bottleneck is
->> the submission part, since adding commands to the buffer
->> is now more lightweight.
->>
->> Last but not least some prefix was added to messages printed
->> by fprintf and printf, and the G2D context struct was moved
->> out of the public header.
->>
->>
-> Thanks for going with my earlier suggestion and untangling all this.
-> 
-> I've went through the lot and it looks great afaict. Fwiw for the series
-> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
-thanks for the review and the help on IRC!
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
+The original mail slipped past my filter. Sorry about that. Also please
+address all clk driver patches to linux-clk@vger.kernel.org (I see that
+this one is not).
 
-> As pretty much none of this is hardware specific and/or requires
-> additional knowledge of the kernel module I'm inclined to pull this in
-> even if we don't get too many reviewers. We better keep it around for
-> a couple of weeks in case others are swamped with unrelated work atm,
-> yet willing to take a look.
-Sure, I'm going to wait and do some pings from time to time :)
+I've applied to clk-next towards 4.3.
 
-
-With best wishes,
-Tobias
+Regards,
+Mike
 
 > 
-> Cheers,
-> Emil
-> 
+> Best regards,
+> Tomasz
