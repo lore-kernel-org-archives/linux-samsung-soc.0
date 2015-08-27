@@ -1,145 +1,153 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: drm/exynos: g2d userptr memory corruption
-Date: Thu, 27 Aug 2015 17:10:12 +0200
-Message-ID: <f43ace67e1dc3520b6bfe34d0796a69d@math.uni-bielefeld.de>
-References: <55D08691.3040405@math.uni-bielefeld.de>
- <1439807175.3050.30.camel@pengutronix.de> <55D200A6.4070304@gmx.net>
- <55D48A68.5090009@math.uni-bielefeld.de> <20150819140838.GA3276@redhat.com>
- <CAF6AEGsa7cmo2G6=Lk_s-PR0KOg8oAPO6oHAr7S827r0cMLp1A@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
+Date: Thu, 27 Aug 2015 18:58:07 +0200
+Message-ID: <1574385.AV2PKdoIbr@amdc1976>
+References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
+ <4468206.R1amSm9GHX@amdc1976> <20150825160932.GD20070@red-moon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAF6AEGsa7cmo2G6=Lk_s-PR0KOg8oAPO6oHAr7S827r0cMLp1A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: Tobias Jakobi <liquid.acid@gmx.net>, Jerome Glisse <jglisse@redhat.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:40717 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752525AbbH0Q6P (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Aug 2015 12:58:15 -0400
+In-reply-to: <20150825160932.GD20070@red-moon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-SGVsbG8sCgpJIGRpZCBzb21lIGZ1cnRoZXIgaW52ZXN0aWdhdGlvbiBpbnRvIHRoaXMgaXNzdWUu
-CgoKSSBleHRlbmRlZCBteSB0ZXN0IGFwcGxpY2F0aW9uIHRvIGFsc28gY292ZXIgR0VNL0dFTSBh
-bmQKR0VNL3VzZXJwdHIgdHJhbnNmZXJzLCBhbmQgYWxzbyBwdXR0aW5nIEdFTSBhbGxvY2F0aW9u
-CmZsYWdzIGludG8gdGhlIG1peC4KCllvdSBjYW4gZmluZCB0aGUgY3VycmVudCB2ZXJzaW9uIGhl
-cmU6Cmh0dHBzOi8vZ2l0aHViLmNvbS90b2JpYXNqYWtvYmkvbGliZHJtL2Jsb2IvZXh5bm9zL3Rl
-c3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3ZlcmlmeV9jb3B5LmMKCldoYXQgaXMgaW50ZXJlc3Rp
-bmcgaXMgdGhhdCBhbGwgR0VNL0dFTSB0cmFuc2Zlcgp2YXJpYW50cyB3b3JrLCByZWdhcmRsZXNz
-IG9mIHRoZSBhbGxvY2F0aW9uIGZsYWdzLgoKSW4gcGFydGljdWxhciBJIGNhbiBhbGxvY2F0ZSBh
-IGNhY2hlYWJsZSBHRU0gYnVmZmVyCmFuZCB0aGUgdmVyaWZpY2F0aW9uIHN0aWxsIHdvcmtzLiBU
-aGlzIGNvbmZ1c2VzIG1lCnNpbmNlIGV2ZXJ5dGhpbmcgcG9pbnQgaW50byB0aGUgZGlyZWN0aW9u
-IHRoYXQgdGhpcwppcyBhIGNhY2hlIGZsdXNoIC8gY2FjaGUgY29oZXJlbmN5IGlzc3VlLiBTbyB3
-aHkKZG9lc24ndCB0aGlzIGhhcHBlbiBmb3IgR0VNIGJ1ZmZlcnMgYXMgd2VsbCBpZiB3ZQphbGxv
-dyBjYWNoaW5nIHRvIGhhcHBlbiB0aGVyZT8KCgoKTmV4dCBJIGhhY2tlZCB1cCBhIGN1c3RvbSBp
-b2N0bCB0byB0cmlnZ2VyCmZsdXNoX2NhY2hlX2FsbCgpLCBvdXRlcl9mbHVzaF9hbGwoKSBhbmQK
-b3V0ZXJfc3luYygpLCBpc3N1aW5nIHRoaXMgaW9jdGwgYWZ0ZXIgZmlsbGluZyB0aGUKYnVmZmVy
-cyBhbmQgYWxzbyBhZnRlciB0aGUgZzJkIG9wZXJhdGlvbnMuIFRoaXMKc29tZWhvdyBoZWxwcywg
-aW4gdGhlIHNlbnNlIHRoYXQgdGhlIHRlc3QgYXBwbGljYXRpb24KcnVucyBsb25nZXIuIEJ1dCBp
-dCBhbHNvIG1ha2VzIHRoZSBzeXN0ZW0gcHJvbmUgdG8KbG9ja3Vwcy4gTG9va3MgbGlrZSBjYWxs
-aW5nIG91dGVyX2ZsdXNoX2FsbCgpIGEgbG90CnRyaWdnZXJzIHRoZXNlLiBJIGRvbid0IGtub3cg
-d2h5IHRoaXMgaGFwcGVucyBidXQKSUlSQyBvbmUgc2hvdWxkbid0IGNhbGwgdGhlc2UgbG93LWxl
-dmVsIGZ1bmN0aW9ucwpmcm9tIGRyaXZlciBjb2RlIGFueXdheS4KCgoKTmV4dCBJIGNoZWNrZWQg
-dGhlIERNQS1BUEkgYW5kIGxvb2tlZCBpbnRvIGRtYV9zeW5jX3NnX2Zvcl9jcHUKYW5kIGRtYV9z
-eW5jX3NnX2Zvcl9kZXZpY2UuIEJ1dCB0aGUgZHJpdmVyIGNvZGUgYWxyZWFkeSBkb2VzIHRoaXM6
-CjEpIGRtYV9tYXAgYmVmb3JlIHN0YXJ0aW5nIHRoZSBlbmdpbmUKMikgZG1hX3VubWFwIGFmdGVy
-IHRoZSBlbmdpbmUgZmluaXNoZXMKClRoZSBETUEtQVBJIEhPV1RPIGV4cGxpY2l0bHkgc2F5cyB0
-aGF0IHRoZSBzeW5jIGZ1bmN0aW9ucyBhcmUKb25seSB0aGVyZSBpZiBJIG1vZGlmeSB0aGUgYnVm
-ZmVyIHdpdGggdGhlIENQVSBiZXR3ZWVuIG1hcAphbmQgdW5tYXAuIFdoaWNoIGlzIG5vdCB0aGUg
-Y2FzZSBoZXJlLgoKSW4gcGFydGljdWxhciBJIHRyYWNlZCB3aGF0IGRtYV97bWFwLHVubWFwfSBk
-byBkZXBlbmRpbmcKb24gdGhlIERNQSBkaXJlY3Rpb24gYW5kIGRlZXAgZG93biB0aGUgY2FsbHN0
-YWNrIHNvbWUKZmx1c2gvaW52YWxpZGF0ZSBzdHVmZiBpcyBjYWxsZWQuIEFuZCB0aGUgR0VNIGNh
-c2VzIHNob3cKdGhhdCB0aGlzIGlzIHNvbWVob3cgd29ya2luZy4KCgoKTmV4dCBJIGxvb2tlZCBp
-bnRvIEplcm9tZSdzIHF1ZXN0aW9uIGFib3V0IHdoZXRoZXJlIHRoZSBHMkQgaXMKY2FjaGUgY29o
-ZXJlbnQgd2l0aCB0aGUgQ1BVLiBJIGxvb2tlZCBpbnRvIG9sZCBBbmRyb2lkIGNvZGUgYW5kCmZv
-dW5kIEZJTUcyRF9BWElfTU9ERV9SRUcsIGEgcmVnaXN0ZXIgdGhhdCBjdXJyZW50bHkgaXNuJ3QK
-dG91Y2hlZCBpbiB0aGUgRFJNIGNvZGUuCkl0IHNlZW1zIHRvIG1hbmlwdWxhdGUgc2lnbmFscyB0
-byB0aGUgQVhJIE1hc3RlciBpbnRlcmZhY2UuCgpUaGUgcmVnaXN0ZXIgbG9va3MgbGlrZSB0aGlz
-OgpbMDozXSBBUkNBQ0hFCls0OjddIEFXQ0FDSEUKWzg6MTVdIEFSVVNFUlMKWzE2OjIzXSBBV1VT
-RVJTClsyNDoyNV0gTWF4QnVyc3RMZW5ndGgKCklmIEkgdW5kZXJzdGFuZCBBUk0ncyBBWEkgc3Bl
-Y2lmaWNhdGlvbnMgY29ycmVjdGx5IHRoZW4geW91CmNhbiBzZXQgY2FjaGUgY29oZXJlbnQgb3Bl
-cmF0aW9uIGJ5IHNldHRpbmcgQXhVU0VSWzBdPTEgYW5kCkF4Q0FDSEVbMV09MS4KClRoZSBpbml0
-aWFsaXphdGlvbiB2YWx1ZXMgZm9yIEF4Q0FDSEUgYW5kIEF4VVNFUlMgYXJlIGFsbAp6ZXJvLCBz
-byB0aGUgZGVmYXVsdCBzZWVtcyB0byBiZSBub24tY29oZXJlbnQgb3BlcmF0aW9uLgpCdXQgc3Rp
-bGwgYWZ0ZXIgc2V0dGluZyB0aGUgYml0cyBpbiBGSU1HMkRfQVhJX01PREVfUkVHIEkKZG9uJ3Qg
-c2VlIGFueSBjaGFuZ2UgaW4gYmVoYXZpb3VyIC0tIHRoZSBpc3N1ZSBzdGF5cy4KCgoKQW55IGlk
-ZWEgd2hhdCBJJ20gbWlzc2luZyBoZXJlPwoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKT24g
-MjAxNS0wOC0xOSAxNjo0MSwgUm9iIENsYXJrIHdyb3RlOgo+IE9uIFdlZCwgQXVnIDE5LCAyMDE1
-IGF0IDEwOjA4IEFNLCBKZXJvbWUgR2xpc3NlIDxqZ2xpc3NlQHJlZGhhdC5jb20+IAo+IHdyb3Rl
-Ogo+PiBPbiBXZWQsIEF1ZyAxOSwgMjAxNSBhdCAwMzo1Mzo0NFBNICswMjAwLCBUb2JpYXMgSmFr
-b2JpIHdyb3RlOgo+Pj4gQWRkaW5nIErDqXLDtG1lIHRvIENjLiBJIHRoaW5rIGhlIGxvb2tlZCB0
-aGUgdXNlcnB0ciBjb2RlIGJlZm9yZSwgc28gCj4+PiBtYXliZQo+Pj4gaGUgaGFzIHNvbWUgaWRl
-YSB3aGF0IGlzIGdvaW5nIHdyb25nIGhlcmUuCj4+PiAKPj4+IEkgYWxzbyBoYWQgYSBsb29rIGF0
-IHRoZSBjb2RlLCBidXQgbXkga25vd2xlZGdlIGFib3V0IHRoZSBETUEgQVBJIGlzCj4+PiBhbG1v
-c3Qgbm9uZXhpc3RhbnQuIEhvd2V2ZXIgSSBjYW4gc2VlIHRoYXQgYmVmb3JlIGRvaW5nIGFueSBE
-TUEgdmlhIAo+Pj4gdGhlCj4+PiBHMkQgb24gdGhlIGJ1ZmZlciB0aGUgY29kZSBjYWxscyBkbWFf
-bWFwKCkgb24gaXQsIGFuZCBhbHNvIHVubWFwcyBpdAo+Pj4gd2hlbiB0aGUgY29tbWFuZGxpc3Qg
-aXMgZmluaXNoZWQuCj4+PiAKPj4+IAo+Pj4gV2l0aCBiZXN0IHdpc2hlcywKPj4+IFRvYmlhcwo+
-Pj4gCj4+PiAKPj4+IFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+PiA+IFRoYW5rcyBMdWNhcyBmb3Ig
-dGhlIGV4cGxhbmF0aW9uIQo+Pj4gPgo+Pj4gPgo+Pj4gPiBMdWNhcyBTdGFjaCB3cm90ZToKPj4+
-ID4+IEhpIFRvYmlhcywKPj4+ID4+Cj4+PiA+PiBBbSBTb25udGFnLCBkZW4gMTYuMDguMjAxNSwg
-MTQ6NDggKzAyMDAgc2NocmllYiBUb2JpYXMgSmFrb2JpOgo+Pj4gPj4+IEhlbGxvLAo+Pj4gPj4+
-Cj4+PiA+Pj4gc29tZSB0aW1lIGFnbyBJIGNoZWNrZWQgd2hldGhlciBJIGNvdWxkIHVzZSB0aGUg
-dXNlcnB0ciBmdW5jdGlvbmFsaXR5IHRvCj4+PiA+Pj4gZG8gemVyby1jb3B5IGZyb20gdXNlcnNw
-YWNlIGFsbG9jYXRlZCBidWZmZXJzIHZpYSB0aGUgRzJELiBUaGlzIGRpZG4ndAo+Pj4gPj4+IHdv
-cmsgb3V0IHNvIHdlbGwsIHNvIGtpbmRhIHB1dCB0aGlzIHRvIHRoZSBib3R0b20gb2YgbXkgVE9E
-TyBsaXN0Lgo+Pj4gPj4+Cj4+PiA+Pj4gTm93IHRoYXQgSU9NTVUgc3VwcG9ydCBoYXMgbGFuZGVk
-IGFuZCBKYW4gS2FyYSBoYXMgcmV3cm90ZSBwYWdlIHBpbm5pbmcKPj4+ID4+PiB1c2luZyBmcmFt
-ZSB2ZWN0b3JzIChzZWUgWzFdKSBJIGdhdmUgdXNlcnB0ciBhbm90aGVyIHRyeS4KPj4+ID4+Pgo+
-Pj4gPj4+IFRoZSByZXN1bHRzIGFyZSBtdWNoIGJldHRlci4gSSdtIG5vdCBleHBlcmllbmNpbmcg
-YW55IGtlcm5lbCBsb2NrdXBzIG9yCj4+PiA+Pj4gc3lzbW11IHBhZ2VmYXVsdHMgYW55bW9yZS4g
-SG93ZXZlciB0aGUgaW1hZ2Ugbm93IHN1ZmZlcnMgZnJvbSB2aXN1YWwKPj4+ID4+PiBhcnRpZmFj
-dHMuIFRoZXNlIGltYWdlcyBzaG93IHRoZSBuYXR1cmUgb2YgdGhlIGFydGlmYWN0czoKPj4+ID4+
-PiBodHRwOi8vaS5pbWd1ci5jb20vbnpUNmczWS5qcGcKPj4+ID4+PiBodHRwOi8vaS5pbWd1ci5j
-b20vd2t1WUk2WC5qcGcKPj4+ID4+Pgo+Pj4gPj4+IFRoZSBjb3JydXB0aW9uIGFsd2F5cyBtYW5p
-ZmVzdHMgaXRzZWxmIGluIHRoZXNlIHBpeGVsIGxpbmVzIG9mIGZpeGVkCj4+PiA+Pj4gc2l6ZSBh
-bmQgd3JvbmcgY29sb3IuCj4+PiA+Pj4KPj4+ID4+PiBJIGhhdmUgd3JpdHRlbiBhIHRlc3RjYXNl
-IGFzIHBhcnQgb2YgbGliZHJtIGZvciB0aGlzIGlzc3VlOgo+Pj4gPj4+IGh0dHBzOi8vZ2l0aHVi
-LmNvbS90b2JpYXNqYWtvYmkvbGliZHJtL2NvbW1pdC9kYjhiZjY4NDQ0MzY1OTgyNTFmNjdhNzFm
-YzMzNGI5MjliZmIyYjcxCj4+PiA+Pj4KPj4+ID4+PiBJdCBhbGxvY2F0ZXMgTiAoTiBhbiBldmVu
-IG51bWJlcikgYnVmZmVycyB3aGljaCBhcmUgYWxpZ25lZCB0byB0aGUKPj4+ID4+PiBzeXN0ZW0g
-cGFnZXNpemUuIFRoZW4gaXQgZG9lcyB0aGlzIGVhY2ggaXRlcmF0aW9uOgo+Pj4gPj4+IDEpIEZp
-bGwgdGhlIGZpcnN0IE4vMiBidWZmZXJzIHdpdGggcmFuZG9tIGRhdGEKPj4+ID4+PiAyKSBDb3B5
-IHRoZSBmaXJzdCBoYWxmIHRvIHRoZSBzZWNvbmQgaGFsZiBvZiB0aGUgYnVmZmVycwo+Pj4gPj4+
-IDMpIG1lbWNtcCgpIGZpcnN0IGFuZCBzZWNvbmQgaGFsZiAodmVyaWZpY2F0aW9uIHBhc3MpCj4+
-PiA+Pj4KPj4+ID4+PiBVc3VhbGx5IHRoaXMgdmVyaWZpY2F0aW9uIGFscmVhZHkgZmFpbHMgb24g
-dGhlIGZpcnN0IGl0ZXJhdGlvbi4gQW4KPj4+ID4+PiBpbnRlcmVzdGluZyBvYnNlcnZhdGlvbiBp
-cyB0aGF0IGluY3JlYXNpbmcgKCEpIHRoZSBidWZmZXIgc2l6ZSAoc28gdGhlCj4+PiA+Pj4gYW1v
-dW50IG9mIHBpeGVscyB0aGF0IGhhdmUgdG8gY29waWVkIHBlciBidWZmZXIgZ3Jvd3MpIG1ha2Vz
-IHRoaXMgaXNzdWUKPj4+ID4+PiBsZXNzIGxpa2VseSB0byBoYXBwZW4uCj4+PiA+Pj4KPj4+ID4+
-PiBXaXRoIHRoZSBkZWZhdWx0IDUxMng1MTIgYnVmZmVycyBob3dldmVyIGl0IGhhcHBlbnMsIGxp
-a2UgSSBzYWlkIGFib3ZlLAo+Pj4gPj4+IGFsbW9zdCBpbW1lZGlhdGVseS4KPj4+ID4+Pgo+Pj4g
-Pj4gVGhpcyBpcyBvYnZpb3VzbHkgYSBjYWNoZSBmbHVzaCBtaXNzaW5nLiBUaGUgbWVtb3J5IHlv
-dSBnZXQgZnJvbQo+Pj4gPj4gdXNlcnNwYWNlIGlzIG5vcm1hbCBjYWNoZWQgbWVtb3J5LCBzbyB0
-byBtYWtlIGl0IHZpc2libGUgdG8gdGhlIEdQVSB5b3UKPj4+ID4+IG5lZWQgdG8gZmx1c2ggcGFy
-dHMgb2YgdGhlIGNhY2hlIG91dCB0byBtYWluIG1lbW9yeS4KPj4+ID4+Cj4+PiA+PiBUaGUgY29y
-cnVwdGlvbiB5b3UgYXJlIHNlZWluZyBpcyBqdXN0IHVuZmx1c2hlZCBjYWNoZWxpbmVzLiBUaGlz
-IGFsc28KPj4+ID4+IGV4cGxhaW5zIHdoeSBpbmNyZWFzaW5nIHRoZSBidWZmZXIgc2l6ZSBoZWxw
-czogdGhlIG1vcmUgbWVtb3J5IHRoZSBDUFUKPj4+ID4+IHRvdWNoZXMgdGhlIG1vcmUgY2FjaGVs
-aW5lcyB3aWxsIGJlIGZsdXNoZWQgb3V0IHRvIGJlIHJlcGxhY2VkIHdpdGggbmV3Cj4+PiA+PiBk
-YXRhLgo+Pj4gPiBJIHNob3VsZCBwb2ludCBvdXQgdGhhdCB0aGUgc25hcHNob3RzIEkgdXBsb2Fk
-ZWQgd2VyZSBkb25lIHdpdGggYQo+Pj4gPiBkaWZmZXJlbnQgc2V0dXAuIFRoZXJlIG9ubHkgdGhl
-IHNvdXJjZSBtZW1vcnkgb2YgdGhlIEcyRCBvcGVyYXRpb24gaXMgYQo+Pj4gPiB1c2Vyc3BhY2Ug
-YWxsb2NhdGVkIGJ1ZmZlci4gVGhlIGRlc3RpbmF0aW9uIGlzIGEgR0VNIGJ1ZmZlciBhbGxvY2F0
-ZWQKPj4+ID4gdGhyb3VnaCBsaWJkcm0sIHdoaWNoIGlzIHRoZW4gdXNlZCBhcyBmcmFtZWJ1ZmZl
-ci4gU28gdGhlIGlzc3VlIGFscmVhZHkKPj4+ID4gYXBwZWFycyB3aGVuIGp1c3QgdGhlIHNvdXJj
-ZSBpcyB1c2Vyc3BhY2UgYWxsb2NhdGVkLgo+Pj4gPgo+PiAKPj4gVGhpcyBpcyBzdGlsbCBjb25z
-aXN0ZW50IHdpdGggY2FjaGVsaW5lcyBpc3N1ZS4gSXMgeW91ciBHUFUgJiBJT01NVSAKPj4gY2Fj
-aGUKPj4gY29oZXJlbnQgd2l0aCB0aGUgQ1BVID8gSWYgbm90IHRoZW4gaXQgbWVhbnMgeW91IG5l
-ZWQgdG8gY2FjaGUgZmx1c2ggCj4+IHRoZQo+PiBidWZmZXIgYmVmb3JlIHlvdSB1c2UgaXQgd2l0
-aCB0aGUgR1BVLiBUaGUgZG1hIEFQSSBwcm92aWRlIGZldyBoZWxwZXJzIAo+PiBmb3IKPj4gdGhh
-dC4KPiAKPiBhbHRob3VnaCBJIHN1c3BlY3QgZG1hLWFwaSBwcm9iYWJseSBub3QgYXdhcmUgb2Yg
-YW55IGRldmljZSBjYWNoZXMKPiAoYW5kIEkgc3VzcGVjdCBhIGJpdCB3ZWFrIHdoZW4gaXQgY29t
-ZXMgdG8gZGV2aWNlcyB0aGF0IHN1cHBvcnQgbWl4IG9mCj4gY29oZXJlbnQgYW5kIG5vbi1jb2hl
-cmVudCBtYXBwaW5ncykuLgo+IAo+IEJSLAo+IC1SCj4gCj4+IENoZWVycywKPj4gSsOpcsO0bWUK
-Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPj4gZHJp
-LWRldmVsIG1haWxpbmcgbGlzdAo+PiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4+
-IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+Hi,
+
+On Tuesday, August 25, 2015 05:09:32 PM Lorenzo Pieralisi wrote:
+> On Tue, Aug 25, 2015 at 03:35:29PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> > 
+> > [ added Lorenzo and linux-pm to Cc: ]
+> > 
+> > Hi,
+> > 
+> > On Tuesday, August 25, 2015 11:43:38 AM Javier Martinez Canillas wrote:
+> > > [adding Kevin Hilman as cc who was also interested in CPUidle for Exynos]
+> > > 
+> > > Hello Krzysztof,
+> > > 
+> > > On 08/23/2015 03:26 AM, Krzysztof Kozlowski wrote:
+> > > 
+> > > [snip]
+> > > 
+> > > > 2015-08-21 16:21 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+> > > > 
+> > > > The big.LITTLE cpuidle driver is not a typical Exynos cpuidle driver.
+> > > > It only executes CPU suspend on a cluster which essentially is a power
+> > > > down operation.
+> > > >
+> > > 
+> > > You are correct, looking at the the big.LITTLE CPUidle driver I see that
+> > > it only has two C-states: C0 (normal WFI) and C1 (single CPU power-down)
+> > > which as you said, places the CPU into power-down mode by using the MCPM
+> > > infrastructure so it's basically a CPU suspend AFAIU.
+> > > 
+> > > So what you are saying is that there are deeper C-states supported by the
+> > > Exynos 542x SoC family but these are not handled by the b.L CPUidle driver.
+> > >  
+> > > > When we talk about cpuidle on Exynos, we have in mind one of sleep
+> > > > modes: AFTR or LPA (sometimes instead of LPA there is LPD or W-AFTR).
+> > > > Actually this is more like a system idle mode, not CPU idle. The power
+> > > > savings are much bigger than disabling only one cluster.
+> > > >
+> > > 
+> > > Interesting, I was not aware of AFTR and LPA but I looked in the manual now.
+> > > Thanks a lot for the information.
+> > > 
+> > > I see that the Exynos CPUidle driver (drivers/cpuidle/cpuidle-exynos.c) also
+> > > has only two C-states (WFI and C1) but C1 makes the system to enter in AFTR
+> > > (system-level power gating).
+> > > 
+> > > This is similar to what the downstream ChromiumOS 3.8 kernel CPUidle driver
+> > > does IIUC [0].
+> > 
+> > Yes but upstream does it in a clean way, has support for platforms
+> > requiring secure firmware operations and also implements coupled
+> > AFTR mode on a few platforms.
+> > 
+> > > > So the question is still valid - whether someone wants or plans to
+> > > > implement cpuidle for Exynos 542x family. Odroid XU3 is not a priority
+> > > > here because energy consumption is not an issue there. This is not a
+> > > > mobile device.
+> > > >
+> > > 
+> > > That's true but it will be interesting for the 5420 and 5800 based
+> > > Chromebooks since optimizing power consumption would be useful there.
+> > 
+> > I would be happy to help with reviewing patches etc. but personally
+> > I don't have any plans for doing this work.  I may look into adding
+> > support for newer ARM64 SoCs (Exynos5433) if I find some extra time
+> > (quite unlikely currently).
+> > 
+> > > I thought that big.LITTLE platforms were encouraged to use the generic b.L
+> > > CPUidle driver just like DT platforms should use the generic CPUFreq DT
+> > > driver but I guess I misunderstood.
+> > > 
+> > > So the b.L CPUidle driver is only to have minimum CPUidle support but a SoC
+> > > specific driver is needed to fine tune and get most out of the platform?
+> > > 
+> > > Or should the b.L CPUidle driver be extended to add per platform C-states?
+> > 
+> > This is a good question. Daniel/Lorenzo?
+> 
+> To move the b.L driver to multiple C-states we should first convert it to
+> the generic CPUidle driver (by defining an MCPM enable-method):
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/cpuidle/cpuidle-arm.c?id=refs/tags/v4.2-rc8
+> 
+> Then we have to figure out how to determine how many CPUidle drivers we
+> have to create (since idle states are different on different CPUs), since
+> using the MIDR does not really scale.
+> 
+> For certain I won't support coupled C-states in the DT idle states code,
+> and every platform requiring them is considered buggy and not worth
+> merging in the mainline kernel from now onwards, HW should be fixed,
+> eventually, I am not willing to see code like
+> drivers/cpuidle/cpuidle-exynos.c in the mainline kernel anymore,
+> I am sorry.
+
+For Exynos chipsets coupled C-states are not strictly required for
+having cpuidle support but make it more useful.  On Exynos chipsets
+secondary CPUs must be disabled to allow system to go into deeper
+idle modes and this is assured by using coupled C-states.  Original
+Android drivers don't use coupled C-states and depend on the rest
+of the system to offline secondary CPUs when not needed.
+
+I would of course prefer not to have handle this in software and
+be automatically handled by hardware/firmware but that doesn't mean
+that we should be declining mainline support for "ugly" hardware
+(this has never been "the Linux way" of doing things).
+
+Coming back to the platforms in question (ARM32 big.LITTLE based
+Odroid XU3 boards etc.) they have been shipped long time ago and
+the best we can do nowadays is to support them as well as possible.
+
+If somebody wants to implement a separate Exynos542x/Exynos5800
+big.LITTLE cpuidle driver for them I see no problem with it and I'm
+willing to help in maintaining it.
+
+> I think it is time to draw a line with CPUidle on ARM, take stock, clean
+> it up and find a way forward, current situation is a potpourri of solutions
+> that all differ in a slightly incompatible way.
+> 
+> Support on ARM64 SoC must be PSCI based and for that there is already
+> support in the mainline kernel (through the PSCI back-end and the DT
+> idle states bindings).
+
+I hope that on ARM64 PSCI will be used.  However I have no access to
+chipset designers / original firmware authors so I can't tell for
+sure.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
