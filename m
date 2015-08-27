@@ -1,18 +1,18 @@
 From: "Mrs. Linda Yong" <spam@practicenet.co.uk>
-Subject: Pls provide the following details
-Date: Wed, 26 Aug 2015 16:56:42 +0200
-Message-ID: <DEXSERV1RAluo3npvqn00002951__18157.7104413465$1440617740$gmane$org@dexam.co.uk>
+Subject: Pls provide the following details  ..
+Date: Thu, 27 Aug 2015 06:11:02 +0200
+Message-ID: <DEXSERV1Os43kokTRrD0000ee09__34628.1641083353$1440648708$gmane$org@dexam.co.uk>
 Reply-To: <bencook551127@yahoo.co.id>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="Windows-1251"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-am1hn0246.outbound.protection.outlook.com ([157.56.112.246]:49460
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+Received: from mail-db3hn0250.outbound.protection.outlook.com ([157.55.234.250]:26972
+	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751788AbbHZTfE (ORCPT
+	id S1750884AbbH0ELK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Aug 2015 15:35:04 -0400
+	Thu, 27 Aug 2015 00:11:10 -0400
 Content-Class: urn:content-classes:message
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
