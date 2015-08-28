@@ -1,71 +1,88 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
-Date: Fri, 28 Aug 2015 14:50:32 +0200
-Message-ID: <2001174.gNo7Q8ZTrR@amdc1976>
-References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
- <55E01D61.8020706@osg.samsung.com> <55E0573B.4060604@samsung.com>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: [PATCH v7 10/44] [media] media: rename the function that create
+ pad links
+Date: Fri, 28 Aug 2015 10:08:02 -0300
+Message-ID: <20150828100802.6e626e4c@recife.lan>
+References: <cover.1440359643.git.mchehab@osg.samsung.com>
+	<f095b87884d435e296a455ab07a9951a74c0c3a6.1440359643.git.mchehab@osg.samsung.com>
+	<55DCBA2D.9090901@osg.samsung.com>
+	<20150826115403.7a794597@recife.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46167 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752581AbbH1Mun (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Aug 2015 08:50:43 -0400
-In-reply-to: <55E0573B.4060604@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20150826115403.7a794597@recife.lan>
+Sender: linux-sh-owner@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, Rafael =?UTF-8?B?TG91cmVuw6dv?= de Lima Chehab <chehabrafael@gmail.com>, Matthias Schwarzott <zzam@gentoo.org>, Antti Palosaari <crope@iki.fi>, Olli Salonen <olli.salonen@iki.fi>, Tommi Rantala <tt.rantala@gmail.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, Boris
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Anand Moon <linux.amoon@gmail.com>, Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
+Em Wed, 26 Aug 2015 11:54:03 -0300
+Mauro Carvalho Chehab <mchehab@osg.samsung.com> escreveu:
 
-Hi,
+> Em Tue, 25 Aug 2015 12:55:41 -0600
+> Shuah Khan <shuahkh@osg.samsung.com> escreveu:
+> 
+> > On 08/23/2015 02:17 PM, Mauro Carvalho Chehab wrote:
+> > > Now that a link can be either between two different graph
+> > > objects, we'll need to add more functions to create links.
+> > 
+> > Is this an incomplete sentence. Should it read: "either between
+> > two different graph objects or two pads" ?
+> 
+> That would be redundant, as pad is a graph object ;)
 
-On Friday, August 28, 2015 09:42:35 PM Krzysztof Kozlowski wrote:
-> W dniu 28.08.2015 o 17:35, Javier Martinez Canillas pisze:
-> > Hello Bartlomiej and Lorenzo,
-> > 
-> > Thanks a lot for your explanations.
-> > 
-> > On 08/27/2015 06:58 PM, Bartlomiej Zolnierkiewicz wrote:
-> >
-> >> If somebody wants to implement a separate Exynos542x/Exynos5800
-> >> big.LITTLE cpuidle driver for them I see no problem with it and I'm
-> >> willing to help in maintaining it.
-> >>
-> > 
-> > Ok, I'll see if I can take a look what is needed to implement a Exynos542x CPUidle
-> > driver. I'm quite busy with other stuff right now but I should be less busy in a
-> > couple of weeks.
-> 
-> The only useful users of Exynos542x cpuidle would be Chromebooks.
-> Probably the same goes with suspend to RAM. Non-mobile devices could
-> leave without it.
-> 
-> In the same time cpuidle and S2R would require a significant amount of
-> work. Testing would have to be performed on Chromebooks. I have doubts
-> it would work on Odroid XU3.
-> 
-> I dug into S2R issues on Odroid XU3 and after fixing trivial imprecise
-> abort I don't have clue. It just dies somewhere in firmware/bootloader.
-> Vendor code has a lot more stuff related to suspend and testing it
-> one-by-one whether it fixes the issue is frustrating.
-> 
-> Do we really need cpuidle or S2R on Exynos542x/5800?
+Renamed the patch description to:
+
+	With the new API, a link can be either between two PADs or between an interface
+	and an entity. So, we need to use a better name for the function that create
+	links between two pads.
+
+	So, rename the such function to media_create_pad_link().
+
+	No functional changes.
+
+	This patch was created via this shell script:
+		for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
+
+	Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+	Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+Regards,
+Mauro
+
 > 
 > > 
-> > Maybe is a little bit out of topic but since Anand also asked about CPUFreq support,
-> > are you planning on re-posting your "cpufreq: add generic cpufreq driver support
-> > for Exynos5250/5800 platforms" [0] series?
+> > > So, rename the existing one that create links only between
+> > > two pads as media_create_pad_link().
+> > 
+> > > 
+> > > No functional changes.
+> > > 
+> > > This patch was created via this shell script:
+> > > 	for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
+> > > 
+> > 
+> > Didn't want to experiment with Coccinelle?? :)
 > 
-> That would be useful. Bartlomiej, do you have plans for continuing the work?
-
-Yes.  It is still on my TODO but may take a while (1-2 weeks) before
-I find some time to actually do it.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> I use Coccinelle, but only when I need more complex changes, as
+> Coccinelle may mangle with comments.
+> 
+> > 
+> > > Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> > > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> > > Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> > > 
+> > 
+> > Changes look good to me. After fixing the commit log:
+> > 
+> > Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+> > 
+> > thanks,
+> > -- Shuah
+> > 
+> > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
