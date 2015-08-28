@@ -1,47 +1,39 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH RESEND] clk: s5pv210: add missing call to
- samsung_clk_of_add_provider()
-Date: Thu, 27 Aug 2015 15:50:27 -0700
-Message-ID: <20150827225027.30921.88982@quantum>
-References: <1439369908-17665-1-git-send-email-m.szyprowski@samsung.com>
- <CA+Ln22HnquKYKfY2cJBnFpn4zVO1pbkE5w1RtpmDEcNOQBnYpg@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] rtc: Fix module autoload for rtc-{ab8500,max8997,s5m}
+ drivers
+Date: Fri, 28 Aug 2015 09:27:37 +0900
+Message-ID: <55DFAAF9.3020202@samsung.com>
+References: <1440671672-26590-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+Ln22HnquKYKfY2cJBnFpn4zVO1pbkE5w1RtpmDEcNOQBnYpg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37878 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750709AbbH1A1p (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Aug 2015 20:27:45 -0400
+In-reply-to: <1440671672-26590-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Luis de Bethencourt <luis.bg@samsung.com>, linux-samsung-soc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Sangbeom Kim <sbkim73@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, rtc-linux@googlegroups.com, linux-arm-kernel@lists.infradead.org
 
-Quoting Tomasz Figa (2015-08-12 02:00:17)
-> 2015-08-12 17:58 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> > Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
-> > clk provider only after registering its all clocks", merged to v3.17-rc1)
-> > modified a way that driver registers registers to core framework. This
-> > change has not been applied to s5pv210 clocks driver, which has been
-> > merged in parallel to that commit. This patch adds a missing call to
-> > samsung_clk_of_add_provider(), so the driver is operational again.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > CC: stable@vger.kernel.org  # v3.17+
-> > ---
-> >  drivers/clk/samsung/clk-s5pv210.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
+On 27.08.2015 19:34, Javier Martinez Canillas wrote:
+> These platform drivers have a platform device ID table but the module
+> alias information is not created so module autoloading will not work.
 > 
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-The original mail slipped past my filter. Sorry about that. Also please
-address all clk driver patches to linux-clk@vger.kernel.org (I see that
-this one is not).
-
-I've applied to clk-next towards 4.3.
-
-Regards,
-Mike
-
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
-> Best regards,
-> Tomasz
+> ---
+> 
+>  drivers/rtc/rtc-ab8500.c  | 1 +
+>  drivers/rtc/rtc-max8997.c | 1 +
+>  drivers/rtc/rtc-s5m.c     | 1 +
+>  3 files changed, 3 insertions(+)
+
+Makes sense:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
