@@ -1,169 +1,85 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] arm64: dts: Add BUS1 instance pinctrl support
-Date: Fri, 28 Aug 2015 16:55:34 +0530
-Message-ID: <1440761134-27639-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38362 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751358AbbH1LfH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Aug 2015 07:35:07 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2] clk: samsung: fix cpu clock's flags checking
+Date: Fri, 28 Aug 2015 13:49:35 +0200
+Message-ID: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, k.kozlowski@samsung.com, gautam.vivek@samsung.com
 
-This adds BUS1 instance pinctrl for exynos7 soc.
+CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+incorrectly used as a bit numbers.  Fix it.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Tested on Exynos4210 based Origen board and on Exynos5250 based
+Arndale board.
+
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Fixes: ddeac8d96 ("clk: samsung: add infrastructure to register cpu clocks")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi |  111 +++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos7.dtsi         |    7 ++
- 2 files changed, 118 insertions(+)
+v2:
+- added Reviewed-by, Acked-by and Fixes tags (no code changes)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-index 2eef4a2..96be6e3 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-@@ -586,3 +586,114 @@
- 		samsung,pin-drv = <2>;
- 	};
- };
-+
-+&pinctrl_bus1 {
-+	etc1: etc1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf0: gpf0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf1: gpf1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf2: gpf2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf3: gpf3 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf4: gpf4 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf5: gpf5 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg1: gpg1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg2: gpg2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gph1: gph1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpv6: gpv6 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	spi5_bus: spi5-bus {
-+		samsung,pins = "gpf2-0", "gpf2-1", "gpf2-2", "gpf2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	ufs_refclk_out: ufs-refclk-out {
-+		samsung,pins = "gpg2-4";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <2>;
-+	};
-+
-+	ufs_rst_n: ufs-rst-n {
-+		samsung,pins = "gph1-5";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index d7a37c3..f9c5a54 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -26,6 +26,7 @@
- 		pinctrl5 = &pinctrl_ese;
- 		pinctrl6 = &pinctrl_fsys0;
- 		pinctrl7 = &pinctrl_fsys1;
-+		pinctrl8 = &pinctrl_bus1;
- 	};
+Michael, please apply.  Thank you.
+
+ drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 7c1e1f5..2fe37f7 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -164,7 +164,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 	 * the values for DIV_COPY and DIV_HPM dividers need not be set.
+ 	 */
+ 	div0 = cfg_data->div0;
+-	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+ 		div1 = cfg_data->div1;
+ 		if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
+ 			div1 = readl(base + E4210_DIV_CPU1) &
+@@ -185,7 +185,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
+ 		WARN_ON(alt_div >= MAX_DIV);
  
- 	cpus {
-@@ -278,6 +279,12 @@
- 			interrupts = <0 203 0>;
- 		};
+-		if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
++		if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+ 			/*
+ 			 * In Exynos4210, ATB clock parent is also mout_core. So
+ 			 * ATB clock also needs to be mantained at safe speed.
+@@ -206,7 +206,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 	writel(div0, base + E4210_DIV_CPU0);
+ 	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
  
-+		pinctrl_bus1: pinctrl@14870000 {
-+			compatible = "samsung,exynos7-pinctrl";
-+			reg = <0x14870000 0x1000>;
-+			interrupts = <0 384 0>;
-+		};
-+
- 		hsi2c_0: hsi2c@13640000 {
- 			compatible = "samsung,exynos7-hsi2c";
- 			reg = <0x13640000 0x1000>;
+-	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+ 		writel(div1, base + E4210_DIV_CPU1);
+ 		wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
+ 				DIV_MASK_ALL);
+@@ -225,7 +225,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	unsigned long mux_reg;
+ 
+ 	/* find out the divider values to use for clock data */
+-	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+ 		while ((cfg_data->prate * 1000) != ndata->new_rate) {
+ 			if (cfg_data->prate == 0)
+ 				return -EINVAL;
+@@ -240,7 +240,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
+ 	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
+ 
+-	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+ 		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
+ 		div_mask |= E4210_DIV0_ATB_MASK;
+ 	}
 -- 
-1.7.10.4
+1.9.1
