@@ -1,31 +1,169 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
-Date: Fri, 28 Aug 2015 12:50:19 +0200
-Message-ID: <55E03CEB.4070102@samsung.com>
-References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] arm64: dts: Add BUS1 instance pinctrl support
+Date: Fri, 28 Aug 2015 16:55:34 +0530
+Message-ID: <1440761134-27639-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:38362 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751358AbbH1LfH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 28 Aug 2015 07:35:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, k.kozlowski@samsung.com, gautam.vivek@samsung.com
 
-On 29/06/15 19:29, Bartlomiej Zolnierkiewicz wrote:
-> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-> incorrectly used as a bit numbers.  Fix it.
-> 
-> Tested on Exynos4210 based Origen board and on Exynos5250 based
-> Arndale board.
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+This adds BUS1 instance pinctrl for exynos7 soc.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi |  111 +++++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi         |    7 ++
+ 2 files changed, 118 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+index 2eef4a2..96be6e3 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+@@ -586,3 +586,114 @@
+ 		samsung,pin-drv = <2>;
+ 	};
+ };
++
++&pinctrl_bus1 {
++	etc1: etc1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpf0: gpf0 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpf1: gpf1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpf2: gpf2 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpf3: gpf3 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpf4: gpf4 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpf5: gpf5 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpg1: gpg1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpg2: gpg2 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gph1: gph1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpv6: gpv6 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	spi5_bus: spi5-bus {
++		samsung,pins = "gpf2-0", "gpf2-1", "gpf2-2", "gpf2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	ufs_refclk_out: ufs-refclk-out {
++		samsung,pins = "gpg2-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <2>;
++	};
++
++	ufs_rst_n: ufs-rst-n {
++		samsung,pins = "gph1-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index d7a37c3..f9c5a54 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -26,6 +26,7 @@
+ 		pinctrl5 = &pinctrl_ese;
+ 		pinctrl6 = &pinctrl_fsys0;
+ 		pinctrl7 = &pinctrl_fsys1;
++		pinctrl8 = &pinctrl_bus1;
+ 	};
+ 
+ 	cpus {
+@@ -278,6 +279,12 @@
+ 			interrupts = <0 203 0>;
+ 		};
+ 
++		pinctrl_bus1: pinctrl@14870000 {
++			compatible = "samsung,exynos7-pinctrl";
++			reg = <0x14870000 0x1000>;
++			interrupts = <0 384 0>;
++		};
++
+ 		hsi2c_0: hsi2c@13640000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13640000 0x1000>;
+-- 
+1.7.10.4
