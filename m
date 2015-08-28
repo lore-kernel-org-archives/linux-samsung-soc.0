@@ -1,88 +1,118 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: [PATCH v7 10/44] [media] media: rename the function that create
- pad links
-Date: Fri, 28 Aug 2015 10:08:02 -0300
-Message-ID: <20150828100802.6e626e4c@recife.lan>
-References: <cover.1440359643.git.mchehab@osg.samsung.com>
-	<f095b87884d435e296a455ab07a9951a74c0c3a6.1440359643.git.mchehab@osg.samsung.com>
-	<55DCBA2D.9090901@osg.samsung.com>
-	<20150826115403.7a794597@recife.lan>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH] ARM: dts: use vqmmc-supply of emmc/sd for
+ exynos4412-odroid-common
+Date: Fri, 28 Aug 2015 18:10:16 +0200
+Message-ID: <55E087E8.3080703@gmx.net>
+References: <1440667758-14960-1-git-send-email-jh80.chung@samsung.com> <55DF0204.1010604@samsung.com> <55DFBE08.9090603@samsung.com> <55DFBFEB.10904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20150826115403.7a794597@recife.lan>
-Sender: linux-sh-owner@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, Rafael =?UTF-8?B?TG91cmVuw6dv?= de Lima Chehab <chehabrafael@gmail.com>, Matthias Schwarzott <zzam@gentoo.org>, Antti Palosaari <crope@iki.fi>, Olli Salonen <olli.salonen@iki.fi>, Tommi Rantala <tt.rantala@gmail.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, Boris
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.15.18]:61453 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751879AbbH1QK1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 28 Aug 2015 12:10:27 -0400
+In-Reply-To: <55DFBFEB.10904@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-Em Wed, 26 Aug 2015 11:54:03 -0300
-Mauro Carvalho Chehab <mchehab@osg.samsung.com> escreveu:
+Hello,
 
-> Em Tue, 25 Aug 2015 12:55:41 -0600
-> Shuah Khan <shuahkh@osg.samsung.com> escreveu:
+Krzysztof Kozlowski wrote:
+> On 28.08.2015 10:48, Jaehoon Chung wrote:
+>> On 08/27/2015 09:26 PM, Krzysztof Kozlowski wrote:
+>>> W dniu 27.08.2015 o 18:29, Jaehoon Chung pisze:
+>>>> Currently vmmc's property is wrong.
+>>>> If it needs to control two supplies, then it has to use vmmc/vqmmc-supply.
+>>>> (Card supply power and I/O Line supply Power.)
+>>>>
+>>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>>>> ---
+>>>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 7 ++++---
+>>>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>>> index ca7d168..4ddabfd 100644
+>>>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>>> @@ -461,10 +461,10 @@
+>>>>  &mshc_0 {
+>>>>  	pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
+>>>>  	pinctrl-names = "default";
+>>>> -	vmmc-supply = <&ldo20_reg &buck8_reg>;
+>>>> +	vmmc-supply = <&ldo20_reg>;
+>>>> +	vqmmc-supply = <&buck8_reg>;
+>>>
+>>> Shouldn't this be reversed? LDO20 has 1.8V and it goes to MMC connector,
+>>> so it should be VQMMC?
+>>
+>> If my schematics is right thing, buck8 is used LAN card power.
+>> I will send after removing buck8_reg. how about?
+>> Anyway, Thanks for pointing out. :)
 > 
-> > On 08/23/2015 02:17 PM, Mauro Carvalho Chehab wrote:
-> > > Now that a link can be either between two different graph
-> > > objects, we'll need to add more functions to create links.
-> > 
-> > Is this an incomplete sentence. Should it read: "either between
-> > two different graph objects or two pads" ?
+> Removing this regulator from this node would effectively disable it.
+> That could affect other components like LAN.
 > 
-> That would be redundant, as pad is a graph object ;)
+> Anyway before fixing the order I would prefer to find the right
+> regulators used by MSHC node.
+Please see this commit:
+https://github.com/tobiasjakobi/linux-odroid/commit/113ffb92e0c7f58f15fe60b47d13eb2d65956d10
 
-Renamed the patch description to:
+This was derived from private communication with Hardkernel.
 
-	With the new API, a link can be either between two PADs or between an interface
-	and an entity. So, we need to use a better name for the function that create
-	links between two pads.
+I can't vouch for correctness though.
 
-	So, rename the such function to media_create_pad_link().
+With best wishes,
+Tobias
 
-	No functional changes.
 
-	This patch was created via this shell script:
-		for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
 
-	Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-	Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Regards,
-Mauro
-
+> Best regards,
+> Krzysztof
 > 
-> > 
-> > > So, rename the existing one that create links only between
-> > > two pads as media_create_pad_link().
-> > 
-> > > 
-> > > No functional changes.
-> > > 
-> > > This patch was created via this shell script:
-> > > 	for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
-> > > 
-> > 
-> > Didn't want to experiment with Coccinelle?? :)
+>>
+>> I don't know who this regulator applied. I have guessed that it used for eMMC.
+>> Sorry for guessing.
+>>
+>> Best Regards,
+>> Jaehoon Chung
+>>
+>>>
+>>> In the same time I can't find on schematics where BUCK8 goes...
+>>>
+>>> The SDHCI_2 node below looks good.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>>>  	mmc-pwrseq = <&emmc_pwrseq>;
+>>>>  	status = "okay";
+>>>> -
+>>>>  	num-slots = <1>;
+>>>>  	broken-cd;
+>>>>  	card-detect-delay = <200>;
+>>>> @@ -485,7 +485,8 @@
+>>>>  	bus-width = <4>;
+>>>>  	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>>>>  	pinctrl-names = "default";
+>>>> -	vmmc-supply = <&ldo4_reg &ldo21_reg>;
+>>>> +	vmmc-supply = <&ldo21_reg>;
+>>>> +	vqmmc-supply = <&ldo4_reg>;
+>>>>  	cd-gpios = <&gpk2 2 0>;
+>>>>  	cd-inverted;
+>>>>  	status = "okay";
+>>>>
+>>>
+>>>
+>>>
+>>
+>>
 > 
-> I use Coccinelle, but only when I need more complex changes, as
-> Coccinelle may mangle with comments.
-> 
-> > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-> > > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-> > > 
-> > 
-> > Changes look good to me. After fixing the commit log:
-> > 
-> > Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
-> > 
-> > thanks,
-> > -- Shuah
-> > 
-> > 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
