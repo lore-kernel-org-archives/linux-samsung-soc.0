@@ -1,50 +1,58 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos7: Add required clock tree for UFS
-Date: Fri, 28 Aug 2015 17:40:03 +0530
-Message-ID: <55E04F9B.7010507@samsung.com>
-References: <1440754083-11829-1-git-send-email-alim.akhtar@samsung.com>
- <CAJKOXPeJLx5dJUW-9ke0PR-ziRykN4ckAwABOQMj--4GajXfMQ@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: CPUIdle for Exynos5422 Odroid-XU3/XU4 boards.
+Date: Fri, 28 Aug 2015 21:42:35 +0900
+Message-ID: <55E0573B.4060604@samsung.com>
+References: <CANAwSgTWZ1a+j8RTiamsKaALKf+ekLVqtO6RFTLXkG=bJN4BPQ@mail.gmail.com>
+ <4468206.R1amSm9GHX@amdc1976> <20150825160932.GD20070@red-moon>
+ <1574385.AV2PKdoIbr@amdc1976> <55E01D61.8020706@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47589 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751759AbbH1MTR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Aug 2015 08:19:17 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NTS02NYGKW3KPB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Aug 2015 21:19:15 +0900 (KST)
-In-reply-to: <CAJKOXPeJLx5dJUW-9ke0PR-ziRykN4ckAwABOQMj--4GajXfMQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <55E01D61.8020706@osg.samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Anand Moon <linux.amoon@gmail.com>, Daniel Lezcano <daniel.lezcano@free.fr>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com
 
-Hi,
-
-On 08/28/2015 03:36 PM, Krzysztof Kozlowski wrote:
-> 2015-08-28 18:28 GMT+09:00 Alim Akhtar <alim.akhtar@samsung.com>:
->> Adding required mux/div/gate clocks for UFS controller
->> present on Exynos7.
+W dniu 28.08.2015 o 17:35, Javier Martinez Canillas pisze:
+> Hello Bartlomiej and Lorenzo,
+> 
+> Thanks a lot for your explanations.
+> 
+> On 08/27/2015 06:58 PM, Bartlomiej Zolnierkiewicz wrote:
+>
+>> If somebody wants to implement a separate Exynos542x/Exynos5800
+>> big.LITTLE cpuidle driver for them I see no problem with it and I'm
+>> willing to help in maintaining it.
 >>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->> This patch has a dependency on [1]
->> [1]-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg46122.html
->
-> Hi,
->
-> I just noticed that you did not send this and previous patches to
-> proper mailing list and to all of maintainers. You missed
-> linux-clk@vger.kernel.org and Stephen Boyd. Please use
-> script/get_maintainers. It will print all necessary addresses.
->
-Thanks for pointing this out, I will add them.
-> Best regards,
-> Krzysztof
->
+> 
+> Ok, I'll see if I can take a look what is needed to implement a Exynos542x CPUidle
+> driver. I'm quite busy with other stuff right now but I should be less busy in a
+> couple of weeks.
+
+The only useful users of Exynos542x cpuidle would be Chromebooks.
+Probably the same goes with suspend to RAM. Non-mobile devices could
+leave without it.
+
+In the same time cpuidle and S2R would require a significant amount of
+work. Testing would have to be performed on Chromebooks. I have doubts
+it would work on Odroid XU3.
+
+I dug into S2R issues on Odroid XU3 and after fixing trivial imprecise
+abort I don't have clue. It just dies somewhere in firmware/bootloader.
+Vendor code has a lot more stuff related to suspend and testing it
+one-by-one whether it fixes the issue is frustrating.
+
+Do we really need cpuidle or S2R on Exynos542x/5800?
+
+> 
+> Maybe is a little bit out of topic but since Anand also asked about CPUFreq support,
+> are you planning on re-posting your "cpufreq: add generic cpufreq driver support
+> for Exynos5250/5800 platforms" [0] series?
+
+That would be useful. Bartlomiej, do you have plans for continuing the work?
+
+Best regards,
+Krzysztof
+
