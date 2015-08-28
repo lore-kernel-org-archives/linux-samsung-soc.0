@@ -1,85 +1,50 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] clk: samsung: fix cpu clock's flags checking
-Date: Fri, 28 Aug 2015 13:49:35 +0200
-Message-ID: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Add required clock tree for UFS
+Date: Fri, 28 Aug 2015 17:40:03 +0530
+Message-ID: <55E04F9B.7010507@samsung.com>
+References: <1440754083-11829-1-git-send-email-alim.akhtar@samsung.com>
+ <CAJKOXPeJLx5dJUW-9ke0PR-ziRykN4ckAwABOQMj--4GajXfMQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:47589 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751759AbbH1MTR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 28 Aug 2015 08:19:17 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NTS02NYGKW3KPB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Aug 2015 21:19:15 +0900 (KST)
+In-reply-to: <CAJKOXPeJLx5dJUW-9ke0PR-ziRykN4ckAwABOQMj--4GajXfMQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com
 
-CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-incorrectly used as a bit numbers.  Fix it.
+Hi,
 
-Tested on Exynos4210 based Origen board and on Exynos5250 based
-Arndale board.
-
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Fixes: ddeac8d96 ("clk: samsung: add infrastructure to register cpu clocks")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v2:
-- added Reviewed-by, Acked-by and Fixes tags (no code changes)
-
-Michael, please apply.  Thank you.
-
- drivers/clk/samsung/clk-cpu.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 7c1e1f5..2fe37f7 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -164,7 +164,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 	 * the values for DIV_COPY and DIV_HPM dividers need not be set.
- 	 */
- 	div0 = cfg_data->div0;
--	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
- 		div1 = cfg_data->div1;
- 		if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
- 			div1 = readl(base + E4210_DIV_CPU1) &
-@@ -185,7 +185,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
- 		WARN_ON(alt_div >= MAX_DIV);
- 
--		if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
-+		if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
- 			/*
- 			 * In Exynos4210, ATB clock parent is also mout_core. So
- 			 * ATB clock also needs to be mantained at safe speed.
-@@ -206,7 +206,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 	writel(div0, base + E4210_DIV_CPU0);
- 	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
- 
--	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
- 		writel(div1, base + E4210_DIV_CPU1);
- 		wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
- 				DIV_MASK_ALL);
-@@ -225,7 +225,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
- 	unsigned long mux_reg;
- 
- 	/* find out the divider values to use for clock data */
--	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
- 		while ((cfg_data->prate * 1000) != ndata->new_rate) {
- 			if (cfg_data->prate == 0)
- 				return -EINVAL;
-@@ -240,7 +240,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
- 	writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
- 	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
- 
--	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
- 		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
- 		div_mask |= E4210_DIV0_ATB_MASK;
- 	}
--- 
-1.9.1
+On 08/28/2015 03:36 PM, Krzysztof Kozlowski wrote:
+> 2015-08-28 18:28 GMT+09:00 Alim Akhtar <alim.akhtar@samsung.com>:
+>> Adding required mux/div/gate clocks for UFS controller
+>> present on Exynos7.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>> This patch has a dependency on [1]
+>> [1]-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg46122.html
+>
+> Hi,
+>
+> I just noticed that you did not send this and previous patches to
+> proper mailing list and to all of maintainers. You missed
+> linux-clk@vger.kernel.org and Stephen Boyd. Please use
+> script/get_maintainers. It will print all necessary addresses.
+>
+Thanks for pointing this out, I will add them.
+> Best regards,
+> Krzysztof
+>
