@@ -1,118 +1,190 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH] ARM: dts: use vqmmc-supply of emmc/sd for
- exynos4412-odroid-common
-Date: Fri, 28 Aug 2015 18:10:16 +0200
-Message-ID: <55E087E8.3080703@gmx.net>
-References: <1440667758-14960-1-git-send-email-jh80.chung@samsung.com> <55DF0204.1010604@samsung.com> <55DFBE08.9090603@samsung.com> <55DFBFEB.10904@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
+Date: Sat, 29 Aug 2015 16:45:55 +0900
+Message-ID: <CAJKOXPdayKaDghOwP=MRfycFCuAr5=E7rAONQZVbnoTNocxfbw@mail.gmail.com>
+References: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
+	<CAJKOXPdcdREhwQZ22RcqbUSTpOn0XmqJ_3n5uUyzEgPihRYwNQ@mail.gmail.com>
+	<CAPTzV17TRxTXKSucMWEk-5k6TtYsXkO0XFuuaCXKgNc2AoGQjA@mail.gmail.com>
+	<55A70DA4.3010405@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:61453 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751879AbbH1QK1 (ORCPT
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:34141 "EHLO
+	mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752243AbbH2Hp5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Aug 2015 12:10:27 -0400
-In-Reply-To: <55DFBFEB.10904@samsung.com>
+	Sat, 29 Aug 2015 03:45:57 -0400
+Received: by qkfh127 with SMTP id h127so40451507qkf.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Aug 2015 00:45:56 -0700 (PDT)
+In-Reply-To: <55A70DA4.3010405@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+To: chanho61.park@samsung.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Kevin Hilman <khilman@kernel.org>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Heesub Shin <heesub.shin@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello,
-
-Krzysztof Kozlowski wrote:
-> On 28.08.2015 10:48, Jaehoon Chung wrote:
->> On 08/27/2015 09:26 PM, Krzysztof Kozlowski wrote:
->>> W dniu 27.08.2015 o 18:29, Jaehoon Chung pisze:
->>>> Currently vmmc's property is wrong.
->>>> If it needs to control two supplies, then it has to use vmmc/vqmmc-supply.
->>>> (Card supply power and I/O Line supply Power.)
+2015-07-16 10:49 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> On 16.07.2015 10:36, Chanho Park wrote:
+>> Hi,
+>>
+>> On Wed, Jul 15, 2015 at 8:35 PM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> 2015-07-15 10:36 GMT+09:00 Chanho Park <parkch98@gmail.com>:
+>>>> The cpu booting of exynos5422 has been still broken since we discussed
+>>>> it in last year[1]. I found this resetting codes from odroid-xu3 kernel of
+>>>> hardkernel, it could help to boot 8 cores well. This patch need to have
+>>>> more test like STR and other SoC especially exynos5800 which is variant
+>>>> of exynos5422. If this patch is broken on exynos5800, I'll find another
+>>>> way to check exynos5422.
 >>>>
->>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>>>> This patch is top of my previous exynos5422 cpu ordering patch[2] and
+>>>> need to enable CONFIG_EXYNOS5420_MCPM=y
+>>>>
+>>>> [    0.047509] CPU0: update cpu_capacity 448
+>>>> [    0.047534] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
+>>>> [    0.047874] Setting up static identity map for 0x400082c0 -
+>>>> 0x40008318
+>>>> [    0.048340] ARM CCI driver probed
+>>>> [    0.048597] Exynos MCPM support installed
+>>>> [    0.065676] CPU1: update cpu_capacity 448
+>>>> [    0.065685] CPU1: thread -1, cpu 1, socket 1, mpidr 80000101
+>>>> [    0.070672] CPU2: update cpu_capacity 448
+>>>> [    0.070680] CPU2: thread -1, cpu 2, socket 1, mpidr 80000102
+>>>> [    0.075644] CPU3: update cpu_capacity 448
+>>>> [    0.075653] CPU3: thread -1, cpu 3, socket 1, mpidr 80000103
+>>>> [    0.080590] CPU4: update cpu_capacity 1535
+>>>> [    0.080600] CPU4: thread -1, cpu 0, socket 0, mpidr 80000000
+>>>> [    0.085591] CPU5: update cpu_capacity 1535
+>>>> [    0.085599] CPU5: thread -1, cpu 1, socket 0, mpidr 80000001
+>>>> [    0.090590] CPU6: update cpu_capacity 1535
+>>>> [    0.090598] CPU6: thread -1, cpu 2, socket 0, mpidr 80000002
+>>>> [    0.095585] CPU7: update cpu_capacity 1535
+>>>> [    0.095593] CPU7: thread -1, cpu 3, socket 0, mpidr 80000003
+>>>> [    0.095720] Brought up 8 CPUs
+>>>>
+>>>> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
+>>>> [2]:https://patchwork.kernel.org/patch/6782891/
+>>>
+>>> Few questions/issues:
+>>> 1. For the proper patch the commit message needs to be fixed a little.
+>>> The dmesg above is meaningless but instead you can put short dmesg (2
+>>> or 4 lines) with failed booting of CPUs.
+>>
+>> They will be gone when I make a official patch.
+>>
+>>> 2. Why only MCPM? Isn't this also needed without MCPM?
+>>
+>> Current exynos platsmp is not aware multi clusters. MCPM covered
+>> secondary cpu booting of exynos big.Little cores. Without MCPM, same
+>> approach and codes will be required on platsmp thus I think it's
+>> redundant.
+>
+> Okay.
+>
+>>
+>>>
+>>>>
+>>>> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+>>>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> Cc: Kevin Hilman <khilman@kernel.org>
+>>>> Cc: Heesub Shin <heesub.shin@samsung.com>
+>>>> Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+>>>> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+>>>> Cc: Przemyslaw Marczak <p.marczak@samsung.com>
+>>>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>>>> Signed-off-by: Chanho Park <parkch98@gmail.com>
+>>>
+>>> I think both Chanho Parks are the same person :) so you may leave only
+>>> one (the one matching "From").
+>>>
 >>>> ---
->>>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 7 ++++---
->>>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>>>  arch/arm/mach-exynos/mcpm-exynos.c | 13 ++++++++++++-
+>>>>  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
+>>>>  2 files changed, 18 insertions(+), 1 deletion(-)
 >>>>
->>>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>> index ca7d168..4ddabfd 100644
->>>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>> @@ -461,10 +461,10 @@
->>>>  &mshc_0 {
->>>>  	pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
->>>>  	pinctrl-names = "default";
->>>> -	vmmc-supply = <&ldo20_reg &buck8_reg>;
->>>> +	vmmc-supply = <&ldo20_reg>;
->>>> +	vqmmc-supply = <&buck8_reg>;
->>>
->>> Shouldn't this be reversed? LDO20 has 1.8V and it goes to MMC connector,
->>> so it should be VQMMC?
->>
->> If my schematics is right thing, buck8 is used LAN card power.
->> I will send after removing buck8_reg. how about?
->> Anyway, Thanks for pointing out. :)
-> 
-> Removing this regulator from this node would effectively disable it.
-> That could affect other components like LAN.
-> 
-> Anyway before fixing the order I would prefer to find the right
-> regulators used by MSHC node.
-Please see this commit:
-https://github.com/tobiasjakobi/linux-odroid/commit/113ffb92e0c7f58f15fe60b47d13eb2d65956d10
-
-This was derived from private communication with Hardkernel.
-
-I can't vouch for correctness though.
-
-With best wishes,
-Tobias
-
-
-
-> Best regards,
-> Krzysztof
-> 
->>
->> I don't know who this regulator applied. I have guessed that it used for eMMC.
->> Sorry for guessing.
->>
->> Best Regards,
->> Jaehoon Chung
->>
->>>
->>> In the same time I can't find on schematics where BUCK8 goes...
->>>
->>> The SDHCI_2 node below looks good.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>>>  	mmc-pwrseq = <&emmc_pwrseq>;
->>>>  	status = "okay";
->>>> -
->>>>  	num-slots = <1>;
->>>>  	broken-cd;
->>>>  	card-detect-delay = <200>;
->>>> @@ -485,7 +485,8 @@
->>>>  	bus-width = <4>;
->>>>  	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->>>>  	pinctrl-names = "default";
->>>> -	vmmc-supply = <&ldo4_reg &ldo21_reg>;
->>>> +	vmmc-supply = <&ldo21_reg>;
->>>> +	vqmmc-supply = <&ldo4_reg>;
->>>>  	cd-gpios = <&gpk2 2 0>;
->>>>  	cd-inverted;
->>>>  	status = "okay";
+>>>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+>>>> index 9bdf547..a076dde 100644
+>>>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+>>>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+>>>> @@ -70,7 +70,18 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+>>>>                 cluster >= EXYNOS5420_NR_CLUSTERS)
+>>>>                 return -EINVAL;
 >>>>
+>>>> -       exynos_cpu_power_up(cpunr);
+>>>> +       if (!exynos_cpu_power_state(cpunr)) {
+>>>> +               exynos_cpu_power_up(cpunr);
 >>>
->>>
->>>
+>>> This second exynos_cpu_power_up() is needed? Do you know why?
+>>
+>> It's redirected to exynos's platsmp and it turned on CPU through pmu registers.
+>>  -> exynos_cpu_powerup: mcpm-exynos.c
+>>  -> exynos_cpu_power_up: platsmp.c
+>>
+>> Current mcpm exynos tried to run exynos_cpu_power_up twice during
+>> secondary cpu is up. The first is from cpu_power_up of mcpm and the
+>> second is from cpu_is_up. I want to avoid second power up the cpu if
+>> it already turned on.
+>>
+>> static void exynos_cpu_is_up(unsigned int cpu, unsigned int cluster)
+>> {
+>>         /* especially when resuming: make sure power control is set */
+>>
+>>         exynos_cpu_powerup(cpu, cluster);
+>> }
+>
+> Okay, I get it. I misunderstood the patch. It's fine.
+>
 >>
 >>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+>>>
+>>>> +
+>>>> +               if (soc_is_exynos5800() && cluster) {
+>>>
+>>> If of_machine_is_compatible() can be used then please use it. Javier
+>>> also mentioned it and he pointed that this is not necessary on
+>>> Chromebooks.
+>>
+>> Okay. I'll use of_machine_is_compatible() instead of soc_is_exynos5800
+>> to avoid running it from exynos5800.
+>>
+>>>
+>>>> +                       while (!pmu_raw_readl(S5P_PMU_SPARE2))
+>>>> +                               udelay(10);
+>>>> +
+>>>> +                       pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
+>>>> +                                       EXYNOS_SWRESET);
+>>>
+>>> This is quite similar to existing exynos_core_restart(). Can you
+>>> extend it for this purpose? Or at least put it as separate function
+>>> near exynos_core_restart() so this would be grouped close to each
+>>> other?
+>>
+>> As I said above, the platsmp is not aware multi clusters. I feel like
+>> it would be dirty if I try to merge them.
+>
+> But here you are not reseting the cluster but reseting a CPU. Very
+> similar function exists already - for waiting on SPARE2 and reseting
+> CPU. I don't see what multiple clusters are changing here?
+>
+>>>
+>>> Documenting this behaviour would be really nice (you can combine some
+>>> of my findings on SPARE2 from previous discussion, if they are useful
+>>> of course).
+>>
+>> No one knows exactly why we should wait until SPARE2 is up. I'll
+>> specify known issue of it with your findings.
+>
+> Right, no one... at least publicly (probably the guys who have access to
+> sources of BL1/BL2 know). Still it is important to document the reason
+> why we think these steps are necessary. Some 3rd party developer won't
+> have a clue why you are spinning on some SPARE2 register...
+
+
+Dear Chanho,
+
+Do you plan to send next version of the patchset? I tested it on my
+Odroid XU3L (5422) and it works good so the idea you had is correct.
+
+Best regards,
+Krzysztof
