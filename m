@@ -1,163 +1,398 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable big.LITTLE CPUidle support
-Date: Sat, 29 Aug 2015 12:47:53 +0200
-Message-ID: <CABxcv=nHWEBJc0w_26W+Xs5=PQv0Pz=9aFYQnaFyhzwu08110g@mail.gmail.com>
-References: <1440749769-10135-1-git-send-email-javier@osg.samsung.com>
-	<55E174F3.1030202@samsung.com>
-	<55E17C56.4080200@osg.samsung.com>
-	<CAJKOXPerJFZqeqNrVrdQnP7YB23LiWf+ZWYHBsWGRvqDQ-PJGA@mail.gmail.com>
-	<CABxcv=nwXc-_Y7qdZ56EGxM266Yifm56m6+Pb8iTHSWLHHSkfA@mail.gmail.com>
-	<CAJKOXPdVDSPgFPkdnLBezimSHs+N0=5KCyXB=CQqMQy3LAcFVw@mail.gmail.com>
-	<CABxcv=m0K_jR689RiEGGJ40sVASK8E6S02cUY344qMXdtwLo9g@mail.gmail.com>
-	<CAJKOXPeHPstPXxzyw1yBFKY-XR44j8vOfEPm4vq-_Fi6k09EGg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPeHPstPXxzyw1yBFKY-XR44j8vOfEPm4vq-_Fi6k09EGg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Anand Moon <linux.amoon@gmail.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Rob Herring <robh@kernel.org>
+Subject: [RESEND PATCH v3 2/5] irqchip: kill off set_irq_flags usage
+Date: Sat, 29 Aug 2015 18:01:22 -0500
+Message-ID: <1440889285-5637-3-git-send-email-robh@kernel.org>
+References: <1440889285-5637-1-git-send-email-robh@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34123 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752557AbbH2XBo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 29 Aug 2015 19:01:44 -0400
+Received: by obbfr1 with SMTP id fr1so69572047obb.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Aug 2015 16:01:44 -0700 (PDT)
+In-Reply-To: <1440889285-5637-1-git-send-email-robh@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 
-Hello Krzysztof,
+set_irq_flags is ARM specific with custom flags which have genirq
+equivalents. Convert drivers to use the genirq interfaces directly, so we
+can kill off set_irq_flags. The translation of flags is as follows:
 
-On Sat, Aug 29, 2015 at 12:39 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> 2015-08-29 19:31 GMT+09:00 Javier Martinez Canillas <javier@dowhile0.org>:
->> Hello Krzysztof,
->>
->> On Sat, Aug 29, 2015 at 12:22 PM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> 2015-08-29 19:07 GMT+09:00 Javier Martinez Canillas <javier@dowhile0.org>:
->>>> Hello Krzysztof,
->>>>
->>>> On Sat, Aug 29, 2015 at 11:55 AM, Krzysztof Kozlowski
->>>> <k.kozlowski@samsung.com> wrote:
->>>>> 2015-08-29 18:33 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
->>>>>> Hello Krzysztof,
->>>>>>
->>>>>> On 08/29/2015 11:01 AM, Krzysztof Kozlowski wrote:
->>>>>>> W dniu 28.08.2015 o 17:16, Javier Martinez Canillas pisze:
->>>>>>>> Some Exynos big.LITTLE boards (i.e: Exynos5420 and Exynos5800 based
->>>>>>>> Chromebooks) have proper firmware that allow the big.LITTLE CPUidle
->>>>>>>> driver to work correctly, so enable support for this.
->>>>>>>>
->>>>>>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>>>>>>
->>>>>>>> ---
->>>>>>>> Kukjin and Krzysztof,
->>>>>>>>
->>>>>>>> As you know there are other boards like the Exynos5422 based Odroid XU{3,4}
->>>>>>>> whose firmware is broken due leaving CCI in secure mode which means that the
->>>>>>>> kernel MCPM support can't properly manage CCI.
->>>>>>>>
->>>>>>>> So if you pick this patch, it should be tested in kernelci before appearing
->>>>>>>> in linux-next to prevent any boot issues.
->>>>>>>>
->>>>>>>> But if that happens, I believe that is better to do a fix / workaround in
->>>>>>>> those broken platforms since nothing prevents users to enable this option
->>>>>>>> anyways. For example the CCI device node could be disabled in the DTS.
->>>>>>>>
->>>>>>>>  arch/arm/configs/exynos_defconfig | 1 +
->>>>>>>>  1 file changed, 1 insertion(+)
->>>>>>>
->>>>>>> On Odroid XU3L (next-20150828, Hardkernel u-boot) boot hangs just after:
->>>>>>>
->>>>>>
->>>>>> Thanks for testing, I was expecting that is just that I don't have a
->>>>>> Odroid XU{3,4} board for test here, I guess I should get one.
->>>>>>
->>>>>>> [    2.568650] dwmmc_exynos 12200000.mmc: num-slots property not found,
->>>>>>> assuming 1 slot is available
->>>>>>>
->>>>>>> ... so no. NACK :). First the boards, firmware, bootloader or kernel
->>>>>>
->>>>>> Agreed with the nack :)
->>>>>>
->>>>>>> code have to be fixed.
->>>>>>>
->>>>>>
->>>>>> Or disable CCI, could you please test the following patch [0] so I
->>>>>> can post it properly?
->>>>>
->>>>> It fixes the boot hang but causes other issues. Not all CPUs boot (I
->>>>
->>>> Thanks for testing.
->>>>
->>>>> tested it on Chanho Park's patch for fixing CPU boot with SWRESET):
->>>>> [    0.010781] CPU0: update cpu_capacity 448
->>>>> [    0.010839] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
->>>>> [    0.011098] Setting up static identity map for 0x40008280 - 0x400082d8
->>>>> [    0.056329] CPU1: update cpu_capacity 448
->>>>> [    0.056337] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
->>>>> [    0.071100] CPU2: update cpu_capacity 448
->>>>> [    0.071107] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
->>>>> [    0.086103] CPU3: update cpu_capacity 448
->>>>> [    0.086111] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
->>>>> [    0.101100] CPU4: update cpu_capacity 1535
->>>>> [    0.101108] CPU4: thread -1, cpu 0, socket 0, mpidr 80000000
->>>>> [    1.115009] CPU5: failed to boot: -110
->>>>> [    2.130019] CPU6: failed to boot: -110
->>>>> [    3.145049] CPU7: failed to boot: -110
->>>>> [    3.145151] Brought up 5 CPUs
->>>>> [    3.145196] SMP: Total of 5 processors activated (240.00 BogoMIPS).
->>>>> [    3.145251] CPU: WARNING: CPU(s) started in wrong/inconsistent
->>>>> modes (primary CPU mode 0x13)
->>>>> [    3.145327] CPU: This may indicate a broken bootloader or firmware.
->>>>> [    3.149347] devtmpfs: initialized
->>>>>
->>>>
->>>> Sigh, such an inconsistent behavior between Exynos5420/5422/5800 boards :-/
->>>
->>> I put all my hope into Przemyslaw's work :)
->>>
->>
->> Me too :)
->>
->>>>
->>>> Any ideas? I agree that the b.L CPUidle support shouldn't be enabled
->>>> by default in exynos_defconfig but as I said nothing prevents the user
->>>> to enable that option and make the board to hang on boot.
->>>
->>> I think these are actually two different issues:
->>> 1. If user enables b.L cpuidle manually, some of the Exynos542x boards
->>> would work (Peach Pi, AFAIU?) and some would not (Odroid XU3, probably
->>
->> Yes, Exynos5800 Peach Pi and Exynos5420 Peach Pit IIRC.
->>
->>> also Arndale Octa). If we cannot fix firmware then we could implement
->>> a workaround in Exynos code. However it shouldn't be DTS but rather
->>> the mach code.
->>
->> Agreed about adding a workaround in mach code.
->>
->>> 2. The default config should be a reference config so it should work
->>> on all boards and should offer all necessary features on them (or even
->>> all features). Enabling the b.L in it makes sense only if it does not
->>> introduce regressions to other boards. If we cannot achieve that
->>> (Odroid XU3 will be affected negatively) then still we could fix issue
->>> #1 so user's manual setting would work.
->>>
->>
->> Yes but if we achieve #1, then I think that b.L CPUidle support should
->> be enabled by default in exynos_defconfig even when it does not work
->> on some boards (as long as don't affect negatively) so users of boards
->> that do work can have that feature out of the box without figuring out
->> what additional config options needs to be enabled.
->>
->> Or that's what you meant and I misunderstood?
->
-> If there won't be negative impact then sure, it could be enabled.
-> However as we saw above, disabling CCI (which is a fix for cpuidle b.L
-> on XU3) has negative impact. Of course there could be other
-> workarounds...
->
+IRQF_VALID -> !IRQ_NOREQUEST
+IRQF_PROBE -> !IRQ_NOPROBE
+IRQF_NOAUTOEN -> IRQ_NOAUTOEN
 
-Yeah, I meant after / if we find a workaround in mach code as you
-explained in #1.
+For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+and setting IRQ_NOREQUEST already, so there is no need to do this in
+.map() functions and we can simply remove the set_irq_flags calls. Some
+users also modify IRQ_NOPROBE and this has been maintained although it
+is not clear that is really needed. There appears to be a great deal of
+blind copy and paste of this code.
 
-> Best regards,
-> Krzysztof
+Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Lee Jones <lee@kernel.org>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+---
+ drivers/irqchip/exynos-combiner.c         |  2 +-
+ drivers/irqchip/irq-armada-370-xp.c       |  3 +--
+ drivers/irqchip/irq-bcm2835.c             |  2 +-
+ drivers/irqchip/irq-clps711x.c            |  6 +++---
+ drivers/irqchip/irq-gic-v3.c              |  5 ++---
+ drivers/irqchip/irq-gic.c                 |  4 ++--
+ drivers/irqchip/irq-hip04.c               |  4 ++--
+ drivers/irqchip/irq-keystone.c            |  2 +-
+ drivers/irqchip/irq-mmp.c                 |  3 ---
+ drivers/irqchip/irq-mxs.c                 |  1 -
+ drivers/irqchip/irq-renesas-intc-irqpin.c |  1 -
+ drivers/irqchip/irq-renesas-irqc.c        |  1 -
+ drivers/irqchip/irq-s3c24xx.c             | 14 ++------------
+ drivers/irqchip/irq-sun4i.c               |  2 +-
+ drivers/irqchip/irq-versatile-fpga.c      |  2 +-
+ drivers/irqchip/irq-vic.c                 |  2 +-
+ drivers/irqchip/irq-vt8500.c              |  1 -
+ drivers/irqchip/spear-shirq.c             |  1 -
+ 18 files changed, 18 insertions(+), 38 deletions(-)
 
-Best regards,
-Javier
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index 5c82e3b..a62cfd3 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -165,7 +165,7 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 
+ 	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
+ 	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(irq);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
+index 0d3b0fe..017f881 100644
+--- a/drivers/irqchip/irq-armada-370-xp.c
++++ b/drivers/irqchip/irq-armada-370-xp.c
+@@ -201,7 +201,6 @@ static int armada_370_xp_msi_map(struct irq_domain *domain, unsigned int virq,
+ {
+ 	irq_set_chip_and_handler(virq, &armada_370_xp_msi_irq_chip,
+ 				 handle_simple_irq);
+-	set_irq_flags(virq, IRQF_VALID);
+ 
+ 	return 0;
+ }
+@@ -318,7 +317,7 @@ static int armada_370_xp_mpic_irq_map(struct irq_domain *h,
+ 		irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
+ 					handle_level_irq);
+ 	}
+-	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(virq);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
+index e68c3b6..9c4ba16 100644
+--- a/drivers/irqchip/irq-bcm2835.c
++++ b/drivers/irqchip/irq-bcm2835.c
+@@ -165,7 +165,7 @@ static int __init armctrl_of_init(struct device_node *node,
+ 			BUG_ON(irq <= 0);
+ 			irq_set_chip_and_handler(irq, &armctrl_chip,
+ 				handle_level_irq);
+-			set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++			irq_set_probe(irq);
+ 		}
+ 	}
+ 
+diff --git a/drivers/irqchip/irq-clps711x.c b/drivers/irqchip/irq-clps711x.c
+index 33127f1..2e74e81 100644
+--- a/drivers/irqchip/irq-clps711x.c
++++ b/drivers/irqchip/irq-clps711x.c
+@@ -133,14 +133,14 @@ static int __init clps711x_intc_irq_map(struct irq_domain *h, unsigned int virq,
+ 					irq_hw_number_t hw)
+ {
+ 	irq_flow_handler_t handler = handle_level_irq;
+-	unsigned int flags = IRQF_VALID | IRQF_PROBE;
++	unsigned int flags = 0;
+ 
+ 	if (!clps711x_irqs[hw].flags)
+ 		return 0;
+ 
+ 	if (clps711x_irqs[hw].flags & CLPS711X_FLAG_FIQ) {
+ 		handler = handle_bad_irq;
+-		flags |= IRQF_NOAUTOEN;
++		flags |= IRQ_NOAUTOEN;
+ 	} else if (clps711x_irqs[hw].eoi) {
+ 		handler = handle_fasteoi_irq;
+ 	}
+@@ -150,7 +150,7 @@ static int __init clps711x_intc_irq_map(struct irq_domain *h, unsigned int virq,
+ 		writel_relaxed(0, clps711x_intc->base + clps711x_irqs[hw].eoi);
+ 
+ 	irq_set_chip_and_handler(virq, &clps711x_intc_chip, handler);
+-	set_irq_flags(virq, flags);
++	irq_modify_status(virq, IRQ_NOPROBE, flags);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index c52f7ba..16f9028 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -681,13 +681,13 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 		irq_set_percpu_devid(irq);
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_percpu_devid_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
++		irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	}
+ 	/* SPIs */
+ 	if (hw >= 32 && hw < gic_data.irq_nr) {
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_fasteoi_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++		irq_set_probe(irq);
+ 	}
+ 	/* LPIs */
+ 	if (hw >= 8192 && hw < GIC_ID_NR) {
+@@ -695,7 +695,6 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 			return -EPERM;
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_fasteoi_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 4dd8826..d6a1ba1 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -793,11 +793,11 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 		irq_set_percpu_devid(irq);
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_percpu_devid_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
++		irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	} else {
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_fasteoi_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++		irq_set_probe(irq);
+ 	}
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
+index 0cae45d..469fba6 100644
+--- a/drivers/irqchip/irq-hip04.c
++++ b/drivers/irqchip/irq-hip04.c
+@@ -305,11 +305,11 @@ static int hip04_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 		irq_set_percpu_devid(irq);
+ 		irq_set_chip_and_handler(irq, &hip04_irq_chip,
+ 					 handle_percpu_devid_irq);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
++		irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	} else {
+ 		irq_set_chip_and_handler(irq, &hip04_irq_chip,
+ 					 handle_fasteoi_irq);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++		irq_set_probe(irq);
+ 	}
+ 	irq_set_chip_data(irq, d->host_data);
+ 	return 0;
+diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
+index 81e3cf5..e7090ec 100644
+--- a/drivers/irqchip/irq-keystone.c
++++ b/drivers/irqchip/irq-keystone.c
+@@ -127,7 +127,7 @@ static int keystone_irq_map(struct irq_domain *h, unsigned int virq,
+ 
+ 	irq_set_chip_data(virq, kirq);
+ 	irq_set_chip_and_handler(virq, &kirq->chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(virq);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index c0da57b..3dfef63 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -164,7 +164,6 @@ static int mmp_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 			      irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(irq, &icu_irq_chip, handle_level_irq);
+-	set_irq_flags(irq, IRQF_VALID);
+ 	return 0;
+ }
+ 
+@@ -234,7 +233,6 @@ void __init icu_init_irq(void)
+ 	for (irq = 0; irq < 64; irq++) {
+ 		icu_mask_irq(irq_get_irq_data(irq));
+ 		irq_set_chip_and_handler(irq, &icu_irq_chip, handle_level_irq);
+-		set_irq_flags(irq, IRQF_VALID);
+ 	}
+ 	irq_set_default_host(icu_data[0].domain);
+ 	set_handle_irq(mmp_handle_irq);
+@@ -337,7 +335,6 @@ void __init mmp2_init_icu(void)
+ 			irq_set_chip_and_handler(irq, &icu_irq_chip,
+ 						 handle_level_irq);
+ 		}
+-		set_irq_flags(irq, IRQF_VALID);
+ 	}
+ 	irq_set_default_host(icu_data[0].domain);
+ 	set_handle_irq(mmp2_handle_irq);
+diff --git a/drivers/irqchip/irq-mxs.c b/drivers/irqchip/irq-mxs.c
+index 04bf97b..ffe85d6 100644
+--- a/drivers/irqchip/irq-mxs.c
++++ b/drivers/irqchip/irq-mxs.c
+@@ -85,7 +85,6 @@ static int icoll_irq_domain_map(struct irq_domain *d, unsigned int virq,
+ 				irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(virq, &mxs_icoll_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
+index 0670ab4..20a86de 100644
+--- a/drivers/irqchip/irq-renesas-intc-irqpin.c
++++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
+@@ -343,7 +343,6 @@ static int intc_irqpin_irq_domain_map(struct irq_domain *h, unsigned int virq,
+ 	intc_irqpin_dbg(&p->irq[hw], "map");
+ 	irq_set_chip_data(virq, h->host_data);
+ 	irq_set_chip_and_handler(virq, &p->irq_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID); /* kill me now */
+ 	return 0;
+ }
+ 
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index 778bd07..74e980f 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -162,7 +162,6 @@ static int irqc_irq_domain_map(struct irq_domain *h, unsigned int virq,
+ 	irqc_dbg(&p->irq[hw], "map");
+ 	irq_set_chip_data(virq, h->host_data);
+ 	irq_set_chip_and_handler(virq, &p->irq_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID); /* kill me now */
+ 	return 0;
+ }
+ 
+diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
+index e96717f..19d1fc4 100644
+--- a/drivers/irqchip/irq-s3c24xx.c
++++ b/drivers/irqchip/irq-s3c24xx.c
+@@ -469,13 +469,11 @@ static int s3c24xx_irq_map(struct irq_domain *h, unsigned int virq,
+ 
+ 	irq_set_chip_data(virq, irq_data);
+ 
+-	set_irq_flags(virq, IRQF_VALID);
+-
+ 	if (parent_intc && irq_data->type != S3C_IRQTYPE_NONE) {
+ 		if (irq_data->parent_irq > 31) {
+ 			pr_err("irq-s3c24xx: parent irq %lu is out of range\n",
+ 			       irq_data->parent_irq);
+-			goto err;
++			return -EINVAL;
+ 		}
+ 
+ 		parent_irq_data = &parent_intc->irqs[irq_data->parent_irq];
+@@ -488,18 +486,12 @@ static int s3c24xx_irq_map(struct irq_domain *h, unsigned int virq,
+ 		if (!irqno) {
+ 			pr_err("irq-s3c24xx: could not find mapping for parent irq %lu\n",
+ 			       irq_data->parent_irq);
+-			goto err;
++			return -EINVAL;
+ 		}
+ 		irq_set_chained_handler(irqno, s3c_irq_demux);
+ 	}
+ 
+ 	return 0;
+-
+-err:
+-	set_irq_flags(virq, 0);
+-
+-	/* the only error can result from bad mapping data*/
+-	return -EINVAL;
+ }
+ 
+ static const struct irq_domain_ops s3c24xx_irq_ops = {
+@@ -1177,8 +1169,6 @@ static int s3c24xx_irq_map_of(struct irq_domain *h, unsigned int virq,
+ 
+ 	irq_set_chip_data(virq, irq_data);
+ 
+-	set_irq_flags(virq, IRQF_VALID);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
+index 83d6aa6..f1f401c 100644
+--- a/drivers/irqchip/irq-sun4i.c
++++ b/drivers/irqchip/irq-sun4i.c
+@@ -84,7 +84,7 @@ static int sun4i_irq_map(struct irq_domain *d, unsigned int virq,
+ 			 irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(virq, &sun4i_irq_chip, handle_fasteoi_irq);
+-	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(virq);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+index 888111b..e96b4fe 100644
+--- a/drivers/irqchip/irq-versatile-fpga.c
++++ b/drivers/irqchip/irq-versatile-fpga.c
+@@ -128,7 +128,7 @@ static int fpga_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 	irq_set_chip_data(irq, f);
+ 	irq_set_chip_and_handler(irq, &f->chip,
+ 				handle_level_irq);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(irq);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
+index d4ce331..401561c 100644
+--- a/drivers/irqchip/irq-vic.c
++++ b/drivers/irqchip/irq-vic.c
+@@ -202,7 +202,7 @@ static int vic_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 		return -EPERM;
+ 	irq_set_chip_and_handler(irq, &vic_chip, handle_level_irq);
+ 	irq_set_chip_data(irq, v->base);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(irq);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/irqchip/irq-vt8500.c b/drivers/irqchip/irq-vt8500.c
+index 0b29700..8b235c9 100644
+--- a/drivers/irqchip/irq-vt8500.c
++++ b/drivers/irqchip/irq-vt8500.c
+@@ -168,7 +168,6 @@ static int vt8500_irq_map(struct irq_domain *h, unsigned int virq,
+ 							irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(virq, &vt8500_irq_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
+index acb721b..e2b4e99 100644
+--- a/drivers/irqchip/spear-shirq.c
++++ b/drivers/irqchip/spear-shirq.c
+@@ -212,7 +212,6 @@ static void __init spear_shirq_register(struct spear_shirq *shirq,
+ 	for (i = 0; i < shirq->nr_irqs; i++) {
+ 		irq_set_chip_and_handler(shirq->virq_base + i,
+ 					 shirq->irq_chip, handle_simple_irq);
+-		set_irq_flags(shirq->virq_base + i, IRQF_VALID);
+ 		irq_set_chip_data(shirq->virq_base + i, shirq);
+ 	}
+ }
+-- 
+2.1.4
