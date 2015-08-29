@@ -1,190 +1,306 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
-Date: Sat, 29 Aug 2015 16:45:55 +0900
-Message-ID: <CAJKOXPdayKaDghOwP=MRfycFCuAr5=E7rAONQZVbnoTNocxfbw@mail.gmail.com>
-References: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
-	<CAJKOXPdcdREhwQZ22RcqbUSTpOn0XmqJ_3n5uUyzEgPihRYwNQ@mail.gmail.com>
-	<CAPTzV17TRxTXKSucMWEk-5k6TtYsXkO0XFuuaCXKgNc2AoGQjA@mail.gmail.com>
-	<55A70DA4.3010405@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Add required clock tree for UFS
+Date: Sat, 29 Aug 2015 17:53:27 +0900
+Message-ID: <CAJKOXPe2vzB3J=7qqSajxnHLViMymV7OuE4Bj0WESu5Ntvx6og@mail.gmail.com>
+References: <1440754083-11829-1-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:34141 "EHLO
-	mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752243AbbH2Hp5 (ORCPT
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:36845 "EHLO
+	mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120AbbH2Ix2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Aug 2015 03:45:57 -0400
-Received: by qkfh127 with SMTP id h127so40451507qkf.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Aug 2015 00:45:56 -0700 (PDT)
-In-Reply-To: <55A70DA4.3010405@samsung.com>
+	Sat, 29 Aug 2015 04:53:28 -0400
+Received: by qkda128 with SMTP id a128so40442705qkd.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Aug 2015 01:53:27 -0700 (PDT)
+In-Reply-To: <1440754083-11829-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: chanho61.park@samsung.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Kevin Hilman <khilman@kernel.org>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Heesub Shin <heesub.shin@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com, kgene@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com
 
-2015-07-16 10:49 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> On 16.07.2015 10:36, Chanho Park wrote:
->> Hi,
->>
->> On Wed, Jul 15, 2015 at 8:35 PM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> 2015-07-15 10:36 GMT+09:00 Chanho Park <parkch98@gmail.com>:
->>>> The cpu booting of exynos5422 has been still broken since we discussed
->>>> it in last year[1]. I found this resetting codes from odroid-xu3 kernel of
->>>> hardkernel, it could help to boot 8 cores well. This patch need to have
->>>> more test like STR and other SoC especially exynos5800 which is variant
->>>> of exynos5422. If this patch is broken on exynos5800, I'll find another
->>>> way to check exynos5422.
->>>>
->>>> This patch is top of my previous exynos5422 cpu ordering patch[2] and
->>>> need to enable CONFIG_EXYNOS5420_MCPM=y
->>>>
->>>> [    0.047509] CPU0: update cpu_capacity 448
->>>> [    0.047534] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
->>>> [    0.047874] Setting up static identity map for 0x400082c0 -
->>>> 0x40008318
->>>> [    0.048340] ARM CCI driver probed
->>>> [    0.048597] Exynos MCPM support installed
->>>> [    0.065676] CPU1: update cpu_capacity 448
->>>> [    0.065685] CPU1: thread -1, cpu 1, socket 1, mpidr 80000101
->>>> [    0.070672] CPU2: update cpu_capacity 448
->>>> [    0.070680] CPU2: thread -1, cpu 2, socket 1, mpidr 80000102
->>>> [    0.075644] CPU3: update cpu_capacity 448
->>>> [    0.075653] CPU3: thread -1, cpu 3, socket 1, mpidr 80000103
->>>> [    0.080590] CPU4: update cpu_capacity 1535
->>>> [    0.080600] CPU4: thread -1, cpu 0, socket 0, mpidr 80000000
->>>> [    0.085591] CPU5: update cpu_capacity 1535
->>>> [    0.085599] CPU5: thread -1, cpu 1, socket 0, mpidr 80000001
->>>> [    0.090590] CPU6: update cpu_capacity 1535
->>>> [    0.090598] CPU6: thread -1, cpu 2, socket 0, mpidr 80000002
->>>> [    0.095585] CPU7: update cpu_capacity 1535
->>>> [    0.095593] CPU7: thread -1, cpu 3, socket 0, mpidr 80000003
->>>> [    0.095720] Brought up 8 CPUs
->>>>
->>>> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
->>>> [2]:https://patchwork.kernel.org/patch/6782891/
->>>
->>> Few questions/issues:
->>> 1. For the proper patch the commit message needs to be fixed a little.
->>> The dmesg above is meaningless but instead you can put short dmesg (2
->>> or 4 lines) with failed booting of CPUs.
->>
->> They will be gone when I make a official patch.
->>
->>> 2. Why only MCPM? Isn't this also needed without MCPM?
->>
->> Current exynos platsmp is not aware multi clusters. MCPM covered
->> secondary cpu booting of exynos big.Little cores. Without MCPM, same
->> approach and codes will be required on platsmp thus I think it's
->> redundant.
+2015-08-28 18:28 GMT+09:00 Alim Akhtar <alim.akhtar@samsung.com>:
+> Adding required mux/div/gate clocks for UFS controller
+> present on Exynos7.
 >
-> Okay.
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+> This patch has a dependency on [1]
+> [1]-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg46122.html
 >
->>
->>>
->>>>
->>>> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
->>>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Cc: Kevin Hilman <khilman@kernel.org>
->>>> Cc: Heesub Shin <heesub.shin@samsung.com>
->>>> Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
->>>> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
->>>> Cc: Przemyslaw Marczak <p.marczak@samsung.com>
->>>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
->>>> Signed-off-by: Chanho Park <parkch98@gmail.com>
->>>
->>> I think both Chanho Parks are the same person :) so you may leave only
->>> one (the one matching "From").
->>>
->>>> ---
->>>>  arch/arm/mach-exynos/mcpm-exynos.c | 13 ++++++++++++-
->>>>  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
->>>>  2 files changed, 18 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
->>>> index 9bdf547..a076dde 100644
->>>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
->>>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
->>>> @@ -70,7 +70,18 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
->>>>                 cluster >= EXYNOS5420_NR_CLUSTERS)
->>>>                 return -EINVAL;
->>>>
->>>> -       exynos_cpu_power_up(cpunr);
->>>> +       if (!exynos_cpu_power_state(cpunr)) {
->>>> +               exynos_cpu_power_up(cpunr);
->>>
->>> This second exynos_cpu_power_up() is needed? Do you know why?
->>
->> It's redirected to exynos's platsmp and it turned on CPU through pmu registers.
->>  -> exynos_cpu_powerup: mcpm-exynos.c
->>  -> exynos_cpu_power_up: platsmp.c
->>
->> Current mcpm exynos tried to run exynos_cpu_power_up twice during
->> secondary cpu is up. The first is from cpu_power_up of mcpm and the
->> second is from cpu_is_up. I want to avoid second power up the cpu if
->> it already turned on.
->>
->> static void exynos_cpu_is_up(unsigned int cpu, unsigned int cluster)
->> {
->>         /* especially when resuming: make sure power control is set */
->>
->>         exynos_cpu_powerup(cpu, cluster);
->> }
+>  drivers/clk/samsung/clk-exynos7.c       |  117 +++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos7-clk.h |   34 +++++++--
+>  2 files changed, 146 insertions(+), 5 deletions(-)
 >
-> Okay, I get it. I misunderstood the patch. It's fine.
+> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+> index 380608b..069af8c 100644
+> --- a/drivers/clk/samsung/clk-exynos7.c
+> +++ b/drivers/clk/samsung/clk-exynos7.c
+> @@ -35,6 +35,7 @@
+>  #define DIV_TOPC1              0x0604
+>  #define DIV_TOPC3              0x060C
+>  #define ENABLE_ACLK_TOPC1      0x0804
+> +#define ENABLE_SCLK_TOPC1      0x0A04
 >
->>
->>
->>>
->>>> +
->>>> +               if (soc_is_exynos5800() && cluster) {
->>>
->>> If of_machine_is_compatible() can be used then please use it. Javier
->>> also mentioned it and he pointed that this is not necessary on
->>> Chromebooks.
->>
->> Okay. I'll use of_machine_is_compatible() instead of soc_is_exynos5800
->> to avoid running it from exynos5800.
->>
->>>
->>>> +                       while (!pmu_raw_readl(S5P_PMU_SPARE2))
->>>> +                               udelay(10);
->>>> +
->>>> +                       pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
->>>> +                                       EXYNOS_SWRESET);
->>>
->>> This is quite similar to existing exynos_core_restart(). Can you
->>> extend it for this purpose? Or at least put it as separate function
->>> near exynos_core_restart() so this would be grouped close to each
->>> other?
->>
->> As I said above, the platsmp is not aware multi clusters. I feel like
->> it would be dirty if I try to merge them.
->
-> But here you are not reseting the cluster but reseting a CPU. Very
-> similar function exists already - for waiting on SPARE2 and reseting
-> CPU. I don't see what multiple clusters are changing here?
->
->>>
->>> Documenting this behaviour would be really nice (you can combine some
->>> of my findings on SPARE2 from previous discussion, if they are useful
->>> of course).
->>
->> No one knows exactly why we should wait until SPARE2 is up. I'll
->> specify known issue of it with your findings.
->
-> Right, no one... at least publicly (probably the guys who have access to
-> sources of BL1/BL2 know). Still it is important to document the reason
-> why we think these steps are necessary. Some 3rd party developer won't
-> have a clue why you are spinning on some SPARE2 register...
+>  static struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initdata = {
+>         FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_bus0_pll_ctrl", 1, 2, 0),
+> @@ -143,6 +144,15 @@ static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
+>  static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+>         GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
+>                 ENABLE_ACLK_TOPC1, 20, 0, 0),
+> +
+> +       GATE(SCLK_MFC_PLL_B, "dout_sclk_mfc_pll_b", "dout_sclk_mfc_pll",
+> +               ENABLE_SCLK_TOPC1, 17, 0, 0),
+> +       GATE(SCLK_MFC_PLL_A, "dout_sclk_mfc_pll_a", "dout_sclk_mfc_pll",
+> +               ENABLE_SCLK_TOPC1, 16, 0, 0),
+> +       GATE(SCLK_BUS1_PLL_B, "dout_sclk_bus1_pll_b", "dout_sclk_bus1_pll",
+> +               ENABLE_SCLK_TOPC1, 13, 0, 0),
+> +       GATE(SCLK_BUS1_PLL_B, "dout_sclk_bus1_pll_a", "dout_sclk_bus1_pll",
+> +               ENABLE_SCLK_TOPC1, 12, 0, 0),
 
+1. s/SCLK_BUS1_PLL_B/SCLK_BUS1_PLL_A/?
+2. Why have they name prefixed with "dout"? These are gates, not dividers.
 
-Dear Chanho,
+>  };
+>
+>  static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+> @@ -433,12 +443,21 @@ static struct samsung_mux_clock top1_mux_clks[] __initdata = {
+>         MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
+>         MUX(0, "mout_aclk_fsys0_200", mout_top1_group1, MUX_SEL_TOP13, 28, 2),
+>
+> +       MUX(0, "mout_sclk_phy_fsys0_26m", mout_top1_group1,
+> +               MUX_SEL_TOP1_FSYS0, 0, 2),
+>         MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 16, 2),
+>         MUX(0, "mout_sclk_usbdrd300", mout_top1_group1,
+>                 MUX_SEL_TOP1_FSYS0, 28, 2),
+>
+> +       MUX(0, "mout_sclk_phy_fsys1", mout_top1_group1,
+> +               MUX_SEL_TOP1_FSYS1, 0, 2),
+> +       MUX(0, "mout_sclk_ufsunipro20", mout_top1_group1,
+> +               MUX_SEL_TOP1_FSYS1, 16, 2),
+> +
+>         MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 0, 2),
+>         MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS11, 12, 2),
+> +       MUX(0, "mout_sclk_phy_fsys1_26m", mout_top1_group1,
+> +               MUX_SEL_TOP1_FSYS11, 24, 2),
+>  };
+>
+>  static struct samsung_div_clock top1_div_clks[] __initdata = {
+> @@ -447,6 +466,13 @@ static struct samsung_div_clock top1_div_clks[] __initdata = {
+>         DIV(DOUT_ACLK_FSYS0_200, "dout_aclk_fsys0_200", "mout_aclk_fsys0_200",
+>                 DIV_TOP13, 28, 4),
+>
+> +       DIV(DOUT_SCLK_PHY_FSYS1, "dout_sclk_phy_fsys1",
+> +               "mout_sclk_phy_fsys1", DIV_TOP1_FSYS1, 0, 6),
+> +
+> +       DIV(DOUT_SCLK_UFSUNIPRO20, "dout_sclk_ufsunipro20",
+> +               "mout_sclk_ufsunipro20",
+> +               DIV_TOP1_FSYS1, 16, 6),
+> +
+>         DIV(DOUT_SCLK_MMC2, "dout_sclk_mmc2", "mout_sclk_mmc2",
+>                 DIV_TOP1_FSYS0, 16, 10),
+>         DIV(0, "dout_sclk_usbdrd300", "mout_sclk_usbdrd300",
+> @@ -456,6 +482,9 @@ static struct samsung_div_clock top1_div_clks[] __initdata = {
+>                 DIV_TOP1_FSYS11, 0, 10),
+>         DIV(DOUT_SCLK_MMC0, "dout_sclk_mmc0", "mout_sclk_mmc0",
+>                 DIV_TOP1_FSYS11, 12, 10),
+> +
+> +       DIV(DOUT_SCLK_PHY_FSYS1_26M, "dout_sclk_phy_fsys1_26m",
+> +               "mout_sclk_phy_fsys1_26m", DIV_TOP1_FSYS11, 24, 6),
+>  };
+>
+>  static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+> @@ -464,10 +493,20 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+>         GATE(0, "sclk_usbdrd300", "dout_sclk_usbdrd300",
+>                 ENABLE_SCLK_TOP1_FSYS0, 28, 0, 0),
+>
+> +       GATE(CLK_SCLK_PHY_FSYS1, "sclk_phy_fsys1", "dout_sclk_phy_fsys1",
+> +               ENABLE_SCLK_TOP1_FSYS1, 0, CLK_SET_RATE_PARENT, 0),
+> +
+> +       GATE(CLK_SCLK_UFSUNIPRO20, "sclk_ufsunipro20", "dout_sclk_ufsunipro20",
+> +               ENABLE_SCLK_TOP1_FSYS1, 16, CLK_SET_RATE_PARENT, 0),
+> +
+>         GATE(CLK_SCLK_MMC1, "sclk_mmc1", "dout_sclk_mmc1",
+>                 ENABLE_SCLK_TOP1_FSYS11, 0, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_MMC0, "sclk_mmc0", "dout_sclk_mmc0",
+>                 ENABLE_SCLK_TOP1_FSYS11, 12, CLK_SET_RATE_PARENT, 0),
+> +
+> +       GATE(CLK_SCLK_PHY_FSYS1_26M, "sclk_phy_fsys1_26m",
+> +               "dout_sclk_phy_fsys1_26m", ENABLE_SCLK_TOP1_FSYS11,
+> +               24, CLK_SET_RATE_PARENT, 0),
+>  };
+>
+>  static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
+> @@ -902,39 +941,117 @@ CLK_OF_DECLARE(exynos7_clk_fsys0, "samsung,exynos7-clock-fsys0",
+>  /* Register Offset definitions for CMU_FSYS1 (0x156E0000) */
+>  #define MUX_SEL_FSYS10                 0x0200
+>  #define MUX_SEL_FSYS11                 0x0204
+> +#define MUX_SEL_FSYS12                 0x0208
+> +#define DIV_FSYS1                      0x0600
+>  #define ENABLE_ACLK_FSYS1              0x0800
+> +#define ENABLE_PCLK_FSYS1               0x0900
+> +#define ENABLE_SCLK_FSYS11              0x0A04
+> +#define ENABLE_SCLK_FSYS12              0x0A08
+> +#define ENABLE_SCLK_FSYS13              0x0A0C
+>
+>  /*
+>   * List of parent clocks for Muxes in CMU_FSYS1
+>   */
+>  PNAME(mout_aclk_fsys1_200_p)   = { "fin_pll",  "dout_aclk_fsys1_200" };
+> +PNAME(mout_fsys1_group_p)      = { "fin_pll", "fin_pll_26m",
+> +                               "sclk_phy_fsys1_26m" };
+>  PNAME(mout_sclk_mmc0_p)                = { "fin_pll", "sclk_mmc0" };
+>  PNAME(mout_sclk_mmc1_p)                = { "fin_pll", "sclk_mmc1" };
+> +PNAME(mout_sclk_ufsunipro20_user_p)  = { "fin_pll", "sclk_ufsunipro20" };
+> +PNAME(mout_phyclk_ufs20_tx0_user_p) = { "fin_pll", "phyclk_ufs20_tx0_symbol" };
+> +PNAME(mout_phyclk_ufs20_rx0_user_p) = { "fin_pll", "phyclk_ufs20_rx0_symbol" };
+> +PNAME(mout_phyclk_ufs20_rx1_user_p) = { "fin_pll", "phyclk_ufs20_rx1_symbol" };
+> +
+> +/* fixed rate clocks used in the FSYS1 block */
+> +struct samsung_fixed_rate_clock fixed_rate_clks_fsys1[] __initdata = {
+> +       FRATE(PHYCLK_UFS20_TX0_SYMBOL, "phyclk_ufs20_tx0_symbol", NULL,
+> +                       CLK_IS_ROOT, 300000000),
+> +       FRATE(PHYCLK_UFS20_RX0_SYMBOL, "phyclk_ufs20_rx0_symbol", NULL,
+> +                       CLK_IS_ROOT, 300000000),
+> +       FRATE(PHYCLK_UFS20_RX1_SYMBOL, "phyclk_ufs20_rx1_symbol", NULL,
+> +                       CLK_IS_ROOT, 300000000),
+> +};
+>
+>  static unsigned long fsys1_clk_regs[] __initdata = {
+>         MUX_SEL_FSYS10,
+>         MUX_SEL_FSYS11,
+> +       MUX_SEL_FSYS12,
+> +       DIV_FSYS1,
+>         ENABLE_ACLK_FSYS1,
+> +       ENABLE_PCLK_FSYS1,
+> +       ENABLE_SCLK_FSYS11,
+> +       ENABLE_SCLK_FSYS12,
+> +       ENABLE_SCLK_FSYS13,
+>  };
+>
+>  static struct samsung_mux_clock fsys1_mux_clks[] __initdata = {
+> +       MUX(MOUT_FSYS1_PHYCLK_SEL1, "mout_fsys1_phyclk_sel1",
+> +               mout_fsys1_group_p, MUX_SEL_FSYS10, 16, 2),
+> +       MUX(0, "mout_fsys1_phyclk_sel0", mout_fsys1_group_p,
+> +                MUX_SEL_FSYS10, 20, 2),
+>         MUX(0, "mout_aclk_fsys1_200_user", mout_aclk_fsys1_200_p,
+>                 MUX_SEL_FSYS10, 28, 1),
+>
+> +       MUX(0, "mout_sclk_ufsunipro20_user", mout_sclk_ufsunipro20_user_p,
+> +               MUX_SEL_FSYS11, 20, 1),
+>         MUX(0, "mout_sclk_mmc1_user", mout_sclk_mmc1_p, MUX_SEL_FSYS11, 24, 1),
+>         MUX(0, "mout_sclk_mmc0_user", mout_sclk_mmc0_p, MUX_SEL_FSYS11, 28, 1),
+> +
+> +       MUX(0, "mout_phyclk_ufs20_rx1_symbol_user",
+> +               mout_phyclk_ufs20_rx1_user_p, MUX_SEL_FSYS12, 16, 1),
+> +       MUX(0, "mout_phyclk_ufs20_rx0_symbol_user",
+> +               mout_phyclk_ufs20_rx0_user_p, MUX_SEL_FSYS12, 24, 1),
+> +       MUX(0, "mout_phyclk_ufs20_tx0_symbol_user",
+> +               mout_phyclk_ufs20_tx0_user_p, MUX_SEL_FSYS12, 28, 1),
+> +};
+> +
+> +static struct samsung_div_clock fsys1_div_clks[] __initdata = {
+> +       DIV(DOUT_PCLK_FSYS1, "dout_pclk_fsys1", "mout_aclk_fsys1_200_user",
+> +               DIV_FSYS1, 0, 2),
+>  };
+>
+>  static struct samsung_gate_clock fsys1_gate_clks[] __initdata = {
+> +       GATE(SCLK_UFSUNIPRO20, "sclk_ufsunipro20_user",
+> +               "mout_sclk_ufsunipro20_user",
+> +               ENABLE_SCLK_FSYS11, 20, 0, 0),
+> +
+>         GATE(ACLK_MMC1, "aclk_mmc1", "mout_aclk_fsys1_200_user",
+>                 ENABLE_ACLK_FSYS1, 29, 0, 0),
+>         GATE(ACLK_MMC0, "aclk_mmc0", "mout_aclk_fsys1_200_user",
+>                 ENABLE_ACLK_FSYS1, 30, 0, 0),
+> +
+> +       GATE(ACLK_UFS20_LINK, "ACLK_UFS20_LINK", "dout_pclk_fsys1",
+> +               ENABLE_ACLK_FSYS1, 31, 0, 0),
+> +       GATE(PCLK_GPIO_FSYS1, "pclk_gpio_fsys1", "mout_aclk_fsys1_200_user",
+> +               ENABLE_PCLK_FSYS1, 30, 0, 0),
+> +
+> +       GATE(PHYCLK_UFS20_RX1_SYMBOL_USER, "phyclk_ufs20_rx1_symbol_user",
+> +               "mout_phyclk_ufs20_rx1_symbol_user",
+> +               ENABLE_SCLK_FSYS12, 16, 0, 0),
+> +       GATE(PHYCLK_UFS20_RX0_SYMBOL_USER, "phyclk_ufs20_rx0_symbol_user",
+> +               "mout_phyclk_ufs20_rx0_symbol_user",
+> +               ENABLE_SCLK_FSYS12, 24, 0, 0),
+> +       GATE(PHYCLK_UFS20_TX0_SYMBOL_USER, "phyclk_ufs20_tx0_symbol_user",
+> +               "mout_phyclk_ufs20_tx0_symbol_user",
+> +               ENABLE_SCLK_FSYS12, 28, 0, 0),
+> +
+> +       GATE(OSCCLK_PHY_CLKOUT_EMBEDDED_COMBO_PHY,
+> +               "oscclk_phy_clkout_embedded_combo_phy",
+> +               "fin_pll",
+> +               ENABLE_SCLK_FSYS12, 4, CLK_IGNORE_UNUSED, 0),
+> +
+> +       GATE(SCLK_COMBO_PHY_EMBEDDED_26M, "sclk_combo_phy_embedded_26m",
+> +               "mout_fsys1_phyclk_sel1",
+> +               ENABLE_SCLK_FSYS13, 24, CLK_IGNORE_UNUSED, 0),
+>  };
+>
+>  static struct samsung_cmu_info fsys1_cmu_info __initdata = {
+> +       .fixed_clks             = fixed_rate_clks_fsys1,
+> +       .nr_fixed_clks          = ARRAY_SIZE(fixed_rate_clks_fsys1),
+>         .mux_clks               = fsys1_mux_clks,
+>         .nr_mux_clks            = ARRAY_SIZE(fsys1_mux_clks),
+> +       .div_clks               = fsys1_div_clks,
+> +       .nr_div_clks            = ARRAY_SIZE(fsys1_div_clks),
+>         .gate_clks              = fsys1_gate_clks,
+>         .nr_gate_clks           = ARRAY_SIZE(fsys1_gate_clks),
+>         .nr_clk_ids             = FSYS1_NR_CLK,
+> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+> index e33c75a..c5f7fd0 100644
+> --- a/include/dt-bindings/clock/exynos7-clk.h
+> +++ b/include/dt-bindings/clock/exynos7-clk.h
+> @@ -21,7 +21,11 @@
+>  #define ACLK_MSCL_532                  8
+>  #define DOUT_SCLK_AUD_PLL              9
+>  #define FOUT_AUD_PLL                   10
+> -#define TOPC_NR_CLK                    11
+> +#define SCLK_MFC_PLL_A                 11
+> +#define SCLK_MFC_PLL_B                 12
+> +#define SCLK_BUS1_PLL_A                        13
+> +#define SCLK_BUS1_PLL_B                        14
+> +#define TOPC_NR_CLK                    15
+>
+>  /* TOP0 */
+>  #define DOUT_ACLK_PERIC1               1
+> @@ -49,7 +53,14 @@
+>  #define CLK_SCLK_MMC2                  6
+>  #define CLK_SCLK_MMC1                  7
+>  #define CLK_SCLK_MMC0                  8
+> -#define TOP1_NR_CLK                    9
+> +#define CLK_SCLK_PHY_FSYS1             9
+> +#define CLK_SCLK_PHY_FSYS1_26M         10
+> +#define MOUT_SCLK_UFSUNIPRO20          11
+> +#define DOUT_SCLK_UFSUNIPRO20          12
+> +#define CLK_SCLK_UFSUNIPRO20           13
+> +#define DOUT_SCLK_PHY_FSYS1            15
+> +#define DOUT_SCLK_PHY_FSYS1_26M                16
+> +#define TOP1_NR_CLK                    17
+>
+>  /* CCORE */
+>  #define PCLK_RTC                       1
+> @@ -122,9 +133,22 @@
+>  #define FSYS0_NR_CLK                   11
+>
+>  /* FSYS1 */
+> -#define ACLK_MMC1                      1
+> -#define ACLK_MMC0                      2
+> -#define FSYS1_NR_CLK                   3
+> +#define ACLK_MMC1                              1
+> +#define ACLK_MMC0                              2
+> +#define PHYCLK_UFS20_TX0_SYMBOL                        3
+> +#define PHYCLK_UFS20_RX0_SYMBOL                        4
+> +#define PHYCLK_UFS20_RX1_SYMBOL                        5
+> +#define ACLK_UFS20_LINK                                6
+> +#define SCLK_UFSUNIPRO20                       7
 
-Do you plan to send next version of the patchset? I tested it on my
-Odroid XU3L (5422) and it works good so the idea you had is correct.
+That's confusing ID. You already have "CLK_SCLK_UFSUNIPRO20" and now
+"SCLK_UFSUNIPRO20". From the naming perspective this is the same
+clock... In the same time one has name "sclk_ufsunipro20" and the
+second "sclk_ufsunipro20_user". That's confusing even more :) .
 
 Best regards,
 Krzysztof
