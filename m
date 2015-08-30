@@ -1,398 +1,176 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [RESEND PATCH v3 2/5] irqchip: kill off set_irq_flags usage
-Date: Sat, 29 Aug 2015 18:01:22 -0500
-Message-ID: <1440889285-5637-3-git-send-email-robh@kernel.org>
-References: <1440889285-5637-1-git-send-email-robh@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34123 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752557AbbH2XBo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Aug 2015 19:01:44 -0400
-Received: by obbfr1 with SMTP id fr1so69572047obb.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Aug 2015 16:01:44 -0700 (PDT)
-In-Reply-To: <1440889285-5637-1-git-send-email-robh@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: [PATCH v8 00/55] MC next generation patches
+Date: Sun, 30 Aug 2015 00:06:11 -0300
+Message-ID: <cover.1440902901.git.mchehab@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-sh@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Hans Verkuil <hverkuil@xs4all.nl>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 
-set_irq_flags is ARM specific with custom flags which have genirq
-equivalents. Convert drivers to use the genirq interfaces directly, so we
-can kill off set_irq_flags. The translation of flags is as follows:
+That's the 8th version of the MC next generation patches.
 
-IRQF_VALID -> !IRQ_NOREQUEST
-IRQF_PROBE -> !IRQ_NOPROBE
-IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+Differences from version 7:
 
-For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-and setting IRQ_NOREQUEST already, so there is no need to do this in
-.map() functions and we can simply remove the set_irq_flags calls. Some
-users also modify IRQ_NOPROBE and this has been maintained although it
-is not clear that is really needed. There appears to be a great deal of
-blind copy and paste of this code.
+- Patches reworked to make the reviewers happy;
+- Bug fixes;
+- ALSA changes got their own separate patches;
+- Javier patches got integrated into this series;
+- media-entity.h structs are now properly documented;
+- Tested on both au0828 and omap3isp.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Lee Jones <lee@kernel.org>
-Cc: Alexander Shiyan <shc_work@mail.ru>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
----
- drivers/irqchip/exynos-combiner.c         |  2 +-
- drivers/irqchip/irq-armada-370-xp.c       |  3 +--
- drivers/irqchip/irq-bcm2835.c             |  2 +-
- drivers/irqchip/irq-clps711x.c            |  6 +++---
- drivers/irqchip/irq-gic-v3.c              |  5 ++---
- drivers/irqchip/irq-gic.c                 |  4 ++--
- drivers/irqchip/irq-hip04.c               |  4 ++--
- drivers/irqchip/irq-keystone.c            |  2 +-
- drivers/irqchip/irq-mmp.c                 |  3 ---
- drivers/irqchip/irq-mxs.c                 |  1 -
- drivers/irqchip/irq-renesas-intc-irqpin.c |  1 -
- drivers/irqchip/irq-renesas-irqc.c        |  1 -
- drivers/irqchip/irq-s3c24xx.c             | 14 ++------------
- drivers/irqchip/irq-sun4i.c               |  2 +-
- drivers/irqchip/irq-versatile-fpga.c      |  2 +-
- drivers/irqchip/irq-vic.c                 |  2 +-
- drivers/irqchip/irq-vt8500.c              |  1 -
- drivers/irqchip/spear-shirq.c             |  1 -
- 18 files changed, 18 insertions(+), 38 deletions(-)
+Due to the complexity of this change, other platform drivers may
+require some fixes. 
 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-index 5c82e3b..a62cfd3 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -165,7 +165,7 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 
- 	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
- 	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
--	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_probe(irq);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
-index 0d3b0fe..017f881 100644
---- a/drivers/irqchip/irq-armada-370-xp.c
-+++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -201,7 +201,6 @@ static int armada_370_xp_msi_map(struct irq_domain *domain, unsigned int virq,
- {
- 	irq_set_chip_and_handler(virq, &armada_370_xp_msi_irq_chip,
- 				 handle_simple_irq);
--	set_irq_flags(virq, IRQF_VALID);
- 
- 	return 0;
- }
-@@ -318,7 +317,7 @@ static int armada_370_xp_mpic_irq_map(struct irq_domain *h,
- 		irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
- 					handle_level_irq);
- 	}
--	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_probe(virq);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
-index e68c3b6..9c4ba16 100644
---- a/drivers/irqchip/irq-bcm2835.c
-+++ b/drivers/irqchip/irq-bcm2835.c
-@@ -165,7 +165,7 @@ static int __init armctrl_of_init(struct device_node *node,
- 			BUG_ON(irq <= 0);
- 			irq_set_chip_and_handler(irq, &armctrl_chip,
- 				handle_level_irq);
--			set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+			irq_set_probe(irq);
- 		}
- 	}
- 
-diff --git a/drivers/irqchip/irq-clps711x.c b/drivers/irqchip/irq-clps711x.c
-index 33127f1..2e74e81 100644
---- a/drivers/irqchip/irq-clps711x.c
-+++ b/drivers/irqchip/irq-clps711x.c
-@@ -133,14 +133,14 @@ static int __init clps711x_intc_irq_map(struct irq_domain *h, unsigned int virq,
- 					irq_hw_number_t hw)
- {
- 	irq_flow_handler_t handler = handle_level_irq;
--	unsigned int flags = IRQF_VALID | IRQF_PROBE;
-+	unsigned int flags = 0;
- 
- 	if (!clps711x_irqs[hw].flags)
- 		return 0;
- 
- 	if (clps711x_irqs[hw].flags & CLPS711X_FLAG_FIQ) {
- 		handler = handle_bad_irq;
--		flags |= IRQF_NOAUTOEN;
-+		flags |= IRQ_NOAUTOEN;
- 	} else if (clps711x_irqs[hw].eoi) {
- 		handler = handle_fasteoi_irq;
- 	}
-@@ -150,7 +150,7 @@ static int __init clps711x_intc_irq_map(struct irq_domain *h, unsigned int virq,
- 		writel_relaxed(0, clps711x_intc->base + clps711x_irqs[hw].eoi);
- 
- 	irq_set_chip_and_handler(virq, &clps711x_intc_chip, handler);
--	set_irq_flags(virq, flags);
-+	irq_modify_status(virq, IRQ_NOPROBE, flags);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index c52f7ba..16f9028 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -681,13 +681,13 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 		irq_set_percpu_devid(irq);
- 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
- 				    handle_percpu_devid_irq, NULL, NULL);
--		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
-+		irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	}
- 	/* SPIs */
- 	if (hw >= 32 && hw < gic_data.irq_nr) {
- 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
- 				    handle_fasteoi_irq, NULL, NULL);
--		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+		irq_set_probe(irq);
- 	}
- 	/* LPIs */
- 	if (hw >= 8192 && hw < GIC_ID_NR) {
-@@ -695,7 +695,6 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 			return -EPERM;
- 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
- 				    handle_fasteoi_irq, NULL, NULL);
--		set_irq_flags(irq, IRQF_VALID);
- 	}
- 
- 	return 0;
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index 4dd8826..d6a1ba1 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -793,11 +793,11 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 		irq_set_percpu_devid(irq);
- 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
- 				    handle_percpu_devid_irq, NULL, NULL);
--		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
-+		irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	} else {
- 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
- 				    handle_fasteoi_irq, NULL, NULL);
--		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+		irq_set_probe(irq);
- 	}
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
-index 0cae45d..469fba6 100644
---- a/drivers/irqchip/irq-hip04.c
-+++ b/drivers/irqchip/irq-hip04.c
-@@ -305,11 +305,11 @@ static int hip04_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 		irq_set_percpu_devid(irq);
- 		irq_set_chip_and_handler(irq, &hip04_irq_chip,
- 					 handle_percpu_devid_irq);
--		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
-+		irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	} else {
- 		irq_set_chip_and_handler(irq, &hip04_irq_chip,
- 					 handle_fasteoi_irq);
--		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+		irq_set_probe(irq);
- 	}
- 	irq_set_chip_data(irq, d->host_data);
- 	return 0;
-diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
-index 81e3cf5..e7090ec 100644
---- a/drivers/irqchip/irq-keystone.c
-+++ b/drivers/irqchip/irq-keystone.c
-@@ -127,7 +127,7 @@ static int keystone_irq_map(struct irq_domain *h, unsigned int virq,
- 
- 	irq_set_chip_data(virq, kirq);
- 	irq_set_chip_and_handler(virq, &kirq->chip, handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_probe(virq);
- 	return 0;
- }
- 
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index c0da57b..3dfef63 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -164,7 +164,6 @@ static int mmp_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 			      irq_hw_number_t hw)
- {
- 	irq_set_chip_and_handler(irq, &icu_irq_chip, handle_level_irq);
--	set_irq_flags(irq, IRQF_VALID);
- 	return 0;
- }
- 
-@@ -234,7 +233,6 @@ void __init icu_init_irq(void)
- 	for (irq = 0; irq < 64; irq++) {
- 		icu_mask_irq(irq_get_irq_data(irq));
- 		irq_set_chip_and_handler(irq, &icu_irq_chip, handle_level_irq);
--		set_irq_flags(irq, IRQF_VALID);
- 	}
- 	irq_set_default_host(icu_data[0].domain);
- 	set_handle_irq(mmp_handle_irq);
-@@ -337,7 +335,6 @@ void __init mmp2_init_icu(void)
- 			irq_set_chip_and_handler(irq, &icu_irq_chip,
- 						 handle_level_irq);
- 		}
--		set_irq_flags(irq, IRQF_VALID);
- 	}
- 	irq_set_default_host(icu_data[0].domain);
- 	set_handle_irq(mmp2_handle_irq);
-diff --git a/drivers/irqchip/irq-mxs.c b/drivers/irqchip/irq-mxs.c
-index 04bf97b..ffe85d6 100644
---- a/drivers/irqchip/irq-mxs.c
-+++ b/drivers/irqchip/irq-mxs.c
-@@ -85,7 +85,6 @@ static int icoll_irq_domain_map(struct irq_domain *d, unsigned int virq,
- 				irq_hw_number_t hw)
- {
- 	irq_set_chip_and_handler(virq, &mxs_icoll_chip, handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 0670ab4..20a86de 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -343,7 +343,6 @@ static int intc_irqpin_irq_domain_map(struct irq_domain *h, unsigned int virq,
- 	intc_irqpin_dbg(&p->irq[hw], "map");
- 	irq_set_chip_data(virq, h->host_data);
- 	irq_set_chip_and_handler(virq, &p->irq_chip, handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID); /* kill me now */
- 	return 0;
- }
- 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index 778bd07..74e980f 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -162,7 +162,6 @@ static int irqc_irq_domain_map(struct irq_domain *h, unsigned int virq,
- 	irqc_dbg(&p->irq[hw], "map");
- 	irq_set_chip_data(virq, h->host_data);
- 	irq_set_chip_and_handler(virq, &p->irq_chip, handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID); /* kill me now */
- 	return 0;
- }
- 
-diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-index e96717f..19d1fc4 100644
---- a/drivers/irqchip/irq-s3c24xx.c
-+++ b/drivers/irqchip/irq-s3c24xx.c
-@@ -469,13 +469,11 @@ static int s3c24xx_irq_map(struct irq_domain *h, unsigned int virq,
- 
- 	irq_set_chip_data(virq, irq_data);
- 
--	set_irq_flags(virq, IRQF_VALID);
--
- 	if (parent_intc && irq_data->type != S3C_IRQTYPE_NONE) {
- 		if (irq_data->parent_irq > 31) {
- 			pr_err("irq-s3c24xx: parent irq %lu is out of range\n",
- 			       irq_data->parent_irq);
--			goto err;
-+			return -EINVAL;
- 		}
- 
- 		parent_irq_data = &parent_intc->irqs[irq_data->parent_irq];
-@@ -488,18 +486,12 @@ static int s3c24xx_irq_map(struct irq_domain *h, unsigned int virq,
- 		if (!irqno) {
- 			pr_err("irq-s3c24xx: could not find mapping for parent irq %lu\n",
- 			       irq_data->parent_irq);
--			goto err;
-+			return -EINVAL;
- 		}
- 		irq_set_chained_handler(irqno, s3c_irq_demux);
- 	}
- 
- 	return 0;
--
--err:
--	set_irq_flags(virq, 0);
--
--	/* the only error can result from bad mapping data*/
--	return -EINVAL;
- }
- 
- static const struct irq_domain_ops s3c24xx_irq_ops = {
-@@ -1177,8 +1169,6 @@ static int s3c24xx_irq_map_of(struct irq_domain *h, unsigned int virq,
- 
- 	irq_set_chip_data(virq, irq_data);
- 
--	set_irq_flags(virq, IRQF_VALID);
--
- 	return 0;
- }
- 
-diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
-index 83d6aa6..f1f401c 100644
---- a/drivers/irqchip/irq-sun4i.c
-+++ b/drivers/irqchip/irq-sun4i.c
-@@ -84,7 +84,7 @@ static int sun4i_irq_map(struct irq_domain *d, unsigned int virq,
- 			 irq_hw_number_t hw)
- {
- 	irq_set_chip_and_handler(virq, &sun4i_irq_chip, handle_fasteoi_irq);
--	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_probe(virq);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
-index 888111b..e96b4fe 100644
---- a/drivers/irqchip/irq-versatile-fpga.c
-+++ b/drivers/irqchip/irq-versatile-fpga.c
-@@ -128,7 +128,7 @@ static int fpga_irqdomain_map(struct irq_domain *d, unsigned int irq,
- 	irq_set_chip_data(irq, f);
- 	irq_set_chip_and_handler(irq, &f->chip,
- 				handle_level_irq);
--	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_probe(irq);
- 	return 0;
- }
- 
-diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
-index d4ce331..401561c 100644
---- a/drivers/irqchip/irq-vic.c
-+++ b/drivers/irqchip/irq-vic.c
-@@ -202,7 +202,7 @@ static int vic_irqdomain_map(struct irq_domain *d, unsigned int irq,
- 		return -EPERM;
- 	irq_set_chip_and_handler(irq, &vic_chip, handle_level_irq);
- 	irq_set_chip_data(irq, v->base);
--	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_probe(irq);
- 	return 0;
- }
- 
-diff --git a/drivers/irqchip/irq-vt8500.c b/drivers/irqchip/irq-vt8500.c
-index 0b29700..8b235c9 100644
---- a/drivers/irqchip/irq-vt8500.c
-+++ b/drivers/irqchip/irq-vt8500.c
-@@ -168,7 +168,6 @@ static int vt8500_irq_map(struct irq_domain *h, unsigned int virq,
- 							irq_hw_number_t hw)
- {
- 	irq_set_chip_and_handler(virq, &vt8500_irq_chip, handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
-index acb721b..e2b4e99 100644
---- a/drivers/irqchip/spear-shirq.c
-+++ b/drivers/irqchip/spear-shirq.c
-@@ -212,7 +212,6 @@ static void __init spear_shirq_register(struct spear_shirq *shirq,
- 	for (i = 0; i < shirq->nr_irqs; i++) {
- 		irq_set_chip_and_handler(shirq->virq_base + i,
- 					 shirq->irq_chip, handle_simple_irq);
--		set_irq_flags(shirq->virq_base + i, IRQF_VALID);
- 		irq_set_chip_data(shirq->virq_base + i, shirq);
- 	}
- }
+As the patch series sent before, this is not meant to be sent
+upstream yet. Its goal is to merge it for Kernel 4.4, in order to
+give people enough time to review and fix pending issues.
+
+Regards,
+Mauro
+
+Javier Martinez Canillas (6):
+  [media] staging: omap4iss: get entity ID using media_entity_id()
+  [media] omap3isp: get entity ID using media_entity_id()
+  [media] media: use entity.graph_obj.mdev instead of .parent
+  [media] media: remove media entity .parent field
+  [media] omap3isp: separate links creation from entities init
+  [media] omap3isp: create links after all subdevs have been bound
+
+Mauro Carvalho Chehab (49):
+  [media] media: create a macro to get entity ID
+  [media] media: add a common struct to be embed on media graph objects
+  [media] media: use media_gobj inside entities
+  [media] media: use media_gobj inside pads
+  [media] media: use media_gobj inside links
+  [media] media: add messages when media device gets (un)registered
+  [media] media: add a debug message to warn about gobj creation/removal
+  [media] media: rename the function that create pad links
+  [media] uapi/media.h: Declare interface types for V4L2 and DVB
+  [media] media: add functions to allow creating interfaces
+  [media] uapi/media.h: Declare interface types for ALSA
+  [media] media: Don't accept early-created links
+  [media] media: convert links from array to list
+  [media] media: make add link more generic
+  [media] media: make media_link more generic to handle interace links
+  [media] media: make link debug printk more generic
+  [media] media: add support to link interfaces and entities
+  [media] media-entity: add a helper function to create interface
+  [media] dvbdev: add support for interfaces
+  [media] media: add a linked list to track interfaces by mdev
+  [media] dvbdev: add support for indirect interface links
+  [media] uapi/media.h: Fix entity namespace
+  [media] replace all occurrences of MEDIA_ENT_T_DEVNODE_V4L
+  [media] replace all occurrences of MEDIA_ENT_T_DEVNODE_DVB
+  [media] media: add macros to check if subdev or V4L2 DMA
+  [media] media: use macros to check for V4L2 subdev entities
+  [media] omap3/omap4/davinci: get rid of MEDIA_ENT_T_V4L2_SUBDEV abuse
+  [media] s5c73m3: fix subdev type
+  [media] s5k5baf: fix subdev type
+  [media] davinci_vbpe: stop MEDIA_ENT_T_V4L2_SUBDEV abuse
+  [media] omap4iss: stop MEDIA_ENT_T_V4L2_SUBDEV abuse
+  [media] v4l2-subdev: use MEDIA_ENT_T_UNKNOWN for new subdevs
+  [media] media controller: get rid of entity subtype on Kernel
+  [media] media.h: don't use legacy entity macros at Kernel
+  [media] DocBook: update descriptions for the media controller entities
+  [media] dvb: modify core to implement interfaces/entities at MC new
+    gen
+  [media] media: report if a pad is sink or source at debug msg
+  [media] uapi/media.h: Add MEDIA_IOC_G_TOPOLOGY ioctl
+  [media] media: Use a macro to interate between all interfaces
+  [media] media: move mdev list init to gobj
+  [media] media-device: add pads and links to media_device
+  [media] media_device: add a topology version field
+  [media] media-device: add support for MEDIA_IOC_G_TOPOLOGY ioctl
+  [media] media-entity: unregister entity links
+  [media] remove interface links at media_entity_unregister()
+  [media] media-device: remove interfaces and interface links
+  [media] v4l2-core: create MC interfaces for devnodes
+  [media] au0828: unregister MC at the end
+  [media] media-entity.h: document all the structs
+
+ .../DocBook/media/v4l/media-ioc-enum-entities.xml  |  57 +--
+ Documentation/media-framework.txt                  |   2 +-
+ drivers/media/dvb-core/dmxdev.c                    |   4 +-
+ drivers/media/dvb-core/dvb_ca_en50221.c            |   2 +-
+ drivers/media/dvb-core/dvb_frontend.c              |  11 +-
+ drivers/media/dvb-core/dvb_net.c                   |   2 +-
+ drivers/media/dvb-core/dvbdev.c                    | 278 +++++++++---
+ drivers/media/dvb-core/dvbdev.h                    |  10 +-
+ drivers/media/firewire/firedtv-ci.c                |   2 +-
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c           |   8 +-
+ drivers/media/i2c/s5k5baf.c                        |   4 +-
+ drivers/media/i2c/smiapp/smiapp-core.c             |   4 +-
+ drivers/media/media-device.c                       | 245 +++++++++--
+ drivers/media/media-entity.c                       | 473 +++++++++++++++++----
+ drivers/media/pci/bt8xx/dst_ca.c                   |   3 +-
+ drivers/media/pci/ddbridge/ddbridge-core.c         |   2 +-
+ drivers/media/pci/ngene/ngene-core.c               |   2 +-
+ drivers/media/pci/ttpci/av7110.c                   |   2 +-
+ drivers/media/pci/ttpci/av7110_av.c                |   4 +-
+ drivers/media/pci/ttpci/av7110_ca.c                |   2 +-
+ drivers/media/platform/exynos4-is/common.c         |   3 +-
+ drivers/media/platform/exynos4-is/fimc-capture.c   |   5 +-
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |   9 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c      |  18 +-
+ drivers/media/platform/exynos4-is/media-dev.c      |  25 +-
+ drivers/media/platform/exynos4-is/media-dev.h      |   8 +-
+ drivers/media/platform/omap3isp/isp.c              | 202 +++++----
+ drivers/media/platform/omap3isp/ispccdc.c          |  39 +-
+ drivers/media/platform/omap3isp/ispccdc.h          |   1 +
+ drivers/media/platform/omap3isp/ispccp2.c          |  35 +-
+ drivers/media/platform/omap3isp/ispccp2.h          |   1 +
+ drivers/media/platform/omap3isp/ispcsi2.c          |  33 +-
+ drivers/media/platform/omap3isp/ispcsi2.h          |   1 +
+ drivers/media/platform/omap3isp/isppreview.c       |  48 ++-
+ drivers/media/platform/omap3isp/isppreview.h       |   1 +
+ drivers/media/platform/omap3isp/ispresizer.c       |  46 +-
+ drivers/media/platform/omap3isp/ispresizer.h       |   1 +
+ drivers/media/platform/omap3isp/ispvideo.c         |  17 +-
+ drivers/media/platform/s3c-camif/camif-capture.c   |   2 +-
+ drivers/media/platform/s3c-camif/camif-core.c      |   4 +-
+ drivers/media/platform/vsp1/vsp1_drv.c             |   4 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c             |   2 +-
+ drivers/media/platform/vsp1/vsp1_video.c           |  15 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c             |   2 +-
+ drivers/media/platform/xilinx/xilinx-dma.c         |  10 +-
+ drivers/media/platform/xilinx/xilinx-vipp.c        |   4 +-
+ drivers/media/usb/au0828/au0828-core.c             |  18 +-
+ drivers/media/usb/au0828/au0828-video.c            |   8 +-
+ drivers/media/usb/cx231xx/cx231xx-cards.c          |   6 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c          |   8 +-
+ drivers/media/usb/uvc/uvc_entity.c                 |   2 +-
+ drivers/media/v4l2-core/v4l2-dev.c                 | 105 ++++-
+ drivers/media/v4l2-core/v4l2-device.c              |  10 +-
+ drivers/media/v4l2-core/v4l2-subdev.c              |   6 +-
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c   |   9 +-
+ drivers/staging/media/davinci_vpfe/dm365_ipipeif.c |  15 +-
+ drivers/staging/media/davinci_vpfe/dm365_isif.c    |  15 +-
+ drivers/staging/media/davinci_vpfe/dm365_resizer.c |  33 +-
+ .../staging/media/davinci_vpfe/vpfe_mc_capture.c   |  10 +-
+ drivers/staging/media/davinci_vpfe/vpfe_video.c    |  17 +-
+ drivers/staging/media/omap4iss/iss.c               |  32 +-
+ drivers/staging/media/omap4iss/iss_csi2.c          |  13 +-
+ drivers/staging/media/omap4iss/iss_ipipe.c         |   9 +-
+ drivers/staging/media/omap4iss/iss_ipipeif.c       |  15 +-
+ drivers/staging/media/omap4iss/iss_resizer.c       |  13 +-
+ drivers/staging/media/omap4iss/iss_video.c         |   9 +-
+ include/media/media-device.h                       |  34 +-
+ include/media/media-entity.h                       | 305 +++++++++++--
+ include/media/v4l2-dev.h                           |   1 +
+ include/uapi/linux/media.h                         | 205 ++++++++-
+ 70 files changed, 1924 insertions(+), 627 deletions(-)
+
 -- 
-2.1.4
+2.4.3
