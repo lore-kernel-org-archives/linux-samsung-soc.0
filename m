@@ -1,121 +1,77 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 07/14] exynos/fimg2d: add g2d_validate_xyz() functions
-Date: Mon, 31 Aug 2015 22:18:33 +0900
-Message-ID: <55E45429.3070500@samsung.com>
+Subject: Re: [PATCH 08/14] exynos/fimg2d: check buffer space in g2d_blend()
+Date: Mon, 31 Aug 2015 22:19:50 +0900
+Message-ID: <55E45476.6030008@samsung.com>
 References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1440425649-9768-8-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1440425649-9768-9-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:45713 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752807AbbHaNSf convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 Aug 2015 09:18:35 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NTY01QLV7MXXX40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 31 Aug 2015 22:18:33 +0900 (KST)
-In-reply-to: <1440425649-9768-8-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1440425649-9768-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk
+Cc: gustavo.padovan@collabora.co.uk, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2015=EB=85=84 08=EC=9B=94 24=EC=9D=BC 23:14, Tobias Jakobi wrote:
-> The G2D headers define a number of modes through enums
-> (like e.g. color, select, repeat, etc.).
->=20
-> This introduces g2d_validate_select_mode() and
-> g2d_validate_blending_op() which validate a
-> select mode or blending operation respectively.
->=20
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  exynos/exynos_fimg2d.c | 44 ++++++++++++++++++++++++++++++++++++++++=
-++++
->  1 file changed, 44 insertions(+)
->=20
-> diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-> index 2e04f4a..781aff5 100644
-> --- a/exynos/exynos_fimg2d.c
-> +++ b/exynos/exynos_fimg2d.c
-> @@ -119,6 +119,50 @@ static unsigned int g2d_check_space(const struct=
- g2d_context *ctx,
->  }
-> =20
->  /*
-> + * g2d_validate_select_mode - validate select mode.
-> + *
-> + * @mode: the mode to validate
-> + */
-> +static unsigned int g2d_validate_select_mode(
-> +	enum e_g2d_select_mode mode)
-> +{
-> +	switch (mode) {
-> +	case G2D_SELECT_MODE_NORMAL:
-> +	case G2D_SELECT_MODE_FGCOLOR:
-> +	case G2D_SELECT_MODE_BGCOLOR:
-> +		return 0;
-> +	}
-
-It's strange use a bit. Just check the range like below,
-
-=46irst, please add G2D_SELECT_MODE_MAX which has 3 << 0, and
-
-if (G2D_SELECT_MODE_MAX < mode) {
-	fprintf(strerr, "invalid command(0x%x)\n", mode);
-	return -EINVAL;
-}
-
-And I think it'd be better to change return type of this function to in=
-t,
-
-> +
-> +	return 1;
-
-so return 0
-
-> +}
-> +
-> +/*
-> + * g2d_validate_blending_op - validate blending operation.
-> + *
-> + * @operation: the operation to validate
-> + */
-> +static unsigned int g2d_validate_blending_op(
-> +	enum e_g2d_op operation)
-> +{
-> +	switch (operation) {
-> +	case G2D_OP_CLEAR:
-> +	case G2D_OP_SRC:
-> +	case G2D_OP_DST:
-> +	case G2D_OP_OVER:
-> +	case G2D_OP_INTERPOLATE:
-> +	case G2D_OP_DISJOINT_CLEAR:
-> +	case G2D_OP_DISJOINT_SRC:
-> +	case G2D_OP_DISJOINT_DST:
-> +	case G2D_OP_CONJOINT_CLEAR:
-> +	case G2D_OP_CONJOINT_SRC:
-> +	case G2D_OP_CONJOINT_DST:
-> +		return 0;
-
-Ditto, You could modify it like above.
-
-Thanks,
-Inki Dae
-
-> +	}
-> +
-> +	return 1;
-> +}
-> +
-> +/*
->   * g2d_add_cmd - set given command and value to user side command bu=
-ffer.
->   *
->   * @ctx: a pointer to g2d_context structure.
->=20
+T24gMjAxNeuFhCAwOOyblCAyNOydvCAyMzoxNCwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBNb3Zl
+IHBhcmFtZXRlciB2YWxpZGF0aW9uIHRvIHRoZSB0b3AgYW5kIGFsc28gdmFsaWRhdGUKPiB0aGUg
+c2VsZWN0IG1vZGUgb2YgdGhlIHNvdXJjZSBpbWFnZSBhbmQgdGhlIHJlcXVlc3RlZAo+IGJsZW5k
+aW5nIG9wZXJhdGlvbiBiZWZvcmUgc3RhcnRpbmcgY29tbWFuZCBzdWJtaXNzaW9uLgo+IAo+IFNp
+Z25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRl
+Pgo+IC0tLQo+ICBleHlub3MvZXh5bm9zX2ZpbWcyZC5jIHwgNjYgKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDM5IGlu
+c2VydGlvbnMoKyksIDI3IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9leHlub3MvZXh5
+bm9zX2ZpbWcyZC5jIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuYwo+IGluZGV4IDc4MWFmZjUuLjVh
+Y2NjZjggMTAwNjQ0Cj4gLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYwo+ICsrKyBiL2V4eW5v
+cy9leHlub3NfZmltZzJkLmMKPiBAQCAtNjIzLDcgKzYyMyw0NSBAQCBnMmRfYmxlbmQoc3RydWN0
+IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1hZ2UgKnNyYywKPiAgCXVuaW9uIGcyZF9w
+b2ludF92YWwgcHQ7Cj4gIAl1bmlvbiBnMmRfYml0Ymx0X2NtZF92YWwgYml0Ymx0Owo+ICAJdW5p
+b24gZzJkX2JsZW5kX2Z1bmNfdmFsIGJsZW5kOwo+IC0JdW5zaWduZWQgaW50IHNyY193ID0gMCwg
+c3JjX2ggPSAwLCBkc3RfdyA9IDAsIGRzdF9oID0gMDsKPiArCXVuc2lnbmVkIGludCBnZW1fc3Bh
+Y2U7Cj4gKwl1bnNpZ25lZCBpbnQgc3JjX3csIHNyY19oLCBkc3RfdywgZHN0X2g7Cj4gKwo+ICsJ
+c3JjX3cgPSB3Owo+ICsJc3JjX2ggPSBoOwo+ICsJaWYgKHNyY194ICsgdyA+IHNyYy0+d2lkdGgp
+Cj4gKwkJc3JjX3cgPSBzcmMtPndpZHRoIC0gc3JjX3g7Cj4gKwlpZiAoc3JjX3kgKyBoID4gc3Jj
+LT5oZWlnaHQpCj4gKwkJc3JjX2ggPSBzcmMtPmhlaWdodCAtIHNyY195Owo+ICsKPiArCWRzdF93
+ID0gdzsKPiArCWRzdF9oID0gaDsKPiArCWlmIChkc3RfeCArIHcgPiBkc3QtPndpZHRoKQo+ICsJ
+CWRzdF93ID0gZHN0LT53aWR0aCAtIGRzdF94Owo+ICsJaWYgKGRzdF95ICsgaCA+IGRzdC0+aGVp
+Z2h0KQo+ICsJCWRzdF9oID0gZHN0LT5oZWlnaHQgLSBkc3RfeTsKPiArCj4gKwl3ID0gTUlOKHNy
+Y193LCBkc3Rfdyk7Cj4gKwloID0gTUlOKHNyY19oLCBkc3RfaCk7Cj4gKwo+ICsJaWYgKHcgPD0g
+MCB8fCBoIDw9IDApIHsKPiArCQlmcHJpbnRmKHN0ZGVyciwgImludmFsaWQgd2lkdGggb3IgaGVp
+Z2h0LlxuIik7Cj4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gKwl9Cj4gKwo+ICsJaWYgKGcyZF92YWxp
+ZGF0ZV9zZWxlY3RfbW9kZShzcmMtPnNlbGVjdF9tb2RlKSkgewo+ICsJCWZwcmludGYoc3RkZXJy
+ICwgImludmFsaWQgc2VsZWN0IG1vZGUgZm9yIHNvdXJjZS5cbiIpOwo+ICsJCXJldHVybiAtRUlO
+VkFMOwo+ICsJfQo+ICsKPiArCWlmIChnMmRfdmFsaWRhdGVfYmxlbmRpbmdfb3Aob3ApKSB7Cj4g
+KwkJZnByaW50ZihzdGRlcnIgLCAidW5zdXBwb3J0ZWQgYmxlbmRpbmcgb3BlcmF0aW9uLlxuIik7
+Cj4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gKwl9Cj4gKwo+ICsJZ2VtX3NwYWNlID0gc3JjLT5zZWxl
+Y3RfbW9kZSA9PSBHMkRfU0VMRUNUX01PREVfTk9STUFMID8gMiA6IDE7Cj4gKwo+ICsJaWYgKGcy
+ZF9jaGVja19zcGFjZShjdHgsIDEyLCBnZW1fc3BhY2UpKQo+ICsJCXJldHVybiAtRU5PU1BDOwoK
+QXMgSSBtZW50aW9uZWQgYmVmb3JlLCBhYm92ZSB0d28gbGluZXMgY291bGQgYmUgaW50ZWdyYXRl
+ZCB3aXRoIG90aGVyCnBhdGNoZXMuCgpUaGFua3MsCklua2kgRGFlCgo+ICAKPiAgCWJpdGJsdC52
+YWwgPSAwOwo+ICAJYmxlbmQudmFsID0gMDsKPiBAQCAtNjUxLDMyICs2ODksNiBAQCBnMmRfYmxl
+bmQoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1hZ2UgKnNyYywKPiAgCWNh
+c2UgRzJEX1NFTEVDVF9NT0RFX0JHQ09MT1I6Cj4gIAkJZzJkX2FkZF9jbWQoY3R4LCBCR19DT0xP
+Ul9SRUcsIHNyYy0+Y29sb3IpOwo+ICAJCWJyZWFrOwo+IC0JZGVmYXVsdDoKPiAtCQlmcHJpbnRm
+KHN0ZGVyciAsICJmYWlsZWQgdG8gc2V0IHNyYy5cbiIpOwo+IC0JCXJldHVybiAtRUlOVkFMOwo+
+IC0JfQo+IC0KPiAtCXNyY193ID0gdzsKPiAtCXNyY19oID0gaDsKPiAtCWlmIChzcmNfeCArIHcg
+PiBzcmMtPndpZHRoKQo+IC0JCXNyY193ID0gc3JjLT53aWR0aCAtIHNyY194Owo+IC0JaWYgKHNy
+Y195ICsgaCA+IHNyYy0+aGVpZ2h0KQo+IC0JCXNyY19oID0gc3JjLT5oZWlnaHQgLSBzcmNfeTsK
+PiAtCj4gLQlkc3RfdyA9IHc7Cj4gLQlkc3RfaCA9IGg7Cj4gLQlpZiAoZHN0X3ggKyB3ID4gZHN0
+LT53aWR0aCkKPiAtCQlkc3RfdyA9IGRzdC0+d2lkdGggLSBkc3RfeDsKPiAtCWlmIChkc3RfeSAr
+IGggPiBkc3QtPmhlaWdodCkKPiAtCQlkc3RfaCA9IGRzdC0+aGVpZ2h0IC0gZHN0X3k7Cj4gLQo+
+IC0JdyA9IE1JTihzcmNfdywgZHN0X3cpOwo+IC0JaCA9IE1JTihzcmNfaCwgZHN0X2gpOwo+IC0K
+PiAtCWlmICh3IDw9IDAgfHwgaCA8PSAwKSB7Cj4gLQkJZnByaW50ZihzdGRlcnIsICJpbnZhbGlk
+IHdpZHRoIG9yIGhlaWdodC5cbiIpOwo+IC0JCWcyZF9yZXNldChjdHgpOwo+IC0JCXJldHVybiAt
+RUlOVkFMOwo+ICAJfQo+ICAKPiAgCWJpdGJsdC5kYXRhLmFscGhhX2JsZW5kX21vZGUgPSBHMkRf
+QUxQSEFfQkxFTkRfTU9ERV9FTkFCTEU7Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
