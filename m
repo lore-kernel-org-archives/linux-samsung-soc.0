@@ -1,39 +1,30 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH] rtc: Fix module autoload for rtc-{ab8500,max8997,s5m}
- drivers
-Date: Mon, 31 Aug 2015 22:09:44 +0200
-Message-ID: <20150831200944.GA3409@piout.net>
-References: <1440671672-26590-1-git-send-email-javier@osg.samsung.com>
+From: Anders Roxell <anders.roxell-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] drivers: i2c: exynos5: irq spinlock rt-safe
+Date: Mon, 31 Aug 2015 23:28:44 +0200
+Message-ID: <20150831212844.GI13774@localhost.localdomain>
+References: <1440489125-20082-1-git-send-email-anders.roxell@linaro.org>
+ <alpine.DEB.2.11.1508252349070.15006@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:45704 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751345AbbHaUJq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 Aug 2015 16:09:46 -0400
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1440671672-26590-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.11.1508252349070.15006@nanos>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-rt-users-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Luis de Bethencourt <luis.bg@samsung.com>, linux-samsung-soc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Sangbeom Kim <sbkim73@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-arm-kernel@lists.infradead.org
 
-On 27/08/2015 at 12:34:32 +0200, Javier Martinez Canillas wrote :
-> These platform drivers have a platform device ID table but the module
-> alias information is not created so module autoloading will not work.
+On 2015-08-25 23:51, Thomas Gleixner wrote:
+> On Tue, 25 Aug 2015, Anders Roxell wrote:
 > 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> > The exynos5_i2c_message_start enables interrupts while holding the i2c
+> > lock which is sought by the irq handler. If an IRQ is received before
+> > this lock is released then a deadlock occurs.
 > 
-> ---
-> 
->  drivers/rtc/rtc-ab8500.c  | 1 +
->  drivers/rtc/rtc-max8997.c | 1 +
->  drivers/rtc/rtc-s5m.c     | 1 +
->  3 files changed, 3 insertions(+)
-Applied, thanks.
+> That's crap. The interrupt handler runs in an irq thread as RT forces
+> all normal interrupts to that.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+You are right, I will send a v2 with a better changelog.
+
+Cheers,
+Anders
