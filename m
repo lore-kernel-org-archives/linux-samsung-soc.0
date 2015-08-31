@@ -1,184 +1,53 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v2] spi: bitbang: Replace spinlock by mutex
-Date: Mon, 31 Aug 2015 15:54:13 +0800
-Message-ID: <CANMq1KAOsyhT1w54dc1u6JRzUdrjo-RpCb7CQBD66OdrSyPh=w@mail.gmail.com>
+Date: Mon, 31 Aug 2015 11:31:59 +0100
+Message-ID: <20150831103159.GJ12027@sirena.org.uk>
 References: <1439783574-5933-1-git-send-email-drinkcat@chromium.org>
+ <CANMq1KAOsyhT1w54dc1u6JRzUdrjo-RpCb7CQBD66OdrSyPh=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f41.google.com ([209.85.213.41]:36431 "EHLO
-	mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750812AbbHaHyO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 Aug 2015 03:54:14 -0400
-Received: by vkbc123 with SMTP id c123so34006473vkb.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2015 00:54:13 -0700 (PDT)
-In-Reply-To: <1439783574-5933-1-git-send-email-drinkcat@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lDJjfxLPd2/fL7KW"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CANMq1KAOsyhT1w54dc1u6JRzUdrjo-RpCb7CQBD66OdrSyPh=w@mail.gmail.com>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nicolas Boichat <drinkcat-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Mark,
 
-On Mon, Aug 17, 2015 at 11:52 AM, Nicolas Boichat <drinkcat@chromium.org> wrote:
-> chipselect (in the case of spi-gpio: spi_gpio_chipselect, which
-> calls gpiod_set_raw_value_cansleep) can sleep, so we should not
-> hold a spinlock while calling it from spi_bitbang_setup.
->
-> This issue was introduced by this commit, which converted spi-gpio
-> to cansleep variants:
-> d9dda5a191 "spi: spi-gpio: Use 'cansleep' variants to access GPIO"
->
-> Replacing the lock variable by a mutex fixes the issue: This is
-> safe as all instances where the lock is used are called from
-> contexts that can sleep.
->
-> Finally, update spi-ppc4xx and and spi-s3c24xx to use mutex
-> functions, as they directly hold the lock for similar purpose.
->
-> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> ---
-> Going the "safer" way and just replacing the spinlock by a
-> mutex.
->
-> Applies on top of broonie-sound/for-next, and compile-tested on
-> x86-64/arm (allyesconfig) and ppc44x (defconfig+SPI driver),
-> and runtime-tested on an arm platform.
->
-> Thanks!
+--lDJjfxLPd2/fL7KW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Any update on this patch? It still applies on for-next but happy to
-resend if necessary (patchwork:
-https://patchwork.kernel.org/patch/7023091/).
+On Mon, Aug 31, 2015 at 03:54:13PM +0800, Nicolas Boichat wrote:
+> On Mon, Aug 17, 2015 at 11:52 AM, Nicolas Boichat <drinkcat-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
 
-Best,
+> Any update on this patch? It still applies on for-next but happy to
+> resend if necessary (patchwork:
+> https://patchwork.kernel.org/patch/7023091/).
 
->  drivers/spi/spi-bitbang.c       | 17 +++++++----------
->  drivers/spi/spi-ppc4xx.c        |  4 ++--
->  drivers/spi/spi-s3c24xx.c       |  4 ++--
->  include/linux/spi/spi_bitbang.h |  2 +-
->  4 files changed, 12 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
-> index 840a498..ef43ef5 100644
-> --- a/drivers/spi/spi-bitbang.c
-> +++ b/drivers/spi/spi-bitbang.c
-> @@ -180,7 +180,6 @@ int spi_bitbang_setup(struct spi_device *spi)
->  {
->         struct spi_bitbang_cs   *cs = spi->controller_state;
->         struct spi_bitbang      *bitbang;
-> -       unsigned long           flags;
->
->         bitbang = spi_master_get_devdata(spi->master);
->
-> @@ -210,12 +209,12 @@ int spi_bitbang_setup(struct spi_device *spi)
->          */
->
->         /* deselect chip (low or high) */
-> -       spin_lock_irqsave(&bitbang->lock, flags);
-> +       mutex_lock(&bitbang->lock);
->         if (!bitbang->busy) {
->                 bitbang->chipselect(spi, BITBANG_CS_INACTIVE);
->                 ndelay(cs->nsecs);
->         }
-> -       spin_unlock_irqrestore(&bitbang->lock, flags);
-> +       mutex_unlock(&bitbang->lock);
->
->         return 0;
->  }
-> @@ -255,13 +254,12 @@ static int spi_bitbang_bufs(struct spi_device *spi, struct spi_transfer *t)
->  static int spi_bitbang_prepare_hardware(struct spi_master *spi)
->  {
->         struct spi_bitbang      *bitbang;
-> -       unsigned long           flags;
->
->         bitbang = spi_master_get_devdata(spi);
->
-> -       spin_lock_irqsave(&bitbang->lock, flags);
-> +       mutex_lock(&bitbang->lock);
->         bitbang->busy = 1;
-> -       spin_unlock_irqrestore(&bitbang->lock, flags);
-> +       mutex_unlock(&bitbang->lock);
->
->         return 0;
->  }
-> @@ -378,13 +376,12 @@ static int spi_bitbang_transfer_one(struct spi_master *master,
->  static int spi_bitbang_unprepare_hardware(struct spi_master *spi)
->  {
->         struct spi_bitbang      *bitbang;
-> -       unsigned long           flags;
->
->         bitbang = spi_master_get_devdata(spi);
->
-> -       spin_lock_irqsave(&bitbang->lock, flags);
-> +       mutex_lock(&bitbang->lock);
->         bitbang->busy = 0;
-> -       spin_unlock_irqrestore(&bitbang->lock, flags);
-> +       mutex_unlock(&bitbang->lock);
->
->         return 0;
->  }
-> @@ -427,7 +424,7 @@ int spi_bitbang_start(struct spi_bitbang *bitbang)
->         if (!master || !bitbang->chipselect)
->                 return -EINVAL;
->
-> -       spin_lock_init(&bitbang->lock);
-> +       mutex_init(&bitbang->lock);
->
->         if (!master->mode_bits)
->                 master->mode_bits = SPI_CPOL | SPI_CPHA | bitbang->flags;
-> diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
-> index 54fb984..dd3d0a2 100644
-> --- a/drivers/spi/spi-ppc4xx.c
-> +++ b/drivers/spi/spi-ppc4xx.c
-> @@ -210,12 +210,12 @@ static int spi_ppc4xx_setupxfer(struct spi_device *spi, struct spi_transfer *t)
->         if (in_8(&hw->regs->cdm) != cdm)
->                 out_8(&hw->regs->cdm, cdm);
->
-> -       spin_lock(&hw->bitbang.lock);
-> +       mutex_lock(&hw->bitbang.lock);
->         if (!hw->bitbang.busy) {
->                 hw->bitbang.chipselect(spi, BITBANG_CS_INACTIVE);
->                 /* Need to ndelay here? */
->         }
-> -       spin_unlock(&hw->bitbang.lock);
-> +       mutex_unlock(&hw->bitbang.lock);
->
->         return 0;
->  }
-> diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-> index f36bc32..4e7d1bf 100644
-> --- a/drivers/spi/spi-s3c24xx.c
-> +++ b/drivers/spi/spi-s3c24xx.c
-> @@ -198,12 +198,12 @@ static int s3c24xx_spi_setup(struct spi_device *spi)
->         if (ret)
->                 return ret;
->
-> -       spin_lock(&hw->bitbang.lock);
-> +       mutex_lock(&hw->bitbang.lock);
->         if (!hw->bitbang.busy) {
->                 hw->bitbang.chipselect(spi, BITBANG_CS_INACTIVE);
->                 /* need to ndelay for 0.5 clocktick ? */
->         }
-> -       spin_unlock(&hw->bitbang.lock);
-> +       mutex_unlock(&hw->bitbang.lock);
->
->         return 0;
->  }
-> diff --git a/include/linux/spi/spi_bitbang.h b/include/linux/spi/spi_bitbang.h
-> index 85578d4..154788e 100644
-> --- a/include/linux/spi/spi_bitbang.h
-> +++ b/include/linux/spi/spi_bitbang.h
-> @@ -4,7 +4,7 @@
->  #include <linux/workqueue.h>
->
->  struct spi_bitbang {
-> -       spinlock_t              lock;
-> +       struct mutex            lock;
->         u8                      busy;
->         u8                      use_dma;
->         u8                      flags;          /* extra spi->mode support */
-> --
-> 2.5.0.276.gf5e568e
->
+Please don't send content free pings and please allow a reasonable
+amount of time for review.
+
+--lDJjfxLPd2/fL7KW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJV5C0eAAoJECTWi3JdVIfQNDYIAIUPVm2icAJcSliN+hvcpAED
+NdoJc5zEG3oi0/XY8JGazMrdfDDkWXFCKAEaVefq3IMkblIHVnCpKTlaWMZ2sqa1
+4CidOrE+srXnu9Lr6z0uvZAshavgUux1oo4n+YAGZkrE1Zhj93hx2WqTJd8UGIRK
+BnrYOZS+XBWaC2S9AU028RLaNr1WciPLAkwRIPS9zeRJZaBawSP1qDBHOY/bVXHl
+DYVxoKrBILVzG0qBwbkqBFwI8ny3zj4Kk6GxTbVz4RfSn1nA5y5hLs28l83bzqkP
+5z5T796PmACwX1wgdaMy1DenPgiZE21r+GGiNDD2TkbN/A4X5I/U4dtgNWZK774=
+=Opby
+-----END PGP SIGNATURE-----
+
+--lDJjfxLPd2/fL7KW--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
