@@ -1,148 +1,196 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v4 08/16] drm: rockchip/dp: add rockchip platform dp driver
-Date: Tue, 01 Sep 2015 16:24:04 +0200
-Message-ID: <2919897.nbhB5Cifed@phil>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com> <1441087288-25404-1-git-send-email-ykk@rock-chips.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS: reset KFC cores when cpu is up
+Date: Tue, 1 Sep 2015 20:17:14 +0530
+Message-ID: <CAM4voamGcz_g+ONa-YaYMs0ZGgcPiXGGOeCV47U5nw_uu48+Jg@mail.gmail.com>
+References: <1441031111-6549-1-git-send-email-parkch98@gmail.com>
+	<7hmvx785wx.fsf@deeprootsystems.com>
+	<55E4D93E.4090307@osg.samsung.com>
+	<55E4EFA3.1050007@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:33150 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751610AbbIAOYj (ORCPT
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:38235 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753126AbbIAOrP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Sep 2015 10:24:39 -0400
-In-Reply-To: <1441087288-25404-1-git-send-email-ykk@rock-chips.com>
+	Tue, 1 Sep 2015 10:47:15 -0400
+Received: by igbut12 with SMTP id ut12so2272516igb.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Sep 2015 07:47:14 -0700 (PDT)
+In-Reply-To: <55E4EFA3.1050007@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kevin Hilman <khilman@kernel.org>, Chanho Park <parkch98@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Heesub Shin <heesub.shin@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Am Dienstag, 1. September 2015, 14:01:28 schrieb Yakir Yang:
-> Rockchip have three clocks for dp controller, we leave pclk_edp
-> to analogix_dp driver control, and keep the sclk_edp_24m and
-> sclk_edp in platform driver.
-> 
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> ---
-> Changes in v4:
-> - Remove some deprecated DT properties in rockchip dp document.
-> 
-> Changes in v3:
-> - Take Thierry Reding and Heiko suggest, leave "sclk_edp_24m" to rockchip
->   dp phy driver which name to "24m", and leave "sclk_edp" to analogix dp
->   core driver which name to "dp", and leave "pclk_edp" to rockchip dp
-> platform driver which name to "pclk".
-> - Take Heiko suggest, add devicetree binding document.
-> - Take Heiko suggest, remove "rockchip,panel" DT property, take use of
-> remote point to get panel node.
-> - Add the new function point analogix_dp_platdata.get_modes init.
-> 
-> Changes in v2:
-> - Take Heiko suggest, get panel node with remote-endpoint method,
->   and create devicetree binding for driver.
-> - Remove the clock enable/disbale with "sclk_edp" & "sclk_edp_24m",
->   leave those clock to rockchip dp phy driver.
-> 
->  .../bindings/video/analogix_dp-rockchip.txt        |  74 ++++
->  drivers/gpu/drm/rockchip/Kconfig                   |   9 +
->  drivers/gpu/drm/rockchip/Makefile                  |   1 +
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 389
-> +++++++++++++++++++++ 4 files changed, 473 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt create
-> mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-> b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt new file
-> mode 100644
-> index 0000000..502483e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-> @@ -0,0 +1,74 @@
-> +Rockchip RK3288 specific extensions to the Analogix Display Port
-> +================================
-> +
-> +Required properties:
-> +- compatible: "rockchip,rk3288-edp";
-> +
-> +- reg: physical base address of the controller and length
-> +
-> +- clocks: from common clock binding: handle to dp clock.
-> +	  of memory mapped region.
-> +
-> +- clock-names: from common clock binding:
-> +	       Required elements: "dp" "pclk"
-> +
-> +- resets: Must contain an entry for each entry in reset-names.
-> +	  See ../reset/reset.txt for details.
-> +
-> +- reset-names: Must include the name "dp"
-> +
-> +- rockchip,grf: this soc should set GRF regs, so need get grf here.
-> +
-> +- ports: contain a port node with endpoint definitions as defined in
-> +  Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +
-> +For the below properties, please refer to Analogix DP binding document:
-> + * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-> +- phys (required)
-> +- phy-names (required)
-> +- hpd-gpios (optional)
-> +---------------------------------------------------------------------------
-> ---- +
-> +Example:
-> +	dp-controller: dp@ff970000 {
-> +		compatible = "rockchip,rk3288-dp";
-> +		reg = <0xff970000 0x4000>;
-> +		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
-> +		clock-names = "dp", "pclk";
-> +		phys = <&dp_phy>;
-> +		phy-names = "dp";
-> +
-> +		rockchip,grf = <&grf>;
-> +		resets = <&cru 111>;
-> +		reset-names = "dp";
-> +
-> +		status = "disabled";
-> +
-> +		ports {
-> +			edp_in: port {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				edp_in_vopb: endpoint@0 {
-> +					reg = <0>;
-> +					remote-endpoint = <&vopb_out_edp>;
-> +				};
-> +				edp_in_vopl: endpoint@1 {
-> +					reg = <1>;
-> +					remote-endpoint = <&vopl_out_edp>;
-> +				};
-> +			};
-> +
-> +			edp_out: port@1 {
-> +				reg = <1>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				edp_out_panel: endpoint {
-> +					reg = <0>;
-> +					remote-endpoint = <&panel_in_edp>
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-just a nit right now, because "git am" mentioned it:
+Hi,
 
-git am \[PATCH\ v4\ 08_16\]\ drm_rockchip_dp_add\ rockchip\ platform\ dp\ 
-driver.mbox 
-[...]/linux-rockchip/.git/rebase-apply/patch:108: new blank line at EOF.
-+
+On Tue, Sep 1, 2015 at 5:51 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 01.09.2015 07:46, Javier Martinez Canillas wrote:
+>>
+>> [adding Krzysztof Kozlowski to cc list]
+>>
+>> Hello Kevin,
+>>
+>> On 09/01/2015 12:11 AM, Kevin Hilman wrote:
+>>> Chanho Park <parkch98@gmail.com> writes:
+>>>
+>>>> The cpu booting of exynos5422 has been still broken since we discussed
+>>>> it in last year[1]. This patch is inspired from odroid xu3
+>>>> code(Actually, it was from samsung exynos vendor kernel)[2]. This weird
+>>>> reset code was founded exynos5420 octa cores series SoCs and only
+>>>> required for the first boot core is the little core(kingfisher core).
+>>>> Some of the exynos5420 boards and all of the exynos5422 boards will be
+>>>> required this code.
+>>>> There is two ways to check the little core is the first cpu. One is
+>>>> checking GPG2CON[1] gpio value and the other is checking the cluster
+>>>> number of the first cpu. I selected the latter because it's more easier
+>>>> than the former.
+>>>>
+>>>> Changes since RFC[3]:
+>>>> - drop checking soc_is_exynos5800 to extend this codes to
+>>>> exynos5420/5422 boards.
+>>>> - kfc cores will be reset only if the cpu0 is kfc core.
+>>>> - Rebase top of the kukjin's for-next branch
+>>>>
+>>>> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
+>>>> [2]:https://patchwork.kernel.org/patch/6782891/
+>>>> [3]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/356610.html
+>>>>
+>>>> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+>>>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> Cc: Kevin Hilman <khilman@kernel.org>
+>>>> Cc: Heesub Shin <heesub.shin@samsung.com>
+>>>> Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+>>>> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+>>>> Cc: Przemyslaw Marczak <p.marczak@samsung.com>
+>>>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> Signed-off-by: Chanho Park <parkch98@gmail.com>
+>>>
+>>>> ---
+>>>>  arch/arm/mach-exynos/mcpm-exynos.c | 18 +++++++++++++++++-
+>>>>  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
+>>>>  2 files changed, 23 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+>>>> index 9bdf547..5b69ed2 100644
+>>>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+>>>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+>>>> @@ -20,6 +20,7 @@
+>>>>  #include <asm/cputype.h>
+>>>>  #include <asm/cp15.h>
+>>>>  #include <asm/mcpm.h>
+>>>> +#include <asm/smp_plat.h>
+>>>>
+>>>>  #include "regs-pmu.h"
+>>>>  #include "common.h"
+>>>> @@ -70,7 +71,22 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+>>>>             cluster >= EXYNOS5420_NR_CLUSTERS)
+>>>>             return -EINVAL;
+>>>>
+>>>> -   exynos_cpu_power_up(cpunr);
+>>>> +   if (!exynos_cpu_power_state(cpunr)) {
+>>>> +           exynos_cpu_power_up(cpunr);
+>>>> +
+>>>> +           /* This assumes the cluster number of the eagle is 0 and the
+>>>> +            * kfc is 1. When the system was booted from the kfc core,
+>>>> +            * they should be reset */
+>>>
+>>> minor: fix multi-line comment style (search for 'multi-line' in
+>>> Documentation/CodingStyle)
+>>>
+>>> Also minor, but personally, I prefer seeing A15/A7 instead of eagle/KFC
+>>> as those names are fading from my memory and I can't seem to remember
+>>> which one is which. :/
+>>>
+>>>> +           if (cluster &&
+>>>> +               cluster == MPIDR_AFFINITY_LEVEL(cpu_logical_map(0), 1)) {
+>>>> +                   while (!pmu_raw_readl(S5P_PMU_SPARE2))
+>>>> +                           udelay(10);
+>>>> +
+>>>> +                   pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
+>>>> +                                   EXYNOS_SWRESET);
+>>>> +           }
+>>>> +   }
+>>>> +
+>>>>     return 0;
+>>>>  }
+>>>
+>>> I tested this on top of mainline (v4.2) using exynos_defconfig (with
+>>> BL_SWITCHER disabled) and I now see all 8 CPUs booting.  Nice!
+>>>
+>>> Tested-by: Kevin Hilman <khilman@linaro.org>
+>>>
+>>> Also, please note that this does not fix another fundamental problem
+>>> with this board in that the firmware puts CCI into secure mode, so
+>>> linux/MCPM cannot manage it, causing hangs whenever CPUidle is enabled
+>>> (because b.L cpuidle driver tries to use MCPM, which needs to manage
+>>> CCI.)
+>>>
+>>> In order for this to not hang when using CPUidle, the following patch is
+>>> also needed.
+>>>
+>>> Kevin
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>> b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>> index 78e6a502f320..7891bd05bf8e 100644
+>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>> @@ -49,3 +49,11 @@
+>>>                 shunt-resistor = <10000>;
+>>>         };
+>>>  };
+>>> +
+>>> +/*
+>>> + * Secure firmware prevents CCI access/usage from linux, so must be
+>>> disabled
+>>> + * to prevent usage by MCPM.
+>>> + */
+>>> +&cci {
+>>> +       status = "disabled";
+>>> +};
+>>>
+>>>
+>>
+>> I posted a similar patch that instead disabling CCI for the XU3 board,
+>> it disables in exynos5422-odroidxu3-common.dtsi since all Exynos5422
+>> Odroid boards have the same broken firmware and so the same issue:
+>>
+>> https://lkml.org/lkml/2015/8/29/59
+>>
+>> Krzysztof tested it on an Odroid XU3 Lite and reported that disabling
+>> CCI caused some CPUs to fail to boot even with $subject applied:
+>>
+>> https://lkml.org/lkml/2015/8/29/65
+>
+> Indeed. On Odroid XU3 Chanho's patch gives me 8 CPUs up. Disabling CCI
+> causes fails on CPU{5,6,7} (Cortex-A15).
 
-meaning you're adding an empty line at the end :-)
+Chanho's patch is for the exynos mcpm back-end. However, when we
+disable CCI the mcpm code is bypassed and we default to the code in
+exynos' platsmp.c/firmware.c. If the A7s were failing to boot-up then
+the reason could have been that Chanho's workaround was not being
+executed after applying the CCI disablement patch.
+According to the comments the A15s are not booting and so the
+exynos_boot_secondary function needs to be checked further.
 
-
-Heiko
+Regards,
+Abhilash
+>
+> Best regards,
+> Krzysztof
+>
+>>
+>> Did you succeed booting all CPUs with CONFIG_ARM_BIG_LITTLE_CPUIDLE
+>> enabled and CCI disabled in the the Odroid XU3 DTS?
+>>
+>> Best regards,
+>>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
