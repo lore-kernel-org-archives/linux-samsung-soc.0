@@ -1,196 +1,141 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS: reset KFC cores when cpu is up
-Date: Tue, 1 Sep 2015 20:17:14 +0530
-Message-ID: <CAM4voamGcz_g+ONa-YaYMs0ZGgcPiXGGOeCV47U5nw_uu48+Jg@mail.gmail.com>
-References: <1441031111-6549-1-git-send-email-parkch98@gmail.com>
-	<7hmvx785wx.fsf@deeprootsystems.com>
-	<55E4D93E.4090307@osg.samsung.com>
-	<55E4EFA3.1050007@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv2] ARM: EXYNOS: reset Little cores when cpu is up
+Date: Tue, 1 Sep 2015 20:17:18 +0530
+Message-ID: <CANAwSgSgXjsxrvvs=WNJ1aF+VQ9j-K23=CHMErRzKj1+owS+DA@mail.gmail.com>
+References: <1441117023-25478-1-git-send-email-parkch98@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:38235 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753126AbbIAOrP (ORCPT
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:34416 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753126AbbIAOrj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Sep 2015 10:47:15 -0400
-Received: by igbut12 with SMTP id ut12so2272516igb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Sep 2015 07:47:14 -0700 (PDT)
-In-Reply-To: <55E4EFA3.1050007@samsung.com>
+	Tue, 1 Sep 2015 10:47:39 -0400
+Received: by wicjd9 with SMTP id jd9so35941538wic.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Sep 2015 07:47:37 -0700 (PDT)
+In-Reply-To: <1441117023-25478-1-git-send-email-parkch98@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kevin Hilman <khilman@kernel.org>, Chanho Park <parkch98@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Heesub Shin <heesub.shin@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Przemyslaw Marczak <p.marczak@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Chanho Park <parkch98@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi,
+Hi All,
 
-On Tue, Sep 1, 2015 at 5:51 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 01.09.2015 07:46, Javier Martinez Canillas wrote:
->>
->> [adding Krzysztof Kozlowski to cc list]
->>
->> Hello Kevin,
->>
->> On 09/01/2015 12:11 AM, Kevin Hilman wrote:
->>> Chanho Park <parkch98@gmail.com> writes:
->>>
->>>> The cpu booting of exynos5422 has been still broken since we discussed
->>>> it in last year[1]. This patch is inspired from odroid xu3
->>>> code(Actually, it was from samsung exynos vendor kernel)[2]. This weird
->>>> reset code was founded exynos5420 octa cores series SoCs and only
->>>> required for the first boot core is the little core(kingfisher core).
->>>> Some of the exynos5420 boards and all of the exynos5422 boards will be
->>>> required this code.
->>>> There is two ways to check the little core is the first cpu. One is
->>>> checking GPG2CON[1] gpio value and the other is checking the cluster
->>>> number of the first cpu. I selected the latter because it's more easier
->>>> than the former.
->>>>
->>>> Changes since RFC[3]:
->>>> - drop checking soc_is_exynos5800 to extend this codes to
->>>> exynos5420/5422 boards.
->>>> - kfc cores will be reset only if the cpu0 is kfc core.
->>>> - Rebase top of the kukjin's for-next branch
->>>>
->>>> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
->>>> [2]:https://patchwork.kernel.org/patch/6782891/
->>>> [3]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/356610.html
->>>>
->>>> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
->>>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Cc: Kevin Hilman <khilman@kernel.org>
->>>> Cc: Heesub Shin <heesub.shin@samsung.com>
->>>> Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
->>>> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
->>>> Cc: Przemyslaw Marczak <p.marczak@samsung.com>
->>>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> Signed-off-by: Chanho Park <parkch98@gmail.com>
->>>
->>>> ---
->>>>  arch/arm/mach-exynos/mcpm-exynos.c | 18 +++++++++++++++++-
->>>>  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
->>>>  2 files changed, 23 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
->>>> index 9bdf547..5b69ed2 100644
->>>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
->>>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
->>>> @@ -20,6 +20,7 @@
->>>>  #include <asm/cputype.h>
->>>>  #include <asm/cp15.h>
->>>>  #include <asm/mcpm.h>
->>>> +#include <asm/smp_plat.h>
->>>>
->>>>  #include "regs-pmu.h"
->>>>  #include "common.h"
->>>> @@ -70,7 +71,22 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
->>>>             cluster >= EXYNOS5420_NR_CLUSTERS)
->>>>             return -EINVAL;
->>>>
->>>> -   exynos_cpu_power_up(cpunr);
->>>> +   if (!exynos_cpu_power_state(cpunr)) {
->>>> +           exynos_cpu_power_up(cpunr);
->>>> +
->>>> +           /* This assumes the cluster number of the eagle is 0 and the
->>>> +            * kfc is 1. When the system was booted from the kfc core,
->>>> +            * they should be reset */
->>>
->>> minor: fix multi-line comment style (search for 'multi-line' in
->>> Documentation/CodingStyle)
->>>
->>> Also minor, but personally, I prefer seeing A15/A7 instead of eagle/KFC
->>> as those names are fading from my memory and I can't seem to remember
->>> which one is which. :/
->>>
->>>> +           if (cluster &&
->>>> +               cluster == MPIDR_AFFINITY_LEVEL(cpu_logical_map(0), 1)) {
->>>> +                   while (!pmu_raw_readl(S5P_PMU_SPARE2))
->>>> +                           udelay(10);
->>>> +
->>>> +                   pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
->>>> +                                   EXYNOS_SWRESET);
->>>> +           }
->>>> +   }
->>>> +
->>>>     return 0;
->>>>  }
->>>
->>> I tested this on top of mainline (v4.2) using exynos_defconfig (with
->>> BL_SWITCHER disabled) and I now see all 8 CPUs booting.  Nice!
->>>
->>> Tested-by: Kevin Hilman <khilman@linaro.org>
->>>
->>> Also, please note that this does not fix another fundamental problem
->>> with this board in that the firmware puts CCI into secure mode, so
->>> linux/MCPM cannot manage it, causing hangs whenever CPUidle is enabled
->>> (because b.L cpuidle driver tries to use MCPM, which needs to manage
->>> CCI.)
->>>
->>> In order for this to not hang when using CPUidle, the following patch is
->>> also needed.
->>>
->>> Kevin
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>> b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>> index 78e6a502f320..7891bd05bf8e 100644
->>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>> @@ -49,3 +49,11 @@
->>>                 shunt-resistor = <10000>;
->>>         };
->>>  };
->>> +
->>> +/*
->>> + * Secure firmware prevents CCI access/usage from linux, so must be
->>> disabled
->>> + * to prevent usage by MCPM.
->>> + */
->>> +&cci {
->>> +       status = "disabled";
->>> +};
->>>
->>>
->>
->> I posted a similar patch that instead disabling CCI for the XU3 board,
->> it disables in exynos5422-odroidxu3-common.dtsi since all Exynos5422
->> Odroid boards have the same broken firmware and so the same issue:
->>
->> https://lkml.org/lkml/2015/8/29/59
->>
->> Krzysztof tested it on an Odroid XU3 Lite and reported that disabling
->> CCI caused some CPUs to fail to boot even with $subject applied:
->>
->> https://lkml.org/lkml/2015/8/29/65
+On 1 September 2015 at 19:47, Chanho Park <parkch98@gmail.com> wrote:
 >
-> Indeed. On Odroid XU3 Chanho's patch gives me 8 CPUs up. Disabling CCI
-> causes fails on CPU{5,6,7} (Cortex-A15).
+> The cpu booting of exynos5422 has been still broken since we discussed
+> it in last year[1]. This patch is inspired from Odroid XU3
+> code (Actually, it was from samsung exynos vendor kernel)[2]. This weird
+> reset code was founded exynos5420 octa cores series SoCs and only
+> required for the first boot core is the Little core (Cortex A7).
+> Some of the exynos5420 boards and all of the exynos5422 boards will require
+> this code.
+>
+> There is two ways to check the little core is the first cpu. One is
+> checking GPG2CON[1] GPIO value and the other is checking the cluster
+> number of the first cpu. I selected the latter because it's more easier
+> than the former.
+>
+> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
+> [2]:https://patchwork.kernel.org/patch/6782891/
+>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> Signed-off-by: Chanho Park <parkch98@gmail.com>
+> ---
+> Changes from v1:
+>  .kfc to Little (Cortex A7) and eagle to big (Cortex A15)
+>  .append comments about waiting SPARE2 register
+>
+> Changes since RFC:
+>  .drop checking soc_is_exynos5800 to extend this codes to
+> exynos5420/5422 boards.
+>  .kfc cores will be reset only if the cpu0 is kfc core.
+>  .Rebase top of the kukjin's for-next branch
+>
+>  arch/arm/mach-exynos/mcpm-exynos.c | 25 ++++++++++++++++++++++++-
+>  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
+>  2 files changed, 30 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+> index 9bdf547..8926621 100644
+> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> @@ -20,6 +20,7 @@
+>  #include <asm/cputype.h>
+>  #include <asm/cp15.h>
+>  #include <asm/mcpm.h>
+> +#include <asm/smp_plat.h>
+>
+>  #include "regs-pmu.h"
+>  #include "common.h"
+> @@ -70,7 +71,29 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+>                 cluster >= EXYNOS5420_NR_CLUSTERS)
+>                 return -EINVAL;
+>
+> -       exynos_cpu_power_up(cpunr);
+> +       if (!exynos_cpu_power_state(cpunr)) {
+> +               exynos_cpu_power_up(cpunr);
+> +
+> +               /* This assumes the cluster number of the big cores(Cortex A15)
+> +                * is 0 and the Little cores(Cortex A7) is 1.
+> +                * When the system was booted from the Little core,
+> +                * they should be reset during power up cpu.
+> +                */
+> +               if (cluster &&
+> +                   cluster == MPIDR_AFFINITY_LEVEL(cpu_logical_map(0), 1)) {
+> +                       /* Before we reset the Little cores, we should wait
+> +                        * the SPARE2 register is set to 1 because the init
+> +                        * codes of the iROM will set the register after
+> +                        * initialization.
+> +                        */
+> +                       while (!pmu_raw_readl(S5P_PMU_SPARE2))
+> +                               udelay(10);
+> +
+> +                       pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
+> +                                       EXYNOS_SWRESET);
+> +               }
+> +       }
+> +
+>         return 0;
+>  }
+>
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+> index b761433..fba9068 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+> @@ -513,6 +513,12 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>  #define SPREAD_ENABLE                                          0xF
+>  #define SPREAD_USE_STANDWFI                                    0xF
+>
+> +#define EXYNOS5420_KFC_CORE_RESET0                             BIT(8)
+> +#define EXYNOS5420_KFC_ETM_RESET0                              BIT(20)
+> +
+> +#define EXYNOS5420_KFC_CORE_RESET(_nr)                         \
+> +       ((EXYNOS5420_KFC_CORE_RESET0 | EXYNOS5420_KFC_ETM_RESET0) << (_nr))
+> +
+>  #define EXYNOS5420_BB_CON1                                     0x0784
+>  #define EXYNOS5420_BB_SEL_EN                                   BIT(31)
+>  #define EXYNOS5420_BB_PMOS_EN                                  BIT(7)
+> --
+> 2.1.0
+>
 
-Chanho's patch is for the exynos mcpm back-end. However, when we
-disable CCI the mcpm code is bypassed and we default to the code in
-exynos' platsmp.c/firmware.c. If the A7s were failing to boot-up then
-the reason could have been that Chanho's workaround was not being
-executed after applying the CCI disablement patch.
-According to the comments the A15s are not booting and so the
-exynos_boot_secondary function needs to be checked further.
+Looking at the following patch
 
-Regards,
-Abhilash
->
-> Best regards,
-> Krzysztof
->
->>
->> Did you succeed booting all CPUs with CONFIG_ARM_BIG_LITTLE_CPUIDLE
->> enabled and CCI disabled in the the Odroid XU3 DTS?
->>
->> Best regards,
->>
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+https://github.com/tobiasjakobi/linux-odroid/commit/c25aae8a02c0e3132df581d1d12be1d6738a08d6
+
+You should also consider some similar logic for platform_do_lowpower
+and exynos_boot_secondary.
+In that same way to address CPUIdle issue.
+
+I am just trying to put my observation. I may be wrong.
+
+-Anand Moon
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
