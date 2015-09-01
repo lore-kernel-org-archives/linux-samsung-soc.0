@@ -1,69 +1,204 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 00/14] drm/exynos: rewrite fimg2d error handling
-Date: Tue, 01 Sep 2015 09:47:17 +0900
-Message-ID: <55E4F595.6030609@samsung.com>
-References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CACvgo51Je-ACgn36cUpRF8XKrftYhk12Pf0NuvGGZWoPp8EDCQ@mail.gmail.com>
- <55DF7735.7040502@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <55DF7735.7040502@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, gustavo.padovan@collabora.co.uk, ML dri-devel <dri-devel@lists.freedesktop.org>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v4 0/16] Add Analogix Core Display Port Driver
+Date: Tue,  1 Sep 2015 13:46:11 +0800
+Message-ID: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.130]:35253 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752835AbbIAFqa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Sep 2015 01:46:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-T24gMjAxNeuFhCAwOOyblCAyOOydvCAwNTo0NiwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZXkg
-RW1pbCwKPiAKPiAKPiBFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4+IEhpIFRvYmlhcywKPj4KPj4gT24g
-MjQgQXVndXN0IDIwMTUgYXQgMTU6MTMsIFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmkt
-YmllbGVmZWxkLmRlPiB3cm90ZToKPj4+IEhlbGxvLAo+Pj4KPj4+IGR1cmluZyB0aGUgZGlzY3Vz
-c2lvbiBhYm91dCB0aGUgbGFzdCBwYXRjaHNldCB0b3VjaGluZyB0aGUKPj4+IGZpbWcyZCBjb2Rl
-LCBpdCBiZWNhbWUgYXBwYXJlbnQgdGhhdCB0aGUgZXJyb3IgaGFuZGxpbmcgZm9yCj4+PiB0aGUg
-Y29tbWFuZCBzdWJtaXNzaW9uIGlzIGN1cnJlbnRseSB1bnNhdGlzZmFjdG9yeS4KPj4+Cj4+PiBU
-aGlzIHNlcmllcyByZXdyaXRlcyB0aGUgaGFuZGxpbmcuIEFsbCBmdW5jdGlvbnMgdGhhdCBzdWJt
-aXQKPj4+IGNvbW1hbmQgYnVmZmVycyBub3cgZmlyc3QgY2hlY2sgaWYgZW5vdWdoIHNwYWNlIGlz
-IGF2YWlsYWJsZQo+Pj4gYW5kIG9ubHkgdGhlbiBwcm9jZWVkIHRvIGJ1aWxkIHRoZSBjb21tYW5k
-IGJ1ZmZlcnMuCj4+Pgo+Pj4gSW4gcGFydGljdWxhciB0aGUgY29tbWFuZCBidWZmZXIgaXMgbm8g
-bG9uZ2VyIGxlZnQgaW4gYQo+Pj4gaGFsZi1maW5pc2hlZCBzdGF0ZSwgc2luY2UgcGFyYW1ldGVy
-cyBwYXNzZWQgdG8gdGhlIGZ1bmN0aW9ucwo+Pj4gYXJlIG5vdyB2YWxpZGF0ZWQgYmVmb3JlIGNv
-bW1hbmQgc3VibWlzc2lvbi4gRm9yIHRoaXMgc29tZQo+Pj4gdmFsaWRhdGlvbiBmdW5jdGlvbnMg
-YXJlIGludHJvZHVjZWQuCj4+Pgo+Pj4gVGhpcyBzaG91bGQgYWxzbyBpbmNyZWFzZSBwZXJmb3Jt
-YW5jZSBpZiB0aGUgYm90dGxlbmVjayBpcwo+Pj4gdGhlIHN1Ym1pc3Npb24gcGFydCwgc2luY2Ug
-YWRkaW5nIGNvbW1hbmRzIHRvIHRoZSBidWZmZXIKPj4+IGlzIG5vdyBtb3JlIGxpZ2h0d2VpZ2h0
-Lgo+Pj4KPj4+IExhc3QgYnV0IG5vdCBsZWFzdCBzb21lIHByZWZpeCB3YXMgYWRkZWQgdG8gbWVz
-c2FnZXMgcHJpbnRlZAo+Pj4gYnkgZnByaW50ZiBhbmQgcHJpbnRmLCBhbmQgdGhlIEcyRCBjb250
-ZXh0IHN0cnVjdCB3YXMgbW92ZWQKPj4+IG91dCBvZiB0aGUgcHVibGljIGhlYWRlci4KPj4+Cj4+
-Pgo+PiBUaGFua3MgZm9yIGdvaW5nIHdpdGggbXkgZWFybGllciBzdWdnZXN0aW9uIGFuZCB1bnRh
-bmdsaW5nIGFsbCB0aGlzLgo+Pgo+PiBJJ3ZlIHdlbnQgdGhyb3VnaCB0aGUgbG90IGFuZCBpdCBs
-b29rcyBncmVhdCBhZmFpY3QuIEZ3aXcgZm9yIHRoZSBzZXJpZXMKPj4gUmV2aWV3ZWQtYnk6IEVt
-aWwgVmVsaWtvdiA8ZW1pbC5sLnZlbGlrb3ZAZ21haWwuY29tPgo+IHRoYW5rcyBmb3IgdGhlIHJl
-dmlldyBhbmQgdGhlIGhlbHAgb24gSVJDIQo+IAo+IAo+PiBBcyBwcmV0dHkgbXVjaCBub25lIG9m
-IHRoaXMgaXMgaGFyZHdhcmUgc3BlY2lmaWMgYW5kL29yIHJlcXVpcmVzCj4+IGFkZGl0aW9uYWwg
-a25vd2xlZGdlIG9mIHRoZSBrZXJuZWwgbW9kdWxlIEknbSBpbmNsaW5lZCB0byBwdWxsIHRoaXMg
-aW4KPj4gZXZlbiBpZiB3ZSBkb24ndCBnZXQgdG9vIG1hbnkgcmV2aWV3ZXJzLiBXZSBiZXR0ZXIg
-a2VlcCBpdCBhcm91bmQgZm9yCj4+IGEgY291cGxlIG9mIHdlZWtzIGluIGNhc2Ugb3RoZXJzIGFy
-ZSBzd2FtcGVkIHdpdGggdW5yZWxhdGVkIHdvcmsgYXRtLAo+PiB5ZXQgd2lsbGluZyB0byB0YWtl
-IGEgbG9vay4KPiBTdXJlLCBJJ20gZ29pbmcgdG8gd2FpdCBhbmQgZG8gc29tZSBwaW5ncyBmcm9t
-IHRpbWUgdG8gdGltZSA6KQo+IAoKSSBoYWQgYSByZXZpZXcgYW5kIGxvb2tzIGdvb2QgdG8gbWUu
-IFRoZXJlIGFyZSBqdXN0IGNsZWFudXAgaXNzdWVzIGJ1dApubyBwcm9ibGVtIHRvIHVwc3RyZWFt
-IHRoZW0gYXMtaXMuIEhvd2V2ZXIsIGluIG15IG9waW5pb24sIEkgdGhpbmsgdGhlCnBhdGNoIDcg
-Y291bGQgYmUgbW9yZSBjbGVhbmVkIHVwLgoKU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2ku
-ZGFlQHNhbXN1bmcuY29tPgoKVGhhbmtzLApJbmtpIERhZQoKCj4gCj4gV2l0aCBiZXN0IHdpc2hl
-cywKPiBUb2JpYXMKPiAKPj4KPj4gQ2hlZXJzLAo+PiBFbWlsCj4+Cj4gCj4gLS0KPiBUbyB1bnN1
-YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgt
-c2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2Vy
-Lmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwu
-b3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+Hi all,
+
+   The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
+share the same IP, so a lot of parts can be re-used. I split the common
+code into bridge directory, then rk3288 and exynos only need to keep
+some platform code. Cause I can't find the exact IP name of exynos dp
+controller, so I decide to name dp core driver with "analogix" which I
+find in rk3288 eDP TRM ;)
+
+Beyond that, there are three light registers setting differents bewteen
+exynos and rk3288.
+1. RK3288 have five special pll resigters which not indicata in exynos
+   dp controller.
+2. The address of DP_PHY_PD(dp phy power manager register) are different
+   between rk3288 and exynos.
+3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
+   register).
+
+I have verified this series on two kinds of rockchip platform board, one
+is rk3288 sdk board which connect with a 2K display port monitor, the other
+is google jerry chromebook which connect with a eDP screen "cnm,n116bgeea2",
+both of them works rightlly.
+
+I haven't verified the dp function on samsung platform, cause I haven't got
+exynos boards. I can only ensure that there are no build error on samsung
+platform, wish some samsung guys help to test. ;)
+
+Besides, The v4 version have been rebased on linux-next master branch
+(git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git), tag name is
+next-20150828 (latest is next-2015-0831). So I think if someone try to apply
+this series, there would be no conflict  ;)
+
+Thanks,
+- Yakir
+
+Changes in v4:
+- Take Romain suggest, rebase on linux-next branch.
+- Take Rob suggest, update "analogix,hpd-gpios" to "hpd-gpios" DT propery.
+- Take Jingoo suggest, rename "analogix_dp-exynos.c" file name to "exynos_dp.c"
+- Take Archit suggest, create a separate folder for analogix code in bridge/
+- Take Jingoo Han suggest, update commit message more readable.
+- Adjust the order from 05 to 04
+- Take Krzysztof suggest, provide backword compatibility with samsung.
+- Take Thierry suggest, add "color-depth" and "color-space" dynamic parsed.
+- Take Krzysztof suggest, split all DTS changes, and provide backward compatibility.
+  Mark old properties as deprecated but still support them.
+- Take Rob suggest, update "analogix,hpd-gpio" to "hpd-gpios" prop name.
+- Take Thierry suggest, deprecated some properties which could parsed from Edid/Mode/DPCD.
+    "analogix,color-space" & "analogix,color-depth"   &
+    "analogix,link-rate"   & "analogix,lane-count"    &
+    "analogix,ycbcr-coeff" & "analogix,dynamic-range" &
+    "vsync-active-high"    & "hsync-active-high"      & "interlaces"
+- Take Krzysztof suggest, separate all DTS changes to a separate patch.
+- Remove some deprecated DT properties in rockchip dp document.
+- Take Kishon suggest, add commit message, and remove the redundant
+  rockchip_dp_phy_init() function, move those code to probe() method.
+  And remove driver .owner number.
+- Take Thierry suggest, seprate the link-rate and lane-count limit
+  out with the device_type flag.
+- Take Jingoo suggest, add commit messages.
+- Call drm_panel_prepare() in .get_modes function, ensure panel should
+  power on before driver try to read edid message.
+
+Changes in v3:
+- Take Thierry Reding suggest, move exynos's video_timing code
+  to analogix_dp-exynos platform driver, add get_modes method
+  to struct analogix_dp_plat_data.
+- Take Heiko suggest, rename some "samsung*" dts propery to "analogix*".
+- Take Thierry Reding suggest, link_rate and lane_count shouldn't config to
+  the DT property value directly, but we can take those as hardware limite.
+  For example, RK3288 only support 4 physical lanes of 2.7/1.62 Gbps/lane,
+  so DT property would like "link-rate = 0x0a" "lane-count = 4".
+- Take Thierry Reding suggest, dynamic parse video timing info from
+  struct drm_display_mode and struct drm_display_info.
+- Take Heiko suggest, add devicetree binding documents.
+- Take Thierry Reding suggest, remove sync pol & colorimetry properies
+  from the new analogix dp driver devicetree binding.
+- Update the exist exynos dtsi file with the latest DP DT properies.
+- Take Thierry Reding and Heiko suggest, leave "sclk_edp_24m" to rockchip
+  dp phy driver which name to "24m", and leave "sclk_edp" to analogix dp
+  core driver which name to "dp", and leave "pclk_edp" to rockchip dp platform
+  driver which name to "pclk".
+- Take Heiko suggest, add devicetree binding document.
+- Take Heiko suggest, remove "rockchip,panel" DT property, take use of remote
+  point to get panel node.
+- Add the new function point analogix_dp_platdata.get_modes init.
+- Take Heiko suggest, add rockchip dp phy driver,
+  collect the phy clocks and power control.
+- Add "analogix,need-force-hpd" to indicate whether driver need foce
+  hpd when hpd detect failed.
+- move dp hpd detect to connector detect function.
+- Add edid modes parse support
+
+Changes in v2:
+- Take Joe Preches advise, improved commit message more readable, and
+  avoid using some uncommon style like bellow:
+  -  retval = exynos_dp_read_bytes_from_i2c(...
+				...)
+  +  retval =
+  +  exynos_dp_read_bytes_from_i2c(......);
+- Take Jingoo Han suggest, just remove my name from author list.
+- Take Jingoo Han suggest, remove new copyright
+- Fix compiled failed dut to analogix_dp_device misspell
+- Take Heiko suggest, get panel node with remote-endpoint method,
+  and create devicetree binding for driver.
+- Remove the clock enable/disbale with "sclk_edp" & "sclk_edp_24m",
+  leave those clock to rockchip dp phy driver.
+- Add GNU license v2 declared and samsung copyright
+- Fix compile failed dut to phy_pd_addr variable misspell error
+
+Mark Yao (1):
+  drm: rockchip: add bpc and color mode setting
+
+Yakir Yang (15):
+  drm: exynos/dp: fix code style
+  drm: exynos/dp: convert to drm bridge mode
+  drm: bridge: analogix/dp: split exynos dp driver to bridge dir
+  drm: bridge: analogix/dp: remove duplicate configuration of link rate
+    and link count
+  drm: bridge: analogix/dp: dynamic parse sync_pol & interlace &
+    colorimetry
+  Documentation: drm/bridge: add document for analogix_dp
+  ARM: dts: exynos/dp: remove some properties that deprecated by
+    analogix_dp driver
+  drm: rockchip/dp: add rockchip platform dp driver
+  phy: Add driver for rockchip Display Port PHY
+  drm: bridge: analogix/dp: add platform device type support
+  drm: bridge: analogix/dp: add some rk3288 special registers setting
+  drm: bridge: analogix/dp: add max link rate and lane count limit for
+    RK3288
+  drm: bridge: analogix/dp: try force hpd after plug in lookup failed
+  drm: bridge: analogix/dp: move hpd detect to connector detect function
+  drm: bridge: analogix/dp: add edid modes parse in get_modes method
+
+ .../devicetree/bindings/drm/bridge/analogix_dp.txt |   52 +
+ .../devicetree/bindings/phy/rockchip-dp-phy.txt    |   26 +
+ .../bindings/video/analogix_dp-rockchip.txt        |   75 +
+ .../devicetree/bindings/video/exynos_dp.txt        |   64 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |    2 -
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 -
+ arch/arm/boot/dts/exynos5250-snow.dts              |    4 +-
+ arch/arm/boot/dts/exynos5250-spring.dts            |    4 +-
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |    4 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |    2 -
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |    4 +-
+ drivers/gpu/drm/bridge/Kconfig                     |    2 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/analogix/Kconfig            |    4 +
+ drivers/gpu/drm/bridge/analogix/Makefile           |    1 +
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1409 +++++++++++++++++++
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  286 ++++
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 1294 ++++++++++++++++++
+ .../analogix/analogix_dp_reg.h}                    |  270 ++--
+ drivers/gpu/drm/exynos/Kconfig                     |    3 +-
+ drivers/gpu/drm/exynos/Makefile                    |    2 +-
+ drivers/gpu/drm/exynos/exynos_dp.c                 |  355 +++++
+ drivers/gpu/drm/exynos/exynos_dp_core.c            | 1427 --------------------
+ drivers/gpu/drm/exynos/exynos_dp_core.h            |  281 ----
+ drivers/gpu/drm/exynos/exynos_dp_reg.c             | 1263 -----------------
+ drivers/gpu/drm/rockchip/Kconfig                   |    9 +
+ drivers/gpu/drm/rockchip/Makefile                  |    1 +
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  416 ++++++
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |    2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |    2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |   33 +-
+ drivers/phy/Kconfig                                |    7 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-rockchip-dp.c                      |  166 +++
+ include/drm/bridge/analogix_dp.h                   |   40 +
+ 35 files changed, 4347 insertions(+), 3167 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+ create mode 100644 Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
+ create mode 100644 drivers/gpu/drm/bridge/analogix/Kconfig
+ create mode 100644 drivers/gpu/drm/bridge/analogix/Makefile
+ create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+ create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+ create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+ rename drivers/gpu/drm/{exynos/exynos_dp_reg.h => bridge/analogix/analogix_dp_reg.h} (62%)
+ create mode 100644 drivers/gpu/drm/exynos/exynos_dp.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.h
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_reg.c
+ create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+ create mode 100644 drivers/phy/phy-rockchip-dp.c
+ create mode 100644 include/drm/bridge/analogix_dp.h
+
+-- 
+2.1.2
