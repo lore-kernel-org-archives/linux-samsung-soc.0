@@ -1,173 +1,450 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v4 16/16] drm: bridge: analogix/dp: add edid modes parse in get_modes method
-Date: Tue,  1 Sep 2015 14:20:18 +0800
-Message-ID: <1441088418-25922-1-git-send-email-ykk@rock-chips.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1441086371-24838-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add exynos5422-odroidxu4 board
+Date: Tue, 1 Sep 2015 10:48:06 +0200
+Message-ID: <55E56646.2070106@osg.samsung.com>
+References: <1440993365-26896-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:33267 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755190AbbIAIsL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Sep 2015 04:48:11 -0400
+In-Reply-To: <1440993365-26896-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, p.marczak@samsung.com
 
-Display Port monitor could support kinds of mode which indicate
-in monitor edid, not just one single display resolution which
-defined in panel or devivetree property display timing.
+Hello Krzysztof,
 
-Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
----
-Changes in v4:
-- Call drm_panel_prepare() in .get_modes function, ensure panel should
-  power on before driver try to read edid message.
+The patch looks good to me, I just have one small comment.
 
-Changes in v3:
-- Add edid modes parse support
+On 08/31/2015 05:56 AM, Krzysztof Kozlowski wrote:
+> Add Hardkernel Odroid XU4 board Device Tree sources. The board differs
+> from Odroid XU3 and XU3-Lite by:
+> 1. No green and red leds (except standard red power led).
+> 2. No audio codec.
+> 3. Two USB3 ports in host mode (no micro USB3 connector for OTG).
+> 4. Realtek RTL8153-CG gigabit network adapter (instead of SMSC9514).
+> 5. Additional connector with IO ports (I2S_0, I2C_5).
+> 6. No DisplayPort.
+> 7. No TI INA231 power measurement sensors.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/Makefile                         |  1 +
+>  arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi  | 56 ++++++++++++++
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 90 +---------------------
+>  arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    | 52 +++++++++++++
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts         | 52 +++++++++++++
+>  arch/arm/boot/dts/exynos5422-odroidxu4.dts         | 48 ++++++++++++
+>  6 files changed, 210 insertions(+), 89 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+>  create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu4.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 233159d2eaab..3d27fe34647f 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -123,6 +123,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+>  	exynos5420-smdk5420.dtb \
+>  	exynos5422-odroidxu3.dtb \
+>  	exynos5422-odroidxu3-lite.dtb \
+> +	exynos5422-odroidxu4.dtb \
+>  	exynos5440-sd5v1.dtb \
+>  	exynos5440-ssdk5440.dtb \
+>  	exynos5800-peach-pi.dtb
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> new file mode 100644
+> index 000000000000..eee16a820484
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> @@ -0,0 +1,56 @@
+> +/*
+> + * Hardkernel Odroid XU3 Audio Codec device tree source
+> + *
+> + * Copyright (c) 2015 Krzysztof Kozlowski
+> + * Copyright (c) 2014 Collabora Ltd.
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/ {
+> +	sound: sound {
+> +		compatible = "simple-audio-card";
+> +
+> +		simple-audio-card,name = "Odroid-XU3";
+> +		simple-audio-card,widgets =
+> +			"Headphone", "Headphone Jack",
+> +			"Speakers", "Speakers";
+> +		simple-audio-card,routing =
+> +			"Headphone Jack", "HPL",
+> +			"Headphone Jack", "HPR",
+> +			"Headphone Jack", "MICBIAS",
+> +			"IN1", "Headphone Jack",
+> +			"Speakers", "SPKL",
+> +			"Speakers", "SPKR";
+> +
+> +		simple-audio-card,format = "i2s";
+> +		simple-audio-card,bitclock-master = <&link0_codec>;
+> +		simple-audio-card,frame-master = <&link0_codec>;
+> +
+> +		simple-audio-card,cpu {
+> +			sound-dai = <&i2s0 0>;
+> +			system-clock-frequency = <19200000>;
+> +		};
+> +
+> +		link0_codec: simple-audio-card,codec {
+> +			sound-dai = <&max98090>;
+> +			clocks = <&i2s0 CLK_I2S_CDCLK>;
+> +		};
+> +	};
+> +};
+> +
+> +&hsi2c_5 {
+> +	max98090: max98090@10 {
+> +		compatible = "maxim,max98090";
+> +		reg = <0x10>;
+> +		interrupt-parent = <&gpx3>;
+> +		interrupts = <2 0>;
+> +		clocks = <&i2s0 CLK_I2S_CDCLK>;
+> +		clock-names = "mclk";
+> +		#sound-dai-cells = <0>;
+> +	};
 
-Changes in v2: None
+Shouldn't this node also include the status = "okay" ?
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 31 ++++++++-------
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 46 +++++++++++-----------
- 2 files changed, 40 insertions(+), 37 deletions(-)
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index dd8bc86d9de4..52c34d8e791f 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -46,70 +46,6 @@
+>  		reset-gpios = <&gpd1 0 1>;
+>  	};
+>  
+> -	pwmleds {
+> -		compatible = "pwm-leds";
+> -
+> -		greenled {
+> -			label = "green:mmc0";
+> -			pwms = <&pwm 1 2000000 0>;
+> -			pwm-names = "pwm1";
+> -			/*
+> -			 * Green LED is much brighter than the others
+> -			 * so limit its max brightness
+> -			 */
+> -			max_brightness = <127>;
+> -			linux,default-trigger = "mmc0";
+> -		};
+> -
+> -		blueled {
+> -			label = "blue:heartbeat";
+> -			pwms = <&pwm 2 2000000 0>;
+> -			pwm-names = "pwm2";
+> -			max_brightness = <255>;
+> -			linux,default-trigger = "heartbeat";
+> -		};
+> -	};
+> -
+> -	gpioleds {
+> -		compatible = "gpio-leds";
+> -		redled {
+> -			label = "red:microSD";
+> -			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+> -			default-state = "off";
+> -			linux,default-trigger = "mmc1";
+> -		};
+> -	};
+> -
+> -	sound: sound {
+> -		compatible = "simple-audio-card";
+> -
+> -		simple-audio-card,name = "Odroid-XU3";
+> -		simple-audio-card,widgets =
+> -			"Headphone", "Headphone Jack",
+> -			"Speakers", "Speakers";
+> -		simple-audio-card,routing =
+> -			"Headphone Jack", "HPL",
+> -			"Headphone Jack", "HPR",
+> -			"Headphone Jack", "MICBIAS",
+> -			"IN1", "Headphone Jack",
+> -			"Speakers", "SPKL",
+> -			"Speakers", "SPKR";
+> -
+> -		simple-audio-card,format = "i2s";
+> -		simple-audio-card,bitclock-master = <&link0_codec>;
+> -		simple-audio-card,frame-master = <&link0_codec>;
+> -
+> -		simple-audio-card,cpu {
+> -			sound-dai = <&i2s0 0>;
+> -			system-clock-frequency = <19200000>;
+> -		};
+> -
+> -		link0_codec: simple-audio-card,codec {
+> -			sound-dai = <&max98090>;
+> -			clocks = <&i2s0 CLK_I2S_CDCLK>;
+> -		};
+> -	};
+> -
+>  	fan0: pwm-fan {
+>  		compatible = "pwm-fan";
+>  		pwms = <&pwm 0 20972 0>;
+> @@ -378,15 +314,6 @@
+>  
+>  &hsi2c_5 {
+>  	status = "okay";
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 499ec57..c71e5f6 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -111,7 +111,7 @@ static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
- 
- static int analogix_dp_read_edid(struct analogix_dp_device *dp)
- {
--	unsigned char edid[EDID_BLOCK_LENGTH * 2];
-+	unsigned char *edid = dp->edid;
- 	unsigned int extend_block = 0;
- 	unsigned char sum;
- 	unsigned char test_vector;
-@@ -908,12 +908,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 			DRM_ERROR("failed to disable the panel\n");
- 	}
- 
--	ret = analogix_dp_handle_edid(dp);
--	if (ret) {
--		dev_err(dp->dev, "unable to handle edid\n");
--		return;
--	}
--
- 	ret = analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
- 					 dp->video_info.max_link_rate);
- 	if (ret) {
-@@ -972,8 +966,24 @@ static int analogix_dp_get_modes(struct drm_connector *connector)
- {
- 	struct analogix_dp_device *dp = connector_to_dp(connector);
- 	struct analogix_dp_plat_data *plat_data = dp->plat_data;
-+	struct edid *edid = (struct edid *)dp->edid;
- 	int num_modes = 0;
- 
-+	if (dp->plat_data && dp->plat_data->panel) {
-+		if (drm_panel_prepare(dp->plat_data->panel)) {
-+			DRM_ERROR("failed to setup the panel\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (analogix_dp_handle_edid(dp)) {
-+		dev_err(dp->dev, "unable to handle edid\n");
-+		return -EINVAL;
-+	}
-+
-+	drm_mode_connector_update_edid_property(connector, edid);
-+	num_modes += drm_add_edid_modes(connector, edid);
-+
- 	if (plat_data && plat_data->panel)
- 		num_modes += drm_panel_get_modes(plat_data->panel);
- 
-@@ -1055,13 +1065,6 @@ static void analogix_dp_bridge_enable(struct drm_bridge *bridge)
- 	if (dp->dpms_mode == DRM_MODE_DPMS_ON)
- 		return;
- 
--	if (dp->plat_data && dp->plat_data->panel) {
--		if (drm_panel_prepare(dp->plat_data->panel)) {
--			DRM_ERROR("failed to setup the panel\n");
--			return;
--		}
--	}
--
- 	if (dp->plat_data && dp->plat_data->power_on)
- 		dp->plat_data->power_on(dp->plat_data);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 6960ab3..5348b1b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -20,6 +20,28 @@
- #define MAX_CR_LOOP 5
- #define MAX_EQ_LOOP 5
- 
-+/* I2C EDID Chip ID, Slave Address */
-+#define I2C_EDID_DEVICE_ADDR			0x50
-+#define I2C_E_EDID_DEVICE_ADDR			0x30
-+
-+#define EDID_BLOCK_LENGTH			0x80
-+#define EDID_HEADER_PATTERN			0x00
-+#define EDID_EXTENSION_FLAG			0x7e
-+#define EDID_CHECKSUM				0x7f
-+
-+/* DP_MAX_LANE_COUNT */
-+#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
-+#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-+
-+/* DP_LANE_COUNT_SET */
-+#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
-+
-+/* DP_TRAINING_LANE0_SET */
-+#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
-+#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
-+#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
-+#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
-+
- enum link_rate_type {
- 	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
- 	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
-@@ -161,6 +183,7 @@ struct analogix_dp_device {
- 	int			dpms_mode;
- 	int			hpd_gpio;
- 	bool                    need_force_hpd;
-+	unsigned char           edid[EDID_BLOCK_LENGTH * 2];
- 
- 	struct analogix_dp_plat_data *plat_data;
- };
-@@ -260,27 +283,4 @@ int analogix_dp_is_video_stream_on(struct analogix_dp_device *dp);
- void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
--
--/* I2C EDID Chip ID, Slave Address */
--#define I2C_EDID_DEVICE_ADDR			0x50
--#define I2C_E_EDID_DEVICE_ADDR			0x30
--
--#define EDID_BLOCK_LENGTH			0x80
--#define EDID_HEADER_PATTERN			0x00
--#define EDID_EXTENSION_FLAG			0x7e
--#define EDID_CHECKSUM				0x7f
--
--/* DP_MAX_LANE_COUNT */
--#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
--#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
--
--/* DP_LANE_COUNT_SET */
--#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
--
--/* DP_TRAINING_LANE0_SET */
--#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
--#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
--#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
--#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
--
- #endif /* _ANALOGIX_DP_CORE_H */
+since I believe for the Odroid XU4 we would like this to be disabled.
+The only I2C device in this I2C bus is the max98090 codec which is
+not present in the XU4.
+
+> -	max98090: max98090@10 {
+> -		compatible = "maxim,max98090";
+> -		reg = <0x10>;
+> -		interrupt-parent = <&gpx3>;
+> -		interrupts = <2 0>;
+> -		clocks = <&i2s0 CLK_I2S_CDCLK>;
+> -		clock-names = "mclk";
+> -		#sound-dai-cells = <0>;
+> -	};
+>  };
+>  
+>  &i2c_2 {
+> @@ -464,19 +391,6 @@
+>  	};
+>  };
+>  
+> -&pwm {
+> -	/*
+> -	 * PWM 0 -- fan
+> -	 * PWM 1 -- Green LED
+> -	 * PWM 2 -- Blue LED
+> -	 * PWM 3 -- on MIPI connector for backlight
+> -	 */
+> -	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
+> -	pinctrl-names = "default";
+> -	samsung,pwm-outputs = <0>;
+> -	status = "okay";
+> -};
+> -
+>  &tmu_cpu0 {
+>  	vtmu-supply = <&ldo7_reg>;
+>  	status = "okay";
+> @@ -512,9 +426,7 @@
+>  	dr_mode = "host";
+>  };
+>  
+> -&usbdrd_dwc3_1 {
+> -	dr_mode = "otg";
+> -};
+> +/* usbdrd_dwc3_1 mode customized in each board */
+>  
+>  &usbdrd3_0 {
+>  	vdd33-supply = <&ldo9_reg>;
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+> index c06882bbb822..379cd61178ee 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+> @@ -13,8 +13,60 @@
+>  
+>  /dts-v1/;
+>  #include "exynos5422-odroidxu3-common.dtsi"
+> +#include "exynos5422-odroidxu3-audio.dtsi"
+>  
+>  / {
+>  	model = "Hardkernel Odroid XU3 Lite";
+>  	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
+> +
+> +	pwmleds {
+> +		compatible = "pwm-leds";
+> +
+> +		greenled {
+> +			label = "green:mmc0";
+> +			pwms = <&pwm 1 2000000 0>;
+> +			pwm-names = "pwm1";
+> +			/*
+> +			 * Green LED is much brighter than the others
+> +			 * so limit its max brightness
+> +			 */
+> +			max_brightness = <127>;
+> +			linux,default-trigger = "mmc0";
+> +		};
+> +
+> +		blueled {
+> +			label = "blue:heartbeat";
+> +			pwms = <&pwm 2 2000000 0>;
+> +			pwm-names = "pwm2";
+> +			max_brightness = <255>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +
+> +	gpioleds {
+> +		compatible = "gpio-leds";
+> +		redled {
+> +			label = "red:microSD";
+> +			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+> +			default-state = "off";
+> +			linux,default-trigger = "mmc1";
+> +		};
+> +	};
+> +};
+> +
+> +&pwm {
+> +	/*
+> +	 * PWM 0 -- fan
+> +	 * PWM 1 -- Green LED
+> +	 * PWM 2 -- Blue LED
+> +	 * PWM 3 -- on MIPI connector for backlight
+> +	 */
+> +	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
+> +	pinctrl-names = "default";
+> +	samsung,pwm-outputs = <0>;
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd_dwc3_1 {
+> +	dr_mode = "otg";
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> index 78e6a502f320..c7509690131d 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> @@ -12,10 +12,45 @@
+>  
+>  /dts-v1/;
+>  #include "exynos5422-odroidxu3-common.dtsi"
+> +#include "exynos5422-odroidxu3-audio.dtsi"
+>  
+>  / {
+>  	model = "Hardkernel Odroid XU3";
+>  	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
+> +
+> +	pwmleds {
+> +		compatible = "pwm-leds";
+> +
+> +		greenled {
+> +			label = "green:mmc0";
+> +			pwms = <&pwm 1 2000000 0>;
+> +			pwm-names = "pwm1";
+> +			/*
+> +			 * Green LED is much brighter than the others
+> +			 * so limit its max brightness
+> +			 */
+> +			max_brightness = <127>;
+> +			linux,default-trigger = "mmc0";
+> +		};
+> +
+> +		blueled {
+> +			label = "blue:heartbeat";
+> +			pwms = <&pwm 2 2000000 0>;
+> +			pwm-names = "pwm2";
+> +			max_brightness = <255>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +
+> +	gpioleds {
+> +		compatible = "gpio-leds";
+> +		redled {
+> +			label = "red:microSD";
+> +			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+> +			default-state = "off";
+> +			linux,default-trigger = "mmc1";
+> +		};
+> +	};
+>  };
+>  
+>  &i2c_0 {
+> @@ -49,3 +84,20 @@
+>  		shunt-resistor = <10000>;
+>  	};
+>  };
+> +
+> +&pwm {
+> +	/*
+> +	 * PWM 0 -- fan
+> +	 * PWM 1 -- Green LED
+> +	 * PWM 2 -- Blue LED
+> +	 * PWM 3 -- on MIPI connector for backlight
+> +	 */
+> +	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
+> +	pinctrl-names = "default";
+> +	samsung,pwm-outputs = <0>;
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd_dwc3_1 {
+> +	dr_mode = "otg";
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+> new file mode 100644
+> index 000000000000..087c485b6084
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+> @@ -0,0 +1,48 @@
+> +/*
+> + * Hardkernel Odroid XU4 board device tree source
+> + *
+> + * Copyright (c) 2015 Krzysztof Kozlowski
+> + * Copyright (c) 2014 Collabora Ltd.
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +#include "exynos5422-odroidxu3-common.dtsi"
+> +
+> +/ {
+> +	model = "Hardkernel Odroid XU4";
+> +	compatible = "hardkernel,odroid-xu4", "samsung,exynos5800", \
+> +		     "samsung,exynos5";
+> +
+> +	pwmleds {
+> +		compatible = "pwm-leds";
+> +
+> +		blueled {
+> +			label = "blue:heartbeat";
+> +			pwms = <&pwm 2 2000000 0>;
+> +			pwm-names = "pwm2";
+> +			max_brightness = <255>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +};
+> +
+> +&pwm {
+> +	/*
+> +	 * PWM 0 -- fan
+> +	 * PWM 2 -- Blue LED
+> +	 */
+> +	pinctrl-0 = <&pwm0_out &pwm2_out>;
+> +	pinctrl-names = "default";
+> +	samsung,pwm-outputs = <0>;
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd_dwc3_1 {
+> +	dr_mode = "host";
+> +};
+> 
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-2.1.2
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
