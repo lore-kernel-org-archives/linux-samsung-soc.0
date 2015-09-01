@@ -1,141 +1,181 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCHv2] ARM: EXYNOS: reset Little cores when cpu is up
-Date: Tue, 1 Sep 2015 20:17:18 +0530
-Message-ID: <CANAwSgSgXjsxrvvs=WNJ1aF+VQ9j-K23=CHMErRzKj1+owS+DA@mail.gmail.com>
-References: <1441117023-25478-1-git-send-email-parkch98@gmail.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [PATCH v4 08/16] drm: rockchip/dp: add rockchip platform dp
+ driver
+Date: Tue, 1 Sep 2015 22:48:17 +0800
+Message-ID: <55E5BAB1.4000301@rock-chips.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1441087288-25404-1-git-send-email-ykk@rock-chips.com>
+ <2919897.nbhB5Cifed@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:34416 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753126AbbIAOrj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Sep 2015 10:47:39 -0400
-Received: by wicjd9 with SMTP id jd9so35941538wic.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Sep 2015 07:47:37 -0700 (PDT)
-In-Reply-To: <1441117023-25478-1-git-send-email-parkch98@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2919897.nbhB5Cifed@phil>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp93rCq3LdnpKM@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <parkch98@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi All,
+Hi Heiko,
 
-On 1 September 2015 at 19:47, Chanho Park <parkch98@gmail.com> wrote:
+=E5=9C=A8 2015/9/1 22:24, Heiko Stuebner =E5=86=99=E9=81=93:
+> Am Dienstag, 1. September 2015, 14:01:28 schrieb Yakir Yang:
+>> Rockchip have three clocks for dp controller, we leave pclk_edp
+>> to analogix_dp driver control, and keep the sclk_edp_24m and
+>> sclk_edp in platform driver.
+>>
+>> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+>> ---
+>> Changes in v4:
+>> - Remove some deprecated DT properties in rockchip dp document.
+>>
+>> Changes in v3:
+>> - Take Thierry Reding and Heiko suggest, leave "sclk_edp_24m" to roc=
+kchip
+>>    dp phy driver which name to "24m", and leave "sclk_edp" to analog=
+ix dp
+>>    core driver which name to "dp", and leave "pclk_edp" to rockchip =
+dp
+>> platform driver which name to "pclk".
+>> - Take Heiko suggest, add devicetree binding document.
+>> - Take Heiko suggest, remove "rockchip,panel" DT property, take use =
+of
+>> remote point to get panel node.
+>> - Add the new function point analogix_dp_platdata.get_modes init.
+>>
+>> Changes in v2:
+>> - Take Heiko suggest, get panel node with remote-endpoint method,
+>>    and create devicetree binding for driver.
+>> - Remove the clock enable/disbale with "sclk_edp" & "sclk_edp_24m",
+>>    leave those clock to rockchip dp phy driver.
+>>
+>>   .../bindings/video/analogix_dp-rockchip.txt        |  74 ++++
+>>   drivers/gpu/drm/rockchip/Kconfig                   |   9 +
+>>   drivers/gpu/drm/rockchip/Makefile                  |   1 +
+>>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 389
+>> +++++++++++++++++++++ 4 files changed, 473 insertions(+)
+>>   create mode 100644
+>> Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt cre=
+ate
+>> mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>>
+>> diff --git
+>> a/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
+>> b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt n=
+ew file
+>> mode 100644
+>> index 0000000..502483e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.t=
+xt
+>> @@ -0,0 +1,74 @@
+>> +Rockchip RK3288 specific extensions to the Analogix Display Port
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +Required properties:
+>> +- compatible: "rockchip,rk3288-edp";
+>> +
+>> +- reg: physical base address of the controller and length
+>> +
+>> +- clocks: from common clock binding: handle to dp clock.
+>> +	  of memory mapped region.
+>> +
+>> +- clock-names: from common clock binding:
+>> +	       Required elements: "dp" "pclk"
+>> +
+>> +- resets: Must contain an entry for each entry in reset-names.
+>> +	  See ../reset/reset.txt for details.
+>> +
+>> +- reset-names: Must include the name "dp"
+>> +
+>> +- rockchip,grf: this soc should set GRF regs, so need get grf here.
+>> +
+>> +- ports: contain a port node with endpoint definitions as defined i=
+n
+>> +  Documentation/devicetree/bindings/media/video-interfaces.txt.
+>> +
+>> +
+>> +For the below properties, please refer to Analogix DP binding docum=
+ent:
+>> + * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
+>> +- phys (required)
+>> +- phy-names (required)
+>> +- hpd-gpios (optional)
+>> +-------------------------------------------------------------------=
+--------
+>> ---- +
+>> +Example:
+>> +	dp-controller: dp@ff970000 {
+>> +		compatible =3D "rockchip,rk3288-dp";
+>> +		reg =3D <0xff970000 0x4000>;
+>> +		interrupts =3D <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+>> +		clocks =3D <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
+>> +		clock-names =3D "dp", "pclk";
+>> +		phys =3D <&dp_phy>;
+>> +		phy-names =3D "dp";
+>> +
+>> +		rockchip,grf =3D <&grf>;
+>> +		resets =3D <&cru 111>;
+>> +		reset-names =3D "dp";
+>> +
+>> +		status =3D "disabled";
+>> +
+>> +		ports {
+>> +			edp_in: port {
+>> +				#address-cells =3D <1>;
+>> +				#size-cells =3D <0>;
+>> +				edp_in_vopb: endpoint@0 {
+>> +					reg =3D <0>;
+>> +					remote-endpoint =3D <&vopb_out_edp>;
+>> +				};
+>> +				edp_in_vopl: endpoint@1 {
+>> +					reg =3D <1>;
+>> +					remote-endpoint =3D <&vopl_out_edp>;
+>> +				};
+>> +			};
+>> +
+>> +			edp_out: port@1 {
+>> +				reg =3D <1>;
+>> +				#address-cells =3D <1>;
+>> +				#size-cells =3D <0>;
+>> +				edp_out_panel: endpoint {
+>> +					reg =3D <0>;
+>> +					remote-endpoint =3D <&panel_in_edp>
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+> just a nit right now, because "git am" mentioned it:
 >
-> The cpu booting of exynos5422 has been still broken since we discussed
-> it in last year[1]. This patch is inspired from Odroid XU3
-> code (Actually, it was from samsung exynos vendor kernel)[2]. This weird
-> reset code was founded exynos5420 octa cores series SoCs and only
-> required for the first boot core is the Little core (Cortex A7).
-> Some of the exynos5420 boards and all of the exynos5422 boards will require
-> this code.
->
-> There is two ways to check the little core is the first cpu. One is
-> checking GPG2CON[1] GPIO value and the other is checking the cluster
-> number of the first cpu. I selected the latter because it's more easier
-> than the former.
->
-> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
-> [2]:https://patchwork.kernel.org/patch/6782891/
->
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Tested-by: Kevin Hilman <khilman@linaro.org>
-> Signed-off-by: Chanho Park <parkch98@gmail.com>
-> ---
-> Changes from v1:
->  .kfc to Little (Cortex A7) and eagle to big (Cortex A15)
->  .append comments about waiting SPARE2 register
->
-> Changes since RFC:
->  .drop checking soc_is_exynos5800 to extend this codes to
-> exynos5420/5422 boards.
->  .kfc cores will be reset only if the cpu0 is kfc core.
->  .Rebase top of the kukjin's for-next branch
->
->  arch/arm/mach-exynos/mcpm-exynos.c | 25 ++++++++++++++++++++++++-
->  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
->  2 files changed, 30 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-> index 9bdf547..8926621 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -20,6 +20,7 @@
->  #include <asm/cputype.h>
->  #include <asm/cp15.h>
->  #include <asm/mcpm.h>
-> +#include <asm/smp_plat.h>
->
->  #include "regs-pmu.h"
->  #include "common.h"
-> @@ -70,7 +71,29 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
->                 cluster >= EXYNOS5420_NR_CLUSTERS)
->                 return -EINVAL;
->
-> -       exynos_cpu_power_up(cpunr);
-> +       if (!exynos_cpu_power_state(cpunr)) {
-> +               exynos_cpu_power_up(cpunr);
+> git am \[PATCH\ v4\ 08_16\]\ drm_rockchip_dp_add\ rockchip\ platform\=
+ dp\
+> driver.mbox
+> [...]/linux-rockchip/.git/rebase-apply/patch:108: new blank line at E=
+OF.
 > +
-> +               /* This assumes the cluster number of the big cores(Cortex A15)
-> +                * is 0 and the Little cores(Cortex A7) is 1.
-> +                * When the system was booted from the Little core,
-> +                * they should be reset during power up cpu.
-> +                */
-> +               if (cluster &&
-> +                   cluster == MPIDR_AFFINITY_LEVEL(cpu_logical_map(0), 1)) {
-> +                       /* Before we reset the Little cores, we should wait
-> +                        * the SPARE2 register is set to 1 because the init
-> +                        * codes of the iROM will set the register after
-> +                        * initialization.
-> +                        */
-> +                       while (!pmu_raw_readl(S5P_PMU_SPARE2))
-> +                               udelay(10);
-> +
-> +                       pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
-> +                                       EXYNOS_SWRESET);
-> +               }
-> +       }
-> +
->         return 0;
->  }
 >
-> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-> index b761433..fba9068 100644
-> --- a/arch/arm/mach-exynos/regs-pmu.h
-> +++ b/arch/arm/mach-exynos/regs-pmu.h
-> @@ -513,6 +513,12 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
->  #define SPREAD_ENABLE                                          0xF
->  #define SPREAD_USE_STANDWFI                                    0xF
+> meaning you're adding an empty line at the end :-)
+
+Oh, thanks, I have saw this too when I apply this on linux-next
+branch, but I haven't see the log very careful at that time, and
+".git/rebase-apply/patch" just empty, so I just go ahead and
+forget to fix this one.
+
+Thanks for your remind,
+  - Yakir
+
 >
-> +#define EXYNOS5420_KFC_CORE_RESET0                             BIT(8)
-> +#define EXYNOS5420_KFC_ETM_RESET0                              BIT(20)
-> +
-> +#define EXYNOS5420_KFC_CORE_RESET(_nr)                         \
-> +       ((EXYNOS5420_KFC_CORE_RESET0 | EXYNOS5420_KFC_ETM_RESET0) << (_nr))
-> +
->  #define EXYNOS5420_BB_CON1                                     0x0784
->  #define EXYNOS5420_BB_SEL_EN                                   BIT(31)
->  #define EXYNOS5420_BB_PMOS_EN                                  BIT(7)
-> --
-> 2.1.0
+> Heiko
+>
+>
 >
 
-Looking at the following patch
 
-https://github.com/tobiasjakobi/linux-odroid/commit/c25aae8a02c0e3132df581d1d12be1d6738a08d6
-
-You should also consider some similar logic for platform_do_lowpower
-and exynos_boot_secondary.
-In that same way to address CPUIdle issue.
-
-I am just trying to put my observation. I may be wrong.
-
--Anand Moon
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
