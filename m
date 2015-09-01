@@ -1,65 +1,69 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 04/14] exynos/fimg2d: check buffer space in g2d_solid_fill()
-Date: Tue, 01 Sep 2015 09:41:22 +0900
-Message-ID: <55E4F432.1080600@samsung.com>
+Subject: Re: [PATCH 00/14] drm/exynos: rewrite fimg2d error handling
+Date: Tue, 01 Sep 2015 09:47:17 +0900
+Message-ID: <55E4F595.6030609@samsung.com>
 References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1440425649-9768-5-git-send-email-tjakobi@math.uni-bielefeld.de>
- <55E45029.40009@samsung.com> <55E4AA97.2070502@math.uni-bielefeld.de>
- <CACvgo51UZ10zQb63yxcUw=7GDp0Zs54atyxJO0xAJeTYzf1GVA@mail.gmail.com>
+ <CACvgo51Je-ACgn36cUpRF8XKrftYhk12Pf0NuvGGZWoPp8EDCQ@mail.gmail.com>
+ <55DF7735.7040502@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:43935 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752883AbbIAAlX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 Aug 2015 20:41:23 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NTZ01V6W38YB290@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 01 Sep 2015 09:41:22 +0900 (KST)
-In-reply-to: <CACvgo51UZ10zQb63yxcUw=7GDp0Zs54atyxJO0xAJeTYzf1GVA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <55DF7735.7040502@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Emil Velikov <emil.l.velikov@gmail.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, gustavo.padovan@collabora.co.uk, ML dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emil Velikov <emil.l.velikov@gmail.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, gustavo.padovan@collabora.co.uk
 
-On 2015=EB=85=84 09=EC=9B=94 01=EC=9D=BC 04:57, Emil Velikov wrote:
-> On 31 August 2015 at 20:27, Tobias Jakobi <tjakobi@math.uni-bielefeld=
-=2Ede> wrote:
->> Hello!
->>
->> Inki Dae wrote:
->>> On 2015=EB=85=84 08=EC=9B=94 24=EC=9D=BC 23:13, Tobias Jakobi wrote=
-:
->=20
->>>> +    if (g2d_check_space(ctx, 7, 1))
->>>> +            return -ENOSPC;
->>>
->>> You can make 3 and 4 patches to one. These should be same patch.
->> Hmm, so which 3 (respectively 4) patches should be squashed?
->>
-> I believe he meant "squash the introduction of the function and its
-> uses into a single patch".
->=20
-> Not sure how much value that brings, so I'll let you guys decide on
-> the bike shed colour :-)
-
-That - including relevant my comments - is just my opinion so no proble=
-m
-to upstream it as is. This is really trivial.
-
-Thanks,
-Inki Dae
-
->=20
-> -Emil
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+T24gMjAxNeuFhCAwOOyblCAyOOydvCAwNTo0NiwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZXkg
+RW1pbCwKPiAKPiAKPiBFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4+IEhpIFRvYmlhcywKPj4KPj4gT24g
+MjQgQXVndXN0IDIwMTUgYXQgMTU6MTMsIFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmkt
+YmllbGVmZWxkLmRlPiB3cm90ZToKPj4+IEhlbGxvLAo+Pj4KPj4+IGR1cmluZyB0aGUgZGlzY3Vz
+c2lvbiBhYm91dCB0aGUgbGFzdCBwYXRjaHNldCB0b3VjaGluZyB0aGUKPj4+IGZpbWcyZCBjb2Rl
+LCBpdCBiZWNhbWUgYXBwYXJlbnQgdGhhdCB0aGUgZXJyb3IgaGFuZGxpbmcgZm9yCj4+PiB0aGUg
+Y29tbWFuZCBzdWJtaXNzaW9uIGlzIGN1cnJlbnRseSB1bnNhdGlzZmFjdG9yeS4KPj4+Cj4+PiBU
+aGlzIHNlcmllcyByZXdyaXRlcyB0aGUgaGFuZGxpbmcuIEFsbCBmdW5jdGlvbnMgdGhhdCBzdWJt
+aXQKPj4+IGNvbW1hbmQgYnVmZmVycyBub3cgZmlyc3QgY2hlY2sgaWYgZW5vdWdoIHNwYWNlIGlz
+IGF2YWlsYWJsZQo+Pj4gYW5kIG9ubHkgdGhlbiBwcm9jZWVkIHRvIGJ1aWxkIHRoZSBjb21tYW5k
+IGJ1ZmZlcnMuCj4+Pgo+Pj4gSW4gcGFydGljdWxhciB0aGUgY29tbWFuZCBidWZmZXIgaXMgbm8g
+bG9uZ2VyIGxlZnQgaW4gYQo+Pj4gaGFsZi1maW5pc2hlZCBzdGF0ZSwgc2luY2UgcGFyYW1ldGVy
+cyBwYXNzZWQgdG8gdGhlIGZ1bmN0aW9ucwo+Pj4gYXJlIG5vdyB2YWxpZGF0ZWQgYmVmb3JlIGNv
+bW1hbmQgc3VibWlzc2lvbi4gRm9yIHRoaXMgc29tZQo+Pj4gdmFsaWRhdGlvbiBmdW5jdGlvbnMg
+YXJlIGludHJvZHVjZWQuCj4+Pgo+Pj4gVGhpcyBzaG91bGQgYWxzbyBpbmNyZWFzZSBwZXJmb3Jt
+YW5jZSBpZiB0aGUgYm90dGxlbmVjayBpcwo+Pj4gdGhlIHN1Ym1pc3Npb24gcGFydCwgc2luY2Ug
+YWRkaW5nIGNvbW1hbmRzIHRvIHRoZSBidWZmZXIKPj4+IGlzIG5vdyBtb3JlIGxpZ2h0d2VpZ2h0
+Lgo+Pj4KPj4+IExhc3QgYnV0IG5vdCBsZWFzdCBzb21lIHByZWZpeCB3YXMgYWRkZWQgdG8gbWVz
+c2FnZXMgcHJpbnRlZAo+Pj4gYnkgZnByaW50ZiBhbmQgcHJpbnRmLCBhbmQgdGhlIEcyRCBjb250
+ZXh0IHN0cnVjdCB3YXMgbW92ZWQKPj4+IG91dCBvZiB0aGUgcHVibGljIGhlYWRlci4KPj4+Cj4+
+Pgo+PiBUaGFua3MgZm9yIGdvaW5nIHdpdGggbXkgZWFybGllciBzdWdnZXN0aW9uIGFuZCB1bnRh
+bmdsaW5nIGFsbCB0aGlzLgo+Pgo+PiBJJ3ZlIHdlbnQgdGhyb3VnaCB0aGUgbG90IGFuZCBpdCBs
+b29rcyBncmVhdCBhZmFpY3QuIEZ3aXcgZm9yIHRoZSBzZXJpZXMKPj4gUmV2aWV3ZWQtYnk6IEVt
+aWwgVmVsaWtvdiA8ZW1pbC5sLnZlbGlrb3ZAZ21haWwuY29tPgo+IHRoYW5rcyBmb3IgdGhlIHJl
+dmlldyBhbmQgdGhlIGhlbHAgb24gSVJDIQo+IAo+IAo+PiBBcyBwcmV0dHkgbXVjaCBub25lIG9m
+IHRoaXMgaXMgaGFyZHdhcmUgc3BlY2lmaWMgYW5kL29yIHJlcXVpcmVzCj4+IGFkZGl0aW9uYWwg
+a25vd2xlZGdlIG9mIHRoZSBrZXJuZWwgbW9kdWxlIEknbSBpbmNsaW5lZCB0byBwdWxsIHRoaXMg
+aW4KPj4gZXZlbiBpZiB3ZSBkb24ndCBnZXQgdG9vIG1hbnkgcmV2aWV3ZXJzLiBXZSBiZXR0ZXIg
+a2VlcCBpdCBhcm91bmQgZm9yCj4+IGEgY291cGxlIG9mIHdlZWtzIGluIGNhc2Ugb3RoZXJzIGFy
+ZSBzd2FtcGVkIHdpdGggdW5yZWxhdGVkIHdvcmsgYXRtLAo+PiB5ZXQgd2lsbGluZyB0byB0YWtl
+IGEgbG9vay4KPiBTdXJlLCBJJ20gZ29pbmcgdG8gd2FpdCBhbmQgZG8gc29tZSBwaW5ncyBmcm9t
+IHRpbWUgdG8gdGltZSA6KQo+IAoKSSBoYWQgYSByZXZpZXcgYW5kIGxvb2tzIGdvb2QgdG8gbWUu
+IFRoZXJlIGFyZSBqdXN0IGNsZWFudXAgaXNzdWVzIGJ1dApubyBwcm9ibGVtIHRvIHVwc3RyZWFt
+IHRoZW0gYXMtaXMuIEhvd2V2ZXIsIGluIG15IG9waW5pb24sIEkgdGhpbmsgdGhlCnBhdGNoIDcg
+Y291bGQgYmUgbW9yZSBjbGVhbmVkIHVwLgoKU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2ku
+ZGFlQHNhbXN1bmcuY29tPgoKVGhhbmtzLApJbmtpIERhZQoKCj4gCj4gV2l0aCBiZXN0IHdpc2hl
+cywKPiBUb2JpYXMKPiAKPj4KPj4gQ2hlZXJzLAo+PiBFbWlsCj4+Cj4gCj4gLS0KPiBUbyB1bnN1
+YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgt
+c2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2Vy
+Lmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwu
+b3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
