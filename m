@@ -1,72 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add exynos5422-odroidxu4 board
-Date: Tue, 1 Sep 2015 21:27:23 +0900
-Message-ID: <55E599AB.5030300@samsung.com>
-References: <1440993365-26896-1-git-send-email-k.kozlowski@samsung.com>
- <55E56646.2070106@osg.samsung.com> <55E5936B.3050003@samsung.com>
- <55E597AC.7070208@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4412-odroid-*: add workaround for
+ CPUfreq/reboot issue
+Date: Tue, 01 Sep 2015 15:08:49 +0200
+Message-ID: <1441112929-6751-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:33684 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753923AbbIAM1a (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29333 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753750AbbIANJE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Sep 2015 08:27:30 -0400
-In-Reply-To: <55E597AC.7070208@osg.samsung.com>
+	Tue, 1 Sep 2015 09:09:04 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NU000GJV1V2RP60@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 01 Sep 2015 14:09:02 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, p.marczak@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-W dniu 01.09.2015 o 21:18, Javier Martinez Canillas pisze:
-> Hello Krzysztof,
-> 
-> On 09/01/2015 02:00 PM, Krzysztof Kozlowski wrote:
->> W dniu 01.09.2015 o 17:48, Javier Martinez Canillas pisze:
-> 
-> [snip]
-> 
->>>>  
->>>>  &hsi2c_5 {
->>>>  	status = "okay";
->>>
->>> since I believe for the Odroid XU4 we would like this to be disabled.
->>> The only I2C device in this I2C bus is the max98090 codec which is
->>> not present in the XU4.
->>
->> hsi2c_5 and i2s_0 are not used by board directly but are connected to
->> external connector:
->> http://www.hardkernel.com/main/products/prdt_info.php?g_code=G143452239825&tab_idx=2
->>
->> This is the 12pin GPIO/I2C/I2S connector in bottom-right corner of board
->> view.
->>
-> 
-> Thanks for the info, I missed that.
->  
->> This is why I left this and is2_0 enabled on Odroid XU4 - I assumed
->> someone may connect something to it. However I have doubts if it is
-> 
-> Yes, now it makes sense.
-> 
->> usable in such state: without respective addresses and interrupts. In
->> the same time OF_OVERLAY should customize it properly.
->>
->> What do you think?
->>
-> 
-> As you said, these are not usable in the current form since if someone
-> wants to use it, has to add a dev node for the I2C device, possibly a
-> clock-frequency to change the default operating frequency, etc.
-> 
-> So has to either create a new DTS based on exynos5422-odroidxu4.dts or
-> as you said use OF overlays. IMHO these should be left disabled and be
-> enabled by users when adding the needed stuff.
+Exynos4412-based Odroid boards (X2, U3, U3+) don't reset PMIC
+configuration during hardware reset. This causes serious issues with
+CPUfreq, when ARM voltage is set below 1.0V. When one resets the board
+when CPUfreq selected one of lower Exynos 4412 operating points (for
+example: 200MHz and 0.9V), the bootloader crashes and it is not possible
+to restart the board without turning power off.
 
-Okay. I'll update the patch by moving entire hsi2c_5 node to audio DTSI
-(including "okay") and i2s0 thus disabling them on XU4.
+This patch provides a workaround for this issue by increasing the start
+of valid range for vdd_arm regulator from 1.0V. After such change,
+CPUfreq can still use lower operating points, but the voltage won't be
+decreased below 1.0V and as a result it will be possible to reset board
+at any time.
 
-Best regards,
-Krzysztof
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Hello,
+
+This issue was there from the beggining, but I was not able to reproduce
+it. It has been already reported by Tobias in early Feb 2015
+(http://www.spinics.net/lists/linux-samsung-soc/msg42294.html).
+Recently, after CPUfreq changes (conversion to generic cpufreq dt and
+enabling cpufreq in exynos_defconfig) it was much easier to observe this
+issue.
+
+This workaround lets one still use CPUfreq and avoid unexpect board
+crashes during reboot (both 'standard' and emergency).
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index db52841..fca8233 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -370,7 +370,7 @@
+ 
+ 			buck2_reg: BUCK2 {
+ 				regulator-name = "vdd_arm";
+-				regulator-min-microvolt = <900000>;
++				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1350000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+-- 
+1.9.2
