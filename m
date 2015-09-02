@@ -1,305 +1,106 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v4 08/16] drm: rockchip/dp: add rockchip platform dp driver
-Date: Wed, 02 Sep 2015 09:52:18 +0800
-Message-ID: <55E65652.4080405@rock-chips.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com> <1441087288-25404-1-git-send-email-ykk@rock-chips.com> <4774646.g5GnBEuWb9@phil>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos4412-odroid-*: add workaround for
+ CPUfreq/reboot issue
+Date: Wed, 02 Sep 2015 11:00:09 +0900
+Message-ID: <55E65829.3050200@samsung.com>
+References: <1441112929-6751-1-git-send-email-m.szyprowski@samsung.com>
+ <CAJKOXPcgG+vABGk6Kgg-ct8LWGkZwQFmsaECZ-K90dN48N8XQw@mail.gmail.com>
+ <15844858.D7Muz8OFGX@amdc1976>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:54102 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751240AbbIBBws (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:55292 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbbIBCAM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Sep 2015 21:52:48 -0400
-In-Reply-To: <4774646.g5GnBEuWb9@phil>
+	Tue, 1 Sep 2015 22:00:12 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NU100CCT1KA9420@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 02 Sep 2015 03:00:10 +0100 (BST)
+In-reply-to: <15844858.D7Muz8OFGX@amdc1976>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hi Heiko,
-
-=E5=9C=A8 09/02/2015 05:00 AM, Heiko Stuebner =E5=86=99=E9=81=93:
-> Hi Yakir,
->
-> Am Dienstag, 1. September 2015, 14:01:28 schrieb Yakir Yang:
->> Rockchip have three clocks for dp controller, we leave pclk_edp
->> to analogix_dp driver control, and keep the sclk_edp_24m and
->> sclk_edp in platform driver.
+On 01.09.2015 23:08, Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+> On Tuesday, September 01, 2015 10:57:37 PM Krzysztof Kozlowski wrote:
+>> 2015-09-01 22:08 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+>>> Exynos4412-based Odroid boards (X2, U3, U3+) don't reset PMIC
+>>> configuration during hardware reset. This causes serious issues with
+>>> CPUfreq, when ARM voltage is set below 1.0V. When one resets the board
+>>> when CPUfreq selected one of lower Exynos 4412 operating points (for
+>>> example: 200MHz and 0.9V), the bootloader crashes and it is not possible
 >>
->> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->> ---
->> Changes in v4:
->> - Remove some deprecated DT properties in rockchip dp document.
+>> s/crashes/hangs/ ? I did not observe a crash but a silent hang.
 >>
->> Changes in v3:
->> - Take Thierry Reding and Heiko suggest, leave "sclk_edp_24m" to roc=
-kchip
->>    dp phy driver which name to "24m", and leave "sclk_edp" to analog=
-ix dp
->>    core driver which name to "dp", and leave "pclk_edp" to rockchip =
-dp
->> platform driver which name to "pclk".
->> - Take Heiko suggest, add devicetree binding document.
->> - Take Heiko suggest, remove "rockchip,panel" DT property, take use =
-of
->> remote point to get panel node.
->> - Add the new function point analogix_dp_platdata.get_modes init.
+>>> to restart the board without turning power off.
+>>>
+>>> This patch provides a workaround for this issue by increasing the start
+>>> of valid range for vdd_arm regulator from 1.0V. After such change,
+>>> CPUfreq can still use lower operating points, but the voltage won't be
+>>> decreased below 1.0V and as a result it will be possible to reset board
+>>> at any time.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >>
->> Changes in v2:
->> - Take Heiko suggest, get panel node with remote-endpoint method,
->>    and create devicetree binding for driver.
->> - Remove the clock enable/disbale with "sclk_edp" & "sclk_edp_24m",
->>    leave those clock to rockchip dp phy driver.
+>> Do you plan to send the same fix for Trats2 board? Everything above
+>> applies there as well plus suspend is affected. The board cannot
+>> properly resume.
 >>
->>   .../bindings/video/analogix_dp-rockchip.txt        |  74 ++++
->>   drivers/gpu/drm/rockchip/Kconfig                   |   9 +
->>   drivers/gpu/drm/rockchip/Makefile                  |   1 +
->>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 389
->> +++++++++++++++++++++ 4 files changed, 473 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt cre=
-ate
->> mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>>> ---
+>>> Hello,
+>>>
+>>> This issue was there from the beggining, but I was not able to reproduce
+>>> it. It has been already reported by Tobias in early Feb 2015
+>>> (http://www.spinics.net/lists/linux-samsung-soc/msg42294.html).
+>>> Recently, after CPUfreq changes (conversion to generic cpufreq dt and
+>>> enabling cpufreq in exynos_defconfig) it was much easier to observe this
+>>> issue.
+>>>
+>>> This workaround lets one still use CPUfreq and avoid unexpect board
+>>> crashes during reboot (both 'standard' and emergency).
 >>
->> diff --git
->> a/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
->> b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt n=
-ew file
->> mode 100644
->> index 0000000..502483e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.t=
-xt
->> @@ -0,0 +1,74 @@
->> +Rockchip RK3288 specific extensions to the Analogix Display Port
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> +
->> +Required properties:
->> +- compatible: "rockchip,rk3288-edp";
->> +
->> +- reg: physical base address of the controller and length
->> +
->> +- clocks: from common clock binding: handle to dp clock.
->> +	  of memory mapped region.
->> +
->> +- clock-names: from common clock binding:
->> +	       Required elements: "dp" "pclk"
->> +
->> +- resets: Must contain an entry for each entry in reset-names.
->> +	  See ../reset/reset.txt for details.
->> +
->> +- reset-names: Must include the name "dp"
->> +
->> +- rockchip,grf: this soc should set GRF regs, so need get grf here.
->> +
->> +- ports: contain a port node with endpoint definitions as defined i=
-n
->> +  Documentation/devicetree/bindings/media/video-interfaces.txt.
->> +
->> +
->> +For the below properties, please refer to Analogix DP binding docum=
-ent:
->> + * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
->> +- phys (required)
->> +- phy-names (required)
->> +- hpd-gpios (optional)
->> +-------------------------------------------------------------------=
---------
->> ---- +
->> +Example:
->> +	dp-controller: dp@ff970000 {
->> +		compatible =3D "rockchip,rk3288-dp";
->> +		reg =3D <0xff970000 0x4000>;
->> +		interrupts =3D <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks =3D <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
->> +		clock-names =3D "dp", "pclk";
->> +		phys =3D <&dp_phy>;
->> +		phy-names =3D "dp";
->> +
->> +		rockchip,grf =3D <&grf>;
->> +		resets =3D <&cru 111>;
->> +		reset-names =3D "dp";
->> +
->> +		status =3D "disabled";
->> +
->> +		ports {
-> #address-cells =3D <1>;
-> #size-cells =3D <0>;
+>> Work-around looks nice and clean. It still allows to use cpufreq and
+>> reduce the energy consumption. The patch should go along with
+>> cpufreq-dt support for Exynos4412 which hopefully would be for v4.3.
+>> If cpufreq-dt for Exynos4412 won't get to v4.3 we can figure out
+>> proper solution, not a work-around.
+> 
+> This work-around is needed also for the old exynos-cpufreq driver
+> as the problem was already there on some Odroid setups (please read
+> the mail from February pointed by Marek for details).
 
-Done,
+This probably would mean that this should go to stable as well but was
+not marked as such. Any reason against backporting?
 
->> +			edp_in: port {
-> edp_in: port@0
-> 	reg =3D <0>;
 
-Done,
+BTW, on old driver it seems that Trats2 is not affected. Both suspend
+and reboot works.
 
->> +				#address-cells =3D <1>;
->> +				#size-cells =3D <0>;
->> +				edp_in_vopb: endpoint@0 {
->> +					reg =3D <0>;
->> +					remote-endpoint =3D <&vopb_out_edp>;
->> +				};
->> +				edp_in_vopl: endpoint@1 {
->> +					reg =3D <1>;
->> +					remote-endpoint =3D <&vopl_out_edp>;
->> +				};
->> +			};
->> +
->> +			edp_out: port@1 {
->> +				reg =3D <1>;
->> +				#address-cells =3D <1>;
->> +				#size-cells =3D <0>;
->> +				edp_out_panel: endpoint {
->> +					reg =3D <0>;
->> +					remote-endpoint =3D <&panel_in_edp>
->> +				};
->> +			};
->> +		};
->> +	};
->> +
->> diff --git a/drivers/gpu/drm/rockchip/Kconfig
->> b/drivers/gpu/drm/rockchip/Kconfig index 35215f6..c2ba945 100644
->> --- a/drivers/gpu/drm/rockchip/Kconfig
->> +++ b/drivers/gpu/drm/rockchip/Kconfig
->> @@ -25,3 +25,12 @@ config ROCKCHIP_DW_HDMI
->>   	  for the Synopsys DesignWare HDMI driver. If you want to
->>   	  enable HDMI on RK3288 based SoC, you should selet this
->>   	  option.
->> +
->> +config ROCKCHIP_ANALOGIX_DP
->> +        tristate "Rockchip specific extensions for Analogix DP driv=
-er"
->> +        depends on DRM_ROCKCHIP
->> +        select DRM_ANALOGIX_DP
->> +        help
->> +	  This selects support for Rockchip SoC specific extensions
->> +	  for the Analogix Core DP driver. If you want to enable DP
->> +	  on RK3288 based SoC, you should selet this option.
->> diff --git a/drivers/gpu/drm/rockchip/Makefile
->> b/drivers/gpu/drm/rockchip/Makefile index f3d8a19..8ad01fb 100644
->> --- a/drivers/gpu/drm/rockchip/Makefile
->> +++ b/drivers/gpu/drm/rockchip/Makefile
->> @@ -6,5 +6,6 @@ rockchipdrm-y :=3D rockchip_drm_drv.o rockchip_drm_f=
-b.o
->> rockchip_drm_fbdev.o \ rockchip_drm_gem.o
+Best regards,
+Krzysztof
+
+> 
+> We don't have a better fix for the time being so I think that it
+> should be merged now regardless of cpufreq-dt changes status.
+> 
+>> Anyway for the time being:
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >>
->>   obj-$(CONFIG_ROCKCHIP_DW_HDMI) +=3D dw_hdmi-rockchip.o
->> +obj-$(CONFIG_ROCKCHIP_ANALOGIX_DP) +=3D analogix_dp-rockchip.o
->>
->>   obj-$(CONFIG_DRM_ROCKCHIP) +=3D rockchipdrm.o rockchip_drm_vop.o
->> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c new file mode 1006=
-44
->> index 0000000..cebff9e
->> --- /dev/null
->> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> @@ -0,0 +1,389 @@
->> +/*
->> + * Rockchip SoC DP (Display Port) interface driver.
->> + *
->> + * Copyright (C) Fuzhou Rockchip Electronics Co., Ltd.
->> + * Author: Andy Yan <andy.yan@rock-chips.com>
->> + *         Yakir Yang <ykk@rock-chips.com>
->> + *         Jeff Chen <jeff.chen@rock-chips.com>
->> + *
->> + * This program is free software; you can redistribute it and/or mo=
-dify it
->> + * under the terms of the GNU General Public License as published b=
-y the
->> + * Free Software Foundation; either version 2 of the License, or (a=
-t your
->> + * option) any later version.
->> + */
->> +#include <drm/drmP.h>
->> +#include <drm/drm_crtc_helper.h>
->> +#include <drm/drm_panel.h>
->> +#include <drm/drm_of.h>
->> +#include <drm/drm_dp_helper.h>
->> +
->> +#include <linux/component.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/of_graph.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset.h>
->> +#include <linux/clk.h>
->> +
->> +#include <video/of_videomode.h>
->> +#include <video/videomode.h>
->> +
->> +#include <drm/bridge/analogix_dp.h>
->> +
->> +#include "rockchip_drm_drv.h"
->> +#include "rockchip_drm_vop.h"
->> +
->> +#define encoder_to_dp(c) \
->> +		container_of(c, struct rockchip_dp_device, encoder)
->> +
->> +#define plat_data_to_dp(pd) \
->> +		container_of(pd, struct rockchip_dp_device, plat_data)
->> +
->> +/* dp grf register offset */
->> +#define GRF_GPIO7B_IOMUX                        0x0070
->> +#define GPIO7B3_SEL_MASK                        (0x03 << 6)
->> +#define GPIO7B3_SEL_EDP_HOTPLUG                 BIT(7)
-> please remove, see comment near pre_init
-
-Okay,
-
->
->> +
->> +#define GRF_SOC_CON6                            0x025c
->> +#define GRF_EDP_LCD_SEL_MASK                    BIT(5)
->> +#define GRF_EDP_SEL_VOP_LIT                     BIT(5)
->> +#define GRF_EDP_SEL_VOP_BIG                     0
->> +
->> +struct rockchip_dp_device {
->> +	struct drm_device        *drm_dev;
->> +	struct device            *dev;
->> +	struct drm_encoder       encoder;
->> +	struct drm_display_mode  mode;
->> +
->> +	struct clk               *pclk;
->> +	struct regmap            *grf;
->> +	struct reset_control     *rst;
->> +
->> +	struct analogix_dp_plat_data plat_data;
->> +};
->> +
->> +static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
->> +{
->> +	u32 val;
->> +	int ret;
->> +
->> +	val =3D GPIO7B3_SEL_EDP_HOTPLUG | (GPIO7B3_SEL_MASK << 16);
->> +	ret =3D regmap_write(dp->grf, GRF_GPIO7B_IOMUX, val);
-> this is just a regular pinctrl setting. Please don't write onto other
-> components registers. Use a regular pinctrl setting in the devicetree=
- instead.
-
-Okay,
-
-Thanks,
-- Yakir
-
->
->> +	if (ret !=3D 0) {
->> +		dev_err(dp->dev, "Could not config GRF edp hpd: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	reset_control_assert(dp->rst);
->> +	usleep_range(10, 20);
->> +	reset_control_deassert(dp->rst);
->> +
->> +	return 0;
->> +}
->
-> Heiko
->
->
->
+>> Thanks Marek,
+>> BR
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
