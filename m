@@ -1,41 +1,70 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] cpufreq-dt: add suspend frequency support
-Date: Wed, 2 Sep 2015 11:03:33 -0700
-Message-ID: <55E739F5.8060000@codeaurora.org>
-References: <1441212476-21316-1-git-send-email-b.zolnierkie@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 10/14] exynos/fimg2d: remove default case from
+ g2d_get_blend_op()
+Date: Wed, 02 Sep 2015 21:35:49 +0200
+Message-ID: <55E74F95.5050105@math.uni-bielefeld.de>
+References: <1440425649-9768-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1440425649-9768-11-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <55E455D7.8060101@samsung.com>
+ <CACvgo52p=ymGzgjA5YHBmQbYEJ_Xowj40=a=2EindKnyoYPk2A@mail.gmail.com>
+ <55E4F3BA.4010709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1441212476-21316-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <55E4F3BA.4010709@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, gustavo.padovan@collabora.co.uk, ML dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/02/2015 09:47 AM, Bartlomiej Zolnierkiewicz wrote:
-> Add suspend frequency support and set it to the boot frequency,
-> this matches what the old exynos-cpufreq driver has been doing.
->
-> This patch fixes suspend/resume support on Exynos4412 based
-> Trats2 board and reboot hang on Exynos4412 based Odroid U3
-> board.
->
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
-> workaround for CPUfreq/reboot issue" one from yesterday.
-
-What do we do about cpufreq-dt users that don't want to change frequency
-during suspend?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+SGVsbG8gSW5raSwKCgpJbmtpIERhZSB3cm90ZToKPiBPbiAyMDE164WEIDA57JuUIDAx7J28IDAz
+OjUzLCBFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4+IE9uIDMxIEF1Z3VzdCAyMDE1IGF0IDE0OjI1LCBJ
+bmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+Pj4gT24gMjAxNeuFhCAwOOyb
+lCAyNOydvCAyMzoxNCwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4+PiBXZSBub3cgdmFsaWRhdGUg
+dGhlIGJsZW5kaW5nIG1vZGUgdmlhIGcyZF92YWxpZGF0ZV9tb2RlKCkKPj4+PiBwcmlvciB0byBm
+ZWVkaW5nIGl0IHRvIGcyZF9nZXRfYmxlbmRfb3AoKS4KPj4+Pgo+Pj4+IFNpZ25lZC1vZmYtYnk6
+IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+Pj4+IC0tLQo+
+Pj4+ICBleHlub3MvZXh5bm9zX2ZpbWcyZC5jIHwgNSAtLS0tLQo+Pj4+ICAxIGZpbGUgY2hhbmdl
+ZCwgNSBkZWxldGlvbnMoLSkKPj4+Pgo+Pj4+IGRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2Zp
+bWcyZC5jIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuYwo+Pj4+IGluZGV4IDQyNzRhOTQuLmQ3MDhl
+OTEgMTAwNjQ0Cj4+Pj4gLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYwo+Pj4+ICsrKyBiL2V4
+eW5vcy9leHlub3NfZmltZzJkLmMKPj4+PiBAQCAtOTEsMTEgKzkxLDYgQEAgc3RhdGljIHVuc2ln
+bmVkIGludCBnMmRfZ2V0X2JsZW5kX29wKGVudW0gZV9nMmRfb3Agb3ApCj4+Pj4gICAgICAgICAg
+ICAgICBTRVRfQkYodmFsLCBHMkRfQ09FRkZfTU9ERV9TUkNfQUxQSEEsIDAsIDAsIDAsCj4+Pj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRzJEX0NPRUZGX01PREVfU1JDX0FMUEhBLCAx
+LCAwLCAwKTsKPj4+PiAgICAgICAgICAgICAgIGJyZWFrOwo+Pj4+IC0gICAgIGRlZmF1bHQ6Cj4+
+Pj4gLSAgICAgICAgICAgICBmcHJpbnRmKHN0ZGVyciwgIk5vdCBzdXBwb3J0IG9wZXJhdGlvbigl
+ZCkuXG4iLCBvcCk7Cj4+Pj4gLSAgICAgICAgICAgICBTRVRfQkYodmFsLCBHMkRfQ09FRkZfTU9E
+RV9PTkUsIDAsIDAsIDAsIEcyRF9DT0VGRl9NT0RFX1pFUk8sCj4+Pj4gLSAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgMCwgMCwgMCk7Cj4+Pj4gLSAgICAgICAgICAgICBicmVhazsKPj4+Cj4+
+PiBXaXRoIHRoaXMsIGhvdyBhYm91dCBjaGFuZ2luZyBhYm92ZSBzd2l0Y2ggYW5kIGNhc2Ugc3Rh
+dGVtZW50IHRvIGlmCj4+PiBzdGF0ZW1lbnQ/Cj4+Pgo+PiBPdXQgb2YgY3VyaW9zaXR5OiB3aHkg
+aXMgaWYvZWxzZSBzdGF0ZW1lbnQgcHJlZmVycmVkIC0gd29uJ3QgaXQgbWFrZQo+PiB0aGluZ3Mg
+bG9uZ2VyL2hhcmRlciB0byByZWFkICh0aGVyZSBhcmUgMTEgY2FzZXMgaGVyZSkgPwo+IAo+IEp1
+c3QgbG9va3Mgc3RyYW5nZSB0byBtZSBzd2l0Y2ggYW5kIGNhc2Ugc3RhdGVtZW50IGhhcyBubyBk
+ZWZhdWx0Cj4gc3RhdGVtZW50LiBUaGlzIGlzIGp1c3QgbXkgb3BpbmlvbiBhbmQgdHJpdmlhbC4K
+SSB3b3VsZCBsaWtlIHRvIGtlZXAgdGhlIHN3aXRjaCBzdGF0ZW1lbnQgaGVyZS4gQXMgRW1pbCBo
+YXMgcG9pbnRlZCBvdXQKdGhlIGJpZyBhZHZhbnRhZ2Ugb2Ygc3dpdGNoIGlzIHRoYXQgdGhlIGNv
+bXBpbGVyIGNhbiB3YXJuIHVzIGlmIHdlJ3JlCm5vdCBkZWFsaW5nIHdpdGggYSB2YWx1ZSBvZiBh
+biBlbnVtLiBJIHRoaW5rIHRoYXQncyBkZWZpbml0ZWx5IGEgZmVhdHVyZQp3aGljaCB3ZSB3YW50
+IGhlcmUuCgpJIHdvdWxkIHN1Z2dlc3QgaW5zdGVhZCB0aGlzOiBJIGFkZCBhIHNob3J0IGNvbW1l
+bnQgdG8gdGhlIHN3aXRjaCBtYWtpbmcKY2xlYXIgd2h5IHdlIGRvbid0IGhhdmUgYSBkZWZhdWx0
+IGNhc2UgaGVyZSBhbmQgdGhhdCBhIHVzZXIgb2YKZzJkX2dldF9ibGVuZF9vcCgpIHNob3VsZCBm
+aXJzdCB2YWxpZGF0ZSBhbnkgZGF0YSBwYXNzZWQgdG8gaXQuCgpXaXRoIGJlc3Qgd2lzaGVzLApU
+b2JpYXMKCgo+IAo+IFRoYW5rcywKPiBJbmtpIERhZQo+IAo+Pgo+PiBDaGVlcnMsCj4+IEVtaWwK
+Pj4gLS0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
+c3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2Ug
+dG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBo
+dHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPj4KPiAKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
