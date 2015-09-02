@@ -1,51 +1,59 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv4] ARM: exynos_defconfig: Enable CONFIG_LEDS_PWM for Odroid-XU3/XU4
-Date: Wed,  2 Sep 2015 16:41:47 +0000
-Message-ID: <1441212107-3993-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:33927 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753161AbbIBQmG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Sep 2015 12:42:06 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] cpufreq-dt: add suspend frequency support
+Date: Wed, 02 Sep 2015 18:42:01 +0200
+Message-ID: <1441212121-21021-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Enable CONFIG_LEDS_PWM amd CONFIG_LEDS_TRIGGER_HEARTBEAT for
-Odroid-XU3/XU4 board.
+Add suspend frequency support and set it to the boot frequency,
+this matches what the old exynos-cpufreq driver has been doing.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+This patch fixes suspend/resume support on Exynos4412 based
+Trats2 board and reboot hang on Exynos4412 based Odroid U3
+board.
 
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
-Changes from last version.
-  Make all modules build-in.
-  Enabled LEDS_GPIO
----
- arch/arm/configs/exynos_defconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
+workaround for CPUfreq/reboot issue" one from yesterday.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 2263cd9..c285975 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -168,6 +168,16 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
- CONFIG_MMC_DW=y
- CONFIG_MMC_DW_IDMAC=y
- CONFIG_MMC_DW_EXYNOS=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_CLASS_FLASH=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_PWM=y
-+CONFIG_LEDS_TRIGGERS=y
-+CONFIG_LEDS_TRIGGER_TIMER=y
-+CONFIG_LEDS_TRIGGER_ONESHOT=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_LEDS_TRIGGER_GPIO=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_MAX77802=y
+ drivers/cpufreq/cpufreq-dt.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index c3583cd..c9138c7 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -329,6 +329,10 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->driver_data = priv;
+ 
+ 	policy->clk = cpu_clk;
++
++	/* capture boot frequency */
++	policy->suspend_freq = clk_get_rate(cpu_clk) / 1000;;
++
+ 	ret = cpufreq_table_validate_and_show(policy, freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
+@@ -419,6 +423,9 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+ 	.ready = cpufreq_ready,
+ 	.name = "cpufreq-dt",
+ 	.attr = cpufreq_dt_attr,
++#ifdef CONFIG_PM
++	.suspend = cpufreq_generic_suspend,
++#endif
+ };
+ 
+ static int dt_cpufreq_probe(struct platform_device *pdev)
 -- 
-2.1.4
+1.9.1
+
