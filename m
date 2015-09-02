@@ -1,62 +1,139 @@
-From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v4 0/16] Add Analogix Core Display Port Driver
-Date: Tue, 01 Sep 2015 23:47:35 +0200
-Message-ID: <3233920.KG0buE86B2@phil>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv2] ARM: EXYNOS: reset Little cores when cpu is up
+Date: Wed, 02 Sep 2015 09:15:11 +0900
+Message-ID: <55E63F8F.4020300@samsung.com>
+References: <1441117023-25478-1-git-send-email-parkch98@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1441086371-24838-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:54587 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751113AbbIBAPV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Sep 2015 20:15:21 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NU000GQAWPICT10@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 02 Sep 2015 01:15:18 +0100 (BST)
+In-reply-to: <1441117023-25478-1-git-send-email-parkch98@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanho Park <parkch98@gmail.com>, kgene@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi Yakir,
-
-Am Dienstag, 1. September 2015, 13:46:11 schrieb Yakir Yang:
->    The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
-> share the same IP, so a lot of parts can be re-used. I split the common
-> code into bridge directory, then rk3288 and exynos only need to keep
-> some platform code. Cause I can't find the exact IP name of exynos dp
-> controller, so I decide to name dp core driver with "analogix" which I
-> find in rk3288 eDP TRM ;)
+On 01.09.2015 23:17, Chanho Park wrote:
+> The cpu booting of exynos5422 has been still broken since we discussed
+> it in last year[1]. This patch is inspired from Odroid XU3
+> code (Actually, it was from samsung exynos vendor kernel)[2]. This weird
+> reset code was founded exynos5420 octa cores series SoCs and only
+> required for the first boot core is the Little core (Cortex A7).
+> Some of the exynos5420 boards and all of the exynos5422 boards will require
+> this code.
 > 
-> Beyond that, there are three light registers setting differents bewteen
-> exynos and rk3288.
-> 1. RK3288 have five special pll resigters which not indicata in exynos
->    dp controller.
-> 2. The address of DP_PHY_PD(dp phy power manager register) are different
->    between rk3288 and exynos.
-> 3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
->    register).
+> There is two ways to check the little core is the first cpu. One is
+> checking GPG2CON[1] GPIO value and the other is checking the cluster
+> number of the first cpu. I selected the latter because it's more easier
+> than the former.
 > 
-> I have verified this series on two kinds of rockchip platform board, one
-> is rk3288 sdk board which connect with a 2K display port monitor, the other
-> is google jerry chromebook which connect with a eDP screen "cnm,n116bgeea2",
-> both of them works rightlly.
+> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
+> [2]:https://patchwork.kernel.org/patch/6782891/
+> 
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> Signed-off-by: Chanho Park <parkch98@gmail.com>
+> ---
+> Changes from v1:
+>  .kfc to Little (Cortex A7) and eagle to big (Cortex A15)
+>  .append comments about waiting SPARE2 register
+> 
+> Changes since RFC:
+>  .drop checking soc_is_exynos5800 to extend this codes to
+> exynos5420/5422 boards.
+>  .kfc cores will be reset only if the cpu0 is kfc core.
+>  .Rebase top of the kukjin's for-next branch
+> 
+>  arch/arm/mach-exynos/mcpm-exynos.c | 25 ++++++++++++++++++++++++-
+>  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
+>  2 files changed, 30 insertions(+), 1 deletion(-)
 
-it looks like during the rebase something did go wrong and I found some issues 
-I mentioned in the replies to individual patches.
+Thanks for updating the patch. Remaining minor nit about comment style
+(/* on first line) can be fixed while applying.
 
-I did prepare a branch based on mainline [0] with both the old and the new edp 
-driver - rk3288_veyron_defconfig build both drivers into the image.
+The patch works good, after disabling bL switcher I have 8 cores running:
 
-While the old driver still works, I wasn't able to make the new one work yet 
-... the drm core does find the connector, but not that anything is connected 
-to it. I'll try to dig deeper tomorrow, but maybe you'll see anything 
-interesting before then.
+Tested on Odroid XU4:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+It's 4.3 merge window so the patch will go probably to v4.4.
+
+Best regards,
+Krzysztof
 
 
-Heiko
-
-[0] https://github.com/mmind/linux-rockchip/tree/tmp/edp-with-veyron
+> 
+> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+> index 9bdf547..8926621 100644
+> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> @@ -20,6 +20,7 @@
+>  #include <asm/cputype.h>
+>  #include <asm/cp15.h>
+>  #include <asm/mcpm.h>
+> +#include <asm/smp_plat.h>
+>  
+>  #include "regs-pmu.h"
+>  #include "common.h"
+> @@ -70,7 +71,29 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+>  		cluster >= EXYNOS5420_NR_CLUSTERS)
+>  		return -EINVAL;
+>  
+> -	exynos_cpu_power_up(cpunr);
+> +	if (!exynos_cpu_power_state(cpunr)) {
+> +		exynos_cpu_power_up(cpunr);
+> +
+> +		/* This assumes the cluster number of the big cores(Cortex A15)
+> +		 * is 0 and the Little cores(Cortex A7) is 1.
+> +		 * When the system was booted from the Little core,
+> +		 * they should be reset during power up cpu.
+> +		 */
+> +		if (cluster &&
+> +		    cluster == MPIDR_AFFINITY_LEVEL(cpu_logical_map(0), 1)) {
+> +			/* Before we reset the Little cores, we should wait
+> +			 * the SPARE2 register is set to 1 because the init
+> +			 * codes of the iROM will set the register after
+> +			 * initialization.
+> +			 */
+> +			while (!pmu_raw_readl(S5P_PMU_SPARE2))
+> +				udelay(10);
+> +
+> +			pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
+> +					EXYNOS_SWRESET);
+> +		}
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+> index b761433..fba9068 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+> @@ -513,6 +513,12 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>  #define SPREAD_ENABLE						0xF
+>  #define SPREAD_USE_STANDWFI					0xF
+>  
+> +#define EXYNOS5420_KFC_CORE_RESET0				BIT(8)
+> +#define EXYNOS5420_KFC_ETM_RESET0				BIT(20)
+> +
+> +#define EXYNOS5420_KFC_CORE_RESET(_nr)				\
+> +	((EXYNOS5420_KFC_CORE_RESET0 | EXYNOS5420_KFC_ETM_RESET0) << (_nr))
+> +
+>  #define EXYNOS5420_BB_CON1					0x0784
+>  #define EXYNOS5420_BB_SEL_EN					BIT(31)
+>  #define EXYNOS5420_BB_PMOS_EN					BIT(7)
+> 
