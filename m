@@ -1,48 +1,67 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
- to bridge dir
-Date: Wed, 2 Sep 2015 15:50:37 +0100
-Message-ID: <CACvgo53pZUtSLRGVMYPs1s4QPBrAr3j=xoZ1t23tPv202bzfyg@mail.gmail.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
-	<1441086598-24995-1-git-send-email-ykk@rock-chips.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv2 2/2] ARM: exynos_defconfig: Enable CONFIG_LEDS_PWM for Odroid-XU3
+Date: Wed, 2 Sep 2015 21:10:03 +0530
+Message-ID: <CANAwSgSWnFFY3apBv9HY8XM2zEJs3N5vLfQaNxM=5f+qNs5bhw@mail.gmail.com>
+References: <1433696621-4763-1-git-send-email-linux.amoon@gmail.com>
+ <1433696621-4763-2-git-send-email-linux.amoon@gmail.com> <55E703CD.3060207@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33594 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753922AbbIBOui (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Sep 2015 10:50:38 -0400
-In-Reply-To: <1441086598-24995-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55E703CD.3060207@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, seanpaul@chromium.com, djkurtz@chromium.com, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, robherring2@gmail.com, Russell King <rmk+kernel@arm.linux.org.uk>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, dianders@chromium.com, linux-arm-kernel@lists.infradead.org, Linu
 
-[Dropping the CC list]
+HI Krzysztof,
 
-Hi Yakir Yang,
-
-On 1 September 2015 at 06:49, Yakir Yang <ykk@rock-chips.com> wrote:
-> Split the dp core driver from exynos directory to bridge
-> directory, and rename the core driver to analogix_dp_*,
-> leave the platform code to analogix_dp-exynos.
+On 2 September 2015 at 19:42, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> W dniu 08.06.2015 o 02:03, Anand Moon pisze:
+>> Enable CONFIG_LEDS_PWM amd CONFIG_LEDS_TRIGGER_HEARTBEAT for
+>> Odroid-XU3 board.
+>>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 >
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> ---
-> Changes in v4:
-> - Take Rob suggest, update "analogix,hpd-gpios" to "hpd-gpios" DT propery.
-> - Take Jingoo suggest, rename "analogix_dp-exynos.c" file name to "exynos_dp.c"
-> - Take Archit suggest, create a separate folder for analogix code in bridge/
+> Dear Anand,
 >
-"Take X suggest", is grammatically incorrect. You should use
-"suggestion(s)" or alternatively use the following approach.
+> There was some confusion for this patch (mixed v3 and v2) so overall it
+> slipped through fingers.
+>
+> Can you please:
+> 1. Rebase and resend.
+> 2. Enable them as built-ins, not modules. For exynos_defconfig
+> everything is built-in which makes easier to test on various boards.
+> 3. Enable LEDS_GPIO. I don't know why it disappeared...
+>
+> Best regards,
+> Krzysztof
+>
+>
+>> ---
+>>  arch/arm/configs/exynos_defconfig | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+>> index 1b7253b..2bbdf80 100644
+>> --- a/arch/arm/configs/exynos_defconfig
+>> +++ b/arch/arm/configs/exynos_defconfig
+>> @@ -165,6 +165,12 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
+>>  CONFIG_MMC_DW=y
+>>  CONFIG_MMC_DW_IDMAC=y
+>>  CONFIG_MMC_DW_EXYNOS=y
+>> +CONFIG_NEW_LEDS=y
+>> +CONFIG_LEDS_CLASS=m
+>> +CONFIG_LEDS_PWM=m
+>> +CONFIG_LEDS_TRIGGERS=y
+>> +CONFIG_LEDS_TRIGGER_TIMER=m
+>> +CONFIG_LEDS_TRIGGER_HEARTBEAT=m
+>>  CONFIG_RTC_CLASS=y
+>>  CONFIG_RTC_DRV_MAX77686=y
+>>  CONFIG_RTC_DRV_MAX77802=y
+>>
+>
 
-- Create a separate folder for analogix code in bridge/ (Archit)
+Thanks for you input I will resend this patch.
 
-Cheers,
-Emil
-
-P.S. Why do you resend the whole series (some 10+ patches) when only a
-few patches have been changed ? Are all the patches changed whist
-missing that information (vX: rebase on top of A)
+-Anand Moon
