@@ -1,312 +1,103 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/2] ARM: dts: Add exynos5422-odroidxu4 board
-Date: Wed, 02 Sep 2015 10:30:05 +0900
-Message-ID: <1441157405-22123-2-git-send-email-k.kozlowski@samsung.com>
-References: <1441157405-22123-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1441157405-22123-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: javier@osg.samsung.com, linux.amoon@gmail.com, cw00.choi@samsung.com, inki.dae@samsung.com, p.marczak@samsung.com, m.szyprowski@samsung.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
+ to bridge dir
+Date: Wed, 02 Sep 2015 09:45:05 +0800
+Message-ID: <55E654A1.7010100@rock-chips.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com> <1441086598-24995-1-git-send-email-ykk@rock-chips.com> <2618155.E00Pak1qvi@phil>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.131]:47613 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751513AbbIBBpw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Sep 2015 21:45:52 -0400
+In-Reply-To: <2618155.E00Pak1qvi@phil>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel
 
-Add Hardkernel Odroid XU4 board Device Tree sources. The board differs
-from Odroid XU3 and XU3-Lite by:
-1. No green and red leds (except standard red power led).
-2. No audio codec.
-3. Two USB3 ports in host mode (no micro USB3 connector for OTG).
-4. Realtek RTL8153-CG gigabit network adapter (instead of SMSC9514).
-5. Additional connector with IO ports (I2S_0, I2C_5).
-6. No DisplayPort (like XU3-Lite).
-7. No TI INA231 power measurement sensors (like XU3-Lite).
+Heiko,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+=E5=9C=A8 09/02/2015 04:46 AM, Heiko Stuebner =E5=86=99=E9=81=93:
+> Am Dienstag, 1. September 2015, 13:49:58 schrieb Yakir Yang:
+>> Split the dp core driver from exynos directory to bridge
+>> directory, and rename the core driver to analogix_dp_*,
+>> leave the platform code to analogix_dp-exynos.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> [...]
+>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c similarity inde=
+x 50%
+>> rename from drivers/gpu/drm/exynos/exynos_dp_core.c
+>> rename to drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index bed0252..7d62f22 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> [...]
+>
+>>   	connector->polled =3D DRM_CONNECTOR_POLL_HPD;
+>>
+>>   	ret =3D drm_connector_init(dp->drm_dev, connector,
+>> -				 &exynos_dp_connector_funcs,
+>> +				 &analogix_dp_connector_funcs,
+>>   				 DRM_MODE_CONNECTOR_eDP);
+>>   	if (ret) {
+>>   		DRM_ERROR("Failed to initialize connector with drm\n");
+>>   		return ret;
+>>   	}
+>>
+>> -	drm_connector_helper_add(connector, &exynos_dp_connector_helper_fu=
+ncs);
+>> +	drm_connector_helper_add(connector,
+>> +				 &analogix_dp_connector_helper_funcs);
+>>   	drm_connector_register(connector);
+> this should only run on exynos, as we're doing all our connector regi=
+stration
+> in the core driver after all components are bound, so I guess somethi=
+ng like
+> the following is needed:
+>
+>         if (dp->plat_data && dp->plat_data->dev_type =3D=3D EXYNOS_DP=
+)
+>                 drm_connector_register(connector);
+>
 
----
+Oh, good catch, thanks
 
-Changes since v1:
-1. hsi2c_5 and is20 are disabled on Odroid XU4 (after moving these nodes
-   to the audio DTSI).
-2. Update Samsung's copyright date for XU4 DTS.
+>
+>>   	drm_mode_connector_attach_encoder(connector, encoder);
+>>
+> [...]
+>
+>> @@ -1301,7 +1239,10 @@ static int exynos_dp_bind(struct device *dev,=
+ struct
+>> device *master, void *data) if (IS_ERR(dp->reg_base))
+>>   		return PTR_ERR(dp->reg_base);
+>>
+>> -	dp->hpd_gpio =3D of_get_named_gpio(dev->of_node, "samsung,hpd-gpio=
+", 0);
+>> +	dp->hpd_gpio =3D of_get_named_gpio(dev->of_node, "hpd-gpios", 0);
+>> +	if (gpio_is_valid(dp->hpd_gpio))
+> this should be !gpio_is_valid ... i.e. only check the old property if=
+ the new
+> one is _not_ valid
 
-I did not add Javier's reviewed-by tag because of splitting audio codec
-to separate patch (1/2).
----
- arch/arm/boot/dts/Makefile                         |  1 +
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 51 +---------------------
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    | 51 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroidxu3.dts         | 51 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroidxu4.dts         | 48 ++++++++++++++++++++
- 5 files changed, 152 insertions(+), 50 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu4.dts
+Oh, much appreciate  ;)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 233159d2eaab..3d27fe34647f 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -123,6 +123,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5420-smdk5420.dtb \
- 	exynos5422-odroidxu3.dtb \
- 	exynos5422-odroidxu3-lite.dtb \
-+	exynos5422-odroidxu4.dtb \
- 	exynos5440-sd5v1.dtb \
- 	exynos5440-ssdk5440.dtb \
- 	exynos5800-peach-pi.dtb
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 987c15d8ebe5..a83d569baea8 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -46,40 +46,6 @@
- 		reset-gpios = <&gpd1 0 1>;
- 	};
- 
--	pwmleds {
--		compatible = "pwm-leds";
--
--		greenled {
--			label = "green:mmc0";
--			pwms = <&pwm 1 2000000 0>;
--			pwm-names = "pwm1";
--			/*
--			 * Green LED is much brighter than the others
--			 * so limit its max brightness
--			 */
--			max_brightness = <127>;
--			linux,default-trigger = "mmc0";
--		};
--
--		blueled {
--			label = "blue:heartbeat";
--			pwms = <&pwm 2 2000000 0>;
--			pwm-names = "pwm2";
--			max_brightness = <255>;
--			linux,default-trigger = "heartbeat";
--		};
--	};
--
--	gpioleds {
--		compatible = "gpio-leds";
--		redled {
--			label = "red:microSD";
--			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--			linux,default-trigger = "mmc1";
--		};
--	};
--
- 	fan0: pwm-fan {
- 		compatible = "pwm-fan";
- 		pwms = <&pwm 0 20972 0>;
-@@ -417,19 +383,6 @@
- 	};
- };
- 
--&pwm {
--	/*
--	 * PWM 0 -- fan
--	 * PWM 1 -- Green LED
--	 * PWM 2 -- Blue LED
--	 * PWM 3 -- on MIPI connector for backlight
--	 */
--	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
--	pinctrl-names = "default";
--	samsung,pwm-outputs = <0>;
--	status = "okay";
--};
--
- &tmu_cpu0 {
- 	vtmu-supply = <&ldo7_reg>;
- 	status = "okay";
-@@ -465,9 +418,7 @@
- 	dr_mode = "host";
- };
- 
--&usbdrd_dwc3_1 {
--	dr_mode = "otg";
--};
-+/* usbdrd_dwc3_1 mode customized in each board */
- 
- &usbdrd3_0 {
- 	vdd33-supply = <&ldo9_reg>;
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index 9c0cea99c996..379cd61178ee 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -18,4 +18,55 @@
- / {
- 	model = "Hardkernel Odroid XU3 Lite";
- 	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
-+
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		greenled {
-+			label = "green:mmc0";
-+			pwms = <&pwm 1 2000000 0>;
-+			pwm-names = "pwm1";
-+			/*
-+			 * Green LED is much brighter than the others
-+			 * so limit its max brightness
-+			 */
-+			max_brightness = <127>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		blueled {
-+			label = "blue:heartbeat";
-+			pwms = <&pwm 2 2000000 0>;
-+			pwm-names = "pwm2";
-+			max_brightness = <255>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	gpioleds {
-+		compatible = "gpio-leds";
-+		redled {
-+			label = "red:microSD";
-+			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "mmc1";
-+		};
-+	};
-+};
-+
-+&pwm {
-+	/*
-+	 * PWM 0 -- fan
-+	 * PWM 1 -- Green LED
-+	 * PWM 2 -- Blue LED
-+	 * PWM 3 -- on MIPI connector for backlight
-+	 */
-+	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
-+	pinctrl-names = "default";
-+	samsung,pwm-outputs = <0>;
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "otg";
- };
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index d8647a469a86..c7509690131d 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -17,6 +17,40 @@
- / {
- 	model = "Hardkernel Odroid XU3";
- 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
-+
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		greenled {
-+			label = "green:mmc0";
-+			pwms = <&pwm 1 2000000 0>;
-+			pwm-names = "pwm1";
-+			/*
-+			 * Green LED is much brighter than the others
-+			 * so limit its max brightness
-+			 */
-+			max_brightness = <127>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		blueled {
-+			label = "blue:heartbeat";
-+			pwms = <&pwm 2 2000000 0>;
-+			pwm-names = "pwm2";
-+			max_brightness = <255>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	gpioleds {
-+		compatible = "gpio-leds";
-+		redled {
-+			label = "red:microSD";
-+			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "mmc1";
-+		};
-+	};
- };
- 
- &i2c_0 {
-@@ -50,3 +84,20 @@
- 		shunt-resistor = <10000>;
- 	};
- };
-+
-+&pwm {
-+	/*
-+	 * PWM 0 -- fan
-+	 * PWM 1 -- Green LED
-+	 * PWM 2 -- Blue LED
-+	 * PWM 3 -- on MIPI connector for backlight
-+	 */
-+	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
-+	pinctrl-names = "default";
-+	samsung,pwm-outputs = <0>;
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "otg";
-+};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-new file mode 100644
-index 000000000000..dae0ddc25bdc
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -0,0 +1,48 @@
-+/*
-+ * Hardkernel Odroid XU4 board device tree source
-+ *
-+ * Copyright (c) 2015 Krzysztof Kozlowski
-+ * Copyright (c) 2014 Collabora Ltd.
-+ * Copyright (c) 2013-2015 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+#include "exynos5422-odroidxu3-common.dtsi"
-+
-+/ {
-+	model = "Hardkernel Odroid XU4";
-+	compatible = "hardkernel,odroid-xu4", "samsung,exynos5800", \
-+		     "samsung,exynos5";
-+
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		blueled {
-+			label = "blue:heartbeat";
-+			pwms = <&pwm 2 2000000 0>;
-+			pwm-names = "pwm2";
-+			max_brightness = <255>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+};
-+
-+&pwm {
-+	/*
-+	 * PWM 0 -- fan
-+	 * PWM 2 -- Blue LED
-+	 */
-+	pinctrl-0 = <&pwm0_out &pwm2_out>;
-+	pinctrl-names = "default";
-+	samsung,pwm-outputs = <0>;
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "host";
-+};
--- 
-1.9.1
+- Yakir
+
+>
+>> +		dp->hpd_gpio =3D of_get_named_gpio(dev->of_node,
+>> +						 "samsung,hpd-gpio", 0);
+>>
+>>   	if (gpio_is_valid(dp->hpd_gpio)) {
+>>   		/*
+>
+>
+>
