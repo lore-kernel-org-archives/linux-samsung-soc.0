@@ -1,194 +1,199 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: Re: [PATCH v4 10/16] phy: Add driver for rockchip Display Port PHY
-Date: Wed, 02 Sep 2015 09:02:55 +0800
-Message-ID: <55E64ABF.7090400@rock-chips.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <1441087455-25533-1-git-send-email-ykk@rock-chips.com>
- <5077044.NGUl9gjQon@phil>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <5077044.NGUl9gjQon@phil>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.infradead.org-SAd4IJPOV+0bIzgrwE/FjQ@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-ggaV8SP1K3vehVd/f8ENTg@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29Tb/PtFMR13I2A@public.gmane.org
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 1/2] ARM: dts: Split audio configuration to separate
+ exynos5422-odroidxu3-audio
+Date: Wed, 02 Sep 2015 10:30:04 +0900
+Message-ID: <1441157405-22123-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.marczak-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSGVpa28sCgrlnKggMDkvMDIvMjAxNSAxMjo1MSBBTSwgSGVpa28gU3R1ZWJuZXIg5YaZ6YGT
-Ogo+IEFtIERpZW5zdGFnLCAxLiBTZXB0ZW1iZXIgMjAxNSwgMTQ6MDQ6MTUgc2NocmllYiBZYWtp
-ciBZYW5nOgo+PiBUaGlzIHBoeSBkcml2ZXIgd291bGQgY29udHJvbCB0aGUgUm9ja2NoaXAgRGlz
-cGxheVBvcnQgbW9kdWxlCj4+IHBoeSBjbG9jayBhbmQgcGh5IHBvd2VyLCBpdCBpcyByZWxhdGUg
-dG8gYW5hbG9naXhfZHAtcm9ja2NoaXAKPj4gZHAgZHJpdmVyLiBJZiB5b3Ugd2FudCBEUCB3b3Jr
-cyByaWdodGx5IG9uIHJvY2tjaGlwIHBsYXRmb3JtLAo+PiB0aGVuIHlvdSBzaG91bGQgc2VsZWN0
-IGJvdGggb2YgdGhlbS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2st
-Y2hpcHMuY29tPgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2NDoKPj4gLSBUYWtlIEtpc2hvbiBzdWdn
-ZXN0LCBhZGQgY29tbWl0IG1lc3NhZ2UsIGFuZCByZW1vdmUgdGhlIHJlZHVuZGFudAo+PiAgICBy
-b2NrY2hpcF9kcF9waHlfaW5pdCgpIGZ1bmN0aW9uLCBtb3ZlIHRob3NlIGNvZGUgdG8gcHJvYmUo
-KSBtZXRob2QuCj4+ICAgIEFuZCByZW1vdmUgZHJpdmVyIC5vd25lciBudW1iZXIuCj4+Cj4+IENo
-YW5nZXMgaW4gdjM6Cj4+IC0gVGFrZSBIZWlrbyBzdWdnZXN0LCBhZGQgcm9ja2NoaXAgZHAgcGh5
-IGRyaXZlciwKPj4gICAgY29sbGVjdCB0aGUgcGh5IGNsb2NrcyBhbmQgcG93ZXIgY29udHJvbC4K
-Pj4KPj4gQ2hhbmdlcyBpbiB2MjogTm9uZQo+Pgo+PiAgIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L3BoeS9yb2NrY2hpcC1kcC1waHkudHh0ICAgIHwgIDI2ICsrKysKPj4gICBkcml2ZXJzL3BoeS9L
-Y29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNyArCj4+ICAgZHJpdmVy
-cy9waHkvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwo+PiAg
-IGRyaXZlcnMvcGh5L3BoeS1yb2NrY2hpcC1kcC5jICAgICAgICAgICAgICAgICAgICAgIHwgMTY2
-Cj4+ICsrKysrKysrKysrKysrKysrKysrKyA0IGZpbGVzIGNoYW5nZWQsIDIwMCBpbnNlcnRpb25z
-KCspCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0Cj4+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9waHkvcm9ja2NoaXAtZHAtcGh5LnR4dCBjcmVhdGUgbW9kZQo+PiAxMDA2NDQgZHJp
-dmVycy9waHkvcGh5LXJvY2tjaGlwLWRwLmMKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9waHkvcm9ja2NoaXAtZHAtcGh5LnR4dAo+PiBiL0RvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waHkvcm9ja2NoaXAtZHAtcGh5LnR4dCBuZXcg
-ZmlsZSBtb2RlCj4+IDEwMDY0NAo+PiBpbmRleCAwMDAwMDAwLi41ZGUxMDg4Cj4+IC0tLSAvZGV2
-L251bGwKPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yb2Nr
-Y2hpcC1kcC1waHkudHh0Cj4+IEBAIC0wLDAgKzEsMjYgQEAKPj4gK1JvY2tjaGlwIFNvYyBTZXJv
-ZXMgRGlzcGxheSBQb3J0IFBIWQo+PiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCj4+ICsKPj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6Cj4+ICstIGNvbXBhdGlibGUgOiBzaG91
-bGQgYmUgb25lIG9mIHRoZSBmb2xsb3dpbmcgc3VwcG9ydGVkIHZhbHVlczoKPj4gKwkgLSAicm9j
-a2NoaXAucmszMjg4LWRwLXBoeSIKPj4gKwo+PiArLSByZWcgOiBhIGxpc3Qgb2YgcmVnaXN0ZXJz
-IHVzZWQgYnkgcGh5IGRyaXZlcgo+IG5vZGVzIGRvIG5vdCBuZWNlc3NhcmlseSBuZWVkIHRvIGhh
-dmUgYSByZWdzIHByb3BlcnR5LiBZb3UgY2FuIGRvIGFsbAo+IG9wZXJhdGlvbnMgdmlhIHRoZSBn
-cmYgc3lzY29uIGFscmVhZHkuCgpPaCwgeWVzLCB0aGUgZHAgcGh5IHBvd2VyIHJlZ2lzdGVyIGlz
-IGJlbG9uZyB0byBHUkYgZmlsZWQsIHRoYW5rcy4KCj4KPj4gKy0gY2xvY2tzOiBmcm9tIGNvbW1v
-biBjbG9jayBiaW5kaW5nOiBoYW5kbGUgdG8gZHAgY2xvY2suCj4+ICsJb2YgbWVtb3J5IG1hcHBl
-ZCByZWdpb24uCj4+ICstIGNsb2NrLW5hbWVzOiBmcm9tIGNvbW1vbiBjbG9jayBiaW5kaW5nOgo+
-PiArCVJlcXVpcmVkIGVsZW1lbnRzOiAic2Nsa19kcCIgInNjbGtfZHBfMjRtIgo+PiArCj4+ICst
-IHJvY2tjaGlwLGdyZjogdGhpcyBzb2Mgc2hvdWxkIHNldCBHUkYgcmVncywgc28gbmVlZCBnZXQg
-Z3JmIGhlcmUuCj4+ICstICNwaHktY2VsbHMgOiBmcm9tIHRoZSBnZW5lcmljIFBIWSBiaW5kaW5n
-cywgbXVzdCBiZSAwOwo+PiArCj4+ICtFeGFtcGxlOgo+PiArCj4+ICtlZHBfcGh5OiBwaHlAZmY3
-NzAyNzQgewo+IGVkcF9waHk6IGVkcC1waHkgewoKRG9uZSwKCj4KPgo+PiArCWNvbXBhdGlsYmxl
-ID0gInJvY2tjaGlwLHJrMzI4OC1kcC1waHkiOwo+PiArCXJlZyA9IDwweGZmNzcwMjc0IDQ+Owo+
-IG5vIHJlZ3MgcHJvcGVydHkKCkRvbmUKCj4+ICsJcm9ja2NoaXAsZ3JmID0gPCZncmY+Owo+PiAr
-CWNsb2NrcyA9IDwmY3J1IFNDTEtfRURQXzI0TT47Cj4+ICsJY2xvY2stbmFtZXMgPSAiMjRtIjsK
-Pj4gKwkjcGh5LWNlbGxzID0gPDA+Owo+PiArfQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waHkv
-S2NvbmZpZyBiL2RyaXZlcnMvcGh5L0tjb25maWcKPj4gaW5kZXggNDdkYTU3My4uOGYyYmM0ZiAx
-MDA2NDQKPj4gLS0tIGEvZHJpdmVycy9waHkvS2NvbmZpZwo+PiArKysgYi9kcml2ZXJzL3BoeS9L
-Y29uZmlnCj4+IEBAIC0zMTAsNiArMzEwLDEzIEBAIGNvbmZpZyBQSFlfUk9DS0NISVBfVVNCCj4+
-ICAgCWhlbHAKPj4gICAJICBFbmFibGUgdGhpcyB0byBzdXBwb3J0IHRoZSBSb2NrY2hpcCBVU0Ig
-Mi4wIFBIWS4KPj4KPj4gK2NvbmZpZyBQSFlfUk9DS0NISVBfRFAKPj4gKwl0cmlzdGF0ZSAiUm9j
-a2NoaXAgRGlzcGxheSBQb3J0IFBIWSBEcml2ZXIiCj4+ICsJZGVwZW5kcyBvbiBBUkNIX1JPQ0tD
-SElQICYmIE9GCj4+ICsJc2VsZWN0IEdFTkVSSUNfUEhZCj4+ICsJaGVscAo+PiArCSAgRW5hYmxl
-IHRoaXMgdG8gc3VwcG9ydCB0aGUgUm9ja2NoaXAgRGlzcGxheSBQb3J0IFBIWS4KPj4gKwo+PiAg
-IGNvbmZpZyBQSFlfU1RfU1BFQVIxMzEwX01JUEhZCj4+ICAgCXRyaXN0YXRlICJTVCBTUEVBUjEz
-MTAtTUlQSFkgZHJpdmVyIgo+PiAgIAlzZWxlY3QgR0VORVJJQ19QSFkKPj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvcGh5L01ha2VmaWxlIGIvZHJpdmVycy9waHkvTWFrZWZpbGUKPj4gaW5kZXggYTVi
-MThjMS4uZTI4MWYzNSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9waHkvTWFrZWZpbGUKPj4gKysr
-IGIvZHJpdmVycy9waHkvTWFrZWZpbGUKPj4gQEAgLTM0LDYgKzM0LDcgQEAgcGh5LWV4eW5vcy11
-c2IyLSQoQ09ORklHX1BIWV9TNVBWMjEwX1VTQjIpCSs9Cj4+IHBoeS1zNXB2MjEwLXVzYjIubyBv
-YmotJChDT05GSUdfUEhZX0VYWU5PUzVfVVNCRFJEKQkrPSBwaHktZXh5bm9zNS11c2JkcmQubwo+
-PiAgIG9iai0kKENPTkZJR19QSFlfUUNPTV9BUFE4MDY0X1NBVEEpCSs9IHBoeS1xY29tLWFwcTgw
-NjQtc2F0YS5vCj4+ICAgb2JqLSQoQ09ORklHX1BIWV9ST0NLQ0hJUF9VU0IpICs9IHBoeS1yb2Nr
-Y2hpcC11c2Iubwo+PiArb2JqLSQoQ09ORklHX1BIWV9ST0NLQ0hJUF9EUCkJCSs9IHBoeS1yb2Nr
-Y2hpcC1kcC5vCj4+ICAgb2JqLSQoQ09ORklHX1BIWV9RQ09NX0lQUTgwNlhfU0FUQSkJKz0gcGh5
-LXFjb20taXBxODA2eC1zYXRhLm8KPj4gICBvYmotJChDT05GSUdfUEhZX1NUX1NQRUFSMTMxMF9N
-SVBIWSkJKz0gcGh5LXNwZWFyMTMxMC1taXBoeS5vCj4+ICAgb2JqLSQoQ09ORklHX1BIWV9TVF9T
-UEVBUjEzNDBfTUlQSFkpCSs9IHBoeS1zcGVhcjEzNDAtbWlwaHkubwo+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9waHkvcGh5LXJvY2tjaGlwLWRwLmMgYi9kcml2ZXJzL3BoeS9waHktcm9ja2NoaXAt
-ZHAuYwo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBpbmRleCAwMDAwMDAwLi5lOWE3MjZlCj4+
-IC0tLSAvZGV2L251bGwKPj4gKysrIGIvZHJpdmVycy9waHkvcGh5LXJvY2tjaGlwLWRwLmMKPj4g
-QEAgLTAsMCArMSwxNjYgQEAKPj4gKy8qCj4+ICsgKiBSb2NrY2hpcCBEUCBQSFkgZHJpdmVyCj4+
-ICsgKgo+PiArICogQ29weXJpZ2h0IChDKSAyMDE1IEZ1WmhvdSBSb2NrY2hpcCBDby4sIEx0ZC4K
-Pj4gKyAqIEF1dGhvcjogWWFraXIgWWFuZyA8eWtrQEByb2NrLWNoaXBzLmNvbT4KPj4gKyAqCj4+
-ICsgKiBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUg
-aXQgYW5kL29yIG1vZGlmeQo+PiArICogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
-ZXJhbCBQdWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQgYnkKPj4gKyAqIHRoZSBGcmVlIFNvZnR3
-YXJlIEZvdW5kYXRpb247IGVpdGhlciB2ZXJzaW9uIDIgb2YgdGhlIExpY2Vuc2UuCj4+ICsgKi8K
-Pj4gKwo+PiArI2luY2x1ZGUgPGxpbnV4L2lvLmg+Cj4+ICsjaW5jbHVkZSA8bGludXgva2VybmVs
-Lmg+Cj4+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+Cj4+ICsjaW5jbHVkZSA8bGludXgvb2Yu
-aD4KPj4gKyNpbmNsdWRlIDxsaW51eC9vZl9hZGRyZXNzLmg+Cj4+ICsjaW5jbHVkZSA8bGludXgv
-Y2xrLmg+Cj4+ICsjaW5jbHVkZSA8bGludXgvcGh5L3BoeS5oPgo+PiArI2luY2x1ZGUgPGxpbnV4
-L3JlZ21hcC5oPgo+PiArI2luY2x1ZGUgPGxpbnV4L21mZC9zeXNjb24uaD4KPj4gKyNpbmNsdWRl
-IDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KPj4gKwo+PiArI2RlZmluZSBHUkZfU09DX0NPTjEy
-ICAgICAgICAgICAgICAgICAgIDB4MDI3NAo+PiArI2RlZmluZSBHUkZfRURQX1JFRl9DTEtfU0VM
-X0lOVEVSICAgICAgIEJJVCg0KQo+PiArCj4+ICsjZGVmaW5lIERQX1BIWV9TSUREUV9XUklURV9F
-TiAgICAgICAgICAgQklUKDIxKQo+PiArI2RlZmluZSBEUF9QSFlfU0lERFFfT04gICAgICAgICAg
-ICAgICAgIDAKPj4gKyNkZWZpbmUgRFBfUEhZX1NJRERRX09GRiAgICAgICAgICAgICAgICBCSVQo
-NSkKPj4gKwo+PiArc3RydWN0IHJvY2tjaGlwX2RwX3BoeSB7Cj4+ICsJc3RydWN0IGRldmljZSAg
-KmRldjsKPj4gKwlzdHJ1Y3QgcmVnbWFwICAqZ3JmOwo+PiArCXZvaWQgX19pb21lbSAgICpyZWdz
-Owo+PiArCXN0cnVjdCBjbGsgICAgICpwaHlfMjRtOwo+PiArfTsKPj4gKwo+PiArc3RhdGljIGlu
-dCByb2NrY2hpcF9kcF9waHlfY2xrX2VuYWJsZShzdHJ1Y3Qgcm9ja2NoaXBfZHBfcGh5ICpkcCkK
-Pj4gK3sKPj4gKwlpbnQgcmV0ID0gMDsKPj4gKwo+PiArCXJldCA9IGNsa19zZXRfcmF0ZShkcC0+
-cGh5XzI0bSwgMjQwMDAwMDApOwo+PiArCWlmIChyZXQgPCAwKSB7Cj4+ICsJCWRldl9lcnIoZHAt
-PmRldiwgImNhbm5vdCBzZXQgY2xvY2sgcGh5XzI0bSAlZFxuIiwgcmV0KTsKPj4gKwkJcmV0dXJu
-IHJldDsKPj4gKwl9Cj4+ICsKPj4gKwlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUoZHAtPnBoeV8y
-NG0pOwo+PiArCWlmIChyZXQgPCAwKSB7Cj4+ICsJCWRldl9lcnIoZHAtPmRldiwgImNhbm5vdCBl
-bmFibGUgY2xvY2sgcGh5XzI0bSAlZFxuIiwgcmV0KTsKPj4gKwkJcmV0dXJuIHJldDsKPj4gKwl9
-Cj4+ICsKPj4gKwlyZXR1cm4gMDsKPj4gK30KPj4gKwo+PiArc3RhdGljIGludCByb2NrY2hpcF9k
-cF9waHlfY2xrX2Rpc2FibGUoc3RydWN0IHJvY2tjaGlwX2RwX3BoeSAqZHApCj4+ICt7Cj4+ICsJ
-Y2xrX2Rpc2FibGVfdW5wcmVwYXJlKGRwLT5waHlfMjRtKTsKPj4gKwo+PiArCXJldHVybiAwOwo+
-PiArfQo+PiArCj4+ICtzdGF0aWMgaW50IHJvY2tjaGlwX3NldF9waHlfc3RhdGUoc3RydWN0IHBo
-eSAqcGh5LCBib29sIGVuYWJsZSkKPj4gK3sKPj4gKwlzdHJ1Y3Qgcm9ja2NoaXBfZHBfcGh5ICpk
-cCA9IHBoeV9nZXRfZHJ2ZGF0YShwaHkpOwo+PiArCj4+ICsJaWYgKGVuYWJsZSkgewo+PiArCQly
-b2NrY2hpcF9kcF9waHlfY2xrX2VuYWJsZShkcCk7Cj4+ICsJCXdyaXRlbChEUF9QSFlfU0lERFFf
-V1JJVEVfRU4gfCBEUF9QSFlfU0lERFFfT04sIGRwLT5yZWdzKTsKPj4gKwl9IGVsc2Ugewo+PiAr
-CQlyb2NrY2hpcF9kcF9waHlfY2xrX2Rpc2FibGUoZHApOwo+PiArCQl3cml0ZWwoRFBfUEhZX1NJ
-RERRX1dSSVRFX0VOIHwgRFBfUEhZX1NJRERRX09GRiwgZHAtPnJlZ3MpOwo+PiArCX0KPj4gKwo+
-PiArCXJldHVybiAwOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgaW50IHJvY2tjaGlwX2RwX3BoeV9w
-b3dlcl9vbihzdHJ1Y3QgcGh5ICpwaHkpCj4+ICt7Cj4+ICsJcmV0dXJuIHJvY2tjaGlwX3NldF9w
-aHlfc3RhdGUocGh5LCB0cnVlKTsKPj4gK30KPj4gKwo+PiArc3RhdGljIGludCByb2NrY2hpcF9k
-cF9waHlfcG93ZXJfb2ZmKHN0cnVjdCBwaHkgKnBoeSkKPj4gK3sKPj4gKwlyZXR1cm4gcm9ja2No
-aXBfc2V0X3BoeV9zdGF0ZShwaHksIGZhbHNlKTsKPj4gK30KPj4gKwo+PiArc3RhdGljIHN0cnVj
-dCBwaHlfb3BzIHJvY2tjaGlwX2RwX3BoeV9vcHMgPSB7Cj4gc3RhdGljIGNvbnN0IHN0cnVjdCAu
-Li4KPgo+IHNlZSA0YTllNWNhMWE1NGEgKCJwaHk6IENvbnN0aWZ5IHN0cnVjdCBwaHlfb3BzIHZh
-cmlhYmxlcyIpCgpEb25lLCB0aGFua3MKCj4KPj4gKwkucG93ZXJfb24JPSByb2NrY2hpcF9kcF9w
-aHlfcG93ZXJfb24sCj4+ICsJLnBvd2VyX29mZgk9IHJvY2tjaGlwX2RwX3BoeV9wb3dlcl9vZmYs
-Cj4+ICsJLm93bmVyCQk9IFRISVNfTU9EVUxFLAo+PiArfTsKPj4gKwo+PiArc3RhdGljIGludCBy
-b2NrY2hpcF9kcF9waHlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPj4gK3sK
-Pj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Owo+PiArCXN0cnVjdCBkZXZpY2Vf
-bm9kZSAqbnAgPSBkZXYtPm9mX25vZGU7Cj4+ICsJc3RydWN0IHBoeV9wcm92aWRlciAqcGh5X3By
-b3ZpZGVyOwo+PiArCXN0cnVjdCByb2NrY2hpcF9kcF9waHkgKmRwOwo+PiArCXN0cnVjdCByZXNv
-dXJjZSAqcmVzOwo+PiArCXN0cnVjdCBwaHkgKnBoeTsKPj4gKwlpbnQgcmV0Owo+PiArCj4gSSBn
-dWVzcyB0aGlzIGNvdWxkIHByb2ZpdCBmcm9tIGEKPgo+IGlmICghbnApCj4gCXJldHVybiAtRU5P
-REVWOwoKSG1tLi4uIHNvIHdlIGFyZSBhdm9pZGluZyB0aGUgbm8gb2ZfZGV2aWNlIGNhc2UsCgpE
-b25lLAoKPj4gKwlkcCA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqZHApLCBHRlBfS0VSTkVM
-KTsKPj4gKwlpZiAoSVNfRVJSKGRwKSkKPj4gKwkJcmV0dXJuIC1FTk9NRU07Cj4+ICsKPj4gKwlk
-cC0+ZGV2ID0gZGV2Owo+PiArCj4+ICsJcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYs
-IElPUkVTT1VSQ0VfTUVNLCAwKTsKPj4gKwlkcC0+cmVncyA9IGRldm1faW9yZW1hcF9yZXNvdXJj
-ZShkZXYsIHJlcyk7Cj4+ICsJaWYgKElTX0VSUihkcC0+cmVncykpCj4+ICsJCXJldHVybiBQVFJf
-RVJSKGRwLT5yZWdzKTsKPj4gKwo+PiArCWRwLT5waHlfMjRtID0gZGV2bV9jbGtfZ2V0KGRldiwg
-IjI0bSIpOwo+PiArCWlmIChJU19FUlIoZHAtPnBoeV8yNG0pKSB7Cj4+ICsJCWRldl9lcnIoZGV2
-LCAiY2Fubm90IGdldCBjbG9jayAyNG1cbiIpOwo+PiArCQlyZXR1cm4gUFRSX0VSUihkcC0+cGh5
-XzI0bSk7Cj4+ICsJfQo+PiArCj4+ICsJZHAtPmdyZiA9IHN5c2Nvbl9yZWdtYXBfbG9va3VwX2J5
-X3BoYW5kbGUobnAsICJyb2NrY2hpcCxncmYiKTsKPj4gKwlpZiAoSVNfRVJSKGRwLT5ncmYpKSB7
-Cj4+ICsJCWRldl9lcnIoZGV2LCAicmszMjg4LWRwIG5lZWRzIHJvY2tjaGlwLGdyZiBwcm9wZXJ0
-eVxuIik7Cj4+ICsJCXJldHVybiBQVFJfRVJSKGRwLT5ncmYpOwo+PiArCX0KPj4gKwo+PiArCXJl
-dCA9IHJlZ21hcF93cml0ZShkcC0+Z3JmLCBHUkZfU09DX0NPTjEyLAo+PiArCQkJICAgR1JGX0VE
-UF9SRUZfQ0xLX1NFTF9JTlRFUiB8Cj4+ICsJCQkgICAoR1JGX0VEUF9SRUZfQ0xLX1NFTF9JTlRF
-UiA8PCAxNikpOwo+PiArCWlmIChyZXQgIT0gMCkgewo+PiArCQlkZXZfZXJyKGRwLT5kZXYsICJD
-b3VsZCBub3QgY29uZmlnIEdSRiBlZHAgcmVmIGNsazogJWRcbiIsIHJldCk7Cj4+ICsJCXJldHVy
-biByZXQ7Cj4+ICsJfQo+PiArCj4+ICsJcGh5ID0gZGV2bShkZXYsIE5VTEwsICZyb2NrY2hpcF9k
-cF9waHlfb3BzLCBOVUxMKTsKPiBobW0sIHdoZXJlIGRpZCB5b3UgZmluZCA0IHBhcmFtcyBmb3Ig
-ZGV2bV9waHlfY3JlYXRlPyBTaG91bGRuJ3QgdGhpcyBiZQo+Cj4gCXBoeSA9IGRldm1fcGh5X2Ny
-ZWF0ZShkZXYsIG5wLCAmcm9ja2NoaXBfZHBfcGh5X29wcyk7Cj4KPiBpbnN0ZWFkIC0gYW5kIGFs
-c28gaW5jbHVkZSB0aGUgcGh5IGR0LW5vZGUgYXMgMm5kIHBhcmFtZXRlcj8KCk9oLCAgOi0oPQoK
-SSB1c2VkIHRvIHRlc3QgdGhlIGRyaXZlciBvbiBjaHJvbWUtMy4xNCBicmFuY2gsIEkgYWx3YXlz
-IGJhY2sgdGhlIGRybSAKaGVhZCBmaWxlLApzbyB0aGVyZSB3b3VsZCBiZSBubyBkcm0gY29uZmxp
-Y3QuIEJ1dCBwaHkgZHJpdmVyIGlzIG1pc3NlZCwgdGhlIDQgCnBhcmFtcyBpcyBjb21lCmZyb20g
-a2VybmVsLTMuMTQuCgpUaGFua3MgZm9yIHlvdXIgcmVkbWluZCwKLSBZYWtpcgoKPgo+IEhlaWtv
-Cj4KPj4gKwlpZiAoSVNfRVJSKHBoeSkpIHsKPj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8g
-Y3JlYXRlIHBoeVxuIik7Cj4+ICsJCXJldHVybiBQVFJfRVJSKHBoeSk7Cj4+ICsJfQo+PiArCXBo
-eV9zZXRfZHJ2ZGF0YShwaHksIGRwKTsKPj4gKwo+PiArCXBoeV9wcm92aWRlciA9IGRldm1fb2Zf
-cGh5X3Byb3ZpZGVyX3JlZ2lzdGVyKGRldiwgb2ZfcGh5X3NpbXBsZV94bGF0ZSk7Cj4+ICsKPj4g
-KwlyZXR1cm4gUFRSX0VSUl9PUl9aRVJPKHBoeV9wcm92aWRlcik7Cj4+ICt9Cj4+ICsKPj4gK3N0
-YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHJvY2tjaGlwX2RwX3BoeV9kdF9pZHNbXSA9
-IHsKPj4gKwl7IC5jb21wYXRpYmxlID0gInJvY2tjaGlwLHJrMzI4OC1kcC1waHkiIH0sCj4+ICsJ
-e30KPj4gK307Cj4+ICsKPj4gK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHJvY2tjaGlwX2RwX3Bo
-eV9kdF9pZHMpOwo+PiArCj4+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciByb2NrY2hp
-cF9kcF9waHlfZHJpdmVyID0gewo+PiArCS5wcm9iZQkJPSByb2NrY2hpcF9kcF9waHlfcHJvYmUs
-Cj4+ICsJLmRyaXZlcgkJPSB7Cj4+ICsJCS5uYW1lCT0gInJvY2tjaGlwLWRwLXBoeSIsCj4+ICsJ
-CS5vZl9tYXRjaF90YWJsZSA9IHJvY2tjaGlwX2RwX3BoeV9kdF9pZHMsCj4+ICsJfSwKPj4gK307
-Cj4+ICsKPj4gK21vZHVsZV9wbGF0Zm9ybV9kcml2ZXIocm9ja2NoaXBfZHBfcGh5X2RyaXZlcik7
-Cj4+ICsKPj4gK01PRFVMRV9BVVRIT1IoIllha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4i
-KTsKPj4gK01PRFVMRV9ERVNDUklQVElPTigiUm9ja2NoaXAgRFAgUEhZIGRyaXZlciIpOwo+PiAr
-TU9EVUxFX0xJQ0VOU0UoIkdQTCB2MiIpOwo+Cj4KPgoKCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKTGlu
-dXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCg==
+The Odroid XU4 board does not have audio codec so before adding DTS for
+new board split the audio codec to separate DTSI file. Include the audio codec
+DTSI in Odroid XU3 and XU3-Lite boards.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+---
+
+Changes since v1:
+1. New patch (refactor).
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi  | 61 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 47 -----------------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |  1 +
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |  1 +
+ 4 files changed, 63 insertions(+), 47 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+new file mode 100644
+index 000000000000..9493923ec652
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -0,0 +1,61 @@
++/*
++ * Hardkernel Odroid XU3 Audio Codec device tree source
++ *
++ * Copyright (c) 2015 Krzysztof Kozlowski
++ * Copyright (c) 2014 Collabora Ltd.
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/ {
++	sound: sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,name = "Odroid-XU3";
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack",
++			"Speakers", "Speakers";
++		simple-audio-card,routing =
++			"Headphone Jack", "HPL",
++			"Headphone Jack", "HPR",
++			"Headphone Jack", "MICBIAS",
++			"IN1", "Headphone Jack",
++			"Speakers", "SPKL",
++			"Speakers", "SPKR";
++
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&link0_codec>;
++		simple-audio-card,frame-master = <&link0_codec>;
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0 0>;
++			system-clock-frequency = <19200000>;
++		};
++
++		link0_codec: simple-audio-card,codec {
++			sound-dai = <&max98090>;
++			clocks = <&i2s0 CLK_I2S_CDCLK>;
++		};
++	};
++};
++
++&hsi2c_5 {
++	status = "okay";
++	max98090: max98090@10 {
++		compatible = "maxim,max98090";
++		reg = <0x10>;
++		interrupt-parent = <&gpx3>;
++		interrupts = <2 0>;
++		clocks = <&i2s0 CLK_I2S_CDCLK>;
++		clock-names = "mclk";
++		#sound-dai-cells = <0>;
++	};
++};
++
++&i2s0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index dd8bc86d9de4..987c15d8ebe5 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -80,36 +80,6 @@
+ 		};
+ 	};
+ 
+-	sound: sound {
+-		compatible = "simple-audio-card";
+-
+-		simple-audio-card,name = "Odroid-XU3";
+-		simple-audio-card,widgets =
+-			"Headphone", "Headphone Jack",
+-			"Speakers", "Speakers";
+-		simple-audio-card,routing =
+-			"Headphone Jack", "HPL",
+-			"Headphone Jack", "HPR",
+-			"Headphone Jack", "MICBIAS",
+-			"IN1", "Headphone Jack",
+-			"Speakers", "SPKL",
+-			"Speakers", "SPKR";
+-
+-		simple-audio-card,format = "i2s";
+-		simple-audio-card,bitclock-master = <&link0_codec>;
+-		simple-audio-card,frame-master = <&link0_codec>;
+-
+-		simple-audio-card,cpu {
+-			sound-dai = <&i2s0 0>;
+-			system-clock-frequency = <19200000>;
+-		};
+-
+-		link0_codec: simple-audio-card,codec {
+-			sound-dai = <&max98090>;
+-			clocks = <&i2s0 CLK_I2S_CDCLK>;
+-		};
+-	};
+-
+ 	fan0: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		pwms = <&pwm 0 20972 0>;
+@@ -376,19 +346,6 @@
+ 	};
+ };
+ 
+-&hsi2c_5 {
+-	status = "okay";
+-	max98090: max98090@10 {
+-		compatible = "maxim,max98090";
+-		reg = <0x10>;
+-		interrupt-parent = <&gpx3>;
+-		interrupts = <2 0>;
+-		clocks = <&i2s0 CLK_I2S_CDCLK>;
+-		clock-names = "mclk";
+-		#sound-dai-cells = <0>;
+-	};
+-};
+-
+ &i2c_2 {
+ 	samsung,i2c-sda-delay = <100>;
+ 	samsung,i2c-max-bus-freq = <66000>;
+@@ -400,10 +357,6 @@
+ 	};
+ };
+ 
+-&i2s0 {
+-	status = "okay";
+-};
+-
+ &mfc {
+ 	samsung,mfc-r = <0x43000000 0x800000>;
+ 	samsung,mfc-l = <0x51000000 0x800000>;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+index c06882bbb822..9c0cea99c996 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+@@ -13,6 +13,7 @@
+ 
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
++#include "exynos5422-odroidxu3-audio.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3 Lite";
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 78e6a502f320..d8647a469a86 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -12,6 +12,7 @@
+ 
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
++#include "exynos5422-odroidxu3-audio.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3";
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
