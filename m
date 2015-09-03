@@ -1,66 +1,82 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv6] ARM: exynos_defconfig: Enable LEDS for Odroid-XU3/XU4
-Date: Thu, 03 Sep 2015 14:42:33 +0900
-Message-ID: <55E7DDC9.7090603@samsung.com>
-References: <1441258696-3699-1-git-send-email-linux.amoon@gmail.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v4 01/16] drm: exynos/dp: fix code style
+Date: Wed, 02 Sep 2015 22:57:58 -0700
+Message-ID: <1441259878.12163.75.camel@perches.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+	 <1441086399-24889-1-git-send-email-ykk@rock-chips.com>
+	 <55E79297.3050203@samsung.com> <55E7D4E4.6070808@rock-chips.com>
+	 <55E7D5EB.1060505@samsung.com> <55E7DBA7.90504@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41410 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750712AbbICFmf (ORCPT
+Received: from smtprelay0056.hostedemail.com ([216.40.44.56]:42797 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750820AbbICF6F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Sep 2015 01:42:35 -0400
-In-reply-to: <1441258696-3699-1-git-send-email-linux.amoon@gmail.com>
+	Thu, 3 Sep 2015 01:58:05 -0400
+In-Reply-To: <55E7DBA7.90504@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andreas Faerber <afaerber@suse.de>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.o
 
-On 03.09.2015 14:38, Anand Moon wrote:
-> Enable config option NEW_LEDS, LEDS_CLASS, LEDS_GPIO, LEDS_PWM,
-> LEDS_TRIGGERS, LEDS_TRIGGER_TIMER, LEDS_TRIGGER_HEARTBEAT for
-> Odroid-XU3/XU4 board.
+On Thu, 2015-09-03 at 13:33 +0800, Yakir Yang wrote:
+[]
+> >>>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c
+[]
+> >>>> @@ -155,24 +156,22 @@ static int exynos_dp_read_edid(struct
+> >>>> exynos_dp_device *dp)
+> >>>>            }
+> >>>>              exynos_dp_read_byte_from_dpcd(dp, DP_TEST_REQUEST,
+> >>>> -                    &test_vector);
+> >>>> +                          &test_vector);
+> >>>>            if (test_vector & DP_TEST_LINK_EDID_READ) {
+> >>>> -            exynos_dp_write_byte_to_dpcd(dp,
+> >>>> -                DP_TEST_EDID_CHECKSUM,
+> >>>> +            exynos_dp_write_byte_to_dpcd(
+> >>>> +                dp, DP_TEST_EDID_CHECKSUM,
+> >>>>                    edid[EDID_BLOCK_LENGTH + EDID_CHECKSUM]);
+> >>>> -            exynos_dp_write_byte_to_dpcd(dp,
+> >>>> -                DP_TEST_RESPONSE,
+> >>>> +            exynos_dp_write_byte_to_dpcd(
+> >>>> +                dp, DP_TEST_RESPONSE,
+> >>>>                    DP_TEST_EDID_CHECKSUM_WRITE);
+> >>> To me, missing argument after opening parenthesis, looks worse. I would
+> >>> prefer:
+> >>>
+> >>>              exynos_dp_write_byte_to_dpcd(dp,
+> >>>
+> >>> Why you moved the 'dp' argument to new line?
+> >> Hmm... Just like style tool indicate, no more warning after
+> >> that change.
+> >>
+> >> For now, I would like to follow the original style, just improved
+> >> some obvious style problem.  :-)
+> > What was the checkpatch warning that said 'dp' has to move to new line?
+> > I tried this and I don't see it.
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> 
-> ---
-> Changes from last version
-> dropped following option.
->   CONFIG_LEDS_CLASS_FLASH
->   CONFIG_TRIGGER_ONESHOT
->   CONFIG_TRIGGER_GPIO
-> fixed the From address
-> ---
->  arch/arm/configs/exynos_defconfig | 7 +++++++
->  1 file changed, 7 insertions(+)
+> checkpatch haven't remind me that put dp to new line would fix
+> this warning, this just come from my experiments. And I works,
+> no more warnings from checkpatch, so I toke this style.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Checkpatch isn't a great arbiter of style.
+It's just a brainless tool.
 
-BTW, Javier's email is different. All you previous mails bounced. I
-cc-ed here the proper one.
+Always use your instead of anything brainless.
 
-Best regards,
-Krzysztof
+If it were code I was writing, I'd ignore 80 columns warnings
+where appropriate.
 
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 9504e77..aaf7aa4 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -163,6 +163,13 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
->  CONFIG_MMC_DW=y
->  CONFIG_MMC_DW_IDMAC=y
->  CONFIG_MMC_DW_EXYNOS=y
-> +CONFIG_NEW_LEDS=y
-> +CONFIG_LEDS_CLASS=y
-> +CONFIG_LEDS_GPIO=y
-> +CONFIG_LEDS_PWM=y
-> +CONFIG_LEDS_TRIGGERS=y
-> +CONFIG_LEDS_TRIGGER_TIMER=y
-> +CONFIG_LEDS_TRIGGER_HEARTBEAT=y
->  CONFIG_RTC_CLASS=y
->  CONFIG_RTC_DRV_MAX77686=y
->  CONFIG_RTC_DRV_MAX77802=y
-> 
+These are long function names and long macro defines, so it's
+inappropriate to use 80 columns as a guiding style.
+
+I'd write:
+
+		exynos_dp_read_byte_from_dpcd(dp, DP_TEST_REQUEST, &test_vector);
+		if (test_vector & DP_TEST_LINK_EDID_READ) {
+			exynos_dp_write_byte_to_dpcd(dp, DP_TEST_EDID_CHECKSUM,
+						     edid[EDID_BLOCK_LENGTH + EDID_CHECKSUM]);
+			exynos_dp_write_byte_to_dpcd(dp, DP_TEST_RESPONSE,
+						     DP_TEST_EDID_CHECKSUM_WRITE);
+		}
