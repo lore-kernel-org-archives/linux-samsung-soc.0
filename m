@@ -1,73 +1,38 @@
-From: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Subject: Re: [PATCHv2] drivers: i2c: exynos5: irq spinlock rt-safe
-Date: Thu, 3 Sep 2015 23:31:01 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1509032319570.15006@nanos>
-References: <1440489125-20082-1-git-send-email-anders.roxell@linaro.org> <1441314363-9836-1-git-send-email-anders.roxell@linaro.org>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v4 14/16] drm: bridge: analogix/dp: try force hpd after
+ plug in lookup failed
+Date: Thu, 3 Sep 2015 16:55:59 -0500
+Message-ID: <CAL_Jsq+F=eE6vU3f-bHrrSCD9GCoh80Nf-5=Qm73QgGDW1Np=w@mail.gmail.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1441088079-25809-1-git-send-email-ykk@rock-chips.com> <CAL_JsqJDALnjVaVoEqGGsSLeE31m3MKOfbSoZ3M+g+zPZR2MFg@mail.gmail.com>
+ <20150903084735.GB3784@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1441314363-9836-1-git-send-email-anders.roxell-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anders Roxell <anders.roxell-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-rt-users-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f176.google.com ([209.85.160.176]:36383 "EHLO
+	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751505AbbICV4T (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 3 Sep 2015 17:56:19 -0400
+In-Reply-To: <20150903084735.GB3784@ulmo.nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <treding@nvidia.com>
+Cc: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, dri-devel <dri-devel@lists.freedesktop.>
 
-On Thu, 3 Sep 2015, Anders Roxell wrote:
+On Thu, Sep 3, 2015 at 3:47 AM, Thierry Reding <treding@nvidia.com> wrote:
+> On Wed, Sep 02, 2015 at 03:17:57PM -0500, Rob Herring wrote:
+> [...]
+>> Are there any eDP panels which don't have EDID and need panel details in DT?
+>
+> Most panels need information other than EDID. They typically have some
+> requirements regarding the power up sequence that aren't to be found
+> anywhere in EDID or detectable by some other mechanism. A decision was
+> therefore made a long time ago to require panels to be listed in DT with
+> a specific compatible string. That way all of these details can be
+> stashed away in drivers that know how to deal with these kinds of
+> details.
 
-> The current spin_lock_irqsave() protects the enabling of the device
-> interrupt.  In order to prevent recursion in the case of sleeping
-> spinlocks (e.g. with RT patch, stacktrace below), convert the spin lock
-> to a raw spin lock. No change for !RT kernels.
-> 
-> [   10.992238] kernel BUG at ../kernel/locking/rtmutex.c:998!
-> [   10.992243] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-> [   10.992250] Modules linked in:
-> [   10.992258] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.1.5-rt5
-> [   10.992263] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [   10.992268] task: ed880000 ti: ed888000 task.ti: ed888000
-> [   10.992281] PC is at rt_spin_lock_slowlock+0xa4/0x2ec
-> [   10.992288] LR is at rt_spin_lock_slowlock+0x54/0x2ec
-> [   10.992296] pc : [<c099e1bc>]    lr : [<c099e16c>]    psr: 60000193
-> [   10.992296] sp : ed889a28  ip : ed880001  fp : 00000089
-> [   10.992300] r10: ed889a28  r9 : c0f55654  r8 : 00000060
-> [   10.992305] r7 : ed880000  r6 : 00000000  r5 : 00000001  r4 : ed9f7288
-> [   10.992310] r3 : ed880000  r2 : 00000000  r1 : ed880000  r0 : 00000000
-> [   10.992316] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
-> Segment kernel
-> ...
-> ...
-> [   10.992662] [<c099e1bc>] (rt_spin_lock_slowlock) from [<c07bc794>]
-> (exynos5_i2c_irq+0x20/0x2b0)
-> [   10.992678] [<c07bc794>] (exynos5_i2c_irq) from [<c028c8b4>]
-> (handle_irq_event_percpu+0x68/0x158)
-> [   10.992690] [<c028c8b4>] (handle_irq_event_percpu) from [<c028ca0c>]
-> (handle_irq_event+0x68/0xa8)
-> [   10.992702] [<c028ca0c>] (handle_irq_event) from [<c028f9c4>]
-> (handle_fasteoi_irq+0x11c/0x1d4)
-> [   10.992713] [<c028f9c4>] (handle_fasteoi_irq) from [<c028c17c>]
-> (generic_handle_irq+0x20/0x30)
-> [   10.992724] [<c028c17c>] (generic_handle_irq) from [<c028c290>]
-> (__handle_domain_irq+0x6c/0xe4)
-> [   10.992734] [<c028c290>] (__handle_domain_irq) from [<c020a71c>]
-> (gic_handle_irq+0x2c/0x68)
-> [   10.992744] [<c020a71c>] (gic_handle_irq) from [<c0214140>]
-> (__irq_svc+0x40/0x88)
-> [   10.992749] Exception stack(0xed889b28 to 0xed889b70)
+I guess I was being hopeful that eDP was improving that situation.
 
-What you completely fail to explain how this can happen at all.
-
-On RT the interrupt of that device is force threaded, but the handler
-is called in hard interrupt context, which is wrong to begin with.
-
-While the interrupt request in this driver is bogus:
-
-        ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
-                                IRQF_NO_SUSPEND | IRQF_ONESHOT,
-                                dev_name(&pdev->dev), i2c);
-
-because it sets the ONESHOT flag for no reason, it does not set the
-NOTRHEAD flag which would prevent force threading.
-
-Hmm?
-
-	tglx
+Rob
