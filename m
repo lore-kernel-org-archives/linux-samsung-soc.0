@@ -1,81 +1,53 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
- to bridge dir
-Date: Thu, 03 Sep 2015 11:55:14 +0800
-Message-ID: <55E7C4A2.6000504@rock-chips.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>	<1441086598-24995-1-git-send-email-ykk@rock-chips.com> <CACvgo53pZUtSLRGVMYPs1s4QPBrAr3j=xoZ1t23tPv202bzfyg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv5] ARM: exynos_defconfig: Enable LEDS for Odroid-XU3/XU4
+Date: Thu,  3 Sep 2015 03:57:36 +0000
+Message-ID: <1441252656-3034-1-git-send-email-linux.amoon@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.133]:57585 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753104AbbICDzZ (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:32993 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752133AbbICD5s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Sep 2015 23:55:25 -0400
-In-Reply-To: <CACvgo53pZUtSLRGVMYPs1s4QPBrAr3j=xoZ1t23tPv202bzfyg@mail.gmail.com>
+	Wed, 2 Sep 2015 23:57:48 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, seanpaul@chromium.com, djkurtz@chromium.com, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, robherring2@gmail.com, Russell King <rmk+kernel@arm.linux.org.uk>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, dianders@chromium.com, linux-arm-kernel@lists.infradead.org, Linu
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Anand Moon <moon.linux@yahoo.com>, Andreas Faerber <afaerber@suse.de>, Lukasz Majewski <l.majewski@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-Hi Emil,
+From: Anand Moon <moon.linux@yahoo.com>
 
-=E5=9C=A8 09/02/2015 10:50 PM, Emil Velikov =E5=86=99=E9=81=93:
-> [Dropping the CC list]
+Enable config option NEW_LEDS, LEDS_CLASS, LEDS_GPIO, LEDS_PWM,
+LEDS_TRIGGERS, LEDS_TRIGGER_TIMER, LEDS_TRIGGER_HEARTBEAT for
+Odroid-XU3/XU4 board.
 
-Hmm...Don't understand what this means. If you can explain, that
-would be better, so I would not miss your suggest.  :-)
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-> Hi Yakir Yang,
->
-> On 1 September 2015 at 06:49, Yakir Yang <ykk@rock-chips.com> wrote:
->> Split the dp core driver from exynos directory to bridge
->> directory, and rename the core driver to analogix_dp_*,
->> leave the platform code to analogix_dp-exynos.
->>
->> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->> ---
->> Changes in v4:
->> - Take Rob suggest, update "analogix,hpd-gpios" to "hpd-gpios" DT pr=
-opery.
->> - Take Jingoo suggest, rename "analogix_dp-exynos.c" file name to "e=
-xynos_dp.c"
->> - Take Archit suggest, create a separate folder for analogix code in=
- bridge/
->>
-> "Take X suggest", is grammatically incorrect. You should use
-> "suggestion(s)" or alternatively use the following approach.
->
-> - Create a separate folder for analogix code in bridge/ (Archit)
+---
+Changes from last version
+dropped following option.
+  CONFIG_LEDS_CLASS_FLASH
+  CONFIG_TRIGGER_ONESHOT
+  CONFIG_TRIGGER_GPIO
+---
+ arch/arm/configs/exynos_defconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks for your correct. I prefer to take the last one  ;)
-
-> Cheers,
-> Emil
->
-> P.S. Why do you resend the whole series (some 10+ patches) when only =
-a
-> few patches have been changed ? Are all the patches changed whist
-> missing that information (vX: rebase on top of A)
-
-Yes, those 10+ patches do base on the previous changes, specially when =
-I
-rebase my series on the latest linux-next branch.
-
-Besides, I don't know that how to send parts of this series, and keep t=
-he
-unrelated patches no send. For example if the [v4 03/16] ~ [v4 10/16]
-need  update to v5, and [v4 11/16] ~ [v4 16/16] keep in v4.
-So should I only send the [v5 03/16]  ~ [v5 10/16], no need to send and
-update [v4 11/16] ~ [v4 16/16] to v5 ?
-
-If so I think it would be difficult for guys to comment, cause they=20
-can't see
-the whole series in one reply list .   ;)
-
-Thanks,
-- Yakir
->
->
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 9504e77..aaf7aa4 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -163,6 +163,13 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_IDMAC=y
+ CONFIG_MMC_DW_EXYNOS=y
++CONFIG_NEW_LEDS=y
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_PWM=y
++CONFIG_LEDS_TRIGGERS=y
++CONFIG_LEDS_TRIGGER_TIMER=y
++CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_MAX77686=y
+ CONFIG_RTC_DRV_MAX77802=y
+-- 
+2.1.4
