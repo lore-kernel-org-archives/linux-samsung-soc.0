@@ -1,121 +1,57 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCHv6] ARM: exynos_defconfig: Enable LEDS for Odroid-XU3/XU4
-Date: Thu, 3 Sep 2015 12:29:46 +0200
-Message-ID: <55E8211A.1000806@osg.samsung.com>
-References: <1441258696-3699-1-git-send-email-linux.amoon@gmail.com>
- <55E810E3.6080709@osg.samsung.com>
- <CANAwSgT0u9iC9MSsbGz5L6n7XgB-fLLYhrN7sUPrn9GyN-2bGA@mail.gmail.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v4 10/16] phy: Add driver for rockchip Display Port PHY
+Date: Thu, 03 Sep 2015 15:52:48 +0200
+Message-ID: <3242714.Wxby7z5YyH@phil>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com> <CAL_JsqJG3wGO3PC2raWvc588rrwF-zHD9+3WwBJxEwntm19k7Q@mail.gmail.com> <55E7BD8C.5070803@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:33844 "EHLO lists.s-osg.org"
+Received: from gloria.sntech.de ([95.129.55.99]:44513 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752877AbbICK3x (ORCPT
+	id S1754043AbbICNxV convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Sep 2015 06:29:53 -0400
-In-Reply-To: <CANAwSgT0u9iC9MSsbGz5L6n7XgB-fLLYhrN7sUPrn9GyN-2bGA@mail.gmail.com>
+	Thu, 3 Sep 2015 09:53:21 -0400
+In-Reply-To: <55E7BD8C.5070803@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Andreas Faerber <afaerber@suse.de>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Rob Herring <robherring2@gmail.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, dri-devel <dri-devel@lists.free>
 
-Hello Anand,
+Am Donnerstag, 3. September 2015, 11:25:00 schrieb Yakir Yang:
+> =E5=9C=A8 09/02/2015 09:27 PM, Rob Herring =E5=86=99=E9=81=93:
+> > On Tue, Sep 1, 2015 at 1:04 AM, Yakir Yang <ykk@rock-chips.com> wro=
+te:
+> >> +- clocks: from common clock binding: handle to dp clock.
+> >> +       of memory mapped region.
+> >> +- clock-names: from common clock binding:
+> >> +       Required elements: "sclk_dp" "sclk_dp_24m"
+> >> +
+> >> +- rockchip,grf: this soc should set GRF regs, so need get grf her=
+e.
+> >=20
+> > I have no idea what GRF means.
+>=20
+> GRF is an module of our IC chip, the full name is General Register Fi=
+les.
+> I would rather to pick some words from our TRM.
+>=20
+> The general register file will be used to do static set by software, =
+which
+> is composed of many registers for system control.
 
-On 09/03/2015 11:47 AM, Anand Moon wrote:
-> Hi Javier,
-> 
-> On 3 September 2015 at 14:50, Javier Martinez Canillas
-> <javier@osg.samsung.com> wrote:
->> Hello Anand,
->>
->> On 09/03/2015 07:38 AM, Anand Moon wrote:
->>> Enable config option NEW_LEDS, LEDS_CLASS, LEDS_GPIO, LEDS_PWM,
->>> LEDS_TRIGGERS, LEDS_TRIGGER_TIMER, LEDS_TRIGGER_HEARTBEAT for
->>> Odroid-XU3/XU4 board.
->>>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>
->>> ---
->>
->> I think Krzysztof already mentioned but a commit message shouln't
->> describe what the change is (one can look to the patch for that)
->> but why the change is needed.
->>
->> So I would had expect something along these lines:
->>
->> Many Exynos boards (i.e: the Exynos5422 Odroid XU3/XU4) have GPIO
->> and PWM based LEDs, so enable the needed Kconfig options to have
->> support for these. Also, some boards use the heartbeat LED trigger
->> so enable support for this as well.
->>
->>> Changes from last version
->>> dropped following option.
->>>   CONFIG_LEDS_CLASS_FLASH
->>>   CONFIG_TRIGGER_ONESHOT
->>>   CONFIG_TRIGGER_GPIO
->>> fixed the From address
->>> ---
->>>  arch/arm/configs/exynos_defconfig | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
->>> index 9504e77..aaf7aa4 100644
->>> --- a/arch/arm/configs/exynos_defconfig
->>> +++ b/arch/arm/configs/exynos_defconfig
->>> @@ -163,6 +163,13 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
->>>  CONFIG_MMC_DW=y
->>>  CONFIG_MMC_DW_IDMAC=y
->>>  CONFIG_MMC_DW_EXYNOS=y
->>> +CONFIG_NEW_LEDS=y
->>> +CONFIG_LEDS_CLASS=y
->>> +CONFIG_LEDS_GPIO=y
->>> +CONFIG_LEDS_PWM=y
->>> +CONFIG_LEDS_TRIGGERS=y
->>> +CONFIG_LEDS_TRIGGER_TIMER=y
->>
-> 
->> I don't see an Exynos board using the timer trigger. Do you need it for
->> some user-space application that uses the sysfs interface? I'm OK with
->> enabling it but again this should be mentioned in the commit message.
->>
+The general register files are present on all Rockchip SoCs I've seen s=
+o far=20
+and really are just an aggregation of registers for settings and status=
+=20
+indications, ranging from memory stuff, dma-controller settings, usb-ph=
+y and=20
+settings for a lot of other phys, etc.
 
-You haven't answered this question.
+The most prevalent description in dt-bindings is currently:
 
->>> +CONFIG_LEDS_TRIGGER_HEARTBEAT=y
->>>  CONFIG_RTC_CLASS=y
->>>  CONFIG_RTC_DRV_MAX77686=y
->>>  CONFIG_RTC_DRV_MAX77802=y
->>>
->>
-> 
-> Earlier design of the LED for Odroid XU3 was using gpio-leds
-> Now It was change to using both pwm-leds and gpio-leds.
->
+- rockchip,grf: phandle to the syscon managing the "general register fi=
+les"
 
-I know that Odroid XU3 have both LEDs connected to GPIO and
-PWM lines but that should be mentioned in the commit message.
- 
-> Earlier I kept them as loadable module and now build-in.
->
 
-Yes, because exynos_defconfig as everything as built-in to
-make it easier for developers to test by only copying the
-kernel image and not the modules.
- 
-> Should I resend this again. Or some body will update the commit message.
->
-
-If a patch has a typo, an extra blank line or something
-very easy to fix then it may be possible that the maintainer
-will do the fix when applying but changing the commit message
-I think is too much so in this case is better to resend IMHO.
- 
-> -Anand Moon
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Heiko
