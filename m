@@ -1,362 +1,81 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v4 10/16] phy: Add driver for rockchip Display Port PHY
-Date: Thu, 03 Sep 2015 11:25:00 +0800
-Message-ID: <55E7BD8C.5070803@rock-chips.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com> <1441087455-25533-1-git-send-email-ykk@rock-chips.com> <CAL_JsqJG3wGO3PC2raWvc588rrwF-zHD9+3WwBJxEwntm19k7Q@mail.gmail.com>
+Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
+ to bridge dir
+Date: Thu, 03 Sep 2015 11:55:14 +0800
+Message-ID: <55E7C4A2.6000504@rock-chips.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>	<1441086598-24995-1-git-send-email-ykk@rock-chips.com> <CACvgo53pZUtSLRGVMYPs1s4QPBrAr3j=xoZ1t23tPv202bzfyg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:36314 "EHLO
+Received: from lucky1.263xmail.com ([211.157.147.133]:57585 "EHLO
 	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752698AbbICDZQ (ORCPT
+	with ESMTP id S1753104AbbICDzZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Sep 2015 23:25:16 -0400
-In-Reply-To: <CAL_JsqJG3wGO3PC2raWvc588rrwF-zHD9+3WwBJxEwntm19k7Q@mail.gmail.com>
+	Wed, 2 Sep 2015 23:55:25 -0400
+In-Reply-To: <CACvgo53pZUtSLRGVMYPs1s4QPBrAr3j=xoZ1t23tPv202bzfyg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, dri-devel <dri-devel@lists.freedes>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, seanpaul@chromium.com, djkurtz@chromium.com, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, robherring2@gmail.com, Russell King <rmk+kernel@arm.linux.org.uk>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, dianders@chromium.com, linux-arm-kernel@lists.infradead.org, Linu
 
-Hi Rob,
+Hi Emil,
 
-=E5=9C=A8 09/02/2015 09:27 PM, Rob Herring =E5=86=99=E9=81=93:
-> On Tue, Sep 1, 2015 at 1:04 AM, Yakir Yang <ykk@rock-chips.com> wrote=
-:
->> This phy driver would control the Rockchip DisplayPort module
->> phy clock and phy power, it is relate to analogix_dp-rockchip
->> dp driver. If you want DP works rightly on rockchip platform,
->> then you should select both of them.
+=E5=9C=A8 09/02/2015 10:50 PM, Emil Velikov =E5=86=99=E9=81=93:
+> [Dropping the CC list]
+
+Hmm...Don't understand what this means. If you can explain, that
+would be better, so I would not miss your suggest.  :-)
+
+> Hi Yakir Yang,
+>
+> On 1 September 2015 at 06:49, Yakir Yang <ykk@rock-chips.com> wrote:
+>> Split the dp core driver from exynos directory to bridge
+>> directory, and rename the core driver to analogix_dp_*,
+>> leave the platform code to analogix_dp-exynos.
 >>
 >> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 >> ---
 >> Changes in v4:
->> - Take Kishon suggest, add commit message, and remove the redundant
->>    rockchip_dp_phy_init() function, move those code to probe() metho=
-d.
->>    And remove driver .owner number.
+>> - Take Rob suggest, update "analogix,hpd-gpios" to "hpd-gpios" DT pr=
+opery.
+>> - Take Jingoo suggest, rename "analogix_dp-exynos.c" file name to "e=
+xynos_dp.c"
+>> - Take Archit suggest, create a separate folder for analogix code in=
+ bridge/
 >>
->> Changes in v3:
->> - Take Heiko suggest, add rockchip dp phy driver,
->>    collect the phy clocks and power control.
->>
->> Changes in v2: None
->>
->>   .../devicetree/bindings/phy/rockchip-dp-phy.txt    |  26 ++++
-> It is preferred that you split binding doc's from driver changes.
-
-Okay, done.
-
->>   drivers/phy/Kconfig                                |   7 +
->>   drivers/phy/Makefile                               |   1 +
->>   drivers/phy/phy-rockchip-dp.c                      | 166 +++++++++=
-++++++++++++
->>   4 files changed, 200 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/rockchip-=
-dp-phy.txt
->>   create mode 100644 drivers/phy/phy-rockchip-dp.c
->>
->> diff --git a/Documentation/devicetree/bindings/phy/rockchip-dp-phy.t=
-xt b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
->> new file mode 100644
->> index 0000000..5de1088
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
->> @@ -0,0 +1,26 @@
->> +Rockchip Soc Seroes Display Port PHY
->> +------------------------------------
->> +
->> +Required properties:
->> +- compatible : should be one of the following supported values:
->> +        - "rockchip.rk3288-dp-phy"
->> +
->> +- reg : a list of registers used by phy driver
-> Please state the size of the list and order of what each entry if mor=
-e than one.
-
-Just like Heiko remind, I don't need the reg number anymore,
-"rockchip,grf" is enough for this driver.
-
-Anyway thanks :-)
-
->> +- clocks: from common clock binding: handle to dp clock.
->> +       of memory mapped region.
->> +- clock-names: from common clock binding:
->> +       Required elements: "sclk_dp" "sclk_dp_24m"
->> +
->> +- rockchip,grf: this soc should set GRF regs, so need get grf here.
-> I have no idea what GRF means.
-
-GRF is an module of our IC chip, the full name is General Register File=
-s.
-I would rather to pick some words from our TRM.
-
-The general register file will be used to do static set by software, wh=
-ich
-is composed of many registers for system control.
-
+> "Take X suggest", is grammatically incorrect. You should use
+> "suggestion(s)" or alternatively use the following approach.
 >
->> +- #phy-cells : from the generic PHY bindings, must be 0;
->> +
->> +Example:
->> +
->> +edp_phy: phy@ff770274 {
->> +       compatilble =3D "rockchip,rk3288-dp-phy";
->> +       reg =3D <0xff770274 4>;
->> +       rockchip,grf =3D <&grf>;
->> +       clocks =3D <&cru SCLK_EDP_24M>;
->> +       clock-names =3D "24m";
->> +       #phy-cells =3D <0>;
->> +}
->> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
->> index 47da573..8f2bc4f 100644
->> --- a/drivers/phy/Kconfig
->> +++ b/drivers/phy/Kconfig
->> @@ -310,6 +310,13 @@ config PHY_ROCKCHIP_USB
->>          help
->>            Enable this to support the Rockchip USB 2.0 PHY.
->>
->> +config PHY_ROCKCHIP_DP
->> +       tristate "Rockchip Display Port PHY Driver"
->> +       depends on ARCH_ROCKCHIP && OF
->> +       select GENERIC_PHY
->> +       help
->> +         Enable this to support the Rockchip Display Port PHY.
->> +
->>   config PHY_ST_SPEAR1310_MIPHY
->>          tristate "ST SPEAR1310-MIPHY driver"
->>          select GENERIC_PHY
->> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
->> index a5b18c1..e281f35 100644
->> --- a/drivers/phy/Makefile
->> +++ b/drivers/phy/Makefile
->> @@ -34,6 +34,7 @@ phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)    +=3D=
- phy-s5pv210-usb2.o
->>   obj-$(CONFIG_PHY_EXYNOS5_USBDRD)       +=3D phy-exynos5-usbdrd.o
->>   obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)    +=3D phy-qcom-apq8064-sata.=
-o
->>   obj-$(CONFIG_PHY_ROCKCHIP_USB) +=3D phy-rockchip-usb.o
->> +obj-$(CONFIG_PHY_ROCKCHIP_DP)          +=3D phy-rockchip-dp.o
->>   obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)    +=3D phy-qcom-ipq806x-sata.=
-o
->>   obj-$(CONFIG_PHY_ST_SPEAR1310_MIPHY)   +=3D phy-spear1310-miphy.o
->>   obj-$(CONFIG_PHY_ST_SPEAR1340_MIPHY)   +=3D phy-spear1340-miphy.o
->> diff --git a/drivers/phy/phy-rockchip-dp.c b/drivers/phy/phy-rockchi=
-p-dp.c
->> new file mode 100644
->> index 0000000..e9a726e
->> --- /dev/null
->> +++ b/drivers/phy/phy-rockchip-dp.c
->> @@ -0,0 +1,166 @@
->> +/*
->> + * Rockchip DP PHY driver
->> + *
->> + * Copyright (C) 2015 FuZhou Rockchip Co., Ltd.
->> + * Author: Yakir Yang <ykk@@rock-chips.com>
->> + *
->> + * This program is free software; you can redistribute it and/or mo=
-dify
->> + * it under the terms of the GNU General Public License as publishe=
-d by
->> + * the Free Software Foundation; either version 2 of the License.
->> + */
->> +
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/clk.h>
->> +#include <linux/phy/phy.h>
->> +#include <linux/regmap.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/platform_device.h>
->> +
->> +#define GRF_SOC_CON12                   0x0274
->> +#define GRF_EDP_REF_CLK_SEL_INTER       BIT(4)
->> +
->> +#define DP_PHY_SIDDQ_WRITE_EN           BIT(21)
->> +#define DP_PHY_SIDDQ_ON                 0
->> +#define DP_PHY_SIDDQ_OFF                BIT(5)
->> +
->> +struct rockchip_dp_phy {
->> +       struct device  *dev;
->> +       struct regmap  *grf;
->> +       void __iomem   *regs;
->> +       struct clk     *phy_24m;
->> +};
->> +
->> +static int rockchip_dp_phy_clk_enable(struct rockchip_dp_phy *dp)
->> +{
->> +       int ret =3D 0;
->> +
->> +       ret =3D clk_set_rate(dp->phy_24m, 24000000);
-> Do you need to do this every time? This can go in probe.
+> - Create a separate folder for analogix code in bridge/ (Archit)
 
-Yeah, it could move to probe, thanks.
+Thanks for your correct. I prefer to take the last one  ;)
 
->> +       if (ret < 0) {
->> +               dev_err(dp->dev, "cannot set clock phy_24m %d\n", re=
-t);
->> +               return ret;
->> +       }
->> +
->> +       ret =3D clk_prepare_enable(dp->phy_24m);
->> +       if (ret < 0) {
->> +               dev_err(dp->dev, "cannot enable clock phy_24m %d\n",=
- ret);
->> +               return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int rockchip_dp_phy_clk_disable(struct rockchip_dp_phy *dp)
->> +{
->> +       clk_disable_unprepare(dp->phy_24m);
->> +
->> +       return 0;
->> +}
->> +
->> +static int rockchip_set_phy_state(struct phy *phy, bool enable)
->> +{
->> +       struct rockchip_dp_phy *dp =3D phy_get_drvdata(phy);
->> +
->> +       if (enable) {
->> +               rockchip_dp_phy_clk_enable(dp);
->> +               writel(DP_PHY_SIDDQ_WRITE_EN | DP_PHY_SIDDQ_ON, dp->=
-regs);
->> +       } else {
->> +               rockchip_dp_phy_clk_disable(dp);
->> +               writel(DP_PHY_SIDDQ_WRITE_EN | DP_PHY_SIDDQ_OFF, dp-=
->regs);
->> +       }
->> +
->> +       return 0;
->> +}
-> I would just inline all 3 of these functions. The wrappers don't
-> doesn't do anything, but add 2 levels of function calls.
-
-After move clk_set_rate to probe, I would rather to remove those
-wrappers just operate in power_on/power_off directly.  :)
-
+> Cheers,
+> Emil
 >
->> +
->> +static int rockchip_dp_phy_power_on(struct phy *phy)
->> +{
->> +       return rockchip_set_phy_state(phy, true);
->> +}
->> +
->> +static int rockchip_dp_phy_power_off(struct phy *phy)
->> +{
->> +       return rockchip_set_phy_state(phy, false);
->> +}
->> +
->> +static struct phy_ops rockchip_dp_phy_ops =3D {
->> +       .power_on       =3D rockchip_dp_phy_power_on,
->> +       .power_off      =3D rockchip_dp_phy_power_off,
->> +       .owner          =3D THIS_MODULE,
->> +};
->> +
->> +static int rockchip_dp_phy_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev =3D &pdev->dev;
->> +       struct device_node *np =3D dev->of_node;
->> +       struct phy_provider *phy_provider;
->> +       struct rockchip_dp_phy *dp;
->> +       struct resource *res;
->> +       struct phy *phy;
->> +       int ret;
->> +
->> +       dp =3D devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
->> +       if (IS_ERR(dp))
->> +               return -ENOMEM;
->> +
->> +       dp->dev =3D dev;
->> +
->> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       dp->regs =3D devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(dp->regs))
->> +               return PTR_ERR(dp->regs);
->> +
->> +       dp->phy_24m =3D devm_clk_get(dev, "24m");
->> +       if (IS_ERR(dp->phy_24m)) {
->> +               dev_err(dev, "cannot get clock 24m\n");
->> +               return PTR_ERR(dp->phy_24m);
->> +       }
-> The binding says there are 2 clocks.
+> P.S. Why do you resend the whole series (some 10+ patches) when only =
+a
+> few patches have been changed ? Are all the patches changed whist
+> missing that information (vX: rebase on top of A)
 
-Oh... Document have been little bit old. I used to handle
-two kinds of clocks in phy driver in v2, and take Thierry
-and Heiko suggest to reduce to one clock in v3, but forget
-to improved the Document at the same time.
+Yes, those 10+ patches do base on the previous changes, specially when =
+I
+rebase my series on the latest linux-next branch.
 
-+- clock-names: from common clock binding:
-+       Required elements: "sclk_dp" "sclk_dp_24m"
+Besides, I don't know that how to send parts of this series, and keep t=
+he
+unrelated patches no send. For example if the [v4 03/16] ~ [v4 10/16]
+need  update to v5, and [v4 11/16] ~ [v4 16/16] keep in v4.
+So should I only send the [v5 03/16]  ~ [v5 10/16], no need to send and
+update [v4 11/16] ~ [v4 16/16] to v5 ?
 
-should be
+If so I think it would be difficult for guys to comment, cause they=20
+can't see
+the whole series in one reply list .   ;)
 
-+- clock-names: from common clock binding:
-+       Required elements: "24m"
-
-Thanks for your point out.
-
->> +
->> +       dp->grf =3D syscon_regmap_lookup_by_phandle(np, "rockchip,gr=
-f");
->> +       if (IS_ERR(dp->grf)) {
->> +               dev_err(dev, "rk3288-dp needs rockchip,grf property\=
-n");
->> +               return PTR_ERR(dp->grf);
->> +       }
->> +
->> +       ret =3D regmap_write(dp->grf, GRF_SOC_CON12,
->> +                          GRF_EDP_REF_CLK_SEL_INTER |
->> +                          (GRF_EDP_REF_CLK_SEL_INTER << 16));
->> +       if (ret !=3D 0) {
->> +               dev_err(dp->dev, "Could not config GRF edp ref clk: =
-%d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       phy =3D devm_phy_create(dev, NULL, &rockchip_dp_phy_ops, NUL=
-L);
->> +       if (IS_ERR(phy)) {
->> +               dev_err(dev, "failed to create phy\n");
->> +               return PTR_ERR(phy);
->> +       }
->> +       phy_set_drvdata(phy, dp);
->> +
->> +       phy_provider =3D devm_of_phy_provider_register(dev, of_phy_s=
-imple_xlate);
->> +
->> +       return PTR_ERR_OR_ZERO(phy_provider);
->> +}
->> +
->> +static const struct of_device_id rockchip_dp_phy_dt_ids[] =3D {
->> +       { .compatible =3D "rockchip,rk3288-dp-phy" },
->> +       {}
->> +};
->> +
->> +MODULE_DEVICE_TABLE(of, rockchip_dp_phy_dt_ids);
->> +
->> +static struct platform_driver rockchip_dp_phy_driver =3D {
->> +       .probe          =3D rockchip_dp_phy_probe,
->> +       .driver         =3D {
->> +               .name   =3D "rockchip-dp-phy",
->> +               .of_match_table =3D rockchip_dp_phy_dt_ids,
->> +       },
->> +};
->> +
->> +module_platform_driver(rockchip_dp_phy_driver);
->> +
->> +MODULE_AUTHOR("Yakir Yang <ykk@rock-chips.com>");
->> +MODULE_DESCRIPTION("Rockchip DP PHY driver");
->> +MODULE_LICENSE("GPL v2");
->> --
->> 2.1.2
->>
->>
+Thanks,
+- Yakir
 >
 >
