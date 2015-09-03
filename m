@@ -1,38 +1,97 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v4 14/16] drm: bridge: analogix/dp: try force hpd after
- plug in lookup failed
-Date: Thu, 3 Sep 2015 16:55:59 -0500
-Message-ID: <CAL_Jsq+F=eE6vU3f-bHrrSCD9GCoh80Nf-5=Qm73QgGDW1Np=w@mail.gmail.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <1441088079-25809-1-git-send-email-ykk@rock-chips.com> <CAL_JsqJDALnjVaVoEqGGsSLeE31m3MKOfbSoZ3M+g+zPZR2MFg@mail.gmail.com>
- <20150903084735.GB3784@ulmo.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [RFC PATCH] clocksource: exynos_mct: use container_of() instead of this_cpu_ptr()
+Date: Fri,  4 Sep 2015 02:49:58 +0300
+Message-ID: <1441324198-14513-1-git-send-email-alexey.klimov@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f176.google.com ([209.85.160.176]:36383 "EHLO
-	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751505AbbICV4T (ORCPT
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:35943 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753011AbbICXuI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Sep 2015 17:56:19 -0400
-In-Reply-To: <20150903084735.GB3784@ulmo.nvidia.com>
+	Thu, 3 Sep 2015 19:50:08 -0400
+Received: by lbcao8 with SMTP id ao8so2616684lbc.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Sep 2015 16:50:07 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, dri-devel <dri-devel@lists.freedesktop.>
+To: daniel.lezcano@linaro.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, alexey.klimov@linaro.org, yury.norov@gmail.com, klimov.linux@gmail.com, kgene@kernel.org
 
-On Thu, Sep 3, 2015 at 3:47 AM, Thierry Reding <treding@nvidia.com> wrote:
-> On Wed, Sep 02, 2015 at 03:17:57PM -0500, Rob Herring wrote:
-> [...]
->> Are there any eDP panels which don't have EDID and need panel details in DT?
->
-> Most panels need information other than EDID. They typically have some
-> requirements regarding the power up sequence that aren't to be found
-> anywhere in EDID or detectable by some other mechanism. A decision was
-> therefore made a long time ago to require panels to be listed in DT with
-> a specific compatible string. That way all of these details can be
-> stashed away in drivers that know how to deal with these kinds of
-> details.
+Since evt structure is embedded in per-CPU mevt structure it's
+definitely faster to use container_of() to get access to mevt
+if we have evt (for example as incoming function argument) instead
+of more expensive approach with this_cpu_ptr(&percpu_mct_tick).
+this_cpu_ptr() on per-CPU mevt structure leads to access to cp15
+to get cpu id and arithmetic operations.
+Container_of() is cheaper since it's just one asm instruction.
+This should work if used evt pointer is correct and owned by
+local mevt structure.
 
-I guess I was being hopeful that eDP was improving that situation.
+For example, before this patch set_state_shutdown() looks like:
 
-Rob
+ 4a4:	e92d4010 	push	{r4, lr}
+ 4a8:	e3004000 	movw	r4, #0
+ 4ac:	ebfffffe 	bl	0 <debug_smp_processor_id>
+ 4b0:	e3003000 	movw	r3, #0
+ 4b4:	e3404000 	movt	r4, #0
+ 4b8:	e3403000 	movt	r3, #0
+ 4bc:	e7933100 	ldr	r3, [r3, r0, lsl #2]
+ 4c0:	e0844003 	add	r4, r4, r3
+ 4c4:	e59400c0 	ldr	r0, [r4, #192]	; 0xc0
+ 4c8:	ebffffd4 	bl	420 <exynos4_mct_tick_stop.isra.1>
+ 4cc:	e3a00000 	mov	r0, #0
+ 4d0:	e8bd8010 	pop	{r4, pc}
+
+With this patch:
+
+ 4a4:	e92d4010 	push	{r4, lr}
+ 4a8:	e59000c0 	ldr	r0, [r0, #192]	; 0xc0
+ 4ac:	ebffffdb 	bl	420 <exynos4_mct_tick_stop.isra.1>
+ 4b0:	e3a00000 	mov	r0, #0
+ 4b4:	e8bd8010 	pop	{r4, pc}
+
+Also, for me size of exynos_mct.o decreased from 84588 bytes
+to 83956.
+
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+ drivers/clocksource/exynos_mct.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 029f96a..ff44082 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -382,24 +382,28 @@ static void exynos4_mct_tick_start(unsigned long cycles,
+ static int exynos4_tick_set_next_event(unsigned long cycles,
+ 				       struct clock_event_device *evt)
+ {
+-	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
++	struct mct_clock_event_device *mevt;
+ 
++	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 	exynos4_mct_tick_start(cycles, mevt);
+-
+ 	return 0;
+ }
+ 
+ static int set_state_shutdown(struct clock_event_device *evt)
+ {
+-	exynos4_mct_tick_stop(this_cpu_ptr(&percpu_mct_tick));
++	struct mct_clock_event_device *mevt;
++
++	mevt = container_of(evt, struct mct_clock_event_device, evt);
++	exynos4_mct_tick_stop(mevt);
+ 	return 0;
+ }
+ 
+ static int set_state_periodic(struct clock_event_device *evt)
+ {
+-	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
++	struct mct_clock_event_device *mevt;
+ 	unsigned long cycles_per_jiffy;
+ 
++	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 	cycles_per_jiffy = (((unsigned long long)NSEC_PER_SEC / HZ * evt->mult)
+ 			    >> evt->shift);
+ 	exynos4_mct_tick_stop(mevt);
+-- 
+2.1.4
