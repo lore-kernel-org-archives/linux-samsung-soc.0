@@ -1,65 +1,187 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv4] ARM: exynos_defconfig: Enable CONFIG_LEDS_PWM for
- Odroid-XU3/XU4
-Date: Thu, 03 Sep 2015 08:48:16 +0900
-Message-ID: <55E78AC0.10006@samsung.com>
-References: <1441212107-3993-1-git-send-email-linux.amoon@gmail.com>
+Subject: Re: [PATCH v4 07/16] ARM: dts: exynos/dp: remove some properties that
+ deprecated by analogix_dp driver
+Date: Thu, 03 Sep 2015 09:01:19 +0900
+Message-ID: <55E78DCF.1060308@samsung.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1441087272-25353-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1441212107-3993-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37760 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750805AbbICABb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Sep 2015 20:01:31 -0400
+In-reply-to: <1441087272-25353-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Mark Yao <mark.yao@rock-chips.com>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-On 03.09.2015 01:41, Anand Moon wrote:
-> Enable CONFIG_LEDS_PWM amd CONFIG_LEDS_TRIGGER_HEARTBEAT for
-> Odroid-XU3/XU4 board.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> 
-> ---
-> Changes from last version.
->   Make all modules build-in.
->   Enabled LEDS_GPIO
-> ---
->  arch/arm/configs/exynos_defconfig | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 2263cd9..c285975 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -168,6 +168,16 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
->  CONFIG_MMC_DW=y
->  CONFIG_MMC_DW_IDMAC=y
->  CONFIG_MMC_DW_EXYNOS=y
-> +CONFIG_NEW_LEDS=y
-> +CONFIG_LEDS_CLASS=y
-> +CONFIG_LEDS_CLASS_FLASH=y
-> +CONFIG_LEDS_GPIO=y
-> +CONFIG_LEDS_PWM=y
-> +CONFIG_LEDS_TRIGGERS=y
-> +CONFIG_LEDS_TRIGGER_TIMER=y
-> +CONFIG_LEDS_TRIGGER_ONESHOT=y
-> +CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-> +CONFIG_LEDS_TRIGGER_GPIO=y
+On 01.09.2015 15:01, Yakir Yang wrote:
+> After exynos_dp have been splited the common IP code into analogix_dp driver,
+s/splited/split/
 
-This is getting boring. I asked about enabling LEDS_GPIO, which you
-confirmed in changelog. Good!
-So what are LEDS_CLASS_FLASH, TRIGGER_ONESHOT and TRIGGER_GPIO doing
-here? They are not mentioned in commit message, changelog and previous
-discussions.
+> the analogix_dp driver have deprecated some samsung platform properties which
 
-Beside that commit message seems to be far away from the contents now...
+s/samsung/Samsung/
+
+> could be dynamic parsed from EDID/MODE/DPCD message, so this is an update for
+
+s/dynamic/dynamically/
+
+> exynos DTS file for dp-controller.
+/exynos/Exynos/
+
+> 
+> Beside analogix_dp have provide the backward compatibility, so there are no
+> bisectability break that make this change in a separate patch.
+
+It took me some time to figure out the meaning of this sentence... Did
+you want to say that backward compatibility is fully preserved?
+
+You are removing samsung,dynamic-range and samsung,ycbcr-coeff. I would
+assume that now:
+1. on all these board these values would be parsed from EDID/MODE/DPCD
+message?
+2. everything would work as previously?
+Am I understanding it correctly?
+
+The patch itself looks good.
 
 Best regards,
 Krzysztof
 
 
->  CONFIG_RTC_CLASS=y
->  CONFIG_RTC_DRV_MAX77686=y
->  CONFIG_RTC_DRV_MAX77802=y
+> 
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> ---
+> Changes in v4:
+> - Take Krzysztof suggest, separate all DTS changes to a separate patch.
+> 
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  arch/arm/boot/dts/exynos5250-arndale.dts   | 2 --
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts  | 2 --
+>  arch/arm/boot/dts/exynos5250-snow.dts      | 4 +---
+>  arch/arm/boot/dts/exynos5250-spring.dts    | 4 +---
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 +---
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts  | 2 --
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 +---
+>  7 files changed, 4 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index db3f65f..4636862 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -124,8 +124,6 @@
+>  &dp {
+>  	status = "okay";
+>  	samsung,color-space = <0>;
+> -	samsung,dynamic-range = <0>;
+> -	samsung,ycbcr-coeff = <0>;
+>  	samsung,color-depth = <1>;
+>  	samsung,link-rate = <0x0a>;
+>  	samsung,lane-count = <4>;
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index c625e71..cd424d6 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -80,8 +80,6 @@
+>  
+>  &dp {
+>  	samsung,color-space = <0>;
+> -	samsung,dynamic-range = <0>;
+> -	samsung,ycbcr-coeff = <0>;
+>  	samsung,color-depth = <1>;
+>  	samsung,link-rate = <0x0a>;
+>  	samsung,lane-count = <4>;
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index 0720caa..242b621 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -244,12 +244,10 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&dp_hpd>;
+>  	samsung,color-space = <0>;
+> -	samsung,dynamic-range = <0>;
+> -	samsung,ycbcr-coeff = <0>;
+>  	samsung,color-depth = <1>;
+>  	samsung,link-rate = <0x0a>;
+>  	samsung,lane-count = <2>;
+> -	samsung,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
+> +	hpd-gpios = <&gpx0 7 GPIO_ACTIVE_HIGH>;
+>  
+>  	ports {
+>  		port@0 {
+> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
+> index c1edd6d..91881d7 100644
+> --- a/arch/arm/boot/dts/exynos5250-spring.dts
+> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
+> @@ -74,12 +74,10 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&dp_hpd_gpio>;
+>  	samsung,color-space = <0>;
+> -	samsung,dynamic-range = <0>;
+> -	samsung,ycbcr-coeff = <0>;
+>  	samsung,color-depth = <1>;
+>  	samsung,link-rate = <0x0a>;
+>  	samsung,lane-count = <1>;
+> -	samsung,hpd-gpio = <&gpc3 0 GPIO_ACTIVE_HIGH>;
+> +	hpd-gpios = <&gpc3 0 GPIO_ACTIVE_HIGH>;
+>  };
+>  
+>  &ehci {
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index 8f4d76c..7433683 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -148,12 +148,10 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&dp_hpd_gpio>;
+>  	samsung,color-space = <0>;
+> -	samsung,dynamic-range = <0>;
+> -	samsung,ycbcr-coeff = <0>;
+>  	samsung,color-depth = <1>;
+>  	samsung,link-rate = <0x06>;
+>  	samsung,lane-count = <2>;
+> -	samsung,hpd-gpio = <&gpx2 6 0>;
+> +	hpd-gpio = <&gpx2 6 0>;
+>  
+>  	ports {
+>  		port@0 {
+> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> index 98871f9..b3df3c1 100644
+> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> @@ -92,8 +92,6 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&dp_hpd>;
+>  	samsung,color-space = <0>;
+> -	samsung,dynamic-range = <0>;
+> -	samsung,ycbcr-coeff = <0>;
+>  	samsung,color-depth = <1>;
+>  	samsung,link-rate = <0x0a>;
+>  	samsung,lane-count = <4>;
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> index 7d5b386..b89bff5 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -142,12 +142,10 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&dp_hpd_gpio>;
+>  	samsung,color-space = <0>;
+> -	samsung,dynamic-range = <0>;
+> -	samsung,ycbcr-coeff = <0>;
+>  	samsung,color-depth = <1>;
+>  	samsung,link-rate = <0x0a>;
+>  	samsung,lane-count = <2>;
+> -	samsung,hpd-gpio = <&gpx2 6 0>;
+> +	hpd-gpios = <&gpx2 6 0>;
+>  	panel = <&panel>;
+>  };
+>  
 > 
