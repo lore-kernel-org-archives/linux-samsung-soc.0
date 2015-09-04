@@ -1,131 +1,47 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: add cursor plane support
-Date: Fri, 04 Sep 2015 20:16:14 +0900
-Message-ID: <55E97D7E.9010808@samsung.com>
-References: <1441311297-5083-1-git-send-email-gustavo@padovan.org>
- <55E9188F.5040601@samsung.com> <20150904071936.GB22430@phenom.ffwll.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20150904071936.GB22430@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH 00/11] clk: samsung: exynos7: Cleanup of clock file
+Date: Fri, 04 Sep 2015 17:07:05 +0530
+Message-ID: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwOeyblCAwNOydvCAxNjoxOSwgRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBG
-cmksIFNlcCAwNCwgMjAxNSBhdCAwMTowNTozNVBNICswOTAwLCBJbmtpIERhZSB3cm90ZToKPj4g
-SGkgR3VzdGF2bywKPj4KPj4gSSBoYWQgYWxyZWFkeSBhIHJldmlldyBidXQgSSBkaWRuJ3QgZ2l2
-ZSBhbnkgY29tbWVudCB0byB5b3UuIFNvcnJ5IGFib3V0Cj4+IHRoYXQuIFRoaXMgcGF0Y2ggbG9v
-a3MgZ29vZCB0byBtZSBidXQgb25lIHRoaW5nIGlzbid0IGNsZWFyLiBCZWxvdyBpcyBteQo+PiBj
-b21tZW50Lgo+Pgo+Pgo+PiBPbiAyMDE164WEIDA57JuUIDA07J28IDA1OjE0LCBHdXN0YXZvIFBh
-ZG92YW4gd3JvdGU6Cj4+PiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
-b2xsYWJvcmEuY28udWs+Cj4+Pgo+Pj4gU2V0IG9uZSBvZiB0aGUgcGxhbmVzIGZvciBlYWNoIGNy
-dGMgZHJpdmVyIGFzIGEgY3Vyc29yIHBsYW5lIGVuYWJsZWQKPj4+IHdpbmRvdyBtYW5hZ2VycyB0
-byBmdWxseSB3b3JrIG9uIGV4eW5vcy4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBh
-ZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4+PiAtLS0KPj4+ICBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgOSArKy0tLS0tLS0K
-Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAgOCAr
-Ky0tLS0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAg
-ICB8ICAzICsrKwo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMg
-ICAgICB8ICA4ICsrLS0tLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X3BsYW5lLmMgICAgIHwgMTggKysrKysrKysrKysrKysrLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggICAgIHwgIDUgKystLS0KPj4+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgfCAgOSArKy0tLS0tLS0KPj4+ICBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAxMCArKystLS0t
-LS0tCj4+PiAgOCBmaWxlcyBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspLCAzOSBkZWxldGlvbnMo
-LSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMz
-X2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNv
-bi5jCj4+PiBpbmRleCBiM2M3MzA3Li43OWIyYjIyIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCj4+PiArKysgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKPj4+IEBAIC0zMyw3ICszMyw2IEBA
-IHN0cnVjdCBkZWNvbl9jb250ZXh0IHsKPj4+ICAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUJCXBs
-YW5lc1tXSU5ET1dTX05SXTsKPj4+ICAJdm9pZCBfX2lvbWVtCQkJKmFkZHI7Cj4+PiAgCXN0cnVj
-dCBjbGsJCQkqY2xrc1s2XTsKPj4+IC0JdW5zaWduZWQgaW50CQkJZGVmYXVsdF93aW47Cj4+PiAg
-CXVuc2lnbmVkIGxvbmcJCQlpcnFfZmxhZ3M7Cj4+PiAgCWludAkJCQlwaXBlOwo+Pj4gIAlib29s
-CQkJCXN1c3BlbmRlZDsKPj4+IEBAIC00OTMsNyArNDkyLDYgQEAgc3RhdGljIGludCBkZWNvbl9i
-aW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRh
-KQo+Pj4gIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiA9IGRhdGE7Cj4+PiAgCXN0cnVjdCBl
-eHlub3NfZHJtX3ByaXZhdGUgKnByaXYgPSBkcm1fZGV2LT5kZXZfcHJpdmF0ZTsKPj4+ICAJc3Ry
-dWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZTsKPj4+IC0JZW51bSBkcm1fcGxhbmVf
-dHlwZSB0eXBlOwo+Pj4gIAl1bnNpZ25lZCBpbnQgenBvczsKPj4+ICAJaW50IHJldDsKPj4+ICAK
-Pj4+IEBAIC01MDEsMTYgKzQ5OSwxNCBAQCBzdGF0aWMgaW50IGRlY29uX2JpbmQoc3RydWN0IGRl
-dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4+PiAgCWN0eC0+
-cGlwZSA9IHByaXYtPnBpcGUrKzsKPj4+ICAKPj4+ICAJZm9yICh6cG9zID0gMDsgenBvcyA8IFdJ
-TkRPV1NfTlI7IHpwb3MrKykgewo+Pj4gLQkJdHlwZSA9ICh6cG9zID09IGN0eC0+ZGVmYXVsdF93
-aW4pID8gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA6Cj4+PiAtCQkJCQkJCURSTV9QTEFORV9UWVBF
-X09WRVJMQVk7Cj4+PiAgCQlyZXQgPSBleHlub3NfcGxhbmVfaW5pdChkcm1fZGV2LCAmY3R4LT5w
-bGFuZXNbenBvc10sCj4+PiAtCQkJCTEgPDwgY3R4LT5waXBlLCB0eXBlLCBkZWNvbl9mb3JtYXRz
-LAo+Pj4gKwkJCQkxIDw8IGN0eC0+cGlwZSwgZGVjb25fZm9ybWF0cywKPj4+ICAJCQkJQVJSQVlf
-U0laRShkZWNvbl9mb3JtYXRzKSwgenBvcyk7Cj4+PiAgCQlpZiAocmV0KQo+Pj4gIAkJCXJldHVy
-biByZXQ7Cj4+PiAgCX0KPj4+ICAKPj4+IC0JZXh5bm9zX3BsYW5lID0gJmN0eC0+cGxhbmVzW2N0
-eC0+ZGVmYXVsdF93aW5dOwo+Pj4gKwlleHlub3NfcGxhbmUgPSAmY3R4LT5wbGFuZXNbREVGQVVM
-VF9XSU5dOwo+Pj4gIAljdHgtPmNydGMgPSBleHlub3NfZHJtX2NydGNfY3JlYXRlKGRybV9kZXYs
-ICZleHlub3NfcGxhbmUtPmJhc2UsCj4+PiAgCQkJCQljdHgtPnBpcGUsIEVYWU5PU19ESVNQTEFZ
-X1RZUEVfTENELAo+Pj4gIAkJCQkJJmRlY29uX2NydGNfb3BzLCBjdHgpOwo+Pj4gQEAgLTYwNyw3
-ICs2MDMsNiBAQCBzdGF0aWMgaW50IGV4eW5vczU0MzNfZGVjb25fcHJvYmUoc3RydWN0IHBsYXRm
-b3JtX2RldmljZSAqcGRldikKPj4+ICAJaWYgKCFjdHgpCj4+PiAgCQlyZXR1cm4gLUVOT01FTTsK
-Pj4+ICAKPj4+IC0JY3R4LT5kZWZhdWx0X3dpbiA9IDA7Cj4+PiAgCWN0eC0+c3VzcGVuZGVkID0g
-dHJ1ZTsKPj4+ICAJY3R4LT5kZXYgPSBkZXY7Cj4+PiAgCWlmIChvZl9nZXRfY2hpbGRfYnlfbmFt
-ZShkZXYtPm9mX25vZGUsICJpODAtaWYtdGltaW5ncyIpKQo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+Pj4gaW5kZXggY2JkYjc4ZS4uZjM4MjZkYyAxMDA2
-NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+
-Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4+PiBA
-QCAtNTIsNyArNTIsNiBAQCBzdHJ1Y3QgZGVjb25fY29udGV4dCB7Cj4+PiAgCXN0cnVjdCBjbGsJ
-CQkqZWNsazsKPj4+ICAJc3RydWN0IGNsawkJCSp2Y2xrOwo+Pj4gIAl2b2lkIF9faW9tZW0JCQkq
-cmVnczsKPj4+IC0JdW5zaWduZWQgaW50CQkJZGVmYXVsdF93aW47Cj4+PiAgCXVuc2lnbmVkIGxv
-bmcJCQlpcnFfZmxhZ3M7Cj4+PiAgCWJvb2wJCQkJaTgwX2lmOwo+Pj4gIAlib29sCQkJCXN1c3Bl
-bmRlZDsKPj4+IEBAIC02OTEsNyArNjkwLDYgQEAgc3RhdGljIGludCBkZWNvbl9iaW5kKHN0cnVj
-dCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQo+Pj4gIAlz
-dHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4+PiAgCXN0
-cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKPj4+ICAJc3RydWN0IGV4eW5vc19kcm1f
-cGxhbmUgKmV4eW5vc19wbGFuZTsKPj4+IC0JZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlOwo+Pj4g
-IAl1bnNpZ25lZCBpbnQgenBvczsKPj4+ICAJaW50IHJldDsKPj4+ICAKPj4+IEBAIC03MDIsMTYg
-KzcwMCwxNCBAQCBzdGF0aWMgaW50IGRlY29uX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1
-Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4+PiAgCX0KPj4+ICAKPj4+ICAJZm9yICh6
-cG9zID0gMDsgenBvcyA8IFdJTkRPV1NfTlI7IHpwb3MrKykgewo+Pj4gLQkJdHlwZSA9ICh6cG9z
-ID09IGN0eC0+ZGVmYXVsdF93aW4pID8gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA6Cj4+PiAtCQkJ
-CQkJRFJNX1BMQU5FX1RZUEVfT1ZFUkxBWTsKPj4+ICAJCXJldCA9IGV4eW5vc19wbGFuZV9pbml0
-KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKPj4+IC0JCQkJCTEgPDwgY3R4LT5waXBlLCB0
-eXBlLCBkZWNvbl9mb3JtYXRzLAo+Pj4gKwkJCQkJMSA8PCBjdHgtPnBpcGUsIGRlY29uX2Zvcm1h
-dHMsCj4+PiAgCQkJCQlBUlJBWV9TSVpFKGRlY29uX2Zvcm1hdHMpLCB6cG9zKTsKPj4+ICAJCWlm
-IChyZXQpCj4+PiAgCQkJcmV0dXJuIHJldDsKPj4+ICAJfQo+Pj4gIAo+Pj4gLQlleHlub3NfcGxh
-bmUgPSAmY3R4LT5wbGFuZXNbY3R4LT5kZWZhdWx0X3dpbl07Cj4+PiArCWV4eW5vc19wbGFuZSA9
-ICZjdHgtPnBsYW5lc1tERUZBVUxUX1dJTl07Cj4+PiAgCWN0eC0+Y3J0YyA9IGV4eW5vc19kcm1f
-Y3J0Y19jcmVhdGUoZHJtX2RldiwgJmV4eW5vc19wbGFuZS0+YmFzZSwKPj4+ICAJCQkJCSAgIGN0
-eC0+cGlwZSwgRVhZTk9TX0RJU1BMQVlfVFlQRV9MQ0QsCj4+PiAgCQkJCQkgICAmZGVjb25fY3J0
-Y19vcHMsIGN0eCk7Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+
-PiBpbmRleCBiN2JhMjFkLi5jYzU2YzNkIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZHJ2LmgKPj4+IEBAIC0yMiw2ICsyMiw5IEBACj4+PiAgI2RlZmluZSBNQVhf
-UExBTkUJNQo+Pj4gICNkZWZpbmUgTUFYX0ZCX0JVRkZFUgk0Cj4+PiAgCj4+PiArI2RlZmluZSBE
-RUZBVUxUX1dJTgkwCj4+PiArI2RlZmluZSBDVVJTT1JfV0lOCTEKPj4KPj4gWW91IGZpeGVkIG92
-ZXJsYXkgbnVtYmVyIGZvciBjdXJzb3Igd2l0aCAxLiBIb3dldmVyLCBEaXNwbGF5IGNvbnRyb2xs
-ZXJzCj4+IG9mIEV4eW5vcyBTb0MgaGF2ZSBmaXhlZCBvdmVybGF5IHByaW9yaXR5IGxpa2UgdGhp
-cywKPj4KPj4gd2luIDQgPiB3aW4gMyA+IHdpbiAyID4gd2luIDEgPiB3aW4gMCBzbyBpZiB3ZSBm
-aXggdGhlIG92ZXJsYXkgbnVtYmVyCj4+IGZvciBjdXJzb3IgYW5kIHdlIHVzZSBhbm90aGVyIG92
-ZXJsYXkgLSB3aGljaCBoYXMgYSBoaWdoZXIgbGF5ZXIgdGhhbgo+PiBjdXJzb3IgLSB0byBkaXNw
-bGF5IGNhcHRpb24gb3IgVUkgdGhlbiB0aGUgd2UgY291bGRuJ3Qgc2VlIHRoZSBjdXJzb3Igb24K
-Pj4gc2NyZWVuIHdpdGhvdXQgYWRkaXRpb25hbCB3b3JrIHN1Y2ggYXMgY29sb3Iga2V5IG9yIGFs
-cGhhIGNoYW5uZWwuCj4+Cj4+IFNvIGJlZm9yZSB0aGF0LCB5b3UgbmVlZCB0byBjaGVjayBob3cg
-bWFueSBvdmVybGF5cyBjYW4gYmUgdXNlZAo+PiBhY2NvcmRpbmcgdG8gRXh5bm9zIFNvQyB2ZXJz
-aW9ucywgYW5kIHdoaWNoIHdheSBpcyBiZXR0ZXIgLSBvbmUgaXMgZm9yCj4+IHRvcCBsYXllciB0
-byBiZSBmaXhlZCBmb3IgY3Vyc29yLCBvdGhlciBpcyBmb3Igb25lIGdpdmVuIGxheWVyIHRvIGJl
-Cj4+IGZpeGVkIGJ5IHVzZXItc3BhY2UgZm9yIGN1cnNvci4KPiAKPiBJIHRoaW5rIGN1cnNvciBz
-aG91bGQgYnkgZGVmYXVsdCBiZSB0aGUgdG9wIGxheWVyIChpZiB0aGUgaHcgY2FuIGRvIGl0KS4K
-PiBPdGhlcndpc2UgaXQgd2lsbCBiZSByZWFsbHkgY29uZnVzaW5nIHRvIGNvbXBvc2l0b3JzIEkg
-ZmVhci4KCkkgYWxzbyBwcmVmZXIgZmlyc3Qgb25lLgoKVGhhbmtzLApJbmtpIERhZQoKPiAtRGFu
-aWVsCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Currently there are lots of ambiguity between clock names in clock file
+and in user manual, which leads to lots of confusion for the reviewers.
+This series attempts to cleanup the exynos7 clock file as per
+user manual naming convention.
+This also adds some of the missing Gate clocks which are needed
+to complete the clock tree.
+
+First 10 patches are mostly cleanup which does not affect any
+functionality to the current code.
+
+Patch 11/11 adds UFS clock addressing review comments [1]
+Krzysztof, hope you are ok with including UFS clock patch with this series.
+
+This patch has a dependency on [2]
+[1] -> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg46183.html
+[2]-> https://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg46122.html
+
+Alim Akhtar (11):
+  clk: samsung: exynos7: Change the CMU_TOPC block clock name
+  clk: samsung: exynos7: Corrects CMU_TOP0 clocks names
+  clk: samsung: exynos7: Corrects CMU_TOP1 clocks names
+  clk: samsung: exynos7: Corrects CMU_CCORE clocks names
+  clk: samsung: exynos7: Corrects CMU_PERIC0 clocks names
+  clk: samsung: exynos7: Corrects CMU_PERIC1 clocks names
+  clk: samsung: exynos7: Corrects CMU_PERIS clocks names
+  clk: samsung: exynos7: Corrects CMU_FSYS0 clocks names
+  clk: samsung: exynos7: Corrects CMU_FSYS1 clocks names
+  clk: samsung: exynos7: Add missing fixed_clks to cmu_info
+  clk: samsung: exynos7: Add required clock tree for UFS
+
+ drivers/clk/samsung/clk-exynos7.c       |  430 ++++++++++++++++++++++---------
+ include/dt-bindings/clock/exynos7-clk.h |   43 +++-
+ 2 files changed, 341 insertions(+), 132 deletions(-)
+
+-- 
+1.7.10.4
+
