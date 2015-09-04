@@ -1,100 +1,223 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v4 14/16] drm: bridge: analogix/dp: try force hpd after
- plug in lookup failed
-Date: Fri, 4 Sep 2015 16:46:01 -0500
-Message-ID: <CAL_JsqKoyZOAA7yzSATA-Ys8N1q9Edi-3ctPU09UVeV=7sTWTg@mail.gmail.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <1441088079-25809-1-git-send-email-ykk@rock-chips.com> <CAL_JsqJDALnjVaVoEqGGsSLeE31m3MKOfbSoZ3M+g+zPZR2MFg@mail.gmail.com>
- <55E7CC43.7040608@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 1/2] drm/exynos: add global macro for the default primary plane
+Date: Fri,  4 Sep 2015 19:05:56 -0300
+Message-ID: <1441404357-9337-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f172.google.com ([209.85.160.172]:36444 "EHLO
-	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751033AbbIDVqV convert rfc822-to-8bit (ORCPT
+Received: from mail-yk0-f178.google.com ([209.85.160.178]:35321 "EHLO
+	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752571AbbIDWGF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Sep 2015 17:46:21 -0400
-In-Reply-To: <55E7CC43.7040608@rock-chips.com>
+	Fri, 4 Sep 2015 18:06:05 -0400
+Received: by ykek143 with SMTP id k143so34253099yke.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2015 15:06:04 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, dri-devel <dri-devel@lists.freedes>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On Wed, Sep 2, 2015 at 11:27 PM, Yakir Yang <ykk@rock-chips.com> wrote:
-> Hi Rob,
->
-> =E5=9C=A8 09/03/2015 04:17 AM, Rob Herring =E5=86=99=E9=81=93:
->>
->> On Tue, Sep 1, 2015 at 1:14 AM, Yakir Yang <ykk@rock-chips.com> wrot=
-e:
->>>
->>> Some edp screen do not have hpd signal, so we can't just return
->>> failed when hpd plug in detect failed.
->>
->> This is a property of the panel (or connector perhaps), so this
->> property should be located there. At least, it is a common issue and
->> not specific to this chip. We could have an HDMI connector and faile=
-d
->> to hook up HPD for example. A connector node is also where hpd-gpios
->> should be located instead (and are already defined by
->> ../bindings/video/hdmi-connector.txt). Perhaps we need a eDP connect=
-or
->> binding, too.
->
->
-> Yep, I agree with your front point, it is a property of panel, not sp=
-ecific
-> to eDP controller, so this code should handle in connector logic.
->
-> But another question, if we just leave this property to connector,
-> then we would need to parse this property in analogix_dp-rockchip.c,
-> and then make an hook in analogix_dp_core.c driver. This is not nice,
-> and if there are some coming platform which alse want to use analogix=
-_dp
-> code and meet this "no-hpd" situation,  then they would need duplicat=
-e
-> to parse this property and fill the hook in analogix_dp_core.c driver=
-=2E
-> So it's little bit conflict  :-)
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Ideally, you would be able to just retrieve this quirk from the
-connector or panel. Getting this property from your node vs. the port
-you are attached to should not be much harder. Either the connector
-struct can have this info or there can be a DT function that can walk
-the graph and get it. Just don't open code the graph traversal in your
-driver.
+Define DEFAULT_WIN as zero to help set the primary plane on all CRTCs.
+Some CRTCs were defining a variable to store the default window, but that
+is not necessary as the default (primary) window is always the window zero.
 
-> Beside I can not understand your example very well. Do you mean
-> that there are some HDMI monitor which also do not have HPD
-> signal (just like some eDP panel do not have hpd too), and then
-> the "hpd-gpios" ? Hmm... I don't know how the "hpd-gpios" want
-> to help in this case, would you mind show some sample code  :-D
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 6 ++----
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 5 ++---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       | 2 ++
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 5 ++---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 6 ++----
+ drivers/gpu/drm/exynos/exynos_mixer.c         | 7 +++----
+ 6 files changed, 13 insertions(+), 18 deletions(-)
 
-I don't know that there is h/w, but it is always possible HPD is not
-hooked up or hooked up incorrectly some how.
-
-If there is no HPD support, then hpd-gpios is not going to help you.
-
-I think there are 3 cases to handle:
-- HPD handled by bridge chip - The bridge driver knows it has this
-capability. No DT properties are needed and no HPD properties on the
-connector node imply the bridge chip should handle HPD functions.
-- HPD handled by GPIO line (or some other block) - Indicated by
-hpd-gpios present
-- No or broken HPD - Indicated by "hpd-force" property.
-
->
->> Are there any eDP panels which don't have EDID and need panel detail=
-s in
->> DT?
->
->
-> Oh, I think you want to collect some info that belong to panel
-> property but no indicate in panel EDID message, so those can
-> be collect in eDP connector binding, is it right ?
-
-Yes, and as Thierry pointed out we may need to know the exact panel eve=
-n.
-
-Rob
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 988df06..2f393b1 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -33,7 +33,6 @@ struct decon_context {
+ 	struct exynos_drm_plane		planes[WINDOWS_NR];
+ 	void __iomem			*addr;
+ 	struct clk			*clks[6];
+-	unsigned int			default_win;
+ 	unsigned long			irq_flags;
+ 	int				pipe;
+ 
+@@ -451,7 +450,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 	ctx->pipe = priv->pipe++;
+ 
+ 	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
+-		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
++		type = (zpos == DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+ 							DRM_PLANE_TYPE_OVERLAY;
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+ 				1 << ctx->pipe, type, decon_formats,
+@@ -460,7 +459,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 			return ret;
+ 	}
+ 
+-	exynos_plane = &ctx->planes[ctx->default_win];
++	exynos_plane = &ctx->planes[DEFAULT_WIN];
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+ 					ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
+ 					&decon_crtc_ops, ctx);
+@@ -557,7 +556,6 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
+-	ctx->default_win = 0;
+ 	ctx->dev = dev;
+ 	if (of_get_child_by_name(dev->of_node, "i80-if-timings"))
+ 		ctx->i80_if = true;
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 0776f38..7a6c069 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -52,7 +52,6 @@ struct decon_context {
+ 	struct clk			*eclk;
+ 	struct clk			*vclk;
+ 	void __iomem			*regs;
+-	unsigned int			default_win;
+ 	unsigned long			irq_flags;
+ 	bool				i80_if;
+ 	int				pipe;
+@@ -631,7 +630,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 	}
+ 
+ 	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
+-		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
++		type = (zpos == DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+ 						DRM_PLANE_TYPE_OVERLAY;
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+ 					1 << ctx->pipe, type, decon_formats,
+@@ -640,7 +639,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 			return ret;
+ 	}
+ 
+-	exynos_plane = &ctx->planes[ctx->default_win];
++	exynos_plane = &ctx->planes[DEFAULT_WIN];
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+ 					   ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
+ 					   &decon_crtc_ops, ctx);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 5cb9bc3..058abd1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -22,6 +22,8 @@
+ #define MAX_PLANE	5
+ #define MAX_FB_BUFFER	4
+ 
++#define DEFAULT_WIN	0
++
+ #define to_exynos_crtc(x)	container_of(x, struct exynos_drm_crtc, base)
+ #define to_exynos_plane(x)	container_of(x, struct exynos_drm_plane, base)
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index dc36e63..7776768 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -154,7 +154,6 @@ struct fimd_context {
+ 	struct clk			*lcd_clk;
+ 	void __iomem			*regs;
+ 	struct regmap			*sysreg;
+-	unsigned int			default_win;
+ 	unsigned long			irq_flags;
+ 	u32				vidcon0;
+ 	u32				vidcon1;
+@@ -910,7 +909,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 	ctx->pipe = priv->pipe++;
+ 
+ 	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
+-		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
++		type = (zpos == DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+ 						DRM_PLANE_TYPE_OVERLAY;
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+ 					1 << ctx->pipe, type, fimd_formats,
+@@ -919,7 +918,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 			return ret;
+ 	}
+ 
+-	exynos_plane = &ctx->planes[ctx->default_win];
++	exynos_plane = &ctx->planes[DEFAULT_WIN];
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+ 					   ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
+ 					   &fimd_crtc_ops, ctx);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 75718e1..fc57687 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -42,7 +42,6 @@ struct vidi_context {
+ 	struct exynos_drm_plane		planes[WINDOWS_NR];
+ 	struct edid			*raw_edid;
+ 	unsigned int			clkdiv;
+-	unsigned int			default_win;
+ 	unsigned long			irq_flags;
+ 	unsigned int			connected;
+ 	bool				vblank_on;
+@@ -446,7 +445,7 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+ 	vidi_ctx_initialize(ctx, drm_dev);
+ 
+ 	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
+-		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
++		type = (zpos == DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+ 						DRM_PLANE_TYPE_OVERLAY;
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+ 					1 << ctx->pipe, type, formats,
+@@ -455,7 +454,7 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+ 			return ret;
+ 	}
+ 
+-	exynos_plane = &ctx->planes[ctx->default_win];
++	exynos_plane = &ctx->planes[DEFAULT_WIN];
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+ 					   ctx->pipe, EXYNOS_DISPLAY_TYPE_VIDI,
+ 					   &vidi_crtc_ops, ctx);
+@@ -507,7 +506,6 @@ static int vidi_probe(struct platform_device *pdev)
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
+-	ctx->default_win = 0;
+ 	ctx->pdev = pdev;
+ 
+ 	INIT_WORK(&ctx->work, vidi_fake_vblank_handler);
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 853ad8f..a149153 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -42,7 +42,6 @@
+ #include "exynos_mixer.h"
+ 
+ #define MIXER_WIN_NR		3
+-#define MIXER_DEFAULT_WIN	0
+ #define VP_DEFAULT_WIN		2
+ 
+ /* The pixelformats that are natively supported by the mixer. */
+@@ -599,7 +598,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 
+ 	/* setup display size */
+ 	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
+-		win == MIXER_DEFAULT_WIN) {
++		win == DEFAULT_WIN) {
+ 		val  = MXR_MXR_RES_HEIGHT(mode->vdisplay);
+ 		val |= MXR_MXR_RES_WIDTH(mode->hdisplay);
+ 		mixer_reg_write(res, MXR_RESOLUTION, val);
+@@ -1134,7 +1133,7 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+ 		const uint32_t *formats;
+ 		unsigned int fcount;
+ 
+-		type = (zpos == MIXER_DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
++		type = (zpos == DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+ 						DRM_PLANE_TYPE_OVERLAY;
+ 		if (zpos < VP_DEFAULT_WIN) {
+ 			formats = mixer_formats;
+@@ -1151,7 +1150,7 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+ 			return ret;
+ 	}
+ 
+-	exynos_plane = &ctx->planes[MIXER_DEFAULT_WIN];
++	exynos_plane = &ctx->planes[DEFAULT_WIN];
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+ 					   ctx->pipe, EXYNOS_DISPLAY_TYPE_HDMI,
+ 					   &mixer_crtc_ops, ctx);
+-- 
+2.1.0
