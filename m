@@ -1,16 +1,16 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 08/10] drm/exynos: Enable DP clock directly from FIMD
-Date: Fri,  4 Sep 2015 17:15:50 -0300
-Message-ID: <1441397752-6672-9-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 10/10] drm/exynos: add pm_runtime to DECON 7
+Date: Fri,  4 Sep 2015 17:15:52 -0300
+Message-ID: <1441397752-6672-11-git-send-email-gustavo@padovan.org>
 References: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f175.google.com ([209.85.160.175]:33635 "EHLO
-	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760563AbbIDUQR (ORCPT
+Received: from mail-yk0-f194.google.com ([209.85.160.194]:34603 "EHLO
+	mail-yk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760503AbbIDUQV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Sep 2015 16:16:17 -0400
-Received: by ykei199 with SMTP id i199so31902096yke.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2015 13:16:16 -0700 (PDT)
+	Fri, 4 Sep 2015 16:16:21 -0400
+Received: by ykcm128 with SMTP id m128so2769866ykc.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2015 13:16:20 -0700 (PDT)
 In-Reply-To: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,168 +19,258 @@ Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.c
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Instead of having a .clock_enable callback enable the dp clock directly
-from FIMD.
+Let pm_runtime handle the enabling/disabling of the device with
+proper refcnt instead of rely on specific flags to track the enabled
+state.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_dp_core.c  | 13 -----------
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  5 ----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 39 +++++++++++++++++---------------
- 3 files changed, 21 insertions(+), 36 deletions(-)
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 125 ++++++++++++-----------------
+ 1 file changed, 53 insertions(+), 72 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 6794982..aa11d18 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -37,11 +37,6 @@
- #define ctx_from_connector(c)	container_of(c, struct exynos_dp_device, \
- 					connector)
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index e4646e2..517ba7a 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -54,7 +54,6 @@ struct decon_context {
+ 	void __iomem			*regs;
+ 	unsigned long			irq_flags;
+ 	bool				i80_if;
+-	bool				suspended;
+ 	int				pipe;
+ 	wait_queue_head_t		wait_vsync_queue;
+ 	atomic_t			wait_vsync_event;
+@@ -85,9 +84,6 @@ static void decon_wait_for_vblank(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
  
--static inline struct exynos_drm_crtc *dp_to_crtc(struct exynos_dp_device *dp)
--{
--	return to_exynos_crtc(dp->encoder.crtc);
--}
+-	if (ctx->suspended)
+-		return;
 -
- static inline struct exynos_dp_device *encoder_to_dp(
- 						struct drm_encoder *e)
- {
-@@ -1068,7 +1063,6 @@ static void exynos_dp_mode_set(struct drm_encoder *encoder,
- static void exynos_dp_enable(struct drm_encoder *encoder)
- {
- 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
--	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
+ 	atomic_set(&ctx->wait_vsync_event, 1);
  
- 	pm_runtime_get_sync(dp->dev);
- 
-@@ -1079,9 +1073,6 @@ static void exynos_dp_enable(struct drm_encoder *encoder)
- 		}
+ 	/*
+@@ -119,13 +115,8 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
  	}
  
--	if (crtc->ops->clock_enable)
--		crtc->ops->clock_enable(dp_to_crtc(dp), true);
+ 	/* Wait for vsync, as disable channel takes effect at next vsync */
+-	if (ch_enabled) {
+-		unsigned int state = ctx->suspended;
 -
- 	phy_power_on(dp->phy);
- 	exynos_dp_init_dp(dp);
- 	enable_irq(dp->irq);
-@@ -1091,7 +1082,6 @@ static void exynos_dp_enable(struct drm_encoder *encoder)
- static void exynos_dp_disable(struct drm_encoder *encoder)
+-		ctx->suspended = 0;
++	if (ch_enabled)
+ 		decon_wait_for_vblank(ctx->crtc);
+-		ctx->suspended = state;
+-	}
+ }
+ 
+ static int decon_ctx_initialize(struct decon_context *ctx,
+@@ -180,9 +171,6 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+ 	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
+ 	u32 val, clkdiv;
+ 
+-	if (ctx->suspended)
+-		return;
+-
+ 	/* nothing to do if we haven't set the mode yet */
+ 	if (mode->htotal == 0 || mode->vtotal == 0)
+ 		return;
+@@ -244,9 +232,6 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+ 	struct decon_context *ctx = crtc->ctx;
+ 	u32 val;
+ 
+-	if (ctx->suspended)
+-		return -EPERM;
+-
+ 	if (!test_and_set_bit(0, &ctx->irq_flags)) {
+ 		val = readl(ctx->regs + VIDINTCON0);
+ 
+@@ -269,9 +254,6 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
+ 	struct decon_context *ctx = crtc->ctx;
+ 	u32 val;
+ 
+-	if (ctx->suspended)
+-		return;
+-
+ 	if (test_and_clear_bit(0, &ctx->irq_flags)) {
+ 		val = readl(ctx->regs + VIDINTCON0);
+ 
+@@ -399,9 +381,6 @@ static void decon_atomic_begin(struct exynos_drm_crtc *crtc,
  {
- 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
--	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
+ 	struct decon_context *ctx = crtc->ctx;
  
- 	if (dp->panel) {
- 		if (drm_panel_disable(dp->panel)) {
-@@ -1104,9 +1094,6 @@ static void exynos_dp_disable(struct drm_encoder *encoder)
- 	flush_work(&dp->hotplug_work);
- 	phy_power_off(dp->phy);
- 
--	if (crtc->ops->clock_enable)
--		crtc->ops->clock_enable(dp_to_crtc(dp), false);
+-	if (ctx->suspended)
+-		return;
 -
- 	if (dp->panel) {
- 		if (drm_panel_unprepare(dp->panel))
- 			DRM_ERROR("failed to turnoff the panel\n");
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 5f1a4d6..ee60619 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -96,10 +96,6 @@ struct exynos_drm_plane {
-  * @disable_plane: disable hardware specific overlay.
-  * @te_handler: trigger to transfer video image at the tearing effect
-  *	synchronization signal if there is a page flip request.
-- * @clock_enable: optional function enabling/disabling display domain clock,
-- *	called from exynos-dp driver before powering up (with
-- *	'enable' argument as true) and after powering down (with
-- *	'enable' as false).
-  */
- struct exynos_drm_crtc;
- struct exynos_drm_crtc_ops {
-@@ -120,7 +116,6 @@ struct exynos_drm_crtc_ops {
- 	void (*atomic_flush)(struct exynos_drm_crtc *crtc,
- 			      struct exynos_drm_plane *plane);
- 	void (*te_handler)(struct exynos_drm_crtc *crtc);
--	void (*clock_enable)(struct exynos_drm_crtc *crtc, bool enable);
- };
- 
- /*
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 0f17ae0..3cf2b80 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -573,6 +573,23 @@ static void fimd_win_set_colkey(struct fimd_context *ctx, unsigned int win)
- 	writel(keycon1, ctx->regs + WKEYCON1_BASE(win));
+ 	decon_shadow_protect_win(ctx, plane->zpos, true);
  }
  
-+static void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool enable)
-+{
-+	struct fimd_context *ctx = crtc->ctx;
-+	u32 val;
-+
-+	/*
-+	 * Only Exynos 5250, 5260, 5410 and 542x requires enabling DP/MIE
-+	 * clock. On these SoCs the bootloader may enable it but any
-+	 * power domain off/on will reset it to disable state.
-+	 */
-+	if (ctx->driver_data != &exynos5_fimd_driver_data)
-+		return;
-+
-+	val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
-+	writel(DP_MIE_CLK_DP_ENABLE, ctx->regs + DP_MIE_CLKCON);
-+}
-+
- /**
-  * shadow_protect_win() - disable updating values from shadow registers at vsync
-  *
-@@ -735,6 +752,8 @@ static void fimd_enable(struct exynos_drm_crtc *crtc)
- 	if (test_and_clear_bit(0, &ctx->irq_flags))
- 		fimd_enable_vblank(ctx->crtc);
+@@ -419,9 +398,6 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 	unsigned int bpp = state->fb->bits_per_pixel >> 3;
+ 	unsigned int pitch = state->fb->pitches[0];
  
-+	fimd_dp_clock_enable(crtc, true);
-+
- 	fimd_commit(ctx->crtc);
+-	if (ctx->suspended)
+-		return;
+-
+ 	/*
+ 	 * SHADOWCON/PRTCON register is used for enabling timing.
+ 	 *
+@@ -518,9 +494,6 @@ static void decon_disable_plane(struct exynos_drm_crtc *crtc,
+ 	unsigned int win = plane->zpos;
+ 	u32 val;
+ 
+-	if (ctx->suspended)
+-		return;
+-
+ 	/* protect windows */
+ 	decon_shadow_protect_win(ctx, win, true);
+ 
+@@ -539,9 +512,6 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc,
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+ 
+-	if (ctx->suspended)
+-		return;
+-
+ 	decon_shadow_protect_win(ctx, plane->zpos, false);
  }
  
-@@ -743,6 +762,8 @@ static void fimd_disable(struct exynos_drm_crtc *crtc)
- 	struct fimd_context *ctx = crtc->ctx;
+@@ -565,39 +535,9 @@ static void decon_init(struct decon_context *ctx)
+ static void decon_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+-	int ret;
+-
+-	if (!ctx->suspended)
+-		return;
+-
+-	ctx->suspended = false;
+ 
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+-	ret = clk_prepare_enable(ctx->pclk);
+-	if (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
+-		return;
+-	}
+-
+-	ret = clk_prepare_enable(ctx->aclk);
+-	if (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
+-		return;
+-	}
+-
+-	ret = clk_prepare_enable(ctx->eclk);
+-	if  (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
+-		return;
+-	}
+-
+-	ret = clk_prepare_enable(ctx->vclk);
+-	if  (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
+-		return;
+-	}
+-
+ 	decon_init(ctx);
+ 
+ 	/* if vblank was enabled status, enable it again. */
+@@ -612,9 +552,6 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+ 	struct decon_context *ctx = crtc->ctx;
  	int i;
  
-+	fimd_dp_clock_enable(crtc, false);
-+
+-	if (ctx->suspended)
+-		return;
+-
  	/*
  	 * We need to make sure that all windows are disabled before we
  	 * suspend that connector. Otherwise we might try to scan from
-@@ -814,23 +835,6 @@ static void fimd_te_handler(struct exynos_drm_crtc *crtc)
- 		drm_crtc_handle_vblank(&ctx->crtc->base);
+@@ -623,14 +560,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+ 	for (i = 0; i < WINDOWS_NR; i++)
+ 		decon_disable_plane(crtc, &ctx->planes[i]);
+ 
+-	clk_disable_unprepare(ctx->vclk);
+-	clk_disable_unprepare(ctx->eclk);
+-	clk_disable_unprepare(ctx->aclk);
+-	clk_disable_unprepare(ctx->pclk);
+-
+ 	pm_runtime_put_sync(ctx->dev);
+-
+-	ctx->suspended = true;
  }
  
--static void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool enable)
--{
--	struct fimd_context *ctx = crtc->ctx;
--	u32 val;
--
--	/*
--	 * Only Exynos 5250, 5260, 5410 and 542x requires enabling DP/MIE
--	 * clock. On these SoCs the bootloader may enable it but any
--	 * power domain off/on will reset it to disable state.
--	 */
--	if (ctx->driver_data != &exynos5_fimd_driver_data)
--		return;
--
--	val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
--	writel(DP_MIE_CLK_DP_ENABLE, ctx->regs + DP_MIE_CLKCON);
--}
--
- static const struct exynos_drm_crtc_ops fimd_crtc_ops = {
- 	.enable = fimd_enable,
- 	.disable = fimd_disable,
-@@ -843,7 +847,6 @@ static const struct exynos_drm_crtc_ops fimd_crtc_ops = {
- 	.disable_plane = fimd_disable_plane,
- 	.atomic_flush = fimd_atomic_flush,
- 	.te_handler = fimd_te_handler,
--	.clock_enable = fimd_dp_clock_enable,
- };
+ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+@@ -756,7 +686,6 @@ static int decon_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+ 	ctx->dev = dev;
+-	ctx->suspended = true;
+ 
+ 	i80_if_timings = of_get_child_by_name(dev->of_node, "i80-if-timings");
+ 	if (i80_if_timings)
+@@ -851,11 +780,63 @@ static int decon_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int exynos7_decon_suspend(struct device *dev)
++{
++	struct decon_context *ctx = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(ctx->vclk);
++	clk_disable_unprepare(ctx->eclk);
++	clk_disable_unprepare(ctx->aclk);
++	clk_disable_unprepare(ctx->pclk);
++
++	return 0;
++}
++
++static int exynos7_decon_resume(struct device *dev)
++{
++	struct decon_context *ctx = dev_get_drvdata(dev);
++	int ret;
++
++	ret = clk_prepare_enable(ctx->pclk);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(ctx->aclk);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(ctx->eclk);
++	if  (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(ctx->vclk);
++	if  (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++#endif
++
++static const struct dev_pm_ops exynos7_decon_pm_ops = {
++	SET_RUNTIME_PM_OPS(exynos7_decon_suspend, exynos7_decon_resume,
++			   NULL)
++};
++
+ struct platform_driver decon_driver = {
+ 	.probe		= decon_probe,
+ 	.remove		= decon_remove,
+ 	.driver		= {
+ 		.name	= "exynos-decon",
++		.pm	= &exynos7_decon_pm_ops,
+ 		.of_match_table = decon_driver_dt_match,
+ 	},
+ };
 -- 
 2.1.0
