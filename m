@@ -1,63 +1,71 @@
-From: Joel Porquet <joel@porquet.org>
-Subject: Re: [PATCH] arm:irqchip: IRQCHIP_DECLARE macro is now accessible
-Date: Fri, 04 Sep 2015 16:54:21 -0400
-Message-ID: <7212409.q6uiaM0l3x@joel-zenbook>
-References: <1436299411-12329-1-git-send-email-joel@porquet.org>
- <20150713152035.GD26642@tiger>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
+ to bridge dir
+Date: Fri, 4 Sep 2015 16:06:02 -0500
+Message-ID: <CAL_JsqLvOOF0Wk=E1kz0rWXg0+6ay0=4OTbCpjdGCfL7_qFN8Q@mail.gmail.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1441086598-24995-1-git-send-email-ykk@rock-chips.com> <2618155.E00Pak1qvi@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20150713152035.GD26642@tiger>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2618155.E00Pak1qvi@phil>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Yakir Yang <ykk@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, dri-devel <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>"linux-kernel@vger.kernel.org" <l>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, July 13, 2015 11:20:35 PM Shawn Guo wrote:
-> On Tue, Jul 07, 2015 at 04:02:53PM -0400, Joel Porquet wrote:
-> > The IRQCHIP_DECLARE macro migrated to 'include/linux/irqchip.h', making=
- it
-> > globally accessible.
-> > =
+On Tue, Sep 1, 2015 at 3:46 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Am Dienstag, 1. September 2015, 13:49:58 schrieb Yakir Yang:
+>> Split the dp core driver from exynos directory to bridge
+>> directory, and rename the core driver to analogix_dp_*,
+>> leave the platform code to analogix_dp-exynos.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>
+> [...]
+>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c similarity index 50%
+>> rename from drivers/gpu/drm/exynos/exynos_dp_core.c
+>> rename to drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index bed0252..7d62f22 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>
+> [...]
+>
+>>       connector->polled = DRM_CONNECTOR_POLL_HPD;
+>>
+>>       ret = drm_connector_init(dp->drm_dev, connector,
+>> -                              &exynos_dp_connector_funcs,
+>> +                              &analogix_dp_connector_funcs,
+>>                                DRM_MODE_CONNECTOR_eDP);
+>>       if (ret) {
+>>               DRM_ERROR("Failed to initialize connector with drm\n");
+>>               return ret;
+>>       }
+>>
+>> -     drm_connector_helper_add(connector, &exynos_dp_connector_helper_funcs);
+>> +     drm_connector_helper_add(connector,
+>> +                              &analogix_dp_connector_helper_funcs);
+>>       drm_connector_register(connector);
+>
+> this should only run on exynos, as we're doing all our connector registration
+> in the core driver after all components are bound, so I guess something like
+> the following is needed:
+>
+>        if (dp->plat_data && dp->plat_data->dev_type == EXYNOS_DP)
+>                drm_connector_register(connector);
 
-> > See commit 91e20b5040c67c51aad88cf87db4305c5bd7f79d
-> > ("irqchip: Move IRQCHIP_DECLARE macro to include/linux/irqchip.h").
-> > =
+Yuck!
 
-> > This patch adds inclusions of 'include/linux/irqchip.h' and replaces us=
-es
-> > of macro OF_DECLARE_2 with IRQCHIP_DECLARE.
-> > =
+Surely there is a better way. From what I've seen of DRM, I have no
+doubt this is needed, but really a better solution is needed. Surely
+there can be a more generic way for the driver to determine if it
+should handle the connector or not. This seems like a common problem
+including one I have seen. What I'm working on has onchip DSI encoder
+-> ADV7533 -> HDMI. The DSI encoder can also have a direct attached
+panel. So I have to check for a bridge in the encoder driver and only
+register the connector for the panel if a bridge is not attached.
 
-> > Signed-off-by: Joel Porquet <joel@porquet.org>
-> > ---
-> =
-
-> ...
-> =
-
-> >  arch/arm/mach-imx/gpc.c              | 7 ++-----
-> =
-
-> Acked-by: Shawn Guo <shawnguo@kernel.org>
-> =
-
-> How will this patch be sent to upstream?
-
-If it's more convenient for the different maintainers affected by this patc=
-h, =
-
-I can probably resubmit it into a series of patches that modify each file =
-
-separately... Let me know quickly so we don't miss the merge window!
-
-Jo=EBl
+Rob
