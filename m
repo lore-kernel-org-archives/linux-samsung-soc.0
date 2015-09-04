@@ -1,7 +1,7 @@
 From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 06/11] clk: samsung: exynos7: Corrects CMU_PERIC1 clocks names
-Date: Fri, 04 Sep 2015 17:07:11 +0530
-Message-ID: <1441366637-28001-7-git-send-email-alim.akhtar@samsung.com>
+Subject: [PATCH 07/11] clk: samsung: exynos7: Corrects CMU_PERIS clocks names
+Date: Fri, 04 Sep 2015 17:07:12 +0530
+Message-ID: <1441366637-28001-8-git-send-email-alim.akhtar@samsung.com>
 References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 Return-path: <linux-clk-owner@vger.kernel.org>
 In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
@@ -10,101 +10,61 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch rename CMU_PERIC1 clocks names to match with user manual.
-And also adds missing gate clock for aclk_peric1_66.
+This patch rename CMU_PERIS clocks names to match with user manual.
+And also adds missing gate clock for aclk_peris_66.
 
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos7.c       |   38 ++++++++++++++++---------------
+ drivers/clk/samsung/clk-exynos7.c       |    7 +++++--
  include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 2 files changed, 22 insertions(+), 19 deletions(-)
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 782943b..696489a 100644
+index 696489a..75db751 100644
 --- a/drivers/clk/samsung/clk-exynos7.c
 +++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -340,6 +340,8 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
- static struct samsung_gate_clock top0_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_PERIC0_66, "aclk_peric0_66", "dout_aclk_peric0_66",
- 		ENABLE_ACLK_TOP03, 20, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_ACLK_PERIC1_66, "aclk_peric1_66", "dout_aclk_peric1_66",
-+		ENABLE_ACLK_TOP03, 12, CLK_SET_RATE_PARENT, 0),
+@@ -150,6 +150,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+ 	GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
+ 		ENABLE_ACLK_TOPC1, 20, 0, 0),
  
- 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "dout_sclk_spdif",
- 		ENABLE_SCLK_TOP0_PERIC0, 4, CLK_SET_RATE_PARENT, 0),
-@@ -662,15 +664,15 @@ CLK_OF_DECLARE(exynos7_clk_peric0, "samsung,exynos7-clock-peric0",
- 	exynos7_clk_peric0_init);
++	GATE(ACLK_PERIS_66, "aclk_peris_66", "dout_aclk_peris_66",
++		ENABLE_ACLK_TOPC1, 24, 0, 0),
++
+ 	GATE(SCLK_AUD_PLL, "sclk_aud_pll", "dout_sclk_aud_pll",
+ 		ENABLE_SCLK_TOPC1, 20, 0, 0),
+ 	GATE(SCLK_MFC_PLL_B, "sclk_mfc_pll_b", "dout_sclk_mfc_pll",
+@@ -788,7 +791,7 @@ CLK_OF_DECLARE(exynos7_clk_peric1, "samsung,exynos7-clock-peric1",
+ #define ENABLE_SCLK_PERIS_SECURE_CHIPID	0x0A10
  
- /* List of parent clocks for Muxes in CMU_PERIC1 */
--PNAME(mout_aclk_peric1_66_p)	= { "fin_pll", "dout_aclk_peric1_66" };
--PNAME(mout_sclk_uart1_p)	= { "fin_pll", "sclk_uart1" };
--PNAME(mout_sclk_uart2_p)	= { "fin_pll", "sclk_uart2" };
--PNAME(mout_sclk_uart3_p)	= { "fin_pll", "sclk_uart3" };
--PNAME(mout_sclk_spi0_p)		= { "fin_pll", "sclk_spi0" };
--PNAME(mout_sclk_spi1_p)		= { "fin_pll", "sclk_spi1" };
--PNAME(mout_sclk_spi2_p)		= { "fin_pll", "sclk_spi2" };
--PNAME(mout_sclk_spi3_p)		= { "fin_pll", "sclk_spi3" };
--PNAME(mout_sclk_spi4_p)		= { "fin_pll", "sclk_spi4" };
-+PNAME(mout_aclk_peric1_66_user_p)	= { "fin_pll", "aclk_peric1_66" };
-+PNAME(mout_sclk_uart1_user_p)	= { "fin_pll", "sclk_uart1" };
-+PNAME(mout_sclk_uart2_user_p)	= { "fin_pll", "sclk_uart2" };
-+PNAME(mout_sclk_uart3_user_p)	= { "fin_pll", "sclk_uart3" };
-+PNAME(mout_sclk_spi0_user_p)		= { "fin_pll", "sclk_spi0" };
-+PNAME(mout_sclk_spi1_user_p)		= { "fin_pll", "sclk_spi1" };
-+PNAME(mout_sclk_spi2_user_p)		= { "fin_pll", "sclk_spi2" };
-+PNAME(mout_sclk_spi3_user_p)		= { "fin_pll", "sclk_spi3" };
-+PNAME(mout_sclk_spi4_user_p)		= { "fin_pll", "sclk_spi4" };
+ /* List of parent clocks for Muxes in CMU_PERIS */
+-PNAME(mout_aclk_peris_66_p) = { "fin_pll", "dout_aclk_peris_66" };
++PNAME(mout_aclk_peris_66_user_p) = { "fin_pll", "aclk_peris_66" };
  
- static unsigned long peric1_clk_regs[] __initdata = {
- 	MUX_SEL_PERIC10,
-@@ -681,24 +683,24 @@ static unsigned long peric1_clk_regs[] __initdata = {
+ static unsigned long peris_clk_regs[] __initdata = {
+ 	MUX_SEL_PERIS,
+@@ -800,7 +803,7 @@ static unsigned long peris_clk_regs[] __initdata = {
+ 
+ static struct samsung_mux_clock peris_mux_clks[] __initdata = {
+ 	MUX(0, "mout_aclk_peris_66_user",
+-		mout_aclk_peris_66_p, MUX_SEL_PERIS, 0, 1),
++		mout_aclk_peris_66_user_p, MUX_SEL_PERIS, 0, 1),
  };
  
- static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
--	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_p,
-+	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_user_p,
- 		MUX_SEL_PERIC10, 0, 1),
- 
--	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_p,
-+	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_user_p,
- 		MUX_SEL_PERIC11, 0, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_p,
-+	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_user_p,
- 		MUX_SEL_PERIC11, 4, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_p,
-+	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_user_p,
- 		MUX_SEL_PERIC11, 8, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_p,
-+	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_user_p,
- 		MUX_SEL_PERIC11, 12, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_p,
-+	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_user_p,
- 		MUX_SEL_PERIC11, 16, 1, CLK_SET_RATE_PARENT, 0),
--	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_p,
-+	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_user_p,
- 		MUX_SEL_PERIC11, 20, 1),
--	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_p,
-+	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_user_p,
- 		MUX_SEL_PERIC11, 24, 1),
--	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_p,
-+	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_user_p,
- 		MUX_SEL_PERIC11, 28, 1),
- };
- 
+ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
 diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index ba60a20..5a157f7 100644
+index 5a157f7..2876654 100644
 --- a/include/dt-bindings/clock/exynos7-clk.h
 +++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -49,7 +49,8 @@
- #define CLK_SCLK_PCM1			13
- #define CLK_SCLK_I2S1			14
- #define CLK_ACLK_PERIC0_66		15
--#define TOP0_NR_CLK			16
-+#define CLK_ACLK_PERIC1_66		16
-+#define TOP0_NR_CLK			17
+@@ -31,7 +31,8 @@
+ #define SCLK_CC_PLL_B			18
+ #define SCLK_CC_PLL_A			19
+ #define ACLK_CCORE_133			20
+-#define TOPC_NR_CLK			21
++#define ACLK_PERIS_66			21
++#define TOPC_NR_CLK			22
  
- /* TOP1 */
- #define DOUT_ACLK_FSYS1_200		1
+ /* TOP0 */
+ #define DOUT_ACLK_PERIC1		1
 -- 
 1.7.10.4
 
