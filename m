@@ -1,146 +1,131 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 03/10] drm/exynos: add pm_runtime to HDMI
-Date: Fri,  4 Sep 2015 17:15:45 -0300
-Message-ID: <1441397752-6672-4-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 04/10] drm/exynos: add pm_runtime to Mixer
+Date: Fri,  4 Sep 2015 17:15:46 -0300
+Message-ID: <1441397752-6672-5-git-send-email-gustavo@padovan.org>
 References: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f195.google.com ([209.85.160.195]:36129 "EHLO
-	mail-yk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760474AbbIDUQG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Sep 2015 16:16:06 -0400
-Received: by ykcf206 with SMTP id f206so2756921ykc.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2015 13:16:05 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Let pm_runtime handle the enabling/disabling of the device with proper
-refcnt instead of rely on specific flags to track the enabled state.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 56 +++++++++++++++++++++++++-----------
- 1 file changed, 39 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 932f7fa..5fcbdda 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -92,7 +92,6 @@ struct hdmi_context {
- 	struct drm_device		*drm_dev;
- 	struct drm_connector		connector;
- 	bool				hpd;
--	bool				powered;
- 	bool				dvi_mode;
- 
- 	void __iomem			*regs;
-@@ -1726,11 +1725,6 @@ static void hdmi_enable(struct drm_encoder *encoder)
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
- 	struct hdmi_resources *res = &hdata->res;
- 
--	if (hdata->powered)
--		return;
--
--	hdata->powered = true;
--
- 	pm_runtime_get_sync(hdata->dev);
- 
- 	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
-@@ -1740,9 +1734,6 @@ static void hdmi_enable(struct drm_encoder *encoder)
- 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
- 			PMU_HDMI_PHY_ENABLE_BIT, 1);
- 
--	clk_prepare_enable(res->hdmi);
--	clk_prepare_enable(res->sclk_hdmi);
--
- 	hdmiphy_poweron(hdata);
- 	hdmi_conf_apply(hdata);
- }
-@@ -1754,9 +1745,6 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 	struct drm_crtc *crtc = encoder->crtc;
- 	const struct drm_crtc_helper_funcs *funcs = NULL;
- 
--	if (!hdata->powered)
--		return;
--
- 	/*
- 	 * The SFRs of VP and Mixer are updated by Vertical Sync of
- 	 * Timing generator which is a part of HDMI so the sequence
-@@ -1778,9 +1766,6 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 
- 	cancel_delayed_work(&hdata->hotplug_work);
- 
--	clk_disable_unprepare(res->sclk_hdmi);
--	clk_disable_unprepare(res->hdmi);
--
- 	/* reset pmu hdmiphy control bit to disable hdmiphy */
- 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
- 			PMU_HDMI_PHY_ENABLE_BIT, 0);
-@@ -1788,8 +1773,6 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 	regulator_bulk_disable(res->regul_count, res->regul_bulk);
- 
- 	pm_runtime_put_sync(hdata->dev);
--
--	hdata->powered = false;
- }
- 
- static struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
-@@ -2146,12 +2129,51 @@ static int hdmi_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int exynos_hdmi_suspend(struct device *dev)
-+{
-+	struct hdmi_context *hdata = dev_get_drvdata(dev);
-+	struct hdmi_resources *res = &hdata->res;
-+
-+	clk_disable_unprepare(res->sclk_hdmi);
-+	clk_disable_unprepare(res->hdmi);
-+
-+	return 0;
-+}
-+
-+static int exynos_hdmi_resume(struct device *dev)
-+{
-+	struct hdmi_context *hdata = dev_get_drvdata(dev);
-+	struct hdmi_resources *res = &hdata->res;
-+	int ret;
-+
-+	ret = clk_prepare_enable(res->hdmi);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the hdmi clk [%d]\n", ret);
-+		return ret;
-+	}
-+	ret = clk_prepare_enable(res->sclk_hdmi);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the sclk_mixer clk [%d]\n",
-+			  ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops exynos_hdmi_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos_hdmi_suspend, exynos_hdmi_resume, NULL)
-+};
-+
- struct platform_driver hdmi_driver = {
- 	.probe		= hdmi_probe,
- 	.remove		= hdmi_remove,
- 	.driver		= {
- 		.name	= "exynos-hdmi",
- 		.owner	= THIS_MODULE,
-+		.pm	= &exynos_hdmi_pm_ops,
- 		.of_match_table = hdmi_match_types,
- 	},
- };
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+TGV0IHBtX3J1bnRpbWUgaGFuZGxlIHRoZSBlbmFibGluZy9kaXNhYmxpbmcgb2YgdGhlIGRldmlj
+ZSB3aXRoIHByb3BlcgpyZWZjbnQgaW5zdGVhZCBvZiByZWx5IG9uIHNwZWNpZmljIGZsYWdzIHRv
+IHRyYWNrIHRoZSBlbmFibGVkIHN0YXRlLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFu
+IDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX21peGVyLmMgfCAxMjUgKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0t
+LS0tLQogMSBmaWxlIGNoYW5nZWQsIDYxIGluc2VydGlvbnMoKyksIDY0IGRlbGV0aW9ucygtKQoK
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IDI0ODQyNzcuLmRjNDgwODQg
+MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNzEsNyArNzEsNiBAQCBl
+bnVtIG1peGVyX3ZlcnNpb25faWQgewogfTsKIAogZW51bSBtaXhlcl9mbGFnX2JpdHMgewotCU1Y
+Ul9CSVRfUE9XRVJFRCwKIAlNWFJfQklUX1ZTWU5DLAogfTsKIApAQCAtOTI3LDggKzkyNiw2IEBA
+IHN0YXRpYyBpbnQgbWl4ZXJfZW5hYmxlX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpj
+cnRjKQogCXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZtaXhlcl9jdHgtPm1peGVyX3Jl
+czsKIAogCV9fc2V0X2JpdChNWFJfQklUX1ZTWU5DLCAmbWl4ZXJfY3R4LT5mbGFncyk7Ci0JaWYg
+KCF0ZXN0X2JpdChNWFJfQklUX1BPV0VSRUQsICZtaXhlcl9jdHgtPmZsYWdzKSkKLQkJcmV0dXJu
+IDA7CiAKIAkvKiBlbmFibGUgdnN5bmMgaW50ZXJydXB0ICovCiAJbWl4ZXJfcmVnX3dyaXRlbWFz
+ayhyZXMsIE1YUl9JTlRfU1RBVFVTLCB+MCwgTVhSX0lOVF9DTEVBUl9WU1lOQyk7CkBAIC05NDQs
+OSArOTQxLDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZGlzYWJsZV92Ymxhbmsoc3RydWN0IGV4eW5v
+c19kcm1fY3J0YyAqY3J0YykKIAogCV9fY2xlYXJfYml0KE1YUl9CSVRfVlNZTkMsICZtaXhlcl9j
+dHgtPmZsYWdzKTsKIAotCWlmICghdGVzdF9iaXQoTVhSX0JJVF9QT1dFUkVELCAmbWl4ZXJfY3R4
+LT5mbGFncykpCi0JCXJldHVybjsKLQogCS8qIGRpc2FibGUgdnN5bmMgaW50ZXJydXB0ICovCiAJ
+bWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9JTlRfU1RBVFVTLCB+MCwgTVhSX0lOVF9DTEVB
+Ul9WU1lOQyk7CiAJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9JTlRfRU4sIDAsIE1YUl9J
+TlRfRU5fVlNZTkMpOwpAQCAtOTU5LDkgKzk1Myw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3VwZGF0
+ZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogCiAJRFJNX0RFQlVHX0tNUygi
+d2luOiAlZFxuIiwgcGxhbmUtPnpwb3MpOwogCi0JaWYgKCF0ZXN0X2JpdChNWFJfQklUX1BPV0VS
+RUQsICZtaXhlcl9jdHgtPmZsYWdzKSkKLQkJcmV0dXJuOwotCiAJaWYgKHBsYW5lLT56cG9zID4g
+MSAmJiBtaXhlcl9jdHgtPnZwX2VuYWJsZWQpCiAJCXZwX3ZpZGVvX2J1ZmZlcihtaXhlcl9jdHgs
+IHBsYW5lKTsKIAllbHNlCkBAIC05NzcsOSArOTY4LDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZGlz
+YWJsZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogCiAJRFJNX0RFQlVHX0tN
+Uygid2luOiAlZFxuIiwgcGxhbmUtPnpwb3MpOwogCi0JaWYgKCF0ZXN0X2JpdChNWFJfQklUX1BP
+V0VSRUQsICZtaXhlcl9jdHgtPmZsYWdzKSkKLQkJcmV0dXJuOwotCiAJc3Bpbl9sb2NrX2lycXNh
+dmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7CiAJbWl4ZXJfdnN5bmNfc2V0X3VwZGF0ZShtaXhl
+cl9jdHgsIGZhbHNlKTsKIApAQCAtOTk0LDkgKzk4Miw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dh
+aXRfZm9yX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCXN0cnVjdCBtaXhl
+cl9jb250ZXh0ICptaXhlcl9jdHggPSBjcnRjLT5jdHg7CiAJaW50IGVycjsKIAotCWlmICghdGVz
+dF9iaXQoTVhSX0JJVF9QT1dFUkVELCAmbWl4ZXJfY3R4LT5mbGFncykpCi0JCXJldHVybjsKLQog
+CWVyciA9IGRybV92YmxhbmtfZ2V0KG1peGVyX2N0eC0+ZHJtX2RldiwgbWl4ZXJfY3R4LT5waXBl
+KTsKIAlpZiAoZXJyIDwgMCkgewogCQlEUk1fREVCVUdfS01TKCJmYWlsZWQgdG8gYWNxdWlyZSB2
+YmxhbmsgY291bnRlclxuIik7CkBAIC0xMDIxLDQzICsxMDA2LDkgQEAgc3RhdGljIHZvaWQgbWl4
+ZXJfZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IG1peGVy
+X2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMg
+PSAmY3R4LT5taXhlcl9yZXM7Ci0JaW50IHJldDsKLQotCWlmICh0ZXN0X2JpdChNWFJfQklUX1BP
+V0VSRUQsICZjdHgtPmZsYWdzKSkKLQkJcmV0dXJuOwogCiAJcG1fcnVudGltZV9nZXRfc3luYyhj
+dHgtPmRldik7CiAKLQlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUocmVzLT5taXhlcik7Ci0JaWYg
+KHJldCA8IDApIHsKLQkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gcHJlcGFyZV9lbmFibGUgdGhlIG1p
+eGVyIGNsayBbJWRdXG4iLCByZXQpOwotCQlyZXR1cm47Ci0JfQotCXJldCA9IGNsa19wcmVwYXJl
+X2VuYWJsZShyZXMtPmhkbWkpOwotCWlmIChyZXQgPCAwKSB7Ci0JCURSTV9FUlJPUigiRmFpbGVk
+IHRvIHByZXBhcmVfZW5hYmxlIHRoZSBoZG1pIGNsayBbJWRdXG4iLCByZXQpOwotCQlyZXR1cm47
+Ci0JfQotCWlmIChjdHgtPnZwX2VuYWJsZWQpIHsKLQkJcmV0ID0gY2xrX3ByZXBhcmVfZW5hYmxl
+KHJlcy0+dnApOwotCQlpZiAocmV0IDwgMCkgewotCQkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gcHJl
+cGFyZV9lbmFibGUgdGhlIHZwIGNsayBbJWRdXG4iLAotCQkJCSAgcmV0KTsKLQkJCXJldHVybjsK
+LQkJfQotCQlpZiAoY3R4LT5oYXNfc2NsaykgewotCQkJcmV0ID0gY2xrX3ByZXBhcmVfZW5hYmxl
+KHJlcy0+c2Nsa19taXhlcik7Ci0JCQlpZiAocmV0IDwgMCkgewotCQkJCURSTV9FUlJPUigiRmFp
+bGVkIHRvIHByZXBhcmVfZW5hYmxlIHRoZSAiIFwKLQkJCQkJICAgInNjbGtfbWl4ZXIgY2xrIFsl
+ZF1cbiIsCi0JCQkJCSAgcmV0KTsKLQkJCQlyZXR1cm47Ci0JCQl9Ci0JCX0KLQl9Ci0KLQlzZXRf
+Yml0KE1YUl9CSVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpOwotCiAJbWl4ZXJfcmVnX3dyaXRlbWFz
+ayhyZXMsIE1YUl9TVEFUVVMsIH4wLCBNWFJfU1RBVFVTX1NPRlRfUkVTRVQpOwogCiAJaWYgKHRl
+c3RfYml0KE1YUl9CSVRfVlNZTkMsICZjdHgtPmZsYWdzKSkgewpAQCAtMTA3MCwyOSArMTAyMSwx
+NSBAQCBzdGF0aWMgdm9pZCBtaXhlcl9lbmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0
+YykKIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0
+YykKIHsKIAlzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwotCXN0cnVjdCBt
+aXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKIAlpbnQgaTsKIAotCWlmICgh
+dGVzdF9iaXQoTVhSX0JJVF9QT1dFUkVELCAmY3R4LT5mbGFncykpCi0JCXJldHVybjsKLQogCW1p
+eGVyX3N0b3AoY3R4KTsKIAltaXhlcl9yZWdzX2R1bXAoY3R4KTsKIAogCWZvciAoaSA9IDA7IGkg
+PCBNSVhFUl9XSU5fTlI7IGkrKykKIAkJbWl4ZXJfZGlzYWJsZV9wbGFuZShjcnRjLCAmY3R4LT5w
+bGFuZXNbaV0pOwogCi0JY2xlYXJfYml0KE1YUl9CSVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpOwot
+Ci0JY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHJlcy0+aGRtaSk7Ci0JY2xrX2Rpc2FibGVfdW5wcmVw
+YXJlKHJlcy0+bWl4ZXIpOwotCWlmIChjdHgtPnZwX2VuYWJsZWQpIHsKLQkJY2xrX2Rpc2FibGVf
+dW5wcmVwYXJlKHJlcy0+dnApOwotCQlpZiAoY3R4LT5oYXNfc2NsaykKLQkJCWNsa19kaXNhYmxl
+X3VucHJlcGFyZShyZXMtPnNjbGtfbWl4ZXIpOwotCX0KLQotCXBtX3J1bnRpbWVfcHV0X3N5bmMo
+Y3R4LT5kZXYpOworCXBtX3J1bnRpbWVfcHV0KGN0eC0+ZGV2KTsKIH0KIAogLyogT25seSB2YWxp
+ZCBmb3IgTWl4ZXIgdmVyc2lvbiAxNi4wLjMzLjAgKi8KQEAgLTEyODgsMTAgKzEyMjUsNzAgQEAg
+c3RhdGljIGludCBtaXhlcl9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAly
+ZXR1cm4gMDsKIH0KIAorI2lmZGVmIENPTkZJR19QTV9TTEVFUAorc3RhdGljIGludCBleHlub3Nf
+bWl4ZXJfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCit7CisJc3RydWN0IG1peGVyX2NvbnRl
+eHQgKmN0eCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOworCXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMg
+KnJlcyA9ICZjdHgtPm1peGVyX3JlczsKKworCWNsa19kaXNhYmxlX3VucHJlcGFyZShyZXMtPmhk
+bWkpOworCWNsa19kaXNhYmxlX3VucHJlcGFyZShyZXMtPm1peGVyKTsKKwlpZiAoY3R4LT52cF9l
+bmFibGVkKSB7CisJCWNsa19kaXNhYmxlX3VucHJlcGFyZShyZXMtPnZwKTsKKwkJaWYgKGN0eC0+
+aGFzX3NjbGspCisJCQljbGtfZGlzYWJsZV91bnByZXBhcmUocmVzLT5zY2xrX21peGVyKTsKKwl9
+CisKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIGludCBleHlub3NfbWl4ZXJfcmVzdW1lKHN0cnVj
+dCBkZXZpY2UgKmRldikKK3sKKwlzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4ID0gZGV2X2dldF9k
+cnZkYXRhKGRldik7CisJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJf
+cmVzOworCWludCByZXQ7CisKKwlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUocmVzLT5taXhlcik7
+CisJaWYgKHJldCA8IDApIHsKKwkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gcHJlcGFyZV9lbmFibGUg
+dGhlIG1peGVyIGNsayBbJWRdXG4iLCByZXQpOworCQlyZXR1cm4gcmV0OworCX0KKwlyZXQgPSBj
+bGtfcHJlcGFyZV9lbmFibGUocmVzLT5oZG1pKTsKKwlpZiAocmV0IDwgMCkgeworCQlEUk1fRVJS
+T1IoIkZhaWxlZCB0byBwcmVwYXJlX2VuYWJsZSB0aGUgaGRtaSBjbGsgWyVkXVxuIiwgcmV0KTsK
+KwkJcmV0dXJuIHJldDsKKwl9CisJaWYgKGN0eC0+dnBfZW5hYmxlZCkgeworCQlyZXQgPSBjbGtf
+cHJlcGFyZV9lbmFibGUocmVzLT52cCk7CisJCWlmIChyZXQgPCAwKSB7CisJCQlEUk1fRVJST1Io
+IkZhaWxlZCB0byBwcmVwYXJlX2VuYWJsZSB0aGUgdnAgY2xrIFslZF1cbiIsCisJCQkJICByZXQp
+OworCQkJcmV0dXJuIHJldDsKKwkJfQorCQlpZiAoY3R4LT5oYXNfc2NsaykgeworCQkJcmV0ID0g
+Y2xrX3ByZXBhcmVfZW5hYmxlKHJlcy0+c2Nsa19taXhlcik7CisJCQlpZiAocmV0IDwgMCkgewor
+CQkJCURSTV9FUlJPUigiRmFpbGVkIHRvIHByZXBhcmVfZW5hYmxlIHRoZSAiIFwKKwkJCQkJICAg
+InNjbGtfbWl4ZXIgY2xrIFslZF1cbiIsCisJCQkJCSAgcmV0KTsKKwkJCQlyZXR1cm4gcmV0Owor
+CQkJfQorCQl9CisJfQorCisJcmV0dXJuIDA7Cit9CisjZW5kaWYKKworc3RhdGljIGNvbnN0IHN0
+cnVjdCBkZXZfcG1fb3BzIGV4eW5vc19taXhlcl9wbV9vcHMgPSB7CisJU0VUX1JVTlRJTUVfUE1f
+T1BTKGV4eW5vc19taXhlcl9zdXNwZW5kLCBleHlub3NfbWl4ZXJfcmVzdW1lLCBOVUxMKQorfTsK
+Kwogc3RydWN0IHBsYXRmb3JtX2RyaXZlciBtaXhlcl9kcml2ZXIgPSB7CiAJLmRyaXZlciA9IHsK
+IAkJLm5hbWUgPSAiZXh5bm9zLW1peGVyIiwKIAkJLm93bmVyID0gVEhJU19NT0RVTEUsCisJCS5w
+bSA9ICZleHlub3NfbWl4ZXJfcG1fb3BzLAogCQkub2ZfbWF0Y2hfdGFibGUgPSBtaXhlcl9tYXRj
+aF90eXBlcywKIAl9LAogCS5wcm9iZSA9IG1peGVyX3Byb2JlLAotLSAKMi4xLjAKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
