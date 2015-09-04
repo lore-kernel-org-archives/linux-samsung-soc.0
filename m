@@ -1,7 +1,7 @@
 From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 03/11] clk: samsung: exynos7: Corrects CMU_TOP1 clocks names
-Date: Fri, 04 Sep 2015 17:07:08 +0530
-Message-ID: <1441366637-28001-4-git-send-email-alim.akhtar@samsung.com>
+Subject: [PATCH 04/11] clk: samsung: exynos7: Corrects CMU_CCORE clocks names
+Date: Fri, 04 Sep 2015 17:07:09 +0530
+Message-ID: <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
 References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 Return-path: <linux-clk-owner@vger.kernel.org>
 In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
@@ -10,100 +10,69 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch rename CMU_TOP1 clocks names to match with user manual.
+This patch rename CMU_CCROE clocks names to match with user manual.
+And also adds missing gate clock for aclk_ccore_133.
 
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos7.c |   50 ++++++++++++++++++++-----------------
- 1 file changed, 27 insertions(+), 23 deletions(-)
+ drivers/clk/samsung/clk-exynos7.c       |    8 ++++++--
+ include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index f9aac4a..ba84e9b 100644
+index ba84e9b..0eb0f57 100644
 --- a/drivers/clk/samsung/clk-exynos7.c
 +++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -409,23 +409,23 @@ CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
- #define ENABLE_SCLK_TOP1_FSYS11		0x0A2C
- 
- /* List of parent clocks for Muxes in CMU_TOP1 */
--PNAME(mout_top1_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
--PNAME(mout_top1_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll_b" };
--PNAME(mout_top1_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll_b" };
--PNAME(mout_top1_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll_b" };
-+PNAME(mout_top1_bus0_pll_user_p)	= { "fin_pll", "sclk_bus0_pll_b" };
-+PNAME(mout_top1_bus1_pll_user_p)	= { "fin_pll", "sclk_bus1_pll_b" };
-+PNAME(mout_top1_cc_pll_user_p)	= { "fin_pll", "sclk_cc_pll_b" };
-+PNAME(mout_top1_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll_b" };
- 
--PNAME(mout_top1_half_bus0_pll_p) = {"mout_top1_bus0_pll",
-+PNAME(mout_top1_bus0_pll_half_p) = {"mout_top1_bus0_pll_user",
- 	"ffac_top1_bus0_pll_div2"};
--PNAME(mout_top1_half_bus1_pll_p) = {"mout_top1_bus1_pll",
-+PNAME(mout_top1_bus1_pll_half_p) = {"mout_top1_bus1_pll_user",
- 	"ffac_top1_bus1_pll_div2"};
--PNAME(mout_top1_half_cc_pll_p) = {"mout_top1_cc_pll",
-+PNAME(mout_top1_cc_pll_half_p) = {"mout_top1_cc_pll_user",
- 	"ffac_top1_cc_pll_div2"};
--PNAME(mout_top1_half_mfc_pll_p) = {"mout_top1_mfc_pll",
-+PNAME(mout_top1_mfc_pll_half_p) = {"mout_top1_mfc_pll_user",
- 	"ffac_top1_mfc_pll_div2"};
- 
--PNAME(mout_top1_group1) = {"mout_top1_half_bus0_pll",
--	"mout_top1_half_bus1_pll", "mout_top1_half_cc_pll",
--	"mout_top1_half_mfc_pll"};
-+PNAME(mout_top1_group1) = {"mout_top1_bus0_pll_half",
-+	"mout_top1_bus1_pll_half", "mout_top1_cc_pll_half",
-+	"mout_top1_mfc_pll_half"};
- 
- static unsigned long top1_clk_regs[] __initdata = {
- 	MUX_SEL_TOP10,
-@@ -445,20 +445,22 @@ static unsigned long top1_clk_regs[] __initdata = {
+@@ -31,6 +31,7 @@
+ #define MUX_SEL_TOPC1		0x0204
+ #define MUX_SEL_TOPC2		0x0208
+ #define MUX_SEL_TOPC3		0x020C
++#define MUX_ENABLE_TOPC2	0x0308
+ #define DIV_TOPC0		0x0600
+ #define DIV_TOPC1		0x0604
+ #define DIV_TOPC3		0x060C
+@@ -167,6 +168,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+ 		ENABLE_SCLK_TOPC1, 1, 0, 0),
+ 	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
+ 		ENABLE_SCLK_TOPC1, 0, 0, 0),
++
++	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
++		MUX_ENABLE_TOPC2, 4, 0, 0),
  };
  
- static struct samsung_mux_clock top1_mux_clks[] __initdata = {
--	MUX(0, "mout_top1_mfc_pll", mout_top1_mfc_pll_p, MUX_SEL_TOP10, 4, 1),
--	MUX(0, "mout_top1_cc_pll", mout_top1_cc_pll_p, MUX_SEL_TOP10, 8, 1),
--	MUX(0, "mout_top1_bus1_pll", mout_top1_bus1_pll_p,
-+	MUX(0, "mout_top1_mfc_pll_user", mout_top1_mfc_pll_user_p,
-+		MUX_SEL_TOP10, 4, 1),
-+	MUX(0, "mout_top1_cc_pll_user", mout_top1_cc_pll_user_p,
-+		MUX_SEL_TOP10, 8, 1),
-+	MUX(0, "mout_top1_bus1_pll_user", mout_top1_bus1_pll_user_p,
- 		MUX_SEL_TOP10, 12, 1),
--	MUX(0, "mout_top1_bus0_pll", mout_top1_bus0_pll_p,
-+	MUX(0, "mout_top1_bus0_pll_user", mout_top1_bus0_pll_user_p,
- 		MUX_SEL_TOP10, 16, 1),
+ static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+@@ -544,7 +548,7 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+ /*
+  * List of parent clocks for Muxes in CMU_CCORE
+  */
+-PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
++PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
  
--	MUX(0, "mout_top1_half_mfc_pll", mout_top1_half_mfc_pll_p,
-+	MUX(0, "mout_top1_mfc_pll_half", mout_top1_mfc_pll_half_p,
- 		MUX_SEL_TOP11, 4, 1),
--	MUX(0, "mout_top1_half_cc_pll", mout_top1_half_cc_pll_p,
-+	MUX(0, "mout_top1_cc_pll_half", mout_top1_cc_pll_half_p,
- 		MUX_SEL_TOP11, 8, 1),
--	MUX(0, "mout_top1_half_bus1_pll", mout_top1_half_bus1_pll_p,
-+	MUX(0, "mout_top1_bus1_pll_half", mout_top1_bus1_pll_half_p,
- 		MUX_SEL_TOP11, 12, 1),
--	MUX(0, "mout_top1_half_bus0_pll", mout_top1_half_bus0_pll_p,
-+	MUX(0, "mout_top1_bus0_pll_half", mout_top1_bus0_pll_half_p,
- 		MUX_SEL_TOP11, 16, 1),
- 
- 	MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
-@@ -502,10 +504,12 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+ static unsigned long ccore_clk_regs[] __initdata = {
+ 	MUX_SEL_CCORE,
+@@ -552,7 +556,7 @@ static unsigned long ccore_clk_regs[] __initdata = {
  };
  
- static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
--	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll_user", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll_user", 1, 2, 0),
+ static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
+-	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
++	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
+ 		MUX_SEL_CCORE, 1, 1),
  };
  
- static struct samsung_cmu_info top1_cmu_info __initdata = {
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index b63eba6..2e01235 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -30,7 +30,8 @@
+ #define SCLK_BUS0_PLL_A			17
+ #define SCLK_CC_PLL_B			18
+ #define SCLK_CC_PLL_A			19
+-#define TOPC_NR_CLK			20
++#define ACLK_CCORE_133			20
++#define TOPC_NR_CLK			21
+ 
+ /* TOP0 */
+ #define DOUT_ACLK_PERIC1		1
 -- 
 1.7.10.4
 
