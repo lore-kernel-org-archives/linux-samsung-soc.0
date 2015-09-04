@@ -1,188 +1,400 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: add cursor plane support
-Date: Fri, 4 Sep 2015 09:19:36 +0200
-Message-ID: <20150904071936.GB22430@phenom.ffwll.local>
-References: <1441311297-5083-1-git-send-email-gustavo@padovan.org>
- <55E9188F.5040601@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:38226 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750712AbbIDHQ4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Sep 2015 03:16:56 -0400
-Received: by wiclk2 with SMTP id lk2so7902321wic.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2015 00:16:53 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <55E9188F.5040601@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH V3 2/6] PM / OPP: Rename opp init/free table routines
+Date: Fri,  4 Sep 2015 13:47:23 +0530
+Message-ID: <6bdbc2c69b18528648d5a752da0d6176825bd870.1441354424.git.viresh.kumar@linaro.org>
+References: <cover.1441354424.git.viresh.kumar@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1441354424.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1441354424.git.viresh.kumar@linaro.org>
+References: <cover.1441354424.git.viresh.kumar@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rafael Wysocki <rjw@rjwysocki.net>, sboyd@codeaurora.org
+Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, nm@ti.com, Viresh Kumar <viresh.kumar@linaro.org>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Len Brown <len.brown@intel.com>, "moderated list:ARM
+	SUB-ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS
+	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-On Fri, Sep 04, 2015 at 01:05:35PM +0900, Inki Dae wrote:
-> Hi Gustavo,
->=20
-> I had already a review but I didn't give any comment to you. Sorry ab=
-out
-> that. This patch looks good to me but one thing isn't clear. Below is=
- my
-> comment.
->=20
->=20
-> On 2015=EB=85=84 09=EC=9B=94 04=EC=9D=BC 05:14, Gustavo Padovan wrote=
-:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >=20
-> > Set one of the planes for each crtc driver as a cursor plane enable=
-d
-> > window managers to fully work on exynos.
-> >=20
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  9 ++-------
-> >  drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  8 ++------
-> >  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  3 +++
-> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  8 ++------
-> >  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 18 +++++++++++++++=
+free-table routines are opposite of init-table ones, and must be named
+to make that clear. Opposite of 'init' is 'exit', but those doesn't suit
+really well.
+
+Replace 'init' with 'add' and 'free' with 'remove'.
+
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
-> >  drivers/gpu/drm/exynos/exynos_drm_plane.h     |  5 ++---
-> >  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  9 ++-------
-> >  drivers/gpu/drm/exynos/exynos_mixer.c         | 10 +++-------
-> >  8 files changed, 31 insertions(+), 39 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/driver=
-s/gpu/drm/exynos/exynos5433_drm_decon.c
-> > index b3c7307..79b2b22 100644
-> > --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> > +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> > @@ -33,7 +33,6 @@ struct decon_context {
-> >  	struct exynos_drm_plane		planes[WINDOWS_NR];
-> >  	void __iomem			*addr;
-> >  	struct clk			*clks[6];
-> > -	unsigned int			default_win;
-> >  	unsigned long			irq_flags;
-> >  	int				pipe;
-> >  	bool				suspended;
-> > @@ -493,7 +492,6 @@ static int decon_bind(struct device *dev, struc=
-t device *master, void *data)
-> >  	struct drm_device *drm_dev =3D data;
-> >  	struct exynos_drm_private *priv =3D drm_dev->dev_private;
-> >  	struct exynos_drm_plane *exynos_plane;
-> > -	enum drm_plane_type type;
-> >  	unsigned int zpos;
-> >  	int ret;
-> > =20
-> > @@ -501,16 +499,14 @@ static int decon_bind(struct device *dev, str=
-uct device *master, void *data)
-> >  	ctx->pipe =3D priv->pipe++;
-> > =20
-> >  	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
-> > -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY=
- :
-> > -							DRM_PLANE_TYPE_OVERLAY;
-> >  		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
-> > -				1 << ctx->pipe, type, decon_formats,
-> > +				1 << ctx->pipe, decon_formats,
-> >  				ARRAY_SIZE(decon_formats), zpos);
-> >  		if (ret)
-> >  			return ret;
-> >  	}
-> > =20
-> > -	exynos_plane =3D &ctx->planes[ctx->default_win];
-> > +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
-> >  	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base=
-,
-> >  					ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
-> >  					&decon_crtc_ops, ctx);
-> > @@ -607,7 +603,6 @@ static int exynos5433_decon_probe(struct platfo=
-rm_device *pdev)
-> >  	if (!ctx)
-> >  		return -ENOMEM;
-> > =20
-> > -	ctx->default_win =3D 0;
-> >  	ctx->suspended =3D true;
-> >  	ctx->dev =3D dev;
-> >  	if (of_get_child_by_name(dev->of_node, "i80-if-timings"))
-> > diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/g=
-pu/drm/exynos/exynos7_drm_decon.c
-> > index cbdb78e..f3826dc 100644
-> > --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> > +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> > @@ -52,7 +52,6 @@ struct decon_context {
-> >  	struct clk			*eclk;
-> >  	struct clk			*vclk;
-> >  	void __iomem			*regs;
-> > -	unsigned int			default_win;
-> >  	unsigned long			irq_flags;
-> >  	bool				i80_if;
-> >  	bool				suspended;
-> > @@ -691,7 +690,6 @@ static int decon_bind(struct device *dev, struc=
-t device *master, void *data)
-> >  	struct decon_context *ctx =3D dev_get_drvdata(dev);
-> >  	struct drm_device *drm_dev =3D data;
-> >  	struct exynos_drm_plane *exynos_plane;
-> > -	enum drm_plane_type type;
-> >  	unsigned int zpos;
-> >  	int ret;
-> > =20
-> > @@ -702,16 +700,14 @@ static int decon_bind(struct device *dev, str=
-uct device *master, void *data)
-> >  	}
-> > =20
-> >  	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
-> > -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY=
- :
-> > -						DRM_PLANE_TYPE_OVERLAY;
-> >  		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
-> > -					1 << ctx->pipe, type, decon_formats,
-> > +					1 << ctx->pipe, decon_formats,
-> >  					ARRAY_SIZE(decon_formats), zpos);
-> >  		if (ret)
-> >  			return ret;
-> >  	}
-> > =20
-> > -	exynos_plane =3D &ctx->planes[ctx->default_win];
-> > +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
-> >  	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base=
-,
-> >  					   ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
-> >  					   &decon_crtc_ops, ctx);
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/=
-drm/exynos/exynos_drm_drv.h
-> > index b7ba21d..cc56c3d 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> > @@ -22,6 +22,9 @@
-> >  #define MAX_PLANE	5
-> >  #define MAX_FB_BUFFER	4
-> > =20
-> > +#define DEFAULT_WIN	0
-> > +#define CURSOR_WIN	1
->=20
-> You fixed overlay number for cursor with 1. However, Display controll=
-ers
-> of Exynos SoC have fixed overlay priority like this,
->=20
-> win 4 > win 3 > win 2 > win 1 > win 0 so if we fix the overlay number
-> for cursor and we use another overlay - which has a higher layer than
-> cursor - to display caption or UI then the we couldn't see the cursor=
- on
-> screen without additional work such as color key or alpha channel.
->=20
-> So before that, you need to check how many overlays can be used
-> according to Exynos SoC versions, and which way is better - one is fo=
-r
-> top layer to be fixed for cursor, other is for one given layer to be
-> fixed by user-space for cursor.
+ arch/arm/mach-imx/mach-imx6q.c       |  2 +-
+ drivers/base/power/opp.c             | 41 ++++++++++++++++++------------------
+ drivers/cpufreq/arm_big_little.h     |  2 +-
+ drivers/cpufreq/arm_big_little_dt.c  |  4 ++--
+ drivers/cpufreq/cpufreq-dt.c         |  6 +++---
+ drivers/cpufreq/exynos5440-cpufreq.c |  6 +++---
+ drivers/cpufreq/imx6q-cpufreq.c      |  6 +++---
+ drivers/cpufreq/mt8173-cpufreq.c     |  6 +++---
+ include/linux/pm_opp.h               | 16 +++++++-------
+ 9 files changed, 44 insertions(+), 45 deletions(-)
 
-I think cursor should by default be the top layer (if the hw can do it)=
-=2E
-Otherwise it will be really confusing to compositors I fear.
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
+index 9602cc12d2f1..3286eec91d92 100644
+--- a/arch/arm/mach-imx/mach-imx6q.c
++++ b/arch/arm/mach-imx/mach-imx6q.c
+@@ -350,7 +350,7 @@ static void __init imx6q_opp_init(void)
+ 		return;
+ 	}
+ 
+-	if (of_init_opp_table(cpu_dev)) {
++	if (of_add_opp_table(cpu_dev)) {
+ 		pr_warn("failed to init OPP table\n");
+ 		goto put_node;
+ 	}
+diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
+index 4741fdc13e83..1515c05bc579 100644
+--- a/drivers/base/power/opp.c
++++ b/drivers/base/power/opp.c
+@@ -800,8 +800,8 @@ static int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+  * The opp is made available by default and it can be controlled using
+  * dev_pm_opp_enable/disable functions and may be removed by dev_pm_opp_remove.
+  *
+- * NOTE: "dynamic" parameter impacts OPPs added by the of_init_opp_table and
+- * freed by of_free_opp_table.
++ * NOTE: "dynamic" parameter impacts OPPs added by the of_add_opp_table and
++ * freed by of_remove_opp_table.
+  *
+  * Locking: The internal device_opp and opp structures are RCU protected.
+  * Hence this function internally uses RCU updater strategy with mutex locks
+@@ -1185,7 +1185,7 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_get_notifier);
+ 
+ #ifdef CONFIG_OF
+ /**
+- * of_free_opp_table() - Free OPP table entries created from static DT entries
++ * of_remove_opp_table() - Free OPP table entries created from static DT entries
+  * @dev:	device pointer used to lookup device OPPs.
+  *
+  * Free OPPs created using static entries present in DT.
+@@ -1196,7 +1196,7 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_get_notifier);
+  * that this function is *NOT* called under RCU protection or in contexts where
+  * mutex cannot be locked.
+  */
+-void of_free_opp_table(struct device *dev)
++void of_remove_opp_table(struct device *dev)
+ {
+ 	struct device_opp *dev_opp;
+ 	struct dev_pm_opp *opp, *tmp;
+@@ -1231,9 +1231,9 @@ void of_free_opp_table(struct device *dev)
+ unlock:
+ 	mutex_unlock(&dev_opp_list_lock);
+ }
+-EXPORT_SYMBOL_GPL(of_free_opp_table);
++EXPORT_SYMBOL_GPL(of_remove_opp_table);
+ 
+-void of_cpumask_free_opp_table(cpumask_var_t cpumask)
++void of_cpumask_remove_opp_table(cpumask_var_t cpumask)
+ {
+ 	struct device *cpu_dev;
+ 	int cpu;
+@@ -1248,10 +1248,10 @@ void of_cpumask_free_opp_table(cpumask_var_t cpumask)
+ 			continue;
+ 		}
+ 
+-		of_free_opp_table(cpu_dev);
++		of_remove_opp_table(cpu_dev);
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(of_cpumask_free_opp_table);
++EXPORT_SYMBOL_GPL(of_cpumask_remove_opp_table);
+ 
+ /* Returns opp descriptor node for a device, caller must do of_node_put() */
+ static struct device_node *_of_get_opp_desc_node(struct device *dev)
+@@ -1267,8 +1267,7 @@ static struct device_node *_of_get_opp_desc_node(struct device *dev)
+ }
+ 
+ /* Initializes OPP tables based on new bindings */
+-static int _of_init_opp_table_v2(struct device *dev,
+-				 struct device_node *opp_np)
++static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np)
+ {
+ 	struct device_node *np;
+ 	struct device_opp *dev_opp;
+@@ -1310,13 +1309,13 @@ static int _of_init_opp_table_v2(struct device *dev,
+ 	return 0;
+ 
+ free_table:
+-	of_free_opp_table(dev);
++	of_remove_opp_table(dev);
+ 
+ 	return ret;
+ }
+ 
+ /* Initializes OPP tables based on old-deprecated bindings */
+-static int _of_init_opp_table_v1(struct device *dev)
++static int _of_add_opp_table_v1(struct device *dev)
+ {
+ 	const struct property *prop;
+ 	const __be32 *val;
+@@ -1353,7 +1352,7 @@ static int _of_init_opp_table_v1(struct device *dev)
+ }
+ 
+ /**
+- * of_init_opp_table() - Initialize opp table from device tree
++ * of_add_opp_table() - Initialize opp table from device tree
+  * @dev:	device pointer used to lookup device OPPs.
+  *
+  * Register the initial OPP table with the OPP library for given device.
+@@ -1375,7 +1374,7 @@ static int _of_init_opp_table_v1(struct device *dev)
+  * -ENODATA	when empty 'operating-points' property is found
+  * -EINVAL	when invalid entries are found in opp-v2 table
+  */
+-int of_init_opp_table(struct device *dev)
++int of_add_opp_table(struct device *dev)
+ {
+ 	struct device_node *opp_np;
+ 	int ret;
+@@ -1390,17 +1389,17 @@ int of_init_opp_table(struct device *dev)
+ 		 * Try old-deprecated bindings for backward compatibility with
+ 		 * older dtbs.
+ 		 */
+-		return _of_init_opp_table_v1(dev);
++		return _of_add_opp_table_v1(dev);
+ 	}
+ 
+-	ret = _of_init_opp_table_v2(dev, opp_np);
++	ret = _of_add_opp_table_v2(dev, opp_np);
+ 	of_node_put(opp_np);
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(of_init_opp_table);
++EXPORT_SYMBOL_GPL(of_add_opp_table);
+ 
+-int of_cpumask_init_opp_table(cpumask_var_t cpumask)
++int of_cpumask_add_opp_table(cpumask_var_t cpumask)
+ {
+ 	struct device *cpu_dev;
+ 	int cpu, ret = 0;
+@@ -1415,20 +1414,20 @@ int of_cpumask_init_opp_table(cpumask_var_t cpumask)
+ 			continue;
+ 		}
+ 
+-		ret = of_init_opp_table(cpu_dev);
++		ret = of_add_opp_table(cpu_dev);
+ 		if (ret) {
+ 			pr_err("%s: couldn't find opp table for cpu:%d, %d\n",
+ 			       __func__, cpu, ret);
+ 
+ 			/* Free all other OPPs */
+-			of_cpumask_free_opp_table(cpumask);
++			of_cpumask_remove_opp_table(cpumask);
+ 			break;
+ 		}
+ 	}
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(of_cpumask_init_opp_table);
++EXPORT_SYMBOL_GPL(of_cpumask_add_opp_table);
+ 
+ /* Required only for V1 bindings, as v2 can manage it from DT itself */
+ int set_cpus_sharing_opps(struct device *cpu_dev, cpumask_var_t cpumask)
+diff --git a/drivers/cpufreq/arm_big_little.h b/drivers/cpufreq/arm_big_little.h
+index a211f7db9d32..d7ac320ead23 100644
+--- a/drivers/cpufreq/arm_big_little.h
++++ b/drivers/cpufreq/arm_big_little.h
+@@ -28,7 +28,7 @@ struct cpufreq_arm_bL_ops {
+ 
+ 	/*
+ 	 * This must set opp table for cpu_dev in a similar way as done by
+-	 * of_init_opp_table().
++	 * of_add_opp_table().
+ 	 */
+ 	int (*init_opp_table)(struct device *cpu_dev);
+ 
+diff --git a/drivers/cpufreq/arm_big_little_dt.c b/drivers/cpufreq/arm_big_little_dt.c
+index 36d91dba2965..47ac0ff54e3a 100644
+--- a/drivers/cpufreq/arm_big_little_dt.c
++++ b/drivers/cpufreq/arm_big_little_dt.c
+@@ -54,7 +54,7 @@ static int dt_init_opp_table(struct device *cpu_dev)
+ 		return -ENOENT;
+ 	}
+ 
+-	ret = of_init_opp_table(cpu_dev);
++	ret = of_add_opp_table(cpu_dev);
+ 	of_node_put(np);
+ 
+ 	return ret;
+@@ -82,7 +82,7 @@ static struct cpufreq_arm_bL_ops dt_bL_ops = {
+ 	.name	= "dt-bl",
+ 	.get_transition_latency = dt_get_transition_latency,
+ 	.init_opp_table = dt_init_opp_table,
+-	.free_opp_table = of_free_opp_table,
++	.free_opp_table = of_remove_opp_table,
+ };
+ 
+ static int generic_bL_probe(struct platform_device *pdev)
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 3b64c203bf99..449d3a4efec2 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -237,7 +237,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	 *
+ 	 * OPPs might be populated at runtime, don't check for error here
+ 	 */
+-	of_cpumask_init_opp_table(policy->cpus);
++	of_cpumask_add_opp_table(policy->cpus);
+ 
+ 	/*
+ 	 * But we need OPP table to function so if it is not there let's
+@@ -360,7 +360,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ out_free_priv:
+ 	kfree(priv);
+ out_free_opp:
+-	of_cpumask_free_opp_table(policy->cpus);
++	of_cpumask_remove_opp_table(policy->cpus);
+ out_node_put:
+ 	of_node_put(np);
+ out_put_reg_clk:
+@@ -377,7 +377,7 @@ static int cpufreq_exit(struct cpufreq_policy *policy)
+ 
+ 	cpufreq_cooling_unregister(priv->cdev);
+ 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
+-	of_cpumask_free_opp_table(policy->related_cpus);
++	of_cpumask_remove_opp_table(policy->related_cpus);
+ 	clk_put(policy->clk);
+ 	if (!IS_ERR(priv->cpu_reg))
+ 		regulator_put(priv->cpu_reg);
+diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+index 21a90ed7f3d8..fc46813d3b83 100644
+--- a/drivers/cpufreq/exynos5440-cpufreq.c
++++ b/drivers/cpufreq/exynos5440-cpufreq.c
+@@ -360,7 +360,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+ 		goto err_put_node;
+ 	}
+ 
+-	ret = of_init_opp_table(dvfs_info->dev);
++	ret = of_add_opp_table(dvfs_info->dev);
+ 	if (ret) {
+ 		dev_err(dvfs_info->dev, "failed to init OPP table: %d\n", ret);
+ 		goto err_put_node;
+@@ -424,7 +424,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+ err_free_table:
+ 	dev_pm_opp_free_cpufreq_table(dvfs_info->dev, &dvfs_info->freq_table);
+ err_free_opp:
+-	of_free_opp_table(dvfs_info->dev);
++	of_remove_opp_table(dvfs_info->dev);
+ err_put_node:
+ 	of_node_put(np);
+ 	dev_err(&pdev->dev, "%s: failed initialization\n", __func__);
+@@ -435,7 +435,7 @@ static int exynos_cpufreq_remove(struct platform_device *pdev)
+ {
+ 	cpufreq_unregister_driver(&exynos_driver);
+ 	dev_pm_opp_free_cpufreq_table(dvfs_info->dev, &dvfs_info->freq_table);
+-	of_free_opp_table(dvfs_info->dev);
++	of_remove_opp_table(dvfs_info->dev);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index 380a90d3c57e..3802765aeb9f 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -202,7 +202,7 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 	 */
+ 	num = dev_pm_opp_get_opp_count(cpu_dev);
+ 	if (num < 0) {
+-		ret = of_init_opp_table(cpu_dev);
++		ret = of_add_opp_table(cpu_dev);
+ 		if (ret < 0) {
+ 			dev_err(cpu_dev, "failed to init OPP table: %d\n", ret);
+ 			goto put_reg;
+@@ -312,7 +312,7 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
+ out_free_opp:
+ 	if (free_opp)
+-		of_free_opp_table(cpu_dev);
++		of_remove_opp_table(cpu_dev);
+ put_reg:
+ 	if (!IS_ERR(arm_reg))
+ 		regulator_put(arm_reg);
+@@ -340,7 +340,7 @@ static int imx6q_cpufreq_remove(struct platform_device *pdev)
+ 	cpufreq_unregister_driver(&imx6q_cpufreq_driver);
+ 	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
+ 	if (free_opp)
+-		of_free_opp_table(cpu_dev);
++		of_remove_opp_table(cpu_dev);
+ 	regulator_put(arm_reg);
+ 	if (!IS_ERR(pu_reg))
+ 		regulator_put(pu_reg);
+diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
+index 49caed293a3b..519e83146e86 100644
+--- a/drivers/cpufreq/mt8173-cpufreq.c
++++ b/drivers/cpufreq/mt8173-cpufreq.c
+@@ -344,7 +344,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 	/* Both presence and absence of sram regulator are valid cases. */
+ 	sram_reg = regulator_get_exclusive(cpu_dev, "sram");
+ 
+-	ret = of_init_opp_table(cpu_dev);
++	ret = of_add_opp_table(cpu_dev);
+ 	if (ret) {
+ 		pr_warn("no OPP table for cpu%d\n", cpu);
+ 		goto out_free_resources;
+@@ -378,7 +378,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 	return 0;
+ 
+ out_free_opp_table:
+-	of_free_opp_table(cpu_dev);
++	of_remove_opp_table(cpu_dev);
+ 
+ out_free_resources:
+ 	if (!IS_ERR(proc_reg))
+@@ -404,7 +404,7 @@ static void mtk_cpu_dvfs_info_release(struct mtk_cpu_dvfs_info *info)
+ 	if (!IS_ERR(info->inter_clk))
+ 		clk_put(info->inter_clk);
+ 
+-	of_free_opp_table(info->cpu_dev);
++	of_remove_opp_table(info->cpu_dev);
+ }
+ 
+ static int mtk_cpufreq_init(struct cpufreq_policy *policy)
+diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+index cab7ba55bedb..5b6243014f8a 100644
+--- a/include/linux/pm_opp.h
++++ b/include/linux/pm_opp.h
+@@ -126,28 +126,28 @@ static inline struct srcu_notifier_head *dev_pm_opp_get_notifier(
+ #endif		/* CONFIG_PM_OPP */
+ 
+ #if defined(CONFIG_PM_OPP) && defined(CONFIG_OF)
+-int of_init_opp_table(struct device *dev);
+-void of_free_opp_table(struct device *dev);
+-int of_cpumask_init_opp_table(cpumask_var_t cpumask);
+-void of_cpumask_free_opp_table(cpumask_var_t cpumask);
++int of_add_opp_table(struct device *dev);
++void of_remove_opp_table(struct device *dev);
++int of_cpumask_add_opp_table(cpumask_var_t cpumask);
++void of_cpumask_remove_opp_table(cpumask_var_t cpumask);
+ int of_get_cpus_sharing_opps(struct device *cpu_dev, cpumask_var_t cpumask);
+ int set_cpus_sharing_opps(struct device *cpu_dev, cpumask_var_t cpumask);
+ #else
+-static inline int of_init_opp_table(struct device *dev)
++static inline int of_add_opp_table(struct device *dev)
+ {
+ 	return -EINVAL;
+ }
+ 
+-static inline void of_free_opp_table(struct device *dev)
++static inline void of_remove_opp_table(struct device *dev)
+ {
+ }
+ 
+-static inline int of_cpumask_init_opp_table(cpumask_var_t cpumask)
++static inline int of_cpumask_add_opp_table(cpumask_var_t cpumask)
+ {
+ 	return -ENOSYS;
+ }
+ 
+-static inline void of_cpumask_free_opp_table(cpumask_var_t cpumask)
++static inline void of_cpumask_remove_opp_table(cpumask_var_t cpumask)
+ {
+ }
+ 
+-- 
+2.4.0
