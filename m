@@ -1,54 +1,76 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH] arm:irqchip: IRQCHIP_DECLARE macro is now accessible
-Date: Sun, 6 Sep 2015 08:45:31 +0800
-Message-ID: <20150906004531.GA30746@tiger>
-References: <1436299411-12329-1-git-send-email-joel@porquet.org>
- <20150713152035.GD26642@tiger>
- <7212409.q6uiaM0l3x@joel-zenbook>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [PATCH v4 01/16] drm: exynos/dp: fix code style
+Date: Sun, 06 Sep 2015 09:33:45 +0800
+Message-ID: <55EB97F9.3010503@rock-chips.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>	
+ <1441086399-24889-1-git-send-email-ykk@rock-chips.com>	
+ <55E79297.3050203@samsung.com> <55E7D4E4.6070808@rock-chips.com>	
+ <55E7D5EB.1060505@samsung.com> <55E7DBA7.90504@rock-chips.com>
+ <1441259878.12163.75.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:46313 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750749AbbIFApu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Sep 2015 20:45:50 -0400
-Content-Disposition: inline
-In-Reply-To: <7212409.q6uiaM0l3x@joel-zenbook>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1441259878.12163.75.camel-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TaqPxH82wqD4g@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joel Porquet <joel@porquet.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Sep 04, 2015 at 04:54:21PM -0400, Joel Porquet wrote:
-> On Monday, July 13, 2015 11:20:35 PM Shawn Guo wrote:
-> > On Tue, Jul 07, 2015 at 04:02:53PM -0400, Joel Porquet wrote:
-> > > The IRQCHIP_DECLARE macro migrated to 'include/linux/irqchip.h', making it
-> > > globally accessible.
-> > > 
-> > > See commit 91e20b5040c67c51aad88cf87db4305c5bd7f79d
-> > > ("irqchip: Move IRQCHIP_DECLARE macro to include/linux/irqchip.h").
-> > > 
-> > > This patch adds inclusions of 'include/linux/irqchip.h' and replaces uses
-> > > of macro OF_DECLARE_2 with IRQCHIP_DECLARE.
-> > > 
-> > > Signed-off-by: Joel Porquet <joel@porquet.org>
-> > > ---
-> > 
-> > ...
-> > 
-> > >  arch/arm/mach-imx/gpc.c              | 7 ++-----
-> > 
-> > Acked-by: Shawn Guo <shawnguo@kernel.org>
-> > 
-> > How will this patch be sent to upstream?
-> 
-> If it's more convenient for the different maintainers affected by this patch, 
-> I can probably resubmit it into a series of patches that modify each file 
-> separately... Let me know quickly so we don't miss the merge window!
-
-We had sent out the materials for this merge window.  So if you have a
-path to upstream, you'd better send this patch through that.  You've
-already got the ACKs from maintainers of affected platform.
-
-Shawn
+SGkgSm9lLAoK5ZyoIDA5LzAzLzIwMTUgMDE6NTcgUE0sIEpvZSBQZXJjaGVzIOWGmemBkzoKPiBP
+biBUaHUsIDIwMTUtMDktMDMgYXQgMTM6MzMgKzA4MDAsIFlha2lyIFlhbmcgd3JvdGU6Cj4gW10K
+Pj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3Jl
+LmMKPiBbXQo+Pj4+Pj4gQEAgLTE1NSwyNCArMTU2LDIyIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Rw
+X3JlYWRfZWRpZChzdHJ1Y3QKPj4+Pj4+IGV4eW5vc19kcF9kZXZpY2UgKmRwKQo+Pj4+Pj4gICAg
+ICAgICAgICAgfQo+Pj4+Pj4gICAgICAgICAgICAgICBleHlub3NfZHBfcmVhZF9ieXRlX2Zyb21f
+ZHBjZChkcCwgRFBfVEVTVF9SRVFVRVNULAo+Pj4+Pj4gLSAgICAgICAgICAgICAgICAgICAgJnRl
+c3RfdmVjdG9yKTsKPj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICZ0ZXN0X3ZlY3Rv
+cik7Cj4+Pj4+PiAgICAgICAgICAgICBpZiAodGVzdF92ZWN0b3IgJiBEUF9URVNUX0xJTktfRURJ
+RF9SRUFEKSB7Cj4+Pj4+PiAtICAgICAgICAgICAgZXh5bm9zX2RwX3dyaXRlX2J5dGVfdG9fZHBj
+ZChkcCwKPj4+Pj4+IC0gICAgICAgICAgICAgICAgRFBfVEVTVF9FRElEX0NIRUNLU1VNLAo+Pj4+
+Pj4gKyAgICAgICAgICAgIGV4eW5vc19kcF93cml0ZV9ieXRlX3RvX2RwY2QoCj4+Pj4+PiArICAg
+ICAgICAgICAgICAgIGRwLCBEUF9URVNUX0VESURfQ0hFQ0tTVU0sCj4+Pj4+PiAgICAgICAgICAg
+ICAgICAgICAgIGVkaWRbRURJRF9CTE9DS19MRU5HVEggKyBFRElEX0NIRUNLU1VNXSk7Cj4+Pj4+
+PiAtICAgICAgICAgICAgZXh5bm9zX2RwX3dyaXRlX2J5dGVfdG9fZHBjZChkcCwKPj4+Pj4+IC0g
+ICAgICAgICAgICAgICAgRFBfVEVTVF9SRVNQT05TRSwKPj4+Pj4+ICsgICAgICAgICAgICBleHlu
+b3NfZHBfd3JpdGVfYnl0ZV90b19kcGNkKAo+Pj4+Pj4gKyAgICAgICAgICAgICAgICBkcCwgRFBf
+VEVTVF9SRVNQT05TRSwKPj4+Pj4+ICAgICAgICAgICAgICAgICAgICAgRFBfVEVTVF9FRElEX0NI
+RUNLU1VNX1dSSVRFKTsKPj4+Pj4gVG8gbWUsIG1pc3NpbmcgYXJndW1lbnQgYWZ0ZXIgb3Blbmlu
+ZyBwYXJlbnRoZXNpcywgbG9va3Mgd29yc2UuIEkgd291bGQKPj4+Pj4gcHJlZmVyOgo+Pj4+Pgo+
+Pj4+PiAgICAgICAgICAgICAgIGV4eW5vc19kcF93cml0ZV9ieXRlX3RvX2RwY2QoZHAsCj4+Pj4+
+Cj4+Pj4+IFdoeSB5b3UgbW92ZWQgdGhlICdkcCcgYXJndW1lbnQgdG8gbmV3IGxpbmU/Cj4+Pj4g
+SG1tLi4uIEp1c3QgbGlrZSBzdHlsZSB0b29sIGluZGljYXRlLCBubyBtb3JlIHdhcm5pbmcgYWZ0
+ZXIKPj4+PiB0aGF0IGNoYW5nZS4KPj4+Pgo+Pj4+IEZvciBub3csIEkgd291bGQgbGlrZSB0byBm
+b2xsb3cgdGhlIG9yaWdpbmFsIHN0eWxlLCBqdXN0IGltcHJvdmVkCj4+Pj4gc29tZSBvYnZpb3Vz
+IHN0eWxlIHByb2JsZW0uICA6LSkKPj4+IFdoYXQgd2FzIHRoZSBjaGVja3BhdGNoIHdhcm5pbmcg
+dGhhdCBzYWlkICdkcCcgaGFzIHRvIG1vdmUgdG8gbmV3IGxpbmU/Cj4+PiBJIHRyaWVkIHRoaXMg
+YW5kIEkgZG9uJ3Qgc2VlIGl0Lgo+PiBjaGVja3BhdGNoIGhhdmVuJ3QgcmVtaW5kIG1lIHRoYXQg
+cHV0IGRwIHRvIG5ldyBsaW5lIHdvdWxkIGZpeAo+PiB0aGlzIHdhcm5pbmcsIHRoaXMganVzdCBj
+b21lIGZyb20gbXkgZXhwZXJpbWVudHMuIEFuZCBJIHdvcmtzLAo+PiBubyBtb3JlIHdhcm5pbmdz
+IGZyb20gY2hlY2twYXRjaCwgc28gSSB0b2tlIHRoaXMgc3R5bGUuCj4gQ2hlY2twYXRjaCBpc24n
+dCBhIGdyZWF0IGFyYml0ZXIgb2Ygc3R5bGUuCj4gSXQncyBqdXN0IGEgYnJhaW5sZXNzIHRvb2wu
+Cj4KPiBBbHdheXMgdXNlIHlvdXIgaW5zdGVhZCBvZiBhbnl0aGluZyBicmFpbmxlc3MuCj4KPiBJ
+ZiBpdCB3ZXJlIGNvZGUgSSB3YXMgd3JpdGluZywgSSdkIGlnbm9yZSA4MCBjb2x1bW5zIHdhcm5p
+bmdzCj4gd2hlcmUgYXBwcm9wcmlhdGUuCj4KPiBUaGVzZSBhcmUgbG9uZyBmdW5jdGlvbiBuYW1l
+cyBhbmQgbG9uZyBtYWNybyBkZWZpbmVzLCBzbyBpdCdzCj4gaW5hcHByb3ByaWF0ZSB0byB1c2Ug
+ODAgY29sdW1ucyBhcyBhIGd1aWRpbmcgc3R5bGUuCj4KPiBJJ2Qgd3JpdGU6Cj4KPiAJCWV4eW5v
+c19kcF9yZWFkX2J5dGVfZnJvbV9kcGNkKGRwLCBEUF9URVNUX1JFUVVFU1QsICZ0ZXN0X3ZlY3Rv
+cik7Cj4gCQlpZiAodGVzdF92ZWN0b3IgJiBEUF9URVNUX0xJTktfRURJRF9SRUFEKSB7Cj4gCQkJ
+ZXh5bm9zX2RwX3dyaXRlX2J5dGVfdG9fZHBjZChkcCwgRFBfVEVTVF9FRElEX0NIRUNLU1VNLAo+
+IAkJCQkJCSAgICAgZWRpZFtFRElEX0JMT0NLX0xFTkdUSCArIEVESURfQ0hFQ0tTVU1dKTsKPiAJ
+CQlleHlub3NfZHBfd3JpdGVfYnl0ZV90b19kcGNkKGRwLCBEUF9URVNUX1JFU1BPTlNFLAo+IAkJ
+CQkJCSAgICAgRFBfVEVTVF9FRElEX0NIRUNLU1VNX1dSSVRFKTsKPiAJCX0KPgoKU28uLi4ganVz
+dCBpZ25vcmUgdGhlIDgwIGNvbHVtbnMgd2FybmluZ3MuIEFjdHVhbGx5IEkgcHJlZmVyIHRvCmtl
+ZXAgdGhlIG9yaWdpbmFsIHN0eWxlIGluIHRoaXMgY2FzZS4KClRoYW5rcywKLSBZYWtpcgpdCj4K
+Pgo+CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxp
+bnV4LXJvY2tjaGlwIG1haWxpbmcgbGlzdApMaW51eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtcm9j
+a2NoaXAK
