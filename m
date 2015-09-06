@@ -1,136 +1,230 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
- to bridge dir
-Date: Mon, 07 Sep 2015 09:22:35 +0900
-Message-ID: <55ECD8CB.7060408@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v4 14/16] drm: bridge: analogix/dp: try force hpd after
+ plug in lookup failed
+Date: Sun, 06 Sep 2015 11:59:08 +0800
+Message-ID: <55EBBA0C.1030100@rock-chips.com>
 References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <1441086598-24995-1-git-send-email-ykk@rock-chips.com>
- <55E79B41.6010301@samsung.com> <55E7DAE1.6070308@rock-chips.com>
- <55E8E8BE.8010300@samsung.com> <55EBF024.3070304@rock-chips.com>
+ <1441088079-25809-1-git-send-email-ykk@rock-chips.com>
+ <CAL_JsqJDALnjVaVoEqGGsSLeE31m3MKOfbSoZ3M+g+zPZR2MFg@mail.gmail.com>
+ <55E7CC43.7040608@rock-chips.com> <20150903090421.GC3784@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-reply-to: <55EBF024.3070304-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1687784072=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150903090421.GC3784@ulmo.nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <treding@nvidia.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, seanpaul@chromium.com, djkurtz@chromium.com, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Rob Herring <robherring2@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Joe Perches <joe@perches.com>, Rob Herring <robh+dt@kernel.org>, dianders@chromium.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jingoo Han <jingoohan1@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDYuMDkuMjAxNSAxNjo0OSwgWWFraXIgWWFuZyB3cm90ZToKPiBIaSBLcnp5c3p0b2YsCj4g
-Cj4g5ZyoIDA5LzA0LzIwMTUgMDg6NDEgQU0sIEtyenlzenRvZiBLb3psb3dza2kg5YaZ6YGTOgo+
-PiBPbiAwMy4wOS4yMDE1IDE0OjMwLCBZYWtpciBZYW5nIHdyb3RlOgo+Pj4gSGkgS3J6eXN6dG9m
-LAo+Pj4KPj4+IOWcqCAwOS8wMy8yMDE1IDA4OjU4IEFNLCBLcnp5c3p0b2YgS296bG93c2tpIOWG
-memBkzoKPj4+PiBPbiAwMS4wOS4yMDE1IDE0OjQ5LCBZYWtpciBZYW5nIHdyb3RlOgo+Pj4+PiBT
-cGxpdCB0aGUgZHAgY29yZSBkcml2ZXIgZnJvbSBleHlub3MgZGlyZWN0b3J5IHRvIGJyaWRnZQo+
-Pj4+PiBkaXJlY3RvcnksIGFuZCByZW5hbWUgdGhlIGNvcmUgZHJpdmVyIHRvIGFuYWxvZ2l4X2Rw
-XyosCj4+Pj4+IGxlYXZlIHRoZSBwbGF0Zm9ybSBjb2RlIHRvIGFuYWxvZ2l4X2RwLWV4eW5vcy4K
-Pj4+Pj4KPj4+Pj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29t
-Pgo+Pj4+PiAtLS0KPj4+Pj4gQ2hhbmdlcyBpbiB2NDoKPj4+Pj4gLSBUYWtlIFJvYiBzdWdnZXN0
-LCB1cGRhdGUgImFuYWxvZ2l4LGhwZC1ncGlvcyIgdG8gImhwZC1ncGlvcyIgRFQKPj4+Pj4gcHJv
-cGVyeS4KPj4+Pj4gLSBUYWtlIEppbmdvbyBzdWdnZXN0LCByZW5hbWUgImFuYWxvZ2l4X2RwLWV4
-eW5vcy5jIiBmaWxlIG5hbWUgdG8KPj4+Pj4gImV4eW5vc19kcC5jIgo+Pj4+PiAtIFRha2UgQXJj
-aGl0IHN1Z2dlc3QsIGNyZWF0ZSBhIHNlcGFyYXRlIGZvbGRlciBmb3IgYW5hbG9naXggY29kZSBp
-bgo+Pj4+PiBicmlkZ2UvCj4+Pj4+Cj4+Pj4+IENoYW5nZXMgaW4gdjM6Cj4+Pj4+IC0gVGFrZSBU
-aGllcnJ5IFJlZGluZyBzdWdnZXN0LCBtb3ZlIGV4eW5vcydzIHZpZGVvX3RpbWluZyBjb2RlCj4+
-Pj4+ICAgICB0byBhbmFsb2dpeF9kcC1leHlub3MgcGxhdGZvcm0gZHJpdmVyLCBhZGQgZ2V0X21v
-ZGVzIG1ldGhvZAo+Pj4+PiAgICAgdG8gc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YS4KPj4+
-Pj4gLSBUYWtlIEhlaWtvIHN1Z2dlc3QsIHJlbmFtZSBzb21lICJzYW1zdW5nKiIgZHRzIHByb3Bl
-cnkgdG8KPj4+Pj4gImFuYWxvZ2l4KiIuCj4+Pj4+Cj4+Pj4+IENoYW5nZXMgaW4gdjI6Cj4+Pj4+
-IC0gVGFrZSBKaW5nb28gSGFuIHN1Z2dlc3QsIHJlbW92ZSBuZXcgY29weXJpZ2h0Cj4+Pj4+IC0g
-Rml4IGNvbXBpbGVkIGZhaWxlZCBkdXQgdG8gYW5hbG9naXhfZHBfZGV2aWNlIG1pc3NwZWxsCj4g
-Cj4gWy4uLi4uXQo+IAo+Pj4+PiAtc3RhdGljIGludCBleHlub3NfZHBfYnJpZGdlX2F0dGFjaChz
-dHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQo+Pj4+PiArc3RhdGljIGludCBhbmFsb2dpeF9kcF9i
-cmlkZ2VfYXR0YWNoKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCj4+Pj4+ICAgIHsKPj4+Pj4g
-LSAgICBzdHJ1Y3QgZXh5bm9zX2RwX2RldmljZSAqZHAgPSBicmlkZ2UtPmRyaXZlcl9wcml2YXRl
-Owo+Pj4+PiAtICAgIHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciA9ICZkcC0+ZW5jb2RlcjsK
-Pj4+Pj4gKyAgICBzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCA9IGJyaWRnZS0+ZHJpdmVy
-X3ByaXZhdGU7Cj4+Pj4+ICsgICAgc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyID0gZHAtPmVu
-Y29kZXI7Cj4+Pj4+ICAgICAgICBzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yID0gJmRw
-LT5jb25uZWN0b3I7Cj4+Pj4+ICAgICAgICBpbnQgcmV0Owo+Pj4+PiAgICAtICAgIC8qIFByZS1l
-bXB0IERQIGNvbm5lY3RvciBjcmVhdGlvbiBpZiB0aGVyZSdzIGEgYnJpZGdlICovCj4+Pj4+IC0g
-ICAgaWYgKGRwLT5wdG5fYnJpZGdlKSB7Cj4+Pj4+IC0gICAgICAgIHJldCA9IGV4eW5vc19kcm1f
-YXR0YWNoX2xjZF9icmlkZ2UoZHAsIGVuY29kZXIpOwo+Pj4+PiAtICAgICAgICBpZiAoIXJldCkK
-Pj4+Pj4gLSAgICAgICAgICAgIHJldHVybiAwOwo+Pj4+PiArICAgIGlmICghYnJpZGdlLT5lbmNv
-ZGVyKSB7Cj4+Pj4+ICsgICAgICAgIERSTV9FUlJPUigiUGFyZW50IGVuY29kZXIgb2JqZWN0IG5v
-dCBmb3VuZCIpOwo+Pj4+PiArICAgICAgICByZXR1cm4gLUVOT0RFVjsKPj4+Pj4gICAgICAgIH0K
-Pj4+Pj4gICAgKyAgICBlbmNvZGVyLT5icmlkZ2UgPSBicmlkZ2U7Cj4+Pj4+ICsKPj4+Pj4gICAg
-ICAgIGNvbm5lY3Rvci0+cG9sbGVkID0gRFJNX0NPTk5FQ1RPUl9QT0xMX0hQRDsKPj4+Pj4gICAg
-ICAgICAgcmV0ID0gZHJtX2Nvbm5lY3Rvcl9pbml0KGRwLT5kcm1fZGV2LCBjb25uZWN0b3IsCj4+
-Pj4+IC0gICAgICAgICAgICAgICAgICZleHlub3NfZHBfY29ubmVjdG9yX2Z1bmNzLAo+Pj4+PiAr
-ICAgICAgICAgICAgICAgICAmYW5hbG9naXhfZHBfY29ubmVjdG9yX2Z1bmNzLAo+Pj4+PiAgICAg
-ICAgICAgICAgICAgICAgIERSTV9NT0RFX0NPTk5FQ1RPUl9lRFApOwo+Pj4+PiAgICAgICAgaWYg
-KHJldCkgewo+Pj4+PiAgICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIHRvIGluaXRpYWxpemUg
-Y29ubmVjdG9yIHdpdGggZHJtXG4iKTsKPj4+Pj4gICAgICAgICAgICByZXR1cm4gcmV0Owo+Pj4+
-PiAgICAgICAgfQo+Pj4+PiAgICAtICAgIGRybV9jb25uZWN0b3JfaGVscGVyX2FkZChjb25uZWN0
-b3IsCj4+Pj4+ICZleHlub3NfZHBfY29ubmVjdG9yX2hlbHBlcl9mdW5jcyk7Cj4+Pj4+ICsgICAg
-ZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKGNvbm5lY3RvciwKPj4+Pj4gKyAgICAgICAgICAgICAg
-ICAgJmFuYWxvZ2l4X2RwX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MpOwo+Pj4+PiAgICAgICAgZHJt
-X2Nvbm5lY3Rvcl9yZWdpc3Rlcihjb25uZWN0b3IpOwo+Pj4+PiAgICAgICAgZHJtX21vZGVfY29u
-bmVjdG9yX2F0dGFjaF9lbmNvZGVyKGNvbm5lY3RvciwgZW5jb2Rlcik7Cj4+Pj4+ICAgIC0gICAg
-aWYgKGRwLT5wYW5lbCkKPj4+Pj4gLSAgICAgICAgcmV0ID0gZHJtX3BhbmVsX2F0dGFjaChkcC0+
-cGFuZWwsICZkcC0+Y29ubmVjdG9yKTsKPj4+Pj4gKyAgICBpZiAoZHAtPnBsYXRfZGF0YSAmJiBk
-cC0+cGxhdF9kYXRhLT5wYW5lbCkgewo+Pj4+PiArICAgICAgICByZXQgPSBkcm1fcGFuZWxfYXR0
-YWNoKGRwLT5wbGF0X2RhdGEtPnBhbmVsLCAmZHAtPmNvbm5lY3Rvcik7Cj4+Pj4+ICsgICAgICAg
-IGlmIChyZXQpIHsKPj4+Pj4gKyAgICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIHRvIGF0dGFj
-aCBwYW5lbFxuIik7Cj4+Pj4+ICsgICAgICAgICAgICByZXR1cm4gcmV0Owo+Pj4+PiArICAgICAg
-ICB9Cj4+Pj4+ICsgICAgfQo+Pj4+PiArCj4+Pj4+ICsgICAgLyoKPj4+Pj4gKyAgICAgKiBUaGlz
-IHNob3VsZCBiZSB0aGUgZW5kIG9mIGF0dGFjaCBmdW5jdGlvbiwgY2F1c2VkCj4+Pj4+ICsgICAg
-ICogd2Ugc2hvdWxkIGVuc3VyZSBkcCBicmlkZ2UgY291bGQgYXR0YWNoIGZpcnN0Lgo+Pj4+PiAr
-ICAgICAqLwo+Pj4+PiArICAgICBpZiAoZHAtPnBsYXRfZGF0YSAmJiBkcC0+cGxhdF9kYXRhLT5h
-dHRhY2gpIHsKPj4+Pj4gKyAgICAgICAgIHJldCA9IGRwLT5wbGF0X2RhdGEtPmF0dGFjaChkcC0+
-cGxhdF9kYXRhLCBicmlkZ2UpOwo+Pj4+PiArICAgICAgICAgaWYgKHJldCkgewo+Pj4+PiArICAg
-ICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIGF0IHBsYXRmb3JtIGF0dGNoIGZ1bmNcbiIpOwo+
-Pj4+IFR3byBuZXcgZXJyb3IgcGF0aHMgYXBwZWFyZWQgaGVyZSBhbmQgYWJvdmUuIERvbid0IHlv
-dSBoYXZlIHRvCj4+Pj4gY2xlYW51cCBzb21ldGhpbmc/IEkgZG9uJ3Qga25vdywganVzdCB3b25k
-ZXJpbmcuLi4KPj4+IEhtbS4uLiBJIHRoaW5rIGJvdGggcGFuZWwgJiBwbGF0Zm9ybV9hdHRjaCBu
-ZWVkIEVSUk9SIHJlbWluZCB3aGVuCj4+PiBpdCBmYWlsZWQuIEJ1dCBpZiBpdCBzdGlsbCBuZWVk
-IGNsZWFuLCBJIHRob3VnaCBpdCBzaG91bGQgY2xlYW4gdGhlCj4+PiBwbGF0Zm9ybSBhdHRjaAo+
-Pj4gZXJyb3IsCj4+PiB0aGlzIGlzIG5vdCByZWxhdGUgdG8gRFJNIGRpcmVjdGx5LCBqdXN0IGFu
-YWxvZ2l4IGRyaXZlciBsb2dpYywgc28KPj4+IGNvZGUgd291bGQgbGlrZSwKPj4+Cj4+PiAtICAg
-IGlmIChkcC0+cGFuZWwpCj4+PiAtICAgICAgICByZXQgPSBkcm1fcGFuZWxfYXR0YWNoKGRwLT5w
-YW5lbCwgJmRwLT5jb25uZWN0b3IpOwo+Pj4gKyAgICBpZiAoZHAtPnBsYXRfZGF0YSAmJiBkcC0+
-cGxhdF9kYXRhLT5wYW5lbCkgewo+Pj4gKyAgICAgICAgcmV0ID0gZHJtX3BhbmVsX2F0dGFjaChk
-cC0+cGxhdF9kYXRhLT5wYW5lbCwgJmRwLT5jb25uZWN0b3IpOwo+Pj4gKyAgICAgICAgaWYgKHJl
-dCkgewo+Pj4gKyAgICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIHRvIGF0dGFjaCBwYW5lbFxu
-Iik7Cj4+PiArICAgICAgICAgICAgcmV0dXJuIHJldDsKPj4+ICsgICAgICAgIH0KPj4+ICsgICAg
-fQo+Pj4KPj4+ICsgICAgLyoKPj4+ICsgICAgICogVGhpcyBzaG91bGQgYmUgdGhlIGVuZCBvZiBh
-dHRhY2ggZnVuY3Rpb24sIGNhdXNlZAo+Pj4gKyAgICAgKiB3ZSBzaG91bGQgZW5zdXJlIGRwIGJy
-aWRnZSBjb3VsZCBhdHRhY2ggZmlyc3QuCj4+PiArICAgICAqLwo+Pj4gKyAgICAgaWYgKGRwLT5w
-bGF0X2RhdGEgJiYgZHAtPnBsYXRfZGF0YS0+YXR0YWNoKSB7Cj4+PiArICAgICAgICAgcmV0ID0g
-ZHAtPnBsYXRfZGF0YS0+YXR0YWNoKGRwLT5wbGF0X2RhdGEsIGJyaWRnZSk7Cj4+Pgo+Pj4gICAg
-ICAgICAgICByZXR1cm4gcmV0Owo+PiBJIGFtIGxvc3QuLi4gdGhlIGNvZGUgbG9va3MgdGhlIHNh
-bWUuIFdoYXQgZGlkIHlvdSBjaGFuZ2U/Cj4gCj4gSSBqdXN0IHJlbW92ZSB0aGUgRFJNX0VSUk9S
-IGFmdGVyIGRwLT5wbGF0X2RhdGEtPmF0dGFjaCgpLAo+IG1heWJlIEkgc2hvdWxkIHBhc3RlIHRo
-ZSBjaGFuZ2UgdGhhdCByZWJhc2Ugb24gdGhpcyBwYXRjaCwKPiBoZXJlIGFyZSB0aGV5LAo+IAo+
-ICAgICAvKgo+ICAgICAgKiBUaGlzIHNob3VsZCBiZSB0aGUgZW5kIG9mIGF0dGFjaCBmdW5jdGlv
-biwgY2F1c2VkCj4gICAgICAqIHdlIHNob3VsZCBlbnN1cmUgZHAgYnJpZGdlIGNvdWxkIGF0dGFj
-aCBmaXJzdC4KPiAgICAgICovCj4gLSAgICAgaWYgKGRwLT5wbGF0X2RhdGEgJiYgZHAtPnBsYXRf
-ZGF0YS0+YXR0YWNoKSB7Cj4gKyAgICAgaWYgKGRwLT5wbGF0X2RhdGEgJiYgZHAtPnBsYXRfZGF0
-YS0+YXR0YWNoKQo+ICAgICAgICAgICAgcmV0ID0gZHAtPnBsYXRfZGF0YS0+YXR0YWNoKGRwLT5w
-bGF0X2RhdGEsIGJyaWRnZSk7Cj4gLSAgICAgICAgICBpZiAocmV0KSB7Cj4gLSAgICAgICAgICAg
-ICAgRFJNX0VSUk9SKCJGYWlsZWQgYXQgcGxhdGZvcm0gYXR0Y2ggZnVuY1xuIik7Cj4gLSAgICAg
-ICAgICAgICAgcmV0dXJuIHJldDsKPiAtICAgICAgICAgIH0KPiAtICAgICAgfQo+IAo+IC0gICAg
-cmV0dXJuIDA7Cj4gKyAgIHJldHVybiByZXQ7Cj4gCj4gCj4gSWYgdGhpcyBoYXZlbid0IG1lZXQg
-eW91ciBjb21tZW50LCBJIG1heWJlIHN0YXJ0IHRvIHRoaW5rIHRoYXQKPiB5b3VyIGNvbW1lbnQg
-ICJUd28gbmV3IGVycm9yIHBhdGhzIGFwcGVhcmVkIGhlcmUgYW5kIGFib3ZlIgo+IGluZGljYXRl
-ZCB0aGF0IHRob3NlIHR3byBmdW5jdGlvbiBpcyB0aGUgc2FtZS4KPiAgICAgImRwLT5wbGF0X2Rh
-dGEtPmF0dGFjaChkcC0+cGxhdF9kYXRhLCBicmlkZ2UpOyAiCj4gICAgICJkcm1fcGFuZWxfYXR0
-YWNoKGRwLT5wbGF0X2RhdGEtPnBhbmVsLCAmZHAtPmNvbm5lY3Rvcik7ICIKCkkgd2Fzbid0IHRh
-bGtpbmcgYWJvdXQgZXJyb3IgbWVzc2FnZSBidXQgcmF0aGVyIGFib3V0IHBvc3NpYmxlIG5lZWQg
-b2YKY2xlYW4gdXAgaW4gZXJyb3IgcGF0aC4gUHJldmlvdXNseSB0aGVyZSB3YXMgb25seSBkcm1f
-cGFuZWxfYXR0YWNoKCkuCk5vdyB5b3UgaGF2ZSB0d28gb2YgdGhlbSAoZHJtX3BhbmVsX2F0dGFj
-aCgpIGFuZApkcC0+cGxhdF9kYXRhLT5hdHRhY2goKSkuIElmIHRoZSBzZWNvbmQgZmFpbHMgZG9u
-J3QgeW91IGhhdmUgdG8gY2xlYW4gdXAKYmVmb3JlIGV4aXQ/IEkgZG9uJ3Qga25vdywganVzdCBh
-c2tpbmcuCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgoKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LXJvY2tjaGlwIG1haWxpbmcgbGlzdApMaW51
-eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3Jn
-L21haWxtYW4vbGlzdGluZm8vbGludXgtcm9ja2NoaXAK
+This is a multi-part message in MIME format.
+--===============1687784072==
+Content-Type: multipart/alternative;
+ boundary="------------090007040306020006030300"
+
+This is a multi-part message in MIME format.
+--------------090007040306020006030300
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+
+Hi Thierry,
+
+=E5=9C=A8 09/03/2015 05:04 PM, Thierry Reding =E5=86=99=E9=81=93:
+> On Thu, Sep 03, 2015 at 12:27:47PM +0800, Yakir Yang wrote:
+>> Hi Rob,
+>>
+>> =E5=9C=A8 09/03/2015 04:17 AM, Rob Herring =E5=86=99=E9=81=93:
+>>> On Tue, Sep 1, 2015 at 1:14 AM, Yakir Yang <ykk@rock-chips.com> wrote=
+:
+>>>> Some edp screen do not have hpd signal, so we can't just return
+>>>> failed when hpd plug in detect failed.
+>>> This is a property of the panel (or connector perhaps), so this
+>>> property should be located there. At least, it is a common issue and
+>>> not specific to this chip. We could have an HDMI connector and failed
+>>> to hook up HPD for example. A connector node is also where hpd-gpios
+>>> should be located instead (and are already defined by
+>>> ../bindings/video/hdmi-connector.txt). Perhaps we need a eDP connecto=
+r
+>>> binding, too.
+>> Yep, I agree with your front point, it is a property of panel, not spe=
+cific
+>> to eDP controller, so this code should handle in connector logic.
+>  From your description it sounds more like this is in fact a property o=
+f
+> the panel. Or maybe I should say "quirk". If the panel doesn't generate
+> the HPD signal, then that should be a property of the panel, not the
+> connector. The eDP specification mandates that connectors have a HPD
+> signal, though it allows the "HPD conductor in the connector cable" to
+> be omitted if not used by the source. I'd consider the cable to belong
+> to the panel rather than the connector, so absence of HPD, either
+> because the cable doesn't have the conductor or because the panel does
+> not generate the signal, should be a quirk of the panel.
+>
+> That said you could have a panel that supports HPD connected via a cabl=
+e
+> that doesn't transmit it, so this would be a per-board variant and henc=
+e
+> should be a device tree property rather than hard-coded in some panel
+> driver.
+>
+> Conversely, if the panel isn't capable of generating an HPD signal, the=
+n
+> I don't think it would be appropriate to make it a DT property. It woul=
+d
+> be better to hard-code it in the driver, lest someone forget to set the
+> property in DT and get stuck with a device that isn't operational.
+
+Oh, you're right, if it's a cable quirk, then DT property would be okay,=20
+if it
+is a problem of panel, then maybe hard-code in driver would be better.
+
+After look up for the document of panel "innolux,n116bge", I haven't see
+any description of hot plug signal, and even not found in PIN ASSIGNMENT.
+So I believe it's a panel problem, that's to say it should handle in=20
+panel driver.
+
+Hmm... But I don't know how to cover the whole hpd situation in panel=20
+detect,
+it looks complicate  *_*
+
+And Russell have remind that DRM .force is another way to handle this one=
+,
+but I haven't understand it very well. I see we need make connector->forc=
+e =3D
+DRM_FORCE_ON, then we can enable eDP in connector->funcs->force(). But
+I don't how to handle connector->force automatically without DT property,
+could some guys help here    :-D
+
+Thanks,
+- Yakir
+
+--------------090007040306020006030300
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+  <head>
+    <meta content=3D"text/html; charset=3Dutf-8" http-equiv=3D"Content-Ty=
+pe">
+  </head>
+  <body bgcolor=3D"#FFFFFF" text=3D"#000000">
+    Hi Thierry,<br>
+    <br>
+    <div class=3D"moz-cite-prefix">=E5=9C=A8 09/03/2015 05:04 PM, Thierry=
+ Reding
+      =E5=86=99=E9=81=93:<br>
+    </div>
+    <blockquote cite=3D"mid:20150903090421.GC3784@ulmo.nvidia.com"
+      type=3D"cite">
+      <pre wrap=3D"">On Thu, Sep 03, 2015 at 12:27:47PM +0800, Yakir Yang=
+ wrote:
+</pre>
+      <blockquote type=3D"cite">
+        <pre wrap=3D"">Hi Rob,
+
+=E5=9C=A8 09/03/2015 04:17 AM, Rob Herring =E5=86=99=E9=81=93:
+</pre>
+        <blockquote type=3D"cite">
+          <pre wrap=3D"">On Tue, Sep 1, 2015 at 1:14 AM, Yakir Yang <a cl=
+ass=3D"moz-txt-link-rfc2396E" href=3D"mailto:ykk@rock-chips.com">&lt;ykk@=
+rock-chips.com&gt;</a> wrote:
+</pre>
+          <blockquote type=3D"cite">
+            <pre wrap=3D"">Some edp screen do not have hpd signal, so we =
+can't just return
+failed when hpd plug in detect failed.
+</pre>
+          </blockquote>
+          <pre wrap=3D"">This is a property of the panel (or connector pe=
+rhaps), so this
+property should be located there. At least, it is a common issue and
+not specific to this chip. We could have an HDMI connector and failed
+to hook up HPD for example. A connector node is also where hpd-gpios
+should be located instead (and are already defined by
+../bindings/video/hdmi-connector.txt). Perhaps we need a eDP connector
+binding, too.
+</pre>
+        </blockquote>
+        <pre wrap=3D"">
+Yep, I agree with your front point, it is a property of panel, not specif=
+ic
+to eDP controller, so this code should handle in connector logic.
+</pre>
+      </blockquote>
+      <pre wrap=3D"">
+>From your description it sounds more like this is in fact a property of
+the panel. Or maybe I should say "quirk". If the panel doesn't generate
+the HPD signal, then that should be a property of the panel, not the
+connector. The eDP specification mandates that connectors have a HPD
+signal, though it allows the "HPD conductor in the connector cable" to
+be omitted if not used by the source. I'd consider the cable to belong
+to the panel rather than the connector, so absence of HPD, either
+because the cable doesn't have the conductor or because the panel does
+not generate the signal, should be a quirk of the panel.
+
+That said you could have a panel that supports HPD connected via a cable
+that doesn't transmit it, so this would be a per-board variant and hence
+should be a device tree property rather than hard-coded in some panel
+driver.
+
+Conversely, if the panel isn't capable of generating an HPD signal, then
+I don't think it would be appropriate to make it a DT property. It would
+be better to hard-code it in the driver, lest someone forget to set the
+property in DT and get stuck with a device that isn't operational.
+</pre>
+    </blockquote>
+    <br>
+    Oh, you're right, if it's a cable quirk, then DT property would be
+    okay, if it<br>
+    is a problem of panel, then maybe hard-code in driver would be
+    better.<br>
+    <br>
+    After look up for the document of panel "innolux,n116bge", I haven't
+    see<br>
+    any description of hot plug signal, and even not found in
+    <meta http-equiv=3D"content-type" content=3D"text/html; charset=3Dutf=
+-8">
+    PIN ASSIGNMENT.<br>
+    So I believe it's a panel problem, that's to say it should handle in
+    panel driver.<br>
+    <br>
+    Hmm... But I don't know how to cover the whole hpd situation in
+    panel detect,<br>
+    it looks complicate=C2=A0 *_*<br>
+    <br>
+    And Russell have remind that DRM .force is another way to handle
+    this one,<br>
+    but I haven't understand it very well. I see we need make
+    connector-&gt;force =3D<br>
+    DRM_FORCE_ON, then we can enable eDP in
+    connector-&gt;funcs-&gt;force(). But<br>
+    I don't how to handle connector-&gt;force automatically without DT
+    property,<br>
+    could some guys help here =C2=A0=C2=A0 :-D<br>
+    <br>
+    Thanks,<br>
+    - Yakir<br>
+  </body>
+</html>
+
+--------------090007040306020006030300--
+
+
+--===============1687784072==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============1687784072==--
