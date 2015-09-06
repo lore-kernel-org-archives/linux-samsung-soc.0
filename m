@@ -1,187 +1,54 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH] drm/exynos: add cursor plane support
-Date: Fri, 4 Sep 2015 19:07:30 -0300
-Message-ID: <20150904220730.GB2665@joana>
-References: <1441311297-5083-1-git-send-email-gustavo@padovan.org>
- <55E9188F.5040601@samsung.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] arm:irqchip: IRQCHIP_DECLARE macro is now accessible
+Date: Sun, 6 Sep 2015 08:45:31 +0800
+Message-ID: <20150906004531.GA30746@tiger>
+References: <1436299411-12329-1-git-send-email-joel@porquet.org>
+ <20150713152035.GD26642@tiger>
+ <7212409.q6uiaM0l3x@joel-zenbook>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f176.google.com ([209.85.160.176]:36235 "EHLO
-	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759298AbbIDWHd convert rfc822-to-8bit (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:46313 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750749AbbIFApu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Sep 2015 18:07:33 -0400
-Received: by ykcf206 with SMTP id f206so34145161ykc.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2015 15:07:33 -0700 (PDT)
+	Sat, 5 Sep 2015 20:45:50 -0400
 Content-Disposition: inline
-In-Reply-To: <55E9188F.5040601@samsung.com>
+In-Reply-To: <7212409.q6uiaM0l3x@joel-zenbook>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Joel Porquet <joel@porquet.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Inki,
+On Fri, Sep 04, 2015 at 04:54:21PM -0400, Joel Porquet wrote:
+> On Monday, July 13, 2015 11:20:35 PM Shawn Guo wrote:
+> > On Tue, Jul 07, 2015 at 04:02:53PM -0400, Joel Porquet wrote:
+> > > The IRQCHIP_DECLARE macro migrated to 'include/linux/irqchip.h', making it
+> > > globally accessible.
+> > > 
+> > > See commit 91e20b5040c67c51aad88cf87db4305c5bd7f79d
+> > > ("irqchip: Move IRQCHIP_DECLARE macro to include/linux/irqchip.h").
+> > > 
+> > > This patch adds inclusions of 'include/linux/irqchip.h' and replaces uses
+> > > of macro OF_DECLARE_2 with IRQCHIP_DECLARE.
+> > > 
+> > > Signed-off-by: Joel Porquet <joel@porquet.org>
+> > > ---
+> > 
+> > ...
+> > 
+> > >  arch/arm/mach-imx/gpc.c              | 7 ++-----
+> > 
+> > Acked-by: Shawn Guo <shawnguo@kernel.org>
+> > 
+> > How will this patch be sent to upstream?
+> 
+> If it's more convenient for the different maintainers affected by this patch, 
+> I can probably resubmit it into a series of patches that modify each file 
+> separately... Let me know quickly so we don't miss the merge window!
 
-2015-09-04 Inki Dae <inki.dae@samsung.com>:
+We had sent out the materials for this merge window.  So if you have a
+path to upstream, you'd better send this patch through that.  You've
+already got the ACKs from maintainers of affected platform.
 
-> Hi Gustavo,
->=20
-> I had already a review but I didn't give any comment to you. Sorry ab=
-out
-> that. This patch looks good to me but one thing isn't clear. Below is=
- my
-> comment.
->=20
->=20
-> On 2015=EB=85=84 09=EC=9B=94 04=EC=9D=BC 05:14, Gustavo Padovan wrote=
-:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >=20
-> > Set one of the planes for each crtc driver as a cursor plane enable=
-d
-> > window managers to fully work on exynos.
-> >=20
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  9 ++-------
-> >  drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  8 ++------
-> >  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  3 +++
-> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  8 ++------
-> >  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 18 +++++++++++++++=
----
-> >  drivers/gpu/drm/exynos/exynos_drm_plane.h     |  5 ++---
-> >  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  9 ++-------
-> >  drivers/gpu/drm/exynos/exynos_mixer.c         | 10 +++-------
-> >  8 files changed, 31 insertions(+), 39 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/driver=
-s/gpu/drm/exynos/exynos5433_drm_decon.c
-> > index b3c7307..79b2b22 100644
-> > --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> > +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> > @@ -33,7 +33,6 @@ struct decon_context {
-> >  	struct exynos_drm_plane		planes[WINDOWS_NR];
-> >  	void __iomem			*addr;
-> >  	struct clk			*clks[6];
-> > -	unsigned int			default_win;
-> >  	unsigned long			irq_flags;
-> >  	int				pipe;
-> >  	bool				suspended;
-> > @@ -493,7 +492,6 @@ static int decon_bind(struct device *dev, struc=
-t device *master, void *data)
-> >  	struct drm_device *drm_dev =3D data;
-> >  	struct exynos_drm_private *priv =3D drm_dev->dev_private;
-> >  	struct exynos_drm_plane *exynos_plane;
-> > -	enum drm_plane_type type;
-> >  	unsigned int zpos;
-> >  	int ret;
-> > =20
-> > @@ -501,16 +499,14 @@ static int decon_bind(struct device *dev, str=
-uct device *master, void *data)
-> >  	ctx->pipe =3D priv->pipe++;
-> > =20
-> >  	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
-> > -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY=
- :
-> > -							DRM_PLANE_TYPE_OVERLAY;
-> >  		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
-> > -				1 << ctx->pipe, type, decon_formats,
-> > +				1 << ctx->pipe, decon_formats,
-> >  				ARRAY_SIZE(decon_formats), zpos);
-> >  		if (ret)
-> >  			return ret;
-> >  	}
-> > =20
-> > -	exynos_plane =3D &ctx->planes[ctx->default_win];
-> > +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
-> >  	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base=
-,
-> >  					ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
-> >  					&decon_crtc_ops, ctx);
-> > @@ -607,7 +603,6 @@ static int exynos5433_decon_probe(struct platfo=
-rm_device *pdev)
-> >  	if (!ctx)
-> >  		return -ENOMEM;
-> > =20
-> > -	ctx->default_win =3D 0;
-> >  	ctx->suspended =3D true;
-> >  	ctx->dev =3D dev;
-> >  	if (of_get_child_by_name(dev->of_node, "i80-if-timings"))
-> > diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/g=
-pu/drm/exynos/exynos7_drm_decon.c
-> > index cbdb78e..f3826dc 100644
-> > --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> > +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> > @@ -52,7 +52,6 @@ struct decon_context {
-> >  	struct clk			*eclk;
-> >  	struct clk			*vclk;
-> >  	void __iomem			*regs;
-> > -	unsigned int			default_win;
-> >  	unsigned long			irq_flags;
-> >  	bool				i80_if;
-> >  	bool				suspended;
-> > @@ -691,7 +690,6 @@ static int decon_bind(struct device *dev, struc=
-t device *master, void *data)
-> >  	struct decon_context *ctx =3D dev_get_drvdata(dev);
-> >  	struct drm_device *drm_dev =3D data;
-> >  	struct exynos_drm_plane *exynos_plane;
-> > -	enum drm_plane_type type;
-> >  	unsigned int zpos;
-> >  	int ret;
-> > =20
-> > @@ -702,16 +700,14 @@ static int decon_bind(struct device *dev, str=
-uct device *master, void *data)
-> >  	}
-> > =20
-> >  	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
-> > -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY=
- :
-> > -						DRM_PLANE_TYPE_OVERLAY;
-> >  		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
-> > -					1 << ctx->pipe, type, decon_formats,
-> > +					1 << ctx->pipe, decon_formats,
-> >  					ARRAY_SIZE(decon_formats), zpos);
-> >  		if (ret)
-> >  			return ret;
-> >  	}
-> > =20
-> > -	exynos_plane =3D &ctx->planes[ctx->default_win];
-> > +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
-> >  	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base=
-,
-> >  					   ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
-> >  					   &decon_crtc_ops, ctx);
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/=
-drm/exynos/exynos_drm_drv.h
-> > index b7ba21d..cc56c3d 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> > @@ -22,6 +22,9 @@
-> >  #define MAX_PLANE	5
-> >  #define MAX_FB_BUFFER	4
-> > =20
-> > +#define DEFAULT_WIN	0
-> > +#define CURSOR_WIN	1
->=20
-> You fixed overlay number for cursor with 1. However, Display controll=
-ers
-> of Exynos SoC have fixed overlay priority like this,
->=20
-> win 4 > win 3 > win 2 > win 1 > win 0 so if we fix the overlay number
-> for cursor and we use another overlay - which has a higher layer than
-> cursor - to display caption or UI then the we couldn't see the cursor=
- on
-> screen without additional work such as color key or alpha channel.
->=20
-> So before that, you need to check how many overlays can be used
-> according to Exynos SoC versions, and which way is better - one is fo=
-r
-> top layer to be fixed for cursor, other is for one given layer to be
-> fixed by user-space for cursor.
-
-I've just sent a v2 adjusting the cursor window to be the on the higher
-layer. However I couldn't check if that is enough for all SoC versions.
-
-	Gustavo
+Shawn
