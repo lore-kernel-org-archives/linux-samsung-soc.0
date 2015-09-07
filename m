@@ -1,145 +1,136 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 11/16] drm: bridge: analogix/dp: add platform device
- type support
-Date: Mon, 07 Sep 2015 08:55:55 +0900
-Message-ID: <55ECD28B.40703@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
+ to bridge dir
+Date: Mon, 07 Sep 2015 09:22:35 +0900
+Message-ID: <55ECD8CB.7060408@samsung.com>
 References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <1441087620-25586-1-git-send-email-ykk@rock-chips.com>
- <55E8E77C.4020305@samsung.com> <55EBBBFA.3020801@rock-chips.com>
+ <1441086598-24995-1-git-send-email-ykk@rock-chips.com>
+ <55E79B41.6010301@samsung.com> <55E7DAE1.6070308@rock-chips.com>
+ <55E8E8BE.8010300@samsung.com> <55EBF024.3070304@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40734 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752943AbbIFX4L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 6 Sep 2015 19:56:11 -0400
-In-reply-to: <55EBBBFA.3020801@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-reply-to: <55EBF024.3070304-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Mark Yao <mark.yao@rock-chips.com>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-On 06.09.2015 13:07, Yakir Yang wrote:
-> Hi Krzysztof,
->=20
-> =E5=9C=A8 09/04/2015 08:36 AM, Krzysztof Kozlowski =E5=86=99=E9=81=93=
-:
->> On 01.09.2015 15:07, Yakir Yang wrote:
->>
->> Empty commit message. Please explain here why you want to add platfo=
-rm
->> device type support.
->>
->> Actually the title is confusing. You are not adding support for plat=
-form
->> device types but rather adding a field containing type of device.
->>
->>
->>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->>> ---
->>> Changes in v4: None
->>> Changes in v3: None
->>> Changes in v2:
->>> - Add GNU license v2 declared and samsung copyright
->>>
->>>   drivers/gpu/drm/exynos/exynos_dp.c              |  1 +
->>>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c |  1 +
->>>   include/drm/bridge/analogix_dp.h                | 16 ++++++++++++=
-++++
->>>   3 files changed, 18 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c
->>> b/drivers/gpu/drm/exynos/exynos_dp.c
->>> index 6060d2c..40ef727 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
->>> @@ -224,6 +224,7 @@ static int exynos_dp_bind(struct device *dev,
->>> struct device *master, void *data)
->>>       dp->dev =3D dev;
->>>       dp->drm_dev =3D drm_dev;
->>>   +    dp->plat_data.dev_type =3D EXYNOS_DP;
->>>       dp->plat_data.power_on =3D exynos_dp_poweron;
->>>       dp->plat_data.power_off =3D exynos_dp_poweroff;
->>>       dp->plat_data.get_modes =3D exynos_dp_get_modes;
->>> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->>> b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->>> index efea045..4934271 100644
->>> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->>> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->>> @@ -293,6 +293,7 @@ static int rockchip_dp_bind(struct device *dev,
->>> struct device *master,
->>>           return ret;
->>>       }
->>>   +    dp->plat_data.dev_type =3D RK3288_DP;
->>>       dp->plat_data.attach =3D NULL;
->>>       dp->plat_data.get_modes =3D NULL;
->>>       dp->plat_data.power_on =3D rockchip_dp_poweron;
->>> diff --git a/include/drm/bridge/analogix_dp.h
->>> b/include/drm/bridge/analogix_dp.h
->>> index 8b4ffad..7209a64 100644
->>> --- a/include/drm/bridge/analogix_dp.h
->>> +++ b/include/drm/bridge/analogix_dp.h
->>> @@ -1,9 +1,25 @@
->>> +/*
->>> + * Analogix Core DP (Display Port) interface driver.
->>> + *
->>> + * Copyright (C) 2012 Samsung Electronics Co., Ltd.
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> modify it
->>> + * under the terms of the GNU General Public License as published =
-by
->>> the
->>> + * Free Software Foundation; either version 2 of the License, or (=
-at
->>> your
->>> + * option) any later version.
->>> + */
->> Two questions:
->> 1. Why this change is here? I would rather expect it at patch 3/16 w=
-hen
->> you created this file... That is the usual time for adding copyright=
-s.
->=20
-> Yep, I should move this to 03/16.
->=20
->> 2. Does this file contains previous Samsung work?
->=20
-> Hmm... I think this haven't contains the previous Samsung works,
-> but I have the cover the head message from analogix_dp_core driver
-> (include the copyright, but without ant author).
-
-If it does not contain Samsung's work then don't mention its copyrights=
-=2E
-
-Best regards,
-Krzysztof
-
->=20
-> Thanks
-> - Yakir
->=20
->> Best regards,
->> Krzysztof
->>
->>>   #ifndef _ANALOGIX_DP_H_
->>>   #define _ANALOGIX_DP_H_
->>>     #include <drm/drm_crtc.h>
->>>   +enum analogix_dp_devtype {
->>> +    EXYNOS_DP,
->>> +    RK3288_DP,
->>> +};
->>> +
->>>   struct analogix_dp_plat_data {
->>> +    enum analogix_dp_devtype dev_type;
->>>       struct drm_panel *panel;
->>>         int (*power_on)(struct analogix_dp_plat_data *);
->>>
->>
->>
->>
->=20
->=20
->=20
+T24gMDYuMDkuMjAxNSAxNjo0OSwgWWFraXIgWWFuZyB3cm90ZToKPiBIaSBLcnp5c3p0b2YsCj4g
+Cj4g5ZyoIDA5LzA0LzIwMTUgMDg6NDEgQU0sIEtyenlzenRvZiBLb3psb3dza2kg5YaZ6YGTOgo+
+PiBPbiAwMy4wOS4yMDE1IDE0OjMwLCBZYWtpciBZYW5nIHdyb3RlOgo+Pj4gSGkgS3J6eXN6dG9m
+LAo+Pj4KPj4+IOWcqCAwOS8wMy8yMDE1IDA4OjU4IEFNLCBLcnp5c3p0b2YgS296bG93c2tpIOWG
+memBkzoKPj4+PiBPbiAwMS4wOS4yMDE1IDE0OjQ5LCBZYWtpciBZYW5nIHdyb3RlOgo+Pj4+PiBT
+cGxpdCB0aGUgZHAgY29yZSBkcml2ZXIgZnJvbSBleHlub3MgZGlyZWN0b3J5IHRvIGJyaWRnZQo+
+Pj4+PiBkaXJlY3RvcnksIGFuZCByZW5hbWUgdGhlIGNvcmUgZHJpdmVyIHRvIGFuYWxvZ2l4X2Rw
+XyosCj4+Pj4+IGxlYXZlIHRoZSBwbGF0Zm9ybSBjb2RlIHRvIGFuYWxvZ2l4X2RwLWV4eW5vcy4K
+Pj4+Pj4KPj4+Pj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29t
+Pgo+Pj4+PiAtLS0KPj4+Pj4gQ2hhbmdlcyBpbiB2NDoKPj4+Pj4gLSBUYWtlIFJvYiBzdWdnZXN0
+LCB1cGRhdGUgImFuYWxvZ2l4LGhwZC1ncGlvcyIgdG8gImhwZC1ncGlvcyIgRFQKPj4+Pj4gcHJv
+cGVyeS4KPj4+Pj4gLSBUYWtlIEppbmdvbyBzdWdnZXN0LCByZW5hbWUgImFuYWxvZ2l4X2RwLWV4
+eW5vcy5jIiBmaWxlIG5hbWUgdG8KPj4+Pj4gImV4eW5vc19kcC5jIgo+Pj4+PiAtIFRha2UgQXJj
+aGl0IHN1Z2dlc3QsIGNyZWF0ZSBhIHNlcGFyYXRlIGZvbGRlciBmb3IgYW5hbG9naXggY29kZSBp
+bgo+Pj4+PiBicmlkZ2UvCj4+Pj4+Cj4+Pj4+IENoYW5nZXMgaW4gdjM6Cj4+Pj4+IC0gVGFrZSBU
+aGllcnJ5IFJlZGluZyBzdWdnZXN0LCBtb3ZlIGV4eW5vcydzIHZpZGVvX3RpbWluZyBjb2RlCj4+
+Pj4+ICAgICB0byBhbmFsb2dpeF9kcC1leHlub3MgcGxhdGZvcm0gZHJpdmVyLCBhZGQgZ2V0X21v
+ZGVzIG1ldGhvZAo+Pj4+PiAgICAgdG8gc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YS4KPj4+
+Pj4gLSBUYWtlIEhlaWtvIHN1Z2dlc3QsIHJlbmFtZSBzb21lICJzYW1zdW5nKiIgZHRzIHByb3Bl
+cnkgdG8KPj4+Pj4gImFuYWxvZ2l4KiIuCj4+Pj4+Cj4+Pj4+IENoYW5nZXMgaW4gdjI6Cj4+Pj4+
+IC0gVGFrZSBKaW5nb28gSGFuIHN1Z2dlc3QsIHJlbW92ZSBuZXcgY29weXJpZ2h0Cj4+Pj4+IC0g
+Rml4IGNvbXBpbGVkIGZhaWxlZCBkdXQgdG8gYW5hbG9naXhfZHBfZGV2aWNlIG1pc3NwZWxsCj4g
+Cj4gWy4uLi4uXQo+IAo+Pj4+PiAtc3RhdGljIGludCBleHlub3NfZHBfYnJpZGdlX2F0dGFjaChz
+dHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQo+Pj4+PiArc3RhdGljIGludCBhbmFsb2dpeF9kcF9i
+cmlkZ2VfYXR0YWNoKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCj4+Pj4+ICAgIHsKPj4+Pj4g
+LSAgICBzdHJ1Y3QgZXh5bm9zX2RwX2RldmljZSAqZHAgPSBicmlkZ2UtPmRyaXZlcl9wcml2YXRl
+Owo+Pj4+PiAtICAgIHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciA9ICZkcC0+ZW5jb2RlcjsK
+Pj4+Pj4gKyAgICBzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCA9IGJyaWRnZS0+ZHJpdmVy
+X3ByaXZhdGU7Cj4+Pj4+ICsgICAgc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyID0gZHAtPmVu
+Y29kZXI7Cj4+Pj4+ICAgICAgICBzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yID0gJmRw
+LT5jb25uZWN0b3I7Cj4+Pj4+ICAgICAgICBpbnQgcmV0Owo+Pj4+PiAgICAtICAgIC8qIFByZS1l
+bXB0IERQIGNvbm5lY3RvciBjcmVhdGlvbiBpZiB0aGVyZSdzIGEgYnJpZGdlICovCj4+Pj4+IC0g
+ICAgaWYgKGRwLT5wdG5fYnJpZGdlKSB7Cj4+Pj4+IC0gICAgICAgIHJldCA9IGV4eW5vc19kcm1f
+YXR0YWNoX2xjZF9icmlkZ2UoZHAsIGVuY29kZXIpOwo+Pj4+PiAtICAgICAgICBpZiAoIXJldCkK
+Pj4+Pj4gLSAgICAgICAgICAgIHJldHVybiAwOwo+Pj4+PiArICAgIGlmICghYnJpZGdlLT5lbmNv
+ZGVyKSB7Cj4+Pj4+ICsgICAgICAgIERSTV9FUlJPUigiUGFyZW50IGVuY29kZXIgb2JqZWN0IG5v
+dCBmb3VuZCIpOwo+Pj4+PiArICAgICAgICByZXR1cm4gLUVOT0RFVjsKPj4+Pj4gICAgICAgIH0K
+Pj4+Pj4gICAgKyAgICBlbmNvZGVyLT5icmlkZ2UgPSBicmlkZ2U7Cj4+Pj4+ICsKPj4+Pj4gICAg
+ICAgIGNvbm5lY3Rvci0+cG9sbGVkID0gRFJNX0NPTk5FQ1RPUl9QT0xMX0hQRDsKPj4+Pj4gICAg
+ICAgICAgcmV0ID0gZHJtX2Nvbm5lY3Rvcl9pbml0KGRwLT5kcm1fZGV2LCBjb25uZWN0b3IsCj4+
+Pj4+IC0gICAgICAgICAgICAgICAgICZleHlub3NfZHBfY29ubmVjdG9yX2Z1bmNzLAo+Pj4+PiAr
+ICAgICAgICAgICAgICAgICAmYW5hbG9naXhfZHBfY29ubmVjdG9yX2Z1bmNzLAo+Pj4+PiAgICAg
+ICAgICAgICAgICAgICAgIERSTV9NT0RFX0NPTk5FQ1RPUl9lRFApOwo+Pj4+PiAgICAgICAgaWYg
+KHJldCkgewo+Pj4+PiAgICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIHRvIGluaXRpYWxpemUg
+Y29ubmVjdG9yIHdpdGggZHJtXG4iKTsKPj4+Pj4gICAgICAgICAgICByZXR1cm4gcmV0Owo+Pj4+
+PiAgICAgICAgfQo+Pj4+PiAgICAtICAgIGRybV9jb25uZWN0b3JfaGVscGVyX2FkZChjb25uZWN0
+b3IsCj4+Pj4+ICZleHlub3NfZHBfY29ubmVjdG9yX2hlbHBlcl9mdW5jcyk7Cj4+Pj4+ICsgICAg
+ZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKGNvbm5lY3RvciwKPj4+Pj4gKyAgICAgICAgICAgICAg
+ICAgJmFuYWxvZ2l4X2RwX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MpOwo+Pj4+PiAgICAgICAgZHJt
+X2Nvbm5lY3Rvcl9yZWdpc3Rlcihjb25uZWN0b3IpOwo+Pj4+PiAgICAgICAgZHJtX21vZGVfY29u
+bmVjdG9yX2F0dGFjaF9lbmNvZGVyKGNvbm5lY3RvciwgZW5jb2Rlcik7Cj4+Pj4+ICAgIC0gICAg
+aWYgKGRwLT5wYW5lbCkKPj4+Pj4gLSAgICAgICAgcmV0ID0gZHJtX3BhbmVsX2F0dGFjaChkcC0+
+cGFuZWwsICZkcC0+Y29ubmVjdG9yKTsKPj4+Pj4gKyAgICBpZiAoZHAtPnBsYXRfZGF0YSAmJiBk
+cC0+cGxhdF9kYXRhLT5wYW5lbCkgewo+Pj4+PiArICAgICAgICByZXQgPSBkcm1fcGFuZWxfYXR0
+YWNoKGRwLT5wbGF0X2RhdGEtPnBhbmVsLCAmZHAtPmNvbm5lY3Rvcik7Cj4+Pj4+ICsgICAgICAg
+IGlmIChyZXQpIHsKPj4+Pj4gKyAgICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIHRvIGF0dGFj
+aCBwYW5lbFxuIik7Cj4+Pj4+ICsgICAgICAgICAgICByZXR1cm4gcmV0Owo+Pj4+PiArICAgICAg
+ICB9Cj4+Pj4+ICsgICAgfQo+Pj4+PiArCj4+Pj4+ICsgICAgLyoKPj4+Pj4gKyAgICAgKiBUaGlz
+IHNob3VsZCBiZSB0aGUgZW5kIG9mIGF0dGFjaCBmdW5jdGlvbiwgY2F1c2VkCj4+Pj4+ICsgICAg
+ICogd2Ugc2hvdWxkIGVuc3VyZSBkcCBicmlkZ2UgY291bGQgYXR0YWNoIGZpcnN0Lgo+Pj4+PiAr
+ICAgICAqLwo+Pj4+PiArICAgICBpZiAoZHAtPnBsYXRfZGF0YSAmJiBkcC0+cGxhdF9kYXRhLT5h
+dHRhY2gpIHsKPj4+Pj4gKyAgICAgICAgIHJldCA9IGRwLT5wbGF0X2RhdGEtPmF0dGFjaChkcC0+
+cGxhdF9kYXRhLCBicmlkZ2UpOwo+Pj4+PiArICAgICAgICAgaWYgKHJldCkgewo+Pj4+PiArICAg
+ICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIGF0IHBsYXRmb3JtIGF0dGNoIGZ1bmNcbiIpOwo+
+Pj4+IFR3byBuZXcgZXJyb3IgcGF0aHMgYXBwZWFyZWQgaGVyZSBhbmQgYWJvdmUuIERvbid0IHlv
+dSBoYXZlIHRvCj4+Pj4gY2xlYW51cCBzb21ldGhpbmc/IEkgZG9uJ3Qga25vdywganVzdCB3b25k
+ZXJpbmcuLi4KPj4+IEhtbS4uLiBJIHRoaW5rIGJvdGggcGFuZWwgJiBwbGF0Zm9ybV9hdHRjaCBu
+ZWVkIEVSUk9SIHJlbWluZCB3aGVuCj4+PiBpdCBmYWlsZWQuIEJ1dCBpZiBpdCBzdGlsbCBuZWVk
+IGNsZWFuLCBJIHRob3VnaCBpdCBzaG91bGQgY2xlYW4gdGhlCj4+PiBwbGF0Zm9ybSBhdHRjaAo+
+Pj4gZXJyb3IsCj4+PiB0aGlzIGlzIG5vdCByZWxhdGUgdG8gRFJNIGRpcmVjdGx5LCBqdXN0IGFu
+YWxvZ2l4IGRyaXZlciBsb2dpYywgc28KPj4+IGNvZGUgd291bGQgbGlrZSwKPj4+Cj4+PiAtICAg
+IGlmIChkcC0+cGFuZWwpCj4+PiAtICAgICAgICByZXQgPSBkcm1fcGFuZWxfYXR0YWNoKGRwLT5w
+YW5lbCwgJmRwLT5jb25uZWN0b3IpOwo+Pj4gKyAgICBpZiAoZHAtPnBsYXRfZGF0YSAmJiBkcC0+
+cGxhdF9kYXRhLT5wYW5lbCkgewo+Pj4gKyAgICAgICAgcmV0ID0gZHJtX3BhbmVsX2F0dGFjaChk
+cC0+cGxhdF9kYXRhLT5wYW5lbCwgJmRwLT5jb25uZWN0b3IpOwo+Pj4gKyAgICAgICAgaWYgKHJl
+dCkgewo+Pj4gKyAgICAgICAgICAgIERSTV9FUlJPUigiRmFpbGVkIHRvIGF0dGFjaCBwYW5lbFxu
+Iik7Cj4+PiArICAgICAgICAgICAgcmV0dXJuIHJldDsKPj4+ICsgICAgICAgIH0KPj4+ICsgICAg
+fQo+Pj4KPj4+ICsgICAgLyoKPj4+ICsgICAgICogVGhpcyBzaG91bGQgYmUgdGhlIGVuZCBvZiBh
+dHRhY2ggZnVuY3Rpb24sIGNhdXNlZAo+Pj4gKyAgICAgKiB3ZSBzaG91bGQgZW5zdXJlIGRwIGJy
+aWRnZSBjb3VsZCBhdHRhY2ggZmlyc3QuCj4+PiArICAgICAqLwo+Pj4gKyAgICAgaWYgKGRwLT5w
+bGF0X2RhdGEgJiYgZHAtPnBsYXRfZGF0YS0+YXR0YWNoKSB7Cj4+PiArICAgICAgICAgcmV0ID0g
+ZHAtPnBsYXRfZGF0YS0+YXR0YWNoKGRwLT5wbGF0X2RhdGEsIGJyaWRnZSk7Cj4+Pgo+Pj4gICAg
+ICAgICAgICByZXR1cm4gcmV0Owo+PiBJIGFtIGxvc3QuLi4gdGhlIGNvZGUgbG9va3MgdGhlIHNh
+bWUuIFdoYXQgZGlkIHlvdSBjaGFuZ2U/Cj4gCj4gSSBqdXN0IHJlbW92ZSB0aGUgRFJNX0VSUk9S
+IGFmdGVyIGRwLT5wbGF0X2RhdGEtPmF0dGFjaCgpLAo+IG1heWJlIEkgc2hvdWxkIHBhc3RlIHRo
+ZSBjaGFuZ2UgdGhhdCByZWJhc2Ugb24gdGhpcyBwYXRjaCwKPiBoZXJlIGFyZSB0aGV5LAo+IAo+
+ICAgICAvKgo+ICAgICAgKiBUaGlzIHNob3VsZCBiZSB0aGUgZW5kIG9mIGF0dGFjaCBmdW5jdGlv
+biwgY2F1c2VkCj4gICAgICAqIHdlIHNob3VsZCBlbnN1cmUgZHAgYnJpZGdlIGNvdWxkIGF0dGFj
+aCBmaXJzdC4KPiAgICAgICovCj4gLSAgICAgaWYgKGRwLT5wbGF0X2RhdGEgJiYgZHAtPnBsYXRf
+ZGF0YS0+YXR0YWNoKSB7Cj4gKyAgICAgaWYgKGRwLT5wbGF0X2RhdGEgJiYgZHAtPnBsYXRfZGF0
+YS0+YXR0YWNoKQo+ICAgICAgICAgICAgcmV0ID0gZHAtPnBsYXRfZGF0YS0+YXR0YWNoKGRwLT5w
+bGF0X2RhdGEsIGJyaWRnZSk7Cj4gLSAgICAgICAgICBpZiAocmV0KSB7Cj4gLSAgICAgICAgICAg
+ICAgRFJNX0VSUk9SKCJGYWlsZWQgYXQgcGxhdGZvcm0gYXR0Y2ggZnVuY1xuIik7Cj4gLSAgICAg
+ICAgICAgICAgcmV0dXJuIHJldDsKPiAtICAgICAgICAgIH0KPiAtICAgICAgfQo+IAo+IC0gICAg
+cmV0dXJuIDA7Cj4gKyAgIHJldHVybiByZXQ7Cj4gCj4gCj4gSWYgdGhpcyBoYXZlbid0IG1lZXQg
+eW91ciBjb21tZW50LCBJIG1heWJlIHN0YXJ0IHRvIHRoaW5rIHRoYXQKPiB5b3VyIGNvbW1lbnQg
+ICJUd28gbmV3IGVycm9yIHBhdGhzIGFwcGVhcmVkIGhlcmUgYW5kIGFib3ZlIgo+IGluZGljYXRl
+ZCB0aGF0IHRob3NlIHR3byBmdW5jdGlvbiBpcyB0aGUgc2FtZS4KPiAgICAgImRwLT5wbGF0X2Rh
+dGEtPmF0dGFjaChkcC0+cGxhdF9kYXRhLCBicmlkZ2UpOyAiCj4gICAgICJkcm1fcGFuZWxfYXR0
+YWNoKGRwLT5wbGF0X2RhdGEtPnBhbmVsLCAmZHAtPmNvbm5lY3Rvcik7ICIKCkkgd2Fzbid0IHRh
+bGtpbmcgYWJvdXQgZXJyb3IgbWVzc2FnZSBidXQgcmF0aGVyIGFib3V0IHBvc3NpYmxlIG5lZWQg
+b2YKY2xlYW4gdXAgaW4gZXJyb3IgcGF0aC4gUHJldmlvdXNseSB0aGVyZSB3YXMgb25seSBkcm1f
+cGFuZWxfYXR0YWNoKCkuCk5vdyB5b3UgaGF2ZSB0d28gb2YgdGhlbSAoZHJtX3BhbmVsX2F0dGFj
+aCgpIGFuZApkcC0+cGxhdF9kYXRhLT5hdHRhY2goKSkuIElmIHRoZSBzZWNvbmQgZmFpbHMgZG9u
+J3QgeW91IGhhdmUgdG8gY2xlYW4gdXAKYmVmb3JlIGV4aXQ/IEkgZG9uJ3Qga25vdywganVzdCBh
+c2tpbmcuCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgoKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LXJvY2tjaGlwIG1haWxpbmcgbGlzdApMaW51
+eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3Jn
+L21haWxtYW4vbGlzdGluZm8vbGludXgtcm9ja2NoaXAK
