@@ -1,230 +1,150 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v4 14/16] drm: bridge: analogix/dp: try force hpd after
- plug in lookup failed
-Date: Sun, 06 Sep 2015 11:59:08 +0800
-Message-ID: <55EBBA0C.1030100@rock-chips.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <1441088079-25809-1-git-send-email-ykk@rock-chips.com>
- <CAL_JsqJDALnjVaVoEqGGsSLeE31m3MKOfbSoZ3M+g+zPZR2MFg@mail.gmail.com>
- <55E7CC43.7040608@rock-chips.com> <20150903090421.GC3784@ulmo.nvidia.com>
+Subject: Re: [PATCH v4 11/16] drm: bridge: analogix/dp: add platform device
+ type support
+Date: Mon, 07 Sep 2015 09:47:20 +0800
+Message-ID: <55ECECA8.4000701@rock-chips.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com> <1441087620-25586-1-git-send-email-ykk@rock-chips.com> <55E8E77C.4020305@samsung.com> <55EBBBFA.3020801@rock-chips.com> <55ECD28B.40703@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1687784072=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150903090421.GC3784@ulmo.nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <treding@nvidia.com>, Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, seanpaul@chromium.com, djkurtz@chromium.com, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Rob Herring <robherring2@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Joe Perches <joe@perches.com>, Rob Herring <robh+dt@kernel.org>, dianders@chromium.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jingoo Han <jingoohan1@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:45430 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752716AbbIGBsF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 6 Sep 2015 21:48:05 -0400
+In-Reply-To: <55ECD28B.40703@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, joe@perches.com, Kukjin Kim <kgene@kernel.org>, Mark Yao <mark.yao@rock-chips.com>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>, djkurtz@chromium.com, dianders@chromium.com, seanpaul@chromium.com, ajaynumb@gmail.com, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, robherring2@gmail.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-This is a multi-part message in MIME format.
---===============1687784072==
-Content-Type: multipart/alternative;
- boundary="------------090007040306020006030300"
+Hi Krzysztof,
 
-This is a multi-part message in MIME format.
---------------090007040306020006030300
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-
-Hi Thierry,
-
-=E5=9C=A8 09/03/2015 05:04 PM, Thierry Reding =E5=86=99=E9=81=93:
-> On Thu, Sep 03, 2015 at 12:27:47PM +0800, Yakir Yang wrote:
->> Hi Rob,
+=E5=9C=A8 09/07/2015 07:55 AM, Krzysztof Kozlowski =E5=86=99=E9=81=93:
+> On 06.09.2015 13:07, Yakir Yang wrote:
+>> Hi Krzysztof,
 >>
->> =E5=9C=A8 09/03/2015 04:17 AM, Rob Herring =E5=86=99=E9=81=93:
->>> On Tue, Sep 1, 2015 at 1:14 AM, Yakir Yang <ykk@rock-chips.com> wrote=
+>> =E5=9C=A8 09/04/2015 08:36 AM, Krzysztof Kozlowski =E5=86=99=E9=81=93=
 :
->>>> Some edp screen do not have hpd signal, so we can't just return
->>>> failed when hpd plug in detect failed.
->>> This is a property of the panel (or connector perhaps), so this
->>> property should be located there. At least, it is a common issue and
->>> not specific to this chip. We could have an HDMI connector and failed
->>> to hook up HPD for example. A connector node is also where hpd-gpios
->>> should be located instead (and are already defined by
->>> ../bindings/video/hdmi-connector.txt). Perhaps we need a eDP connecto=
-r
->>> binding, too.
->> Yep, I agree with your front point, it is a property of panel, not spe=
-cific
->> to eDP controller, so this code should handle in connector logic.
->  From your description it sounds more like this is in fact a property o=
-f
-> the panel. Or maybe I should say "quirk". If the panel doesn't generate
-> the HPD signal, then that should be a property of the panel, not the
-> connector. The eDP specification mandates that connectors have a HPD
-> signal, though it allows the "HPD conductor in the connector cable" to
-> be omitted if not used by the source. I'd consider the cable to belong
-> to the panel rather than the connector, so absence of HPD, either
-> because the cable doesn't have the conductor or because the panel does
-> not generate the signal, should be a quirk of the panel.
->
-> That said you could have a panel that supports HPD connected via a cabl=
-e
-> that doesn't transmit it, so this would be a per-board variant and henc=
-e
-> should be a device tree property rather than hard-coded in some panel
-> driver.
->
-> Conversely, if the panel isn't capable of generating an HPD signal, the=
-n
-> I don't think it would be appropriate to make it a DT property. It woul=
-d
-> be better to hard-code it in the driver, lest someone forget to set the
-> property in DT and get stuck with a device that isn't operational.
-
-Oh, you're right, if it's a cable quirk, then DT property would be okay,=20
-if it
-is a problem of panel, then maybe hard-code in driver would be better.
-
-After look up for the document of panel "innolux,n116bge", I haven't see
-any description of hot plug signal, and even not found in PIN ASSIGNMENT.
-So I believe it's a panel problem, that's to say it should handle in=20
-panel driver.
-
-Hmm... But I don't know how to cover the whole hpd situation in panel=20
-detect,
-it looks complicate  *_*
-
-And Russell have remind that DRM .force is another way to handle this one=
+>>> On 01.09.2015 15:07, Yakir Yang wrote:
+>>>
+>>> Empty commit message. Please explain here why you want to add platf=
+orm
+>>> device type support.
+>>>
+>>> Actually the title is confusing. You are not adding support for pla=
+tform
+>>> device types but rather adding a field containing type of device.
+>>>
+>>>
+>>>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>>>> ---
+>>>> Changes in v4: None
+>>>> Changes in v3: None
+>>>> Changes in v2:
+>>>> - Add GNU license v2 declared and samsung copyright
+>>>>
+>>>>    drivers/gpu/drm/exynos/exynos_dp.c              |  1 +
+>>>>    drivers/gpu/drm/rockchip/analogix_dp-rockchip.c |  1 +
+>>>>    include/drm/bridge/analogix_dp.h                | 16 ++++++++++=
+++++++
+>>>>    3 files changed, 18 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c
+>>>> b/drivers/gpu/drm/exynos/exynos_dp.c
+>>>> index 6060d2c..40ef727 100644
+>>>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+>>>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+>>>> @@ -224,6 +224,7 @@ static int exynos_dp_bind(struct device *dev,
+>>>> struct device *master, void *data)
+>>>>        dp->dev =3D dev;
+>>>>        dp->drm_dev =3D drm_dev;
+>>>>    +    dp->plat_data.dev_type =3D EXYNOS_DP;
+>>>>        dp->plat_data.power_on =3D exynos_dp_poweron;
+>>>>        dp->plat_data.power_off =3D exynos_dp_poweroff;
+>>>>        dp->plat_data.get_modes =3D exynos_dp_get_modes;
+>>>> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>>>> b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>>>> index efea045..4934271 100644
+>>>> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>>>> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>>>> @@ -293,6 +293,7 @@ static int rockchip_dp_bind(struct device *dev=
 ,
-but I haven't understand it very well. I see we need make connector->forc=
-e =3D
-DRM_FORCE_ON, then we can enable eDP in connector->funcs->force(). But
-I don't how to handle connector->force automatically without DT property,
-could some guys help here    :-D
+>>>> struct device *master,
+>>>>            return ret;
+>>>>        }
+>>>>    +    dp->plat_data.dev_type =3D RK3288_DP;
+>>>>        dp->plat_data.attach =3D NULL;
+>>>>        dp->plat_data.get_modes =3D NULL;
+>>>>        dp->plat_data.power_on =3D rockchip_dp_poweron;
+>>>> diff --git a/include/drm/bridge/analogix_dp.h
+>>>> b/include/drm/bridge/analogix_dp.h
+>>>> index 8b4ffad..7209a64 100644
+>>>> --- a/include/drm/bridge/analogix_dp.h
+>>>> +++ b/include/drm/bridge/analogix_dp.h
+>>>> @@ -1,9 +1,25 @@
+>>>> +/*
+>>>> + * Analogix Core DP (Display Port) interface driver.
+>>>> + *
+>>>> + * Copyright (C) 2012 Samsung Electronics Co., Ltd.
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or
+>>>> modify it
+>>>> + * under the terms of the GNU General Public License as published=
+ by
+>>>> the
+>>>> + * Free Software Foundation; either version 2 of the License, or =
+(at
+>>>> your
+>>>> + * option) any later version.
+>>>> + */
+>>> Two questions:
+>>> 1. Why this change is here? I would rather expect it at patch 3/16 =
+when
+>>> you created this file... That is the usual time for adding copyrigh=
+ts.
+>> Yep, I should move this to 03/16.
+>>
+>>> 2. Does this file contains previous Samsung work?
+>> Hmm... I think this haven't contains the previous Samsung works,
+>> but I have the cover the head message from analogix_dp_core driver
+>> (include the copyright, but without ant author).
+> If it does not contain Samsung's work then don't mention its copyrigh=
+ts.
 
-Thanks,
+Okay,
+
 - Yakir
 
---------------090007040306020006030300
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-  <head>
-    <meta content=3D"text/html; charset=3Dutf-8" http-equiv=3D"Content-Ty=
-pe">
-  </head>
-  <body bgcolor=3D"#FFFFFF" text=3D"#000000">
-    Hi Thierry,<br>
-    <br>
-    <div class=3D"moz-cite-prefix">=E5=9C=A8 09/03/2015 05:04 PM, Thierry=
- Reding
-      =E5=86=99=E9=81=93:<br>
-    </div>
-    <blockquote cite=3D"mid:20150903090421.GC3784@ulmo.nvidia.com"
-      type=3D"cite">
-      <pre wrap=3D"">On Thu, Sep 03, 2015 at 12:27:47PM +0800, Yakir Yang=
- wrote:
-</pre>
-      <blockquote type=3D"cite">
-        <pre wrap=3D"">Hi Rob,
-
-=E5=9C=A8 09/03/2015 04:17 AM, Rob Herring =E5=86=99=E9=81=93:
-</pre>
-        <blockquote type=3D"cite">
-          <pre wrap=3D"">On Tue, Sep 1, 2015 at 1:14 AM, Yakir Yang <a cl=
-ass=3D"moz-txt-link-rfc2396E" href=3D"mailto:ykk@rock-chips.com">&lt;ykk@=
-rock-chips.com&gt;</a> wrote:
-</pre>
-          <blockquote type=3D"cite">
-            <pre wrap=3D"">Some edp screen do not have hpd signal, so we =
-can't just return
-failed when hpd plug in detect failed.
-</pre>
-          </blockquote>
-          <pre wrap=3D"">This is a property of the panel (or connector pe=
-rhaps), so this
-property should be located there. At least, it is a common issue and
-not specific to this chip. We could have an HDMI connector and failed
-to hook up HPD for example. A connector node is also where hpd-gpios
-should be located instead (and are already defined by
-../bindings/video/hdmi-connector.txt). Perhaps we need a eDP connector
-binding, too.
-</pre>
-        </blockquote>
-        <pre wrap=3D"">
-Yep, I agree with your front point, it is a property of panel, not specif=
-ic
-to eDP controller, so this code should handle in connector logic.
-</pre>
-      </blockquote>
-      <pre wrap=3D"">
->From your description it sounds more like this is in fact a property of
-the panel. Or maybe I should say "quirk". If the panel doesn't generate
-the HPD signal, then that should be a property of the panel, not the
-connector. The eDP specification mandates that connectors have a HPD
-signal, though it allows the "HPD conductor in the connector cable" to
-be omitted if not used by the source. I'd consider the cable to belong
-to the panel rather than the connector, so absence of HPD, either
-because the cable doesn't have the conductor or because the panel does
-not generate the signal, should be a quirk of the panel.
-
-That said you could have a panel that supports HPD connected via a cable
-that doesn't transmit it, so this would be a per-board variant and hence
-should be a device tree property rather than hard-coded in some panel
-driver.
-
-Conversely, if the panel isn't capable of generating an HPD signal, then
-I don't think it would be appropriate to make it a DT property. It would
-be better to hard-code it in the driver, lest someone forget to set the
-property in DT and get stuck with a device that isn't operational.
-</pre>
-    </blockquote>
-    <br>
-    Oh, you're right, if it's a cable quirk, then DT property would be
-    okay, if it<br>
-    is a problem of panel, then maybe hard-code in driver would be
-    better.<br>
-    <br>
-    After look up for the document of panel "innolux,n116bge", I haven't
-    see<br>
-    any description of hot plug signal, and even not found in
-    <meta http-equiv=3D"content-type" content=3D"text/html; charset=3Dutf=
--8">
-    PIN ASSIGNMENT.<br>
-    So I believe it's a panel problem, that's to say it should handle in
-    panel driver.<br>
-    <br>
-    Hmm... But I don't know how to cover the whole hpd situation in
-    panel detect,<br>
-    it looks complicate=C2=A0 *_*<br>
-    <br>
-    And Russell have remind that DRM .force is another way to handle
-    this one,<br>
-    but I haven't understand it very well. I see we need make
-    connector-&gt;force =3D<br>
-    DRM_FORCE_ON, then we can enable eDP in
-    connector-&gt;funcs-&gt;force(). But<br>
-    I don't how to handle connector-&gt;force automatically without DT
-    property,<br>
-    could some guys help here =C2=A0=C2=A0 :-D<br>
-    <br>
-    Thanks,<br>
-    - Yakir<br>
-  </body>
-</html>
-
---------------090007040306020006030300--
-
-
---===============1687784072==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============1687784072==--
+>
+> Best regards,
+> Krzysztof
+>
+>> Thanks
+>> - Yakir
+>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>>>    #ifndef _ANALOGIX_DP_H_
+>>>>    #define _ANALOGIX_DP_H_
+>>>>      #include <drm/drm_crtc.h>
+>>>>    +enum analogix_dp_devtype {
+>>>> +    EXYNOS_DP,
+>>>> +    RK3288_DP,
+>>>> +};
+>>>> +
+>>>>    struct analogix_dp_plat_data {
+>>>> +    enum analogix_dp_devtype dev_type;
+>>>>        struct drm_panel *panel;
+>>>>          int (*power_on)(struct analogix_dp_plat_data *);
+>>>>
+>>>
+>>>
+>>
+>>
+>
+>
+>
