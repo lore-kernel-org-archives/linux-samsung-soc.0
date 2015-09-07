@@ -1,150 +1,113 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp
- driver to bridge dir
-Date: Mon, 7 Sep 2015 10:11:53 +0200
-Message-ID: <20150907081152.GA19961@ulmo.nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 14/16] drm: bridge: analogix/dp: try force hpd after
+ plug in lookup failed
+Date: Mon, 7 Sep 2015 10:20:18 +0200
+Message-ID: <20150907082017.GB19961@ulmo.nvidia.com>
 References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <2618155.E00Pak1qvi@phil>
- <CAL_JsqLvOOF0Wk=E1kz0rWXg0+6ay0=4OTbCpjdGCfL7_qFN8Q@mail.gmail.com>
- <3704589.SqgGPobGdG@phil>
+ <1441088079-25809-1-git-send-email-ykk@rock-chips.com>
+ <CAL_JsqJDALnjVaVoEqGGsSLeE31m3MKOfbSoZ3M+g+zPZR2MFg@mail.gmail.com>
+ <55E7CC43.7040608@rock-chips.com>
+ <20150903090421.GC3784@ulmo.nvidia.com>
+ <55EBBA0C.1030100@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7164 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751676AbbIGIMF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Sep 2015 04:12:05 -0400
-In-Reply-To: <3704589.SqgGPobGdG@phil>
+	protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55EBBA0C.1030100-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, dri-devel <dri-devel@lists>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robherring2@gmail.com>, Yakir Yang <ykk@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Ajay kumar <ajaynumb@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andy Yan <andy.yan@rock-chips.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Kishon Vijay Abraham I <kishon@ti.com>, architt@codeaurora.org, dri-devel <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel@vger.kernel
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
+--ftEhullJWpWg/VHq
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 04, 2015 at 11:29:30PM +0200, Heiko Stuebner wrote:
-> Am Freitag, 4. September 2015, 16:06:02 schrieb Rob Herring:
-> > On Tue, Sep 1, 2015 at 3:46 PM, Heiko Stuebner <heiko@sntech.de> wrote:
-> > > Am Dienstag, 1. September 2015, 13:49:58 schrieb Yakir Yang:
-> > >> Split the dp core driver from exynos directory to bridge
-> > >> directory, and rename the core driver to analogix_dp_*,
-> > >> leave the platform code to analogix_dp-exynos.
-> > >>=20
-> > >> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> > >=20
-> > > [...]
-> > >=20
-> > >> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > >> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c similarity inde=
-x 50%
-> > >> rename from drivers/gpu/drm/exynos/exynos_dp_core.c
-> > >> rename to drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> > >> index bed0252..7d62f22 100644
-> > >> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > >> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> > >=20
-> > > [...]
-> > >=20
-> > >>       connector->polled =3D DRM_CONNECTOR_POLL_HPD;
-> > >>      =20
-> > >>       ret =3D drm_connector_init(dp->drm_dev, connector,
-> > >>=20
-> > >> -                              &exynos_dp_connector_funcs,
-> > >> +                              &analogix_dp_connector_funcs,
-> > >>=20
-> > >>                                DRM_MODE_CONNECTOR_eDP);
-> > >>      =20
-> > >>       if (ret) {
-> > >>      =20
-> > >>               DRM_ERROR("Failed to initialize connector with drm\n");
-> > >>               return ret;
-> > >>      =20
-> > >>       }
-> > >>=20
-> > >> -     drm_connector_helper_add(connector,
-> > >> &exynos_dp_connector_helper_funcs); +   =20
-> > >> drm_connector_helper_add(connector,
-> > >> +                              &analogix_dp_connector_helper_funcs);
-> > >>=20
-> > >>       drm_connector_register(connector);
-> > >=20
-> > > this should only run on exynos, as we're doing all our connector
-> > > registration in the core driver after all components are bound, so I
-> > > guess something like>=20
-> > > the following is needed:
-> > >        if (dp->plat_data && dp->plat_data->dev_type =3D=3D EXYNOS_DP)
-> > >       =20
-> > >                drm_connector_register(connector);
-> >=20
-> > Yuck!
-> >=20
-> > Surely there is a better way. From what I've seen of DRM, I have no
-> > doubt this is needed, but really a better solution is needed. Surely
-> > there can be a more generic way for the driver to determine if it
-> > should handle the connector or not. This seems like a common problem
-> > including one I have seen. What I'm working on has onchip DSI encoder
-> > -> ADV7533 -> HDMI. The DSI encoder can also have a direct attached
-> > panel. So I have to check for a bridge in the encoder driver and only
-> > register the connector for the panel if a bridge is not attached.
+On Sun, Sep 06, 2015 at 11:59:08AM +0800, Yakir Yang wrote:
+> Hi Thierry,
 >=20
-> I'm also only a part-time drm meddler, so things may be inaccurate.
+> =E5=9C=A8 09/03/2015 05:04 PM, Thierry Reding =E5=86=99=E9=81=93:
+> >On Thu, Sep 03, 2015 at 12:27:47PM +0800, Yakir Yang wrote:
+> >>Hi Rob,
+> >>
+> >>=E5=9C=A8 09/03/2015 04:17 AM, Rob Herring =E5=86=99=E9=81=93:
+> >>>On Tue, Sep 1, 2015 at 1:14 AM, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+> >>>>Some edp screen do not have hpd signal, so we can't just return
+> >>>>failed when hpd plug in detect failed.
+> >>>This is a property of the panel (or connector perhaps), so this
+> >>>property should be located there. At least, it is a common issue and
+> >>>not specific to this chip. We could have an HDMI connector and failed
+> >>>to hook up HPD for example. A connector node is also where hpd-gpios
+> >>>should be located instead (and are already defined by
+> >>>../bindings/video/hdmi-connector.txt). Perhaps we need a eDP connector
+> >>>binding, too.
+> >>Yep, I agree with your front point, it is a property of panel, not spec=
+ific
+> >>to eDP controller, so this code should handle in connector logic.
+> > From your description it sounds more like this is in fact a property of
+> >the panel. Or maybe I should say "quirk". If the panel doesn't generate
+> >the HPD signal, then that should be a property of the panel, not the
+> >connector. The eDP specification mandates that connectors have a HPD
+> >signal, though it allows the "HPD conductor in the connector cable" to
+> >be omitted if not used by the source. I'd consider the cable to belong
+> >to the panel rather than the connector, so absence of HPD, either
+> >because the cable doesn't have the conductor or because the panel does
+> >not generate the signal, should be a quirk of the panel.
+> >
+> >That said you could have a panel that supports HPD connected via a cable
+> >that doesn't transmit it, so this would be a per-board variant and hence
+> >should be a device tree property rather than hard-coded in some panel
+> >driver.
+> >
+> >Conversely, if the panel isn't capable of generating an HPD signal, then
+> >I don't think it would be appropriate to make it a DT property. It would
+> >be better to hard-code it in the driver, lest someone forget to set the
+> >property in DT and get stuck with a device that isn't operational.
 >=20
-> This conditional is not meant to prevent the registration of the dp conne=
-ctor,=20
-> only delay it for non-exynos drms. The connector registration does publis=
-h it=20
-> to userspace, so like i.MX we're doing that for all connectors at the sam=
-e=20
-> time after all components are bound - to also make x11 happy. Exynos on t=
-he=20
-> other hand seems to register its connectors individually and I'm not sure=
- if=20
-> they would be willing to change that.
+> Oh, you're right, if it's a cable quirk, then DT property would be okay, =
+if
+> it
+> is a problem of panel, then maybe hard-code in driver would be better.
 >=20
-> see d3007dabeff4 ("drm/rockchip: register all connectors after bind") or=
-=20
-> simply rockchip_drm_drv.c line 178.
->=20
-> and e355e7dd607b ("imx-drm: delay publishing sysfs connector entries")
+> After look up for the document of panel "innolux,n116bge", I haven't see
+> any description of hot plug signal, and even not found in PIN ASSIGNMENT.
+> So I believe it's a panel problem, that's to say it should handle in panel
+> driver.
 
-There really shouldn't be a reason for both drivers to behave
-differently in this case. Gustavo has done a lot of work on cleaning up
-the Exynos driver lately, so perhaps you should sync up with him to see
-if this is something that he can integrate with his changes.
-
-If you can't reach an agreement and Exynos must keep the exact behaviour
-as it has now, then perhaps a better option would be to have the
-Analogix core driver not register the connector but rather leave that up
-to users of the helpers. Then you don't have to clutter the core driver
-with this type of platform-specific data.
+The datasheet that I have for that panel lists HPD as pin 17. Also I
+used to have a setup with that panel and I distinctly remember hotplug
+working just fine. Perhaps this is an issue with a specific variant of
+the panel? Or perhaps this is indeed a problem with the cable that's
+connecting the panel to the board. It could be one of those cases where
+they left out the HPD conductor to save money.
 
 Thierry
 
---KsGdsel6WgEHnImy
+--ftEhullJWpWg/VHq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJV7UbFAAoJEN0jrNd/PrOhhQEP/jHH4mCsHQhN5TM93ToODSaX
-PPIfSGotJwJRb4aerJlBmOJe/TttR3E0gN5C+c7YwTMcUJzAz7I/ORMJtfKrkqiF
-3n0EnWu/ni0FQoZWInV5+vwnRWaChZ1/yGlTmQSd8APlxQdojvOSjkMFG6EVWU8t
-0A1xPjetuUwkdHP3T2RRAkPHt6KDgc/EF0z71kDgs7vOkF4hhEqNCXk8k+NSEYpr
-wh/RUU70Us+MzsoQMypnOBredfsjrKoJXI/iEBVVzBbtg5//GQqNPDuG8eFzKrZy
-Xv0pxG8PCmVmZX+dDT73Foh3m7h2/zqzOFaXqXjx9101ZgldlfgFCTYE1Mybtfo7
-f6rS4cE4n2JsebYSa5sR5i5nlIkLF2v2GtfQpT9EWn1pKlTq6PIvBhGfUtFTWsYZ
-Wu8mYK/88PYtgOj64OV8KuylZrGFVoT6H/BZPlEmvea56Pyw3yAxcDOS40GaQFTi
-J2OWghSDhdWa3C6q333ZOILtG61Ik1PaDvynEQF51thkh/6L+8wlmh2pWLSWAT0E
-PtQJbX6AnuOS7LWDTOWMEMK/0UJsLZ2fc/kg8A7YXizqQJZO1uxOI8VqO2wJPX/Y
-jh8lc2ad0ztXqCd0v0pS7su4RYaxjomT3YLxIhUkFz4zZUpiZG9EjqLYCtJUYEqM
-kyHGsK+eVeiLZw/ukWae
-=a4je
+iQIcBAABCAAGBQJV7UjBAAoJEN0jrNd/PrOhE68P/0B1Ca2qOrOsr1K0KU/AQhsk
+DwpfyUV93vVdsTaSVyinlXsMi+Dpr3kse6y94kvLudF5r0yqMVcIHEuGwq5GkVAC
+R2KexsvfBCtdIh2vF8C2zwSwpRJBmk42kWPzgcI+/Jbal4LKSoOvn3GJhalwWMxK
+zfMhsjgb2XWFQPn7rdlHQ08z8v2ZV3njHPz/SF6aaKh5L6WZTFGRRifQcBzTzJh6
+dDZ1T+MTjcDbEjOtTThhhS9976OM9NalebudYT/VQ1HZtOTCJu4s+fX2S9fltSVk
+4TFIjgs1KXOCRB0knP6ITYOaHAZoydOnoJo/FCQClj4tiWuf4g42/lukW3oeYr3/
+fNYOqfncKtSdvavtQCUUra/PvrygiZya8AvcGRVqZub/vmyqmTmPSmS4UKOr6i+j
+lzfuoP0ubWe3gjFdJafa4kbWHd15j9+PxXKAgxhkUVt7UsWAejSQMnM4scLqy9dJ
+HwwlxL8umkt1cMng4YmAIz4EIYI4P/Uu8cA+w+RtzzK7GVNOlrudtM5PrubjU33G
+DvLTucz82biGx9B+SlTjEsYFKWPeimhwEkvzXauHmDp4AHwjS9d1I245f2FmJfLd
+bJ9i/DvHwxJ9PbdLFl7P9m1kVhc9dp6MuKb4Vkm92UPmU7X9m6ls7o+uSLWN6vx2
+/OgBPesp9l+CXunS2aL9
+=DkJC
 -----END PGP SIGNATURE-----
 
---KsGdsel6WgEHnImy--
+--ftEhullJWpWg/VHq--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
