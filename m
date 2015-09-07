@@ -1,201 +1,223 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: Re: [PATCH v4 03/16] drm: bridge: analogix/dp: split exynos dp driver
- to bridge dir
-Date: Mon, 07 Sep 2015 10:27:25 +0800
-Message-ID: <55ECF60D.4060208@rock-chips.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com> <1441086598-24995-1-git-send-email-ykk@rock-chips.com> <55E79B41.6010301@samsung.com> <55E7DAE1.6070308@rock-chips.com> <55E8E8BE.8010300@samsung.com> <55EBF024.3070304@rock-chips.com> <55ECD8CB.7060408@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 01/11] clk: samsung: exynos7: Change the CMU_TOPC block
+ clock name
+Date: Mon, 07 Sep 2015 14:33:43 +0900
+Message-ID: <55ED21B7.6080608@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55ECD8CB.7060408-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, dianders-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, seanpaul-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:52764 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751257AbbIGFdw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Sep 2015 01:33:52 -0400
+In-reply-to: <1441366637-28001-2-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+On 04.09.2015 20:37, Alim Akhtar wrote:
+> Corrects the CMU_TOPC block clock name as per user manual.
+> This also adds few of the missing gate clocks of topc block.
+> This does not change any functionalies.
 
-=E5=9C=A8 09/07/2015 08:22 AM, Krzysztof Kozlowski =E5=86=99=E9=81=93:
-> On 06.09.2015 16:49, Yakir Yang wrote:
->> Hi Krzysztof,
->>
->> =E5=9C=A8 09/04/2015 08:41 AM, Krzysztof Kozlowski =E5=86=99=E9=81=93=
-:
->>> On 03.09.2015 14:30, Yakir Yang wrote:
->>>> Hi Krzysztof,
->>>>
->>>> =E5=9C=A8 09/03/2015 08:58 AM, Krzysztof Kozlowski =E5=86=99=E9=81=
-=93:
->>>>> On 01.09.2015 14:49, Yakir Yang wrote:
->>>>>> Split the dp core driver from exynos directory to bridge
->>>>>> directory, and rename the core driver to analogix_dp_*,
->>>>>> leave the platform code to analogix_dp-exynos.
->>>>>>
->>>>>> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
->>>>>> ---
->>>>>> Changes in v4:
->>>>>> - Take Rob suggest, update "analogix,hpd-gpios" to "hpd-gpios" D=
-T
->>>>>> propery.
->>>>>> - Take Jingoo suggest, rename "analogix_dp-exynos.c" file name t=
-o
->>>>>> "exynos_dp.c"
->>>>>> - Take Archit suggest, create a separate folder for analogix cod=
-e in
->>>>>> bridge/
->>>>>>
->>>>>> Changes in v3:
->>>>>> - Take Thierry Reding suggest, move exynos's video_timing code
->>>>>>      to analogix_dp-exynos platform driver, add get_modes method
->>>>>>      to struct analogix_dp_plat_data.
->>>>>> - Take Heiko suggest, rename some "samsung*" dts propery to
->>>>>> "analogix*".
->>>>>>
->>>>>> Changes in v2:
->>>>>> - Take Jingoo Han suggest, remove new copyright
->>>>>> - Fix compiled failed dut to analogix_dp_device misspell
->> [.....]
->>
->>>>>> -static int exynos_dp_bridge_attach(struct drm_bridge *bridge)
->>>>>> +static int analogix_dp_bridge_attach(struct drm_bridge *bridge)
->>>>>>     {
->>>>>> -    struct exynos_dp_device *dp =3D bridge->driver_private;
->>>>>> -    struct drm_encoder *encoder =3D &dp->encoder;
->>>>>> +    struct analogix_dp_device *dp =3D bridge->driver_private;
->>>>>> +    struct drm_encoder *encoder =3D dp->encoder;
->>>>>>         struct drm_connector *connector =3D &dp->connector;
->>>>>>         int ret;
->>>>>>     -    /* Pre-empt DP connector creation if there's a bridge *=
-/
->>>>>> -    if (dp->ptn_bridge) {
->>>>>> -        ret =3D exynos_drm_attach_lcd_bridge(dp, encoder);
->>>>>> -        if (!ret)
->>>>>> -            return 0;
->>>>>> +    if (!bridge->encoder) {
->>>>>> +        DRM_ERROR("Parent encoder object not found");
->>>>>> +        return -ENODEV;
->>>>>>         }
->>>>>>     +    encoder->bridge =3D bridge;
->>>>>> +
->>>>>>         connector->polled =3D DRM_CONNECTOR_POLL_HPD;
->>>>>>           ret =3D drm_connector_init(dp->drm_dev, connector,
->>>>>> -                 &exynos_dp_connector_funcs,
->>>>>> +                 &analogix_dp_connector_funcs,
->>>>>>                      DRM_MODE_CONNECTOR_eDP);
->>>>>>         if (ret) {
->>>>>>             DRM_ERROR("Failed to initialize connector with drm\n=
-");
->>>>>>             return ret;
->>>>>>         }
->>>>>>     -    drm_connector_helper_add(connector,
->>>>>> &exynos_dp_connector_helper_funcs);
->>>>>> +    drm_connector_helper_add(connector,
->>>>>> +                 &analogix_dp_connector_helper_funcs);
->>>>>>         drm_connector_register(connector);
->>>>>>         drm_mode_connector_attach_encoder(connector, encoder);
->>>>>>     -    if (dp->panel)
->>>>>> -        ret =3D drm_panel_attach(dp->panel, &dp->connector);
->>>>>> +    if (dp->plat_data && dp->plat_data->panel) {
->>>>>> +        ret =3D drm_panel_attach(dp->plat_data->panel, &dp->con=
-nector);
->>>>>> +        if (ret) {
->>>>>> +            DRM_ERROR("Failed to attach panel\n");
->>>>>> +            return ret;
->>>>>> +        }
->>>>>> +    }
->>>>>> +
->>>>>> +    /*
->>>>>> +     * This should be the end of attach function, caused
->>>>>> +     * we should ensure dp bridge could attach first.
->>>>>> +     */
->>>>>> +     if (dp->plat_data && dp->plat_data->attach) {
->>>>>> +         ret =3D dp->plat_data->attach(dp->plat_data, bridge);
->>>>>> +         if (ret) {
->>>>>> +             DRM_ERROR("Failed at platform attch func\n");
->>>>> Two new error paths appeared here and above. Don't you have to
->>>>> cleanup something? I don't know, just wondering...
->>>> Hmm... I think both panel & platform_attch need ERROR remind when
->>>> it failed. But if it still need clean, I though it should clean th=
-e
->>>> platform attch
->>>> error,
->>>> this is not relate to DRM directly, just analogix driver logic, so
->>>> code would like,
->>>>
->>>> -    if (dp->panel)
->>>> -        ret =3D drm_panel_attach(dp->panel, &dp->connector);
->>>> +    if (dp->plat_data && dp->plat_data->panel) {
->>>> +        ret =3D drm_panel_attach(dp->plat_data->panel, &dp->conne=
-ctor);
->>>> +        if (ret) {
->>>> +            DRM_ERROR("Failed to attach panel\n");
->>>> +            return ret;
->>>> +        }
->>>> +    }
->>>>
->>>> +    /*
->>>> +     * This should be the end of attach function, caused
->>>> +     * we should ensure dp bridge could attach first.
->>>> +     */
->>>> +     if (dp->plat_data && dp->plat_data->attach) {
->>>> +         ret =3D dp->plat_data->attach(dp->plat_data, bridge);
->>>>
->>>>             return ret;
->>> I am lost... the code looks the same. What did you change?
->> I just remove the DRM_ERROR after dp->plat_data->attach(),
->> maybe I should paste the change that rebase on this patch,
->> here are they,
->>
->>      /*
->>       * This should be the end of attach function, caused
->>       * we should ensure dp bridge could attach first.
->>       */
->> -     if (dp->plat_data && dp->plat_data->attach) {
->> +     if (dp->plat_data && dp->plat_data->attach)
->>             ret =3D dp->plat_data->attach(dp->plat_data, bridge);
->> -          if (ret) {
->> -              DRM_ERROR("Failed at platform attch func\n");
->> -              return ret;
->> -          }
->> -      }
->>
->> -    return 0;
->> +   return ret;
->>
->>
->> If this haven't meet your comment, I maybe start to think that
->> your comment  "Two new error paths appeared here and above"
->> indicated that those two function is the same.
->>      "dp->plat_data->attach(dp->plat_data, bridge); "
->>      "drm_panel_attach(dp->plat_data->panel, &dp->connector); "
-> I wasn't talking about error message but rather about possible need o=
-f
-> clean up in error path. Previously there was only drm_panel_attach().
-> Now you have two of them (drm_panel_attach() and
-> dp->plat_data->attach()). If the second fails don't you have to clean=
- up
-> before exit? I don't know, just asking.
+s/functionalies/functionalities/
 
-Oh... Sorry about missing your words. Yes,=20
-drm_panel_detach(dp->plat_data->panel)
-was missed in this error path.
+Yes, it does change. After adding new gates without users, kernel will
+disable them. Previously these gates remained in default reset state
+(probably "pass") or in state set by bootloader (also "pass").
 
-Thanks,
-- Yakir
+Please update the changelog and of course test the patchset for any
+issues in different components depending on these clocks. Depending
+directly or indirectly.
 
->
-> Best regards,
-> Krzysztof
->
->
->
->
+Split the patch into:
+1. clean up/rename,
+2. addition of new mux/gate clock.
+
+Currently it is more difficult to review the patch.
+
+Best regards,
+Krzysztof
 
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c       |   90 +++++++++++++++++++------------
+>  include/dt-bindings/clock/exynos7-clk.h |   11 +++-
+>  2 files changed, 67 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+> index 380608b..2394bde 100644
+> --- a/drivers/clk/samsung/clk-exynos7.c
+> +++ b/drivers/clk/samsung/clk-exynos7.c
+> @@ -35,38 +35,39 @@
+>  #define DIV_TOPC1		0x0604
+>  #define DIV_TOPC3		0x060C
+>  #define ENABLE_ACLK_TOPC1	0x0804
+> +#define ENABLE_SCLK_TOPC1	0x0A04
+>  
+>  static struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initdata = {
+> -	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_bus0_pll_ctrl", 1, 2, 0),
+> +	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_topc_bus0_pll", 1, 2, 0),
+>  	FFACTOR(0, "ffac_topc_bus0_pll_div4",
+>  		"ffac_topc_bus0_pll_div2", 1, 2, 0),
+> -	FFACTOR(0, "ffac_topc_bus1_pll_div2", "mout_bus1_pll_ctrl", 1, 2, 0),
+> -	FFACTOR(0, "ffac_topc_cc_pll_div2", "mout_cc_pll_ctrl", 1, 2, 0),
+> -	FFACTOR(0, "ffac_topc_mfc_pll_div2", "mout_mfc_pll_ctrl", 1, 2, 0),
+> +	FFACTOR(0, "ffac_topc_bus1_pll_div2", "mout_topc_bus1_pll", 1, 2, 0),
+> +	FFACTOR(0, "ffac_topc_cc_pll_div2", "mout_topc_cc_pll", 1, 2, 0),
+> +	FFACTOR(0, "ffac_topc_mfc_pll_div2", "mout_topc_mfc_pll", 1, 2, 0),
+>  };
+>  
+>  /* List of parent clocks for Muxes in CMU_TOPC */
+> -PNAME(mout_aud_pll_ctrl_p)	= { "fin_pll", "fout_aud_pll" };
+> -PNAME(mout_bus0_pll_ctrl_p)	= { "fin_pll", "fout_bus0_pll" };
+> -PNAME(mout_bus1_pll_ctrl_p)	= { "fin_pll", "fout_bus1_pll" };
+> -PNAME(mout_cc_pll_ctrl_p)	= { "fin_pll", "fout_cc_pll" };
+> -PNAME(mout_mfc_pll_ctrl_p)	= { "fin_pll", "fout_mfc_pll" };
+> +PNAME(mout_topc_aud_pll_ctrl_p)	= { "fin_pll", "fout_aud_pll" };
+> +PNAME(mout_topc_bus0_pll_ctrl_p)	= { "fin_pll", "fout_bus0_pll" };
+> +PNAME(mout_topc_bus1_pll_ctrl_p)	= { "fin_pll", "fout_bus1_pll" };
+> +PNAME(mout_topc_cc_pll_ctrl_p)	= { "fin_pll", "fout_cc_pll" };
+> +PNAME(mout_topc_mfc_pll_ctrl_p)	= { "fin_pll", "fout_mfc_pll" };
+>  
+> -PNAME(mout_topc_group2) = { "mout_sclk_bus0_pll_cmuc",
+> -	"mout_sclk_bus1_pll_cmuc", "mout_sclk_cc_pll_cmuc",
+> -	"mout_sclk_mfc_pll_cmuc" };
+> +PNAME(mout_topc_group2) = { "mout_topc_bus0_pll_half",
+> +	"mout_topc_bus1_pll_half", "mout_topc_cc_pll_half",
+> +	"mout_topc_mfc_pll_half" };
+>  
+> -PNAME(mout_sclk_bus0_pll_cmuc_p) = { "mout_bus0_pll_ctrl",
+> +PNAME(mout_topc_bus0_pll_half_p) = { "mout_topc_bus0_pll",
+>  	"ffac_topc_bus0_pll_div2", "ffac_topc_bus0_pll_div4"};
+> -PNAME(mout_sclk_bus1_pll_cmuc_p) = { "mout_bus1_pll_ctrl",
+> +PNAME(mout_topc_bus1_pll_half_p) = { "mout_topc_bus1_pll",
+>  	"ffac_topc_bus1_pll_div2"};
+> -PNAME(mout_sclk_cc_pll_cmuc_p) = { "mout_cc_pll_ctrl",
+> +PNAME(mout_topc_cc_pll_half_p) = { "mout_topc_cc_pll",
+>  	"ffac_topc_cc_pll_div2"};
+> -PNAME(mout_sclk_mfc_pll_cmuc_p) = { "mout_mfc_pll_ctrl",
+> +PNAME(mout_topc_mfc_pll_half_p) = { "mout_topc_mfc_pll",
+>  	"ffac_topc_mfc_pll_div2"};
+>  
+>  
+> -PNAME(mout_sclk_bus0_pll_out_p) = {"mout_bus0_pll_ctrl",
+> +PNAME(mout_topc_bus0_pll_out_p) = {"mout_topc_bus0_pll",
+>  	"ffac_topc_bus0_pll_div2"};
+>  
+>  static unsigned long topc_clk_regs[] __initdata = {
+> @@ -90,22 +91,26 @@ static unsigned long topc_clk_regs[] __initdata = {
+>  };
+>  
+>  static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+> -	MUX(0, "mout_bus0_pll_ctrl", mout_bus0_pll_ctrl_p, MUX_SEL_TOPC0, 0, 1),
+> -	MUX(0, "mout_bus1_pll_ctrl", mout_bus1_pll_ctrl_p, MUX_SEL_TOPC0, 4, 1),
+> -	MUX(0, "mout_cc_pll_ctrl", mout_cc_pll_ctrl_p, MUX_SEL_TOPC0, 8, 1),
+> -	MUX(0, "mout_mfc_pll_ctrl", mout_mfc_pll_ctrl_p, MUX_SEL_TOPC0, 12, 1),
+> -
+> -	MUX(0, "mout_sclk_bus0_pll_cmuc", mout_sclk_bus0_pll_cmuc_p,
+> +	MUX(0, "mout_topc_bus0_pll", mout_topc_bus0_pll_ctrl_p,
+> +		MUX_SEL_TOPC0, 0, 1),
+> +	MUX(0, "mout_topc_bus1_pll", mout_topc_bus1_pll_ctrl_p,
+> +		MUX_SEL_TOPC0, 4, 1),
+> +	MUX(0, "mout_topc_cc_pll", mout_topc_cc_pll_ctrl_p,
+> +		MUX_SEL_TOPC0, 8, 1),
+> +	MUX(0, "mout_topc_mfc_pll", mout_topc_mfc_pll_ctrl_p,
+> +		MUX_SEL_TOPC0, 12, 1),
+> +	MUX(0, "mout_topc_bus0_pll_half", mout_topc_bus0_pll_half_p,
+>  		MUX_SEL_TOPC0, 16, 2),
+> -	MUX(0, "mout_sclk_bus1_pll_cmuc", mout_sclk_bus1_pll_cmuc_p,
+> +	MUX(0, "mout_topc_bus1_pll_half", mout_topc_bus1_pll_half_p,
+>  		MUX_SEL_TOPC0, 20, 1),
+> -	MUX(0, "mout_sclk_cc_pll_cmuc", mout_sclk_cc_pll_cmuc_p,
+> +	MUX(0, "mout_topc_cc_pll_half", mout_topc_cc_pll_half_p,
+>  		MUX_SEL_TOPC0, 24, 1),
+> -	MUX(0, "mout_sclk_mfc_pll_cmuc", mout_sclk_mfc_pll_cmuc_p,
+> +	MUX(0, "mout_topc_mfc_pll_half", mout_topc_mfc_pll_half_p,
+>  		MUX_SEL_TOPC0, 28, 1),
+>  
+> -	MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
+> -	MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
+> +	MUX(0, "mout_topc_aud_pll", mout_topc_aud_pll_ctrl_p,
+> +		MUX_SEL_TOPC1, 0, 1),
+> +	MUX(0, "mout_topc_bus0_pll_out", mout_topc_bus0_pll_out_p,
+>  		MUX_SEL_TOPC1, 16, 1),
+>  
+>  	MUX(0, "mout_aclk_ccore_133", mout_topc_group2,	MUX_SEL_TOPC2, 4, 2),
+> @@ -123,15 +128,15 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
+>  	DIV(DOUT_ACLK_PERIS, "dout_aclk_peris_66", "mout_aclk_peris_66",
+>  		DIV_TOPC1, 24, 4),
+>  
+> -	DIV(DOUT_SCLK_BUS0_PLL, "dout_sclk_bus0_pll", "mout_sclk_bus0_pll_out",
+> +	DIV(DOUT_SCLK_BUS0_PLL, "dout_sclk_bus0_pll", "mout_topc_bus0_pll_out",
+>  		DIV_TOPC3, 0, 4),
+> -	DIV(DOUT_SCLK_BUS1_PLL, "dout_sclk_bus1_pll", "mout_bus1_pll_ctrl",
+> +	DIV(DOUT_SCLK_BUS1_PLL, "dout_sclk_bus1_pll", "mout_topc_bus1_pll",
+>  		DIV_TOPC3, 8, 4),
+> -	DIV(DOUT_SCLK_CC_PLL, "dout_sclk_cc_pll", "mout_cc_pll_ctrl",
+> +	DIV(DOUT_SCLK_CC_PLL, "dout_sclk_cc_pll", "mout_topc_cc_pll",
+>  		DIV_TOPC3, 12, 4),
+> -	DIV(DOUT_SCLK_MFC_PLL, "dout_sclk_mfc_pll", "mout_mfc_pll_ctrl",
+> +	DIV(DOUT_SCLK_MFC_PLL, "dout_sclk_mfc_pll", "mout_topc_mfc_pll",
+>  		DIV_TOPC3, 16, 4),
+> -	DIV(DOUT_SCLK_AUD_PLL, "dout_sclk_aud_pll", "mout_aud_pll_ctrl",
+> +	DIV(DOUT_SCLK_AUD_PLL, "dout_sclk_aud_pll", "mout_topc_aud_pll",
+>  		DIV_TOPC3, 28, 4),
+>  };
+>  
+> @@ -143,6 +148,25 @@ static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
+>  static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+>  	GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
+>  		ENABLE_ACLK_TOPC1, 20, 0, 0),
+> +
+> +	GATE(SCLK_AUD_PLL, "sclk_aud_pll", "dout_sclk_aud_pll",
+> +		ENABLE_SCLK_TOPC1, 20, 0, 0),
+> +	GATE(SCLK_MFC_PLL_B, "sclk_mfc_pll_b", "dout_sclk_mfc_pll",
+> +		ENABLE_SCLK_TOPC1, 17, 0, 0),
+> +	GATE(SCLK_MFC_PLL_A, "sclk_mfc_pll_a", "dout_sclk_mfc_pll",
+> +		ENABLE_SCLK_TOPC1, 16, 0, 0),
+> +	GATE(SCLK_BUS1_PLL_B, "sclk_bus1_pll_b", "dout_sclk_bus1_pll",
+> +		ENABLE_SCLK_TOPC1, 13, 0, 0),
+> +	GATE(SCLK_BUS1_PLL_A, "sclk_bus1_pll_a", "dout_sclk_bus1_pll",
+> +		ENABLE_SCLK_TOPC1, 12, 0, 0),
+> +	GATE(SCLK_BUS0_PLL_B, "sclk_bus0_pll_b", "dout_sclk_bus0_pll",
+> +		ENABLE_SCLK_TOPC1, 5, 0, 0),
+> +	GATE(SCLK_BUS0_PLL_A, "sclk_bus0_pll_a", "dout_sclk_bus0_pll",
+> +		ENABLE_SCLK_TOPC1, 4, 0, 0),
+> +	GATE(SCLK_CC_PLL_B, "sclk_cc_pll_b", "dout_sclk_cc_pll",
+> +		ENABLE_SCLK_TOPC1, 1, 0, 0),
+> +	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
+> +		ENABLE_SCLK_TOPC1, 0, 0, 0),
+>  };
+>  
+>  static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+> index e33c75a..b63eba6 100644
+> --- a/include/dt-bindings/clock/exynos7-clk.h
+> +++ b/include/dt-bindings/clock/exynos7-clk.h
+> @@ -21,7 +21,16 @@
+>  #define ACLK_MSCL_532			8
+>  #define DOUT_SCLK_AUD_PLL		9
+>  #define FOUT_AUD_PLL			10
+> -#define TOPC_NR_CLK			11
+> +#define SCLK_AUD_PLL			11
+> +#define SCLK_MFC_PLL_B			12
+> +#define SCLK_MFC_PLL_A			13
+> +#define SCLK_BUS1_PLL_B			14
+> +#define SCLK_BUS1_PLL_A			15
+> +#define SCLK_BUS0_PLL_B			16
+> +#define SCLK_BUS0_PLL_A			17
+> +#define SCLK_CC_PLL_B			18
+> +#define SCLK_CC_PLL_A			19
+> +#define TOPC_NR_CLK			20
+>  
+>  /* TOP0 */
+>  #define DOUT_ACLK_PERIC1		1
+> 
