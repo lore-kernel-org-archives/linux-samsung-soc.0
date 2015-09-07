@@ -1,21 +1,25 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v4 1/4] PM / OPP: add dev_pm_opp_get_suspend_opp() helper
-Date: Mon, 07 Sep 2015 17:41:38 +0200
-Message-ID: <1441640501-13613-2-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH v4 2/4] cpufreq: allow cpufreq_generic_suspend() to work
+ without suspend frequency
+Date: Mon, 07 Sep 2015 17:41:39 +0200
+Message-ID: <1441640501-13613-3-git-send-email-b.zolnierkie@samsung.com>
 References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33214 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753803AbbIGPnA (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:56186 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753277AbbIGPn1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Sep 2015 11:43:00 -0400
+	Mon, 7 Sep 2015 11:43:27 -0400
 In-reply-to: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-Add dev_pm_opp_get_suspend_opp() helper to obtain suspend opp.
+Some cpufreq drivers may set suspend frequency only for
+selected setups but still would like to use the generic
+suspend handler.  Thus don't treat !policy->suspend_freq
+condition as an incorrect one.
 
 Cc: Viresh Kumar <viresh.kumar@linaro.org>
 Cc: Thomas Abraham <thomas.ab@samsung.com>
@@ -25,74 +29,23 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/base/power/opp.c | 30 ++++++++++++++++++++++++++++++
- include/linux/pm_opp.h   |  6 ++++++
- 2 files changed, 36 insertions(+)
+ drivers/cpufreq/cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
-index eb25449..3d948ea 100644
---- a/drivers/base/power/opp.c
-+++ b/drivers/base/power/opp.c
-@@ -341,6 +341,36 @@ unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
- EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_clock_latency);
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index b3d9368..a634fcb 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1626,8 +1626,8 @@ int cpufreq_generic_suspend(struct cpufreq_policy *policy)
+ 	int ret;
  
- /**
-+ * dev_pm_opp_get_suspend_opp() - Get suspend opp
-+ * @dev:	device for which we do this operation
-+ *
-+ * Return: This function returns pointer to the suspend opp if it is
-+ * defined, otherwise it returns NULL.
-+ *
-+ * Locking: This function must be called under rcu_read_lock(). opp is a rcu
-+ * protected pointer. The reason for the same is that the opp pointer which is
-+ * returned will remain valid for use with opp_get_{voltage, freq} only while
-+ * under the locked area. The pointer returned must be used prior to unlocking
-+ * with rcu_read_unlock() to maintain the integrity of the pointer.
-+ */
-+struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev)
-+{
-+	struct device_opp *dev_opp;
-+	struct dev_pm_opp *opp;
-+
-+	opp_rcu_lockdep_assert();
-+
-+	dev_opp = _find_device_opp(dev);
-+	if (IS_ERR(dev_opp))
-+		opp = NULL;
-+	else
-+		opp = dev_opp->suspend_opp;
-+
-+	return opp;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_get_suspend_opp);
-+
-+/**
-  * dev_pm_opp_get_opp_count() - Get number of opps available in the opp list
-  * @dev:	device for which we do this operation
-  *
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index cab7ba5..e817722 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -34,6 +34,7 @@ bool dev_pm_opp_is_turbo(struct dev_pm_opp *opp);
+ 	if (!policy->suspend_freq) {
+-		pr_err("%s: suspend_freq can't be zero\n", __func__);
+-		return -EINVAL;
++		pr_debug("%s: suspend_freq not defined\n", __func__);
++		return 0;
+ 	}
  
- int dev_pm_opp_get_opp_count(struct device *dev);
- unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev);
-+struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev);
- 
- struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
- 					      unsigned long freq,
-@@ -80,6 +81,11 @@ static inline unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
- 	return 0;
- }
- 
-+static inline struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev)
-+{
-+	return NULL;
-+}
-+
- static inline struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
- 					unsigned long freq, bool available)
- {
+ 	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
 -- 
 1.9.1
