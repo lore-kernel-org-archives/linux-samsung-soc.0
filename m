@@ -1,82 +1,61 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable USB Video Class support
-Date: Tue, 8 Sep 2015 10:40:58 +0200
-Message-ID: <55EE9F1A.9030703@osg.samsung.com>
-References: <1441662323-15468-1-git-send-email-javier@osg.samsung.com>
- <55EE9820.2010202@samsung.com>
+From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
+Subject: [PATCH 0/3] platform/chrome: vboot context support
+Date: Tue,  8 Sep 2015 09:07:43 -0300
+Message-ID: <1441714066-5599-1-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:34811 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752866AbbIHIlF (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38233 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754246AbbIHMI1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Sep 2015 04:41:05 -0400
-In-Reply-To: <55EE9820.2010202@samsung.com>
+	Tue, 8 Sep 2015 08:08:27 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: gregkh@linuxfoundation.org, olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
 
-[adding Bartlomiej to cc]
+Hi everyone,
 
-Hello Krzysztof,
+This series adds support for reading and writing the verified boot cont=
+ext
+nvram space on the EC using the cros_ec sysfs interface.
 
-On 09/08/2015 10:11 AM, Krzysztof Kozlowski wrote:
-> On 08.09.2015 06:45, Javier Martinez Canillas wrote:
->> The Exynos5420 Peach Pit and Exynos5800 Peach Pi boards have a built-in
->> Silicon Motion USB UVC WebCam. Enable support for the USB Video Class
->> driver and its needed media Kconfig symbols so the camera is supported.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> ---
->>
->>  arch/arm/configs/exynos_defconfig | 4 ++++
->>  1 file changed, 4 insertions(+)
-> 
-> The patch itself looks good but now I wonder whether we are not putting
-> to much stuff built-in. The exynos_defconfig does not replace the
-> distribution distro. For a fully working board the distro should prepare
-> it's own config.
->
+The first patch fixes is_visible() functionality, making it work for bi=
+nary
+attributes as well as normal ones. This is needed so the sysfs group
+can be hidden when the EC doesn't offer any space for the context.
 
-Agreed that exynos_defconfig is not meant to replace a distro config.
+The second patch is the actual code implementing the interface to read
+and write the context data.
 
-> I understand that in this case the USB webcams are parts of device (like
-> on all laptops)... a little bit similar as camera sensors on mobile
-> phones. Yet on mobile phone usually the camera itself is part of SoC,
-> only the sensor is external.
-> 
-> Actually what we need is a kind of policy for exynos_defconfig - what
-> should be inside as built-in and what as module?
->
+The third patch adds the DT properties on peach boards which, judging b=
+y
+the vendor tree, use the EC to store the verified boot context.
 
-I had the same conversation with Bartlomiej before in [0] when I tried to
-enable the SBS battery driver as module. I save you a click and quote him:
+The series was tested on a peach pi and was found to work OK there. As
+always, all comments and further tests are welcome :)
 
-"the current most popular use case for exynos_defconfig
-(not multi_v7_defconfig) seems to be to build kernel image
-alone and use it without any modules"
+Cheers!
+Emilio
 
-Which seems to be true, so my understanding is that exynos_defconfig is a
-minimal defconfig for Exynos platforms and for easy of test/use, everything
-should be built-in while multi_v7_defconfig would be more similar to a conf
-used by distros where most things would be built as a module when possible.
+Emilio L=C3=B3pez (3):
+  sysfs: Fix is_visible() support for binary attributes
+  platform/chrome: Support reading/writing the vboot context
+  ARM: dts: Enable EC vboot context support on Peach boards
 
-Other SoC specific deconfig do it differently, OMAP for example does the
-opposite and tries to build as much stuff as possible as a module.
+ Documentation/devicetree/bindings/mfd/cros-ec.txt |   4 +
+ arch/arm/boot/dts/exynos5420-peach-pit.dts        |   1 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts         |   1 +
+ drivers/platform/chrome/Makefile                  |   5 +-
+ drivers/platform/chrome/cros_ec_dev.c             |   1 +
+ drivers/platform/chrome/cros_ec_vbc.c             | 137 ++++++++++++++=
+++++++++
+ fs/sysfs/group.c                                  |  22 +++-
+ include/linux/mfd/cros_ec.h                       |   1 +
+ 8 files changed, 167 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_vbc.c
 
-> Best regards,
-> Krzysztof
-> 
->
-
-[0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-August/278757.html
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--=20
+2.1.4
