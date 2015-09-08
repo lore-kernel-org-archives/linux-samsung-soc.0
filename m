@@ -1,94 +1,65 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 1/3] sysfs: Fix is_visible() support for binary attributes
-Date: Tue, 8 Sep 2015 08:30:13 -0700
-Message-ID: <20150908153013.GA6758@roeck-us.net>
-References: <1441714066-5599-1-git-send-email-emilio.lopez@collabora.co.uk>
- <1441714066-5599-2-git-send-email-emilio.lopez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:33760 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754535AbbIHPaT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Sep 2015 11:30:19 -0400
-Content-Disposition: inline
-In-Reply-To: <1441714066-5599-2-git-send-email-emilio.lopez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v5 0/4] cpufreq-dt: add suspend frequency support
+Date: Tue, 08 Sep 2015 18:41:00 +0200
+Message-ID: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>
-Cc: gregkh@linuxfoundation.org, olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Emilio,
+Hi,
 
-On Tue, Sep 08, 2015 at 09:07:44AM -0300, Emilio L=F3pez wrote:
-> According to the sysfs header file:
->=20
->     "The returned value will replace static permissions defined in
->      struct attribute or struct bin_attribute."
->=20
-> but this isn't the case, as is_visible is only called on
-> struct attribute only. This patch adds the code paths required
-> to support is_visible() on binary attributes.
->=20
-> Signed-off-by: Emilio L=F3pez <emilio.lopez@collabora.co.uk>
-> ---
->  fs/sysfs/group.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
->=20
-> diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
-> index 39a0199..eb6996a 100644
-> --- a/fs/sysfs/group.c
-> +++ b/fs/sysfs/group.c
-> @@ -37,10 +37,10 @@ static int create_files(struct kernfs_node *paren=
-t, struct kobject *kobj,
->  {
->  	struct attribute *const *attr;
->  	struct bin_attribute *const *bin_attr;
-> -	int error =3D 0, i;
-> +	int error =3D 0, i =3D 0;
-> =20
->  	if (grp->attrs) {
-> -		for (i =3D 0, attr =3D grp->attrs; *attr && !error; i++, attr++) {
-> +		for (attr =3D grp->attrs; *attr && !error; i++, attr++) {
->  			umode_t mode =3D (*attr)->mode;
-> =20
->  			/*
-> @@ -73,13 +73,27 @@ static int create_files(struct kernfs_node *paren=
-t, struct kobject *kobj,
->  	}
-> =20
->  	if (grp->bin_attrs) {
-> -		for (bin_attr =3D grp->bin_attrs; *bin_attr; bin_attr++) {
-> +		for (bin_attr =3D grp->bin_attrs; *bin_attr; i++, bin_attr++) {
-> +			umode_t mode =3D (*bin_attr)->attr.mode;
-> +
->  			if (update)
->  				kernfs_remove_by_name(parent,
->  						(*bin_attr)->attr.name);
-> +			if (grp->is_visible) {
-> +				mode =3D grp->is_visible(kobj,
-> +						       &(*bin_attr)->attr, i);
+This patch series adds suspend frequency support (using opp-v2
+bindings and suspend-opp functionality) to cpufreq-dt driver and
+then adds suspend opp for Exynos4412 based boards.
 
-With this, if 'n' is the number of non-binary attributes,
+This patch series fixes suspend/resume support on Exynos4412
+based Trats2 board and reboot hang on Exynos4412 based Odroid
+U3 board.
 
-for i < n:
-	The index passed to is_visible points to a non-binary attribute.
-for i >=3D n:
-	The index passed to is_visible points to the (index - n)th binary
-	attribute.
+Changes since v4:
+- removed superfluous CONFIG_PM ifdefs
+- added Acked-by tag from Krzysztof to patch #4
+- added Acked-by tag from Viresh to patches #1-3
 
-Unless I am missing something, this is not explained anywhere, but it i=
-s
-not entirely trivial to understand. I think it should be documented.
+Changes since v3:
+- fixed dev_pm_opp_get_suspend_opp() locking
+- shortened variable name in dev_pm_opp_get_suspend_opp()
+- adjusted cpufreq_generic_suspend() to work with cpufreq-dt
+- removed no longer needed cpufreq_dt_suspend()
+- added Acked-by tag from Viresh to patch #4
 
-Also, it might be a good idea to check through existing code to ensure
-that this change doesn't accidentially cause trouble (existing drivers
-implementing both attribute types may not expect to see an index variab=
-le
-pointing to a value larger than the number of elements in the attrs arr=
-ay).
+Changes since v2:
+- rewrote to use suspend-opp functionality
 
-Thanks,
-Guenter
+Changes since v1:
+- removed superfluous ";"
+
+Depends on:
+- next-20150902 branch of linux-next kernel tree
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (4):
+  PM / OPP: add dev_pm_opp_get_suspend_opp() helper
+  cpufreq: allow cpufreq_generic_suspend() to work without suspend
+    frequency
+  cpufreq-dt: add suspend frequency support
+  ARM: dts: add suspend opp to exynos4412
+
+ arch/arm/boot/dts/exynos4412.dtsi |  1 +
+ drivers/base/power/opp.c          | 30 ++++++++++++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt.c      |  9 +++++++++
+ drivers/cpufreq/cpufreq.c         |  4 ++--
+ include/linux/pm_opp.h            |  6 ++++++
+ 5 files changed, 48 insertions(+), 2 deletions(-)
+
+-- 
+1.9.1
+
