@@ -1,155 +1,60 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 8/9] exynos/fimg2d: add message prefix
-Date: Tue,  8 Sep 2015 17:22:33 +0200
-Message-ID: <1441725754-27555-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 9/9] exynos/fimg2d: remove g2d_context from public header
+Date: Tue,  8 Sep 2015 17:22:34 +0200
+Message-ID: <1441725754-27555-10-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34653 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755048AbbIHPYo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Sep 2015 11:24:44 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Add a prefix to the messages printed to the console via
-printf() and fprintf() so that one can easily see where
-the message comes from.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/exynos_fimg2d.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
-
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 5873fe7..9746c21 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -42,6 +42,8 @@
- 
- #define MIN(a, b)	((a) < (b) ? (a) : (b))
- 
-+#define MSG_PREFIX "exynos/fimg2d: "
-+
- enum g2d_base_addr_reg {
- 	g2d_dst = 0,
- 	g2d_src
-@@ -255,7 +257,7 @@ static int g2d_flush(struct g2d_context *ctx)
- 		return 0;
- 
- 	if (ctx->cmdlist_nr >= G2D_MAX_CMD_LIST_NR) {
--		fprintf(stderr, "Overflow cmdlist.\n");
-+		fprintf(stderr, MSG_PREFIX "command list overflow.\n");
- 		return -EINVAL;
- 	}
- 
-@@ -271,7 +273,7 @@ static int g2d_flush(struct g2d_context *ctx)
- 
- 	ret = drmIoctl(ctx->fd, DRM_IOCTL_EXYNOS_G2D_SET_CMDLIST, &cmdlist);
- 	if (ret < 0) {
--		fprintf(stderr, "failed to set cmdlist.\n");
-+		fprintf(stderr, MSG_PREFIX "failed to set cmdlist.\n");
- 		return ret;
- 	}
- 
-@@ -293,7 +295,7 @@ struct g2d_context *g2d_init(int fd)
- 
- 	ctx = calloc(1, sizeof(*ctx));
- 	if (!ctx) {
--		fprintf(stderr, "failed to allocate context.\n");
-+		fprintf(stderr, MSG_PREFIX "failed to allocate context.\n");
- 		return NULL;
- 	}
- 
-@@ -301,7 +303,7 @@ struct g2d_context *g2d_init(int fd)
- 
- 	ret = drmIoctl(fd, DRM_IOCTL_EXYNOS_G2D_GET_VER, &ver);
- 	if (ret < 0) {
--		fprintf(stderr, "failed to get version.\n");
-+		fprintf(stderr, MSG_PREFIX "failed to get version.\n");
- 		free(ctx);
- 		return NULL;
- 	}
-@@ -309,7 +311,7 @@ struct g2d_context *g2d_init(int fd)
- 	ctx->major = ver.major;
- 	ctx->minor = ver.minor;
- 
--	printf("g2d version(%d.%d).\n", ctx->major, ctx->minor);
-+	printf(MSG_PREFIX "G2D version (%d.%d).\n", ctx->major, ctx->minor);
- 	return ctx;
- }
- 
-@@ -335,7 +337,7 @@ int g2d_exec(struct g2d_context *ctx)
- 
- 	ret = drmIoctl(ctx->fd, DRM_IOCTL_EXYNOS_G2D_EXEC, &exec);
- 	if (ret < 0) {
--		fprintf(stderr, "failed to execute.\n");
-+		fprintf(stderr, MSG_PREFIX "failed to execute.\n");
- 		return ret;
- 	}
- 
-@@ -436,7 +438,7 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
- 	h = MIN(src_h, dst_h);
- 
- 	if (w <= 0 || h <= 0) {
--		fprintf(stderr, "invalid width or height.\n");
-+		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
- 		return -EINVAL;
- 	}
- 
-@@ -532,7 +534,7 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
- 		dst_h = dst->height - dst_y;
- 
- 	if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
--		fprintf(stderr, "invalid width or height.\n");
-+		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
- 		return -EINVAL;
- 	}
- 
-@@ -633,17 +635,17 @@ g2d_blend(struct g2d_context *ctx, struct g2d_image *src,
- 	h = MIN(src_h, dst_h);
- 
- 	if (w <= 0 || h <= 0) {
--		fprintf(stderr, "invalid width or height.\n");
-+		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
- 		return -EINVAL;
- 	}
- 
- 	if (!g2d_validate_select_mode(src->select_mode)) {
--		fprintf(stderr , "invalid select mode for source.\n");
-+		fprintf(stderr , MSG_PREFIX "invalid select mode for source.\n");
- 		return -EINVAL;
- 	}
- 
- 	if (!g2d_validate_blending_op(op)) {
--		fprintf(stderr , "unsupported blending operation.\n");
-+		fprintf(stderr , MSG_PREFIX "unsupported blending operation.\n");
- 		return -EINVAL;
- 	}
- 
-@@ -752,17 +754,17 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
- 		dst_h = dst->height - dst_y;
- 
- 	if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
--		fprintf(stderr, "invalid width or height.\n");
-+		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
- 		return -EINVAL;
- 	}
- 
- 	if (!g2d_validate_select_mode(src->select_mode)) {
--		fprintf(stderr , "invalid select mode for source.\n");
-+		fprintf(stderr , MSG_PREFIX "invalid select mode for source.\n");
- 		return -EINVAL;
- 	}
- 
- 	if (!g2d_validate_blending_op(op)) {
--		fprintf(stderr , "unsupported blending operation.\n");
-+		fprintf(stderr , MSG_PREFIX "unsupported blending operation.\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.0.5
+QWxsIGZ1bmN0aW9ucyBmcm9tIHRoZSBwdWJsaWMgQVBJIG9ubHkgb3BlcmF0aW9uIG9uCnN0cnVj
+dCBnMmRfY29udGV4dCosIHNvIHRoaXMgc2hvdWxkbid0IGJyZWFrIHRvbyBtdWNoLgoKTWFrZSB0
+aGUgY29udGV4dCBwcml2YXRlIHNpbmNlIHdlIGRvbid0IHdhbnQgdGhlCnVzZXIgdG8gbW9kaWZ5
+IGl0cyBjb250ZW50IGRpcmVjdGx5LiBBbHNvIHJlbW92ZQp0aGUgZGVmaW5lcyB0aGF0IHdlcmUg
+b25seSB1c2VkIGZvciBmaWVsZHMgb2YKZzJkX2NvbnRleHQuCgpTaWduZWQtb2ZmLWJ5OiBUb2Jp
+YXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBleHlub3MvZXh5
+bm9zX2ZpbWcyZC5jIHwgMTUgKysrKysrKysrKysrKysrCiBleHlub3MvZXh5bm9zX2ZpbWcyZC5o
+IHwgMTQgKy0tLS0tLS0tLS0tLS0KIDIgZmlsZXMgY2hhbmdlZCwgMTYgaW5zZXJ0aW9ucygrKSwg
+MTMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYyBiL2V4
+eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggOTc0NmMyMS4uZTczNDE0NCAxMDA2NDQKLS0tIGEv
+ZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5jCkBAIC00
+NCw2ICs0NCwyMSBAQAogCiAjZGVmaW5lIE1TR19QUkVGSVggImV4eW5vcy9maW1nMmQ6ICIKIAor
+I2RlZmluZSBHMkRfTUFYX0NNRF9OUgkJNjQKKyNkZWZpbmUgRzJEX01BWF9HRU1fQ01EX05SCTY0
+CisjZGVmaW5lIEcyRF9NQVhfQ01EX0xJU1RfTlIJNjQKKworc3RydWN0IGcyZF9jb250ZXh0IHsK
+KwlpbnQJCQkJZmQ7CisJdW5zaWduZWQgaW50CQkJbWFqb3I7CisJdW5zaWduZWQgaW50CQkJbWlu
+b3I7CisJc3RydWN0IGRybV9leHlub3NfZzJkX2NtZAljbWRbRzJEX01BWF9DTURfTlJdOworCXN0
+cnVjdCBkcm1fZXh5bm9zX2cyZF9jbWQJY21kX2J1ZltHMkRfTUFYX0dFTV9DTURfTlJdOworCXVu
+c2lnbmVkIGludAkJCWNtZF9ucjsKKwl1bnNpZ25lZCBpbnQJCQljbWRfYnVmX25yOworCXVuc2ln
+bmVkIGludAkJCWNtZGxpc3RfbnI7Cit9OworCiBlbnVtIGcyZF9iYXNlX2FkZHJfcmVnIHsKIAln
+MmRfZHN0ID0gMCwKIAlnMmRfc3JjCmRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5o
+IGIvZXh5bm9zL2V4eW5vc19maW1nMmQuaAppbmRleCA5ZGIwYzg4Li40YWExNTY4IDEwMDY0NAot
+LS0gYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5oCisrKyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmgK
+QEAgLTEzLDkgKzEzLDYgQEAKICNpZm5kZWYgX0ZJTUcyRF9IXwogI2RlZmluZSBfRklNRzJEX0hf
+CiAKLSNkZWZpbmUgRzJEX01BWF9DTURfTlIJCTY0Ci0jZGVmaW5lIEcyRF9NQVhfR0VNX0NNRF9O
+Ugk2NAotI2RlZmluZSBHMkRfTUFYX0NNRF9MSVNUX05SCTY0CiAjZGVmaW5lIEcyRF9QTEFORV9N
+QVhfTlIJMgogCiBlbnVtIGVfZzJkX2NvbG9yX21vZGUgewpAQCAtMjg5LDE2ICsyODYsNyBAQCBz
+dHJ1Y3QgZzJkX2ltYWdlIHsKIAl2b2lkCQkJCSptYXBwZWRfcHRyW0cyRF9QTEFORV9NQVhfTlJd
+OwogfTsKIAotc3RydWN0IGcyZF9jb250ZXh0IHsKLQlpbnQJCQkJZmQ7Ci0JdW5zaWduZWQgaW50
+CQkJbWFqb3I7Ci0JdW5zaWduZWQgaW50CQkJbWlub3I7Ci0Jc3RydWN0IGRybV9leHlub3NfZzJk
+X2NtZAljbWRbRzJEX01BWF9DTURfTlJdOwotCXN0cnVjdCBkcm1fZXh5bm9zX2cyZF9jbWQJY21k
+X2J1ZltHMkRfTUFYX0dFTV9DTURfTlJdOwotCXVuc2lnbmVkIGludAkJCWNtZF9ucjsKLQl1bnNp
+Z25lZCBpbnQJCQljbWRfYnVmX25yOwotCXVuc2lnbmVkIGludAkJCWNtZGxpc3RfbnI7Ci19Owor
+c3RydWN0IGcyZF9jb250ZXh0OwogCiBzdHJ1Y3QgZzJkX2NvbnRleHQgKmcyZF9pbml0KGludCBm
+ZCk7CiB2b2lkIGcyZF9maW5pKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4KTsKLS0gCjIuMC41Cgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
