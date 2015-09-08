@@ -1,55 +1,86 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 5/9] exynos/fimg2d: remove default case from g2d_get_blend_op()
-Date: Tue,  8 Sep 2015 17:22:30 +0200
-Message-ID: <1441725754-27555-6-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 6/9] exynos/fimg2d: remove superfluous initialization of
+ g2d_point_val
+Date: Tue,  8 Sep 2015 17:22:31 +0200
+Message-ID: <1441725754-27555-7-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34636 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754535AbbIHPX5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Sep 2015 11:23:57 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-We now validate the blending mode via g2d_validate_mode()
-prior to feeding it to g2d_get_blend_op().
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/exynos_fimg2d.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 9d9359a..d7cbb24 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -64,6 +64,11 @@ static unsigned int g2d_get_blend_op(enum e_g2d_op op)
- 
- 	val.val = 0;
- 
-+	/*
-+	 * The switch statement is missing the default branch since
-+	 * we assume that the caller checks the blending operation
-+	 * via g2d_validate_blending_op() first.
-+	 */
- 	switch (op) {
- 	case G2D_OP_CLEAR:
- 	case G2D_OP_DISJOINT_CLEAR:
-@@ -91,11 +96,6 @@ static unsigned int g2d_get_blend_op(enum e_g2d_op op)
- 		SET_BF(val, G2D_COEFF_MODE_SRC_ALPHA, 0, 0, 0,
- 				G2D_COEFF_MODE_SRC_ALPHA, 1, 0, 0);
- 		break;
--	default:
--		fprintf(stderr, "Not support operation(%d).\n", op);
--		SET_BF(val, G2D_COEFF_MODE_ONE, 0, 0, 0, G2D_COEFF_MODE_ZERO,
--				0, 0, 0);
--		break;
- 	}
- 
- 	return val.val;
--- 
-2.0.5
+VGhlIGcyZF9wb2ludF92YWwgdW5pb24gY29uc2lzdHMgb2YgdHdvIGNvb3JkaW5hdGVzIG9mIDE2
+CmJpdHMuIFdoZW5ldmVyIHRoaXMgdW5pb24gaXMgdXNlZCB0aG91Z2gsIGJvdGggY29vcmRpbmF0
+ZXMKYXJlIGV4cGxpY2l0bHkgc2V0LiBIZW5jZSBwcmlvciBpbml0aWFsaXphdGlvbiBpcyB1bm5l
+Y2Vzc2FyeS4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmkt
+YmllbGVmZWxkLmRlPgotLS0KIGV4eW5vcy9leHlub3NfZmltZzJkLmMgfCAxOSAtLS0tLS0tLS0t
+LS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+ZXh5bm9zL2V4eW5vc19maW1nMmQuYyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggZDdj
+YmIyNC4uZmJjNzdhMyAxMDA2NDQKLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9l
+eHlub3MvZXh5bm9zX2ZpbWcyZC5jCkBAIC0zODAsMTUgKzM4MCwxMiBAQCBnMmRfc29saWRfZmls
+bChzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqaW1nLAogCWlmICh5
+ICsgaCA+IGltZy0+aGVpZ2h0KQogCQloID0gaW1nLT5oZWlnaHQgLSB5OwogCi0JcHQudmFsID0g
+MDsKIAlwdC5kYXRhLnggPSB4OwogCXB0LmRhdGEueSA9IHk7CiAJZzJkX2FkZF9jbWQoY3R4LCBE
+U1RfTEVGVF9UT1BfUkVHLCBwdC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSB4
+ICsgdzsKIAlwdC5kYXRhLnkgPSB5ICsgaDsKLQogCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hU
+X0JPVFRPTV9SRUcsIHB0LnZhbCk7CiAKIAlnMmRfYWRkX2NtZChjdHgsIFNGX0NPTE9SX1JFRywg
+aW1nLT5jb2xvcik7CkBAIC00NjAsMjAgKzQ1NywxNiBAQCBnMmRfY29weShzdHJ1Y3QgZzJkX2Nv
+bnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqc3JjLAogCWcyZF9hZGRfYmFzZV9hZGRyKGN0
+eCwgc3JjLCBnMmRfc3JjKTsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19TVFJJREVfUkVHLCBzcmMt
+PnN0cmlkZSk7CiAKLQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194OwogCXB0LmRhdGEu
+eSA9IHNyY195OwogCWcyZF9hZGRfY21kKGN0eCwgU1JDX0xFRlRfVE9QX1JFRywgcHQudmFsKTsK
+LQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194ICsgdzsKIAlwdC5kYXRhLnkgPSBzcmNf
+eSArIGg7CiAJZzJkX2FkZF9jbWQoY3R4LCBTUkNfUklHSFRfQk9UVE9NX1JFRywgcHQudmFsKTsK
+IAotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gZHN0X3g7CiAJcHQuZGF0YS55ID0gZHN0X3k7
+CiAJZzJkX2FkZF9jbWQoY3R4LCBEU1RfTEVGVF9UT1BfUkVHLCBwdC52YWwpOwotCXB0LnZhbCA9
+IDA7CiAJcHQuZGF0YS54ID0gZHN0X3ggKyB3OwogCXB0LmRhdGEueSA9IGRzdF95ICsgaDsKIAln
+MmRfYWRkX2NtZChjdHgsIERTVF9SSUdIVF9CT1RUT01fUkVHLCBwdC52YWwpOwpAQCAtNTgxLDIw
+ICs1NzQsMTYgQEAgZzJkX2NvcHlfd2l0aF9zY2FsZShzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwg
+c3RydWN0IGcyZF9pbWFnZSAqc3JjLAogCQlnMmRfYWRkX2NtZChjdHgsIFNSQ19ZU0NBTEVfUkVH
+LCBzY2FsZV95KTsKIAl9CiAKLQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194OwogCXB0
+LmRhdGEueSA9IHNyY195OwogCWcyZF9hZGRfY21kKGN0eCwgU1JDX0xFRlRfVE9QX1JFRywgcHQu
+dmFsKTsKLQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194ICsgc3JjX3c7CiAJcHQuZGF0
+YS55ID0gc3JjX3kgKyBzcmNfaDsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19SSUdIVF9CT1RUT01f
+UkVHLCBwdC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeDsKIAlwdC5k
+YXRhLnkgPSBkc3RfeTsKIAlnMmRfYWRkX2NtZChjdHgsIERTVF9MRUZUX1RPUF9SRUcsIHB0LnZh
+bCk7Ci0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeCArIGRzdF93OwogCXB0LmRhdGEu
+eSA9IGRzdF95ICsgZHN0X2g7CiAJZzJkX2FkZF9jbWQoY3R4LCBEU1RfUklHSFRfQk9UVE9NX1JF
+RywgcHQudmFsKTsKQEAgLTcwMCwyMCArNjg5LDE2IEBAIGcyZF9ibGVuZChzdHJ1Y3QgZzJkX2Nv
+bnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqc3JjLAogCWcyZF9hZGRfY21kKGN0eCwgQklU
+QkxUX0NPTU1BTkRfUkVHLCBiaXRibHQudmFsKTsKIAlnMmRfYWRkX2NtZChjdHgsIEJMRU5EX0ZV
+TkNUSU9OX1JFRywgYmxlbmQudmFsKTsKIAotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gc3Jj
+X3g7CiAJcHQuZGF0YS55ID0gc3JjX3k7CiAJZzJkX2FkZF9jbWQoY3R4LCBTUkNfTEVGVF9UT1Bf
+UkVHLCBwdC52YWwpOwotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gc3JjX3ggKyB3OwogCXB0
+LmRhdGEueSA9IHNyY195ICsgaDsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19SSUdIVF9CT1RUT01f
+UkVHLCBwdC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeDsKIAlwdC5k
+YXRhLnkgPSBkc3RfeTsKIAlnMmRfYWRkX2NtZChjdHgsIERTVF9MRUZUX1RPUF9SRUcsIHB0LnZh
+bCk7Ci0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeCArIHc7CiAJcHQuZGF0YS55ID0g
+ZHN0X3kgKyBoOwogCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hUX0JPVFRPTV9SRUcsIHB0LnZh
+bCk7CkBAIC04MjksMjAgKzgxNCwxNiBAQCBnMmRfc2NhbGVfYW5kX2JsZW5kKHN0cnVjdCBnMmRf
+Y29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICpzcmMsCiAJZzJkX2FkZF9jbWQoY3R4LCBC
+SVRCTFRfQ09NTUFORF9SRUcsIGJpdGJsdC52YWwpOwogCWcyZF9hZGRfY21kKGN0eCwgQkxFTkRf
+RlVOQ1RJT05fUkVHLCBibGVuZC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBz
+cmNfeDsKIAlwdC5kYXRhLnkgPSBzcmNfeTsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19MRUZUX1RP
+UF9SRUcsIHB0LnZhbCk7Ci0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBzcmNfeCArIHNyY193
+OwogCXB0LmRhdGEueSA9IHNyY195ICsgc3JjX2g7CiAJZzJkX2FkZF9jbWQoY3R4LCBTUkNfUklH
+SFRfQk9UVE9NX1JFRywgcHQudmFsKTsKIAotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gZHN0
+X3g7CiAJcHQuZGF0YS55ID0gZHN0X3k7CiAJZzJkX2FkZF9jbWQoY3R4LCBEU1RfTEVGVF9UT1Bf
+UkVHLCBwdC52YWwpOwotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gZHN0X3ggKyBkc3RfdzsK
+IAlwdC5kYXRhLnkgPSBkc3RfeSArIGRzdF9oOwogCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hU
+X0JPVFRPTV9SRUcsIHB0LnZhbCk7Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
