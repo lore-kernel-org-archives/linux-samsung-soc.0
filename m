@@ -1,53 +1,201 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 2/9] exynos/fimg2d: simplify base address submission in
- g2d_scale_and_blend()
-Date: Tue,  8 Sep 2015 17:22:27 +0200
-Message-ID: <1441725754-27555-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 3/9] exynos/fimg2d: add g2d_check_space()
+Date: Tue,  8 Sep 2015 17:22:28 +0200
+Message-ID: <1441725754-27555-4-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34626 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755025AbbIHPXZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Sep 2015 11:23:25 -0400
 In-Reply-To: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VXNlIGcyZF9hZGRfYmFzZV9hZGRyKCkgZm9yIHNvdXJjZSBhbmQgZGVzdGluYXRpb24gYmFzZQph
-ZGRyZXNzIGp1c3QgbGlrZSBhbGwgb3RoZXIgY2FsbHMuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMg
-SmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBleHlub3MvZXh5bm9z
-X2ZpbWcyZC5jIHwgMTQgKystLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKyksIDEyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2V4eW5vcy9leHlub3NfZmltZzJk
-LmMgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5jCmluZGV4IDRhODhlMGMuLjg1YjIzMTcgMTAwNjQ0
-Ci0tLSBhL2V4eW5vcy9leHlub3NfZmltZzJkLmMKKysrIGIvZXh5bm9zL2V4eW5vc19maW1nMmQu
-YwpAQCAtNjcyLDEyICs2NzIsNyBAQCBnMmRfc2NhbGVfYW5kX2JsZW5kKHN0cnVjdCBnMmRfY29u
-dGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICpzcmMsCiAJCWcyZF9hZGRfY21kKGN0eCwgRFNU
-X1NFTEVDVF9SRUcsIEcyRF9TRUxFQ1RfTU9ERV9OT1JNQUwpOwogCiAJZzJkX2FkZF9jbWQoY3R4
-LCBEU1RfQ09MT1JfTU9ERV9SRUcsIGRzdC0+Y29sb3JfbW9kZSk7Ci0JaWYgKGRzdC0+YnVmX3R5
-cGUgPT0gRzJEX0lNR0JVRl9VU0VSUFRSKQotCQlnMmRfYWRkX2NtZChjdHgsIERTVF9CQVNFX0FE
-RFJfUkVHIHwgRzJEX0JVRl9VU0VSUFRSLAotCQkJCSh1bnNpZ25lZCBsb25nKSZkc3QtPnVzZXJf
-cHRyWzBdKTsKLQllbHNlCi0JCWcyZF9hZGRfY21kKGN0eCwgRFNUX0JBU0VfQUREUl9SRUcsIGRz
-dC0+Ym9bMF0pOwotCisJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBkc3QsIGcyZF9kc3QpOwogCWcy
-ZF9hZGRfY21kKGN0eCwgRFNUX1NUUklERV9SRUcsIGRzdC0+c3RyaWRlKTsKIAogCWcyZF9hZGRf
-Y21kKGN0eCwgU1JDX1NFTEVDVF9SRUcsIHNyYy0+c2VsZWN0X21vZGUpOwpAQCAtNjg1LDEyICs2
-ODAsNyBAQCBnMmRfc2NhbGVfYW5kX2JsZW5kKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1
-Y3QgZzJkX2ltYWdlICpzcmMsCiAKIAlzd2l0Y2ggKHNyYy0+c2VsZWN0X21vZGUpIHsKIAljYXNl
-IEcyRF9TRUxFQ1RfTU9ERV9OT1JNQUw6Ci0JCWlmIChzcmMtPmJ1Zl90eXBlID09IEcyRF9JTUdC
-VUZfVVNFUlBUUikKLQkJCWcyZF9hZGRfY21kKGN0eCwgU1JDX0JBU0VfQUREUl9SRUcgfCBHMkRf
-QlVGX1VTRVJQVFIsCi0JCQkJCSh1bnNpZ25lZCBsb25nKSZzcmMtPnVzZXJfcHRyWzBdKTsKLQkJ
-ZWxzZQotCQkJZzJkX2FkZF9jbWQoY3R4LCBTUkNfQkFTRV9BRERSX1JFRywgc3JjLT5ib1swXSk7
-Ci0KKwkJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBzcmMsIGcyZF9zcmMpOwogCQlnMmRfYWRkX2Nt
-ZChjdHgsIFNSQ19TVFJJREVfUkVHLCBzcmMtPnN0cmlkZSk7CiAJCWJyZWFrOwogCWNhc2UgRzJE
-X1NFTEVDVF9NT0RFX0ZHQ09MT1I6Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+This is going to be used to check if the command buffers have
+enough space left prior to actual submission of the commands.
+
+Use this in g2d_{solid_fill,copy,copy_with_scale}().
+
+For this the parameter validation before buffer space
+checking so that we can exit early if it fails.
+Also don't reset the G2D context in this situation since
+the buffers are not partially submitted anymore.
+
+The repeat mode in g2d_copy_with_scale() is checked first
+to make computation of space easier.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 99 ++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 64 insertions(+), 35 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 85b2317..2e04f4a 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -102,6 +102,23 @@ static unsigned int g2d_get_blend_op(enum e_g2d_op op)
+ }
+ 
+ /*
++ * g2d_check_space - check if command buffers have enough space left.
++ *
++ * @ctx: a pointer to g2d_context structure.
++ * @num_cmds: number of (regular) commands.
++ * @num_gem_cmds: number of GEM commands.
++ */
++static unsigned int g2d_check_space(const struct g2d_context *ctx,
++	unsigned int num_cmds, unsigned int num_gem_cmds)
++{
++	if (ctx->cmd_nr + num_cmds >= G2D_MAX_CMD_NR ||
++	    ctx->cmd_buf_nr + num_gem_cmds >= G2D_MAX_GEM_CMD_NR)
++		return 1;
++	else
++		return 0;
++}
++
++/*
+  * g2d_add_cmd - set given command and value to user side command buffer.
+  *
+  * @ctx: a pointer to g2d_context structure.
+@@ -302,6 +319,9 @@ g2d_solid_fill(struct g2d_context *ctx, struct g2d_image *img,
+ 	union g2d_bitblt_cmd_val bitblt;
+ 	union g2d_point_val pt;
+ 
++	if (g2d_check_space(ctx, 7, 1))
++		return -ENOSPC;
++
+ 	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+ 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
+ 	g2d_add_base_addr(ctx, img, g2d_dst);
+@@ -355,17 +375,7 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
+ {
+ 	union g2d_rop4_val rop4;
+ 	union g2d_point_val pt;
+-	unsigned int src_w = 0, src_h = 0, dst_w = 0, dst_h = 0;
+-
+-	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
+-	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+-	g2d_add_base_addr(ctx, dst, g2d_dst);
+-	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
+-
+-	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+-	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
+-	g2d_add_base_addr(ctx, src, g2d_src);
+-	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
++	unsigned int src_w, src_h, dst_w, dst_h;
+ 
+ 	src_w = w;
+ 	src_h = h;
+@@ -386,10 +396,22 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
+ 
+ 	if (w <= 0 || h <= 0) {
+ 		fprintf(stderr, "invalid width or height.\n");
+-		g2d_reset(ctx);
+ 		return -EINVAL;
+ 	}
+ 
++	if (g2d_check_space(ctx, 11, 2))
++		return -ENOSPC;
++
++	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
++	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
++	g2d_add_base_addr(ctx, dst, g2d_dst);
++	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
++
++	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
++	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
++	g2d_add_base_addr(ctx, src, g2d_src);
++	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
++
+ 	pt.val = 0;
+ 	pt.data.x = src_x;
+ 	pt.data.y = src_y;
+@@ -445,23 +467,12 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ {
+ 	union g2d_rop4_val rop4;
+ 	union g2d_point_val pt;
+-	unsigned int scale;
++	unsigned int scale, repeat_pad;
+ 	unsigned int scale_x, scale_y;
+ 
+-	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
+-	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+-	g2d_add_base_addr(ctx, dst, g2d_dst);
+-	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
+-
+-	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+-	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
+-
+-	g2d_add_cmd(ctx, SRC_REPEAT_MODE_REG, src->repeat_mode);
+-	if (src->repeat_mode == G2D_REPEAT_MODE_PAD)
+-		g2d_add_cmd(ctx, SRC_PAD_VALUE_REG, dst->color);
+-
+-	g2d_add_base_addr(ctx, src, g2d_src);
+-	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
++	/* Sanitize this parameter to facilitate space computation below. */
++	if (negative)
++		negative = 1;
+ 
+ 	if (src_w == dst_w && src_h == dst_h)
+ 		scale = 0;
+@@ -471,6 +482,8 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 		scale_y = g2d_get_scaling(src_h, dst_h);
+ 	}
+ 
++	repeat_pad = src->repeat_mode == G2D_REPEAT_MODE_PAD ? 1 : 0;
++
+ 	if (src_x + src_w > src->width)
+ 		src_w = src->width - src_x;
+ 	if (src_y + src_h > src->height)
+@@ -483,21 +496,37 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 
+ 	if (src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
+ 		fprintf(stderr, "invalid width or height.\n");
+-		g2d_reset(ctx);
+ 		return -EINVAL;
+ 	}
+ 
++	if (g2d_check_space(ctx, 12 + scale * 3 + negative + repeat_pad, 2))
++		return -ENOSPC;
++
++	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
++	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
++	g2d_add_base_addr(ctx, dst, g2d_dst);
++	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
++
++	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
++	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
++
++	g2d_add_cmd(ctx, SRC_REPEAT_MODE_REG, src->repeat_mode);
++	if (repeat_pad)
++		g2d_add_cmd(ctx, SRC_PAD_VALUE_REG, dst->color);
++
++	g2d_add_base_addr(ctx, src, g2d_src);
++	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
++
++	rop4.val = 0;
++	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
++
+ 	if (negative) {
+ 		g2d_add_cmd(ctx, BG_COLOR_REG, 0x00FFFFFF);
+-		rop4.val = 0;
+-		rop4.data.unmasked_rop3 = G2D_ROP3_SRC^G2D_ROP3_DST;
+-		g2d_add_cmd(ctx, ROP4_REG, rop4.val);
+-	} else {
+-		rop4.val = 0;
+-		rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
+-		g2d_add_cmd(ctx, ROP4_REG, rop4.val);
++		rop4.data.unmasked_rop3 ^= G2D_ROP3_DST;
+ 	}
+ 
++	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
++
+ 	if (scale) {
+ 		g2d_add_cmd(ctx, SRC_SCALE_CTRL_REG, G2D_SCALE_MODE_BILINEAR);
+ 		g2d_add_cmd(ctx, SRC_XSCALE_REG, scale_x);
+-- 
+2.0.5
