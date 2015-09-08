@@ -1,101 +1,103 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable USB Video Class support
-Date: Tue, 8 Sep 2015 22:12:42 +0900
-Message-ID: <55EEDECA.4040407@samsung.com>
-References: <1441662323-15468-1-git-send-email-javier@osg.samsung.com>
- <55EE9820.2010202@samsung.com> <55EE9F1A.9030703@osg.samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 04/11] clk: samsung: exynos7: Corrects CMU_CCORE clocks
+ names
+Date: Tue, 08 Sep 2015 18:48:22 +0530
+Message-ID: <55EEE01E.5040502@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
+ <55EE8E82.8080800@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55EE9F1A.9030703@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <55EE8E82.8080800@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 08.09.2015 o 17:40, Javier Martinez Canillas pisze:
-> [adding Bartlomiej to cc]
-> 
-> Hello Krzysztof,
-> 
-> On 09/08/2015 10:11 AM, Krzysztof Kozlowski wrote:
->> On 08.09.2015 06:45, Javier Martinez Canillas wrote:
->>> The Exynos5420 Peach Pit and Exynos5800 Peach Pi boards have a built-in
->>> Silicon Motion USB UVC WebCam. Enable support for the USB Video Class
->>> driver and its needed media Kconfig symbols so the camera is supported.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>
->>> ---
->>>
->>>  arch/arm/configs/exynos_defconfig | 4 ++++
->>>  1 file changed, 4 insertions(+)
+Hello,
+
+On 09/08/2015 01:00 PM, Krzysztof Kozlowski wrote:
+> On 04.09.2015 20:37, Alim Akhtar wrote:
+>> This patch rename CMU_CCROE clocks names to match with user manual.
+>
+> s/rename/renames/ (everywhere...)
+> s/CCROE/CCORE/
+>
+>
+>> And also adds missing gate clock for aclk_ccore_133.
 >>
->> The patch itself looks good but now I wonder whether we are not putting
->> to much stuff built-in. The exynos_defconfig does not replace the
->> distribution distro. For a fully working board the distro should prepare
->> it's own config.
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos7.c       |    8 ++++++--
+>>   include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+>>   2 files changed, 8 insertions(+), 3 deletions(-)
 >>
-> 
-> Agreed that exynos_defconfig is not meant to replace a distro config.
-> 
->> I understand that in this case the USB webcams are parts of device (like
->> on all laptops)... a little bit similar as camera sensors on mobile
->> phones. Yet on mobile phone usually the camera itself is part of SoC,
->> only the sensor is external.
->>
->> Actually what we need is a kind of policy for exynos_defconfig - what
->> should be inside as built-in and what as module?
->>
-> 
-> I had the same conversation with Bartlomiej before in [0] when I tried to
-> enable the SBS battery driver as module. I save you a click and quote him:
-> 
-> "the current most popular use case for exynos_defconfig
-> (not multi_v7_defconfig) seems to be to build kernel image
-> alone and use it without any modules"
-> 
-> Which seems to be true, so my understanding is that exynos_defconfig is a
-> minimal defconfig for Exynos platforms and for easy of test/use, everything
-> should be built-in while multi_v7_defconfig would be more similar to a conf
-> used by distros where most things would be built as a module when possible.
-
-Yeah, but this actually does not entirely cover my doubts. We cannot
-enable everything built-in because boot partitions on some devices have
-limited size. So enabling everything would break that use case (use case
-of easy testing).
-
-Let me rephrase my question into:
-1. What is worth enabling in exynos_defconfig? USB devices? I would
-argue, except they are needed to boot.
-So maybe enable everything which Exynos boards have hard-wired? That
-would make some sense... but we're making kernel larger.
-
-2. Maybe enable only what is a typical use case (including typical
-testing cases)? Then we would have to define what "typical" means. For
-example battery would be typical but camera would not.
-
-3. Argh, so maybe, if we agree that not everything is worth being
-enabled, that additional stuff could be build as module?
-
-
-> Other SoC specific deconfig do it differently, OMAP for example does the
-> opposite and tries to build as much stuff as possible as a module.
-
-I don't argue about switching from "y" to "m". That's not the case.
-Rather I am thinking where/when we should stop enabling stuff?
-
-Best regards,
-Krzysztof
-
-> 
->> Best regards,
->> Krzysztof
->>
->>
-> 
-> [0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-August/278757.html
-> 
+>> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+>> index ba84e9b..0eb0f57 100644
+>> --- a/drivers/clk/samsung/clk-exynos7.c
+>> +++ b/drivers/clk/samsung/clk-exynos7.c
+>> @@ -31,6 +31,7 @@
+>>   #define MUX_SEL_TOPC1		0x0204
+>>   #define MUX_SEL_TOPC2		0x0208
+>>   #define MUX_SEL_TOPC3		0x020C
+>> +#define MUX_ENABLE_TOPC2	0x0308
+>>   #define DIV_TOPC0		0x0600
+>>   #define DIV_TOPC1		0x0604
+>>   #define DIV_TOPC3		0x060C
+>> @@ -167,6 +168,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+>>   		ENABLE_SCLK_TOPC1, 1, 0, 0),
+>>   	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
+>>   		ENABLE_SCLK_TOPC1, 0, 0, 0),
+>> +
+>> +	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
+>> +		MUX_ENABLE_TOPC2, 4, 0, 0),
+>
+> Hmmm... Shouldn't this be CLK_ENABLE_ACLK_TOPC0 register? For other
+> similar clock configurations (e.g. SCLK_I2S1) the gate at the end is
+> controlled, not the mux parent.
+Good catch, will re-spin, as suggested by you, will separate adding Gate 
+and renaming clock names.
+>
 > Best regards,
-> 
+> Krzysztof
+>
+>>   };
+>>
+>>   static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+>> @@ -544,7 +548,7 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+>>   /*
+>>    * List of parent clocks for Muxes in CMU_CCORE
+>>    */
+>> -PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
+>> +PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
+>>
+>>   static unsigned long ccore_clk_regs[] __initdata = {
+>>   	MUX_SEL_CCORE,
+>> @@ -552,7 +556,7 @@ static unsigned long ccore_clk_regs[] __initdata = {
+>>   };
+>>
+>>   static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
+>> -	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
+>> +	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
+>>   		MUX_SEL_CCORE, 1, 1),
+>>   };
+>>
+>> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+>> index b63eba6..2e01235 100644
+>> --- a/include/dt-bindings/clock/exynos7-clk.h
+>> +++ b/include/dt-bindings/clock/exynos7-clk.h
+>> @@ -30,7 +30,8 @@
+>>   #define SCLK_BUS0_PLL_A			17
+>>   #define SCLK_CC_PLL_B			18
+>>   #define SCLK_CC_PLL_A			19
+>> -#define TOPC_NR_CLK			20
+>> +#define ACLK_CCORE_133			20
+>> +#define TOPC_NR_CLK			21
+>>
+>>   /* TOP0 */
+>>   #define DOUT_ACLK_PERIC1		1
+>>
+>
+>
