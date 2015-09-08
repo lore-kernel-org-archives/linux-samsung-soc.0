@@ -1,86 +1,97 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 6/9] exynos/fimg2d: remove superfluous initialization of
- g2d_point_val
-Date: Tue,  8 Sep 2015 17:22:31 +0200
-Message-ID: <1441725754-27555-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 7/9] exynos/fimg2d: make g2d_add_cmd() less heavy
+Date: Tue,  8 Sep 2015 17:22:32 +0200
+Message-ID: <1441725754-27555-8-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34646 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754430AbbIHPYN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Sep 2015 11:24:13 -0400
 In-Reply-To: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VGhlIGcyZF9wb2ludF92YWwgdW5pb24gY29uc2lzdHMgb2YgdHdvIGNvb3JkaW5hdGVzIG9mIDE2
-CmJpdHMuIFdoZW5ldmVyIHRoaXMgdW5pb24gaXMgdXNlZCB0aG91Z2gsIGJvdGggY29vcmRpbmF0
-ZXMKYXJlIGV4cGxpY2l0bHkgc2V0LiBIZW5jZSBwcmlvciBpbml0aWFsaXphdGlvbiBpcyB1bm5l
-Y2Vzc2FyeS4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmkt
-YmllbGVmZWxkLmRlPgotLS0KIGV4eW5vcy9leHlub3NfZmltZzJkLmMgfCAxOSAtLS0tLS0tLS0t
-LS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZXh5bm9zL2V4eW5vc19maW1nMmQuYyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggZDdj
-YmIyNC4uZmJjNzdhMyAxMDA2NDQKLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9l
-eHlub3MvZXh5bm9zX2ZpbWcyZC5jCkBAIC0zODAsMTUgKzM4MCwxMiBAQCBnMmRfc29saWRfZmls
-bChzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqaW1nLAogCWlmICh5
-ICsgaCA+IGltZy0+aGVpZ2h0KQogCQloID0gaW1nLT5oZWlnaHQgLSB5OwogCi0JcHQudmFsID0g
-MDsKIAlwdC5kYXRhLnggPSB4OwogCXB0LmRhdGEueSA9IHk7CiAJZzJkX2FkZF9jbWQoY3R4LCBE
-U1RfTEVGVF9UT1BfUkVHLCBwdC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSB4
-ICsgdzsKIAlwdC5kYXRhLnkgPSB5ICsgaDsKLQogCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hU
-X0JPVFRPTV9SRUcsIHB0LnZhbCk7CiAKIAlnMmRfYWRkX2NtZChjdHgsIFNGX0NPTE9SX1JFRywg
-aW1nLT5jb2xvcik7CkBAIC00NjAsMjAgKzQ1NywxNiBAQCBnMmRfY29weShzdHJ1Y3QgZzJkX2Nv
-bnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqc3JjLAogCWcyZF9hZGRfYmFzZV9hZGRyKGN0
-eCwgc3JjLCBnMmRfc3JjKTsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19TVFJJREVfUkVHLCBzcmMt
-PnN0cmlkZSk7CiAKLQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194OwogCXB0LmRhdGEu
-eSA9IHNyY195OwogCWcyZF9hZGRfY21kKGN0eCwgU1JDX0xFRlRfVE9QX1JFRywgcHQudmFsKTsK
-LQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194ICsgdzsKIAlwdC5kYXRhLnkgPSBzcmNf
-eSArIGg7CiAJZzJkX2FkZF9jbWQoY3R4LCBTUkNfUklHSFRfQk9UVE9NX1JFRywgcHQudmFsKTsK
-IAotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gZHN0X3g7CiAJcHQuZGF0YS55ID0gZHN0X3k7
-CiAJZzJkX2FkZF9jbWQoY3R4LCBEU1RfTEVGVF9UT1BfUkVHLCBwdC52YWwpOwotCXB0LnZhbCA9
-IDA7CiAJcHQuZGF0YS54ID0gZHN0X3ggKyB3OwogCXB0LmRhdGEueSA9IGRzdF95ICsgaDsKIAln
-MmRfYWRkX2NtZChjdHgsIERTVF9SSUdIVF9CT1RUT01fUkVHLCBwdC52YWwpOwpAQCAtNTgxLDIw
-ICs1NzQsMTYgQEAgZzJkX2NvcHlfd2l0aF9zY2FsZShzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwg
-c3RydWN0IGcyZF9pbWFnZSAqc3JjLAogCQlnMmRfYWRkX2NtZChjdHgsIFNSQ19ZU0NBTEVfUkVH
-LCBzY2FsZV95KTsKIAl9CiAKLQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194OwogCXB0
-LmRhdGEueSA9IHNyY195OwogCWcyZF9hZGRfY21kKGN0eCwgU1JDX0xFRlRfVE9QX1JFRywgcHQu
-dmFsKTsKLQlwdC52YWwgPSAwOwogCXB0LmRhdGEueCA9IHNyY194ICsgc3JjX3c7CiAJcHQuZGF0
-YS55ID0gc3JjX3kgKyBzcmNfaDsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19SSUdIVF9CT1RUT01f
-UkVHLCBwdC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeDsKIAlwdC5k
-YXRhLnkgPSBkc3RfeTsKIAlnMmRfYWRkX2NtZChjdHgsIERTVF9MRUZUX1RPUF9SRUcsIHB0LnZh
-bCk7Ci0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeCArIGRzdF93OwogCXB0LmRhdGEu
-eSA9IGRzdF95ICsgZHN0X2g7CiAJZzJkX2FkZF9jbWQoY3R4LCBEU1RfUklHSFRfQk9UVE9NX1JF
-RywgcHQudmFsKTsKQEAgLTcwMCwyMCArNjg5LDE2IEBAIGcyZF9ibGVuZChzdHJ1Y3QgZzJkX2Nv
-bnRleHQgKmN0eCwgc3RydWN0IGcyZF9pbWFnZSAqc3JjLAogCWcyZF9hZGRfY21kKGN0eCwgQklU
-QkxUX0NPTU1BTkRfUkVHLCBiaXRibHQudmFsKTsKIAlnMmRfYWRkX2NtZChjdHgsIEJMRU5EX0ZV
-TkNUSU9OX1JFRywgYmxlbmQudmFsKTsKIAotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gc3Jj
-X3g7CiAJcHQuZGF0YS55ID0gc3JjX3k7CiAJZzJkX2FkZF9jbWQoY3R4LCBTUkNfTEVGVF9UT1Bf
-UkVHLCBwdC52YWwpOwotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gc3JjX3ggKyB3OwogCXB0
-LmRhdGEueSA9IHNyY195ICsgaDsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19SSUdIVF9CT1RUT01f
-UkVHLCBwdC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeDsKIAlwdC5k
-YXRhLnkgPSBkc3RfeTsKIAlnMmRfYWRkX2NtZChjdHgsIERTVF9MRUZUX1RPUF9SRUcsIHB0LnZh
-bCk7Ci0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBkc3RfeCArIHc7CiAJcHQuZGF0YS55ID0g
-ZHN0X3kgKyBoOwogCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hUX0JPVFRPTV9SRUcsIHB0LnZh
-bCk7CkBAIC04MjksMjAgKzgxNCwxNiBAQCBnMmRfc2NhbGVfYW5kX2JsZW5kKHN0cnVjdCBnMmRf
-Y29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICpzcmMsCiAJZzJkX2FkZF9jbWQoY3R4LCBC
-SVRCTFRfQ09NTUFORF9SRUcsIGJpdGJsdC52YWwpOwogCWcyZF9hZGRfY21kKGN0eCwgQkxFTkRf
-RlVOQ1RJT05fUkVHLCBibGVuZC52YWwpOwogCi0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBz
-cmNfeDsKIAlwdC5kYXRhLnkgPSBzcmNfeTsKIAlnMmRfYWRkX2NtZChjdHgsIFNSQ19MRUZUX1RP
-UF9SRUcsIHB0LnZhbCk7Ci0JcHQudmFsID0gMDsKIAlwdC5kYXRhLnggPSBzcmNfeCArIHNyY193
-OwogCXB0LmRhdGEueSA9IHNyY195ICsgc3JjX2g7CiAJZzJkX2FkZF9jbWQoY3R4LCBTUkNfUklH
-SFRfQk9UVE9NX1JFRywgcHQudmFsKTsKIAotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gZHN0
-X3g7CiAJcHQuZGF0YS55ID0gZHN0X3k7CiAJZzJkX2FkZF9jbWQoY3R4LCBEU1RfTEVGVF9UT1Bf
-UkVHLCBwdC52YWwpOwotCXB0LnZhbCA9IDA7CiAJcHQuZGF0YS54ID0gZHN0X3ggKyBkc3RfdzsK
-IAlwdC5kYXRhLnkgPSBkc3RfeSArIGRzdF9oOwogCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hU
-X0JPVFRPTV9SRUcsIHB0LnZhbCk7Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+The function currently checks for each added command
+if an overflow of the corresponding command buffers
+occurs, but none of the callers ever checks the
+return value.
+
+Since all callers are now converted to use
+g2d_check_space() simplify the function.
+
+(1) The overflow checks become asserts, so they're only
+    active for debug builds. This is fine since
+    g2d_add_cmd() is not part of the public API.
+
+(2) Switch the return value to void.
+
+(3) Explicitly state that the caller has to check
+    buffer space before calling g2d_add_cmd().
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index fbc77a3..5873fe7 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -18,6 +18,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <errno.h>
++#include <assert.h>
+ 
+ #include <sys/mman.h>
+ #include <linux/stddef.h>
+@@ -172,8 +173,11 @@ static int g2d_validate_blending_op(
+  * @ctx: a pointer to g2d_context structure.
+  * @cmd: command data.
+  * @value: value data.
++ *
++ * The caller has to make sure that the commands buffers have enough space
++ * left to hold the command. Use g2d_check_space() to ensure this.
+  */
+-static int g2d_add_cmd(struct g2d_context *ctx, unsigned long cmd,
++static void g2d_add_cmd(struct g2d_context *ctx, unsigned long cmd,
+ 			unsigned long value)
+ {
+ 	switch (cmd & ~(G2D_BUF_USERPTR)) {
+@@ -183,28 +187,20 @@ static int g2d_add_cmd(struct g2d_context *ctx, unsigned long cmd,
+ 	case DST_PLANE2_BASE_ADDR_REG:
+ 	case PAT_BASE_ADDR_REG:
+ 	case MASK_BASE_ADDR_REG:
+-		if (ctx->cmd_buf_nr >= G2D_MAX_GEM_CMD_NR) {
+-			fprintf(stderr, "Overflow cmd_gem size.\n");
+-			return -EINVAL;
+-		}
++		assert(ctx->cmd_buf_nr < G2D_MAX_GEM_CMD_NR);
+ 
+ 		ctx->cmd_buf[ctx->cmd_buf_nr].offset = cmd;
+ 		ctx->cmd_buf[ctx->cmd_buf_nr].data = value;
+ 		ctx->cmd_buf_nr++;
+ 		break;
+ 	default:
+-		if (ctx->cmd_nr >= G2D_MAX_CMD_NR) {
+-			fprintf(stderr, "Overflow cmd size.\n");
+-			return -EINVAL;
+-		}
++		assert(ctx->cmd_nr < G2D_MAX_CMD_NR);
+ 
+ 		ctx->cmd[ctx->cmd_nr].offset = cmd;
+ 		ctx->cmd[ctx->cmd_nr].data = value;
+ 		ctx->cmd_nr++;
+ 		break;
+ 	}
+-
+-	return 0;
+ }
+ 
+ /*
+-- 
+2.0.5
