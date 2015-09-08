@@ -1,61 +1,85 @@
 From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
-Subject: [PATCH 0/3] platform/chrome: vboot context support
-Date: Tue,  8 Sep 2015 09:07:43 -0300
-Message-ID: <1441714066-5599-1-git-send-email-emilio.lopez@collabora.co.uk>
+Subject: [PATCH 1/3] sysfs: Fix is_visible() support for binary attributes
+Date: Tue,  8 Sep 2015 09:07:44 -0300
+Message-ID: <1441714066-5599-2-git-send-email-emilio.lopez@collabora.co.uk>
+References: <1441714066-5599-1-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38233 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38237 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754246AbbIHMI1 (ORCPT
+	with ESMTP id S1754246AbbIHMI4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Sep 2015 08:08:27 -0400
+	Tue, 8 Sep 2015 08:08:56 -0400
+In-Reply-To: <1441714066-5599-1-git-send-email-emilio.lopez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: gregkh@linuxfoundation.org, olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
 
-Hi everyone,
+According to the sysfs header file:
 
-This series adds support for reading and writing the verified boot cont=
-ext
-nvram space on the EC using the cros_ec sysfs interface.
+    "The returned value will replace static permissions defined in
+     struct attribute or struct bin_attribute."
 
-The first patch fixes is_visible() functionality, making it work for bi=
-nary
-attributes as well as normal ones. This is needed so the sysfs group
-can be hidden when the EC doesn't offer any space for the context.
+but this isn't the case, as is_visible is only called on
+struct attribute only. This patch adds the code paths required
+to support is_visible() on binary attributes.
 
-The second patch is the actual code implementing the interface to read
-and write the context data.
+Signed-off-by: Emilio L=C3=B3pez <emilio.lopez@collabora.co.uk>
+---
+ fs/sysfs/group.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-The third patch adds the DT properties on peach boards which, judging b=
-y
-the vendor tree, use the EC to store the verified boot context.
-
-The series was tested on a peach pi and was found to work OK there. As
-always, all comments and further tests are welcome :)
-
-Cheers!
-Emilio
-
-Emilio L=C3=B3pez (3):
-  sysfs: Fix is_visible() support for binary attributes
-  platform/chrome: Support reading/writing the vboot context
-  ARM: dts: Enable EC vboot context support on Peach boards
-
- Documentation/devicetree/bindings/mfd/cros-ec.txt |   4 +
- arch/arm/boot/dts/exynos5420-peach-pit.dts        |   1 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts         |   1 +
- drivers/platform/chrome/Makefile                  |   5 +-
- drivers/platform/chrome/cros_ec_dev.c             |   1 +
- drivers/platform/chrome/cros_ec_vbc.c             | 137 ++++++++++++++=
-++++++++
- fs/sysfs/group.c                                  |  22 +++-
- include/linux/mfd/cros_ec.h                       |   1 +
- 8 files changed, 167 insertions(+), 5 deletions(-)
- create mode 100644 drivers/platform/chrome/cros_ec_vbc.c
-
+diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+index 39a0199..eb6996a 100644
+--- a/fs/sysfs/group.c
++++ b/fs/sysfs/group.c
+@@ -37,10 +37,10 @@ static int create_files(struct kernfs_node *parent,=
+ struct kobject *kobj,
+ {
+ 	struct attribute *const *attr;
+ 	struct bin_attribute *const *bin_attr;
+-	int error =3D 0, i;
++	int error =3D 0, i =3D 0;
+=20
+ 	if (grp->attrs) {
+-		for (i =3D 0, attr =3D grp->attrs; *attr && !error; i++, attr++) {
++		for (attr =3D grp->attrs; *attr && !error; i++, attr++) {
+ 			umode_t mode =3D (*attr)->mode;
+=20
+ 			/*
+@@ -73,13 +73,27 @@ static int create_files(struct kernfs_node *parent,=
+ struct kobject *kobj,
+ 	}
+=20
+ 	if (grp->bin_attrs) {
+-		for (bin_attr =3D grp->bin_attrs; *bin_attr; bin_attr++) {
++		for (bin_attr =3D grp->bin_attrs; *bin_attr; i++, bin_attr++) {
++			umode_t mode =3D (*bin_attr)->attr.mode;
++
+ 			if (update)
+ 				kernfs_remove_by_name(parent,
+ 						(*bin_attr)->attr.name);
++			if (grp->is_visible) {
++				mode =3D grp->is_visible(kobj,
++						       &(*bin_attr)->attr, i);
++				if (!mode)
++					continue;
++			}
++
++			WARN(mode & ~(SYSFS_PREALLOC | 0664),
++			     "Attribute %s: Invalid permissions 0%o\n",
++			     (*bin_attr)->attr.name, mode);
++
++			mode &=3D SYSFS_PREALLOC | 0664;
+ 			error =3D sysfs_add_file_mode_ns(parent,
+ 					&(*bin_attr)->attr, true,
+-					(*bin_attr)->attr.mode, NULL);
++					mode, NULL);
+ 			if (error)
+ 				break;
+ 		}
 --=20
 2.1.4
