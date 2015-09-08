@@ -1,69 +1,53 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 0/9] drm/exynos: rewrite fimg2d error handling
-Date: Tue,  8 Sep 2015 17:22:25 +0200
-Message-ID: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34607 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755025AbbIHPWv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Sep 2015 11:22:51 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 2/9] exynos/fimg2d: simplify base address submission in
+ g2d_scale_and_blend()
+Date: Tue,  8 Sep 2015 17:22:27 +0200
+Message-ID: <1441725754-27555-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-during the discussion about the last patchset touching the
-fimg2d code, it became apparent that the error handling for
-the command submission is currently unsatisfactory.
-
-This series rewrites the handling. All functions that submit
-command buffers now first check if enough space is available
-and only then proceed to build the command buffers.
-
-In particular the command buffer is no longer left in a
-half-finished state, since parameters passed to the functions
-are now validated before command submission. For this some
-validation functions are introduced.
-
-This should also increase performance if the bottleneck is
-the submission part, since adding commands to the buffer
-is now more lightweight.
-
-Last but not least some prefix was added to messages printed
-by fprintf and printf, and the G2D context struct was moved
-out of the public header.
-
-
-Please review and let me know if I can improve anything!
-
-With best wishes,
-Tobias
-
-
-Changes since v1:
-- squashed some of the patches together (suggested by Inki)
-- changed return value of validate functions (suggested by Inki)
-- added some more explanatory comments (suggested by Emil)
-
-
-Tobias Jakobi (9):
-  exynos/fimg2d: fix empty buffer handling in g2d_flush()
-  exynos/fimg2d: simplify base address submission in
-    g2d_scale_and_blend()
-  exynos/fimg2d: add g2d_check_space()
-  exynos/fimg2d: add g2d_validate_xyz() functions
-  exynos/fimg2d: remove default case from g2d_get_blend_op()
-  exynos/fimg2d: remove superfluous initialization of g2d_point_val
-  exynos/fimg2d: make g2d_add_cmd() less heavy
-  exynos/fimg2d: add message prefix
-  exynos/fimg2d: remove g2d_context from public header
-
- exynos/exynos_fimg2d.c | 376 ++++++++++++++++++++++++++++++-------------------
- exynos/exynos_fimg2d.h |  14 +-
- 2 files changed, 231 insertions(+), 159 deletions(-)
-
--- 
-2.0.5
+VXNlIGcyZF9hZGRfYmFzZV9hZGRyKCkgZm9yIHNvdXJjZSBhbmQgZGVzdGluYXRpb24gYmFzZQph
+ZGRyZXNzIGp1c3QgbGlrZSBhbGwgb3RoZXIgY2FsbHMuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMg
+SmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBleHlub3MvZXh5bm9z
+X2ZpbWcyZC5jIHwgMTQgKystLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKyksIDEyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2V4eW5vcy9leHlub3NfZmltZzJk
+LmMgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5jCmluZGV4IDRhODhlMGMuLjg1YjIzMTcgMTAwNjQ0
+Ci0tLSBhL2V4eW5vcy9leHlub3NfZmltZzJkLmMKKysrIGIvZXh5bm9zL2V4eW5vc19maW1nMmQu
+YwpAQCAtNjcyLDEyICs2NzIsNyBAQCBnMmRfc2NhbGVfYW5kX2JsZW5kKHN0cnVjdCBnMmRfY29u
+dGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICpzcmMsCiAJCWcyZF9hZGRfY21kKGN0eCwgRFNU
+X1NFTEVDVF9SRUcsIEcyRF9TRUxFQ1RfTU9ERV9OT1JNQUwpOwogCiAJZzJkX2FkZF9jbWQoY3R4
+LCBEU1RfQ09MT1JfTU9ERV9SRUcsIGRzdC0+Y29sb3JfbW9kZSk7Ci0JaWYgKGRzdC0+YnVmX3R5
+cGUgPT0gRzJEX0lNR0JVRl9VU0VSUFRSKQotCQlnMmRfYWRkX2NtZChjdHgsIERTVF9CQVNFX0FE
+RFJfUkVHIHwgRzJEX0JVRl9VU0VSUFRSLAotCQkJCSh1bnNpZ25lZCBsb25nKSZkc3QtPnVzZXJf
+cHRyWzBdKTsKLQllbHNlCi0JCWcyZF9hZGRfY21kKGN0eCwgRFNUX0JBU0VfQUREUl9SRUcsIGRz
+dC0+Ym9bMF0pOwotCisJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBkc3QsIGcyZF9kc3QpOwogCWcy
+ZF9hZGRfY21kKGN0eCwgRFNUX1NUUklERV9SRUcsIGRzdC0+c3RyaWRlKTsKIAogCWcyZF9hZGRf
+Y21kKGN0eCwgU1JDX1NFTEVDVF9SRUcsIHNyYy0+c2VsZWN0X21vZGUpOwpAQCAtNjg1LDEyICs2
+ODAsNyBAQCBnMmRfc2NhbGVfYW5kX2JsZW5kKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1
+Y3QgZzJkX2ltYWdlICpzcmMsCiAKIAlzd2l0Y2ggKHNyYy0+c2VsZWN0X21vZGUpIHsKIAljYXNl
+IEcyRF9TRUxFQ1RfTU9ERV9OT1JNQUw6Ci0JCWlmIChzcmMtPmJ1Zl90eXBlID09IEcyRF9JTUdC
+VUZfVVNFUlBUUikKLQkJCWcyZF9hZGRfY21kKGN0eCwgU1JDX0JBU0VfQUREUl9SRUcgfCBHMkRf
+QlVGX1VTRVJQVFIsCi0JCQkJCSh1bnNpZ25lZCBsb25nKSZzcmMtPnVzZXJfcHRyWzBdKTsKLQkJ
+ZWxzZQotCQkJZzJkX2FkZF9jbWQoY3R4LCBTUkNfQkFTRV9BRERSX1JFRywgc3JjLT5ib1swXSk7
+Ci0KKwkJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBzcmMsIGcyZF9zcmMpOwogCQlnMmRfYWRkX2Nt
+ZChjdHgsIFNSQ19TVFJJREVfUkVHLCBzcmMtPnN0cmlkZSk7CiAJCWJyZWFrOwogCWNhc2UgRzJE
+X1NFTEVDVF9NT0RFX0ZHQ09MT1I6Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
