@@ -1,96 +1,69 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 04/11] clk: samsung: exynos7: Corrects CMU_CCORE clocks
- names
-Date: Tue, 08 Sep 2015 16:30:10 +0900
-Message-ID: <55EE8E82.8080800@samsung.com>
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Enable USB Video Class support
+Date: Tue, 08 Sep 2015 17:11:12 +0900
+Message-ID: <55EE9820.2010202@samsung.com>
+References: <1441662323-15468-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1441662323-15468-1-git-send-email-javier@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04.09.2015 20:37, Alim Akhtar wrote:
-> This patch rename CMU_CCROE clocks names to match with user manual.
-
-s/rename/renames/ (everywhere...)
-s/CCROE/CCORE/
-
-
-> And also adds missing gate clock for aclk_ccore_133.
+On 08.09.2015 06:45, Javier Martinez Canillas wrote:
+> The Exynos5420 Peach Pit and Exynos5800 Peach Pi boards have a built-in
+> Silicon Motion USB UVC WebCam. Enable support for the USB Video Class
+> driver and its needed media Kconfig symbols so the camera is supported.
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
 > ---
->  drivers/clk/samsung/clk-exynos7.c       |    8 ++++++--
->  include/dt-bindings/clock/exynos7-clk.h |    3 ++-
->  2 files changed, 8 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-> index ba84e9b..0eb0f57 100644
-> --- a/drivers/clk/samsung/clk-exynos7.c
-> +++ b/drivers/clk/samsung/clk-exynos7.c
-> @@ -31,6 +31,7 @@
->  #define MUX_SEL_TOPC1		0x0204
->  #define MUX_SEL_TOPC2		0x0208
->  #define MUX_SEL_TOPC3		0x020C
-> +#define MUX_ENABLE_TOPC2	0x0308
->  #define DIV_TOPC0		0x0600
->  #define DIV_TOPC1		0x0604
->  #define DIV_TOPC3		0x060C
-> @@ -167,6 +168,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
->  		ENABLE_SCLK_TOPC1, 1, 0, 0),
->  	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
->  		ENABLE_SCLK_TOPC1, 0, 0, 0),
-> +
-> +	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
-> +		MUX_ENABLE_TOPC2, 4, 0, 0),
+>  arch/arm/configs/exynos_defconfig | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Hmmm... Shouldn't this be CLK_ENABLE_ACLK_TOPC0 register? For other
-similar clock configurations (e.g. SCLK_I2S1) the gate at the end is
-controlled, not the mux parent.
+The patch itself looks good but now I wonder whether we are not putting
+to much stuff built-in. The exynos_defconfig does not replace the
+distribution distro. For a fully working board the distro should prepare
+it's own config.
+
+I understand that in this case the USB webcams are parts of device (like
+on all laptops)... a little bit similar as camera sensors on mobile
+phones. Yet on mobile phone usually the camera itself is part of SoC,
+only the sensor is external.
+
+Actually what we need is a kind of policy for exynos_defconfig - what
+should be inside as built-in and what as module?
 
 Best regards,
 Krzysztof
 
->  };
->  
->  static struct samsung_pll_clock topc_pll_clks[] __initdata = {
-> @@ -544,7 +548,7 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
->  /*
->   * List of parent clocks for Muxes in CMU_CCORE
->   */
-> -PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
-> +PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
->  
->  static unsigned long ccore_clk_regs[] __initdata = {
->  	MUX_SEL_CCORE,
-> @@ -552,7 +556,7 @@ static unsigned long ccore_clk_regs[] __initdata = {
->  };
->  
->  static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
-> -	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
-> +	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
->  		MUX_SEL_CCORE, 1, 1),
->  };
->  
-> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-> index b63eba6..2e01235 100644
-> --- a/include/dt-bindings/clock/exynos7-clk.h
-> +++ b/include/dt-bindings/clock/exynos7-clk.h
-> @@ -30,7 +30,8 @@
->  #define SCLK_BUS0_PLL_A			17
->  #define SCLK_CC_PLL_B			18
->  #define SCLK_CC_PLL_A			19
-> -#define TOPC_NR_CLK			20
-> +#define ACLK_CCORE_133			20
-> +#define TOPC_NR_CLK			21
->  
->  /* TOP0 */
->  #define DOUT_ACLK_PERIC1		1
-> 
 
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 1ff2bfa2e183..62f677f76a0b 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -126,6 +126,10 @@ CONFIG_REGULATOR_S2MPA01=y
+>  CONFIG_REGULATOR_S2MPS11=y
+>  CONFIG_REGULATOR_S5M8767=y
+>  CONFIG_REGULATOR_TPS65090=y
+> +CONFIG_MEDIA_SUPPORT=y
+> +CONFIG_MEDIA_CAMERA_SUPPORT=y
+> +CONFIG_MEDIA_USB_SUPPORT=y
+> +CONFIG_USB_VIDEO_CLASS=y
+>  CONFIG_DRM=y
+>  CONFIG_DRM_NXP_PTN3460=y
+>  CONFIG_DRM_PARADE_PS8622=y
+> 
