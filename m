@@ -1,36 +1,32 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
-Date: Tue, 8 Sep 2015 10:40:53 +0530
-Message-ID: <20150908051053.GA18554@linux>
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
- <20150908024659.GF26760@linux>
- <55EE5C79.2030604@samsung.com>
- <20150908042017.GJ26760@linux>
- <55EE6892.3010304@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 02/11] clk: samsung: exynos7: Corrects CMU_TOP0 clocks names
+Date: Tue, 08 Sep 2015 16:12:35 +0900
+Message-ID: <55EE8A63.9080209@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-3-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55EE6892.3010304@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1441366637-28001-3-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08-09-15, 13:48, Krzysztof Kozlowski wrote:
-> Somehow my mind stuck on solving Exynos4x12 cpufreq issues.
+On 04.09.2015 20:37, Alim Akhtar wrote:
+> This patch rename CMU_TOP0 clocks names to match with user manual.
+s/rename/renames/
+
+I did not check the exact renames but overall the patch makes sense and
+looks good.
+
+Best regards,
+Krzysztof
+
 > 
-> Right, it should go through Rafael's, probably except DTS patch (4/4)
-> because it depends on previous DTS changes. These changes are still in
-> arm-soc, not in Linus' tree [0].
-
-That's bad :(
-
-Anyway, 4/4 is kind of independent to this series, in the sense that
-it wouldn't harm even if it gets applied separately.
-
-So, go ahead and apply 4/4 to Samsung's tree and rest of this can be
-picked by Rafael.
-
--- 
-viresh
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c |   67 ++++++++++++++++++++-----------------
+>  1 file changed, 37 insertions(+), 30 deletions(-)
+> 
