@@ -1,122 +1,102 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable USB Video Class support
-Date: Wed, 9 Sep 2015 09:41:07 +0200
-Message-ID: <55EFE293.8050400@osg.samsung.com>
-References: <1441662323-15468-1-git-send-email-javier@osg.samsung.com>
- <55EE9820.2010202@samsung.com> <55EE9F1A.9030703@osg.samsung.com>
- <55EEDECA.4040407@samsung.com> <55EEE370.9040705@osg.samsung.com>
- <55EF77EE.10301@samsung.com>
+From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio.lopez@collabora.co.uk>
+Subject: Re: [PATCH 1/3] sysfs: Fix is_visible() support for binary attributes
+Date: Wed, 9 Sep 2015 10:14:46 -0300
+Message-ID: <55F030C6.80504@collabora.co.uk>
+References: <1441714066-5599-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1441714066-5599-2-git-send-email-emilio.lopez@collabora.co.uk>
+ <20150908153013.GA6758@roeck-us.net> <20150908191002.GB10156@kroah.com>
+ <20150908193052.GA11106@roeck-us.net> <55EF82A4.5000502@collabora.co.uk>
+ <55EF86F8.3060406@roeck-us.net> <20150909035850.GA5497@kroah.com>
+ <55EFB1B5.1060703@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55EF77EE.10301@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:40067 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754623AbbIINO5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Sep 2015 09:14:57 -0400
+In-Reply-To: <55EFB1B5.1060703@roeck-us.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, Greg KH <gregkh@linuxfoundation.org>
+Cc: olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On 09/09/2015 02:06 AM, Krzysztof Kozlowski wrote:
-> On 08.09.2015 22:32, Javier Martinez Canillas wrote:
-> 
-> (...)
-> 
->>  
->>> Let me rephrase my question into:
->>> 1. What is worth enabling in exynos_defconfig? USB devices? I would
->>> argue, except they are needed to boot.
->>
->> Ok, I understand your concern. The question is where we draw the line.
->>
->>> So maybe enable everything which Exynos boards have hard-wired? That
->>> would make some sense... but we're making kernel larger.
+On 09/09/15 01:12, Guenter Roeck wrote:
+> On 09/08/2015 08:58 PM, Greg KH wrote:
+>> On Tue, Sep 08, 2015 at 06:10:16PM -0700, Guenter Roeck wrote:
+>>> Hi Emilio,
 >>>
->>
->> In the case of this WebCam, it's not a typical USB device in the sense
->> that is built in the Chromebook and not something that's plugged on an
->> external USB port.
-> 
-> Right, that is the difference from regular USB devices.
-> 
->>  
->>> 2. Maybe enable only what is a typical use case (including typical
->>> testing cases)? Then we would have to define what "typical" means. For
->>> example battery would be typical but camera would not.
+>>> On 09/08/2015 05:51 PM, Emilio L=F3pez wrote:
+>>>> Hi Greg & Guenter,
+>>>>
+>>> [ ... ]
+>>>>>>>
+>>>>>>> Unless I am missing something, this is not explained anywhere,
+>>>>>>> but it is
+>>>>>>> not entirely trivial to understand. I think it should be docume=
+nted.
+>>>>
+>>>> I agree. I couldn't find any mention of what this int was supposed
+>>>> to be by looking at Documentation/ (is_visible is not even mention=
+ed
+>>>> :/) or include/linux/sysfs.h. Once we settle on something I'll
+>>>> document it before sending a v2.
+>>>>
+>>> In the include file ? No strong preference, though.
 >>>
->>
->> There are a lot of board specific drivers that we currently enable as
->> built-in like hwmon sensors or iio devices that are likely only present
->> on a single board or a family of boards.
->>
->> So then I think all those drivers should be changed as a module as well,
->> unless are critical for the board operation (i.e: thermal or fan drivers).
-> 
-> Actually I think we should not judge by number of board using given
-> component but its usefulness in general exynos_defconfig case. Even when
-> something is used on just one board but it is important for that board,
-> then it should be built-in.
-> 
-> For example hwmon monitoring stuff to get information about board
-> condition. Other example are leds on Odroid - to get visible condition
-> of the board.
-> 
-> This don't have to be critical, but just important for testing.
-> 
-> Additionally such components can be accessed usually from limited
-> user-space, e.g. system booted to console or SSH.
-> 
-> If using a component requires more complex user-space (e.g. any kind of
-> window system), then probably already modules could be easily used. In
-> such cases I would expect the boot is not from network but from MMC and
-> there is a full-blown distro working.
-> 
-
-Ok, fair enough.
- 
->>> 3. Argh, so maybe, if we agree that not everything is worth being
->>> enabled, that additional stuff could be build as module?
+>>>> By the way, I wrote a quick coccinelle script to match is_visible(=
+)
+>>>> users which reference the index (included below), and it found
+>>>> references to drivers which do not seem to use any binary
+>>>> attributes, so I believe changing the index meaning shouldn't be a=
+n
+>>>> issue.
+>>>>
+>>> Good.
 >>>
+>>>>>> I agree, make i the number of the bin attribute and that should =
+solve
+>>>>>> this issue.
+>>>>>>
+>>>>> No, that would conflict with the "normal" use of is_visible for
+>>>>> non-binary
+>>>>> attributes, and make the index all but useless, since the
+>>>>> is_visible function
+>>>>> would have to search through all the attributes anyway to figure
+>>>>> out which one
+>>>>> is being checked.
+>>>>
+>>>> Yeah, using the same indexes would be somewhat pointless, although
+>>>> not many seem to be using it anyway (only 14 files matched). Other=
+s
+>>>> seem to be comparing the attr* instead. An alternative would be to
+>>>> use negative indexes for binary attributes and positive indexes fo=
+r
+>>>> normal attributes.
+>>>>
+>>> ... and I probably wrote or reviewed a significant percentage of
+>>> those ;-).
+>>>
+>>> Using negative numbers for binary attributes is an interesting idea=
+=2E
+>>> Kind of unusual, though. Greg, any thoughts on that ?
 >>
->> Yes, I don't see anything wrong to enable more stuff as a module if
->> that will give more build / test coverage.
+>> Ick, no, that's a mess, maybe we just could drop the index alltogeth=
+er?
 >>
->> The goal of kernelci is to add functional tests so besides testing
->> if a given kernel booted correctly, it's going to test if for example
->> USB enumeration is working and has no regressions. For that use case
->> is interesting to have support for the built-in USB devices like this
->> camera (either as built-in or as a module).
-> 
-> Okay, so we have some agreement that other stuff which is not important
-> but still hard-wired on Exynos boards (built into the board), can be
-> enabled as a module. So now we we have to draw the line which is
-> "important enough" to built-in and which is not so it could be as module.
-> 
->>From my point of view media in general (cameras, tuners etc.) should be
-> put in the second category (module), especially that in usual to test
-> them you would have to boot system to a full graphical mode. Can you
-> test them from SSH connection? Maybe you could test DVB tuners by
-> reading status of packets but still output won't be visible.
 >
+> No, please don't. Having to manually compare dozens of index pointers
+> would be
+> even more of a mess.
 
-Ok, my take on it was that if is wired into the board, then it should be
-supported out-of-the-box with a zImage build using exynos_defconfig but
-I see your point and looks reasonable to me.
+So, what about keeping it the way it is in the patch, and documenting i=
+t=20
+thoroughly? Otherwise, we could introduce another "is_bin_visible"=20
+function to do this same thing but just on binary attributes, but I'd=20
+rather not add a new function pointer if possible.
 
-I'll wait a couple of days to see if others have more opinions and respin
-the patch with these options enabled as a module.
-
-Thanks a lot for your feedback!
- 
-> Any comments from other interested parties?
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Cheers,
+Emilio
