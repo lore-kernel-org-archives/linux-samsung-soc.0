@@ -1,103 +1,74 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 1/3] sysfs: Fix is_visible() support for binary attributes
-Date: Wed, 09 Sep 2015 06:30:42 -0700
-Message-ID: <55F03482.4030104@roeck-us.net>
-References: <1441714066-5599-1-git-send-email-emilio.lopez@collabora.co.uk> <1441714066-5599-2-git-send-email-emilio.lopez@collabora.co.uk> <20150908153013.GA6758@roeck-us.net> <20150908191002.GB10156@kroah.com> <20150908193052.GA11106@roeck-us.net> <55EF82A4.5000502@collabora.co.uk> <55EF86F8.3060406@roeck-us.net> <20150909035850.GA5497@kroah.com> <55EFB1B5.1060703@roeck-us.net> <55F030C6.80504@collabora.co.uk>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH] drm/exynos: Remove useless EXPORT_SYMBOL_GPLs
+Date: Wed,  9 Sep 2015 12:55:25 -0300
+Message-ID: <1441814125-2021-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:44499 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753989AbbIINau (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Sep 2015 09:30:50 -0400
-In-Reply-To: <55F030C6.80504@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?windows-1252?Q?Emilio_L=F3pez?= <emilio.lopez@collabora.co.uk>, Greg KH <gregkh@linuxfoundation.org>
-Cc: olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 09/09/2015 06:14 AM, Emilio L=F3pez wrote:
-> On 09/09/15 01:12, Guenter Roeck wrote:
->> On 09/08/2015 08:58 PM, Greg KH wrote:
->>> On Tue, Sep 08, 2015 at 06:10:16PM -0700, Guenter Roeck wrote:
->>>> Hi Emilio,
->>>>
->>>> On 09/08/2015 05:51 PM, Emilio L=F3pez wrote:
->>>>> Hi Greg & Guenter,
->>>>>
->>>> [ ... ]
->>>>>>>>
->>>>>>>> Unless I am missing something, this is not explained anywhere,
->>>>>>>> but it is
->>>>>>>> not entirely trivial to understand. I think it should be docum=
-ented.
->>>>>
->>>>> I agree. I couldn't find any mention of what this int was suppose=
-d
->>>>> to be by looking at Documentation/ (is_visible is not even mentio=
-ned
->>>>> :/) or include/linux/sysfs.h. Once we settle on something I'll
->>>>> document it before sending a v2.
->>>>>
->>>> In the include file ? No strong preference, though.
->>>>
->>>>> By the way, I wrote a quick coccinelle script to match is_visible=
-()
->>>>> users which reference the index (included below), and it found
->>>>> references to drivers which do not seem to use any binary
->>>>> attributes, so I believe changing the index meaning shouldn't be =
-an
->>>>> issue.
->>>>>
->>>> Good.
->>>>
->>>>>>> I agree, make i the number of the bin attribute and that should=
- solve
->>>>>>> this issue.
->>>>>>>
->>>>>> No, that would conflict with the "normal" use of is_visible for
->>>>>> non-binary
->>>>>> attributes, and make the index all but useless, since the
->>>>>> is_visible function
->>>>>> would have to search through all the attributes anyway to figure
->>>>>> out which one
->>>>>> is being checked.
->>>>>
->>>>> Yeah, using the same indexes would be somewhat pointless, althoug=
-h
->>>>> not many seem to be using it anyway (only 14 files matched). Othe=
-rs
->>>>> seem to be comparing the attr* instead. An alternative would be t=
-o
->>>>> use negative indexes for binary attributes and positive indexes f=
-or
->>>>> normal attributes.
->>>>>
->>>> ... and I probably wrote or reviewed a significant percentage of
->>>> those ;-).
->>>>
->>>> Using negative numbers for binary attributes is an interesting ide=
-a.
->>>> Kind of unusual, though. Greg, any thoughts on that ?
->>>
->>> Ick, no, that's a mess, maybe we just could drop the index alltoget=
-her?
->>>
->>
->> No, please don't. Having to manually compare dozens of index pointer=
-s
->> would be
->> even more of a mess.
->
-> So, what about keeping it the way it is in the patch, and documenting=
- it thoroughly? Otherwise, we could introduce another "is_bin_visible" =
-function to do this same thing but just on binary attributes, but I'd r=
-ather not add a new function pointer if possible.
->
-
-I would prefer to keep and document it.
-
-Guenter
+RnJvbTogRGFuaWVsIEt1cnR6IDxkamt1cnR6QGNocm9taXVtLm9yZz4KCkFsbCB0aGUgdXNlciBv
+ZiB0aGVzZSBmdW5jdGlvbnMgYXJlIGluc2lkZSBleHlub3MtZHJtIGRyaXZlciBhbmQKeW91IGRv
+bid0IG5lZWQgdG8gZXhwb3J0IHRoZSBzeW1ib2xzIGZvciB0aGF0IGNhc2UuCgpTaWduZWQtb2Zm
+LWJ5OiBEYW5pZWwgS3VydHogPGRqa3VydHpAY2hyb21pdW0ub3JnPgpTaWduZWQtb2ZmLWJ5OiBH
+dXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYyB8IDYgLS0tLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgIHwgMyAtLS0KIDIgZmlsZXMgY2hhbmdl
+ZCwgOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUu
+YwppbmRleCBjNjhhNmEyLi43ZjU1YmE2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9jb3JlLmMKQEAgLTI4LDcgKzI4LDYgQEAgaW50IGV4eW5vc19kcm1fc3ViZHJ2X3JlZ2lz
+dGVyKHN0cnVjdCBleHlub3NfZHJtX3N1YmRydiAqc3ViZHJ2KQogCiAJcmV0dXJuIDA7CiB9Ci1F
+WFBPUlRfU1lNQk9MX0dQTChleHlub3NfZHJtX3N1YmRydl9yZWdpc3Rlcik7CiAKIGludCBleHlu
+b3NfZHJtX3N1YmRydl91bnJlZ2lzdGVyKHN0cnVjdCBleHlub3NfZHJtX3N1YmRydiAqc3ViZHJ2
+KQogewpAQCAtMzksNyArMzgsNiBAQCBpbnQgZXh5bm9zX2RybV9zdWJkcnZfdW5yZWdpc3Rlcihz
+dHJ1Y3QgZXh5bm9zX2RybV9zdWJkcnYgKnN1YmRydikKIAogCXJldHVybiAwOwogfQotRVhQT1JU
+X1NZTUJPTF9HUEwoZXh5bm9zX2RybV9zdWJkcnZfdW5yZWdpc3Rlcik7CiAKIGludCBleHlub3Nf
+ZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIHsKQEAgLTY5
+LDcgKzY3LDYgQEAgaW50IGV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZShzdHJ1Y3QgZHJt
+X2RldmljZSAqZGV2KQogCiAJcmV0dXJuIDA7CiB9Ci1FWFBPUlRfU1lNQk9MX0dQTChleHlub3Nf
+ZHJtX2RldmljZV9zdWJkcnZfcHJvYmUpOwogCiBpbnQgZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2
+X3JlbW92ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQogewpAQCAtODcsNyArODQsNiBAQCBpbnQg
+ZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3JlbW92ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQog
+CiAJcmV0dXJuIDA7CiB9Ci1FWFBPUlRfU1lNQk9MX0dQTChleHlub3NfZHJtX2RldmljZV9zdWJk
+cnZfcmVtb3ZlKTsKIAogaW50IGV4eW5vc19kcm1fc3ViZHJ2X29wZW4oc3RydWN0IGRybV9kZXZp
+Y2UgKmRldiwgc3RydWN0IGRybV9maWxlICpmaWxlKQogewpAQCAtMTExLDcgKzEwNyw2IEBAIGVy
+cjoKIAl9CiAJcmV0dXJuIHJldDsKIH0KLUVYUE9SVF9TWU1CT0xfR1BMKGV4eW5vc19kcm1fc3Vi
+ZHJ2X29wZW4pOwogCiB2b2lkIGV4eW5vc19kcm1fc3ViZHJ2X2Nsb3NlKHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKIHsKQEAgLTEyMiw0ICsxMTcsMyBAQCB2
+b2lkIGV4eW5vc19kcm1fc3ViZHJ2X2Nsb3NlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVj
+dCBkcm1fZmlsZSAqZmlsZSkKIAkJCXN1YmRydi0+Y2xvc2UoZGV2LCBzdWJkcnYtPmRldiwgZmls
+ZSk7CiAJfQogfQotRVhQT1JUX1NZTUJPTF9HUEwoZXh5bm9zX2RybV9zdWJkcnZfY2xvc2UpOwpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCmluZGV4IDUzNWI0YWQuLjBhNTk2
+ZjEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwor
+KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMKQEAgLTEwOTAsNyAr
+MTA5MCw2IEBAIGludCBleHlub3NfZzJkX2dldF92ZXJfaW9jdGwoc3RydWN0IGRybV9kZXZpY2Ug
+KmRybV9kZXYsIHZvaWQgKmRhdGEsCiAKIAlyZXR1cm4gMDsKIH0KLUVYUE9SVF9TWU1CT0xfR1BM
+KGV4eW5vc19nMmRfZ2V0X3Zlcl9pb2N0bCk7CiAKIGludCBleHlub3NfZzJkX3NldF9jbWRsaXN0
+X2lvY3RsKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LCB2b2lkICpkYXRhLAogCQkJCSBzdHJ1
+Y3QgZHJtX2ZpbGUgKmZpbGUpCkBAIC0xMjYxLDcgKzEyNjAsNiBAQCBlcnI6CiAJZzJkX3B1dF9j
+bWRsaXN0KGcyZCwgbm9kZSk7CiAJcmV0dXJuIHJldDsKIH0KLUVYUE9SVF9TWU1CT0xfR1BMKGV4
+eW5vc19nMmRfc2V0X2NtZGxpc3RfaW9jdGwpOwogCiBpbnQgZXh5bm9zX2cyZF9leGVjX2lvY3Rs
+KHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LCB2b2lkICpkYXRhLAogCQkJICBzdHJ1Y3QgZHJt
+X2ZpbGUgKmZpbGUpCkBAIC0xMzI0LDcgKzEzMjIsNiBAQCBpbnQgZXh5bm9zX2cyZF9leGVjX2lv
+Y3RsKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LCB2b2lkICpkYXRhLAogb3V0OgogCXJldHVy
+biAwOwogfQotRVhQT1JUX1NZTUJPTF9HUEwoZXh5bm9zX2cyZF9leGVjX2lvY3RsKTsKIAogc3Rh
+dGljIGludCBnMmRfc3ViZHJ2X3Byb2JlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LCBzdHJ1
+Y3QgZGV2aWNlICpkZXYpCiB7Ci0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
