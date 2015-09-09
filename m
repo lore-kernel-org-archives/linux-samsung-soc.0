@@ -1,99 +1,52 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable USB Video Class support
-Date: Wed, 09 Sep 2015 09:06:06 +0900
-Message-ID: <55EF77EE.10301@samsung.com>
-References: <1441662323-15468-1-git-send-email-javier@osg.samsung.com>
- <55EE9820.2010202@samsung.com> <55EE9F1A.9030703@osg.samsung.com>
- <55EEDECA.4040407@samsung.com> <55EEE370.9040705@osg.samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs
+Date: Wed, 09 Sep 2015 03:14:35 +0200
+Message-ID: <5636818.tTEsh48iXg@vostro.rjw.lan>
+References: <1441731732-8624-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <55EEE370.9040705@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:49797 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753945AbbIIAqp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Sep 2015 20:46:45 -0400
+In-Reply-To: <1441731732-8624-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08.09.2015 22:32, Javier Martinez Canillas wrote:
+On Tuesday, September 08, 2015 07:02:12 PM Bartlomiej Zolnierkiewicz wrote:
+> CONFIG_PM ifdefs are superfluous and can be removed.
 
-(...)
+I guess Kukjin can apply this one?
 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index 9e231f5..ef5282b 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -576,10 +576,8 @@ static struct cpufreq_driver s5pv210_driver = {
+>  	.get		= cpufreq_generic_get,
+>  	.init		= s5pv210_cpu_init,
+>  	.name		= "s5pv210",
+> -#ifdef CONFIG_PM
+>  	.suspend	= cpufreq_generic_suspend,
+>  	.resume		= cpufreq_generic_suspend, /* We need to set SLEEP FREQ again */
+> -#endif
+>  };
 >  
->> Let me rephrase my question into:
->> 1. What is worth enabling in exynos_defconfig? USB devices? I would
->> argue, except they are needed to boot.
+>  static struct notifier_block s5pv210_cpufreq_reboot_notifier = {
 > 
-> Ok, I understand your concern. The question is where we draw the line.
-> 
->> So maybe enable everything which Exynos boards have hard-wired? That
->> would make some sense... but we're making kernel larger.
->>
-> 
-> In the case of this WebCam, it's not a typical USB device in the sense
-> that is built in the Chromebook and not something that's plugged on an
-> external USB port.
 
-Right, that is the difference from regular USB devices.
-
->  
->> 2. Maybe enable only what is a typical use case (including typical
->> testing cases)? Then we would have to define what "typical" means. For
->> example battery would be typical but camera would not.
->>
-> 
-> There are a lot of board specific drivers that we currently enable as
-> built-in like hwmon sensors or iio devices that are likely only present
-> on a single board or a family of boards.
-> 
-> So then I think all those drivers should be changed as a module as well,
-> unless are critical for the board operation (i.e: thermal or fan drivers).
-
-Actually I think we should not judge by number of board using given
-component but its usefulness in general exynos_defconfig case. Even when
-something is used on just one board but it is important for that board,
-then it should be built-in.
-
-For example hwmon monitoring stuff to get information about board
-condition. Other example are leds on Odroid - to get visible condition
-of the board.
-
-This don't have to be critical, but just important for testing.
-
-Additionally such components can be accessed usually from limited
-user-space, e.g. system booted to console or SSH.
-
-If using a component requires more complex user-space (e.g. any kind of
-window system), then probably already modules could be easily used. In
-such cases I would expect the boot is not from network but from MMC and
-there is a full-blown distro working.
-
-
->> 3. Argh, so maybe, if we agree that not everything is worth being
->> enabled, that additional stuff could be build as module?
->>
-> 
-> Yes, I don't see anything wrong to enable more stuff as a module if
-> that will give more build / test coverage.
-> 
-> The goal of kernelci is to add functional tests so besides testing
-> if a given kernel booted correctly, it's going to test if for example
-> USB enumeration is working and has no regressions. For that use case
-> is interesting to have support for the built-in USB devices like this
-> camera (either as built-in or as a module).
-
-Okay, so we have some agreement that other stuff which is not important
-but still hard-wired on Exynos boards (built into the board), can be
-enabled as a module. So now we we have to draw the line which is
-"important enough" to built-in and which is not so it could be as module.
-
->From my point of view media in general (cameras, tuners etc.) should be
-put in the second category (module), especially that in usual to test
-them you would have to boot system to a full graphical mode. Can you
-test them from SSH connection? Maybe you could test DVB tuners by
-reading status of packets but still output won't be visible.
-
-Any comments from other interested parties?
-
-Best regards,
-Krzysztof
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
