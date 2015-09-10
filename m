@@ -1,50 +1,39 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] ARM: exynos_defconfig: Disable simplefb support
-Date: Thu, 10 Sep 2015 15:42:32 +0200
-Message-ID: <1441892552-13819-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:35343 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753885AbbIJNmn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Sep 2015 09:42:43 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v8 10/55] [media] media: rename the function that create
+ pad links
+Date: Thu, 10 Sep 2015 16:16:10 +0200
+Message-ID: <CABxcv=mdyshSH5wzRRJHnhiavr_m74=Ax07=JzSTO1uxiCmJtA@mail.gmail.com>
+References: <cover.1440902901.git.mchehab@osg.samsung.com>
+	<06bad8b26ee0cef02d9c52d578af3a51a0f03b1f.1440902901.git.mchehab@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <06bad8b26ee0cef02d9c52d578af3a51a0f03b1f.1440902901.git.mchehab@osg.samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?Q?Rafael_Louren=C3=A7o_de_Lima_Chehab?= <chehabrafael@gmail.com>, Shuah Khan <shuahkh@osg.samsung.com>, Matthias Schwarzott <zzam@gentoo.org>, Antti Palosaari <crope@iki.fi>, Olli Salonen <olli.salonen@iki.fi>T
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-The simplefb driver allows the kernel to render on a pre-allocated
-buffer that's been initialized by firmware before the kernel boots.
+On Sun, Aug 30, 2015 at 5:06 AM, Mauro Carvalho Chehab
+<mchehab@osg.samsung.com> wrote:
+> With the new API, a link can be either between two PADs or between an interface
+> and an entity. So, we need to use a better name for the function that create
+> links between two pads.
+>
+> So, rename the such function to media_create_pad_link().
+>
+> No functional changes.
+>
+> This patch was created via this shell script:
+>         for i in $(find drivers/media -name '*.[ch]' -type f) $(find drivers/staging/media -name '*.[ch]' -type f) $(find include/ -name '*.h' -type f) ; do sed s,media_entity_create_link,media_create_pad_link,g <$i >a && mv a $i; done
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+>
 
-This option was enabled to have display working on the Exynos5250
-Snow Chromebook by commit da9d0fbf5e9a ("ARM: exynos: defconfig
-update") since proper DRM/KMS support did not exist at that time.
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-But now that the Exynos DRM driver has support for this hardware,
-there is no need to have simplefb enabled. In fact, if a user has
-a u-boot that injects the simplefb dev node to the FDT before pass
-it to the kernel, display won't be properly initialized and only a
-blank screen will be shown since there isn't a proper handoff from
-the simplefb driver to the Exynos DRM driver.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-
- arch/arm/configs/exynos_defconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 62f677f76a0b..20d878c83193 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -139,7 +139,6 @@ CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=y
--CONFIG_FB_SIMPLE=y
- CONFIG_EXYNOS_VIDEO=y
- CONFIG_EXYNOS_MIPI_DSI=y
- CONFIG_LCD_CLASS_DEVICE=y
--- 
-2.4.3
+Best regards,
+Javier
