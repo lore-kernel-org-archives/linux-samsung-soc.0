@@ -1,36 +1,40 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 11/11] clk: samsung: exynos7: Add required clock tree for
- UFS
-Date: Thu, 10 Sep 2015 13:08:51 +0900
-Message-ID: <55F10253.6000308@samsung.com>
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: [PATCH 14/17] thermal: exynos: allow compile test
+Date: Wed,  9 Sep 2015 21:11:10 -0700
+Message-ID: <1441858273-4017-15-git-send-email-edubezval@gmail.com>
+References: <1441858273-4017-1-git-send-email-edubezval@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1441858273-4017-1-git-send-email-edubezval@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rui Zhang <rui.zhang@intel.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04.09.2015 20:37, Alim Akhtar wrote:
-> Adding required mux/div/gate clocks for UFS controller
-> present on Exynos7.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c       |  116 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/exynos7-clk.h |   24 ++++++-
->  2 files changed, 138 insertions(+), 2 deletions(-)
-> 
+Adding COMPILE_TEST flag to exynos driver to facilitate
+maintenance.
 
-My previous comments are fixed, rest looks good:
+Cc: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+---
+ drivers/thermal/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
-
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 0fa5d20..9069cc7 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -345,7 +345,7 @@ source "drivers/thermal/ti-soc-thermal/Kconfig"
+ endmenu
+ 
+ menu "Samsung thermal drivers"
+-depends on ARCH_EXYNOS
++depends on ARCH_EXYNOS || COMPILE_TEST
+ source "drivers/thermal/samsung/Kconfig"
+ endmenu
+ 
+-- 
+2.5.0
