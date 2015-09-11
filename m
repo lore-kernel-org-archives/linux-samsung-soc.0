@@ -1,37 +1,51 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] [media] media-device: split media initialization and
- registration
-Date: Thu, 10 Sep 2015 20:33:32 +0200
-Message-ID: <55F1CCFC.4080604@osg.samsung.com>
-References: <1441890195-11650-1-git-send-email-javier@osg.samsung.com>
- <1441890195-11650-3-git-send-email-javier@osg.samsung.com>
- <55F1C04C.1040906@linux.intel.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Disable simplefb support
+Date: Fri, 11 Sep 2015 14:01:54 +0900
+Message-ID: <55F26042.2080600@samsung.com>
+References: <1441892552-13819-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <55F1C04C.1040906@linux.intel.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc: Luis de Bethencourt <luis@debethencourt.com>, linux-sh@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Matthias Schwarzott <zzam@gentoo.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tommi Rantala <tt.rantala@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Michal Simek <michal.simek@xilinx.com>, Olli Salonen <olli.salonen@iki.fi>, linux-arm-kernel@lists.infradead.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, Antti Palosaari <crope@iki.fi>, Shuah Khan <shuahkh@osg.samsung.com>, =?UTF-8?Q?Rafael_Louren=c3=a7o
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:10031 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751064AbbIKFCA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Sep 2015 01:02:00 -0400
+In-reply-to: <1441892552-13819-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Hello Sakari,
-
-On 09/10/2015 07:39 PM, Sakari Ailus wrote:
-> Javier Martinez Canillas wrote:
->> Also, add a media_entity_cleanup() function that will destroy the
->> graph_mutex that is initialized in media_entity_init().
+On 10.09.2015 22:42, Javier Martinez Canillas wrote:
+> The simplefb driver allows the kernel to render on a pre-allocated
+> buffer that's been initialized by firmware before the kernel boots.
 > 
-> media_device_init() and media_device_cleanup()?
->
+> This option was enabled to have display working on the Exynos5250
+> Snow Chromebook by commit da9d0fbf5e9a ("ARM: exynos: defconfig
+> update") since proper DRM/KMS support did not exist at that time.
+> 
+> But now that the Exynos DRM driver has support for this hardware,
+> there is no need to have simplefb enabled. In fact, if a user has
+> a u-boot that injects the simplefb dev node to the FDT before pass
+> it to the kernel, display won't be properly initialized and only a
+> blank screen will be shown since there isn't a proper handoff from
+> the simplefb driver to the Exynos DRM driver.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+>  arch/arm/configs/exynos_defconfig | 1 -
+>  1 file changed, 1 deletion(-)
 
-Right, sorry about that. I'll fix it.
+Seems logical. None of the boards use simple-framebuffer compatible
+anyway. I understand that on Snow simplefb was needed along with change
+in Uboot like this one:
+https://chromium.googlesource.com/chromiumos/third_party/u-boot/+/refs/changes/58/49358/2
 
-Thanks!
- 
+and now none of Exynos boards use simplefb anymore?
+
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
