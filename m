@@ -1,122 +1,149 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Disable simplefb support
-Date: Fri, 11 Sep 2015 09:40:43 +0200
-Message-ID: <55F2857B.4020800@osg.samsung.com>
-References: <1441892552-13819-1-git-send-email-javier@osg.samsung.com>
- <55F26042.2080600@samsung.com> <55F27D9F.1000702@osg.samsung.com>
- <55F27FB1.50100@samsung.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH 2/2] [media] media-device: split media initialization
+ and registration
+Date: Fri, 11 Sep 2015 06:07:28 -0300
+Message-ID: <20150911060728.0d8c061d@recife.lan>
+References: <1441890195-11650-1-git-send-email-javier@osg.samsung.com>
+	<1441890195-11650-3-git-send-email-javier@osg.samsung.com>
+	<55F1BA5C.50508@linux.intel.com>
+	<55F1CC72.6000204@osg.samsung.com>
+	<55F26BDF.8050600@linux.intel.com>
+	<55F28358.1070007@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:35587 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751484AbbIKHks (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Sep 2015 03:40:48 -0400
-In-Reply-To: <55F27FB1.50100@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <55F28358.1070007@osg.samsung.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org, Luis de Bethencourt <luis@debethencourt.com>, linux-sh@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Matthias Schwarzott <zzam@gentoo.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tommi Rantala <tt.rantala@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michal Simek <michal.simek@xilinx.com>, Olli Salonen <olli.salonen@iki.fi>, linux-arm-kernel@lists.infradead.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, Antti Palosaari <crope@iki.fi>, Shuah Khan <shuahkh@osg.samsung.com>, Rafae
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Hello Krzysztof,
+Em Fri, 11 Sep 2015 09:31:36 +0200
+Javier Martinez Canillas <javier@osg.samsung.com> escreveu:
 
-On 09/11/2015 09:16 AM, Krzysztof Kozlowski wrote:
-> On 11.09.2015 16:07, Javier Martinez Canillas wrote:
->> Hello Krzysztof,
->>
->> On 09/11/2015 07:01 AM, Krzysztof Kozlowski wrote:
->>> On 10.09.2015 22:42, Javier Martinez Canillas wrote:
->>>> The simplefb driver allows the kernel to render on a pre-allocated
->>>> buffer that's been initialized by firmware before the kernel boots.
->>>>
->>>> This option was enabled to have display working on the Exynos5250
->>>> Snow Chromebook by commit da9d0fbf5e9a ("ARM: exynos: defconfig
->>>> update") since proper DRM/KMS support did not exist at that time.
->>>>
->>>> But now that the Exynos DRM driver has support for this hardware,
->>>> there is no need to have simplefb enabled. In fact, if a user has
->>>> a u-boot that injects the simplefb dev node to the FDT before pass
->>>> it to the kernel, display won't be properly initialized and only a
->>>> blank screen will be shown since there isn't a proper handoff from
->>>> the simplefb driver to the Exynos DRM driver.
->>>>
->>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>>
->>>> ---
->>>>
->>>>  arch/arm/configs/exynos_defconfig | 1 -
->>>>  1 file changed, 1 deletion(-)
->>>
->>> Seems logical. None of the boards use simple-framebuffer compatible
->>> anyway. I understand that on Snow simplefb was needed along with change
->>> in Uboot like this one:
->>> https://chromium.googlesource.com/chromiumos/third_party/u-boot/+/refs/changes/58/49358/2
->>>
->>
->> Exactly but you won't see the dev node with the "simple-framebuffer"
->> compatible string in the DTS since is the bootloader that adds this
->> device node to the FDT before passing it to the kernel.
->>
->> The bootloader shouldn't mangle the FDT (with the exception of the
->> memory and choosen/bootargs nodes) but simplefb is just a hack to
->> re-use the display HW initialization made by the bootloader.
->>
->>> and now none of Exynos boards use simplefb anymore?
->>>
->>
->> Yes, there are no other Exynos boards using simplefb besides Snow
->> that I'm aware of but since Exynos DRM is working well on this board
->> from v4.0, there is no need for it anymore.
+> Hello Sakari,
 > 
-> OK,
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-
-Thanks!
- 
->>
->> In fact, as explained in the commit message, it could do more harm
->> than good since users that are still booting with a u-boot that adds
->> the simplefb device node, only get a blank screen since the simplefb
->> driver is probed, creates a console and later the Exynos DRM probes
->> and re-initializes the HW creating its own console, causing this issue.
->>
->> I got several reports of users that says that mainline stop booting for
->> them but is just that they didn't get display working. Disabling simplefb
->> makes display to work again so maybe this is even -rc material and should
->> go to stable # v4.0+
+> On 09/11/2015 07:51 AM, Sakari Ailus wrote:
+> > Hi Javier,
+> > 
+> > Javier Martinez Canillas wrote:
+> >> Hello Sakari,
+> >>
+> >> On 09/10/2015 07:14 PM, Sakari Ailus wrote:
+> >>> Hi Javier,
+> >>>
+> >>> Thanks for the set! A few comments below.
+> >>>
+> >>
+> >> Thanks to you for your feedback.
+> >>
+> >>> Javier Martinez Canillas wrote:
+> >>>> The media device node is registered and so made visible to user-space
+> >>>> before entities are registered and links created which means that the
+> >>>> media graph obtained by user-space could be only partially enumerated
+> >>>> if that happens too early before all the graph has been created.
+> >>>>
+> >>>> To avoid this race condition, split the media init and registration
+> >>>> in separate functions and only register the media device node when
+> >>>> all the pending subdevices have been registered, either explicitly
+> >>>> by the driver or asynchronously using v4l2_async_register_subdev().
+> >>>>
+> >>>> Also, add a media_entity_cleanup() function that will destroy the
+> >>>> graph_mutex that is initialized in media_entity_init().
+> >>>>
+> >>>> Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> >>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> >>>>
+> >>>> ---
+> >>>>
+> >>>>   drivers/media/common/siano/smsdvb-main.c      |  1 +
+> >>>>   drivers/media/media-device.c                  | 38 +++++++++++++++++++++++----
+> >>>>   drivers/media/platform/exynos4-is/media-dev.c | 12 ++++++---
+> >>>>   drivers/media/platform/omap3isp/isp.c         | 11 +++++---
+> >>>>   drivers/media/platform/s3c-camif/camif-core.c | 13 ++++++---
+> >>>>   drivers/media/platform/vsp1/vsp1_drv.c        | 19 ++++++++++----
+> >>>>   drivers/media/platform/xilinx/xilinx-vipp.c   | 11 +++++---
+> >>>>   drivers/media/usb/au0828/au0828-core.c        | 26 +++++++++++++-----
+> >>>>   drivers/media/usb/cx231xx/cx231xx-cards.c     | 22 +++++++++++-----
+> >>>>   drivers/media/usb/dvb-usb-v2/dvb_usb_core.c   | 11 +++++---
+> >>>>   drivers/media/usb/dvb-usb/dvb-usb-dvb.c       | 13 ++++++---
+> >>>>   drivers/media/usb/siano/smsusb.c              | 14 ++++++++--
+> >>>>   drivers/media/usb/uvc/uvc_driver.c            |  9 +++++--
+> >>>>   include/media/media-device.h                  |  2 ++
+> >>>>   14 files changed, 156 insertions(+), 46 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/media/common/siano/smsdvb-main.c b/drivers/media/common/siano/smsdvb-main.c
+> >>>> index ab345490a43a..8a1ea2192439 100644
+> >>>> --- a/drivers/media/common/siano/smsdvb-main.c
+> >>>> +++ b/drivers/media/common/siano/smsdvb-main.c
+> >>>> @@ -617,6 +617,7 @@ static void smsdvb_media_device_unregister(struct smsdvb_client_t *client)
+> >>>>       if (!coredev->media_dev)
+> >>>>           return;
+> >>>>       media_device_unregister(coredev->media_dev);
+> >>>> +    media_device_cleanup(coredev->media_dev);
+> >>>>       kfree(coredev->media_dev);
+> >>>>       coredev->media_dev = NULL;
+> >>>>   #endif
+> >>>> diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+> >>>> index 745defb34b33..a8beb0b445a6 100644
+> >>>> --- a/drivers/media/media-device.c
+> >>>> +++ b/drivers/media/media-device.c
+> >>>> @@ -526,7 +526,7 @@ static void media_device_release(struct media_devnode *mdev)
+> >>>>   }
+> >>>>
+> >>>>   /**
+> >>>> - * media_device_register - register a media device
+> >>>> + * media_device_init() - initialize a media device
+> >>>>    * @mdev:    The media device
+> >>>>    *
+> >>>>    * The caller is responsible for initializing the media device before
+> >>>> @@ -534,12 +534,11 @@ static void media_device_release(struct media_devnode *mdev)
+> >>>>    *
+> >>>>    * - dev must point to the parent device
+> >>>>    * - model must be filled with the device model name
+> >>>> + *
+> >>>> + * returns zero on success or a negative error code.
+> >>>>    */
+> >>>> -int __must_check __media_device_register(struct media_device *mdev,
+> >>>> -                     struct module *owner)
+> >>>> +int __must_check media_device_init(struct media_device *mdev)
+> >>>
+> >>> I think I suggested making media_device_init() return void as the only
+> >>> remaining source of errors would be driver bugs.
+> >>>
+> >>
+> >> Yes you did and I think I explained why I preferred to leave it as
+> >> is and I thought we agreed :)
+> > 
+> > I thought we agreed, too. But my understanding was that the agreement was different. ;-)
+> >
 > 
-> You know, it is only a defconfig. The issue is there regardless of
-> change in defconfig. I am not convinced that defconfig problems are
-> worth backporting. multi_v7 has it enabled anyway.
->
+> Fair enough :)
+>  
+> >>
+> >> Currently media_device_register() is failing gracefully if a buggy
+> >> driver is not setting mdev->dev. So changing media_device_init() to
+> >> return void instead, would be a semantic change and if drivers are
+> >> not checking that anymore, can lead to NULL pointer dereference bugs.
+> > 
+> > Do we have such drivers? Would they ever have worked in the first place, as media device registration would have failed?
 
-Yes, that's why I said "maybe" :)
- 
-> Maybe the EXYNOS_DRM should have some anti-dependency on SIMPLE_FB? But
+Actually we do. The media controller is an optional feature at the DVB
+only drivers (dvb-usb, dvb-usb-v2, siano), as it is used only to show
+the interfaces associated to them, and no functionality will be lost
+if it fails to register the MC (except for the enumeration).
 
-hrmm I don't know, I think this issue happens with any DRM driver. Hopefully
-there should be soon a nice hand off from simplefb to DRM drivers like early
-console does to the real console drivers for UARTs.
+I don't see any reason why making it mandatory at those PC customer
+DVB drivers. If it fails... well, G_TOPOLOGY won't work, but all
+the rest will.
 
-> on the other hand the issue is actually caused by hacks in bootloader...
->
+For hybrid devices (au0828 and cx231xx), they're currently optional.
+I wrote a patch already on my WIP branch making it mandatory for au0828,
+provided that the MEDIA_CONTROLLER config option is enabled, and
+I intend to do the same for cx231xx. The rationale is that we'll use
+it to lock between analog and digital part, so it should be mandatory
+there.
 
-Yeah and in fact this does not happen with the stock bootloader that comes
-shipped on these devices, is with a special build that has this hack enabled.
- 
-> 
-> Best regards,
-> Krzysztof
-> 
->
-
-Thanks a lot for your feedback.
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Regards,
+Mauro
