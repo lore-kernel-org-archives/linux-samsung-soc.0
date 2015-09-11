@@ -1,68 +1,69 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Disable simplefb support
-Date: Fri, 11 Sep 2015 08:25:51 -0700
-Message-ID: <20150911152551.3201.92278@quantum>
-References: <1441892552-13819-1-git-send-email-javier@osg.samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 00/10] drm/exynos: add pm_runtime support
+Date: Fri, 11 Sep 2015 17:56:22 -0300
+Message-ID: <20150911205622.GA31113@joana>
+References: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:36630 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753020AbbIKP0C convert rfc822-to-8bit (ORCPT
+Received: from mail-yk0-f196.google.com ([209.85.160.196]:33666 "EHLO
+	mail-yk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753796AbbIKU40 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Sep 2015 11:26:02 -0400
-Received: by padhk3 with SMTP id hk3so77677609pad.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2015 08:26:02 -0700 (PDT)
-In-Reply-To: <1441892552-13819-1-git-send-email-javier@osg.samsung.com>
+	Fri, 11 Sep 2015 16:56:26 -0400
+Received: by ykdg206 with SMTP id g206so9353182ykd.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2015 13:56:25 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Quoting Javier Martinez Canillas (2015-09-10 06:42:32)
-> The simplefb driver allows the kernel to render on a pre-allocated
-> buffer that's been initialized by firmware before the kernel boots.
-> 
-> This option was enabled to have display working on the Exynos5250
-> Snow Chromebook by commit da9d0fbf5e9a ("ARM: exynos: defconfig
-> update") since proper DRM/KMS support did not exist at that time.
-> 
-> But now that the Exynos DRM driver has support for this hardware,
-> there is no need to have simplefb enabled. In fact, if a user has
-> a u-boot that injects the simplefb dev node to the FDT before pass
-> it to the kernel, display won't be properly initialized and only a
-> blank screen will be shown since there isn't a proper handoff from
-> the simplefb driver to the Exynos DRM driver.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Hi Inki,
 
-Reviewed-by/Tested-by: Michael Turquette <mturquette@baylibre.com>
+Any comment on this series?
 
-Thanks, this resolved one of the issues I had with U-boot that injected
-the simplefb node.
+	Gustavo
 
-Regards,
-Mike
+2015-09-04 Gustavo Padovan <gustavo@padovan.org>:
 
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 > 
-> ---
+> Hi,
 > 
->  arch/arm/configs/exynos_defconfig | 1 -
->  1 file changed, 1 deletion(-)
+> This series adds proper runtime PM suport to CRTCs and Encoders, so
+> now instead of relying on 'suspended' or 'enabled' flags to track when
+> the CRTC or Encoder is enabled we let the pm_runtime subsystem do it for us
+> and remove all the flags. This is a important step to the atomic suspend/resume
+> support that will land in drm anytime soon.
 > 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 62f677f76a0b..20d878c83193 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -139,7 +139,6 @@ CONFIG_DRM_EXYNOS_DSI=y
->  CONFIG_DRM_EXYNOS_HDMI=y
->  CONFIG_DRM_PANEL_SIMPLE=y
->  CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=y
-> -CONFIG_FB_SIMPLE=y
->  CONFIG_EXYNOS_VIDEO=y
->  CONFIG_EXYNOS_MIPI_DSI=y
->  CONFIG_LCD_CLASS_DEVICE=y
+> Please review!
+> 
+> 	Gustavo
+> 
+> Gustavo Padovan (10):
+>   drm/exynos: do not start enabling DP at bind() phase
+>   drm/exynos: add pm_runtime to DP
+>   drm/exynos: add pm_runtime to HDMI
+>   drm/exynos: add pm_runtime to Mixer
+>   drm/exynos: remove exynos_crtc commit() callback
+>   drm/exynos: Remove exynos_crtc commit() callback
+>   drm/exynos: add pm_runtime to FIMD
+>   drm/exynos: Enable DP clock directly from FIMD
+>   drm/exynos: add pm_runtime to DECON 5433
+>   drm/exynos: add pm_runtime to DECON 7
+> 
+>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  90 ++++++++----------
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 126 +++++++++++--------------
+>  drivers/gpu/drm/exynos/exynos_dp_core.c       |  57 ++++++------
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c      |  10 --
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |   7 --
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 129 ++++++++++++--------------
+>  drivers/gpu/drm/exynos/exynos_hdmi.c          |  56 +++++++----
+>  drivers/gpu/drm/exynos/exynos_mixer.c         | 125 ++++++++++++-------------
+>  8 files changed, 275 insertions(+), 325 deletions(-)
+> 
 > -- 
-> 2.4.3
+> 2.1.0
 > 
