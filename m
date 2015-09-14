@@ -1,41 +1,45 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: [PATCHv2 07/10] thermal: exynos: allow compile test
-Date: Sun, 13 Sep 2015 19:31:36 -0700
-Message-ID: <1442197899-5952-8-git-send-email-edubezval@gmail.com>
-References: <1442197899-5952-1-git-send-email-edubezval@gmail.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1442197899-5952-1-git-send-email-edubezval@gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Rui Zhang <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] arm64: dts: Add BUS1 instance pinctrl support
+Date: Mon, 14 Sep 2015 10:38:10 +0530
+Message-ID: <55F6563A.2030107@samsung.com>
+References: <1440761134-27639-1-git-send-email-alim.akhtar@samsung.com>
+ <55E3E95D.50003@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:39097 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750962AbbINFRc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Sep 2015 01:17:32 -0400
+In-reply-to: <55E3E95D.50003@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, gautam.vivek@samsung.com
 
-Adding COMPILE_TEST flag to exynos driver to facilitate
-maintenance.
+Hi
 
-Cc: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
----
- drivers/thermal/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 08/31/2015 11:12 AM, Krzysztof Kozlowski wrote:
+> On 28.08.2015 20:25, Alim Akhtar wrote:
+>> This adds BUS1 instance pinctrl for exynos7 soc.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>   arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi |  111 +++++++++++++++++++++++
+>>   arch/arm64/boot/dts/exynos/exynos7.dtsi         |    7 ++
+>>   2 files changed, 118 insertions(+)
+>
+> The "etc1" GPIO in my datasheet is not fully documented but the rest
+> looks good:
+>
+Ok will send v2 and remove etc1 gpio node.
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index c2c8cba..202905e8 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -345,7 +345,7 @@ source "drivers/thermal/ti-soc-thermal/Kconfig"
- endmenu
- 
- menu "Samsung thermal drivers"
--depends on ARCH_EXYNOS
-+depends on ARCH_EXYNOS || COMPILE_TEST
- source "drivers/thermal/samsung/Kconfig"
- endmenu
- 
--- 
-2.5.0
-
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+Thanks!!
+> Best regards,
+> Krzysztof
+>
+>
