@@ -1,185 +1,51 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 2/3] mfd: s2mps11: Add manual shutdown method for
- Odroid XU3
-Date: Mon, 14 Sep 2015 09:12:12 +0100
-Message-ID: <20150914081212.GE27591@x1>
-References: <1439287746-14034-1-git-send-email-k.kozlowski.k@gmail.com>
- <1439287746-14034-3-git-send-email-k.kozlowski.k@gmail.com>
- <CAJKOXPeSH-w1zBLomLiUKqAVbGEQVvTLfGbJ-YFgZ_qw5MsC9Q@mail.gmail.com>
+From: Riku Voipio <riku.voipio@linaro.org>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable usb3503
+Date: Mon, 14 Sep 2015 11:35:56 +0300
+Message-ID: <CAAqcGHmaWXFAVairN+2pw6adDG8AMc-MTMKp4g5aUP9Kw+8i7A@mail.gmail.com>
+References: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org>
+	<556FF260.5060006@collabora.co.uk>
+	<7hd21b2wo4.fsf@deeprootsystems.com>
+	<4414616.t6CSY5FxHU@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:34173 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751852AbbINIMQ (ORCPT
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:35888 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752223AbbINIf5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Sep 2015 04:12:16 -0400
-Received: by wicfx3 with SMTP id fx3so128938284wic.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2015 01:12:14 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPeSH-w1zBLomLiUKqAVbGEQVvTLfGbJ-YFgZ_qw5MsC9Q@mail.gmail.com>
+	Mon, 14 Sep 2015 04:35:57 -0400
+Received: by wicgb1 with SMTP id gb1so131009359wic.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2015 01:35:56 -0700 (PDT)
+In-Reply-To: <4414616.t6CSY5FxHU@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>
 
-On Sun, 13 Sep 2015, Krzysztof Kozlowski wrote:
-> You acked this patch. However finally it did not go through other tre=
-e
-> so maybe you could pick it up for 4.4?
->=20
-> If you want I could reabse and resend it.
+On 5 June 2015 at 15:45, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thursday 04 June 2015 10:47:07 Kevin Hilman wrote:
+>>
+>> > But I wonder why is not working, shouldn't the driver defer and
+>> > be probed again once the PHY driver probe succeeds?
+>>
+>> Yeah, I'm not sure why that isn't working, and didn't look into it.
+>>
+>> FWIW, the same problem happens when both are modules.  If you modprobe
+>> usb3503 first, then the phy, it doesn't work.  You have to load the phy
+>> before the usb3503.
 
-Yes, please rebase and resend.
+> The driver does not try to get a reference to the phy, and it does
+> not return -EPROBE_DEFER in any circumstance, so I assume it just
+> runs into an error condition on the first probe and does not
+> try again.
 
-> 2015-08-11 19:09 GMT+09:00 Krzysztof Kozlowski <k.kozlowski.k@gmail.c=
-om>:
-> >
-> > On Odroid XU3 board (with S2MPS11 PMIC) the PWRHOLD bit in CTRL1
-> > register must be manually set to 0 before initiating power off sequ=
-ence.
-> >
-> > One of usual power down methods for Exynos based devices looks like=
-:
-> > 1. PWRHOLD pin of PMIC is connected to PSHOLD of Exynos.
-> > 2. Exynos holds up this pin during system operation.
-> > 3. ACOKB pin of PMIC is pulled up to VBATT and optionally to pin in
-> >    other device.
-> > 4. When PWRHOLD/PSHOLD goes low, the PMIC will turn off the power i=
-f
-> >    ACOKB goes high.
-> >
-> > On Odroid XU3 family the difference is in (3) - the ACOKB is ground=
-ed.
-> > This means that PMIC must manually set PWRHOLD field to low and the=
-n
-> > wait for signal from Application Processor (the usual change in
-> > PWRHOLD/PSHOLD pin will actually cut off the power).
-> >
-> > The patch adds respective binding allowing Odroid XU3 device to be
-> > powered off.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-> > Reported-by: Anand Moon <linux.amoon@gmail.com>
-> > Tested-by: Anand Moon <linux.amoon@gmail.com>
-> > Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> > Acked-by: Lee Jones <lee.jones@linaro.org>
-> >
-> > ---
-> >
-> > Changes since v1:
-> > 1. Split bindings documentation to separate patch (suggested by Lee=
-).
-> > 2. Fix additional empty line (suggested by Lee).
-> > 3. Add Anand's tested-by, Javier's reviewed-by and Lee's acked-by.
-> >
-> > Patch is losely based on patch in Hardkernel repository [0] and pre=
-vious
-> > work of Anand Moon [1].
-> >
-> > [0] https://github.com/hardkernel/linux/commit/6897e62ba328bd1c8c09=
-5d918101863250cd73e7
-> > [1] http://www.spinics.net/lists/linux-samsung-soc/msg45959.html
-> > ---
-> >  drivers/mfd/sec-core.c              | 30 +++++++++++++++++++++++++=
-+++++
-> >  include/linux/mfd/samsung/core.h    |  2 ++
-> >  include/linux/mfd/samsung/s2mps11.h |  1 +
-> >  3 files changed, 33 insertions(+)
-> >
-> > diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> > index d206a3e8fe87..2d1137a7a0ee 100644
-> > --- a/drivers/mfd/sec-core.c
-> > +++ b/drivers/mfd/sec-core.c
-> > @@ -278,6 +278,8 @@ static struct sec_platform_data *sec_pmic_i2c_p=
-arse_dt_pdata(
-> >          * not parsed here.
-> >          */
-> >
-> > +       pd->manual_poweroff =3D of_property_read_bool(dev->of_node,
-> > +                                               "samsung,s2mps11-ac=
-okb-ground");
-> >         return pd;
-> >  }
-> >  #else
-> > @@ -440,6 +442,33 @@ static int sec_pmic_remove(struct i2c_client *=
-i2c)
-> >         return 0;
-> >  }
-> >
-> > +static void sec_pmic_shutdown(struct i2c_client *i2c)
-> > +{
-> > +       struct sec_pmic_dev *sec_pmic =3D i2c_get_clientdata(i2c);
-> > +       unsigned int reg, mask;
-> > +
-> > +       if (!sec_pmic->pdata->manual_poweroff)
-> > +               return;
-> > +
-> > +       switch (sec_pmic->device_type) {
-> > +       case S2MPS11X:
-> > +               reg =3D S2MPS11_REG_CTRL1;
-> > +               mask =3D S2MPS11_CTRL1_PWRHOLD_MASK;
-> > +               break;
-> > +       default:
-> > +               /*
-> > +                * Currently only one board with S2MPS11 needs this=
-, so just
-> > +                * ignore the rest.
-> > +                */
-> > +               dev_warn(sec_pmic->dev,
-> > +                       "Unsupported device %lu for manual power of=
-f\n",
-> > +                       sec_pmic->device_type);
-> > +               return;
-> > +       }
-> > +
-> > +       regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
-> > +}
-> > +
-> >  #ifdef CONFIG_PM_SLEEP
-> >  static int sec_pmic_suspend(struct device *dev)
-> >  {
-> > @@ -491,6 +520,7 @@ static struct i2c_driver sec_pmic_driver =3D {
-> >         },
-> >         .probe =3D sec_pmic_probe,
-> >         .remove =3D sec_pmic_remove,
-> > +       .shutdown =3D sec_pmic_shutdown,
-> >         .id_table =3D sec_pmic_id,
-> >  };
-> >
-> > diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/s=
-amsung/core.h
-> > index 75115384f3fc..aa78957e092f 100644
-> > --- a/include/linux/mfd/samsung/core.h
-> > +++ b/include/linux/mfd/samsung/core.h
-> > @@ -132,6 +132,8 @@ struct sec_platform_data {
-> >         int                             buck2_init;
-> >         int                             buck3_init;
-> >         int                             buck4_init;
-> > +       /* Whether or not manually set PWRHOLD to low during shutdo=
-wn. */
-> > +       bool                            manual_poweroff;
-> >  };
-> >
-> >  /**
-> > diff --git a/include/linux/mfd/samsung/s2mps11.h b/include/linux/mf=
-d/samsung/s2mps11.h
-> > index 7981a9d77d3f..b288965e8101 100644
-> > --- a/include/linux/mfd/samsung/s2mps11.h
-> > +++ b/include/linux/mfd/samsung/s2mps11.h
-> > @@ -179,6 +179,7 @@ enum s2mps11_regulators {
-> >  #define S2MPS11_BUCK_N_VOLTAGES (S2MPS11_BUCK_VSEL_MASK + 1)
-> >  #define S2MPS11_RAMP_DELAY     25000           /* uV/us */
-> >
-> > +#define S2MPS11_CTRL1_PWRHOLD_MASK     BIT(4)
-> >
-> >  #define S2MPS11_BUCK2_RAMP_SHIFT       6
-> >  #define S2MPS11_BUCK34_RAMP_SHIFT      4
-> >
+> I don't really understand why the driver registers both an i2c_driver
+> and a platform_driver, or if that is required, but it may also
+> complicate getting deferred probing to work here.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Is someone looking into fixing it? Having to load this as module would
+be an inconvenience for me, as I like to boot arndale with nfsroot.
+Yet I understand that eventually I'll need to use an initrd - so not a
+blocker, just grumpy work.
+
+Riku
