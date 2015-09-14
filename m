@@ -1,51 +1,42 @@
-From: Riku Voipio <riku.voipio@linaro.org>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable usb3503
-Date: Mon, 14 Sep 2015 11:35:56 +0300
-Message-ID: <CAAqcGHmaWXFAVairN+2pw6adDG8AMc-MTMKp4g5aUP9Kw+8i7A@mail.gmail.com>
-References: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org>
-	<556FF260.5060006@collabora.co.uk>
-	<7hd21b2wo4.fsf@deeprootsystems.com>
-	<4414616.t6CSY5FxHU@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:35888 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752223AbbINIf5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Sep 2015 04:35:57 -0400
-Received: by wicgb1 with SMTP id gb1so131009359wic.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2015 01:35:56 -0700 (PDT)
-In-Reply-To: <4414616.t6CSY5FxHU@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v2] ARM: exynos_defconfig: Enable USB Video Class support
+Date: Mon, 14 Sep 2015 14:04:19 +0200
+Message-ID: <1442232259-777-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>
 
-On 5 June 2015 at 15:45, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 04 June 2015 10:47:07 Kevin Hilman wrote:
->>
->> > But I wonder why is not working, shouldn't the driver defer and
->> > be probed again once the PHY driver probe succeeds?
->>
->> Yeah, I'm not sure why that isn't working, and didn't look into it.
->>
->> FWIW, the same problem happens when both are modules.  If you modprobe
->> usb3503 first, then the phy, it doesn't work.  You have to load the phy
->> before the usb3503.
+The Exynos5420 Peach Pit and Exynos5800 Peach Pi boards have a built-in
+Silicon Motion USB UVC WebCam. Enable support for the USB Video Class
+driver and its needed media Kconfig symbols so the camera is supported.
 
-> The driver does not try to get a reference to the phy, and it does
-> not return -EPROBE_DEFER in any circumstance, so I assume it just
-> runs into an error condition on the first probe and does not
-> try again.
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-> I don't really understand why the driver registers both an i2c_driver
-> and a platform_driver, or if that is required, but it may also
-> complicate getting deferred probing to work here.
+---
 
-Is someone looking into fixing it? Having to load this as module would
-be an inconvenience for me, as I like to boot arndale with nfsroot.
-Yet I understand that eventually I'll need to use an initrd - so not a
-blocker, just grumpy work.
+Changes in v2:
+- Enable tristate Kconfig options as module instead of built-in.
+  Suggested by Krzysztof Kozlowski.
 
-Riku
+ arch/arm/configs/exynos_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 711cb0a3893d..d4f6063d8a72 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -126,6 +126,10 @@ CONFIG_REGULATOR_S2MPA01=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+ CONFIG_REGULATOR_TPS65090=y
++CONFIG_MEDIA_SUPPORT=m
++CONFIG_MEDIA_CAMERA_SUPPORT=y
++CONFIG_MEDIA_USB_SUPPORT=y
++CONFIG_USB_VIDEO_CLASS=m
+ CONFIG_DRM=y
+ CONFIG_DRM_NXP_PTN3460=y
+ CONFIG_DRM_PARADE_PS8622=y
+-- 
+2.4.3
