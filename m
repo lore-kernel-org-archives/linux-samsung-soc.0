@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
-Subject: [PATCH v2 1/3] sysfs: Support is_visible() on binary attributes
-Date: Mon, 14 Sep 2015 09:34:07 -0300
-Message-ID: <1442234049-18637-2-git-send-email-emilio.lopez@collabora.co.uk>
+Subject: [PATCH v2 3/3] ARM: dts: Enable EC vboot context support on Peach boards
+Date: Mon, 14 Sep 2015 09:34:09 -0300
+Message-ID: <1442234049-18637-4-git-send-email-emilio.lopez@collabora.co.uk>
 References: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -13,100 +13,44 @@ To: gregkh@linuxfoundation.org, olof@lixom.net, kgene@kernel.org, k.kozlowski@sa
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-According to the sysfs header file:
-
-    "The returned value will replace static permissions defined in
-     struct attribute or struct bin_attribute."
-
-but this isn't the case, as is_visible is only called on struct attribu=
-te
-only. This patch introduces a new is_bin_visible() function to implemen=
-t
-the same functionality for binary attributes, and updates documentation
-accordingly.
+The Peach boards use the EC to store the vboot context information,
+so add the corresponding properties on the EC node to indicate so.
 
 Signed-off-by: Emilio L=C3=B3pez <emilio.lopez@collabora.co.uk>
 ---
 
 Changes from v1:
- - Don't overload is_visible, introduce is_bin_visible instead as
-   discussed on the list.
+ - none
 
- fs/sysfs/group.c      | 17 +++++++++++++++--
- include/linux/sysfs.h | 18 ++++++++++++++----
- 2 files changed, 29 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
-index 39a0199..51b56e6 100644
---- a/fs/sysfs/group.c
-+++ b/fs/sysfs/group.c
-@@ -73,13 +73,26 @@ static int create_files(struct kernfs_node *parent,=
- struct kobject *kobj,
- 	}
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot=
+/dts/exynos5420-peach-pit.dts
+index 8f4d76c..ac02fb4 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -935,6 +935,7 @@
+ 		pinctrl-0 =3D <&ec_spi_cs &ec_irq>;
+ 		reg =3D <0>;
+ 		spi-max-frequency =3D <3125000>;
++		google,has-vbc-nvram;
 =20
- 	if (grp->bin_attrs) {
--		for (bin_attr =3D grp->bin_attrs; *bin_attr; bin_attr++) {
-+		for (i =3D 0, bin_attr =3D grp->bin_attrs; *bin_attr; i++, bin_attr+=
-+) {
-+			umode_t mode =3D (*bin_attr)->attr.mode;
-+
- 			if (update)
- 				kernfs_remove_by_name(parent,
- 						(*bin_attr)->attr.name);
-+			if (grp->is_bin_visible) {
-+				mode =3D grp->is_bin_visible(kobj, *bin_attr, i);
-+				if (!mode)
-+					continue;
-+			}
-+
-+			WARN(mode & ~(SYSFS_PREALLOC | 0664),
-+			     "Attribute %s: Invalid permissions 0%o\n",
-+			     (*bin_attr)->attr.name, mode);
-+
-+			mode &=3D SYSFS_PREALLOC | 0664;
- 			error =3D sysfs_add_file_mode_ns(parent,
- 					&(*bin_attr)->attr, true,
--					(*bin_attr)->attr.mode, NULL);
-+					mode, NULL);
- 			if (error)
- 				break;
- 		}
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index 9f65758..2f66050 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -64,10 +64,18 @@ do {							\
-  *		a new subdirectory with this name.
-  * @is_visible:	Optional: Function to return permissions associated wi=
-th an
-  *		attribute of the group. Will be called repeatedly for each
-- *		attribute in the group. Only read/write permissions as well as
-- *		SYSFS_PREALLOC are accepted. Must return 0 if an attribute is
-- *		not visible. The returned value will replace static permissions
-- *		defined in struct attribute or struct bin_attribute.
-+ *		non-binary attribute in the group. Only read/write
-+ *		permissions as well as SYSFS_PREALLOC are accepted. Must
-+ *		return 0 if an attribute is not visible. The returned value
-+ *		will replace static permissions defined in struct attribute.
-+ * @is_bin_visible:
-+ *		Optional: Function to return permissions associated with a
-+ *		binary attribute of the group. Will be called repeatedly
-+ *		for each binary attribute in the group. Only read/write
-+ *		permissions as well as SYSFS_PREALLOC are accepted. Must
-+ *		return 0 if a binary attribute is not visible. The returned
-+ *		value will replace static permissions defined in
-+ *		struct bin_attribute.
-  * @attrs:	Pointer to NULL terminated list of attributes.
-  * @bin_attrs:	Pointer to NULL terminated list of binary attributes.
-  *		Either attrs or bin_attrs or both must be provided.
-@@ -76,6 +84,8 @@ struct attribute_group {
- 	const char		*name;
- 	umode_t			(*is_visible)(struct kobject *,
- 					      struct attribute *, int);
-+	umode_t			(*is_bin_visible)(struct kobject *,
-+						  struct bin_attribute *, int);
- 	struct attribute	**attrs;
- 	struct bin_attribute	**bin_attrs;
- };
+ 		controller-data {
+ 			samsung,spi-feedback-delay =3D <1>;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/=
+dts/exynos5800-peach-pi.dts
+index 7d5b386..b60dec0 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -898,6 +898,7 @@
+ 		pinctrl-0 =3D <&ec_spi_cs &ec_irq>;
+ 		reg =3D <0>;
+ 		spi-max-frequency =3D <3125000>;
++		google,has-vbc-nvram;
+=20
+ 		controller-data {
+ 			samsung,spi-feedback-delay =3D <1>;
 --=20
 2.1.4
