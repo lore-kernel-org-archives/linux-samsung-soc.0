@@ -1,63 +1,66 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] arm64: dts: Add BUS1 instance pinctrl support
-Date: Mon, 14 Sep 2015 15:26:29 +0900
-Message-ID: <55F66895.7030902@samsung.com>
-References: <1440761134-27639-1-git-send-email-alim.akhtar@samsung.com>
- <55E3E95D.50003@samsung.com> <55F6563A.2030107@samsung.com>
- <55F6606F.3090000@samsung.com> <55F66641.6010209@samsung.com>
+Subject: Re: [PATCH v5 0/4] cpufreq-dt: add suspend frequency support
+Date: Mon, 14 Sep 2015 16:08:58 +0900
+Message-ID: <55F6728A.2070805@samsung.com>
+References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+ <2547413.Uj7KDUeGpY@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:40123 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751030AbbING0k (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Sep 2015 02:26:40 -0400
-In-reply-to: <55F66641.6010209@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <2547413.Uj7KDUeGpY@vostro.rjw.lan>
+Sender: linux-clk-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, gautam.vivek@samsung.com
 
-On 14.09.2015 15:16, Alim Akhtar wrote:
-> Hello,
+On 09.09.2015 10:16, Rafael J. Wysocki wrote:
+> On Tuesday, September 08, 2015 06:41:00 PM Bartlomiej Zolnierkiewicz wrote:
+>> Hi,
+>>
+>> This patch series adds suspend frequency support (using opp-v2
+>> bindings and suspend-opp functionality) to cpufreq-dt driver and
+>> then adds suspend opp for Exynos4412 based boards.
+>>
+>> This patch series fixes suspend/resume support on Exynos4412
+>> based Trats2 board and reboot hang on Exynos4412 based Odroid
+>> U3 board.
+>>
+>> Changes since v4:
+>> - removed superfluous CONFIG_PM ifdefs
+>> - added Acked-by tag from Krzysztof to patch #4
+>> - added Acked-by tag from Viresh to patches #1-3
+>>
+>> Changes since v3:
+>> - fixed dev_pm_opp_get_suspend_opp() locking
+>> - shortened variable name in dev_pm_opp_get_suspend_opp()
+>> - adjusted cpufreq_generic_suspend() to work with cpufreq-dt
+>> - removed no longer needed cpufreq_dt_suspend()
+>> - added Acked-by tag from Viresh to patch #4
+>>
+>> Changes since v2:
+>> - rewrote to use suspend-opp functionality
+>>
+>> Changes since v1:
+>> - removed superfluous ";"
+>>
+>> Depends on:
+>> - next-20150902 branch of linux-next kernel tree
 > 
-> On 09/14/2015 11:21 AM, Krzysztof Kozlowski wrote:
->> On 14.09.2015 14:08, Alim Akhtar wrote:
->>> Hi
->>>
->>> On 08/31/2015 11:12 AM, Krzysztof Kozlowski wrote:
->>>> On 28.08.2015 20:25, Alim Akhtar wrote:
->>>>> This adds BUS1 instance pinctrl for exynos7 soc.
->>>>>
->>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>>> ---
->>>>>    arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi |  111
->>>>> +++++++++++++++++++++++
->>>>>    arch/arm64/boot/dts/exynos/exynos7.dtsi         |    7 ++
->>>>>    2 files changed, 118 insertions(+)
->>>>
->>>> The "etc1" GPIO in my datasheet is not fully documented but the rest
->>>> looks good:
->>>>
->>> Ok will send v2 and remove etc1 gpio node.
->>
->> You don't have to. I mentioned it only for reference that I cannot
->> review the etc GPIO node because it is not mentioned in my datasheet.
->> However you may have different (e.g. newer) datasheet and etc1 could be
->> documented there.
->>
-> Sorry for delay, I check two versions of the UM and unfortunately both
-> show incomplete entries for etc1, my downstream code has these changes
-> though.
->> I applied the first version of patch some time ago (your response is
->> after two weeks). Do you want me to replace it with v2?
->>
-> Please consider taking my v2 which I just posted.
-> Thanks again.
+> I've queued up [1-3/4] for the next PM pull request.
+> 
+> The [4/4] has to go in separately through the platform tree.
 
-Okay, I'll replace the patch with v2.
+Dear Rafael,
+
+If you want, the fourth patch can go now through your tree - the late
+SoC changes were pulled by Linus. No difference... I can grab it as I
+had other DT related fix in queue.
+
+The only important thing is to get entire patchset to 4.3 because it is
+a fix for regression introduced in cpufreq for exynos. Do you plan to
+send your part in current 4.3 cycle?
 
 Best regards,
 Krzysztof
+
