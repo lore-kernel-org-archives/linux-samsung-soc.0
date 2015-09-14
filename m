@@ -1,89 +1,63 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 0/2] [media] Fix race between graph enumeration and
- entities registration
-Date: Mon, 14 Sep 2015 14:21:39 +0200
-Message-ID: <1442233301-25181-1-git-send-email-javier@osg.samsung.com>
+From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [PATCH v2 0/3] platform/chrome: vboot context support
+Date: Mon, 14 Sep 2015 09:34:06 -0300
+Message-ID: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-sh@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Matthias Schwarzott <zzam@gentoo.org>, Olli Salonen <olli.salonen@iki.fi>, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Antti Palosaari <crope@iki.fi>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Luis de Bethencourt <luis@debethencourt.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, =?UTF-8?q?Rafael=20Louren=C3=A7o=20de=20Lima=20Chehab?= <chehabrafael@gmail.com>, linux-arm-kernel@lists.infradead.org, Tommi Rantala <tt.rantala@gmail.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Kyungmin Park <kyun>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi everyone,
 
-The Media Controller framework has an issue in which the media device node
-is registered before all the media entities and pads links are created so
-if user-space tries to enumerate the graph too early, it may get a partial
-graph since not everything has been registered yet.
+This series adds support for reading and writing the verified boot cont=
+ext
+nvram space on the EC using the cros_ec sysfs interface.
 
-This series fixes the issue by separate the media device registration from
-the initialization so drives can first initialize the media device, create
-the graph and then finally register the media device node once is finished.
-The solution was suggested by Sakari Ailus.
+The first patch improves is_visible() functionality, making it work
+for binary attributes as well as normal ones. This is needed so the
+sysfs group can be hidden when the EC doesn't offer any space for
+the context.
 
-This is the second version of the series that fixes issues pointed out by
-Sakari Ailus. The first version was [0].
+The second patch is the actual code implementing the interface to read
+and write the context data.
 
-Patch #1 adds a check to the media_device_unregister() function to know if
-the media device has been registed yet so calling it will be safe and the
-cleanup functions of the drivers won't need to be changed in case register
-failed.
+The third patch adds the DT properties on peach boards which, judging b=
+y
+the vendor tree, use the EC to store the verified boot context.
 
-Patch #2 does the init and registration split, changing all the drivers to
-make the change atomic and also adds a cleanup function for media devices.
+The series was tested on a peach pi and was found to work OK there. As
+always, all comments and further tests are welcome :)
 
-The patches are on top of Mauro's "[PATCH v8 00/55] MC next generation" [1]
-but is not a dependency for that series, it was only be based on that patch
-series to avoid conflicts with in-flight patches.
+Cheers!
+Emilio
 
-The patches have been tested on an OMAP3 IGEPv2 board that has a OMAP3 ISP
-device and an Exynos5800 Chromebook with a built-in UVC camera.
+Emilio L=C3=B3pez (3):
+  sysfs: Support is_visible() on binary attributes
+  platform/chrome: Support reading/writing the vboot context
+  ARM: dts: Enable EC vboot context support on Peach boards
 
-[0]: https://lkml.org/lkml/2015/9/10/311
-[1]: http://permalink.gmane.org/gmane.linux.drivers.driver-project.devel/74515
+ Documentation/devicetree/bindings/mfd/cros-ec.txt |   4 +
+ arch/arm/boot/dts/exynos5420-peach-pit.dts        |   1 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts         |   1 +
+ drivers/platform/chrome/Makefile                  |   5 +-
+ drivers/platform/chrome/cros_ec_dev.c             |   1 +
+ drivers/platform/chrome/cros_ec_vbc.c             | 137 ++++++++++++++=
+++++++++
+ fs/sysfs/group.c                                  |  17 ++-
+ include/linux/mfd/cros_ec.h                       |   1 +
+ include/linux/sysfs.h                             |  18 ++-
+ 9 files changed, 178 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_vbc.c
 
-Best regards,
-Javier
+--=20
+2.1.4
 
-Changes in v2:
-- Reword the documentation for media_device_unregister(). Suggested by Sakari.
-- Added Sakari's Acked-by tag for patch #1.
-- Change media_device_init() to return void instead of an error.
-  Suggested by Sakari Ailus.
-- Remove the error messages when media_device_register() fails.
-  Suggested by Sakari Ailus.
-- Fix typos in commit message of patch #2. Suggested by Sakari Ailus.
-
-Javier Martinez Canillas (2):
-  [media] media-device: check before unregister if mdev was registered
-  [media] media-device: split media initialization and registration
-
- drivers/media/common/siano/smsdvb-main.c      |  1 +
- drivers/media/media-device.c                  | 43 ++++++++++++++++++++++-----
- drivers/media/platform/exynos4-is/media-dev.c | 15 +++++-----
- drivers/media/platform/omap3isp/isp.c         | 14 ++++-----
- drivers/media/platform/s3c-camif/camif-core.c | 15 ++++++----
- drivers/media/platform/vsp1/vsp1_drv.c        | 12 ++++----
- drivers/media/platform/xilinx/xilinx-vipp.c   | 12 +++-----
- drivers/media/usb/au0828/au0828-core.c        | 27 ++++++++---------
- drivers/media/usb/cx231xx/cx231xx-cards.c     | 30 +++++++++----------
- drivers/media/usb/dvb-usb-v2/dvb_usb_core.c   | 23 +++++++-------
- drivers/media/usb/dvb-usb/dvb-usb-dvb.c       | 24 ++++++++-------
- drivers/media/usb/siano/smsusb.c              |  5 ++--
- drivers/media/usb/uvc/uvc_driver.c            | 10 +++++--
- include/media/media-device.h                  |  2 ++
- 14 files changed, 136 insertions(+), 97 deletions(-)
-
--- 
-2.4.3
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
