@@ -1,51 +1,202 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v2] ARM: dts: Fix LEDs on exynos5422-odroidxu3
-Date: Sun, 13 Sep 2015 18:32:16 +0900
-Message-ID: <1442136736-28672-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:33532 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751349AbbIMJc3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 13 Sep 2015 05:32:29 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 1/2] ARM: dts: Split audio configuration to separate
+ exynos5422-odroidxu3-audio
+Date: Mon, 14 Sep 2015 09:47:48 +0900
+Message-ID: <1442191669-3366-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-The LEDs on Odroid XU3 family boards could not properly probe because PWM
-outputs were reduced only to PWM for fan. Fix it for Odroid XU3 and
-XU3-Lite boards by switching to usage of all 4 outputs (although the PWM
-for MIPI probably is redundant because board does not have MIPI
-connector available).
+The Odroid XU4 board does not have audio codec so before adding DTS for
+new board split the audio codec to separate DTSI file. Include the audio codec
+DTSI in Odroid XU3 and XU3-Lite boards.
 
-This fixes warnings on dmesg:
-[    4.838712] samsung-pwm 12dd0000.pwm: tried to request PWM channel 1 without output
-[    4.838725] leds_pwm pwmleds: unable to request PWM for green:mmc0: -22
-[    4.838767] leds_pwm: probe of pwmleds failed with error -22
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 
 ---
+Changes since v2:
+1. Add Javier's reviewed-by.
 
 Changes since v1:
-1. Do not rebase on patchset adding support for Odroid XU4 board. Rebase
-   just on current next.
+1. New patch (refactor).
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi  | 61 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 47 -----------------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |  1 +
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |  1 +
+ 4 files changed, 63 insertions(+), 47 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
 
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+new file mode 100644
+index 000000000000..9493923ec652
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -0,0 +1,61 @@
++/*
++ * Hardkernel Odroid XU3 Audio Codec device tree source
++ *
++ * Copyright (c) 2015 Krzysztof Kozlowski
++ * Copyright (c) 2014 Collabora Ltd.
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/ {
++	sound: sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,name = "Odroid-XU3";
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack",
++			"Speakers", "Speakers";
++		simple-audio-card,routing =
++			"Headphone Jack", "HPL",
++			"Headphone Jack", "HPR",
++			"Headphone Jack", "MICBIAS",
++			"IN1", "Headphone Jack",
++			"Speakers", "SPKL",
++			"Speakers", "SPKR";
++
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&link0_codec>;
++		simple-audio-card,frame-master = <&link0_codec>;
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0 0>;
++			system-clock-frequency = <19200000>;
++		};
++
++		link0_codec: simple-audio-card,codec {
++			sound-dai = <&max98090>;
++			clocks = <&i2s0 CLK_I2S_CDCLK>;
++		};
++	};
++};
++
++&hsi2c_5 {
++	status = "okay";
++	max98090: max98090@10 {
++		compatible = "maxim,max98090";
++		reg = <0x10>;
++		interrupt-parent = <&gpx3>;
++		interrupts = <2 0>;
++		clocks = <&i2s0 CLK_I2S_CDCLK>;
++		clock-names = "mclk";
++		#sound-dai-cells = <0>;
++	};
++};
++
++&i2s0 {
++	status = "okay";
++};
 diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index dd8bc86d9de4..90d298dce851 100644
+index 90d298dce851..2f0fb8678e9f 100644
 --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
 +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -473,7 +473,6 @@
- 	 */
- 	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
- 	pinctrl-names = "default";
--	samsung,pwm-outputs = <0>;
- 	status = "okay";
+@@ -80,36 +80,6 @@
+ 		};
+ 	};
+ 
+-	sound: sound {
+-		compatible = "simple-audio-card";
+-
+-		simple-audio-card,name = "Odroid-XU3";
+-		simple-audio-card,widgets =
+-			"Headphone", "Headphone Jack",
+-			"Speakers", "Speakers";
+-		simple-audio-card,routing =
+-			"Headphone Jack", "HPL",
+-			"Headphone Jack", "HPR",
+-			"Headphone Jack", "MICBIAS",
+-			"IN1", "Headphone Jack",
+-			"Speakers", "SPKL",
+-			"Speakers", "SPKR";
+-
+-		simple-audio-card,format = "i2s";
+-		simple-audio-card,bitclock-master = <&link0_codec>;
+-		simple-audio-card,frame-master = <&link0_codec>;
+-
+-		simple-audio-card,cpu {
+-			sound-dai = <&i2s0 0>;
+-			system-clock-frequency = <19200000>;
+-		};
+-
+-		link0_codec: simple-audio-card,codec {
+-			sound-dai = <&max98090>;
+-			clocks = <&i2s0 CLK_I2S_CDCLK>;
+-		};
+-	};
+-
+ 	fan0: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		pwms = <&pwm 0 20972 0>;
+@@ -376,19 +346,6 @@
+ 	};
  };
  
+-&hsi2c_5 {
+-	status = "okay";
+-	max98090: max98090@10 {
+-		compatible = "maxim,max98090";
+-		reg = <0x10>;
+-		interrupt-parent = <&gpx3>;
+-		interrupts = <2 0>;
+-		clocks = <&i2s0 CLK_I2S_CDCLK>;
+-		clock-names = "mclk";
+-		#sound-dai-cells = <0>;
+-	};
+-};
+-
+ &i2c_2 {
+ 	samsung,i2c-sda-delay = <100>;
+ 	samsung,i2c-max-bus-freq = <66000>;
+@@ -400,10 +357,6 @@
+ 	};
+ };
+ 
+-&i2s0 {
+-	status = "okay";
+-};
+-
+ &mfc {
+ 	samsung,mfc-r = <0x43000000 0x800000>;
+ 	samsung,mfc-l = <0x51000000 0x800000>;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+index c06882bbb822..9c0cea99c996 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+@@ -13,6 +13,7 @@
+ 
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
++#include "exynos5422-odroidxu3-audio.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3 Lite";
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 78e6a502f320..d8647a469a86 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -12,6 +12,7 @@
+ 
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
++#include "exynos5422-odroidxu3-audio.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3";
 -- 
-2.1.4
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
