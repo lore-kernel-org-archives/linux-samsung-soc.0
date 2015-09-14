@@ -1,63 +1,248 @@
-From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v2 0/3] platform/chrome: vboot context support
-Date: Mon, 14 Sep 2015 09:34:06 -0300
-Message-ID: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
+From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
+Subject: [PATCH v2 2/3] platform/chrome: Support reading/writing the vboot context
+Date: Mon, 14 Sep 2015 09:34:08 -0300
+Message-ID: <1442234049-18637-3-git-send-email-emilio.lopez@collabora.co.uk>
+References: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47283 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754003AbbINMfP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Sep 2015 08:35:15 -0400
+In-Reply-To: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gregkh@linuxfoundation.org, olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux@roeck-us.net
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
 
-Hi everyone,
+Some EC implementations include a small nvram space used to store
+verified boot context data. This patch offers a way to expose this
+data to userspace.
 
-This series adds support for reading and writing the verified boot cont=
-ext
-nvram space on the EC using the cros_ec sysfs interface.
-
-The first patch improves is_visible() functionality, making it work
-for binary attributes as well as normal ones. This is needed so the
-sysfs group can be hidden when the EC doesn't offer any space for
-the context.
-
-The second patch is the actual code implementing the interface to read
-and write the context data.
-
-The third patch adds the DT properties on peach boards which, judging b=
-y
-the vendor tree, use the EC to store the verified boot context.
-
-The series was tested on a peach pi and was found to work OK there. As
-always, all comments and further tests are welcome :)
-
-Cheers!
-Emilio
-
-Emilio L=C3=B3pez (3):
-  sysfs: Support is_visible() on binary attributes
-  platform/chrome: Support reading/writing the vboot context
-  ARM: dts: Enable EC vboot context support on Peach boards
+Signed-off-by: Emilio L=C3=B3pez <emilio.lopez@collabora.co.uk>
+---
+Changes from v1:
+ - Use is_bin_visible instead of is_visible
 
  Documentation/devicetree/bindings/mfd/cros-ec.txt |   4 +
- arch/arm/boot/dts/exynos5420-peach-pit.dts        |   1 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts         |   1 +
  drivers/platform/chrome/Makefile                  |   5 +-
  drivers/platform/chrome/cros_ec_dev.c             |   1 +
  drivers/platform/chrome/cros_ec_vbc.c             | 137 ++++++++++++++=
 ++++++++
- fs/sysfs/group.c                                  |  17 ++-
  include/linux/mfd/cros_ec.h                       |   1 +
- include/linux/sysfs.h                             |  18 ++-
- 9 files changed, 178 insertions(+), 7 deletions(-)
+ 5 files changed, 147 insertions(+), 1 deletion(-)
  create mode 100644 drivers/platform/chrome/cros_ec_vbc.c
 
+diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Docume=
+ntation/devicetree/bindings/mfd/cros-ec.txt
+index 1777916..136e0c2 100644
+--- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
++++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+@@ -34,6 +34,10 @@ Required properties (LPC):
+ - compatible: "google,cros-ec-lpc"
+ - reg: List of (IO address, size) pairs defining the interface uses
+=20
++Optional properties (all):
++- google,has-vbc-nvram: Some implementations of the EC include a small
++  nvram space used to store verified boot context data. This boolean f=
+lag
++  is used to specify whether this nvram is present or not.
+=20
+ Example for I2C:
+=20
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome=
+/Makefile
+index 4a11b01..787be61 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -1,7 +1,10 @@
+=20
+ obj-$(CONFIG_CHROMEOS_LAPTOP)	+=3D chromeos_laptop.o
+ obj-$(CONFIG_CHROMEOS_PSTORE)	+=3D chromeos_pstore.o
+-cros_ec_devs-objs               :=3D cros_ec_dev.o cros_ec_sysfs.o cro=
+s_ec_lightbar.o
++cros_ec_devs-objs               :=3D cros_ec_dev.o
++cros_ec_devs-objs               +=3D cros_ec_lightbar.o
++cros_ec_devs-objs               +=3D cros_ec_sysfs.o
++cros_ec_devs-objs               +=3D cros_ec_vbc.o
+ obj-$(CONFIG_CROS_EC_CHARDEV)   +=3D cros_ec_devs.o
+ obj-$(CONFIG_CROS_EC_LPC)       +=3D cros_ec_lpc.o
+ obj-$(CONFIG_CROS_EC_PROTO)	+=3D cros_ec_proto.o
+diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platform/c=
+hrome/cros_ec_dev.c
+index e8fcdc2..d19263f 100644
+--- a/drivers/platform/chrome/cros_ec_dev.c
++++ b/drivers/platform/chrome/cros_ec_dev.c
+@@ -32,6 +32,7 @@ static int ec_major;
+ static const struct attribute_group *cros_ec_groups[] =3D {
+ 	&cros_ec_attr_group,
+ 	&cros_ec_lightbar_attr_group,
++	&cros_ec_vbc_attr_group,
+ 	NULL,
+ };
+=20
+diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/c=
+hrome/cros_ec_vbc.c
+new file mode 100644
+index 0000000..a0e8d38
+--- /dev/null
++++ b/drivers/platform/chrome/cros_ec_vbc.c
+@@ -0,0 +1,137 @@
++/*
++ * cros_ec_vbc - Expose the vboot context nvram to userspace
++ *
++ * Copyright (C) 2015 Collabora Ltd.
++ *
++ * based on vendor driver,
++ *
++ * Copyright (C) 2012 The Chromium OS Authors
++ *
++ * This program is free software; you can redistribute it and/or modif=
+y
++ * it under the terms of the GNU General Public License as published b=
+y
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/mfd/cros_ec.h>
++#include <linux/mfd/cros_ec_commands.h>
++#include <linux/slab.h>
++
++static ssize_t vboot_context_read(struct file *filp, struct kobject *k=
+obj,
++				  struct bin_attribute *att, char *buf,
++				  loff_t pos, size_t count)
++{
++	struct device *dev =3D container_of(kobj, struct device, kobj);
++	struct cros_ec_dev *ec =3D container_of(dev, struct cros_ec_dev,
++					      class_dev);
++	struct cros_ec_device *ecdev =3D ec->ec_dev;
++	struct ec_params_vbnvcontext *params;
++	struct cros_ec_command *msg;
++	int err;
++	const size_t para_sz =3D sizeof(struct ec_params_vbnvcontext);
++	const size_t resp_sz =3D sizeof(struct ec_response_vbnvcontext);
++	const size_t payload =3D max(para_sz, resp_sz);
++
++	msg =3D kmalloc(sizeof(*msg) + payload, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
++	params =3D (struct ec_params_vbnvcontext *)msg->data;
++	params->op =3D EC_VBNV_CONTEXT_OP_READ;
++
++	msg->version =3D EC_VER_VBNV_CONTEXT;
++	msg->command =3D EC_CMD_VBNV_CONTEXT;
++	msg->outsize =3D sizeof(params->op);
++	msg->insize =3D resp_sz;
++
++	err =3D cros_ec_cmd_xfer(ecdev, msg);
++	if (err < 0) {
++		dev_err(dev, "Error sending read request: %d\n", err);
++		kfree(msg);
++		return err;
++	}
++
++	BUILD_BUG_ON(resp_sz > PAGE_SIZE);
++	memcpy(buf, msg->data, resp_sz);
++
++	kfree(msg);
++	return resp_sz;
++}
++
++static ssize_t vboot_context_write(struct file *filp, struct kobject *=
+kobj,
++				   struct bin_attribute *attr, char *buf,
++				   loff_t pos, size_t count)
++{
++	struct device *dev =3D container_of(kobj, struct device, kobj);
++	struct cros_ec_dev *ec =3D container_of(dev, struct cros_ec_dev,
++					      class_dev);
++	struct cros_ec_device *ecdev =3D ec->ec_dev;
++	struct ec_params_vbnvcontext *params;
++	struct cros_ec_command *msg;
++	int err;
++	const size_t para_sz =3D sizeof(*params);
++	const size_t data_sz =3D sizeof(params->block);
++
++	/* Only write full values */
++	if (count !=3D data_sz)
++		return -EINVAL;
++
++	msg =3D kmalloc(sizeof(*msg) + para_sz, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
++	params =3D (struct ec_params_vbnvcontext *)msg->data;
++	params->op =3D EC_VBNV_CONTEXT_OP_WRITE;
++	memcpy(params->block, buf, data_sz);
++
++	msg->version =3D EC_VER_VBNV_CONTEXT;
++	msg->command =3D EC_CMD_VBNV_CONTEXT;
++	msg->outsize =3D para_sz;
++	msg->insize =3D 0;
++
++	err =3D cros_ec_cmd_xfer(ecdev, msg);
++	if (err < 0) {
++		dev_err(dev, "Error sending write request: %d\n", err);
++		kfree(msg);
++		return err;
++	}
++
++	kfree(msg);
++	return data_sz;
++}
++
++static umode_t cros_ec_vbc_is_visible(struct kobject *kobj,
++				      struct bin_attribute *a, int n)
++{
++	struct device *dev =3D container_of(kobj, struct device, kobj);
++	struct cros_ec_dev *ec =3D container_of(dev, struct cros_ec_dev,
++					      class_dev);
++	struct device_node *np =3D ec->ec_dev->dev->of_node;
++
++	if (IS_ENABLED(CONFIG_OF) && np) {
++		if (of_property_read_bool(np, "google,has-vbc-nvram"))
++			return a->attr.mode;
++	}
++
++	return 0;
++}
++
++static BIN_ATTR_RW(vboot_context, 16);
++
++static struct bin_attribute *cros_ec_vbc_bin_attrs[] =3D {
++	&bin_attr_vboot_context,
++	NULL
++};
++
++struct attribute_group cros_ec_vbc_attr_group =3D {
++	.name =3D "vbc",
++	.bin_attrs =3D cros_ec_vbc_bin_attrs,
++	.is_bin_visible =3D cros_ec_vbc_is_visible,
++};
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index da72671..494682c 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -255,5 +255,6 @@ int cros_ec_query_all(struct cros_ec_device *ec_dev=
+);
+ /* sysfs stuff */
+ extern struct attribute_group cros_ec_attr_group;
+ extern struct attribute_group cros_ec_lightbar_attr_group;
++extern struct attribute_group cros_ec_vbc_attr_group;
+=20
+ #endif /* __LINUX_MFD_CROS_EC_H */
 --=20
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
