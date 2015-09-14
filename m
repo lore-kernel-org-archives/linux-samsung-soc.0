@@ -1,128 +1,41 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] ARM: EXYNOS: reset Little cores when cpu is up
-Date: Mon, 14 Sep 2015 10:24:35 +0900
-Message-ID: <55F621D3.3030207@samsung.com>
-References: <1441117023-25478-1-git-send-email-parkch98@gmail.com>
- <55E63F8F.4020300@samsung.com> <55E64386.3000903@osg.samsung.com>
- <55E64559.7000105@samsung.com> <55E6A8F6.5020301@osg.samsung.com>
- <55E6AC57.4020208@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:25317 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753201AbbINBYs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 13 Sep 2015 21:24:48 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NUN00M5Q7X9YZ90@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Sep 2015 02:24:45 +0100 (BST)
-In-reply-to: <55E6AC57.4020208@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: [PATCHv2 07/10] thermal: exynos: allow compile test
+Date: Sun, 13 Sep 2015 19:31:36 -0700
+Message-ID: <1442197899-5952-8-git-send-email-edubezval@gmail.com>
+References: <1442197899-5952-1-git-send-email-edubezval@gmail.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1442197899-5952-1-git-send-email-edubezval@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Rui Zhang <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Chanho Park <parkch98@gmail.com>, kgene@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>
 
-On 02.09.2015 16:59, Krzysztof Kozlowski wrote:
-> On 02.09.2015 16:44, Javier Martinez Canillas wrote:
->> Hello Krzysztof,
->>
->> On 09/02/2015 02:39 AM, Krzysztof Kozlowski wrote:
->>> On 02.09.2015 09:32, Javier Martinez Canillas wrote:
->>>> Hello Krzysztof,
->>>>
->>>> On 09/02/2015 02:15 AM, Krzysztof Kozlowski wrote:
->>>>> On 01.09.2015 23:17, Chanho Park wrote:
->>>>>> The cpu booting of exynos5422 has been still broken since we discussed
->>>>>> it in last year[1]. This patch is inspired from Odroid XU3
->>>>>> code (Actually, it was from samsung exynos vendor kernel)[2]. This weird
->>>>>> reset code was founded exynos5420 octa cores series SoCs and only
->>>>>> required for the first boot core is the Little core (Cortex A7).
->>>>>> Some of the exynos5420 boards and all of the exynos5422 boards will require
->>>>>> this code.
->>>>>>
->>>>>> There is two ways to check the little core is the first cpu. One is
->>>>>> checking GPG2CON[1] GPIO value and the other is checking the cluster
->>>>>> number of the first cpu. I selected the latter because it's more easier
->>>>>> than the former.
->>>>>>
->>>>>> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
->>>>>> [2]:https://patchwork.kernel.org/patch/6782891/
->>>>>>
->>>>>> Cc: Kevin Hilman <khilman@kernel.org>
->>>>>> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
->>>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>>> Tested-by: Kevin Hilman <khilman@linaro.org>
->>>>>> Signed-off-by: Chanho Park <parkch98@gmail.com>
->>>>>> ---
->>>>>> Changes from v1:
->>>>>>  .kfc to Little (Cortex A7) and eagle to big (Cortex A15)
->>>>>>  .append comments about waiting SPARE2 register
->>>>>>
->>>>>> Changes since RFC:
->>>>>>  .drop checking soc_is_exynos5800 to extend this codes to
->>>>>> exynos5420/5422 boards.
->>>>>>  .kfc cores will be reset only if the cpu0 is kfc core.
->>>>>>  .Rebase top of the kukjin's for-next branch
->>>>>>
->>>>>>  arch/arm/mach-exynos/mcpm-exynos.c | 25 ++++++++++++++++++++++++-
->>>>>>  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
->>>>>>  2 files changed, 30 insertions(+), 1 deletion(-)
->>>>>
->>>>> Thanks for updating the patch. Remaining minor nit about comment style
->>>>> (/* on first line) can be fixed while applying.
->>>>>
->>>>> The patch works good, after disabling bL switcher I have 8 cores running:
->>>>>
->>>>> Tested on Odroid XU4:
->>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>>
->>>>> It's 4.3 merge window so the patch will go probably to v4.4.
->>>>>
->>>>
->>>> Isn't this material for the v4.3 -rc cycle since it's fixing a bug
->>>> (CPUs not booting)? So I don't think that's necessary to wait for v4.4.
->>>
->>> It is a bug fix but:
->>> 1. Not a fix for regression introduced in current merge window,
->>
->> I thought the -rc cycle was for stabilization and fix not only regressions
->> introduced during the merge window but also long standing issues.
-> 
-> It's all subtle. Sometimes it also depends on the mood of maintainer...
-> A lot of fixes for different issues are merged in -rc and in the same
-> time they are rejected because they are too late and they don't fix
-> regression from merge window. Anyway I used the argument #1 in
-> combination with #2.
-> 
-> Best regards,
-> Krzysztof
-> 
->>
->>> 2. There may be more subtle issues like the one mentioned below, not
->>> found yet (probably no one tested it with all possible configurations),
->>>
->>
->> Right, this is indeed a better reason to wait for v4.4.
->>  
->>> so I don't think rushing with the patch to mainline is good idea.
->>>
->>
->> Yes, agreed.
->>  
->>> However your comment reminds me about stable. This actually looks like a
->>> candidate for stable.
+Adding COMPILE_TEST flag to exynos driver to facilitate
+maintenance.
 
-I applied the patch to my repo marking it as stable backport for v4.1+.
-Earlier kernels would require manual backporting/rebasing.
+Cc: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+---
+ drivers/thermal/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It should be in linux-next soon. Let's see how it turns out. If no one
-complains than I actually agree with Javier's opinion of sending this to
-v4.3.
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index c2c8cba..202905e8 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -345,7 +345,7 @@ source "drivers/thermal/ti-soc-thermal/Kconfig"
+ endmenu
+ 
+ menu "Samsung thermal drivers"
+-depends on ARCH_EXYNOS
++depends on ARCH_EXYNOS || COMPILE_TEST
+ source "drivers/thermal/samsung/Kconfig"
+ endmenu
+ 
+-- 
+2.5.0
 
-Best regards,
-Krzysztof
