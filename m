@@ -1,40 +1,185 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 0/4] cpufreq-dt: add suspend frequency support
-Date: Mon, 14 Sep 2015 16:19:45 +0900
-Message-ID: <55F67511.5000908@samsung.com>
-References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
- <2547413.Uj7KDUeGpY@vostro.rjw.lan> <55F6728A.2070805@samsung.com>
- <20150914071727.GB32551@linux>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 2/3] mfd: s2mps11: Add manual shutdown method for
+ Odroid XU3
+Date: Mon, 14 Sep 2015 09:12:12 +0100
+Message-ID: <20150914081212.GE27591@x1>
+References: <1439287746-14034-1-git-send-email-k.kozlowski.k@gmail.com>
+ <1439287746-14034-3-git-send-email-k.kozlowski.k@gmail.com>
+ <CAJKOXPeSH-w1zBLomLiUKqAVbGEQVvTLfGbJ-YFgZ_qw5MsC9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:41523 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751563AbbINHUA (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:34173 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751852AbbINIMQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Sep 2015 03:20:00 -0400
-In-reply-to: <20150914071727.GB32551@linux>
+	Mon, 14 Sep 2015 04:12:16 -0400
+Received: by wicfx3 with SMTP id fx3so128938284wic.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2015 01:12:14 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPeSH-w1zBLomLiUKqAVbGEQVvTLfGbJ-YFgZ_qw5MsC9Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-On 14.09.2015 16:17, Viresh Kumar wrote:
-> On 14-09-15, 16:08, Krzysztof Kozlowski wrote:
->> If you want, the fourth patch can go now through your tree - the late
->> SoC changes were pulled by Linus. No difference... I can grab it as I
->> had other DT related fix in queue.
->>
->> The only important thing is to get entire patchset to 4.3 because it is
->> a fix for regression introduced in cpufreq for exynos. Do you plan to
->> send your part in current 4.3 cycle?
-> 
-> The first 3 patches are already part for 4.3-rc1 and so you can keep
-> the DT update in your tree now. :)
+On Sun, 13 Sep 2015, Krzysztof Kozlowski wrote:
+> You acked this patch. However finally it did not go through other tre=
+e
+> so maybe you could pick it up for 4.4?
+>=20
+> If you want I could reabse and resend it.
 
-Damn it, I missed it. It solves everything, the fourth patch will go
-through platform tree.
+Yes, please rebase and resend.
 
-Best regards,
-Krzysztof
+> 2015-08-11 19:09 GMT+09:00 Krzysztof Kozlowski <k.kozlowski.k@gmail.c=
+om>:
+> >
+> > On Odroid XU3 board (with S2MPS11 PMIC) the PWRHOLD bit in CTRL1
+> > register must be manually set to 0 before initiating power off sequ=
+ence.
+> >
+> > One of usual power down methods for Exynos based devices looks like=
+:
+> > 1. PWRHOLD pin of PMIC is connected to PSHOLD of Exynos.
+> > 2. Exynos holds up this pin during system operation.
+> > 3. ACOKB pin of PMIC is pulled up to VBATT and optionally to pin in
+> >    other device.
+> > 4. When PWRHOLD/PSHOLD goes low, the PMIC will turn off the power i=
+f
+> >    ACOKB goes high.
+> >
+> > On Odroid XU3 family the difference is in (3) - the ACOKB is ground=
+ed.
+> > This means that PMIC must manually set PWRHOLD field to low and the=
+n
+> > wait for signal from Application Processor (the usual change in
+> > PWRHOLD/PSHOLD pin will actually cut off the power).
+> >
+> > The patch adds respective binding allowing Odroid XU3 device to be
+> > powered off.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> > Reported-by: Anand Moon <linux.amoon@gmail.com>
+> > Tested-by: Anand Moon <linux.amoon@gmail.com>
+> > Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+> >
+> > ---
+> >
+> > Changes since v1:
+> > 1. Split bindings documentation to separate patch (suggested by Lee=
+).
+> > 2. Fix additional empty line (suggested by Lee).
+> > 3. Add Anand's tested-by, Javier's reviewed-by and Lee's acked-by.
+> >
+> > Patch is losely based on patch in Hardkernel repository [0] and pre=
+vious
+> > work of Anand Moon [1].
+> >
+> > [0] https://github.com/hardkernel/linux/commit/6897e62ba328bd1c8c09=
+5d918101863250cd73e7
+> > [1] http://www.spinics.net/lists/linux-samsung-soc/msg45959.html
+> > ---
+> >  drivers/mfd/sec-core.c              | 30 +++++++++++++++++++++++++=
++++++
+> >  include/linux/mfd/samsung/core.h    |  2 ++
+> >  include/linux/mfd/samsung/s2mps11.h |  1 +
+> >  3 files changed, 33 insertions(+)
+> >
+> > diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> > index d206a3e8fe87..2d1137a7a0ee 100644
+> > --- a/drivers/mfd/sec-core.c
+> > +++ b/drivers/mfd/sec-core.c
+> > @@ -278,6 +278,8 @@ static struct sec_platform_data *sec_pmic_i2c_p=
+arse_dt_pdata(
+> >          * not parsed here.
+> >          */
+> >
+> > +       pd->manual_poweroff =3D of_property_read_bool(dev->of_node,
+> > +                                               "samsung,s2mps11-ac=
+okb-ground");
+> >         return pd;
+> >  }
+> >  #else
+> > @@ -440,6 +442,33 @@ static int sec_pmic_remove(struct i2c_client *=
+i2c)
+> >         return 0;
+> >  }
+> >
+> > +static void sec_pmic_shutdown(struct i2c_client *i2c)
+> > +{
+> > +       struct sec_pmic_dev *sec_pmic =3D i2c_get_clientdata(i2c);
+> > +       unsigned int reg, mask;
+> > +
+> > +       if (!sec_pmic->pdata->manual_poweroff)
+> > +               return;
+> > +
+> > +       switch (sec_pmic->device_type) {
+> > +       case S2MPS11X:
+> > +               reg =3D S2MPS11_REG_CTRL1;
+> > +               mask =3D S2MPS11_CTRL1_PWRHOLD_MASK;
+> > +               break;
+> > +       default:
+> > +               /*
+> > +                * Currently only one board with S2MPS11 needs this=
+, so just
+> > +                * ignore the rest.
+> > +                */
+> > +               dev_warn(sec_pmic->dev,
+> > +                       "Unsupported device %lu for manual power of=
+f\n",
+> > +                       sec_pmic->device_type);
+> > +               return;
+> > +       }
+> > +
+> > +       regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
+> > +}
+> > +
+> >  #ifdef CONFIG_PM_SLEEP
+> >  static int sec_pmic_suspend(struct device *dev)
+> >  {
+> > @@ -491,6 +520,7 @@ static struct i2c_driver sec_pmic_driver =3D {
+> >         },
+> >         .probe =3D sec_pmic_probe,
+> >         .remove =3D sec_pmic_remove,
+> > +       .shutdown =3D sec_pmic_shutdown,
+> >         .id_table =3D sec_pmic_id,
+> >  };
+> >
+> > diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/s=
+amsung/core.h
+> > index 75115384f3fc..aa78957e092f 100644
+> > --- a/include/linux/mfd/samsung/core.h
+> > +++ b/include/linux/mfd/samsung/core.h
+> > @@ -132,6 +132,8 @@ struct sec_platform_data {
+> >         int                             buck2_init;
+> >         int                             buck3_init;
+> >         int                             buck4_init;
+> > +       /* Whether or not manually set PWRHOLD to low during shutdo=
+wn. */
+> > +       bool                            manual_poweroff;
+> >  };
+> >
+> >  /**
+> > diff --git a/include/linux/mfd/samsung/s2mps11.h b/include/linux/mf=
+d/samsung/s2mps11.h
+> > index 7981a9d77d3f..b288965e8101 100644
+> > --- a/include/linux/mfd/samsung/s2mps11.h
+> > +++ b/include/linux/mfd/samsung/s2mps11.h
+> > @@ -179,6 +179,7 @@ enum s2mps11_regulators {
+> >  #define S2MPS11_BUCK_N_VOLTAGES (S2MPS11_BUCK_VSEL_MASK + 1)
+> >  #define S2MPS11_RAMP_DELAY     25000           /* uV/us */
+> >
+> > +#define S2MPS11_CTRL1_PWRHOLD_MASK     BIT(4)
+> >
+> >  #define S2MPS11_BUCK2_RAMP_SHIFT       6
+> >  #define S2MPS11_BUCK34_RAMP_SHIFT      4
+> >
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
