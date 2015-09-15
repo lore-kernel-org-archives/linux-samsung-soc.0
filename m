@@ -1,27 +1,44 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v3 1/2] ARM: dts: Split audio configuration to separateexynos5422-odroidxu3-audio
-Date: Wed, 16 Sep 2015 07:35:52 +0900
-Message-ID: <55F89D48.900@kernel.org>
-References: <1442191669-3366-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: Fix LEDs on exynos5422-odroidxu3
+Date: Wed, 16 Sep 2015 08:35:50 +0900
+Message-ID: <55F8AB56.1010900@kernel.org>
+References: <1442136736-28672-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1442191669-3366-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:52096 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751532AbbIOXgM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Sep 2015 19:36:12 -0400
+In-Reply-To: <1442136736-28672-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/14/15 09:47, Krzysztof Kozlowski wrote:
-> The Odroid XU4 board does not have audio codec so before adding DTS for
-> new board split the audio codec to separate DTSI file. Include the audio codec
-> DTSI in Odroid XU3 and XU3-Lite boards.
+On 09/13/15 18:32, Krzysztof Kozlowski wrote:
+> The LEDs on Odroid XU3 family boards could not properly probe because PWM
+> outputs were reduced only to PWM for fan. Fix it for Odroid XU3 and
+> XU3-Lite boards by switching to usage of all 4 outputs (although the PWM
+> for MIPI probably is redundant because board does not have MIPI
+> connector available).
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> This fixes warnings on dmesg:
+> [    4.838712] samsung-pwm 12dd0000.pwm: tried to request PWM channel 1 without output
+> [    4.838725] leds_pwm pwmleds: unable to request PWM for green:mmc0: -22
+> [    4.838767] leds_pwm: probe of pwmleds failed with error -22
 > 
-Applied 1-2.
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Do not rebase on patchset adding support for Odroid XU4 board. Rebase
+>    just on current next.
+> ---
 
-Thanks,
-Kukjin
+Applied, thanks.
+
+- Kukjin
