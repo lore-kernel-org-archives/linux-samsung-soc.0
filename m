@@ -1,140 +1,117 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 7/7] [RFC] [media] introduce v4l2_timespec type for timestamps
-Date: Tue, 15 Sep 2015 18:32:36 +0200
-Message-ID: <55F84824.2000603@xs4all.nl>
-References: <1442332148-488079-1-git-send-email-arnd@arndb.de> <1442332148-488079-8-git-send-email-arnd@arndb.de>
+From: Andreas Oberritter <obi@saftware.de>
+Subject: Re: [PATCH 1/7] [media] dvb: use ktime_t for internal
+	timeout
+Date: Tue, 15 Sep 2015 19:55:35 +0200
+Message-ID: <55F85B97.8000700@saftware.de>
+References: <1442332148-488079-1-git-send-email-arnd@arndb.de>
+ <1442332148-488079-2-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud2.xs4all.net ([194.109.24.29]:51658 "EHLO
-	lb3-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751904AbbIOQdy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Sep 2015 12:33:54 -0400
-In-Reply-To: <1442332148-488079-8-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <y2038-bounces@lists.linaro.org>
+In-Reply-To: <1442332148-488079-2-git-send-email-arnd@arndb.de>
+List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/y2038/>
+List-Post: <mailto:y2038@lists.linaro.org>
+List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
+List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=subscribe>
+Errors-To: y2038-bounces@lists.linaro.org
+Sender: "Y2038" <y2038-bounces@lists.linaro.org>
 To: Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, y2038@lists.linaro.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-api@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: y2038@lists.linaro.org, linux-api@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/15/2015 05:49 PM, Arnd Bergmann wrote:
-> The v4l2 event queue uses a 'struct timespec' to pass monotonic
-> timestamps. This is not a problem by itself, but it breaks when user
-> space redefines timespec to use 'long long' on 32-bit systems.
-> 
-> To avoid that problem, we define our own replacement for timespec here,
-> using 'long' tv_sec and tv_nsec members. This means no change to the
-> existing API, but lets us keep using it with a y2038 compatible libc.
-> 
-> As a side-effect, this changes the API for x32 programs to be the same
-> as native 32-bit, using a 32-bit tv_sec/tv_nsec value, but both old and
-> new kernels already support both formats for on the binary level for
-> compat and x32.
-> 
-> Alternatively, we could leave the header file to define the interface
-> based on 'struct timespec', and implement both ioctls for native
-> processes. I picked the approach in this case because it matches what
-> we do for v4l2_timeval in the respective patch, but both would work
-> equally well here.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/media/v4l2-core/v4l2-event.c | 20 +++++++++++++-------
->  include/uapi/linux/videodev2.h       |  8 +++++++-
->  2 files changed, 20 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-event.c b/drivers/media/v4l2-core/v4l2-event.c
-> index 8d3171c6bee8..2a26ad591f59 100644
-> --- a/drivers/media/v4l2-core/v4l2-event.c
-> +++ b/drivers/media/v4l2-core/v4l2-event.c
-> @@ -108,7 +108,7 @@ static struct v4l2_subscribed_event *v4l2_event_subscribed(
->  }
->  
->  static void __v4l2_event_queue_fh(struct v4l2_fh *fh, const struct v4l2_event *ev,
-> -		const struct timespec *ts)
-> +		const struct v4l2_timespec *ts)
->  {
->  	struct v4l2_subscribed_event *sev;
->  	struct v4l2_kevent *kev;
-> @@ -170,17 +170,20 @@ void v4l2_event_queue(struct video_device *vdev, const struct v4l2_event *ev)
->  {
->  	struct v4l2_fh *fh;
->  	unsigned long flags;
-> -	struct timespec timestamp;
-> +	struct timespec64 timestamp;
-> +	struct v4l2_timespec vts;
->  
->  	if (vdev == NULL)
->  		return;
->  
-> -	ktime_get_ts(&timestamp);
-> +	ktime_get_ts64(&timestamp);
-> +	vts.tv_sec = timestamp.tv_sec;
-> +	vts.tv_nsec = timestamp.tv_nsec;
-
-I prefer to take this opportunity to create a v4l2_get_timespec helper
-function, just like v4l2_get_timeval.
-
->  
->  	spin_lock_irqsave(&vdev->fh_lock, flags);
->  
->  	list_for_each_entry(fh, &vdev->fh_list, list)
-> -		__v4l2_event_queue_fh(fh, ev, &timestamp);
-> +		__v4l2_event_queue_fh(fh, ev, &vts);
->  
->  	spin_unlock_irqrestore(&vdev->fh_lock, flags);
->  }
-> @@ -189,12 +192,15 @@ EXPORT_SYMBOL_GPL(v4l2_event_queue);
->  void v4l2_event_queue_fh(struct v4l2_fh *fh, const struct v4l2_event *ev)
->  {
->  	unsigned long flags;
-> -	struct timespec timestamp;
-> +	struct timespec64 timestamp;
-> +	struct v4l2_timespec vts;
->  
-> -	ktime_get_ts(&timestamp);
-> +	ktime_get_ts64(&timestamp);
-> +	vts.tv_sec = timestamp.tv_sec;
-> +	vts.tv_nsec = timestamp.tv_nsec;
->  
->  	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
-> -	__v4l2_event_queue_fh(fh, ev, &timestamp);
-> +	__v4l2_event_queue_fh(fh, ev, &vts);
->  	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
->  }
->  EXPORT_SYMBOL_GPL(v4l2_event_queue_fh);
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index b02cf054fbb8..bc659be87260 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -809,6 +809,12 @@ struct v4l2_timeval {
->  	long tv_usec;
->  };
->  
-> +/* used for monotonic times, therefore y2038 safe */
-> +struct v4l2_timespec {
-> +	long tv_sec;
-> +	long tv_nsec;
-> +};
-> +
->  /**
->   * struct v4l2_buffer - video buffer info
->   * @index:	id number of the buffer
-> @@ -2088,7 +2094,7 @@ struct v4l2_event {
->  	} u;
->  	__u32				pending;
->  	__u32				sequence;
-> -	struct timespec			timestamp;
-> +	struct v4l2_timespec		timestamp;
->  	__u32				id;
->  	__u32				reserved[8];
->  };
-> 
-
-I think I am OK with this. This timestamp is used much more rarely and I do
-not expect this ABI change to cause any problems in userspace.
-
-Regards,
-
-	Hans
+SGVsbG8gQXJuZCwKCk9uIDE1LjA5LjIwMTUgMTc6NDksIEFybmQgQmVyZ21hbm4gd3JvdGU6Cj4g
+VGhlIGR2YiBkZW11eGVyIGNvZGUgdXNlcyBhICdzdHJ1Y3QgdGltZXNwZWMnIHRvIHBhc3MgYSB0
+aW1lb3V0Cj4gYXMgYWJzb2x1dGUgdGltZS4gVGhpcyB3aWxsIGNhdXNlIHByb2JsZW1zIG9uIDMy
+LWJpdCBhcmNoaXRlY3R1cmVzCj4gaW4gMjAzOCB3aGVuIHRpbWVfdCBvdmVyZmxvd3MsIGFuZCBp
+dCBpcyByYWN5IHdpdGggYSBjb25jdXJyZW50Cj4gc2V0dGltZW9mZGF5KCkgY2FsbC4KPiAKPiBU
+aGlzIHBhdGNoIGNoYW5nZXMgdGhlIGNvZGUgdG8gdXNlIGt0aW1lX2dldCgpIGluc3RlYWQsIHVz
+aW5nCj4gdGhlIG1vbm90b25pYyB0aW1lIGJhc2UgdG8gYXZvaWQgYm90aCB0aGUgcmFjZSBhbmQg
+dGhlIG92ZXJmbG93Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21hbm4gPGFybmRAYXJu
+ZGIuZGU+Cj4gLS0tCj4gIGRyaXZlcnMvbWVkaWEvZHZiLWNvcmUvZGVtdXguaCAgICAgfCAgMiAr
+LQo+ICBkcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RteGRldi5jICAgIHwgIDIgKy0KPiAgZHJpdmVy
+cy9tZWRpYS9kdmItY29yZS9kdmJfZGVtdXguYyB8IDE3ICsrKysrKy0tLS0tLS0tLS0tCj4gIGRy
+aXZlcnMvbWVkaWEvZHZiLWNvcmUvZHZiX2RlbXV4LmggfCAgNCArKy0tCj4gIGRyaXZlcnMvbWVk
+aWEvZHZiLWNvcmUvZHZiX25ldC5jICAgfCAgMiArLQo+ICA1IGZpbGVzIGNoYW5nZWQsIDExIGlu
+c2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21l
+ZGlhL2R2Yi1jb3JlL2RlbXV4LmggYi9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RlbXV4LmgKPiBp
+bmRleCA4MzMxOTFiY2Q4MTAuLmQ4ZTJiMTIxM2JlZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL21l
+ZGlhL2R2Yi1jb3JlL2RlbXV4LmgKPiArKysgYi9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RlbXV4
+LmgKPiBAQCAtOTIsNyArOTIsNyBAQCBzdHJ1Y3QgZG14X3RzX2ZlZWQgewo+ICAJCSAgICBpbnQg
+dHlwZSwKPiAgCQkgICAgZW51bSBkbXhfdHNfcGVzIHBlc190eXBlLAo+ICAJCSAgICBzaXplX3Qg
+Y2lyY3VsYXJfYnVmZmVyX3NpemUsCj4gLQkJICAgIHN0cnVjdCB0aW1lc3BlYyB0aW1lb3V0KTsK
+PiArCQkgICAga3RpbWVfdCB0aW1lb3V0KTsKPiAgCWludCAoKnN0YXJ0X2ZpbHRlcmluZykgKHN0
+cnVjdCBkbXhfdHNfZmVlZCogZmVlZCk7Cj4gIAlpbnQgKCpzdG9wX2ZpbHRlcmluZykgKHN0cnVj
+dCBkbXhfdHNfZmVlZCogZmVlZCk7Cj4gIH07Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEv
+ZHZiLWNvcmUvZG14ZGV2LmMgYi9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RteGRldi5jCj4gaW5k
+ZXggZDBlM2Y5ZDg1ZjM0Li4wZDIwYjM3OWVlZWMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9tZWRp
+YS9kdmItY29yZS9kbXhkZXYuYwo+ICsrKyBiL2RyaXZlcnMvbWVkaWEvZHZiLWNvcmUvZG14ZGV2
+LmMKPiBAQCAtNTU4LDcgKzU1OCw3IEBAIHN0YXRpYyBpbnQgZHZiX2RteGRldl9zdGFydF9mZWVk
+KHN0cnVjdCBkbXhkZXYgKmRteGRldiwKPiAgCQkJCSBzdHJ1Y3QgZG14ZGV2X2ZpbHRlciAqZmls
+dGVyLAo+ICAJCQkJIHN0cnVjdCBkbXhkZXZfZmVlZCAqZmVlZCkKPiAgewo+IC0Jc3RydWN0IHRp
+bWVzcGVjIHRpbWVvdXQgPSB7IDAgfTsKPiArCWt0aW1lX3QgdGltZW91dCA9IGt0aW1lX3NldCgw
+LCAwKTsKPiAgCXN0cnVjdCBkbXhfcGVzX2ZpbHRlcl9wYXJhbXMgKnBhcmEgPSAmZmlsdGVyLT5w
+YXJhbXMucGVzOwo+ICAJZG14X291dHB1dF90IG90eXBlOwo+ICAJaW50IHJldDsKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9tZWRpYS9kdmItY29yZS9kdmJfZGVtdXguYyBiL2RyaXZlcnMvbWVkaWEv
+ZHZiLWNvcmUvZHZiX2RlbXV4LmMKPiBpbmRleCA2YzdmZjBjZGNkMzIuLmQ4M2RkMGViNTc1NyAx
+MDA2NDQKPiAtLS0gYS9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9kZW11eC5jCj4gKysrIGIv
+ZHJpdmVycy9tZWRpYS9kdmItY29yZS9kdmJfZGVtdXguYwo+IEBAIC0zOTksMjggKzM5OSwyMyBA
+QCBzdGF0aWMgdm9pZCBkdmJfZG14X3N3ZmlsdGVyX3BhY2tldChzdHJ1Y3QgZHZiX2RlbXV4ICpk
+ZW11eCwgY29uc3QgdTggKmJ1ZikKPiAgCWludCBkdnJfZG9uZSA9IDA7Cj4gIAo+ICAJaWYgKGR2
+Yl9kZW11eF9zcGVlZGNoZWNrKSB7Cj4gLQkJc3RydWN0IHRpbWVzcGVjIGN1cl90aW1lLCBkZWx0
+YV90aW1lOwo+ICsJCWt0aW1lX3QgY3VyX3RpbWU7Cj4gIAkJdTY0IHNwZWVkX2J5dGVzLCBzcGVl
+ZF90aW1lZGVsdGE7Cj4gIAo+ICAJCWRlbXV4LT5zcGVlZF9wa3RzX2NudCsrOwo+ICAKPiAgCQkv
+KiBzaG93IHNwZWVkIGV2ZXJ5IFNQRUVEX1BLVFNfSU5URVJWQUwgcGFja2V0cyAqLwo+ICAJCWlm
+ICghKGRlbXV4LT5zcGVlZF9wa3RzX2NudCAlIFNQRUVEX1BLVFNfSU5URVJWQUwpKSB7Cj4gLQkJ
+CWN1cl90aW1lID0gY3VycmVudF9rZXJuZWxfdGltZSgpOwo+ICsJCQljdXJfdGltZSA9IGt0aW1l
+X2dldCgpOwo+ICAKPiAtCQkJaWYgKGRlbXV4LT5zcGVlZF9sYXN0X3RpbWUudHZfc2VjICE9IDAg
+JiYKPiAtCQkJCQlkZW11eC0+c3BlZWRfbGFzdF90aW1lLnR2X25zZWMgIT0gMCkgewo+IC0JCQkJ
+ZGVsdGFfdGltZSA9IHRpbWVzcGVjX3N1YihjdXJfdGltZSwKPiAtCQkJCQkJZGVtdXgtPnNwZWVk
+X2xhc3RfdGltZSk7Cj4gKwkJCWlmIChrdGltZV90b19ucyhkZW11eC0+c3BlZWRfbGFzdF90aW1l
+KSA9PSAwKSB7CgppZiBrdGltZV90b19ucyBkb2VzIHdoYXQgSSB0aGluayBpdCBkb2VzLCB0aGVu
+IHlvdSBzaG91bGQgaW52ZXJ0IHRoZSBsb2dpYy4KClJlZ2FyZHMsCkFuZHJlYXMKCj4gIAkJCQlz
+cGVlZF9ieXRlcyA9ICh1NjQpZGVtdXgtPnNwZWVkX3BrdHNfY250Cj4gIAkJCQkJKiAxODggKiA4
+Owo+ICAJCQkJLyogY29udmVydCB0byAxMDI0IGJhc2lzICovCj4gIAkJCQlzcGVlZF9ieXRlcyA9
+IDEwMDAgKiBkaXY2NF91NjQoc3BlZWRfYnl0ZXMsCj4gIAkJCQkJCTEwMjQpOwo+IC0JCQkJc3Bl
+ZWRfdGltZWRlbHRhID0KPiAtCQkJCQkodTY0KXRpbWVzcGVjX3RvX25zKCZkZWx0YV90aW1lKTsK
+PiAtCQkJCXNwZWVkX3RpbWVkZWx0YSA9IGRpdjY0X3U2NChzcGVlZF90aW1lZGVsdGEsCj4gLQkJ
+CQkJCTEwMDAwMDApOyAvKiBuc2VjIC0+IHVzZWMgKi8KPiArCQkJCXNwZWVkX3RpbWVkZWx0YSA9
+IGt0aW1lX21zX2RlbHRhKGN1cl90aW1lLAo+ICsJCQkJCQkJZGVtdXgtPnNwZWVkX2xhc3RfdGlt
+ZSk7Cj4gIAkJCQlwcmludGsoS0VSTl9JTkZPICJUUyBzcGVlZCAlbGx1IEtiaXRzL3NlYyBcbiIs
+Cj4gIAkJCQkJCWRpdjY0X3U2NChzcGVlZF9ieXRlcywKPiAgCQkJCQkJCXNwZWVkX3RpbWVkZWx0
+YSkpOwo+IEBAIC02NjcsNyArNjYyLDcgQEAgb3V0Ogo+ICAKPiAgc3RhdGljIGludCBkbXhfdHNf
+ZmVlZF9zZXQoc3RydWN0IGRteF90c19mZWVkICp0c19mZWVkLCB1MTYgcGlkLCBpbnQgdHNfdHlw
+ZSwKPiAgCQkJICAgZW51bSBkbXhfdHNfcGVzIHBlc190eXBlLAo+IC0JCQkgICBzaXplX3QgY2ly
+Y3VsYXJfYnVmZmVyX3NpemUsIHN0cnVjdCB0aW1lc3BlYyB0aW1lb3V0KQo+ICsJCQkgICBzaXpl
+X3QgY2lyY3VsYXJfYnVmZmVyX3NpemUsIGt0aW1lX3QgdGltZW91dCkKPiAgewo+ICAJc3RydWN0
+IGR2Yl9kZW11eF9mZWVkICpmZWVkID0gKHN0cnVjdCBkdmJfZGVtdXhfZmVlZCAqKXRzX2ZlZWQ7
+Cj4gIAlzdHJ1Y3QgZHZiX2RlbXV4ICpkZW11eCA9IGZlZWQtPmRlbXV4Owo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9kZW11eC5oIGIvZHJpdmVycy9tZWRpYS9kdmIt
+Y29yZS9kdmJfZGVtdXguaAo+IGluZGV4IGFlN2ZjMzNjMzIzMS4uNWVkM2NhYjRhZDI4IDEwMDY0
+NAo+IC0tLSBhL2RyaXZlcnMvbWVkaWEvZHZiLWNvcmUvZHZiX2RlbXV4LmgKPiArKysgYi9kcml2
+ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9kZW11eC5oCj4gQEAgLTgzLDcgKzgzLDcgQEAgc3RydWN0
+IGR2Yl9kZW11eF9mZWVkIHsKPiAgCXU4ICpidWZmZXI7Cj4gIAlpbnQgYnVmZmVyX3NpemU7Cj4g
+IAo+IC0Jc3RydWN0IHRpbWVzcGVjIHRpbWVvdXQ7Cj4gKwlrdGltZV90IHRpbWVvdXQ7Cj4gIAlz
+dHJ1Y3QgZHZiX2RlbXV4X2ZpbHRlciAqZmlsdGVyOwo+ICAKPiAgCWludCB0c190eXBlOwo+IEBA
+IC0xMzQsNyArMTM0LDcgQEAgc3RydWN0IGR2Yl9kZW11eCB7Cj4gIAo+ICAJdWludDhfdCAqY250
+X3N0b3JhZ2U7IC8qIGZvciBUUyBjb250aW51aXR5IGNoZWNrICovCj4gIAo+IC0Jc3RydWN0IHRp
+bWVzcGVjIHNwZWVkX2xhc3RfdGltZTsgLyogZm9yIFRTIHNwZWVkIGNoZWNrICovCj4gKwlrdGlt
+ZV90IHNwZWVkX2xhc3RfdGltZTsgLyogZm9yIFRTIHNwZWVkIGNoZWNrICovCj4gIAl1aW50MzJf
+dCBzcGVlZF9wa3RzX2NudDsgLyogZm9yIFRTIHNwZWVkIGNoZWNrICovCj4gIH07Cj4gIAo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9uZXQuYyBiL2RyaXZlcnMvbWVk
+aWEvZHZiLWNvcmUvZHZiX25ldC5jCj4gaW5kZXggYjgxZTAyNmVkYWIzLi5kZjNiYTE1YzAwN2Ug
+MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9tZWRpYS9kdmItY29yZS9kdmJfbmV0LmMKPiArKysgYi9k
+cml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9uZXQuYwo+IEBAIC05OTgsNyArOTk4LDcgQEAgc3Rh
+dGljIGludCBkdmJfbmV0X2ZlZWRfc3RhcnQoc3RydWN0IG5ldF9kZXZpY2UgKmRldikKPiAgCQlu
+ZXRkZXZfZGJnKGRldiwgInN0YXJ0IGZpbHRlcmluZ1xuIik7Cj4gIAkJcHJpdi0+c2VjZmVlZC0+
+c3RhcnRfZmlsdGVyaW5nKHByaXYtPnNlY2ZlZWQpOwo+ICAJfSBlbHNlIGlmIChwcml2LT5mZWVk
+dHlwZSA9PSBEVkJfTkVUX0ZFRURUWVBFX1VMRSkgewo+IC0JCXN0cnVjdCB0aW1lc3BlYyB0aW1l
+b3V0ID0geyAwLCAxMDAwMDAwMCB9OyAvLyAxMCBtc2VjCj4gKwkJa3RpbWVfdCB0aW1lb3V0ID0g
+bnNfdG9fa3RpbWUoMTAgKiBOU0VDX1BFUl9NU0VDKTsKPiAgCj4gIAkJLyogd2UgaGF2ZSBwYXls
+b2FkcyBlbmNhcHN1bGF0ZWQgaW4gVFMgKi8KPiAgCQluZXRkZXZfZGJnKGRldiwgImFsbG9jIHRz
+ZmVlZFxuIik7Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpZMjAzOCBtYWlsaW5nIGxpc3QKWTIwMzhAbGlzdHMubGluYXJvLm9yZwpodHRwczovL2xp
+c3RzLmxpbmFyby5vcmcvbWFpbG1hbi9saXN0aW5mby95MjAzOAo=
