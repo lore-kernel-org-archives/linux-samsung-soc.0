@@ -1,117 +1,249 @@
-From: Andreas Oberritter <obi@saftware.de>
-Subject: Re: [PATCH 1/7] [media] dvb: use ktime_t for internal
-	timeout
-Date: Tue, 15 Sep 2015 19:55:35 +0200
-Message-ID: <55F85B97.8000700@saftware.de>
-References: <1442332148-488079-1-git-send-email-arnd@arndb.de>
- <1442332148-488079-2-git-send-email-arnd@arndb.de>
+From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio.lopez@collabora.co.uk>
+Subject: Re: [PATCH v2 2/3] platform/chrome: Support reading/writing the vboot
+ context
+Date: Tue, 15 Sep 2015 16:16:04 -0300
+Message-ID: <55F86E74.9010907@collabora.co.uk>
+References: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1442234049-18637-3-git-send-email-emilio.lopez@collabora.co.uk>
+ <CABxcv=m23sfK=jOCswirQRB1SbP70VnomKp6hhwFhRLHiabq4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <1442332148-488079-2-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org
-Cc: y2038@lists.linaro.org, linux-api@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:50022 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752065AbbIOTQ1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Sep 2015 15:16:27 -0400
+In-Reply-To: <CABxcv=m23sfK=jOCswirQRB1SbP70VnomKp6hhwFhRLHiabq4w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-SGVsbG8gQXJuZCwKCk9uIDE1LjA5LjIwMTUgMTc6NDksIEFybmQgQmVyZ21hbm4gd3JvdGU6Cj4g
-VGhlIGR2YiBkZW11eGVyIGNvZGUgdXNlcyBhICdzdHJ1Y3QgdGltZXNwZWMnIHRvIHBhc3MgYSB0
-aW1lb3V0Cj4gYXMgYWJzb2x1dGUgdGltZS4gVGhpcyB3aWxsIGNhdXNlIHByb2JsZW1zIG9uIDMy
-LWJpdCBhcmNoaXRlY3R1cmVzCj4gaW4gMjAzOCB3aGVuIHRpbWVfdCBvdmVyZmxvd3MsIGFuZCBp
-dCBpcyByYWN5IHdpdGggYSBjb25jdXJyZW50Cj4gc2V0dGltZW9mZGF5KCkgY2FsbC4KPiAKPiBU
-aGlzIHBhdGNoIGNoYW5nZXMgdGhlIGNvZGUgdG8gdXNlIGt0aW1lX2dldCgpIGluc3RlYWQsIHVz
-aW5nCj4gdGhlIG1vbm90b25pYyB0aW1lIGJhc2UgdG8gYXZvaWQgYm90aCB0aGUgcmFjZSBhbmQg
-dGhlIG92ZXJmbG93Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21hbm4gPGFybmRAYXJu
-ZGIuZGU+Cj4gLS0tCj4gIGRyaXZlcnMvbWVkaWEvZHZiLWNvcmUvZGVtdXguaCAgICAgfCAgMiAr
-LQo+ICBkcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RteGRldi5jICAgIHwgIDIgKy0KPiAgZHJpdmVy
-cy9tZWRpYS9kdmItY29yZS9kdmJfZGVtdXguYyB8IDE3ICsrKysrKy0tLS0tLS0tLS0tCj4gIGRy
-aXZlcnMvbWVkaWEvZHZiLWNvcmUvZHZiX2RlbXV4LmggfCAgNCArKy0tCj4gIGRyaXZlcnMvbWVk
-aWEvZHZiLWNvcmUvZHZiX25ldC5jICAgfCAgMiArLQo+ICA1IGZpbGVzIGNoYW5nZWQsIDExIGlu
-c2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21l
-ZGlhL2R2Yi1jb3JlL2RlbXV4LmggYi9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RlbXV4LmgKPiBp
-bmRleCA4MzMxOTFiY2Q4MTAuLmQ4ZTJiMTIxM2JlZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL21l
-ZGlhL2R2Yi1jb3JlL2RlbXV4LmgKPiArKysgYi9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RlbXV4
-LmgKPiBAQCAtOTIsNyArOTIsNyBAQCBzdHJ1Y3QgZG14X3RzX2ZlZWQgewo+ICAJCSAgICBpbnQg
-dHlwZSwKPiAgCQkgICAgZW51bSBkbXhfdHNfcGVzIHBlc190eXBlLAo+ICAJCSAgICBzaXplX3Qg
-Y2lyY3VsYXJfYnVmZmVyX3NpemUsCj4gLQkJICAgIHN0cnVjdCB0aW1lc3BlYyB0aW1lb3V0KTsK
-PiArCQkgICAga3RpbWVfdCB0aW1lb3V0KTsKPiAgCWludCAoKnN0YXJ0X2ZpbHRlcmluZykgKHN0
-cnVjdCBkbXhfdHNfZmVlZCogZmVlZCk7Cj4gIAlpbnQgKCpzdG9wX2ZpbHRlcmluZykgKHN0cnVj
-dCBkbXhfdHNfZmVlZCogZmVlZCk7Cj4gIH07Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEv
-ZHZiLWNvcmUvZG14ZGV2LmMgYi9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2RteGRldi5jCj4gaW5k
-ZXggZDBlM2Y5ZDg1ZjM0Li4wZDIwYjM3OWVlZWMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9tZWRp
-YS9kdmItY29yZS9kbXhkZXYuYwo+ICsrKyBiL2RyaXZlcnMvbWVkaWEvZHZiLWNvcmUvZG14ZGV2
-LmMKPiBAQCAtNTU4LDcgKzU1OCw3IEBAIHN0YXRpYyBpbnQgZHZiX2RteGRldl9zdGFydF9mZWVk
-KHN0cnVjdCBkbXhkZXYgKmRteGRldiwKPiAgCQkJCSBzdHJ1Y3QgZG14ZGV2X2ZpbHRlciAqZmls
-dGVyLAo+ICAJCQkJIHN0cnVjdCBkbXhkZXZfZmVlZCAqZmVlZCkKPiAgewo+IC0Jc3RydWN0IHRp
-bWVzcGVjIHRpbWVvdXQgPSB7IDAgfTsKPiArCWt0aW1lX3QgdGltZW91dCA9IGt0aW1lX3NldCgw
-LCAwKTsKPiAgCXN0cnVjdCBkbXhfcGVzX2ZpbHRlcl9wYXJhbXMgKnBhcmEgPSAmZmlsdGVyLT5w
-YXJhbXMucGVzOwo+ICAJZG14X291dHB1dF90IG90eXBlOwo+ICAJaW50IHJldDsKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9tZWRpYS9kdmItY29yZS9kdmJfZGVtdXguYyBiL2RyaXZlcnMvbWVkaWEv
-ZHZiLWNvcmUvZHZiX2RlbXV4LmMKPiBpbmRleCA2YzdmZjBjZGNkMzIuLmQ4M2RkMGViNTc1NyAx
-MDA2NDQKPiAtLS0gYS9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9kZW11eC5jCj4gKysrIGIv
-ZHJpdmVycy9tZWRpYS9kdmItY29yZS9kdmJfZGVtdXguYwo+IEBAIC0zOTksMjggKzM5OSwyMyBA
-QCBzdGF0aWMgdm9pZCBkdmJfZG14X3N3ZmlsdGVyX3BhY2tldChzdHJ1Y3QgZHZiX2RlbXV4ICpk
-ZW11eCwgY29uc3QgdTggKmJ1ZikKPiAgCWludCBkdnJfZG9uZSA9IDA7Cj4gIAo+ICAJaWYgKGR2
-Yl9kZW11eF9zcGVlZGNoZWNrKSB7Cj4gLQkJc3RydWN0IHRpbWVzcGVjIGN1cl90aW1lLCBkZWx0
-YV90aW1lOwo+ICsJCWt0aW1lX3QgY3VyX3RpbWU7Cj4gIAkJdTY0IHNwZWVkX2J5dGVzLCBzcGVl
-ZF90aW1lZGVsdGE7Cj4gIAo+ICAJCWRlbXV4LT5zcGVlZF9wa3RzX2NudCsrOwo+ICAKPiAgCQkv
-KiBzaG93IHNwZWVkIGV2ZXJ5IFNQRUVEX1BLVFNfSU5URVJWQUwgcGFja2V0cyAqLwo+ICAJCWlm
-ICghKGRlbXV4LT5zcGVlZF9wa3RzX2NudCAlIFNQRUVEX1BLVFNfSU5URVJWQUwpKSB7Cj4gLQkJ
-CWN1cl90aW1lID0gY3VycmVudF9rZXJuZWxfdGltZSgpOwo+ICsJCQljdXJfdGltZSA9IGt0aW1l
-X2dldCgpOwo+ICAKPiAtCQkJaWYgKGRlbXV4LT5zcGVlZF9sYXN0X3RpbWUudHZfc2VjICE9IDAg
-JiYKPiAtCQkJCQlkZW11eC0+c3BlZWRfbGFzdF90aW1lLnR2X25zZWMgIT0gMCkgewo+IC0JCQkJ
-ZGVsdGFfdGltZSA9IHRpbWVzcGVjX3N1YihjdXJfdGltZSwKPiAtCQkJCQkJZGVtdXgtPnNwZWVk
-X2xhc3RfdGltZSk7Cj4gKwkJCWlmIChrdGltZV90b19ucyhkZW11eC0+c3BlZWRfbGFzdF90aW1l
-KSA9PSAwKSB7CgppZiBrdGltZV90b19ucyBkb2VzIHdoYXQgSSB0aGluayBpdCBkb2VzLCB0aGVu
-IHlvdSBzaG91bGQgaW52ZXJ0IHRoZSBsb2dpYy4KClJlZ2FyZHMsCkFuZHJlYXMKCj4gIAkJCQlz
-cGVlZF9ieXRlcyA9ICh1NjQpZGVtdXgtPnNwZWVkX3BrdHNfY250Cj4gIAkJCQkJKiAxODggKiA4
-Owo+ICAJCQkJLyogY29udmVydCB0byAxMDI0IGJhc2lzICovCj4gIAkJCQlzcGVlZF9ieXRlcyA9
-IDEwMDAgKiBkaXY2NF91NjQoc3BlZWRfYnl0ZXMsCj4gIAkJCQkJCTEwMjQpOwo+IC0JCQkJc3Bl
-ZWRfdGltZWRlbHRhID0KPiAtCQkJCQkodTY0KXRpbWVzcGVjX3RvX25zKCZkZWx0YV90aW1lKTsK
-PiAtCQkJCXNwZWVkX3RpbWVkZWx0YSA9IGRpdjY0X3U2NChzcGVlZF90aW1lZGVsdGEsCj4gLQkJ
-CQkJCTEwMDAwMDApOyAvKiBuc2VjIC0+IHVzZWMgKi8KPiArCQkJCXNwZWVkX3RpbWVkZWx0YSA9
-IGt0aW1lX21zX2RlbHRhKGN1cl90aW1lLAo+ICsJCQkJCQkJZGVtdXgtPnNwZWVkX2xhc3RfdGlt
-ZSk7Cj4gIAkJCQlwcmludGsoS0VSTl9JTkZPICJUUyBzcGVlZCAlbGx1IEtiaXRzL3NlYyBcbiIs
-Cj4gIAkJCQkJCWRpdjY0X3U2NChzcGVlZF9ieXRlcywKPiAgCQkJCQkJCXNwZWVkX3RpbWVkZWx0
-YSkpOwo+IEBAIC02NjcsNyArNjYyLDcgQEAgb3V0Ogo+ICAKPiAgc3RhdGljIGludCBkbXhfdHNf
-ZmVlZF9zZXQoc3RydWN0IGRteF90c19mZWVkICp0c19mZWVkLCB1MTYgcGlkLCBpbnQgdHNfdHlw
-ZSwKPiAgCQkJICAgZW51bSBkbXhfdHNfcGVzIHBlc190eXBlLAo+IC0JCQkgICBzaXplX3QgY2ly
-Y3VsYXJfYnVmZmVyX3NpemUsIHN0cnVjdCB0aW1lc3BlYyB0aW1lb3V0KQo+ICsJCQkgICBzaXpl
-X3QgY2lyY3VsYXJfYnVmZmVyX3NpemUsIGt0aW1lX3QgdGltZW91dCkKPiAgewo+ICAJc3RydWN0
-IGR2Yl9kZW11eF9mZWVkICpmZWVkID0gKHN0cnVjdCBkdmJfZGVtdXhfZmVlZCAqKXRzX2ZlZWQ7
-Cj4gIAlzdHJ1Y3QgZHZiX2RlbXV4ICpkZW11eCA9IGZlZWQtPmRlbXV4Owo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9kZW11eC5oIGIvZHJpdmVycy9tZWRpYS9kdmIt
-Y29yZS9kdmJfZGVtdXguaAo+IGluZGV4IGFlN2ZjMzNjMzIzMS4uNWVkM2NhYjRhZDI4IDEwMDY0
-NAo+IC0tLSBhL2RyaXZlcnMvbWVkaWEvZHZiLWNvcmUvZHZiX2RlbXV4LmgKPiArKysgYi9kcml2
-ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9kZW11eC5oCj4gQEAgLTgzLDcgKzgzLDcgQEAgc3RydWN0
-IGR2Yl9kZW11eF9mZWVkIHsKPiAgCXU4ICpidWZmZXI7Cj4gIAlpbnQgYnVmZmVyX3NpemU7Cj4g
-IAo+IC0Jc3RydWN0IHRpbWVzcGVjIHRpbWVvdXQ7Cj4gKwlrdGltZV90IHRpbWVvdXQ7Cj4gIAlz
-dHJ1Y3QgZHZiX2RlbXV4X2ZpbHRlciAqZmlsdGVyOwo+ICAKPiAgCWludCB0c190eXBlOwo+IEBA
-IC0xMzQsNyArMTM0LDcgQEAgc3RydWN0IGR2Yl9kZW11eCB7Cj4gIAo+ICAJdWludDhfdCAqY250
-X3N0b3JhZ2U7IC8qIGZvciBUUyBjb250aW51aXR5IGNoZWNrICovCj4gIAo+IC0Jc3RydWN0IHRp
-bWVzcGVjIHNwZWVkX2xhc3RfdGltZTsgLyogZm9yIFRTIHNwZWVkIGNoZWNrICovCj4gKwlrdGlt
-ZV90IHNwZWVkX2xhc3RfdGltZTsgLyogZm9yIFRTIHNwZWVkIGNoZWNrICovCj4gIAl1aW50MzJf
-dCBzcGVlZF9wa3RzX2NudDsgLyogZm9yIFRTIHNwZWVkIGNoZWNrICovCj4gIH07Cj4gIAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9uZXQuYyBiL2RyaXZlcnMvbWVk
-aWEvZHZiLWNvcmUvZHZiX25ldC5jCj4gaW5kZXggYjgxZTAyNmVkYWIzLi5kZjNiYTE1YzAwN2Ug
-MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9tZWRpYS9kdmItY29yZS9kdmJfbmV0LmMKPiArKysgYi9k
-cml2ZXJzL21lZGlhL2R2Yi1jb3JlL2R2Yl9uZXQuYwo+IEBAIC05OTgsNyArOTk4LDcgQEAgc3Rh
-dGljIGludCBkdmJfbmV0X2ZlZWRfc3RhcnQoc3RydWN0IG5ldF9kZXZpY2UgKmRldikKPiAgCQlu
-ZXRkZXZfZGJnKGRldiwgInN0YXJ0IGZpbHRlcmluZ1xuIik7Cj4gIAkJcHJpdi0+c2VjZmVlZC0+
-c3RhcnRfZmlsdGVyaW5nKHByaXYtPnNlY2ZlZWQpOwo+ICAJfSBlbHNlIGlmIChwcml2LT5mZWVk
-dHlwZSA9PSBEVkJfTkVUX0ZFRURUWVBFX1VMRSkgewo+IC0JCXN0cnVjdCB0aW1lc3BlYyB0aW1l
-b3V0ID0geyAwLCAxMDAwMDAwMCB9OyAvLyAxMCBtc2VjCj4gKwkJa3RpbWVfdCB0aW1lb3V0ID0g
-bnNfdG9fa3RpbWUoMTAgKiBOU0VDX1BFUl9NU0VDKTsKPiAgCj4gIAkJLyogd2UgaGF2ZSBwYXls
-b2FkcyBlbmNhcHN1bGF0ZWQgaW4gVFMgKi8KPiAgCQluZXRkZXZfZGJnKGRldiwgImFsbG9jIHRz
-ZmVlZFxuIik7Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpZMjAzOCBtYWlsaW5nIGxpc3QKWTIwMzhAbGlzdHMubGluYXJvLm9yZwpodHRwczovL2xp
-c3RzLmxpbmFyby5vcmcvbWFpbG1hbi9saXN0aW5mby95MjAzOAo=
+Hi Javier,
+
+Thanks for the review. You'll find my answers inline
+
+On 15/09/15 10:47, Javier Martinez Canillas wrote:
+> Hello Emilio,
+>
+> Patch looks mostly good to me, I just have a few comments.
+>
+> On Mon, Sep 14, 2015 at 2:34 PM, Emilio L=C3=B3pez
+> <emilio.lopez@collabora.co.uk> wrote:
+>> Some EC implementations include a small nvram space used to store
+>> verified boot context data. This patch offers a way to expose this
+>> data to userspace.
+>>
+>> Signed-off-by: Emilio L=C3=B3pez <emilio.lopez@collabora.co.uk>
+>> ---
+>> Changes from v1:
+>>   - Use is_bin_visible instead of is_visible
+>>
+>>   Documentation/devicetree/bindings/mfd/cros-ec.txt |   4 +
+>>   drivers/platform/chrome/Makefile                  |   5 +-
+>>   drivers/platform/chrome/cros_ec_dev.c             |   1 +
+>>   drivers/platform/chrome/cros_ec_vbc.c             | 137 ++++++++++=
+++++++++++++
+>>   include/linux/mfd/cros_ec.h                       |   1 +
+>>   5 files changed, 147 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/platform/chrome/cros_ec_vbc.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Doc=
+umentation/devicetree/bindings/mfd/cros-ec.txt
+>> index 1777916..136e0c2 100644
+>> --- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+>> @@ -34,6 +34,10 @@ Required properties (LPC):
+>>   - compatible: "google,cros-ec-lpc"
+>>   - reg: List of (IO address, size) pairs defining the interface use=
+s
+>>
+>> +Optional properties (all):
+>> +- google,has-vbc-nvram: Some implementations of the EC include a sm=
+all
+>> +  nvram space used to store verified boot context data. This boolea=
+n flag
+>> +  is used to specify whether this nvram is present or not.
+>>
+>>   Example for I2C:
+>>
+>
+> I would split the DT binding part from the actual implementation, see
+> Documentation/devicetree/bindings/submitting-patches.txt.
+
+Ok, I'll do
+
+>> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chr=
+ome/Makefile
+>> index 4a11b01..787be61 100644
+>> --- a/drivers/platform/chrome/Makefile
+>> +++ b/drivers/platform/chrome/Makefile
+>> @@ -1,7 +1,10 @@
+>>
+>>   obj-$(CONFIG_CHROMEOS_LAPTOP)  +=3D chromeos_laptop.o
+>>   obj-$(CONFIG_CHROMEOS_PSTORE)  +=3D chromeos_pstore.o
+>> -cros_ec_devs-objs               :=3D cros_ec_dev.o cros_ec_sysfs.o =
+cros_ec_lightbar.o
+>> +cros_ec_devs-objs               :=3D cros_ec_dev.o
+>> +cros_ec_devs-objs               +=3D cros_ec_lightbar.o
+>> +cros_ec_devs-objs               +=3D cros_ec_sysfs.o
+>> +cros_ec_devs-objs               +=3D cros_ec_vbc.o
+>
+> Why are you changing the Makefile? AFAIK +=3D is usually used when th=
+e
+> compilation is conditional based on a Kconfig symbol but since these
+> are build unconditionally, I'll just keep it as foo :=3D bar baz
+
+As far as I'm aware, +=3D is append[0]. It's used for stuff like
+obj-$(CONFIG_CHROMEOS_LAPTOP)  +=3D chromeos_laptop.o
+because the left part will resolve to "obj-y" or similar, and you want=20
+to add to it, not replace it. I only changed the Makefile here because=20
+the line was growing too long, and I thought it looked neater this way;=
+=20
+it shouldn't cause any functional change apart from the intended one.
+
+[0] https://www.gnu.org/software/make/manual/html_node/Appending.html
+
+> Which makes me think, do we need a Kconfig option for this feature
+> since not all machines have it?
+
+Not all machines have a lightbar either; both of the features are=20
+runtime-conditional. IMO, it makes more sense this way when you conside=
+r=20
+a kernel will likely support multiple platforms.
+
+>>   obj-$(CONFIG_CROS_EC_CHARDEV)   +=3D cros_ec_devs.o
+>>   obj-$(CONFIG_CROS_EC_LPC)       +=3D cros_ec_lpc.o
+>>   obj-$(CONFIG_CROS_EC_PROTO)    +=3D cros_ec_proto.o
+>> diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platfor=
+m/chrome/cros_ec_dev.c
+>> index e8fcdc2..d19263f 100644
+>> --- a/drivers/platform/chrome/cros_ec_dev.c
+>> +++ b/drivers/platform/chrome/cros_ec_dev.c
+>> @@ -32,6 +32,7 @@ static int ec_major;
+>>   static const struct attribute_group *cros_ec_groups[] =3D {
+>>          &cros_ec_attr_group,
+>>          &cros_ec_lightbar_attr_group,
+>> +       &cros_ec_vbc_attr_group,
+>>          NULL,
+>>   };
+>>
+>> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platfor=
+m/chrome/cros_ec_vbc.c
+>> new file mode 100644
+>> index 0000000..a0e8d38
+>> --- /dev/null
+>> +++ b/drivers/platform/chrome/cros_ec_vbc.c
+>> @@ -0,0 +1,137 @@
+>> +/*
+>> + * cros_ec_vbc - Expose the vboot context nvram to userspace
+>> + *
+>> + * Copyright (C) 2015 Collabora Ltd.
+>> + *
+>> + * based on vendor driver,
+>> + *
+>> + * Copyright (C) 2012 The Chromium OS Authors
+>> + *
+>> + * This program is free software; you can redistribute it and/or mo=
+dify
+>> + * it under the terms of the GNU General Public License as publishe=
+d by
+>> + * the Free Software Foundation; either version 2 of the License, o=
+r
+>> + * (at your option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/mfd/cros_ec.h>
+>> +#include <linux/mfd/cros_ec_commands.h>
+>> +#include <linux/slab.h>
+>> +
+>> +static ssize_t vboot_context_read(struct file *filp, struct kobject=
+ *kobj,
+>> +                                 struct bin_attribute *att, char *b=
+uf,
+>> +                                 loff_t pos, size_t count)
+>> +{
+>> +       struct device *dev =3D container_of(kobj, struct device, kob=
+j);
+>> +       struct cros_ec_dev *ec =3D container_of(dev, struct cros_ec_=
+dev,
+>> +                                             class_dev);
+>> +       struct cros_ec_device *ecdev =3D ec->ec_dev;
+>> +       struct ec_params_vbnvcontext *params;
+>> +       struct cros_ec_command *msg;
+>> +       int err;
+>> +       const size_t para_sz =3D sizeof(struct ec_params_vbnvcontext=
+);
+>> +       const size_t resp_sz =3D sizeof(struct ec_response_vbnvconte=
+xt);
+>> +       const size_t payload =3D max(para_sz, resp_sz);
+>> +
+>> +       msg =3D kmalloc(sizeof(*msg) + payload, GFP_KERNEL);
+>> +       if (!msg)
+>> +               return -ENOMEM;
+>> +
+>> +       params =3D (struct ec_params_vbnvcontext *)msg->data;
+>> +       params->op =3D EC_VBNV_CONTEXT_OP_READ;
+>> +
+>> +       msg->version =3D EC_VER_VBNV_CONTEXT;
+>> +       msg->command =3D EC_CMD_VBNV_CONTEXT;
+>> +       msg->outsize =3D sizeof(params->op);
+>
+> Shouldn't this be para_sz ? Since you are sending to the EC the whole
+> struct ec_params_vbnvcontext and not only the op field.
+>
+> Or if the EC only expects to get the u32 op field, then I think your
+> max payload calculation is not correct.
+
+The params struct is the same for both read and write ops, so it has th=
+e=20
+op flag and a buffer for the write op. During the read op I believe=20
+there's no need to send this potentially-garbage-filled buffer to the=20
+EC, so outsize is set accordingly here.
+
+The vendor tree does it this way, but I can change it to send the full=20
+buffer if you prefer so.
+
+ec code is at=20
+https://chromium.googlesource.com/chromiumos/platform/ec/+/master/commo=
+n/system.c=20
+L1086+ if you want to take a look
+
+>> +       msg->insize =3D resp_sz;
+>> +
+>> +       err =3D cros_ec_cmd_xfer(ecdev, msg);
+>> +       if (err < 0) {
+>> +               dev_err(dev, "Error sending read request: %d\n", err=
+);
+>> +               kfree(msg);
+>> +               return err;
+>> +       }
+>> +
+>> +       BUILD_BUG_ON(resp_sz > PAGE_SIZE);
+>
+> Why you need this? struct ec_response_vbnvcontext is really small AFA=
+ICT.
+
+This is just me being paranoid about memcpy :) Indeed, the struct shoul=
+d=20
+be way smaller than a page. I can drop it if you think it's too much.
+
+>> +       memcpy(buf, msg->data, resp_sz);
+>> +
+>> +       kfree(msg);
+>> +       return resp_sz;
+>> +}
+>> +
+
+Thanks!
+Emilio
