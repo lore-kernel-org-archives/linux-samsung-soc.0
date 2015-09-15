@@ -1,90 +1,87 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 7/7] [RFC] [media] introduce v4l2_timespec type for
-	timestamps
-Date: Tue, 15 Sep 2015 17:49:08 +0200
-Message-ID: <1442332148-488079-8-git-send-email-arnd@arndb.de>
-References: <1442332148-488079-1-git-send-email-arnd@arndb.de>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: Re: [PATCH 6/7] [RFC] [media]: v4l2: introduce v4l2_timeval
+Date: Tue, 15 Sep 2015 18:27:19 +0200
+Message-ID: <55F846E7.2040006@xs4all.nl>
+References: <1442332148-488079-1-git-send-email-arnd@arndb.de> <1442332148-488079-7-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <1442332148-488079-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, y2038@lists.linaro.org, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1442332148-488079-7-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIHY0bDIgZXZlbnQgcXVldWUgdXNlcyBhICdzdHJ1Y3QgdGltZXNwZWMnIHRvIHBhc3MgbW9u
-b3RvbmljCnRpbWVzdGFtcHMuIFRoaXMgaXMgbm90IGEgcHJvYmxlbSBieSBpdHNlbGYsIGJ1dCBp
-dCBicmVha3Mgd2hlbiB1c2VyCnNwYWNlIHJlZGVmaW5lcyB0aW1lc3BlYyB0byB1c2UgJ2xvbmcg
-bG9uZycgb24gMzItYml0IHN5c3RlbXMuCgpUbyBhdm9pZCB0aGF0IHByb2JsZW0sIHdlIGRlZmlu
-ZSBvdXIgb3duIHJlcGxhY2VtZW50IGZvciB0aW1lc3BlYyBoZXJlLAp1c2luZyAnbG9uZycgdHZf
-c2VjIGFuZCB0dl9uc2VjIG1lbWJlcnMuIFRoaXMgbWVhbnMgbm8gY2hhbmdlIHRvIHRoZQpleGlz
-dGluZyBBUEksIGJ1dCBsZXRzIHVzIGtlZXAgdXNpbmcgaXQgd2l0aCBhIHkyMDM4IGNvbXBhdGli
-bGUgbGliYy4KCkFzIGEgc2lkZS1lZmZlY3QsIHRoaXMgY2hhbmdlcyB0aGUgQVBJIGZvciB4MzIg
-cHJvZ3JhbXMgdG8gYmUgdGhlIHNhbWUKYXMgbmF0aXZlIDMyLWJpdCwgdXNpbmcgYSAzMi1iaXQg
-dHZfc2VjL3R2X25zZWMgdmFsdWUsIGJ1dCBib3RoIG9sZCBhbmQKbmV3IGtlcm5lbHMgYWxyZWFk
-eSBzdXBwb3J0IGJvdGggZm9ybWF0cyBmb3Igb24gdGhlIGJpbmFyeSBsZXZlbCBmb3IKY29tcGF0
-IGFuZCB4MzIuCgpBbHRlcm5hdGl2ZWx5LCB3ZSBjb3VsZCBsZWF2ZSB0aGUgaGVhZGVyIGZpbGUg
-dG8gZGVmaW5lIHRoZSBpbnRlcmZhY2UKYmFzZWQgb24gJ3N0cnVjdCB0aW1lc3BlYycsIGFuZCBp
-bXBsZW1lbnQgYm90aCBpb2N0bHMgZm9yIG5hdGl2ZQpwcm9jZXNzZXMuIEkgcGlja2VkIHRoZSBh
-cHByb2FjaCBpbiB0aGlzIGNhc2UgYmVjYXVzZSBpdCBtYXRjaGVzIHdoYXQKd2UgZG8gZm9yIHY0
-bDJfdGltZXZhbCBpbiB0aGUgcmVzcGVjdGl2ZSBwYXRjaCwgYnV0IGJvdGggd291bGQgd29yawpl
-cXVhbGx5IHdlbGwgaGVyZS4KClNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21hbm4gPGFybmRAYXJu
-ZGIuZGU+Ci0tLQogZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdjRsMi1ldmVudC5jIHwgMjAgKysr
-KysrKysrKysrKy0tLS0tLS0KIGluY2x1ZGUvdWFwaS9saW51eC92aWRlb2RldjIuaCAgICAgICB8
-ICA4ICsrKysrKystCiAyIGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDggZGVsZXRp
-b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdjRsMi1ldmVudC5j
-IGIvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdjRsMi1ldmVudC5jCmluZGV4IDhkMzE3MWM2YmVl
-OC4uMmEyNmFkNTkxZjU5IDEwMDY0NAotLS0gYS9kcml2ZXJzL21lZGlhL3Y0bDItY29yZS92NGwy
-LWV2ZW50LmMKKysrIGIvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdjRsMi1ldmVudC5jCkBAIC0x
-MDgsNyArMTA4LDcgQEAgc3RhdGljIHN0cnVjdCB2NGwyX3N1YnNjcmliZWRfZXZlbnQgKnY0bDJf
-ZXZlbnRfc3Vic2NyaWJlZCgKIH0KIAogc3RhdGljIHZvaWQgX192NGwyX2V2ZW50X3F1ZXVlX2Zo
-KHN0cnVjdCB2NGwyX2ZoICpmaCwgY29uc3Qgc3RydWN0IHY0bDJfZXZlbnQgKmV2LAotCQljb25z
-dCBzdHJ1Y3QgdGltZXNwZWMgKnRzKQorCQljb25zdCBzdHJ1Y3QgdjRsMl90aW1lc3BlYyAqdHMp
-CiB7CiAJc3RydWN0IHY0bDJfc3Vic2NyaWJlZF9ldmVudCAqc2V2OwogCXN0cnVjdCB2NGwyX2tl
-dmVudCAqa2V2OwpAQCAtMTcwLDE3ICsxNzAsMjAgQEAgdm9pZCB2NGwyX2V2ZW50X3F1ZXVlKHN0
-cnVjdCB2aWRlb19kZXZpY2UgKnZkZXYsIGNvbnN0IHN0cnVjdCB2NGwyX2V2ZW50ICpldikKIHsK
-IAlzdHJ1Y3QgdjRsMl9maCAqZmg7CiAJdW5zaWduZWQgbG9uZyBmbGFnczsKLQlzdHJ1Y3QgdGlt
-ZXNwZWMgdGltZXN0YW1wOworCXN0cnVjdCB0aW1lc3BlYzY0IHRpbWVzdGFtcDsKKwlzdHJ1Y3Qg
-djRsMl90aW1lc3BlYyB2dHM7CiAKIAlpZiAodmRldiA9PSBOVUxMKQogCQlyZXR1cm47CiAKLQlr
-dGltZV9nZXRfdHMoJnRpbWVzdGFtcCk7CisJa3RpbWVfZ2V0X3RzNjQoJnRpbWVzdGFtcCk7CisJ
-dnRzLnR2X3NlYyA9IHRpbWVzdGFtcC50dl9zZWM7CisJdnRzLnR2X25zZWMgPSB0aW1lc3RhbXAu
-dHZfbnNlYzsKIAogCXNwaW5fbG9ja19pcnFzYXZlKCZ2ZGV2LT5maF9sb2NrLCBmbGFncyk7CiAK
-IAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGZoLCAmdmRldi0+ZmhfbGlzdCwgbGlzdCkKLQkJX192NGwy
-X2V2ZW50X3F1ZXVlX2ZoKGZoLCBldiwgJnRpbWVzdGFtcCk7CisJCV9fdjRsMl9ldmVudF9xdWV1
-ZV9maChmaCwgZXYsICZ2dHMpOwogCiAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmdmRldi0+Zmhf
-bG9jaywgZmxhZ3MpOwogfQpAQCAtMTg5LDEyICsxOTIsMTUgQEAgRVhQT1JUX1NZTUJPTF9HUEwo
-djRsMl9ldmVudF9xdWV1ZSk7CiB2b2lkIHY0bDJfZXZlbnRfcXVldWVfZmgoc3RydWN0IHY0bDJf
-ZmggKmZoLCBjb25zdCBzdHJ1Y3QgdjRsMl9ldmVudCAqZXYpCiB7CiAJdW5zaWduZWQgbG9uZyBm
-bGFnczsKLQlzdHJ1Y3QgdGltZXNwZWMgdGltZXN0YW1wOworCXN0cnVjdCB0aW1lc3BlYzY0IHRp
-bWVzdGFtcDsKKwlzdHJ1Y3QgdjRsMl90aW1lc3BlYyB2dHM7CiAKLQlrdGltZV9nZXRfdHMoJnRp
-bWVzdGFtcCk7CisJa3RpbWVfZ2V0X3RzNjQoJnRpbWVzdGFtcCk7CisJdnRzLnR2X3NlYyA9IHRp
-bWVzdGFtcC50dl9zZWM7CisJdnRzLnR2X25zZWMgPSB0aW1lc3RhbXAudHZfbnNlYzsKIAogCXNw
-aW5fbG9ja19pcnFzYXZlKCZmaC0+dmRldi0+ZmhfbG9jaywgZmxhZ3MpOwotCV9fdjRsMl9ldmVu
-dF9xdWV1ZV9maChmaCwgZXYsICZ0aW1lc3RhbXApOworCV9fdjRsMl9ldmVudF9xdWV1ZV9maChm
-aCwgZXYsICZ2dHMpOwogCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmZoLT52ZGV2LT5maF9sb2Nr
-LCBmbGFncyk7CiB9CiBFWFBPUlRfU1lNQk9MX0dQTCh2NGwyX2V2ZW50X3F1ZXVlX2ZoKTsKZGlm
-ZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9saW51eC92aWRlb2RldjIuaCBiL2luY2x1ZGUvdWFwaS9s
-aW51eC92aWRlb2RldjIuaAppbmRleCBiMDJjZjA1NGZiYjguLmJjNjU5YmU4NzI2MCAxMDA2NDQK
-LS0tIGEvaW5jbHVkZS91YXBpL2xpbnV4L3ZpZGVvZGV2Mi5oCisrKyBiL2luY2x1ZGUvdWFwaS9s
-aW51eC92aWRlb2RldjIuaApAQCAtODA5LDYgKzgwOSwxMiBAQCBzdHJ1Y3QgdjRsMl90aW1ldmFs
-IHsKIAlsb25nIHR2X3VzZWM7CiB9OwogCisvKiB1c2VkIGZvciBtb25vdG9uaWMgdGltZXMsIHRo
-ZXJlZm9yZSB5MjAzOCBzYWZlICovCitzdHJ1Y3QgdjRsMl90aW1lc3BlYyB7CisJbG9uZyB0dl9z
-ZWM7CisJbG9uZyB0dl9uc2VjOworfTsKKwogLyoqCiAgKiBzdHJ1Y3QgdjRsMl9idWZmZXIgLSB2
-aWRlbyBidWZmZXIgaW5mbwogICogQGluZGV4OglpZCBudW1iZXIgb2YgdGhlIGJ1ZmZlcgpAQCAt
-MjA4OCw3ICsyMDk0LDcgQEAgc3RydWN0IHY0bDJfZXZlbnQgewogCX0gdTsKIAlfX3UzMgkJCQlw
-ZW5kaW5nOwogCV9fdTMyCQkJCXNlcXVlbmNlOwotCXN0cnVjdCB0aW1lc3BlYwkJCXRpbWVzdGFt
-cDsKKwlzdHJ1Y3QgdjRsMl90aW1lc3BlYwkJdGltZXN0YW1wOwogCV9fdTMyCQkJCWlkOwogCV9f
-dTMyCQkJCXJlc2VydmVkWzhdOwogfTsKLS0gCjIuMS4wLnJjMgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KWTIwMzggbWFpbGluZyBsaXN0ClkyMDM4QGxp
-c3RzLmxpbmFyby5vcmcKaHR0cHM6Ly9saXN0cy5saW5hcm8ub3JnL21haWxtYW4vbGlzdGluZm8v
-eTIwMzgK
+On 09/15/2015 05:49 PM, Arnd Bergmann wrote:
+> The v4l2 API uses a 'struct timeval' to communicate time stamps to user
+> space. This is broken on 32-bit architectures as soon as we have a C library
+> that defines time_t as 64 bit, which then changes the structure layout of
+> struct v4l2_buffer.
+> 
+> Fortunately, almost all v4l2 drivers use monotonic timestamps and call
+> v4l2_get_timestamp(), which means they don't also have a y2038 problem.
+> This means we can keep using the existing binary layout of the structure
+> and do not need to worry about defining a new kernel interface for
+> userland with 64-bit time_t.
+> 
+> A possible downside of this approach is that it breaks any user space
+> that tries to assign the timeval structure returned from the kernel
+> to another timeval, or to pass a pointer to it into a function that
+> expects a timeval. Those will cause a build-time warning or error
+> that can be fixed up in a backwards compatible way.
+> 
+> The alternative to this patch is to leave the structure using
+> 'struct timeval', but then we have to rework the kernel to let
+> it handle both 32-bit and 64-bit time_t for 32-bit user space
+> processes.
+
+Cool. Only this morning I was thinking about what would be needed in v4l2
+to be y2038 safe, and here it is!
+
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 3228fbebcd63..b02cf054fbb8 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -803,6 +803,12 @@ struct v4l2_plane {
+>  	__u32			reserved[11];
+>  };
+>  
+> +/* used for monotonic times, therefore y2038 safe */
+> +struct v4l2_timeval {
+> +	long tv_sec;
+> +	long tv_usec;
+> +};
+> +
+>  /**
+>   * struct v4l2_buffer - video buffer info
+>   * @index:	id number of the buffer
+> @@ -839,7 +845,7 @@ struct v4l2_buffer {
+>  	__u32			bytesused;
+>  	__u32			flags;
+>  	__u32			field;
+> -	struct timeval		timestamp;
+> +	struct v4l2_timeval	timestamp;
+>  	struct v4l2_timecode	timecode;
+>  	__u32			sequence;
+>  
+> 
+
+I suspect that quite a few apps use assign the timestamp to another timeval
+struct. A quick grep in v4l-utils (which we maintain) shows at least two of
+those assignments. Ditto for xawtv3.
+
+So I don't think v4l2_timeval is an option as it would break userspace too badly.
+
+An alternative to supporting a 64-bit timeval for 32-bit userspace is to make a
+new y2038-aware struct and a new set of ioctls and use this opportunity to clean
+up and extend the v4l2_buffer struct.
+
+So any 32-bit app that needs to be y2038 compliant would just use the new
+struct and ioctls.
+
+But this is something to discuss among the v4l2 developers.
+
+Regards,
+
+	Hans
