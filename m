@@ -1,153 +1,125 @@
-From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] platform/chrome: Support reading/writing the vboot
- context
-Date: Tue, 15 Sep 2015 17:24:50 -0300
-Message-ID: <55F87E92.8000609@collabora.co.uk>
-References: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
- <1442234049-18637-3-git-send-email-emilio.lopez@collabora.co.uk>
- <CABxcv=m23sfK=jOCswirQRB1SbP70VnomKp6hhwFhRLHiabq4w@mail.gmail.com>
- <55F86E74.9010907@collabora.co.uk>
- <CABxcv=mnCNQPtVBU4tPOWD237_-RojoW+RVLTj+F=3PHbUHfQQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 6/7] [RFC] [media]: v4l2: introduce v4l2_timeval
+Date: Tue, 15 Sep 2015 22:26:23 +0200
+Message-ID: <2432018.5rA5LXfiBo@wuerfel>
+References: <1442332148-488079-1-git-send-email-arnd@arndb.de>
+ <1442332148-488079-7-git-send-email-arnd@arndb.de>
+ <55F846E7.2040006@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CABxcv=mnCNQPtVBU4tPOWD237_-RojoW+RVLTj+F=3PHbUHfQQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <y2038-bounces@lists.linaro.org>
+In-Reply-To: <55F846E7.2040006@xs4all.nl>
+List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/y2038/>
+List-Post: <mailto:y2038@lists.linaro.org>
+List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
+List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=subscribe>
+Errors-To: y2038-bounces@lists.linaro.org
+Sender: "Y2038" <y2038-bounces@lists.linaro.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-samsung-soc@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, y2038@lists.linaro.org, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Javier,
-
-On 15/09/15 16:43, Javier Martinez Canillas wrote:
-> Hello Emilio,
->
-> On Tue, Sep 15, 2015 at 9:16 PM, Emilio L=C3=B3pez
-> <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
->
-> [snip]
->
->>>>
->>>>    obj-$(CONFIG_CHROMEOS_LAPTOP)  +=3D chromeos_laptop.o
->>>>    obj-$(CONFIG_CHROMEOS_PSTORE)  +=3D chromeos_pstore.o
->>>> -cros_ec_devs-objs               :=3D cros_ec_dev.o cros_ec_sysfs.=
-o
->>>> cros_ec_lightbar.o
->>>> +cros_ec_devs-objs               :=3D cros_ec_dev.o
->>>> +cros_ec_devs-objs               +=3D cros_ec_lightbar.o
->>>> +cros_ec_devs-objs               +=3D cros_ec_sysfs.o
->>>> +cros_ec_devs-objs               +=3D cros_ec_vbc.o
->>>
->>>
->>> Why are you changing the Makefile? AFAIK +=3D is usually used when =
-the
->>> compilation is conditional based on a Kconfig symbol but since thes=
-e
->>> are build unconditionally, I'll just keep it as foo :=3D bar baz
->>
->>
->> As far as I'm aware, +=3D is append[0]. It's used for stuff like
->> obj-$(CONFIG_CHROMEOS_LAPTOP)  +=3D chromeos_laptop.o
->> because the left part will resolve to "obj-y" or similar, and you wa=
-nt to
->> add to it, not replace it. I only changed the Makefile here because =
-the line
->> was growing too long, and I thought it looked neater this way; it sh=
-ouldn't
->> cause any functional change apart from the intended one.
->>
->> [0] https://www.gnu.org/software/make/manual/html_node/Appending.htm=
-l
->>
->
-> Yes, I know how Kbuild works. What I tried to say is that you usually
-> append based on a Kconfig symbol. In fact even you are mentioning suc=
-h
-> an example.
-> So appending unconditionally like you are doing makes the Makefile
-> harder to read IMHO. If the line grows to long you can use a backlash
-> (\) char to split the line.
-
-I guess it just boils down to personal preference; I don't feel that=20
-strongly about it, I'll change it in v3
-
-(...)
->>>> +       struct device *dev =3D container_of(kobj, struct device, k=
-obj);
->>>> +       struct cros_ec_dev *ec =3D container_of(dev, struct cros_e=
-c_dev,
->>>> +                                             class_dev);
->>>> +       struct cros_ec_device *ecdev =3D ec->ec_dev;
->>>> +       struct ec_params_vbnvcontext *params;
->>>> +       struct cros_ec_command *msg;
->>>> +       int err;
->>>> +       const size_t para_sz =3D sizeof(struct ec_params_vbnvconte=
-xt);
->>>> +       const size_t resp_sz =3D sizeof(struct ec_response_vbnvcon=
-text);
->>>> +       const size_t payload =3D max(para_sz, resp_sz);
->>>> +
->>>> +       msg =3D kmalloc(sizeof(*msg) + payload, GFP_KERNEL);
->>>> +       if (!msg)
->>>> +               return -ENOMEM;
->>>> +
->>>> +       params =3D (struct ec_params_vbnvcontext *)msg->data;
->>>> +       params->op =3D EC_VBNV_CONTEXT_OP_READ;
->>>> +
->>>> +       msg->version =3D EC_VER_VBNV_CONTEXT;
->>>> +       msg->command =3D EC_CMD_VBNV_CONTEXT;
->>>> +       msg->outsize =3D sizeof(params->op);
->>>
->>>
->>> Shouldn't this be para_sz ? Since you are sending to the EC the who=
-le
->>> struct ec_params_vbnvcontext and not only the op field.
->>>
->>> Or if the EC only expects to get the u32 op field, then I think you=
-r
->>> max payload calculation is not correct.
->>
->>
->> The params struct is the same for both read and write ops, so it has=
- the op
->
-> That's not true, struct ec_response_vbnvcontext has only the block
-> field while struct ec_param_vbnvcontext has both the op and block
-> fields.
-
-The former is a response struct, not a params struct.
-
->> flag and a buffer for the write op. During the read op I believe the=
-re's no
->> need to send this potentially-garbage-filled buffer to the EC, so ou=
-tsize is
->> set accordingly here.
->
-> Yes, I agree with you but then as I mentioned I think your payload
-> calculation is wrong since you want instead max(sizeof(struct
-> ec_response_vbnvcontext), sizeof(param->op)). Otherwise you are
-> allocating 4 bytes more than needed.
-
-Yeah, I can see that. If I do that though, max(...) would be less than=20
-the size of the full params struct, and casting data to it could lead t=
-o=20
-subtle bugs in the future. I can change it and add a comment mentioning=
-=20
-this, deal?
-
-(...)
-
-> with the needed changes, feel free to add my:
->
-> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-
-Ok, thanks!
-
-Emilio
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gVHVlc2RheSAxNSBTZXB0ZW1iZXIgMjAxNSAxODoyNzoxOSBIYW5zIFZlcmt1aWwgd3JvdGU6
+Cj4gT24gMDkvMTUvMjAxNSAwNTo0OSBQTSwgQXJuZCBCZXJnbWFubiB3cm90ZToKPiA+IFRoZSB2
+NGwyIEFQSSB1c2VzIGEgJ3N0cnVjdCB0aW1ldmFsJyB0byBjb21tdW5pY2F0ZSB0aW1lIHN0YW1w
+cyB0byB1c2VyCj4gPiBzcGFjZS4gVGhpcyBpcyBicm9rZW4gb24gMzItYml0IGFyY2hpdGVjdHVy
+ZXMgYXMgc29vbiBhcyB3ZSBoYXZlIGEgQyBsaWJyYXJ5Cj4gPiB0aGF0IGRlZmluZXMgdGltZV90
+IGFzIDY0IGJpdCwgd2hpY2ggdGhlbiBjaGFuZ2VzIHRoZSBzdHJ1Y3R1cmUgbGF5b3V0IG9mCj4g
+PiBzdHJ1Y3QgdjRsMl9idWZmZXIuCj4gPiAKPiA+IEZvcnR1bmF0ZWx5LCBhbG1vc3QgYWxsIHY0
+bDIgZHJpdmVycyB1c2UgbW9ub3RvbmljIHRpbWVzdGFtcHMgYW5kIGNhbGwKPiA+IHY0bDJfZ2V0
+X3RpbWVzdGFtcCgpLCB3aGljaCBtZWFucyB0aGV5IGRvbid0IGFsc28gaGF2ZSBhIHkyMDM4IHBy
+b2JsZW0uCj4gPiBUaGlzIG1lYW5zIHdlIGNhbiBrZWVwIHVzaW5nIHRoZSBleGlzdGluZyBiaW5h
+cnkgbGF5b3V0IG9mIHRoZSBzdHJ1Y3R1cmUKPiA+IGFuZCBkbyBub3QgbmVlZCB0byB3b3JyeSBh
+Ym91dCBkZWZpbmluZyBhIG5ldyBrZXJuZWwgaW50ZXJmYWNlIGZvcgo+ID4gdXNlcmxhbmQgd2l0
+aCA2NC1iaXQgdGltZV90Lgo+ID4gCj4gPiBBIHBvc3NpYmxlIGRvd25zaWRlIG9mIHRoaXMgYXBw
+cm9hY2ggaXMgdGhhdCBpdCBicmVha3MgYW55IHVzZXIgc3BhY2UKPiA+IHRoYXQgdHJpZXMgdG8g
+YXNzaWduIHRoZSB0aW1ldmFsIHN0cnVjdHVyZSByZXR1cm5lZCBmcm9tIHRoZSBrZXJuZWwKPiA+
+IHRvIGFub3RoZXIgdGltZXZhbCwgb3IgdG8gcGFzcyBhIHBvaW50ZXIgdG8gaXQgaW50byBhIGZ1
+bmN0aW9uIHRoYXQKPiA+IGV4cGVjdHMgYSB0aW1ldmFsLiBUaG9zZSB3aWxsIGNhdXNlIGEgYnVp
+bGQtdGltZSB3YXJuaW5nIG9yIGVycm9yCj4gPiB0aGF0IGNhbiBiZSBmaXhlZCB1cCBpbiBhIGJh
+Y2t3YXJkcyBjb21wYXRpYmxlIHdheS4KPiA+IAo+ID4gVGhlIGFsdGVybmF0aXZlIHRvIHRoaXMg
+cGF0Y2ggaXMgdG8gbGVhdmUgdGhlIHN0cnVjdHVyZSB1c2luZwo+ID4gJ3N0cnVjdCB0aW1ldmFs
+JywgYnV0IHRoZW4gd2UgaGF2ZSB0byByZXdvcmsgdGhlIGtlcm5lbCB0byBsZXQKPiA+IGl0IGhh
+bmRsZSBib3RoIDMyLWJpdCBhbmQgNjQtYml0IHRpbWVfdCBmb3IgMzItYml0IHVzZXIgc3BhY2UK
+PiA+IHByb2Nlc3Nlcy4KPiAKPiBDb29sLiBPbmx5IHRoaXMgbW9ybmluZyBJIHdhcyB0aGlua2lu
+ZyBhYm91dCB3aGF0IHdvdWxkIGJlIG5lZWRlZCBpbiB2NGwyCj4gdG8gYmUgeTIwMzggc2FmZSwg
+YW5kIGhlcmUgaXQgaXMhCgpOaWNlIQoKZndpdywgSSBhbHNvIGhhdmUgYSBsaXN0IG9mIGRyaXZl
+cnMgYXQKaHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRzL2QvMUhDWXdIWHhzNDhU
+c1RiNklHVWR1TmpRbm1mUnZNUHpDTjZUXzBZaVF3aXMvZWRpdD91c3A9c2hhcmluZwp3aGljaCBs
+aXN0cyBhbGwga25vd24gZmlsZXMgdGhhdCBzdGlsbCBuZWVkIGNoYW5naW5nLCBpbiBjYXNlIHlv
+dSBhcmUKd29uZGVyaW5nIHdoYXQgZWxzZSBuZWVkcyB0byBiZSBkb25lLCB0aG91Z2ggaXQgY3Vy
+cmVudGx5IG9ubHkgY292ZXJzCnRoaW5ncyB0aGF0IG5vYm9keSBzbyBmYXIgaGFzIHN0YXJ0ZWQg
+d29ya2luZyBvbiwgYW5kIEkgaGF2ZSBhIGNvdXBsZQpwYXRjaGVzIG9uIG15IGRpc2sgdGhhdCBu
+ZWVkIHBvbGlzaGluZyAoSSBwdXNoZWQgb3V0IHRoZSB2NGwyIHBvcnRpb24Kb2YgdGhhdCBhcyBh
+IHN0YXJ0KQoKPiA+IEBAIC04MzksNyArODQ1LDcgQEAgc3RydWN0IHY0bDJfYnVmZmVyIHsKPiA+
+ICAJX191MzIJCQlieXRlc3VzZWQ7Cj4gPiAgCV9fdTMyCQkJZmxhZ3M7Cj4gPiAgCV9fdTMyCQkJ
+ZmllbGQ7Cj4gPiAtCXN0cnVjdCB0aW1ldmFsCQl0aW1lc3RhbXA7Cj4gPiArCXN0cnVjdCB2NGwy
+X3RpbWV2YWwJdGltZXN0YW1wOwo+ID4gIAlzdHJ1Y3QgdjRsMl90aW1lY29kZQl0aW1lY29kZTsK
+PiA+ICAJX191MzIJCQlzZXF1ZW5jZTsKPiA+ICAKPiA+IAo+IAo+IEkgc3VzcGVjdCB0aGF0IHF1
+aXRlIGEgZmV3IGFwcHMgdXNlIGFzc2lnbiB0aGUgdGltZXN0YW1wIHRvIGFub3RoZXIgdGltZXZh
+bAo+IHN0cnVjdC4gQSBxdWljayBncmVwIGluIHY0bC11dGlscyAod2hpY2ggd2UgbWFpbnRhaW4p
+IHNob3dzIGF0IGxlYXN0IHR3byBvZgo+IHRob3NlIGFzc2lnbm1lbnRzLiBEaXR0byBmb3IgeGF3
+dHYzLgoKT2ssIHRoYXQgaXMgdmVyeSBoZWxwZnVsIGluZm9ybWF0aW9uLCB0aGFua3MgZm9yIGZp
+bmRpbmcgdGhhdCEKCj4gU28gSSBkb24ndCB0aGluayB2NGwyX3RpbWV2YWwgaXMgYW4gb3B0aW9u
+IGFzIGl0IHdvdWxkIGJyZWFrIHVzZXJzcGFjZSB0b28gYmFkbHkuCgpBZ3JlZWQsIHdlIGRlZmlu
+aXRlbHkgZG9uJ3Qgd2FudCB0byBicmVhayBidWlsZGluZyB1c2VyIHNwYWNlIHdpdGgKZXhpc3Rp
+bmcgZW52aXJvbm1lbnRzLCBpLmUuIDY0LWJpdCBhcmNoaXRlY3R1cmVzLCBvciAzMi1iaXQgYXJj
+aGl0ZWN0dXJlcwp3aXRoIDMyLWJpdCB0aW1lX3QuCgo+IEFuIGFsdGVybmF0aXZlIHRvIHN1cHBv
+cnRpbmcgYSA2NC1iaXQgdGltZXZhbCBmb3IgMzItYml0IHVzZXJzcGFjZSBpcyB0byBtYWtlIGEK
+PiBuZXcgeTIwMzgtYXdhcmUgc3RydWN0IGFuZCBhIG5ldyBzZXQgb2YgaW9jdGxzIGFuZCB1c2Ug
+dGhpcyBvcHBvcnR1bml0eSB0byBjbGVhbgo+IHVwIGFuZCBleHRlbmQgdGhlIHY0bDJfYnVmZmVy
+IHN0cnVjdC4KPiAKPiBTbyBhbnkgMzItYml0IGFwcCB0aGF0IG5lZWRzIHRvIGJlIHkyMDM4IGNv
+bXBsaWFudCB3b3VsZCBqdXN0IHVzZSB0aGUgbmV3Cj4gc3RydWN0IGFuZCBpb2N0bHMuCj4gCj4g
+QnV0IHRoaXMgaXMgc29tZXRoaW5nIHRvIGRpc2N1c3MgYW1vbmcgdGhlIHY0bDIgZGV2ZWxvcGVy
+cy4KCk9rLiBXZSBnZW5lcmFsbHkgdG8gcmVxdWlyZSBhcyBmZXcgc291cmNlIGxldmVsIGNoYW5n
+ZXMgdG8gdXNlciBzcGFjZQphcyBwb3NzaWJsZSBmb3IgdGhlIGNvbnZlcnNpb24sIGFuZCB3ZSB3
+YW50IHRvIG1ha2Ugc3VyZSB0aGF0IHdoZW4KdXNpbmcgYSAzMi1iaXQgbGliYyB3aXRoIDY0LWJp
+dCB0aW1lX3QsIHdlIGRvbid0IGFjY2lkZW50YWxseSBnZXQKYnJva2VuIGludGVyZmFjZXMgKGku
+ZS4gd2Ugc2hvdWxkIGdldCBhIGNvbXBpbGUgZXJyb3Igd2hlbmV2ZXIgd2UKY2FuJ3QgZ2V0IGl0
+IHJpZ2h0IGF1dG9tYXRpY2FsbHkpLgoKT25lIGFzcGVjdCB0aGF0IG1ha2VzIHY0bDJfYnVmZmVy
+IHNwZWNpYWwgaXMgdGhhdCB0aGUgYmluYXJ5IGZvcm1hdAppcyBhbHJlYWR5IGNsZWFuIGZvciB5
+MjAzOCAob25jZSBwYXRjaCA0LzcgImV4eW5vczQtaXM6IHVzZSBtb25vdG9uaWMKdGltZXN0YW1w
+cyBhcyBhZHZlcnRpemVkIiBnZXRzIG1lcmdlZCksIGFuZCB3ZSBvbmx5IG5lZWQgdG8gd29ycnkg
+YWJvdXQKd2hhdCBoYXBwZW5zIHdoZW4gdXNlciBzcGFjZSBkaXNhZ3JlZXMgYWJvdXQgdGhlIHNp
+emUgb2YgdGltZXZhbC4KCkxldCBtZSBkZXNjcmliZSB0aGUgb3B0aW9ucyB0aGF0IEkgY2FuIHRo
+aW5rIG9mIGhlcmU6CgphKSBTaW1pbGFyIHRvIG15IGZpcnN0IGF0dGVtcHQsIGRlZmluZSBhIG5l
+dyBzdHJ1Y3QgdjRsMl90aW1ldmFsLCBidXQKICAgb25seSB1c2UgaXQgd2hlbiBidWlsZGluZyB3
+aXRoIGEgeTIwMzgtYXdhcmUgbGliYywgc28gd2UgZG9uJ3QgYnJlYWsKICAgZXhpc3RpbmcgZW52
+aXJvbm1lbnRzOgoKCS8qIHNvbWUgY29tcGlsZS10aW1lIGNvbmRpdGlvbmFsIHRoYXQgd2UgZmly
+c3QgbmVlZCB0byBhZ3JlZSBvbiB3aXRoIGxpYmMgKi8KCSNpZiBfX0JJVFNfUEVSX1RJTUVfVCA+
+IF9fQklUU19QRVJfTE9ORwoJc3RydWN0IHY0bDJfdGltZXZhbCB7IGxvbmcgdHZfc2VjOyBsb25n
+IHR2X3VzZWM7IH0KCSNlbHNlCgkjZGVmaW5lIHY0bDJfdGltZXZhbCB0aW1ldmFsCgkjZW5kaWYK
+CiAgIFRoaXMgbWVhbnMgdGhhdCBhbnkgdXNlciBzcGFjZSB0aGF0IGN1cnJlbnRseSBhc3N1bWVz
+IHRoZSB0aW1lc3RhbXAKICAgbWVtYmVyIHRvIGJlIGEgJ3N0cnVjdCB0aW1ldmFsJyBoYXMgdG8g
+YmUgY2hhbmdlZCB0byBhY2Nlc3MgdGhlIG1lbWJlcnMKICAgaW5kaXZpZHVhbGx5LCBvciBnZXQg
+YSBidWlsZCBlcnJvci4KICAgVGhlIF9fQklUU19QRVJfVElNRV9UIHRyaWNrIGhhcyB0byBiZSB1
+c2VkIGluIGEgY291cGxlIG9mIG90aGVyIHN1YnN5c3RlbXMKICAgdG9vLCBhcyBzb21lIG9mIHRo
+ZW0gaGF2ZSBubyBvdGhlciB3YXkgdG8gaWRlbnRpZnkgYW4gaW50ZXJmYWNlCgpiKSBLZWVwIHRo
+ZSBoZWFkZXIgZmlsZSB1bmNoYW5nZWQsIGJ1dCBkZWFsIHdpdGggYm90aCBmb3JtYXRzIG9mIHY0
+bDJfYnVmZmVyCiAgIGluIHRoZSBrZXJuZWwuIEZvcnR1bmF0ZWx5LCBhbGwgaW9jdGxzIHRoYXQg
+cGFzcyBhIHY0bDJfYnVmZmVyIGhhdmUKICAgcHJvcGVybHkgZGVmaW5lZCBjb21tYW5kIGNvZGVz
+LCBhbmQgaXQgZG9lcyBub3QgZ2V0IHBhc3NlZCB1c2luZyBhCiAgIHJlYWQvd3JpdGUgc3R5bGUg
+aW50ZXJmYWNlLiBUaGlzIG1lYW5zIHdlIG1vdmUgdGhlIHY0bDJfYnVmZmVyMzIKICAgaGFuZGxp
+bmcgZnJvbSB2NGwyLWNvbXBhdC1pb2N0bDMyLmMgdG8gdjRsMi1pb2N0bC5jIGFuZCBhZGQgYW4g
+aW4ta2VybmVsCiAgIHY0bDJfYnVmZmVyNjQgdGhhdCBtYXRjaGVzIHRoZSA2NC1iaXQgdmFyaWFu
+dCBvZiB2NGwyX2J1ZmZlci4KICAgVGhpcyB3YXksIHVzZXIgc3BhY2UgY2FuIHVzZSBlaXRoZXIg
+ZGVmaW5pdGlvbiBvZiB0aW1lX3QsIGFuZCB0aGUKICAga2VybmVsIHdpbGwganVzdCBoYW5kbGUg
+dGhlbSBuYXRpdmVseS4KICAgVGhpcyBpcyBnb2luZyB0byBiZSB0aGUgbW9zdCBjb21tb24gd2F5
+IHRvIGhhbmRsZSB5MjAzOCBjb21wYXRpYmlsaXR5CiAgIGluIGRldmljZSBkcml2ZXJzLCBhbmQg
+aXQgaGFzIHRoZSBhZGRpdGlvbmFsIGFkdmFudGFnZSBvZiBzaW1wbGlmeWluZwogICB0aGUgY29t
+cGF0IHBhdGguCgpjKSBBcyB5b3UgZGVzY3JpYmUgYWJvdmUsIGludHJvZHVjZSBhIG5ldyB2NGwy
+X2J1ZmZlciByZXBsYWNlbWVudCB3aXRoCiAgIGEgZGlmZmVyZW50IGxheW91dCB0aGF0IGRvZXMg
+bm90IHJlZmVyZW5jZSB0aW1ldmFsLiBGb3IgdGhpcyBjYXNlLCBJCiAgIHdvdWxkIHJlY29tbWVu
+ZCB1c2luZyBhIHNpbmdsZSA2NC1iaXQgbmFub3NlY29uZCB0aW1lc3RhbXAgdGhhdCBjYW4KICAg
+YmUgZ2VuZXJhdGVkIHVzaW5nIGt0aW1lX2dldF9ucygpLgogICBIb3dldmVyLCB0byBhdm9pZCBh
+bWJpZ3VpdHkgd2l0aCB0aGUgdXNlciBzcGFjZSBkZWZpbml0aW9uIG9mIHN0cnVjdAogICB0aW1l
+dmFsLCB3ZSBzdGlsbCBoYXZlIHRvIGhpZGUgdGhlIGV4aXN0aW5nICdzdHJ1Y3QgdjRsMl9idWZm
+ZXInIGZyb20KICAgeTIwMzgtYXdhcmUgdXNlciBzcGFjZSBieSBlbmNsb3NpbmcgaXQgaW4gJyNp
+ZiBfX0JJVFNfUEVSX1RJTUVfVCA+IAogICBfX0JJVFNfUEVSX0xPTkcnIG9yIHNpbWlsYXIuCgoJ
+QXJuZApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpZMjAz
+OCBtYWlsaW5nIGxpc3QKWTIwMzhAbGlzdHMubGluYXJvLm9yZwpodHRwczovL2xpc3RzLmxpbmFy
+by5vcmcvbWFpbG1hbi9saXN0aW5mby95MjAzOAo=
