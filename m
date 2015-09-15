@@ -1,57 +1,100 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v4 2/2] [media] media-device: split media initialization
- and registration
-Date: Tue, 15 Sep 2015 14:01:54 +0300
-Message-ID: <55F7FAA2.2090605@linux.intel.com>
-References: <1442313147-24566-1-git-send-email-javier@osg.samsung.com>
- <1442313147-24566-3-git-send-email-javier@osg.samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] clk: samsung: fix cpu clock's flags checking
+Date: Tue, 15 Sep 2015 14:28:39 +0200
+Message-ID: <4294976.g7Mb9GifR6@amdc1976>
+References: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1442313147-24566-3-git-send-email-javier@osg.samsung.com>
+In-reply-to: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Luis de Bethencourt <luis@debethencourt.com>, linux-sh@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Matthias Schwarzott <zzam@gentoo.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tommi Rantala <tt.rantala@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Michal Simek <michal.simek@xilinx.com>, Olli Salonen <olli.salonen@iki.fi>, linux-arm-kernel@lists.infradead.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, Antti Palosaari <crope@iki.fi>, Shuah Khan <shuahkh@osg.samsung.com>, =?UTF-8?Q?Rafael_Louren=c3=a7o
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Javier,
 
-Javier Martinez Canillas wrote:
-> The media device node is registered and so made visible to user-space
-> before entities are registered and links created which means that the
-> media graph obtained by user-space could be only partially enumerated
-> if that happens too early before all the graph has been created.
+[ + Stephen on cc: ]
+
+On Friday, August 28, 2015 01:49:35 PM Bartlomiej Zolnierkiewicz wrote:
+> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> incorrectly used as a bit numbers.  Fix it.
 > 
-> To avoid this race condition, split the media init and registration
-> in separate functions and only register the media device node when
-> all the pending subdevices have been registered, either explicitly
-> by the driver or asynchronously using v4l2_async_register_subdev().
+> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> Arndale board.
 > 
-> The media_device_register() had a check for drivers not filling dev
-> and model fields but all drivers in mainline set them and not doing
-> it will be a driver bug so change the function return to void and
-> add a BUG_ON() for dev being NULL instead.
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Fixes: ddeac8d96 ("clk: samsung: add infrastructure to register cpu clocks")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> v2:
+> - added Reviewed-by, Acked-by and Fixes tags (no code changes)
 > 
-> Also, add a media_device_cleanup() function that will destroy the
-> graph_mutex that is initialized in media_device_init().
+> Michael, please apply.  Thank you.
+
+Gentle ping.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Thanks!
-
-For drivers/media/media-device.c, drivers/media/platform/omap3isp/isp.c
-and include/media/media-device.h:
-
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-Laurent, could you ack these if you're fine with them?
-
-They depend on Mauro's patches so they should be applied after them.
-
--- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+> index 7c1e1f5..2fe37f7 100644
+> --- a/drivers/clk/samsung/clk-cpu.c
+> +++ b/drivers/clk/samsung/clk-cpu.c
+> @@ -164,7 +164,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+>  	 * the values for DIV_COPY and DIV_HPM dividers need not be set.
+>  	 */
+>  	div0 = cfg_data->div0;
+> -	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+>  		div1 = cfg_data->div1;
+>  		if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
+>  			div1 = readl(base + E4210_DIV_CPU1) &
+> @@ -185,7 +185,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+>  		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
+>  		WARN_ON(alt_div >= MAX_DIV);
+>  
+> -		if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
+> +		if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+>  			/*
+>  			 * In Exynos4210, ATB clock parent is also mout_core. So
+>  			 * ATB clock also needs to be mantained at safe speed.
+> @@ -206,7 +206,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+>  	writel(div0, base + E4210_DIV_CPU0);
+>  	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
+>  
+> -	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+>  		writel(div1, base + E4210_DIV_CPU1);
+>  		wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
+>  				DIV_MASK_ALL);
+> @@ -225,7 +225,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+>  	unsigned long mux_reg;
+>  
+>  	/* find out the divider values to use for clock data */
+> -	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+>  		while ((cfg_data->prate * 1000) != ndata->new_rate) {
+>  			if (cfg_data->prate == 0)
+>  				return -EINVAL;
+> @@ -240,7 +240,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+>  	writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
+>  	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
+>  
+> -	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+>  		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
+>  		div_mask |= E4210_DIV0_ATB_MASK;
+>  	}
