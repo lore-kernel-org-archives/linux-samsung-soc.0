@@ -1,37 +1,56 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v2 3/3] ARM: dts: Enable EC vboot context support on Peach boards
-Date: Tue, 15 Sep 2015 15:49:40 +0200
-Message-ID: <CABxcv==qZESJAjPOWLF-QiBZeCeUL9tfLmExzmBS5zX+DLd=7w@mail.gmail.com>
-References: <1442234049-18637-1-git-send-email-emilio.lopez@collabora.co.uk>
-	<1442234049-18637-4-git-send-email-emilio.lopez@collabora.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 2/7] [media] dvb: remove unused systime() function
+Date: Tue, 15 Sep 2015 17:49:03 +0200
+Message-ID: <1442332148-488079-3-git-send-email-arnd@arndb.de>
+References: <1442332148-488079-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f178.google.com ([209.85.160.178]:34741 "EHLO
-	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751811AbbIONtl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Sep 2015 09:49:41 -0400
-Received: by ykdg206 with SMTP id g206so185447582ykd.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2015 06:49:40 -0700 (PDT)
-In-Reply-To: <1442234049-18637-4-git-send-email-emilio.lopez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <y2038-bounces@lists.linaro.org>
+In-Reply-To: <1442332148-488079-1-git-send-email-arnd@arndb.de>
+List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/y2038/>
+List-Post: <mailto:y2038@lists.linaro.org>
+List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
+List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=subscribe>
+Errors-To: y2038-bounces@lists.linaro.org
+Sender: "Y2038" <y2038-bounces@lists.linaro.org>
+To: linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, y2038@lists.linaro.org, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hello Emilio,
-
-On Mon, Sep 14, 2015 at 2:34 PM, Emilio L=C3=B3pez
-<emilio.lopez@collabora.co.uk> wrote:
-> The Peach boards use the EC to store the vboot context information,
-> so add the corresponding properties on the EC node to indicate so.
->
-> Signed-off-by: Emilio L=C3=B3pez <emilio.lopez@collabora.co.uk>
-> ---
-
-Acked-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
-Javier
+VGhlIHN5c3RpbWUgZnVuY3Rpb24gdXNlcyBzdHJ1Y3QgdGltZXNwZWMsIHdoaWNoIHdlIHdhbnQg
+dG8gc3RvcAp1c2luZyBpbiB0aGUga2VybmVsIGJlY2F1c2UgaXQgb3ZlcmZsb3dzIGluIDIwMzgu
+IEZvcnR1bmF0ZWx5LAp0aGlzIHVzZSBpbiBkaWJ4MDAwX2NvbW1vbiBpcyBpbiBhIGZ1bmN0aW9u
+IHRoYXQgaXMgbmV2ZXIgY2FsbGVkLApzbyB3ZSBjYW4ganVzdCByZW1vdmUgaXQuCgpTaWduZWQt
+b2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgotLS0KIGRyaXZlcnMvbWVkaWEv
+ZHZiLWZyb250ZW5kcy9kaWJ4MDAwX2NvbW1vbi5jIHwgMTAgLS0tLS0tLS0tLQogZHJpdmVycy9t
+ZWRpYS9kdmItZnJvbnRlbmRzL2RpYngwMDBfY29tbW9uLmggfCAgMiAtLQogMiBmaWxlcyBjaGFu
+Z2VkLCAxMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL2R2Yi1mcm9u
+dGVuZHMvZGlieDAwMF9jb21tb24uYyBiL2RyaXZlcnMvbWVkaWEvZHZiLWZyb250ZW5kcy9kaWJ4
+MDAwX2NvbW1vbi5jCmluZGV4IDQzYmU3MjM4MzExZS4uNzljYjAwN2I0MDFmIDEwMDY0NAotLS0g
+YS9kcml2ZXJzL21lZGlhL2R2Yi1mcm9udGVuZHMvZGlieDAwMF9jb21tb24uYworKysgYi9kcml2
+ZXJzL21lZGlhL2R2Yi1mcm9udGVuZHMvZGlieDAwMF9jb21tb24uYwpAQCAtNTAwLDE2ICs1MDAs
+NiBAQCB2b2lkIGRpYngwMDBfZXhpdF9pMmNfbWFzdGVyKHN0cnVjdCBkaWJ4MDAwX2kyY19tYXN0
+ZXIgKm1zdCkKIH0KIEVYUE9SVF9TWU1CT0woZGlieDAwMF9leGl0X2kyY19tYXN0ZXIpOwogCi0K
+LXUzMiBzeXN0aW1lKHZvaWQpCi17Ci0Jc3RydWN0IHRpbWVzcGVjIHQ7Ci0KLQl0ID0gY3VycmVu
+dF9rZXJuZWxfdGltZSgpOwotCXJldHVybiAodC50dl9zZWMgKiAxMDAwMCkgKyAodC50dl9uc2Vj
+IC8gMTAwMDAwKTsKLX0KLUVYUE9SVF9TWU1CT0woc3lzdGltZSk7Ci0KIE1PRFVMRV9BVVRIT1Io
+IlBhdHJpY2sgQm9ldHRjaGVyIDxwYm9ldHRjaGVyQGRpYmNvbS5mcj4iKTsKIE1PRFVMRV9ERVND
+UklQVElPTigiQ29tbW9uIGZ1bmN0aW9uIHRoZSBEaUJjb20gZGVtb2R1bGF0b3IgZmFtaWx5Iik7
+CiBNT0RVTEVfTElDRU5TRSgiR1BMIik7CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL2R2Yi1m
+cm9udGVuZHMvZGlieDAwMF9jb21tb24uaCBiL2RyaXZlcnMvbWVkaWEvZHZiLWZyb250ZW5kcy9k
+aWJ4MDAwX2NvbW1vbi5oCmluZGV4IGI1MzhlMDU1NWM5NS4uNjFmNDE1MmYyNGVlIDEwMDY0NAot
+LS0gYS9kcml2ZXJzL21lZGlhL2R2Yi1mcm9udGVuZHMvZGlieDAwMF9jb21tb24uaAorKysgYi9k
+cml2ZXJzL21lZGlhL2R2Yi1mcm9udGVuZHMvZGlieDAwMF9jb21tb24uaApAQCAtNDcsOCArNDcs
+NiBAQCBleHRlcm4gdm9pZCBkaWJ4MDAwX2V4aXRfaTJjX21hc3RlcihzdHJ1Y3QgZGlieDAwMF9p
+MmNfbWFzdGVyICptc3QpOwogZXh0ZXJuIHZvaWQgZGlieDAwMF9yZXNldF9pMmNfbWFzdGVyKHN0
+cnVjdCBkaWJ4MDAwX2kyY19tYXN0ZXIgKm1zdCk7CiBleHRlcm4gaW50IGRpYngwMDBfaTJjX3Nl
+dF9zcGVlZChzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmkyY19hZGFwLCB1MTYgc3BlZWQpOwogCi1leHRl
+cm4gdTMyIHN5c3RpbWUodm9pZCk7Ci0KICNkZWZpbmUgQkFORF9MQkFORCAweDAxCiAjZGVmaW5l
+IEJBTkRfVUhGICAgMHgwMgogI2RlZmluZSBCQU5EX1ZIRiAgIDB4MDQKLS0gCjIuMS4wLnJjMgoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KWTIwMzggbWFp
+bGluZyBsaXN0ClkyMDM4QGxpc3RzLmxpbmFyby5vcmcKaHR0cHM6Ly9saXN0cy5saW5hcm8ub3Jn
+L21haWxtYW4vbGlzdGluZm8veTIwMzgK
