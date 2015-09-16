@@ -1,33 +1,28 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable USB Video Class support
-Date: Thu, 17 Sep 2015 07:59:14 +0900
-Message-ID: <55F9F442.60905@kernel.org>
-References: <1442232259-777-1-git-send-email-javier@osg.samsung.com> <55F7602C.5060108@samsung.com>
+Subject: Re: [PATCH] cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs
+Date: Thu, 17 Sep 2015 08:03:03 +0900
+Message-ID: <55F9F527.6010606@kernel.org>
+References: <1441731732-8624-1-git-send-email-b.zolnierkie@samsung.com> <5636818.tTEsh48iXg@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55F7602C.5060108@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Andreas Faerber <afaerber@suse.de>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:43446 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752521AbbIPXDK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Sep 2015 19:03:10 -0400
+In-Reply-To: <5636818.tTEsh48iXg@vostro.rjw.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/15/15 09:02, Krzysztof Kozlowski wrote:
-> On 14.09.2015 21:04, Javier Martinez Canillas wrote:
->> The Exynos5420 Peach Pit and Exynos5800 Peach Pi boards have a built-in
->> Silicon Motion USB UVC WebCam. Enable support for the USB Video Class
->> driver and its needed media Kconfig symbols so the camera is supported.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> ---
->>
->> Changes in v2:
->> - Enable tristate Kconfig options as module instead of built-in.
->>   Suggested by Krzysztof Kozlowski.
+On 09/09/15 10:14, Rafael J. Wysocki wrote:
+> On Tuesday, September 08, 2015 07:02:12 PM Bartlomiej Zolnierkiewicz wrote:
+>> CONFIG_PM ifdefs are superfluous and can be removed.
 > 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> I guess Kukjin can apply this one?
 > 
 Applied, thanks.
 
