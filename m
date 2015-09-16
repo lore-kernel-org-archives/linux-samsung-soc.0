@@ -1,37 +1,62 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 5/7] [media] use v4l2_get_timestamp where possible
-Date: Wed, 16 Sep 2015 10:57:48 +0200
-Message-ID: <55F92F0C.5000508@samsung.com>
-References: <1442332148-488079-1-git-send-email-arnd@arndb.de>
- <1442332148-488079-6-git-send-email-arnd@arndb.de>
+From: Thomas Pietrowski <thopiekar@gmail.com>
+Subject: Re: [PATCH RESEND v6 0/3] dts: thermal: Odroid U3: Provide support
+ for Odroid U3 fan
+Date: Wed, 16 Sep 2015 13:00:05 +0200
+Message-ID: <CAE-5t2sUqu+KBU_-oj1posMfA99wGNKjHk4yA4-o-7HcKGo5nQ@mail.gmail.com>
+References: <1425470624-25793-1-git-send-email-l.majewski@samsung.com>
+	<1439298440-15882-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1442332148-488079-6-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f177.google.com ([209.85.160.177]:36001 "EHLO
+	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752595AbbIPLAH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Sep 2015 07:00:07 -0400
+In-Reply-To: <1439298440-15882-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>
 
-On 15/09/15 17:49, Arnd Bergmann wrote:
-> This is a preparation for a change to the type of v4l2 timestamps.
-> v4l2_get_timestamp() is a helper function that reads the monotonic
-> time and stores it into a 'struct timeval'. Multiple drivers implement
-> the same thing themselves for historic reasons.
-> 
-> Changing them all to use v4l2_get_timestamp() is more consistent
-> and reduces the amount of code duplication, and most importantly
-> simplifies the following changes.
-> 
-> If desired, this patch can easily be split up into one patch per
-> driver.
-> 
-> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> ---
-For:
+Will this patchset be released with 4.3.x?
 
-  drivers/media/platform/exynos4-is/fimc-lite.c
-  drivers/media/platform/s3c-camif/camif-capture.c
-
-Acked-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+2015-08-11 15:07 GMT+02:00 Lukasz Majewski <l.majewski@samsung.com>:
+> Presented patches add support for Odroid's U3 optional CPU FAN, which uses PWM
+> subsystem for low level control.
+>
+> This patch is a resend of previously send series:
+> https://lkml.org/lkml/2015/3/4/726
+>
+> The "hwmon" part of this series has been already added to upstream.
+> Unfortunately, the DTS files for Odroid U3 device have NOT been added to
+> mainline repository.
+>
+> Those patches were tested at Exynos4412 - Odroid U3 board.
+>
+> Patches were applied on:
+> kernel_samsung -> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>
+> kernel_samsung/for-next (Linux v4.2-rc1)
+> SHA1: 366c21fdd7b1e71a47a6fa969f2e9a014c981aff
+>
+> Kamil Debski (1):
+>   ARM: dts: Add pwm-fan node to the Odroid-U3 board
+>
+> Lukasz Majewski (2):
+>   Documentation: dts: Documentation entry to explain how to use PWM FAN
+>     as a cooling device
+>   ARM: dts: Add properties to use pwm-fan device as a cooling device in
+>     Odroid U3
+>
+>  .../devicetree/bindings/hwmon/pwm-fan.txt          | 29 ++++++++++++++-
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts          | 43 ++++++++++++++++++++++
+>  2 files changed, 70 insertions(+), 2 deletions(-)
+>
+> --
+> 2.0.0.rc2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
