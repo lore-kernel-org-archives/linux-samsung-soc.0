@@ -1,45 +1,62 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
-Date: Thu, 17 Sep 2015 07:44:53 +0900
-Message-ID: <55F9F0E5.7000805@kernel.org>
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
- <20150908024659.GF26760@linux> <55EE5C79.2030604@samsung.com>
- <20150908042017.GJ26760@linux> <55EE6892.3010304@samsung.com>
- <20150908051053.GA18554@linux>
+Subject: Re: [PATCH v2] ARM: dts: Fix LEDs on exynos5422-odroidxu3
+Date: Thu, 17 Sep 2015 07:52:47 +0900
+Message-ID: <55F9F2BF.2060904@kernel.org>
+References: <1442136736-28672-1-git-send-email-k.kozlowski.k@gmail.com> <55F8AB56.1010900@kernel.org> <55F8AFAC.5090305@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20150908051053.GA18554@linux>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Anand Moon <linux.amoon@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:42857 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752328AbbIPWw6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Sep 2015 18:52:58 -0400
+In-Reply-To: <55F8AFAC.5090305@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/08/15 14:10, Viresh Kumar wrote:
-> On 08-09-15, 13:48, Krzysztof Kozlowski wrote:
->> Somehow my mind stuck on solving Exynos4x12 cpufreq issues.
+On 09/16/15 08:54, Krzysztof Kozlowski wrote:
+> On 16.09.2015 08:35, Kukjin Kim wrote:
+>> On 09/13/15 18:32, Krzysztof Kozlowski wrote:
+>>> The LEDs on Odroid XU3 family boards could not properly probe because PWM
+>>> outputs were reduced only to PWM for fan. Fix it for Odroid XU3 and
+>>> XU3-Lite boards by switching to usage of all 4 outputs (although the PWM
+>>> for MIPI probably is redundant because board does not have MIPI
+>>> connector available).
+>>>
+>>> This fixes warnings on dmesg:
+>>> [    4.838712] samsung-pwm 12dd0000.pwm: tried to request PWM channel 1 without output
+>>> [    4.838725] leds_pwm pwmleds: unable to request PWM for green:mmc0: -22
+>>> [    4.838767] leds_pwm: probe of pwmleds failed with error -22
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+>>>
+>>> ---
+>>>
+>>> Changes since v1:
+>>> 1. Do not rebase on patchset adding support for Odroid XU4 board. Rebase
+>>>    just on current next.
+>>> ---
 >>
->> Right, it should go through Rafael's, probably except DTS patch (4/4)
->> because it depends on previous DTS changes. These changes are still in
->> arm-soc, not in Linus' tree [0].
+>> Applied, thanks.
+>>
 > 
-> That's bad :(
+> Thanks. This is actually a candidate for current v4.3 cycle. It fixes
+> issue with LEDs for Odroid XU3 caused by Anand's b685d540cc26:
+> The offending commit b685d540cc26 was merged in v4.3.
+> I forgot to add "fixes" tag.
+> 	Fixes: b685d540cc26 ("ARM: dts: Add pwm-fan node for exynos5422-odroidxu3")
 > 
-> Anyway, 4/4 is kind of independent to this series, in the sense that
-> it wouldn't harm even if it gets applied separately.
+> Can you send it to arm-soc during this cycle?
 > 
-> So, go ahead and apply 4/4 to Samsung's tree and rest of this can be
-> picked by Rafael.
+Why not? Will do it ;-)
+
+> For current v4.3 Bartlomiej's patch is also an important candidate:
+> "ARM: dts: add suspend opp to exynos4412"
 > 
-Applied 4/4 into samsung tree, thanks.
+Thanks for gentle reminder.
 
 - Kukjin
