@@ -1,77 +1,82 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v2 0/7] Add support for Exynos SROM Controller driver
-Date: Thu, 17 Sep 2015 08:19:48 +0900
-Message-ID: <55F9F914.3000709@kernel.org>
-References: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
+From: Nicholas Krause <xerofoify@gmail.com>
+Subject: [PATCH] mach-s3c64xx:Fix error handling for certain calls to
+ s3c_gpio_cfgpin_range in the file dev-audio.c
+Date: Wed, 16 Sep 2015 21:51:13 -0400
+Message-ID: <1442454673-26752-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43923 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752349AbbIPXTz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Sep 2015 19:19:55 -0400
-In-Reply-To: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene@kernel.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, k.kozlowski@samsung.com, kgene@kernel.org, heiko@sntech.de, thomas.ab@samsung.com
 
-On 08/24/15 17:02, Pankaj Dubey wrote:
-> This patch set adds support for Exynos SROM controller DT based driver.
-> Currently SROM register sets are used only during S2R, so driver
-> basically added for taking care of S2R. It will help us in removing
-> static mapping from exynos.c and other extra code handline during S2R.
-> 
-> This patch set also updated exynos4 and exynos5 dtsi files for with device
-> node for srom, and added binding documentation for the same.
-> 
-> First two patches are some minor cleanup in mach-exynos.
-> 
-> Patchset v1 was posted here[1]
-> [1]: https://lkml.org/lkml/2015/4/29/98
-> 
-> Changes since v1:
->  - Rebased to latest kgene tree.
->  - Addressed review comments from Krzysztof Kozlowski.
->  - Add two new patches for minor cleanup in exynos.c and map.h
-> 
-> Pankaj Dubey (7):
->   ARM: EXYNOS: remove unused static mapping of CMU for exynos5
->   ARM: EXYNOS: code cleanup in map.h
->   drivers: soc: add support for exynos SROM driver
->   ARM: EXYNOS: Remove SROM related register settings from mach-exynos
->   ARM: dts: add SROM device node for exynos4
->   ARM: dts: add SROM device node for exynos5
->   Documentation: dt-bindings: add exynos-srom binding information
-> 
->  .../bindings/arm/samsung/exynos-srom.txt           |  12 ++
->  arch/arm/boot/dts/exynos4.dtsi                     |   5 +
->  arch/arm/boot/dts/exynos5.dtsi                     |   5 +
->  arch/arm/mach-exynos/Kconfig                       |   2 +
->  arch/arm/mach-exynos/common.h                      |   2 -
->  arch/arm/mach-exynos/exynos.c                      |  22 ----
->  arch/arm/mach-exynos/include/mach/map.h            |   8 --
->  arch/arm/mach-exynos/regs-srom.h                   |  53 --------
->  arch/arm/mach-exynos/suspend.c                     |  20 +--
->  arch/arm/plat-samsung/include/plat/map-s5p.h       |   1 -
->  drivers/soc/Kconfig                                |   1 +
->  drivers/soc/Makefile                               |   1 +
->  drivers/soc/samsung/Kconfig                        |  13 ++
->  drivers/soc/samsung/Makefile                       |   1 +
->  drivers/soc/samsung/exynos-srom.c                  | 143 +++++++++++++++++++++
->  drivers/soc/samsung/exynos-srom.h                  |  51 ++++++++
->  16 files changed, 236 insertions(+), 104 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
->  delete mode 100644 arch/arm/mach-exynos/regs-srom.h
->  create mode 100644 drivers/soc/samsung/Kconfig
->  create mode 100644 drivers/soc/samsung/Makefile
->  create mode 100644 drivers/soc/samsung/exynos-srom.c
->  create mode 100644 drivers/soc/samsung/exynos-srom.h
-> 
-Hi Pankaj,
+This fixes error handling for calls to the function
+s3c_gpio_cfgpin_range in the file dev-audio.c that
+assume calls to this particular function always run
+successfully to properly check now if these calls
+fail by returning a error code and if so return it
+directly to the call of these functions in order for
+the caller to be able to handle these failed calls in
+its own error path(s).
 
-Can you please address comments as per Krzysztof's review?...
+Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+---
+ arch/arm/mach-s3c64xx/dev-audio.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-- Kukjin
+diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+index ff780a8..81fabdb 100644
+--- a/arch/arm/mach-s3c64xx/dev-audio.c
++++ b/arch/arm/mach-s3c64xx/dev-audio.c
+@@ -27,6 +27,7 @@
+ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+ {
+ 	unsigned int base;
++	int ret;
+ 
+ 	switch (pdev->id) {
+ 	case 0:
+@@ -47,9 +48,9 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
+-
+-	return 0;
++	ret = s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
++
++	return ret;
+ }
+ 
+ static struct resource s3c64xx_iis0_resource[] = {
+@@ -122,6 +123,7 @@ EXPORT_SYMBOL(s3c64xx_device_iisv4);
+ static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
+ {
+ 	unsigned int base;
++	int ret;
+ 
+ 	switch (pdev->id) {
+ 	case 0:
+@@ -136,8 +138,8 @@ static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(2));
+-	return 0;
++	ret = s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(2));
++	return ret;
+ }
+ 
+ static struct resource s3c64xx_pcm0_resource[] = {
+-- 
+2.1.4
