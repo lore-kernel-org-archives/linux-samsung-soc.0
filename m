@@ -1,107 +1,132 @@
-From: nick <xerofoify@gmail.com>
-Subject: Re: [PATCH RFT] mach-s3c64xx:Fix error handling for certain calls to
- s3c_gpio_cfgpin_range in the file dev-audio.c
-Date: Thu, 17 Sep 2015 06:52:22 -0400
-Message-ID: <55FA9B66.6020000@gmail.com>
-References: <1442458835-25520-1-git-send-email-xerofoify@gmail.com>
- <20150917102319.GL21084@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20150917102319.GL21084@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH RESEND] ARM: dts: Move display-timings node from fimd to dp
+Date: Thu, 17 Sep 2015 14:48:39 +0200
+Message-ID: <1442494120-463-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:38253 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751744AbbIQMst (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Sep 2015 08:48:49 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Sean Paul <seanpaul@chromium.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
+From: Sean Paul <seanpaul@chromium.org>
 
+This patch moves the display-timings node from fimd to dp to reflect the
+device tree bindings change.
 
-On 2015-09-17 06:23 AM, Russell King - ARM Linux wrote:
-> On Wed, Sep 16, 2015 at 11:00:35PM -0400, Nicholas Krause wrote:
->> diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
->> index ff780a8..81fabdb 100644
->> --- a/arch/arm/mach-s3c64xx/dev-audio.c
->> +++ b/arch/arm/mach-s3c64xx/dev-audio.c
->> @@ -27,6 +27,7 @@
->>  static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
->>  {
->>  	unsigned int base;
->> +	int ret;
->>  
->>  	switch (pdev->id) {
->>  	case 0:
->> @@ -47,9 +48,9 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
->>  		return -EINVAL;
->>  	}
->>  
->> -	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
->> -
->> -	return 0;
->> +	ret = s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
->> +
->> +	return ret;
-> 
-> Let's look at the code:
-> 
->         case 2:
->                 s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
->                 s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
->                 s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
->                 s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
->                 return 0;
->         default:
->                 printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
->                         pdev->id);
->                 return -EINVAL;
->         }
-> 
->         s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
-> 
->         return 0;
-> 
-> and you're changing it to:
-> 
->         case 2:
->                 s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
->                 s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
->                 s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
->                 s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
->                 return 0;
->         default:
->                 printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
->                         pdev->id);
->                 return -EINVAL;
->         }
-> 
->         ret = s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
-> 
->         return ret;
-> 
-> What about all the previous calls to s3c_gpio_cfgpin_range() and
-> s3c_gpio_cfgpin() ?  Can't they fail as well?
-> 
-> However, _maybe_ the original authors idea was "I don't care if these
-> calls fail, it's safer to continue if they do" and your changes actually
-> result in breakage.
-> 
-I considered that maybe I was a little too hasty when reading this function
-definition and came  to the wrong conclusion when writing this patch :(.
-> Maybe the better solution would be to add WARN_ON() around each of these.
-> 
-WARN_ON around these is better as they cannot fail or the gpio configuration
-for this board will not function properly making part of this board no longer
-usable until a reboot or hard restart.
-Nick
-> There's a lot of questions here, none of them are a trivial case of "lets
-> generate a patch to just do some random change to the code and hope it's
-> right."
-> 
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+[tomeu.vizoso@collabora.com: Rebased]
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+
+---
+
+Hi,
+
+looks like a long time ago the bindings were changed and the DTs for
+these boards weren't updated.
+
+I have retaken Sean's forgotten patch and rebased it, but I have only
+tested on an Arndale that exynos-drm doesn't complain about missing
+timings.
+
+Regards,
+
+Tomeu
+---
+ arch/arm/boot/dts/exynos5250-arndale.dts  |  8 ++++----
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 16 ++++++++--------
+ arch/arm/boot/dts/exynos5420-smdk5420.dts |  7 ++++---
+ 3 files changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index db3f65f3eb45..c000532c1444 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -129,10 +129,6 @@
+ 	samsung,color-depth = <1>;
+ 	samsung,link-rate = <0x0a>;
+ 	samsung,lane-count = <4>;
+-};
+-
+-&fimd {
+-	status = "okay";
+ 
+ 	display-timings {
+ 		native-mode = <&timing0>;
+@@ -152,6 +148,10 @@
+ 	};
+ };
+ 
++&fimd {
++	status = "okay";
++};
++
+ &hdmi {
+ 	hpd-gpio = <&gpx3 7 GPIO_ACTIVE_LOW>;
+ 	vdd_osc-supply = <&ldo10_reg>;
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index c625e71217aa..0f5dcd418af8 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -89,14 +89,6 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dp_hpd>;
+ 	status = "okay";
+-};
+-
+-&ehci {
+-	samsung,vbus-gpio = <&gpx2 6 GPIO_ACTIVE_HIGH>;
+-};
+-
+-&fimd {
+-	status = "okay";
+ 
+ 	display-timings {
+ 		native-mode = <&timing0>;
+@@ -116,6 +108,14 @@
+ 	};
+ };
+ 
++&ehci {
++	samsung,vbus-gpio = <&gpx2 6 GPIO_ACTIVE_HIGH>;
++};
++
++&fimd {
++	status = "okay";
++};
++
+ &hdmi {
+ 	hpd-gpio = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+ };
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 98871f972c8a..7520d52f4e22 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -98,10 +98,7 @@
+ 	samsung,link-rate = <0x0a>;
+ 	samsung,lane-count = <4>;
+ 	status = "okay";
+-};
+ 
+-&fimd {
+-	status = "okay";
+ 	display-timings {
+ 		native-mode = <&timing0>;
+ 		timing0: timing@0 {
+@@ -118,6 +115,10 @@
+ 	};
+ };
+ 
++&fimd {
++	status = "okay";
++};
++
+ &hdmi {
+ 	status = "okay";
+ 	hpd-gpio = <&gpx3 7 0>;
+-- 
+2.4.3
