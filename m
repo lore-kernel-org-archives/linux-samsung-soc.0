@@ -1,85 +1,33 @@
-From: Nicholas Krause <xerofoify@gmail.com>
-Subject: [PATCH RFT] mach-s3c64xx:Fix error handling for certain calls to
- s3c_gpio_cfgpin_range in the file dev-audio.c
-Date: Wed, 16 Sep 2015 23:00:35 -0400
-Message-ID: <1442458835-25520-1-git-send-email-xerofoify@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 6/6] pinctrl: samsung: Remove unneded semicolon
+Date: Thu, 17 Sep 2015 16:55:21 +0900
+Message-ID: <55FA71E9.4010402@samsung.com>
+References: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
+ <1442392111-8448-7-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene@kernel.org
-Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1442392111-8448-7-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This fixes error handling for calls to the function 
-s3c_gpio_cfgpin_range in the file dev-audio.c that
-assume calls to this particular function always run 
-successfully to properly check now if these calls
-fail by returning a error code and if so return it 
-directly as otherwise we fail to signal that the
-pins have failed to changed their configuration to 
-future function users of the gpio configuration
-of this device, therefore making them incorrectly 
-access a misconfigured gpio subsystem on the board
-using this gpio driver.
+On 16.09.2015 17:28, Javier Martinez Canillas wrote:
+> It's not needed an is just creating a null statement, so remove it.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+>  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
----
- arch/arm/mach-s3c64xx/dev-audio.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Quite obvious and pointed out by coccicheck, so:
 
-diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-index ff780a8..81fabdb 100644
---- a/arch/arm/mach-s3c64xx/dev-audio.c
-+++ b/arch/arm/mach-s3c64xx/dev-audio.c
-@@ -27,6 +27,7 @@
- static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
- {
- 	unsigned int base;
-+	int ret;
- 
- 	switch (pdev->id) {
- 	case 0:
-@@ -47,9 +48,9 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
--
--	return 0;
-+	ret = s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
-+
-+	return ret;
- }
- 
- static struct resource s3c64xx_iis0_resource[] = {
-@@ -122,6 +123,7 @@ EXPORT_SYMBOL(s3c64xx_device_iisv4);
- static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
- {
- 	unsigned int base;
-+	int ret;
- 
- 	switch (pdev->id) {
- 	case 0:
-@@ -136,8 +138,8 @@ static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(2));
--	return 0;
-+	ret = s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(2));
-+	return ret;
- }
- 
- static struct resource s3c64xx_pcm0_resource[] = {
--- 
-2.1.4
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
