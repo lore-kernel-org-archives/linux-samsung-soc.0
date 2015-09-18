@@ -1,133 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 9/9] [media] omap3isp: support 64-bit version of
-	omap3isp_stat_data
-Date: Thu, 17 Sep 2015 23:19:40 +0200
-Message-ID: <1442524780-781677-10-git-send-email-arnd@arndb.de>
-References: <1442524780-781677-1-git-send-email-arnd@arndb.de>
+From: Nicholas Krause <xerofoify@gmail.com>
+Subject: [PATCH RESEND] mach:-s3c64xx:Cause kernel oops with WARN_ON if calls
+ for setting up gpio fail in s3c64xx_i2s_cfg_gpio
+Date: Thu, 17 Sep 2015 20:54:34 -0400
+Message-ID: <1442537674-26953-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <1442524780-781677-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, y2038@lists.linaro.org, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene@kernel.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QyBsaWJyYXJpZXMgd2l0aCA2NC1iaXQgdGltZV90IHVzZSBhbiBpbmNvbXBhdGlibGUgZm9ybWF0
-IGZvcgpzdHJ1Y3Qgb21hcDNpc3Bfc3RhdF9kYXRhLiBUaGlzIGNoYW5nZXMgdGhlIGtlcm5lbCBj
-b2RlIHRvCnN1cHBvcnQgZWl0aGVyIHZlcnNpb24sIGJ5IG1vdmluZyBvdmVyIHRoZSBub3JtYWwg
-aGFuZGxpbmcKdG8gdGhlIDY0LWJpdCB2YXJpYW50LCBhbmQgYWRkaW5nIGNvbXBhdGlibGl0eSBj
-b2RlIHRvIGhhbmRsZQp0aGUgb2xkIGJpbmFyeSBmb3JtYXQgd2l0aCB0aGUgZXhpc3RpbmcgaW9j
-dGwgY29tbWFuZCBjb2RlLgoKRm9ydHVuYXRlbHksIHRoZSBjb21tYW5kIGNvZGUgaW5jbHVkZXMg
-dGhlIHNpemUgb2YgdGhlIHN0cnVjdHVyZSwKc28gdGhlIGRpZmZlcmVuY2UgZ2V0cyBoYW5kbGVk
-IGF1dG9tYXRpY2FsbHkuCgpTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRi
-LmRlPgotLS0KIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vb21hcDNpc3AvaXNwaDNhX2Fld2IuYyB8
-ICAyICsrCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL29tYXAzaXNwL2lzcGgzYV9hZi5jICAgfCAg
-MiArKwogZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9vbWFwM2lzcC9pc3BoaXN0LmMgICAgIHwgIDIg
-KysKIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vb21hcDNpc3AvaXNwc3RhdC5jICAgICB8IDE4ICsr
-KysrKysrKysrKysrKystLQogZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9vbWFwM2lzcC9pc3BzdGF0
-LmggICAgIHwgIDIgKysKIGluY2x1ZGUvdWFwaS9saW51eC9vbWFwM2lzcC5oICAgICAgICAgICAg
-ICAgICB8IDE5ICsrKysrKysrKysrKysrKysrKysKIDYgZmlsZXMgY2hhbmdlZCwgNDMgaW5zZXJ0
-aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRm
-b3JtL29tYXAzaXNwL2lzcGgzYV9hZXdiLmMgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL29tYXAz
-aXNwL2lzcGgzYV9hZXdiLmMKaW5kZXggY2NhZjkyZjM5MjM2Li4yZDU2NzcyNTYwOGYgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vb21hcDNpc3AvaXNwaDNhX2Fld2IuYworKysg
-Yi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL29tYXAzaXNwL2lzcGgzYV9hZXdiLmMKQEAgLTI1MCw2
-ICsyNTAsOCBAQCBzdGF0aWMgbG9uZyBoM2FfYWV3Yl9pb2N0bChzdHJ1Y3QgdjRsMl9zdWJkZXYg
-KnNkLCB1bnNpZ25lZCBpbnQgY21kLCB2b2lkICphcmcpCiAJCXJldHVybiBvbWFwM2lzcF9zdGF0
-X2NvbmZpZyhzdGF0LCBhcmcpOwogCWNhc2UgVklESU9DX09NQVAzSVNQX1NUQVRfUkVROgogCQly
-ZXR1cm4gb21hcDNpc3Bfc3RhdF9yZXF1ZXN0X3N0YXRpc3RpY3Moc3RhdCwgYXJnKTsKKwljYXNl
-IFZJRElPQ19PTUFQM0lTUF9TVEFUX1JFUV9USU1FMzI6CisJCXJldHVybiBvbWFwM2lzcF9zdGF0
-X3JlcXVlc3Rfc3RhdGlzdGljc190aW1lMzIoc3RhdCwgYXJnKTsKIAljYXNlIFZJRElPQ19PTUFQ
-M0lTUF9TVEFUX0VOOiB7CiAJCXVuc2lnbmVkIGxvbmcgKmVuID0gYXJnOwogCQlyZXR1cm4gb21h
-cDNpc3Bfc3RhdF9lbmFibGUoc3RhdCwgISEqZW4pOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRp
-YS9wbGF0Zm9ybS9vbWFwM2lzcC9pc3BoM2FfYWYuYyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
-b21hcDNpc3AvaXNwaDNhX2FmLmMKaW5kZXggOTI5MzdmN2VlY2VmLi4yYWMwMjM3MTMxOGIgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vb21hcDNpc3AvaXNwaDNhX2FmLmMKKysr
-IGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9vbWFwM2lzcC9pc3BoM2FfYWYuYwpAQCAtMzE0LDYg
-KzMxNCw4IEBAIHN0YXRpYyBsb25nIGgzYV9hZl9pb2N0bChzdHJ1Y3QgdjRsMl9zdWJkZXYgKnNk
-LCB1bnNpZ25lZCBpbnQgY21kLCB2b2lkICphcmcpCiAJCXJldHVybiBvbWFwM2lzcF9zdGF0X2Nv
-bmZpZyhzdGF0LCBhcmcpOwogCWNhc2UgVklESU9DX09NQVAzSVNQX1NUQVRfUkVROgogCQlyZXR1
-cm4gb21hcDNpc3Bfc3RhdF9yZXF1ZXN0X3N0YXRpc3RpY3Moc3RhdCwgYXJnKTsKKwljYXNlIFZJ
-RElPQ19PTUFQM0lTUF9TVEFUX1JFUV9USU1FMzI6CisJCXJldHVybiBvbWFwM2lzcF9zdGF0X3Jl
-cXVlc3Rfc3RhdGlzdGljc190aW1lMzIoc3RhdCwgYXJnKTsKIAljYXNlIFZJRElPQ19PTUFQM0lT
-UF9TVEFUX0VOOiB7CiAJCWludCAqZW4gPSBhcmc7CiAJCXJldHVybiBvbWFwM2lzcF9zdGF0X2Vu
-YWJsZShzdGF0LCAhISplbik7CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL29t
-YXAzaXNwL2lzcGhpc3QuYyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vb21hcDNpc3AvaXNwaGlz
-dC5jCmluZGV4IDcxMzhiMDQzYTRhYS4uNjY5Yjk3YjA3OWVlIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L21lZGlhL3BsYXRmb3JtL29tYXAzaXNwL2lzcGhpc3QuYworKysgYi9kcml2ZXJzL21lZGlhL3Bs
-YXRmb3JtL29tYXAzaXNwL2lzcGhpc3QuYwpAQCAtNDM2LDYgKzQzNiw4IEBAIHN0YXRpYyBsb25n
-IGhpc3RfaW9jdGwoc3RydWN0IHY0bDJfc3ViZGV2ICpzZCwgdW5zaWduZWQgaW50IGNtZCwgdm9p
-ZCAqYXJnKQogCQlyZXR1cm4gb21hcDNpc3Bfc3RhdF9jb25maWcoc3RhdCwgYXJnKTsKIAljYXNl
-IFZJRElPQ19PTUFQM0lTUF9TVEFUX1JFUToKIAkJcmV0dXJuIG9tYXAzaXNwX3N0YXRfcmVxdWVz
-dF9zdGF0aXN0aWNzKHN0YXQsIGFyZyk7CisJY2FzZSBWSURJT0NfT01BUDNJU1BfU1RBVF9SRVFf
-VElNRTMyOgorCQlyZXR1cm4gb21hcDNpc3Bfc3RhdF9yZXF1ZXN0X3N0YXRpc3RpY3NfdGltZTMy
-KHN0YXQsIGFyZyk7CiAJY2FzZSBWSURJT0NfT01BUDNJU1BfU1RBVF9FTjogewogCQlpbnQgKmVu
-ID0gYXJnOwogCQlyZXR1cm4gb21hcDNpc3Bfc3RhdF9lbmFibGUoc3RhdCwgISEqZW4pOwpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9vbWFwM2lzcC9pc3BzdGF0LmMgYi9kcml2
-ZXJzL21lZGlhL3BsYXRmb3JtL29tYXAzaXNwL2lzcHN0YXQuYwppbmRleCBmYTk2ZTMzMGM1NjMu
-LjNkNzAzMzI0MjJiNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9vbWFwM2lz
-cC9pc3BzdGF0LmMKKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9vbWFwM2lzcC9pc3BzdGF0
-LmMKQEAgLTQ5Niw4ICs0OTYsNyBAQCBpbnQgb21hcDNpc3Bfc3RhdF9yZXF1ZXN0X3N0YXRpc3Rp
-Y3Moc3RydWN0IGlzcHN0YXQgKnN0YXQsCiAJCXJldHVybiBQVFJfRVJSKGJ1Zik7CiAJfQogCi0J
-ZGF0YS0+dHMudHZfc2VjID0gYnVmLT50cy50dl9zZWM7Ci0JZGF0YS0+dHMudHZfdXNlYyA9IGJ1
-Zi0+dHMudHZfdXNlYzsKKwlkYXRhLT50cyA9IGJ1Zi0+dHM7CiAJZGF0YS0+Y29uZmlnX2NvdW50
-ZXIgPSBidWYtPmNvbmZpZ19jb3VudGVyOwogCWRhdGEtPmZyYW1lX251bWJlciA9IGJ1Zi0+ZnJh
-bWVfbnVtYmVyOwogCWRhdGEtPmJ1Zl9zaXplID0gYnVmLT5idWZfc2l6ZTsKQEAgLTUwOSw2ICs1
-MDgsMjEgQEAgaW50IG9tYXAzaXNwX3N0YXRfcmVxdWVzdF9zdGF0aXN0aWNzKHN0cnVjdCBpc3Bz
-dGF0ICpzdGF0LAogCXJldHVybiAwOwogfQogCitpbnQgb21hcDNpc3Bfc3RhdF9yZXF1ZXN0X3N0
-YXRpc3RpY3NfdGltZTMyKHN0cnVjdCBpc3BzdGF0ICpzdGF0LAorCQkJCQlzdHJ1Y3Qgb21hcDNp
-c3Bfc3RhdF9kYXRhX3RpbWUzMiAqZGF0YSkKK3sKKwlzdHJ1Y3Qgb21hcDNpc3Bfc3RhdF9kYXRh
-IGRhdGE2NDsKKwlpbnQgcmV0OworCisJcmV0ID0gb21hcDNpc3Bfc3RhdF9yZXF1ZXN0X3N0YXRp
-c3RpY3Moc3RhdCwgJmRhdGE2NCk7CisKKwlkYXRhLT50cy50dl9zZWMgPSBkYXRhNjQudHMudHZf
-c2VjOworCWRhdGEtPnRzLnR2X3VzZWMgPSBkYXRhNjQudHMudHZfdXNlYzsKKwltZW1jcHkoJmRh
-dGEtPmJ1ZiwgJmRhdGE2NC5idWYsIHNpemVvZigqZGF0YSkgLSBzaXplb2YoZGF0YS0+dHMpKTsK
-KworCXJldHVybiByZXQ7Cit9CisKIC8qCiAgKiBvbWFwM2lzcF9zdGF0X2NvbmZpZyAtIFJlY2Vp
-dmVzIG5ldyBzdGF0aXN0aWMgZW5naW5lIGNvbmZpZ3VyYXRpb24uCiAgKiBAbmV3X2NvbmY6IFBv
-aW50ZXIgdG8gY29uZmlnIHN0cnVjdHVyZS4KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxh
-dGZvcm0vb21hcDNpc3AvaXNwc3RhdC5oIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9vbWFwM2lz
-cC9pc3BzdGF0LmgKaW5kZXggN2I0ZjEzNjU2N2EzLi5iMTllYTZjOGY3MzMgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vb21hcDNpc3AvaXNwc3RhdC5oCisrKyBiL2RyaXZlcnMv
-bWVkaWEvcGxhdGZvcm0vb21hcDNpc3AvaXNwc3RhdC5oCkBAIC0xMzAsNiArMTMwLDggQEAgc3Ry
-dWN0IGlzcHN0YXRfZ2VuZXJpY19jb25maWcgewogaW50IG9tYXAzaXNwX3N0YXRfY29uZmlnKHN0
-cnVjdCBpc3BzdGF0ICpzdGF0LCB2b2lkICpuZXdfY29uZik7CiBpbnQgb21hcDNpc3Bfc3RhdF9y
-ZXF1ZXN0X3N0YXRpc3RpY3Moc3RydWN0IGlzcHN0YXQgKnN0YXQsCiAJCQkJICAgICBzdHJ1Y3Qg
-b21hcDNpc3Bfc3RhdF9kYXRhICpkYXRhKTsKK2ludCBvbWFwM2lzcF9zdGF0X3JlcXVlc3Rfc3Rh
-dGlzdGljc190aW1lMzIoc3RydWN0IGlzcHN0YXQgKnN0YXQsCisJCQkJICAgICBzdHJ1Y3Qgb21h
-cDNpc3Bfc3RhdF9kYXRhX3RpbWUzMiAqZGF0YSk7CiBpbnQgb21hcDNpc3Bfc3RhdF9pbml0KHN0
-cnVjdCBpc3BzdGF0ICpzdGF0LCBjb25zdCBjaGFyICpuYW1lLAogCQkgICAgICAgY29uc3Qgc3Ry
-dWN0IHY0bDJfc3ViZGV2X29wcyAqc2Rfb3BzKTsKIHZvaWQgb21hcDNpc3Bfc3RhdF9jbGVhbnVw
-KHN0cnVjdCBpc3BzdGF0ICpzdGF0KTsKZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9saW51eC9v
-bWFwM2lzcC5oIGIvaW5jbHVkZS91YXBpL2xpbnV4L29tYXAzaXNwLmgKaW5kZXggYzA5MGNmOTI0
-OWJiLi40YmZmNjZhZWZjYTUgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvdWFwaS9saW51eC9vbWFwM2lz
-cC5oCisrKyBiL2luY2x1ZGUvdWFwaS9saW51eC9vbWFwM2lzcC5oCkBAIC01NCw2ICs1NCw4IEBA
-CiAJX0lPV1IoJ1YnLCBCQVNFX1ZJRElPQ19QUklWQVRFICsgNSwgc3RydWN0IG9tYXAzaXNwX2gz
-YV9hZl9jb25maWcpCiAjZGVmaW5lIFZJRElPQ19PTUFQM0lTUF9TVEFUX1JFUSBcCiAJX0lPV1Io
-J1YnLCBCQVNFX1ZJRElPQ19QUklWQVRFICsgNiwgc3RydWN0IG9tYXAzaXNwX3N0YXRfZGF0YSkK
-KyNkZWZpbmUgVklESU9DX09NQVAzSVNQX1NUQVRfUkVRX1RJTUUzMiBcCisJX0lPV1IoJ1YnLCBC
-QVNFX1ZJRElPQ19QUklWQVRFICsgNiwgc3RydWN0IG9tYXAzaXNwX3N0YXRfZGF0YV90aW1lMzIp
-CiAjZGVmaW5lIFZJRElPQ19PTUFQM0lTUF9TVEFUX0VOIFwKIAlfSU9XUignVicsIEJBU0VfVklE
-SU9DX1BSSVZBVEUgKyA3LCB1bnNpZ25lZCBsb25nKQogCkBAIC0xNjQsNyArMTY2LDExIEBAIHN0
-cnVjdCBvbWFwM2lzcF9oM2FfYWV3Yl9jb25maWcgewogICogQGNvbmZpZ19jb3VudGVyOiBOdW1i
-ZXIgb2YgdGhlIGNvbmZpZ3VyYXRpb24gYXNzb2NpYXRlZCB3aXRoIHRoZSBkYXRhLgogICovCiBz
-dHJ1Y3Qgb21hcDNpc3Bfc3RhdF9kYXRhIHsKKyNpZmRlZiBfX0tFUk5FTF9fCisJc3RydWN0IHY0
-bDJfdGltZXZhbCB0czsKKyNlbHNlCiAJc3RydWN0IHRpbWV2YWwgdHM7CisjZW5kaWYKIAl2b2lk
-IF9fdXNlciAqYnVmOwogCV9fdTMyIGJ1Zl9zaXplOwogCV9fdTE2IGZyYW1lX251bWJlcjsKQEAg
-LTE3Miw2ICsxNzgsMTkgQEAgc3RydWN0IG9tYXAzaXNwX3N0YXRfZGF0YSB7CiAJX191MTYgY29u
-ZmlnX2NvdW50ZXI7CiB9OwogCisjaWZkZWYgX19LRVJORUxfXworc3RydWN0IG9tYXAzaXNwX3N0
-YXRfZGF0YV90aW1lMzIgeworCXN0cnVjdCB7CisJCV9fczMyCXR2X3NlYzsKKwkJX19zMzIJdHZf
-dXNlYzsKKwl9IHRzOworCV9fdTMyIGJ1ZjsKKwlfX3UzMiBidWZfc2l6ZTsKKwlfX3UxNiBmcmFt
-ZV9udW1iZXI7CisJX191MTYgY3VyX2ZyYW1lOworCV9fdTE2IGNvbmZpZ19jb3VudGVyOworfTsK
-KyNlbmRpZgogCiAvKiBIaXN0b2dyYW0gcmVsYXRlZCBzdHJ1Y3RzICovCiAKLS0gCjIuMS4wLnJj
-MgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KWTIwMzgg
-bWFpbGluZyBsaXN0ClkyMDM4QGxpc3RzLmxpbmFyby5vcmcKaHR0cHM6Ly9saXN0cy5saW5hcm8u
-b3JnL21haWxtYW4vbGlzdGluZm8veTIwMzgK
+This fixes the function s3c64xx_i2c_cfg_gpio to cause a kernel oopes
+if the call to either s3c_gpio_cfgpin_range or s3c_gpio_cfgpin fail
+as we cannot continue to run on a board using this gpio setup if
+the configuration for the board fails when the gpio configuration
+of the board is being reconfigured in the function in
+s3c64xx_i2s_cfg_gpio.
+
+Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+---
+ arch/arm/mach-s3c64xx/dev-audio.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+index ff780a8..5e7538b 100644
+--- a/arch/arm/mach-s3c64xx/dev-audio.c
++++ b/arch/arm/mach-s3c64xx/dev-audio.c
+@@ -36,10 +36,10 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+ 		base = S3C64XX_GPE(0);
+ 		break;
+ 	case 2:
+-		s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
+-		s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
+-		s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
+-		s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
++		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5)));
++		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5)));
++		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5)));
++		WARN_ON(s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));)
+ 		return 0;
+ 	default:
+ 		printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
+@@ -47,7 +47,7 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
++	WARN_ON(s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3)));
+ 
+ 	return 0;
+ }
+-- 
+2.1.4
