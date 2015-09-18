@@ -1,58 +1,57 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: Re: [PATCH v2 7/9] [media] v4l2: introduce v4l2_timeval
-Date: Fri, 18 Sep 2015 12:22:47 +0200
-Message-ID: <55FBE5F7.3030609@xs4all.nl>
-References: <1442524780-781677-1-git-send-email-arnd@arndb.de> <9019880.VVdOR6WRt1@wuerfel> <55FBDEDC.8040204@xs4all.nl> <4764782.hLp7DObtr0@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4764782.hLp7DObtr0@wuerfel>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH 0/4] Exynos 5433 jpeg h/w codec support
+Date: Fri, 18 Sep 2015 16:20:56 +0200
+Message-ID: <1442586060-23657-1-git-send-email-andrzej.p@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20979 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752800AbbIROWA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Sep 2015 10:22:00 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On 09/18/15 12:08, Arnd Bergmann wrote:
-> On Friday 18 September 2015 11:52:28 Hans Verkuil wrote:
->> On 09/18/15 11:43, Arnd Bergmann wrote:
->>> On Friday 18 September 2015 11:27:40 Hans Verkuil wrote:
->>>> Ah, OK. Got it.
->>>>
->>>> I think this is dependent on the upcoming media workshop next month. If we
->>>> decide to redesign v4l2_buffer anyway, then we can avoid timeval completely.
->>>> And the only place where we would need to convert it in the compat code
->>>> hidden in the v4l2 core (likely v4l2-ioctl.c).
->>>
->>> Ah, I think I understood the idea now, I missed that earlier when you mention
->>> the idea.
->>>
->>> So what you are saying here is that you could come up with a new unambiguous
->>> (using only __u32 and __u64 types and no pointers) format that gets exposed
->>> to a new set of ioctls, and then change the handling of the existing three
->>> formats (native 64-bit, traditional 32-bit, and 32-bit with 64-bit time_t)
->>> so they get converted into the new format by the common ioctl handling code?
->>
->> Right. Drivers only see the new struct, and only v4l2-ioctl.c (and possible
->> v4l2-compat-ioctl32.c) see the old ones.
->>
->> BTW, I will probably pick up patches 4 and 6 for 4.4. That should help a bit.
-> 
-> Ok, thanks!
-> 
-> I guess it's up to Mauro to pick up the first three patches?
+Support for Exynos 5433 to the s5p-jpeg driver.
 
-Yes.
+The series also includes jpeg codec node definition for Device Tree,
+but it depends on:
 
-> As I don't see anything more to do for me here until you've had the
-> discussion about the new format, I'll move on to another subsystem now.
-> I have around 70 patches waiting to be submitted, plus the system call
-> series.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+branch v4.3-drop/dt64-samsung which has not made it into 4.3,
+but the driver is meant for 4.4.
 
-Agreed.
+Rebased onto Mauro's master with the branch mentioned above merged.
 
-Thanks again for working on this!
+This patch series also adds Andrzej Pietrasiewicz and
+Jacek Anaszewski as maintainers of drivers/media/platform/s5p-jpeg.
 
-Regards,
+Andrzej is the original author of the driver, and has committed
+support for three Exynos chip models and some fixes.
+Jacek has committed support for another three and a number of fixes,
+and is the second author of the driver.
+The code size is now quite large compared to the initial release,
+so having it maintained is a good idea and we both have the supported
+hardware at hand.
 
-	Hans
+Andrzej Pietrasiewicz (2):
+  s5p-jpeg: add support for 5433
+  MAINTAINERS: add exynos jpeg codec maintainers
+
+Marek Szyprowski (2):
+  s5p-jpeg: generalize clocks handling
+  ARM64: dts: exynos5433: add jpeg node
+
+ .../bindings/media/exynos-jpeg-codec.txt           |   3 +-
+ MAINTAINERS                                        |   8 +
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  21 +
+ drivers/media/platform/s5p-jpeg/jpeg-core.c        | 444 ++++++++++++++++++---
+ drivers/media/platform/s5p-jpeg/jpeg-core.h        |  41 +-
+ drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c  |  80 +++-
+ drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h  |  11 +-
+ drivers/media/platform/s5p-jpeg/jpeg-regs.h        |  85 ++--
+ 8 files changed, 588 insertions(+), 105 deletions(-)
+
+-- 
+1.9.1
