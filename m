@@ -1,51 +1,49 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v2 0/9] drm/exynos: rewrite fimg2d error handling
-Date: Mon, 21 Sep 2015 19:46:17 +0200
-Message-ID: <56004269.4060707@math.uni-bielefeld.de>
-References: <1441725754-27555-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CACvgo51rc1QC=EaGqb1Zq5T=j8R91CXq+KA_W24vKVG8sqZ5uQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACvgo51rc1QC=EaGqb1Zq5T=j8R91CXq+KA_W24vKVG8sqZ5uQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>
+Subject: [PATCH] ARM: dts: exynos4412-odroid: unify voltage regulator style
+Date: Mon, 21 Sep 2015 19:59:00 +0200
+Message-ID: <1442858340-4584-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1442858340-4584-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:54155 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752966AbbIUR7R (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Sep 2015 13:59:17 -0400
+In-Reply-To: <1442858340-4584-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: k.kozlowski@samsung.com, devicetree@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-SGV5IEVtaWwsCgpFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4gSGkgVG9iaWFzLAo+IAo+IE9uIDggU2Vw
-dGVtYmVyIDIwMTUgYXQgMTY6MjIsIFRvYmlhcyBKYWtvYmkKPiA8dGpha29iaUBtYXRoLnVuaS1i
-aWVsZWZlbGQuZGU+IHdyb3RlOgo+PiBIZWxsbywKPj4KPj4gZHVyaW5nIHRoZSBkaXNjdXNzaW9u
-IGFib3V0IHRoZSBsYXN0IHBhdGNoc2V0IHRvdWNoaW5nIHRoZQo+PiBmaW1nMmQgY29kZSwgaXQg
-YmVjYW1lIGFwcGFyZW50IHRoYXQgdGhlIGVycm9yIGhhbmRsaW5nIGZvcgo+PiB0aGUgY29tbWFu
-ZCBzdWJtaXNzaW9uIGlzIGN1cnJlbnRseSB1bnNhdGlzZmFjdG9yeS4KPj4KPj4gVGhpcyBzZXJp
-ZXMgcmV3cml0ZXMgdGhlIGhhbmRsaW5nLiBBbGwgZnVuY3Rpb25zIHRoYXQgc3VibWl0Cj4+IGNv
-bW1hbmQgYnVmZmVycyBub3cgZmlyc3QgY2hlY2sgaWYgZW5vdWdoIHNwYWNlIGlzIGF2YWlsYWJs
-ZQo+PiBhbmQgb25seSB0aGVuIHByb2NlZWQgdG8gYnVpbGQgdGhlIGNvbW1hbmQgYnVmZmVycy4K
-Pj4KPj4gSW4gcGFydGljdWxhciB0aGUgY29tbWFuZCBidWZmZXIgaXMgbm8gbG9uZ2VyIGxlZnQg
-aW4gYQo+PiBoYWxmLWZpbmlzaGVkIHN0YXRlLCBzaW5jZSBwYXJhbWV0ZXJzIHBhc3NlZCB0byB0
-aGUgZnVuY3Rpb25zCj4+IGFyZSBub3cgdmFsaWRhdGVkIGJlZm9yZSBjb21tYW5kIHN1Ym1pc3Np
-b24uIEZvciB0aGlzIHNvbWUKPj4gdmFsaWRhdGlvbiBmdW5jdGlvbnMgYXJlIGludHJvZHVjZWQu
-Cj4+Cj4+IFRoaXMgc2hvdWxkIGFsc28gaW5jcmVhc2UgcGVyZm9ybWFuY2UgaWYgdGhlIGJvdHRs
-ZW5lY2sgaXMKPj4gdGhlIHN1Ym1pc3Npb24gcGFydCwgc2luY2UgYWRkaW5nIGNvbW1hbmRzIHRv
-IHRoZSBidWZmZXIKPj4gaXMgbm93IG1vcmUgbGlnaHR3ZWlnaHQuCj4+Cj4+IExhc3QgYnV0IG5v
-dCBsZWFzdCBzb21lIHByZWZpeCB3YXMgYWRkZWQgdG8gbWVzc2FnZXMgcHJpbnRlZAo+PiBieSBm
-cHJpbnRmIGFuZCBwcmludGYsIGFuZCB0aGUgRzJEIGNvbnRleHQgc3RydWN0IHdhcyBtb3ZlZAo+
-PiBvdXQgb2YgdGhlIHB1YmxpYyBoZWFkZXIuCj4+Cj4+Cj4+IFBsZWFzZSByZXZpZXcgYW5kIGxl
-dCBtZSBrbm93IGlmIEkgY2FuIGltcHJvdmUgYW55dGhpbmchCj4+Cj4gQ29uc2lkZXJpbmcgdGhh
-dCB0aGVyZSB3ZXJlIG5vIG1vcmUgb2JqZWN0aW9ucyB3aXRoIHRoZSBzZXJpZXMgSSd2ZQo+IHNj
-b29wZWQgdGhlbSB1cC4KdGhhbmtzIGEgbG90ISBHb2luZyB0byBwcmVwYXJlIHRoZSBuZXh0IGJh
-dGNoIHRoZW4gOikKCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoKPiAKPiBUaGFua3MgZm9yIGNs
-ZWFyaW5nIHRoaXMgYW5kIHN0aWNraW5nIGFyb3VuZCAhCj4gRW1pbAo+IAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Use 'ldoN_reg: LDON' syntax and drop the deprecated
+'regulator-compatible' property.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index 518230f..9f381bd 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -294,15 +294,13 @@
+ 				regulator-always-on;
+ 			};
+ 
+-			ldo8_reg: ldo@8 {
+-				regulator-compatible = "LDO8";
++			ldo8_reg: LDO8 {
+ 				regulator-name = "VDD10_HDMI_1.0V";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+ 			};
+ 
+-			ldo10_reg: ldo@10 {
+-				regulator-compatible = "LDO10";
++			ldo10_reg: LDO10 {
+ 				regulator-name = "VDDQ_MIPIHSI_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+-- 
+2.0.5
