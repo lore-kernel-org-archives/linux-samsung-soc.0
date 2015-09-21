@@ -1,38 +1,51 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 Subject: Re: [PATCH 4/4] ARM64: dts: exynos5433: add jpeg node
-Date: Mon, 21 Sep 2015 14:28:23 +0200
-Message-ID: <55FFF7E7.2050609@samsung.com>
+Date: Mon, 21 Sep 2015 14:55:28 +0200
+Message-ID: <55FFFE40.8070801@samsung.com>
 References: <1442586060-23657-1-git-send-email-andrzej.p@samsung.com>
  <1442586060-23657-5-git-send-email-andrzej.p@samsung.com>
  <55FFD2D2.1010508@xs4all.nl> <55FFD4FF.6090306@samsung.com>
  <20150921084133.175b1bda@recife.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:35579 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756606AbbIUM3K (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Sep 2015 08:29:10 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <20150921084133.175b1bda@recife.lan>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Mauro,
 
-On 21/09/15 13:41, Mauro Carvalho Chehab wrote:
-> Btw, I just got a Samsung TM1 device, with seems to be using an arm64
-> SoC. Is this driver providing support for its camera?
+W dniu 21.09.2015 o 13:41, Mauro Carvalho Chehab pisze:
 
-The TM1 device (Z3) is based on a Qualcomm 64-bit SoC. The $subject
-patch adds support for a standalone JPEG codec IP block of Samsung
-Exynos5433 SoC, which can be found for instance in Galaxy Note4.
-Perhaps someone else can provide more details regarding the TM1's camera
-status.
+<snip>
 
--- 
-Regards,
-Sylwester
+>>>
+>>> I think the media subsystem can take patches 1-3 and whoever does DT patches can
+>>> take this patch, right?
+>>>
+>>
+>> The cover letter explains that the series is rebased onto Mauro's
+>> master with Kukjin's branch merged. The latter does contain
+>> the exynos5433.dtsi. That said, yes, taking patches 1-3 in
+>> media subsystem and leaving DT patch to someone else is the
+>> way to go.
+>
+> I'm ok with such strategy, provided that the new driver builds fine with
+> COMPILE_TEST without the need of the dtsi patch.
+>
+
+I've checked. It does compile with COMPILE_TEST.
+
+
+> Please also notice that, if the driver uses MC, it has to wait for
+> the MC next gen support to be merged,
+
+No, it does not. It is a rather simple mem2mem device.
+
+Sylwester has answered about camera support which is a different
+topic.
+
+Andrzej
