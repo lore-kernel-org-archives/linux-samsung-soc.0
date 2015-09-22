@@ -1,72 +1,151 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 08/13] exynos: fimg2d: add g2d_set_direction
-Date: Tue, 22 Sep 2015 17:54:57 +0200
-Message-ID: <1442937302-8211-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 09/13] exynos/fimg2d: add g2d_move
+Date: Tue, 22 Sep 2015 17:54:58 +0200
+Message-ID: <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40816 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932456AbbIVP6N (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Sep 2015 11:58:13 -0400
 In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VGhpcyBhbGxvd3Mgc2V0dGluZyB0aGUgdHdvIGRpcmVjdGlvbiByZWdpc3RlcnMsIHdoaWNoIHNw
-ZWNpZnkgaG93CnRoZSBlbmdpbmUgYmxpdHMgcGl4ZWxzLiBUaGlzIGNhbiBiZSB1c2VkIGZvciBv
-dmVybGFwcGluZyBibGl0cywKd2hpY2ggaGFwcGVuIGUuZy4gd2hlbiAnbW92aW5nJyBhIHJlY3Rh
-bmd1bGFyIHJlZ2lvbiBpbnNpZGUgYQpmaXhlZCBidWZmZXIuCgpTaWduZWQtb2ZmLWJ5OiBUb2Jp
-YXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBleHlub3MvZXh5
-bm9zX2ZpbWcyZC5jIHwgMTMgKysrKysrKysrKysrKwogZXh5bm9zL2V4eW5vc19maW1nMmQuaCB8
-IDM4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAyIGZpbGVzIGNoYW5n
-ZWQsIDUxIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5j
-IGIvZXh5bm9zL2V4eW5vc19maW1nMmQuYwppbmRleCBlOTk3ZDRiLi40ZDU0MTljIDEwMDY0NAot
-LS0gYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5jCisrKyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMK
-QEAgLTI0Miw2ICsyNDIsMTkgQEAgc3RhdGljIHZvaWQgZzJkX2FkZF9iYXNlX2FkZHIoc3RydWN0
-IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1hZ2UgKmltZywKIH0KIAogLyoKKyAqIGcy
-ZF9zZXRfZGlyZWN0aW9uIC0gc2V0dXAgZGlyZWN0aW9uIHJlZ2lzdGVyICh1c2VmdWwgZm9yIG92
-ZXJsYXBwaW5nIGJsaXRzKS4KKyAqCisgKiBAY3R4OiBhIHBvaW50ZXIgdG8gZzJkX2NvbnRleHQg
-c3RydWN0dXJlLgorICogQGRpcjogYSBwb2ludGVyIHRvIHRoZSBnMmRfZGlyZWN0aW9uX3ZhbCBz
-dHJ1Y3R1cmUuCisgKi8KK3N0YXRpYyB2b2lkIGcyZF9zZXRfZGlyZWN0aW9uKHN0cnVjdCBnMmRf
-Y29udGV4dCAqY3R4LAorCQkJY29uc3QgdW5pb24gZzJkX2RpcmVjdGlvbl92YWwgKmRpcikKK3sK
-KwlnMmRfYWRkX2NtZChjdHgsIFNSQ19NQVNLX0RJUkVDVF9SRUcsIGRpci0+dmFsWzBdKTsKKwln
-MmRfYWRkX2NtZChjdHgsIERTVF9QQVRfRElSRUNUX1JFRywgZGlyLT52YWxbMV0pOworfQorCisv
-KgogICogZzJkX3Jlc2V0IC0gcmVzZXQgZmltZzJkIGhhcmR3YXJlLgogICoKICAqIEBjdHg6IGEg
-cG9pbnRlciB0byBnMmRfY29udGV4dCBzdHJ1Y3R1cmUuCmRpZmYgLS1naXQgYS9leHlub3MvZXh5
-bm9zX2ZpbWcyZC5oIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuaAppbmRleCBjNmI1OGFjLi45ZWVl
-N2MwIDEwMDY0NAotLS0gYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5oCisrKyBiL2V4eW5vcy9leHlu
-b3NfZmltZzJkLmgKQEAgLTE4OSw2ICsxODksMTEgQEAgZW51bSBlX2cyZF9leGVjX2ZsYWcgewog
-CUcyRF9FWEVDX0ZMQUdfQVNZTkMgPSAoMSA8PCAwKQogfTsKIAorZW51bSBlX2cyZF9kaXJfbW9k
-ZSB7CisJRzJEX0RJUl9NT0RFX1BPU0lUSVZFID0gMCwKKwlHMkRfRElSX01PREVfTkVHQVRJVkUg
-PSAxCit9OworCiB1bmlvbiBnMmRfcG9pbnRfdmFsIHsKIAl1bnNpZ25lZCBpbnQgdmFsOwogCXN0
-cnVjdCB7CkBAIC0yNjksNiArMjc0LDM5IEBAIHVuaW9uIGcyZF9ibGVuZF9mdW5jX3ZhbCB7CiAJ
-fSBkYXRhOwogfTsKIAordW5pb24gZzJkX2RpcmVjdGlvbl92YWwgeworCXVuc2lnbmVkIGludCB2
-YWxbMl07CisJc3RydWN0IHsKKwkJLyogU1JDX01TS19ESVJFQ1RfUkVHIFswOjFdIChzb3VyY2Up
-ICovCisJCWVudW0gZV9nMmRfZGlyX21vZGUJCXNyY194X2RpcmVjdGlvbjoxOworCQllbnVtIGVf
-ZzJkX2Rpcl9tb2RlCQlzcmNfeV9kaXJlY3Rpb246MTsKKworCQkvKiBTUkNfTVNLX0RJUkVDVF9S
-RUcgWzI6M10gKi8KKwkJdW5zaWduZWQgaW50CQkJcmV2ZXJzZWQxOjI7CisKKwkJLyogU1JDX01T
-S19ESVJFQ1RfUkVHIFs0OjVdIChtYXNrKSAqLworCQllbnVtIGVfZzJkX2Rpcl9tb2RlCQltYXNr
-X3hfZGlyZWN0aW9uOjE7CisJCWVudW0gZV9nMmRfZGlyX21vZGUJCW1hc2tfeV9kaXJlY3Rpb246
-MTsKKworCQkvKiBTUkNfTVNLX0RJUkVDVF9SRUcgWzY6MzFdICovCisJCXVuc2lnbmVkIGludAkJ
-CXBhZGRpbmcxOjI2OworCisJCS8qIERTVF9QQVRfRElSRUNUX1JFRyBbMDoxXSAoZGVzdGluYXRp
-b24pICovCisJCWVudW0gZV9nMmRfZGlyX21vZGUJCWRzdF94X2RpcmVjdGlvbjoxOworCQllbnVt
-IGVfZzJkX2Rpcl9tb2RlCQlkc3RfeV9kaXJlY3Rpb246MTsKKworCQkvKiBEU1RfUEFUX0RJUkVD
-VF9SRUcgWzI6M10gKi8KKwkJdW5zaWduZWQgaW50CQkJcmV2ZXJzZWQyOjI7CisKKwkJLyogRFNU
-X1BBVF9ESVJFQ1RfUkVHIFs0OjVdIChwYXR0ZXJuKSAqLworCQllbnVtIGVfZzJkX2Rpcl9tb2Rl
-CQlwYXRfeF9kaXJlY3Rpb246MTsKKwkJZW51bSBlX2cyZF9kaXJfbW9kZQkJcGF0X3lfZGlyZWN0
-aW9uOjE7CisKKwkJLyogRFNUX1BBVF9ESVJFQ1RfUkVHIFs2OjMxXSAqLworCQl1bnNpZ25lZCBp
-bnQJCQlwYWRkaW5nMjoyNjsKKwl9IGRhdGE7Cit9OworCiBzdHJ1Y3QgZzJkX2ltYWdlIHsKIAll
-bnVtIGVfZzJkX3NlbGVjdF9tb2RlCQlzZWxlY3RfbW9kZTsKIAllbnVtIGVfZzJkX2NvbG9yX21v
-ZGUJCWNvbG9yX21vZGU7Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+We already have g2d_copy() which implements G2D copy
+operations from one buffer to another. However we can't
+do a overlapping copy operation in one buffer.
+
+Add g2d_move() which acts like the standard memmove()
+and properly handles overlapping copies.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ exynos/exynos_fimg2d.h |  3 ++
+ 2 files changed, 97 insertions(+)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 4d5419c..8703629 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -540,6 +540,100 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
+ }
+ 
+ /**
++ * g2d_move - move content inside single buffer.
++ *	Similar to 'memmove' this moves a rectangular region
++ *	of the provided buffer to another location (the source
++ *	and destination region potentially overlapping).
++ *
++ * @ctx: a pointer to g2d_context structure.
++ * @img: a pointer to g2d_image structure providing
++ *	buffer information.
++ * @src_x: x position of source rectangle.
++ * @src_y: y position of source rectangle.
++ * @dst_x: x position of destination rectangle.
++ * @dst_y: y position of destination rectangle.
++ * @w: width of rectangle to move.
++ * @h: height of rectangle to move.
++ */
++int
++g2d_move(struct g2d_context *ctx, struct g2d_image *img,
++		unsigned int src_x, unsigned int src_y,
++		unsigned int dst_x, unsigned dst_y, unsigned int w,
++		unsigned int h)
++{
++	union g2d_rop4_val rop4;
++	union g2d_point_val pt;
++	union g2d_direction_val dir;
++	unsigned int src_w, src_h, dst_w, dst_h;
++
++	src_w = w;
++	src_h = h;
++	if (src_x + img->width > w)
++		src_w = img->width - src_x;
++	if (src_y + img->height > h)
++		src_h = img->height - src_y;
++
++	dst_w = w;
++	dst_h = w;
++	if (dst_x + img->width > w)
++		dst_w = img->width - dst_x;
++	if (dst_y + img->height > h)
++		dst_h = img->height - dst_y;
++
++	w = MIN(src_w, dst_w);
++	h = MIN(src_h, dst_h);
++
++	if (w == 0 || h == 0) {
++		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
++		return -EINVAL;
++	}
++
++	if (g2d_check_space(ctx, 13, 2))
++		return -ENOSPC;
++
++	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
++	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
++
++	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
++	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, img->color_mode);
++
++	g2d_add_base_addr(ctx, img, g2d_dst);
++	g2d_add_base_addr(ctx, img, g2d_src);
++
++	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
++	g2d_add_cmd(ctx, SRC_STRIDE_REG, img->stride);
++
++	dir.val[0] = dir.val[1] = 0;
++
++	if (dst_x >= src_x)
++		dir.data.src_x_direction = dir.data.dst_x_direction = 1;
++	if (dst_y >= src_y)
++		dir.data.src_y_direction = dir.data.dst_y_direction = 1;
++
++	g2d_set_direction(ctx, &dir);
++
++	pt.data.x = src_x;
++	pt.data.y = src_y;
++	g2d_add_cmd(ctx, SRC_LEFT_TOP_REG, pt.val);
++	pt.data.x = src_x + w;
++	pt.data.y = src_y + h;
++	g2d_add_cmd(ctx, SRC_RIGHT_BOTTOM_REG, pt.val);
++
++	pt.data.x = dst_x;
++	pt.data.y = dst_y;
++	g2d_add_cmd(ctx, DST_LEFT_TOP_REG, pt.val);
++	pt.data.x = dst_x + w;
++	pt.data.y = dst_y + h;
++	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
++
++	rop4.val = 0;
++	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
++	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
++
++	return g2d_flush(ctx);
++}
++
++/**
+  * g2d_copy_with_scale - copy contents in source buffer to destination buffer
+  *	scaling up or down properly.
+  *
+diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
+index 9eee7c0..2700686 100644
+--- a/exynos/exynos_fimg2d.h
++++ b/exynos/exynos_fimg2d.h
+@@ -343,6 +343,9 @@ int g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
+ 		struct g2d_image *dst, unsigned int src_x,
+ 		unsigned int src_y, unsigned int dst_x, unsigned int dst_y,
+ 		unsigned int w, unsigned int h);
++int g2d_move(struct g2d_context *ctx, struct g2d_image *img,
++		unsigned int src_x, unsigned int src_y, unsigned int dst_x,
++		unsigned dst_y, unsigned int w, unsigned int h);
+ int g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 				struct g2d_image *dst, unsigned int src_x,
+ 				unsigned int src_y, unsigned int src_w,
+-- 
+2.0.5
