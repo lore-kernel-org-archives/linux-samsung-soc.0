@@ -1,151 +1,98 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 09/13] exynos/fimg2d: add g2d_move
-Date: Tue, 22 Sep 2015 17:54:58 +0200
-Message-ID: <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 10/13] tests/exynos: add test for g2d_move
+Date: Tue, 22 Sep 2015 17:54:59 +0200
+Message-ID: <1442937302-8211-11-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40816 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932456AbbIVP6N (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Sep 2015 11:58:13 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-We already have g2d_copy() which implements G2D copy
-operations from one buffer to another. However we can't
-do a overlapping copy operation in one buffer.
-
-Add g2d_move() which acts like the standard memmove()
-and properly handles overlapping copies.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/exynos_fimg2d.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++++++
- exynos/exynos_fimg2d.h |  3 ++
- 2 files changed, 97 insertions(+)
-
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 4d5419c..8703629 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -540,6 +540,100 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
- }
- 
- /**
-+ * g2d_move - move content inside single buffer.
-+ *	Similar to 'memmove' this moves a rectangular region
-+ *	of the provided buffer to another location (the source
-+ *	and destination region potentially overlapping).
-+ *
-+ * @ctx: a pointer to g2d_context structure.
-+ * @img: a pointer to g2d_image structure providing
-+ *	buffer information.
-+ * @src_x: x position of source rectangle.
-+ * @src_y: y position of source rectangle.
-+ * @dst_x: x position of destination rectangle.
-+ * @dst_y: y position of destination rectangle.
-+ * @w: width of rectangle to move.
-+ * @h: height of rectangle to move.
-+ */
-+int
-+g2d_move(struct g2d_context *ctx, struct g2d_image *img,
-+		unsigned int src_x, unsigned int src_y,
-+		unsigned int dst_x, unsigned dst_y, unsigned int w,
-+		unsigned int h)
-+{
-+	union g2d_rop4_val rop4;
-+	union g2d_point_val pt;
-+	union g2d_direction_val dir;
-+	unsigned int src_w, src_h, dst_w, dst_h;
-+
-+	src_w = w;
-+	src_h = h;
-+	if (src_x + img->width > w)
-+		src_w = img->width - src_x;
-+	if (src_y + img->height > h)
-+		src_h = img->height - src_y;
-+
-+	dst_w = w;
-+	dst_h = w;
-+	if (dst_x + img->width > w)
-+		dst_w = img->width - dst_x;
-+	if (dst_y + img->height > h)
-+		dst_h = img->height - dst_y;
-+
-+	w = MIN(src_w, dst_w);
-+	h = MIN(src_h, dst_h);
-+
-+	if (w == 0 || h == 0) {
-+		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
-+		return -EINVAL;
-+	}
-+
-+	if (g2d_check_space(ctx, 13, 2))
-+		return -ENOSPC;
-+
-+	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
-+	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
-+
-+	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
-+	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, img->color_mode);
-+
-+	g2d_add_base_addr(ctx, img, g2d_dst);
-+	g2d_add_base_addr(ctx, img, g2d_src);
-+
-+	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
-+	g2d_add_cmd(ctx, SRC_STRIDE_REG, img->stride);
-+
-+	dir.val[0] = dir.val[1] = 0;
-+
-+	if (dst_x >= src_x)
-+		dir.data.src_x_direction = dir.data.dst_x_direction = 1;
-+	if (dst_y >= src_y)
-+		dir.data.src_y_direction = dir.data.dst_y_direction = 1;
-+
-+	g2d_set_direction(ctx, &dir);
-+
-+	pt.data.x = src_x;
-+	pt.data.y = src_y;
-+	g2d_add_cmd(ctx, SRC_LEFT_TOP_REG, pt.val);
-+	pt.data.x = src_x + w;
-+	pt.data.y = src_y + h;
-+	g2d_add_cmd(ctx, SRC_RIGHT_BOTTOM_REG, pt.val);
-+
-+	pt.data.x = dst_x;
-+	pt.data.y = dst_y;
-+	g2d_add_cmd(ctx, DST_LEFT_TOP_REG, pt.val);
-+	pt.data.x = dst_x + w;
-+	pt.data.y = dst_y + h;
-+	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
-+
-+	rop4.val = 0;
-+	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
-+	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
-+
-+	return g2d_flush(ctx);
-+}
-+
-+/**
-  * g2d_copy_with_scale - copy contents in source buffer to destination buffer
-  *	scaling up or down properly.
-  *
-diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
-index 9eee7c0..2700686 100644
---- a/exynos/exynos_fimg2d.h
-+++ b/exynos/exynos_fimg2d.h
-@@ -343,6 +343,9 @@ int g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
- 		struct g2d_image *dst, unsigned int src_x,
- 		unsigned int src_y, unsigned int dst_x, unsigned int dst_y,
- 		unsigned int w, unsigned int h);
-+int g2d_move(struct g2d_context *ctx, struct g2d_image *img,
-+		unsigned int src_x, unsigned int src_y, unsigned int dst_x,
-+		unsigned dst_y, unsigned int w, unsigned int h);
- int g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
- 				struct g2d_image *dst, unsigned int src_x,
- 				unsigned int src_y, unsigned int src_w,
--- 
-2.0.5
+VG8gY2hlY2sgaWYgZzJkX21vdmUoKSB3b3JrcyBwcm9wZXJseSB3ZSBjcmVhdGUgYSBzbWFsbCBj
+aGVja2VyYm9hcmQKcGF0dGVybiBpbiB0aGUgY2VudGVyIG9mIHRoZSBzY3JlZW4gYW5kIHRoZW4g
+c2hpZnQgdGhpcyBwYXR0ZXJuCmFyb3VuZCB3aXRoIGcyZF9tb3ZlKCkuIFRoZSBwYXR0ZXJuIHNo
+b3VsZCBiZSBwcm9wZXJseSBwcmVzZXJ2ZWQKYnkgdGhlIG9wZXJhdGlvbi4KClNpZ25lZC1vZmYt
+Ynk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIHRl
+c3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyB8IDEzMiArKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDEzMiBpbnNlcnRpb25zKCspCgpk
+aWZmIC0tZ2l0IGEvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jIGIvdGVzdHMvZXh5
+bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jCmluZGV4IGRmYjAwYTAuLjc5N2ZiNmUgMTAwNjQ0Ci0t
+LSBhL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYworKysgYi90ZXN0cy9leHlub3Mv
+ZXh5bm9zX2ZpbWcyZF90ZXN0LmMKQEAgLTMxMyw2ICszMTMsMTMwIEBAIGZhaWw6CiAJcmV0dXJu
+IHJldDsKIH0KIAorc3RhdGljIGludCBnMmRfbW92ZV90ZXN0KHN0cnVjdCBleHlub3NfZGV2aWNl
+ICpkZXYsCisJCQkJc3RydWN0IGV4eW5vc19ibyAqdG1wLAorCQkJCXN0cnVjdCBleHlub3NfYm8g
+KmJ1ZiwKKwkJCQllbnVtIGVfZzJkX2J1Zl90eXBlIHR5cGUpCit7CisJc3RydWN0IGcyZF9jb250
+ZXh0ICpjdHg7CisJc3RydWN0IGcyZF9pbWFnZSBpbWcgPSB7MH0sIHRtcF9pbWcgPSB7MH07CisJ
+dW5zaWduZWQgaW50IGltZ193LCBpbWdfaCwgY291bnQ7CisJaW50IGN1cl94LCBjdXJfeTsKKwl2
+b2lkICpjaGVja2VyYm9hcmQ7CisJaW50IHJldDsKKworCXN0YXRpYyBjb25zdCBzdHJ1Y3QgZzJk
+X3N0ZXAgeworCQlpbnQgeCwgeTsKKwl9IHN0ZXBzW10gPSB7CisJCXsgMSwgIDB9LCB7IDAsICAx
+fSwKKwkJey0xLCAgMH0sIHsgMCwgLTF9LAorCQl7IDEsICAxfSwgey0xLCAtMX0sCisJCXsgMSwg
+LTF9LCB7LTEsICAxfSwKKwkJeyAyLCAgMX0sIHsgMSwgIDJ9LAorCQl7LTIsIC0xfSwgey0xLCAt
+Mn0sCisJCXsgMiwgLTF9LCB7IDEsIC0yfSwKKwkJey0yLCAgMX0sIHstMSwgIDJ9CisJfTsKKwlz
+dGF0aWMgY29uc3QgdW5zaWduZWQgaW50IG51bV9zdGVwcyA9CisJCXNpemVvZihzdGVwcykgLyBz
+aXplb2Yoc3RydWN0IGcyZF9zdGVwKTsKKworCWN0eCA9IGcyZF9pbml0KGRldi0+ZmQpOworCWlm
+ICghY3R4KQorCQlyZXR1cm4gLUVGQVVMVDsKKworCWltZy5ib1swXSA9IGJ1Zi0+aGFuZGxlOwor
+CisJLyogY3JlYXRlIHBhdHRlcm4gb2YgaGFsZiB0aGUgc2NyZWVuIHNpemUgKi8KKwljaGVja2Vy
+Ym9hcmQgPSBjcmVhdGVfY2hlY2tlcmJvYXJkX3BhdHRlcm4oc2NyZWVuX3dpZHRoIC8gNjQsIHNj
+cmVlbl9oZWlnaHQgLyA2NCwgMzIpOworCWlmICghY2hlY2tlcmJvYXJkKSB7CisJCXJldCA9IC1F
+RkFVTFQ7CisJCWdvdG8gZmFpbDsKKwl9CisKKwlpbWdfdyA9IChzY3JlZW5fd2lkdGggLyA2NCkg
+KiAzMjsKKwlpbWdfaCA9IChzY3JlZW5faGVpZ2h0IC8gNjQpICogMzI7CisKKwlzd2l0Y2ggKHR5
+cGUpIHsKKwljYXNlIEcyRF9JTUdCVUZfR0VNOgorCQltZW1jcHkodG1wLT52YWRkciwgY2hlY2tl
+cmJvYXJkLCBpbWdfdyAqIGltZ19oICogNCk7CisJCXRtcF9pbWcuYm9bMF0gPSB0bXAtPmhhbmRs
+ZTsKKwkJYnJlYWs7CisJY2FzZSBHMkRfSU1HQlVGX1VTRVJQVFI6CisJCXRtcF9pbWcudXNlcl9w
+dHJbMF0udXNlcnB0ciA9ICh1bnNpZ25lZCBsb25nKWNoZWNrZXJib2FyZDsKKwkJdG1wX2ltZy51
+c2VyX3B0clswXS5zaXplID0gaW1nX3cgKiBpbWdfaCAqIDQ7CisJCWJyZWFrOworCWNhc2UgRzJE
+X0lNR0JVRl9DT0xPUjoKKwlkZWZhdWx0OgorCQlyZXQgPSAtRUZBVUxUOworCQlnb3RvIGZhaWw7
+CisJfQorCisJLyogc29saWQgZmlsbCBmcmFtZWJ1ZmZlciB3aXRoIHdoaXRlIGNvbG9yICovCisJ
+aW1nLndpZHRoID0gc2NyZWVuX3dpZHRoOworCWltZy5oZWlnaHQgPSBzY3JlZW5faGVpZ2h0Owor
+CWltZy5zdHJpZGUgPSBzY3JlZW5fd2lkdGggKiA0OworCWltZy5idWZfdHlwZSA9IEcyRF9JTUdC
+VUZfR0VNOworCWltZy5jb2xvcl9tb2RlID0gRzJEX0NPTE9SX0ZNVF9BUkdCODg4OCB8IEcyRF9P
+UkRFUl9BWFJHQjsKKwlpbWcuY29sb3IgPSAweGZmZmZmZmZmOworCisJLyogcHV0IGNoZWNrZXJi
+b2FyZCBwYXR0ZXJuIGluIHRoZSBjZW50ZXIgb2YgdGhlIGZyYW1lYnVmZmVyICovCisJY3VyX3gg
+PSAoc2NyZWVuX3dpZHRoIC0gaW1nX3cpIC8gMjsKKwljdXJfeSA9IChzY3JlZW5faGVpZ2h0IC0g
+aW1nX2gpIC8gMjsKKwl0bXBfaW1nLndpZHRoID0gaW1nX3c7CisJdG1wX2ltZy5oZWlnaHQgPSBp
+bWdfaDsKKwl0bXBfaW1nLnN0cmlkZSA9IGltZ193ICogNDsKKwl0bXBfaW1nLmJ1Zl90eXBlID0g
+dHlwZTsKKwl0bXBfaW1nLmNvbG9yX21vZGUgPSBHMkRfQ09MT1JfRk1UX0FSR0I4ODg4IHwgRzJE
+X09SREVSX0FYUkdCOworCisJcmV0ID0gZzJkX3NvbGlkX2ZpbGwoY3R4LCAmaW1nLCAwLCAwLCBz
+Y3JlZW5fd2lkdGgsIHNjcmVlbl9oZWlnaHQpIHx8CisJCWcyZF9jb3B5KGN0eCwgJnRtcF9pbWcs
+ICZpbWcsIDAsIDAsIGN1cl94LCBjdXJfeSwgaW1nX3csIGltZ19oKTsKKworCWlmICghcmV0KQor
+CQlyZXQgPSBnMmRfZXhlYyhjdHgpOworCWlmIChyZXQgPCAwKQorCQkJZ290byBmYWlsOworCisJ
+cHJpbnRmKCJtb3ZlIHRlc3Qgd2l0aCAlcy5cbiIsCisJCQl0eXBlID09IEcyRF9JTUdCVUZfR0VN
+ID8gImdlbSIgOiAidXNlcnB0ciIpOworCisJc3JhbmQodGltZShOVUxMKSk7CisJZm9yIChjb3Vu
+dCA9IDA7IGNvdW50IDwgMjU2OyArK2NvdW50KSB7CisJCWNvbnN0IHN0cnVjdCBnMmRfc3RlcCAq
+czsKKworCQkvKiBzZWxlY3Qgc3RlcCBhbmQgdmFsaWRhdGUgaXQgKi8KKwkJd2hpbGUgKDEpIHsK
+KwkJCXMgPSAmc3RlcHNbcmFuZG9tKCkgJSBudW1fc3RlcHNdOworCisJCQlpZiAoY3VyX3ggKyBz
+LT54IDwgMCB8fCBjdXJfeSArIHMtPnkgPCAwIHx8CisJCQkJY3VyX3ggKyBpbWdfdyArIHMtPngg
+Pj0gc2NyZWVuX3dpZHRoIHx8CisJCQkJY3VyX3kgKyBpbWdfaCArIHMtPnkgPj0gc2NyZWVuX2hl
+aWdodCkKKwkJCQljb250aW51ZTsKKwkJCWVsc2UKKwkJCQlicmVhazsKKwkJfQorCisJCXJldCA9
+IGcyZF9tb3ZlKGN0eCwgJmltZywgY3VyX3gsIGN1cl95LCBjdXJfeCArIHMtPngsIGN1cl95ICsg
+cy0+eSwKKwkJCWltZ193LCBpbWdfaCk7CisJCWlmICghcmV0KQorCQkJcmV0ID0gZzJkX2V4ZWMo
+Y3R4KTsKKworCQlpZiAocmV0IDwgMCkKKwkJCWdvdG8gZmFpbDsKKworCQljdXJfeCArPSBzLT54
+OworCQljdXJfeSArPSBzLT55OworCisJCXVzbGVlcCgxMDAwMDApOworCX0KKworZmFpbDoKKwln
+MmRfZmluaShjdHgpOworCisJZnJlZShjaGVja2VyYm9hcmQpOworCisJcmV0dXJuIHJldDsKK30K
+Kwogc3RhdGljIGludCBnMmRfY29weV93aXRoX3NjYWxlX3Rlc3Qoc3RydWN0IGV4eW5vc19kZXZp
+Y2UgKmRldiwKIAkJCQkJc3RydWN0IGV4eW5vc19ibyAqc3JjLAogCQkJCQlzdHJ1Y3QgZXh5bm9z
+X2JvICpkc3QsCkBAIC03MDgsNiArODMyLDE0IEBAIGludCBtYWluKGludCBhcmdjLCBjaGFyICoq
+YXJndikKIAogCXdhaXRfZm9yX3VzZXJfaW5wdXQoMCk7CiAKKwlyZXQgPSBnMmRfbW92ZV90ZXN0
+KGRldiwgc3JjLCBibywgRzJEX0lNR0JVRl9HRU0pOworCWlmIChyZXQgPCAwKSB7CisJCWZwcmlu
+dGYoc3RkZXJyLCAiZmFpbGVkIHRvIHRlc3QgbW92ZSBvcGVyYXRpb24uXG4iKTsKKwkJZ290byBl
+cnJfZnJlZV9zcmM7CisJfQorCisJd2FpdF9mb3JfdXNlcl9pbnB1dCgwKTsKKwogCXJldCA9IGcy
+ZF9jb3B5X3dpdGhfc2NhbGVfdGVzdChkZXYsIHNyYywgYm8sIEcyRF9JTUdCVUZfR0VNKTsKIAlp
+ZiAocmV0IDwgMCkgewogCQlmcHJpbnRmKHN0ZGVyciwgImZhaWxlZCB0byB0ZXN0IGNvcHkgYW5k
+IHNjYWxlIG9wZXJhdGlvbi5cbiIpOwotLSAKMi4wLjUKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
