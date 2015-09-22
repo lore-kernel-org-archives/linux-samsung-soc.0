@@ -1,117 +1,75 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 01/13] drm: Implement drmHandleEvent2()
-Date: Tue, 22 Sep 2015 17:54:50 +0200
-Message-ID: <1442937302-8211-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40764 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933513AbbIVPyF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Sep 2015 11:54:05 -0400
-In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 00/13] drm/exynos: async G2D and g2d_move()
+Date: Tue, 22 Sep 2015 17:54:49 +0200
+Message-ID: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Basically this is an extended version of drmHandleEvent().
-
-drmHandleEvent() only handles core events (like e.g. page flips),
-but since kernel DRM drivers might use vendor-specific events
-to signal userspace the completion of pending jobs, etc., its
-desirable to provide a way to handle these without putting
-vendor-specific code in the core libdrm.
-
-To use this you provide drmHandleEvent2() with a function that
-handles your non-core events.
-
-The signature of that function looks like this:
-void vendor(int fd, struct drm_event *e, void *ctx);
-
-'fd' is the DRM file descriptor, 'e' the non-core event
-and 'ctx' the event context (casted to void).
-
-This way we don't have to maintain a copy of drmHandleEvent()
-in the vendor code.
-
-v2: Remove the opaque pointer, since this can be better
-    handled with a container approach.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- xf86drm.h     | 21 +++++++++++++++++++++
- xf86drmMode.c | 10 +++++++++-
- 2 files changed, 30 insertions(+), 1 deletion(-)
-
-diff --git a/xf86drm.h b/xf86drm.h
-index 481d882..1e474a3 100644
---- a/xf86drm.h
-+++ b/xf86drm.h
-@@ -750,8 +750,29 @@ typedef struct _drmEventContext {
- 
- } drmEventContext, *drmEventContextPtr;
- 
-+typedef void (*drmEventVendorHandler)(int fd, struct drm_event *e, void *ctx);
-+
- extern int drmHandleEvent(int fd, drmEventContextPtr evctx);
- 
-+/*
-+ * drmHandleEvent2() is an extended variant of drmHandleEvent() which
-+ * allows handling of vendor-specific/non-core events.
-+ * The function pointer 'vendorhandler' is used (if non-zero) to
-+ * process non-core events. Users of have to prepare a container struct
-+ * in the following way:
-+ *
-+ * struct vendor_event_context {
-+ *		drmEventContext base;
-+ *		int vendor_specific_data[num];
-+ * };
-+ *
-+ * And then call:
-+ * struct vendor_event_context ctx = {0};
-+ * drmHandleEvent2(fd, &ctx.base, handler);
-+ */
-+extern int drmHandleEvent2(int fd, drmEventContextPtr evctx,
-+	drmEventVendorHandler vendorhandler);
-+
- extern char *drmGetDeviceNameFromFd(int fd);
- extern int drmGetNodeTypeFromFd(int fd);
- 
-diff --git a/xf86drmMode.c b/xf86drmMode.c
-index ab6b519..89698da 100644
---- a/xf86drmMode.c
-+++ b/xf86drmMode.c
-@@ -867,7 +867,8 @@ int drmModeCrtcSetGamma(int fd, uint32_t crtc_id, uint32_t size,
- 	return DRM_IOCTL(fd, DRM_IOCTL_MODE_SETGAMMA, &l);
- }
- 
--int drmHandleEvent(int fd, drmEventContextPtr evctx)
-+int drmHandleEvent2(int fd, drmEventContextPtr evctx,
-+			drmEventVendorHandler vendorhandler)
- {
- 	char buffer[1024];
- 	int len, i;
-@@ -910,6 +911,8 @@ int drmHandleEvent(int fd, drmEventContextPtr evctx)
- 						 U642VOID (vblank->user_data));
- 			break;
- 		default:
-+			if (vendorhandler)
-+				vendorhandler(fd, e, evctx);
- 			break;
- 		}
- 		i += e->length;
-@@ -918,6 +921,11 @@ int drmHandleEvent(int fd, drmEventContextPtr evctx)
- 	return 0;
- }
- 
-+int drmHandleEvent(int fd, drmEventContextPtr evctx)
-+{
-+	return drmHandleEvent2(fd, evctx, NULL);
-+}
-+
- int drmModePageFlip(int fd, uint32_t crtc_id, uint32_t fb_id,
- 		    uint32_t flags, void *user_data)
- {
--- 
-2.0.5
+SGVsbG8sCgp0aGlzIHNlcmllcyBtb3N0bHkgdG91Y2hlcyBHMkQgY29kZS4gSXQgaW50cm9kdWNl
+cyB0aGUgZm9sbG93aW5nOgoKKDEpIGRybUhhbmRsZUV2ZW50MigpIGlzIGFkZGVkIHRvIGVuYWJs
+ZSBwcm9jZXNzaW5nIG9mIHZlbmRvci1zcGVjaWZpYwogICAgZXZlbnRzLiBUaGlzIHdpbGwgYmUg
+dXNlZCB0byBleHBvc2UgYXN5bmNocm9ub3VzIG9wZXJhdGlvbiBvZiB0aGUKICAgIEcyRC4gVGhl
+IG5lY2Vzc2FyeSBrZXJuZWwgaW5mcmFzdHJ1Y3R1cmUgaXMgYWxyZWFkeSB0aGVyZSBzaW5jZQog
+ICAgYSBsb3Qgb2Yga2VybmVsIHZlcnNpb25zLiBbVGhpcyB0b3VjaGVzIGxpYmRybSBjb3JlIGNv
+ZGUhXQoKKDIpIFRoZSBuZWNlc3NhcnkgaW5mcmFzdHJ1Y3R1cmUgdG8gaGFuZGxlIEcyRCBldmVu
+dHMuIFRoaXMgaW5jbHVkZXMKICAgIGFkZGluZyBnMmRfY29uZmlnX2V2ZW50KCkgYW5kIGcyZF9l
+eGVjMigpIHRvIHRoZSBwdWJsaWMgQVBJLgogICAgQSB0ZXN0IGFwcGxpY2F0aW9uIGlzIHByb3Zp
+ZGVkIHRvIGVuc3VyZSB0aGF0IGV2ZXJ5dGhpbmcgd29ya3MKICAgIGFzIGV4cGVjdGVkLgoKKDMp
+IEEgc21hbGwgcGVyZm9ybWFuY2UgdGVzdCBhcHBsaWNhdGlvbiB3aGljaCBjYW4gYmUgdXNlZCB0
+byBtZWFzdXJlCiAgICB0aGUgc3BlZWQgb2Ygc29saWQgY29sb3IgY2xlYXIgb3BlcmF0aW9ucy4g
+SW50ZXJlc3RpbmcgZm9yCiAgICBiZW5jaG1hcmtpbmcgYW5kIHBsb3R0aW5nIGNvbG9yZnVsIGdy
+YXBocyAoZS5nLiB0aHJvdWdoCiAgICBNYXRoZW1hdGljYSkuCgooNCkgZzJkX21vdmUoKSB3aGlj
+aCB3b3JrcyBzaW1pbGFyIHRvIGcyZF9jb3B5KCkgYnV0IGxpa2UgdGhlIEMKICAgIG1lbW1vdmUo
+KSBwcm9wZXJseSBoYW5kbGVzIG92ZXJsYXBwaW5nIGJ1ZmZlciBjb3BpZXMuCiAgICBBZ2FpbiBh
+IHRlc3QgYXBwbGljYXRpb24gaXMgcHJlc2VudCB0byBjaGVjayB0aGF0IHRoaXMKICAgIGluZGVl
+ZCBkb2VzIHdoYXQgaXQgc2hvdWxkLgoKKDUpIFZhcmlvdXMgc21hbGwgY2hhbmdlcy4gQSBmcmFt
+ZWJ1ZmZlciBjb2xvcmZvcm1hdCBmaXggZm9yIHRoZQogICAgZ2VuZXJhbCBHMkQgdGVzdCBhcHBs
+aWNhdGlvbi4gTW92aW5nIHRoZSBjdXJyZW50bHkgdW51c2VkCiAgICBnMmRfcmVzZXQoKSB0byB0
+aGUgcHVibGljIEFQSS4gQWRkaW5nIGEgY291bnRlcnBhcnQgdG8KICAgIGV4eW5vc19ib19tYXAo
+KSB0byB1bm1hcCBidWZmZXJzIGFnYWluLgoKKDYpIExhc3QgYnV0IG5vdCBsZWFzdCBhIHNtYWxs
+IGJ1bXAgb2YgdGhlIEV4eW5vcyB2ZXJzaW9uIG51bWJlci4KClBsZWFzZSByZXZpZXcgYW5kIGxl
+dCBtZSBrbm93IHdoYXQgSSBzaG91bGQgY2hhbmdlL2ltcHJvdmUuCgoKV2l0aCBiZXN0IHdpc2hl
+cywKVG9iaWFzCgpQLlMuOiBNb3N0IHBhdGNoZXMgd2VyZSBzdWJtaXR0ZWQgYWxyZWFkeSBzb21l
+IHRpbWUgYWdvIGJ1dCBuZXZlcgptYWRlIGl0IHVwc3RyZWFtLiBTbyBpZiBzb21ldGhpbmcgbG9v
+a3MgZmFtaWxpYXIsIGRvbid0IHdvcnJ5ISA7KQoKVG9iaWFzIEpha29iaSAoMTMpOgogIGRybTog
+SW1wbGVtZW50IGRybUhhbmRsZUV2ZW50MigpCiAgZXh5bm9zOiBJbnRyb2R1Y2UgZXh5bm9zX2hh
+bmRsZV9ldmVudCgpCiAgdGVzdHMvZXh5bm9zOiBhZGQgZmltZzJkIHBlcmZvcm1hbmNlIGFuYWx5
+c2lzCiAgZXh5bm9zL2ZpbWcyZDogYWRkIGcyZF9jb25maWdfZXZlbnQKICBleHlub3M6IGZpbWcy
+ZDogYWRkIGcyZF9leGVjMgogIHRlc3RzL2V4eW5vczogYWRkIGZpbWcyZCBldmVudCB0ZXN0CiAg
+dGVzdHMvZXh5bm9zOiB1c2UgWFJHQjg4ODggZm9yIGZyYW1lYnVmZmVyCiAgZXh5bm9zOiBmaW1n
+MmQ6IGFkZCBnMmRfc2V0X2RpcmVjdGlvbgogIGV4eW5vcy9maW1nMmQ6IGFkZCBnMmRfbW92ZQog
+IHRlc3RzL2V4eW5vczogYWRkIHRlc3QgZm9yIGcyZF9tb3ZlCiAgZXh5bm9zL2ZpbWcyZDogYWRk
+IGV4eW5vc19ib191bm1hcCgpCiAgZXh5bm9zL2ZpbWcyZDogYWRkIGcyZF9yZXNldCgpIHRvIHB1
+YmxpYyBBUEkKICBleHlub3M6IGJ1bXAgdmVyc2lvbiBudW1iZXIKCiBleHlub3MvZXh5bm9zLXN5
+bWJvbC1jaGVjayAgICAgICAgIHwgICA1ICsKIGV4eW5vcy9leHlub3NfZHJtLmMgICAgICAgICAg
+ICAgICAgfCAgNDggKysrKysrCiBleHlub3MvZXh5bm9zX2RybS5oICAgICAgICAgICAgICAgIHwg
+IDEyICsrCiBleHlub3MvZXh5bm9zX2RybWlmLmggICAgICAgICAgICAgIHwgIDI3ICsrKwogZXh5
+bm9zL2V4eW5vc19maW1nMmQuYyAgICAgICAgICAgICB8IDE2NCArKysrKysrKysrKysrKysrKy0t
+CiBleHlub3MvZXh5bm9zX2ZpbWcyZC5oICAgICAgICAgICAgIHwgIDQ5ICsrKysrKwogZXh5bm9z
+L2xpYmRybV9leHlub3MucGMuaW4gICAgICAgICB8ICAgMiArLQogdGVzdHMvZXh5bm9zL01ha2Vm
+aWxlLmFtICAgICAgICAgICB8ICAyNiArKy0KIHRlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX2V2
+ZW50LmMgfCAzMjYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogdGVzdHMv
+ZXh5bm9zL2V4eW5vc19maW1nMmRfcGVyZi5jICB8IDMyMCArKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysKIHRlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyAgfCAxMzQg
+KysrKysrKysrKysrKystCiB4Zjg2ZHJtLmggICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIx
+ICsrKwogeGY4NmRybU1vZGUuYyAgICAgICAgICAgICAgICAgICAgICB8ICAxMCArLQogMTMgZmls
+ZXMgY2hhbmdlZCwgMTEyOCBpbnNlcnRpb25zKCspLCAxNiBkZWxldGlvbnMoLSkKIGNyZWF0ZSBt
+b2RlIDEwMDY0NCB0ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF9ldmVudC5jCiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfcGVyZi5jCgotLSAKMi4wLjUKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
