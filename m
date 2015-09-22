@@ -1,40 +1,43 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 13/13] exynos: bump version number
-Date: Tue, 22 Sep 2015 17:55:02 +0200
-Message-ID: <1442937302-8211-14-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] clk: samsung: fix cpu clock's flags checking
+Date: Tue, 22 Sep 2015 10:09:43 -0700
+Message-ID: <20150922170943.GI23081@codeaurora.org>
+References: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40840 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758612AbbIVQCb (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:52749 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751980AbbIVRJq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Sep 2015 12:02:31 -0400
-In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Tue, 22 Sep 2015 13:09:46 -0400
+Content-Disposition: inline
+In-Reply-To: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-The Exynos API was extended quite a bit, so reflect this in the
-version number.
+On 08/28, Bartlomiej Zolnierkiewicz wrote:
+> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> incorrectly used as a bit numbers.  Fix it.
+> 
+> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> Arndale board.
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Fixes: ddeac8d96 ("clk: samsung: add infrastructure to register cpu clocks")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
 
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/libdrm_exynos.pc.in | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to clk-fixes
 
-diff --git a/exynos/libdrm_exynos.pc.in b/exynos/libdrm_exynos.pc.in
-index 5ce9118..ff1c432 100644
---- a/exynos/libdrm_exynos.pc.in
-+++ b/exynos/libdrm_exynos.pc.in
-@@ -5,7 +5,7 @@ includedir=@includedir@
- 
- Name: libdrm_exynos
- Description: Userspace interface to exynos kernel DRM services
--Version: 0.6
-+Version: 0.7
- Libs: -L${libdir} -ldrm_exynos
- Cflags: -I${includedir} -I${includedir}/libdrm -I${includedir}/exynos
- Requires.private: libdrm
 -- 
-2.0.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
