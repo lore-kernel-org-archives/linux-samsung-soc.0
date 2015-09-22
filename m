@@ -1,66 +1,40 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 12/13] exynos/fimg2d: add g2d_reset() to public API
-Date: Tue, 22 Sep 2015 17:55:01 +0200
-Message-ID: <1442937302-8211-13-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 13/13] exynos: bump version number
+Date: Tue, 22 Sep 2015 17:55:02 +0200
+Message-ID: <1442937302-8211-14-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40840 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758612AbbIVQCb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Sep 2015 12:02:31 -0400
 In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-QWZ0ZXIgdGhlIHJld3JpdGUgb2YgdGhlIGNvbW1hbmQgYnVmZmVyIHN1Ym1pc3Npb24KaGFuZGxp
-bmcgZzJkX3Jlc2V0KCkgaXMgbm8gbG9uZ2VyIGNhbGxlZCBpbnRlcm5hbGx5LgoKU3RpbGwgdGhl
-IHVzZXIgbWlnaHQgd2FudCB0byByZXNldCB0aGUgRzJECmNvbnRleHQgc28gZXhwb3NlIHRoaXMg
-Y2FsbC4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmll
-bGVmZWxkLmRlPgotLS0KIGV4eW5vcy9leHlub3Mtc3ltYm9sLWNoZWNrIHwgIDEgKwogZXh5bm9z
-L2V4eW5vc19maW1nMmQuYyAgICAgfCAyOCArKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tCiBl
-eHlub3MvZXh5bm9zX2ZpbWcyZC5oICAgICB8ICAxICsKIDMgZmlsZXMgY2hhbmdlZCwgMTYgaW5z
-ZXJ0aW9ucygrKSwgMTQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vcy1z
-eW1ib2wtY2hlY2sgYi9leHlub3MvZXh5bm9zLXN5bWJvbC1jaGVjawppbmRleCAyZTRiYTU2Li41
-N2RkNjg0IDEwMDc1NQotLS0gYS9leHlub3MvZXh5bm9zLXN5bWJvbC1jaGVjaworKysgYi9leHlu
-b3MvZXh5bm9zLXN5bWJvbC1jaGVjawpAQCAtMzIsNiArMzIsNyBAQCBnMmRfZXhlYzIKIGcyZF9j
-b25maWdfZXZlbnQKIGcyZF9maW5pCiBnMmRfaW5pdAorZzJkX3Jlc2V0CiBnMmRfc2NhbGVfYW5k
-X2JsZW5kCiBnMmRfc29saWRfZmlsbAogRU9GCmRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2Zp
-bWcyZC5jIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuYwppbmRleCA4NzAzNjI5Li5jYzVkOWY0IDEw
-MDY0NAotLS0gYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5jCisrKyBiL2V4eW5vcy9leHlub3NfZmlt
-ZzJkLmMKQEAgLTI1NSwyMCArMjU1LDYgQEAgc3RhdGljIHZvaWQgZzJkX3NldF9kaXJlY3Rpb24o
-c3RydWN0IGcyZF9jb250ZXh0ICpjdHgsCiB9CiAKIC8qCi0gKiBnMmRfcmVzZXQgLSByZXNldCBm
-aW1nMmQgaGFyZHdhcmUuCi0gKgotICogQGN0eDogYSBwb2ludGVyIHRvIGcyZF9jb250ZXh0IHN0
-cnVjdHVyZS4KLSAqCi0gKi8KLXN0YXRpYyB2b2lkIGcyZF9yZXNldChzdHJ1Y3QgZzJkX2NvbnRl
-eHQgKmN0eCkKLXsKLQljdHgtPmNtZF9uciA9IDA7Ci0JY3R4LT5jbWRfYnVmX25yID0gMDsKLQot
-CWcyZF9hZGRfY21kKGN0eCwgU09GVF9SRVNFVF9SRUcsIDB4MDEpOwotfQotCi0vKgogICogZzJk
-X2ZsdXNoIC0gc3VibWl0IGFsbCBjb21tYW5kcyBhbmQgdmFsdWVzIGluIHVzZXIgc2lkZSBjb21t
-YW5kIGJ1ZmZlcgogICoJCXRvIGNvbW1hbmQgcXVldWUgYXdhcmUgb2YgZmltZzJkIGRtYS4KICAq
-CkBAIC0zNTYsNiArMzQyLDIwIEBAIHZvaWQgZzJkX2Zpbmkoc3RydWN0IGcyZF9jb250ZXh0ICpj
-dHgpCiAJZnJlZShjdHgpOwogfQogCisvKgorICogZzJkX3Jlc2V0IC0gcmVzZXQgZmltZzJkIGhh
-cmR3YXJlLgorICoKKyAqIEBjdHg6IGEgcG9pbnRlciB0byBnMmRfY29udGV4dCBzdHJ1Y3R1cmUu
-CisgKgorICovCit2b2lkIGcyZF9yZXNldChzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCkKK3sKKwlj
-dHgtPmNtZF9uciA9IDA7CisJY3R4LT5jbWRfYnVmX25yID0gMDsKKworCWcyZF9hZGRfY21kKGN0
-eCwgU09GVF9SRVNFVF9SRUcsIDB4MDEpOworfQorCiAvKioKICAqIGcyZF9jb25maWdfZXZlbnQg
-LSBzZXR1cCB1c2VyZGF0YSBjb25maWd1cmF0aW9uIGZvciBhIGcyZCBldmVudC4KICAqCQlUaGUg
-bmV4dCBpbnZvY2F0aW9uIG9mIGEgZzJkIGNhbGwgKGUuZy4gZzJkX3NvbGlkX2ZpbGwpIGlzCmRp
-ZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5oIGIvZXh5bm9zL2V4eW5vc19maW1nMmQu
-aAppbmRleCAyNzAwNjg2Li4wMzM5MWMxIDEwMDY0NAotLS0gYS9leHlub3MvZXh5bm9zX2ZpbWcy
-ZC5oCisrKyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmgKQEAgLTMzMyw2ICszMzMsNyBAQCBzdHJ1
-Y3QgZzJkX2NvbnRleHQ7CiAKIHN0cnVjdCBnMmRfY29udGV4dCAqZzJkX2luaXQoaW50IGZkKTsK
-IHZvaWQgZzJkX2Zpbmkoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgpOwordm9pZCBnMmRfcmVzZXQo
-c3RydWN0IGcyZF9jb250ZXh0ICpjdHgpOwogdm9pZCBnMmRfY29uZmlnX2V2ZW50KHN0cnVjdCBn
-MmRfY29udGV4dCAqY3R4LCB2b2lkICp1c2VyZGF0YSk7CiBpbnQgZzJkX2V4ZWMoc3RydWN0IGcy
-ZF9jb250ZXh0ICpjdHgpOwogaW50IGcyZF9leGVjMihzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwg
-dW5zaWduZWQgaW50IGZsYWdzKTsKLS0gCjIuMC41CgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The Exynos API was extended quite a bit, so reflect this in the
+version number.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/libdrm_exynos.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/exynos/libdrm_exynos.pc.in b/exynos/libdrm_exynos.pc.in
+index 5ce9118..ff1c432 100644
+--- a/exynos/libdrm_exynos.pc.in
++++ b/exynos/libdrm_exynos.pc.in
+@@ -5,7 +5,7 @@ includedir=@includedir@
+ 
+ Name: libdrm_exynos
+ Description: Userspace interface to exynos kernel DRM services
+-Version: 0.6
++Version: 0.7
+ Libs: -L${libdir} -ldrm_exynos
+ Cflags: -I${includedir} -I${includedir}/libdrm -I${includedir}/exynos
+ Requires.private: libdrm
+-- 
+2.0.5
