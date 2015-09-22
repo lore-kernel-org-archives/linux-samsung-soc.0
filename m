@@ -1,187 +1,73 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v5 15/17] drm: bridge: analogix/dp: try force hpd after plug in lookup failed
-Date: Tue, 22 Sep 2015 16:02:55 +0800
-Message-ID: <1442908975-7401-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v5 16/17] drm: bridge: analogix/dp: move hpd detect to
+ connector detect function
+Date: Tue, 22 Sep 2015 16:05:14 +0800
+Message-ID: <1442909114-7464-1-git-send-email-ykk@rock-chips.com>
 References: <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.133]:40618 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757163AbbIVIFP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Sep 2015 04:05:15 -0400
-In-Reply-To: <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1442906428-2609-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <treding@nvidia.com>, joe@perches.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>
-Cc: David Airlie <airlied@linux.ie>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-Some edp screen do not have hpd signal, so we can't just return
-failed when hpd plug in detect failed.
+This change just make a little clean to make code more like
+drm core expect, move hdp detect code from bridge->enable(),
+and place them into connector->detect().
 
-This is an hardware property, so we need add a devicetree property
-"analogix,need-force-hpd" to indicate this sutiation.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 ---
 Changes in v5: None
-Changes in v4: None
+Changes in v4:
+- Take Jingoo suggest, add commit messages.
+
 Changes in v3:
-- Add "analogix,need-force-hpd" to indicate whether driver need foce
-  hpd when hpd detect failed.
+- move dp hpd detect to connector detect function.
 
 Changes in v2: None
 
- .../devicetree/bindings/drm/bridge/analogix_dp.txt |  4 ++-
- .../bindings/video/analogix_dp-rockchip.txt        |  1 +
- .../devicetree/bindings/video/exynos_dp.txt        |  1 +
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 36 +++++++++++++++++++---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  2 ++
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  9 ++++++
- 6 files changed, 47 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-index f54dc3e..c310367 100644
---- a/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-+++ b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-@@ -22,6 +22,9 @@ Required properties for dp-controller:
- 		from general PHY binding: Should be "dp".
- 
- Optional properties for dp-controller:
-+	-analogix,need-force-hpd:
-+		Indicate driver need force hpd when hpd detect failed, this
-+		is used for some eDP screen which don't have hpd signal.
- 	-hpd-gpios:
- 		Hotplug detect GPIO.
- 		Indicates which GPIO should be used for hotplug detection
-@@ -31,7 +34,6 @@ Optional properties for dp-controller:
- 		* Documentation/devicetree/bindings/video/exynos_dp.txt
- 		* Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
- 
--
- [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
- -------------------------------------------------------------------------------
- 
-diff --git a/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-index ec93917..be18388 100644
---- a/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-+++ b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-@@ -31,6 +31,7 @@ For the below properties, please refer to Analogix DP binding document:
- - phys (required)
- - phy-names (required)
- - hpd-gpios (optional)
-+- analogix,need-force-hpd (optional)
- -------------------------------------------------------------------------------
- 
- Example:
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index ea03b3a..4f06e80 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -41,6 +41,7 @@ For the below properties, please refer to Analogix DP binding document:
- 	-phys (required)
- 	-phy-names (required)
- 	-hpd-gpios (optional)
-+	-analogix,need-force-hpd (optional)
- 	-video interfaces (optional)
- 
- Deprecated properties for DisplayPort:
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 3efae33..7e83738 100644
+index 7e83738..90c4fda 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -59,15 +59,38 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
- {
- 	int timeout_loop = 0;
- 
--	while (analogix_dp_get_plug_in_status(dp) != 0) {
-+	while (timeout_loop < DP_TIMEOUT_LOOP_COUNT) {
-+		if (analogix_dp_get_plug_in_status(dp) == 0)
-+			return 0;
-+
- 		timeout_loop++;
--		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
--			dev_err(dp->dev, "failed to get hpd plug status\n");
--			return -ETIMEDOUT;
--		}
- 		usleep_range(10, 11);
+@@ -901,12 +901,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to disable the panel\n");
  	}
  
-+	/*
-+	 * Some edp screen do not have hpd signal, so we can't just
-+	 * return failed when hpd plug in detect failed, DT property
-+	 * "need-force-hpd" would indicate whether driver need this.
-+	 */
-+	if (!dp->need_force_hpd)
-+		return -ETIMEDOUT;
-+
-+	/*
-+	 * The eDP TRM indicate that if HPD_STATUS(RO) is 0, AUX CH
-+	 * will not work, so we need to give a force hpd action to
-+	 * set HPD_STATUS manually.
-+	 */
-+	dev_dbg(dp->dev, "failed to get hpd plug status, try to force hpd\n");
-+
-+	analogix_dp_force_hpd(dp);
-+
-+	if (analogix_dp_get_plug_in_status(dp) != 0) {
-+		dev_err(dp->dev, "failed to get hpd plug in status\n");
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(dp->dev, "success to get plug in status after force hpd\n");
-+
- 	return 0;
- }
+-	ret = analogix_dp_detect_hpd(dp);
+-	if (ret) {
+-		/* Cable has been disconnected, we're done */
+-		return;
+-	}
+-
+ 	ret = analogix_dp_handle_edid(dp);
+ 	if (ret) {
+ 		dev_err(dp->dev, "unable to handle edid\n");
+@@ -941,6 +935,11 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
  
-@@ -1243,6 +1266,9 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 	if (IS_ERR(dp->reg_base))
- 		return PTR_ERR(dp->reg_base);
- 
-+	dp->need_force_hpd =
-+		of_property_read_bool(dev->of_node, "analogix,need-force-hpd");
-+
- 	dp->hpd_gpio = of_get_named_gpio(dev->of_node, "hpd-gpios", 0);
- 	if (!gpio_is_valid(dp->hpd_gpio))
- 		dp->hpd_gpio = of_get_named_gpio(dev->of_node,
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index f4cb799..3a136b8 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -160,6 +160,7 @@ struct analogix_dp_device {
- 	struct phy		*phy;
- 	int			dpms_mode;
- 	int			hpd_gpio;
-+	bool                    need_force_hpd;
- 
- 	struct analogix_dp_plat_data *plat_data;
- };
-@@ -180,6 +181,7 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 				       bool enable);
- void analogix_dp_init_analog_func(struct analogix_dp_device *dp);
- void analogix_dp_init_hpd(struct analogix_dp_device *dp);
-+void analogix_dp_force_hpd(struct analogix_dp_device *dp);
- enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp);
- void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp);
- void analogix_dp_reset_aux(struct analogix_dp_device *dp);
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 21a3287..c7e2959 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -365,6 +365,15 @@ void analogix_dp_init_hpd(struct analogix_dp_device *dp)
- 	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
- }
- 
-+void analogix_dp_force_hpd(struct analogix_dp_device *dp)
-+{
-+	u32 reg;
-+
-+	reg = readl(dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
-+	reg = (F_HPD | HPD_CTRL);
-+	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
-+}
-+
- enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp)
+ enum drm_connector_status analogix_dp_detect(struct device *dev, bool force)
  {
- 	u32 reg;
++	struct analogix_dp_device *dp = dev_get_drvdata(dev);
++
++	if (analogix_dp_detect_hpd(dp))
++		return connector_status_disconnected;
++
+ 	return connector_status_connected;
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_detect);
 -- 
 1.9.1
