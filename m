@@ -1,64 +1,68 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos5420: fix wrong clock binding for
- sysmmu_fimd1_1
-Date: Wed, 23 Sep 2015 10:43:53 +0200
-Message-ID: <56026649.4050802@samsung.com>
-References: <1442994115-20167-1-git-send-email-jy0922.shim@samsung.com>
+From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v3 2/4] Documentation: bindings: mfd: cros ec: document
+ vbc EC property
+Date: Wed, 23 Sep 2015 11:31:22 -0300
+Message-ID: <5602B7BA.8020302@collabora.co.uk>
+References: <1442842703-5309-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1442842703-5309-3-git-send-email-emilio.lopez@collabora.co.uk>
+ <20150923003401.GB16510@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:63901 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753153AbbIWIn5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Sep 2015 04:43:57 -0400
-In-reply-to: <1442994115-20167-1-git-send-email-jy0922.shim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150923003401.GB16510@x1>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, stable@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org, javier@osg.samsung.com
 
-Hello,
+Hi Lee,
 
-On 2015-09-23 09:41, Joonyoung Shim wrote:
-> The sysmmu_fimd1_1 should bind the clock CLK_SMMU_FIMD1M1, not the clock
-> CLK_SMMU_FIMD1M0. CLK_SMMU_FIMD1M0 is a clock for the sysmmu_fimd1_0.
+On 22/09/15 21:34, Lee Jones wrote:
+> On Mon, 21 Sep 2015, Emilio L=C3=B3pez wrote:
 >
-> This wrong clock binding causes the problem that is blocked in iommu_map
-> function when IOMMU is enabled and exynos-drm driver tries to allocate
-> buffer via DMA mapping API on Odroid-XU3 board.
+>> Some EC implementations include a small nvram space used to store
+>> verified boot context data. This boolean property lets us indicate
+>> whether this space is available or not on a specific EC implementati=
+on.
+>>
+>> Signed-off-by: Emilio L=C3=B3pez <emilio.lopez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+>> ---
+>>
+>> Patch is new in v3, split from 3/4
+>>
+>>   Documentation/devicetree/bindings/mfd/cros-ec.txt | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Doc=
+umentation/devicetree/bindings/mfd/cros-ec.txt
+>> index 1777916..136e0c2 100644
+>> --- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+>> @@ -34,6 +34,10 @@ Required properties (LPC):
+>>   - compatible: "google,cros-ec-lpc"
+>>   - reg: List of (IO address, size) pairs defining the interface use=
+s
+>>
+>> +Optional properties (all):
+>> +- google,has-vbc-nvram: Some implementations of the EC include a sm=
+all
+>> +  nvram space used to store verified boot context data. This boolea=
+n flag
+>> +  is used to specify whether this nvram is present or not.
 >
-> Fixes: b70045167815 ("ARM: dts: add sysmmu nodes for exynos5420")
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Cc: <stable@vger.kernel.org> # v4.2
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Is there no way to check for this at runtime?
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+You can issue a read and see if it succeeds, but the problem is that=20
+some EC implementations return success even when they don't implement=20
+the functionality.
 
-> ---
-> Changes for v2:
-> - Update the commit message
-> - Add Fixes: and Reviewed-by: tags
->
->   arch/arm/boot/dts/exynos5420.dtsi | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index df9aee9..1b3d6c7 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -1117,7 +1117,7 @@
->   		interrupt-parent = <&combiner>;
->   		interrupts = <3 0>;
->   		clock-names = "sysmmu", "master";
-> -		clocks = <&clock CLK_SMMU_FIMD1M0>, <&clock CLK_FIMD1>;
-> +		clocks = <&clock CLK_SMMU_FIMD1M1>, <&clock CLK_FIMD1>;
->   		power-domains = <&disp_pd>;
->   		#iommu-cells = <0>;
->   	};
+Cheers,
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Emilio
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
