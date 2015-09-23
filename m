@@ -1,43 +1,66 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] clk: samsung: fix cpu clock's flags checking
-Date: Tue, 22 Sep 2015 10:09:43 -0700
-Message-ID: <20150922170943.GI23081@codeaurora.org>
-References: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 2/4] Documentation: bindings: mfd: cros ec: document
+ vbc EC property
+Date: Wed, 23 Sep 2015 01:34:01 +0100
+Message-ID: <20150923003401.GB16510@x1>
+References: <1442842703-5309-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1442842703-5309-3-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:52749 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751980AbbIVRJq (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:33497 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759696AbbIWAeE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Sep 2015 13:09:46 -0400
+	Tue, 22 Sep 2015 20:34:04 -0400
+Received: by pacex6 with SMTP id ex6so23717100pac.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Sep 2015 17:34:03 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <1442842703-5309-3-git-send-email-emilio.lopez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>
+Cc: gregkh@linuxfoundation.org, olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux@roeck-us.net, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 08/28, Bartlomiej Zolnierkiewicz wrote:
-> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-> incorrectly used as a bit numbers.  Fix it.
-> 
-> Tested on Exynos4210 based Origen board and on Exynos5250 based
-> Arndale board.
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Fixes: ddeac8d96 ("clk: samsung: add infrastructure to register cpu clocks")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+On Mon, 21 Sep 2015, Emilio L=C3=B3pez wrote:
+
+> Some EC implementations include a small nvram space used to store
+> verified boot context data. This boolean property lets us indicate
+> whether this space is available or not on a specific EC implementatio=
+n.
+>=20
+> Signed-off-by: Emilio L=C3=B3pez <emilio.lopez@collabora.co.uk>
 > ---
+>=20
+> Patch is new in v3, split from 3/4
+>=20
+>  Documentation/devicetree/bindings/mfd/cros-ec.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Docu=
+mentation/devicetree/bindings/mfd/cros-ec.txt
+> index 1777916..136e0c2 100644
+> --- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
+> +++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+> @@ -34,6 +34,10 @@ Required properties (LPC):
+>  - compatible: "google,cros-ec-lpc"
+>  - reg: List of (IO address, size) pairs defining the interface uses
+> =20
+> +Optional properties (all):
+> +- google,has-vbc-nvram: Some implementations of the EC include a sma=
+ll
+> +  nvram space used to store verified boot context data. This boolean=
+ flag
+> +  is used to specify whether this nvram is present or not.
 
-Applied to clk-fixes
+Is there no way to check for this at runtime?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  Example for I2C:
+> =20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
