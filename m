@@ -1,46 +1,50 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos5420: fix wrong clock binding for
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos5420: fix wrong clock binding for
  sysmmu_fimd1_1
-Date: Wed, 23 Sep 2015 09:19:04 +0200
-Message-ID: <56025268.6040405@osg.samsung.com>
-References: <1442990906-16411-1-git-send-email-jy0922.shim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1442990906-16411-1-git-send-email-jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Date: Wed, 23 Sep 2015 16:41:55 +0900
+Message-ID: <1442994115-20167-1-git-send-email-jy0922.shim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:45895 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751921AbbIWHl5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Sep 2015 03:41:57 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, stable@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org, m.szyprowski@samsung.com, javier@osg.samsung.com, jy0922.shim@samsung.com
 
-Hello Joonyoung,
+The sysmmu_fimd1_1 should bind the clock CLK_SMMU_FIMD1M1, not the clock
+CLK_SMMU_FIMD1M0. CLK_SMMU_FIMD1M0 is a clock for the sysmmu_fimd1_0.
 
-On 09/23/2015 08:48 AM, Joonyoung Shim wrote:
-> The sysmmu_fimd1_1 should bind the clock CLK_SMMU_FIMD1M1, not the clock
-> CLK_SMMU_FIMD1M0. CLK_SMMU_FIMD1M0 is a clock for the sysmmu_fimd1_0.
-> 
+This wrong clock binding causes the problem that is blocked in iommu_map
+function when IOMMU is enabled and exynos-drm driver tries to allocate
+buffer via DMA mapping API on Odroid-XU3 board.
 
-Can you please mention in the commit message if this patch is solving an
-issue on a given machine or if it is just for the sake of correctness.
+Fixes: b70045167815 ("ARM: dts: add sysmmu nodes for exynos5420")
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: <stable@vger.kernel.org> # v4.2
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+Changes for v2:
+- Update the commit message
+- Add Fixes: and Reviewed-by: tags
 
-Git blame shows that this was added by commit b70045167815 ("ARM: dts: add
-sysmmu nodes for exynos5420") so please add a Fixes: tag.
+ arch/arm/boot/dts/exynos5420.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v4.2
-> ---
-
-Patch looks good to me.
-
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-
-Best regards,
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index df9aee9..1b3d6c7 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -1117,7 +1117,7 @@
+ 		interrupt-parent = <&combiner>;
+ 		interrupts = <3 0>;
+ 		clock-names = "sysmmu", "master";
+-		clocks = <&clock CLK_SMMU_FIMD1M0>, <&clock CLK_FIMD1>;
++		clocks = <&clock CLK_SMMU_FIMD1M1>, <&clock CLK_FIMD1>;
+ 		power-domains = <&disp_pd>;
+ 		#iommu-cells = <0>;
+ 	};
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
