@@ -1,41 +1,92 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/3] drm/exynos: Suspend/resume is unused if !PM
-Date: Thu, 24 Sep 2015 12:14:13 +0200
-Message-ID: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
+Subject: [PATCH 2/3] drm/exynos: fimc: Clock control is unused if !PM
+Date: Thu, 24 Sep 2015 12:14:14 +0200
+Message-ID: <1443089655-15352-2-git-send-email-thierry.reding@gmail.com>
+References: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:33276 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753640AbbIXKOY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Sep 2015 06:14:24 -0400
+Received: by pacex6 with SMTP id ex6so69222814pac.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Sep 2015 03:14:24 -0700 (PDT)
+In-Reply-To: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClByb3RlY3QgdGhlIHN1
-c3BlbmQgYW5kIHJlc3VtZSBjYWxsYmFja3Mgd2l0aCBhbiAjaWZkZWYgQ09ORklHX1BNX1NMRUVQ
-Cmd1YXJkIHRvIGF2b2lkICJkZWZpbmVkIGJ1dCBub3QgdXNlZCIgd2FybmluZ3MuCgpTaWduZWQt
-b2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyB8IDIgKysKIDEgZmlsZSBjaGFuZ2VkLCAy
-IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKaW5k
-ZXggZjBhNTgzOWJkMjI2Li5lMDdhMGZlMTY0MzIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmMKQEAgLTMwNCw2ICszMDQsNyBAQCBpbnQgZXh5bm9zX2F0b21pY19jb21t
-aXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRl
-LAogCXJldHVybiAwOwogfQogCisjaWZkZWYgQ09ORklHX1BNX1NMRUVQCiBzdGF0aWMgaW50IGV4
-eW5vc19kcm1fc3VzcGVuZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBwbV9tZXNzYWdlX3Qgc3Rh
-dGUpCiB7CiAJc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcjsKQEAgLTM0MCw2ICszNDEs
-NyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fcmVzdW1lKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYp
-CiAKIAlyZXR1cm4gMDsKIH0KKyNlbmRpZgogCiBzdGF0aWMgaW50IGV4eW5vc19kcm1fb3Blbihz
-dHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCiB7Ci0tIAoyLjUu
-MAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Thierry Reding <treding@nvidia.com>
+
+Protect the fimc_clk_ctrl() function with an #ifdef CONFIG_PM guard to
+avoid "defined but not used" warnings.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 36 ++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 2a652359af64..dd3a5e6d58c8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1206,23 +1206,6 @@ static struct exynos_drm_ipp_ops fimc_dst_ops = {
+ 	.set_addr = fimc_dst_set_addr,
+ };
+ 
+-static int fimc_clk_ctrl(struct fimc_context *ctx, bool enable)
+-{
+-	DRM_DEBUG_KMS("enable[%d]\n", enable);
+-
+-	if (enable) {
+-		clk_prepare_enable(ctx->clocks[FIMC_CLK_GATE]);
+-		clk_prepare_enable(ctx->clocks[FIMC_CLK_WB_A]);
+-		ctx->suspended = false;
+-	} else {
+-		clk_disable_unprepare(ctx->clocks[FIMC_CLK_GATE]);
+-		clk_disable_unprepare(ctx->clocks[FIMC_CLK_WB_A]);
+-		ctx->suspended = true;
+-	}
+-
+-	return 0;
+-}
+-
+ static irqreturn_t fimc_irq_handler(int irq, void *dev_id)
+ {
+ 	struct fimc_context *ctx = dev_id;
+@@ -1780,6 +1763,24 @@ static int fimc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM
++static int fimc_clk_ctrl(struct fimc_context *ctx, bool enable)
++{
++	DRM_DEBUG_KMS("enable[%d]\n", enable);
++
++	if (enable) {
++		clk_prepare_enable(ctx->clocks[FIMC_CLK_GATE]);
++		clk_prepare_enable(ctx->clocks[FIMC_CLK_WB_A]);
++		ctx->suspended = false;
++	} else {
++		clk_disable_unprepare(ctx->clocks[FIMC_CLK_GATE]);
++		clk_disable_unprepare(ctx->clocks[FIMC_CLK_WB_A]);
++		ctx->suspended = true;
++	}
++
++	return 0;
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static int fimc_suspend(struct device *dev)
+ {
+@@ -1806,7 +1807,6 @@ static int fimc_resume(struct device *dev)
+ }
+ #endif
+ 
+-#ifdef CONFIG_PM
+ static int fimc_runtime_suspend(struct device *dev)
+ {
+ 	struct fimc_context *ctx = get_fimc_context(dev);
+-- 
+2.5.0
