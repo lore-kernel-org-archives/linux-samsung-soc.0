@@ -1,50 +1,111 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 00/16] drm/exynos/hdmi: refactoring/cleanup patches
-Date: Fri, 25 Sep 2015 14:48:13 +0200
-Message-ID: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 09/16] drm/exynos/hdmi: use constant size array for regulators
+Date: Fri, 25 Sep 2015 14:48:22 +0200
+Message-ID: <1443185309-13827-10-git-send-email-a.hajda@samsung.com>
+References: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35552 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932221AbbIYMtE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Sep 2015 08:49:04 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NV800CL4GXQ7C10@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Sep 2015 13:49:02 +0100 (BST)
+In-reply-to: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-SGksCgpUaGlzIGlzIGFub3RoZXIgc2V0IG9mIGNsZWFudXAvaW1wcm92ZW1lbnQgcGF0Y2hlcyBm
-b3IgSERNSS4KClRoZSBwYXRjaHNldCBpcyBiYXNlZCBvbiBleHlub3MtZHJtLW5leHQuCkl0IHdh
-cyB0ZXN0ZWQgb24gVW5pdmVyc2FsIGFuZCBPZHJvaWQgVTMuCgpSZWdhcmRzCkFuZHJ6ZWoKCgpB
-bmRyemVqIEhhamRhICgxNSk6CiAgZHJtL2V4eW5vcy9oZG1pOiByZW1vdmUgc3VwcG9ydCBmb3Ig
-ZGVwcmVjYXRlZCBjb21wYXRpYmxlCiAgZHQtYmluZGluZ3M6IHJlbW92ZSBkZXByZWNhdGVkIGNv
-bXBhdGlibGUgc3RyaW5nIGZyb20gZXh5bm9zLWhkbWkKICBkcm0vZXh5bm9zL2hkbWk6IHVzZSBt
-YXBwaW5ncyBmb3IgcmVnaXN0ZXJzIHdpdGggSVAgZGVwZW5kZW50IGFkZHJlc3MKICBkcm0vZXh5
-bm9zL2hkbWk6IG1vdmUgUExMIHN0YWJpbGl6YXRpb24gY2hlY2sgY29kZSB0byBzZXBhcmF0ZQog
-ICAgZnVuY3Rpb24KICBkcm0vZXh5bm9zL2hkbWk6IHNpbXBsaWZ5IEhETUktUEhZIHBvd2VyIHNl
-cXVlbmNlCiAgZHJtL2V4eW5vcy9oZG1pOiByZXBsYWNlIGFsbCB3cml0ZWIgd2l0aCB3cml0ZWwK
-ICBkcm0vZXh5bm9zL2hkbWk6IGZpeCByZW1vdmFsIG9yZGVyCiAgZHJtL2V4eW5vcy9oZG1pOiB1
-c2Ugb3B0aW9uYWwgcmVndWxhdG9yX2dldCBmb3IgaGRtaS1lbgogIGRybS9leHlub3MvaGRtaTog
-dXNlIGNvbnN0YW50IHNpemUgYXJyYXkgZm9yIHJlZ3VsYXRvcnMKICBkcm0vZXh5bm9zL2hkbWk6
-IHNpbXBsaWZ5IGNsb2NrIHJlLXBhcmVudGluZwogIGRybS9leHlub3MvaGRtaTogY29udmVydCB0
-byBncGlvZCBBUEkKICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92ZSBkZXByZWNhdGVkIGhkbWlfcmVz
-b3VyY2VzIHN0cnVjdHVyZQogIGRybS9leHlub3MvaGRtaTogY29udmVydCBjb250YWluZXJfb2Yg
-bWFjcm8gdG8gaW5saW5lIGZ1bmN0aW9uCiAgZHJtL2V4eW5vcy9oZG1pOiBpbXByb3ZlIEhETUkv
-QUNSIHJlbGF0ZWQgY29kZQogIGRybS9leHlub3MvaGRtaTogcmVtb3ZlIHVudXNlZCBmaWVsZAoK
-VG9tYXN6IFN0YW5pc2xhd3NraSAoMSk6CiAgZHJtOiBleHlub3M6IG1peGVyOiBmaXggdXNpbmcg
-dXNsZWVwKCkgaW4gYXRvbWljIGNvbnRleHQKCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRl
-by9leHlub3NfaGRtaS50eHQgICAgICB8ICAgNyArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfaGRtaS5jICAgICAgICAgICAgICAgfCA0OTEgKysrKysrKy0tLS0tLS0tLS0tLS0tCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgICAgICB8ICAgMiAr
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWhkbWkuaCAgICAgICAgICAgICAgICAgfCAg
-MzMgKy0KIDQgZmlsZXMgY2hhbmdlZCwgMTg5IGluc2VydGlvbnMoKyksIDM0NCBkZWxldGlvbnMo
-LSkKCi0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+Driver always uses the same number of regulators, so there is no point in
+dynamic allocation.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 841470c..583dd5e 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -83,6 +83,12 @@ static const u32 hdmi_reg_map[][HDMI_TYPE_COUNT] = {
+ 	{ HDMI_V13_ACR_CON, HDMI_V14_ACR_CON },
+ };
+ 
++static const char * const supply[] = {
++	"vdd",
++	"vdd_osc",
++	"vdd_pll",
++};
++
+ struct hdmi_driver_data {
+ 	unsigned int type;
+ 	const struct hdmiphy_config *phy_confs;
+@@ -96,9 +102,8 @@ struct hdmi_resources {
+ 	struct clk			*sclk_pixel;
+ 	struct clk			*sclk_hdmiphy;
+ 	struct clk			*mout_hdmi;
+-	struct regulator_bulk_data	*regul_bulk;
++	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
+ 	struct regulator		*reg_hdmi_en;
+-	int				regul_count;
+ };
+ 
+ struct hdmi_context {
+@@ -1652,7 +1657,7 @@ static void hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	pm_runtime_get_sync(hdata->dev);
+ 
+-	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
++	if (regulator_bulk_enable(ARRAY_SIZE(supply), res->regul_bulk))
+ 		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+ 
+ 	/* set pmu hdmiphy control bit to enable hdmiphy */
+@@ -1701,7 +1706,7 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+ 			PMU_HDMI_PHY_ENABLE_BIT, 0);
+ 
+-	regulator_bulk_disable(res->regul_count, res->regul_bulk);
++	regulator_bulk_disable(ARRAY_SIZE(supply), res->regul_bulk);
+ 
+ 	pm_runtime_put_sync(hdata->dev);
+ 
+@@ -1743,11 +1748,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ {
+ 	struct device *dev = hdata->dev;
+ 	struct hdmi_resources *res = &hdata->res;
+-	static char *supply[] = {
+-		"vdd",
+-		"vdd_osc",
+-		"vdd_pll",
+-	};
+ 	int i, ret;
+ 
+ 	DRM_DEBUG_KMS("HDMI resource init\n");
+@@ -1786,12 +1786,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 
+ 	clk_set_parent(res->mout_hdmi, res->sclk_pixel);
+ 
+-	res->regul_bulk = devm_kzalloc(dev, ARRAY_SIZE(supply) *
+-		sizeof(res->regul_bulk[0]), GFP_KERNEL);
+-	if (!res->regul_bulk) {
+-		ret = -ENOMEM;
+-		goto fail;
+-	}
+ 	for (i = 0; i < ARRAY_SIZE(supply); ++i) {
+ 		res->regul_bulk[i].supply = supply[i];
+ 		res->regul_bulk[i].consumer = NULL;
+@@ -1801,7 +1795,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 		DRM_ERROR("failed to get regulators\n");
+ 		return ret;
+ 	}
+-	res->regul_count = ARRAY_SIZE(supply);
+ 
+ 	res->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
+ 
+-- 
+1.9.1
