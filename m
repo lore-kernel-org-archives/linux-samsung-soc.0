@@ -1,67 +1,62 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 2/3] drm/exynos: fimc: Clock control is unused if !PM
-Date: Fri, 25 Sep 2015 10:41:32 +0200
-Message-ID: <560508BC.4070602@samsung.com>
+Subject: Re: [PATCH 3/3] drm/exynos: rotator: Clock control is unused if !PM
+Date: Fri, 25 Sep 2015 10:41:52 +0200
+Message-ID: <560508D0.7030606@samsung.com>
 References: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
- <1443089655-15352-2-git-send-email-thierry.reding@gmail.com>
+ <1443089655-15352-3-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1443089655-15352-2-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:22008 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754894AbbIYImT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Sep 2015 04:42:19 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NV8004J75IHKQ70@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Sep 2015 09:42:17 +0100 (BST)
+In-reply-to: <1443089655-15352-3-git-send-email-thierry.reding@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-T24gMDkvMjQvMjAxNSAxMjoxNCBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhp
-ZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBQcm90ZWN0IHRoZSBmaW1jX2Ns
-a19jdHJsKCkgZnVuY3Rpb24gd2l0aCBhbiAjaWZkZWYgQ09ORklHX1BNIGd1YXJkIHRvCj4gYXZv
-aWQgImRlZmluZWQgYnV0IG5vdCB1c2VkIiB3YXJuaW5ncy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBU
-aGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgoKUmV2aWV3ZWQtYnk6IEFuZHJ6ZWog
-SGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+CgpSZWdhcmRzCkFuZHJ6ZWoKCj4gLS0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMgfCAzNiArKysrKysrKysrKysr
-KysrLS0tLS0tLS0tLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwg
-MTggZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9maW1jLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
-Yy5jCj4gaW5kZXggMmE2NTIzNTlhZjY0Li5kZDNhNWU2ZDU4YzggMTAwNjQ0Cj4gLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPiBAQCAtMTIwNiwyMyArMTIwNiw2IEBAIHN0
-YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9pcHBfb3BzIGZpbWNfZHN0X29wcyA9IHsKPiAgCS5zZXRf
-YWRkciA9IGZpbWNfZHN0X3NldF9hZGRyLAo+ICB9Owo+ICAKPiAtc3RhdGljIGludCBmaW1jX2Ns
-a19jdHJsKHN0cnVjdCBmaW1jX2NvbnRleHQgKmN0eCwgYm9vbCBlbmFibGUpCj4gLXsKPiAtCURS
-TV9ERUJVR19LTVMoImVuYWJsZVslZF1cbiIsIGVuYWJsZSk7Cj4gLQo+IC0JaWYgKGVuYWJsZSkg
-ewo+IC0JCWNsa19wcmVwYXJlX2VuYWJsZShjdHgtPmNsb2Nrc1tGSU1DX0NMS19HQVRFXSk7Cj4g
-LQkJY2xrX3ByZXBhcmVfZW5hYmxlKGN0eC0+Y2xvY2tzW0ZJTUNfQ0xLX1dCX0FdKTsKPiAtCQlj
-dHgtPnN1c3BlbmRlZCA9IGZhbHNlOwo+IC0JfSBlbHNlIHsKPiAtCQljbGtfZGlzYWJsZV91bnBy
-ZXBhcmUoY3R4LT5jbG9ja3NbRklNQ19DTEtfR0FURV0pOwo+IC0JCWNsa19kaXNhYmxlX3VucHJl
-cGFyZShjdHgtPmNsb2Nrc1tGSU1DX0NMS19XQl9BXSk7Cj4gLQkJY3R4LT5zdXNwZW5kZWQgPSB0
-cnVlOwo+IC0JfQo+IC0KPiAtCXJldHVybiAwOwo+IC19Cj4gLQo+ICBzdGF0aWMgaXJxcmV0dXJu
-X3QgZmltY19pcnFfaGFuZGxlcihpbnQgaXJxLCB2b2lkICpkZXZfaWQpCj4gIHsKPiAgCXN0cnVj
-dCBmaW1jX2NvbnRleHQgKmN0eCA9IGRldl9pZDsKPiBAQCAtMTc4MCw2ICsxNzYzLDI0IEBAIHN0
-YXRpYyBpbnQgZmltY19yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCXJl
-dHVybiAwOwo+ICB9Cj4gIAo+ICsjaWZkZWYgQ09ORklHX1BNCj4gK3N0YXRpYyBpbnQgZmltY19j
-bGtfY3RybChzdHJ1Y3QgZmltY19jb250ZXh0ICpjdHgsIGJvb2wgZW5hYmxlKQo+ICt7Cj4gKwlE
-Uk1fREVCVUdfS01TKCJlbmFibGVbJWRdXG4iLCBlbmFibGUpOwo+ICsKPiArCWlmIChlbmFibGUp
-IHsKPiArCQljbGtfcHJlcGFyZV9lbmFibGUoY3R4LT5jbG9ja3NbRklNQ19DTEtfR0FURV0pOwo+
-ICsJCWNsa19wcmVwYXJlX2VuYWJsZShjdHgtPmNsb2Nrc1tGSU1DX0NMS19XQl9BXSk7Cj4gKwkJ
-Y3R4LT5zdXNwZW5kZWQgPSBmYWxzZTsKPiArCX0gZWxzZSB7Cj4gKwkJY2xrX2Rpc2FibGVfdW5w
-cmVwYXJlKGN0eC0+Y2xvY2tzW0ZJTUNfQ0xLX0dBVEVdKTsKPiArCQljbGtfZGlzYWJsZV91bnBy
-ZXBhcmUoY3R4LT5jbG9ja3NbRklNQ19DTEtfV0JfQV0pOwo+ICsJCWN0eC0+c3VzcGVuZGVkID0g
-dHJ1ZTsKPiArCX0KPiArCj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiAgI2lmZGVmIENPTkZJR19Q
-TV9TTEVFUAo+ICBzdGF0aWMgaW50IGZpbWNfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCj4g
-IHsKPiBAQCAtMTgwNiw3ICsxODA3LDYgQEAgc3RhdGljIGludCBmaW1jX3Jlc3VtZShzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpCj4gIH0KPiAgI2VuZGlmCj4gIAo+IC0jaWZkZWYgQ09ORklHX1BNCj4gIHN0
-YXRpYyBpbnQgZmltY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+ICB7Cj4g
-IAlzdHJ1Y3QgZmltY19jb250ZXh0ICpjdHggPSBnZXRfZmltY19jb250ZXh0KGRldik7Cj4gCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 09/24/2015 12:14 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Protect the rotator_clk_crtl() function with an #ifdef CONFIG_PM guard
+> to avoid "defined but not used" warnings.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> index 425e70625388..2f5c118f4c8e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> @@ -786,6 +786,7 @@ static int rotator_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_PM
+>  static int rotator_clk_crtl(struct rot_context *rot, bool enable)
+>  {
+>  	if (enable) {
+> @@ -822,7 +823,6 @@ static int rotator_resume(struct device *dev)
+>  }
+>  #endif
+>  
+> -#ifdef CONFIG_PM
+>  static int rotator_runtime_suspend(struct device *dev)
+>  {
+>  	struct rot_context *rot = dev_get_drvdata(dev);
+> 
