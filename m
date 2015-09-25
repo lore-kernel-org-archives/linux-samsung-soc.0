@@ -1,62 +1,49 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 3/3] drm/exynos: rotator: Clock control is unused if !PM
-Date: Fri, 25 Sep 2015 10:41:52 +0200
-Message-ID: <560508D0.7030606@samsung.com>
+Subject: Re: [PATCH 1/3] drm/exynos: Suspend/resume is unused if !PM
+Date: Fri, 25 Sep 2015 10:47:05 +0200
+Message-ID: <56050A09.7090205@samsung.com>
 References: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
- <1443089655-15352-3-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22008 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754894AbbIYImT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Sep 2015 04:42:19 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NV8004J75IHKQ70@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Sep 2015 09:42:17 +0100 (BST)
-In-reply-to: <1443089655-15352-3-git-send-email-thierry.reding@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/24/2015 12:14 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Protect the rotator_clk_crtl() function with an #ifdef CONFIG_PM guard
-> to avoid "defined but not used" warnings.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-
-
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> index 425e70625388..2f5c118f4c8e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> @@ -786,6 +786,7 @@ static int rotator_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_PM
->  static int rotator_clk_crtl(struct rot_context *rot, bool enable)
->  {
->  	if (enable) {
-> @@ -822,7 +823,6 @@ static int rotator_resume(struct device *dev)
->  }
->  #endif
->  
-> -#ifdef CONFIG_PM
->  static int rotator_runtime_suspend(struct device *dev)
->  {
->  	struct rot_context *rot = dev_get_drvdata(dev);
-> 
+T24gMDkvMjQvMjAxNSAxMjoxNCBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhp
+ZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBQcm90ZWN0IHRoZSBzdXNwZW5k
+IGFuZCByZXN1bWUgY2FsbGJhY2tzIHdpdGggYW4gI2lmZGVmIENPTkZJR19QTV9TTEVFUAo+IGd1
+YXJkIHRvIGF2b2lkICJkZWZpbmVkIGJ1dCBub3QgdXNlZCIgd2FybmluZ3MuCj4gCj4gU2lnbmVk
+LW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBiZXN0IHNv
+bHV0aW9uIHdvdWxkIGJlIHRvIG1lcmdlIGxlZ2FjeSBleHlub3NfZHJtXyhzdXNwZW5kfHJlc3Vt
+ZSkgUE0KZnVuY3Rpb25zIHdpdGggZXh5bm9zX2RybV9zeXNfKHN1c3BlbmR8cmVzdW1lKS4gVGhl
+cmUgaXMgbm8gcmVhc29uIHRvIGtlZXAgYm90aC4KQ291bGQgeW91IGRvIGl0LCBpZiBub3QgSSBj
+YW4gcHJlcGFyZSBxdWljayBwYXRjaC4KClJlZ2FyZHMKQW5kcnplagoKPiAtLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgMiArKwo+ICAxIGZpbGUgY2hhbmdl
+ZCwgMiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+cnYuYwo+IGluZGV4IGYwYTU4MzliZDIyNi4uZTA3YTBmZTE2NDMyIDEwMDY0NAo+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+IEBAIC0zMDQsNiArMzA0LDcgQEAgaW50IGV4
+eW5vc19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fYXRv
+bWljX3N0YXRlICpzdGF0ZSwKPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+ICsjaWZkZWYgQ09ORklH
+X1BNX1NMRUVQCj4gIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9zdXNwZW5kKHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsIHBtX21lc3NhZ2VfdCBzdGF0ZSkKPiAgewo+ICAJc3RydWN0IGRybV9jb25uZWN0
+b3IgKmNvbm5lY3RvcjsKPiBAQCAtMzQwLDYgKzM0MSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Ry
+bV9yZXN1bWUoc3RydWN0IGRybV9kZXZpY2UgKmRldikKPiAgCj4gIAlyZXR1cm4gMDsKPiAgfQo+
+ICsjZW5kaWYKPiAgCj4gIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9vcGVuKHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKPiAgewo+IAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
