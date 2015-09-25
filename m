@@ -1,51 +1,50 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 02/16] dt-bindings: remove deprecated compatible string from
- exynos-hdmi
-Date: Fri, 25 Sep 2015 14:48:15 +0200
-Message-ID: <1443185309-13827-3-git-send-email-a.hajda@samsung.com>
-References: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:30176 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932208AbbIYMtC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Sep 2015 08:49:02 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NV800KWQGXNJ770@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Sep 2015 13:48:59 +0100 (BST)
-In-reply-to: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 00/16] drm/exynos/hdmi: refactoring/cleanup patches
+Date: Fri, 25 Sep 2015 14:48:13 +0200
+Message-ID: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-samsung,exynos5-hdmi compatible was marked as deprecated in Jun 2013.
-It was never used since then.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- Documentation/devicetree/bindings/video/exynos_hdmi.txt | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index 1fd8cf9..d474f59 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -2,10 +2,9 @@ Device-Tree bindings for drm hdmi driver
- 
- Required properties:
- - compatible: value should be one among the following:
--	1) "samsung,exynos5-hdmi" <DEPRECATED>
--	2) "samsung,exynos4210-hdmi"
--	3) "samsung,exynos4212-hdmi"
--	4) "samsung,exynos5420-hdmi"
-+	1) "samsung,exynos4210-hdmi"
-+	2) "samsung,exynos4212-hdmi"
-+	3) "samsung,exynos5420-hdmi"
- - reg: physical base address of the hdmi and length of memory mapped
- 	region.
- - interrupts: interrupt number to the cpu.
--- 
-1.9.1
+SGksCgpUaGlzIGlzIGFub3RoZXIgc2V0IG9mIGNsZWFudXAvaW1wcm92ZW1lbnQgcGF0Y2hlcyBm
+b3IgSERNSS4KClRoZSBwYXRjaHNldCBpcyBiYXNlZCBvbiBleHlub3MtZHJtLW5leHQuCkl0IHdh
+cyB0ZXN0ZWQgb24gVW5pdmVyc2FsIGFuZCBPZHJvaWQgVTMuCgpSZWdhcmRzCkFuZHJ6ZWoKCgpB
+bmRyemVqIEhhamRhICgxNSk6CiAgZHJtL2V4eW5vcy9oZG1pOiByZW1vdmUgc3VwcG9ydCBmb3Ig
+ZGVwcmVjYXRlZCBjb21wYXRpYmxlCiAgZHQtYmluZGluZ3M6IHJlbW92ZSBkZXByZWNhdGVkIGNv
+bXBhdGlibGUgc3RyaW5nIGZyb20gZXh5bm9zLWhkbWkKICBkcm0vZXh5bm9zL2hkbWk6IHVzZSBt
+YXBwaW5ncyBmb3IgcmVnaXN0ZXJzIHdpdGggSVAgZGVwZW5kZW50IGFkZHJlc3MKICBkcm0vZXh5
+bm9zL2hkbWk6IG1vdmUgUExMIHN0YWJpbGl6YXRpb24gY2hlY2sgY29kZSB0byBzZXBhcmF0ZQog
+ICAgZnVuY3Rpb24KICBkcm0vZXh5bm9zL2hkbWk6IHNpbXBsaWZ5IEhETUktUEhZIHBvd2VyIHNl
+cXVlbmNlCiAgZHJtL2V4eW5vcy9oZG1pOiByZXBsYWNlIGFsbCB3cml0ZWIgd2l0aCB3cml0ZWwK
+ICBkcm0vZXh5bm9zL2hkbWk6IGZpeCByZW1vdmFsIG9yZGVyCiAgZHJtL2V4eW5vcy9oZG1pOiB1
+c2Ugb3B0aW9uYWwgcmVndWxhdG9yX2dldCBmb3IgaGRtaS1lbgogIGRybS9leHlub3MvaGRtaTog
+dXNlIGNvbnN0YW50IHNpemUgYXJyYXkgZm9yIHJlZ3VsYXRvcnMKICBkcm0vZXh5bm9zL2hkbWk6
+IHNpbXBsaWZ5IGNsb2NrIHJlLXBhcmVudGluZwogIGRybS9leHlub3MvaGRtaTogY29udmVydCB0
+byBncGlvZCBBUEkKICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92ZSBkZXByZWNhdGVkIGhkbWlfcmVz
+b3VyY2VzIHN0cnVjdHVyZQogIGRybS9leHlub3MvaGRtaTogY29udmVydCBjb250YWluZXJfb2Yg
+bWFjcm8gdG8gaW5saW5lIGZ1bmN0aW9uCiAgZHJtL2V4eW5vcy9oZG1pOiBpbXByb3ZlIEhETUkv
+QUNSIHJlbGF0ZWQgY29kZQogIGRybS9leHlub3MvaGRtaTogcmVtb3ZlIHVudXNlZCBmaWVsZAoK
+VG9tYXN6IFN0YW5pc2xhd3NraSAoMSk6CiAgZHJtOiBleHlub3M6IG1peGVyOiBmaXggdXNpbmcg
+dXNsZWVwKCkgaW4gYXRvbWljIGNvbnRleHQKCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRl
+by9leHlub3NfaGRtaS50eHQgICAgICB8ICAgNyArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfaGRtaS5jICAgICAgICAgICAgICAgfCA0OTEgKysrKysrKy0tLS0tLS0tLS0tLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgICAgICB8ICAgMiAr
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWhkbWkuaCAgICAgICAgICAgICAgICAgfCAg
+MzMgKy0KIDQgZmlsZXMgY2hhbmdlZCwgMTg5IGluc2VydGlvbnMoKyksIDM0NCBkZWxldGlvbnMo
+LSkKCi0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
