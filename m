@@ -1,82 +1,354 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 11/16] drm/exynos/hdmi: convert to gpiod API
-Date: Fri, 25 Sep 2015 14:48:24 +0200
-Message-ID: <1443185309-13827-12-git-send-email-a.hajda@samsung.com>
-References: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] ARM: dts: exynos4412-trats2: remove regulator-compatible usage
+Date: Fri, 25 Sep 2015 15:44:17 +0200
+Message-ID: <1443188657-13501-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:39288 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755924AbbIYNoi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Sep 2015 09:44:38 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 
-VGhlIHBhdGNoIGNvbnZlcnRzIEFQSSB0byBncGlvZCBhbmQgbW92ZXMgaW5pdGlhbGl6YXRpb24g
-Y29kZQp0byBoZG1pX3Jlc291cmNlc19pbml0LgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpk
-YSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19oZG1pLmMgfCAzNyArKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmls
-ZSBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19oZG1pLmMKaW5kZXggNDc1MzQxZi4uYzA2NjRkNTMgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAgLTMwLDExICszMCwxMSBAQAogI2luY2x1ZGUgPGxp
-bnV4L2RlbGF5Lmg+CiAjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5oPgogI2luY2x1ZGUgPGxp
-bnV4L2Nsay5oPgorI2luY2x1ZGUgPGxpbnV4L2dwaW8vY29uc3VtZXIuaD4KICNpbmNsdWRlIDxs
-aW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4KICNpbmNsdWRlIDxsaW51eC9pby5oPgogI2luY2x1
-ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4KICNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4KLSNp
-bmNsdWRlIDxsaW51eC9vZl9ncGlvLmg+CiAjaW5jbHVkZSA8bGludXgvaGRtaS5oPgogI2luY2x1
-ZGUgPGxpbnV4L2NvbXBvbmVudC5oPgogI2luY2x1ZGUgPGxpbnV4L21mZC9zeXNjb24uaD4KQEAg
-LTQ2LDggKzQ2LDYgQEAKICNpbmNsdWRlICJleHlub3NfZHJtX2NydGMuaCIKICNpbmNsdWRlICJl
-eHlub3NfbWl4ZXIuaCIKIAotI2luY2x1ZGUgPGxpbnV4L2dwaW8uaD4KLQogI2RlZmluZSBjdHhf
-ZnJvbV9jb25uZWN0b3IoYykJY29udGFpbmVyX29mKGMsIHN0cnVjdCBoZG1pX2NvbnRleHQsIGNv
-bm5lY3RvcikKIAogI2RlZmluZSBIT1RQTFVHX0RFQk9VTkNFX01TCQkxMTAwCkBAIC0xMjksNyAr
-MTI3LDcgQEAgc3RydWN0IGhkbWlfY29udGV4dCB7CiAJc3RydWN0IGhkbWlfcmVzb3VyY2VzCQly
-ZXM7CiAJY29uc3Qgc3RydWN0IGhkbWlfZHJpdmVyX2RhdGEJKmRydl9kYXRhOwogCi0JaW50CQkJ
-CWhwZF9ncGlvOworCXN0cnVjdCBncGlvX2Rlc2MgCQkqaHBkX2dwaW87CiAJdm9pZCBfX2lvbWVt
-CQkJKnJlZ3NfaGRtaXBoeTsKIAogCXN0cnVjdCByZWdtYXAJCQkqcG11cmVnOwpAQCAtOTQ5LDcg
-Kzk0Nyw3IEBAIHN0YXRpYyBlbnVtIGRybV9jb25uZWN0b3Jfc3RhdHVzIGhkbWlfZGV0ZWN0KHN0
-cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsCiB7CiAJc3RydWN0IGhkbWlfY29udGV4dCAq
-aGRhdGEgPSBjdHhfZnJvbV9jb25uZWN0b3IoY29ubmVjdG9yKTsKIAotCWlmIChncGlvX2dldF92
-YWx1ZShoZGF0YS0+aHBkX2dwaW8pKQorCWlmIChncGlvZF9nZXRfdmFsdWUoaGRhdGEtPmhwZF9n
-cGlvKSkKIAkJcmV0dXJuIGNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkOwogCiAJcmV0dXJuIGNv
-bm5lY3Rvcl9zdGF0dXNfZGlzY29ubmVjdGVkOwpAQCAtMTc0OCw2ICsxNzQ2LDE3IEBAIHN0YXRp
-YyBpbnQgaGRtaV9yZXNvdXJjZXNfaW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIAog
-CURSTV9ERUJVR19LTVMoIkhETUkgcmVzb3VyY2UgaW5pdFxuIik7CiAKKwloZGF0YS0+aHBkX2dw
-aW8gPSBkZXZtX2dwaW9kX2dldChkZXYsICJocGQiLCBHUElPRF9JTik7CisJaWYgKElTX0VSUiho
-ZGF0YS0+aHBkX2dwaW8pKSB7CisJCURSTV9FUlJPUigiY2Fubm90IGdldCBocGQgZ3BpbyBwcm9w
-ZXJ0eVxuIik7CisJCXJldHVybiBQVFJfRVJSKGhkYXRhLT5ocGRfZ3Bpbyk7CisJfQorCisJaGRh
-dGEtPmlycSA9IGdwaW9kX3RvX2lycShoZGF0YS0+aHBkX2dwaW8pOworCWlmIChoZGF0YS0+aXJx
-IDwgMCkgeworCQlEUk1fRVJST1IoImZhaWxlZCB0byBnZXQgR1BJTyBpcnFcbiIpOworCQlyZXR1
-cm4gIGhkYXRhLT5pcnE7CisJfQogCS8qIGdldCBjbG9ja3MsIHBvd2VyICovCiAJcmVzLT5oZG1p
-ID0gZGV2bV9jbGtfZ2V0KGRldiwgImhkbWkiKTsKIAlpZiAoSVNfRVJSKHJlcy0+aGRtaSkpIHsK
-QEAgLTE5MDksMTEgKzE5MTgsNiBAQCBzdGF0aWMgaW50IGhkbWlfcHJvYmUoc3RydWN0IHBsYXRm
-b3JtX2RldmljZSAqcGRldikKIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBoZGF0YSk7CiAK
-IAloZGF0YS0+ZGV2ID0gZGV2OwotCWhkYXRhLT5ocGRfZ3BpbyA9IG9mX2dldF9uYW1lZF9ncGlv
-KGRldi0+b2Zfbm9kZSwgImhwZC1ncGlvIiwgMCk7Ci0JaWYgKGhkYXRhLT5ocGRfZ3BpbyA8IDAp
-IHsKLQkJRFJNX0VSUk9SKCJjYW5ub3QgZ2V0IGhwZCBncGlvIHByb3BlcnR5XG4iKTsKLQkJcmV0
-dXJuIGhkYXRhLT5ocGRfZ3BpbzsKLQl9CiAKIAlyZXQgPSBoZG1pX3Jlc291cmNlc19pbml0KGhk
-YXRhKTsKIAlpZiAocmV0KSB7CkBAIC0xOTI4LDEyICsxOTMyLDYgQEAgc3RhdGljIGludCBoZG1p
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCXJldHVybiByZXQ7CiAJfQog
-Ci0JcmV0ID0gZGV2bV9ncGlvX3JlcXVlc3QoZGV2LCBoZGF0YS0+aHBkX2dwaW8sICJIUEQiKTsK
-LQlpZiAocmV0KSB7Ci0JCURSTV9FUlJPUigiZmFpbGVkIHRvIHJlcXVlc3QgSFBEIGdwaW9cbiIp
-OwotCQlyZXR1cm4gcmV0OwotCX0KLQogCWRkY19ub2RlID0gaGRtaV9sZWdhY3lfZGRjX2R0X2Jp
-bmRpbmcoZGV2KTsKIAlpZiAoZGRjX25vZGUpCiAJCWdvdG8gb3V0X2dldF9kZGNfYWRwdDsKQEAg
-LTE5ODEsMTMgKzE5NzksNiBAQCBvdXRfZ2V0X3BoeV9wb3J0OgogCQl9CiAJfQogCi0JaGRhdGEt
-PmlycSA9IGdwaW9fdG9faXJxKGhkYXRhLT5ocGRfZ3Bpbyk7Ci0JaWYgKGhkYXRhLT5pcnEgPCAw
-KSB7Ci0JCURSTV9FUlJPUigiZmFpbGVkIHRvIGdldCBHUElPIGlycVxuIik7Ci0JCXJldCA9IGhk
-YXRhLT5pcnE7Ci0JCWdvdG8gZXJyX2hkbWlwaHk7Ci0JfQotCiAJSU5JVF9ERUxBWUVEX1dPUkso
-JmhkYXRhLT5ob3RwbHVnX3dvcmssIGhkbWlfaG90cGx1Z193b3JrX2Z1bmMpOwogCiAJcmV0ID0g
-ZGV2bV9yZXF1ZXN0X3RocmVhZGVkX2lycShkZXYsIGhkYXRhLT5pcnEsIE5VTEwsCi0tIAoxLjku
-MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The regulator-compatible property from the regulator DT binding was
+deprecated and the correct approach is to use the node's name.
+
+This patch has no functional changes but by not using a deprecated
+property, new DTS based on this one will not carry the same issue.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+ arch/arm/boot/dts/exynos4412-trats2.dts | 105 +++++++++++---------------------
+ 1 file changed, 35 insertions(+), 70 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 2a1ebb76ebe0..9ee55119e7d2 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -564,16 +564,14 @@
+ 		#clock-cells = <1>;
+ 
+ 		voltage-regulators {
+-			ldo1_reg: ldo1 {
+-				regulator-compatible = "LDO1";
++			ldo1_reg: LDO1 {
+ 				regulator-name = "VALIVE_1.0V_AP";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			ldo2_reg: ldo2 {
+-				regulator-compatible = "LDO2";
++			ldo2_reg: LDO2 {
+ 				regulator-name = "VM1M2_1.2V_AP";
+ 				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1200000>;
+@@ -583,32 +581,28 @@
+ 				};
+ 			};
+ 
+-			ldo3_reg: ldo3 {
+-				regulator-compatible = "LDO3";
++			ldo3_reg: LDO3 {
+ 				regulator-name = "VCC_1.8V_AP";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			ldo4_reg: ldo4 {
+-				regulator-compatible = "LDO4";
++			ldo4_reg: LDO4 {
+ 				regulator-name = "VCC_2.8V_AP";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			ldo5_reg: ldo5 {
+-				regulator-compatible = "LDO5";
++			ldo5_reg: LDO5 {
+ 				regulator-name = "VCC_1.8V_IO";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			ldo6_reg: ldo6 {
+-				regulator-compatible = "LDO6";
++			ldo6_reg: LDO6 {
+ 				regulator-name = "VMPLL_1.0V_AP";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+@@ -618,8 +612,7 @@
+ 				};
+ 			};
+ 
+-			ldo7_reg: ldo7 {
+-				regulator-compatible = "LDO7";
++			ldo7_reg: LDO7 {
+ 				regulator-name = "VPLL_1.0V_AP";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+@@ -629,8 +622,7 @@
+ 				};
+ 			};
+ 
+-			ldo8_reg: ldo8 {
+-				regulator-compatible = "LDO8";
++			ldo8_reg: LDO8 {
+ 				regulator-name = "VMIPI_1.0V";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+@@ -639,15 +631,13 @@
+ 				};
+ 			};
+ 
+-			ldo9_reg: ldo9 {
+-				regulator-compatible = "LDO9";
++			ldo9_reg: LDO9 {
+ 				regulator-name = "CAM_ISP_MIPI_1.2V";
+ 				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1200000>;
+ 			};
+ 
+-			ldo10_reg: ldo10 {
+-				regulator-compatible = "LDO10";
++			ldo10_reg: DO10 {
+ 				regulator-name = "VMIPI_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+@@ -656,8 +646,7 @@
+ 				};
+ 			};
+ 
+-			ldo11_reg: ldo11 {
+-				regulator-compatible = "LDO11";
++			ldo11_reg: LDO11 {
+ 				regulator-name = "VABB1_1.95V";
+ 				regulator-min-microvolt = <1950000>;
+ 				regulator-max-microvolt = <1950000>;
+@@ -667,8 +656,7 @@
+ 				};
+ 			};
+ 
+-			ldo12_reg: ldo12 {
+-				regulator-compatible = "LDO12";
++			ldo12_reg: LDO12 {
+ 				regulator-name = "VUOTG_3.0V";
+ 				regulator-min-microvolt = <3000000>;
+ 				regulator-max-microvolt = <3000000>;
+@@ -677,15 +665,13 @@
+ 				};
+ 			};
+ 
+-			ldo13_reg: ldo13 {
+-				regulator-compatible = "LDO13";
++			ldo13_reg: LDO13 {
+ 				regulator-name = "NFC_AVDD_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 			};
+ 
+-			ldo14_reg: ldo14 {
+-				regulator-compatible = "LDO14";
++			ldo14_reg: LDO14 {
+ 				regulator-name = "VABB2_1.95V";
+ 				regulator-min-microvolt = <1950000>;
+ 				regulator-max-microvolt = <1950000>;
+@@ -695,8 +681,7 @@
+ 				};
+ 			};
+ 
+-			ldo15_reg: ldo15 {
+-				regulator-compatible = "LDO15";
++			ldo15_reg: LDO15 {
+ 				regulator-name = "VHSIC_1.0V";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+@@ -705,8 +690,7 @@
+ 				};
+ 			};
+ 
+-			ldo16_reg: ldo16 {
+-				regulator-compatible = "LDO16";
++			ldo16_reg: LDO16 {
+ 				regulator-name = "VHSIC_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+@@ -715,80 +699,69 @@
+ 				};
+ 			};
+ 
+-			ldo17_reg: ldo17 {
+-				regulator-compatible = "LDO17";
++			ldo17_reg: LDO17 {
+ 				regulator-name = "CAM_SENSOR_CORE_1.2V";
+ 				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1200000>;
+ 			};
+ 
+-			ldo18_reg: ldo18 {
+-				regulator-compatible = "LDO18";
++			ldo18_reg: LDO18 {
+ 				regulator-name = "CAM_ISP_SEN_IO_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 			};
+ 
+-			ldo19_reg: ldo19 {
+-				regulator-compatible = "LDO19";
++			ldo19_reg: LDO19 {
+ 				regulator-name = "VT_CAM_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 			};
+ 
+-			ldo20_reg: ldo20 {
+-				regulator-compatible = "LDO20";
++			ldo20_reg: LDO20 {
+ 				regulator-name = "VDDQ_PRE_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 			};
+ 
+-			ldo21_reg: ldo21 {
+-				regulator-compatible = "LDO21";
++			ldo21_reg: LDO21 {
+ 				regulator-name = "VTF_2.8V";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+ 				maxim,ena-gpios = <&gpy2 0 GPIO_ACTIVE_HIGH>;
+ 			};
+ 
+-			ldo22_reg: ldo22 {
+-				regulator-compatible = "LDO22";
++			ldo22_reg: LDO22 {
+ 				regulator-name = "VMEM_VDD_2.8V";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+ 				maxim,ena-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
+ 			};
+ 
+-			ldo23_reg: ldo23 {
+-				regulator-compatible = "LDO23";
++			ldo23_reg: LDO23 {
+ 				regulator-name = "TSP_AVDD_3.3V";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+ 			};
+ 
+-			ldo24_reg: ldo24 {
+-				regulator-compatible = "LDO24";
++			ldo24_reg: LDO24 {
+ 				regulator-name = "TSP_VDD_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 			};
+ 
+-			ldo25_reg: ldo25 {
+-				regulator-compatible = "LDO25";
++			ldo25_reg: LDO25 {
+ 				regulator-name = "LCD_VCC_3.3V";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+ 			};
+ 
+-			ldo26_reg: ldo26 {
+-				regulator-compatible = "LDO26";
++			ldo26_reg: LDO26 {
+ 				regulator-name = "MOTOR_VCC_3.0V";
+ 				regulator-min-microvolt = <3000000>;
+ 				regulator-max-microvolt = <3000000>;
+ 			};
+ 
+-			buck1_reg: buck1 {
+-				regulator-compatible = "BUCK1";
++			buck1_reg: BUCK1 {
+ 				regulator-name = "vdd_mif";
+ 				regulator-min-microvolt = <850000>;
+ 				regulator-max-microvolt = <1100000>;
+@@ -799,8 +772,7 @@
+ 				};
+ 			};
+ 
+-			buck2_reg: buck2 {
+-				regulator-compatible = "BUCK2";
++			buck2_reg: BUCK2 {
+ 				regulator-name = "vdd_arm";
+ 				regulator-min-microvolt = <850000>;
+ 				regulator-max-microvolt = <1500000>;
+@@ -811,8 +783,7 @@
+ 				};
+ 			};
+ 
+-			buck3_reg: buck3 {
+-				regulator-compatible = "BUCK3";
++			buck3_reg: BUCK3 {
+ 				regulator-name = "vdd_int";
+ 				regulator-min-microvolt = <850000>;
+ 				regulator-max-microvolt = <1150000>;
+@@ -823,8 +794,7 @@
+ 				};
+ 			};
+ 
+-			buck4_reg: buck4 {
+-				regulator-compatible = "BUCK4";
++			buck4_reg: BUCK4 {
+ 				regulator-name = "vdd_g3d";
+ 				regulator-min-microvolt = <850000>;
+ 				regulator-max-microvolt = <1150000>;
+@@ -834,40 +804,35 @@
+ 				};
+ 			};
+ 
+-			buck5_reg: buck5 {
+-				regulator-compatible = "BUCK5";
++			buck5_reg: BUCK5 {
+ 				regulator-name = "VMEM_1.2V_AP";
+ 				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1200000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			buck6_reg: buck6 {
+-				regulator-compatible = "BUCK6";
++			buck6_reg: BUCK6 {
+ 				regulator-name = "VCC_SUB_1.35V";
+ 				regulator-min-microvolt = <1350000>;
+ 				regulator-max-microvolt = <1350000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			buck7_reg: buck7 {
+-				regulator-compatible = "BUCK7";
++			buck7_reg: BUCK7 {
+ 				regulator-name = "VCC_SUB_2.0V";
+ 				regulator-min-microvolt = <2000000>;
+ 				regulator-max-microvolt = <2000000>;
+ 				regulator-always-on;
+ 			};
+ 
+-			buck8_reg: buck8 {
+-				regulator-compatible = "BUCK8";
++			buck8_reg: BUCK8 {
+ 				regulator-name = "VMEM_VDDF_3.0V";
+ 				regulator-min-microvolt = <2850000>;
+ 				regulator-max-microvolt = <2850000>;
+ 				maxim,ena-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
+ 			};
+ 
+-			buck9_reg: buck9 {
+-				regulator-compatible = "BUCK9";
++			buck9_reg: BUCK9 {
+ 				regulator-name = "CAM_ISP_CORE_1.2V";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1200000>;
+-- 
+2.4.3
