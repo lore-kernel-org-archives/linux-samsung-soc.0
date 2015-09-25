@@ -1,49 +1,51 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 1/3] drm/exynos: Suspend/resume is unused if !PM
-Date: Fri, 25 Sep 2015 10:47:05 +0200
-Message-ID: <56050A09.7090205@samsung.com>
-References: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1443089655-15352-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
+Subject: [PATCH 02/16] dt-bindings: remove deprecated compatible string from
+ exynos-hdmi
+Date: Fri, 25 Sep 2015 14:48:15 +0200
+Message-ID: <1443185309-13827-3-git-send-email-a.hajda@samsung.com>
+References: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:30176 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932208AbbIYMtC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Sep 2015 08:49:02 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NV800KWQGXNJ770@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Sep 2015 13:48:59 +0100 (BST)
+In-reply-to: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-T24gMDkvMjQvMjAxNSAxMjoxNCBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhp
-ZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBQcm90ZWN0IHRoZSBzdXNwZW5k
-IGFuZCByZXN1bWUgY2FsbGJhY2tzIHdpdGggYW4gI2lmZGVmIENPTkZJR19QTV9TTEVFUAo+IGd1
-YXJkIHRvIGF2b2lkICJkZWZpbmVkIGJ1dCBub3QgdXNlZCIgd2FybmluZ3MuCj4gCj4gU2lnbmVk
-LW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBiZXN0IHNv
-bHV0aW9uIHdvdWxkIGJlIHRvIG1lcmdlIGxlZ2FjeSBleHlub3NfZHJtXyhzdXNwZW5kfHJlc3Vt
-ZSkgUE0KZnVuY3Rpb25zIHdpdGggZXh5bm9zX2RybV9zeXNfKHN1c3BlbmR8cmVzdW1lKS4gVGhl
-cmUgaXMgbm8gcmVhc29uIHRvIGtlZXAgYm90aC4KQ291bGQgeW91IGRvIGl0LCBpZiBub3QgSSBj
-YW4gcHJlcGFyZSBxdWljayBwYXRjaC4KClJlZ2FyZHMKQW5kcnplagoKPiAtLS0KPiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgMiArKwo+ICAxIGZpbGUgY2hhbmdl
-ZCwgMiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuYwo+IGluZGV4IGYwYTU4MzliZDIyNi4uZTA3YTBmZTE2NDMyIDEwMDY0NAo+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+IEBAIC0zMDQsNiArMzA0LDcgQEAgaW50IGV4
-eW5vc19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fYXRv
-bWljX3N0YXRlICpzdGF0ZSwKPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+ICsjaWZkZWYgQ09ORklH
-X1BNX1NMRUVQCj4gIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9zdXNwZW5kKHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYsIHBtX21lc3NhZ2VfdCBzdGF0ZSkKPiAgewo+ICAJc3RydWN0IGRybV9jb25uZWN0
-b3IgKmNvbm5lY3RvcjsKPiBAQCAtMzQwLDYgKzM0MSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Ry
-bV9yZXN1bWUoc3RydWN0IGRybV9kZXZpY2UgKmRldikKPiAgCj4gIAlyZXR1cm4gMDsKPiAgfQo+
-ICsjZW5kaWYKPiAgCj4gIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9vcGVuKHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKPiAgewo+IAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+samsung,exynos5-hdmi compatible was marked as deprecated in Jun 2013.
+It was never used since then.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ Documentation/devicetree/bindings/video/exynos_hdmi.txt | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+index 1fd8cf9..d474f59 100644
+--- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
++++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+@@ -2,10 +2,9 @@ Device-Tree bindings for drm hdmi driver
+ 
+ Required properties:
+ - compatible: value should be one among the following:
+-	1) "samsung,exynos5-hdmi" <DEPRECATED>
+-	2) "samsung,exynos4210-hdmi"
+-	3) "samsung,exynos4212-hdmi"
+-	4) "samsung,exynos5420-hdmi"
++	1) "samsung,exynos4210-hdmi"
++	2) "samsung,exynos4212-hdmi"
++	3) "samsung,exynos5420-hdmi"
+ - reg: physical base address of the hdmi and length of memory mapped
+ 	region.
+ - interrupts: interrupt number to the cpu.
+-- 
+1.9.1
