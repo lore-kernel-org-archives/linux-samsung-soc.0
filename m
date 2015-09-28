@@ -1,53 +1,65 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH] drm/exynos: Avoid NULL pointer dereference in resume if bind failed
-Date: Sun, 27 Sep 2015 17:11:46 +0100
-Message-ID: <1443370306-15429-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 4/4] ARM64: dts: exynos5433: add jpeg node
+Date: Mon, 28 Sep 2015 17:52:13 +0900
+Message-ID: <5608FFBD.1030306@samsung.com>
+References: <1442586060-23657-1-git-send-email-andrzej.p@samsung.com>
+ <1442586060-23657-5-git-send-email-andrzej.p@samsung.com>
+ <55FFD2D2.1010508@xs4all.nl> <55FFD4FF.6090306@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51463 "EHLO
-	mx0a-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751124AbbI0QfW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Sep 2015 12:35:22 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <55FFD4FF.6090306@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jingoohan1@gmail.com, inki.dae@samsung.com
-Cc: jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-If binding failed calling exynos_dp_enable in exynos_dp_resume will
-result in several NULL pointer dereferences. It is much better to
-simply skip suspend/resume handling if bind has failed, do so by
-checking if a drm_dev exists.
+W dniu 21.09.2015 o 18:59, Andrzej Pietrasiewicz pisze:
+> Hi Hans,
+> 
+> W dniu 21.09.2015 o 11:50, Hans Verkuil pisze:
+>> On 18-09-15 16:21, Andrzej Pietrasiewicz wrote:
+>>> From: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>
+>>> Add Exynos 5433 jpeg h/w codec node.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+>>> ---
+>>>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 21 +++++++++++++++++++++
+>>>   1 file changed, 21 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>> b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>
+>> This dtsi file doesn't exist in the media-git tree. What is the story
+>> here?
+>>
+>> Should this go through a different subsystem?
+>>
+>> I think the media subsystem can take patches 1-3 and whoever does DT
+>> patches can
+>> take this patch, right?
+>>
+> 
+> The cover letter explains that the series is rebased onto Mauro's
+> master with Kukjin's branch merged. The latter does contain
+> the exynos5433.dtsi. That said, yes, taking patches 1-3 in
+> media subsystem and leaving DT patch to someone else is the
+> way to go.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- drivers/gpu/drm/exynos/exynos_dp_core.c |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+Although Kukjin picked Exynos 5433 ARM64 patches but they were not
+accepted upstream by arm-soc. He rolled it for few releases but:
+1. Reason for not accepting by arm-soc was not resolved - there is no DTS.
+2. Kukjin did not rebase the branch for 4.4... which maybe means that he
+wants to drop it?
+3. Anyone (but me...) can send Galaxy Note4 (Exynos5433) DTS file based
+on sources on opensource.samsung.com. The DTS there is for 32-bit but it
+can be probably easily adjusted for ARM64.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index d66ade0..48baf07 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -1388,6 +1388,9 @@ static int exynos_dp_suspend(struct device *dev)
- {
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
-+	if (!dp->drm_dev)
-+		return 0;
-+
- 	exynos_dp_disable(&dp->encoder);
- 	return 0;
- }
-@@ -1396,6 +1399,9 @@ static int exynos_dp_resume(struct device *dev)
- {
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
-+	if (!dp->drm_dev)
-+		return 0;
-+
- 	exynos_dp_enable(&dp->encoder);
- 	return 0;
- }
--- 
-1.7.2.5
+All of this means that Device Tree support for this driver can't be
+merged now and effort for mainlining 5433 may be unfortunately wasted...
+
+Best regards,
+Krzysztof
