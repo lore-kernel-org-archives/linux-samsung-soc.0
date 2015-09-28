@@ -1,83 +1,54 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 4/4] ARM64: dts: exynos5433: add jpeg node
-Date: Mon, 28 Sep 2015 21:02:28 +0900
-Message-ID: <56092C54.1070507@samsung.com>
-References: <1442586060-23657-1-git-send-email-andrzej.p@samsung.com>
- <55FFD4FF.6090306@samsung.com> <5608FFBD.1030306@samsung.com>
- <2466182.YdnXZtSWXI@amdc1976>
+From: John Youn <John.Youn@synopsys.com>
+Subject: Re: [PATCH v3 0/4] Exynos4412-based Trats2 USB gadget (DWC2) fixes
+Date: Mon, 28 Sep 2015 18:21:23 +0000
+Message-ID: <2B3535C5ECE8B5419E3ECBE30077290901DC37F2EC@US01WEMBX2.internal.synopsys.com>
+References: <1442830572-6765-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <2466182.YdnXZtSWXI@amdc1976>
-Sender: linux-media-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "balbi@ti.com" <balbi@ti.com>
+Cc: Robert Baldyga <r.baldyga@samsung.com>, John Youn <John.Youn@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 28.09.2015 o 20:54, Bartlomiej Zolnierkiewicz pisze:
+On 9/21/2015 3:16 AM, Marek Szyprowski wrote:
+> Hello,
 > 
-> Hi,
+> This is an updated DWC2 related part of initial patchset posted here:
+> https://lkml.org/lkml/2015/8/21/306 
+> Only DWC2 related patches have been modified since the initial
+> submission.
 > 
-> On Monday, September 28, 2015 05:52:13 PM Krzysztof Kozlowski wrote:
->> W dniu 21.09.2015 o 18:59, Andrzej Pietrasiewicz pisze:
->>> Hi Hans,
->>>
->>> W dniu 21.09.2015 o 11:50, Hans Verkuil pisze:
->>>> On 18-09-15 16:21, Andrzej Pietrasiewicz wrote:
->>>>> From: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>>
->>>>> Add Exynos 5433 jpeg h/w codec node.
->>>>>
->>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
->>>>> ---
->>>>>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 21 +++++++++++++++++++++
->>>>>   1 file changed, 21 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>>>> b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>>>
->>>> This dtsi file doesn't exist in the media-git tree. What is the story
->>>> here?
->>>>
->>>> Should this go through a different subsystem?
->>>>
->>>> I think the media subsystem can take patches 1-3 and whoever does DT
->>>> patches can
->>>> take this patch, right?
->>>>
->>>
->>> The cover letter explains that the series is rebased onto Mauro's
->>> master with Kukjin's branch merged. The latter does contain
->>> the exynos5433.dtsi. That said, yes, taking patches 1-3 in
->>> media subsystem and leaving DT patch to someone else is the
->>> way to go.
->>
->> Although Kukjin picked Exynos 5433 ARM64 patches but they were not
->> accepted upstream by arm-soc. He rolled it for few releases but:
->> 1. Reason for not accepting by arm-soc was not resolved - there is no DTS.
->> 2. Kukjin did not rebase the branch for 4.4... which maybe means that he
->> wants to drop it?
->> 3. Anyone (but me...) can send Galaxy Note4 (Exynos5433) DTS file based
->> on sources on opensource.samsung.com. The DTS there is for 32-bit but it
->> can be probably easily adjusted for ARM64.
->>
->> All of this means that Device Tree support for this driver can't be
->> merged now and effort for mainlining 5433 may be unfortunately wasted...
+> Changelog:
+> v3:
+> - rebased onto latest 'testing/next' from Felipe Balbi (includes
+>   s3c_hsotg -> dwc2 rename)
 > 
-> Exynos5433 support is being incrementally merged (clocks, drm, phy,
-> pinctrl, thermal and tty support is already in upstream or -next).
+> v2:
+> - moved setting of ll_hw_enabled flag to enable/disable functions,
+>   as suggested by John Youn
+> - moved setting of phy width to dwc2_lowlevel_init function
 > 
-> I don't know why DTS changes got stuck in Kukjin's tree (Kukjin,
-> could you please explain?) but I think that this shouldn't not stop
-> us from continuing Exynos5433 upstreaming effort.
+> 
+> Marek Szyprowski (4):
+>   usb: dwc2: remove double call to dwc2_hsotg_of_probe
+>   usb: dwc2: remove non-functional clock gating
+>   usb: dwc2: fix unbalanced phy control
+>   usb: dwc2: refactor common low-level hw code to platform.c
+> 
+>  drivers/usb/dwc2/core.h     |   4 +-
+>  drivers/usb/dwc2/gadget.c   | 201 ++++---------------------------------
+>  drivers/usb/dwc2/platform.c | 236 ++++++++++++++++++++++++++++++++++++--------
+>  3 files changed, 217 insertions(+), 224 deletions(-)
+> 
 
-I already explained. There is no DTS, so the pull request was rejected
-(pull request for v4.0 I believe).
 
-It was not about adding drivers for 5433's clocks/phy/pinctrl etc. It
-was about DTS.
+Tested-by: John Youn <johnyoun@synopsys.com>
+Acked-by: John Youn <johnyoun@synopsys.com>
 
-Best regards,
-Krzysztof
+Could you queue this Felipe?
+
+Regards,
+John
