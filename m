@@ -1,59 +1,56 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 2/3] drm/exynos: remove decon_mode_fixup()
-Date: Tue, 29 Sep 2015 17:59:18 -0300
-Message-ID: <1443560359-4389-2-git-send-email-gustavo@padovan.org>
-References: <1443560359-4389-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1443560359-4389-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL] Samsung fixes for v4.3
+Date: Wed, 30 Sep 2015 08:59:14 +0900
+Message-ID: <1443571154-28722-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlIG9ubHkgdGhpbmcgbW9kZV9maXh1cCB3YXMgZG9pbmcgd2FzIHNldCB0aGUgYWRqdXN0ZWRf
-bW9kZS0+dnJlZnJlc2ggdG8KNjAsIGJ1dCBpdCBhbHJlYWR5IGhhcyB0aGUgdmFsdWUgb2YgNjAg
-d2hlbiB0aGUgZGVjb25fbW9kZV9maXh1cCgpIGlzCmNhbGxlZC4gVGhhdCBtZWFucyB0aGlzIGNh
-bGwgaXMgYWN0dWFsbHkgcG9pbnRsZXNzIGFuZCBjYW4gYmUgcmVtb3ZlZC4KClNpZ25lZC1vZmYt
-Ynk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KCi0t
-LQpUaGlzIGlzIHVudGVzdGVkIGFzIEkgZG9uJ3QgaGF2ZSBhbnkgZGVjb24gZGV2aWNlLCBidXQg
-SSBhc3N1bWUgdGhlCmJlaGF2aW91ciBpcyBzaW1pbGFyIHRvIEZJTUQgYW5kIGl0IHRoYXQgY2Fz
-ZSwgSSdtIHByb3Bvc2luZyB0aGUKdGhlIHJlbW92YWwgaW4gZGVjb25fbW9kZV9maXh1cCgpIGFz
-IHdlbGwuCi0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIHwg
-MTIgLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTIgZGVsZXRpb25zKC0pCgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCmluZGV4IGNiZGI3OGUuLmU2Y2Jh
-Y2EgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24u
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKQEAgLTM3
-LDcgKzM3LDYgQEAKICAqIERFQ09OIHN0YW5kcyBmb3IgRGlzcGxheSBhbmQgRW5oYW5jZW1lbnQg
-Y29udHJvbGxlci4KICAqLwogCi0jZGVmaW5lIERFQ09OX0RFRkFVTFRfRlJBTUVSQVRFIDYwCiAj
-ZGVmaW5lIE1JTl9GQl9XSURUSF9GT1JfMTZXT1JEX0JVUlNUIDEyOAogCiAjZGVmaW5lIFdJTkRP
-V1NfTlIJMgpAQCAtMTY1LDE2ICsxNjQsNiBAQCBzdGF0aWMgdTMyIGRlY29uX2NhbGNfY2xrZGl2
-KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgsCiAJcmV0dXJuIChjbGtkaXYgPCAweDEwMCkgPyBj
-bGtkaXYgOiAweGZmOwogfQogCi1zdGF0aWMgYm9vbCBkZWNvbl9tb2RlX2ZpeHVwKHN0cnVjdCBl
-eHlub3NfZHJtX2NydGMgKmNydGMsCi0JCWNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICpt
-b2RlLAotCQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqYWRqdXN0ZWRfbW9kZSkKLXsKLQlpZiAo
-YWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2ggPT0gMCkKLQkJYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2gg
-PSBERUNPTl9ERUZBVUxUX0ZSQU1FUkFURTsKLQotCXJldHVybiB0cnVlOwotfQotCiBzdGF0aWMg
-dm9pZCBkZWNvbl9jb21taXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIHsKIAlzdHJ1
-Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwpAQCAtNjM3LDcgKzYyNiw2IEBAIHN0
-YXRpYyB2b2lkIGRlY29uX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyBkZWNvbl9jcnRjX29wcyA9IHsK
-IAkuZW5hYmxlID0gZGVjb25fZW5hYmxlLAogCS5kaXNhYmxlID0gZGVjb25fZGlzYWJsZSwKLQku
-bW9kZV9maXh1cCA9IGRlY29uX21vZGVfZml4dXAsCiAJLmNvbW1pdCA9IGRlY29uX2NvbW1pdCwK
-IAkuZW5hYmxlX3ZibGFuayA9IGRlY29uX2VuYWJsZV92YmxhbmssCiAJLmRpc2FibGVfdmJsYW5r
-ID0gZGVjb25fZGlzYWJsZV92YmxhbmssCi0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+Dear Kukjin,
+
+Below you will find fixes for current release cycle which are not
+present yet in your tree.
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+
+  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+
+are available in the git repository at:
+
+  https://github.com/krzk/linux.git tags/samsung-fixes-4.3
+
+for you to fetch changes up to c7d2ecd9f64c351cb4d551f1f472d0fc09c3cae8:
+
+  ARM: dts: Fix wrong clock binding for sysmmu_fimd1_1 on exynos5420 (2015-09-29 15:39:58 +0900)
+
+----------------------------------------------------------------
+Fixes for Exynos (DT and mach code):
+1. Finally fix booting of all 8 cores on Exynos Octa (Exynos542x): all
+   8 cores are booting and can be used. The fix, based on vendor
+   code and bootloader behavior, is as for time being only
+   for MCPM enabled path.
+2. Fix thermal boot issue on SMDK5250.
+3. Fix invalid clock used for FIMD IOMMU.
+
+----------------------------------------------------------------
+Chanho Park (1):
+      ARM: EXYNOS: reset Little cores when cpu is up
+
+Joonyoung Shim (1):
+      ARM: dts: Fix wrong clock binding for sysmmu_fimd1_1 on exynos5420
+
+Yadwinder Singh Brar (1):
+      ARM: dts: Fix bootup thermal issue on smdk5250
+
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |  1 +
+ arch/arm/boot/dts/exynos5420.dtsi         |  2 +-
+ arch/arm/mach-exynos/mcpm-exynos.c        | 27 ++++++++++++++++++++++++++-
+ arch/arm/mach-exynos/regs-pmu.h           |  6 ++++++
+ 4 files changed, 34 insertions(+), 2 deletions(-)
