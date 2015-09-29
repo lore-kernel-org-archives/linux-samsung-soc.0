@@ -1,54 +1,45 @@
-From: John Youn <John.Youn@synopsys.com>
-Subject: Re: [PATCH v3 0/4] Exynos4412-based Trats2 USB gadget (DWC2) fixes
-Date: Mon, 28 Sep 2015 18:21:23 +0000
-Message-ID: <2B3535C5ECE8B5419E3ECBE30077290901DC37F2EC@US01WEMBX2.internal.synopsys.com>
-References: <1442830572-6765-1-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos5420: fix wrong clock binding for sysmmu_fimd1_1
+Date: Tue, 29 Sep 2015 15:38:23 +0900
+Message-ID: <CAJKOXPfNfdkv4hEN=Mm8D2o+z+z9LbAvne5iekLGSeZ8x+NJAA@mail.gmail.com>
+References: <1442994115-20167-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "balbi@ti.com" <balbi@ti.com>
-Cc: Robert Baldyga <r.baldyga@samsung.com>, John Youn <John.Youn@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:34909 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755301AbbI2GiX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Sep 2015 02:38:23 -0400
+In-Reply-To: <1442994115-20167-1-git-send-email-jy0922.shim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, stable@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, kgene@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, javier@osg.samsung.com
 
-On 9/21/2015 3:16 AM, Marek Szyprowski wrote:
-> Hello,
-> 
-> This is an updated DWC2 related part of initial patchset posted here:
-> https://lkml.org/lkml/2015/8/21/306 
-> Only DWC2 related patches have been modified since the initial
-> submission.
-> 
-> Changelog:
-> v3:
-> - rebased onto latest 'testing/next' from Felipe Balbi (includes
->   s3c_hsotg -> dwc2 rename)
-> 
-> v2:
-> - moved setting of ll_hw_enabled flag to enable/disable functions,
->   as suggested by John Youn
-> - moved setting of phy width to dwc2_lowlevel_init function
-> 
-> 
-> Marek Szyprowski (4):
->   usb: dwc2: remove double call to dwc2_hsotg_of_probe
->   usb: dwc2: remove non-functional clock gating
->   usb: dwc2: fix unbalanced phy control
->   usb: dwc2: refactor common low-level hw code to platform.c
-> 
->  drivers/usb/dwc2/core.h     |   4 +-
->  drivers/usb/dwc2/gadget.c   | 201 ++++---------------------------------
->  drivers/usb/dwc2/platform.c | 236 ++++++++++++++++++++++++++++++++++++--------
->  3 files changed, 217 insertions(+), 224 deletions(-)
-> 
+2015-09-23 16:41 GMT+09:00 Joonyoung Shim <jy0922.shim@samsung.com>:
+>
+> The sysmmu_fimd1_1 should bind the clock CLK_SMMU_FIMD1M1, not the clock
+> CLK_SMMU_FIMD1M0. CLK_SMMU_FIMD1M0 is a clock for the sysmmu_fimd1_0.
+>
+> This wrong clock binding causes the problem that is blocked in iommu_map
+> function when IOMMU is enabled and exynos-drm driver tries to allocate
+> buffer via DMA mapping API on Odroid-XU3 board.
+>
+> Fixes: b70045167815 ("ARM: dts: add sysmmu nodes for exynos5420")
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> Cc: <stable@vger.kernel.org> # v4.2
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> Changes for v2:
+> - Update the commit message
+> - Add Fixes: and Reviewed-by: tags
+>
+>  arch/arm/boot/dts/exynos5420.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 
-Tested-by: John Youn <johnyoun@synopsys.com>
-Acked-by: John Youn <johnyoun@synopsys.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Could you queue this Felipe?
-
-Regards,
-John
+Best regards,
+Krzysztof
