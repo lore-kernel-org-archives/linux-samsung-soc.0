@@ -1,47 +1,55 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] drm/exynos: Avoid NULL pointer dereference in resume
- if bind failed
-Date: Wed, 30 Sep 2015 14:15:22 +0100
-Message-ID: <20150930131522.GK5432@ck-lbox>
-References: <1443370306-15429-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <560BC6ED.3090205@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: dp: remove suspend/resume functions
+Date: Wed, 30 Sep 2015 22:46:04 +0900
+Message-ID: <560BE79C.6040903@samsung.com>
+References: <1443612079-28094-1-git-send-email-inki.dae@samsung.com>
+ <CACvgo52GwALBN1Tw_WXntbC6+QJRDrjM7EAFbYtC+VG5OZm9yA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:55895 "EHLO
-	mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932558AbbI3Ni0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Sep 2015 09:38:26 -0400
-Content-Disposition: inline
-In-Reply-To: <560BC6ED.3090205@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CACvgo52GwALBN1Tw_WXntbC6+QJRDrjM7EAFbYtC+VG5OZm9yA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Emil Velikov <emil.l.velikov@gmail.com>, Gustavo Padovan <gustavo@padovan.org>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, jg1.han@samsung.com, ML dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: jingoohan1@gmail.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, airlied@linux.ie, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 30, 2015 at 08:26:37PM +0900, Inki Dae wrote:
-> Hi,
->=20
-> On 2015=EB=85=84 09=EC=9B=94 28=EC=9D=BC 01:11, Charles Keepax wrote:
-> > If binding failed calling exynos_dp_enable in exynos_dp_resume will
-> > result in several NULL pointer dereferences. It is much better to
-> > simply skip suspend/resume handling if bind has failed, do so by
-> > checking if a drm_dev exists.
->=20
-> Thanks for your patch. However, the pm interfaces of KMS drivers aren=
-'t
-> required because these are controlled by top of Exynos drm driver and
-> connector dpms. So I posted a patch that it removes pm interfaces of =
-dp
-> driver.
-
-No problems at all, as long as my Arndale starts resuming without
-a NULL pointer I am happy :-)
-
-Had a quick test of your patch it appears to fix my issue as well
-so totally fine with that.
-
-Thanks,
-Charles
+SGkgRW1pbCwKCk9uIDIwMTXrhYQgMDnsm5QgMzDsnbwgMjE6MTksIEVtaWwgVmVsaWtvdiB3cm90
+ZToKPiBIaSBJbmtpLAo+IAo+IE9uIDMwIFNlcHRlbWJlciAyMDE1IGF0IDEyOjIxLCBJbmtpIERh
+ZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiBUaGlzIHBhdGNoIHJlbW92ZXMgdW5u
+ZWNlc3NhcnkgcG0gc3VzcGVuZC9yZXN1bWUgZnVuY3Rpb25zLgo+Pgo+PiBBbGwga21zIHN1YiBk
+cml2ZXJzIHdpbGwgYmUgY29udHJvbGxlZCBieSB0b3Agb2YgRXh5bm9zIGRybSBkcml2ZXIKPj4g
+YW5kIGNvbm5lY3RvciBkcG1zIHNvIHRoZXNlIHN1YiBkcml2ZXJzIHNob3VsZG4ndCBoYXZlIHRo
+ZWlyIG93bgo+PiBwbSBpbnRlcmZhY2VzLgo+Pgo+IE5vdCBzdXJlIGlmIHlvdSd2ZSBub3RpY2Vk
+IGJ1dCB0aGlzIHBhdGNoIHNlZW1zIHRvIGRvIHRoZSBvcHBvc2l0ZSBvZgo+IHdoYXQgR3VzdGF2
+byB3YXMgYWltaW5nIHdpdGggYW4gZWFybGllciBzZXJpZXMgWzFdLgoKSSByZW1vdmVkIGp1c3Qg
+dGhlIGludGVyZmFjZXMgcmVsYXRlZCB0byBzbGVlcCBwbSBub3QgcnVudGltZSBwbS4gRnJvbQps
+b25nIGFnbywgTGludXggRFJNIGRyaXZlcnMgLSBlc3BlY2lhbGx5IEFSTSBEUk0gZHJpdmVycyAt
+IGhhdmUgYmVlbgpzdGVwcGluZyBmb3J3YXJkIHRvIGEgaW50ZWdyYXRlZCBEUk0gZHJpdmVyIHNv
+IGl0J2QgYmUgcmVhc29uYWJsZSBmb3IKc2xlZXAgcG0gb3BlcmF0aW9ucyBvZiBhbGwgS01TIGRy
+aXZlcnMgYXJlIGNvbnRyb2xsZWQgYnkgdG9wIG9mIERSTQpkcml2ZXIuIEl0IG1lYW5zIHRoYXQg
+RXh5bm9zIGRybSBkcml2ZXIgaGFzIGFscmVhZHkgc2xlZXAgcG0gaW50ZXJmYWNlcy4KCkhvd2V2
+ZXIsIEkgdGhpbmsgYSBwb3dlciBkb21haW4gb2YgZWFjaCBrbXMgZGV2aWNlIGNvdWxkbid0IGJl
+CmNvbnRyb2xsZWQgYnkgdGhlIHRvcCBpbiBjYXNlIG9mIEFSTSBTb0MgYmVjYXVzZSBrbXMgZGV2
+aWNlcyBjYW4gdXNlIGEKZGlmZmVyZW50IHBvd2VyIGRvbWFpbiBlYWNoIG90aGVyIGFjY29yZGlu
+ZyB0byBWZW5kb3IgU29DIHNvIHJ1bnRpbWUgcG0Kc2hvdWxkIGJlIGNvbnRyb2xsZWQgYnkgZWFj
+aCBrbXMgZHJpdmVyLCB3aGljaCB3aWxsIGJlIHRyaWdnZXJlZCBieSBEUk0gdG9wLgoKQW5kIEd1
+c3Rhdm8ncyBwYXRjaCBzZXQgeW91IG1lbnRpb25lZCAtIG5vdyBiZWluZyByZXZpZXdlZCAtIHdp
+bGwgYWRkCm9ubHkgcnVudGltZSBwbSBpbnRlcmZhY2VzIHRvIGVhY2gga21zIGRyaXZlci4KClRo
+YW5rcywKSW5raSBEYWUKCj4gCj4gQ2hlZXJzLAo+IEVtaWwKPiAKPiBbMV0gaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2ZWwvMjAxNS1TZXB0ZW1iZXIvMDg5ODAw
+Lmh0bWwKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
+ICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3Nh
+Z2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
+IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
