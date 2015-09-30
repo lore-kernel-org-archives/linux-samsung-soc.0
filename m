@@ -1,59 +1,80 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 07/17] ARM: dts: exynos/dp: remove some properties that
- deprecated by analogix_dp driver
-Date: Wed, 30 Sep 2015 14:39:16 +0900
-Message-ID: <560B7584.8070703@samsung.com>
-References: <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
- <1442907799-6266-1-git-send-email-ykk@rock-chips.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/7] phy: exynos-usb2: add vbus regulator support
+Date: Wed, 30 Sep 2015 08:00:10 +0200
+Message-ID: <560B7A6A.5010609@samsung.com>
+References: <1440160723-6636-1-git-send-email-m.szyprowski@samsung.com>
+ <1440160723-6636-2-git-send-email-m.szyprowski@samsung.com>
+ <55D71D3E.3010807@ti.com> <55DC0173.9030702@samsung.com>
+ <55DC073D.8050909@samsung.com> <55DEDE54.3040801@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:60354 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751545AbbI3Fjd (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:12456 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752756AbbI3GAO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Sep 2015 01:39:33 -0400
-In-reply-to: <1442907799-6266-1-git-send-email-ykk@rock-chips.com>
+	Wed, 30 Sep 2015 02:00:14 -0400
+In-reply-to: <55DEDE54.3040801@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <treding@nvidia.com>, joe@perches.com, Rob Herring <robh+dt@kernel.org>
-Cc: David Airlie <airlied@linux.ie>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Kamil Debski <k.debski@samsung.com>
 
-On 22.09.2015 16:43, Yakir Yang wrote:
-> After exynos_dp have been split the common IP code into analogix_dp driver,
-> the analogix_dp driver have deprecated some Samsung platform properties which
-> could be dynamically parsed from EDID/MODE/DPCD message, so this is an update
-> for Exynos DTS file for dp-controller.
-> 
-> Beside the backward compatibility is fully preserved, so there are no
-> bisectability break that make this change in a separate patch.
-> 
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> ---
-> Changes in v5:
-> - Correct the misspell in commit message. (Krzysztof)
-> 
-> Changes in v4:
-> - Separate all DTS changes to a separate patch. (Krzysztof)
-> 
-> Changes in v3: None
-> Changes in v2: None
-> 
->  arch/arm/boot/dts/exynos5250-arndale.dts   | 2 --
->  arch/arm/boot/dts/exynos5250-smdk5250.dts  | 2 --
->  arch/arm/boot/dts/exynos5250-snow.dts      | 4 +---
->  arch/arm/boot/dts/exynos5250-spring.dts    | 4 +---
->  arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 +---
->  arch/arm/boot/dts/exynos5420-smdk5420.dts  | 2 --
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 +---
->  7 files changed, 4 insertions(+), 18 deletions(-)
-> 
+Hello,
 
-Assuming this will be merged as part of this set (dependency on previous
-patches):
+On 2015-08-27 11:54, Kishon Vijay Abraham I wrote:
+> On Tuesday 25 August 2015 11:42 AM, Krzysztof Kozlowski wrote:
+>> On 25.08.2015 14:47, Marek Szyprowski wrote:
+>>> Hello,
+>>>
+>>> On 2015-08-21 14:44, Kishon Vijay Abraham I wrote:
+>>>> On Friday 21 August 2015 06:08 PM, Marek Szyprowski wrote:
+>>>>> Exynos USB2 PHY has separate power supply, which is usually provided by
+>>>>> VBUS regulator. This patch adds support for it. VBUS regulator is
+>>>>> optional, to keep compatibility with boards, which have VBUS provided
+>>>>> from some always-on power source.
+>>>>>
+>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>>> ---
+>>>>>    .../devicetree/bindings/phy/samsung-phy.txt        |  3 +++
+>>>>>    drivers/phy/phy-samsung-usb2.c                     | 25
+>>>>> ++++++++++++++++++++--
+>>>>>    drivers/phy/phy-samsung-usb2.h                     |  2 ++
+>>>>>    3 files changed, 28 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>> b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>> index 60c6f2a633e0..0289d3b07853 100644
+>>>>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>> @@ -44,6 +44,9 @@ Required properties:
+>>>>>        - the "ref" clock is used to get the rate of the clock provided
+>>>>> to the
+>>>>>          PHY module
+>>>>>    +Optional properties:
+>>>>> +- vbus-supply: power-supply phandle for vbus power source
+>>>> how about using phy-supply?
+>>> I wanted to make it a bit more descriptive (vbus-supply is rather self
+>>> explaining name)
+>>> and keep it in line with Exynos usb3-drd phy, which already supports
+>>> vbus-supply.
+>>> If you think that this is a bad idea, a will use phy-supply then.
+>> This is actually supply for VBUS, not for the phy. Using phy-supply
+>> would work fine and reduce the size of code... but would be rather a
+>> hacky-use of phy and it could be misleading.
+>>
+>> I don't have strong feeling about this, both ideas have its advantages.
+>> If I had to choose than I would like to use vbus-supply because of its
+>> correctness with real-world (this is a VBUS after all).
+> Alright.. lets use vbus-supply then.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Could you take this patch to -next then? I would like to have all needed 
+pieces
+merged to v4.4 to finally get USB gadget stuff working again on Trats2 
+boards.
 
-Best regards,
-Krzysztof
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
