@@ -1,65 +1,339 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 03/17] drm: bridge: analogix/dp: fix some obvious code
- style
-Date: Wed, 30 Sep 2015 14:22:34 +0900
-Message-ID: <560B719A.4040309@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v5 05/17] drm: bridge: analogix/dp: dynamic parse sync_pol
+ & interlace & dynamic_range
+Date: Wed, 30 Sep 2015 14:32:04 +0900
+Message-ID: <560B73D4.30109@samsung.com>
 References: <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
- <1442907276-2997-1-git-send-email-ykk@rock-chips.com>
+ <1442907477-3283-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:63951 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750726AbbI3FWz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Sep 2015 01:22:55 -0400
-In-reply-to: <1442907276-2997-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1442907477-3283-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <treding@nvidia.com>, joe@perches.com, Rob Herring <robh+dt@kernel.org>
-Cc: David Airlie <airlied@linux.ie>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-On 22.09.2015 16:34, Yakir Yang wrote:
-> Fix some obvious alignment problems, like alignment and line
-> over 80 characters problems, make this easy to be maintained
-> later.
+On 22.09.2015 16:37, Yakir Yang wrote:
+> Both hsync/vsync polarity and interlace mode can be parsed from
+> drm display mode, and dynamic_range and ycbcr_coeff can be judge
+> by the video code.
 > 
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> But presumably Exynos still relies on the DT properties, so take
+> good use of mode_fixup() in to achieve the compatibility hacks.
+> 
+> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 > ---
 > Changes in v5:
-> - Resequence this patch after analogix_dp driver have been split
->   from exynos_dp code, and rephrase reasonable commit message, and
->   remove some controversial style (Krzysztof)
->     -		analogix_dp_write_byte_to_dpcd(
->     - 				dp, DP_TEST_RESPONSE,
->     +		analogix_dp_write_byte_to_dpcd(dp,
->     +				DP_TEST_RESPONSE,
-> 				DP_TEST_EDID_CHECKSUM_WRITE);
-> 
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2:
-> - Improved commit message more readable, and avoid using some
->   uncommon style like bellow: (Joe Preches)
->     -  retval = exynos_dp_read_bytes_from_i2c(...
->   				  ...);
->     +  retval =
->     +  exynos_dp_read_bytes_from_i2c(......);
-> 
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 129 ++++++++++-----------
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  72 ++++++------
->  drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 124 ++++++++++----------
->  3 files changed, 163 insertions(+), 162 deletions(-)
-> 
+> - Switch video timing type to "u32", so driver could use "of_property_read_u32"
+>   to get the backword timing values. 
 
-IMHO much better than in previous attempt. The code looks good:
+Okay
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Krzysztof suggest me that driver could use
+>   the "of_property_read_bool" to get backword timing values, but that interfacs
+>   would modify the original drm_display_mode timing directly (whether those
+>   properties exists or not).
 
-BTW my opinion is not enough, you still need an ack from Exynos DP
-maintainer (or DRM guys).
+Hmm, I don't understand. You have a:
+	struct video_info {
+		bool h_sync_polarity;
+		bool v_sync_polarity;
+		bool interlaced;
+	};
 
+so what is wrong with:
+	dp_video_config->h_sync_polarity =
+		of_property_read_bool(dp_node, "hsync-active-high");
+
+Is it exactly the same binding as previously?
 
 Best regards,
 Krzysztof
+
+> 
+> Changes in v4:
+> - Provide backword compatibility with samsung. (Krzysztof)
+> 
+> Changes in v3:
+> - Dynamic parse video timing info from struct drm_display_mode and
+>   struct drm_display_info. (Thierry)
+> 
+> Changes in v2: None
+> 
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 144 +++++++++++++--------
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   8 +-
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  14 +-
+>  3 files changed, 104 insertions(+), 62 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index 1e3c8d3..6be139b 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -890,8 +890,8 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+>  		return;
+>  	}
+>  
+> -	ret = analogix_dp_set_link_train(dp, dp->video_info->lane_count,
+> -					 dp->video_info->link_rate);
+> +	ret = analogix_dp_set_link_train(dp, dp->video_info.lane_count,
+> +					 dp->video_info.link_rate);
+>  	if (ret) {
+>  		dev_err(dp->dev, "unable to do link train\n");
+>  		return;
+> @@ -1030,6 +1030,85 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+>  	dp->dpms_mode = DRM_MODE_DPMS_OFF;
+>  }
+>  
+> +static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
+> +					struct drm_display_mode *orig_mode,
+> +					struct drm_display_mode *mode)
+> +{
+> +	struct analogix_dp_device *dp = bridge->driver_private;
+> +	struct drm_display_info *display_info = &dp->connector->display_info;
+> +	struct video_info *video = &dp->video_info;
+> +	struct device_node *dp_node = dp->dev->of_node;
+> +	int vic;
+> +
+> +	/* Input video interlaces & hsync pol & vsync pol */
+> +	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
+> +	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
+> +	video->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
+> +
+> +	/* Input video dynamic_range & colorimetry */
+> +	vic = drm_match_cea_mode(mode);
+> +	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
+> +	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
+> +		video->dynamic_range = CEA;
+> +		video->ycbcr_coeff = COLOR_YCBCR601;
+> +	} else if (vic) {
+> +		video->dynamic_range = CEA;
+> +		video->ycbcr_coeff = COLOR_YCBCR709;
+> +	} else {
+> +		video->dynamic_range = VESA;
+> +		video->ycbcr_coeff = COLOR_YCBCR709;
+> +	}
+> +
+> +	/* Input vide bpc and color_formats */
+> +	switch (display_info->bpc) {
+> +	case 12:
+> +		video->color_depth = COLOR_12;
+> +		break;
+> +	case 10:
+> +		video->color_depth = COLOR_10;
+> +		break;
+> +	case 8:
+> +		video->color_depth = COLOR_8;
+> +		break;
+> +	case 6:
+> +		video->color_depth = COLOR_6;
+> +		break;
+> +	default:
+> +		video->color_depth = COLOR_8;
+> +		break;
+> +	}
+> +	if (display_info->color_formats & DRM_COLOR_FORMAT_YCRCB444)
+> +		video->color_space = COLOR_YCBCR444;
+> +	else if (display_info->color_formats & DRM_COLOR_FORMAT_YCRCB422)
+> +		video->color_space = COLOR_YCBCR422;
+> +	else if (display_info->color_formats & DRM_COLOR_FORMAT_RGB444)
+> +		video->color_space = COLOR_RGB;
+> +	else
+> +		video->color_space = COLOR_RGB;
+> +
+> +	/*
+> +	 * NOTE: those property parsing code is used for providing backward
+> +	 * compatibility for samsung platform.
+> +	 * Due to we used the "of_property_read_u32" interfaces, when this
+> +	 * property isn't present, the "video_info" can keep the original
+> +	 * values and wouldn't be modified.
+> +	 */
+> +	of_property_read_u32(dp_node, "samsung,color-space",
+> +			     &video->color_space);
+> +	of_property_read_u32(dp_node, "samsung,dynamic-range",
+> +			     &video->dynamic_range);
+> +	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
+> +			     &video->ycbcr_coeff);
+> +	of_property_read_u32(dp_node, "samsung,color-depth",
+> +			     &video->color_depth);
+> +	of_property_read_u32(dp_node, "hsync-active-high",
+> +			     &video->h_sync_polarity);
+> +	of_property_read_u32(dp_node, "vsync-active-high",
+> +			     &video->v_sync_polarity);
+> +	of_property_read_u32(dp_node, "interlaced",
+> +			     &video->interlaced);
+> +}
+> +
+>  static void analogix_dp_bridge_nop(struct drm_bridge *bridge)
+>  {
+>  	/* do nothing */
+> @@ -1040,6 +1119,7 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+>  	.disable = analogix_dp_bridge_disable,
+>  	.pre_enable = analogix_dp_bridge_nop,
+>  	.post_disable = analogix_dp_bridge_nop,
+> +	.mode_set = analogix_dp_bridge_mode_set,
+>  	.attach = analogix_dp_bridge_attach,
+>  };
+>  
+> @@ -1070,62 +1150,24 @@ static int analogix_dp_create_bridge(struct drm_device *drm_dev,
+>  	return 0;
+>  }
+>  
+> -static struct video_info *analogix_dp_dt_parse_pdata(struct device *dev)
+> +static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
+>  {
+> -	struct device_node *dp_node = dev->of_node;
+> -	struct video_info *dp_video_config;
+> -
+> -	dp_video_config = devm_kzalloc(dev, sizeof(*dp_video_config),
+> -				       GFP_KERNEL);
+> -	if (!dp_video_config)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	dp_video_config->h_sync_polarity =
+> -		of_property_read_bool(dp_node, "hsync-active-high");
+> -
+> -	dp_video_config->v_sync_polarity =
+> -		of_property_read_bool(dp_node, "vsync-active-high");
+> -
+> -	dp_video_config->interlaced =
+> -		of_property_read_bool(dp_node, "interlaced");
+> -
+> -	if (of_property_read_u32(dp_node, "samsung,color-space",
+> -				 &dp_video_config->color_space)) {
+> -		dev_err(dev, "failed to get color-space\n");
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (of_property_read_u32(dp_node, "samsung,dynamic-range",
+> -				 &dp_video_config->dynamic_range)) {
+> -		dev_err(dev, "failed to get dynamic-range\n");
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
+> -				 &dp_video_config->ycbcr_coeff)) {
+> -		dev_err(dev, "failed to get ycbcr-coeff\n");
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (of_property_read_u32(dp_node, "samsung,color-depth",
+> -				 &dp_video_config->color_depth)) {
+> -		dev_err(dev, "failed to get color-depth\n");
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> +	struct device_node *dp_node = dp->dev->of_node;
+> +	struct video_info *video_info = &dp->video_info
+>  
+>  	if (of_property_read_u32(dp_node, "samsung,link-rate",
+> -				 &dp_video_config->link_rate)) {
+> +				 &video_info->link_rate)) {
+>  		dev_err(dev, "failed to get link-rate\n");
+> -		return ERR_PTR(-EINVAL);
+> +		return -EINVAL;
+>  	}
+>  
+>  	if (of_property_read_u32(dp_node, "samsung,lane-count",
+> -				 &dp_video_config->lane_count)) {
+> +				 &video_info->lane_count)) {
+>  		dev_err(dev, "failed to get lane-count\n");
+> -		return ERR_PTR(-EINVAL);
+> +		return -EINVAL;
+>  	}
+>  
+> -	return dp_video_config;
+> +	return 0;
+>  }
+>  
+>  int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+> @@ -1158,9 +1200,9 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>  	 */
+>  	dp->plat_data = plat_data;
+>  
+> -	dp->video_info = analogix_dp_dt_parse_pdata(&pdev->dev);
+> -	if (IS_ERR(dp->video_info))
+> -		return PTR_ERR(dp->video_info);
+> +	ret = analogix_dp_dt_parse_pdata(dp);
+> +	if (ret)
+> +		return ret;
+>  
+>  	dp->phy = devm_phy_get(dp->dev, "dp");
+>  	if (IS_ERR(dp->phy)) {
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> index 9a90a18..730486d 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> @@ -120,9 +120,9 @@ enum dp_irq_type {
+>  struct video_info {
+>  	char *name;
+>  
+> -	bool h_sync_polarity;
+> -	bool v_sync_polarity;
+> -	bool interlaced;
+> +	u32 h_sync_polarity;
+> +	u32 v_sync_polarity;
+> +	u32 interlaced;
+>  
+>  	enum color_space color_space;
+>  	enum dynamic_range dynamic_range;
+> @@ -154,7 +154,7 @@ struct analogix_dp_device {
+>  	unsigned int		irq;
+>  	void __iomem		*reg_base;
+>  
+> -	struct video_info	*video_info;
+> +	struct video_info	video_info;
+>  	struct link_train	link_train;
+>  	struct work_struct	hotplug_work;
+>  	struct phy		*phy;
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> index a388c0a..861097a 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> @@ -1084,15 +1084,15 @@ void analogix_dp_set_video_color_format(struct analogix_dp_device *dp)
+>  	u32 reg;
+>  
+>  	/* Configure the input color depth, color space, dynamic range */
+> -	reg = (dp->video_info->dynamic_range << IN_D_RANGE_SHIFT) |
+> -		(dp->video_info->color_depth << IN_BPC_SHIFT) |
+> -		(dp->video_info->color_space << IN_COLOR_F_SHIFT);
+> +	reg = (dp->video_info.dynamic_range << IN_D_RANGE_SHIFT) |
+> +		(dp->video_info.color_depth << IN_BPC_SHIFT) |
+> +		(dp->video_info.color_space << IN_COLOR_F_SHIFT);
+>  	writel(reg, dp->reg_base + ANALOGIX_DP_VIDEO_CTL_2);
+>  
+>  	/* Set Input Color YCbCr Coefficients to ITU601 or ITU709 */
+>  	reg = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_3);
+>  	reg &= ~IN_YC_COEFFI_MASK;
+> -	if (dp->video_info->ycbcr_coeff)
+> +	if (dp->video_info.ycbcr_coeff)
+>  		reg |= IN_YC_COEFFI_ITU709;
+>  	else
+>  		reg |= IN_YC_COEFFI_ITU601;
+> @@ -1229,17 +1229,17 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp)
+>  
+>  	reg = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
+>  	reg &= ~INTERACE_SCAN_CFG;
+> -	reg |= (dp->video_info->interlaced << 2);
+> +	reg |= (dp->video_info.interlaced << 2);
+>  	writel(reg, dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
+>  
+>  	reg = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
+>  	reg &= ~VSYNC_POLARITY_CFG;
+> -	reg |= (dp->video_info->v_sync_polarity << 1);
+> +	reg |= (dp->video_info.v_sync_polarity << 1);
+>  	writel(reg, dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
+>  
+>  	reg = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
+>  	reg &= ~HSYNC_POLARITY_CFG;
+> -	reg |= (dp->video_info->h_sync_polarity << 0);
+> +	reg |= (dp->video_info.h_sync_polarity << 0);
+>  	writel(reg, dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
+>  
+>  	reg = AUDIO_MODE_SPDIF_MODE | VIDEO_MODE_SLAVE_MODE;
+> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
