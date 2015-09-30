@@ -1,35 +1,47 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH] drm/exynos: dp: remove suspend/resume functions
-Date: Wed, 30 Sep 2015 13:19:46 +0100
-Message-ID: <CACvgo52GwALBN1Tw_WXntbC6+QJRDrjM7EAFbYtC+VG5OZm9yA@mail.gmail.com>
-References: <1443612079-28094-1-git-send-email-inki.dae@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] drm/exynos: Avoid NULL pointer dereference in resume
+ if bind failed
+Date: Wed, 30 Sep 2015 14:15:22 +0100
+Message-ID: <20150930131522.GK5432@ck-lbox>
+References: <1443370306-15429-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <560BC6ED.3090205@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1443612079-28094-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Gustavo Padovan <gustavo@padovan.org>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, jg1.han@samsung.com, ML dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:55895 "EHLO
+	mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932558AbbI3Ni0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Sep 2015 09:38:26 -0400
+Content-Disposition: inline
+In-Reply-To: <560BC6ED.3090205@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: jingoohan1@gmail.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, airlied@linux.ie, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
 
-SGkgSW5raSwKCk9uIDMwIFNlcHRlbWJlciAyMDE1IGF0IDEyOjIxLCBJbmtpIERhZSA8aW5raS5k
-YWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IFRoaXMgcGF0Y2ggcmVtb3ZlcyB1bm5lY2Vzc2FyeSBw
-bSBzdXNwZW5kL3Jlc3VtZSBmdW5jdGlvbnMuCj4KPiBBbGwga21zIHN1YiBkcml2ZXJzIHdpbGwg
-YmUgY29udHJvbGxlZCBieSB0b3Agb2YgRXh5bm9zIGRybSBkcml2ZXIKPiBhbmQgY29ubmVjdG9y
-IGRwbXMgc28gdGhlc2Ugc3ViIGRyaXZlcnMgc2hvdWxkbid0IGhhdmUgdGhlaXIgb3duCj4gcG0g
-aW50ZXJmYWNlcy4KPgpOb3Qgc3VyZSBpZiB5b3UndmUgbm90aWNlZCBidXQgdGhpcyBwYXRjaCBz
-ZWVtcyB0byBkbyB0aGUgb3Bwb3NpdGUgb2YKd2hhdCBHdXN0YXZvIHdhcyBhaW1pbmcgd2l0aCBh
-biBlYXJsaWVyIHNlcmllcyBbMV0uCgpDaGVlcnMsCkVtaWwKClsxXSBodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1LVNlcHRlbWJlci8wODk4MDAuaHRt
-bApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, Sep 30, 2015 at 08:26:37PM +0900, Inki Dae wrote:
+> Hi,
+>=20
+> On 2015=EB=85=84 09=EC=9B=94 28=EC=9D=BC 01:11, Charles Keepax wrote:
+> > If binding failed calling exynos_dp_enable in exynos_dp_resume will
+> > result in several NULL pointer dereferences. It is much better to
+> > simply skip suspend/resume handling if bind has failed, do so by
+> > checking if a drm_dev exists.
+>=20
+> Thanks for your patch. However, the pm interfaces of KMS drivers aren=
+'t
+> required because these are controlled by top of Exynos drm driver and
+> connector dpms. So I posted a patch that it removes pm interfaces of =
+dp
+> driver.
+
+No problems at all, as long as my Arndale starts resuming without
+a NULL pointer I am happy :-)
+
+Had a quick test of your patch it appears to fix my issue as well
+so totally fine with that.
+
+Thanks,
+Charles
