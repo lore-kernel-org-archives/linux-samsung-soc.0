@@ -1,68 +1,68 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
 Subject: Re: [PATCH] ARM: dts: Add Exynos5250 Snow Rev5+ support
-Date: Wed, 30 Sep 2015 08:38:23 +0200
-Message-ID: <560B835F.6070708@osg.samsung.com>
+Date: Wed, 30 Sep 2015 08:42:10 +0200
+Message-ID: <560B8442.1070901@osg.samsung.com>
 References: <1443527855-434-1-git-send-email-javier@osg.samsung.com>
- <CAD=FV=Vmdv6sTmbVyxE=04ycNCOzEWJpfMpzGnihOwaW0ZFzmQ@mail.gmail.com>
+ <560B2D29.5060707@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:39996 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:40012 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753516AbbI3Gi3 (ORCPT
+	id S1753650AbbI3GmR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Sep 2015 02:38:29 -0400
-In-Reply-To: <CAD=FV=Vmdv6sTmbVyxE=04ycNCOzEWJpfMpzGnihOwaW0ZFzmQ@mail.gmail.com>
+	Wed, 30 Sep 2015 02:42:17 -0400
+In-Reply-To: <560B2D29.5060707@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 
-Hello Doug,
+Hello Krzysztof,
 
-On 09/29/2015 07:28 PM, Doug Anderson wrote:
+On 09/30/2015 02:30 AM, Krzysztof Kozlowski wrote:
 
 [snip]
 
-> 
-> 
+>>
+>> The DTS in the vendor ChromeOS tree are called exynos5250-snow-rev{4,5}.dtb
+>> but I decided to leave Rev4 as exynos5250-snow.dtb to avoid breaking u-boot
+>> that has CONFIG_DEFAULT_DEVICE_TREE="exynos5250-snow" in snow_defconfig.
+>>
+>> Also, ChromiumOS Rev4 DTS has "google,snow-rev4" in its compatible string
+>> but was not added in mainline since Rev4 firmware fallbacks to "google,snow"
+>> and Rev5 searches for "google,snow-rev5". That way the compatible string
+>> could be consistent with the DTS naming and still be able to pack both Rev4
+>> and Rev5 FDT in the same FIT image and let the firmware pick the correct FDT.
+>>
 >>  arch/arm/boot/dts/Makefile                    |   1 +
 >>  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 684 ++++++++++++++++++++++++++
 >>  arch/arm/boot/dts/exynos5250-snow-rev5.dts    |  47 ++
 >>  arch/arm/boot/dts/exynos5250-snow.dts         | 666 +------------------------
 >>  4 files changed, 733 insertions(+), 665 deletions(-)
+>>  create mode 100644 arch/arm/boot/dts/exynos5250-snow-common.dtsi
+>>  create mode 100644 arch/arm/boot/dts/exynos5250-snow-rev5.dts
 > 
-> Thanks!  Note:
-> 
-> $ pwclient git-am 7285451
-> Applying patch #7285451 using 'git am'
-> Description: ARM: dts: Add Exynos5250 Snow Rev5+ support
-> Applying: ARM: dts: Add Exynos5250 Snow Rev5+ support
-> .git/rebase-apply/patch:774: new blank line at EOF.
-> +
-> warning: 1 line adds whitespace errors.
+> Now the exynos5250-snow.dts means in fact Rev4... but there is no
+> information in DTS about it. I think adding compatible
+> "google,snow-rev4" makes sense:
+> 1. For informational purposes (this could be also handled with a comment).
+> 2. Later one could decide to switch the default meaning of "google,snow"
+> to Rev5 and the real compatible (rev4) will be there already.
 >
 
-sigh, sorry for missing that one.
+Ok, I explained my rationale about why I did not add a "google,snow-rev4"
+but I don't have a strong opinion on this so I'll add it on v2.
  
-> 
-> One other nit is that the exynos5250-snow.dts" ends up with the
-> "max98095" pinctrl properties sorted differently than the
-> "exynos5250-snow-rev5.dts".  Is it worth reordering the
-> "exynos5250-snow.dts" in the same patch?
+> Could you add the new compatible and fix patch issues pointed by Doug?
 >
 
-Right, I'll change exynos5250-snow.dts to have pinctrl-names
-before pinctrl-0 that will not only match max98090 properties
-order but also be consistent with the rest of the dev nodes.
- 
-> Otherwise this looks fine to me.
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
+Sure.
 
-Thanks a lot for your feedback and review!
+> Best regards,
+> Krzysztof
+> 
 
 Best regards,
 -- 
