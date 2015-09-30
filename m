@@ -1,55 +1,42 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
 Subject: Re: [PATCH] drm/exynos: dp: remove suspend/resume functions
-Date: Wed, 30 Sep 2015 22:46:04 +0900
-Message-ID: <560BE79C.6040903@samsung.com>
+Date: Wed, 30 Sep 2015 11:25:01 -0300
+Message-ID: <20150930142501.GA21618@joana>
 References: <1443612079-28094-1-git-send-email-inki.dae@samsung.com>
- <CACvgo52GwALBN1Tw_WXntbC6+QJRDrjM7EAFbYtC+VG5OZm9yA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CACvgo52GwALBN1Tw_WXntbC6+QJRDrjM7EAFbYtC+VG5OZm9yA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Velikov <emil.l.velikov@gmail.com>, Gustavo Padovan <gustavo@padovan.org>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, jg1.han@samsung.com, ML dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f182.google.com ([209.85.160.182]:32852 "EHLO
+	mail-yk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754522AbbI3OZG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Sep 2015 10:25:06 -0400
+Received: by ykft14 with SMTP id t14so45229886ykf.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Sep 2015 07:25:06 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1443612079-28094-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com
 
-SGkgRW1pbCwKCk9uIDIwMTXrhYQgMDnsm5QgMzDsnbwgMjE6MTksIEVtaWwgVmVsaWtvdiB3cm90
-ZToKPiBIaSBJbmtpLAo+IAo+IE9uIDMwIFNlcHRlbWJlciAyMDE1IGF0IDEyOjIxLCBJbmtpIERh
-ZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiBUaGlzIHBhdGNoIHJlbW92ZXMgdW5u
-ZWNlc3NhcnkgcG0gc3VzcGVuZC9yZXN1bWUgZnVuY3Rpb25zLgo+Pgo+PiBBbGwga21zIHN1YiBk
-cml2ZXJzIHdpbGwgYmUgY29udHJvbGxlZCBieSB0b3Agb2YgRXh5bm9zIGRybSBkcml2ZXIKPj4g
-YW5kIGNvbm5lY3RvciBkcG1zIHNvIHRoZXNlIHN1YiBkcml2ZXJzIHNob3VsZG4ndCBoYXZlIHRo
-ZWlyIG93bgo+PiBwbSBpbnRlcmZhY2VzLgo+Pgo+IE5vdCBzdXJlIGlmIHlvdSd2ZSBub3RpY2Vk
-IGJ1dCB0aGlzIHBhdGNoIHNlZW1zIHRvIGRvIHRoZSBvcHBvc2l0ZSBvZgo+IHdoYXQgR3VzdGF2
-byB3YXMgYWltaW5nIHdpdGggYW4gZWFybGllciBzZXJpZXMgWzFdLgoKSSByZW1vdmVkIGp1c3Qg
-dGhlIGludGVyZmFjZXMgcmVsYXRlZCB0byBzbGVlcCBwbSBub3QgcnVudGltZSBwbS4gRnJvbQps
-b25nIGFnbywgTGludXggRFJNIGRyaXZlcnMgLSBlc3BlY2lhbGx5IEFSTSBEUk0gZHJpdmVycyAt
-IGhhdmUgYmVlbgpzdGVwcGluZyBmb3J3YXJkIHRvIGEgaW50ZWdyYXRlZCBEUk0gZHJpdmVyIHNv
-IGl0J2QgYmUgcmVhc29uYWJsZSBmb3IKc2xlZXAgcG0gb3BlcmF0aW9ucyBvZiBhbGwgS01TIGRy
-aXZlcnMgYXJlIGNvbnRyb2xsZWQgYnkgdG9wIG9mIERSTQpkcml2ZXIuIEl0IG1lYW5zIHRoYXQg
-RXh5bm9zIGRybSBkcml2ZXIgaGFzIGFscmVhZHkgc2xlZXAgcG0gaW50ZXJmYWNlcy4KCkhvd2V2
-ZXIsIEkgdGhpbmsgYSBwb3dlciBkb21haW4gb2YgZWFjaCBrbXMgZGV2aWNlIGNvdWxkbid0IGJl
-CmNvbnRyb2xsZWQgYnkgdGhlIHRvcCBpbiBjYXNlIG9mIEFSTSBTb0MgYmVjYXVzZSBrbXMgZGV2
-aWNlcyBjYW4gdXNlIGEKZGlmZmVyZW50IHBvd2VyIGRvbWFpbiBlYWNoIG90aGVyIGFjY29yZGlu
-ZyB0byBWZW5kb3IgU29DIHNvIHJ1bnRpbWUgcG0Kc2hvdWxkIGJlIGNvbnRyb2xsZWQgYnkgZWFj
-aCBrbXMgZHJpdmVyLCB3aGljaCB3aWxsIGJlIHRyaWdnZXJlZCBieSBEUk0gdG9wLgoKQW5kIEd1
-c3Rhdm8ncyBwYXRjaCBzZXQgeW91IG1lbnRpb25lZCAtIG5vdyBiZWluZyByZXZpZXdlZCAtIHdp
-bGwgYWRkCm9ubHkgcnVudGltZSBwbSBpbnRlcmZhY2VzIHRvIGVhY2gga21zIGRyaXZlci4KClRo
-YW5rcywKSW5raSBEYWUKCj4gCj4gQ2hlZXJzLAo+IEVtaWwKPiAKPiBbMV0gaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2ZWwvMjAxNS1TZXB0ZW1iZXIvMDg5ODAw
-Lmh0bWwKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
-ICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3Nh
-Z2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
-IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Inki,
+
+2015-09-30 Inki Dae <inki.dae@samsung.com>:
+
+> This patch removes unnecessary pm suspend/resume functions.
+> 
+> All kms sub drivers will be controlled by top of Exynos drm driver
+> and connector dpms so these sub drivers shouldn't have their own
+> pm interfaces.
+> 
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_dp_core.c | 23 -----------------------
+>  1 file changed, 23 deletions(-)
+
+This sounds reasonable to me.
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+	Gustavo
