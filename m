@@ -1,67 +1,62 @@
-From: Nicholas Krause <xerofoify@gmail.com>
-Subject: [PATCH RESENDv2] mach:-s3c64xx:Output trace information with WARN_ON
- if calls for setting up gpio board configuration fail in s3c64xx_i2s_cfg_gpio
-Date: Tue, 29 Sep 2015 22:07:50 -0400
-Message-ID: <1443578870-14534-1-git-send-email-xerofoify@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene@kernel.org
-Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL] ARM: defconfig: Exynos improvements for 4.4
+Date: Wed, 30 Sep 2015 11:22:44 +0900
+Message-ID: <1443579766-15793-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:61813 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752296AbbI3CXh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Sep 2015 22:23:37 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This fixes the function s3c64xx_i2c_cfg_gpio to log output to the 
-kernel log buff with WARN_ON if any of the calls to either 
-s3c_gpio_cfgpin_range or s3c_gpio_cfgpin fail as we cannot exit 
-from s3c64xx_i2s_cfg_gpio if any of these calls fail due to 
-other intended function work being required to complete. Therefore
-due to this output our failed calls by means of WARN_ON to the
-kernel log buffer for failed configuration of gpio devices using
-this driver file.
-v2:Fix Patch Wording as it was clearly confusing and incorrect
+Dear Kukjin,
 
-Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
----
- arch/arm/mach-s3c64xx/dev-audio.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Few defconfig related changes for 4.4.
 
-diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-index ff780a8..5e7538b 100644
---- a/arch/arm/mach-s3c64xx/dev-audio.c
-+++ b/arch/arm/mach-s3c64xx/dev-audio.c
-@@ -36,10 +36,10 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
- 		base = S3C64XX_GPE(0);
- 		break;
- 	case 2:
--		s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
-+		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5)));
-+		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5)));
-+		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5)));
-+		WARN_ON(s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));)
- 		return 0;
- 	default:
- 		printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
-@@ -47,7 +47,7 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
-+	WARN_ON(s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3)));
- 
- 	return 0;
- }
--- 
-2.1.4
+Description along with a tag.
+You can find them also on the lists with my reviewed-by.
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+
+  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+
+are available in the git repository at:
+
+  https://github.com/krzk/linux.git tags/samsung-defconfig-4.4
+
+for you to fetch changes up to 7fa5ce4e6fcb4596761c17e124e7d1f8cf64fe96:
+
+  ARM: exynos_defconfig: Disable simplefb support (2015-09-13 19:25:39 +0900)
+
+----------------------------------------------------------------
+Defconfig changes around Exynos based boards:
+1. Enable DWC2 USB driver for exynos and multi_v7 defconfigs.
+   The driver is present on Exynos and Rockhip boards. Enabling also
+   ethernet gadget allows betwork communication with the device.
+2. Enable LEDS for Odroid XU3/XU4 family boards (provides simple
+   monitoring of the board).
+3. Disable the simplefb driver because in certain situations (when
+   U-boot injects simplefb bindings into DTB) it may break display.
+
+----------------------------------------------------------------
+Anand Moon (1):
+      ARM: exynos_defconfig: Enable LEDS for Odroid-XU3/XU4
+
+Javier Martinez Canillas (1):
+      ARM: exynos_defconfig: Disable simplefb support
+
+Marek Szyprowski (2):
+      ARM: exynos_defconfig: Enable DWC2 USB driver and USB ethernet gadget
+      ARM: multi_v7_defconfig: Enable DWC2 USB driver and USB ethernet gadget
+
+ arch/arm/configs/exynos_defconfig   | 9 ++++++++-
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
