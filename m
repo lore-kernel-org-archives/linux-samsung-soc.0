@@ -1,69 +1,36 @@
-From: Nicholas Krause <xerofoify@gmail.com>
-Subject: [PATCH] mach:-s3c64xx:Output trace information with WARN_ON if calls
- for setting up gpio board configuration fail in s3c64xx_i2s_cfg_gpio
-Date: Wed, 30 Sep 2015 22:35:46 -0400
-Message-ID: <1443666946-16400-1-git-send-email-xerofoify@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene@kernel.org
-Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RESEND] drm/exynos: Staticize local function in exynos_drm_gem.c
+Date: Thu, 01 Oct 2015 14:21:40 +0900
+Message-ID: <1443676900-32215-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52542 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750826AbbJAFV5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 Oct 2015 01:21:57 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This fixes the function s3c64xx_i2c_cfg_gpio to log output to the
-kernel log buff with WARN_ON if any of the calls to either
-s3c_gpio_cfgpin_range or s3c_gpio_cfgpin fail as we cannot exit
-from s3c64xx_i2s_cfg_gpio if any of these calls fail due to
-other intended function work being required to complete. Further more
-if a failure occurs allow the other users/devolopers of this driver
-to properly check the kernel log buffers for a kernel trace for
-when these calls failing to execute successfully arise.
+The exynos_drm_gem_mmap_buffer() is not used outside so make it static.
 
-Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-v3:Fix more wording issues and uncaught build failure with
-previous build test
-v2:Fix Patch Wording as it was clearly confusing and incorrect
- arch/arm/mach-s3c64xx/dev-audio.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-index ff780a8..796ac75 100644
---- a/arch/arm/mach-s3c64xx/dev-audio.c
-+++ b/arch/arm/mach-s3c64xx/dev-audio.c
-@@ -36,10 +36,10 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
- 		base = S3C64XX_GPE(0);
- 		break;
- 	case 2:
--		s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
-+		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5)));
-+		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5)));
-+		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5)));
-+		WARN_ON(s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5)));
- 		return 0;
- 	default:
- 		printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
-@@ -47,7 +47,7 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
-+	WARN_ON(s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3)));
- 
- 	return 0;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index f12fbc36b120..ba9cadb9acef 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -313,7 +313,7 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
+ 	drm_gem_object_unreference_unlocked(obj);
  }
+ 
+-int exynos_drm_gem_mmap_buffer(struct exynos_drm_gem_obj *exynos_gem_obj,
++static int exynos_drm_gem_mmap_buffer(struct exynos_drm_gem_obj *exynos_gem_obj,
+ 				      struct vm_area_struct *vma)
+ {
+ 	struct drm_device *drm_dev = exynos_gem_obj->base.dev;
 -- 
-2.1.4
+1.9.1
