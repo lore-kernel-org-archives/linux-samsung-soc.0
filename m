@@ -1,54 +1,98 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: dts: Add Exynos5250 Snow Rev5+ support
-Date: Wed, 30 Sep 2015 16:58:43 -0700
-Message-ID: <CAD=FV=WmqDSbnA8OWL00WS-qc9A4wCpkgxHhLBW3qEE=SkzupA@mail.gmail.com>
-References: <1443527855-434-1-git-send-email-javier@osg.samsung.com>
-	<560B2D29.5060707@samsung.com>
-	<CAD=FV=VfGeWdynFd+5YqnRGn+jsC0G_2VhTm1FKsR5o2WpcH1A@mail.gmail.com>
-	<560C73EC.40608@samsung.com>
+From: nick <xerofoify@gmail.com>
+Subject: Re: [PATCH RESENDv2] mach:-s3c64xx:Output trace information with
+ WARN_ON if calls for setting up gpio board configuration fail in
+ s3c64xx_i2s_cfg_gpio
+Date: Wed, 30 Sep 2015 22:26:31 -0400
+Message-ID: <560C99D7.2090006@gmail.com>
+References: <1443578870-14534-1-git-send-email-xerofoify@gmail.com>
+ <560C74C7.7030409@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <560C73EC.40608@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <560C74C7.7030409@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, kgene@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-On Wed, Sep 30, 2015 at 4:44 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
->> Switching the default meaning of "google,snow" to Rev5 is probably not
->> something we'd ever want to do, since it could confuse "rev3" boards
->> (which should be serviced by the rev4 dts).  From comments in the
->> Chrome OS tree:
+
+On 2015-09-30 07:48 PM, Krzysztof Kozlowski wrote:
+> On 30.09.2015 11:07, Nicholas Krause wrote:
+>> This fixes the function s3c64xx_i2c_cfg_gpio to log output to the 
+>> kernel log buff with WARN_ON if any of the calls to either 
+>> s3c_gpio_cfgpin_range or s3c_gpio_cfgpin fail as we cannot exit 
+>> from s3c64xx_i2s_cfg_gpio if any of these calls fail due to 
+>> other intended function work being required to complete.
+> 
+> This is better now.
+> 
+>> Therefore
+>> due to this output our failed calls by means of WARN_ON to the
+>> kernel log buffer for failed configuration of gpio devices using
+>> this driver file.
+> 
+> I don't get this sentence. What do you want to say?
+> 
+Fixed this in the v3 version.
+> 
+>> v2:Fix Patch Wording as it was clearly confusing and incorrect
+> 
+> Changelog goes after --- separator.
+> 
+> Last question - have you compiled it? I mean truly compiled like
+> generated object file and linked objects into vmlinux?
+I rebuild and it seems indeed there was a build warning. Sometimes through
+rarely ccache can cause issues with this and therefore did a clean build to
+make sure that the build was indeed working correctly without failure.
+Sorry,
+Nick 
+> 
+> Best regards,
+> Krzysztof
+> 
 >>
->> In the "rev4" DTS:
->>          * - Any real rev 0-3 boards in the field will match "google,snow",
->>          *   since older U-Boots don't look for a revision specific device tree.
->>          * - Any real rev 4 boards in the field will match "google,snow-rev4"
->>          *   first.  If that's not present they will pick the first
->>          *   "google,snow" device tree that they find (ignoring the kernel
->>          *   ordering).
+>> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+>> ---
+>>  arch/arm/mach-s3c64xx/dev-audio.c | 10 +++++-----
+>>  1 file changed, 5 insertions(+), 5 deletions(-)
 >>
->> In the "rev5" DTS:
->>          * - Purposely don't add "google,snow" so old firmware (which didn't
->>          *   include a -revN suffix) won't pick this one.
->
-> These are requirements written somewhere in the downstream tree... not
-> in upstream. Have in mind that someone may not be using Chrome OS on
-> Chromebook but custom U-Boot and different distro.
->
-> You cannot expect that everyone will new some requirements of some
-> downstream OS. If you need such requirements, write them in bindings
-> documentation *in the upstream*.
-
-Agreed, which is why I bring it up here.  I think Javier wasn't aware
-of these when he sent up his patch.  I believe when he adds the
-bindings docs he'll put this information.
-
-Previously rev5 wasn't supported upstream and I believe rev5 didn't
-even exist when the upstream stuff was submitted.
-
--Doug
+>> diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+>> index ff780a8..5e7538b 100644
+>> --- a/arch/arm/mach-s3c64xx/dev-audio.c
+>> +++ b/arch/arm/mach-s3c64xx/dev-audio.c
+>> @@ -36,10 +36,10 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+>>  		base = S3C64XX_GPE(0);
+>>  		break;
+>>  	case 2:
+>> -		s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
+>> -		s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
+>> -		s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
+>> -		s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
+>> +		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5)));
+>> +		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5)));
+>> +		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5)));
+>> +		WARN_ON(s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));)
+>>  		return 0;
+>>  	default:
+>>  		printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
+>> @@ -47,7 +47,7 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> -	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
+>> +	WARN_ON(s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3)));
+>>  
+>>  	return 0;
+>>  }
+>>
+> 
