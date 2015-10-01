@@ -1,8 +1,8 @@
 From: Nicholas Krause <xerofoify@gmail.com>
 Subject: [PATCH] mach:-s3c64xx:Output trace information with WARN_ON if calls
  for setting up gpio board configuration fail in s3c64xx_i2s_cfg_gpio
-Date: Wed, 30 Sep 2015 22:28:51 -0400
-Message-ID: <1443666531-2377-1-git-send-email-xerofoify@gmail.com>
+Date: Wed, 30 Sep 2015 22:35:46 -0400
+Message-ID: <1443666946-16400-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -17,7 +17,7 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, k.kozlowski@samsung.co, linux-kernel@vger.kernel.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 This fixes the function s3c64xx_i2c_cfg_gpio to log output to the
