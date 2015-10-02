@@ -1,79 +1,26 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/2] s5p-mfc: use MFC_BUF_FLAG_EOS to identify last buffers in
- decoder capture queue
-Date: Fri, 02 Oct 2015 11:58:54 +0200
-Message-ID: <1443779934-30088-2-git-send-email-a.hajda@samsung.com>
-References: <1443779934-30088-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57843 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751022AbbJBJ7w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Oct 2015 05:59:52 -0400
-In-reply-to: <1443779934-30088-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 6/6] pinctrl: samsung: Remove unneded semicolon
+Date: Fri, 2 Oct 2015 03:25:34 -0700
+Message-ID: <CACRpkdZND2-KW9Feps7KCihYzwzcW00yiHcK0fQnuk-1MBs=KA@mail.gmail.com>
+References: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
+	<1442392111-8448-7-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1442392111-8448-7-git-send-email-javier@osg.samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "open list:ARM/SAMSUNG S5P SERIES Multi
-	Format Codec MFC..." <linux-media@vger.kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-MFC driver never delivered EOS event to apps feeding constantly its capture
-buffer with fresh buffers. The patch fixes it by marking last buffers returned
-by MFC with MFC_BUF_FLAG_EOS flag and firing EOS event on de-queuing such
-buffers.
+On Wed, Sep 16, 2015 at 1:28 AM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c     |  1 +
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 21 +++++++++++++--------
- 2 files changed, 14 insertions(+), 8 deletions(-)
+> It's not needed an is just creating a null statement, so remove it.
+>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 21c424e..f1e537e 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -196,6 +196,7 @@ static void s5p_mfc_handle_frame_all_extracted(struct s5p_mfc_ctx *ctx)
- 		vb2_set_plane_payload(dst_buf->b, 0, 0);
- 		vb2_set_plane_payload(dst_buf->b, 1, 0);
- 		list_del(&dst_buf->list);
-+		dst_buf->flags |= MFC_BUF_FLAG_EOS;
- 		ctx->dst_queue_cnt--;
- 		dst_buf->b->v4l2_buf.sequence = (ctx->sequence++);
- 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-index aebe4fd..7866eda 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-@@ -645,17 +645,22 @@ static int vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
- 		mfc_err("Call on DQBUF after unrecoverable error\n");
- 		return -EIO;
- 	}
--	if (buf->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
--		ret = vb2_dqbuf(&ctx->vq_src, buf, file->f_flags & O_NONBLOCK);
--	else if (buf->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-+
-+	switch (buf->type) {
-+	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
-+		return vb2_dqbuf(&ctx->vq_src, buf, file->f_flags & O_NONBLOCK);
-+	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		ret = vb2_dqbuf(&ctx->vq_dst, buf, file->f_flags & O_NONBLOCK);
--		if (ret == 0 && ctx->state == MFCINST_FINISHED &&
--				list_empty(&ctx->vq_dst.done_list))
-+		if (ret)
-+			return ret;
-+
-+		if (ctx->state == MFCINST_FINISHED &&
-+		    (ctx->dst_bufs[buf->index].flags & MFC_BUF_FLAG_EOS))
- 			v4l2_event_queue_fh(&ctx->fh, &ev);
--	} else {
--		ret = -EINVAL;
-+		return 0;
-+	default:
-+		return -EINVAL;
- 	}
--	return ret;
- }
- 
- /* Export DMA buffer */
--- 
-1.9.1
+Patch applied with Krzysztof's Review-tag.
+
+Yours,
+Linus Walleij
