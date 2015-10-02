@@ -1,66 +1,49 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 4/4] usb: dwc2: refactor common low-level hw code to
- platform.c
-Date: Fri, 02 Oct 2015 09:47:54 +0200
-Message-ID: <560E36AA.7090106@samsung.com>
-References: <1442830572-6765-1-git-send-email-m.szyprowski@samsung.com>
- <1442830572-6765-5-git-send-email-m.szyprowski@samsung.com>
- <20151001155018.GC4469@saruman.tx.rr.com>
- <2B3535C5ECE8B5419E3ECBE30077290901DC383B31@US01WEMBX2.internal.synopsys.com>
- <20151001220355.GB32355@saruman.tx.rr.com>
- <2B3535C5ECE8B5419E3ECBE30077290901DC383EFF@US01WEMBX2.internal.synopsys.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/3] mfd: sec-core: Dump PMIC revision to find out the HW
+Date: Fri, 02 Oct 2015 17:25:49 +0900
+Message-ID: <1443774351-28766-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <2B3535C5ECE8B5419E3ECBE30077290901DC383EFF@US01WEMBX2.internal.synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: John Youn <John.Youn@synopsys.com>, "balbi@ti.com" <balbi@ti.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Robert Baldyga <r.baldyga@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+There are different revisions of the same chipset. For example S2MPS13 has
+more than 2 revisions. They differ slightly in regulator constraints.
+Print the revision number to easily find which PMIC is used on the board.
 
-On 2015-10-02 00:21, John Youn wrote:
-> On 10/1/2015 3:04 PM, Felipe Balbi wrote:
->> On Thu, Oct 01, 2015 at 09:04:59PM +0000, John Youn wrote:
->>> On 10/1/2015 8:50 AM, Felipe Balbi wrote:
->>>> On Mon, Sep 21, 2015 at 12:16:12PM +0200, Marek Szyprowski wrote:
->>>>> DWC2 module on some platforms needs three additional hardware
->>>>> resources: phy controller, clock and power supply. All of them must be
->>>>> enabled/activated to properly initialize and operate. This was initially
->>>>> handled in s3c-hsotg driver, which has been converted to 'gadget' part
->>>>> of dwc2 driver. Unfortunately, not all of this code got moved to common
->>>>> platform code, what resulted in accessing DWC2 registers without
->>>>> enabling low-level hardware resources. This fails for example on Exynos
->>>>> SoCs. This patch moves all the code for managing those resources to
->>>>> common platform.c file and provides convenient wrappers for controlling
->>>>> them.
->>>>>
->>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> I just caught several build errors which this patch. I hope you can
->>>> send me a follow-up fix (which I can amend to $subject) otherwise
->>>> I'll have to drop this series
->>>>
->>> I forgot that this was initially part of a larger
->>> patch-set. Maybe that is causing issues? If this wasn't intended
->>> to go through Felipe's tree then my bad.
->>>
->>> Also, I noticed this patch causes deadlock warnings with lockdep
->>> enabled.
->>>
->>> Can you look into that also while you investigate this?
->> John, do you want me to drop the series meanwhile ? I can do that no problems.
-> You can drop this one. I think leaving in patch 1-3 is fine as
-> they are small cleanup patches. Unless you or Marek prefer to
-> drop all of them.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/mfd/sec-core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Patches 1-3 are fixes, so please keep them. I've also just posted an 
-updated patch
-no 4, I've missed the fact that dwc2_hsotg structure content was defined
-conditionally.
-
-Best regards
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 2d1137a7a0ee..589e5efc2d7f 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -253,6 +253,15 @@ static const struct regmap_config s5m8767_regmap_config = {
+ 	.cache_type = REGCACHE_FLAT,
+ };
+ 
++static void sec_pmic_dump_rev(struct sec_pmic_dev *sec_pmic)
++{
++	unsigned int val;
++
++	/* For each device type, the REG_ID is always the first register */
++	if (!regmap_read(sec_pmic->regmap_pmic, S2MPS11_REG_ID, &val))
++		dev_dbg(sec_pmic->dev, "Revision: 0x%x\n", val);
++}
++
+ #ifdef CONFIG_OF
+ /*
+  * Only the common platform data elements for s5m8767 are parsed here from the
+@@ -425,6 +434,7 @@ static int sec_pmic_probe(struct i2c_client *i2c,
+ 		goto err_mfd;
+ 
+ 	device_init_wakeup(sec_pmic->dev, sec_pmic->wakeup);
++	sec_pmic_dump_rev(sec_pmic);
+ 
+ 	return ret;
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
