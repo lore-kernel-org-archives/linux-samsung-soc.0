@@ -1,38 +1,160 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/3] mfd: dt-bindings: Document pulled down WRSTBI pin on
- S2MPS1X
-Date: Fri, 02 Oct 2015 17:25:50 +0900
-Message-ID: <1443774351-28766-2-git-send-email-k.kozlowski@samsung.com>
-References: <1443774351-28766-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1443774351-28766-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Ingi Kim <ingi2.kim@samsung.com>
+Subject: [PATCH] drm/exynos: fix spelling errors
+Date: Fri, 02 Oct 2015 17:59:26 +0900
+Message-ID: <1443776366-13046-1-git-send-email-ingi2.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:37744 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750925AbbJBI7i (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 Oct 2015 04:59:38 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ingi Kim <ingi2.kim@samsung.com>
 
-Document a new Device Tree property 'samsung,s2mps11-wrstbi-ground'
-indicating that WRSTBI pin of S2MPS13 PMIC is pulled down so
-corresponding buck warm reset function should be disabled.
+This patch fixes spelling errors in drm fimc/gsc
+inavild -> invaild
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
 ---
- Documentation/devicetree/bindings/mfd/s2mps11.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 16 ++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c  | 12 ++++++------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-index 90eaef393325..890f0b0e1643 100644
---- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-+++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-@@ -19,6 +19,9 @@ Optional properties:
-   connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
-   register to turn off the power. Usually the ACOKB is pulled up to VBATT so
-   when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
-+- samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
-+  down. When the system is suspended it will always go down thus triggerring
-+  unwanted buck warm reset (setting buck voltages to default values).
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 2a65235..5d00f86 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -466,7 +466,7 @@ static int fimc_src_set_fmt_order(struct fimc_context *ctx, u32 fmt)
+ 			EXYNOS_MSCTRL_C_INT_IN_2PLANE);
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid source yuv order 0x%x.\n", fmt);
++		dev_err(ippdrv->dev, "invalid source yuv order 0x%x.\n", fmt);
+ 		return -EINVAL;
+ 	}
  
- Optional nodes:
- - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+@@ -513,7 +513,7 @@ static int fimc_src_set_fmt(struct device *dev, u32 fmt)
+ 		cfg |= EXYNOS_MSCTRL_INFORMAT_YCBCR420;
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid source format 0x%x.\n", fmt);
++		dev_err(ippdrv->dev, "invalid source format 0x%x.\n", fmt);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -578,7 +578,7 @@ static int fimc_src_set_transf(struct device *dev,
+ 			cfg1 &= ~EXYNOS_MSCTRL_FLIP_Y_MIRROR;
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid degree value %d.\n", degree);
++		dev_err(ippdrv->dev, "invalid degree value %d.\n", degree);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -701,7 +701,7 @@ static int fimc_src_set_addr(struct device *dev,
+ 		property->prop_id, buf_id, buf_type);
+ 
+ 	if (buf_id > FIMC_MAX_SRC) {
+-		dev_info(ippdrv->dev, "inavlid buf_id %d.\n", buf_id);
++		dev_info(ippdrv->dev, "invalid buf_id %d.\n", buf_id);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -812,7 +812,7 @@ static int fimc_dst_set_fmt_order(struct fimc_context *ctx, u32 fmt)
+ 		cfg |= EXYNOS_CIOCTRL_YCBCR_2PLANE;
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid target yuv order 0x%x.\n", fmt);
++		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -865,7 +865,7 @@ static int fimc_dst_set_fmt(struct device *dev, u32 fmt)
+ 			cfg |= EXYNOS_CITRGFMT_OUTFORMAT_YCBCR420;
+ 			break;
+ 		default:
+-			dev_err(ippdrv->dev, "inavlid target format 0x%x.\n",
++			dev_err(ippdrv->dev, "invalid target format 0x%x.\n",
+ 				fmt);
+ 			return -EINVAL;
+ 		}
+@@ -929,7 +929,7 @@ static int fimc_dst_set_transf(struct device *dev,
+ 			cfg &= ~EXYNOS_CITRGFMT_FLIP_Y_MIRROR;
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid degree value %d.\n", degree);
++		dev_err(ippdrv->dev, "invalid degree value %d.\n", degree);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1160,7 +1160,7 @@ static int fimc_dst_set_addr(struct device *dev,
+ 		property->prop_id, buf_id, buf_type);
+ 
+ 	if (buf_id > FIMC_MAX_DST) {
+-		dev_info(ippdrv->dev, "inavlid buf_id %d.\n", buf_id);
++		dev_info(ippdrv->dev, "invalid buf_id %d.\n", buf_id);
+ 		return -ENOMEM;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index 808a0a0..11b87d2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -543,7 +543,7 @@ static int gsc_src_set_fmt(struct device *dev, u32 fmt)
+ 			GSC_IN_YUV420_2P);
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid target yuv order 0x%x.\n", fmt);
++		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -595,7 +595,7 @@ static int gsc_src_set_transf(struct device *dev,
+ 			cfg &= ~GSC_IN_ROT_YFLIP;
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid degree value %d.\n", degree);
++		dev_err(ippdrv->dev, "invalid degree value %d.\n", degree);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -721,7 +721,7 @@ static int gsc_src_set_addr(struct device *dev,
+ 		property->prop_id, buf_id, buf_type);
+ 
+ 	if (buf_id > GSC_MAX_SRC) {
+-		dev_info(ippdrv->dev, "inavlid buf_id %d.\n", buf_id);
++		dev_info(ippdrv->dev, "invalid buf_id %d.\n", buf_id);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -814,7 +814,7 @@ static int gsc_dst_set_fmt(struct device *dev, u32 fmt)
+ 			GSC_OUT_YUV420_2P);
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid target yuv order 0x%x.\n", fmt);
++		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -866,7 +866,7 @@ static int gsc_dst_set_transf(struct device *dev,
+ 			cfg &= ~GSC_IN_ROT_YFLIP;
+ 		break;
+ 	default:
+-		dev_err(ippdrv->dev, "inavlid degree value %d.\n", degree);
++		dev_err(ippdrv->dev, "invalid degree value %d.\n", degree);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1176,7 +1176,7 @@ static int gsc_dst_set_addr(struct device *dev,
+ 		property->prop_id, buf_id, buf_type);
+ 
+ 	if (buf_id > GSC_MAX_DST) {
+-		dev_info(ippdrv->dev, "inavlid buf_id %d.\n", buf_id);
++		dev_info(ippdrv->dev, "invalid buf_id %d.\n", buf_id);
+ 		return -EINVAL;
+ 	}
+ 
 -- 
-1.9.1
+2.0.5
