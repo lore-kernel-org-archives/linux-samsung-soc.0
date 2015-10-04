@@ -1,59 +1,55 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 00/10] drm/exynos: add pm_runtime support
-Date: Sun, 4 Oct 2015 17:14:12 +0200
-Message-ID: <56114244.10508@math.uni-bielefeld.de>
-References: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 1/4] sysfs: Support is_visible() on binary attributes
+Date: Sun, 4 Oct 2015 19:33:34 +0100
+Message-ID: <20151004183334.GA23538@kroah.com>
+References: <1442842703-5309-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1442842703-5309-2-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42582 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751453AbbJDSdk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 4 Oct 2015 14:33:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1442842703-5309-2-git-send-email-emilio.lopez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>
+Cc: olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux@roeck-us.net, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gR3VzdGF2bywKCmp1c3Qgd2FudGVkIHRvIGFzayBpZiB0aGUgc2VyaWVzIGlzIHN0aWxs
-IG1lYW50IHRvIGdvIHVwc3RyZWFtLiBJIHRyaWVkCmFwcGx5aW5nIHRoZSBzZXJpZXMgdG8gdG9y
-dmFsZHMvbWFzdGVyIGFuZCBJIGdldCBhIGNvbmZsaWN0IGJlY2F1c2Ugb2YKSW5raSdzIGNvbW1p
-dCAxNDhiYTA5YzQ2NWNjNTRkOGU2OGYwNDFiZjlhMzAzMzJiMzE1YzM5ICgnZHJtL2V4eW5vczog
-ZHA6CnJlbW92ZSBzdXNwZW5kL3Jlc3VtZSBmdW5jdGlvbnMnKS4KCldpdGggYmVzdCB3aXNoZXMs
-ClRvYmlhcwoKCkd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiBGcm9tOiBHdXN0YXZvIFBhZG92YW4g
-PGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gCj4gSGksCj4gCj4gVGhpcyBzZXJp
-ZXMgYWRkcyBwcm9wZXIgcnVudGltZSBQTSBzdXBvcnQgdG8gQ1JUQ3MgYW5kIEVuY29kZXJzLCBz
-bwo+IG5vdyBpbnN0ZWFkIG9mIHJlbHlpbmcgb24gJ3N1c3BlbmRlZCcgb3IgJ2VuYWJsZWQnIGZs
-YWdzIHRvIHRyYWNrIHdoZW4KPiB0aGUgQ1JUQyBvciBFbmNvZGVyIGlzIGVuYWJsZWQgd2UgbGV0
-IHRoZSBwbV9ydW50aW1lIHN1YnN5c3RlbSBkbyBpdCBmb3IgdXMKPiBhbmQgcmVtb3ZlIGFsbCB0
-aGUgZmxhZ3MuIFRoaXMgaXMgYSBpbXBvcnRhbnQgc3RlcCB0byB0aGUgYXRvbWljIHN1c3BlbmQv
-cmVzdW1lCj4gc3VwcG9ydCB0aGF0IHdpbGwgbGFuZCBpbiBkcm0gYW55dGltZSBzb29uLgo+IAo+
-IFBsZWFzZSByZXZpZXchCj4gCj4gCUd1c3Rhdm8KPiAKPiBHdXN0YXZvIFBhZG92YW4gKDEwKToK
-PiAgIGRybS9leHlub3M6IGRvIG5vdCBzdGFydCBlbmFibGluZyBEUCBhdCBiaW5kKCkgcGhhc2UK
-PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIERQCj4gICBkcm0vZXh5bm9zOiBhZGQg
-cG1fcnVudGltZSB0byBIRE1JCj4gICBkcm0vZXh5bm9zOiBhZGQgcG1fcnVudGltZSB0byBNaXhl
-cgo+ICAgZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19jcnRjIGNvbW1pdCgpIGNhbGxiYWNrCj4g
-ICBkcm0vZXh5bm9zOiBSZW1vdmUgZXh5bm9zX2NydGMgY29tbWl0KCkgY2FsbGJhY2sKPiAgIGRy
-bS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIEZJTUQKPiAgIGRybS9leHlub3M6IEVuYWJsZSBE
-UCBjbG9jayBkaXJlY3RseSBmcm9tIEZJTUQKPiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1l
-IHRvIERFQ09OIDU0MzMKPiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIERFQ09OIDcK
-PiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgIDkw
-ICsrKysrKysrLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJt
-X2RlY29uLmMgICAgfCAxMjYgKysrKysrKysrKystLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMgICAgICAgfCAgNTcgKysrKysrLS0tLS0tCj4g
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgICB8ICAxMCAtLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAgfCAgIDcgLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgMTI5ICsr
-KysrKysrKysrKy0tLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2hkbWkuYyAgICAgICAgICB8ICA1NiArKysrKysrLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAxMjUgKysrKysrKysrKysrLS0tLS0tLS0tLS0t
-LQo+ICA4IGZpbGVzIGNoYW5nZWQsIDI3NSBpbnNlcnRpb25zKCspLCAzMjUgZGVsZXRpb25zKC0p
-Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, Sep 21, 2015 at 10:38:20AM -0300, Emilio L=F3pez wrote:
+> According to the sysfs header file:
+>=20
+>     "The returned value will replace static permissions defined in
+>      struct attribute or struct bin_attribute."
+>=20
+> but this isn't the case, as is_visible is only called on struct attri=
+bute
+> only. This patch introduces a new is_bin_visible() function to implem=
+ent
+> the same functionality for binary attributes, and updates documentati=
+on
+> accordingly.
+>=20
+> Note that to keep functionality and code similar to that of normal
+> attributes, the mode is now checked as well to ensure it contains onl=
+y
+> read/write permissions or SYSFS_PREALLOC.
+>=20
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Emilio L=F3pez <emilio.lopez@collabora.co.uk>
+
+As this should probably go through the "platform drivers" maintainer,
+I'll just give you this:
+
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+So it can go through their tree and not require me to just take this
+one.
+
+thanks,
+
+greg k-h
