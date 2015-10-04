@@ -1,33 +1,59 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 5/7] [media] mipi-csis: make sparse happy
-Date: Sat, 03 Oct 2015 00:25:57 +0200
-Message-ID: <4962836.RxBJeKxGZM@wuerfel>
-References: <cover.1443737682.git.mchehab@osg.samsung.com> <de2ce8fd84f965a270bad28d284932bf20c349be.1443737683.git.mchehab@osg.samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 00/10] drm/exynos: add pm_runtime support
+Date: Sun, 4 Oct 2015 17:14:12 +0200
+Message-ID: <56114244.10508@math.uni-bielefeld.de>
+References: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <de2ce8fd84f965a270bad28d284932bf20c349be.1443737683.git.mchehab@osg.samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday 01 October 2015 19:17:27 Mauro Carvalho Chehab wrote:
-> diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-> index d74e1bec3d86..4b85105dc159 100644
-> --- a/drivers/media/platform/exynos4-is/mipi-csis.c
-> +++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-> @@ -706,7 +706,8 @@ static irqreturn_t s5pcsis_irq_handler(int irq, void *dev_id)
->                 else
->                         offset = S5PCSIS_PKTDATA_ODD;
->  
-> -               memcpy(pktbuf->data, state->regs + offset, pktbuf->len);
-> +               memcpy(pktbuf->data, (u8 __force *)state->regs + offset,
-> +                      pktbuf->len);
->                 pktbuf->data = NULL;
-> 
-
-I think this is what memcpy_toio() is meant for.
-
-	Arnd
+SGVsbG8gR3VzdGF2bywKCmp1c3Qgd2FudGVkIHRvIGFzayBpZiB0aGUgc2VyaWVzIGlzIHN0aWxs
+IG1lYW50IHRvIGdvIHVwc3RyZWFtLiBJIHRyaWVkCmFwcGx5aW5nIHRoZSBzZXJpZXMgdG8gdG9y
+dmFsZHMvbWFzdGVyIGFuZCBJIGdldCBhIGNvbmZsaWN0IGJlY2F1c2Ugb2YKSW5raSdzIGNvbW1p
+dCAxNDhiYTA5YzQ2NWNjNTRkOGU2OGYwNDFiZjlhMzAzMzJiMzE1YzM5ICgnZHJtL2V4eW5vczog
+ZHA6CnJlbW92ZSBzdXNwZW5kL3Jlc3VtZSBmdW5jdGlvbnMnKS4KCldpdGggYmVzdCB3aXNoZXMs
+ClRvYmlhcwoKCkd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiBGcm9tOiBHdXN0YXZvIFBhZG92YW4g
+PGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gCj4gSGksCj4gCj4gVGhpcyBzZXJp
+ZXMgYWRkcyBwcm9wZXIgcnVudGltZSBQTSBzdXBvcnQgdG8gQ1JUQ3MgYW5kIEVuY29kZXJzLCBz
+bwo+IG5vdyBpbnN0ZWFkIG9mIHJlbHlpbmcgb24gJ3N1c3BlbmRlZCcgb3IgJ2VuYWJsZWQnIGZs
+YWdzIHRvIHRyYWNrIHdoZW4KPiB0aGUgQ1JUQyBvciBFbmNvZGVyIGlzIGVuYWJsZWQgd2UgbGV0
+IHRoZSBwbV9ydW50aW1lIHN1YnN5c3RlbSBkbyBpdCBmb3IgdXMKPiBhbmQgcmVtb3ZlIGFsbCB0
+aGUgZmxhZ3MuIFRoaXMgaXMgYSBpbXBvcnRhbnQgc3RlcCB0byB0aGUgYXRvbWljIHN1c3BlbmQv
+cmVzdW1lCj4gc3VwcG9ydCB0aGF0IHdpbGwgbGFuZCBpbiBkcm0gYW55dGltZSBzb29uLgo+IAo+
+IFBsZWFzZSByZXZpZXchCj4gCj4gCUd1c3Rhdm8KPiAKPiBHdXN0YXZvIFBhZG92YW4gKDEwKToK
+PiAgIGRybS9leHlub3M6IGRvIG5vdCBzdGFydCBlbmFibGluZyBEUCBhdCBiaW5kKCkgcGhhc2UK
+PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIERQCj4gICBkcm0vZXh5bm9zOiBhZGQg
+cG1fcnVudGltZSB0byBIRE1JCj4gICBkcm0vZXh5bm9zOiBhZGQgcG1fcnVudGltZSB0byBNaXhl
+cgo+ICAgZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19jcnRjIGNvbW1pdCgpIGNhbGxiYWNrCj4g
+ICBkcm0vZXh5bm9zOiBSZW1vdmUgZXh5bm9zX2NydGMgY29tbWl0KCkgY2FsbGJhY2sKPiAgIGRy
+bS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIEZJTUQKPiAgIGRybS9leHlub3M6IEVuYWJsZSBE
+UCBjbG9jayBkaXJlY3RseSBmcm9tIEZJTUQKPiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1l
+IHRvIERFQ09OIDU0MzMKPiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIERFQ09OIDcK
+PiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgIDkw
+ICsrKysrKysrLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJt
+X2RlY29uLmMgICAgfCAxMjYgKysrKysrKysrKystLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMgICAgICAgfCAgNTcgKysrKysrLS0tLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgICB8ICAxMCAtLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAgfCAgIDcgLS0K
+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgMTI5ICsr
+KysrKysrKysrKy0tLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2hkbWkuYyAgICAgICAgICB8ICA1NiArKysrKysrLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAxMjUgKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+LQo+ICA4IGZpbGVzIGNoYW5nZWQsIDI3NSBpbnNlcnRpb25zKCspLCAzMjUgZGVsZXRpb25zKC0p
+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
