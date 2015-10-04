@@ -1,55 +1,67 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/4] sysfs: Support is_visible() on binary attributes
-Date: Sun, 4 Oct 2015 19:33:34 +0100
-Message-ID: <20151004183334.GA23538@kroah.com>
-References: <1442842703-5309-1-git-send-email-emilio.lopez@collabora.co.uk>
- <1442842703-5309-2-git-send-email-emilio.lopez@collabora.co.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL] Samsung fixes for v4.3
+Date: Mon, 05 Oct 2015 08:59:05 +0900
+Message-ID: <5611BD49.5030806@samsung.com>
+References: <1443571154-28722-1-git-send-email-k.kozlowski@samsung.com>
+ <560B864A.9050400@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42582 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751453AbbJDSdk (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45288 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751835AbbJDX7T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 Oct 2015 14:33:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1442842703-5309-2-git-send-email-emilio.lopez@collabora.co.uk>
+	Sun, 4 Oct 2015 19:59:19 -0400
+In-reply-to: <560B864A.9050400@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>
-Cc: olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux@roeck-us.net, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>
 
-On Mon, Sep 21, 2015 at 10:38:20AM -0300, Emilio L=F3pez wrote:
-> According to the sysfs header file:
->=20
->     "The returned value will replace static permissions defined in
->      struct attribute or struct bin_attribute."
->=20
-> but this isn't the case, as is_visible is only called on struct attri=
-bute
-> only. This patch introduces a new is_bin_visible() function to implem=
-ent
-> the same functionality for binary attributes, and updates documentati=
-on
-> accordingly.
->=20
-> Note that to keep functionality and code similar to that of normal
-> attributes, the mode is now checked as well to ensure it contains onl=
-y
-> read/write permissions or SYSFS_PREALLOC.
->=20
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Emilio L=F3pez <emilio.lopez@collabora.co.uk>
+On 30.09.2015 15:50, Kukjin Kim wrote:
+> On 09/30/15 08:59, Krzysztof Kozlowski wrote:
+>> Dear Kukjin,
+>>
+>> Below you will find fixes for current release cycle which are not
+>> present yet in your tree.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+>>
+>>   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   https://github.com/krzk/linux.git tags/samsung-fixes-4.3
+>>
+>> for you to fetch changes up to c7d2ecd9f64c351cb4d551f1f472d0fc09c3cae8:
+>>
+>>   ARM: dts: Fix wrong clock binding for sysmmu_fimd1_1 on exynos5420 (2015-09-29 15:39:58 +0900)
+>>
+>> ----------------------------------------------------------------
+>> Fixes for Exynos (DT and mach code):
+>> 1. Finally fix booting of all 8 cores on Exynos Octa (Exynos542x): all
+>>    8 cores are booting and can be used. The fix, based on vendor
+>>    code and bootloader behavior, is as for time being only
+>>    for MCPM enabled path.
+>> 2. Fix thermal boot issue on SMDK5250.
+>> 3. Fix invalid clock used for FIMD IOMMU.
+>>
+> Pulled, thanks.
+> 
+> Note it will be sent to upstream in a day.
 
-As this should probably go through the "platform drivers" maintainer,
-I'll just give you this:
+A day extended to a week. Please do not hold the fixes but send them. If
+they reached Linus tree late and they required any further fix, then we
+would have less time for any updates.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The same applies for regular pull request for 4.4. For previous v4.3
+release many changes were too late (so they could even slip from 4.3 to
+4.4). Can we just avoid such issues and send pull requests earlier?
 
-So it can go through their tree and not require me to just take this
-one.
-
-thanks,
-
-greg k-h
+Best regards,
+Krzysztof
