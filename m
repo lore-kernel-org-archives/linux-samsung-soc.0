@@ -1,16 +1,16 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/6] ARM: s3c24xx: h1940: Use PWM lookup table
-Date: Mon,  5 Oct 2015 14:47:12 +0200
-Message-ID: <1444049237-29878-2-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 3/6] ARM: s3c64xx: smdk6410: Use PWM lookup table
+Date: Mon,  5 Oct 2015 14:47:14 +0200
+Message-ID: <1444049237-29878-4-git-send-email-thierry.reding@gmail.com>
 References: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:38755 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751672AbbJEMrV (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:35739 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751910AbbJEMrY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Oct 2015 08:47:21 -0400
-Received: by wiclk2 with SMTP id lk2so112873733wic.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Oct 2015 05:47:20 -0700 (PDT)
+	Mon, 5 Oct 2015 08:47:24 -0400
+Received: by wicge5 with SMTP id ge5so118954818wic.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Oct 2015 05:47:23 -0700 (PDT)
 In-Reply-To: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -26,52 +26,72 @@ Cc: Kukjin Kim <kgene@kernel.org>
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 ---
- arch/arm/mach-s3c24xx/mach-h1940.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/arm/mach-s3c64xx/dev-backlight.c | 4 ----
+ arch/arm/mach-s3c64xx/mach-smdk6410.c | 8 +++++++-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index d40d4f5244c6..9f54300df4b3 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -25,6 +25,7 @@
- #include <linux/gpio.h>
- #include <linux/input.h>
- #include <linux/gpio_keys.h>
+diff --git a/arch/arm/mach-s3c64xx/dev-backlight.c b/arch/arm/mach-s3c64xx/dev-backlight.c
+index 38c323e68e3f..e62e789f9aee 100644
+--- a/arch/arm/mach-s3c64xx/dev-backlight.c
++++ b/arch/arm/mach-s3c64xx/dev-backlight.c
+@@ -69,7 +69,6 @@ static struct samsung_bl_drvdata samsung_dfl_bl_data __initdata = {
+ 	.plat_data = {
+ 		.max_brightness = 255,
+ 		.dft_brightness = 255,
+-		.pwm_period_ns  = 78770,
+ 		.enable_gpio    = -1,
+ 		.init           = samsung_bl_init,
+ 		.exit           = samsung_bl_exit,
+@@ -111,7 +110,6 @@ void __init samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
+ 	samsung_bl_data = &samsung_bl_drvdata->plat_data;
+ 
+ 	/* Copy board specific data provided by user */
+-	samsung_bl_data->pwm_id = bl_data->pwm_id;
+ 	samsung_bl_device->dev.parent = &samsung_device_pwm.dev;
+ 
+ 	if (bl_data->max_brightness)
+@@ -120,8 +118,6 @@ void __init samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
+ 		samsung_bl_data->dft_brightness = bl_data->dft_brightness;
+ 	if (bl_data->lth_brightness)
+ 		samsung_bl_data->lth_brightness = bl_data->lth_brightness;
+-	if (bl_data->pwm_period_ns)
+-		samsung_bl_data->pwm_period_ns = bl_data->pwm_period_ns;
+ 	if (bl_data->enable_gpio >= 0)
+ 		samsung_bl_data->enable_gpio = bl_data->enable_gpio;
+ 	if (bl_data->init)
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index d590b88bd8a8..2722800d5c11 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -30,6 +30,7 @@
+ #include <linux/smsc911x.h>
+ #include <linux/regulator/fixed.h>
+ #include <linux/regulator/machine.h>
 +#include <linux/pwm.h>
  #include <linux/pwm_backlight.h>
- #include <linux/i2c.h>
- #include <linux/leds.h>
-@@ -469,6 +470,11 @@ static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
- 	.ocr_avail     = MMC_VDD_32_33,
+ #include <linux/platform_data/s3c-hsotg.h>
+ 
+@@ -623,8 +624,12 @@ static struct samsung_bl_gpio_info smdk6410_bl_gpio_info = {
+ 	.func = S3C_GPIO_SFN(2),
  };
  
-+static struct pwm_lookup h1940_pwm_lookup[] = {
-+	PWM_LOOKUP("samsung-pwm", 0, "pwm-backlight", NULL, 36296,
++static struct pwm_lookup smdk6410_pwm_lookup[] = {
++	PWM_LOOKUP("samsung-pwm", 1, "pwm-backlight.0", NULL, 78770,
 +		   PWM_POLARITY_NORMAL),
 +};
 +
- static int h1940_backlight_init(struct device *dev)
- {
- 	gpio_request(S3C2410_GPB(0), "Backlight");
-@@ -503,11 +509,8 @@ static void h1940_backlight_exit(struct device *dev)
+ static struct platform_pwm_backlight_data smdk6410_bl_data = {
+-	.pwm_id = 1,
+ 	.enable_gpio = -1,
+ };
  
+@@ -695,6 +700,7 @@ static void __init smdk6410_machine_init(void)
  
- static struct platform_pwm_backlight_data backlight_data = {
--	.pwm_id         = 0,
- 	.max_brightness = 100,
- 	.dft_brightness = 50,
--	/* tcnt = 0x31 */
--	.pwm_period_ns  = 36296,
- 	.enable_gpio    = -1,
- 	.init           = h1940_backlight_init,
- 	.notify		= h1940_backlight_notify,
-@@ -725,6 +728,7 @@ static void __init h1940_init(void)
- 	gpio_request(H1940_LATCH_SD_POWER, "SD power");
- 	gpio_direction_output(H1940_LATCH_SD_POWER, 0);
+ 	platform_add_devices(smdk6410_devices, ARRAY_SIZE(smdk6410_devices));
  
-+	pwm_add_table(h1940_pwm_lookup, ARRAY_SIZE(h1940_pwm_lookup));
- 	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
++	pwm_add_table(smdk6410_pwm_lookup, ARRAY_SIZE(smdk6410_pwm_lookup));
+ 	samsung_bl_set(&smdk6410_bl_gpio_info, &smdk6410_bl_data);
+ }
  
- 	gpio_request(S3C2410_GPA(1), "Red LED blink");
 -- 
 2.5.0
