@@ -1,61 +1,40 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 5/7] [media] mipi-csis: make sparse happy
-Date: Mon, 05 Oct 2015 13:07:20 +0200
-Message-ID: <30256208.KbAtSBWnKO@wuerfel>
-References: <cover.1443737682.git.mchehab@osg.samsung.com> <4962836.RxBJeKxGZM@wuerfel> <56124FE8.8070400@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v2 0/7] Add support for Exynos SROM Controller driver
+Date: Mon, 05 Oct 2015 14:36:32 +0300
+Message-ID: <018501d0ff62$1650b410$42f21c30$@samsung.com>
+References: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:63857 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750768AbbJELH6 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22144 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750781AbbJELgh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Oct 2015 07:07:58 -0400
-In-Reply-To: <56124FE8.8070400@samsung.com>
+	Mon, 5 Oct 2015 07:36:37 -0400
+In-reply-to: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
+Content-language: ru
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>
+To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: thomas.ab@samsung.com, k.kozlowski@samsung.com, kgene@kernel.org, heiko@sntech.de
 
-On Monday 05 October 2015 12:24:40 Sylwester Nawrocki wrote:
-> On 03/10/15 00:25, Arnd Bergmann wrote:
-> > On Thursday 01 October 2015 19:17:27 Mauro Carvalho Chehab wrote:
-> >> > diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-> >> > index d74e1bec3d86..4b85105dc159 100644
-> >> > --- a/drivers/media/platform/exynos4-is/mipi-csis.c
-> >> > +++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-> >> > @@ -706,7 +706,8 @@ static irqreturn_t s5pcsis_irq_handler(int irq, void *dev_id)
-> >> >                 else
-> >> >                         offset = S5PCSIS_PKTDATA_ODD;
-> >> >  
-> >> > -               memcpy(pktbuf->data, state->regs + offset, pktbuf->len);
-> >> > +               memcpy(pktbuf->data, (u8 __force *)state->regs + offset,
-> >> > +                      pktbuf->len);
-> >> >                 pktbuf->data = NULL;
-> >> > 
-> >
-> > I think this is what memcpy_toio() is meant for.
-> 
-> Exactly memcpy_fromio().  But it's implementation is inefficient on
-> ARCH=arm, memcpy_fromio() will be translated to a loop of readb(),
-> only if an arm sub-architecture provides a processor instruction
-> to access memory by byte.  Each readb() also involves a memory barrier.
-> That's all what we wanted to avoid. AFAIR using memcpy_fromio() was
-> causing increase of the copy operation several times comparing to
-> memcpy(). On arm64 it looks better, but this driver is currently
-> used only on arm32.
-> 
-> I would prefer to add (void __force *) instead:
-> 
-> memcpy(pktbuf->data, (void __force *)state->regs + offset, pktbuf->len);
-> 
-> Alternatively, the memset could just be replaced by a loop of
-> u32 reads - __raw_readl();
+ Hello!
 
-You are right for old kernels, but this was fixed in 7ddfe625cb ("ARM:
-optimize memset_io()/memcpy_fromio()/memcpy_toio()") at least for
-little-endian kernels and should be fine now on ARM just like
-everywhere else.
+> This patch set adds support for Exynos SROM controller DT based driver.
+> Currently SROM register sets are used only during S2R, so driver
+> basically added for taking care of S2R. It will help us in removing
+> static mapping from exynos.c and other extra code handline during S2R.
 
-	Arnd
+ Very good news, but, your driver seems not to do anything except suspend/resume. But how do i add
+some device plugged into it? In order to be operational, its outputs have to be configured. But how
+do i do it with your driver? For example, on SMDK boards SROM controller is used to connect SMSC9111
+etherner chip.
+ Currently i use hardcoded initialization based on of_machine_is_compatible(), but i believe this
+would be considered a hack and such a thing cannot be pushed upstream. I guess i have to put all
+needed configuration into device tree somehow. But how? Are there any recommentations?
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
