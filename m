@@ -1,8 +1,10 @@
 From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv2 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
-Date: Mon,  5 Oct 2015 09:00:28 +0000
-Message-ID: <1444035629-1173-1-git-send-email-linux.amoon@gmail.com>
+Subject: [PATCHv2 2/2] ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+Date: Mon,  5 Oct 2015 09:00:29 +0000
+Message-ID: <1444035629-1173-2-git-send-email-linux.amoon@gmail.com>
+References: <1444035629-1173-1-git-send-email-linux.amoon@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444035629-1173-1-git-send-email-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -16,17 +18,17 @@ Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
 Changes: Fixed the commit log.
 ---
- arch/arm/configs/exynos_defconfig | 1 +
+ arch/arm/configs/multi_v7_defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 1ff2bfa..5d1937b 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -61,6 +61,7 @@ CONFIG_BLK_DEV_DM=y
- CONFIG_DM_CRYPT=m
- CONFIG_NETDEVICES=y
- CONFIG_SMSC911X=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 03deb7f..009d714 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -221,6 +221,7 @@ CONFIG_BROADCOM_PHY=y
+ CONFIG_ICPLUS_PHY=y
+ CONFIG_MICREL_PHY=y
+ CONFIG_USB_PEGASUS=y
 +CONFIG_USB_RTL8152=y
  CONFIG_USB_USBNET=y
  CONFIG_USB_NET_SMSC75XX=y
