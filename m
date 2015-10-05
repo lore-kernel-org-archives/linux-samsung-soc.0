@@ -1,72 +1,36 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL] Samsung fixes for v4.3
-Date: Mon, 05 Oct 2015 10:36:28 +0900
-Message-ID: <124301d0ff0e$4162bf80$c4283e80$@kernel.org>
-References: <1443571154-28722-1-git-send-email-k.kozlowski@samsung.com>
- <560B864A.9050400@kernel.org> <5611BD49.5030806@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5611BD49.5030806@samsung.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+Date: Mon,  5 Oct 2015 06:29:29 +0000
+Message-ID: <1444026570-14076-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f68.google.com ([209.85.220.68]:33892 "EHLO
+	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751693AbbJEG34 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Oct 2015 02:29:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Thierry Reding <treding@nvidia.com>, Andreas Faerber <afaerber@suse.de>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Lee Jones <lee.jones@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ray Jui <rjui@broadcom.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Krzysztof Kozlowski wrote:
-> 
-> On 30.09.2015 15:50, Kukjin Kim wrote:
-> > On 09/30/15 08:59, Krzysztof Kozlowski wrote:
-> >> Dear Kukjin,
-> >>
-> >> Below you will find fixes for current release cycle which are not
-> >> present yet in your tree.
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >>
-> >>
-> >> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-> >>
-> >>   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>   https://github.com/krzk/linux.git tags/samsung-fixes-4.3
-> >>
-> >> for you to fetch changes up to c7d2ecd9f64c351cb4d551f1f472d0fc09c3cae8:
-> >>
-> >>   ARM: dts: Fix wrong clock binding for sysmmu_fimd1_1 on exynos5420 (2015-09-29 15:39:58 +0900)
-> >>
-> >> ----------------------------------------------------------------
-> >> Fixes for Exynos (DT and mach code):
-> >> 1. Finally fix booting of all 8 cores on Exynos Octa (Exynos542x): all
-> >>    8 cores are booting and can be used. The fix, based on vendor
-> >>    code and bootloader behavior, is as for time being only
-> >>    for MCPM enabled path.
-> >> 2. Fix thermal boot issue on SMDK5250.
-> >> 3. Fix invalid clock used for FIMD IOMMU.
-> >>
-> > Pulled, thanks.
-> >
-> > Note it will be sent to upstream in a day.
-> 
-> A day extended to a week. Please do not hold the fixes but send them. If
-> they reached Linus tree late and they required any further fix, then we
-> would have less time for any updates.
-> 
-Sorry for the delay and it's my fault. I'll handle it tonight...
+Enable CONFIG_USB_RTL8152 for Odroid-XU4.
 
-> The same applies for regular pull request for 4.4. For previous v4.3
-> release many changes were too late (so they could even slip from 4.3 to
-> 4.4). Can we just avoid such issues and send pull requests earlier?
-> 
-Krzysztof, I sent a pull request lately because of handling of cross-tree but I
-don't think so it causes some missing because it was due to cross tree not only
-mine. Please don't worry about that I'll handle it.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Anyway thanks for your gentle reminder.
-
-- Kukjin
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 1ff2bfa..5d1937b 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -61,6 +61,7 @@ CONFIG_BLK_DEV_DM=y
+ CONFIG_DM_CRYPT=m
+ CONFIG_NETDEVICES=y
+ CONFIG_SMSC911X=y
++CONFIG_USB_RTL8152=y
+ CONFIG_USB_USBNET=y
+ CONFIG_USB_NET_SMSC75XX=y
+ CONFIG_USB_NET_SMSC95XX=y
+-- 
+2.1.4
