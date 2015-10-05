@@ -1,16 +1,16 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 6/6] ARM: s3c64xx: smartq: Use PWM lookup table
-Date: Mon,  5 Oct 2015 14:47:17 +0200
-Message-ID: <1444049237-29878-7-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 4/6] ARM: s3c64xx: crag6410: Use PWM lookup table
+Date: Mon,  5 Oct 2015 14:47:15 +0200
+Message-ID: <1444049237-29878-5-git-send-email-thierry.reding@gmail.com>
 References: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:35839 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751910AbbJEMr2 (ORCPT
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:38859 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751910AbbJEMrZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Oct 2015 08:47:28 -0400
-Received: by wicge5 with SMTP id ge5so118957471wic.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Oct 2015 05:47:27 -0700 (PDT)
+	Mon, 5 Oct 2015 08:47:25 -0400
+Received: by wiclk2 with SMTP id lk2so112876466wic.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Oct 2015 05:47:24 -0700 (PDT)
 In-Reply-To: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -26,50 +26,45 @@ Cc: Kukjin Kim <kgene@kernel.org>
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 ---
- arch/arm/mach-s3c64xx/mach-smartq.c | 9 +++++++--
+ arch/arm/mach-s3c64xx/mach-crag6410.c | 9 +++++++--
  1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index b3d13537a7f0..7b8a3699795c 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -14,6 +14,7 @@
- #include <linux/gpio.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+index 65c426bc45f7..d13aa3f9bac4 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+@@ -25,6 +25,7 @@
+ #include <linux/mmc/host.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/fixed.h>
 +#include <linux/pwm.h>
  #include <linux/pwm_backlight.h>
- #include <linux/serial_core.h>
- #include <linux/serial_s3c.h>
-@@ -139,6 +140,11 @@ static struct platform_device smartq_usb_otg_vbus_dev = {
- 	.dev.platform_data	= &smartq_usb_otg_vbus_pdata,
+ #include <linux/dm9000.h>
+ #include <linux/gpio_keys.h>
+@@ -108,11 +109,14 @@ static struct s3c2410_uartcfg crag6410_uartcfgs[] __initdata = {
+ 	},
  };
  
-+static struct pwm_lookup smartq_pwm_lookup[] = {
-+	PWM_LOOKUP("samsung-pwm", 1, "pwm-backlight.0", NULL,
-+		   1000000000 / (1000 * 20), PWM_POLARITY_NORMAL),
++static struct pwm_lookup crag6410_pwm_lookup[] = {
++	PWM_LOOKUP("samsung-pwm", 0, "pwm-backlight", NULL, 100000,
++		   PWM_POLARITY_NORMAL),
 +};
 +
- static int smartq_bl_init(struct device *dev)
- {
-     s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_SFN(2));
-@@ -147,10 +153,8 @@ static int smartq_bl_init(struct device *dev)
- }
- 
- static struct platform_pwm_backlight_data smartq_backlight_data = {
--	.pwm_id		= 1,
+ static struct platform_pwm_backlight_data crag6410_backlight_data = {
+-	.pwm_id		= 0,
  	.max_brightness	= 1000,
  	.dft_brightness	= 600,
--	.pwm_period_ns	= 1000000000 / (1000 * 20),
+-	.pwm_period_ns	= 100000,	/* about 1kHz */
  	.enable_gpio	= -1,
- 	.init		= smartq_bl_init,
  };
-@@ -396,5 +400,6 @@ void __init smartq_machine_init(void)
- 	WARN_ON(smartq_usb_host_init());
- 	WARN_ON(smartq_wifi_init());
  
-+	pwm_add_table(smartq_pwm_lookup, ARRAY_SIZE(smartq_pwm_lookup));
- 	platform_add_devices(smartq_devices, ARRAY_SIZE(smartq_devices));
- }
+@@ -843,6 +847,7 @@ static void __init crag6410_machine_init(void)
+ 	samsung_keypad_set_platdata(&crag6410_keypad_data);
+ 	s3c64xx_spi0_set_platdata(NULL, 0, 2);
+ 
++	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
+ 	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
+ 
+ 	gpio_led_register_device(-1, &gpio_leds_pdata);
 -- 
 2.5.0
