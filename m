@@ -1,64 +1,66 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] mfd: sec-core: Disable buck voltage reset on watchdog
- falling edge
-Date: Tue, 06 Oct 2015 08:49:16 +0900
-Message-ID: <56130C7C.6000207@samsung.com>
-References: <1443774351-28766-1-git-send-email-k.kozlowski@samsung.com>
- <1443774351-28766-3-git-send-email-k.kozlowski@samsung.com>
- <2375080.1KPJ21Fk4I@amdc1976>
+Subject: Re: [PATCH v2 0/7] Add support for Exynos SROM Controller driver
+Date: Tue, 06 Oct 2015 09:23:42 +0900
+Message-ID: <5613148E.8010903@samsung.com>
+References: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
+ <018501d0ff62$1650b410$42f21c30$@samsung.com> <5612719E.60006@samsung.com>
+ <01cb01d0ff70$6027b760$20772620$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <2375080.1KPJ21Fk4I@amdc1976>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45815 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750780AbbJFAXs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Oct 2015 20:23:48 -0400
+In-reply-to: <01cb01d0ff70$6027b760$20772620$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pavel Fedin <p.fedin@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: k.kozlowski.k@gmail.com, thomas.ab@samsung.com, kgene@kernel.org, heiko@sntech.de
 
-On 05.10.2015 22:35, Bartlomiej Zolnierkiewicz wrote:
+On 05.10.2015 22:18, Pavel Fedin wrote:
+>  Hello!
 > 
-> Hi,
+>> That is interesting. What do you mean by that? Although SROM controller
+>> can access external memory (SRAM, ROM) but it is not exactly a bus. How
+>> is the SMSC9111 "connected"? What interface or protocol is used?
 > 
-> On Friday, October 02, 2015 05:25:51 PM Krzysztof Kozlowski wrote:
->> The WRSTBI bit (disabled by default but enabled by bootloader), when
->> set, is responsible for resetting voltages to default values of
->> certain bucks on falling edge of Warm Reset Input pin from AP.
->>
->> However on some boards (with S2MPS13) the pin is pulled down so any
->> suspend will effectively trigger the reset of bucks supplying the power
->> to the little and big cores. In the same time when resuming, these bucks
->> must provide voltage greater or equal to voltage before suspend to match
->> the frequency chosen by cpufreq. If voltage (default value of voltage
->> after reset) is lower than one set by cpufreq before suspend, then
->> system will hang during resuming.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> I tested this (with some additional Exynos5433 patches) and it works
-> like expected (suspend/resume issue is fixed).
-> 
-> Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> 
+>  SROM controller actually provides a demultiplexed external address and data bus. This way you could
+> hook up old good ROM chip to it (hence its name). However, you can plug in there anything else with
+> the appropriate interface, and SMSC9111 uses exactly that. Just some address + control + data wires.
+> Therefore, you can think of SROMc as a simple bus.
 
-Thanks!
+Ah, okay, thanks for details.
 
-> You could also add:
 > 
-> Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> I am sorry but I cannot figure out what exactly are you talking about.
+>> The Device Tree is the glue to describe the board, the hardware and its
+>> configuration. Please elaborate a little more.
 > 
-> (since the issue got narrowed down and reported to you by me :).
+>  Yes, exactly that. SROM controller has 4 outputs, and for every of these outputs you have to choose
+> mode and timings. Once you set them correctly, you can use peripherial behind them. These timings
+> actually depend on the actual peripherial.
+> 
+>  By this time i remembered that u-boot guys also did something with this. And here are links:
+> http://git.denx.de/?p=u-boot.git;a=blob;f=arch/arm/dts/exynos5250-smdk5250.dts;h=8b695442b1a29dec4e3
+> 53ebd3cfee0ff89f218a6;hb=HEAD#l43 - this is how connection is described
+> http://git.denx.de/?p=u-boot.git;a=blob;f=board/samsung/common/board.c;h=d32c75de50858f131284e28db0c
+> 7ed55883f1cb0;hb=HEAD#l184 - and this is parsing code
 
-I didn't put it because I wasn't sure who was the author of our report.
-I'll wait a one more day for any comments and add it in v2/resend.
+I see... Pankaj's driver was not developed for that purpose. You would
+have to extend it. For the SROMC driver there shouldn't be much work to
+do: just parse additional bindings and configure the controller for
+ethernet adapter.
 
-BTW, any comments on the binding itself?
-Actually I had hard time choosing the name for binding because unlike
-the ACOKB the WRSTBI pin is not grounded but pulled down. However it is
-quite similar so I stick to the same convention:
- - samsung,s2mps11-acokb-ground
- - samsung,s2mps11-wrstbi-ground
+>  There's only one small problem with their code. "bank" parameter is device-wide, therefore you
+> cannot configure more than one bank. For SMDK boards it's OK, but in future you may run into problem
+> with this.
 
+You are not bound by u-boot bindings anyhow (at least to my
+understanding). You can try to re-use them but if some binding is
+problematic then just create your own.
 
 Best regards,
 Krzysztof
