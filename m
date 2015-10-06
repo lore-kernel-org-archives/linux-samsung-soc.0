@@ -1,66 +1,70 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 0/7] Add support for Exynos SROM Controller driver
-Date: Tue, 06 Oct 2015 09:23:42 +0900
-Message-ID: <5613148E.8010903@samsung.com>
-References: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
- <018501d0ff62$1650b410$42f21c30$@samsung.com> <5612719E.60006@samsung.com>
- <01cb01d0ff70$6027b760$20772620$@samsung.com>
+Subject: Re: [PATCH 0/6] ARM: s3cxxxx: Use PWM lookup table
+Date: Tue, 06 Oct 2015 09:28:50 +0900
+Message-ID: <561315C2.9040506@samsung.com>
+References: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45815 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750780AbbJFAXs (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:53206 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751441AbbJFA2z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Oct 2015 20:23:48 -0400
-In-reply-to: <01cb01d0ff70$6027b760$20772620$@samsung.com>
+	Mon, 5 Oct 2015 20:28:55 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NVR00346W04WR90@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Oct 2015 01:28:52 +0100 (BST)
+In-reply-to: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: k.kozlowski.k@gmail.com, thomas.ab@samsung.com, kgene@kernel.org, heiko@sntech.de
+To: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05.10.2015 22:18, Pavel Fedin wrote:
->  Hello!
+On 05.10.2015 21:47, Thierry Reding wrote:
+> Back when the PWM framework was introduced the concept of PWM lookup
+> tables was added to allow board code to register a table of PWM devices
+> and their association with consumers. The goal is to allow drivers to
+> use a unified method to request PWM devices. At the same time, since no
+> boards were exposing these tables, fallback code was kept in drivers to
+> allow old code to remain functional. In order to get rid of the legacy
+> fallback code, legacy users need to be updated to register PWM lookup
+> tables.
 > 
->> That is interesting. What do you mean by that? Although SROM controller
->> can access external memory (SRAM, ROM) but it is not exactly a bus. How
->> is the SMSC9111 "connected"? What interface or protocol is used?
-> 
->  SROM controller actually provides a demultiplexed external address and data bus. This way you could
-> hook up old good ROM chip to it (hence its name). However, you can plug in there anything else with
-> the appropriate interface, and SMSC9111 uses exactly that. Just some address + control + data wires.
-> Therefore, you can think of SROMc as a simple bus.
+> This series converts all s3c24xx and s3c64xx boards that hook up a pwm-
+> backlight device to use the new PWM lookup tables. All patches have been
+> compile-tested, but I don't have access to any of these boards, so I
+> couldn't verify that they really work.
 
-Ah, okay, thanks for details.
+Unfortunately I can't verify them neither. I don't have these boards. In
+that case I would prefer approach "if it ain't broken, don't touch
+it"... unless someone tests the patches of course.
 
-> 
->> I am sorry but I cannot figure out what exactly are you talking about.
->> The Device Tree is the glue to describe the board, the hardware and its
->> configuration. Please elaborate a little more.
-> 
->  Yes, exactly that. SROM controller has 4 outputs, and for every of these outputs you have to choose
-> mode and timings. Once you set them correctly, you can use peripherial behind them. These timings
-> actually depend on the actual peripherial.
-> 
->  By this time i remembered that u-boot guys also did something with this. And here are links:
-> http://git.denx.de/?p=u-boot.git;a=blob;f=arch/arm/dts/exynos5250-smdk5250.dts;h=8b695442b1a29dec4e3
-> 53ebd3cfee0ff89f218a6;hb=HEAD#l43 - this is how connection is described
-> http://git.denx.de/?p=u-boot.git;a=blob;f=board/samsung/common/board.c;h=d32c75de50858f131284e28db0c
-> 7ed55883f1cb0;hb=HEAD#l184 - and this is parsing code
-
-I see... Pankaj's driver was not developed for that purpose. You would
-have to extend it. For the SROMC driver there shouldn't be much work to
-do: just parse additional bindings and configure the controller for
-ethernet adapter.
-
->  There's only one small problem with their code. "bank" parameter is device-wide, therefore you
-> cannot configure more than one bank. For SMDK boards it's OK, but in future you may run into problem
-> with this.
-
-You are not bound by u-boot bindings anyhow (at least to my
-understanding). You can try to re-use them but if some binding is
-problematic then just create your own.
+Anyone can provide tested-by tag?
 
 Best regards,
 Krzysztof
+
+
+> 
+> Thierry
+> 
+> Thierry Reding (6):
+>   ARM: s3c24xx: h1940: Use PWM lookup table
+>   ARM: s3c24xx: rx1950: Use PWM lookup table
+>   ARM: s3c64xx: smdk6410: Use PWM lookup table
+>   ARM: s3c64xx: crag6410: Use PWM lookup table
+>   ARM: s3c64xx: hmt: Use PWM lookup table
+>   ARM: s3c64xx: smartq: Use PWM lookup table
+> 
+>  arch/arm/mach-s3c24xx/mach-h1940.c    | 10 +++++++---
+>  arch/arm/mach-s3c24xx/mach-rx1950.c   |  8 ++++++--
+>  arch/arm/mach-s3c64xx/dev-backlight.c |  4 ----
+>  arch/arm/mach-s3c64xx/mach-crag6410.c |  9 +++++++--
+>  arch/arm/mach-s3c64xx/mach-hmt.c      |  9 +++++++--
+>  arch/arm/mach-s3c64xx/mach-smartq.c   |  9 +++++++--
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c |  8 +++++++-
+>  7 files changed, 41 insertions(+), 16 deletions(-)
+> 
