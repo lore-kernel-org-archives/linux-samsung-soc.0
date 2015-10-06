@@ -1,67 +1,67 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCHv9 06/15] rc: Add HDMI CEC protocol handling
-Date: Tue, 6 Oct 2015 19:05:40 +0100
-Message-ID: <20151006180540.GR21513@n2100.arm.linux.org.uk>
-References: <cover.1441633456.git.hansverk@cisco.com>
- <345aeebe5561f8f6540f477ae160c5cbf1b0f6d5.1441633456.git.hansverk@cisco.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH] ARM: dts: exynos4412-odroid: remove redundant pinctrl
+ settings
+Date: Wed, 7 Oct 2015 01:26:38 +0200
+Message-ID: <561458AE.3040801@math.uni-bielefeld.de>
+References: <1442858340-4584-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <345aeebe5561f8f6540f477ae160c5cbf1b0f6d5.1441633456.git.hansverk@cisco.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:39761 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753382AbbJFX0n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Oct 2015 19:26:43 -0400
+In-Reply-To: <1442858340-4584-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: k.kozlowski@samsung.com, devicetree@vger.kernel.org
 
-On Mon, Sep 07, 2015 at 03:44:35PM +0200, Hans Verkuil wrote:
-> From: Kamil Debski <kamil@wypas.org>
+Gentle ping!
+
+- Tobias
+
+
+Tobias Jakobi wrote:
+> The pinctrl settings in i2c_0 and i2c_1 are already provided
+> through the exynos4 dtsi.
 > 
-> Add handling of remote control events coming from the HDMI CEC bus.
-> This patch includes a new keymap that maps values found in the CEC
-> messages to the keys pressed and released. Also, a new protocol has
-> been added to the core.
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 6 ------
+>  1 file changed, 6 deletions(-)
 > 
-> Signed-off-by: Kamil Debski <kamil@wypas.org>
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-(Added Mauro)
-
-Hmm, how is rc-cec supposed to be loaded?
-
-At boot, I see:
-
-[   16.577704] IR keymap rc-cec not found
-[   16.586675] Registered IR keymap rc-empty
-[   16.591668] input: RC for dw_hdmi as /devices/soc0/soc/120000.hdmi/rc/rc1/input3
-[   16.597769] rc1: RC for dw_hdmi as /devices/soc0/soc/120000.hdmi/rc/rc1
-
-Yet the rc-cec is a module in the filesystem, but it doesn't seem to
-be loaded automatically - even after the system has booted, the module
-hasn't been loaded.
-
-It looks like it _should_ be loaded, but this plainly isn't working:
-
-        map = seek_rc_map(name);
-#ifdef MODULE
-        if (!map) {
-                int rc = request_module("%s", name);
-                if (rc < 0) {
-                        printk(KERN_ERR "Couldn't load IR keymap %s\n", name);
-                        return NULL;
-                }
-                msleep(20);     /* Give some time for IR to register */
-
-                map = seek_rc_map(name);
-        }
-#endif
-        if (!map) {
-                printk(KERN_ERR "IR keymap %s not found\n", name);
-                return NULL;
-        }
-
-Any ideas?
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index 3f8bc7b..3c34e74 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -217,8 +217,6 @@
+>  };
+>  
+>  &i2c_0 {
+> -	pinctrl-0 = <&i2c0_bus>;
+> -	pinctrl-names = "default";
+>  	samsung,i2c-sda-delay = <100>;
+>  	samsung,i2c-max-bus-freq = <400000>;
+>  	status = "okay";
+> @@ -444,8 +442,6 @@
+>  };
+>  
+>  &i2c_1 {
+> -	pinctrl-names = "default";
+> -	pinctrl-0 = <&i2c1_bus>;
+>  	status = "okay";
+>  	max98090: max98090@10 {
+>  		compatible = "maxim,max98090";
+> @@ -460,8 +456,6 @@
+>  
+>  &i2c_2 {
+>  	status = "okay";
+> -	pinctrl-names = "default";
+> -	pinctrl-0 = <&i2c2_bus>;
+>  };
+>  
+>  &i2c_8 {
+> 
