@@ -1,70 +1,58 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/6] ARM: s3cxxxx: Use PWM lookup table
-Date: Tue, 06 Oct 2015 09:28:50 +0900
-Message-ID: <561315C2.9040506@samsung.com>
-References: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCHv2 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet
+ driver for Odroid-XU4
+Date: Tue, 06 Oct 2015 09:39:06 +0900
+Message-ID: <5613182A.8080000@samsung.com>
+References: <1444035629-1173-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:53206 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751441AbbJFA2z (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45902 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751248AbbJFAjS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Oct 2015 20:28:55 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NVR00346W04WR90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Oct 2015 01:28:52 +0100 (BST)
-In-reply-to: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
+	Mon, 5 Oct 2015 20:39:18 -0400
+In-reply-to: <1444035629-1173-1-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05.10.2015 21:47, Thierry Reding wrote:
-> Back when the PWM framework was introduced the concept of PWM lookup
-> tables was added to allow board code to register a table of PWM devices
-> and their association with consumers. The goal is to allow drivers to
-> use a unified method to request PWM devices. At the same time, since no
-> boards were exposing these tables, fallback code was kept in drivers to
-> allow old code to remain functional. In order to get rid of the legacy
-> fallback code, legacy users need to be updated to register PWM lookup
-> tables.
-> 
-> This series converts all s3c24xx and s3c64xx boards that hook up a pwm-
-> backlight device to use the new PWM lookup tables. All patches have been
-> compile-tested, but I don't have access to any of these boards, so I
-> couldn't verify that they really work.
+On 05.10.2015 18:00, Anand Moon wrote:
+> Odroid XU4 supports RTL8152/RTL8153 Based USB 3.0 Ethernet Adapters.
+> Support speed upto 10/100/1000 Mbit Ethernet LAN.
 
-Unfortunately I can't verify them neither. I don't have these boards. In
-that case I would prefer approach "if it ain't broken, don't touch
-it"... unless someone tests the patches of course.
+Just:
+"Odroid XU4 has a RTL8153-CG gigabit Ethernet adapter, connected over
+USB 3.0."
 
-Anyone can provide tested-by tag?
+The message can be fixed when applying, so:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
 
-
 > 
-> Thierry
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > 
-> Thierry Reding (6):
->   ARM: s3c24xx: h1940: Use PWM lookup table
->   ARM: s3c24xx: rx1950: Use PWM lookup table
->   ARM: s3c64xx: smdk6410: Use PWM lookup table
->   ARM: s3c64xx: crag6410: Use PWM lookup table
->   ARM: s3c64xx: hmt: Use PWM lookup table
->   ARM: s3c64xx: smartq: Use PWM lookup table
+> ---
+> Changes: Fixed the commit log.
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->  arch/arm/mach-s3c24xx/mach-h1940.c    | 10 +++++++---
->  arch/arm/mach-s3c24xx/mach-rx1950.c   |  8 ++++++--
->  arch/arm/mach-s3c64xx/dev-backlight.c |  4 ----
->  arch/arm/mach-s3c64xx/mach-crag6410.c |  9 +++++++--
->  arch/arm/mach-s3c64xx/mach-hmt.c      |  9 +++++++--
->  arch/arm/mach-s3c64xx/mach-smartq.c   |  9 +++++++--
->  arch/arm/mach-s3c64xx/mach-smdk6410.c |  8 +++++++-
->  7 files changed, 41 insertions(+), 16 deletions(-)
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 1ff2bfa..5d1937b 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -61,6 +61,7 @@ CONFIG_BLK_DEV_DM=y
+>  CONFIG_DM_CRYPT=m
+>  CONFIG_NETDEVICES=y
+>  CONFIG_SMSC911X=y
+> +CONFIG_USB_RTL8152=y
+>  CONFIG_USB_USBNET=y
+>  CONFIG_USB_NET_SMSC75XX=y
+>  CONFIG_USB_NET_SMSC95XX=y
 > 
