@@ -1,183 +1,59 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT 2/3] usb: misc: usb3503: Allow usage of device through phy
- interface
-Date: Wed, 07 Oct 2015 09:30:06 +0900
-Message-ID: <1444177807-15524-3-git-send-email-k.kozlowski@samsung.com>
-References: <1444177807-15524-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1444177807-15524-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@freescale.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>, riku.voipio@linaro.org
+Subject: [PATCH v2 1/3] mfd: sec-core: Dump PMIC revision to find out the HW
+Date: Wed, 07 Oct 2015 09:44:39 +0900
+Message-ID: <1444178681-16188-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:38790 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752667AbbJGApC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Oct 2015 20:45:02 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-The USB3503 hub controller can be connected through I2C interface (e.g.
-on Odroid-U3 board) or directly by phy (e.g. on Arndale board). Thus the
-usb3503 driver can act as a i2c or platform device.
-
-In the second configuration (phy) the driver did not get a reference to
-necessary phy to use it. This lead to probe failure if PHY driver was
-probed after usb3503 probe.
-
-The patch adds support for generic phy framework so the driver will the
-phy reference (if provided) and use it.
+There are different revisions of the same chipset. For example S2MPS13 has
+more than 2 revisions. They differ slightly in regulator constraints.
+Print the revision number to easily find which PMIC is used on the board.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reported-by: Kevin Hilman <khilman@kernel.org>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Kevin Hilman <khilman@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: riku.voipio@linaro.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/usb/misc/usb3503.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
 
-diff --git a/drivers/usb/misc/usb3503.c b/drivers/usb/misc/usb3503.c
-index 64ff5b91752d..e9423fc28105 100644
---- a/drivers/usb/misc/usb3503.c
-+++ b/drivers/usb/misc/usb3503.c
-@@ -27,6 +27,7 @@
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/usb3503.h>
-+#include <linux/phy/phy.h>
- #include <linux/regmap.h>
- 
- #define USB3503_VIDL		0x00
-@@ -59,6 +60,7 @@ struct usb3503 {
- 	struct regmap		*regmap;
- 	struct device		*dev;
- 	struct clk		*clk;
-+	struct phy		*phy;
- 	u8	port_off_mask;
- 	int	gpio_intn;
- 	int	gpio_reset;
-@@ -66,6 +68,29 @@ struct usb3503 {
- 	bool	secondary_ref_clk;
+---
+
+Changs since v1:
+None.
+---
+ drivers/mfd/sec-core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 2d1137a7a0ee..589e5efc2d7f 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -253,6 +253,15 @@ static const struct regmap_config s5m8767_regmap_config = {
+ 	.cache_type = REGCACHE_FLAT,
  };
  
-+static int usb3503_phy_on(struct usb3503 *hub)
++static void sec_pmic_dump_rev(struct sec_pmic_dev *sec_pmic)
 +{
-+	int err;
++	unsigned int val;
 +
-+	err = phy_power_on(hub->phy);
-+	if (err)
-+		return err;
-+
-+	err = phy_init(hub->phy);
-+	if (err) {
-+		phy_power_off(hub->phy);
-+		return err;
-+	}
-+
-+	return 0;
++	/* For each device type, the REG_ID is always the first register */
++	if (!regmap_read(sec_pmic->regmap_pmic, S2MPS11_REG_ID, &val))
++		dev_dbg(sec_pmic->dev, "Revision: 0x%x\n", val);
 +}
 +
-+static void usb3503_phy_off(struct usb3503 *hub)
-+{
-+	phy_exit(hub->phy);
-+	phy_power_off(hub->phy);
-+}
-+
- static int usb3503_reset(struct usb3503 *hub, int state)
- {
- 	if (!state && gpio_is_valid(hub->gpio_connect))
-@@ -189,6 +214,13 @@ static int usb3503_probe(struct usb3503 *hub)
- 		u32 rate = 0;
- 		hub->port_off_mask = 0;
+ #ifdef CONFIG_OF
+ /*
+  * Only the common platform data elements for s5m8767 are parsed here from the
+@@ -425,6 +434,7 @@ static int sec_pmic_probe(struct i2c_client *i2c,
+ 		goto err_mfd;
  
-+		hub->phy = devm_phy_optional_get(dev, "usb2-phy");
-+		if (IS_ERR(hub->phy)) {
-+			err = PTR_ERR(hub->phy);
-+			if (err != -EPROBE_DEFER)
-+				dev_err(dev, "unable to get phy: %d\n", err);
-+			return err;
-+		}
- 		if (!of_property_read_u32(np, "refclk-frequency", &rate)) {
- 			switch (rate) {
- 			case 38400000:
-@@ -300,6 +332,10 @@ static int usb3503_probe(struct usb3503 *hub)
- 		}
- 	}
+ 	device_init_wakeup(sec_pmic->dev, sec_pmic->wakeup);
++	sec_pmic_dump_rev(sec_pmic);
  
-+	err = usb3503_phy_on(hub);
-+	if (err)
-+		return err;
-+
- 	usb3503_switch_mode(hub, hub->mode);
+ 	return ret;
  
- 	dev_info(dev, "%s: probed in %s mode\n", __func__,
-@@ -339,9 +375,29 @@ static int usb3503_platform_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	hub->dev = &pdev->dev;
- 
-+	platform_set_drvdata(pdev, hub);
-+
- 	return usb3503_probe(hub);
- }
- 
-+static int usb3503_i2c_remove(struct i2c_client *i2c)
-+{
-+	struct usb3503 *hub = i2c_get_clientdata(i2c);
-+
-+	usb3503_phy_off(hub);
-+
-+	return 0;
-+}
-+
-+static int usb3503_platform_remove(struct platform_device *pdev)
-+{
-+	struct usb3503 *hub = platform_get_drvdata(pdev);
-+
-+	usb3503_phy_off(hub);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int usb3503_i2c_suspend(struct device *dev)
- {
-@@ -350,6 +406,8 @@ static int usb3503_i2c_suspend(struct device *dev)
- 
- 	usb3503_switch_mode(hub, USB3503_MODE_STANDBY);
- 
-+	usb3503_phy_off(hub);
-+
- 	if (hub->clk)
- 		clk_disable_unprepare(hub->clk);
- 
-@@ -360,10 +418,15 @@ static int usb3503_i2c_resume(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct usb3503 *hub = i2c_get_clientdata(client);
-+	int err;
- 
- 	if (hub->clk)
- 		clk_prepare_enable(hub->clk);
- 
-+	err = usb3503_phy_on(hub);
-+	if (err)
-+		return err;
-+
- 	usb3503_switch_mode(hub, hub->mode);
- 
- 	return 0;
-@@ -395,6 +458,7 @@ static struct i2c_driver usb3503_i2c_driver = {
- 		.of_match_table = of_match_ptr(usb3503_of_match),
- 	},
- 	.probe		= usb3503_i2c_probe,
-+	.remove		= usb3503_i2c_remove,
- 	.id_table	= usb3503_id,
- };
- 
-@@ -404,6 +468,7 @@ static struct platform_driver usb3503_platform_driver = {
- 		.of_match_table = of_match_ptr(usb3503_of_match),
- 	},
- 	.probe		= usb3503_platform_probe,
-+	.remove		= usb3503_platform_remove,
- };
- 
- static int __init usb3503_init(void)
 -- 
 1.9.1
