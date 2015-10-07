@@ -1,370 +1,258 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 3/5] ARM: dts: Use GPIO constants for flags cells in exynos4412 boards
-Date: Wed,  7 Oct 2015 15:14:15 +0200
-Message-ID: <1444223657-7248-4-git-send-email-javier@osg.samsung.com>
-References: <1444223657-7248-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444223657-7248-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v5 0/17] Add Analogix Core Display Port Driver
+Date: Wed, 07 Oct 2015 19:05:15 +0800
+Message-ID: <5614FC6B.4080702@rock-chips.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
+ <5614BADD.1070307@rock-chips.com> <5614DBE2.6080102@osg.samsung.com>
+ <5614DFBC.8060105@rock-chips.com> <5614E553.6060108@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============1028182125=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5614E553.6060108@osg.samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <treding@nvidia.com>, joe@perches.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, emil.l.velikov@gmail.com, dianders@chromium.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Kumar Gala <galak@codeaurora.org>, ajaynumb@gmail.com, robherring2@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The board DTS are using numeric values instead of the defined GPIO
-constanst to express polarity, use them to make the DTS more clear.
+This is a multi-part message in MIME format.
+--===============1028182125==
+Content-Type: multipart/alternative;
+ boundary="------------040407000308030704080101"
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
+This is a multi-part message in MIME format.
+--------------040407000308030704080101
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 15 ++++++-----
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |  2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts        |  8 +++---
- arch/arm/boot/dts/exynos4412-origen.dts         | 15 ++++++-----
- arch/arm/boot/dts/exynos4412-tiny4412.dts       |  9 ++++---
- arch/arm/boot/dts/exynos4412-trats2.dts         | 34 ++++++++++++-------------
- 6 files changed, 43 insertions(+), 40 deletions(-)
+Hi Javier,
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index c3e978d77367..edf0fc8db6ff 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/clock/maxim,max77686.h>
- #include "exynos4412.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	chosen {
-@@ -30,7 +31,7 @@
- 		power_key {
- 			interrupt-parent = <&gpx1>;
- 			interrupts = <3 0>;
--			gpios = <&gpx1 3 1>;
-+			gpios = <&gpx1 3 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			label = "power key";
- 			debounce-interval = <10>;
-@@ -70,7 +71,7 @@
- 		pinctrl-0 = <&sd1_cd>;
- 		pinctrl-names = "default";
- 		compatible = "mmc-pwrseq-emmc";
--		reset-gpios = <&gpk1 2 1>;
-+		reset-gpios = <&gpk1 2 GPIO_ACTIVE_LOW>;
- 	};
- 
- 	camera {
-@@ -181,7 +182,7 @@
- };
- 
- &hdmi {
--	hpd-gpio = <&gpx3 7 0>;
-+	hpd-gpio = <&gpx3 7 GPIO_ACTIVE_HIGH>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&hdmi_hpd>;
- 	vdd-supply = <&ldo8_reg>;
-@@ -207,9 +208,9 @@
- 		compatible = "smsc,usb3503";
- 		reg = <0x08>;
- 
--		intn-gpios = <&gpx3 0 0>;
--		connect-gpios = <&gpx3 4 0>;
--		reset-gpios = <&gpx3 5 0>;
-+		intn-gpios = <&gpx3 0 GPIO_ACTIVE_HIGH>;
-+		connect-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
- 		initial-mode = <1>;
- 	};
- 
-@@ -482,7 +483,7 @@
- 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
- 	pinctrl-names = "default";
- 	vmmc-supply = <&ldo4_reg &ldo21_reg>;
--	cd-gpios = <&gpk2 2 0>;
-+	cd-gpios = <&gpk2 2 GPIO_ACTIVE_HIGH>;
- 	cd-inverted;
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 1e6ef99eef59..646ff0bd001a 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -27,7 +27,7 @@
- 		compatible = "gpio-leds";
- 		led1 {
- 			label = "led1:heart";
--			gpios = <&gpc1 0 1>;
-+			gpios = <&gpc1 0 GPIO_ACTIVE_LOW>;
- 			default-state = "on";
- 			linux,default-trigger = "heartbeat";
- 		};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 679ac103ebf6..b44bb682e976 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -26,13 +26,13 @@
- 		compatible = "gpio-leds";
- 		led1 {
- 			label = "led1:heart";
--			gpios = <&gpc1 0 1>;
-+			gpios = <&gpc1 0 GPIO_ACTIVE_LOW>;
- 			default-state = "on";
- 			linux,default-trigger = "heartbeat";
- 		};
- 		led2 {
- 			label = "led2:mmc0";
--			gpios = <&gpc1 2 1>;
-+			gpios = <&gpc1 2 GPIO_ACTIVE_LOW>;
- 			default-state = "on";
- 			linux,default-trigger = "mmc0";
- 		};
-@@ -44,7 +44,7 @@
- 		home_key {
- 			interrupt-parent = <&gpx2>;
- 			interrupts = <2 0>;
--			gpios = <&gpx2 2 0>;
-+			gpios = <&gpx2 2 GPIO_ACTIVE_HIGH>;
- 			linux,code = <KEY_HOME>;
- 			label = "home key";
- 			debounce-interval = <10>;
-@@ -57,7 +57,7 @@
- 		regulator-name = "p3v3_en";
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
--		gpio = <&gpa1 1 1>;
-+		gpio = <&gpa1 1 GPIO_ACTIVE_LOW>;
- 		enable-active-high;
- 		regulator-always-on;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 9d528af68c1a..c8d86af2fb98 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -14,6 +14,7 @@
- 
- /dts-v1/;
- #include "exynos4412.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- 
- / {
-@@ -45,7 +46,7 @@
- 			regulator-name = "VMEM_VDD_2.8V";
- 			regulator-min-microvolt = <2800000>;
- 			regulator-max-microvolt = <2800000>;
--			gpio = <&gpx1 1 0>;
-+			gpio = <&gpx1 1 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
- 	};
-@@ -107,13 +108,13 @@
- 
- 		s5m8767,pmic-buck-default-dvs-idx = <3>;
- 
--		s5m8767,pmic-buck-dvs-gpios = <&gpx2 3 0>,
--						 <&gpx2 4 0>,
--						 <&gpx2 5 0>;
-+		s5m8767,pmic-buck-dvs-gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>,
-+						 <&gpx2 4 GPIO_ACTIVE_HIGH>,
-+						 <&gpx2 5 GPIO_ACTIVE_HIGH>;
- 
--		s5m8767,pmic-buck-ds-gpios = <&gpm3 5 0>,
--						<&gpm3 6 0>,
--						<&gpm3 7 0>;
-+		s5m8767,pmic-buck-ds-gpios = <&gpm3 5 GPIO_ACTIVE_HIGH>,
-+						<&gpm3 6 GPIO_ACTIVE_HIGH>,
-+						<&gpm3 7 GPIO_ACTIVE_HIGH>;
- 
- 		s5m8767,pmic-buck2-dvs-voltage = <1250000>, <1200000>,
- 						 <1200000>, <1200000>,
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index 525684ca8dc0..4840bbdaa9ec 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -13,6 +13,7 @@
- 
- /dts-v1/;
- #include "exynos4412.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "FriendlyARM TINY4412 board based on Exynos4412";
-@@ -31,26 +32,26 @@
- 
- 		led1 {
- 			label = "led1";
--			gpios = <&gpm4 0 1>;
-+			gpios = <&gpm4 0 GPIO_ACTIVE_LOW>;
- 			default-state = "off";
- 			linux,default-trigger = "heartbeat";
- 		};
- 
- 		led2 {
- 			label = "led2";
--			gpios = <&gpm4 1 1>;
-+			gpios = <&gpm4 1 GPIO_ACTIVE_LOW>;
- 			default-state = "off";
- 		};
- 
- 		led3 {
- 			label = "led3";
--			gpios = <&gpm4 2 1>;
-+			gpios = <&gpm4 2 GPIO_ACTIVE_LOW>;
- 			default-state = "off";
- 		};
- 
- 		led4 {
- 			label = "led4";
--			gpios = <&gpm4 3 1>;
-+			gpios = <&gpm4 3 GPIO_ACTIVE_LOW>;
- 			default-state = "off";
- 			linux,default-trigger = "mmc0";
- 		};
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 93e3bbd4bd49..d8bf4afb8bd9 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -65,7 +65,7 @@
- 			regulator-name = "CAM_SENSOR_A";
- 			regulator-min-microvolt = <2800000>;
- 			regulator-max-microvolt = <2800000>;
--			gpio = <&gpm0 2 0>;
-+			gpio = <&gpm0 2 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
- 
-@@ -74,7 +74,7 @@
- 			regulator-name = "LCD_VDD_2.2V";
- 			regulator-min-microvolt = <2200000>;
- 			regulator-max-microvolt = <2200000>;
--			gpio = <&gpc0 1 0>;
-+			gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
- 
-@@ -83,7 +83,7 @@
- 			regulator-name = "CAM_AF";
- 			regulator-min-microvolt = <2800000>;
- 			regulator-max-microvolt = <2800000>;
--			gpio = <&gpm0 4 0>;
-+			gpio = <&gpm0 4 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
- 
-@@ -92,7 +92,7 @@
- 			regulator-name = "LED_A_3.0V";
- 			regulator-min-microvolt = <3000000>;
- 			regulator-max-microvolt = <3000000>;
--			gpio = <&gpj0 5 0>;
-+			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
- 	};
-@@ -101,21 +101,21 @@
- 		compatible = "gpio-keys";
- 
- 		key-down {
--			gpios = <&gpx3 3 1>;
-+			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
- 			linux,code = <114>;
- 			label = "volume down";
- 			debounce-interval = <10>;
- 		};
- 
- 		key-up {
--			gpios = <&gpx2 2 1>;
-+			gpios = <&gpx2 2 GPIO_ACTIVE_LOW>;
- 			linux,code = <115>;
- 			label = "volume up";
- 			debounce-interval = <10>;
- 		};
- 
- 		key-power {
--			gpios = <&gpx2 7 1>;
-+			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
- 			linux,code = <116>;
- 			label = "power";
- 			debounce-interval = <10>;
-@@ -123,7 +123,7 @@
- 		};
- 
- 		key-ok {
--			gpios = <&gpx0 1 1>;
-+			gpios = <&gpx0 1 GPIO_ACTIVE_LOW>;
- 			linux,code = <139>;
- 			label = "ok";
- 			debounce-inteval = <10>;
-@@ -198,7 +198,7 @@
- 
- 	i2c_ak8975: i2c-gpio-0 {
- 		compatible = "i2c-gpio";
--		gpios = <&gpy2 4 0>, <&gpy2 5 0>;
-+		gpios = <&gpy2 4 GPIO_ACTIVE_HIGH>, <&gpy2 5 GPIO_ACTIVE_HIGH>;
- 		i2c-gpio,delay-us = <2>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -207,13 +207,13 @@
- 		ak8975@0c {
- 			compatible = "asahi-kasei,ak8975";
- 			reg = <0x0c>;
--			gpios = <&gpj0 7 0>;
-+			gpios = <&gpj0 7 GPIO_ACTIVE_HIGH>;
- 		};
- 	};
- 
- 	i2c_cm36651: i2c-gpio-2 {
- 		compatible = "i2c-gpio";
--		gpios = <&gpf0 0 1>, <&gpf0 1 1>;
-+		gpios = <&gpf0 0 GPIO_ACTIVE_LOW>, <&gpf0 1 GPIO_ACTIVE_LOW>;
- 		i2c-gpio,delay-us = <2>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -359,7 +359,7 @@
- 		reg = <0>;
- 		vdd3-supply = <&lcd_vdd3_reg>;
- 		vci-supply = <&ldo25_reg>;
--		reset-gpios = <&gpy4 5 0>;
-+		reset-gpios = <&gpy4 5 GPIO_ACTIVE_HIGH>;
- 		power-on-delay= <50>;
- 		reset-delay = <100>;
- 		init-delay = <100>;
-@@ -446,7 +446,7 @@
- 			clocks = <&camera 1>;
- 			clock-names = "extclk";
- 			samsung,camclk-out = <1>;
--			gpios = <&gpm1 6 0>;
-+			gpios = <&gpm1 6 GPIO_ACTIVE_HIGH>;
- 
- 			port {
- 				is_s5k6a3_ep: endpoint {
-@@ -488,8 +488,8 @@
- 	s5c73m3@3c {
- 		compatible = "samsung,s5c73m3";
- 		reg = <0x3c>;
--		standby-gpios = <&gpm0 1 1>;   /* ISP_STANDBY */
--		xshutdown-gpios = <&gpf1 3 1>; /* ISP_RESET */
-+		standby-gpios = <&gpm0 1 GPIO_ACTIVE_LOW>;   /* ISP_STANDBY */
-+		xshutdown-gpios = <&gpf1 3 GPIO_ACTIVE_LOW>; /* ISP_RESET */
- 		vdd-int-supply = <&buck9_reg>;
- 		vddio-cis-supply = <&ldo9_reg>;
- 		vdda-supply = <&ldo17_reg>;
-@@ -1241,7 +1241,7 @@
- 
- &sdhci_2 {
- 	bus-width = <4>;
--	cd-gpios = <&gpx3 4 0>;
-+	cd-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
- 	cd-inverted;
- 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
- 	pinctrl-names = "default";
-@@ -1268,7 +1268,7 @@
- &spi_1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&spi1_bus>;
--	cs-gpios = <&gpb 5 0>;
-+	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
- 	status = "okay";
- 
- 	s5c73m3_spi: s5c73m3 {
--- 
-2.4.3
+On 10/07/2015 05:26 PM, Javier Martinez Canillas wrote:
+> Hello Yakir,
+>
+> On 10/07/2015 11:02 AM, Yakir Yang wrote:
+>> Hi Javier,
+>>
+>> On 10/07/2015 04:46 PM, Javier Martinez Canillas wrote:
+>>> Hello Yakir,
+>>>
+>>> On 10/07/2015 08:25 AM, Yakir Yang wrote:
+>>>> Hi all,
+>>>>
+>>>> Friendly ping.....   :)
+>>>>
+>>>>
+>>>> Best regards,
+>>>> - Yakir
+>>>>
+>>>>
+>>> Do you have a tree that I can use to test these patches?
+>> Wow, thanks a lot, I do have a tree on github [https://github.com/yakir-Yang/linux/tree/analogix_dp],
+>> crossing my finger, wish things works......    ;)
+>>
+> I tried your analogix_dp branch on an Exynos5800 Peach Pi Chromebook
+> but the machine didn't boot. Unfortunately I need to do some soldering
+> to have a serial console on this board so don't have a kernel boot log.
+>
+> I'll let you know if I can get more info about this issue.
+
+Whoops, sorry for the failed, much appreciated for your works.
+
+Besides, I thought maybe I can find a Peach Pit Chromebook in my side,
+I remember that some of our guys have brought one, but previously I
+thought that mainline kernel wouldn't run on Peach Pit directly.
+
+Maybe you can email me the method the run mainline kernel on Peach
+Pit, so I can debug the analogix_dp driver at the same time, that would
+be great.
+> Also, there is Kconfig recursive dependency that you may want to fix:
+>
+> $ make exynos_defconfig
+> drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+> drivers/video/fbdev/Kconfig:5: symbol FB is selected by DRM_KMS_FB_HELPER
+> drivers/gpu/drm/Kconfig:34: symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
+> drivers/gpu/drm/Kconfig:28: symbol DRM_KMS_HELPER is selected by DRM_ANALOGIX_DP
+> drivers/gpu/drm/bridge/analogix/Kconfig:1: symbol DRM_ANALOGIX_DP is selected by DRM_EXYNOS_DP
+> drivers/gpu/drm/exynos/Kconfig:57: symbol DRM_EXYNOS_DP depends on DRM_EXYNOS_FIMD
+> drivers/gpu/drm/exynos/Kconfig:19: symbol DRM_EXYNOS_FIMD depends on FB_S3C
+> drivers/video/fbdev/Kconfig:2023: symbol FB_S3C depends on FB
+>   
+
+Yeah, recursive dependency detected, guess I should remove the
+"DRM_KMS_HELPER" from bridge analogix_dp Kconfig file, thanks
+for your remind.
+
+--- a/drivers/gpu/drm/bridge/analogix/Kconfig
++++ b/drivers/gpu/drm/bridge/analogix/Kconfig
+@@ -1,4 +1,3 @@
+  config DRM_ANALOGIX_DP
+         tristate
+         depends on DRM
+-       select DRM_KMS_HELPER
+
+
+Thanks,
+- Yakir
+>> Thanks,
+>> - Yakir
+>>
+> Best regards,
+
+
+--------------040407000308030704080101
+Content-Type: text/html; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+  <head>
+    <meta content=3D"text/html; charset=3Dwindows-1252"
+      http-equiv=3D"Content-Type">
+  </head>
+  <body bgcolor=3D"#FFFFFF" text=3D"#000000">
+    Hi Javier,<br>
+    <br>
+    <div class=3D"moz-cite-prefix">On 10/07/2015 05:26 PM, Javier Martine=
+z
+      Canillas wrote:<br>
+    </div>
+    <blockquote cite=3D"mid:5614E553.6060108@osg.samsung.com" type=3D"cit=
+e">
+      <pre wrap=3D"">Hello Yakir,
+
+On 10/07/2015 11:02 AM, Yakir Yang wrote:
+</pre>
+      <blockquote type=3D"cite">
+        <pre wrap=3D"">Hi Javier,
+
+On 10/07/2015 04:46 PM, Javier Martinez Canillas wrote:
+</pre>
+        <blockquote type=3D"cite">
+          <pre wrap=3D"">Hello Yakir,
+
+On 10/07/2015 08:25 AM, Yakir Yang wrote:
+</pre>
+          <blockquote type=3D"cite">
+            <pre wrap=3D"">Hi all,
+
+Friendly ping.....   :)
+
+
+Best regards,
+- Yakir
+
+
+</pre>
+          </blockquote>
+          <pre wrap=3D"">Do you have a tree that I can use to test these =
+patches?
+</pre>
+        </blockquote>
+        <pre wrap=3D"">
+Wow, thanks a lot, I do have a tree on github [<a class=3D"moz-txt-link-f=
+reetext" href=3D"https://github.com/yakir-Yang/linux/tree/analogix_dp">ht=
+tps://github.com/yakir-Yang/linux/tree/analogix_dp</a>],
+crossing my finger, wish things works......    ;)
+
+</pre>
+      </blockquote>
+      <pre wrap=3D"">
+I tried your analogix_dp branch on an Exynos5800 Peach Pi Chromebook
+but the machine didn't boot. Unfortunately I need to do some soldering
+to have a serial console on this board so don't have a kernel boot log.
+
+I'll let you know if I can get more info about this issue.</pre>
+    </blockquote>
+    <br>
+    Whoops, sorry for the failed, much appreciated for your works.<br>
+    <br>
+    Besides, I thought maybe I can find a Peach Pit Chromebook in my
+    side,<br>
+    I remember that some of our guys have brought one, but previously I<b=
+r>
+    thought that mainline kernel wouldn't run on Peach Pit directly.<br>
+    <br>
+    Maybe you can email me the method the run mainline kernel on Peach<br=
+>
+    Pit, so I can debug the analogix_dp driver at the same time, that
+    would<br>
+    be great.<br>
+    =A0
+    <meta http-equiv=3D"content-type" content=3D"text/html;
+      charset=3Dwindows-1252">
+    <blockquote cite=3D"mid:5614E553.6060108@osg.samsung.com" type=3D"cit=
+e">
+      <pre wrap=3D"">
+Also, there is Kconfig recursive dependency that you may want to fix:
+
+$ make exynos_defconfig
+drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+drivers/video/fbdev/Kconfig:5: symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:34: symbol DRM_KMS_FB_HELPER depends on DRM_KMS_H=
+ELPER
+drivers/gpu/drm/Kconfig:28: symbol DRM_KMS_HELPER is selected by DRM_ANAL=
+OGIX_DP
+drivers/gpu/drm/bridge/analogix/Kconfig:1: symbol DRM_ANALOGIX_DP is sele=
+cted by DRM_EXYNOS_DP
+drivers/gpu/drm/exynos/Kconfig:57: symbol DRM_EXYNOS_DP depends on DRM_EX=
+YNOS_FIMD
+drivers/gpu/drm/exynos/Kconfig:19: symbol DRM_EXYNOS_FIMD depends on FB_S=
+3C
+drivers/video/fbdev/Kconfig:2023: symbol FB_S3C depends on FB
+ </pre>
+    </blockquote>
+    <br>
+    Yeah, recursive dependency detected, guess I should remove the<br>
+    "DRM_KMS_HELPER" from bridge analogix_dp Kconfig file, thanks<br>
+    for your remind.<br>
+    <br>
+    --- a/drivers/gpu/drm/bridge/analogix/Kconfig<br>
+    +++ b/drivers/gpu/drm/bridge/analogix/Kconfig<br>
+    @@ -1,4 +1,3 @@<br>
+    =A0config DRM_ANALOGIX_DP<br>
+    =A0=A0=A0=A0=A0=A0=A0 tristate<br>
+    =A0=A0=A0=A0=A0=A0=A0 depends on DRM<br>
+    -=A0=A0=A0=A0=A0=A0 select DRM_KMS_HELPER<br>
+    <br>
+    <br>
+    Thanks,<br>
+    - Yakir<br>
+    <blockquote cite=3D"mid:5614E553.6060108@osg.samsung.com" type=3D"cit=
+e">
+      <pre wrap=3D"">
+</pre>
+      <blockquote type=3D"cite">
+        <pre wrap=3D"">Thanks,
+- Yakir
+
+</pre>
+      </blockquote>
+      <pre wrap=3D"">
+Best regards,
+</pre>
+    </blockquote>
+    <br>
+  </body>
+</html>
+
+--------------040407000308030704080101--
+
+
+--===============1028182125==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============1028182125==--
