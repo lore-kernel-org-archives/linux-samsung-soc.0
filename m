@@ -1,99 +1,98 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 5/6] ARM: s3c64xx: hmt: Use PWM lookup table
-Date: Wed, 7 Oct 2015 17:37:24 +0200
-Message-ID: <20151007153724.GC1975@ulmo>
-References: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
- <1444049237-29878-6-git-send-email-thierry.reding@gmail.com>
- <56147766.6010703@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 00/13] drm/exynos: async G2D and g2d_move()
+Date: Wed, 7 Oct 2015 20:32:22 +0200
+Message-ID: <56156536.6070906@math.uni-bielefeld.de>
+References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GZVR6ND4mMseVXL/"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:33186 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754188AbbJGPh1 (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:41362 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751575AbbJGSc1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Oct 2015 11:37:27 -0400
-Received: by wiclk2 with SMTP id lk2so219599721wic.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2015 08:37:26 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <56147766.6010703@samsung.com>
+	Wed, 7 Oct 2015 14:32:27 -0400
+In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
+
+Gentle ping! :-)
+
+- Tobias
 
 
---GZVR6ND4mMseVXL/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 07, 2015 at 10:37:42AM +0900, Krzysztof Kozlowski wrote:
-> On 05.10.2015 21:47, Thierry Reding wrote:
-> > Use a PWM lookup table to provide the PWM to the pwm-backlight device.
-> > The driver has a legacy code path that is required only because boards
-> > still use the legacy method of requesting PWMs by global ID. Replacing
-> > these usages allows that legacy fallback to be removed.
-> >=20
-> > Cc: Kukjin Kim <kgene@kernel.org>
-> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-> > ---
-> >  arch/arm/mach-s3c64xx/mach-hmt.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/m=
-ach-hmt.c
-> > index e4b087c58ee6..816b39d1e6d1 100644
-> > --- a/arch/arm/mach-s3c64xx/mach-hmt.c
-> > +++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-> > @@ -19,6 +19,7 @@
-> >  #include <linux/gpio.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/leds.h>
-> > +#include <linux/pwm.h>
-> >  #include <linux/pwm_backlight.h>
-> >  #include <linux/mtd/mtd.h>
-> >  #include <linux/mtd/partitions.h>
-> > @@ -73,6 +74,11 @@ static struct s3c2410_uartcfg hmt_uartcfgs[] __initd=
-ata =3D {
-> >  	},
-> >  };
-> > =20
-> > +static struct pwm_lookup hmt_pwm_lookup[] =3D {
-> > +	PWM_LOOKUP("samsung-pwm", 1, "pwm-backlight.0", NULL,
->=20
-> Same questions as in patch 2 - why suffix ".0" for "pwm-backlight"?
-
-For the same reason that I explained in patch 2. Not sure if the .id =3D 0
-was really supposed to be. For most devices it would probably make sense
-to initialize it to -1 because they typically only have a single
-backlight. But given that userspace might be using the name to control
-the backlight via sysfs it's probably not a good idea to go and change
-that.
-
-Thierry
-
---GZVR6ND4mMseVXL/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWFTw0AAoJEN0jrNd/PrOhsg0P/1CP867ONw9m/UxthFU4xxw7
-mMUNwUCOVzENxEGTAKbkK8tH5UPLgMn9fLCmc7U2vo57AP26B9CWMw+h3cPmc0l5
-msR5xTjUywGS+DLiDcCsZ62FcIZmsoRLek6o+boThxkc7lFHEwvjy/Nfo8+DFd62
-eh5HwDtn4C0woq10394ljtksapVhXHs9vuBjQoMedu3l4wPB1s6HhG3tBbvcjIAW
-A9KE1jpoAvBn9DWSd8IVdGibO5iJ8GhDm7ZsTpKeJ27Z+gqSZBUGeLouAYwRvvcR
-1yrhGFmFdFbSz4grnbHFH1PUtr4X90J69xVNJjkw0bSuy43WhRKsIHisBu7+4WGe
-1cbMqNYbvHXjT5XpR+oPQXaQZ4a6guxpswejUm6CKCHFVo6DOx+WG/FBZfudzp1M
-fqdJyymD9AX8itD0fiWlHhawp0Na4xB83MmubCiUcnITaUtAh9JDTCAjacwh7WqX
-F/H3kHxVQ/eu5wUCvrgWVjY+KO7K0JDL+h4rwP6jsx8wKMyp7sbWND4jmnU5j0Fd
-z2CnW1hh3kDahKcKuDAuKUEx1TfiWOYupEMXkA032IDurrjStRuj15k9Gwg66spO
-ohXBKJQ3LNCxYmGNbKtd+qgxsIALX3tQA+xPSWBiqHC/ymJ2wfb4J4RIiZ+fHp8K
-epdFoWZf6cRLM2dECF2i
-=JgYz
------END PGP SIGNATURE-----
-
---GZVR6ND4mMseVXL/--
+Tobias Jakobi wrote:
+> Hello,
+> 
+> this series mostly touches G2D code. It introduces the following:
+> 
+> (1) drmHandleEvent2() is added to enable processing of vendor-specific
+>     events. This will be used to expose asynchronous operation of the
+>     G2D. The necessary kernel infrastructure is already there since
+>     a lot of kernel versions. [This touches libdrm core code!]
+> 
+> (2) The necessary infrastructure to handle G2D events. This includes
+>     adding g2d_config_event() and g2d_exec2() to the public API.
+>     A test application is provided to ensure that everything works
+>     as expected.
+> 
+> (3) A small performance test application which can be used to measure
+>     the speed of solid color clear operations. Interesting for
+>     benchmarking and plotting colorful graphs (e.g. through
+>     Mathematica).
+> 
+> (4) g2d_move() which works similar to g2d_copy() but like the C
+>     memmove() properly handles overlapping buffer copies.
+>     Again a test application is present to check that this
+>     indeed does what it should.
+> 
+> (5) Various small changes. A framebuffer colorformat fix for the
+>     general G2D test application. Moving the currently unused
+>     g2d_reset() to the public API. Adding a counterpart to
+>     exynos_bo_map() to unmap buffers again.
+> 
+> (6) Last but not least a small bump of the Exynos version number.
+> 
+> Please review and let me know what I should change/improve.
+> 
+> 
+> With best wishes,
+> Tobias
+> 
+> P.S.: Most patches were submitted already some time ago but never
+> made it upstream. So if something looks familiar, don't worry! ;)
+> 
+> Tobias Jakobi (13):
+>   drm: Implement drmHandleEvent2()
+>   exynos: Introduce exynos_handle_event()
+>   tests/exynos: add fimg2d performance analysis
+>   exynos/fimg2d: add g2d_config_event
+>   exynos: fimg2d: add g2d_exec2
+>   tests/exynos: add fimg2d event test
+>   tests/exynos: use XRGB8888 for framebuffer
+>   exynos: fimg2d: add g2d_set_direction
+>   exynos/fimg2d: add g2d_move
+>   tests/exynos: add test for g2d_move
+>   exynos/fimg2d: add exynos_bo_unmap()
+>   exynos/fimg2d: add g2d_reset() to public API
+>   exynos: bump version number
+> 
+>  exynos/exynos-symbol-check         |   5 +
+>  exynos/exynos_drm.c                |  48 ++++++
+>  exynos/exynos_drm.h                |  12 ++
+>  exynos/exynos_drmif.h              |  27 +++
+>  exynos/exynos_fimg2d.c             | 164 +++++++++++++++++--
+>  exynos/exynos_fimg2d.h             |  49 ++++++
+>  exynos/libdrm_exynos.pc.in         |   2 +-
+>  tests/exynos/Makefile.am           |  26 ++-
+>  tests/exynos/exynos_fimg2d_event.c | 326 +++++++++++++++++++++++++++++++++++++
+>  tests/exynos/exynos_fimg2d_perf.c  | 320 ++++++++++++++++++++++++++++++++++++
+>  tests/exynos/exynos_fimg2d_test.c  | 134 ++++++++++++++-
+>  xf86drm.h                          |  21 +++
+>  xf86drmMode.c                      |  10 +-
+>  13 files changed, 1128 insertions(+), 16 deletions(-)
+>  create mode 100644 tests/exynos/exynos_fimg2d_event.c
+>  create mode 100644 tests/exynos/exynos_fimg2d_perf.c
+> 
