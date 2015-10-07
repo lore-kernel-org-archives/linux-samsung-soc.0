@@ -1,58 +1,59 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] ARM: dts: exynos4412-odroid: unify voltage regulator
- style
-Date: Wed, 7 Oct 2015 01:26:59 +0200
-Message-ID: <561458C3.8030806@math.uni-bielefeld.de>
-References: <1442858340-4584-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442858340-4584-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFT 0/3] usb: usb3503: Fix probing on Arndale board (missing phy)
+Date: Wed, 07 Oct 2015 09:30:04 +0900
+Message-ID: <1444177807-15524-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:39762 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753078AbbJFX1B (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:38679 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752960AbbJGAaR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Oct 2015 19:27:01 -0400
-In-Reply-To: <1442858340-4584-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Tue, 6 Oct 2015 20:30:17 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: k.kozlowski@samsung.com, devicetree@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@freescale.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>, riku.voipio@linaro.org
 
-Gentle ping!
+Hi,
 
-- Tobias
 
-Tobias Jakobi wrote:
-> Use 'ldoN_reg: LDON' syntax and drop the deprecated
-> 'regulator-compatible' property.
-> 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 518230f..9f381bd 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -294,15 +294,13 @@
->  				regulator-always-on;
->  			};
->  
-> -			ldo8_reg: ldo@8 {
-> -				regulator-compatible = "LDO8";
-> +			ldo8_reg: LDO8 {
->  				regulator-name = "VDD10_HDMI_1.0V";
->  				regulator-min-microvolt = <1000000>;
->  				regulator-max-microvolt = <1000000>;
->  			};
->  
-> -			ldo10_reg: ldo@10 {
-> -				regulator-compatible = "LDO10";
-> +			ldo10_reg: LDO10 {
->  				regulator-name = "VDDQ_MIPIHSI_1.8V";
->  				regulator-min-microvolt = <1800000>;
->  				regulator-max-microvolt = <1800000>;
-> 
+Introduction
+============
+This patchset tries to fix probing of usb3503 on Arndale board
+if the Samsung PHY driver is probed later (or built as a module).
+
+*The patchset was not tested on Arndale board.*
+I don't have that board. Please test it and say if the usb3503 deferred probe
+works fine and the issue is solved.
+
+The patchset was tested on Odroid U3 board (which is different!)
+in a simulated environment. It is not sufficient testing.
+
+
+Difference
+==========
+The usb3503 device driver can be used as a I2C device (on Odroid U3)
+or as a platform device connected through phy (on Arndale). In the second
+case the necessary phy reference has to be obtained and enabled.
+
+For some details please look also at thread [0][1].
+
+[0] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/348524.html
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/348875.html
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (3):
+  dt-bindings: usb: usb5303: Document new 'phys' property
+  usb: misc: usb3503: Allow usage of device through phy interface
+  ARM: dts: Fix usb3503 probe by enabling phy on exynos5250-arndale
+
+ Documentation/devicetree/bindings/usb/usb3503.txt |  4 ++
+ arch/arm/boot/dts/exynos5250-arndale.dts          |  2 +
+ drivers/usb/misc/usb3503.c                        | 65 +++++++++++++++++++++++
+ 3 files changed, 71 insertions(+)
+
+-- 
+1.9.1
