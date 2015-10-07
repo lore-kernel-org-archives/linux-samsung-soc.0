@@ -1,231 +1,111 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v3 1/2] s5p-mfc: end-of-stream handling for newer encoders
-Date: Wed, 07 Oct 2015 12:15:31 +0200
-Message-ID: <1444212931-13566-1-git-send-email-a.hajda@samsung.com>
-References: <002601d0fd10006ce900146bb0samsung.com@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58281 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751260AbbJGKPl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Oct 2015 06:15:41 -0400
-In-reply-to: <002601d0fd10006ce900146bb0samsung.com@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v5 0/17] Add Analogix Core Display Port Driver
+Date: Wed, 7 Oct 2015 13:25:28 +0200
+Message-ID: <56150128.2070309@osg.samsung.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
+ <5614BADD.1070307@rock-chips.com> <5614DBE2.6080102@osg.samsung.com>
+ <5614DFBC.8060105@rock-chips.com> <5614E553.6060108@osg.samsung.com>
+ <5614FC6B.4080702@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5614FC6B.4080702@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <treding@nvidia.com>, joe@perches.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>
+Cc: David Airlie <airlied@linux.ie>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-MFC encoder supports end-of-stream handling for encoder
-in version 5 of hardware. This patch adds it also for newer version.
-It was successfully tested on MFC-v8.
+Hello Yakir,
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-Hi Kamil,
+On 10/07/2015 01:05 PM, Yakir Yang wrote:
+> Hi Javier,
+> 
+> On 10/07/2015 05:26 PM, Javier Martinez Canillas wrote:
+>> Hello Yakir,
+>>
+>> On 10/07/2015 11:02 AM, Yakir Yang wrote:
+>>> Hi Javier,
+>>>
+>>> On 10/07/2015 04:46 PM, Javier Martinez Canillas wrote:
+>>>> Hello Yakir,
+>>>>
+>>>> On 10/07/2015 08:25 AM, Yakir Yang wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> Friendly ping.....   :)
+>>>>>
+>>>>>
+>>>>> Best regards,
+>>>>> - Yakir
+>>>>>
+>>>>>
+>>>> Do you have a tree that I can use to test these patches?
+>>> Wow, thanks a lot, I do have a tree on github [https://github.com/yakir-Yang/linux/tree/analogix_dp],
+>>> crossing my finger, wish things works......    ;)
+>>>
+>> I tried your analogix_dp branch on an Exynos5800 Peach Pi Chromebook
+>> but the machine didn't boot. Unfortunately I need to do some soldering
+>> to have a serial console on this board so don't have a kernel boot log.
+>>
+>> I'll let you know if I can get more info about this issue.
+> 
+> Whoops, sorry for the failed, much appreciated for your works.
+> 
+> Besides, I thought maybe I can find a Peach Pit Chromebook in my side,
+> I remember that some of our guys have brought one, but previously I
+> thought that mainline kernel wouldn't run on Peach Pit directly.
+> 
 
-Incorrect format fixed.
+Great, mainline works correctly on all Exynos based Chromebooks.
 
-Regards
-Andrzej
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c        | 25 ++++++-------
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |  5 ++-
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c | 49 +++++++++++++++++--------
- 3 files changed, 48 insertions(+), 31 deletions(-)
+> Maybe you can email me the method the run mainline kernel on Peach
+> Pit, so I can debug the analogix_dp driver at the same time, that would
+> be great.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 7b646c2..05a31ee 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -181,13 +181,6 @@ unlock:
- 		mutex_unlock(&dev->mfc_mutex);
- }
- 
--static void s5p_mfc_clear_int_flags(struct s5p_mfc_dev *dev)
--{
--	mfc_write(dev, 0, S5P_FIMV_RISC_HOST_INT);
--	mfc_write(dev, 0, S5P_FIMV_RISC2HOST_CMD);
--	mfc_write(dev, 0xffff, S5P_FIMV_SI_RTN_CHID);
--}
--
- static void s5p_mfc_handle_frame_all_extracted(struct s5p_mfc_ctx *ctx)
- {
- 	struct s5p_mfc_buf *dst_buf;
-@@ -579,17 +572,13 @@ static void s5p_mfc_handle_init_buffers(struct s5p_mfc_ctx *ctx,
- 	}
- }
- 
--static void s5p_mfc_handle_stream_complete(struct s5p_mfc_ctx *ctx,
--				 unsigned int reason, unsigned int err)
-+static void s5p_mfc_handle_stream_complete(struct s5p_mfc_ctx *ctx)
- {
- 	struct s5p_mfc_dev *dev = ctx->dev;
- 	struct s5p_mfc_buf *mb_entry;
- 
- 	mfc_debug(2, "Stream completed\n");
- 
--	s5p_mfc_clear_int_flags(dev);
--	ctx->int_type = reason;
--	ctx->int_err = err;
- 	ctx->state = MFCINST_FINISHED;
- 
- 	spin_lock(&dev->irqlock);
-@@ -646,6 +635,13 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
- 		if (ctx->c_ops->post_frame_start) {
- 			if (ctx->c_ops->post_frame_start(ctx))
- 				mfc_err("post_frame_start() failed\n");
-+
-+			if (ctx->state == MFCINST_FINISHING &&
-+						list_empty(&ctx->ref_queue)) {
-+				s5p_mfc_hw_call_void(dev->mfc_ops, clear_int_flags, dev);
-+				s5p_mfc_handle_stream_complete(ctx);
-+				break;
-+			}
- 			s5p_mfc_hw_call_void(dev->mfc_ops, clear_int_flags, dev);
- 			wake_up_ctx(ctx, reason, err);
- 			WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
-@@ -691,7 +687,10 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
- 		break;
- 
- 	case S5P_MFC_R2H_CMD_COMPLETE_SEQ_RET:
--		s5p_mfc_handle_stream_complete(ctx, reason, err);
-+		s5p_mfc_hw_call_void(dev->mfc_ops, clear_int_flags, dev);
-+		ctx->int_type = reason;
-+		ctx->int_err = err;
-+		s5p_mfc_handle_stream_complete(ctx);
- 		break;
- 
- 	case S5P_MFC_R2H_CMD_DPB_FLUSH_RET:
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index 94868f7..d082d47 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -907,9 +907,9 @@ static int enc_post_frame_start(struct s5p_mfc_ctx *ctx)
- 			list_add_tail(&mb_entry->list, &ctx->ref_queue);
- 			ctx->ref_queue_cnt++;
- 		}
--		mfc_debug(2, "enc src count: %d, enc ref count: %d\n",
--			  ctx->src_queue_cnt, ctx->ref_queue_cnt);
- 	}
-+	mfc_debug(2, "enc src count: %d, enc ref count: %d\n",
-+		  ctx->src_queue_cnt, ctx->ref_queue_cnt);
- 	if ((ctx->dst_queue_cnt > 0) && (strm_size > 0)) {
- 		mb_entry = list_entry(ctx->dst_queue.next, struct s5p_mfc_buf,
- 									list);
-@@ -932,6 +932,7 @@ static int enc_post_frame_start(struct s5p_mfc_ctx *ctx)
- 	spin_unlock_irqrestore(&dev->irqlock, flags);
- 	if ((ctx->src_queue_cnt == 0) || (ctx->dst_queue_cnt == 0))
- 		clear_work_bit(ctx);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-index e0924a52..b958453 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -554,7 +554,7 @@ static void s5p_mfc_get_enc_frame_buffer_v6(struct s5p_mfc_ctx *ctx,
- 	enc_recon_y_addr = readl(mfc_regs->e_recon_luma_dpb_addr);
- 	enc_recon_c_addr = readl(mfc_regs->e_recon_chroma_dpb_addr);
- 
--	mfc_debug(2, "recon y addr: 0x%08lx\n", enc_recon_y_addr);
-+	mfc_debug(2, "recon y addr: 0x%08lx y_addr: 0x%08lx\n", enc_recon_y_addr, *y_addr);
- 	mfc_debug(2, "recon c addr: 0x%08lx\n", enc_recon_c_addr);
- }
- 
-@@ -1483,6 +1483,7 @@ static int s5p_mfc_encode_one_frame_v6(struct s5p_mfc_ctx *ctx)
- {
- 	struct s5p_mfc_dev *dev = ctx->dev;
- 	const struct s5p_mfc_regs *mfc_regs = dev->mfc_regs;
-+	int cmd;
- 
- 	mfc_debug(2, "++\n");
- 
-@@ -1493,9 +1494,13 @@ static int s5p_mfc_encode_one_frame_v6(struct s5p_mfc_ctx *ctx)
- 
- 	s5p_mfc_set_slice_mode(ctx);
- 
-+	if (ctx->state != MFCINST_FINISHING)
-+		cmd = S5P_FIMV_CH_FRAME_START_V6;
-+	else
-+		cmd = S5P_FIMV_CH_LAST_FRAME_V6;
-+
- 	writel(ctx->inst_no, mfc_regs->instance_id);
--	s5p_mfc_hw_call_void(dev->mfc_cmds, cmd_host2risc, dev,
--			S5P_FIMV_CH_FRAME_START_V6, NULL);
-+	s5p_mfc_hw_call_void(dev->mfc_cmds, cmd_host2risc, dev, cmd, NULL);
- 
- 	mfc_debug(2, "--\n");
- 
-@@ -1563,8 +1568,8 @@ static inline int s5p_mfc_run_dec_frame(struct s5p_mfc_ctx *ctx)
- 	temp_vb->flags |= MFC_BUF_FLAG_USED;
- 	s5p_mfc_set_dec_stream_buffer_v6(ctx,
- 		vb2_dma_contig_plane_dma_addr(&temp_vb->b->vb2_buf, 0),
--		ctx->consumed_stream,
--		temp_vb->b->vb2_buf.planes[0].bytesused);
-+			ctx->consumed_stream,
-+			temp_vb->b->vb2_buf.planes[0].bytesused);
- 	spin_unlock_irqrestore(&dev->irqlock, flags);
- 
- 	dev->curr_ctx = ctx->num;
-@@ -1592,7 +1597,7 @@ static inline int s5p_mfc_run_enc_frame(struct s5p_mfc_ctx *ctx)
- 
- 	spin_lock_irqsave(&dev->irqlock, flags);
- 
--	if (list_empty(&ctx->src_queue)) {
-+	if (list_empty(&ctx->src_queue) && ctx->state != MFCINST_FINISHING) {
- 		mfc_debug(2, "no src buffers.\n");
- 		spin_unlock_irqrestore(&dev->irqlock, flags);
- 		return -EAGAIN;
-@@ -1604,15 +1609,28 @@ static inline int s5p_mfc_run_enc_frame(struct s5p_mfc_ctx *ctx)
- 		return -EAGAIN;
- 	}
- 
--	src_mb = list_entry(ctx->src_queue.next, struct s5p_mfc_buf, list);
--	src_mb->flags |= MFC_BUF_FLAG_USED;
--	src_y_addr = vb2_dma_contig_plane_dma_addr(&src_mb->b->vb2_buf, 0);
--	src_c_addr = vb2_dma_contig_plane_dma_addr(&src_mb->b->vb2_buf, 1);
-+	if (list_empty(&ctx->src_queue)) {
-+		/* send null frame */
-+		s5p_mfc_set_enc_frame_buffer_v6(ctx, 0, 0);
-+		src_mb = NULL;
-+	} else {
-+		src_mb = list_entry(ctx->src_queue.next, struct s5p_mfc_buf, list);
-+		src_mb->flags |= MFC_BUF_FLAG_USED;
-+		if (src_mb->b->vb2_buf.planes[0].bytesused == 0) {
-+			s5p_mfc_set_enc_frame_buffer_v6(ctx, 0, 0);
-+			ctx->state = MFCINST_FINISHING;
-+		} else {
-+			src_y_addr = vb2_dma_contig_plane_dma_addr(&src_mb->b->vb2_buf, 0);
-+			src_c_addr = vb2_dma_contig_plane_dma_addr(&src_mb->b->vb2_buf, 1);
- 
--	mfc_debug(2, "enc src y addr: 0x%08lx\n", src_y_addr);
--	mfc_debug(2, "enc src c addr: 0x%08lx\n", src_c_addr);
-+			mfc_debug(2, "enc src y addr: 0x%08lx\n", src_y_addr);
-+			mfc_debug(2, "enc src c addr: 0x%08lx\n", src_c_addr);
- 
--	s5p_mfc_set_enc_frame_buffer_v6(ctx, src_y_addr, src_c_addr);
-+			s5p_mfc_set_enc_frame_buffer_v6(ctx, src_y_addr, src_c_addr);
-+			if (src_mb->flags & MFC_BUF_FLAG_EOS)
-+				ctx->state = MFCINST_FINISHING;
-+		}
-+	}
- 
- 	dst_mb = list_entry(ctx->dst_queue.next, struct s5p_mfc_buf, list);
- 	dst_mb->flags |= MFC_BUF_FLAG_USED;
-@@ -1639,11 +1657,10 @@ static inline void s5p_mfc_run_init_dec(struct s5p_mfc_ctx *ctx)
- 	spin_lock_irqsave(&dev->irqlock, flags);
- 	mfc_debug(2, "Preparing to init decoding.\n");
- 	temp_vb = list_entry(ctx->src_queue.next, struct s5p_mfc_buf, list);
--	mfc_debug(2, "Header size: %d\n",
--		temp_vb->b->vb2_buf.planes[0].bytesused);
-+	mfc_debug(2, "Header size: %d\n", temp_vb->b->vb2_buf.planes[0].bytesused);
- 	s5p_mfc_set_dec_stream_buffer_v6(ctx,
- 		vb2_dma_contig_plane_dma_addr(&temp_vb->b->vb2_buf, 0), 0,
--		temp_vb->b->vb2_buf.planes[0].bytesused);
-+			temp_vb->b->vb2_buf.planes[0].bytesused);
- 	spin_unlock_irqrestore(&dev->irqlock, flags);
- 	dev->curr_ctx = ctx->num;
- 	s5p_mfc_init_decode_v6(ctx);
+I wrote a little blog post explaining how to run mainline on these boards:
+
+http://blogs.s-osg.org/install-linux-mainline-kernel-distro-exynos-chromebooks/
+
+That explains the simplest setup though so if you need a different one
+(i.e: chain loading a non verified u-boot) or if you have any questions,
+feel free to contact me in private and I can help you with the setup.
+
+>> Also, there is Kconfig recursive dependency that you may want to fix:
+>>
+>> $ make exynos_defconfig
+>> drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+>> drivers/video/fbdev/Kconfig:5: symbol FB is selected by DRM_KMS_FB_HELPER
+>> drivers/gpu/drm/Kconfig:34: symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
+>> drivers/gpu/drm/Kconfig:28: symbol DRM_KMS_HELPER is selected by DRM_ANALOGIX_DP
+>> drivers/gpu/drm/bridge/analogix/Kconfig:1: symbol DRM_ANALOGIX_DP is selected by DRM_EXYNOS_DP
+>> drivers/gpu/drm/exynos/Kconfig:57: symbol DRM_EXYNOS_DP depends on DRM_EXYNOS_FIMD
+>> drivers/gpu/drm/exynos/Kconfig:19: symbol DRM_EXYNOS_FIMD depends on FB_S3C
+>> drivers/video/fbdev/Kconfig:2023: symbol FB_S3C depends on FB
+>>   
+> 
+> Yeah, recursive dependency detected, guess I should remove the
+> "DRM_KMS_HELPER" from bridge analogix_dp Kconfig file, thanks
+> for your remind.
+> 
+> --- a/drivers/gpu/drm/bridge/analogix/Kconfig
+> +++ b/drivers/gpu/drm/bridge/analogix/Kconfig
+> @@ -1,4 +1,3 @@
+>  config DRM_ANALOGIX_DP
+>         tristate
+>         depends on DRM
+> -       select DRM_KMS_HELPER
+> 
+> 
+
+That fixes the recursive dependency issue indeed. Thanks.
+
+> Thanks,
+> - Yakir
+
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
