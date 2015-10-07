@@ -1,48 +1,46 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/3] mfd: dt-bindings: Document pulled down WRSTBI pin on
- S2MPS1X
-Date: Wed, 07 Oct 2015 09:44:40 +0900
-Message-ID: <1444178681-16188-2-git-send-email-k.kozlowski@samsung.com>
-References: <1444178681-16188-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/6] ARM: s3c24xx: h1940: Use PWM lookup table
+Date: Wed, 07 Oct 2015 10:32:34 +0900
+Message-ID: <56147632.6060901@samsung.com>
+References: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
+ <1444049237-29878-2-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:30608 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:30923 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752797AbbJGApF (ORCPT
+	with ESMTP id S1752924AbbJGBch (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Oct 2015 20:45:05 -0400
-In-reply-to: <1444178681-16188-1-git-send-email-k.kozlowski@samsung.com>
+	Tue, 6 Oct 2015 21:32:37 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NVT008B3TMA6L10@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 Oct 2015 02:32:35 +0100 (BST)
+In-reply-to: <1444049237-29878-2-git-send-email-thierry.reding@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Document a new Device Tree property 'samsung,s2mps11-wrstbi-ground'
-indicating that WRSTBI pin of S2MPS13 PMIC is pulled down so
-corresponding buck warm reset function should be disabled.
+On 05.10.2015 21:47, Thierry Reding wrote:
+> Use a PWM lookup table to provide the PWM to the pwm-backlight device.
+> The driver has a legacy code path that is required only because boards
+> still use the legacy method of requesting PWMs by global ID. Replacing
+> these usages allows that legacy fallback to be removed.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+> ---
+>  arch/arm/mach-s3c24xx/mach-h1940.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+The code looks good.
 
----
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Changs since v1:
-None.
----
- Documentation/devicetree/bindings/mfd/s2mps11.txt | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-index 90eaef393325..890f0b0e1643 100644
---- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-+++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-@@ -19,6 +19,9 @@ Optional properties:
-   connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
-   register to turn off the power. Usually the ACOKB is pulled up to VBATT so
-   when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
-+- samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
-+  down. When the system is suspended it will always go down thus triggerring
-+  unwanted buck warm reset (setting buck voltages to default values).
- 
- Optional nodes:
- - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
--- 
-1.9.1
+Best regards,
+Krzysztof
