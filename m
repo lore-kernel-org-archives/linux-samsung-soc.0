@@ -1,82 +1,70 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [GIT PULL] ARM: dts: Exynos improvements for 4.4-2
-Date: Thu, 08 Oct 2015 07:25:10 +0900
-Message-ID: <56159BC6.3050101@kernel.org>
-References: <1444096492-15166-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 4/4] ARM: dts: Enable EC vboot context support on Peach
+ boards
+Date: Thu, 08 Oct 2015 07:31:05 +0900
+Message-ID: <56159D29.3090801@kernel.org>
+References: <1442842703-5309-1-git-send-email-emilio.lopez@collabora.co.uk> <1442842703-5309-5-git-send-email-emilio.lopez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58284 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:58509 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752296AbbJGWZS (ORCPT
+	id S1751275AbbJGWbN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Oct 2015 18:25:18 -0400
-In-Reply-To: <1444096492-15166-1-git-send-email-k.kozlowski@samsung.com>
+	Wed, 7 Oct 2015 18:31:13 -0400
+In-Reply-To: <1442842703-5309-5-git-send-email-emilio.lopez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>
+To: =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio.lopez@collabora.co.uk>
+Cc: gregkh@linuxfoundation.org, olof@lixom.net, kgene@kernel.org, k.kozlowski@samsung.com, linux@roeck-us.net, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 10/06/15 10:54, Krzysztof Kozlowski wrote:
-> Dear Kukjin,
-> 
-> This is an updated pull request with DTS related changes for 4.4.
-> 
-> Description along with a tag.
-> You can find them also on the lists with my reviewed-by.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-> 
->   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-> 
-> are available in the git repository at:
-> 
->   https://github.com/krzk/linux.git tags/samsung-dt-4.4-2
-> 
-> for you to fetch changes up to c21dbcfefc9dc9abc42971dc1f2681b6a8677c3c:
-> 
->   ARM: dts: Remove regulator-compatible usage in exynos4412-trats2 (2015-10-06 10:47:13 +0900)
-> 
-> ----------------------------------------------------------------
-> Device Tree improvements for Exynos based boards (updated pull request):
-> 1. Enable DMA on Exynos4 serial ports. This old patch uncovered
->    a number of other issues in dmaengine and samsung serial driver.
->    All of known issues are resolved so finally enable the DMA for UART.
-> 2. Fix incorrect location of display-timings node (FIMD->DP node)
->    on Arndale, SMDK5250 and SMDK5240 boards.
-> 3. Minor cleanups.
-> 
-> ----------------------------------------------------------------
-> Javier Martinez Canillas (1):
->       ARM: dts: Remove regulator-compatible usage in exynos4412-trats2
-> 
-> Robert Baldyga (1):
->       ARM: dts: Add DMA support for serial ports in exynos4
-> 
-> Sean Paul (1):
->       ARM: dts: Move display-timings node from fimd to dp in exynos5250-arndale, smdk5250 and smdk5420
-> 
-> Tobias Jakobi (2):
->       ARM: dts: Remove redundant pinctrl settings in exynos4412-odroid
->       ARM: dts: Unify voltage regulator style in exynos4412-odroid
-> 
-> Vladimir Zapolskiy (1):
->       ARM: dts: Fix cpu compatible value for s3c2416
-> 
->  arch/arm/boot/dts/exynos4.dtsi                  |   8 ++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  12 +--
->  arch/arm/boot/dts/exynos4412-trats2.dts         | 105 ++++++++----------------
->  arch/arm/boot/dts/exynos5250-arndale.dts        |   8 +-
->  arch/arm/boot/dts/exynos5250-smdk5250.dts       |  16 ++--
->  arch/arm/boot/dts/exynos5420-smdk5420.dts       |   7 +-
->  arch/arm/boot/dts/s3c2416.dtsi                  |   2 +-
->  7 files changed, 62 insertions(+), 96 deletions(-)
+On 09/21/15 22:38, Emilio L=C3=B3pez wrote:
+> The Peach boards use the EC to store the vboot context information,
+> so add the corresponding properties on the EC node to indicate so.
+>=20
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Emilio L=C3=B3pez <emilio.lopez@collabora.co.uk>
+> ---
+>=20
+> Changes from v1:
+>  - none
+>=20
+> Changes from v2:
+>  - collect tags from Krzysztof & Javier
+>=20
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
+>  2 files changed, 2 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/bo=
+ot/dts/exynos5420-peach-pit.dts
+> index 8f4d76c..ac02fb4 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -935,6 +935,7 @@
+>  		pinctrl-0 =3D <&ec_spi_cs &ec_irq>;
+>  		reg =3D <0>;
+>  		spi-max-frequency =3D <3125000>;
+> +		google,has-vbc-nvram;
+> =20
+>  		controller-data {
+>  			samsung,spi-feedback-delay =3D <1>;
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boo=
+t/dts/exynos5800-peach-pi.dts
+> index 7d5b386..b60dec0 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -898,6 +898,7 @@
+>  		pinctrl-0 =3D <&ec_spi_cs &ec_irq>;
+>  		reg =3D <0>;
+>  		spi-max-frequency =3D <3125000>;
+> +		google,has-vbc-nvram;
+> =20
+>  		controller-data {
+>  			samsung,spi-feedback-delay =3D <1>;
 
-Pulled, thanks.
+Applied, thanks.
 
 - Kukjin
