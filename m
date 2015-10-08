@@ -1,106 +1,81 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/5] thermal: exynos: Fix first temperature read after
- registering sensor
-Date: Thu, 08 Oct 2015 14:34:03 +0900
-Message-ID: <1444282446-6419-2-git-send-email-k.kozlowski@samsung.com>
-References: <1444282446-6419-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [RFT 0/3] usb: usb3503: Fix probing on Arndale board (missing phy)
+Date: Thu, 08 Oct 2015 15:02:38 +0900
+Message-ID: <561606FE.2090007@samsung.com>
+References: <1444177807-15524-1-git-send-email-k.kozlowski@samsung.com>
+ <56152BB2.4020202@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1444282446-6419-1-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <56152BB2.4020202@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@freescale.com>, Ben Gamari <ben@smart-cactus.org>, Wolfram Sang <wsa@the-dreams.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>, riku.voipio@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Thermal core could not read the temperature after registering the
-thermal sensor with thermal_zone_of_sensor_register() because the driver
-was not yet initialized.
+On 07.10.2015 23:26, Marek Szyprowski wrote:
+> Hello,
+> 
+> On 2015-10-07 02:30, Krzysztof Kozlowski wrote:
+>> Introduction
+>> ============
+>> This patchset tries to fix probing of usb3503 on Arndale board
+>> if the Samsung PHY driver is probed later (or built as a module).
+>>
+>> *The patchset was not tested on Arndale board.*
+>> I don't have that board. Please test it and say if the usb3503
+>> deferred probe
+>> works fine and the issue is solved.
+>>
+>> The patchset was tested on Odroid U3 board (which is different!)
+>> in a simulated environment. It is not sufficient testing.
+>>
+>>
+>> Difference
+>> ==========
+>> The usb3503 device driver can be used as a I2C device (on Odroid U3)
+>> or as a platform device connected through phy (on Arndale). In the second
+>> case the necessary phy reference has to be obtained and enabled.
+>>
+>> For some details please look also at thread [0][1].
+>>
+>> [0]
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/348524.html
+>>
+>> [1]
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/348875.html
+>>
+>>
 
-The call trace looked like:
-    exynos_tmu_probe()
-        thermal_zone_of_sensor_register()
-            of_thermal_set_mode()
-                thermal_zone_device_update()
-                    exynos_get_temp()
-                        if (!data->tmu_read) return -EINVAL;
-        exynos_map_dt_data()
-            data->tmu_read = ...
+> 
+> I'm not sure that this is the correct approach. usb3503 chip is simply
+> connected
+> to Exynos USB2 phy, so it visible on the USB bus. The real driver that
+> controls USB2
+> PHY is Exynos EHCI driver and USB3503 should not mess around it.
 
-This produced an error in dmesg:
-thermal thermal_zone0: failed to read out thermal zone (-22)
+The ehci node (usb@12110000) has one port configured and it takes one
+PHY reference (phy of id 1 - USB host). I can't see driver taking
+reference to HSIC0 or HSIC1 phys... Since I cannot diagnose the error I
+don't know what is really expected here.
 
-Register the thermal_zone_device later, after parsing Device Tree and
-enabling necessary clocks, but before calling exynos_tmu_initialize()
-which uses the registered thermal_zone_device.
+> 
+> In my opinion all that is needed in case of Arndale board is forcing
+> reset of
+> usb3503 chip after successful EHCI and USB2 PHY initialization (for some
+> reason
+> initialization of usb3503 chip must be done after usb host initialization).
+> However I have no idea which driver should trigger this reset. Right now
+> I didn't
+> find any good solution for additional control for devices which are on
+> autoprobed
+> bus like usb.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Fixes: 3b6a1a805f34 ("thermal: samsung: core: Exynos TMU rework to use device tree for configuration")
----
- drivers/thermal/samsung/exynos_tmu.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+The reset is done at the end of usb3503's probe. The question "why
+usb3503 has to be initialized after EHCI and USB PHY" is still valid...
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 23f4320f8ef7..bc71a61f0c4a 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1289,13 +1289,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, data);
- 	mutex_init(&data->lock);
- 
--	data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
--						    &exynos_sensor_ops);
--	if (IS_ERR(data->tzd)) {
--		pr_err("thermal: tz: %p ERROR\n", data->tzd);
--		return PTR_ERR(data->tzd);
--	}
--
- 	/*
- 	 * Try enabling the regulator if found
- 	 * TODO: Add regulator as an SOC feature, so that regulator enable
-@@ -1365,21 +1358,36 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 		break;
- 	};
- 
-+	/*
-+	 * data->tzd must be registered before calling exynos_tmu_initialize(),
-+	 * requesting irq and calling exynos_tmu_control().
-+	 */
-+	data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
-+						    &exynos_sensor_ops);
-+	if (IS_ERR(data->tzd)) {
-+		ret = PTR_ERR(data->tzd);
-+		dev_err(&pdev->dev, "Failed to register sensor: %d\n", ret);
-+		goto err_sclk;
-+	}
-+
- 	ret = exynos_tmu_initialize(pdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize TMU\n");
--		goto err_sclk;
-+		goto err_thermal;
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
- 		IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
--		goto err_sclk;
-+		goto err_thermal;
- 	}
- 
- 	exynos_tmu_control(pdev, true);
- 	return 0;
-+
-+err_thermal:
-+	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
- err_sclk:
- 	clk_disable_unprepare(data->sclk);
- err_clk:
-@@ -1390,7 +1398,6 @@ err_clk_sec:
- err_sensor:
- 	if (!IS_ERR_OR_NULL(data->regulator))
- 		regulator_disable(data->regulator);
--	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
- 
- 	return ret;
- }
--- 
-1.9.1
+Anyway thanks for feedback! I really appreciate it.
+
+Best regards,
+Krzysztof
