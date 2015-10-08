@@ -1,43 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 6/6] ARM: s3c64xx: smartq: Use PWM lookup table
-Date: Thu, 08 Oct 2015 10:02:12 +0900
-Message-ID: <5615C094.8000504@samsung.com>
-References: <1444049237-29878-1-git-send-email-thierry.reding@gmail.com>
- <1444049237-29878-7-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv3 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+Date: Thu,  8 Oct 2015 03:48:36 +0000
+Message-ID: <1444276117-3657-1-git-send-email-linux.amoon@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:22530 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751188AbbJHBCL (ORCPT
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:35006 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751318AbbJHDsw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Oct 2015 21:02:11 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NVV00E5MMVM25B0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Oct 2015 02:02:10 +0100 (BST)
-In-reply-to: <1444049237-29878-7-git-send-email-thierry.reding@gmail.com>
+	Wed, 7 Oct 2015 23:48:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05.10.2015 21:47, Thierry Reding wrote:
-> Use a PWM lookup table to provide the PWM to the pwm-backlight device.
-> The driver has a legacy code path that is required only because boards
-> still use the legacy method of requesting PWMs by global ID. Replacing
-> these usages allows that legacy fallback to be removed.
-> 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-> ---
->  arch/arm/mach-s3c64xx/mach-smartq.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+Odroid XU4 has a RTL8153-CG gigabit Ethernet adapter, connected over
+USB 3.0.
 
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Best regards,
-Krzysztof
+---
+Changes: Fixed the commit message thanks to Krzysztof Kozlowski
+         Added reviewed by Krzysztof Kozlowski
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 1ff2bfa..5d1937b 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -61,6 +61,7 @@ CONFIG_BLK_DEV_DM=y
+ CONFIG_DM_CRYPT=m
+ CONFIG_NETDEVICES=y
+ CONFIG_SMSC911X=y
++CONFIG_USB_RTL8152=y
+ CONFIG_USB_USBNET=y
+ CONFIG_USB_NET_SMSC75XX=y
+ CONFIG_USB_NET_SMSC95XX=y
+-- 
+2.1.4
