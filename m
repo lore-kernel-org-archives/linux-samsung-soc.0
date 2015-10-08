@@ -1,49 +1,54 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] ARM: dts: exynos4412-odroid: unify voltage regulator
- style
-Date: Thu, 8 Oct 2015 12:25:30 +0200
-Message-ID: <5616449A.6030508@math.uni-bielefeld.de>
-References: <1442858340-4584-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442858340-4584-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <561458C3.8030806@math.uni-bielefeld.de> <5615BF94.5080406@samsung.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: [PATCH] thermal: exynos: fix register read in TMU
+Date: Thu, 8 Oct 2015 19:51:29 +0530
+Message-ID: <20151008142129.GC10587@sudip-pc>
+References: <1443699599-9693-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <CAJKOXPfyC8etcPe373q6Pc1qWb2zVnHE96V+Rh5mPmpzAxFjiA@mail.gmail.com>
+ <20151001141243.GA5061@sudip-pc>
+ <CAJKOXPdVs9i9sVP84wa2wU0qVH1-o4unvaDC+O7c1za6bJUSLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42157 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754914AbbJHKZe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Oct 2015 06:25:34 -0400
-In-Reply-To: <5615BF94.5080406@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPdVs9i9sVP84wa2wU0qVH1-o4unvaDC+O7c1za6bJUSLw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
 
-Krzysztof Kozlowski wrote:
-> On 07.10.2015 08:26, Tobias Jakobi wrote:
->> Gentle ping!
+On Fri, Oct 02, 2015 at 08:43:52AM +0900, Krzysztof Kozlowski wrote:
+> 2015-10-01 23:12 GMT+09:00 Sudip Mukherjee <sudipm.mukherjee@gmail.com>:
+> > On Thu, Oct 01, 2015 at 10:18:57PM +0900, Krzysztof Kozlowski wrote:
+> >> 2015-10-01 20:39 GMT+09:00 Sudip Mukherjee <sudipm.mukherjee@gmail.com>:
+> >> > The value of emul_con was getting overwritten if the selected soc is
+> >> > SOC_ARCH_EXYNOS5260. And so as a result we were reading from the wrong
+> >> > register in the case of SOC_ARCH_EXYNOS5260.
+> >>
+> >> How the value is overwritten if the soc is Exynos5260? I can't see it
+> >> (although the "else if" is still more obvious than "if" but how does
+> >> the description match the code?).
+> > The code here is:
+> > if (data->soc == SOC_ARCH_EXYNOS5260)
+> >         emul_con = EXYNOS5260_EMUL_CON;
+> > if (data->soc == SOC_ARCH_EXYNOS5433)
+> >         emul_con = EXYNOS5433_TMU_EMUL_CON;
+> > else if (data->soc == SOC_ARCH_EXYNOS7)
+> >         emul_con = EXYNOS7_TMU_REG_EMUL_CON;
+> > else
+> >         emul_con = EXYNOS_EMUL_CON;
+> >
+> > So if data->soc is SOC_ARCH_EXYNOS5260 , then emul_con becomes
+> > EXYNOS5260_EMUL_CON. But again for the else part it will become
+> > EXYNOS_EMUL_CON.
 > 
-> Both patches are now in Kukjin's tree.
-Thanks Krzysztof for the heads up!
-
-With best wishes,
-Tobias
-
-
-> Best regards,
-> Krzysztof
+> Indeed!
 > 
->>
->> - Tobias
->>
->> Tobias Jakobi wrote:
->>> Use 'ldoN_reg: LDON' syntax and drop the deprecated
->>> 'regulator-compatible' property.
->>>
->>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>> ---
->>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 6 ++----
->>>  1 file changed, 2 insertions(+), 4 deletions(-)
+> Fixes: 488c7455d74c ("thermal: exynos: Add the support for Exynos5433 TMU")
 > 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Hi Krzysztof,
+Who will pick this one up? I still do not see it in linux-next.
+
+regards
+sudip
