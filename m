@@ -1,54 +1,77 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH] thermal: exynos: fix register read in TMU
-Date: Thu, 8 Oct 2015 19:51:29 +0530
-Message-ID: <20151008142129.GC10587@sudip-pc>
-References: <1443699599-9693-1-git-send-email-sudipm.mukherjee@gmail.com>
- <CAJKOXPfyC8etcPe373q6Pc1qWb2zVnHE96V+Rh5mPmpzAxFjiA@mail.gmail.com>
- <20151001141243.GA5061@sudip-pc>
- <CAJKOXPdVs9i9sVP84wa2wU0qVH1-o4unvaDC+O7c1za6bJUSLw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv3 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+Date: Thu, 08 Oct 2015 16:41:15 +0200
+Message-ID: <5551783.9EQ5GEjhxX@wuerfel>
+References: <1444276117-3657-1-git-send-email-linux.amoon@gmail.com> <26439960.pU0jZ9hpjg@wuerfel> <1444296433.9895.234.camel@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPdVs9i9sVP84wa2wU0qVH1-o4unvaDC+O7c1za6bJUSLw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444296433.9895.234.camel@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Anand Moon <linux.amoon@gmail.com>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 02, 2015 at 08:43:52AM +0900, Krzysztof Kozlowski wrote:
-> 2015-10-01 23:12 GMT+09:00 Sudip Mukherjee <sudipm.mukherjee@gmail.com>:
-> > On Thu, Oct 01, 2015 at 10:18:57PM +0900, Krzysztof Kozlowski wrote:
-> >> 2015-10-01 20:39 GMT+09:00 Sudip Mukherjee <sudipm.mukherjee@gmail.com>:
-> >> > The value of emul_con was getting overwritten if the selected soc is
-> >> > SOC_ARCH_EXYNOS5260. And so as a result we were reading from the wrong
-> >> > register in the case of SOC_ARCH_EXYNOS5260.
-> >>
-> >> How the value is overwritten if the soc is Exynos5260? I can't see it
-> >> (although the "else if" is still more obvious than "if" but how does
-> >> the description match the code?).
-> > The code here is:
-> > if (data->soc == SOC_ARCH_EXYNOS5260)
-> >         emul_con = EXYNOS5260_EMUL_CON;
-> > if (data->soc == SOC_ARCH_EXYNOS5433)
-> >         emul_con = EXYNOS5433_TMU_EMUL_CON;
-> > else if (data->soc == SOC_ARCH_EXYNOS7)
-> >         emul_con = EXYNOS7_TMU_REG_EMUL_CON;
-> > else
-> >         emul_con = EXYNOS_EMUL_CON;
-> >
-> > So if data->soc is SOC_ARCH_EXYNOS5260 , then emul_con becomes
-> > EXYNOS5260_EMUL_CON. But again for the else part it will become
-> > EXYNOS_EMUL_CON.
+On Thursday 08 October 2015 11:27:13 Sjoerd Simons wrote:
+> On Thu, 2015-10-08 at 10:37 +0200, Arnd Bergmann wrote:
+> > On Thursday 08 October 2015 16:46:27 Krzysztof Kozlowski wrote:
+> > > On 08.10.2015 16:41, Arnd Bergmann wrote:
+> > > > On Thursday 08 October 2015 03:48:36 Anand Moon wrote:
+> > > > > diff --git a/arch/arm/configs/exynos_defconfig
+> > > > > b/arch/arm/configs/exynos_defconfig
+> > > > > index 1ff2bfa..5d1937b 100644
+> > > > > --- a/arch/arm/configs/exynos_defconfig
+> > > > > +++ b/arch/arm/configs/exynos_defconfig
+> > > > > @@ -61,6 +61,7 @@ CONFIG_BLK_DEV_DM=y
+> > > > >  CONFIG_DM_CRYPT=m
+> > > > >  CONFIG_NETDEVICES=y
+> > > > >  CONFIG_SMSC911X=y
+> > > > > +CONFIG_USB_RTL8152=y
+> > > > >  CONFIG_USB_USBNET=y
+> > > > >  CONFIG_USB_NET_SMSC75XX=y
+> > > > >  CONFIG_USB_NET_SMSC95XX=y
+> > > > 
+> > > > Can we make that a loadable module for multi_v7_defconfig?
+> > > 
+> > > What about nfsroot boots? We were discussing this also here:
+> > > http://linux-arm-kernel.infradead.narkive.com/lG5g4hrB/patch-arm-mu
+> > > lti-v7-defconfig-enable-usb3503
+> > > 
+> > > and actually I would be happy to see a confirmed policy about that.
+> > > Everything should be a module for multi_v7?
+> > 
+> > We try to make as much as possible modular here, and NFS root is a
+> > corner
+> > case: it's possible to do NFS root with an initramfs, but it's easier
+> > not
+> > to. Is it something you do a lot on this hardware?
 > 
-> Indeed!
+> It's a workflow thing though, not a hardware specific thing. I
+> personally tend to use NFS root quite often and so do various
+> colleagues irrespective of the hardware (and an XU4 is bound to appear
+> on my desk someday). 
 > 
-> Fixes: 488c7455d74c ("thermal: exynos: Add the support for Exynos5433 TMU")
+> Now I personally really don't mind whether NFS root requires a ramdisk
+> or not (though some consistency would be nice). However deciding it on
+> a per device basis just makes everything quite fuzzy (e.g. my recent
+> rockchip multi_v7 patchset first ended up in a similar discussion,
+> though v2 was merged without further comments when I indicated in the
+> cover letter that i used the NFS root use-case as one of the deciding
+> factors for y vs. m).
 > 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> It would be really good to see someone put their foot down on the
+> general policy (e.g. the arm-soc maintainers?), such that this
+> discussion doesn't need to happen every time 
 
-Hi Krzysztof,
-Who will pick this one up? I still do not see it in linux-next.
+Yes, agreed, that what I'm trying to do here ;-)
 
-regards
-sudip
+I realize that building things as modules is a hassle, it is so for
+some things more than for others, so I keep asking the question
+to everyone to find out what a good balance is to make as much as
+possible modules without hurting too much.
+
+Once we have a firm policy in place, we should probably change all
+the existing symbols.
+
+	Arnd
