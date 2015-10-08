@@ -1,44 +1,85 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv3 2/2] ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
-Date: Thu,  8 Oct 2015 03:48:37 +0000
-Message-ID: <1444276117-3657-2-git-send-email-linux.amoon@gmail.com>
-References: <1444276117-3657-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:34673 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752256AbbJHDs4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Oct 2015 23:48:56 -0400
-In-Reply-To: <1444276117-3657-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/5] thermal: exynos: Fix unbalanced regulator disable on probe
+ failure
+Date: Thu, 08 Oct 2015 14:34:02 +0900
+Message-ID: <1444282446-6419-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Odroid XU4 has a RTL8153-CG gigabit Ethernet adapter, connected over
-USB 3.0.
+During probe if the regulator could not be enabled, the error exit path
+would still disable it. This could lead to unbalanced counter of
+regulator enable/disable.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+The patch moves code for getting and enabling the regulator from
+exynos_map_dt_data() to probe function because it is really not a part
+of getting Device Tree properties.
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Fixes: 5f09a5cbd14a ("thermal: exynos: Disable the regulator on probe failure")
+Cc: <stable@vger.kernel.org>
 ---
-Changes: Fixed the commit message thanks to Krzysztof Kozlowski
-         Added reviewed by Krzysztof Kozlowski
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/thermal/samsung/exynos_tmu.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 03deb7f..009d714 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -221,6 +221,7 @@ CONFIG_BROADCOM_PHY=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
- CONFIG_USB_PEGASUS=y
-+CONFIG_USB_RTL8152=y
- CONFIG_USB_USBNET=y
- CONFIG_USB_NET_SMSC75XX=y
- CONFIG_USB_NET_SMSC95XX=y
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 0bae8cc6c23a..23f4320f8ef7 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -1168,27 +1168,10 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct exynos_tmu_platform_data *pdata;
+ 	struct resource res;
+-	int ret;
+ 
+ 	if (!data || !pdev->dev.of_node)
+ 		return -ENODEV;
+ 
+-	/*
+-	 * Try enabling the regulator if found
+-	 * TODO: Add regulator as an SOC feature, so that regulator enable
+-	 * is a compulsory call.
+-	 */
+-	data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
+-	if (!IS_ERR(data->regulator)) {
+-		ret = regulator_enable(data->regulator);
+-		if (ret) {
+-			dev_err(&pdev->dev, "failed to enable vtmu\n");
+-			return ret;
+-		}
+-	} else {
+-		dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
+-	}
+-
+ 	data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
+ 	if (data->id < 0)
+ 		data->id = 0;
+@@ -1312,6 +1295,23 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 		pr_err("thermal: tz: %p ERROR\n", data->tzd);
+ 		return PTR_ERR(data->tzd);
+ 	}
++
++	/*
++	 * Try enabling the regulator if found
++	 * TODO: Add regulator as an SOC feature, so that regulator enable
++	 * is a compulsory call.
++	 */
++	data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
++	if (!IS_ERR(data->regulator)) {
++		ret = regulator_enable(data->regulator);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to enable vtmu\n");
++			return ret;
++		}
++	} else {
++		dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
++	}
++
+ 	ret = exynos_map_dt_data(pdev);
+ 	if (ret)
+ 		goto err_sensor;
 -- 
-2.1.4
+1.9.1
+
