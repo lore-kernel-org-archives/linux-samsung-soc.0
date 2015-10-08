@@ -1,77 +1,152 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCHv3 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
-Date: Thu, 08 Oct 2015 16:41:15 +0200
-Message-ID: <5551783.9EQ5GEjhxX@wuerfel>
-References: <1444276117-3657-1-git-send-email-linux.amoon@gmail.com> <26439960.pU0jZ9hpjg@wuerfel> <1444296433.9895.234.camel@collabora.co.uk>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH 2/5] thermal: exynos: Fix first temperature read after
+ registering sensor
+Date: Thu, 8 Oct 2015 22:13:21 +0530
+Message-ID: <CAGOxZ51BuqBGBECngB3YnNQJ4Ae+LNfTvqntg+GxdAih4GPXzQ@mail.gmail.com>
+References: <1444282446-6419-1-git-send-email-k.kozlowski@samsung.com> <1444282446-6419-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444296433.9895.234.camel@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Anand Moon <linux.amoon@gmail.com>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:33083 "EHLO
+	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933164AbbJHQoC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 Oct 2015 12:44:02 -0400
+In-Reply-To: <1444282446-6419-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thursday 08 October 2015 11:27:13 Sjoerd Simons wrote:
-> On Thu, 2015-10-08 at 10:37 +0200, Arnd Bergmann wrote:
-> > On Thursday 08 October 2015 16:46:27 Krzysztof Kozlowski wrote:
-> > > On 08.10.2015 16:41, Arnd Bergmann wrote:
-> > > > On Thursday 08 October 2015 03:48:36 Anand Moon wrote:
-> > > > > diff --git a/arch/arm/configs/exynos_defconfig
-> > > > > b/arch/arm/configs/exynos_defconfig
-> > > > > index 1ff2bfa..5d1937b 100644
-> > > > > --- a/arch/arm/configs/exynos_defconfig
-> > > > > +++ b/arch/arm/configs/exynos_defconfig
-> > > > > @@ -61,6 +61,7 @@ CONFIG_BLK_DEV_DM=y
-> > > > >  CONFIG_DM_CRYPT=m
-> > > > >  CONFIG_NETDEVICES=y
-> > > > >  CONFIG_SMSC911X=y
-> > > > > +CONFIG_USB_RTL8152=y
-> > > > >  CONFIG_USB_USBNET=y
-> > > > >  CONFIG_USB_NET_SMSC75XX=y
-> > > > >  CONFIG_USB_NET_SMSC95XX=y
-> > > > 
-> > > > Can we make that a loadable module for multi_v7_defconfig?
-> > > 
-> > > What about nfsroot boots? We were discussing this also here:
-> > > http://linux-arm-kernel.infradead.narkive.com/lG5g4hrB/patch-arm-mu
-> > > lti-v7-defconfig-enable-usb3503
-> > > 
-> > > and actually I would be happy to see a confirmed policy about that.
-> > > Everything should be a module for multi_v7?
-> > 
-> > We try to make as much as possible modular here, and NFS root is a
-> > corner
-> > case: it's possible to do NFS root with an initramfs, but it's easier
-> > not
-> > to. Is it something you do a lot on this hardware?
-> 
-> It's a workflow thing though, not a hardware specific thing. I
-> personally tend to use NFS root quite often and so do various
-> colleagues irrespective of the hardware (and an XU4 is bound to appear
-> on my desk someday). 
-> 
-> Now I personally really don't mind whether NFS root requires a ramdisk
-> or not (though some consistency would be nice). However deciding it on
-> a per device basis just makes everything quite fuzzy (e.g. my recent
-> rockchip multi_v7 patchset first ended up in a similar discussion,
-> though v2 was merged without further comments when I indicated in the
-> cover letter that i used the NFS root use-case as one of the deciding
-> factors for y vs. m).
-> 
-> It would be really good to see someone put their foot down on the
-> general policy (e.g. the arm-soc maintainers?), such that this
-> discussion doesn't need to happen every time 
+Hello,
 
-Yes, agreed, that what I'm trying to do here ;-)
+On Thu, Oct 8, 2015 at 11:04 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> Thermal core could not read the temperature after registering the
+> thermal sensor with thermal_zone_of_sensor_register() because the driver
+> was not yet initialized.
+>
+> The call trace looked like:
+>     exynos_tmu_probe()
+>         thermal_zone_of_sensor_register()
+>             of_thermal_set_mode()
+>                 thermal_zone_device_update()
+>                     exynos_get_temp()
+>                         if (!data->tmu_read) return -EINVAL;
+>         exynos_map_dt_data()
+>             data->tmu_read = ...
+>
+> This produced an error in dmesg:
+> thermal thermal_zone0: failed to read out thermal zone (-22)
+>
+> Register the thermal_zone_device later, after parsing Device Tree and
+> enabling necessary clocks, but before calling exynos_tmu_initialize()
+> which uses the registered thermal_zone_device.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Fixes: 3b6a1a805f34 ("thermal: samsung: core: Exynos TMU rework to use device tree for configuration")
+> ---
+Patch looks good to me.
 
-I realize that building things as modules is a hassle, it is so for
-some things more than for others, so I keep asking the question
-to everyone to find out what a good balance is to make as much as
-possible modules without hurting too much.
+Before this patch I was getting below on exynos5800 board:
+[    2.648629] thermal thermal_zone0: failed to read out thermal zone (-22)
+[    2.653906] 10060000.tmu supply vtmu not found, using dummy regulator
+[    2.660521] thermal thermal_zone1: failed to read out thermal zone (-22)
+[    2.666985] 10064000.tmu supply vtmu not found, using dummy regulator
+[    2.673658] thermal thermal_zone2: failed to read out thermal zone (-22)
+[    2.680093] 10068000.tmu supply vtmu not found, using dummy regulator
+[    2.686901] thermal thermal_zone3: failed to read out thermal zone (-22)
+[    2.693187] 1006c000.tmu supply vtmu not found, using dummy regulator
+[    2.699914] thermal thermal_zone4: failed to read out thermal zone (-22)
+[    2.706332] 100a0000.tmu supply vtmu not found, using dummy regulator
 
-Once we have a firm policy in place, we should probably change all
-the existing symbols.
 
-	Arnd
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+Tested on exynos5800 peach board, so
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+
+>  drivers/thermal/samsung/exynos_tmu.c | 27 +++++++++++++++++--------
+--
+>  1 file changed, 17 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 23f4320f8ef7..bc71a61f0c4a 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -1289,13 +1289,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>         platform_set_drvdata(pdev, data);
+>         mutex_init(&data->lock);
+>
+> -       data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+> -                                                   &exynos_sensor_ops);
+> -       if (IS_ERR(data->tzd)) {
+> -               pr_err("thermal: tz: %p ERROR\n", data->tzd);
+> -               return PTR_ERR(data->tzd);
+> -       }
+> -
+>         /*
+>          * Try enabling the regulator if found
+>          * TODO: Add regulator as an SOC feature, so that regulator enable
+> @@ -1365,21 +1358,36 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>                 break;
+>         };
+>
+> +       /*
+> +        * data->tzd must be registered before calling exynos_tmu_initialize(),
+> +        * requesting irq and calling exynos_tmu_control().
+> +        */
+> +       data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+> +                                                   &exynos_sensor_ops);
+> +       if (IS_ERR(data->tzd)) {
+> +               ret = PTR_ERR(data->tzd);
+> +               dev_err(&pdev->dev, "Failed to register sensor: %d\n", ret);
+> +               goto err_sclk;
+> +       }
+> +
+>         ret = exynos_tmu_initialize(pdev);
+>         if (ret) {
+>                 dev_err(&pdev->dev, "Failed to initialize TMU\n");
+> -               goto err_sclk;
+> +               goto err_thermal;
+>         }
+>
+>         ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
+>                 IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
+>         if (ret) {
+>                 dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
+> -               goto err_sclk;
+> +               goto err_thermal;
+>         }
+>
+>         exynos_tmu_control(pdev, true);
+>         return 0;
+> +
+> +err_thermal:
+> +       thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
+>  err_sclk:
+>         clk_disable_unprepare(data->sclk);
+>  err_clk:
+> @@ -1390,7 +1398,6 @@ err_clk_sec:
+>  err_sensor:
+>         if (!IS_ERR_OR_NULL(data->regulator))
+>                 regulator_disable(data->regulator);
+> -       thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
+>
+>         return ret;
+>  }
+> --
+> 1.9.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+
+-- 
+Regards,
+Alim
