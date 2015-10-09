@@ -1,97 +1,56 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCHv3 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet
- driver for Odroid-XU4
-Date: Fri, 9 Oct 2015 09:14:33 +0530
-Message-ID: <CANAwSgS1AKwg8U0WBW8JmveHd0qdRL6RAOV4F4P22a9F28xopQ@mail.gmail.com>
-References: <1444276117-3657-1-git-send-email-linux.amoon@gmail.com>
- <26439960.pU0jZ9hpjg@wuerfel> <1444296433.9895.234.camel@collabora.co.uk> <5551783.9EQ5GEjhxX@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:33816 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932153AbbJIDoy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Oct 2015 23:44:54 -0400
-In-Reply-To: <5551783.9EQ5GEjhxX@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 3/4] i2c: s3c2410: enable RuntimePM before registering to the core
+Date: Fri,  9 Oct 2015 07:54:52 +0100
+Message-ID: <1444373693-2372-3-git-send-email-wsa@the-dreams.de>
+References: <1444373693-2372-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444373693-2372-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-sh@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-Hi Arnd,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On 8 October 2015 at 20:11, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 08 October 2015 11:27:13 Sjoerd Simons wrote:
->> On Thu, 2015-10-08 at 10:37 +0200, Arnd Bergmann wrote:
->> > On Thursday 08 October 2015 16:46:27 Krzysztof Kozlowski wrote:
->> > > On 08.10.2015 16:41, Arnd Bergmann wrote:
->> > > > On Thursday 08 October 2015 03:48:36 Anand Moon wrote:
->> > > > > diff --git a/arch/arm/configs/exynos_defconfig
->> > > > > b/arch/arm/configs/exynos_defconfig
->> > > > > index 1ff2bfa..5d1937b 100644
->> > > > > --- a/arch/arm/configs/exynos_defconfig
->> > > > > +++ b/arch/arm/configs/exynos_defconfig
->> > > > > @@ -61,6 +61,7 @@ CONFIG_BLK_DEV_DM=y
->> > > > >  CONFIG_DM_CRYPT=m
->> > > > >  CONFIG_NETDEVICES=y
->> > > > >  CONFIG_SMSC911X=y
->> > > > > +CONFIG_USB_RTL8152=y
->> > > > >  CONFIG_USB_USBNET=y
->> > > > >  CONFIG_USB_NET_SMSC75XX=y
->> > > > >  CONFIG_USB_NET_SMSC95XX=y
->> > > >
->> > > > Can we make that a loadable module for multi_v7_defconfig?
->> > >
->> > > What about nfsroot boots? We were discussing this also here:
->> > > http://linux-arm-kernel.infradead.narkive.com/lG5g4hrB/patch-arm-mu
->> > > lti-v7-defconfig-enable-usb3503
->> > >
->> > > and actually I would be happy to see a confirmed policy about that.
->> > > Everything should be a module for multi_v7?
->> >
->> > We try to make as much as possible modular here, and NFS root is a
->> > corner
->> > case: it's possible to do NFS root with an initramfs, but it's easier
->> > not
->> > to. Is it something you do a lot on this hardware?
->>
->> It's a workflow thing though, not a hardware specific thing. I
->> personally tend to use NFS root quite often and so do various
->> colleagues irrespective of the hardware (and an XU4 is bound to appear
->> on my desk someday).
->>
->> Now I personally really don't mind whether NFS root requires a ramdisk
->> or not (though some consistency would be nice). However deciding it on
->> a per device basis just makes everything quite fuzzy (e.g. my recent
->> rockchip multi_v7 patchset first ended up in a similar discussion,
->> though v2 was merged without further comments when I indicated in the
->> cover letter that i used the NFS root use-case as one of the deciding
->> factors for y vs. m).
->>
->> It would be really good to see someone put their foot down on the
->> general policy (e.g. the arm-soc maintainers?), such that this
->> discussion doesn't need to happen every time
->
-> Yes, agreed, that what I'm trying to do here ;-)
->
-> I realize that building things as modules is a hassle, it is so for
-> some things more than for others, so I keep asking the question
-> to everyone to find out what a good balance is to make as much as
-> possible modules without hurting too much.
->
-> Once we have a firm policy in place, we should probably change all
-> the existing symbols.
->
->         Arnd
+The core may register clients attached to this master which may use
+funtionality from the master. So, RuntimePM must be enabled before, otherwise
+this will fail. While here, move drvdata, too.
 
-As long as we use correct exynos5422-odroidxu4.dtb is used in the
-boot.scr/boot.ini ethernet come up,
-build and tested using CONFIG_USB_RTL8152=m using multi_v7_defconfig.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Not sure what is the policy for NFS booting.
+Not tested on HW. Found by code review.
 
-Do you want CONFIG_USB_RTL8152 to be build as module in
-exynos/multi_v7_defconfig.
+ drivers/i2c/busses/i2c-s3c2410.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
--Anand Moon
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 50bfd8cef5f224..75f76cd644728a 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1243,6 +1243,11 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->adap.nr = i2c->pdata->bus_num;
+ 	i2c->adap.dev.of_node = pdev->dev.of_node;
+ 
++	platform_set_drvdata(pdev, i2c);
++
++	pm_runtime_enable(&pdev->dev);
++	pm_runtime_enable(&i2c->adap.dev);
++
+ 	ret = i2c_add_numbered_adapter(&i2c->adap);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
+@@ -1251,11 +1256,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	platform_set_drvdata(pdev, i2c);
+-
+-	pm_runtime_enable(&pdev->dev);
+-	pm_runtime_enable(&i2c->adap.dev);
+-
+ 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+ 	return 0;
+ }
+-- 
+2.1.4
