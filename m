@@ -1,56 +1,38 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 3/4] i2c: s3c2410: enable RuntimePM before registering to the core
-Date: Fri,  9 Oct 2015 07:54:52 +0100
-Message-ID: <1444373693-2372-3-git-send-email-wsa@the-dreams.de>
-References: <1444373693-2372-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444373693-2372-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-sh@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv3 1/2] ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+Date: Fri, 09 Oct 2015 10:15:02 +0200
+Message-ID: <18718651.GRDoBKLmUe@wuerfel>
+References: <1444276117-3657-1-git-send-email-linux.amoon@gmail.com> <5551783.9EQ5GEjhxX@wuerfel> <CANAwSgS1AKwg8U0WBW8JmveHd0qdRL6RAOV4F4P22a9F28xopQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.131]:63850 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756065AbbJIIPn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Oct 2015 04:15:43 -0400
+In-Reply-To: <CANAwSgS1AKwg8U0WBW8JmveHd0qdRL6RAOV4F4P22a9F28xopQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Friday 09 October 2015 09:14:33 Anand Moon wrote:
+> As long as we use correct exynos5422-odroidxu4.dtb is used in the
+> boot.scr/boot.ini ethernet come up,
+> build and tested using CONFIG_USB_RTL8152=m using multi_v7_defconfig.
+> 
+> Not sure what is the policy for NFS booting.
+> 
+> Do you want CONFIG_USB_RTL8152 to be build as module in
+> exynos/multi_v7_defconfig.
 
-The core may register clients attached to this master which may use
-funtionality from the master. So, RuntimePM must be enabled before, otherwise
-this will fail. While here, move drvdata, too.
+The NFS booting is exactly the question here: Would it be a significant
+hassle for anyone to require using a ramdisk if they need NFS root?
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+If we all think it would be an acceptable price, we should probably
+make all ethernet drivers loadable modules, as it is commonly
+done on distros.
 
-Not tested on HW. Found by code review.
-
- drivers/i2c/busses/i2c-s3c2410.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 50bfd8cef5f224..75f76cd644728a 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1243,6 +1243,11 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	i2c->adap.nr = i2c->pdata->bus_num;
- 	i2c->adap.dev.of_node = pdev->dev.of_node;
- 
-+	platform_set_drvdata(pdev, i2c);
-+
-+	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_enable(&i2c->adap.dev);
-+
- 	ret = i2c_add_numbered_adapter(&i2c->adap);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
-@@ -1251,11 +1256,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	platform_set_drvdata(pdev, i2c);
--
--	pm_runtime_enable(&pdev->dev);
--	pm_runtime_enable(&i2c->adap.dev);
--
- 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
- 	return 0;
- }
--- 
-2.1.4
+	Arnd
