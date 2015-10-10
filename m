@@ -1,62 +1,198 @@
-From: Thomas Pietrowski <thopiekar@gmail.com>
-Subject: Re: Feedback on hardware support for Odroid U3
-Date: Sat, 10 Oct 2015 10:46:01 +0200
-Message-ID: <CAE-5t2uJSotJsO8g0zNvnK2DhMEjXzURMtKh1siyJRGXA1=+=Q@mail.gmail.com>
-References: <CAE-5t2tKeYTjS_1qiQ4oAZS1g5yheA2G1g0CMHRaHdY3Z84NBw@mail.gmail.com>
-	<557BC91C.10007@gmail.com>
-	<16487700.5L20qaootX@home>
-	<557BFEAA.1090802@gmail.com>
-	<CAE-5t2sRjsD=NFdfOdtu6t1o=tb4TGKnhxPa5+rEXaWXm3P6nw@mail.gmail.com>
-	<CAJKOXPfta+QXsLp1fPhNhMuFNEARZVjcFCtWtqRRG1gg=oFBsw@mail.gmail.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [PATCH v5 0/17] Add Analogix Core Display Port Driver
+Date: Sat, 10 Oct 2015 22:31:17 +0800
+Message-ID: <56192135.2080608@rock-chips.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
+ <5614BADD.1070307@rock-chips.com> <5614DBE2.6080102@osg.samsung.com>
+ <5614DFBC.8060105@rock-chips.com> <5614E553.6060108@osg.samsung.com>
+ <5614FC6B.4080702@rock-chips.com> <56150128.2070309@osg.samsung.com>
+ <5615BB93.9020008@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f177.google.com ([209.85.160.177]:36486 "EHLO
-	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751240AbbJJIqC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Oct 2015 04:46:02 -0400
-Received: by ykba192 with SMTP id a192so94855227ykb.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Oct 2015 01:46:01 -0700 (PDT)
-In-Reply-To: <CAJKOXPfta+QXsLp1fPhNhMuFNEARZVjcFCtWtqRRG1gg=oFBsw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <5615BB93.9020008-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-Thanks! The patch for fan support is obviously on a good way to be appl=
-ied.
+Hi Javier,
 
-However, I just took now 4.2.3 from linux-stable and ran into the same
-problem of this conversation: https://lkml.org/lkml/2015/2/17/434
-
-Is there a way I can help getting this debugged? I could apply this
-patch and test it if you like. Just asking because someone is maybe
-working on a better fix :)
-
-Here a more detailed output of this problem: http://pastebin.com/ity4cE=
-AS
-
-Regards
-
-2015-08-06 1:31 GMT+02:00 Krzysztof Koz=C5=82owski <k.kozlowski.k@gmail=
-=2Ecom>:
-> 2015-08-05 22:07 GMT+09:00 Thomas Pietrowski <thopiekar@gmail.com>:
->> Sorry for the long delay. Got now linux-stable 4.2.0-rc5 running her=
-e,
->> but I still miss the fan support.
->> Searched the web again for the patch and found this on LKML:
->> https://lkml.org/lkml/2014/12/18/138
+On 10/08/2015 08:40 AM, Yakir Yang wrote:
+> On 10/07/2015 07:25 PM, Javier Martinez Canillas wrote:
+>> On 10/07/2015 01:05 PM, Yakir Yang wrote:
+>>> On 10/07/2015 05:26 PM, Javier Martinez Canillas wrote:
+>>>> On 10/07/2015 11:02 AM, Yakir Yang wrote:
+>>>>> On 10/07/2015 04:46 PM, Javier Martinez Canillas wrote:
+>>>>>> On 10/07/2015 08:25 AM, Yakir Yang wrote:
+>>>>>>> Hi all,
+>>>>>>>
+>>>>>>> Friendly ping.....   :)
+>>>>>>>
+>>>>>>>
+>>>>>>> Best regards,
+>>>>>>> - Yakir
+>>>>>>>
+>>>>>>>
+>>>>>> Do you have a tree that I can use to test these patches?
+>>>>> Wow, thanks a lot, I do have a tree on github 
+>>>>> [https://github.com/yakir-Yang/linux/tree/analogix_dp],
+>>>>> crossing my finger, wish things works......    ;)
+>>>>>
+>>>> I tried your analogix_dp branch on an Exynos5800 Peach Pi Chromebook
+>>>> but the machine didn't boot. Unfortunately I need to do some soldering
+>>>> to have a serial console on this board so don't have a kernel boot 
+>>>> log.
+>>>>
+>>>> I'll let you know if I can get more info about this issue.
+>>> Whoops, sorry for the failed, much appreciated for your works.
+>>>
+>>> Besides, I thought maybe I can find a Peach Pit Chromebook in my side,
+>>> I remember that some of our guys have brought one, but previously I
+>>> thought that mainline kernel wouldn't run on Peach Pit directly.
+>>>
+>> Great, mainline works correctly on all Exynos based Chromebooks.
 >>
->> Then looked at the "arm-soc" repository but found this patch nowhere=
-=2E
->> Are you planing to add this in future releases?
+>>> Maybe you can email me the method the run mainline kernel on Peach
+>>> Pit, so I can debug the analogix_dp driver at the same time, that would
+>>> be great.
+>> I wrote a little blog post explaining how to run mainline on these 
+>> boards:
+>>
+>> http://blogs.s-osg.org/install-linux-mainline-kernel-distro-exynos-chromebooks/ 
+>>
+>>
+>> That explains the simplest setup though so if you need a different one
+>> (i.e: chain loading a non verified u-boot) or if you have any questions,
+>> feel free to contact me in private and I can help you with the setup.
+>>
 >
-> Me? No, I am not planning to work on this. Also I don't have an Odroi=
-d
-> U3 with a fan.
+> Ah, thanks, gonna to step-by-step.
+
+Thanks for your great material, although I meet some problems in the 
+step-by-step
+process, and failed at this way to setup mainline kernel environment on 
+Exynos chromebooks.
+
+But i do find another way to install mainline kernel to Exynos Chromebook:
+1. Install any ChromeOS image into a USB media device (like dd tools)
+2. "enable_dev_usb_boot" on Exynos chromebooks which would allowed boot 
+from USB.
+3. Flash the mainline kernel into the KERNEL-A and KERNEL-B partitions 
+on host PC.
+4. Insert USB device into Exynos chromebooks, and press CTRL+U, boot 
+into USB OS.
+
+And it's better to enable pstore function on mainline kernel, so we can 
+analysis the last log when
+the mainline kernel crashed. After enable PSTORE_RAM in .config, we 
+still need add ramoops node
+into file, like:
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -750,6 +750,15 @@
+                 iommu = <&sysmmu_gsc3>;
+         };
+
++       ramoops: ramoops {
++               compatible = "ramoops";
++               name = "ramoops";
++               reg = <0x41f00000 0x100000>;
++               record-size = <0x20000>;
++               dump-oops;
++               status = "okay";
++       };
++
+         hdmi: hdmi {
+                 compatible = "samsung,exynos4212-hdmi";
+                 reg = <0x14530000 0x70000>;
+
+
+Aha, I have tested this series on two Exynos Chromebooks that I 
+borrowed(Snow and Peach Pit)
+with previously method (actually I believed it's a common method without 
+broken the original
+ChromeOS image).
+
+And I do find the crash place that make you failed at this series, here 
+is the diff changes:
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
+b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 5f8fc11..bcbc009 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1169,6 +1169,7 @@ static int analogix_dp_create_bridge(struct 
+drm_device *drm_dev,
+
+         dp->bridge = bridge;
+
++       dp->encoder->bridge = bridge;
+         bridge->driver_private = dp;
+         bridge->encoder = dp->encoder;
+         bridge->funcs = &analogix_dp_bridge_funcs;
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -151,7 +151,7 @@
+         samsung,color-depth = <1>;
+         samsung,link-rate = <0x06>;
+         samsung,lane-count = <2>;
+-       hpd-gpio = <&gpx2 6 0>;
++       hpd-gpios = <&gpx2 6 0>;
+
+         ports {
+                 port@0 {
+
+
+Anyway I'm going to send the v6 series, thanks for your good idea.
+
+- Yakir
+
 >
-> I think you should ask the author of the patchset.
+> - Yakir
 >
-> Best regards,
-> Krzysztof
+>>>> Also, there is Kconfig recursive dependency that you may want to fix:
+>>>>
+>>>> $ make exynos_defconfig
+>>>> drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+>>>> drivers/video/fbdev/Kconfig:5: symbol FB is selected by 
+>>>> DRM_KMS_FB_HELPER
+>>>> drivers/gpu/drm/Kconfig:34: symbol DRM_KMS_FB_HELPER depends on 
+>>>> DRM_KMS_HELPER
+>>>> drivers/gpu/drm/Kconfig:28: symbol DRM_KMS_HELPER is selected by 
+>>>> DRM_ANALOGIX_DP
+>>>> drivers/gpu/drm/bridge/analogix/Kconfig:1: symbol DRM_ANALOGIX_DP 
+>>>> is selected by DRM_EXYNOS_DP
+>>>> drivers/gpu/drm/exynos/Kconfig:57: symbol DRM_EXYNOS_DP depends on 
+>>>> DRM_EXYNOS_FIMD
+>>>> drivers/gpu/drm/exynos/Kconfig:19: symbol DRM_EXYNOS_FIMD depends 
+>>>> on FB_S3C
+>>>> drivers/video/fbdev/Kconfig:2023: symbol FB_S3C depends on FB
+>>> Yeah, recursive dependency detected, guess I should remove the
+>>> "DRM_KMS_HELPER" from bridge analogix_dp Kconfig file, thanks
+>>> for your remind.
+>>>
+>>> --- a/drivers/gpu/drm/bridge/analogix/Kconfig
+>>> +++ b/drivers/gpu/drm/bridge/analogix/Kconfig
+>>> @@ -1,4 +1,3 @@
+>>>   config DRM_ANALOGIX_DP
+>>>          tristate
+>>>          depends on DRM
+>>> -       select DRM_KMS_HELPER
+>>>
+>>>
+>> That fixes the recursive dependency issue indeed. Thanks.
+>>
+>>> Thanks,
+>>> - Yakir
+>> Best regards,
+>
