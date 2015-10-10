@@ -1,7 +1,7 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v6 15/17] drm: bridge: analogix/dp: try force hpd after plug in lookup failed
-Date: Sun, 11 Oct 2015 00:05:50 +0800
-Message-ID: <1444493150-28140-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v6 17/17] drm: bridge: analogix/dp: add edid modes parse in get_modes method
+Date: Sun, 11 Oct 2015 00:06:01 +0800
+Message-ID: <1444493161-28226-1-git-send-email-ykk@rock-chips.com>
 References: <1444491357-26095-1-git-send-email-ykk@rock-chips.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1444491357-26095-1-git-send-email-ykk@rock-chips.com>
@@ -10,174 +10,146 @@ To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyo
 Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some edp screen do not have hpd signal, so we can't just return
-failed when hpd plug in detect failed.
-
-This is an hardware property, so we need add a devicetree property
-"analogix,need-force-hpd" to indicate this sutiation.
+Display Port monitor could support kinds of mode which indicate
+in monitor edid, not just one single display resolution which
+defined in panel or devivetree property display timing.
 
 Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 ---
 Changes in v6: None
 Changes in v5: None
-Changes in v4: None
+Changes in v4:
+- Call drm_panel_prepare() in .get_modes function, ensure panel should
+  power on before driver try to read edid message.
+
 Changes in v3:
-- Add "analogix,need-force-hpd" to indicate whether driver need foce
-  hpd when hpd detect failed.
+- Add edid modes parse support
 
 Changes in v2: None
 
- .../devicetree/bindings/drm/bridge/analogix_dp.txt |  4 ++-
- .../bindings/video/analogix_dp-rockchip.txt        |  1 +
- .../devicetree/bindings/video/exynos_dp.txt        |  1 +
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 36 +++++++++++++++++++---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  2 ++
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  9 ++++++
- 6 files changed, 47 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 24 +++++++----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 46 +++++++++++-----------
+ 2 files changed, 40 insertions(+), 30 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-index f54dc3e..c310367 100644
---- a/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-+++ b/Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-@@ -22,6 +22,9 @@ Required properties for dp-controller:
- 		from general PHY binding: Should be "dp".
- 
- Optional properties for dp-controller:
-+	-analogix,need-force-hpd:
-+		Indicate driver need force hpd when hpd detect failed, this
-+		is used for some eDP screen which don't have hpd signal.
- 	-hpd-gpios:
- 		Hotplug detect GPIO.
- 		Indicates which GPIO should be used for hotplug detection
-@@ -31,7 +34,6 @@ Optional properties for dp-controller:
- 		* Documentation/devicetree/bindings/video/exynos_dp.txt
- 		* Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
- 
--
- [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
- -------------------------------------------------------------------------------
- 
-diff --git a/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-index ec93917..be18388 100644
---- a/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-+++ b/Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-@@ -31,6 +31,7 @@ For the below properties, please refer to Analogix DP binding document:
- - phys (required)
- - phy-names (required)
- - hpd-gpios (optional)
-+- analogix,need-force-hpd (optional)
- -------------------------------------------------------------------------------
- 
- Example:
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index ea03b3a..4f06e80 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -41,6 +41,7 @@ For the below properties, please refer to Analogix DP binding document:
- 	-phys (required)
- 	-phy-names (required)
- 	-hpd-gpios (optional)
-+	-analogix,need-force-hpd (optional)
- 	-video interfaces (optional)
- 
- Deprecated properties for DisplayPort:
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 2982dd0..322015e 100644
+index a83b159..bcbc009 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -59,15 +59,38 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
- {
- 	int timeout_loop = 0;
+@@ -107,7 +107,7 @@ static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
  
--	while (analogix_dp_get_plug_in_status(dp) != 0) {
-+	while (timeout_loop < DP_TIMEOUT_LOOP_COUNT) {
-+		if (analogix_dp_get_plug_in_status(dp) == 0)
-+			return 0;
-+
- 		timeout_loop++;
--		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
--			dev_err(dp->dev, "failed to get hpd plug status\n");
--			return -ETIMEDOUT;
--		}
- 		usleep_range(10, 11);
+ static int analogix_dp_read_edid(struct analogix_dp_device *dp)
+ {
+-	unsigned char edid[EDID_BLOCK_LENGTH * 2];
++	unsigned char *edid = dp->edid;
+ 	unsigned int extend_block = 0;
+ 	unsigned char sum;
+ 	unsigned char test_vector;
+@@ -901,12 +901,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to disable the panel\n");
  	}
  
-+	/*
-+	 * Some edp screen do not have hpd signal, so we can't just
-+	 * return failed when hpd plug in detect failed, DT property
-+	 * "need-force-hpd" would indicate whether driver need this.
-+	 */
-+	if (!dp->need_force_hpd)
-+		return -ETIMEDOUT;
+-	ret = analogix_dp_handle_edid(dp);
+-	if (ret) {
+-		dev_err(dp->dev, "unable to handle edid\n");
+-		return;
+-	}
+-
+ 	ret = analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
+ 					 dp->video_info.max_link_rate);
+ 	if (ret) {
+@@ -947,8 +941,24 @@ EXPORT_SYMBOL_GPL(analogix_dp_detect);
+ int analogix_dp_get_modes(struct device *dev)
+ {
+ 	struct analogix_dp_device *dp = dev_get_drvdata(dev);
++	struct edid *edid = (struct edid *)dp->edid;
+ 	int num_modes = 0;
+ 
++	if (dp->plat_data && dp->plat_data->panel) {
++		if (drm_panel_prepare(dp->plat_data->panel)) {
++			DRM_ERROR("failed to setup the panel\n");
++			return -EINVAL;
++		}
++	}
 +
-+	/*
-+	 * The eDP TRM indicate that if HPD_STATUS(RO) is 0, AUX CH
-+	 * will not work, so we need to give a force hpd action to
-+	 * set HPD_STATUS manually.
-+	 */
-+	dev_dbg(dp->dev, "failed to get hpd plug status, try to force hpd\n");
-+
-+	analogix_dp_force_hpd(dp);
-+
-+	if (analogix_dp_get_plug_in_status(dp) != 0) {
-+		dev_err(dp->dev, "failed to get hpd plug in status\n");
++	if (analogix_dp_handle_edid(dp)) {
++		dev_err(dp->dev, "unable to handle edid\n");
 +		return -EINVAL;
 +	}
 +
-+	dev_dbg(dp->dev, "success to get plug in status after force hpd\n");
++	drm_mode_connector_update_edid_property(dp->connector, edid);
++	num_modes += drm_add_edid_modes(dp->connector, edid);
 +
- 	return 0;
- }
+ 	if (dp->plat_data->panel)
+ 		num_modes += drm_panel_get_modes(dp->plat_data->panel);
  
-@@ -1244,6 +1267,9 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 	if (IS_ERR(dp->reg_base))
- 		return PTR_ERR(dp->reg_base);
- 
-+	dp->need_force_hpd =
-+		of_property_read_bool(dev->of_node, "analogix,need-force-hpd");
-+
- 	dp->hpd_gpio = of_get_named_gpio(dev->of_node, "hpd-gpios", 0);
- 	if (!gpio_is_valid(dp->hpd_gpio))
- 		dp->hpd_gpio = of_get_named_gpio(dev->of_node,
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index f4cb799..3a136b8 100644
+index 3a136b8..089489d 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -160,6 +160,7 @@ struct analogix_dp_device {
- 	struct phy		*phy;
+@@ -20,6 +20,28 @@
+ #define MAX_CR_LOOP 5
+ #define MAX_EQ_LOOP 5
+ 
++/* I2C EDID Chip ID, Slave Address */
++#define I2C_EDID_DEVICE_ADDR			0x50
++#define I2C_E_EDID_DEVICE_ADDR			0x30
++
++#define EDID_BLOCK_LENGTH			0x80
++#define EDID_HEADER_PATTERN			0x00
++#define EDID_EXTENSION_FLAG			0x7e
++#define EDID_CHECKSUM				0x7f
++
++/* DP_MAX_LANE_COUNT */
++#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
++#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
++
++/* DP_LANE_COUNT_SET */
++#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
++
++/* DP_TRAINING_LANE0_SET */
++#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
++#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
++#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
++#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
++
+ enum link_rate_type {
+ 	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
+ 	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
+@@ -161,6 +183,7 @@ struct analogix_dp_device {
  	int			dpms_mode;
  	int			hpd_gpio;
-+	bool                    need_force_hpd;
+ 	bool                    need_force_hpd;
++	unsigned char           edid[EDID_BLOCK_LENGTH * 2];
  
  	struct analogix_dp_plat_data *plat_data;
  };
-@@ -180,6 +181,7 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 				       bool enable);
- void analogix_dp_init_analog_func(struct analogix_dp_device *dp);
- void analogix_dp_init_hpd(struct analogix_dp_device *dp);
-+void analogix_dp_force_hpd(struct analogix_dp_device *dp);
- enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp);
- void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp);
- void analogix_dp_reset_aux(struct analogix_dp_device *dp);
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 21a3287..c7e2959 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -365,6 +365,15 @@ void analogix_dp_init_hpd(struct analogix_dp_device *dp)
- 	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
- }
- 
-+void analogix_dp_force_hpd(struct analogix_dp_device *dp)
-+{
-+	u32 reg;
-+
-+	reg = readl(dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
-+	reg = (F_HPD | HPD_CTRL);
-+	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
-+}
-+
- enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp)
- {
- 	u32 reg;
+@@ -260,27 +283,4 @@ int analogix_dp_is_video_stream_on(struct analogix_dp_device *dp);
+ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
+ void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
+ void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
+-
+-/* I2C EDID Chip ID, Slave Address */
+-#define I2C_EDID_DEVICE_ADDR			0x50
+-#define I2C_E_EDID_DEVICE_ADDR			0x30
+-
+-#define EDID_BLOCK_LENGTH			0x80
+-#define EDID_HEADER_PATTERN			0x00
+-#define EDID_EXTENSION_FLAG			0x7e
+-#define EDID_CHECKSUM				0x7f
+-
+-/* DP_MAX_LANE_COUNT */
+-#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
+-#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
+-
+-/* DP_LANE_COUNT_SET */
+-#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
+-
+-/* DP_TRAINING_LANE0_SET */
+-#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
+-#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
+-#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
+-#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
+-
+ #endif /* _ANALOGIX_DP_CORE_H */
 -- 
 1.9.1
