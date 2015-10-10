@@ -1,139 +1,56 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH 1/5] thermal: exynos: Fix unbalanced regulator disable on
- probe failure
-Date: Sat, 10 Oct 2015 07:16:27 +0530
-Message-ID: <CAGOxZ53KA3bB6F4Ucc8r7rLZFfYiATPsQjKs2BOeWV2BdK=nvA@mail.gmail.com>
-References: <1444282446-6419-1-git-send-email-k.kozlowski@samsung.com>
- <CAGOxZ52DE42YA3b5z-16H7fxs58f6Mv+AjMcaaaJEM6bftEmnA@mail.gmail.com> <56179DC0.1040003@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFT 0/3] usb: usb3503: Fix probing on Arndale board (missing
+ phy)
+Date: Sat, 10 Oct 2015 12:08:45 +0900
+Message-ID: <5618813D.20502@samsung.com>
+References: <1444177807-15524-1-git-send-email-k.kozlowski@samsung.com>
+ <7hoag797gk.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:36168 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751409AbbJJBrH (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:36803 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750967AbbJJDIy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Oct 2015 21:47:07 -0400
-In-Reply-To: <56179DC0.1040003@samsung.com>
+	Fri, 9 Oct 2015 23:08:54 -0400
+In-Reply-To: <7hoag797gk.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: k.kozlowski.k@gmail.com, Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>, Ben Gamari <ben@smart-cactus.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, riku.voipio@linaro.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Peter Chen <peter.chen@freescale.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, Tyler Baker <tyler.baker@linaro.org>
 
-Hello,
-
-On Fri, Oct 9, 2015 at 4:28 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> W dniu 09.10.2015 o 01:45, Alim Akhtar pisze:
->> Hello,
+W dniu 10.10.2015 o 04:18, Kevin Hilman pisze:
+> Hi Krzystof,
+> 
+> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
+> 
+>> Introduction
+>> ============
+>> This patchset tries to fix probing of usb3503 on Arndale board
+>> if the Samsung PHY driver is probed later (or built as a module).
 >>
->> On Thu, Oct 8, 2015 at 11:04 AM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> During probe if the regulator could not be enabled, the error exit path
->>> would still disable it. This could lead to unbalanced counter of
->>> regulator enable/disable.
->>>
->> Do you see a regulator unbalanced reported here during boot? You may
->> want to add that to commit message.
->
-> I did not see the warning/error message about unbalanced disable. It
-> would happen in certain condition only - no other enables of regulator
-> and count going below 0.
->
-> I would have to simulate this error to get the warning message. I don't
-> think it is worth the effort.
->
-Ok, looking at code, it does looks to be calling regulator disable in
-case regulator enable fails.
-Feel free to add
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Thanks!!
+>> *The patchset was not tested on Arndale board.*
+>> I don't have that board. Please test it and say if the usb3503 deferred probe
+>> works fine and the issue is solved.
+> 
+> FYI... I built this series on top of  next-20151009 and using
+> exynos_defconfig.  I booted it on my arndale, and I still don't see the
+> networking come up.  Full boot log attached.
 
-> Best regards,
-> Krzysztof
->
->>
->>> The patch moves code for getting and enabling the regulator from
->>> exynos_map_dt_data() to probe function because it is really not a part
->>> of getting Device Tree properties.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> Fixes: 5f09a5cbd14a ("thermal: exynos: Disable the regulator on probe failure")
->>> Cc: <stable@vger.kernel.org>
->>> ---
->>>  drivers/thermal/samsung/exynos_tmu.c | 34 +++++++++++++++++-----------------
->>>  1 file changed, 17 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->>> index 0bae8cc6c23a..23f4320f8ef7 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu.c
->>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>> @@ -1168,27 +1168,10 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->>>         struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->>>         struct exynos_tmu_platform_data *pdata;
->>>         struct resource res;
->>> -       int ret;
->>>
->>>         if (!data || !pdev->dev.of_node)
->>>                 return -ENODEV;
->>>
->>> -       /*
->>> -        * Try enabling the regulator if found
->>> -        * TODO: Add regulator as an SOC feature, so that regulator enable
->>> -        * is a compulsory call.
->>> -        */
->>> -       data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
->>> -       if (!IS_ERR(data->regulator)) {
->>> -               ret = regulator_enable(data->regulator);
->>> -               if (ret) {
->>> -                       dev_err(&pdev->dev, "failed to enable vtmu\n");
->>> -                       return ret;
->>> -               }
->>> -       } else {
->>> -               dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
->>> -       }
->>> -
->>>         data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
->>>         if (data->id < 0)
->>>                 data->id = 0;
->>> @@ -1312,6 +1295,23 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->>>                 pr_err("thermal: tz: %p ERROR\n", data->tzd);
->>>                 return PTR_ERR(data->tzd);
->>>         }
->>> +
->>> +       /*
->>> +        * Try enabling the regulator if found
->>> +        * TODO: Add regulator as an SOC feature, so that regulator enable
->>> +        * is a compulsory call.
->>> +        */
->>> +       data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
->>> +       if (!IS_ERR(data->regulator)) {
->>> +               ret = regulator_enable(data->regulator);
->>> +               if (ret) {
->>> +                       dev_err(&pdev->dev, "failed to enable vtmu\n");
->>> +                       return ret;
->>> +               }
->>> +       } else {
->>> +               dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
->>> +       }
->>> +
->>>         ret = exynos_map_dt_data(pdev);
->>>         if (ret)
->>>                 goto err_sensor;
->>> --
->>> 1.9.1
->>>
->>>
->>> _______________________________________________
->>> linux-arm-kernel mailing list
->>> linux-arm-kernel@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->>
->>
->
++cc Tyler
 
+Kevin,
+Thanks for testing but I am not sure if this boot failure is related to
+the patch. I mean if the patch should fix this particular boot failure.
+The board stopped to boot after enabling DWC2 and network USB gadget:
+http://www.spinics.net/lists/linux-samsung-soc/msg47009.html
 
+The boot log shows that usb3503 was probed but asix network adapter was
+not. I wonder how these things are related to each other...
 
--- 
-Regards,
-Alim
+Nevertheless it would be difficult to debug the issue without the
+Arndale board. :)
+
+Best regards,
+Krzysztof
