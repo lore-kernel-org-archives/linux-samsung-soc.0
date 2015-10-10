@@ -1,56 +1,84 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFT 0/3] usb: usb3503: Fix probing on Arndale board (missing
- phy)
-Date: Sat, 10 Oct 2015 12:08:45 +0900
-Message-ID: <5618813D.20502@samsung.com>
-References: <1444177807-15524-1-git-send-email-k.kozlowski@samsung.com>
- <7hoag797gk.fsf@deeprootsystems.com>
+Subject: Re: [PATCH] thermal: exynos: fix register read in TMU
+Date: Sat, 10 Oct 2015 13:36:16 +0900
+Message-ID: <561895C0.5030400@samsung.com>
+References: <1443699599-9693-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <CAJKOXPfyC8etcPe373q6Pc1qWb2zVnHE96V+Rh5mPmpzAxFjiA@mail.gmail.com>
+ <20151001141243.GA5061@sudip-pc>
+ <CAJKOXPdVs9i9sVP84wa2wU0qVH1-o4unvaDC+O7c1za6bJUSLw@mail.gmail.com>
+ <20151008142129.GC10587@sudip-pc>
+ <CAJKOXPfbrdm75n_v+dRnq8dqAFAGvHj28QQ4ZY8WZms1D6eLZQ@mail.gmail.com>
+ <20151009140716.0c6e57b7@amdc2363>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:36803 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750967AbbJJDIy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Oct 2015 23:08:54 -0400
-In-Reply-To: <7hoag797gk.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20151009140716.0c6e57b7@amdc2363>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: k.kozlowski.k@gmail.com, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>, Ben Gamari <ben@smart-cactus.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, riku.voipio@linaro.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Peter Chen <peter.chen@freescale.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, Tyler Baker <tyler.baker@linaro.org>
 
-W dniu 10.10.2015 o 04:18, Kevin Hilman pisze:
-> Hi Krzystof,
+W dniu 09.10.2015 o 21:07, Lukasz Majewski pisze:
+> Hi Krzysztof,
 > 
-> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
-> 
->> Introduction
->> ============
->> This patchset tries to fix probing of usb3503 on Arndale board
->> if the Samsung PHY driver is probed later (or built as a module).
+>> 2015-10-08 23:21 GMT+09:00 Sudip Mukherjee
+>> <sudipm.mukherjee@gmail.com>:
+>>> On Fri, Oct 02, 2015 at 08:43:52AM +0900, Krzysztof Kozlowski wrote:
+>>>> 2015-10-01 23:12 GMT+09:00 Sudip Mukherjee
+>>>> <sudipm.mukherjee@gmail.com>:
+>>>>> On Thu, Oct 01, 2015 at 10:18:57PM +0900, Krzysztof Kozlowski
+>>>>> wrote:
+>>>>>> 2015-10-01 20:39 GMT+09:00 Sudip Mukherjee
+>>>>>> <sudipm.mukherjee@gmail.com>:
+>>>>>>> The value of emul_con was getting overwritten if the selected
+>>>>>>> soc is SOC_ARCH_EXYNOS5260. And so as a result we were
+>>>>>>> reading from the wrong register in the case of
+>>>>>>> SOC_ARCH_EXYNOS5260.
+>>>>>>
+>>>>>> How the value is overwritten if the soc is Exynos5260? I can't
+>>>>>> see it (although the "else if" is still more obvious than "if"
+>>>>>> but how does the description match the code?).
+>>>>> The code here is:
+>>>>> if (data->soc == SOC_ARCH_EXYNOS5260)
+>>>>>         emul_con = EXYNOS5260_EMUL_CON;
+>>>>> if (data->soc == SOC_ARCH_EXYNOS5433)
+>>>>>         emul_con = EXYNOS5433_TMU_EMUL_CON;
+>>>>> else if (data->soc == SOC_ARCH_EXYNOS7)
+>>>>>         emul_con = EXYNOS7_TMU_REG_EMUL_CON;
+>>>>> else
+>>>>>         emul_con = EXYNOS_EMUL_CON;
+>>>>>
+>>>>> So if data->soc is SOC_ARCH_EXYNOS5260 , then emul_con becomes
+>>>>> EXYNOS5260_EMUL_CON. But again for the else part it will become
+>>>>> EXYNOS_EMUL_CON.
+>>>>
+>>>> Indeed!
+>>>>
+>>>> Fixes: 488c7455d74c ("thermal: exynos: Add the support for
+>>>> Exynos5433 TMU")
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>
+>>> Hi Krzysztof,
+>>> Who will pick this one up? I still do not see it in linux-next.
 >>
->> *The patchset was not tested on Arndale board.*
->> I don't have that board. Please test it and say if the usb3503 deferred probe
->> works fine and the issue is solved.
+>> Hi!
+>>
+>> I guess it is a patch for Lukasz.
+>>
+>> Lukasz,
+>> Do you plan to pick it up or maybe this should go through samsung-soc
+>> tree?
 > 
-> FYI... I built this series on top of  next-20151009 and using
-> exynos_defconfig.  I booted it on my arndale, and I still don't see the
-> networking come up.  Full boot log attached.
+> This is the only one patch, which is waiting in my queue. Since no more
+> fixes available, please feel free to grab this patch to samsung-soc.
+> 
+> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
 
-+cc Tyler
-
-Kevin,
-Thanks for testing but I am not sure if this boot failure is related to
-the patch. I mean if the patch should fix this particular boot failure.
-The board stopped to boot after enabling DWC2 and network USB gadget:
-http://www.spinics.net/lists/linux-samsung-soc/msg47009.html
-
-The boot log shows that usb3503 was probed but asix network adapter was
-not. I wonder how these things are related to each other...
-
-Nevertheless it would be difficult to debug the issue without the
-Arndale board. :)
+Okay, thanks! Applied to fixes for current cycle. I'll it send later to
+Kukjin (unless he picks it as well).
 
 Best regards,
 Krzysztof
+
