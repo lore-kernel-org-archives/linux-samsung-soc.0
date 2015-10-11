@@ -1,57 +1,24 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: defconfig: Exynos improvements for 4.4, 2nd pull
-Date: Tue, 13 Oct 2015 09:38:42 +0900
-Message-ID: <1444696722-25093-1-git-send-email-k.kozlowski@samsung.com>
+From: Christine McCarthy <Christine.McCarthy@co.lake.mn.us>
+Subject: Unexpected Luck
+Date: Sun, 11 Oct 2015 17:02:51 -0400
+Message-ID: <d5aea7ef-9907-4e97-91be-6fde8fdf02f4__44546.2289885201$1444697485$gmane$org@EXCHANGE-SERVRM.LakeCounty.local>
+Reply-To: <monicatorresesp@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:45842 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751902AbbJMAjC (ORCPT
+Received: from zixvpm01.solbrekk.com ([216.17.49.110]:28833 "EHLO
+	zixvpm01.solbrekk.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932101AbbJMAvG convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 20:39:02 -0400
+	Mon, 12 Oct 2015 20:51:06 -0400
+Received: from 127.0.0.1 (ZixVPM [127.0.0.1])
+	by Outbound.solbrekk.com (Proprietary) with SMTP id 234AD3AEFB
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2015 19:42:40 -0500 (CDT)
+Content-Description: Mail message body
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Recipients <Christine.McCarthy@co.lake.mn.us>
 
-Dear Kukjin,
-
-This is another round of defconfig related changes for 4.4.
-
-Description along with a tag.
-You can find them also on the lists with my reviewed-by.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 7fa5ce4e6fcb4596761c17e124e7d1f8cf64fe96:
-
-  ARM: exynos_defconfig: Disable simplefb support (2015-09-13 19:25:39 +0900)
-
-are available in the git repository at:
-
-  https://github.com/krzk/linux.git tags/samsung-defconfig-4.4-2
-
-for you to fetch changes up to 89a0112100e74f50407d269570a02a82fd28ccb8:
-
-  ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4 (2015-10-12 12:59:50 +0900)
-
-----------------------------------------------------------------
-Defconfig changes around Exynos based boards:
-1. Change WiFi-Ex from built-in to module to fix issue with probing
-   the driver before root filesystem is available (driver needs
-   firmware).
-2. Enable Realtek RTL81t3 ethernet adapter present on Odroid-XU4
-   board.
-
-----------------------------------------------------------------
-Anand Moon (2):
-      ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
-      ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
-
-Javier Martinez Canillas (1):
-      ARM: exynos_defconfig: Enable WiFi-Ex as a module instead built-in
-
- arch/arm/configs/exynos_defconfig   | 5 +++--
- arch/arm/configs/multi_v7_defconfig | 1 +
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Contact Monica Torres via email: monicatorresesp@gmail.com for your win=
+nings of =E2=82=AC1,000,000.00.
