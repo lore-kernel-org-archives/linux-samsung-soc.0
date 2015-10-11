@@ -1,155 +1,51 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v6 17/17] drm: bridge: analogix/dp: add edid modes parse in get_modes method
-Date: Sun, 11 Oct 2015 00:06:01 +0800
-Message-ID: <1444493161-28226-1-git-send-email-ykk@rock-chips.com>
-References: <1444491357-26095-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444491357-26095-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, joe@perches.com, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
-Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
+Date: Sun, 11 Oct 2015 15:46:04 +0000
+Message-ID: <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:34372 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752070AbbJKPqn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 11 Oct 2015 11:46:43 -0400
+In-Reply-To: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Display Port monitor could support kinds of mode which indicate
-in monitor edid, not just one single display resolution which
-defined in panel or devivetree property display timing.
+Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+
 ---
-Changes in v6: None
-Changes in v5: None
-Changes in v4:
-- Call drm_panel_prepare() in .get_modes function, ensure panel should
-  power on before driver try to read edid message.
+Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
 
-Changes in v3:
-- Add edid modes parse support
+Changes Fixed the UHS-I bus speed detedtion on cold boot.
 
-Changes in v2: None
+[    2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req 100000000Hz, actual 100000000HZ div = 0)
+[    2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+[    2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+[    2.461743]  mmcblk0: p1 p2
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 24 +++++++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 46 +++++++++++-----------
- 2 files changed, 40 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index a83b159..bcbc009 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -107,7 +107,7 @@ static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
- 
- static int analogix_dp_read_edid(struct analogix_dp_device *dp)
- {
--	unsigned char edid[EDID_BLOCK_LENGTH * 2];
-+	unsigned char *edid = dp->edid;
- 	unsigned int extend_block = 0;
- 	unsigned char sum;
- 	unsigned char test_vector;
-@@ -901,12 +901,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 			DRM_ERROR("failed to disable the panel\n");
- 	}
- 
--	ret = analogix_dp_handle_edid(dp);
--	if (ret) {
--		dev_err(dp->dev, "unable to handle edid\n");
--		return;
--	}
--
- 	ret = analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
- 					 dp->video_info.max_link_rate);
- 	if (ret) {
-@@ -947,8 +941,24 @@ EXPORT_SYMBOL_GPL(analogix_dp_detect);
- int analogix_dp_get_modes(struct device *dev)
- {
- 	struct analogix_dp_device *dp = dev_get_drvdata(dev);
-+	struct edid *edid = (struct edid *)dp->edid;
- 	int num_modes = 0;
- 
-+	if (dp->plat_data && dp->plat_data->panel) {
-+		if (drm_panel_prepare(dp->plat_data->panel)) {
-+			DRM_ERROR("failed to setup the panel\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (analogix_dp_handle_edid(dp)) {
-+		dev_err(dp->dev, "unable to handle edid\n");
-+		return -EINVAL;
-+	}
-+
-+	drm_mode_connector_update_edid_property(dp->connector, edid);
-+	num_modes += drm_add_edid_modes(dp->connector, edid);
-+
- 	if (dp->plat_data->panel)
- 		num_modes += drm_panel_get_modes(dp->plat_data->panel);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 3a136b8..089489d 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -20,6 +20,28 @@
- #define MAX_CR_LOOP 5
- #define MAX_EQ_LOOP 5
- 
-+/* I2C EDID Chip ID, Slave Address */
-+#define I2C_EDID_DEVICE_ADDR			0x50
-+#define I2C_E_EDID_DEVICE_ADDR			0x30
-+
-+#define EDID_BLOCK_LENGTH			0x80
-+#define EDID_HEADER_PATTERN			0x00
-+#define EDID_EXTENSION_FLAG			0x7e
-+#define EDID_CHECKSUM				0x7f
-+
-+/* DP_MAX_LANE_COUNT */
-+#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
-+#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-+
-+/* DP_LANE_COUNT_SET */
-+#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
-+
-+/* DP_TRAINING_LANE0_SET */
-+#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
-+#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
-+#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
-+#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
-+
- enum link_rate_type {
- 	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
- 	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
-@@ -161,6 +183,7 @@ struct analogix_dp_device {
- 	int			dpms_mode;
- 	int			hpd_gpio;
- 	bool                    need_force_hpd;
-+	unsigned char           edid[EDID_BLOCK_LENGTH * 2];
- 
- 	struct analogix_dp_plat_data *plat_data;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 58c06d3..ba4a87b 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -364,6 +364,10 @@
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+ 	bus-width = <4>;
+ 	cap-sd-highspeed;
++	sd-uhs-sdr12;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
  };
-@@ -260,27 +283,4 @@ int analogix_dp_is_video_stream_on(struct analogix_dp_device *dp);
- void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
--
--/* I2C EDID Chip ID, Slave Address */
--#define I2C_EDID_DEVICE_ADDR			0x50
--#define I2C_E_EDID_DEVICE_ADDR			0x30
--
--#define EDID_BLOCK_LENGTH			0x80
--#define EDID_HEADER_PATTERN			0x00
--#define EDID_EXTENSION_FLAG			0x7e
--#define EDID_CHECKSUM				0x7f
--
--/* DP_MAX_LANE_COUNT */
--#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
--#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
--
--/* DP_LANE_COUNT_SET */
--#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
--
--/* DP_TRAINING_LANE0_SET */
--#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
--#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
--#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
--#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
--
- #endif /* _ANALOGIX_DP_CORE_H */
+ 
+ &pinctrl_0 {
 -- 
-1.9.1
+2.1.4
