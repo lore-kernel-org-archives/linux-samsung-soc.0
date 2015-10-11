@@ -1,39 +1,86 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv4 2/2] ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
-Date: Sun, 11 Oct 2015 17:36:00 +0000
-Message-ID: <1444584960-2971-2-git-send-email-linux.amoon@gmail.com>
-References: <1444584960-2971-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444584960-2971-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thomas Pietrowski <thopiekar@gmail.com>
+Subject: Re: Feedback on hardware support for Odroid U3
+Date: Sun, 11 Oct 2015 21:20:26 +0200
+Message-ID: <CAE-5t2u77Ozygb+DAFDXb-uohpjA9RG9JHNe3kN4eT94UPhVUQ@mail.gmail.com>
+References: <CAE-5t2tKeYTjS_1qiQ4oAZS1g5yheA2G1g0CMHRaHdY3Z84NBw@mail.gmail.com>
+	<557BC91C.10007@gmail.com>
+	<16487700.5L20qaootX@home>
+	<557BFEAA.1090802@gmail.com>
+	<CAE-5t2sRjsD=NFdfOdtu6t1o=tb4TGKnhxPa5+rEXaWXm3P6nw@mail.gmail.com>
+	<CAJKOXPfta+QXsLp1fPhNhMuFNEARZVjcFCtWtqRRG1gg=oFBsw@mail.gmail.com>
+	<CAE-5t2uJSotJsO8g0zNvnK2DhMEjXzURMtKh1siyJRGXA1=+=Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f179.google.com ([209.85.160.179]:34332 "EHLO
+	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751073AbbJKTU1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 11 Oct 2015 15:20:27 -0400
+Received: by ykdg206 with SMTP id g206so119403547ykd.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Oct 2015 12:20:26 -0700 (PDT)
+In-Reply-To: <CAE-5t2uJSotJsO8g0zNvnK2DhMEjXzURMtKh1siyJRGXA1=+=Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Odroid XU4 has a RTL8153-CG gigabit Ethernet adapter, connected over
-USB 3.0.
+Probably also interesting for you:
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
-Changes: Fixed the commit message thanks to Krzysztof KozlowskAdded reviewed by Krzysztof Kozlowski
-         Added reviewed by Krzysztof Kozlowski
-         Build as r8152 as module
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+~$ zcat /proc/config.gz | grep CONFIG_DRM_EXYNOS
+CONFIG_DRM_EXYNOS=3Dm
+CONFIG_DRM_EXYNOS_IOMMU=3Dy
+CONFIG_DRM_EXYNOS_FIMD=3Dy
+CONFIG_DRM_EXYNOS5433_DECON=3Dy
+CONFIG_DRM_EXYNOS7_DECON=3Dy
+CONFIG_DRM_EXYNOS_DPI=3Dy
+CONFIG_DRM_EXYNOS_DSI=3Dy
+CONFIG_DRM_EXYNOS_DP=3Dy
+CONFIG_DRM_EXYNOS_HDMI=3Dy
+CONFIG_DRM_EXYNOS_VIDI=3Dy
+CONFIG_DRM_EXYNOS_G2D=3Dy
+CONFIG_DRM_EXYNOS_IPP=3Dy
+CONFIG_DRM_EXYNOS_FIMC=3Dy
+CONFIG_DRM_EXYNOS_ROTATOR=3Dy
+CONFIG_DRM_EXYNOS_MIC=3Dy
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 03deb7f..966ffc1 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -221,6 +221,7 @@ CONFIG_BROADCOM_PHY=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
- CONFIG_USB_PEGASUS=y
-+CONFIG_USB_RTL8152=m
- CONFIG_USB_USBNET=y
- CONFIG_USB_NET_SMSC75XX=y
- CONFIG_USB_NET_SMSC95XX=y
--- 
-2.1.4
+Regards :)
+
+2015-10-10 10:46 GMT+02:00 Thomas Pietrowski <thopiekar@gmail.com>:
+> Thanks! The patch for fan support is obviously on a good way to be ap=
+plied.
+>
+> However, I just took now 4.2.3 from linux-stable and ran into the sam=
+e
+> problem of this conversation: https://lkml.org/lkml/2015/2/17/434
+>
+> Is there a way I can help getting this debugged? I could apply this
+> patch and test it if you like. Just asking because someone is maybe
+> working on a better fix :)
+>
+> Here a more detailed output of this problem: http://pastebin.com/ity4=
+cEAS
+>
+> Regards
+>
+> 2015-08-06 1:31 GMT+02:00 Krzysztof Koz=C5=82owski <k.kozlowski.k@gma=
+il.com>:
+>> 2015-08-05 22:07 GMT+09:00 Thomas Pietrowski <thopiekar@gmail.com>:
+>>> Sorry for the long delay. Got now linux-stable 4.2.0-rc5 running he=
+re,
+>>> but I still miss the fan support.
+>>> Searched the web again for the patch and found this on LKML:
+>>> https://lkml.org/lkml/2014/12/18/138
+>>>
+>>> Then looked at the "arm-soc" repository but found this patch nowher=
+e.
+>>> Are you planing to add this in future releases?
+>>
+>> Me? No, I am not planning to work on this. Also I don't have an Odro=
+id
+>> U3 with a fan.
+>>
+>> I think you should ask the author of the patchset.
+>>
+>> Best regards,
+>> Krzysztof
