@@ -1,122 +1,67 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed
- support
-Date: Mon, 12 Oct 2015 19:51:29 +0900
-Message-ID: <561B90B1.1090100@samsung.com>
-References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
- <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
- <561B48B7.1040201@samsung.com>
- <CANAwSgSk0yHGvnoVoTk9MnUqjyEw1+yzH=C-1s_wxVkpGRHCEg@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv9 14/15] cec: s5p-cec: Add s5p-cec driver
+Date: Mon, 12 Oct 2015 12:50:23 +0200
+Message-ID: <561B906F.9020508@xs4all.nl>
+References: <cover.1441633456.git.hansverk@cisco.com> <b55a5c1ff9318211aa472b28d03a978aad23770b.1441633456.git.hansverk@cisco.com> <20151005223207.GM21513@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:53376 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751346AbbJLKvc (ORCPT
+Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:39286 "EHLO
+	lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750888AbbJLKwY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 06:51:32 -0400
-In-reply-to: <CANAwSgSk0yHGvnoVoTk9MnUqjyEw1+yzH=C-1s_wxVkpGRHCEg@mail.gmail.com>
+	Mon, 12 Oct 2015 06:52:24 -0400
+In-Reply-To: <20151005223207.GM21513@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Hans Verkuil <hansverk@cisco.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
 
-On 10/12/2015 07:46 PM, Anand Moon wrote:
-> Hi Krzysztof,
+On 10/06/2015 12:32 AM, Russell King - ARM Linux wrote:
+> On Mon, Sep 07, 2015 at 03:44:43PM +0200, Hans Verkuil wrote:
+>> +	if (status & CEC_STATUS_TX_DONE) {
+>> +		if (status & CEC_STATUS_TX_ERROR) {
+>> +			dev_dbg(cec->dev, "CEC_STATUS_TX_ERROR set\n");
+>> +			cec->tx = STATE_ERROR;
+>> +		} else {
+>> +			dev_dbg(cec->dev, "CEC_STATUS_TX_DONE\n");
+>> +			cec->tx = STATE_DONE;
+>> +		}
+>> +		s5p_clr_pending_tx(cec);
+>> +	}
 > 
-> On 12 October 2015 at 11:14, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> On 12.10.2015 00:46, Anand Moon wrote:
->>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
->>
->> This description is not entirely correct. The MMC driver already
->> supports these UHS speeds (you did not any code) so you rather enabled
->> it (description of bindings says "is supported").
->>
->> You mentioned DDR50 but I don't see respective property below.
-> Looks like I missed it, I will add this in the next patch,
->>
->> How do you know that these modes are really supported? I don't know. Can
->> you convince me?
->>
-> 
->>>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>
->>> ---
->>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
->>>
->>> Changes Fixed the UHS-I bus speed detedtion on cold boot.
->>
->> I don't get what is exactly fixed here. What was the error? What is the
->> outcome of this fix? The log below is before or after?
->>
->> Best regards,
->> Krzysztof
->>
->>>
->>> [    2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req 100000000Hz, actual 100000000HZ div = 0)
->>> [    2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
->>> [    2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->>> [    2.461743]  mmcblk0: p1 p2
->>
->>> ---
->>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>> index 58c06d3..ba4a87b 100644
->>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>> @@ -364,6 +364,10 @@
->>>       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->>>       bus-width = <4>;
->>>       cap-sd-highspeed;
->>> +     sd-uhs-sdr12;
->>> +     sd-uhs-sdr25;
->>> +     sd-uhs-sdr50;
->>> +     sd-uhs-sdr104;
->>>  };
->>>
->>>  &pinctrl_0 {
->>>
->>
-> 
-> Changes were made to support Sandisk Ultra UHS-I class 10 card support.
-> OdroidXU3/XU4 board would not boot up using this card.
-> 
-> Depending on the capability of the UHS-I card, the speed of the card
-> is selected.
-> I have just added the enhance capability feature to support them.
-> 
-> On warm boot: i.e reboot of the board.
-> [    4.649073] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
-> req 50000000Hz, actual 50000000HZ div = 0)
-> [    4.657555] mmc1: new high speed SDHC card at address aaaa
-> [    4.663787] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
-> [    4.669206]  mmcblk0: p1 p2
-> 
-> On cold boot:: ie: power on the board.
-> 
-> [    4.630237] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
-> req 100000000Hz, actual 100000000HZ div = 0)
-> [    4.639820] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
-> [    4.646266] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
-> [    4.650293] IRQ56 no longer affine to CPU7
-> [    4.650581] CPU7: shutdown
-> [    4.658293]  mmcblk0: p1 p2
-> 
-> Note: Their is need to reset the PMIC
-> S2MPS11_REG_L13CTRL/S2MPS11_REG_L19CTRL registers
->          to support this feature consistently on every reboot.
+> Your CEC implementation seems to be written around the idea that there
+> are only two possible outcomes from a CEC message - "done" and "error",
+> which get translated to:
 
-I don't understand...why needs to reset?
-I know it needs to switch the voltage, doesn't it?
-
-Best Regards,
-Jaehoon Chung
+This code is for the Samsung exynos CEC implementation. Marek, is this all
+that the exynos CEC hardware returns?
 
 > 
-> -Anand Moon
+>> +	case STATE_DONE:
+>> +		cec_transmit_done(cec->adap, CEC_TX_STATUS_OK);
+>> +		cec->tx = STATE_IDLE;
+>> +		break;
+>> +	case STATE_ERROR:
+>> +		cec_transmit_done(cec->adap, CEC_TX_STATUS_RETRY_TIMEOUT);
+>> +		cec->tx = STATE_IDLE;
 > 
+> "okay" and "retry_timeout".  So, if we have an adapter which can report
+> (eg) a NACK, we have to report it as the obscure "retry timeout" status?
+> Why this obscure naming - why can't we have something that uses the
+> terminology in the spec?
+> 
+
+Actually, a NACK should lead to a re-transmission (up to 5 times), see CEC 7.1.
+The assumption of the CEC framework is that this is done by the CEC adapter
+driver, not by the framework. So if after repeated retransmissions there is
+still no Ack, the CEC_TX_STATUS_RETRY_TIMEOUT error is returned. I could
+change this to _MAX_RETRIES_REACHED if you prefer.
+
+The CEC_TX_STATUS_ macros were based on what the adv drivers support (except
+for CEC_TX_STATUS_REPLY_TIMEOUT which is specific to the framework).
+
+Regards,
+
+	Hans
