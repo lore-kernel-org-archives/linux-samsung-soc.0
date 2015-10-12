@@ -1,69 +1,57 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2] arm: dts: Fix audio card detection on peach boards
-Date: Mon, 12 Oct 2015 18:07:18 +0530
-Message-ID: <1444653438-6532-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, k.kozlowski@samsung.com, kgene@kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, stable@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] arm: dts: Fix audio card detection on peach boards
+Date: Mon, 12 Oct 2015 21:56:49 +0900
+Message-ID: <561BAE11.4050801@samsung.com>
+References: <1444631169-19468-1-git-send-email-alim.akhtar@samsung.com>
+ <561B578E.1050308@samsung.com> <561B7AFF.1080707@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:35505 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751337AbbJLM4z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Oct 2015 08:56:55 -0400
+In-Reply-To: <561B7AFF.1080707@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: k.kozlowski.k@gmail.com, Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, stable@vger.kernel.org
 
-Since commit 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards"),
-sound card detection is broken on peach boards and gives below errors:
+W dniu 12.10.2015 o 18:18, Sylwester Nawrocki pisze:
+> On 12/10/15 08:47, Krzysztof Kozlowski wrote:
+>>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> index 8f4d76c..525a93a 100644
+>>>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> @@ -1056,5 +1056,10 @@
+>>>>  	timeout-sec = <32>;
+>>>>  };
+>>>>  
+>>>> +&pmu_system_controller {
+>>
+>> Please put the node in alphabetical order.
+>>
+>>>> +	assigned-clocks = <&pmu_system_controller 0>;
+>>>> +	assigned-clock-parents =  <&clock CLK_FIN_PLL>;
+>>
+>> I might be missing something here but isn't the first clock of
+>> pmu_system_controller already a CLK_FIN_PLL? So you are reparenting the
+>> FIN_PLL to FIN_PLL?
+> 
+> No, it's not, the first PMU consumer clock is indeed CLK_FIN_PLL,
+> but pmu_system_controller is also a clock provider. 
 
-[    3.630457] max98090 7-0010: MAX98091 REVID=0x51
-[    3.634233] max98090 7-0010: use default 2.8v micbias
-[    3.640985] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
-[    3.645307] max98090 7-0010: Invalid master clock frequency
-[    3.650824] snow-audio sound: ASoC: Peach-Pi-I2S-MAX98091 late_probe() failed: -22
-[    3.658914] snow-audio sound: snd_soc_register_card failed (-22)
-[    3.664366] snow-audio: probe of sound failed with error -22
+Oh yes, indeed it is. Thanks for pointing me in right direction.
 
-This patch adds missing assigned-clocks and assigned-clock-parents for
-pmu_system_controller node which is used as "mclk" for audio codec.
+Best regards,
+Krzysztof
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Fixes: 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards")
-Cc: <stable@vger.kernel.org>
----
-Changes since v1:
-Addressed Krzysztof's review comments.
-
- arch/arm/boot/dts/exynos5420-peach-pit.dts |    5 +++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |    5 +++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 8f4d76c5e11c..1b95da79293c 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -915,6 +915,11 @@
- 	};
- };
- 
-+&pmu_system_controller {
-+	assigned-clocks = <&pmu_system_controller 0>;
-+	assigned-clock-parents = <&clock CLK_FIN_PLL>;
-+};
-+
- &rtc {
- 	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&max77802 MAX77802_CLK_32K_AP>;
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 7d5b386b5ae6..8f40c7e549bd 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -878,6 +878,11 @@
- 	};
- };
- 
-+&pmu_system_controller {
-+	assigned-clocks = <&pmu_system_controller 0>;
-+	assigned-clock-parents = <&clock CLK_FIN_PLL>;
-+};
-+
- &rtc {
- 	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&max77802 MAX77802_CLK_32K_AP>;
--- 
-1.7.10.4
+> The first output
+> clock of pmu_system_controller is CLKOUT, it's a composite mux and
+> gate clock (registered in drivers/clk/samsung /clk-exynos-clkout.c).
+> So  the above dts change is selecting an external oscillator input of
+> the CLKOUT mux, i.e. it will route 24 MHz clock signal from the external
+> oscillator to the CLKOUT output pin, to which audio CODEC is connected
+> on peach-pit AFAICS.
