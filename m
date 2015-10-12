@@ -1,95 +1,62 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] arm: dts: Fix audio card detection on peach boards
-Date: Mon, 12 Oct 2015 15:47:42 +0900
-Message-ID: <561B578E.1050308@samsung.com>
-References: <1444631169-19468-1-git-send-email-alim.akhtar@samsung.com>
+Subject: Re: [PATCH v7 05/17] drm: bridge: analogix/dp: dynamic parse sync_pol
+ & interlace & dynamic_range
+Date: Mon, 12 Oct 2015 15:54:03 +0900
+Message-ID: <561B590B.6090806@samsung.com>
+References: <1444491357-26095-1-git-send-email-ykk@rock-chips.com>
+ <1444624149-16180-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49530 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751186AbbJLGrz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 02:47:55 -0400
-In-reply-to: <1444631169-19468-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1444624149-16180-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Rob Herring <robh+dt@kernel.org>, joe@perches.com, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
+Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, stable@vger.kernel.org
 
-On 12.10.2015 15:26, Alim Akhtar wrote:
-> Since the merge of 2fad972 ("ARM: dts: Add mclk entry for Peach boards"),
-
-Please switch to longer SHA abbreviation:
-$ git config core.abbrev 12
-
-> sound card detection is broken on peach boards and gives below errors:
+On 12.10.2015 13:29, Yakir Yang wrote:
+> Both hsync/vsync polarity and interlace mode can be parsed from
+> drm display mode, and dynamic_range and ycbcr_coeff can be judge
+> by the video code.
 > 
-> [    3.630457] max98090 7-0010: MAX98091 REVID=0x51
-> [    3.634233] max98090 7-0010: use default 2.8v micbias
-> [    3.640985] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
-> [    3.645307] max98090 7-0010: Invalid master clock frequency
-> [    3.650824] snow-audio sound: ASoC: Peach-Pi-I2S-MAX98091 late_probe() failed: -22
-> [    3.658914] snow-audio sound: snd_soc_register_card failed (-22)
-> [    3.664366] snow-audio: probe of sound failed with error -22
+> But presumably Exynos still relies on the DT properties, so take
+> good use of mode_fixup() in to achieve the compatibility hacks.
 > 
-> This patch adds missing assigned-clocks and assigned-clock-parents for
-> pmu_system_controller node which is used as "mclk" for audio codec.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Fixes: 2fad972 ("ARM: dts: Add mclk entry for Peach boards")
-> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 > ---
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |    5 +++++
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    5 +++++
->  2 files changed, 10 insertions(+)
+> *just add a note that this is v7 of only fifth patch.*
 > 
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 8f4d76c..525a93a 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -1056,5 +1056,10 @@
->  	timeout-sec = <32>;
->  };
->  
-> +&pmu_system_controller {
+> Changes in v7:
+> - Back to use the of_property_read_bool() interfacs to provoid backward
+>   compatibility of "hsync-active-high" "vsync-active-high" "interlaced"
+>   to avoid -EOVERFLOW error (Krzysztof)
+> 
+> Changes in v6: None
+> Changes in v5:
+> - Switch video timing type to "u32", so driver could use "of_property_read_u32"
+>   to get the backword timing values. Krzysztof suggest me that driver could use
+>   the "of_property_read_bool" to get backword timing values, but that interfacs
+>   would modify the original drm_display_mode timing directly (whether those
+>   properties exists or not).
+> 
+> Changes in v4:
+> - Provide backword compatibility with samsung. (Krzysztof)
+> 
+> Changes in v3:
+> - Dynamic parse video timing info from struct drm_display_mode and
+>   struct drm_display_info. (Thierry)
+> 
+> Changes in v2: None
+> 
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 148 +++++++++++++--------
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   2 +-
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  14 +-
+>  3 files changed, 103 insertions(+), 61 deletions(-)
+> 
 
-Please put the node in alphabetical order.
-
-> +	assigned-clocks = <&pmu_system_controller 0>;
-> +	assigned-clock-parents =  <&clock CLK_FIN_PLL>;
-
-I might be missing something here but isn't the first clock of
-pmu_system_controller already a CLK_FIN_PLL? So you are reparenting the
-FIN_PLL to FIN_PLL?
-
-In the same time there is doubled space character after '='.
-
-> +};
-> +
->  #include "cros-ec-keyboard.dtsi"
->  #include "cros-adc-thermistors.dtsi"
-> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> index 7d5b386..411de8f 100644
-> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> @@ -1019,5 +1019,10 @@
->  	timeout-sec = <32>;
->  };
->  
-> +&pmu_system_controller {
-> +	assigned-clocks = <&pmu_system_controller 0>;
-> +	assigned-clock-parents =  <&clock CLK_FIN_PLL>;
-
-Ditto.
+Looks good and backward compatible to me:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
-
-
-> +};
-> +
->  #include "cros-ec-keyboard.dtsi"
->  #include "cros-adc-thermistors.dtsi"
-> 
