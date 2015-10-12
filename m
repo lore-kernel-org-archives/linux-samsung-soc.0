@@ -1,85 +1,143 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCHv9 14/15] cec: s5p-cec: Add s5p-cec driver
-Date: Mon, 12 Oct 2015 14:39:42 +0200
-Message-ID: <561BAA0E.4040905@xs4all.nl>
-References: <cover.1441633456.git.hansverk@cisco.com>
- <b55a5c1ff9318211aa472b28d03a978aad23770b.1441633456.git.hansverk@cisco.com>
- <20151005223207.GM21513@n2100.arm.linux.org.uk> <561B906F.9020508@xs4all.nl>
- <CAP3TMiFj47GMYEqnNTXQv3vKbwnDGKhRDcMrwTY42RVUH-_d4Q@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed
+ support
+Date: Mon, 12 Oct 2015 21:42:25 +0900
+Message-ID: <561BAAB1.4020203@samsung.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+ <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
+ <561B48B7.1040201@samsung.com>
+ <CANAwSgSk0yHGvnoVoTk9MnUqjyEw1+yzH=C-1s_wxVkpGRHCEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAP3TMiFj47GMYEqnNTXQv3vKbwnDGKhRDcMrwTY42RVUH-_d4Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kamil Debski <kamil@wypas.org>
-Cc: linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, sean@mess.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, lars@opdenkamp.eu, dri-devel@lists.freedesktop.org, Hans Verkuil <hansverk@cisco.com>, Kyungmin Park <kyungmin.park@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, thomas@tommie-lie.de, linux-input@vger.kernel.org, linux-media@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:34112 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751415AbbJLMmb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Oct 2015 08:42:31 -0400
+In-Reply-To: <CANAwSgSk0yHGvnoVoTk9MnUqjyEw1+yzH=C-1s_wxVkpGRHCEg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: k.kozlowski.k@gmail.com, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-T24gMTAvMTIvMjAxNSAwMjozMyBQTSwgS2FtaWwgRGVic2tpIHdyb3RlOgo+IEhpLAo+IAo+IE9u
-IDEyIE9jdG9iZXIgMjAxNSBhdCAxMjo1MCwgSGFucyBWZXJrdWlsIDxodmVya3VpbEB4czRhbGwu
-bmw+IHdyb3RlOgo+PiBPbiAxMC8wNi8yMDE1IDEyOjMyIEFNLCBSdXNzZWxsIEtpbmcgLSBBUk0g
-TGludXggd3JvdGU6Cj4+PiBPbiBNb24sIFNlcCAwNywgMjAxNSBhdCAwMzo0NDo0M1BNICswMjAw
-LCBIYW5zIFZlcmt1aWwgd3JvdGU6Cj4+Pj4gKyAgICBpZiAoc3RhdHVzICYgQ0VDX1NUQVRVU19U
-WF9ET05FKSB7Cj4+Pj4gKyAgICAgICAgICAgIGlmIChzdGF0dXMgJiBDRUNfU1RBVFVTX1RYX0VS
-Uk9SKSB7Cj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgZGV2X2RiZyhjZWMtPmRldiwgIkNFQ19T
-VEFUVVNfVFhfRVJST1Igc2V0XG4iKTsKPj4+PiArICAgICAgICAgICAgICAgICAgICBjZWMtPnR4
-ID0gU1RBVEVfRVJST1I7Cj4+Pj4gKyAgICAgICAgICAgIH0gZWxzZSB7Cj4+Pj4gKyAgICAgICAg
-ICAgICAgICAgICAgZGV2X2RiZyhjZWMtPmRldiwgIkNFQ19TVEFUVVNfVFhfRE9ORVxuIik7Cj4+
-Pj4gKyAgICAgICAgICAgICAgICAgICAgY2VjLT50eCA9IFNUQVRFX0RPTkU7Cj4+Pj4gKyAgICAg
-ICAgICAgIH0KPj4+PiArICAgICAgICAgICAgczVwX2Nscl9wZW5kaW5nX3R4KGNlYyk7Cj4+Pj4g
-KyAgICB9Cj4+Pgo+Pj4gWW91ciBDRUMgaW1wbGVtZW50YXRpb24gc2VlbXMgdG8gYmUgd3JpdHRl
-biBhcm91bmQgdGhlIGlkZWEgdGhhdCB0aGVyZQo+Pj4gYXJlIG9ubHkgdHdvIHBvc3NpYmxlIG91
-dGNvbWVzIGZyb20gYSBDRUMgbWVzc2FnZSAtICJkb25lIiBhbmQgImVycm9yIiwKPj4+IHdoaWNo
-IGdldCB0cmFuc2xhdGVkIHRvOgo+Pgo+PiBUaGlzIGNvZGUgaXMgZm9yIHRoZSBTYW1zdW5nIGV4
-eW5vcyBDRUMgaW1wbGVtZW50YXRpb24uIE1hcmVrLCBpcyB0aGlzIGFsbAo+PiB0aGF0IHRoZSBl
-eHlub3MgQ0VDIGhhcmR3YXJlIHJldHVybnM/Cj4gCj4gVGhlIHBvc3NpYmxlIHN0YXR1cyB2YWx1
-ZXMgdGhhdCBhcmUgaW1wbGVtZW50ZWQgaW4gdGhlIENFQyBmcmFtZXdvcmsKPiBhcmUgZm9sbG93
-aW5nOgo+IAo+ICsvKiBjZWMgc3RhdHVzIGZpZWxkICovCj4gKyNkZWZpbmUgQ0VDX1RYX1NUQVRV
-U19PSyAgICAgICAgICAgICAgICgwKQo+ICsjZGVmaW5lIENFQ19UWF9TVEFUVVNfQVJCX0xPU1Qg
-ICAgICAgICAoMSA8PCAwKQo+ICsjZGVmaW5lIENFQ19UWF9TVEFUVVNfUkVUUllfVElNRU9VVCAg
-ICAoMSA8PCAxKQo+ICsjZGVmaW5lIENFQ19UWF9TVEFUVVNfRkVBVFVSRV9BQk9SVCAgICAoMSA8
-PCAyKQo+ICsjZGVmaW5lIENFQ19UWF9TVEFUVVNfUkVQTFlfVElNRU9VVCAgICAoMSA8PCAzKQo+
-ICsjZGVmaW5lIENFQ19SWF9TVEFUVVNfUkVBRFkgICAgICAgICAgICAoMCkKPiAKPiBUaGUgb25s
-eSB0d28gb25lcyBJIGNvdWxkIG1hdGNoIHdpdGggdGhlIEV4eW5vcyBDRUMgbW9kdWxlIHN0YXR1
-cyBiaXRzIGFyZQo+IENFQ19UWF9TVEFUVVNfT0sgYW5kICBDRUNfVFhfU1RBVFVTX1JFVFJZX1RJ
-TUVPVVQuCj4gCj4gVGhlIHN0YXR1cyBiaXRzIGluIEV4eW5vcyBIVyBhcmU6Cj4gLSBUeF9FcnJv
-cgo+IC0gVHhfRG9uZQo+IC0gVHhfVHJhbnNmZXJyaW5nCj4gLSBUeF9SdW5uaW5nCj4gLSBUeF9C
-eXRlc19UcmFuc2ZlcnJlZAo+IAo+IC0gVHhfV2FpdAo+IC0gVHhfU2VuZGluZ19TdGF0dXNfQml0
-Cj4gLSBUeF9TZW5kaW5nX0hkcl9CbGsKPiAtIFR4X1NlbmRpbmdfRGF0YV9CbGsKPiAtIFR4X0xh
-dGVzdF9Jbml0aWF0b3IKPiAKPiAtIFR4X1dhaXRfU0ZUX1N1Y2MKPiAtIFR4X1dhaXRfU0ZUX05l
-dwo+IC0gVHhfV2FpdF9TRlRfUmV0cmFuCj4gLSBUeF9SZXRyYW5zX0NudAo+IC0gVHhfQUNLX0Zh
-aWxlZAoKU28gYXJlIHRoZXNlIGFsbCBpbnRlcm1lZGlhdGUgc3RhdGVzPyBBbmQgZXZlcnkgdHJh
-bnNmZXIgYWx3YXlzIGVuZHMgd2l0aCBUeF9Eb25lIG9yClR4X0Vycm9yIHN0YXRlPwoKSXQgZG9l
-cyBsb29rIHRoYXQgd2F5Li4uCgpSZWdhcmRzLAoKCUhhbnMKCj4gCj4+Cj4+Pgo+Pj4+ICsgICAg
-Y2FzZSBTVEFURV9ET05FOgo+Pj4+ICsgICAgICAgICAgICBjZWNfdHJhbnNtaXRfZG9uZShjZWMt
-PmFkYXAsIENFQ19UWF9TVEFUVVNfT0spOwo+Pj4+ICsgICAgICAgICAgICBjZWMtPnR4ID0gU1RB
-VEVfSURMRTsKPj4+PiArICAgICAgICAgICAgYnJlYWs7Cj4+Pj4gKyAgICBjYXNlIFNUQVRFX0VS
-Uk9SOgo+Pj4+ICsgICAgICAgICAgICBjZWNfdHJhbnNtaXRfZG9uZShjZWMtPmFkYXAsIENFQ19U
-WF9TVEFUVVNfUkVUUllfVElNRU9VVCk7Cj4+Pj4gKyAgICAgICAgICAgIGNlYy0+dHggPSBTVEFU
-RV9JRExFOwo+Pj4KPj4+ICJva2F5IiBhbmQgInJldHJ5X3RpbWVvdXQiLiAgU28sIGlmIHdlIGhh
-dmUgYW4gYWRhcHRlciB3aGljaCBjYW4gcmVwb3J0Cj4+PiAoZWcpIGEgTkFDSywgd2UgaGF2ZSB0
-byByZXBvcnQgaXQgYXMgdGhlIG9ic2N1cmUgInJldHJ5IHRpbWVvdXQiIHN0YXR1cz8KPj4+IFdo
-eSB0aGlzIG9ic2N1cmUgbmFtaW5nIC0gd2h5IGNhbid0IHdlIGhhdmUgc29tZXRoaW5nIHRoYXQg
-dXNlcyB0aGUKPj4+IHRlcm1pbm9sb2d5IGluIHRoZSBzcGVjPwo+Pj4KPj4KPj4gQWN0dWFsbHks
-IGEgTkFDSyBzaG91bGQgbGVhZCB0byBhIHJlLXRyYW5zbWlzc2lvbiAodXAgdG8gNSB0aW1lcyks
-IHNlZSBDRUMgNy4xLgo+PiBUaGUgYXNzdW1wdGlvbiBvZiB0aGUgQ0VDIGZyYW1ld29yayBpcyB0
-aGF0IHRoaXMgaXMgZG9uZSBieSB0aGUgQ0VDIGFkYXB0ZXIKPj4gZHJpdmVyLCBub3QgYnkgdGhl
-IGZyYW1ld29yay4gU28gaWYgYWZ0ZXIgcmVwZWF0ZWQgcmV0cmFuc21pc3Npb25zIHRoZXJlIGlz
-Cj4+IHN0aWxsIG5vIEFjaywgdGhlIENFQ19UWF9TVEFUVVNfUkVUUllfVElNRU9VVCBlcnJvciBp
-cyByZXR1cm5lZC4gSSBjb3VsZAo+PiBjaGFuZ2UgdGhpcyB0byBfTUFYX1JFVFJJRVNfUkVBQ0hF
-RCBpZiB5b3UgcHJlZmVyLgo+Pgo+PiBUaGUgQ0VDX1RYX1NUQVRVU18gbWFjcm9zIHdlcmUgYmFz
-ZWQgb24gd2hhdCB0aGUgYWR2IGRyaXZlcnMgc3VwcG9ydCAoZXhjZXB0Cj4+IGZvciBDRUNfVFhf
-U1RBVFVTX1JFUExZX1RJTUVPVVQgd2hpY2ggaXMgc3BlY2lmaWMgdG8gdGhlIGZyYW1ld29yayku
-Cj4+Cj4+IFJlZ2FyZHMsCj4+Cj4+ICAgICAgICAgSGFucwo+IAo+IEJlc3Qgd2lzaGVzLAo+IEth
-bWlsCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+W dniu 12.10.2015 o 19:46, Anand Moon pisze:
+> Hi Krzysztof,
+> 
+> On 12 October 2015 at 11:14, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On 12.10.2015 00:46, Anand Moon wrote:
+>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
+>>
+>> This description is not entirely correct. The MMC driver already
+>> supports these UHS speeds (you did not any code) so you rather enabled
+>> it (description of bindings says "is supported").
+>>
+>> You mentioned DDR50 but I don't see respective property below.
+> Looks like I missed it, I will add this in the next patch,
+>>
+>> How do you know that these modes are really supported? I don't know. Can
+>> you convince me?
+
+That part was not answered...
+
+>>
+> 
+>>>
+>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>>
+>>> ---
+>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
+>>>
+>>> Changes Fixed the UHS-I bus speed detedtion on cold boot.
+>>
+>> I don't get what is exactly fixed here. What was the error? What is the
+>> outcome of this fix? The log below is before or after?
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>>
+>>> [    2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req 100000000Hz, actual 100000000HZ div = 0)
+>>> [    2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+>>> [    2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+>>> [    2.461743]  mmcblk0: p1 p2
+>>
+>>> ---
+>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> index 58c06d3..ba4a87b 100644
+>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> @@ -364,6 +364,10 @@
+>>>       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>>>       bus-width = <4>;
+>>>       cap-sd-highspeed;
+>>> +     sd-uhs-sdr12;
+>>> +     sd-uhs-sdr25;
+>>> +     sd-uhs-sdr50;
+>>> +     sd-uhs-sdr104;
+>>>  };
+>>>
+>>>  &pinctrl_0 {
+>>>
+>>
+> 
+> Changes were made to support Sandisk Ultra UHS-I class 10 card support.
+> OdroidXU3/XU4 board would not boot up using this card.
+> 
+> Depending on the capability of the UHS-I card, the speed of the card
+> is selected.
+> I have just added the enhance capability feature to support them.
+
+So without these capabilities mentioned microSD card cannot be used? So
+I have a UHS-I card, that one exactly:
+http://www.samsung.com/us/support/owners/product/MB-MP32D/APC
+
+It works:
+[    2.628365] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req
+50000000Hz, actual 50000000HZ div = 0)
+[    2.693296] mmc1: new high speed SDHC card at address 0001
+[    2.703867] mmcblk0: mmc1:0001 00000 29.8 GiB
+[    2.708406]  mmcblk0: p1 p2
+
+This is just HS mode.
+
+In the same time isn't UHS-I backward compatible? Your report seems
+surprising.
+
+Best regards,
+Krzysztof
+
+> 
+> On warm boot: i.e reboot of the board.
+> [    4.649073] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+> req 50000000Hz, actual 50000000HZ div = 0)
+> [    4.657555] mmc1: new high speed SDHC card at address aaaa
+> [    4.663787] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+> [    4.669206]  mmcblk0: p1 p2
+> 
+> On cold boot:: ie: power on the board.
+> 
+> [    4.630237] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
+> req 100000000Hz, actual 100000000HZ div = 0)
+> [    4.639820] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+> [    4.646266] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+> [    4.650293] IRQ56 no longer affine to CPU7
+> [    4.650581] CPU7: shutdown
+> [    4.658293]  mmcblk0: p1 p2
+> 
+> Note: Their is need to reset the PMIC
+> S2MPS11_REG_L13CTRL/S2MPS11_REG_L19CTRL registers
+>          to support this feature consistently on every reboot.
+> 
+> -Anand Moon
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
