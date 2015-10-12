@@ -1,99 +1,69 @@
-From: Kamil Debski <kamil@wypas.org>
-Subject: Re: [PATCHv9 14/15] cec: s5p-cec: Add s5p-cec driver
-Date: Mon, 12 Oct 2015 14:44:59 +0200
-Message-ID: <CAP3TMiFQb_hU+SH=uL6=9QZvRdjoWYeFtOQz+4X3oEiQ+RiHwg@mail.gmail.com>
-References: <cover.1441633456.git.hansverk@cisco.com> <b55a5c1ff9318211aa472b28d03a978aad23770b.1441633456.git.hansverk@cisco.com>
- <20151005223207.GM21513@n2100.arm.linux.org.uk> <561B906F.9020508@xs4all.nl>
- <CAP3TMiFj47GMYEqnNTXQv3vKbwnDGKhRDcMrwTY42RVUH-_d4Q@mail.gmail.com> <561BAA0E.4040905@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:36802 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751722AbbJLMpk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 08:45:40 -0400
-Received: by lbcao8 with SMTP id ao8so141893857lbc.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2015 05:45:39 -0700 (PDT)
-In-Reply-To: <561BAA0E.4040905@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v2] arm: dts: Fix audio card detection on peach boards
+Date: Mon, 12 Oct 2015 18:07:18 +0530
+Message-ID: <1444653438-6532-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, k.kozlowski@samsung.com, kgene@kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, thomas@tommie-lie.de, sean@mess.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, Hans Verkuil <hans.verkuil@cisco.com>
 
-Hi,
+Since commit 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards"),
+sound card detection is broken on peach boards and gives below errors:
 
-On 12 October 2015 at 14:39, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 10/12/2015 02:33 PM, Kamil Debski wrote:
->> Hi,
->>
->> On 12 October 2015 at 12:50, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>> On 10/06/2015 12:32 AM, Russell King - ARM Linux wrote:
->>>> On Mon, Sep 07, 2015 at 03:44:43PM +0200, Hans Verkuil wrote:
->>>>> +    if (status & CEC_STATUS_TX_DONE) {
->>>>> +            if (status & CEC_STATUS_TX_ERROR) {
->>>>> +                    dev_dbg(cec->dev, "CEC_STATUS_TX_ERROR set\n");
->>>>> +                    cec->tx = STATE_ERROR;
->>>>> +            } else {
->>>>> +                    dev_dbg(cec->dev, "CEC_STATUS_TX_DONE\n");
->>>>> +                    cec->tx = STATE_DONE;
->>>>> +            }
->>>>> +            s5p_clr_pending_tx(cec);
->>>>> +    }
->>>>
->>>> Your CEC implementation seems to be written around the idea that there
->>>> are only two possible outcomes from a CEC message - "done" and "error",
->>>> which get translated to:
->>>
->>> This code is for the Samsung exynos CEC implementation. Marek, is this all
->>> that the exynos CEC hardware returns?
->>
->> The possible status values that are implemented in the CEC framework
->> are following:
->>
->> +/* cec status field */
->> +#define CEC_TX_STATUS_OK               (0)
->> +#define CEC_TX_STATUS_ARB_LOST         (1 << 0)
->> +#define CEC_TX_STATUS_RETRY_TIMEOUT    (1 << 1)
->> +#define CEC_TX_STATUS_FEATURE_ABORT    (1 << 2)
->> +#define CEC_TX_STATUS_REPLY_TIMEOUT    (1 << 3)
->> +#define CEC_RX_STATUS_READY            (0)
->>
->> The only two ones I could match with the Exynos CEC module status bits are
->> CEC_TX_STATUS_OK and  CEC_TX_STATUS_RETRY_TIMEOUT.
->>
->> The status bits in Exynos HW are:
->> - Tx_Error
->> - Tx_Done
->> - Tx_Transferring
->> - Tx_Running
->> - Tx_Bytes_Transferred
->>
->> - Tx_Wait
->> - Tx_Sending_Status_Bit
->> - Tx_Sending_Hdr_Blk
->> - Tx_Sending_Data_Blk
->> - Tx_Latest_Initiator
->>
->> - Tx_Wait_SFT_Succ
->> - Tx_Wait_SFT_New
->> - Tx_Wait_SFT_Retran
->> - Tx_Retrans_Cnt
->> - Tx_ACK_Failed
->
-> So are these all intermediate states? And every transfer always ends with Tx_Done or
-> Tx_Error state?
+[    3.630457] max98090 7-0010: MAX98091 REVID=0x51
+[    3.634233] max98090 7-0010: use default 2.8v micbias
+[    3.640985] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
+[    3.645307] max98090 7-0010: Invalid master clock frequency
+[    3.650824] snow-audio sound: ASoC: Peach-Pi-I2S-MAX98091 late_probe() failed: -22
+[    3.658914] snow-audio sound: snd_soc_register_card failed (-22)
+[    3.664366] snow-audio: probe of sound failed with error -22
 
-Yes, the Exynos CEC module has a pretty low level status indicator.
+This patch adds missing assigned-clocks and assigned-clock-parents for
+pmu_system_controller node which is used as "mclk" for audio codec.
 
-> It does look that way...
->
-> Regards,
->
->         Hans
->
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Fixes: 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards")
+Cc: <stable@vger.kernel.org>
+---
+Changes since v1:
+Addressed Krzysztof's review comments.
 
-Best wishes,
-Kamil
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |    5 +++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  |    5 +++++
+ 2 files changed, 10 insertions(+)
 
-[snip]
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 8f4d76c5e11c..1b95da79293c 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -915,6 +915,11 @@
+ 	};
+ };
+ 
++&pmu_system_controller {
++	assigned-clocks = <&pmu_system_controller 0>;
++	assigned-clock-parents = <&clock CLK_FIN_PLL>;
++};
++
+ &rtc {
+ 	status = "okay";
+ 	clocks = <&clock CLK_RTC>, <&max77802 MAX77802_CLK_32K_AP>;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 7d5b386b5ae6..8f40c7e549bd 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -878,6 +878,11 @@
+ 	};
+ };
+ 
++&pmu_system_controller {
++	assigned-clocks = <&pmu_system_controller 0>;
++	assigned-clock-parents = <&clock CLK_FIN_PLL>;
++};
++
+ &rtc {
+ 	status = "okay";
+ 	clocks = <&clock CLK_RTC>, <&max77802 MAX77802_CLK_32K_AP>;
+-- 
+1.7.10.4
