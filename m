@@ -1,50 +1,68 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v2] arm: dts: Fix audio card detection on peach boards
-Date: Tue, 13 Oct 2015 04:10:01 +0900
-Message-ID: <561C0589.7010103@kernel.org>
-References: <1444653438-6532-1-git-send-email-alim.akhtar@samsung.com> <561BAFE0.5070205@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix double of_node_put() when parsing child
+ power domains
+Date: Tue, 13 Oct 2015 04:11:02 +0900
+Message-ID: <561C05C6.6080105@kernel.org>
+References: <1444613217-8926-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:48326 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751892AbbJLTKH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 15:10:07 -0400
-In-Reply-To: <561BAFE0.5070205@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444613217-8926-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, k.kozlowski.k@gmail.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, stable@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 10/12/15 22:04, Krzysztof Kozlowski wrote:
-> W dniu 12.10.2015 o 21:37, Alim Akhtar pisze:
->> Since commit 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards"),
->> sound card detection is broken on peach boards and gives below errors:
->>
->> [    3.630457] max98090 7-0010: MAX98091 REVID=0x51
->> [    3.634233] max98090 7-0010: use default 2.8v micbias
->> [    3.640985] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
->> [    3.645307] max98090 7-0010: Invalid master clock frequency
->> [    3.650824] snow-audio sound: ASoC: Peach-Pi-I2S-MAX98091 late_probe() failed: -22
->> [    3.658914] snow-audio sound: snd_soc_register_card failed (-22)
->> [    3.664366] snow-audio: probe of sound failed with error -22
->>
->> This patch adds missing assigned-clocks and assigned-clock-parents for
->> pmu_system_controller node which is used as "mclk" for audio codec.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> Fixes: 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards")
->> Cc: <stable@vger.kernel.org>
->> ---
->> Changes since v1:
->> Addressed Krzysztof's review comments.
+On 10/12/15 10:26, Krzysztof Kozlowski wrote:
+> On each next iteration of for_each_compatible_node() the reference
+> counter for current device node is already decreased by the loop
+> iterator. The manual call to of_node_get() is required only on loop
+> break which is not happening here.
 > 
-> Looks good, thanks!
+> The double of_node_get() (with enabled CONFIG_OF_DYNAMIC) lead to
+> decreasing the counter below expected, initial value.
 > 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Fixes: fe4034a3fad7 ("ARM: EXYNOS: Add missing of_node_put() when parsing power domains")
+> ---
+>  arch/arm/mach-exynos/pm_domains.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-Applied, thanks.
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> index 4a87e86dec45..7c21760f590f 100644
+> --- a/arch/arm/mach-exynos/pm_domains.c
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -200,15 +200,15 @@ no_clk:
+>  		args.args_count = 0;
+>  		child_domain = of_genpd_get_from_provider(&args);
+>  		if (IS_ERR(child_domain))
+> -			goto next_pd;
+> +			continue;
+>  
+>  		if (of_parse_phandle_with_args(np, "power-domains",
+>  					 "#power-domain-cells", 0, &args) != 0)
+> -			goto next_pd;
+> +			continue;
+>  
+>  		parent_domain = of_genpd_get_from_provider(&args);
+>  		if (IS_ERR(parent_domain))
+> -			goto next_pd;
+> +			continue;
+>  
+>  		if (pm_genpd_add_subdomain(parent_domain, child_domain))
+>  			pr_warn("%s failed to add subdomain: %s\n",
+> @@ -216,8 +216,6 @@ no_clk:
+>  		else
+>  			pr_info("%s has as child subdomain: %s.\n",
+>  				parent_domain->name, child_domain->name);
+> -next_pd:
+> -		of_node_put(np);
+>  	}
+>  
+>  	return 0;
 
-- Kukjin
+Looks good to me, applied.
+
+Thanks,
+Kukjin
