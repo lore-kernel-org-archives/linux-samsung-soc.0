@@ -1,101 +1,161 @@
-From: Anand Moon <moon.linux@yahoo.com>
-Subject: Re: [PATCH 1/3] ARM: dts: exynos5422-odroidxu3: use cd-gpio method
- to detect sd-card
-Date: Mon, 12 Oct 2015 14:47:32 +0000 (UTC)
-Message-ID: <1111856990.2419183.1444661252893.JavaMail.yahoo@mail.yahoo.com>
-References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
- <561B3739.4040701@samsung.com> <561B3A83.6090607@samsung.com>
-Reply-To: Anand Moon <moon.linux@yahoo.com>
+From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 10/17] phy: Add driver for rockchip Display Port PHY
+Date: Mon, 12 Oct 2015 20:32:47 +0530
+Message-ID: <561BCB97.3030201@ti.com>
+References: <1444491357-26095-1-git-send-email-ykk@rock-chips.com>
+ <1444492559-27181-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <561B3A83.6090607@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1444492559-27181-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Hi All,
-
-On Monday, October 12, 2015 10:14 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-
 
 Hi,
 
-On 10/12/2015 01:29 PM, Krzysztof Kozlowski wrote:
-> On 12.10.2015 00:46, Anand Moon wrote:
->> From: Jaehoon Chung <jh80.chung@samsung.com>
->>
->> To detect sd-card use the cd-gpio method.
->> It can decrease the interrupt for detecting sd-card.
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>
->> ---
->> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
->> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> index 1af5bdc..26decbd 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> @@ -352,8 +352,10 @@
->>      samsung,dw-mshc-ciu-div = <3>;
->>      samsung,dw-mshc-sdr-timing = <0 4>;
->>      samsung,dw-mshc-ddr-timing = <0 2>;
->> +    cd-gpios = <&gpc2 2 GPIO_ACTIVE_HIGH>;
->> +    cd-inverted;
->>      pinctrl-names = "default";
->> -    pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
->> +    pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+On Saturday 10 October 2015 09:25 PM, Yakir Yang wrote:
+> This phy driver would control the Rockchip DisplayPort module
+> phy clock and phy power, it is relate to analogix_dp-rockchip
+> dp driver. If you want DP works rightly on rockchip platform,
+> then you should select both of them.
 
-Don't do change this.
-
+Add phy driver for the Rockchip DisplayPort PHY module. This is required
+to get DisplayPort working in Rockchip SoCs.
 > 
-> Anand,
+> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> ---
+> Changes in v6: None
+> Changes in v5:
+> - Remove "reg" DT property, cause driver could poweron/poweroff phy via
+>   the exist "grf" syscon already. And rename the example DT node from
+>   "edp_phy: phy@ff770274" to "edp_phy: edp-phy" directly. (Heiko)
+> - Add deivce_node at the front of driver, update phy_ops type from "static
+>   struct" to "static const struct". And correct the input paramters of
+>   devm_phy_create() interfaces. (Heiko)
 > 
-> You essentially reverted here af6ad88acbd6 ("ARM: dts: Mux XMMCnDATA[0]
-> pad correctly for Exynos5420 boards"). Why? There is no explanation in
-> the commit message about this.
-
-I don't remember to send the patch relevant to this. Hmm...
-Well, Is this patch really signed-off by me?
-
-Best Regards,
-
-Jaehoon Chung
+> Changes in v4:
+> - Add commit message, and remove the redundant rockchip_dp_phy_init()
+>   function, move those code to probe() method. And remove driver .owner
+>   number. (Kishon)
 > 
-> Best regards,
-> Krzysztof
+> Changes in v3:
+> - Suggest, add rockchip dp phy driver, collect the phy clocks and
+>   power control. (Heiko)
 > 
-
+> Changes in v2: None
 > 
+>  drivers/phy/Kconfig           |   7 ++
+>  drivers/phy/Makefile          |   1 +
+>  drivers/phy/phy-rockchip-dp.c | 151 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 159 insertions(+)
+>  create mode 100644 drivers/phy/phy-rockchip-dp.c
+> 
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 47da573..8f2bc4f 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -310,6 +310,13 @@ config PHY_ROCKCHIP_USB
+>  	help
+>  	  Enable this to support the Rockchip USB 2.0 PHY.
+>  
+> +config PHY_ROCKCHIP_DP
+> +	tristate "Rockchip Display Port PHY Driver"
+> +	depends on ARCH_ROCKCHIP && OF
+> +	select GENERIC_PHY
+> +	help
+> +	  Enable this to support the Rockchip Display Port PHY.
+> +
+>  config PHY_ST_SPEAR1310_MIPHY
+>  	tristate "ST SPEAR1310-MIPHY driver"
+>  	select GENERIC_PHY
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index a5b18c1..e281f35 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -34,6 +34,7 @@ phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
+>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
+>  obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
+>  obj-$(CONFIG_PHY_ROCKCHIP_USB) += phy-rockchip-usb.o
+> +obj-$(CONFIG_PHY_ROCKCHIP_DP)		+= phy-rockchip-dp.o
+>  obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
+>  obj-$(CONFIG_PHY_ST_SPEAR1310_MIPHY)	+= phy-spear1310-miphy.o
+>  obj-$(CONFIG_PHY_ST_SPEAR1340_MIPHY)	+= phy-spear1340-miphy.o
+> diff --git a/drivers/phy/phy-rockchip-dp.c b/drivers/phy/phy-rockchip-dp.c
+> new file mode 100644
+> index 0000000..3a2ac120
+> --- /dev/null
+> +++ b/drivers/phy/phy-rockchip-dp.c
+> @@ -0,0 +1,151 @@
+> +/*
+> + * Rockchip DP PHY driver
+> + *
+> + * Copyright (C) 2015 FuZhou Rockchip Co., Ltd.
+> + * Author: Yakir Yang <ykk@@rock-chips.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/clk.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define GRF_SOC_CON12                   0x0274
+> +#define GRF_EDP_REF_CLK_SEL_INTER	BIT(4)
+> +#define GRF_EDP_PHY_SIDDQ_WRITE_EN      BIT(21)
+> +#define GRF_EDP_PHY_SIDDQ_ON            0
+> +#define GRF_EDP_PHY_SIDDQ_OFF           BIT(5)
+> +
+> +struct rockchip_dp_phy {
+> +	struct device  *dev;
+> +	struct regmap  *grf;
+> +	struct clk     *phy_24m;
+> +};
+> +
+> +static int rockchip_set_phy_state(struct phy *phy, bool enable)
+> +{
+> +	struct rockchip_dp_phy *dp = phy_get_drvdata(phy);
+> +	int ret;
+> +
+> +	if (enable) {
+> +		ret = clk_prepare_enable(dp->phy_24m);
+> +		if (ret < 0) {
+> +			dev_err(dp->dev, "Can't enable clock 24m %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		ret = regmap_write(dp->grf, GRF_SOC_CON12,
+> +				   GRF_EDP_PHY_SIDDQ_WRITE_EN |
+> +				   GRF_EDP_PHY_SIDDQ_ON);
+> +	} else {
+> +		clk_disable_unprepare(dp->phy_24m);
 
+should clk_disable come after regmap_write? It'll be symmetric to enable?
+> +		ret = regmap_write(dp->grf, GRF_SOC_CON12,
+> +				   GRF_EDP_PHY_SIDDQ_WRITE_EN |
+> +				   GRF_EDP_PHY_SIDDQ_OFF);
 
-Some how I don't receive these mail on my email id.
+Is this syscon register used only by Display Port PHY? Better to use
+regmap_update API?
 
-I have picked up these changes from tizen repository for OdroidXU3.
-I have tested with this changes to detect UHS-I micro cd cards.
-That's the reason for this email. 
-
-
-If it's wrong then I will drop it.
-
--Anand Moon
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks
+Kishon
