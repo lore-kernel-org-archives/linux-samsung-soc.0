@@ -1,181 +1,266 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed
- support
-Date: Mon, 12 Oct 2015 22:16:14 +0900
-Message-ID: <561BB29E.6090109@samsung.com>
-References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
- <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
- <561B48B7.1040201@samsung.com>
- <CANAwSgSk0yHGvnoVoTk9MnUqjyEw1+yzH=C-1s_wxVkpGRHCEg@mail.gmail.com>
- <561BAAB1.4020203@samsung.com> <561BAFDF.2090501@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: add global macro for the default primary
+ plane
+Date: Mon, 12 Oct 2015 22:18:14 +0900
+Message-ID: <561BB316.4060806@samsung.com>
+References: <1441404357-9337-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:35727 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752054AbbJLNQU (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55692 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751415AbbJLNSR convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 09:16:20 -0400
-In-Reply-To: <561BAFDF.2090501@samsung.com>
+	Mon, 12 Oct 2015 09:18:17 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NW30356TZMEH610@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Oct 2015 22:18:14 +0900 (KST)
+In-reply-to: <1441404357-9337-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, Anand Moon <linux.amoon@gmail.com>
-Cc: k.kozlowski.k@gmail.com, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-W dniu 12.10.2015 o 22:04, Jaehoon Chung pisze:
-> On 10/12/2015 09:42 PM, Krzysztof Kozlowski wrote:
->> W dniu 12.10.2015 o 19:46, Anand Moon pisze:
->>> Hi Krzysztof,
->>>
->>> On 12 October 2015 at 11:14, Krzysztof Kozlowski
->>> <k.kozlowski@samsung.com> wrote:
->>>> On 12.10.2015 00:46, Anand Moon wrote:
->>>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
->>>>
->>>> This description is not entirely correct. The MMC driver already
->>>> supports these UHS speeds (you did not any code) so you rather enabled
->>>> it (description of bindings says "is supported").
->>>>
->>>> You mentioned DDR50 but I don't see respective property below.
->>> Looks like I missed it, I will add this in the next patch,
->>>>
->>>> How do you know that these modes are really supported? I don't know. Can
->>>> you convince me?
->>
->> That part was not answered...
-> 
-> In my experiment, it needs two requirements.
-> One is that Host controller supported UHS-I mode or others, other is SD-card.
-> In Anand's commit message, there is no information for this.
-> 
-> And 50MB/s or 104MB/s is not real performance. (Just theoretical values)
-> It seems that can get those performances.
+Hi Gustavo,
 
-Right. But do you know if the host actually supports these?
+Merged.
 
-> 
->>
->>>>
->>>
->>>>>
->>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>>>
->>>>> ---
->>>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
->>>>>
->>>>> Changes Fixed the UHS-I bus speed detedtion on cold boot.
->>>>
->>>> I don't get what is exactly fixed here. What was the error? What is the
->>>> outcome of this fix? The log below is before or after?
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>>>>
->>>>> [    2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req 100000000Hz, actual 100000000HZ div = 0)
->>>>> [    2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
->>>>> [    2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->>>>> [    2.461743]  mmcblk0: p1 p2
->>>>
->>>>> ---
->>>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++++
->>>>>  1 file changed, 4 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>>> index 58c06d3..ba4a87b 100644
->>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>>> @@ -364,6 +364,10 @@
->>>>>       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->>>>>       bus-width = <4>;
->>>>>       cap-sd-highspeed;
->>>>> +     sd-uhs-sdr12;
->>>>> +     sd-uhs-sdr25;
->>>>> +     sd-uhs-sdr50;
->>>>> +     sd-uhs-sdr104;
->>>>>  };
->>>>>
->>>>>  &pinctrl_0 {
->>>>>
->>>>
->>>
->>> Changes were made to support Sandisk Ultra UHS-I class 10 card support.
->>> OdroidXU3/XU4 board would not boot up using this card.
->>>
->>> Depending on the capability of the UHS-I card, the speed of the card
->>> is selected.
->>> I have just added the enhance capability feature to support them.
->>
->> So without these capabilities mentioned microSD card cannot be used? So
->> I have a UHS-I card, that one exactly:
->> http://www.samsung.com/us/support/owners/product/MB-MP32D/APC
->>
->> It works:
->> [    2.628365] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req
->> 50000000Hz, actual 50000000HZ div = 0)
->> [    2.693296] mmc1: new high speed SDHC card at address 0001
->> [    2.703867] mmcblk0: mmc1:0001 00000 29.8 GiB
->> [    2.708406]  mmcblk0: p1 p2
->>
->> This is just HS mode.
->>
->> In the same time isn't UHS-I backward compatible? Your report seems
->> surprising.
-> 
-> Right. it's not issue. just working as lower mode than its capability.
+Thanks,
+Inki Dae
 
-Anand's report mentions "board would not boot up" which seems quite
-drastic. :)
-
-Thanks Jaehoon for help in reviewing this patch.
-
-
-Dear Anand,
-
-Could you describe in more details observable issues, what is fixed or
-what feature is added?
-
-Best regards,
-Krzysztof
-
-> 
-> Best Regards,
-> Jaehoon Chung
-> 
->>
->> Best regards,
->> Krzysztof
->>
->>>
->>> On warm boot: i.e reboot of the board.
->>> [    4.649073] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
->>> req 50000000Hz, actual 50000000HZ div = 0)
->>> [    4.657555] mmc1: new high speed SDHC card at address aaaa
->>> [    4.663787] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->>> [    4.669206]  mmcblk0: p1 p2
->>>
->>> On cold boot:: ie: power on the board.
->>>
->>> [    4.630237] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
->>> req 100000000Hz, actual 100000000HZ div = 0)
->>> [    4.639820] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
->>> [    4.646266] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->>> [    4.650293] IRQ56 no longer affine to CPU7
->>> [    4.650581] CPU7: shutdown
->>> [    4.658293]  mmcblk0: p1 p2
->>>
->>> Note: Their is need to reset the PMIC
->>> S2MPS11_REG_L13CTRL/S2MPS11_REG_L19CTRL registers
->>>          to support this feature consistently on every reboot.
->>>
->>> -Anand Moon
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>> Please read the FAQ at  http://www.tux.org/lkml/
->>>
->>
->>
-> 
+2015=B3=E2 09=BF=F9 05=C0=CF 07:05=BF=A1 Gustavo Padovan =C0=CC(=B0=A1)=
+ =BE=B4 =B1=DB:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>=20
+> Define DEFAULT_WIN as zero to help set the primary plane on all CRTCs=
+=2E
+> Some CRTCs were defining a variable to store the default window, but =
+that
+> is not necessary as the default (primary) window is always the window=
+ zero.
+>=20
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 6 ++----
+>   drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 5 ++---
+>   drivers/gpu/drm/exynos/exynos_drm_drv.h       | 2 ++
+>   drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 5 ++---
+>   drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 6 ++----
+>   drivers/gpu/drm/exynos/exynos_mixer.c         | 7 +++----
+>   6 files changed, 13 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/=
+gpu/drm/exynos/exynos5433_drm_decon.c
+> index 988df06..2f393b1 100644
+> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> @@ -33,7 +33,6 @@ struct decon_context {
+>   	struct exynos_drm_plane		planes[WINDOWS_NR];
+>   	void __iomem			*addr;
+>   	struct clk			*clks[6];
+> -	unsigned int			default_win;
+>   	unsigned long			irq_flags;
+>   	int				pipe;
+>  =20
+> @@ -451,7 +450,7 @@ static int decon_bind(struct device *dev, struct =
+device *master, void *data)
+>   	ctx->pipe =3D priv->pipe++;
+>  =20
+>   	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
+> -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+> +		type =3D (zpos =3D=3D DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+>   							DRM_PLANE_TYPE_OVERLAY;
+>   		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
+>   				1 << ctx->pipe, type, decon_formats,
+> @@ -460,7 +459,7 @@ static int decon_bind(struct device *dev, struct =
+device *master, void *data)
+>   			return ret;
+>   	}
+>  =20
+> -	exynos_plane =3D &ctx->planes[ctx->default_win];
+> +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
+>   	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+>   					ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
+>   					&decon_crtc_ops, ctx);
+> @@ -557,7 +556,6 @@ static int exynos5433_decon_probe(struct platform=
+_device *pdev)
+>   	if (!ctx)
+>   		return -ENOMEM;
+>  =20
+> -	ctx->default_win =3D 0;
+>   	ctx->dev =3D dev;
+>   	if (of_get_child_by_name(dev->of_node, "i80-if-timings"))
+>   		ctx->i80_if =3D true;
+> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu=
+/drm/exynos/exynos7_drm_decon.c
+> index 0776f38..7a6c069 100644
+> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+> @@ -52,7 +52,6 @@ struct decon_context {
+>   	struct clk			*eclk;
+>   	struct clk			*vclk;
+>   	void __iomem			*regs;
+> -	unsigned int			default_win;
+>   	unsigned long			irq_flags;
+>   	bool				i80_if;
+>   	int				pipe;
+> @@ -631,7 +630,7 @@ static int decon_bind(struct device *dev, struct =
+device *master, void *data)
+>   	}
+>  =20
+>   	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
+> -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+> +		type =3D (zpos =3D=3D DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+>   						DRM_PLANE_TYPE_OVERLAY;
+>   		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
+>   					1 << ctx->pipe, type, decon_formats,
+> @@ -640,7 +639,7 @@ static int decon_bind(struct device *dev, struct =
+device *master, void *data)
+>   			return ret;
+>   	}
+>  =20
+> -	exynos_plane =3D &ctx->planes[ctx->default_win];
+> +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
+>   	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+>   					   ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
+>   					   &decon_crtc_ops, ctx);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/dr=
+m/exynos/exynos_drm_drv.h
+> index 5cb9bc3..058abd1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -22,6 +22,8 @@
+>   #define MAX_PLANE	5
+>   #define MAX_FB_BUFFER	4
+>  =20
+> +#define DEFAULT_WIN	0
+> +
+>   #define to_exynos_crtc(x)	container_of(x, struct exynos_drm_crtc, b=
+ase)
+>   #define to_exynos_plane(x)	container_of(x, struct exynos_drm_plane,=
+ base)
+>  =20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_fimd.c
+> index dc36e63..7776768 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -154,7 +154,6 @@ struct fimd_context {
+>   	struct clk			*lcd_clk;
+>   	void __iomem			*regs;
+>   	struct regmap			*sysreg;
+> -	unsigned int			default_win;
+>   	unsigned long			irq_flags;
+>   	u32				vidcon0;
+>   	u32				vidcon1;
+> @@ -910,7 +909,7 @@ static int fimd_bind(struct device *dev, struct d=
+evice *master, void *data)
+>   	ctx->pipe =3D priv->pipe++;
+>  =20
+>   	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
+> -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+> +		type =3D (zpos =3D=3D DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+>   						DRM_PLANE_TYPE_OVERLAY;
+>   		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
+>   					1 << ctx->pipe, type, fimd_formats,
+> @@ -919,7 +918,7 @@ static int fimd_bind(struct device *dev, struct d=
+evice *master, void *data)
+>   			return ret;
+>   	}
+>  =20
+> -	exynos_plane =3D &ctx->planes[ctx->default_win];
+> +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
+>   	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+>   					   ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
+>   					   &fimd_crtc_ops, ctx);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_vidi.c
+> index 75718e1..fc57687 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -42,7 +42,6 @@ struct vidi_context {
+>   	struct exynos_drm_plane		planes[WINDOWS_NR];
+>   	struct edid			*raw_edid;
+>   	unsigned int			clkdiv;
+> -	unsigned int			default_win;
+>   	unsigned long			irq_flags;
+>   	unsigned int			connected;
+>   	bool				vblank_on;
+> @@ -446,7 +445,7 @@ static int vidi_bind(struct device *dev, struct d=
+evice *master, void *data)
+>   	vidi_ctx_initialize(ctx, drm_dev);
+>  =20
+>   	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
+> -		type =3D (zpos =3D=3D ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+> +		type =3D (zpos =3D=3D DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+>   						DRM_PLANE_TYPE_OVERLAY;
+>   		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
+>   					1 << ctx->pipe, type, formats,
+> @@ -455,7 +454,7 @@ static int vidi_bind(struct device *dev, struct d=
+evice *master, void *data)
+>   			return ret;
+>   	}
+>  =20
+> -	exynos_plane =3D &ctx->planes[ctx->default_win];
+> +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
+>   	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+>   					   ctx->pipe, EXYNOS_DISPLAY_TYPE_VIDI,
+>   					   &vidi_crtc_ops, ctx);
+> @@ -507,7 +506,6 @@ static int vidi_probe(struct platform_device *pde=
+v)
+>   	if (!ctx)
+>   		return -ENOMEM;
+>  =20
+> -	ctx->default_win =3D 0;
+>   	ctx->pdev =3D pdev;
+>  =20
+>   	INIT_WORK(&ctx->work, vidi_fake_vblank_handler);
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
+exynos/exynos_mixer.c
+> index 853ad8f..a149153 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -42,7 +42,6 @@
+>   #include "exynos_mixer.h"
+>  =20
+>   #define MIXER_WIN_NR		3
+> -#define MIXER_DEFAULT_WIN	0
+>   #define VP_DEFAULT_WIN		2
+>  =20
+>   /* The pixelformats that are natively supported by the mixer. */
+> @@ -599,7 +598,7 @@ static void mixer_graph_buffer(struct mixer_conte=
+xt *ctx,
+>  =20
+>   	/* setup display size */
+>   	if (ctx->mxr_ver =3D=3D MXR_VER_128_0_0_184 &&
+> -		win =3D=3D MIXER_DEFAULT_WIN) {
+> +		win =3D=3D DEFAULT_WIN) {
+>   		val  =3D MXR_MXR_RES_HEIGHT(mode->vdisplay);
+>   		val |=3D MXR_MXR_RES_WIDTH(mode->hdisplay);
+>   		mixer_reg_write(res, MXR_RESOLUTION, val);
+> @@ -1134,7 +1133,7 @@ static int mixer_bind(struct device *dev, struc=
+t device *manager, void *data)
+>   		const uint32_t *formats;
+>   		unsigned int fcount;
+>  =20
+> -		type =3D (zpos =3D=3D MIXER_DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY =
+:
+> +		type =3D (zpos =3D=3D DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
+>   						DRM_PLANE_TYPE_OVERLAY;
+>   		if (zpos < VP_DEFAULT_WIN) {
+>   			formats =3D mixer_formats;
+> @@ -1151,7 +1150,7 @@ static int mixer_bind(struct device *dev, struc=
+t device *manager, void *data)
+>   			return ret;
+>   	}
+>  =20
+> -	exynos_plane =3D &ctx->planes[MIXER_DEFAULT_WIN];
+> +	exynos_plane =3D &ctx->planes[DEFAULT_WIN];
+>   	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+>   					   ctx->pipe, EXYNOS_DISPLAY_TYPE_HDMI,
+>   					   &mixer_crtc_ops, ctx);
+>=20
