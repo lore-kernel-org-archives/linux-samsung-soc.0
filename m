@@ -1,105 +1,109 @@
-From: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm: dts: Fix audio card detection on peach boards
-Date: Mon, 12 Oct 2015 17:48:20 +0530
-Message-ID: <561BA50C.6020602@samsung.com>
-References: <1444631169-19468-1-git-send-email-alim.akhtar@samsung.com>
- <561B578E.1050308@samsung.com>
+From: Kamil Debski <kamil@wypas.org>
+Subject: Re: [PATCHv9 14/15] cec: s5p-cec: Add s5p-cec driver
+Date: Mon, 12 Oct 2015 14:33:16 +0200
+Message-ID: <CAP3TMiFj47GMYEqnNTXQv3vKbwnDGKhRDcMrwTY42RVUH-_d4Q@mail.gmail.com>
+References: <cover.1441633456.git.hansverk@cisco.com> <b55a5c1ff9318211aa472b28d03a978aad23770b.1441633456.git.hansverk@cisco.com>
+ <20151005223207.GM21513@n2100.arm.linux.org.uk> <561B906F.9020508@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <561B578E.1050308-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:33482 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752262AbbJLMd6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Oct 2015 08:33:58 -0400
+Received: by lbbk10 with SMTP id k10so29193239lbb.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2015 05:33:56 -0700 (PDT)
+In-Reply-To: <561B906F.9020508@xs4all.nl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, thomas@tommie-lie.de, sean@mess.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, Hans Verkuil <hans.verkuil@cisco.com>
 
-Hello Kezysztof
-Thanks for your review.
+Hi,
 
-On 10/12/2015 12:17 PM, Krzysztof Kozlowski wrote:
-> On 12.10.2015 15:26, Alim Akhtar wrote:
->> Since the merge of 2fad972 ("ARM: dts: Add mclk entry for Peach boards"),
->
-> Please switch to longer SHA abbreviation:
-> $ git config core.abbrev 12
->
-ok, will do thanks
->> sound card detection is broken on peach boards and gives below errors:
+On 12 October 2015 at 12:50, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 10/06/2015 12:32 AM, Russell King - ARM Linux wrote:
+>> On Mon, Sep 07, 2015 at 03:44:43PM +0200, Hans Verkuil wrote:
+>>> +    if (status & CEC_STATUS_TX_DONE) {
+>>> +            if (status & CEC_STATUS_TX_ERROR) {
+>>> +                    dev_dbg(cec->dev, "CEC_STATUS_TX_ERROR set\n");
+>>> +                    cec->tx = STATE_ERROR;
+>>> +            } else {
+>>> +                    dev_dbg(cec->dev, "CEC_STATUS_TX_DONE\n");
+>>> +                    cec->tx = STATE_DONE;
+>>> +            }
+>>> +            s5p_clr_pending_tx(cec);
+>>> +    }
 >>
->> [    3.630457] max98090 7-0010: MAX98091 REVID=0x51
->> [    3.634233] max98090 7-0010: use default 2.8v micbias
->> [    3.640985] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
->> [    3.645307] max98090 7-0010: Invalid master clock frequency
->> [    3.650824] snow-audio sound: ASoC: Peach-Pi-I2S-MAX98091 late_probe() failed: -22
->> [    3.658914] snow-audio sound: snd_soc_register_card failed (-22)
->> [    3.664366] snow-audio: probe of sound failed with error -22
->>
->> This patch adds missing assigned-clocks and assigned-clock-parents for
->> pmu_system_controller node which is used as "mclk" for audio codec.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Fixes: 2fad972 ("ARM: dts: Add mclk entry for Peach boards")
->> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
->> ---
->>   arch/arm/boot/dts/exynos5420-peach-pit.dts |    5 +++++
->>   arch/arm/boot/dts/exynos5800-peach-pi.dts  |    5 +++++
->>   2 files changed, 10 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> index 8f4d76c..525a93a 100644
->> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> @@ -1056,5 +1056,10 @@
->>   	timeout-sec = <32>;
->>   };
->>
->> +&pmu_system_controller {
+>> Your CEC implementation seems to be written around the idea that there
+>> are only two possible outcomes from a CEC message - "done" and "error",
+>> which get translated to:
 >
-> Please put the node in alphabetical order.
->
-ok
->> +	assigned-clocks = <&pmu_system_controller 0>;
->> +	assigned-clock-parents =  <&clock CLK_FIN_PLL>;
->
-> I might be missing something here but isn't the first clock of
-> pmu_system_controller already a CLK_FIN_PLL? So you are reparenting the
-> FIN_PLL to FIN_PLL?
->
-> In the same time there is doubled space character after '='.
->
-will remove
+> This code is for the Samsung exynos CEC implementation. Marek, is this all
+> that the exynos CEC hardware returns?
 
->> +};
->> +
->>   #include "cros-ec-keyboard.dtsi"
->>   #include "cros-adc-thermistors.dtsi"
->> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> index 7d5b386..411de8f 100644
->> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> @@ -1019,5 +1019,10 @@
->>   	timeout-sec = <32>;
->>   };
+The possible status values that are implemented in the CEC framework
+are following:
+
++/* cec status field */
++#define CEC_TX_STATUS_OK               (0)
++#define CEC_TX_STATUS_ARB_LOST         (1 << 0)
++#define CEC_TX_STATUS_RETRY_TIMEOUT    (1 << 1)
++#define CEC_TX_STATUS_FEATURE_ABORT    (1 << 2)
++#define CEC_TX_STATUS_REPLY_TIMEOUT    (1 << 3)
++#define CEC_RX_STATUS_READY            (0)
+
+The only two ones I could match with the Exynos CEC module status bits are
+CEC_TX_STATUS_OK and  CEC_TX_STATUS_RETRY_TIMEOUT.
+
+The status bits in Exynos HW are:
+- Tx_Error
+- Tx_Done
+- Tx_Transferring
+- Tx_Running
+- Tx_Bytes_Transferred
+
+- Tx_Wait
+- Tx_Sending_Status_Bit
+- Tx_Sending_Hdr_Blk
+- Tx_Sending_Data_Blk
+- Tx_Latest_Initiator
+
+- Tx_Wait_SFT_Succ
+- Tx_Wait_SFT_New
+- Tx_Wait_SFT_Retran
+- Tx_Retrans_Cnt
+- Tx_ACK_Failed
+
+>
 >>
->> +&pmu_system_controller {
->> +	assigned-clocks = <&pmu_system_controller 0>;
->> +	assigned-clock-parents =  <&clock CLK_FIN_PLL>;
->
-> Ditto.
->
-> Best regards,
-> Krzysztof
->
->
->> +};
->> +
->>   #include "cros-ec-keyboard.dtsi"
->>   #include "cros-adc-thermistors.dtsi"
+>>> +    case STATE_DONE:
+>>> +            cec_transmit_done(cec->adap, CEC_TX_STATUS_OK);
+>>> +            cec->tx = STATE_IDLE;
+>>> +            break;
+>>> +    case STATE_ERROR:
+>>> +            cec_transmit_done(cec->adap, CEC_TX_STATUS_RETRY_TIMEOUT);
+>>> +            cec->tx = STATE_IDLE;
+>>
+>> "okay" and "retry_timeout".  So, if we have an adapter which can report
+>> (eg) a NACK, we have to report it as the obscure "retry timeout" status?
+>> Why this obscure naming - why can't we have something that uses the
+>> terminology in the spec?
 >>
 >
+> Actually, a NACK should lead to a re-transmission (up to 5 times), see CEC 7.1.
+> The assumption of the CEC framework is that this is done by the CEC adapter
+> driver, not by the framework. So if after repeated retransmissions there is
+> still no Ack, the CEC_TX_STATUS_RETRY_TIMEOUT error is returned. I could
+> change this to _MAX_RETRIES_REACHED if you prefer.
 >
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> The CEC_TX_STATUS_ macros were based on what the adv drivers support (except
+> for CEC_TX_STATUS_REPLY_TIMEOUT which is specific to the framework).
+>
+> Regards,
+>
+>         Hans
+
+Best wishes,
+Kamil
