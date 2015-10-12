@@ -1,244 +1,172 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 08/10] drm/exynos: Enable DP clock directly from FIMD
-Date: Mon, 12 Oct 2015 22:19:02 +0900
-Message-ID: <561BB346.8080403@samsung.com>
+Subject: Re: [PATCH 07/10] drm/exynos: add pm_runtime to FIMD
+Date: Mon, 12 Oct 2015 22:19:17 +0900
+Message-ID: <561BB355.7070308@samsung.com>
 References: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
- <1441397752-6672-9-git-send-email-gustavo@padovan.org>
- <55FCDBB6.40807@samsung.com>
+ <1441397752-6672-8-git-send-email-gustavo@padovan.org>
+ <55FCDC46.5030601@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34062 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751415AbbJLNTE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 09:19:04 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NW30169LZNQBQ30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Oct 2015 22:19:02 +0900 (KST)
-In-reply-to: <55FCDBB6.40807@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <55FCDC46.5030601@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Gustavo, please ping~~~
-
-2015=EB=85=84 09=EC=9B=94 19=EC=9D=BC 12:51=EC=97=90 Inki Dae =EC=9D=B4=
-(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> Hi Gustavo,
->
-> On 2015=EB=85=84 09=EC=9B=94 05=EC=9D=BC 05:15, Gustavo Padovan wrote=
-:
->> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->>
->> Instead of having a .clock_enable callback enable the dp clock direc=
-tly
->> from FIMD.
->>
->> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->> ---
->>   drivers/gpu/drm/exynos/exynos_dp_core.c  | 13 -----------
->>   drivers/gpu/drm/exynos/exynos_drm_drv.h  |  5 ----
->>   drivers/gpu/drm/exynos/exynos_drm_fimd.c | 39 +++++++++++++++++---=
-------------
->>   3 files changed, 21 insertions(+), 36 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/d=
-rm/exynos/exynos_dp_core.c
->> index 6794982..aa11d18 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> @@ -37,11 +37,6 @@
->>   #define ctx_from_connector(c)	container_of(c, struct exynos_dp_dev=
-ice, \
->>   					connector)
->>
->> -static inline struct exynos_drm_crtc *dp_to_crtc(struct exynos_dp_d=
-evice *dp)
->> -{
->> -	return to_exynos_crtc(dp->encoder.crtc);
->> -}
->> -
->>   static inline struct exynos_dp_device *encoder_to_dp(
->>   						struct drm_encoder *e)
->>   {
->> @@ -1068,7 +1063,6 @@ static void exynos_dp_mode_set(struct drm_enco=
-der *encoder,
->>   static void exynos_dp_enable(struct drm_encoder *encoder)
->>   {
->>   	struct exynos_dp_device *dp =3D encoder_to_dp(encoder);
->> -	struct exynos_drm_crtc *crtc =3D dp_to_crtc(dp);
->>
->>   	pm_runtime_get_sync(dp->dev);
->>
->> @@ -1079,9 +1073,6 @@ static void exynos_dp_enable(struct drm_encode=
-r *encoder)
->>   		}
->>   	}
->>
->> -	if (crtc->ops->clock_enable)
->> -		crtc->ops->clock_enable(dp_to_crtc(dp), true);
->> -
->>   	phy_power_on(dp->phy);
->>   	exynos_dp_init_dp(dp);
->>   	enable_irq(dp->irq);
->> @@ -1091,7 +1082,6 @@ static void exynos_dp_enable(struct drm_encode=
-r *encoder)
->>   static void exynos_dp_disable(struct drm_encoder *encoder)
->>   {
->>   	struct exynos_dp_device *dp =3D encoder_to_dp(encoder);
->> -	struct exynos_drm_crtc *crtc =3D dp_to_crtc(dp);
->>
->>   	if (dp->panel) {
->>   		if (drm_panel_disable(dp->panel)) {
->> @@ -1104,9 +1094,6 @@ static void exynos_dp_disable(struct drm_encod=
-er *encoder)
->>   	flush_work(&dp->hotplug_work);
->>   	phy_power_off(dp->phy);
->>
->> -	if (crtc->ops->clock_enable)
->> -		crtc->ops->clock_enable(dp_to_crtc(dp), false);
->> -
->>   	if (dp->panel) {
->>   		if (drm_panel_unprepare(dp->panel))
->>   			DRM_ERROR("failed to turnoff the panel\n");
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/d=
-rm/exynos/exynos_drm_drv.h
->> index 5f1a4d6..ee60619 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -96,10 +96,6 @@ struct exynos_drm_plane {
->>    * @disable_plane: disable hardware specific overlay.
->>    * @te_handler: trigger to transfer video image at the tearing eff=
-ect
->>    *	synchronization signal if there is a page flip request.
->> - * @clock_enable: optional function enabling/disabling display doma=
-in clock,
->> - *	called from exynos-dp driver before powering up (with
->> - *	'enable' argument as true) and after powering down (with
->> - *	'enable' as false).
->>    */
->>   struct exynos_drm_crtc;
->>   struct exynos_drm_crtc_ops {
->> @@ -120,7 +116,6 @@ struct exynos_drm_crtc_ops {
->>   	void (*atomic_flush)(struct exynos_drm_crtc *crtc,
->>   			      struct exynos_drm_plane *plane);
->>   	void (*te_handler)(struct exynos_drm_crtc *crtc);
->> -	void (*clock_enable)(struct exynos_drm_crtc *crtc, bool enable);
->>   };
->>
->>   /*
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/=
-drm/exynos/exynos_drm_fimd.c
->> index 0f17ae0..3cf2b80 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> @@ -573,6 +573,23 @@ static void fimd_win_set_colkey(struct fimd_con=
-text *ctx, unsigned int win)
->>   	writel(keycon1, ctx->regs + WKEYCON1_BASE(win));
->>   }
->>
->> +static void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool=
- enable)
->> +{
->> +	struct fimd_context *ctx =3D crtc->ctx;
->> +	u32 val;
->> +
->> +	/*
->> +	 * Only Exynos 5250, 5260, 5410 and 542x requires enabling DP/MIE
->> +	 * clock. On these SoCs the bootloader may enable it but any
->> +	 * power domain off/on will reset it to disable state.
->> +	 */
->> +	if (ctx->driver_data !=3D &exynos5_fimd_driver_data)
->> +		return;
->> +
->> +	val =3D enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
->> +	writel(DP_MIE_CLK_DP_ENABLE, ctx->regs + DP_MIE_CLKCON);
->> +}
->> +
->>   /**
->>    * shadow_protect_win() - disable updating values from shadow regi=
-sters at vsync
->>    *
->> @@ -735,6 +752,8 @@ static void fimd_enable(struct exynos_drm_crtc *=
-crtc)
->>   	if (test_and_clear_bit(0, &ctx->irq_flags))
->>   		fimd_enable_vblank(ctx->crtc);
->>
->> +	fimd_dp_clock_enable(crtc, true);
->
-> You are forcing FIMD driver to enable DP clock every time FIMD is
-> enabled. Please know that in Exynos Display pipeline, Encoder device
-> could be used according to how Display path is configured.
->
-> For example,
-> FIMD ----- Panel
-> FIMD ----- MIPI-DSI ----- Panel
-> FIMD ----- DP ----- Panel
-> ...
->
-> In previous codes, DP clock will be enabled by DP driver even through
-> enable callback of the DP clock is registered by FIMD driver to
-> fimd_crtc_ops, which means that DP clock can be enabled only in case
-> that DP driver is available.
->
-> Thanks,
-> Inki Dae
->
->> +
->>   	fimd_commit(ctx->crtc);
->>   }
->>
->> @@ -743,6 +762,8 @@ static void fimd_disable(struct exynos_drm_crtc =
-*crtc)
->>   	struct fimd_context *ctx =3D crtc->ctx;
->>   	int i;
->>
->> +	fimd_dp_clock_enable(crtc, false);
->> +
->>   	/*
->>   	 * We need to make sure that all windows are disabled before we
->>   	 * suspend that connector. Otherwise we might try to scan from
->> @@ -814,23 +835,6 @@ static void fimd_te_handler(struct exynos_drm_c=
-rtc *crtc)
->>   		drm_crtc_handle_vblank(&ctx->crtc->base);
->>   }
->>
->> -static void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool=
- enable)
->> -{
->> -	struct fimd_context *ctx =3D crtc->ctx;
->> -	u32 val;
->> -
->> -	/*
->> -	 * Only Exynos 5250, 5260, 5410 and 542x requires enabling DP/MIE
->> -	 * clock. On these SoCs the bootloader may enable it but any
->> -	 * power domain off/on will reset it to disable state.
->> -	 */
->> -	if (ctx->driver_data !=3D &exynos5_fimd_driver_data)
->> -		return;
->> -
->> -	val =3D enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
->> -	writel(DP_MIE_CLK_DP_ENABLE, ctx->regs + DP_MIE_CLKCON);
->> -}
->> -
->>   static const struct exynos_drm_crtc_ops fimd_crtc_ops =3D {
->>   	.enable =3D fimd_enable,
->>   	.disable =3D fimd_disable,
->> @@ -843,7 +847,6 @@ static const struct exynos_drm_crtc_ops fimd_crt=
-c_ops =3D {
->>   	.disable_plane =3D fimd_disable_plane,
->>   	.atomic_flush =3D fimd_atomic_flush,
->>   	.te_handler =3D fimd_te_handler,
->> -	.clock_enable =3D fimd_dp_clock_enable,
->>   };
->>
->>   static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
->>
->
+QWxzbyBwaW5nfn4KCjIwMTXrhYQgMDnsm5QgMTnsnbwgMTI6NTPsl5AgSW5raSBEYWUg7J20KOqw
+gCkg7JO0IOq4gDoKPiBPbiAyMDE164WEIDA57JuUIDA17J28IDA1OjE1LCBHdXN0YXZvIFBhZG92
+YW4gd3JvdGU6Cj4+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxh
+Ym9yYS5jby51az4KPj4KPj4gTGV0IHBtX3J1bnRpbWUgaGFuZGxlIHRoZSBlbmFibGluZy9kaXNh
+Ymxpbmcgb2YgdGhlIGRldmljZSB3aXRoIHByb3Blcgo+PiByZWZjbnQgaW5zdGVhZCBvZiByZWx5
+IG9uIHNwZWNpZmljIGZsYWdzIHRvIHRyYWNrIHRoZSBlbmFibGVkIHN0YXRlLgo+Pgo+PiBTaWdu
+ZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
+dWs+Cj4+IC0tLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVj
+b24uYyB8ICAxIC0KPj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29u
+LmMgICAgfCAgMSAtCj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
+YyAgICAgIHwgOTEgKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tCj4+ICAgMyBmaWxlcyBjaGFu
+Z2VkLCAzNyBpbnNlcnRpb25zKCspLCA1NiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYwo+PiBpbmRleCA3OWIyYjIyLi44
+MzhhOWMxIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNf
+ZHJtX2RlY29uLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2Ry
+bV9kZWNvbi5jCj4+IEBAIC00NzgsNyArNDc4LDYgQEAgc3RhdGljIHN0cnVjdCBleHlub3NfZHJt
+X2NydGNfb3BzIGRlY29uX2NydGNfb3BzID0gewo+PiAgIAkuY29tbWl0CQkJPSBkZWNvbl9jb21t
+aXQsCj4+ICAgCS5lbmFibGVfdmJsYW5rCQk9IGRlY29uX2VuYWJsZV92YmxhbmssCj4+ICAgCS5k
+aXNhYmxlX3ZibGFuawkJPSBkZWNvbl9kaXNhYmxlX3ZibGFuaywKPj4gLQkuY29tbWl0CQkJPSBk
+ZWNvbl9jb21taXQsCj4KPiBBYm92ZSB3b3VsZG4ndCBiZSByZWxhdGVkIHRvIHRoaXMgcGF0Y2gu
+Cj4KPj4gICAJLmF0b21pY19iZWdpbgkJPSBkZWNvbl9hdG9taWNfYmVnaW4sCj4+ICAgCS51cGRh
+dGVfcGxhbmUJCT0gZGVjb25fdXBkYXRlX3BsYW5lLAo+PiAgIAkuZGlzYWJsZV9wbGFuZQkJPSBk
+ZWNvbl9kaXNhYmxlX3BsYW5lLAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3M3X2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2Ry
+bV9kZWNvbi5jCj4+IGluZGV4IGYzODI2ZGMuLmU0NjQ2ZTIgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+PiArKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKPj4gQEAgLTYzNyw3ICs2MzcsNiBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMgZGVjb25fY3J0Y19vcHMgPSB7
+Cj4+ICAgCS5lbmFibGUgPSBkZWNvbl9lbmFibGUsCj4+ICAgCS5kaXNhYmxlID0gZGVjb25fZGlz
+YWJsZSwKPj4gICAJLm1vZGVfZml4dXAgPSBkZWNvbl9tb2RlX2ZpeHVwLAo+PiAtCS5jb21taXQg
+PSBkZWNvbl9jb21taXQsCj4KPiBEaXR0by4KPgo+IFRoYW5rcywKPiBJbmtpIERhZQo+Cj4+ICAg
+CS5lbmFibGVfdmJsYW5rID0gZGVjb25fZW5hYmxlX3ZibGFuaywKPj4gICAJLmRpc2FibGVfdmJs
+YW5rID0gZGVjb25fZGlzYWJsZV92YmxhbmssCj4+ICAgCS53YWl0X2Zvcl92YmxhbmsgPSBkZWNv
+bl93YWl0X2Zvcl92YmxhbmssCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
+bWQuYwo+PiBpbmRleCAwYmJlNTM3Li4wZjE3YWUwIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9maW1kLmMKPj4gQEAgLTE2MCw3ICsxNjAsNiBAQCBzdHJ1Y3QgZmlt
+ZF9jb250ZXh0IHsKPj4gICAJdTMyCQkJCXZpZG91dF9jb247Cj4+ICAgCXUzMgkJCQlpODBpZmNv
+bjsKPj4gICAJYm9vbAkJCQlpODBfaWY7Cj4+IC0JYm9vbAkJCQlzdXNwZW5kZWQ7Cj4+ICAgCWlu
+dAkJCQlwaXBlOwo+PiAgIAl3YWl0X3F1ZXVlX2hlYWRfdAkJd2FpdF92c3luY19xdWV1ZTsKPj4g
+ICAJYXRvbWljX3QJCQl3YWl0X3ZzeW5jX2V2ZW50Owo+PiBAQCAtMjA5LDkgKzIwOCw2IEBAIHN0
+YXRpYyBpbnQgZmltZF9lbmFibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMp
+Cj4+ICAgCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKPj4gICAJdTMyIHZh
+bDsKPj4KPj4gLQlpZiAoY3R4LT5zdXNwZW5kZWQpCj4+IC0JCXJldHVybiAtRVBFUk07Cj4+IC0K
+Pj4gICAJaWYgKCF0ZXN0X2FuZF9zZXRfYml0KDAsICZjdHgtPmlycV9mbGFncykpIHsKPj4gICAJ
+CXZhbCA9IHJlYWRsKGN0eC0+cmVncyArIFZJRElOVENPTjApOwo+Pgo+PiBAQCAtMjQxLDkgKzIz
+Nyw2IEBAIHN0YXRpYyB2b2lkIGZpbWRfZGlzYWJsZV92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1f
+Y3J0YyAqY3J0YykKPj4gICAJc3RydWN0IGZpbWRfY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4Owo+
+PiAgIAl1MzIgdmFsOwo+Pgo+PiAtCWlmIChjdHgtPnN1c3BlbmRlZCkKPj4gLQkJcmV0dXJuOwo+
+PiAtCj4+ICAgCWlmICh0ZXN0X2FuZF9jbGVhcl9iaXQoMCwgJmN0eC0+aXJxX2ZsYWdzKSkgewo+
+PiAgIAkJdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgVklESU5UQ09OMCk7Cj4+Cj4+IEBAIC0yNjQs
+OSArMjU3LDYgQEAgc3RhdGljIHZvaWQgZmltZF93YWl0X2Zvcl92Ymxhbmsoc3RydWN0IGV4eW5v
+c19kcm1fY3J0YyAqY3J0YykKPj4gICB7Cj4+ICAgCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9
+IGNydGMtPmN0eDsKPj4KPj4gLQlpZiAoY3R4LT5zdXNwZW5kZWQpCj4+IC0JCXJldHVybjsKPj4g
+LQo+PiAgIAlhdG9taWNfc2V0KCZjdHgtPndhaXRfdnN5bmNfZXZlbnQsIDEpOwo+Pgo+PiAgIAkv
+Kgo+PiBAQCAtMzM5LDE0ICszMjksMTIgQEAgc3RhdGljIHZvaWQgZmltZF9jbGVhcl9jaGFubmVs
+cyhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+PiAgIAkJaW50IHBpcGUgPSBjdHgtPnBp
+cGU7Cj4+Cj4+ICAgCQkvKiBlbnN1cmUgdGhhdCB2YmxhbmsgaW50ZXJydXB0IHdvbid0IGJlIHJl
+cG9ydGVkIHRvIGNvcmUgKi8KPj4gLQkJY3R4LT5zdXNwZW5kZWQgPSBmYWxzZTsKPj4gICAJCWN0
+eC0+cGlwZSA9IC0xOwo+Pgo+PiAgIAkJZmltZF9lbmFibGVfdmJsYW5rKGN0eC0+Y3J0Yyk7Cj4+
+ICAgCQlmaW1kX3dhaXRfZm9yX3ZibGFuayhjdHgtPmNydGMpOwo+PiAgIAkJZmltZF9kaXNhYmxl
+X3ZibGFuayhjdHgtPmNydGMpOwo+Pgo+PiAtCQljdHgtPnN1c3BlbmRlZCA9IHRydWU7Cj4+ICAg
+CQljdHgtPnBpcGUgPSBwaXBlOwo+PiAgIAl9Cj4+Cj4+IEBAIC0zOTQsOSArMzgyLDYgQEAgc3Rh
+dGljIHZvaWQgZmltZF9jb21taXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPj4gICAJ
+dm9pZCAqdGltaW5nX2Jhc2UgPSBjdHgtPnJlZ3MgKyBkcml2ZXJfZGF0YS0+dGltaW5nX2Jhc2U7
+Cj4+ICAgCXUzMiB2YWwsIGNsa2RpdjsKPj4KPj4gLQlpZiAoY3R4LT5zdXNwZW5kZWQpCj4+IC0J
+CXJldHVybjsKPj4gLQo+PiAgIAkvKiBub3RoaW5nIHRvIGRvIGlmIHdlIGhhdmVuJ3Qgc2V0IHRo
+ZSBtb2RlIHlldCAqLwo+PiAgIAlpZiAobW9kZS0+aHRvdGFsID09IDAgfHwgbW9kZS0+dnRvdGFs
+ID09IDApCj4+ICAgCQlyZXR1cm47Cj4+IEBAIC02MzAsOSArNjE1LDYgQEAgc3RhdGljIHZvaWQg
+ZmltZF9hdG9taWNfYmVnaW4oc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKPj4gICB7Cj4+
+ICAgCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKPj4KPj4gLQlpZiAoY3R4
+LT5zdXNwZW5kZWQpCj4+IC0JCXJldHVybjsKPj4gLQo+PiAgIAlmaW1kX3NoYWRvd19wcm90ZWN0
+X3dpbihjdHgsIHBsYW5lLT56cG9zLCB0cnVlKTsKPj4gICB9Cj4+Cj4+IEBAIC02NDEsOSArNjIz
+LDYgQEAgc3RhdGljIHZvaWQgZmltZF9hdG9taWNfZmx1c2goc3RydWN0IGV4eW5vc19kcm1fY3J0
+YyAqY3J0YywKPj4gICB7Cj4+ICAgCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0
+eDsKPj4KPj4gLQlpZiAoY3R4LT5zdXNwZW5kZWQpCj4+IC0JCXJldHVybjsKPj4gLQo+PiAgIAlm
+aW1kX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIHBsYW5lLT56cG9zLCBmYWxzZSk7Cj4+ICAgfQo+
+Pgo+PiBAQCAtNjU5LDkgKzYzOCw2IEBAIHN0YXRpYyB2b2lkIGZpbWRfdXBkYXRlX3BsYW5lKHN0
+cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCj4+ICAgCXVuc2lnbmVkIGludCBicHAgPSBzdGF0
+ZS0+ZmItPmJpdHNfcGVyX3BpeGVsID4+IDM7Cj4+ICAgCXVuc2lnbmVkIGludCBwaXRjaCA9IHN0
+YXRlLT5mYi0+cGl0Y2hlc1swXTsKPj4KPj4gLQlpZiAoY3R4LT5zdXNwZW5kZWQpCj4+IC0JCXJl
+dHVybjsKPj4gLQo+PiAgIAlvZmZzZXQgPSBwbGFuZS0+c3JjX3ggKiBicHA7Cj4+ICAgCW9mZnNl
+dCArPSBwbGFuZS0+c3JjX3kgKiBwaXRjaDsKPj4KPj4gQEAgLTc0Myw5ICs3MTksNiBAQCBzdGF0
+aWMgdm9pZCBmaW1kX2Rpc2FibGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywK
+Pj4gICAJc3RydWN0IGZpbWRfY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4Owo+PiAgIAl1bnNpZ25l
+ZCBpbnQgd2luID0gcGxhbmUtPnpwb3M7Cj4+Cj4+IC0JaWYgKGN0eC0+c3VzcGVuZGVkKQo+PiAt
+CQlyZXR1cm47Cj4+IC0KPj4gICAJZmltZF9lbmFibGVfdmlkZW9fb3V0cHV0KGN0eCwgd2luLCBm
+YWxzZSk7Cj4+Cj4+ICAgCWlmIChjdHgtPmRyaXZlcl9kYXRhLT5oYXNfc2hhZG93Y29uKQo+PiBA
+QCAtNzU1LDI3ICs3MjgsOSBAQCBzdGF0aWMgdm9pZCBmaW1kX2Rpc2FibGVfcGxhbmUoc3RydWN0
+IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKPj4gICBzdGF0aWMgdm9pZCBmaW1kX2VuYWJsZShzdHJ1
+Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+PiAgIHsKPj4gICAJc3RydWN0IGZpbWRfY29udGV4
+dCAqY3R4ID0gY3J0Yy0+Y3R4Owo+PiAtCWludCByZXQ7Cj4+IC0KPj4gLQlpZiAoIWN0eC0+c3Vz
+cGVuZGVkKQo+PiAtCQlyZXR1cm47Cj4+IC0KPj4gLQljdHgtPnN1c3BlbmRlZCA9IGZhbHNlOwo+
+Pgo+PiAgIAlwbV9ydW50aW1lX2dldF9zeW5jKGN0eC0+ZGV2KTsKPj4KPj4gLQlyZXQgPSBjbGtf
+cHJlcGFyZV9lbmFibGUoY3R4LT5idXNfY2xrKTsKPj4gLQlpZiAocmV0IDwgMCkgewo+PiAtCQlE
+Uk1fRVJST1IoIkZhaWxlZCB0byBwcmVwYXJlX2VuYWJsZSB0aGUgYnVzIGNsayBbJWRdXG4iLCBy
+ZXQpOwo+PiAtCQlyZXR1cm47Cj4+IC0JfQo+PiAtCj4+IC0JcmV0ID0gY2xrX3ByZXBhcmVfZW5h
+YmxlKGN0eC0+bGNkX2Nsayk7Cj4+IC0JaWYgIChyZXQgPCAwKSB7Cj4+IC0JCURSTV9FUlJPUigi
+RmFpbGVkIHRvIHByZXBhcmVfZW5hYmxlIHRoZSBsY2QgY2xrIFslZF1cbiIsIHJldCk7Cj4+IC0J
+CXJldHVybjsKPj4gLQl9Cj4+IC0KPj4gICAJLyogaWYgdmJsYW5rIHdhcyBlbmFibGVkIHN0YXR1
+cywgZW5hYmxlIGl0IGFnYWluLiAqLwo+PiAgIAlpZiAodGVzdF9hbmRfY2xlYXJfYml0KDAsICZj
+dHgtPmlycV9mbGFncykpCj4+ICAgCQlmaW1kX2VuYWJsZV92YmxhbmsoY3R4LT5jcnRjKTsKPj4g
+QEAgLTc4OCw5ICs3NDMsNiBAQCBzdGF0aWMgdm9pZCBmaW1kX2Rpc2FibGUoc3RydWN0IGV4eW5v
+c19kcm1fY3J0YyAqY3J0YykKPj4gICAJc3RydWN0IGZpbWRfY29udGV4dCAqY3R4ID0gY3J0Yy0+
+Y3R4Owo+PiAgIAlpbnQgaTsKPj4KPj4gLQlpZiAoY3R4LT5zdXNwZW5kZWQpCj4+IC0JCXJldHVy
+bjsKPj4gLQo+PiAgIAkvKgo+PiAgIAkgKiBXZSBuZWVkIHRvIG1ha2Ugc3VyZSB0aGF0IGFsbCB3
+aW5kb3dzIGFyZSBkaXNhYmxlZCBiZWZvcmUgd2UKPj4gICAJICogc3VzcGVuZCB0aGF0IGNvbm5l
+Y3Rvci4gT3RoZXJ3aXNlIHdlIG1pZ2h0IHRyeSB0byBzY2FuIGZyb20KPj4gQEAgLTgwNSwxMiAr
+NzU3LDcgQEAgc3RhdGljIHZvaWQgZmltZF9kaXNhYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMg
+KmNydGMpCj4+Cj4+ICAgCXdyaXRlbCgwLCBjdHgtPnJlZ3MgKyBWSURDT04wKTsKPj4KPj4gLQlj
+bGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT5sY2RfY2xrKTsKPj4gLQljbGtfZGlzYWJsZV91bnBy
+ZXBhcmUoY3R4LT5idXNfY2xrKTsKPj4gLQo+PiAgIAlwbV9ydW50aW1lX3B1dF9zeW5jKGN0eC0+
+ZGV2KTsKPj4gLQo+PiAtCWN0eC0+c3VzcGVuZGVkID0gdHJ1ZTsKPj4gICB9Cj4+Cj4+ICAgc3Rh
+dGljIHZvaWQgZmltZF90cmlnZ2VyKHN0cnVjdCBkZXZpY2UgKmRldikKPj4gQEAgLTEwMTksNyAr
+OTY2LDYgQEAgc3RhdGljIGludCBmaW1kX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpCj4+ICAgCQlyZXR1cm4gLUVOT01FTTsKPj4KPj4gICAJY3R4LT5kZXYgPSBkZXY7Cj4+IC0J
+Y3R4LT5zdXNwZW5kZWQgPSB0cnVlOwo+PiAgIAljdHgtPmRyaXZlcl9kYXRhID0gZHJtX2ZpbWRf
+Z2V0X2RyaXZlcl9kYXRhKHBkZXYpOwo+Pgo+PiAgIAlpZiAob2ZfcHJvcGVydHlfcmVhZF9ib29s
+KGRldi0+b2Zfbm9kZSwgInNhbXN1bmcsaW52ZXJ0LXZkZW4iKSkKPj4gQEAgLTExMjksMTIgKzEw
+NzUsNDkgQEAgc3RhdGljIGludCBmaW1kX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQo+PiAgIAlyZXR1cm4gMDsKPj4gICB9Cj4+Cj4+ICsjaWZkZWYgQ09ORklHX1BNX1NMRUVQ
+Cj4+ICtzdGF0aWMgaW50IGV4eW5vc19maW1kX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+
+PiArewo+PiArCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYp
+Owo+PiArCj4+ICsJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGN0eC0+bGNkX2Nsayk7Cj4+ICsJY2xr
+X2Rpc2FibGVfdW5wcmVwYXJlKGN0eC0+YnVzX2Nsayk7Cj4+ICsKPj4gKwlyZXR1cm4gMDsKPj4g
+K30KPj4gKwo+PiArc3RhdGljIGludCBleHlub3NfZmltZF9yZXN1bWUoc3RydWN0IGRldmljZSAq
+ZGV2KQo+PiArewo+PiArCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGRldl9nZXRfZHJ2ZGF0
+YShkZXYpOwo+PiArCWludCByZXQ7Cj4+ICsKPj4gKwlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUo
+Y3R4LT5idXNfY2xrKTsKPj4gKwlpZiAocmV0IDwgMCkgewo+PiArCQlEUk1fRVJST1IoIkZhaWxl
+ZCB0byBwcmVwYXJlX2VuYWJsZSB0aGUgYnVzIGNsayBbJWRdXG4iLCByZXQpOwo+PiArCQlyZXR1
+cm4gcmV0Owo+PiArCX0KPj4gKwo+PiArCXJldCA9IGNsa19wcmVwYXJlX2VuYWJsZShjdHgtPmxj
+ZF9jbGspOwo+PiArCWlmICAocmV0IDwgMCkgewo+PiArCQlEUk1fRVJST1IoIkZhaWxlZCB0byBw
+cmVwYXJlX2VuYWJsZSB0aGUgbGNkIGNsayBbJWRdXG4iLCByZXQpOwo+PiArCQlyZXR1cm4gcmV0
+Owo+PiArCX0KPj4gKwo+PiArCXJldHVybiAwOwo+PiArfQo+PiArI2VuZGlmCj4+ICsKPj4gK3N0
+YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBleHlub3NfZmltZF9wbV9vcHMgPSB7Cj4+ICsJ
+U0VUX1JVTlRJTUVfUE1fT1BTKGV4eW5vc19maW1kX3N1c3BlbmQsIGV4eW5vc19maW1kX3Jlc3Vt
+ZSwgTlVMTCkKPj4gK307Cj4+ICsKPj4gICBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGZpbWRfZHJp
+dmVyID0gewo+PiAgIAkucHJvYmUJCT0gZmltZF9wcm9iZSwKPj4gICAJLnJlbW92ZQkJPSBmaW1k
+X3JlbW92ZSwKPj4gICAJLmRyaXZlcgkJPSB7Cj4+ICAgCQkubmFtZQk9ICJleHlub3M0LWZiIiwK
+Pj4gICAJCS5vd25lcgk9IFRISVNfTU9EVUxFLAo+PiArCQkucG0JPSAmZXh5bm9zX2ZpbWRfcG1f
+b3BzLAo+PiAgIAkJLm9mX21hdGNoX3RhYmxlID0gZmltZF9kcml2ZXJfZHRfbWF0Y2gsCj4+ICAg
+CX0sCj4+ICAgfTsKPj4KPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
