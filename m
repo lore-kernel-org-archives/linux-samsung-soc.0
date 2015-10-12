@@ -1,83 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 0/3] delete unneeded of_node_put
-Date: Mon, 12 Oct 2015 22:43:13 +0200
-Message-ID: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 06/37] ARM: dts: s5pv210-goni: Fix typo in regulator enable GPIO property
+Date: Tue, 13 Oct 2015 00:12:35 +0300
+Message-ID: <1444684386-17094-7-git-send-email-laurent.pinchart@ideasonboard.com>
+References: <1444684386-17094-1-git-send-email-laurent.pinchart@ideasonboard.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55768 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751973AbbJLVNE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Oct 2015 17:13:04 -0400
+In-Reply-To: <1444684386-17094-1-git-send-email-laurent.pinchart@ideasonboard.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Device node iterators perform an of_node_put on each iteration, so putting
-an of_node_put before going around to the next iteration results in a
-double put.
+The property name should be "gpio", not "gpios". Fix it.
 
-The complete semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@r exists@
-expression e1,e2;
-local idexpression n;
-iterator name for_each_node_by_name, for_each_node_by_type,
-for_each_compatible_node, for_each_matching_node,
-for_each_matching_node_and_match, for_each_child_of_node,
-for_each_available_child_of_node, for_each_node_with_property;
-iterator i;
-position p1,p2;
-statement S;
-@@
-
-(
-(
-for_each_node_by_name(n,e1) S
-|
-for_each_node_by_type(n,e1) S
-|
-for_each_compatible_node(n,e1,e2) S
-|
-for_each_matching_node(n,e1) S
-|
-for_each_matching_node_and_match(n,e1,e2) S
-|
-for_each_child_of_node(e1,n) S
-|
-for_each_available_child_of_node(e1,n) S
-|
-for_each_node_with_property(n,e1) S
-)
-&
-i@p1(...) {
-   ... when != of_node_get(n)
-       when any
-   of_node_put@p2(n);
-   ... when any
-}
-)
-
-@s exists@
-local idexpression r.n;
-statement S;
-position r.p1,r.p2;
-iterator i;
-@@
-
- of_node_put@p2(n);
- ... when any
- i@p1(..., n, ...)
- S
-
-@depends on s@
-local idexpression n;
-position r.p2;
-@@
-
-- of_node_put@p2(n);
-// </smpl>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
+ arch/arm/boot/dts/s5pv210-goni.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm/mach-exynos/pm_domains.c                 |    8 +++-----
- drivers/soc/qcom/smd.c                            |    4 +---
- drivers/video/fbdev/omap2/dss/omapdss-boot-init.c |    4 +---
- 3 files changed, 5 insertions(+), 11 deletions(-)
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
+index a3d4643b202e..3b76eeeb8410 100644
+--- a/arch/arm/boot/dts/s5pv210-goni.dts
++++ b/arch/arm/boot/dts/s5pv210-goni.dts
+@@ -47,7 +47,7 @@
+ 			regulator-min-microvolt = <2800000>;
+ 			regulator-max-microvolt = <2800000>;
+ 			reg = <0>;
+-			gpios = <&mp05 4 0>;
++			gpio = <&mp05 4 0>;
+ 			enable-active-high;
+ 		};
+ 
+@@ -73,7 +73,7 @@
+ 			regulator-min-microvolt = <2800000>;
+ 			regulator-max-microvolt = <2800000>;
+ 			reg = <3>;
+-			gpios = <&gpj1 3 0>;
++			gpio = <&gpj1 3 0>;
+ 			enable-active-high;
+ 		};
+ 	};
+-- 
+2.4.9
