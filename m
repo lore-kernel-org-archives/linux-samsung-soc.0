@@ -1,119 +1,157 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: fix spelling errors
-Date: Mon, 12 Oct 2015 22:35:11 +0900
-Message-ID: <561BB70F.9080306@samsung.com>
-References: <1443776366-13046-1-git-send-email-ingi2.kim@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: use vmmc-supply of emmc/sd for exynos5422-odroidxu3
+Date: Mon, 12 Oct 2015 20:03:40 +0530
+Message-ID: <CANAwSgQ7Tm+hrjYqhVS0Og=NsMK1zJSOM+f7pcjHLzFMNKJkpw@mail.gmail.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+ <1444578364-1384-2-git-send-email-linux.amoon@gmail.com> <561B3A3E.3030904@samsung.com>
+ <561B49D0.2040305@samsung.com> <CANAwSgT=O-AVhQv4TO8ZukK15Ya++Kos_ZEjiFZWiDwNXub0mQ@mail.gmail.com>
+ <561BA3F2.5010403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1443776366-13046-1-git-send-email-ingi2.kim@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ingi Kim <ingi2.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <561BA3F2.5010403@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksIEluZ2kuCgpNZXJnZWQuIFRoYW5rcyBmb3IgeW91ciBmaXJzdCBwYXRjaCB0byBkcm0gd29y
-bGQuIDopClRoaXMgcGF0Y2ggaXNuJ3QgdHJpdmlhbCBzbyB3aWxsIGdvIHRvIG5leHQuCgpUaGFu
-a3MsCklua2kgRGFlCgoKMjAxNeuFhCAxMOyblCAwMuydvCAxNzo1OeyXkCBJbmdpIEtpbSDsnbQo
-6rCAKSDsk7Qg6riAOgo+IFRoaXMgcGF0Y2ggZml4ZXMgc3BlbGxpbmcgZXJyb3JzIGluIGRybSBm
-aW1jL2dzYwo+IGluYXZpbGQgLT4gaW52YWlsZAo+IAo+IFNpZ25lZC1vZmYtYnk6IEluZ2kgS2lt
-IDxpbmdpMi5raW1Ac2Ftc3VuZy5jb20+Cj4gLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZmltYy5jIHwgMTYgKysrKysrKystLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICB8IDEyICsrKysrKy0tLS0tLQo+ICAgMiBmaWxl
-cyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAxNCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPiBpbmRleCAyYTY1MjM1Li41ZDAwZjg2
-IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMK
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jCj4gQEAgLTQ2
-Niw3ICs0NjYsNyBAQCBzdGF0aWMgaW50IGZpbWNfc3JjX3NldF9mbXRfb3JkZXIoc3RydWN0IGZp
-bWNfY29udGV4dCAqY3R4LCB1MzIgZm10KQo+ICAgCQkJRVhZTk9TX01TQ1RSTF9DX0lOVF9JTl8y
-UExBTkUpOwo+ICAgCQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+IC0JCWRldl9lcnIoaXBwZHJ2LT5k
-ZXYsICJpbmF2bGlkIHNvdXJjZSB5dXYgb3JkZXIgMHgleC5cbiIsIGZtdCk7Cj4gKwkJZGV2X2Vy
-cihpcHBkcnYtPmRldiwgImludmFsaWQgc291cmNlIHl1diBvcmRlciAweCV4LlxuIiwgZm10KTsK
-PiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTUxMyw3ICs1MTMsNyBAQCBz
-dGF0aWMgaW50IGZpbWNfc3JjX3NldF9mbXQoc3RydWN0IGRldmljZSAqZGV2LCB1MzIgZm10KQo+
-ICAgCQljZmcgfD0gRVhZTk9TX01TQ1RSTF9JTkZPUk1BVF9ZQ0JDUjQyMDsKPiAgIAkJYnJlYWs7
-Cj4gICAJZGVmYXVsdDoKPiAtCQlkZXZfZXJyKGlwcGRydi0+ZGV2LCAiaW5hdmxpZCBzb3VyY2Ug
-Zm9ybWF0IDB4JXguXG4iLCBmbXQpOwo+ICsJCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbnZhbGlk
-IHNvdXJjZSBmb3JtYXQgMHgleC5cbiIsIGZtdCk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAg
-CX0KPiAgIAo+IEBAIC01NzgsNyArNTc4LDcgQEAgc3RhdGljIGludCBmaW1jX3NyY19zZXRfdHJh
-bnNmKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJCWNmZzEgJj0gfkVYWU5PU19NU0NUUkxfRkxJ
-UF9ZX01JUlJPUjsKPiAgIAkJYnJlYWs7Cj4gICAJZGVmYXVsdDoKPiAtCQlkZXZfZXJyKGlwcGRy
-di0+ZGV2LCAiaW5hdmxpZCBkZWdyZWUgdmFsdWUgJWQuXG4iLCBkZWdyZWUpOwo+ICsJCWRldl9l
-cnIoaXBwZHJ2LT5kZXYsICJpbnZhbGlkIGRlZ3JlZSB2YWx1ZSAlZC5cbiIsIGRlZ3JlZSk7Cj4g
-ICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+IEBAIC03MDEsNyArNzAxLDcgQEAgc3Rh
-dGljIGludCBmaW1jX3NyY19zZXRfYWRkcihzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJCXByb3Bl
-cnR5LT5wcm9wX2lkLCBidWZfaWQsIGJ1Zl90eXBlKTsKPiAgIAo+ICAgCWlmIChidWZfaWQgPiBG
-SU1DX01BWF9TUkMpIHsKPiAtCQlkZXZfaW5mbyhpcHBkcnYtPmRldiwgImluYXZsaWQgYnVmX2lk
-ICVkLlxuIiwgYnVmX2lkKTsKPiArCQlkZXZfaW5mbyhpcHBkcnYtPmRldiwgImludmFsaWQgYnVm
-X2lkICVkLlxuIiwgYnVmX2lkKTsKPiAgIAkJcmV0dXJuIC1FTk9NRU07Cj4gICAJfQo+ICAgCj4g
-QEAgLTgxMiw3ICs4MTIsNyBAQCBzdGF0aWMgaW50IGZpbWNfZHN0X3NldF9mbXRfb3JkZXIoc3Ry
-dWN0IGZpbWNfY29udGV4dCAqY3R4LCB1MzIgZm10KQo+ICAgCQljZmcgfD0gRVhZTk9TX0NJT0NU
-UkxfWUNCQ1JfMlBMQU5FOwo+ICAgCQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+IC0JCWRldl9lcnIo
-aXBwZHJ2LT5kZXYsICJpbmF2bGlkIHRhcmdldCB5dXYgb3JkZXIgMHgleC5cbiIsIGZtdCk7Cj4g
-KwkJZGV2X2VycihpcHBkcnYtPmRldiwgImludmFsaWQgdGFyZ2V0IHl1diBvcmRlciAweCV4Llxu
-IiwgZm10KTsKPiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTg2NSw3ICs4
-NjUsNyBAQCBzdGF0aWMgaW50IGZpbWNfZHN0X3NldF9mbXQoc3RydWN0IGRldmljZSAqZGV2LCB1
-MzIgZm10KQo+ICAgCQkJY2ZnIHw9IEVYWU5PU19DSVRSR0ZNVF9PVVRGT1JNQVRfWUNCQ1I0MjA7
-Cj4gICAJCQlicmVhazsKPiAgIAkJZGVmYXVsdDoKPiAtCQkJZGV2X2VycihpcHBkcnYtPmRldiwg
-ImluYXZsaWQgdGFyZ2V0IGZvcm1hdCAweCV4LlxuIiwKPiArCQkJZGV2X2VycihpcHBkcnYtPmRl
-diwgImludmFsaWQgdGFyZ2V0IGZvcm1hdCAweCV4LlxuIiwKPiAgIAkJCQlmbXQpOwo+ICAgCQkJ
-cmV0dXJuIC1FSU5WQUw7Cj4gICAJCX0KPiBAQCAtOTI5LDcgKzkyOSw3IEBAIHN0YXRpYyBpbnQg
-ZmltY19kc3Rfc2V0X3RyYW5zZihzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJCQljZmcgJj0gfkVY
-WU5PU19DSVRSR0ZNVF9GTElQX1lfTUlSUk9SOwo+ICAgCQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+
-IC0JCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbmF2bGlkIGRlZ3JlZSB2YWx1ZSAlZC5cbiIsIGRl
-Z3JlZSk7Cj4gKwkJZGV2X2VycihpcHBkcnYtPmRldiwgImludmFsaWQgZGVncmVlIHZhbHVlICVk
-LlxuIiwgZGVncmVlKTsKPiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTEx
-NjAsNyArMTE2MCw3IEBAIHN0YXRpYyBpbnQgZmltY19kc3Rfc2V0X2FkZHIoc3RydWN0IGRldmlj
-ZSAqZGV2LAo+ICAgCQlwcm9wZXJ0eS0+cHJvcF9pZCwgYnVmX2lkLCBidWZfdHlwZSk7Cj4gICAK
-PiAgIAlpZiAoYnVmX2lkID4gRklNQ19NQVhfRFNUKSB7Cj4gLQkJZGV2X2luZm8oaXBwZHJ2LT5k
-ZXYsICJpbmF2bGlkIGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gKwkJZGV2X2luZm8oaXBwZHJ2
-LT5kZXYsICJpbnZhbGlkIGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gICAJCXJldHVybiAtRU5P
-TUVNOwo+ICAgCX0KPiAgIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZ3NjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMK
-PiBpbmRleCA4MDhhMGEwLi4xMWI4N2QyIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9nc2MuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9nc2MuYwo+IEBAIC01NDMsNyArNTQzLDcgQEAgc3RhdGljIGludCBnc2Nfc3JjX3Nl
-dF9mbXQoc3RydWN0IGRldmljZSAqZGV2LCB1MzIgZm10KQo+ICAgCQkJR1NDX0lOX1lVVjQyMF8y
-UCk7Cj4gICAJCWJyZWFrOwo+ICAgCWRlZmF1bHQ6Cj4gLQkJZGV2X2VycihpcHBkcnYtPmRldiwg
-ImluYXZsaWQgdGFyZ2V0IHl1diBvcmRlciAweCV4LlxuIiwgZm10KTsKPiArCQlkZXZfZXJyKGlw
-cGRydi0+ZGV2LCAiaW52YWxpZCB0YXJnZXQgeXV2IG9yZGVyIDB4JXguXG4iLCBmbXQpOwo+ICAg
-CQlyZXR1cm4gLUVJTlZBTDsKPiAgIAl9Cj4gICAKPiBAQCAtNTk1LDcgKzU5NSw3IEBAIHN0YXRp
-YyBpbnQgZ3NjX3NyY19zZXRfdHJhbnNmKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJCWNmZyAm
-PSB+R1NDX0lOX1JPVF9ZRkxJUDsKPiAgIAkJYnJlYWs7Cj4gICAJZGVmYXVsdDoKPiAtCQlkZXZf
-ZXJyKGlwcGRydi0+ZGV2LCAiaW5hdmxpZCBkZWdyZWUgdmFsdWUgJWQuXG4iLCBkZWdyZWUpOwo+
-ICsJCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbnZhbGlkIGRlZ3JlZSB2YWx1ZSAlZC5cbiIsIGRl
-Z3JlZSk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+IEBAIC03MjEsNyArNzIx
-LDcgQEAgc3RhdGljIGludCBnc2Nfc3JjX3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAg
-IAkJcHJvcGVydHktPnByb3BfaWQsIGJ1Zl9pZCwgYnVmX3R5cGUpOwo+ICAgCj4gICAJaWYgKGJ1
-Zl9pZCA+IEdTQ19NQVhfU1JDKSB7Cj4gLQkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbmF2bGlk
-IGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gKwkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbnZh
-bGlkIGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0K
-PiAgIAo+IEBAIC04MTQsNyArODE0LDcgQEAgc3RhdGljIGludCBnc2NfZHN0X3NldF9mbXQoc3Ry
-dWN0IGRldmljZSAqZGV2LCB1MzIgZm10KQo+ICAgCQkJR1NDX09VVF9ZVVY0MjBfMlApOwo+ICAg
-CQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+IC0JCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbmF2bGlk
-IHRhcmdldCB5dXYgb3JkZXIgMHgleC5cbiIsIGZtdCk7Cj4gKwkJZGV2X2VycihpcHBkcnYtPmRl
-diwgImludmFsaWQgdGFyZ2V0IHl1diBvcmRlciAweCV4LlxuIiwgZm10KTsKPiAgIAkJcmV0dXJu
-IC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTg2Niw3ICs4NjYsNyBAQCBzdGF0aWMgaW50IGdz
-Y19kc3Rfc2V0X3RyYW5zZihzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJCQljZmcgJj0gfkdTQ19J
-Tl9ST1RfWUZMSVA7Cj4gICAJCWJyZWFrOwo+ICAgCWRlZmF1bHQ6Cj4gLQkJZGV2X2VycihpcHBk
-cnYtPmRldiwgImluYXZsaWQgZGVncmVlIHZhbHVlICVkLlxuIiwgZGVncmVlKTsKPiArCQlkZXZf
-ZXJyKGlwcGRydi0+ZGV2LCAiaW52YWxpZCBkZWdyZWUgdmFsdWUgJWQuXG4iLCBkZWdyZWUpOwo+
-ICAgCQlyZXR1cm4gLUVJTlZBTDsKPiAgIAl9Cj4gICAKPiBAQCAtMTE3Niw3ICsxMTc2LDcgQEAg
-c3RhdGljIGludCBnc2NfZHN0X3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJcHJv
-cGVydHktPnByb3BfaWQsIGJ1Zl9pZCwgYnVmX3R5cGUpOwo+ICAgCj4gICAJaWYgKGJ1Zl9pZCA+
-IEdTQ19NQVhfRFNUKSB7Cj4gLQkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbmF2bGlkIGJ1Zl9p
-ZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gKwkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbnZhbGlkIGJ1
-Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+
-IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Krzysztof,
+
+On 12 October 2015 at 17:43, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> W dniu 12.10.2015 o 20:08, Anand Moon pisze:
+>> Hi Krzysztof,
+>>
+>> On 12 October 2015 at 11:19, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> On 12.10.2015 13:42, Krzysztof Kozlowski wrote:
+>>>> On 12.10.2015 00:46, Anand Moon wrote:
+>>>>> Added support for vmmc/vqmmc-supply for emmc/sd cards.
+>>>>> Fixed the min values for regulator ldo13_reg (VDDQ_MMC2).
+>>>>
+>>>> I can't see the description of a problem which is fixed. If you fix
+>>>> something, then please describe what is wrong.
+>>>>
+>>>>> Added ramp-delay for LDO9(VDD33_USB3_0).
+>>>>> Added ramp-delay for LDO13(VDDQ_MMC2).
+>>>>> Added ramp-delay for LDO15(ETH_P3V3).
+>>>>>
+>>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>>>>
+>>>>> ---
+>>>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
+>>>>>
+>>>>> Note:
+>>>>> Changes need for support of UHS-I highspeed cards.
+>>>>> changes for vqmmc-supply for emmc is not supported.
+>>>>>
+>>>>> [    1.831136] vdd_ldo9: ramp_delay not set
+>>>>> [    1.843049] vdd_ldo13: ramp_delay not set
+>>>>> [    1.850975] vdd_ldo15: ramp_delay not set
+>>>>> [    1.862816] vdd_sd: ramp_delay not set
+>>>>> ---
+>>>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 8 +++++++-
+>>>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>>>> index 26decbd..58c06d3 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>>>> @@ -157,6 +157,7 @@
+>>>>>                              regulator-min-microvolt = <3000000>;
+>>>>>                              regulator-max-microvolt = <3000000>;
+>>>>>                              regulator-always-on;
+>>>>> +                            regulator-ramp-delay = <12000>;
+>>>>>                      };
+>>>>>
+>>>>>                      ldo10_reg: LDO10 {
+>>>>> @@ -182,9 +183,10 @@
+>>>>>
+>>>>>                      ldo13_reg: LDO13 {
+>>>>>                              regulator-name = "vdd_ldo13";
+>>>>> -                            regulator-min-microvolt = <2800000>;
+>>>>> +                            regulator-min-microvolt = <1800000>;
+>>>>>                              regulator-max-microvolt = <2800000>;
+>>>>>                              regulator-always-on;
+>>>>> +                            regulator-ramp-delay = <12000>;
+>>>>>                      };
+>>>>>
+>>>>>                      ldo15_reg: LDO15 {
+>>>>> @@ -213,6 +215,7 @@
+>>>>>                              regulator-min-microvolt = <2800000>;
+>>>>>                              regulator-max-microvolt = <2800000>;
+>>>>>                              regulator-always-on;
+>>>>> +                            regulator-ramp-delay = <12000>;
+>>>>
+>>>> Where did you get this value from? It looks wrong... My datasheet does
+>>>> not have 12000 uV/uS.
+>>>
+>>
+>>> Anand,
+>>>
+>>> We have actually been here:
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351601.html
+>>>
+>>> That time you used 8000. I asked the same question - how did you figure
+>>> out the exact value.
+>>>
+>>> Now we have the same question - why 12000?
+>>>
+>>> It is completely fine to make a mistake (I do a lot of them) but please
+>>> try not to make the same mistake again.
+>>>
+>>> BR,
+>>> Krzysztof
+>>
+>> I will focus more in the future to clamp down my mistakes to minimal.
+>>
+>>>
+>>>>
+>>>>>                      };
+>>>>>
+>>>>>                      ldo24_reg: LDO24 {
+>>>>> @@ -338,6 +341,7 @@
+>>>>>      samsung,dw-mshc-ddr-timing = <0 2>;
+>>>>>      samsung,dw-mshc-hs400-timing = <0 2>;
+>>>>>      samsung,read-strobe-delay = <90>;
+>>>>> +    vmmc-supply = <&ldo3_reg>;
+>>>>>      pinctrl-names = "default";
+>>>>>      pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+>>>>>      bus-width = <8>;
+>>>>> @@ -352,6 +356,8 @@
+>>>>>      samsung,dw-mshc-ciu-div = <3>;
+>>>>>      samsung,dw-mshc-sdr-timing = <0 4>;
+>>>>>      samsung,dw-mshc-ddr-timing = <0 2>;
+>>>>> +    vmmc-supply = <&ldo19_reg>;
+>>>>> +    vqmmc-supply = <&ldo13_reg>;
+>>>>
+>>>> It looks wrong. LDO13 is used in one place as VQMMC and in other as
+>>>> VMMC. How did you figure out which regulator supplies which power domain?
+>>>>
+>>
+>> I refer Schematics diagram to XU4_MAIN_REV0.1.pdf
+>>
+>> From the PWR_PMCI_S2MPS11_LDO_CTRL document it LDO13 point to VDDQ_MMC2.
+>>
+>
+> Aaa right, by mistake I thought that you put LDO13 here and in the node
+> before, but there is LDO3, not 13. You did this correctly.
+>
+> But I have two other questions:
+> 1. Maybe these regulators now should not be always-enabled?
+
+regulator-always-on         can be removed: I have tested this.
+
+> 2. Why changing minimum voltage of LDO13 to 1.8V? The schematics says 2.8V.
+>
+
+In the schematics diagram to XU4_MAIN_REV0.1.pdf
+
+>From the EXYNOS5422 MMC UFS diagram CH2 range is VDDQ_MMC2 (1.8V/2.8V).
+
+-Anand Moon
+
+> Best regards,
+> Krzysztof
+>
+>
