@@ -1,43 +1,146 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCHv9 14/15] cec: s5p-cec: Add s5p-cec driver
-Date: Mon, 12 Oct 2015 12:54:20 +0200
-Message-ID: <561B915C.20005@xs4all.nl>
-References: <cover.1441633456.git.hansverk@cisco.com> <b55a5c1ff9318211aa472b28d03a978aad23770b.1441633456.git.hansverk@cisco.com> <20151005231109.GN21513@n2100.arm.linux.org.uk>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: use vmmc-supply of emmc/sd for exynos5422-odroidxu3
+Date: Mon, 12 Oct 2015 16:38:10 +0530
+Message-ID: <CANAwSgT=O-AVhQv4TO8ZukK15Ya++Kos_ZEjiFZWiDwNXub0mQ@mail.gmail.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+ <1444578364-1384-2-git-send-email-linux.amoon@gmail.com> <561B3A3E.3030904@samsung.com>
+ <561B49D0.2040305@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20151005231109.GN21513@n2100.arm.linux.org.uk>
-Sender: linux-media-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Hans Verkuil <hansverk@cisco.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:35942 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751606AbbJLLIb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Oct 2015 07:08:31 -0400
+In-Reply-To: <561B49D0.2040305@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On 10/06/2015 01:11 AM, Russell King - ARM Linux wrote:
-> On Mon, Sep 07, 2015 at 03:44:43PM +0200, Hans Verkuil wrote:
->> +	cec->adap = cec_create_adapter(&s5p_cec_adap_ops, cec,
->> +		CEC_NAME, CEC_CAP_STATE |
->> +		CEC_CAP_PHYS_ADDR | CEC_CAP_LOG_ADDRS | CEC_CAP_IO |
->> +		CEC_CAP_IS_SOURCE,
->> +		0, THIS_MODULE, &pdev->dev);
->> +	ret = PTR_ERR_OR_ZERO(cec->adap);
->> +	if (ret)
->> +		return ret;
->> +	cec->adap->available_log_addrs = 1;
->> +
->> +	platform_set_drvdata(pdev, cec);
->> +	pm_runtime_enable(dev);
-> 
-> This is really not a good interface.
-> 
-> "cec_create_adapter" creates and registers the adapter, at which point it
-> becomes available to userspace.  However, you haven't finished setting it
-> up, so it's possible to nip in here and start using it before the setup
-> has completed.  This needs fixing.
-> 
+Hi Krzysztof,
 
-Good point, I'll split off the registration part into a separate function.
+On 12 October 2015 at 11:19, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 12.10.2015 13:42, Krzysztof Kozlowski wrote:
+>> On 12.10.2015 00:46, Anand Moon wrote:
+>>> Added support for vmmc/vqmmc-supply for emmc/sd cards.
+>>> Fixed the min values for regulator ldo13_reg (VDDQ_MMC2).
+>>
+>> I can't see the description of a problem which is fixed. If you fix
+>> something, then please describe what is wrong.
+>>
+>>> Added ramp-delay for LDO9(VDD33_USB3_0).
+>>> Added ramp-delay for LDO13(VDDQ_MMC2).
+>>> Added ramp-delay for LDO15(ETH_P3V3).
+>>>
+>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>>
+>>> ---
+>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
+>>>
+>>> Note:
+>>> Changes need for support of UHS-I highspeed cards.
+>>> changes for vqmmc-supply for emmc is not supported.
+>>>
+>>> [    1.831136] vdd_ldo9: ramp_delay not set
+>>> [    1.843049] vdd_ldo13: ramp_delay not set
+>>> [    1.850975] vdd_ldo15: ramp_delay not set
+>>> [    1.862816] vdd_sd: ramp_delay not set
+>>> ---
+>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 8 +++++++-
+>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> index 26decbd..58c06d3 100644
+>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> @@ -157,6 +157,7 @@
+>>>                              regulator-min-microvolt = <3000000>;
+>>>                              regulator-max-microvolt = <3000000>;
+>>>                              regulator-always-on;
+>>> +                            regulator-ramp-delay = <12000>;
+>>>                      };
+>>>
+>>>                      ldo10_reg: LDO10 {
+>>> @@ -182,9 +183,10 @@
+>>>
+>>>                      ldo13_reg: LDO13 {
+>>>                              regulator-name = "vdd_ldo13";
+>>> -                            regulator-min-microvolt = <2800000>;
+>>> +                            regulator-min-microvolt = <1800000>;
+>>>                              regulator-max-microvolt = <2800000>;
+>>>                              regulator-always-on;
+>>> +                            regulator-ramp-delay = <12000>;
+>>>                      };
+>>>
+>>>                      ldo15_reg: LDO15 {
+>>> @@ -213,6 +215,7 @@
+>>>                              regulator-min-microvolt = <2800000>;
+>>>                              regulator-max-microvolt = <2800000>;
+>>>                              regulator-always-on;
+>>> +                            regulator-ramp-delay = <12000>;
+>>
+>> Where did you get this value from? It looks wrong... My datasheet does
+>> not have 12000 uV/uS.
+>
 
-Regards,
+> Anand,
+>
+> We have actually been here:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/351601.html
+>
+> That time you used 8000. I asked the same question - how did you figure
+> out the exact value.
+>
+> Now we have the same question - why 12000?
+>
+> It is completely fine to make a mistake (I do a lot of them) but please
+> try not to make the same mistake again.
+>
+> BR,
+> Krzysztof
 
-	Hans
+I will focus more in the future to clamp down my mistakes to minimal.
+
+>
+>>
+>>>                      };
+>>>
+>>>                      ldo24_reg: LDO24 {
+>>> @@ -338,6 +341,7 @@
+>>>      samsung,dw-mshc-ddr-timing = <0 2>;
+>>>      samsung,dw-mshc-hs400-timing = <0 2>;
+>>>      samsung,read-strobe-delay = <90>;
+>>> +    vmmc-supply = <&ldo3_reg>;
+>>>      pinctrl-names = "default";
+>>>      pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+>>>      bus-width = <8>;
+>>> @@ -352,6 +356,8 @@
+>>>      samsung,dw-mshc-ciu-div = <3>;
+>>>      samsung,dw-mshc-sdr-timing = <0 4>;
+>>>      samsung,dw-mshc-ddr-timing = <0 2>;
+>>> +    vmmc-supply = <&ldo19_reg>;
+>>> +    vqmmc-supply = <&ldo13_reg>;
+>>
+>> It looks wrong. LDO13 is used in one place as VQMMC and in other as
+>> VMMC. How did you figure out which regulator supplies which power domain?
+>>
+
+I refer Schematics diagram to XU4_MAIN_REV0.1.pdf
+
+>From the PWR_PMCI_S2MPS11_LDO_CTRL document it LDO13 point to VDDQ_MMC2.
+
+>> Best regards,
+>> Krzysztof
+>>
+>>>      cd-gpios = <&gpc2 2 GPIO_ACTIVE_HIGH>;
+>>>      cd-inverted;
+>>>      pinctrl-names = "default";
+>>>
+>>
+>>
+>
+
+-Anand Moon
