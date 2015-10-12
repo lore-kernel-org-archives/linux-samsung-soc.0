@@ -1,128 +1,86 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
-Date: Mon, 12 Oct 2015 16:53:57 +0530
-Message-ID: <CANAwSgSS3Tv_CfX3s1f6VxZre86c66Eg=AdTkwQr6xtPF5WOfA@mail.gmail.com>
-References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
- <1444578364-1384-3-git-send-email-linux.amoon@gmail.com> <561B48B7.1040201@samsung.com>
- <CANAwSgSk0yHGvnoVoTk9MnUqjyEw1+yzH=C-1s_wxVkpGRHCEg@mail.gmail.com> <561B90B1.1090100@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv9 07/15] cec: add HDMI CEC framework
+Date: Mon, 12 Oct 2015 13:35:54 +0200
+Message-ID: <561B9B1A.4020001@xs4all.nl>
+References: <cover.1441633456.git.hansverk@cisco.com> <60de2f33f0d4c809f06d23cdac75e3b798aaae4b.1441633456.git.hansverk@cisco.com> <20151006170635.GQ21513@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <561B90B1.1090100@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20151006170635.GQ21513@n2100.arm.linux.org.uk>
+Sender: linux-media-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Hans Verkuil <hansverk@cisco.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jaehoon Chung
+On 10/06/2015 07:06 PM, Russell King - ARM Linux wrote:
+> On Mon, Sep 07, 2015 at 03:44:36PM +0200, Hans Verkuil wrote:
+>> From: Hans Verkuil <hans.verkuil@cisco.com>
+>>
+>> The added HDMI CEC framework provides a generic kernel interface for
+>> HDMI CEC devices.
+>>
+>> Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+>> [k.debski@samsung.com: Merged CEC Updates commit by Hans Verkuil]
+>> [k.debski@samsung.com: Merged Update author commit by Hans Verkuil]
+>> [k.debski@samsung.com: change kthread handling when setting logical
+>> address]
+>> [k.debski@samsung.com: code cleanup and fixes]
+>> [k.debski@samsung.com: add missing CEC commands to match spec]
+>> [k.debski@samsung.com: add RC framework support]
+>> [k.debski@samsung.com: move and edit documentation]
+>> [k.debski@samsung.com: add vendor id reporting]
+>> [k.debski@samsung.com: add possibility to clear assigned logical
+>> addresses]
+>> [k.debski@samsung.com: documentation fixes, clenaup and expansion]
+>> [k.debski@samsung.com: reorder of API structs and add reserved fields]
+>> [k.debski@samsung.com: fix handling of events and fix 32/64bit timespec
+>> problem]
+>> [k.debski@samsung.com: add cec.h to include/uapi/linux/Kbuild]
+>> [k.debski@samsung.com: add sequence number handling]
+>> [k.debski@samsung.com: add passthrough mode]
+>> [k.debski@samsung.com: fix CEC defines, add missing CEC 2.0 commands]
+>> minor additions]
+>> Signed-off-by: Kamil Debski <kamil@wypas.org>
+>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> 
+> I don't see much in the way of support for source devices in this:
+> how do we handle hotplug of the sink, and how to do we configure the
+> physical address?
 
-On 12 October 2015 at 16:21, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> On 10/12/2015 07:46 PM, Anand Moon wrote:
->> Hi Krzysztof,
->>
->> On 12 October 2015 at 11:14, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> On 12.10.2015 00:46, Anand Moon wrote:
->>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
->>>
->>> This description is not entirely correct. The MMC driver already
->>> supports these UHS speeds (you did not any code) so you rather enabled
->>> it (description of bindings says "is supported").
->>>
->>> You mentioned DDR50 but I don't see respective property below.
->> Looks like I missed it, I will add this in the next patch,
->>>
->>> How do you know that these modes are really supported? I don't know. Can
->>> you convince me?
->>>
->>
->>>>
->>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>>
->>>> ---
->>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
->>>>
->>>> Changes Fixed the UHS-I bus speed detedtion on cold boot.
->>>
->>> I don't get what is exactly fixed here. What was the error? What is the
->>> outcome of this fix? The log below is before or after?
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>>>
->>>> [    2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req 100000000Hz, actual 100000000HZ div = 0)
->>>> [    2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
->>>> [    2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->>>> [    2.461743]  mmcblk0: p1 p2
->>>
->>>> ---
->>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++++
->>>>  1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> index 58c06d3..ba4a87b 100644
->>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> @@ -364,6 +364,10 @@
->>>>       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->>>>       bus-width = <4>;
->>>>       cap-sd-highspeed;
->>>> +     sd-uhs-sdr12;
->>>> +     sd-uhs-sdr25;
->>>> +     sd-uhs-sdr50;
->>>> +     sd-uhs-sdr104;
->>>>  };
->>>>
->>>>  &pinctrl_0 {
->>>>
->>>
->>
->> Changes were made to support Sandisk Ultra UHS-I class 10 card support.
->> OdroidXU3/XU4 board would not boot up using this card.
->>
->> Depending on the capability of the UHS-I card, the speed of the card
->> is selected.
->> I have just added the enhance capability feature to support them.
->>
->> On warm boot: i.e reboot of the board.
->> [    4.649073] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
->> req 50000000Hz, actual 50000000HZ div = 0)
->> [    4.657555] mmc1: new high speed SDHC card at address aaaa
->> [    4.663787] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->> [    4.669206]  mmcblk0: p1 p2
->>
->> On cold boot:: ie: power on the board.
->>
->> [    4.630237] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
->> req 100000000Hz, actual 100000000HZ div = 0)
->> [    4.639820] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
->> [    4.646266] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->> [    4.650293] IRQ56 no longer affine to CPU7
->> [    4.650581] CPU7: shutdown
->> [    4.658293]  mmcblk0: p1 p2
->>
->> Note: Their is need to reset the PMIC
->> S2MPS11_REG_L13CTRL/S2MPS11_REG_L19CTRL registers
->>          to support this feature consistently on every reboot.
->
-> I don't understand...why needs to reset?
-> I know it needs to switch the voltage, doesn't it?
->
+The source device driver should call cec_enable(false) if the hotplug
+goes down and cec_enable(true) when the EDID has been read and the physical
+address has been retrieved and configured in the cec adapter.
 
-I was referring to this code.
+This however assumes that the source driver is the one controlling the
+CEC hardware. This is the case for the cobalt driver, but not apparently
+for the exynos hardware. In that case userspace will have to handle this:
+disable the CEC adapter when the hotplug disappears, set the physical address
+and enable the CEC adapter when a new EDID is read.
 
-https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/drivers/regulator/s2mps11.c#L451
+Such drivers have the CEC_CAP_STATE and CEC_CAP_PHYS_ADDR caps set. I.e.
+they expect that userspace does this.
 
-I am not sure if this need to fixed in u-boot of hardkernel or
-shutdown function.
+This is also something that USB CEC dongles will do, although I don't have
+a driver for that.
 
--Anand Moon
+> Surely you aren't proposing that drivers should write directly to
+> adap->phys_addr without calling some notification function that the
+> physical address has changed?
 
-> Best Regards,
-> Jaehoon Chung
->
->>
->> -Anand Moon
->>
->
+Userspace is informed through CEC_EVENT_STATE_CHANGE when the adapter is
+enabled/disabled. When the adapter is enabled and CEC_CAP_PHYS_ADDR is
+not set (i.e. the kernel takes care of this), then calling CEC_ADAP_G_PHYS_ADDR
+returns the new physical address.
+ 
+> Please can you give some guidance on how a HDMI source bridge driver
+> should deal with these issues.  Thanks.
+> 
+
+The cec.txt file will give more information about the kernel internals.
+All I need is time (ha!) to update that file since the current version
+is completely outdated (as mentioned in the cover letter).
+
+Regards,
+
+	Hans
