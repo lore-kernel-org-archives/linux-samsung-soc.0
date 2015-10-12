@@ -1,76 +1,119 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 00/16] drm/exynos/hdmi: refactoring/cleanup patches
-Date: Mon, 12 Oct 2015 22:26:50 +0900
-Message-ID: <561BB51A.2050307@samsung.com>
-References: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix spelling errors
+Date: Mon, 12 Oct 2015 22:35:11 +0900
+Message-ID: <561BB70F.9080306@samsung.com>
+References: <1443776366-13046-1-git-send-email-ingi2.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:41609 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751801AbbJLN0w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 09:26:52 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NW402CRV00RLP60@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Oct 2015 22:26:51 +0900 (KST)
-In-reply-to: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1443776366-13046-1-git-send-email-ingi2.kim@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ingi Kim <ingi2.kim@samsung.com>, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hi Andrzej,
-
-=46or all patches, merged excepting patch 2 which cleans up dt binding
-document.
-
-Thanks,
-Inki Dae
-
-2015=B3=E2 09=BF=F9 25=C0=CF 21:48=BF=A1 Andrzej Hajda =C0=CC(=B0=A1) =BE=
-=B4 =B1=DB:
-> Hi,
->=20
-> This is another set of cleanup/improvement patches for HDMI.
->=20
-> The patchset is based on exynos-drm-next.
-> It was tested on Universal and Odroid U3.
->=20
-> Regards
-> Andrzej
->=20
->=20
-> Andrzej Hajda (15):
->    drm/exynos/hdmi: remove support for deprecated compatible
->    dt-bindings: remove deprecated compatible string from exynos-hdmi
->    drm/exynos/hdmi: use mappings for registers with IP dependent addr=
-ess
->    drm/exynos/hdmi: move PLL stabilization check code to separate
->      function
->    drm/exynos/hdmi: simplify HDMI-PHY power sequence
->    drm/exynos/hdmi: replace all writeb with writel
->    drm/exynos/hdmi: fix removal order
->    drm/exynos/hdmi: use optional regulator_get for hdmi-en
->    drm/exynos/hdmi: use constant size array for regulators
->    drm/exynos/hdmi: simplify clock re-parenting
->    drm/exynos/hdmi: convert to gpiod API
->    drm/exynos/hdmi: remove deprecated hdmi_resources structure
->    drm/exynos/hdmi: convert container_of macro to inline function
->    drm/exynos/hdmi: improve HDMI/ACR related code
->    drm/exynos/hdmi: remove unused field
->=20
-> Tomasz Stanislawski (1):
->    drm: exynos: mixer: fix using usleep() in atomic context
->=20
->   .../devicetree/bindings/video/exynos_hdmi.txt      |   7 +-
->   drivers/gpu/drm/exynos/exynos_hdmi.c               | 491 +++++++---=
------------
->   drivers/gpu/drm/exynos/exynos_mixer.c              |   2 +-
->   drivers/gpu/drm/exynos/regs-hdmi.h                 |  33 +-
->   4 files changed, 189 insertions(+), 344 deletions(-)
->=20
+SGksIEluZ2kuCgpNZXJnZWQuIFRoYW5rcyBmb3IgeW91ciBmaXJzdCBwYXRjaCB0byBkcm0gd29y
+bGQuIDopClRoaXMgcGF0Y2ggaXNuJ3QgdHJpdmlhbCBzbyB3aWxsIGdvIHRvIG5leHQuCgpUaGFu
+a3MsCklua2kgRGFlCgoKMjAxNeuFhCAxMOyblCAwMuydvCAxNzo1OeyXkCBJbmdpIEtpbSDsnbQo
+6rCAKSDsk7Qg6riAOgo+IFRoaXMgcGF0Y2ggZml4ZXMgc3BlbGxpbmcgZXJyb3JzIGluIGRybSBm
+aW1jL2dzYwo+IGluYXZpbGQgLT4gaW52YWlsZAo+IAo+IFNpZ25lZC1vZmYtYnk6IEluZ2kgS2lt
+IDxpbmdpMi5raW1Ac2Ftc3VuZy5jb20+Cj4gLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZmltYy5jIHwgMTYgKysrKysrKystLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICB8IDEyICsrKysrKy0tLS0tLQo+ICAgMiBmaWxl
+cyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAxNCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPiBpbmRleCAyYTY1MjM1Li41ZDAwZjg2
+IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMK
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jCj4gQEAgLTQ2
+Niw3ICs0NjYsNyBAQCBzdGF0aWMgaW50IGZpbWNfc3JjX3NldF9mbXRfb3JkZXIoc3RydWN0IGZp
+bWNfY29udGV4dCAqY3R4LCB1MzIgZm10KQo+ICAgCQkJRVhZTk9TX01TQ1RSTF9DX0lOVF9JTl8y
+UExBTkUpOwo+ICAgCQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+IC0JCWRldl9lcnIoaXBwZHJ2LT5k
+ZXYsICJpbmF2bGlkIHNvdXJjZSB5dXYgb3JkZXIgMHgleC5cbiIsIGZtdCk7Cj4gKwkJZGV2X2Vy
+cihpcHBkcnYtPmRldiwgImludmFsaWQgc291cmNlIHl1diBvcmRlciAweCV4LlxuIiwgZm10KTsK
+PiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTUxMyw3ICs1MTMsNyBAQCBz
+dGF0aWMgaW50IGZpbWNfc3JjX3NldF9mbXQoc3RydWN0IGRldmljZSAqZGV2LCB1MzIgZm10KQo+
+ICAgCQljZmcgfD0gRVhZTk9TX01TQ1RSTF9JTkZPUk1BVF9ZQ0JDUjQyMDsKPiAgIAkJYnJlYWs7
+Cj4gICAJZGVmYXVsdDoKPiAtCQlkZXZfZXJyKGlwcGRydi0+ZGV2LCAiaW5hdmxpZCBzb3VyY2Ug
+Zm9ybWF0IDB4JXguXG4iLCBmbXQpOwo+ICsJCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbnZhbGlk
+IHNvdXJjZSBmb3JtYXQgMHgleC5cbiIsIGZtdCk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAg
+CX0KPiAgIAo+IEBAIC01NzgsNyArNTc4LDcgQEAgc3RhdGljIGludCBmaW1jX3NyY19zZXRfdHJh
+bnNmKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJCWNmZzEgJj0gfkVYWU5PU19NU0NUUkxfRkxJ
+UF9ZX01JUlJPUjsKPiAgIAkJYnJlYWs7Cj4gICAJZGVmYXVsdDoKPiAtCQlkZXZfZXJyKGlwcGRy
+di0+ZGV2LCAiaW5hdmxpZCBkZWdyZWUgdmFsdWUgJWQuXG4iLCBkZWdyZWUpOwo+ICsJCWRldl9l
+cnIoaXBwZHJ2LT5kZXYsICJpbnZhbGlkIGRlZ3JlZSB2YWx1ZSAlZC5cbiIsIGRlZ3JlZSk7Cj4g
+ICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+IEBAIC03MDEsNyArNzAxLDcgQEAgc3Rh
+dGljIGludCBmaW1jX3NyY19zZXRfYWRkcihzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJCXByb3Bl
+cnR5LT5wcm9wX2lkLCBidWZfaWQsIGJ1Zl90eXBlKTsKPiAgIAo+ICAgCWlmIChidWZfaWQgPiBG
+SU1DX01BWF9TUkMpIHsKPiAtCQlkZXZfaW5mbyhpcHBkcnYtPmRldiwgImluYXZsaWQgYnVmX2lk
+ICVkLlxuIiwgYnVmX2lkKTsKPiArCQlkZXZfaW5mbyhpcHBkcnYtPmRldiwgImludmFsaWQgYnVm
+X2lkICVkLlxuIiwgYnVmX2lkKTsKPiAgIAkJcmV0dXJuIC1FTk9NRU07Cj4gICAJfQo+ICAgCj4g
+QEAgLTgxMiw3ICs4MTIsNyBAQCBzdGF0aWMgaW50IGZpbWNfZHN0X3NldF9mbXRfb3JkZXIoc3Ry
+dWN0IGZpbWNfY29udGV4dCAqY3R4LCB1MzIgZm10KQo+ICAgCQljZmcgfD0gRVhZTk9TX0NJT0NU
+UkxfWUNCQ1JfMlBMQU5FOwo+ICAgCQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+IC0JCWRldl9lcnIo
+aXBwZHJ2LT5kZXYsICJpbmF2bGlkIHRhcmdldCB5dXYgb3JkZXIgMHgleC5cbiIsIGZtdCk7Cj4g
+KwkJZGV2X2VycihpcHBkcnYtPmRldiwgImludmFsaWQgdGFyZ2V0IHl1diBvcmRlciAweCV4Llxu
+IiwgZm10KTsKPiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTg2NSw3ICs4
+NjUsNyBAQCBzdGF0aWMgaW50IGZpbWNfZHN0X3NldF9mbXQoc3RydWN0IGRldmljZSAqZGV2LCB1
+MzIgZm10KQo+ICAgCQkJY2ZnIHw9IEVYWU5PU19DSVRSR0ZNVF9PVVRGT1JNQVRfWUNCQ1I0MjA7
+Cj4gICAJCQlicmVhazsKPiAgIAkJZGVmYXVsdDoKPiAtCQkJZGV2X2VycihpcHBkcnYtPmRldiwg
+ImluYXZsaWQgdGFyZ2V0IGZvcm1hdCAweCV4LlxuIiwKPiArCQkJZGV2X2VycihpcHBkcnYtPmRl
+diwgImludmFsaWQgdGFyZ2V0IGZvcm1hdCAweCV4LlxuIiwKPiAgIAkJCQlmbXQpOwo+ICAgCQkJ
+cmV0dXJuIC1FSU5WQUw7Cj4gICAJCX0KPiBAQCAtOTI5LDcgKzkyOSw3IEBAIHN0YXRpYyBpbnQg
+ZmltY19kc3Rfc2V0X3RyYW5zZihzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJCQljZmcgJj0gfkVY
+WU5PU19DSVRSR0ZNVF9GTElQX1lfTUlSUk9SOwo+ICAgCQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+
+IC0JCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbmF2bGlkIGRlZ3JlZSB2YWx1ZSAlZC5cbiIsIGRl
+Z3JlZSk7Cj4gKwkJZGV2X2VycihpcHBkcnYtPmRldiwgImludmFsaWQgZGVncmVlIHZhbHVlICVk
+LlxuIiwgZGVncmVlKTsKPiAgIAkJcmV0dXJuIC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTEx
+NjAsNyArMTE2MCw3IEBAIHN0YXRpYyBpbnQgZmltY19kc3Rfc2V0X2FkZHIoc3RydWN0IGRldmlj
+ZSAqZGV2LAo+ICAgCQlwcm9wZXJ0eS0+cHJvcF9pZCwgYnVmX2lkLCBidWZfdHlwZSk7Cj4gICAK
+PiAgIAlpZiAoYnVmX2lkID4gRklNQ19NQVhfRFNUKSB7Cj4gLQkJZGV2X2luZm8oaXBwZHJ2LT5k
+ZXYsICJpbmF2bGlkIGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gKwkJZGV2X2luZm8oaXBwZHJ2
+LT5kZXYsICJpbnZhbGlkIGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gICAJCXJldHVybiAtRU5P
+TUVNOwo+ICAgCX0KPiAgIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZ3NjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMK
+PiBpbmRleCA4MDhhMGEwLi4xMWI4N2QyIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9nc2MuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9nc2MuYwo+IEBAIC01NDMsNyArNTQzLDcgQEAgc3RhdGljIGludCBnc2Nfc3JjX3Nl
+dF9mbXQoc3RydWN0IGRldmljZSAqZGV2LCB1MzIgZm10KQo+ICAgCQkJR1NDX0lOX1lVVjQyMF8y
+UCk7Cj4gICAJCWJyZWFrOwo+ICAgCWRlZmF1bHQ6Cj4gLQkJZGV2X2VycihpcHBkcnYtPmRldiwg
+ImluYXZsaWQgdGFyZ2V0IHl1diBvcmRlciAweCV4LlxuIiwgZm10KTsKPiArCQlkZXZfZXJyKGlw
+cGRydi0+ZGV2LCAiaW52YWxpZCB0YXJnZXQgeXV2IG9yZGVyIDB4JXguXG4iLCBmbXQpOwo+ICAg
+CQlyZXR1cm4gLUVJTlZBTDsKPiAgIAl9Cj4gICAKPiBAQCAtNTk1LDcgKzU5NSw3IEBAIHN0YXRp
+YyBpbnQgZ3NjX3NyY19zZXRfdHJhbnNmKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJCWNmZyAm
+PSB+R1NDX0lOX1JPVF9ZRkxJUDsKPiAgIAkJYnJlYWs7Cj4gICAJZGVmYXVsdDoKPiAtCQlkZXZf
+ZXJyKGlwcGRydi0+ZGV2LCAiaW5hdmxpZCBkZWdyZWUgdmFsdWUgJWQuXG4iLCBkZWdyZWUpOwo+
+ICsJCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbnZhbGlkIGRlZ3JlZSB2YWx1ZSAlZC5cbiIsIGRl
+Z3JlZSk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+IEBAIC03MjEsNyArNzIx
+LDcgQEAgc3RhdGljIGludCBnc2Nfc3JjX3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAg
+IAkJcHJvcGVydHktPnByb3BfaWQsIGJ1Zl9pZCwgYnVmX3R5cGUpOwo+ICAgCj4gICAJaWYgKGJ1
+Zl9pZCA+IEdTQ19NQVhfU1JDKSB7Cj4gLQkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbmF2bGlk
+IGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gKwkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbnZh
+bGlkIGJ1Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0K
+PiAgIAo+IEBAIC04MTQsNyArODE0LDcgQEAgc3RhdGljIGludCBnc2NfZHN0X3NldF9mbXQoc3Ry
+dWN0IGRldmljZSAqZGV2LCB1MzIgZm10KQo+ICAgCQkJR1NDX09VVF9ZVVY0MjBfMlApOwo+ICAg
+CQlicmVhazsKPiAgIAlkZWZhdWx0Ogo+IC0JCWRldl9lcnIoaXBwZHJ2LT5kZXYsICJpbmF2bGlk
+IHRhcmdldCB5dXYgb3JkZXIgMHgleC5cbiIsIGZtdCk7Cj4gKwkJZGV2X2VycihpcHBkcnYtPmRl
+diwgImludmFsaWQgdGFyZ2V0IHl1diBvcmRlciAweCV4LlxuIiwgZm10KTsKPiAgIAkJcmV0dXJu
+IC1FSU5WQUw7Cj4gICAJfQo+ICAgCj4gQEAgLTg2Niw3ICs4NjYsNyBAQCBzdGF0aWMgaW50IGdz
+Y19kc3Rfc2V0X3RyYW5zZihzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gICAJCQljZmcgJj0gfkdTQ19J
+Tl9ST1RfWUZMSVA7Cj4gICAJCWJyZWFrOwo+ICAgCWRlZmF1bHQ6Cj4gLQkJZGV2X2VycihpcHBk
+cnYtPmRldiwgImluYXZsaWQgZGVncmVlIHZhbHVlICVkLlxuIiwgZGVncmVlKTsKPiArCQlkZXZf
+ZXJyKGlwcGRydi0+ZGV2LCAiaW52YWxpZCBkZWdyZWUgdmFsdWUgJWQuXG4iLCBkZWdyZWUpOwo+
+ICAgCQlyZXR1cm4gLUVJTlZBTDsKPiAgIAl9Cj4gICAKPiBAQCAtMTE3Niw3ICsxMTc2LDcgQEAg
+c3RhdGljIGludCBnc2NfZHN0X3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJcHJv
+cGVydHktPnByb3BfaWQsIGJ1Zl9pZCwgYnVmX3R5cGUpOwo+ICAgCj4gICAJaWYgKGJ1Zl9pZCA+
+IEdTQ19NQVhfRFNUKSB7Cj4gLQkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbmF2bGlkIGJ1Zl9p
+ZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gKwkJZGV2X2luZm8oaXBwZHJ2LT5kZXYsICJpbnZhbGlkIGJ1
+Zl9pZCAlZC5cbiIsIGJ1Zl9pZCk7Cj4gICAJCXJldHVybiAtRUlOVkFMOwo+ICAgCX0KPiAgIAo+
+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
