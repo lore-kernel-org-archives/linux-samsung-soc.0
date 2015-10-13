@@ -1,62 +1,88 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [BUG] broken mixer after second resume from mem
-Date: Tue, 13 Oct 2015 12:25:55 +0200
-Message-ID: <561CDC33.7050103@collabora.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos/gem: remove DMA-mapping hacks used for
+ constructing page array
+Date: Tue, 13 Oct 2015 19:55:19 +0900
+Message-ID: <561CE317.4020209@samsung.com>
+References: <1444731749-10759-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38455 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752519AbbJMK0B (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Oct 2015 06:26:01 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1444731749-10759-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: javier@dowhile0.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniel.stone@collabora.co.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi,
-
-have been hunting down a bug on exynos5250-snow which caused both HDMI
-and LVDS output to be broken after the second resume (with suspend to
-mem, but not to idle).
-
-What I have found is that when powering down the DISP1 power domain
-while suspending for the second time, the contents of the SRC_TOP3
-register change from 0x1110550 to 0x1110500. IIUIC, this means that
-ACLK_200_DISP1 is reparented to XXTI.
-
-When the CPU comes up again, that register contains 0x1110550 again, but
-it's set to 0x1110500 by the code that restores clk registers when resuming:
-
-First suspend:
-
-exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
-exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
-exynos5250_clk_suspend: SRC_TOP3 1110550
-exynos5250_clk_resume: SRC_TOP3 1110550 - before
-exynos5250_clk_resume: SRC_TOP3 1110550 - after
-exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
-exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
-
-
-Second suspend:
-
-exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
-exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
-exynos5250_clk_suspend: SRC_TOP3 1110500
-exynos5250_clk_resume: SRC_TOP3 1110550 - before
-exynos5250_clk_resume: SRC_TOP3 1110500 - after
-exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - before
-exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
-
-
-I have no idea of why it happens on the second suspend, and also don't
-know why it doesn't happen when suspending to idle.
-
-Any ideas?
-
-Thanks,
-
-Tomeu
+SGkgTWFyZWssCgpPbiAxMC8xMy8yMDE1IDA3OjIyIFBNLCBNYXJlayBTenlwcm93c2tpIHdyb3Rl
+Ogo+IEV4eW5vcyBHRU0gb2JqZWN0cyBjb250YWlucyBhbiBhcnJheSBvZiBwb2ludGVycyB0byB0
+aGUgcGFnZXMsIHdoaWNoIHRoZQo+IGFsbG9jYXRlZCBidWZmZXIgY29uc2lzdHMgb2YuIFRpbGwg
+bm93IHRoZSBjb2RlIHVzZWQgc29tZSBoYWNrcyAobGlrZQo+IHJlbHlpbmcgb24gRE1BLW1hcHBp
+bmcgaW50ZXJuYWwgc3RydWN0dXJlcyBvciB1c2luZyBBUk0tc3BlY2lmaWMKPiBkbWFfdG9fcGZu
+IGhlbHBlcikgdG8gYnVpbGQgdGhpcyBhcnJheS4gVGhpcyBwYXRjaCBmaXhlcyB0aGlzIGJ5IGFk
+ZGluZwo+IHByb3BlciBjYWxsIHRvIGRtYV9nZXRfc2d0YWJsZV9hdHRycygpIGFuZCB1c2luZyB0
+aGUgYWNxdWlyZWQgc2NhdHRlci1saXN0Cj4gdG8gY29uc3RydWN0IG5lZWRlZCBhcnJheS4gVGhp
+cyBhcHByb2FjaCBpcyBtb3JlIHBvcnRhYmxlICh3b3JrIGFsc28gZm9yCj4gQVJNNjQpIGFuZCBm
+aW5hbGx5IGZpeGVzIHRoZSBsYXllcmluZyB2aW9sYXRpb24gdGhhdCB3YXMgcHJlc2VudCBpbiB0
+aGlzCj4gY29kZS4KCkkgYWxzbyBzZW50IHJlbGF0ZWQgcGF0Y2hlcyB0byB1cGRhdGUgY29kZXMg
+b2YgRXh5bm9zIEdFTSBvYmplY3QgYW5kIGkKdGhpbmsgdGhpcyBjYW4gYmUgYXBwbGllZCBlYXNp
+bHkgb24gbXkgcGF0Y2hzZXQgb3IgaSB3aWxsIGJlIGFibGUgdG8KcmViYXNlIG15IHBhdGNoc2V0
+IG9uIHlvdXIgcGF0Y2guCgo+IAo+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0u
+c3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiBQYXRjaCBpcyBiYXNlZCBvbiBleHlub3Mt
+ZHJtLW5leHQgYnJhbmNoLgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZ2VtLmMgfCA2MCArKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxl
+IGNoYW5nZWQsIDM1IGluc2VydGlvbnMoKyksIDI1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKPiBpbmRleCAyOWY0ODc1NmU3MmYuLmU5OThh
+NjRhM2RkMCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Z2VtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKPiBA
+QCAtMjUsNiArMjUsMTAgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2FsbG9jX2J1ZihzdHJ1Y3Qg
+ZXh5bm9zX2RybV9nZW0gKmV4eW5vc19nZW0pCj4gIAlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2ID0g
+ZXh5bm9zX2dlbS0+YmFzZS5kZXY7Cj4gIAllbnVtIGRtYV9hdHRyIGF0dHI7Cj4gIAl1bnNpZ25l
+ZCBpbnQgbnJfcGFnZXM7Cj4gKwlzdHJ1Y3Qgc2dfdGFibGUgc2d0Owo+ICsJc3RydWN0IHNjYXR0
+ZXJsaXN0ICpzOwo+ICsJaW50IHJldCA9IC1FTk9NRU07Cj4gKwlpbnQgaSwgajsKPiAgCj4gIAlp
+ZiAoZXh5bm9zX2dlbS0+ZG1hX2FkZHIpIHsKPiAgCQlEUk1fREVCVUdfS01TKCJhbHJlYWR5IGFs
+bG9jYXRlZC5cbiIpOwo+IEBAIC01NiwxMyArNjAsMTAgQEAgc3RhdGljIGludCBleHlub3NfZHJt
+X2FsbG9jX2J1ZihzdHJ1Y3QgZXh5bm9zX2RybV9nZW0gKmV4eW5vc19nZW0pCj4gIAo+ICAJbnJf
+cGFnZXMgPSBleHlub3NfZ2VtLT5zaXplID4+IFBBR0VfU0hJRlQ7Cj4gIAo+IC0JaWYgKCFpc19k
+cm1faW9tbXVfc3VwcG9ydGVkKGRldikpIHsKPiAtCQlleHlub3NfZ2VtLT5wYWdlcyA9IGRybV9j
+YWxsb2NfbGFyZ2UobnJfcGFnZXMsCj4gLQkJCQkJCSAgICAgc2l6ZW9mKHN0cnVjdCBwYWdlICop
+KTsKPiAtCQlpZiAoIWV4eW5vc19nZW0tPnBhZ2VzKSB7Cj4gLQkJCURSTV9FUlJPUigiZmFpbGVk
+IHRvIGFsbG9jYXRlIHBhZ2VzLlxuIik7Cj4gLQkJCXJldHVybiAtRU5PTUVNOwo+IC0JCX0KPiAr
+CWV4eW5vc19nZW0tPnBhZ2VzID0gZHJtX2NhbGxvY19sYXJnZShucl9wYWdlcywgc2l6ZW9mKHN0
+cnVjdCBwYWdlICopKTsKPiArCWlmICghZXh5bm9zX2dlbS0+cGFnZXMpIHsKPiArCQlEUk1fRVJS
+T1IoImZhaWxlZCB0byBhbGxvY2F0ZSBwYWdlcy5cbiIpOwo+ICsJCXJldHVybiAtRU5PTUVNOwo+
+ICAJfQo+ICAKPiAgCWV4eW5vc19nZW0tPmNvb2tpZSA9IGRtYV9hbGxvY19hdHRycyhkZXYtPmRl
+diwgZXh5bm9zX2dlbS0+c2l6ZSwKPiBAQCAtNzAsMzAgKzcxLDQwIEBAIHN0YXRpYyBpbnQgZXh5
+bm9zX2RybV9hbGxvY19idWYoc3RydWN0IGV4eW5vc19kcm1fZ2VtICpleHlub3NfZ2VtKQo+ICAJ
+CQkJCSAgICAgJmV4eW5vc19nZW0tPmRtYV9hdHRycyk7Cj4gIAlpZiAoIWV4eW5vc19nZW0tPmNv
+b2tpZSkgewo+ICAJCURSTV9FUlJPUigiZmFpbGVkIHRvIGFsbG9jYXRlIGJ1ZmZlci5cbiIpOwo+
+IC0JCWlmIChleHlub3NfZ2VtLT5wYWdlcykKPiAtCQkJZHJtX2ZyZWVfbGFyZ2UoZXh5bm9zX2dl
+bS0+cGFnZXMpOwo+IC0JCXJldHVybiAtRU5PTUVNOwo+ICsJCWdvdG8gZXJyX2ZyZWU7Cj4gIAl9
+Cj4gIAo+IC0JaWYgKGV4eW5vc19nZW0tPnBhZ2VzKSB7Cj4gLQkJZG1hX2FkZHJfdCBzdGFydF9h
+ZGRyOwo+IC0JCXVuc2lnbmVkIGludCBpID0gMDsKPiAtCj4gLQkJc3RhcnRfYWRkciA9IGV4eW5v
+c19nZW0tPmRtYV9hZGRyOwo+IC0JCXdoaWxlIChpIDwgbnJfcGFnZXMpIHsKPiAtCQkJZXh5bm9z
+X2dlbS0+cGFnZXNbaV0gPQo+IC0JCQkJcGZuX3RvX3BhZ2UoZG1hX3RvX3BmbihkZXYtPmRldiwg
+c3RhcnRfYWRkcikpOwo+IC0JCQlzdGFydF9hZGRyICs9IFBBR0VfU0laRTsKPiAtCQkJaSsrOwo+
+IC0JCX0KPiAtCX0gZWxzZSB7Cj4gLQkJZXh5bm9zX2dlbS0+cGFnZXMgPSBleHlub3NfZ2VtLT5j
+b29raWU7Cj4gKwlyZXQgPSBkbWFfZ2V0X3NndGFibGVfYXR0cnMoZGV2LT5kZXYsICZzZ3QsIGV4
+eW5vc19nZW0tPmNvb2tpZSwKPiArCQkJCSAgICBleHlub3NfZ2VtLT5kbWFfYWRkciwgZXh5bm9z
+X2dlbS0+c2l6ZSwKPiArCQkJCSAgICAmZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKPiArCWlmIChy
+ZXQgPCAwKSB7Cj4gKwkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gZ2V0IHNndGFibGUuXG4iKTsKPiAr
+CQlnb3RvIGVycl9kbWFfZnJlZTsKPiArCX0KPiArCj4gKwlqID0gMDsKPiArCWZvcl9lYWNoX3Nn
+KHNndC5zZ2wsIHMsIHNndC5vcmlnX25lbnRzLCBpKSB7Cj4gKwkJaW50IHNpemUgPSBzLT5sZW5n
+dGggPj4gUEFHRV9TSElGVDsKPiArCQlzdHJ1Y3QgcGFnZSAqcGFnZSA9IHNnX3BhZ2Uocyk7Cj4g
+Kwo+ICsJCXdoaWxlIChzaXplLS0gPiAwKQo+ICsJCQlleHlub3NfZ2VtLT5wYWdlc1tqKytdID0g
+cGFnZSsrOwo+ICAJfQoKZHJtX3ByaW1lX3NnX3RvX3BhZ2VfYWRkcl9hcnJheXMoKSB3aWxsIGRv
+IHNhbWUgb3BlcmF0aW9uLgoKVGhhbmtzLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
