@@ -1,34 +1,26 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/3] mfd: sec-core: Dump PMIC revision to find out the
- HW
-Date: Tue, 13 Oct 2015 10:04:15 +0100
-Message-ID: <20151013090415.GH32409@x1>
+Subject: Re: [PATCH v2 2/3] mfd: dt-bindings: Document pulled down WRSTBI pin
+ on S2MPS1X
+Date: Tue, 13 Oct 2015 10:04:31 +0100
+Message-ID: <20151013090431.GI32409@x1>
 References: <1444178681-16188-1-git-send-email-k.kozlowski@samsung.com>
+ <1444178681-16188-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:36158 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751329AbbJMJEU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Oct 2015 05:04:20 -0400
-Received: by wicgb1 with SMTP id gb1so179373786wic.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Oct 2015 02:04:18 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1444178681-16188-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1444178681-16188-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On Wed, 07 Oct 2015, Krzysztof Kozlowski wrote:
 
-> There are different revisions of the same chipset. For example S2MPS1=
-3 has
-> more than 2 revisions. They differ slightly in regulator constraints.
-> Print the revision number to easily find which PMIC is used on the bo=
-ard.
+> Document a new Device Tree property 'samsung,s2mps11-wrstbi-ground'
+> indicating that WRSTBI pin of S2MPS13 PMIC is pulled down so
+> corresponding buck warm reset function should be disabled.
 >=20
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >=20
@@ -37,41 +29,33 @@ ard.
 > Changs since v1:
 > None.
 > ---
->  drivers/mfd/sec-core.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  Documentation/devicetree/bindings/mfd/s2mps11.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 
 Applied, thanks.
 
-> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> index 2d1137a7a0ee..589e5efc2d7f 100644
-> --- a/drivers/mfd/sec-core.c
-> +++ b/drivers/mfd/sec-core.c
-> @@ -253,6 +253,15 @@ static const struct regmap_config s5m8767_regmap=
-_config =3D {
->  	.cache_type =3D REGCACHE_FLAT,
->  };
+> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Docu=
+mentation/devicetree/bindings/mfd/s2mps11.txt
+> index 90eaef393325..890f0b0e1643 100644
+> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> @@ -19,6 +19,9 @@ Optional properties:
+>    connected to the ground so the PMIC must manually set PWRHOLD bit =
+in CTRL1
+>    register to turn off the power. Usually the ACOKB is pulled up to =
+VBATT so
+>    when PWRHOLD pin goes low, the rising ACOKB will trigger power off=
+=2E
+> +- samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC i=
+s pulled
+> +  down. When the system is suspended it will always go down thus tri=
+ggerring
+> +  unwanted buck warm reset (setting buck voltages to default values)=
+=2E
 > =20
-> +static void sec_pmic_dump_rev(struct sec_pmic_dev *sec_pmic)
-> +{
-> +	unsigned int val;
-> +
-> +	/* For each device type, the REG_ID is always the first register */
-> +	if (!regmap_read(sec_pmic->regmap_pmic, S2MPS11_REG_ID, &val))
-> +		dev_dbg(sec_pmic->dev, "Revision: 0x%x\n", val);
-> +}
-> +
->  #ifdef CONFIG_OF
->  /*
->   * Only the common platform data elements for s5m8767 are parsed her=
-e from the
-> @@ -425,6 +434,7 @@ static int sec_pmic_probe(struct i2c_client *i2c,
->  		goto err_mfd;
-> =20
->  	device_init_wakeup(sec_pmic->dev, sec_pmic->wakeup);
-> +	sec_pmic_dump_rev(sec_pmic);
-> =20
->  	return ret;
-> =20
+>  Optional nodes:
+>  - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffe=
+red 32.768
 
 --=20
 Lee Jones
