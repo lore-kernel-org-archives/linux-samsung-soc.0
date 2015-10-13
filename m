@@ -1,69 +1,77 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 1/4] ARM: exynos_defconfig: Enable Maxim 8997 family drivers
-Date: Tue, 13 Oct 2015 10:27:05 +0900
-Message-ID: <1444699628-3774-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:29960 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752009AbbJMB1S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 21:27:18 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 3/4] ARM: multi_v7_defconfig: Enable Maxim 8997 family drivers
+Date: Tue, 13 Oct 2015 10:27:07 +0900
+Message-ID: <1444699628-3774-3-git-send-email-k.kozlowski@samsung.com>
+References: <1444699628-3774-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1444699628-3774-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Enable support for Maxim 8997 Multi Functional Device present on Trats and
-Origen boards by toggling on drivers: charger, haptic motor,
-LED, RTC and extcon.
+Enable support for Maxim 8997 Multi Function Device present on Trats and
+Origen boards by toggling on drivers: main MFD, charger, haptic motor,
+regulator, LED and RTC.
 
-This allows to test and usage of these boards with exynos config.
+This allows to test and usage of these boards with multi_v7 config.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/configs/exynos_defconfig | 6 ++++++
+ arch/arm/configs/multi_v7_defconfig | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 7172e96af22e..0bf9c31f4661 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -74,6 +74,8 @@ CONFIG_KEYBOARD_CROS_EC=y
- CONFIG_MOUSE_CYAPA=y
- CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_TOUCHSCREEN_ATMEL_MXT=y
-+CONFIG_INPUT_MISC=y
-+CONFIG_INPUT_MAX8997_HAPTIC=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_SAMSUNG=y
- CONFIG_SERIAL_SAMSUNG_CONSOLE=y
-@@ -95,6 +97,7 @@ CONFIG_BATTERY_MAX17040=y
- CONFIG_BATTERY_MAX17042=y
- CONFIG_CHARGER_MAX14577=y
- CONFIG_CHARGER_MAX77693=y
-+CONFIG_CHARGER_MAX8997=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 05948da5bb69..0b2b474649a2 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -248,6 +248,7 @@ CONFIG_TOUCHSCREEN_ST1232=m
+ CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_TOUCHSCREEN_SUN4I=y
+ CONFIG_INPUT_MISC=y
++CONFIG_INPUT_MAX8997_HAPTIC=m
+ CONFIG_INPUT_MPU3050=y
+ CONFIG_INPUT_AXP20X_PEK=y
+ CONFIG_INPUT_ADXL34X=m
+@@ -359,6 +360,7 @@ CONFIG_BATTERY_MAX17040=m
+ CONFIG_BATTERY_MAX17042=m
+ CONFIG_CHARGER_MAX14577=m
+ CONFIG_CHARGER_MAX77693=m
++CONFIG_CHARGER_MAX8997=m
  CONFIG_CHARGER_TPS65090=y
- CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_NTC_THERMISTOR=y
-@@ -178,9 +181,11 @@ CONFIG_NEW_LEDS=y
+ CONFIG_POWER_RESET_AS3722=y
+ CONFIG_POWER_RESET_GPIO=y
+@@ -397,6 +399,7 @@ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+ CONFIG_MFD_MAX8907=y
++CONFIG_MFD_MAX8997=y
+ CONFIG_MFD_RK808=y
+ CONFIG_MFD_PM8921_CORE=y
+ CONFIG_MFD_QCOM_RPM=y
+@@ -421,6 +424,7 @@ CONFIG_POWER_RESET_SYSCON=y
+ CONFIG_REGULATOR_MAX14577=m
+ CONFIG_REGULATOR_MAX8907=y
+ CONFIG_REGULATOR_MAX8973=y
++CONFIG_REGULATOR_MAX8997=m
+ CONFIG_REGULATOR_MAX77686=y
+ CONFIG_REGULATOR_MAX77693=m
+ CONFIG_REGULATOR_MAX77802=m
+@@ -568,6 +572,7 @@ CONFIG_NEW_LEDS=y
  CONFIG_LEDS_CLASS=y
  CONFIG_LEDS_GPIO=y
  CONFIG_LEDS_PWM=y
-+CONFIG_LEDS_MAX8997=y
++CONFIG_LEDS_MAX8997=m
  CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_HEARTBEAT=y
- CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_MAX8997=y
+ CONFIG_LEDS_TRIGGER_TIMER=y
+ CONFIG_LEDS_TRIGGER_ONESHOT=y
+@@ -587,6 +592,7 @@ CONFIG_RTC_DRV_AS3722=y
+ CONFIG_RTC_DRV_DS1307=y
+ CONFIG_RTC_DRV_HYM8563=m
+ CONFIG_RTC_DRV_MAX8907=y
++CONFIG_RTC_DRV_MAX8997=m
  CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_MAX77802=y
- CONFIG_RTC_DRV_S5M=y
-@@ -195,6 +200,7 @@ CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_EXTCON=y
- CONFIG_EXTCON_MAX14577=y
- CONFIG_EXTCON_MAX77693=y
-+CONFIG_EXTCON_MAX8997=y
- CONFIG_IIO=y
- CONFIG_EXYNOS_ADC=y
- CONFIG_PWM=y
+ CONFIG_RTC_DRV_RK808=m
+ CONFIG_RTC_DRV_MAX77802=m
 -- 
 1.9.1
