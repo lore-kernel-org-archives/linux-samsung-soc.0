@@ -1,77 +1,161 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCHv9 14/15] cec: s5p-cec: Add s5p-cec driver
-Date: Wed, 14 Oct 2015 00:26:24 +0100
-Message-ID: <20151013232624.GO32532@n2100.arm.linux.org.uk>
-References: <cover.1441633456.git.hansverk@cisco.com>
- <b55a5c1ff9318211aa472b28d03a978aad23770b.1441633456.git.hansverk@cisco.com>
- <20151005223207.GM21513@n2100.arm.linux.org.uk>
- <561B906F.9020508@xs4all.nl>
- <CAP3TMiFj47GMYEqnNTXQv3vKbwnDGKhRDcMrwTY42RVUH-_d4Q@mail.gmail.com>
- <561BAA0E.4040905@xs4all.nl>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed
+ support
+Date: Wed, 14 Oct 2015 08:59:10 +0900
+Message-ID: <561D9ACE.6050103@samsung.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+ <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
+ <561B48B7.1040201@samsung.com>
+ <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
+ <561C4CEE.3050905@samsung.com>
+ <CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
+ <561C7DF1.6000609@samsung.com>
+ <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <561BAA0E.4040905@xs4all.nl>
-Sender: linux-input-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Kamil Debski <kamil@wypas.org>, Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, thomas@tommie-lie.de, sean@mess.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 12, 2015 at 02:39:42PM +0200, Hans Verkuil wrote:
-> On 10/12/2015 02:33 PM, Kamil Debski wrote:
-> > The possible status values that are implemented in the CEC framework
-> > are following:
-> > 
-> > +/* cec status field */
-> > +#define CEC_TX_STATUS_OK               (0)
-> > +#define CEC_TX_STATUS_ARB_LOST         (1 << 0)
-> > +#define CEC_TX_STATUS_RETRY_TIMEOUT    (1 << 1)
-> > +#define CEC_TX_STATUS_FEATURE_ABORT    (1 << 2)
-> > +#define CEC_TX_STATUS_REPLY_TIMEOUT    (1 << 3)
-> > +#define CEC_RX_STATUS_READY            (0)
-> > 
-> > The only two ones I could match with the Exynos CEC module status bits are
-> > CEC_TX_STATUS_OK and  CEC_TX_STATUS_RETRY_TIMEOUT.
-> > 
-> > The status bits in Exynos HW are:
-> > - Tx_Error
-> > - Tx_Done
-> > - Tx_Transferring
-> > - Tx_Running
-> > - Tx_Bytes_Transferred
-> > 
-> > - Tx_Wait
-> > - Tx_Sending_Status_Bit
-> > - Tx_Sending_Hdr_Blk
-> > - Tx_Sending_Data_Blk
-> > - Tx_Latest_Initiator
-> > 
-> > - Tx_Wait_SFT_Succ
-> > - Tx_Wait_SFT_New
-> > - Tx_Wait_SFT_Retran
-> > - Tx_Retrans_Cnt
-> > - Tx_ACK_Failed
+On 14.10.2015 01:27, Anand Moon wrote:
+> Hi Krzysztof,
 > 
-> So are these all intermediate states? And every transfer always ends with Tx_Done or
-> Tx_Error state?
+> On 13 October 2015 at 09:13, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>>
+>> On 13.10.2015 12:08, Anand Moon wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On 13 October 2015 at 05:44, Krzysztof Kozlowski
+>>> <k.kozlowski@samsung.com> wrote:
+>>>> On 13.10.2015 00:32, Anand Moon wrote:
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> On 12 October 2015 at 11:14, Krzysztof Kozlowski
+>>>>> <k.kozlowski@samsung.com> wrote:
+>>>>>> On 12.10.2015 00:46, Anand Moon wrote:
+>>>>>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
+>>>>>>
+>>>>>> This description is not entirely correct. The MMC driver already
+>>>>>> supports these UHS speeds (you did not any code) so you rather enabled
+>>>>>> it (description of bindings says "is supported").
+>>>>>>
+>>>>>> You mentioned DDR50 but I don't see respective property below.
+>>>>>>
+>>>>>> How do you know that these modes are really supported? I don't know. Can
+>>>>>> you convince me?
+>>>>>
+>>>>> Setting this DDR50 capability give me this error. That's the reason to
+>>>>> drop this capability.
+>>>>
+>>>> But you mentioned it in commit message! "Added support for UHS-I ...
+>>>> (DDR50)"
+>>>>
+>>>> In the same time dropping DDR50 is not an sufficient proof that "SDR50
+>>>> and SDR104 are really supported".
+>>>>
+>>>
+>>> These changes are related to the microSD card capabilities.
+>>> So SDR50 have better frequency over DDR50. On the same Sandisk card.
+>>>
+>>> When the card select the capability for DDR50
+>>> ---------------------------------------------------
+>>> [    4.001477] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>> req 50000000Hz, actual 50000000HZ div = 0)
+>>> [    4.001604] mmc1: new ultra high speed DDR50 SDHC card at address aaaa
+>>> [    4.004505] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+>>> [    4.009179] mmcblk0: error -110 sending status command, retrying
+>>> [    4.009271] mmcblk0: error -115 sending stop command, original cmd
+>>> response 0x900, card status 0x900
+>>> [    4.009275] mmcblk0: error -84 transferring data, sector 0, nr 8,
+>>> cmd response 0x900, card status 0x0
+>>> [    4.025563] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>> req 400000Hz, actual 396825HZ div = 63)
+>>> [    4.067770] Console: switching to colour frame buffer device 274x77
+>>> [    4.098782] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>> req 50000000Hz, actual 50000000HZ div = 0)
+>>> [    4.099692] mmc1: tried to reset card
+>>> [    4.101332]  mmcblk0: p1 p2
+>>>
+>>>
+>>> When the card select the capability for SDR50
+>>> ---------------------------------------------------------------------------------
+>>> [ 2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req
+>>> 100000000Hz, actual 100000000HZ div = 0)
+>>> [ 2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+>>> [ 2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+>>> [ 2.461743] mmcblk0: p1 p2
+>>>
+>>> Which will relate to better read/write speed.
+>>
+>> Which is not an answer to my question. To none of my previous questions.
+>>
 > 
-> It does look that way...
+> Basically UHS-I capability  (sd-uhs-sdr12, sd-uhs-sdr25, sd-uhs-sdr50,
+> sd-uhs-sdr104) help tune speed supported for mmc
+> 
+> I have tired to compare the speed on high speed UHS-I vs ultra high
+> speed UHS-I using izone utility.
+> 
+> [    2.572469] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+> req 50000000Hz, actual 50000000HZ div = 0)
+> [    2.572609] mmc1: new high speed SDHC card at address aaaa
+> 
+>       Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+> -r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+>         Output is in kBytes/sec
+>         Time Resolution = 0.000001 seconds.
+>         Processor cache size set to 32 kBytes.
+>         Processor cache line size set to 64 bytes.
+>         File stride size set to 17 * record size.
+>                                                               random
+>  random     bkwd    record    stride
+>               kB  reclen    write  rewrite    read    reread    read
+>   write     read   rewrite      read   fwrite frewrite    fread
+> freread
+>            10240       4     1631        0     6556        0     5538      982
+>            10240      64     8828        0    18897        0    17994      303
+>            10240     128     6269        0    20670        0    20128     1096
+> ---------------------------------------------------------------------------------------------------------
+> [    2.613761] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
+> req 100000000Hz, actual 100000000HZ div = 0)
+> [    2.623573] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+> 
+>         Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+> -r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+>         Output is in kBytes/sec
+>         Time Resolution = 0.000001 seconds.
+>         Processor cache size set to 32 kBytes.
+>         Processor cache line size set to 64 bytes.
+>         File stride size set to 17 * record size.
+>                                                               random
+>  random     bkwd    record    stride
+>               kB  reclen    write  rewrite    read    reread    read
+>   write     read   rewrite      read   fwrite frewrite    fread
+> freread
+>            10240       4     1809        0     7507        0     5233      859
+>            10240      64    11622        0    31250        0    28072      516
+>            10240     128     4320        0    34417        0    32509     1148
+> 
+> My observation is that their slight increase in read/write operation.
+> 
+> Hope I have tried to answer you query. If I am wrong please let me know.
 
-For the Synopsis DW CEC, I have:
+Nope, that did not answer my query. You gave some performance benchmarks
+but my question was not about the speed of anything. The question is
+(once again):
+How do you know that these modes are really supported?
 
-Bit Field	Description
-4   ERROR_INIT	An error is detected on cec line (for initiator only).
-3   ARB_LOST	The initiator losses the CEC line arbitration to a second
-		initiator. (specification CEC 9).
-2   NACK	A frame is not acknowledged in a directly addressed message.
-		Or a frame is negatively acknowledged in a broadcast message
-		(for initiator only).
-0   DONE	The current transmission is successful (for initiator only).
+You are marking the *host* as supporting these modes. Please provide
+information that host supports them *really*, not by experimenting "oh,
+it seems to work now, maybe it will work always".
 
-That's about as much of a description that there is for this hardware.
-Quite what comprises an "ERROR_INIT", I don't know.
+Usually vendors, if their products implement some kind of
+specification/protocol, they mark the products as "compatible with XYZ" etc.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Best regards,
+Krzysztof
