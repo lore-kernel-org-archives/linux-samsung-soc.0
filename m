@@ -1,94 +1,69 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v6 11/17] Documentation: phy: add document for rockchip
- dp phy
-Date: Tue, 13 Oct 2015 09:21:41 +0800
-Message-ID: <561C5CA5.1030403@rock-chips.com>
-References: <1444491357-26095-1-git-send-email-ykk@rock-chips.com> <1444492695-27241-1-git-send-email-ykk@rock-chips.com> <561C3410.8090600@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/4] ARM: exynos_defconfig: Enable Maxim 8997 family drivers
+Date: Tue, 13 Oct 2015 10:27:05 +0900
+Message-ID: <1444699628-3774-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:40533 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752009AbbJMBV7 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29960 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752009AbbJMB1S (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 21:21:59 -0400
-In-Reply-To: <561C3410.8090600@ti.com>
+	Mon, 12 Oct 2015 21:27:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, joe@perches.com, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
-Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
 
-Hi Kishon,
+Enable support for Maxim 8997 Multi Functional Device present on Trats and
+Origen boards by toggling on drivers: charger, haptic motor,
+LED, RTC and extcon.
 
-On 10/13/2015 06:28 AM, Kishon Vijay Abraham I wrote:
-> Hi,
->
-> On Saturday 10 October 2015 09:28 PM, Yakir Yang wrote:
->> This phy driver is binded with the Rockchip DisplayPort
->> driver, here are the brief properties:
->> 	edp_phy: edp-phy@ff770274 {
->> 		compatible = "rockchip,rk3288-dp-phy";
->> 		rockchip,grf = <&grf>;
->> 		clocks = <&cru SCLK_EDP_24M>;
->> 		clock-names = "24m";
->> 		#phy-cells = <0>;
->> 	};
-> The commit message can simply be "Add dt binding documentation for
-> rockchip display port PHY".
+This allows to test and usage of these boards with exynos config.
 
-Okay, thanks.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-- Yakir
-
->
-> Thanks
-> Kishon
->
->> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->> ---
->> Changes in v6: None
->> Changes in v5:
->> - Split binding doc's from driver changes. (Rob)
->> - Update the rockchip,grf explain in document, and correct the clock required
->>    elemets in document. (Rob & Heiko)
->>
->> Changes in v4: None
->> Changes in v3: None
->> Changes in v2: None
->>
->>   .../devicetree/bindings/phy/rockchip-dp-phy.txt    | 22 ++++++++++++++++++++++
->>   1 file changed, 22 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
->>
->> diff --git a/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
->> new file mode 100644
->> index 0000000..505194e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
->> @@ -0,0 +1,22 @@
->> +Rockchip Soc Seroes Display Port PHY
->> +------------------------------------
->> +
->> +Required properties:
->> +- compatible : should be one of the following supported values:
->> +	 - "rockchip.rk3288-dp-phy"
->> +- clocks: from common clock binding: handle to dp clock.
->> +	of memory mapped region.
->> +- clock-names: from common clock binding:
->> +	Required elements: "24m"
->> +- rockchip,grf: phandle to the syscon managing the "general register files"
->> +- #phy-cells : from the generic PHY bindings, must be 0;
->> +
->> +Example:
->> +
->> +edp_phy: edp-phy@ff770274 {
->> +	compatible = "rockchip,rk3288-dp-phy";
->> +	rockchip,grf = <&grf>;
->> +	clocks = <&cru SCLK_EDP_24M>;
->> +	clock-names = "24m";
->> +	#phy-cells = <0>;
->> +};
->>
->
->
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 7172e96af22e..0bf9c31f4661 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -74,6 +74,8 @@ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_CYAPA=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
++CONFIG_INPUT_MISC=y
++CONFIG_INPUT_MAX8997_HAPTIC=y
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_SAMSUNG=y
+ CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+@@ -95,6 +97,7 @@ CONFIG_BATTERY_MAX17040=y
+ CONFIG_BATTERY_MAX17042=y
+ CONFIG_CHARGER_MAX14577=y
+ CONFIG_CHARGER_MAX77693=y
++CONFIG_CHARGER_MAX8997=y
+ CONFIG_CHARGER_TPS65090=y
+ CONFIG_SENSORS_LM90=y
+ CONFIG_SENSORS_NTC_THERMISTOR=y
+@@ -178,9 +181,11 @@ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_LEDS_PWM=y
++CONFIG_LEDS_MAX8997=y
+ CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+ CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_MAX8997=y
+ CONFIG_RTC_DRV_MAX77686=y
+ CONFIG_RTC_DRV_MAX77802=y
+ CONFIG_RTC_DRV_S5M=y
+@@ -195,6 +200,7 @@ CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_EXTCON=y
+ CONFIG_EXTCON_MAX14577=y
+ CONFIG_EXTCON_MAX77693=y
++CONFIG_EXTCON_MAX8997=y
+ CONFIG_IIO=y
+ CONFIG_EXYNOS_ADC=y
+ CONFIG_PWM=y
+-- 
+1.9.1
