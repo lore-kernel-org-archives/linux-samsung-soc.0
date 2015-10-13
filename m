@@ -1,57 +1,150 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/37] ARM: dts: Fix fixed regulators enable GPIO polarity
-Date: Tue, 13 Oct 2015 23:09:32 +0800
-Message-ID: <20151013150932.GD584@tiger>
-References: <1444684386-17094-1-git-send-email-laurent.pinchart@ideasonboard.com>
- <20151013140946.GB584@tiger>
- <1561402.NmbcA6rYT5@avalon>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
+Date: Tue, 13 Oct 2015 21:57:23 +0530
+Message-ID: <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+ <1444578364-1384-3-git-send-email-linux.amoon@gmail.com> <561B48B7.1040201@samsung.com>
+ <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
+ <561C4CEE.3050905@samsung.com> <CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
+ <561C7DF1.6000609@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1561402.NmbcA6rYT5@avalon>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <561C7DF1.6000609-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 13, 2015 at 05:17:24PM +0300, Laurent Pinchart wrote:
-> Hi Shawn,
-> 
-> On Tuesday 13 October 2015 22:09:46 Shawn Guo wrote:
-> > On Tue, Oct 13, 2015 at 12:12:29AM +0300, Laurent Pinchart wrote:
-> > > Laurent Pinchart (37):
-> > ...
-> > 
-> > >   ARM: imx6sx-sdb: Fix typo in regulator enable GPIO property
-> > 
-> > ...
-> > 
-> > >   ARM: dts: imx6qdl-tx6: Fix regulator enable GPIO polarity
-> > 
-> > ...
-> > 
-> > >   ARM: dts: imx23-evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx23-stmp378x_devb: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx25-pdk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-cfa10036: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-m28cu3: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-m28evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-sps1: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-tx28: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx53-m53evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx53-mba53: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx53-tx53: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx6q-dmo-edmqmx6: Fix regulator enable GPIO polarity
-> > 
-> > Applied these 15 patches, thanks.
-> 
-> There's ongoing discussions regarding whether this is the right thing to do. 
-> Please see http://www.spinics.net/lists/arm-kernel/msg451724.html. It's thus a 
-> bit early to apply the patches at this point I'm afraid.
+Hi Krzysztof,
 
-Okay, dropped them except the first one which fixes a typo for
-imx6sx-sdb.
+On 13 October 2015 at 09:13, Krzysztof Kozlowski
+<k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>
+> On 13.10.2015 12:08, Anand Moon wrote:
+> > Hi Krzysztof,
+> >
+> > On 13 October 2015 at 05:44, Krzysztof Kozlowski
+> > <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> >> On 13.10.2015 00:32, Anand Moon wrote:
+> >>> Hi Krzysztof,
+> >>>
+> >>> On 12 October 2015 at 11:14, Krzysztof Kozlowski
+> >>> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> >>>> On 12.10.2015 00:46, Anand Moon wrote:
+> >>>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
+> >>>>
+> >>>> This description is not entirely correct. The MMC driver already
+> >>>> supports these UHS speeds (you did not any code) so you rather enabled
+> >>>> it (description of bindings says "is supported").
+> >>>>
+> >>>> You mentioned DDR50 but I don't see respective property below.
+> >>>>
+> >>>> How do you know that these modes are really supported? I don't know. Can
+> >>>> you convince me?
+> >>>
+> >>> Setting this DDR50 capability give me this error. That's the reason to
+> >>> drop this capability.
+> >>
+> >> But you mentioned it in commit message! "Added support for UHS-I ...
+> >> (DDR50)"
+> >>
+> >> In the same time dropping DDR50 is not an sufficient proof that "SDR50
+> >> and SDR104 are really supported".
+> >>
+> >
+> > These changes are related to the microSD card capabilities.
+> > So SDR50 have better frequency over DDR50. On the same Sandisk card.
+> >
+> > When the card select the capability for DDR50
+> > ---------------------------------------------------
+> > [    4.001477] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+> > req 50000000Hz, actual 50000000HZ div = 0)
+> > [    4.001604] mmc1: new ultra high speed DDR50 SDHC card at address aaaa
+> > [    4.004505] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+> > [    4.009179] mmcblk0: error -110 sending status command, retrying
+> > [    4.009271] mmcblk0: error -115 sending stop command, original cmd
+> > response 0x900, card status 0x900
+> > [    4.009275] mmcblk0: error -84 transferring data, sector 0, nr 8,
+> > cmd response 0x900, card status 0x0
+> > [    4.025563] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+> > req 400000Hz, actual 396825HZ div = 63)
+> > [    4.067770] Console: switching to colour frame buffer device 274x77
+> > [    4.098782] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+> > req 50000000Hz, actual 50000000HZ div = 0)
+> > [    4.099692] mmc1: tried to reset card
+> > [    4.101332]  mmcblk0: p1 p2
+> >
+> >
+> > When the card select the capability for SDR50
+> > ---------------------------------------------------------------------------------
+> > [ 2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req
+> > 100000000Hz, actual 100000000HZ div = 0)
+> > [ 2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+> > [ 2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+> > [ 2.461743] mmcblk0: p1 p2
+> >
+> > Which will relate to better read/write speed.
+>
+> Which is not an answer to my question. To none of my previous questions.
+>
 
-Shawn
+Basically UHS-I capability  (sd-uhs-sdr12, sd-uhs-sdr25, sd-uhs-sdr50,
+sd-uhs-sdr104) help tune speed supported for mmc
+
+I have tired to compare the speed on high speed UHS-I vs ultra high
+speed UHS-I using izone utility.
+
+[    2.572469] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+req 50000000Hz, actual 50000000HZ div = 0)
+[    2.572609] mmc1: new high speed SDHC card at address aaaa
+
+      Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+-r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+        Output is in kBytes/sec
+        Time Resolution = 0.000001 seconds.
+        Processor cache size set to 32 kBytes.
+        Processor cache line size set to 64 bytes.
+        File stride size set to 17 * record size.
+                                                              random
+ random     bkwd    record    stride
+              kB  reclen    write  rewrite    read    reread    read
+  write     read   rewrite      read   fwrite frewrite    fread
+freread
+           10240       4     1631        0     6556        0     5538      982
+           10240      64     8828        0    18897        0    17994      303
+           10240     128     6269        0    20670        0    20128     1096
+---------------------------------------------------------------------------------------------------------
+[    2.613761] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
+req 100000000Hz, actual 100000000HZ div = 0)
+[    2.623573] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+
+        Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+-r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+        Output is in kBytes/sec
+        Time Resolution = 0.000001 seconds.
+        Processor cache size set to 32 kBytes.
+        Processor cache line size set to 64 bytes.
+        File stride size set to 17 * record size.
+                                                              random
+ random     bkwd    record    stride
+              kB  reclen    write  rewrite    read    reread    read
+  write     read   rewrite      read   fwrite frewrite    fread
+freread
+           10240       4     1809        0     7507        0     5233      859
+           10240      64    11622        0    31250        0    28072      516
+           10240     128     4320        0    34417        0    32509     1148
+
+My observation is that their slight increase in read/write operation.
+
+Hope I have tried to answer you query. If I am wrong please let me know.
+
+-Anand Moon
+
+>
+> Best regards,
+> Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
