@@ -1,43 +1,93 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCHv9 07/15] cec: add HDMI CEC framework
-Date: Tue, 13 Oct 2015 23:51:47 +0100
-Message-ID: <20151013225147.GM32532@n2100.arm.linux.org.uk>
+Subject: Re: [PATCHv9 06/15] rc: Add HDMI CEC protocol handling
+Date: Wed, 14 Oct 2015 00:09:57 +0100
+Message-ID: <20151013230957.GN32532@n2100.arm.linux.org.uk>
 References: <cover.1441633456.git.hansverk@cisco.com>
- <60de2f33f0d4c809f06d23cdac75e3b798aaae4b.1441633456.git.hansverk@cisco.com>
- <20151006170635.GQ21513@n2100.arm.linux.org.uk>
- <561B9B1A.4020001@xs4all.nl>
+ <345aeebe5561f8f6540f477ae160c5cbf1b0f6d5.1441633456.git.hansverk@cisco.com>
+ <20151006180540.GR21513@n2100.arm.linux.org.uk>
+ <561B9E97.4050909@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <561B9B1A.4020001@xs4all.nl>
-Sender: linux-input-owner@vger.kernel.org
+In-Reply-To: <561B9E97.4050909@xs4all.nl>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-samsung-soc@vger.kernel.org, sean@mess.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dmitry.torokhov@gmail.com, lars@opdenkamp.eu, dri-devel@lists.freedesktop.org, kamil@wypas.org, Hans Verkuil <hansverk@cisco.com>, kyungmin.park@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>, thomas@tommie-lie.de, linux-input@vger.kernel.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 12, 2015 at 01:35:54PM +0200, Hans Verkuil wrote:
-> On 10/06/2015 07:06 PM, Russell King - ARM Linux wrote:
-> > Surely you aren't proposing that drivers should write directly to
-> > adap->phys_addr without calling some notification function that the
-> > physical address has changed?
-> 
-> Userspace is informed through CEC_EVENT_STATE_CHANGE when the adapter is
-> enabled/disabled. When the adapter is enabled and CEC_CAP_PHYS_ADDR is
-> not set (i.e. the kernel takes care of this), then calling CEC_ADAP_G_PHYS_ADDR
-> returns the new physical address.
-
-Okay, so when I see the EDID arrive, I should be doing:
-
-                phys = parse_hdmi_addr(block->edid);
-                cec->adap->phys_addr = phys;
-                cec_enable(cec->adap, true);
-
-IOW, you _are_ expecting adap->phys_addr to be written, but only while
-the adapter is disabled?
-
-Thanks.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+T24gTW9uLCBPY3QgMTIsIDIwMTUgYXQgMDE6NTA6NDdQTSArMDIwMCwgSGFucyBWZXJrdWlsIHdy
+b3RlOgo+IE9uIDEwLzA2LzIwMTUgMDg6MDUgUE0sIFJ1c3NlbGwgS2luZyAtIEFSTSBMaW51eCB3
+cm90ZToKPiA+IE9uIE1vbiwgU2VwIDA3LCAyMDE1IGF0IDAzOjQ0OjM1UE0gKzAyMDAsIEhhbnMg
+VmVya3VpbCB3cm90ZToKPiA+PiBGcm9tOiBLYW1pbCBEZWJza2kgPGthbWlsQHd5cGFzLm9yZz4K
+PiA+Pgo+ID4+IEFkZCBoYW5kbGluZyBvZiByZW1vdGUgY29udHJvbCBldmVudHMgY29taW5nIGZy
+b20gdGhlIEhETUkgQ0VDIGJ1cy4KPiA+PiBUaGlzIHBhdGNoIGluY2x1ZGVzIGEgbmV3IGtleW1h
+cCB0aGF0IG1hcHMgdmFsdWVzIGZvdW5kIGluIHRoZSBDRUMKPiA+PiBtZXNzYWdlcyB0byB0aGUg
+a2V5cyBwcmVzc2VkIGFuZCByZWxlYXNlZC4gQWxzbywgYSBuZXcgcHJvdG9jb2wgaGFzCj4gPj4g
+YmVlbiBhZGRlZCB0byB0aGUgY29yZS4KPiA+Pgo+ID4+IFNpZ25lZC1vZmYtYnk6IEthbWlsIERl
+YnNraSA8a2FtaWxAd3lwYXMub3JnPgo+ID4+IFNpZ25lZC1vZmYtYnk6IEhhbnMgVmVya3VpbCA8
+aGFucy52ZXJrdWlsQGNpc2NvLmNvbT4KPiA+IAo+ID4gKEFkZGVkIE1hdXJvKQo+ID4gCj4gPiBI
+bW0sIGhvdyBpcyByYy1jZWMgc3VwcG9zZWQgdG8gYmUgbG9hZGVkPwo+IAo+IElzIENPTkZJR19S
+Q19NQVAgZW5hYmxlZCBpbiB5b3VyIGNvbmZpZz8gUmFuICdkZXBtb2QgLWEnPyAoU29ycnksIEkn
+bSBzdXJlIHlvdSd2ZSBkb25lCj4gdGhhdCwganVzdCBjaGVja2luZy4uLikKCkNPTkZJR19SQ19N
+QVA9bQoKYW5kIHllcywgaWYgZGVwbW9kIGhhZG4ndCBoYXZlIGJlZW4gcnVuLCBtb2Rwcm9iaW5n
+IHJjLWNlYyB3b3VsZCBub3QKaGF2ZSB3b3JrZWQgLSBtb2Rwcm9iZSBhbHdheXMgbG9va3MgdXAg
+aW4gdGhlIGRlcG1vZCBpbmZvcm1hdGlvbiB0bwpmaW5kIG91dCB3aGVyZSB0aGUgbW9kdWxlIGlz
+IGxvY2F0ZWQsIGFuZCBhbHNvIHRvIGRldGVybWluZSBhbnkKZGVwZW5kZW5jaWVzLgoKPiBJdCdz
+IG9wdGlvbmFsIGFzIEkgdW5kZXJzdGFuZCBpdCwgc2luY2UgeW91IGNvdWxkIGNvbmZpZ3VyZSB0
+aGUga2V5dGFibGUgZnJvbQo+IHVzZXJzcGFjZSBpbnN0ZWFkIG9mIHVzaW5nIHRoaXMgbW9kdWxl
+Lgo+IAo+IEZvciB0aGUgcmVjb3JkIChqdXN0IHRyaWVkIGl0KSwgaXQgZG9lcyBsb2FkIGZpbmUg
+b24gbXkgc2V0dXAuCgpJbW1lZGlhdGVseSBhZnRlciBib290LCBJIGhhdmU6CgojIGxzbW9kCk1v
+ZHVsZSAgICAgICAgICAgICAgICAgIFNpemUgIFVzZWQgYnkKLi4uCmNvZGEgICAgICAgICAgICAg
+ICAgICAgNTQ2ODUgIDAKdjRsMl9tZW0ybWVtICAgICAgICAgICAxNDUxNyAgMSBjb2RhCnZpZGVv
+YnVmMl9kbWFfY29udGlnICAgICA5NDc4ICAxIGNvZGEKdmlkZW9idWYyX3ZtYWxsb2MgICAgICAg
+NTUyOSAgMSBjb2RhCnZpZGVvYnVmMl9tZW1vcHMgICAgICAgIDE4ODggIDIgdmlkZW9idWYyX2Rt
+YV9jb250aWcsdmlkZW9idWYyX3ZtYWxsb2MKY2VjZF9kd19oZG1pICAgICAgICAgICAgMzEyOSAg
+MAojIG1vZHByb2JlIHJjLWNlYwojIGxzbW9kCk1vZHVsZSAgICAgICAgICAgICAgICAgIFNpemUg
+IFVzZWQgYnkKcmNfY2VjICAgICAgICAgICAgICAgICAgMTc4NSAgMAouLi4KY29kYSAgICAgICAg
+ICAgICAgICAgICA1NDY4NSAgMAp2NGwyX21lbTJtZW0gICAgICAgICAgIDE0NTE3ICAxIGNvZGEK
+dmlkZW9idWYyX2RtYV9jb250aWcgICAgIDk0NzggIDEgY29kYQp2aWRlb2J1ZjJfdm1hbGxvYyAg
+ICAgICA1NTI5ICAxIGNvZGEKdmlkZW9idWYyX21lbW9wcyAgICAgICAgMTg4OCAgMiB2aWRlb2J1
+ZjJfZG1hX2NvbnRpZyx2aWRlb2J1ZjJfdm1hbGxvYwpjZWNkX2R3X2hkbWkgICAgICAgICAgICAz
+MTI5ICAwCgpTbywgcmMtY2VjIGlzIHBlcmZlY3RseSBsb2FkYWJsZSwgaXQganVzdCBkb2Vzbid0
+IGdldCBsb2FkZWQgYXQgYm9vdC4KTWFudWFsbHkgbG9hZGluZyBpdCBsaWtlIHRoaXMgaXMgdXNl
+bGVzcyB0aG91Z2ggLSBJIGhhdmUgdG8gdW5sb2FkCmNlY2RfZHdfaGRtaSBhbmQgdGhlbiByZS1s
+b2FkIGl0IGFmdGVyIHJjLWNlYyBpcyBsb2FkZWQgZm9yIHJjLWNlYyB0bwpiZSBzZWVuLiAgQXQg
+dGhhdCBwb2ludCwgKGFuZCB3aXRoIHRoZSBoZWxwIG9mIGEgdXNlcnNwYWNlIHByb2dyYW0pCnRo
+aW5ncyBzdGFydCB3b3JraW5nIGFzIGV4cGVjdGVkLgoKPiBCVFcsIEkgYW0gc3RpbGwgb24gdGhl
+IGZlbmNlIHdoZXRoZXIgdXNpbmcgdGhlIGtlcm5lbCBSQyBzdWJzeXN0ZW0gaXMKPiB0aGUgcmln
+aHQgdGhpbmcgdG8gZG8uIFRoZXJlIGFyZSBhIG51bWJlciBvZiBDRUMgUkMgY29tbWFuZHMgdGhh
+dCB1c2UKPiBleHRyYSBwYXJhbWV0ZXJzIHRoYXQgY2Fubm90IGJlIG1hcHBlZCB0byB0aGUgUkMg
+QVBJLCBzbyB5b3Ugc3RpbGwKPiBuZWVkIHRvIGhhbmRsZSB0aG9zZSBtYW51YWxseS4KCkV2ZW4g
+dGhvdWdoIGl0IGlzIGEgcmVtb3RlIGNvbnRyb2wgd2hpY2ggaXMgYmVpbmcgZm9yd2FyZGVkIGZv
+ciB0aGUKbW9zdCBwYXJ0LCBidXQgdGhlcmUgYXJlIG9wZXJhdGlvbiBjb2RlcyB3aGljaCBhcmVu
+J3QgcmVsYXRlZCB0bwprZXkgcHJlc3NlcyBzcGVjaWZpZWQgYnkgdGhlIHN0YW5kYXJkLiAgSSBk
+b24ndCB0aGluayB0aGVyZSdzIGFueXRoaW5nCndyb25nIHdpdGggaGF2aW5nIGEgUkMgaW50ZXJm
+YWNlIHByZXNlbnQsIGJ1dCBhbGxvd2luZyBvdGhlciBpbnRlcmZhY2VzCmFzIGEgcG9zc2liaWxp
+dHkgaXMgYSBnb29kIHRoaW5nIHRvbyAtIGl0IGFsbG93cyBhIGNlcnRhaW4gYW1vdW50IG9mCmZs
+ZXhpYmlsaXR5LgoKRm9yIGV4YW1wbGUsIHdpdGggcmMtY2VjIGxvYWRlZCBhbmQgcHJvcGVybHkg
+Ym91bmQsIEkgY2FuIGNvbnRyb2wgYXQKbGVhc3Qgcmh5dGhtYm94IHdpdGhpbiBnbm9tZSB1c2lu
+ZyB0aGUgVFZzIHJlbW90ZSBjb250cm9sIHdpdGggbm8KbW9kaWZpY2F0aW9ucyAtIGFuZCB0aGF0
+IGhhcHBlbnMgYmVjYXVzZSB0aGUgWCBzZXJ2ZXIgcGFzc2VzIG9uIHRoZQpldmVudHMgaXQgcmVj
+ZWl2ZXMgdmlhIHRoZSBldmVudCBkZXZpY2UuCgpHaXZlbiB0aGUgcmFuZ2Ugb2YgbWVkaWEgYXBw
+bGljYXRpb25zLCBJIHRoaW5rIHRoYXQncyBrZXkgLSBpdCBuZWVkcwp0byBhdCBsZWFzdCBoYXZl
+IHRoZSBjYXBhYmlsaXR5IHRvIHBsdWcgaW50byB0aGUgZXhpc3Rpbmcgd2F5cyBvZiBkb2luZwp0
+aGluZ3MsIGV2ZW4gaWYgdGhvc2Ugd2F5cyBhcmUgbm90IHBlcmZlY3QuCgo+IFBlcmhhcHMgSSBz
+aG91bGQgc3BsaXQgaXQgb2ZmIGludG8gYSBzZXBhcmF0ZSBwYXRjaCBhbmQga2VlcCBpdCBvdXQK
+PiBmcm9tIHRoZSBpbml0aWFsIHB1bGwgcmVxdWVzdCBvbmNlIHdlJ3JlIHJlYWR5IGZvciB0aGF0
+LgoKSSdtIGJpYXNlZCBiZWNhdXNlIGl0IGlzIGFuIGVuYWJsZW1lbnQgZmVhdHVyZSAtIGl0IGFs
+bG93cyBDRUMgdG8gd29yawpvdXQgb2YgdGhlIGJveCB3aXRoIGF0IGxlYXN0IHNvbWUgZXhpc3Rp
+bmcgbWVkaWEgYXBwcy4gOikKCi0tIApGVFRDIGJyb2FkYmFuZCBmb3IgMC44bWlsZSBsaW5lOiBj
+dXJyZW50bHkgYXQgOS42TWJwcyBkb3duIDQwMGticHMgdXAKYWNjb3JkaW5nIHRvIHNwZWVkdGVz
+dC5uZXQuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
