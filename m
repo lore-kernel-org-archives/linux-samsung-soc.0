@@ -1,48 +1,53 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 4/4] ARM: multi_v7_defconfig: Enable Maxim 77693 LED and haptic
+Subject: [PATCH 2/4] ARM: exynos_defconfig: Enable Maxim 77693 LED and haptic
  drivers
-Date: Tue, 13 Oct 2015 10:27:08 +0900
-Message-ID: <1444699628-3774-4-git-send-email-k.kozlowski@samsung.com>
+Date: Tue, 13 Oct 2015 10:27:06 +0900
+Message-ID: <1444699628-3774-2-git-send-email-k.kozlowski@samsung.com>
 References: <1444699628-3774-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29960 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752735AbbJMB1T (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Oct 2015 21:27:19 -0400
 In-reply-to: <1444699628-3774-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 Enable support for:
-1. Haptic motor driver on Trats2 board (Maxim 77693) and Note 4 (Maxim
-   77843);
+1. Haptic motor driver on Trats2 board (Maxim 77693) and Note 4
+   (Maxim 77843);
 2. LED driver on Trats2 board (Maxim 77693).
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/configs/multi_v7_defconfig | 3 +++
+ arch/arm/configs/exynos_defconfig | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 0b2b474649a2..fbe7d93ce5b3 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -248,6 +248,7 @@ CONFIG_TOUCHSCREEN_ST1232=m
- CONFIG_TOUCHSCREEN_STMPE=y
- CONFIG_TOUCHSCREEN_SUN4I=y
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 0bf9c31f4661..bbb4228b76a2 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -75,6 +75,7 @@ CONFIG_MOUSE_CYAPA=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
  CONFIG_INPUT_MISC=y
-+CONFIG_INPUT_MAX77693_HAPTIC=m
- CONFIG_INPUT_MAX8997_HAPTIC=m
- CONFIG_INPUT_MPU3050=y
- CONFIG_INPUT_AXP20X_PEK=y
-@@ -570,8 +571,10 @@ CONFIG_MMC_SH_MMCIF=y
- CONFIG_MMC_SUNXI=y
++CONFIG_INPUT_MAX77693_HAPTIC=y
+ CONFIG_INPUT_MAX8997_HAPTIC=y
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_SAMSUNG=y
+@@ -179,8 +180,10 @@ CONFIG_MMC_DW_IDMAC=y
+ CONFIG_MMC_DW_EXYNOS=y
  CONFIG_NEW_LEDS=y
  CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_CLASS_FLASH=m
++CONFIG_LEDS_CLASS_FLASH=y
  CONFIG_LEDS_GPIO=y
  CONFIG_LEDS_PWM=y
-+CONFIG_LEDS_MAX77693=m
- CONFIG_LEDS_MAX8997=m
++CONFIG_LEDS_MAX77693=y
+ CONFIG_LEDS_MAX8997=y
  CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_TIMER=y
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
 -- 
 1.9.1
