@@ -1,99 +1,111 @@
 From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
-Date: Tue, 13 Oct 2015 09:19:17 +0530
-Message-ID: <CANAwSgTGu+JeQjS__iZEiWx+rVF9OFmgne5_EgUXRnnStdqNUA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos5422-odroidxu3: use cd-gpio method to
+ detect sd-card
+Date: Tue, 13 Oct 2015 09:37:08 +0530
+Message-ID: <CANAwSgR3tR+rZk+3WMc7hd=pspQgvLSWdTJaNrQvQqqdj4DSmA@mail.gmail.com>
 References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
- <1444578364-1384-3-git-send-email-linux.amoon@gmail.com> <561B48B7.1040201@samsung.com>
- <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
- <561C4CEE.3050905@samsung.com> <CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
- <561C7DF1.6000609@samsung.com>
+ <561B3739.4040701@samsung.com> <561B3A83.6090607@samsung.com>
+ <1111856990.2419183.1444661252893.JavaMail.yahoo@mail.yahoo.com>
+ <561C4C88.2040004@samsung.com> <561C6713.1070508@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <561C7DF1.6000609-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <561C6713.1070508-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Anand Moon <moon.linux-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi Jaehoon,
 
-On 13 October 2015 at 09:13, Krzysztof Kozlowski
-<k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 13.10.2015 12:08, Anand Moon wrote:
->> Hi Krzysztof,
->>
->> On 13 October 2015 at 05:44, Krzysztof Kozlowski
->> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> On 13.10.2015 00:32, Anand Moon wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On 12 October 2015 at 11:14, Krzysztof Kozlowski
->>>> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>>> On 12.10.2015 00:46, Anand Moon wrote:
->>>>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
->>>>>
->>>>> This description is not entirely correct. The MMC driver already
->>>>> supports these UHS speeds (you did not any code) so you rather enabled
->>>>> it (description of bindings says "is supported").
->>>>>
->>>>> You mentioned DDR50 but I don't see respective property below.
->>>>>
->>>>> How do you know that these modes are really supported? I don't know. Can
->>>>> you convince me?
->>>>
->>>> Setting this DDR50 capability give me this error. That's the reason to
->>>> drop this capability.
->>>
->>> But you mentioned it in commit message! "Added support for UHS-I ...
->>> (DDR50)"
->>>
->>> In the same time dropping DDR50 is not an sufficient proof that "SDR50
->>> and SDR104 are really supported".
->>>
->>
->> These changes are related to the microSD card capabilities.
->> So SDR50 have better frequency over DDR50. On the same Sandisk card.
->>
->> When the card select the capability for DDR50
->> ---------------------------------------------------
->> [    4.001477] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
->> req 50000000Hz, actual 50000000HZ div = 0)
->> [    4.001604] mmc1: new ultra high speed DDR50 SDHC card at address aaaa
->> [    4.004505] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->> [    4.009179] mmcblk0: error -110 sending status command, retrying
->> [    4.009271] mmcblk0: error -115 sending stop command, original cmd
->> response 0x900, card status 0x900
->> [    4.009275] mmcblk0: error -84 transferring data, sector 0, nr 8,
->> cmd response 0x900, card status 0x0
->> [    4.025563] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
->> req 400000Hz, actual 396825HZ div = 63)
->> [    4.067770] Console: switching to colour frame buffer device 274x77
->> [    4.098782] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
->> req 50000000Hz, actual 50000000HZ div = 0)
->> [    4.099692] mmc1: tried to reset card
->> [    4.101332]  mmcblk0: p1 p2
->>
->>
->> When the card select the capability for SDR50
->> ---------------------------------------------------------------------------------
->> [ 2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req
->> 100000000Hz, actual 100000000HZ div = 0)
->> [ 2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
->> [ 2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
->> [ 2.461743] mmcblk0: p1 p2
->>
->> Which will relate to better read/write speed.
+On 13 October 2015 at 07:36, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Dear, Anand.
 >
-> Which is not an answer to my question. To none of my previous questions.
+>
+> On 10/13/2015 09:12 AM, Krzysztof Kozlowski wrote:
+>> On 12.10.2015 23:47, Anand Moon wrote:
+>>>>
+>>>> Anand,
+>>>>
+>>>> You essentially reverted here af6ad88acbd6 ("ARM: dts: Mux XMMCnDATA[0]
+>>>> pad correctly for Exynos5420 boards"). Why? There is no explanation in
+>>>> the commit message about this.
+>>>
+>>> I don't remember to send the patch relevant to this. Hmm...
+>>> Well, Is this patch really signed-off by me?
+>>>
+>>> Best Regards,
+>>>
+>>> Jaehoon Chung
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>>>
+>>>
+>>>
+>>> Some how I don't receive these mail on my email id.
+>>>
+>>> I have picked up these changes from tizen repository for OdroidXU3.
+>>> I have tested with this changes to detect UHS-I micro cd cards.
+>>> That's the reason for this email.
+>
+> It seems to make manually, right?
+> I have checked the tizen repository.
+>
+> The below is
+>
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> @@ -335,7 +335,9 @@
+>         samsung,dw-mshc-sdr-timing = <0 4>;
+>         samsung,dw-mshc-ddr-timing = <0 2>;
+>         pinctrl-names = "default";
+> -       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+> +       cd-gpios = <&gpc2 2 0>;
+> +       cd-inverted;
+> +       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4>;
+>         bus-width = <4>;
+>         cap-sd-highspeed;
+>  };
+>
+>
+>
+> Yours
+>
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -352,8 +352,10 @@
+>         samsung,dw-mshc-ciu-div = <3>;
+>         samsung,dw-mshc-sdr-timing = <0 4>;
+>         samsung,dw-mshc-ddr-timing = <0 2>;
+> +       cd-gpios = <&gpc2 2 GPIO_ACTIVE_HIGH>;
+> +       cd-inverted;
+>         pinctrl-names = "default";
+> -       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+> +       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>
+> Did you know what differ? :)
+>
+> Best Regards,
+> Jaehoon Chung
+>
+>>
+>> ... and you applied it blindly without looking at actual existing
+>> contents and at previous commits.
+>>
+>> That is not how patches from different repositories should be cherry picked.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>
 
-OK, you are correct.Just ignore these changes.
+Looks like my changes have introduce another bug so please ignore this changes.
 
 -Anand Moon
-
->
-> Best regards,
-> Krzysztof
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
