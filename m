@@ -1,77 +1,139 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/3] mfd: documentation: dt: Document grounded ACOKB
- pin on S2MPS11
-Date: Tue, 13 Oct 2015 11:07:05 +0100
-Message-ID: <20151013100705.GY32409@x1>
-References: <1439287746-14034-1-git-send-email-k.kozlowski.k@gmail.com>
- <1439287746-14034-2-git-send-email-k.kozlowski.k@gmail.com>
- <02a201d0d676$2fbe73c0$8f3b5b40$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <02a201d0d676$2fbe73c0$8f3b5b40$@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Krzysztof Kozlowski' <k.kozlowski.k@gmail.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Samuel Ortiz' <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Anand Moon' <linux.amoon@gmail.com>, 'Javier Martinez Canillas' <javier@osg.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos/gem: remove DMA-mapping hacks used for constructing
+ page array
+Date: Tue, 13 Oct 2015 12:22:29 +0200
+Message-ID: <1444731749-10759-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:60462 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932293AbbJMKWs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 Oct 2015 06:22:48 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NW500KOSM5XIYA0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 13 Oct 2015 11:22:45 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-On Fri, 14 Aug 2015, Kukjin Kim wrote:
+Exynos GEM objects contains an array of pointers to the pages, which the
+allocated buffer consists of. Till now the code used some hacks (like
+relying on DMA-mapping internal structures or using ARM-specific
+dma_to_pfn helper) to build this array. This patch fixes this by adding
+proper call to dma_get_sgtable_attrs() and using the acquired scatter-list
+to construct needed array. This approach is more portable (work also for
+ARM64) and finally fixes the layering violation that was present in this
+code.
 
-> Krzysztof Kozlowski wrote:
-> >=20
-> > Document a new Device Tree property 'samsung,s2mps11-acokb-ground'
-> > indicating that ACOKB pin of S2MPS11 PMIC is connected to the groun=
-d so
-> > the PMIC must manually set PWRHOLD bit in CTRL1 register to turn of=
-f the
-> > power.
-> >=20
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-> > Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> > Acked-by: Lee Jones <lee.jones@linaro.org>
-> >=20
-> > ---
-> >=20
-> > Changes since v1:
-> > 1. Split bindings documentation to separate patch (suggested by Lee=
-).
-> > 2. Add Javier's reviewed-by and Lee's acked-by.
-> > ---
-> >  Documentation/devicetree/bindings/mfd/s2mps11.txt | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> > b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> > index 57a045016fca..90eaef393325 100644
-> > --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> > +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> > @@ -15,6 +15,10 @@ Optional properties:
-> >  - interrupt-parent: Specifies the phandle of the interrupt control=
-ler to which
-> >    the interrupts from s2mps11 are delivered to.
-> >  - interrupts: Interrupt specifiers for interrupt sources.
-> > +- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS1=
-1 PMIC is
-> > +  connected to the ground so the PMIC must manually set PWRHOLD bi=
-t in CTRL1
-> > +  register to turn off the power. Usually the ACOKB is pulled up t=
-o VBATT so
-> > +  when PWRHOLD pin goes low, the rising ACOKB will trigger power o=
-ff.
-> >=20
-> >  Optional nodes:
-> >  - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buf=
-fered 32.768
->=20
-> Applied 1/3 and 3/3.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Patch is based on exynos-drm-next branch.
+---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 60 +++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 25 deletions(-)
 
-Any chance you applied these on their own branch (which can be
-tagged)?
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 29f48756e72f..e998a64a3dd0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -25,6 +25,10 @@ static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem)
+ 	struct drm_device *dev = exynos_gem->base.dev;
+ 	enum dma_attr attr;
+ 	unsigned int nr_pages;
++	struct sg_table sgt;
++	struct scatterlist *s;
++	int ret = -ENOMEM;
++	int i, j;
+ 
+ 	if (exynos_gem->dma_addr) {
+ 		DRM_DEBUG_KMS("already allocated.\n");
+@@ -56,13 +60,10 @@ static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem)
+ 
+ 	nr_pages = exynos_gem->size >> PAGE_SHIFT;
+ 
+-	if (!is_drm_iommu_supported(dev)) {
+-		exynos_gem->pages = drm_calloc_large(nr_pages,
+-						     sizeof(struct page *));
+-		if (!exynos_gem->pages) {
+-			DRM_ERROR("failed to allocate pages.\n");
+-			return -ENOMEM;
+-		}
++	exynos_gem->pages = drm_calloc_large(nr_pages, sizeof(struct page *));
++	if (!exynos_gem->pages) {
++		DRM_ERROR("failed to allocate pages.\n");
++		return -ENOMEM;
+ 	}
+ 
+ 	exynos_gem->cookie = dma_alloc_attrs(dev->dev, exynos_gem->size,
+@@ -70,30 +71,40 @@ static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem)
+ 					     &exynos_gem->dma_attrs);
+ 	if (!exynos_gem->cookie) {
+ 		DRM_ERROR("failed to allocate buffer.\n");
+-		if (exynos_gem->pages)
+-			drm_free_large(exynos_gem->pages);
+-		return -ENOMEM;
++		goto err_free;
+ 	}
+ 
+-	if (exynos_gem->pages) {
+-		dma_addr_t start_addr;
+-		unsigned int i = 0;
+-
+-		start_addr = exynos_gem->dma_addr;
+-		while (i < nr_pages) {
+-			exynos_gem->pages[i] =
+-				pfn_to_page(dma_to_pfn(dev->dev, start_addr));
+-			start_addr += PAGE_SIZE;
+-			i++;
+-		}
+-	} else {
+-		exynos_gem->pages = exynos_gem->cookie;
++	ret = dma_get_sgtable_attrs(dev->dev, &sgt, exynos_gem->cookie,
++				    exynos_gem->dma_addr, exynos_gem->size,
++				    &exynos_gem->dma_attrs);
++	if (ret < 0) {
++		DRM_ERROR("failed to get sgtable.\n");
++		goto err_dma_free;
++	}
++
++	j = 0;
++	for_each_sg(sgt.sgl, s, sgt.orig_nents, i) {
++		int size = s->length >> PAGE_SHIFT;
++		struct page *page = sg_page(s);
++
++		while (size-- > 0)
++			exynos_gem->pages[j++] = page++;
+ 	}
+ 
++	sg_free_table(&sgt);
++
+ 	DRM_DEBUG_KMS("dma_addr(0x%lx), size(0x%lx)\n",
+ 			(unsigned long)exynos_gem->dma_addr, exynos_gem->size);
+ 
+ 	return 0;
++
++err_dma_free:
++	dma_free_attrs(dev->dev, exynos_gem->size, exynos_gem->cookie,
++		       exynos_gem->dma_addr, &exynos_gem->dma_attrs);
++err_free:
++	drm_free_large(exynos_gem->pages);
++
++	return ret;
+ }
+ 
+ static void exynos_drm_free_buf(struct exynos_drm_gem *exynos_gem)
+@@ -112,8 +123,7 @@ static void exynos_drm_free_buf(struct exynos_drm_gem *exynos_gem)
+ 			(dma_addr_t)exynos_gem->dma_addr,
+ 			&exynos_gem->dma_attrs);
+ 
+-	if (!is_drm_iommu_supported(dev))
+-		drm_free_large(exynos_gem->pages);
++	drm_free_large(exynos_gem->pages);
+ }
+ 
+ static int exynos_drm_gem_handle_create(struct drm_gem_object *obj,
+-- 
+1.9.2
