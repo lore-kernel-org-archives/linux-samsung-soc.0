@@ -1,52 +1,43 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed
- support
-Date: Tue, 13 Oct 2015 09:14:38 +0900
-Message-ID: <561C4CEE.3050905@samsung.com>
-References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
- <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
- <561B48B7.1040201@samsung.com>
- <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
+Subject: Re: [PATCH 05/37] ARM: dts: s5pv210-aquila: Fix typo in regulator
+ enable GPIO property
+Date: Tue, 13 Oct 2015 09:20:18 +0900
+Message-ID: <561C4E42.7060905@samsung.com>
+References: <1444684386-17094-1-git-send-email-laurent.pinchart@ideasonboard.com>
+ <1444684386-17094-6-git-send-email-laurent.pinchart@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:29368 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752755AbbJMAOp (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35847 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752009AbbJMAU1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2015 20:14:45 -0400
-In-reply-to: <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
+	Mon, 12 Oct 2015 20:20:27 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NW4004KQUA1WV10@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 13 Oct 2015 01:20:25 +0100 (BST)
+In-reply-to: <1444684386-17094-6-git-send-email-laurent.pinchart@ideasonboard.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-On 13.10.2015 00:32, Anand Moon wrote:
-> Hi Krzysztof,
+On 13.10.2015 06:12, Laurent Pinchart wrote:
+> The property name should be "gpio", not "gpios". Fix it.
 > 
-> On 12 October 2015 at 11:14, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> On 12.10.2015 00:46, Anand Moon wrote:
->>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
->>
->> This description is not entirely correct. The MMC driver already
->> supports these UHS speeds (you did not any code) so you rather enabled
->> it (description of bindings says "is supported").
->>
->> You mentioned DDR50 but I don't see respective property below.
->>
->> How do you know that these modes are really supported? I don't know. Can
->> you convince me?
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  arch/arm/boot/dts/s5pv210-aquila.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Setting this DDR50 capability give me this error. That's the reason to
-> drop this capability.
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-But you mentioned it in commit message! "Added support for UHS-I ...
-(DDR50)"
-
-In the same time dropping DDR50 is not an sufficient proof that "SDR50
-and SDR104 are really supported".
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
