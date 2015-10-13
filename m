@@ -1,97 +1,62 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v2 0/7] Add support for Exynos SROM Controller driver
-Date: Tue, 13 Oct 2015 18:55:21 +0530
-Message-ID: <561D0641.5060205@samsung.com>
-References: <1440403348-8974-1-git-send-email-pankaj.dubey@samsung.com>
- <55DBD063.5040703@samsung.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 0/3] arm:irchip: IRQCHIP_DECLARE macro is now
+ accessible
+Date: Tue, 13 Oct 2015 21:48:51 +0800
+Message-ID: <20151013134851.GA551@tiger>
+References: <1444740975-31948-1-git-send-email-joel@porquet.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37748 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752356AbbJMN0D (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:32777 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752100AbbJMNtN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Oct 2015 09:26:03 -0400
-In-reply-to: <55DBD063.5040703@samsung.com>
+	Tue, 13 Oct 2015 09:49:13 -0400
+Content-Disposition: inline
+In-Reply-To: <1444740975-31948-1-git-send-email-joel@porquet.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene@kernel.org, heiko@sntech.de, thomas.ab@samsung.com, p.fedin@samsung.com
+To: Joel Porquet <joel@porquet.org>
+Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, kgene@kernel.org, k.kozlowski@samsung.com, kernel@pengutronix.de, tony@atomide.com, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marc Zyngier <marc.zyngier@arm.com>
 
-Hi Krzysztof,
+On Tue, Oct 13, 2015 at 02:56:12PM +0200, Joel Porquet wrote:
+> The IRQCHIP_DECLARE macro migrated to 'include/linux/irqchip.h', maki=
+ng it
+> globally accessible.
+>=20
+> See commit 91e20b5040c67c51aad88cf87db4305c5bd7f79d ("irqchip: Move
+> IRQCHIP_DECLARE macro to include/linux/irqchip.h").
+>=20
+> This series of patches add inclusions of 'include/linux/irqchip.h' an=
+d
+> replaces uses of macro OF_DECLARE_2 with IRQCHIP_DECLARE for platform=
+s
+> exynos, imx and omap2.
+>=20
+> I had submitted a single patch a few months ago
+> (https://lkml.org/lkml/2015/7/7/1069), but it never got merged althou=
+gh it
+> had been acked by all the subsystem maintainers. Hopefully, splitting=
+ the
+> patch into these independent patches that can be applied separately s=
+hould
+> help.
+>=20
+> Jo=EBl
+>=20
+> Joel Porquet (3):
+>   arm:exynos: IRQCHIP_DECLARE macro is now accessible
+>   arm:imx: IRQCHIP_DECLARE macro is now accessible
+>   arm:omap2: IRQCHIP_DECLARE macro is now accessible
+>=20
+>  arch/arm/mach-exynos/suspend.c       | 3 ++-
+>  arch/arm/mach-imx/gpc.c              | 7 ++-----
+>  arch/arm/mach-omap2/omap-wakeupgen.c | 7 ++-----
+>  3 files changed, 6 insertions(+), 11 deletions(-)
 
-On Tuesday 25 August 2015 07:48 AM, Krzysztof Kozlowski wrote:
-> On 24.08.2015 17:02, Pankaj Dubey wrote:
->> This patch set adds support for Exynos SROM controller DT based driver.
->> Currently SROM register sets are used only during S2R, so driver
->> basically added for taking care of S2R. It will help us in removing
->> static mapping from exynos.c and other extra code handline during S2R.
->>
->> This patch set also updated exynos4 and exynos5 dtsi files for with device
->> node for srom, and added binding documentation for the same.
->>
->> First two patches are some minor cleanup in mach-exynos.
->>
->> Patchset v1 was posted here[1]
->> [1]: https://lkml.org/lkml/2015/4/29/98
->>
->> Changes since v1:
->>   - Rebased to latest kgene tree.
->>   - Addressed review comments from Krzysztof Kozlowski.
->>   - Add two new patches for minor cleanup in exynos.c and map.h
->>
->> Pankaj Dubey (7):
->>    ARM: EXYNOS: remove unused static mapping of CMU for exynos5
->>    ARM: EXYNOS: code cleanup in map.h
->>    drivers: soc: add support for exynos SROM driver
->>    ARM: EXYNOS: Remove SROM related register settings from mach-exynos
->>    ARM: dts: add SROM device node for exynos4
->>    ARM: dts: add SROM device node for exynos5
->>    Documentation: dt-bindings: add exynos-srom binding information
->
-> One more thing: please update the existing Exynos entry in maintainers
-> so it would cover drivers/soc/samsung.
->
+Marc sent a patch [1] doing the same thing a few days ago.
 
-Thanks for review, and sorry for late reply.
+Shawn
 
-I have updated v3 version of this patch series addressing most of your 
-review comments. Please do let me know if still it has any concern.
-
-Regarding Pavel's comment of handling any other external peripheral 
-which can be hooked into srom can be handled as feature addition on top 
-of this basic driver based on requirement.
-
-Thanks,
-Pankaj Dubey
-> Best regards,
-> Krzysztof
->
->>
->>   .../bindings/arm/samsung/exynos-srom.txt           |  12 ++
->>   arch/arm/boot/dts/exynos4.dtsi                     |   5 +
->>   arch/arm/boot/dts/exynos5.dtsi                     |   5 +
->>   arch/arm/mach-exynos/Kconfig                       |   2 +
->>   arch/arm/mach-exynos/common.h                      |   2 -
->>   arch/arm/mach-exynos/exynos.c                      |  22 ----
->>   arch/arm/mach-exynos/include/mach/map.h            |   8 --
->>   arch/arm/mach-exynos/regs-srom.h                   |  53 --------
->>   arch/arm/mach-exynos/suspend.c                     |  20 +--
->>   arch/arm/plat-samsung/include/plat/map-s5p.h       |   1 -
->>   drivers/soc/Kconfig                                |   1 +
->>   drivers/soc/Makefile                               |   1 +
->>   drivers/soc/samsung/Kconfig                        |  13 ++
->>   drivers/soc/samsung/Makefile                       |   1 +
->>   drivers/soc/samsung/exynos-srom.c                  | 143 +++++++++++++++++++++
->>   drivers/soc/samsung/exynos-srom.h                  |  51 ++++++++
->>   16 files changed, 236 insertions(+), 104 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
->>   delete mode 100644 arch/arm/mach-exynos/regs-srom.h
->>   create mode 100644 drivers/soc/samsung/Kconfig
->>   create mode 100644 drivers/soc/samsung/Makefile
->>   create mode 100644 drivers/soc/samsung/exynos-srom.c
->>   create mode 100644 drivers/soc/samsung/exynos-srom.h
->>
->
->
+[1] http://thread.gmane.org/gmane.linux.ports.arm.kernel/444136
