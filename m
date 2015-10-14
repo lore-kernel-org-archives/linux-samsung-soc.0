@@ -1,66 +1,181 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
 Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
-Date: Wed, 14 Oct 2015 07:56:06 +0530
-Message-ID: <CAGOxZ50P8N5eDp-7Z892Dj=iNnYP+P2JKFALmKPJ5s4kQaDiXA@mail.gmail.com>
+Date: Wed, 14 Oct 2015 09:28:22 +0530
+Message-ID: <CANAwSgS=AdOKre79PAP8EQfhvZtMrWuMWPodoPr3_Sq=TWJwbw@mail.gmail.com>
 References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
  <1444578364-1384-3-git-send-email-linux.amoon@gmail.com> <561B48B7.1040201@samsung.com>
  <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
  <561C4CEE.3050905@samsung.com> <CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
  <561C7DF1.6000609@samsung.com> <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
- <561D9ACE.6050103@samsung.com> <CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
- <561DACC6.9040209@samsung.com> <CAGOxZ53W90Q37U+bfohpUVvXQfqa2M+R4g2T6d1SM1xRyn3V6A@mail.gmail.com>
- <561DBBE2.8060609@samsung.com>
+ <561D9ACE.6050103@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <561DBBE2.8060609@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:37324 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751642AbbJND6n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 Oct 2015 23:58:43 -0400
+In-Reply-To: <561D9ACE.6050103@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 14, 2015 at 7:50 AM, Krzysztof Kozlowski
+hi Krzysztof,
+
+On 14 October 2015 at 05:29, Krzysztof Kozlowski
 <k.kozlowski@samsung.com> wrote:
-> On 14.10.2015 11:13, Alim Akhtar wrote:
->> On Wed, Oct 14, 2015 at 6:45 AM, Krzysztof Kozlowski
+> On 14.10.2015 01:27, Anand Moon wrote:
+>> Hi Krzysztof,
+>>
+>> On 13 October 2015 at 09:13, Krzysztof Kozlowski
 >> <k.kozlowski@samsung.com> wrote:
->>> On 14.10.2015 10:06, Alim Akhtar wrote:
->>>> +Doug
->>>> Hello,
->>>> AFAIR, dw_mmc host controller does support UHS-I [1], specially SDR50
->>>> and SDR104 modes.
->>>>
->>>> [1]: http://www.spinics.net/lists/linux-mmc/msg28186.html
->>>>
->>>> What I remember is, one need to set "broken-cd" property also in order
->>>> to make it work because of the vqmmc and vmmc connection on board. I
->>>> didn't find the link right now, but you can search on the web, there
->>>> was a long discussion about handling this.
->>>> Have not checked it recently, so not sure if this got broken somehow.
->>>>
 >>>
->>> Please, don't top post.
+>>> On 13.10.2015 12:08, Anand Moon wrote:
+>>>> Hi Krzysztof,
+>>>>
+>>>> On 13 October 2015 at 05:44, Krzysztof Kozlowski
+>>>> <k.kozlowski@samsung.com> wrote:
+>>>>> On 13.10.2015 00:32, Anand Moon wrote:
+>>>>>> Hi Krzysztof,
+>>>>>>
+>>>>>> On 12 October 2015 at 11:14, Krzysztof Kozlowski
+>>>>>> <k.kozlowski@samsung.com> wrote:
+>>>>>>> On 12.10.2015 00:46, Anand Moon wrote:
+>>>>>>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
+>>>>>>>
+>>>>>>> This description is not entirely correct. The MMC driver already
+>>>>>>> supports these UHS speeds (you did not any code) so you rather enabled
+>>>>>>> it (description of bindings says "is supported").
+>>>>>>>
+>>>>>>> You mentioned DDR50 but I don't see respective property below.
+>>>>>>>
+>>>>>>> How do you know that these modes are really supported? I don't know. Can
+>>>>>>> you convince me?
+>>>>>>
+>>>>>> Setting this DDR50 capability give me this error. That's the reason to
+>>>>>> drop this capability.
+>>>>>
+>>>>> But you mentioned it in commit message! "Added support for UHS-I ...
+>>>>> (DDR50)"
+>>>>>
+>>>>> In the same time dropping DDR50 is not an sufficient proof that "SDR50
+>>>>> and SDR104 are really supported".
+>>>>>
+>>>>
+>>>> These changes are related to the microSD card capabilities.
+>>>> So SDR50 have better frequency over DDR50. On the same Sandisk card.
+>>>>
+>>>> When the card select the capability for DDR50
+>>>> ---------------------------------------------------
+>>>> [    4.001477] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>>> req 50000000Hz, actual 50000000HZ div = 0)
+>>>> [    4.001604] mmc1: new ultra high speed DDR50 SDHC card at address aaaa
+>>>> [    4.004505] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+>>>> [    4.009179] mmcblk0: error -110 sending status command, retrying
+>>>> [    4.009271] mmcblk0: error -115 sending stop command, original cmd
+>>>> response 0x900, card status 0x900
+>>>> [    4.009275] mmcblk0: error -84 transferring data, sector 0, nr 8,
+>>>> cmd response 0x900, card status 0x0
+>>>> [    4.025563] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>>> req 400000Hz, actual 396825HZ div = 63)
+>>>> [    4.067770] Console: switching to colour frame buffer device 274x77
+>>>> [    4.098782] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>>> req 50000000Hz, actual 50000000HZ div = 0)
+>>>> [    4.099692] mmc1: tried to reset card
+>>>> [    4.101332]  mmcblk0: p1 p2
+>>>>
+>>>>
+>>>> When the card select the capability for SDR50
+>>>> ---------------------------------------------------------------------------------
+>>>> [ 2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req
+>>>> 100000000Hz, actual 100000000HZ div = 0)
+>>>> [ 2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+>>>> [ 2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+>>>> [ 2.461743] mmcblk0: p1 p2
+>>>>
+>>>> Which will relate to better read/write speed.
 >>>
->> I am sorry, but I didn't get this, what is the guide line here???
+>>> Which is not an answer to my question. To none of my previous questions.
+>>>
+>>
+>> Basically UHS-I capability  (sd-uhs-sdr12, sd-uhs-sdr25, sd-uhs-sdr50,
+>> sd-uhs-sdr104) help tune speed supported for mmc
+>>
+>> I have tired to compare the speed on high speed UHS-I vs ultra high
+>> speed UHS-I using izone utility.
+>>
+>> [    2.572469] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>> req 50000000Hz, actual 50000000HZ div = 0)
+>> [    2.572609] mmc1: new high speed SDHC card at address aaaa
+>>
+>>       Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+>> -r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+>>         Output is in kBytes/sec
+>>         Time Resolution = 0.000001 seconds.
+>>         Processor cache size set to 32 kBytes.
+>>         Processor cache line size set to 64 bytes.
+>>         File stride size set to 17 * record size.
+>>                                                               random
+>>  random     bkwd    record    stride
+>>               kB  reclen    write  rewrite    read    reread    read
+>>   write     read   rewrite      read   fwrite frewrite    fread
+>> freread
+>>            10240       4     1631        0     6556        0     5538      982
+>>            10240      64     8828        0    18897        0    17994      303
+>>            10240     128     6269        0    20670        0    20128     1096
+>> ---------------------------------------------------------------------------------------------------------
+>> [    2.613761] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
+>> req 100000000Hz, actual 100000000HZ div = 0)
+>> [    2.623573] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+>>
+>>         Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+>> -r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+>>         Output is in kBytes/sec
+>>         Time Resolution = 0.000001 seconds.
+>>         Processor cache size set to 32 kBytes.
+>>         Processor cache line size set to 64 bytes.
+>>         File stride size set to 17 * record size.
+>>                                                               random
+>>  random     bkwd    record    stride
+>>               kB  reclen    write  rewrite    read    reread    read
+>>   write     read   rewrite      read   fwrite frewrite    fread
+>> freread
+>>            10240       4     1809        0     7507        0     5233      859
+>>            10240      64    11622        0    31250        0    28072      516
+>>            10240     128     4320        0    34417        0    32509     1148
+>>
+>> My observation is that their slight increase in read/write operation.
+>>
+>> Hope I have tried to answer you query. If I am wrong please let me know.
 >
-> I mean reply inline, under the other person's quote, not above it.
+> Nope, that did not answer my query. You gave some performance benchmarks
+> but my question was not about the speed of anything. The question is
+> (once again):
+> How do you know that these modes are really supported?
 >
-> And some old, really old joke:
-> A: Because it messes up the order in which people normally read text.
-> Q: Why is top-posting such a bad thing?
-> A: Top-posting.
-> Q: What is the most annoying thing in e-mail?
+> You are marking the *host* as supporting these modes. Please provide
+> information that host supports them *really*, not by experimenting "oh,
+> it seems to work now, maybe it will work always".
 >
-> :)
->
-I see..got it..thanks for clarification.
+> Usually vendors, if their products implement some kind of
+> specification/protocol, they mark the products as "compatible with XYZ" etc.
 
+I found this link from hardkernel website which specify the interface support
+
+http://www.hardkernel.com/main/products/prdt_info.php?g_code=G141578491347
+
+Manufacturer Part Number : Sandisk SDSDQAD-016G
+Interface : UHS-1 SDR50
+
+I don't know much internal specification of the Odroid XU3/XU4 Boards.
+
+I am not sure if it will support host will sd-uhs-sdr104, but it will
+be compatible for sd-uhs-sdr12, sd-uhs-sdr25, sd-uhs-sdr50.
+
+-Anand Moon
+
+>
 > Best regards,
 > Krzysztof
->
-
-
-
--- 
-Regards,
-Alim
