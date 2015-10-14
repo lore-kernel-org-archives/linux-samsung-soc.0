@@ -1,78 +1,87 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
-Date: Wed, 14 Oct 2015 15:40:04 -0700
-Message-ID: <CAD=FV=Voh6Xh_naWQTaRPP8YUS2xJh7jfA+zYbH9QdVhmyZz9A@mail.gmail.com>
-References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
-	<1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
-	<561B48B7.1040201@samsung.com>
-	<CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
-	<561C4CEE.3050905@samsung.com>
-	<CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
-	<561C7DF1.6000609@samsung.com>
-	<CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
-	<561D9ACE.6050103@samsung.com>
-	<CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [BUG] broken mixer after second resume from mem
+Date: Thu, 15 Oct 2015 08:35:48 +0900
+Message-ID: <561EE6D4.6030803@samsung.com>
+References: <561CDC33.7050103@collabora.com> <561DEE43.5040309@samsung.com>
+ <CAAObsKCubVgXTCdLJOZZ3nSXZjdL3G9SjWWuVYPcxLgh5poV6g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f169.google.com ([209.85.160.169]:36449 "EHLO
-	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753717AbbJNWkF (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28319 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753772AbbJNXfv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Oct 2015 18:40:05 -0400
-Received: by ykdt21 with SMTP id t21so1799192ykd.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Oct 2015 15:40:04 -0700 (PDT)
-In-Reply-To: <CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
+	Wed, 14 Oct 2015 19:35:51 -0400
+In-reply-to: <CAAObsKCubVgXTCdLJOZZ3nSXZjdL3G9SjWWuVYPcxLgh5poV6g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniel.stone@collabora.co.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi,
+On 14.10.2015 15:50, Tomeu Vizoso wrote:
+> On 14 October 2015 at 07:55, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On 13.10.2015 19:25, Tomeu Vizoso wrote:
+>>> Hi,
+>>>
+>>> have been hunting down a bug on exynos5250-snow which caused both HDMI
+>>> and LVDS output to be broken after the second resume (with suspend to
+>>> mem, but not to idle).
+>>>
+>>> What I have found is that when powering down the DISP1 power domain
+>>> while suspending for the second time, the contents of the SRC_TOP3
+>>> register change from 0x1110550 to 0x1110500. IIUIC, this means that
+>>> ACLK_200_DISP1 is reparented to XXTI.
+>>>
+>>> When the CPU comes up again, that register contains 0x1110550 again, but
+>>> it's set to 0x1110500 by the code that restores clk registers when resuming:
+>>>
+>>> First suspend:
+>>>
+>>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
+>>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
+>>> exynos5250_clk_suspend: SRC_TOP3 1110550
+>>> exynos5250_clk_resume: SRC_TOP3 1110550 - before
+>>> exynos5250_clk_resume: SRC_TOP3 1110550 - after
+>>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
+>>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
+>>>
+>>>
+>>> Second suspend:
+>>>
+>>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
+>>> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
+>>> exynos5250_clk_suspend: SRC_TOP3 1110500
+>>> exynos5250_clk_resume: SRC_TOP3 1110550 - before
+>>> exynos5250_clk_resume: SRC_TOP3 1110500 - after
+>>> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - before
+>>> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
+>>>
+>>
+>> I am assuming you are talking about current linux-next. The actual
+>> reparent happens in exynos_pd_power which would indicate the exynos pd
+>> clock reparenting code. However the domains for Exynos5250 don't have
+>> any clocks set up for reparenting... which actually might be the issue.
+>> These clocks should be probably reparented - as it is done for other
+>> platforms - look at 5420 example (they are glitch-free on both of SoCs).
+>>
+>> I've seen a such issues before. The problem is that after some time I
+>> tend to forget the needed workaround and solution. :)
+>>
+>> Try with reparenting necessary clocks. On other platform for some kind
+>> of similar issue the reset was required for the IP block - DECON
+>> (actually the mux could not stabilize there which can be observed in one
+>> of STATUS registers for mux).
+>>
+>> Let me know if explanation above is not detailed enough.
+> 
+> Thanks for the reply, I looked at downstream and saw that two clocks
+> are being reparented and that seems to fix things. Will send a patch
+> later today.
+> 
 
-On Tue, Oct 13, 2015 at 6:06 PM, Alim Akhtar <alim.akhtar@gmail.com> wrote:
-> +Doug
-> Hello,
-> AFAIR, dw_mmc host controller does support UHS-I [1], specially SDR50
-> and SDR104 modes.
->
-> [1]: http://www.spinics.net/lists/linux-mmc/msg28186.html
->
-> What I remember is, one need to set "broken-cd" property also in order
-> to make it work because of the vqmmc and vmmc connection on board. I
-> didn't find the link right now, but you can search on the web, there
-> was a long discussion about handling this.
-> Have not checked it recently, so not sure if this got broken somehow.
+Great! Happy to hear that!
 
-Right.  It _shouldn't_ be possible to add "vmmc/vqmmc" supplies to
-your DTS (which you do in patch 2/3) and also to use the "gpc2-2" pin
-for card detect (even if you configure it as a GPIO).  Once you add
-"vmmc/vqmmc" then Linux ought to be turning these regulators off when
-no card is plugged in.  Presumably the "vqmmc" regulator is hooked up
-to the "VDDQ_MMC2".  If you look in the user manual for 5422 you can
-see that "GPC2[2]/SD_2_CDn" has power domain "VDDQ_MMC2".  Thus you
-really shouldn't be using that pin when vqmmc is off.  I think at some
-point someone claimed that it still worked for them, but nobody could
-ever explain why.  Full discussion at
-<https://patchwork.kernel.org/patch/4763881/>
-
----
-
-In case it matters, comments on stuff from earlier in the thread:
-
-* As people pointed out, exynos5422 certainly supports all these modes
-(including DDR50) in the SoC.
-
-* Just because the SoC supports these modes doesn't mean that the
-boards do, which is why the SoC .dtsi doesn't include them.  Thus,
-this patch is "right" in that it changes a board-specific file.
-
-* As Krzysztof points out this board doesn't "add" support but rather
-"enables" support.  The distinction is subtle.
-
-* You might be able to get DDR50 working, but probably better to just
-start with SDR modes.  Previously I never attempted to get DDR50 cards
-working, so possibly the software needs extra work?
-
-
--Doug
+Best regards,
+Krzysztof
