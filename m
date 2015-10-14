@@ -1,42 +1,45 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] dt-bindings: Correct the example for Exynos power domain clocks
-Date: Wed, 14 Oct 2015 15:02:06 +0900
-Message-ID: <1444802526-18518-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33700 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750852AbbJNGCs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Oct 2015 02:02:48 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv9 07/15] cec: add HDMI CEC framework
+Date: Wed, 14 Oct 2015 08:29:44 +0200
+Message-ID: <561DF658.3090002@xs4all.nl>
+References: <cover.1441633456.git.hansverk@cisco.com> <60de2f33f0d4c809f06d23cdac75e3b798aaae4b.1441633456.git.hansverk@cisco.com> <20151006170635.GQ21513@n2100.arm.linux.org.uk> <561B9B1A.4020001@xs4all.nl> <20151013225147.GM32532@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20151013225147.GM32532@n2100.arm.linux.org.uk>
+Sender: linux-media-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Since commit 29e5eea06bc1 ("ARM: EXYNOS: Get current parent clock for
-power domain on/off") the "pclkN" names of "clock-names" property is not
-parsed any more. The bindings and driver were updated but the example
-was not. Fix the example now.
+On 10/14/2015 12:51 AM, Russell King - ARM Linux wrote:
+> On Mon, Oct 12, 2015 at 01:35:54PM +0200, Hans Verkuil wrote:
+>> On 10/06/2015 07:06 PM, Russell King - ARM Linux wrote:
+>>> Surely you aren't proposing that drivers should write directly to
+>>> adap->phys_addr without calling some notification function that the
+>>> physical address has changed?
+>>
+>> Userspace is informed through CEC_EVENT_STATE_CHANGE when the adapter is
+>> enabled/disabled. When the adapter is enabled and CEC_CAP_PHYS_ADDR is
+>> not set (i.e. the kernel takes care of this), then calling CEC_ADAP_G_PHYS_ADDR
+>> returns the new physical address.
+> 
+> Okay, so when I see the EDID arrive, I should be doing:
+> 
+>                 phys = parse_hdmi_addr(block->edid);
+>                 cec->adap->phys_addr = phys;
+>                 cec_enable(cec->adap, true);
+> 
+> IOW, you _are_ expecting adap->phys_addr to be written, but only while
+> the adapter is disabled?
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Right.
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index e151057d92f0..4e947372a693 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -43,9 +43,8 @@ Example:
- 	mfc_pd: power-domain@10044060 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044060 0x20>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
--			<&clock CLK_MOUT_USER_ACLK333>;
--		clock-names = "oscclk", "pclk0", "clk0";
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
-+		clock-names = "oscclk", "clk0";
- 		#power-domain-cells = <0>;
- 	};
- 
--- 
-1.9.1
+And when the hotplug goes down you should call cec_enable(cec->adap, false).
+While the adapter is disabled, CEC_ADAP_G_PHYS_ADDR will always return
+CEC_PHYS_ADDR_INVALID regardless of the cec->adap->phys_addr value.
+
+Regards,
+
+	Hans
