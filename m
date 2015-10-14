@@ -1,55 +1,43 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] dt-bindings: Correct the example for Exynos power domain
- clocks
-Date: Wed, 14 Oct 2015 11:24:52 +0200
-Message-ID: <561E1F64.5010405@osg.samsung.com>
-References: <1444802526-18518-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v1 2/2] ARM: dts: exynos5250: Add clocks to DISP1 domain
+Date: Wed, 14 Oct 2015 12:44:17 +0200
+Message-ID: <1444819457-27519-3-git-send-email-tomeu.vizoso@collabora.com>
+References: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444802526-18518-1-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-[dropping my old email address from the cc list]
+Adds to the node of the DISP1 power domain the two clocks that need to
+be reparented while the domain is powered off:
+CLK_MOUT_ACLK200_DISP1_SUB and CLK_MOUT_ACLK300_DISP1_SUB.
 
-Hello Krzysztof,
+Otherwise the state is unknown at power up and the mixer's clocks are
+all messed up.
 
-On 10/14/2015 08:02 AM, Krzysztof Kozlowski wrote:
-> Since commit 29e5eea06bc1 ("ARM: EXYNOS: Get current parent clock for
-> power domain on/off") the "pclkN" names of "clock-names" property is not
-> parsed any more. The bindings and driver were updated but the example
-> was not. Fix the example now.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> index e151057d92f0..4e947372a693 100644
-> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> @@ -43,9 +43,8 @@ Example:
->  	mfc_pd: power-domain@10044060 {
->  		compatible = "samsung,exynos4210-pd";
->  		reg = <0x10044060 0x20>;
-> -		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
-> -			<&clock CLK_MOUT_USER_ACLK333>;
-> -		clock-names = "oscclk", "pclk0", "clk0";
-> +		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
-> +		clock-names = "oscclk", "clk0";
->  		#power-domain-cells = <0>;
->  	};
->  
-> 
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Link: http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
+---
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+ arch/arm/boot/dts/exynos5250.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards,
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index b24610ea8c2a..88b9cf5f226f 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -130,6 +130,10 @@
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x100440A0 0x20>;
+ 		#power-domain-cells = <0>;
++		clocks = <&clock CLK_FIN_PLL>,
++			 <&clock CLK_MOUT_ACLK200_DISP1_SUB>,
++			 <&clock CLK_MOUT_ACLK300_DISP1_SUB>;
++		clock-names = "oscclk", "clk0", "clk1";
+ 	};
+ 
+ 	clock: clock-controller@10010000 {
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.5.0
