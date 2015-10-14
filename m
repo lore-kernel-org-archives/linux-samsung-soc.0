@@ -1,100 +1,153 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [BUG] broken mixer after second resume from mem
-Date: Wed, 14 Oct 2015 08:50:23 +0200
-Message-ID: <CAAObsKCubVgXTCdLJOZZ3nSXZjdL3G9SjWWuVYPcxLgh5poV6g@mail.gmail.com>
-References: <561CDC33.7050103@collabora.com> <561DEE43.5040309@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v6 1/2] usb: dwc2: remove no longer needed init_mutex
+Date: Wed, 14 Oct 2015 08:52:28 +0200
+Message-ID: <1444805549-21185-1-git-send-email-m.szyprowski@samsung.com>
+References: <2B3535C5ECE8B5419E3ECBE30077290901DC38A41D@US01WEMBX2.internal.synopsys.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:38093 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750845AbbJNGuo (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:45126 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751320AbbJNGwy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Oct 2015 02:50:44 -0400
-In-Reply-To: <561DEE43.5040309@samsung.com>
+	Wed, 14 Oct 2015 02:52:54 -0400
+In-reply-to: <2B3535C5ECE8B5419E3ECBE30077290901DC38A41D@US01WEMBX2.internal.synopsys.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniel.stone@collabora.co.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, John Youn <johnyoun@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 14 October 2015 at 07:55, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 13.10.2015 19:25, Tomeu Vizoso wrote:
->> Hi,
->>
->> have been hunting down a bug on exynos5250-snow which caused both HDMI
->> and LVDS output to be broken after the second resume (with suspend to
->> mem, but not to idle).
->>
->> What I have found is that when powering down the DISP1 power domain
->> while suspending for the second time, the contents of the SRC_TOP3
->> register change from 0x1110550 to 0x1110500. IIUIC, this means that
->> ACLK_200_DISP1 is reparented to XXTI.
->>
->> When the CPU comes up again, that register contains 0x1110550 again, but
->> it's set to 0x1110500 by the code that restores clk registers when resuming:
->>
->> First suspend:
->>
->> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
->> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
->> exynos5250_clk_suspend: SRC_TOP3 1110550
->> exynos5250_clk_resume: SRC_TOP3 1110550 - before
->> exynos5250_clk_resume: SRC_TOP3 1110550 - after
->> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
->> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
->>
->>
->> Second suspend:
->>
->> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
->> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
->> exynos5250_clk_suspend: SRC_TOP3 1110500
->> exynos5250_clk_resume: SRC_TOP3 1110550 - before
->> exynos5250_clk_resume: SRC_TOP3 1110500 - after
->> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - before
->> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
->>
->
-> I am assuming you are talking about current linux-next. The actual
-> reparent happens in exynos_pd_power which would indicate the exynos pd
-> clock reparenting code. However the domains for Exynos5250 don't have
-> any clocks set up for reparenting... which actually might be the issue.
-> These clocks should be probably reparented - as it is done for other
-> platforms - look at 5420 example (they are glitch-free on both of SoCs).
->
-> I've seen a such issues before. The problem is that after some time I
-> tend to forget the needed workaround and solution. :)
->
-> Try with reparenting necessary clocks. On other platform for some kind
-> of similar issue the reset was required for the IP block - DECON
-> (actually the mux could not stabilize there which can be observed in one
-> of STATUS registers for mux).
->
-> Let me know if explanation above is not detailed enough.
+init_mutex is a leftover from the time, when s3c-hsotg driver did not
+implement proper pull up/down control and emulated it by enabling
+enabling/disabling usb phy. Proper pull up/down control has been added
+by commit 5b9451f8c4fbaf0549139755fb45ff2b57975b7f ("usb: dwc2: gadget:
+use soft-disconnect udc feature in pullup() method"), so init_muxtex can
+be removed now to avoid potential deadlocks with other locks.
 
-Thanks for the reply, I looked at downstream and saw that two clocks
-are being reparented and that seems to fix things. Will send a patch
-later today.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: John Youn <johnyoun@synopsys.com>
+Tested-by: John Youn <johnyoun@synopsys.com>
+---
+ drivers/usb/dwc2/core.h     |  1 -
+ drivers/usb/dwc2/gadget.c   | 17 -----------------
+ drivers/usb/dwc2/platform.c |  1 -
+ 3 files changed, 19 deletions(-)
 
-Regards,
-
-Tomeu
-
->> I have no idea of why it happens on the second suspend, and also don't
->> know why it doesn't happen when suspending to idle.
->
-> As for the idle - domains are probably not gated so the problems just
-> does not exist.
->
-> BTW as this is display, you can CC some Samsung guys from DRM... they
-> know a lot on these stuff. :)
->
-> Best regards,
-> Krzysztof
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+index ebf2504..89091db 100644
+--- a/drivers/usb/dwc2/core.h
++++ b/drivers/usb/dwc2/core.h
+@@ -712,7 +712,6 @@ struct dwc2_hsotg {
+ 	struct regulator_bulk_data supplies[ARRAY_SIZE(dwc2_hsotg_supply_names)];
+ 
+ 	spinlock_t lock;
+-	struct mutex init_mutex;
+ 	void *priv;
+ 	int     irq;
+ 	struct clk *clk;
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 7e5670c..79d9f3b 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -3193,7 +3193,6 @@ static int dwc2_hsotg_udc_start(struct usb_gadget *gadget,
+ 		return -EINVAL;
+ 	}
+ 
+-	mutex_lock(&hsotg->init_mutex);
+ 	WARN_ON(hsotg->driver);
+ 
+ 	driver->driver.bus = NULL;
+@@ -3220,12 +3219,9 @@ static int dwc2_hsotg_udc_start(struct usb_gadget *gadget,
+ 
+ 	dev_info(hsotg->dev, "bound driver %s\n", driver->driver.name);
+ 
+-	mutex_unlock(&hsotg->init_mutex);
+-
+ 	return 0;
+ 
+ err:
+-	mutex_unlock(&hsotg->init_mutex);
+ 	hsotg->driver = NULL;
+ 	return ret;
+ }
+@@ -3246,8 +3242,6 @@ static int dwc2_hsotg_udc_stop(struct usb_gadget *gadget)
+ 	if (!hsotg)
+ 		return -ENODEV;
+ 
+-	mutex_lock(&hsotg->init_mutex);
+-
+ 	/* all endpoints should be shutdown */
+ 	for (ep = 1; ep < hsotg->num_of_eps; ep++) {
+ 		if (hsotg->eps_in[ep])
+@@ -3270,8 +3264,6 @@ static int dwc2_hsotg_udc_stop(struct usb_gadget *gadget)
+ 
+ 	regulator_bulk_disable(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
+ 
+-	mutex_unlock(&hsotg->init_mutex);
+-
+ 	return 0;
+ }
+ 
+@@ -3307,7 +3299,6 @@ static int dwc2_hsotg_pullup(struct usb_gadget *gadget, int is_on)
+ 		return 0;
+ 	}
+ 
+-	mutex_lock(&hsotg->init_mutex);
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+ 	if (is_on) {
+ 		hsotg->enabled = 1;
+@@ -3321,7 +3312,6 @@ static int dwc2_hsotg_pullup(struct usb_gadget *gadget, int is_on)
+ 
+ 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
+-	mutex_unlock(&hsotg->init_mutex);
+ 
+ 	return 0;
+ }
+@@ -3832,8 +3822,6 @@ int dwc2_hsotg_suspend(struct dwc2_hsotg *hsotg)
+ 	if (hsotg->lx_state != DWC2_L0)
+ 		return ret;
+ 
+-	mutex_lock(&hsotg->init_mutex);
+-
+ 	if (hsotg->driver) {
+ 		int ep;
+ 
+@@ -3861,8 +3849,6 @@ int dwc2_hsotg_suspend(struct dwc2_hsotg *hsotg)
+ 		clk_disable(hsotg->clk);
+ 	}
+ 
+-	mutex_unlock(&hsotg->init_mutex);
+-
+ 	return ret;
+ }
+ 
+@@ -3874,8 +3860,6 @@ int dwc2_hsotg_resume(struct dwc2_hsotg *hsotg)
+ 	if (hsotg->lx_state == DWC2_L2)
+ 		return ret;
+ 
+-	mutex_lock(&hsotg->init_mutex);
+-
+ 	if (hsotg->driver) {
+ 		dev_info(hsotg->dev, "resuming usb gadget %s\n",
+ 			 hsotg->driver->driver.name);
+@@ -3892,7 +3876,6 @@ int dwc2_hsotg_resume(struct dwc2_hsotg *hsotg)
+ 			dwc2_hsotg_core_connect(hsotg);
+ 		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 	}
+-	mutex_unlock(&hsotg->init_mutex);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index b920e43..581e9ca 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -252,7 +252,6 @@ static int dwc2_driver_probe(struct platform_device *dev)
+ 	}
+ 
+ 	spin_lock_init(&hsotg->lock);
+-	mutex_init(&hsotg->init_mutex);
+ 
+ 	/* Detect config values from hardware */
+ 	retval = dwc2_get_hwparams(hsotg);
+-- 
+1.9.2
