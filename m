@@ -1,8 +1,8 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
 Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed
  support
-Date: Wed, 14 Oct 2015 10:15:50 +0900
-Message-ID: <561DACC6.9040209@samsung.com>
+Date: Wed, 14 Oct 2015 10:40:32 +0900
+Message-ID: <561DB290.5070903@samsung.com>
 References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
  <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
  <561B48B7.1040201@samsung.com>
@@ -13,45 +13,72 @@ References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
  <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
  <561D9ACE.6050103@samsung.com>
  <CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
+ <561DACC6.9040209@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:23016 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752537AbbJNBQA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47253 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752807AbbJNBkf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Oct 2015 21:16:00 -0400
-In-reply-to: <CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
+	Tue, 13 Oct 2015 21:40:35 -0400
+In-reply-to: <561DACC6.9040209@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>
+Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>
 
-On 14.10.2015 10:06, Alim Akhtar wrote:
-> +Doug
-> Hello,
-> AFAIR, dw_mmc host controller does support UHS-I [1], specially SDR50
-> and SDR104 modes.
+On 10/14/2015 10:15 AM, Krzysztof Kozlowski wrote:
+> On 14.10.2015 10:06, Alim Akhtar wrote:
+>> +Doug
+>> Hello,
+>> AFAIR, dw_mmc host controller does support UHS-I [1], specially SDR50
+>> and SDR104 modes.
+>>
+>> [1]: http://www.spinics.net/lists/linux-mmc/msg28186.html
+>>
+>> What I remember is, one need to set "broken-cd" property also in order
+>> to make it work because of the vqmmc and vmmc connection on board. I
+>> didn't find the link right now, but you can search on the web, there
+>> was a long discussion about handling this.
+>> Have not checked it recently, so not sure if this got broken somehow.
+>>
 > 
-> [1]: http://www.spinics.net/lists/linux-mmc/msg28186.html
+> Please, don't top post.
 > 
-> What I remember is, one need to set "broken-cd" property also in order
-> to make it work because of the vqmmc and vmmc connection on board. I
-> didn't find the link right now, but you can search on the web, there
-> was a long discussion about handling this.
-> Have not checked it recently, so not sure if this got broken somehow.
+> I am not a SD/MMC specialist (I do not feel enough confident in its
+> internals) but the datasheet for 5422 does not mention UHS. However it
+> mentions "High Speed DDR Mode with 200 MHz clock rate (HS400)". This
+> does not look like UHS...
+
+You're right. It's not UHS mode. it mentions eMMC's HS400 mode.
+UHS and HS400 are difference mode.
+
+eMMC mode are supported 
+
+> https://www.sdcard.org/developers/overview/bus_speed/
+> This of course is not a definite proof that 5422 does not support UHS. I
+> am just saying that I couldn't find any information that *it does*.
+
+Well, I think you want to know whether it supported or not.
+Then you can find the information at User manual.
+In mobile storage part of User manual, it described the overview.
+Mobile storage host supports these specification:
+- Secure Digital memory (SD memory version 3.0)
+- Secure Digital I/O SDIO (SDIO version 3.0)
+- etc...
+
+SD3.0 is supported UHS-I mode. 
+If user manual of exynos5422 is mentioned this specification, it should be supported UHS-I mode.
+
+If my understanding is wrong, let me know, plz.
+
+Best Regards,
+Jaehoon Chung
+
 > 
-
-Please, don't top post.
-
-I am not a SD/MMC specialist (I do not feel enough confident in its
-internals) but the datasheet for 5422 does not mention UHS. However it
-mentions "High Speed DDR Mode with 200 MHz clock rate (HS400)". This
-does not look like UHS...
-https://www.sdcard.org/developers/overview/bus_speed/
-This of course is not a definite proof that 5422 does not support UHS. I
-am just saying that I couldn't find any information that *it does*.
-
-Best regards,
-Krzysztof
+> Best regards,
+> Krzysztof
+> 
+> 
