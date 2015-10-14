@@ -1,69 +1,95 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH v5 0/17] Add Analogix Core Display Port Driver
-Date: Wed, 14 Oct 2015 10:18:10 +0200
-Message-ID: <561E0FC2.1070603@osg.samsung.com>
-References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
- <1442906428-2609-1-git-send-email-ykk@rock-chips.com>
- <5614BADD.1070307@rock-chips.com> <5614DBE2.6080102@osg.samsung.com>
- <5614DFBC.8060105@rock-chips.com> <5614E553.6060108@osg.samsung.com>
- <5614FC6B.4080702@rock-chips.com> <56150128.2070309@osg.samsung.com>
- <5615BB93.9020008@rock-chips.com> <56192135.2080608@rock-chips.com>
- <561CCD09.6020801@osg.samsung.com> <561D0C10.4060002@rock-chips.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 3/4] ARM: multi_v7_defconfig: Enable Maxim 8997 family
+ drivers
+Date: Wed, 14 Oct 2015 10:27:49 +0200
+Message-ID: <561E1205.1040203@osg.samsung.com>
+References: <1444699628-3774-1-git-send-email-k.kozlowski@samsung.com>
+ <1444699628-3774-3-git-send-email-k.kozlowski@samsung.com>
+ <CABxcv=m3tjo6rX3QVTjy3YPiM8AXF=m45TLVvc4-eZK+51X-8Q@mail.gmail.com>
+ <561D04BB.1080406@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <561D0C10.4060002-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:52599 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751533AbbJNI1z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Oct 2015 04:27:55 -0400
+In-Reply-To: <561D04BB.1080406@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: k.kozlowski.k@gmail.com, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
 
-Hello Yakir,
+Hello Krzysztof,
 
-On 10/13/2015 03:50 PM, Yakir Yang wrote:
-> On 10/13/2015 05:21 PM, Javier Martinez Canillas wrote:
-> 
-
-[snip]
-
->>> And it's better to enable pstore function on mainline kernel, so we can analysis the last log when
->>> the mainline kernel crashed. After enable PSTORE_RAM in .config, we still need add ramoops node
->> Interesting, I knew about pstore but I never used it with the Exynos Chromebooks.
+On 10/13/2015 03:18 PM, Krzysztof Kozlowski wrote:
+> W dniu 13.10.2015 o 17:36, Javier Martinez Canillas pisze:
+>> Hello Krzysztof,
 >>
->>> into file, like:
->>> --- a/arch/arm/boot/dts/exynos5250.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->>> @@ -750,6 +750,15 @@
->>>                  iommu = <&sysmmu_gsc3>;
->>>          };
+>> On Tue, Oct 13, 2015 at 3:27 AM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> Enable support for Maxim 8997 Multi Function Device present on Trats and
+>>> Origen boards by toggling on drivers: main MFD, charger, haptic motor,
+>>> regulator, LED and RTC.
 >>>
->>> +       ramoops: ramoops {
->>> +               compatible = "ramoops";
->>> +               name = "ramoops";
->>> +               reg = <0x41f00000 0x100000>;
->>> +               record-size = <0x20000>;
->>> +               dump-oops;
->>> +               status = "okay";
->>> +       };
->>> +
->> Are you using mainline? There isn't a "ramoops" compatible string documented
->> in the upstream DT bindings, platform_match() would match by driver name as
->> a fallback but I don't see code in fs/pstore/ram.c that parses the properties
->> in your device node. I wonder how this works for you or did I missunderstand?
+>>> This allows to test and usage of these boards with multi_v7 config.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> ---
+>>
+>> [snip]
+>>
+>>>  CONFIG_MFD_MAX77686=y
+>>>  CONFIG_MFD_MAX77693=y
+>>>  CONFIG_MFD_MAX8907=y
+>>> +CONFIG_MFD_MAX8997=y
+>>
+>> Only slightly related with your patch but some of the MFD driver for
+>> PMICs used in Exynos boards (like MAX77686) have a tristate Kconfig
+>> symbol while others like this one have a boolean. Do you know if there
+>> are any restrictions w.r.t build this as module or is just an
+>> arbitrary decision? I'm asking since probably we should either allow
+>> this to build as a module or convert the others to boolean.
 > 
-> Aha, I lost some things that I back port the pstore/ram.c from chrome
-> v3.14 tree which driver would parsed the "ramoops" compatible.
+> First, thanks for reviewing the patches.
 >
 
-Ah, that explains it then.
+You are welcome.
+ 
+> As for the question, I wasn't involved in development of these older
+> drivers for older boards. I don't know their internals. AFAIK there were
+> no specific restrictions, except the usual:
+> 
+> 1. Not all other drivers using resources provided by these, took the
+> reference to given resource (e.g. get regulator).
+> 
+> 2. Not all consumer drivers supported deferred probe for given resource
+> (e.g. regulator, clock), see: "regulators: max77693: register driver
+> earlier to avoid deferred probe". In general USB gadget subsystem has
+> this issue. Actually the mentioned max77693 regulator driver should be
+> changed from tristate to built-in because of this.
+> 
+> I don't remember any other important issues so if you fix 1 and 2 then
+> this can be probably safely switched to modules. Of course after testing.
+>
+
+Thanks for the explanation. I neither plan to fix these issues nor changing
+these symbols to tristate since I don't have access to the hardware to test.
+
+I asked mostly because I was curious and to know if I should change the MFD
+drivers to boolean for the PMIC present in boards I have access, to make it
+consistent. But as you said is the other way around, that it would be good
+to allow these drivers to be built as a module.
+ 
+> Best regards,
+> Krzysztof
+> 
+> --
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
