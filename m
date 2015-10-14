@@ -1,80 +1,42 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [BUG] broken mixer after second resume from mem
-Date: Wed, 14 Oct 2015 14:55:15 +0900
-Message-ID: <561DEE43.5040309@samsung.com>
-References: <561CDC33.7050103@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <561CDC33.7050103@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, javier@dowhile0.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniel.stone@collabora.co.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: Correct the example for Exynos power domain clocks
+Date: Wed, 14 Oct 2015 15:02:06 +0900
+Message-ID: <1444802526-18518-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33700 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750852AbbJNGCs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Oct 2015 02:02:48 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 13.10.2015 19:25, Tomeu Vizoso wrote:
-> Hi,
-> 
-> have been hunting down a bug on exynos5250-snow which caused both HDMI
-> and LVDS output to be broken after the second resume (with suspend to
-> mem, but not to idle).
-> 
-> What I have found is that when powering down the DISP1 power domain
-> while suspending for the second time, the contents of the SRC_TOP3
-> register change from 0x1110550 to 0x1110500. IIUIC, this means that
-> ACLK_200_DISP1 is reparented to XXTI.
-> 
-> When the CPU comes up again, that register contains 0x1110550 again, but
-> it's set to 0x1110500 by the code that restores clk registers when resuming:
-> 
-> First suspend:
-> 
-> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
-> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
-> exynos5250_clk_suspend: SRC_TOP3 1110550
-> exynos5250_clk_resume: SRC_TOP3 1110550 - before
-> exynos5250_clk_resume: SRC_TOP3 1110550 - after
-> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
-> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
-> 
-> 
-> Second suspend:
-> 
-> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
-> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
-> exynos5250_clk_suspend: SRC_TOP3 1110500
-> exynos5250_clk_resume: SRC_TOP3 1110550 - before
-> exynos5250_clk_resume: SRC_TOP3 1110500 - after
-> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - before
-> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
-> 
+Since commit 29e5eea06bc1 ("ARM: EXYNOS: Get current parent clock for
+power domain on/off") the "pclkN" names of "clock-names" property is not
+parsed any more. The bindings and driver were updated but the example
+was not. Fix the example now.
 
-I am assuming you are talking about current linux-next. The actual
-reparent happens in exynos_pd_power which would indicate the exynos pd
-clock reparenting code. However the domains for Exynos5250 don't have
-any clocks set up for reparenting... which actually might be the issue.
-These clocks should be probably reparented - as it is done for other
-platforms - look at 5420 example (they are glitch-free on both of SoCs).
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-I've seen a such issues before. The problem is that after some time I
-tend to forget the needed workaround and solution. :)
-
-Try with reparenting necessary clocks. On other platform for some kind
-of similar issue the reset was required for the IP block - DECON
-(actually the mux could not stabilize there which can be observed in one
-of STATUS registers for mux).
-
-Let me know if explanation above is not detailed enough.
-
-> I have no idea of why it happens on the second suspend, and also don't
-> know why it doesn't happen when suspending to idle.
-
-As for the idle - domains are probably not gated so the problems just
-does not exist.
-
-BTW as this is display, you can CC some Samsung guys from DRM... they
-know a lot on these stuff. :)
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+index e151057d92f0..4e947372a693 100644
+--- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
++++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+@@ -43,9 +43,8 @@ Example:
+ 	mfc_pd: power-domain@10044060 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044060 0x20>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
+-			<&clock CLK_MOUT_USER_ACLK333>;
+-		clock-names = "oscclk", "pclk0", "clk0";
++		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
++		clock-names = "oscclk", "clk0";
+ 		#power-domain-cells = <0>;
+ 	};
+ 
+-- 
+1.9.1
