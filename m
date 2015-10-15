@@ -1,44 +1,38 @@
-From: Mikko Rapeli <mikko.rapeli@iki.fi>
-Subject: [PATCH v4 05/79] exynos_drm.h: use __u64 from linux/types.h
-Date: Thu, 15 Oct 2015 07:55:43 +0200
-Message-ID: <1444888618-4506-6-git-send-email-mikko.rapeli@iki.fi>
-References: <1444888618-4506-1-git-send-email-mikko.rapeli@iki.fi>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCHv9 06/15] rc: Add HDMI CEC protocol handling
+Date: Thu, 15 Oct 2015 08:31:08 +0100
+Message-ID: <20151015073107.GT32532@n2100.arm.linux.org.uk>
+References: <cover.1441633456.git.hansverk@cisco.com>
+ <345aeebe5561f8f6540f477ae160c5cbf1b0f6d5.1441633456.git.hansverk@cisco.com>
+ <20151006180540.GR21513@n2100.arm.linux.org.uk>
+ <561B9E97.4050909@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1444888618-4506-1-git-send-email-mikko.rapeli@iki.fi>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, mikko.rapeli@iki.fi, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <561B9E97.4050909@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Rml4ZXMgdXNlcnNwYWNlIGNvbXBpbGF0aW9uIGVycm9yOgoKZHJtL2V4eW5vc19kcm0uaDozMDoy
-OiBlcnJvcjogdW5rbm93biB0eXBlIG5hbWUg4oCYdWludDY0X3TigJkKClNpZ25lZC1vZmYtYnk6
-IE1pa2tvIFJhcGVsaSA8bWlra28ucmFwZWxpQGlraS5maT4KLS0tCiBpbmNsdWRlL3VhcGkvZHJt
-L2V4eW5vc19kcm0uaCB8IDYgKysrLS0tCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCsp
-LCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2Ry
-bS5oIGIvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmgKaW5kZXggNTU3NWVkMS4uY2Y0MzFi
-NyAxMDA2NDQKLS0tIGEvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmgKKysrIGIvaW5jbHVk
-ZS91YXBpL2RybS9leHlub3NfZHJtLmgKQEAgLTI3LDcgKzI3LDcgQEAKICAqCS0gdGhpcyBoYW5k
-bGUgd2lsbCBiZSBzZXQgYnkgZ2VtIG1vZHVsZSBvZiBrZXJuZWwgc2lkZS4KICAqLwogc3RydWN0
-IGRybV9leHlub3NfZ2VtX2NyZWF0ZSB7Ci0JdWludDY0X3Qgc2l6ZTsKKwlfX3U2NCBzaXplOwog
-CXVuc2lnbmVkIGludCBmbGFnczsKIAl1bnNpZ25lZCBpbnQgaGFuZGxlOwogfTsKQEAgLTQ0LDcg
-KzQ0LDcgQEAgc3RydWN0IGRybV9leHlub3NfZ2VtX2NyZWF0ZSB7CiBzdHJ1Y3QgZHJtX2V4eW5v
-c19nZW1faW5mbyB7CiAJdW5zaWduZWQgaW50IGhhbmRsZTsKIAl1bnNpZ25lZCBpbnQgZmxhZ3M7
-Ci0JdWludDY0X3Qgc2l6ZTsKKwlfX3U2NCBzaXplOwogfTsKIAogLyoqCkBAIC01OCw3ICs1OCw3
-IEBAIHN0cnVjdCBkcm1fZXh5bm9zX2dlbV9pbmZvIHsKIHN0cnVjdCBkcm1fZXh5bm9zX3ZpZGlf
-Y29ubmVjdGlvbiB7CiAJdW5zaWduZWQgaW50IGNvbm5lY3Rpb247CiAJdW5zaWduZWQgaW50IGV4
-dGVuc2lvbnM7Ci0JdWludDY0X3QgZWRpZDsKKwlfX3U2NCBlZGlkOwogfTsKIAogLyogbWVtb3J5
-IHR5cGUgZGVmaW5pdGlvbnMuICovCi0tIAoyLjUuMAoKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0Cmxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFk
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Mon, Oct 12, 2015 at 01:50:47PM +0200, Hans Verkuil wrote:
+> > Yet the rc-cec is a module in the filesystem, but it doesn't seem to
+> > be loaded automatically - even after the system has booted, the module
+> > hasn't been loaded.
+> > 
+> > It looks like it _should_ be loaded, but this plainly isn't working:
+> > 
+> >         map = seek_rc_map(name);
+> > #ifdef MODULE
+
+This is the problem.  MODULE is only set when _this_ file is built as a
+module.  If this is built in, but your rc maps are modules, then they
+won't get loaded because this symbol will not be defined.
+
+It needs to be CONFIG_MODULES - and when it is, the rc-cec module is
+automatically loaded.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
