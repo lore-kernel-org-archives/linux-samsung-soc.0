@@ -1,87 +1,112 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [BUG] broken mixer after second resume from mem
-Date: Thu, 15 Oct 2015 08:35:48 +0900
-Message-ID: <561EE6D4.6030803@samsung.com>
-References: <561CDC33.7050103@collabora.com> <561DEE43.5040309@samsung.com>
- <CAAObsKCubVgXTCdLJOZZ3nSXZjdL3G9SjWWuVYPcxLgh5poV6g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] clk: samsung: exynos5250: Add DISP1 clocks
+Date: Thu, 15 Oct 2015 10:37:19 +0900
+Message-ID: <561F034F.8000607@samsung.com>
+References: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:28319 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753772AbbJNXfv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Oct 2015 19:35:51 -0400
-In-reply-to: <CAAObsKCubVgXTCdLJOZZ3nSXZjdL3G9SjWWuVYPcxLgh5poV6g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniel.stone@collabora.co.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 14.10.2015 15:50, Tomeu Vizoso wrote:
-> On 14 October 2015 at 07:55, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> On 13.10.2015 19:25, Tomeu Vizoso wrote:
->>> Hi,
->>>
->>> have been hunting down a bug on exynos5250-snow which caused both HDMI
->>> and LVDS output to be broken after the second resume (with suspend to
->>> mem, but not to idle).
->>>
->>> What I have found is that when powering down the DISP1 power domain
->>> while suspending for the second time, the contents of the SRC_TOP3
->>> register change from 0x1110550 to 0x1110500. IIUIC, this means that
->>> ACLK_200_DISP1 is reparented to XXTI.
->>>
->>> When the CPU comes up again, that register contains 0x1110550 again, but
->>> it's set to 0x1110500 by the code that restores clk registers when resuming:
->>>
->>> First suspend:
->>>
->>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
->>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
->>> exynos5250_clk_suspend: SRC_TOP3 1110550
->>> exynos5250_clk_resume: SRC_TOP3 1110550 - before
->>> exynos5250_clk_resume: SRC_TOP3 1110550 - after
->>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
->>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - after
->>>
->>>
->>> Second suspend:
->>>
->>> exynos_pd_power: SRC_TOP3 1110550 disp1-power-domain@100440A0 - before
->>> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
->>> exynos5250_clk_suspend: SRC_TOP3 1110500
->>> exynos5250_clk_resume: SRC_TOP3 1110550 - before
->>> exynos5250_clk_resume: SRC_TOP3 1110500 - after
->>> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - before
->>> exynos_pd_power: SRC_TOP3 1110500 disp1-power-domain@100440A0 - after
->>>
->>
->> I am assuming you are talking about current linux-next. The actual
->> reparent happens in exynos_pd_power which would indicate the exynos pd
->> clock reparenting code. However the domains for Exynos5250 don't have
->> any clocks set up for reparenting... which actually might be the issue.
->> These clocks should be probably reparented - as it is done for other
->> platforms - look at 5420 example (they are glitch-free on both of SoCs).
->>
->> I've seen a such issues before. The problem is that after some time I
->> tend to forget the needed workaround and solution. :)
->>
->> Try with reparenting necessary clocks. On other platform for some kind
->> of similar issue the reset was required for the IP block - DECON
->> (actually the mux could not stabilize there which can be observed in one
->> of STATUS registers for mux).
->>
->> Let me know if explanation above is not detailed enough.
+On 14.10.2015 19:44, Tomeu Vizoso wrote:
+> When the DISP1 power domain is powered off, there's two clocks that need
+> to be temporarily reparented to OSC, and back to their original parents
+> when the domain is powered on again.
 > 
-> Thanks for the reply, I looked at downstream and saw that two clocks
-> are being reparented and that seems to fix things. Will send a patch
-> later today.
+> We expose these two clocks in the DT bindings so that the DT node of the
+> power domain can reference them.
 > 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> ---
+> 
+>  drivers/clk/samsung/clk-exynos5250.c   | 16 +++++++++++++++-
+>  include/dt-bindings/clock/exynos5250.h |  4 +++-
+>  2 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index 55b83c7ef878..918e40fa6aa1 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -222,9 +222,14 @@ PNAME(mout_mpll_user_p)	= { "fin_pll", "mout_mpll" };
+>  PNAME(mout_bpll_user_p)	= { "fin_pll", "mout_bpll" };
+>  PNAME(mout_aclk166_p)	= { "mout_cpll", "mout_mpll_user" };
+>  PNAME(mout_aclk200_p)	= { "mout_mpll_user", "mout_bpll_user" };
+> +PNAME(mout_aclk300_p)	= { "mout_aclk300_disp1_mid",
+> +			    "mout_aclk300_disp1_mid1" };
+>  PNAME(mout_aclk400_p)	= { "mout_aclk400_g3d_mid", "mout_gpll" };
+>  PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
+>  PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
+> +PNAME(mout_aclk300_sub_p) = { "fin_pll", "div_aclk300" };
+> +PNAME(mout_aclk300_disp1_mid_p) = { "mout_mpll_user", "mout_bpll_user" };
 
-Great! Happy to hear that!
+There is no need for that, just use existing mout_aclk200_p.
+
+> +PNAME(mout_aclk300_disp1_mid1_p) = { "mout_vpll", "mout_cpll" };
+>  PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
+>  PNAME(mout_aclk400_isp_sub_p) = { "fin_pll", "div_aclk400_isp" };
+>  PNAME(mout_hdmi_p)	= { "div_hdmi_pixel", "sclk_hdmiphy" };
+> @@ -303,9 +308,14 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+>  	 */
+>  	MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+>  	MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+> +	MUX(0, "mout_aclk300_disp1_mid", mout_aclk300_disp1_mid_p, SRC_TOP0,
+> +		14, 1),
+> +	MUX(0, "mout_aclk300", mout_aclk300_p, SRC_TOP0, 15, 1),
+>  	MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+>  	MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
+>  
+> +	MUX(0, "mout_aclk300_disp1_mid1", mout_aclk300_disp1_mid1_p, SRC_TOP1,
+> +		8, 1),
+>  	MUX(0, "mout_aclk400_isp", mout_aclk200_p, SRC_TOP1, 24, 1),
+>  	MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
+>  
+> @@ -316,7 +326,10 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+>  	MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
+>  	MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+>  
+> -	MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
+> +	MUX(CLK_MOUT_ACLK200_DISP1_SUB, "mout_aclk200_disp1_sub",
+> +		mout_aclk200_sub_p, SRC_TOP3, 4, 1),
+> +	MUX(CLK_MOUT_ACLK300_DISP1_SUB, "mout_aclk300_disp1_sub",
+> +		mout_aclk300_sub_p, SRC_TOP3, 6, 1),
+>  	MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
+>  	MUX(0, "mout_aclk_266_isp_sub", mout_aclk266_sub_p, SRC_TOP3, 16, 1),
+>  	MUX(0, "mout_aclk_400_isp_sub", mout_aclk400_isp_sub_p,
+> @@ -392,6 +405,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>  	DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+>  	DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
+>  							24, 3),
+> +	DIV(0, "div_aclk300", "mout_aclk300", DIV_TOP0, 28, 3),
+
+Maybe use name "div_aclk300_disp"? There is similar clock for GSCALER,
+so the div_aclk300 would be too generic.
 
 Best regards,
 Krzysztof
+
+>  
+>  	DIV(0, "div_aclk400_isp", "mout_aclk400_isp", DIV_TOP1, 20, 3),
+>  	DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
+> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
+> index 8183d1c237d9..15508adcdfde 100644
+> --- a/include/dt-bindings/clock/exynos5250.h
+> +++ b/include/dt-bindings/clock/exynos5250.h
+> @@ -173,8 +173,10 @@
+>  /* mux clocks */
+>  #define CLK_MOUT_HDMI		1024
+>  #define CLK_MOUT_GPLL		1025
+> +#define CLK_MOUT_ACLK200_DISP1_SUB	1026
+> +#define CLK_MOUT_ACLK300_DISP1_SUB	1027
+>  
+>  /* must be greater than maximal clock id */
+> -#define CLK_NR_CLKS		1026
+> +#define CLK_NR_CLKS		1028
+>  
+>  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
+> 
