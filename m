@@ -1,91 +1,63 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 0/6] ARM: dts: Use correct CD properties for SDIO and eMMC
- in Snow and Peach
-Date: Thu, 15 Oct 2015 18:51:07 +0200
-Message-ID: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCHv9 07/15] cec: add HDMI CEC framework
+Date: Thu, 15 Oct 2015 18:34:04 +0100
+Message-ID: <20151015173404.GG32532@n2100.arm.linux.org.uk>
+References: <cover.1441633456.git.hansverk@cisco.com>
+ <60de2f33f0d4c809f06d23cdac75e3b798aaae4b.1441633456.git.hansverk@cisco.com>
+ <20151006170635.GQ21513@n2100.arm.linux.org.uk>
+ <561B9B1A.4020001@xs4all.nl>
+ <20151013225147.GM32532@n2100.arm.linux.org.uk>
+ <561DF658.3090002@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Douglas Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <561DF658.3090002@xs4all.nl>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-samsung-soc@vger.kernel.org, sean@mess.org, dmitry.torokhov@gmail.com, lars@opdenkamp.eu, dri-devel@lists.freedesktop.org, kamil@wypas.org, Hans Verkuil <hansverk@cisco.com>, kyungmin.park@samsung.com, Hans Verkuil <hans.verkuil@cisco.com>, thomas@tommie-lie.de, linux-input@vger.kernel.org, linux-media@vger.kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-The Exynos Chromebooks DTS don't use the correct card detection properties
-since these were carried from the vendor tree that had a reason to do so.
-
-There are two things that I noticed:
-
-1) The Marvell WiFi SDIO is marked as broken-cd instead of non-removable:
-
-This causes the device to be removed when the system enters into a suspend
-state which leads to the following warning when the system is resumed:
-
-[  181.944636] mmc2: error -2 during resume (card was removed?)
-
-The rationale for using broken-cd is explained in downstream commit [0] and
-was that using the non-removable property caused issues with the mwifiex
-driver since the reset logic called the mmc_{remove,add}_host() functions.
-
-But the reset logic in the mwifiex mainline driver has changed and this is
-no longer the case so it's safe to use the non-removable property AFAICT.
-
-2) The eMMC node has both broken-cd and non-removable but the MMC DT binding
-doc (Documentation/devicetree/bindings/mmc/mmc.txt) mentions that only one
-of these card detection properties should be used.
-
-So this series change both the SDIO WiFi and eMMC device nodes in the Snow,
-Peach Pi and Peach Pit boards DTS to use the non-removable property.
-
-To test, I've cherry picked commit [1] from the vendor tree that adds a
-debugfs entry to force a card reset and after the reset, the WiFi card still
-works correctly:
-
-$ echo 1 > /sys/kernel/debug/mwifiex/mlan0/reset
-
-And also tested that both eMMC and WiFi are working correctly after a S2R.
-
-The test were made on an Exynos5800 Peach Pi but I don't have access to a
-Snow anymore so testing patch 3/6 and 6/6 on that board will be appreciated.
-
-v1 of the series was [2] and this version fixes issues pointed out by Tomeu.
-
-Changes since v1:
- - Replace broken-cd for non-removable in the correct mmc node for Snow.
- - Correct the card detetion properties for eMMC in Snow, Pit and Pi.
- - Also remove the card-detect-delay property when using non-removable.
-
-[0]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/ad348e1e2381
-[1]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/5995363523de
-[2]: https://lkml.org/lkml/2015/10/15/294
-
-Best regards,
-Javier
-
-
-Javier Martinez Canillas (6):
-  ARM: dts: Mark SDIO as non-removable in exynos5800-peach-pi
-  ARM: dts: Mark SDIO as non-removable in exynos5420-peach-pit
-  ARM: dts: Mark SDIO as non-removable in exynos5250-snow-common
-  ARM: dts: Remove broken-cd from eMMC node in exynos5800-peach-pi
-  ARM: dts: Remove broken-cd from eMMC node in exynos5420-peach-pi
-  ARM: dts: Mark eMMC as non-removable in exynos5250-snow-common
-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 6 ++----
- arch/arm/boot/dts/exynos5420-peach-pit.dts    | 5 +----
- arch/arm/boot/dts/exynos5800-peach-pi.dts     | 5 +----
- 3 files changed, 4 insertions(+), 12 deletions(-)
-
--- 
-2.4.3
+T24gV2VkLCBPY3QgMTQsIDIwMTUgYXQgMDg6Mjk6NDRBTSArMDIwMCwgSGFucyBWZXJrdWlsIHdy
+b3RlOgo+IE9uIDEwLzE0LzIwMTUgMTI6NTEgQU0sIFJ1c3NlbGwgS2luZyAtIEFSTSBMaW51eCB3
+cm90ZToKPiA+IE9uIE1vbiwgT2N0IDEyLCAyMDE1IGF0IDAxOjM1OjU0UE0gKzAyMDAsIEhhbnMg
+VmVya3VpbCB3cm90ZToKPiA+PiBPbiAxMC8wNi8yMDE1IDA3OjA2IFBNLCBSdXNzZWxsIEtpbmcg
+LSBBUk0gTGludXggd3JvdGU6Cj4gPj4+IFN1cmVseSB5b3UgYXJlbid0IHByb3Bvc2luZyB0aGF0
+IGRyaXZlcnMgc2hvdWxkIHdyaXRlIGRpcmVjdGx5IHRvCj4gPj4+IGFkYXAtPnBoeXNfYWRkciB3
+aXRob3V0IGNhbGxpbmcgc29tZSBub3RpZmljYXRpb24gZnVuY3Rpb24gdGhhdCB0aGUKPiA+Pj4g
+cGh5c2ljYWwgYWRkcmVzcyBoYXMgY2hhbmdlZD8KPiA+Pgo+ID4+IFVzZXJzcGFjZSBpcyBpbmZv
+cm1lZCB0aHJvdWdoIENFQ19FVkVOVF9TVEFURV9DSEFOR0Ugd2hlbiB0aGUgYWRhcHRlciBpcwo+
+ID4+IGVuYWJsZWQvZGlzYWJsZWQuIFdoZW4gdGhlIGFkYXB0ZXIgaXMgZW5hYmxlZCBhbmQgQ0VD
+X0NBUF9QSFlTX0FERFIgaXMKPiA+PiBub3Qgc2V0IChpLmUuIHRoZSBrZXJuZWwgdGFrZXMgY2Fy
+ZSBvZiB0aGlzKSwgdGhlbiBjYWxsaW5nIENFQ19BREFQX0dfUEhZU19BRERSCj4gPj4gcmV0dXJu
+cyB0aGUgbmV3IHBoeXNpY2FsIGFkZHJlc3MuCj4gPiAKPiA+IE9rYXksIHNvIHdoZW4gSSBzZWUg
+dGhlIEVESUQgYXJyaXZlLCBJIHNob3VsZCBiZSBkb2luZzoKPiA+IAo+ID4gICAgICAgICAgICAg
+ICAgIHBoeXMgPSBwYXJzZV9oZG1pX2FkZHIoYmxvY2stPmVkaWQpOwo+ID4gICAgICAgICAgICAg
+ICAgIGNlYy0+YWRhcC0+cGh5c19hZGRyID0gcGh5czsKPiA+ICAgICAgICAgICAgICAgICBjZWNf
+ZW5hYmxlKGNlYy0+YWRhcCwgdHJ1ZSk7Cj4gPiAKPiA+IElPVywgeW91IF9hcmVfIGV4cGVjdGlu
+ZyBhZGFwLT5waHlzX2FkZHIgdG8gYmUgd3JpdHRlbiwgYnV0IG9ubHkgd2hpbGUKPiA+IHRoZSBh
+ZGFwdGVyIGlzIGRpc2FibGVkPwo+IAo+IFJpZ2h0Lgo+IAo+IEFuZCB3aGVuIHRoZSBob3RwbHVn
+IGdvZXMgZG93biB5b3Ugc2hvdWxkIGNhbGwgY2VjX2VuYWJsZShjZWMtPmFkYXAsIGZhbHNlKS4K
+PiBXaGlsZSB0aGUgYWRhcHRlciBpcyBkaXNhYmxlZCwgQ0VDX0FEQVBfR19QSFlTX0FERFIgd2ls
+bCBhbHdheXMgcmV0dXJuCj4gQ0VDX1BIWVNfQUREUl9JTlZBTElEIHJlZ2FyZGxlc3Mgb2YgdGhl
+IGNlYy0+YWRhcC0+cGh5c19hZGRyIHZhbHVlLgoKVGhlcmUgc2VlbXMgdG8gYmUgYSBmZXcgYnVn
+cy4gIElzIHRoZXJlIGEgd2F5IHRvIG1vbml0b3IgKGluIGEgc2ltaWxhcgp3YXkgdG8gdGNwZHVt
+cCkgdGhlIGFjdGl2aXR5IG9uIHRoZSBidXM/CgpXaGF0IEknbSBzZWVpbmcgaXMgdGhhdCBpZiB0
+aGUgVFYgaXMgc3dpdGNoZWQgdG8gdGhlIGFwcHJvcHJpYXRlIEFWCmlucHV0LCBhbmQgdGhlbiBJ
+IGRvOgoKCWNlYy1jdGwgLS1wbGF5YmFjawoKdG8gdXNlIHRoZSBrZXJuZWwgdG8gcGljayB1cCBh
+IHBsYXliYWNrIGxvZ2ljYWwgYWRkcmVzcywgSSB0aGVuIGNhbid0CnVzZSB0aGUgcmVtb3RlIGNv
+bnRyb2wgbWVkaWEgcGxheWJhY2sga2V5cyB1bnRpbCBJIHN3aXRjaCBhd2F5IGZyb20KdGhlIEFW
+IGlucHV0IGFuZCBiYWNrIHRvIGl0LgoKLS0gCkZUVEMgYnJvYWRiYW5kIGZvciAwLjhtaWxlIGxp
+bmU6IGN1cnJlbnRseSBhdCA5LjZNYnBzIGRvd24gNDAwa2JwcyB1cAphY2NvcmRpbmcgdG8gc3Bl
+ZWR0ZXN0Lm5ldC4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
