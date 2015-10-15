@@ -1,38 +1,44 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCHv9 06/15] rc: Add HDMI CEC protocol handling
-Date: Thu, 15 Oct 2015 08:31:08 +0100
-Message-ID: <20151015073107.GT32532@n2100.arm.linux.org.uk>
-References: <cover.1441633456.git.hansverk@cisco.com>
- <345aeebe5561f8f6540f477ae160c5cbf1b0f6d5.1441633456.git.hansverk@cisco.com>
- <20151006180540.GR21513@n2100.arm.linux.org.uk>
- <561B9E97.4050909@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <561B9E97.4050909@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org, Hans Verkuil <hans.verkuil@cisco.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v2 0/2] Fix display on second resume on 5250-snow
+Date: Thu, 15 Oct 2015 12:31:22 +0200
+Message-ID: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 12, 2015 at 01:50:47PM +0200, Hans Verkuil wrote:
-> > Yet the rc-cec is a module in the filesystem, but it doesn't seem to
-> > be loaded automatically - even after the system has booted, the module
-> > hasn't been loaded.
-> > 
-> > It looks like it _should_ be loaded, but this plainly isn't working:
-> > 
-> >         map = seek_rc_map(name);
-> > #ifdef MODULE
+Hi,
 
-This is the problem.  MODULE is only set when _this_ file is built as a
-module.  If this is built in, but your rc maps are modules, then they
-won't get loaded because this symbol will not be defined.
+as discussed in [0], currently on the second resume from memory the
+display is broken on Snow boards (ARM Samsung Series 3 Chromebook).
 
-It needs to be CONFIG_MODULES - and when it is, the rc-cec module is
-automatically loaded.
+The reason is that on resume the contents of register SRC_TOP3 aren't
+what the kernel thinks they are because the HW (or FW) is doing some
+clock reparenting beneath our feet.
+
+This series tasks the kernel to do the reparenting itself so that the HW
+state always matches the kernel's internal state.
+
+Thanks,
+
+Tomeu
+
+[0] http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
+
+Changes in v2:
+- Reuse mout_aclk200_p
+- Rename div_aclk300 as div_aclk300_disp
+
+Tomeu Vizoso (2):
+  clk: samsung: exynos5250: Add DISP1 clocks
+  ARM: dts: exynos5250: Add clocks to DISP1 domain
+
+ arch/arm/boot/dts/exynos5250.dtsi      |  4 ++++
+ drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+ include/dt-bindings/clock/exynos5250.h |  4 +++-
+ 3 files changed, 20 insertions(+), 2 deletions(-)
 
 -- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.5.0
+
