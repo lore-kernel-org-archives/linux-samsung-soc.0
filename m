@@ -1,55 +1,80 @@
-From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-Date: Fri, 16 Oct 2015 05:49:35 -0700
-Message-ID: <20151016124935.20687.4394@quantum>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
- <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
- <56203AD3.2050905@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 0/6] ARM: dts: Use correct CD properties for SDIO and
+ eMMC in Snow and Peach
+Date: Fri, 16 Oct 2015 15:48:30 +0200
+Message-ID: <5621002E.4080906@osg.samsung.com>
+References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
+ <5620E17B.9080906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56203AD3.2050905-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:32988 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932270AbbJPNsg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Oct 2015 09:48:36 -0400
+In-Reply-To: <5620E17B.9080906@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Douglas Anderson <dianders@chromium.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2015-10-15 16:46:27)
-> On 15.10.2015 19:31, Tomeu Vizoso wrote:
-> > When the DISP1 power domain is powered off, there's two clocks that need
-> > to be temporarily reparented to OSC, and back to their original parents
-> > when the domain is powered on again.
-> > 
-> > We expose these two clocks in the DT bindings so that the DT node of the
-> > power domain can reference them.
-> > 
-> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> > Acked-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> > ---
-> > 
-> > Changes in v2:
-> > - Reuse mout_aclk200_p
-> > - Rename div_aclk300 as div_aclk300_disp
-> > 
-> >  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
-> >  include/dt-bindings/clock/exynos5250.h |  4 +++-
-> >  2 files changed, 16 insertions(+), 2 deletions(-)
-> > 
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Hello Alim,
 
-Applied to clk-next.
+On 10/16/2015 01:37 PM, Alim Akhtar wrote:
+> Hi Javier,
+> 
+> On 10/15/2015 10:21 PM, Javier Martinez Canillas wrote:
+>> Hello,
+>>
+>> The Exynos Chromebooks DTS don't use the correct card detection properties
+>> since these were carried from the vendor tree that had a reason to do so.
+>>
+>> There are two things that I noticed:
+>>
+>> 1) The Marvell WiFi SDIO is marked as broken-cd instead of non-removable:
+>>
+>> This causes the device to be removed when the system enters into a suspend
+>> state which leads to the following warning when the system is resumed:
+>>
+>> [  181.944636] mmc2: error -2 during resume (card was removed?)
+>>
+>> The rationale for using broken-cd is explained in downstream commit [0] and
+>> was that using the non-removable property caused issues with the mwifiex
+>> driver since the reset logic called the mmc_{remove,add}_host() functions.
+>>
+>> But the reset logic in the mwifiex mainline driver has changed and this is
+>> no longer the case so it's safe to use the non-removable property AFAICT.
+>>
+> Good to know it is fixed now. This is fixed in firmware or in the driver?
+>
 
-Regards,
-Mike
+The fix is only in the driver. In fact, I'm using the same firmware from
+the ChromeOS rootfs for both the v3.8 vendor tree and mainline.
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+So IIUC, the problem with the vendor tree was that the mwifiex SDIO driver
+mwifiex_sdio_reset_work() function did a card reset by calling the functions
+mmc_remove_host() and then mmc_add_host().
+
+But this didn't play nice with MMC_CAP_NONREMOVABLE since mmc_rescan() just
+returns if the flag is set so the card wouldn't be tried to be detected again.
+
+After commit ("b4336a282db8 mwifiex: sdio: reset adapter using mmc_hw_reset"),
+the card is reset by doing a power cycle so that's why "non-removable" can be
+used now instead of "broken-cd".
+
+>> 2) The eMMC node has both broken-cd and non-removable but the MMC DT binding
+>> doc (Documentation/devicetree/bindings/mmc/mmc.txt) mentions that only one
+>> of these card detection properties should be used.
+>>
+> This change looks ok, will take a closer look once I am back to my work station.
+>
+
+Thanks a lot for taking a look.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
