@@ -1,75 +1,55 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [RFT PATCH v2 3/6] ARM: dts: Mark SDIO as non-removable in exynos5250-snow-common
-Date: Fri, 16 Oct 2015 14:33:51 +0200
-Message-ID: <CAAObsKCLcoNZZ9bpY20G5OPV7icPnaWWTQS=u0DNP8amCwq_oA@mail.gmail.com>
-References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com> <1444927873-15140-4-git-send-email-javier@osg.samsung.com>
+From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
+Date: Fri, 16 Oct 2015 05:49:35 -0700
+Message-ID: <20151016124935.20687.4394@quantum>
+References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
+ <56203AD3.2050905@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:38350 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750756AbbJPMeM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Oct 2015 08:34:12 -0400
-In-Reply-To: <1444927873-15140-4-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56203AD3.2050905-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Douglas Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 15 October 2015 at 18:51, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> The Exynos5250 Snow Chromebooks have a Marvell WiFi SDIO chip which
-> can't neither be removed nor be detected. But the node isn't marked
-> as non-removable and instead has the broken-cd DT property.
->
-> This causes the device to be removed when the system enters into a
-> suspend state and the following warnings is shown after a resume:
->
-> [  181.944636] mmc2: error -2 during resume (card was removed?)
->
-> Also remove the card-detect-delay property that is not needed with
-> non-removable.
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Quoting Krzysztof Kozlowski (2015-10-15 16:46:27)
+> On 15.10.2015 19:31, Tomeu Vizoso wrote:
+> > When the DISP1 power domain is powered off, there's two clocks that need
+> > to be temporarily reparented to OSC, and back to their original parents
+> > when the domain is powered on again.
+> > 
+> > We expose these two clocks in the DT bindings so that the DT node of the
+> > power domain can reference them.
+> > 
+> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> > Acked-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> > ---
+> > 
+> > Changes in v2:
+> > - Reuse mout_aclk200_p
+> > - Rename div_aclk300 as div_aclk300_disp
+> > 
+> >  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+> >  include/dt-bindings/clock/exynos5250.h |  4 +++-
+> >  2 files changed, 16 insertions(+), 2 deletions(-)
+> > 
+> 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Reviewed-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Tested-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Applied to clk-next.
 
-Thanks,
+Regards,
+Mike
 
-Tomeu
-
-
->
-> Changes since v1:
-> - Remove card-detect-delay property as well.
-> - Use the correct mmc node. Suggested by Tomeu.
->
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> index 0a7f408824d8..1822c502a25a 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> @@ -552,10 +552,9 @@
->  &mmc_3 {
->         status = "okay";
->         num-slots = <1>;
-> -       broken-cd;
-> +       non-removable;
->         cap-sdio-irq;
->         keep-power-in-suspend;
-> -       card-detect-delay = <200>;
->         samsung,dw-mshc-ciu-div = <3>;
->         samsung,dw-mshc-sdr-timing = <2 3>;
->         samsung,dw-mshc-ddr-timing = <1 2>;
-> --
-> 2.4.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
