@@ -1,43 +1,47 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-Date: Fri, 16 Oct 2015 08:46:27 +0900
-Message-ID: <56203AD3.2050905@samsung.com>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
- <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] ARM: Exynos: Clock for v4.4 (dependency)
+Date: Fri, 16 Oct 2015 14:42:23 +0900
+Message-ID: <1444974144-12928-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:17752 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752582AbbJPFme (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Oct 2015 01:42:34 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On 15.10.2015 19:31, Tomeu Vizoso wrote:
-> When the DISP1 power domain is powered off, there's two clocks that need
-> to be temporarily reparented to OSC, and back to their original parents
-> when the domain is powered on again.
-> 
-> We expose these two clocks in the DT bindings so that the DT node of the
-> power domain can reference them.
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
-> 
-> Changes in v2:
-> - Reuse mout_aclk200_p
-> - Rename div_aclk300 as div_aclk300_disp
-> 
->  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
->  include/dt-bindings/clock/exynos5250.h |  4 +++-
->  2 files changed, 16 insertions(+), 2 deletions(-)
-> 
+Dear Kukjin,
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Updated to Exynos5250 clock driver, required by next pull with DT.
 
 Best regards,
 Krzysztof
 
 
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+
+  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+
+are available in the git repository at:
+
+  https://github.com/krzk/linux.git tags/samsung-clk-exynos5250-4.4
+
+for you to fetch changes up to 9aaf43d9b59d6b5d8daeb3a4b9d894ea88fc34c5:
+
+  clk: samsung: exynos5250: Add DISP1 clocks (2015-10-16 08:49:53 +0900)
+
+----------------------------------------------------------------
+Just one patch for v4.4 (required by DT pull):
+New clocks for Exynos5250 to fix display issue on Snow board (HDMI
+and LVDS output is broken after resume from Suspend to RAM).
+
+----------------------------------------------------------------
+Tomeu Vizoso (1):
+      clk: samsung: exynos5250: Add DISP1 clocks
+
+ drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+ include/dt-bindings/clock/exynos5250.h |  4 +++-
+ 2 files changed, 16 insertions(+), 2 deletions(-)
