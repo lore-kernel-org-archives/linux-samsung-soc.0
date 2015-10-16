@@ -1,21 +1,32 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [RFT PATCH v2 6/6] ARM: dts: Mark eMMC as non-removable in exynos5250-snow-common
-Date: Fri, 16 Oct 2015 14:33:18 +0200
-Message-ID: <CAAObsKCuSvwnbKmB6gskoGTkvHBrz2rqu3Qif7WHn_fDbF7_wQ@mail.gmail.com>
-References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com> <1444927873-15140-7-git-send-email-javier@osg.samsung.com>
+Subject: Re: [RFT PATCH v2 3/6] ARM: dts: Mark SDIO as non-removable in exynos5250-snow-common
+Date: Fri, 16 Oct 2015 14:33:51 +0200
+Message-ID: <CAAObsKCLcoNZZ9bpY20G5OPV7icPnaWWTQS=u0DNP8amCwq_oA@mail.gmail.com>
+References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com> <1444927873-15140-4-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444927873-15140-7-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:38350 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750756AbbJPMeM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Oct 2015 08:34:12 -0400
+In-Reply-To: <1444927873-15140-4-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Douglas Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 On 15 October 2015 at 18:51, Javier Martinez Canillas
 <javier@osg.samsung.com> wrote:
-> The eMMC is non-removable so mark it using the non-removable DT
-> property to avoid having to redetect it after a suspend/resume.
+> The Exynos5250 Snow Chromebooks have a Marvell WiFi SDIO chip which
+> can't neither be removed nor be detected. But the node isn't marked
+> as non-removable and instead has the broken-cd DT property.
+>
+> This causes the device to be removed when the system enters into a
+> suspend state and the following warnings is shown after a resume:
+>
+> [  181.944636] mmc2: error -2 during resume (card was removed?)
 >
 > Also remove the card-detect-delay property that is not needed with
 > non-removable.
@@ -29,25 +40,28 @@ Thanks,
 
 Tomeu
 
-> ---
+
 >
 > Changes since v1:
-> - None, new patch.
+> - Remove card-detect-delay property as well.
+> - Use the correct mmc node. Suggested by Tomeu.
 >
 >  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 3 +--
 >  1 file changed, 1 insertion(+), 2 deletions(-)
 >
 > diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> index 1822c502a25a..5cb33ba5e296 100644
+> index 0a7f408824d8..1822c502a25a 100644
 > --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
 > +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> @@ -520,8 +520,7 @@
->  &mmc_0 {
+> @@ -552,10 +552,9 @@
+>  &mmc_3 {
 >         status = "okay";
 >         num-slots = <1>;
 > -       broken-cd;
-> -       card-detect-delay = <200>;
 > +       non-removable;
+>         cap-sdio-irq;
+>         keep-power-in-suspend;
+> -       card-detect-delay = <200>;
 >         samsung,dw-mshc-ciu-div = <3>;
 >         samsung,dw-mshc-sdr-timing = <2 3>;
 >         samsung,dw-mshc-ddr-timing = <1 2>;
