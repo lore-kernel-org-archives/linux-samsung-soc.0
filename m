@@ -1,58 +1,96 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: exynos5250: Add clocks to DISP1 domain
-Date: Fri, 16 Oct 2015 10:19:08 +0200
-Message-ID: <5620B2FC.5040004@collabora.com>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
- <1444905084-22540-3-git-send-email-tomeu.vizoso@collabora.com>
- <56203A74.7040305@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v2 0/6] ARM: dts: Use correct CD properties for SDIO and
+ eMMC in Snow and Peach
+Date: Fri, 16 Oct 2015 17:07:31 +0530
+Message-ID: <5620E17B.9080906@samsung.com>
+References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56203A74.7040305@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:51225 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751537AbbJPLq5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Oct 2015 07:46:57 -0400
+In-reply-to: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Douglas Anderson <dianders@chromium.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 10/16/2015 01:44 AM, Krzysztof Kozlowski wrote:
-> On 15.10.2015 19:31, Tomeu Vizoso wrote:
->> Adds to the node of the DISP1 power domain the two clocks that need to
->> be reparented while the domain is powered off:
->> CLK_MOUT_ACLK200_DISP1_SUB and CLK_MOUT_ACLK300_DISP1_SUB.
->>
->> Otherwise the state is unknown at power up and the mixer's clocks are
->> all messed up.
->>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->> Link: http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
->> ---
->>
->>
->>  arch/arm/boot/dts/exynos5250.dtsi | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
->> index b24610ea8c2a..88b9cf5f226f 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -130,6 +130,10 @@
->>  		compatible = "samsung,exynos4210-pd";
->>  		reg = <0x100440A0 0x20>;
->>  		#power-domain-cells = <0>;
->> +		clocks = <&clock CLK_FIN_PLL>,
->> +			 <&clock CLK_MOUT_ACLK200_DISP1_SUB>,
->> +			 <&clock CLK_MOUT_ACLK300_DISP1_SUB>;
->> +		clock-names = "oscclk", "clk0", "clk1";
->>  	};
->>  
->>  	clock: clock-controller@10010000 {
->>
-> 
-> I reviewed it already. Any changes here since v1?
+Hi Javier,
 
-No, I just forgot to add your r-b tag, sorry about that.
+On 10/15/2015 10:21 PM, Javier Martinez Canillas wrote:
+> Hello,
+>
+> The Exynos Chromebooks DTS don't use the correct card detection properties
+> since these were carried from the vendor tree that had a reason to do so.
+>
+> There are two things that I noticed:
+>
+> 1) The Marvell WiFi SDIO is marked as broken-cd instead of non-removable:
+>
+> This causes the device to be removed when the system enters into a suspend
+> state which leads to the following warning when the system is resumed:
+>
+> [  181.944636] mmc2: error -2 during resume (card was removed?)
+>
+> The rationale for using broken-cd is explained in downstream commit [0] and
+> was that using the non-removable property caused issues with the mwifiex
+> driver since the reset logic called the mmc_{remove,add}_host() functions.
+>
+> But the reset logic in the mwifiex mainline driver has changed and this is
+> no longer the case so it's safe to use the non-removable property AFAICT.
+>
+Good to know it is fixed now. This is fixed in firmware or in the driver?
 
-Thanks,
+> 2) The eMMC node has both broken-cd and non-removable but the MMC DT binding
+> doc (Documentation/devicetree/bindings/mmc/mmc.txt) mentions that only one
+> of these card detection properties should be used.
+>
+This change looks ok, will take a closer look once I am back to my work 
+station.
 
-Tomeu
+> So this series change both the SDIO WiFi and eMMC device nodes in the Snow,
+> Peach Pi and Peach Pit boards DTS to use the non-removable property.
+>
+> To test, I've cherry picked commit [1] from the vendor tree that adds a
+> debugfs entry to force a card reset and after the reset, the WiFi card still
+> works correctly:
+>
+> $ echo 1 > /sys/kernel/debug/mwifiex/mlan0/reset
+>
+> And also tested that both eMMC and WiFi are working correctly after a S2R.
+>
+> The test were made on an Exynos5800 Peach Pi but I don't have access to a
+> Snow anymore so testing patch 3/6 and 6/6 on that board will be appreciated.
+>
+> v1 of the series was [2] and this version fixes issues pointed out by Tomeu.
+>
+> Changes since v1:
+>   - Replace broken-cd for non-removable in the correct mmc node for Snow.
+>   - Correct the card detetion properties for eMMC in Snow, Pit and Pi.
+>   - Also remove the card-detect-delay property when using non-removable.
+>
+> [0]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/ad348e1e2381
+> [1]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/5995363523de
+> [2]: https://lkml.org/lkml/2015/10/15/294
+>
+> Best regards,
+> Javier
+>
+>
+> Javier Martinez Canillas (6):
+>    ARM: dts: Mark SDIO as non-removable in exynos5800-peach-pi
+>    ARM: dts: Mark SDIO as non-removable in exynos5420-peach-pit
+>    ARM: dts: Mark SDIO as non-removable in exynos5250-snow-common
+>    ARM: dts: Remove broken-cd from eMMC node in exynos5800-peach-pi
+>    ARM: dts: Remove broken-cd from eMMC node in exynos5420-peach-pi
+>    ARM: dts: Mark eMMC as non-removable in exynos5250-snow-common
+>
+>   arch/arm/boot/dts/exynos5250-snow-common.dtsi | 6 ++----
+>   arch/arm/boot/dts/exynos5420-peach-pit.dts    | 5 +----
+>   arch/arm/boot/dts/exynos5800-peach-pi.dts     | 5 +----
+>   3 files changed, 4 insertions(+), 12 deletions(-)
+>
