@@ -1,66 +1,58 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: dts: Exynos for v4.4 (3rd)
-Date: Fri, 16 Oct 2015 14:42:24 +0900
-Message-ID: <1444974144-12928-2-git-send-email-k.kozlowski@samsung.com>
-References: <1444974144-12928-1-git-send-email-k.kozlowski@samsung.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: exynos5250: Add clocks to DISP1 domain
+Date: Fri, 16 Oct 2015 10:19:08 +0200
+Message-ID: <5620B2FC.5040004@collabora.com>
+References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1444905084-22540-3-git-send-email-tomeu.vizoso@collabora.com>
+ <56203A74.7040305@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1444974144-12928-1-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <56203A74.7040305@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Kukjin,
+On 10/16/2015 01:44 AM, Krzysztof Kozlowski wrote:
+> On 15.10.2015 19:31, Tomeu Vizoso wrote:
+>> Adds to the node of the DISP1 power domain the two clocks that need to
+>> be reparented while the domain is powered off:
+>> CLK_MOUT_ACLK200_DISP1_SUB and CLK_MOUT_ACLK300_DISP1_SUB.
+>>
+>> Otherwise the state is unknown at power up and the mixer's clocks are
+>> all messed up.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> Link: http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
+>> ---
+>>
+>>
+>>  arch/arm/boot/dts/exynos5250.dtsi | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index b24610ea8c2a..88b9cf5f226f 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -130,6 +130,10 @@
+>>  		compatible = "samsung,exynos4210-pd";
+>>  		reg = <0x100440A0 0x20>;
+>>  		#power-domain-cells = <0>;
+>> +		clocks = <&clock CLK_FIN_PLL>,
+>> +			 <&clock CLK_MOUT_ACLK200_DISP1_SUB>,
+>> +			 <&clock CLK_MOUT_ACLK300_DISP1_SUB>;
+>> +		clock-names = "oscclk", "clk0", "clk1";
+>>  	};
+>>  
+>>  	clock: clock-controller@10010000 {
+>>
+> 
+> I reviewed it already. Any changes here since v1?
 
-Last batch of changes to DT for Exynos for v4.4.
-Includes dependency - clock driver changes.
+No, I just forgot to add your r-b tag, sorry about that.
 
-Best regards,
-Krzysztof
+Thanks,
 
-
-The following changes since commit 9aaf43d9b59d6b5d8daeb3a4b9d894ea88fc34c5:
-
-  clk: samsung: exynos5250: Add DISP1 clocks (2015-10-16 08:49:53 +0900)
-
-are available in the git repository at:
-
-  https://github.com/krzk/linux.git tags/samsung-dt-4.4-3
-
-for you to fetch changes up to 1967da5699e660957737ec6c4015cfd8e428f0ff:
-
-  ARM: dts: Add clocks to DISP1 domain in exynos5250 (2015-10-16 14:20:03 +0900)
-
-----------------------------------------------------------------
-Last round (from my side) of v4.4 Device Tree improvements for Exynos
-based boards:
-1. Fix USB OTG on Exynos3250 (Monk and Rinato), Exynos4210 (Trats
-   and Universal) and Exynos4412 (Trats2).
-2. Fix HDMI and LVDS display on Snow (Exynos5250) after second Suspend to RAM.
-3. Minor cleanups and fixes.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      Merge tag 'samsung-clk-exynos5250-4.4' into dt-for-next
-      dt-bindings: Correct the example for Exynos power domain clocks
-
-Laurent Pinchart (2):
-      ARM: dts: Fix typo in regulator enable GPIO property in s5pv210-aquila
-      ARM: dts: Fix typo in regulator enable GPIO property in s5pv210-goni
-
-Marek Szyprowski (1):
-      ARM: dts: Add vbus regulator to USB2 phy nodes on exynos3250, exynos4210 and exynos4412 boards
-
-Tomeu Vizoso (1):
-      ARM: dts: Add clocks to DISP1 domain in exynos5250
-
- Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 5 ++---
- arch/arm/boot/dts/exynos3250-monk.dts                         | 1 +
- arch/arm/boot/dts/exynos3250-rinato.dts                       | 1 +
- arch/arm/boot/dts/exynos4210-trats.dts                        | 2 +-
- arch/arm/boot/dts/exynos4210-universal_c210.dts               | 2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts                       | 1 +
- arch/arm/boot/dts/exynos5250.dtsi                             | 4 ++++
- arch/arm/boot/dts/s5pv210-aquila.dts                          | 2 +-
- arch/arm/boot/dts/s5pv210-goni.dts                            | 4 ++--
- 9 files changed, 14 insertions(+), 8 deletions(-)
+Tomeu
