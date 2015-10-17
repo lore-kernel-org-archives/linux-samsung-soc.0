@@ -1,56 +1,110 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-Date: Sat, 17 Oct 2015 19:08:28 +0900
-Message-ID: <CAJKOXPdvGUbkPB4E5uufQ=a63k7FK7puJjgY7xWnyqjGVhrnGQ@mail.gmail.com>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
-	<1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
-	<56203AD3.2050905@samsung.com>
-	<20151016124935.20687.4394@quantum>
-	<20151016172651.GB23912@codeaurora.org>
-	<CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
-	<56218B2D.9040007@kernel.org>
-	<CAJKOXPf5Dnh36rrY6Vet13EHKB3gJuU0VnAfsyYnvWTx92O_GA@mail.gmail.com>
-	<56221B26.2050407@osg.samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 00/13] drm/exynos: async G2D and g2d_move()
+Date: Sun, 18 Oct 2015 00:39:50 +0200
+Message-ID: <5622CE36.2030302@math.uni-bielefeld.de>
+References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <56156536.6070906@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <56221B26.2050407@osg.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Boyd <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.i
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:32936 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751222AbbJQWjy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 17 Oct 2015 18:39:54 -0400
+In-Reply-To: <56156536.6070906@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-2015-10-17 18:55 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
-> Hello Krzysztof,
->
-> On 10/17/2015 10:53 AM, Krzysztof Kozlowski wrote:
->> 2015-10-17 8:41 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
->
-> [snip]
->
->>>>
->>> So...how can I take 2nd patch of this series in samsung(arm-soc) tree?
->>> And this series shouldn't be for fixes for 4.3?...Mike how do you think?
->>
->> Stephen acked it so I thought everything will go through samsung-soc.
->>
->> Dear Kukjin,
->> Indeed this can go as fix for current cycle... but in the same time
->> this does not fix any specific regression. Tomeu did not describe when
->> issue happened for the first time so I assumed it was like that
->> always. It's up to you.
->>
->
-> Sorry for not answering about this series before but I've been in contact
-> with Tomeu over IRC before he posted it and since you already added your
-> Reviewed-by tag, I didn't feel the need do to it.
->
-> This is a regression for 4.3 since S2R was working correctly for 4.2 in
-> Snow, I tested after fixing resume with commit 6fd4899a54a5 ("irqchip:
-> exynos-combiner: Save IRQ enable set on suspend") and the display was
-> always enabled on resume.
+Another ping!
 
-Hmmm, that means the patchset indeed should go as fixes.
+I need someone from Samsung to review this, or at least someone familiar
+with the G2D.
 
-Thanks for details,
-Krzysztof
+With best wishes,
+Tobias
+
+
+Tobias Jakobi wrote:
+> Gentle ping! :-)
+> 
+> - Tobias
+> 
+> 
+> Tobias Jakobi wrote:
+>> Hello,
+>>
+>> this series mostly touches G2D code. It introduces the following:
+>>
+>> (1) drmHandleEvent2() is added to enable processing of vendor-specific
+>>     events. This will be used to expose asynchronous operation of the
+>>     G2D. The necessary kernel infrastructure is already there since
+>>     a lot of kernel versions. [This touches libdrm core code!]
+>>
+>> (2) The necessary infrastructure to handle G2D events. This includes
+>>     adding g2d_config_event() and g2d_exec2() to the public API.
+>>     A test application is provided to ensure that everything works
+>>     as expected.
+>>
+>> (3) A small performance test application which can be used to measure
+>>     the speed of solid color clear operations. Interesting for
+>>     benchmarking and plotting colorful graphs (e.g. through
+>>     Mathematica).
+>>
+>> (4) g2d_move() which works similar to g2d_copy() but like the C
+>>     memmove() properly handles overlapping buffer copies.
+>>     Again a test application is present to check that this
+>>     indeed does what it should.
+>>
+>> (5) Various small changes. A framebuffer colorformat fix for the
+>>     general G2D test application. Moving the currently unused
+>>     g2d_reset() to the public API. Adding a counterpart to
+>>     exynos_bo_map() to unmap buffers again.
+>>
+>> (6) Last but not least a small bump of the Exynos version number.
+>>
+>> Please review and let me know what I should change/improve.
+>>
+>>
+>> With best wishes,
+>> Tobias
+>>
+>> P.S.: Most patches were submitted already some time ago but never
+>> made it upstream. So if something looks familiar, don't worry! ;)
+>>
+>> Tobias Jakobi (13):
+>>   drm: Implement drmHandleEvent2()
+>>   exynos: Introduce exynos_handle_event()
+>>   tests/exynos: add fimg2d performance analysis
+>>   exynos/fimg2d: add g2d_config_event
+>>   exynos: fimg2d: add g2d_exec2
+>>   tests/exynos: add fimg2d event test
+>>   tests/exynos: use XRGB8888 for framebuffer
+>>   exynos: fimg2d: add g2d_set_direction
+>>   exynos/fimg2d: add g2d_move
+>>   tests/exynos: add test for g2d_move
+>>   exynos/fimg2d: add exynos_bo_unmap()
+>>   exynos/fimg2d: add g2d_reset() to public API
+>>   exynos: bump version number
+>>
+>>  exynos/exynos-symbol-check         |   5 +
+>>  exynos/exynos_drm.c                |  48 ++++++
+>>  exynos/exynos_drm.h                |  12 ++
+>>  exynos/exynos_drmif.h              |  27 +++
+>>  exynos/exynos_fimg2d.c             | 164 +++++++++++++++++--
+>>  exynos/exynos_fimg2d.h             |  49 ++++++
+>>  exynos/libdrm_exynos.pc.in         |   2 +-
+>>  tests/exynos/Makefile.am           |  26 ++-
+>>  tests/exynos/exynos_fimg2d_event.c | 326 +++++++++++++++++++++++++++++++++++++
+>>  tests/exynos/exynos_fimg2d_perf.c  | 320 ++++++++++++++++++++++++++++++++++++
+>>  tests/exynos/exynos_fimg2d_test.c  | 134 ++++++++++++++-
+>>  xf86drm.h                          |  21 +++
+>>  xf86drmMode.c                      |  10 +-
+>>  13 files changed, 1128 insertions(+), 16 deletions(-)
+>>  create mode 100644 tests/exynos/exynos_fimg2d_event.c
+>>  create mode 100644 tests/exynos/exynos_fimg2d_perf.c
+>>
+> 
