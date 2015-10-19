@@ -1,105 +1,102 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 7/7] ARM: EXYNOS: Remove code for restart and poweroff for
- exynos SoCs
-Date: Mon, 19 Oct 2015 16:07:46 +0200
-Message-ID: <5624F932.7030001@osg.samsung.com>
-References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
- <1445234635-3950-8-git-send-email-alim.akhtar@samsung.com>
- <562494F8.6070003@samsung.com> <5624BE39.7020605@osg.samsung.com>
- <CAJKOXPcvKeDNwof5eyD5XjzUiZrHoyShD8gOPGo7uUxEyypQbw@mail.gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v3 6/8] drivers: soc: add support for exynos SROM driver
+Date: Mon, 19 Oct 2015 19:58:55 +0530
+Message-ID: <CAGcde9E+DELn_-ibE5+NtsrtBFNqG=AKF8wk=Yh8YYxZbk+v3w@mail.gmail.com>
+References: <20151013150002.GA27569@Red>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:34254 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752160AbbJSOHw (ORCPT
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:38627 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750814AbbJSO3Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 10:07:52 -0400
-In-Reply-To: <CAJKOXPcvKeDNwof5eyD5XjzUiZrHoyShD8gOPGo7uUxEyypQbw@mail.gmail.com>
+	Mon, 19 Oct 2015 10:29:16 -0400
+In-Reply-To: <20151013150002.GA27569@Red>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: LABBE Corentin <clabbe.montjoie@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, p.fedin@samsung.com, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
 
-Hello Krzysztof,
+Hi,
 
-On 10/19/2015 03:28 PM, Krzysztof Kozlowski wrote:
-> 2015-10-19 18:56 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
->> Hello,
->>
->> On 10/19/2015 09:00 AM, Krzysztof Kozlowski wrote:
->>> On 19.10.2015 15:03, Alim Akhtar wrote:
->>>> Now we can use the generic syscon-{reboot/poweroff} drivers,
->>>> so we don't need special handling for reboot/poweroff in
->>>> exynos pmu driver. This patch remove the same.
->>>>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>> ---
->>>>  arch/arm/mach-exynos/pmu.c |   43 -------------------------------------------
->>>>  1 file changed, 43 deletions(-)
->>>
->>> I think that removal of this stuff will effectively remove the
->>> restart/poweroff handlers from:
->>> 1. Other defconfigs, like multi_v7
->>> 2. Custom configs.
->>>
->>
->> This will also break old DTBs that don't have a "syscon-poweroff" device
->> node that contains the necessary PMU regmap, offset and mask information.
-> 
-> I am not sure whether this is ABI break issue. There was no compatible
-> mentioning that "reset works" which now would be replaced. The
-> existing PMU compatible (like samsung,exynos4412-pmu) does not mention
-> "reset" as a feature coming with this compatible.
-> 
-> So no ABI break.
-> 
-> 
+Thanks for review.
 
-I deliberately didn't use the "DT ABI break" expression since as you said is
-not part of the documented DT bindings. But what I said is that this change
-will break old DTBs with newer kernels since reboot and power off will stop
-working after $SUBJECT.
-
-I'm not a particular fan of the stable DT idea since in practice it seems to
-do more harm than good but since that was decided, the expectation for users
-is that booting a new kernel with an old DT should not cause any regression.
-
-So I think that at least a comment in the commit message is needed so if
-there are people really using old DTs with newer kernels on Exynos boards,
-they can know that the commit causes such an issue instead of having to
-figure it out themselves.
-
->>
->>> Previously this code was always compiled in for ARCH_EXYNOS. Now it is
->>> not so I am thinking about selecting necessary drivers from main exynos
->>> Kconfig symbol. That could be tricky though, because "select" should be
->>> used only for non-visible symbols.
->>>
->>> Any ideas how to solve that?
->>>
->>
->> Is true that select should only be used for non-visible symbols but there
->> are others user visible symbols that are selected by ARCH_EXYNOS such as
->> EXYNOS_THERMAL. So I think selecting the regmap syscon reset stuff there
->> is a sensible option.
-> 
-> Selecting from defconfig is not sufficient... since I do not have
-> other idea than selecting then ovak, but Alim please check it whether
-> it does not create circular dependencies on various configs.
+On 13 October 2015 at 20:30, LABBE Corentin <clabbe.montjoie@gmail.com> wrote:
+> +static struct exynos_srom_reg_dump *exynos_srom_alloc_reg_dump(
+> +               const unsigned long *rdump,
+> +               unsigned long nr_rdump)
+> +{
+> +       struct exynos_srom_reg_dump *rd;
+> +       unsigned int i;
+> +
+> +       rd = kcalloc(nr_rdump, sizeof(*rd), GFP_KERNEL);
+> +       if (!rd)
+> +               return NULL;
+> +
+> +       for (i = 0; i < nr_rdump; ++i)
+> +               rd[i].offset = rdump[i];
+> +
+> +       return rd;
+> +}
+>
+> You do not free rd anywhere in your code.
 >
 
-Agreed, Kconfig circular dependencies is the reason why select is avoided.
-Fortunately now the 0-day bot analyzes even posted patches so it's possible
-that such an issue could be found even before these patches are merged.
+OK, I missed that, corrected in v4.
 
-> Best regards,
-> Krzysztof
+> +static int exynos_srom_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *np;
+> +       struct device *dev = &pdev->dev;
+> +
+> +       np = dev->of_node;
+>
+> Are you sure that dev->of_node will be always set ?
+> I see lots of driver who if (dev->of_node) {}
 >
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Taken care in v4.
+
+> +       exynos_srom_base = of_iomap(np, 0);
+> +
+> +       if (!exynos_srom_base) {
+> +               pr_err("iomap of exynos srom controller failed\n");
+> +               return -ENOMEM;
+> +       }
+>
+> You can use dev_err(dev, "") insted of pr_err
+>
+
+Taken care in v4.
+
+> +
+> +       exynos_srom_regs = exynos_srom_alloc_reg_dump(exynos_srom_offsets,
+> +                       sizeof(exynos_srom_offsets));
+> +
+> +       if (!exynos_srom_regs) {
+> +               iounmap(exynos_srom_regs);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       return 0;
+> +}
+>
+> Instead of using a global static exynos_srom_base/exynos_srom_regs, why you do not use platform_set_drvdata() ?
+>
+
+OK. Taken care in v4.
+
+Posted v4 here
+
+https://lkml.org/lkml/2015/10/19/278
+
+Thanks,
+Pankaj Dubey
+
+> Regards
+> LABBE Corentin
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
