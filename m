@@ -1,39 +1,105 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH] ARM: exynos_defconfig: Increase CONFIG_BLK_DEV_RAM_SIZE to 64K
-Date: Mon, 19 Oct 2015 15:22:54 +0200
-Message-ID: <4039144.iLSv7qv3SU@wuerfel>
-References: <1445251715-9725-1-git-send-email-alim.akhtar@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 5/7] ARM: exynos_defconfig: Normalize exynos defconfig
+Date: Mon, 19 Oct 2015 15:25:49 +0200
+Message-ID: <5624EF5D.7080403@osg.samsung.com>
+References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+ <1445234635-3950-6-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:62255 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753546AbbJSNXf (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:34249 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752911AbbJSNZy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 09:23:35 -0400
-In-Reply-To: <1445251715-9725-1-git-send-email-alim.akhtar@samsung.com>
+	Mon, 19 Oct 2015 09:25:54 -0400
+In-Reply-To: <1445234635-3950-6-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com, k.kozlowski@samsung.com, kgene@kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Monday 19 October 2015 16:18:35 Alim Akhtar wrote:
-> Spam Status: CRM114    
-> CONFIG_BLK_DEV_RAM_SIZE is currently set to 8K, which is a bit on the
-> smaller side, lets bump it up to 64K so that a bigger RAM_DISK can
-> be used with defconfig.
+Hello Alim,
+
+On 10/19/2015 08:03 AM, Alim Akhtar wrote:
+> make savedefconfig result in some difference, lets normalize the
+> defconfig.
 > 
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
-> Every time I build exynos_defconfig, I need to manually change RAM_SIZE
-> to match my ramdisk image size. I am not sure what is the best ramdisk size
-> might be, but bumping it to 64K might be a reasonable one.
 
-Is there still a reason to use ramdisks these days? If 8MB is not
-enough to have a useful initrd, that might mean that everyone else
-uses initramfs and you should just do the same thing?
+Did you make savedefconfig against v4.3-rc6 or tot linux-next?
 
-Then we can also remove this option here.
+I remember we had issues in the past due savedefconfig made against
+linux-next but then some of the patches in linux-next not making it
+to the next release. So I think it should be good to mention what's
+the base used for this patch.
 
-	Arnd
+>  arch/arm/configs/exynos_defconfig |    8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 1ff2bfa2e183..3349713e6c63 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -99,10 +99,8 @@ CONFIG_SENSORS_LM90=y
+>  CONFIG_SENSORS_NTC_THERMISTOR=y
+>  CONFIG_SENSORS_PWM_FAN=y
+>  CONFIG_SENSORS_INA2XX=y
+> -CONFIG_THERMAL=y
+>  CONFIG_CPU_THERMAL=y
+>  CONFIG_THERMAL_EMULATION=y
+> -CONFIG_EXYNOS_THERMAL=y
+
+I would prefer to split all the changes that removes symbols into a
+separate patch explaining why these are not needed anymore (i.e: it
+is selected now by symbol $foo).
+
+>  CONFIG_WATCHDOG=y
+>  CONFIG_S3C2410_WATCHDOG=y
+>  CONFIG_MFD_CROS_EC=y
+> @@ -127,14 +125,14 @@ CONFIG_REGULATOR_S2MPS11=y
+>  CONFIG_REGULATOR_S5M8767=y
+>  CONFIG_REGULATOR_TPS65090=y
+>  CONFIG_DRM=y
+> -CONFIG_DRM_NXP_PTN3460=y
+> -CONFIG_DRM_PARADE_PS8622=y
+>  CONFIG_DRM_EXYNOS=y
+>  CONFIG_DRM_EXYNOS_FIMD=y
+>  CONFIG_DRM_EXYNOS_DSI=y
+>  CONFIG_DRM_EXYNOS_HDMI=y
+>  CONFIG_DRM_PANEL_SIMPLE=y
+>  CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=y
+> +CONFIG_DRM_NXP_PTN3460=y
+> +CONFIG_DRM_PARADE_PS8622=y
+
+Moving these DRM bridge symbols to match savedefconfig is ok IMHO.
+
+>  CONFIG_FB_SIMPLE=y
+>  CONFIG_EXYNOS_VIDEO=y
+>  CONFIG_EXYNOS_MIPI_DSI=y
+> @@ -175,7 +173,6 @@ CONFIG_RTC_DRV_S5M=y
+>  CONFIG_RTC_DRV_S3C=y
+>  CONFIG_DMADEVICES=y
+>  CONFIG_PL330_DMA=y
+> -CONFIG_CHROME_PLATFORMS=y
+>  CONFIG_CROS_EC_CHARDEV=y
+>  CONFIG_COMMON_CLK_MAX77686=y
+>  CONFIG_COMMON_CLK_MAX77802=y
+> @@ -190,7 +187,6 @@ CONFIG_PWM_SAMSUNG=y
+>  CONFIG_PHY_EXYNOS5250_SATA=y
+>  CONFIG_EXT2_FS=y
+>  CONFIG_EXT3_FS=y
+> -CONFIG_EXT4_FS=y
+>  CONFIG_MSDOS_FS=y
+>  CONFIG_VFAT_FS=y
+>  CONFIG_TMPFS=y
+> 
+
+Same comment than above, I would prefer these to be split.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
