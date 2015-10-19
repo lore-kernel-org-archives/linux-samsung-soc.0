@@ -1,32 +1,109 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 1/3] clk: samsung: exynos4: Add SSS gate clock
-Date: Mon, 19 Oct 2015 12:59:46 -0700
-Message-ID: <20151019195946.GH10182@codeaurora.org>
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
- <1445230834-32689-2-git-send-email-k.kozlowski@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 6/9] clocksource/drivers/exynos_mct: Use container_of()
+ instead of this_cpu_ptr()
+Date: Mon, 19 Oct 2015 22:59:25 +0200
+Message-ID: <1445288368-6440-6-git-send-email-daniel.lezcano@linaro.org>
+References: <56255943.6060807@linaro.org>
+ <1445288368-6440-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1445230834-32689-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1445288368-6440-1-git-send-email-daniel.lezcano@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: tglx@linutronix.de
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, mingo@kernel.org, "moderated list:ARM/SAMSUNG EXYNO..." <linux-arm-kernel@lists.infradead.org>, Alexey Klimov <alexey.klimov@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 10/19, Krzysztof Kozlowski wrote:
-> Add a gate clock for controlling all clocks of Security Sub System
-> (SSS).
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+From: Alexey Klimov <alexey.klimov@linaro.org>
 
-The To: list is huge, so I have no idea if you want me to apply
-this patch or not, and given that it's part of a series that has
-dts changes I guess that means it should go through arm-soc:
+Since evt structure is embedded in per-CPU mevt structure it's
+definitely faster to use container_of() to get access to mevt
+if we have evt (for example as incoming function argument) instead
+of more expensive approach with this_cpu_ptr(&percpu_mct_tick).
+this_cpu_ptr() on per-CPU mevt structure leads to access to cp15
+to get cpu id and arithmetic operations.
+Container_of() is cheaper since it's just one asm instruction.
+This should work if used evt pointer is correct and owned by
+local mevt structure.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+For example, before this patch set_state_shutdown() looks like:
 
+ 4a4:	e92d4010 	push	{r4, lr}
+ 4a8:	e3004000 	movw	r4, #0
+ 4ac:	ebfffffe 	bl	0 <debug_smp_processor_id>
+ 4b0:	e3003000 	movw	r3, #0
+ 4b4:	e3404000 	movt	r4, #0
+ 4b8:	e3403000 	movt	r3, #0
+ 4bc:	e7933100 	ldr	r3, [r3, r0, lsl #2]
+ 4c0:	e0844003 	add	r4, r4, r3
+ 4c4:	e59400c0 	ldr	r0, [r4, #192]	; 0xc0
+ 4c8:	ebffffd4 	bl	420 <exynos4_mct_tick_stop.isra.1>
+ 4cc:	e3a00000 	mov	r0, #0
+ 4d0:	e8bd8010 	pop	{r4, pc}
+
+With this patch:
+
+ 4a4:	e92d4010 	push	{r4, lr}
+ 4a8:	e59000c0 	ldr	r0, [r0, #192]	; 0xc0
+ 4ac:	ebffffdb 	bl	420 <exynos4_mct_tick_stop.isra.1>
+ 4b0:	e3a00000 	mov	r0, #0
+ 4b4:	e8bd8010 	pop	{r4, pc}
+
+Also, for me size of exynos_mct.o decreased from 84588 bytes
+to 83956.
+
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clocksource/exynos_mct.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 029f96a..ff44082 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -382,24 +382,28 @@ static void exynos4_mct_tick_start(unsigned long cycles,
+ static int exynos4_tick_set_next_event(unsigned long cycles,
+ 				       struct clock_event_device *evt)
+ {
+-	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
++	struct mct_clock_event_device *mevt;
+ 
++	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 	exynos4_mct_tick_start(cycles, mevt);
+-
+ 	return 0;
+ }
+ 
+ static int set_state_shutdown(struct clock_event_device *evt)
+ {
+-	exynos4_mct_tick_stop(this_cpu_ptr(&percpu_mct_tick));
++	struct mct_clock_event_device *mevt;
++
++	mevt = container_of(evt, struct mct_clock_event_device, evt);
++	exynos4_mct_tick_stop(mevt);
+ 	return 0;
+ }
+ 
+ static int set_state_periodic(struct clock_event_device *evt)
+ {
+-	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
++	struct mct_clock_event_device *mevt;
+ 	unsigned long cycles_per_jiffy;
+ 
++	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 	cycles_per_jiffy = (((unsigned long long)NSEC_PER_SEC / HZ * evt->mult)
+ 			    >> evt->shift);
+ 	exynos4_mct_tick_stop(mevt);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
