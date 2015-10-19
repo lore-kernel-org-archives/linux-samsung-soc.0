@@ -1,67 +1,42 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 7/7] ARM: EXYNOS: Remove code for restart and poweroff for
- exynos SoCs
-Date: Mon, 19 Oct 2015 11:56:09 +0200
-Message-ID: <5624BE39.7020605@osg.samsung.com>
-References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
- <1445234635-3950-8-git-send-email-alim.akhtar@samsung.com>
- <562494F8.6070003@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] arm64: dts: Add reboot node for exynos7
+Date: Mon, 19 Oct 2015 15:28:03 +0530
+Message-ID: <1445248683-28403-1-git-send-email-alim.akhtar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:34186 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750759AbbJSJ4P (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:35788 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904AbbJSKH1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 05:56:15 -0400
-In-Reply-To: <562494F8.6070003@samsung.com>
+	Mon, 19 Oct 2015 06:07:27 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello,
+This patch add syscon-reboot node to reboot exynos7 based SoCs.
 
-On 10/19/2015 09:00 AM, Krzysztof Kozlowski wrote:
-> On 19.10.2015 15:03, Alim Akhtar wrote:
->> Now we can use the generic syscon-{reboot/poweroff} drivers,
->> so we don't need special handling for reboot/poweroff in
->> exynos pmu driver. This patch remove the same.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>  arch/arm/mach-exynos/pmu.c |   43 -------------------------------------------
->>  1 file changed, 43 deletions(-)
-> 
-> I think that removal of this stuff will effectively remove the
-> restart/poweroff handlers from:
-> 1. Other defconfigs, like multi_v7
-> 2. Custom configs.
->
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos7.dtsi |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-This will also break old DTBs that don't have a "syscon-poweroff" device
-node that contains the necessary PMU regmap, offset and mask information.
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index 4d132692996f..1bc8e15363e8 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -450,6 +450,13 @@
+ 			reg = <0x105c0000 0x5000>;
+ 		};
  
-> Previously this code was always compiled in for ARCH_EXYNOS. Now it is
-> not so I am thinking about selecting necessary drivers from main exynos
-> Kconfig symbol. That could be tricky though, because "select" should be
-> used only for non-visible symbols.
-> 
-> Any ideas how to solve that?
->
-
-Is true that select should only be used for non-visible symbols but there
-are others user visible symbols that are selected by ARCH_EXYNOS such as
-EXYNOS_THERMAL. So I think selecting the regmap syscon reset stuff there
-is a sensible option.
- 
-> Best regards,
-> Krzysztof
->
-
-Best regards,
++		reboot: syscon-reboot {
++			compatible = "syscon-reboot";
++			regmap = <&pmu_system_controller>;
++			offset = <0x0400>;
++			mask = <0x1>;
++		};
++
+ 		rtc: rtc@10590000 {
+ 			compatible = "samsung,s3c6410-rtc";
+ 			reg = <0x10590000 0x100>;
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.7.10.4
