@@ -1,89 +1,119 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 5/7] ARM: exynos_defconfig: Normalize exynos defconfig
-Date: Mon, 19 Oct 2015 18:38:05 +0200
-Message-ID: <56251C6D.9000708@osg.samsung.com>
+Subject: Re: [PATCH 7/7] ARM: EXYNOS: Remove code for restart and poweroff for
+ exynos SoCs
+Date: Mon, 19 Oct 2015 18:42:16 +0200
+Message-ID: <56251D68.4000900@osg.samsung.com>
 References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
- <1445234635-3950-6-git-send-email-alim.akhtar@samsung.com>
- <5624EF5D.7080403@osg.samsung.com>
- <CAGOxZ52bGrHo0DzjhyjGPXwX0CWUn0Oqkx-EGZY51zC5FWcAKw@mail.gmail.com>
+ <1445234635-3950-8-git-send-email-alim.akhtar@samsung.com>
+ <562494F8.6070003@samsung.com> <5624BE39.7020605@osg.samsung.com>
+ <CAJKOXPcvKeDNwof5eyD5XjzUiZrHoyShD8gOPGo7uUxEyypQbw@mail.gmail.com>
+ <5624F932.7030001@osg.samsung.com>
+ <CAGOxZ53k5Nftc=YgTnow382S2mG51yiLO4RmkMM8fONBB4GnCg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:34338 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:34345 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751358AbbJSQiL (ORCPT
+	id S1752875AbbJSQmW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 12:38:11 -0400
-In-Reply-To: <CAGOxZ52bGrHo0DzjhyjGPXwX0CWUn0Oqkx-EGZY51zC5FWcAKw@mail.gmail.com>
+	Mon, 19 Oct 2015 12:42:22 -0400
+In-Reply-To: <CAGOxZ53k5Nftc=YgTnow382S2mG51yiLO4RmkMM8fONBB4GnCg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
 Hello Alim,
 
-On 10/19/2015 05:58 PM, Alim Akhtar wrote:
+On 10/19/2015 06:13 PM, Alim Akhtar wrote:
 > Hi Javier,
 > 
-> On Mon, Oct 19, 2015 at 6:55 PM, Javier Martinez Canillas
+> On Mon, Oct 19, 2015 at 7:37 PM, Javier Martinez Canillas
 > <javier@osg.samsung.com> wrote:
->> Hello Alim,
+>> Hello Krzysztof,
 >>
->> On 10/19/2015 08:03 AM, Alim Akhtar wrote:
->>> make savedefconfig result in some difference, lets normalize the
->>> defconfig.
+>> On 10/19/2015 03:28 PM, Krzysztof Kozlowski wrote:
+>>> 2015-10-19 18:56 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+>>>> Hello,
+>>>>
+>>>> On 10/19/2015 09:00 AM, Krzysztof Kozlowski wrote:
+>>>>> On 19.10.2015 15:03, Alim Akhtar wrote:
+>>>>>> Now we can use the generic syscon-{reboot/poweroff} drivers,
+>>>>>> so we don't need special handling for reboot/poweroff in
+>>>>>> exynos pmu driver. This patch remove the same.
+>>>>>>
+>>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>>>> ---
+>>>>>>  arch/arm/mach-exynos/pmu.c |   43 -------------------------------------------
+>>>>>>  1 file changed, 43 deletions(-)
+>>>>>
+>>>>> I think that removal of this stuff will effectively remove the
+>>>>> restart/poweroff handlers from:
+>>>>> 1. Other defconfigs, like multi_v7
+>>>>> 2. Custom configs.
+>>>>>
+>>>>
+>>>> This will also break old DTBs that don't have a "syscon-poweroff" device
+>>>> node that contains the necessary PMU regmap, offset and mask information.
 >>>
->>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>> ---
+>>> I am not sure whether this is ABI break issue. There was no compatible
+>>> mentioning that "reset works" which now would be replaced. The
+>>> existing PMU compatible (like samsung,exynos4412-pmu) does not mention
+>>> "reset" as a feature coming with this compatible.
+>>>
+>>> So no ABI break.
+>>>
+>>>
 >>
->> Did you make savedefconfig against v4.3-rc6 or tot linux-next?
+>> I deliberately didn't use the "DT ABI break" expression since as you said is
+>> not part of the documented DT bindings. But what I said is that this change
+>> will break old DTBs with newer kernels since reboot and power off will stop
+>> working after $SUBJECT.
 >>
-> These are based on v4.3-rc5.
-> 
->> I remember we had issues in the past due savedefconfig made against
->> linux-next but then some of the patches in linux-next not making it
->> to the next release. So I think it should be good to mention what's
->> the base used for this patch.
+>> I'm not a particular fan of the stable DT idea since in practice it seems to
+>> do more harm than good but since that was decided, the expectation for users
+>> is that booting a new kernel with an old DT should not cause any regression.
 >>
-> Ah, ok I didn't follow that, will check again on Linux-next as well as
-
-IIRC the problem was in that case that a patch was adding a new select
-that made the symbol not necessary in the defconfig. So a patch against
-linux-next was posted removing the unneeded symbol but at the end the
-select patch didn't make it to the release but the one removing the
-symbol did.
-
-> on 4.3-rc5
+>> So I think that at least a comment in the commit message is needed so if
+>> there are people really using old DTs with newer kernels on Exynos boards,
+>> they can know that the commit causes such an issue instead of having to
+>> figure it out themselves.
+>>
+> Agree, will add a comment about this in commit message.
 >
 
-OK, using 4.3-rcX should be safe AFAICT.
-
->>>  arch/arm/configs/exynos_defconfig |    8 ++------
->>>  1 file changed, 2 insertions(+), 6 deletions(-)
+Thanks, with that comment in the commit message, feel free
+to add my Reviewed-by tag to this patch as well.
+ 
+>>>>
+>>>>> Previously this code was always compiled in for ARCH_EXYNOS. Now it is
+>>>>> not so I am thinking about selecting necessary drivers from main exynos
+>>>>> Kconfig symbol. That could be tricky though, because "select" should be
+>>>>> used only for non-visible symbols.
+>>>>>
+>>>>> Any ideas how to solve that?
+>>>>>
+>>>>
+>>>> Is true that select should only be used for non-visible symbols but there
+>>>> are others user visible symbols that are selected by ARCH_EXYNOS such as
+>>>> EXYNOS_THERMAL. So I think selecting the regmap syscon reset stuff there
+>>>> is a sensible option.
 >>>
->>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
->>> index 1ff2bfa2e183..3349713e6c63 100644
->>> --- a/arch/arm/configs/exynos_defconfig
->>> +++ b/arch/arm/configs/exynos_defconfig
->>> @@ -99,10 +99,8 @@ CONFIG_SENSORS_LM90=y
->>>  CONFIG_SENSORS_NTC_THERMISTOR=y
->>>  CONFIG_SENSORS_PWM_FAN=y
->>>  CONFIG_SENSORS_INA2XX=y
->>> -CONFIG_THERMAL=y
->>>  CONFIG_CPU_THERMAL=y
->>>  CONFIG_THERMAL_EMULATION=y
->>> -CONFIG_EXYNOS_THERMAL=y
+>>> Selecting from defconfig is not sufficient... since I do not have
+>>> other idea than selecting then ovak, but Alim please check it whether
+>>> it does not create circular dependencies on various configs.
+>>>
 >>
->> I would prefer to split all the changes that removes symbols into a
->> separate patch explaining why these are not needed anymore (i.e: it
->> is selected now by symbol $foo).
+>> Agreed, Kconfig circular dependencies is the reason why select is avoided.
+>> Fortunately now the 0-day bot analyzes even posted patches so it's possible
+>> that such an issue could be found even before these patches are merged.
 >>
-> Ok ..let me rebase my patches and check these config changes again....
+> ok..will select it from mach-exynos/Kconfig.
+> Thanks.
+>
 
-
-Thanks, the changes looks good to me though so please feel free
-to add my Reviewed-by tag if you re-spin and split the changes.
+Ok, great.
 
 Best regards,
 -- 
