@@ -1,66 +1,123 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
-Date: Mon, 19 Oct 2015 18:11:19 +0200
-Message-ID: <56251627.4050908@math.uni-bielefeld.de>
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH 7/7] ARM: EXYNOS: Remove code for restart and poweroff for
+ exynos SoCs
+Date: Mon, 19 Oct 2015 21:43:33 +0530
+Message-ID: <CAGOxZ53k5Nftc=YgTnow382S2mG51yiLO4RmkMM8fONBB4GnCg@mail.gmail.com>
+References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+ <1445234635-3950-8-git-send-email-alim.akhtar@samsung.com>
+ <562494F8.6070003@samsung.com> <5624BE39.7020605@osg.samsung.com>
+ <CAJKOXPcvKeDNwof5eyD5XjzUiZrHoyShD8gOPGo7uUxEyypQbw@mail.gmail.com> <5624F932.7030001@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:35546 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751533AbbJSQLX (ORCPT
+Received: from mail-io0-f181.google.com ([209.85.223.181]:34610 "EHLO
+	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932259AbbJSQON (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 12:11:23 -0400
-In-Reply-To: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
+	Mon, 19 Oct 2015 12:14:13 -0400
+In-Reply-To: <5624F932.7030001@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Krzysztof,
+Hi Javier,
 
-I can confirm that this also works on a Odroid-X2, so I guess it's safe
-to enable the PRNG for all Exynos4412-based Odroid devices.
+On Mon, Oct 19, 2015 at 7:37 PM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> Hello Krzysztof,
+>
+> On 10/19/2015 03:28 PM, Krzysztof Kozlowski wrote:
+>> 2015-10-19 18:56 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+>>> Hello,
+>>>
+>>> On 10/19/2015 09:00 AM, Krzysztof Kozlowski wrote:
+>>>> On 19.10.2015 15:03, Alim Akhtar wrote:
+>>>>> Now we can use the generic syscon-{reboot/poweroff} drivers,
+>>>>> so we don't need special handling for reboot/poweroff in
+>>>>> exynos pmu driver. This patch remove the same.
+>>>>>
+>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>>> ---
+>>>>>  arch/arm/mach-exynos/pmu.c |   43 -------------------------------------------
+>>>>>  1 file changed, 43 deletions(-)
+>>>>
+>>>> I think that removal of this stuff will effectively remove the
+>>>> restart/poweroff handlers from:
+>>>> 1. Other defconfigs, like multi_v7
+>>>> 2. Custom configs.
+>>>>
+>>>
+>>> This will also break old DTBs that don't have a "syscon-poweroff" device
+>>> node that contains the necessary PMU regmap, offset and mask information.
+>>
+>> I am not sure whether this is ABI break issue. There was no compatible
+>> mentioning that "reset works" which now would be replaced. The
+>> existing PMU compatible (like samsung,exynos4412-pmu) does not mention
+>> "reset" as a feature coming with this compatible.
+>>
+>> So no ABI break.
+>>
+>>
+>
+> I deliberately didn't use the "DT ABI break" expression since as you said is
+> not part of the documented DT bindings. But what I said is that this change
+> will break old DTBs with newer kernels since reboot and power off will stop
+> working after $SUBJECT.
+>
+> I'm not a particular fan of the stable DT idea since in practice it seems to
+> do more harm than good but since that was decided, the expectation for users
+> is that booting a new kernel with an old DT should not cause any regression.
+>
+> So I think that at least a comment in the commit message is needed so if
+> there are people really using old DTs with newer kernels on Exynos boards,
+> they can know that the commit causes such an issue instead of having to
+> figure it out themselves.
+>
+Agree, will add a comment about this in commit message.
 
-Any chance that you might also take a look at the other hwcrypto stuff
-on the SoC ('samsung,exynos4210-secss' compatible)?
+>>>
+>>>> Previously this code was always compiled in for ARCH_EXYNOS. Now it is
+>>>> not so I am thinking about selecting necessary drivers from main exynos
+>>>> Kconfig symbol. That could be tricky though, because "select" should be
+>>>> used only for non-visible symbols.
+>>>>
+>>>> Any ideas how to solve that?
+>>>>
+>>>
+>>> Is true that select should only be used for non-visible symbols but there
+>>> are others user visible symbols that are selected by ARCH_EXYNOS such as
+>>> EXYNOS_THERMAL. So I think selecting the regmap syscon reset stuff there
+>>> is a sensible option.
+>>
+>> Selecting from defconfig is not sufficient... since I do not have
+>> other idea than selecting then ovak, but Alim please check it whether
+>> it does not create circular dependencies on various configs.
+>>
+>
+> Agreed, Kconfig circular dependencies is the reason why select is avoided.
+> Fortunately now the 0-day bot analyzes even posted patches so it's possible
+> that such an issue could be found even before these patches are merged.
+>
+ok..will select it from mach-exynos/Kconfig.
+Thanks.
 
-With best wishes,
-Tobias
-
-
-Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> 
-> The patchset adds necessary clock from Security SubSystem (SSS)
-> and enables the PRNG module of Exynos for Trats2 board.
-> 
-> The first patch (clock) is required for other ones so please
-> take everything in one step.
-> 
-> The actual Device Tree support (and compatible) was sent in separate
-> patch:
->  - https://patchwork.kernel.org/patch/7432891/
->  - http://marc.info/?l=linux-crypto-vger&m=144522952725052&w=2
-> 
-> The device can be tested (after applying both patchsets) with:
-> $ echo exynos > /sys/class/misc/hw_random/rng_current
-> $ dd if=/dev/hwrng of=/dev/null bs=1 count=16
-> 
-> 
+>> Best regards,
+>> Krzysztof
+>>
+>
 > Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (3):
->   clk: samsung: exynos4: Add SSS gate clock
->   ARM: dts: Add PRNG module for exynos4
->   ARM: dts: Enable PRNG module on exynos4412-trats2
-> 
->  arch/arm/boot/dts/exynos4.dtsi          | 8 ++++++++
->  arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
->  drivers/clk/samsung/clk-exynos4.c       | 1 +
->  include/dt-bindings/clock/exynos4.h     | 1 +
->  4 files changed, 14 insertions(+)
-> 
+> --
+> Javier Martinez Canillas
+> Open Source Group
+> Samsung Research America
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Regards,
+Alim
