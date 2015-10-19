@@ -1,102 +1,47 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v3 6/8] drivers: soc: add support for exynos SROM driver
-Date: Mon, 19 Oct 2015 19:58:55 +0530
-Message-ID: <CAGcde9E+DELn_-ibE5+NtsrtBFNqG=AKF8wk=Yh8YYxZbk+v3w@mail.gmail.com>
-References: <20151013150002.GA27569@Red>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
+Date: Mon, 19 Oct 2015 08:11:06 -0700
+Message-ID: <CAD=FV=WaD6BuJbSJKTCy4MoG125EMYvnBqYKRTixXL7Gz=YnvA@mail.gmail.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+	<1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
+	<561B48B7.1040201@samsung.com>
+	<CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
+	<561C4CEE.3050905@samsung.com>
+	<CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
+	<561C7DF1.6000609@samsung.com>
+	<CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
+	<561D9ACE.6050103@samsung.com>
+	<CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
+	<CAD=FV=Voh6Xh_naWQTaRPP8YUS2xJh7jfA+zYbH9QdVhmyZz9A@mail.gmail.com>
+	<CANAwSgSd8sHDcmGmck=Em2H5WJzVWM28cbvs9z6CFgpuTY_Juw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:38627 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750814AbbJSO3Q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 10:29:16 -0400
-In-Reply-To: <20151013150002.GA27569@Red>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CANAwSgSd8sHDcmGmck=Em2H5WJzVWM28cbvs9z6CFgpuTY_Juw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alim Akhtar <alim.akhtar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: LABBE Corentin <clabbe.montjoie@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, p.fedin@samsung.com, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
 
 Hi,
 
-Thanks for review.
+On Mon, Oct 19, 2015 at 3:11 AM, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> 1 Drop the cd-gpios changes. pinctrl-0 changes.
 
-On 13 October 2015 at 20:30, LABBE Corentin <clabbe.montjoie@gmail.com> wrote:
-> +static struct exynos_srom_reg_dump *exynos_srom_alloc_reg_dump(
-> +               const unsigned long *rdump,
-> +               unsigned long nr_rdump)
-> +{
-> +       struct exynos_srom_reg_dump *rd;
-> +       unsigned int i;
-> +
-> +       rd = kcalloc(nr_rdump, sizeof(*rd), GFP_KERNEL);
-> +       if (!rd)
-> +               return NULL;
-> +
-> +       for (i = 0; i < nr_rdump; ++i)
-> +               rd[i].offset = rdump[i];
-> +
-> +       return rd;
-> +}
->
-> You do not free rd anywhere in your code.
->
+Right.
 
-OK, I missed that, corrected in v4.
 
-> +static int exynos_srom_probe(struct platform_device *pdev)
-> +{
-> +       struct device_node *np;
-> +       struct device *dev = &pdev->dev;
-> +
-> +       np = dev->of_node;
->
-> Are you sure that dev->of_node will be always set ?
-> I see lots of driver who if (dev->of_node) {}
->
+> 2 Fix the regulator changes for vmmc/vqmmc with disable of regulator-always-on;
 
-Taken care in v4.
+I'm not totally sure I understand.  You should need to keep vmmc and
+vqmmc always on because otherwise you can't do card detection (unless
+you poll for card detect).
 
-> +       exynos_srom_base = of_iomap(np, 0);
-> +
-> +       if (!exynos_srom_base) {
-> +               pr_err("iomap of exynos srom controller failed\n");
-> +               return -ENOMEM;
-> +       }
->
-> You can use dev_err(dev, "") insted of pr_err
->
 
-Taken care in v4.
+> 3 Drop this UHS-I changes as if now.
 
-> +
-> +       exynos_srom_regs = exynos_srom_alloc_reg_dump(exynos_srom_offsets,
-> +                       sizeof(exynos_srom_offsets));
-> +
-> +       if (!exynos_srom_regs) {
-> +               iounmap(exynos_srom_regs);
-> +               return -ENOMEM;
-> +       }
-> +
-> +       return 0;
-> +}
->
-> Instead of using a global static exynos_srom_base/exynos_srom_regs, why you do not use platform_set_drvdata() ?
->
-
-OK. Taken care in v4.
-
-Posted v4 here
-
-https://lkml.org/lkml/2015/10/19/278
-
-Thanks,
-Pankaj Dubey
-
-> Regards
-> LABBE Corentin
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sounds right.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
