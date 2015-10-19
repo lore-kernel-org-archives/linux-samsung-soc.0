@@ -1,86 +1,71 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
-Date: Mon, 19 Oct 2015 15:41:44 +0530
-Message-ID: <CANAwSgSd8sHDcmGmck=Em2H5WJzVWM28cbvs9z6CFgpuTY_Juw@mail.gmail.com>
-References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
- <1444578364-1384-3-git-send-email-linux.amoon@gmail.com> <561B48B7.1040201@samsung.com>
- <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
- <561C4CEE.3050905@samsung.com> <CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
- <561C7DF1.6000609@samsung.com> <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
- <561D9ACE.6050103@samsung.com> <CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
- <CAD=FV=Voh6Xh_naWQTaRPP8YUS2xJh7jfA+zYbH9QdVhmyZz9A@mail.gmail.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 7/7] ARM: EXYNOS: Remove code for restart and poweroff for
+ exynos SoCs
+Date: Mon, 19 Oct 2015 15:53:51 +0530
+Message-ID: <5624C4B7.30507@samsung.com>
+References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+ <1445234635-3950-8-git-send-email-alim.akhtar@samsung.com>
+ <562494F8.6070003@samsung.com> <5624BE39.7020605@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=Voh6Xh_naWQTaRPP8YUS2xJh7jfA+zYbH9QdVhmyZz9A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Alim Akhtar <alim.akhtar@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:58055 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752970AbbJSKdE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Oct 2015 06:33:04 -0400
+In-reply-to: <5624BE39.7020605@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Doug/ Krzysztof ,
 
-On 15 October 2015 at 04:10, Doug Anderson <dianders@chromium.org> wrote:
-> Hi,
+
+On 10/19/2015 03:26 PM, Javier Martinez Canillas wrote:
+> Hello,
 >
-> On Tue, Oct 13, 2015 at 6:06 PM, Alim Akhtar <alim.akhtar@gmail.com> wrote:
->> +Doug
->> Hello,
->> AFAIR, dw_mmc host controller does support UHS-I [1], specially SDR50
->> and SDR104 modes.
+> On 10/19/2015 09:00 AM, Krzysztof Kozlowski wrote:
+>> On 19.10.2015 15:03, Alim Akhtar wrote:
+>>> Now we can use the generic syscon-{reboot/poweroff} drivers,
+>>> so we don't need special handling for reboot/poweroff in
+>>> exynos pmu driver. This patch remove the same.
+>>>
+>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> ---
+>>>   arch/arm/mach-exynos/pmu.c |   43 -------------------------------------------
+>>>   1 file changed, 43 deletions(-)
 >>
->> [1]: http://www.spinics.net/lists/linux-mmc/msg28186.html
+>> I think that removal of this stuff will effectively remove the
+>> restart/poweroff handlers from:
+>> 1. Other defconfigs, like multi_v7
+>> 2. Custom configs.
 >>
->> What I remember is, one need to set "broken-cd" property also in order
->> to make it work because of the vqmmc and vmmc connection on board. I
->> didn't find the link right now, but you can search on the web, there
->> was a long discussion about handling this.
->> Have not checked it recently, so not sure if this got broken somehow.
 >
-> Right.  It _shouldn't_ be possible to add "vmmc/vqmmc" supplies to
-> your DTS (which you do in patch 2/3) and also to use the "gpc2-2" pin
-> for card detect (even if you configure it as a GPIO).  Once you add
-> "vmmc/vqmmc" then Linux ought to be turning these regulators off when
-> no card is plugged in.  Presumably the "vqmmc" regulator is hooked up
-> to the "VDDQ_MMC2".  If you look in the user manual for 5422 you can
-> see that "GPC2[2]/SD_2_CDn" has power domain "VDDQ_MMC2".  Thus you
-> really shouldn't be using that pin when vqmmc is off.  I think at some
-> point someone claimed that it still worked for them, but nobody could
-> ever explain why.  Full discussion at
-> <https://patchwork.kernel.org/patch/4763881/>
+> This will also break old DTBs that don't have a "syscon-poweroff" device
+> node that contains the necessary PMU regmap, offset and mask information.
 >
-> ---
+>> Previously this code was always compiled in for ARCH_EXYNOS. Now it is
+>> not so I am thinking about selecting necessary drivers from main exynos
+>> Kconfig symbol. That could be tricky though, because "select" should be
+>> used only for non-visible symbols.
+>>
+>> Any ideas how to solve that?
+>>
 >
-> In case it matters, comments on stuff from earlier in the thread:
+> Is true that select should only be used for non-visible symbols but there
+> are others user visible symbols that are selected by ARCH_EXYNOS such as
+> EXYNOS_THERMAL. So I think selecting the regmap syscon reset stuff there
+> is a sensible option.
 >
-> * As people pointed out, exynos5422 certainly supports all these modes
-> (including DDR50) in the SoC.
+Yes, another example is MFD_SYSYCON which is selected from Kconfig.
+Also CONFIG_POWER_RESET_SYSCON is enable in arch/arm64/config/defconfig.
+So both approaches are taken here.
+will go with maintainer suggestion here.
+>> Best regards,
+>> Krzysztof
+>>
 >
-> * Just because the SoC supports these modes doesn't mean that the
-> boards do, which is why the SoC .dtsi doesn't include them.  Thus,
-> this patch is "right" in that it changes a board-specific file.
+> Best regards,
 >
-> * As Krzysztof points out this board doesn't "add" support but rather
-> "enables" support.  The distinction is subtle.
->
-> * You might be able to get DDR50 working, but probably better to just
-> start with SDR modes.  Previously I never attempted to get DDR50 cards
-> working, so possibly the software needs extra work?
->
-
-Thanks for clarifying all the background details on the mmc changes.
-
-Here is what I would conclude from the previous mail chain's.
-
-1 Drop the cd-gpios changes. pinctrl-0 changes.
-
-2 Fix the regulator changes for vmmc/vqmmc with disable of regulator-always-on;
-
-3 Drop this UHS-I changes as if now.
-
-Is this ok with you.
-
--Anand Moon
-
->
-> -Doug
