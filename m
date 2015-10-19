@@ -1,110 +1,50 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 00/13] drm/exynos: async G2D and g2d_move()
-Date: Sun, 18 Oct 2015 00:39:50 +0200
-Message-ID: <5622CE36.2030302@math.uni-bielefeld.de>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <56156536.6070906@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 1/6] ARM: dts: Mark SDIO as non-removable in
+ exynos5800-peach-pi
+Date: Mon, 19 Oct 2015 09:10:23 +0900
+Message-ID: <562434EF.4010604@samsung.com>
+References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
+ <1444927873-15140-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:32936 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751222AbbJQWjy (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:28358 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752485AbbJSAKd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 17 Oct 2015 18:39:54 -0400
-In-Reply-To: <56156536.6070906@math.uni-bielefeld.de>
+	Sun, 18 Oct 2015 20:10:33 -0400
+In-reply-to: <1444927873-15140-2-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Douglas Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Another ping!
-
-I need someone from Samsung to review this, or at least someone familiar
-with the G2D.
-
-With best wishes,
-Tobias
-
-
-Tobias Jakobi wrote:
-> Gentle ping! :-)
+On 16.10.2015 01:51, Javier Martinez Canillas wrote:
+> The Exynos5800 Peach Pi Chromebook has a Marvell WiFi SDIO chip which
+> can't neither be removed nor be detected. But the node isn't marked
+> as non-removable and instead has the broken-cd DT property.
 > 
-> - Tobias
+> This causes the device to be removed when the system enters into a
+> suspend state and the following warnings is shown after a resume:
 > 
+> [  181.944636] mmc2: error -2 during resume (card was removed?)
 > 
-> Tobias Jakobi wrote:
->> Hello,
->>
->> this series mostly touches G2D code. It introduces the following:
->>
->> (1) drmHandleEvent2() is added to enable processing of vendor-specific
->>     events. This will be used to expose asynchronous operation of the
->>     G2D. The necessary kernel infrastructure is already there since
->>     a lot of kernel versions. [This touches libdrm core code!]
->>
->> (2) The necessary infrastructure to handle G2D events. This includes
->>     adding g2d_config_event() and g2d_exec2() to the public API.
->>     A test application is provided to ensure that everything works
->>     as expected.
->>
->> (3) A small performance test application which can be used to measure
->>     the speed of solid color clear operations. Interesting for
->>     benchmarking and plotting colorful graphs (e.g. through
->>     Mathematica).
->>
->> (4) g2d_move() which works similar to g2d_copy() but like the C
->>     memmove() properly handles overlapping buffer copies.
->>     Again a test application is present to check that this
->>     indeed does what it should.
->>
->> (5) Various small changes. A framebuffer colorformat fix for the
->>     general G2D test application. Moving the currently unused
->>     g2d_reset() to the public API. Adding a counterpart to
->>     exynos_bo_map() to unmap buffers again.
->>
->> (6) Last but not least a small bump of the Exynos version number.
->>
->> Please review and let me know what I should change/improve.
->>
->>
->> With best wishes,
->> Tobias
->>
->> P.S.: Most patches were submitted already some time ago but never
->> made it upstream. So if something looks familiar, don't worry! ;)
->>
->> Tobias Jakobi (13):
->>   drm: Implement drmHandleEvent2()
->>   exynos: Introduce exynos_handle_event()
->>   tests/exynos: add fimg2d performance analysis
->>   exynos/fimg2d: add g2d_config_event
->>   exynos: fimg2d: add g2d_exec2
->>   tests/exynos: add fimg2d event test
->>   tests/exynos: use XRGB8888 for framebuffer
->>   exynos: fimg2d: add g2d_set_direction
->>   exynos/fimg2d: add g2d_move
->>   tests/exynos: add test for g2d_move
->>   exynos/fimg2d: add exynos_bo_unmap()
->>   exynos/fimg2d: add g2d_reset() to public API
->>   exynos: bump version number
->>
->>  exynos/exynos-symbol-check         |   5 +
->>  exynos/exynos_drm.c                |  48 ++++++
->>  exynos/exynos_drm.h                |  12 ++
->>  exynos/exynos_drmif.h              |  27 +++
->>  exynos/exynos_fimg2d.c             | 164 +++++++++++++++++--
->>  exynos/exynos_fimg2d.h             |  49 ++++++
->>  exynos/libdrm_exynos.pc.in         |   2 +-
->>  tests/exynos/Makefile.am           |  26 ++-
->>  tests/exynos/exynos_fimg2d_event.c | 326 +++++++++++++++++++++++++++++++++++++
->>  tests/exynos/exynos_fimg2d_perf.c  | 320 ++++++++++++++++++++++++++++++++++++
->>  tests/exynos/exynos_fimg2d_test.c  | 134 ++++++++++++++-
->>  xf86drm.h                          |  21 +++
->>  xf86drmMode.c                      |  10 +-
->>  13 files changed, 1128 insertions(+), 16 deletions(-)
->>  create mode 100644 tests/exynos/exynos_fimg2d_event.c
->>  create mode 100644 tests/exynos/exynos_fimg2d_perf.c
->>
+> Also remove the card-detect-delay property that is not needed with
+> non-removable.
 > 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+> Changes since v1:
+> - Remove card-detect-delay property as well.
+> 
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+That sounds reasonable:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
