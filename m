@@ -1,37 +1,44 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFT PATCH v2 6/6] ARM: dts: Mark eMMC as non-removable in
- exynos5250-snow-common
-Date: Mon, 19 Oct 2015 09:12:19 +0900
-Message-ID: <56243563.2050603@samsung.com>
-References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
- <1444927873-15140-7-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] hwrng: exynos - Fix unbalanced PM runtime get/puts
+Date: Mon, 19 Oct 2015 10:41:12 +0900
+Message-ID: <56244A38.4040207@samsung.com>
+References: <1445011311-32142-1-git-send-email-daniel.thompson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1444927873-15140-7-git-send-email-javier@osg.samsung.com>
+In-reply-to: <1445011311-32142-1-git-send-email-daniel.thompson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Douglas Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>, Herbert Xu <herbert@gondor.apana.org.au>, Matt Mackall <mpm@selenic.com>
+Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16.10.2015 01:51, Javier Martinez Canillas wrote:
-> The eMMC is non-removable so mark it using the non-removable DT
-> property to avoid having to redetect it after a suspend/resume.
+On 17.10.2015 01:01, Daniel Thompson wrote:
+> Currently this driver calls pm_runtime_get_sync() rampantly
+> but never puts anything back. This makes it impossible for the
+> device to autosuspend properly; it will remain fully active
+> after the first use.
 > 
-> Also remove the card-detect-delay property that is not needed with
-> non-removable.
+> Fix in the obvious way.
 > 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
+> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
 > 
-> Changes since v1:
-> - None, new patch.
+> Notes:
+>     Compile tested only (CONFIG_PM=y, CONFIG_HW_RANDOM_EXYNOS=m); I spotted
+>     this whilst reviewing the code and don't have an exynos platform to
+>     test on.
 > 
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
+>  drivers/char/hw_random/exynos-rng.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+To test the patch I had to add OF support to the driver. I have these
+patches almost ready and I will send them soon. Anyway:
+
+Tested on Trats2 board (Exynos4412):
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
