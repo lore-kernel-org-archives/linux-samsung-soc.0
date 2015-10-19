@@ -1,35 +1,67 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [4/7] arm: dts: Add syscon-{reboot,
- poweroff} nodes for exynos5410 SoC
-Date: Mon, 19 Oct 2015 14:26:13 +0530
-Message-ID: <5624B02D.3010709@samsung.com>
-References: <1445234635-3950-5-git-send-email-alim.akhtar@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 7/7] ARM: EXYNOS: Remove code for restart and poweroff for
+ exynos SoCs
+Date: Mon, 19 Oct 2015 11:56:09 +0200
+Message-ID: <5624BE39.7020605@osg.samsung.com>
+References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+ <1445234635-3950-8-git-send-email-alim.akhtar@samsung.com>
+ <562494F8.6070003@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54017 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753737AbbJSI4p (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:34186 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750759AbbJSJ4P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 04:56:45 -0400
-In-reply-to: <1445234635-3950-5-git-send-email-alim.akhtar@samsung.com>
+	Mon, 19 Oct 2015 05:56:15 -0400
+In-Reply-To: <562494F8.6070003@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, k.kozlowski@samsung.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Monday 19 October 2015 11:33 AM, Alim Akhtar wrote:
-> This patch adds syscon-{reboot, poweroff} nodes to allow the
-> generic syscon-{reboot, poweroff} driver to reset/poweroff exynos5410 SoC.
+Hello,
+
+On 10/19/2015 09:00 AM, Krzysztof Kozlowski wrote:
+> On 19.10.2015 15:03, Alim Akhtar wrote:
+>> Now we can use the generic syscon-{reboot/poweroff} drivers,
+>> so we don't need special handling for reboot/poweroff in
+>> exynos pmu driver. This patch remove the same.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/pmu.c |   43 -------------------------------------------
+>>  1 file changed, 43 deletions(-)
+> 
+> I think that removal of this stuff will effectively remove the
+> restart/poweroff handlers from:
+> 1. Other defconfigs, like multi_v7
+> 2. Custom configs.
 >
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+This will also break old DTBs that don't have a "syscon-poweroff" device
+node that contains the necessary PMU regmap, offset and mask information.
+ 
+> Previously this code was always compiled in for ARCH_EXYNOS. Now it is
+> not so I am thinking about selecting necessary drivers from main exynos
+> Kconfig symbol. That could be tricky though, because "select" should be
+> used only for non-visible symbols.
+> 
+> Any ideas how to solve that?
 >
-> ---
-> arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++++
->   1 file changed, 14 insertions(+)
 
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Is true that select should only be used for non-visible symbols but there
+are others user visible symbols that are selected by ARCH_EXYNOS such as
+EXYNOS_THERMAL. So I think selecting the regmap syscon reset stuff there
+is a sensible option.
+ 
+> Best regards,
+> Krzysztof
+>
 
-Thanks,
-Pankaj Dubey
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
