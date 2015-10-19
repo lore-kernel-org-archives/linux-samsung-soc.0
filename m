@@ -1,42 +1,86 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] arm64: dts: Add reboot node for exynos7
-Date: Mon, 19 Oct 2015 15:28:03 +0530
-Message-ID: <1445248683-28403-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35788 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750904AbbJSKH1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Oct 2015 06:07:27 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed support
+Date: Mon, 19 Oct 2015 15:41:44 +0530
+Message-ID: <CANAwSgSd8sHDcmGmck=Em2H5WJzVWM28cbvs9z6CFgpuTY_Juw@mail.gmail.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+ <1444578364-1384-3-git-send-email-linux.amoon@gmail.com> <561B48B7.1040201@samsung.com>
+ <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
+ <561C4CEE.3050905@samsung.com> <CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
+ <561C7DF1.6000609@samsung.com> <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
+ <561D9ACE.6050103@samsung.com> <CAGOxZ51uPkdGmCAs2Tc8_=YvkORJKdivN47vo1ZxkGQ-MY=-oQ@mail.gmail.com>
+ <CAD=FV=Voh6Xh_naWQTaRPP8YUS2xJh7jfA+zYbH9QdVhmyZz9A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=Voh6Xh_naWQTaRPP8YUS2xJh7jfA+zYbH9QdVhmyZz9A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Alim Akhtar <alim.akhtar@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, k.kozlowski@samsung.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch add syscon-reboot node to reboot exynos7 based SoCs.
+Hi Doug/ Krzysztof ,
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7.dtsi |    7 +++++++
- 1 file changed, 7 insertions(+)
+On 15 October 2015 at 04:10, Doug Anderson <dianders@chromium.org> wrote:
+> Hi,
+>
+> On Tue, Oct 13, 2015 at 6:06 PM, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+>> +Doug
+>> Hello,
+>> AFAIR, dw_mmc host controller does support UHS-I [1], specially SDR50
+>> and SDR104 modes.
+>>
+>> [1]: http://www.spinics.net/lists/linux-mmc/msg28186.html
+>>
+>> What I remember is, one need to set "broken-cd" property also in order
+>> to make it work because of the vqmmc and vmmc connection on board. I
+>> didn't find the link right now, but you can search on the web, there
+>> was a long discussion about handling this.
+>> Have not checked it recently, so not sure if this got broken somehow.
+>
+> Right.  It _shouldn't_ be possible to add "vmmc/vqmmc" supplies to
+> your DTS (which you do in patch 2/3) and also to use the "gpc2-2" pin
+> for card detect (even if you configure it as a GPIO).  Once you add
+> "vmmc/vqmmc" then Linux ought to be turning these regulators off when
+> no card is plugged in.  Presumably the "vqmmc" regulator is hooked up
+> to the "VDDQ_MMC2".  If you look in the user manual for 5422 you can
+> see that "GPC2[2]/SD_2_CDn" has power domain "VDDQ_MMC2".  Thus you
+> really shouldn't be using that pin when vqmmc is off.  I think at some
+> point someone claimed that it still worked for them, but nobody could
+> ever explain why.  Full discussion at
+> <https://patchwork.kernel.org/patch/4763881/>
+>
+> ---
+>
+> In case it matters, comments on stuff from earlier in the thread:
+>
+> * As people pointed out, exynos5422 certainly supports all these modes
+> (including DDR50) in the SoC.
+>
+> * Just because the SoC supports these modes doesn't mean that the
+> boards do, which is why the SoC .dtsi doesn't include them.  Thus,
+> this patch is "right" in that it changes a board-specific file.
+>
+> * As Krzysztof points out this board doesn't "add" support but rather
+> "enables" support.  The distinction is subtle.
+>
+> * You might be able to get DDR50 working, but probably better to just
+> start with SDR modes.  Previously I never attempted to get DDR50 cards
+> working, so possibly the software needs extra work?
+>
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 4d132692996f..1bc8e15363e8 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -450,6 +450,13 @@
- 			reg = <0x105c0000 0x5000>;
- 		};
- 
-+		reboot: syscon-reboot {
-+			compatible = "syscon-reboot";
-+			regmap = <&pmu_system_controller>;
-+			offset = <0x0400>;
-+			mask = <0x1>;
-+		};
-+
- 		rtc: rtc@10590000 {
- 			compatible = "samsung,s3c6410-rtc";
- 			reg = <0x10590000 0x100>;
--- 
-1.7.10.4
+Thanks for clarifying all the background details on the mmc changes.
+
+Here is what I would conclude from the previous mail chain's.
+
+1 Drop the cd-gpios changes. pinctrl-0 changes.
+
+2 Fix the regulator changes for vmmc/vqmmc with disable of regulator-always-on;
+
+3 Drop this UHS-I changes as if now.
+
+Is this ok with you.
+
+-Anand Moon
+
+>
+> -Doug
