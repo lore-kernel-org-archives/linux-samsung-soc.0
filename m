@@ -1,57 +1,72 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 00/10] drm/exynos: add pm_runtime support
-Date: Mon, 19 Oct 2015 21:09:38 +0900
-Message-ID: <5624DD82.1020408@samsung.com>
-References: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/7] arm: dts: Add syscon-{reboot, poweroff} nodes for
+ exynos3250 SoCs
+Date: Mon, 19 Oct 2015 15:03:34 +0200
+Message-ID: <5624EA26.9030909@osg.samsung.com>
+References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+ <1445234635-3950-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1441397752-6672-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:34228 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932184AbbJSNDl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Oct 2015 09:03:41 -0400
+In-Reply-To: <1445234635-3950-2-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-SGkgR3VzdGF2bywKClBsZWFzZSBwaW5nfiBhbmQgcmUtYmFzZSBvbiB0b3Agb2YgZXh5bm9zLWRy
-bS1uZXh0LgoKVGhhbmtzLApJbmtpIERhZQoKMjAxNeuFhCAwOeyblCAwNeydvCAwNToxNeyXkCBH
-dXN0YXZvIFBhZG92YW4g7J20KOqwgCkg7JO0IOq4gDoKPiBGcm9tOiBHdXN0YXZvIFBhZG92YW4g
-PGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4KPiBIaSwKPgo+IFRoaXMgc2VyaWVz
-IGFkZHMgcHJvcGVyIHJ1bnRpbWUgUE0gc3Vwb3J0IHRvIENSVENzIGFuZCBFbmNvZGVycywgc28K
-PiBub3cgaW5zdGVhZCBvZiByZWx5aW5nIG9uICdzdXNwZW5kZWQnIG9yICdlbmFibGVkJyBmbGFn
-cyB0byB0cmFjayB3aGVuCj4gdGhlIENSVEMgb3IgRW5jb2RlciBpcyBlbmFibGVkIHdlIGxldCB0
-aGUgcG1fcnVudGltZSBzdWJzeXN0ZW0gZG8gaXQgZm9yIHVzCj4gYW5kIHJlbW92ZSBhbGwgdGhl
-IGZsYWdzLiBUaGlzIGlzIGEgaW1wb3J0YW50IHN0ZXAgdG8gdGhlIGF0b21pYyBzdXNwZW5kL3Jl
-c3VtZQo+IHN1cHBvcnQgdGhhdCB3aWxsIGxhbmQgaW4gZHJtIGFueXRpbWUgc29vbi4KPgo+IFBs
-ZWFzZSByZXZpZXchCj4KPiAJR3VzdGF2bwo+Cj4gR3VzdGF2byBQYWRvdmFuICgxMCk6Cj4gICAg
-ZHJtL2V4eW5vczogZG8gbm90IHN0YXJ0IGVuYWJsaW5nIERQIGF0IGJpbmQoKSBwaGFzZQo+ICAg
-IGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIERQCj4gICAgZHJtL2V4eW5vczogYWRkIHBt
-X3J1bnRpbWUgdG8gSERNSQo+ICAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIE1peGVy
-Cj4gICAgZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19jcnRjIGNvbW1pdCgpIGNhbGxiYWNrCj4g
-ICAgZHJtL2V4eW5vczogUmVtb3ZlIGV4eW5vc19jcnRjIGNvbW1pdCgpIGNhbGxiYWNrCj4gICAg
-ZHJtL2V4eW5vczogYWRkIHBtX3J1bnRpbWUgdG8gRklNRAo+ICAgIGRybS9leHlub3M6IEVuYWJs
-ZSBEUCBjbG9jayBkaXJlY3RseSBmcm9tIEZJTUQKPiAgICBkcm0vZXh5bm9zOiBhZGQgcG1fcnVu
-dGltZSB0byBERUNPTiA1NDMzCj4gICAgZHJtL2V4eW5vczogYWRkIHBtX3J1bnRpbWUgdG8gREVD
-T04gNwo+Cj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMg
-fCAgOTAgKysrKysrKystLS0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-czdfZHJtX2RlY29uLmMgICAgfCAxMjYgKysrKysrKysrKystLS0tLS0tLS0tLS0tLQo+ICAgZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAgICAgIHwgIDU3ICsrKysrKy0t
-LS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyAgICAgIHwg
-IDEwIC0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAg
-fCAgIDcgLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICAg
-ICB8IDEyOSArKysrKysrKysrKystLS0tLS0tLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfaGRtaS5jICAgICAgICAgIHwgIDU2ICsrKysrKystLS0tCj4gICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAxMjUgKysrKysrKysrKysr
-LS0tLS0tLS0tLS0tLQo+ICAgOCBmaWxlcyBjaGFuZ2VkLCAyNzUgaW5zZXJ0aW9ucygrKSwgMzI1
-IGRlbGV0aW9ucygtKQo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Hello Alim,
+
+On 10/19/2015 08:03 AM, Alim Akhtar wrote:
+> This patch adds syscon-{reboot, poweroff} nodes to allow the
+> generic syscon-{reboot, poweroff} driver to reset/poweroff exynos3250 SoC.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index 033def482fc3..af5d9ad4c7b7 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -152,6 +152,20 @@
+>  			interrupt-parent = <&gic>;
+>  		};
+>  
+> +		poweroff: syscon-poweroff {
+> +			compatible = "syscon-poweroff";
+> +			regmap = <&pmu_system_controller>;
+> +			offset = <0x330C>;
+> +			mask = <0x5200>;
+> +		};
+> +
+> +		reboot: syscon-reboot {
+> +			compatible = "syscon-reboot";
+> +			regmap = <&pmu_system_controller>;
+> +			offset = <0x0400>;
+> +			mask = <0x1>;
+> +		};
+> +
+
+I don't have a Exynos3250 manual but I guess 0x330C is also named
+PS_HOLD_CONTROL and 0x400 is SWRESET as the other Exynos SoCs.
+
+I wonder if a macro could be used instead of magic numbers or at
+least have a comment next to the offset field.
+
+The patch looks good to me though and a comment can be added as
+a follow up so:
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
