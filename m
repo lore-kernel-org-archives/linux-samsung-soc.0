@@ -1,112 +1,237 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 06/10] drm/exynos/decon5433: add function to set particular
- register bits
-Date: Tue, 20 Oct 2015 11:22:37 +0200
-Message-ID: <1445332961-25419-7-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 07/10] drm/exynos/decon5433: merge different flag fields
+Date: Tue, 20 Oct 2015 11:22:38 +0200
+Message-ID: <1445332961-25419-8-git-send-email-a.hajda@samsung.com>
 References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38215 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753468AbbJTJX3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Oct 2015 05:23:29 -0400
 In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 
-VGhlIGRyaXZlciBvZnRlbiBzZXRzIG9ubHkgcGFydGljdWxhciBiaXRzIG9mIGNvbmZpZ3VyYXRp
-b24gcmVnaXN0ZXJzLgpVc2luZyBzZXBhcmF0ZSBmdW5jdGlvbiB0byBzdWNoIGFjdGlvbiBzaW1w
-bGlmaWVzIHRoZSBjb2RlLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBz
-YW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2Rl
-Y29uLmMgfCA2OSArKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAx
-OSBpbnNlcnRpb25zKCspLCA1MCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKaW5kZXggODNlMDkzOS4uNzIyYzExYSAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYwpAQCAtNjIsNiAr
-NjIsMTMgQEAgc3RhdGljIGNvbnN0IHVpbnQzMl90IGRlY29uX2Zvcm1hdHNbXSA9IHsKIAlEUk1f
-Rk9STUFUX0FSR0I4ODg4LAogfTsKIAorc3RhdGljIGlubGluZSB2b2lkIGRlY29uX3NldF9iaXRz
-KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgsIHUzMiByZWcsIHUzMiBtYXNrLAorCQkJCSAgdTMy
-IHZhbCkKK3sKKwl2YWwgPSAodmFsICYgbWFzaykgfCAocmVhZGwoY3R4LT5hZGRyICsgcmVnKSAm
-IH5tYXNrKTsKKwl3cml0ZWwodmFsLCBjdHgtPmFkZHIgKyByZWcpOworfQorCiBzdGF0aWMgaW50
-IGRlY29uX2VuYWJsZV92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIHsKIAlz
-dHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwpAQCAtMjE1LDE2ICsyMjIsOCBA
-QCBzdGF0aWMgdm9pZCBkZWNvbl93aW5fc2V0X3BpeGZtdChzdHJ1Y3QgZGVjb25fY29udGV4dCAq
-Y3R4LCB1bnNpZ25lZCBpbnQgd2luLAogc3RhdGljIHZvaWQgZGVjb25fc2hhZG93X3Byb3RlY3Rf
-d2luKHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgsIGludCB3aW4sCiAJCQkJCWJvb2wgcHJvdGVj
-dCkKIHsKLQl1MzIgdmFsOwotCi0JdmFsID0gcmVhZGwoY3R4LT5hZGRyICsgREVDT05fU0hBRE9X
-Q09OKTsKLQotCWlmIChwcm90ZWN0KQotCQl2YWwgfD0gU0hBRE9XQ09OX1d4X1BST1RFQ1Qod2lu
-KTsKLQllbHNlCi0JCXZhbCAmPSB+U0hBRE9XQ09OX1d4X1BST1RFQ1Qod2luKTsKLQotCXdyaXRl
-bCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1NIQURPV0NPTik7CisJZGVjb25fc2V0X2JpdHMoY3R4
-LCBERUNPTl9TSEFET1dDT04sIFNIQURPV0NPTl9XeF9QUk9URUNUKHdpbiksCisJCSAgICAgICBw
-cm90ZWN0ID8gfjAgOiAwKTsKIH0KIAogc3RhdGljIHZvaWQgZGVjb25fYXRvbWljX2JlZ2luKHN0
-cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCkBAIC0yNzgsMTQgKzI3NywxMCBAQCBzdGF0aWMg
-dm9pZCBkZWNvbl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKIAlk
-ZWNvbl93aW5fc2V0X3BpeGZtdChjdHgsIHdpbiwgc3RhdGUtPmZiKTsKIAogCS8qIHdpbmRvdyBl
-bmFibGUgKi8KLQl2YWwgPSByZWFkbChjdHgtPmFkZHIgKyBERUNPTl9XSU5DT054KHdpbikpOwot
-CXZhbCB8PSBXSU5DT054X0VOV0lOX0Y7Ci0Jd3JpdGVsKHZhbCwgY3R4LT5hZGRyICsgREVDT05f
-V0lOQ09OeCh3aW4pKTsKKwlkZWNvbl9zZXRfYml0cyhjdHgsIERFQ09OX1dJTkNPTngod2luKSwg
-V0lOQ09OeF9FTldJTl9GLCB+MCk7CiAKIAkvKiBzdGFuZGFsb25lIHVwZGF0ZSAqLwotCXZhbCA9
-IHJlYWRsKGN0eC0+YWRkciArIERFQ09OX1VQREFURSk7Ci0JdmFsIHw9IFNUQU5EQUxPTkVfVVBE
-QVRFX0Y7Ci0Jd3JpdGVsKHZhbCwgY3R4LT5hZGRyICsgREVDT05fVVBEQVRFKTsKKwlkZWNvbl9z
-ZXRfYml0cyhjdHgsIERFQ09OX1VQREFURSwgU1RBTkRBTE9ORV9VUERBVEVfRiwgfjApOwogfQog
-CiBzdGF0aWMgdm9pZCBkZWNvbl9kaXNhYmxlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX2NydGMg
-KmNydGMsCkBAIC0yOTMsNyArMjg4LDYgQEAgc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZV9wbGFu
-ZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogewogCXN0cnVjdCBkZWNvbl9jb250ZXh0
-ICpjdHggPSBjcnRjLT5jdHg7CiAJdW5zaWduZWQgaW50IHdpbiA9IHBsYW5lLT56cG9zOwotCXUz
-MiB2YWw7CiAKIAlpZiAoY3R4LT5zdXNwZW5kZWQpCiAJCXJldHVybjsKQEAgLTMwMSwxNiArMjk1
-LDEyIEBAIHN0YXRpYyB2b2lkIGRlY29uX2Rpc2FibGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1f
-Y3J0YyAqY3J0YywKIAlkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCB3aW4sIHRydWUpOwog
-CiAJLyogd2luZG93IGRpc2FibGUgKi8KLQl2YWwgPSByZWFkbChjdHgtPmFkZHIgKyBERUNPTl9X
-SU5DT054KHdpbikpOwotCXZhbCAmPSB+V0lOQ09OeF9FTldJTl9GOwotCXdyaXRlbCh2YWwsIGN0
-eC0+YWRkciArIERFQ09OX1dJTkNPTngod2luKSk7CisJZGVjb25fc2V0X2JpdHMoY3R4LCBERUNP
-Tl9XSU5DT054KHdpbiksIFdJTkNPTnhfRU5XSU5fRiwgMCk7CiAKIAlkZWNvbl9zaGFkb3dfcHJv
-dGVjdF93aW4oY3R4LCB3aW4sIGZhbHNlKTsKIAogCS8qIHN0YW5kYWxvbmUgdXBkYXRlICovCi0J
-dmFsID0gcmVhZGwoY3R4LT5hZGRyICsgREVDT05fVVBEQVRFKTsKLQl2YWwgfD0gU1RBTkRBTE9O
-RV9VUERBVEVfRjsKLQl3cml0ZWwodmFsLCBjdHgtPmFkZHIgKyBERUNPTl9VUERBVEUpOworCWRl
-Y29uX3NldF9iaXRzKGN0eCwgREVDT05fVVBEQVRFLCBTVEFOREFMT05FX1VQREFURV9GLCB+MCk7
-CiB9CiAKIHN0YXRpYyB2b2lkIGRlY29uX2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5bm9zX2RybV9j
-cnRjICpjcnRjLApAQCAtNDE2LDE3ICs0MDYsMTIgQEAgc3RhdGljIHZvaWQgZGVjb25fZGlzYWJs
-ZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogdm9pZCBkZWNvbl90ZV9pcnFfaGFuZGxl
-cihzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogewogCXN0cnVjdCBkZWNvbl9jb250ZXh0
-ICpjdHggPSBjcnRjLT5jdHg7Ci0JdTMyIHZhbDsKIAogCWlmICghdGVzdF9iaXQoQklUX0NMS1Nf
-RU5BQkxFRCwgJmN0eC0+ZW5hYmxlZCkpCiAJCXJldHVybjsKIAotCWlmIChhdG9taWNfYWRkX3Vu
-bGVzcygmY3R4LT53aW5fdXBkYXRlZCwgLTEsIDApKSB7Ci0JCS8qIHRyaWdnZXIgKi8KLQkJdmFs
-ID0gcmVhZGwoY3R4LT5hZGRyICsgREVDT05fVFJJR0NPTik7Ci0JCXZhbCB8PSBUUklHQ09OX1NX
-VFJJR0NNRDsKLQkJd3JpdGVsKHZhbCwgY3R4LT5hZGRyICsgREVDT05fVFJJR0NPTik7Ci0JfQor
-CWlmIChhdG9taWNfYWRkX3VubGVzcygmY3R4LT53aW5fdXBkYXRlZCwgLTEsIDApKQorCQlkZWNv
-bl9zZXRfYml0cyhjdHgsIERFQ09OX1RSSUdDT04sIFRSSUdDT05fU1dUUklHQ01ELCB+MCk7CiAK
-IAlkcm1fY3J0Y19oYW5kbGVfdmJsYW5rKCZjdHgtPmNydGMtPmJhc2UpOwogfQpAQCAtNDM1LDcg
-KzQyMCw2IEBAIHN0YXRpYyB2b2lkIGRlY29uX2NsZWFyX2NoYW5uZWxzKHN0cnVjdCBleHlub3Nf
-ZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0
-eDsKIAlpbnQgd2luLCBpLCByZXQ7Ci0JdTMyIHZhbDsKIAogCURSTV9ERUJVR19LTVMoIiVzXG4i
-LCBfX0ZJTEVfXyk7CiAKQEAgLTQ0NiwyNSArNDMwLDEwIEBAIHN0YXRpYyB2b2lkIGRlY29uX2Ns
-ZWFyX2NoYW5uZWxzKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiAJfQogCiAJZm9yICh3
-aW4gPSAwOyB3aW4gPCBXSU5ET1dTX05SOyB3aW4rKykgewotCQkvKiBzaGFkb3cgdXBkYXRlIGRp
-c2FibGUgKi8KLQkJdmFsID0gcmVhZGwoY3R4LT5hZGRyICsgREVDT05fU0hBRE9XQ09OKTsKLQkJ
-dmFsIHw9IFNIQURPV0NPTl9XeF9QUk9URUNUKHdpbik7Ci0JCXdyaXRlbCh2YWwsIGN0eC0+YWRk
-ciArIERFQ09OX1NIQURPV0NPTik7Ci0KLQkJLyogd2luZG93IGRpc2FibGUgKi8KLQkJdmFsID0g
-cmVhZGwoY3R4LT5hZGRyICsgREVDT05fV0lOQ09OeCh3aW4pKTsKLQkJdmFsICY9IH5XSU5DT054
-X0VOV0lOX0Y7Ci0JCXdyaXRlbCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1dJTkNPTngod2luKSk7
-Ci0KLQkJLyogc2hhZG93IHVwZGF0ZSBlbmFibGUgKi8KLQkJdmFsID0gcmVhZGwoY3R4LT5hZGRy
-ICsgREVDT05fU0hBRE9XQ09OKTsKLQkJdmFsICY9IH5TSEFET1dDT05fV3hfUFJPVEVDVCh3aW4p
-OwotCQl3cml0ZWwodmFsLCBjdHgtPmFkZHIgKyBERUNPTl9TSEFET1dDT04pOwotCi0JCS8qIHN0
-YW5kYWxvbmUgdXBkYXRlICovCi0JCXZhbCA9IHJlYWRsKGN0eC0+YWRkciArIERFQ09OX1VQREFU
-RSk7Ci0JCXZhbCB8PSBTVEFOREFMT05FX1VQREFURV9GOwotCQl3cml0ZWwodmFsLCBjdHgtPmFk
-ZHIgKyBERUNPTl9VUERBVEUpOworCQlkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCB3aW4s
-IHRydWUpOworCQlkZWNvbl9zZXRfYml0cyhjdHgsIERFQ09OX1dJTkNPTngod2luKSwgV0lOQ09O
-eF9FTldJTl9GLCAwKTsKKwkJZGVjb25fc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCBmYWxz
-ZSk7CisJCWRlY29uX3NldF9iaXRzKGN0eCwgREVDT05fVVBEQVRFLCBTVEFOREFMT05FX1VQREFU
-RV9GLCB+MCk7CiAJfQogCS8qIFRPRE86IHdhaXQgZm9yIHBvc3NpYmxlIHZzeW5jICovCiAJbXNs
-ZWVwKDUwKTsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Driver uses four different fields for internal flags. They can be merged
+into one.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 61 +++++++++++++--------------
+ 1 file changed, 30 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 722c11a..265a77f 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -37,6 +37,13 @@ static const char * const decon_clks_name[] = {
+ 	"sclk_decon_eclk",
+ };
+ 
++enum decon_flag_bits {
++	BIT_CLKS_ENABLED,
++	BIT_IRQS_ENABLED,
++	BIT_WIN_UPDATED,
++	BIT_SUSPENDED
++};
++
+ struct decon_context {
+ 	struct device			*dev;
+ 	struct drm_device		*drm_dev;
+@@ -44,15 +51,9 @@ struct decon_context {
+ 	struct exynos_drm_plane		planes[WINDOWS_NR];
+ 	void __iomem			*addr;
+ 	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
+-	unsigned long			irq_flags;
+ 	int				pipe;
+-	bool				suspended;
+-
+-#define BIT_CLKS_ENABLED		0
+-#define BIT_IRQS_ENABLED		1
+-	unsigned long			enabled;
++	unsigned long			flags;
+ 	bool				i80_if;
+-	atomic_t			win_updated;
+ };
+ 
+ static const uint32_t decon_formats[] = {
+@@ -74,10 +75,10 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+ 	struct decon_context *ctx = crtc->ctx;
+ 	u32 val;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return -EPERM;
+ 
+-	if (test_and_set_bit(0, &ctx->irq_flags)) {
++	if (test_and_set_bit(BIT_IRQS_ENABLED, &ctx->flags)) {
+ 		val = VIDINTCON0_INTEN;
+ 		if (ctx->i80_if)
+ 			val |= VIDINTCON0_FRAMEDONE;
+@@ -94,10 +95,10 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+-	if (test_and_clear_bit(0, &ctx->irq_flags))
++	if (test_and_clear_bit(BIT_IRQS_ENABLED, &ctx->flags))
+ 		writel(0, ctx->addr + DECON_VIDINTCON0);
+ }
+ 
+@@ -114,7 +115,7 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+ 	struct drm_display_mode *m = &crtc->base.mode;
+ 	u32 val;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+ 	/* enable clock gate */
+@@ -231,7 +232,7 @@ static void decon_atomic_begin(struct exynos_drm_crtc *crtc,
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+ 	decon_shadow_protect_win(ctx, plane->zpos, true);
+@@ -247,7 +248,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 	unsigned int pitch = state->fb->pitches[0];
+ 	u32 val;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+ 	val = COORDINATE_X(plane->crtc_x) | COORDINATE_Y(plane->crtc_y);
+@@ -289,7 +290,7 @@ static void decon_disable_plane(struct exynos_drm_crtc *crtc,
+ 	struct decon_context *ctx = crtc->ctx;
+ 	unsigned int win = plane->zpos;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+ 	decon_shadow_protect_win(ctx, win, true);
+@@ -308,13 +309,13 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc,
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+ 	decon_shadow_protect_win(ctx, plane->zpos, false);
+ 
+ 	if (ctx->i80_if)
+-		atomic_set(&ctx->win_updated, 1);
++		set_bit(BIT_WIN_UPDATED, &ctx->flags);
+ }
+ 
+ static void decon_swreset(struct decon_context *ctx)
+@@ -346,11 +347,9 @@ static void decon_enable(struct exynos_drm_crtc *crtc)
+ 	int ret;
+ 	int i;
+ 
+-	if (!ctx->suspended)
++	if (!test_and_clear_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+-	ctx->suspended = false;
+-
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++) {
+@@ -359,10 +358,10 @@ static void decon_enable(struct exynos_drm_crtc *crtc)
+ 			goto err;
+ 	}
+ 
+-	set_bit(BIT_CLKS_ENABLED, &ctx->enabled);
++	set_bit(BIT_CLKS_ENABLED, &ctx->flags);
+ 
+ 	/* if vblank was enabled status, enable it again. */
+-	if (test_and_clear_bit(0, &ctx->irq_flags))
++	if (test_and_clear_bit(BIT_IRQS_ENABLED, &ctx->flags))
+ 		decon_enable_vblank(ctx->crtc);
+ 
+ 	decon_commit(ctx->crtc);
+@@ -372,7 +371,7 @@ err:
+ 	while (--i >= 0)
+ 		clk_disable_unprepare(ctx->clks[i]);
+ 
+-	ctx->suspended = true;
++	set_bit(BIT_SUSPENDED, &ctx->flags);
+ }
+ 
+ static void decon_disable(struct exynos_drm_crtc *crtc)
+@@ -380,7 +379,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+ 	struct decon_context *ctx = crtc->ctx;
+ 	int i;
+ 
+-	if (ctx->suspended)
++	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+ 	/*
+@@ -396,21 +395,21 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+ 	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++)
+ 		clk_disable_unprepare(ctx->clks[i]);
+ 
+-	clear_bit(BIT_CLKS_ENABLED, &ctx->enabled);
++	clear_bit(BIT_CLKS_ENABLED, &ctx->flags);
+ 
+ 	pm_runtime_put_sync(ctx->dev);
+ 
+-	ctx->suspended = true;
++	set_bit(BIT_SUSPENDED, &ctx->flags);
+ }
+ 
+ void decon_te_irq_handler(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+ 
+-	if (!test_bit(BIT_CLKS_ENABLED, &ctx->enabled))
++	if (!test_bit(BIT_CLKS_ENABLED, &ctx->flags))
+ 		return;
+ 
+-	if (atomic_add_unless(&ctx->win_updated, -1, 0))
++	if (test_and_clear_bit(BIT_WIN_UPDATED, &ctx->flags))
+ 		decon_set_bits(ctx, DECON_TRIGCON, TRIGCON_SWTRIGCMD, ~0);
+ 
+ 	drm_crtc_handle_vblank(&ctx->crtc->base);
+@@ -520,7 +519,7 @@ static irqreturn_t decon_vsync_irq_handler(int irq, void *dev_id)
+ 	struct decon_context *ctx = dev_id;
+ 	u32 val;
+ 
+-	if (!test_bit(BIT_CLKS_ENABLED, &ctx->enabled))
++	if (!test_bit(BIT_CLKS_ENABLED, &ctx->flags))
+ 		goto out;
+ 
+ 	val = readl(ctx->addr + DECON_VIDINTCON1);
+@@ -541,7 +540,7 @@ static irqreturn_t decon_lcd_sys_irq_handler(int irq, void *dev_id)
+ 	u32 val;
+ 	int win;
+ 
+-	if (!test_bit(BIT_CLKS_ENABLED, &ctx->enabled))
++	if (!test_bit(BIT_CLKS_ENABLED, &ctx->flags))
+ 		goto out;
+ 
+ 	val = readl(ctx->addr + DECON_VIDINTCON1);
+@@ -576,7 +575,7 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
+-	ctx->suspended = true;
++	__set_bit(BIT_SUSPENDED, &ctx->flags);
+ 	ctx->dev = dev;
+ 	if (of_get_child_by_name(dev->of_node, "i80-if-timings"))
+ 		ctx->i80_if = true;
+-- 
+1.9.1
