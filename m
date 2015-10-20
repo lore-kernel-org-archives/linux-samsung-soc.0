@@ -1,32 +1,34 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] hwrng: exynos - Fix unbalanced PM runtime get/puts
-Date: Tue, 20 Oct 2015 22:19:54 +0800
-Message-ID: <20151020141954.GB7625@gondor.apana.org.au>
-References: <1445011311-32142-1-git-send-email-daniel.thompson@linaro.org>
+From: Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>
+Subject: Re: [PATCH 0/4] hwrng: exynos - Add Device Tree support
+Date: Tue, 20 Oct 2015 22:24:02 +0800
+Message-ID: <20151020142402.GH7625@gondor.apana.org.au>
+References: <1445229462-32395-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1445011311-32142-1-git-send-email-daniel.thompson@linaro.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Matt Mackall <mpm@selenic.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+In-Reply-To: <1445229462-32395-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 16, 2015 at 05:01:51PM +0100, Daniel Thompson wrote:
-> Currently this driver calls pm_runtime_get_sync() rampantly
-> but never puts anything back. This makes it impossible for the
-> device to autosuspend properly; it will remain fully active
-> after the first use.
+On Mon, Oct 19, 2015 at 01:37:38PM +0900, Krzysztof Kozlowski wrote:
+> Hi,
 > 
-> Fix in the obvious way.
+> The patchset fixes known issues in Exynos hardware random number
+> generator and adds Device Tree support for it.
 > 
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> The device was tested on Trats2 board (Exynos4412). It should work
+> on other Exynos4 and Exynos5 as well... altough it seems that
+> on some of Exynos542x boards the SSS module is secured.
 
-Patch applied.  Thanks.
+All applied.  Thanks.
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
+Email: Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>
 Home Page: http://gondor.apana.org.au/~herbert/
 PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
