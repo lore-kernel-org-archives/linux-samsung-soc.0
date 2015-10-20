@@ -1,77 +1,62 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH 1/7] arm: dts: Add syscon-{reboot,
- poweroff} nodes for exynos3250 SoCs
-Date: Tue, 20 Oct 2015 14:30:02 +0530
-Message-ID: <56260292.2040902@samsung.com>
-References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
- <1445234635-3950-2-git-send-email-alim.akhtar@samsung.com>
- <5624EA26.9030909@osg.samsung.com>
+From: Chaotian Jing <chaotian.jing@mediatek.com>
+Subject: [PATCH v2 0/9] Add tune support of Mediatek MMC driver
+Date: Tue, 20 Oct 2015 17:13:02 +0800
+Message-ID: <1445332391-30530-1-git-send-email-chaotian.jing@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36498 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751063AbbJTJJK (ORCPT
+Received: from mailgw01.mediatek.com ([210.61.82.183]:41431 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751596AbbJTJNf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 05:09:10 -0400
-In-reply-to: <5624EA26.9030909@osg.samsung.com>
+	Tue, 20 Oct 2015 05:13:35 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, k.kozlowski@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Matthias Brugger <matthias.bgg@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Barry Song <baohua@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Lars-Peter Clausen <lars@metafoo.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sascha Hauer <s.hauer@pengutronix.de>, Howard Chen <ibanezchen@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Kristina Martsenko <kristina.martsenko@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cog>
 
-Hi Javier,
+Change in v2:
+Drop the 400mhz and use assigned-clock-parents to instead
+Split the original tune patch to several independent patches
+Re-write the mmc_send_tuning()
+Fix GPD checksum error
+Move the HS400 setting to ops->prepare_hs400_tuning()	
+Modify SD driving settings
 
-On 10/19/2015 06:33 PM, Javier Martinez Canillas wrote:
-> Hello Alim,
->
-> On 10/19/2015 08:03 AM, Alim Akhtar wrote:
->> This patch adds syscon-{reboot, poweroff} nodes to allow the
->> generic syscon-{reboot, poweroff} driver to reset/poweroff exynos3250 SoC.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->> index 033def482fc3..af5d9ad4c7b7 100644
->> --- a/arch/arm/boot/dts/exynos3250.dtsi
->> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->> @@ -152,6 +152,20 @@
->>   			interrupt-parent = <&gic>;
->>   		};
->>
->> +		poweroff: syscon-poweroff {
->> +			compatible = "syscon-poweroff";
->> +			regmap = <&pmu_system_controller>;
->> +			offset = <0x330C>;
->> +			mask = <0x5200>;
->> +		};
->> +
->> +		reboot: syscon-reboot {
->> +			compatible = "syscon-reboot";
->> +			regmap = <&pmu_system_controller>;
->> +			offset = <0x0400>;
->> +			mask = <0x1>;
->> +		};
->> +
->
-> I don't have a Exynos3250 manual but I guess 0x330C is also named
-> PS_HOLD_CONTROL and 0x400 is SWRESET as the other Exynos SoCs.
->
-> I wonder if a macro could be used instead of magic numbers or at
-> least have a comment next to the offset field.
->
-> The patch looks good to me though and a comment can be added as
-> a follow up so:
->
-Will add a comment about register offset next to it.
+Change in v1:
+Add DT bindings for eMMC hardware reset
+Add pinctrl of data strobe pin for HS400 mode
+Modify eMMC driving settings
+Add 400mhz source clock for HS400 mode
+Add eMMC HS200/HS400 mode support
+Add SD SDR50/SDR104 mode support
+Add implement of tune function with CMD19/CMD21
 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
->
-Thanks!
+Chaotian Jing (9):
+  mmc: core: Add DT bindings for eMMC hardware reset support
+  mmc: dt-bindings: update Mediatek MMC bindings
+  mmc: mediatek: make cmd_ints_mask to const
+  mmc: mediatek: change the argument "ddr" to "timing"
+  mmc: mediatek: fix got GPD checksum error interrupt when data transfer
+  mmc: mediatek: add implement of ops->hw_reset()
+  mmc: mmc: extend the mmc_send_tuning()
+  mmc: mediatek: add HS400 support
+  arm64: dts: mediatek: add HS200/HS400/SDR50/SDR104 support
 
-> Best regards,
->
+ Documentation/devicetree/bindings/mmc/mmc.txt    |   1 +
+ Documentation/devicetree/bindings/mmc/mtk-sd.txt |  11 +-
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts      |  27 ++-
+ drivers/mmc/core/host.c                          |   2 +
+ drivers/mmc/core/mmc_ops.c                       |   8 +-
+ drivers/mmc/host/dw_mmc-exynos.c                 |   4 +-
+ drivers/mmc/host/dw_mmc.c                        |   2 +-
+ drivers/mmc/host/dw_mmc.h                        |   2 +-
+ drivers/mmc/host/mtk-sd.c                        | 296 ++++++++++++++++++++---
+ drivers/mmc/host/sdhci-esdhc-imx.c               |   6 +-
+ drivers/mmc/host/sdhci-msm.c                     |   2 +-
+ drivers/mmc/host/sdhci-sirf.c                    |   2 +-
+ include/linux/mmc/core.h                         |   2 +-
+ 13 files changed, 314 insertions(+), 51 deletions(-)
+
+-- 
+1.8.1.1.dirty
