@@ -1,44 +1,57 @@
 From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
-Date: Tue, 20 Oct 2015 14:54:39 +0530
-Message-ID: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
+Subject: [PATCH v2 2/6] arm: dts: Add syscon-{reboot,
+ poweroff} nodes for exynos4
+Date: Tue, 20 Oct 2015 14:54:41 +0530
+Message-ID: <1445333085-22837-3-git-send-email-alim.akhtar@samsung.com>
+References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55693 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753368AbbJTJeH (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47879 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753726AbbJTJew (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 05:34:07 -0400
+	Tue, 20 Oct 2015 05:34:52 -0400
+In-reply-to: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene@kernel.org, k.kozlowski@samsung.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Now we have a nice way to reboot/poweroff system using a generic
-syscon regmap based drivers, this series moves exynos SoCs to
-make use of the same.
+This patch adds syscon-{reboot, poweroff} nodes to allow the
+generic syscon-{reboot, poweroff} driver to reset/poweroff exynos4 SoC.
 
-Changes since v1:
-* Added a comment about the register information
-* Droped defconfig changes as disscussed
-* Collected various Reviewed-by, Tested-by and Acked-by tags
-* Added SYSCON-{RESET, POWEROFF} to select from Kconfig
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Alim Akhtar (6):
-  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos3250 SoCs
-  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos4
-  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5
-  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5410 SoC
-  ARM: exynos: select POWER_RESET_SYSCON and
-    POWER_RESET_SYSCON_POWEROFF
-  ARM: EXYNOS: Remove code for restart and poweroff for exynos SoCs
-
- arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++
- arch/arm/boot/dts/exynos4.dtsi    |   14 ++++++++++++
- arch/arm/boot/dts/exynos5.dtsi    |   14 ++++++++++++
- arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++
- arch/arm/mach-exynos/Kconfig      |    3 +++
- arch/arm/mach-exynos/pmu.c        |   43 -------------------------------------
- 6 files changed, 59 insertions(+), 43 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 98c0a368b777..1622f487e269 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -158,6 +158,20 @@
+ 		interrupt-parent = <&gic>;
+ 	};
+ 
++	poweroff: syscon-poweroff {
++		compatible = "syscon-poweroff";
++		regmap = <&pmu_system_controller>;
++		offset = <0x330C>; /* PS_HOLD_CONTROL */
++		mask = <0x5200>; /* reset value */
++	};
++
++	reboot: syscon-reboot {
++		compatible = "syscon-reboot";
++		regmap = <&pmu_system_controller>;
++		offset = <0x0400>; /* SWRESET */
++		mask = <0x1>;
++	};
++
+ 	dsi_0: dsi@11C80000 {
+ 		compatible = "samsung,exynos4210-mipi-dsi";
+ 		reg = <0x11C80000 0x10000>;
 -- 
 1.7.10.4
