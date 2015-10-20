@@ -1,94 +1,60 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv2] ARM: dts: use vmmc-supply of emmc/sd for exynos5422-odroidxu3
-Date: Tue, 20 Oct 2015 12:56:33 +0000
-Message-ID: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:33117 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751996AbbJTM4x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 08:56:53 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: Re: [PATCH 0/7] Switch to generic syscon regmap based drivers
+Date: Tue, 20 Oct 2015 15:43:33 +0200
+Message-ID: <56264505.3090405@fivetechno.de>
+References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, k.kozlowski@samsung.com, javier@osg.samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-Changes need for host controller to detect UHS-I highspeed cards.
-Changes in VDDQ_MMC2 voltage range help scale
-the required voltage to detect and load the microSD cards.
+Am 19.10.2015 um 08:03 schrieb Alim Akhtar:
+> Alim Akhtar (7):
+>   arm: dts: Add syscon-{reboot, poweroff} nodes for exynos3250 SoCs
+>   arm: dts: Add syscon-{reboot, poweroff} nodes for exynos4
+>   arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5
+>   arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5410 SoC
+>   ARM: exynos_defconfig: Normalize exynos defconfig
+>   ARM: exynos_defconfig: Enable generic syscon-{reboot, poweroff}
+>     drivers
+>   ARM: EXYNOS: Remove code for restart and poweroff for exynos SoCs
+> 
+>  arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++
+>  arch/arm/boot/dts/exynos4.dtsi    |   14 ++++++++++++
+>  arch/arm/boot/dts/exynos5.dtsi    |   14 ++++++++++++
+>  arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++
+>  arch/arm/configs/exynos_defconfig |   11 +++++-----
+>  arch/arm/mach-exynos/pmu.c        |   43 -------------------------------------
+>  6 files changed, 61 insertions(+), 49 deletions(-)
+> 
+Hi,
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
+I have tested this patch on my Odroid U3 and U3+ using 4.3.0-rc6 from
+Tobias' repo at https://github.com/tobiasjakobi/linux-odroid/tree/odroid-4.3.y
 
-Changes:
-Drop the ranp_delay for LDO9.
+and his debug config:
+https://raw.githubusercontent.com/tobiasjakobi/odroid-environment/master/sourcecode/system/vanilla-4.3-debug.conf
 
-Thanks to : Krzysztof, Doug Anderson, Jaehoon Chung for helping
-me out figure out the mmc core requirement.
+halt -p works (power goes down to 0W)
 
-Also drop the previous changes:
-use cd-gpio method to detect sd-card.
-Added UHS-I bus speed support.
+reboot does not work, stuck at 0.5W, right after
+"systemd-shutdown[1]: rebooting".
 
-[    4.713553] random: nonblocking pool is initialized
-[    4.718423] 14530000.hdmi supply hdmi-en not found, using dummy regulator
-[    4.726206] exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
-[    4.732555] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
-[    4.740180] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
-[    4.746936] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[    4.753428] [drm] No driver support for vblank timestamp query.
-[    4.940794] Console: switching to colour frame buffer device 274x77
-[    4.995344] exynos-drm exynos-drm: fb0:  frame buffer device
-[    5.024573] [drm] Initialized exynos 1.0.0 20110530 on minor 0
-[    5.031164] exynos-dwc3 usb@12000000: no suspend clk specified
-[    5.054571] usb 2-1: new full-speed USB device number 2 using exynos-ohci
-[    5.159527] dwmmc_exynos 12220000.mmc: Busy; trying anyway
-[    5.163705] mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x0)
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+reboot did work with 4.3.0-rc3 from above repo (without Alim's patch).
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 1af5bdc..a4be3e0 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -182,9 +182,10 @@
- 
- 			ldo13_reg: LDO13 {
- 				regulator-name = "vdd_ldo13";
--				regulator-min-microvolt = <2800000>;
-+				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-always-on;
-+				regulator-ramp-delay = <12000>;
- 			};
- 
- 			ldo15_reg: LDO15 {
-@@ -213,6 +214,7 @@
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-always-on;
-+				regulator-ramp-delay = <12000>;
- 			};
- 
- 			ldo24_reg: LDO24 {
-@@ -338,6 +340,7 @@
- 	samsung,dw-mshc-ddr-timing = <0 2>;
- 	samsung,dw-mshc-hs400-timing = <0 2>;
- 	samsung,read-strobe-delay = <90>;
-+	vmmc-supply = <&ldo3_reg>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
- 	bus-width = <8>;
-@@ -355,6 +358,8 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
- 	bus-width = <4>;
-+	vmmc-supply = <&ldo19_reg>;
-+	vqmmc-supply = <&ldo13_reg>;
- 	cap-sd-highspeed;
- };
- 
+Thanks,
 -- 
-2.1.4
+Markus Reichl
