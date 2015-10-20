@@ -1,56 +1,48 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 4/6] arm: dts: Add syscon-{reboot,
- poweroff} nodes for exynos5410 SoC
-Date: Tue, 20 Oct 2015 14:54:43 +0530
-Message-ID: <1445333085-22837-5-git-send-email-alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 5/6] ARM: exynos: select POWER_RESET_SYSCON and
+ POWER_RESET_SYSCON_POWEROFF
+Date: Tue, 20 Oct 2015 14:54:44 +0530
+Message-ID: <1445333085-22837-6-git-send-email-alim.akhtar@samsung.com>
 References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42623 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753789AbbJTJfa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 05:35:30 -0400
-In-reply-to: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1445333085-22837-1-git-send-email-alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, k.kozlowski@samsung.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch adds syscon-{reboot, poweroff} nodes to allow the
-generic syscon-{reboot, poweroff} driver to reset/poweroff exynos5410 SoC.
+Since we switch to use generic syscon regmap based reset/poweroff
+driver for exynos SoC, lets select it from ARCH_EXYNOS instead of
+enabling it from various defconfigs. This also select POWER_RESET
+as SYSCON-{reset, poweroff} drivers depends on it.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+Signed-off-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 731eefd23fa9..fad0779b1b6e 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -102,6 +102,20 @@
- 			reg = <0x10040000 0x5000>;
- 		};
+Have run make for allyes, allmod, multi_v7 and exynos defconfigs
+no error/warrning reported.
+
+ arch/arm/mach-exynos/Kconfig |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 3a10f1a8317a..d279edf9b10d 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -27,6 +27,9 @@ menuconfig ARCH_EXYNOS
+ 	select SRAM
+ 	select THERMAL
+ 	select MFD_SYSCON
++	select POWER_RESET
++	select POWER_RESET_SYSCON
++	select POWER_RESET_SYSCON_POWEROFF
+ 	help
+ 	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
  
-+		poweroff: syscon-poweroff {
-+			compatible = "syscon-poweroff";
-+			regmap = <&pmu_system_controller>;
-+			offset = <0x330C>; /* PS_HOLD_CONTROL */
-+			mask = <0x5200>; /* reset value */
-+		};
-+
-+		reboot: syscon-reboot {
-+			compatible = "syscon-reboot";
-+			regmap = <&pmu_system_controller>;
-+			offset = <0x0400>; /* SWRESET */
-+			mask = <0x1>;
-+		};
-+
- 		mct: mct@101C0000 {
- 			compatible = "samsung,exynos4210-mct";
- 			reg = <0x101C0000 0xB00>;
 -- 
 1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
