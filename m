@@ -1,73 +1,44 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings for
- DECON-TV
-Date: Tue, 20 Oct 2015 11:22:40 +0200
-Message-ID: <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
+Date: Tue, 20 Oct 2015 14:54:39 +0530
+Message-ID: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:55693 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753368AbbJTJeH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Oct 2015 05:34:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-REVDT04tVFYoRGlzcGxheSBhbmQgRW5oYW5jZW1lbnQgQ29udHJvbGxlciBmb3IgVFYpIGlzIGEg
-dmFyaWF0aW9uCm9mIERFQ09OIElQLiBJdHMgbWFpbiBwdXJwb3NlIGlzIHRvIHByb2R1Y2Ugdmlk
-ZW8gc3RyZWFtIGZvciBIRE1JIElQLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5o
-YWpkYUBzYW1zdW5nLmNvbT4KLS0tCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlu
-b3M1NDMzLWRlY29uLnR4dCAgfCAyMSArKysrKysrKysrKystLS0tLS0tLS0KIDEgZmlsZSBjaGFu
-Z2VkLCAxMiBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL0RvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M1NDMzLWRlY29uLnR4dCBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M1NDMzLWRlY29u
-LnR4dAppbmRleCAzZGZmNzhiLi4yYTg4YzhkIDEwMDY0NAotLS0gYS9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9zNTQzMy1kZWNvbi50eHQKKysrIGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vczU0MzMtZGVjb24udHh0CkBA
-IC01LDI0ICs1LDI3IEBAIEV4eW5vcyBzZXJpZXMgb2YgU29DcyB3aGljaCB0cmFuc2ZlcnMgdGhl
-IGltYWdlIGRhdGEgZnJvbSBhIHZpZGVvIG1lbW9yeQogYnVmZmVyIHRvIGFuIGV4dGVybmFsIExD
-RCBpbnRlcmZhY2UuCiAKIFJlcXVpcmVkIHByb3BlcnRpZXM6Ci0tIGNvbXBhdGlibGU6IHZhbHVl
-IHNob3VsZCBiZSAic2Ftc3VuZyxleHlub3M1NDMzLWRlY29uIjsKKy0gY29tcGF0aWJsZTogdmFs
-dWUgc2hvdWxkIGJlIG9uZSBvZjoKKwkic2Ftc3VuZyxleHlub3M1NDMzLWRlY29uIiwgInNhbXN1
-bmcsZXh5bm9zNTQzMy1kZWNvbi10diI7CiAtIHJlZzogcGh5c2ljYWwgYmFzZSBhZGRyZXNzIGFu
-ZCBsZW5ndGggb2YgdGhlIERFQ09OIHJlZ2lzdGVycyBzZXQuCi0tIGludGVycnVwdHM6IHNob3Vs
-ZCBjb250YWluIGEgbGlzdCBvZiBhbGwgREVDT04gSVAgYmxvY2sgaW50ZXJydXB0cyBpbiB0aGUK
-LQkgICAgICBvcmRlcjogVlNZTkMsIExDRF9TWVNURU0uIFRoZSBpbnRlcnJ1cHQgc3BlY2lmaWVy
-IGZvcm1hdAotCSAgICAgIGRlcGVuZHMgb24gdGhlIGludGVycnVwdCBjb250cm9sbGVyIHVzZWQu
-Ci0tIGludGVycnVwdC1uYW1lczogc2hvdWxkIGNvbnRhaW4gdGhlIGludGVycnVwdCBuYW1lczog
-InZzeW5jIiwgImxjZF9zeXMiCi0JCSAgIGluIHRoZSBzYW1lIG9yZGVyIGFzIHRoZXkgd2VyZSBs
-aXN0ZWQgaW4gdGhlIGludGVycnVwdHMKLQkJICAgcHJvcGVydHkuCistIGludGVycnVwdHM6IHNo
-b3VsZCBjb250YWluIGludGVycnVwdCBzcGVjaWZpZXIgb2YgVlNZTkMgYW5kIG9wdGlvbmFsbHkK
-KwkgICAgICBMQ0RfU1lTVEVNLiBUaGUgaW50ZXJydXB0IHNwZWNpZmllciBmb3JtYXQgZGVwZW5k
-cyBvbgorCSAgICAgIHRoZSBpbnRlcnJ1cHQgY29udHJvbGxlciB1c2VkLgorLSBpbnRlcnJ1cHQt
-bmFtZXM6IHNob3VsZCBjb250YWluIHRoZSBpbnRlcnJ1cHQgbmFtZSAidnN5bmMiIGFuZCBvcHRp
-b25hbGx5CisJCSAgICJsY2Rfc3lzIiBpbiB0aGUgc2FtZSBvcmRlciBhcyB0aGV5IHdlcmUgbGlz
-dGVkIGluCisJCSAgIHRoZSBpbnRlcnJ1cHRzIHByb3BlcnR5LgogLSBjbG9ja3M6IG11c3QgaW5j
-bHVkZSBjbG9jayBzcGVjaWZpZXJzIGNvcnJlc3BvbmRpbmcgdG8gZW50cmllcyBpbiB0aGUKIAkg
-IGNsb2NrLW5hbWVzIHByb3BlcnR5LgogLSBjbG9jay1uYW1lczogbGlzdCBvZiBjbG9jayBuYW1l
-cyBzb3J0ZWQgaW4gdGhlIHNhbWUgb3JkZXIgYXMgdGhlIGNsb2NrcwogCSAgICAgICBwcm9wZXJ0
-eS4gTXVzdCBjb250YWluICJwY2xrIiwgImFjbGtfZGVjb24iLCAiYWNsa19zbW11X2RlY29uMHgi
-LAogCSAgICAgICAiYWNsa194aXVfZGVjb24weCIsICJwY2xrX3NtbXVfZGVjb24weCIsIGNsa19k
-ZWNvbl92Y2xrIiwKIAkgICAgICAgInNjbGtfZGVjb25fZWNsayIKKworT3B0aW9uYWwgcHJvcGVy
-dGllczoKIC0gcG9ydHM6IGNvbnRhaW5zIGEgcG9ydCB3aGljaCBpcyBjb25uZWN0ZWQgdG8gbWlj
-IG5vZGUuIGFkZHJlc3MtY2VsbHMgYW5kCi0JIHNpemUtY2VsbHMgbXVzdCAxIGFuZCAwLCByZXNw
-ZWN0aXZlbHkuCisJIHNpemUtY2VsbHMgbXVzdCBiZSAxIGFuZCAwLCByZXNwZWN0aXZlbHkuCiAt
-IHBvcnQ6IGNvbnRhaW5zIGFuIGVuZHBvaW50IG5vZGUgd2hpY2ggaXMgY29ubmVjdGVkIHRvIHRo
-ZSBlbmRwb2ludCBpbiB0aGUgbWljCi0Jbm9kZS4gVGhlIHJlZyB2YWx1ZSBtdXNldCBiZSAwLgor
-CW5vZGUuIFRoZSByZWcgdmFsdWUgbXVzdCBiZSAwLgogLSBpODAtaWYtdGltaW5nczogc3BlY2lm
-eSB3aGV0aGVyIHRoZSBwYW5lbCB3aGljaCBpcyBjb25uZWN0ZWQgdG8gZGVjb24gdXNlcwogCQkg
-IGk4MCBsY2QgaW50ZXJmYWNlIG9yIG1pcGkgdmlkZW8gaW50ZXJmYWNlLiBUaGlzIG5vZGUgY29u
-dGFpbnMKIAkJICBubyB0aW1pbmcgaW5mb3JtYXRpb24gYXMgdGhhdCBvZiBmaW1kIGRvZXMuIEJl
-Y2F1c2UgdGhlcmUgaXMKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Now we have a nice way to reboot/poweroff system using a generic
+syscon regmap based drivers, this series moves exynos SoCs to
+make use of the same.
+
+Changes since v1:
+* Added a comment about the register information
+* Droped defconfig changes as disscussed
+* Collected various Reviewed-by, Tested-by and Acked-by tags
+* Added SYSCON-{RESET, POWEROFF} to select from Kconfig
+
+Alim Akhtar (6):
+  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos3250 SoCs
+  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos4
+  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5
+  arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5410 SoC
+  ARM: exynos: select POWER_RESET_SYSCON and
+    POWER_RESET_SYSCON_POWEROFF
+  ARM: EXYNOS: Remove code for restart and poweroff for exynos SoCs
+
+ arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++
+ arch/arm/boot/dts/exynos4.dtsi    |   14 ++++++++++++
+ arch/arm/boot/dts/exynos5.dtsi    |   14 ++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++
+ arch/arm/mach-exynos/Kconfig      |    3 +++
+ arch/arm/mach-exynos/pmu.c        |   43 -------------------------------------
+ 6 files changed, 59 insertions(+), 43 deletions(-)
+
+-- 
+1.7.10.4
