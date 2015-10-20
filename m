@@ -1,46 +1,79 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 04/10] dt-bindings: video: add PCLK clock entry to
- exynos5433-decon
-Date: Tue, 20 Oct 2015 21:24:30 +0900
-Message-ID: <5626327E.3050002@samsung.com>
+Subject: Re: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings
+ for DECON-TV
+Date: Tue, 20 Oct 2015 21:30:56 +0900
+Message-ID: <56263400.6010200@samsung.com>
 References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
- <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:33931 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752217AbbJTMYh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 08:24:37 -0400
-In-Reply-To: <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: k.kozlowski.k@gmail.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, k.kozlowski.k@gmail.com, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
-> DECON IP requires this clock to access configuration registers.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> index 377afbf..3dff78b 100644
-> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> @@ -16,7 +16,7 @@ Required properties:
->  - clocks: must include clock specifiers corresponding to entries in the
->  	  clock-names property.
->  - clock-names: list of clock names sorted in the same order as the clocks
-> -	       property. Must contain "aclk_decon", "aclk_smmu_decon0x",
-> +	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
-
-I assume that old DTB wouldn't work at all, so there is no point in
-maintaining ABI compatibility?
-
-Best regards,
-Krzysztof
+VyBkbml1IDIwLjEwLjIwMTUgbyAxODoyMiwgQW5kcnplaiBIYWpkYSBwaXN6ZToKPiBERUNPTi1U
+VihEaXNwbGF5IGFuZCBFbmhhbmNlbWVudCBDb250cm9sbGVyIGZvciBUVikgaXMgYSB2YXJpYXRp
+b24KPiBvZiBERUNPTiBJUC4gSXRzIG1haW4gcHVycG9zZSBpcyB0byBwcm9kdWNlIHZpZGVvIHN0
+cmVhbSBmb3IgSERNSSBJUC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhh
+amRhQHNhbXN1bmcuY29tPgo+IC0tLQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9l
+eHlub3M1NDMzLWRlY29uLnR4dCAgfCAyMSArKysrKysrKysrKystLS0tLS0tLS0KPiAgMSBmaWxl
+IGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdp
+dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M1NDMzLWRl
+Y29uLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M1
+NDMzLWRlY29uLnR4dAo+IGluZGV4IDNkZmY3OGIuLjJhODhjOGQgMTAwNjQ0Cj4gLS0tIGEvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vczU0MzMtZGVjb24udHh0
+Cj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vczU0
+MzMtZGVjb24udHh0Cj4gQEAgLTUsMjQgKzUsMjcgQEAgRXh5bm9zIHNlcmllcyBvZiBTb0NzIHdo
+aWNoIHRyYW5zZmVycyB0aGUgaW1hZ2UgZGF0YSBmcm9tIGEgdmlkZW8gbWVtb3J5Cj4gIGJ1ZmZl
+ciB0byBhbiBleHRlcm5hbCBMQ0QgaW50ZXJmYWNlLgo+ICAKPiAgUmVxdWlyZWQgcHJvcGVydGll
+czoKPiAtLSBjb21wYXRpYmxlOiB2YWx1ZSBzaG91bGQgYmUgInNhbXN1bmcsZXh5bm9zNTQzMy1k
+ZWNvbiI7Cj4gKy0gY29tcGF0aWJsZTogdmFsdWUgc2hvdWxkIGJlIG9uZSBvZjoKPiArCSJzYW1z
+dW5nLGV4eW5vczU0MzMtZGVjb24iLCAic2Ftc3VuZyxleHlub3M1NDMzLWRlY29uLXR2IjsKClVu
+dGlsIHRoaXMgcG9pbnQgaXQgbG9va2VkIGdvb2QuCgo+ICAtIHJlZzogcGh5c2ljYWwgYmFzZSBh
+ZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIERFQ09OIHJlZ2lzdGVycyBzZXQuCj4gLS0gaW50ZXJy
+dXB0czogc2hvdWxkIGNvbnRhaW4gYSBsaXN0IG9mIGFsbCBERUNPTiBJUCBibG9jayBpbnRlcnJ1
+cHRzIGluIHRoZQo+IC0JICAgICAgb3JkZXI6IFZTWU5DLCBMQ0RfU1lTVEVNLiBUaGUgaW50ZXJy
+dXB0IHNwZWNpZmllciBmb3JtYXQKPiAtCSAgICAgIGRlcGVuZHMgb24gdGhlIGludGVycnVwdCBj
+b250cm9sbGVyIHVzZWQuCj4gLS0gaW50ZXJydXB0LW5hbWVzOiBzaG91bGQgY29udGFpbiB0aGUg
+aW50ZXJydXB0IG5hbWVzOiAidnN5bmMiLCAibGNkX3N5cyIKPiAtCQkgICBpbiB0aGUgc2FtZSBv
+cmRlciBhcyB0aGV5IHdlcmUgbGlzdGVkIGluIHRoZSBpbnRlcnJ1cHRzCj4gLQkJICAgcHJvcGVy
+dHkuCj4gKy0gaW50ZXJydXB0czogc2hvdWxkIGNvbnRhaW4gaW50ZXJydXB0IHNwZWNpZmllciBv
+ZiBWU1lOQyBhbmQgb3B0aW9uYWxseQo+ICsJICAgICAgTENEX1NZU1RFTS4gVGhlIGludGVycnVw
+dCBzcGVjaWZpZXIgZm9ybWF0IGRlcGVuZHMgb24KPiArCSAgICAgIHRoZSBpbnRlcnJ1cHQgY29u
+dHJvbGxlciB1c2VkLgo+ICstIGludGVycnVwdC1uYW1lczogc2hvdWxkIGNvbnRhaW4gdGhlIGlu
+dGVycnVwdCBuYW1lICJ2c3luYyIgYW5kIG9wdGlvbmFsbHkKPiArCQkgICAibGNkX3N5cyIgaW4g
+dGhlIHNhbWUgb3JkZXIgYXMgdGhleSB3ZXJlIGxpc3RlZCBpbgo+ICsJCSAgIHRoZSBpbnRlcnJ1
+cHRzIHByb3BlcnR5LgoKVGhlIGRyaXZlciBhbHJlYWR5IGRpZCBub3QgcmVxdWlyZSBib3RoIGlu
+dGVycnVwdHMsIHJpZ2h0PyBPbmx5IG9uZSBvZiB0aGVtPwoKPiAgLSBjbG9ja3M6IG11c3QgaW5j
+bHVkZSBjbG9jayBzcGVjaWZpZXJzIGNvcnJlc3BvbmRpbmcgdG8gZW50cmllcyBpbiB0aGUKPiAg
+CSAgY2xvY2stbmFtZXMgcHJvcGVydHkuCj4gIC0gY2xvY2stbmFtZXM6IGxpc3Qgb2YgY2xvY2sg
+bmFtZXMgc29ydGVkIGluIHRoZSBzYW1lIG9yZGVyIGFzIHRoZSBjbG9ja3MKPiAgCSAgICAgICBw
+cm9wZXJ0eS4gTXVzdCBjb250YWluICJwY2xrIiwgImFjbGtfZGVjb24iLCAiYWNsa19zbW11X2Rl
+Y29uMHgiLAo+ICAJICAgICAgICJhY2xrX3hpdV9kZWNvbjB4IiwgInBjbGtfc21tdV9kZWNvbjB4
+IiwgY2xrX2RlY29uX3ZjbGsiLAo+ICAJICAgICAgICJzY2xrX2RlY29uX2VjbGsiCj4gKwo+ICtP
+cHRpb25hbCBwcm9wZXJ0aWVzOgo+ICAtIHBvcnRzOiBjb250YWlucyBhIHBvcnQgd2hpY2ggaXMg
+Y29ubmVjdGVkIHRvIG1pYyBub2RlLiBhZGRyZXNzLWNlbGxzIGFuZAo+IC0JIHNpemUtY2VsbHMg
+bXVzdCAxIGFuZCAwLCByZXNwZWN0aXZlbHkuCj4gKwkgc2l6ZS1jZWxscyBtdXN0IGJlIDEgYW5k
+IDAsIHJlc3BlY3RpdmVseS4KPiAgLSBwb3J0OiBjb250YWlucyBhbiBlbmRwb2ludCBub2RlIHdo
+aWNoIGlzIGNvbm5lY3RlZCB0byB0aGUgZW5kcG9pbnQgaW4gdGhlIG1pYwo+IC0Jbm9kZS4gVGhl
+IHJlZyB2YWx1ZSBtdXNldCBiZSAwLgo+ICsJbm9kZS4gVGhlIHJlZyB2YWx1ZSBtdXN0IGJlIDAu
+Cj4gIC0gaTgwLWlmLXRpbWluZ3M6IHNwZWNpZnkgd2hldGhlciB0aGUgcGFuZWwgd2hpY2ggaXMg
+Y29ubmVjdGVkIHRvIGRlY29uIHVzZXMKPiAgCQkgIGk4MCBsY2QgaW50ZXJmYWNlIG9yIG1pcGkg
+dmlkZW8gaW50ZXJmYWNlLiBUaGlzIG5vZGUgY29udGFpbnMKPiAgCQkgIG5vIHRpbWluZyBpbmZv
+cm1hdGlvbiBhcyB0aGF0IG9mIGZpbWQgZG9lcy4gQmVjYXVzZSB0aGVyZSBpcwo+IAoKVGhpcyBp
+cyBjbGVhbnVwLCBwbGVhc2Ugc3BsaXQgaXQuCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
