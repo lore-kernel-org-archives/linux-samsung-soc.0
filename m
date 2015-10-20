@@ -1,47 +1,36 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 00/10] drm/exynos/decon5433: add support to DECON-TV
-Date: Tue, 20 Oct 2015 11:22:31 +0200
-Message-ID: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Subject: [PATCH 04/10] dt-bindings: video: add PCLK clock entry to
+ exynos5433-decon
+Date: Tue, 20 Oct 2015 11:22:35 +0200
+Message-ID: <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSW5raSwKClRoaXMgcGF0Y2hzZXQgYWRkcyBzdXBwb3J0IHRvIERFQ09OLVRWIGluIEV4eW5v
-czU0MzMgU29DLgpUaGUgbWFpbiBwYXRjaCBpcyBwcmVwZW5kZWQgd2l0aCBmZXcgcHJlcGFyYXRp
-b24gcGF0Y2hlczoKLSBhZGQgdGhyZWUgY2xvY2tzIHJlcXVpcmVkIGJ5IEhETUkgcGlwZWxpbmUs
-Ci0gc21hbGwgYmluZGluZ3MgdXBkYXRlLAotIGRyaXZlciBjbGVhbnVwLgoKVGhlIHBhdGNoc2V0
-IGlzIGJhc2VkIG9uIHRoZSBsYXRlc3QgZXh5bm9zLWRybS1uZXh0IGJyYW5jaC4KClJlZ2FyZHMK
-QW5kcnplagoKCkFuZHJ6ZWogSGFqZGEgKDEwKToKICBjbGsvc2Ftc3VuZzogZXh5bm9zNTQzMzog
-YWRkIGRlZmluaXRpb25zIG9mIEhETUktUEhZIG91dHB1dCBjbG9ja3MKICBjbGsvc2Ftc3VuZzog
-ZXh5bm9zNTQzMzogYWRkIHBjbGtfZGVjb24gY2xvY2sKICBkcm0vZXh5bm9zL2RlY29uNTQzMzog
-YWRkIFBDTEsgY2xvY2sKICBkdC1iaW5kaW5nczogdmlkZW86IGFkZCBQQ0xLIGNsb2NrIGVudHJ5
-IHRvIGV4eW5vczU0MzMtZGVjb24KICBkcm0vZXh5bm9zL2RlY29uNTQzMzogZml4IHRpbWluZyBy
-ZWdpc3RlcnMgd3JpdGVzCiAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IGFkZCBmdW5jdGlvbiB0byBz
-ZXQgcGFydGljdWxhciByZWdpc3RlciBiaXRzCiAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IG1lcmdl
-IGRpZmZlcmVudCBmbGFnIGZpZWxkcwogIGRybS9leHlub3MvZGVjb241NDMzOiByZW1vdmUgZHVw
-bGljYXRlZCBpbml0aWFsaXphdGlvbgogIGR0LWJpbmRpbmdzOiB2aWRlbzogZXh5bm9zNTQzMy1k
-ZWNvbjogYWRkIGJpbmRpbmdzIGZvciBERUNPTi1UVgogIGRybS9leHlub3MvZGVjb241NDMzOiBh
-ZGQgc3VwcG9ydCBmb3IgREVDT04tVFYKCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9l
-eHlub3M1NDMzLWRlY29uLnR4dCB8ICAyMyArLQogZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5
-bm9zNTQzMy5jICAgICAgICAgICAgICAgfCAgIDggKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zNTQzM19kcm1fZGVjb24uYyAgICAgIHwgMzIwICsrKysrKysrKystLS0tLS0tLS0tLQog
-aW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9leHlub3M1NDMzLmggICAgICAgICAgICAgfCAgIDcg
-Ky0KIGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oICAgICAgICAgICAgICAgICAgIHwg
-IDI5ICsrCiA1IGZpbGVzIGNoYW5nZWQsIDIxNCBpbnNlcnRpb25zKCspLCAxNzMgZGVsZXRpb25z
-KC0pCgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+DECON IP requires this clock to access configuration registers.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ Documentation/devicetree/bindings/video/exynos5433-decon.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+index 377afbf..3dff78b 100644
+--- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
++++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+@@ -16,7 +16,7 @@ Required properties:
+ - clocks: must include clock specifiers corresponding to entries in the
+ 	  clock-names property.
+ - clock-names: list of clock names sorted in the same order as the clocks
+-	       property. Must contain "aclk_decon", "aclk_smmu_decon0x",
++	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
+ 	       "aclk_xiu_decon0x", "pclk_smmu_decon0x", clk_decon_vclk",
+ 	       "sclk_decon_eclk"
+ - ports: contains a port which is connected to mic node. address-cells and
+-- 
+1.9.1
+
