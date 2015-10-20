@@ -1,245 +1,47 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v5 8/8] ARM: EXYNOS: Remove SROM related register settings from
- mach-exynos
-Date: Tue, 20 Oct 2015 14:45:39 +0530
-Message-ID: <1445332540-12814-9-git-send-email-pankaj.dubey@samsung.com>
-References: <1445332540-12814-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50839 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750785AbbJTJWF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 05:22:05 -0400
-In-reply-to: <1445332540-12814-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 00/10] drm/exynos/decon5433: add support to DECON-TV
+Date: Tue, 20 Oct 2015 11:22:31 +0200
+Message-ID: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, p.fedin@samsung.com, thomas.ab@samsung.com, andi.shyti@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-As now we have dedicated driver for SROM controller, it will take care
-of saving register banks during S2R so we can safely remove these
-settings from mach-exynos.
-
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/Kconfig                 |  2 ++
- arch/arm/mach-exynos/exynos.c                | 17 ---------
- arch/arm/mach-exynos/include/mach/map.h      |  3 --
- arch/arm/mach-exynos/regs-srom.h             | 53 ----------------------------
- arch/arm/mach-exynos/suspend.c               | 20 ++---------
- arch/arm/plat-samsung/include/plat/map-s5p.h |  1 -
- 6 files changed, 4 insertions(+), 92 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/regs-srom.h
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 3a10f1a..62c3139 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -27,6 +27,8 @@ menuconfig ARCH_EXYNOS
- 	select SRAM
- 	select THERMAL
- 	select MFD_SYSCON
-+	select SOC_SAMSUNG
-+	select EXYNOS_SROM if PM
- 	help
- 	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
- 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 524aa6f..4ffb90e 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -37,11 +37,6 @@ void __iomem *pmu_base_addr;
- 
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
--		.virtual	= (unsigned long)S5P_VA_SROMC,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_SROMC),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S5P_VA_CMU,
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_CMU),
- 		.length		= SZ_128K,
-@@ -64,15 +59,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
- 	},
- };
- 
--static struct map_desc exynos5_iodesc[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_SROMC,
--		.pfn		= __phys_to_pfn(EXYNOS5_PA_SROMC),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	},
--};
--
- static struct platform_device exynos_cpuidle = {
- 	.name              = "exynos_cpuidle",
- #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-@@ -144,9 +130,6 @@ static void __init exynos_map_io(void)
- {
- 	if (soc_is_exynos4())
- 		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
--
--	if (soc_is_exynos5())
--		iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
- }
- 
- static void __init exynos_init_io(void)
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 86d8085..351e839 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -32,7 +32,4 @@
- #define EXYNOS4_PA_COREPERI		0x10500000
- #define EXYNOS4_PA_L2CC			0x10502000
- 
--#define EXYNOS4_PA_SROMC		0x12570000
--#define EXYNOS5_PA_SROMC		0x12250000
--
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-exynos/regs-srom.h b/arch/arm/mach-exynos/regs-srom.h
-deleted file mode 100644
-index 5c4d442..0000000
---- a/arch/arm/mach-exynos/regs-srom.h
-+++ /dev/null
-@@ -1,53 +0,0 @@
--/*
-- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * S5P SROMC register definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __PLAT_SAMSUNG_REGS_SROM_H
--#define __PLAT_SAMSUNG_REGS_SROM_H __FILE__
--
--#include <mach/map.h>
--
--#define S5P_SROMREG(x)		(S5P_VA_SROMC + (x))
--
--#define S5P_SROM_BW		S5P_SROMREG(0x0)
--#define S5P_SROM_BC0		S5P_SROMREG(0x4)
--#define S5P_SROM_BC1		S5P_SROMREG(0x8)
--#define S5P_SROM_BC2		S5P_SROMREG(0xc)
--#define S5P_SROM_BC3		S5P_SROMREG(0x10)
--#define S5P_SROM_BC4		S5P_SROMREG(0x14)
--#define S5P_SROM_BC5		S5P_SROMREG(0x18)
--
--/* one register BW holds 4 x 4-bit packed settings for NCS0 - NCS3 */
--
--#define S5P_SROM_BW__DATAWIDTH__SHIFT		0
--#define S5P_SROM_BW__ADDRMODE__SHIFT		1
--#define S5P_SROM_BW__WAITENABLE__SHIFT		2
--#define S5P_SROM_BW__BYTEENABLE__SHIFT		3
--
--#define S5P_SROM_BW__CS_MASK			0xf
--
--#define S5P_SROM_BW__NCS0__SHIFT		0
--#define S5P_SROM_BW__NCS1__SHIFT		4
--#define S5P_SROM_BW__NCS2__SHIFT		8
--#define S5P_SROM_BW__NCS3__SHIFT		12
--#define S5P_SROM_BW__NCS4__SHIFT		16
--#define S5P_SROM_BW__NCS5__SHIFT		20
--
--/* applies to same to BCS0 - BCS3 */
--
--#define S5P_SROM_BCX__PMC__SHIFT		0
--#define S5P_SROM_BCX__TACP__SHIFT		4
--#define S5P_SROM_BCX__TCAH__SHIFT		8
--#define S5P_SROM_BCX__TCOH__SHIFT		12
--#define S5P_SROM_BCX__TACC__SHIFT		16
--#define S5P_SROM_BCX__TCOS__SHIFT		24
--#define S5P_SROM_BCX__TACS__SHIFT		28
--
--#endif /* __PLAT_SAMSUNG_REGS_SROM_H */
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index e00eb39..21abd9b 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -31,12 +31,13 @@
- #include <asm/smp_scu.h>
- #include <asm/suspend.h>
- 
-+#include <mach/map.h>
-+
- #include <plat/pm-common.h>
- 
- #include "common.h"
- #include "exynos-pmu.h"
- #include "regs-pmu.h"
--#include "regs-srom.h"
- 
- #define REG_TABLE_END (-1U)
- 
-@@ -52,15 +53,6 @@ struct exynos_wkup_irq {
- 	u32 mask;
- };
- 
--static struct sleep_save exynos_core_save[] = {
--	/* SROM side */
--	SAVE_ITEM(S5P_SROM_BW),
--	SAVE_ITEM(S5P_SROM_BC0),
--	SAVE_ITEM(S5P_SROM_BC1),
--	SAVE_ITEM(S5P_SROM_BC2),
--	SAVE_ITEM(S5P_SROM_BC3),
--};
--
- struct exynos_pm_data {
- 	const struct exynos_wkup_irq *wkup_irq;
- 	unsigned int wake_disable_mask;
-@@ -339,8 +331,6 @@ static void exynos_pm_prepare(void)
- 	/* Set wake-up mask registers */
- 	exynos_pm_set_wakeup_mask();
- 
--	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
--
- 	exynos_pm_enter_sleep_mode();
- 
- 	/* ensure at least INFORM0 has the resume address */
-@@ -371,8 +361,6 @@ static void exynos5420_pm_prepare(void)
- 	/* Set wake-up mask registers */
- 	exynos_pm_set_wakeup_mask();
- 
--	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
--
- 	exynos_pmu_spare3 = pmu_raw_readl(S5P_PMU_SPARE3);
- 	/*
- 	 * The cpu state needs to be saved and restored so that the
-@@ -463,8 +451,6 @@ static void exynos_pm_resume(void)
- 	/* For release retention */
- 	exynos_pm_release_retention();
- 
--	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
--
- 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
- 		scu_enable(S5P_VA_SCU);
- 
-@@ -531,8 +517,6 @@ static void exynos5420_pm_resume(void)
- 
- 	pmu_raw_writel(exynos_pmu_spare3, S5P_PMU_SPARE3);
- 
--	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
--
- early_wakeup:
- 
- 	tmp = pmu_raw_readl(EXYNOS5420_SFR_AXI_CGDIS1);
-diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
-index f5cf2bd..e555769 100644
---- a/arch/arm/plat-samsung/include/plat/map-s5p.h
-+++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
-@@ -18,7 +18,6 @@
- 
- #define S5P_VA_DMC0		S3C_ADDR(0x02440000)
- #define S5P_VA_DMC1		S3C_ADDR(0x02480000)
--#define S5P_VA_SROMC		S3C_ADDR(0x024C0000)
- 
- #define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
- #define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
--- 
-2.4.5
+SGkgSW5raSwKClRoaXMgcGF0Y2hzZXQgYWRkcyBzdXBwb3J0IHRvIERFQ09OLVRWIGluIEV4eW5v
+czU0MzMgU29DLgpUaGUgbWFpbiBwYXRjaCBpcyBwcmVwZW5kZWQgd2l0aCBmZXcgcHJlcGFyYXRp
+b24gcGF0Y2hlczoKLSBhZGQgdGhyZWUgY2xvY2tzIHJlcXVpcmVkIGJ5IEhETUkgcGlwZWxpbmUs
+Ci0gc21hbGwgYmluZGluZ3MgdXBkYXRlLAotIGRyaXZlciBjbGVhbnVwLgoKVGhlIHBhdGNoc2V0
+IGlzIGJhc2VkIG9uIHRoZSBsYXRlc3QgZXh5bm9zLWRybS1uZXh0IGJyYW5jaC4KClJlZ2FyZHMK
+QW5kcnplagoKCkFuZHJ6ZWogSGFqZGEgKDEwKToKICBjbGsvc2Ftc3VuZzogZXh5bm9zNTQzMzog
+YWRkIGRlZmluaXRpb25zIG9mIEhETUktUEhZIG91dHB1dCBjbG9ja3MKICBjbGsvc2Ftc3VuZzog
+ZXh5bm9zNTQzMzogYWRkIHBjbGtfZGVjb24gY2xvY2sKICBkcm0vZXh5bm9zL2RlY29uNTQzMzog
+YWRkIFBDTEsgY2xvY2sKICBkdC1iaW5kaW5nczogdmlkZW86IGFkZCBQQ0xLIGNsb2NrIGVudHJ5
+IHRvIGV4eW5vczU0MzMtZGVjb24KICBkcm0vZXh5bm9zL2RlY29uNTQzMzogZml4IHRpbWluZyBy
+ZWdpc3RlcnMgd3JpdGVzCiAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IGFkZCBmdW5jdGlvbiB0byBz
+ZXQgcGFydGljdWxhciByZWdpc3RlciBiaXRzCiAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IG1lcmdl
+IGRpZmZlcmVudCBmbGFnIGZpZWxkcwogIGRybS9leHlub3MvZGVjb241NDMzOiByZW1vdmUgZHVw
+bGljYXRlZCBpbml0aWFsaXphdGlvbgogIGR0LWJpbmRpbmdzOiB2aWRlbzogZXh5bm9zNTQzMy1k
+ZWNvbjogYWRkIGJpbmRpbmdzIGZvciBERUNPTi1UVgogIGRybS9leHlub3MvZGVjb241NDMzOiBh
+ZGQgc3VwcG9ydCBmb3IgREVDT04tVFYKCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9l
+eHlub3M1NDMzLWRlY29uLnR4dCB8ICAyMyArLQogZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5
+bm9zNTQzMy5jICAgICAgICAgICAgICAgfCAgIDggKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zNTQzM19kcm1fZGVjb24uYyAgICAgIHwgMzIwICsrKysrKysrKystLS0tLS0tLS0tLQog
+aW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9leHlub3M1NDMzLmggICAgICAgICAgICAgfCAgIDcg
+Ky0KIGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oICAgICAgICAgICAgICAgICAgIHwg
+IDI5ICsrCiA1IGZpbGVzIGNoYW5nZWQsIDIxNCBpbnNlcnRpb25zKCspLCAxNzMgZGVsZXRpb25z
+KC0pCgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
