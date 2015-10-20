@@ -1,52 +1,56 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 6/8] drivers: soc: add support for exynos SROM driver
-Date: Tue, 20 Oct 2015 17:27:58 +0900
-Message-ID: <5625FB0E.2000109@samsung.com>
-References: <1445255206-11148-1-git-send-email-pankaj.dubey@samsung.com>
- <1445255206-11148-7-git-send-email-pankaj.dubey@samsung.com>
- <56258683.7070204@samsung.com> <5625B92C.10505@samsung.com>
- <5625C07D.4030706@samsung.com> <014301d10b01$488873f0$d9995bd0$@samsung.com>
- <5625E3B9.8040707@samsung.com> <021201d10b0f$b273bf00$175b3d00$@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 0/7] Switch to generic syscon regmap based drivers
+Date: Tue, 20 Oct 2015 14:26:39 +0530
+Message-ID: <562601C7.8070705@samsung.com>
+References: <1445234635-3950-1-git-send-email-alim.akhtar@samsung.com>
+ <CAAtXAHfjdNvJtXW6e4Wm4dba9vbzhpMGJvTBXxvmya08EvHenA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <021201d10b0f$b273bf00$175b3d00$@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pavel Fedin <p.fedin@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, thomas.ab@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:59681 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751857AbbJTJGN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Oct 2015 05:06:13 -0400
+In-reply-to: <CAAtXAHfjdNvJtXW6e4Wm4dba9vbzhpMGJvTBXxvmya08EvHenA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Moritz Fischer <moritz.fischer@ettus.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org, k.kozlowski@samsung.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On 20.10.2015 17:17, Pavel Fedin wrote:
->  Hello!
-> 
->>>  Pin controller is needed in order to configure multi-functional pins correctly.
+Hi Moritz,
+
+On 10/20/2015 02:48 AM, Moritz Fischer wrote:
+> On Sun, Oct 18, 2015 at 11:03 PM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>> Alim Akhtar (7):
+>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos3250 SoCs
+>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos4
+>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5
+>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5410 SoC
+>>    ARM: exynos_defconfig: Normalize exynos defconfig
+>>    ARM: exynos_defconfig: Enable generic syscon-{reboot, poweroff}
+>>      drivers
+>>    ARM: EXYNOS: Remove code for restart and poweroff for exynos SoCs
 >>
->> Are there any obstacles for upstreaming it?
-> 
->  I don't know. The last post on this topic is from March, 2015:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html. Patch 0003 has been acked-by, and nothing more since
-> that.
->  Actually, only 0002 and 0003 of this series are needed for the pin controller. 0001 has been accepted
-> (27284129522e7e2a5b89e80bd44ea3345f79c9e8).
-
-I see that all objections were solved and I already reviewed all of the
-patches. This was sent before I started collecting patches as
-co-maintainer so all it is needed now is to rebase and resend with
-collected tags.
-
-I'll try to find them in my archives and apply.
-
-Really, if you have anything waiting then just resend/ping. Things
-changed since May this year :) .
-
-Best regards,
-Krzysztof
+>>   arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++
+>>   arch/arm/boot/dts/exynos4.dtsi    |   14 ++++++++++++
+>>   arch/arm/boot/dts/exynos5.dtsi    |   14 ++++++++++++
+>>   arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++
+>>   arch/arm/configs/exynos_defconfig |   11 +++++-----
+>>   arch/arm/mach-exynos/pmu.c        |   43 -------------------------------------
+>>   6 files changed, 61 insertions(+), 49 deletions(-)
+>>
+>> --
+>> 1.7.10.4
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Feel free to add Acked-By: Moritz Fischer <moritz.fischer@ettus.com>
+> to the patches in your series
+>
+Thanks!
+> Moritz
+>
