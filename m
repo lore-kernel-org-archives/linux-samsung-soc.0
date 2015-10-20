@@ -1,68 +1,64 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 03/10] drm/exynos/decon5433: add PCLK clock
-Date: Tue, 20 Oct 2015 11:22:34 +0200
-Message-ID: <1445332961-25419-4-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 05/10] drm/exynos/decon5433: fix timing registers writes
+Date: Tue, 20 Oct 2015 11:22:36 +0200
+Message-ID: <1445332961-25419-6-git-send-email-a.hajda@samsung.com>
 References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PCLK clock is used by DECON IP. The patch also replaces magic number with
-number of clocks in array definition.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 1ea26dbb..b25d764 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -27,13 +27,23 @@
- #define CURSOR_WIN	2
- #define MIN_FB_WIDTH_FOR_16WORD_BURST	128
- 
-+static const char * const decon_clks_name[] = {
-+	"pclk",
-+	"aclk_decon",
-+	"aclk_smmu_decon0x",
-+	"aclk_xiu_decon0x",
-+	"pclk_smmu_decon0x",
-+	"sclk_decon_vclk",
-+	"sclk_decon_eclk",
-+};
-+
- struct decon_context {
- 	struct device			*dev;
- 	struct drm_device		*drm_dev;
- 	struct exynos_drm_crtc		*crtc;
- 	struct exynos_drm_plane		planes[WINDOWS_NR];
- 	void __iomem			*addr;
--	struct clk			*clks[6];
-+	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
- 	unsigned long			irq_flags;
- 	int				pipe;
- 	bool				suspended;
-@@ -45,15 +55,6 @@ struct decon_context {
- 	atomic_t			win_updated;
- };
- 
--static const char * const decon_clks_name[] = {
--	"aclk_decon",
--	"aclk_smmu_decon0x",
--	"aclk_xiu_decon0x",
--	"pclk_smmu_decon0x",
--	"sclk_decon_vclk",
--	"sclk_decon_eclk",
--};
--
- static const uint32_t decon_formats[] = {
- 	DRM_FORMAT_XRGB1555,
- 	DRM_FORMAT_RGB565,
--- 
-1.9.1
-
+QWxsIHRpbWluZyByZWdpc3RlcnMgc2hvdWxkIGNvbnRhaW4gdmFsdWVzIGRlY3JlYXNlZCBieSBv
+bmUuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgot
+LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8IDE4ICsr
+KysrKysrKy0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgOSBkZWxl
+dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNf
+ZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29u
+LmMKaW5kZXggYjI1ZDc2NC4uODNlMDkzOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zNTQzM19kcm1fZGVjb24uYwpAQCAtMTA0LDcgKzEwNCw3IEBAIHN0YXRpYyB2b2lkIGRl
+Y29uX3NldHVwX3RyaWdnZXIoc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCkKIHN0YXRpYyB2b2lk
+IGRlY29uX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogewogCXN0cnVjdCBk
+ZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7Ci0Jc3RydWN0IGRybV9kaXNwbGF5X21vZGUg
+Km1vZGUgPSAmY3J0Yy0+YmFzZS5tb2RlOworCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptID0g
+JmNydGMtPmJhc2UubW9kZTsKIAl1MzIgdmFsOwogCiAJaWYgKGN0eC0+c3VzcGVuZGVkKQpAQCAt
+MTIyLDI5ICsxMjIsMjkgQEAgc3RhdGljIHZvaWQgZGVjb25fY29tbWl0KHN0cnVjdCBleHlub3Nf
+ZHJtX2NydGMgKmNydGMpCiAJCXZhbCB8PSBWSURPVVRfUkdCX0lGOwogCXdyaXRlbCh2YWwsIGN0
+eC0+YWRkciArIERFQ09OX1ZJRE9VVENPTjApOwogCi0JdmFsID0gVklEVENPTjJfTElORVZBTCht
+b2RlLT52ZGlzcGxheSAtIDEpIHwKLQkJVklEVENPTjJfSE9aVkFMKG1vZGUtPmhkaXNwbGF5IC0g
+MSk7CisJdmFsID0gVklEVENPTjJfTElORVZBTChtLT52ZGlzcGxheSAtIDEpIHwKKwkJVklEVENP
+TjJfSE9aVkFMKG0tPmhkaXNwbGF5IC0gMSk7CiAJd3JpdGVsKHZhbCwgY3R4LT5hZGRyICsgREVD
+T05fVklEVENPTjIpOwogCiAJaWYgKCFjdHgtPmk4MF9pZikgewogCQl2YWwgPSBWSURUQ09OMDBf
+VkJQRF9GKAotCQkJCW1vZGUtPmNydGNfdnRvdGFsIC0gbW9kZS0+Y3J0Y192c3luY19lbmQpIHwK
+KwkJCQltLT5jcnRjX3Z0b3RhbCAtIG0tPmNydGNfdnN5bmNfZW5kIC0gMSkgfAogCQkJVklEVENP
+TjAwX1ZGUERfRigKLQkJCQltb2RlLT5jcnRjX3ZzeW5jX3N0YXJ0IC0gbW9kZS0+Y3J0Y192ZGlz
+cGxheSk7CisJCQkJbS0+Y3J0Y192c3luY19zdGFydCAtIG0tPmNydGNfdmRpc3BsYXkgLSAxKTsK
+IAkJd3JpdGVsKHZhbCwgY3R4LT5hZGRyICsgREVDT05fVklEVENPTjAwKTsKIAogCQl2YWwgPSBW
+SURUQ09OMDFfVlNQV19GKAotCQkJCW1vZGUtPmNydGNfdnN5bmNfZW5kIC0gbW9kZS0+Y3J0Y192
+c3luY19zdGFydCk7CisJCQkJbS0+Y3J0Y192c3luY19lbmQgLSBtLT5jcnRjX3ZzeW5jX3N0YXJ0
+IC0gMSk7CiAJCXdyaXRlbCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1ZJRFRDT04wMSk7CiAKIAkJ
+dmFsID0gVklEVENPTjEwX0hCUERfRigKLQkJCQltb2RlLT5jcnRjX2h0b3RhbCAtIG1vZGUtPmNy
+dGNfaHN5bmNfZW5kKSB8CisJCQkJbS0+Y3J0Y19odG90YWwgLSBtLT5jcnRjX2hzeW5jX2VuZCAt
+IDEpIHwKIAkJCVZJRFRDT04xMF9IRlBEX0YoCi0JCQkJbW9kZS0+Y3J0Y19oc3luY19zdGFydCAt
+IG1vZGUtPmNydGNfaGRpc3BsYXkpOworCQkJCW0tPmNydGNfaHN5bmNfc3RhcnQgLSBtLT5jcnRj
+X2hkaXNwbGF5IC0gMSk7CiAJCXdyaXRlbCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1ZJRFRDT04x
+MCk7CiAKIAkJdmFsID0gVklEVENPTjExX0hTUFdfRigKLQkJCQltb2RlLT5jcnRjX2hzeW5jX2Vu
+ZCAtIG1vZGUtPmNydGNfaHN5bmNfc3RhcnQpOworCQkJCW0tPmNydGNfaHN5bmNfZW5kIC0gbS0+
+Y3J0Y19oc3luY19zdGFydCAtIDEpOwogCQl3cml0ZWwodmFsLCBjdHgtPmFkZHIgKyBERUNPTl9W
+SURUQ09OMTEpOwogCX0KIAotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
