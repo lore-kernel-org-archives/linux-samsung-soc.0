@@ -1,121 +1,91 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 6/6] ARM: EXYNOS: Remove code for restart and poweroff for
- exynos SoCs
-Date: Tue, 20 Oct 2015 14:54:45 +0530
-Message-ID: <1445333085-22837-7-git-send-email-alim.akhtar@samsung.com>
-References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36279 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753399AbbJTJgG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 05:36:06 -0400
-In-reply-to: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH v6 0/17] Add Analogix Core Display Port Driver
+Date: Tue, 20 Oct 2015 11:48:54 +0200
+Message-ID: <56260E06.2040902@osg.samsung.com>
+References: <1441086371-24838-1-git-send-email-ykk@rock-chips.com>
+ <1444491357-26095-1-git-send-email-ykk@rock-chips.com>
+ <5624C896.8070108@osg.samsung.com> <5625A2A1.6090907@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5625A2A1.6090907-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, k.kozlowski@samsung.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Now we can use the generic syscon-{reboot/poweroff} drivers,
-so we don't need special handling for reboot/poweroff in
-exynos pmu driver. This patch remove the same.
+Hello Yakir,
 
-Note: This will break reboot/poweroff on boards with older dtbs
-with a newer kernel.
+On 10/20/2015 04:10 AM, Yakir Yang wrote:
+> Hi Javier,
+> 
+> On 10/19/2015 06:40 PM, Javier Martinez Canillas wrote:
+>> Hello Yakir,
+>>
+>> On 10/10/2015 05:35 PM, Yakir Yang wrote:
+>>> Hi all,
+>>>
+>>>     The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
+>>> share the same IP, so a lot of parts can be re-used. I split the common
+>>> code into bridge directory, then rk3288 and exynos only need to keep
+>>> some platform code. Cause I can't find the exact IP name of exynos dp
+>>> controller, so I decide to name dp core driver with "analogix" which I
+>>> find in rk3288 eDP TRM :)
+>>>
+>>> But  there are still three light registers setting differents bewteen
+>>> exynos and rk3288.
+>>> 1. RK3288 have five special pll resigters which not indicata in exynos
+>>>     dp controller.
+>>> 2. The address of DP_PHY_PD(dp phy power manager register) are different
+>>>     between rk3288 and exynos.
+>>> 3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
+>>>     register).
+>>>
+>>> This series have been well tested on Rockchip platform with eDP panel
+>>> on Jerry Chromebook and Display Port Monitor on RK3288 board and thanks
+>>> to Javier@Samsung help me to find a way to install mainline kernel to
+>>> Samsung Exynos Chromebooks, so this series also have been tested on Samsung
+>>> Snow and Peach Pit Chromebooks which borrowed from my friends.
+>>>
+>>> Besides, This version was build on linux-next branch (tag next-20150918), and
+>>> the above test experiments also base on that tag. But I know the latest tag is
+>>> next-20151009, so i do rebase this series again on next-20151009, there were
+>>> little conflicts(exynos_dp removed the suspend/resume).
+>>>
+>>> But after I retest this series on next-20151009, I saw kernel crashed in mmc
+>>> driver(dw_mci_probe failed to get regulator). So i have to disabled the MMC
+>>> module(after all I boot with USB device), and I can see eDP light up normally
+>>> in startup stage, but kernel keep crashed when it try to mount the filesystem.
+>>> I thought this isn't related to dp driver directly, so i choice not to debug
+>>> more depth.
+>>>
+>>> That's to say if someone want to test this series, I suggest you applied this
+>>> series on tag-20150918, just need to fix some light conflicts with the 01 & 02
+>>> patches (or just email me, I can send you directly).
+>>>
+>>> Thanks,
+>> Do you have a branch that I can use to test this series?
+> 
+> Thank you for your kind assistance, I have created a tree which checkout from the next-20151019. Surely there were some conflicts to applied this series on that tag, but things still works for me, here is the git address [https://github.com/yakir-Yang/linux/tree/analogix_dp]
+>
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
----
- arch/arm/mach-exynos/pmu.c |   43 -------------------------------------------
- 1 file changed, 43 deletions(-)
+I tested your branch on an Exynos5800 Peach Pi Chromebook and display is
+working on boot. I also tested DPMS and S2R and things are still working
+so for the whole series feel free to add:
 
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index de68938ee6aa..393c04aa727e 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -14,9 +14,6 @@
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/delay.h>
--#include <linux/notifier.h>
--#include <linux/reboot.h>
--
- 
- #include "exynos-pmu.h"
- #include "regs-pmu.h"
-@@ -681,23 +678,6 @@ static unsigned int const exynos5420_list_disable_pmu_reg[] = {
- 	EXYNOS5420_CMU_RESET_FSYS_SYS_PWR_REG,
- };
- 
--static void exynos_power_off(void)
--{
--	unsigned int tmp;
--
--	pr_info("Power down.\n");
--	tmp = pmu_raw_readl(EXYNOS_PS_HOLD_CONTROL);
--	tmp ^= (1 << 8);
--	pmu_raw_writel(tmp, EXYNOS_PS_HOLD_CONTROL);
--
--	/* Wait a little so we don't give a false warning below */
--	mdelay(100);
--
--	pr_err("Power down failed, please power off system manually.\n");
--	while (1)
--		;
--}
--
- static void exynos5420_powerdown_conf(enum sys_powerdown mode)
- {
- 	u32 this_cluster;
-@@ -875,14 +855,6 @@ static void exynos5420_pmu_init(void)
- 	pr_info("EXYNOS5420 PMU initialized\n");
- }
- 
--static int pmu_restart_notify(struct notifier_block *this,
--		unsigned long code, void *unused)
--{
--	pmu_raw_writel(0x1, EXYNOS_SWRESET);
--
--	return NOTIFY_DONE;
--}
--
- static const struct exynos_pmu_data exynos3250_pmu_data = {
- 	.pmu_config	= exynos3250_pmu_config,
- 	.pmu_init	= exynos3250_pmu_init,
-@@ -940,20 +912,11 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
- 	{ /*sentinel*/ },
- };
- 
--/*
-- * Exynos PMU restart notifier, handles restart functionality
-- */
--static struct notifier_block pmu_restart_handler = {
--	.notifier_call = pmu_restart_notify,
--	.priority = 128,
--};
--
- static int exynos_pmu_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
--	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pmu_base_addr = devm_ioremap_resource(dev, res);
-@@ -978,12 +941,6 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pmu_context);
- 
--	ret = register_restart_handler(&pmu_restart_handler);
--	if (ret)
--		dev_warn(dev, "can't register restart handler err=%d\n", ret);
--
--	pm_power_off = exynos_power_off;
--
- 	dev_dbg(dev, "Exynos PMU Driver probe done\n");
- 	return 0;
- }
+Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+
+> Best regards,
+> - Yakir
+> 
+
+Best regards,
 -- 
-1.7.10.4
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
