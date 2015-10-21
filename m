@@ -1,124 +1,74 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
-Date: Wed, 21 Oct 2015 11:39:32 +0530
-Message-ID: <56272C1C.8040007@samsung.com>
-References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
- <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com>
- <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com>
- <1606098.olLAyTIhB3@dell2.five-lan.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49729 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753153AbbJUGSu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Oct 2015 02:18:50 -0400
-In-reply-to: <1606098.olLAyTIhB3@dell2.five-lan.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH 1/2] mmc: dw_mmc: exynos: Add the exynos3250 compatible
+Date: Wed, 21 Oct 2015 15:39:14 +0900
+Message-ID: <1445409555-1684-1-git-send-email-jh80.chung@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: ulf.hansson@linaro.org, kgene@kernel.org, k.kozlowski@samsung.com, linux-arm-kernel@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: m.reichl@fivetechno.de, Alim Akhtar <alim.akhtar@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
+To check more exactly, add the exynos3250 compatible.
+Not use exynos5250 compatibility.
 
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+---
+ Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt | 2 ++
+ drivers/mmc/host/dw_mmc-exynos.c                         | 7 +++++++
+ 2 files changed, 9 insertions(+)
 
-On 10/20/2015 10:53 PM, Markus Reichl wrote:
-> Am Dienstag, 20. Oktober 2015, 21:22:05 schrieb Alim Akhtar:
->> On Tue, Oct 20, 2015 at 9:17 PM, Alim Akhtar <alim.akhtar@gmail.com> wrote:
->>> Hi Markus,
->>>
->>> On Tue, Oct 20, 2015 at 8:29 PM, Markus Reichl <m.reichl@fivetechno.de> wrote:
->>>> Am 20.10.2015 um 11:24 schrieb Alim Akhtar:
->>>>> Now we have a nice way to reboot/poweroff system using a generic
->>>>> syscon regmap based drivers, this series moves exynos SoCs to
->>>>> make use of the same.
->>>>>
->>>>> Changes since v1:
->>>>> * Added a comment about the register information
->>>>> * Droped defconfig changes as disscussed
->>>>> * Collected various Reviewed-by, Tested-by and Acked-by tags
->>>>> * Added SYSCON-{RESET, POWEROFF} to select from Kconfig
->>>>>
->>>>> Alim Akhtar (6):
->>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos3250 SoCs
->>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos4
->>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5
->>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5410 SoC
->>>>>    ARM: exynos: select POWER_RESET_SYSCON and
->>>>>      POWER_RESET_SYSCON_POWEROFF
->>>>>    ARM: EXYNOS: Remove code for restart and poweroff for exynos SoCs
->>>>>
->>>>>   arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++
->>>>>   arch/arm/boot/dts/exynos4.dtsi    |   14 ++++++++++++
->>>>>   arch/arm/boot/dts/exynos5.dtsi    |   14 ++++++++++++
->>>>>   arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++
->>>>>   arch/arm/mach-exynos/Kconfig      |    3 +++
->>>>>   arch/arm/mach-exynos/pmu.c        |   43 -------------------------------------
->>>>>   6 files changed, 59 insertions(+), 43 deletions(-)
->>>>>
->>>>
->>>> Hi Alim,
->>>>
->>>> I have installed your patch set above with git am on top of
->>>> 4.3.0-rc6-00108-gce1fad2 torvalds/linux of today
->>>> with make exynos_defconfig on Odroid U3.
->>>>
->>> which exynos soc Odroid U3 uses?
->>>
->> OK, I can see its uses exynos4412 and exynos4412-odroidu3.dts does
->> include exynos4.dtsi,
->> so these should have worked.
->>
->>>> "halt -p" worked (power 0.0W).
->>>> "reboot" got stuck at 0.5W.
->>>>
->>> reboot stuck mean system does not reboot any more?
->
-> It freezes when going for reboot.
-> Have to power off/on to boot again.
->
-> Btw I use an mmc, not an sd-card.
-> No other HW connected, just LAN-cable.
-> Bootloader is u-boot v2015.10.
-> o
-Have checked on 4.3.0-rc6-00006-gd03c139e7e77, still works on peach boards.
-Sorry I don't have Odroid U3 with me, may be Javier or Krzysztof might 
-help here to check whats wrong. To me its looks more of a board specific 
-issue for now.
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index aad9844..cd22ac9 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -22,6 +22,8 @@ Required Properties:
+ 	  specific extensions.
+ 	- "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
+ 	  specific extensions having an SMU.
++	- "samsung,exynos3250-dw-mshc": for controllers with Samsung Exynos3250
++	  specific extensions.
+ 
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 1e75309..1c96218 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -32,6 +32,7 @@ enum dw_mci_exynos_type {
+ 	DW_MCI_TYPE_EXYNOS5420_SMU,
+ 	DW_MCI_TYPE_EXYNOS7,
+ 	DW_MCI_TYPE_EXYNOS7_SMU,
++	DW_MCI_TYPE_EXYNOS3250,
+ };
+ 
+ /* Exynos implementation specific driver private data */
+@@ -73,6 +74,9 @@ static struct dw_mci_exynos_compatible {
+ 	}, {
+ 		.compatible	= "samsung,exynos7-dw-mshc-smu",
+ 		.ctrl_type	= DW_MCI_TYPE_EXYNOS7_SMU,
++	}, {
++		.compatible	= "samsung,exynos3250-dw-mshc",
++		.ctrl_type	= DW_MCI_TYPE_EXYNOS3250,
+ 	},
+ };
+ 
+@@ -467,6 +471,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot)
+ 	} while (start_smpl != smpl);
+ 
+ 	found = dw_mci_exynos_get_best_clksmpl(candiates);
++
+ 	if (found >= 0) {
+ 		dw_mci_exynos_set_clksmpl(host, found);
+ 		priv->tuned_sample = found;
+@@ -520,6 +525,8 @@ static const struct of_device_id dw_mci_exynos_match[] = {
+ 			.data = &exynos_drv_data, },
+ 	{ .compatible = "samsung,exynos7-dw-mshc-smu",
+ 			.data = &exynos_drv_data, },
++	{ .compatible = "samsung,exynos3250-dw-mshc",
++			.data = &exynos_drv_data, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
+-- 
+1.9.1
 
->>> As far as I can see there in __no__ functional changes that my patch introduce.
->>> So ideally it should have work. My patches are based on the top on
->>> vanilla v4.3-rc5.
->>> (25cb62b Linux 4.3-rc5), can you check at this commit?
->
-> Will try tomorrow.
->
->>>
->>> Will check with the commit mentioned by you tomorrow.
->>>
->>>>
->>>> Without your patch set reboot worked.
->>>>
->>>>
->>>> Thanks,
->>>> --
->>>> Markus Reichl
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->>>
->>> --
->>> Regards,
->>> Alim
->>
->>
->>
->>
-> Thanks,
-> --
-> Markus
->
