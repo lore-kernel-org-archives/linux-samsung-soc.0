@@ -1,81 +1,64 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add documentation and
- dt-bindings
-Date: Wed, 21 Oct 2015 15:08:44 +0200
-Message-ID: <56278E5C.9040603@osg.samsung.com>
-References: <1445391203-3819-1-git-send-email-k.kozlowski@samsung.com>
- <5627509E.6090503@osg.samsung.com>
- <CAJKOXPdG9qd_bAPdpKQSWJ5bM_LnjQ=XcWH14sa1jo0T5b+8zQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
+Date: Wed, 21 Oct 2015 15:23:32 +0200
+Message-ID: <562791D4.3050105@osg.samsung.com>
+References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
+ <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com>
+ <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com>
+ <1606098.olLAyTIhB3@dell2.five-lan.de> <56272C1C.8040007@samsung.com>
+ <562765F3.9010306@osg.samsung.com> <56276C87.6040509@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:42085 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:42093 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754136AbbJUNIv (ORCPT
+	id S1751069AbbJUNXh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Oct 2015 09:08:51 -0400
-In-Reply-To: <CAJKOXPdG9qd_bAPdpKQSWJ5bM_LnjQ=XcWH14sa1jo0T5b+8zQ@mail.gmail.com>
+	Wed, 21 Oct 2015 09:23:37 -0400
+In-Reply-To: <56276C87.6040509@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, m.reichl@fivetechno.de, Alim Akhtar <alim.akhtar@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hello Krzysztof,
+Hello Alim,
 
-On 10/21/2015 02:43 PM, Krzysztof Kozlowski wrote:
-> 2015-10-21 17:45 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+On 10/21/2015 12:44 PM, Alim Akhtar wrote:
+
+[snip]
+
 >>
->> Hello Krzysztof,
+>> Can you please test following patch [0] on top of Alim's series? If that
+>> works then it should either be part of Alim's series or the patches will
+>> have to wait until that patch lands into mainline. I don't have an eMMC
+>> to test it in XU4 but I'm pretty confident that it will solve the issue.
 >>
->> Patch looks good to me, I've only one comment.
->>
->> On 10/21/2015 03:33 AM, Krzysztof Kozlowski wrote:
->>> Extend the Samsung Exynos maintainer entry to match SoC documentation
->>> and SoC dt-bindings directories. Without that some files, like
->>> bindings/arm/samsung/pmu.txt, are not matched by existing patterns.
->>>
->>> This also may serve as a hint where new documentation and bindings (not
->>> matching specific subsystem) should be put.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> Cc: Kukjin Kim <kgene@kernel.org>
->>> ---
->>>  MAINTAINERS | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index b556aad90930..cad7b6b628b2 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -1459,6 +1459,8 @@ F:      drivers/*/*s3c2410*
->>>  F:   drivers/*/*/*s3c2410*
->>>  F:   drivers/spi/spi-s3c*
->>>  F:   sound/soc/samsung/*
->>> +F:   Documentation/arm/Samsung/
->>
->> That there is also a Documentation/arm/Samsung-S3C24XX/ so
->> I think this should be Documentation/arm/Samsung*/ instead.
-> 
-> I am not sure... I think this is documentation from the Ben Dooks'
-> work and there is a entry for S3C241x machines:
-> SIMTEC EB2410ITX )
->
+> I am fine with including this with my series or lowering syscon_restart_handler priority to 128.
 
-I'm not familiar with S3C241x but the EB2410ITX entry only covers
-a couple of files under arch/arm/mach-s3c24xx, basically all that
-are related to the BAST machine (board file and platform data).
+Yes, I also considered changing the syscon-reboot handler priority to 128 but
+then I noticed this commit:
 
-But arch/arm/mach-s3c24* and drivers/*/*s3c2410* are covered by
-the ARM/SAMSUNG entry so that's why I thought the Samsung-S3C24XX
-docs should be there too since are SoC and not board specific.
+b81180b3fd48 ("power: reset: adjust priority of simple syscon reboot driver").
 
-It's your call but I would put it in ARM/SAMSUNG and only the file
-Documentation/arm/Samsung-S3C24XX/EB2410ITX.txt in the BAST entry.
+So as you can see, it was 128 before but was bumped to 192 so it was called
+before restart handlers registered by watchdogs. So, changing to 128 would
+break other people use cases.
 
-> Best regards,
-> Krzysztof
-> 
+Now, I don't know if that is the right fix since register_restart_handler()
+explanation about the policy used for restart handler priority numbers is
+scarce. It only mentions 0, 128 and 255 so probably the correct thing to do
+is to change all watchdog restart handler to 0 but that is a separate issue.
+
+> It also make sense to increase eMMC priority as you suggested as before system reboot, devices should have reseted itself.
+
+That was my rationale as well and is why I think the handler for devices
+should use the highest priority regardless if the syscon-reboot is later
+changed to prio 128 and the watchdog handlers to 0.
+
+Best regards,
+
+[0]: http://lxr.free-electrons.com/source/kernel/reboot.c#L113
 
 Best regards,
 -- 
