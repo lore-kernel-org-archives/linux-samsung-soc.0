@@ -1,65 +1,69 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add documentation and
- dt-bindings
-Date: Wed, 21 Oct 2015 10:45:18 +0200
-Message-ID: <5627509E.6090503@osg.samsung.com>
-References: <1445391203-3819-1-git-send-email-k.kozlowski@samsung.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
+ output clocks
+Date: Wed, 21 Oct 2015 01:59:40 -0700
+Message-ID: <20151021085940.20687.94974@quantum>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
+ <20151020103416.20687.40409@quantum> <562622CF.1070906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:42060 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753231AbbJUIpY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Oct 2015 04:45:24 -0400
-In-Reply-To: <1445391203-3819-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <562622CF.1070906@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
 
-Hello Krzysztof,
-
-Patch looks good to me, I've only one comment.
-
-On 10/21/2015 03:33 AM, Krzysztof Kozlowski wrote:
-> Extend the Samsung Exynos maintainer entry to match SoC documentation
-> and SoC dt-bindings directories. Without that some files, like
-> bindings/arm/samsung/pmu.txt, are not matched by existing patterns.
-> 
-> This also may serve as a hint where new documentation and bindings (not
-> matching specific subsystem) should be put.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> ---
->  MAINTAINERS | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b556aad90930..cad7b6b628b2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1459,6 +1459,8 @@ F:	drivers/*/*s3c2410*
->  F:	drivers/*/*/*s3c2410*
->  F:	drivers/spi/spi-s3c*
->  F:	sound/soc/samsung/*
-> +F:	Documentation/arm/Samsung/
-
-That there is also a Documentation/arm/Samsung-S3C24XX/ so
-I think this should be Documentation/arm/Samsung*/ instead.
-
-> +F:	Documentation/devicetree/bindings/arm/samsung/
->  N:	exynos
->  
->  ARM/SAMSUNG MOBILE MACHINE SUPPORT
-> 
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+UXVvdGluZyBTeWx3ZXN0ZXIgTmF3cm9ja2kgKDIwMTUtMTAtMjAgMDQ6MTc6MzUpCj4gT24gMjAv
+MTAvMTUgMTI6MzQsIE1pY2hhZWwgVHVycXVldHRlIHdyb3RlOgo+ID4+IGRpZmYgLS1naXQgYS9p
+bmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL2V4eW5vczU0MzMuaCBiL2luY2x1ZGUvZHQtYmluZGlu
+Z3MvY2xvY2svZXh5bm9zNTQzMy5oCj4gPj4gPiBpbmRleCA1YmQ4MGQ1Li40ZjBkNTY2IDEwMDY0
+NAo+ID4+ID4gLS0tIGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9leHlub3M1NDMzLmgKPiA+
+PiA+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svZXh5bm9zNTQzMy5oCj4gPj4gPiBA
+QCAtNzY1LDcgKzc2NSwxMCBAQAo+ID4+ID4gICNkZWZpbmUgQ0xLX1NDTEtfUkdCX1ZDTEsgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAxMDkKPiA+PiA+ICAjZGVmaW5lIENMS19TQ0xLX1JH
+Ql9UVl9WQ0xLICAgICAgICAgICAgICAgICAgICAgICAgICAgMTEwCj4gPj4gPiAgCj4gPj4gPiAt
+I2RlZmluZSBESVNQX05SX0NMSyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDEx
+MQo+ID4+ID4gKyNkZWZpbmUgQ0xLX1BIWUNMS19IRE1JUEhZX1BJWEVMX0NMS09fUEhZICAgICAg
+ICAgICAgICAxMTEKPiA+PiA+ICsjZGVmaW5lIENMS19QSFlDTEtfSERNSVBIWV9UTURTX0NMS09f
+UEhZICAgICAgICAgICAgICAgMTEyCj4gPj4gPiArCj4gPj4gPiArI2RlZmluZSBESVNQX05SX0NM
+SyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDExMwo+ID4KPiA+IFdoeSBicmVh
+ayBjb21wYXRpYmlsaXR5IHdpdGggb2xkZXIgRFRCcz8KPiAKPiBJIHVzZWQgdG8gYmUgcmVzaXN0
+YW50IHRvIGNoYW5naW5nIHRob3NlIF9OUl9DTEsgZGVmaW5lcwo+IGluIHRoZSBwYXN0IGJ1dCB0
+aGVuIHJlYWxpemVkIHRoZXkgYXJlIG5vdCBwYXJ0IG9mIHRoZSBEVCBBQkkuCj4gVGhlc2UgZGVm
+aW5lcyBhcmUgdXNlZCBvbmx5IGluIGRyaXZlcnMgYW5kIGFmZmVjdCBvbmx5IHNpemUKPiBvZiB0
+aGUgcHJvdmlkZXIncyBhbGxvY2F0ZWQgY2xvY2sgYXJyYXkuIFRoZSBjb25mdXNpb24gbWF5IGJl
+Cj4gY2F1c2VkIGJ5IHRoZSBmYWN0IHRoYXQgdGhlIHdob2xlIGhlYWRlciBpcyBzaGFyZWQgYnkg
+dGhlIGtlcm5lbAo+IHNvdXJjZSBhbmQgZHRzLgo+IAo+ICQgZ2l0IGdyZXAgLWwgX05SX0NMSyBh
+cmNoL2FybS9ib290L2R0cyBkcml2ZXJzL2Nsay9zYW1zdW5nLwo+IGRyaXZlcnMvY2xrL3NhbXN1
+bmcvY2xrLWV4eW5vcy1jbGtvdXQuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczMy
+NTAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczQuYwo+IGRyaXZlcnMvY2xrL3Nh
+bXN1bmcvY2xrLWV4eW5vczQ0MTUuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczUy
+NTAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczUyNjAuYwo+IGRyaXZlcnMvY2xr
+L3NhbXN1bmcvY2xrLWV4eW5vczU0MTAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5v
+czU0MjAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczU0MzMuYwo+IGRyaXZlcnMv
+Y2xrL3NhbXN1bmcvY2xrLWV4eW5vczU0NDAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4
+eW5vczcuYwo+IAo+IFRoZXJlIGlzIG5vICpfTlJfQ0xLIGluIGFueSBkdHMgZmlsZS4KPiBOZXcg
+a2VybmVsIHdpbGwgd29yayB3aWxsIG9sZGVyIERUQiwgdGhlIGRyaXZlciB3aWxsIGp1c3QKPiBy
+ZWdpc3RlciBtb3JlIGNsb2Nrcywgd2hpY2ggd2lsbCBub3QgYmUgZGVyZWZlcmVuY2VkIGFueXdo
+ZXJlCj4gaW4gb2xkZXIgZHRiLgoKSSBza2ltbWVkIHRocm91Z2ggdGhlIGNvZGUgdG9vIGZhc3Qu
+IFlvdSdyZSByaWdodCwgaXRzIGEgc2VudGluZWwvbWF4CnZhbHVlIHRoaW5nIHdoaWNoIGlzIG5v
+dCBwYXJ0IG9mIHRoZSBBQkkuCgpQYXJkb24gdGhlIG5vaXNlLiBOb3RoaW5nIHRvIHNlZSBoZXJl
+LCBtb3ZlIGFsb25nLi4uCgpSZWdhcmRzLApNaWtlCgo+IAo+IC0tIAo+IFJlZ2FyZHMsCj4gU3ls
+d2VzdGVyCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
+ZSAidW5zdWJzY3JpYmUgbGludXgtY2xrIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBt
+YWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDov
+L3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
