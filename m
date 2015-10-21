@@ -1,43 +1,55 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] MAINTAINERS: ARM: EXYNOS: Add documentation and dt-bindings
-Date: Wed, 21 Oct 2015 10:33:23 +0900
-Message-ID: <1445391203-3819-1-git-send-email-k.kozlowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [RFC PATCH] ARM: exynos_defconfig: Increase
+ CONFIG_BLK_DEV_RAM_SIZE to 64K
+Date: Wed, 21 Oct 2015 10:26:56 +0530
+Message-ID: <56271B18.7030000@samsung.com>
+References: <1445251715-9725-1-git-send-email-alim.akhtar@samsung.com>
+ <4039144.iLSv7qv3SU@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:13314 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751621AbbJUBdi (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47616 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752694AbbJUFGB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Oct 2015 21:33:38 -0400
+	Wed, 21 Oct 2015 01:06:01 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NWK02L5H0TYHO60@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Oct 2015 14:05:58 +0900 (KST)
+In-reply-to: <4039144.iLSv7qv3SU@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Jonathan Corbet <corbet@lwn.net>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com, k.kozlowski@samsung.com, kgene@kernel.org
 
-Extend the Samsung Exynos maintainer entry to match SoC documentation
-and SoC dt-bindings directories. Without that some files, like
-bindings/arm/samsung/pmu.txt, are not matched by existing patterns.
+Hi Arnd
 
-This also may serve as a hint where new documentation and bindings (not
-matching specific subsystem) should be put.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b556aad90930..cad7b6b628b2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1459,6 +1459,8 @@ F:	drivers/*/*s3c2410*
- F:	drivers/*/*/*s3c2410*
- F:	drivers/spi/spi-s3c*
- F:	sound/soc/samsung/*
-+F:	Documentation/arm/Samsung/
-+F:	Documentation/devicetree/bindings/arm/samsung/
- N:	exynos
- 
- ARM/SAMSUNG MOBILE MACHINE SUPPORT
--- 
-1.9.1
+On 10/19/2015 06:52 PM, Arnd Bergmann wrote:
+> On Monday 19 October 2015 16:18:35 Alim Akhtar wrote:
+>> Spam Status: CRM114
+>> CONFIG_BLK_DEV_RAM_SIZE is currently set to 8K, which is a bit on the
+>> smaller side, lets bump it up to 64K so that a bigger RAM_DISK can
+>> be used with defconfig.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>> Every time I build exynos_defconfig, I need to manually change RAM_SIZE
+>> to match my ramdisk image size. I am not sure what is the best ramdisk size
+>> might be, but bumping it to 64K might be a reasonable one.
+>
+> Is there still a reason to use ramdisks these days? If 8MB is not
+> enough to have a useful initrd, that might mean that everyone else
+> uses initramfs and you should just do the same thing?
+>
+There is not specific reason to still use ramdisks, but I feel till we 
+remove this config, lets modify it to be used by few like me.
+I am ok with either way.
+Thanks
+> Then we can also remove this option here.
+>
+> 	Arnd
+>
