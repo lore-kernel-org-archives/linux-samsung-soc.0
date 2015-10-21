@@ -1,55 +1,124 @@
 From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [RFC PATCH] ARM: exynos_defconfig: Increase
- CONFIG_BLK_DEV_RAM_SIZE to 64K
-Date: Wed, 21 Oct 2015 10:26:56 +0530
-Message-ID: <56271B18.7030000@samsung.com>
-References: <1445251715-9725-1-git-send-email-alim.akhtar@samsung.com>
- <4039144.iLSv7qv3SU@wuerfel>
+Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
+Date: Wed, 21 Oct 2015 11:39:32 +0530
+Message-ID: <56272C1C.8040007@samsung.com>
+References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
+ <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com>
+ <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com>
+ <1606098.olLAyTIhB3@dell2.five-lan.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47616 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752694AbbJUFGB (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:49729 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753153AbbJUGSu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Oct 2015 01:06:01 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NWK02L5H0TYHO60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Oct 2015 14:05:58 +0900 (KST)
-In-reply-to: <4039144.iLSv7qv3SU@wuerfel>
+	Wed, 21 Oct 2015 02:18:50 -0400
+In-reply-to: <1606098.olLAyTIhB3@dell2.five-lan.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com, k.kozlowski@samsung.com, kgene@kernel.org
+To: m.reichl@fivetechno.de, Alim Akhtar <alim.akhtar@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hi Arnd
 
-On 10/19/2015 06:52 PM, Arnd Bergmann wrote:
-> On Monday 19 October 2015 16:18:35 Alim Akhtar wrote:
->> Spam Status: CRM114
->> CONFIG_BLK_DEV_RAM_SIZE is currently set to 8K, which is a bit on the
->> smaller side, lets bump it up to 64K so that a bigger RAM_DISK can
->> be used with defconfig.
+
+On 10/20/2015 10:53 PM, Markus Reichl wrote:
+> Am Dienstag, 20. Oktober 2015, 21:22:05 schrieb Alim Akhtar:
+>> On Tue, Oct 20, 2015 at 9:17 PM, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+>>> Hi Markus,
+>>>
+>>> On Tue, Oct 20, 2015 at 8:29 PM, Markus Reichl <m.reichl@fivetechno.de> wrote:
+>>>> Am 20.10.2015 um 11:24 schrieb Alim Akhtar:
+>>>>> Now we have a nice way to reboot/poweroff system using a generic
+>>>>> syscon regmap based drivers, this series moves exynos SoCs to
+>>>>> make use of the same.
+>>>>>
+>>>>> Changes since v1:
+>>>>> * Added a comment about the register information
+>>>>> * Droped defconfig changes as disscussed
+>>>>> * Collected various Reviewed-by, Tested-by and Acked-by tags
+>>>>> * Added SYSCON-{RESET, POWEROFF} to select from Kconfig
+>>>>>
+>>>>> Alim Akhtar (6):
+>>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos3250 SoCs
+>>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos4
+>>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5
+>>>>>    arm: dts: Add syscon-{reboot, poweroff} nodes for exynos5410 SoC
+>>>>>    ARM: exynos: select POWER_RESET_SYSCON and
+>>>>>      POWER_RESET_SYSCON_POWEROFF
+>>>>>    ARM: EXYNOS: Remove code for restart and poweroff for exynos SoCs
+>>>>>
+>>>>>   arch/arm/boot/dts/exynos3250.dtsi |   14 ++++++++++++
+>>>>>   arch/arm/boot/dts/exynos4.dtsi    |   14 ++++++++++++
+>>>>>   arch/arm/boot/dts/exynos5.dtsi    |   14 ++++++++++++
+>>>>>   arch/arm/boot/dts/exynos5410.dtsi |   14 ++++++++++++
+>>>>>   arch/arm/mach-exynos/Kconfig      |    3 +++
+>>>>>   arch/arm/mach-exynos/pmu.c        |   43 -------------------------------------
+>>>>>   6 files changed, 59 insertions(+), 43 deletions(-)
+>>>>>
+>>>>
+>>>> Hi Alim,
+>>>>
+>>>> I have installed your patch set above with git am on top of
+>>>> 4.3.0-rc6-00108-gce1fad2 torvalds/linux of today
+>>>> with make exynos_defconfig on Odroid U3.
+>>>>
+>>> which exynos soc Odroid U3 uses?
+>>>
+>> OK, I can see its uses exynos4412 and exynos4412-odroidu3.dts does
+>> include exynos4.dtsi,
+>> so these should have worked.
 >>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->> Every time I build exynos_defconfig, I need to manually change RAM_SIZE
->> to match my ramdisk image size. I am not sure what is the best ramdisk size
->> might be, but bumping it to 64K might be a reasonable one.
+>>>> "halt -p" worked (power 0.0W).
+>>>> "reboot" got stuck at 0.5W.
+>>>>
+>>> reboot stuck mean system does not reboot any more?
 >
-> Is there still a reason to use ramdisks these days? If 8MB is not
-> enough to have a useful initrd, that might mean that everyone else
-> uses initramfs and you should just do the same thing?
+> It freezes when going for reboot.
+> Have to power off/on to boot again.
 >
-There is not specific reason to still use ramdisks, but I feel till we 
-remove this config, lets modify it to be used by few like me.
-I am ok with either way.
-Thanks
-> Then we can also remove this option here.
+> Btw I use an mmc, not an sd-card.
+> No other HW connected, just LAN-cable.
+> Bootloader is u-boot v2015.10.
+> o
+Have checked on 4.3.0-rc6-00006-gd03c139e7e77, still works on peach boards.
+Sorry I don't have Odroid U3 with me, may be Javier or Krzysztof might 
+help here to check whats wrong. To me its looks more of a board specific 
+issue for now.
+
+>>> As far as I can see there in __no__ functional changes that my patch introduce.
+>>> So ideally it should have work. My patches are based on the top on
+>>> vanilla v4.3-rc5.
+>>> (25cb62b Linux 4.3-rc5), can you check at this commit?
 >
-> 	Arnd
+> Will try tomorrow.
+>
+>>>
+>>> Will check with the commit mentioned by you tomorrow.
+>>>
+>>>>
+>>>> Without your patch set reboot worked.
+>>>>
+>>>>
+>>>> Thanks,
+>>>> --
+>>>> Markus Reichl
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>>
+>>> --
+>>> Regards,
+>>> Alim
+>>
+>>
+>>
+>>
+> Thanks,
+> --
+> Markus
 >
