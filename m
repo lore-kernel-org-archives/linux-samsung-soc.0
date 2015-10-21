@@ -1,89 +1,141 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 16/19] ARM: dts: s5pv210: replace legacy *,wakeup property with wakeup-source
-Date: Wed, 21 Oct 2015 11:10:13 +0100
-Message-ID: <1445422216-29375-17-git-send-email-sudeep.holla@arm.com>
-References: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
+Date: Wed, 21 Oct 2015 12:16:19 +0200
+Message-ID: <562765F3.9010306@osg.samsung.com>
+References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
+ <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com>
+ <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com>
+ <1606098.olLAyTIhB3@dell2.five-lan.de> <56272C1C.8040007@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56272C1C.8040007-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org, Alim Akhtar <alim.akhtar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kgene <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Though the keyboard and other driver will continue to support the legacy
-"gpio-key,wakeup", "linux,input-wakeup" boolean property to enable the
-wakeup source, "wakeup-source" is the new standard binding.
+Hello Alim,
 
-This patch replaces all the legacy wakeup properties with the unified
-"wakeup-source" property in order to avoid any futher copy-paste
-duplication.
+On 10/21/2015 08:09 AM, Alim Akhtar wrote:
 
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- arch/arm/boot/dts/s5pv210-aquila.dts   | 4 ++--
- arch/arm/boot/dts/s5pv210-goni.dts     | 4 ++--
- arch/arm/boot/dts/s5pv210-smdkv210.dts | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+[snip]
 
-diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
-index f00cea7aca2f..72f162e7040b 100644
---- a/arch/arm/boot/dts/s5pv210-aquila.dts
-+++ b/arch/arm/boot/dts/s5pv210-aquila.dts
-@@ -257,7 +257,7 @@
- 			linux,code = <KEY_POWER>;
- 			label = "power";
- 			debounce-interval = <1>;
--			gpio-key,wakeup;
-+			wakeup-source;
- 		};
- 	};
- };
-@@ -268,7 +268,7 @@
- 
- &keypad {
- 	linux,input-no-autorepeat;
--	linux,input-wakeup;
-+	wakeup-source;
- 	samsung,keypad-num-rows = <3>;
- 	samsung,keypad-num-columns = <3>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
-index a3d4643b202e..f4d0a023c31c 100644
---- a/arch/arm/boot/dts/s5pv210-goni.dts
-+++ b/arch/arm/boot/dts/s5pv210-goni.dts
-@@ -239,7 +239,7 @@
- 			linux,code = <KEY_POWER>;
- 			label = "power";
- 			debounce-interval = <1>;
--			gpio-key,wakeup;
-+			wakeup-source;
- 		};
- 	};
- };
-@@ -250,7 +250,7 @@
- 
- &keypad {
- 	linux,input-no-autorepeat;
--	linux,input-wakeup;
-+	wakeup-source;
- 	samsung,keypad-num-rows = <3>;
- 	samsung,keypad-num-columns = <3>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/s5pv210-smdkv210.dts b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-index da7d210df670..54fcc3fc82e2 100644
---- a/arch/arm/boot/dts/s5pv210-smdkv210.dts
-+++ b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-@@ -59,7 +59,7 @@
- 
- &keypad {
- 	linux,input-no-autorepeat;
--	linux,input-wakeup;
-+	wakeup-source;
- 	samsung,keypad-num-rows = <8>;
- 	samsung,keypad-num-columns = <8>;
- 	pinctrl-names = "default";
+>>>>>
+>>>>> Hi Alim,
+>>>>>
+>>>>> I have installed your patch set above with git am on top of
+>>>>> 4.3.0-rc6-00108-gce1fad2 torvalds/linux of today
+>>>>> with make exynos_defconfig on Odroid U3.
+>>>>>
+>>>> which exynos soc Odroid U3 uses?
+>>>>
+>>> OK, I can see its uses exynos4412 and exynos4412-odroidu3.dts does
+>>> include exynos4.dtsi,
+>>> so these should have worked.
+>>>
+>>>>> "halt -p" worked (power 0.0W).
+>>>>> "reboot" got stuck at 0.5W.
+>>>>>
+>>>> reboot stuck mean system does not reboot any more?
+>>
+>> It freezes when going for reboot.
+>> Have to power off/on to boot again.
+>>
+>> Btw I use an mmc, not an sd-card.
+>> No other HW connected, just LAN-cable.
+>> Bootloader is u-boot v2015.10.
+>> o
+> Have checked on 4.3.0-rc6-00006-gd03c139e7e77, still works on peach boards.
+> Sorry I don't have Odroid U3 with me, may be Javier or Krzysztof might help here to check whats wrong. To me its looks more of a board specific issue for now.
+> 
+
+Krzysztof has an Odroid XU3 lite and I have an Odroid XU4, both uses an
+Exynos5422 so we can't check what's wrong with Odroid U3 (Exynos4412).
+
+Having said that I think I know what is the issue here. Markus said that
+he is using an eMMC instead of an uSD (which is what I used and my guess
+is that Krzysztof did too).
+
+Now, there is a subtle difference between the old PMU restart handler
+and the syscon-reboot one, and that is the restart handler priorities:
+
+notifier                    priority
+------------------------------------
+pmu_restart_notify          128
+mmc_pwrseq_emmc_reset_nb    129
+syscon_restart_handle       192
+
+So, without Alim's patches, first the eMMC reset handler will be called
+and then the PMU restart handler but after his series, the syscon reset
+handler has a higher priority so the eMMC reset will never be called.
+
+But the problem is that the eMMC card has to be properly reset on system
+restart to allow the SoC iROM to be able to read the bootloader from the
+eMMC since the iROM doesn't have restart logic and the card shouldn't be
+left in an unknown state.
+
+So the problem here is not that the system is not being reset (that I
+think that works) but that on reboot, the system is not able to boot
+again since the ROM is not able to read the second stage bootloader.
+
+Markus, 
+
+Can you please test following patch [0] on top of Alim's series? If that
+works then it should either be part of Alim's series or the patches will
+have to wait until that patch lands into mainline. I don't have an eMMC
+to test it in XU4 but I'm pretty confident that it will solve the issue.
+
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+
+[0]:
+>From c9b250ee03bae338339b70693e906145c719f783 Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Date: Wed, 21 Oct 2015 11:59:44 +0200
+Subject: [RFT PATCH] mmc: pwrseq: Use highest priority for eMMC restart
+ handler
+
+The pwrseq_emmc driver does a eMMC card reset before a system reboot to
+allow broken or limited ROM boot-loaders, that don't have an eMMC reset
+logic, to be able to read the second stage from the eMMC.
+
+But this has to be called before a system reboot handler and while most
+of them use the priority 128, there are other restart handlers (such as
+the syscon-reboot one) that use a higher priority. So, use the highest
+priority to make sure that the eMMC hw is reset before a system reboot.
+
+Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+---
+ drivers/mmc/core/pwrseq_emmc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
+index 137c97fb7aa8..ad4f94ec7e8d 100644
+--- a/drivers/mmc/core/pwrseq_emmc.c
++++ b/drivers/mmc/core/pwrseq_emmc.c
+@@ -84,11 +84,11 @@ struct mmc_pwrseq *mmc_pwrseq_emmc_alloc(struct mmc_host *host,
+ 
+ 	/*
+ 	 * register reset handler to ensure emmc reset also from
+-	 * emergency_reboot(), priority 129 schedules it just before
+-	 * system reboot
++	 * emergency_reboot(), priority 255 is the highest priority
++	 * so it will be executed before any system reboot handler.
+ 	 */
+ 	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
+-	pwrseq->reset_nb.priority = 129;
++	pwrseq->reset_nb.priority = 255;
+ 	register_restart_handler(&pwrseq->reset_nb);
+ 
+ 	pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
+-- 
+2.4.3
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
