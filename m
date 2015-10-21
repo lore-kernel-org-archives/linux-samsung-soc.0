@@ -1,69 +1,434 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
- output clocks
-Date: Wed, 21 Oct 2015 01:59:40 -0700
-Message-ID: <20151021085940.20687.94974@quantum>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
- <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
- <20151020103416.20687.40409@quantum> <562622CF.1070906@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <562622CF.1070906@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH 12/19] ARM: dts: exynos: replace legacy *,wakeup property with wakeup-source
+Date: Wed, 21 Oct 2015 11:10:09 +0100
+Message-ID: <1445422216-29375-13-git-send-email-sudeep.holla@arm.com>
+References: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1445422216-29375-1-git-send-email-sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-UXVvdGluZyBTeWx3ZXN0ZXIgTmF3cm9ja2kgKDIwMTUtMTAtMjAgMDQ6MTc6MzUpCj4gT24gMjAv
-MTAvMTUgMTI6MzQsIE1pY2hhZWwgVHVycXVldHRlIHdyb3RlOgo+ID4+IGRpZmYgLS1naXQgYS9p
-bmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL2V4eW5vczU0MzMuaCBiL2luY2x1ZGUvZHQtYmluZGlu
-Z3MvY2xvY2svZXh5bm9zNTQzMy5oCj4gPj4gPiBpbmRleCA1YmQ4MGQ1Li40ZjBkNTY2IDEwMDY0
-NAo+ID4+ID4gLS0tIGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9leHlub3M1NDMzLmgKPiA+
-PiA+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svZXh5bm9zNTQzMy5oCj4gPj4gPiBA
-QCAtNzY1LDcgKzc2NSwxMCBAQAo+ID4+ID4gICNkZWZpbmUgQ0xLX1NDTEtfUkdCX1ZDTEsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAxMDkKPiA+PiA+ICAjZGVmaW5lIENMS19TQ0xLX1JH
-Ql9UVl9WQ0xLICAgICAgICAgICAgICAgICAgICAgICAgICAgMTEwCj4gPj4gPiAgCj4gPj4gPiAt
-I2RlZmluZSBESVNQX05SX0NMSyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDEx
-MQo+ID4+ID4gKyNkZWZpbmUgQ0xLX1BIWUNMS19IRE1JUEhZX1BJWEVMX0NMS09fUEhZICAgICAg
-ICAgICAgICAxMTEKPiA+PiA+ICsjZGVmaW5lIENMS19QSFlDTEtfSERNSVBIWV9UTURTX0NMS09f
-UEhZICAgICAgICAgICAgICAgMTEyCj4gPj4gPiArCj4gPj4gPiArI2RlZmluZSBESVNQX05SX0NM
-SyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDExMwo+ID4KPiA+IFdoeSBicmVh
-ayBjb21wYXRpYmlsaXR5IHdpdGggb2xkZXIgRFRCcz8KPiAKPiBJIHVzZWQgdG8gYmUgcmVzaXN0
-YW50IHRvIGNoYW5naW5nIHRob3NlIF9OUl9DTEsgZGVmaW5lcwo+IGluIHRoZSBwYXN0IGJ1dCB0
-aGVuIHJlYWxpemVkIHRoZXkgYXJlIG5vdCBwYXJ0IG9mIHRoZSBEVCBBQkkuCj4gVGhlc2UgZGVm
-aW5lcyBhcmUgdXNlZCBvbmx5IGluIGRyaXZlcnMgYW5kIGFmZmVjdCBvbmx5IHNpemUKPiBvZiB0
-aGUgcHJvdmlkZXIncyBhbGxvY2F0ZWQgY2xvY2sgYXJyYXkuIFRoZSBjb25mdXNpb24gbWF5IGJl
-Cj4gY2F1c2VkIGJ5IHRoZSBmYWN0IHRoYXQgdGhlIHdob2xlIGhlYWRlciBpcyBzaGFyZWQgYnkg
-dGhlIGtlcm5lbAo+IHNvdXJjZSBhbmQgZHRzLgo+IAo+ICQgZ2l0IGdyZXAgLWwgX05SX0NMSyBh
-cmNoL2FybS9ib290L2R0cyBkcml2ZXJzL2Nsay9zYW1zdW5nLwo+IGRyaXZlcnMvY2xrL3NhbXN1
-bmcvY2xrLWV4eW5vcy1jbGtvdXQuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczMy
-NTAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczQuYwo+IGRyaXZlcnMvY2xrL3Nh
-bXN1bmcvY2xrLWV4eW5vczQ0MTUuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczUy
-NTAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczUyNjAuYwo+IGRyaXZlcnMvY2xr
-L3NhbXN1bmcvY2xrLWV4eW5vczU0MTAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5v
-czU0MjAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczU0MzMuYwo+IGRyaXZlcnMv
-Y2xrL3NhbXN1bmcvY2xrLWV4eW5vczU0NDAuYwo+IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4
-eW5vczcuYwo+IAo+IFRoZXJlIGlzIG5vICpfTlJfQ0xLIGluIGFueSBkdHMgZmlsZS4KPiBOZXcg
-a2VybmVsIHdpbGwgd29yayB3aWxsIG9sZGVyIERUQiwgdGhlIGRyaXZlciB3aWxsIGp1c3QKPiBy
-ZWdpc3RlciBtb3JlIGNsb2Nrcywgd2hpY2ggd2lsbCBub3QgYmUgZGVyZWZlcmVuY2VkIGFueXdo
-ZXJlCj4gaW4gb2xkZXIgZHRiLgoKSSBza2ltbWVkIHRocm91Z2ggdGhlIGNvZGUgdG9vIGZhc3Qu
-IFlvdSdyZSByaWdodCwgaXRzIGEgc2VudGluZWwvbWF4CnZhbHVlIHRoaW5nIHdoaWNoIGlzIG5v
-dCBwYXJ0IG9mIHRoZSBBQkkuCgpQYXJkb24gdGhlIG5vaXNlLiBOb3RoaW5nIHRvIHNlZSBoZXJl
-LCBtb3ZlIGFsb25nLi4uCgpSZWdhcmRzLApNaWtlCgo+IAo+IC0tIAo+IFJlZ2FyZHMsCj4gU3ls
-d2VzdGVyCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
-ZSAidW5zdWJzY3JpYmUgbGludXgtY2xrIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBt
-YWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDov
-L3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Though the keyboard and other driver will continue to support the legacy
+"gpio-key,wakeup", "linux-keypad,wakeup" boolean property to enable the
+wakeup source, "wakeup-source" is the new standard binding.
+
+This patch replaces all the legacy wakeup properties with the unified
+"wakeup-source" property in order to avoid any futher copy-paste
+duplication.
+
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos3250-monk.dts           |  6 +++---
+ arch/arm/boot/dts/exynos3250-rinato.dts         |  6 +++---
+ arch/arm/boot/dts/exynos4210-origen.dts         | 10 +++++-----
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |  2 +-
+ arch/arm/boot/dts/exynos4210-trats.dts          |  2 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |  4 ++--
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  2 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts        |  2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts         |  2 +-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |  2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts         |  4 ++--
+ arch/arm/boot/dts/exynos5250-arndale.dts        | 12 ++++++------
+ arch/arm/boot/dts/exynos5250-snow.dts           |  4 ++--
+ arch/arm/boot/dts/exynos5250-spring.dts         |  4 ++--
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts   |  2 +-
+ arch/arm/boot/dts/exynos5420-peach-pit.dts      |  4 ++--
+ arch/arm/boot/dts/exynos5800-peach-pi.dts       |  4 ++--
+ 17 files changed, 36 insertions(+), 36 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index 540a0adf2be6..b77ea2163a0a 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -43,7 +43,7 @@
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+ 			debounce-interval = <10>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+@@ -67,7 +67,7 @@
+ 			interrupt-parent = <&gpx1>;
+ 			interrupts = <5 0>;
+ 			reg = <0x25>;
+-			wakeup;
++			wakeup-source;
+ 
+ 			muic: max77836-muic {
+ 				compatible = "maxim,max77836-muic";
+@@ -184,7 +184,7 @@
+ 		interrupt-parent = <&gpx0>;
+ 		interrupts = <7 0>;
+ 		reg = <0x66>;
+-		wakeup;
++		wakeup-source;
+ 
+ 		s2mps14_osc: clocks {
+ 			compatible = "samsung,s2mps14-clk";
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 41a5fafb9aa9..7acd11d2d957 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -43,7 +43,7 @@
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+ 			debounce-interval = <10>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+@@ -58,7 +58,7 @@
+ 			interrupt-parent = <&gpx1>;
+ 			interrupts = <5 0>;
+ 			reg = <0x25>;
+-			wakeup;
++			wakeup-source;
+ 
+ 			muic: max77836-muic {
+ 				compatible = "maxim,max77836-muic";
+@@ -245,7 +245,7 @@
+ 		interrupt-parent = <&gpx0>;
+ 		interrupts = <7 0>;
+ 		reg = <0x66>;
+-		wakeup;
++		wakeup-source;
+ 
+ 		s2mps14_osc: clocks {
+ 			compatible = "samsung,s2mps14-clk";
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index e050d85cdacd..9e97f6065493 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -59,35 +59,35 @@
+ 			label = "Up";
+ 			gpios = <&gpx2 0 1>;
+ 			linux,code = <KEY_UP>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		down {
+ 			label = "Down";
+ 			gpios = <&gpx2 1 1>;
+ 			linux,code = <KEY_DOWN>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		back {
+ 			label = "Back";
+ 			gpios = <&gpx1 7 1>;
+ 			linux,code = <KEY_BACK>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		home {
+ 			label = "Home";
+ 			gpios = <&gpx1 6 1>;
+ 			linux,code = <KEY_HOME>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		menu {
+ 			label = "Menu";
+ 			gpios = <&gpx1 5 1>;
+ 			linux,code = <KEY_MENU>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+index 043b03caff8f..82babe064576 100644
+--- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+@@ -69,7 +69,7 @@
+ 	samsung,keypad-num-rows = <2>;
+ 	samsung,keypad-num-columns = <8>;
+ 	linux,keypad-no-autorepeat;
+-	linux,keypad-wakeup;
++	wakeup-source;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&keypad_rows &keypad_cols>;
+ 	status = "okay";
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index ba34886f8b65..1317c0fc7005 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -111,7 +111,7 @@
+ 			linux,code = <116>;
+ 			label = "power";
+ 			debounce-interval = <10>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		ok-key {
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index eb379526e234..0eed67bef4b7 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -91,7 +91,7 @@
+ 			linux,code = <171>;
+ 			label = "config";
+ 			debounce-interval = <1>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		camera-key {
+@@ -106,7 +106,7 @@
+ 			linux,code = <116>;
+ 			label = "power";
+ 			debounce-interval = <1>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		ok-key {
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index db52841297a5..079f2d373c4c 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -34,7 +34,7 @@
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+ 			debounce-interval = <10>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+index 679ac103ebf6..9491449c01e8 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+@@ -48,7 +48,7 @@
+ 			linux,code = <KEY_HOME>;
+ 			label = "home key";
+ 			debounce-interval = <10>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 9d528af68c1a..107e77dc8060 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -426,7 +426,7 @@
+ 	samsung,keypad-num-rows = <3>;
+ 	samsung,keypad-num-columns = <2>;
+ 	linux,keypad-no-autorepeat;
+-	linux,keypad-wakeup;
++	wakeup-source;
+ 	pinctrl-0 = <&keypad_rows &keypad_cols>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index c2421df1fa43..210a6b2e51d4 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -49,7 +49,7 @@
+ 	samsung,keypad-num-rows = <3>;
+ 	samsung,keypad-num-columns = <8>;
+ 	linux,keypad-no-autorepeat;
+-	linux,keypad-wakeup;
++	wakeup-source;
+ 	pinctrl-0 = <&keypad_rows &keypad_cols>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 2a1ebb76ebe0..cdb2e81d9d04 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -119,7 +119,7 @@
+ 			linux,code = <116>;
+ 			label = "power";
+ 			debounce-interval = <10>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		key-ok {
+@@ -127,7 +127,7 @@
+ 			linux,code = <139>;
+ 			label = "ok";
+ 			debounce-inteval = <10>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index db3f65f3eb45..866934e948fc 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -34,42 +34,42 @@
+ 			label = "SW-TACT2";
+ 			gpios = <&gpx1 4 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_MENU>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		home {
+ 			label = "SW-TACT3";
+ 			gpios = <&gpx1 5 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_HOME>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		up {
+ 			label = "SW-TACT4";
+ 			gpios = <&gpx1 6 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_UP>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		down {
+ 			label = "SW-TACT5";
+ 			gpios = <&gpx1 7 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_DOWN>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		back {
+ 			label = "SW-TACT6";
+ 			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_BACK>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		wakeup {
+ 			label = "SW-TACT7";
+ 			gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_WAKEUP>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 0720caab5511..cb13c94e6089 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -41,7 +41,7 @@
+ 			label = "Power";
+ 			gpios = <&gpx1 3 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		lid-switch {
+@@ -50,7 +50,7 @@
+ 			linux,input-type = <5>; /* EV_SW */
+ 			linux,code = <0>; /* SW_LID */
+ 			debounce-interval = <1>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
+index c1edd6d038a9..0f500cb1eb2d 100644
+--- a/arch/arm/boot/dts/exynos5250-spring.dts
++++ b/arch/arm/boot/dts/exynos5250-spring.dts
+@@ -37,7 +37,7 @@
+ 			label = "Power";
+ 			gpios = <&gpx1 3 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		lid-switch {
+@@ -46,7 +46,7 @@
+ 			linux,input-type = <5>; /* EV_SW */
+ 			linux,code = <0>; /* SW_LID */
+ 			debounce-interval = <1>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index eeb4ac22cfce..797c05dec637 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -46,7 +46,7 @@
+ 			label = "SW-TACT1";
+ 			gpios = <&gpx2 7 1>;
+ 			linux,code = <KEY_WAKEUP>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 8f4d76c5e11c..d8ab9b6f4999 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -64,7 +64,7 @@
+ 			label = "Power";
+ 			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		lid-switch {
+@@ -73,7 +73,7 @@
+ 			linux,input-type = <5>; /* EV_SW */
+ 			linux,code = <0>; /* SW_LID */
+ 			debounce-interval = <1>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 7d5b386b5ae6..68b7e8bcc5bd 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -63,7 +63,7 @@
+ 			label = "Power";
+ 			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 		lid-switch {
+@@ -72,7 +72,7 @@
+ 			linux,input-type = <5>; /* EV_SW */
+ 			linux,code = <0>; /* SW_LID */
+ 			debounce-interval = <1>;
+-			gpio-key,wakeup;
++			wakeup-source;
+ 		};
+ 
+ 	};
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
