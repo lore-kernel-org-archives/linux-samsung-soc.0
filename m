@@ -1,141 +1,198 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
-Date: Wed, 21 Oct 2015 12:16:19 +0200
-Message-ID: <562765F3.9010306@osg.samsung.com>
-References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
- <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com>
- <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com>
- <1606098.olLAyTIhB3@dell2.five-lan.de> <56272C1C.8040007@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos5422-odroidxu3: Added UHS-I bus speed
+ support
+Date: Wed, 21 Oct 2015 19:28:54 +0900
+Message-ID: <562768E6.8010807@samsung.com>
+References: <1444578364-1384-1-git-send-email-linux.amoon@gmail.com>
+ <1444578364-1384-3-git-send-email-linux.amoon@gmail.com>
+ <561B48B7.1040201@samsung.com>
+ <CANAwSgSLFviT4ZNXTYwxYs2pbrr9ozJmPMauhgRPO0556Rsr_g@mail.gmail.com>
+ <561C4CEE.3050905@samsung.com>
+ <CANAwSgRJ+5O-x61K9E_AxTZWQy3jJrKF5MiLtWRdUU29CCfa-Q@mail.gmail.com>
+ <561C7DF1.6000609@samsung.com>
+ <CANAwSgRBzFqHB98wSQnQu-ggGqRT2H6wC415wULXVhPg0uw_3A@mail.gmail.com>
+ <561D9ACE.6050103@samsung.com>
+ <CANAwSgS=AdOKre79PAP8EQfhvZtMrWuMWPodoPr3_Sq=TWJwbw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56272C1C.8040007-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org, Alim Akhtar <alim.akhtar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kgene <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47740 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754253AbbJUK24 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Oct 2015 06:28:56 -0400
+In-reply-to: <CANAwSgS=AdOKre79PAP8EQfhvZtMrWuMWPodoPr3_Sq=TWJwbw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hello Alim,
+Hi, Anand.
 
-On 10/21/2015 08:09 AM, Alim Akhtar wrote:
-
-[snip]
-
->>>>>
->>>>> Hi Alim,
->>>>>
->>>>> I have installed your patch set above with git am on top of
->>>>> 4.3.0-rc6-00108-gce1fad2 torvalds/linux of today
->>>>> with make exynos_defconfig on Odroid U3.
->>>>>
->>>> which exynos soc Odroid U3 uses?
->>>>
->>> OK, I can see its uses exynos4412 and exynos4412-odroidu3.dts does
->>> include exynos4.dtsi,
->>> so these should have worked.
->>>
->>>>> "halt -p" worked (power 0.0W).
->>>>> "reboot" got stuck at 0.5W.
->>>>>
->>>> reboot stuck mean system does not reboot any more?
->>
->> It freezes when going for reboot.
->> Have to power off/on to boot again.
->>
->> Btw I use an mmc, not an sd-card.
->> No other HW connected, just LAN-cable.
->> Bootloader is u-boot v2015.10.
->> o
-> Have checked on 4.3.0-rc6-00006-gd03c139e7e77, still works on peach boards.
-> Sorry I don't have Odroid U3 with me, may be Javier or Krzysztof might help here to check whats wrong. To me its looks more of a board specific issue for now.
+On 10/14/2015 12:58 PM, Anand Moon wrote:
+> hi Krzysztof,
 > 
+> On 14 October 2015 at 05:29, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On 14.10.2015 01:27, Anand Moon wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On 13 October 2015 at 09:13, Krzysztof Kozlowski
+>>> <k.kozlowski@samsung.com> wrote:
+>>>>
+>>>> On 13.10.2015 12:08, Anand Moon wrote:
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> On 13 October 2015 at 05:44, Krzysztof Kozlowski
+>>>>> <k.kozlowski@samsung.com> wrote:
+>>>>>> On 13.10.2015 00:32, Anand Moon wrote:
+>>>>>>> Hi Krzysztof,
+>>>>>>>
+>>>>>>> On 12 October 2015 at 11:14, Krzysztof Kozlowski
+>>>>>>> <k.kozlowski@samsung.com> wrote:
+>>>>>>>> On 12.10.2015 00:46, Anand Moon wrote:
+>>>>>>>>> Added support for UHS-I bus speed 50MB/s (SDR50, DDR50) 104MB/s (SDR104)
+>>>>>>>>
+>>>>>>>> This description is not entirely correct. The MMC driver already
+>>>>>>>> supports these UHS speeds (you did not any code) so you rather enabled
+>>>>>>>> it (description of bindings says "is supported").
+>>>>>>>>
+>>>>>>>> You mentioned DDR50 but I don't see respective property below.
+>>>>>>>>
+>>>>>>>> How do you know that these modes are really supported? I don't know. Can
+>>>>>>>> you convince me?
+>>>>>>>
+>>>>>>> Setting this DDR50 capability give me this error. That's the reason to
+>>>>>>> drop this capability.
+>>>>>>
+>>>>>> But you mentioned it in commit message! "Added support for UHS-I ...
+>>>>>> (DDR50)"
+>>>>>>
+>>>>>> In the same time dropping DDR50 is not an sufficient proof that "SDR50
+>>>>>> and SDR104 are really supported".
+>>>>>>
+>>>>>
+>>>>> These changes are related to the microSD card capabilities.
+>>>>> So SDR50 have better frequency over DDR50. On the same Sandisk card.
+>>>>>
+>>>>> When the card select the capability for DDR50
+>>>>> ---------------------------------------------------
+>>>>> [    4.001477] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>>>> req 50000000Hz, actual 50000000HZ div = 0)
+>>>>> [    4.001604] mmc1: new ultra high speed DDR50 SDHC card at address aaaa
+>>>>> [    4.004505] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+>>>>> [    4.009179] mmcblk0: error -110 sending status command, retrying
+>>>>> [    4.009271] mmcblk0: error -115 sending stop command, original cmd
+>>>>> response 0x900, card status 0x900
+>>>>> [    4.009275] mmcblk0: error -84 transferring data, sector 0, nr 8,
+>>>>> cmd response 0x900, card status 0x0
+>>>>> [    4.025563] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>>>> req 400000Hz, actual 396825HZ div = 63)
+>>>>> [    4.067770] Console: switching to colour frame buffer device 274x77
+>>>>> [    4.098782] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>>>> req 50000000Hz, actual 50000000HZ div = 0)
+>>>>> [    4.099692] mmc1: tried to reset card
+>>>>> [    4.101332]  mmcblk0: p1 p2
 
-Krzysztof has an Odroid XU3 lite and I have an Odroid XU4, both uses an
-Exynos5422 so we can't check what's wrong with Odroid U3 (Exynos4412).
+I found this issue that produced on your board.
+I will send the patch and test DDR50 on your board.
 
-Having said that I think I know what is the issue here. Markus said that
-he is using an eMMC instead of an uSD (which is what I used and my guess
-is that Krzysztof did too).
+Best Regards,
+Jaehoon Chung
 
-Now, there is a subtle difference between the old PMU restart handler
-and the syscon-reboot one, and that is the restart handler priorities:
-
-notifier                    priority
-------------------------------------
-pmu_restart_notify          128
-mmc_pwrseq_emmc_reset_nb    129
-syscon_restart_handle       192
-
-So, without Alim's patches, first the eMMC reset handler will be called
-and then the PMU restart handler but after his series, the syscon reset
-handler has a higher priority so the eMMC reset will never be called.
-
-But the problem is that the eMMC card has to be properly reset on system
-restart to allow the SoC iROM to be able to read the bootloader from the
-eMMC since the iROM doesn't have restart logic and the card shouldn't be
-left in an unknown state.
-
-So the problem here is not that the system is not being reset (that I
-think that works) but that on reboot, the system is not able to boot
-again since the ROM is not able to read the second stage bootloader.
-
-Markus, 
-
-Can you please test following patch [0] on top of Alim's series? If that
-works then it should either be part of Alim's series or the patches will
-have to wait until that patch lands into mainline. I don't have an eMMC
-to test it in XU4 but I'm pretty confident that it will solve the issue.
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
-
-[0]:
->From c9b250ee03bae338339b70693e906145c719f783 Mon Sep 17 00:00:00 2001
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Date: Wed, 21 Oct 2015 11:59:44 +0200
-Subject: [RFT PATCH] mmc: pwrseq: Use highest priority for eMMC restart
- handler
-
-The pwrseq_emmc driver does a eMMC card reset before a system reboot to
-allow broken or limited ROM boot-loaders, that don't have an eMMC reset
-logic, to be able to read the second stage from the eMMC.
-
-But this has to be called before a system reboot handler and while most
-of them use the priority 128, there are other restart handlers (such as
-the syscon-reboot one) that use a higher priority. So, use the highest
-priority to make sure that the eMMC hw is reset before a system reboot.
-
-Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
----
- drivers/mmc/core/pwrseq_emmc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
-index 137c97fb7aa8..ad4f94ec7e8d 100644
---- a/drivers/mmc/core/pwrseq_emmc.c
-+++ b/drivers/mmc/core/pwrseq_emmc.c
-@@ -84,11 +84,11 @@ struct mmc_pwrseq *mmc_pwrseq_emmc_alloc(struct mmc_host *host,
- 
- 	/*
- 	 * register reset handler to ensure emmc reset also from
--	 * emergency_reboot(), priority 129 schedules it just before
--	 * system reboot
-+	 * emergency_reboot(), priority 255 is the highest priority
-+	 * so it will be executed before any system reboot handler.
- 	 */
- 	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
--	pwrseq->reset_nb.priority = 129;
-+	pwrseq->reset_nb.priority = 255;
- 	register_restart_handler(&pwrseq->reset_nb);
- 
- 	pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
--- 
-2.4.3
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>>
+>>>>>
+>>>>> When the card select the capability for SDR50
+>>>>> ---------------------------------------------------------------------------------
+>>>>> [ 2.439806] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot req
+>>>>> 100000000Hz, actual 100000000HZ div = 0)
+>>>>> [ 2.449729] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+>>>>> [ 2.455984] mmcblk0: mmc1:aaaa SL32G 29.7 GiB
+>>>>> [ 2.461743] mmcblk0: p1 p2
+>>>>>
+>>>>> Which will relate to better read/write speed.
+>>>>
+>>>> Which is not an answer to my question. To none of my previous questions.
+>>>>
+>>>
+>>> Basically UHS-I capability  (sd-uhs-sdr12, sd-uhs-sdr25, sd-uhs-sdr50,
+>>> sd-uhs-sdr104) help tune speed supported for mmc
+>>>
+>>> I have tired to compare the speed on high speed UHS-I vs ultra high
+>>> speed UHS-I using izone utility.
+>>>
+>>> [    2.572469] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+>>> req 50000000Hz, actual 50000000HZ div = 0)
+>>> [    2.572609] mmc1: new high speed SDHC card at address aaaa
+>>>
+>>>       Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+>>> -r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+>>>         Output is in kBytes/sec
+>>>         Time Resolution = 0.000001 seconds.
+>>>         Processor cache size set to 32 kBytes.
+>>>         Processor cache line size set to 64 bytes.
+>>>         File stride size set to 17 * record size.
+>>>                                                               random
+>>>  random     bkwd    record    stride
+>>>               kB  reclen    write  rewrite    read    reread    read
+>>>   write     read   rewrite      read   fwrite frewrite    fread
+>>> freread
+>>>            10240       4     1631        0     6556        0     5538      982
+>>>            10240      64     8828        0    18897        0    17994      303
+>>>            10240     128     6269        0    20670        0    20128     1096
+>>> ---------------------------------------------------------------------------------------------------------
+>>> [    2.613761] mmc_host mmc1: Bus speed (slot 0) = 100000000Hz (slot
+>>> req 100000000Hz, actual 100000000HZ div = 0)
+>>> [    2.623573] mmc1: new ultra high speed SDR50 SDHC card at address aaaa
+>>>
+>>>         Command line used: ./iozone -L64 -S32 -azecwI -+n -r4k -r64k
+>>> -r128k -s10M -i0 -i1 -i2 -f datafile -Rb out.xls
+>>>         Output is in kBytes/sec
+>>>         Time Resolution = 0.000001 seconds.
+>>>         Processor cache size set to 32 kBytes.
+>>>         Processor cache line size set to 64 bytes.
+>>>         File stride size set to 17 * record size.
+>>>                                                               random
+>>>  random     bkwd    record    stride
+>>>               kB  reclen    write  rewrite    read    reread    read
+>>>   write     read   rewrite      read   fwrite frewrite    fread
+>>> freread
+>>>            10240       4     1809        0     7507        0     5233      859
+>>>            10240      64    11622        0    31250        0    28072      516
+>>>            10240     128     4320        0    34417        0    32509     1148
+>>>
+>>> My observation is that their slight increase in read/write operation.
+>>>
+>>> Hope I have tried to answer you query. If I am wrong please let me know.
+>>
+>> Nope, that did not answer my query. You gave some performance benchmarks
+>> but my question was not about the speed of anything. The question is
+>> (once again):
+>> How do you know that these modes are really supported?
+>>
+>> You are marking the *host* as supporting these modes. Please provide
+>> information that host supports them *really*, not by experimenting "oh,
+>> it seems to work now, maybe it will work always".
+>>
+>> Usually vendors, if their products implement some kind of
+>> specification/protocol, they mark the products as "compatible with XYZ" etc.
+> 
+> I found this link from hardkernel website which specify the interface support
+> 
+> http://www.hardkernel.com/main/products/prdt_info.php?g_code=G141578491347
+> 
+> Manufacturer Part Number : Sandisk SDSDQAD-016G
+> Interface : UHS-1 SDR50
+> 
+> I don't know much internal specification of the Odroid XU3/XU4 Boards.
+> 
+> I am not sure if it will support host will sd-uhs-sdr104, but it will
+> be compatible for sd-uhs-sdr12, sd-uhs-sdr25, sd-uhs-sdr50.
+> 
+> -Anand Moon
+> 
+>>
+>> Best regards,
+>> Krzysztof
+> 
