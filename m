@@ -1,46 +1,37 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: change the compatible from exynos5250 to
- exynos3250
-Date: Wed, 21 Oct 2015 15:39:15 +0900
-Message-ID: <1445409555-1684-2-git-send-email-jh80.chung@samsung.com>
-References: <1445409555-1684-1-git-send-email-jh80.chung@samsung.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1445409555-1684-1-git-send-email-jh80.chung@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: ulf.hansson@linaro.org, kgene@kernel.org, k.kozlowski@samsung.com, linux-arm-kernel@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v4 6/8] drivers: soc: add support for exynos SROM driver
+Date: Wed, 21 Oct 2015 10:32:49 +0300
+Message-ID: <00a401d10bd2$b0ddf930$1299eb90$@samsung.com>
+References: <1445255206-11148-1-git-send-email-pankaj.dubey@samsung.com>
+ <1445255206-11148-7-git-send-email-pankaj.dubey@samsung.com>
+ <56258683.7070204@samsung.com> <5625B92C.10505@samsung.com>
+ <5625C07D.4030706@samsung.com> <014301d10b01$488873f0$d9995bd0$@samsung.com>
+ <20151020082047.GA923@samsunx.samsung>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24693 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752150AbbJUHcx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Oct 2015 03:32:53 -0400
+In-reply-to: <20151020082047.GA923@samsunx.samsung>
+Content-language: ru
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Andi Shyti' <andi.shyti@samsung.com>
+Cc: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, thomas.ab@samsung.com
 
-To use more excatly, change compatible from exynos5250 to exynos3250.
-Exynos3250 and exnos5250 are some difference.
+ Hello!
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> can we add the "depends on ... && PM" now, later, once
+> you'll extend it, you remove it again?
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 033def4..05ed242 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -333,7 +333,7 @@
- 		};
- 
- 		mshc_0: mshc@12510000 {
--			compatible = "samsung,exynos5250-dw-mshc";
-+			compatible = "samsung,exynos3250-dw-mshc";
- 			reg = <0x12510000 0x1000>;
- 			interrupts = <0 142 0>;
- 			clocks = <&cmu CLK_SDMMC0>, <&cmu CLK_SCLK_MMC0>;
-@@ -345,7 +345,7 @@
- 		};
- 
- 		mshc_1: mshc@12520000 {
--			compatible = "samsung,exynos5250-dw-mshc";
-+			compatible = "samsung,exynos3250-dw-mshc";
- 			reg = <0x12520000 0x1000>;
- 			interrupts = <0 143 0>;
- 			clocks = <&cmu CLK_SDMMC1>, <&cmu CLK_SCLK_MMC1>;
--- 
-1.9.1
+ Yes, you can. However, i think i'll post my patches as soon as the code gets integrated into some repository, before it even goes
+to the RC. So, it's up to you.
 
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
