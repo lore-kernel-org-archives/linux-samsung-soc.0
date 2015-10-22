@@ -1,142 +1,125 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCHv2] ARM: dts: use vmmc-supply of emmc/sd for exynos5422-odroidxu3
-Date: Thu, 22 Oct 2015 18:34:17 +0530
-Message-ID: <CANAwSgQFqcM++D6FoTXTnZJryaoi92pEiSvbjyz8rj79VmGOMQ@mail.gmail.com>
-References: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com> <56283582.5010908@samsung.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: Consolidate SRAM bindings from all
+ vendors
+Date: Thu, 22 Oct 2015 15:34:47 +0200
+Message-ID: <20151022133447.GZ10947@lukather>
+References: <1445477130-407-1-git-send-email-k.kozlowski@samsung.com>
+ <20151022090529.GV10947@lukather>
+ <5628AA23.5070608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f8lmXUvqnCdFQPaI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56283582.5010908@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <5628AA23.5070608@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-hi Krzysztof,
 
-On 22 October 2015 at 06:31, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 20.10.2015 21:56, Anand Moon wrote:
->> Changes need for host controller to detect UHS-I highspeed cards.
->> Changes in VDDQ_MMC2 voltage range help scale
->> the required voltage to detect and load the microSD cards.
->
-> Thanks for updating description of commit.
->
->>
->> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->> ---
->> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
->>
->> Changes:
->> Drop the ranp_delay for LDO9.
->>
->> Thanks to : Krzysztof, Doug Anderson, Jaehoon Chung for helping
->> me out figure out the mmc core requirement.
->>
->> Also drop the previous changes:
->> use cd-gpio method to detect sd-card.
->> Added UHS-I bus speed support.
->>
->> [    4.713553] random: nonblocking pool is initialized
->> [    4.718423] 14530000.hdmi supply hdmi-en not found, using dummy regulator
->> [    4.726206] exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
->> [    4.732555] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
->> [    4.740180] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
->> [    4.746936] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->> [    4.753428] [drm] No driver support for vblank timestamp query.
->> [    4.940794] Console: switching to colour frame buffer device 274x77
->> [    4.995344] exynos-drm exynos-drm: fb0:  frame buffer device
->> [    5.024573] [drm] Initialized exynos 1.0.0 20110530 on minor 0
->> [    5.031164] exynos-dwc3 usb@12000000: no suspend clk specified
->> [    5.054571] usb 2-1: new full-speed USB device number 2 using exynos-ohci
->> [    5.159527] dwmmc_exynos 12220000.mmc: Busy; trying anyway
->> [    5.163705] mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x0)
->> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> index 1af5bdc..a4be3e0 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> @@ -182,9 +182,10 @@
->>
->>                       ldo13_reg: LDO13 {
->>                               regulator-name = "vdd_ldo13";
->> -                             regulator-min-microvolt = <2800000>;
->> +                             regulator-min-microvolt = <1800000>;
->
-> You did not convinced me in previous discussion about the change to
-> 1.8V. I said that:
->> On the same diagram few lines below:
->> VDDQ_MMC2: 2.8V 250mA
->
-> You responded:
->> You are correct.
->
-> So I am confused. Are you sure that this SD card block can/should
-> operate on 1.8V? Have you actually tried this?
->
+--f8lmXUvqnCdFQPaI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Look like I missed this point. Here is the link I would like to share.
+On Thu, Oct 22, 2015 at 06:19:31PM +0900, Krzysztof Kozlowski wrote:
+> On 22.10.2015 18:05, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Thu, Oct 22, 2015 at 10:25:28AM +0900, Krzysztof Kozlowski wrote:
+> >> SRAM bindings for various SoCs, using the mmio-sram genalloc
+> >> API, are spread over different places - per SoC vendor. Since all of
+> >> these are quite similar (they depend on mmio-sram) move them to a comm=
+on
+> >> place.
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >> Cc: Heiko Stuebner <heiko@sntech.de>
+> >> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> >> Cc: Chen-Yu Tsai <wens@csie.org>
+> >> Cc: Kukjin Kim <kgene@kernel.org>
+> >> Suggested-by: Rob Herring <robh+dt@kernel.org>
+> >>
+> >> ---
+> >>
+> >> Changes since v1:
+> >> 1. New patch. Extended suggestion from Rob.
+> >> ---
+> >>  .../bindings/{arm/rockchip/pmu-sram.txt =3D> sram/rockchip-pmu-sram.t=
+xt}    | 0
+> >>  .../bindings/{arm/rockchip/smp-sram.txt =3D> sram/rockchip-smp-sram.t=
+xt}    | 0
+> >>  .../bindings/{arm/exynos/smp-sysram.txt =3D> sram/samsung-sram.txt}  =
+       | 0
+> >>  Documentation/devicetree/bindings/{misc =3D> sram}/sram.txt          =
+       | 0
+> >>  .../devicetree/bindings/{soc/sunxi/sram.txt =3D> sram/sunxi-sram.txt}=
+       | 0
+> >>  5 files changed, 0 insertions(+), 0 deletions(-)
+> >>  rename Documentation/devicetree/bindings/{arm/rockchip/pmu-sram.txt =
+=3D> sram/rockchip-pmu-sram.txt} (100%)
+> >>  rename Documentation/devicetree/bindings/{arm/rockchip/smp-sram.txt =
+=3D> sram/rockchip-smp-sram.txt} (100%)
+> >>  rename Documentation/devicetree/bindings/{arm/exynos/smp-sysram.txt =
+=3D> sram/samsung-sram.txt} (100%)
+> >>  rename Documentation/devicetree/bindings/{misc =3D> sram}/sram.txt (1=
+00%)
+> >>  rename Documentation/devicetree/bindings/{soc/sunxi/sram.txt =3D> sra=
+m/sunxi-sram.txt} (100%)
+> >=20
+> > I'm not sure about that one. The SRAM bindins we have for sunxi is for
+> > an SRAM controller, that maps the SRAM either to the CPU or to the
+> > devices.
+> >=20
+> > It's not really related to the other users, and wouldn't it be
+> > confusing to have a driver in drivers/soc, and a Documentation in
+> > another sub-directory?
+>=20
+> I guess the only relation to other users is the "mmio-sram". In the same
+> time this is still similar to e.g. Samsung's sram bindings (where the
+> memory is mapped to CPU only).
+>=20
+> Being located in drivers/soc is not an issue here - code for other
+> vendors may be moved there as well in the future.
+>=20
+> Of course I do not insist. Actually Rob's comment was only about moving
+> sram.txt and Samsung's sram to common place.
+>=20
+> Anyway I will be sending v3 of these because while looking more
+> carefully I found hard-coded paths to bindings/misc/sram.txt. I'll fix
+> it in next version.
 
-http://www.hjreggel.net/cardspeed/cs_sdxc.html
-Section: Summary of SD modes
+I didn't really have the context. If Rob feels like we should do that,
+then go ahead.
 
-https://en.wikipedia.org/wiki/Secure_Digital
-Section: Power consumption
+Maxime
 
-Their different requirement for voltage requirement for UHS-I, the max
-value is around 3.3V
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
->>                               regulator-max-microvolt = <2800000>;
->>                               regulator-always-on;
->> +                             regulator-ramp-delay = <12000>;
->
-> NAK
->
-> We've been talking about this. Sooo maaaanyyyy times.
->
-> If you are going to send v3 please come up with detailed reasoning,
-> which will convince my stubborn mind.
->
+--f8lmXUvqnCdFQPaI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Look like I missed this point. my typo. Will drop this in next version.
-No matter I try hard, it turn out I make silly and annoying mistake.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
--Anand Moon
+iQIcBAEBAgAGBQJWKOX3AAoJEBx+YmzsjxAggIgP/iBRI8a2YT4JxpscEhidRCuH
+bSsgvwZFt/RryoU8cs44payOvJPooBK3Whe6vm+IZ+zjTusznHOt4Um8hkovFv1u
+kgn1dA2x3UYSufvA6rdcdJI2XL3DOD37DSyhodYf6mpTHukoeqDViNxSixtbA/OW
+OOGyIzyC6QxzcPwffpUrCmB2kAZoacIo4wWu9pYbrCNwRmnBVm6XEKVFm65QB50E
+tdnX68g0DLfGV59FqJsBvU/4X1igiUe8uL/6FiHgD3RaURVmN7K7macMMahYQjhj
+1yRh8PPJaptBr8jvcEuArDNPSLRtoBKyVZzWXL6cG/g7uVzxF11sDYHRgF/LnCLx
+W+KGim4iJvVJPfr/RIFyYUH3CEo+b8YmEI9TiQVh/faAowBEoff3ik31G6ySAi/S
+Ky7QRS+5Dm0mllME+gbGzaVuQCvBlxRgHuuQlxabWEGq69tyg89qh9H1Xpq9ndWp
+Az8PfyK1Z+vE6ayALDg3XvO6cFD0MfrBOxYOHLGA7QtUCqquJ97exv+fkPpFnOSo
+1UM27tyBj81KmiSMEtjcgjH0ZcMrdYyG0oZOUc3EwQGPi6npWqbS6VCG+o2SKvS1
+FBnhLaBCZzFtwFi9tgHy6dFY7cSf6u2uxCKTtm6fZ6fqXY+Sjy2WKhoX5v7K7h/R
+JKPxxSsQlPACPaXc/yAk
+=9Un3
+-----END PGP SIGNATURE-----
 
-> Best regards,
-> Krzysztof
->
->>                       };
->>
->>                       ldo15_reg: LDO15 {
->> @@ -213,6 +214,7 @@
->>                               regulator-min-microvolt = <2800000>;
->>                               regulator-max-microvolt = <2800000>;
->>                               regulator-always-on;
->> +                             regulator-ramp-delay = <12000>;
->>                       };
->>
->>                       ldo24_reg: LDO24 {
->> @@ -338,6 +340,7 @@
->>       samsung,dw-mshc-ddr-timing = <0 2>;
->>       samsung,dw-mshc-hs400-timing = <0 2>;
->>       samsung,read-strobe-delay = <90>;
->> +     vmmc-supply = <&ldo3_reg>;
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
->>       bus-width = <8>;
->> @@ -355,6 +358,8 @@
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
->>       bus-width = <4>;
->> +     vmmc-supply = <&ldo19_reg>;
->> +     vqmmc-supply = <&ldo13_reg>;
->>       cap-sd-highspeed;
->>  };
->>
->>
->
+--f8lmXUvqnCdFQPaI--
