@@ -1,146 +1,105 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] mmc: dw_mmc: exynos: Add the exynos3250 compatible
-Date: Thu, 22 Oct 2015 12:51:05 +0900
-Message-ID: <56285D29.7030502@samsung.com>
-References: <1445409555-1684-1-git-send-email-jh80.chung@samsung.com>
- <5628289C.90800@samsung.com> <56284FCE.3000108@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
+Date: Thu, 22 Oct 2015 09:24:47 +0530
+Message-ID: <56285E07.9070500@samsung.com>
+References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
+ <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com>
+ <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com>
+ <1606098.olLAyTIhB3@dell2.five-lan.de> <56272C1C.8040007@samsung.com>
+ <562765F3.9010306@osg.samsung.com>
+ <CAGOxZ52-ia8uhgGg5CiU9TSYkfAsRD52zvLqq++Y-mr4uaFOpg@mail.gmail.com>
+ <5627A75E.60509@osg.samsung.com>
+ <CAGOxZ537QuzBP4tcG9qh-+iXK-Y=WwZGiJ1-cwtLqwRf0a+wVA@mail.gmail.com>
+ <56282B2D.6000708@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:15959 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751618AbbJVDvI (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:49176 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751153AbbJVEDh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Oct 2015 23:51:08 -0400
-In-reply-to: <56284FCE.3000108@samsung.com>
+	Thu, 22 Oct 2015 00:03:37 -0400
+In-reply-to: <56282B2D.6000708@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: ulf.hansson@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Markus Reichl <m.reichl@fivetechno.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Ulf Hansson <ulf.hansson@linaro.org>
 
-On 22.10.2015 11:54, Jaehoon Chung wrote:
-> Hi, Krzysztof.
-> 
-> On 10/22/2015 09:06 AM, Krzysztof Kozlowski wrote:
->> On 21.10.2015 15:39, Jaehoon Chung wrote:
->>> To check more exactly, add the exynos3250 compatible.
->>> Not use exynos5250 compatibility.
->>
->> Hi,
->>
->> I can't find any difference between old and new compatible. Maybe I am
->> missing something? Maybe there is a difference for these devices?
-> 
-> Sorry, I needs to add more explanation about changing compatible.
-> Exynos3250 has more registers than exynos5250 in dwmmc IP.
-> Now, we used dwmmc controller with exynos5250 compatible.
-> Then some codes can't run in dw-mmc.c, if SoC is exynos3250.
-> For example, there is the checking point in dw_mci_exynos_config_hs400().
-> 
-> static void dw_mci_exynos_config_hs400(struct dw_mci *host, u32 timing)
-> {
->         struct dw_mci_exynos_priv_data *priv = host->priv;
->         u32 dqs, strobe;
-> 
->         /*
->          * Not supported to configure register
->          * related to HS400
->          */
->         if (priv->ctrl_type < DW_MCI_TYPE_EXYNOS5420)
->                 return;
-> 
->         dqs = priv->saved_dqs_en;
->         strobe = priv->saved_strobe_ctrl;
-> 
-> It can't use this feature with exynos5250 compatible.
 
-Ahh, I see it now. I missed that context and commit message wasn't
-explaining this real reason. This real reason - supporting HS400 or
-other features not present on Exynos5250 - was not mentioned.
 
-The new compatible make sense now... but I am wondering if instead just
-"samsung,exynos5420-dw-mshc" should be used? I think it would give the
-same result as your change and if new compatible is not required then it
-will be better not to add it.
-
-Best regards,
-Krzysztof
-
-> 
-> Does it need to change the compatible from exynos5250 to exynos3250?
-> 
-> Beset Regards,
-> Jaehoon Chung
-> 
->>
->> Anyway if the code is the same then it should use exactly the same
->> compatible.
->>
->> Best regards,
->> Krzysztof
->>
+On 10/22/2015 05:47 AM, Krzysztof Kozlowski wrote:
+> On 22.10.2015 00:01, Alim Akhtar wrote:
+>> On Wed, Oct 21, 2015 at 8:25 PM, Javier Martinez Canillas
+>> <javier@osg.samsung.com> wrote:
+>>> Hello Alim,
 >>>
->>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->>> ---
->>>  Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt | 2 ++
->>>  drivers/mmc/host/dw_mmc-exynos.c                         | 7 +++++++
->>>  2 files changed, 9 insertions(+)
+>>> On 10/21/2015 04:50 PM, Alim Akhtar wrote:
 >>>
->>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->>> index aad9844..cd22ac9 100644
->>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->>> @@ -22,6 +22,8 @@ Required Properties:
->>>  	  specific extensions.
->>>  	- "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
->>>  	  specific extensions having an SMU.
->>> +	- "samsung,exynos3250-dw-mshc": for controllers with Samsung Exynos3250
->>> +	  specific extensions.
->>>  
->>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
->>>    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
->>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
->>> index 1e75309..1c96218 100644
->>> --- a/drivers/mmc/host/dw_mmc-exynos.c
->>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
->>> @@ -32,6 +32,7 @@ enum dw_mci_exynos_type {
->>>  	DW_MCI_TYPE_EXYNOS5420_SMU,
->>>  	DW_MCI_TYPE_EXYNOS7,
->>>  	DW_MCI_TYPE_EXYNOS7_SMU,
->>> +	DW_MCI_TYPE_EXYNOS3250,
->>>  };
->>>  
->>>  /* Exynos implementation specific driver private data */
->>> @@ -73,6 +74,9 @@ static struct dw_mci_exynos_compatible {
->>>  	}, {
->>>  		.compatible	= "samsung,exynos7-dw-mshc-smu",
->>>  		.ctrl_type	= DW_MCI_TYPE_EXYNOS7_SMU,
->>> +	}, {
->>> +		.compatible	= "samsung,exynos3250-dw-mshc",
->>> +		.ctrl_type	= DW_MCI_TYPE_EXYNOS3250,
->>>  	},
->>>  };
->>>  
->>> @@ -467,6 +471,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot)
->>>  	} while (start_smpl != smpl);
->>>  
->>>  	found = dw_mci_exynos_get_best_clksmpl(candiates);
->>> +
->>>  	if (found >= 0) {
->>>  		dw_mci_exynos_set_clksmpl(host, found);
->>>  		priv->tuned_sample = found;
->>> @@ -520,6 +525,8 @@ static const struct of_device_id dw_mci_exynos_match[] = {
->>>  			.data = &exynos_drv_data, },
->>>  	{ .compatible = "samsung,exynos7-dw-mshc-smu",
->>>  			.data = &exynos_drv_data, },
->>> +	{ .compatible = "samsung,exynos3250-dw-mshc",
->>> +			.data = &exynos_drv_data, },
->>>  	{},
->>>  };
->>>  MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
+>>> [snip]
 >>>
+>>>>>
+>>>>> [0]:
+>>>>>  From c9b250ee03bae338339b70693e906145c719f783 Mon Sep 17 00:00:00 2001
+>>>>> From: Javier Martinez Canillas <javier@osg.samsung.com>
+>>>>> Date: Wed, 21 Oct 2015 11:59:44 +0200
+>>>>> Subject: [RFT PATCH] mmc: pwrseq: Use highest priority for eMMC restart
+>>>>>   handler
+>>>>>
+>>>>> The pwrseq_emmc driver does a eMMC card reset before a system reboot to
+>>>>> allow broken or limited ROM boot-loaders, that don't have an eMMC reset
+>>>>> logic, to be able to read the second stage from the eMMC.
+>>>>>
+>>>>> But this has to be called before a system reboot handler and while most
+>>>>> of them use the priority 128, there are other restart handlers (such as
+>>>>> the syscon-reboot one) that use a higher priority. So, use the highest
+>>>>> priority to make sure that the eMMC hw is reset before a system reboot.
+>>>>>
+>>>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>>>> ---
+>>>> Looks good.
+>>>> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>>
+>>>
+>
+> +Cc Ulf,
+>
+> Javier,
+>
+> First of all, thanks Javier for digging into the issue. Actually I have
+> Odroid U3 but because of user-space limitations (which I need for other
+> work) I cannot test all of mainline patches there.
+>
+>
+>>> Thanks, should I post it as a proper patch or are adding it to your
+>>> series?
+>> Suggest you to post as a patch collecting {Tested, Reviewed}-by (easy
+>> for maintainers to pickup ) and probably CCing Ulf for his feedback.
 >>
->>
-> 
-> 
+>>> I think the latter is more reasonable so with an ack from Ulf,
+>>> all patches can go through the linux-samsung tree.
+>>>
+>> yes, that is reasonable, as I said, let Krzysztof and Ulf take a call here.
+>
+> Javier, Alim, Ulf,
+>
+> I am not grabbing any more patches for v4.4 because I doubt that they
+> could be merged to arm-soc for this cycle. My last pull requests for
+> v4.4 is still pending...
+>
+> This means that I plan to pick up these series for v4.5, after closing
+> v4.4 merge window (unless Kukjin picks it also). Because of that, we
+> have plenty of time, so my idea is:
+> 1. Wait for some comments from Ulf on Javier's fix.
+> 2. If the fix goes into v4.4, then problem solved.
+> 3. If not and it get acked, then it can go with this set.
+> 4. If not and it get applied by Ulf for v4.5, then a tag from him would
+> be a nice way to solve dependency.
+>
+> Either way we don't have to hurry, I think.
+>
+I am fine, no hurry, lets give these a bit more time to hear from other.
+Thanks
+> Best regards,
+> Krzysztof
+>
