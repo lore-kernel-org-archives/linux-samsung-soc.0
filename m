@@ -1,91 +1,98 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] mmc: dw_mmc: exynos: Add the exynos3250 compatible
-Date: Thu, 22 Oct 2015 09:06:52 +0900
-Message-ID: <5628289C.90800@samsung.com>
-References: <1445409555-1684-1-git-send-email-jh80.chung@samsung.com>
+Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
+Date: Thu, 22 Oct 2015 09:17:49 +0900
+Message-ID: <56282B2D.6000708@samsung.com>
+References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com>
+ <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com>
+ <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com>
+ <1606098.olLAyTIhB3@dell2.five-lan.de> <56272C1C.8040007@samsung.com>
+ <562765F3.9010306@osg.samsung.com>
+ <CAGOxZ52-ia8uhgGg5CiU9TSYkfAsRD52zvLqq++Y-mr4uaFOpg@mail.gmail.com>
+ <5627A75E.60509@osg.samsung.com>
+ <CAGOxZ537QuzBP4tcG9qh-+iXK-Y=WwZGiJ1-cwtLqwRf0a+wVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1445409555-1684-1-git-send-email-jh80.chung@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: ulf.hansson@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:14147 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751508AbbJVARx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Oct 2015 20:17:53 -0400
+In-reply-to: <CAGOxZ537QuzBP4tcG9qh-+iXK-Y=WwZGiJ1-cwtLqwRf0a+wVA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Ulf Hansson <ulf.hansson@linaro.org>
 
-On 21.10.2015 15:39, Jaehoon Chung wrote:
-> To check more exactly, add the exynos3250 compatible.
-> Not use exynos5250 compatibility.
+On 22.10.2015 00:01, Alim Akhtar wrote:
+> On Wed, Oct 21, 2015 at 8:25 PM, Javier Martinez Canillas
+> <javier@osg.samsung.com> wrote:
+>> Hello Alim,
+>>
+>> On 10/21/2015 04:50 PM, Alim Akhtar wrote:
+>>
+>> [snip]
+>>
+>>>>
+>>>> [0]:
+>>>> From c9b250ee03bae338339b70693e906145c719f783 Mon Sep 17 00:00:00 2001
+>>>> From: Javier Martinez Canillas <javier@osg.samsung.com>
+>>>> Date: Wed, 21 Oct 2015 11:59:44 +0200
+>>>> Subject: [RFT PATCH] mmc: pwrseq: Use highest priority for eMMC restart
+>>>>  handler
+>>>>
+>>>> The pwrseq_emmc driver does a eMMC card reset before a system reboot to
+>>>> allow broken or limited ROM boot-loaders, that don't have an eMMC reset
+>>>> logic, to be able to read the second stage from the eMMC.
+>>>>
+>>>> But this has to be called before a system reboot handler and while most
+>>>> of them use the priority 128, there are other restart handlers (such as
+>>>> the syscon-reboot one) that use a higher priority. So, use the highest
+>>>> priority to make sure that the eMMC hw is reset before a system reboot.
+>>>>
+>>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>>> ---
+>>> Looks good.
+>>> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>
+>>
 
-Hi,
++Cc Ulf,
 
-I can't find any difference between old and new compatible. Maybe I am
-missing something? Maybe there is a difference for these devices?
+Javier,
 
-Anyway if the code is the same then it should use exactly the same
-compatible.
+First of all, thanks Javier for digging into the issue. Actually I have
+Odroid U3 but because of user-space limitations (which I need for other
+work) I cannot test all of mainline patches there.
+
+
+>> Thanks, should I post it as a proper patch or are adding it to your
+>> series?
+> Suggest you to post as a patch collecting {Tested, Reviewed}-by (easy
+> for maintainers to pickup ) and probably CCing Ulf for his feedback.
+> 
+>> I think the latter is more reasonable so with an ack from Ulf,
+>> all patches can go through the linux-samsung tree.
+>>
+> yes, that is reasonable, as I said, let Krzysztof and Ulf take a call here.
+
+Javier, Alim, Ulf,
+
+I am not grabbing any more patches for v4.4 because I doubt that they
+could be merged to arm-soc for this cycle. My last pull requests for
+v4.4 is still pending...
+
+This means that I plan to pick up these series for v4.5, after closing
+v4.4 merge window (unless Kukjin picks it also). Because of that, we
+have plenty of time, so my idea is:
+1. Wait for some comments from Ulf on Javier's fix.
+2. If the fix goes into v4.4, then problem solved.
+3. If not and it get acked, then it can go with this set.
+4. If not and it get applied by Ulf for v4.5, then a tag from him would
+be a nice way to solve dependency.
+
+Either way we don't have to hurry, I think.
 
 Best regards,
 Krzysztof
-
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
->  Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt | 2 ++
->  drivers/mmc/host/dw_mmc-exynos.c                         | 7 +++++++
->  2 files changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> index aad9844..cd22ac9 100644
-> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> @@ -22,6 +22,8 @@ Required Properties:
->  	  specific extensions.
->  	- "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
->  	  specific extensions having an SMU.
-> +	- "samsung,exynos3250-dw-mshc": for controllers with Samsung Exynos3250
-> +	  specific extensions.
->  
->  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
->    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 1e75309..1c96218 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -32,6 +32,7 @@ enum dw_mci_exynos_type {
->  	DW_MCI_TYPE_EXYNOS5420_SMU,
->  	DW_MCI_TYPE_EXYNOS7,
->  	DW_MCI_TYPE_EXYNOS7_SMU,
-> +	DW_MCI_TYPE_EXYNOS3250,
->  };
->  
->  /* Exynos implementation specific driver private data */
-> @@ -73,6 +74,9 @@ static struct dw_mci_exynos_compatible {
->  	}, {
->  		.compatible	= "samsung,exynos7-dw-mshc-smu",
->  		.ctrl_type	= DW_MCI_TYPE_EXYNOS7_SMU,
-> +	}, {
-> +		.compatible	= "samsung,exynos3250-dw-mshc",
-> +		.ctrl_type	= DW_MCI_TYPE_EXYNOS3250,
->  	},
->  };
->  
-> @@ -467,6 +471,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot)
->  	} while (start_smpl != smpl);
->  
->  	found = dw_mci_exynos_get_best_clksmpl(candiates);
-> +
->  	if (found >= 0) {
->  		dw_mci_exynos_set_clksmpl(host, found);
->  		priv->tuned_sample = found;
-> @@ -520,6 +525,8 @@ static const struct of_device_id dw_mci_exynos_match[] = {
->  			.data = &exynos_drv_data, },
->  	{ .compatible = "samsung,exynos7-dw-mshc-smu",
->  			.data = &exynos_drv_data, },
-> +	{ .compatible = "samsung,exynos3250-dw-mshc",
-> +			.data = &exynos_drv_data, },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
-> 
-
