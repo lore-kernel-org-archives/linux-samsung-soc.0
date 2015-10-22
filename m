@@ -1,163 +1,87 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] mmc: pwrseq: Use highest priority for eMMC restart
- handler
-Date: Thu, 22 Oct 2015 03:20:55 +0200
-Message-ID: <562839F7.3040005@osg.samsung.com>
-References: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
- <56282F71.2070408@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:45415 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752456AbbJVBVC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Oct 2015 21:21:02 -0400
-In-Reply-To: <56282F71.2070408@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 3/3] dt-bindings: EXYNOS: Document compatibles from other
+ vendors
+Date: Thu, 22 Oct 2015 10:25:30 +0900
+Message-ID: <1445477130-407-3-git-send-email-k.kozlowski@samsung.com>
+References: <1445477130-407-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1445477130-407-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>, Hakjoo Kim <ruppi.kim@hardkernel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Markus Reichl <m.reichl@fivetechno.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-Hello Krzysztof,
+Document compatibles used on other Exynos-based boards (non-Samsung):
+FriendlyARM, Google, Hardkernel and Insignal.
 
-Thanks for your feedback.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Hakjoo Kim <ruppi.kim@hardkernel.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 10/22/2015 02:36 AM, Krzysztof Kozlowski wrote:
-> On 22.10.2015 00:15, Javier Martinez Canillas wrote:
->> The pwrseq_emmc driver does a eMMC card reset before a system reboot to
->> allow broken or limited ROM boot-loaders (that don't have an eMMC reset
->> logic) to be able to read the second stage from the eMMC.
->>
->> But this has to be called before a system reboot handler and while most
->> of them use the priority 128, there are other restart handlers (such as
->> the syscon-reboot one) that use a higher priority. So, use the highest
->> priority to make sure that the eMMC hw is reset before a system reboot.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
->> Tested-by: Anand Moon <linux.amoon@gmail.com>
->> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
->>
->> ---
->> Hello,
->>
->> This patch was needed since a recent series from Alim [0] added
->> syscon reboot and poweroff support to Exynos SoCs and removed
->> the reset handler in the Exynos Power Management Unit (PMU) code.
->>
->> But the PMU and syscon-reboot restart handler have a different
->> priority so [0] breaks restart when eMMC is used on these boards.
->>
->> [0]: http://www.spinics.net/lists/arm-kernel/msg454396.html
->>
->> So this patch must be merged before [0] to avoid regressions.
->>
->> Best regards,
->> Javier
->>
->>  drivers/mmc/core/pwrseq_emmc.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
->> index 137c97fb7aa8..ad4f94ec7e8d 100644
->> --- a/drivers/mmc/core/pwrseq_emmc.c
->> +++ b/drivers/mmc/core/pwrseq_emmc.c
->> @@ -84,11 +84,11 @@ struct mmc_pwrseq *mmc_pwrseq_emmc_alloc(struct mmc_host *host,
->>  
->>  	/*
->>  	 * register reset handler to ensure emmc reset also from
->> -	 * emergency_reboot(), priority 129 schedules it just before
->> -	 * system reboot
->> +	 * emergency_reboot(), priority 255 is the highest priority
->> +	 * so it will be executed before any system reboot handler.
->>  	 */
->>  	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
->> -	pwrseq->reset_nb.priority = 129;
->> +	pwrseq->reset_nb.priority = 255;
-> 
-> I see the problem which you are trying to solve but this may be tricker
-> then just kicking the number. Some of restart handlers are registered
-> with priority 192. I found few of such, like: at91_restart_nb,
-> zynq_slcr_restart_nb, rmobile_reset_nb (maybe more, I did not grep too
-> much).
-> 
+---
 
-Yes, the syscon-reboot restart handler also uses a priority 192 and that
-is why reboot with eMMC broke with Alim's patches since the PMU restart
-handler priority is 128.
+Changes since v1:
+1. Added Javier's reviewed-by
+---
+ .../bindings/arm/samsung/samsung-boards.txt        | 44 +++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
-> I guess they chose the "192" priority on purpose.
->
-
-I tried to understand what's the policy w.r.t priority numbering for
-restart handlers but only found this in the register_restart_handler
-kernel-doc [0]:
-
-/**
- *	register_restart_handler - Register function to be called to reset
- *				   the system
- *	@nb: Info about handler function to be called
- *	@nb->priority:	Handler priority. Handlers should follow the
- *			following guidelines for setting priorities.
- *			0:	Restart handler of last resort,
- *				with limited restart capabilities
- *			128:	Default restart handler; use if no other
- *				restart handler is expected to be available,
- *				and/or if restart functionality is
- *				sufficient to restart the entire system
- *			255:	Highest priority restart handler, will
- *				preempt all other restart handlers
-
-So, reading that is not clear to me if only the values 0, 128 and 255
-should be used or any value from 0-255.
-
-What's clear to me is that restart handlers to reset a specific hw block
-should be called before the restart handler that resets the whole system.
-
-The 192 seems to be used because there are other default restart handlers
-that are using a prio of 128. See for example the commit that changed the
-syscon-reboot prio from 128 to 192:
-
-b81180b3fd48 power: reset: adjust priority of simple syscon reboot driver
-
-So probably the 192 value was chosen because is in the middle of 128 and
-255 but it seems to me a rather arbitrary value and I would prefer it to
-be documented in some place.
-
-> Effectively, now the emmc handler will be executed before their
-> handlers... is it an issue? Maybe some testing on these platforms is
-> necessary?
->
-
-I don't think is an issue, the reason why I chose 255 is that it is
-a documented value in the kernel-doc and since is the highest prio,
-it makes sure the eMMC will be reset before any system restart handler.
-
-Also, the pwrseq_emmc driver is only used in platforms whose SoC ROM
-can either leave the eMMC in an unknown state so the kernel needs to
-hw reset the eMMC or does not have a reset logic so it can only read
-from an eMMC if is in a known state (i.e: after a reset from kernel).
-
-Since the current mmc_pwrseq_emmc_reset_nb notifier priority is 129,
-eMMC reset will not work if one of the platforms you mentioned needs
-this since the system restart handler with prio 192 will be executed
-before the eMMC one, leaving the eMMC in an unknown state on reboot.
-
-And $SUBJECT should not cause any regressions for the platforms that
-are currently using the pwrseq_emmc, since the restart handler was
-already being called before the system restart handler so bumping
-the priority should not cause any effect.
-
-> Best regards,
-> Krzysztof
-> 
-
-[0]: http://lxr.free-electrons.com/source/kernel/reboot.c#L113
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+index 43589d2466a7..da078702ae73 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+@@ -16,7 +16,49 @@ Required root node properties:
+ 	- "samsung,sd5v1"	- for Exynos5440-based Samsung board.
+ 	- "samsung,ssdk5440"	- for Exynos5440-based Samsung board.
+ 
+-Optional:
++* Other companies Exynos SoC based
++  * FriendlyARM
++        - "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
++                                    TINY4412 board.
++
++  * Google
++        - "google,pi"             - for Exynos5800-based Google Peach Pi
++                                    Rev 10+ board,
++          also: "google,pi-rev16", "google,pi-rev15", "google,pi-rev14",
++		"google,pi-rev13", "google,pi-rev12", "google,pi-rev11",
++                "google,pi-rev10", "google,peach".
++
++        - "google,pit"            - for Exynos5420-based Google Peach Pit
++                                    Rev 6+ (Exynos5420),
++          also: "google,pit-rev16", "google,pit-rev15", "google,pit-rev14",
++                "google,pit-rev13", "google,pit-rev12", "google,pit-rev11",
++                "google,pit-rev10", "google,pit-rev9", "google,pit-rev8",
++                "google,pit-rev7", "google,pit-rev6", "google,peach".
++
++        - "google,snow-rev4"      - for Exynos5250-based Google Snow board,
++          also: "google,snow"
++        - "google,snow-rev5"      - for Exynos5250-based Google Snow
++                                    Rev 5+ board.
++        - "google,spring"         - for Exynos5250-based Google Spring board.
++
++  * Hardkernel
++        - "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
++        - "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
++        - "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
++        - "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
++        - "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
++                                         Odroid XU3 Lite board.
++        - "hardkernel,odroid-xu4" - for Exynos5422-based Hardkernel Odroid XU4.
++
++  * Insignal
++        - "insignal,arndale"      - for Exynos5250-based Insignal Arndale board.
++        - "insignal,arndale-octa" - for Exynos5420-based Insignal Arndale
++                                    Octa board.
++        - "insignal,origen"       - for Exynos4210-based Insignal Origen board.
++        - "insignal,origen4412    - for Exynos4412-based Insignal Origen board.
++
++
++Optional nodes:
+     - firmware node, specifying presence and type of secure firmware:
+         - compatible: only "samsung,secure-firmware" is currently supported
+         - reg: address of non-secure SYSRAM used for communication with firmware
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
