@@ -1,87 +1,47 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 3/3] dt-bindings: EXYNOS: Document compatibles from other
- vendors
-Date: Thu, 22 Oct 2015 10:25:30 +0900
-Message-ID: <1445477130-407-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 2/3] dt-bindings: Consolidate Exynos SoC bindings
+Date: Thu, 22 Oct 2015 10:25:29 +0900
+Message-ID: <1445477130-407-2-git-send-email-k.kozlowski@samsung.com>
 References: <1445477130-407-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1445477130-407-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>, Hakjoo Kim <ruppi.kim@hardkernel.com>
+Cc: linux-rockchip@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document compatibles used on other Exynos-based boards (non-Samsung):
-FriendlyARM, Google, Hardkernel and Insignal.
+Exynos SoC Device Tree bindings are spread over arm/exynos/ and
+arm/samsung/ directories. There is no need for that separation and it
+actually confuses. Put power domain bindings under power/ and
+remaining samsung-boards.txt under arm/samsung/.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Hakjoo Kim <ruppi.kim@hardkernel.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 ---
 
 Changes since v1:
-1. Added Javier's reviewed-by
+1. Move power_domain.txt to power/pd-samsung.txt.
+2. The smp-sysram.txt is moved in previous patch to sram/ directory
+   (Suggested by Rob Herring).
+3. Added Javier's reviewed-by. Although there are some differences since
+   v1 but this is merely re-organization. Please let me know if the
+   review tag is no longer valid.
 ---
- .../bindings/arm/samsung/samsung-boards.txt        | 44 +++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/{ => samsung}/samsung-boards.txt    | 0
+ .../bindings/{arm/exynos/power_domain.txt => power/pd-samsung.txt}        | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/devicetree/bindings/arm/{ => samsung}/samsung-boards.txt (100%)
+ rename Documentation/devicetree/bindings/{arm/exynos/power_domain.txt => power/pd-samsung.txt} (100%)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index 43589d2466a7..da078702ae73 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -16,7 +16,49 @@ Required root node properties:
- 	- "samsung,sd5v1"	- for Exynos5440-based Samsung board.
- 	- "samsung,ssdk5440"	- for Exynos5440-based Samsung board.
- 
--Optional:
-+* Other companies Exynos SoC based
-+  * FriendlyARM
-+        - "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
-+                                    TINY4412 board.
-+
-+  * Google
-+        - "google,pi"             - for Exynos5800-based Google Peach Pi
-+                                    Rev 10+ board,
-+          also: "google,pi-rev16", "google,pi-rev15", "google,pi-rev14",
-+		"google,pi-rev13", "google,pi-rev12", "google,pi-rev11",
-+                "google,pi-rev10", "google,peach".
-+
-+        - "google,pit"            - for Exynos5420-based Google Peach Pit
-+                                    Rev 6+ (Exynos5420),
-+          also: "google,pit-rev16", "google,pit-rev15", "google,pit-rev14",
-+                "google,pit-rev13", "google,pit-rev12", "google,pit-rev11",
-+                "google,pit-rev10", "google,pit-rev9", "google,pit-rev8",
-+                "google,pit-rev7", "google,pit-rev6", "google,peach".
-+
-+        - "google,snow-rev4"      - for Exynos5250-based Google Snow board,
-+          also: "google,snow"
-+        - "google,snow-rev5"      - for Exynos5250-based Google Snow
-+                                    Rev 5+ board.
-+        - "google,spring"         - for Exynos5250-based Google Spring board.
-+
-+  * Hardkernel
-+        - "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
-+        - "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
-+        - "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-+        - "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
-+        - "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
-+                                         Odroid XU3 Lite board.
-+        - "hardkernel,odroid-xu4" - for Exynos5422-based Hardkernel Odroid XU4.
-+
-+  * Insignal
-+        - "insignal,arndale"      - for Exynos5250-based Insignal Arndale board.
-+        - "insignal,arndale-octa" - for Exynos5420-based Insignal Arndale
-+                                    Octa board.
-+        - "insignal,origen"       - for Exynos4210-based Insignal Origen board.
-+        - "insignal,origen4412    - for Exynos4412-based Insignal Origen board.
-+
-+
-+Optional nodes:
-     - firmware node, specifying presence and type of secure firmware:
-         - compatible: only "samsung,secure-firmware" is currently supported
-         - reg: address of non-secure SYSRAM used for communication with firmware
+diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/arm/samsung-boards.txt
+rename to Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+rename to Documentation/devicetree/bindings/power/pd-samsung.txt
 -- 
 1.9.1
