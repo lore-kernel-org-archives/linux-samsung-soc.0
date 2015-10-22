@@ -1,121 +1,85 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] ARM: dts: use vmmc-supply of emmc/sd for
- exynos5422-odroidxu3
-Date: Thu, 22 Oct 2015 10:01:54 +0900
-Message-ID: <56283582.5010908@samsung.com>
-References: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add documentation and dt-bindings
+Date: Thu, 22 Oct 2015 10:17:48 +0900
+Message-ID: <5628393C.7050105@samsung.com>
+References: <1445391203-3819-1-git-send-email-k.kozlowski@samsung.com>
+ <5627509E.6090503@osg.samsung.com>
+ <CAJKOXPdG9qd_bAPdpKQSWJ5bM_LnjQ=XcWH14sa1jo0T5b+8zQ@mail.gmail.com>
+ <56278E5C.9040603@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:64750 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753077AbbJVBRw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Oct 2015 21:17:52 -0400
+In-reply-to: <56278E5C.9040603@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
 
-On 20.10.2015 21:56, Anand Moon wrote:
-> Changes need for host controller to detect UHS-I highspeed cards.
-> Changes in VDDQ_MMC2 voltage range help scale
-> the required voltage to detect and load the microSD cards.
-
-Thanks for updating description of commit.
-
+On 21.10.2015 22:08, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
+> On 10/21/2015 02:43 PM, Krzysztof Kozlowski wrote:
+>> 2015-10-21 17:45 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+>>>
+>>> Hello Krzysztof,
+>>>
+>>> Patch looks good to me, I've only one comment.
+>>>
+>>> On 10/21/2015 03:33 AM, Krzysztof Kozlowski wrote:
+>>>> Extend the Samsung Exynos maintainer entry to match SoC documentation
+>>>> and SoC dt-bindings directories. Without that some files, like
+>>>> bindings/arm/samsung/pmu.txt, are not matched by existing patterns.
+>>>>
+>>>> This also may serve as a hint where new documentation and bindings (not
+>>>> matching specific subsystem) should be put.
+>>>>
+>>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> Cc: Kukjin Kim <kgene@kernel.org>
+>>>> ---
+>>>>  MAINTAINERS | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index b556aad90930..cad7b6b628b2 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -1459,6 +1459,8 @@ F:      drivers/*/*s3c2410*
+>>>>  F:   drivers/*/*/*s3c2410*
+>>>>  F:   drivers/spi/spi-s3c*
+>>>>  F:   sound/soc/samsung/*
+>>>> +F:   Documentation/arm/Samsung/
+>>>
+>>> That there is also a Documentation/arm/Samsung-S3C24XX/ so
+>>> I think this should be Documentation/arm/Samsung*/ instead.
+>>
+>> I am not sure... I think this is documentation from the Ben Dooks'
+>> work and there is a entry for S3C241x machines:
+>> SIMTEC EB2410ITX )
+>>
 > 
-> Changes:
-> Drop the ranp_delay for LDO9.
+> I'm not familiar with S3C241x but the EB2410ITX entry only covers
+> a couple of files under arch/arm/mach-s3c24xx, basically all that
+> are related to the BAST machine (board file and platform data).
 > 
-> Thanks to : Krzysztof, Doug Anderson, Jaehoon Chung for helping
-> me out figure out the mmc core requirement.
-> 
-> Also drop the previous changes:
-> use cd-gpio method to detect sd-card.
-> Added UHS-I bus speed support.
-> 
-> [    4.713553] random: nonblocking pool is initialized
-> [    4.718423] 14530000.hdmi supply hdmi-en not found, using dummy regulator
-> [    4.726206] exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
-> [    4.732555] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
-> [    4.740180] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
-> [    4.746936] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-> [    4.753428] [drm] No driver support for vblank timestamp query.
-> [    4.940794] Console: switching to colour frame buffer device 274x77
-> [    4.995344] exynos-drm exynos-drm: fb0:  frame buffer device
-> [    5.024573] [drm] Initialized exynos 1.0.0 20110530 on minor 0
-> [    5.031164] exynos-dwc3 usb@12000000: no suspend clk specified
-> [    5.054571] usb 2-1: new full-speed USB device number 2 using exynos-ohci
-> [    5.159527] dwmmc_exynos 12220000.mmc: Busy; trying anyway
-> [    5.163705] mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x0)
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 1af5bdc..a4be3e0 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -182,9 +182,10 @@
->  
->  			ldo13_reg: LDO13 {
->  				regulator-name = "vdd_ldo13";
-> -				regulator-min-microvolt = <2800000>;
-> +				regulator-min-microvolt = <1800000>;
+> But arch/arm/mach-s3c24* and drivers/*/*s3c2410* are covered by
+> the ARM/SAMSUNG entry so that's why I thought the Samsung-S3C24XX
+> docs should be there too since are SoC and not board specific.
 
-You did not convinced me in previous discussion about the change to
-1.8V. I said that:
-> On the same diagram few lines below:
-> VDDQ_MMC2: 2.8V 250mA
+Right, but in the same time the documentation clearly is related to the
+boards from that time (pre-Exynos).
 
-You responded:
-> You are correct.
+> It's your call but I would put it in ARM/SAMSUNG and only the file
+> Documentation/arm/Samsung-S3C24XX/EB2410ITX.txt in the BAST entry.
 
-So I am confused. Are you sure that this SD card block can/should
-operate on 1.8V? Have you actually tried this?
-
->  				regulator-max-microvolt = <2800000>;
->  				regulator-always-on;
-> +				regulator-ramp-delay = <12000>;
-
-NAK
-
-We've been talking about this. Sooo maaaanyyyy times.
-
-If you are going to send v3 please come up with detailed reasoning,
-which will convince my stubborn mind.
+I would prefer to leave it as is... Anyway thanks for comments and if
+anyone feels like doing re-organization and cleanup on this old
+documents - please go ahead.
 
 Best regards,
 Krzysztof
-
->  			};
->  
->  			ldo15_reg: LDO15 {
-> @@ -213,6 +214,7 @@
->  				regulator-min-microvolt = <2800000>;
->  				regulator-max-microvolt = <2800000>;
->  				regulator-always-on;
-> +				regulator-ramp-delay = <12000>;
->  			};
->  
->  			ldo24_reg: LDO24 {
-> @@ -338,6 +340,7 @@
->  	samsung,dw-mshc-ddr-timing = <0 2>;
->  	samsung,dw-mshc-hs400-timing = <0 2>;
->  	samsung,read-strobe-delay = <90>;
-> +	vmmc-supply = <&ldo3_reg>;
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
->  	bus-width = <8>;
-> @@ -355,6 +358,8 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
->  	bus-width = <4>;
-> +	vmmc-supply = <&ldo19_reg>;
-> +	vqmmc-supply = <&ldo13_reg>;
->  	cap-sd-highspeed;
->  };
->  
-> 
