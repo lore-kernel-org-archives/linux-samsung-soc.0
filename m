@@ -1,91 +1,121 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] mmc: pwrseq: Use highest priority for eMMC restart handler
-Date: Thu, 22 Oct 2015 09:36:01 +0900
-Message-ID: <56282F71.2070408@samsung.com>
-References: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCHv2] ARM: dts: use vmmc-supply of emmc/sd for
+ exynos5422-odroidxu3
+Date: Thu, 22 Oct 2015 10:01:54 +0900
+Message-ID: <56283582.5010908@samsung.com>
+References: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:64445 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755585AbbJVAgI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Oct 2015 20:36:08 -0400
-In-reply-to: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Markus Reichl <m.reichl@fivetechno.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-On 22.10.2015 00:15, Javier Martinez Canillas wrote:
-> The pwrseq_emmc driver does a eMMC card reset before a system reboot to
-> allow broken or limited ROM boot-loaders (that don't have an eMMC reset
-> logic) to be able to read the second stage from the eMMC.
+On 20.10.2015 21:56, Anand Moon wrote:
+> Changes need for host controller to detect UHS-I highspeed cards.
+> Changes in VDDQ_MMC2 voltage range help scale
+> the required voltage to detect and load the microSD cards.
+
+Thanks for updating description of commit.
+
 > 
-> But this has to be called before a system reboot handler and while most
-> of them use the priority 128, there are other restart handlers (such as
-> the syscon-reboot one) that use a higher priority. So, use the highest
-> priority to make sure that the eMMC hw is reset before a system reboot.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
-> Hello,
+> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
 > 
-> This patch was needed since a recent series from Alim [0] added
-> syscon reboot and poweroff support to Exynos SoCs and removed
-> the reset handler in the Exynos Power Management Unit (PMU) code.
+> Changes:
+> Drop the ranp_delay for LDO9.
 > 
-> But the PMU and syscon-reboot restart handler have a different
-> priority so [0] breaks restart when eMMC is used on these boards.
+> Thanks to : Krzysztof, Doug Anderson, Jaehoon Chung for helping
+> me out figure out the mmc core requirement.
 > 
-> [0]: http://www.spinics.net/lists/arm-kernel/msg454396.html
+> Also drop the previous changes:
+> use cd-gpio method to detect sd-card.
+> Added UHS-I bus speed support.
 > 
-> So this patch must be merged before [0] to avoid regressions.
+> [    4.713553] random: nonblocking pool is initialized
+> [    4.718423] 14530000.hdmi supply hdmi-en not found, using dummy regulator
+> [    4.726206] exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
+> [    4.732555] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
+> [    4.740180] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
+> [    4.746936] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+> [    4.753428] [drm] No driver support for vblank timestamp query.
+> [    4.940794] Console: switching to colour frame buffer device 274x77
+> [    4.995344] exynos-drm exynos-drm: fb0:  frame buffer device
+> [    5.024573] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+> [    5.031164] exynos-dwc3 usb@12000000: no suspend clk specified
+> [    5.054571] usb 2-1: new full-speed USB device number 2 using exynos-ohci
+> [    5.159527] dwmmc_exynos 12220000.mmc: Busy; trying anyway
+> [    5.163705] mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x0)
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> Best regards,
-> Javier
-> 
->  drivers/mmc/core/pwrseq_emmc.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
-> index 137c97fb7aa8..ad4f94ec7e8d 100644
-> --- a/drivers/mmc/core/pwrseq_emmc.c
-> +++ b/drivers/mmc/core/pwrseq_emmc.c
-> @@ -84,11 +84,11 @@ struct mmc_pwrseq *mmc_pwrseq_emmc_alloc(struct mmc_host *host,
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index 1af5bdc..a4be3e0 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -182,9 +182,10 @@
 >  
->  	/*
->  	 * register reset handler to ensure emmc reset also from
-> -	 * emergency_reboot(), priority 129 schedules it just before
-> -	 * system reboot
-> +	 * emergency_reboot(), priority 255 is the highest priority
-> +	 * so it will be executed before any system reboot handler.
->  	 */
->  	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
-> -	pwrseq->reset_nb.priority = 129;
-> +	pwrseq->reset_nb.priority = 255;
+>  			ldo13_reg: LDO13 {
+>  				regulator-name = "vdd_ldo13";
+> -				regulator-min-microvolt = <2800000>;
+> +				regulator-min-microvolt = <1800000>;
 
-I see the problem which you are trying to solve but this may be tricker
-then just kicking the number. Some of restart handlers are registered
-with priority 192. I found few of such, like: at91_restart_nb,
-zynq_slcr_restart_nb, rmobile_reset_nb (maybe more, I did not grep too
-much).
+You did not convinced me in previous discussion about the change to
+1.8V. I said that:
+> On the same diagram few lines below:
+> VDDQ_MMC2: 2.8V 250mA
 
-I guess they chose the "192" priority on purpose.
+You responded:
+> You are correct.
 
-Effectively, now the emmc handler will be executed before their
-handlers... is it an issue? Maybe some testing on these platforms is
-necessary?
+So I am confused. Are you sure that this SD card block can/should
+operate on 1.8V? Have you actually tried this?
+
+>  				regulator-max-microvolt = <2800000>;
+>  				regulator-always-on;
+> +				regulator-ramp-delay = <12000>;
+
+NAK
+
+We've been talking about this. Sooo maaaanyyyy times.
+
+If you are going to send v3 please come up with detailed reasoning,
+which will convince my stubborn mind.
 
 Best regards,
 Krzysztof
 
->  	register_restart_handler(&pwrseq->reset_nb);
+>  			};
 >  
->  	pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
+>  			ldo15_reg: LDO15 {
+> @@ -213,6 +214,7 @@
+>  				regulator-min-microvolt = <2800000>;
+>  				regulator-max-microvolt = <2800000>;
+>  				regulator-always-on;
+> +				regulator-ramp-delay = <12000>;
+>  			};
+>  
+>  			ldo24_reg: LDO24 {
+> @@ -338,6 +340,7 @@
+>  	samsung,dw-mshc-ddr-timing = <0 2>;
+>  	samsung,dw-mshc-hs400-timing = <0 2>;
+>  	samsung,read-strobe-delay = <90>;
+> +	vmmc-supply = <&ldo3_reg>;
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+>  	bus-width = <8>;
+> @@ -355,6 +358,8 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+>  	bus-width = <4>;
+> +	vmmc-supply = <&ldo19_reg>;
+> +	vqmmc-supply = <&ldo13_reg>;
+>  	cap-sd-highspeed;
+>  };
+>  
 > 
