@@ -1,88 +1,95 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: Consolidate SRAM bindings from all vendors
-Date: Thu, 22 Oct 2015 08:51:02 -0500
-Message-ID: <CAL_Jsq+S6cCSo_rqsr36uGBo4dE8M9wqFdn=eV3XeHgjqS0pkA@mail.gmail.com>
-References: <1445477130-407-1-git-send-email-k.kozlowski@samsung.com>
- <20151022090529.GV10947@lukather> <5628AA23.5070608@samsung.com> <20151022133447.GZ10947@lukather>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] mmc: pwrseq: Use highest priority for eMMC restart handler
+Date: Thu, 22 Oct 2015 08:34:38 -0700
+Message-ID: <CAD=FV=VZJ9Tc4G-Xiw60DmfC4izU_6dVwwa0N0ePM0eaJfcqkg@mail.gmail.com>
+References: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
+	<56282F71.2070408@samsung.com>
+	<562839F7.3040005@osg.samsung.com>
+	<56283F27.9060804@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:59044 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757682AbbJVNvZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Oct 2015 09:51:25 -0400
-In-Reply-To: <20151022133447.GZ10947@lukather>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56283F27.9060804@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Markus Reichl <m.reichl@fivetechno.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>
 
-On Thu, Oct 22, 2015 at 8:34 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Thu, Oct 22, 2015 at 06:19:31PM +0900, Krzysztof Kozlowski wrote:
->> On 22.10.2015 18:05, Maxime Ripard wrote:
->> > Hi,
->> >
->> > On Thu, Oct 22, 2015 at 10:25:28AM +0900, Krzysztof Kozlowski wrote:
->> >> SRAM bindings for various SoCs, using the mmio-sram genalloc
->> >> API, are spread over different places - per SoC vendor. Since all of
->> >> these are quite similar (they depend on mmio-sram) move them to a common
->> >> place.
->> >>
->> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> >> Cc: Heiko Stuebner <heiko@sntech.de>
->> >> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
->> >> Cc: Chen-Yu Tsai <wens@csie.org>
->> >> Cc: Kukjin Kim <kgene@kernel.org>
->> >> Suggested-by: Rob Herring <robh+dt@kernel.org>
->> >>
->> >> ---
->> >>
->> >> Changes since v1:
->> >> 1. New patch. Extended suggestion from Rob.
->> >> ---
->> >>  .../bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt}    | 0
->> >>  .../bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt}    | 0
->> >>  .../bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt}         | 0
->> >>  Documentation/devicetree/bindings/{misc => sram}/sram.txt                 | 0
->> >>  .../devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt}       | 0
->> >>  5 files changed, 0 insertions(+), 0 deletions(-)
->> >>  rename Documentation/devicetree/bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt} (100%)
->> >>  rename Documentation/devicetree/bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt} (100%)
->> >>  rename Documentation/devicetree/bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt} (100%)
->> >>  rename Documentation/devicetree/bindings/{misc => sram}/sram.txt (100%)
->> >>  rename Documentation/devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt} (100%)
->> >
->> > I'm not sure about that one. The SRAM bindins we have for sunxi is for
->> > an SRAM controller, that maps the SRAM either to the CPU or to the
->> > devices.
->> >
->> > It's not really related to the other users, and wouldn't it be
->> > confusing to have a driver in drivers/soc, and a Documentation in
->> > another sub-directory?
->>
->> I guess the only relation to other users is the "mmio-sram". In the same
->> time this is still similar to e.g. Samsung's sram bindings (where the
->> memory is mapped to CPU only).
->>
->> Being located in drivers/soc is not an issue here - code for other
->> vendors may be moved there as well in the future.
->>
->> Of course I do not insist. Actually Rob's comment was only about moving
->> sram.txt and Samsung's sram to common place.
+Krzysztof,
 
-I certainly appreciate your finding other instances.
-
->> Anyway I will be sending v3 of these because while looking more
->> carefully I found hard-coded paths to bindings/misc/sram.txt. I'll fix
->> it in next version.
+On Wed, Oct 21, 2015 at 6:43 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> I think at least one platform may be affected because it used
+> mmc-pwrseq-emmc and gpio-restart.
 >
-> I didn't really have the context. If Rob feels like we should do that,
-> then go ahead.
+> Look at rk3288-veyron.dtsi.
+>
+> Both of restart handlers had the priority of 129 which means that the
+> order of execution depends on probing sequence. Now you will make the
+> sequence strict - first mmc then gpio.
+>
+> You seems convinced that this is not a problem... I don't know. I would
+> prefer test this on affected platforms before risking to break them.
+> It's annoying if fix for one SoC breaks another.
 
-I'm trying to group by binding type rather than arch or vendor for
-common bindings. I think bindings/sram is fine to host both ctrlr and
-memory range bindings.
+Assuming I'm understanding things properly, veyron isn't using 129 as
+a priority.  In the dts file:
 
-Rob
+        gpio-restart {
+                compatible = "gpio-restart";
+                gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&ap_warm_reset_h>;
+                priority = <200>;
+        };
+
+...so it overrides the default 129 with 200.  Ah, but Javier already
+pointed that out in his reply.
+
+>> Since the current mmc_pwrseq_emmc_reset_nb notifier priority is 129,
+>> eMMC reset will not work if one of the platforms you mentioned needs
+>> this since the system restart handler with prio 192 will be executed
+>> before the eMMC one, leaving the eMMC in an unknown state on reboot.
+>
+> And now you will "fix this" by making eMMC working correctly. So let's
+> make it straight:
+> 1. Previously the eMMC could be left on these platforms in an unknown
+> state (because emmc handler was not executed).
+> 2. No one complained! Which could mean that in fact this was working fine...
+> 3. Now you will change it.
+> 4. Maybe someone will complain?
+
+On veyron boards the reset shouldn't hurt.  The eMMC reset will
+actually get asserted at reset anyway since the reset will reset GPIO
+states and the default GPIO state for the eMMC line asserts reset.
+
+OK, I just picked this onto Heiko's somewhat "stable-tree"
+(v4.3-rc3-876-g6509232) from
+<https://github.com/mmind/linux-rockchip/>.  I put printouts in
+__mmc_pwrseq_emmc_reset() to confirm it was getting called.  I then
+rebooted.  I then saw:
+
+[   36.175732] reboot: Restarting system
+[   36.179400] DOUG: resetting emmc
+[   36.182829] DOUG: resetting emmc done
+
+...and the reboot worked normally (which means that the GPIO restart
+got called since otherwise I would have gotten TPM errors).
+
+So I'd say that for rk3288-veyron-jerry:
+
+Tested-by: Douglas Anderson <dianders@chromium.org>
+
+
+Note that personally I would only choose the "highest" priority as an
+absolute last resort.  Leaving a little extra slack in there means
+that when the next person comes up with a really good reason to run
+before you do that they can do it without changing your code.  All
+good BASIC programmers know to skip "10" in their first version for
+just this reason.  ;)
+
+If I were to pick a number, I suppose I'd pick something like "220",
+but that's pretty arbitrary.  I would have picked 200 except that it
+appears that would race with veyron's choice.
+
+-Doug
