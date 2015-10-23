@@ -1,90 +1,113 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 3/3] dt-bindings: EXYNOS: Document compatibles from other
- vendors
-Date: Fri, 23 Oct 2015 10:39:21 +0900
-Message-ID: <1445564361-16974-3-git-send-email-k.kozlowski@samsung.com>
-References: <1445564361-16974-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v3 1/3] dt-bindings: Consolidate SRAM bindings from all vendors
+Date: Fri, 23 Oct 2015 10:39:19 +0900
+Message-ID: <1445564361-16974-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1445564361-16974-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc: Hakjoo Kim <ruppi.kim@hardkernel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document compatibles used on other Exynos-based boards (non-Samsung):
-FriendlyARM, Google, Hardkernel and Insignal.
+SRAM bindings for various SoCs, using the mmio-sram genalloc
+API, are spread over different places - per SoC vendor. Since all of
+these are quite similar (they depend on mmio-sram) move them to a common
+place.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
 Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Hakjoo Kim <ruppi.kim@hardkernel.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Suggested-by: Rob Herring <robh+dt@kernel.org>
 
 ---
 
 Changes since v2:
-1. None
+1. Update paths to sram.txt.
 
 Changes since v1:
-1. Added Javier's reviewed-by
+1. New patch. Extended suggestion from Rob.
 ---
- .../bindings/arm/samsung/samsung-boards.txt        | 44 +++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/arm,scpi.txt                      | 2 +-
+ .../bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt}  | 0
+ .../bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt}  | 2 +-
+ .../bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt}       | 2 +-
+ Documentation/devicetree/bindings/{misc => sram}/sram.txt               | 0
+ .../devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt}     | 2 +-
+ 6 files changed, 4 insertions(+), 4 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt} (100%)
+ rename Documentation/devicetree/bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt} (92%)
+ rename Documentation/devicetree/bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt} (95%)
+ rename Documentation/devicetree/bindings/{misc => sram}/sram.txt (100%)
+ rename Documentation/devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt} (97%)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index 43589d2466a7..da078702ae73 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -16,7 +16,49 @@ Required root node properties:
- 	- "samsung,sd5v1"	- for Exynos5440-based Samsung board.
- 	- "samsung,ssdk5440"	- for Exynos5440-based Samsung board.
+diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+index 86302de67c2c..313dabdc14f9 100644
+--- a/Documentation/devicetree/bindings/arm/arm,scpi.txt
++++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+@@ -63,7 +63,7 @@ Required properties:
+ - compatible : should be "arm,juno-sram-ns" for Non-secure SRAM on Juno
  
--Optional:
-+* Other companies Exynos SoC based
-+  * FriendlyARM
-+        - "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
-+                                    TINY4412 board.
-+
-+  * Google
-+        - "google,pi"             - for Exynos5800-based Google Peach Pi
-+                                    Rev 10+ board,
-+          also: "google,pi-rev16", "google,pi-rev15", "google,pi-rev14",
-+		"google,pi-rev13", "google,pi-rev12", "google,pi-rev11",
-+                "google,pi-rev10", "google,peach".
-+
-+        - "google,pit"            - for Exynos5420-based Google Peach Pit
-+                                    Rev 6+ (Exynos5420),
-+          also: "google,pit-rev16", "google,pit-rev15", "google,pit-rev14",
-+                "google,pit-rev13", "google,pit-rev12", "google,pit-rev11",
-+                "google,pit-rev10", "google,pit-rev9", "google,pit-rev8",
-+                "google,pit-rev7", "google,pit-rev6", "google,peach".
-+
-+        - "google,snow-rev4"      - for Exynos5250-based Google Snow board,
-+          also: "google,snow"
-+        - "google,snow-rev5"      - for Exynos5250-based Google Snow
-+                                    Rev 5+ board.
-+        - "google,spring"         - for Exynos5250-based Google Spring board.
-+
-+  * Hardkernel
-+        - "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
-+        - "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
-+        - "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-+        - "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
-+        - "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
-+                                         Odroid XU3 Lite board.
-+        - "hardkernel,odroid-xu4" - for Exynos5422-based Hardkernel Odroid XU4.
-+
-+  * Insignal
-+        - "insignal,arndale"      - for Exynos5250-based Insignal Arndale board.
-+        - "insignal,arndale-octa" - for Exynos5420-based Insignal Arndale
-+                                    Octa board.
-+        - "insignal,origen"       - for Exynos4210-based Insignal Origen board.
-+        - "insignal,origen4412    - for Exynos4412-based Insignal Origen board.
-+
-+
-+Optional nodes:
-     - firmware node, specifying presence and type of secure firmware:
-         - compatible: only "samsung,secure-firmware" is currently supported
-         - reg: address of non-secure SYSRAM used for communication with firmware
+ The rest of the properties should follow the generic mmio-sram description
+-found in ../../misc/sysram.txt
++found in ../../sram/sram.txt
+ 
+ Each sub-node represents the reserved area for SCPI.
+ 
+diff --git a/Documentation/devicetree/bindings/arm/rockchip/pmu-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/arm/rockchip/pmu-sram.txt
+rename to Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+diff --git a/Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
+similarity index 92%
+rename from Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt
+rename to Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
+index d9416fb8db6f..800701ecffca 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt
++++ b/Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
+@@ -12,7 +12,7 @@ Required sub-node properties:
+ - compatible : should be "rockchip,rk3066-smp-sram"
+ 
+ The rest of the properties should follow the generic mmio-sram discription
+-found in ../../misc/sram.txt
++found in Documentation/devicetree/bindings/sram/sram.txt
+ 
+ Example:
+ 
+diff --git a/Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt b/Documentation/devicetree/bindings/sram/samsung-sram.txt
+similarity index 95%
+rename from Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt
+rename to Documentation/devicetree/bindings/sram/samsung-sram.txt
+index 4a0a4f70a0ce..6bc474b2b885 100644
+--- a/Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt
++++ b/Documentation/devicetree/bindings/sram/samsung-sram.txt
+@@ -15,7 +15,7 @@ Required sub-node properties:
+ 		"samsung,exynos4210-sysram-ns" : for Non-secure SYSRAM
+ 
+ The rest of the properties should follow the generic mmio-sram discription
+-found in ../../misc/sysram.txt
++found in Documentation/devicetree/bindings/sram/sram.txt
+ 
+ Example:
+ 
+diff --git a/Documentation/devicetree/bindings/misc/sram.txt b/Documentation/devicetree/bindings/sram/sram.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/misc/sram.txt
+rename to Documentation/devicetree/bindings/sram/sram.txt
+diff --git a/Documentation/devicetree/bindings/soc/sunxi/sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+similarity index 97%
+rename from Documentation/devicetree/bindings/soc/sunxi/sram.txt
+rename to Documentation/devicetree/bindings/sram/sunxi-sram.txt
+index 067698112f5f..8d5665468fe7 100644
+--- a/Documentation/devicetree/bindings/soc/sunxi/sram.txt
++++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+@@ -16,7 +16,7 @@ SRAM nodes
+ ----------
+ 
+ Each SRAM is described using the mmio-sram bindings documented in
+-Documentation/devicetree/bindings/misc/sram.txt
++Documentation/devicetree/bindings/sram/sram.txt
+ 
+ Each SRAM will have SRAM sections that are going to be handled by the
+ SRAM controller as subnodes. These sections are represented following
 -- 
 1.9.1
