@@ -1,46 +1,53 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] ARM: dts: change the compatible from exynos5250 to
- exynos5420 for mshc
-Date: Fri, 23 Oct 2015 11:14:15 +0900
-Message-ID: <562997F7.3060803@samsung.com>
-References: <1445565713-4000-1-git-send-email-jh80.chung@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:57235 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751463AbbJWCOY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Oct 2015 22:14:24 -0400
-In-reply-to: <1445565713-4000-1-git-send-email-jh80.chung@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] Documentation: ARM: EXYNOS: Update bootloader interface on
+ Exynos542x
+Date: Fri, 23 Oct 2015 13:19:17 +0900
+Message-ID: <1445573957-28933-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: ulf.hansson@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 23.10.2015 11:01, Jaehoon Chung wrote:
-> Exynos3250 and exnos5250 are some differences in Mobile Storage Host.
-> (For example, exynos3250 support the HS400 mode, but exynos5250 doesn't
-> support it.)
-> Exynos3250 can perform the similar function with exynos5420 compatible.
-> So this patch changes the compatible from exynos5250 to exynos5420
-> for mshc.
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
-> Changelog v2:
-> 	- Drop "mmc: dw_mmc: exynos: Add the exynos3250 compatible" patch.
-> 	- Describe commit-message more detailedly than before.
-> 	- Change to exynos5420, not add new compatible (exynos3250).
-> 
->  arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Update the documentation about:
+1. Usage of PMU_SPARE2 register.
+   Bootloaders on Exynos542x-based boards often use the register
+   PMU_SPARE2 (0x908) in the same way as on Exynos3250: as a indicator
+   the secondary CPU was booted on. The bootloader will set this value
+   to non-zero, after sucessfull power up of secondary CPU. In the same
+   time this booted CPU will stuck (spin) waiting for software reset.
+2. Exynos542x entry address for secondary CPU boot up after system
+   suspend (with MCPM enabled and in non-secure mode).
 
+See arch/arm/mach-exynos/mcpm-exynos.c for source code.
 
-Thanks! Looks good:
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ Documentation/arm/Samsung/Bootloader-interface.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/arm/Samsung/Bootloader-interface.txt b/Documentation/arm/Samsung/Bootloader-interface.txt
+index df8d4fb85939..ed494ac0beb2 100644
+--- a/Documentation/arm/Samsung/Bootloader-interface.txt
++++ b/Documentation/arm/Samsung/Bootloader-interface.txt
+@@ -19,7 +19,7 @@ executing kernel.
+ Address:      sysram_ns_base_addr
+ Offset        Value                                        Purpose
+ =============================================================================
+-0x08          exynos_cpu_resume_ns                         System suspend
++0x08          exynos_cpu_resume_ns, mcpm_entry_point       System suspend
+ 0x0c          0x00000bad (Magic cookie)                    System suspend
+ 0x1c          exynos4_secondary_startup                    Secondary CPU boot
+ 0x1c + 4*cpu  exynos4_secondary_startup (Exynos4412)       Secondary CPU boot
+@@ -56,7 +56,8 @@ Offset        Value                                        Purpose
+ Address:      pmu_base_addr
+ Offset        Value                           Purpose
+ =============================================================================
+-0x0908        Non-zero (only Exynos3250)      Secondary CPU boot up indicator
++0x0908        Non-zero                        Secondary CPU boot up indicator
++                                              on Exynos3250 and Exynos542x
+ 
+ 
+ 4. Glossary
+-- 
+1.9.1
