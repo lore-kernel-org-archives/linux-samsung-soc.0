@@ -1,71 +1,103 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: Consolidate Exynos SoC bindings
-Date: Sat, 24 Oct 2015 05:13:57 +0900
-Message-ID: <562A9505.6010009@kernel.org>
-References: <1445564361-16974-1-git-send-email-k.kozlowski@samsung.com> <1445564361-16974-2-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 1/5] Late Samsung DT updates for v4.4
+Date: Sat, 24 Oct 2015 06:18:06 +0900
+Message-ID: <562AA40E.4050407@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1445564361-16974-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:37855 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751459AbbJWVSs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Oct 2015 17:18:48 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On 10/23/15 10:39, Krzysztof Kozlowski wrote:
-> Exynos SoC Device Tree bindings are spread over arm/exynos/ and
-> arm/samsung/ directories. There is no need for that separation and it
-> actually confuses. Put power domain bindings under power/ and
-> remaining samsung-boards.txt under arm/samsung/.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
-> Changes since v2:
-> 1. Update path pointing to pd-samsung.txt in samsung,sysmmu.txt.
-> 
-> Changes since v1:
-> 1. Move power_domain.txt to power/pd-samsung.txt.
-> 2. The smp-sysram.txt is moved in previous patch to sram/ directory
->    (Suggested by Rob Herring).
-> 3. Added Javier's reviewed-by. Although there are some differences since
->    v1 but this is merely re-organization. Please let me know if the
->    review tag is no longer valid.
-> ---
->  Documentation/devicetree/bindings/arm/{ => samsung}/samsung-boards.txt  | 0
->  Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt              | 2 +-
->  .../bindings/{arm/exynos/power_domain.txt => power/pd-samsung.txt}      | 0
->  3 files changed, 1 insertion(+), 1 deletion(-)
->  rename Documentation/devicetree/bindings/arm/{ => samsung}/samsung-boards.txt (100%)
->  rename Documentation/devicetree/bindings/{arm/exynos/power_domain.txt => power/pd-samsung.txt} (100%)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> similarity index 100%
-> rename from Documentation/devicetree/bindings/arm/samsung-boards.txt
-> rename to Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> diff --git a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
-> index 729543c47046..bc620fe32a70 100644
-> --- a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
-> @@ -47,7 +47,7 @@ Required properties:
->  - clocks: Required if the System MMU is needed to gate its clock.
->  - power-domains: Required if the System MMU is needed to gate its power.
->  	  Please refer to the following document:
-> -	  Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> +	  Documentation/devicetree/bindings/power/pd-samsung.txt
->  
->  Examples:
->  	gsc_0: gsc@13e00000 {
-> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
-> similarity index 100%
-> rename from Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> rename to Documentation/devicetree/bindings/power/pd-samsung.txt
+Hi Arnd, Olof, Kevin
 
-Applied 2/3 and 3/3.
+Here is late pull-request for v4.4, please pull.
+
+If any problems, please kindly let me know.
+See you in Seoul next week ;-)
 
 Thanks,
 Kukjin
+
+
+The following changes since commit df829b06f0079165d9dc7719af8f8a7da852fe51:
+
+  ARM: dts: Use GPIO constants for flags cells in exynos5440 boards
+(2015-10-08 07:39:58 +0900)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-dt-2
+
+for you to fetch changes up to d6b9aea67f40e138e972b17c7c658bc3c8ac2459:
+
+  MAINTAINERS: Add documentation and dt-bindings for exynos stuff
+(2015-10-24 05:07:26 +0900)
+
+----------------------------------------------------------------
+Samsung 2nd DT updates for v4.4
+
+- use exynos5420-dw-mshc instead of exynos5250 for exynos3250
+- add DISP1 clocks and the DISP1 power domain of two closk
+  on exynos5250 (clock commit got Stephen's ack)
+- add vbus regulators on exynos3250, exynos4210 and exynos4412 boards
+- fix typo in regulator enable GPIO property on s5pv20-aquila and goni
+- document: correct the example of exynos power domain clocks
+- document: consolidate exynos SoC dt-bindings and non-Samsung
+  boards related compatibles (FriendlyARM, Google, Hardkernel
+  and Insignal)
+- update MAINTAINER entries accordingly (documentation)
+
+----------------------------------------------------------------
+Jaehoon Chung (1):
+      ARM: dts: use exynos5420-dw-mshc compatible for exynos3250
+
+Krzysztof Kozlowski (4):
+      dt-bindings: Correct the example for Exynos power domain clocks
+      dt-bindings: Consolidate Exynos SoC bindings
+      dt-bindings: EXYNOS: Document compatibles from other vendors
+      MAINTAINERS: Add documentation and dt-bindings for exynos stuff
+
+Laurent Pinchart (2):
+      ARM: dts: Fix typo in regulator enable GPIO property in s5pv210-aquila
+      ARM: dts: Fix typo in regulator enable GPIO property in s5pv210-goni
+
+Marek Szyprowski (1):
+      ARM: dts: Add vbus regulator to USB2 phy nodes on exynos3250,
+exynos4210 and exynos4412 boards
+
+Tomeu Vizoso (2):
+      clk: samsung: exynos5250: Add DISP1 clocks
+      ARM: dts: Add clocks to DISP1 domain in exynos5250
+
+ .../devicetree/bindings/arm/samsung-boards.txt     | 27 ---------
+ .../bindings/arm/samsung/samsung-boards.txt        | 69
+++++++++++++++++++++++
+ .../devicetree/bindings/iommu/samsung,sysmmu.txt   |  2 +-
+ .../power_domain.txt => power/pd-samsung.txt}      |  5 +-
+ MAINTAINERS                                        |  4 ++
+ arch/arm/boot/dts/exynos3250-monk.dts              |  1 +
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  1 +
+ arch/arm/boot/dts/exynos3250.dtsi                  |  4 +-
+ arch/arm/boot/dts/exynos4210-trats.dts             |  2 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |  2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  1 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |  4 ++
+ arch/arm/boot/dts/s5pv210-aquila.dts               |  2 +-
+ arch/arm/boot/dts/s5pv210-goni.dts                 |  4 +-
+ drivers/clk/samsung/clk-exynos5250.c               | 14 ++++-
+ include/dt-bindings/clock/exynos5250.h             |  4 +-
+ 16 files changed, 106 insertions(+), 40 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/samsung-boards.txt
+ create mode 100644
+Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+ rename Documentation/devicetree/bindings/{arm/exynos/power_domain.txt
+=> power/pd-samsung.txt} (93%)
