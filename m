@@ -1,165 +1,293 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH 10/10] drm/exynos/decon5433: add support for DECON-TV
-Date: Fri, 23 Oct 2015 20:55:39 +0900
-Message-ID: <562A203B.7060505@samsung.com>
+Date: Fri, 23 Oct 2015 15:03:11 +0200
+Message-ID: <562A300F.2000108@samsung.com>
 References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
  <1445332961-25419-11-git-send-email-a.hajda@samsung.com>
+ <562A203B.7060505@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1445332961-25419-11-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:26010 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750970AbbJWNDS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Oct 2015 09:03:18 -0400
+In-reply-to: <562A203B.7060505@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 
-SGkgQW5kcnplaiwKCgoyMDE164WEIDEw7JuUIDIw7J28IDE4OjIy7JeQIEFuZHJ6ZWogSGFqZGEg
-7J20KOqwgCkg7JO0IOq4gDoKPiBERUNPTi1UViBJUCBpcyByZXNwb25zaWJsZSBmb3IgZ2VuZXJh
-dGluZyB2aWRlbyBzdHJlYW0gd2hpY2ggaXMgdHJhbnNmZXJyZWQKPiB0byBIRE1JIElQLiBJdCBp
-cyBhbG1vc3QgZnVsbHkgY29tcGF0aWJsZSB3aXRoIERFQ09OIElQLgo+Cj4gVGhlIHBhdGNoIGlz
-IGJhc2VkIG9uIGluaXRpYWwgd29yayBvZiBIeXVuZ3dvbiBId2FuZy4KPgo+IFNpZ25lZC1vZmYt
-Ynk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAxNTQgKysrKysrKysrKysr
-KysrKy0tLS0tLS0tLS0KPiAgIGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oICAgICAg
-ICAgICAgICB8ICAyOSArKysrKwo+ICAgMiBmaWxlcyBjaGFuZ2VkLCAxMjIgaW5zZXJ0aW9ucygr
-KSwgNjEgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1
-NDMzX2RybV9kZWNvbi5jCj4gaW5kZXggM2M5YWE0ZS4uZmJlMWIzMSAxMDA2NDQKPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKPiArKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKPiBAQCAtMTMsNiArMTMs
-NyBAQAo+ICAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+ICAgI2luY2x1ZGUg
-PGxpbnV4L2Nsay5oPgo+ICAgI2luY2x1ZGUgPGxpbnV4L2NvbXBvbmVudC5oPgo+ICsjaW5jbHVk
-ZSA8bGludXgvb2ZfZGV2aWNlLmg+Cj4gICAjaW5jbHVkZSA8bGludXgvb2ZfZ3Bpby5oPgo+ICAg
-I2luY2x1ZGUgPGxpbnV4L3BtX3J1bnRpbWUuaD4KPgo+IEBAIC0zNyw2ICszOCwxMiBAQCBzdGF0
-aWMgY29uc3QgY2hhciAqIGNvbnN0IGRlY29uX2Nsa3NfbmFtZVtdID0gewo+ICAgCSJzY2xrX2Rl
-Y29uX2VjbGsiLAo+ICAgfTsKPgo+ICtlbnVtIGRlY29uX2lmdHlwZSB7Cj4gKwlJRlRZUEVfUkdC
-LAo+ICsJSUZUWVBFX0k4MCwKPiArCUlGVFlQRV9IRE1JCj4gK307Cj4gKwo+ICAgZW51bSBkZWNv
-bl9mbGFnX2JpdHMgewo+ICAgCUJJVF9DTEtTX0VOQUJMRUQsCj4gICAJQklUX0lSUVNfRU5BQkxF
-RCwKPiBAQCAtNTMsNyArNjAsOCBAQCBzdHJ1Y3QgZGVjb25fY29udGV4dCB7Cj4gICAJc3RydWN0
-IGNsawkJCSpjbGtzW0FSUkFZX1NJWkUoZGVjb25fY2xrc19uYW1lKV07Cj4gICAJaW50CQkJCXBp
-cGU7Cj4gICAJdW5zaWduZWQgbG9uZwkJCWZsYWdzOwo+IC0JYm9vbAkJCQlpODBfaWY7Cj4gKwll
-bnVtIGRlY29uX2lmdHlwZQkJb3V0X3R5cGU7Cj4gKwlpbnQJCQkJZmlyc3Rfd2luOwo+ICAgfTsK
-Pgo+ICAgc3RhdGljIGNvbnN0IHVpbnQzMl90IGRlY29uX2Zvcm1hdHNbXSA9IHsKPiBAQCAtODAs
-NyArODgsNyBAQCBzdGF0aWMgaW50IGRlY29uX2VuYWJsZV92Ymxhbmsoc3RydWN0IGV4eW5vc19k
-cm1fY3J0YyAqY3J0YykKPgo+ICAgCWlmICh0ZXN0X2FuZF9zZXRfYml0KEJJVF9JUlFTX0VOQUJM
-RUQsICZjdHgtPmZsYWdzKSkgewo+ICAgCQl2YWwgPSBWSURJTlRDT04wX0lOVEVOOwo+IC0JCWlm
-IChjdHgtPmk4MF9pZikKPiArCQlpZiAoY3R4LT5vdXRfdHlwZSA9PSBJRlRZUEVfSTgwKQo+ICAg
-CQkJdmFsIHw9IFZJRElOVENPTjBfRlJBTUVET05FOwo+ICAgCQllbHNlCj4gICAJCQl2YWwgfD0g
-VklESU5UQ09OMF9JTlRGUk1FTjsKPiBAQCAtMTA0LDggKzExMiwxMSBAQCBzdGF0aWMgdm9pZCBk
-ZWNvbl9kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+Cj4gICBz
-dGF0aWMgdm9pZCBkZWNvbl9zZXR1cF90cmlnZ2VyKHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgp
-Cj4gICB7Cj4gLQl1MzIgdmFsID0gVFJJR0NPTl9UUklHRU5fUEVSX0YgfCBUUklHQ09OX1RSSUdF
-Tl9GIHwKPiAtCQkJVFJJR0NPTl9URV9BVVRPX01BU0sgfCBUUklHQ09OX1NXVFJJR0VOOwo+ICsJ
-dTMyIHZhbCA9IChjdHgtPm91dF90eXBlICE9IElGVFlQRV9IRE1JKQo+ICsJCT8gVFJJR0NPTl9U
-UklHRU5fUEVSX0YgfCBUUklHQ09OX1RSSUdFTl9GIHwKPiArCQkgIFRSSUdDT05fVEVfQVVUT19N
-QVNLIHwgVFJJR0NPTl9TV1RSSUdFTgo+ICsJCTogVFJJR0NPTl9UUklHRU5fUEVSX0YgfCBUUklH
-Q09OX1RSSUdFTl9GIHwKPiArCQkgIFRSSUdDT05fSFdUUklHTUFTS19JODBfUkdCIHwgVFJJR0NP
-Tl9IV1RSSUdFTl9JODBfUkdCOwo+ICAgCXdyaXRlbCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1RS
-SUdDT04pOwo+ICAgfQo+Cj4gQEAgLTExOCwxMyArMTI5LDIyIEBAIHN0YXRpYyB2b2lkIGRlY29u
-X2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+ICAgCWlmICh0ZXN0X2JpdChC
-SVRfU1VTUEVOREVELCAmY3R4LT5mbGFncykpCj4gICAJCXJldHVybjsKPgo+ICsJaWYgKGN0eC0+
-b3V0X3R5cGUgPT0gSUZUWVBFX0hETUkpIHsKPiArCQltLT5jcnRjX2hzeW5jX3N0YXJ0ID0gbS0+
-Y3J0Y19oZGlzcGxheSArIDEwOwo+ICsJCW0tPmNydGNfaHN5bmNfZW5kID0gbS0+Y3J0Y19odG90
-YWwgLSA5MjsKPiArCQltLT5jcnRjX3ZzeW5jX3N0YXJ0ID0gbS0+Y3J0Y192ZGlzcGxheSArIDE7
-Cj4gKwkJbS0+Y3J0Y192c3luY19lbmQgPSBtLT5jcnRjX3ZzeW5jX3N0YXJ0ICsgMTsKPiArCX0K
-PiArCj4gKwlkZWNvbl9zZXRfYml0cyhjdHgsIERFQ09OX1ZJRENPTjAsIFZJRENPTjBfRU5WSUQs
-IDApOwo+ICsKPiAgIAkvKiBlbmFibGUgY2xvY2sgZ2F0ZSAqLwo+ICAgCXZhbCA9IENNVV9DTEtH
-QUdFX01PREVfU0ZSX0YgfCBDTVVfQ0xLR0FHRV9NT0RFX01FTV9GOwo+ICAgCXdyaXRlbCh2YWws
-IGN0eC0+YWRkciArIERFQ09OX0NNVSk7Cj4KPiAgIAkvKiBsY2Qgb24gYW5kIHVzZSBjb21tYW5k
-IGlmICovCj4gICAJdmFsID0gVklET1VUX0xDRF9PTjsKPiAtCWlmIChjdHgtPmk4MF9pZikKPiAr
-CWlmIChjdHgtPm91dF90eXBlID09IElGVFlQRV9JODApCj4gICAJCXZhbCB8PSBWSURPVVRfQ09N
-TUFORF9JRjsKPiAgIAllbHNlCj4gICAJCXZhbCB8PSBWSURPVVRfUkdCX0lGOwo+IEBAIC0xMzQs
-NyArMTU0LDcgQEAgc3RhdGljIHZvaWQgZGVjb25fY29tbWl0KHN0cnVjdCBleHlub3NfZHJtX2Ny
-dGMgKmNydGMpCj4gICAJCVZJRFRDT04yX0hPWlZBTChtLT5oZGlzcGxheSAtIDEpOwo+ICAgCXdy
-aXRlbCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1ZJRFRDT04yKTsKPgo+IC0JaWYgKCFjdHgtPmk4
-MF9pZikgewo+ICsJaWYgKGN0eC0+b3V0X3R5cGUgIT0gSUZUWVBFX0k4MCkgewo+ICAgCQl2YWwg
-PSBWSURUQ09OMDBfVkJQRF9GKAo+ICAgCQkJCW0tPmNydGNfdnRvdGFsIC0gbS0+Y3J0Y192c3lu
-Y19lbmQgLSAxKSB8Cj4gICAJCQlWSURUQ09OMDBfVkZQRF9GKAo+IEBAIC0xNTksMTUgKzE3OSw5
-IEBAIHN0YXRpYyB2b2lkIGRlY29uX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRj
-KQo+ICAgCWRlY29uX3NldHVwX3RyaWdnZXIoY3R4KTsKPgo+ICAgCS8qIGVuYWJsZSBvdXRwdXQg
-YW5kIGRpc3BsYXkgc2lnbmFsICovCj4gLQl2YWwgPSBWSURDT04wX0VOVklEIHwgVklEQ09OMF9F
-TlZJRF9GOwo+IC0Jd3JpdGVsKHZhbCwgY3R4LT5hZGRyICsgREVDT05fVklEQ09OMCk7Cj4gKwlk
-ZWNvbl9zZXRfYml0cyhjdHgsIERFQ09OX1ZJRENPTjAsIFZJRENPTjBfRU5WSUQgfCBWSURDT04w
-X0VOVklEX0YsIH4wKTsKPiAgIH0KPgo+IC0jZGVmaW5lIENPT1JESU5BVEVfWCh4KQkJKCgoeCkg
-JiAweGZmZikgPDwgMTIpCj4gLSNkZWZpbmUgQ09PUkRJTkFURV9ZKHgpCQkoKHgpICYgMHhmZmYp
-Cj4gLSNkZWZpbmUgT0ZGU0laRSh4KQkJKCgoeCkgJiAweDNmZmYpIDw8IDE0KQo+IC0jZGVmaW5l
-IFBBR0VXSURUSCh4KQkJKCh4KSAmIDB4M2ZmZikKPiAtCj4gICBzdGF0aWMgdm9pZCBkZWNvbl93
-aW5fc2V0X3BpeGZtdChzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2lu
-LAo+ICAgCQkJCSBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikKPiAgIHsKPiBAQCAtMjM4LDYg
-KzI1MiwxMCBAQCBzdGF0aWMgdm9pZCBkZWNvbl9hdG9taWNfYmVnaW4oc3RydWN0IGV4eW5vc19k
-cm1fY3J0YyAqY3J0YywKPiAgIAlkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCBwbGFuZS0+
-enBvcywgdHJ1ZSk7Cj4gICB9Cj4KPiArI2RlZmluZSBCSVRfVkFMKHgsIGUsIHMpICgoKHgpICYg
-KCgxIDw8ICgoZSkgLSAocykgKyAxKSkgLSAxKSkgPDwgKHMpKQo+ICsjZGVmaW5lIENPT1JESU5B
-VEVfWCh4KSBCSVRfVkFMKCh4KSwgMjMsIDEyKQo+ICsjZGVmaW5lIENPT1JESU5BVEVfWSh4KSBC
-SVRfVkFMKCh4KSwgMTEsIDApCj4gKwo+ICAgc3RhdGljIHZvaWQgZGVjb25fdXBkYXRlX3BsYW5l
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCj4gICAJCQkgICAgICAgc3RydWN0IGV4eW5v
-c19kcm1fcGxhbmUgKnBsYW5lKQo+ICAgewo+IEBAIC0yNzEsOCArMjg5LDEyIEBAIHN0YXRpYyB2
-b2lkIGRlY29uX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAo+ICAg
-CXZhbCA9IHBsYW5lLT5kbWFfYWRkclswXSArIHBpdGNoICogcGxhbmUtPmNydGNfaDsKPiAgIAl3
-cml0ZWwodmFsLCBjdHgtPmFkZHIgKyBERUNPTl9WSURXMHhBREQxQjAod2luKSk7Cj4KPiAtCXZh
-bCA9IE9GRlNJWkUocGl0Y2ggLSBwbGFuZS0+Y3J0Y193ICogYnBwKQo+IC0JCXwgUEFHRVdJRFRI
-KHBsYW5lLT5jcnRjX3cgKiBicHApOwo+ICsJaWYgKGN0eC0+b3V0X3R5cGUgIT0gSUZUWVBFX0hE
-TUkpCj4gKwkJdmFsID0gQklUX1ZBTChwaXRjaCAtIHBsYW5lLT5jcnRjX3cgKiBicHAsIDI3LCAx
-NCkKPiArCQkJfCBCSVRfVkFMKHBsYW5lLT5jcnRjX3cgKiBicHAsIDEzLCAwKTsKPiArCWVsc2UK
-PiArCQl2YWwgPSBCSVRfVkFMKHBpdGNoIC0gcGxhbmUtPmNydGNfdyAqIGJwcCwgMjksIDE1KQo+
-ICsJCQl8IEJJVF9WQUwocGxhbmUtPmNydGNfdyAqIGJwcCwgMTQsIDApOwo+ICAgCXdyaXRlbCh2
-YWwsIGN0eC0+YWRkciArIERFQ09OX1ZJRFcweEFERDIod2luKSk7Cj4KPiAgIAlkZWNvbl93aW5f
-c2V0X3BpeGZtdChjdHgsIHdpbiwgc3RhdGUtPmZiKTsKPiBAQCAtMzE0LDcgKzMzNiw3IEBAIHN0
-YXRpYyB2b2lkIGRlY29uX2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRj
-LAo+Cj4gICAJZGVjb25fc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgcGxhbmUtPnpwb3MsIGZhbHNl
-KTsKPgo+IC0JaWYgKGN0eC0+aTgwX2lmKQo+ICsJaWYgKGN0eC0+b3V0X3R5cGUgPT0gSUZUWVBF
-X0k4MCkKPiAgIAkJc2V0X2JpdChCSVRfV0lOX1VQREFURUQsICZjdHgtPmZsYWdzKTsKPiAgIH0K
-Pgo+IEBAIC0zMzksNiArMzYxLDE3IEBAIHN0YXRpYyB2b2lkIGRlY29uX3N3cmVzZXQoc3RydWN0
-IGRlY29uX2NvbnRleHQgKmN0eCkKPiAgIAl9Cj4KPiAgIAlXQVJOKHRyaWVzID09IDAsICJmYWls
-ZWQgdG8gc29mdHdhcmUgcmVzZXQgREVDT05cbiIpOwo+ICsKPiArCWlmIChjdHgtPm91dF90eXBl
-ICE9IElGVFlQRV9IRE1JKQo+ICsJCXJldHVybjsKPiArCj4gKwl3cml0ZWwoVklEQ09OMF9DTEtW
-QUxVUCB8IFZJRENPTjBfVkxDS0ZSRUUsIGN0eC0+YWRkciArIERFQ09OX1ZJRENPTjApOwo+ICsJ
-ZGVjb25fc2V0X2JpdHMoY3R4LCBERUNPTl9DTVUsCj4gKwkJICAgICAgIENNVV9DTEtHQUdFX01P
-REVfU0ZSX0YgfCBDTVVfQ0xLR0FHRV9NT0RFX01FTV9GLCB+MCk7Cj4gKwl3cml0ZWwoVklEQ09O
-MV9WQ0xLX1JVTl9WREVOX0RJU0FCTEUsIGN0eC0+YWRkciArIERFQ09OX1ZJRENPTjEpOwo+ICsJ
-d3JpdGVsKENSQ0NUUkxfQ1JDRU4gfCBDUkNDVFJMX0NSQ1NUQVJUX0YgfCBDUkNDVFJMX0NSQ0NM
-S0VOLAo+ICsJICAgICAgIGN0eC0+YWRkciArIERFQ09OX0NSQ0NUUkwpOwo+ICsJZGVjb25fc2V0
-dXBfdHJpZ2dlcihjdHgpOwo+ICAgfQo+Cj4gICBzdGF0aWMgdm9pZCBkZWNvbl9lbmFibGUoc3Ry
-dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPiBAQCAtMzg3LDcgKzQyMCw3IEBAIHN0YXRpYyB2
-b2lkIGRlY29uX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPiAgIAkgKiBz
-dXNwZW5kIHRoYXQgY29ubmVjdG9yLiBPdGhlcndpc2Ugd2UgbWlnaHQgdHJ5IHRvIHNjYW4gZnJv
-bQo+ICAgCSAqIGEgZGVzdHJveWVkIGJ1ZmZlciBsYXRlci4KPiAgIAkgKi8KPiAtCWZvciAoaSA9
-IDA7IGkgPCBXSU5ET1dTX05SOyBpKyspCj4gKwlmb3IgKGkgPSBjdHgtPmZpcnN0X3dpbjsgaSA8
-IFdJTkRPV1NfTlI7IGkrKykKPiAgIAkJZGVjb25fZGlzYWJsZV9wbGFuZShjcnRjLCAmY3R4LT5w
-bGFuZXNbaV0pOwo+Cj4gICAJZGVjb25fc3dyZXNldChjdHgpOwo+IEBAIC00NjEsMjUgKzQ5NCwz
-MCBAQCBzdGF0aWMgaW50IGRlY29uX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2
-aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4gICAJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYg
-PSBkYXRhOwo+ICAgCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXYgPSBkcm1fZGV2LT5k
-ZXZfcHJpdmF0ZTsKPiAgIAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lOwo+
-ICsJZW51bSBleHlub3NfZHJtX291dHB1dF90eXBlIG91dF90eXBlOwo+ICAgCWVudW0gZHJtX3Bs
-YW5lX3R5cGUgdHlwZTsKPiAtCXVuc2lnbmVkIGludCB6cG9zOwo+ICsJdW5zaWduZWQgaW50IHdp
-bjsKPiAgIAlpbnQgcmV0Owo+Cj4gICAJY3R4LT5kcm1fZGV2ID0gZHJtX2RldjsKPiAgIAljdHgt
-PnBpcGUgPSBwcml2LT5waXBlKys7Cj4KPiAtCWZvciAoenBvcyA9IDA7IHpwb3MgPCBXSU5ET1dT
-X05SOyB6cG9zKyspIHsKPiAtCQl0eXBlID0gZXh5bm9zX3BsYW5lX2dldF90eXBlKHpwb3MsIENV
-UlNPUl9XSU4pOwo+IC0JCXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYsICZjdHgtPnBs
-YW5lc1t6cG9zXSwKPiArCWZvciAod2luID0gY3R4LT5maXJzdF93aW47IHdpbiA8IFdJTkRPV1Nf
-TlI7IHdpbisrKSB7Cj4gKwkJaW50IHRtcCA9ICh3aW4gPT0gY3R4LT5maXJzdF93aW4pID8gMCA6
-IHdpbjsKCkFGQUlLLCBERUNPTiBUViBmb3IgRXh5bm9zNTQzMyBTb0MgaGFzIGZvdXIgaGFyZHdh
-cmUgb3ZlcmxheXMgc28gSSBndWVzcyAKeW91IHVzZWQgY3R4LT5maXJzdF93aW4gdG8gaW5pdGlh
-bGl6ZSBmb3VyIHBsYW5lcyBpbiBjYXNlIG9mIElGVFlQRV9IRE1JLgoKSG93ZXZlciwgd2l0aCBJ
-RlRZUEVfSERNSSBjdHgtPmZpcnN0X3dpbiBoYXMgMSwgYXMgYSByZXN1bHQsIApjdHgtPnBsYW5l
-c1tdIHdpbGwgaGF2ZSAwLCAybmQsIDNyZCBhbmQgNHRoIHBsYW5lcyBhbmQgdGhpcyBtZWFucyB3
-ZSAKc2hvdWxkIHVzZSAwLCAybmQgfiA0dGggaGFyZHdhcmUgb3ZlcmxheSBleGNlcHRpbmcgMXN0
-IG92ZXJsYXkuIElzIHRoaXMgCnlvdXIgaW50ZW50aW9uPwpTaG91bGRuJ3QgY3R4LT5wbGFuZXNb
-XSBoYXZlIDFzdCwgMm5kICwzcmQgYW5kIDR0aCBwbGFuZXMgc28gdGhhdCB3ZSBjYW4gCnVzZSAx
-c3QgfiA0dGggaGFyZHdhcmUgb3ZlcmxheSBmb3IgREVDT04gVFY/CgpERUNPTiBUViBmb3IgRXh5
-bm9zNTQzMyBTb0MgY2FuIHVzZSBvbmx5IDFzdCB+IDR0aCBoYXJkd2FyZSBvdmVybGF5cy4KCkFu
-ZCBvdGhlciB0aGluZywgaXQgbWF5IGJlIHRyaXZpYWwgYnV0IEkgdGhpbmsgaXQnZCBiZSBiZXR0
-ZXIgdG8gdXNlIAonb3ZsJyBpbnN0ZWFkIG9mICd0bXAuCgpUaGFua3MsCklua2kgRGFlCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 10/23/2015 01:55 PM, Inki Dae wrote:
+> Hi Andrzej,
+>
+>
+> 2015=EB=85=84 10=EC=9B=94 20=EC=9D=BC 18:22=EC=97=90 Andrzej Hajda =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>> DECON-TV IP is responsible for generating video stream which is tran=
+sferred
+>> to HDMI IP. It is almost fully compatible with DECON IP.
+>>
+>> The patch is based on initial work of Hyungwon Hwang.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 154 ++++++++++++++=
+++----------
+>>   include/video/exynos5433_decon.h              |  29 +++++
+>>   2 files changed, 122 insertions(+), 61 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers=
+/gpu/drm/exynos/exynos5433_drm_decon.c
+>> index 3c9aa4e..fbe1b31 100644
+>> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>> @@ -13,6 +13,7 @@
+>>   #include <linux/platform_device.h>
+>>   #include <linux/clk.h>
+>>   #include <linux/component.h>
+>> +#include <linux/of_device.h>
+>>   #include <linux/of_gpio.h>
+>>   #include <linux/pm_runtime.h>
+>>
+>> @@ -37,6 +38,12 @@ static const char * const decon_clks_name[] =3D {
+>>   	"sclk_decon_eclk",
+>>   };
+>>
+>> +enum decon_iftype {
+>> +	IFTYPE_RGB,
+>> +	IFTYPE_I80,
+>> +	IFTYPE_HDMI
+>> +};
+>> +
+>>   enum decon_flag_bits {
+>>   	BIT_CLKS_ENABLED,
+>>   	BIT_IRQS_ENABLED,
+>> @@ -53,7 +60,8 @@ struct decon_context {
+>>   	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
+>>   	int				pipe;
+>>   	unsigned long			flags;
+>> -	bool				i80_if;
+>> +	enum decon_iftype		out_type;
+>> +	int				first_win;
+>>   };
+>>
+>>   static const uint32_t decon_formats[] =3D {
+>> @@ -80,7 +88,7 @@ static int decon_enable_vblank(struct exynos_drm_c=
+rtc *crtc)
+>>
+>>   	if (test_and_set_bit(BIT_IRQS_ENABLED, &ctx->flags)) {
+>>   		val =3D VIDINTCON0_INTEN;
+>> -		if (ctx->i80_if)
+>> +		if (ctx->out_type =3D=3D IFTYPE_I80)
+>>   			val |=3D VIDINTCON0_FRAMEDONE;
+>>   		else
+>>   			val |=3D VIDINTCON0_INTFRMEN;
+>> @@ -104,8 +112,11 @@ static void decon_disable_vblank(struct exynos_=
+drm_crtc *crtc)
+>>
+>>   static void decon_setup_trigger(struct decon_context *ctx)
+>>   {
+>> -	u32 val =3D TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
+>> -			TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN;
+>> +	u32 val =3D (ctx->out_type !=3D IFTYPE_HDMI)
+>> +		? TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
+>> +		  TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN
+>> +		: TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
+>> +		  TRIGCON_HWTRIGMASK_I80_RGB | TRIGCON_HWTRIGEN_I80_RGB;
+>>   	writel(val, ctx->addr + DECON_TRIGCON);
+>>   }
+>>
+>> @@ -118,13 +129,22 @@ static void decon_commit(struct exynos_drm_crt=
+c *crtc)
+>>   	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+>>   		return;
+>>
+>> +	if (ctx->out_type =3D=3D IFTYPE_HDMI) {
+>> +		m->crtc_hsync_start =3D m->crtc_hdisplay + 10;
+>> +		m->crtc_hsync_end =3D m->crtc_htotal - 92;
+>> +		m->crtc_vsync_start =3D m->crtc_vdisplay + 1;
+>> +		m->crtc_vsync_end =3D m->crtc_vsync_start + 1;
+>> +	}
+>> +
+>> +	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID, 0);
+>> +
+>>   	/* enable clock gate */
+>>   	val =3D CMU_CLKGAGE_MODE_SFR_F | CMU_CLKGAGE_MODE_MEM_F;
+>>   	writel(val, ctx->addr + DECON_CMU);
+>>
+>>   	/* lcd on and use command if */
+>>   	val =3D VIDOUT_LCD_ON;
+>> -	if (ctx->i80_if)
+>> +	if (ctx->out_type =3D=3D IFTYPE_I80)
+>>   		val |=3D VIDOUT_COMMAND_IF;
+>>   	else
+>>   		val |=3D VIDOUT_RGB_IF;
+>> @@ -134,7 +154,7 @@ static void decon_commit(struct exynos_drm_crtc =
+*crtc)
+>>   		VIDTCON2_HOZVAL(m->hdisplay - 1);
+>>   	writel(val, ctx->addr + DECON_VIDTCON2);
+>>
+>> -	if (!ctx->i80_if) {
+>> +	if (ctx->out_type !=3D IFTYPE_I80) {
+>>   		val =3D VIDTCON00_VBPD_F(
+>>   				m->crtc_vtotal - m->crtc_vsync_end - 1) |
+>>   			VIDTCON00_VFPD_F(
+>> @@ -159,15 +179,9 @@ static void decon_commit(struct exynos_drm_crtc=
+ *crtc)
+>>   	decon_setup_trigger(ctx);
+>>
+>>   	/* enable output and display signal */
+>> -	val =3D VIDCON0_ENVID | VIDCON0_ENVID_F;
+>> -	writel(val, ctx->addr + DECON_VIDCON0);
+>> +	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID | VIDCON0_ENVID_F=
+, ~0);
+>>   }
+>>
+>> -#define COORDINATE_X(x)		(((x) & 0xfff) << 12)
+>> -#define COORDINATE_Y(x)		((x) & 0xfff)
+>> -#define OFFSIZE(x)		(((x) & 0x3fff) << 14)
+>> -#define PAGEWIDTH(x)		((x) & 0x3fff)
+>> -
+>>   static void decon_win_set_pixfmt(struct decon_context *ctx, unsign=
+ed int win,
+>>   				 struct drm_framebuffer *fb)
+>>   {
+>> @@ -238,6 +252,10 @@ static void decon_atomic_begin(struct exynos_dr=
+m_crtc *crtc,
+>>   	decon_shadow_protect_win(ctx, plane->zpos, true);
+>>   }
+>>
+>> +#define BIT_VAL(x, e, s) (((x) & ((1 << ((e) - (s) + 1)) - 1)) << (=
+s))
+>> +#define COORDINATE_X(x) BIT_VAL((x), 23, 12)
+>> +#define COORDINATE_Y(x) BIT_VAL((x), 11, 0)
+>> +
+>>   static void decon_update_plane(struct exynos_drm_crtc *crtc,
+>>   			       struct exynos_drm_plane *plane)
+>>   {
+>> @@ -271,8 +289,12 @@ static void decon_update_plane(struct exynos_dr=
+m_crtc *crtc,
+>>   	val =3D plane->dma_addr[0] + pitch * plane->crtc_h;
+>>   	writel(val, ctx->addr + DECON_VIDW0xADD1B0(win));
+>>
+>> -	val =3D OFFSIZE(pitch - plane->crtc_w * bpp)
+>> -		| PAGEWIDTH(plane->crtc_w * bpp);
+>> +	if (ctx->out_type !=3D IFTYPE_HDMI)
+>> +		val =3D BIT_VAL(pitch - plane->crtc_w * bpp, 27, 14)
+>> +			| BIT_VAL(plane->crtc_w * bpp, 13, 0);
+>> +	else
+>> +		val =3D BIT_VAL(pitch - plane->crtc_w * bpp, 29, 15)
+>> +			| BIT_VAL(plane->crtc_w * bpp, 14, 0);
+>>   	writel(val, ctx->addr + DECON_VIDW0xADD2(win));
+>>
+>>   	decon_win_set_pixfmt(ctx, win, state->fb);
+>> @@ -314,7 +336,7 @@ static void decon_atomic_flush(struct exynos_drm=
+_crtc *crtc,
+>>
+>>   	decon_shadow_protect_win(ctx, plane->zpos, false);
+>>
+>> -	if (ctx->i80_if)
+>> +	if (ctx->out_type =3D=3D IFTYPE_I80)
+>>   		set_bit(BIT_WIN_UPDATED, &ctx->flags);
+>>   }
+>>
+>> @@ -339,6 +361,17 @@ static void decon_swreset(struct decon_context =
+*ctx)
+>>   	}
+>>
+>>   	WARN(tries =3D=3D 0, "failed to software reset DECON\n");
+>> +
+>> +	if (ctx->out_type !=3D IFTYPE_HDMI)
+>> +		return;
+>> +
+>> +	writel(VIDCON0_CLKVALUP | VIDCON0_VLCKFREE, ctx->addr + DECON_VIDC=
+ON0);
+>> +	decon_set_bits(ctx, DECON_CMU,
+>> +		       CMU_CLKGAGE_MODE_SFR_F | CMU_CLKGAGE_MODE_MEM_F, ~0);
+>> +	writel(VIDCON1_VCLK_RUN_VDEN_DISABLE, ctx->addr + DECON_VIDCON1);
+>> +	writel(CRCCTRL_CRCEN | CRCCTRL_CRCSTART_F | CRCCTRL_CRCCLKEN,
+>> +	       ctx->addr + DECON_CRCCTRL);
+>> +	decon_setup_trigger(ctx);
+>>   }
+>>
+>>   static void decon_enable(struct exynos_drm_crtc *crtc)
+>> @@ -387,7 +420,7 @@ static void decon_disable(struct exynos_drm_crtc=
+ *crtc)
+>>   	 * suspend that connector. Otherwise we might try to scan from
+>>   	 * a destroyed buffer later.
+>>   	 */
+>> -	for (i =3D 0; i < WINDOWS_NR; i++)
+>> +	for (i =3D ctx->first_win; i < WINDOWS_NR; i++)
+>>   		decon_disable_plane(crtc, &ctx->planes[i]);
+>>
+>>   	decon_swreset(ctx);
+>> @@ -461,25 +494,30 @@ static int decon_bind(struct device *dev, stru=
+ct device *master, void *data)
+>>   	struct drm_device *drm_dev =3D data;
+>>   	struct exynos_drm_private *priv =3D drm_dev->dev_private;
+>>   	struct exynos_drm_plane *exynos_plane;
+>> +	enum exynos_drm_output_type out_type;
+>>   	enum drm_plane_type type;
+>> -	unsigned int zpos;
+>> +	unsigned int win;
+>>   	int ret;
+>>
+>>   	ctx->drm_dev =3D drm_dev;
+>>   	ctx->pipe =3D priv->pipe++;
+>>
+>> -	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
+>> -		type =3D exynos_plane_get_type(zpos, CURSOR_WIN);
+>> -		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
+>> +	for (win =3D ctx->first_win; win < WINDOWS_NR; win++) {
+>> +		int tmp =3D (win =3D=3D ctx->first_win) ? 0 : win;
+> AFAIK, DECON TV for Exynos5433 SoC has four hardware overlays so I gu=
+ess=20
+> you used ctx->first_win to initialize four planes in case of IFTYPE_H=
+DMI.
+>
+> However, with IFTYPE_HDMI ctx->first_win has 1, as a result,=20
+> ctx->planes[] will have 0, 2nd, 3rd and 4th planes and this means we=20
+> should use 0, 2nd ~ 4th hardware overlay excepting 1st overlay. Is th=
+is=20
+> your intention?
+> Shouldn't ctx->planes[] have 1st, 2nd ,3rd and 4th planes so that we =
+can=20
+> use 1st ~ 4th hardware overlay for DECON TV?
+>
+> DECON TV for Exynos5433 SoC can use only 1st ~ 4th hardware overlays.
+>
+> And other thing, it may be trivial but I think it'd be better to use=20
+> 'ovl' instead of 'tmp.
+
+DECON-TV has hardware window 0 with very limited functionality,
+it is just background color, no scanout buffers. So it cannot be used
+as drm plane. ctx->first_win contains value of the 1st valid window.
+There is a question how to map windows to planes. I have chosen
+the simplest solution - n'th hw window is mapped to n'th plane and have
+zpos=3D=3Dn. The only problem is with function exynos_plane_get_type,
+which returns DRM_PLANE_TYPE_PRIMARY only if their 1st argument is equa=
+l 0,
+ie it assumes default window is always 0.
+As an simple workaround I used 'tmp' variable which maps 1st window to =
+0.
+This way exynos_plane_get_type returns expected value for all windows.
+I plan replace this workaround with something nicer, but as it would in=
+volve
+changes in other drivers I left this as TODO for later.
+Regarding ctx->planes[], it is static array so it will have always one =
+entry
+invalid in case of TV, with this approach it will be th 0th entry, but =
+with a gain
+of consistency in windows/zpos/planes numbering.
+If you prefer different approach please let me know.
+
+Regards
+Andrzej
+
+>
+> Thanks,
+> Inki Dae
+>
