@@ -1,64 +1,62 @@
-From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 0/6] Switch to generic syscon regmap based drivers
-Date: Sat, 24 Oct 2015 03:59:36 +0900
-Message-ID: <562A8398.8010600@kernel.org>
-References: <1445333085-22837-1-git-send-email-alim.akhtar@samsung.com> <CAGOxZ50G-ttivhVjbozUisA0HXcFz7bvRUuPR67xR88TTCa_wQ@mail.gmail.com> <CAGOxZ51_JPy51htzD_M_=qaPVUexkVhoA2ANLS2-rpK3QDT=8A@mail.gmail.com> <1606098.olLAyTIhB3@dell2.five-lan.de> <56272C1C.8040007@samsung.com> <562765F3.9010306@osg.samsung.com> <CAGOxZ52-ia8uhgGg5CiU9TSYkfAsRD52zvLqq++Y-mr4uaFOpg@mail.gmail.com> <5627A75E.60509@osg.samsung.com> <562A8209.7090305@kernel.org>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [GIT PULL] ARM: defconfig: Exynos improvements for 4.4, 2nd pull
+Date: Sat, 24 Oct 2015 04:15:14 +0900
+Message-ID: <562A8742.6090508@kernel.org>
+References: <1444696722-25093-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <562A8209.7090305-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Alim Akhtar <alim.akhtar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444696722-25093-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 10/24/15 03:52, Kukjin Kim wrote:
-> On 10/21/15 23:55, Javier Martinez Canillas wrote:
->> Hello Alim,
->>
->> On 10/21/2015 04:50 PM, Alim Akhtar wrote:
->>
->> [snip]
->>
->>>>
->>>> [0]:
->>>> From c9b250ee03bae338339b70693e906145c719f783 Mon Sep 17 00:00:00 2001
->>>> From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
->>>> Date: Wed, 21 Oct 2015 11:59:44 +0200
->>>> Subject: [RFT PATCH] mmc: pwrseq: Use highest priority for eMMC restart
->>>>  handler
->>>>
->>>> The pwrseq_emmc driver does a eMMC card reset before a system reboot to
->>>> allow broken or limited ROM boot-loaders, that don't have an eMMC reset
->>>> logic, to be able to read the second stage from the eMMC.
->>>>
->>>> But this has to be called before a system reboot handler and while most
->>>> of them use the priority 128, there are other restart handlers (such as
->>>> the syscon-reboot one) that use a higher priority. So, use the highest
->>>> priority to make sure that the eMMC hw is reset before a system reboot.
->>>>
->>>> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
->>>> ---
->>> Looks good.
->>> Reviewed-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>
->>
->> Thanks, should I post it as a proper patch or are adding it to your
->> series? I think the latter is more reasonable so with an ack from Ulf,
->> all patches can go through the linux-samsung tree.
->>  
-> Javier,
+On 10/13/15 09:38, Krzysztof Kozlowski wrote:
+> Dear Kukjin,
 > 
-> Can you please post your fix right now? so that I could take this series
-> for v4.4 of late pull-request...
+> This is another round of defconfig related changes for 4.4.
 > 
-I found the patch in linux-arm-kernel ml just now....let me see. Please
-kindly ignore previous my comments...
+> Description along with a tag.
+> You can find them also on the lists with my reviewed-by.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 7fa5ce4e6fcb4596761c17e124e7d1f8cf64fe96:
+> 
+>   ARM: exynos_defconfig: Disable simplefb support (2015-09-13 19:25:39 +0900)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/krzk/linux.git tags/samsung-defconfig-4.4-2
+> 
+> for you to fetch changes up to 89a0112100e74f50407d269570a02a82fd28ccb8:
+> 
+>   ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4 (2015-10-12 12:59:50 +0900)
+> 
+> ----------------------------------------------------------------
+> Defconfig changes around Exynos based boards:
+> 1. Change WiFi-Ex from built-in to module to fix issue with probing
+>    the driver before root filesystem is available (driver needs
+>    firmware).
+> 2. Enable Realtek RTL81t3 ethernet adapter present on Odroid-XU4
+>    board.
+> 
+> ----------------------------------------------------------------
+> Anand Moon (2):
+>       ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+>       ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+> 
+> Javier Martinez Canillas (1):
+>       ARM: exynos_defconfig: Enable WiFi-Ex as a module instead built-in
+> 
+>  arch/arm/configs/exynos_defconfig   | 5 +++--
+>  arch/arm/configs/multi_v7_defconfig | 1 +
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 
-Thanks,
-Kukjin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied, thanks.
+
+- Kukjin
