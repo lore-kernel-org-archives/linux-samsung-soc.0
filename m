@@ -1,17 +1,17 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 4/5] Late Samsung driver updates for v4.4
-Date: Sat, 24 Oct 2015 06:26:27 +0900
-Message-ID: <562AA603.7040600@kernel.org>
+Subject: [GIT PULL 5/5] Late Samsung defconfig updates for v4.4
+Date: Sat, 24 Oct 2015 06:27:56 +0900
+Message-ID: <562AA65C.7010702@kernel.org>
 References: <562AA40E.4050407@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:38426 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:38533 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752910AbbJWV0w (ORCPT
+	id S1751380AbbJWV2f (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Oct 2015 17:26:52 -0400
+	Fri, 23 Oct 2015 17:28:35 -0400
 In-Reply-To: <562AA40E.4050407@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -25,64 +25,45 @@ The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 are available in the git repository at:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-driver
+tags/samsung-defconfig
 
-for you to fetch changes up to c612d5a7785b307df96938d590c3a1edfb624ccf:
+for you to fetch changes up to f0864f843f0249f3e16e1a9af7152d7aa8070b10:
 
-  cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs (2015-10-24
-04:34:50 +0900)
-
-----------------------------------------------------------------
-Samsung driver udpates for v4.4
-
-- add support for exynos SROM controller DT based driver
-  (drivers/soc/samsung/exynos-srom.c)
-  : Since the exynos SROM registers are used during Suspend to RAM
-    so the exynos SROM driver handles the S2R and then we can remove
-    static mapping for SROM registers.
-  : Pankaj tested boot and S2R functionality on Peach-Pi chromebook
-  : Pavel tested on SMDK5410 board
-  : Krzysztof tested on Trats2 (exynos4412) board
-- update Maintainer entry accordingly
-- remove superfluous CONFIG_PM ifdefs with Viresh's ack
+  ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+(2015-10-24 04:13:12 +0900)
 
 ----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (1):
-      cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs
+Samsung defconfig udpates for v4.4
 
-Pankaj Dubey (8):
-      ARM: EXYNOS: remove unused static mapping of CMU for exynos5
-      ARM: EXYNOS: code cleanup in map.h
-      dt-bindings: add exynos-srom device tree binding
-      ARM: dts: add SROM device node for exynos4
-      ARM: dts: add SROM device node for exynos5
-      drivers: soc: add support for exynos SROM driver
-      MAINTAINERS: add maintainers entry for drivers/soc/samsung
-      ARM: EXYNOS: Remove SROM related register settings from mach-exynos
+- exynos_defconfig
+  : enable USB Video Class for Peach boards.
+  : enable DWC2 USB and USB ethernet gadget
+  : enable LEDs (LEGS_GPIO and LEDS_PWM)for Odroid-XU3/XU4
+  : enable RTL8152 for Odroid-XU4
+  : enable WiFi-Ex as a module instead of build-in
+  : disable temporal simplefb support (FB_SIMPLE) because
+    exynos DRM driver can support it now
 
- .../bindings/arm/samsung/exynos-srom.txt           |  12 ++
- MAINTAINERS                                        |   1 +
- arch/arm/boot/dts/exynos4.dtsi                     |   5 +
- arch/arm/boot/dts/exynos5.dtsi                     |   5 +
- arch/arm/mach-exynos/Kconfig                       |   2 +
- arch/arm/mach-exynos/exynos.c                      |  22 ---
- arch/arm/mach-exynos/include/mach/map.h            |   8 -
- arch/arm/mach-exynos/regs-srom.h                   |  53 -------
- arch/arm/mach-exynos/suspend.c                     |  20 +--
- arch/arm/plat-samsung/include/plat/map-s5p.h       |   1 -
- drivers/cpufreq/s5pv210-cpufreq.c                  |   2 -
- drivers/soc/Kconfig                                |   1 +
- drivers/soc/Makefile                               |   1 +
- drivers/soc/samsung/Kconfig                        |  13 ++
- drivers/soc/samsung/Makefile                       |   1 +
- drivers/soc/samsung/exynos-srom.c                  | 175
-+++++++++++++++++++++
- drivers/soc/samsung/exynos-srom.h                  |  51 ++++++
- 17 files changed, 269 insertions(+), 104 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
- delete mode 100644 arch/arm/mach-exynos/regs-srom.h
- create mode 100644 drivers/soc/samsung/Kconfig
- create mode 100644 drivers/soc/samsung/Makefile
- create mode 100644 drivers/soc/samsung/exynos-srom.c
- create mode 100644 drivers/soc/samsung/exynos-srom.h
+- multi_v7_defconfig
+  : enable DWC2 USB and USB ethernet gadget
+  : enable RTL8152 for Odroid-XU4
+
+----------------------------------------------------------------
+Anand Moon (3):
+      ARM: exynos_defconfig: Enable LEDS for Odroid-XU3/XU4
+      ARM: exynos_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+      ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
+
+Javier Martinez Canillas (3):
+      ARM: exynos_defconfig: Enable USB Video Class support
+      ARM: exynos_defconfig: Disable simplefb support
+      ARM: exynos_defconfig: Enable WiFi-Ex as a module instead built-in
+
+Marek Szyprowski (2):
+      ARM: exynos_defconfig: Enable DWC2 USB driver and USB ethernet gadget
+      ARM: multi_v7_defconfig: Enable DWC2 USB driver and USB ethernet
+gadget
+
+ arch/arm/configs/exynos_defconfig   | 18 +++++++++++++++---
+ arch/arm/configs/multi_v7_defconfig |  3 +++
+ 2 files changed, 18 insertions(+), 3 deletions(-)
