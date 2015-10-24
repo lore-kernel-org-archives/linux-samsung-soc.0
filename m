@@ -1,158 +1,106 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v7 17/17] drm: bridge: analogix/dp: add edid modes parse in get_modes method
-Date: Sat, 24 Oct 2015 11:21:49 +0800
-Message-ID: <1445656909-15477-2-git-send-email-ykk@rock-chips.com>
-References: <1445599415-30856-1-git-send-email-ykk@rock-chips.com>
- <1445656909-15477-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1445656909-15477-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, joe@perches.com, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
-Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] mmc: pwrseq: Use highest priority for eMMC restart handler
+Date: Sat, 24 Oct 2015 10:25:32 +0530
+Message-ID: <562B0F44.1080007@samsung.com>
+References: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
+ <56282F71.2070408@samsung.com> <562839F7.3040005@osg.samsung.com>
+ <56283F27.9060804@samsung.com>
+ <CAD=FV=VZJ9Tc4G-Xiw60DmfC4izU_6dVwwa0N0ePM0eaJfcqkg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:32788 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750794AbbJXFFK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 24 Oct 2015 01:05:10 -0400
+In-reply-to: <CAD=FV=VZJ9Tc4G-Xiw60DmfC4izU_6dVwwa0N0ePM0eaJfcqkg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Markus Reichl <m.reichl@fivetechno.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
 
-Display Port monitor could support kinds of mode which indicate
-in monitor edid, not just one single display resolution which
-defined in panel or devivetree property display timing.
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4:
-- Call drm_panel_prepare() in .get_modes function, ensure panel should
-  power on before driver try to read edid message.
 
-Changes in v3:
-- Add edid modes parse support
-
-Changes in v2: None
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 24 +++++++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 46 +++++++++++-----------
- 2 files changed, 40 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 216d33d..4fa5f69 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -107,7 +107,7 @@ static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
- 
- static int analogix_dp_read_edid(struct analogix_dp_device *dp)
- {
--	unsigned char edid[EDID_BLOCK_LENGTH * 2];
-+	unsigned char *edid = dp->edid;
- 	unsigned int extend_block = 0;
- 	unsigned char sum;
- 	unsigned char test_vector;
-@@ -901,12 +901,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 			DRM_ERROR("failed to disable the panel\n");
- 	}
- 
--	ret = analogix_dp_handle_edid(dp);
--	if (ret) {
--		dev_err(dp->dev, "unable to handle edid\n");
--		return;
--	}
--
- 	ret = analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
- 					 dp->video_info.max_link_rate);
- 	if (ret) {
-@@ -947,8 +941,24 @@ EXPORT_SYMBOL_GPL(analogix_dp_detect);
- int analogix_dp_get_modes(struct device *dev)
- {
- 	struct analogix_dp_device *dp = dev_get_drvdata(dev);
-+	struct edid *edid = (struct edid *)dp->edid;
- 	int num_modes = 0;
- 
-+	if (dp->plat_data && dp->plat_data->panel) {
-+		if (drm_panel_prepare(dp->plat_data->panel)) {
-+			DRM_ERROR("failed to setup the panel\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (analogix_dp_handle_edid(dp)) {
-+		dev_err(dp->dev, "unable to handle edid\n");
-+		return -EINVAL;
-+	}
-+
-+	drm_mode_connector_update_edid_property(dp->connector, edid);
-+	num_modes += drm_add_edid_modes(dp->connector, edid);
-+
- 	if (dp->plat_data->panel)
- 		num_modes += drm_panel_get_modes(dp->plat_data->panel);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index d3c7e0a..2bd2e0d 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -20,6 +20,28 @@
- #define MAX_CR_LOOP 5
- #define MAX_EQ_LOOP 5
- 
-+/* I2C EDID Chip ID, Slave Address */
-+#define I2C_EDID_DEVICE_ADDR			0x50
-+#define I2C_E_EDID_DEVICE_ADDR			0x30
-+
-+#define EDID_BLOCK_LENGTH			0x80
-+#define EDID_HEADER_PATTERN			0x00
-+#define EDID_EXTENSION_FLAG			0x7e
-+#define EDID_CHECKSUM				0x7f
-+
-+/* DP_MAX_LANE_COUNT */
-+#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
-+#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-+
-+/* DP_LANE_COUNT_SET */
-+#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
-+
-+/* DP_TRAINING_LANE0_SET */
-+#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
-+#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
-+#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
-+#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
-+
- enum link_rate_type {
- 	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
- 	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
-@@ -161,6 +183,7 @@ struct analogix_dp_device {
- 	int			dpms_mode;
- 	int			hpd_gpio;
- 	bool                    need_force_hpd;
-+	unsigned char           edid[EDID_BLOCK_LENGTH * 2];
- 
- 	struct analogix_dp_plat_data *plat_data;
- };
-@@ -260,27 +283,4 @@ int analogix_dp_is_video_stream_on(struct analogix_dp_device *dp);
- void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
--
--/* I2C EDID Chip ID, Slave Address */
--#define I2C_EDID_DEVICE_ADDR			0x50
--#define I2C_E_EDID_DEVICE_ADDR			0x30
--
--#define EDID_BLOCK_LENGTH			0x80
--#define EDID_HEADER_PATTERN			0x00
--#define EDID_EXTENSION_FLAG			0x7e
--#define EDID_CHECKSUM				0x7f
--
--/* DP_MAX_LANE_COUNT */
--#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
--#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
--
--/* DP_LANE_COUNT_SET */
--#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
--
--/* DP_TRAINING_LANE0_SET */
--#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
--#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
--#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
--#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
--
- #endif /* _ANALOGIX_DP_CORE_H */
--- 
-2.1.2
+On 10/22/2015 09:04 PM, Doug Anderson wrote:
+> Krzysztof,
+>
+> On Wed, Oct 21, 2015 at 6:43 PM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> I think at least one platform may be affected because it used
+>> mmc-pwrseq-emmc and gpio-restart.
+>>
+>> Look at rk3288-veyron.dtsi.
+>>
+>> Both of restart handlers had the priority of 129 which means that the
+>> order of execution depends on probing sequence. Now you will make the
+>> sequence strict - first mmc then gpio.
+>>
+>> You seems convinced that this is not a problem... I don't know. I would
+>> prefer test this on affected platforms before risking to break them.
+>> It's annoying if fix for one SoC breaks another.
+>
+> Assuming I'm understanding things properly, veyron isn't using 129 as
+> a priority.  In the dts file:
+>
+>          gpio-restart {
+>                  compatible = "gpio-restart";
+>                  gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+>                  pinctrl-names = "default";
+>                  pinctrl-0 = <&ap_warm_reset_h>;
+>                  priority = <200>;
+>          };
+>
+> ...so it overrides the default 129 with 200.  Ah, but Javier already
+> pointed that out in his reply.
+>
+>>> Since the current mmc_pwrseq_emmc_reset_nb notifier priority is 129,
+>>> eMMC reset will not work if one of the platforms you mentioned needs
+>>> this since the system restart handler with prio 192 will be executed
+>>> before the eMMC one, leaving the eMMC in an unknown state on reboot.
+>>
+>> And now you will "fix this" by making eMMC working correctly. So let's
+>> make it straight:
+>> 1. Previously the eMMC could be left on these platforms in an unknown
+>> state (because emmc handler was not executed).
+>> 2. No one complained! Which could mean that in fact this was working fine...
+>> 3. Now you will change it.
+>> 4. Maybe someone will complain?
+>
+> On veyron boards the reset shouldn't hurt.  The eMMC reset will
+> actually get asserted at reset anyway since the reset will reset GPIO
+> states and the default GPIO state for the eMMC line asserts reset.
+>
+> OK, I just picked this onto Heiko's somewhat "stable-tree"
+> (v4.3-rc3-876-g6509232) from
+> <https://github.com/mmind/linux-rockchip/>.  I put printouts in
+> __mmc_pwrseq_emmc_reset() to confirm it was getting called.  I then
+> rebooted.  I then saw:
+>
+> [   36.175732] reboot: Restarting system
+> [   36.179400] DOUG: resetting emmc
+> [   36.182829] DOUG: resetting emmc done
+>
+> ...and the reboot worked normally (which means that the GPIO restart
+> got called since otherwise I would have gotten TPM errors).
+>
+> So I'd say that for rk3288-veyron-jerry:
+>
+> Tested-by: Douglas Anderson <dianders@chromium.org>
+>
+Thank you!
+>
+> Note that personally I would only choose the "highest" priority as an
+> absolute last resort.  Leaving a little extra slack in there means
+> that when the next person comes up with a really good reason to run
+> before you do that they can do it without changing your code.  All
+> good BASIC programmers know to skip "10" in their first version for
+> just this reason.  ;)
+>
+> If I were to pick a number, I suppose I'd pick something like "220",
+> but that's pretty arbitrary.  I would have picked 200 except that it
+> appears that would race with veyron's choice.
+>
+> -Doug
+>
