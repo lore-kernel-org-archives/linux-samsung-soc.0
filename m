@@ -1,106 +1,89 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] mmc: pwrseq: Use highest priority for eMMC restart handler
-Date: Sat, 24 Oct 2015 10:25:32 +0530
-Message-ID: <562B0F44.1080007@samsung.com>
-References: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
- <56282F71.2070408@samsung.com> <562839F7.3040005@osg.samsung.com>
- <56283F27.9060804@samsung.com>
- <CAD=FV=VZJ9Tc4G-Xiw60DmfC4izU_6dVwwa0N0ePM0eaJfcqkg@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL] ARM: dts: Exynos for v4.4 (3rd)
+Date: Sat, 24 Oct 2015 20:02:48 +0900
+Message-ID: <CAJKOXPcugB_njEkyJJzXOpgs1ACgwwEf=ZnMumDbrx_5GvCHhA@mail.gmail.com>
+References: <1444974144-12928-1-git-send-email-k.kozlowski@samsung.com>
+	<1444974144-12928-2-git-send-email-k.kozlowski@samsung.com>
+	<562A8C0F.8010902@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:32788 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750794AbbJXFFK (ORCPT
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:36232 "EHLO
+	mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751205AbbJXLCt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Oct 2015 01:05:10 -0400
-In-reply-to: <CAD=FV=VZJ9Tc4G-Xiw60DmfC4izU_6dVwwa0N0ePM0eaJfcqkg@mail.gmail.com>
+	Sat, 24 Oct 2015 07:02:49 -0400
+In-Reply-To: <562A8C0F.8010902@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Markus Reichl <m.reichl@fivetechno.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 
+2015-10-24 4:35 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
+> On 10/16/15 14:42, Krzysztof Kozlowski wrote:
+>> Dear Kukjin,
+>>
+>> Last batch of changes to DT for Exynos for v4.4.
+>> Includes dependency - clock driver changes.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>> The following changes since commit 9aaf43d9b59d6b5d8daeb3a4b9d894ea88fc34c5:
+>>
+>>   clk: samsung: exynos5250: Add DISP1 clocks (2015-10-16 08:49:53 +0900)
+>>
+>> are available in the git repository at:
+>>
+>>   https://github.com/krzk/linux.git tags/samsung-dt-4.4-3
+>>
+>> for you to fetch changes up to 1967da5699e660957737ec6c4015cfd8e428f0ff:
+>>
+>>   ARM: dts: Add clocks to DISP1 domain in exynos5250 (2015-10-16 14:20:03 +0900)
+>>
+>> ----------------------------------------------------------------
+>> Last round (from my side) of v4.4 Device Tree improvements for Exynos
+>> based boards:
+>> 1. Fix USB OTG on Exynos3250 (Monk and Rinato), Exynos4210 (Trats
+>>    and Universal) and Exynos4412 (Trats2).
+>> 2. Fix HDMI and LVDS display on Snow (Exynos5250) after second Suspend to RAM.
+>> 3. Minor cleanups and fixes.
+>>
+>> ----------------------------------------------------------------
+>> Krzysztof Kozlowski (2):
+>>       Merge tag 'samsung-clk-exynos5250-4.4' into dt-for-next
+>
+> Since there is no the branch(tags/samsung-clk-exynos5250-4.4) in clk
+> tree, I think we don't need to keep the branch as a topic and we can
+> just take the patch with Stephen's ack...
+>
+>>       dt-bindings: Correct the example for Exynos power domain clocks
+>>
+>> Laurent Pinchart (2):
+>>       ARM: dts: Fix typo in regulator enable GPIO property in s5pv210-aquila
+>>       ARM: dts: Fix typo in regulator enable GPIO property in s5pv210-goni
+>>
+>> Marek Szyprowski (1):
+>>       ARM: dts: Add vbus regulator to USB2 phy nodes on exynos3250, exynos4210 and exynos4412 boards
+>>
+>> Tomeu Vizoso (1):
+>>       ARM: dts: Add clocks to DISP1 domain in exynos5250
+>>
+>>  Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 5 ++---
+>>  arch/arm/boot/dts/exynos3250-monk.dts                         | 1 +
+>>  arch/arm/boot/dts/exynos3250-rinato.dts                       | 1 +
+>>  arch/arm/boot/dts/exynos4210-trats.dts                        | 2 +-
+>>  arch/arm/boot/dts/exynos4210-universal_c210.dts               | 2 +-
+>>  arch/arm/boot/dts/exynos4412-trats2.dts                       | 1 +
+>>  arch/arm/boot/dts/exynos5250.dtsi                             | 4 ++++
+>>  arch/arm/boot/dts/s5pv210-aquila.dts                          | 2 +-
+>>  arch/arm/boot/dts/s5pv210-goni.dts                            | 4 ++--
+>>  9 files changed, 14 insertions(+), 8 deletions(-)
+>
+> In this case, please show all of diff status including merge branch ;-)
 
+Right, thanks for catching this!
 
-On 10/22/2015 09:04 PM, Doug Anderson wrote:
-> Krzysztof,
->
-> On Wed, Oct 21, 2015 at 6:43 PM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> I think at least one platform may be affected because it used
->> mmc-pwrseq-emmc and gpio-restart.
->>
->> Look at rk3288-veyron.dtsi.
->>
->> Both of restart handlers had the priority of 129 which means that the
->> order of execution depends on probing sequence. Now you will make the
->> sequence strict - first mmc then gpio.
->>
->> You seems convinced that this is not a problem... I don't know. I would
->> prefer test this on affected platforms before risking to break them.
->> It's annoying if fix for one SoC breaks another.
->
-> Assuming I'm understanding things properly, veyron isn't using 129 as
-> a priority.  In the dts file:
->
->          gpio-restart {
->                  compatible = "gpio-restart";
->                  gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
->                  pinctrl-names = "default";
->                  pinctrl-0 = <&ap_warm_reset_h>;
->                  priority = <200>;
->          };
->
-> ...so it overrides the default 129 with 200.  Ah, but Javier already
-> pointed that out in his reply.
->
->>> Since the current mmc_pwrseq_emmc_reset_nb notifier priority is 129,
->>> eMMC reset will not work if one of the platforms you mentioned needs
->>> this since the system restart handler with prio 192 will be executed
->>> before the eMMC one, leaving the eMMC in an unknown state on reboot.
->>
->> And now you will "fix this" by making eMMC working correctly. So let's
->> make it straight:
->> 1. Previously the eMMC could be left on these platforms in an unknown
->> state (because emmc handler was not executed).
->> 2. No one complained! Which could mean that in fact this was working fine...
->> 3. Now you will change it.
->> 4. Maybe someone will complain?
->
-> On veyron boards the reset shouldn't hurt.  The eMMC reset will
-> actually get asserted at reset anyway since the reset will reset GPIO
-> states and the default GPIO state for the eMMC line asserts reset.
->
-> OK, I just picked this onto Heiko's somewhat "stable-tree"
-> (v4.3-rc3-876-g6509232) from
-> <https://github.com/mmind/linux-rockchip/>.  I put printouts in
-> __mmc_pwrseq_emmc_reset() to confirm it was getting called.  I then
-> rebooted.  I then saw:
->
-> [   36.175732] reboot: Restarting system
-> [   36.179400] DOUG: resetting emmc
-> [   36.182829] DOUG: resetting emmc done
->
-> ...and the reboot worked normally (which means that the GPIO restart
-> got called since otherwise I would have gotten TPM errors).
->
-> So I'd say that for rk3288-veyron-jerry:
->
-> Tested-by: Douglas Anderson <dianders@chromium.org>
->
-Thank you!
->
-> Note that personally I would only choose the "highest" priority as an
-> absolute last resort.  Leaving a little extra slack in there means
-> that when the next person comes up with a really good reason to run
-> before you do that they can do it without changing your code.  All
-> good BASIC programmers know to skip "10" in their first version for
-> just this reason.  ;)
->
-> If I were to pick a number, I suppose I'd pick something like "220",
-> but that's pretty arbitrary.  I would have picked 200 except that it
-> appears that would race with veyron's choice.
->
-> -Doug
->
+Best regards,
+Krzysztof
