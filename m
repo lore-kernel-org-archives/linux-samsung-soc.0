@@ -1,18 +1,18 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH 2/4] drivers: exynos-srom: Add support for bank configuration
-Date: Mon, 26 Oct 2015 14:47:42 +0300
-Message-ID: <7ce074e2ca045f58f19cad1dfc205476535f16a2.1445859834.git.p.fedin@samsung.com>
+Subject: [PATCH 3/4] ARM: dts: Add Ethernet chip to SMDK5410
+Date: Mon, 26 Oct 2015 14:47:43 +0300
+Message-ID: <e98a08b6576931ee935dbfd539839fb857c01e4f.1445859834.git.p.fedin@samsung.com>
 References: <cover.1445859834.git.p.fedin@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:39387 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753447AbbJZLrw (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38229 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753498AbbJZLrw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 26 Oct 2015 07:47:52 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NWT00DT7SRQZI10@mailout4.w1.samsung.com> for
+ with ESMTP id <0NWT002VHSRQLM10@mailout1.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Mon, 26 Oct 2015 11:47:50 +0000 (GMT)
 In-reply-to: <cover.1445859834.git.p.fedin@samsung.com>
 In-reply-to: <cover.1445859834.git.p.fedin@samsung.com>
@@ -22,105 +22,77 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Bindings are based on u-boot implementation, however they are stored in
-subnodes, providing support for more than one bank.
-
-Since the driver now does more than suspend-resume support, dependency on
-CONFIG_PM is removed.
+The chip is smsc9115, connected via SROMc bank 3. Additionally, some GPIO
+initialization is required.
 
 Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
 ---
- arch/arm/mach-exynos/Kconfig      |  2 +-
- drivers/soc/samsung/Kconfig       |  2 +-
- drivers/soc/samsung/exynos-srom.c | 42 ++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 43 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 42 +++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 83c85f5..c22dc42 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -16,7 +16,7 @@ menuconfig ARCH_EXYNOS
- 	select ARM_GIC
- 	select COMMON_CLK_SAMSUNG
- 	select EXYNOS_THERMAL
--	select EXYNOS_SROM if PM
-+	select EXYNOS_SROM
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 2833b5b..ea4bc2a 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -8,6 +8,6 @@ config SOC_SAMSUNG
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index cebeaab..154e37b 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -35,6 +35,17 @@
+ 		reg = <0x02037000 0x1000>;
+ 	};
  
- config EXYNOS_SROM
- 	bool
--	depends on ARM && ARCH_EXYNOS && PM
-+	depends on ARM && ARCH_EXYNOS
++	etherhet@07000000 {
++		compatible = "smsc,lan9115";
++		reg = <0x07000000 0x10000>;
++		phy-mode = "mii";
++		interrupt-parent = <&gpx0>;
++		interrupts = <5 8>;
++		reg-io-width = <2>;
++		smsc,irq-push-pull;
++		smsc,force-internal-phy;
++	};
++
+ };
  
- endmenu
-diff --git a/drivers/soc/samsung/exynos-srom.c b/drivers/soc/samsung/exynos-srom.c
-index 57a232d..6c8c56a 100644
---- a/drivers/soc/samsung/exynos-srom.c
-+++ b/drivers/soc/samsung/exynos-srom.c
-@@ -67,9 +67,46 @@ static struct exynos_srom_reg_dump *exynos_srom_alloc_reg_dump(
- 	return rd;
- }
+ &mmc_0 {
+@@ -61,6 +72,27 @@
+ 	disable-wp;
+ };
  
-+static int decode_sromc(struct exynos_srom *srom, struct device_node *np)
-+{
-+	u32 bank, width;
-+	u32 timing[7];
-+	u32 bw;
++&pinctrl_0 {
++	srom_ctl: srom-ctl {
++		samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
++			       "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
++		samsung,pin-function = <2>;
++		samsung,pin-drv = <0>;
++	};
 +
-+	if (of_property_read_u32(np, "bank", &bank))
-+		return -ENXIO;
-+	if (of_property_read_u32(np, "width", &width))
-+		width = 1;
-+	if (of_property_read_u32_array(np, "srom-timing", timing, 7)) {
-+		pr_err("Could not decode SROMC configuration\n");
-+		return -ENXIO;
-+	}
++	srom_ebi: srom-ebi {
++		samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
++			       "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
++			       "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
++			       "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
++			       "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
++			       "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++};
 +
-+	bank *= 4; /* Convert bank into shift/offset */
+ &uart0 {
+ 	status = "okay";
+ };
+@@ -72,3 +104,13 @@
+ &uart2 {
+ 	status = "okay";
+ };
 +
-+	bw = 1 << EXYNOS_SROM_BW__BYTEENABLE__SHIFT;
-+	if (width == 2)
-+		bw |= 1 << EXYNOS_SROM_BW__DATAWIDTH__SHIFT;
-+	bw <<= bank;
-+	bw |= __raw_readl(srom->reg_base + EXYNOS_SROM_BW) &
-+	      ~(EXYNOS_SROM_BW__CS_MASK << bank);
-+	__raw_writel(bw, srom->reg_base + EXYNOS_SROM_BW);
-+
-+	__raw_writel((timing[0] << EXYNOS_SROM_BCX__PMC__SHIFT) |
-+		    (timing[1] << EXYNOS_SROM_BCX__TACP__SHIFT) |
-+		    (timing[2] << EXYNOS_SROM_BCX__TCAH__SHIFT) |
-+		    (timing[3] << EXYNOS_SROM_BCX__TCOH__SHIFT) |
-+		    (timing[4] << EXYNOS_SROM_BCX__TACC__SHIFT) |
-+		    (timing[5] << EXYNOS_SROM_BCX__TCOS__SHIFT) |
-+		    (timing[6] << EXYNOS_SROM_BCX__TACS__SHIFT),
-+		    srom->reg_base + EXYNOS_SROM_BC0 + bank);
-+
-+	return 0;
-+}
-+
- static int exynos_srom_probe(struct platform_device *pdev)
- {
--	struct device_node *np;
-+	struct device_node *np, *child;
- 	struct exynos_srom *srom;
- 	struct device *dev = &pdev->dev;
- 
-@@ -100,6 +137,9 @@ static int exynos_srom_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	for_each_child_of_node(np, child)
-+		decode_sromc(srom, child);
-+
- 	return 0;
- }
- 
++&sromc_0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
++	bank@3 {
++		bank = <3>;
++		width = <2>;
++		srom-timing = <1 9 12 1 9 1 1>;
++	};
++};
 -- 
 2.4.4
