@@ -1,46 +1,53 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add bindings
- for DECON-TV
-Date: Mon, 26 Oct 2015 12:59:56 +0100
-Message-ID: <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
+Subject: [PATCH 0/7] add atomic_check callback to exynos_crtc
+Date: Mon, 26 Oct 2015 13:03:38 +0100
+Message-ID: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-DECON-TV(Display and Enhancement Controller for TV) is a variation
-of DECON IP. Its main purpose is to produce video stream for HDMI IP.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-Hi Krzysztof,
-
-I have decided to skip cleanup part as it would require more work,
-not related to this patchset.
-
-Regards
-Andrzej
-
- Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-index 3dff78b..c9fd7b3 100644
---- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-+++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-@@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
- buffer to an external LCD interface.
- 
- Required properties:
--- compatible: value should be "samsung,exynos5433-decon";
-+- compatible: value should be one of:
-+	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
- - reg: physical base address and length of the DECON registers set.
- - interrupts: should contain a list of all DECON IP block interrupts in the
- 	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
--- 
-1.9.1
-
+SGkgSW5raSwKClRoaXMgcGF0Y2hzZXQgcmVtb3ZlcyBoYWNreSBtb2RlIHZhbGlkYXRpb24gaW4g
+TWl4ZXIgZHJpdmVyIGJ5IGFkZGluZwphdG9taWNfY2hlY2sgY2FsbGJhY2sgdG8gZXh5bm9zX2Ny
+dGMgYW5kIHJlcGxhY2luZyBkaXJlY3QgZnVuY3Rpb24gY2FsbAp3aXRoIERSTSBmcmFtZXdvcmsg
+dmFsaWRhdGlvbi4gQXMgYSByZXN1bHQgSERNSSBkcml2ZXIgZG9lcyBub3QgZGVwZW5kIGFueW1v
+cmUKb24gTUlYRVIgZHJpdmVyIGFuZCBib3RoIGRyaXZlcnMgY2FuIGJlIHNlbGVjdGVkIHdpdGgg
+ZGlmZmVyZW50IEtjb25maWcgb3B0aW9ucywKaXQgaXMgdXNlZnVsbCBlc3BlY2lhbGx5IGZvciBs
+YXRlc3RzIFNvQ3Mgd2hpY2ggZG8gaGF2ZSBIRE1JIElQIGJ1dCBkbyBub3QgaGF2ZQpNSVhFUiBJ
+UC4KQWRkaXRpb25hbGx5IHBhdGNoc2V0IHBlcmZvcm1zIHNtYWxsIEtjb25maWcgcmVmYWN0b3Jp
+bmcuCgpLcnp5c3p0b2YgY291bGQgeW91IGxvb2sgYXQgZXh5bm9zX2RlZmNvbmZpZyBwYXRjaC4g
+TWF5YmUgaXQgd291bGQgYmUgZ29vZAp0byBtZXJnZSBpdCBiZWZvcmUgbmV4dCBwYXRjaCB0byBh
+bGxvdyBmdWxsIGJpLXNlY3RhYmlsaXR5IDopCgpSZWdhcmRzCkFuZHJ6ZWoKCgpBbmRyemVqIEhh
+amRhICg3KToKICBkcm0vZXh5bm9zOiBhZGQgYXRvbWljX2NoZWNrIGNhbGxiYWNrIHRvIGV4eW5v
+c19jcnRjCiAgZHJtL2V4eW5vcy9taXhlcjogcmVwbGFjZSBkaXJlY3QgY3Jvc3MtZHJpdmVyIGNh
+bGwgd2l0aCBkcm0gbW9kZQogICAgdmFsaWRhdGlvbgogIEFSTTogZXh5bm9zX2RlZmNvbmZpZzog
+ZW5hYmxlIEV4eW5vcyBEUk0gTWl4ZXIgZHJpdmVyCiAgZHJtL2V4eW5vczogc2VwYXJhdGUgTWl4
+ZXIgYW5kIEhETUkgZHJpdmVycwogIGRybS9leHlub3M6IGFic3RyYWN0IG91dCBjb21tb24gZGVw
+ZW5kZW5jeQogIGRybS9leHlub3M6IHJlLWFycmFuZ2UgS2NvbmZpZyBlbnRyaWVzCiAgZHJtL2V4
+eW5vczogc2ltcGxpZnkgS2NvbmZpZyBjb21wb25lbnQgbmFtZXMKCiBhcmNoL2FybS9jb25maWdz
+L2V4eW5vc19kZWZjb25maWcgICAgICAgIHwgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9L
+Y29uZmlnICAgICAgICAgICB8IDc1ICsrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL01ha2VmaWxlICAgICAgICAgIHwgIDMgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgfCAxMiArKysrKwogZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICB8ICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmggIHwgIDMgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2hkbWkuYyAgICAgfCAgNSAtLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMgICAgfCAgNiArKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmgg
+ICAgfCAyMCAtLS0tLS0tLS0KIDkgZmlsZXMgY2hhbmdlZCwgNjkgaW5zZXJ0aW9ucygrKSwgNjAg
+ZGVsZXRpb25zKC0pCiBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfbWl4ZXIuaAoKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
