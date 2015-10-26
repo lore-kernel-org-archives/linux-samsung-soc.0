@@ -1,113 +1,86 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: s2mps11: add documentation for
- s2mps15 PMIC
-Date: Mon, 26 Oct 2015 18:12:29 +0530
-Message-ID: <562E1FB5.1000600@samsung.com>
-References: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
- <1445855803-26973-2-git-send-email-alim.akhtar@samsung.com>
- <20151026110924.GI597@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <20151026110924.GI597@x1>
-Sender: linux-clk-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: broonie@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v3 0/7] samsung: pmu: split up SoC specific PMU data
+Date: Mon, 26 Oct 2015 18:25:36 +0530
+Message-ID: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47104 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753769AbbJZM6g (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Oct 2015 08:58:36 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+
+This patch series is a part of continuation work from following series
+[1] and [2].
+
+1: exynos: Move pmu driver to driver/soc folder and add exynos7 support
+   http://www.spinics.net/lists/linux-samsung-soc/msg39797.html from Amit Daniel Kacchap
+2: soc: samsung: pmu: split up SoC specific PMU data
+   https://lkml.org/lkml/2015/1/7/12 from me
+
+Here is another attempt for the same, in this series I am splitting up SoC
+specific PMU configuration data into mach-exynos folder itself, before moving
+all of them under drivers/soc/samsung/. Also instead of making all changes in
+single patch it has been broken into SoC specific patches to avoid large size
+of patch. With this approach there will not be unwanted big churns just after
+adding exynos-pmu under drivers/soc/samsung.
+
+All these patches are just refactoring to keep minimal changes while moving
+exynos-pmu driver under drivers/soc/samsung/. Support for exynos7 PMU can be added
+on top of it, in such a manner that for ARM64 build, ARM related SoC's PMU will not
+get compiled and thus unnecessary increasing kernel image size.
+
+I have tested on Peach-Pi (Exynos5880) based chromebook for boot
+and S2R functionality.
+
+These patches have been prepared on top of Kukjin Kim's for-next
+
+Changes since v2:
+ - Removed Amit's Samsung id as it's no more valid.
+ - Rebased on latest kgene tree.
+ - Removed redundant code from regs-pmu.h
 
 
+Pankaj Dubey (7):
+  ARM: EXYNOS: removing redundant code from regs-pmu.h
+  ARM: EXYNOS: Move pmu specific headers under "linux/soc/samsung"
+  ARCH: EXYNOS: split up exynos3250 SoC specific PMU data
+  ARCH: EXYNOS: split up exynos4 SoC specific PMU data
+  ARCH: EXYNOS: split up exynos5250 SoC specific PMU data
+  ARCH: EXYNOS: split up exynos5420 SoC specific PMU data
+  drivers: soc: Add support for Exynos PMU driver
 
-On 10/26/2015 04:39 PM, Lee Jones wrote:
-> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->
->> From: Thomas Abraham <thomas.ab@samsung.com>
->>
->> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
->> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
->>
->> Cc: devicetree@vger.kernel.org
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->>   Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 ++++++++++++++-------
->>   1 file changed, 15 insertions(+), 8 deletions(-)
->
-> Nothing to controversial here.
->
-> For my own reference:
->    Acked-by: Lee Jones <lee.jones@linaro.org>
->
-Thanks, will send v3 of this series.
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ arch/arm/mach-exynos/Makefile                      |    2 +-
+ arch/arm/mach-exynos/exynos.c                      |    2 +-
+ arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
+ arch/arm/mach-exynos/platsmp.c                     |    2 +-
+ arch/arm/mach-exynos/pm.c                          |    4 +-
+ arch/arm/mach-exynos/pmu.c                         | 1004 --------------------
+ arch/arm/mach-exynos/suspend.c                     |    4 +-
+ drivers/soc/samsung/Kconfig                        |    4 +
+ drivers/soc/samsung/Makefile                       |    4 +
+ drivers/soc/samsung/exynos-pmu.c                   |  168 ++++
+ drivers/soc/samsung/exynos-pmu.h                   |   52 +
+ drivers/soc/samsung/exynos3250-pmu.c               |  175 ++++
+ drivers/soc/samsung/exynos4-pmu.c                  |  223 +++++
+ drivers/soc/samsung/exynos5250-pmu.c               |  196 ++++
+ drivers/soc/samsung/exynos5420-pmu.c               |  280 ++++++
+ .../linux/soc/samsung}/exynos-pmu.h                |    2 +-
+ .../linux/soc/samsung/exynos-regs-pmu.h            |   17 +-
+ 18 files changed, 1116 insertions(+), 1026 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/pmu.c
+ create mode 100644 drivers/soc/samsung/exynos-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos-pmu.h
+ create mode 100644 drivers/soc/samsung/exynos3250-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos4-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos5250-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos5420-pmu.c
+ rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (90%)
+ rename arch/arm/mach-exynos/regs-pmu.h => include/linux/soc/samsung/exynos-regs-pmu.h (98%)
 
->> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> index 890f0b0e1643..c0427c9d0886 100644
->> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> @@ -1,5 +1,5 @@
->>
->> -* Samsung S2MPS11, S2MPS13, S2MPS14 and S2MPU02 Voltage and Current Regulator
->> +* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
->>
->>   The Samsung S2MPS11 is a multi-function device which includes voltage and
->>   current regulators, RTC, charger controller and other sub-blocks. It is
->> @@ -7,8 +7,12 @@ interfaced to the host controller using an I2C interface. Each sub-block is
->>   addressed by the host system using different I2C slave addresses.
->>
->>   Required properties:
->> -- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps13-pmic"
->> -	      or "samsung,s2mps14-pmic" or "samsung,s2mpu02-pmic".
->> +- compatible: Should be one of the following
->> +	- "samsung,s2mps11-pmic"
->> +	- "samsung,s2mps13-pmic"
->> +	- "samsung,s2mps14-pmic"
->> +	- "samsung,s2mps15-pmic"
->> +	- "samsung,s2mpu02-pmic".
->>   - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
->>
->>   Optional properties:
->> @@ -24,7 +28,7 @@ Optional properties:
->>     unwanted buck warm reset (setting buck voltages to default values).
->>
->>   Optional nodes:
->> -- clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
->> +- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
->>     KHz outputs, so to register these as clocks with common clock framework
->>     instantiate a sub-node named "clocks". It uses the common clock binding
->>     documented in :
->> @@ -37,12 +41,13 @@ Optional nodes:
->>       the clock which they consume.
->>       Clock               ID           Devices
->>       ----------------------------------------------------------
->> -    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S5M8767
->> -    32KhzCP		1            S2MPS11, S2MPS13, S5M8767
->> -    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S5M8767
->> +    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
->> +    32KhzCP		1            S2MPS11, S2MPS13, S2MPS15, S5M8767
->> +    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
->>
->>     - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
->> -		"samsung,s2mps14-clk", "samsung,s5m8767-clk"
->> +		"samsung,s2mps14-clk", "samsung,s2mps15-clk",
->> +		"samsung,s5m8767-clk"
->>
->>   - regulators: The regulators of s2mps11 that have to be instantiated should be
->>   included in a sub-node named 'regulators'. Regulator nodes included in this
->> @@ -90,6 +95,7 @@ as per the datasheet of s2mps11.
->>   			- S2MPS11: 1 to 38
->>   			- S2MPS13: 1 to 40
->>   			- S2MPS14: 1 to 25
->> +			- S2MPS15: 1 to 27
->>   			- S2MPU02: 1 to 28
->>   		  - Example: LDO1, LDO2, LDO28
->>   	- BUCKn
->> @@ -97,6 +103,7 @@ as per the datasheet of s2mps11.
->>   			- S2MPS11: 1 to 10
->>   			- S2MPS13: 1 to 10
->>   			- S2MPS14: 1 to 5
->> +			- S2MPS15: 1 to 10
->>   			- S2MPU02: 1 to 7
->>   		  - Example: BUCK1, BUCK2, BUCK9
->>
->
+-- 
+2.4.5
