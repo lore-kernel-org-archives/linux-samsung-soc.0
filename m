@@ -1,20 +1,19 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/7] drm/exynos/mixer: replace direct cross-driver call with
- drm mode validation
-Date: Mon, 26 Oct 2015 13:03:40 +0100
-Message-ID: <1445861025-23266-3-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 4/7] drm/exynos: separate Mixer and HDMI drivers
+Date: Mon, 26 Oct 2015 13:03:42 +0100
+Message-ID: <1445861025-23266-5-git-send-email-a.hajda@samsung.com>
 References: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:40362 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753529AbbJZMED (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:30629 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753517AbbJZMEI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Oct 2015 08:04:03 -0400
+	Mon, 26 Oct 2015 08:04:08 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NWT00D86TINZI20@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Oct 2015 12:03:59 +0000 (GMT)
+ with ESMTP id <0NWT0098MTIPJK20@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Oct 2015 12:04:01 +0000 (GMT)
 In-reply-to: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -22,98 +21,66 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS
 	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-HDMI driver called directly function from MIXER driver to invalidate modes
-not supported by MIXER. The patch replaces the hack with proper .atomic_check
-callback.
+Latest Exynos SoCs does not have Mixer IP, but they still have HDMI IP.
+Their drivers should be configurable separately.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c  |  5 -----
- drivers/gpu/drm/exynos/exynos_mixer.c |  6 ++++--
- drivers/gpu/drm/exynos/exynos_mixer.h | 20 --------------------
- 3 files changed, 4 insertions(+), 27 deletions(-)
- delete mode 100644 drivers/gpu/drm/exynos/exynos_mixer.h
+ drivers/gpu/drm/exynos/Kconfig          | 8 +++++++-
+ drivers/gpu/drm/exynos/Makefile         | 3 ++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 4 +++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index b0f5ff4..57b6755 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -44,7 +44,6 @@
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 16cb1f7..c0dc056 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -62,9 +62,15 @@ config DRM_EXYNOS_DP
+ 	help
+ 	  This enables support for DP device.
  
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
--#include "exynos_mixer.h"
++config DRM_EXYNOS_MIXER
++	bool "Exynos DRM Mixer"
++	depends on DRM_EXYNOS && !VIDEO_SAMSUNG_S5P_TV
++	help
++	  Choose this option if you want to use Exynos Mixer for DRM.
++
+ config DRM_EXYNOS_HDMI
+ 	bool "Exynos DRM HDMI"
+-	depends on DRM_EXYNOS && !VIDEO_SAMSUNG_S5P_TV
++	depends on DRM_EXYNOS && !VIDEO_SAMSUNG_S5P_TV && (DRM_EXYNOS_MIXER || DRM_EXYNOS5433_DECON)
+ 	help
+ 	  Choose this option if you want to use Exynos HDMI for DRM.
  
- #define HOTPLUG_DEBOUNCE_MS		1100
- 
-@@ -1017,10 +1016,6 @@ static int hdmi_mode_valid(struct drm_connector *connector,
- 		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? true :
- 		false, mode->clock * 1000);
- 
--	ret = mixer_check_mode(mode);
--	if (ret)
--		return MODE_BAD;
--
- 	ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
- 	if (ret < 0)
- 		return MODE_BAD;
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 3f9f072..d09f8f9 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -39,7 +39,6 @@
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_plane.h"
- #include "exynos_drm_iommu.h"
--#include "exynos_mixer.h"
- 
- #define MIXER_WIN_NR		3
- #define VP_DEFAULT_WIN		2
-@@ -1096,8 +1095,10 @@ static void mixer_disable(struct exynos_drm_crtc *crtc)
- }
- 
- /* Only valid for Mixer version 16.0.33.0 */
--int mixer_check_mode(struct drm_display_mode *mode)
-+static int mixer_atomic_check(struct exynos_drm_crtc *crtc,
-+		       struct drm_crtc_state *state)
- {
-+	struct drm_display_mode *mode = &state->adjusted_mode;
- 	u32 w, h;
- 
- 	w = mode->hdisplay;
-@@ -1123,6 +1124,7 @@ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
- 	.wait_for_vblank	= mixer_wait_for_vblank,
- 	.update_plane		= mixer_update_plane,
- 	.disable_plane		= mixer_disable_plane,
-+	.atomic_check		= mixer_atomic_check,
- };
- 
- static struct mixer_drv_data exynos5420_mxr_drv_data = {
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.h b/drivers/gpu/drm/exynos/exynos_mixer.h
-deleted file mode 100644
-index 3811e41..0000000
---- a/drivers/gpu/drm/exynos/exynos_mixer.h
-+++ /dev/null
-@@ -1,20 +0,0 @@
--/*
-- * Copyright (C) 2013 Google, Inc.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#ifndef _EXYNOS_MIXER_H_
--#define _EXYNOS_MIXER_H_
--
--/* This function returns 0 if the given timing is valid for the mixer */
--int mixer_check_mode(struct drm_display_mode *mode);
--
--#endif
+diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
+index 02aecfe..6496532 100644
+--- a/drivers/gpu/drm/exynos/Makefile
++++ b/drivers/gpu/drm/exynos/Makefile
+@@ -14,7 +14,8 @@ exynosdrm-$(CONFIG_DRM_EXYNOS7_DECON)	+= exynos7_drm_decon.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_DPI)	+= exynos_drm_dpi.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_DSI)	+= exynos_drm_dsi.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_DP)	+= exynos_dp_core.o exynos_dp_reg.o
+-exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o exynos_mixer.o
++exynosdrm-$(CONFIG_DRM_EXYNOS_MIXER)	+= exynos_mixer.o
++exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_VIDI)	+= exynos_drm_vidi.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_G2D)	+= exynos_drm_g2d.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_IPP)	+= exynos_drm_ipp.o
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 0a05117..ba4de7d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -531,8 +531,10 @@ static struct platform_driver *const exynos_drm_kms_drivers[] = {
+ #ifdef CONFIG_DRM_EXYNOS_DSI
+ 	&dsi_driver,
+ #endif
+-#ifdef CONFIG_DRM_EXYNOS_HDMI
++#ifdef CONFIG_DRM_EXYNOS_MIXER
+ 	&mixer_driver,
++#endif
++#ifdef CONFIG_DRM_EXYNOS_HDMI
+ 	&hdmi_driver,
+ #endif
+ #ifdef CONFIG_DRM_EXYNOS_VIDI
 -- 
 1.9.1
