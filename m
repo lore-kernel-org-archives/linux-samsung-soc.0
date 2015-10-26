@@ -1,46 +1,33 @@
-From: Help Desk <jbower@NILP.ORG>
-Subject: Administrative Notice
-Date: Mon, 26 Oct 2015 11:48:13 +0800
-Message-ID: <62cfb74e-800b-4a9c-bb75-9a7add9c1683@MAIL.NILP.ORG>
-Reply-To: help.desk.team015@tech-center.com
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v5 0/8] Add support for Exynos SROM Controller driver
+Date: Mon, 26 Oct 2015 09:45:31 +0300
+Message-ID: <00f401d10fb9$e92e7f40$bb8b7dc0$@samsung.com>
+References: <1445332540-12814-1-git-send-email-pankaj.dubey@samsung.com>
+ <5626DD9A.9030603@samsung.com> <00ba01d10d78$177c1720$46744560$@samsung.com>
+ <562A7A03.8040704@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 50-247-246-185-static.hfc.comcastbusiness.net ([50.247.246.185]:64262
-	"EHLO MAIL.NILP.ORG" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-	with ESMTP id S1752984AbbJZDyn convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:19749 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753128AbbJZGpf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 Oct 2015 23:54:43 -0400
-Content-Description: Mail message body
+	Mon, 26 Oct 2015 02:45:35 -0400
+In-reply-to: <562A7A03.8040704@kernel.org>
+Content-language: ru
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene@kernel.org>
+Cc: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, thomas.ab@samsung.com, andi.shyti@samsung.com
 
-Help Desk
+ Hello!
 
+> Applied, this whole series.
 
-Scheduled Maintenance & Upgrade
+ Where can i find the recent code to base my series on? I looked at linux-samsung.git but was unable to find it there.
 
-Your account is in the process of being upgraded to a newest  
-Windows-based servers and an enhanced online email interface inline with internet infrastructure Maintenance. The new servers will provide better anti-spam and anti-virus functions, along with IMAP Support for mobile devices to enhance your usage.
-
-To ensure that your account is not disrupted but active during and after this upgrade, you are required to kindly confirm your account by stating the details below:
-
-* Domain\user name: 
-* Password: 
-
-This will prompt the upgrade of your account.
-
-Failure to acknowledge the receipt of this notification, might result to a temporary deactivation of your account from our database. Your account shall remain active upon your confirmation of your login details.
-
-During this maintenance window, there may be periods of interruption to email services.  This will include sending and receiving email in Outlook, on webmail, and on mobile devices. Also, if you leave your Mailbox open during the maintenance period, you may be prompted to close and reopen. 
- 
-We appreciate your patience as this maintenance is performed and we do apologize for any inconveniences caused.
-
-Sincerely,
-
-Customer Care Team
-
-
-(c) Copyright 2015, All Rights Reserved.
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
