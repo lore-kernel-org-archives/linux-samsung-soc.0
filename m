@@ -1,33 +1,54 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v5 0/8] Add support for Exynos SROM Controller driver
-Date: Mon, 26 Oct 2015 09:45:31 +0300
-Message-ID: <00f401d10fb9$e92e7f40$bb8b7dc0$@samsung.com>
-References: <1445332540-12814-1-git-send-email-pankaj.dubey@samsung.com>
- <5626DD9A.9030603@samsung.com> <00ba01d10d78$177c1720$46744560$@samsung.com>
- <562A7A03.8040704@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:19749 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753128AbbJZGpf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Oct 2015 02:45:35 -0400
-In-reply-to: <562A7A03.8040704@kernel.org>
-Content-language: ru
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v2 0/5] mfd: sec: add S2MPS15 PMIC support
+Date: Mon, 26 Oct 2015 16:06:38 +0530
+Message-ID: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, thomas.ab@samsung.com, andi.shyti@samsung.com
 
- Hello!
+Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
+The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
+27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
+programming these blocks via a I2C interface. This patch series adds initial
+support for LDO/Buck regulators of S2MPS15 PMIC.
 
-> Applied, this whole series.
+Changes since v1:
+* Added suggestion from Krzysztof [1].
+* Added s2mps15's 32.768 clocks support.
+* Added s2mps15's rtc support.
 
- Where can i find the recent code to base my series on? I looked at linux-samsung.git but was unable to find it there.
+V1 of these patches (with a lesser features) were posted a year back,
+since then there is not much progress on this, this is my attempt to
+move things forward.
 
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+[1]-> https://lkml.org/lkml/2014/10/14/67
+
+This series is based on linux-next-20151022.
+This is tested on exynos7-espresso board.
+
+Alim Akhtar (2):
+  clk: s2mps15: Add support for S2MPS15 clocks
+  drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+
+Thomas Abraham (3):
+  dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
+  mfd: sec: Add support for S2MPS15 PMIC
+  regulator: s2mps11: add support for S2MPS15 regulators
+
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 ++-
+ drivers/clk/Kconfig                               |    5 +-
+ drivers/clk/clk-s2mps11.c                         |   24 +++
+ drivers/mfd/sec-core.c                            |   31 ++++
+ drivers/mfd/sec-irq.c                             |    8 +
+ drivers/regulator/Kconfig                         |    4 +-
+ drivers/regulator/s2mps11.c                       |  135 ++++++++++++++++-
+ drivers/rtc/rtc-s5m.c                             |   14 +-
+ include/linux/mfd/samsung/core.h                  |    1 +
+ include/linux/mfd/samsung/s2mps15.h               |  161 +++++++++++++++++++++
+ 10 files changed, 392 insertions(+), 14 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps15.h
+
+-- 
+1.7.10.4
