@@ -1,124 +1,97 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3 7/7] drivers: soc: Add support for Exynos PMU driver
-Date: Mon, 26 Oct 2015 18:25:43 +0530
-Message-ID: <1445864143-25695-8-git-send-email-pankaj.dubey@samsung.com>
-References: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35145 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753769AbbJZNEM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Oct 2015 09:04:12 -0400
-In-reply-to: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
+Date: Mon, 26 Oct 2015 18:21:21 +0530
+Message-ID: <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
-to "drivers/soc/samsung". This driver is mainly used for setting misc
-bits of register from PMU IP of Exynos SoC which will be required to
-configure before Suspend/Resume. Currently all these settings are done
-in "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
-support, there is a need of this PMU driver in driver/* folder.
+S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
+adds supports for the same to the s2mps11 clock driver.
 
-This driver uses existing DT binding information and there should
-be no functionality change in the supported platforms.
-
-Signed-off-by: Amit Daniel Kachhap <amitdanielk@gmail.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- arch/arm/mach-exynos/Kconfig                                   | 1 +
- arch/arm/mach-exynos/Makefile                                  | 4 +---
- drivers/soc/samsung/Kconfig                                    | 4 ++++
- drivers/soc/samsung/Makefile                                   | 4 ++++
- arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c | 0
- {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h     | 0
- {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c | 0
- {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c    | 0
- {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c | 0
- {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c | 0
- 10 files changed, 10 insertions(+), 3 deletions(-)
- rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
- rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h (100%)
- rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c (100%)
- rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c (100%)
- rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c (100%)
- rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c (100%)
+ drivers/clk/Kconfig       |    5 +++--
+ drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 83c85f5..874cb38 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -16,6 +16,7 @@ menuconfig ARCH_EXYNOS
- 	select ARM_GIC
- 	select COMMON_CLK_SAMSUNG
- 	select EXYNOS_THERMAL
-+	select EXYNOS_PMU
- 	select EXYNOS_SROM if PM
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_S3C2410_I2C if I2C
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 2d58063..34d29df 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -9,9 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index a1fa61159179..037a314b5d76 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
+ 	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+ 	depends on MFD_SEC_CORE
+ 	---help---
+-	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
++	  This driver supports S2MPS1X/S5M8767 crystal oscillator
+ 	  clock. These multi-function devices have two (S2MPS14) or three
+-	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
++	  (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
++	  clocked at 32KHz each.
  
- # Core
+ config CLK_TWL6040
+ 	tristate "External McPDM functional clock from twl6040"
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index d266299dfdb1..455500dca653 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -25,6 +25,7 @@
+ #include <linux/mfd/samsung/s2mps11.h>
+ #include <linux/mfd/samsung/s2mps13.h>
+ #include <linux/mfd/samsung/s2mps14.h>
++#include <linux/mfd/samsung/s2mps15.h>
+ #include <linux/mfd/samsung/s5m8767.h>
+ #include <linux/mfd/samsung/core.h>
  
--obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o \
--					exynos3250-pmu.o exynos4-pmu.o \
--					exynos5250-pmu.o exynos5420-pmu.o
-+obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
+@@ -148,6 +149,24 @@ static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+ 	},
+ };
  
- obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
- obj-$(CONFIG_PM_SLEEP)		+= suspend.o
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 2833b5b..f545d6c 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -10,4 +10,8 @@ config EXYNOS_SROM
- 	bool
- 	depends on ARM && ARCH_EXYNOS && PM
- 
-+config EXYNOS_PMU
-+	bool
-+	depends on ARCH_EXYNOS
++static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
++	[S2MPS11_CLK_AP] = {
++		.name = "s2mps15_ap",
++		.ops = &s2mps11_clk_ops,
++		.flags = CLK_IS_ROOT,
++	},
++	[S2MPS11_CLK_CP] = {
++		.name = "s2mps15_cp",
++		.ops = &s2mps11_clk_ops,
++		.flags = CLK_IS_ROOT,
++	},
++	[S2MPS11_CLK_BT] = {
++		.name = "s2mps15_bt",
++		.ops = &s2mps11_clk_ops,
++		.flags = CLK_IS_ROOT,
++	},
++};
 +
- endmenu
-diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-index 9c554d5..26fb489 100644
---- a/drivers/soc/samsung/Makefile
-+++ b/drivers/soc/samsung/Makefile
-@@ -1 +1,5 @@
- obj-$(CONFIG_EXYNOS_SROM)	+= exynos-srom.o
-+ifdef CONFIG_ARM
-+obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
-+					exynos5250-pmu.o exynos5420-pmu.o
-+endif
-diff --git a/arch/arm/mach-exynos/pmu.c b/drivers/soc/samsung/exynos-pmu.c
-similarity index 100%
-rename from arch/arm/mach-exynos/pmu.c
-rename to drivers/soc/samsung/exynos-pmu.c
-diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
-similarity index 100%
-rename from arch/arm/mach-exynos/exynos-pmu.h
-rename to drivers/soc/samsung/exynos-pmu.h
-diff --git a/arch/arm/mach-exynos/exynos3250-pmu.c b/drivers/soc/samsung/exynos3250-pmu.c
-similarity index 100%
-rename from arch/arm/mach-exynos/exynos3250-pmu.c
-rename to drivers/soc/samsung/exynos3250-pmu.c
-diff --git a/arch/arm/mach-exynos/exynos4-pmu.c b/drivers/soc/samsung/exynos4-pmu.c
-similarity index 100%
-rename from arch/arm/mach-exynos/exynos4-pmu.c
-rename to drivers/soc/samsung/exynos4-pmu.c
-diff --git a/arch/arm/mach-exynos/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
-similarity index 100%
-rename from arch/arm/mach-exynos/exynos5250-pmu.c
-rename to drivers/soc/samsung/exynos5250-pmu.c
-diff --git a/arch/arm/mach-exynos/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
-similarity index 100%
-rename from arch/arm/mach-exynos/exynos5420-pmu.c
-rename to drivers/soc/samsung/exynos5420-pmu.c
+ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+ 		struct clk_init_data *clks_init)
+ {
+@@ -207,6 +226,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 		s2mps11_reg = S2MPS14_REG_RTCCTRL;
+ 		clks_init = s2mps14_clks_init;
+ 		break;
++	case S2MPS15X:
++		s2mps11_reg = S2MPS15_REG_RTC_BUF;
++		clks_init = s2mps15_clks_init;
++		break;
+ 	case S5M8767X:
+ 		s2mps11_reg = S5M8767_REG_CTRL1;
+ 		clks_init = s2mps11_clks_init;
+@@ -292,6 +315,7 @@ static const struct platform_device_id s2mps11_clk_id[] = {
+ 	{ "s2mps11-clk", S2MPS11X},
+ 	{ "s2mps13-clk", S2MPS13X},
+ 	{ "s2mps14-clk", S2MPS14X},
++	{ "s2mps15-clk", S2MPS15X},
+ 	{ "s5m8767-clk", S5M8767X},
+ 	{ },
+ };
 -- 
-2.4.5
+1.7.10.4
+
