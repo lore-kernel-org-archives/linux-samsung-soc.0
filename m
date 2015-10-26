@@ -1,97 +1,53 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
-Date: Sun, 25 Oct 2015 01:58:15 +0200
-Message-ID: <562C1B17.3080303@math.uni-bielefeld.de>
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
- <56251627.4050908@math.uni-bielefeld.de> <562581BD.3070609@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/5] Late Samsung DT updates for v4.4
+Date: Mon, 26 Oct 2015 10:17:05 +0900
+Message-ID: <20151026011705.GI14238@localhost>
+References: <562AA40E.4050407@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <562581BD.3070609@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:34054 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751216AbbJZBYr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 25 Oct 2015 21:24:47 -0400
+Received: by padda3 with SMTP id da3so19718315pad.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Oct 2015 18:24:46 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <562AA40E.4050407@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hello Krzysztof,
-
-
-Krzysztof Kozlowski wrote:
-> On 20.10.2015 01:11, Tobias Jakobi wrote:
->> Hello Krzysztof,
->>
->> I can confirm that this also works on a Odroid-X2, so I guess it's safe
->> to enable the PRNG for all Exynos4412-based Odroid devices.
+On Sat, Oct 24, 2015 at 06:18:06AM +0900, Kukjin Kim wrote:
+> Hi Arnd, Olof, Kevin
 > 
-> Sure, I can send a patch for that. I can test it later also on Odroid-U3.
-Thanks already!
-
-
-
->> Any chance that you might also take a look at the other hwcrypto stuff
->> on the SoC ('samsung,exynos4210-secss' compatible)?
+> Here is late pull-request for v4.4, please pull.
 > 
-> What do you mean? The s5p-sss driver already supports Device Tree.
-The driver supports DT, but it doesn't really work.
-
-I'm using the following DT entry to let the driver probe correctly:
-https://github.com/tobiasjakobi/linux-odroid/commit/82c00cddb5cbf89fad994784c28c8125beae8e13
-
-But the crypto self-test fails on boot:
-alg: skcipher: encryption failed on test 1 for ecb-aes-s5p: ret=22
-
-
-Another problems is that SSS and PRNG can't be used at the same time,
-since they both use common hardware resources (I think it was IO).
-
-
-With best wishes,
-Tobias
-
-
-> Best regards,
-> Krzysztof
+> If any problems, please kindly let me know.
+> See you in Seoul next week ;-)
 > 
->>
->> With best wishes,
->> Tobias
->>
->>
->> Krzysztof Kozlowski wrote:
->>> Hi,
->>>
->>>
->>> The patchset adds necessary clock from Security SubSystem (SSS)
->>> and enables the PRNG module of Exynos for Trats2 board.
->>>
->>> The first patch (clock) is required for other ones so please
->>> take everything in one step.
->>>
->>> The actual Device Tree support (and compatible) was sent in separate
->>> patch:
->>>  - https://patchwork.kernel.org/patch/7432891/
->>>  - http://marc.info/?l=linux-crypto-vger&m=144522952725052&w=2
->>>
->>> The device can be tested (after applying both patchsets) with:
->>> $ echo exynos > /sys/class/misc/hw_random/rng_current
->>> $ dd if=/dev/hwrng of=/dev/null bs=1 count=16
->>>
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>> Krzysztof Kozlowski (3):
->>>   clk: samsung: exynos4: Add SSS gate clock
->>>   ARM: dts: Add PRNG module for exynos4
->>>   ARM: dts: Enable PRNG module on exynos4412-trats2
->>>
->>>  arch/arm/boot/dts/exynos4.dtsi          | 8 ++++++++
->>>  arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
->>>  drivers/clk/samsung/clk-exynos4.c       | 1 +
->>>  include/dt-bindings/clock/exynos4.h     | 1 +
->>>  4 files changed, 14 insertions(+)
->>>
->>
->>
+> Thanks,
+> Kukjin
 > 
+> 
+> The following changes since commit df829b06f0079165d9dc7719af8f8a7da852fe51:
+> 
+>   ARM: dts: Use GPIO constants for flags cells in exynos5440 boards
+> (2015-10-08 07:39:58 +0900)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-dt-2
+> 
+> for you to fetch changes up to d6b9aea67f40e138e972b17c7c658bc3c8ac2459:
+> 
+>   MAINTAINERS: Add documentation and dt-bindings for exynos stuff
+> (2015-10-24 05:07:26 +0900)
+
+Merged, thanks.
+
+
+-Olof
