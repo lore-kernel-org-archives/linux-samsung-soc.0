@@ -1,53 +1,86 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/7] add atomic_check callback to exynos_crtc
-Date: Mon, 26 Oct 2015 13:03:38 +0100
-Message-ID: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 1/7] drm/exynos: add atomic_check callback to exynos_crtc
+Date: Mon, 26 Oct 2015 13:03:39 +0100
+Message-ID: <1445861025-23266-2-git-send-email-a.hajda@samsung.com>
+References: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:40362 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753488AbbJZMEC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Oct 2015 08:04:02 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NWT00D7VTIMZM20@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Oct 2015 12:03:58 +0000 (GMT)
+In-reply-to: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS
+	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-SGkgSW5raSwKClRoaXMgcGF0Y2hzZXQgcmVtb3ZlcyBoYWNreSBtb2RlIHZhbGlkYXRpb24gaW4g
-TWl4ZXIgZHJpdmVyIGJ5IGFkZGluZwphdG9taWNfY2hlY2sgY2FsbGJhY2sgdG8gZXh5bm9zX2Ny
-dGMgYW5kIHJlcGxhY2luZyBkaXJlY3QgZnVuY3Rpb24gY2FsbAp3aXRoIERSTSBmcmFtZXdvcmsg
-dmFsaWRhdGlvbi4gQXMgYSByZXN1bHQgSERNSSBkcml2ZXIgZG9lcyBub3QgZGVwZW5kIGFueW1v
-cmUKb24gTUlYRVIgZHJpdmVyIGFuZCBib3RoIGRyaXZlcnMgY2FuIGJlIHNlbGVjdGVkIHdpdGgg
-ZGlmZmVyZW50IEtjb25maWcgb3B0aW9ucywKaXQgaXMgdXNlZnVsbCBlc3BlY2lhbGx5IGZvciBs
-YXRlc3RzIFNvQ3Mgd2hpY2ggZG8gaGF2ZSBIRE1JIElQIGJ1dCBkbyBub3QgaGF2ZQpNSVhFUiBJ
-UC4KQWRkaXRpb25hbGx5IHBhdGNoc2V0IHBlcmZvcm1zIHNtYWxsIEtjb25maWcgcmVmYWN0b3Jp
-bmcuCgpLcnp5c3p0b2YgY291bGQgeW91IGxvb2sgYXQgZXh5bm9zX2RlZmNvbmZpZyBwYXRjaC4g
-TWF5YmUgaXQgd291bGQgYmUgZ29vZAp0byBtZXJnZSBpdCBiZWZvcmUgbmV4dCBwYXRjaCB0byBh
-bGxvdyBmdWxsIGJpLXNlY3RhYmlsaXR5IDopCgpSZWdhcmRzCkFuZHJ6ZWoKCgpBbmRyemVqIEhh
-amRhICg3KToKICBkcm0vZXh5bm9zOiBhZGQgYXRvbWljX2NoZWNrIGNhbGxiYWNrIHRvIGV4eW5v
-c19jcnRjCiAgZHJtL2V4eW5vcy9taXhlcjogcmVwbGFjZSBkaXJlY3QgY3Jvc3MtZHJpdmVyIGNh
-bGwgd2l0aCBkcm0gbW9kZQogICAgdmFsaWRhdGlvbgogIEFSTTogZXh5bm9zX2RlZmNvbmZpZzog
-ZW5hYmxlIEV4eW5vcyBEUk0gTWl4ZXIgZHJpdmVyCiAgZHJtL2V4eW5vczogc2VwYXJhdGUgTWl4
-ZXIgYW5kIEhETUkgZHJpdmVycwogIGRybS9leHlub3M6IGFic3RyYWN0IG91dCBjb21tb24gZGVw
-ZW5kZW5jeQogIGRybS9leHlub3M6IHJlLWFycmFuZ2UgS2NvbmZpZyBlbnRyaWVzCiAgZHJtL2V4
-eW5vczogc2ltcGxpZnkgS2NvbmZpZyBjb21wb25lbnQgbmFtZXMKCiBhcmNoL2FybS9jb25maWdz
-L2V4eW5vc19kZWZjb25maWcgICAgICAgIHwgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9L
-Y29uZmlnICAgICAgICAgICB8IDc1ICsrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL01ha2VmaWxlICAgICAgICAgIHwgIDMgKy0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgfCAxMiArKysrKwogZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICB8ICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHJ2LmggIHwgIDMgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2hkbWkuYyAgICAgfCAgNSAtLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
-eGVyLmMgICAgfCAgNiArKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmgg
-ICAgfCAyMCAtLS0tLS0tLS0KIDkgZmlsZXMgY2hhbmdlZCwgNjkgaW5zZXJ0aW9ucygrKSwgNjAg
-ZGVsZXRpb25zKC0pCiBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfbWl4ZXIuaAoKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Some CRTCs needs mode validation, this patch adds neccessary
+callback to Exynos DRM framework. It is called from DRM core
+via atomic_check helper for drm_crtc.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 12 ++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  3 +++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 50dec0d..b3ba27f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -50,6 +50,17 @@ exynos_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ 		exynos_crtc->ops->commit(exynos_crtc);
+ }
+ 
++static int exynos_crtc_atomic_check(struct drm_crtc *crtc,
++				     struct drm_crtc_state *state)
++{
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
++
++	if (exynos_crtc->ops->atomic_check)
++		return exynos_crtc->ops->atomic_check(exynos_crtc, state);
++
++	return 0;
++}
++
+ static void exynos_crtc_atomic_begin(struct drm_crtc *crtc,
+ 				     struct drm_crtc_state *old_crtc_state)
+ {
+@@ -86,6 +97,7 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+ 	.enable		= exynos_drm_crtc_enable,
+ 	.disable	= exynos_drm_crtc_disable,
+ 	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
++	.atomic_check	= exynos_crtc_atomic_check,
+ 	.atomic_begin	= exynos_crtc_atomic_begin,
+ 	.atomic_flush	= exynos_crtc_atomic_flush,
+ };
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 638fc43..f1eda7f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -89,6 +89,7 @@ struct exynos_drm_plane {
+  * @disable_vblank: specific driver callback for disabling vblank interrupt.
+  * @wait_for_vblank: wait for vblank interrupt to make sure that
+  *	hardware overlay is updated.
++ * @atomic_check: validate state
+  * @atomic_begin: prepare a window to receive a update
+  * @atomic_flush: mark the end of a window update
+  * @update_plane: apply hardware specific overlay data to registers.
+@@ -108,6 +109,8 @@ struct exynos_drm_crtc_ops {
+ 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*wait_for_vblank)(struct exynos_drm_crtc *crtc);
++	int (*atomic_check)(struct exynos_drm_crtc *crtc,
++			    struct drm_crtc_state *state);
+ 	void (*atomic_begin)(struct exynos_drm_crtc *crtc,
+ 			      struct exynos_drm_plane *plane);
+ 	void (*update_plane)(struct exynos_drm_crtc *crtc,
+-- 
+1.9.1
