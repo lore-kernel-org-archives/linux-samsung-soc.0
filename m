@@ -1,42 +1,46 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 5/5] Late Samsung defconfig updates for v4.4
-Date: Mon, 26 Oct 2015 10:21:05 +0900
-Message-ID: <20151026012105.GL14238@localhost>
-References: <562AA40E.4050407@kernel.org>
- <562AA65C.7010702@kernel.org>
+From: Help Desk <jbower@NILP.ORG>
+Subject: Administrative Notice
+Date: Mon, 26 Oct 2015 11:48:13 +0800
+Message-ID: <62cfb74e-800b-4a9c-bb75-9a7add9c1683@MAIL.NILP.ORG>
+Reply-To: help.desk.team015@tech-center.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:35044 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752284AbbJZBY6 (ORCPT
+Received: from 50-247-246-185-static.hfc.comcastbusiness.net ([50.247.246.185]:64262
+	"EHLO MAIL.NILP.ORG" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+	with ESMTP id S1752984AbbJZDyn convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 Oct 2015 21:24:58 -0400
-Received: by pagq8 with SMTP id q8so18715685pag.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Oct 2015 18:24:57 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <562AA65C.7010702@kernel.org>
+	Sun, 25 Oct 2015 23:54:43 -0400
+Content-Description: Mail message body
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
-On Sat, Oct 24, 2015 at 06:27:56AM +0900, Kukjin Kim wrote:
-> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-> 
->   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-defconfig
-> 
-> for you to fetch changes up to f0864f843f0249f3e16e1a9af7152d7aa8070b10:
-> 
->   ARM: multi_v7_defconfig: Enable rtl8152 ethernet driver for Odroid-XU4
-> (2015-10-24 04:13:12 +0900)
-
-Merged, thanks.
+Help Desk
 
 
--Olof
+Scheduled Maintenance & Upgrade
+
+Your account is in the process of being upgraded to a newest  
+Windows-based servers and an enhanced online email interface inline with internet infrastructure Maintenance. The new servers will provide better anti-spam and anti-virus functions, along with IMAP Support for mobile devices to enhance your usage.
+
+To ensure that your account is not disrupted but active during and after this upgrade, you are required to kindly confirm your account by stating the details below:
+
+* Domain\user name: 
+* Password: 
+
+This will prompt the upgrade of your account.
+
+Failure to acknowledge the receipt of this notification, might result to a temporary deactivation of your account from our database. Your account shall remain active upon your confirmation of your login details.
+
+During this maintenance window, there may be periods of interruption to email services.  This will include sending and receiving email in Outlook, on webmail, and on mobile devices. Also, if you leave your Mailbox open during the maintenance period, you may be prompted to close and reopen. 
+ 
+We appreciate your patience as this maintenance is performed and we do apologize for any inconveniences caused.
+
+Sincerely,
+
+Customer Care Team
+
+
+(c) Copyright 2015, All Rights Reserved.
