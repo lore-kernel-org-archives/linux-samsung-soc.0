@@ -1,90 +1,89 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: pwrseq: Use highest priority for eMMC restart handler
-Date: Tue, 27 Oct 2015 11:10:01 +0100
-Message-ID: <CAPDyKFoMQcC5sdCEKHWqNOdw1Yw8e8yRpdx7mtq7sMxg6sAi+A@mail.gmail.com>
-References: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v7 06/17] Documentation: drm/bridge: add document for analogix_dp
+Date: Tue, 27 Oct 2015 22:04:50 +0100
+Message-ID: <4132920.kfrKzY5nYN@phil>
+References: <1445599415-30856-1-git-send-email-ykk@rock-chips.com> <1445655964-15237-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f178.google.com ([209.85.160.178]:36377 "EHLO
-	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751646AbbJ0KKB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Oct 2015 06:10:01 -0400
-Received: by ykba4 with SMTP id a4so206397255ykb.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2015 03:10:01 -0700 (PDT)
-In-Reply-To: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1445655964-15237-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Andy Yan <andy.yan@rock-chip>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Markus Reichl <m.reichl@fivetechno.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On 21 October 2015 at 17:15, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> The pwrseq_emmc driver does a eMMC card reset before a system reboot to
-> allow broken or limited ROM boot-loaders (that don't have an eMMC reset
-> logic) to be able to read the second stage from the eMMC.
->
-> But this has to be called before a system reboot handler and while most
-> of them use the priority 128, there are other restart handlers (such as
-> the syscon-reboot one) that use a higher priority. So, use the highest
-> priority to make sure that the eMMC hw is reset before a system reboot.
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
->
+Hi Yakir,
+
+Am Samstag, 24. Oktober 2015, 11:06:00 schrieb Yakir Yang:
+> Analogix dp driver is split from exynos dp driver, so we just
+> make an copy of exynos_dp.txt, and then simplify exynos_dp.txt
+> 
+> Beside update some exynos dtsi file with the latest change
+> according to the devicetree binding documents.
+> 
+> Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 > ---
-> Hello,
->
-> This patch was needed since a recent series from Alim [0] added
-> syscon reboot and poweroff support to Exynos SoCs and removed
-> the reset handler in the Exynos Power Management Unit (PMU) code.
->
-> But the PMU and syscon-reboot restart handler have a different
-> priority so [0] breaks restart when eMMC is used on these boards.
->
-> [0]: http://www.spinics.net/lists/arm-kernel/msg454396.html
->
-> So this patch must be merged before [0] to avoid regressions.
->
-> Best regards,
-> Javier
+> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+> index 7a3a9cd..9e47357 100644
+> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+> @@ -31,45 +31,31 @@ Required properties for dp-controller:
+>  		from general PHY binding: the phandle for the PHY device.
+>  	-phy-names:
+>  		from general PHY binding: Should be "dp".
+> -	-samsung,color-space:
+> -		input video data format.
+> -			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+> -	-samsung,dynamic-range:
+> -		dynamic range for input video data.
+> -			VESA = 0, CEA = 1
+> -	-samsung,ycbcr-coeff:
+> -		YCbCr co-efficients for input video.
+> -			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+> -	-samsung,color-depth:
+> -		number of bits per colour component.
+> -			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+> -	-samsung,link-rate:
+> -		link rate supported by the panel.
+> -			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+> -	-samsung,lane-count:
+> -		number of lanes supported by the panel.
+> -			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+> +
+> +Optional properties for dp-controller:
+>  	- display-timings: timings for the connected panel as described by
+>  		Documentation/devicetree/bindings/video/display-timing.txt
+											^^
 
-So it seems like there have been a good discussion around this. I
-don't have any objections, but is more concerned about potential
-regressions.
+bindings/display/display-timing.txt ... that actually made the patch not apply cleanly
 
-I have queued it up for next (4.4) so we get some testing in
-linux-next. If anyone have issues, please report them.
 
-Kind regards
-Uffe
+[...]
 
->
->  drivers/mmc/core/pwrseq_emmc.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
-> index 137c97fb7aa8..ad4f94ec7e8d 100644
-> --- a/drivers/mmc/core/pwrseq_emmc.c
-> +++ b/drivers/mmc/core/pwrseq_emmc.c
-> @@ -84,11 +84,11 @@ struct mmc_pwrseq *mmc_pwrseq_emmc_alloc(struct mmc_host *host,
->
->         /*
->          * register reset handler to ensure emmc reset also from
-> -        * emergency_reboot(), priority 129 schedules it just before
-> -        * system reboot
-> +        * emergency_reboot(), priority 255 is the highest priority
-> +        * so it will be executed before any system reboot handler.
->          */
->         pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
-> -       pwrseq->reset_nb.priority = 129;
-> +       pwrseq->reset_nb.priority = 255;
->         register_restart_handler(&pwrseq->reset_nb);
->
->         pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
-> --
-> 2.4.3
->
+> -[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> +Deprecated properties for DisplayPort:
+> +-interlaced:            deprecated prop that can parsed frm drm_display_mode.
+> +-vsync-active-high:     deprecated prop that can parsed frm drm_display_mode.
+> +-hsync-active-high:     deprecated prop that can parsed frm drm_display_mode.
+> +-samsung,ycbcr-coeff:   deprecated prop that can parsed frm drm_display_mode.
+> +-samsung,dynamic-range: deprecated prop that can parsed frm drm_display_mode.
+
+the "frm" above need some more "o"s to be "from"s :-)
+
+> +-samsung,color-space:   deprecated prop that can parsed from drm_display_info.
+> +-samsung,color-depth:   deprecated prop that can parsed from drm_display_info.
+> +-samsung,link-rate:     deprecated prop that can reading from monitor by dpcd method.
+> +-samsung,lane-count:    deprecated prop that can reading from monitor by dpcd method.
+> +-samsung,hpd-gpio:      deprecated name for hpd-gpios.
+> +
+> +-------------------------------------------------------------------------------
+
+
+Cheers,
+Heiko
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
