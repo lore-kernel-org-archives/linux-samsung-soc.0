@@ -1,38 +1,60 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v5 0/8] Add support for Exynos SROM Controller driver
-Date: Tue, 27 Oct 2015 11:15:17 +0900
-Message-ID: <562EDE35.2090409@kernel.org>
-References: <1445332540-12814-1-git-send-email-pankaj.dubey@samsung.com> <5626DD9A.9030603@samsung.com> <00ba01d10d78$177c1720$46744560$@samsung.com> <562A7A03.8040704@kernel.org> <00f401d10fb9$e92e7f40$bb8b7dc0$@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: dts: Add SROMc to Exynos 5410
+Date: Tue, 27 Oct 2015 08:27:05 +0530
+Message-ID: <562EE801.4000906@samsung.com>
+References: <cover.1445859834.git.p.fedin@samsung.com>
+ <185cfa03e31cee4187492e0b9b0050e4b6f1a8f9.1445859834.git.p.fedin@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:38983 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751704AbbJ0CPY (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:50236 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753674AbbJ0C4m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Oct 2015 22:15:24 -0400
-In-Reply-To: <00f401d10fb9$e92e7f40$bb8b7dc0$@samsung.com>
+	Mon, 26 Oct 2015 22:56:42 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NWU02X8ZYUF6Q80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Oct 2015 11:56:39 +0900 (KST)
+In-reply-to: <185cfa03e31cee4187492e0b9b0050e4b6f1a8f9.1445859834.git.p.fedin@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>
-Cc: 'Kukjin Kim' <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, thomas.ab@samsung.com, andi.shyti@samsung.com
+To: Pavel Fedin <p.fedin@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>
 
-On 10/26/15 15:45, Pavel Fedin wrote:
->  Hello!
-> 
-Hi,
+Hi Pavel,
 
->> Applied, this whole series.
-> 
->  Where can i find the recent code to base my series on? I looked at linux-samsung.git but was unable to find it there.
-> 
-You may need to fetch again?
-Anyway the branch is v4.4-next/driver-samsung or tags/samsung-driver...
-Or just for-next should be fine I think.
+On Monday 26 October 2015 05:17 PM, Pavel Fedin wrote:
+> This machine uses own SoC device tree file, add missing part.
+>
+> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 4603356..91dd302 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -101,6 +101,11 @@
+>   			reg = <0x10000000 0x100>;
+>   		};
+>
+> +		sromc_0: sromc@12250000 {
 
-See below:
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=v4.4-next/driver-samsung
+Why sromc_0? Does this SoC have more than one srom controllers?
+
+> +			compatible = "samsung,exynos-srom";
+> +			reg = <0x12250000 0x10>;
+> +		};
+> +
+>   		pmu_system_controller: system-controller@10040000 {
+>   			compatible = "samsung,exynos5410-pmu", "syscon";
+>   			reg = <0x10040000 0x5000>;
+>
 
 Thanks,
-Kukjin
+Pankaj Dubey
