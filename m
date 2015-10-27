@@ -1,100 +1,67 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v2 2/5] mfd: sec: Add support for S2MPS15 PMIC
-Date: Tue, 27 Oct 2015 10:58:28 +0530
-Message-ID: <562F0B7C.9080307@samsung.com>
-References: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
- <1445855803-26973-3-git-send-email-alim.akhtar@samsung.com>
- <20151026110611.GH597@x1> <562E1F84.2000105@samsung.com>
- <20151026142930.GJ597@x1>
+From: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v3 00/10] Add tune support of Mediatek MMC driver
+Date: Tue, 27 Oct 2015 14:24:20 +0800
+Message-ID: <1445927070-5102-1-git-send-email-chaotian.jing@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45197 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752080AbbJ0FiB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Oct 2015 01:38:01 -0400
-In-reply-to: <20151026142930.GJ597@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Howard Chen <ibanezchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kristina Martsenko <kristina.martsenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: broonie@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
 
-Hello
+Change in v3:
+Fix checkpatch errors and warnings for patch 8
+Split patch 9, make DT parts enabling hw reset separately
 
-On 10/26/2015 07:59 PM, Lee Jones wrote:
-> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->
->> Hi Lee,
->> Thanks for looking into this.
->>
->> On 10/26/2015 04:36 PM, Lee Jones wrote:
->>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->>>
->>>> From: Thomas Abraham <thomas.ab@samsung.com>
->>>>
->>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
->>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
->>>> clock outputs and battery charger. This patch adds initial support for
->>>> LDO and buck regulators of S2MPS15 device.
->>>>
->>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
->>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>   drivers/mfd/sec-core.c              |   31 +++++++
->>>>   drivers/mfd/sec-irq.c               |    8 ++
->>>>   include/linux/mfd/samsung/core.h    |    1 +
->>>>   include/linux/mfd/samsung/s2mps15.h |  161 +++++++++++++++++++++++++++++++++++
->>>>   4 files changed, 201 insertions(+)
->>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
->>>>
->>>> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
->>>> index 2626fc0b5b8c..db3d4d4ff805 100644
->>>> --- a/drivers/mfd/sec-core.c
->>>> +++ b/drivers/mfd/sec-core.c
->>>> @@ -29,6 +29,7 @@
->>>>   #include <linux/mfd/samsung/s2mps11.h>
->>>>   #include <linux/mfd/samsung/s2mps13.h>
->>>>   #include <linux/mfd/samsung/s2mps14.h>
->>>> +#include <linux/mfd/samsung/s2mps15.h>
->>>>   #include <linux/mfd/samsung/s2mpu02.h>
->>>>   #include <linux/mfd/samsung/s5m8763.h>
->>>>   #include <linux/mfd/samsung/s5m8767.h>
->>>> @@ -96,6 +97,17 @@ static const struct mfd_cell s2mps14_devs[] = {
->>>>   	}
->>>>   };
->>>>
->>>> +static const struct mfd_cell s2mps15_devs[] = {
->>>> +	{
->>>> +		.name = "s2mps15-pmic",
->>>> +	}, {
->>>> +		.name = "s2mps15-rtc",
->>>> +	}, {
->>>
->>> Why don't these have compatibles?
->>>
->> s2mps15-pmic does have compatible below in sec_dt_match[].
->
-> Woah!!  What's going on here?  You're matching the MFD and Regulator
-> drivers with the same compatible string.  And then registering the
-> Regulator device as an MFD.  That's a bit confusing don't you think?
->
-Sorry for the confusion, as explained in the binding documentation,
-S2MPS15 is a multi-function device which has rtc, regulator and clk 
-provider as a sub-blocks. And each of these sub-blocks are represented
-as child node of parent MFD node. Out of these only clk controller child 
-node needs its own compatible string to populate of_node structure of 
-the device so that it can access properties of this sub-node in 
-drivers/clk/clk-s2mps11.c.
-I just followed "Documentation/devicetree/bindings/mfd/s2mps11.txt"
-to implement s2mps15.
+Change in v2:
+Drop the 400mhz and use assigned-clock-parents to instead
+Split the original tune patch to several independent patches
+Re-write the mmc_send_tuning()
+Fix GPD checksum error
+Move the HS400 setting to ops->prepare_hs400_tuning()	
+Modify SD driving settings
 
+Change in v1:
+Add DT bindings for eMMC hardware reset
+Add pinctrl of data strobe pin for HS400 mode
+Modify eMMC driving settings
+Add 400mhz source clock for HS400 mode
+Add eMMC HS200/HS400 mode support
+Add SD SDR50/SDR104 mode support
+Add implement of tune function with CMD19/CMD21
 
->> s2mps15-rtc does not need one as rtc driver does not support OF yet.
->> So no DT node for this as of now.
->
-> [...]
->
+Chaotian Jing (10):
+  mmc: core: Add DT bindings for eMMC hardware reset support
+  mmc: dt-bindings: update Mediatek MMC bindings
+  mmc: mediatek: make cmd_ints_mask to const
+  mmc: mediatek: change the argument "ddr" to "timing"
+  mmc: mediatek: fix got GPD checksum error interrupt when data transfer
+  mmc: mediatek: add implement of ops->hw_reset()
+  arm64: dts: mediatek: add eMMC hw reset support
+  mmc: mmc: extend the mmc_send_tuning()
+  mmc: mediatek: add HS400 support
+  arm64: dts: mediatek: add HS200/HS400/SDR50/SDR104 support
+
+ Documentation/devicetree/bindings/mmc/mmc.txt    |   1 +
+ Documentation/devicetree/bindings/mmc/mtk-sd.txt |  11 +-
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts      |  27 +-
+ drivers/mmc/core/host.c                          |   2 +
+ drivers/mmc/core/mmc_ops.c                       |   8 +-
+ drivers/mmc/host/dw_mmc-exynos.c                 |   4 +-
+ drivers/mmc/host/dw_mmc.c                        |   2 +-
+ drivers/mmc/host/dw_mmc.h                        |   2 +-
+ drivers/mmc/host/mtk-sd.c                        | 304 ++++++++++++++++++++---
+ drivers/mmc/host/sdhci-esdhc-imx.c               |   6 +-
+ drivers/mmc/host/sdhci-msm.c                     |   2 +-
+ drivers/mmc/host/sdhci-sirf.c                    |   2 +-
+ include/linux/mmc/core.h                         |   2 +-
+ 13 files changed, 322 insertions(+), 51 deletions(-)
+
+-- 
+1.8.1.1.dirty
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
