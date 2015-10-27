@@ -1,60 +1,51 @@
-From: Chaotian Jing <chaotian.jing@mediatek.com>
-Subject: [PATCH v3 01/10] mmc: core: Add DT bindings for eMMC hardware reset
- support
-Date: Tue, 27 Oct 2015 14:24:21 +0800
-Message-ID: <1445927070-5102-2-git-send-email-chaotian.jing@mediatek.com>
-References: <1445927070-5102-1-git-send-email-chaotian.jing@mediatek.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH 4/4] Documentation: dt-bindings: Describe SROMc
+ configuration
+Date: Tue, 27 Oct 2015 09:59:43 +0300
+Message-ID: <00b101d11085$0f9f7be0$2ede73a0$@samsung.com>
+References: <cover.1445859834.git.p.fedin@samsung.com>
+ <7ac097efc649bac4e9f2b991baaa969ce4cbc3ef.1445859834.git.p.fedin@samsung.com>
+ <562F0795.10900@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1445927070-5102-1-git-send-email-chaotian.jing@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Minda Chen <Minda.Chen@csr.com>, Dong Aisheng <b29396@freescale.com>, Lars-Peter Clausen <lars@metafoo.de>, Weijun Yang <Weijun.Yang@csr.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, Howard Chen <ibanezchen@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org, ivan.ivanov@linaro.org, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Sascha Hauer <s.hauer@pengutronix.de>, Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:23102 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751572AbbJ0G7r (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Oct 2015 02:59:47 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NWV00A31A3LEH40@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Oct 2015 06:59:45 +0000 (GMT)
+In-reply-to: <562F0795.10900@samsung.com>
+Content-language: ru
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: 'Kukjin Kim' <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>
 
-Sometime only need set MMC_CAP_HW_RESET for one of MMC hosts,
-So set it in device tree is better.
+ Hello!
 
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
----
- Documentation/devicetree/bindings/mmc/mmc.txt | 1 +
- drivers/mmc/core/host.c                       | 2 ++
- 2 files changed, 3 insertions(+)
+> > +Bank configurations can be defined as an optional subnodes. They can have the
+> > +following properties:
+> > +- bank : bank number (0 - 3)
+> > +- width : data width in bytes (1 or 2). If omitted, default of 1 is used.
+> > +- srom-timing : array of 7 integers: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs
+> > +
+> 
+> I think these will be optional properties as all Exynos SoC may not be
+> having these. So better to add them under "Optional Properties" heading,
+> and move this above the "-Example" heading
 
-diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
-index 0384fc3..f693baf 100644
---- a/Documentation/devicetree/bindings/mmc/mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/mmc.txt
-@@ -37,6 +37,7 @@ Optional properties:
- - sd-uhs-sdr104: SD UHS SDR104 speed is supported
- - sd-uhs-ddr50: SD UHS DDR50 speed is supported
- - cap-power-off-card: powering off the card is safe
-+- cap-mmc-hw-reset: eMMC hardware reset is supported
- - cap-sdio-irq: enable SDIO IRQ signalling on this interface
- - full-pwr-cycle: full power cycle of the card is supported
- - mmc-ddr-1_8v: eMMC high-speed DDR mode(1.8V I/O) is supported
-diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-index abd933b..04fdc2f 100644
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -507,6 +507,8 @@ int mmc_of_parse(struct mmc_host *host)
- 		host->caps |= MMC_CAP_UHS_DDR50;
- 	if (of_property_read_bool(np, "cap-power-off-card"))
- 		host->caps |= MMC_CAP_POWER_OFF_CARD;
-+	if (of_property_read_bool(np, "cap-mmc-hw-reset"))
-+		host->caps |= MMC_CAP_HW_RESET;
- 	if (of_property_read_bool(np, "cap-sdio-irq"))
- 		host->caps |= MMC_CAP_SDIO_IRQ;
- 	if (of_property_read_bool(np, "full-pwr-cycle"))
--- 
-1.8.1.1.dirty
+ Not really. Actually 'bank' is not optional, because it actually identifies to which bank properties are applied, and srom-timings
+are settings by themselves. Without both of them the definition just doesn't make sense. The only really optional specifier is
+'width', which has a default.
+ Could you give me an example of how to write this correctly?
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
