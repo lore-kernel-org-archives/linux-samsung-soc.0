@@ -1,31 +1,56 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v5 0/8] Add support for Exynos SROM Controller driver
-Date: Tue, 27 Oct 2015 10:17:41 +0300
-Message-ID: <00bc01d11087$9239dcb0$b6ad9610$@samsung.com>
-References: <1445332540-12814-1-git-send-email-pankaj.dubey@samsung.com>
- <5626DD9A.9030603@samsung.com> <00ba01d10d78$177c1720$46744560$@samsung.com>
- <562A7A03.8040704@kernel.org> <00f401d10fb9$e92e7f40$bb8b7dc0$@samsung.com>
- <562EDE35.2090409@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <562EDE35.2090409@kernel.org>
-Content-language: ru
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, thomas.ab@samsung.com, andi.shyti@samsung.com
+Subject: [PATCH v2 0/4] Exynos SROMc configuration and Ethernet support for
+ SMDK5410
+Date: Tue, 27 Oct 2015 11:43:51 +0300
+Message-ID: <cover.1445935215.git.p.fedin@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:11029 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754422AbbJ0IoE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Oct 2015 04:44:04 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NWV00JOKEXDB260@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Oct 2015 08:44:01 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
- Hello!
+This patch extends Exynos SROM controller driver with ability to configure
+controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+which is connected via SROMc bank #3.
 
-> You may need to fetch again?
-> Anyway the branch is v4.4-next/driver-samsung or tags/samsung-driver...
-> Or just for-next should be fine I think.
+With this patchset, support for the whole existing SMDK range can be added.
+Actually, only bank number is different.
 
- Thank you very much, already found it, and even posted my series, you should have already seen it.
+This patchset also depends on Exynos 5410 pinctrl support, introduced by
+patches 0003 and 0004 from this set:
+[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
 
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+Pinctrl support is necessary in order to correctly configure
+multifunctional pins of the Exynos chip.
+
+v1 => v2:
+- Fixed some typos and bad labels in device tree
+- Improved documentation
+
+Pavel Fedin (4):
+  ARM: dts: Add SROMc to Exynos 5410
+  drivers: exynos-srom: Add support for bank configuration
+  ARM: dts: Add Ethernet chip to SMDK5410
+  Documentation: dt-bindings: Describe SROMc configuration
+
+ .../bindings/arm/samsung/exynos-srom.txt           | 24 ++++++++++++-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          | 42 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi                  |  5 +++
+ arch/arm/mach-exynos/Kconfig                       |  2 +-
+ drivers/soc/samsung/Kconfig                        |  2 +-
+ drivers/soc/samsung/exynos-srom.c                  | 42 +++++++++++++++++++++-
+ 6 files changed, 113 insertions(+), 4 deletions(-)
+
+-- 
+2.4.4
