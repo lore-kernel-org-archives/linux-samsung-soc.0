@@ -1,124 +1,99 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
-Date: Wed, 28 Oct 2015 13:51:49 +0000
-Message-ID: <20151028135149.GF4058@x1>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
- <20151026143411.GL597@x1>
- <563021AF.6030100@samsung.com>
- <20151028084609.GG5828@x1>
- <5630D12C.2030008@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 00/13] drm/exynos: async G2D and g2d_move()
+Date: Wed, 28 Oct 2015 20:27:04 +0100
+Message-ID: <56312188.6020707@math.uni-bielefeld.de>
+References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5630D12C.2030008@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: k.kozlowski.k@gmail.com, Alim Akhtar <alim.akhtar@samsung.com>, broonie@kernel.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55079 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756153AbbJ1T1I (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Oct 2015 15:27:08 -0400
+In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
+Another ping!
 
-> W dniu 28.10.2015 o 17:46, Lee Jones pisze:
-> > On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
-> >=20
-> >> On 26.10.2015 23:34, Lee Jones wrote:
-> >>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
-> >>>
-> >>>> From: Thomas Abraham <thomas.ab@samsung.com>
-> >>>>
-> >>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. T=
-he S2MPS15
-> >>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three =
-32.768KHz
-> >>>> clock outputs and battery charger. This patch adds initial suppo=
-rt for
-> >>>> LDO and buck regulators of S2MPS15 device.
-> >>>>
-> >>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> >>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> >>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
-> >>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >>>> ---
-> >>>>  drivers/mfd/sec-core.c              |   31 +++++++
-> >>>>  drivers/mfd/sec-irq.c               |    8 ++
-> >>>>  include/linux/mfd/samsung/core.h    |    1 +
-> >>>>  include/linux/mfd/samsung/s2mps15.h |  158 ++++++++++++++++++++=
-+++++++++++++++
-> >>>>  4 files changed, 198 insertions(+)
-> >>>>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
-> >>>
-> >>> I replied to the previous set and won't be reviewing this one unt=
-il
-> >>> all of the open points are solved.
-> >>
-> >> The naming and compatibles used by the driver are confusing but ho=
-w it
-> >> was at beginning. Beside the confusion, the names are correct:
-> >>
-> >> 1. Main mfd driver:
-> >>  - compatible: samsung,s2mps1*-pmic
-> >>  - driver name: sec_pmic
-> >>
-> >> 2. Regulator driver:
-> >>  - no compatible (because it always searches for "regulators" subn=
-ode of
-> >> its parent... that is the convention/legacy behaviour)
-> >>  - driver name: s2mps1*-pmic
-> >>
-> >> I hope that explains your concerns.
-> >=20
-> > It explains *why*, but doesn't ease my concerns in any way.
-> >=20
-> > Unfortunately I've only just realised the disparity we have between
-> > MFD and the Regulator subsystem, which is annoying because it's now
-> > almost impossible to rectify. =20
-> >=20
-> > We should have taken one of two views.  Either a) The MFD is the PM=
-IC
-> > device which encompasses regulator control.  In which case the MFD
-> > and it's corresponding compatible string would be named *-pmic and =
-the
-> > regulator driver would be called *-regulator. Or b) The MFD could b=
-e
-> > considered a normal MFD and be named after the model number, then t=
-he
-> > regulator 'could' be named *-pmic.
-> >=20
-> > However, with reference to b), how much other Power Management does
-> > the regulator driver do besides control regulators?  I suspect not
-> > much.  Therefore my preference would be for a).  My second choice
-> > would be a mixuture of the two where nothing gets named *-pmic.  Th=
-e
-> > last option on my list would be the current situation where we seem=
- to
-> > be calling both the MFD (PMIC) itself and the Regulator driver
-> > *-pmic, which is not good.
->=20
-> Starting from the description of device-family. This is called "Power
-> Management IC" but it is rather a "Power Deliver/Distribute IC". Ther=
-e
-> isn't any logic inside except enable/disable/configure/set low power
-> mode for regulators.
->=20
-> However in the same time the IC comes (always) with:
->  - 32kHz clocks,
->  - RTC,
->  - backup battery charger (no driver for it),
->  - reset for SoC,
->  - shutdown on thermal alert (also no driver for this control).
->=20
-> The solution a) seems fine to me. Make sense and it looks entirely
-> backward compatible - only driver names will be modified.
+With best wishes,
+Tobias
 
-Perfect solution from my PoV.
 
-Thanks Krzysztof.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Tobias Jakobi wrote:
+> Hello,
+> 
+> this series mostly touches G2D code. It introduces the following:
+> 
+> (1) drmHandleEvent2() is added to enable processing of vendor-specific
+>     events. This will be used to expose asynchronous operation of the
+>     G2D. The necessary kernel infrastructure is already there since
+>     a lot of kernel versions. [This touches libdrm core code!]
+> 
+> (2) The necessary infrastructure to handle G2D events. This includes
+>     adding g2d_config_event() and g2d_exec2() to the public API.
+>     A test application is provided to ensure that everything works
+>     as expected.
+> 
+> (3) A small performance test application which can be used to measure
+>     the speed of solid color clear operations. Interesting for
+>     benchmarking and plotting colorful graphs (e.g. through
+>     Mathematica).
+> 
+> (4) g2d_move() which works similar to g2d_copy() but like the C
+>     memmove() properly handles overlapping buffer copies.
+>     Again a test application is present to check that this
+>     indeed does what it should.
+> 
+> (5) Various small changes. A framebuffer colorformat fix for the
+>     general G2D test application. Moving the currently unused
+>     g2d_reset() to the public API. Adding a counterpart to
+>     exynos_bo_map() to unmap buffers again.
+> 
+> (6) Last but not least a small bump of the Exynos version number.
+> 
+> Please review and let me know what I should change/improve.
+> 
+> 
+> With best wishes,
+> Tobias
+> 
+> P.S.: Most patches were submitted already some time ago but never
+> made it upstream. So if something looks familiar, don't worry! ;)
+> 
+> Tobias Jakobi (13):
+>   drm: Implement drmHandleEvent2()
+>   exynos: Introduce exynos_handle_event()
+>   tests/exynos: add fimg2d performance analysis
+>   exynos/fimg2d: add g2d_config_event
+>   exynos: fimg2d: add g2d_exec2
+>   tests/exynos: add fimg2d event test
+>   tests/exynos: use XRGB8888 for framebuffer
+>   exynos: fimg2d: add g2d_set_direction
+>   exynos/fimg2d: add g2d_move
+>   tests/exynos: add test for g2d_move
+>   exynos/fimg2d: add exynos_bo_unmap()
+>   exynos/fimg2d: add g2d_reset() to public API
+>   exynos: bump version number
+> 
+>  exynos/exynos-symbol-check         |   5 +
+>  exynos/exynos_drm.c                |  48 ++++++
+>  exynos/exynos_drm.h                |  12 ++
+>  exynos/exynos_drmif.h              |  27 +++
+>  exynos/exynos_fimg2d.c             | 164 +++++++++++++++++--
+>  exynos/exynos_fimg2d.h             |  49 ++++++
+>  exynos/libdrm_exynos.pc.in         |   2 +-
+>  tests/exynos/Makefile.am           |  26 ++-
+>  tests/exynos/exynos_fimg2d_event.c | 326 +++++++++++++++++++++++++++++++++++++
+>  tests/exynos/exynos_fimg2d_perf.c  | 320 ++++++++++++++++++++++++++++++++++++
+>  tests/exynos/exynos_fimg2d_test.c  | 134 ++++++++++++++-
+>  xf86drm.h                          |  21 +++
+>  xf86drmMode.c                      |  10 +-
+>  13 files changed, 1128 insertions(+), 16 deletions(-)
+>  create mode 100644 tests/exynos/exynos_fimg2d_event.c
+>  create mode 100644 tests/exynos/exynos_fimg2d_perf.c
+> 
