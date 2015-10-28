@@ -1,19 +1,19 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v3 1/4] Documentation: dt-bindings: Describe SROMc configuration
-Date: Wed, 28 Oct 2015 10:57:35 +0300
-Message-ID: <046d990092dc85cf50db9082fc894d93a3ece7c0.1446018918.git.p.fedin@samsung.com>
+Subject: [PATCH v3 2/4] ARM: dts: Add SROMc to Exynos 5410
+Date: Wed, 28 Oct 2015 10:57:36 +0300
+Message-ID: <40d3e02ee082e994e155f662407552a96319e6b4.1446018918.git.p.fedin@samsung.com>
 References: <cover.1446018918.git.p.fedin@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:13007 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752330AbbJ1H5p (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:62480 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932449AbbJ1H5q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 03:57:45 -0400
+	Wed, 28 Oct 2015 03:57:46 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NWX000W17G75S40@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 07:57:43 +0000 (GMT)
+ with ESMTP id <0NWX004UT7G8VI40@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 07:57:44 +0000 (GMT)
 In-reply-to: <cover.1446018918.git.p.fedin@samsung.com>
 In-reply-to: <cover.1446018918.git.p.fedin@samsung.com>
 References: <cover.1446018918.git.p.fedin@samsung.com>
@@ -22,48 +22,28 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Add documentation for new properties, allowing bank configuration.
+This machine uses own SoC device tree file, add missing part.
 
 Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
 ---
- .../bindings/arm/samsung/exynos-srom.txt           | 24 +++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-index 33886d5..9e4a40b 100644
---- a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-@@ -5,8 +5,30 @@ Required properties:
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 4603356..e2b58f8 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -101,6 +101,11 @@
+ 			reg = <0x10000000 0x100>;
+ 		};
  
- - reg: offset and length of the register set
- 
--Example:
-+Bank configurations can be defined in optional subnodes. Each subnode
-+describes one bank and contains the following:
-+
-+Required properties:
-+- bank : bank number (0 - 3)
-+
-+- srom-timing : array of 7 integers: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs
-+
-+Optional properties:
-+- width : data width in bytes (1 or 2). If omitted, default of 1 is used.
-+
-+Example: basic definition, no banks are configured
-+	sromc@12570000 {
-+		compatible = "samsung,exynos-srom";
-+		reg = <0x12570000 0x10>;
-+	};
-+
-+Example: SROMc with bank3 configuration
- 	sromc@12570000 {
- 		compatible = "samsung,exynos-srom";
- 		reg = <0x12570000 0x10>;
-+		bank@3 {
-+			bank = <3>;
-+			width = <2>;
-+			srom-timing = <1 9 12 1 9 1 1>;
++		sromc: sromc@12250000 {
++			compatible = "samsung,exynos-srom";
++			reg = <0x12250000 0x14>;
 +		};
- 	};
++
+ 		pmu_system_controller: system-controller@10040000 {
+ 			compatible = "samsung,exynos5410-pmu", "syscon";
+ 			reg = <0x10040000 0x5000>;
 -- 
 2.4.4
