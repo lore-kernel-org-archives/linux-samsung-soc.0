@@ -1,55 +1,57 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
-Date: Wed, 28 Oct 2015 10:53:23 +0900
-Message-ID: <20151028015323.GZ28319@sirena.org.uk>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: Add SROMc to Exynos 5410
+Date: Wed, 28 Oct 2015 11:12:47 +0900
+Message-ID: <56302F1F.5090206@samsung.com>
+References: <cover.1445935215.git.p.fedin@samsung.com>
+ <91ae80f172192fa4dbc8bf8ee5a9068661592de6.1445935215.git.p.fedin@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KQ2iXOoQ638mtNze"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38316 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751132AbbJ1Bxk (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:15297 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751549AbbJ1CM7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Oct 2015 21:53:40 -0400
-Content-Disposition: inline
-In-Reply-To: <56302514.4090407@samsung.com>
+	Tue, 27 Oct 2015 22:12:59 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NWW00JRKRHLQH00@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 02:12:57 +0000 (GMT)
+In-reply-to: <91ae80f172192fa4dbc8bf8ee5a9068661592de6.1445935215.git.p.fedin@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: Pavel Fedin <p.fedin@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
+On 27.10.2015 17:43, Pavel Fedin wrote:
+> This machine uses own SoC device tree file, add missing part.
+> 
+> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 4603356..af85aad 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -101,6 +101,11 @@
+>  			reg = <0x10000000 0x100>;
+>  		};
+>  
+> +		sromc: sromc@12250000 {
+> +			compatible = "samsung,exynos-srom";
+> +			reg = <0x12250000 0x10>;
 
---KQ2iXOoQ638mtNze
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Isn't 0x10 too small (SROM_BC3 won't be mapped)?
 
-On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
+Best regards,
+Krzysztof
 
-> If that's true, then don't add new compatibles, new names etc. Re-use.
-> No new code needed, no changes needed. Keep it simple.
-
-Well, it depends - it can be useful to get the information about it
-being a different part into DT so that if in future we realise that
-there is some difference (perhaps a bug workaround even if the IP is
-intended to be the same).  Though in the case of a MFD that information
-can be obtained from the MFD for the device.
-
---KQ2iXOoQ638mtNze
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWMCqPAAoJECTWi3JdVIfQ4xYH/j4G3S5X7WjyczTIZ00O2321
-T1RDXLoEYYjVS0AvRTNbR15/mFw2Zbm3Tpq14EpoWItBNP3VNmjknWH2N+3dEiFA
-nD2xto1RCCzXb/4Vi908Y39rqEN2MRcjO4NtPh0ZEH3RnbKfCj4/X+F8Kv4MWVm3
-4pBDefmn0JhyS1VxlVfPV5Ot/jApXZTei2OWI/iwBtATaIwa41z0EdWCUrAzONld
-RQMmG8UK1NYbsED3bqiLtVatNED/oAlgaHGslxgA4pUbc52Jk7cS/cO3fK+RmOS/
-Ji9IeIOfmWSgHMl0aqKiBBn8tQca5ou6q32rRgYiwLEorsE9Iq1+pKaWAbmtUzY=
-=7yDC
------END PGP SIGNATURE-----
-
---KQ2iXOoQ638mtNze--
+> +		};
+> +
+>  		pmu_system_controller: system-controller@10040000 {
+>  			compatible = "samsung,exynos5410-pmu", "syscon";
+>  			reg = <0x10040000 0x5000>;
+> 
