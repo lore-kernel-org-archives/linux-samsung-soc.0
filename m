@@ -1,53 +1,58 @@
-From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v8 06/17] dt-bindings: add document for analogix display port driver
-Date: Wed, 28 Oct 2015 21:02:58 +0100
-Message-ID: <103292898.nCEg51kmfI@phil>
-References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com> <1446020793-10532-1-git-send-email-ykk@rock-chips.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v8 10/17] phy: Add driver for rockchip Display Port PHY
+Date: Wed, 28 Oct 2015 21:36:56 +0100
+Message-ID: <1657250.2TWeX0dr1C@phil>
+References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com> <1446021033-11537-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1446020793-10532-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-deve
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:33721 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751431AbbJ1UhW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Oct 2015 16:37:22 -0400
+In-Reply-To: <1446021033-11537-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Yao <mark.yao@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-deve
 
 Hi Yakir,
 
-Am Mittwoch, 28. Oktober 2015, 16:26:33 schrieb Yakir Yang:
-> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-> index 7a3a9cd..9905081 100644
-> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-> @@ -31,45 +31,31 @@ Required properties for dp-controller:
->  		from general PHY binding: the phandle for the PHY device.
->  	-phy-names:
->  		from general PHY binding: Should be "dp".
-> -	-samsung,color-space:
-> -		input video data format.
-> -			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
-> -	-samsung,dynamic-range:
-> -		dynamic range for input video data.
-> -			VESA = 0, CEA = 1
-> -	-samsung,ycbcr-coeff:
-> -		YCbCr co-efficients for input video.
-> -			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
-> -	-samsung,color-depth:
-> -		number of bits per colour component.
-> -			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
-> -	-samsung,link-rate:
-> -		link rate supported by the panel.
-> -			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
-> -	-samsung,lane-count:
-> -		number of lanes supported by the panel.
-> -			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
-> -	- display-timings: timings for the connected panel as described by
-> -		Documentation/devicetree/bindings/video/display-timing.txt
-											^^ display/display-timings.txt
-otherwise this patch does not apply.
+Am Mittwoch, 28. Oktober 2015, 16:30:33 schrieb Yakir Yang:
+> +static int rockchip_dp_phy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct phy_provider *phy_provider;
+> +	struct rockchip_dp_phy *dp;
+> +	struct resource *res;
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+drivers/phy/phy-rockchip-dp.c: In function 'rockchip_dp_phy_probe':
+drivers/phy/phy-rockchip-dp.c:86:19: warning: unused variable 'res' [-Wunused-variable]
+
+> +	struct phy *phy;
+> +	int ret;
+> +
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
+> +	if (IS_ERR(dp))
+> +		return -ENOMEM;
+> +
+> +	dp->dev = dev;
+> +
+> +	dp->phy_24m = devm_clk_get(dev, "24m");
+> +	if (IS_ERR(dp->phy_24m)) {
+> +		dev_err(dev, "cannot get clock 24m\n");
+> +		return PTR_ERR(dp->phy_24m);
+> +	}
+> +
+> +	ret = clk_set_rate(dp->phy_24m, 24000000);
+> +	if (ret < 0) {
+> +		dev_err(dp->dev, "cannot set clock phy_24m %d\n", ret);
+> +		return ret;
+> +	}
+> +
