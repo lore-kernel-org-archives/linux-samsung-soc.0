@@ -1,57 +1,41 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 1/4] ARM: dts: Add SROMc to Exynos 5410
-Date: Wed, 28 Oct 2015 11:12:47 +0900
-Message-ID: <56302F1F.5090206@samsung.com>
-References: <cover.1445935215.git.p.fedin@samsung.com>
- <91ae80f172192fa4dbc8bf8ee5a9068661592de6.1445935215.git.p.fedin@samsung.com>
+Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+Date: Wed, 28 Oct 2015 11:17:56 +0900
+Message-ID: <56303054.8060804@samsung.com>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
+ <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:15297 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751549AbbJ1CM7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Oct 2015 22:12:59 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NWW00JRKRHLQH00@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 02:12:57 +0000 (GMT)
-In-reply-to: <91ae80f172192fa4dbc8bf8ee5a9068661592de6.1445935215.git.p.fedin@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20151028015323.GZ28319@sirena.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 27.10.2015 17:43, Pavel Fedin wrote:
-> This machine uses own SoC device tree file, add missing part.
+On 28.10.2015 10:53, Mark Brown wrote:
+> On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
 > 
-> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
+>> If that's true, then don't add new compatibles, new names etc. Re-use.
+>> No new code needed, no changes needed. Keep it simple.
 > 
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 4603356..af85aad 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -101,6 +101,11 @@
->  			reg = <0x10000000 0x100>;
->  		};
->  
-> +		sromc: sromc@12250000 {
-> +			compatible = "samsung,exynos-srom";
-> +			reg = <0x12250000 0x10>;
+> Well, it depends - it can be useful to get the information about it
+> being a different part into DT so that if in future we realise that
+> there is some difference (perhaps a bug workaround even if the IP is
+> intended to be the same).  Though in the case of a MFD that information
+> can be obtained from the MFD for the device.
 
-Isn't 0x10 too small (SROM_BC3 won't be mapped)?
+We can always differentiate later and introduce new compatible.
+Declaring a compatible right now would be useful only if we really cared
+about using the workaround on older DTBs.
+
+Since I cannot judge the difference (I don't have the datasheet of
+S2MPS15) then I don't see the need of adding new compatible/name for the
+"same device".
+
+Of course maybe there is such need? Alim?
 
 Best regards,
 Krzysztof
-
-> +		};
-> +
->  		pmu_system_controller: system-controller@10040000 {
->  			compatible = "samsung,exynos5410-pmu", "syscon";
->  			reg = <0x10040000 0x5000>;
-> 
