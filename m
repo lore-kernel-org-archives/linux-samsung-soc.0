@@ -1,48 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL 4/5] Late Samsung driver updates for v4.4
-Date: Wed, 28 Oct 2015 16:57:30 +0900
-Message-ID: <56307FEA.6090207@samsung.com>
-References: <562AA40E.4050407@kernel.org> <562AA603.7040600@kernel.org>
- <56307B33.90608@samsung.com> <000101d11155$1f8d6eb0$5ea84c10$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: [PATCH v3 0/4] Exynos SROMc configuration and Ethernet support for
+ SMDK5410
+Date: Wed, 28 Oct 2015 10:57:34 +0300
+Message-ID: <cover.1446018918.git.p.fedin@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12993 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932286AbbJ1H5g (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:24141 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753402AbbJ1H5p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 03:57:36 -0400
+	Wed, 28 Oct 2015 03:57:45 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NWX000VW7FY5S40@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 07:57:34 +0000 (GMT)
-In-reply-to: <000101d11155$1f8d6eb0$5ea84c10$@samsung.com>
+ with ESMTP id <0NWX00JUF7G6H740@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 07:57:42 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 28.10.2015 16:49, Pavel Fedin wrote:
->  Hello!
-> 
->> The question is - do you prefer us to send a following up patch or to
->> fix it by amending the commit?
->>
->> Here is a fix which can be squashed into these two commits:
-> 
->  By the way, since we are discussing fixing these commits...
->  After hardcoded SROMc handling has been removed, Exynos5410-based machines stopped handling it entirely, because the description
-> has never been added to exynos5410.dtsi (which does not include exynos5.dtsi). Shouldn't the description be added there too?
+This patch extends Exynos SROM controller driver with ability to configure
+controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+which is connected via SROMc bank #3.
 
-No, it is not needed.
-The Exynos5410 in current form does not have suspend capability. During
-boot you should see in dmesg:
-	Failed to find PMU node
-coming from mach-exynos/suspend.c.
+With this patchset, support for the whole existing SMDK range can be added.
+Actually, only bank number is different.
 
-In suspend.c there is no compatible for Exynos5410.
+This patchset also depends on Exynos 5410 pinctrl support, introduced by
+patches 0003 and 0004 from this set:
+[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
 
-Best regards,
-Krzysztof
+Pinctrl support is necessary in order to correctly configure
+multifunctional pins of the Exynos chip.
+
+v2 => v3:
+- Fixed up SROMc region size in the device tree
+- Reordered patches, documentation goes first now
+
+v1 => v2:
+- Fixed some typos and bad labels in device tree
+- Improved documentation
+
+Pavel Fedin (4):
+  Documentation: dt-bindings: Describe SROMc configuration
+  ARM: dts: Add SROMc to Exynos 5410
+  drivers: exynos-srom: Add support for bank configuration
+  ARM: dts: Add Ethernet chip to SMDK5410
+
+ .../bindings/arm/samsung/exynos-srom.txt           | 24 ++++++++++++-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          | 42 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi                  |  5 +++
+ arch/arm/mach-exynos/Kconfig                       |  2 +-
+ drivers/soc/samsung/Kconfig                        |  2 +-
+ drivers/soc/samsung/exynos-srom.c                  | 42 +++++++++++++++++++++-
+ 6 files changed, 113 insertions(+), 4 deletions(-)
+
+-- 
+2.4.4
