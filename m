@@ -1,99 +1,53 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 00/13] drm/exynos: async G2D and g2d_move()
-Date: Wed, 28 Oct 2015 20:27:04 +0100
-Message-ID: <56312188.6020707@math.uni-bielefeld.de>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v8 06/17] dt-bindings: add document for analogix display port driver
+Date: Wed, 28 Oct 2015 21:02:58 +0100
+Message-ID: <103292898.nCEg51kmfI@phil>
+References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com> <1446020793-10532-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55079 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756153AbbJ1T1I (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 15:27:08 -0400
-In-Reply-To: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1446020793-10532-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-deve
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-Another ping!
+Hi Yakir,
 
-With best wishes,
-Tobias
+Am Mittwoch, 28. Oktober 2015, 16:26:33 schrieb Yakir Yang:
+> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+> index 7a3a9cd..9905081 100644
+> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+> @@ -31,45 +31,31 @@ Required properties for dp-controller:
+>  		from general PHY binding: the phandle for the PHY device.
+>  	-phy-names:
+>  		from general PHY binding: Should be "dp".
+> -	-samsung,color-space:
+> -		input video data format.
+> -			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+> -	-samsung,dynamic-range:
+> -		dynamic range for input video data.
+> -			VESA = 0, CEA = 1
+> -	-samsung,ycbcr-coeff:
+> -		YCbCr co-efficients for input video.
+> -			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+> -	-samsung,color-depth:
+> -		number of bits per colour component.
+> -			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+> -	-samsung,link-rate:
+> -		link rate supported by the panel.
+> -			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+> -	-samsung,lane-count:
+> -		number of lanes supported by the panel.
+> -			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+> -	- display-timings: timings for the connected panel as described by
+> -		Documentation/devicetree/bindings/video/display-timing.txt
+											^^ display/display-timings.txt
+otherwise this patch does not apply.
 
-
-Tobias Jakobi wrote:
-> Hello,
-> 
-> this series mostly touches G2D code. It introduces the following:
-> 
-> (1) drmHandleEvent2() is added to enable processing of vendor-specific
->     events. This will be used to expose asynchronous operation of the
->     G2D. The necessary kernel infrastructure is already there since
->     a lot of kernel versions. [This touches libdrm core code!]
-> 
-> (2) The necessary infrastructure to handle G2D events. This includes
->     adding g2d_config_event() and g2d_exec2() to the public API.
->     A test application is provided to ensure that everything works
->     as expected.
-> 
-> (3) A small performance test application which can be used to measure
->     the speed of solid color clear operations. Interesting for
->     benchmarking and plotting colorful graphs (e.g. through
->     Mathematica).
-> 
-> (4) g2d_move() which works similar to g2d_copy() but like the C
->     memmove() properly handles overlapping buffer copies.
->     Again a test application is present to check that this
->     indeed does what it should.
-> 
-> (5) Various small changes. A framebuffer colorformat fix for the
->     general G2D test application. Moving the currently unused
->     g2d_reset() to the public API. Adding a counterpart to
->     exynos_bo_map() to unmap buffers again.
-> 
-> (6) Last but not least a small bump of the Exynos version number.
-> 
-> Please review and let me know what I should change/improve.
-> 
-> 
-> With best wishes,
-> Tobias
-> 
-> P.S.: Most patches were submitted already some time ago but never
-> made it upstream. So if something looks familiar, don't worry! ;)
-> 
-> Tobias Jakobi (13):
->   drm: Implement drmHandleEvent2()
->   exynos: Introduce exynos_handle_event()
->   tests/exynos: add fimg2d performance analysis
->   exynos/fimg2d: add g2d_config_event
->   exynos: fimg2d: add g2d_exec2
->   tests/exynos: add fimg2d event test
->   tests/exynos: use XRGB8888 for framebuffer
->   exynos: fimg2d: add g2d_set_direction
->   exynos/fimg2d: add g2d_move
->   tests/exynos: add test for g2d_move
->   exynos/fimg2d: add exynos_bo_unmap()
->   exynos/fimg2d: add g2d_reset() to public API
->   exynos: bump version number
-> 
->  exynos/exynos-symbol-check         |   5 +
->  exynos/exynos_drm.c                |  48 ++++++
->  exynos/exynos_drm.h                |  12 ++
->  exynos/exynos_drmif.h              |  27 +++
->  exynos/exynos_fimg2d.c             | 164 +++++++++++++++++--
->  exynos/exynos_fimg2d.h             |  49 ++++++
->  exynos/libdrm_exynos.pc.in         |   2 +-
->  tests/exynos/Makefile.am           |  26 ++-
->  tests/exynos/exynos_fimg2d_event.c | 326 +++++++++++++++++++++++++++++++++++++
->  tests/exynos/exynos_fimg2d_perf.c  | 320 ++++++++++++++++++++++++++++++++++++
->  tests/exynos/exynos_fimg2d_test.c  | 134 ++++++++++++++-
->  xf86drm.h                          |  21 +++
->  xf86drmMode.c                      |  10 +-
->  13 files changed, 1128 insertions(+), 16 deletions(-)
->  create mode 100644 tests/exynos/exynos_fimg2d_event.c
->  create mode 100644 tests/exynos/exynos_fimg2d_perf.c
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
