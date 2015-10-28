@@ -1,7 +1,7 @@
 From: Yakir Yang <ykk@rock-chips.com>
 Subject: Re: [PATCH v7 10/17] phy: Add driver for rockchip Display Port PHY
-Date: Wed, 28 Oct 2015 09:46:35 +0800
-Message-ID: <563028FB.8030501@rock-chips.com>
+Date: Wed, 28 Oct 2015 09:49:58 +0800
+Message-ID: <563029C6.5000807@rock-chips.com>
 References: <1445599415-30856-1-git-send-email-ykk@rock-chips.com>
  <1445655964-15237-1-git-send-email-ykk@rock-chips.com>
  <1445655964-15237-5-git-send-email-ykk@rock-chips.com>
@@ -10,11 +10,11 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:49948 "EHLO
+Received: from lucky1.263xmail.com ([211.157.147.132]:53437 "EHLO
 	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754944AbbJ1Brh (ORCPT
+	with ESMTP id S1751805AbbJ1Bue (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Oct 2015 21:47:37 -0400
+	Tue, 27 Oct 2015 21:50:34 -0400
 In-Reply-To: <2304066.jCpsGbPbCP@phil>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -72,11 +72,7 @@ On 10/28/2015 05:23 AM, Heiko Stuebner wrote:
 >
 > You could also just use/copy the HIWORD_MASK macro we use for example
 > in the clock controller.
-
-Great, thanks.
-
-- Yakir
-
+>
 >
 >> +
 >> +struct rockchip_dp_phy {
@@ -106,7 +102,11 @@ Great, thanks.
 >
 > with these things fixed,
 > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->
+
+Oops, thanks
+
+- Yakir
+
 >
 > Cheers,
 > Heiko
