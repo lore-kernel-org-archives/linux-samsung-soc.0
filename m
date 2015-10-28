@@ -1,76 +1,121 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/7] add atomic_check callback to exynos_crtc
-Date: Wed, 28 Oct 2015 14:30:57 +0900
-Message-ID: <56305D91.4040402@samsung.com>
-References: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
- <563026D7.307@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
+Date: Wed, 28 Oct 2015 14:36:53 +0900
+Message-ID: <56305EF5.1080709@samsung.com>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
+ <5630243E.1080608@samsung.com> <5630503A.3070404@samsung.com>
+ <5630554E.8070301@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46458 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752888AbbJ1Fa7 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 01:30:59 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NWX014UR0NLSK90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 14:30:57 +0900 (KST)
-In-reply-to: <563026D7.307@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <5630554E.8070301@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org, broonie@kernel.org
+Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-
-
-2015=EB=85=84 10=EC=9B=94 28=EC=9D=BC 10:37=EC=97=90 Krzysztof Kozlowsk=
-i =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> On 26.10.2015 21:03, Andrzej Hajda wrote:
->> Hi Inki,
+On 28.10.2015 13:55, Alim Akhtar wrote:
+> 
+> 
+> On 10/28/2015 10:04 AM, Krzysztof Kozlowski wrote:
+>> On 28.10.2015 10:26, Krzysztof Kozlowski wrote:
+>>> On 26.10.2015 21:51, Alim Akhtar wrote:
+>>>> S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
+>>>> adds supports for the same to the s2mps11 clock driver.
+>>>>
+>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>> ---
+>>>>   drivers/clk/Kconfig       |    5 +++--
+>>>>   drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
+>>>>   2 files changed, 27 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>>>> index a1fa61159179..037a314b5d76 100644
+>>>> --- a/drivers/clk/Kconfig
+>>>> +++ b/drivers/clk/Kconfig
+>>>> @@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
+>>>>       tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+>>>>       depends on MFD_SEC_CORE
+>>>>       ---help---
+>>>> -      This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
+>>>> +      This driver supports S2MPS1X/S5M8767 crystal oscillator
+>>>>         clock. These multi-function devices have two (S2MPS14) or three
+>>>> -      (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz
+>>>> each.
+>>>> +      (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
+>>>> +      clocked at 32KHz each.
+>>>>
+>>>>   config CLK_TWL6040
+>>>>       tristate "External McPDM functional clock from twl6040"
+>>>> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+>>>> index d266299dfdb1..455500dca653 100644
+>>>> --- a/drivers/clk/clk-s2mps11.c
+>>>> +++ b/drivers/clk/clk-s2mps11.c
+>>>> @@ -25,6 +25,7 @@
+>>>>   #include <linux/mfd/samsung/s2mps11.h>
+>>>>   #include <linux/mfd/samsung/s2mps13.h>
+>>>>   #include <linux/mfd/samsung/s2mps14.h>
+>>>> +#include <linux/mfd/samsung/s2mps15.h>
+>>>>   #include <linux/mfd/samsung/s5m8767.h>
+>>>>   #include <linux/mfd/samsung/core.h>
+>>>>
+>>>> @@ -148,6 +149,24 @@ static struct clk_init_data
+>>>> s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+>>>>       },
+>>>>   };
+>>>>
+>>>> +static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
+>>>> +    [S2MPS11_CLK_AP] = {
+>>>> +        .name = "s2mps15_ap",
+>>>> +        .ops = &s2mps11_clk_ops,
+>>>> +        .flags = CLK_IS_ROOT,
+>>>> +    },
+>>>> +    [S2MPS11_CLK_CP] = {
+>>>> +        .name = "s2mps15_cp",
+>>>> +        .ops = &s2mps11_clk_ops,
+>>>> +        .flags = CLK_IS_ROOT,
+>>>> +    },
+>>>> +    [S2MPS11_CLK_BT] = {
+>>>> +        .name = "s2mps15_bt",
+>>>> +        .ops = &s2mps11_clk_ops,
+>>>> +        .flags = CLK_IS_ROOT,
+>>>> +    },
+>>>> +};
+>>>> +
+>>>>   static struct device_node *s2mps11_clk_parse_dt(struct
+>>>> platform_device *pdev,
+>>>>           struct clk_init_data *clks_init)
+>>>>   {
+>>>> @@ -207,6 +226,10 @@ static int s2mps11_clk_probe(struct
+>>>> platform_device *pdev)
+>>>>           s2mps11_reg = S2MPS14_REG_RTCCTRL;
+>>>>           clks_init = s2mps14_clks_init;
+>>>>           break;
+>>>> +    case S2MPS15X:
+>>>> +        s2mps11_reg = S2MPS15_REG_RTC_BUF;
+>>>> +        clks_init = s2mps15_clks_init;
+>>>
+>>> Another question (after looking at RTC driver):
+>>> Is this the same register address as S2MPS14?
 >>
->> This patchset removes hacky mode validation in Mixer driver by addin=
-g
->> atomic_check callback to exynos_crtc and replacing direct function c=
-all
->> with DRM framework validation. As a result HDMI driver does not depe=
-nd anymore
->> on MIXER driver and both drivers can be selected with different Kcon=
-fig options,
->> it is usefull especially for latests SoCs which do have HDMI IP but =
-do not have
->> MIXER IP.
->> Additionally patchset performs small Kconfig refactoring.
+>> I found the answer - this is the same address as in S2MPS13 and S2MPS14:
+>> 0xc. The S2MPS14 has only two clocks though but S2MPS13 has three.
+>> Again, as in RTC, you should re-use existing support.
 >>
->> Krzysztof could you look at exynos_defconfig patch. Maybe it would b=
-e good
->> to merge it before next patch to allow full bi-sectability :)
->=20
-> I would be happy to see similar for multi_v7. HDMI is already there.
->=20
-> I also wonder why actually DRM_EXYNOS_HDMI has to depend on MIXER or =
-DECON?
+>> It looks there is no need for this patch at all.
+>>
+> Yes, checked that, rtc looks same to s2mps14 and clk looks same as
+> s2mps13{ not s2mps11}, because of the RTC_BUF address changes.
+> Will drop patch 4 and 5 and use the existing names where applicable.
 
-DECON controller has two kinds of data paths in case of Exynos5433 or l=
-ater.
-One is Display path and other is TV path. So it'd be reasonable for DRM=
-_EXYNOS_HDMI to depend on MIXER or DECON -
-TV path of DECON controller transfers Display data to HDMI like MIXER I=
-P of previous Exynos SoC did.
+Thanks!
 
-Thanks,
-Inki Dae
+> I think I don't have to change the binding or Kconfig changes?
 
->=20
-> Best regards,
-> Krzysztof
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+I think you don't have to. Only the main MFD driver will be updated with
+respective child driver names and compatible.
+
+Best regards,
+Krzysztof
