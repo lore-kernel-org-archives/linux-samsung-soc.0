@@ -1,126 +1,42 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v3 3/4] drivers: exynos-srom: Add support for bank configuration
-Date: Wed, 28 Oct 2015 10:57:37 +0300
-Message-ID: <048021141f295b0e70c852134d4ac9cc6f7f1da4.1446018918.git.p.fedin@samsung.com>
-References: <cover.1446018918.git.p.fedin@samsung.com>
+Subject: RE: [GIT PULL 4/5] Late Samsung driver updates for v4.4
+Date: Wed, 28 Oct 2015 11:00:45 +0300
+Message-ID: <000801d11156$c0e0c270$42a24750$@samsung.com>
+References: <562AA40E.4050407@kernel.org> <562AA603.7040600@kernel.org>
+ <56307B33.90608@samsung.com> <000101d11155$1f8d6eb0$5ea84c10$@samsung.com>
+ <56307FEA.6090207@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:62480 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964788AbbJ1H5r (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:14198 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753385AbbJ1IAu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 03:57:47 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
+	Wed, 28 Oct 2015 04:00:50 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NWX004V37G9KZ40@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 07:57:45 +0000 (GMT)
-In-reply-to: <cover.1446018918.git.p.fedin@samsung.com>
-In-reply-to: <cover.1446018918.git.p.fedin@samsung.com>
-References: <cover.1446018918.git.p.fedin@samsung.com>
+ with ESMTP id <0NWX006YM7LBTS40@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 08:00:47 +0000 (GMT)
+In-reply-to: <56307FEA.6090207@samsung.com>
+Content-language: ru
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Bindings are based on u-boot implementation, however they are stored in
-subnodes, providing support for more than one bank.
+ Hello!
 
-Since the driver now does more than suspend-resume support, dependency on
-CONFIG_PM is removed.
+> The Exynos5410 in current form does not have suspend capability. During
+> boot you should see in dmesg:
+> 	Failed to find PMU node
+> coming from mach-exynos/suspend.c.
 
-Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
----
- arch/arm/mach-exynos/Kconfig      |  2 +-
- drivers/soc/samsung/Kconfig       |  2 +-
- drivers/soc/samsung/exynos-srom.c | 42 ++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 43 insertions(+), 3 deletions(-)
+ Indeed. By the way, can this be a reason why reboot stopped working? It worked in v4.1. Isn't this a regression?
+ Ok, nevertheless, here is v3 of my patchset.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 83c85f5..c22dc42 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -16,7 +16,7 @@ menuconfig ARCH_EXYNOS
- 	select ARM_GIC
- 	select COMMON_CLK_SAMSUNG
- 	select EXYNOS_THERMAL
--	select EXYNOS_SROM if PM
-+	select EXYNOS_SROM
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 2833b5b..ea4bc2a 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -8,6 +8,6 @@ config SOC_SAMSUNG
- 
- config EXYNOS_SROM
- 	bool
--	depends on ARM && ARCH_EXYNOS && PM
-+	depends on ARM && ARCH_EXYNOS
- 
- endmenu
-diff --git a/drivers/soc/samsung/exynos-srom.c b/drivers/soc/samsung/exynos-srom.c
-index 57a232d..6c8c56a 100644
---- a/drivers/soc/samsung/exynos-srom.c
-+++ b/drivers/soc/samsung/exynos-srom.c
-@@ -67,9 +67,46 @@ static struct exynos_srom_reg_dump *exynos_srom_alloc_reg_dump(
- 	return rd;
- }
- 
-+static int decode_sromc(struct exynos_srom *srom, struct device_node *np)
-+{
-+	u32 bank, width;
-+	u32 timing[7];
-+	u32 bw;
-+
-+	if (of_property_read_u32(np, "bank", &bank))
-+		return -ENXIO;
-+	if (of_property_read_u32(np, "width", &width))
-+		width = 1;
-+	if (of_property_read_u32_array(np, "srom-timing", timing, 7)) {
-+		pr_err("Could not decode SROMC configuration\n");
-+		return -ENXIO;
-+	}
-+
-+	bank *= 4; /* Convert bank into shift/offset */
-+
-+	bw = 1 << EXYNOS_SROM_BW__BYTEENABLE__SHIFT;
-+	if (width == 2)
-+		bw |= 1 << EXYNOS_SROM_BW__DATAWIDTH__SHIFT;
-+	bw <<= bank;
-+	bw |= __raw_readl(srom->reg_base + EXYNOS_SROM_BW) &
-+	      ~(EXYNOS_SROM_BW__CS_MASK << bank);
-+	__raw_writel(bw, srom->reg_base + EXYNOS_SROM_BW);
-+
-+	__raw_writel((timing[0] << EXYNOS_SROM_BCX__PMC__SHIFT) |
-+		    (timing[1] << EXYNOS_SROM_BCX__TACP__SHIFT) |
-+		    (timing[2] << EXYNOS_SROM_BCX__TCAH__SHIFT) |
-+		    (timing[3] << EXYNOS_SROM_BCX__TCOH__SHIFT) |
-+		    (timing[4] << EXYNOS_SROM_BCX__TACC__SHIFT) |
-+		    (timing[5] << EXYNOS_SROM_BCX__TCOS__SHIFT) |
-+		    (timing[6] << EXYNOS_SROM_BCX__TACS__SHIFT),
-+		    srom->reg_base + EXYNOS_SROM_BC0 + bank);
-+
-+	return 0;
-+}
-+
- static int exynos_srom_probe(struct platform_device *pdev)
- {
--	struct device_node *np;
-+	struct device_node *np, *child;
- 	struct exynos_srom *srom;
- 	struct device *dev = &pdev->dev;
- 
-@@ -100,6 +137,9 @@ static int exynos_srom_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	for_each_child_of_node(np, child)
-+		decode_sromc(srom, child);
-+
- 	return 0;
- }
- 
--- 
-2.4.4
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
