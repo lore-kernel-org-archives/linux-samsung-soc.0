@@ -1,19 +1,19 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v3 2/4] ARM: dts: Add SROMc to Exynos 5410
-Date: Wed, 28 Oct 2015 10:57:36 +0300
-Message-ID: <40d3e02ee082e994e155f662407552a96319e6b4.1446018918.git.p.fedin@samsung.com>
+Subject: [PATCH v3 4/4] ARM: dts: Add Ethernet chip to SMDK5410
+Date: Wed, 28 Oct 2015 10:57:38 +0300
+Message-ID: <e5eba0f655e9df234891ef26f2c55219a50e98a0.1446018918.git.p.fedin@samsung.com>
 References: <cover.1446018918.git.p.fedin@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout2.w1.samsung.com ([210.118.77.12]:62480 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932449AbbJ1H5q (ORCPT
+	with ESMTP id S932449AbbJ1H5s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 03:57:46 -0400
+	Wed, 28 Oct 2015 03:57:48 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
  by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NWX004UT7G8VI40@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 07:57:44 +0000 (GMT)
+ with ESMTP id <0NWX006UE7G9D540@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 07:57:45 +0000 (GMT)
 In-reply-to: <cover.1446018918.git.p.fedin@samsung.com>
 In-reply-to: <cover.1446018918.git.p.fedin@samsung.com>
 References: <cover.1446018918.git.p.fedin@samsung.com>
@@ -22,28 +22,77 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-This machine uses own SoC device tree file, add missing part.
+The chip is smsc9115, connected via SROMc bank 3. Additionally, some GPIO
+initialization is required.
 
 Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 42 +++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 4603356..e2b58f8 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -101,6 +101,11 @@
- 			reg = <0x10000000 0x100>;
- 		};
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index cebeaab..2a6a5ac 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -35,6 +35,17 @@
+ 		reg = <0x02037000 0x1000>;
+ 	};
  
-+		sromc: sromc@12250000 {
-+			compatible = "samsung,exynos-srom";
-+			reg = <0x12250000 0x14>;
-+		};
++	ethernet@07000000 {
++		compatible = "smsc,lan9115";
++		reg = <0x07000000 0x10000>;
++		phy-mode = "mii";
++		interrupt-parent = <&gpx0>;
++		interrupts = <5 8>;
++		reg-io-width = <2>;
++		smsc,irq-push-pull;
++		smsc,force-internal-phy;
++	};
 +
- 		pmu_system_controller: system-controller@10040000 {
- 			compatible = "samsung,exynos5410-pmu", "syscon";
- 			reg = <0x10040000 0x5000>;
+ };
+ 
+ &mmc_0 {
+@@ -61,6 +72,27 @@
+ 	disable-wp;
+ };
+ 
++&pinctrl_0 {
++	srom_ctl: srom-ctl {
++		samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
++			       "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
++		samsung,pin-function = <2>;
++		samsung,pin-drv = <0>;
++	};
++
++	srom_ebi: srom-ebi {
++		samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
++			       "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
++			       "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
++			       "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
++			       "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
++			       "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
+@@ -72,3 +104,13 @@
+ &uart2 {
+ 	status = "okay";
+ };
++
++&sromc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
++	bank@3 {
++		bank = <3>;
++		width = <2>;
++		srom-timing = <1 9 12 1 9 1 1>;
++	};
++};
 -- 
 2.4.4
