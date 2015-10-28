@@ -1,101 +1,44 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v8 14/17] drm: bridge: analogix/dp: add max link rate and lane count limit for RK3288
-Date: Wed, 28 Oct 2015 16:56:01 +0800
-Message-ID: <1446022561-16870-1-git-send-email-ykk@rock-chips.com>
-References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
-Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [GIT PULL 4/5] Late Samsung driver updates for v4.4
+Date: Wed, 28 Oct 2015 12:02:11 +0300
+Message-ID: <001d01d1115f$556b3670$0041a350$@samsung.com>
+References: <562AA40E.4050407@kernel.org> <562AA603.7040600@kernel.org>
+ <56307B33.90608@samsung.com> <000101d11155$1f8d6eb0$5ea84c10$@samsung.com>
+ <56307FEA.6090207@samsung.com> <000801d11156$c0e0c270$42a24750$@samsung.com>
+ <563081DE.9010500@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:18265 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754826AbbJ1JCO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Oct 2015 05:02:14 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NWX006MVAFOB960@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 09:02:12 +0000 (GMT)
+In-reply-to: <563081DE.9010500@samsung.com>
+Content-language: ru
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-There are some IP limit on rk3288 that only support 4 physical lanes
-of 2.7/1.6 Gbps/lane, so seprate them out by device_type flag.
+ Hello!
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4:
-- Seprate the link-rate and lane-count limit out with the device_type
-  flag. (Thierry)
+> The noticeable change between v4.1 and v4.2 was for example:
+> c4241a582d22 ("ARM: EXYNOS: use PS_HOLD based poweroff for all supported
+> SoCs")
 
-Changes in v3: None
-Changes in v2: None
+ First of all, sorry for misinforming you. It was not v4.1 which worked, but 3.18 one. I never ran 4.1 on this board, it's my
+memory's fault...
+ Second, the commit which actually broke 5410 is 8cfc7fdd33080e30b86d21b1a8c9ad0686427ddc ("ARM: EXYNOS: move restart code into pmu
+driver"). And we don't have 5410 PMU description in our DT, that's the problem.
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 33 ++++++++++++++--------
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  4 +--
- 2 files changed, 23 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 6307060..563ffb1d 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -890,8 +890,8 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 		return;
- 	}
- 
--	ret = analogix_dp_set_link_train(dp, dp->video_info.lane_count,
--					 dp->video_info.link_rate);
-+	ret = analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
-+					 dp->video_info.max_link_rate);
- 	if (ret) {
- 		dev_err(dp->dev, "unable to do link train\n");
- 		return;
-@@ -1156,16 +1156,25 @@ static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
- 	struct device_node *dp_node = dp->dev->of_node;
- 	struct video_info *video_info = &dp->video_info;
- 
--	if (of_property_read_u32(dp_node, "samsung,link-rate",
--				 &video_info->link_rate)) {
--		dev_err(dp->dev, "failed to get link-rate\n");
--		return -EINVAL;
--	}
--
--	if (of_property_read_u32(dp_node, "samsung,lane-count",
--				 &video_info->lane_count)) {
--		dev_err(dp->dev, "failed to get lane-count\n");
--		return -EINVAL;
-+	switch (dp->plat_data && dp->plat_data->dev_type) {
-+	case RK3288_DP:
-+		/*
-+		 * Like Rk3288 DisplayPort TRM indicate that "Main link
-+		 * containing 4 physical lanes of 2.7/1.62 Gbps/lane".
-+		 */
-+		video_info->max_link_rate = 0x0A;
-+		video_info->max_lane_count = 0x04;
-+		break;
-+	case EXYNOS_DP:
-+		/*
-+		 * NOTE: those property parseing code is used for
-+		 * providing backward compatibility for samsung platform.
-+		 */
-+		of_property_read_u32(dp_node, "samsung,link-rate",
-+				     &video_info->max_link_rate);
-+		of_property_read_u32(dp_node, "samsung,lane-count",
-+				     &video_info->max_lane_count);
-+		break;
- 	}
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index e37cef6..e6f8243 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -129,8 +129,8 @@ struct video_info {
- 	enum color_coefficient ycbcr_coeff;
- 	enum color_depth color_depth;
- 
--	enum link_rate_type link_rate;
--	enum link_lane_count_type lane_count;
-+	enum link_rate_type max_link_rate;
-+	enum link_lane_count_type max_lane_count;
- };
- 
- struct link_train {
--- 
-1.9.1
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
