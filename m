@@ -1,67 +1,387 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v8 11/17] dt-bindings: add document for rockchip dp phy
-Date: Wed, 28 Oct 2015 16:31:08 +0800
-Message-ID: <1446021068-11655-1-git-send-email-ykk@rock-chips.com>
-References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
+Date: Wed, 28 Oct 2015 08:46:09 +0000
+Message-ID: <20151028084609.GG5828@x1>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+ <20151026143411.GL597@x1>
+ <563021AF.6030100@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
+Content-Disposition: inline
+In-Reply-To: <563021AF.6030100@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
-Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, broonie@kernel.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add dt binding documentation for rockchip display port PHY.
+On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v8:
-- Remove the specific address in the example node name. (Heiko)
+> On 26.10.2015 23:34, Lee Jones wrote:
+> > On Mon, 26 Oct 2015, Alim Akhtar wrote:
+> >=20
+> >> From: Thomas Abraham <thomas.ab@samsung.com>
+> >>
+> >> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The=
+ S2MPS15
+> >> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32=
+=2E768KHz
+> >> clock outputs and battery charger. This patch adds initial support=
+ for
+> >> LDO and buck regulators of S2MPS15 device.
+> >>
+> >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> >> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> >> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+> >> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >> ---
+> >>  drivers/mfd/sec-core.c              |   31 +++++++
+> >>  drivers/mfd/sec-irq.c               |    8 ++
+> >>  include/linux/mfd/samsung/core.h    |    1 +
+> >>  include/linux/mfd/samsung/s2mps15.h |  158 ++++++++++++++++++++++=
++++++++++++++
+> >>  4 files changed, 198 insertions(+)
+> >>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
+> >=20
+> > I replied to the previous set and won't be reviewing this one until
+> > all of the open points are solved.
+>=20
+> The naming and compatibles used by the driver are confusing but how i=
+t
+> was at beginning. Beside the confusion, the names are correct:
+>=20
+> 1. Main mfd driver:
+>  - compatible: samsung,s2mps1*-pmic
+>  - driver name: sec_pmic
+>=20
+> 2. Regulator driver:
+>  - no compatible (because it always searches for "regulators" subnode=
+ of
+> its parent... that is the convention/legacy behaviour)
+>  - driver name: s2mps1*-pmic
+>=20
+> I hope that explains your concerns.
 
-Changes in v7:
-- Simplify the commit message. (Kishon)
+It explains *why*, but doesn't ease my concerns in any way.
 
-Changes in v6: None
-Changes in v5:
-- Split binding doc's from driver changes. (Rob)
-- Update the rockchip,grf explain in document, and correct the clock required
-  elemets in document. (Rob & Heiko)
+Unfortunately I've only just realised the disparity we have between
+MFD and the Regulator subsystem, which is annoying because it's now
+almost impossible to rectify. =20
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+We should have taken one of two views.  Either a) The MFD is the PMIC
+device which encompasses regulator control.  In which case the MFD
+and it's corresponding compatible string would be named *-pmic and the
+regulator driver would be called *-regulator. Or b) The MFD could be
+considered a normal MFD and be named after the model number, then the
+regulator 'could' be named *-pmic.
 
- .../devicetree/bindings/phy/rockchip-dp-phy.txt    | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+However, with reference to b), how much other Power Management does
+the regulator driver do besides control regulators?  I suspect not
+much.  Therefore my preference would be for a).  My second choice
+would be a mixuture of the two where nothing gets named *-pmic.  The
+last option on my list would be the current situation where we seem to
+be calling both the MFD (PMIC) itself and the Regulator driver
+*-pmic, which is not good.
 
-diff --git a/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
-new file mode 100644
-index 0000000..00902cb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
-@@ -0,0 +1,22 @@
-+Rockchip Soc Seroes Display Port PHY
-+------------------------------------
-+
-+Required properties:
-+- compatible : should be one of the following supported values:
-+	 - "rockchip.rk3288-dp-phy"
-+- clocks: from common clock binding: handle to dp clock.
-+	of memory mapped region.
-+- clock-names: from common clock binding:
-+	Required elements: "24m"
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+- #phy-cells : from the generic PHY bindings, must be 0;
-+
-+Example:
-+
-+edp_phy: edp-phy {
-+	compatible = "rockchip,rk3288-dp-phy";
-+	rockchip,grf = <&grf>;
-+	clocks = <&cru SCLK_EDP_24M>;
-+	clock-names = "24m";
-+	#phy-cells = <0>;
-+};
--- 
-1.9.1
+> >> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> >> index 2626fc0b5b8c..db3d4d4ff805 100644
+> >> --- a/drivers/mfd/sec-core.c
+> >> +++ b/drivers/mfd/sec-core.c
+> >> @@ -29,6 +29,7 @@
+> >>  #include <linux/mfd/samsung/s2mps11.h>
+> >>  #include <linux/mfd/samsung/s2mps13.h>
+> >>  #include <linux/mfd/samsung/s2mps14.h>
+> >> +#include <linux/mfd/samsung/s2mps15.h>
+> >>  #include <linux/mfd/samsung/s2mpu02.h>
+> >>  #include <linux/mfd/samsung/s5m8763.h>
+> >>  #include <linux/mfd/samsung/s5m8767.h>
+> >> @@ -96,6 +97,17 @@ static const struct mfd_cell s2mps14_devs[] =3D=
+ {
+> >>  	}
+> >>  };
+> >> =20
+> >> +static const struct mfd_cell s2mps15_devs[] =3D {
+> >> +	{
+> >> +		.name =3D "s2mps15-pmic",
+> >> +	}, {
+> >> +		.name =3D "s2mps15-rtc",
+> >> +	}, {
+> >> +		.name =3D "s2mps15-clk",
+> >> +		.of_compatible =3D "samsung,s2mps15-clk",
+> >> +	},
+> >> +};
+> >> +
+> >>  static const struct mfd_cell s2mpa01_devs[] =3D {
+> >>  	{
+> >>  		.name =3D "s2mpa01-pmic",
+> >> @@ -125,6 +137,9 @@ static const struct of_device_id sec_dt_match[=
+] =3D {
+> >>  		.compatible =3D "samsung,s2mps14-pmic",
+> >>  		.data =3D (void *)S2MPS14X,
+> >>  	}, {
+> >> +		.compatible =3D "samsung,s2mps15-pmic",
+> >> +		.data =3D (void *)S2MPS15X,
+> >> +	}, {
+> >>  		.compatible =3D "samsung,s2mpa01-pmic",
+> >>  		.data =3D (void *)S2MPA01,
+> >>  	}, {
+> >> @@ -226,6 +241,15 @@ static const struct regmap_config s2mps14_reg=
+map_config =3D {
+> >>  	.cache_type =3D REGCACHE_FLAT,
+> >>  };
+> >> =20
+> >> +static const struct regmap_config s2mps15_regmap_config =3D {
+> >> +	.reg_bits =3D 8,
+> >> +	.val_bits =3D 8,
+> >> +
+> >> +	.max_register =3D S2MPS15_REG_LDODSCH4,
+> >> +	.volatile_reg =3D s2mps11_volatile,
+> >> +	.cache_type =3D REGCACHE_FLAT,
+> >> +};
+> >> +
+> >>  static const struct regmap_config s2mpu02_regmap_config =3D {
+> >>  	.reg_bits =3D 8,
+> >>  	.val_bits =3D 8,
+> >> @@ -387,6 +411,9 @@ static int sec_pmic_probe(struct i2c_client *i=
+2c,
+> >>  	case S2MPS14X:
+> >>  		regmap =3D &s2mps14_regmap_config;
+> >>  		break;
+> >> +	case S2MPS15X:
+> >> +		regmap =3D &s2mps15_regmap_config;
+> >> +		break;
+> >>  	case S5M8763X:
+> >>  		regmap =3D &s5m8763_regmap_config;
+> >>  		break;
+> >> @@ -445,6 +472,10 @@ static int sec_pmic_probe(struct i2c_client *=
+i2c,
+> >>  		sec_devs =3D s2mps14_devs;
+> >>  		num_sec_devs =3D ARRAY_SIZE(s2mps14_devs);
+> >>  		break;
+> >> +	case S2MPS15X:
+> >> +		sec_devs =3D s2mps15_devs;
+> >> +		num_sec_devs =3D ARRAY_SIZE(s2mps15_devs);
+> >> +		break;
+> >>  	case S2MPU02:
+> >>  		sec_devs =3D s2mpu02_devs;
+> >>  		num_sec_devs =3D ARRAY_SIZE(s2mpu02_devs);
+> >> diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+> >> index 806fa8dbb22d..d77de431cc50 100644
+> >> --- a/drivers/mfd/sec-irq.c
+> >> +++ b/drivers/mfd/sec-irq.c
+> >> @@ -407,6 +407,11 @@ static const struct regmap_irq_chip s2mps14_i=
+rq_chip =3D {
+> >>  	S2MPS1X_IRQ_CHIP_COMMON_DATA,
+> >>  };
+> >> =20
+> >> +static const struct regmap_irq_chip s2mps15_irq_chip =3D {
+> >> +	.name =3D "s2mps15",
+> >> +	S2MPS1X_IRQ_CHIP_COMMON_DATA,
+> >> +};
+> >> +
+> >>  static const struct regmap_irq_chip s2mpu02_irq_chip =3D {
+> >>  	.name =3D "s2mpu02",
+> >>  	.irqs =3D s2mpu02_irqs,
+> >> @@ -466,6 +471,9 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic=
+)
+> >>  	case S2MPS14X:
+> >>  		sec_irq_chip =3D &s2mps14_irq_chip;
+> >>  		break;
+> >> +	case S2MPS15X:
+> >> +		sec_irq_chip =3D &s2mps15_irq_chip;
+> >> +		break;
+> >>  	case S2MPU02:
+> >>  		sec_irq_chip =3D &s2mpu02_irq_chip;
+> >>  		break;
+> >> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/=
+samsung/core.h
+> >> index a06098639399..6bc4bcd488ac 100644
+> >> --- a/include/linux/mfd/samsung/core.h
+> >> +++ b/include/linux/mfd/samsung/core.h
+> >> @@ -44,6 +44,7 @@ enum sec_device_type {
+> >>  	S2MPS11X,
+> >>  	S2MPS13X,
+> >>  	S2MPS14X,
+> >> +	S2MPS15X,
+> >>  	S2MPU02,
+> >>  };
+> >> =20
+> >> diff --git a/include/linux/mfd/samsung/s2mps15.h b/include/linux/m=
+fd/samsung/s2mps15.h
+> >> new file mode 100644
+> >> index 000000000000..36d35287c3c0
+> >> --- /dev/null
+> >> +++ b/include/linux/mfd/samsung/s2mps15.h
+> >> @@ -0,0 +1,158 @@
+> >> +/*
+> >> + * Copyright (c) 2015 Samsung Electronics Co., Ltd
+> >> + *              http://www.samsung.com
+> >> + *
+> >> + * This program is free software; you can redistribute  it and/or=
+ modify it
+> >> + * under  the terms of  the GNU General  Public License as publis=
+hed by the
+> >> + * Free Software Foundation;  either version 2 of the  License, o=
+r (at your
+> >> + * option) any later version.
+> >> + *
+> >> + * This program is distributed in the hope that it will be useful=
+,
+> >> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> >> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> >> + * GNU General Public License for more details.
+> >> + */
+> >> +
+> >> +#ifndef __LINUX_MFD_S2MPS15_H
+> >> +#define __LINUX_MFD_S2MPS15_H
+> >> +
+> >> +/* S2MPS15 registers */
+> >> +enum s2mps15_reg {
+> >> +	S2MPS15_REG_ID,
+> >> +	S2MPS15_REG_INT1,
+> >> +	S2MPS15_REG_INT2,
+> >> +	S2MPS15_REG_INT3,
+> >> +	S2MPS15_REG_INT1M,
+> >> +	S2MPS15_REG_INT2M,
+> >> +	S2MPS15_REG_INT3M,
+> >> +	S2MPS15_REG_ST1,
+> >> +	S2MPS15_REG_ST2,
+> >> +	S2MPS15_REG_PWRONSRC,
+> >> +	S2MPS15_REG_OFFSRC,
+> >> +	S2MPS15_REG_BU_CHG,
+> >> +	S2MPS15_REG_RTC_BUF,
+> >> +	S2MPS15_REG_CTRL1,
+> >> +	S2MPS15_REG_CTRL2,
+> >> +	S2MPS15_REG_RSVD1,
+> >> +	S2MPS15_REG_RSVD2,
+> >> +	S2MPS15_REG_RSVD3,
+> >> +	S2MPS15_REG_RSVD4,
+> >> +	S2MPS15_REG_RSVD5,
+> >> +	S2MPS15_REG_RSVD6,
+> >> +	S2MPS15_REG_CTRL3,
+> >> +	S2MPS15_REG_RSVD7,
+> >> +	S2MPS15_REG_RSVD8,
+> >> +	S2MPS15_REG_RSVD9,
+> >> +	S2MPS15_REG_B1CTRL1,
+> >> +	S2MPS15_REG_B1CTRL2,
+> >> +	S2MPS15_REG_B2CTRL1,
+> >> +	S2MPS15_REG_B2CTRL2,
+> >> +	S2MPS15_REG_B3CTRL1,
+> >> +	S2MPS15_REG_B3CTRL2,
+> >> +	S2MPS15_REG_B4CTRL1,
+> >> +	S2MPS15_REG_B4CTRL2,
+> >> +	S2MPS15_REG_B5CTRL1,
+> >> +	S2MPS15_REG_B5CTRL2,
+> >> +	S2MPS15_REG_B6CTRL1,
+> >> +	S2MPS15_REG_B6CTRL2,
+> >> +	S2MPS15_REG_B7CTRL1,
+> >> +	S2MPS15_REG_B7CTRL2,
+> >> +	S2MPS15_REG_B8CTRL1,
+> >> +	S2MPS15_REG_B8CTRL2,
+> >> +	S2MPS15_REG_B9CTRL1,
+> >> +	S2MPS15_REG_B9CTRL2,
+> >> +	S2MPS15_REG_B10CTRL1,
+> >> +	S2MPS15_REG_B10CTRL2,
+> >> +	S2MPS15_REG_BBCTRL1,
+> >> +	S2MPS15_REG_BBCTRL2,
+> >> +	S2MPS15_REG_BRAMP,
+> >> +	S2MPS15_REG_LDODVS1,
+> >> +	S2MPS15_REG_LDODVS2,
+> >> +	S2MPS15_REG_LDODVS3,
+> >> +	S2MPS15_REG_LDODVS4,
+> >> +	S2MPS15_REG_L1CTRL,
+> >> +	S2MPS15_REG_L2CTRL,
+> >> +	S2MPS15_REG_L3CTRL,
+> >> +	S2MPS15_REG_L4CTRL,
+> >> +	S2MPS15_REG_L5CTRL,
+> >> +	S2MPS15_REG_L6CTRL,
+> >> +	S2MPS15_REG_L7CTRL,
+> >> +	S2MPS15_REG_L8CTRL,
+> >> +	S2MPS15_REG_L9CTRL,
+> >> +	S2MPS15_REG_L10CTRL,
+> >> +	S2MPS15_REG_L11CTRL,
+> >> +	S2MPS15_REG_L12CTRL,
+> >> +	S2MPS15_REG_L13CTRL,
+> >> +	S2MPS15_REG_L14CTRL,
+> >> +	S2MPS15_REG_L15CTRL,
+> >> +	S2MPS15_REG_L16CTRL,
+> >> +	S2MPS15_REG_L17CTRL,
+> >> +	S2MPS15_REG_L18CTRL,
+> >> +	S2MPS15_REG_L19CTRL,
+> >> +	S2MPS15_REG_L20CTRL,
+> >> +	S2MPS15_REG_L21CTRL,
+> >> +	S2MPS15_REG_L22CTRL,
+> >> +	S2MPS15_REG_L23CTRL,
+> >> +	S2MPS15_REG_L24CTRL,
+> >> +	S2MPS15_REG_L25CTRL,
+> >> +	S2MPS15_REG_L26CTRL,
+> >> +	S2MPS15_REG_L27CTRL,
+> >> +	S2MPS15_REG_LDODSCH1,
+> >> +	S2MPS15_REG_LDODSCH2,
+> >> +	S2MPS15_REG_LDODSCH3,
+> >> +	S2MPS15_REG_LDODSCH4,
+> >> +};
+> >> +
+> >> +/* S2MPS15 regulator ids */
+> >> +enum s2mps15_regulators {
+> >> +	S2MPS15_LDO1,
+> >> +	S2MPS15_LDO2,
+> >> +	S2MPS15_LDO3,
+> >> +	S2MPS15_LDO4,
+> >> +	S2MPS15_LDO5,
+> >> +	S2MPS15_LDO6,
+> >> +	S2MPS15_LDO7,
+> >> +	S2MPS15_LDO8,
+> >> +	S2MPS15_LDO9,
+> >> +	S2MPS15_LDO10,
+> >> +	S2MPS15_LDO11,
+> >> +	S2MPS15_LDO12,
+> >> +	S2MPS15_LDO13,
+> >> +	S2MPS15_LDO14,
+> >> +	S2MPS15_LDO15,
+> >> +	S2MPS15_LDO16,
+> >> +	S2MPS15_LDO17,
+> >> +	S2MPS15_LDO18,
+> >> +	S2MPS15_LDO19,
+> >> +	S2MPS15_LDO20,
+> >> +	S2MPS15_LDO21,
+> >> +	S2MPS15_LDO22,
+> >> +	S2MPS15_LDO23,
+> >> +	S2MPS15_LDO24,
+> >> +	S2MPS15_LDO25,
+> >> +	S2MPS15_LDO26,
+> >> +	S2MPS15_LDO27,
+> >> +	S2MPS15_BUCK1,
+> >> +	S2MPS15_BUCK2,
+> >> +	S2MPS15_BUCK3,
+> >> +	S2MPS15_BUCK4,
+> >> +	S2MPS15_BUCK5,
+> >> +	S2MPS15_BUCK6,
+> >> +	S2MPS15_BUCK7,
+> >> +	S2MPS15_BUCK8,
+> >> +	S2MPS15_BUCK9,
+> >> +	S2MPS15_BUCK10,
+> >> +	S2MPS15_BUCK11,
+> >> +	S2MPS15_REGULATOR_MAX,
+> >> +};
+> >> +
+> >> +#define S2MPS15_LDO_VSEL_MASK		(0x3F)
+> >> +#define S2MPS15_BUCK_VSEL_MASK		(0xFF)
+> >> +
+> >> +#define S2MPS15_ENABLE_SHIFT		(0x06)
+> >> +#define S2MPS15_ENABLE_MASK		(0x03 << S2MPS15_ENABLE_SHIFT)
+> >> +
+> >> +#define S2MPS15_LDO_N_VOLTAGES		(S2MPS15_LDO_VSEL_MASK + 1)
+> >> +#define S2MPS15_BUCK_N_VOLTAGES	(S2MPS15_BUCK_VSEL_MASK + 1)
+> >> +
+> >> +#endif /* __LINUX_MFD_S2MPS15_H */
+> >=20
+>=20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
