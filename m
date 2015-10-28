@@ -1,23 +1,18 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
-Date: Wed, 28 Oct 2015 10:22:18 +0900
-Message-ID: <5630234A.8080905@samsung.com>
+Date: Wed, 28 Oct 2015 10:26:22 +0900
+Message-ID: <5630243E.1080608@samsung.com>
 References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
  <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:61513 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754359AbbJ1BWc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Oct 2015 21:22:32 -0400
+Return-path: <linux-clk-owner@vger.kernel.org>
 In-reply-to: <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org, broonie@kernel.org
 Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 26.10.2015 21:51, Alim Akhtar wrote:
 > S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
@@ -79,10 +74,21 @@ On 26.10.2015 21:51, Alim Akhtar wrote:
 > +		.flags = CLK_IS_ROOT,
 > +	},
 > +};
+> +
+>  static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+>  		struct clk_init_data *clks_init)
+>  {
+> @@ -207,6 +226,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  		s2mps11_reg = S2MPS14_REG_RTCCTRL;
+>  		clks_init = s2mps14_clks_init;
+>  		break;
+> +	case S2MPS15X:
+> +		s2mps11_reg = S2MPS15_REG_RTC_BUF;
+> +		clks_init = s2mps15_clks_init;
 
-I see that for S2MPS13 we already added similar array which duplicates
-the S2MPS11. This actually looks wrong. Just re-use existing
-s2mps11_clks_init.
+Another question (after looking at RTC driver):
+Is this the same register address as S2MPS14?
 
 Best regards,
 Krzysztof
+
