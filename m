@@ -1,55 +1,83 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [rtc-linux] Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support
- for S2MPS15 RTC
-Date: Wed, 28 Oct 2015 16:00:58 +0530
-Message-ID: <5630A3E2.9010207@samsung.com>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
- <56303054.8060804@samsung.com> <56303DA3.5020306@samsung.com>
- <5630419F.1000300@samsung.com> <20151028094853.GM22331@piout.net>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] mmc: pwrseq: Use highest priority for eMMC restart
+ handler
+Date: Wed, 28 Oct 2015 12:02:47 +0100
+Message-ID: <5630AB57.4030405@osg.samsung.com>
+References: <1445440540-21525-1-git-send-email-javier@osg.samsung.com>
+ <CAPDyKFoMQcC5sdCEKHWqNOdw1Yw8e8yRpdx7mtq7sMxg6sAi+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37942 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755647AbbJ1Kjx (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:53512 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750916AbbJ1LCw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 06:39:53 -0400
-In-reply-to: <20151028094853.GM22331@piout.net>
+	Wed, 28 Oct 2015 07:02:52 -0400
+In-Reply-To: <CAPDyKFoMQcC5sdCEKHWqNOdw1Yw8e8yRpdx7mtq7sMxg6sAi+A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, lee.jones@linaro.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Markus Reichl <m.reichl@fivetechno.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-Hi Alexandre,
+Hello Ulf,
 
-On 10/28/2015 03:18 PM, Alexandre Belloni wrote:
-> On 28/10/2015 at 12:31:43 +0900, Krzysztof Kozlowski wrote :
->> The s2mps13 clock driver added new name and compatible... which was
->> probably totally unneeded (I missed that during review). We don't have
->> to make this as a rule...
+On 10/27/2015 11:10 AM, Ulf Hansson wrote:
+> On 21 October 2015 at 17:15, Javier Martinez Canillas
+> <javier@osg.samsung.com> wrote:
+>> The pwrseq_emmc driver does a eMMC card reset before a system reboot to
+>> allow broken or limited ROM boot-loaders (that don't have an eMMC reset
+>> logic) to be able to read the second stage from the eMMC.
 >>
->> Since we do not have any data about future workarounds and the
->> differences then just follow Ockham's razor - use the same name and
->> compatible.
+>> But this has to be called before a system reboot handler and while most
+>> of them use the priority 128, there are other restart handlers (such as
+>> the syscon-reboot one) that use a higher priority. So, use the highest
+>> priority to make sure that the eMMC hw is reset before a system reboot.
 >>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+>> Tested-by: Anand Moon <linux.amoon@gmail.com>
+>> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>
+>> ---
+>> Hello,
+>>
+>> This patch was needed since a recent series from Alim [0] added
+>> syscon reboot and poweroff support to Exynos SoCs and removed
+>> the reset handler in the Exynos Power Management Unit (PMU) code.
+>>
+>> But the PMU and syscon-reboot restart handler have a different
+>> priority so [0] breaks restart when eMMC is used on these boards.
+>>
+>> [0]: http://www.spinics.net/lists/arm-kernel/msg454396.html
+>>
+>> So this patch must be merged before [0] to avoid regressions.
+>>
+>> Best regards,
+>> Javier
+> 
+> So it seems like there have been a good discussion around this. I
+> don't have any objections, but is more concerned about potential
+> regressions.
 >
-> So you don't care about DT backward compatibility because when a
-> workaround will be needed for one of the IPs, then you will have to
-> update the old dtb to use it.
+
+Yes, there was a lot of discussion indeed but it seems we all agree
+on the approach and that the patch should not land before having a
+lot of testing.
+ 
+> I have queued it up for next (4.4) so we get some testing in
+> linux-next. If anyone have issues, please report them.
 >
-> Unless you are sure that the IP is the same, doing
+
+great, some weeks sitting in -next to let the CI infrastructure to
+play with it seems reasonable to me. Thanks a lot!
+ 
+> Kind regards
+> Uffe
 >
-> { "s2mps15-rtc",	S2MPS14X },
->
-> is probably the best way to handle that. Note that I personally don't
-> care about the DT ABI, I'm just pointing out what may happen ;)
->
-Thats what my point is, anyway I am still looking into the fine prints 
-of the s2mps15 and s2mps14 user manual, now I have found at least one 
-difference in their one of the register bit, which might be a good 
-reason to keep s2mps15-rtc device.
-Will update the same in v4.
-Thanks,
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
