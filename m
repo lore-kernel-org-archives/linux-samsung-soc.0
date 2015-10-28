@@ -1,158 +1,71 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v8 17/17] drm: bridge: analogix/dp: add edid modes parse in get_modes method
-Date: Wed, 28 Oct 2015 17:13:53 +0800
-Message-ID: <1446023633-7558-1-git-send-email-ykk@rock-chips.com>
-References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
-Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: Add SROMc to Exynos 5410
+Date: Wed, 28 Oct 2015 15:00:38 +0530
+Message-ID: <563095BE.9050106@samsung.com>
+References: <cover.1445935215.git.p.fedin@samsung.com>
+ <91ae80f172192fa4dbc8bf8ee5a9068661592de6.1445935215.git.p.fedin@samsung.com>
+ <56302F1F.5090206@samsung.com> <009001d1114f$3c7a1f60$b56e5e20$@samsung.com>
+ <56307824.1050302@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:53716 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751159AbbJ1Jd0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Oct 2015 05:33:26 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NWX01KDEBVOFP60@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Oct 2015 18:33:24 +0900 (KST)
+In-reply-to: <56307824.1050302@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pavel Fedin <p.fedin@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: 'Kukjin Kim' <kgene@kernel.org>
 
-Display Port monitor could support kinds of mode which indicate
-in monitor edid, not just one single display resolution which
-defined in panel or devivetree property display timing.
+Hi
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4:
-- Call drm_panel_prepare() in .get_modes function, ensure panel should
-  power on before driver try to read edid message.
+On Wednesday 28 October 2015 12:54 PM, Krzysztof Kozlowski wrote:
+> On 28.10.2015 16:06, Pavel Fedin wrote:
+>>   Hello!
+>>
+>>>> +		sromc: sromc@12250000 {
+>>>> +			compatible = "samsung,exynos-srom";
+>>>> +			reg = <0x12250000 0x10>;
+>>>
+>>> Isn't 0x10 too small (SROM_BC3 won't be mapped)?
+>>
+>>   Muhaha, indeed, thanks for noticing this.
+>>   By the way, i've just checked exynos4.dtsi and exynos5.dtsi, they specify the same size. Did reviewers overlook this small thing?
+>
+> Yep, I pointed that 0x100 (from first version of patchset) is too big...
+> but did not exactly check the length of new value.
+>
 
-Changes in v3:
-- Add edid modes parse support
+Yes, once you pointed out I checked UM for Exynos4415, Exynos5250, 
+Exynos5420 and Exynos5410 and all these manuals talks about SROM_BC{0-3} 
+only. There is no offset such as SROM_BC{4,5} at least in these SoC 
+manuals. Accordingly I modified size from 0x100 to 0x10. But looks like 
+I missed to remove SROM_BC{{4,5} from exynos-srom.h. I checked only 
+these registers are used in the driver, so as such it should not cause 
+any issue in driver as of now, only we have some redundant entry in 
+exynos-srom.h which can be removed if it's not applicable for any of 
+Exynos SoC, after confirmation from Kukjin.
 
-Changes in v2: None
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 24 +++++++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 46 +++++++++++-----------
- 2 files changed, 40 insertions(+), 30 deletions(-)
+>> Shouldn't it be fixed then?
+>
+> Yes. It hasn't been pulled yet by arm-soc... Let's wait Kukjin's opinion
+> how to deal with exynos[45].dtsi.
+>
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 216d33d..4fa5f69 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -107,7 +107,7 @@ static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
- 
- static int analogix_dp_read_edid(struct analogix_dp_device *dp)
- {
--	unsigned char edid[EDID_BLOCK_LENGTH * 2];
-+	unsigned char *edid = dp->edid;
- 	unsigned int extend_block = 0;
- 	unsigned char sum;
- 	unsigned char test_vector;
-@@ -901,12 +901,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 			DRM_ERROR("failed to disable the panel\n");
- 	}
- 
--	ret = analogix_dp_handle_edid(dp);
--	if (ret) {
--		dev_err(dp->dev, "unable to handle edid\n");
--		return;
--	}
--
- 	ret = analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
- 					 dp->video_info.max_link_rate);
- 	if (ret) {
-@@ -947,8 +941,24 @@ EXPORT_SYMBOL_GPL(analogix_dp_detect);
- int analogix_dp_get_modes(struct device *dev)
- {
- 	struct analogix_dp_device *dp = dev_get_drvdata(dev);
-+	struct edid *edid = (struct edid *)dp->edid;
- 	int num_modes = 0;
- 
-+	if (dp->plat_data && dp->plat_data->panel) {
-+		if (drm_panel_prepare(dp->plat_data->panel)) {
-+			DRM_ERROR("failed to setup the panel\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (analogix_dp_handle_edid(dp)) {
-+		dev_err(dp->dev, "unable to handle edid\n");
-+		return -EINVAL;
-+	}
-+
-+	drm_mode_connector_update_edid_property(dp->connector, edid);
-+	num_modes += drm_add_edid_modes(dp->connector, edid);
-+
- 	if (dp->plat_data->panel)
- 		num_modes += drm_panel_get_modes(dp->plat_data->panel);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index d3c7e0a..2bd2e0d 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -20,6 +20,28 @@
- #define MAX_CR_LOOP 5
- #define MAX_EQ_LOOP 5
- 
-+/* I2C EDID Chip ID, Slave Address */
-+#define I2C_EDID_DEVICE_ADDR			0x50
-+#define I2C_E_EDID_DEVICE_ADDR			0x30
-+
-+#define EDID_BLOCK_LENGTH			0x80
-+#define EDID_HEADER_PATTERN			0x00
-+#define EDID_EXTENSION_FLAG			0x7e
-+#define EDID_CHECKSUM				0x7f
-+
-+/* DP_MAX_LANE_COUNT */
-+#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
-+#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-+
-+/* DP_LANE_COUNT_SET */
-+#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
-+
-+/* DP_TRAINING_LANE0_SET */
-+#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
-+#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
-+#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
-+#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
-+
- enum link_rate_type {
- 	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
- 	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
-@@ -161,6 +183,7 @@ struct analogix_dp_device {
- 	int			dpms_mode;
- 	int			hpd_gpio;
- 	bool                    need_force_hpd;
-+	unsigned char           edid[EDID_BLOCK_LENGTH * 2];
- 
- 	struct analogix_dp_plat_data *plat_data;
- };
-@@ -260,27 +283,4 @@ int analogix_dp_is_video_stream_on(struct analogix_dp_device *dp);
- void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
--
--/* I2C EDID Chip ID, Slave Address */
--#define I2C_EDID_DEVICE_ADDR			0x50
--#define I2C_E_EDID_DEVICE_ADDR			0x30
--
--#define EDID_BLOCK_LENGTH			0x80
--#define EDID_HEADER_PATTERN			0x00
--#define EDID_EXTENSION_FLAG			0x7e
--#define EDID_CHECKSUM				0x7f
--
--/* DP_MAX_LANE_COUNT */
--#define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
--#define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
--
--/* DP_LANE_COUNT_SET */
--#define DPCD_LANE_COUNT_SET(x)			((x) & 0x1f)
--
--/* DP_TRAINING_LANE0_SET */
--#define DPCD_PRE_EMPHASIS_SET(x)		(((x) & 0x3) << 3)
--#define DPCD_PRE_EMPHASIS_GET(x)		(((x) >> 3) & 0x3)
--#define DPCD_VOLTAGE_SWING_SET(x)		(((x) & 0x3) << 0)
--#define DPCD_VOLTAGE_SWING_GET(x)		(((x) >> 0) & 0x3)
--
- #endif /* _ANALOGIX_DP_CORE_H */
--- 
-1.9.1
+> Best regards,
+> Krzysztof
+>
+
+Thanks,
+Pankaj Dubey
