@@ -1,57 +1,74 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH] ARM: exynos: Bring back reboot on Exynos5410
-Date: Thu, 29 Oct 2015 14:28:13 +0530
-Message-ID: <5631DFA5.8040208@samsung.com>
-References: <1446024965-8508-1-git-send-email-p.fedin@samsung.com>
- <56317960.9070608@samsung.com>
- <CAGcde9H4WVt34rn6_9H+sVu2Bp2xq4awMiwV1zgv1D6posPWSg@mail.gmail.com>
- <006c01d11218$d6e2d500$84a87f00$@samsung.com> <5631D8E5.6090506@samsung.com>
- <002801d11225$dedab4a0$9c901de0$@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: Describe SROMc configuration
+Date: Thu, 29 Oct 2015 19:29:40 +0900
+Message-ID: <CAJKOXPcSehXRYDpYiybzdagPS76QKGpeMb7DxkpwJq8GTfuPOw@mail.gmail.com>
+References: <cover.1446018918.git.p.fedin@samsung.com>
+	<046d990092dc85cf50db9082fc894d93a3ece7c0.1446018918.git.p.fedin@samsung.com>
+	<563183F9.6020806@samsung.com>
+	<008001d1121d$c0fef160$42fcd420$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34312 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756322AbbJ2I5n (ORCPT
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:34017 "EHLO
+	mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756630AbbJ2K3l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Oct 2015 04:57:43 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NWZ01XLE4W5XG00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Oct 2015 17:57:41 +0900 (KST)
-In-reply-to: <002801d11225$dedab4a0$9c901de0$@samsung.com>
+	Thu, 29 Oct 2015 06:29:41 -0400
+In-Reply-To: <008001d1121d$c0fef160$42fcd420$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Kukjin Kim' <kgene@kernel.org>
+To: Pavel Fedin <p.fedin@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org
 
+2015-10-29 16:45 GMT+09:00 Pavel Fedin <p.fedin@samsung.com>:
+>  Hello!
+>
+>> You missed here a lot of potential Cc. Please use get_maintainer.pl
+>> script. It *must* be sent to devicetree list.
+>>
+>> Please send it also to DeviceTree maintainers because you are adding
+>> quite generic names for bindings so they may have interesting thoughts
+>> on this.
+>>
+>> LKML list is also missing.
+>
+>  Ok. Next version will go there too.
+>
+>> Any vendor prefix here? How generic is this?
+>
+>  I just don't know... Does *everything* really need a vendor prefix? How readable would that be? "compatible" property already says
+> that it's samsung-exynos-specific. And IMHO it's quite obvious that properties of vendor-specific device are automatically
+> vendor-specific.
+>  Ok, i am currently fixing up the rest and will post v4 soon, and will Cc: it to devicetree ML.
 
+Which my reply you are referring to? You stripped part of some
+sentence and put it without *any context*. Just random sentence.
+I asked for vendor prefix in few places... srom-timing? width? And I
+do not remember where I used exactly these words. This is why
+*context* is needed.
 
-On Thursday 29 October 2015 02:13 PM, Pavel Fedin wrote:
->   Hello!
 >
->> These patches are not adding any new code, except DT entry. Infact
->> restart handler will be removed from PMU driver and we will be using
->> generic syscon based implementation for reboot, which is already present
->> in Linux kernel.
->
->   Ah, got it. So syscon is a very generic thing, allowing to describe whatever reset register for whatever board, since we are specifying both address and value to write there. Is my understanding correct? If so, then, OK, you can do this too.
->
+>  P.S. I intentionally omit the rest of the text in order to avoid overquoting, since we are already focused on some specific things.
+> If someone wants to get the whole picture, he/she could just browse back to the start of the thread. Or is it considered wrong
+> approach in this particular ML?
 
-Yes, syscon-reboot does exactly same. We just need to provide 
-"syscon-provider" in our case it's PMU device node, register/offset and 
-value to be written, and syscon-reboot driver will take care from 
-registered restart-handler.
+Yep, selecting some sentences and replying only to them, leaving the
+context away, is highly confusing. I reply in different places,
+sometimes asking for similar things. Removing context messes this up.
+In the same time all of my other questions are being removed without
+any acknowledgment so I do not know if they were ignored or just
+silently acked.
 
-Thanks,
-Pankaj Dubey
-> Kind regards,
-> Pavel Fedin
-> Expert Engineer
-> Samsung Electronics Research center Russia
->
->
->
+I show you example:
+
+>  I just don't know...
+I don't know neither.
+
+> If someone wants to get the whole picture, he/she could just browse back to the start of the thread.
+Yes, I would just scroll up and see the context. No, wait. There is no
+context. I have to find mine original email and compare which part was
+ignored, which was applied and which quoted sentence you are referring
+to.
+
+Best regards,
+Krzysztof
