@@ -1,58 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
-Date: Thu, 29 Oct 2015 15:24:54 +0900
-Message-ID: <5631BBB6.9080204@samsung.com>
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
- <56251627.4050908@math.uni-bielefeld.de> <562581BD.3070609@samsung.com>
- <562C1B17.3080303@math.uni-bielefeld.de>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v3 3/4] drivers: exynos-srom: Add support for bank
+ configuration
+Date: Thu, 29 Oct 2015 09:54:01 +0300
+Message-ID: <006b01d11216$9831dc40$c89594c0$@samsung.com>
+References: <cover.1446018918.git.p.fedin@samsung.com>
+ <048021141f295b0e70c852134d4ac9cc6f7f1da4.1446018918.git.p.fedin@samsung.com>
+ <56318175.6000006@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <562C1B17.3080303@math.uni-bielefeld.de>
-Sender: linux-clk-owner@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:60268 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752050AbbJ2GyE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Oct 2015 02:54:04 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NWY0035SZ62IC20@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Oct 2015 06:54:02 +0000 (GMT)
+In-reply-to: <56318175.6000006@samsung.com>
+Content-language: ru
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: 'Kukjin Kim' <kgene@kernel.org>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>
 
-On 25.10.2015 08:58, Tobias Jakobi wrote:
-> Hello Krzysztof,
-> 
-> 
-> Krzysztof Kozlowski wrote:
->> On 20.10.2015 01:11, Tobias Jakobi wrote:
->>> Hello Krzysztof,
->>>
->>> I can confirm that this also works on a Odroid-X2, so I guess it's safe
->>> to enable the PRNG for all Exynos4412-based Odroid devices.
->>
->> Sure, I can send a patch for that. I can test it later also on Odroid-U3.
-> Thanks already!
-> 
-> 
-> 
->>> Any chance that you might also take a look at the other hwcrypto stuff
->>> on the SoC ('samsung,exynos4210-secss' compatible)?
->>
->> What do you mean? The s5p-sss driver already supports Device Tree.
-> The driver supports DT, but it doesn't really work.
-> 
-> I'm using the following DT entry to let the driver probe correctly:
-> https://github.com/tobiasjakobi/linux-odroid/commit/82c00cddb5cbf89fad994784c28c8125beae8e13
-> 
-> But the crypto self-test fails on boot:
-> alg: skcipher: encryption failed on test 1 for ecb-aes-s5p: ret=22
-> 
-> 
-> Another problems is that SSS and PRNG can't be used at the same time,
-> since they both use common hardware resources (I think it was IO).
-> 
+ Hello!
 
-Thanks for explaining this. I added the issue to the long TODO list but
-I don't know when I will be able to dig into this.
+> > +	for_each_child_of_node(np, child)
+> > +		decode_sromc(srom, child);
+> 
+> You ignore the return value here so bank may be not configured but
+> device probe will return 0.
 
-If anyone wants to look into this, please go ahead...
+ Yes, so that banks which are described correctly, will still be configured.
 
-Best regards,
-Krzysztof
+> Maybe clean up and fail the probe?
 
+ I think it's not fatal, so cleanup is not necessary. May be dev_warn() in this case?
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
