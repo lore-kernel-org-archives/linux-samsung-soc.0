@@ -1,95 +1,56 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Thu, 29 Oct 2015 11:27:05 +0900
-Message-ID: <563183F9.6020806@samsung.com>
-References: <cover.1446018918.git.p.fedin@samsung.com>
- <046d990092dc85cf50db9082fc894d93a3ece7c0.1446018918.git.p.fedin@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC PATCH v8 09/10] arm: multi_v7_defconfig: remove
+ CONFIG_MMC_DW_IDMAC
+Date: Thu, 29 Oct 2015 11:32:22 +0900
+Message-ID: <56318536.1010408@samsung.com>
+References: <1442385625-26775-1-git-send-email-shawn.lin@rock-chips.com>
+ <1442385795-1389-1-git-send-email-shawn.lin@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54569 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755459AbbJ2C1Q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Oct 2015 22:27:16 -0400
-In-reply-to: <046d990092dc85cf50db9082fc894d93a3ece7c0.1446018918.git.p.fedin@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1442385795-1389-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shawn Lin <shawn.lin@rock-chips.com>, ulf.hansson@linaro.org
+Cc: Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, heiko@sntech.de, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 28.10.2015 16:57, Pavel Fedin wrote:
-> Add documentation for new properties, allowing bank configuration.
+Hi, All.
+
+Is there any other opinion about this patch?
+
+Best Regards,
+Jaehoon Chung
+
+On 09/16/2015 03:43 PM, Shawn Lin wrote:
+> DesignWare MMC Controller's transfer mode should be decided
+> at runtime instead of compile-time. So we remove this config
+> option and read dw_mmc's register to select DMA master.
 > 
-> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 > ---
->  .../bindings/arm/samsung/exynos-srom.txt           | 24 +++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-
-You missed here a lot of potential Cc. Please use get_maintainer.pl
-script. It *must* be sent to devicetree list.
-
-Please send it also to DeviceTree maintainers because you are adding
-quite generic names for bindings so they may have interesting thoughts
-on this.
-
-LKML list is also missing.
-
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-> index 33886d5..9e4a40b 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-> @@ -5,8 +5,30 @@ Required properties:
->  
->  - reg: offset and length of the register set
->  
-> -Example:
-> +Bank configurations can be defined in optional subnodes. Each subnode
-> +describes one bank and contains the following:
-> +
-> +Required properties:
-> +- bank : bank number (0 - 3)
-
-I wonder whether this should be maybe "reg"?
-
-> +
-> +- srom-timing : array of 7 integers: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs
-
-Missing "pmc"? Where is the seventh?
-
-This looks vendor specific, so prefix with "samsung,exynos-".
-
-> +
-> +Optional properties:
-> +- width : data width in bytes (1 or 2). If omitted, default of 1 is used.
-
-This is not bank-width? So data-width? Any vendor prefix here? How
-generic is this?
-
-These are first things which came to my mind. Maybe DT maintainers will
-come with something more...
-
-Best regards,
-Krzysztof
-
-> +
-> +Example: basic definition, no banks are configured
-> +	sromc@12570000 {
-> +		compatible = "samsung,exynos-srom";
-> +		reg = <0x12570000 0x10>;
-> +	};
-> +
-> +Example: SROMc with bank3 configuration
->  	sromc@12570000 {
->  		compatible = "samsung,exynos-srom";
->  		reg = <0x12570000 0x10>;
-> +		bank@3 {
-> +			bank = <3>;
-> +			width = <2>;
-> +			srom-timing = <1 9 12 1 9 1 1>;
-> +		};
->  	};
+> Changes in v8: None
+> Changes in v7: None
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  arch/arm/configs/multi_v7_defconfig | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> index 03deb7f..ad929ea 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -539,7 +539,6 @@ CONFIG_MMC_ATMELMCI=y
+>  CONFIG_MMC_MVSDIO=y
+>  CONFIG_MMC_SDHI=y
+>  CONFIG_MMC_DW=y
+> -CONFIG_MMC_DW_IDMAC=y
+>  CONFIG_MMC_DW_PLTFM=y
+>  CONFIG_MMC_DW_EXYNOS=y
+>  CONFIG_MMC_DW_ROCKCHIP=y
 > 
