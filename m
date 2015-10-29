@@ -1,57 +1,110 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC PATCH v8 10/10] arm: zx_defconfig: remove CONFIG_MMC_DW_IDMAC
-Date: Thu, 29 Oct 2015 11:32:35 +0900
-Message-ID: <56318543.3090900@samsung.com>
-References: <1442385625-26775-1-git-send-email-shawn.lin@rock-chips.com>
- <1442385808-1433-1-git-send-email-shawn.lin@rock-chips.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
+Date: Thu, 29 Oct 2015 09:49:02 +0530
+Message-ID: <56319E36.1000700@samsung.com>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+ <20151026143411.GL597@x1> <563021AF.6030100@samsung.com>
+ <20151028084609.GG5828@x1> <5630D12C.2030008@samsung.com>
+ <20151028135149.GF4058@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1442385808-1433-1-git-send-email-shawn.lin@rock-chips.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Shawn Lin <shawn.lin@rock-chips.com>, ulf.hansson@linaro.org
-Cc: Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jun Nie <jun.nie@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Govindraj Raja <govindraj.raja@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, heiko@sntech.de, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20151028135149.GF4058@x1>
+Sender: linux-clk-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: k.kozlowski.k@gmail.com, broonie@kernel.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi, All.
-
-Is there any other opinion about this patch?
 
 
-Best Regards,
-Jaehoon Chung
+On 10/28/2015 07:21 PM, Lee Jones wrote:
+> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
+>
+>> W dniu 28.10.2015 o 17:46, Lee Jones pisze:
+>>> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
+>>>
+>>>> On 26.10.2015 23:34, Lee Jones wrote:
+>>>>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
+>>>>>
+>>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>>>>
+>>>>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
+>>>>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
+>>>>>> clock outputs and battery charger. This patch adds initial support for
+>>>>>> LDO and buck regulators of S2MPS15 device.
+>>>>>>
+>>>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+>>>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>>> ---
+>>>>>>   drivers/mfd/sec-core.c              |   31 +++++++
+>>>>>>   drivers/mfd/sec-irq.c               |    8 ++
+>>>>>>   include/linux/mfd/samsung/core.h    |    1 +
+>>>>>>   include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
+>>>>>>   4 files changed, 198 insertions(+)
+>>>>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
+>>>>>
+>>>>> I replied to the previous set and won't be reviewing this one until
+>>>>> all of the open points are solved.
+>>>>
+>>>> The naming and compatibles used by the driver are confusing but how it
+>>>> was at beginning. Beside the confusion, the names are correct:
+>>>>
+>>>> 1. Main mfd driver:
+>>>>   - compatible: samsung,s2mps1*-pmic
+>>>>   - driver name: sec_pmic
+>>>>
+>>>> 2. Regulator driver:
+>>>>   - no compatible (because it always searches for "regulators" subnode of
+>>>> its parent... that is the convention/legacy behaviour)
+>>>>   - driver name: s2mps1*-pmic
+>>>>
+>>>> I hope that explains your concerns.
+>>>
+>>> It explains *why*, but doesn't ease my concerns in any way.
+>>>
+>>> Unfortunately I've only just realised the disparity we have between
+>>> MFD and the Regulator subsystem, which is annoying because it's now
+>>> almost impossible to rectify.
+>>>
+>>> We should have taken one of two views.  Either a) The MFD is the PMIC
+>>> device which encompasses regulator control.  In which case the MFD
+>>> and it's corresponding compatible string would be named *-pmic and the
+>>> regulator driver would be called *-regulator. Or b) The MFD could be
+>>> considered a normal MFD and be named after the model number, then the
+>>> regulator 'could' be named *-pmic.
+>>>
+>>> However, with reference to b), how much other Power Management does
+>>> the regulator driver do besides control regulators?  I suspect not
+>>> much.  Therefore my preference would be for a).  My second choice
+>>> would be a mixuture of the two where nothing gets named *-pmic.  The
+>>> last option on my list would be the current situation where we seem to
+>>> be calling both the MFD (PMIC) itself and the Regulator driver
+>>> *-pmic, which is not good.
+>>
+>> Starting from the description of device-family. This is called "Power
+>> Management IC" but it is rather a "Power Deliver/Distribute IC". There
+>> isn't any logic inside except enable/disable/configure/set low power
+>> mode for regulators.
+>>
+>> However in the same time the IC comes (always) with:
+>>   - 32kHz clocks,
+>>   - RTC,
+>>   - backup battery charger (no driver for it),
+>>   - reset for SoC,
+>>   - shutdown on thermal alert (also no driver for this control).
+>>
+>> The solution a) seems fine to me. Make sense and it looks entirely
+>> backward compatible - only driver names will be modified.
+>
+> Perfect solution from my PoV.
+>
+> Thanks Krzysztof.
+>
+Thanks Jones/Krzysztof as always.
+Will update the patches.
 
-On 09/16/2015 03:43 PM, Shawn Lin wrote:
-> DesignWare MMC Controller's transfer mode should be decided
-> at runtime instead of compile-time. So we remove this config
-> option and read dw_mmc's register to select DMA master.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> ---
-> 
-> Changes in v8: None
-> Changes in v7: None
-> Changes in v6: None
-> Changes in v5: None
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
-> 
->  arch/arm/configs/zx_defconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm/configs/zx_defconfig b/arch/arm/configs/zx_defconfig
-> index b200bb0..ab683fb 100644
-> --- a/arch/arm/configs/zx_defconfig
-> +++ b/arch/arm/configs/zx_defconfig
-> @@ -83,7 +83,6 @@ CONFIG_MMC=y
->  CONFIG_MMC_UNSAFE_RESUME=y
->  CONFIG_MMC_BLOCK_MINORS=16
->  CONFIG_MMC_DW=y
-> -CONFIG_MMC_DW_IDMAC=y
->  CONFIG_EXT2_FS=y
->  CONFIG_EXT4_FS=y
->  CONFIG_EXT4_FS_POSIX_ACL=y
-> 
 
