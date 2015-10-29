@@ -1,108 +1,78 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v4 4/4] ARM: dts: Add Ethernet chip to SMDK5410
-Date: Thu, 29 Oct 2015 23:10:31 +0530
-Message-ID: <CAGcde9HVft2zuVVFaaWwApHkyqttdS_M=Kq=Am_JKOYOnp5V+A@mail.gmail.com>
+From: Pankaj Dubey <dubepankaj1980@gmail.com>
+Subject: Re: [PATCH v4 0/4] [PATCH v4 0/4] Exynos SROMc configuration and
+ Ethernet support for SMDK5410
+Date: Thu, 29 Oct 2015 23:16:44 +0530
+Message-ID: <CAGcde9GtepdzFLCfW+ughAdyU_sKXUhgK35z434FPOFXpmRX9Q@mail.gmail.com>
 References: <cover.1446122247.git.p.fedin@samsung.com>
- <6fed900bf831d8bc23ef56c95417887c3d9a2d07.1446122247.git.p.fedin@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <6fed900bf831d8bc23ef56c95417887c3d9a2d07.1446122247.git.p.fedin@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pavel Fedin <p.fedin@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:36057 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757914AbbJ2RrF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Oct 2015 13:47:05 -0400
+In-Reply-To: <cover.1446122247.git.p.fedin@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Hi Pavel,
+To: Pavel Fedin <p.fedin@samsung.com>
+Cc: devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>
 
 On 29 October 2015 at 18:12, Pavel Fedin <p.fedin@samsung.com> wrote:
-> The chip is smsc9115, connected via SROMc bank 3. Additionally, some GPIO
-> initialization is required.
+> This patch extends Exynos SROM controller driver with ability to configure
+> controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+> which is connected via SROMc bank #3.
 >
-> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5410-smdk5410.dts | 41 +++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> With this patchset, support for the whole existing SMDK range can be added.
+> Actually, only bank number is different.
 >
-> diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-> index cebeaab..311e7be 100644
-> --- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-> +++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-> @@ -61,6 +61,27 @@
->         disable-wp;
->  };
+> This patchset also depends on Exynos 5410 pinctrl support, introduced by
+> patches 0003 and 0004 from this set:
+> [PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
 >
-> +&pinctrl_0 {
-> +       srom_ctl: srom-ctl {
-> +               samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
-> +                              "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
-> +               samsung,pin-function = <2>;
-> +               samsung,pin-drv = <0>;
-> +       };
-> +
-> +       srom_ebi: srom-ebi {
-> +               samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
-> +                              "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
-> +                              "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
-> +                              "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
-> +                              "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
-> +                              "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
-> +               samsung,pin-function = <2>;
-> +               samsung,pin-pud = <3>;
-> +               samsung,pin-drv = <0>;
-> +       };
-> +};
-> +
->  &uart0 {
->         status = "okay";
->  };
-> @@ -72,3 +93,23 @@
->  &uart2 {
->         status = "okay";
->  };
-> +
-> +&sromc {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
-> +
-> +       ethernet@07000000 {
-> +               compatible = "smsc,lan9115";
-> +               reg = <0x07000000 0x10000>;
-> +               phy-mode = "mii";
-> +               interrupt-parent = <&gpx0>;
-> +               interrupts = <5 8>;
-> +               reg-io-width = <2>;
-> +               smsc,irq-push-pull;
-> +               smsc,force-internal-phy;
-> +
-> +               samsung,srom-bank = <3>;
-> +               samsung,srom-data-width = <2>;
-> +               samsung,srom-timing = <1 9 12 1 9 1 1>;
+> Pinctrl support is necessary in order to correctly configure
+> multifunctional pins of the Exynos chip.
+>
+> v3 => v4:
+> - Devices are now added as subnodes, with additional properties. This allows
+>   to cleary specify dependency. If configuration fails, error will be reported
+>   and child devices will not be probed.
+> - These additional properties now have "samsung,srom-XXX" format
+> - Fixed code style, now better understood.
+>
+> v2 => v3:
+> - Fixed up SROMc region size in the device tree
+> - Reordered patches, documentation goes first now
+>
+> v1 => v2:
+> - Fixed some typos and bad labels in device tree
+> - Improved documentation
+>
+> Pavel Fedin (4):
+>   Documentation: dt-bindings: Describe SROMc configuration
+>   ARM: dts: Add SROMc to Exynos 5410
+>   drivers: exynos-srom: Add support for bank configuration
+>   ARM: dts: Add Ethernet chip to SMDK5410
+>
+>  .../bindings/arm/samsung/exynos-srom.txt           | 50 ++++++++++++++++++-
+>  arch/arm/boot/dts/exynos5410-smdk5410.dts          | 41 +++++++++++++++
+>  arch/arm/boot/dts/exynos5410.dtsi                  | 15 ++++++
+>  arch/arm/mach-exynos/Kconfig                       |  2 +-
+>  drivers/soc/samsung/Kconfig                        |  2 +-
+>  drivers/soc/samsung/exynos-srom.c                  | 58 +++++++++++++++++++++-
+>  6 files changed, 162 insertions(+), 6 deletions(-)
+>
 
-I think this is not correct. We can't change binding of "smsc,lan9115"
-which is already documented here [1]. These samsung specific srom
-properties should be in srom node or its subnode, but not in this way.
-
-[1]: Documentation/devicetree/bindings/net/smsc911x.txt
+Something wrong here, I am not able to find V4 1/4 and 3/4 in this mailing list.
 
 Thanks,
 Pankaj Dubey
-
-> +       };
-> +};
 > --
 > 2.4.4
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
