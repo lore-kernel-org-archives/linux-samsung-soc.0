@@ -1,154 +1,78 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [rtc-linux] Re: [PATCH v4 4/4] drivers/rtc/rtc-s5m.c: add support
- for S2MPS15 RTC
-Date: Thu, 29 Oct 2015 21:43:27 +0530
-Message-ID: <CAGOxZ52_-02JtWs0SEHcNp4FURQaxddu_dT-QmdrrUxEvvaUcQ@mail.gmail.com>
-References: <1446094723-6212-1-git-send-email-alim.akhtar@samsung.com>
- <1446094723-6212-5-git-send-email-alim.akhtar@samsung.com>
- <5631B487.3050501@samsung.com> <5631CF0A.90109@samsung.com>
- <CAJKOXPeJcjoGMqPhdOg-sH7xojF0m3bbTh0OqBEHTuo9sQrNug@mail.gmail.com>
- <563200F2.4010202@samsung.com> <CAJKOXPeefkJHs=34z__K1ON4vk9iXAix8QWOMrWczO7ATzAaiA@mail.gmail.com>
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 2/4] ARM: dts: Add SROMc to Exynos 5410
+Date: Thu, 29 Oct 2015 22:58:16 +0530
+Message-ID: <CAGcde9EXfe0amqoTOwgKi-Y6=4mRcEbZrA=as-BxzfMv3ntAhQ@mail.gmail.com>
+References: <cover.1446122247.git.p.fedin@samsung.com> <eafa355058ff500a72ff2e3408ab635954467a76.1446122247.git.p.fedin@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f180.google.com ([209.85.223.180]:33478 "EHLO
-	mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751498AbbJ2QOI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Oct 2015 12:14:08 -0400
-In-Reply-To: <CAJKOXPeefkJHs=34z__K1ON4vk9iXAix8QWOMrWczO7ATzAaiA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <eafa355058ff500a72ff2e3408ab635954467a76.1446122247.git.p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: rtc-linux@googlegroups.com, lee.jones@linaro.org, broonie@kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Alim Akhtar <alim.akhtar@samsung.com>
 
-Hi Krzysztof,
+Hi Pavel,
 
-On Thu, Oct 29, 2015 at 5:05 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> 2015-10-29 20:20 GMT+09:00 Alim Akhtar <alim.akhtar@samsung.com>:
->>>> I am testing this patch before sending them, what I have found is if you
->>>> don't update WUDR the time does not changes in rtc.
->>>> e.g.
->>>> if you don't do above changes then you will see below:
->>>> -----
->>>> # date --set="Oct 29 14:10:40 2015" <update the a new date>
->>>> Thu Oct 29 14:10:40 UTC 2015
->>>> #
->>>> # hwclock --systohc <copy system clock to hardware clock/rtc>
->>>> # hwclock <read back hwclock>
->>>> Thu Oct 29 12:52:32 2015  .922889 seconds
->>>> ----
->>>> which is not excepted.
->>>>
->>>> And with the above change I see:
->>>>
->>>> ----
->>>>   # date --set="Oct 29 14:30:10 2015" <update the a new date>
->>>> Thu Oct 29 14:30:10 UTC 2015
->>>> # date
->>>> Thu Oct 29 14:30:12 UTC 2015
->>>> # hwclock --systohc <copy system clock to hardware clock/rtc>
->>>> # hwclock <read back hwclock>
->>>> Thu Oct 29 14:30:21 2015  .333006 seconds
->>>> ----
->>>>
->>>> Which is as expected.
->>>
->>>
->>> Okay, but I said that vendor is setting only WUDR which is bit 4. You
->>
->> bit:4 is AUDR (for alarm). not WUDR and bit: 1 is WDUR(for timer)
+On 29 October 2015 at 18:12, Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This machine uses own SoC device tree file, add missing part.
 >
-> Damn, the mismatch in names is confusing. The vendor sets WUDR which
-> on S2MPS15 is bit 1.
+> Signed-off-by: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos5410.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 >
-> You are setting bit 1 (okay) and bit 4. This is different which makes
-> me asking questions.
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 4603356..da6a8fa0e 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -101,6 +101,15 @@
+>                         reg = <0x10000000 0x100>;
+>                 };
 >
-hmm..ok let me have a relook. Perhaps I will add a switch case here to
-handle each device_type,
-keeping the current behavior as same.
+> +               sromc: sromc@12250000 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges;
+> +
 
->>>
->>> are setting bit 1 and bit 4. Your reply - about the need of setting
->>> WUDR (bit 4 I guess) - does not explain my concerns. Do you have to
->>> set bit 1?
->>>
->> Yes, I think we need to set both for timer and alarm.
->> I have send you a snapshot of the rtc_update register in UM via internal
->> email. PTAL.
->
-> Okay, I will take a look when I get to the office tomorrow.
->
->>
->>>>
->>>>>>          ret = regmap_write(info->regmap, info->regs->rtc_udr_update,
->>>>>> data);
->>>>>>          if (ret < 0) {
->>>>>>                  dev_err(info->dev, "failed to write update reg(%d)\n",
->>>>>> ret);
->>>>>> @@ -252,6 +256,9 @@ static inline int s5m8767_rtc_set_alarm_reg(struct
->>>>>> s5m_rtc_info *info)
->>>>>>          case S5M8767X:
->>>>>>                  data &= ~S5M_RTC_TIME_EN_MASK;
->>>>>>                  break;
->>>>>> +       case S2MPS15X:
->>>>>> +               data |= S2MPS15_RTC_AUDR_MASK;
->>>>>> +               break;
->>>>>>          case S2MPS14X:
->>>>>>                  data |= S2MPS_RTC_RUDR_MASK;
->>>>>>                  break;
->>>>>
->>>>>
->>>>>
->>>>> Another difference: you are setting here exactly the same values as
->>>>> S2MPS13 - bit 1 and bit 4. However vendor code sets only bit 4 (called
->>>>> WUDR there)?
->>>>>
->>>> No they are not, AUDR on s2mps13 is bit:1 where as it is bit:4 on
->>>> s2mps15.
->>>>>
->>>>>
->>>>> What exactly is necessary to update alarm and time registers on S2MPS15?
->>>>>
->>>> As explained above in example, it is required to update the 'write alarm
->>>> buffer(AUDR)' and 'write time buffer(WUDR)' bits in-order to get rtc
->>>> working.
->>>
->>>
->>> For updating time and alarm registers? Or only for updating alarm
->>> registers?
->>>
->> example was only for the timer register.
->>
->
-> Anyway setting alarm above is strange. You are setting bit 4 twice. One as:
->   data |= info->regs->rtc_udr_mask;
-> and then:
->   case S2MPS15X:
->     data |= S2MPS15_RTC_AUDR_MASK;
->
-ok, I can see what you are saying...good catch.
+We do not need to specify these three properties as they are already
+present in parent node "soc".
 
-> Yeah, I know this is misleading. Could you document expected behavior
-> exactly somewhere in the code or in the commit message? "bit fields
-> are changed for WUDR and AUDR." seems not enough. Instead I would be
-> happy to see a statement: "to set time registers, AUDR and WUDR must
-> be set, to set alarm ....  etc. where AUDR and WUDR on S2MPS15 are
-> reversed"
->
-This is a nice suggestions, will add.
+> +                       compatible = "samsung,exynos-srom";
+> +                       reg = <0x12250000 0x14>;
+> +               };
+> +
+>                 pmu_system_controller: system-controller@10040000 {
+>                         compatible = "samsung,exynos5410-pmu", "syscon";
+>                         reg = <0x10040000 0x5000>;
+> @@ -133,6 +142,12 @@
+>                                                 <10 &gic 0 130 0>,
+>                                                 <11 &gic 0 131 0>;
+>                         };
+> +
+> +                       arch_timer {
+> +                               compatible = "arm,armv7-timer";
+> +                               clock-frequency = <24000000>;
+> +                       };
+> +
 
-> Best regards,
-> Krzysztof
+This change should not be part of this patch.
+
+Thanks,
+Pankaj Dubey
+
+>                 };
+>
+>                 sysram@02020000 {
+> --
+> 2.4.4
+>
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Regards,
-Alim
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
