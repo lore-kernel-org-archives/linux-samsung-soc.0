@@ -1,91 +1,58 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: mfd: s2mps11: add documentation for
- s2mps15 PMIC
-Date: Thu, 29 Oct 2015 14:57:11 +0900
-Message-ID: <5631B537.1090404@samsung.com>
-References: <1446094723-6212-1-git-send-email-alim.akhtar@samsung.com>
- <1446094723-6212-2-git-send-email-alim.akhtar@samsung.com>
+Subject: Re: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
+Date: Thu, 29 Oct 2015 15:24:54 +0900
+Message-ID: <5631BBB6.9080204@samsung.com>
+References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
+ <56251627.4050908@math.uni-bielefeld.de> <562581BD.3070609@samsung.com>
+ <562C1B17.3080303@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1446094723-6212-2-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org, broonie@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <562C1B17.3080303@math.uni-bielefeld.de>
+Sender: linux-clk-owner@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 29.10.2015 13:58, Alim Akhtar wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
+On 25.10.2015 08:58, Tobias Jakobi wrote:
+> Hello Krzysztof,
 > 
-> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
-> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
 > 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 ++++++++++++++-------
->  1 file changed, 15 insertions(+), 8 deletions(-)
+> Krzysztof Kozlowski wrote:
+>> On 20.10.2015 01:11, Tobias Jakobi wrote:
+>>> Hello Krzysztof,
+>>>
+>>> I can confirm that this also works on a Odroid-X2, so I guess it's safe
+>>> to enable the PRNG for all Exynos4412-based Odroid devices.
+>>
+>> Sure, I can send a patch for that. I can test it later also on Odroid-U3.
+> Thanks already!
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> index 890f0b0e1643..c0427c9d0886 100644
-> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> @@ -1,5 +1,5 @@
->  
-> -* Samsung S2MPS11, S2MPS13, S2MPS14 and S2MPU02 Voltage and Current Regulator
-> +* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
->  
->  The Samsung S2MPS11 is a multi-function device which includes voltage and
->  current regulators, RTC, charger controller and other sub-blocks. It is
-> @@ -7,8 +7,12 @@ interfaced to the host controller using an I2C interface. Each sub-block is
->  addressed by the host system using different I2C slave addresses.
->  
->  Required properties:
-> -- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps13-pmic"
-> -	      or "samsung,s2mps14-pmic" or "samsung,s2mpu02-pmic".
-> +- compatible: Should be one of the following
-> +	- "samsung,s2mps11-pmic"
-> +	- "samsung,s2mps13-pmic"
-> +	- "samsung,s2mps14-pmic"
-> +	- "samsung,s2mps15-pmic"
-> +	- "samsung,s2mpu02-pmic".
->  - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
->  
->  Optional properties:
-> @@ -24,7 +28,7 @@ Optional properties:
->    unwanted buck warm reset (setting buck voltages to default values).
->  
->  Optional nodes:
-> -- clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
-> +- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
->    KHz outputs, so to register these as clocks with common clock framework
->    instantiate a sub-node named "clocks". It uses the common clock binding
->    documented in :
-> @@ -37,12 +41,13 @@ Optional nodes:
->      the clock which they consume.
->      Clock               ID           Devices
->      ----------------------------------------------------------
-> -    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S5M8767
-> -    32KhzCP		1            S2MPS11, S2MPS13, S5M8767
-> -    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S5M8767
-> +    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
-> +    32KhzCP		1            S2MPS11, S2MPS13, S2MPS15, S5M8767
-> +    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
->  
->    - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
-> -		"samsung,s2mps14-clk", "samsung,s5m8767-clk"
-> +		"samsung,s2mps14-clk", "samsung,s2mps15-clk",
-> +		"samsung,s5m8767-clk"
+> 
+> 
+>>> Any chance that you might also take a look at the other hwcrypto stuff
+>>> on the SoC ('samsung,exynos4210-secss' compatible)?
+>>
+>> What do you mean? The s5p-sss driver already supports Device Tree.
+> The driver supports DT, but it doesn't really work.
+> 
+> I'm using the following DT entry to let the driver probe correctly:
+> https://github.com/tobiasjakobi/linux-odroid/commit/82c00cddb5cbf89fad994784c28c8125beae8e13
+> 
+> But the crypto self-test fails on boot:
+> alg: skcipher: encryption failed on test 1 for ecb-aes-s5p: ret=22
+> 
+> 
+> Another problems is that SSS and PRNG can't be used at the same time,
+> since they both use common hardware resources (I think it was IO).
+> 
 
-Noooo. Why "samsung,s2mps15-clk"?
+Thanks for explaining this. I added the issue to the long TODO list but
+I don't know when I will be able to dig into this.
 
-Adding a new compatible to bindings is a major change so my review tag
-(from v1 where there was no such compatible) should be dropped. Please
-drop it.
+If anyone wants to look into this, please go ahead...
 
 Best regards,
 Krzysztof
+
