@@ -1,110 +1,61 @@
 From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
-Date: Thu, 29 Oct 2015 09:49:02 +0530
-Message-ID: <56319E36.1000700@samsung.com>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
- <20151026143411.GL597@x1> <563021AF.6030100@samsung.com>
- <20151028084609.GG5828@x1> <5630D12C.2030008@samsung.com>
- <20151028135149.GF4058@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <20151028135149.GF4058@x1>
-Sender: linux-clk-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: k.kozlowski.k@gmail.com, broonie@kernel.org, mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH v4 0/4] mfd: sec: add S2MPS15 PMIC support
+Date: Thu, 29 Oct 2015 10:28:37 +0530
+Message-ID: <1446094723-6212-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
+The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
+27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
+programming these blocks via a I2C interface. This patch series adds initial
+support for LDO/Buck regulators of S2MPS15 PMIC.
+
+Changes since v3:
+* Changes regulator driver name from s2mps15-pmic -> s2mps15-regulator as disscussed here [2]
+* Re-use the exsisting compatible/names for s2mps15 clock block.
+
+Changes since v2:
+* Addressed Lee Jones review comments.
+
+Changes since v1:
+* Added suggestion from Krzysztof [1].
+* Added s2mps15's 32.768 clocks support.
+* Added s2mps15's rtc support.
+
+V1 of these patches (with a lesser features) were posted a year back,
+since then there is not much progress on this, this is my attempt to
+move things forward.
+
+[1]-> https://lkml.org/lkml/2014/10/14/67
+[2]-> https://lkml.org/lkml/2015/10/28/417
+
+This series is based on linux-next-20151022.
+This is tested on exynos7-espresso board.
 
 
-On 10/28/2015 07:21 PM, Lee Jones wrote:
-> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
->
->> W dniu 28.10.2015 o 17:46, Lee Jones pisze:
->>> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
->>>
->>>> On 26.10.2015 23:34, Lee Jones wrote:
->>>>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->>>>>
->>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
->>>>>>
->>>>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
->>>>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
->>>>>> clock outputs and battery charger. This patch adds initial support for
->>>>>> LDO and buck regulators of S2MPS15 device.
->>>>>>
->>>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
->>>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>>> ---
->>>>>>   drivers/mfd/sec-core.c              |   31 +++++++
->>>>>>   drivers/mfd/sec-irq.c               |    8 ++
->>>>>>   include/linux/mfd/samsung/core.h    |    1 +
->>>>>>   include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
->>>>>>   4 files changed, 198 insertions(+)
->>>>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
->>>>>
->>>>> I replied to the previous set and won't be reviewing this one until
->>>>> all of the open points are solved.
->>>>
->>>> The naming and compatibles used by the driver are confusing but how it
->>>> was at beginning. Beside the confusion, the names are correct:
->>>>
->>>> 1. Main mfd driver:
->>>>   - compatible: samsung,s2mps1*-pmic
->>>>   - driver name: sec_pmic
->>>>
->>>> 2. Regulator driver:
->>>>   - no compatible (because it always searches for "regulators" subnode of
->>>> its parent... that is the convention/legacy behaviour)
->>>>   - driver name: s2mps1*-pmic
->>>>
->>>> I hope that explains your concerns.
->>>
->>> It explains *why*, but doesn't ease my concerns in any way.
->>>
->>> Unfortunately I've only just realised the disparity we have between
->>> MFD and the Regulator subsystem, which is annoying because it's now
->>> almost impossible to rectify.
->>>
->>> We should have taken one of two views.  Either a) The MFD is the PMIC
->>> device which encompasses regulator control.  In which case the MFD
->>> and it's corresponding compatible string would be named *-pmic and the
->>> regulator driver would be called *-regulator. Or b) The MFD could be
->>> considered a normal MFD and be named after the model number, then the
->>> regulator 'could' be named *-pmic.
->>>
->>> However, with reference to b), how much other Power Management does
->>> the regulator driver do besides control regulators?  I suspect not
->>> much.  Therefore my preference would be for a).  My second choice
->>> would be a mixuture of the two where nothing gets named *-pmic.  The
->>> last option on my list would be the current situation where we seem to
->>> be calling both the MFD (PMIC) itself and the Regulator driver
->>> *-pmic, which is not good.
->>
->> Starting from the description of device-family. This is called "Power
->> Management IC" but it is rather a "Power Deliver/Distribute IC". There
->> isn't any logic inside except enable/disable/configure/set low power
->> mode for regulators.
->>
->> However in the same time the IC comes (always) with:
->>   - 32kHz clocks,
->>   - RTC,
->>   - backup battery charger (no driver for it),
->>   - reset for SoC,
->>   - shutdown on thermal alert (also no driver for this control).
->>
->> The solution a) seems fine to me. Make sense and it looks entirely
->> backward compatible - only driver names will be modified.
->
-> Perfect solution from my PoV.
->
-> Thanks Krzysztof.
->
-Thanks Jones/Krzysztof as always.
-Will update the patches.
+Alim Akhtar (1):
+  drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
 
+Thomas Abraham (3):
+  dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
+  mfd: sec: Add support for S2MPS15 PMIC
+  regulator: s2mps11: add support for S2MPS15 regulators
 
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 +--
+ drivers/mfd/sec-core.c                            |   31 ++++
+ drivers/mfd/sec-irq.c                             |    8 ++
+ drivers/regulator/Kconfig                         |    4 +-
+ drivers/regulator/s2mps11.c                       |  135 +++++++++++++++++-
+ drivers/rtc/rtc-s5m.c                             |   20 ++-
+ include/linux/mfd/samsung/core.h                  |    1 +
+ include/linux/mfd/samsung/rtc.h                   |    4 +
+ include/linux/mfd/samsung/s2mps15.h               |  158 +++++++++++++++++++++
+ 9 files changed, 371 insertions(+), 13 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps15.h
+
+-- 
+1.7.10.4
