@@ -1,74 +1,146 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: Describe SROMc configuration
-Date: Thu, 29 Oct 2015 19:29:40 +0900
-Message-ID: <CAJKOXPcSehXRYDpYiybzdagPS76QKGpeMb7DxkpwJq8GTfuPOw@mail.gmail.com>
-References: <cover.1446018918.git.p.fedin@samsung.com>
-	<046d990092dc85cf50db9082fc894d93a3ece7c0.1446018918.git.p.fedin@samsung.com>
-	<563183F9.6020806@samsung.com>
-	<008001d1121d$c0fef160$42fcd420$@samsung.com>
+Subject: Re: [PATCH v4 4/4] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+Date: Thu, 29 Oct 2015 20:03:57 +0900
+Message-ID: <CAJKOXPeJcjoGMqPhdOg-sH7xojF0m3bbTh0OqBEHTuo9sQrNug@mail.gmail.com>
+References: <1446094723-6212-1-git-send-email-alim.akhtar@samsung.com>
+	<1446094723-6212-5-git-send-email-alim.akhtar@samsung.com>
+	<5631B487.3050501@samsung.com>
+	<5631CF0A.90109@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f179.google.com ([209.85.220.179]:34017 "EHLO
-	mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756630AbbJ2K3l (ORCPT
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:36080 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751204AbbJ2LD6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Oct 2015 06:29:41 -0400
-In-Reply-To: <008001d1121d$c0fef160$42fcd420$@samsung.com>
+	Thu, 29 Oct 2015 07:03:58 -0400
+In-Reply-To: <5631CF0A.90109@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, lee.jones@linaro.org, broonie@kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-2015-10-29 16:45 GMT+09:00 Pavel Fedin <p.fedin@samsung.com>:
->  Hello!
+2015-10-29 16:47 GMT+09:00 Alim Akhtar <alim.akhtar@samsung.com>:
+> Hello Krzysztof,
 >
->> You missed here a lot of potential Cc. Please use get_maintainer.pl
->> script. It *must* be sent to devicetree list.
+>
+> On 10/29/2015 11:24 AM, Krzysztof Kozlowski wrote:
 >>
->> Please send it also to DeviceTree maintainers because you are adding
->> quite generic names for bindings so they may have interesting thoughts
->> on this.
+>> On 29.10.2015 13:58, Alim Akhtar wrote:
+>>>
+>>> RTC found in s2mps15 is almost same as one found on s2mps14/13
+>>> with few differences in RTC_UPDATE register fields, like
+>>> bit fields are changed for WUDR and AUDR.
+>>> This patch add required changes to enable s2mps15 rtc timer.
+>>>
+>>> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> ---
+>>>   drivers/rtc/rtc-s5m.c           |   20 ++++++++++++++++++--
+>>>   include/linux/mfd/samsung/rtc.h |    4 ++++
+>>>   2 files changed, 22 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>>> index f2504b4eef34..0d106a99958f 100644
+>>> --- a/drivers/rtc/rtc-s5m.c
+>>> +++ b/drivers/rtc/rtc-s5m.c
+>>> @@ -188,6 +188,7 @@ static inline int
+>>> s5m_check_peding_alarm_interrupt(struct s5m_rtc_info *info,
+>>>                 ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+>>>                 val &= S5M_ALARM0_STATUS;
+>>>                 break;
+>>> +       case S2MPS15X:
+>>>         case S2MPS14X:
+>>>         case S2MPS13X:
+>>>                 ret = regmap_read(info->s5m87xx->regmap_pmic,
+>>> S2MPS14_REG_ST2,
+>>> @@ -223,6 +224,9 @@ static inline int s5m8767_rtc_set_time_reg(struct
+>>> s5m_rtc_info *info)
+>>>         if (info->device_type == S5M8763X || info->device_type ==
+>>> S5M8767X)
+>>>                 data |= S5M_RTC_TIME_EN_MASK;
+>>>
+>>> +       if (info->device_type == S2MPS15X)
+>>> +               data |= S2MPS15_RTC_WUDR_MASK;
+>>> +
 >>
->> LKML list is also missing.
->
->  Ok. Next version will go there too.
->
->> Any vendor prefix here? How generic is this?
->
->  I just don't know... Does *everything* really need a vendor prefix? How readable would that be? "compatible" property already says
-> that it's samsung-exynos-specific. And IMHO it's quite obvious that properties of vendor-specific device are automatically
-> vendor-specific.
->  Ok, i am currently fixing up the rest and will post v4 soon, and will Cc: it to devicetree ML.
+>>
+>>
+>> You are setting here bit 1 and bit 4. However vendor code sets only bit
+>> 4 (called WUDR there). That's confusing. Why the difference? Or maybe I
+>> am looking at wrong vendor tree (SM-G920F)?
+>>
+> Sorry, I don't have access to vendor code that you are looking into, so
+> won't be able to comment on that.
 
-Which my reply you are referring to? You stripped part of some
-sentence and put it without *any context*. Just random sentence.
-I asked for vendor prefix in few places... srom-timing? width? And I
-do not remember where I used exactly these words. This is why
-*context* is needed.
+Everyone have the access. It is on opensource.samsung.com, as required by GPL.
 
 >
->  P.S. I intentionally omit the rest of the text in order to avoid overquoting, since we are already focused on some specific things.
-> If someone wants to get the whole picture, he/she could just browse back to the start of the thread. Or is it considered wrong
-> approach in this particular ML?
+> I am testing this patch before sending them, what I have found is if you
+> don't update WUDR the time does not changes in rtc.
+> e.g.
+> if you don't do above changes then you will see below:
+> -----
+> # date --set="Oct 29 14:10:40 2015" <update the a new date>
+> Thu Oct 29 14:10:40 UTC 2015
+> #
+> # hwclock --systohc <copy system clock to hardware clock/rtc>
+> # hwclock <read back hwclock>
+> Thu Oct 29 12:52:32 2015  .922889 seconds
+> ----
+> which is not excepted.
+>
+> And with the above change I see:
+>
+> ----
+>  # date --set="Oct 29 14:30:10 2015" <update the a new date>
+> Thu Oct 29 14:30:10 UTC 2015
+> # date
+> Thu Oct 29 14:30:12 UTC 2015
+> # hwclock --systohc <copy system clock to hardware clock/rtc>
+> # hwclock <read back hwclock>
+> Thu Oct 29 14:30:21 2015  .333006 seconds
+> ----
+>
+> Which is as expected.
 
-Yep, selecting some sentences and replying only to them, leaving the
-context away, is highly confusing. I reply in different places,
-sometimes asking for similar things. Removing context messes this up.
-In the same time all of my other questions are being removed without
-any acknowledgment so I do not know if they were ignored or just
-silently acked.
+Okay, but I said that vendor is setting only WUDR which is bit 4. You
+are setting bit 1 and bit 4. Your reply - about the need of setting
+WUDR (bit 4 I guess) - does not explain my concerns. Do you have to
+set bit 1?
 
-I show you example:
+>
+>>>         ret = regmap_write(info->regmap, info->regs->rtc_udr_update,
+>>> data);
+>>>         if (ret < 0) {
+>>>                 dev_err(info->dev, "failed to write update reg(%d)\n",
+>>> ret);
+>>> @@ -252,6 +256,9 @@ static inline int s5m8767_rtc_set_alarm_reg(struct
+>>> s5m_rtc_info *info)
+>>>         case S5M8767X:
+>>>                 data &= ~S5M_RTC_TIME_EN_MASK;
+>>>                 break;
+>>> +       case S2MPS15X:
+>>> +               data |= S2MPS15_RTC_AUDR_MASK;
+>>> +               break;
+>>>         case S2MPS14X:
+>>>                 data |= S2MPS_RTC_RUDR_MASK;
+>>>                 break;
+>>
+>>
+>> Another difference: you are setting here exactly the same values as
+>> S2MPS13 - bit 1 and bit 4. However vendor code sets only bit 4 (called
+>> WUDR there)?
+>>
+> No they are not, AUDR on s2mps13 is bit:1 where as it is bit:4 on s2mps15.
+>>
+>> What exactly is necessary to update alarm and time registers on S2MPS15?
+>>
+> As explained above in example, it is required to update the 'write alarm
+> buffer(AUDR)' and 'write time buffer(WUDR)' bits in-order to get rtc
+> working.
 
->  I just don't know...
-I don't know neither.
-
-> If someone wants to get the whole picture, he/she could just browse back to the start of the thread.
-Yes, I would just scroll up and see the context. No, wait. There is no
-context. I have to find mine original email and compare which part was
-ignored, which was applied and which quoted sentence you are referring
-to.
+For updating time and alarm registers? Or only for updating alarm registers?
 
 Best regards,
 Krzysztof
