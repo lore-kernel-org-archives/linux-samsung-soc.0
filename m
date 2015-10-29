@@ -1,49 +1,62 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v3 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Thu, 29 Oct 2015 14:43:15 +0300
-Message-ID: <003c01d1123f$002a3220$007e9660$@samsung.com>
-References: <cover.1446018918.git.p.fedin@samsung.com>
- <046d990092dc85cf50db9082fc894d93a3ece7c0.1446018918.git.p.fedin@samsung.com>
- <563183F9.6020806@samsung.com> <008001d1121d$c0fef160$42fcd420$@samsung.com>
- <CAJKOXPcSehXRYDpYiybzdagPS76QKGpeMb7DxkpwJq8GTfuPOw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH v4 0/4] [PATCH v4 0/4] Exynos SROMc configuration and Ethernet
+ support for SMDK5410
+Date: Thu, 29 Oct 2015 15:42:16 +0300
+Message-ID: <cover.1446122247.git.p.fedin@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:20511 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751055AbbJ2LnT convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:34368 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751148AbbJ2Mmb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Oct 2015 07:43:19 -0400
-In-reply-to: <CAJKOXPcSehXRYDpYiybzdagPS76QKGpeMb7DxkpwJq8GTfuPOw@mail.gmail.com>
-Content-language: ru
+	Thu, 29 Oct 2015 08:42:31 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kukjin Kim' <kgene@kernel.org>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
- Hello!
+This patch extends Exynos SROM controller driver with ability to configure
+controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+which is connected via SROMc bank #3.
 
-> >> Any vendor prefix here? How generic is this?
-> >
-> >  I just don't know... Does *everything* really need a vendor prefix? How readable would that
-> be? "compatible" property already says
-> > that it's samsung-exynos-specific. And IMHO it's quite obvious that properties of vendor-
-> specific device are automatically
-> > vendor-specific.
-> >  Ok, i am currently fixing up the rest and will post v4 soon, and will Cc: it to devicetree
-> ML.
-> 
-> Which my reply you are referring to? You stripped part of some
-> sentence and put it without *any context*. Just random sentence.
-> I asked for vendor prefix in few places... srom-timing? width? And I
-> do not remember where I used exactly these words.
+With this patchset, support for the whole existing SMDK range can be added.
+Actually, only bank number is different.
 
- Ok, sorry, i promise to improve. :)
- Anyway, i have figured out how to add sub-devices, and heavily modified the whole thing. And indeed, vendor prefix is now very useful, so i added it to all three properties. Making v4...
+This patchset also depends on Exynos 5410 pinctrl support, introduced by
+patches 0003 and 0004 from this set:
+[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
 
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+Pinctrl support is necessary in order to correctly configure
+multifunctional pins of the Exynos chip.
+
+v3 => v4:
+- Devices are now added as subnodes, with additional properties. This allows
+  to cleary specify dependency. If configuration fails, error will be reported
+  and child devices will not be probed.
+- These additional properties now have "samsung,srom-XXX" format
+- Fixed code style, now better understood.
+
+v2 => v3:
+- Fixed up SROMc region size in the device tree
+- Reordered patches, documentation goes first now
+
+v1 => v2:
+- Fixed some typos and bad labels in device tree
+- Improved documentation
+
+Pavel Fedin (4):
+  Documentation: dt-bindings: Describe SROMc configuration
+  ARM: dts: Add SROMc to Exynos 5410
+  drivers: exynos-srom: Add support for bank configuration
+  ARM: dts: Add Ethernet chip to SMDK5410
+
+ .../bindings/arm/samsung/exynos-srom.txt           | 50 ++++++++++++++++++-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          | 41 +++++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi                  | 15 ++++++
+ arch/arm/mach-exynos/Kconfig                       |  2 +-
+ drivers/soc/samsung/Kconfig                        |  2 +-
+ drivers/soc/samsung/exynos-srom.c                  | 58 +++++++++++++++++++++-
+ 6 files changed, 162 insertions(+), 6 deletions(-)
+
+-- 
+2.4.4
