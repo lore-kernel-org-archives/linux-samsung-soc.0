@@ -1,146 +1,39 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v4 3/4] drivers: exynos-srom: Add support for bank configuration
-Date: Thu, 29 Oct 2015 15:42:19 +0300
-Message-ID: <4312ee676afb81377610ae05d0373ebd3b51ddde.1446122247.git.p.fedin@samsung.com>
-References: <cover.1446122247.git.p.fedin@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22641 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752376AbbJ2Mmf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Oct 2015 08:42:35 -0400
-In-reply-to: <cover.1446122247.git.p.fedin@samsung.com>
-In-reply-to: <cover.1446122247.git.p.fedin@samsung.com>
-References: <cover.1446122247.git.p.fedin@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] ARM: multi_v7_defconfig: enable Exynos DRM Mixer driver
+Date: Thu, 29 Oct 2015 15:25:06 +0100
+Message-ID: <1446128706-27750-1-git-send-email-a.hajda@samsung.com>
+References: <563063C8.2040202@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <563063C8.2040202@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: k.kozlowski@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Implement handling properties in subnodes and adding child devices to the
-system. Child devices will not be added if configuration fails.
-
-Since the driver now does more than suspend-resume support, dependency on
-CONFIG_PM is removed.
-
-Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
----
- arch/arm/mach-exynos/Kconfig      |  2 +-
- drivers/soc/samsung/Kconfig       |  2 +-
- drivers/soc/samsung/exynos-srom.c | 58 +++++++++++++++++++++++++++++++++++++--
- 3 files changed, 58 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 83c85f5..c22dc42 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -16,7 +16,7 @@ menuconfig ARCH_EXYNOS
- 	select ARM_GIC
- 	select COMMON_CLK_SAMSUNG
- 	select EXYNOS_THERMAL
--	select EXYNOS_SROM if PM
-+	select EXYNOS_SROM
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 2833b5b..ea4bc2a 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -8,6 +8,6 @@ config SOC_SAMSUNG
- 
- config EXYNOS_SROM
- 	bool
--	depends on ARM && ARCH_EXYNOS && PM
-+	depends on ARM && ARCH_EXYNOS
- 
- endmenu
-diff --git a/drivers/soc/samsung/exynos-srom.c b/drivers/soc/samsung/exynos-srom.c
-index 57a232d..68e894f 100644
---- a/drivers/soc/samsung/exynos-srom.c
-+++ b/drivers/soc/samsung/exynos-srom.c
-@@ -14,6 +14,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
-@@ -67,11 +68,48 @@ static struct exynos_srom_reg_dump *exynos_srom_alloc_reg_dump(
- 	return rd;
- }
- 
-+static int decode_sromc(struct exynos_srom *srom, struct device_node *np)
-+{
-+	u32 bank, width;
-+	u32 timing[7];
-+	u32 cs, bw;
-+
-+	if (of_property_read_u32(np, "samsung,srom-bank", &bank))
-+		return -EINVAL;
-+	if (of_property_read_u32(np, "samsung,srom-data-width", &width))
-+		width = 1;
-+	if (of_property_read_u32_array(np, "samsung,srom-timing", timing,
-+				       ARRAY_SIZE(timing)))
-+		return -EINVAL;
-+
-+	bank *= 4; /* Convert bank into shift/offset */
-+
-+	cs = 1 << EXYNOS_SROM_BW__BYTEENABLE__SHIFT;
-+	if (width == 2)
-+		cs |= 1 << EXYNOS_SROM_BW__DATAWIDTH__SHIFT;
-+
-+	bw = __raw_readl(srom->reg_base + EXYNOS_SROM_BW);
-+	bw = (bw & ~(EXYNOS_SROM_BW__CS_MASK << bank)) | (cs << bank);
-+	__raw_writel(bw, srom->reg_base + EXYNOS_SROM_BW);
-+
-+	__raw_writel((timing[0] << EXYNOS_SROM_BCX__PMC__SHIFT) |
-+		    (timing[1] << EXYNOS_SROM_BCX__TACP__SHIFT) |
-+		    (timing[2] << EXYNOS_SROM_BCX__TCAH__SHIFT) |
-+		    (timing[3] << EXYNOS_SROM_BCX__TCOH__SHIFT) |
-+		    (timing[4] << EXYNOS_SROM_BCX__TACC__SHIFT) |
-+		    (timing[5] << EXYNOS_SROM_BCX__TCOS__SHIFT) |
-+		    (timing[6] << EXYNOS_SROM_BCX__TACS__SHIFT),
-+		    srom->reg_base + EXYNOS_SROM_BC0 + bank);
-+
-+	return 0;
-+}
-+
- static int exynos_srom_probe(struct platform_device *pdev)
- {
--	struct device_node *np;
-+	struct device_node *np, *child;
- 	struct exynos_srom *srom;
- 	struct device *dev = &pdev->dev;
-+	bool error = false;
- 
- 	np = dev->of_node;
- 	if (!np) {
-@@ -100,7 +138,23 @@ static int exynos_srom_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	return 0;
-+	for_each_child_of_node(np, child) {
-+		if (decode_sromc(srom, child)) {
-+			dev_err(dev,
-+				"Could not decode bank configuration for %s\n",
-+				child->name);
-+			error = true;
-+		}
-+	}
-+
-+	/*
-+	 * If any bank failed to configure, we still provide suspend/resume,
-+	 * but do not probe child devices
-+	 */
-+	if (error)
-+		return 0;
-+
-+	return of_platform_populate(np, NULL, NULL, dev);
- }
- 
- static int exynos_srom_remove(struct platform_device *pdev)
--- 
-2.4.4
+TWl4ZXIgZHJpdmVyIGlzIHNlbGVjdGVkIGJ5IENPTkZJR19EUk1fRVhZTk9TX0hETUkgb3B0aW9u
+LiBTaW5jZSBFeHlub3M1NDMzCkhETUkgZG9lcyBub3QgcmVxdWlyZSBNaXhlciBhbmQgdGhlcmUg
+YXJlIHNlcGFyYXRlIG9wdGlvbnMgdG8gc2VsZWN0IE1peGVyCmFuZCBIRE1JLgoKU2lnbmVkLW9m
+Zi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9j
+b25maWdzL211bHRpX3Y3X2RlZmNvbmZpZyB8IDEgKwogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vY29uZmlncy9tdWx0aV92N19kZWZjb25maWcg
+Yi9hcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2RlZmNvbmZpZwppbmRleCAwM2RlYjdmLi5jYTVl
+OTI4IDEwMDY0NAotLS0gYS9hcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2RlZmNvbmZpZworKysg
+Yi9hcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2RlZmNvbmZpZwpAQCAtNDQ5LDYgKzQ0OSw3IEBA
+IENPTkZJR19EUk1fTk9VVkVBVT1tCiBDT05GSUdfRFJNX0VYWU5PUz1tCiBDT05GSUdfRFJNX0VY
+WU5PU19EU0k9eQogQ09ORklHX0RSTV9FWFlOT1NfRklNRD15CitDT05GSUdfRFJNX0VYWU5PU19N
+SVhFUj15CiBDT05GSUdfRFJNX0VYWU5PU19IRE1JPXkKIENPTkZJR19EUk1fUkNBUl9EVT1tCiBD
+T05GSUdfRFJNX1RFR1JBPXkKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
