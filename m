@@ -1,62 +1,42 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v4 3/4] regulator: s2mps11: add support for S2MPS15
- regulators
-Date: Thu, 29 Oct 2015 14:04:44 +0530
-Message-ID: <5631DA24.10303@samsung.com>
-References: <1446094723-6212-1-git-send-email-alim.akhtar@samsung.com>
- <1446094723-6212-4-git-send-email-alim.akhtar@samsung.com>
- <20151029080835.GM4058@x1> <5631D533.6070807@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH] ARM: exynos: Bring back reboot on Exynos5410
+Date: Thu, 29 Oct 2015 11:43:22 +0300
+Message-ID: <002801d11225$dedab4a0$9c901de0$@samsung.com>
+References: <1446024965-8508-1-git-send-email-p.fedin@samsung.com>
+ <56317960.9070608@samsung.com>
+ <CAGcde9H4WVt34rn6_9H+sVu2Bp2xq4awMiwV1zgv1D6posPWSg@mail.gmail.com>
+ <006c01d11218$d6e2d500$84a87f00$@samsung.com> <5631D8E5.6090506@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5631D533.6070807@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>
-Cc: broonie@kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:8831 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751261AbbJ2In0 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Oct 2015 04:43:26 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NWZ003NU48B9C40@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Oct 2015 08:43:23 +0000 (GMT)
+In-reply-to: <5631D8E5.6090506@samsung.com>
+Content-language: ru
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Kukjin Kim' <kgene@kernel.org>
 
-Hi,
+ Hello!
 
-On 10/29/2015 01:43 PM, Krzysztof Kozlowski wrote:
-> On 29.10.2015 17:08, Lee Jones wrote:
->> On Thu, 29 Oct 2015, Alim Akhtar wrote:
->>
->>> From: Thomas Abraham <thomas.ab@samsung.com>
->>>
->>> The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
->>> 27 LDO and 10 Buck regulators and allows programming these regulators via a
->>> I2C interface. This patch adds initial support for LDO/Buck regulators of
->>> S2MPS15 PMIC.
->>>
->>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> ---
->>>   drivers/regulator/Kconfig   |    4 +-
->>>   drivers/regulator/s2mps11.c |  135 ++++++++++++++++++++++++++++++++++++++++++-
->>>   2 files changed, 136 insertions(+), 3 deletions(-)
->>
->> [...]
->>
->>> @@ -1070,6 +1202,7 @@ static const struct platform_device_id s2mps11_pmic_id[] = {
->>>   	{ "s2mps11-pmic", S2MPS11X},
->>>   	{ "s2mps13-pmic", S2MPS13X},
->>>   	{ "s2mps14-pmic", S2MPS14X},
->>> +	{ "s2mps15-regulator", S2MPS15X},
->>>   	{ "s2mpu02-pmic", S2MPU02},
->>>   	{ },
->>>   };
->>
->> Are you going to s/pmic/regulator/ for the existing devices too?
->
-> Yeah, I expected that as well... but of course it is orthogonal to this
-> patchset.
->
-Agree with Krzysztof here. Noted, will send a separate patch to rename 
-other S2MPxxx-pmic to *-regulator.
+> These patches are not adding any new code, except DT entry. Infact
+> restart handler will be removed from PMU driver and we will be using
+> generic syscon based implementation for reboot, which is already present
+> in Linux kernel.
 
-> Best regards,
-> Krzysztof
->
->
+ Ah, got it. So syscon is a very generic thing, allowing to describe whatever reset register for whatever board, since we are specifying both address and value to write there. Is my understanding correct? If so, then, OK, you can do this too.
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
