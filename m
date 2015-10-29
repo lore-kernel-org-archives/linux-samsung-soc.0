@@ -1,78 +1,108 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 2/4] ARM: dts: Add SROMc to Exynos 5410
-Date: Thu, 29 Oct 2015 22:58:16 +0530
-Message-ID: <CAGcde9EXfe0amqoTOwgKi-Y6=4mRcEbZrA=as-BxzfMv3ntAhQ@mail.gmail.com>
-References: <cover.1446122247.git.p.fedin@samsung.com> <eafa355058ff500a72ff2e3408ab635954467a76.1446122247.git.p.fedin@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v4 4/4] ARM: dts: Add Ethernet chip to SMDK5410
+Date: Thu, 29 Oct 2015 23:10:31 +0530
+Message-ID: <CAGcde9HVft2zuVVFaaWwApHkyqttdS_M=Kq=Am_JKOYOnp5V+A@mail.gmail.com>
+References: <cover.1446122247.git.p.fedin@samsung.com>
+ <6fed900bf831d8bc23ef56c95417887c3d9a2d07.1446122247.git.p.fedin@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <eafa355058ff500a72ff2e3408ab635954467a76.1446122247.git.p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <6fed900bf831d8bc23ef56c95417887c3d9a2d07.1446122247.git.p.fedin@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Pavel Fedin <p.fedin@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Pavel,
 
-On 29 October 2015 at 18:12, Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> This machine uses own SoC device tree file, add missing part.
+On 29 October 2015 at 18:12, Pavel Fedin <p.fedin@samsung.com> wrote:
+> The chip is smsc9115, connected via SROMc bank 3. Additionally, some GPIO
+> initialization is required.
 >
-> Signed-off-by: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5410.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+>  arch/arm/boot/dts/exynos5410-smdk5410.dts | 41 +++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 4603356..da6a8fa0e 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -101,6 +101,15 @@
->                         reg = <0x10000000 0x100>;
->                 };
+> diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+> index cebeaab..311e7be 100644
+> --- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
+> +++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+> @@ -61,6 +61,27 @@
+>         disable-wp;
+>  };
 >
-> +               sromc: sromc@12250000 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       ranges;
+> +&pinctrl_0 {
+> +       srom_ctl: srom-ctl {
+> +               samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
+> +                              "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-drv = <0>;
+> +       };
 > +
+> +       srom_ebi: srom-ebi {
+> +               samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
+> +                              "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
+> +                              "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
+> +                              "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
+> +                              "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
+> +                              "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <0>;
+> +       };
+> +};
+> +
+>  &uart0 {
+>         status = "okay";
+>  };
+> @@ -72,3 +93,23 @@
+>  &uart2 {
+>         status = "okay";
+>  };
+> +
+> +&sromc {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
+> +
+> +       ethernet@07000000 {
+> +               compatible = "smsc,lan9115";
+> +               reg = <0x07000000 0x10000>;
+> +               phy-mode = "mii";
+> +               interrupt-parent = <&gpx0>;
+> +               interrupts = <5 8>;
+> +               reg-io-width = <2>;
+> +               smsc,irq-push-pull;
+> +               smsc,force-internal-phy;
+> +
+> +               samsung,srom-bank = <3>;
+> +               samsung,srom-data-width = <2>;
+> +               samsung,srom-timing = <1 9 12 1 9 1 1>;
 
-We do not need to specify these three properties as they are already
-present in parent node "soc".
+I think this is not correct. We can't change binding of "smsc,lan9115"
+which is already documented here [1]. These samsung specific srom
+properties should be in srom node or its subnode, but not in this way.
 
-> +                       compatible = "samsung,exynos-srom";
-> +                       reg = <0x12250000 0x14>;
-> +               };
-> +
->                 pmu_system_controller: system-controller@10040000 {
->                         compatible = "samsung,exynos5410-pmu", "syscon";
->                         reg = <0x10040000 0x5000>;
-> @@ -133,6 +142,12 @@
->                                                 <10 &gic 0 130 0>,
->                                                 <11 &gic 0 131 0>;
->                         };
-> +
-> +                       arch_timer {
-> +                               compatible = "arm,armv7-timer";
-> +                               clock-frequency = <24000000>;
-> +                       };
-> +
-
-This change should not be part of this patch.
+[1]: Documentation/devicetree/bindings/net/smsc911x.txt
 
 Thanks,
 Pankaj Dubey
 
->                 };
->
->                 sysram@02020000 {
+> +       };
+> +};
 > --
 > 2.4.4
 >
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
