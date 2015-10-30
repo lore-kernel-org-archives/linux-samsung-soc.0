@@ -1,92 +1,80 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 06/13] tests/exynos: add fimg2d event test
-Date: Fri, 30 Oct 2015 15:28:14 +0100
-Message-ID: <56337E7E.7040405@math.uni-bielefeld.de>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20151030155043.35acb278@hwh-ubuntu> <5633519F.60607@math.uni-bielefeld.de>
- <CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
- <5633546C.5090601@math.uni-bielefeld.de>
- <CACvgo52xNr9yCxV+dAGhxHBtHuPv=fgzhAzKHvsCFY7Eh4AXJg@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v8 11/17] dt-bindings: add document for rockchip dp phy
+Date: Fri, 30 Oct 2015 11:42:09 -0500
+Message-ID: <CAL_JsqL=pL8SXLEzhbJHS_djFSh+Ctky0igzagZ6E0M9Q_TFuA@mail.gmail.com>
+References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com> <1446021068-11655-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACvgo52xNr9yCxV+dAGhxHBtHuPv=fgzhAzKHvsCFY7Eh4AXJg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:44907 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751078AbbJ3Qme (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Oct 2015 12:42:34 -0400
+In-Reply-To: <1446021068-11655-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, Daniel Kurtz <djkurtz@chromium.org>, Doug Anderson <dianders@chromium.org>, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, Ajay kumar <ajaynumb@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.c>
 
-SGV5IEVtaWwsCgoKRW1pbCBWZWxpa292IHdyb3RlOgo+IE9uIDMwIE9jdG9iZXIgMjAxNSBhdCAx
-MToyOCwgVG9iaWFzIEpha29iaQo+IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4gd3Jv
-dGU6Cj4+IEhlbGxvIEVtaWwsCj4+Cj4+Cj4+IEVtaWwgVmVsaWtvdiB3cm90ZToKPj4+IE9uIDMw
-IE9jdG9iZXIgMjAxNSBhdCAxMToxNiwgVG9iaWFzIEpha29iaQo+Pj4gPHRqYWtvYmlAbWF0aC51
-bmktYmllbGVmZWxkLmRlPiB3cm90ZToKPj4+PiBIZWxsbyBIeXVuZ3dvbiwKPj4+Pgo+Pj4+IGZp
-cnN0IG9mIGFsbCB0aGFua3MgZm9yIHJldmlld2luZyB0aGUgc2VyaWVzIQo+Pj4+Cj4+Pj4KPj4+
-Pgo+Pj4+IEh5dW5nd29uIEh3YW5nIHdyb3RlOgo+Pj4+PiBPbiBUdWUsIDIyIFNlcCAyMDE1IDE3
-OjU0OjU1ICswMjAwCj4+Pj4+IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVm
-ZWxkLmRlPiB3cm90ZToKPj4+Pj4KPj4+Cj4+Pj4+PiArICAgIGV2aGFuZGxlci0+ZXZjdHguYmFz
-ZS52ZXJzaW9uID0gRFJNX0VWRU5UX0NPTlRFWFRfVkVSU0lPTjsKPj4+Pj4+ICsgICAgZXZoYW5k
-bGVyLT5ldmN0eC52ZXJzaW9uID0gRVhZTk9TX0VWRU5UX0NPTlRFWFRfVkVSU0lPTjsKPj4+Pj4K
-Pj4+Pj4gVGhlIHZlcnNpb25zIG11c3QgYmUgc2V0IG5vdCB1c2luZyBYWFhfRVZFTlRfQ09OVEVY
-VF9WRVJTSU9OLiBBZnRlciB0aGUKPj4+Pj4gdmVyc2lvbnMgYXJlIGJ1bXBlZCwgdGhlIGV2ZW50
-IHdpbGwgY29udGFpbnMgd3JvbmcgdmVyc2lvbiBpbmZvLgo+Pj4+IEhtbSwgSSBkb24ndCBzZWUg
-aG93IHRoaXMgaXMgdHJ1ZS4gQm90aCBEUk1fRVZFTlRfQ09OVEVYVF9WRVJTSU9OIGFuZAo+Pj4+
-IEVYWU5PU19FVkVOVF9DT05URVhUX1ZFUlNJT04gY29tZSBmcm9tIHRoZSBwdWJsaWMgbGliZHJt
-IGhlYWRlci4gSWYgdGhlCj4+Pj4gdmVyc2lvbiBpbiB0aGUgcHVibGljIGhlYWRlciBpcyBidW1w
-ZWQsIHRoZW4gaXQncyBhbHNvIGJ1bXBlZCBoZXJlLiBTbyBJCj4+Pj4gZG9uJ3Qgc2VlIHRoZSBp
-c3N1ZS4KPj4+Pgo+Pj4gVGhlIGlzc3VlIGlzIHRoYXQgdGhlIHB1YmxpYyBoZWFkZXIgZGVmaW5l
-cyB0aGUgaW50ZXJmYWNlIGF2YWlsYWJsZSwKPj4+IHdoaWxlIHlvdSBzZXQgdGhlIHZlcnNpb24g
-dGhhdCB5b3UgaW1wbGVtZW50LiBDdXJyZW50bHkgdGhvc2UgbWF0Y2gsCj4+PiBidXQgaWYvd2hl
-biB3ZSBleHBhbmQgdGhlIEFQSSAoYnVtcGluZyB0aGUgdmVyc2lvbiBpbiB0aGUgaGVhZGVyKSBh
-bmQKPj4+IHJlYnVpbGQgeW91ciBwcm9ncmFtIHdlIHdpbGwgY3Jhc2guCj4+IEhtbSwgSSdtIHN0
-aWxsIG5vdCBzdXJlIEkgdW5kZXJzdGFuZCB0aGlzLiBEbyB5b3UgbWVhbiByZWJ1aWxkaW5nIHRo
-ZQo+PiB0ZXN0cyBvdXQtb2YtdHJlZSBhbmQgdGhlbiBydW5uaW5nIHRoZW0gYWdhaW5zdCBhIG5l
-d2VyL29sZGVyIGxpYmRybQo+PiB2ZXJzaW9uPwo+Pgo+PiBCZWNhdXNlIGZyb20gbXkgdW5kZXJz
-dGFuZGluZyB0aGUgdGVzdHMgYXJlIGFsd2F5cyBidWlsZCB0b2dldGhlciB3aXRoCj4+IGxpYmRy
-bSBhbnl3YXkuIE9yIGFtIEkgbWlzdW5kZXJzdGFuZGluZyBoZXJlIHNvbWV0aGluZz8KPj4KPiBX
-ZSdyZSBub3QgdGFsa2luZyBhYm91dCBidWlsZGluZyBvdXQgb2YgdHJlZSBvciBhbnl0aGluZyBs
-aWtlIHRoYXQKPiBoZXJlLiBUaGUgZm9sbG93aW5nIGV4YW1wbGUgc2hvdWxkIGlsbHVzdHJhdGUg
-d2hhdCBJIGhhdmUgaW4gbWluZC4KPiBHcmVhdGx5IGFwcHJlY2lhdGVkIGlmIHlvdSBjYW4gZXhw
-bGFpbiBpdCBpbiB5b3VyIG93biB3b3Jkcy4KPiAKPiAKPiBDdXJyZW50bHkKPiAKPiAqIHhmODZk
-cm0uaAo+ICNkZWZpbmUgRFJNX0VWRU5UX0NPTlRFWFRfVkVSU0lPTiAyCj4gc3RydWN0IGRybUV2
-ZW50Q29udGV4dCB7Cj4gICAgaW50IHZlcnNpb247Cj4gICAgLi4uCj4gICAgdm9pZCAoKnBhZ2Vf
-ZmxpcF9oYW5kbGVyKSguLi4pOwo+IH0KPiAKPiAqIHVzZXIKPiBzdHJ1Y3QgZm9vIHsKPiAgICAu
-dmVyc2lvbiA9IC4uLlZFUlNJT04gLy8gMgo+ICAgIC4uLgo+IH0KPiAKPiAKPiBBUEkgYnVtcAo+
-IAo+ICogeGY4NmRybS5oCj4gI2RlZmluZSBEUk1fRVZFTlRfQ09OVEVYVF9WRVJTSU9OIDMKPiBz
-dHJ1Y3QgZHJtRXZlbnRDb250ZXh0IHsKPiAgICBpbnQgdmVyc2lvbjsKPiAgICAuLi4KPiAgICB2
-b2lkICgqcGFnZV9mbGlwX2hhbmRsZXIpKC4uLik7Cj4gICAgdm9pZCAoKnBhZ2VfZmxpcF9oYW5k
-bGVyMikoLi4uKTsKPiB9Cj4gCj4gKiB1c2VyIChoYXNuJ3QgYmVlbiB1cGRhdGVkLCBvbmx5IHJl
-YnVpbHQpCj4gc3RydWN0IGZvbyB7Cj4gICAgLnZlcnNpb24gPSAuLi5WRVJTSU9OIC8vIDMKPiAg
-ICAuLi4KPiAgICAucGFnZV9mbGlwX2hhbmRsZXIyID0gMCAvLyAuLi4gb3IgZ2FyYmFnZS4KPiB9
-Cj4gCj4gCj4gKiB4Zjg2ZHJtTW9kZS5jCj4gaW50IGRybUhhbmRsZUV2ZW50KC4uLikKPiB7Cj4g
-Li4uCj4gaWYgKGZvby52ZXJzaW9uID49IDMpCj4gICAgZm9vLnBhZ2VfZmxpcF9oYW5kbGVyMigp
-OyAvLyBib29tICEKPiBlbHNlCj4gICAgZm9vLnBhZ2VfZmxpcF9oYW5kbGVyKCk7Cj4gLi4uCj4g
-fQo+IAo+IAo+IEFsc28gd29ydGggbWVudGlvbmluZyBpcyB0aGF0IHRoZSBpc3N1ZSBpcyByYXRo
-ZXIgd2lkZSBzcHJlYWQgcmF0aGVyCj4gdGhhbiBsaW1pdGVkIHRvIGxpYmRybSA6JygKT0ssIEkg
-c2VlIHdoYXQgeW91IG1lYW4uIEhvd2V2ZXIgdGhpcyBzaG91bGRuJ3QgaGFwcGVuIGFzIGxvbmcg
-YXMgdGhlCnVzZXIgcHJvcGVybHkgemVybyBpbml0aWFsaXplcyB0aGUgZXZlbnQgY29udGV4dCBz
-dHJ1Y3R1cmVzLCByaWdodD8KCgoKPj4+IEJlZm9yZSB5b3UgYXNrIC0geWVzIGN1cnJlbnQgbGli
-ZHJtIHVzZXJzIGFyZSBub3QgZG9pbmcgdGhlIHJpZ2h0Cj4+PiB0aGluZyBhbmQgc2hvdWxkIGJl
-IHVwZGF0ZWQgb25lIG9mIHRoZXNlIGRheXMuCj4+IE1heWJlIGEgZHVtYiBxdWVzdGlvbiwgYnV0
-IHdoYXQgd291bGQgYmUgdGhlIHJpZ2h0IHRoaW5nIHRvIGRvIGluIG1heSBjYXNlLgo+Pgo+PiBE
-ZWZpbmUgbXkgb3duIE1ZX1haWV9FVkVOVF9DT05URVhUX1ZFUlNJT04gYW5kIHVzZSB0aGVzZT8K
-Pj4KPiBObyBuZWVkIGZvciBleHRyYSBkZWZpbmVzIGltaG8uIEp1c3Qgc2V0IHRoZSB2ZXJzaW9u
-cyB0byAyIGFuZCAxIGZvcgo+IGV2Y3R4LmJhc2UudmVyc2lvbiBhbmQgZXZjdHgudmVyc2lvbiBy
-ZXNwZWN0aXZlbHkuCk9LLCBnb2luZyB0byBkbyB0aGlzIHRoZW4uIEluIGFueSBjYXNlLCBjYW4g
-dGhlIHVzZXIgYXNzdW1lIHRoYXQgdGhlCmV2ZW50IHN0cnVjdHVyZXMgb25seSAiZ3JvdyIsIGlu
-IHRoZSBzZW5zZSB0aGF0IG5ldyBmaWVsZHMgYXJlIGFkZGVkIHRvIGl0PwoKCldpdGggYmVzdCB3
-aXNoZXMsClRvYmlhcwoKCj4gR2xhZCB0byBzZWUgc29tZSBvZiB0aGUgU2Ftc3VuZy9FeHlub3Mg
-cGVvcGxlIGxvb2tpbmcgdGhpcyB3YXkgOi0pCj4gCj4gUmVnYXJkcywKPiBFbWlsCj4gCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, Oct 28, 2015 at 3:31 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+> Add dt binding documentation for rockchip display port PHY.
+>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+> ---
+> Changes in v8:
+> - Remove the specific address in the example node name. (Heiko)
+>
+> Changes in v7:
+> - Simplify the commit message. (Kishon)
+>
+> Changes in v6: None
+> Changes in v5:
+> - Split binding doc's from driver changes. (Rob)
+> - Update the rockchip,grf explain in document, and correct the clock required
+>   elemets in document. (Rob & Heiko)
+>
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
+>
+>  .../devicetree/bindings/phy/rockchip-dp-phy.txt    | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+>
+> diff --git a/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+> new file mode 100644
+> index 0000000..00902cb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+> @@ -0,0 +1,22 @@
+> +Rockchip Soc Seroes Display Port PHY
+> +------------------------------------
+> +
+> +Required properties:
+> +- compatible : should be one of the following supported values:
+> +        - "rockchip.rk3288-dp-phy"
+> +- clocks: from common clock binding: handle to dp clock.
+> +       of memory mapped region.
+> +- clock-names: from common clock binding:
+> +       Required elements: "24m"
+> +- rockchip,grf: phandle to the syscon managing the "general register files"
+> +- #phy-cells : from the generic PHY bindings, must be 0;
+> +
+> +Example:
+> +
+> +edp_phy: edp-phy {
+> +       compatible = "rockchip,rk3288-dp-phy";
+> +       rockchip,grf = <&grf>;
+> +       clocks = <&cru SCLK_EDP_24M>;
+> +       clock-names = "24m";
+> +       #phy-cells = <0>;
+> +};
+> --
+> 1.9.1
+>
+>
