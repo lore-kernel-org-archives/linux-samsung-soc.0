@@ -1,88 +1,137 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/2] mfd: sec-core: Rename MFD and regulator names
- differently
-Date: Fri, 30 Oct 2015 12:24:37 +0000
-Message-ID: <20151030122437.GT4058@x1>
-References: <1446202913-20467-1-git-send-email-alim.akhtar@samsung.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 06/13] tests/exynos: add fimg2d event test
+Date: Fri, 30 Oct 2015 12:31:51 +0000
+Message-ID: <CACvgo52xNr9yCxV+dAGhxHBtHuPv=fgzhAzKHvsCFY7Eh4AXJg@mail.gmail.com>
+References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	<1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+	<20151030155043.35acb278@hwh-ubuntu>
+	<5633519F.60607@math.uni-bielefeld.de>
+	<CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
+	<5633546C.5090601@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1446202913-20467-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: broonie@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f173.google.com ([209.85.213.173]:34302 "EHLO
+	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750971AbbJ3Mbw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Oct 2015 08:31:52 -0400
+Received: by igpw7 with SMTP id w7so9028555igp.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 05:31:51 -0700 (PDT)
+In-Reply-To: <5633546C.5090601@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Hyungwon Hwang <human.hwang@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
 
-On Fri, 30 Oct 2015, Alim Akhtar wrote:
+On 30 October 2015 at 11:28, Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+> Hello Emil,
+>
+>
+> Emil Velikov wrote:
+>> On 30 October 2015 at 11:16, Tobias Jakobi
+>> <tjakobi@math.uni-bielefeld.de> wrote:
+>>> Hello Hyungwon,
+>>>
+>>> first of all thanks for reviewing the series!
+>>>
+>>>
+>>>
+>>> Hyungwon Hwang wrote:
+>>>> On Tue, 22 Sep 2015 17:54:55 +0200
+>>>> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+>>>>
+>>
+>>>>> +    evhandler->evctx.base.version = DRM_EVENT_CONTEXT_VERSION;
+>>>>> +    evhandler->evctx.version = EXYNOS_EVENT_CONTEXT_VERSION;
+>>>>
+>>>> The versions must be set not using XXX_EVENT_CONTEXT_VERSION. After the
+>>>> versions are bumped, the event will contains wrong version info.
+>>> Hmm, I don't see how this is true. Both DRM_EVENT_CONTEXT_VERSION and
+>>> EXYNOS_EVENT_CONTEXT_VERSION come from the public libdrm header. If the
+>>> version in the public header is bumped, then it's also bumped here. So I
+>>> don't see the issue.
+>>>
+>> The issue is that the public header defines the interface available,
+>> while you set the version that you implement. Currently those match,
+>> but if/when we expand the API (bumping the version in the header) and
+>> rebuild your program we will crash.
+> Hmm, I'm still not sure I understand this. Do you mean rebuilding the
+> tests out-of-tree and then running them against a newer/older libdrm
+> version?
+>
+> Because from my understanding the tests are always build together with
+> libdrm anyway. Or am I misunderstanding here something?
+>
+We're not talking about building out of tree or anything like that
+here. The following example should illustrate what I have in mind.
+Greatly appreciated if you can explain it in your own words.
 
-> Currently S2MPSXX multifunction device is named as *-pmic,
-> and this MFD also supports regulator as a one of its MFD cell which
-> has the same name, which is a bit confusing.
->=20
-> We did discussed different approaches about how the MFD and it
-> cells need to be named here [1].
-> Based in the discussion this patch rename MFD regulator name as
-> *-regulator instead of current *-pmic.
->=20
-> [1]-> https://lkml.org/lkml/2015/10/28/417
->=20
-> Suggested-by: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/mfd/sec-core.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
 
-You need to squash these patches together, or you will hurt
-bisectability for your platform.
- =20
-But the code looks good:
-  Acked-by: Lee Jones <lee.jones@linaro.org>
+Currently
 
-> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> index 7c4e7be17f1e..c9802ba9be72 100644
-> --- a/drivers/mfd/sec-core.c
-> +++ b/drivers/mfd/sec-core.c
-> @@ -68,7 +68,7 @@ static const struct mfd_cell s5m8767_devs[] =3D {
-> =20
->  static const struct mfd_cell s2mps11_devs[] =3D {
->  	{
-> -		.name =3D "s2mps11-pmic",
-> +		.name =3D "s2mps11-regulator",
->  	}, {
->  		.name =3D "s2mps14-rtc",
->  	}, {
-> @@ -78,7 +78,7 @@ static const struct mfd_cell s2mps11_devs[] =3D {
->  };
-> =20
->  static const struct mfd_cell s2mps13_devs[] =3D {
-> -	{ .name =3D "s2mps13-pmic", },
-> +	{ .name =3D "s2mps13-regulator", },
->  	{ .name =3D "s2mps13-rtc", },
->  	{
->  		.name =3D "s2mps13-clk",
-> @@ -88,7 +88,7 @@ static const struct mfd_cell s2mps13_devs[] =3D {
-> =20
->  static const struct mfd_cell s2mps14_devs[] =3D {
->  	{
-> -		.name =3D "s2mps14-pmic",
-> +		.name =3D "s2mps14-regulator",
->  	}, {
->  		.name =3D "s2mps14-rtc",
->  	}, {
-> @@ -116,7 +116,7 @@ static const struct mfd_cell s2mpa01_devs[] =3D {
-> =20
->  static const struct mfd_cell s2mpu02_devs[] =3D {
->  	{
-> -		.name =3D "s2mpu02-pmic",
-> +		.name =3D "s2mpu02-regulator",
->  	},
->  };
-> =20
+* xf86drm.h
+#define DRM_EVENT_CONTEXT_VERSION 2
+struct drmEventContext {
+   int version;
+   ...
+   void (*page_flip_handler)(...);
+}
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+* user
+struct foo {
+   .version = ...VERSION // 2
+   ...
+}
+
+
+API bump
+
+* xf86drm.h
+#define DRM_EVENT_CONTEXT_VERSION 3
+struct drmEventContext {
+   int version;
+   ...
+   void (*page_flip_handler)(...);
+   void (*page_flip_handler2)(...);
+}
+
+* user (hasn't been updated, only rebuilt)
+struct foo {
+   .version = ...VERSION // 3
+   ...
+   .page_flip_handler2 = 0 // ... or garbage.
+}
+
+
+* xf86drmMode.c
+int drmHandleEvent(...)
+{
+...
+if (foo.version >= 3)
+   foo.page_flip_handler2(); // boom !
+else
+   foo.page_flip_handler();
+...
+}
+
+
+Also worth mentioning is that the issue is rather wide spread rather
+than limited to libdrm :'(
+
+>
+>> Before you ask - yes current libdrm users are not doing the right
+>> thing and should be updated one of these days.
+> Maybe a dumb question, but what would be the right thing to do in may case.
+>
+> Define my own MY_XZY_EVENT_CONTEXT_VERSION and use these?
+>
+No need for extra defines imho. Just set the versions to 2 and 1 for
+evctx.base.version and evctx.version respectively.
+
+
+Glad to see some of the Samsung/Exynos people looking this way :-)
+
+Regards,
+Emil
