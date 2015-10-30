@@ -1,81 +1,36 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Fri, 30 Oct 2015 16:23:07 +0900
-Message-ID: <56331ADB.1070602@samsung.com>
-References: <cover.1446122247.git.p.fedin@samsung.com>
- <f1fbd1a7877090f4318705f0fccbf4d96c0ebc9c.1446122247.git.p.fedin@samsung.com>
- <56330E6E.50003@samsung.com> <00a101d112e0$537a18e0$fa6e4aa0$@samsung.com>
+Subject: Re: [PATCH v5 1/4] dt-bindings: mfd: s2mps11: add documentation for
+ s2mps15 PMIC
+Date: Fri, 30 Oct 2015 16:42:13 +0900
+Message-ID: <56331F55.3060308@samsung.com>
+References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
+ <1446186334-16510-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49759 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758527AbbJ3HXN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 03:23:13 -0400
-In-reply-to: <00a101d112e0$537a18e0$fa6e4aa0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1446186334-16510-2-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org, broonie@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>
 
-On 30.10.2015 15:58, Pavel Fedin wrote:
->  Hello!
+On 30.10.2015 15:25, Alim Akhtar wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
 > 
->>> Add documentation for new subnode properties, allowing bank configuration.
->>> Based on u-boot implementation, but heavily reworked.
->>
->> Please, carefully look at:
->> Documentation/devicetree/bindings/net/gpmc-eth.txt
->> Documentation/devicetree/bindings/bus/ti-gpmc.txt
+> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
+> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
+> This also supports RTC and three 32.768KHz clock outputs.
 > 
->  Thank you very much. Indeed, this looks very similar. By the way, should i document smsc over sromc in the same manner, writing
-> devicetree/bindings/net/sromc-eth.txt?
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/s2mps11.txt |   21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
 > 
->  This is a short reply for now, i'll make longer one (or just a new version) after studying these existing bindings and trying to
-> apply them.
 
-Existing SROMC bindings document is small so one document for everything
-should be sufficient. This can be always split if new type of devices
-will be using SROMC (BTW, do you know of any other devices using SROMC
-on Exynos?).
-
-> 
->  Pankaj:
-> 
->>> +&sromc {
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
->>> +
->>> +       ethernet@07000000 {
->>> +               compatible = "smsc,lan9115";
->>> +               reg = <0x07000000 0x10000>;
->>> +               phy-mode = "mii";
->>> +               interrupt-parent = <&gpx0>;
->>> +               interrupts = <5 8>;
->>> +               reg-io-width = <2>;
->>> +               smsc,irq-push-pull;
->>> +               smsc,force-internal-phy;
->>> +
->>> +               samsung,srom-bank = <3>;
->>> +               samsung,srom-data-width = <2>;
->>> +               samsung,srom-timing = <1 9 12 1 9 1 1>;
->>
->> I think this is not correct. We can't change binding of "smsc,lan9115"
->> which is already documented here [1]. These samsung specific srom
->> properties should be in srom node or its subnode, but not in this way.
-> 
->  So, if you look at gpmc-eth.txt, you'll see that this approach is perfectly valid (this is a reply to another msg, just don't want
-> to post one more single-line reply).
-
-
-Yes, the binding of smsc,lan9115 is not changed.
-
-Putting srom properties in separate bank node would be good also but
-then some mapping (connection) between ethernet and bank should be added
-probably...
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
