@@ -1,187 +1,57 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 09/13] exynos/fimg2d: add g2d_move
-Date: Fri, 30 Oct 2015 12:18:00 +0100
-Message-ID: <563351E8.7000007@math.uni-bielefeld.de>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 06/13] tests/exynos: add fimg2d event test
+Date: Fri, 30 Oct 2015 11:24:38 +0000
+Message-ID: <CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20151030161704.33346dab@hwh-ubuntu>
+	<1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+	<20151030155043.35acb278@hwh-ubuntu>
+	<5633519F.60607@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57643 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1030334AbbJ3LSC (ORCPT
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:36762 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030730AbbJ3LYj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 07:18:02 -0400
-In-Reply-To: <20151030161704.33346dab@hwh-ubuntu>
+	Fri, 30 Oct 2015 07:24:39 -0400
+Received: by igdg1 with SMTP id g1so9197459igd.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 04:24:38 -0700 (PDT)
+In-Reply-To: <5633519F.60607@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hyungwon Hwang <human.hwang@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Hyungwon Hwang <human.hwang@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
 
-Hello Hyungwon,
-
-
-Hyungwon Hwang wrote:
-> On Tue, 22 Sep 2015 17:54:58 +0200
-> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
-> 
->> We already have g2d_copy() which implements G2D copy
->> operations from one buffer to another. However we can't
->> do a overlapping copy operation in one buffer.
+On 30 October 2015 at 11:16, Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+> Hello Hyungwon,
+>
+> first of all thanks for reviewing the series!
+>
+>
+>
+> Hyungwon Hwang wrote:
+>> On Tue, 22 Sep 2015 17:54:55 +0200
+>> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
 >>
->> Add g2d_move() which acts like the standard memmove()
->> and properly handles overlapping copies.
+
+>>> +    evhandler->evctx.base.version = DRM_EVENT_CONTEXT_VERSION;
+>>> +    evhandler->evctx.version = EXYNOS_EVENT_CONTEXT_VERSION;
 >>
->> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  exynos/exynos_fimg2d.c | 94
->> ++++++++++++++++++++++++++++++++++++++++++++++++++
->> exynos/exynos_fimg2d.h |  3 ++ 2 files changed, 97 insertions(+)
->>
->> diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
->> index 4d5419c..8703629 100644
->> --- a/exynos/exynos_fimg2d.c
->> +++ b/exynos/exynos_fimg2d.c
->> @@ -540,6 +540,100 @@ g2d_copy(struct g2d_context *ctx, struct
->> g2d_image *src, }
->>  
->>  /**
->> + * g2d_move - move content inside single buffer.
->> + *	Similar to 'memmove' this moves a rectangular region
->> + *	of the provided buffer to another location (the source
->> + *	and destination region potentially overlapping).
->> + *
->> + * @ctx: a pointer to g2d_context structure.
->> + * @img: a pointer to g2d_image structure providing
->> + *	buffer information.
->> + * @src_x: x position of source rectangle.
->> + * @src_y: y position of source rectangle.
->> + * @dst_x: x position of destination rectangle.
->> + * @dst_y: y position of destination rectangle.
->> + * @w: width of rectangle to move.
->> + * @h: height of rectangle to move.
->> + */
->> +int
->> +g2d_move(struct g2d_context *ctx, struct g2d_image *img,
->> +		unsigned int src_x, unsigned int src_y,
->> +		unsigned int dst_x, unsigned dst_y, unsigned int w,
->> +		unsigned int h)
->> +{
->> +	union g2d_rop4_val rop4;
->> +	union g2d_point_val pt;
->> +	union g2d_direction_val dir;
->> +	unsigned int src_w, src_h, dst_w, dst_h;
->> +
->> +	src_w = w;
->> +	src_h = h;
->> +	if (src_x + img->width > w)
->> +		src_w = img->width - src_x;
->> +	if (src_y + img->height > h)
->> +		src_h = img->height - src_y;
->> +
->> +	dst_w = w;
->> +	dst_h = w;
->> +	if (dst_x + img->width > w)
->> +		dst_w = img->width - dst_x;
->> +	if (dst_y + img->height > h)
->> +		dst_h = img->height - dst_y;
->> +
->> +	w = MIN(src_w, dst_w);
->> +	h = MIN(src_h, dst_h);
->> +
->> +	if (w == 0 || h == 0) {
->> +		fprintf(stderr, MSG_PREFIX "invalid width or
->> height.\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (g2d_check_space(ctx, 13, 2))
->> +		return -ENOSPC;
->> +
->> +	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
->> +	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
->> +
->> +	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
->> +	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, img->color_mode);
->> +
->> +	g2d_add_base_addr(ctx, img, g2d_dst);
->> +	g2d_add_base_addr(ctx, img, g2d_src);
->> +
->> +	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
->> +	g2d_add_cmd(ctx, SRC_STRIDE_REG, img->stride);
->> +
->> +	dir.val[0] = dir.val[1] = 0;
->> +
->> +	if (dst_x >= src_x)
->> +		dir.data.src_x_direction = dir.data.dst_x_direction
->> = 1;
->> +	if (dst_y >= src_y)
->> +		dir.data.src_y_direction = dir.data.dst_y_direction
->> = 1; +
-> 
-> As I commented in the patch 08/13, I think that direction is related
-> with flip. If I am right, these two if statements looks awkward.
-I hope my other mail clear things up. The code above does exactly what
-it's supposed to do.
+>> The versions must be set not using XXX_EVENT_CONTEXT_VERSION. After the
+>> versions are bumped, the event will contains wrong version info.
+> Hmm, I don't see how this is true. Both DRM_EVENT_CONTEXT_VERSION and
+> EXYNOS_EVENT_CONTEXT_VERSION come from the public libdrm header. If the
+> version in the public header is bumped, then it's also bumped here. So I
+> don't see the issue.
+>
+The issue is that the public header defines the interface available,
+while you set the version that you implement. Currently those match,
+but if/when we expand the API (bumping the version in the header) and
+rebuild your program we will crash.
 
-You can also check this with the test application I incuded. E.g. you
-can remove the setting of the direction registers and quickly observe
-image corruption of the moved region.
+Before you ask - yes current libdrm users are not doing the right
+thing and should be updated one of these days.
 
-
-With best wishes,
-Tobias
-
-
-
-> 
-> Best regards,
-> Hyungwon Hwang
-> 
->> +	g2d_set_direction(ctx, &dir);
->> +
->> +	pt.data.x = src_x;
->> +	pt.data.y = src_y;
->> +	g2d_add_cmd(ctx, SRC_LEFT_TOP_REG, pt.val);
->> +	pt.data.x = src_x + w;
->> +	pt.data.y = src_y + h;
->> +	g2d_add_cmd(ctx, SRC_RIGHT_BOTTOM_REG, pt.val);
->> +
->> +	pt.data.x = dst_x;
->> +	pt.data.y = dst_y;
->> +	g2d_add_cmd(ctx, DST_LEFT_TOP_REG, pt.val);
->> +	pt.data.x = dst_x + w;
->> +	pt.data.y = dst_y + h;
->> +	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
->> +
->> +	rop4.val = 0;
->> +	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
->> +	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
->> +
->> +	return g2d_flush(ctx);
->> +}
->> +
->> +/**
->>   * g2d_copy_with_scale - copy contents in source buffer to
->> destination buffer
->>   *	scaling up or down properly.
->>   *
->> diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
->> index 9eee7c0..2700686 100644
->> --- a/exynos/exynos_fimg2d.h
->> +++ b/exynos/exynos_fimg2d.h
->> @@ -343,6 +343,9 @@ int g2d_copy(struct g2d_context *ctx, struct
->> g2d_image *src, struct g2d_image *dst, unsigned int src_x,
->>  		unsigned int src_y, unsigned int dst_x, unsigned int
->> dst_y, unsigned int w, unsigned int h);
->> +int g2d_move(struct g2d_context *ctx, struct g2d_image *img,
->> +		unsigned int src_x, unsigned int src_y, unsigned int
->> dst_x,
->> +		unsigned dst_y, unsigned int w, unsigned int h);
->>  int g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image
->> *src, struct g2d_image *dst, unsigned int src_x,
->>  				unsigned int src_y, unsigned int
->> src_w,
-> 
+-Emil
+P.S. Having some deja-vu here... I thought I mentioned this a while back.
