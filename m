@@ -1,103 +1,187 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 08/13] exynos: fimg2d: add g2d_set_direction
-Date: Fri, 30 Oct 2015 12:17:52 +0100
-Message-ID: <563351E0.3050108@math.uni-bielefeld.de>
+Subject: Re: [PATCH 09/13] exynos/fimg2d: add g2d_move
+Date: Fri, 30 Oct 2015 12:18:00 +0100
+Message-ID: <563351E8.7000007@math.uni-bielefeld.de>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-9-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20151030161401.3e2d327c@hwh-ubuntu>
+ <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20151030161704.33346dab@hwh-ubuntu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20151030161401.3e2d327c@hwh-ubuntu>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57643 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1030334AbbJ3LSC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Oct 2015 07:18:02 -0400
+In-Reply-To: <20151030161704.33346dab@hwh-ubuntu>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Hyungwon Hwang <human.hwang@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk
-List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gSHl1bmd3b24sCgoKSHl1bmd3b24gSHdhbmcgd3JvdGU6Cj4gT24gVHVlLCAyMiBTZXAg
-MjAxNSAxNzo1NDo1NyArMDIwMAo+IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmll
-bGVmZWxkLmRlPiB3cm90ZToKPiAKPj4gVGhpcyBhbGxvd3Mgc2V0dGluZyB0aGUgdHdvIGRpcmVj
-dGlvbiByZWdpc3RlcnMsIHdoaWNoIHNwZWNpZnkgaG93Cj4+IHRoZSBlbmdpbmUgYmxpdHMgcGl4
-ZWxzLiBUaGlzIGNhbiBiZSB1c2VkIGZvciBvdmVybGFwcGluZyBibGl0cywKPj4gd2hpY2ggaGFw
-cGVuIGUuZy4gd2hlbiAnbW92aW5nJyBhIHJlY3Rhbmd1bGFyIHJlZ2lvbiBpbnNpZGUgYQo+PiBm
-aXhlZCBidWZmZXIuCj4gCj4gQ29kZSBpdHNlbGYgbG9va3MgZ29vZC4gQnV0IGFzIEkga25vdywg
-ZGlyZWN0aW9uIHJlZ2lzdGVycyBhcmUgcmVsYXRlZAo+IHdpdGggZmxpcCwgbm90IG1vdmluZy4g
-SXNuJ3QgaXQ/IEkgYW0gbm90IHRoYXQgbXVjaCBmYW1pbGlhciB3aXRoIEcyRC4KPiBQbGVhc2Ug
-bGV0IG1lIGtub3cgaWYgSSBhbSB3cm9uZy4KdGhhdCdzIGNvcnJlY3QsIHlvdSBjYW4gdXNlIHRo
-ZSBkaXJlY3Rpb24gcmVnaXN0ZXJzIHRvIGltcGxlbWVudApmbGlwcGluZyBvcGVyYXRpb25zLgoK
-SG93ZXZlciB3aGF0IHRoZXkgcmVhbGx5IGRvIGlzIHRvIGNoYW5nZSB0aGUgb3BlcmF0aW9uIGRp
-cmVjdGlvbiBvZiB0aGUKRzJEIGVuZ2luZS4gU28geW91IGNhbiBtYW5hZ2UgaG93IHRoZSBlbmdp
-bmUgdHJhdmVyc2VzIHRocm91Z2ggcGl4ZWwKcm93cyBhbmQgY29sdW1uIChlaXRoZXIgaW4gZm9y
-d2FyZCBvciBpbiBiYWNrd2FyZCBkaXJlY3Rpb24pLgoKTm9ybWFsbHkgdGhpcyBkb2Vzbid0IG1h
-dHRlciwgbGlrZSBpdCBkb2Vzbid0IG1hdHRlciBpZiB5b3UgbWVtY3B5KCkKZnJvbSBvbmUgYnVm
-ZmVyIHRvIGFub3RoZXIgd2hlbiB0aGVyZSBpcyBubyBpbnRlcnNlY3Rpb24gb2YgdGhlIGJ1ZmZl
-cnMuCkhvd2V2ZXIgaWYgdGhlIHR3byBidWZmZXJzIG92ZXJsYXAgdGhlbiB5b3UgaGF2ZSB0byBi
-ZSBjYXJlZnVsIHdpdGggdGhlCmRpcmVjdGlvbiBpbiB3aGljaCB5b3UgdHJhdmVyc2UgdGhlIGJ1
-ZmZlci4KCk5vdyBpZiB5b3Ugc2V0IHRoZSB4LWRpcmVjdGlvbiBvZiB0aGUgc291cmNlIEcyRCBp
-bWFnZSB0byBmb3J3YXJkLCBidXQKdGhlIHgtZGlyZWN0aW9uIG9mIHRoZSBkZXN0aW5hdGlvbiB0
-byBiYWNrd2FyZCwgeW91IGdldCB5b3VyIG1lbnRpb25lZAp4LWZsaXBwaW5nLgoKVGhlIG1haW4g
-cHVycG9zZSBmb3IgZzJkX21vdmUoKSBpcyB0byBiZSB1c2VkIGUuZy4gaW4gYWNjZWxlcmF0aW9u
-IGNvZGUKZm9yIHRoZSBhcm1zb2MgWG9yZyBERFguIEEgY29tbW9uIG9wZXJhdGlvbiB0aGVyZSBp
-cyBub3QgbW92ZSBwaXhlbApyZWdpb25zIGFyb3VuZCBpbiB0aGUgc2FtZSBidWZmZXIuCgoKV2l0
-aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKUC5TLjogSSB0aGluayB0aGUgRXh5bm9zIHVzZXIgbWFu
-dWFsIG1lbnRpb25zIGZsaXBwaW5nIGFzIG9uZSBleGFtcGxlIG9uCmhvdyB0byB1c2UgdGhlc2Ug
-cmVnaXN0ZXJzLiBCdXQgbGlrZSBJIHNhaWQgYWJvdmUsIGl0J3MganVzdCBvbmUgd2F5IHRvCnVz
-ZSBpdC4KCgoKCj4gCj4gQmVzdCByZWdhcmRzLAo+IEh5dW5nd29uIEh3YW5nCj4gCj4+Cj4+IFNp
-Z25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRl
-Pgo+PiAtLS0KPj4gIGV4eW5vcy9leHlub3NfZmltZzJkLmMgfCAxMyArKysrKysrKysrKysrCj4+
-ICBleHlub3MvZXh5bm9zX2ZpbWcyZC5oIHwgMzggKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysKPj4gIDIgZmlsZXMgY2hhbmdlZCwgNTEgaW5zZXJ0aW9ucygrKQo+Pgo+PiBk
-aWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYyBiL2V4eW5vcy9leHlub3NfZmltZzJk
-LmMKPj4gaW5kZXggZTk5N2Q0Yi4uNGQ1NDE5YyAxMDA2NDQKPj4gLS0tIGEvZXh5bm9zL2V4eW5v
-c19maW1nMmQuYwo+PiArKysgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5jCj4+IEBAIC0yNDIsNiAr
-MjQyLDE5IEBAIHN0YXRpYyB2b2lkIGcyZF9hZGRfYmFzZV9hZGRyKHN0cnVjdCBnMmRfY29udGV4
-dAo+PiAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICppbWcsIH0KPj4gIAo+PiAgLyoKPj4gKyAqIGcy
-ZF9zZXRfZGlyZWN0aW9uIC0gc2V0dXAgZGlyZWN0aW9uIHJlZ2lzdGVyICh1c2VmdWwgZm9yCj4+
-IG92ZXJsYXBwaW5nIGJsaXRzKS4KPj4gKyAqCj4+ICsgKiBAY3R4OiBhIHBvaW50ZXIgdG8gZzJk
-X2NvbnRleHQgc3RydWN0dXJlLgo+PiArICogQGRpcjogYSBwb2ludGVyIHRvIHRoZSBnMmRfZGly
-ZWN0aW9uX3ZhbCBzdHJ1Y3R1cmUuCj4+ICsgKi8KPj4gK3N0YXRpYyB2b2lkIGcyZF9zZXRfZGly
-ZWN0aW9uKHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LAo+PiArCQkJY29uc3QgdW5pb24gZzJkX2Rp
-cmVjdGlvbl92YWwgKmRpcikKPj4gK3sKPj4gKwlnMmRfYWRkX2NtZChjdHgsIFNSQ19NQVNLX0RJ
-UkVDVF9SRUcsIGRpci0+dmFsWzBdKTsKPj4gKwlnMmRfYWRkX2NtZChjdHgsIERTVF9QQVRfRElS
-RUNUX1JFRywgZGlyLT52YWxbMV0pOwo+PiArfQo+PiArCj4+ICsvKgo+PiAgICogZzJkX3Jlc2V0
-IC0gcmVzZXQgZmltZzJkIGhhcmR3YXJlLgo+PiAgICoKPj4gICAqIEBjdHg6IGEgcG9pbnRlciB0
-byBnMmRfY29udGV4dCBzdHJ1Y3R1cmUuCj4+IGRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2Zp
-bWcyZC5oIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuaAo+PiBpbmRleCBjNmI1OGFjLi45ZWVlN2Mw
-IDEwMDY0NAo+PiAtLS0gYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5oCj4+ICsrKyBiL2V4eW5vcy9l
-eHlub3NfZmltZzJkLmgKPj4gQEAgLTE4OSw2ICsxODksMTEgQEAgZW51bSBlX2cyZF9leGVjX2Zs
-YWcgewo+PiAgCUcyRF9FWEVDX0ZMQUdfQVNZTkMgPSAoMSA8PCAwKQo+PiAgfTsKPj4gIAo+PiAr
-ZW51bSBlX2cyZF9kaXJfbW9kZSB7Cj4+ICsJRzJEX0RJUl9NT0RFX1BPU0lUSVZFID0gMCwKPj4g
-KwlHMkRfRElSX01PREVfTkVHQVRJVkUgPSAxCj4+ICt9Owo+PiArCj4+ICB1bmlvbiBnMmRfcG9p
-bnRfdmFsIHsKPj4gIAl1bnNpZ25lZCBpbnQgdmFsOwo+PiAgCXN0cnVjdCB7Cj4+IEBAIC0yNjks
-NiArMjc0LDM5IEBAIHVuaW9uIGcyZF9ibGVuZF9mdW5jX3ZhbCB7Cj4+ICAJfSBkYXRhOwo+PiAg
-fTsKPj4gIAo+PiArdW5pb24gZzJkX2RpcmVjdGlvbl92YWwgewo+PiArCXVuc2lnbmVkIGludCB2
-YWxbMl07Cj4+ICsJc3RydWN0IHsKPj4gKwkJLyogU1JDX01TS19ESVJFQ1RfUkVHIFswOjFdIChz
-b3VyY2UpICovCj4+ICsJCWVudW0gZV9nMmRfZGlyX21vZGUJCXNyY194X2RpcmVjdGlvbjoxOwo+
-PiArCQllbnVtIGVfZzJkX2Rpcl9tb2RlCQlzcmNfeV9kaXJlY3Rpb246MTsKPj4gKwo+PiArCQkv
-KiBTUkNfTVNLX0RJUkVDVF9SRUcgWzI6M10gKi8KPj4gKwkJdW5zaWduZWQgaW50CQkJcmV2ZXJz
-ZWQxOjI7Cj4+ICsKPj4gKwkJLyogU1JDX01TS19ESVJFQ1RfUkVHIFs0OjVdIChtYXNrKSAqLwo+
-PiArCQllbnVtIGVfZzJkX2Rpcl9tb2RlCj4+IG1hc2tfeF9kaXJlY3Rpb246MTsKPj4gKwkJZW51
-bSBlX2cyZF9kaXJfbW9kZQo+PiBtYXNrX3lfZGlyZWN0aW9uOjE7ICsKPj4gKwkJLyogU1JDX01T
-S19ESVJFQ1RfUkVHIFs2OjMxXSAqLwo+PiArCQl1bnNpZ25lZCBpbnQJCQlwYWRkaW5nMToyNjsK
-Pj4gKwo+PiArCQkvKiBEU1RfUEFUX0RJUkVDVF9SRUcgWzA6MV0gKGRlc3RpbmF0aW9uKSAqLwo+
-PiArCQllbnVtIGVfZzJkX2Rpcl9tb2RlCQlkc3RfeF9kaXJlY3Rpb246MTsKPj4gKwkJZW51bSBl
-X2cyZF9kaXJfbW9kZQkJZHN0X3lfZGlyZWN0aW9uOjE7Cj4+ICsKPj4gKwkJLyogRFNUX1BBVF9E
-SVJFQ1RfUkVHIFsyOjNdICovCj4+ICsJCXVuc2lnbmVkIGludAkJCXJldmVyc2VkMjoyOwo+PiAr
-Cj4+ICsJCS8qIERTVF9QQVRfRElSRUNUX1JFRyBbNDo1XSAocGF0dGVybikgKi8KPj4gKwkJZW51
-bSBlX2cyZF9kaXJfbW9kZQkJcGF0X3hfZGlyZWN0aW9uOjE7Cj4+ICsJCWVudW0gZV9nMmRfZGly
-X21vZGUJCXBhdF95X2RpcmVjdGlvbjoxOwo+PiArCj4+ICsJCS8qIERTVF9QQVRfRElSRUNUX1JF
-RyBbNjozMV0gKi8KPj4gKwkJdW5zaWduZWQgaW50CQkJcGFkZGluZzI6MjY7Cj4+ICsJfSBkYXRh
-Owo+PiArfTsKPj4gKwo+PiAgc3RydWN0IGcyZF9pbWFnZSB7Cj4+ICAJZW51bSBlX2cyZF9zZWxl
-Y3RfbW9kZQkJc2VsZWN0X21vZGU7Cj4+ICAJZW51bSBlX2cyZF9jb2xvcl9tb2RlCQljb2xvcl9t
-b2RlOwo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello Hyungwon,
+
+
+Hyungwon Hwang wrote:
+> On Tue, 22 Sep 2015 17:54:58 +0200
+> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+> 
+>> We already have g2d_copy() which implements G2D copy
+>> operations from one buffer to another. However we can't
+>> do a overlapping copy operation in one buffer.
+>>
+>> Add g2d_move() which acts like the standard memmove()
+>> and properly handles overlapping copies.
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  exynos/exynos_fimg2d.c | 94
+>> ++++++++++++++++++++++++++++++++++++++++++++++++++
+>> exynos/exynos_fimg2d.h |  3 ++ 2 files changed, 97 insertions(+)
+>>
+>> diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+>> index 4d5419c..8703629 100644
+>> --- a/exynos/exynos_fimg2d.c
+>> +++ b/exynos/exynos_fimg2d.c
+>> @@ -540,6 +540,100 @@ g2d_copy(struct g2d_context *ctx, struct
+>> g2d_image *src, }
+>>  
+>>  /**
+>> + * g2d_move - move content inside single buffer.
+>> + *	Similar to 'memmove' this moves a rectangular region
+>> + *	of the provided buffer to another location (the source
+>> + *	and destination region potentially overlapping).
+>> + *
+>> + * @ctx: a pointer to g2d_context structure.
+>> + * @img: a pointer to g2d_image structure providing
+>> + *	buffer information.
+>> + * @src_x: x position of source rectangle.
+>> + * @src_y: y position of source rectangle.
+>> + * @dst_x: x position of destination rectangle.
+>> + * @dst_y: y position of destination rectangle.
+>> + * @w: width of rectangle to move.
+>> + * @h: height of rectangle to move.
+>> + */
+>> +int
+>> +g2d_move(struct g2d_context *ctx, struct g2d_image *img,
+>> +		unsigned int src_x, unsigned int src_y,
+>> +		unsigned int dst_x, unsigned dst_y, unsigned int w,
+>> +		unsigned int h)
+>> +{
+>> +	union g2d_rop4_val rop4;
+>> +	union g2d_point_val pt;
+>> +	union g2d_direction_val dir;
+>> +	unsigned int src_w, src_h, dst_w, dst_h;
+>> +
+>> +	src_w = w;
+>> +	src_h = h;
+>> +	if (src_x + img->width > w)
+>> +		src_w = img->width - src_x;
+>> +	if (src_y + img->height > h)
+>> +		src_h = img->height - src_y;
+>> +
+>> +	dst_w = w;
+>> +	dst_h = w;
+>> +	if (dst_x + img->width > w)
+>> +		dst_w = img->width - dst_x;
+>> +	if (dst_y + img->height > h)
+>> +		dst_h = img->height - dst_y;
+>> +
+>> +	w = MIN(src_w, dst_w);
+>> +	h = MIN(src_h, dst_h);
+>> +
+>> +	if (w == 0 || h == 0) {
+>> +		fprintf(stderr, MSG_PREFIX "invalid width or
+>> height.\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (g2d_check_space(ctx, 13, 2))
+>> +		return -ENOSPC;
+>> +
+>> +	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
+>> +	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+>> +
+>> +	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
+>> +	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, img->color_mode);
+>> +
+>> +	g2d_add_base_addr(ctx, img, g2d_dst);
+>> +	g2d_add_base_addr(ctx, img, g2d_src);
+>> +
+>> +	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
+>> +	g2d_add_cmd(ctx, SRC_STRIDE_REG, img->stride);
+>> +
+>> +	dir.val[0] = dir.val[1] = 0;
+>> +
+>> +	if (dst_x >= src_x)
+>> +		dir.data.src_x_direction = dir.data.dst_x_direction
+>> = 1;
+>> +	if (dst_y >= src_y)
+>> +		dir.data.src_y_direction = dir.data.dst_y_direction
+>> = 1; +
+> 
+> As I commented in the patch 08/13, I think that direction is related
+> with flip. If I am right, these two if statements looks awkward.
+I hope my other mail clear things up. The code above does exactly what
+it's supposed to do.
+
+You can also check this with the test application I incuded. E.g. you
+can remove the setting of the direction registers and quickly observe
+image corruption of the moved region.
+
+
+With best wishes,
+Tobias
+
+
+
+> 
+> Best regards,
+> Hyungwon Hwang
+> 
+>> +	g2d_set_direction(ctx, &dir);
+>> +
+>> +	pt.data.x = src_x;
+>> +	pt.data.y = src_y;
+>> +	g2d_add_cmd(ctx, SRC_LEFT_TOP_REG, pt.val);
+>> +	pt.data.x = src_x + w;
+>> +	pt.data.y = src_y + h;
+>> +	g2d_add_cmd(ctx, SRC_RIGHT_BOTTOM_REG, pt.val);
+>> +
+>> +	pt.data.x = dst_x;
+>> +	pt.data.y = dst_y;
+>> +	g2d_add_cmd(ctx, DST_LEFT_TOP_REG, pt.val);
+>> +	pt.data.x = dst_x + w;
+>> +	pt.data.y = dst_y + h;
+>> +	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
+>> +
+>> +	rop4.val = 0;
+>> +	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
+>> +	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
+>> +
+>> +	return g2d_flush(ctx);
+>> +}
+>> +
+>> +/**
+>>   * g2d_copy_with_scale - copy contents in source buffer to
+>> destination buffer
+>>   *	scaling up or down properly.
+>>   *
+>> diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
+>> index 9eee7c0..2700686 100644
+>> --- a/exynos/exynos_fimg2d.h
+>> +++ b/exynos/exynos_fimg2d.h
+>> @@ -343,6 +343,9 @@ int g2d_copy(struct g2d_context *ctx, struct
+>> g2d_image *src, struct g2d_image *dst, unsigned int src_x,
+>>  		unsigned int src_y, unsigned int dst_x, unsigned int
+>> dst_y, unsigned int w, unsigned int h);
+>> +int g2d_move(struct g2d_context *ctx, struct g2d_image *img,
+>> +		unsigned int src_x, unsigned int src_y, unsigned int
+>> dst_x,
+>> +		unsigned dst_y, unsigned int w, unsigned int h);
+>>  int g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image
+>> *src, struct g2d_image *dst, unsigned int src_x,
+>>  				unsigned int src_y, unsigned int
+>> src_w,
+> 
