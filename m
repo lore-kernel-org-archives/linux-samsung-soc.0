@@ -1,199 +1,441 @@
 From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 06/13] tests/exynos: add fimg2d event test
-Date: Fri, 30 Oct 2015 15:50:43 +0900
-Message-ID: <20151030155043.35acb278@hwh-ubuntu>
+Subject: Re: [PATCH 03/13] tests/exynos: add fimg2d performance analysis
+Date: Fri, 30 Oct 2015 15:51:26 +0900
+Message-ID: <20151030155126.371b9bcc@hwh-ubuntu>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1442937302-8211-4-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:45116 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751926AbbJ3Gv2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Oct 2015 02:51:28 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NX001X78TPQBUB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Oct 2015 15:51:26 +0900 (KST)
+In-reply-to: <1442937302-8211-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-T24gVHVlLCAyMiBTZXAgMjAxNSAxNzo1NDo1NSArMDIwMApUb2JpYXMgSmFrb2JpIDx0amFrb2Jp
-QG1hdGgudW5pLWJpZWxlZmVsZC5kZT4gd3JvdGU6Cgo+IFRoaXMgdGVzdHMgYXN5bmMgcHJvY2Vz
-c2luZyBvZiBHMkQgam9icy4gQSBzZXBhcmF0ZSB0aHJlYWQgaXMgc3Bhd25lZAo+IHRvIG1vbml0
-b3IgdGhlIERSTSBmZCBmb3IgZXZlbnRzIGFuZCBjaGVjayB3aGV0aGVyIGEgRzJEIGpvYiB3YXMK
-PiBjb21wbGV0ZWQuCj4gCj4gdjI6IEFkZCBHUEx2MiBoZWFkZXIsIGFyZ3VtZW50IGhhbmRsaW5n
-IGFuZCBkb2N1bWVudGF0aW9uLgo+ICAgICBUZXN0IGlzIG9ubHkgaW5zdGFsbGVkIHdoZW4gcmVx
-dWVzdGVkLgo+IHYzOiBBbGxvY2F0ZSBHMkQgam9icyB3aXRoIGNhbGxvYyB3aGljaCBmaXhlcyAn
-YnVzeScgYmVpbmcKPiAgICAgcG90ZW50aWFsbHkgdW5pbml0aWFsaXplZC4gQWxzbyBlbmFibGUg
-dGltZW91dCBmb3IgcG9sbCgpCj4gICAgIGluIHRoZSBtb25pdG9yIHRocmVhZC4gVGhpcyBmaXhl
-cyBwdGhyZWFkX2pvaW4oKSBub3Qgd29ya2luZwo+ICAgICBiZWNhdXNlIG9mIHBvbGwoKSBub3Qg
-cmV0dXJuaW5nLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0
-aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+ICB0ZXN0cy9leHlub3MvTWFrZWZpbGUuYW0gICAg
-ICAgICAgIHwgIDExICstCj4gIHRlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX2V2ZW50LmMgfCAz
-MjYKPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrIDIgZmlsZXMgY2hhbmdl
-ZCwgMzM1Cj4gaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkgY3JlYXRlIG1vZGUgMTAwNjQ0
-Cj4gdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfZXZlbnQuYwo+IAo+IGRpZmYgLS1naXQgYS90
-ZXN0cy9leHlub3MvTWFrZWZpbGUuYW0gYi90ZXN0cy9leHlub3MvTWFrZWZpbGUuYW0KPiBpbmRl
-eCBlODJkMTk5Li4zNTdkNmI4IDEwMDY0NAo+IC0tLSBhL3Rlc3RzL2V4eW5vcy9NYWtlZmlsZS5h
-bQo+ICsrKyBiL3Rlc3RzL2V4eW5vcy9NYWtlZmlsZS5hbQo+IEBAIC0yMCwxNiArMjAsMjMgQEAg
-ZW5kaWYKPiAgCj4gIGlmIEhBVkVfSU5TVEFMTF9URVNUUwo+ICBiaW5fUFJPR1JBTVMgKz0gXAo+
-IC0JZXh5bm9zX2ZpbWcyZF9wZXJmCj4gKwlleHlub3NfZmltZzJkX3BlcmYgXAo+ICsJZXh5bm9z
-X2ZpbWcyZF9ldmVudAo+ICBlbHNlCj4gIG5vaW5zdF9QUk9HUkFNUyArPSBcCj4gLQlleHlub3Nf
-ZmltZzJkX3BlcmYKPiArCWV4eW5vc19maW1nMmRfcGVyZiBcCj4gKwlleHlub3NfZmltZzJkX2V2
-ZW50Cj4gIGVuZGlmCj4gIAo+ICBleHlub3NfZmltZzJkX3BlcmZfTERBREQgPSBcCj4gIAkkKHRv
-cF9idWlsZGRpcikvbGliZHJtLmxhIFwKPiAgCSQodG9wX2J1aWxkZGlyKS9leHlub3MvbGliZHJt
-X2V4eW5vcy5sYQo+ICAKPiArZXh5bm9zX2ZpbWcyZF9ldmVudF9MREFERCA9IFwKPiArCSQodG9w
-X2J1aWxkZGlyKS9saWJkcm0ubGEgXAo+ICsJJCh0b3BfYnVpbGRkaXIpL2V4eW5vcy9saWJkcm1f
-ZXh5bm9zLmxhIFwKPiArCS1scHRocmVhZAo+ICsKPiAgZXh5bm9zX2ZpbWcyZF90ZXN0X0xEQURE
-ID0gXAo+ICAJJCh0b3BfYnVpbGRkaXIpL2xpYmRybS5sYSBcCj4gIAkkKHRvcF9idWlsZGRpcikv
-bGlia21zL2xpYmttcy5sYSBcCj4gZGlmZiAtLWdpdCBhL3Rlc3RzL2V4eW5vcy9leHlub3NfZmlt
-ZzJkX2V2ZW50LmMKPiBiL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX2V2ZW50LmMgbmV3IGZp
-bGUgbW9kZSAxMDA2NDQKPiBpbmRleCAwMDAwMDAwLi5jMDNkY2ZmCj4gLS0tIC9kZXYvbnVsbAo+
-ICsrKyBiL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX2V2ZW50LmMKPiBAQCAtMCwwICsxLDMy
-NiBAQAo+ICsvKgo+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTUgLSBUb2JpYXMgSmFrb2JpCj4gKyAq
-Cj4gKyAqIFRoaXMgaXMgZnJlZSBzb2Z0d2FyZTogeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5k
-L29yIG1vZGlmeQo+ICsgKiBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1
-YmxpYyBMaWNlbnNlIGFzIHB1Ymxpc2hlZAo+ICsgKiBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3Vu
-ZGF0aW9uLCBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSBMaWNlbnNlLAo+ICsgKiBvciAoYXQgeW91
-ciBvcHRpb24pIGFueSBsYXRlciB2ZXJzaW9uLgo+ICsgKgo+ICsgKiBJdCBpcyBkaXN0cmlidXRl
-ZCBpbiB0aGUgaG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVsLCBidXQKPiArICogV0lUSE9VVCBB
-TlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUgaW1wbGllZCB3YXJyYW50eSBvZgo+ICsgKiBN
-RVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UuIFNlZSB0
-aGUKPiArICogR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgZm9yIG1vcmUgZGV0YWlscy4KPiAr
-ICogWW91IHNob3VsZCBoYXZlIHJlY2VpdmVkIGEgY29weSBvZiB0aGUgR05VIEdlbmVyYWwgUHVi
-bGljIExpY2Vuc2UKPiArICogYWxvbmcgd2l0aCBpdC4gSWYgbm90LCBzZWUgPGh0dHA6Ly93d3cu
-Z251Lm9yZy9saWNlbnNlcy8+Lgo+ICsgKi8KPiArCj4gKyNpbmNsdWRlIDx1bmlzdGQuaD4KPiAr
-I2luY2x1ZGUgPHBvbGwuaD4KPiArCj4gKyNpbmNsdWRlIDxzdGRsaWIuaD4KPiArI2luY2x1ZGUg
-PHN0ZGlvLmg+Cj4gKyNpbmNsdWRlIDx0aW1lLmg+Cj4gKyNpbmNsdWRlIDxnZXRvcHQuaD4KPiAr
-Cj4gKyNpbmNsdWRlIDxwdGhyZWFkLmg+Cj4gKwo+ICsjaW5jbHVkZSA8eGY4NmRybS5oPgo+ICsK
-PiArI2luY2x1ZGUgImV4eW5vc19kcm0uaCIKPiArI2luY2x1ZGUgImV4eW5vc19kcm1pZi5oIgo+
-ICsjaW5jbHVkZSAiZXh5bm9zX2ZpbWcyZC5oIgo+ICsKPiArc3RydWN0IGcyZF9qb2Igewo+ICsJ
-dW5zaWduZWQgaW50IGlkOwo+ICsJdW5zaWduZWQgaW50IGJ1c3k7Cj4gK307Cj4gKwo+ICtzdHJ1
-Y3QgZXh5bm9zX2V2aGFuZGxlciB7Cj4gKwlzdHJ1Y3QgcG9sbGZkIGZkczsKPiArCXN0cnVjdCBl
-eHlub3NfZXZlbnRfY29udGV4dCBldmN0eDsKPiArfTsKPiArCj4gK3N0cnVjdCB0aHJlYWRkYXRh
-IHsKPiArCXVuc2lnbmVkIGludCBzdG9wOwo+ICsJc3RydWN0IGV4eW5vc19kZXZpY2UgKmRldjsK
-PiArCXN0cnVjdCBleHlub3NfZXZoYW5kbGVyIGV2aGFuZGxlcjsKPiArfTsKPiArCj4gK3N0YXRp
-YyB2b2lkIGcyZF9ldmVudF9oYW5kbGVyKGludCBmZCwgdW5zaWduZWQgaW50IGNtZGxpc3Rfbm8s
-Cj4gdW5zaWduZWQgaW50IHR2X3NlYywKPiArCQkJCQkJCXVuc2lnbmVkIGludAo+IHR2X3VzZWMs
-IHZvaWQgKnVzZXJfZGF0YSkgK3sKPiArCXN0cnVjdCBnMmRfam9iICpqb2IgPSB1c2VyX2RhdGE7
-Cj4gKwo+ICsJZnByaW50ZihzdGRlcnIsICJpbmZvOiBnMmQgam9iIChpZCA9ICV1LCBjbWRsaXN0
-IG51bWJlciA9Cj4gJXUpIGZpbmlzaGVkIVxuIiwKPiArCQkJam9iLT5pZCwgY21kbGlzdF9ubyk7
-Cj4gKwo+ICsJam9iLT5idXN5ID0gMDsKPiArfQo+ICsKPiArc3RhdGljIHZvaWQgc2V0dXBfZzJk
-X2V2ZW50X2hhbmRsZXIoc3RydWN0IGV4eW5vc19ldmhhbmRsZXIKPiAqZXZoYW5kbGVyLCBpbnQg
-ZmQpICt7Cj4gKwlldmhhbmRsZXItPmZkcy5mZCA9IGZkOwo+ICsJZXZoYW5kbGVyLT5mZHMuZXZl
-bnRzID0gUE9MTElOOwo+ICsJZXZoYW5kbGVyLT5ldmN0eC5iYXNlLnZlcnNpb24gPSBEUk1fRVZF
-TlRfQ09OVEVYVF9WRVJTSU9OOwo+ICsJZXZoYW5kbGVyLT5ldmN0eC52ZXJzaW9uID0gRVhZTk9T
-X0VWRU5UX0NPTlRFWFRfVkVSU0lPTjsKClRoZSB2ZXJzaW9ucyBtdXN0IGJlIHNldCBub3QgdXNp
-bmcgWFhYX0VWRU5UX0NPTlRFWFRfVkVSU0lPTi4gQWZ0ZXIgdGhlCnZlcnNpb25zIGFyZSBidW1w
-ZWQsIHRoZSBldmVudCB3aWxsIGNvbnRhaW5zIHdyb25nIHZlcnNpb24gaW5mby4KCkFsc28sIEkg
-dGhpbmsgdGhlIHR5cGUgb2YgZXZlbnQgbXVzdCBiZSBzZXQgaGVyZS4KCkJlc3QgcmVnYXJkcywK
-SHl1bmd3b24gSHdhbmcKCj4gKwlldmhhbmRsZXItPmV2Y3R4LmcyZF9ldmVudF9oYW5kbGVyID0g
-ZzJkX2V2ZW50X2hhbmRsZXI7Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkKiB0aHJlYWRmdW5jKHZv
-aWQgKmFyZykgewo+ICsJY29uc3QgaW50IHRpbWVvdXQgPSAwOwo+ICsJc3RydWN0IHRocmVhZGRh
-dGEgKmRhdGE7Cj4gKwo+ICsJZGF0YSA9IGFyZzsKPiArCj4gKwl3aGlsZSAoMSkgewo+ICsJCWlm
-IChkYXRhLT5zdG9wKSBicmVhazsKPiArCj4gKwkJdXNsZWVwKDUwMCk7Cj4gKwo+ICsJCWRhdGEt
-PmV2aGFuZGxlci5mZHMucmV2ZW50cyA9IDA7Cj4gKwo+ICsJCWlmIChwb2xsKCZkYXRhLT5ldmhh
-bmRsZXIuZmRzLCAxLCB0aW1lb3V0KSA8IDApCj4gKwkJCWNvbnRpbnVlOwo+ICsKPiArCQlpZiAo
-ZGF0YS0+ZXZoYW5kbGVyLmZkcy5yZXZlbnRzICYgKFBPTExIVVAgfAo+IFBPTExFUlIpKQo+ICsJ
-CQljb250aW51ZTsKPiArCj4gKwkJaWYgKGRhdGEtPmV2aGFuZGxlci5mZHMucmV2ZW50cyAmIFBP
-TExJTikKPiArCQkJZXh5bm9zX2hhbmRsZV9ldmVudChkYXRhLT5kZXYsCj4gJmRhdGEtPmV2aGFu
-ZGxlci5ldmN0eCk7Cj4gKwl9Cj4gKwo+ICsJcHRocmVhZF9leGl0KDApOwo+ICt9Cj4gKwo+ICsv
-Kgo+ICsgKiBXZSBuZWVkIHRvIHdhaXQgdW50aWwgYWxsIEcyRCBqb2JzIGFyZSBmaW5pc2hlZCwg
-b3RoZXJ3aXNlIHdlCj4gKyAqIHBvdGVudGlhbGx5IHJlbW92ZSBhIEJPIHdoaWNoIHRoZSBlbmdp
-bmUgc3RpbGwgb3BlcmF0ZXMgb24uCj4gKyAqIFRoaXMgcmVzdWx0cyBpbiB0aGUgZm9sbG93aW5n
-IGtlcm5lbCBtZXNzYWdlOgo+ICsgKiBbZHJtOmV4eW5vc19kcm1fZ2VtX3B1dF9kbWFfYWRkcl0g
-KkVSUk9SKiBmYWlsZWQgdG8gbG9va3VwIGdlbQo+IG9iamVjdC4KPiArICogQWxzbyBhbnkgc3Vi
-c2VxdWVudCBCTyBhbGxvY2F0aW9ucyBmYWlsIHRoZW4gd2l0aDoKPiArICogW2RybTpleHlub3Nf
-ZHJtX2FsbG9jX2J1Zl0gKkVSUk9SKiBmYWlsZWQgdG8gYWxsb2NhdGUgYnVmZmVyLgo+ICsgKi8K
-PiArc3RhdGljIHZvaWQgd2FpdF9hbGxfam9icyhzdHJ1Y3QgZzJkX2pvYiogam9icywgdW5zaWdu
-ZWQgbnVtX2pvYnMpCj4gK3sKPiArCXVuc2lnbmVkIGk7Cj4gKwo+ICsJZm9yIChpID0gMDsgaSA8
-IG51bV9qb2JzOyArK2kpIHsKPiArCQl3aGlsZSAoam9ic1tpXS5idXN5KQo+ICsJCQl1c2xlZXAo
-NTAwKTsKPiArCX0KPiArCj4gK30KPiArCj4gK3N0YXRpYyBzdHJ1Y3QgZzJkX2pvYiogZnJlZV9q
-b2Ioc3RydWN0IGcyZF9qb2IqIGpvYnMsIHVuc2lnbmVkCj4gbnVtX2pvYnMpICt7Cj4gKwl1bnNp
-Z25lZCBpOwo+ICsKPiArCWZvciAoaSA9IDA7IGkgPCBudW1fam9iczsgKytpKSB7Cj4gKwkJaWYg
-KGpvYnNbaV0uYnVzeSA9PSAwKQo+ICsJCQlyZXR1cm4gJmpvYnNbaV07Cj4gKwl9Cj4gKwo+ICsJ
-cmV0dXJuIE5VTEw7Cj4gK30KPiArCj4gK3N0YXRpYyBpbnQgZzJkX3dvcmsoc3RydWN0IGcyZF9j
-b250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1hZ2UgKmltZywKPiArCQkJCQl1bnNpZ25lZCBudW1f
-am9icywgdW5zaWduZWQKPiBpdGVyYXRpb25zKSArewo+ICsJc3RydWN0IGcyZF9qb2IgKmpvYnMg
-PSBjYWxsb2MobnVtX2pvYnMsIHNpemVvZihzdHJ1Y3QKPiBnMmRfam9iKSk7Cj4gKwlpbnQgcmV0
-Owo+ICsJdW5zaWduZWQgaTsKPiArCj4gKwkvKiBzZXR1cCBqb2IgaWRzICovCj4gKwlmb3IgKGkg
-PSAwOyBpIDwgbnVtX2pvYnM7ICsraSkKPiArCQlqb2JzW2ldLmlkID0gaTsKPiArCj4gKwlmb3Ig
-KGkgPSAwOyBpIDwgaXRlcmF0aW9uczsgKytpKSB7Cj4gKwkJdW5zaWduZWQgeCwgeSwgdywgaDsK
-PiArCj4gKwkJc3RydWN0IGcyZF9qb2IgKmogPSBOVUxMOwo+ICsKPiArCQl3aGlsZSAoMSkgewo+
-ICsJCQlqID0gZnJlZV9qb2Ioam9icywgbnVtX2pvYnMpOwo+ICsKPiArCQkJaWYgKGopCj4gKwkJ
-CQlicmVhazsKPiArCQkJZWxzZQo+ICsJCQkJdXNsZWVwKDUwMCk7Cj4gKwkJfQo+ICsKPiArCQl4
-ID0gcmFuZCgpICUgaW1nLT53aWR0aDsKPiArCQl5ID0gcmFuZCgpICUgaW1nLT5oZWlnaHQ7Cj4g
-Kwo+ICsJCWlmICh4ID09IChpbWctPndpZHRoIC0gMSkpCj4gKwkJCXggLT0gMTsKPiArCQlpZiAo
-eSA9PSAoaW1nLT5oZWlnaHQgLSAxKSkKPiArCQkJeSAtPSAxOwo+ICsKPiArCQl3ID0gcmFuZCgp
-ICUgKGltZy0+d2lkdGggLSB4KTsKPiArCQloID0gcmFuZCgpICUgKGltZy0+aGVpZ2h0IC0geSk7
-Cj4gKwo+ICsJCWlmICh3ID09IDApIHcgPSAxOwo+ICsJCWlmIChoID09IDApIGggPSAxOwo+ICsK
-PiArCQlpbWctPmNvbG9yID0gcmFuZCgpOwo+ICsKPiArCQlqLT5idXN5ID0gMTsKPiArCQlnMmRf
-Y29uZmlnX2V2ZW50KGN0eCwgaik7Cj4gKwo+ICsJCXJldCA9IGcyZF9zb2xpZF9maWxsKGN0eCwg
-aW1nLCB4LCB5LCB3LCBoKTsKPiArCj4gKwkJaWYgKHJldCA9PSAwKQo+ICsJCQlnMmRfZXhlYzIo
-Y3R4LCBHMkRfRVhFQ19GTEFHX0FTWU5DKTsKPiArCj4gKwkJaWYgKHJldCAhPSAwKSB7Cj4gKwkJ
-CWZwcmludGYoc3RkZXJyLCAiZXJyb3I6IGl0ZXJhdGlvbiAldSAoeCA9Cj4gJXUsIHggPSAldSwg
-eCA9ICV1LCB4ID0gJXUpIGZhaWxlZFxuIiwKPiArCQkJCQlpLCB4LCB5LCB3LCBoKTsKPiArCQkJ
-YnJlYWs7Cj4gKwkJfQo+ICsJfQo+ICsKPiArCXdhaXRfYWxsX2pvYnMoam9icywgbnVtX2pvYnMp
-Owo+ICsJZnJlZShqb2JzKTsKPiArCj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiArc3RhdGljIHZv
-aWQgdXNhZ2UoY29uc3QgY2hhciAqbmFtZSkKPiArewo+ICsJZnByaW50ZihzdGRlcnIsICJ1c2Fn
-ZTogJXMgWy1pandoXVxuXG4iLCBuYW1lKTsKPiArCj4gKwlmcHJpbnRmKHN0ZGVyciwgIlx0LWkg
-PG51bWJlciBvZiBpdGVyYXRpb25zPlxuIik7Cj4gKwlmcHJpbnRmKHN0ZGVyciwgIlx0LWogPG51
-bWJlciBvZiBHMkQgam9icz4gKGRlZmF1bHQgPQo+IDQpXG5cbiIpOyArCj4gKwlmcHJpbnRmKHN0
-ZGVyciwgIlx0LXcgPGJ1ZmZlciB3aWR0aD4gKGRlZmF1bHQgPSA0MDk2KVxuIik7Cj4gKwlmcHJp
-bnRmKHN0ZGVyciwgIlx0LWggPGJ1ZmZlciBoZWlnaHQ+IChkZWZhdWx0ID0gNDA5NilcbiIpOwo+
-ICsKPiArCWV4aXQoMCk7Cj4gK30KPiArCj4gK2ludCBtYWluKGludCBhcmdjLCBjaGFyICoqYXJn
-dikKPiArewo+ICsJaW50IGZkLCByZXQsIGMsIHBhcnNlZmFpbDsKPiArCj4gKwlwdGhyZWFkX3Qg
-ZXZlbnRfdGhyZWFkOwo+ICsJc3RydWN0IHRocmVhZGRhdGEgZXZlbnRfZGF0YSA9IHswfTsKPiAr
-Cj4gKwlzdHJ1Y3QgZXh5bm9zX2RldmljZSAqZGV2Owo+ICsJc3RydWN0IGcyZF9jb250ZXh0ICpj
-dHg7Cj4gKwlzdHJ1Y3QgZXh5bm9zX2JvICpibzsKPiArCj4gKwlzdHJ1Y3QgZzJkX2ltYWdlIGlt
-ZyA9IHswfTsKPiArCj4gKwl1bnNpZ25lZCBpbnQgaXRlcnMgPSAwLCBuam9icyA9IDQ7Cj4gKwl1
-bnNpZ25lZCBpbnQgYnVmdyA9IDQwOTYsIGJ1ZmggPSA0MDk2Owo+ICsKPiArCXJldCA9IDA7Cj4g
-KwlwYXJzZWZhaWwgPSAwOwo+ICsKPiArCXdoaWxlICgoYyA9IGdldG9wdChhcmdjLCBhcmd2LCAi
-aTpqOnc6aDoiKSkgIT0gLTEpIHsKPiArCQlzd2l0Y2ggKGMpIHsKPiArCQljYXNlICdpJzoKPiAr
-CQkJaWYgKHNzY2FuZihvcHRhcmcsICIldSIsICZpdGVycykgIT0gMSkKPiArCQkJCXBhcnNlZmFp
-bCA9IDE7Cj4gKwkJCWJyZWFrOwo+ICsJCWNhc2UgJ2onOgo+ICsJCQlpZiAoc3NjYW5mKG9wdGFy
-ZywgIiV1IiwgJm5qb2JzKSAhPSAxKQo+ICsJCQkJcGFyc2VmYWlsID0gMTsKPiArCQkJYnJlYWs7
-Cj4gKwkJY2FzZSAndyc6Cj4gKwkJCWlmIChzc2NhbmYob3B0YXJnLCAiJXUiLCAmYnVmdykgIT0g
-MSkKPiArCQkJCXBhcnNlZmFpbCA9IDE7Cj4gKwkJCWJyZWFrOwo+ICsJCWNhc2UgJ2gnOgo+ICsJ
-CQlpZiAoc3NjYW5mKG9wdGFyZywgIiV1IiwgJmJ1ZmgpICE9IDEpCj4gKwkJCQlwYXJzZWZhaWwg
-PSAxOwo+ICsJCQlicmVhazsKPiArCQlkZWZhdWx0Ogo+ICsJCQlwYXJzZWZhaWwgPSAxOwo+ICsJ
-CQlicmVhazsKPiArCQl9Cj4gKwl9Cj4gKwo+ICsJaWYgKHBhcnNlZmFpbCB8fCAoYXJnYyA9PSAx
-KSB8fCAoaXRlcnMgPT0gMCkpCj4gKwkJdXNhZ2UoYXJndlswXSk7Cj4gKwo+ICsJaWYgKGJ1Zncg
-PiA0MDk2IHx8IGJ1ZmggPiA0MDk2KSB7Cj4gKwkJZnByaW50ZihzdGRlcnIsICJlcnJvcjogYnVm
-ZmVyIHdpZHRoL2hlaWdodCBzaG91bGQKPiBiZSBsZXNzIHRoYW4gNDA5Ni5cbiIpOwo+ICsJCXJl
-dCA9IC0xOwo+ICsKPiArCQlnb3RvIG91dDsKPiArCX0KPiArCj4gKwlpZiAoYnVmdyA9PSAwIHx8
-IGJ1ZmggPT0gMCkgewo+ICsJCWZwcmludGYoc3RkZXJyLCAiZXJyb3I6IGJ1ZmZlciB3aWR0aC9o
-ZWlnaHQgc2hvdWxkCj4gYmUgbm9uLXplcm8uXG4iKTsKPiArCQlyZXQgPSAtMTsKPiArCj4gKwkJ
-Z290byBvdXQ7Cj4gKwl9Cj4gKwo+ICsJZmQgPSBkcm1PcGVuKCJleHlub3MiLCBOVUxMKTsKPiAr
-CWlmIChmZCA8IDApIHsKPiArCQlmcHJpbnRmKHN0ZGVyciwgImVycm9yOiBmYWlsZWQgdG8gb3Bl
-biBkcm1cbiIpOwo+ICsJCXJldCA9IC0xOwo+ICsKPiArCQlnb3RvIG91dDsKPiArCX0KPiArCj4g
-KwlkZXYgPSBleHlub3NfZGV2aWNlX2NyZWF0ZShmZCk7Cj4gKwlpZiAoZGV2ID09IE5VTEwpIHsK
-PiArCQlmcHJpbnRmKHN0ZGVyciwgImVycm9yOiBmYWlsZWQgdG8gY3JlYXRlIGRldmljZVxuIik7
-Cj4gKwkJcmV0ID0gLTI7Cj4gKwo+ICsJCWdvdG8gZmFpbDsKPiArCX0KPiArCj4gKwljdHggPSBn
-MmRfaW5pdChmZCk7Cj4gKwlpZiAoY3R4ID09IE5VTEwpIHsKPiArCQlmcHJpbnRmKHN0ZGVyciwg
-ImVycm9yOiBmYWlsZWQgdG8gaW5pdCBHMkRcbiIpOwo+ICsJCXJldCA9IC0zOwo+ICsKPiArCQln
-b3RvIGcyZF9mYWlsOwo+ICsJfQo+ICsKPiArCWJvID0gZXh5bm9zX2JvX2NyZWF0ZShkZXYsIGJ1
-ZncgKiBidWZoICogNCwgMCk7Cj4gKwlpZiAoYm8gPT0gTlVMTCkgewo+ICsJCWZwcmludGYoc3Rk
-ZXJyLCAiZXJyb3I6IGZhaWxlZCB0byBjcmVhdGUgYm9cbiIpOwo+ICsJCXJldCA9IC00Owo+ICsK
-PiArCQlnb3RvIGJvX2ZhaWw7Cj4gKwl9Cj4gKwo+ICsJLyogc2V0dXAgZzJkIGltYWdlIG9iamVj
-dCAqLwo+ICsJaW1nLndpZHRoID0gYnVmdzsKPiArCWltZy5oZWlnaHQgPSBidWZoOwo+ICsJaW1n
-LnN0cmlkZSA9IGJ1ZncgKiA0Owo+ICsJaW1nLmNvbG9yX21vZGUgPSBHMkRfQ09MT1JfRk1UX0FS
-R0I4ODg4IHwgRzJEX09SREVSX0FYUkdCOwo+ICsJaW1nLmJ1Zl90eXBlID0gRzJEX0lNR0JVRl9H
-RU07Cj4gKwlpbWcuYm9bMF0gPSBiby0+aGFuZGxlOwo+ICsKPiArCWV2ZW50X2RhdGEuZGV2ID0g
-ZGV2Owo+ICsJc2V0dXBfZzJkX2V2ZW50X2hhbmRsZXIoJmV2ZW50X2RhdGEuZXZoYW5kbGVyLCBm
-ZCk7Cj4gKwo+ICsJcHRocmVhZF9jcmVhdGUoJmV2ZW50X3RocmVhZCwgTlVMTCwgdGhyZWFkZnVu
-YywgJmV2ZW50X2RhdGEpOwo+ICsKPiArCXJldCA9IGcyZF93b3JrKGN0eCwgJmltZywgbmpvYnMs
-IGl0ZXJzKTsKPiArCWlmIChyZXQgIT0gMCkKPiArCQlmcHJpbnRmKHN0ZGVyciwgImVycm9yOiBn
-MmRfd29yayBmYWlsZWRcbiIpOwo+ICsKPiArCWV2ZW50X2RhdGEuc3RvcCA9IDE7Cj4gKwlwdGhy
-ZWFkX2pvaW4oZXZlbnRfdGhyZWFkLCBOVUxMKTsKPiArCj4gKwlleHlub3NfYm9fZGVzdHJveShi
-byk7Cj4gKwo+ICtib19mYWlsOgo+ICsJZzJkX2ZpbmkoY3R4KTsKPiArCj4gK2cyZF9mYWlsOgo+
-ICsJZXh5bm9zX2RldmljZV9kZXN0cm95KGRldik7Cj4gKwo+ICtmYWlsOgo+ICsJZHJtQ2xvc2Uo
-ZmQpOwo+ICsKPiArb3V0Ogo+ICsJcmV0dXJuIHJldDsKPiArfQoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Tue, 22 Sep 2015 17:54:52 +0200
+Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+
+> Currently only fast solid color clear performance is measured.
+> A large buffer is allocated and solid color clear operations
+> are executed on it with randomly chosen properties (position
+> and size of the region, clear color). Execution time is
+> measured and output together with the amount of pixels
+> processed.
+> 
+> The 'simple' variant only executes one G2D command buffer at
+> a time, while the 'multi' variant executes multiple ones. This
+> can be used to measure setup/exec overhead.
+> 
+> The test also serves a stability check. If clocks/voltages are
+> too high or low respectively, the test quickly reveals this.
+> 
+> v2: Add GPLv2 header, argument handling and documentation.
+>     Tool is only installed when requested.
+> 
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  tests/exynos/Makefile.am          |  19 ++-
+>  tests/exynos/exynos_fimg2d_perf.c | 320
+> ++++++++++++++++++++++++++++++++++++++ 2 files changed, 337
+> insertions(+), 2 deletions(-) create mode 100644
+> tests/exynos/exynos_fimg2d_perf.c
+> 
+> diff --git a/tests/exynos/Makefile.am b/tests/exynos/Makefile.am
+> index b21d016..e82d199 100644
+> --- a/tests/exynos/Makefile.am
+> +++ b/tests/exynos/Makefile.am
+> @@ -5,16 +5,31 @@ AM_CFLAGS = \
+>  	-I $(top_srcdir)/exynos \
+>  	-I $(top_srcdir)
+>  
+> +bin_PROGRAMS =
+> +noinst_PROGRAMS =
+> +
+>  if HAVE_LIBKMS
+>  if HAVE_INSTALL_TESTS
+> -bin_PROGRAMS = \
+> +bin_PROGRAMS += \
+>  	exynos_fimg2d_test
+>  else
+> -noinst_PROGRAMS = \
+> +noinst_PROGRAMS += \
+>  	exynos_fimg2d_test
+>  endif
+>  endif
+>  
+> +if HAVE_INSTALL_TESTS
+> +bin_PROGRAMS += \
+> +	exynos_fimg2d_perf
+> +else
+> +noinst_PROGRAMS += \
+> +	exynos_fimg2d_perf
+> +endif
+> +
+> +exynos_fimg2d_perf_LDADD = \
+> +	$(top_builddir)/libdrm.la \
+> +	$(top_builddir)/exynos/libdrm_exynos.la
+> +
+>  exynos_fimg2d_test_LDADD = \
+>  	$(top_builddir)/libdrm.la \
+>  	$(top_builddir)/libkms/libkms.la \
+> diff --git a/tests/exynos/exynos_fimg2d_perf.c
+> b/tests/exynos/exynos_fimg2d_perf.c new file mode 100644
+> index 0000000..73d28ea
+> --- /dev/null
+> +++ b/tests/exynos/exynos_fimg2d_perf.c
+> @@ -0,0 +1,320 @@
+> +/*
+> + * Copyright (C) 2015 - Tobias Jakobi
+> + *
+> + * This is free software: you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published
+> + * by the Free Software Foundation, either version 2 of the License,
+> + * or (at your option) any later version.
+> + *
+> + * It is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + * You should have received a copy of the GNU General Public License
+> + * along with it. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <stdlib.h>
+> +#include <stdio.h>
+> +#include <time.h>
+> +#include <getopt.h>
+> +
+> +#include <xf86drm.h>
+> +
+> +#include "exynos_drm.h"
+> +#include "exynos_drmif.h"
+> +#include "exynos_fimg2d.h"
+> +
+> +static int output_mathematica = 0;
+> +
+> +static int fimg2d_perf_simple(struct exynos_bo *bo, struct
+> g2d_context *ctx,
+> +			unsigned buf_width, unsigned buf_height,
+> unsigned iterations) +{
+> +	struct timespec tspec = { 0 };
+> +	struct g2d_image img = { 0 };
+> +
+> +	unsigned long long g2d_time;
+> +	unsigned i;
+> +	int ret = 0;
+> +
+> +	img.width = buf_width;
+> +	img.height = buf_height;
+> +	img.stride = buf_width * 4;
+> +	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
+> +	img.buf_type = G2D_IMGBUF_GEM;
+> +	img.bo[0] = bo->handle;
+> +
+> +	srand(time(NULL));
+> +
+> +	printf("starting simple G2D performance test\n");
+> +	printf("buffer width = %u, buffer height = %u, iterations =
+> %u\n",
+> +		buf_width, buf_height, iterations);
+> +
+> +	if (output_mathematica)
+> +		putchar('{');
+> +
+> +	for (i = 0; i < iterations; ++i) {
+> +		unsigned x, y, w, h;
+> +
+> +		x = rand() % buf_width;
+> +		y = rand() % buf_height;
+> +
+> +		if (x == (buf_width - 1))
+> +			x -= 1;
+> +		if (y == (buf_height - 1))
+> +			y -= 1;
+> +
+> +		w = rand() % (buf_width - x);
+> +		h = rand() % (buf_height - y);
+> +
+> +		if (w == 0) w = 1;
+> +		if (h == 0) h = 1;
+> +
+> +		img.color = rand();
+> +
+> +		ret = g2d_solid_fill(ctx, &img, x, y, w, h);
+> +
+> +		clock_gettime(CLOCK_MONOTONIC, &tspec);
+> +
+> +		if (ret == 0)
+> +			ret = g2d_exec(ctx);
+> +
+> +		if (ret != 0) {
+> +			fprintf(stderr, "error: iteration %u failed
+> (x = %u, y = %u, w = %u, h = %u)\n",
+> +				i, x, y, w, h);
+> +			break;
+> +		} else {
+> +			struct timespec end = { 0 };
+> +			clock_gettime(CLOCK_MONOTONIC, &end);
+> +
+> +			g2d_time = (end.tv_sec - tspec.tv_sec) *
+> 1000000000ULL;
+> +			g2d_time += (end.tv_nsec - tspec.tv_nsec);
+> +
+> +			if (output_mathematica) {
+> +				if (i != 0) putchar(',');
+> +				printf("{%u,%llu}", w * h, g2d_time);
+> +			} else {
+> +				printf("num_pixels = %u, usecs =
+> %llu\n", w * h, g2d_time);
+> +			}
+> +		}
+> +	}
+> +
+> +	if (output_mathematica)
+> +		printf("}\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static int fimg2d_perf_multi(struct exynos_bo *bo, struct
+> g2d_context *ctx,
+> +			unsigned buf_width, unsigned buf_height,
+> unsigned iterations, unsigned batch) +{
+> +	struct timespec tspec = { 0 };
+> +	struct g2d_image *images;
+> +
+> +	unsigned long long g2d_time;
+> +	unsigned i, j;
+> +	int ret = 0;
+> +
+> +	images = calloc(batch, sizeof(struct g2d_image));
+
+I think that this should be freed at the end of this function.
+
+Best regards,
+Hyungwon Hwang
+
+> +	for (i = 0; i < batch; ++i) {
+> +		images[i].width = buf_width;
+> +		images[i].height = buf_height;
+> +		images[i].stride = buf_width * 4;
+> +		images[i].color_mode = G2D_COLOR_FMT_ARGB8888 |
+> G2D_ORDER_AXRGB;
+> +		images[i].buf_type = G2D_IMGBUF_GEM;
+> +		images[i].bo[0] = bo->handle;
+> +	}
+> +
+> +	srand(time(NULL));
+> +
+> +	printf("starting multi G2D performance test (batch size =
+> %u)\n", batch);
+> +	printf("buffer width = %u, buffer height = %u, iterations =
+> %u\n",
+> +		buf_width, buf_height, iterations);
+> +
+> +	if (output_mathematica)
+> +		putchar('{');
+> +
+> +	for (i = 0; i < iterations; ++i) {
+> +		unsigned num_pixels = 0;
+> +
+> +		for (j = 0; j < batch; ++j) {
+> +			unsigned x, y, w, h;
+> +
+> +			x = rand() % buf_width;
+> +			y = rand() % buf_height;
+> +
+> +			if (x == (buf_width - 1))
+> +				x -= 1;
+> +			if (y == (buf_height - 1))
+> +				y -= 1;
+> +
+> +			w = rand() % (buf_width - x);
+> +			h = rand() % (buf_height - y);
+> +
+> +			if (w == 0) w = 1;
+> +			if (h == 0) h = 1;
+> +
+> +			images[j].color = rand();
+> +
+> +			num_pixels += w * h;
+> +
+> +			ret = g2d_solid_fill(ctx, &images[j], x, y,
+> w, h);
+> +			if (ret != 0)
+> +				break;
+> +		}
+> +
+> +		clock_gettime(CLOCK_MONOTONIC, &tspec);
+> +
+> +		if (ret == 0)
+> +			ret = g2d_exec(ctx);
+> +
+> +		if (ret != 0) {
+> +			fprintf(stderr, "error: iteration %u failed
+> (num_pixels = %u)\n", i, num_pixels);
+> +			break;
+> +			break;
+> +		} else {
+> +			struct timespec end = { 0 };
+> +			clock_gettime(CLOCK_MONOTONIC, &end);
+> +
+> +			g2d_time = (end.tv_sec - tspec.tv_sec) *
+> 1000000000ULL;
+> +			g2d_time += (end.tv_nsec - tspec.tv_nsec);
+> +
+> +			if (output_mathematica) {
+> +				if (i != 0) putchar(',');
+> +				printf("{%u,%llu}", num_pixels,
+> g2d_time);
+> +			} else {
+> +				printf("num_pixels = %u, usecs =
+> %llu\n", num_pixels, g2d_time);
+> +			}
+> +		}
+> +	}
+> +
+> +	if (output_mathematica)
+> +		printf("}\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static void usage(const char *name)
+> +{
+> +	fprintf(stderr, "usage: %s [-ibwh]\n\n", name);
+> +
+> +	fprintf(stderr, "\t-i <number of iterations>\n");
+> +	fprintf(stderr, "\t-b <size of a batch> (default = 3)\n\n");
+> +
+> +	fprintf(stderr, "\t-w <buffer width> (default = 4096)\n");
+> +	fprintf(stderr, "\t-h <buffer height> (default = 4096)\n\n");
+> +
+> +	fprintf(stderr, "\t-M <enable Mathematica styled output>\n");
+> +
+> +	exit(0);
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +	int fd, ret, c, parsefail;
+> +
+> +	struct exynos_device *dev;
+> +	struct g2d_context *ctx;
+> +	struct exynos_bo *bo;
+> +
+> +	unsigned int iters = 0, batch = 3;
+> +	unsigned int bufw = 4096, bufh = 4096;
+> +
+> +	ret = 0;
+> +	parsefail = 0;
+> +
+> +	while ((c = getopt(argc, argv, "i:b:w:h:M")) != -1) {
+> +		switch (c) {
+> +		case 'i':
+> +			if (sscanf(optarg, "%u", &iters) != 1)
+> +				parsefail = 1;
+> +			break;
+> +		case 'b':
+> +			if (sscanf(optarg, "%u", &batch) != 1)
+> +				parsefail = 1;
+> +			break;
+> +		case 'w':
+> +			if (sscanf(optarg, "%u", &bufw) != 1)
+> +				parsefail = 1;
+> +			break;
+> +		case 'h':
+> +			if (sscanf(optarg, "%u", &bufh) != 1)
+> +				parsefail = 1;
+> +			break;
+> +		case 'M':
+> +			output_mathematica = 1;
+> +			break;
+> +		default:
+> +			parsefail = 1;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (parsefail || (argc == 1) || (iters == 0))
+> +		usage(argv[0]);
+> +
+> +	if (bufw < 2 || bufw > 4096 || bufh < 2 || bufh > 4096) {
+> +		fprintf(stderr, "error: buffer width/height should
+> be in the range 2 to 4096.\n");
+> +		ret = -1;
+> +
+> +		goto out;
+> +	}
+> +
+> +	if (bufw == 0 || bufh == 0) {
+> +		fprintf(stderr, "error: buffer width/height should
+> be non-zero.\n");
+> +		ret = -1;
+> +
+> +		goto out;
+> +	}
+> +
+> +	fd = drmOpen("exynos", NULL);
+> +	if (fd < 0) {
+> +		fprintf(stderr, "error: failed to open drm\n");
+> +		ret = -1;
+> +
+> +		goto out;
+> +	}
+> +
+> +	dev = exynos_device_create(fd);
+> +	if (dev == NULL) {
+> +		fprintf(stderr, "error: failed to create device\n");
+> +		ret = -2;
+> +
+> +		goto fail;
+> +	}
+> +
+> +	ctx = g2d_init(fd);
+> +	if (ctx == NULL) {
+> +		fprintf(stderr, "error: failed to init G2D\n");
+> +		ret = -3;
+> +
+> +		goto g2d_fail;
+> +	}
+> +
+> +	bo = exynos_bo_create(dev, bufw * bufh * 4, 0);
+> +	if (bo == NULL) {
+> +		fprintf(stderr, "error: failed to create bo\n");
+> +		ret = -4;
+> +
+> +		goto bo_fail;
+> +	}
+> +
+> +	ret = fimg2d_perf_simple(bo, ctx, bufw, bufh, iters);
+> +
+> +	if (ret == 0)
+> +		ret = fimg2d_perf_multi(bo, ctx, bufw, bufh, iters,
+> batch); +
+> +	exynos_bo_destroy(bo);
+> +
+> +bo_fail:
+> +	g2d_fini(ctx);
+> +
+> +g2d_fail:
+> +	exynos_device_destroy(dev);
+> +
+> +fail:
+> +	drmClose(fd);
+> +
+> +out:
+> +	return ret;
+> +}
