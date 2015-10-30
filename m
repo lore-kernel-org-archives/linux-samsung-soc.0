@@ -1,50 +1,41 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 06/13] tests/exynos: add fimg2d event test
-Date: Fri, 30 Oct 2015 18:49:36 +0000
-Message-ID: <CACvgo53ac-eqcCF29wFa43cGnx4=OuryBZm-y-vg27R6k_NzrA@mail.gmail.com>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<20151030155043.35acb278@hwh-ubuntu>
-	<5633519F.60607@math.uni-bielefeld.de>
-	<CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
-	<5633546C.5090601@math.uni-bielefeld.de>
-	<CACvgo52xNr9yCxV+dAGhxHBtHuPv=fgzhAzKHvsCFY7Eh4AXJg@mail.gmail.com>
-	<56337E7E.7040405@math.uni-bielefeld.de>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: drm/exynos: when to call dma_map_sg() on a GEM object?
+Date: Fri, 30 Oct 2015 21:44:06 +0100
+Message-ID: <5633D696.8020103@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:34361 "EHLO
-	mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758864AbbJ3Sth (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59042 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759980AbbJ3UoJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 14:49:37 -0400
-Received: by iody8 with SMTP id y8so88979278iod.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 11:49:37 -0700 (PDT)
-In-Reply-To: <56337E7E.7040405@math.uni-bielefeld.de>
+	Fri, 30 Oct 2015 16:44:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Hyungwon Hwang <human.hwang@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
+To: ML dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-On 30 October 2015 at 14:28, Tobias Jakobi
-<tjakobi@math.uni-bielefeld.de> wrote:
+Hey there,
 
-> OK, I see what you mean. However this shouldn't happen as long as the
-> user properly zero initializes the event context structures, right?
->
-It pains me to say it but in this day and age, not everyone zero
-initializes their structs (be that via C99 initailizers, memset or
-just {}).
+this question arose during some discussion with someone concerning the
+Exynos mixer and G2D.
 
-> OK, going to do this then. In any case, can the user assume that the
-> event structures only "grow", in the sense that new fields are added to it?
->
-That is correct. Note that this approach is also used elsewhere - the
-DRI driver <> loader model, also the drm ioctls structs are extended
-in a similar way (minus the actual version field).
+The question is the following. Consider the Exynos mixer when run under
+the IOMMU (that's sysmmu_tv IIRC). What exactly does setup the IOMMU
+mapping so that the mixer can scanout the framebuffer?
 
-With the current knowledge in hand, perhaps we could have done things
-differently... But that's another story :-)
+There is exynos_gem_map_sgt_with_dma() in the Exynos GEM code, but it's
+currently exclusively used for the G2D and only when dealing with
+userptr (and not GEM) there.
 
-Regards,
-Emil
+I was looking at exynos_drm_alloc_buf() since this called when
+allocating a BO to be used as scanout.
+
+I see dma_alloc_attrs() being called, which also sets the DMA address
+that is later used in the mixer code. But DMA_ATTR_NO_KERNEL_MAPPING is
+passed, so no mapping is done at this point.
+
+Is the mapping done somewhere else, or is it simply not necessary here?
+
+With best wishes,
+Tobias
