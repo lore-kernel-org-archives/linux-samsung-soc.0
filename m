@@ -1,71 +1,85 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 2/2] regulator: s2mps11: Rename s2mpsxx regulator as
- *-regulator
-Date: Fri, 30 Oct 2015 12:24:10 +0000
-Message-ID: <20151030122409.GS4058@x1>
+Subject: Re: [PATCH 1/2] mfd: sec-core: Rename MFD and regulator names
+ differently
+Date: Fri, 30 Oct 2015 12:24:37 +0000
+Message-ID: <20151030122437.GT4058@x1>
 References: <1446202913-20467-1-git-send-email-alim.akhtar@samsung.com>
- <1446202913-20467-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:33400 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750888AbbJ3MYR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 08:24:17 -0400
-Received: by wmeg8 with SMTP id g8so10574795wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 05:24:16 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1446202913-20467-2-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1446202913-20467-1-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Alim Akhtar <alim.akhtar@samsung.com>
 Cc: broonie@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On Fri, 30 Oct 2015, Alim Akhtar wrote:
 
-> S2MPSXX regulators are probed with the same name as their parent MFD
-> device, this is a bit confusing.
-> As we discussed the same here[1], this patch rename the current regul=
-ator
-> names from *-pmic to *-regulator.
+> Currently S2MPSXX multifunction device is named as *-pmic,
+> and this MFD also supports regulator as a one of its MFD cell which
+> has the same name, which is a bit confusing.
+>=20
+> We did discussed different approaches about how the MFD and it
+> cells need to be named here [1].
+> Based in the discussion this patch rename MFD regulator name as
+> *-regulator instead of current *-pmic.
 >=20
 > [1]-> https://lkml.org/lkml/2015/10/28/417
 >=20
 > Suggested-by: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
->  drivers/regulator/s2mps11.c |    8 ++++----
+>  drivers/mfd/sec-core.c |    8 ++++----
 >  1 file changed, 4 insertions(+), 4 deletions(-)
 
 You need to squash these patches together, or you will hurt
 bisectability for your platform.
-
+ =20
 But the code looks good:
   Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.=
-c
-> index b2f3a28e720c..3242ffc0cb25 100644
-> --- a/drivers/regulator/s2mps11.c
-> +++ b/drivers/regulator/s2mps11.c
-> @@ -1199,11 +1199,11 @@ out:
->  }
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> index 7c4e7be17f1e..c9802ba9be72 100644
+> --- a/drivers/mfd/sec-core.c
+> +++ b/drivers/mfd/sec-core.c
+> @@ -68,7 +68,7 @@ static const struct mfd_cell s5m8767_devs[] =3D {
 > =20
->  static const struct platform_device_id s2mps11_pmic_id[] =3D {
-> -	{ "s2mps11-pmic", S2MPS11X},
-> -	{ "s2mps13-pmic", S2MPS13X},
-> -	{ "s2mps14-pmic", S2MPS14X},
-> +	{ "s2mps11-regulator", S2MPS11X},
-> +	{ "s2mps13-regulator", S2MPS13X},
-> +	{ "s2mps14-regulator", S2MPS14X},
->  	{ "s2mps15-regulator", S2MPS15X},
-> -	{ "s2mpu02-pmic", S2MPU02},
-> +	{ "s2mpu02-regulator", S2MPU02},
->  	{ },
+>  static const struct mfd_cell s2mps11_devs[] =3D {
+>  	{
+> -		.name =3D "s2mps11-pmic",
+> +		.name =3D "s2mps11-regulator",
+>  	}, {
+>  		.name =3D "s2mps14-rtc",
+>  	}, {
+> @@ -78,7 +78,7 @@ static const struct mfd_cell s2mps11_devs[] =3D {
 >  };
->  MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
+> =20
+>  static const struct mfd_cell s2mps13_devs[] =3D {
+> -	{ .name =3D "s2mps13-pmic", },
+> +	{ .name =3D "s2mps13-regulator", },
+>  	{ .name =3D "s2mps13-rtc", },
+>  	{
+>  		.name =3D "s2mps13-clk",
+> @@ -88,7 +88,7 @@ static const struct mfd_cell s2mps13_devs[] =3D {
+> =20
+>  static const struct mfd_cell s2mps14_devs[] =3D {
+>  	{
+> -		.name =3D "s2mps14-pmic",
+> +		.name =3D "s2mps14-regulator",
+>  	}, {
+>  		.name =3D "s2mps14-rtc",
+>  	}, {
+> @@ -116,7 +116,7 @@ static const struct mfd_cell s2mpa01_devs[] =3D {
+> =20
+>  static const struct mfd_cell s2mpu02_devs[] =3D {
+>  	{
+> -		.name =3D "s2mpu02-pmic",
+> +		.name =3D "s2mpu02-regulator",
+>  	},
+>  };
+> =20
 
 --=20
 Lee Jones
