@@ -1,60 +1,74 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 06/13] tests/exynos: add fimg2d event test
-Date: Fri, 30 Oct 2015 12:28:44 +0100
-Message-ID: <5633546C.5090601@math.uni-bielefeld.de>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20151030155043.35acb278@hwh-ubuntu> <5633519F.60607@math.uni-bielefeld.de>
- <CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/2] regulator: s2mps11: Rename s2mpsxx regulator as
+ *-regulator
+Date: Fri, 30 Oct 2015 12:24:10 +0000
+Message-ID: <20151030122409.GS4058@x1>
+References: <1446202913-20467-1-git-send-email-alim.akhtar@samsung.com>
+ <1446202913-20467-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:33400 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750888AbbJ3MYR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Oct 2015 08:24:17 -0400
+Received: by wmeg8 with SMTP id g8so10574795wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 05:24:16 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1446202913-20467-2-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: broonie@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGVsbG8gRW1pbCwKCgpFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4gT24gMzAgT2N0b2JlciAyMDE1IGF0
-IDExOjE2LCBUb2JpYXMgSmFrb2JpCj4gPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiB3
-cm90ZToKPj4gSGVsbG8gSHl1bmd3b24sCj4+Cj4+IGZpcnN0IG9mIGFsbCB0aGFua3MgZm9yIHJl
-dmlld2luZyB0aGUgc2VyaWVzIQo+Pgo+Pgo+Pgo+PiBIeXVuZ3dvbiBId2FuZyB3cm90ZToKPj4+
-IE9uIFR1ZSwgMjIgU2VwIDIwMTUgMTc6NTQ6NTUgKzAyMDAKPj4+IFRvYmlhcyBKYWtvYmkgPHRq
-YWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiB3cm90ZToKPj4+Cj4gCj4+Pj4gKyAgICBldmhh
-bmRsZXItPmV2Y3R4LmJhc2UudmVyc2lvbiA9IERSTV9FVkVOVF9DT05URVhUX1ZFUlNJT047Cj4+
-Pj4gKyAgICBldmhhbmRsZXItPmV2Y3R4LnZlcnNpb24gPSBFWFlOT1NfRVZFTlRfQ09OVEVYVF9W
-RVJTSU9OOwo+Pj4KPj4+IFRoZSB2ZXJzaW9ucyBtdXN0IGJlIHNldCBub3QgdXNpbmcgWFhYX0VW
-RU5UX0NPTlRFWFRfVkVSU0lPTi4gQWZ0ZXIgdGhlCj4+PiB2ZXJzaW9ucyBhcmUgYnVtcGVkLCB0
-aGUgZXZlbnQgd2lsbCBjb250YWlucyB3cm9uZyB2ZXJzaW9uIGluZm8uCj4+IEhtbSwgSSBkb24n
-dCBzZWUgaG93IHRoaXMgaXMgdHJ1ZS4gQm90aCBEUk1fRVZFTlRfQ09OVEVYVF9WRVJTSU9OIGFu
-ZAo+PiBFWFlOT1NfRVZFTlRfQ09OVEVYVF9WRVJTSU9OIGNvbWUgZnJvbSB0aGUgcHVibGljIGxp
-YmRybSBoZWFkZXIuIElmIHRoZQo+PiB2ZXJzaW9uIGluIHRoZSBwdWJsaWMgaGVhZGVyIGlzIGJ1
-bXBlZCwgdGhlbiBpdCdzIGFsc28gYnVtcGVkIGhlcmUuIFNvIEkKPj4gZG9uJ3Qgc2VlIHRoZSBp
-c3N1ZS4KPj4KPiBUaGUgaXNzdWUgaXMgdGhhdCB0aGUgcHVibGljIGhlYWRlciBkZWZpbmVzIHRo
-ZSBpbnRlcmZhY2UgYXZhaWxhYmxlLAo+IHdoaWxlIHlvdSBzZXQgdGhlIHZlcnNpb24gdGhhdCB5
-b3UgaW1wbGVtZW50LiBDdXJyZW50bHkgdGhvc2UgbWF0Y2gsCj4gYnV0IGlmL3doZW4gd2UgZXhw
-YW5kIHRoZSBBUEkgKGJ1bXBpbmcgdGhlIHZlcnNpb24gaW4gdGhlIGhlYWRlcikgYW5kCj4gcmVi
-dWlsZCB5b3VyIHByb2dyYW0gd2Ugd2lsbCBjcmFzaC4KSG1tLCBJJ20gc3RpbGwgbm90IHN1cmUg
-SSB1bmRlcnN0YW5kIHRoaXMuIERvIHlvdSBtZWFuIHJlYnVpbGRpbmcgdGhlCnRlc3RzIG91dC1v
-Zi10cmVlIGFuZCB0aGVuIHJ1bm5pbmcgdGhlbSBhZ2FpbnN0IGEgbmV3ZXIvb2xkZXIgbGliZHJt
-CnZlcnNpb24/CgpCZWNhdXNlIGZyb20gbXkgdW5kZXJzdGFuZGluZyB0aGUgdGVzdHMgYXJlIGFs
-d2F5cyBidWlsZCB0b2dldGhlciB3aXRoCmxpYmRybSBhbnl3YXkuIE9yIGFtIEkgbWlzdW5kZXJz
-dGFuZGluZyBoZXJlIHNvbWV0aGluZz8KCgo+IEJlZm9yZSB5b3UgYXNrIC0geWVzIGN1cnJlbnQg
-bGliZHJtIHVzZXJzIGFyZSBub3QgZG9pbmcgdGhlIHJpZ2h0Cj4gdGhpbmcgYW5kIHNob3VsZCBi
-ZSB1cGRhdGVkIG9uZSBvZiB0aGVzZSBkYXlzLgpNYXliZSBhIGR1bWIgcXVlc3Rpb24sIGJ1dCB3
-aGF0IHdvdWxkIGJlIHRoZSByaWdodCB0aGluZyB0byBkbyBpbiBtYXkgY2FzZS4KCkRlZmluZSBt
-eSBvd24gTVlfWFpZX0VWRU5UX0NPTlRFWFRfVkVSU0lPTiBhbmQgdXNlIHRoZXNlPwoKV2l0aCBi
-ZXN0IHdpc2hlcywKVG9iaWFzCgoKCj4gLUVtaWwKPiBQLlMuIEhhdmluZyBzb21lIGRlamEtdnUg
-aGVyZS4uLiBJIHRob3VnaHQgSSBtZW50aW9uZWQgdGhpcyBhIHdoaWxlIGJhY2suCj4gCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Fri, 30 Oct 2015, Alim Akhtar wrote:
+
+> S2MPSXX regulators are probed with the same name as their parent MFD
+> device, this is a bit confusing.
+> As we discussed the same here[1], this patch rename the current regul=
+ator
+> names from *-pmic to *-regulator.
+>=20
+> [1]-> https://lkml.org/lkml/2015/10/28/417
+>=20
+> Suggested-by: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/regulator/s2mps11.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+
+You need to squash these patches together, or you will hurt
+bisectability for your platform.
+
+But the code looks good:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.=
+c
+> index b2f3a28e720c..3242ffc0cb25 100644
+> --- a/drivers/regulator/s2mps11.c
+> +++ b/drivers/regulator/s2mps11.c
+> @@ -1199,11 +1199,11 @@ out:
+>  }
+> =20
+>  static const struct platform_device_id s2mps11_pmic_id[] =3D {
+> -	{ "s2mps11-pmic", S2MPS11X},
+> -	{ "s2mps13-pmic", S2MPS13X},
+> -	{ "s2mps14-pmic", S2MPS14X},
+> +	{ "s2mps11-regulator", S2MPS11X},
+> +	{ "s2mps13-regulator", S2MPS13X},
+> +	{ "s2mps14-regulator", S2MPS14X},
+>  	{ "s2mps15-regulator", S2MPS15X},
+> -	{ "s2mpu02-pmic", S2MPU02},
+> +	{ "s2mpu02-regulator", S2MPU02},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
