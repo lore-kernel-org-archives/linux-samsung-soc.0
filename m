@@ -1,57 +1,60 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [PATCH 06/13] tests/exynos: add fimg2d event test
-Date: Fri, 30 Oct 2015 11:24:38 +0000
-Message-ID: <CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
+Date: Fri, 30 Oct 2015 12:28:44 +0100
+Message-ID: <5633546C.5090601@math.uni-bielefeld.de>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<20151030155043.35acb278@hwh-ubuntu>
-	<5633519F.60607@math.uni-bielefeld.de>
+ <1442937302-8211-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20151030155043.35acb278@hwh-ubuntu> <5633519F.60607@math.uni-bielefeld.de>
+ <CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f179.google.com ([209.85.213.179]:36762 "EHLO
-	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030730AbbJ3LYj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 07:24:39 -0400
-Received: by igdg1 with SMTP id g1so9197459igd.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 04:24:38 -0700 (PDT)
-In-Reply-To: <5633519F.60607@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACvgo52ax76mKOsYX6p9UEw8n2m-7OjmMYEbiFw8G1E7hOTp3g@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Hyungwon Hwang <human.hwang@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
 
-On 30 October 2015 at 11:16, Tobias Jakobi
-<tjakobi@math.uni-bielefeld.de> wrote:
-> Hello Hyungwon,
->
-> first of all thanks for reviewing the series!
->
->
->
-> Hyungwon Hwang wrote:
->> On Tue, 22 Sep 2015 17:54:55 +0200
->> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
->>
-
->>> +    evhandler->evctx.base.version = DRM_EVENT_CONTEXT_VERSION;
->>> +    evhandler->evctx.version = EXYNOS_EVENT_CONTEXT_VERSION;
->>
->> The versions must be set not using XXX_EVENT_CONTEXT_VERSION. After the
->> versions are bumped, the event will contains wrong version info.
-> Hmm, I don't see how this is true. Both DRM_EVENT_CONTEXT_VERSION and
-> EXYNOS_EVENT_CONTEXT_VERSION come from the public libdrm header. If the
-> version in the public header is bumped, then it's also bumped here. So I
-> don't see the issue.
->
-The issue is that the public header defines the interface available,
-while you set the version that you implement. Currently those match,
-but if/when we expand the API (bumping the version in the header) and
-rebuild your program we will crash.
-
-Before you ask - yes current libdrm users are not doing the right
-thing and should be updated one of these days.
-
--Emil
-P.S. Having some deja-vu here... I thought I mentioned this a while back.
+SGVsbG8gRW1pbCwKCgpFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4gT24gMzAgT2N0b2JlciAyMDE1IGF0
+IDExOjE2LCBUb2JpYXMgSmFrb2JpCj4gPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiB3
+cm90ZToKPj4gSGVsbG8gSHl1bmd3b24sCj4+Cj4+IGZpcnN0IG9mIGFsbCB0aGFua3MgZm9yIHJl
+dmlld2luZyB0aGUgc2VyaWVzIQo+Pgo+Pgo+Pgo+PiBIeXVuZ3dvbiBId2FuZyB3cm90ZToKPj4+
+IE9uIFR1ZSwgMjIgU2VwIDIwMTUgMTc6NTQ6NTUgKzAyMDAKPj4+IFRvYmlhcyBKYWtvYmkgPHRq
+YWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiB3cm90ZToKPj4+Cj4gCj4+Pj4gKyAgICBldmhh
+bmRsZXItPmV2Y3R4LmJhc2UudmVyc2lvbiA9IERSTV9FVkVOVF9DT05URVhUX1ZFUlNJT047Cj4+
+Pj4gKyAgICBldmhhbmRsZXItPmV2Y3R4LnZlcnNpb24gPSBFWFlOT1NfRVZFTlRfQ09OVEVYVF9W
+RVJTSU9OOwo+Pj4KPj4+IFRoZSB2ZXJzaW9ucyBtdXN0IGJlIHNldCBub3QgdXNpbmcgWFhYX0VW
+RU5UX0NPTlRFWFRfVkVSU0lPTi4gQWZ0ZXIgdGhlCj4+PiB2ZXJzaW9ucyBhcmUgYnVtcGVkLCB0
+aGUgZXZlbnQgd2lsbCBjb250YWlucyB3cm9uZyB2ZXJzaW9uIGluZm8uCj4+IEhtbSwgSSBkb24n
+dCBzZWUgaG93IHRoaXMgaXMgdHJ1ZS4gQm90aCBEUk1fRVZFTlRfQ09OVEVYVF9WRVJTSU9OIGFu
+ZAo+PiBFWFlOT1NfRVZFTlRfQ09OVEVYVF9WRVJTSU9OIGNvbWUgZnJvbSB0aGUgcHVibGljIGxp
+YmRybSBoZWFkZXIuIElmIHRoZQo+PiB2ZXJzaW9uIGluIHRoZSBwdWJsaWMgaGVhZGVyIGlzIGJ1
+bXBlZCwgdGhlbiBpdCdzIGFsc28gYnVtcGVkIGhlcmUuIFNvIEkKPj4gZG9uJ3Qgc2VlIHRoZSBp
+c3N1ZS4KPj4KPiBUaGUgaXNzdWUgaXMgdGhhdCB0aGUgcHVibGljIGhlYWRlciBkZWZpbmVzIHRo
+ZSBpbnRlcmZhY2UgYXZhaWxhYmxlLAo+IHdoaWxlIHlvdSBzZXQgdGhlIHZlcnNpb24gdGhhdCB5
+b3UgaW1wbGVtZW50LiBDdXJyZW50bHkgdGhvc2UgbWF0Y2gsCj4gYnV0IGlmL3doZW4gd2UgZXhw
+YW5kIHRoZSBBUEkgKGJ1bXBpbmcgdGhlIHZlcnNpb24gaW4gdGhlIGhlYWRlcikgYW5kCj4gcmVi
+dWlsZCB5b3VyIHByb2dyYW0gd2Ugd2lsbCBjcmFzaC4KSG1tLCBJJ20gc3RpbGwgbm90IHN1cmUg
+SSB1bmRlcnN0YW5kIHRoaXMuIERvIHlvdSBtZWFuIHJlYnVpbGRpbmcgdGhlCnRlc3RzIG91dC1v
+Zi10cmVlIGFuZCB0aGVuIHJ1bm5pbmcgdGhlbSBhZ2FpbnN0IGEgbmV3ZXIvb2xkZXIgbGliZHJt
+CnZlcnNpb24/CgpCZWNhdXNlIGZyb20gbXkgdW5kZXJzdGFuZGluZyB0aGUgdGVzdHMgYXJlIGFs
+d2F5cyBidWlsZCB0b2dldGhlciB3aXRoCmxpYmRybSBhbnl3YXkuIE9yIGFtIEkgbWlzdW5kZXJz
+dGFuZGluZyBoZXJlIHNvbWV0aGluZz8KCgo+IEJlZm9yZSB5b3UgYXNrIC0geWVzIGN1cnJlbnQg
+bGliZHJtIHVzZXJzIGFyZSBub3QgZG9pbmcgdGhlIHJpZ2h0Cj4gdGhpbmcgYW5kIHNob3VsZCBi
+ZSB1cGRhdGVkIG9uZSBvZiB0aGVzZSBkYXlzLgpNYXliZSBhIGR1bWIgcXVlc3Rpb24sIGJ1dCB3
+aGF0IHdvdWxkIGJlIHRoZSByaWdodCB0aGluZyB0byBkbyBpbiBtYXkgY2FzZS4KCkRlZmluZSBt
+eSBvd24gTVlfWFpZX0VWRU5UX0NPTlRFWFRfVkVSU0lPTiBhbmQgdXNlIHRoZXNlPwoKV2l0aCBi
+ZXN0IHdpc2hlcywKVG9iaWFzCgoKCj4gLUVtaWwKPiBQLlMuIEhhdmluZyBzb21lIGRlamEtdnUg
+aGVyZS4uLiBJIHRob3VnaHQgSSBtZW50aW9uZWQgdGhpcyBhIHdoaWxlIGJhY2suCj4gCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
