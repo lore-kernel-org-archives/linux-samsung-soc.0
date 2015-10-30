@@ -1,36 +1,62 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: mfd: s2mps11: add documentation for
- s2mps15 PMIC
-Date: Fri, 30 Oct 2015 16:42:13 +0900
-Message-ID: <56331F55.3060308@samsung.com>
-References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
- <1446186334-16510-2-git-send-email-alim.akhtar@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1446186334-16510-2-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org, broonie@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
+Subject: [PATCH] mfd: sec-core: Remove unused s2mpu02-rtc and s2mpu02-clk
+ children
+Date: Fri, 30 Oct 2015 16:51:21 +0900
+Message-ID: <1446191481-21214-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44199 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758651AbbJ3Hvb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Oct 2015 03:51:31 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 30.10.2015 15:25, Alim Akhtar wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
-> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
-> This also supports RTC and three 32.768KHz clock outputs.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  Documentation/devicetree/bindings/mfd/s2mps11.txt |   21 ++++++++++++++-------
->  1 file changed, 14 insertions(+), 7 deletions(-)
-> 
+The commit 54e8827d5f0e ("mfd: sec-core: Add support for S2MPU02
+device") added new MFD child devices for S2MPU02: RTC and clock
+provider (the clock provider with new compatible). However support for
+these devices was not added to existing drivers (rtc-s5m, clk-s2mps11).
+New drivers were not submitted neither.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This means that the name of children devices is completely unused. The
+"samsung,s2mpu02-clk" compatible remains undocumented so it is unclear
+what is provided by that compatible.
 
-Best regards,
-Krzysztof
+Clean up this by removing unused child devices and undocumented
+compatible.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+---
+
+I don't think that removing the "samsung,s2mpu02-clk" compatible would
+be considered as ABI break because:
+1. Kernel did not document it as ABI.
+2. Kernel did not provide any kind of feature for that compatible. It
+   was totally ignored.
+---
+ drivers/mfd/sec-core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 2626fc0b5b8c..989076d6cb83 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -103,12 +103,9 @@ static const struct mfd_cell s2mpa01_devs[] = {
+ };
+ 
+ static const struct mfd_cell s2mpu02_devs[] = {
+-	{ .name = "s2mpu02-pmic", },
+-	{ .name = "s2mpu02-rtc", },
+ 	{
+-		.name = "s2mpu02-clk",
+-		.of_compatible = "samsung,s2mpu02-clk",
+-	}
++		.name = "s2mpu02-pmic",
++	},
+ };
+ 
+ #ifdef CONFIG_OF
+-- 
+1.9.1
