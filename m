@@ -1,70 +1,81 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v4 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Fri, 30 Oct 2015 09:58:03 +0300
-Message-ID: <00a101d112e0$537a18e0$fa6e4aa0$@samsung.com>
-References: <cover.1446122247.git.p.fedin@samsung.com>
- <f1fbd1a7877090f4318705f0fccbf4d96c0ebc9c.1446122247.git.p.fedin@samsung.com>
- <56330E6E.50003@samsung.com>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: Re: [PATCH 08/13] exynos: fimg2d: add g2d_set_direction
+Date: Fri, 30 Oct 2015 16:14:01 +0900
+Message-ID: <20151030161401.3e2d327c@hwh-ubuntu>
+References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1442937302-8211-9-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42178 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757901AbbJ3G6I (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 02:58:08 -0400
-In-reply-to: <56330E6E.50003@samsung.com>
-Content-language: ru
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1442937302-8211-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>
 
- Hello!
-
-> > Add documentation for new subnode properties, allowing bank configuration.
-> > Based on u-boot implementation, but heavily reworked.
-> 
-> Please, carefully look at:
-> Documentation/devicetree/bindings/net/gpmc-eth.txt
-> Documentation/devicetree/bindings/bus/ti-gpmc.txt
-
- Thank you very much. Indeed, this looks very similar. By the way, should i document smsc over sromc in the same manner, writing
-devicetree/bindings/net/sromc-eth.txt?
-
- This is a short reply for now, i'll make longer one (or just a new version) after studying these existing bindings and trying to
-apply them.
-
- Pankaj:
-
-> > +&sromc {
-> > +       pinctrl-names = "default";
-> > +       pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
-> > +
-> > +       ethernet@07000000 {
-> > +               compatible = "smsc,lan9115";
-> > +               reg = <0x07000000 0x10000>;
-> > +               phy-mode = "mii";
-> > +               interrupt-parent = <&gpx0>;
-> > +               interrupts = <5 8>;
-> > +               reg-io-width = <2>;
-> > +               smsc,irq-push-pull;
-> > +               smsc,force-internal-phy;
-> > +
-> > +               samsung,srom-bank = <3>;
-> > +               samsung,srom-data-width = <2>;
-> > +               samsung,srom-timing = <1 9 12 1 9 1 1>;
-> 
-> I think this is not correct. We can't change binding of "smsc,lan9115"
-> which is already documented here [1]. These samsung specific srom
-> properties should be in srom node or its subnode, but not in this way.
-
- So, if you look at gpmc-eth.txt, you'll see that this approach is perfectly valid (this is a reply to another msg, just don't want
-to post one more single-line reply).
-
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+T24gVHVlLCAyMiBTZXAgMjAxNSAxNzo1NDo1NyArMDIwMApUb2JpYXMgSmFrb2JpIDx0amFrb2Jp
+QG1hdGgudW5pLWJpZWxlZmVsZC5kZT4gd3JvdGU6Cgo+IFRoaXMgYWxsb3dzIHNldHRpbmcgdGhl
+IHR3byBkaXJlY3Rpb24gcmVnaXN0ZXJzLCB3aGljaCBzcGVjaWZ5IGhvdwo+IHRoZSBlbmdpbmUg
+YmxpdHMgcGl4ZWxzLiBUaGlzIGNhbiBiZSB1c2VkIGZvciBvdmVybGFwcGluZyBibGl0cywKPiB3
+aGljaCBoYXBwZW4gZS5nLiB3aGVuICdtb3ZpbmcnIGEgcmVjdGFuZ3VsYXIgcmVnaW9uIGluc2lk
+ZSBhCj4gZml4ZWQgYnVmZmVyLgoKQ29kZSBpdHNlbGYgbG9va3MgZ29vZC4gQnV0IGFzIEkga25v
+dywgZGlyZWN0aW9uIHJlZ2lzdGVycyBhcmUgcmVsYXRlZAp3aXRoIGZsaXAsIG5vdCBtb3Zpbmcu
+IElzbid0IGl0PyBJIGFtIG5vdCB0aGF0IG11Y2ggZmFtaWxpYXIgd2l0aCBHMkQuClBsZWFzZSBs
+ZXQgbWUga25vdyBpZiBJIGFtIHdyb25nLgoKQmVzdCByZWdhcmRzLApIeXVuZ3dvbiBId2FuZwoK
+PiAKPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxl
+ZmVsZC5kZT4KPiAtLS0KPiAgZXh5bm9zL2V4eW5vc19maW1nMmQuYyB8IDEzICsrKysrKysrKysr
+KysKPiAgZXh5bm9zL2V4eW5vc19maW1nMmQuaCB8IDM4ICsrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrCj4gIDIgZmlsZXMgY2hhbmdlZCwgNTEgaW5zZXJ0aW9ucygrKQo+IAo+
+IGRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5jIGIvZXh5bm9zL2V4eW5vc19maW1n
+MmQuYwo+IGluZGV4IGU5OTdkNGIuLjRkNTQxOWMgMTAwNjQ0Cj4gLS0tIGEvZXh5bm9zL2V4eW5v
+c19maW1nMmQuYwo+ICsrKyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKPiBAQCAtMjQyLDYgKzI0
+MiwxOSBAQCBzdGF0aWMgdm9pZCBnMmRfYWRkX2Jhc2VfYWRkcihzdHJ1Y3QgZzJkX2NvbnRleHQK
+PiAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICppbWcsIH0KPiAgCj4gIC8qCj4gKyAqIGcyZF9zZXRf
+ZGlyZWN0aW9uIC0gc2V0dXAgZGlyZWN0aW9uIHJlZ2lzdGVyICh1c2VmdWwgZm9yCj4gb3Zlcmxh
+cHBpbmcgYmxpdHMpLgo+ICsgKgo+ICsgKiBAY3R4OiBhIHBvaW50ZXIgdG8gZzJkX2NvbnRleHQg
+c3RydWN0dXJlLgo+ICsgKiBAZGlyOiBhIHBvaW50ZXIgdG8gdGhlIGcyZF9kaXJlY3Rpb25fdmFs
+IHN0cnVjdHVyZS4KPiArICovCj4gK3N0YXRpYyB2b2lkIGcyZF9zZXRfZGlyZWN0aW9uKHN0cnVj
+dCBnMmRfY29udGV4dCAqY3R4LAo+ICsJCQljb25zdCB1bmlvbiBnMmRfZGlyZWN0aW9uX3ZhbCAq
+ZGlyKQo+ICt7Cj4gKwlnMmRfYWRkX2NtZChjdHgsIFNSQ19NQVNLX0RJUkVDVF9SRUcsIGRpci0+
+dmFsWzBdKTsKPiArCWcyZF9hZGRfY21kKGN0eCwgRFNUX1BBVF9ESVJFQ1RfUkVHLCBkaXItPnZh
+bFsxXSk7Cj4gK30KPiArCj4gKy8qCj4gICAqIGcyZF9yZXNldCAtIHJlc2V0IGZpbWcyZCBoYXJk
+d2FyZS4KPiAgICoKPiAgICogQGN0eDogYSBwb2ludGVyIHRvIGcyZF9jb250ZXh0IHN0cnVjdHVy
+ZS4KPiBkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuaCBiL2V4eW5vcy9leHlub3Nf
+ZmltZzJkLmgKPiBpbmRleCBjNmI1OGFjLi45ZWVlN2MwIDEwMDY0NAo+IC0tLSBhL2V4eW5vcy9l
+eHlub3NfZmltZzJkLmgKPiArKysgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5oCj4gQEAgLTE4OSw2
+ICsxODksMTEgQEAgZW51bSBlX2cyZF9leGVjX2ZsYWcgewo+ICAJRzJEX0VYRUNfRkxBR19BU1lO
+QyA9ICgxIDw8IDApCj4gIH07Cj4gIAo+ICtlbnVtIGVfZzJkX2Rpcl9tb2RlIHsKPiArCUcyRF9E
+SVJfTU9ERV9QT1NJVElWRSA9IDAsCj4gKwlHMkRfRElSX01PREVfTkVHQVRJVkUgPSAxCj4gK307
+Cj4gKwo+ICB1bmlvbiBnMmRfcG9pbnRfdmFsIHsKPiAgCXVuc2lnbmVkIGludCB2YWw7Cj4gIAlz
+dHJ1Y3Qgewo+IEBAIC0yNjksNiArMjc0LDM5IEBAIHVuaW9uIGcyZF9ibGVuZF9mdW5jX3ZhbCB7
+Cj4gIAl9IGRhdGE7Cj4gIH07Cj4gIAo+ICt1bmlvbiBnMmRfZGlyZWN0aW9uX3ZhbCB7Cj4gKwl1
+bnNpZ25lZCBpbnQgdmFsWzJdOwo+ICsJc3RydWN0IHsKPiArCQkvKiBTUkNfTVNLX0RJUkVDVF9S
+RUcgWzA6MV0gKHNvdXJjZSkgKi8KPiArCQllbnVtIGVfZzJkX2Rpcl9tb2RlCQlzcmNfeF9kaXJl
+Y3Rpb246MTsKPiArCQllbnVtIGVfZzJkX2Rpcl9tb2RlCQlzcmNfeV9kaXJlY3Rpb246MTsKPiAr
+Cj4gKwkJLyogU1JDX01TS19ESVJFQ1RfUkVHIFsyOjNdICovCj4gKwkJdW5zaWduZWQgaW50CQkJ
+cmV2ZXJzZWQxOjI7Cj4gKwo+ICsJCS8qIFNSQ19NU0tfRElSRUNUX1JFRyBbNDo1XSAobWFzaykg
+Ki8KPiArCQllbnVtIGVfZzJkX2Rpcl9tb2RlCj4gbWFza194X2RpcmVjdGlvbjoxOwo+ICsJCWVu
+dW0gZV9nMmRfZGlyX21vZGUKPiBtYXNrX3lfZGlyZWN0aW9uOjE7ICsKPiArCQkvKiBTUkNfTVNL
+X0RJUkVDVF9SRUcgWzY6MzFdICovCj4gKwkJdW5zaWduZWQgaW50CQkJcGFkZGluZzE6MjY7Cj4g
+Kwo+ICsJCS8qIERTVF9QQVRfRElSRUNUX1JFRyBbMDoxXSAoZGVzdGluYXRpb24pICovCj4gKwkJ
+ZW51bSBlX2cyZF9kaXJfbW9kZQkJZHN0X3hfZGlyZWN0aW9uOjE7Cj4gKwkJZW51bSBlX2cyZF9k
+aXJfbW9kZQkJZHN0X3lfZGlyZWN0aW9uOjE7Cj4gKwo+ICsJCS8qIERTVF9QQVRfRElSRUNUX1JF
+RyBbMjozXSAqLwo+ICsJCXVuc2lnbmVkIGludAkJCXJldmVyc2VkMjoyOwo+ICsKPiArCQkvKiBE
+U1RfUEFUX0RJUkVDVF9SRUcgWzQ6NV0gKHBhdHRlcm4pICovCj4gKwkJZW51bSBlX2cyZF9kaXJf
+bW9kZQkJcGF0X3hfZGlyZWN0aW9uOjE7Cj4gKwkJZW51bSBlX2cyZF9kaXJfbW9kZQkJcGF0X3lf
+ZGlyZWN0aW9uOjE7Cj4gKwo+ICsJCS8qIERTVF9QQVRfRElSRUNUX1JFRyBbNjozMV0gKi8KPiAr
+CQl1bnNpZ25lZCBpbnQJCQlwYWRkaW5nMjoyNjsKPiArCX0gZGF0YTsKPiArfTsKPiArCj4gIHN0
+cnVjdCBnMmRfaW1hZ2Ugewo+ICAJZW51bSBlX2cyZF9zZWxlY3RfbW9kZQkJc2VsZWN0X21vZGU7
+Cj4gIAllbnVtIGVfZzJkX2NvbG9yX21vZGUJCWNvbG9yX21vZGU7CgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
