@@ -1,65 +1,92 @@
-From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 07/13] tests/exynos: use XRGB8888 for framebuffer
-Date: Fri, 30 Oct 2015 15:41:10 +0900
-Message-ID: <20151030154110.6e458145@hwh-ubuntu>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-8-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v4 2/4] ARM: dts: Add SROMc to Exynos 5410
+Date: Fri, 30 Oct 2015 09:41:15 +0300
+Message-ID: <009f01d112dd$fab40830$f01c1890$@samsung.com>
+References: <cover.1446122247.git.p.fedin@samsung.com>
+ <eafa355058ff500a72ff2e3408ab635954467a76.1446122247.git.p.fedin@samsung.com>
+ <CAGcde9EXfe0amqoTOwgKi-Y6=4mRcEbZrA=as-BxzfMv3ntAhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58034 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751485AbbJ3GlM (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:49669 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751485AbbJ3GlU convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 02:41:12 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NX001GLYT8MRRA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Oct 2015 15:41:10 +0900 (KST)
-In-reply-to: <1442937302-8211-8-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Fri, 30 Oct 2015 02:41:20 -0400
+In-reply-to: <CAGcde9EXfe0amqoTOwgKi-Y6=4mRcEbZrA=as-BxzfMv3ntAhQ@mail.gmail.com>
+Content-language: ru
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
+To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
 
-On Tue, 22 Sep 2015 17:54:56 +0200
-Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+ Hello!
 
-> This matches the G2D color mode that is used in the entire code.
-> The previous (incorrect) RGBA8888 would only work since the
-> Exynos mixer did its configuration based on the bpp, and not
-> based on the actual pixelformat.
+> -----Original Message-----
+> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-owner@vger.kernel.org]
+> On Behalf Of Pankaj Dubey
+> Sent: Thursday, October 29, 2015 8:28 PM
+> To: Pavel Fedin
+> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-soc;
+> linux-kernel@vger.kernel.org; Rob Herring; Pawel Moll; Mark Rutland; Ian Campbell; Kumar Gala;
+> Kukjin Kim; Krzysztof Kozlowski
+> Subject: Re: [PATCH v4 2/4] ARM: dts: Add SROMc to Exynos 5410
 > 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  tests/exynos/exynos_fimg2d_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Pavel,
 > 
-> diff --git a/tests/exynos/exynos_fimg2d_test.c
-> b/tests/exynos/exynos_fimg2d_test.c index 8794dac..dfb00a0 100644
-> --- a/tests/exynos/exynos_fimg2d_test.c
-> +++ b/tests/exynos/exynos_fimg2d_test.c
-> @@ -675,7 +675,7 @@ int main(int argc, char **argv)
->  	offsets[0] = 0;
->  
->  	ret = drmModeAddFB2(dev->fd, screen_width, screen_height,
-> -				DRM_FORMAT_RGBA8888, handles,
-> +				DRM_FORMAT_XRGB8888, handles,
->  				pitches, offsets, &fb_id, 0);
+> On 29 October 2015 at 18:12, Pavel Fedin <p.fedin@samsung.com> wrote:
+> > This machine uses own SoC device tree file, add missing part.
+> >
+> > Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos5410.dtsi | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> > index 4603356..da6a8fa0e 100644
+> > --- a/arch/arm/boot/dts/exynos5410.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> > @@ -101,6 +101,15 @@
+> >                         reg = <0x10000000 0x100>;
+> >                 };
+> >
+> > +               sromc: sromc@12250000 {
+> > +                       #address-cells = <1>;
+> > +                       #size-cells = <1>;
+> > +                       ranges;
+> > +
+> 
+> We do not need to specify these three properties as they are already
+> present in parent node "soc".
 
-Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
+ We do, otherwise dtc complains about defaults of #address-cells = 2 and #size-cells=1, and without empty "ranges" subnode's resources are not correctly translated.
 
-Nice catch. It's right, if there was no previous setting for source
-image color mode. But I think it could be the source image color mode
-was set by another application before when this test runs. So I think
-the code which sets the source image color mode must be added.
+> 
+> > +                       compatible = "samsung,exynos-srom";
+> > +                       reg = <0x12250000 0x14>;
+> > +               };
+> > +
+> >                 pmu_system_controller: system-controller@10040000 {
+> >                         compatible = "samsung,exynos5410-pmu", "syscon";
+> >                         reg = <0x10040000 0x5000>;
+> > @@ -133,6 +142,12 @@
+> >                                                 <10 &gic 0 130 0>,
+> >                                                 <11 &gic 0 131 0>;
+> >                         };
+> > +
+> > +                       arch_timer {
+> > +                               compatible = "arm,armv7-timer";
+> > +                               clock-frequency = <24000000>;
+> > +                       };
+> > +
+> 
+> This change should not be part of this patch.
 
-Best regards,
-Hyungwon Hwang
+ Ooops, thank you very much, this should not have been here at all. This is a leftover from my experiments, i was tracing DT parsing code and added it just for test, to see why timer gets probed as a subnode.
+ Just forgot to remove it afterwards and it slipped into the patch.
 
-
->  	if (ret < 0)
->  		goto err_destroy_buffer;
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
