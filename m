@@ -1,53 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Fri, 30 Oct 2015 15:09:28 +0900
-Message-ID: <56330998.5060706@samsung.com>
-References: <cover.1446018918.git.p.fedin@samsung.com>
- <046d990092dc85cf50db9082fc894d93a3ece7c0.1446018918.git.p.fedin@samsung.com>
- <563183F9.6020806@samsung.com> <008001d1121d$c0fef160$42fcd420$@samsung.com>
- <CAJKOXPcSehXRYDpYiybzdagPS76QKGpeMb7DxkpwJq8GTfuPOw@mail.gmail.com>
- <003c01d1123f$002a3220$007e9660$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47618 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751940AbbJ3GJg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 02:09:36 -0400
-In-reply-to: <003c01d1123f$002a3220$007e9660$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v5 0/4] mfd: sec: add S2MPS15 PMIC support
+Date: Fri, 30 Oct 2015 11:55:30 +0530
+Message-ID: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kukjin Kim' <kgene@kernel.org>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org
 
-On 29.10.2015 20:43, Pavel Fedin wrote:
->  Hello!
-> 
->>>> Any vendor prefix here? How generic is this?
->>>
->>>  I just don't know... Does *everything* really need a vendor prefix? How readable would that
->> be? "compatible" property already says
->>> that it's samsung-exynos-specific. And IMHO it's quite obvious that properties of vendor-
->> specific device are automatically
->>> vendor-specific.
->>>  Ok, i am currently fixing up the rest and will post v4 soon, and will Cc: it to devicetree
->> ML.
->>
->> Which my reply you are referring to? You stripped part of some
->> sentence and put it without *any context*. Just random sentence.
->> I asked for vendor prefix in few places... srom-timing? width? And I
->> do not remember where I used exactly these words.
-> 
->  Ok, sorry, i promise to improve. :)
->  Anyway, i have figured out how to add sub-devices, and heavily modified the whole thing. And indeed, vendor prefix is now very useful, so i added it to all three properties. Making v4...
+Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
+The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
+27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
+programming these blocks via a I2C interface. This patch series adds initial
+support for LDO/Buck regulators of S2MPS15 PMIC.
 
-Actually now I found:
-Documentation/devicetree/bindings/net/gpmc-eth.txt
+Changes since v4:
+* Dorpped Krzysztof reviewed-by and Lee Acked-by tags from patch 1/4,
+  because of the new changes to DT bindings. Seeking a fresh review/ack tags.
+* Removed samsung,s2mps15-clk compatible as we can reuse exsisting compatible of s2mps13.
+* Added acked-by on patch 2/4
+* Modified rtc driver as s2mps15 differs from s2mps14/13 etc, addressed Krzysztof
+  concerns on rtc patch.
+  There are some other improvement suggestion from Krzystof for the rtc, I feel that can be done
+  as a sperate patch later.
 
-Aren't you duplicating this work? This looks very, very similar.
+Changes since v3:
+* Changes regulator driver name from s2mps15-pmic -> s2mps15-regulator as disscussed here [2]
+* Re-use the exsisting compatible/names for s2mps15 clock block.
 
-Best regards,
-Krzysztof
+Changes since v2:
+* Addressed Lee Jones review comments.
+
+Changes since v1:
+* Added suggestion from Krzysztof [1].
+* Added s2mps15's 32.768 clocks support.
+* Added s2mps15's rtc support.
+
+V1 of these patches (with a lesser features) were posted a year back,
+since then there is not much progress on this, this is my attempt to
+move things forward.
+
+[1]-> https://lkml.org/lkml/2014/10/14/67
+[2]-> https://lkml.org/lkml/2015/10/28/417
+
+This series is based on linux-next-20151022.
+This is tested on exynos7-espresso board.
+
+Alim Akhtar (1):
+  drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+
+Thomas Abraham (3):
+  dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
+  mfd: sec: Add support for S2MPS15 PMIC
+  regulator: s2mps11: add support for S2MPS15 regulators
+
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   21 ++-
+ drivers/mfd/sec-core.c                            |   31 ++++
+ drivers/mfd/sec-irq.c                             |    8 ++
+ drivers/regulator/Kconfig                         |    4 +-
+ drivers/regulator/s2mps11.c                       |  135 +++++++++++++++++-
+ drivers/rtc/rtc-s5m.c                             |   37 ++++-
+ include/linux/mfd/samsung/core.h                  |    1 +
+ include/linux/mfd/samsung/rtc.h                   |    2 +
+ include/linux/mfd/samsung/s2mps15.h               |  158 +++++++++++++++++++++
+ 9 files changed, 383 insertions(+), 14 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps15.h
+
+-- 
+1.7.10.4
