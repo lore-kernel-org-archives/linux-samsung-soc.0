@@ -1,85 +1,93 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/5] Late Samsung driver updates for v4.4
-Date: Fri, 30 Oct 2015 19:12:00 -0700
-Message-ID: <20151031021200.GA2189@localhost>
-References: <562AA40E.4050407@kernel.org>
- <562AA603.7040600@kernel.org>
- <56307B33.90608@samsung.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [PATCH v8 11/17] dt-bindings: add document for rockchip dp phy
+Date: Sat, 31 Oct 2015 11:13:48 +0800
+Message-ID: <563431EC.9050701@rock-chips.com>
+References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
+ <1446021068-11655-1-git-send-email-ykk@rock-chips.com>
+ <CAL_JsqL=pL8SXLEzhbJHS_djFSh+Ctky0igzagZ6E0M9Q_TFuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:36219 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750710AbbJaCMJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 22:12:09 -0400
-Received: by pacfv9 with SMTP id fv9so93466645pac.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 19:12:08 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <56307B33.90608@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <CAL_JsqL=pL8SXLEzhbJHS_djFSh+Ctky0igzagZ6E0M9Q_TFuA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpau>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, p.fedin@samsung.com
 
-On Wed, Oct 28, 2015 at 04:37:23PM +0900, Krzysztof Kozlowski wrote:
-> On 24.10.2015 06:26, Kukjin Kim wrote:
-> > The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-> > 
-> >   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > tags/samsung-driver
-> > 
-> > for you to fetch changes up to c612d5a7785b307df96938d590c3a1edfb624ccf:
-> > 
-> >   cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs (2015-10-24
-> > 04:34:50 +0900)
-> > 
-> > ----------------------------------------------------------------
-> > Samsung driver udpates for v4.4
-> > 
-> > - add support for exynos SROM controller DT based driver
-> >   (drivers/soc/samsung/exynos-srom.c)
-> >   : Since the exynos SROM registers are used during Suspend to RAM
-> >     so the exynos SROM driver handles the S2R and then we can remove
-> >     static mapping for SROM registers.
-> >   : Pankaj tested boot and S2R functionality on Peach-Pi chromebook
-> >   : Pavel tested on SMDK5410 board
-> >   : Krzysztof tested on Trats2 (exynos4412) board
-> > - update Maintainer entry accordingly
-> > - remove superfluous CONFIG_PM ifdefs with Viresh's ack
-> > 
-> > ----------------------------------------------------------------
-> > Bartlomiej Zolnierkiewicz (1):
-> >       cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs
-> > 
-> > Pankaj Dubey (8):
-> >       ARM: EXYNOS: remove unused static mapping of CMU for exynos5
-> >       ARM: EXYNOS: code cleanup in map.h
-> >       dt-bindings: add exynos-srom device tree binding
-> >       ARM: dts: add SROM device node for exynos4
-> >       ARM: dts: add SROM device node for exynos5
-> 
-> Hi Olof and Kukjin,
-> 
-> I see that this pull request was not pulled yet. (Un)Fortunately I
-> spotted one mistake in DTS changes above - the length of mapped region
-> is too small by one word. This does not produce any visible effect but
-> actually is wrong because driver will read from unmapped memory.
 
-Yeah, I started looking now at why I didn't merge it since I had just not
-touched it nor replied to it.
-
-It looks like it contains an slight jumble of patches. It modifies DT
-contents, which we always ask to get in the dt branch.
-
-Please resend after -rc1 and we'll merge this for 4.5.
-
+On 10/31/2015 12:42 AM, Rob Herring wrote:
+> On Wed, Oct 28, 2015 at 3:31 AM, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+>> Add dt binding documentation for rockchip display port PHY.
+>>
+>> Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+>> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
 Thanks,
 
+- Yakir
 
--Olof
+>> ---
+>> Changes in v8:
+>> - Remove the specific address in the example node name. (Heiko)
+>>
+>> Changes in v7:
+>> - Simplify the commit message. (Kishon)
+>>
+>> Changes in v6: None
+>> Changes in v5:
+>> - Split binding doc's from driver changes. (Rob)
+>> - Update the rockchip,grf explain in document, and correct the clock required
+>>    elemets in document. (Rob & Heiko)
+>>
+>> Changes in v4: None
+>> Changes in v3: None
+>> Changes in v2: None
+>>
+>>   .../devicetree/bindings/phy/rockchip-dp-phy.txt    | 22 ++++++++++++++++++++++
+>>   1 file changed, 22 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+>> new file mode 100644
+>> index 0000000..00902cb
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+>> @@ -0,0 +1,22 @@
+>> +Rockchip Soc Seroes Display Port PHY
+>> +------------------------------------
+>> +
+>> +Required properties:
+>> +- compatible : should be one of the following supported values:
+>> +        - "rockchip.rk3288-dp-phy"
+>> +- clocks: from common clock binding: handle to dp clock.
+>> +       of memory mapped region.
+>> +- clock-names: from common clock binding:
+>> +       Required elements: "24m"
+>> +- rockchip,grf: phandle to the syscon managing the "general register files"
+>> +- #phy-cells : from the generic PHY bindings, must be 0;
+>> +
+>> +Example:
+>> +
+>> +edp_phy: edp-phy {
+>> +       compatible = "rockchip,rk3288-dp-phy";
+>> +       rockchip,grf = <&grf>;
+>> +       clocks = <&cru SCLK_EDP_24M>;
+>> +       clock-names = "24m";
+>> +       #phy-cells = <0>;
+>> +};
+>> --
+>> 1.9.1
+>>
+>>
+>
+>
