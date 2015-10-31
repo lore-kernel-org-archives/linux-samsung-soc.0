@@ -1,41 +1,85 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: drm/exynos: when to call dma_map_sg() on a GEM object?
-Date: Fri, 30 Oct 2015 21:44:06 +0100
-Message-ID: <5633D696.8020103@math.uni-bielefeld.de>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 4/5] Late Samsung driver updates for v4.4
+Date: Fri, 30 Oct 2015 19:12:00 -0700
+Message-ID: <20151031021200.GA2189@localhost>
+References: <562AA40E.4050407@kernel.org>
+ <562AA603.7040600@kernel.org>
+ <56307B33.90608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59042 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1759980AbbJ3UoJ (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:36219 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750710AbbJaCMJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Oct 2015 16:44:09 -0400
+	Fri, 30 Oct 2015 22:12:09 -0400
+Received: by pacfv9 with SMTP id fv9so93466645pac.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2015 19:12:08 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <56307B33.90608@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ML dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, p.fedin@samsung.com
 
-Hey there,
+On Wed, Oct 28, 2015 at 04:37:23PM +0900, Krzysztof Kozlowski wrote:
+> On 24.10.2015 06:26, Kukjin Kim wrote:
+> > The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+> > 
+> >   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > tags/samsung-driver
+> > 
+> > for you to fetch changes up to c612d5a7785b307df96938d590c3a1edfb624ccf:
+> > 
+> >   cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs (2015-10-24
+> > 04:34:50 +0900)
+> > 
+> > ----------------------------------------------------------------
+> > Samsung driver udpates for v4.4
+> > 
+> > - add support for exynos SROM controller DT based driver
+> >   (drivers/soc/samsung/exynos-srom.c)
+> >   : Since the exynos SROM registers are used during Suspend to RAM
+> >     so the exynos SROM driver handles the S2R and then we can remove
+> >     static mapping for SROM registers.
+> >   : Pankaj tested boot and S2R functionality on Peach-Pi chromebook
+> >   : Pavel tested on SMDK5410 board
+> >   : Krzysztof tested on Trats2 (exynos4412) board
+> > - update Maintainer entry accordingly
+> > - remove superfluous CONFIG_PM ifdefs with Viresh's ack
+> > 
+> > ----------------------------------------------------------------
+> > Bartlomiej Zolnierkiewicz (1):
+> >       cpufreq: s5pv210: remove superfluous CONFIG_PM ifdefs
+> > 
+> > Pankaj Dubey (8):
+> >       ARM: EXYNOS: remove unused static mapping of CMU for exynos5
+> >       ARM: EXYNOS: code cleanup in map.h
+> >       dt-bindings: add exynos-srom device tree binding
+> >       ARM: dts: add SROM device node for exynos4
+> >       ARM: dts: add SROM device node for exynos5
+> 
+> Hi Olof and Kukjin,
+> 
+> I see that this pull request was not pulled yet. (Un)Fortunately I
+> spotted one mistake in DTS changes above - the length of mapped region
+> is too small by one word. This does not produce any visible effect but
+> actually is wrong because driver will read from unmapped memory.
 
-this question arose during some discussion with someone concerning the
-Exynos mixer and G2D.
+Yeah, I started looking now at why I didn't merge it since I had just not
+touched it nor replied to it.
 
-The question is the following. Consider the Exynos mixer when run under
-the IOMMU (that's sysmmu_tv IIRC). What exactly does setup the IOMMU
-mapping so that the mixer can scanout the framebuffer?
+It looks like it contains an slight jumble of patches. It modifies DT
+contents, which we always ask to get in the dt branch.
 
-There is exynos_gem_map_sgt_with_dma() in the Exynos GEM code, but it's
-currently exclusively used for the G2D and only when dealing with
-userptr (and not GEM) there.
+Please resend after -rc1 and we'll merge this for 4.5.
 
-I was looking at exynos_drm_alloc_buf() since this called when
-allocating a BO to be used as scanout.
 
-I see dma_alloc_attrs() being called, which also sets the DMA address
-that is later used in the mixer code. But DMA_ATTR_NO_KERNEL_MAPPING is
-passed, so no mapping is done at this point.
+Thanks,
 
-Is the mapping done somewhere else, or is it simply not necessary here?
 
-With best wishes,
-Tobias
+-Olof
