@@ -1,59 +1,49 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: exynos5: register driver early in subsys initcall
- to avoid probe defer
-Date: Sun, 1 Nov 2015 17:02:03 +0100
-Message-ID: <20151101160203.GB2295@katana>
-References: <1446215008-30506-1-git-send-email-m.szyprowski@samsung.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH v5 4/4] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+Date: Sun, 1 Nov 2015 18:40:48 +0100
+Message-ID: <20151101174048.GD22331@piout.net>
+References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
+ <1446186334-16510-5-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1446215008-30506-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---98e8jtXdkpgskNou
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:36713 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752375AbbKARku (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 1 Nov 2015 12:40:50 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1446186334-16510-5-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: lee.jones@linaro.org, broonie@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-On Fri, Oct 30, 2015 at 03:23:28PM +0100, Marek Szyprowski wrote:
-> i2c bus drivers should be registered earlier than typical drivers to let
-> important i2c devices (like PMICs/regulators) get registered early
-> enough to avoid probe defer of all devices in typical embedded system.
->=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On 30/10/2015 at 11:55:34 +0530, Alim Akhtar wrote :
+> RTC found in s2mps15 is almost same as one found on s2mps13
+> with few differences in RTC_UPDATE register fields, like:
+> 1> Bit[4] and Bit[1] are reversed
+>    - On s2mps13
+>           WUDR -> bit[4], AUDR -> bit[1]
+>    - On s2mps15
+> 	  WUDR -> bit[1], AUDR -> bit[4]
+> 2> In case of s2mps13, for alarm register, need to set both
+>    WDUR and ADUR high, whereas for s2mps15 only set AUDR to high.
+> 3> On s2mps15, WUDR, RUDR and AUDR functions should never be used
+>    at the same time.
+> 
+> This patch add required changes to enable s2mps15 rtc timer.
+> 
+> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/rtc/rtc-s5m.c           |   37 +++++++++++++++++++++++++++++++++----
+>  include/linux/mfd/samsung/rtc.h |    2 ++
+>  2 files changed, 35 insertions(+), 4 deletions(-)
+> 
+Applied after fixing the small alignment issue, thanks.
 
-I don't accept such patches anymore. Some more background:
-
-http://www.spinics.net/lists/linux-i2c/msg13102.html
-http://www.spinics.net/lists/linux-i2c/msg16644.html
-
-
---98e8jtXdkpgskNou
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWNjd7AAoJEBQN5MwUoCm2AYYP/AyXc0wgvKlMGerOo0CJDivX
-h2vZstIXpzwTusY8rUr5bzNZO5zGd18o4upKMhaB5Dkerxc0yrG1jDn2K+gekclt
-bZ/nlREANssR2k4ylnsGn17J5av/GaWSqYBHDHhYHPwihmEvgXR/9JKS/Rx9Rddb
-AM+WBbS+m9ETeBvvmSefybLRXFat/Ty7slyoI3RaN1sQX1tkf1Tck0JYwkv9QCqn
-JbLKkouo2wjuIq84evwsMVST0ob2TS02sFonQ4sWboci2e7LNDiR2NHfcgj5f+Rj
-T/tiSxpnc4CJogsA7/1rzC6+k5nJRh+KI1m9YXnNOnloO0xH0qs6Rc7bl1BlCZ5c
-SuRAPCsh0uajrzN9eYU+j70pHSgo6QYEqXOBi219PxAjPfEV1uoMth86A17TNAJ6
-xqJwJg2tX9N4M5dMTGdPFjkBzDaxZjUigaHDLIbMf/B3+VxXG0v0vtJLEUVUt8aU
-osR+kFrxP218BKTcdq5RQsngtKV20OzMYPGRt8gXiuQRSHQ1mmudLqCp35GRWLpz
-eFubeiN5uhGvOVSYSaXaaJyws2k+s+7sds0+CDPB8hYYq4fx1fFuQ98mi6dAeJ7R
-cxhbczvpc4iFHf3H8J7lLEeY2Ku6xcJHzFMjx5Y92Dff0y6/wHLwMcWxCl5ehd33
-KvXE1QxvXPLJKGha8qFr
-=GURY
------END PGP SIGNATURE-----
-
---98e8jtXdkpgskNou--
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
