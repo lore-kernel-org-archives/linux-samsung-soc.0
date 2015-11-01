@@ -1,51 +1,59 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: Pending rtc-s3c patches
-Date: Sun, 1 Nov 2015 20:36:51 +0900
-Message-ID: <5635F953.6080702@samsung.com>
-References: <20151028101449.GA13014@piout.net>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: exynos5: register driver early in subsys initcall
+ to avoid probe defer
+Date: Sun, 1 Nov 2015 17:02:03 +0100
+Message-ID: <20151101160203.GB2295@katana>
+References: <1446215008-30506-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:34632 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751453AbbKALg4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Nov 2015 06:36:56 -0500
-Received: by padec8 with SMTP id ec8so9446951pad.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Nov 2015 03:36:55 -0800 (PST)
-In-Reply-To: <20151028101449.GA13014@piout.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1446215008-30506-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: k.kozlowski.k@gmail.com, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
-
-W dniu 28.10.2015 o 19:14, Alexandre Belloni pisze:
-> Hi,
-> 
-> There are three pending patches (from 2010 and 2011) for rtc-s3c. I'd
-> like to get an update and either drop or apply those.
-> 
-> Can someone take a few minutes to review them?
-> 
-> The patches are:
-> http://patchwork.ozlabs.org/patch/71318/
-
-This is not needed. The pie_lock (replacing s3c_rtc_pie_lock) protects
-set_freq() which:
-1. is called only during probe;
-2. is accessing different registers than s3c_rtc_setaie().
 
 
-> http://patchwork.ozlabs.org/patch/99857/
+--98e8jtXdkpgskNou
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is good although does not apply cleanly. I rebased, tested and send
-the patch.
+On Fri, Oct 30, 2015 at 03:23:28PM +0100, Marek Szyprowski wrote:
+> i2c bus drivers should be registered earlier than typical drivers to let
+> important i2c devices (like PMICs/regulators) get registered early
+> enough to avoid probe defer of all devices in typical embedded system.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> http://patchwork.ozlabs.org/patch/101732/
+I don't accept such patches anymore. Some more background:
 
-This does not look good. Code is actually used so commit description
-does not match current state. I think you can ignore it.
+http://www.spinics.net/lists/linux-i2c/msg13102.html
+http://www.spinics.net/lists/linux-i2c/msg16644.html
 
-Best regards,
-Krzysztof
+
+--98e8jtXdkpgskNou
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWNjd7AAoJEBQN5MwUoCm2AYYP/AyXc0wgvKlMGerOo0CJDivX
+h2vZstIXpzwTusY8rUr5bzNZO5zGd18o4upKMhaB5Dkerxc0yrG1jDn2K+gekclt
+bZ/nlREANssR2k4ylnsGn17J5av/GaWSqYBHDHhYHPwihmEvgXR/9JKS/Rx9Rddb
+AM+WBbS+m9ETeBvvmSefybLRXFat/Ty7slyoI3RaN1sQX1tkf1Tck0JYwkv9QCqn
+JbLKkouo2wjuIq84evwsMVST0ob2TS02sFonQ4sWboci2e7LNDiR2NHfcgj5f+Rj
+T/tiSxpnc4CJogsA7/1rzC6+k5nJRh+KI1m9YXnNOnloO0xH0qs6Rc7bl1BlCZ5c
+SuRAPCsh0uajrzN9eYU+j70pHSgo6QYEqXOBi219PxAjPfEV1uoMth86A17TNAJ6
+xqJwJg2tX9N4M5dMTGdPFjkBzDaxZjUigaHDLIbMf/B3+VxXG0v0vtJLEUVUt8aU
+osR+kFrxP218BKTcdq5RQsngtKV20OzMYPGRt8gXiuQRSHQ1mmudLqCp35GRWLpz
+eFubeiN5uhGvOVSYSaXaaJyws2k+s+7sds0+CDPB8hYYq4fx1fFuQ98mi6dAeJ7R
+cxhbczvpc4iFHf3H8J7lLEeY2Ku6xcJHzFMjx5Y92Dff0y6/wHLwMcWxCl5ehd33
+KvXE1QxvXPLJKGha8qFr
+=GURY
+-----END PGP SIGNATURE-----
+
+--98e8jtXdkpgskNou--
