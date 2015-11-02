@@ -1,331 +1,307 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 4/7] drm/exynos/hdmi: code cleanup
-Date: Mon, 02 Nov 2015 14:16:42 +0100
-Message-ID: <1446470205-15606-5-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 7/7] drm/exynos/hdmi: add Exynos5433 support
+Date: Mon, 02 Nov 2015 14:16:45 +0100
+Message-ID: <1446470205-15606-8-git-send-email-a.hajda@samsung.com>
 References: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:32219 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752532AbbKBNSC (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:24851 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753143AbbKBNSG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 08:18:02 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Mon, 2 Nov 2015 08:18:06 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NX600ED2VLZIV90@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Nov 2015 13:17:59 +0000 (GMT)
+ with ESMTP id <0NX600KBFVM5AC90@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 02 Nov 2015 13:18:05 +0000 (GMT)
 In-reply-to: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The patch performs following clean-ups:
-- remove unnecessary white spaces,
-- remove obvious comments,
-- fix tabulations,
-- remove NULL initializators,
-- re-order driver data.
-
-The patch does not change driver's behavior.
+HDMI on Exynos5433 differs from previous versions:
+- different HDMI-PHY settings,
+- different clocks,
+- SYSREG registers for enabling reference clock,
+- MODE_SET register in HDMI-PHY.
+It is distinguished from other variants by different compatible string.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 79 ++++++++++++------------------------
- 1 file changed, 26 insertions(+), 53 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 142 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/exynos/regs-hdmi.h   |   9 ++-
+ 2 files changed, 149 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 5ff68db..13eea02 100644
+index e44e2f6..46cf863 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -7,9 +7,9 @@
-  *
-  * Based on drivers/media/video/s5p-tv/hdmi_drv.c
-  *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation; either version 2 of the License, or (at your
-  * option) any later version.
-  *
-  */
-@@ -49,14 +49,16 @@
+@@ -112,6 +112,7 @@ struct string_array_spec {
+ struct hdmi_driver_data {
+ 	unsigned int type;
+ 	unsigned int is_apb_phy:1;
++	unsigned int has_sysreg:1;
+ 	struct hdmiphy_configs phy_confs;
+ 	struct string_array_spec clk_gates;
+ 	/*
+@@ -140,6 +141,7 @@ struct hdmi_context {
+ 	struct gpio_desc 		*hpd_gpio;
+ 	int				irq;
+ 	struct regmap			*pmureg;
++	struct regmap			*sysreg;
+ 	struct clk			**clk_gates;
+ 	struct clk			**clk_muxes;
+ 	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
+@@ -516,6 +518,90 @@ static const struct hdmiphy_config hdmiphy_5420_configs[] = {
+ 	},
+ };
  
- /* AVI header and aspect ratio */
- #define HDMI_AVI_VERSION		0x02
--#define HDMI_AVI_LENGTH		0x0D
-+#define HDMI_AVI_LENGTH			0x0d
- 
- /* AUI header info */
--#define HDMI_AUI_VERSION	0x01
--#define HDMI_AUI_LENGTH	0x0A
--#define AVI_SAME_AS_PIC_ASPECT_RATIO 0x8
--#define AVI_4_3_CENTER_RATIO	0x9
--#define AVI_16_9_CENTER_RATIO	0xa
-+#define HDMI_AUI_VERSION		0x01
-+#define HDMI_AUI_LENGTH			0x0a
++static const struct hdmiphy_config hdmiphy_5433_configs[] = {
++	{
++		.pixel_clock = 27000000,
++		.conf = {
++			0x01, 0x51, 0x22, 0x51, 0x08, 0xfc, 0x88, 0x46,
++			0x72, 0x50, 0x24, 0x0c, 0x24, 0x0f, 0x7c, 0xa5,
++			0xd4, 0x2b, 0x87, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 27027000,
++		.conf = {
++			0x01, 0x51, 0x2d, 0x72, 0x64, 0x09, 0x88, 0xc3,
++			0x71, 0x50, 0x24, 0x14, 0x24, 0x0f, 0x7c, 0xa5,
++			0xd4, 0x2b, 0x87, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x28, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 40000000,
++		.conf = {
++			0x01, 0x51, 0x32, 0x55, 0x01, 0x00, 0x88, 0x02,
++			0x4d, 0x50, 0x44, 0x8C, 0x27, 0x00, 0x7C, 0xAC,
++			0xD6, 0x2B, 0x67, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 50000000,
++		.conf = {
++			0x01, 0x51, 0x34, 0x40, 0x64, 0x09, 0x88, 0xc3,
++			0x3d, 0x50, 0x44, 0x8C, 0x27, 0x00, 0x7C, 0xAC,
++			0xD6, 0x2B, 0x67, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 65000000,
++		.conf = {
++			0x01, 0x51, 0x36, 0x31, 0x40, 0x10, 0x04, 0xc6,
++			0x2e, 0xe8, 0x44, 0x8C, 0x27, 0x00, 0x7C, 0xAC,
++			0xD6, 0x2B, 0x67, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 74176000,
++		.conf = {
++			0x01, 0x51, 0x3E, 0x35, 0x5B, 0xDE, 0x88, 0x42,
++			0x53, 0x51, 0x44, 0x8C, 0x27, 0x00, 0x7C, 0xAC,
++			0xD6, 0x2B, 0x67, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 74250000,
++		.conf = {
++			0x01, 0x51, 0x3E, 0x35, 0x40, 0xF0, 0x88, 0xC2,
++			0x52, 0x51, 0x44, 0x8C, 0x27, 0x00, 0x7C, 0xAC,
++			0xD6, 0x2B, 0x67, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 108000000,
++		.conf = {
++			0x01, 0x51, 0x2d, 0x15, 0x01, 0x00, 0x88, 0x02,
++			0x72, 0x52, 0x44, 0x8C, 0x27, 0x00, 0x7C, 0xAC,
++			0xD6, 0x2B, 0x67, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
++	{
++		.pixel_clock = 148500000,
++		.conf = {
++			0x01, 0x51, 0x1f, 0x00, 0x40, 0xf8, 0x88, 0xc1,
++			0x52, 0x52, 0x24, 0x0c, 0x24, 0x0f, 0x7c, 0xa5,
++			0xd4, 0x2b, 0x87, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x4a, 0x00, 0x40,
++		},
++	},
++};
 +
-+/* AVI active format aspect ratio */
-+#define AVI_SAME_AS_PIC_ASPECT_RATIO	0x08
-+#define AVI_4_3_CENTER_RATIO		0x09
-+#define AVI_16_9_CENTER_RATIO		0x0a
- 
- enum hdmi_type {
- 	HDMI_TYPE13,
-@@ -154,7 +156,6 @@ static inline struct hdmi_context *connector_to_hdmi(struct drm_connector *c)
- 	return container_of(c, struct hdmi_context, connector);
- }
- 
--/* list of phy config settings */
- static const struct hdmiphy_config hdmiphy_v13_configs[] = {
- 	{
- 		.pixel_clock = 27000000,
-@@ -523,26 +524,24 @@ static const char * const hdmi_clk_muxes4[] = {
+ static const char * const hdmi_clk_gates4[] = {
+ 	"hdmi", "sclk_hdmi"
+ };
+@@ -524,6 +610,15 @@ static const char * const hdmi_clk_muxes4[] = {
  	"sclk_pixel", "sclk_hdmiphy", "mout_hdmi"
  };
  
--static const struct hdmi_driver_data exynos5420_hdmi_driver_data = {
--	.type		= HDMI_TYPE14,
--	.is_apb_phy	= 1,
--	.phy_confs	= INIT_ARRAY_SPEC(hdmiphy_5420_configs),
-+static const struct hdmi_driver_data exynos4210_hdmi_driver_data = {
-+	.type		= HDMI_TYPE13,
-+	.phy_confs	= INIT_ARRAY_SPEC(hdmiphy_v13_configs),
- 	.clk_gates	= INIT_ARRAY_SPEC(hdmi_clk_gates4),
++static const char * const hdmi_clk_gates5433[] = {
++	"hdmi_pclk", "hdmi_i_pclk", "i_tmds_clk", "i_pixel_clk", "i_spdif_clk"
++};
++
++static const char * const hdmi_clk_muxes5433[] = {
++	"oscclk", "tmds_clko", "tmds_clko_user",
++	"oscclk", "pixel_clko", "pixel_clko_user"
++};
++
+ static const struct hdmi_driver_data exynos4210_hdmi_driver_data = {
+ 	.type		= HDMI_TYPE13,
+ 	.phy_confs	= INIT_ARRAY_SPEC(hdmiphy_v13_configs),
+@@ -546,6 +641,15 @@ static const struct hdmi_driver_data exynos5420_hdmi_driver_data = {
  	.clk_muxes	= INIT_ARRAY_SPEC(hdmi_clk_muxes4),
  };
  
- static const struct hdmi_driver_data exynos4212_hdmi_driver_data = {
- 	.type		= HDMI_TYPE14,
--	.is_apb_phy	= 0,
- 	.phy_confs	= INIT_ARRAY_SPEC(hdmiphy_v14_configs),
- 	.clk_gates	= INIT_ARRAY_SPEC(hdmi_clk_gates4),
- 	.clk_muxes	= INIT_ARRAY_SPEC(hdmi_clk_muxes4),
- };
- 
--static const struct hdmi_driver_data exynos4210_hdmi_driver_data = {
--	.type		= HDMI_TYPE13,
--	.is_apb_phy	= 0,
--	.phy_confs	= INIT_ARRAY_SPEC(hdmiphy_v13_configs),
-+static const struct hdmi_driver_data exynos5420_hdmi_driver_data = {
++static const struct hdmi_driver_data exynos5433_hdmi_driver_data = {
 +	.type		= HDMI_TYPE14,
 +	.is_apb_phy	= 1,
-+	.phy_confs	= INIT_ARRAY_SPEC(hdmiphy_5420_configs),
- 	.clk_gates	= INIT_ARRAY_SPEC(hdmi_clk_gates4),
- 	.clk_muxes	= INIT_ARRAY_SPEC(hdmi_clk_muxes4),
- };
-@@ -1154,13 +1153,11 @@ static bool hdmi_mode_fixup(struct drm_encoder *encoder,
- 
- 	mode_ok = hdmi_mode_valid(connector, adjusted_mode);
- 
--	/* just return if user desired mode exists. */
- 	if (mode_ok == MODE_OK)
- 		return true;
- 
- 	/*
--	 * otherwise, find the most suitable mode among modes and change it
--	 * to adjusted_mode.
-+	 * Find the most suitable mode and copy it to adjusted_mode.
- 	 */
- 	list_for_each_entry(m, &connector->modes, head) {
- 		mode_ok = hdmi_mode_valid(connector, m);
-@@ -1205,15 +1202,15 @@ static void hdmi_audio_init(struct hdmi_context *hdata)
- 	switch (bits_per_sample) {
- 	case 20:
- 		data_num = 2;
--		bit_ch  = 1;
-+		bit_ch = 1;
- 		break;
- 	case 24:
- 		data_num = 3;
--		bit_ch  = 1;
-+		bit_ch = 1;
- 		break;
- 	default:
- 		data_num = 1;
--		bit_ch  = 0;
-+		bit_ch = 0;
- 		break;
- 	}
- 
-@@ -1306,13 +1303,12 @@ static void hdmi_conf_init(struct hdmi_context *hdata)
- 	/* choose HDMI mode */
- 	hdmi_reg_writemask(hdata, HDMI_MODE_SEL,
- 		HDMI_MODE_HDMI_EN, HDMI_MODE_MASK);
--	/* Apply Video preable and Guard band in HDMI mode only */
-+	/* apply video pre-amble and guard band in HDMI mode only */
- 	hdmi_reg_writeb(hdata, HDMI_CON_2, 0);
- 	/* disable bluescreen */
- 	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_BLUE_SCR_EN);
- 
- 	if (hdata->dvi_mode) {
--		/* choose DVI mode */
- 		hdmi_reg_writemask(hdata, HDMI_MODE_SEL,
- 				HDMI_MODE_DVI_EN, HDMI_MODE_MASK);
- 		hdmi_reg_writeb(hdata, HDMI_CON_2,
-@@ -1384,7 +1380,7 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 
- 	val = (m->hsync_start - m->hdisplay - 2);
- 	val |= ((m->hsync_end - m->hdisplay - 2) << 10);
--	val |= ((m->flags & DRM_MODE_FLAG_NHSYNC)  ? 1 : 0)<<20;
-+	val |= ((m->flags & DRM_MODE_FLAG_NHSYNC) ? 1 : 0)<<20;
- 	hdmi_reg_writev(hdata, HDMI_V13_H_SYNC_GEN_0, 3, val);
- 
- 	/*
-@@ -1395,7 +1391,6 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 
- 	/* Following values & calculations differ for different type of modes */
- 	if (m->flags & DRM_MODE_FLAG_INTERLACE) {
--		/* Interlaced Mode */
- 		val = ((m->vsync_end - m->vdisplay) / 2);
- 		val |= ((m->vsync_start - m->vdisplay) / 2) << 12;
- 		hdmi_reg_writev(hdata, HDMI_V13_V_SYNC_GEN_1_0, 3, val);
-@@ -1424,8 +1419,6 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 
- 		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST2_L, 2, 0x249);
- 	} else {
--		/* Progressive Mode */
--
- 		val = m->vtotal;
- 		val |= (m->vtotal - m->vdisplay) << 11;
- 		hdmi_reg_writev(hdata, HDMI_V13_V_BLANK_0, 3, val);
-@@ -1444,7 +1437,6 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST2_L, 2, 0x248);
- 	}
- 
--	/* Timing generator registers */
- 	hdmi_reg_writev(hdata, HDMI_TG_H_FSZ_L, 2, m->htotal);
- 	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay);
- 	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay);
-@@ -1466,7 +1458,7 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 	hdmi_reg_writev(hdata, HDMI_V_LINE_0, 2, m->vtotal);
- 	hdmi_reg_writev(hdata, HDMI_H_LINE_0, 2, m->htotal);
- 	hdmi_reg_writev(hdata, HDMI_HSYNC_POL, 1,
--			(m->flags & DRM_MODE_FLAG_NHSYNC)  ? 1 : 0);
-+			(m->flags & DRM_MODE_FLAG_NHSYNC) ? 1 : 0);
- 	hdmi_reg_writev(hdata, HDMI_VSYNC_POL, 1,
- 			(m->flags & DRM_MODE_FLAG_NVSYNC) ? 1 : 0);
- 	hdmi_reg_writev(hdata, HDMI_INT_PRO_MODE, 1,
-@@ -1480,7 +1472,6 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 
- 	/* Following values & calculations differ for different type of modes */
- 	if (m->flags & DRM_MODE_FLAG_INTERLACE) {
--		/* Interlaced Mode */
- 		hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_BEF_2_0, 2,
- 			(m->vsync_end - m->vdisplay) / 2);
- 		hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_BEF_1_0, 2,
-@@ -1513,7 +1504,6 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST3_L, 2, 0x0);
- 		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST4_L, 2, 0x0);
- 	} else {
--		/* Progressive Mode */
- 		hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_BEF_2_0, 2,
- 			m->vsync_end - m->vdisplay);
- 		hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_BEF_1_0, 2,
-@@ -1538,7 +1528,6 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 		hdmi_reg_writev(hdata, HDMI_TG_FIELD_BOT_HDMI_L, 2, 0x233);
- 	}
- 
--	/* Following values & calculations are same irrespective of mode type */
- 	hdmi_reg_writev(hdata, HDMI_H_SYNC_START_0, 2,
- 			m->hsync_start - m->hdisplay - 2);
- 	hdmi_reg_writev(hdata, HDMI_H_SYNC_END_0, 2,
-@@ -1562,7 +1551,6 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 	hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_AFT_PXL_5_0, 2, 0xffff);
- 	hdmi_reg_writev(hdata, HDMI_V_SYNC_LINE_AFT_PXL_6_0, 2, 0xffff);
- 
--	/* Timing generator registers */
- 	hdmi_reg_writev(hdata, HDMI_TG_H_FSZ_L, 2, m->htotal);
- 	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay);
- 	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay);
-@@ -1582,10 +1570,7 @@ static void hdmi_mode_apply(struct hdmi_context *hdata)
- 		hdmi_v14_mode_apply(hdata);
- 
- 	hdmiphy_wait_for_pll(hdata);
--
- 	hdmi_clk_set_parents(hdata, true);
--
--	/* enable HDMI and timing generator */
- 	hdmi_start(hdata, true);
- }
- 
-@@ -1593,10 +1578,9 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
++	.has_sysreg     = 1,
++	.phy_confs	= INIT_ARRAY_SPEC(hdmiphy_5433_configs),
++	.clk_gates	= INIT_ARRAY_SPEC(hdmi_clk_gates5433),
++	.clk_muxes	= INIT_ARRAY_SPEC(hdmi_clk_muxes5433),
++};
++
+ static inline u32 hdmi_map_reg(struct hdmi_context *hdata, u32 reg_id)
  {
- 	hdmi_clk_set_parents(hdata, false);
+ 	if ((reg_id & 0xffff0000) == HDMI_MAPPED_BASE)
+@@ -1541,6 +1645,8 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ 	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay);
+ 	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay);
+ 	hdmi_reg_writev(hdata, HDMI_TG_V_FSZ_L, 2, m->vtotal);
++	if (hdata->drv_data == &exynos5433_hdmi_driver_data)
++		hdmi_reg_writeb(hdata, HDMI_TG_DECON_EN, 1);
+ }
  
--	/* reset hdmiphy */
- 	hdmi_reg_writemask(hdata, HDMI_PHY_RSTOUT, ~0, HDMI_PHY_SW_RSTOUT);
- 	usleep_range(10000, 12000);
--	hdmi_reg_writemask(hdata, HDMI_PHY_RSTOUT,  0, HDMI_PHY_SW_RSTOUT);
-+	hdmi_reg_writemask(hdata, HDMI_PHY_RSTOUT, 0, HDMI_PHY_SW_RSTOUT);
+ static void hdmi_mode_apply(struct hdmi_context *hdata)
+@@ -1565,6 +1671,14 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
  	usleep_range(10000, 12000);
  }
  
-@@ -1605,7 +1589,6 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
++static void hdmiphy_enable_mode_set(struct hdmi_context *hdata, bool enable)
++{
++	u8 v = enable ? HDMI_PHY_ENABLE_MODE_SET : HDMI_PHY_DISABLE_MODE_SET;
++
++	if (hdata->drv_data == &exynos5433_hdmi_driver_data)
++		writel(v, hdata->regs_hdmiphy + HDMIPHY5433_MODE_SET_DONE);
++}
++
+ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+ {
  	int ret;
- 	int i;
+@@ -1576,12 +1690,14 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+ 		return;
+ 	}
  
--	/* pixel clock */
- 	i = hdmi_find_phy_conf(hdata, hdata->current_mode.clock * 1000);
- 	if (i < 0) {
- 		DRM_ERROR("failed to find hdmiphy conf\n");
-@@ -1626,16 +1609,11 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
- {
- 	hdmiphy_conf_reset(hdata);
- 	hdmiphy_conf_apply(hdata);
--
- 	hdmi_start(hdata, false);
- 	hdmi_conf_init(hdata);
--
- 	hdmi_audio_init(hdata);
--
--	/* setting core registers */
- 	hdmi_mode_apply(hdata);
- 	hdmi_audio_control(hdata, true);
--
- 	hdmi_regs_dump(hdata, "start");
++	hdmiphy_enable_mode_set(hdata, true);
+ 	ret = hdmiphy_reg_write_buf(hdata, 0,
+ 			hdata->drv_data->phy_confs.data[i].conf, 32);
+ 	if (ret) {
+ 		DRM_ERROR("failed to configure hdmiphy\n");
+ 		return;
+ 	}
++	hdmiphy_enable_mode_set(hdata, false);
+ 
+ 	usleep_range(10000, 12000);
+ }
+@@ -1614,6 +1730,15 @@ static void hdmi_mode_set(struct drm_encoder *encoder,
+ 	hdata->cea_video_id = drm_match_cea_mode(mode);
  }
  
-@@ -1669,7 +1647,6 @@ static void hdmi_enable(struct drm_encoder *encoder)
- 	if (regulator_bulk_enable(ARRAY_SIZE(supply), hdata->regul_bulk))
- 		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
- 
--	/* set pmu hdmiphy control bit to enable hdmiphy */
++static void hdmi_set_refclk(struct hdmi_context *hdata, bool on)
++{
++	if (!hdata->sysreg)
++		return;
++
++	regmap_update_bits(hdata->sysreg, EXYNOS5433_SYSREG_DISP_HDMI_PHY,
++			   SYSREG_HDMI_REFCLK_INT_CLK, on ? ~0 : 0);
++}
++
+ static void hdmi_enable(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+@@ -1631,6 +1756,8 @@ static void hdmi_enable(struct drm_encoder *encoder)
  	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
  			PMU_HDMI_PHY_ENABLE_BIT, 1);
  
-@@ -1701,14 +1678,12 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 	if (funcs && funcs->disable)
- 		(*funcs->disable)(crtc);
++	hdmi_set_refclk(hdata, true);
++
+ 	hdmi_clk_enable_gates(hdata);
  
--	/* HDMI System Disable */
- 	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
- 
- 	cancel_delayed_work(&hdata->hotplug_work);
+ 	hdmi_conf_apply(hdata);
+@@ -1665,6 +1792,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
  
  	hdmi_clk_disable_gates(hdata);
  
--	/* reset pmu hdmiphy control bit to disable hdmiphy */
++	hdmi_set_refclk(hdata, false);
++
  	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
  			PMU_HDMI_PHY_ENABLE_BIT, 0);
  
-@@ -1967,7 +1942,6 @@ static int hdmi_probe(struct platform_device *pdev)
- 	if (ddc_node)
- 		goto out_get_ddc_adpt;
+@@ -1817,6 +1946,9 @@ static struct of_device_id hdmi_match_types[] = {
+ 		.compatible = "samsung,exynos5420-hdmi",
+ 		.data = &exynos5420_hdmi_driver_data,
+ 	}, {
++		.compatible = "samsung,exynos5433-hdmi",
++		.data = &exynos5433_hdmi_driver_data,
++	}, {
+ 		/* end node */
+ 	}
+ };
+@@ -1983,6 +2115,16 @@ out_get_phy_port:
+ 		goto err_hdmiphy;
+ 	}
  
--	/* DDC i2c driver */
- 	ddc_node = of_parse_phandle(dev->of_node, "ddc", 0);
- 	if (!ddc_node) {
- 		DRM_ERROR("Failed to find ddc node in device tree\n");
-@@ -1985,7 +1959,6 @@ out_get_ddc_adpt:
- 	if (phy_node)
- 		goto out_get_phy_port;
++	if (hdata->drv_data->has_sysreg) {
++		hdata->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
++				"samsung,sysreg-phandle");
++		if (IS_ERR(hdata->sysreg)) {
++			DRM_ERROR("sysreg regmap lookup failed.\n");
++			ret = -EPROBE_DEFER;
++			goto err_hdmiphy;
++		}
++	}
++
+ 	pm_runtime_enable(dev);
  
--	/* hdmiphy i2c driver */
- 	phy_node = of_parse_phandle(dev->of_node, "phy", 0);
- 	if (!phy_node) {
- 		DRM_ERROR("Failed to find hdmiphy node in device tree\n");
+ 	ret = component_add(&pdev->dev, &hdmi_component_ops);
+diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
+index 8c891e5..169667a 100644
+--- a/drivers/gpu/drm/exynos/regs-hdmi.h
++++ b/drivers/gpu/drm/exynos/regs-hdmi.h
+@@ -586,10 +586,12 @@
+ #define HDMI_TG_VACT_ST4_L		HDMI_TG_BASE(0x0070)
+ #define HDMI_TG_VACT_ST4_H		HDMI_TG_BASE(0x0074)
+ #define HDMI_TG_3D			HDMI_TG_BASE(0x00F0)
++#define HDMI_TG_DECON_EN		HDMI_TG_BASE(0x01e0)
+ 
+ /* HDMI PHY Registers Offsets*/
+-#define HDMIPHY_POWER		(0x74 >> 2)
+-#define HDMIPHY_MODE_SET_DONE		(0x7c >> 2)
++#define HDMIPHY_POWER			0x74
++#define HDMIPHY_MODE_SET_DONE		0x7c
++#define HDMIPHY5433_MODE_SET_DONE	0x84
+ 
+ /* HDMI PHY Values */
+ #define HDMI_PHY_POWER_ON              0x80
+@@ -603,4 +605,7 @@
+ #define PMU_HDMI_PHY_CONTROL		0x700
+ #define PMU_HDMI_PHY_ENABLE_BIT		BIT(0)
+ 
++#define EXYNOS5433_SYSREG_DISP_HDMI_PHY	0x1008
++#define SYSREG_HDMI_REFCLK_INT_CLK	1
++
+ #endif /* SAMSUNG_REGS_HDMI_H */
 -- 
 1.9.1
