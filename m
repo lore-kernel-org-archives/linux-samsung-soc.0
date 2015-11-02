@@ -1,61 +1,90 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 4/4] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
-Date: Mon, 2 Nov 2015 10:58:49 +0000
-Message-ID: <20151102105849.GV4058@x1>
-References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
- <1446186334-16510-5-git-send-email-alim.akhtar@samsung.com>
- <20151101174048.GD22331@piout.net>
- <5636A44D.4090908@samsung.com>
- <20151102004722.GI22331@piout.net>
- <20151102090359.GR4058@x1>
- <20151102101931.GK22331@piout.net>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH 1/2] arm64: dts: exynos7: Add pmic s2mps15 device tree
+ node
+Date: Mon, 2 Nov 2015 12:30:37 +0100
+Message-ID: <5637495D.1080701@osg.samsung.com>
+References: <1446458641-4447-1-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:34254 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753200AbbKBK6x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 05:58:53 -0500
-Received: by wmff134 with SMTP id f134so55482940wmf.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2015 02:58:52 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20151102101931.GK22331@piout.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1446458641-4447-1-git-send-email-alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, broonie@kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-On Mon, 02 Nov 2015, Alexandre Belloni wrote:
+Hello Alim,
 
-> On 02/11/2015 at 09:03:59 +0000, Lee Jones wrote :
-> > > > I think you cannot apply it directly because it depends on head=
-ers from
-> > > > patch 2/4. It won't build.
-> > > >=20
-> > >=20
-> > > Yeah, this depends on the mfd tree. I don't thin Lee applied patc=
-h 2/4
-> > > yet so I'm taking that one for 4.5.
-> >=20
-> > I don't mind if you take it, but if you do so you need to take the
-> > Regulator patch as well AND provide Mark and I a pull-request from =
-an
-> > immutable branch please.=20
-> >=20
->=20
-> Actually, I was thinking that you would take 2/4 through your tree an=
-d I
-> would either base myself on that or delay the patch for 4.5. You coul=
-d
-> also take the rtc patch if you plan to apply 2/4, feel free to add my
-> acked-by.
+This patch looks mostly good to me, I just have two comments below:
 
-Perfect.  I will do the latter.
+On 11/02/2015 11:04 AM, Alim Akhtar wrote:
+> This patch add pmic (s2mps15) node of espresso board,
+> which includes addition of regulators and pmic-clk sub-nodes.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> This patch should go in after driver side changes [1] lands.
+> [1]-> https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg47736.html
+> 
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  349 +++++++++++++++++++++++
+>  1 file changed, 349 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> index 838a3626dac1..8ce04a0ec928 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> @@ -53,6 +53,355 @@
+>  	status = "okay";
+>  };
+>  
+> +&hsi2c_4 {
+> +	samsung,i2c-sda-delay = <100>;
+> +	samsung,i2c-max-bus-freq = <200000>;
+> +	status = "okay";
+> +
+> +	s2mps15_pmic@66 {
+> +		compatible = "samsung,s2mps15-pmic";
+> +		reg = <0x66>;
+> +		interrupts = <2 0>;
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Maybe using IRQ_TYPE_NONE instead of 0?
+
+> +		interrupt-parent = <&gpa0>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pmic_irq>;
+> +		wakeup-source;
+> +
+> +		s2mps15_osc: clocks {
+> +			compatible = "samsung,s2mps13-clk";
+> +			#clock-cells = <1>;
+> +			clock-output-names = "s2mps13_ap", "s2mps13_cp",
+> +				"s2mps13_bt";
+> +		};
+> +
+> +		regulators {
+> +			ldo1_reg: LDO1 {
+> +				regulator-name = "vdd_ldo1";
+> +				regulator-min-microvolt = <500000>;
+> +				regulator-max-microvolt = <900000>;
+> +				regulator-always-on;
+
+I see that all regulators are marked as regulator-always-on but that will
+prevent the regulator subsystem to disable unused regulators. Can you please
+double check which regulators should really be always on and which ones can
+be disabled if are not used?
+
+After those two changes:
+
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
