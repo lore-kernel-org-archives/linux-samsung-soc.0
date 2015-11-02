@@ -1,13 +1,13 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v3] tests/exynos: add fimg2d performance analysis
-Date: Mon,  2 Nov 2015 10:46:56 +0100
-Message-ID: <1446457617-4684-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v4] tests/exynos: add fimg2d performance analysis
+Date: Mon,  2 Nov 2015 10:52:09 +0100
+Message-ID: <1446457929-8302-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33146 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33173 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751014AbbKBJrI (ORCPT
+	by vger.kernel.org with ESMTP id S1751847AbbKBJwP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 04:47:08 -0500
+	Mon, 2 Nov 2015 04:52:15 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -31,12 +31,13 @@ v2: Add GPLv2 header, argument handling and documentation.
     Tool is only installed when requested.
 v3: Free images array in fimg2d_perf_multi() as pointed out
     by Hyungwon Hwang.
+v4: Include header for error numbers (fixes build).
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
  tests/exynos/Makefile.am          |  19 ++-
- tests/exynos/exynos_fimg2d_perf.c | 326 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 343 insertions(+), 2 deletions(-)
+ tests/exynos/exynos_fimg2d_perf.c | 327 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 344 insertions(+), 2 deletions(-)
  create mode 100644 tests/exynos/exynos_fimg2d_perf.c
 
 diff --git a/tests/exynos/Makefile.am b/tests/exynos/Makefile.am
@@ -79,10 +80,10 @@ index b21d016..e82d199 100644
  	$(top_builddir)/libkms/libkms.la \
 diff --git a/tests/exynos/exynos_fimg2d_perf.c b/tests/exynos/exynos_fimg2d_perf.c
 new file mode 100644
-index 0000000..5068b9a
+index 0000000..1699bba
 --- /dev/null
 +++ b/tests/exynos/exynos_fimg2d_perf.c
-@@ -0,0 +1,326 @@
+@@ -0,0 +1,327 @@
 +/*
 + * Copyright (C) 2015 - Tobias Jakobi
 + *
@@ -103,6 +104,7 @@ index 0000000..5068b9a
 +#include <stdio.h>
 +#include <time.h>
 +#include <getopt.h>
++#include <errno.h>
 +
 +#include <xf86drm.h>
 +
