@@ -1,87 +1,63 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v4 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Mon, 02 Nov 2015 10:31:52 +0300
-Message-ID: <012101d11540$8c280be0$a47823a0$@samsung.com>
-References: <cover.1446122247.git.p.fedin@samsung.com>
- <f1fbd1a7877090f4318705f0fccbf4d96c0ebc9c.1446122247.git.p.fedin@samsung.com>
- <56330E6E.50003@samsung.com> <00d401d112ff$c426e9a0$4c74bce0$@samsung.com>
- <5635D1EE.5010604@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: drm/exynos: when to call dma_map_sg() on a GEM object?
+Date: Mon, 02 Nov 2015 16:41:56 +0900
+Message-ID: <563713C4.2050309@samsung.com>
+References: <5633D696.8020103@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58709 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752273AbbKBHb5 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:36411 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750856AbbKBHl6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 02:31:57 -0500
-In-reply-to: <5635D1EE.5010604@samsung.com>
-Content-language: ru
+	Mon, 2 Nov 2015 02:41:58 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NX6004ITG1WI020@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 02 Nov 2015 16:41:56 +0900 (KST)
+In-reply-to: <5633D696.8020103@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, 'Mark Rutland' <mark.rutland@arm.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Rob Herring' <robh+dt@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Kumar Gala' <galak@codeaurora.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, ML dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
- Hello!
-
-> > --- cut exynos5410.dtsi ---
-> > 		sromc: sromc@12250000 {
-> > 			#address-cells = <2>;
-> > 			#size-cells = <1>;
-> > 			ranges = <0 0 0x04000000 0x20000
-> > 				  1 0 0x05000000 0x20000
-> > 				  2 0 0x06000000 0x20000
-> > 				  3 0 0x07000000 0x20000>;
+On 10/31/2015 05:44 AM, Tobias Jakobi wrote:
+> Hey there,
 > 
-> Do you have to use 2 cells for address? Cannot it be:
->  			ranges = <0 0x04000000 0x20000
->  				  1 0x05000000 0x20000
->  				  2 0x06000000 0x20000
->  				  3 0x07000000 0x20000>;
-
- I tried this first, but it didn't work, and ranges translation
-gave me something really weird (like addr = 0x80 and
-size = 0x04000004). I decided not to dig deeply into
-"ranges" processing, but just followed GPMC approach. They say
-that first number is range ID and second number is offset within
-the range. And it just worked.
-
-> >  3. About samsung,srom-config array. I have the following reasons to keep if this way:
-> >     - listing every property under own name is just too much typing
-> >     - these values really do not make sense without each other, or partialy. I would say
-> that in array form they are even better
-> > readable, because it is the same order in which they go into the register.
+> this question arose during some discussion with someone concerning the
+> Exynos mixer and G2D.
 > 
-> For timings - OK. PMC is separate. This is not a timing.
+> The question is the following. Consider the Exynos mixer when run under
+> the IOMMU (that's sysmmu_tv IIRC). What exactly does setup the IOMMU
+> mapping so that the mixer can scanout the framebuffer?
+> 
 
- But it's srom-config, and not srom-timing anymore. So do you want
-two properties like srom-timing + srom-page-mode (with vendor prefix
-of course)?
+IOMMU mapping is in dma_alloc_attrs(). Already IOMMU was integrated in
+the DMA mapping API on ARM arch.
 
-> You need to document them. We are not gonna put some data looking like a
-> vendor blob into the binding. I understand that document has
-> confidential mark... all of Samsung datasheets I've seen had it. I don't
-> find it as problem but of course I am not the one to judge here. If you
-> do not feel comfortable publishing such data, get an approval from your
-> manager. You can also try to search for this in vendor code
-> (opensource.samsung.com). If it is published there, then this won't be a
-> disclosure.
+> There is exynos_gem_map_sgt_with_dma() in the Exynos GEM code, but it's
+> currently exclusively used for the G2D and only when dealing with
+> userptr (and not GEM) there.
+> 
+> I was looking at exynos_drm_alloc_buf() since this called when
+> allocating a BO to be used as scanout.
+> 
+> I see dma_alloc_attrs() being called, which also sets the DMA address
+> that is later used in the mixer code. But DMA_ATTR_NO_KERNEL_MAPPING is
+> passed, so no mapping is done at this point.
+> 
 
- I've seen the actual SROMc settings in some old Android kernels, like 3.0.4.
-But they are not documented there, no comments, just #define's.
- Ok, i'll try to take a look how to minimize the actual information. :)
+Did you read Documentation/DMA-attributes.txt document?
+DMA_ATTR_NO_KERNEL_MAPPING is just to avoid creating a kernel virtual
+mapping for the allocated buffer on ARM arch.
 
-> BTW, your email client is weird. You are sending non-wrapped emails
-> without format=flowed in Content-Type. Please stick to mailing list
-> convention of wrapping at 72-char.
+> Is the mapping done somewhere else, or is it simply not necessary here?
+> 
 
- I know, sorry, this is MS Outlook (not Express), and it's impossible
-to configure it this way (if i just set up word wrap, it starts to
-corrupt patches). I am now trying to wrap the text by hands, i hope
-it's better. And i cannot use anything else because... You know why. :)
+What is the mapping you mean? As you know, the DMA address of the
+memory gets from dma_alloc_attrs() and it can be used by device. There
+is no reason to use dma_map_*().
 
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+Thanks.
