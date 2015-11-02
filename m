@@ -1,415 +1,384 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v4] tests/exynos: add fimg2d performance analysis
-Date: Mon,  2 Nov 2015 10:52:09 +0100
-Message-ID: <1446457929-8302-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33173 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751847AbbKBJwP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 04:52:15 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH 1/2] arm64: dts: exynos7: Add pmic s2mps15 device tree node
+Date: Mon, 02 Nov 2015 15:34:00 +0530
+Message-ID: <1446458641-4447-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, inki.dae@samsung.com, human.hwang@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: k.kozlowski@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently only fast solid color clear performance is measured.
-A large buffer is allocated and solid color clear operations
-are executed on it with randomly chosen properties (position
-and size of the region, clear color). Execution time is
-measured and output together with the amount of pixels
-processed.
+This patch add pmic (s2mps15) node of espresso board,
+which includes addition of regulators and pmic-clk sub-nodes.
 
-The 'simple' variant only executes one G2D command buffer at
-a time, while the 'multi' variant executes multiple ones. This
-can be used to measure setup/exec overhead.
-
-The test also serves a stability check. If clocks/voltages are
-too high or low respectively, the test quickly reveals this.
-
-v2: Add GPLv2 header, argument handling and documentation.
-    Tool is only installed when requested.
-v3: Free images array in fimg2d_perf_multi() as pointed out
-    by Hyungwon Hwang.
-v4: Include header for error numbers (fixes build).
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- tests/exynos/Makefile.am          |  19 ++-
- tests/exynos/exynos_fimg2d_perf.c | 327 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 344 insertions(+), 2 deletions(-)
- create mode 100644 tests/exynos/exynos_fimg2d_perf.c
+This patch should go in after driver side changes [1] lands.
+[1]-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg47736.html
 
-diff --git a/tests/exynos/Makefile.am b/tests/exynos/Makefile.am
-index b21d016..e82d199 100644
---- a/tests/exynos/Makefile.am
-+++ b/tests/exynos/Makefile.am
-@@ -5,16 +5,31 @@ AM_CFLAGS = \
- 	-I $(top_srcdir)/exynos \
- 	-I $(top_srcdir)
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  349 +++++++++++++++++++++++
+ 1 file changed, 349 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index 838a3626dac1..8ce04a0ec928 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -53,6 +53,355 @@
+ 	status = "okay";
+ };
  
-+bin_PROGRAMS =
-+noinst_PROGRAMS =
-+
- if HAVE_LIBKMS
- if HAVE_INSTALL_TESTS
--bin_PROGRAMS = \
-+bin_PROGRAMS += \
- 	exynos_fimg2d_test
- else
--noinst_PROGRAMS = \
-+noinst_PROGRAMS += \
- 	exynos_fimg2d_test
- endif
- endif
- 
-+if HAVE_INSTALL_TESTS
-+bin_PROGRAMS += \
-+	exynos_fimg2d_perf
-+else
-+noinst_PROGRAMS += \
-+	exynos_fimg2d_perf
-+endif
-+
-+exynos_fimg2d_perf_LDADD = \
-+	$(top_builddir)/libdrm.la \
-+	$(top_builddir)/exynos/libdrm_exynos.la
-+
- exynos_fimg2d_test_LDADD = \
- 	$(top_builddir)/libdrm.la \
- 	$(top_builddir)/libkms/libkms.la \
-diff --git a/tests/exynos/exynos_fimg2d_perf.c b/tests/exynos/exynos_fimg2d_perf.c
-new file mode 100644
-index 0000000..1699bba
---- /dev/null
-+++ b/tests/exynos/exynos_fimg2d_perf.c
-@@ -0,0 +1,327 @@
-+/*
-+ * Copyright (C) 2015 - Tobias Jakobi
-+ *
-+ * This is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published
-+ * by the Free Software Foundation, either version 2 of the License,
-+ * or (at your option) any later version.
-+ *
-+ * It is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ * You should have received a copy of the GNU General Public License
-+ * along with it. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <time.h>
-+#include <getopt.h>
-+#include <errno.h>
-+
-+#include <xf86drm.h>
-+
-+#include "exynos_drm.h"
-+#include "exynos_drmif.h"
-+#include "exynos_fimg2d.h"
-+
-+static int output_mathematica = 0;
-+
-+static int fimg2d_perf_simple(struct exynos_bo *bo, struct g2d_context *ctx,
-+			unsigned buf_width, unsigned buf_height, unsigned iterations)
-+{
-+	struct timespec tspec = { 0 };
-+	struct g2d_image img = { 0 };
-+
-+	unsigned long long g2d_time;
-+	unsigned i;
-+	int ret = 0;
-+
-+	img.width = buf_width;
-+	img.height = buf_height;
-+	img.stride = buf_width * 4;
-+	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-+	img.buf_type = G2D_IMGBUF_GEM;
-+	img.bo[0] = bo->handle;
-+
-+	srand(time(NULL));
-+
-+	printf("starting simple G2D performance test\n");
-+	printf("buffer width = %u, buffer height = %u, iterations = %u\n",
-+		buf_width, buf_height, iterations);
-+
-+	if (output_mathematica)
-+		putchar('{');
-+
-+	for (i = 0; i < iterations; ++i) {
-+		unsigned x, y, w, h;
-+
-+		x = rand() % buf_width;
-+		y = rand() % buf_height;
-+
-+		if (x == (buf_width - 1))
-+			x -= 1;
-+		if (y == (buf_height - 1))
-+			y -= 1;
-+
-+		w = rand() % (buf_width - x);
-+		h = rand() % (buf_height - y);
-+
-+		if (w == 0) w = 1;
-+		if (h == 0) h = 1;
-+
-+		img.color = rand();
-+
-+		ret = g2d_solid_fill(ctx, &img, x, y, w, h);
-+
-+		clock_gettime(CLOCK_MONOTONIC, &tspec);
-+
-+		if (ret == 0)
-+			ret = g2d_exec(ctx);
-+
-+		if (ret != 0) {
-+			fprintf(stderr, "error: iteration %u failed (x = %u, y = %u, w = %u, h = %u)\n",
-+				i, x, y, w, h);
-+			break;
-+		} else {
-+			struct timespec end = { 0 };
-+			clock_gettime(CLOCK_MONOTONIC, &end);
-+
-+			g2d_time = (end.tv_sec - tspec.tv_sec) * 1000000000ULL;
-+			g2d_time += (end.tv_nsec - tspec.tv_nsec);
-+
-+			if (output_mathematica) {
-+				if (i != 0) putchar(',');
-+				printf("{%u,%llu}", w * h, g2d_time);
-+			} else {
-+				printf("num_pixels = %u, usecs = %llu\n", w * h, g2d_time);
-+			}
-+		}
-+	}
-+
-+	if (output_mathematica)
-+		printf("}\n");
-+
-+	return ret;
-+}
-+
-+static int fimg2d_perf_multi(struct exynos_bo *bo, struct g2d_context *ctx,
-+			unsigned buf_width, unsigned buf_height, unsigned iterations, unsigned batch)
-+{
-+	struct timespec tspec = { 0 };
-+	struct g2d_image *images;
-+
-+	unsigned long long g2d_time;
-+	unsigned i, j;
-+	int ret = 0;
-+
-+	images = calloc(batch, sizeof(struct g2d_image));
-+	if (images == NULL) {
-+		fprintf(stderr, "error: failed to allocate G2D images.\n");
-+		return -ENOMEM;
-+	}
-+
-+	for (i = 0; i < batch; ++i) {
-+		images[i].width = buf_width;
-+		images[i].height = buf_height;
-+		images[i].stride = buf_width * 4;
-+		images[i].color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-+		images[i].buf_type = G2D_IMGBUF_GEM;
-+		images[i].bo[0] = bo->handle;
-+	}
-+
-+	srand(time(NULL));
-+
-+	printf("starting multi G2D performance test (batch size = %u)\n", batch);
-+	printf("buffer width = %u, buffer height = %u, iterations = %u\n",
-+		buf_width, buf_height, iterations);
-+
-+	if (output_mathematica)
-+		putchar('{');
-+
-+	for (i = 0; i < iterations; ++i) {
-+		unsigned num_pixels = 0;
-+
-+		for (j = 0; j < batch; ++j) {
-+			unsigned x, y, w, h;
-+
-+			x = rand() % buf_width;
-+			y = rand() % buf_height;
-+
-+			if (x == (buf_width - 1))
-+				x -= 1;
-+			if (y == (buf_height - 1))
-+				y -= 1;
-+
-+			w = rand() % (buf_width - x);
-+			h = rand() % (buf_height - y);
-+
-+			if (w == 0) w = 1;
-+			if (h == 0) h = 1;
-+
-+			images[j].color = rand();
-+
-+			num_pixels += w * h;
-+
-+			ret = g2d_solid_fill(ctx, &images[j], x, y, w, h);
-+			if (ret != 0)
-+				break;
-+		}
-+
-+		clock_gettime(CLOCK_MONOTONIC, &tspec);
-+
-+		if (ret == 0)
-+			ret = g2d_exec(ctx);
-+
-+		if (ret != 0) {
-+			fprintf(stderr, "error: iteration %u failed (num_pixels = %u)\n", i, num_pixels);
-+			break;
-+		} else {
-+			struct timespec end = { 0 };
-+			clock_gettime(CLOCK_MONOTONIC, &end);
-+
-+			g2d_time = (end.tv_sec - tspec.tv_sec) * 1000000000ULL;
-+			g2d_time += (end.tv_nsec - tspec.tv_nsec);
-+
-+			if (output_mathematica) {
-+				if (i != 0) putchar(',');
-+				printf("{%u,%llu}", num_pixels, g2d_time);
-+			} else {
-+				printf("num_pixels = %u, usecs = %llu\n", num_pixels, g2d_time);
-+			}
-+		}
-+	}
-+
-+	if (output_mathematica)
-+		printf("}\n");
-+
-+	free(images);
-+
-+	return ret;
-+}
-+
-+static void usage(const char *name)
-+{
-+	fprintf(stderr, "usage: %s [-ibwh]\n\n", name);
-+
-+	fprintf(stderr, "\t-i <number of iterations>\n");
-+	fprintf(stderr, "\t-b <size of a batch> (default = 3)\n\n");
-+
-+	fprintf(stderr, "\t-w <buffer width> (default = 4096)\n");
-+	fprintf(stderr, "\t-h <buffer height> (default = 4096)\n\n");
-+
-+	fprintf(stderr, "\t-M <enable Mathematica styled output>\n");
-+
-+	exit(0);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int fd, ret, c, parsefail;
-+
-+	struct exynos_device *dev;
-+	struct g2d_context *ctx;
-+	struct exynos_bo *bo;
-+
-+	unsigned int iters = 0, batch = 3;
-+	unsigned int bufw = 4096, bufh = 4096;
-+
-+	ret = 0;
-+	parsefail = 0;
-+
-+	while ((c = getopt(argc, argv, "i:b:w:h:M")) != -1) {
-+		switch (c) {
-+		case 'i':
-+			if (sscanf(optarg, "%u", &iters) != 1)
-+				parsefail = 1;
-+			break;
-+		case 'b':
-+			if (sscanf(optarg, "%u", &batch) != 1)
-+				parsefail = 1;
-+			break;
-+		case 'w':
-+			if (sscanf(optarg, "%u", &bufw) != 1)
-+				parsefail = 1;
-+			break;
-+		case 'h':
-+			if (sscanf(optarg, "%u", &bufh) != 1)
-+				parsefail = 1;
-+			break;
-+		case 'M':
-+			output_mathematica = 1;
-+			break;
-+		default:
-+			parsefail = 1;
-+			break;
-+		}
-+	}
-+
-+	if (parsefail || (argc == 1) || (iters == 0))
-+		usage(argv[0]);
-+
-+	if (bufw < 2 || bufw > 4096 || bufh < 2 || bufh > 4096) {
-+		fprintf(stderr, "error: buffer width/height should be in the range 2 to 4096.\n");
-+		ret = -1;
-+
-+		goto out;
-+	}
-+
-+	if (bufw == 0 || bufh == 0) {
-+		fprintf(stderr, "error: buffer width/height should be non-zero.\n");
-+		ret = -1;
-+
-+		goto out;
-+	}
-+
-+	fd = drmOpen("exynos", NULL);
-+	if (fd < 0) {
-+		fprintf(stderr, "error: failed to open drm\n");
-+		ret = -1;
-+
-+		goto out;
-+	}
-+
-+	dev = exynos_device_create(fd);
-+	if (dev == NULL) {
-+		fprintf(stderr, "error: failed to create device\n");
-+		ret = -2;
-+
-+		goto fail;
-+	}
-+
-+	ctx = g2d_init(fd);
-+	if (ctx == NULL) {
-+		fprintf(stderr, "error: failed to init G2D\n");
-+		ret = -3;
-+
-+		goto g2d_fail;
-+	}
-+
-+	bo = exynos_bo_create(dev, bufw * bufh * 4, 0);
-+	if (bo == NULL) {
-+		fprintf(stderr, "error: failed to create bo\n");
-+		ret = -4;
-+
-+		goto bo_fail;
-+	}
-+
-+	ret = fimg2d_perf_simple(bo, ctx, bufw, bufh, iters);
-+
-+	if (ret == 0)
-+		ret = fimg2d_perf_multi(bo, ctx, bufw, bufh, iters, batch);
-+
-+	exynos_bo_destroy(bo);
-+
-+bo_fail:
-+	g2d_fini(ctx);
-+
-+g2d_fail:
-+	exynos_device_destroy(dev);
-+
-+fail:
-+	drmClose(fd);
-+
-+out:
-+	return ret;
-+}
++&hsi2c_4 {
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-max-bus-freq = <200000>;
++	status = "okay";
++
++	s2mps15_pmic@66 {
++		compatible = "samsung,s2mps15-pmic";
++		reg = <0x66>;
++		interrupts = <2 0>;
++		interrupt-parent = <&gpa0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pmic_irq>;
++		wakeup-source;
++
++		s2mps15_osc: clocks {
++			compatible = "samsung,s2mps13-clk";
++			#clock-cells = <1>;
++			clock-output-names = "s2mps13_ap", "s2mps13_cp",
++				"s2mps13_bt";
++		};
++
++		regulators {
++			ldo1_reg: LDO1 {
++				regulator-name = "vdd_ldo1";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <900000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo2_reg: LDO2 {
++				regulator-name = "vdd_ldo2";
++				regulator-min-microvolt = <1620000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <125>;
++				regulator-always-on;
++			};
++
++			ldo3_reg: LDO3 {
++				regulator-name = "vdd_ldo3";
++				regulator-min-microvolt = <1620000>;
++				regulator-max-microvolt = <1980000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo4_reg: LDO4 {
++				regulator-name = "vdd_ldo4";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1110000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo5_reg: LDO5 {
++				regulator-name = "vdd_ldo5";
++				regulator-min-microvolt = <1620000>;
++				regulator-max-microvolt = <1980000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo6_reg: LDO6 {
++				regulator-name = "vdd_ldo6";
++				regulator-min-microvolt = <2250000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo7_reg: LDO7 {
++				regulator-name = "vdd_ldo7";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1150000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo8_reg: LDO8 {
++				regulator-name = "vdd_ldo8";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo9_reg: LDO9 {
++				regulator-name = "vdd_ldo9";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo10_reg: LDO10 {
++				regulator-name = "vdd_ldo10";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo11_reg: LDO11 {
++				regulator-name = "vdd_ldo11";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo12_reg: LDO12 {
++				regulator-name = "vdd_ldo12";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo13_reg: LDO13 {
++				regulator-name = "vdd_ldo13";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo14_reg: LDO14 {
++				regulator-name = "vdd_ldo14";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo15_reg: LDO15 {
++				regulator-name = "vdd_ldo15";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo16_reg: LDO16 {
++				regulator-name = "vdd_ldo16";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo17_reg: LDO17 {
++				regulator-name = "vdd_ldo17";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo18_reg: LDO18 {
++				regulator-name = "vdd_ldo18";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo19_reg: LDO19 {
++				regulator-name = "vdd_ldo19";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo20_reg: LDO20 {
++				regulator-name = "vdd_ldo20";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo21_reg: LDO21 {
++				regulator-name = "vdd_ldo21";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo22_reg: LDO22 {
++				regulator-name = "vdd_ldo22";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo23_reg: LDO23 {
++				regulator-name = "vdd_ldo23";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo24_reg: LDO24 {
++				regulator-name = "vdd_ldo24";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo25_reg: LDO25 {
++				regulator-name = "vdd_ldo25";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo26_reg: LDO26 {
++				regulator-name = "vdd_ldo26";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1470000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo27_reg: LDO27 {
++				regulator-name = "vdd_ldo27";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			buck1_reg: BUCK1 {
++				regulator-name = "vdd_mif";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck2_reg: BUCK2 {
++				regulator-name = "vdd_atlas";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <12500>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck3_reg: BUCK3 {
++				regulator-name = "vdd_apollo";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <12500>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck4_reg: BUCK4 {
++				regulator-name = "vdd_int";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <12500>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck5_reg: BUCK5 {
++				regulator-name = "vdd_buck5";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck6_reg: BUCK6 {
++				regulator-name = "vdd_g3d";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-always-on;
++				regulator-ramp-delay = <12500>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck7_reg: BUCK7 {
++				regulator-name = "vdd_buck7";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck8_reg: BUCK8 {
++				regulator-name = "vdd_buck8";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck9_reg: BUCK9 {
++				regulator-name = "vdd_buck9";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <2100000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck10_reg: BUCK10 {
++				regulator-name = "vdd_buck10";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <3000000>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++		};
++	};
++};
++
++&pinctrl_alive {
++	pmic_irq: pmic-irq {
++		samsung,pins = "gpa0-2";
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++};
++
+ &mmc_0 {
+ 	status = "okay";
+ 	num-slots = <1>;
 -- 
-2.4.9
+1.7.10.4
