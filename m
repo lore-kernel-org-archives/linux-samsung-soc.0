@@ -1,99 +1,104 @@
-From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 07/13] tests/exynos: use XRGB8888 for framebuffer
-Date: Mon, 02 Nov 2015 11:32:46 +0900
-Message-ID: <20151102113246.11a0b0b4@hwh-ubuntu>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-8-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20151030154110.6e458145@hwh-ubuntu> <563351AE.4020301@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v2] mfd: sec-core: Rename MFD and regulator names differently
+Date: Mon, 02 Nov 2015 09:36:09 +0530
+Message-ID: <1446437169-29550-1-git-send-email-alim.akhtar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50627 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751059AbbKBCct (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60431 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbbKBEE5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Nov 2015 21:32:49 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NX602N581QNI910@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Nov 2015 11:32:47 +0900 (KST)
-In-reply-to: <563351AE.4020301@math.uni-bielefeld.de>
+	Sun, 1 Nov 2015 23:04:57 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 30 Oct 2015 12:17:02 +0100
-Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+Currently S2MPSXX multifunction device is named as *-pmic,
+and these MFDs also supports regulator as a one of its MFD cell which
+has the same name, because current name is confusing and we want to
+sort it out.
 
-> Hello Hyungwon,
-> 
-> 
-> Hyungwon Hwang wrote:
-> > On Tue, 22 Sep 2015 17:54:56 +0200
-> > Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
-> > 
-> >> This matches the G2D color mode that is used in the entire code.
-> >> The previous (incorrect) RGBA8888 would only work since the
-> >> Exynos mixer did its configuration based on the bpp, and not
-> >> based on the actual pixelformat.
-> >>
-> >> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> >> ---
-> >>  tests/exynos/exynos_fimg2d_test.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/tests/exynos/exynos_fimg2d_test.c
-> >> b/tests/exynos/exynos_fimg2d_test.c index 8794dac..dfb00a0 100644
-> >> --- a/tests/exynos/exynos_fimg2d_test.c
-> >> +++ b/tests/exynos/exynos_fimg2d_test.c
-> >> @@ -675,7 +675,7 @@ int main(int argc, char **argv)
-> >>  	offsets[0] = 0;
-> >>  
-> >>  	ret = drmModeAddFB2(dev->fd, screen_width, screen_height,
-> >> -				DRM_FORMAT_RGBA8888, handles,
-> >> +				DRM_FORMAT_XRGB8888, handles,
-> >>  				pitches, offsets, &fb_id, 0);
-> > 
-> > Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
-> > 
-> > Nice catch. It's right, if there was no previous setting for source
-> > image color mode. But I think it could be the source image color
-> > mode was set by another application before when this test runs. So
-> > I think the code which sets the source image color mode must be
-> > added.
-> I think you misunderstand something here. First of all settings from
-> anither application using DRM don't carry over.
-> 
-> The point for this change is that all used G2D image structures have
-> the color_mode field set to G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB.
-> So the G2D is operating on ARGB8888 pixel data.
-> 
-> However the framebuffer is set to DRM_FORMAT_RGBA8888, which obviously
-> is wrong since this is not the type of data we put into the
-> framebuffer.
+We did discussed different approaches about how the MFD and it
+cells need to be named here [1].
+Based in the discussion this patch rename MFD regulator name as
+*-regulator instead of current *-pmic.
 
-Oh. That's right. I misunderstanded the code. This patch is absolutely
-right.
+This patch also changes the corresponding entries in the regulator driver
+to keep git-bisect happy.
 
-Best regards,
-Hyungwon Hwang
+[1]-> https://lkml.org/lkml/2015/10/28/417
 
-> 
-> 
-> With best wishes,
-> Tobias
-> 
-> 
-> > 
-> > Best regards,
-> > Hyungwon Hwang
-> > 
-> > 
-> >>  	if (ret < 0)
-> >>  		goto err_destroy_buffer;
-> > 
-> 
+Suggested-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+Changes since V1:
+* Squashed the two patches in one as sugeested by Lee
+* Based on the top of [1]
+[1]-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg47736.html
+
+ drivers/mfd/sec-core.c      |    8 ++++----
+ drivers/regulator/s2mps11.c |    8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 7c4e7be17f1e..c9802ba9be72 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -68,7 +68,7 @@ static const struct mfd_cell s5m8767_devs[] = {
+ 
+ static const struct mfd_cell s2mps11_devs[] = {
+ 	{
+-		.name = "s2mps11-pmic",
++		.name = "s2mps11-regulator",
+ 	}, {
+ 		.name = "s2mps14-rtc",
+ 	}, {
+@@ -78,7 +78,7 @@ static const struct mfd_cell s2mps11_devs[] = {
+ };
+ 
+ static const struct mfd_cell s2mps13_devs[] = {
+-	{ .name = "s2mps13-pmic", },
++	{ .name = "s2mps13-regulator", },
+ 	{ .name = "s2mps13-rtc", },
+ 	{
+ 		.name = "s2mps13-clk",
+@@ -88,7 +88,7 @@ static const struct mfd_cell s2mps13_devs[] = {
+ 
+ static const struct mfd_cell s2mps14_devs[] = {
+ 	{
+-		.name = "s2mps14-pmic",
++		.name = "s2mps14-regulator",
+ 	}, {
+ 		.name = "s2mps14-rtc",
+ 	}, {
+@@ -116,7 +116,7 @@ static const struct mfd_cell s2mpa01_devs[] = {
+ 
+ static const struct mfd_cell s2mpu02_devs[] = {
+ 	{
+-		.name = "s2mpu02-pmic",
++		.name = "s2mpu02-regulator",
+ 	},
+ };
+ 
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index b2f3a28e720c..3242ffc0cb25 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -1199,11 +1199,11 @@ out:
+ }
+ 
+ static const struct platform_device_id s2mps11_pmic_id[] = {
+-	{ "s2mps11-pmic", S2MPS11X},
+-	{ "s2mps13-pmic", S2MPS13X},
+-	{ "s2mps14-pmic", S2MPS14X},
++	{ "s2mps11-regulator", S2MPS11X},
++	{ "s2mps13-regulator", S2MPS13X},
++	{ "s2mps14-regulator", S2MPS14X},
+ 	{ "s2mps15-regulator", S2MPS15X},
+-	{ "s2mpu02-pmic", S2MPU02},
++	{ "s2mpu02-regulator", S2MPU02},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
+-- 
+1.7.10.4
