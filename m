@@ -1,75 +1,61 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: drm/exynos: when to call dma_map_sg() on a GEM object?
-Date: Mon, 02 Nov 2015 19:42:19 +0900
-Message-ID: <56373E0B.3050608@samsung.com>
-References: <5633D696.8020103@math.uni-bielefeld.de>
- <563713C4.2050309@samsung.com> <56373B0B.2050902@math.uni-bielefeld.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 4/4] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+Date: Mon, 2 Nov 2015 10:58:49 +0000
+Message-ID: <20151102105849.GV4058@x1>
+References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
+ <1446186334-16510-5-git-send-email-alim.akhtar@samsung.com>
+ <20151101174048.GD22331@piout.net>
+ <5636A44D.4090908@samsung.com>
+ <20151102004722.GI22331@piout.net>
+ <20151102090359.GR4058@x1>
+ <20151102101931.GK22331@piout.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <56373B0B.2050902@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Joonyoung Shim <jy0922.shim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:34254 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753200AbbKBK6x (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Nov 2015 05:58:53 -0500
+Received: by wmff134 with SMTP id f134so55482940wmf.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2015 02:58:52 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20151102101931.GK22331@piout.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, broonie@kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-SGkgVG9iaWFzLAoKMjAxNeuFhCAxMeyblCAwMuydvCAxOToyOeyXkCBUb2JpYXMgSmFrb2JpIOyd
-tCjqsIApIOyTtCDquIA6Cj4gSGVsbG8gSm9vbnlvdW5nLAo+IAo+IAo+IEpvb255b3VuZyBTaGlt
-IHdyb3RlOgo+PiBPbiAxMC8zMS8yMDE1IDA1OjQ0IEFNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+
-Pj4gSGV5IHRoZXJlLAo+Pj4KPj4+IHRoaXMgcXVlc3Rpb24gYXJvc2UgZHVyaW5nIHNvbWUgZGlz
-Y3Vzc2lvbiB3aXRoIHNvbWVvbmUgY29uY2VybmluZyB0aGUKPj4+IEV4eW5vcyBtaXhlciBhbmQg
-RzJELgo+Pj4KPj4+IFRoZSBxdWVzdGlvbiBpcyB0aGUgZm9sbG93aW5nLiBDb25zaWRlciB0aGUg
-RXh5bm9zIG1peGVyIHdoZW4gcnVuIHVuZGVyCj4+PiB0aGUgSU9NTVUgKHRoYXQncyBzeXNtbXVf
-dHYgSUlSQykuIFdoYXQgZXhhY3RseSBkb2VzIHNldHVwIHRoZSBJT01NVQo+Pj4gbWFwcGluZyBz
-byB0aGF0IHRoZSBtaXhlciBjYW4gc2Nhbm91dCB0aGUgZnJhbWVidWZmZXI/Cj4+Pgo+Pgo+PiBJ
-T01NVSBtYXBwaW5nIGlzIGluIGRtYV9hbGxvY19hdHRycygpLiBBbHJlYWR5IElPTU1VIHdhcyBp
-bnRlZ3JhdGVkIGluCj4+IHRoZSBETUEgbWFwcGluZyBBUEkgb24gQVJNIGFyY2guCj4gVGhhbmtz
-LCBJJ20gZ29pbmcgdG8gdGFrZSBhIGNsb3NlciBsb29rIGF0IGRtYV9hbGxvY19hdHRycygpIHRo
-ZW4uCj4gCj4gCj4+PiBUaGVyZSBpcyBleHlub3NfZ2VtX21hcF9zZ3Rfd2l0aF9kbWEoKSBpbiB0
-aGUgRXh5bm9zIEdFTSBjb2RlLCBidXQgaXQncwo+Pj4gY3VycmVudGx5IGV4Y2x1c2l2ZWx5IHVz
-ZWQgZm9yIHRoZSBHMkQgYW5kIG9ubHkgd2hlbiBkZWFsaW5nIHdpdGgKPj4+IHVzZXJwdHIgKGFu
-ZCBub3QgR0VNKSB0aGVyZS4KPj4+Cj4+PiBJIHdhcyBsb29raW5nIGF0IGV4eW5vc19kcm1fYWxs
-b2NfYnVmKCkgc2luY2UgdGhpcyBjYWxsZWQgd2hlbgo+Pj4gYWxsb2NhdGluZyBhIEJPIHRvIGJl
-IHVzZWQgYXMgc2Nhbm91dC4KPj4+Cj4+PiBJIHNlZSBkbWFfYWxsb2NfYXR0cnMoKSBiZWluZyBj
-YWxsZWQsIHdoaWNoIGFsc28gc2V0cyB0aGUgRE1BIGFkZHJlc3MKPj4+IHRoYXQgaXMgbGF0ZXIg
-dXNlZCBpbiB0aGUgbWl4ZXIgY29kZS4gQnV0IERNQV9BVFRSX05PX0tFUk5FTF9NQVBQSU5HIGlz
-Cj4+PiBwYXNzZWQsIHNvIG5vIG1hcHBpbmcgaXMgZG9uZSBhdCB0aGlzIHBvaW50Lgo+Pj4KPj4K
-Pj4gRGlkIHlvdSByZWFkIERvY3VtZW50YXRpb24vRE1BLWF0dHJpYnV0ZXMudHh0IGRvY3VtZW50
-Pwo+IEkgZGlkLCBidXQgSSBndWVzcyBJIHNob3VsZCByZWFkIGl0IGFnYWluLi4uCj4gCj4gCj4+
-IERNQV9BVFRSX05PX0tFUk5FTF9NQVBQSU5HIGlzIGp1c3QgdG8gYXZvaWQgY3JlYXRpbmcgYSBr
-ZXJuZWwgdmlydHVhbAo+PiBtYXBwaW5nIGZvciB0aGUgYWxsb2NhdGVkIGJ1ZmZlciBvbiBBUk0g
-YXJjaC4KPiBBaCBPSywgc28gdGhlIElPTU1VIG1hcHBpbmcgaXMgYWx3YXlzIGVzdGFibGlzaGVk
-Lgo+IAo+IAo+Pj4gSXMgdGhlIG1hcHBpbmcgZG9uZSBzb21ld2hlcmUgZWxzZSwgb3IgaXMgaXQg
-c2ltcGx5IG5vdCBuZWNlc3NhcnkgaGVyZT8KPj4+Cj4+Cj4+IFdoYXQgaXMgdGhlIG1hcHBpbmcg
-eW91IG1lYW4/IEFzIHlvdSBrbm93LCB0aGUgRE1BIGFkZHJlc3Mgb2YgdGhlCj4+IG1lbW9yeSBn
-ZXRzIGZyb20gZG1hX2FsbG9jX2F0dHJzKCkgYW5kIGl0IGNhbiBiZSB1c2VkIGJ5IGRldmljZS4g
-VGhlcmUKPj4gaXMgbm8gcmVhc29uIHRvIHVzZSBkbWFfbWFwXyooKS4KPj5Gcm9tIG15IHVuZGVy
-c3RhbmRpbmcgdGhlIG1peGVyIGRvZXNuJ3QgZGlyZWN0bHkgYWNjZXNzIHRoZSBwaHlzaWNhbAo+
-IG1lbW9yeSB3aGVuIHJ1bm5pbmcgdW5kZXIgSU9NTVUuIEl0IGFjY2Vzc2VzIG1lbW9yeSB0aHJv
-dWdoIHN5c21tdV90diwKPiBzbyBteSBxdWVzdGlvbiB3YXMgd2hvIGRvZXMgdGhlIHNldHVwIHNv
-IHRoYXQgc3lzbW11X3R2ICJrbm93cyIgaG93IHRvCj4gdHJhbnNsYXRlIG1lbW9yeSBhY2Nlc3Nl
-cy4KClRoYXQgaXMgZG9uZSBieSBkbWEtbWFwcGluZyBBUEksIGRtYV9hbGxvY19hdHRycyBmdW5j
-dGlvbiBpbiBjYXNlIG9mIEV4eW5vcyBEUk0uCgpUaGlzIGRtYSBtYXBwaW5nIEFQSSBjYWxscyBp
-bnRlcm5hbGx5IGlvbW11X21hcCBmdW5jdGlvbiBvZiBpb21tdSBmcmFtZXdvcmsKYWZ0ZXIgYWxs
-b2NhdGluZyBwaHlzaWNhbCBwYWdlcyBhbmQgaW92YSBzcGFjZSwgYW5kIHRoZSBpb3ZhIHNwYWNl
-IHdpbGwgYmUKbWFwcGVkIHdpdGggcGh5c2ljYWwgcGFnZXMuCgpQbGVhc2UsIGxvb2sgaW50byB0
-aGUgZG1hIG1hcHBpbmcgZnJhbWV3b3JrIC0gYXJjaC9hcm0vbW0vZG1hLW1hcHBpbmcuYyAtCmlm
-IHlvdSB3YW50IHRvIHVuZGVyc3RhbmQuIEkgdGhpbmsgeW91IGNvdWxkIHVuZGVyc3RhbmQgaXQg
-ZWFzaWx5IGlmIHlvdQp0cmllZCB0byBsb29rIGludG8gZXh5bm9zX2RybV9hbGxvY19idWYgZnVu
-Y3Rpb24gYmVmb3JlIGFza2luZyBmb3IgaXQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IAo+IFdp
-dGggYmVzdCB3aXNoZXMsCj4gVG9iaWFzCj4gCj4gCj4+Cj4+IFRoYW5rcy4KPj4KPiAKPiAtLQo+
-IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmli
-ZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
-b21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
-Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IApfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, 02 Nov 2015, Alexandre Belloni wrote:
+
+> On 02/11/2015 at 09:03:59 +0000, Lee Jones wrote :
+> > > > I think you cannot apply it directly because it depends on head=
+ers from
+> > > > patch 2/4. It won't build.
+> > > >=20
+> > >=20
+> > > Yeah, this depends on the mfd tree. I don't thin Lee applied patc=
+h 2/4
+> > > yet so I'm taking that one for 4.5.
+> >=20
+> > I don't mind if you take it, but if you do so you need to take the
+> > Regulator patch as well AND provide Mark and I a pull-request from =
+an
+> > immutable branch please.=20
+> >=20
+>=20
+> Actually, I was thinking that you would take 2/4 through your tree an=
+d I
+> would either base myself on that or delay the patch for 4.5. You coul=
+d
+> also take the rtc patch if you plan to apply 2/4, feel free to add my
+> acked-by.
+
+Perfect.  I will do the latter.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
