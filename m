@@ -1,90 +1,54 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH 1/2] arm64: dts: exynos7: Add pmic s2mps15 device tree node
-Date: Mon, 02 Nov 2015 17:28:27 +0530
-Message-ID: <56374FE3.9050805@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] arm64: dts: exynos7: Enable HS200 mode operation
+Date: Mon, 2 Nov 2015 20:58:56 +0900
+Message-ID: <CAJKOXPcpyBQ-2MDC6D69-p+038wxfVdS+weBGJy+r+eP6tNB-g@mail.gmail.com>
 References: <1446458641-4447-1-git-send-email-alim.akhtar@samsung.com>
- <5637495D.1080701@osg.samsung.com>
+	<1446458641-4447-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5637495D.1080701@osg.samsung.com>
+In-Reply-To: <1446458641-4447-2-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: k.kozlowski@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Subject - name of the board at the end (not the name of the SoC):
+arm64: dts: Enable HS200 mode operation on exynos7-espresso
 
+2015-11-02 19:04 GMT+09:00 Alim Akhtar <alim.akhtar@samsung.com>:
+> This patch enables HS200 mode operation on exynos7 based
+> espresso board.
+> This also remove _broken-cd_ property as per mmc binding documentation
 
-On 11/02/2015 05:00 PM, Javier Martinez Canillas wrote:
-> Hello Alim,
+s/remove/removes/
+
+> which say one of the properties between broken-cd and non-removable
+
+s/say/says/
+
+> should be used. And we already use _non-removable_ as emmc mounted
+> on board which is a non-removable device.
 >
-> This patch looks mostly good to me, I just have two comments below:
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> On 11/02/2015 11:04 AM, Alim Akhtar wrote:
->> This patch add pmic (s2mps15) node of espresso board,
->> which includes addition of regulators and pmic-clk sub-nodes.
->>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->> This patch should go in after driver side changes [1] lands.
->> [1]-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg47736.html
->>
->>   arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  349 +++++++++++++++++++++++
->>   1 file changed, 349 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->> index 838a3626dac1..8ce04a0ec928 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->> @@ -53,6 +53,355 @@
->>   	status = "okay";
->>   };
->>
->> +&hsi2c_4 {
->> +	samsung,i2c-sda-delay = <100>;
->> +	samsung,i2c-max-bus-freq = <200000>;
->> +	status = "okay";
->> +
->> +	s2mps15_pmic@66 {
->> +		compatible = "samsung,s2mps15-pmic";
->> +		reg = <0x66>;
->> +		interrupts = <2 0>;
->
-> Maybe using IRQ_TYPE_NONE instead of 0?
->
-Ok will check
->> +		interrupt-parent = <&gpa0>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&pmic_irq>;
->> +		wakeup-source;
->> +
->> +		s2mps15_osc: clocks {
->> +			compatible = "samsung,s2mps13-clk";
->> +			#clock-cells = <1>;
->> +			clock-output-names = "s2mps13_ap", "s2mps13_cp",
->> +				"s2mps13_bt";
->> +		};
->> +
->> +		regulators {
->> +			ldo1_reg: LDO1 {
->> +				regulator-name = "vdd_ldo1";
->> +				regulator-min-microvolt = <500000>;
->> +				regulator-max-microvolt = <900000>;
->> +				regulator-always-on;
->
-> I see that all regulators are marked as regulator-always-on but that will
-> prevent the regulator subsystem to disable unused regulators. Can you please
-> double check which regulators should really be always on and which ones can
-> be disabled if are not used?
->
-I kept it on always, as I am still in a process for validating all IPs 
-on board. Will see if I can remove some of them, which I feel can be done.
-> After those two changes:
->
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
->
-Thanks!
-> Best regards,
->
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> index 8ce04a0ec928..7f19b99fc85b 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> @@ -405,8 +405,8 @@
+>  &mmc_0 {
+>         status = "okay";
+>         num-slots = <1>;
+> -       broken-cd;
+>         cap-mmc-highspeed;
+> +       mmc-hs200-1_8v;
+
+The "mmc-ddr-1_8v" should also be supported but I guess you did not
+add it on purpose?
+
+Best regards,
+Krzysztof
