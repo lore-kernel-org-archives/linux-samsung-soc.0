@@ -1,85 +1,150 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 6/7] dt-bindings: exynos_hdmi: add bindings for Exynos5433
- variant
-Date: Mon, 02 Nov 2015 14:16:44 +0100
-Message-ID: <1446470205-15606-7-git-send-email-a.hajda@samsung.com>
-References: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/2] arm64: dts: exynos7: Add pmic s2mps15 device tree node
+Date: Mon, 2 Nov 2015 22:52:43 +0900
+Message-ID: <CAJKOXPcPQD+3QinbaKcREQSn1yJCf2kQG0C4rhJtCS=W_25Gmw@mail.gmail.com>
+References: <1446458641-4447-1-git-send-email-alim.akhtar@samsung.com>
+	<CAJKOXPfrvuH8t3Pkf2Qt8VEfMR3qOeFKHrG0i3qUf94BR1y2tQ@mail.gmail.com>
+	<56375EB1.2090504@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:34607 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752532AbbKBNSF (ORCPT
+Received: from mail-qg0-f47.google.com ([209.85.192.47]:34924 "EHLO
+	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753736AbbKBNwo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 08:18:05 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NX600GA2VM37690@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Nov 2015 13:18:03 +0000 (GMT)
-In-reply-to: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
+	Mon, 2 Nov 2015 08:52:44 -0500
+In-Reply-To: <56375EB1.2090504@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org
 
-Exynos5433 variant of HDMI requires different set of clocks and sysreg
-phandle to system registers.
+2015-11-02 22:01 GMT+09:00 Alim Akhtar <alim.akhtar@samsung.com>:
+>>>
+>>>   arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  349
+>>> +++++++++++++++++++++++
+>>>   1 file changed, 349 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>>> b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>>> index 838a3626dac1..8ce04a0ec928 100644
+>>> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>>> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>>> @@ -53,6 +53,355 @@
+>>>          status = "okay";
+>>>   };
+>>>
+>>> +&hsi2c_4 {
+>>> +       samsung,i2c-sda-delay = <100>;
+>>> +       samsung,i2c-max-bus-freq = <200000>;
+>>> +       status = "okay";
+>>> +
+>>> +       s2mps15_pmic@66 {
+>>> +               compatible = "samsung,s2mps15-pmic";
+>>> +               reg = <0x66>;
+>>> +               interrupts = <2 0>;
+>>> +               interrupt-parent = <&gpa0>;
+>>> +               pinctrl-names = "default";
+>>> +               pinctrl-0 = <&pmic_irq>;
+>>> +               wakeup-source;
+>>> +
+>>> +               s2mps15_osc: clocks {
+>>> +                       compatible = "samsung,s2mps13-clk";
+>>> +                       #clock-cells = <1>;
+>>> +                       clock-output-names = "s2mps13_ap", "s2mps13_cp",
+>>> +                               "s2mps13_bt";
+>>> +               };
+>>
+>>
+>> Don't you want to use one of these clocks for s3c-rtc (&rtc node)?
+>>
+> yes, you are right, rtc on this board is currently broken, mainly because of
+> the introduction of rtc_src clock in the s3c-rtc driver.
+> That is on my do list next. will take a look.
+>
+> Are you suggesting to remove this -clk node now and add along with rtc
+> changes? I feel this should go in along with this patch.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- .../devicetree/bindings/video/exynos_hdmi.txt      | 27 +++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+Just add it in consecutive patch in this series. You added here some
+providers (clock and regulators) without consumers. This of course
+looks good as a way of providing full description of the board but:
+1. For regulators always on: may be meaningless for kernel. Kernel
+does not use it. Existence of regulator subnode will fulfill driver's
+needs for probe.
+2. For clocks: actually will disable these clocks because of lack of
+consumers... which is fine but probably not what you wanted.
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index d474f59..4c3c582 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -5,6 +5,7 @@ Required properties:
- 	1) "samsung,exynos4210-hdmi"
- 	2) "samsung,exynos4212-hdmi"
- 	3) "samsung,exynos5420-hdmi"
-+	4) "samsung,exynos5433-hdmi"
- - reg: physical base address of the hdmi and length of memory mapped
- 	region.
- - interrupts: interrupt number to the cpu.
-@@ -12,6 +13,11 @@ Required properties:
- 	a) phandle of the gpio controller node.
- 	b) pin number within the gpio controller.
- 	c) optional flags and pull up/down.
-+- ddc: phandle to the hdmi ddc node
-+- phy: phandle to the hdmi phy node
-+- samsung,syscon-phandle: phandle for system controller node for PMU.
-+
-+Required properties for Exynos 4210, 4212 and 5420:
- - clocks: list of clock IDs from SoC clock driver.
- 	a) hdmi: Gate of HDMI IP bus clock.
- 	b) sclk_hdmi: Gate of HDMI special clock.
-@@ -25,9 +31,24 @@ Required properties:
- 		sclk_pixel.
- - clock-names: aliases as per driver requirements for above clock IDs:
- 	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
--- ddc: phandle to the hdmi ddc node
--- phy: phandle to the hdmi phy node
--- samsung,syscon-phandle: phandle for system controller node for PMU.
-+
-+Required properties for Exynos 5433:
-+- clocks: list of clock specifiers according to common clock bindings.
-+	a) hdmi_pclk: Gate of HDMI IP APB bus.
-+	b) hdmi_i_pclk: Gate of HDMI-PHY IP APB bus.
-+	d) i_tmds_clk: Gate of HDMI TMDS clock.
-+	e) i_pixel_clk: Gate of HDMI pixel clock.
-+	f) i_spdif_clk: Gate of HDMI SPDIF clock.
-+	g) oscclk: Oscillator clock, used as parent of following *_user clocks
-+		in case HDMI-PHY is not operational.
-+	h) tmds_clko: TMDS clock generated by HDMI-PHY.
-+	i) tmds_clko_user: MUX used to switch between oscclk and tmds_clko,
-+		respectively if HDMI-PHY is off and operational.
-+	j) pixel_clko: Pixel clock generated by HDMI-PHY.
-+	k) pixel_clko_user: MUX used to switch between oscclk and pixel_clko,
-+		respectively if HDMI-PHY is off and operational.
-+- clock-names: aliases for above clock specfiers.
-+- samsung,sysreg: handle to syscon used to control the system registers.
- 
- Example:
- 
--- 
-1.9.1
+The standard approach is to add such providers when they are needed -
+there are some consumers using them.
+
+>>> +
+>>> +               regulators {
+>>> +                       ldo1_reg: LDO1 {
+>>> +                               regulator-name = "vdd_ldo1";
+>>> +                               regulator-min-microvolt = <500000>;
+>>> +                               regulator-max-microvolt = <900000>;
+>>> +                               regulator-always-on;
+>>> +                               regulator-enable-ramp-delay = <125>;
+>>> +                       };
+
+(...)
+
+>>> +
+>>> +                       buck10_reg: BUCK10 {
+>>> +                               regulator-name = "vdd_buck10";
+>>> +                               regulator-min-microvolt = <1000000>;
+>>> +                               regulator-max-microvolt = <3000000>;
+>>> +                               regulator-boot-on;
+>>> +                               regulator-always-on;
+>>> +                               regulator-ramp-delay = <25000>;
+>>> +                               regulator-enable-ramp-delay = <250>;
+>>> +                       };
+>>
+>>
+>> All of these ldo3 and bucks in vendor tree for Espresso board have
+>> ramp delay of 12000. Also they don't have enable-ramp-delay set and
+>> voltages sometimes differ. I don't have S2MPS15 datasheet so I don't
+>> know what is the true value... I'll leave it up to you but it looks
+>> suspicious.
+>>
+> These values generally comes from our board design team, so I cann't really
+> comment on that, it may vary from board revision etc.
+> I will check if we have any updated version of recommended value and update
+> accordingly.
+
+Okay, just pointing the difference. I cannot verify them.
+
+>
+>>> +               };
+>>> +       };
+>>> +};
+>>
+>>
+>> What will be the benefit of defining all of these regulators if they
+>> are always on and without consumers? No one will disable them, no one
+>> will change the voltage. Please provide some consumers.
+>>
+> As many drivers are not yet enabled in arm64 defconfig, that is one of the
+> reason why we are not seeing many consumer for these nodes.
+
+That is not a problem. Please send a patch changing the defconfig.
+Usually defconfig (for armv7 this would be exynos and multi_v7) should
+provide bootable and working environment for all of our supported
+boards.
+
+> This is the ground work being done for enabling those. If you insist will
+> try to reduce what is being used now. Moreover this was used to verify
+> functionality of pmic driver as well.
+
+Actually as a verification I think even adding simple node
+"regulators" is sufficient - driver will add all regulators anyway.
+However seeing all regulators described for particular board is
+good... but lack of consumers is disturbing because this may mean that
+it was not really fully modeled.
+
+>From my point of view - all of regulators in DT are welcomed but at
+least some of them should have a consumer. This means that someone
+took care and looked at the relationships between them.
+
+Best regards,
+Krzysztof
