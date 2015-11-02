@@ -1,47 +1,60 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v5 4/4] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
-Date: Mon, 2 Nov 2015 11:19:31 +0100
-Message-ID: <20151102101931.GK22331@piout.net>
-References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
- <1446186334-16510-5-git-send-email-alim.akhtar@samsung.com>
- <20151101174048.GD22331@piout.net>
- <5636A44D.4090908@samsung.com>
- <20151102004722.GI22331@piout.net>
- <20151102090359.GR4058@x1>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: drm/exynos: when to call dma_map_sg() on a GEM object?
+Date: Mon, 2 Nov 2015 11:29:31 +0100
+Message-ID: <56373B0B.2050902@math.uni-bielefeld.de>
+References: <5633D696.8020103@math.uni-bielefeld.de>
+ <563713C4.2050309@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:43122 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752107AbbKBKTf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 05:19:35 -0500
-Content-Disposition: inline
-In-Reply-To: <20151102090359.GR4058@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <563713C4.2050309@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, broonie@kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-On 02/11/2015 at 09:03:59 +0000, Lee Jones wrote :
-> > > I think you cannot apply it directly because it depends on headers from
-> > > patch 2/4. It won't build.
-> > > 
-> > 
-> > Yeah, this depends on the mfd tree. I don't thin Lee applied patch 2/4
-> > yet so I'm taking that one for 4.5.
-> 
-> I don't mind if you take it, but if you do so you need to take the
-> Regulator patch as well AND provide Mark and I a pull-request from an
-> immutable branch please. 
-> 
-
-Actually, I was thinking that you would take 2/4 through your tree and I
-would either base myself on that or delay the patch for 4.5. You could
-also take the rtc patch if you plan to apply 2/4, feel free to add my
-acked-by.
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+SGVsbG8gSm9vbnlvdW5nLAoKCkpvb255b3VuZyBTaGltIHdyb3RlOgo+IE9uIDEwLzMxLzIwMTUg
+MDU6NDQgQU0sIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+IEhleSB0aGVyZSwKPj4KPj4gdGhpcyBx
+dWVzdGlvbiBhcm9zZSBkdXJpbmcgc29tZSBkaXNjdXNzaW9uIHdpdGggc29tZW9uZSBjb25jZXJu
+aW5nIHRoZQo+PiBFeHlub3MgbWl4ZXIgYW5kIEcyRC4KPj4KPj4gVGhlIHF1ZXN0aW9uIGlzIHRo
+ZSBmb2xsb3dpbmcuIENvbnNpZGVyIHRoZSBFeHlub3MgbWl4ZXIgd2hlbiBydW4gdW5kZXIKPj4g
+dGhlIElPTU1VICh0aGF0J3Mgc3lzbW11X3R2IElJUkMpLiBXaGF0IGV4YWN0bHkgZG9lcyBzZXR1
+cCB0aGUgSU9NTVUKPj4gbWFwcGluZyBzbyB0aGF0IHRoZSBtaXhlciBjYW4gc2Nhbm91dCB0aGUg
+ZnJhbWVidWZmZXI/Cj4+Cj4gCj4gSU9NTVUgbWFwcGluZyBpcyBpbiBkbWFfYWxsb2NfYXR0cnMo
+KS4gQWxyZWFkeSBJT01NVSB3YXMgaW50ZWdyYXRlZCBpbgo+IHRoZSBETUEgbWFwcGluZyBBUEkg
+b24gQVJNIGFyY2guClRoYW5rcywgSSdtIGdvaW5nIHRvIHRha2UgYSBjbG9zZXIgbG9vayBhdCBk
+bWFfYWxsb2NfYXR0cnMoKSB0aGVuLgoKCj4+IFRoZXJlIGlzIGV4eW5vc19nZW1fbWFwX3NndF93
+aXRoX2RtYSgpIGluIHRoZSBFeHlub3MgR0VNIGNvZGUsIGJ1dCBpdCdzCj4+IGN1cnJlbnRseSBl
+eGNsdXNpdmVseSB1c2VkIGZvciB0aGUgRzJEIGFuZCBvbmx5IHdoZW4gZGVhbGluZyB3aXRoCj4+
+IHVzZXJwdHIgKGFuZCBub3QgR0VNKSB0aGVyZS4KPj4KPj4gSSB3YXMgbG9va2luZyBhdCBleHlu
+b3NfZHJtX2FsbG9jX2J1ZigpIHNpbmNlIHRoaXMgY2FsbGVkIHdoZW4KPj4gYWxsb2NhdGluZyBh
+IEJPIHRvIGJlIHVzZWQgYXMgc2Nhbm91dC4KPj4KPj4gSSBzZWUgZG1hX2FsbG9jX2F0dHJzKCkg
+YmVpbmcgY2FsbGVkLCB3aGljaCBhbHNvIHNldHMgdGhlIERNQSBhZGRyZXNzCj4+IHRoYXQgaXMg
+bGF0ZXIgdXNlZCBpbiB0aGUgbWl4ZXIgY29kZS4gQnV0IERNQV9BVFRSX05PX0tFUk5FTF9NQVBQ
+SU5HIGlzCj4+IHBhc3NlZCwgc28gbm8gbWFwcGluZyBpcyBkb25lIGF0IHRoaXMgcG9pbnQuCj4+
+Cj4gCj4gRGlkIHlvdSByZWFkIERvY3VtZW50YXRpb24vRE1BLWF0dHJpYnV0ZXMudHh0IGRvY3Vt
+ZW50PwpJIGRpZCwgYnV0IEkgZ3Vlc3MgSSBzaG91bGQgcmVhZCBpdCBhZ2Fpbi4uLgoKCj4gRE1B
+X0FUVFJfTk9fS0VSTkVMX01BUFBJTkcgaXMganVzdCB0byBhdm9pZCBjcmVhdGluZyBhIGtlcm5l
+bCB2aXJ0dWFsCj4gbWFwcGluZyBmb3IgdGhlIGFsbG9jYXRlZCBidWZmZXIgb24gQVJNIGFyY2gu
+CkFoIE9LLCBzbyB0aGUgSU9NTVUgbWFwcGluZyBpcyBhbHdheXMgZXN0YWJsaXNoZWQuCgoKPj4g
+SXMgdGhlIG1hcHBpbmcgZG9uZSBzb21ld2hlcmUgZWxzZSwgb3IgaXMgaXQgc2ltcGx5IG5vdCBu
+ZWNlc3NhcnkgaGVyZT8KPj4KPiAKPiBXaGF0IGlzIHRoZSBtYXBwaW5nIHlvdSBtZWFuPyBBcyB5
+b3Uga25vdywgdGhlIERNQSBhZGRyZXNzIG9mIHRoZQo+IG1lbW9yeSBnZXRzIGZyb20gZG1hX2Fs
+bG9jX2F0dHJzKCkgYW5kIGl0IGNhbiBiZSB1c2VkIGJ5IGRldmljZS4gVGhlcmUKPiBpcyBubyBy
+ZWFzb24gdG8gdXNlIGRtYV9tYXBfKigpLgpGcm9tIG15IHVuZGVyc3RhbmRpbmcgdGhlIG1peGVy
+IGRvZXNuJ3QgZGlyZWN0bHkgYWNjZXNzIHRoZSBwaHlzaWNhbAptZW1vcnkgd2hlbiBydW5uaW5n
+IHVuZGVyIElPTU1VLiBJdCBhY2Nlc3NlcyBtZW1vcnkgdGhyb3VnaCBzeXNtbXVfdHYsCnNvIG15
+IHF1ZXN0aW9uIHdhcyB3aG8gZG9lcyB0aGUgc2V0dXAgc28gdGhhdCBzeXNtbXVfdHYgImtub3dz
+IiBob3cgdG8KdHJhbnNsYXRlIG1lbW9yeSBhY2Nlc3Nlcy4KCgpXaXRoIGJlc3Qgd2lzaGVzLApU
+b2JpYXMKCgo+IAo+IFRoYW5rcy4KPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
