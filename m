@@ -1,74 +1,87 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v4] tests/exynos: add fimg2d event test
-Date: Mon,  2 Nov 2015 10:46:57 +0100
-Message-ID: <1446457617-4684-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1446457617-4684-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v3] tests/exynos: add fimg2d performance analysis
+Date: Mon,  2 Nov 2015 10:46:56 +0100
+Message-ID: <1446457617-4684-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33152 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33146 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751014AbbKBJrL (ORCPT
+	by vger.kernel.org with ESMTP id S1751014AbbKBJrI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 04:47:11 -0500
-In-Reply-To: <1446457617-4684-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Mon, 2 Nov 2015 04:47:08 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, inki.dae@samsung.com, human.hwang@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-This tests async processing of G2D jobs. A separate thread is spawned
-to monitor the DRM fd for events and check whether a G2D job was
-completed.
+Currently only fast solid color clear performance is measured.
+A large buffer is allocated and solid color clear operations
+are executed on it with randomly chosen properties (position
+and size of the region, clear color). Execution time is
+measured and output together with the amount of pixels
+processed.
+
+The 'simple' variant only executes one G2D command buffer at
+a time, while the 'multi' variant executes multiple ones. This
+can be used to measure setup/exec overhead.
+
+The test also serves a stability check. If clocks/voltages are
+too high or low respectively, the test quickly reveals this.
 
 v2: Add GPLv2 header, argument handling and documentation.
-    Test is only installed when requested.
-v3: Allocate G2D jobs with calloc which fixes 'busy' being
-    potentially uninitialized. Also enable timeout for poll()
-    in the monitor thread. This fixes pthread_join() not working
-    because of poll() not returning.
-v4: Use explicit/fixed values for the DRM event context versions.
+    Tool is only installed when requested.
+v3: Free images array in fimg2d_perf_multi() as pointed out
+    by Hyungwon Hwang.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- tests/exynos/Makefile.am           |  11 +-
- tests/exynos/exynos_fimg2d_event.c | 326 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 335 insertions(+), 2 deletions(-)
- create mode 100644 tests/exynos/exynos_fimg2d_event.c
+ tests/exynos/Makefile.am          |  19 ++-
+ tests/exynos/exynos_fimg2d_perf.c | 326 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 343 insertions(+), 2 deletions(-)
+ create mode 100644 tests/exynos/exynos_fimg2d_perf.c
 
 diff --git a/tests/exynos/Makefile.am b/tests/exynos/Makefile.am
-index e82d199..357d6b8 100644
+index b21d016..e82d199 100644
 --- a/tests/exynos/Makefile.am
 +++ b/tests/exynos/Makefile.am
-@@ -20,16 +20,23 @@ endif
+@@ -5,16 +5,31 @@ AM_CFLAGS = \
+ 	-I $(top_srcdir)/exynos \
+ 	-I $(top_srcdir)
  
++bin_PROGRAMS =
++noinst_PROGRAMS =
++
+ if HAVE_LIBKMS
  if HAVE_INSTALL_TESTS
- bin_PROGRAMS += \
--	exynos_fimg2d_perf
-+	exynos_fimg2d_perf \
-+	exynos_fimg2d_event
+-bin_PROGRAMS = \
++bin_PROGRAMS += \
+ 	exynos_fimg2d_test
  else
- noinst_PROGRAMS += \
--	exynos_fimg2d_perf
-+	exynos_fimg2d_perf \
-+	exynos_fimg2d_event
+-noinst_PROGRAMS = \
++noinst_PROGRAMS += \
+ 	exynos_fimg2d_test
+ endif
  endif
  
- exynos_fimg2d_perf_LDADD = \
- 	$(top_builddir)/libdrm.la \
- 	$(top_builddir)/exynos/libdrm_exynos.la
- 
-+exynos_fimg2d_event_LDADD = \
++if HAVE_INSTALL_TESTS
++bin_PROGRAMS += \
++	exynos_fimg2d_perf
++else
++noinst_PROGRAMS += \
++	exynos_fimg2d_perf
++endif
++
++exynos_fimg2d_perf_LDADD = \
 +	$(top_builddir)/libdrm.la \
-+	$(top_builddir)/exynos/libdrm_exynos.la \
-+	-lpthread
++	$(top_builddir)/exynos/libdrm_exynos.la
 +
  exynos_fimg2d_test_LDADD = \
  	$(top_builddir)/libdrm.la \
  	$(top_builddir)/libkms/libkms.la \
-diff --git a/tests/exynos/exynos_fimg2d_event.c b/tests/exynos/exynos_fimg2d_event.c
+diff --git a/tests/exynos/exynos_fimg2d_perf.c b/tests/exynos/exynos_fimg2d_perf.c
 new file mode 100644
-index 0000000..3f5c3f4
+index 0000000..5068b9a
 --- /dev/null
-+++ b/tests/exynos/exynos_fimg2d_event.c
++++ b/tests/exynos/exynos_fimg2d_perf.c
 @@ -0,0 +1,326 @@
 +/*
 + * Copyright (C) 2015 - Tobias Jakobi
@@ -86,15 +99,10 @@ index 0000000..3f5c3f4
 + * along with it. If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#include <unistd.h>
-+#include <poll.h>
-+
 +#include <stdlib.h>
 +#include <stdio.h>
 +#include <time.h>
 +#include <getopt.h>
-+
-+#include <pthread.h>
 +
 +#include <xf86drm.h>
 +
@@ -102,170 +110,192 @@ index 0000000..3f5c3f4
 +#include "exynos_drmif.h"
 +#include "exynos_fimg2d.h"
 +
-+struct g2d_job {
-+	unsigned int id;
-+	unsigned int busy;
-+};
++static int output_mathematica = 0;
 +
-+struct exynos_evhandler {
-+	struct pollfd fds;
-+	struct exynos_event_context evctx;
-+};
-+
-+struct threaddata {
-+	unsigned int stop;
-+	struct exynos_device *dev;
-+	struct exynos_evhandler evhandler;
-+};
-+
-+static void g2d_event_handler(int fd, unsigned int cmdlist_no, unsigned int tv_sec,
-+							unsigned int tv_usec, void *user_data)
++static int fimg2d_perf_simple(struct exynos_bo *bo, struct g2d_context *ctx,
++			unsigned buf_width, unsigned buf_height, unsigned iterations)
 +{
-+	struct g2d_job *job = user_data;
++	struct timespec tspec = { 0 };
++	struct g2d_image img = { 0 };
 +
-+	fprintf(stderr, "info: g2d job (id = %u, cmdlist number = %u) finished!\n",
-+			job->id, cmdlist_no);
-+
-+	job->busy = 0;
-+}
-+
-+static void setup_g2d_event_handler(struct exynos_evhandler *evhandler, int fd)
-+{
-+	evhandler->fds.fd = fd;
-+	evhandler->fds.events = POLLIN;
-+	evhandler->evctx.base.version = 2;
-+	evhandler->evctx.version = 1;
-+	evhandler->evctx.g2d_event_handler = g2d_event_handler;
-+}
-+
-+static void* threadfunc(void *arg) {
-+	const int timeout = 0;
-+	struct threaddata *data;
-+
-+	data = arg;
-+
-+	while (1) {
-+		if (data->stop) break;
-+
-+		usleep(500);
-+
-+		data->evhandler.fds.revents = 0;
-+
-+		if (poll(&data->evhandler.fds, 1, timeout) < 0)
-+			continue;
-+
-+		if (data->evhandler.fds.revents & (POLLHUP | POLLERR))
-+			continue;
-+
-+		if (data->evhandler.fds.revents & POLLIN)
-+			exynos_handle_event(data->dev, &data->evhandler.evctx);
-+	}
-+
-+	pthread_exit(0);
-+}
-+
-+/*
-+ * We need to wait until all G2D jobs are finished, otherwise we
-+ * potentially remove a BO which the engine still operates on.
-+ * This results in the following kernel message:
-+ * [drm:exynos_drm_gem_put_dma_addr] *ERROR* failed to lookup gem object.
-+ * Also any subsequent BO allocations fail then with:
-+ * [drm:exynos_drm_alloc_buf] *ERROR* failed to allocate buffer.
-+ */
-+static void wait_all_jobs(struct g2d_job* jobs, unsigned num_jobs)
-+{
++	unsigned long long g2d_time;
 +	unsigned i;
++	int ret = 0;
 +
-+	for (i = 0; i < num_jobs; ++i) {
-+		while (jobs[i].busy)
-+			usleep(500);
-+	}
++	img.width = buf_width;
++	img.height = buf_height;
++	img.stride = buf_width * 4;
++	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
++	img.buf_type = G2D_IMGBUF_GEM;
++	img.bo[0] = bo->handle;
 +
-+}
++	srand(time(NULL));
 +
-+static struct g2d_job* free_job(struct g2d_job* jobs, unsigned num_jobs)
-+{
-+	unsigned i;
++	printf("starting simple G2D performance test\n");
++	printf("buffer width = %u, buffer height = %u, iterations = %u\n",
++		buf_width, buf_height, iterations);
 +
-+	for (i = 0; i < num_jobs; ++i) {
-+		if (jobs[i].busy == 0)
-+			return &jobs[i];
-+	}
-+
-+	return NULL;
-+}
-+
-+static int g2d_work(struct g2d_context *ctx, struct g2d_image *img,
-+					unsigned num_jobs, unsigned iterations)
-+{
-+	struct g2d_job *jobs = calloc(num_jobs, sizeof(struct g2d_job));
-+	int ret;
-+	unsigned i;
-+
-+	/* setup job ids */
-+	for (i = 0; i < num_jobs; ++i)
-+		jobs[i].id = i;
++	if (output_mathematica)
++		putchar('{');
 +
 +	for (i = 0; i < iterations; ++i) {
 +		unsigned x, y, w, h;
 +
-+		struct g2d_job *j = NULL;
++		x = rand() % buf_width;
++		y = rand() % buf_height;
 +
-+		while (1) {
-+			j = free_job(jobs, num_jobs);
-+
-+			if (j)
-+				break;
-+			else
-+				usleep(500);
-+		}
-+
-+		x = rand() % img->width;
-+		y = rand() % img->height;
-+
-+		if (x == (img->width - 1))
++		if (x == (buf_width - 1))
 +			x -= 1;
-+		if (y == (img->height - 1))
++		if (y == (buf_height - 1))
 +			y -= 1;
 +
-+		w = rand() % (img->width - x);
-+		h = rand() % (img->height - y);
++		w = rand() % (buf_width - x);
++		h = rand() % (buf_height - y);
 +
 +		if (w == 0) w = 1;
 +		if (h == 0) h = 1;
 +
-+		img->color = rand();
++		img.color = rand();
 +
-+		j->busy = 1;
-+		g2d_config_event(ctx, j);
++		ret = g2d_solid_fill(ctx, &img, x, y, w, h);
 +
-+		ret = g2d_solid_fill(ctx, img, x, y, w, h);
++		clock_gettime(CLOCK_MONOTONIC, &tspec);
 +
 +		if (ret == 0)
-+			g2d_exec2(ctx, G2D_EXEC_FLAG_ASYNC);
++			ret = g2d_exec(ctx);
 +
 +		if (ret != 0) {
-+			fprintf(stderr, "error: iteration %u (x = %u, x = %u, x = %u, x = %u) failed\n",
-+					i, x, y, w, h);
++			fprintf(stderr, "error: iteration %u failed (x = %u, y = %u, w = %u, h = %u)\n",
++				i, x, y, w, h);
 +			break;
++		} else {
++			struct timespec end = { 0 };
++			clock_gettime(CLOCK_MONOTONIC, &end);
++
++			g2d_time = (end.tv_sec - tspec.tv_sec) * 1000000000ULL;
++			g2d_time += (end.tv_nsec - tspec.tv_nsec);
++
++			if (output_mathematica) {
++				if (i != 0) putchar(',');
++				printf("{%u,%llu}", w * h, g2d_time);
++			} else {
++				printf("num_pixels = %u, usecs = %llu\n", w * h, g2d_time);
++			}
 +		}
 +	}
 +
-+	wait_all_jobs(jobs, num_jobs);
-+	free(jobs);
++	if (output_mathematica)
++		printf("}\n");
 +
-+	return 0;
++	return ret;
++}
++
++static int fimg2d_perf_multi(struct exynos_bo *bo, struct g2d_context *ctx,
++			unsigned buf_width, unsigned buf_height, unsigned iterations, unsigned batch)
++{
++	struct timespec tspec = { 0 };
++	struct g2d_image *images;
++
++	unsigned long long g2d_time;
++	unsigned i, j;
++	int ret = 0;
++
++	images = calloc(batch, sizeof(struct g2d_image));
++	if (images == NULL) {
++		fprintf(stderr, "error: failed to allocate G2D images.\n");
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < batch; ++i) {
++		images[i].width = buf_width;
++		images[i].height = buf_height;
++		images[i].stride = buf_width * 4;
++		images[i].color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
++		images[i].buf_type = G2D_IMGBUF_GEM;
++		images[i].bo[0] = bo->handle;
++	}
++
++	srand(time(NULL));
++
++	printf("starting multi G2D performance test (batch size = %u)\n", batch);
++	printf("buffer width = %u, buffer height = %u, iterations = %u\n",
++		buf_width, buf_height, iterations);
++
++	if (output_mathematica)
++		putchar('{');
++
++	for (i = 0; i < iterations; ++i) {
++		unsigned num_pixels = 0;
++
++		for (j = 0; j < batch; ++j) {
++			unsigned x, y, w, h;
++
++			x = rand() % buf_width;
++			y = rand() % buf_height;
++
++			if (x == (buf_width - 1))
++				x -= 1;
++			if (y == (buf_height - 1))
++				y -= 1;
++
++			w = rand() % (buf_width - x);
++			h = rand() % (buf_height - y);
++
++			if (w == 0) w = 1;
++			if (h == 0) h = 1;
++
++			images[j].color = rand();
++
++			num_pixels += w * h;
++
++			ret = g2d_solid_fill(ctx, &images[j], x, y, w, h);
++			if (ret != 0)
++				break;
++		}
++
++		clock_gettime(CLOCK_MONOTONIC, &tspec);
++
++		if (ret == 0)
++			ret = g2d_exec(ctx);
++
++		if (ret != 0) {
++			fprintf(stderr, "error: iteration %u failed (num_pixels = %u)\n", i, num_pixels);
++			break;
++		} else {
++			struct timespec end = { 0 };
++			clock_gettime(CLOCK_MONOTONIC, &end);
++
++			g2d_time = (end.tv_sec - tspec.tv_sec) * 1000000000ULL;
++			g2d_time += (end.tv_nsec - tspec.tv_nsec);
++
++			if (output_mathematica) {
++				if (i != 0) putchar(',');
++				printf("{%u,%llu}", num_pixels, g2d_time);
++			} else {
++				printf("num_pixels = %u, usecs = %llu\n", num_pixels, g2d_time);
++			}
++		}
++	}
++
++	if (output_mathematica)
++		printf("}\n");
++
++	free(images);
++
++	return ret;
 +}
 +
 +static void usage(const char *name)
 +{
-+	fprintf(stderr, "usage: %s [-ijwh]\n\n", name);
++	fprintf(stderr, "usage: %s [-ibwh]\n\n", name);
 +
 +	fprintf(stderr, "\t-i <number of iterations>\n");
-+	fprintf(stderr, "\t-j <number of G2D jobs> (default = 4)\n\n");
++	fprintf(stderr, "\t-b <size of a batch> (default = 3)\n\n");
 +
 +	fprintf(stderr, "\t-w <buffer width> (default = 4096)\n");
-+	fprintf(stderr, "\t-h <buffer height> (default = 4096)\n");
++	fprintf(stderr, "\t-h <buffer height> (default = 4096)\n\n");
++
++	fprintf(stderr, "\t-M <enable Mathematica styled output>\n");
 +
 +	exit(0);
 +}
@@ -274,29 +304,24 @@ index 0000000..3f5c3f4
 +{
 +	int fd, ret, c, parsefail;
 +
-+	pthread_t event_thread;
-+	struct threaddata event_data = {0};
-+
 +	struct exynos_device *dev;
 +	struct g2d_context *ctx;
 +	struct exynos_bo *bo;
 +
-+	struct g2d_image img = {0};
-+
-+	unsigned int iters = 0, njobs = 4;
++	unsigned int iters = 0, batch = 3;
 +	unsigned int bufw = 4096, bufh = 4096;
 +
 +	ret = 0;
 +	parsefail = 0;
 +
-+	while ((c = getopt(argc, argv, "i:j:w:h:")) != -1) {
++	while ((c = getopt(argc, argv, "i:b:w:h:M")) != -1) {
 +		switch (c) {
 +		case 'i':
 +			if (sscanf(optarg, "%u", &iters) != 1)
 +				parsefail = 1;
 +			break;
-+		case 'j':
-+			if (sscanf(optarg, "%u", &njobs) != 1)
++		case 'b':
++			if (sscanf(optarg, "%u", &batch) != 1)
 +				parsefail = 1;
 +			break;
 +		case 'w':
@@ -307,6 +332,9 @@ index 0000000..3f5c3f4
 +			if (sscanf(optarg, "%u", &bufh) != 1)
 +				parsefail = 1;
 +			break;
++		case 'M':
++			output_mathematica = 1;
++			break;
 +		default:
 +			parsefail = 1;
 +			break;
@@ -316,8 +344,8 @@ index 0000000..3f5c3f4
 +	if (parsefail || (argc == 1) || (iters == 0))
 +		usage(argv[0]);
 +
-+	if (bufw > 4096 || bufh > 4096) {
-+		fprintf(stderr, "error: buffer width/height should be less than 4096.\n");
++	if (bufw < 2 || bufw > 4096 || bufh < 2 || bufh > 4096) {
++		fprintf(stderr, "error: buffer width/height should be in the range 2 to 4096.\n");
 +		ret = -1;
 +
 +		goto out;
@@ -362,25 +390,10 @@ index 0000000..3f5c3f4
 +		goto bo_fail;
 +	}
 +
-+	/* setup g2d image object */
-+	img.width = bufw;
-+	img.height = bufh;
-+	img.stride = bufw * 4;
-+	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-+	img.buf_type = G2D_IMGBUF_GEM;
-+	img.bo[0] = bo->handle;
++	ret = fimg2d_perf_simple(bo, ctx, bufw, bufh, iters);
 +
-+	event_data.dev = dev;
-+	setup_g2d_event_handler(&event_data.evhandler, fd);
-+
-+	pthread_create(&event_thread, NULL, threadfunc, &event_data);
-+
-+	ret = g2d_work(ctx, &img, njobs, iters);
-+	if (ret != 0)
-+		fprintf(stderr, "error: g2d_work failed\n");
-+
-+	event_data.stop = 1;
-+	pthread_join(event_thread, NULL);
++	if (ret == 0)
++		ret = fimg2d_perf_multi(bo, ctx, bufw, bufh, iters, batch);
 +
 +	exynos_bo_destroy(bo);
 +
