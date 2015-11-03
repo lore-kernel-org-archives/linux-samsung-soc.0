@@ -1,65 +1,84 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v5 0/4] Exynos SROMc configuration and Ethernet support for
- SMDK5410
-Date: Tue, 03 Nov 2015 12:16:37 +0300
-Message-ID: <cover.1446542020.git.p.fedin@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 20/22] clocksource/drivers/exynos_mct: Fix Kconfig and add
+ COMPILE_TEST option
+Date: Tue, 03 Nov 2015 11:02:24 +0100
+Message-ID: <9713489.TbNNoNQg5A@wuerfel>
+References: <1446469011-22710-1-git-send-email-daniel.lezcano@linaro.org>
+ <563806E7.6010105@samsung.com> <563872E2.10001@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <563872E2.10001@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, john.stultz@linaro.org, tglx@linutronix.de, "moderated list:ARM SUB-ARCHITECT..." <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch extends Exynos SROM controller driver with ability to configure
-controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
-which is connected via SROMc bank #3.
+On Tuesday 03 November 2015 09:40:02 Daniel Lezcano wrote:
+> On 11/03/2015 01:59 AM, Krzysztof Kozlowski wrote:
+> > On 03.11.2015 09:30, Krzysztof Kozlowski wrote:
+> >> On 02.11.2015 21:56, Daniel Lezcano wrote:
+> >>> Let the platform's Kconfig to select the clock instead of having a reverse
+> >>> dependency from the driver to the platform options.
+> >>
+> >> Selecting user-visible symbols is rather discouraged so why not
+> >> something like this:
+> >>
+> >> -       def_bool y if ARCH_EXYNOS
+> >> -       depends on !ARM64
+> >> +       bool "Exynos multi core timer driver"
+> >> +       depends on ARCH_EXYNOS || (COMPILE_TEST && ARM)
+> >
+> > Nope, that was wrong as we loose auto-select on Exynos. Instead:
+> > -       def_bool y if ARCH_EXYNOS
+> > -       depends on !ARM64
+> > +       bool "Exynos multi core timer driver" if ARM
+> > +       depends on ARCH_EXYNOS || COMPILE_TEST
+> > +       default y if ARCH_EXYNOS
+> >
+> > This way we avoid select (which is a reverse dependency for the driver),
+> > have it auto-selectable and compile tested on arm.
+> 
+> I think you misunderstood the patch I sent.
+> 
+> It does two things:
+> 
+> 1. Follow the thumb of rule of the current Kconfig format
+> 
+>     - The timer driver is selected by the platform (exynos in this case)
+>     - User can't select the driver in the menuconfig
+>     - There is no dependency on the platform except for compilation test
+> 
+> 2. Add the COMPILE_TEST
+> 
+>     - User can select the driver for compilation testing. This is for 
+> allyesconfig when doing compilation test coverage (exynos timer could be 
+> compiled on other platform). As the delay code is not portable, we have 
+> to restrict the compilation on the ARM platform, this is why there is 
+> the dependency on ARM.
+> 
+> I am currently looking at splitting the delay code in order to prevent 
+> this restriction on this driver and some others drivers.
 
-With this patchset, support for the whole existing SMDK range can be added.
-Actually, only bank number is different.
+I suspect this will come up again in the future. The problem is
+really that drivers/clocksource has different rules from almost
+everything else, by requiring the platform to 'select' the driver.
 
-This patchset also depends on Exynos 5410 pinctrl support, introduced by
-patches 0003 and 0004 from this set:
-[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
+The second version that Krzysztof posted is how we handle this in
+other driver subsystems, and I would generally prefer it to do this
+consistently for everything, but John Stultz has in the past argued
+strongly for using 'select' in all clocksource drivers. The reason
+is that for each platform we know in advance which driver we want,
+and there is never a need for the user to have to select the right
+one.
 
-Pinctrl support is necessary in order to correctly configure
-multifunctional pins of the Exynos chip.
-
-v4 => v5:
-- Some cosmetic changes in the dtsi ("compatible" goes first)
-- Use correctly specified ranges for the SROMc node
-- Reuse existing properties where possible ("reg" for bank# and
-  "reg-io-width" for data width)
-- Separated page-mode property from timings array
-- More improvements to the documentation
-
-v3 => v4:
-- Devices are now added as subnodes, with additional properties. This allows
-  to cleary specify dependency. If configuration fails, error will be reported
-  and child devices will not be probed.
-- These additional properties now have "samsung,srom-XXX" format
-- Fixed code style, now better understood.
-
-v2 => v3:
-- Fixed up SROMc region size in the device tree
-- Reordered patches, documentation goes first now
-
-v1 => v2:
-- Fixed some typos and bad labels in device tree
-- Improved documentation
-
-Pavel Fedin (4):
-  Documentation: dt-bindings: Describe SROMc configuration
-  ARM: dts: Add SROMc to Exynos 5410
-  drivers: exynos-srom: Add support for bank configuration
-  ARM: dts: Add Ethernet chip to SMDK5410
-
- .../bindings/arm/samsung/exynos-srom.txt           | 68 +++++++++++++++++++++-
- arch/arm/boot/dts/exynos5410-smdk5410.dts          | 40 +++++++++++++
- arch/arm/boot/dts/exynos5410.dtsi                  | 11 ++++
- arch/arm/mach-exynos/Kconfig                       |  2 +-
- drivers/soc/samsung/Kconfig                        |  2 +-
- drivers/soc/samsung/exynos-srom.c                  | 60 ++++++++++++++++++-
- 6 files changed, 177 insertions(+), 6 deletions(-)
-
--- 
-2.4.4
+	Arnd
