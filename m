@@ -1,282 +1,142 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 6/7] ARCH: EXYNOS: split up exynos5420 SoC specific PMU
- data
-Date: Tue, 03 Nov 2015 11:10:52 +0900
-Message-ID: <563817AC.8080802@samsung.com>
+Subject: Re: [PATCH v3 7/7] drivers: soc: Add support for Exynos PMU driver
+Date: Tue, 03 Nov 2015 11:22:30 +0900
+Message-ID: <56381A66.1010406@samsung.com>
 References: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
- <1445864143-25695-7-git-send-email-pankaj.dubey@samsung.com>
+ <1445864143-25695-8-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:63926 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751965AbbKCCK6 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45023 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752668AbbKCCWg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 21:10:58 -0500
-In-reply-to: <1445864143-25695-7-git-send-email-pankaj.dubey@samsung.com>
+	Mon, 2 Nov 2015 21:22:36 -0500
+In-reply-to: <1445864143-25695-8-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com
 
 On 26.10.2015 21:55, Pankaj Dubey wrote:
-> This patch splits up mach-exynos/pmu.c file, and moves exynos5420,
-> PMU configuration data and functions handing data into exynos5420
-> SoC specific PMU file mach-exynos/exynos5420-pmu.c.
+> This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
+> to "drivers/soc/samsung". This driver is mainly used for setting misc
+> bits of register from PMU IP of Exynos SoC which will be required to
+> configure before Suspend/Resume. Currently all these settings are done
+> in "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
+> support, there is a need of this PMU driver in driver/* folder.
 > 
+> This driver uses existing DT binding information and there should
+> be no functionality change in the supported platforms.
+> 
+> Signed-off-by: Amit Daniel Kachhap <amitdanielk@gmail.com>
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->  arch/arm/mach-exynos/Makefile         |   2 +-
->  arch/arm/mach-exynos/exynos-pmu.h     |   1 +
->  arch/arm/mach-exynos/exynos5420-pmu.c | 280 ++++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/pmu.c            | 263 -------------------------------
->  4 files changed, 282 insertions(+), 264 deletions(-)
->  create mode 100644 arch/arm/mach-exynos/exynos5420-pmu.c
+>  arch/arm/mach-exynos/Kconfig                                   | 1 +
+>  arch/arm/mach-exynos/Makefile                                  | 4 +---
+>  drivers/soc/samsung/Kconfig                                    | 4 ++++
+>  drivers/soc/samsung/Makefile                                   | 4 ++++
+>  arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h     | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c    | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c | 0
+>  10 files changed, 10 insertions(+), 3 deletions(-)
+>  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c (100%)
 > 
-
-This should be rebased on:
-ARM: EXYNOS: Constify local exynos_pmu_data structure
-https://lkml.org/lkml/2015/10/28/917
-
-After merge window I can provide you a tag for that.
-
-
-
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 83c85f5..874cb38 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -16,6 +16,7 @@ menuconfig ARCH_EXYNOS
+>  	select ARM_GIC
+>  	select COMMON_CLK_SAMSUNG
+>  	select EXYNOS_THERMAL
+> +	select EXYNOS_PMU
+>  	select EXYNOS_SROM if PM
+>  	select HAVE_ARM_SCU if SMP
+>  	select HAVE_S3C2410_I2C if I2C
 > diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> index bfb23a5..2d58063 100644
+> index 2d58063..34d29df 100644
 > --- a/arch/arm/mach-exynos/Makefile
 > +++ b/arch/arm/mach-exynos/Makefile
-> @@ -11,7 +11,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
+> @@ -9,9 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
 >  
->  obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o \
->  					exynos3250-pmu.o exynos4-pmu.o \
-> -					exynos5250-pmu.o
-> +					exynos5250-pmu.o exynos5420-pmu.o
+>  # Core
+>  
+> -obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o \
+> -					exynos3250-pmu.o exynos4-pmu.o \
+> -					exynos5250-pmu.o exynos5420-pmu.o
+> +obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
 >  
 >  obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
 >  obj-$(CONFIG_PM_SLEEP)		+= suspend.o
-> diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/arch/arm/mach-exynos/exynos-pmu.h
-> index 98c6bf3..4d53b68 100644
-> --- a/arch/arm/mach-exynos/exynos-pmu.h
-> +++ b/arch/arm/mach-exynos/exynos-pmu.h
-> @@ -48,4 +48,5 @@ extern const struct exynos_pmu_data exynos4210_pmu_data;
->  extern const struct exynos_pmu_data exynos4212_pmu_data;
->  extern const struct exynos_pmu_data exynos4412_pmu_data;
->  extern const struct exynos_pmu_data exynos5250_pmu_data;
-> +extern const struct exynos_pmu_data exynos5420_pmu_data;
->  #endif /* __EXYNOSPMU_H */
-> diff --git a/arch/arm/mach-exynos/exynos5420-pmu.c b/arch/arm/mach-exynos/exynos5420-pmu.c
-> new file mode 100644
-> index 0000000..5810afe
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos/exynos5420-pmu.c
-> @@ -0,0 +1,280 @@
-> +/*
-> + * Copyright (c) 2011-2015 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * EXYNOS5420 - CPU PMU (Power Management Unit) support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 2833b5b..f545d6c 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -10,4 +10,8 @@ config EXYNOS_SROM
+>  	bool
+>  	depends on ARM && ARCH_EXYNOS && PM
+>  
+> +config EXYNOS_PMU
+> +	bool
+> +	depends on ARCH_EXYNOS
 > +
-> +#include <linux/pm.h>
-> +#include <linux/soc/samsung/exynos-regs-pmu.h>
-> +#include <linux/soc/samsung/exynos-pmu.h>
-> +
-> +#include <asm/cputype.h>
-> +
-> +#include "exynos-pmu.h"
-> +
-> +static struct exynos_pmu_conf exynos5420_pmu_config[] = {
-> +	/* { .offset = offset, .val = { AFTR, LPA, SLEEP } */
-> +	{ EXYNOS5_ARM_CORE0_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_DIS_IRQ_ARM_CORE0_LOCAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_DIS_IRQ_ARM_CORE0_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_ARM_CORE1_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_DIS_IRQ_ARM_CORE1_LOCAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_DIS_IRQ_ARM_CORE1_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_ARM_CORE2_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_ARM_CORE2_LOCAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_ARM_CORE2_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_ARM_CORE3_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_ARM_CORE3_LOCAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_ARM_CORE3_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_KFC_CORE0_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE0_LOCAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE0_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_KFC_CORE1_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE1_LOCAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE1_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_KFC_CORE2_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE2_LOCAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE2_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_KFC_CORE3_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE3_LOCAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_DIS_IRQ_KFC_CORE3_CENTRAL_SYS_PWR_REG, { 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_ISP_ARM_SYS_PWR_REG,			{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_DIS_IRQ_ISP_ARM_LOCAL_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_DIS_IRQ_ISP_ARM_CENTRAL_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_ARM_COMMON_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_KFC_COMMON_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_ARM_L2_SYS_PWR_REG,			{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_KFC_L2_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_ACLKSTOP_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_SCLKSTOP_SYS_PWR_REG,		{ 0x1, 0x0, 0x1} },
-> +	{ EXYNOS5_CMU_RESET_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_CMU_ACLKSTOP_SYSMEM_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_SCLKSTOP_SYSMEM_SYS_PWR_REG,	{ 0x1, 0x0, 0x1} },
-> +	{ EXYNOS5_CMU_RESET_SYSMEM_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_DRAM_FREQ_DOWN_SYS_PWR_REG,		{ 0x1, 0x0, 0x1} },
-> +	{ EXYNOS5_DDRPHY_DLLOFF_SYS_PWR_REG,		{ 0x1, 0x1, 0x1} },
-> +	{ EXYNOS5_DDRPHY_DLLLOCK_SYS_PWR_REG,		{ 0x1, 0x0, 0x1} },
-> +	{ EXYNOS5_APLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_MPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_VPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_EPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_BPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_CPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_DPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_IPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_KPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_MPLLUSER_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_BPLLUSER_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_RPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_SPLL_SYSCLK_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_TOP_BUS_SYS_PWR_REG,			{ 0x3, 0x0, 0x0} },
-> +	{ EXYNOS5_TOP_RETENTION_SYS_PWR_REG,		{ 0x1, 0x1, 0x1} },
-> +	{ EXYNOS5_TOP_PWR_SYS_PWR_REG,			{ 0x3, 0x3, 0x0} },
-> +	{ EXYNOS5_TOP_BUS_SYSMEM_SYS_PWR_REG,		{ 0x3, 0x0, 0x0} },
-> +	{ EXYNOS5_TOP_RETENTION_SYSMEM_SYS_PWR_REG,	{ 0x1, 0x0, 0x1} },
-> +	{ EXYNOS5_TOP_PWR_SYSMEM_SYS_PWR_REG,		{ 0x3, 0x0, 0x0} },
-> +	{ EXYNOS5_LOGIC_RESET_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_OSCCLK_GATE_SYS_PWR_REG,		{ 0x1, 0x0, 0x1} },
-> +	{ EXYNOS5_LOGIC_RESET_SYSMEM_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_OSCCLK_GATE_SYSMEM_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_INTRAM_MEM_SYS_PWR_REG,		{ 0x3, 0x0, 0x3} },
-> +	{ EXYNOS5420_INTROM_MEM_SYS_PWR_REG,		{ 0x3, 0x0, 0x3} },
-> +	{ EXYNOS5_PAD_RETENTION_DRAM_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_PAD_RETENTION_MAU_SYS_PWR_REG,	{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_JTAG_SYS_PWR_REG,	{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_DRAM_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_UART_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_MMC0_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_MMC1_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_MMC2_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_HSI_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_EBIA_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_EBIB_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_SPI_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5420_PAD_RETENTION_DRAM_COREBLK_SYS_PWR_REG, { 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_PAD_ISOLATION_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_PAD_ISOLATION_SYSMEM_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_PAD_ALV_SEL_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_XUSBXTI_SYS_PWR_REG,			{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_XXTI_SYS_PWR_REG,			{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_EXT_REGULATOR_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_GPIO_MODE_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_GPIO_MODE_SYSMEM_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_GPIO_MODE_MAU_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_TOP_ASB_RESET_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-> +	{ EXYNOS5_TOP_ASB_ISOLATION_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
-> +	{ EXYNOS5_GSCL_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5_ISP_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5_MFC_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5_G3D_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_DISP1_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_MAU_SYS_PWR_REG,			{ 0x7, 0x7, 0x0} },
-> +	{ EXYNOS5420_G2D_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_MSC_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_FSYS_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_FSYS2_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_PSGEN_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_PERIC_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5420_WCORE_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_CLKSTOP_MFC_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_DISP1_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_MAU_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_G2D_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_MSC_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_FSYS_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_PSGEN_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_PERIC_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_CLKSTOP_WCORE_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_SYSCLK_MFC_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_DISP1_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_MAU_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_G2D_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_MSC_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_FSYS_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_FSYS2_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_PSGEN_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_PERIC_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_SYSCLK_WCORE_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_FSYS2_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_PSGEN_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_PERIC_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_WCORE_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_DISP1_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_MAU_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_G2D_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_MSC_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-> +	{ EXYNOS5420_CMU_RESET_FSYS_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-> +	{ PMU_TABLE_END,},
-> +};
-> +
-> +static unsigned int const exynos5420_list_disable_pmu_reg[] = {
-> +	EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,
-> +	EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,
-> +	EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_DISP1_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_MAU_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_G2D_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_MSC_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_FSYS_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_PSGEN_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_PERIC_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_CLKSTOP_WCORE_SYS_PWR_REG,
-> +	EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,
-> +	EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,
-> +	EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_DISP1_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_MAU_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_G2D_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_MSC_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_FSYS_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_FSYS2_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_PSGEN_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_PERIC_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_SYSCLK_WCORE_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_FSYS2_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_PSGEN_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_PERIC_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_WCORE_SYS_PWR_REG,
-> +	EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,
-> +	EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,
-> +	EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_DISP1_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_MAU_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_G2D_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_MSC_SYS_PWR_REG,
-> +	EXYNOS5420_CMU_RESET_FSYS_SYS_PWR_REG,
-> +};
-> +
-> +void exynos5420_powerdown_conf(enum sys_powerdown mode)
+>  endmenu
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 9c554d5..26fb489 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -1 +1,5 @@
+>  obj-$(CONFIG_EXYNOS_SROM)	+= exynos-srom.o
+> +ifdef CONFIG_ARM
+> +obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+> +					exynos5250-pmu.o exynos5420-pmu.o
+> +endif
+> diff --git a/arch/arm/mach-exynos/pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/pmu.c
+> rename to drivers/soc/samsung/exynos-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
 
-Not static?
+1. Please reorder the exynos_sys_powerdown_conf() to be after the
+statics. I am thinking also about adding EXPORT_SYMBOL... but maybe this
+would be over-thinking.
+
+2. I think the proper location of everything is drivers/power/reset/.
+Although I don't have strong opinion.
+
+3. Please cc linux-pm and arm-soc guys (Arnd, Olof, Kevin) on next
+iteration.
 
 Best regards,
 Krzysztof
+
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos-pmu.h
+> rename to drivers/soc/samsung/exynos-pmu.h
+> diff --git a/arch/arm/mach-exynos/exynos3250-pmu.c b/drivers/soc/samsung/exynos3250-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos3250-pmu.c
+> rename to drivers/soc/samsung/exynos3250-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos4-pmu.c b/drivers/soc/samsung/exynos4-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos4-pmu.c
+> rename to drivers/soc/samsung/exynos4-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos5250-pmu.c
+> rename to drivers/soc/samsung/exynos5250-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos5420-pmu.c
+> rename to drivers/soc/samsung/exynos5420-pmu.c
+> 
