@@ -1,227 +1,144 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2 1/7] drm/exynos: do not start enabling DP at bind() phase
-Date: Tue, 03 Nov 2015 19:47:03 +0900
-Message-ID: <1446547629-12521-2-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH v2 7/7] drm/exynos: add pm_runtime to DECON 7
+Date: Tue, 03 Nov 2015 19:47:09 +0900
+Message-ID: <1446547629-12521-8-git-send-email-inki.dae@samsung.com>
 References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47472 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751039AbbKCKrO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Nov 2015 05:47:14 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NX802U5AJAO4180@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 03 Nov 2015 19:47:12 +0900 (KST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-The DP device will be properly enabled at the enable() call just
-after the bind call finishes.
-
-Changelog v2:
-- no change
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_dp_core.c | 107 +++++++++++++++++++++++---------
- drivers/gpu/drm/exynos/exynos_dp_core.h |   1 +
- 2 files changed, 78 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 124fb9a..e4d32a1 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -1009,9 +1009,9 @@ static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
- {
- 	int ret;
- 
--	encoder->bridge = dp->bridge;
--	dp->bridge->encoder = encoder;
--	ret = drm_bridge_attach(encoder->dev, dp->bridge);
-+	encoder->bridge->next = dp->ptn_bridge;
-+	dp->ptn_bridge->encoder = encoder;
-+	ret = drm_bridge_attach(encoder->dev, dp->ptn_bridge);
- 	if (ret) {
- 		DRM_ERROR("Failed to attach bridge to drm\n");
- 		return ret;
-@@ -1020,14 +1020,15 @@ static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
- 	return 0;
- }
- 
--static int exynos_dp_create_connector(struct drm_encoder *encoder)
-+static int exynos_dp_bridge_attach(struct drm_bridge *bridge)
- {
--	struct exynos_dp_device *dp = encoder_to_dp(encoder);
-+	struct exynos_dp_device *dp = bridge->driver_private;
-+	struct drm_encoder *encoder = &dp->encoder;
- 	struct drm_connector *connector = &dp->connector;
- 	int ret;
- 
- 	/* Pre-empt DP connector creation if there's a bridge */
--	if (dp->bridge) {
-+	if (dp->ptn_bridge) {
- 		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
- 		if (!ret)
- 			return 0;
-@@ -1052,22 +1053,9 @@ static int exynos_dp_create_connector(struct drm_encoder *encoder)
- 	return ret;
- }
- 
--static bool exynos_dp_mode_fixup(struct drm_encoder *encoder,
--				 const struct drm_display_mode *mode,
--				 struct drm_display_mode *adjusted_mode)
--{
--	return true;
--}
--
--static void exynos_dp_mode_set(struct drm_encoder *encoder,
--			       struct drm_display_mode *mode,
--			       struct drm_display_mode *adjusted_mode)
--{
--}
--
--static void exynos_dp_enable(struct drm_encoder *encoder)
-+static void exynos_dp_bridge_enable(struct drm_bridge *bridge)
- {
--	struct exynos_dp_device *dp = encoder_to_dp(encoder);
-+	struct exynos_dp_device *dp = bridge->driver_private;
- 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
- 
- 	if (dp->dpms_mode == DRM_MODE_DPMS_ON)
-@@ -1092,9 +1080,9 @@ static void exynos_dp_enable(struct drm_encoder *encoder)
- 	dp->dpms_mode = DRM_MODE_DPMS_ON;
- }
- 
--static void exynos_dp_disable(struct drm_encoder *encoder)
-+static void exynos_dp_bridge_disable(struct drm_bridge *bridge)
- {
--	struct exynos_dp_device *dp = encoder_to_dp(encoder);
-+	struct exynos_dp_device *dp = bridge->driver_private;
- 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
- 
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
-@@ -1123,6 +1111,69 @@ static void exynos_dp_disable(struct drm_encoder *encoder)
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
- }
- 
-+static void exynos_dp_bridge_nop(struct drm_bridge *bridge)
-+{
-+	/* do nothing */
-+}
-+
-+static const struct drm_bridge_funcs exynos_dp_bridge_funcs = {
-+	.enable = exynos_dp_bridge_enable,
-+	.disable = exynos_dp_bridge_disable,
-+	.pre_enable = exynos_dp_bridge_nop,
-+	.post_disable = exynos_dp_bridge_nop,
-+	.attach = exynos_dp_bridge_attach,
-+};
-+
-+static int exynos_dp_create_connector(struct drm_encoder *encoder)
-+{
-+	struct exynos_dp_device *dp = encoder_to_dp(encoder);
-+	struct drm_device *drm_dev = dp->drm_dev;
-+	struct drm_bridge *bridge;
-+	int ret;
-+
-+	bridge = devm_kzalloc(drm_dev->dev, sizeof(*bridge), GFP_KERNEL);
-+	if (!bridge) {
-+		DRM_ERROR("failed to allocate for drm bridge\n");
-+		return -ENOMEM;
-+	}
-+
-+	dp->bridge = bridge;
-+
-+	encoder->bridge = bridge;
-+	bridge->driver_private = dp;
-+	bridge->encoder = encoder;
-+	bridge->funcs = &exynos_dp_bridge_funcs;
-+
-+	ret = drm_bridge_attach(drm_dev, bridge);
-+	if (ret) {
-+		DRM_ERROR("failed to attach drm bridge\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static bool exynos_dp_mode_fixup(struct drm_encoder *encoder,
-+				 const struct drm_display_mode *mode,
-+				 struct drm_display_mode *adjusted_mode)
-+{
-+	return true;
-+}
-+
-+static void exynos_dp_mode_set(struct drm_encoder *encoder,
-+			       struct drm_display_mode *mode,
-+			       struct drm_display_mode *adjusted_mode)
-+{
-+}
-+
-+static void exynos_dp_enable(struct drm_encoder *encoder)
-+{
-+}
-+
-+static void exynos_dp_disable(struct drm_encoder *encoder)
-+{
-+}
-+
- static struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
- 	.mode_fixup = exynos_dp_mode_fixup,
- 	.mode_set = exynos_dp_mode_set,
-@@ -1238,7 +1289,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 		}
- 	}
- 
--	if (!dp->panel && !dp->bridge) {
-+	if (!dp->panel && !dp->ptn_bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
- 			return ret;
-@@ -1289,10 +1340,6 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 
- 	INIT_WORK(&dp->hotplug_work, exynos_dp_hotplug);
- 
--	phy_power_on(dp->phy);
--
--	exynos_dp_init_dp(dp);
--
- 	ret = devm_request_irq(&pdev->dev, dp->irq, exynos_dp_irq_handler,
- 			irq_flags, "exynos-dp", dp);
- 	if (ret) {
-@@ -1365,9 +1412,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	if (endpoint) {
- 		bridge_node = of_graph_get_remote_port_parent(endpoint);
- 		if (bridge_node) {
--			dp->bridge = of_drm_find_bridge(bridge_node);
-+			dp->ptn_bridge = of_drm_find_bridge(bridge_node);
- 			of_node_put(bridge_node);
--			if (!dp->bridge)
-+			if (!dp->ptn_bridge)
- 				return -EPROBE_DEFER;
- 		} else
- 			return -EPROBE_DEFER;
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index e413b6f..66eec4b 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -153,6 +153,7 @@ struct exynos_dp_device {
- 	struct drm_connector	connector;
- 	struct drm_panel	*panel;
- 	struct drm_bridge	*bridge;
-+	struct drm_bridge	*ptn_bridge;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
--- 
-1.9.1
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+TGV0IHBtX3J1bnRpbWUgaGFuZGxlIHRoZSBlbmFibGluZy9kaXNhYmxpbmcgb2YgdGhlIGRldmlj
+ZSB3aXRoCnByb3BlciByZWZjbnQgaW5zdGVhZCBvZiByZWx5IG9uIHNwZWNpZmljIGZsYWdzIHRv
+IHRyYWNrIHRoZSBlbmFibGVkCnN0YXRlLgoKQ2hhbmdlbG9nIHYyOgotIE1vZGlmeSBDT05GSUdf
+UE1fU0xFRVAgLT4gQ09ORklHX1BNCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1
+c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+ClNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxp
+bmtpLmRhZUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdf
+ZHJtX2RlY29uLmMgfCAxMjUgKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBj
+aGFuZ2VkLCA1MyBpbnNlcnRpb25zKCspLCA3MiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKaW5kZXggZWFkMmIxNi4uMzExOWFiYSAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwpAQCAtNTQsNyArNTQs
+NiBAQCBzdHJ1Y3QgZGVjb25fY29udGV4dCB7CiAJdm9pZCBfX2lvbWVtCQkJKnJlZ3M7CiAJdW5z
+aWduZWQgbG9uZwkJCWlycV9mbGFnczsKIAlib29sCQkJCWk4MF9pZjsKLQlib29sCQkJCXN1c3Bl
+bmRlZDsKIAlpbnQJCQkJcGlwZTsKIAl3YWl0X3F1ZXVlX2hlYWRfdAkJd2FpdF92c3luY19xdWV1
+ZTsKIAlhdG9taWNfdAkJCXdhaXRfdnN5bmNfZXZlbnQ7CkBAIC04NSw5ICs4NCw2IEBAIHN0YXRp
+YyB2b2lkIGRlY29uX3dhaXRfZm9yX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRj
+KQogewogCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7CiAKLQlpZiAoY3R4
+LT5zdXNwZW5kZWQpCi0JCXJldHVybjsKLQogCWF0b21pY19zZXQoJmN0eC0+d2FpdF92c3luY19l
+dmVudCwgMSk7CiAKIAkvKgpAQCAtMTE5LDEzICsxMTUsOCBAQCBzdGF0aWMgdm9pZCBkZWNvbl9j
+bGVhcl9jaGFubmVscyhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCX0KIAogCS8qIFdh
+aXQgZm9yIHZzeW5jLCBhcyBkaXNhYmxlIGNoYW5uZWwgdGFrZXMgZWZmZWN0IGF0IG5leHQgdnN5
+bmMgKi8KLQlpZiAoY2hfZW5hYmxlZCkgewotCQl1bnNpZ25lZCBpbnQgc3RhdGUgPSBjdHgtPnN1
+c3BlbmRlZDsKLQotCQljdHgtPnN1c3BlbmRlZCA9IDA7CisJaWYgKGNoX2VuYWJsZWQpCiAJCWRl
+Y29uX3dhaXRfZm9yX3ZibGFuayhjdHgtPmNydGMpOwotCQljdHgtPnN1c3BlbmRlZCA9IHN0YXRl
+OwotCX0KIH0KIAogc3RhdGljIGludCBkZWNvbl9jdHhfaW5pdGlhbGl6ZShzdHJ1Y3QgZGVjb25f
+Y29udGV4dCAqY3R4LApAQCAtMTcwLDkgKzE2MSw2IEBAIHN0YXRpYyB2b2lkIGRlY29uX2NvbW1p
+dChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCXN0cnVjdCBkcm1fZGlzcGxheV9tb2Rl
+ICptb2RlID0gJmNydGMtPmJhc2Uuc3RhdGUtPmFkanVzdGVkX21vZGU7CiAJdTMyIHZhbCwgY2xr
+ZGl2OwogCi0JaWYgKGN0eC0+c3VzcGVuZGVkKQotCQlyZXR1cm47Ci0KIAkvKiBub3RoaW5nIHRv
+IGRvIGlmIHdlIGhhdmVuJ3Qgc2V0IHRoZSBtb2RlIHlldCAqLwogCWlmIChtb2RlLT5odG90YWwg
+PT0gMCB8fCBtb2RlLT52dG90YWwgPT0gMCkKIAkJcmV0dXJuOwpAQCAtMjM0LDkgKzIyMiw2IEBA
+IHN0YXRpYyBpbnQgZGVjb25fZW5hYmxlX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpj
+cnRjKQogCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7CiAJdTMyIHZhbDsK
+IAotCWlmIChjdHgtPnN1c3BlbmRlZCkKLQkJcmV0dXJuIC1FUEVSTTsKLQogCWlmICghdGVzdF9h
+bmRfc2V0X2JpdCgwLCAmY3R4LT5pcnFfZmxhZ3MpKSB7CiAJCXZhbCA9IHJlYWRsKGN0eC0+cmVn
+cyArIFZJRElOVENPTjApOwogCkBAIC0yNTksOSArMjQ0LDYgQEAgc3RhdGljIHZvaWQgZGVjb25f
+ZGlzYWJsZV92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAlzdHJ1Y3QgZGVj
+b25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwogCXUzMiB2YWw7CiAKLQlpZiAoY3R4LT5zdXNw
+ZW5kZWQpCi0JCXJldHVybjsKLQogCWlmICh0ZXN0X2FuZF9jbGVhcl9iaXQoMCwgJmN0eC0+aXJx
+X2ZsYWdzKSkgewogCQl2YWwgPSByZWFkbChjdHgtPnJlZ3MgKyBWSURJTlRDT04wKTsKIApAQCAt
+Mzg5LDkgKzM3MSw2IEBAIHN0YXRpYyB2b2lkIGRlY29uX2F0b21pY19iZWdpbihzdHJ1Y3QgZXh5
+bm9zX2RybV9jcnRjICpjcnRjLAogewogCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRj
+LT5jdHg7CiAKLQlpZiAoY3R4LT5zdXNwZW5kZWQpCi0JCXJldHVybjsKLQogCWRlY29uX3NoYWRv
+d19wcm90ZWN0X3dpbihjdHgsIHBsYW5lLT56cG9zLCB0cnVlKTsKIH0KIApAQCAtNDA5LDkgKzM4
+OCw2IEBAIHN0YXRpYyB2b2lkIGRlY29uX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9j
+cnRjICpjcnRjLAogCXVuc2lnbmVkIGludCBicHAgPSBzdGF0ZS0+ZmItPmJpdHNfcGVyX3BpeGVs
+ID4+IDM7CiAJdW5zaWduZWQgaW50IHBpdGNoID0gc3RhdGUtPmZiLT5waXRjaGVzWzBdOwogCi0J
+aWYgKGN0eC0+c3VzcGVuZGVkKQotCQlyZXR1cm47Ci0KIAkvKgogCSAqIFNIQURPV0NPTi9QUlRD
+T04gcmVnaXN0ZXIgaXMgdXNlZCBmb3IgZW5hYmxpbmcgdGltaW5nLgogCSAqCkBAIC01MDgsOSAr
+NDg0LDYgQEAgc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2Ry
+bV9jcnRjICpjcnRjLAogCXVuc2lnbmVkIGludCB3aW4gPSBwbGFuZS0+enBvczsKIAl1MzIgdmFs
+OwogCi0JaWYgKGN0eC0+c3VzcGVuZGVkKQotCQlyZXR1cm47Ci0KIAkvKiBwcm90ZWN0IHdpbmRv
+d3MgKi8KIAlkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCB3aW4sIHRydWUpOwogCkBAIC01
+MjksOSArNTAyLDYgQEAgc3RhdGljIHZvaWQgZGVjb25fYXRvbWljX2ZsdXNoKHN0cnVjdCBleHlu
+b3NfZHJtX2NydGMgKmNydGMsCiB7CiAJc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCA9IGNydGMt
+PmN0eDsKIAotCWlmIChjdHgtPnN1c3BlbmRlZCkKLQkJcmV0dXJuOwotCiAJZGVjb25fc2hhZG93
+X3Byb3RlY3Rfd2luKGN0eCwgcGxhbmUtPnpwb3MsIGZhbHNlKTsKIH0KIApAQCAtNTU1LDM5ICs1
+MjUsOSBAQCBzdGF0aWMgdm9pZCBkZWNvbl9pbml0KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgp
+CiBzdGF0aWMgdm9pZCBkZWNvbl9lbmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykK
+IHsKIAlzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwotCWludCByZXQ7Ci0K
+LQlpZiAoIWN0eC0+c3VzcGVuZGVkKQotCQlyZXR1cm47Ci0KLQljdHgtPnN1c3BlbmRlZCA9IGZh
+bHNlOwogCiAJcG1fcnVudGltZV9nZXRfc3luYyhjdHgtPmRldik7CiAKLQlyZXQgPSBjbGtfcHJl
+cGFyZV9lbmFibGUoY3R4LT5wY2xrKTsKLQlpZiAocmV0IDwgMCkgewotCQlEUk1fRVJST1IoIkZh
+aWxlZCB0byBwcmVwYXJlX2VuYWJsZSB0aGUgcGNsayBbJWRdXG4iLCByZXQpOwotCQlyZXR1cm47
+Ci0JfQotCi0JcmV0ID0gY2xrX3ByZXBhcmVfZW5hYmxlKGN0eC0+YWNsayk7Ci0JaWYgKHJldCA8
+IDApIHsKLQkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gcHJlcGFyZV9lbmFibGUgdGhlIGFjbGsgWyVk
+XVxuIiwgcmV0KTsKLQkJcmV0dXJuOwotCX0KLQotCXJldCA9IGNsa19wcmVwYXJlX2VuYWJsZShj
+dHgtPmVjbGspOwotCWlmICAocmV0IDwgMCkgewotCQlEUk1fRVJST1IoIkZhaWxlZCB0byBwcmVw
+YXJlX2VuYWJsZSB0aGUgZWNsayBbJWRdXG4iLCByZXQpOwotCQlyZXR1cm47Ci0JfQotCi0JcmV0
+ID0gY2xrX3ByZXBhcmVfZW5hYmxlKGN0eC0+dmNsayk7Ci0JaWYgIChyZXQgPCAwKSB7Ci0JCURS
+TV9FUlJPUigiRmFpbGVkIHRvIHByZXBhcmVfZW5hYmxlIHRoZSB2Y2xrIFslZF1cbiIsIHJldCk7
+Ci0JCXJldHVybjsKLQl9Ci0KIAlkZWNvbl9pbml0KGN0eCk7CiAKIAkvKiBpZiB2Ymxhbmsgd2Fz
+IGVuYWJsZWQgc3RhdHVzLCBlbmFibGUgaXQgYWdhaW4uICovCkBAIC02MDIsOSArNTQyLDYgQEAg
+c3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQog
+CXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7CiAJaW50IGk7CiAKLQlpZiAo
+Y3R4LT5zdXNwZW5kZWQpCi0JCXJldHVybjsKLQogCS8qCiAJICogV2UgbmVlZCB0byBtYWtlIHN1
+cmUgdGhhdCBhbGwgd2luZG93cyBhcmUgZGlzYWJsZWQgYmVmb3JlIHdlCiAJICogc3VzcGVuZCB0
+aGF0IGNvbm5lY3Rvci4gT3RoZXJ3aXNlIHdlIG1pZ2h0IHRyeSB0byBzY2FuIGZyb20KQEAgLTYx
+MywxNCArNTUwLDcgQEAgc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2Ry
+bV9jcnRjICpjcnRjKQogCWZvciAoaSA9IDA7IGkgPCBXSU5ET1dTX05SOyBpKyspCiAJCWRlY29u
+X2Rpc2FibGVfcGxhbmUoY3J0YywgJmN0eC0+cGxhbmVzW2ldKTsKIAotCWNsa19kaXNhYmxlX3Vu
+cHJlcGFyZShjdHgtPnZjbGspOwotCWNsa19kaXNhYmxlX3VucHJlcGFyZShjdHgtPmVjbGspOwot
+CWNsa19kaXNhYmxlX3VucHJlcGFyZShjdHgtPmFjbGspOwotCWNsa19kaXNhYmxlX3VucHJlcGFy
+ZShjdHgtPnBjbGspOwotCiAJcG1fcnVudGltZV9wdXRfc3luYyhjdHgtPmRldik7Ci0KLQljdHgt
+PnN1c3BlbmRlZCA9IHRydWU7CiB9CiAKIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9j
+cnRjX29wcyBkZWNvbl9jcnRjX29wcyA9IHsKQEAgLTc0OCw3ICs2NzgsNiBAQCBzdGF0aWMgaW50
+IGRlY29uX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCXJldHVybiAtRU5P
+TUVNOwogCiAJY3R4LT5kZXYgPSBkZXY7Ci0JY3R4LT5zdXNwZW5kZWQgPSB0cnVlOwogCiAJaTgw
+X2lmX3RpbWluZ3MgPSBvZl9nZXRfY2hpbGRfYnlfbmFtZShkZXYtPm9mX25vZGUsICJpODAtaWYt
+dGltaW5ncyIpOwogCWlmIChpODBfaWZfdGltaW5ncykKQEAgLTg0MywxMSArNzcyLDYzIEBAIHN0
+YXRpYyBpbnQgZGVjb25fcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJcmV0
+dXJuIDA7CiB9CiAKKyNpZmRlZiBDT05GSUdfUE0KK3N0YXRpYyBpbnQgZXh5bm9zN19kZWNvbl9z
+dXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKK3sKKwlzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4
+ID0gZGV2X2dldF9kcnZkYXRhKGRldik7CisKKwljbGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT52
+Y2xrKTsKKwljbGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT5lY2xrKTsKKwljbGtfZGlzYWJsZV91
+bnByZXBhcmUoY3R4LT5hY2xrKTsKKwljbGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT5wY2xrKTsK
+KworCXJldHVybiAwOworfQorCitzdGF0aWMgaW50IGV4eW5vczdfZGVjb25fcmVzdW1lKHN0cnVj
+dCBkZXZpY2UgKmRldikKK3sKKwlzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gZGV2X2dldF9k
+cnZkYXRhKGRldik7CisJaW50IHJldDsKKworCXJldCA9IGNsa19wcmVwYXJlX2VuYWJsZShjdHgt
+PnBjbGspOworCWlmIChyZXQgPCAwKSB7CisJCURSTV9FUlJPUigiRmFpbGVkIHRvIHByZXBhcmVf
+ZW5hYmxlIHRoZSBwY2xrIFslZF1cbiIsIHJldCk7CisJCXJldHVybiByZXQ7CisJfQorCisJcmV0
+ID0gY2xrX3ByZXBhcmVfZW5hYmxlKGN0eC0+YWNsayk7CisJaWYgKHJldCA8IDApIHsKKwkJRFJN
+X0VSUk9SKCJGYWlsZWQgdG8gcHJlcGFyZV9lbmFibGUgdGhlIGFjbGsgWyVkXVxuIiwgcmV0KTsK
+KwkJcmV0dXJuIHJldDsKKwl9CisKKwlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUoY3R4LT5lY2xr
+KTsKKwlpZiAgKHJldCA8IDApIHsKKwkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gcHJlcGFyZV9lbmFi
+bGUgdGhlIGVjbGsgWyVkXVxuIiwgcmV0KTsKKwkJcmV0dXJuIHJldDsKKwl9CisKKwlyZXQgPSBj
+bGtfcHJlcGFyZV9lbmFibGUoY3R4LT52Y2xrKTsKKwlpZiAgKHJldCA8IDApIHsKKwkJRFJNX0VS
+Uk9SKCJGYWlsZWQgdG8gcHJlcGFyZV9lbmFibGUgdGhlIHZjbGsgWyVkXVxuIiwgcmV0KTsKKwkJ
+cmV0dXJuIHJldDsKKwl9CisKKwlyZXR1cm4gMDsKK30KKyNlbmRpZgorCitzdGF0aWMgY29uc3Qg
+c3RydWN0IGRldl9wbV9vcHMgZXh5bm9zN19kZWNvbl9wbV9vcHMgPSB7CisJU0VUX1JVTlRJTUVf
+UE1fT1BTKGV4eW5vczdfZGVjb25fc3VzcGVuZCwgZXh5bm9zN19kZWNvbl9yZXN1bWUsCisJCQkg
+ICBOVUxMKQorfTsKKwogc3RydWN0IHBsYXRmb3JtX2RyaXZlciBkZWNvbl9kcml2ZXIgPSB7CiAJ
+LnByb2JlCQk9IGRlY29uX3Byb2JlLAogCS5yZW1vdmUJCT0gZGVjb25fcmVtb3ZlLAogCS5kcml2
+ZXIJCT0gewogCQkubmFtZQk9ICJleHlub3MtZGVjb24iLAorCQkucG0JPSAmZXh5bm9zN19kZWNv
+bl9wbV9vcHMsCiAJCS5vZl9tYXRjaF90YWJsZSA9IGRlY29uX2RyaXZlcl9kdF9tYXRjaCwKIAl9
+LAogfTsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
