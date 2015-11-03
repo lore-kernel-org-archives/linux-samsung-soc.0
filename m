@@ -1,142 +1,100 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 7/7] drivers: soc: Add support for Exynos PMU driver
-Date: Tue, 03 Nov 2015 11:22:30 +0900
-Message-ID: <56381A66.1010406@samsung.com>
-References: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
- <1445864143-25695-8-git-send-email-pankaj.dubey@samsung.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH v9 10/17] phy: Add driver for rockchip Display Port PHY
+Date: Mon, 2 Nov 2015 20:38:27 -0800
+Message-ID: <20151103043827.GA17261@localhost>
+References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
+ <1446083918-30809-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45023 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752668AbbKCCWg (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:35011 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751801AbbKCEib (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 21:22:36 -0500
-In-reply-to: <1445864143-25695-8-git-send-email-pankaj.dubey@samsung.com>
+	Mon, 2 Nov 2015 23:38:31 -0500
+Content-Disposition: inline
+In-Reply-To: <1446083918-30809-1-git-send-email-ykk@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, djkurtz@chromium.org, dianders@chromium.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Kukjin Kim <kgene@kernel.org>, robherring2@gmail.com, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Sean Paul <seanpaul@chromi>
 
-On 26.10.2015 21:55, Pankaj Dubey wrote:
-> This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
-> to "drivers/soc/samsung". This driver is mainly used for setting misc
-> bits of register from PMU IP of Exynos SoC which will be required to
-> configure before Suspend/Resume. Currently all these settings are done
-> in "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
-> support, there is a need of this PMU driver in driver/* folder.
+Hi Yakir,
+
+On Thu, Oct 29, 2015 at 09:58:38AM +0800, Yakir Yang wrote:
+> Add phy driver for the Rockchip DisplayPort PHY module. This
+> is required to get DisplayPort working in Rockchip SoCs.
 > 
-> This driver uses existing DT binding information and there should
-> be no functionality change in the supported platforms.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amitdanielk@gmail.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 > ---
->  arch/arm/mach-exynos/Kconfig                                   | 1 +
->  arch/arm/mach-exynos/Makefile                                  | 4 +---
->  drivers/soc/samsung/Kconfig                                    | 4 ++++
->  drivers/soc/samsung/Makefile                                   | 4 ++++
->  arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c | 0
->  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h     | 0
->  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c | 0
->  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c    | 0
->  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c | 0
->  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c | 0
->  10 files changed, 10 insertions(+), 3 deletions(-)
->  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
->  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h (100%)
->  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c (100%)
->  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c (100%)
->  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c (100%)
->  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c (100%)
-> 
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 83c85f5..874cb38 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -16,6 +16,7 @@ menuconfig ARCH_EXYNOS
->  	select ARM_GIC
->  	select COMMON_CLK_SAMSUNG
->  	select EXYNOS_THERMAL
-> +	select EXYNOS_PMU
->  	select EXYNOS_SROM if PM
->  	select HAVE_ARM_SCU if SMP
->  	select HAVE_S3C2410_I2C if I2C
-> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> index 2d58063..34d29df 100644
-> --- a/arch/arm/mach-exynos/Makefile
-> +++ b/arch/arm/mach-exynos/Makefile
-> @@ -9,9 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
->  
->  # Core
->  
-> -obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o \
-> -					exynos3250-pmu.o exynos4-pmu.o \
-> -					exynos5250-pmu.o exynos5420-pmu.o
-> +obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
->  
->  obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
->  obj-$(CONFIG_PM_SLEEP)		+= suspend.o
-> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-> index 2833b5b..f545d6c 100644
-> --- a/drivers/soc/samsung/Kconfig
-> +++ b/drivers/soc/samsung/Kconfig
-> @@ -10,4 +10,8 @@ config EXYNOS_SROM
->  	bool
->  	depends on ARM && ARCH_EXYNOS && PM
->  
-> +config EXYNOS_PMU
-> +	bool
-> +	depends on ARCH_EXYNOS
+...
+> diff --git a/drivers/phy/phy-rockchip-dp.c b/drivers/phy/phy-rockchip-dp.c
+> new file mode 100644
+> index 0000000..f3e0058
+> --- /dev/null
+> +++ b/drivers/phy/phy-rockchip-dp.c
+> @@ -0,0 +1,151 @@
+> +/*
+> + * Rockchip DP PHY driver
+> + *
+> + * Copyright (C) 2015 FuZhou Rockchip Co., Ltd.
+> + * Author: Yakir Yang <ykk@@rock-chips.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License.
+> + */
 > +
->  endmenu
-> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-> index 9c554d5..26fb489 100644
-> --- a/drivers/soc/samsung/Makefile
-> +++ b/drivers/soc/samsung/Makefile
-> @@ -1 +1,5 @@
->  obj-$(CONFIG_EXYNOS_SROM)	+= exynos-srom.o
-> +ifdef CONFIG_ARM
-> +obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
-> +					exynos5250-pmu.o exynos5420-pmu.o
-> +endif
-> diff --git a/arch/arm/mach-exynos/pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> similarity index 100%
-> rename from arch/arm/mach-exynos/pmu.c
-> rename to drivers/soc/samsung/exynos-pmu.c
-> diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/clk.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define GRF_SOC_CON12                           0x0274
+> +
+> +#define GRF_EDP_REF_CLK_SEL_INTER_HIWORD_MASK   BIT(4)
+> +#define GRF_EDP_REF_CLK_SEL_INTER               BIT(4)
 
-1. Please reorder the exynos_sys_powerdown_conf() to be after the
-statics. I am thinking also about adding EXPORT_SYMBOL... but maybe this
-would be over-thinking.
+Why are the above two macros the same? Judging by the RK3288 manual and
+other downstream drivers, it seems like you want the _MASK one to be
+shifted left by 16 (i.e., BIT(20)).
 
-2. I think the proper location of everything is drivers/power/reset/.
-Although I don't have strong opinion.
+> +
+> +#define GRF_EDP_PHY_SIDDQ_HIWORD_MASK           BIT(21)
+> +#define GRF_EDP_PHY_SIDDQ_ON                    0
+> +#define GRF_EDP_PHY_SIDDQ_OFF                   BIT(5)
+> +
 
-3. Please cc linux-pm and arm-soc guys (Arnd, Olof, Kevin) on next
-iteration.
+...
 
-Best regards,
-Krzysztof
+> +	ret = regmap_write(dp->grf, GRF_SOC_CON12, GRF_EDP_REF_CLK_SEL_INTER |
+> +			   GRF_EDP_REF_CLK_SEL_INTER_HIWORD_MASK);
 
-> similarity index 100%
-> rename from arch/arm/mach-exynos/exynos-pmu.h
-> rename to drivers/soc/samsung/exynos-pmu.h
-> diff --git a/arch/arm/mach-exynos/exynos3250-pmu.c b/drivers/soc/samsung/exynos3250-pmu.c
-> similarity index 100%
-> rename from arch/arm/mach-exynos/exynos3250-pmu.c
-> rename to drivers/soc/samsung/exynos3250-pmu.c
-> diff --git a/arch/arm/mach-exynos/exynos4-pmu.c b/drivers/soc/samsung/exynos4-pmu.c
-> similarity index 100%
-> rename from arch/arm/mach-exynos/exynos4-pmu.c
-> rename to drivers/soc/samsung/exynos4-pmu.c
-> diff --git a/arch/arm/mach-exynos/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
-> similarity index 100%
-> rename from arch/arm/mach-exynos/exynos5250-pmu.c
-> rename to drivers/soc/samsung/exynos5250-pmu.c
-> diff --git a/arch/arm/mach-exynos/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
-> similarity index 100%
-> rename from arch/arm/mach-exynos/exynos5420-pmu.c
-> rename to drivers/soc/samsung/exynos5420-pmu.c
-> 
+IOW, the above is writing:
+
+	BIT(4) | BIT(4)
+
+whereas I think you want:
+
+	BIT(4) | BIT(20)
+
+> +	if (ret != 0) {
+> +		dev_err(dp->dev, "Could not config GRF edp ref clk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+
+...
+
+(FYI, I came across this by inspection when comparing Heiko's
+'somewhat-stable' branch [1] with this series. The former brings up eDP
+fine on veyron-jaq, whereas this one doesn't yet, even with the above
+change. Still debugging the issue.)
+
+Brian
+
+[1] https://github.com/mmind/linux-rockchip/tree/devel/somewhat-stable
