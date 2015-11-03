@@ -1,80 +1,105 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2 6/7] drm/exynos: add pm_runtime to DECON 5433
-Date: Tue, 03 Nov 2015 19:47:08 +0900
-Message-ID: <1446547629-12521-7-git-send-email-inki.dae@samsung.com>
-References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 20/22] clocksource/drivers/exynos_mct: Fix Kconfig and add
+ COMPILE_TEST option
+Date: Tue, 3 Nov 2015 12:08:53 +0100
+Message-ID: <563895C5.9000502@linaro.org>
+References: <1446469011-22710-1-git-send-email-daniel.lezcano@linaro.org>
+ <563806E7.6010105@samsung.com> <563872E2.10001@linaro.org>
+ <9713489.TbNNoNQg5A@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35431 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751736AbbKCLI5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Nov 2015 06:08:57 -0500
+Received: by wmll128 with SMTP id l128so83806336wml.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Nov 2015 03:08:56 -0800 (PST)
+In-Reply-To: <9713489.TbNNoNQg5A@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, tglx@linutronix.de, john.stultz@linaro.org, linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM SUB-ARCHITECT..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-TGV0IHBtX3J1bnRpbWUgaGFuZGxlIHRoZSBlbmFibGluZy9kaXNhYmxpbmcgb2YgdGhlIGRldmlj
-ZSB3aXRoCnByb3BlciByZWZjbnQgaW5zdGVhZCBvZiByZWx5IG9uIHNwZWNpZmljIGZsYWdzIHRv
-IHRyYWNrIHRoZSBlbmFibGVkCnN0YXRlLgoKQ2hhbmdlbG9nIHYyOgotIENoYW5nZSBDT05GSUdf
-UE1fU0xFRVAgLT4gQ09ORklHX1BNCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1
-c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+ClNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxp
-bmtpLmRhZUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0
-MzNfZHJtX2RlY29uLmMgfCA1NCArKysrKysrKysrKysrKysrKysrLS0tLS0tLS0KIDEgZmlsZSBj
-aGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspLCAxNSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKaW5kZXggZmJlMWIzMS4uZWRmZDZl
-MyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNv
-bi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYwpA
-QCAtMzg1LDEyICszODUsNiBAQCBzdGF0aWMgdm9pZCBkZWNvbl9lbmFibGUoc3RydWN0IGV4eW5v
-c19kcm1fY3J0YyAqY3J0YykKIAogCXBtX3J1bnRpbWVfZ2V0X3N5bmMoY3R4LT5kZXYpOwogCi0J
-Zm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoZGVjb25fY2xrc19uYW1lKTsgaSsrKSB7Ci0JCXJl
-dCA9IGNsa19wcmVwYXJlX2VuYWJsZShjdHgtPmNsa3NbaV0pOwotCQlpZiAocmV0IDwgMCkKLQkJ
-CWdvdG8gZXJyOwotCX0KLQogCXNldF9iaXQoQklUX0NMS1NfRU5BQkxFRCwgJmN0eC0+ZmxhZ3Mp
-OwogCiAJLyogaWYgdmJsYW5rIHdhcyBlbmFibGVkIHN0YXR1cywgZW5hYmxlIGl0IGFnYWluLiAq
-LwpAQCAtMzk5LDExICszOTMsNiBAQCBzdGF0aWMgdm9pZCBkZWNvbl9lbmFibGUoc3RydWN0IGV4
-eW5vc19kcm1fY3J0YyAqY3J0YykKIAogCWRlY29uX2NvbW1pdChjdHgtPmNydGMpOwogCi0JcmV0
-dXJuOwotZXJyOgotCXdoaWxlICgtLWkgPj0gMCkKLQkJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGN0
-eC0+Y2xrc1tpXSk7Ci0KIAlzZXRfYml0KEJJVF9TVVNQRU5ERUQsICZjdHgtPmZsYWdzKTsKIH0K
-IApAQCAtNDI1LDkgKzQxNCw2IEBAIHN0YXRpYyB2b2lkIGRlY29uX2Rpc2FibGUoc3RydWN0IGV4
-eW5vc19kcm1fY3J0YyAqY3J0YykKIAogCWRlY29uX3N3cmVzZXQoY3R4KTsKIAotCWZvciAoaSA9
-IDA7IGkgPCBBUlJBWV9TSVpFKGRlY29uX2Nsa3NfbmFtZSk7IGkrKykKLQkJY2xrX2Rpc2FibGVf
-dW5wcmVwYXJlKGN0eC0+Y2xrc1tpXSk7Ci0KIAljbGVhcl9iaXQoQklUX0NMS1NfRU5BQkxFRCwg
-JmN0eC0+ZmxhZ3MpOwogCiAJcG1fcnVudGltZV9wdXRfc3luYyhjdHgtPmRldik7CkBAIC00Nzgs
-NyArNDY0LDYgQEAgZXJyOgogc3RhdGljIHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzIGRlY29u
-X2NydGNfb3BzID0gewogCS5lbmFibGUJCQk9IGRlY29uX2VuYWJsZSwKIAkuZGlzYWJsZQkJPSBk
-ZWNvbl9kaXNhYmxlLAotCS5jb21taXQJCQk9IGRlY29uX2NvbW1pdCwKIAkuZW5hYmxlX3ZibGFu
-awkJPSBkZWNvbl9lbmFibGVfdmJsYW5rLAogCS5kaXNhYmxlX3ZibGFuawkJPSBkZWNvbl9kaXNh
-YmxlX3ZibGFuaywKIAkuYXRvbWljX2JlZ2luCQk9IGRlY29uX2F0b21pY19iZWdpbiwKQEAgLTU4
-MSw2ICs1NjYsNDQgQEAgb3V0OgogCXJldHVybiBJUlFfSEFORExFRDsKIH0KIAorI2lmZGVmIENP
-TkZJR19QTQorc3RhdGljIGludCBleHlub3M1NDMzX2RlY29uX3N1c3BlbmQoc3RydWN0IGRldmlj
-ZSAqZGV2KQoreworCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBkZXZfZ2V0X2RydmRhdGEo
-ZGV2KTsKKwlpbnQgaTsKKworCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKGRlY29uX2Nsa3Nf
-bmFtZSk7IGkrKykKKwkJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGN0eC0+Y2xrc1tpXSk7CisKKwly
-ZXR1cm4gMDsKK30KKworc3RhdGljIGludCBleHlub3M1NDMzX2RlY29uX3Jlc3VtZShzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpCit7CisJc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCA9IGRldl9nZXRfZHJ2
-ZGF0YShkZXYpOworCWludCBpLCByZXQ7CisKKwlmb3IgKGkgPSAwOyBpIDwgQVJSQVlfU0laRShk
-ZWNvbl9jbGtzX25hbWUpOyBpKyspIHsKKwkJcmV0ID0gY2xrX3ByZXBhcmVfZW5hYmxlKGN0eC0+
-Y2xrc1tpXSk7CisJCWlmIChyZXQgPCAwKQorCQkJZ290byBlcnI7CisJfQorCisJcmV0dXJuIDA7
-CisKK2VycjoKKwl3aGlsZSAoLS1pID49IDApCisJCWNsa19kaXNhYmxlX3VucHJlcGFyZShjdHgt
-PmNsa3NbaV0pOworCisJcmV0dXJuIHJldDsKK30KKyNlbmRpZgorCitzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGRldl9wbV9vcHMgZXh5bm9zNTQzM19kZWNvbl9wbV9vcHMgPSB7CisJU0VUX1JVTlRJTUVf
-UE1fT1BTKGV4eW5vczU0MzNfZGVjb25fc3VzcGVuZCwgZXh5bm9zNTQzM19kZWNvbl9yZXN1bWUs
-CisJCQkgICBOVUxMKQorfTsKKwogc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZXh5
-bm9zNTQzM19kZWNvbl9kcml2ZXJfZHRfbWF0Y2hbXSA9IHsKIAl7CiAJCS5jb21wYXRpYmxlID0g
-InNhbXN1bmcsZXh5bm9zNTQzMy1kZWNvbiIsCkBAIC02ODQsNiArNzA3LDcgQEAgc3RydWN0IHBs
-YXRmb3JtX2RyaXZlciBleHlub3M1NDMzX2RlY29uX2RyaXZlciA9IHsKIAkucmVtb3ZlCQk9IGV4
-eW5vczU0MzNfZGVjb25fcmVtb3ZlLAogCS5kcml2ZXIJCT0gewogCQkubmFtZQk9ICJleHlub3M1
-NDMzLWRlY29uIiwKKwkJLnBtCT0gJmV4eW5vczU0MzNfZGVjb25fcG1fb3BzLAogCQkub2ZfbWF0
-Y2hfdGFibGUgPSBleHlub3M1NDMzX2RlY29uX2RyaXZlcl9kdF9tYXRjaCwKIAl9LAogfTsKLS0g
-CjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 11/03/2015 11:02 AM, Arnd Bergmann wrote:
+> On Tuesday 03 November 2015 09:40:02 Daniel Lezcano wrote:
+>> On 11/03/2015 01:59 AM, Krzysztof Kozlowski wrote:
+>>> On 03.11.2015 09:30, Krzysztof Kozlowski wrote:
+>>>> On 02.11.2015 21:56, Daniel Lezcano wrote:
+>>>>> Let the platform's Kconfig to select the clock instead of having =
+a reverse
+>>>>> dependency from the driver to the platform options.
+>>>>
+>>>> Selecting user-visible symbols is rather discouraged so why not
+>>>> something like this:
+>>>>
+>>>> -       def_bool y if ARCH_EXYNOS
+>>>> -       depends on !ARM64
+>>>> +       bool "Exynos multi core timer driver"
+>>>> +       depends on ARCH_EXYNOS || (COMPILE_TEST && ARM)
+>>>
+>>> Nope, that was wrong as we loose auto-select on Exynos. Instead:
+>>> -       def_bool y if ARCH_EXYNOS
+>>> -       depends on !ARM64
+>>> +       bool "Exynos multi core timer driver" if ARM
+>>> +       depends on ARCH_EXYNOS || COMPILE_TEST
+>>> +       default y if ARCH_EXYNOS
+>>>
+>>> This way we avoid select (which is a reverse dependency for the dri=
+ver),
+>>> have it auto-selectable and compile tested on arm.
+>>
+>> I think you misunderstood the patch I sent.
+>>
+>> It does two things:
+>>
+>> 1. Follow the thumb of rule of the current Kconfig format
+>>
+>>      - The timer driver is selected by the platform (exynos in this =
+case)
+>>      - User can't select the driver in the menuconfig
+>>      - There is no dependency on the platform except for compilation=
+ test
+>>
+>> 2. Add the COMPILE_TEST
+>>
+>>      - User can select the driver for compilation testing. This is f=
+or
+>> allyesconfig when doing compilation test coverage (exynos timer coul=
+d be
+>> compiled on other platform). As the delay code is not portable, we h=
+ave
+>> to restrict the compilation on the ARM platform, this is why there i=
+s
+>> the dependency on ARM.
+>>
+>> I am currently looking at splitting the delay code in order to preve=
+nt
+>> this restriction on this driver and some others drivers.
+>
+> I suspect this will come up again in the future. The problem is
+> really that drivers/clocksource has different rules from almost
+> everything else, by requiring the platform to 'select' the driver.
+>
+> The second version that Krzysztof posted is how we handle this in
+> other driver subsystems, and I would generally prefer it to do this
+> consistently for everything, but John Stultz has in the past argued
+> strongly for using 'select' in all clocksource drivers. The reason
+> is that for each platform we know in advance which driver we want,
+> and there is never a need for the user to have to select the right
+> one.
+
+Yes, and I second John in this.
+
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
