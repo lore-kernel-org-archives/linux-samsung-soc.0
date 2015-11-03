@@ -1,18 +1,16 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Tue, 03 Nov 2015 16:18:36 +0900
-Message-ID: <56385FCC.1090007@samsung.com>
-References: <cover.1446122247.git.p.fedin@samsung.com>
- <f1fbd1a7877090f4318705f0fccbf4d96c0ebc9c.1446122247.git.p.fedin@samsung.com>
- <56330E6E.50003@samsung.com> <00d401d112ff$c426e9a0$4c74bce0$@samsung.com>
- <5635D1EE.5010604@samsung.com> <012101d11540$8c280be0$a47823a0$@samsung.com>
- <5637FCCB.1060007@samsung.com> <004d01d11604$fc7a2a80$f56e7f80$@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 20/22] clocksource/drivers/exynos_mct: Fix Kconfig and add
+ COMPILE_TEST option
+Date: Tue, 3 Nov 2015 09:40:02 +0100
+Message-ID: <563872E2.10001@linaro.org>
+References: <1446469011-22710-1-git-send-email-daniel.lezcano@linaro.org>
+ <1446469011-22710-20-git-send-email-daniel.lezcano@linaro.org>
+ <56380040.3080600@samsung.com> <563806E7.6010105@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <004d01d11604$fc7a2a80$f56e7f80$@samsung.com>
+In-Reply-To: <563806E7.6010105@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,41 +20,69 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pavel Fedin <p.fedin@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Mark Rutland' <mark.rutland@arm.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, k.kozlowski.k@gmail.com, 'Rob Herring' <robh+dt@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Kumar Gala' <galak@codeaurora.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, tglx@linutronix.de
+Cc: "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, arnd@arndb.de, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, john.stultz@linaro.org, "moderated list:ARM SUB-ARCHITECT..." <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03.11.2015 15:58, Pavel Fedin wrote:
->  Hello!
-> 
->>>>> --- cut exynos5410.dtsi ---
->>>>> 		sromc: sromc@12250000 {
->>>>> 			#address-cells = <2>;
->>>>> 			#size-cells = <1>;
->>>>> 			ranges = <0 0 0x04000000 0x20000
->>>>> 				  1 0 0x05000000 0x20000
->>>>> 				  2 0 0x06000000 0x20000
->>>>> 				  3 0 0x07000000 0x20000>;
->>>>
->>>> Do you have to use 2 cells for address? Cannot it be:
->>>>  			ranges = <0 0x04000000 0x20000
->>>>  				  1 0x05000000 0x20000
->>>>  				  2 0x06000000 0x20000
->>>>  				  3 0x07000000 0x20000>;
->>>
->>>  I tried this first, but it didn't work, and ranges translation
->>> gave me something really weird (like addr = 0x80 and
->>> size = 0x04000004).
->>
->> Did you change the address-cells to <1>?
-> 
->  Of course i did.
-
-I saw some other nodes use the ranges without the offset but maybe some
-more steps are required for such configuration.
-
-So anyway send the version with the child offset and I will try to
-figure out why it is required.
-
-Best regards,
-Krzysztof
+T24gMTEvMDMvMjAxNSAwMTo1OSBBTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBPbiAw
+My4xMS4yMDE1IDA5OjMwLCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+PiBPbiAwMi4xMS4y
+MDE1IDIxOjU2LCBEYW5pZWwgTGV6Y2FubyB3cm90ZToKPj4+IExldCB0aGUgcGxhdGZvcm0ncyBL
+Y29uZmlnIHRvIHNlbGVjdCB0aGUgY2xvY2sgaW5zdGVhZCBvZiBoYXZpbmcgYSByZXZlcnNlCj4+
+PiBkZXBlbmRlbmN5IGZyb20gdGhlIGRyaXZlciB0byB0aGUgcGxhdGZvcm0gb3B0aW9ucy4KPj4K
+Pj4gU2VsZWN0aW5nIHVzZXItdmlzaWJsZSBzeW1ib2xzIGlzIHJhdGhlciBkaXNjb3VyYWdlZCBz
+byB3aHkgbm90Cj4+IHNvbWV0aGluZyBsaWtlIHRoaXM6Cj4+Cj4+IC0gICAgICAgZGVmX2Jvb2wg
+eSBpZiBBUkNIX0VYWU5PUwo+PiAtICAgICAgIGRlcGVuZHMgb24gIUFSTTY0Cj4+ICsgICAgICAg
+Ym9vbCAiRXh5bm9zIG11bHRpIGNvcmUgdGltZXIgZHJpdmVyIgo+PiArICAgICAgIGRlcGVuZHMg
+b24gQVJDSF9FWFlOT1MgfHwgKENPTVBJTEVfVEVTVCAmJiBBUk0pCj4KPiBOb3BlLCB0aGF0IHdh
+cyB3cm9uZyBhcyB3ZSBsb29zZSBhdXRvLXNlbGVjdCBvbiBFeHlub3MuIEluc3RlYWQ6Cj4gLSAg
+ICAgICBkZWZfYm9vbCB5IGlmIEFSQ0hfRVhZTk9TCj4gLSAgICAgICBkZXBlbmRzIG9uICFBUk02
+NAo+ICsgICAgICAgYm9vbCAiRXh5bm9zIG11bHRpIGNvcmUgdGltZXIgZHJpdmVyIiBpZiBBUk0K
+PiArICAgICAgIGRlcGVuZHMgb24gQVJDSF9FWFlOT1MgfHwgQ09NUElMRV9URVNUCj4gKyAgICAg
+ICBkZWZhdWx0IHkgaWYgQVJDSF9FWFlOT1MKPgo+IFRoaXMgd2F5IHdlIGF2b2lkIHNlbGVjdCAo
+d2hpY2ggaXMgYSByZXZlcnNlIGRlcGVuZGVuY3kgZm9yIHRoZSBkcml2ZXIpLAo+IGhhdmUgaXQg
+YXV0by1zZWxlY3RhYmxlIGFuZCBjb21waWxlIHRlc3RlZCBvbiBhcm0uCgpJIHRoaW5rIHlvdSBt
+aXN1bmRlcnN0b29kIHRoZSBwYXRjaCBJIHNlbnQuCgpJdCBkb2VzIHR3byB0aGluZ3M6CgoxLiBG
+b2xsb3cgdGhlIHRodW1iIG9mIHJ1bGUgb2YgdGhlIGN1cnJlbnQgS2NvbmZpZyBmb3JtYXQKCiAg
+ICAtIFRoZSB0aW1lciBkcml2ZXIgaXMgc2VsZWN0ZWQgYnkgdGhlIHBsYXRmb3JtIChleHlub3Mg
+aW4gdGhpcyBjYXNlKQogICAgLSBVc2VyIGNhbid0IHNlbGVjdCB0aGUgZHJpdmVyIGluIHRoZSBt
+ZW51Y29uZmlnCiAgICAtIFRoZXJlIGlzIG5vIGRlcGVuZGVuY3kgb24gdGhlIHBsYXRmb3JtIGV4
+Y2VwdCBmb3IgY29tcGlsYXRpb24gdGVzdAoKMi4gQWRkIHRoZSBDT01QSUxFX1RFU1QKCiAgICAt
+IFVzZXIgY2FuIHNlbGVjdCB0aGUgZHJpdmVyIGZvciBjb21waWxhdGlvbiB0ZXN0aW5nLiBUaGlz
+IGlzIGZvciAKYWxseWVzY29uZmlnIHdoZW4gZG9pbmcgY29tcGlsYXRpb24gdGVzdCBjb3ZlcmFn
+ZSAoZXh5bm9zIHRpbWVyIGNvdWxkIGJlIApjb21waWxlZCBvbiBvdGhlciBwbGF0Zm9ybSkuIEFz
+IHRoZSBkZWxheSBjb2RlIGlzIG5vdCBwb3J0YWJsZSwgd2UgaGF2ZSAKdG8gcmVzdHJpY3QgdGhl
+IGNvbXBpbGF0aW9uIG9uIHRoZSBBUk0gcGxhdGZvcm0sIHRoaXMgaXMgd2h5IHRoZXJlIGlzIAp0
+aGUgZGVwZW5kZW5jeSBvbiBBUk0uCgpJIGFtIGN1cnJlbnRseSBsb29raW5nIGF0IHNwbGl0dGlu
+ZyB0aGUgZGVsYXkgY29kZSBpbiBvcmRlciB0byBwcmV2ZW50IAp0aGlzIHJlc3RyaWN0aW9uIG9u
+IHRoaXMgZHJpdmVyIGFuZCBzb21lIG90aGVycyBkcml2ZXJzLgoKCj4+PiBBZGQgdGhlIENPTVBJ
+TEVfVEVTVCBvcHRpb24gZm9yIHRoZSBjb21waWxhdGlvbiB0ZXN0IGNvdmVyYWdlLiBEdWUgdG8g
+dGhlCj4+PiBub24gcG9ydGFibGUgJ2RlbGF5JyBjb2RlLCB0aGlzIGRyaXZlciBpcyBvbmx5IGNv
+bXBpbGFibGUgb24gQVJNLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IERhbmllbCBMZXpjYW5vIDxk
+YW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnPgo+Pj4gLS0tCj4+PiAgIGFyY2gvYXJtL21hY2gtZXh5
+bm9zL0tjb25maWcgfCAxICsKPj4+ICAgZHJpdmVycy9jbG9ja3NvdXJjZS9LY29uZmlnICB8IDQg
+KystLQo+Pj4gICAyIGZpbGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMo
+LSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3MvS2NvbmZpZyBiL2Fy
+Y2gvYXJtL21hY2gtZXh5bm9zL0tjb25maWcKPj4+IGluZGV4IDNhMTBmMWEuLmZmMTA1MzkgMTAw
+NjQ0Cj4+PiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vcy9LY29uZmlnCj4+PiArKysgYi9hcmNo
+L2FybS9tYWNoLWV4eW5vcy9LY29uZmlnCj4+PiBAQCAtMjcsNiArMjcsNyBAQCBtZW51Y29uZmln
+IEFSQ0hfRVhZTk9TCj4+PiAgIAlzZWxlY3QgU1JBTQo+Pj4gICAJc2VsZWN0IFRIRVJNQUwKPj4+
+ICAgCXNlbGVjdCBNRkRfU1lTQ09OCj4+PiArCXNlbGVjdCBDTEtTUkNfRVhZTk9TX01DVAo+Pj4g
+ICAJaGVscAo+Pj4gICAJICBTdXBwb3J0IGZvciBTQU1TVU5HIEVYWU5PUyBTb0NzIChFWFlOT1M0
+LzUpCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvS2NvbmZpZyBiL2Ry
+aXZlcnMvY2xvY2tzb3VyY2UvS2NvbmZpZwo+Pj4gaW5kZXggOTE2YzM2ZC4uZDgyOWNiZSAxMDA2
+NDQKPj4+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvS2NvbmZpZwo+Pj4gKysrIGIvZHJpdmVy
+cy9jbG9ja3NvdXJjZS9LY29uZmlnCj4+PiBAQCAtMjEzLDggKzIxMyw4IEBAIGNvbmZpZyBDTEtT
+UkNfTUVUQUdfR0VORVJJQwo+Pj4gICAJICBUaGlzIG9wdGlvbiBlbmFibGVzIHN1cHBvcnQgZm9y
+IHRoZSBNZXRhIHBlci10aHJlYWQgdGltZXJzLgo+Pj4KPj4+ICAgY29uZmlnIENMS1NSQ19FWFlO
+T1NfTUNUCj4+PiAtCWRlZl9ib29sIHkgaWYgQVJDSF9FWFlOT1MKPj4+IC0JZGVwZW5kcyBvbiAh
+QVJNNjQKPj4+ICsJYm9vbCAiRXh5bm9zIG11bHRpIGNvcmUgdGltZXIgZHJpdmVyIiBpZiBDT01Q
+SUxFX1RFU1QKPj4+ICsJZGVwZW5kcyBvbiBBUk0KPj4+ICAgCWhlbHAKPj4+ICAgCSAgU3VwcG9y
+dCBmb3IgTXVsdGkgQ29yZSBUaW1lciBjb250cm9sbGVyIG9uIEV4eW5vcyBTb0NzLgo+Pj4KPj4+
+Cj4+Cj4+Cj4KCgotLSAKICA8aHR0cDovL3d3dy5saW5hcm8ub3JnLz4gTGluYXJvLm9yZyDilIIg
+T3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCgpGb2xsb3cgTGluYXJvOiAgPGh0dHA6
+Ly93d3cuZmFjZWJvb2suY29tL3BhZ2VzL0xpbmFybz4gRmFjZWJvb2sgfAo8aHR0cDovL3R3aXR0
+ZXIuY29tLyMhL2xpbmFyb29yZz4gVHdpdHRlciB8CjxodHRwOi8vd3d3LmxpbmFyby5vcmcvbGlu
+YXJvLWJsb2cvPiBCbG9nCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBs
+aXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlz
+dGluZm8vbGludXgtYXJtLWtlcm5lbAo=
