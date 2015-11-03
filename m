@@ -1,105 +1,75 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Tue, 03 Nov 2015 09:16:11 +0900
-Message-ID: <5637FCCB.1060007@samsung.com>
-References: <cover.1446122247.git.p.fedin@samsung.com>
- <f1fbd1a7877090f4318705f0fccbf4d96c0ebc9c.1446122247.git.p.fedin@samsung.com>
- <56330E6E.50003@samsung.com> <00d401d112ff$c426e9a0$4c74bce0$@samsung.com>
- <5635D1EE.5010604@samsung.com> <012101d11540$8c280be0$a47823a0$@samsung.com>
+Subject: Re: [PATCH 20/22] clocksource/drivers/exynos_mct: Fix Kconfig and add
+ COMPILE_TEST option
+Date: Tue, 03 Nov 2015 09:30:56 +0900
+Message-ID: <56380040.3080600@samsung.com>
+References: <1446469011-22710-1-git-send-email-daniel.lezcano@linaro.org>
+ <1446469011-22710-20-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51493 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51647 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752538AbbKCAQY (ORCPT
+	with ESMTP id S1751280AbbKCAbC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 19:16:24 -0500
-In-reply-to: <012101d11540$8c280be0$a47823a0$@samsung.com>
+	Mon, 2 Nov 2015 19:31:02 -0500
+In-reply-to: <1446469011-22710-20-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, 'Mark Rutland' <mark.rutland@arm.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Rob Herring' <robh+dt@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Kumar Gala' <galak@codeaurora.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
+Cc: john.stultz@linaro.org, linux-kernel@vger.kernel.org, arnd@arndb.de, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM SUB-ARCHITECT..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
 
-On 02.11.2015 16:31, Pavel Fedin wrote:
->  Hello!
-> 
->>> --- cut exynos5410.dtsi ---
->>> 		sromc: sromc@12250000 {
->>> 			#address-cells = <2>;
->>> 			#size-cells = <1>;
->>> 			ranges = <0 0 0x04000000 0x20000
->>> 				  1 0 0x05000000 0x20000
->>> 				  2 0 0x06000000 0x20000
->>> 				  3 0 0x07000000 0x20000>;
->>
->> Do you have to use 2 cells for address? Cannot it be:
->>  			ranges = <0 0x04000000 0x20000
->>  				  1 0x05000000 0x20000
->>  				  2 0x06000000 0x20000
->>  				  3 0x07000000 0x20000>;
-> 
->  I tried this first, but it didn't work, and ranges translation
-> gave me something really weird (like addr = 0x80 and
-> size = 0x04000004).
+On 02.11.2015 21:56, Daniel Lezcano wrote:
+> Let the platform's Kconfig to select the clock instead of having a reverse
+> dependency from the driver to the platform options.
 
-Did you change the address-cells to <1>?
+Selecting user-visible symbols is rather discouraged so why not
+something like this:
 
-> I decided not to dig deeply into
-> "ranges" processing, but just followed GPMC approach. They say
-> that first number is range ID and second number is offset within
-> the range. And it just worked.
-> 
->>>  3. About samsung,srom-config array. I have the following reasons to keep if this way:
->>>     - listing every property under own name is just too much typing
->>>     - these values really do not make sense without each other, or partialy. I would say
->> that in array form they are even better
->>> readable, because it is the same order in which they go into the register.
->>
->> For timings - OK. PMC is separate. This is not a timing.
-> 
->  But it's srom-config, and not srom-timing anymore. So do you want
-> two properties like srom-timing + srom-page-mode (with vendor prefix
-> of course)?
-
-Yes, I still want separate properties because this too generic. In next
-SoC they will extend the register and you will have to extend the
-binding. I agree for simplicity reasons to group timings in an array.
-But not entire register.
-
->> You need to document them. We are not gonna put some data looking like a
->> vendor blob into the binding. I understand that document has
->> confidential mark... all of Samsung datasheets I've seen had it. I don't
->> find it as problem but of course I am not the one to judge here. If you
->> do not feel comfortable publishing such data, get an approval from your
->> manager. You can also try to search for this in vendor code
->> (opensource.samsung.com). If it is published there, then this won't be a
->> disclosure.
-> 
->  I've seen the actual SROMc settings in some old Android kernels, like 3.0.4.
-> But they are not documented there, no comments, just #define's.
->  Ok, i'll try to take a look how to minimize the actual information. :)
-
-Actually 15 secs of search by grep revealed that they are already
-documented and published. I looked at first image coming into my mind:
-GT-I9300_JB
-arch/arm/mach-exynos/include/mach/sromc-exynos4.h
-
-
->> BTW, your email client is weird. You are sending non-wrapped emails
->> without format=flowed in Content-Type. Please stick to mailing list
->> convention of wrapping at 72-char.
-> 
->  I know, sorry, this is MS Outlook (not Express), and it's impossible
-> to configure it this way (if i just set up word wrap, it starts to
-> corrupt patches). I am now trying to wrap the text by hands, i hope
-> it's better. And i cannot use anything else because... You know why. :)
-
-Actually no... I don't know why...
-All of us are using whatever we want (mutt+MDA, thunderbird, kmail,
-etc.). At least in two locations I've been: in Polish R&D and in HQ.
-
+-       def_bool y if ARCH_EXYNOS
+-       depends on !ARM64
++       bool "Exynos multi core timer driver"
++       depends on ARCH_EXYNOS || (COMPILE_TEST && ARM)
 
 Best regards,
 Krzysztof
+
+> 
+> Add the COMPILE_TEST option for the compilation test coverage. Due to the
+> non portable 'delay' code, this driver is only compilable on ARM.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  arch/arm/mach-exynos/Kconfig | 1 +
+>  drivers/clocksource/Kconfig  | 4 ++--
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 3a10f1a..ff10539 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -27,6 +27,7 @@ menuconfig ARCH_EXYNOS
+>  	select SRAM
+>  	select THERMAL
+>  	select MFD_SYSCON
+> +	select CLKSRC_EXYNOS_MCT
+>  	help
+>  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+>  
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index 916c36d..d829cbe 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -213,8 +213,8 @@ config CLKSRC_METAG_GENERIC
+>  	  This option enables support for the Meta per-thread timers.
+>  
+>  config CLKSRC_EXYNOS_MCT
+> -	def_bool y if ARCH_EXYNOS
+> -	depends on !ARM64
+> +	bool "Exynos multi core timer driver" if COMPILE_TEST
+> +	depends on ARM
+>  	help
+>  	  Support for Multi Core Timer controller on Exynos SoCs.
+>  
+> 
