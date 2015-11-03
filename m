@@ -1,90 +1,38 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 20/22] clocksource/drivers/exynos_mct: Fix Kconfig and add
- COMPILE_TEST option
-Date: Tue, 03 Nov 2015 09:59:19 +0900
-Message-ID: <563806E7.6010105@samsung.com>
-References: <1446469011-22710-1-git-send-email-daniel.lezcano@linaro.org>
- <1446469011-22710-20-git-send-email-daniel.lezcano@linaro.org>
- <56380040.3080600@samsung.com>
+Subject: Re: [PATCH v3 1/7] ARM: EXYNOS: removing redundant code from regs-pmu.h
+Date: Tue, 03 Nov 2015 10:37:23 +0900
+Message-ID: <56380FD3.1060204@samsung.com>
+References: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
+ <1445864143-25695-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51869 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752614AbbKCA70 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44637 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441AbbKCBhd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2015 19:59:26 -0500
-In-reply-to: <56380040.3080600@samsung.com>
+	Mon, 2 Nov 2015 20:37:33 -0500
+In-reply-to: <1445864143-25695-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: john.stultz@linaro.org, linux-kernel@vger.kernel.org, arnd@arndb.de, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM SUB-ARCHITECT..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com
 
-On 03.11.2015 09:30, Krzysztof Kozlowski wrote:
-> On 02.11.2015 21:56, Daniel Lezcano wrote:
->> Let the platform's Kconfig to select the clock instead of having a reverse
->> dependency from the driver to the platform options.
+On 26.10.2015 21:55, Pankaj Dubey wrote:
+> commit 6ec4f8d0d91f ("ARM: EXYNOS: add generic function to calculate
+> cpu number") introduced exynos_pmu_cpunr to be used by multi-cluster SoC's
+> e.g Exynos5420, but it's no more used in the codebase and hence removing
+> this part of code.
 > 
-> Selecting user-visible symbols is rather discouraged so why not
-> something like this:
-> 
-> -       def_bool y if ARCH_EXYNOS
-> -       depends on !ARM64
-> +       bool "Exynos multi core timer driver"
-> +       depends on ARCH_EXYNOS || (COMPILE_TEST && ARM)
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pmu.c      | 1 +
+>  arch/arm/mach-exynos/regs-pmu.h | 9 ---------
+>  2 files changed, 1 insertion(+), 9 deletions(-)
+>
 
-Nope, that was wrong as we loose auto-select on Exynos. Instead:
--       def_bool y if ARCH_EXYNOS
--       depends on !ARM64
-+       bool "Exynos multi core timer driver" if ARM
-+       depends on ARCH_EXYNOS || COMPILE_TEST
-+       default y if ARCH_EXYNOS
-
-This way we avoid select (which is a reverse dependency for the driver),
-have it auto-selectable and compile tested on arm.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
-
-> 
->>
->> Add the COMPILE_TEST option for the compilation test coverage. Due to the
->> non portable 'delay' code, this driver is only compilable on ARM.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>  arch/arm/mach-exynos/Kconfig | 1 +
->>  drivers/clocksource/Kconfig  | 4 ++--
->>  2 files changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
->> index 3a10f1a..ff10539 100644
->> --- a/arch/arm/mach-exynos/Kconfig
->> +++ b/arch/arm/mach-exynos/Kconfig
->> @@ -27,6 +27,7 @@ menuconfig ARCH_EXYNOS
->>  	select SRAM
->>  	select THERMAL
->>  	select MFD_SYSCON
->> +	select CLKSRC_EXYNOS_MCT
->>  	help
->>  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
->>  
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index 916c36d..d829cbe 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -213,8 +213,8 @@ config CLKSRC_METAG_GENERIC
->>  	  This option enables support for the Meta per-thread timers.
->>  
->>  config CLKSRC_EXYNOS_MCT
->> -	def_bool y if ARCH_EXYNOS
->> -	depends on !ARM64
->> +	bool "Exynos multi core timer driver" if COMPILE_TEST
->> +	depends on ARM
->>  	help
->>  	  Support for Multi Core Timer controller on Exynos SoCs.
->>  
->>
-> 
-> 
