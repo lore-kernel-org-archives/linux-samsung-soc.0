@@ -1,185 +1,137 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
-Date: Wed, 04 Nov 2015 16:56:30 +0900
-Message-ID: <5639BA2E.6090707@samsung.com>
-References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
- <5638B57E.9070702@samsung.com>
- <CAAQKjZOUBE5Grz=pPtwx9oF19-yoRX-UFtv9C+GxQgNy_sSRag@mail.gmail.com>
- <5639B2AE.6020601@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 1/4] Documentation: dt-bindings: Describe SROMc
+ configuration
+Date: Wed, 04 Nov 2015 17:09:36 +0900
+Message-ID: <5639BD40.4020000@samsung.com>
+References: <cover.1446542020.git.p.fedin@samsung.com>
+ <9a1edb15c06e27fa1fba5773c937e3a3d363c32a.1446542020.git.p.fedin@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5639B2AE.6020601@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45559 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751403AbbKDIJq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Nov 2015 03:09:46 -0500
+In-reply-to: <9a1edb15c06e27fa1fba5773c937e3a3d363c32a.1446542020.git.p.fedin@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pavel Fedin <p.fedin@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
 
-CgoyMDE164WEIDEx7JuUIDA07J28IDE2OjI07JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBPbiAxMS8wMy8yMDE1IDA0OjM4IFBNLCBJbmtpIERhZSB3cm90ZToKPj4gIAo+PiAy
-MDE1LTExLTAzIDIyOjI0IEdNVCswOTowMCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tCj4+IDxtYWlsdG86YS5oYWpkYUBzYW1zdW5nLmNvbT4+Ogo+Pj4gSGkgSW5raSwKPj4+Cj4+
-PiBPbiAxMS8wMy8yMDE1IDExOjQ3IEFNLCBJbmtpIERhZSB3cm90ZToKPj4+PiBUaGlzIHBhdGNo
-IHNlcmllcyBhZGRzIHBtIHJ1bnRpbWUgc3VwcG9ydCBmb3IgRXh5bm9zIGRybS4KPj4+Pgo+Pj4+
-IE9yaWdpbmFsbHksIHRoaXMgcGF0Y2ggd2FzIHBvc3RlZCBieSBHdXN0YXZvIGJ1dCB0aGVyZSB3
-YXMgbm8gYW55Cj4+Pj4gYW5zd2VyIGFib3V0IHNvbWUgY29tbWVudHMuIFNvIEkgcmViYXNlZCB0
-aGlzIHBhdGNoIHNlcmllcyBvbiB0b3Agb2YKPj4+PiBleHlub3MtZHJtLW5leHQsIHJlbW92ZWQg
-dW5uZWNlc3NhcnkgcGF0Y2hlcyBhbmQgbW9kaWZpZWQgd3JvbmcgbWFjcm8uCj4+Pgo+Pj4gSSBo
-YXZlIHNlbnQgY29tbWVudCB0byBvcmlnaW5hbCBwYXRjaHNldFsxXSwgYnV0IGZvciBzb21lIHN0
-cmFuZ2UgcmVhc29ucwo+Pj4gaXQgd2VudCBvbmx5IHRvIG1haWxpbmcgbGlzdHMuCj4+PiBNeSBj
-b25jZXJucyB3ZXJlIGFzIGZvbGxvd3M6Cj4+PiAtIGV4eW5vc19kcm0gaGFzIGFscmVhZHkgcG1f
-cnVudGltZSBzdXBwb3J0IHZpYSBleHlub3NfZHJtX2RydiBwbSBvcHMsCj4+PiAgIHdoeSBzaG91
-bGQgd2UgYWRkIHBlciBjb21wb25lbnQgc3VwcG9ydD8KPj4gIAo+PiBGb3IgdGhpcywgSSB0aGlu
-ayBJIGFscmVhZHkgbWVudGlvbmVkIGVub3VnaCwKPj4gICAgICAgICBodHRwOi8vd3d3LnNwaW5p
-Y3MubmV0L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzQ3Njk1Lmh0bWwKPj4KPj4gSW4gYnJp
-ZWYsIGV4eW5vc19kcm1fZHJ2IGRvZXNuJ3QgY29udHJvbCBlYWNoIHBvd2VyIGRvbWFpbiBvZiBl
-YWNoIGttcyBkZXZpY2UuCj4+IEl0IG1lYW5zIHRoYXQgd2UgY2Fubm90IHBvd2VyIG9mZiBmdWxs
-eSB3aXRob3V0IHBtIHJ1bnRpbWUgaW50ZXJmYWNlIG9mIGVhY2gKPj4ga21zIGRldmljZSAtIGp1
-c3QgdGhleSBjYW4gb25seSBjb250cm9sIHRoZWlyIGNsb2NrIG5vdCBwb3dlciBkb21haW4uIFNv
-Cj4+IHF1ZXN0aW9uLiBIb3cgd2UgY291bGQgY29udHJvbCBwb3dlciBkb21haW4gb2YgZWFjaCBr
-bXMgZGV2aWNlIHdpdGhvdXQgcnVudGltZQo+PiBwbSBpbnRlcmZhY2U/Cj4gCj4gSG1tLCBidXQg
-dG8gZW5hYmxlIHBtX3J1bnRpbWUgaW4gY29tcG9uZW50cyBpdCBpcyBlbm91Z2ggdG8gdXNlCj4g
-cG1fcnVudGltZV9lbmFibGUvZGlzYWJsZSBhbmQgcG1fcnVudGltZV9nZXQvcHV0KF9zeW5jKSwg
-dGhlcmUgaXMgbm8gbmVlZCB0byBhZGQKPiBwbSBjYWxsYmFja3MuCgpUaGF0IGlzIHRoaXMgcGF0
-Y2ggc2VyaWVzIGRvZXMsIGFuZCBwbSBjYWxsYmFjayBpcyBpbXBsZW1lbnRlZCBpbiBleHlub3Nf
-ZHJtX2RydiBub3QgaW4gY29tcG9uZW50IGRyaXZlcnMuCgo+IEluIGZhY3QgbW9zdCBvZiB0aGUg
-Y29tcG9uZW50cyBhbHJlYWR5IHN1cHBvcnRzIHJ1bnRpbWUgcG0sICBidXQgcXVpY2sgZ3JlcAo+
-IHNob3dzIHRoYXQgaXQgaXMgbm90IGltcGxlbWVudGVkIGluOgo+IGV4eW5vc19kcm1fZHNpLmMs
-IGV4eW5vc19kcF9jb3JlLmMsIGV4eW5vc19kcm1fbWljLmMuCgpleHlub3NfZHBfY29yZSBhbHJl
-YWR5IGhhcyBydW50aW1lIHBtIGludGVyZmFjZSB3aXRoIHRoaXMgcGF0Y2ggc2VyaWVzLiBGb3Ig
-ZHNpIGFuZCBtaWMsIHdlIG5lZWQgdG8gYWRkIHRoZSBydW50aW1lIHBtIGludGVyZmFjZXMuCgo+
-IFNvIEkgZ3Vlc3MgYWRkaW5nIHBtX3J1bnRpbWUgc3VwcG9ydCBieSBhZGRpbmcgY2FsbHMgcG1f
-cnVudGltZV9lbmFibGUvZGlzYWJsZQo+IGFuZCBwbV9ydW50aW1lX2dldC9wdXQoX3N5bmMpIGlu
-IGFwcHJvcHJpYXRlIHBsYWNlcyBzaG91bGQgYmUgZW5vdWdoLgo+IAo+Pgo+Pj4gLSBjb21wb25l
-bnQgc3VzcGVuZCBzZXF1ZW5jZSBpcyBub24gZGV0ZXJtaW5pc3RpYywgYnV0IGluIGNhc2Ugb2YK
-Pj4+ICAgdmlkZW8gcGlwZWxpbmVzLCBzcGVjaWZpY2F0aW9uIG9mdGVuIHJlcXVpcmVzIGZpeGVk
-IG9yZGVyLAo+Pgo+PiBDYW4geW91ciBzaG93IG1lIGFuIGV4YW1wbGU/IEkgdGhpbmsgY29tcG9u
-ZW50IHN1c3BlbmQgYW5kIHJlc3VtZSBhcmUgaW52b2tlZAo+PiBieSBvbmx5IGRybSBkcG1zIGlu
-dGVyZmFjZSwgYW5kIHRoZSBkcG1zIGludGVyZmFjZSBoYXMgYSBmaXhlZCBvcmRlciAtIHdoZW4K
-Pj4gZHBtcyBnb2VzIHRvIG9mZiwgZW5jb2RlciBmaXJzdCwgYW5kIHdoZW4gZHBtcyBnb2VzIHRv
-IG9uLCBjcnRjIGZpcnN0Lgo+IAo+IE5vdyBhcyBJIHVuZGVyc3RhbmQgeW91IGRvIG5vdCB3YW50
-IHRvIHJlbW92ZSBleHlub3NfZHJtX2RydiBwbSBjYWxsYmFja3Mgc28KPiB0aGV5IHdpbGwgZGlz
-YWJsZSBkZXZpY2VzIHByb3Blcmx5LCBhZnRlciB0aGF0IGNsb2NrIGRpc2FibGluZyBvcmRlciBz
-aG91bGQgbm90Cj4gbWF0dGVyLCBzbyB0aGUgd2hvbGUgcG9pbnQgaXMgbm90IHZhbGlkLgoKSW4g
-dGhpcyBjYXNlLCB0aGUgZHBtcyBhY3R1YWxseSBpcyBpbnZva2VkIGJ5IFNMRUVQIFBNIG9mIExp
-bnV4IHBvd2VyIG1hbmFnZW1lbnQgZnJhbWV3b3JrLiBEUk0gS01TIGhhcyBhIGludGVyZmFjZSB0
-byBjb250cm9sIHBvd2VyIG9mIGttcyBkZXZpY2UsIHdoaWNoIGlzIHJlYWxseSBkaWZmZXJlbnQg
-ZnJvbSBTTEVFUCBQTS4KU28gdGhpcyByZXF1ZXN0IGNhbiBiZSBkb25lIGJ5IHVzZXJzcGFjZSBp
-biBydW50aW1lIC0ganVzdCBEaXNwbGF5IHBvd2VyIG9mZi9vbi4KCj4gCj4+Cj4+IE15IG9ubHkg
-Y29uY2VybiBpcyB0aGF0IHJ1bnRpbWUgcG0gaW50ZXJmYWNlIG9mIGVhY2gga21zIGRyaXZlciBp
-cyBjYWxsZWQKPj4gd2l0aGluIHBtIHNsZWVwIGNvbnRleHQgb2YgRXh5bm9zIGRybSBkcml2ZXIu
-IFNvIEkgd2lsbCBsb29rIGludG8gdGhpcyBubyBwcm9ibGVtLgo+Pgo+Pj4gLSB0aGUgcGF0Y2hz
-ZXQgYWRkcyBpbXBsaWNpdCBkZXBlbmRlbmN5IG9uIFBNX1NMRUVQLgo+Pj4KPj4+Cj4+PiBDdXJy
-ZW50IHNvbHV0aW9uIHNob3VsZCB3b3JrIGNvcnJlY3RseSBhbmQgaXQgd2FzIE9LIGxhc3QgdGlt
-ZSBJIGhhdmUgdGVzdGVkIGl0Lgo+Pj4gSSBhbSBub3Qgc3VyZSBhYm91dCBhdG9taWMgcmVxdWly
-ZW1lbnRzLCBhcmUgdGhlcmUgc3BlY2lhbCBvbmVzPwo+Pgo+PiBOb3QgcmVsYXRlZCB0byBhdG9t
-aWMgZmVhdHVyZS4KPj4KPj4+Cj4+PiBUaGVyZSBhcmUgb3RoZXIgaXNzdWVzIHdpdGggY3VycmVu
-dCBzb2x1dGlvbiwgcmF0aGVyIGVhc3kgdG8gc29sdmU6Cj4+PiAtIGl0IGFzc3VtZXMgdGhhdCBl
-eHlub3MtZHJtIGRldmljZSB3aWxsIGJlIHN1c3BlbmRlZCBmaXJzdCAtIGl0IHNob3VsZCBiZSB0
-cnVlLAo+Pj4gIGFzIGl0IGlzIGNyZWF0ZWQgYXQgdGhlIGVuZCBhbmQgc3VzcGVuZCBvcmRlciBp
-cyByZXZlcnNlIHRvIGNyZWF0aW9uIG9yZGVyLCBidXQKPj4+ICBJIGFtIG5vdCBzdXJlIGlmIHdl
-IGNhbiByZWx5IG9uIGl0IC0gc29tZSBzb2x1dGlvbiBpcyB0byBhZGQgcG0gY2FsbGJhY2tzIHRv
-Cj4+PiAgYWxsIGNvbXBvbmVudHMsIGFuZCBmcm9tIHRob3NlIGNhbGxiYWNrcyBjYWxsIG9uZSBj
-ZW50cmFsaXplZCBwbSByb3V0aW5lLAo+Pgo+PiBZb3UgbWVhbiBwbSBjYWxsYmFja3MgYXJlIHBt
-IHNsZWVwIGludGVyZmFjZT8gQW5kIHlvdSBtZWFuIGxldCdzIGFkZCBzbGVlcCBwbQo+PiBpbnRl
-cmZhY2UgdG8gZWFjaCBrbXMgZHJpdmVyPyAgSWYgc28sIEknbSBub3QgYWdyZWUgd2l0aCB5b3Ug
-YmVjYXVzZSBzbGVlcCBwbQo+PiBzaG91bGQgYmUgY29udHJvbGxlZCBieSBvbmx5IGRybSB0b3Ag
-bGlrZSBzaW5nbGUgZHJpdmVyIGRvZXMuCj4gCj4gTGV0cyBsb29rIGF0IGFuIGV4YW1wbGU6Cj4g
-QXNzdW1lIHdlIGhhdmUgcHJlc2VudCBvbmx5IGZpbWQgYW5kIGRzaSBjb21wb25lbnRzLgo+IElu
-IHN1Y2ggY2FzZSBrZXJuZWwgY3JlYXRlcyB0d28gcGxhdGZvcm0gZGV2aWNlcyBmb3IgZmltZCBh
-bmQgZHNpIGluIGVhcmx5IHN0YWdlCj4gb2YgcGFyc2luZyBkZXZpY2UgdHJlZSBibG9iLgo+IER1
-cmluZyBleHlub3NfZHJtX2RydiBpbml0aWFsaXphdGlvbiBleHlub3MtZHJtIHBsYXRmb3JtIGRl
-dmljZSBpcyBjcmVhdGVkLCB0aGUKPiBpbXBvcnRhbnQgdGhpbmcgaXQgaXMgY3JlYXRlZCBhZnRl
-ciBmaW1kIGFuZCBkc2kuCj4gTm93IHdoZW4gcGxhdGZvcm0gZW50ZXJzIHNsZWVwIG1vZGUgc3Vz
-cGVuZCBjYWxsYmFja3MgYXJlIGNhbGxlZCwgdGhlIGltcG9ydGFudAo+IHRoaW5nIGhlcmUgaXMK
-PiBpbiB3aGljaCBvcmRlci4gSWYgSSByZW1lbWJlciBjb3JyZWN0bHkgUE0gZ3VhcmFudGVlcyBv
-bmx5IHRoYXQgY2hpbGRyZW4gd2lsbCBiZQo+IGhhbmRsZWQgYmVmb3JlIHBhcmVudHMuCj4gU2lu
-Y2Ugd2UgaGF2ZSBubyBwYXJlbnQtY2hpbGQgcmVsYXRpb24gYmV0d2VlbiBleHlub3MtZHJtLCBm
-aW1kIGFuZCBkc2ksIHRoZQo+IG9yZGVyIGlzIHVua25vd24uCgpleHlub3MtZHJtIGlzIG5vdCBy
-ZWFsIGhhcmR3YXJlLiBTbyB0aGUgb3JkZXIgaXMgb25seSB2YWxpZCBmb3Iga21zIGRldmljZXMg
-LSBjb21wb25lbnRzLgpUaGUgb25seSB0aGluZyBleHlub3MtZHJtIGRvZXMgaXMgdG8gaW52b2tl
-IGRwbXMgc28gdGhhdCBrbXMgZGV2aWNlcyBhcmUgZW5hYmxlZCBvciBkaXNhYmxlZCBpbiBmaXhl
-ZCBvcmRlci4KCkFuZCBhcyBJIG1lbnRpb25lZCBiZWZvcmUsIG15IG9ubHkgY29uY2VybiBpcyB0
-aGF0IHJ1bnRpbWUgcG0gaW50ZXJmYWNlIG9mIGVhY2gga21zIGRyaXZlciBpcyBjYWxsZWQKd2l0
-aGluIHBtIHNsZWVwIGNvbnRleHQgb2YgRXh5bm9zIGRybSBkcml2ZXIuIFNvIHJlcXVpcmVkIGZv
-ciBtb3JlIHJldmlldyBhbmQgdGVzdC4KCj4gU28gaXQgd2lsbCBiZSBwb3NzaWJsZSB0aGF0IGNv
-bXBvbmVudCB3aWxsIGVudGVyIHNsZWVwIG1vZGUgYmVmb3JlIGV4eW5vcy1kcm0KCkhvdyBjb21w
-b25lbnQgY2FuIGVudGVyIHNsZWVwIG1vZGUgYmVmb3JlIGV4eW5vcy1kcm0/IGNvbXBvbWVudHMg
-aGF2ZSBubyBzbGVlcCBwbSBpbnRlcmZhY2VzIGJ1dCBvbmx5IHJ1bnRpbWUgcG0gaW50ZXJmYWNl
-LAphbmQgZXZlbiB0aGUgcnVudGltZSBwbSBpbnRlcmZhY2VzIHdpbGwgYmUgY2FsbGVkIGJ5IHBt
-IGludGVyZmFjZXMgb2YgZXh5bm9zLWRybSBvbmx5IHdoZW4gc2xlZXAgcG0gaXMgcmVxdWVzdGVk
-LgpPdGhlcndpc2UsIHRoZSBydW50aW1lIHBtIGludGVyZmFjZSBvZiBlYWNoIGNvbXBvbmVudCB3
-aWxsIGJlIGNhbGxlZCBieSBkcG1zIHJlcXVlc3QgZnJvbSB1c2Vyc3BhY2UuCgo+IGFuZCBpbiBz
-dWNoIGNhc2Ugc3lzdGVtIGNhbiBldmVuCj4gaGFuZyBpZiBleHlub3MtZHJtIGNhbGxiYWNrcyB3
-aWxsIHRyeSB0byBhY2Nlc3MgcmVnaXN0ZXJzIG9mIHN1Y2ggY29tcG9uZW50LgoKU28gc2VlbXMg
-bm90IHRydWUuCgo+IEZvcnR1bmF0ZWx5IGluIGN1cnJlbnQgaW1wbGVtZW50YXRpb24gb2YgUE0g
-b3JkZXIgb2Ygc3VzcGVuZGluZyBpcyByZXZlcnNlZAo+IG9yZGVyIG9mIGRldmljZSBjcmVhdGlv
-biwgc28KPiBpdCB3aWxsIGJlIGFsd2F5cyBleHlub3MtZHJtIGZpcnN0Lgo+IAo+IFNvIGluIHNo
-b3J0IHdlIHJlbHkgaGVyZSBvbiBpbXBsZW1lbnRhdGlvbiBkZXRhaWwgb2YgUE0gZnJhbWV3b3Jr
-Lgo+IAo+Pgo+Pj4gLSBzdXNwZW5kL3Jlc3VtZSBjYWxsYmFja3MgdGhlb3JldGljYWxseSBjYW4g
-YmUgY2FsbGVkIGR1cmluZyBjb21wb25lbnQKPj4+ICAgbWFzdGVyIGluaXRpYWxpemF0aW9uL2Rl
-aW5pdGFpbGl6YXRpb24gaXQgY291bGQgYmUgcmFjeSwKPj4KPj4gSSdtIG5vdCBzdXJlIHdoYXQg
-eW91IG1lYW4gYnV0IGNvbXBvbmVudCBtYXN0ZXIKPj4gaW5pdGlhbGl6YXRpb24vZGVpbml0YWls
-aXphdGlvbiBtZWFuIGJpbmQgYW5kIHVuYmluZD8gSWYgc28sIGJpbmQvdW5iaW5kCj4+IGludGVy
-ZmFjZXMgb2YgYWxsIGNvbXBvbmVudHMgd2lsbCBuZXZlciBjYWxsIHBtIHJlbGV2YW50IGludGVy
-ZmFjZXMgYnV0IHRoZQo+PiB0aGUgcG0gcmVsZXZhbnQgaW50ZXJmYWNlcyBhcmUgY2FsbGVkIGJ5
-IG9ubHkgZHBtcyBpbnRlcmZhY2UuCj4gCj4gZXh5bm9zX2RybV9zeXNfc3VzcGVuZCBhbmQgZXh5
-bm9zX2RybV9zeXNfcmVzdW1lIHRha2VzIHBvaW50ZXIKPiB0byBkcm1fZGV2aWNlIGFuZCB1c2Vz
-IGl0LiBJdCBpcyBwb3NzaWJsZSB0aGF0IGluIHRoZSBzYW1lIHRpbWUgZHJtX2RyaXZlcgo+IGlz
-IGRlc3Ryb3llZCBmb3Igc29tZSByZWFzb24gaXQgd2lsbCByZXN1bHQgaW4gaW52YWxpZCBwb2lu
-dGVyIGluIHJlc3VtZS9zdXNwZW5kCj4gY2FsbGJhY2tzLgoKTm90IHN1cmUgYnV0IHNlZW1zIGxp
-a2UgdG8gbmVlZCBtb3JlIHJldmlldyBhbmQgdGVzdCBhbnl3YXkuCgo+IAo+IFRoZSBwcm9ibGVt
-IGlzIGNvbW1vbiBmb3IgY29tcG9uZW50aXplZCBkcml2ZXJzIGFuZCB3YXMgYWxyZWFkeSByZXBv
-cnRlZCBbMV0sCj4gYnV0IHRoZXJlCj4gaXMgbm8gZ2VuZXJhbCBzb2x1dGlvbiBmb3IgaXQuIE9u
-IHRoZSBvdGhlciBzaWRlIHByb2JhYmlsaXR5IGl0IHdpbGwgZXZlciBoYXBwZW4KPiBzZWVtcyB0
-byBiZSB2ZXJ5IGxvdy4KPiAKPiBbMV06IGh0dHA6Ly9wZXJtYWxpbmsuZ21hbmUub3JnL2dtYW5l
-LmNvbXAudmlkZW8uZHJpLmRldmVsLzExNTgyMAo+IAo+Pgo+Pj4gLSBleHlub3NfZHJtX3N5c19z
-dXNwZW5kL3Jlc3VtZSBjYWxscyBleHlub3NfZHJtX3N1c3BlbmQvcmVzdW1lCj4+PiAgIGZvciBo
-aXN0b3JpY2FsIHJlYXNvbnMsIHRoZXNlIGZ1bmN0aW9uIGNhbiBiZSBtZXJnZWQgdG9nZXRoZXIu
-Cj4+Cj4+IEFsc28gY2FuIHlvdSBzaG93IG1lIG1vcmUgZGV0YWlsPwo+IAo+IFRoaXMgaXMgcXVp
-dGUgc2ltcGxlLCBJIHdpbGwgcG9zdCBwYXRjaCBmb3IgaXQuCgpUaGFua3MgZm9yIHNoYXJpbmcu
-CgpBbnl3YXksIEkgYmVsaWV2ZSBHdXN0YXZvIHRvIHRha2UgY2FyZSBvZiB0aGlzIHBhdGNoIHNl
-cmllcyBhZnRlciBiYWNrIGZyb20gaGlzIHZhY2F0aW9uLgoKVGhhbmtzLApJbmtpIERhZQoKPiAK
-PiBSZWdhcmRzCj4gQW5kcnplago+IAo+Pgo+PiBUaGFua3MsCj4+IElua2kgRGFlCj4+Cj4+Pgo+
-Pj4gWzFdOiBodHRwOi8vcGVybWFsaW5rLmdtYW5lLm9yZy9nbWFuZS5saW51eC5rZXJuZWwuc2Ft
-c3VuZy1zb2MvNDgzOTUKPj4+Cj4+PiBSZWdhcmRzCj4+PiBBbmRyemVqCj4+Pgo+Pj4+Cj4+Pj4g
-Q2hhbmdlbG9nIHYyOgo+Pj4+IC0gUmVtb3ZlIHBhdGNoIDUgYW5kIDYuCj4+Pj4gICAuIGNvbW1p
-dCBjYWxsYmFjayBhcmUgYWxyZWFkeSByZW1vdmVkIHNvIGlzbid0IHJlcXVpcmVkIGFueW1vcmUu
-Cj4+Pj4gLSBSZW1vdmUgcGF0Y2ggOCB3aGljaCBtYWtlcyBkcCBjbG9jayBlbmFibGVkIGRpcmVj
-dGx5IGZyb20gRklNRC4KPj4+PiAgIC4gUmVhbGx5IG5vdCBtZW5kYXRvcnkgZm9yIEZJTUQgdXNl
-cyBEUCwgYW5kIGl0IGNvdWxkIGJlIGRpZmZlcmVudAo+Pj4+ICAgICBhY2NvcmRpbmcgdG8gQm9h
-cmQuCj4+Pj4gLSBNb2RpZmllZCBDT05GSUdfUE1fU0xFRVAgdG8gQ09ORklHX1BNLgo+Pj4+ICAg
-LiBJbiBjYXNlIG9mIHJ1bnRpbWUgcG0sIENPTkZJR19QTSBtYWNybyBzaG91bGQgYmUgdXNlZCBp
-bnN0ZWFkIG9mCj4+Pj4gICAgIENPTkZJR19QTV9TTEVFUC4KPj4+Pgo+Pj4+IEd1c3Rhdm8gUGFk
-b3ZhbiAoNyk6Cj4+Pj4gICBkcm0vZXh5bm9zOiBkbyBub3Qgc3RhcnQgZW5hYmxpbmcgRFAgYXQg
-YmluZCgpIHBoYXNlCj4+Pj4gICBkcm0vZXh5bm9zOiBhZGQgcG1fcnVudGltZSB0byBEUAo+Pj4+
-ICAgZHJtL2V4eW5vczogYWRkIHBtX3J1bnRpbWUgdG8gSERNSQo+Pj4+ICAgZHJtL2V4eW5vczog
-YWRkIHBtX3J1bnRpbWUgdG8gTWl4ZXIKPj4+PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1l
-IHRvIEZJTUQKPj4+PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIERFQ09OIDU0MzMK
-Pj4+PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIERFQ09OIDcKPj4+Pgo+Pj4+ICBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgNTQgKysrKysr
-LS0tCj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyAgICB8
-IDEyNSArKysrKysrKystLS0tLS0tLS0tCj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RwX2NvcmUuYyAgICAgICB8IDE2NSArKysrKysrKysrKysrKysrKysrLS0tLS0tLQo+Pj4+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmggICAgICAgfCAgIDEgKwo+
-Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAgOTEg
-KysrKysrLS0tLS0tLS0KPj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
-ICAgICAgICAgIHwgIDU2ICsrKysrKy0tLQo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19taXhlci5jICAgICAgICAgfCAxMjUgKysrKysrKysrKy0tLS0tLS0tLQo+Pj4+ICA3IGZp
-bGVzIGNoYW5nZWQsIDM1MiBpbnNlcnRpb25zKCspLCAyNjUgZGVsZXRpb25zKC0pCj4+Pj4KPj4+
-Cj4+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+Pj4g
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+Pj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZyA8bWFpbHRvOmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc+Cj4+PiBodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCj4+ICAKPj4gIAo+
-IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 03.11.2015 18:16, Pavel Fedin wrote:
+> Add documentation for new subnode properties, allowing bank configuration.
+> Based on u-boot implementation, but heavily reworked.
+
+Please mention also fixing the size of mapped memory in <reg> in the
+example.
+
+> 
+> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
+> ---
+>  .../bindings/arm/samsung/exynos-srom.txt           | 68 +++++++++++++++++++++-
+>  1 file changed, 66 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+> index 33886d5..ee378ca 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+> @@ -5,8 +5,72 @@ Required properties:
+>  
+>  - reg: offset and length of the register set
+>  
+> -Example:
+> +- #address-cells: Must be set to 2 to allow memory address translation
+> +
+> +- #size-cells: Must be set to 1 to allow CS address passing
+> +
+> +- ranges: Must be set up to reflect the memory layout with four integer values
+> +	  per bank:
+> +		<bank-number> 0 <physical address of bank> <size>
+> +
+
+These are mentioned as required but actually they shouldn't be, if there
+are no peripherals.
+
+By making them required you would be breaking ABI. I see that actually
+the ABI is not broken by the driver so maybe just add a separate
+optional section for subdevices.
+In that section you would described required attributes and subnodes.
+
+> +Sub-nodes:
+> +The SROM controller can be used to attach external peripherials. In this case
+
+s/peripherials/peripherals/
+
+> +device nodes should be added as subnodes to the SROMc node. These subnodes,
+> +except regular device specification, should contain the following properties,
+> +describing configuration of the relevant SROM bank:
+> +
+> +Required properties:
+> +- reg: bank number, base address (relative to start of the bank) and size of
+> +       the memory mapped for the device. Note that base address will be
+> +       typically 0 as this is the start of the bank.
+> +
+> +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
+> +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> +                        Each value is specified in cycles (0 - 15) and has the
+> +                        following meaning:
+> +                        Tacp : Page mode access cycle at Page mode
+> +                        Tcah : Address holding time after CSn
+> +                        Tcoh : Chip selection hold on OEn
+> +                        Tacc : Access cycle
+
+This one has values 1-32 clock cycles
+
+> +                        Tcos : Chip selection set-up before OEn
+> +                        Tacs : Address set-up before CSn
+> +
+> +Optional properties:
+> +- reg-io-width : data width in bytes (1 or 2). If omitted, default of 1 is used.
+> +
+> +- samsung,srom-page-mode : page mode configuration for the bank:
+> +			   0 - normal (one data)
+> +			   1 - four data
+> +			   If omitted, default of 0 is used.
+> +
+> +Example: basic definition, no banks are configured
+> +	sromc@12570000 {
+> +		compatible = "samsung,exynos-srom";
+> +		reg = <0x12570000 0x14>;
+> +	};
+> +
+> +Example: SROMc with smsc 911x ethernet chip on bank 3
+
+Maybe:
+s/smsc 911x ethernet/SMSC911x Ethernet/
+
+Best regards,
+Krzysztof
+
+>  	sromc@12570000 {
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0x04000000 0x20000   // Bank0
+> +			  1 0 0x05000000 0x20000   // Bank1
+> +			  2 0 0x06000000 0x20000   // Bank2
+> +			  3 0 0x07000000 0x20000>; // Bank3
+> +
+>  		compatible = "samsung,exynos-srom";
+> -		reg = <0x12570000 0x10>;
+> +		reg = <0x12570000 0x14>;
+> +
+> +		ethernet@3 {
+> +			compatible = "smsc,lan9115";
+> +			reg = <3 0 0x10000>;	   // Bank 3, offset = 0
+> +			phy-mode = "mii";
+> +			interrupt-parent = <&gpx0>;
+> +			interrupts = <5 8>;
+> +			reg-io-width = <2>;
+> +			smsc,irq-push-pull;
+> +			smsc,force-internal-phy;
+> +
+> +			samsung,srom-config = <1 9 12 1 9 1 1>;
+> +		};
+>  	};
+> 
