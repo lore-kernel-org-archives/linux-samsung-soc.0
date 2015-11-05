@@ -1,44 +1,72 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 2/2] arm64: dts: exynos7: Enable HS200 mode operation
-Date: Thu, 05 Nov 2015 17:22:21 +0530
-Message-ID: <1446724341-3568-2-git-send-email-alim.akhtar@samsung.com>
-References: <1446724341-3568-1-git-send-email-alim.akhtar@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: [PATCH v6 0/4] Exynos SROMc configuration and Ethernet support for
+ SMDK5410
+Date: Thu, 05 Nov 2015 15:02:59 +0300
+Message-ID: <cover.1446724046.git.p.fedin@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1446724341-3568-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch enables HS200 mode operation on exynos7 based
-espresso board.
-This also removes _broken-cd_ property as per mmc binding documentation
-which says one of the properties between broken-cd and non-removable
-should be used. And we already use _non-removable_ as emmc mounted
-on board which is a non-removable device.
+This patch extends Exynos SROM controller driver with ability to configure
+controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+which is connected via SROMc bank #3.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
-Changes since v1:
-* Addressed Krzysztof review comments
+With this patchset, support for the whole existing SMDK range can be added.
+Actually, only bank number is different.
 
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patchset also depends on Exynos 5410 pinctrl support, introduced by
+patches 0003 and 0004 from this set:
+[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index f5a3da50ac57..d8767b00862e 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -333,8 +333,8 @@
- &mmc_0 {
- 	status = "okay";
- 	num-slots = <1>;
--	broken-cd;
- 	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
- 	non-removable;
- 	card-detect-delay = <200>;
- 	clock-frequency = <800000000>;
+Pinctrl support is necessary in order to correctly configure
+multifunctional pins of the Exynos chip.
+
+v5 => v6:
+- Even more improvements to the documentation, fixed some errors and typos.
+- Separated adding bus ranges from generic SROMc support
+- Some stuff renamed for even better code readability
+- Stylistic cleanups in the DTS (everything in alphabetic order, use named
+  constant name for interrupt config byte)
+
+v4 => v5:
+- Some cosmetic changes in the dtsi ("compatible" goes first)
+- Use correctly specified ranges for the SROMc node
+- Reuse existing properties where possible ("reg" for bank# and
+  "reg-io-width" for data width)
+- Separated page-mode property from timings array
+- More improvements to the documentation
+
+v3 => v4:
+- Devices are now added as subnodes, with additional properties. This allows
+  to cleary specify dependency. If configuration fails, error will be reported
+  and child devices will not be probed.
+- These additional properties now have "samsung,srom-XXX" format
+- Fixed code style, now better understood.
+
+v2 => v3:
+- Fixed up SROMc region size in the device tree
+- Reordered patches, documentation goes first now
+
+v1 => v2:
+- Fixed some typos and bad labels in device tree
+- Improved documentation
+
+Pavel Fedin (4):
+  Documentation: dt-bindings: Describe SROMc configuration
+  ARM: dts: Add SROMc to Exynos 5410
+  drivers: exynos-srom: Add support for bank configuration
+  ARM: dts: Add Ethernet chip to SMDK5410
+
+ .../bindings/arm/samsung/exynos-srom.txt           | 71 +++++++++++++++++++++-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          | 41 +++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi                  | 11 ++++
+ arch/arm/mach-exynos/Kconfig                       |  2 +-
+ drivers/soc/samsung/Kconfig                        |  2 +-
+ drivers/soc/samsung/exynos-srom.c                  | 61 ++++++++++++++++++-
+ 6 files changed, 182 insertions(+), 6 deletions(-)
+
 -- 
-1.7.10.4
+2.4.4
