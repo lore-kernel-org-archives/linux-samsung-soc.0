@@ -1,51 +1,334 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v5 4/4] ARM: dts: Add Ethernet chip to SMDK5410
-Date: Thu, 05 Nov 2015 14:36:36 +0300
-Message-ID: <005001d117be$3b5709c0$b2051d40$@samsung.com>
-References: <cover.1446542020.git.p.fedin@samsung.com>
- <4568ad982f0af1846994119961cbb798edff311c.1446542020.git.p.fedin@samsung.com>
- <5639C1A5.1040708@samsung.com> <004f01d117bb$1e4fbb40$5aef31c0$@samsung.com>
- <563B3D15.2070700@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48829 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031023AbbKELgk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Nov 2015 06:36:40 -0500
-In-reply-to: <563B3D15.2070700@samsung.com>
-Content-language: ru
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v2 1/2] arm64: dts: exynos7: Add pmic s2mps15 device tree node
+Date: Thu, 05 Nov 2015 17:22:20 +0530
+Message-ID: <1446724341-3568-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>
 
- Hello!
+This patch add pmic (s2mps15) node of espresso board,
+which includes addition of regulators and pmic-clk sub-nodes.
 
-> >>> +	ethernet@3 {
-> >>> +		compatible = "smsc,lan9115";
-> >>> +		reg = <3 0 0x10000>;
-> >>> +		phy-mode = "mii";
-> >>> +		interrupt-parent = <&gpx0>;
-> >>> +		interrupts = <5 8>;
-> >>
-> >> s/8/IRQ_TYPE_LEVEL_LOW/
-> >> (is this really level low interrupt?)
-> >
-> >  Yes, according to: https://github.com/AndreiLux/Perseus-S3/blob/master/arch/arm/mach-
-> exynos/mach-smdk5250.c#L133
-> 
-> Although this is different board, but okay.
+This patch also adds {vmmc,vqmmc}-supply properties for mmc2 node.
 
- I am curious too, so i examined SMSC datasheet. The IRQ is fully programmable on
-chip's side too, and our driver indeed defaults to active-low. You can switch it
-to active-high by addint smsc,irq-active-high property. But i just copied
-settings from those old Android kernels, and it just works.
- So, cleaning up and posting v6.
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+Changes since v1:
+* Addressed Javier and Krzysztof review comments.
+* Removed unused ldo/buck nodes.
+* Removed always-on properties from ldo/buck to disable them
+* Added a consumer of pmic supply (like mmc)
 
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  280 +++++++++++++++++++++++
+ 1 file changed, 280 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index 5424cc450f72..f5a3da50ac57 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "exynos7.dtsi"
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
+@@ -52,6 +53,283 @@
+ 	status = "okay";
+ };
+ 
++&hsi2c_4 {
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-max-bus-freq = <200000>;
++	status = "okay";
++
++	s2mps15_pmic@66 {
++		compatible = "samsung,s2mps15-pmic";
++		reg = <0x66>;
++		interrupts = <2 IRQ_TYPE_NONE>;
++		interrupt-parent = <&gpa0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pmic_irq>;
++		wakeup-source;
++
++		s2mps15_osc: clocks {
++			compatible = "samsung,s2mps13-clk";
++			#clock-cells = <1>;
++			clock-output-names = "s2mps13_ap", "s2mps13_cp",
++				"s2mps13_bt";
++		};
++
++		regulators {
++			ldo1_reg: LDO1 {
++				regulator-name = "vdd_ldo1";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <900000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo2_reg: LDO2 {
++				regulator-name = "vqmmc-sdcard";
++				regulator-min-microvolt = <1620000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo3_reg: LDO3 {
++				regulator-name = "vdd_ldo3";
++				regulator-min-microvolt = <1620000>;
++				regulator-max-microvolt = <1980000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo4_reg: LDO4 {
++				regulator-name = "vdd_ldo4";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1110000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo5_reg: LDO5 {
++				regulator-name = "vdd_ldo5";
++				regulator-min-microvolt = <1620000>;
++				regulator-max-microvolt = <1980000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo6_reg: LDO6 {
++				regulator-name = "vdd_ldo6";
++				regulator-min-microvolt = <2250000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo7_reg: LDO7 {
++				regulator-name = "vdd_ldo7";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1150000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo8_reg: LDO8 {
++				regulator-name = "vdd_ldo8";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo9_reg: LDO9 {
++				regulator-name = "vdd_ldo9";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo10_reg: LDO10 {
++				regulator-name = "vdd_ldo10";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo11_reg: LDO11 {
++				regulator-name = "vdd_ldo11";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo12_reg: LDO12 {
++				regulator-name = "vdd_ldo12";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo13_reg: LDO13 {
++				regulator-name = "vdd_ldo13";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo14_reg: LDO14 {
++				regulator-name = "vdd_ldo14";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo17_reg: LDO17 {
++				regulator-name = "vmmc-sdcard";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo18_reg: LDO18 {
++				regulator-name = "vdd_ldo18";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo19_reg: LDO19 {
++				regulator-name = "vdd_ldo19";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo21_reg: LDO21 {
++				regulator-name = "vdd_ldo21";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo23_reg: LDO23 {
++				regulator-name = "vdd_ldo23";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo25_reg: LDO25 {
++				regulator-name = "vdd_ldo25";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3375000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo26_reg: LDO26 {
++				regulator-name = "vdd_ldo26";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1470000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			ldo27_reg: LDO27 {
++				regulator-name = "vdd_ldo27";
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <2275000>;
++				regulator-enable-ramp-delay = <125>;
++			};
++
++			buck1_reg: BUCK1 {
++				regulator-name = "vdd_mif";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck2_reg: BUCK2 {
++				regulator-name = "vdd_atlas";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <12500>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck4_reg: BUCK4 {
++				regulator-name = "vdd_int";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-ramp-delay = <12500>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck5_reg: BUCK5 {
++				regulator-name = "vdd_buck5";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck6_reg: BUCK6 {
++				regulator-name = "vdd_g3d";
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-ramp-delay = <12500>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck7_reg: BUCK7 {
++				regulator-name = "vdd_buck7";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
++				regulator-always-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck8_reg: BUCK8 {
++				regulator-name = "vdd_buck8";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
++				regulator-always-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck9_reg: BUCK9 {
++				regulator-name = "vdd_buck9";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <2100000>;
++				regulator-always-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++
++			buck10_reg: BUCK10 {
++				regulator-name = "vdd_buck10";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <3000000>;
++				regulator-always-on;
++				regulator-ramp-delay = <25000>;
++				regulator-enable-ramp-delay = <250>;
++			};
++		};
++	};
++};
++
++&pinctrl_alive {
++	pmic_irq: pmic-irq {
++		samsung,pins = "gpa0-2";
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++};
++
+ &mmc_0 {
+ 	status = "okay";
+ 	num-slots = <1>;
+@@ -80,5 +358,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+ 	bus-width = <4>;
++	vmmc-supply = <&ldo17_reg>;
++	vqmmc-supply = <&ldo2_reg>;
+ 	disable-wp;
+ };
+-- 
+1.7.10.4
