@@ -1,51 +1,117 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2] mfd: sec-core: Rename MFD and regulator names
- differently
-Date: Wed, 4 Nov 2015 13:45:45 +0000
-Message-ID: <20151104134545.GA1717@sirena.org.uk>
-References: <1446437169-29550-1-git-send-email-alim.akhtar@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47136 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751973AbbKDNqQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Nov 2015 08:46:16 -0500
-Content-Disposition: inline
-In-Reply-To: <1446437169-29550-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH V2 5/5] ARM: dts: exynos4412: Rename OPP nodes as opp@<opp-hz>
+Date: Thu,  5 Nov 2015 07:11:56 +0530
+Message-ID: <a911512c457ac95b6d8cb46eb631786cb4b64da9.1446687367.git.viresh.kumar@linaro.org>
+References: <cover.1446687367.git.viresh.kumar@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1446687367.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1446687367.git.viresh.kumar@linaro.org>
+References: <cover.1446687367.git.viresh.kumar@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rafael Wysocki <rjw@rjwysocki.net>, robh+dt@kernel.org, sboyd@codeaurora.org, lee.jones@linaro.org
+Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, nm@ti.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS
+	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: lee.jones@linaro.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
+OPP bindings got updated to name OPP nodes this way, make changes
+according to that.
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm/boot/dts/exynos4412.dtsi | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-On Mon, Nov 02, 2015 at 09:36:09AM +0530, Alim Akhtar wrote:
-> Currently S2MPSXX multifunction device is named as *-pmic,
-> and these MFDs also supports regulator as a one of its MFD cell which
-> has the same name, because current name is confusing and we want to
-> sort it out.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWOgwCAAoJECTWi3JdVIfQeVMH/3Ha+RIQFIFmlTJWYOBZul6K
-FhF3051JgGlvWjNAlXHH9Fl6zoFkzm9A+I2XYsUnPUtTht92kQhMLfAxqISYbHjH
-/re+KIlMRK+ICPrIb+Kn+/pIqY6FOab5M8ZsujCRTvs/wQdBERkjSoIcBVtABJO1
-ltb29z2HdxDt9FODN7CDJfHoRBNamKLTK3JRg8OAGV4rNzzkolOnFcYWKtXfRjuZ
-R1eoQZjjPB5+dRi3Us382z9QXdEv5tTGi8n4Z83FdpKG9gDn0I6fNga1MWMi1IqE
-z+OlPoSNOovQbC/LVMEVG2eWrVvNEq6ibwfEgM8aAYRxrmo6uFFM7xMbj/pIrgw=
-=e1ta
------END PGP SIGNATURE-----
-
---C7zPtVaVf+AK4Oqc--
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 294cfe40388d..40beede46e55 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -64,73 +64,73 @@
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+-		opp00 {
++		opp@200000000 {
+ 			opp-hz = /bits/ 64 <200000000>;
+ 			opp-microvolt = <900000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp01 {
++		opp@300000000 {
+ 			opp-hz = /bits/ 64 <300000000>;
+ 			opp-microvolt = <900000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp02 {
++		opp@400000000 {
+ 			opp-hz = /bits/ 64 <400000000>;
+ 			opp-microvolt = <925000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp03 {
++		opp@500000000 {
+ 			opp-hz = /bits/ 64 <500000000>;
+ 			opp-microvolt = <950000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp04 {
++		opp@600000000 {
+ 			opp-hz = /bits/ 64 <600000000>;
+ 			opp-microvolt = <975000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp05 {
++		opp@700000000 {
+ 			opp-hz = /bits/ 64 <700000000>;
+ 			opp-microvolt = <987500>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp06 {
++		opp@800000000 {
+ 			opp-hz = /bits/ 64 <800000000>;
+ 			opp-microvolt = <1000000>;
+ 			clock-latency-ns = <200000>;
+ 			opp-suspend;
+ 		};
+-		opp07 {
++		opp@900000000 {
+ 			opp-hz = /bits/ 64 <900000000>;
+ 			opp-microvolt = <1037500>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp08 {
++		opp@1000000000 {
+ 			opp-hz = /bits/ 64 <1000000000>;
+ 			opp-microvolt = <1087500>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp09 {
++		opp@1100000000 {
+ 			opp-hz = /bits/ 64 <1100000000>;
+ 			opp-microvolt = <1137500>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp10 {
++		opp@1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <1187500>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp11 {
++		opp@1300000000 {
+ 			opp-hz = /bits/ 64 <1300000000>;
+ 			opp-microvolt = <1250000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp12 {
++		opp@1400000000 {
+ 			opp-hz = /bits/ 64 <1400000000>;
+ 			opp-microvolt = <1287500>;
+ 			clock-latency-ns = <200000>;
+ 		};
+-		opp13 {
++		opp@1500000000 {
+ 			opp-hz = /bits/ 64 <1500000000>;
+ 			opp-microvolt = <1350000>;
+ 			clock-latency-ns = <200000>;
+-- 
+2.6.2.198.g614a2ac
