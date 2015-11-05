@@ -1,123 +1,46 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v3 3/7] ARCH: EXYNOS: split up exynos3250 SoC specific PMU
+Subject: Re: [PATCH v3 5/7] ARCH: EXYNOS: split up exynos5250 SoC specific PMU
  data
-Date: Thu, 05 Nov 2015 11:01:33 +0530
-Message-ID: <563AE9B5.2020808@samsung.com>
+Date: Thu, 05 Nov 2015 11:01:37 +0530
+Message-ID: <563AE9B9.4090005@samsung.com>
 References: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
- <1445864143-25695-4-git-send-email-pankaj.dubey@samsung.com>
- <563813F8.6000201@samsung.com>
+ <1445864143-25695-6-git-send-email-pankaj.dubey@samsung.com>
+ <563816F7.10502@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:60560 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752173AbbKEFbO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Nov 2015 00:31:14 -0500
-In-reply-to: <563813F8.6000201@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <563816F7.10502@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
 
-On Tuesday 03 November 2015 07:25 AM, Krzysztof Kozlowski wrote:
+
+On Tuesday 03 November 2015 07:37 AM, Krzysztof Kozlowski wrote:
 > On 26.10.2015 21:55, Pankaj Dubey wrote:
->> This patch splits up mach-exynos/pmu.c file, and moves exynos3250 PMU
->> configuration data and functions handing those data into exynos3250
->> SoC specific PMU file mach-exynos/exynos3250-pmu.c.
+>> This patch splits up mach-exynos/pmu.c file, and moves exynos5250,
+>> PMU configuration data and functions handing data into exynos5250
+>> SoC specific PMU file mach-exynos/exynos5250-pmu.c.
 >>
 >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 >> ---
->>   arch/arm/mach-exynos/Makefile         |   2 +-
->>   arch/arm/mach-exynos/exynos-pmu.h     |  47 +++++++++
->>   arch/arm/mach-exynos/exynos3250-pmu.c | 175 +++++++++++++++++++++++++++++++
->>   arch/arm/mach-exynos/pmu.c            | 189 +---------------------------------
->>   4 files changed, 224 insertions(+), 189 deletions(-)
->>   create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
->>   create mode 100644 arch/arm/mach-exynos/exynos3250-pmu.c
+>>   arch/arm/mach-exynos/Makefile         |   4 +-
+>>   arch/arm/mach-exynos/exynos-pmu.h     |   1 +
+>>   arch/arm/mach-exynos/exynos5250-pmu.c | 196 ++++++++++++++++++++++++++++++++++
+>>   arch/arm/mach-exynos/pmu.c            | 180 -------------------------------
+>>   4 files changed, 200 insertions(+), 181 deletions(-)
+>>   create mode 100644 arch/arm/mach-exynos/exynos5250-pmu.c
 >>
->> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
->> index 2f30676..e869f86 100644
->> --- a/arch/arm/mach-exynos/Makefile
->> +++ b/arch/arm/mach-exynos/Makefile
->> @@ -9,7 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
->>
->>   # Core
->>
->> -obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
->> +obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o exynos3250-pmu.o
->>
->>   obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
->>   obj-$(CONFIG_PM_SLEEP)		+= suspend.o
->> diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/arch/arm/mach-exynos/exynos-pmu.h
->> new file mode 100644
->> index 0000000..2da4964
->> --- /dev/null
->> +++ b/arch/arm/mach-exynos/exynos-pmu.h
->> @@ -0,0 +1,47 @@
->> +/*
->> + * Copyright (c) 2015 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
->> + *
->> + * Header for EXYNOS PMU Driver support
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#ifndef __EXYNOSPMU_H
->> +#define __EXYNOSPMU_H
 >
-> __EXYNOS_PMU_H
-> (and rename it in last patch)
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >
 
-OK.
+Thanks.
 
->> +
->> +#include <linux/io.h>
->> +
->> +#define PMU_TABLE_END	(-1U)
->> +
->> +extern void __iomem *pmu_base_addr;
->> +
->> +struct exynos_pmu_conf {
->> +	unsigned int offset;
->> +	u8 val[NUM_SYS_POWERDOWN];
->> +};
->> +
->> +struct exynos_pmu_data {
->> +	const struct exynos_pmu_conf *pmu_config;
->> +	const struct exynos_pmu_conf *pmu_config_extra;
->> +
->> +	void (*pmu_init)(void);
->> +	void (*powerdown_conf)(enum sys_powerdown);
->> +	void (*powerdown_conf_extra)(enum sys_powerdown);
->> +};
->> +
->> +static inline void pmu_raw_writel(u32 val, u32 offset)
->> +{
->> +	writel_relaxed(val, pmu_base_addr + offset);
->> +}
->> +
->> +static inline u32 pmu_raw_readl(u32 offset)
->> +{
->> +	return readl_relaxed(pmu_base_addr + offset);
->> +}
->
-> These shouldn't be static inlines in header because you will duplicate
-> it in each compiled object. Leave optimizations to compiler.
->
-
-OK. Thanks for review.
-
-Thanks,
 Pankaj Dubey
-> Rest looks good,
+
+> Best regards,
 > Krzysztof
->
 >
