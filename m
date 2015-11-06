@@ -1,43 +1,80 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v6 1/4] Documentation: dt-bindings: Describe SROMc
- configuration
-Date: Fri, 06 Nov 2015 17:18:12 +0900
-Message-ID: <563C6244.6060806@samsung.com>
-References: <cover.1446724046.git.p.fedin@samsung.com>
- <26ce9f26ee8537b2f81ad0bf470d1c6b1c8a1a31.1446724046.git.p.fedin@samsung.com>
- <563BEE44.4040207@samsung.com> <001001d1186b$358b6470$a0a22d50$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <001001d1186b$358b6470$a0a22d50$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>
+From: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v7 0/4] Exynos SROMc configuration and Ethernet support for
+ SMDK5410
+Date: Fri, 06 Nov 2015 13:03:45 +0300
+Message-ID: <cover.1446799912.git.p.fedin@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06.11.2015 17:14, Pavel Fedin wrote:
->  Hello!
-> 
->>> +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
->>> +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
->>> +                        Each value is specified in cycles and has the following
->>> +                        meaning and valid range:
->>> +                        Tacp : Page mode access cycle at Page mode (0 - 15)
->>> +                        Tcah : Address holding time after CSn (0 - 15)
->>> +                        Tcoh : Chip selection hold on OEn (0 - 15)
->>> +                        Tacc : Access cycle (0 - 32)
->>
->> All of the manuals have error here. Probably it can be either: 1-32 or
->> 0-31. I would bet on 0-31, what do you think?
-> 
->  Damn, everything starts from 0, so i automatically put '0 - 32'. The actual time, however, varies from 1 to 32, but the value is
-> from 0 to 31, i. e. <time> - 1
->  What shall we do? Just document this, or adjust the code to take number of cycles and subtract 1? To tell the truth, i'm already
-> sick of these small fixups, and i would prefer just to fix documentation.
+This patch extends Exynos SROM controller driver with ability to configure
+controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+which is connected via SROMc bank #3.
 
-Whatever you choose. Just make it correct. :) The problem is that
-Datasheet has errors for these values...
+With this patchset, support for the whole existing SMDK range can be added.
+Actually, only bank number is different.
 
-Best regards,
-Krzysztof
+This patchset also depends on Exynos 5410 pinctrl support, introduced by
+patches 0003 and 0004 from this set:
+[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
+
+Pinctrl support is necessary in order to correctly configure
+multifunctional pins of the Exynos chip.
+
+v6 => v7:
+- Fixed stupid error in Tacc description in the documentation
+
+v5 => v6:
+- Even more improvements to the documentation, fixed some errors and typos.
+- Separated adding bus ranges from generic SROMc support
+- Some stuff renamed for even better code readability
+- Stylistic cleanups in the DTS (everything in alphabetic order, use named
+  constant name for interrupt config byte)
+
+v4 => v5:
+- Some cosmetic changes in the dtsi ("compatible" goes first)
+- Use correctly specified ranges for the SROMc node
+- Reuse existing properties where possible ("reg" for bank# and
+  "reg-io-width" for data width)
+- Separated page-mode property from timings array
+- More improvements to the documentation
+
+v3 => v4:
+- Devices are now added as subnodes, with additional properties. This allows
+  to cleary specify dependency. If configuration fails, error will be reported
+  and child devices will not be probed.
+- These additional properties now have "samsung,srom-XXX" format
+- Fixed code style, now better understood.
+
+v2 => v3:
+- Fixed up SROMc region size in the device tree
+- Reordered patches, documentation goes first now
+
+v1 => v2:
+- Fixed some typos and bad labels in device tree
+- Improved documentation
+
+Pavel Fedin (4):
+  Documentation: dt-bindings: Describe SROMc configuration
+  ARM: dts: Add SROMc to Exynos 5410
+  drivers: exynos-srom: Add support for bank configuration
+  ARM: dts: Add Ethernet chip to SMDK5410
+
+ .../bindings/arm/samsung/exynos-srom.txt           | 71 +++++++++++++++++++++-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          | 41 +++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi                  | 11 ++++
+ arch/arm/mach-exynos/Kconfig                       |  2 +-
+ drivers/soc/samsung/Kconfig                        |  2 +-
+ drivers/soc/samsung/exynos-srom.c                  | 61 ++++++++++++++++++-
+ 6 files changed, 182 insertions(+), 6 deletions(-)
+
+-- 
+2.4.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
