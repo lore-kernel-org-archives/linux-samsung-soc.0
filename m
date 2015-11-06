@@ -1,51 +1,107 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v7 2/4] ARM: dts: Add SROMc to Exynos 5410
-Date: Fri, 06 Nov 2015 13:03:47 +0300
-Message-ID: <27a0491450c401f12e3cad0b0b488a128998627a.1446799912.git.p.fedin@samsung.com>
+Subject: [PATCH v7 4/4] ARM: dts: Add Ethernet chip to SMDK5410
+Date: Fri, 06 Nov 2015 13:03:49 +0300
+Message-ID: <d129d652910aa3afb651e2c55382ef5d0bfebcf1.1446799912.git.p.fedin@samsung.com>
 References: <cover.1446799912.git.p.fedin@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:44863 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161118AbbKFKD7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Nov 2015 05:03:59 -0500
 In-reply-to: <cover.1446799912.git.p.fedin@samsung.com>
 In-reply-to: <cover.1446799912.git.p.fedin@samsung.com>
 References: <cover.1446799912.git.p.fedin@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This machine uses own SoC device tree file, add missing part.
+The chip is smsc9115, connected via SROMc bank 3. Additionally, some GPIO
+initialization is required.
 
 Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 41 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi         |  6 +++++
+ 2 files changed, 47 insertions(+)
 
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index cebeaab..373abf7 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "exynos5410.dtsi"
++#include <dt-bindings/interrupt-controller/irq.h>
+ / {
+ 	model = "Samsung SMDK5410 board based on EXYNOS5410";
+ 	compatible = "samsung,smdk5410", "samsung,exynos5410", "samsung,exynos5";
+@@ -61,6 +62,46 @@
+ 	disable-wp;
+ };
+ 
++&pinctrl_0 {
++	srom_ctl: srom-ctl {
++		samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
++			       "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
++		samsung,pin-function = <2>;
++		samsung,pin-drv = <0>;
++	};
++
++	srom_ebi: srom-ebi {
++		samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
++			       "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
++			       "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
++			       "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
++			       "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
++			       "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&sromc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
++
++	ethernet@3 {
++		compatible = "smsc,lan9115";
++		reg = <3 0 0x10000>;
++		phy-mode = "mii";
++		interrupt-parent = <&gpx0>;
++		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
++		reg-io-width = <2>;
++		smsc,irq-push-pull;
++		smsc,force-internal-phy;
++
++		samsung,srom-page-mode = <1>;
++		samsung,srom-timing = <9 12 1 9 1 1>;
++	};
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
 diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 4603356..e2b58f8 100644
+index e2b58f8..9cfb814 100644
 --- a/arch/arm/boot/dts/exynos5410.dtsi
 +++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -101,6 +101,11 @@
- 			reg = <0x10000000 0x100>;
+@@ -104,6 +104,12 @@
+ 		sromc: sromc@12250000 {
+ 			compatible = "samsung,exynos-srom";
+ 			reg = <0x12250000 0x14>;
++			#address-cells = <2>;
++			#size-cells = <1>;
++			ranges = <0 0 0x04000000 0x20000
++				  1 0 0x05000000 0x20000
++				  2 0 0x06000000 0x20000
++				  3 0 0x07000000 0x20000>;
  		};
  
-+		sromc: sromc@12250000 {
-+			compatible = "samsung,exynos-srom";
-+			reg = <0x12250000 0x14>;
-+		};
-+
  		pmu_system_controller: system-controller@10040000 {
- 			compatible = "samsung,exynos5410-pmu", "syscon";
- 			reg = <0x10040000 0x5000>;
 -- 
 2.4.4
