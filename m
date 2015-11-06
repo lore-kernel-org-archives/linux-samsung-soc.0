@@ -1,42 +1,82 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: exynos7: Enable HS200 mode operation
-Date: Fri, 06 Nov 2015 08:56:28 +0900
-Message-ID: <563BECAC.5080609@samsung.com>
-References: <1446724341-3568-1-git-send-email-alim.akhtar@samsung.com>
- <1446724341-3568-2-git-send-email-alim.akhtar@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v6 1/4] Documentation: dt-bindings: Describe SROMc
+ configuration
+Date: Fri, 06 Nov 2015 09:03:16 +0900
+Message-ID: <563BEE44.4040207@samsung.com>
+References: <cover.1446724046.git.p.fedin@samsung.com>
+ <26ce9f26ee8537b2f81ad0bf470d1c6b1c8a1a31.1446724046.git.p.fedin@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28135 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756455AbbKEX42 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Nov 2015 18:56:28 -0500
-In-reply-to: <1446724341-3568-2-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <26ce9f26ee8537b2f81ad0bf470d1c6b1c8a1a31.1446724046.git.p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 05.11.2015 20:52, Alim Akhtar wrote:
-> This patch enables HS200 mode operation on exynos7 based
-> espresso board.
-> This also removes _broken-cd_ property as per mmc binding documentation
-> which says one of the properties between broken-cd and non-removable
-> should be used. And we already use _non-removable_ as emmc mounted
-> on board which is a non-removable device.
+On 05.11.2015 21:03, Pavel Fedin wrote:
+> Add documentation for new subnode properties, allowing bank configuration.
+> Based on u-boot implementation, but heavily reworked.
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Also, fix size of SROMc mapping in the example.
+> 
+> Signed-off-by: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
-> Changes since v1:
-> * Addressed Krzysztof review comments
+>  .../bindings/arm/samsung/exynos-srom.txt           | 71 +++++++++++++++++++++-
+>  1 file changed, 69 insertions(+), 2 deletions(-)
 > 
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+> index 33886d5..cce5c1f 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+> @@ -5,8 +5,75 @@ Required properties:
+>  
+>  - reg: offset and length of the register set
+>  
+> -Example:
+> +Optional properties:
+> +The SROM controller can be used to attach external peripherals. In this case
+> +extra properties, describing the bus behind it, should be specified as below:
+> +
+> +- #address-cells: Must be set to 2 to allow memory address translation
+> +
+> +- #size-cells: Must be set to 1 to allow CS address passing
+> +
+> +- ranges: Must be set up to reflect the memory layout with four integer values
+> +	  per bank:
+> +		<bank-number> 0 <physical address of bank> <size>
+> +
+> +Sub-nodes:
+> +The actual device nodes should be added as subnodes to the SROMc node. These
+> +subnodes, except regular device specification, should contain the following
+> +properties, describing configuration of the relevant SROM bank:
+> +
+> +Required properties:
+> +- reg: bank number, base address (relative to start of the bank) and size of
+> +       the memory mapped for the device. Note that base address will be
+> +       typically 0 as this is the start of the bank.
+> +
+> +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
+> +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> +                        Each value is specified in cycles and has the following
+> +                        meaning and valid range:
+> +                        Tacp : Page mode access cycle at Page mode (0 - 15)
+> +                        Tcah : Address holding time after CSn (0 - 15)
+> +                        Tcoh : Chip selection hold on OEn (0 - 15)
+> +                        Tacc : Access cycle (0 - 32)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+All of the manuals have error here. Probably it can be either: 1-32 or
+0-31. I would bet on 0-31, what do you think?
+
+Rest looks good:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
