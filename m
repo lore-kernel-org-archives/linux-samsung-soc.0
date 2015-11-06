@@ -1,64 +1,64 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 0/7] samsung: pmu: split up SoC specific PMU data
-Date: Fri, 06 Nov 2015 09:18:17 +0900
-Message-ID: <563BF1C9.102@samsung.com>
-References: <1445864143-25695-1-git-send-email-pankaj.dubey@samsung.com>
- <5638168A.8060500@samsung.com> <563AE8C3.9000001@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: exynos7: Add pmic s2mps15 device tree node
+Date: Fri, 6 Nov 2015 05:58:20 +0530
+Message-ID: <CAGOxZ53sL2D7cgo7QsxybXUo3daL7eVePEEurmHheGiXDr+1Fg@mail.gmail.com>
+References: <1446724341-3568-1-git-send-email-alim.akhtar@samsung.com> <563BEC5C.9040707@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <563AE8C3.9000001@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:35351 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965331AbbKFA3A (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Nov 2015 19:29:00 -0500
+In-Reply-To: <563BEC5C.9040707@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 05.11.2015 14:27, Pankaj Dubey wrote:
-> Hi Krzysztof,
-> 
-> On Tuesday 03 November 2015 07:36 AM, Krzysztof Kozlowski wrote:
->> On 26.10.2015 21:55, Pankaj Dubey wrote:
->>> This patch series is a part of continuation work from following series
->>> [1] and [2].
->>>
->>> 1: exynos: Move pmu driver to driver/soc folder and add exynos7 support
->>>     http://www.spinics.net/lists/linux-samsung-soc/msg39797.html from
->>> Amit Daniel Kacchap
->>> 2: soc: samsung: pmu: split up SoC specific PMU data
->>>     https://lkml.org/lkml/2015/1/7/12 from me
->>>
->>
->> +Cc Bartlomiej,
->>
->> There were some concerns for previous versions of this patchset. I
->> cannot find all of them (e.g. Bartlomiej's are not present on lkml.org
->> anymore) so I am not sure if they were addressed properly.
->>
-> 
-> Yes. If I recall correctly he has following main concerns:
-> 1: To convert exynos-pmu to a proper platform driver before moving out
-> of arch/arm/mach-exynos. This is already addressed.
-> 
-> 2: Do we really need common driver for both ARM and ARM64? I feel yes,
-> as at least I can see that driver's basic structure will be reused. As
-> in case of PMU driver most of lines of code is data part (register
-> offset and its values in different mode), that part will be kept in
-> separate file e.g. exynos7-pmu.c or exynosXXXX-pmu.c.
-> There has been already one attempt of submission for exynos7 PMU driver at:
-> 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305418.html
-> 
-> 
-> 3: He had a concern that in case of ARM64 build most of ARM related code
-> will be present in binary which will be dead code, that can be addressed
-> by excluding ARM based SoC exynosXXXX-pmu.c file in Makefile.
-> It has been taken care in v3 7/7 patch in drivers/soc/samsung/Makefile.
-> 
+On Fri, Nov 6, 2015 at 5:25 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 05.11.2015 20:52, Alim Akhtar wrote:
+>> This patch add pmic (s2mps15) node of espresso board,
+>> which includes addition of regulators and pmic-clk sub-nodes.
+>
+> My comment for fixing capital letters was ignored. Do you disagree with it?
+>
+Ah! sorry about that, I missed that completely, will re-send.
+Thanks!
 
-Sounds reasonable to me. Maybe someone will have other comments but for
-me it's okay. When sending next version, please CC linux-pm mailing list
-and arm-soc maintainers (Arnd, Olof, Kevin).
+>>
+>> This patch also adds {vmmc,vqmmc}-supply properties for mmc2 node.
+>>
+>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> ---
+>> Changes since v1:
+>> * Addressed Javier and Krzysztof review comments.
+>> * Removed unused ldo/buck nodes.
+>> * Removed always-on properties from ldo/buck to disable them
+>> * Added a consumer of pmic supply (like mmc)
+>>
+>>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  280 +++++++++++++++++++++++
+>>  1 file changed, 280 insertions(+)
+>>
+>
+> Rest looks good, so with the fix above:
+>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> Best regards,
+> Krzysztof
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Best regards,
-Krzysztof
+
+
+-- 
+Regards,
+Alim
