@@ -1,53 +1,47 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v3 2/2] arm64: dts: exynos7: Enable HS200 mode operation
-Date: Fri, 06 Nov 2015 08:36:40 +0530
-Message-ID: <1446779200-10457-2-git-send-email-alim.akhtar@samsung.com>
-References: <1446779200-10457-1-git-send-email-alim.akhtar@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v6 1/4] Documentation: dt-bindings: Describe SROMc
+ configuration
+Date: Fri, 06 Nov 2015 11:14:49 +0300
+Message-ID: <001001d1186b$358b6470$a0a22d50$@samsung.com>
+References: <cover.1446724046.git.p.fedin@samsung.com>
+ <26ce9f26ee8537b2f81ad0bf470d1c6b1c8a1a31.1446724046.git.p.fedin@samsung.com>
+ <563BEE44.4040207@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47330 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031061AbbKFDFb (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34994 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757237AbbKFIOy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Nov 2015 22:05:31 -0500
-In-reply-to: <1446779200-10457-1-git-send-email-alim.akhtar@samsung.com>
+	Fri, 6 Nov 2015 03:14:54 -0500
+In-reply-to: <563BEE44.4040207@samsung.com>
+Content-language: ru
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>
 
-This patch enables HS200 mode operation on exynos7 based
-espresso board.
-This also removes _broken-cd_ property as per mmc binding documentation
-which says one of the properties between broken-cd and non-removable
-should be used. And we already use _non-removable_ as emmc mounted
-on board which is a non-removable device.
+ Hello!
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
-Chnages since v2:
-* none
+> > +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
+> > +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> > +                        Each value is specified in cycles and has the following
+> > +                        meaning and valid range:
+> > +                        Tacp : Page mode access cycle at Page mode (0 - 15)
+> > +                        Tcah : Address holding time after CSn (0 - 15)
+> > +                        Tcoh : Chip selection hold on OEn (0 - 15)
+> > +                        Tacc : Access cycle (0 - 32)
+> 
+> All of the manuals have error here. Probably it can be either: 1-32 or
+> 0-31. I would bet on 0-31, what do you think?
 
-Changes since v1:
-* Addressed Krzysztof review comments
+ Damn, everything starts from 0, so i automatically put '0 - 32'. The actual time, however, varies from 1 to 32, but the value is
+from 0 to 31, i. e. <time> - 1
+ What shall we do? Just document this, or adjust the code to take number of cycles and subtract 1? To tell the truth, i'm already
+sick of these small fixups, and i would prefer just to fix documentation.
 
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index f5a3da50ac57..d8767b00862e 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -333,8 +333,8 @@
- &mmc_0 {
- 	status = "okay";
- 	num-slots = <1>;
--	broken-cd;
- 	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
- 	non-removable;
- 	card-detect-delay = <200>;
- 	clock-frequency = <800000000>;
--- 
-1.7.10.4
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
