@@ -1,85 +1,106 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [rtc-linux] Re: [PATCH v5 1/4] dt-bindings: mfd: s2mps11: add
- documentation for s2mps15 PMIC
-Date: Sat, 7 Nov 2015 12:09:38 +0900
-Message-ID: <563D6B72.9010004@samsung.com>
-References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
- <1446186334-16510-2-git-send-email-alim.akhtar@samsung.com>
- <20151106223339.GA22411@rob-hp-laptop>
+Subject: Re: [PATCH] dmaengine: pl330: Fix race in residue reporting
+Date: Sat, 7 Nov 2015 21:40:49 +0900
+Message-ID: <563DF151.2010307@samsung.com>
+References: <1446808295-23149-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151106223339.GA22411@rob-hp-laptop>
+In-Reply-To: <1446808295-23149-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rtc-linux@googlegroups.com, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: k.kozlowski.k@gmail.com, lee.jones@linaro.org, broonie@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Vinod Koul <vinod.koul@intel.com>
+Cc: k.kozlowski.k@gmail.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org, linux-arm-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 07.11.2015 o 07:33, Rob Herring pisze:
-> On Fri, Oct 30, 2015 at 11:55:31AM +0530, Alim Akhtar wrote:
->> From: Thomas Abraham <thomas.ab@samsung.com>
->>
->> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
->> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
->> This also supports RTC and three 32.768KHz clock outputs.
->>
->> Cc: devicetree@vger.kernel.org
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/s2mps11.txt |   21 ++++++++++++++-------
->>  1 file changed, 14 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> index 890f0b0e1643..4c0543ceec25 100644
->> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->> @@ -1,5 +1,5 @@
->>  
->> -* Samsung S2MPS11, S2MPS13, S2MPS14 and S2MPU02 Voltage and Current Regulator
->> +* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
->>  
->>  The Samsung S2MPS11 is a multi-function device which includes voltage and
->>  current regulators, RTC, charger controller and other sub-blocks. It is
->> @@ -7,8 +7,12 @@ interfaced to the host controller using an I2C interface. Each sub-block is
->>  addressed by the host system using different I2C slave addresses.
->>  
->>  Required properties:
->> -- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps13-pmic"
->> -	      or "samsung,s2mps14-pmic" or "samsung,s2mpu02-pmic".
->> +- compatible: Should be one of the following
->> +	- "samsung,s2mps11-pmic"
->> +	- "samsung,s2mps13-pmic"
->> +	- "samsung,s2mps14-pmic"
->> +	- "samsung,s2mps15-pmic"
->> +	- "samsung,s2mpu02-pmic".
->>  - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
->>  
->>  Optional properties:
->> @@ -24,7 +28,7 @@ Optional properties:
->>    unwanted buck warm reset (setting buck voltages to default values).
->>  
->>  Optional nodes:
->> -- clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
->> +- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+W dniu 06.11.2015 o 20:11, Sjoerd Simons pisze:
+> When a transfer completes there is a small window between the descriptor
+> being unset as the current active one in the thread and it being marked
+> as done. This causes the residue to be incorrectly set when
+> pl330_tx_status is run in that window. Practically this caused
+> issue for me with audio playback as the residue goes up during a
+> transfer (as the in-progress transfer is no longer accounted for),
+> which makes the higher levels think the audio ringbuffer wrapped around
+> and thus did a sudden big jump forward.
 > 
-> s5m8767 doesn't seem to be documented. Can you please fix or remove.
+> To resolve this, add a field protected by the dma engine lock to
+> indicate the transfer is done but the status hasn't been updated yet.
+> 
+> Also fix the locking in pl330_tx_status, as the function inspects the
+> threads req_running field and queries the dma engine for the current
+> state of the running transfer the dma engine lock needs to be held to
+> ensure the active descriptor doesn't change underneath it.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> 
+> ---
+> 
+>  drivers/dma/pl330.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 17ee758..6c8243b 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -503,6 +503,8 @@ struct dma_pl330_desc {
+>  	struct pl330_reqcfg rqcfg;
+>  
+>  	enum desc_status status;
+> +	/* Transfer completed, but not yet moved to DONE state */
+> +	bool xferred;
+>  
+>  	int bytes_requested;
+>  	bool last;
+> @@ -1463,6 +1465,9 @@ static void dma_pl330_rqcb(struct dma_pl330_desc *desc, enum pl330_op_err err)
+>  	spin_lock_irqsave(&pch->lock, flags);
+>  
+>  	desc->status = DONE;
+> +	spin_lock(&pch->thread->dmac->lock);
+> +	desc->xferred = false;
+> +	spin_unlock(&pch->thread->dmac->lock);
+>  
+>  	spin_unlock_irqrestore(&pch->lock, flags);
+>  
+> @@ -1595,6 +1600,7 @@ static int pl330_update(struct pl330_dmac *pl330)
+>  
+>  			/* Detach the req */
+>  			descdone = thrd->req[active].desc;
+> +			descdone->xferred = true;
+>  			thrd->req[active].desc = NULL;
 
-What exactly do you have in mind?
+Looking at the code indeed the small window could happen. How can I
+reproduce it? Can you describe your system?
 
-The s5m8767-clk is already documented as part of clk-s2mps11.c driver:
-Documentation/devicetree/bindings/mfd/s2mps11.txt
-
-The main s5m8767 MFD driver is documented as part of regulator driver:
-Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
-
-Yes, this may be confusing... They S2M and S5M family devices share:
- - main mfd driver,
- - rtc driver,
- - clk driver.
-
-but regulator drivers are separate.
+As for the change itself, how about adding a new value to desc_status?
+Now you are actually introducing a semi-status field.
 
 Best regards,
 Krzysztof
+
+>  
+>  			thrd->req_running = -1;
+> @@ -2250,13 +2256,14 @@ pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+>  		goto out;
+>  
+>  	spin_lock_irqsave(&pch->lock, flags);
+> +	spin_lock(&pch->thread->dmac->lock);
+>  
+>  	if (pch->thread->req_running != -1)
+>  		running = pch->thread->req[pch->thread->req_running].desc;
+>  
+>  	/* Check in pending list */
+>  	list_for_each_entry(desc, &pch->work_list, node) {
+> -		if (desc->status == DONE)
+> +		if (desc->xferred || desc->status == DONE)
+>  			transferred = desc->bytes_requested;
+>  		else if (running && desc == running)
+>  			transferred =
+> @@ -2281,6 +2288,7 @@ pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+>  		if (desc->last)
+>  			residual = 0;
+>  	}
+> +	spin_unlock(&pch->thread->dmac->lock);
+>  	spin_unlock_irqrestore(&pch->lock, flags);
+>  
+>  out:
+> 
