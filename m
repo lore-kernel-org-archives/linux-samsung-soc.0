@@ -1,106 +1,100 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] dmaengine: pl330: Fix race in residue reporting
-Date: Sat, 7 Nov 2015 21:40:49 +0900
-Message-ID: <563DF151.2010307@samsung.com>
-References: <1446808295-23149-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 0/6] ARM: dts: Use correct CD properties for SDIO and
+ eMMC in Snow and Peach
+Date: Sun, 8 Nov 2015 11:48:17 -0300
+Message-ID: <563F60B1.6030906@osg.samsung.com>
+References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
+ <56245DB8.7070106@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446808295-23149-1-git-send-email-sjoerd.simons@collabora.co.uk>
+In-Reply-To: <56245DB8.7070106@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Vinod Koul <vinod.koul@intel.com>
-Cc: k.kozlowski.k@gmail.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org, linux-arm-kernel@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Douglas Anderson <dianders@chromium.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 06.11.2015 o 20:11, Sjoerd Simons pisze:
-> When a transfer completes there is a small window between the descriptor
-> being unset as the current active one in the thread and it being marked
-> as done. This causes the residue to be incorrectly set when
-> pl330_tx_status is run in that window. Practically this caused
-> issue for me with audio playback as the residue goes up during a
-> transfer (as the in-progress transfer is no longer accounted for),
-> which makes the higher levels think the audio ringbuffer wrapped around
-> and thus did a sudden big jump forward.
-> 
-> To resolve this, add a field protected by the dma engine lock to
-> indicate the transfer is done but the status hasn't been updated yet.
-> 
-> Also fix the locking in pl330_tx_status, as the function inspects the
-> threads req_running field and queries the dma engine for the current
-> state of the running transfer the dma engine lock needs to be held to
-> ensure the active descriptor doesn't change underneath it.
-> 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> 
-> ---
-> 
->  drivers/dma/pl330.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 17ee758..6c8243b 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -503,6 +503,8 @@ struct dma_pl330_desc {
->  	struct pl330_reqcfg rqcfg;
->  
->  	enum desc_status status;
-> +	/* Transfer completed, but not yet moved to DONE state */
-> +	bool xferred;
->  
->  	int bytes_requested;
->  	bool last;
-> @@ -1463,6 +1465,9 @@ static void dma_pl330_rqcb(struct dma_pl330_desc *desc, enum pl330_op_err err)
->  	spin_lock_irqsave(&pch->lock, flags);
->  
->  	desc->status = DONE;
-> +	spin_lock(&pch->thread->dmac->lock);
-> +	desc->xferred = false;
-> +	spin_unlock(&pch->thread->dmac->lock);
->  
->  	spin_unlock_irqrestore(&pch->lock, flags);
->  
-> @@ -1595,6 +1600,7 @@ static int pl330_update(struct pl330_dmac *pl330)
->  
->  			/* Detach the req */
->  			descdone = thrd->req[active].desc;
-> +			descdone->xferred = true;
->  			thrd->req[active].desc = NULL;
+Hello Kukjin,
 
-Looking at the code indeed the small window could happen. How can I
-reproduce it? Can you describe your system?
+On 10/19/2015 12:04 AM, Alim Akhtar wrote:
+> Hi Javier,
+> 
+> On 10/15/2015 10:21 PM, Javier Martinez Canillas wrote:
+>> Hello,
+>>
+>> The Exynos Chromebooks DTS don't use the correct card detection properties
+>> since these were carried from the vendor tree that had a reason to do so.
+>>
+>> There are two things that I noticed:
+>>
+>> 1) The Marvell WiFi SDIO is marked as broken-cd instead of non-removable:
+>>
+>> This causes the device to be removed when the system enters into a suspend
+>> state which leads to the following warning when the system is resumed:
+>>
+>> [  181.944636] mmc2: error -2 during resume (card was removed?)
+>>
+>> The rationale for using broken-cd is explained in downstream commit [0] and
+>> was that using the non-removable property caused issues with the mwifiex
+>> driver since the reset logic called the mmc_{remove,add}_host() functions.
+>>
+>> But the reset logic in the mwifiex mainline driver has changed and this is
+>> no longer the case so it's safe to use the non-removable property AFAICT.
+>>
+>> 2) The eMMC node has both broken-cd and non-removable but the MMC DT binding
+>> doc (Documentation/devicetree/bindings/mmc/mmc.txt) mentions that only one
+>> of these card detection properties should be used.
+>>
+>> So this series change both the SDIO WiFi and eMMC device nodes in the Snow,
+>> Peach Pi and Peach Pit boards DTS to use the non-removable property.
+>>
+>> To test, I've cherry picked commit [1] from the vendor tree that adds a
+>> debugfs entry to force a card reset and after the reset, the WiFi card still
+>> works correctly:
+>>
+>> $ echo 1 > /sys/kernel/debug/mwifiex/mlan0/reset
+>>
+>> And also tested that both eMMC and WiFi are working correctly after a S2R.
+>>
+>> The test were made on an Exynos5800 Peach Pi but I don't have access to a
+>> Snow anymore so testing patch 3/6 and 6/6 on that board will be appreciated.
+>>
+>> v1 of the series was [2] and this version fixes issues pointed out by Tomeu.
+>>
+>> Changes since v1:
+>>   - Replace broken-cd for non-removable in the correct mmc node for Snow.
+>>   - Correct the card detetion properties for eMMC in Snow, Pit and Pi.
+>>   - Also remove the card-detect-delay property when using non-removable.
+>>
+>> [0]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/ad348e1e2381
+>> [1]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/5995363523de
+>> [2]: https://lkml.org/lkml/2015/10/15/294
+>>
+>> Best regards,
+>> Javier
+>>
+>>
+>> Javier Martinez Canillas (6):
+>>    ARM: dts: Mark SDIO as non-removable in exynos5800-peach-pi
+>>    ARM: dts: Mark SDIO as non-removable in exynos5420-peach-pit
+>>    ARM: dts: Mark SDIO as non-removable in exynos5250-snow-common
+>>    ARM: dts: Remove broken-cd from eMMC node in exynos5800-peach-pi
+>>    ARM: dts: Remove broken-cd from eMMC node in exynos5420-peach-pi
+>>    ARM: dts: Mark eMMC as non-removable in exynos5250-snow-common
+>>
+> This series looks good to me, so feel free to add
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> and for patch 4 and 5: Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Thanks.
+>
 
-As for the change itself, how about adding a new value to desc_status?
-Now you are actually introducing a semi-status field.
+You said that you are going to take this series once Alim tested / gave
+his feedback but that happened weeks ago and I still don't see these in
+your tree.
 
 Best regards,
-Krzysztof
-
->  
->  			thrd->req_running = -1;
-> @@ -2250,13 +2256,14 @@ pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
->  		goto out;
->  
->  	spin_lock_irqsave(&pch->lock, flags);
-> +	spin_lock(&pch->thread->dmac->lock);
->  
->  	if (pch->thread->req_running != -1)
->  		running = pch->thread->req[pch->thread->req_running].desc;
->  
->  	/* Check in pending list */
->  	list_for_each_entry(desc, &pch->work_list, node) {
-> -		if (desc->status == DONE)
-> +		if (desc->xferred || desc->status == DONE)
->  			transferred = desc->bytes_requested;
->  		else if (running && desc == running)
->  			transferred =
-> @@ -2281,6 +2288,7 @@ pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
->  		if (desc->last)
->  			residual = 0;
->  	}
-> +	spin_unlock(&pch->thread->dmac->lock);
->  	spin_unlock_irqrestore(&pch->lock, flags);
->  
->  out:
-> 
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
