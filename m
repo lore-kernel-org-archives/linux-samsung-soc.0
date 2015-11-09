@@ -1,108 +1,187 @@
-From: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH] dmaengine: pl330: Fix race in residue reporting
-Date: Mon, 09 Nov 2015 14:12:16 +0100
-Message-ID: <1447074736.22840.35.camel@collabora.co.uk>
-References: <1446808295-23149-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <563DF151.2010307@samsung.com>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [PATCH v2 9/9] [media] omap3isp: support 64-bit version of omap3isp_stat_data
+Date: Mon, 09 Nov 2015 22:09:26 +0200
+Message-ID: <5733951.qvCn4pc5g5@avalon>
+References: <1442524780-781677-1-git-send-email-arnd@arndb.de> <1442524780-781677-10-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <563DF151.2010307-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1442524780-781677-10-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gU2F0LCAyMDE1LTExLTA3IGF0IDIxOjQwICswOTAwLCBLcnp5c3p0b2YgS296bG93c2tpIHdy
-b3RlOgo+IFcgZG5pdSAwNi4xMS4yMDE1IG8gMjA6MTEsIFNqb2VyZCBTaW1vbnMgcGlzemU6Cj4g
-PiBXaGVuIGEgdHJhbnNmZXIgY29tcGxldGVzIHRoZXJlIGlzIGEgc21hbGwgd2luZG93IGJldHdl
-ZW4gdGhlCj4gPiBkZXNjcmlwdG9yCj4gPiBiZWluZyB1bnNldCBhcyB0aGUgY3VycmVudCBhY3Rp
-dmUgb25lIGluIHRoZSB0aHJlYWQgYW5kIGl0IGJlaW5nCj4gPiBtYXJrZWQKPiA+IGFzIGRvbmUu
-IFRoaXMgY2F1c2VzIHRoZSByZXNpZHVlIHRvIGJlIGluY29ycmVjdGx5IHNldCB3aGVuCj4gPiBw
-bDMzMF90eF9zdGF0dXMgaXMgcnVuIGluIHRoYXQgd2luZG93LiBQcmFjdGljYWxseSB0aGlzIGNh
-dXNlZAo+ID4gaXNzdWUgZm9yIG1lIHdpdGggYXVkaW8gcGxheWJhY2sgYXMgdGhlIHJlc2lkdWUg
-Z29lcyB1cCBkdXJpbmcgYQo+ID4gdHJhbnNmZXIgKGFzIHRoZSBpbi1wcm9ncmVzcyB0cmFuc2Zl
-ciBpcyBubyBsb25nZXIgYWNjb3VudGVkIGZvciksCj4gPiB3aGljaCBtYWtlcyB0aGUgaGlnaGVy
-IGxldmVscyB0aGluayB0aGUgYXVkaW8gcmluZ2J1ZmZlciB3cmFwcGVkCj4gPiBhcm91bmQKPiA+
-IGFuZCB0aHVzIGRpZCBhIHN1ZGRlbiBiaWcganVtcCBmb3J3YXJkLgo+ID4gCj4gPiBUbyByZXNv
-bHZlIHRoaXMsIGFkZCBhIGZpZWxkIHByb3RlY3RlZCBieSB0aGUgZG1hIGVuZ2luZSBsb2NrIHRv
-Cj4gPiBpbmRpY2F0ZSB0aGUgdHJhbnNmZXIgaXMgZG9uZSBidXQgdGhlIHN0YXR1cyBoYXNuJ3Qg
-YmVlbiB1cGRhdGVkCj4gPiB5ZXQuCj4gPiAKPiA+IEFsc28gZml4IHRoZSBsb2NraW5nIGluIHBs
-MzMwX3R4X3N0YXR1cywgYXMgdGhlIGZ1bmN0aW9uIGluc3BlY3RzCj4gPiB0aGUKPiA+IHRocmVh
-ZHMgcmVxX3J1bm5pbmcgZmllbGQgYW5kIHF1ZXJpZXMgdGhlIGRtYSBlbmdpbmUgZm9yIHRoZQo+
-ID4gY3VycmVudAo+ID4gc3RhdGUgb2YgdGhlIHJ1bm5pbmcgdHJhbnNmZXIgdGhlIGRtYSBlbmdp
-bmUgbG9jayBuZWVkcyB0byBiZSBoZWxkCj4gPiB0bwo+ID4gZW5zdXJlIHRoZSBhY3RpdmUgZGVz
-Y3JpcHRvciBkb2Vzbid0IGNoYW5nZSB1bmRlcm5lYXRoIGl0Lgo+ID4gCj4gPiBTaWduZWQtb2Zm
-LWJ5OiBTam9lcmQgU2ltb25zIDxzam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51az4KPiA+IAo+
-ID4gLS0tCj4gPiAKPiA+IMKgZHJpdmVycy9kbWEvcGwzMzAuYyB8IDEwICsrKysrKysrKy0KPiA+
-IMKgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+ID4gCj4g
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kbWEvcGwzMzAuYyBiL2RyaXZlcnMvZG1hL3BsMzMwLmMK
-PiA+IGluZGV4IDE3ZWU3NTguLjZjODI0M2IgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2RtYS9w
-bDMzMC5jCj4gPiArKysgYi9kcml2ZXJzL2RtYS9wbDMzMC5jCj4gPiBAQCAtNTAzLDYgKzUwMyw4
-IEBAIHN0cnVjdCBkbWFfcGwzMzBfZGVzYyB7Cj4gPiDCoAlzdHJ1Y3QgcGwzMzBfcmVxY2ZnIHJx
-Y2ZnOwo+ID4gwqAKPiA+IMKgCWVudW0gZGVzY19zdGF0dXMgc3RhdHVzOwo+ID4gKwkvKiBUcmFu
-c2ZlciBjb21wbGV0ZWQsIGJ1dCBub3QgeWV0IG1vdmVkIHRvIERPTkUgc3RhdGUgKi8KPiA+ICsJ
-Ym9vbCB4ZmVycmVkOwo+ID4gwqAKPiA+IMKgCWludCBieXRlc19yZXF1ZXN0ZWQ7Cj4gPiDCoAli
-b29sIGxhc3Q7Cj4gPiBAQCAtMTQ2Myw2ICsxNDY1LDkgQEAgc3RhdGljIHZvaWQgZG1hX3BsMzMw
-X3JxY2Ioc3RydWN0Cj4gPiBkbWFfcGwzMzBfZGVzYyAqZGVzYywgZW51bSBwbDMzMF9vcF9lcnIg
-ZXJyKQo+ID4gwqAJc3Bpbl9sb2NrX2lycXNhdmUoJnBjaC0+bG9jaywgZmxhZ3MpOwo+ID4gwqAK
-PiA+IMKgCWRlc2MtPnN0YXR1cyA9IERPTkU7Cj4gPiArCXNwaW5fbG9jaygmcGNoLT50aHJlYWQt
-PmRtYWMtPmxvY2spOwo+ID4gKwlkZXNjLT54ZmVycmVkID0gZmFsc2U7Cj4gPiArCXNwaW5fdW5s
-b2NrKCZwY2gtPnRocmVhZC0+ZG1hYy0+bG9jayk7Cj4gPiDCoAo+ID4gwqAJc3Bpbl91bmxvY2tf
-aXJxcmVzdG9yZSgmcGNoLT5sb2NrLCBmbGFncyk7Cj4gPiDCoAo+ID4gQEAgLTE1OTUsNiArMTYw
-MCw3IEBAIHN0YXRpYyBpbnQgcGwzMzBfdXBkYXRlKHN0cnVjdCBwbDMzMF9kbWFjCj4gPiAqcGwz
-MzApCj4gPiDCoAo+ID4gwqAJCQkvKiBEZXRhY2ggdGhlIHJlcSAqLwo+ID4gwqAJCQlkZXNjZG9u
-ZSA9IHRocmQtPnJlcVthY3RpdmVdLmRlc2M7Cj4gPiArCQkJZGVzY2RvbmUtPnhmZXJyZWQgPSB0
-cnVlOwo+ID4gwqAJCQl0aHJkLT5yZXFbYWN0aXZlXS5kZXNjID0gTlVMTDsKPiAKPiBMb29raW5n
-IGF0IHRoZSBjb2RlIGluZGVlZCB0aGUgc21hbGwgd2luZG93IGNvdWxkIGhhcHBlbi4gSG93IGNh
-biBJCj4gcmVwcm9kdWNlIGl0PyBDYW4geW91IGRlc2NyaWJlIHlvdXIgc3lzdGVtPwoKSSdtIHVz
-aW5nIGEgUm9jayAyIHNxdWFyZSAoUkszMjg4IGJhc2VkKSBib2FyZCwgcnVubmluZyBEZWJpYW4g
-SmVzc2llCmFuZCBzaW1wbHkgcGxheWluZyBiYWNrIGF1ZGlvIHVzaW5nIHZsYyAmIHB1bHNlYXVk
-aW8uCgpGb3Igc29tZSByZWFzb24gd2hlbiB1c2luZyB2bGMsIHB1bHNlYXVkaW8gaXMgcG9sbGlu
-ZyB0aGUgaHcgcG9pbnRlcgpwb3NpdGlvbiB2ZXJ5IHZlcnkgb2Z0ZW4gYW5kIHNlZW1zIHRvIGhp
-dCB0aGlzIHRpbnkgd2luZG93IGEgZmV3IHRpbWVzCmEgbWludXRlIGRlcGVuZGluZyBhIGJpdCBv
-biBzeXN0ZW0gbG9hZC4gVGhpcyBjYXVzZXMgc29tZSBhdWRpYWJsZQppc3N1ZXMgYW5kIGV2ZW50
-dWFsbHkgdW5kZXJmbG93aW5nIChhcyB2bGMgZmlsbHMgdGhlIHB1bHNlYXVkaW8gYnVmZmVyCmF0
-IGEgY29uc3RhbnQgcmF0ZSwgYnV0IGR1ZSB0byB0aGlzLCBwdWxzZSBwdXNoZXMgdGhlIGRhdGEg
-ZmFzdGVyIHRoZW4KdGhlIGFjdHVhbCBwbGF5YmFjayByYXRlIGV2ZXJ5IHNvIG9mdGVuKS4KCj4g
-QXMgZm9yIHRoZSBjaGFuZ2UgaXRzZWxmLCBob3cgYWJvdXQgYWRkaW5nIGEgbmV3IHZhbHVlIHRv
-Cj4gZGVzY19zdGF0dXM/Cj4gTm93IHlvdSBhcmUgYWN0dWFsbHkgaW50cm9kdWNpbmcgYSBzZW1p
-LXN0YXR1cyBmaWVsZC4KClRoZSByZWFzb24gaSBwaWNrZWQgdGhpcyB3YXkgdGhpcyB3YXMgd2Fz
-IGR1ZSB0byB0aGUgY3VycmVudCBsb2NraW5nCnNjaGVtZS4gVGhlIGxvY2tpbmcgb3JkZXIgaXMg
-Y2hhbm5lbCwgdGhlbiBjb250cm9sbGVyICh3aGVuIGxvY2tpbmcKYm90aCkuIFdoaWxlIHByb2Nl
-c3NpbmcgdGhlIGV2ZW50cyAoYW5kIHVwZGF0ZSB0aGUgYWN0aXZlIGRlc2NyaXB0b3IpLAp0aGUg
-Y29udHJvbGxlciBpcyBsb2NrZWQgc28gdGhlIHN0YXR1cyBjYW4ndCBiZSBkaXJlY3RseSB1cGRh
-dGVkIChhcwp0aGF0J3MgcHJvdGVjdGVkIGJ5IHRoZSBjaGFubmVsIGxvY2spLiBBbmQgd2UgY2Fu
-J3QgZ3JhYiB0aGUgY2hhbm5lbApsb2NrIHdpdGhvdXQgZG9wcGluZyB0aGUgY29udHJvbGxlciBv
-bmUgZmlyc3QgOikuCgpLZWVwaW5nIG9uZSBzdGF0dXMgZmllbGQgbWlnaHQgd2VsbCBiZSBwb3Nz
-aWJsZSwgYnV0IHdvdWxkIHJlcXVpcmUgYXQKbGVhc3QgcmV3b3JraW5nIHRoZSBsb2NraW5nIGhl
-cmUuCgoKCj4gQmVzdCByZWdhcmRzLAo+IEtyenlzenRvZgo+IAo+ID4gwqAKPiA+IMKgCQkJdGhy
-ZC0+cmVxX3J1bm5pbmcgPSAtMTsKPiA+IEBAIC0yMjUwLDEzICsyMjU2LDE0IEBAIHBsMzMwX3R4
-X3N0YXR1cyhzdHJ1Y3QgZG1hX2NoYW4gKmNoYW4sCj4gPiBkbWFfY29va2llX3QgY29va2llLAo+
-ID4gwqAJCWdvdG8gb3V0Owo+ID4gwqAKPiA+IMKgCXNwaW5fbG9ja19pcnFzYXZlKCZwY2gtPmxv
-Y2ssIGZsYWdzKTsKPiA+ICsJc3Bpbl9sb2NrKCZwY2gtPnRocmVhZC0+ZG1hYy0+bG9jayk7Cj4g
-PiDCoAo+ID4gwqAJaWYgKHBjaC0+dGhyZWFkLT5yZXFfcnVubmluZyAhPSAtMSkKPiA+IMKgCQly
-dW5uaW5nID0gcGNoLT50aHJlYWQtPnJlcVtwY2gtPnRocmVhZC0KPiA+ID5yZXFfcnVubmluZ10u
-ZGVzYzsKPiA+IMKgCj4gPiDCoAkvKiBDaGVjayBpbiBwZW5kaW5nIGxpc3QgKi8KPiA+IMKgCWxp
-c3RfZm9yX2VhY2hfZW50cnkoZGVzYywgJnBjaC0+d29ya19saXN0LCBub2RlKSB7Cj4gPiAtCQlp
-ZiAoZGVzYy0+c3RhdHVzID09IERPTkUpCj4gPiArCQlpZiAoZGVzYy0+eGZlcnJlZCB8fCBkZXNj
-LT5zdGF0dXMgPT0gRE9ORSkKPiA+IMKgCQkJdHJhbnNmZXJyZWQgPSBkZXNjLT5ieXRlc19yZXF1
-ZXN0ZWQ7Cj4gPiDCoAkJZWxzZSBpZiAocnVubmluZyAmJiBkZXNjID09IHJ1bm5pbmcpCj4gPiDC
-oAkJCXRyYW5zZmVycmVkID0KPiA+IEBAIC0yMjgxLDYgKzIyODgsNyBAQCBwbDMzMF90eF9zdGF0
-dXMoc3RydWN0IGRtYV9jaGFuICpjaGFuLAo+ID4gZG1hX2Nvb2tpZV90IGNvb2tpZSwKPiA+IMKg
-CQlpZiAoZGVzYy0+bGFzdCkKPiA+IMKgCQkJcmVzaWR1YWwgPSAwOwo+ID4gwqAJfQo+ID4gKwlz
-cGluX3VubG9jaygmcGNoLT50aHJlYWQtPmRtYWMtPmxvY2spOwo+ID4gwqAJc3Bpbl91bmxvY2tf
-aXJxcmVzdG9yZSgmcGNoLT5sb2NrLCBmbGFncyk7Cj4gPiDCoAo+ID4gwqBvdXQ6Cj4gPiAKPiAK
-Ci0tIApTam9lcmQgU2ltb25zCkNvbGxhYm9yYSBMdGQuCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKTGlu
-dXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCg==
+Hi Arnd,
+
+Thank you for the patch.
+
+On Thursday 17 September 2015 23:19:40 Arnd Bergmann wrote:
+> C libraries with 64-bit time_t use an incompatible format for
+> struct omap3isp_stat_data. This changes the kernel code to
+> support either version, by moving over the normal handling
+> to the 64-bit variant, and adding compatiblity code to handle
+> the old binary format with the existing ioctl command code.
+> 
+> Fortunately, the command code includes the size of the structure,
+> so the difference gets handled automatically.
+
+We plan to design a new interface to handle statistics in V4L2. That API 
+should support proper 64-bit timestamps out of the box, and will be 
+implemented by the OMAP3 ISP driver. Userspace should then move to it. I 
+wonder if it's worth it to fix the existing VIDIOC_OMAP3ISP_STAT_REQ ioctl 
+given that I expect it to have a handful of users at most.
+
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> ---
+>  drivers/media/platform/omap3isp/isph3a_aewb.c |  2 ++
+>  drivers/media/platform/omap3isp/isph3a_af.c   |  2 ++
+>  drivers/media/platform/omap3isp/isphist.c     |  2 ++
+>  drivers/media/platform/omap3isp/ispstat.c     | 18 ++++++++++++++++--
+>  drivers/media/platform/omap3isp/ispstat.h     |  2 ++
+>  include/uapi/linux/omap3isp.h                 | 19 +++++++++++++++++++
+>  6 files changed, 43 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/omap3isp/isph3a_aewb.c
+> b/drivers/media/platform/omap3isp/isph3a_aewb.c index
+> ccaf92f39236..2d567725608f 100644
+> --- a/drivers/media/platform/omap3isp/isph3a_aewb.c
+> +++ b/drivers/media/platform/omap3isp/isph3a_aewb.c
+> @@ -250,6 +250,8 @@ static long h3a_aewb_ioctl(struct v4l2_subdev *sd,
+> unsigned int cmd, void *arg) return omap3isp_stat_config(stat, arg);
+>  	case VIDIOC_OMAP3ISP_STAT_REQ:
+>  		return omap3isp_stat_request_statistics(stat, arg);
+> +	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
+> +		return omap3isp_stat_request_statistics_time32(stat, arg);
+>  	case VIDIOC_OMAP3ISP_STAT_EN: {
+>  		unsigned long *en = arg;
+>  		return omap3isp_stat_enable(stat, !!*en);
+> diff --git a/drivers/media/platform/omap3isp/isph3a_af.c
+> b/drivers/media/platform/omap3isp/isph3a_af.c index
+> 92937f7eecef..2ac02371318b 100644
+> --- a/drivers/media/platform/omap3isp/isph3a_af.c
+> +++ b/drivers/media/platform/omap3isp/isph3a_af.c
+> @@ -314,6 +314,8 @@ static long h3a_af_ioctl(struct v4l2_subdev *sd,
+> unsigned int cmd, void *arg) return omap3isp_stat_config(stat, arg);
+>  	case VIDIOC_OMAP3ISP_STAT_REQ:
+>  		return omap3isp_stat_request_statistics(stat, arg);
+> +	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
+> +		return omap3isp_stat_request_statistics_time32(stat, arg);
+>  	case VIDIOC_OMAP3ISP_STAT_EN: {
+>  		int *en = arg;
+>  		return omap3isp_stat_enable(stat, !!*en);
+> diff --git a/drivers/media/platform/omap3isp/isphist.c
+> b/drivers/media/platform/omap3isp/isphist.c index
+> 7138b043a4aa..669b97b079ee 100644
+> --- a/drivers/media/platform/omap3isp/isphist.c
+> +++ b/drivers/media/platform/omap3isp/isphist.c
+> @@ -436,6 +436,8 @@ static long hist_ioctl(struct v4l2_subdev *sd, unsigned
+> int cmd, void *arg) return omap3isp_stat_config(stat, arg);
+>  	case VIDIOC_OMAP3ISP_STAT_REQ:
+>  		return omap3isp_stat_request_statistics(stat, arg);
+> +	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
+> +		return omap3isp_stat_request_statistics_time32(stat, arg);
+>  	case VIDIOC_OMAP3ISP_STAT_EN: {
+>  		int *en = arg;
+>  		return omap3isp_stat_enable(stat, !!*en);
+> diff --git a/drivers/media/platform/omap3isp/ispstat.c
+> b/drivers/media/platform/omap3isp/ispstat.c index
+> fa96e330c563..3d70332422b5 100644
+> --- a/drivers/media/platform/omap3isp/ispstat.c
+> +++ b/drivers/media/platform/omap3isp/ispstat.c
+> @@ -496,8 +496,7 @@ int omap3isp_stat_request_statistics(struct ispstat
+> *stat, return PTR_ERR(buf);
+>  	}
+> 
+> -	data->ts.tv_sec = buf->ts.tv_sec;
+> -	data->ts.tv_usec = buf->ts.tv_usec;
+> +	data->ts = buf->ts;
+>  	data->config_counter = buf->config_counter;
+>  	data->frame_number = buf->frame_number;
+>  	data->buf_size = buf->buf_size;
+> @@ -509,6 +508,21 @@ int omap3isp_stat_request_statistics(struct ispstat
+> *stat, return 0;
+>  }
+> 
+> +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
+> +					struct omap3isp_stat_data_time32 *data)
+> +{
+> +	struct omap3isp_stat_data data64;
+> +	int ret;
+> +
+> +	ret = omap3isp_stat_request_statistics(stat, &data64);
+> +
+> +	data->ts.tv_sec = data64.ts.tv_sec;
+> +	data->ts.tv_usec = data64.ts.tv_usec;
+> +	memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
+> +
+> +	return ret;
+> +}
+> +
+>  /*
+>   * omap3isp_stat_config - Receives new statistic engine configuration.
+>   * @new_conf: Pointer to config structure.
+> diff --git a/drivers/media/platform/omap3isp/ispstat.h
+> b/drivers/media/platform/omap3isp/ispstat.h index
+> 7b4f136567a3..b19ea6c8f733 100644
+> --- a/drivers/media/platform/omap3isp/ispstat.h
+> +++ b/drivers/media/platform/omap3isp/ispstat.h
+> @@ -130,6 +130,8 @@ struct ispstat_generic_config {
+>  int omap3isp_stat_config(struct ispstat *stat, void *new_conf);
+>  int omap3isp_stat_request_statistics(struct ispstat *stat,
+>  				     struct omap3isp_stat_data *data);
+> +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
+> +				     struct omap3isp_stat_data_time32 *data);
+>  int omap3isp_stat_init(struct ispstat *stat, const char *name,
+>  		       const struct v4l2_subdev_ops *sd_ops);
+>  void omap3isp_stat_cleanup(struct ispstat *stat);
+> diff --git a/include/uapi/linux/omap3isp.h b/include/uapi/linux/omap3isp.h
+> index c090cf9249bb..4bff66aefca5 100644
+> --- a/include/uapi/linux/omap3isp.h
+> +++ b/include/uapi/linux/omap3isp.h
+> @@ -54,6 +54,8 @@
+>  	_IOWR('V', BASE_VIDIOC_PRIVATE + 5, struct omap3isp_h3a_af_config)
+>  #define VIDIOC_OMAP3ISP_STAT_REQ \
+>  	_IOWR('V', BASE_VIDIOC_PRIVATE + 6, struct omap3isp_stat_data)
+> +#define VIDIOC_OMAP3ISP_STAT_REQ_TIME32 \
+> +	_IOWR('V', BASE_VIDIOC_PRIVATE + 6, struct omap3isp_stat_data_time32)
+>  #define VIDIOC_OMAP3ISP_STAT_EN \
+>  	_IOWR('V', BASE_VIDIOC_PRIVATE + 7, unsigned long)
+> 
+> @@ -164,7 +166,11 @@ struct omap3isp_h3a_aewb_config {
+>   * @config_counter: Number of the configuration associated with the data.
+>   */
+>  struct omap3isp_stat_data {
+> +#ifdef __KERNEL__
+> +	struct v4l2_timeval ts;
+> +#else
+>  	struct timeval ts;
+> +#endif
+>  	void __user *buf;
+>  	__u32 buf_size;
+>  	__u16 frame_number;
+> @@ -172,6 +178,19 @@ struct omap3isp_stat_data {
+>  	__u16 config_counter;
+>  };
+> 
+> +#ifdef __KERNEL__
+> +struct omap3isp_stat_data_time32 {
+> +	struct {
+> +		__s32	tv_sec;
+> +		__s32	tv_usec;
+> +	} ts;
+> +	__u32 buf;
+> +	__u32 buf_size;
+> +	__u16 frame_number;
+> +	__u16 cur_frame;
+> +	__u16 config_counter;
+> +};
+> +#endif
+> 
+>  /* Histogram related structs */
+
+-- 
+Regards,
+
+Laurent Pinchart
