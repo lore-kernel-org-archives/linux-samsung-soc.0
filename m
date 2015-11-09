@@ -1,133 +1,506 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 09/13] exynos/fimg2d: add g2d_move
-Date: Mon, 9 Nov 2015 10:47:02 +0100
-Message-ID: <56406B96.1050701@math.uni-bielefeld.de>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20151109163013.011f4cb6@hwh-ubuntu>
+Subject: Re: [PATCH v4] tests/exynos: add fimg2d performance analysis
+Date: Mon, 9 Nov 2015 10:47:13 +0100
+Message-ID: <56406BA1.7090004@math.uni-bielefeld.de>
+References: <1446457929-8302-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20151109164551.28ef93e7@hwh-ubuntu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20151109163013.011f4cb6@hwh-ubuntu>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hyungwon Hwang <human.hwang@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:56302 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751715AbbKIJrP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Nov 2015 04:47:15 -0500
+In-Reply-To: <20151109164551.28ef93e7@hwh-ubuntu>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hyungwon Hwang <human.hwang@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, inki.dae@samsung.com
 
-SGVsbG8gSHl1bmd3b24sCgoKSHl1bmd3b24gSHdhbmcgd3JvdGU6Cj4gSGVsbG8gVG9iaWFzLAo+
-IAo+IEkgd2FzIGluIHZhY2F0aW9uIGxhc3Qgd2Vlaywgc28gSSBjb3VsZCBydW4geW91ciBjb2Rl
-IHRvZGF5LiBJIGZvdW5kCj4gdGhhdCB3aGF0IGcyZF9tb3ZlKCkgZG9lcyBpcyBhY3R1YWxseSBj
-b3B5aW5nIG5vdCBtb3ZpbmcsIGJlY2F1c2UgdGhlCj4gb3BlcmF0aW9uIGRvZXMgbm90IGNsZWFy
-IHRoZSBwcmV2aW91cyBhcmVhLgpJIGNob29zZSBnMmRfbW92ZSgpIGJlY2F1c2Ugd2UgYWxzbyBo
-YXZlIG1lbWNweSgpIGFuZCBtZW1tb3ZlKCkgaW4gbGliYy4KTGlrZSBpbiBsaWJjICdtb3Zpbmcn
-IG1lbW9yeSBkb2Vzbid0IGFjdHVhbGx5IG1vdmUgaXQsIGxpa2UgeW91IHdvdWxkCm1vdmUgYSBy
-ZWFsIG9iamVjdCwgc2luY2UgaXQncyB1bmRlZmluZWQgd2hhdCAnZW1wdHknIG1lbW9yeSBzaG91
-bGQgYmUuCgpUaGUgc2FtZSBhcHBsaWVzIGhlcmUuIEl0J3Mgbm90IGRlZmluZWQgd2hhdCAnZW1w
-dHknIGFyZWFzIG9mIHRoZSBidWZmZXIKc2hvdWxkIGJlLgoKCj4gV291bGQgaXQgYmUgcG9zc2li
-bGUgdG8KPiBnZW5lcmFsaXplIGcyZF9jb3B5KCkgd29ya3MgYmV0dGVyLCBzbyBpdCBjb3VsZCB3
-b3JrcyB3ZWxsIGluIGNhc2Ugb2YKPiB0aGUgc3JjIGJ1ZmZlciBhbmQgZHN0IGJ1ZmZlciBiZWlu
-ZyBzYW1lLgpJIHRoaW5rIHRoaXMgd291bGQgYnJlYWsgZzJkX2NvcHkoKSBiYWNrd2FyZCBjb21w
-YXRpYmlsaXR5LgoKSSBhbHNvIHdhbnQgdGhlIHVzZXIgdG8gZXhwbGljaXRseSByZXF1ZXN0IHRo
-aXMuIFRoZSB1c2VyIHNob3VsZCBtYWtlCnN1cmUgd2hhdCByZXF1aXJlbWVudHMgaGUgaGFzIGZv
-ciB0aGUgYnVmZmVycyBpbiBxdWVzdGlvbi4gQXJlIHRoZQpidWZmZXJzIGRpc2pvaW50IG9yIG5v
-dD8KCgo+IElmIGl0IGlzIHBvc3NpYmxlLCBJIHRoaW5rIGl0Cj4gd291bGQgYmUgYmV0dGVyIHdh
-eSB0byBkbyB0aGF0LiBJZiBpdCBpcyBub3QsIGF0IGxlYXN0IGNoYW5pbmcgdGhlCj4gZnVuY3Rp
-b24gbmFtZSBpcyBuZWVkZWQuIEkgdGVzdGVkIGl0IG9uIG15IE9kcm9pZCBVMyBib2FyZC4KSSBk
-b24ndCBoYXZlIGEgc3Ryb25nIG9waW5pb24gb24gdGhlIG5hbWluZy4gQW55IHJlY29tbWVuZGF0
-aW9ucz8KCkkgc3RpbGwgdGhpbmsgdGhlIG5hbWluZyBpcyBmaW5lIHRob3VnaCwgc2luY2UgaXQg
-bWlycm9ycyBsaWJjJ3MgbmFtaW5nLgpBbmQgdGhlIHVzZXIgaXMgc3VwcG9zZWQgdG8gcmVhZCB0
-aGUgZG9jdW1lbnRhdGlvbiBhbnl3YXkuCgoKCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoKPiAK
-PiBCZXN0IHJlZ2FyZHMsCj4gSHl1bmd3b24gSHdhbmcKPiAKPiBPbiBUdWUsIDIyIFNlcCAyMDE1
-IDE3OjU0OjU4ICswMjAwCj4gVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZl
-bGQuZGU+IHdyb3RlOgo+IAo+PiBXZSBhbHJlYWR5IGhhdmUgZzJkX2NvcHkoKSB3aGljaCBpbXBs
-ZW1lbnRzIEcyRCBjb3B5Cj4+IG9wZXJhdGlvbnMgZnJvbSBvbmUgYnVmZmVyIHRvIGFub3RoZXIu
-IEhvd2V2ZXIgd2UgY2FuJ3QKPj4gZG8gYSBvdmVybGFwcGluZyBjb3B5IG9wZXJhdGlvbiBpbiBv
-bmUgYnVmZmVyLgo+Pgo+PiBBZGQgZzJkX21vdmUoKSB3aGljaCBhY3RzIGxpa2UgdGhlIHN0YW5k
-YXJkIG1lbW1vdmUoKQo+PiBhbmQgcHJvcGVybHkgaGFuZGxlcyBvdmVybGFwcGluZyBjb3BpZXMu
-Cj4+Cj4+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmll
-bGVmZWxkLmRlPgo+PiAtLS0KPj4gIGV4eW5vcy9leHlub3NfZmltZzJkLmMgfCA5NAo+PiArKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+PiBleHlub3Mv
-ZXh5bm9zX2ZpbWcyZC5oIHwgIDMgKysgMiBmaWxlcyBjaGFuZ2VkLCA5NyBpbnNlcnRpb25zKCsp
-Cj4+Cj4+IGRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2ZpbWcyZC5jIGIvZXh5bm9zL2V4eW5v
-c19maW1nMmQuYwo+PiBpbmRleCA0ZDU0MTljLi44NzAzNjI5IDEwMDY0NAo+PiAtLS0gYS9leHlu
-b3MvZXh5bm9zX2ZpbWcyZC5jCj4+ICsrKyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKPj4gQEAg
-LTU0MCw2ICs1NDAsMTAwIEBAIGcyZF9jb3B5KHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1
-Y3QKPj4gZzJkX2ltYWdlICpzcmMsIH0KPj4gIAo+PiAgLyoqCj4+ICsgKiBnMmRfbW92ZSAtIG1v
-dmUgY29udGVudCBpbnNpZGUgc2luZ2xlIGJ1ZmZlci4KPj4gKyAqCVNpbWlsYXIgdG8gJ21lbW1v
-dmUnIHRoaXMgbW92ZXMgYSByZWN0YW5ndWxhciByZWdpb24KPj4gKyAqCW9mIHRoZSBwcm92aWRl
-ZCBidWZmZXIgdG8gYW5vdGhlciBsb2NhdGlvbiAodGhlIHNvdXJjZQo+PiArICoJYW5kIGRlc3Rp
-bmF0aW9uIHJlZ2lvbiBwb3RlbnRpYWxseSBvdmVybGFwcGluZykuCj4+ICsgKgo+PiArICogQGN0
-eDogYSBwb2ludGVyIHRvIGcyZF9jb250ZXh0IHN0cnVjdHVyZS4KPj4gKyAqIEBpbWc6IGEgcG9p
-bnRlciB0byBnMmRfaW1hZ2Ugc3RydWN0dXJlIHByb3ZpZGluZwo+PiArICoJYnVmZmVyIGluZm9y
-bWF0aW9uLgo+PiArICogQHNyY194OiB4IHBvc2l0aW9uIG9mIHNvdXJjZSByZWN0YW5nbGUuCj4+
-ICsgKiBAc3JjX3k6IHkgcG9zaXRpb24gb2Ygc291cmNlIHJlY3RhbmdsZS4KPj4gKyAqIEBkc3Rf
-eDogeCBwb3NpdGlvbiBvZiBkZXN0aW5hdGlvbiByZWN0YW5nbGUuCj4+ICsgKiBAZHN0X3k6IHkg
-cG9zaXRpb24gb2YgZGVzdGluYXRpb24gcmVjdGFuZ2xlLgo+PiArICogQHc6IHdpZHRoIG9mIHJl
-Y3RhbmdsZSB0byBtb3ZlLgo+PiArICogQGg6IGhlaWdodCBvZiByZWN0YW5nbGUgdG8gbW92ZS4K
-Pj4gKyAqLwo+PiAraW50Cj4+ICtnMmRfbW92ZShzdHJ1Y3QgZzJkX2NvbnRleHQgKmN0eCwgc3Ry
-dWN0IGcyZF9pbWFnZSAqaW1nLAo+PiArCQl1bnNpZ25lZCBpbnQgc3JjX3gsIHVuc2lnbmVkIGlu
-dCBzcmNfeSwKPj4gKwkJdW5zaWduZWQgaW50IGRzdF94LCB1bnNpZ25lZCBkc3RfeSwgdW5zaWdu
-ZWQgaW50IHcsCj4+ICsJCXVuc2lnbmVkIGludCBoKQo+PiArewo+PiArCXVuaW9uIGcyZF9yb3A0
-X3ZhbCByb3A0Owo+PiArCXVuaW9uIGcyZF9wb2ludF92YWwgcHQ7Cj4+ICsJdW5pb24gZzJkX2Rp
-cmVjdGlvbl92YWwgZGlyOwo+PiArCXVuc2lnbmVkIGludCBzcmNfdywgc3JjX2gsIGRzdF93LCBk
-c3RfaDsKPj4gKwo+PiArCXNyY193ID0gdzsKPj4gKwlzcmNfaCA9IGg7Cj4+ICsJaWYgKHNyY194
-ICsgaW1nLT53aWR0aCA+IHcpCj4+ICsJCXNyY193ID0gaW1nLT53aWR0aCAtIHNyY194Owo+PiAr
-CWlmIChzcmNfeSArIGltZy0+aGVpZ2h0ID4gaCkKPj4gKwkJc3JjX2ggPSBpbWctPmhlaWdodCAt
-IHNyY195Owo+PiArCj4+ICsJZHN0X3cgPSB3Owo+PiArCWRzdF9oID0gdzsKPj4gKwlpZiAoZHN0
-X3ggKyBpbWctPndpZHRoID4gdykKPj4gKwkJZHN0X3cgPSBpbWctPndpZHRoIC0gZHN0X3g7Cj4+
-ICsJaWYgKGRzdF95ICsgaW1nLT5oZWlnaHQgPiBoKQo+PiArCQlkc3RfaCA9IGltZy0+aGVpZ2h0
-IC0gZHN0X3k7Cj4+ICsKPj4gKwl3ID0gTUlOKHNyY193LCBkc3Rfdyk7Cj4+ICsJaCA9IE1JTihz
-cmNfaCwgZHN0X2gpOwo+PiArCj4+ICsJaWYgKHcgPT0gMCB8fCBoID09IDApIHsKPj4gKwkJZnBy
-aW50ZihzdGRlcnIsIE1TR19QUkVGSVggImludmFsaWQgd2lkdGggb3IKPj4gaGVpZ2h0LlxuIik7
-Cj4+ICsJCXJldHVybiAtRUlOVkFMOwo+PiArCX0KPj4gKwo+PiArCWlmIChnMmRfY2hlY2tfc3Bh
-Y2UoY3R4LCAxMywgMikpCj4+ICsJCXJldHVybiAtRU5PU1BDOwo+PiArCj4+ICsJZzJkX2FkZF9j
-bWQoY3R4LCBEU1RfU0VMRUNUX1JFRywgRzJEX1NFTEVDVF9NT0RFX0JHQ09MT1IpOwo+PiArCWcy
-ZF9hZGRfY21kKGN0eCwgU1JDX1NFTEVDVF9SRUcsIEcyRF9TRUxFQ1RfTU9ERV9OT1JNQUwpOwo+
-PiArCj4+ICsJZzJkX2FkZF9jbWQoY3R4LCBEU1RfQ09MT1JfTU9ERV9SRUcsIGltZy0+Y29sb3Jf
-bW9kZSk7Cj4+ICsJZzJkX2FkZF9jbWQoY3R4LCBTUkNfQ09MT1JfTU9ERV9SRUcsIGltZy0+Y29s
-b3JfbW9kZSk7Cj4+ICsKPj4gKwlnMmRfYWRkX2Jhc2VfYWRkcihjdHgsIGltZywgZzJkX2RzdCk7
-Cj4+ICsJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBpbWcsIGcyZF9zcmMpOwo+PiArCj4+ICsJZzJk
-X2FkZF9jbWQoY3R4LCBEU1RfU1RSSURFX1JFRywgaW1nLT5zdHJpZGUpOwo+PiArCWcyZF9hZGRf
-Y21kKGN0eCwgU1JDX1NUUklERV9SRUcsIGltZy0+c3RyaWRlKTsKPj4gKwo+PiArCWRpci52YWxb
-MF0gPSBkaXIudmFsWzFdID0gMDsKPj4gKwo+PiArCWlmIChkc3RfeCA+PSBzcmNfeCkKPj4gKwkJ
-ZGlyLmRhdGEuc3JjX3hfZGlyZWN0aW9uID0gZGlyLmRhdGEuZHN0X3hfZGlyZWN0aW9uCj4+ID0g
-MTsKPj4gKwlpZiAoZHN0X3kgPj0gc3JjX3kpCj4+ICsJCWRpci5kYXRhLnNyY195X2RpcmVjdGlv
-biA9IGRpci5kYXRhLmRzdF95X2RpcmVjdGlvbgo+PiA9IDE7ICsKPj4gKwlnMmRfc2V0X2RpcmVj
-dGlvbihjdHgsICZkaXIpOwo+PiArCj4+ICsJcHQuZGF0YS54ID0gc3JjX3g7Cj4+ICsJcHQuZGF0
-YS55ID0gc3JjX3k7Cj4+ICsJZzJkX2FkZF9jbWQoY3R4LCBTUkNfTEVGVF9UT1BfUkVHLCBwdC52
-YWwpOwo+PiArCXB0LmRhdGEueCA9IHNyY194ICsgdzsKPj4gKwlwdC5kYXRhLnkgPSBzcmNfeSAr
-IGg7Cj4+ICsJZzJkX2FkZF9jbWQoY3R4LCBTUkNfUklHSFRfQk9UVE9NX1JFRywgcHQudmFsKTsK
-Pj4gKwo+PiArCXB0LmRhdGEueCA9IGRzdF94Owo+PiArCXB0LmRhdGEueSA9IGRzdF95Owo+PiAr
-CWcyZF9hZGRfY21kKGN0eCwgRFNUX0xFRlRfVE9QX1JFRywgcHQudmFsKTsKPj4gKwlwdC5kYXRh
-LnggPSBkc3RfeCArIHc7Cj4+ICsJcHQuZGF0YS55ID0gZHN0X3kgKyBoOwo+PiArCWcyZF9hZGRf
-Y21kKGN0eCwgRFNUX1JJR0hUX0JPVFRPTV9SRUcsIHB0LnZhbCk7Cj4+ICsKPj4gKwlyb3A0LnZh
-bCA9IDA7Cj4+ICsJcm9wNC5kYXRhLnVubWFza2VkX3JvcDMgPSBHMkRfUk9QM19TUkM7Cj4+ICsJ
-ZzJkX2FkZF9jbWQoY3R4LCBST1A0X1JFRywgcm9wNC52YWwpOwo+PiArCj4+ICsJcmV0dXJuIGcy
-ZF9mbHVzaChjdHgpOwo+PiArfQo+PiArCj4+ICsvKioKPj4gICAqIGcyZF9jb3B5X3dpdGhfc2Nh
-bGUgLSBjb3B5IGNvbnRlbnRzIGluIHNvdXJjZSBidWZmZXIgdG8KPj4gZGVzdGluYXRpb24gYnVm
-ZmVyCj4+ICAgKglzY2FsaW5nIHVwIG9yIGRvd24gcHJvcGVybHkuCj4+ICAgKgo+PiBkaWZmIC0t
-Z2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuaCBiL2V4eW5vcy9leHlub3NfZmltZzJkLmgKPj4g
-aW5kZXggOWVlZTdjMC4uMjcwMDY4NiAxMDA2NDQKPj4gLS0tIGEvZXh5bm9zL2V4eW5vc19maW1n
-MmQuaAo+PiArKysgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5oCj4+IEBAIC0zNDMsNiArMzQzLDkg
-QEAgaW50IGcyZF9jb3B5KHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1Y3QKPj4gZzJkX2lt
-YWdlICpzcmMsIHN0cnVjdCBnMmRfaW1hZ2UgKmRzdCwgdW5zaWduZWQgaW50IHNyY194LAo+PiAg
-CQl1bnNpZ25lZCBpbnQgc3JjX3ksIHVuc2lnbmVkIGludCBkc3RfeCwgdW5zaWduZWQgaW50Cj4+
-IGRzdF95LCB1bnNpZ25lZCBpbnQgdywgdW5zaWduZWQgaW50IGgpOwo+PiAraW50IGcyZF9tb3Zl
-KHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICppbWcsCj4+ICsJCXVu
-c2lnbmVkIGludCBzcmNfeCwgdW5zaWduZWQgaW50IHNyY195LCB1bnNpZ25lZCBpbnQKPj4gZHN0
-X3gsCj4+ICsJCXVuc2lnbmVkIGRzdF95LCB1bnNpZ25lZCBpbnQgdywgdW5zaWduZWQgaW50IGgp
-Owo+PiAgaW50IGcyZF9jb3B5X3dpdGhfc2NhbGUoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsIHN0
-cnVjdCBnMmRfaW1hZ2UKPj4gKnNyYywgc3RydWN0IGcyZF9pbWFnZSAqZHN0LCB1bnNpZ25lZCBp
-bnQgc3JjX3gsCj4+ICAJCQkJdW5zaWduZWQgaW50IHNyY195LCB1bnNpZ25lZCBpbnQKPj4gc3Jj
-X3csCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hello Hyungwon,
+
+
+Hyungwon Hwang wrote:
+> Hello,
+> 
+> I think this patch should update .gitignore, not for adding the built
+> binary to untracked file list.
+Thanks!
+
+
+> Also, I want to make clear about the purpose of this test program. What
+> do you want to get after this test? This program runs G2D with
+> randomly chosen number of pixel and shows the elapsed time to do
+> that. I run it on my board. But I could not find any meaning of the
+> test. If you just want to know the execution time of solid fill, what
+> about get the width and height from user and run the same tests
+> iteratively for more accurate result? Or at least, increasing number of
+> pixels?
+The test is to measure the dependency between amount of pixels the G2D
+has to process and the amount of time for the G2D to process such pixels.
+
+It's exactly what a performance test should do, measure the time it
+takes for a certain workload to complete.
+
+In particular the test wants to answer the question if the dependency
+stated above is of linear type.
+
+Of course it's not, since we have setup time, so at least it should be
+affine linear. But even that is not true, since you see subtle
+'branching' when doing high density plots (that's why I added export of
+the data to Mathematica).
+
+
+What you ask for (user input) is in fact already implemented. The user
+can specify the buffer width and height, which in turn limits the size
+of the rectangle that is solid filled.
+
+If you want smaller rectangles filled, decrease buffer width and height,
+if you want bigger ones filled, increase.
+
+
+The second purpose is to stress test the G2D, as already indicated in
+the commit description. The G2D can be overclocked quite a lot under
+certain conditions. With increase MIF/INT voltages I can run it with
+400MHz instead of the 200MHz defaults. The application can now be used
+to check stability. E.g. if voltages are too low the system can quickly
+lock-up.
+
+In particular one could also check how processing time depends on the
+clock rate of the G2D. One interesting question here is how memory
+bandwidth limits us.
+
+
+
+With best wishes,
+Tobias
+
+
+> 
+> 
+> Best regards,
+> Hyungwon Hwang
+> 
+> 
+> On Mon, 02 Nov 2015 10:52:09 +0100
+> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+> 
+>> Currently only fast solid color clear performance is measured.
+>> A large buffer is allocated and solid color clear operations
+>> are executed on it with randomly chosen properties (position
+>> and size of the region, clear color). Execution time is
+>> measured and output together with the amount of pixels
+>> processed.
+>>
+>> The 'simple' variant only executes one G2D command buffer at
+>> a time, while the 'multi' variant executes multiple ones. This
+>> can be used to measure setup/exec overhead.
+>>
+>> The test also serves a stability check. If clocks/voltages are
+>> too high or low respectively, the test quickly reveals this.
+>>
+>> v2: Add GPLv2 header, argument handling and documentation.
+>>     Tool is only installed when requested.
+>> v3: Free images array in fimg2d_perf_multi() as pointed out
+>>     by Hyungwon Hwang.
+>> v4: Include header for error numbers (fixes build).
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  tests/exynos/Makefile.am          |  19 ++-
+>>  tests/exynos/exynos_fimg2d_perf.c | 327
+>> ++++++++++++++++++++++++++++++++++++++ 2 files changed, 344
+>> insertions(+), 2 deletions(-) create mode 100644
+>> tests/exynos/exynos_fimg2d_perf.c
+>>
+>> diff --git a/tests/exynos/Makefile.am b/tests/exynos/Makefile.am
+>> index b21d016..e82d199 100644
+>> --- a/tests/exynos/Makefile.am
+>> +++ b/tests/exynos/Makefile.am
+>> @@ -5,16 +5,31 @@ AM_CFLAGS = \
+>>  	-I $(top_srcdir)/exynos \
+>>  	-I $(top_srcdir)
+>>  
+>> +bin_PROGRAMS =
+>> +noinst_PROGRAMS =
+>> +
+>>  if HAVE_LIBKMS
+>>  if HAVE_INSTALL_TESTS
+>> -bin_PROGRAMS = \
+>> +bin_PROGRAMS += \
+>>  	exynos_fimg2d_test
+>>  else
+>> -noinst_PROGRAMS = \
+>> +noinst_PROGRAMS += \
+>>  	exynos_fimg2d_test
+>>  endif
+>>  endif
+>>  
+>> +if HAVE_INSTALL_TESTS
+>> +bin_PROGRAMS += \
+>> +	exynos_fimg2d_perf
+>> +else
+>> +noinst_PROGRAMS += \
+>> +	exynos_fimg2d_perf
+>> +endif
+>> +
+>> +exynos_fimg2d_perf_LDADD = \
+>> +	$(top_builddir)/libdrm.la \
+>> +	$(top_builddir)/exynos/libdrm_exynos.la
+>> +
+>>  exynos_fimg2d_test_LDADD = \
+>>  	$(top_builddir)/libdrm.la \
+>>  	$(top_builddir)/libkms/libkms.la \
+>> diff --git a/tests/exynos/exynos_fimg2d_perf.c
+>> b/tests/exynos/exynos_fimg2d_perf.c new file mode 100644
+>> index 0000000..1699bba
+>> --- /dev/null
+>> +++ b/tests/exynos/exynos_fimg2d_perf.c
+>> @@ -0,0 +1,327 @@
+>> +/*
+>> + * Copyright (C) 2015 - Tobias Jakobi
+>> + *
+>> + * This is free software: you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published
+>> + * by the Free Software Foundation, either version 2 of the License,
+>> + * or (at your option) any later version.
+>> + *
+>> + * It is distributed in the hope that it will be useful, but
+>> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+>> + * GNU General Public License for more details.
+>> + * You should have received a copy of the GNU General Public License
+>> + * along with it. If not, see <http://www.gnu.org/licenses/>.
+>> + */
+>> +
+>> +#include <stdlib.h>
+>> +#include <stdio.h>
+>> +#include <time.h>
+>> +#include <getopt.h>
+>> +#include <errno.h>
+>> +
+>> +#include <xf86drm.h>
+>> +
+>> +#include "exynos_drm.h"
+>> +#include "exynos_drmif.h"
+>> +#include "exynos_fimg2d.h"
+>> +
+>> +static int output_mathematica = 0;
+>> +
+>> +static int fimg2d_perf_simple(struct exynos_bo *bo, struct
+>> g2d_context *ctx,
+>> +			unsigned buf_width, unsigned buf_height,
+>> unsigned iterations) +{
+>> +	struct timespec tspec = { 0 };
+>> +	struct g2d_image img = { 0 };
+>> +
+>> +	unsigned long long g2d_time;
+>> +	unsigned i;
+>> +	int ret = 0;
+>> +
+>> +	img.width = buf_width;
+>> +	img.height = buf_height;
+>> +	img.stride = buf_width * 4;
+>> +	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
+>> +	img.buf_type = G2D_IMGBUF_GEM;
+>> +	img.bo[0] = bo->handle;
+>> +
+>> +	srand(time(NULL));
+>> +
+>> +	printf("starting simple G2D performance test\n");
+>> +	printf("buffer width = %u, buffer height = %u, iterations =
+>> %u\n",
+>> +		buf_width, buf_height, iterations);
+>> +
+>> +	if (output_mathematica)
+>> +		putchar('{');
+>> +
+>> +	for (i = 0; i < iterations; ++i) {
+>> +		unsigned x, y, w, h;
+>> +
+>> +		x = rand() % buf_width;
+>> +		y = rand() % buf_height;
+>> +
+>> +		if (x == (buf_width - 1))
+>> +			x -= 1;
+>> +		if (y == (buf_height - 1))
+>> +			y -= 1;
+>> +
+>> +		w = rand() % (buf_width - x);
+>> +		h = rand() % (buf_height - y);
+>> +
+>> +		if (w == 0) w = 1;
+>> +		if (h == 0) h = 1;
+>> +
+>> +		img.color = rand();
+>> +
+>> +		ret = g2d_solid_fill(ctx, &img, x, y, w, h);
+>> +
+>> +		clock_gettime(CLOCK_MONOTONIC, &tspec);
+>> +
+>> +		if (ret == 0)
+>> +			ret = g2d_exec(ctx);
+>> +
+>> +		if (ret != 0) {
+>> +			fprintf(stderr, "error: iteration %u failed
+>> (x = %u, y = %u, w = %u, h = %u)\n",
+>> +				i, x, y, w, h);
+>> +			break;
+>> +		} else {
+>> +			struct timespec end = { 0 };
+>> +			clock_gettime(CLOCK_MONOTONIC, &end);
+>> +
+>> +			g2d_time = (end.tv_sec - tspec.tv_sec) *
+>> 1000000000ULL;
+>> +			g2d_time += (end.tv_nsec - tspec.tv_nsec);
+>> +
+>> +			if (output_mathematica) {
+>> +				if (i != 0) putchar(',');
+>> +				printf("{%u,%llu}", w * h, g2d_time);
+>> +			} else {
+>> +				printf("num_pixels = %u, usecs =
+>> %llu\n", w * h, g2d_time);
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	if (output_mathematica)
+>> +		printf("}\n");
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int fimg2d_perf_multi(struct exynos_bo *bo, struct
+>> g2d_context *ctx,
+>> +			unsigned buf_width, unsigned buf_height,
+>> unsigned iterations, unsigned batch) +{
+>> +	struct timespec tspec = { 0 };
+>> +	struct g2d_image *images;
+>> +
+>> +	unsigned long long g2d_time;
+>> +	unsigned i, j;
+>> +	int ret = 0;
+>> +
+>> +	images = calloc(batch, sizeof(struct g2d_image));
+>> +	if (images == NULL) {
+>> +		fprintf(stderr, "error: failed to allocate G2D
+>> images.\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	for (i = 0; i < batch; ++i) {
+>> +		images[i].width = buf_width;
+>> +		images[i].height = buf_height;
+>> +		images[i].stride = buf_width * 4;
+>> +		images[i].color_mode = G2D_COLOR_FMT_ARGB8888 |
+>> G2D_ORDER_AXRGB;
+>> +		images[i].buf_type = G2D_IMGBUF_GEM;
+>> +		images[i].bo[0] = bo->handle;
+>> +	}
+>> +
+>> +	srand(time(NULL));
+>> +
+>> +	printf("starting multi G2D performance test (batch size =
+>> %u)\n", batch);
+>> +	printf("buffer width = %u, buffer height = %u, iterations =
+>> %u\n",
+>> +		buf_width, buf_height, iterations);
+>> +
+>> +	if (output_mathematica)
+>> +		putchar('{');
+>> +
+>> +	for (i = 0; i < iterations; ++i) {
+>> +		unsigned num_pixels = 0;
+>> +
+>> +		for (j = 0; j < batch; ++j) {
+>> +			unsigned x, y, w, h;
+>> +
+>> +			x = rand() % buf_width;
+>> +			y = rand() % buf_height;
+>> +
+>> +			if (x == (buf_width - 1))
+>> +				x -= 1;
+>> +			if (y == (buf_height - 1))
+>> +				y -= 1;
+>> +
+>> +			w = rand() % (buf_width - x);
+>> +			h = rand() % (buf_height - y);
+>> +
+>> +			if (w == 0) w = 1;
+>> +			if (h == 0) h = 1;
+>> +
+>> +			images[j].color = rand();
+>> +
+>> +			num_pixels += w * h;
+>> +
+>> +			ret = g2d_solid_fill(ctx, &images[j], x, y,
+>> w, h);
+>> +			if (ret != 0)
+>> +				break;
+>> +		}
+>> +
+>> +		clock_gettime(CLOCK_MONOTONIC, &tspec);
+>> +
+>> +		if (ret == 0)
+>> +			ret = g2d_exec(ctx);
+>> +
+>> +		if (ret != 0) {
+>> +			fprintf(stderr, "error: iteration %u failed
+>> (num_pixels = %u)\n", i, num_pixels);
+>> +			break;
+>> +		} else {
+>> +			struct timespec end = { 0 };
+>> +			clock_gettime(CLOCK_MONOTONIC, &end);
+>> +
+>> +			g2d_time = (end.tv_sec - tspec.tv_sec) *
+>> 1000000000ULL;
+>> +			g2d_time += (end.tv_nsec - tspec.tv_nsec);
+>> +
+>> +			if (output_mathematica) {
+>> +				if (i != 0) putchar(',');
+>> +				printf("{%u,%llu}", num_pixels,
+>> g2d_time);
+>> +			} else {
+>> +				printf("num_pixels = %u, usecs =
+>> %llu\n", num_pixels, g2d_time);
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	if (output_mathematica)
+>> +		printf("}\n");
+>> +
+>> +	free(images);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void usage(const char *name)
+>> +{
+>> +	fprintf(stderr, "usage: %s [-ibwh]\n\n", name);
+>> +
+>> +	fprintf(stderr, "\t-i <number of iterations>\n");
+>> +	fprintf(stderr, "\t-b <size of a batch> (default = 3)\n\n");
+>> +
+>> +	fprintf(stderr, "\t-w <buffer width> (default = 4096)\n");
+>> +	fprintf(stderr, "\t-h <buffer height> (default = 4096)\n\n");
+>> +
+>> +	fprintf(stderr, "\t-M <enable Mathematica styled output>\n");
+>> +
+>> +	exit(0);
+>> +}
+>> +
+>> +int main(int argc, char **argv)
+>> +{
+>> +	int fd, ret, c, parsefail;
+>> +
+>> +	struct exynos_device *dev;
+>> +	struct g2d_context *ctx;
+>> +	struct exynos_bo *bo;
+>> +
+>> +	unsigned int iters = 0, batch = 3;
+>> +	unsigned int bufw = 4096, bufh = 4096;
+>> +
+>> +	ret = 0;
+>> +	parsefail = 0;
+>> +
+>> +	while ((c = getopt(argc, argv, "i:b:w:h:M")) != -1) {
+>> +		switch (c) {
+>> +		case 'i':
+>> +			if (sscanf(optarg, "%u", &iters) != 1)
+>> +				parsefail = 1;
+>> +			break;
+>> +		case 'b':
+>> +			if (sscanf(optarg, "%u", &batch) != 1)
+>> +				parsefail = 1;
+>> +			break;
+>> +		case 'w':
+>> +			if (sscanf(optarg, "%u", &bufw) != 1)
+>> +				parsefail = 1;
+>> +			break;
+>> +		case 'h':
+>> +			if (sscanf(optarg, "%u", &bufh) != 1)
+>> +				parsefail = 1;
+>> +			break;
+>> +		case 'M':
+>> +			output_mathematica = 1;
+>> +			break;
+>> +		default:
+>> +			parsefail = 1;
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	if (parsefail || (argc == 1) || (iters == 0))
+>> +		usage(argv[0]);
+>> +
+>> +	if (bufw < 2 || bufw > 4096 || bufh < 2 || bufh > 4096) {
+>> +		fprintf(stderr, "error: buffer width/height should
+>> be in the range 2 to 4096.\n");
+>> +		ret = -1;
+>> +
+>> +		goto out;
+>> +	}
+>> +
+>> +	if (bufw == 0 || bufh == 0) {
+>> +		fprintf(stderr, "error: buffer width/height should
+>> be non-zero.\n");
+>> +		ret = -1;
+>> +
+>> +		goto out;
+>> +	}
+>> +
+>> +	fd = drmOpen("exynos", NULL);
+>> +	if (fd < 0) {
+>> +		fprintf(stderr, "error: failed to open drm\n");
+>> +		ret = -1;
+>> +
+>> +		goto out;
+>> +	}
+>> +
+>> +	dev = exynos_device_create(fd);
+>> +	if (dev == NULL) {
+>> +		fprintf(stderr, "error: failed to create device\n");
+>> +		ret = -2;
+>> +
+>> +		goto fail;
+>> +	}
+>> +
+>> +	ctx = g2d_init(fd);
+>> +	if (ctx == NULL) {
+>> +		fprintf(stderr, "error: failed to init G2D\n");
+>> +		ret = -3;
+>> +
+>> +		goto g2d_fail;
+>> +	}
+>> +
+>> +	bo = exynos_bo_create(dev, bufw * bufh * 4, 0);
+>> +	if (bo == NULL) {
+>> +		fprintf(stderr, "error: failed to create bo\n");
+>> +		ret = -4;
+>> +
+>> +		goto bo_fail;
+>> +	}
+>> +
+>> +	ret = fimg2d_perf_simple(bo, ctx, bufw, bufh, iters);
+>> +
+>> +	if (ret == 0)
+>> +		ret = fimg2d_perf_multi(bo, ctx, bufw, bufh, iters,
+>> batch); +
+>> +	exynos_bo_destroy(bo);
+>> +
+>> +bo_fail:
+>> +	g2d_fini(ctx);
+>> +
+>> +g2d_fail:
+>> +	exynos_device_destroy(dev);
+>> +
+>> +fail:
+>> +	drmClose(fd);
+>> +
+>> +out:
+>> +	return ret;
+>> +}
+> 
