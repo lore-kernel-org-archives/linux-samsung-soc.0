@@ -1,115 +1,214 @@
 From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 09/13] exynos/fimg2d: add g2d_move
-Date: Mon, 09 Nov 2015 16:30:13 +0900
-Message-ID: <20151109163013.011f4cb6@hwh-ubuntu>
+Subject: Re: [PATCH 10/13] tests/exynos: add test for g2d_move
+Date: Mon, 09 Nov 2015 16:36:31 +0900
+Message-ID: <20151109163631.13d41d5f@hwh-ubuntu>
 References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1442937302-8211-11-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:60199 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750814AbbKIHge (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Nov 2015 02:36:34 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NXJ01K98EGVQF90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 09 Nov 2015 16:36:31 +0900 (KST)
+In-reply-to: <1442937302-8211-11-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk
-List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gVG9iaWFzLAoKSSB3YXMgaW4gdmFjYXRpb24gbGFzdCB3ZWVrLCBzbyBJIGNvdWxkIHJ1
-biB5b3VyIGNvZGUgdG9kYXkuIEkgZm91bmQKdGhhdCB3aGF0IGcyZF9tb3ZlKCkgZG9lcyBpcyBh
-Y3R1YWxseSBjb3B5aW5nIG5vdCBtb3ZpbmcsIGJlY2F1c2UgdGhlCm9wZXJhdGlvbiBkb2VzIG5v
-dCBjbGVhciB0aGUgcHJldmlvdXMgYXJlYS4gV291bGQgaXQgYmUgcG9zc2libGUgdG8KZ2VuZXJh
-bGl6ZSBnMmRfY29weSgpIHdvcmtzIGJldHRlciwgc28gaXQgY291bGQgd29ya3Mgd2VsbCBpbiBj
-YXNlIG9mCnRoZSBzcmMgYnVmZmVyIGFuZCBkc3QgYnVmZmVyIGJlaW5nIHNhbWUuIElmIGl0IGlz
-IHBvc3NpYmxlLCBJIHRoaW5rIGl0CndvdWxkIGJlIGJldHRlciB3YXkgdG8gZG8gdGhhdC4gSWYg
-aXQgaXMgbm90LCBhdCBsZWFzdCBjaGFuaW5nIHRoZQpmdW5jdGlvbiBuYW1lIGlzIG5lZWRlZC4g
-SSB0ZXN0ZWQgaXQgb24gbXkgT2Ryb2lkIFUzIGJvYXJkLgoKQmVzdCByZWdhcmRzLApIeXVuZ3dv
-biBId2FuZwoKT24gVHVlLCAyMiBTZXAgMjAxNSAxNzo1NDo1OCArMDIwMApUb2JpYXMgSmFrb2Jp
-IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4gd3JvdGU6Cgo+IFdlIGFscmVhZHkgaGF2
-ZSBnMmRfY29weSgpIHdoaWNoIGltcGxlbWVudHMgRzJEIGNvcHkKPiBvcGVyYXRpb25zIGZyb20g
-b25lIGJ1ZmZlciB0byBhbm90aGVyLiBIb3dldmVyIHdlIGNhbid0Cj4gZG8gYSBvdmVybGFwcGlu
-ZyBjb3B5IG9wZXJhdGlvbiBpbiBvbmUgYnVmZmVyLgo+IAo+IEFkZCBnMmRfbW92ZSgpIHdoaWNo
-IGFjdHMgbGlrZSB0aGUgc3RhbmRhcmQgbWVtbW92ZSgpCj4gYW5kIHByb3Blcmx5IGhhbmRsZXMg
-b3ZlcmxhcHBpbmcgY29waWVzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRq
-YWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+ICBleHlub3MvZXh5bm9zX2ZpbWcy
-ZC5jIHwgOTQKPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKwo+IGV4eW5vcy9leHlub3NfZmltZzJkLmggfCAgMyArKyAyIGZpbGVzIGNoYW5nZWQsIDk3
-IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYyBi
-L2V4eW5vcy9leHlub3NfZmltZzJkLmMKPiBpbmRleCA0ZDU0MTljLi44NzAzNjI5IDEwMDY0NAo+
-IC0tLSBhL2V4eW5vcy9leHlub3NfZmltZzJkLmMKPiArKysgYi9leHlub3MvZXh5bm9zX2ZpbWcy
-ZC5jCj4gQEAgLTU0MCw2ICs1NDAsMTAwIEBAIGcyZF9jb3B5KHN0cnVjdCBnMmRfY29udGV4dCAq
-Y3R4LCBzdHJ1Y3QKPiBnMmRfaW1hZ2UgKnNyYywgfQo+ICAKPiAgLyoqCj4gKyAqIGcyZF9tb3Zl
-IC0gbW92ZSBjb250ZW50IGluc2lkZSBzaW5nbGUgYnVmZmVyLgo+ICsgKglTaW1pbGFyIHRvICdt
-ZW1tb3ZlJyB0aGlzIG1vdmVzIGEgcmVjdGFuZ3VsYXIgcmVnaW9uCj4gKyAqCW9mIHRoZSBwcm92
-aWRlZCBidWZmZXIgdG8gYW5vdGhlciBsb2NhdGlvbiAodGhlIHNvdXJjZQo+ICsgKglhbmQgZGVz
-dGluYXRpb24gcmVnaW9uIHBvdGVudGlhbGx5IG92ZXJsYXBwaW5nKS4KPiArICoKPiArICogQGN0
-eDogYSBwb2ludGVyIHRvIGcyZF9jb250ZXh0IHN0cnVjdHVyZS4KPiArICogQGltZzogYSBwb2lu
-dGVyIHRvIGcyZF9pbWFnZSBzdHJ1Y3R1cmUgcHJvdmlkaW5nCj4gKyAqCWJ1ZmZlciBpbmZvcm1h
-dGlvbi4KPiArICogQHNyY194OiB4IHBvc2l0aW9uIG9mIHNvdXJjZSByZWN0YW5nbGUuCj4gKyAq
-IEBzcmNfeTogeSBwb3NpdGlvbiBvZiBzb3VyY2UgcmVjdGFuZ2xlLgo+ICsgKiBAZHN0X3g6IHgg
-cG9zaXRpb24gb2YgZGVzdGluYXRpb24gcmVjdGFuZ2xlLgo+ICsgKiBAZHN0X3k6IHkgcG9zaXRp
-b24gb2YgZGVzdGluYXRpb24gcmVjdGFuZ2xlLgo+ICsgKiBAdzogd2lkdGggb2YgcmVjdGFuZ2xl
-IHRvIG1vdmUuCj4gKyAqIEBoOiBoZWlnaHQgb2YgcmVjdGFuZ2xlIHRvIG1vdmUuCj4gKyAqLwo+
-ICtpbnQKPiArZzJkX21vdmUoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1h
-Z2UgKmltZywKPiArCQl1bnNpZ25lZCBpbnQgc3JjX3gsIHVuc2lnbmVkIGludCBzcmNfeSwKPiAr
-CQl1bnNpZ25lZCBpbnQgZHN0X3gsIHVuc2lnbmVkIGRzdF95LCB1bnNpZ25lZCBpbnQgdywKPiAr
-CQl1bnNpZ25lZCBpbnQgaCkKPiArewo+ICsJdW5pb24gZzJkX3JvcDRfdmFsIHJvcDQ7Cj4gKwl1
-bmlvbiBnMmRfcG9pbnRfdmFsIHB0Owo+ICsJdW5pb24gZzJkX2RpcmVjdGlvbl92YWwgZGlyOwo+
-ICsJdW5zaWduZWQgaW50IHNyY193LCBzcmNfaCwgZHN0X3csIGRzdF9oOwo+ICsKPiArCXNyY193
-ID0gdzsKPiArCXNyY19oID0gaDsKPiArCWlmIChzcmNfeCArIGltZy0+d2lkdGggPiB3KQo+ICsJ
-CXNyY193ID0gaW1nLT53aWR0aCAtIHNyY194Owo+ICsJaWYgKHNyY195ICsgaW1nLT5oZWlnaHQg
-PiBoKQo+ICsJCXNyY19oID0gaW1nLT5oZWlnaHQgLSBzcmNfeTsKPiArCj4gKwlkc3RfdyA9IHc7
-Cj4gKwlkc3RfaCA9IHc7Cj4gKwlpZiAoZHN0X3ggKyBpbWctPndpZHRoID4gdykKPiArCQlkc3Rf
-dyA9IGltZy0+d2lkdGggLSBkc3RfeDsKPiArCWlmIChkc3RfeSArIGltZy0+aGVpZ2h0ID4gaCkK
-PiArCQlkc3RfaCA9IGltZy0+aGVpZ2h0IC0gZHN0X3k7Cj4gKwo+ICsJdyA9IE1JTihzcmNfdywg
-ZHN0X3cpOwo+ICsJaCA9IE1JTihzcmNfaCwgZHN0X2gpOwo+ICsKPiArCWlmICh3ID09IDAgfHwg
-aCA9PSAwKSB7Cj4gKwkJZnByaW50ZihzdGRlcnIsIE1TR19QUkVGSVggImludmFsaWQgd2lkdGgg
-b3IKPiBoZWlnaHQuXG4iKTsKPiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCX0KPiArCj4gKwlpZiAo
-ZzJkX2NoZWNrX3NwYWNlKGN0eCwgMTMsIDIpKQo+ICsJCXJldHVybiAtRU5PU1BDOwo+ICsKPiAr
-CWcyZF9hZGRfY21kKGN0eCwgRFNUX1NFTEVDVF9SRUcsIEcyRF9TRUxFQ1RfTU9ERV9CR0NPTE9S
-KTsKPiArCWcyZF9hZGRfY21kKGN0eCwgU1JDX1NFTEVDVF9SRUcsIEcyRF9TRUxFQ1RfTU9ERV9O
-T1JNQUwpOwo+ICsKPiArCWcyZF9hZGRfY21kKGN0eCwgRFNUX0NPTE9SX01PREVfUkVHLCBpbWct
-PmNvbG9yX21vZGUpOwo+ICsJZzJkX2FkZF9jbWQoY3R4LCBTUkNfQ09MT1JfTU9ERV9SRUcsIGlt
-Zy0+Y29sb3JfbW9kZSk7Cj4gKwo+ICsJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBpbWcsIGcyZF9k
-c3QpOwo+ICsJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBpbWcsIGcyZF9zcmMpOwo+ICsKPiArCWcy
-ZF9hZGRfY21kKGN0eCwgRFNUX1NUUklERV9SRUcsIGltZy0+c3RyaWRlKTsKPiArCWcyZF9hZGRf
-Y21kKGN0eCwgU1JDX1NUUklERV9SRUcsIGltZy0+c3RyaWRlKTsKPiArCj4gKwlkaXIudmFsWzBd
-ID0gZGlyLnZhbFsxXSA9IDA7Cj4gKwo+ICsJaWYgKGRzdF94ID49IHNyY194KQo+ICsJCWRpci5k
-YXRhLnNyY194X2RpcmVjdGlvbiA9IGRpci5kYXRhLmRzdF94X2RpcmVjdGlvbgo+ID0gMTsKPiAr
-CWlmIChkc3RfeSA+PSBzcmNfeSkKPiArCQlkaXIuZGF0YS5zcmNfeV9kaXJlY3Rpb24gPSBkaXIu
-ZGF0YS5kc3RfeV9kaXJlY3Rpb24KPiA9IDE7ICsKPiArCWcyZF9zZXRfZGlyZWN0aW9uKGN0eCwg
-JmRpcik7Cj4gKwo+ICsJcHQuZGF0YS54ID0gc3JjX3g7Cj4gKwlwdC5kYXRhLnkgPSBzcmNfeTsK
-PiArCWcyZF9hZGRfY21kKGN0eCwgU1JDX0xFRlRfVE9QX1JFRywgcHQudmFsKTsKPiArCXB0LmRh
-dGEueCA9IHNyY194ICsgdzsKPiArCXB0LmRhdGEueSA9IHNyY195ICsgaDsKPiArCWcyZF9hZGRf
-Y21kKGN0eCwgU1JDX1JJR0hUX0JPVFRPTV9SRUcsIHB0LnZhbCk7Cj4gKwo+ICsJcHQuZGF0YS54
-ID0gZHN0X3g7Cj4gKwlwdC5kYXRhLnkgPSBkc3RfeTsKPiArCWcyZF9hZGRfY21kKGN0eCwgRFNU
-X0xFRlRfVE9QX1JFRywgcHQudmFsKTsKPiArCXB0LmRhdGEueCA9IGRzdF94ICsgdzsKPiArCXB0
-LmRhdGEueSA9IGRzdF95ICsgaDsKPiArCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hUX0JPVFRP
-TV9SRUcsIHB0LnZhbCk7Cj4gKwo+ICsJcm9wNC52YWwgPSAwOwo+ICsJcm9wNC5kYXRhLnVubWFz
-a2VkX3JvcDMgPSBHMkRfUk9QM19TUkM7Cj4gKwlnMmRfYWRkX2NtZChjdHgsIFJPUDRfUkVHLCBy
-b3A0LnZhbCk7Cj4gKwo+ICsJcmV0dXJuIGcyZF9mbHVzaChjdHgpOwo+ICt9Cj4gKwo+ICsvKioK
-PiAgICogZzJkX2NvcHlfd2l0aF9zY2FsZSAtIGNvcHkgY29udGVudHMgaW4gc291cmNlIGJ1ZmZl
-ciB0bwo+IGRlc3RpbmF0aW9uIGJ1ZmZlcgo+ICAgKglzY2FsaW5nIHVwIG9yIGRvd24gcHJvcGVy
-bHkuCj4gICAqCj4gZGlmZiAtLWdpdCBhL2V4eW5vcy9leHlub3NfZmltZzJkLmggYi9leHlub3Mv
-ZXh5bm9zX2ZpbWcyZC5oCj4gaW5kZXggOWVlZTdjMC4uMjcwMDY4NiAxMDA2NDQKPiAtLS0gYS9l
-eHlub3MvZXh5bm9zX2ZpbWcyZC5oCj4gKysrIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuaAo+IEBA
-IC0zNDMsNiArMzQzLDkgQEAgaW50IGcyZF9jb3B5KHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBz
-dHJ1Y3QKPiBnMmRfaW1hZ2UgKnNyYywgc3RydWN0IGcyZF9pbWFnZSAqZHN0LCB1bnNpZ25lZCBp
-bnQgc3JjX3gsCj4gIAkJdW5zaWduZWQgaW50IHNyY195LCB1bnNpZ25lZCBpbnQgZHN0X3gsIHVu
-c2lnbmVkIGludAo+IGRzdF95LCB1bnNpZ25lZCBpbnQgdywgdW5zaWduZWQgaW50IGgpOwo+ICtp
-bnQgZzJkX21vdmUoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1hZ2UgKmlt
-ZywKPiArCQl1bnNpZ25lZCBpbnQgc3JjX3gsIHVuc2lnbmVkIGludCBzcmNfeSwgdW5zaWduZWQg
-aW50Cj4gZHN0X3gsCj4gKwkJdW5zaWduZWQgZHN0X3ksIHVuc2lnbmVkIGludCB3LCB1bnNpZ25l
-ZCBpbnQgaCk7Cj4gIGludCBnMmRfY29weV93aXRoX3NjYWxlKHN0cnVjdCBnMmRfY29udGV4dCAq
-Y3R4LCBzdHJ1Y3QgZzJkX2ltYWdlCj4gKnNyYywgc3RydWN0IGcyZF9pbWFnZSAqZHN0LCB1bnNp
-Z25lZCBpbnQgc3JjX3gsCj4gIAkJCQl1bnNpZ25lZCBpbnQgc3JjX3ksIHVuc2lnbmVkIGludAo+
-IHNyY193LAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello,
+
+I think this patch should update .gitignore, not for adding the built
+binary to untracked file list.
+
+But without it, it looks good to me, and I tested it on my Odroid U3
+board.
+
+Tested-by: Hyungwon Hwang <human.hwang@samsung.com>
+Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
+
+Best regards,
+Hyungwon Hwang
+
+
+On Tue, 22 Sep 2015 17:54:59 +0200
+Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+
+> To check if g2d_move() works properly we create a small checkerboard
+> pattern in the center of the screen and then shift this pattern
+> around with g2d_move(). The pattern should be properly preserved
+> by the operation.
+> 
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  tests/exynos/exynos_fimg2d_test.c | 132
+> ++++++++++++++++++++++++++++++++++++++ 1 file changed, 132
+> insertions(+)
+> 
+> diff --git a/tests/exynos/exynos_fimg2d_test.c
+> b/tests/exynos/exynos_fimg2d_test.c index dfb00a0..797fb6e 100644
+> --- a/tests/exynos/exynos_fimg2d_test.c
+> +++ b/tests/exynos/exynos_fimg2d_test.c
+> @@ -313,6 +313,130 @@ fail:
+>  	return ret;
+>  }
+>  
+> +static int g2d_move_test(struct exynos_device *dev,
+> +				struct exynos_bo *tmp,
+> +				struct exynos_bo *buf,
+> +				enum e_g2d_buf_type type)
+> +{
+> +	struct g2d_context *ctx;
+> +	struct g2d_image img = {0}, tmp_img = {0};
+> +	unsigned int img_w, img_h, count;
+> +	int cur_x, cur_y;
+> +	void *checkerboard;
+> +	int ret;
+> +
+> +	static const struct g2d_step {
+> +		int x, y;
+> +	} steps[] = {
+> +		{ 1,  0}, { 0,  1},
+> +		{-1,  0}, { 0, -1},
+> +		{ 1,  1}, {-1, -1},
+> +		{ 1, -1}, {-1,  1},
+> +		{ 2,  1}, { 1,  2},
+> +		{-2, -1}, {-1, -2},
+> +		{ 2, -1}, { 1, -2},
+> +		{-2,  1}, {-1,  2}
+> +	};
+> +	static const unsigned int num_steps =
+> +		sizeof(steps) / sizeof(struct g2d_step);
+> +
+> +	ctx = g2d_init(dev->fd);
+> +	if (!ctx)
+> +		return -EFAULT;
+> +
+> +	img.bo[0] = buf->handle;
+> +
+> +	/* create pattern of half the screen size */
+> +	checkerboard = create_checkerboard_pattern(screen_width /
+> 64, screen_height / 64, 32);
+> +	if (!checkerboard) {
+> +		ret = -EFAULT;
+> +		goto fail;
+> +	}
+> +
+> +	img_w = (screen_width / 64) * 32;
+> +	img_h = (screen_height / 64) * 32;
+> +
+> +	switch (type) {
+> +	case G2D_IMGBUF_GEM:
+> +		memcpy(tmp->vaddr, checkerboard, img_w * img_h * 4);
+> +		tmp_img.bo[0] = tmp->handle;
+> +		break;
+> +	case G2D_IMGBUF_USERPTR:
+> +		tmp_img.user_ptr[0].userptr = (unsigned
+> long)checkerboard;
+> +		tmp_img.user_ptr[0].size = img_w * img_h * 4;
+> +		break;
+> +	case G2D_IMGBUF_COLOR:
+> +	default:
+> +		ret = -EFAULT;
+> +		goto fail;
+> +	}
+> +
+> +	/* solid fill framebuffer with white color */
+> +	img.width = screen_width;
+> +	img.height = screen_height;
+> +	img.stride = screen_width * 4;
+> +	img.buf_type = G2D_IMGBUF_GEM;
+> +	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
+> +	img.color = 0xffffffff;
+> +
+> +	/* put checkerboard pattern in the center of the framebuffer
+> */
+> +	cur_x = (screen_width - img_w) / 2;
+> +	cur_y = (screen_height - img_h) / 2;
+> +	tmp_img.width = img_w;
+> +	tmp_img.height = img_h;
+> +	tmp_img.stride = img_w * 4;
+> +	tmp_img.buf_type = type;
+> +	tmp_img.color_mode = G2D_COLOR_FMT_ARGB8888 |
+> G2D_ORDER_AXRGB; +
+> +	ret = g2d_solid_fill(ctx, &img, 0, 0, screen_width,
+> screen_height) ||
+> +		g2d_copy(ctx, &tmp_img, &img, 0, 0, cur_x, cur_y,
+> img_w, img_h); +
+> +	if (!ret)
+> +		ret = g2d_exec(ctx);
+> +	if (ret < 0)
+> +			goto fail;
+> +
+> +	printf("move test with %s.\n",
+> +			type == G2D_IMGBUF_GEM ? "gem" : "userptr");
+> +
+> +	srand(time(NULL));
+> +	for (count = 0; count < 256; ++count) {
+> +		const struct g2d_step *s;
+> +
+> +		/* select step and validate it */
+> +		while (1) {
+> +			s = &steps[random() % num_steps];
+> +
+> +			if (cur_x + s->x < 0 || cur_y + s->y < 0 ||
+> +				cur_x + img_w + s->x >= screen_width
+> ||
+> +				cur_y + img_h + s->y >=
+> screen_height)
+> +				continue;
+> +			else
+> +				break;
+> +		}
+> +
+> +		ret = g2d_move(ctx, &img, cur_x, cur_y, cur_x +
+> s->x, cur_y + s->y,
+> +			img_w, img_h);
+> +		if (!ret)
+> +			ret = g2d_exec(ctx);
+> +
+> +		if (ret < 0)
+> +			goto fail;
+> +
+> +		cur_x += s->x;
+> +		cur_y += s->y;
+> +
+> +		usleep(100000);
+> +	}
+> +
+> +fail:
+> +	g2d_fini(ctx);
+> +
+> +	free(checkerboard);
+> +
+> +	return ret;
+> +}
+> +
+>  static int g2d_copy_with_scale_test(struct exynos_device *dev,
+>  					struct exynos_bo *src,
+>  					struct exynos_bo *dst,
+> @@ -708,6 +832,14 @@ int main(int argc, char **argv)
+>  
+>  	wait_for_user_input(0);
+>  
+> +	ret = g2d_move_test(dev, src, bo, G2D_IMGBUF_GEM);
+> +	if (ret < 0) {
+> +		fprintf(stderr, "failed to test move operation.\n");
+> +		goto err_free_src;
+> +	}
+> +
+> +	wait_for_user_input(0);
+> +
+>  	ret = g2d_copy_with_scale_test(dev, src, bo, G2D_IMGBUF_GEM);
+>  	if (ret < 0) {
+>  		fprintf(stderr, "failed to test copy and scale
+> operation.\n");
