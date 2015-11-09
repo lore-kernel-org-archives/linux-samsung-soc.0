@@ -1,100 +1,100 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 0/6] ARM: dts: Use correct CD properties for SDIO and
- eMMC in Snow and Peach
-Date: Sun, 8 Nov 2015 11:48:17 -0300
-Message-ID: <563F60B1.6030906@osg.samsung.com>
-References: <1444927873-15140-1-git-send-email-javier@osg.samsung.com>
- <56245DB8.7070106@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [rtc-linux] Re: [PATCH v5 1/4] dt-bindings: mfd: s2mps11: add
+ documentation for s2mps15 PMIC
+Date: Mon, 09 Nov 2015 11:24:45 +0530
+Message-ID: <56403525.7000808@samsung.com>
+References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
+ <1446186334-16510-2-git-send-email-alim.akhtar@samsung.com>
+ <20151106223339.GA22411@rob-hp-laptop> <563D6B72.9010004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56245DB8.7070106@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Douglas Anderson <dianders@chromium.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:51151 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750814AbbKIFyV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Nov 2015 00:54:21 -0500
+In-reply-to: <563D6B72.9010004@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com
+Cc: k.kozlowski.k@gmail.com, lee.jones@linaro.org, broonie@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
 
-Hello Kukjin,
+Hi Krzysztof,
 
-On 10/19/2015 12:04 AM, Alim Akhtar wrote:
-> Hi Javier,
-> 
-> On 10/15/2015 10:21 PM, Javier Martinez Canillas wrote:
->> Hello,
+On 11/07/2015 08:39 AM, Krzysztof Kozlowski wrote:
+> W dniu 07.11.2015 o 07:33, Rob Herring pisze:
+>> On Fri, Oct 30, 2015 at 11:55:31AM +0530, Alim Akhtar wrote:
+>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>
+>>> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
+>>> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
+>>> This also supports RTC and three 32.768KHz clock outputs.
+>>>
+>>> Cc: devicetree@vger.kernel.org
+>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/mfd/s2mps11.txt |   21 ++++++++++++++-------
+>>>   1 file changed, 14 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+>>> index 890f0b0e1643..4c0543ceec25 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
+>>> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+>>> @@ -1,5 +1,5 @@
+>>>
+>>> -* Samsung S2MPS11, S2MPS13, S2MPS14 and S2MPU02 Voltage and Current Regulator
+>>> +* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
+>>>
+>>>   The Samsung S2MPS11 is a multi-function device which includes voltage and
+>>>   current regulators, RTC, charger controller and other sub-blocks. It is
+>>> @@ -7,8 +7,12 @@ interfaced to the host controller using an I2C interface. Each sub-block is
+>>>   addressed by the host system using different I2C slave addresses.
+>>>
+>>>   Required properties:
+>>> -- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps13-pmic"
+>>> -	      or "samsung,s2mps14-pmic" or "samsung,s2mpu02-pmic".
+>>> +- compatible: Should be one of the following
+>>> +	- "samsung,s2mps11-pmic"
+>>> +	- "samsung,s2mps13-pmic"
+>>> +	- "samsung,s2mps14-pmic"
+>>> +	- "samsung,s2mps15-pmic"
+>>> +	- "samsung,s2mpu02-pmic".
+>>>   - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+>>>
+>>>   Optional properties:
+>>> @@ -24,7 +28,7 @@ Optional properties:
+>>>     unwanted buck warm reset (setting buck voltages to default values).
+>>>
+>>>   Optional nodes:
+>>> -- clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+>>> +- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
 >>
->> The Exynos Chromebooks DTS don't use the correct card detection properties
->> since these were carried from the vendor tree that had a reason to do so.
->>
->> There are two things that I noticed:
->>
->> 1) The Marvell WiFi SDIO is marked as broken-cd instead of non-removable:
->>
->> This causes the device to be removed when the system enters into a suspend
->> state which leads to the following warning when the system is resumed:
->>
->> [  181.944636] mmc2: error -2 during resume (card was removed?)
->>
->> The rationale for using broken-cd is explained in downstream commit [0] and
->> was that using the non-removable property caused issues with the mwifiex
->> driver since the reset logic called the mmc_{remove,add}_host() functions.
->>
->> But the reset logic in the mwifiex mainline driver has changed and this is
->> no longer the case so it's safe to use the non-removable property AFAICT.
->>
->> 2) The eMMC node has both broken-cd and non-removable but the MMC DT binding
->> doc (Documentation/devicetree/bindings/mmc/mmc.txt) mentions that only one
->> of these card detection properties should be used.
->>
->> So this series change both the SDIO WiFi and eMMC device nodes in the Snow,
->> Peach Pi and Peach Pit boards DTS to use the non-removable property.
->>
->> To test, I've cherry picked commit [1] from the vendor tree that adds a
->> debugfs entry to force a card reset and after the reset, the WiFi card still
->> works correctly:
->>
->> $ echo 1 > /sys/kernel/debug/mwifiex/mlan0/reset
->>
->> And also tested that both eMMC and WiFi are working correctly after a S2R.
->>
->> The test were made on an Exynos5800 Peach Pi but I don't have access to a
->> Snow anymore so testing patch 3/6 and 6/6 on that board will be appreciated.
->>
->> v1 of the series was [2] and this version fixes issues pointed out by Tomeu.
->>
->> Changes since v1:
->>   - Replace broken-cd for non-removable in the correct mmc node for Snow.
->>   - Correct the card detetion properties for eMMC in Snow, Pit and Pi.
->>   - Also remove the card-detect-delay property when using non-removable.
->>
->> [0]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/ad348e1e2381
->> [1]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/5995363523de
->> [2]: https://lkml.org/lkml/2015/10/15/294
->>
->> Best regards,
->> Javier
->>
->>
->> Javier Martinez Canillas (6):
->>    ARM: dts: Mark SDIO as non-removable in exynos5800-peach-pi
->>    ARM: dts: Mark SDIO as non-removable in exynos5420-peach-pit
->>    ARM: dts: Mark SDIO as non-removable in exynos5250-snow-common
->>    ARM: dts: Remove broken-cd from eMMC node in exynos5800-peach-pi
->>    ARM: dts: Remove broken-cd from eMMC node in exynos5420-peach-pi
->>    ARM: dts: Mark eMMC as non-removable in exynos5250-snow-common
->>
-> This series looks good to me, so feel free to add
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> and for patch 4 and 5: Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Thanks.
+>> s5m8767 doesn't seem to be documented. Can you please fix or remove.
 >
+> What exactly do you have in mind?
+>
+> The s5m8767-clk is already documented as part of clk-s2mps11.c driver:
+> Documentation/devicetree/bindings/mfd/s2mps11.txt
+>
+> The main s5m8767 MFD driver is documented as part of regulator driver:
+> Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+>
+> Yes, this may be confusing... They S2M and S5M family devices share:
+>   - main mfd driver,
+>   - rtc driver,
+>   - clk driver.
+>
+> but regulator drivers are separate.
+>
+Indeed things are documented but in very confusing manners, e.g. 
+compatible name "samsung,s5m8767-pmic" belongs to MFD not regulator.
+It should have being in */bindings/mfd/s2mps11.txt
+Not sure if it make sense to change it though.
 
-You said that you are going to take this series once Alim tested / gave
-his feedback but that happened weeks ago and I still don't see these in
-your tree.
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> Best regards,
+> Krzysztof
+>
+>
