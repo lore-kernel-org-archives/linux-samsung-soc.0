@@ -1,117 +1,115 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [rtc-linux] Re: [PATCH v5 1/4] dt-bindings: mfd: s2mps11: add
- documentation for s2mps15 PMIC
-Date: Mon, 09 Nov 2015 15:40:19 +0900
-Message-ID: <56403FD3.8000501@samsung.com>
-References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
- <1446186334-16510-2-git-send-email-alim.akhtar@samsung.com>
- <20151106223339.GA22411@rob-hp-laptop> <563D6B72.9010004@samsung.com>
- <56403525.7000808@samsung.com>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: Re: [PATCH 09/13] exynos/fimg2d: add g2d_move
+Date: Mon, 09 Nov 2015 16:30:13 +0900
+Message-ID: <20151109163013.011f4cb6@hwh-ubuntu>
+References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56403525.7000808@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, rtc-linux@googlegroups.com
-Cc: k.kozlowski.k@gmail.com, lee.jones@linaro.org, broonie@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09.11.2015 14:54, Alim Akhtar wrote:
-> Hi Krzysztof,
-> 
-> On 11/07/2015 08:39 AM, Krzysztof Kozlowski wrote:
->> W dniu 07.11.2015 o 07:33, Rob Herring pisze:
->>> On Fri, Oct 30, 2015 at 11:55:31AM +0530, Alim Akhtar wrote:
->>>> From: Thomas Abraham <thomas.ab@samsung.com>
->>>>
->>>> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15
->>>> device
->>>> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck
->>>> regulators.
->>>> This also supports RTC and three 32.768KHz clock outputs.
->>>>
->>>> Cc: devicetree@vger.kernel.org
->>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>> ---
->>>>   Documentation/devicetree/bindings/mfd/s2mps11.txt |   21
->>>> ++++++++++++++-------
->>>>   1 file changed, 14 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt
->>>> b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->>>> index 890f0b0e1643..4c0543ceec25 100644
->>>> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
->>>> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
->>>> @@ -1,5 +1,5 @@
->>>>
->>>> -* Samsung S2MPS11, S2MPS13, S2MPS14 and S2MPU02 Voltage and Current
->>>> Regulator
->>>> +* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
->>>>
->>>>   The Samsung S2MPS11 is a multi-function device which includes
->>>> voltage and
->>>>   current regulators, RTC, charger controller and other sub-blocks.
->>>> It is
->>>> @@ -7,8 +7,12 @@ interfaced to the host controller using an I2C
->>>> interface. Each sub-block is
->>>>   addressed by the host system using different I2C slave addresses.
->>>>
->>>>   Required properties:
->>>> -- compatible: Should be "samsung,s2mps11-pmic" or
->>>> "samsung,s2mps13-pmic"
->>>> -          or "samsung,s2mps14-pmic" or "samsung,s2mpu02-pmic".
->>>> +- compatible: Should be one of the following
->>>> +    - "samsung,s2mps11-pmic"
->>>> +    - "samsung,s2mps13-pmic"
->>>> +    - "samsung,s2mps14-pmic"
->>>> +    - "samsung,s2mps15-pmic"
->>>> +    - "samsung,s2mpu02-pmic".
->>>>   - reg: Specifies the I2C slave address of the pmic block. It
->>>> should be 0x66.
->>>>
->>>>   Optional properties:
->>>> @@ -24,7 +28,7 @@ Optional properties:
->>>>     unwanted buck warm reset (setting buck voltages to default values).
->>>>
->>>>   Optional nodes:
->>>> -- clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT)
->>>> buffered 32.768
->>>> +- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide
->>>> three(AP/CP/BT) buffered 32.768
->>>
->>> s5m8767 doesn't seem to be documented. Can you please fix or remove.
->>
->> What exactly do you have in mind?
->>
->> The s5m8767-clk is already documented as part of clk-s2mps11.c driver:
->> Documentation/devicetree/bindings/mfd/s2mps11.txt
->>
->> The main s5m8767 MFD driver is documented as part of regulator driver:
->> Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
->>
->> Yes, this may be confusing... They S2M and S5M family devices share:
->>   - main mfd driver,
->>   - rtc driver,
->>   - clk driver.
->>
->> but regulator drivers are separate.
->>
-> Indeed things are documented but in very confusing manners, e.g.
-> compatible name "samsung,s5m8767-pmic" belongs to MFD not regulator.
-
-The compatible itself belongs to MFD but in the same time the required
-properties for regulator driver (which expects to be child of that
-compatible) are stored next to it.
-
-> It should have being in */bindings/mfd/s2mps11.txt
-> Not sure if it make sense to change it though.
-
-Then the naming would be confusing. :)
-
-Actually I have it on my todo list to fix things up. Truth is that all
-of these devices are tightly coupled.
-
-Best regards,
-Krzysztof
+SGVsbG8gVG9iaWFzLAoKSSB3YXMgaW4gdmFjYXRpb24gbGFzdCB3ZWVrLCBzbyBJIGNvdWxkIHJ1
+biB5b3VyIGNvZGUgdG9kYXkuIEkgZm91bmQKdGhhdCB3aGF0IGcyZF9tb3ZlKCkgZG9lcyBpcyBh
+Y3R1YWxseSBjb3B5aW5nIG5vdCBtb3ZpbmcsIGJlY2F1c2UgdGhlCm9wZXJhdGlvbiBkb2VzIG5v
+dCBjbGVhciB0aGUgcHJldmlvdXMgYXJlYS4gV291bGQgaXQgYmUgcG9zc2libGUgdG8KZ2VuZXJh
+bGl6ZSBnMmRfY29weSgpIHdvcmtzIGJldHRlciwgc28gaXQgY291bGQgd29ya3Mgd2VsbCBpbiBj
+YXNlIG9mCnRoZSBzcmMgYnVmZmVyIGFuZCBkc3QgYnVmZmVyIGJlaW5nIHNhbWUuIElmIGl0IGlz
+IHBvc3NpYmxlLCBJIHRoaW5rIGl0CndvdWxkIGJlIGJldHRlciB3YXkgdG8gZG8gdGhhdC4gSWYg
+aXQgaXMgbm90LCBhdCBsZWFzdCBjaGFuaW5nIHRoZQpmdW5jdGlvbiBuYW1lIGlzIG5lZWRlZC4g
+SSB0ZXN0ZWQgaXQgb24gbXkgT2Ryb2lkIFUzIGJvYXJkLgoKQmVzdCByZWdhcmRzLApIeXVuZ3dv
+biBId2FuZwoKT24gVHVlLCAyMiBTZXAgMjAxNSAxNzo1NDo1OCArMDIwMApUb2JpYXMgSmFrb2Jp
+IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4gd3JvdGU6Cgo+IFdlIGFscmVhZHkgaGF2
+ZSBnMmRfY29weSgpIHdoaWNoIGltcGxlbWVudHMgRzJEIGNvcHkKPiBvcGVyYXRpb25zIGZyb20g
+b25lIGJ1ZmZlciB0byBhbm90aGVyLiBIb3dldmVyIHdlIGNhbid0Cj4gZG8gYSBvdmVybGFwcGlu
+ZyBjb3B5IG9wZXJhdGlvbiBpbiBvbmUgYnVmZmVyLgo+IAo+IEFkZCBnMmRfbW92ZSgpIHdoaWNo
+IGFjdHMgbGlrZSB0aGUgc3RhbmRhcmQgbWVtbW92ZSgpCj4gYW5kIHByb3Blcmx5IGhhbmRsZXMg
+b3ZlcmxhcHBpbmcgY29waWVzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRq
+YWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+ICBleHlub3MvZXh5bm9zX2ZpbWcy
+ZC5jIHwgOTQKPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKwo+IGV4eW5vcy9leHlub3NfZmltZzJkLmggfCAgMyArKyAyIGZpbGVzIGNoYW5nZWQsIDk3
+IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYyBi
+L2V4eW5vcy9leHlub3NfZmltZzJkLmMKPiBpbmRleCA0ZDU0MTljLi44NzAzNjI5IDEwMDY0NAo+
+IC0tLSBhL2V4eW5vcy9leHlub3NfZmltZzJkLmMKPiArKysgYi9leHlub3MvZXh5bm9zX2ZpbWcy
+ZC5jCj4gQEAgLTU0MCw2ICs1NDAsMTAwIEBAIGcyZF9jb3B5KHN0cnVjdCBnMmRfY29udGV4dCAq
+Y3R4LCBzdHJ1Y3QKPiBnMmRfaW1hZ2UgKnNyYywgfQo+ICAKPiAgLyoqCj4gKyAqIGcyZF9tb3Zl
+IC0gbW92ZSBjb250ZW50IGluc2lkZSBzaW5nbGUgYnVmZmVyLgo+ICsgKglTaW1pbGFyIHRvICdt
+ZW1tb3ZlJyB0aGlzIG1vdmVzIGEgcmVjdGFuZ3VsYXIgcmVnaW9uCj4gKyAqCW9mIHRoZSBwcm92
+aWRlZCBidWZmZXIgdG8gYW5vdGhlciBsb2NhdGlvbiAodGhlIHNvdXJjZQo+ICsgKglhbmQgZGVz
+dGluYXRpb24gcmVnaW9uIHBvdGVudGlhbGx5IG92ZXJsYXBwaW5nKS4KPiArICoKPiArICogQGN0
+eDogYSBwb2ludGVyIHRvIGcyZF9jb250ZXh0IHN0cnVjdHVyZS4KPiArICogQGltZzogYSBwb2lu
+dGVyIHRvIGcyZF9pbWFnZSBzdHJ1Y3R1cmUgcHJvdmlkaW5nCj4gKyAqCWJ1ZmZlciBpbmZvcm1h
+dGlvbi4KPiArICogQHNyY194OiB4IHBvc2l0aW9uIG9mIHNvdXJjZSByZWN0YW5nbGUuCj4gKyAq
+IEBzcmNfeTogeSBwb3NpdGlvbiBvZiBzb3VyY2UgcmVjdGFuZ2xlLgo+ICsgKiBAZHN0X3g6IHgg
+cG9zaXRpb24gb2YgZGVzdGluYXRpb24gcmVjdGFuZ2xlLgo+ICsgKiBAZHN0X3k6IHkgcG9zaXRp
+b24gb2YgZGVzdGluYXRpb24gcmVjdGFuZ2xlLgo+ICsgKiBAdzogd2lkdGggb2YgcmVjdGFuZ2xl
+IHRvIG1vdmUuCj4gKyAqIEBoOiBoZWlnaHQgb2YgcmVjdGFuZ2xlIHRvIG1vdmUuCj4gKyAqLwo+
+ICtpbnQKPiArZzJkX21vdmUoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1h
+Z2UgKmltZywKPiArCQl1bnNpZ25lZCBpbnQgc3JjX3gsIHVuc2lnbmVkIGludCBzcmNfeSwKPiAr
+CQl1bnNpZ25lZCBpbnQgZHN0X3gsIHVuc2lnbmVkIGRzdF95LCB1bnNpZ25lZCBpbnQgdywKPiAr
+CQl1bnNpZ25lZCBpbnQgaCkKPiArewo+ICsJdW5pb24gZzJkX3JvcDRfdmFsIHJvcDQ7Cj4gKwl1
+bmlvbiBnMmRfcG9pbnRfdmFsIHB0Owo+ICsJdW5pb24gZzJkX2RpcmVjdGlvbl92YWwgZGlyOwo+
+ICsJdW5zaWduZWQgaW50IHNyY193LCBzcmNfaCwgZHN0X3csIGRzdF9oOwo+ICsKPiArCXNyY193
+ID0gdzsKPiArCXNyY19oID0gaDsKPiArCWlmIChzcmNfeCArIGltZy0+d2lkdGggPiB3KQo+ICsJ
+CXNyY193ID0gaW1nLT53aWR0aCAtIHNyY194Owo+ICsJaWYgKHNyY195ICsgaW1nLT5oZWlnaHQg
+PiBoKQo+ICsJCXNyY19oID0gaW1nLT5oZWlnaHQgLSBzcmNfeTsKPiArCj4gKwlkc3RfdyA9IHc7
+Cj4gKwlkc3RfaCA9IHc7Cj4gKwlpZiAoZHN0X3ggKyBpbWctPndpZHRoID4gdykKPiArCQlkc3Rf
+dyA9IGltZy0+d2lkdGggLSBkc3RfeDsKPiArCWlmIChkc3RfeSArIGltZy0+aGVpZ2h0ID4gaCkK
+PiArCQlkc3RfaCA9IGltZy0+aGVpZ2h0IC0gZHN0X3k7Cj4gKwo+ICsJdyA9IE1JTihzcmNfdywg
+ZHN0X3cpOwo+ICsJaCA9IE1JTihzcmNfaCwgZHN0X2gpOwo+ICsKPiArCWlmICh3ID09IDAgfHwg
+aCA9PSAwKSB7Cj4gKwkJZnByaW50ZihzdGRlcnIsIE1TR19QUkVGSVggImludmFsaWQgd2lkdGgg
+b3IKPiBoZWlnaHQuXG4iKTsKPiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCX0KPiArCj4gKwlpZiAo
+ZzJkX2NoZWNrX3NwYWNlKGN0eCwgMTMsIDIpKQo+ICsJCXJldHVybiAtRU5PU1BDOwo+ICsKPiAr
+CWcyZF9hZGRfY21kKGN0eCwgRFNUX1NFTEVDVF9SRUcsIEcyRF9TRUxFQ1RfTU9ERV9CR0NPTE9S
+KTsKPiArCWcyZF9hZGRfY21kKGN0eCwgU1JDX1NFTEVDVF9SRUcsIEcyRF9TRUxFQ1RfTU9ERV9O
+T1JNQUwpOwo+ICsKPiArCWcyZF9hZGRfY21kKGN0eCwgRFNUX0NPTE9SX01PREVfUkVHLCBpbWct
+PmNvbG9yX21vZGUpOwo+ICsJZzJkX2FkZF9jbWQoY3R4LCBTUkNfQ09MT1JfTU9ERV9SRUcsIGlt
+Zy0+Y29sb3JfbW9kZSk7Cj4gKwo+ICsJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBpbWcsIGcyZF9k
+c3QpOwo+ICsJZzJkX2FkZF9iYXNlX2FkZHIoY3R4LCBpbWcsIGcyZF9zcmMpOwo+ICsKPiArCWcy
+ZF9hZGRfY21kKGN0eCwgRFNUX1NUUklERV9SRUcsIGltZy0+c3RyaWRlKTsKPiArCWcyZF9hZGRf
+Y21kKGN0eCwgU1JDX1NUUklERV9SRUcsIGltZy0+c3RyaWRlKTsKPiArCj4gKwlkaXIudmFsWzBd
+ID0gZGlyLnZhbFsxXSA9IDA7Cj4gKwo+ICsJaWYgKGRzdF94ID49IHNyY194KQo+ICsJCWRpci5k
+YXRhLnNyY194X2RpcmVjdGlvbiA9IGRpci5kYXRhLmRzdF94X2RpcmVjdGlvbgo+ID0gMTsKPiAr
+CWlmIChkc3RfeSA+PSBzcmNfeSkKPiArCQlkaXIuZGF0YS5zcmNfeV9kaXJlY3Rpb24gPSBkaXIu
+ZGF0YS5kc3RfeV9kaXJlY3Rpb24KPiA9IDE7ICsKPiArCWcyZF9zZXRfZGlyZWN0aW9uKGN0eCwg
+JmRpcik7Cj4gKwo+ICsJcHQuZGF0YS54ID0gc3JjX3g7Cj4gKwlwdC5kYXRhLnkgPSBzcmNfeTsK
+PiArCWcyZF9hZGRfY21kKGN0eCwgU1JDX0xFRlRfVE9QX1JFRywgcHQudmFsKTsKPiArCXB0LmRh
+dGEueCA9IHNyY194ICsgdzsKPiArCXB0LmRhdGEueSA9IHNyY195ICsgaDsKPiArCWcyZF9hZGRf
+Y21kKGN0eCwgU1JDX1JJR0hUX0JPVFRPTV9SRUcsIHB0LnZhbCk7Cj4gKwo+ICsJcHQuZGF0YS54
+ID0gZHN0X3g7Cj4gKwlwdC5kYXRhLnkgPSBkc3RfeTsKPiArCWcyZF9hZGRfY21kKGN0eCwgRFNU
+X0xFRlRfVE9QX1JFRywgcHQudmFsKTsKPiArCXB0LmRhdGEueCA9IGRzdF94ICsgdzsKPiArCXB0
+LmRhdGEueSA9IGRzdF95ICsgaDsKPiArCWcyZF9hZGRfY21kKGN0eCwgRFNUX1JJR0hUX0JPVFRP
+TV9SRUcsIHB0LnZhbCk7Cj4gKwo+ICsJcm9wNC52YWwgPSAwOwo+ICsJcm9wNC5kYXRhLnVubWFz
+a2VkX3JvcDMgPSBHMkRfUk9QM19TUkM7Cj4gKwlnMmRfYWRkX2NtZChjdHgsIFJPUDRfUkVHLCBy
+b3A0LnZhbCk7Cj4gKwo+ICsJcmV0dXJuIGcyZF9mbHVzaChjdHgpOwo+ICt9Cj4gKwo+ICsvKioK
+PiAgICogZzJkX2NvcHlfd2l0aF9zY2FsZSAtIGNvcHkgY29udGVudHMgaW4gc291cmNlIGJ1ZmZl
+ciB0bwo+IGRlc3RpbmF0aW9uIGJ1ZmZlcgo+ICAgKglzY2FsaW5nIHVwIG9yIGRvd24gcHJvcGVy
+bHkuCj4gICAqCj4gZGlmZiAtLWdpdCBhL2V4eW5vcy9leHlub3NfZmltZzJkLmggYi9leHlub3Mv
+ZXh5bm9zX2ZpbWcyZC5oCj4gaW5kZXggOWVlZTdjMC4uMjcwMDY4NiAxMDA2NDQKPiAtLS0gYS9l
+eHlub3MvZXh5bm9zX2ZpbWcyZC5oCj4gKysrIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuaAo+IEBA
+IC0zNDMsNiArMzQzLDkgQEAgaW50IGcyZF9jb3B5KHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBz
+dHJ1Y3QKPiBnMmRfaW1hZ2UgKnNyYywgc3RydWN0IGcyZF9pbWFnZSAqZHN0LCB1bnNpZ25lZCBp
+bnQgc3JjX3gsCj4gIAkJdW5zaWduZWQgaW50IHNyY195LCB1bnNpZ25lZCBpbnQgZHN0X3gsIHVu
+c2lnbmVkIGludAo+IGRzdF95LCB1bnNpZ25lZCBpbnQgdywgdW5zaWduZWQgaW50IGgpOwo+ICtp
+bnQgZzJkX21vdmUoc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsIHN0cnVjdCBnMmRfaW1hZ2UgKmlt
+ZywKPiArCQl1bnNpZ25lZCBpbnQgc3JjX3gsIHVuc2lnbmVkIGludCBzcmNfeSwgdW5zaWduZWQg
+aW50Cj4gZHN0X3gsCj4gKwkJdW5zaWduZWQgZHN0X3ksIHVuc2lnbmVkIGludCB3LCB1bnNpZ25l
+ZCBpbnQgaCk7Cj4gIGludCBnMmRfY29weV93aXRoX3NjYWxlKHN0cnVjdCBnMmRfY29udGV4dCAq
+Y3R4LCBzdHJ1Y3QgZzJkX2ltYWdlCj4gKnNyYywgc3RydWN0IGcyZF9pbWFnZSAqZHN0LCB1bnNp
+Z25lZCBpbnQgc3JjX3gsCj4gIAkJCQl1bnNpZ25lZCBpbnQgc3JjX3ksIHVuc2lnbmVkIGludAo+
+IHNyY193LAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
