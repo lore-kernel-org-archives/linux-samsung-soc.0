@@ -1,48 +1,61 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 04/25] drm/exynos: gsc: fix wrong pm_runtime state
-Date: Tue, 10 Nov 2015 14:23:20 +0100
-Message-ID: <1447161821-1877-5-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 01/25] ARM: dts: exynos4: add rotator nodes
+Date: Tue, 10 Nov 2015 14:23:17 +0100
+Message-ID: <1447161821-1877-2-git-send-email-m.szyprowski@samsung.com>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:64203 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753088AbbKJNYu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Nov 2015 08:24:50 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NXL00AJ8P9CUMA0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2015 13:24:48 +0000 (GMT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-
-At probe time, gsc clock is not enabled, so pm_runtime state should
-be deactive. So this patch removes pm_runtime_set_active() from
-gsc_probe().
-
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_gsc.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 72a9c84e06b6..ed55d37b6330 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1713,7 +1713,6 @@ static int gsc_probe(struct platform_device *pdev)
- 	mutex_init(&ctx->lock);
- 	platform_set_drvdata(pdev, ctx);
- 
--	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
- 
- 	ret = exynos_drm_ippdrv_register(ippdrv);
--- 
-1.9.2
+VGhpcyBwYXRjaCBhZGRzIGRldmljZSBub2RlIGZvciBSb3RhdG9yIGRldmljZSB0byBFeHlub3Mg
+NDIxMCBhbmQgNHgxMgpkZXZpY2UgdHJlZSBmaWxlcy4KClNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6
+eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9ib290L2R0
+cy9leHlub3M0LmR0c2kgICAgfCAxMCArKysrKysrKystCiBhcmNoL2FybS9ib290L2R0cy9leHlu
+b3M0MjEwLmR0c2kgfCAgOCArKysrKysrKwogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5k
+dHNpIHwgIDQgKysrKwogMyBmaWxlcyBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspLCAxIGRlbGV0
+aW9uKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNC5kdHNpIGIvYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNC5kdHNpCmluZGV4IDJmMzFmNzczYjA5Ni4uM2ZhNTc1YWQ3
+NjkzIDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0LmR0c2kKKysrIGIvYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNC5kdHNpCkBAIC03MTgsNiArNzE4LDE1IEBACiAJCWlvbW11
+cyA9IDwmc3lzbW11X2pwZWc+OwogCX07CiAKKwlyb3RhdG9yOiByb3RhdG9yQDEyODEwMDAwIHsK
+KwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQyMTAtcm90YXRvciI7CisJCXJlZyA9IDww
+eDEyODEwMDAwIDB4MTAwMD47CisJCWludGVycnVwdHMgPSA8MCA4MyAwPjsKKwkJY2xvY2tzID0g
+PCZjbG9jayBDTEtfUk9UQVRPUj47CisJCWNsb2NrLW5hbWVzID0gInJvdGF0b3IiOworCQlpb21t
+dXMgPSA8JnN5c21tdV9yb3RhdG9yPjsKKwl9OworCiAJaGRtaTogaGRtaUAxMkQwMDAwMCB7CiAJ
+CWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEwLWhkbWkiOwogCQlyZWcgPSA8MHgxMkQw
+MDAwMCAweDcwMDAwPjsKQEAgLTk0NSw3ICs5NTQsNiBAQAogCQlpbnRlcnJ1cHRzID0gPDUgMD47
+CiAJCWNsb2NrLW5hbWVzID0gInN5c21tdSIsICJtYXN0ZXIiOwogCQljbG9ja3MgPSA8JmNsb2Nr
+IENMS19TTU1VX1JPVEFUT1I+LCA8JmNsb2NrIENMS19ST1RBVE9SPjsKLQkJcG93ZXItZG9tYWlu
+cyA9IDwmcGRfbGNkMD47CiAJCSNpb21tdS1jZWxscyA9IDwwPjsKIAl9OwogCmRpZmYgLS1naXQg
+YS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9l
+eHlub3M0MjEwLmR0c2kKaW5kZXggM2U1YmE2NjVkMjAwLi5iNzQ3NGNmMjdlODIgMTAwNjQ0Ci0t
+LSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaQorKysgYi9hcmNoL2FybS9ib290
+L2R0cy9leHlub3M0MjEwLmR0c2kKQEAgLTI3OSwzICsyNzksMTEgQEAKIAkJPCZjbG9jayBDTEtf
+T1VUX0NQVT4sIDwmY2xvY2sgQ0xLX1hYVEk+LCA8JmNsb2NrIENMS19YVVNCWFRJPjsKIAkjY2xv
+Y2stY2VsbHMgPSA8MT47CiB9OworCismcm90YXRvciB7CisJcG93ZXItZG9tYWlucyA9IDwmcGRf
+bGNkMD47Cit9OworCismc3lzbW11X3JvdGF0b3IgeworCXBvd2VyLWRvbWFpbnMgPSA8JnBkX2xj
+ZDA+OworfTsKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczR4MTIuZHRzaSBi
+L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczR4MTIuZHRzaQppbmRleCBiNzdkYWM2MWZmYjUuLjE0
+OGI0N2FkMzEyMCAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNp
+CisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczR4MTIuZHRzaQpAQCAtMzM5LDYgKzMzOSwx
+MCBAQAogCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEyLWpwZWciOwogfTsKIAorJnJv
+dGF0b3IgeworCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEyLXJvdGF0b3IiOworfTsK
+KwogJm1peGVyIHsKIAljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMi1taXhlciI7CiAJ
+Y2xvY2stbmFtZXMgPSAibWl4ZXIiLCAiaGRtaSIsICJzY2xrX2hkbWkiLCAidnAiOwotLSAKMS45
+LjIKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
