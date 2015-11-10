@@ -1,623 +1,240 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 11/25] drm/exynos: introduce exynos_drm_plane_state structure
-Date: Tue, 10 Nov 2015 14:23:27 +0100
-Message-ID: <1447161821-1877-12-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 10/25] drm/exynos: move dma_addr attribute from exynos plane to
+ exynos fb
+Date: Tue, 10 Nov 2015 14:23:26 +0100
+Message-ID: <1447161821-1877-11-git-send-email-m.szyprowski@samsung.com>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:64213 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753099AbbKJNY4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Nov 2015 08:24:56 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NXL00AJEP9GUMA0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2015 13:24:52 +0000 (GMT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch introduces exynos_drm_plane_state structure, which subclasses
-drm_plane_state and holds precalculated data suitable for configuring
-Exynos hardware.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  21 ++---
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  21 ++---
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  56 +++++++-----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  33 +++----
- drivers/gpu/drm/exynos/exynos_drm_plane.c     | 125 +++++++++++++++++++-------
- drivers/gpu/drm/exynos/exynos_mixer.c         |  61 +++++++------
- 6 files changed, 197 insertions(+), 120 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index a3161b0428b9..27039468364b 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -260,9 +260,10 @@ static void decon_atomic_begin(struct exynos_drm_crtc *crtc,
- static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 			       struct exynos_drm_plane *plane)
- {
-+	struct exynos_drm_plane_state *state =
-+				to_exynos_plane_state(plane->base.state);
- 	struct decon_context *ctx = crtc->ctx;
--	struct drm_plane_state *state = plane->base.state;
--	struct drm_framebuffer *fb = state->fb;
-+	struct drm_framebuffer *fb = state->base.fb;
- 	unsigned int win = plane->zpos;
- 	unsigned int bpp = fb->bits_per_pixel >> 3;
- 	unsigned int pitch = fb->pitches[0];
-@@ -272,11 +273,11 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 	if (test_bit(BIT_SUSPENDED, &ctx->flags))
- 		return;
- 
--	val = COORDINATE_X(plane->crtc_x) | COORDINATE_Y(plane->crtc_y);
-+	val = COORDINATE_X(state->crtc.x) | COORDINATE_Y(state->crtc.y);
- 	writel(val, ctx->addr + DECON_VIDOSDxA(win));
- 
--	val = COORDINATE_X(plane->crtc_x + plane->crtc_w - 1) |
--		COORDINATE_Y(plane->crtc_y + plane->crtc_h - 1);
-+	val = COORDINATE_X(state->crtc.x + state->crtc.w - 1) |
-+		COORDINATE_Y(state->crtc.y + state->crtc.h - 1);
- 	writel(val, ctx->addr + DECON_VIDOSDxB(win));
- 
- 	val = VIDOSD_Wx_ALPHA_R_F(0x0) | VIDOSD_Wx_ALPHA_G_F(0x0) |
-@@ -289,15 +290,15 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 
- 	writel(dma_addr, ctx->addr + DECON_VIDW0xADD0B0(win));
- 
--	val = dma_addr + pitch * plane->crtc_h;
-+	val = dma_addr + pitch * state->src.h;
- 	writel(val, ctx->addr + DECON_VIDW0xADD1B0(win));
- 
- 	if (ctx->out_type != IFTYPE_HDMI)
--		val = BIT_VAL(pitch - plane->crtc_w * bpp, 27, 14)
--			| BIT_VAL(plane->crtc_w * bpp, 13, 0);
-+		val = BIT_VAL(pitch - state->crtc.w * bpp, 27, 14)
-+			| BIT_VAL(state->crtc.w * bpp, 13, 0);
- 	else
--		val = BIT_VAL(pitch - plane->crtc_w * bpp, 29, 15)
--			| BIT_VAL(plane->crtc_w * bpp, 14, 0);
-+		val = BIT_VAL(pitch - state->crtc.w * bpp, 29, 15)
-+			| BIT_VAL(state->crtc.w * bpp, 14, 0);
- 	writel(val, ctx->addr + DECON_VIDW0xADD2(win));
- 
- 	decon_win_set_pixfmt(ctx, win, fb);
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 15e1e165020f..7868d30d8eac 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -399,9 +399,10 @@ static void decon_atomic_begin(struct exynos_drm_crtc *crtc,
- static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 			       struct exynos_drm_plane *plane)
- {
-+	struct exynos_drm_plane_state *state =
-+				to_exynos_plane_state(plane->base.state);
- 	struct decon_context *ctx = crtc->ctx;
--	struct drm_plane_state *state = plane->base.state;
--	struct drm_framebuffer *fb = state->fb;
-+	struct drm_framebuffer *fb = state->base.fb;
- 	int padding;
- 	unsigned long val, alpha;
- 	unsigned int last_x;
-@@ -434,22 +435,22 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 	writel(fb->height, ctx->regs + VIDW_WHOLE_Y(win));
- 
- 	/* offset from the start of the buffer to read */
--	writel(plane->src_x, ctx->regs + VIDW_OFFSET_X(win));
--	writel(plane->src_y, ctx->regs + VIDW_OFFSET_Y(win));
-+	writel(state->src.x, ctx->regs + VIDW_OFFSET_X(win));
-+	writel(state->src.y, ctx->regs + VIDW_OFFSET_Y(win));
- 
- 	DRM_DEBUG_KMS("start addr = 0x%lx\n",
- 			(unsigned long)val);
- 	DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
--			plane->crtc_w, plane->crtc_h);
-+			state->crtc.w, state->crtc.h);
- 
--	val = VIDOSDxA_TOPLEFT_X(plane->crtc_x) |
--		VIDOSDxA_TOPLEFT_Y(plane->crtc_y);
-+	val = VIDOSDxA_TOPLEFT_X(state->crtc.x) |
-+		VIDOSDxA_TOPLEFT_Y(state->crtc.y);
- 	writel(val, ctx->regs + VIDOSD_A(win));
- 
--	last_x = plane->crtc_x + plane->crtc_w;
-+	last_x = state->crtc.x + state->crtc.w;
- 	if (last_x)
- 		last_x--;
--	last_y = plane->crtc_y + plane->crtc_h;
-+	last_y = state->crtc.y + state->crtc.h;
- 	if (last_y)
- 		last_y--;
- 
-@@ -458,7 +459,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 	writel(val, ctx->regs + VIDOSD_B(win));
- 
- 	DRM_DEBUG_KMS("osd pos: tx = %d, ty = %d, bx = %d, by = %d\n",
--			plane->crtc_x, plane->crtc_y, last_x, last_y);
-+			state->crtc.x, state->crtc.y, last_x, last_y);
- 
- 	/* OSD alpha */
- 	alpha = VIDOSDxC_ALPHA0_R_F(0x0) |
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index dc41ffb26eb9..482ed2c2ed89 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -38,22 +38,44 @@ enum exynos_drm_output_type {
- 	EXYNOS_DISPLAY_TYPE_VIDI,
- };
- 
-+struct exynos_drm_rect {
-+	unsigned int x, y;
-+	unsigned int w, h;
-+};
-+
- /*
-- * Exynos drm common overlay structure.
-+ * Exynos drm plane state structure.
-  *
-- * @base: plane object
-- * @src_x: offset x on a framebuffer to be displayed.
-- *	- the unit is screen coordinates.
-- * @src_y: offset y on a framebuffer to be displayed.
-- *	- the unit is screen coordinates.
-- * @src_w: width of a partial image to be displayed from framebuffer.
-- * @src_h: height of a partial image to be displayed from framebuffer.
-- * @crtc_x: offset x on hardware screen.
-- * @crtc_y: offset y on hardware screen.
-- * @crtc_w: window width to be displayed (hardware screen).
-- * @crtc_h: window height to be displayed (hardware screen).
-+ * @base: plane_state object (contains drm_framebuffer pointer)
-+ * @src: rectangle of the source image data to be displayed (clipped to
-+ *       visible part).
-+ * @crtc: rectangle of the target image position on hardware screen
-+ *       (clipped to visible part).
-  * @h_ratio: horizontal scaling ratio, 16.16 fixed point
-  * @v_ratio: vertical scaling ratio, 16.16 fixed point
-+ *
-+ * this structure consists plane state data that will be applied to hardware
-+ * specific overlay info.
-+ */
-+
-+struct exynos_drm_plane_state {
-+	struct drm_plane_state base;
-+	struct exynos_drm_rect crtc;
-+	struct exynos_drm_rect src;
-+	unsigned int h_ratio;
-+	unsigned int v_ratio;
-+};
-+
-+static inline struct exynos_drm_plane_state *
-+to_exynos_plane_state(struct drm_plane_state *state)
-+{
-+	return container_of(state, struct exynos_drm_plane_state, base);
-+}
-+
-+/*
-+ * Exynos drm common overlay structure.
-+ *
-+ * @base: plane object
-  * @zpos: order of overlay layer(z position).
-  *
-  * this structure is common to exynos SoC and its contents would be copied
-@@ -62,16 +84,6 @@ enum exynos_drm_output_type {
- 
- struct exynos_drm_plane {
- 	struct drm_plane base;
--	unsigned int src_x;
--	unsigned int src_y;
--	unsigned int src_w;
--	unsigned int src_h;
--	unsigned int crtc_x;
--	unsigned int crtc_y;
--	unsigned int crtc_w;
--	unsigned int crtc_h;
--	unsigned int h_ratio;
--	unsigned int v_ratio;
- 	unsigned int zpos;
- 	struct drm_framebuffer *pending_fb;
- };
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index d39e960a837f..40fa621e3963 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -641,9 +641,10 @@ static void fimd_atomic_flush(struct exynos_drm_crtc *crtc,
- static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 			      struct exynos_drm_plane *plane)
- {
-+	struct exynos_drm_plane_state *state =
-+				to_exynos_plane_state(plane->base.state);
- 	struct fimd_context *ctx = crtc->ctx;
--	struct drm_plane_state *state = plane->base.state;
--	struct drm_framebuffer *fb = state->fb;
-+	struct drm_framebuffer *fb = state->base.fb;
- 	dma_addr_t dma_addr;
- 	unsigned long val, size, offset;
- 	unsigned int last_x, last_y, buf_offsize, line_size;
-@@ -654,8 +655,8 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 	if (ctx->suspended)
- 		return;
- 
--	offset = plane->src_x * bpp;
--	offset += plane->src_y * pitch;
-+	offset = state->src.x * bpp;
-+	offset += state->src.y * pitch;
- 
- 	/* buffer start address */
- 	dma_addr = exynos_drm_fb_dma_addr(fb, 0) + offset;
-@@ -663,18 +664,18 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 	writel(val, ctx->regs + VIDWx_BUF_START(win, 0));
- 
- 	/* buffer end address */
--	size = pitch * plane->crtc_h;
-+	size = pitch * state->crtc.h;
- 	val = (unsigned long)(dma_addr + size);
- 	writel(val, ctx->regs + VIDWx_BUF_END(win, 0));
- 
- 	DRM_DEBUG_KMS("start addr = 0x%lx, end addr = 0x%lx, size = 0x%lx\n",
- 			(unsigned long)dma_addr, val, size);
- 	DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
--			plane->crtc_w, plane->crtc_h);
-+			state->crtc.w, state->crtc.h);
- 
- 	/* buffer size */
--	buf_offsize = pitch - (plane->crtc_w * bpp);
--	line_size = plane->crtc_w * bpp;
-+	buf_offsize = pitch - (state->crtc.w * bpp);
-+	line_size = state->crtc.w * bpp;
- 	val = VIDW_BUF_SIZE_OFFSET(buf_offsize) |
- 		VIDW_BUF_SIZE_PAGEWIDTH(line_size) |
- 		VIDW_BUF_SIZE_OFFSET_E(buf_offsize) |
-@@ -682,16 +683,16 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 	writel(val, ctx->regs + VIDWx_BUF_SIZE(win, 0));
- 
- 	/* OSD position */
--	val = VIDOSDxA_TOPLEFT_X(plane->crtc_x) |
--		VIDOSDxA_TOPLEFT_Y(plane->crtc_y) |
--		VIDOSDxA_TOPLEFT_X_E(plane->crtc_x) |
--		VIDOSDxA_TOPLEFT_Y_E(plane->crtc_y);
-+	val = VIDOSDxA_TOPLEFT_X(state->crtc.x) |
-+		VIDOSDxA_TOPLEFT_Y(state->crtc.y) |
-+		VIDOSDxA_TOPLEFT_X_E(state->crtc.x) |
-+		VIDOSDxA_TOPLEFT_Y_E(state->crtc.y);
- 	writel(val, ctx->regs + VIDOSD_A(win));
- 
--	last_x = plane->crtc_x + plane->crtc_w;
-+	last_x = state->crtc.x + state->crtc.w;
- 	if (last_x)
- 		last_x--;
--	last_y = plane->crtc_y + plane->crtc_h;
-+	last_y = state->crtc.y + state->crtc.h;
- 	if (last_y)
- 		last_y--;
- 
-@@ -701,14 +702,14 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 	writel(val, ctx->regs + VIDOSD_B(win));
- 
- 	DRM_DEBUG_KMS("osd pos: tx = %d, ty = %d, bx = %d, by = %d\n",
--			plane->crtc_x, plane->crtc_y, last_x, last_y);
-+			state->crtc.x, state->crtc.y, last_x, last_y);
- 
- 	/* OSD size */
- 	if (win != 3 && win != 4) {
- 		u32 offset = VIDOSD_D(win);
- 		if (win == 0)
- 			offset = VIDOSD_C(win);
--		val = plane->crtc_w * plane->crtc_h;
-+		val = state->crtc.w * state->crtc.h;
- 		writel(val, ctx->regs + offset);
- 
- 		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index c725409421b8..365a738042e2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -56,19 +56,35 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
- 	return size;
- }
- 
--static void exynos_plane_mode_set(struct drm_plane *plane,
--				  struct drm_crtc *crtc,
--				  struct drm_framebuffer *fb,
--				  int crtc_x, int crtc_y,
--				  unsigned int crtc_w, unsigned int crtc_h,
--				  uint32_t src_x, uint32_t src_y,
--				  uint32_t src_w, uint32_t src_h)
-+static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
-+
- {
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
-+	struct drm_plane_state *state = &exynos_state->base;
-+	struct drm_crtc *crtc = exynos_state->base.crtc;
- 	struct drm_display_mode *mode = &crtc->state->adjusted_mode;
-+	int crtc_x, crtc_y;
-+	unsigned int crtc_w, crtc_h;
-+	unsigned int src_x, src_y;
-+	unsigned int src_w, src_h;
- 	unsigned int actual_w;
- 	unsigned int actual_h;
- 
-+	/*
-+	 * The original src/dest coordinates are stored in exynos_state->base,
-+	 * but we want to keep another copy internal to our driver that we can
-+	 * clip/modify ourselves.
-+	 */
-+
-+	crtc_x = state->crtc_x;
-+	crtc_y = state->crtc_y;
-+	crtc_w = state->crtc_w;
-+	crtc_h = state->crtc_h;
-+
-+	src_x = state->src_x >> 16;
-+	src_y = state->src_y >> 16;
-+	src_w = state->src_w >> 16;
-+	src_h = state->src_h >> 16;
-+
- 	actual_w = exynos_plane_get_size(crtc_x, crtc_w, mode->hdisplay);
- 	actual_h = exynos_plane_get_size(crtc_y, crtc_h, mode->vdisplay);
- 
-@@ -85,46 +101,93 @@ static void exynos_plane_mode_set(struct drm_plane *plane,
- 	}
- 
- 	/* set ratio */
--	exynos_plane->h_ratio = (src_w << 16) / crtc_w;
--	exynos_plane->v_ratio = (src_h << 16) / crtc_h;
-+	exynos_state->h_ratio = (src_w << 16) / crtc_w;
-+	exynos_state->v_ratio = (src_h << 16) / crtc_h;
- 
- 	/* set drm framebuffer data. */
--	exynos_plane->src_x = src_x;
--	exynos_plane->src_y = src_y;
--	exynos_plane->src_w = (actual_w * exynos_plane->h_ratio) >> 16;
--	exynos_plane->src_h = (actual_h * exynos_plane->v_ratio) >> 16;
-+	exynos_state->src.x = src_x;
-+	exynos_state->src.y = src_y;
-+	exynos_state->src.w = (actual_w * exynos_state->h_ratio) >> 16;
-+	exynos_state->src.h = (actual_h * exynos_state->v_ratio) >> 16;
- 
- 	/* set plane range to be displayed. */
--	exynos_plane->crtc_x = crtc_x;
--	exynos_plane->crtc_y = crtc_y;
--	exynos_plane->crtc_w = actual_w;
--	exynos_plane->crtc_h = actual_h;
-+	exynos_state->crtc.x = crtc_x;
-+	exynos_state->crtc.y = crtc_y;
-+	exynos_state->crtc.w = actual_w;
-+	exynos_state->crtc.h = actual_h;
- 
- 	DRM_DEBUG_KMS("plane : offset_x/y(%d,%d), width/height(%d,%d)",
--			exynos_plane->crtc_x, exynos_plane->crtc_y,
--			exynos_plane->crtc_w, exynos_plane->crtc_h);
-+			exynos_state->crtc.x, exynos_state->crtc.y,
-+			exynos_state->crtc.w, exynos_state->crtc.h);
-+}
- 
--	plane->crtc = crtc;
-+static void exynos_drm_plane_reset(struct drm_plane *plane)
-+{
-+	struct exynos_drm_plane_state *exynos_state;
-+
-+	if (plane->state) {
-+		exynos_state = to_exynos_plane_state(plane->state);
-+		if (exynos_state->base.fb)
-+			drm_framebuffer_unreference(exynos_state->base.fb);
-+		kfree(exynos_state);
-+		plane->state = NULL;
-+	}
-+
-+	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
-+	if (exynos_state) {
-+		plane->state = &exynos_state->base;
-+		plane->state->plane = plane;
-+	}
-+}
-+
-+static struct drm_plane_state *
-+exynos_drm_plane_duplicate_state(struct drm_plane *plane)
-+{
-+	struct exynos_drm_plane_state *exynos_state;
-+	struct exynos_drm_plane_state *copy;
-+
-+	exynos_state = to_exynos_plane_state(plane->state);
-+	copy = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
-+	if (!copy)
-+		return NULL;
-+
-+	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
-+	return &copy->base;
-+}
-+
-+static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
-+					   struct drm_plane_state *old_state)
-+{
-+	struct exynos_drm_plane_state *old_exynos_state =
-+					to_exynos_plane_state(old_state);
-+	__drm_atomic_helper_plane_destroy_state(plane, old_state);
-+	kfree(old_exynos_state);
- }
- 
- static struct drm_plane_funcs exynos_plane_funcs = {
- 	.update_plane	= drm_atomic_helper_update_plane,
- 	.disable_plane	= drm_atomic_helper_disable_plane,
- 	.destroy	= drm_plane_cleanup,
--	.reset = drm_atomic_helper_plane_reset,
--	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
--	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
-+	.reset		= exynos_drm_plane_reset,
-+	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
-+	.atomic_destroy_state = exynos_drm_plane_destroy_state,
- };
- 
- static int exynos_plane_atomic_check(struct drm_plane *plane,
- 				     struct drm_plane_state *state)
- {
- 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
-+	struct exynos_drm_plane_state *exynos_state =
-+						to_exynos_plane_state(state);
-+	int ret = 0;
- 
--	if (!state->fb)
-+	if (!state->crtc || !state->fb)
- 		return 0;
- 
--	return 0;
-+	/* translate state into exynos_state */
-+	exynos_plane_mode_set(exynos_state);
-+
-+	return ret;
- }
- 
- static void exynos_plane_atomic_update(struct drm_plane *plane,
-@@ -137,12 +200,7 @@ static void exynos_plane_atomic_update(struct drm_plane *plane,
- 	if (!state->crtc)
- 		return;
- 
--	exynos_plane_mode_set(plane, state->crtc, state->fb,
--			      state->crtc_x, state->crtc_y,
--			      state->crtc_w, state->crtc_h,
--			      state->src_x >> 16, state->src_y >> 16,
--			      state->src_w >> 16, state->src_h >> 16);
--
-+	plane->crtc = state->crtc;
- 	exynos_plane->pending_fb = state->fb;
- 
- 	if (exynos_crtc->ops->update_plane)
-@@ -159,8 +217,7 @@ static void exynos_plane_atomic_disable(struct drm_plane *plane,
- 		return;
- 
- 	if (exynos_crtc->ops->disable_plane)
--		exynos_crtc->ops->disable_plane(exynos_crtc,
--						exynos_plane);
-+		exynos_crtc->ops->disable_plane(exynos_crtc, exynos_plane);
- }
- 
- static const struct drm_plane_helper_funcs plane_helper_funcs = {
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index efb5d0435558..c3bd8cace37a 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -400,10 +400,11 @@ static void mixer_stop(struct mixer_context *ctx)
- static void vp_video_buffer(struct mixer_context *ctx,
- 			    struct exynos_drm_plane *plane)
- {
-+	struct exynos_drm_plane_state *state =
-+				to_exynos_plane_state(plane->base.state);
- 	struct mixer_resources *res = &ctx->mixer_res;
--	struct drm_plane_state *state = plane->base.state;
--	struct drm_framebuffer *fb = state->fb;
--	struct drm_display_mode *mode = &state->crtc->mode;
-+	struct drm_framebuffer *fb = state->base.fb;
-+	struct drm_display_mode *mode = &state->base.crtc->mode;
- 	unsigned long flags;
- 	dma_addr_t luma_addr[2], chroma_addr[2];
- 	bool tiled_mode = false;
-@@ -460,24 +461,24 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(fb->pitches[0]) |
- 		VP_IMG_VSIZE(fb->height / 2));
- 
--	vp_reg_write(res, VP_SRC_WIDTH, plane->src_w);
--	vp_reg_write(res, VP_SRC_HEIGHT, plane->src_h);
-+	vp_reg_write(res, VP_SRC_WIDTH, state->src.w);
-+	vp_reg_write(res, VP_SRC_HEIGHT, state->src.h);
- 	vp_reg_write(res, VP_SRC_H_POSITION,
--			VP_SRC_H_POSITION_VAL(plane->src_x));
--	vp_reg_write(res, VP_SRC_V_POSITION, plane->src_y);
-+			VP_SRC_H_POSITION_VAL(state->src.x));
-+	vp_reg_write(res, VP_SRC_V_POSITION, state->src.y);
- 
--	vp_reg_write(res, VP_DST_WIDTH, plane->crtc_w);
--	vp_reg_write(res, VP_DST_H_POSITION, plane->crtc_x);
-+	vp_reg_write(res, VP_DST_WIDTH, state->crtc.w);
-+	vp_reg_write(res, VP_DST_H_POSITION, state->crtc.x);
- 	if (ctx->interlace) {
--		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_h / 2);
--		vp_reg_write(res, VP_DST_V_POSITION, plane->crtc_y / 2);
-+		vp_reg_write(res, VP_DST_HEIGHT, state->crtc.h / 2);
-+		vp_reg_write(res, VP_DST_V_POSITION, state->crtc.y / 2);
- 	} else {
--		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_h);
--		vp_reg_write(res, VP_DST_V_POSITION, plane->crtc_y);
-+		vp_reg_write(res, VP_DST_HEIGHT, state->crtc.h);
-+		vp_reg_write(res, VP_DST_V_POSITION, state->crtc.y);
- 	}
- 
--	vp_reg_write(res, VP_H_RATIO, plane->h_ratio);
--	vp_reg_write(res, VP_V_RATIO, plane->v_ratio);
-+	vp_reg_write(res, VP_H_RATIO, state->h_ratio);
-+	vp_reg_write(res, VP_V_RATIO, state->v_ratio);
- 
- 	vp_reg_write(res, VP_ENDIAN_MODE, VP_ENDIAN_MODE_LITTLE);
- 
-@@ -509,15 +510,18 @@ static void mixer_layer_update(struct mixer_context *ctx)
- static int mixer_setup_scale(const struct exynos_drm_plane *plane,
- 		unsigned int *x_ratio, unsigned int *y_ratio)
- {
--	if (plane->crtc_w != plane->src_w) {
--		if (plane->crtc_w == 2 * plane->src_w)
-+	struct exynos_drm_plane_state *state =
-+				to_exynos_plane_state(plane->base.state);
-+
-+	if (state->crtc.w != state->src.w) {
-+		if (state->crtc.w == 2 * state->src.w)
- 			*x_ratio = 1;
- 		else
- 			goto fail;
- 	}
- 
--	if (plane->crtc_h != plane->src_h) {
--		if (plane->crtc_h == 2 * plane->src_h)
-+	if (state->crtc.h != state->src.h) {
-+		if (state->crtc.h == 2 * state->src.h)
- 			*y_ratio = 1;
- 		else
- 			goto fail;
-@@ -533,10 +537,11 @@ fail:
- static void mixer_graph_buffer(struct mixer_context *ctx,
- 			       struct exynos_drm_plane *plane)
- {
-+	struct exynos_drm_plane_state *state =
-+				to_exynos_plane_state(plane->base.state);
- 	struct mixer_resources *res = &ctx->mixer_res;
--	struct drm_plane_state *state = plane->base.state;
--	struct drm_framebuffer *fb = state->fb;
--	struct drm_display_mode *mode = &state->crtc->mode;
-+	struct drm_framebuffer *fb = state->base.fb;
-+	struct drm_display_mode *mode = &state->base.crtc->mode;
- 	unsigned long flags;
- 	unsigned int win = plane->zpos;
- 	unsigned int x_ratio = 0, y_ratio = 0;
-@@ -572,13 +577,13 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 	if (mixer_setup_scale(plane, &x_ratio, &y_ratio))
- 		return;
- 
--	dst_x_offset = plane->crtc_x;
--	dst_y_offset = plane->crtc_y;
-+	dst_x_offset = state->crtc.x;
-+	dst_y_offset = state->crtc.y;
- 
- 	/* converting dma address base and source offset */
- 	dma_addr = exynos_drm_fb_dma_addr(fb, 0)
--		+ (plane->src_x * fb->bits_per_pixel >> 3)
--		+ (plane->src_y * fb->pitches[0]);
-+		+ (state->src.x * fb->bits_per_pixel >> 3)
-+		+ (state->src.y * fb->pitches[0]);
- 	src_x_offset = 0;
- 	src_y_offset = 0;
- 
-@@ -606,8 +611,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 		mixer_reg_write(res, MXR_RESOLUTION, val);
- 	}
- 
--	val  = MXR_GRP_WH_WIDTH(plane->src_w);
--	val |= MXR_GRP_WH_HEIGHT(plane->src_h);
-+	val  = MXR_GRP_WH_WIDTH(state->src.w);
-+	val |= MXR_GRP_WH_HEIGHT(state->src.h);
- 	val |= MXR_GRP_WH_H_SCALE(x_ratio);
- 	val |= MXR_GRP_WH_V_SCALE(y_ratio);
- 	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
--- 
-1.9.2
+RE1BIGFkZHJlc3MgaXMgYSBmcmFtZWJ1ZmZlciBhdHRyaWJ1dGUgYW5kIHRoZSByaWdodCBwbGFj
+ZSBmb3IgaXQgaXMKZXh5bm9zX2RybV9mcmFtZWJ1ZmZlciBub3QgZXh5bm9zX2RybV9wbGFuZS4g
+VGhpcyBwYXRjaCBhbHNvIGludHJvZHVjZXMKaGVscGVyIGZ1bmN0aW9uIGZvciBnZXR0aW5nIGRt
+YSBhZGRyZXNzIG9mIHRoZSBnaXZlbiBmcmFtZWJ1ZmZlci4KClNpZ25lZC1vZmYtYnk6IE1hcmVr
+IFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAxMyArKysrKysrKy0tLS0tCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAxNiArKysrKysrKyst
+LS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgICAgfCAg
+MyAtLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgICAgICB8IDE2
+ICsrKysrKy0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5o
+ICAgICAgICB8ICAzICstLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
+YyAgICAgIHwgMTAgKysrKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X3BsYW5lLmMgICAgIHwgMTggLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgfCAgNSArKysrLQogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgICAgIHwgIDcgKysrKy0tLQogOSBmaWxlcyBjaGFuZ2Vk
+LCAzOCBpbnNlcnRpb25zKCspLCA1MyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKaW5kZXggZmJlMWIzMTc0Zjc1Li5hMzE2MWIw
+NDI4YjkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1f
+ZGVjb24uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29u
+LmMKQEAgLTIxLDYgKzIxLDcgQEAKIAogI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCiAjaW5j
+bHVkZSAiZXh5bm9zX2RybV9jcnRjLmgiCisjaW5jbHVkZSAiZXh5bm9zX2RybV9mYi5oIgogI2lu
+Y2x1ZGUgImV4eW5vc19kcm1fcGxhbmUuaCIKICNpbmNsdWRlICJleHlub3NfZHJtX2lvbW11Lmgi
+CiAKQEAgLTI2MSw5ICsyNjIsMTEgQEAgc3RhdGljIHZvaWQgZGVjb25fdXBkYXRlX3BsYW5lKHN0
+cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCiB7CiAJc3RydWN0IGRlY29uX2NvbnRleHQgKmN0
+eCA9IGNydGMtPmN0eDsKIAlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSA9IHBsYW5lLT5i
+YXNlLnN0YXRlOworCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gc3RhdGUtPmZiOwogCXVu
+c2lnbmVkIGludCB3aW4gPSBwbGFuZS0+enBvczsKLQl1bnNpZ25lZCBpbnQgYnBwID0gc3RhdGUt
+PmZiLT5iaXRzX3Blcl9waXhlbCA+PiAzOwotCXVuc2lnbmVkIGludCBwaXRjaCA9IHN0YXRlLT5m
+Yi0+cGl0Y2hlc1swXTsKKwl1bnNpZ25lZCBpbnQgYnBwID0gZmItPmJpdHNfcGVyX3BpeGVsID4+
+IDM7CisJdW5zaWduZWQgaW50IHBpdGNoID0gZmItPnBpdGNoZXNbMF07CisJZG1hX2FkZHJfdCBk
+bWFfYWRkciA9IGV4eW5vc19kcm1fZmJfZG1hX2FkZHIoZmIsIDApOwogCXUzMiB2YWw7CiAKIAlp
+ZiAodGVzdF9iaXQoQklUX1NVU1BFTkRFRCwgJmN0eC0+ZmxhZ3MpKQpAQCAtMjg0LDkgKzI4Nyw5
+IEBAIHN0YXRpYyB2b2lkIGRlY29uX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRj
+ICpjcnRjLAogCQlWSURPU0RfV3hfQUxQSEFfQl9GKDB4MCk7CiAJd3JpdGVsKHZhbCwgY3R4LT5h
+ZGRyICsgREVDT05fVklET1NEeEQod2luKSk7CiAKLQl3cml0ZWwocGxhbmUtPmRtYV9hZGRyWzBd
+LCBjdHgtPmFkZHIgKyBERUNPTl9WSURXMHhBREQwQjAod2luKSk7CisJd3JpdGVsKGRtYV9hZGRy
+LCBjdHgtPmFkZHIgKyBERUNPTl9WSURXMHhBREQwQjAod2luKSk7CiAKLQl2YWwgPSBwbGFuZS0+
+ZG1hX2FkZHJbMF0gKyBwaXRjaCAqIHBsYW5lLT5jcnRjX2g7CisJdmFsID0gZG1hX2FkZHIgKyBw
+aXRjaCAqIHBsYW5lLT5jcnRjX2g7CiAJd3JpdGVsKHZhbCwgY3R4LT5hZGRyICsgREVDT05fVklE
+VzB4QUREMUIwKHdpbikpOwogCiAJaWYgKGN0eC0+b3V0X3R5cGUgIT0gSUZUWVBFX0hETUkpCkBA
+IC0yOTcsNyArMzAwLDcgQEAgc3RhdGljIHZvaWQgZGVjb25fdXBkYXRlX3BsYW5lKHN0cnVjdCBl
+eHlub3NfZHJtX2NydGMgKmNydGMsCiAJCQl8IEJJVF9WQUwocGxhbmUtPmNydGNfdyAqIGJwcCwg
+MTQsIDApOwogCXdyaXRlbCh2YWwsIGN0eC0+YWRkciArIERFQ09OX1ZJRFcweEFERDIod2luKSk7
+CiAKLQlkZWNvbl93aW5fc2V0X3BpeGZtdChjdHgsIHdpbiwgc3RhdGUtPmZiKTsKKwlkZWNvbl93
+aW5fc2V0X3BpeGZtdChjdHgsIHdpbiwgZmIpOwogCiAJLyogd2luZG93IGVuYWJsZSAqLwogCWRl
+Y29uX3NldF9iaXRzKGN0eCwgREVDT05fV0lOQ09OeCh3aW4pLCBXSU5DT054X0VOV0lOX0YsIH4w
+KTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24u
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwppbmRleCBkNTBj
+MjZhNDFlMDkuLjE1ZTFlMTY1MDIwZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3M3X2RybV9kZWNvbi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+N19kcm1fZGVjb24uYwpAQCAtMzAsNiArMzAsNyBAQAogI2luY2x1ZGUgImV4eW5vc19kcm1fY3J0
+Yy5oIgogI2luY2x1ZGUgImV4eW5vc19kcm1fcGxhbmUuaCIKICNpbmNsdWRlICJleHlub3NfZHJt
+X2Rydi5oIgorI2luY2x1ZGUgImV4eW5vc19kcm1fZmIuaCIKICNpbmNsdWRlICJleHlub3NfZHJt
+X2ZiZGV2LmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9pb21tdS5oIgogCkBAIC00MDAsMTMgKzQw
+MSwxNCBAQCBzdGF0aWMgdm9pZCBkZWNvbl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1f
+Y3J0YyAqY3J0YywKIHsKIAlzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4Owog
+CXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRlID0gcGxhbmUtPmJhc2Uuc3RhdGU7CisJc3Ry
+dWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBzdGF0ZS0+ZmI7CiAJaW50IHBhZGRpbmc7CiAJdW5z
+aWduZWQgbG9uZyB2YWwsIGFscGhhOwogCXVuc2lnbmVkIGludCBsYXN0X3g7CiAJdW5zaWduZWQg
+aW50IGxhc3RfeTsKIAl1bnNpZ25lZCBpbnQgd2luID0gcGxhbmUtPnpwb3M7Ci0JdW5zaWduZWQg
+aW50IGJwcCA9IHN0YXRlLT5mYi0+Yml0c19wZXJfcGl4ZWwgPj4gMzsKLQl1bnNpZ25lZCBpbnQg
+cGl0Y2ggPSBzdGF0ZS0+ZmItPnBpdGNoZXNbMF07CisJdW5zaWduZWQgaW50IGJwcCA9IGZiLT5i
+aXRzX3Blcl9waXhlbCA+PiAzOworCXVuc2lnbmVkIGludCBwaXRjaCA9IGZiLT5waXRjaGVzWzBd
+OwogCiAJaWYgKGN0eC0+c3VzcGVuZGVkKQogCQlyZXR1cm47CkBAIC00MjIsMTQgKzQyNCwxNCBA
+QCBzdGF0aWMgdm9pZCBkZWNvbl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAq
+Y3J0YywKIAkgKi8KIAogCS8qIGJ1ZmZlciBzdGFydCBhZGRyZXNzICovCi0JdmFsID0gKHVuc2ln
+bmVkIGxvbmcpcGxhbmUtPmRtYV9hZGRyWzBdOworCXZhbCA9ICh1bnNpZ25lZCBsb25nKWV4eW5v
+c19kcm1fZmJfZG1hX2FkZHIoZmIsIDApOwogCXdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFZJRFdf
+QlVGX1NUQVJUKHdpbikpOwogCi0JcGFkZGluZyA9IChwaXRjaCAvIGJwcCkgLSBzdGF0ZS0+ZmIt
+PndpZHRoOworCXBhZGRpbmcgPSAocGl0Y2ggLyBicHApIC0gZmItPndpZHRoOwogCiAJLyogYnVm
+ZmVyIHNpemUgKi8KLQl3cml0ZWwoc3RhdGUtPmZiLT53aWR0aCArIHBhZGRpbmcsIGN0eC0+cmVn
+cyArIFZJRFdfV0hPTEVfWCh3aW4pKTsKLQl3cml0ZWwoc3RhdGUtPmZiLT5oZWlnaHQsIGN0eC0+
+cmVncyArIFZJRFdfV0hPTEVfWSh3aW4pKTsKKwl3cml0ZWwoZmItPndpZHRoICsgcGFkZGluZywg
+Y3R4LT5yZWdzICsgVklEV19XSE9MRV9YKHdpbikpOworCXdyaXRlbChmYi0+aGVpZ2h0LCBjdHgt
+PnJlZ3MgKyBWSURXX1dIT0xFX1kod2luKSk7CiAKIAkvKiBvZmZzZXQgZnJvbSB0aGUgc3RhcnQg
+b2YgdGhlIGJ1ZmZlciB0byByZWFkICovCiAJd3JpdGVsKHBsYW5lLT5zcmNfeCwgY3R4LT5yZWdz
+ICsgVklEV19PRkZTRVRfWCh3aW4pKTsKQEAgLTQ3MSw3ICs0NzMsNyBAQCBzdGF0aWMgdm9pZCBk
+ZWNvbl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKIAogCXdyaXRl
+bChhbHBoYSwgY3R4LT5yZWdzICsgVklET1NEX0Qod2luKSk7CiAKLQlkZWNvbl93aW5fc2V0X3Bp
+eGZtdChjdHgsIHdpbiwgc3RhdGUtPmZiKTsKKwlkZWNvbl93aW5fc2V0X3BpeGZtdChjdHgsIHdp
+biwgZmIpOwogCiAJLyogaGFyZHdhcmUgd2luZG93IDAgZG9lc24ndCBzdXBwb3J0IGNvbG9yIGtl
+eS4gKi8KIAlpZiAod2luICE9IDApCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
+LmgKaW5kZXggZjFlZGE3ZmE0ZTNjLi5kYzQxZmZiMjZlYjkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTU0LDggKzU0LDYgQEAgZW51bSBleHlub3NfZHJtX291
+dHB1dF90eXBlIHsKICAqIEBjcnRjX2g6IHdpbmRvdyBoZWlnaHQgdG8gYmUgZGlzcGxheWVkICho
+YXJkd2FyZSBzY3JlZW4pLgogICogQGhfcmF0aW86IGhvcml6b250YWwgc2NhbGluZyByYXRpbywg
+MTYuMTYgZml4ZWQgcG9pbnQKICAqIEB2X3JhdGlvOiB2ZXJ0aWNhbCBzY2FsaW5nIHJhdGlvLCAx
+Ni4xNiBmaXhlZCBwb2ludAotICogQGRtYV9hZGRyOiBhcnJheSBvZiBidXMoYWNjZXNzZWQgYnkg
+ZG1hKSBhZGRyZXNzIHRvIHRoZSBtZW1vcnkgcmVnaW9uCi0gKgkgICAgICBhbGxvY2F0ZWQgZm9y
+IGEgb3ZlcmxheS4KICAqIEB6cG9zOiBvcmRlciBvZiBvdmVybGF5IGxheWVyKHogcG9zaXRpb24p
+LgogICoKICAqIHRoaXMgc3RydWN0dXJlIGlzIGNvbW1vbiB0byBleHlub3MgU29DIGFuZCBpdHMg
+Y29udGVudHMgd291bGQgYmUgY29waWVkCkBAIC03NCw3ICs3Miw2IEBAIHN0cnVjdCBleHlub3Nf
+ZHJtX3BsYW5lIHsKIAl1bnNpZ25lZCBpbnQgY3J0Y19oOwogCXVuc2lnbmVkIGludCBoX3JhdGlv
+OwogCXVuc2lnbmVkIGludCB2X3JhdGlvOwotCWRtYV9hZGRyX3QgZG1hX2FkZHJbTUFYX0ZCX0JV
+RkZFUl07CiAJdW5zaWduZWQgaW50IHpwb3M7CiAJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqcGVu
+ZGluZ19mYjsKIH07CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCmluZGV4IGZj
+ZWEyOGJkYmM0Mi4uOTZkNWRiNGVmNjNmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZmIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmIuYwpAQCAtMzcsNiArMzcsNyBAQAogc3RydWN0IGV4eW5vc19kcm1fZmIgewogCXN0cnVj
+dCBkcm1fZnJhbWVidWZmZXIJZmI7CiAJc3RydWN0IGV4eW5vc19kcm1fZ2VtCSpleHlub3NfZ2Vt
+W01BWF9GQl9CVUZGRVJdOworCWRtYV9hZGRyX3QJCQlkbWFfYWRkcltNQVhfRkJfQlVGRkVSXTsK
+IH07CiAKIHN0YXRpYyBpbnQgY2hlY2tfZmJfZ2VtX21lbW9yeV90eXBlKHN0cnVjdCBkcm1fZGV2
+aWNlICpkcm1fZGV2LApAQCAtMTM1LDYgKzEzNiw4IEBAIGV4eW5vc19kcm1fZnJhbWVidWZmZXJf
+aW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkJZ290byBlcnI7CiAKIAkJZXh5bm9zX2Zi
+LT5leHlub3NfZ2VtW2ldID0gZXh5bm9zX2dlbVtpXTsKKwkJZXh5bm9zX2ZiLT5kbWFfYWRkcltp
+XSA9IGV4eW5vc19nZW1baV0tPmRtYV9hZGRyCisJCQkJCQkrIG1vZGVfY21kLT5vZmZzZXRzW2ld
+OwogCX0KIAogCWRybV9oZWxwZXJfbW9kZV9maWxsX2ZiX3N0cnVjdCgmZXh5bm9zX2ZiLT5mYiwg
+bW9kZV9jbWQpOwpAQCAtMTg5LDIxICsxOTIsMTQgQEAgZXJyOgogCXJldHVybiBFUlJfUFRSKHJl
+dCk7CiB9CiAKLXN0cnVjdCBleHlub3NfZHJtX2dlbSAqZXh5bm9zX2RybV9mYl9nZW0oc3RydWN0
+IGRybV9mcmFtZWJ1ZmZlciAqZmIsIGludCBpbmRleCkKK2RtYV9hZGRyX3QgZXh5bm9zX2RybV9m
+Yl9kbWFfYWRkcihzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiwgaW50IGluZGV4KQogewogCXN0
+cnVjdCBleHlub3NfZHJtX2ZiICpleHlub3NfZmIgPSB0b19leHlub3NfZmIoZmIpOwotCXN0cnVj
+dCBleHlub3NfZHJtX2dlbSAqZXh5bm9zX2dlbTsKIAogCWlmIChpbmRleCA+PSBNQVhfRkJfQlVG
+RkVSKQotCQlyZXR1cm4gTlVMTDsKKwkJcmV0dXJuIERNQV9FUlJPUl9DT0RFOwogCi0JZXh5bm9z
+X2dlbSA9IGV4eW5vc19mYi0+ZXh5bm9zX2dlbVtpbmRleF07Ci0JaWYgKCFleHlub3NfZ2VtKQot
+CQlyZXR1cm4gTlVMTDsKLQotCURSTV9ERUJVR19LTVMoImRtYV9hZGRyOiAweCVseFxuIiwgKHVu
+c2lnbmVkIGxvbmcpZXh5bm9zX2dlbS0+ZG1hX2FkZHIpOwotCi0JcmV0dXJuIGV4eW5vc19nZW07
+CisJcmV0dXJuIGV4eW5vc19mYi0+ZG1hX2FkZHJbaW5kZXhdOwogfQogCiBzdGF0aWMgdm9pZCBl
+eHlub3NfZHJtX291dHB1dF9wb2xsX2NoYW5nZWQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5oIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmgKaW5kZXggNzI2YTJkNDQzNzFmLi40MzU3
+YTgyYzUxZDkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
+Yi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5oCkBAIC0yMiw4
+ICsyMiw3IEBAIGV4eW5vc19kcm1fZnJhbWVidWZmZXJfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAq
+ZGV2LAogCQkJICAgIHN0cnVjdCBleHlub3NfZHJtX2dlbSAqKmV4eW5vc19nZW0sCiAJCQkgICAg
+aW50IGNvdW50KTsKIAotLyogZ2V0IGdlbSBvYmplY3Qgb2YgYSBkcm0gZnJhbWVidWZmZXIgKi8K
+LXN0cnVjdCBleHlub3NfZHJtX2dlbSAqZXh5bm9zX2RybV9mYl9nZW0oc3RydWN0IGRybV9mcmFt
+ZWJ1ZmZlciAqZmIsIGludCBpbmRleCk7CitkbWFfYWRkcl90IGV4eW5vc19kcm1fZmJfZG1hX2Fk
+ZHIoc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIsIGludCBpbmRleCk7CiAKIHZvaWQgZXh5bm9z
+X2RybV9tb2RlX2NvbmZpZ19pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwogCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCBiZDc1YzE1MzFjYWMuLmQzOWU5
+NjBhODM3ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
+bWQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCkBAIC0y
+OSw2ICsyOSw3IEBACiAjaW5jbHVkZSA8ZHJtL2V4eW5vc19kcm0uaD4KIAogI2luY2x1ZGUgImV4
+eW5vc19kcm1fZHJ2LmgiCisjaW5jbHVkZSAiZXh5bm9zX2RybV9mYi5oIgogI2luY2x1ZGUgImV4
+eW5vc19kcm1fZmJkZXYuaCIKICNpbmNsdWRlICJleHlub3NfZHJtX2NydGMuaCIKICNpbmNsdWRl
+ICJleHlub3NfZHJtX3BsYW5lLmgiCkBAIC02NDIsMTIgKzY0MywxMyBAQCBzdGF0aWMgdm9pZCBm
+aW1kX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAogewogCXN0cnVj
+dCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKIAlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRl
+ICpzdGF0ZSA9IHBsYW5lLT5iYXNlLnN0YXRlOworCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZi
+ID0gc3RhdGUtPmZiOwogCWRtYV9hZGRyX3QgZG1hX2FkZHI7CiAJdW5zaWduZWQgbG9uZyB2YWws
+IHNpemUsIG9mZnNldDsKIAl1bnNpZ25lZCBpbnQgbGFzdF94LCBsYXN0X3ksIGJ1Zl9vZmZzaXpl
+LCBsaW5lX3NpemU7CiAJdW5zaWduZWQgaW50IHdpbiA9IHBsYW5lLT56cG9zOwotCXVuc2lnbmVk
+IGludCBicHAgPSBzdGF0ZS0+ZmItPmJpdHNfcGVyX3BpeGVsID4+IDM7Ci0JdW5zaWduZWQgaW50
+IHBpdGNoID0gc3RhdGUtPmZiLT5waXRjaGVzWzBdOworCXVuc2lnbmVkIGludCBicHAgPSBmYi0+
+Yml0c19wZXJfcGl4ZWwgPj4gMzsKKwl1bnNpZ25lZCBpbnQgcGl0Y2ggPSBmYi0+cGl0Y2hlc1sw
+XTsKIAogCWlmIChjdHgtPnN1c3BlbmRlZCkKIAkJcmV0dXJuOwpAQCAtNjU2LDcgKzY1OCw3IEBA
+IHN0YXRpYyB2b2lkIGZpbWRfdXBkYXRlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNy
+dGMsCiAJb2Zmc2V0ICs9IHBsYW5lLT5zcmNfeSAqIHBpdGNoOwogCiAJLyogYnVmZmVyIHN0YXJ0
+IGFkZHJlc3MgKi8KLQlkbWFfYWRkciA9IHBsYW5lLT5kbWFfYWRkclswXSArIG9mZnNldDsKKwlk
+bWFfYWRkciA9IGV4eW5vc19kcm1fZmJfZG1hX2FkZHIoZmIsIDApICsgb2Zmc2V0OwogCXZhbCA9
+ICh1bnNpZ25lZCBsb25nKWRtYV9hZGRyOwogCXdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFZJRFd4
+X0JVRl9TVEFSVCh3aW4sIDApKTsKIApAQCAtNzEyLDcgKzcxNCw3IEBAIHN0YXRpYyB2b2lkIGZp
+bWRfdXBkYXRlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCiAJCURSTV9ERUJV
+R19LTVMoIm9zZCBzaXplID0gMHgleFxuIiwgKHVuc2lnbmVkIGludCl2YWwpOwogCX0KIAotCWZp
+bWRfd2luX3NldF9waXhmbXQoY3R4LCB3aW4sIHN0YXRlLT5mYik7CisJZmltZF93aW5fc2V0X3Bp
+eGZtdChjdHgsIHdpbiwgZmIpOwogCiAJLyogaGFyZHdhcmUgd2luZG93IDAgZG9lc24ndCBzdXBw
+b3J0IGNvbG9yIGtleS4gKi8KIAlpZiAod2luICE9IDApCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9wbGFuZS5jCmluZGV4IDE3OTMxMTc2MGJiNy4uYzcyNTQwOTQyMWI4IDEwMDY0
+NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYworKysgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMTIwLDI4ICsxMjAs
+MTAgQEAgc3RhdGljIGludCBleHlub3NfcGxhbmVfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1fcGxh
+bmUgKnBsYW5lLAogCQkJCSAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUpCiB7CiAJ
+c3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShw
+bGFuZSk7Ci0JaW50IG5yOwotCWludCBpOwogCiAJaWYgKCFzdGF0ZS0+ZmIpCiAJCXJldHVybiAw
+OwogCi0JbnIgPSBkcm1fZm9ybWF0X251bV9wbGFuZXMoc3RhdGUtPmZiLT5waXhlbF9mb3JtYXQp
+OwotCWZvciAoaSA9IDA7IGkgPCBucjsgaSsrKSB7Ci0JCXN0cnVjdCBleHlub3NfZHJtX2dlbSAq
+ZXh5bm9zX2dlbSA9Ci0JCQkJCWV4eW5vc19kcm1fZmJfZ2VtKHN0YXRlLT5mYiwgaSk7Ci0JCWlm
+ICghZXh5bm9zX2dlbSkgewotCQkJRFJNX0RFQlVHX0tNUygiZ2VtIG9iamVjdCBpcyBudWxsXG4i
+KTsKLQkJCXJldHVybiAtRUZBVUxUOwotCQl9Ci0KLQkJZXh5bm9zX3BsYW5lLT5kbWFfYWRkcltp
+XSA9IGV4eW5vc19nZW0tPmRtYV9hZGRyICsKLQkJCQkJICAgIHN0YXRlLT5mYi0+b2Zmc2V0c1tp
+XTsKLQotCQlEUk1fREVCVUdfS01TKCJidWZmZXI6ICVkLCBkbWFfYWRkciA9IDB4JWx4XG4iLAot
+CQkJCWksICh1bnNpZ25lZCBsb25nKWV4eW5vc19wbGFuZS0+ZG1hX2FkZHJbaV0pOwotCX0KLQog
+CXJldHVybiAwOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fdmlkaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYwpp
+bmRleCA2NjkzNjJjNTNmNDkuLjNjZTE0MTIzNmZhZCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fdmlkaS5jCkBAIC0yNCw2ICsyNCw3IEBACiAKICNpbmNsdWRlICJleHlub3Nf
+ZHJtX2Rydi5oIgogI2luY2x1ZGUgImV4eW5vc19kcm1fY3J0Yy5oIgorI2luY2x1ZGUgImV4eW5v
+c19kcm1fZmIuaCIKICNpbmNsdWRlICJleHlub3NfZHJtX3BsYW5lLmgiCiAjaW5jbHVkZSAiZXh5
+bm9zX2RybV92aWRpLmgiCiAKQEAgLTEyNiwxMSArMTI3LDEzIEBAIHN0YXRpYyB2b2lkIHZpZGlf
+dXBkYXRlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCiAJCQkgICAgICBzdHJ1
+Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmUpCiB7CiAJc3RydWN0IHZpZGlfY29udGV4dCAqY3R4
+ID0gY3J0Yy0+Y3R4OworCWRtYV9hZGRyX3QgYWRkcjsKIAogCWlmIChjdHgtPnN1c3BlbmRlZCkK
+IAkJcmV0dXJuOwogCi0JRFJNX0RFQlVHX0tNUygiZG1hX2FkZHIgPSAlcGFkXG4iLCBwbGFuZS0+
+ZG1hX2FkZHIpOworCWFkZHIgPSBleHlub3NfZHJtX2ZiX2RtYV9hZGRyKHBsYW5lLT5iYXNlLmZi
+LCAwKTsKKwlEUk1fREVCVUdfS01TKCJkbWFfYWRkciA9ICVwYWRcbiIsICZhZGRyKTsKIAogCWlm
+IChjdHgtPnZibGFua19vbikKIAkJc2NoZWR1bGVfd29yaygmY3R4LT53b3JrKTsKZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IGQwOWY4ZjlhODkzOS4uZWZiNWQwNDM1NTU4
+IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAgLTM3LDYgKzM3LDcgQEAK
+IAogI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9jcnRj
+LmgiCisjaW5jbHVkZSAiZXh5bm9zX2RybV9mYi5oIgogI2luY2x1ZGUgImV4eW5vc19kcm1fcGxh
+bmUuaCIKICNpbmNsdWRlICJleHlub3NfZHJtX2lvbW11LmgiCiAKQEAgLTQyMiw4ICs0MjMsOCBA
+QCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwK
+IAkJcmV0dXJuOwogCX0KIAotCWx1bWFfYWRkclswXSA9IHBsYW5lLT5kbWFfYWRkclswXTsKLQlj
+aHJvbWFfYWRkclswXSA9IHBsYW5lLT5kbWFfYWRkclsxXTsKKwlsdW1hX2FkZHJbMF0gPSBleHlu
+b3NfZHJtX2ZiX2RtYV9hZGRyKGZiLCAwKTsKKwljaHJvbWFfYWRkclswXSA9IGV4eW5vc19kcm1f
+ZmJfZG1hX2FkZHIoZmIsIDEpOwogCiAJaWYgKG1vZGUtPmZsYWdzICYgRFJNX01PREVfRkxBR19J
+TlRFUkxBQ0UpIHsKIAkJY3R4LT5pbnRlcmxhY2UgPSB0cnVlOwpAQCAtNTc1LDcgKzU3Niw3IEBA
+IHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4
+LAogCWRzdF95X29mZnNldCA9IHBsYW5lLT5jcnRjX3k7CiAKIAkvKiBjb252ZXJ0aW5nIGRtYSBh
+ZGRyZXNzIGJhc2UgYW5kIHNvdXJjZSBvZmZzZXQgKi8KLQlkbWFfYWRkciA9IHBsYW5lLT5kbWFf
+YWRkclswXQorCWRtYV9hZGRyID0gZXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMCkKIAkJKyAo
+cGxhbmUtPnNyY194ICogZmItPmJpdHNfcGVyX3BpeGVsID4+IDMpCiAJCSsgKHBsYW5lLT5zcmNf
+eSAqIGZiLT5waXRjaGVzWzBdKTsKIAlzcmNfeF9vZmZzZXQgPSAwOwotLSAKMS45LjIKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
