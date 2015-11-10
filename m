@@ -1,133 +1,164 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v7 1/4] Documentation: dt-bindings: Describe SROMc configuration
-Date: Tue, 10 Nov 2015 08:24:05 -0600
-Message-ID: <CAL_JsqLsD9gA2-AWYGaHvOuZhhDmE2BHmPMU2nJjPYEvQJdNHQ@mail.gmail.com>
-References: <cover.1446799912.git.p.fedin@samsung.com> <0bc58ce0fd39767834f486c4c0cfbbd70044caed.1446799912.git.p.fedin@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing)
+ subsystem
+Date: Tue, 10 Nov 2015 17:23:21 +0100
+Message-ID: <564219F9.8070401@math.uni-bielefeld.de>
+References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37294 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752323AbbKJOY2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Nov 2015 09:24:28 -0500
-In-Reply-To: <0bc58ce0fd39767834f486c4c0cfbbd70044caed.1446799912.git.p.fedin@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Fri, Nov 6, 2015 at 4:03 AM, Pavel Fedin <p.fedin@samsung.com> wrote:
-> Add documentation for new subnode properties, allowing bank configuration.
-> Based on u-boot implementation, but heavily reworked.
->
-> Also, fix size of SROMc mapping in the example.
->
-> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  .../bindings/arm/samsung/exynos-srom.txt           | 71 +++++++++++++++++++++-
->  1 file changed, 69 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-> index 33886d5..3ff2950 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-> @@ -5,8 +5,75 @@ Required properties:
->
->  - reg: offset and length of the register set
->
-> -Example:
-> +Optional properties:
-> +The SROM controller can be used to attach external peripherals. In this case
-> +extra properties, describing the bus behind it, should be specified as below:
-> +
-> +- #address-cells: Must be set to 2 to allow memory address translation
-
-2 is for CS# and offset.
-
-> +
-> +- #size-cells: Must be set to 1 to allow CS address passing
-
-size is the size, not the address.
-
-> +
-> +- ranges: Must be set up to reflect the memory layout with four integer values
-> +         per bank:
-> +               <bank-number> 0 <physical address of bank> <size>
-
-s/physical/parent/
-
-You could have another level of translation above for the parent.
-
-> +
-> +Sub-nodes:
-> +The actual device nodes should be added as subnodes to the SROMc node. These
-> +subnodes, except regular device specification, should contain the following
-> +properties, describing configuration of the relevant SROM bank:
-> +
-> +Required properties:
-> +- reg: bank number, base address (relative to start of the bank) and size of
-> +       the memory mapped for the device. Note that base address will be
-> +       typically 0 as this is the start of the bank.
-> +
-> +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
-> +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
-> +                        Each value is specified in cycles and has the following
-> +                        meaning and valid range:
-> +                        Tacp : Page mode access cycle at Page mode (0 - 15)
-> +                        Tcah : Address holding time after CSn (0 - 15)
-> +                        Tcoh : Chip selection hold on OEn (0 - 15)
-> +                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
-> +                        Tcos : Chip selection set-up before OEn (0 - 15)
-> +                        Tacs : Address set-up before CSn (0 - 15)
-
-This is not easily extended. Perhaps a property per value instead.
-
-> +
-> +Optional properties:
-> +- reg-io-width : data width in bytes (1 or 2). If omitted, default of 1 is used.
-> +
-> +- samsung,srom-page-mode : page mode configuration for the bank:
-> +                          0 - normal (one data)
-> +                          1 - four data
-> +                          If omitted, default of 0 is used.
-> +
-> +Example: basic definition, no banks are configured
-> +       sromc@12570000 {
-> +               compatible = "samsung,exynos-srom";
-> +               reg = <0x12570000 0x14>;
-> +       };
-> +
-> +Example: SROMc with SMSC911x ethernet chip on bank 3
->         sromc@12570000 {
-> +               #address-cells = <2>;
-> +               #size-cells = <1>;
-> +               ranges = <0 0 0x04000000 0x20000   // Bank0
-> +                         1 0 0x05000000 0x20000   // Bank1
-> +                         2 0 0x06000000 0x20000   // Bank2
-> +                         3 0 0x07000000 0x20000>; // Bank3
-> +
->                 compatible = "samsung,exynos-srom";
-> -               reg = <0x12570000 0x10>;
-> +               reg = <0x12570000 0x14>;
-> +
-> +               ethernet@3 {
-> +                       compatible = "smsc,lan9115";
-> +                       reg = <3 0 0x10000>;       // Bank 3, offset = 0
-> +                       phy-mode = "mii";
-> +                       interrupt-parent = <&gpx0>;
-> +                       interrupts = <5 8>;
-> +                       reg-io-width = <2>;
-> +                       smsc,irq-push-pull;
-> +                       smsc,force-internal-phy;
-> +
-> +                       samsung,srom-config = <1 9 12 1 9 1 1>;
-
-This doesn't match the doc.
-
-> +               };
->         };
-> --
-> 2.4.4
->
+SGVsbG8gTWFyZWssCgp0aGlzIGxvb2tzIHZlcnkgaW50ZXJlc3RpbmcuIEknbGwgdHJ5IHRvIGlu
+dGVncmF0ZSB0aGlzIHdpdGggbXkgbXB2IERSTQpiYWNrZW5kIG9uY2UgdGhlIGNvbG9yc3BhY2Ug
+Y29udmVyc2lvbiBiaXRzIGFyZSBpbXBsZW1lbnRlZC4KCkkgYWxzbyB3YW50ZWQgdG8gc3VnZ2Vz
+dCB0aGF0IHVzaW5nIHRoZSBJUFAgYmxvY2tzIChyb3RhdG9yLCBGSU1DKQpzaG91bGQgYmUgc3Rp
+bGwgYmUgcG9zc2libGUgd2l0aG91dCBhbnkga2luZCBvZiBkaXNwbGF5IGFjdGl2ZS4gU28Kc2lt
+aWxhciBpbiB0aGUgd2F5IEkgY2FuIHVzZSB0aGUgRzJEIGJsb2NrIHdpdGhvdXQgcHJlc2VudGlu
+ZyBhbnl0aGluZwpvbiB0aGUgc2NyZWVuIGl0c2VsZi4KCkknbSB0YWtlIGEgY2xvc2VyIGxvb2sg
+YXQgdGhlIHNlcmllcyBsYXRlci4KCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoKCgoKTWFyZWsg
+U3p5cHJvd3NraSB3cm90ZToKPiBEZWFyIEFsbCwKPiAKPiBUaGlzIHBhdGNoIHNlcmllcyBpbnRy
+b2R1Y2VzIGEgbmV3IGxpZmUgaW50byBFeHlub3MgSVBQIChJbWFnZSBQb3N0Cj4gUHJvY2Vzc2lu
+Zykgc3Vic3lzdGVtIGJ5IGludGVncmF0aW5nIGl0ICh0cmFuc3BhcmVudGx5IGZvciB1c2Vyc3Bh
+Y2UKPiBhcHBsaWNhdGlvbnMpIHdpdGggRXh5bm9zIERSTSBjb3JlIHBsYW5lIG1hbmFnZW1lbnQu
+IFRoaXMgbWVhbnMgdGhhdCBhbGwKPiBDUlRDIGRyaXZlcnMgdHJhbnNwYXJlbnRseSBnZXQgc3Vw
+cG9ydCBmb3Igc3RhbmRhcmQgZmVhdHVyZXMgb2YgSVBQCj4gc3Vic3lzdGVtIGxpa2Ugcm90YXRp
+b24gYW5kIHNjYWxpbmcuCj4gCj4gU3VwcG9ydCBmb3IgZmVhdHVyZXMgbm90IHN1cHBvcnRlZCBu
+YXRpdmVseSBieSBDUlRDIGRyaXZlcnMgaXMKPiBpbXBsZW1lbnRlZCB3aXRoIGEgaGVscCBvZiB0
+ZW1wb3JhcnkgZnJhbWVidWZmZXJzLCB3aGVyZSBpbWFnZSBkYXRhIGlzCj4gcHJvY2Vzc2VkIGJ5
+IElQUCBzdWJzeXN0ZW0gYmVmb3JlIHBlcmZvcm1pbmcgdGhlIHNjYW5vdXQgYnkgYSBDUlRDIGRy
+aXZlci4KPiAKPiBUaGlzIHBhdGNoc2V0IGlzIGEgZmlyc3QgdmVyc2lvbiBvZiB0aGlzICduZXcg
+ZmVhdHVyZScgYW5kIEkgd291bGQgbGlrZQo+IGdldCBzb21lIGNvbW1lbnRzIG9uIHRoZSBwcm9w
+b3NlZCBhcHByb2FjaC4gSSBwbGFuIHRvIGNvbnRpbnVlIHdvcmtpbmcKPiBvbiBlbmhhbmNpbmcg
+RXh5bm9zIERSTSBkcml2ZXJzIGFuZCBlc3BlY2lhbGx5IGRvIHRoZSBjbGVhbnVwIHRoZSBJUFAK
+PiBzdWJzeXN0ZW0uCj4gCj4gTW9zdCBvZiB0aGUgbmV3IGZlYXR1cmVzIGFyZSBhZGRlZCBieSB0
+aGUgbGFzdCAyIHBhdGNoZXMuIEFsbCBvdGhlcgo+IHBhdGNoZXMgYXJlIGJ1Z2ZpeGVzIGluIHZh
+cmlvdXMgRXh5bm9zIERSTSBzdWJkcml2ZXJzIGFuZCBzaWduaWZpY2FudAo+IGNvcmUgcmV3cml0
+ZSAtIGludHJvZHVjaW5nIGEgc3ViY2xhc3Mgb2YgZHJtX3BsYW5lX3N0YXRlIHdhcyBuZWVkZWQg
+YW5kCj4gYWxsIGRyaXZlcnMgaGF2ZSBiZWVuIGNvbnZlcnRlZCB0byB1c2UgaXQuIFNvbWUgaW5p
+dGlhbCBjbGVhbnVwcyBpbiBJUFAKPiBzdWJzeXN0ZW0gd2VyZSBhbHNvIG5lZWRlZCB0byBsZXQg
+RXh5bm9zIGNvcmUgdG8gY2FsbCBpdCBpbnRlcm5hbGx5IGZyb20KPiB0aGUgZHJpdmVyIGNvcmUu
+IFRoaXMgcGFydCB3aWxsIGJlIGNsZWFuZWQgZXZlbiBtb3JlIGluIHRoZSBmdXR1cmUuCj4gCj4g
+Cj4gTXkgc29sdXRpb24gaGFzIGJlZW4gdGVzdGVkIG9uIEV4eW5vczQ0MTItYmFzZWQgT2Ryb2lk
+IFUzIGFuZAo+IEV4eW5vczU0MjAtYmFzZWQgT2Ryb2lkIFhVMy4gVG8gY2hlY2sgcm90YXRpb24s
+IGNyb3BwaW5nIGFuZCBzY2FsaW5nCj4gSSd2ZSBkZXZlbG9wZWQgYSBzaW1wbGUgdGVzdCBhcHBs
+aWNhdGlvbiwgd2hpY2ggdXNlIGF0b21pYyBtb2RlCj4gc2V0dGluZy9wYWdlIGZsaXBwaW5nIEFQ
+SS4gWW91IGNhbiBkb3dubG9hZCBpdCBoZXJlOgo+IAo+IGh0dHBzOi8vZ2l0LmxpbmFyby5vcmcv
+P3A9cGVvcGxlL21hcmVrLnN6eXByb3dza2kvYXRvbWljdGVzdC5naXQKPiAKPiBUaGUgYXBwbGlj
+YXRpb24gZHJhd3MgYSByZWN0YW5nbGUgd2l0aCB0ZXN0IHBhdHRlcm4gYW5kIHRoZW4gbW92ZXMg
+aXQKPiBhcm91bmQgdGhlIHNjcmVlbi4gVG8gc2VlIGhvdyBhbGwgbWVudGlvbmVkIGZlYXR1cmVz
+IHdvcmsgKHBsYW5lCj4gcm90YXRpb24sIGNyb3BwaW5nLCBzY2FsaW5nIGFuZCBvZmYtc2NyZWVu
+IGRpc3BsYXkpLCBwbGVhc2UgcnVuIHRoZQo+IGZvbGxvd2luZyBjb21tYW5kczoKPiAKPiBzY2Fs
+aW5nICsgcm90YXRpb246Cj4gIyAuL2F0b21pY3Rlc3QgLWI0MDB4MzAwIC1mNjAgLXQxMDAgLW0y
+eDEgLXgxeDEKPiAKPiBjcm9wcGluZyArIHJvdGF0aW9uOgo+ICMgLi9hdG9taWN0ZXN0IC1iNDAw
+eDMwMCAtZjYwIC10MTAwIC1tMngxIC1jMXgxCj4gCj4gY3JvcHBpbmcgKyByb3RhdGlvbiArIG9m
+Zi1zY3JlZW4gZGlzcGxheToKPiAjIC4vYXRvbWljdGVzdCAtYjQwMHgzMDAgLWY2MCAtdDEwMCAt
+bTJ4MSAtYzF4MSAtbzQwMHgzMDAKPiAKPiBzY2FsaW5nICsgY3JvcHBpbmcgKyByb3RhdGlvbjoK
+PiAjIC4vYXRvbWljdGVzdCAtYjQwMHgzMDAgLWY2MCAtdDEwMCAtbTJ4MSAteDF4MSAtYzF4MSAK
+PiAKPiBGb3IgbW9yZSBpbmZvcm1hdGlvbiBhYm91dCBwYXJhbWV0ZXJzLCBydW4gdGhlIGFwcGxp
+Y2F0aW9uIHdpdGggLWgKPiBwYXJhbWV0ZXIgb3IgY2hlY2sgdGhlIHNvdXJjZSBjb2RlLgo+IAo+
+IAo+IE15IFRPRE8gbGlzdCAocGxlYXNlIGNvbW1lbnQgdGhlIHByaW9yaXR5IG9mIHRob3NlIHRh
+c2tzKToKPiAKPiAxLiBhZGQgc3VwcG9ydCBmb3IgY29sb3Igc3BhY2UgY29udmVyc2lvbiwgc3Vw
+cG9ydCBmb3IgZm9yZWlnbiBwaXhlbAo+IGZvcm1hdHMgYW5kIGZiLW1vZGlmaWVycyB0byBteSBw
+bGFuZS1JUFAgaW50ZWdyYXRpb24gY29kZSAoY3VycmVudGx5Cj4gb25seSBSR0Igc2luZ2xlIHBs
+YW5lIG1vZGVzIGFyZSBzdXBwb3J0ZWQpCj4gCj4gMi4gcHJvdmlkZSBzdXBwb3J0IGZvciBJUFAg
+ZmVhdHVyZXMgKGZyYW1lYnVmZmVyIHJvdGF0aW9uLCBzY2FsaW5nLAo+IGNyb3BwaW5nLCBjb2xv
+ciBzcGFjZSBjb252ZXJzaW9uKSB3aXRoIHVzZXJzcGFjZSBhdG9taWMgQVBJIGluc3RlYWQgb2YK
+PiAob3IgdG9nZXRoZXIgd2l0aCkgRXh5bm9zIGN1c3RvbSBJUFAgaW9jdGxzOyB0aGUgaW1wb3J0
+YW50IHF1ZXN0aW9uIGlzCj4gd2VhdGhlciB0aGUgZXhpc3RpbmcgRXh5bm9zIElQUCBBUEkgKHVz
+ZXJzcGFjZSBpb2N0bHMpIHNob3VsZCBiZSBrZXB0IG9yCj4gY2FuIGJlIHJlbW92ZWQgKGV4aXN0
+aW5nIHVzZXJzcGFjZSBBUEkgaXMgbWlzbGVhZGluZyBpbiBtYW55IGFzcGVjdHMpLgo+IAo+IDMu
+IHNpbXBsaWZ5IElQUCBzdWJzeXN0ZW0gY29yZSAodGhlIGNvZGUgbG9va3Mgb3Zlci1lbmdpbmVl
+cmVkIGEgYml0LAo+IHRoZXJlIGFyZSBhbHNvIHNvbWUga25vd24gaXNzdWVzIHdpdGggZXJyb3Ig
+cGF0aHMpLCByZW1vdmUKPiBub24tZnVuY3Rpb25hbCB3cml0ZS1iYWNrIGFuZCBvdXRwdXQgbW9k
+ZXMKPiAKPiA0LiBzaW1wbGlmeSBpbnRlcmZhY2UgdG8gSVBQIEhXLXNwZWNpZmljIG1lbTJtZW0g
+c3ViZHJpdmVycwo+IAo+IDUuIGltcGxlbWVudCBvdXRwdXQgbW9kZSBmb3IgSVBQIHN1Yi1kcml2
+ZXJzLCB1c2UgaXQgd2hlcmUgcG9zc2libGUKPiBpbnN0ZWFkIG9mIHVzaW5nIHRlbXBvcmFyeSBm
+cmFtZWJ1ZmZlciAoaW1hZ2UgZGF0YSBpcyB0aGVuIHRyYW5zZmVycmVkCj4gZGlyZWN0bHkgZnJv
+bSBzY2FsaW5nIGh3IGJsb2NrIHRvIGRpc3BsYXkgZW5naW5lIHZpYSBsb2NhbCBwYXRoLCBubwo+
+IHRlbXBvcmFyeSBmcmFtZWJ1ZmZlcnMgYXJlIG5lZWRlZCkKPiAKPiA2LiBpbXBsZW1lbnQgd3Jp
+dGUtYmFjayBmZWF0dXJlIHdpdGggYXRvbWljIEFQSSBhcyByZXNwZWN0aXZlIENSVEMKPiBwcm9w
+ZXJ0aWVzCj4gCj4gCj4gUGF0Y2hlcyBoYXZlIGJlZW4gcHJlcGFyZWQgb24gdG9wIG9mIGxpbnV4
+LW5leHQgZnJvbSAxMC0xMS0yMDE1LiBGaXJzdAo+IDIgcGF0Y2hlcyBzaG91bGQgYmUgYXBwbGll
+ZCB0byBTYW1zdW5nIFNvQyB0cmVlLCBhbGwgb3RoZXIgc2hvdWxkIGdvCj4gdG8gRXh5bm9zIERS
+TSB0cmVlLgo+IAo+IEJlc3QgcmVnYXJkcwo+IE1hcmVrIFN6eXByb3dza2kKPiBTYW1zdW5nIFIm
+RCBJbnN0aXR1dGUgUG9sYW5kCj4gCj4gCj4gUGF0Y2ggc3VtbWFyeToKPiAKPiBNYXJlayBTenlw
+cm93c2tpICgyMSk6Cj4gICBBUk06IGR0czogZXh5bm9zNDogYWRkIHJvdGF0b3Igbm9kZXMKPiAg
+IEFSTTogZHRzOiBleHlub3M1NDJ4OiBhZGQgcm90YXRvciBub2RlCj4gICBkcm0vZXh5bm9zOiBn
+c2M6IGFkZCBkZXZpY2UgdHJlZSBzdXBwb3J0IGFuZCByZW1vdmUgdXNhZ2Ugb2Ygc3RhdGljCj4g
+ICAgIG1hcHBpbmdzCj4gICBkcm0vZXh5bm9zOiByb3RhdG9yOiBjb252ZXJ0IHRvIGNvbW1vbiBj
+bG9jayBmcmFtZXdvcmsKPiAgIGRybS9leHlub3M6IGV4eW5vczctZGVjb246IHJlbW92ZSBleGNl
+c3NpdmUgY2hlY2sKPiAgIGRybS9leHlub3M6IG1vdmUgZG1hX2FkZHIgYXR0cmlidXRlIGZyb20g
+ZXh5bm9zIHBsYW5lIHRvIGV4eW5vcyBmYgo+ICAgZHJtL2V4eW5vczogaW50cm9kdWNlIGV4eW5v
+c19kcm1fcGxhbmVfc3RhdGUgc3RydWN0dXJlCj4gICBkcm0vZXh5bm9zOiBtaXhlcjogdXNlIGNy
+dGMtPnN0YXRlLT5hZGp1c3RlZF9tb2RlIGluc3RlYWQgb2YKPiAgICAgY3J0Yy0+bW9kZQo+ICAg
+ZHJtL2V4eW5vczogbWl4ZXI6IGVuYWJsZSB2aWRlbyBvdmVybGF5IHBsYW5lIG9ubHkgd2hlbiBW
+UCBpcwo+ICAgICBhdmFpbGFibGUKPiAgIGRybS9leHlub3M6IGludHJvZHVjZSBleHlub3NfZHJt
+X3BsYW5lX2NvbmZpZyBzdHJ1Y3R1cmUKPiAgIGRybS9leHlub3M6IGFkZCBnZW5lcmljIGNoZWNr
+IGZvciBwbGFuZSBzdGF0ZQo+ICAgZHJtL2V4eW5vczogbWl4ZXI6IHVzZSByYXRpbyBwcmVjYWxj
+dWxhdGVkIGluIGV4eW5vc19zdGF0ZQo+ICAgZHJtL2V4eW5vczogZml4IGNsaXBwaW5nIHdoZW4g
+c2NhbGxpbmcgaXMgZW5hYmxlZAo+ICAgZHJtL2V4eW5vczogZmltZDogZml4IGRtYSBidXJzdCBz
+aXplIHNldHRpbmcgZm9yIHNtYWxsIHBsYW5lIHNpemUKPiAgIGRybS9leHlub3M6IGFkZCBmYiBw
+b2ludGVyIHRvIGV4eW5vc19kcm1fcGxhbmVfc3RhdGUKPiAgIGRybS9leHlub3M6IGdlbTogc2V0
+IGRlZmF1bHQgYWxpZ25tZW50IGZvciBkdW1iIEdFTSBidWZmZXJzCj4gICBkcm0vZXh5bm9zOiBn
+ZW06IHJlbW92ZSBvbGQgdW51c2VkIHByb3RvdHlwZXMKPiAgIGRybS9leHlub3M6IGdlbTogc2lt
+cGxpZnkgYWNjZXNzIHRvIGV4eW5vcyBnZW0gb2JqZWN0Cj4gICBkcm0vZXh5bm9zOiBpcHA6IG1h
+a2UgZnJhbWV3b3JrIGNvbnRleHQgZ2xvYmFsCj4gICBkcm0vZXh5bm9zOiBhZGQgZ2VuZXJpYyBw
+bGFuZSByb3RhdGlvbiBwcm9wZXJ0eSBzdXBwb3J0Cj4gICBkcm0vZXh5bm9zOiBhZGQgc3VwcG9y
+dCBmb3IgcGxhbmUgc2NhbGluZwo+IAo+IFNldW5nLVdvbyBLaW0gKDQpOgo+ICAgZHJtL2V4eW5v
+czogZ3NjOiBwcmVwYXJlIGFuZCB1bnByZXBhcmUgZ3NjIGNsb2NrCj4gICBkcm0vZXh5bm9zOiBn
+c2M6IGZpeCB3cm9uZyBwbV9ydW50aW1lIHN0YXRlCj4gICBkcm0vZXh5bm9zOiBmaXggdG8gY2Fs
+Y3VsYXRlIG9mZnNldCBvZiBlYWNoIHBsYW5lIGZvciBpcHAgZmltYwo+ICAgZHJtL2V4eW5vczog
+Zml4IHRvIGNhbGN1bGF0ZSBvZmZzZXQgb2YgZWFjaCBwbGFuZSBmb3IgaXBwIGdzYwo+IAo+ICAu
+Li4vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9leHlub3M1LWdzYy50eHQgICAgICB8ICAgNCAr
+Cj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQuZHRzaSAgICAgICAgICAgICAgICAgICAgIHwg
+IDEwICstCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaSAgICAgICAgICAgICAg
+ICAgIHwgICA4ICsKPiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNpICAgICAgICAg
+ICAgICAgICAgfCAgIDQgKwo+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kgICAg
+ICAgICAgICAgICAgICB8ICAxOSArKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcg
+ICAgICAgICAgICAgICAgICAgICB8ICAxMCArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL01h
+a2VmaWxlICAgICAgICAgICAgICAgICAgICB8ICAgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyAgICAgIHwgIDQ4ICsrLS0KPiAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jICAgICAgICAgfCAgNjggKystLS0KPiAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAgICAgICAgfCAgOTcgKysr
+KystLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICAgICAgICAg
+ICB8ICAxNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuaCAgICAg
+ICAgICAgICB8ICAgMyArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
+Yy5jICAgICAgICAgICB8IDEwNiArKysrKysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmltZC5jICAgICAgICAgICB8ICA4OCArKysrLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyAgICAgICAgICAgIHwgIDQ4ICsrLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jICAgICAgICAgICAgfCAgNTQgKy0tLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmggICAgICAgICAgICB8ICA1
+MSArLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYyAgICAgICAg
+ICAgIHwgMTUxICsrKysrKysrKystCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9pcHAuYyAgICAgICAgICAgIHwgMjM3ICsrKysrKysrKysrKystLS0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuaCAgICAgICAgICAgIHwgICA4ICstCj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICAgICAgIHwgMjU1ICsrKysr
+KysrKysrKystLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5l
+LmggICAgICAgICAgfCAgIDcgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X3BsYW5lX2lwcC5jICAgICAgfCAyODEgKysrKysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZV9pcHAuaCAgICAgIHwgIDczICsrKysrKwo+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcm90YXRvci5jICAgICAgICB8ICAg
+NCArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgICAg
+ICB8ICAzMCArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAg
+ICAgICAgICAgfCAxMzMgKysrKystLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3Mt
+Z3NjLmggICAgICAgICAgICAgICAgICB8ICAgNCArLQo+ICAyOCBmaWxlcyBjaGFuZ2VkLCAxMzQ4
+IGluc2VydGlvbnMoKyksIDQ3MCBkZWxldGlvbnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZV9pcHAuYwo+ICBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lX2lwcC5oCj4g
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
