@@ -1,53 +1,107 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos5422-odroid*: remove fimd node
-Date: Tue, 10 Nov 2015 11:24:09 +0100
-Message-ID: <1447151049-25370-1-git-send-email-m.szyprowski@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v4 0/9] samsung: pmu: split up SoC specific PMU data
+Date: Tue, 10 Nov 2015 17:12:55 +0530
+Message-ID: <1447155784-12667-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43517 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752086AbbKJKYW (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:37766 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750906AbbKJLql (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Nov 2015 05:24:22 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NXL007V1GWKNB50@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2015 10:24:20 +0000 (GMT)
+	Tue, 10 Nov 2015 06:46:41 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, olof@lixom.net, khilman@linaro.org, arnd@arndb.de, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-FIMD device is not used at all on Exynos5422-based Odroid XU3-lite and
-XU4. XU3 board teorethically can support FIMD with DisplayPort
-connector, but due to hw limitation/design it doesn't work in most
-cases. It is also not even enabled in XU3 dts file.
+This patch series is a part of continuation work from following series
+[1], [2] and [3]
 
-FIMD node was enabled mainly due to limitation of early Exynos DRM
-driver, which didn't initialize properly when no FIMD device was
-available. This node can be now safetly removed from XU3-common dtsi and
-added layer to Odroid XU3 dts, when Display Port driver gets enabled.
+1: exynos: Move pmu driver to driver/soc folder and add exynos7 support
+   http://www.spinics.net/lists/linux-samsung-soc/msg39797.html from Amit Daniel Kacchap
+2: soc: samsung: pmu: split up SoC specific PMU data
+   https://lkml.org/lkml/2015/1/7/12 from me
+3: https://lkml.org/lkml/2015/10/26/245
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 -----
- 1 file changed, 5 deletions(-)
+In this series I am splitting up SoC specific PMU configuration data into
+mach-exynos folder itself, before moving all of them under
+drivers/soc/samsung/. Also instead of making all changes in single patch it
+has been broken into SoC specific patches to avoid large size of patch.
+With this approach there will not be unwanted big churns just after
+adding exynos-pmu under drivers/soc/samsung.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 1af5bdc..9134217 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -67,11 +67,6 @@
- 			<19200000>;
- };
- 
--&fimd {
--	status = "okay";
--};
--
--
- &hdmi {
- 	status = "okay";
- 	hpd-gpio = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+All these patches are just refactoring to keep minimal changes while moving
+exynos-pmu driver under drivers/soc/samsung/. Support for exynos7 PMU can
+be added on top of it, in such a manner that for ARM64 build, ARM related
+SoC's PMU will not get compiled and thus unnecessary increasing kernel image size.
+
+I have tested on Peach-Pi (Exynos5880) based chromebook for boot
+and S2R functionality.
+
+These patches have been prepared on top of Kukjin Kim's for-next and on top of
+cherry-picked change from [4].
+
+4: ARM: EXYNOS: Constify local exynos_pmu_data structure
+   https://lkml.org/lkml/2015/10/28/917
+
+Changes since v3:
+ - Keeping intact copyright dates in existing header files.
+ - Addressed review comments from Krzysztof for v3.
+ - Removing static inline function from exynos-pmu.h and
+   keeping them in PMU driver.
+ - Added new patch (2/9) for fixing potential null pointer reference in
+   exynos_sys_powerdown_conf.
+ - Added new patch (8/9) for rearranging static and non-static function for
+   better readability.
+
+Changes since v2:
+ - Removed Amit's Samsung id as it's no more valid.
+ - Rebased on latest kgene tree.
+ - Removed redundant code from regs-pmu.h
+
+Pankaj Dubey (9):
+  ARM: EXYNOS: removing redundant code from regs-pmu.h
+  ARM: EXYNOS: Fix potential NULL pointer access in
+    exynos_sys_powerdown_conf
+  ARM: EXYNOS: Move pmu specific headers under "linux/soc/samsung"
+  ARM: EXYNOS: split up exynos3250 SoC specific PMU data
+  ARM: EXYNOS: split up exynos4 SoC specific PMU data
+  ARM: EXYNOS: split up exynos5250 SoC specific PMU data
+  ARM: EXYNOS: split up exynos5420 SoC specific PMU data
+  ARM: EXYNOS: rearrange static and non-static functions of PMU driver
+  drivers: soc: Add support for Exynos PMU driver
+
+ arch/arm/mach-exynos/Kconfig                |    1 +
+ arch/arm/mach-exynos/Makefile               |    2 +-
+ arch/arm/mach-exynos/exynos-pmu.h           |   24 -
+ arch/arm/mach-exynos/exynos.c               |    4 +-
+ arch/arm/mach-exynos/mcpm-exynos.c          |    2 +-
+ arch/arm/mach-exynos/platsmp.c              |    2 +-
+ arch/arm/mach-exynos/pm.c                   |    4 +-
+ arch/arm/mach-exynos/pmu.c                  | 1004 ---------------------------
+ arch/arm/mach-exynos/regs-pmu.h             |  702 -------------------
+ arch/arm/mach-exynos/suspend.c              |    4 +-
+ drivers/soc/samsung/Kconfig                 |    4 +
+ drivers/soc/samsung/Makefile                |    4 +
+ drivers/soc/samsung/exynos-pmu.c            |  183 +++++
+ drivers/soc/samsung/exynos-pmu.h            |   45 ++
+ drivers/soc/samsung/exynos3250-pmu.c        |  175 +++++
+ drivers/soc/samsung/exynos4-pmu.c           |  223 ++++++
+ drivers/soc/samsung/exynos5250-pmu.c        |  196 ++++++
+ drivers/soc/samsung/exynos5420-pmu.c        |  280 ++++++++
+ include/linux/soc/samsung/exynos-pmu.h      |   24 +
+ include/linux/soc/samsung/exynos-regs-pmu.h |  693 ++++++++++++++++++
+ 20 files changed, 1836 insertions(+), 1740 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/exynos-pmu.h
+ delete mode 100644 arch/arm/mach-exynos/pmu.c
+ delete mode 100644 arch/arm/mach-exynos/regs-pmu.h
+ create mode 100644 drivers/soc/samsung/exynos-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos-pmu.h
+ create mode 100644 drivers/soc/samsung/exynos3250-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos4-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos5250-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos5420-pmu.c
+ create mode 100644 include/linux/soc/samsung/exynos-pmu.h
+ create mode 100644 include/linux/soc/samsung/exynos-regs-pmu.h
+
 -- 
-1.9.2
+2.4.5
