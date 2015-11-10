@@ -1,240 +1,53 @@
-From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 09/13] exynos/fimg2d: add g2d_move
-Date: Tue, 10 Nov 2015 13:20:05 +0900
-Message-ID: <20151110132005.73ff2b60@hwh-ubuntu>
-References: <1442937302-8211-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1442937302-8211-10-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20151109163013.011f4cb6@hwh-ubuntu> <56406B96.1050701@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos5422-odroid*: remove fimd node
+Date: Tue, 10 Nov 2015 11:24:09 +0100
+Message-ID: <1447151049-25370-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:45875 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751473AbbKJEUJ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:43517 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752086AbbKJKYW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Nov 2015 23:20:09 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NXL00N7F01JU020@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2015 13:20:07 +0900 (KST)
-In-reply-to: <56406B96.1050701@math.uni-bielefeld.de>
+	Tue, 10 Nov 2015 05:24:22 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NXL007V1GWKNB50@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2015 10:24:20 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Tobias,
+FIMD device is not used at all on Exynos5422-based Odroid XU3-lite and
+XU4. XU3 board teorethically can support FIMD with DisplayPort
+connector, but due to hw limitation/design it doesn't work in most
+cases. It is also not even enabled in XU3 dts file.
 
-On Mon, 09 Nov 2015 10:47:02 +0100
-Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+FIMD node was enabled mainly due to limitation of early Exynos DRM
+driver, which didn't initialize properly when no FIMD device was
+available. This node can be now safetly removed from XU3-common dtsi and
+added layer to Odroid XU3 dts, when Display Port driver gets enabled.
 
-> Hello Hyungwon,
-> 
-> 
-> Hyungwon Hwang wrote:
-> > Hello Tobias,
-> > 
-> > I was in vacation last week, so I could run your code today. I found
-> > that what g2d_move() does is actually copying not moving, because
-> > the operation does not clear the previous area.
-> I choose g2d_move() because we also have memcpy() and memmove() in
-> libc. Like in libc 'moving' memory doesn't actually move it, like you
-> would move a real object, since it's undefined what 'empty' memory
-> should be.
-> 
-> The same applies here. It's not defined what 'empty' areas of the
-> buffer should be.
-> 
-> 
-> > Would it be possible to
-> > generalize g2d_copy() works better, so it could works well in case
-> > of the src buffer and dst buffer being same.
-> I think this would break g2d_copy() backward compatibility.
-> 
-> I also want the user to explicitly request this. The user should make
-> sure what requirements he has for the buffers in question. Are the
-> buffers disjoint or not?
-> 
-> 
-> > If it is possible, I think it
-> > would be better way to do that. If it is not, at least chaning the
-> > function name is needed. I tested it on my Odroid U3 board.
-> I don't have a strong opinion on the naming. Any recommendations?
-> 
-> I still think the naming is fine though, since it mirrors libc's
-> naming. And the user is supposed to read the documentation anyway.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> 
-> 
-> 
-> With best wishes,
-> Tobias
-
-In that manner following glibc, I agree that the naming is reasonable.
-I commented like that previously, because at the first time when I run
-the test, I think that the result seems like a bug. The test program
-said that it was a move test, but the operation seemed copying. It
-would be just OK if it is well documented or printed when runs the test
-that the test does not do anything about the previous area
-intentionally.
-
-
-BRs,
-Hyungwon Hwang
-
-> 
-> > 
-> > Best regards,
-> > Hyungwon Hwang
-> > 
-> > On Tue, 22 Sep 2015 17:54:58 +0200
-> > Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
-> > 
-> >> We already have g2d_copy() which implements G2D copy
-> >> operations from one buffer to another. However we can't
-> >> do a overlapping copy operation in one buffer.
-> >>
-> >> Add g2d_move() which acts like the standard memmove()
-> >> and properly handles overlapping copies.
-> >>
-> >> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> >> ---
-> >>  exynos/exynos_fimg2d.c | 94
-> >> ++++++++++++++++++++++++++++++++++++++++++++++++++
-> >> exynos/exynos_fimg2d.h |  3 ++ 2 files changed, 97 insertions(+)
-> >>
-> >> diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-> >> index 4d5419c..8703629 100644
-> >> --- a/exynos/exynos_fimg2d.c
-> >> +++ b/exynos/exynos_fimg2d.c
-> >> @@ -540,6 +540,100 @@ g2d_copy(struct g2d_context *ctx, struct
-> >> g2d_image *src, }
-> >>  
-> >>  /**
-> >> + * g2d_move - move content inside single buffer.
-> >> + *	Similar to 'memmove' this moves a rectangular region
-> >> + *	of the provided buffer to another location (the source
-> >> + *	and destination region potentially overlapping).
-> >> + *
-> >> + * @ctx: a pointer to g2d_context structure.
-> >> + * @img: a pointer to g2d_image structure providing
-> >> + *	buffer information.
-> >> + * @src_x: x position of source rectangle.
-> >> + * @src_y: y position of source rectangle.
-> >> + * @dst_x: x position of destination rectangle.
-> >> + * @dst_y: y position of destination rectangle.
-> >> + * @w: width of rectangle to move.
-> >> + * @h: height of rectangle to move.
-> >> + */
-> >> +int
-> >> +g2d_move(struct g2d_context *ctx, struct g2d_image *img,
-> >> +		unsigned int src_x, unsigned int src_y,
-> >> +		unsigned int dst_x, unsigned dst_y, unsigned int
-> >> w,
-> >> +		unsigned int h)
-> >> +{
-> >> +	union g2d_rop4_val rop4;
-> >> +	union g2d_point_val pt;
-> >> +	union g2d_direction_val dir;
-> >> +	unsigned int src_w, src_h, dst_w, dst_h;
-> >> +
-> >> +	src_w = w;
-> >> +	src_h = h;
-> >> +	if (src_x + img->width > w)
-> >> +		src_w = img->width - src_x;
-> >> +	if (src_y + img->height > h)
-> >> +		src_h = img->height - src_y;
-> >> +
-> >> +	dst_w = w;
-> >> +	dst_h = w;
-> >> +	if (dst_x + img->width > w)
-> >> +		dst_w = img->width - dst_x;
-> >> +	if (dst_y + img->height > h)
-> >> +		dst_h = img->height - dst_y;
-> >> +
-> >> +	w = MIN(src_w, dst_w);
-> >> +	h = MIN(src_h, dst_h);
-> >> +
-> >> +	if (w == 0 || h == 0) {
-> >> +		fprintf(stderr, MSG_PREFIX "invalid width or
-> >> height.\n");
-> >> +		return -EINVAL;
-> >> +	}
-> >> +
-> >> +	if (g2d_check_space(ctx, 13, 2))
-> >> +		return -ENOSPC;
-> >> +
-> >> +	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
-> >> +	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
-> >> +
-> >> +	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
-> >> +	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, img->color_mode);
-> >> +
-> >> +	g2d_add_base_addr(ctx, img, g2d_dst);
-> >> +	g2d_add_base_addr(ctx, img, g2d_src);
-> >> +
-> >> +	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
-> >> +	g2d_add_cmd(ctx, SRC_STRIDE_REG, img->stride);
-> >> +
-> >> +	dir.val[0] = dir.val[1] = 0;
-> >> +
-> >> +	if (dst_x >= src_x)
-> >> +		dir.data.src_x_direction =
-> >> dir.data.dst_x_direction = 1;
-> >> +	if (dst_y >= src_y)
-> >> +		dir.data.src_y_direction =
-> >> dir.data.dst_y_direction = 1; +
-> >> +	g2d_set_direction(ctx, &dir);
-> >> +
-> >> +	pt.data.x = src_x;
-> >> +	pt.data.y = src_y;
-> >> +	g2d_add_cmd(ctx, SRC_LEFT_TOP_REG, pt.val);
-> >> +	pt.data.x = src_x + w;
-> >> +	pt.data.y = src_y + h;
-> >> +	g2d_add_cmd(ctx, SRC_RIGHT_BOTTOM_REG, pt.val);
-> >> +
-> >> +	pt.data.x = dst_x;
-> >> +	pt.data.y = dst_y;
-> >> +	g2d_add_cmd(ctx, DST_LEFT_TOP_REG, pt.val);
-> >> +	pt.data.x = dst_x + w;
-> >> +	pt.data.y = dst_y + h;
-> >> +	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
-> >> +
-> >> +	rop4.val = 0;
-> >> +	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
-> >> +	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
-> >> +
-> >> +	return g2d_flush(ctx);
-> >> +}
-> >> +
-> >> +/**
-> >>   * g2d_copy_with_scale - copy contents in source buffer to
-> >> destination buffer
-> >>   *	scaling up or down properly.
-> >>   *
-> >> diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
-> >> index 9eee7c0..2700686 100644
-> >> --- a/exynos/exynos_fimg2d.h
-> >> +++ b/exynos/exynos_fimg2d.h
-> >> @@ -343,6 +343,9 @@ int g2d_copy(struct g2d_context *ctx, struct
-> >> g2d_image *src, struct g2d_image *dst, unsigned int src_x,
-> >>  		unsigned int src_y, unsigned int dst_x, unsigned
-> >> int dst_y, unsigned int w, unsigned int h);
-> >> +int g2d_move(struct g2d_context *ctx, struct g2d_image *img,
-> >> +		unsigned int src_x, unsigned int src_y, unsigned
-> >> int dst_x,
-> >> +		unsigned dst_y, unsigned int w, unsigned int h);
-> >>  int g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image
-> >> *src, struct g2d_image *dst, unsigned int src_x,
-> >>  				unsigned int src_y, unsigned int
-> >> src_w,
-> > 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 1af5bdc..9134217 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -67,11 +67,6 @@
+ 			<19200000>;
+ };
+ 
+-&fimd {
+-	status = "okay";
+-};
+-
+-
+ &hdmi {
+ 	status = "okay";
+ 	hpd-gpio = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+-- 
+1.9.2
