@@ -1,60 +1,49 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 09/25] drm/exynos: exynos7-decon: remove excessive check
-Date: Tue, 10 Nov 2015 14:23:25 +0100
-Message-ID: <1447161821-1877-10-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 02/25] ARM: dts: exynos542x: add rotator node
+Date: Tue, 10 Nov 2015 14:23:18 +0100
+Message-ID: <1447161821-1877-3-git-send-email-m.szyprowski@samsung.com>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55191 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753107AbbKJNYy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Nov 2015 08:24:54 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NXL007J3P9FCTA0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2015 13:24:51 +0000 (GMT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Display area is already checked by exynos plane core, so there is no
-need for such check in driver code.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index ead2b16e237d..d50c26a41e09 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -399,7 +399,6 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 			       struct exynos_drm_plane *plane)
- {
- 	struct decon_context *ctx = crtc->ctx;
--	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
- 	struct drm_plane_state *state = plane->base.state;
- 	int padding;
- 	unsigned long val, alpha;
-@@ -441,15 +440,6 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 	DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
- 			plane->crtc_w, plane->crtc_h);
- 
--	/*
--	 * OSD position.
--	 * In case the window layout goes of LCD layout, DECON fails.
--	 */
--	if ((plane->crtc_x + plane->crtc_w) > mode->hdisplay)
--		plane->crtc_x = mode->hdisplay - plane->crtc_w;
--	if ((plane->crtc_y + plane->crtc_h) > mode->vdisplay)
--		plane->crtc_y = mode->vdisplay - plane->crtc_h;
--
- 	val = VIDOSDxA_TOPLEFT_X(plane->crtc_x) |
- 		VIDOSDxA_TOPLEFT_Y(plane->crtc_y);
- 	writel(val, ctx->regs + VIDOSD_A(win));
--- 
-1.9.2
+VGhpcyBwYXRjaCBhZGRzIGRldmljZSBub2RlIGZvciBSb3RhdG9yIGRldmljZSB0byBFeHlub3Mg
+NTQyeCBkZXZpY2UKdHJlZSBmaWxlLgoKU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8
+bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0
+MjAuZHRzaSB8IDE5ICsrKysrKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNl
+cnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5kdHNp
+IGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5kdHNpCmluZGV4IDFiM2Q2Yzc2OWEzYy4u
+NDhhMGE1NTMxNGY1IDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0
+c2kKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC5kdHNpCkBAIC03MTcsNiArNzE3
+LDE1IEBACiAJCWlvbW11cyA9IDwmc3lzbW11X3R2PjsKIAl9OwogCisJcm90YXRvcjogcm90YXRv
+ckAxMUMwMDAwMCB7CisJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1MjUwLXJvdGF0b3Ii
+OworCQlyZWcgPSA8MHgxMUMwMDAwMCAweDY0PjsKKwkJaW50ZXJydXB0cyA9IDwwIDg0IDA+Owor
+CQljbG9ja3MgPSA8JmNsb2NrIENMS19ST1RBVE9SPjsKKwkJY2xvY2stbmFtZXMgPSAicm90YXRv
+ciI7CisJCWlvbW11cyA9IDwmc3lzbW11X3JvdGF0b3I+OworCX07CisKIAlnc2NfMDogdmlkZW8t
+c2NhbGVyQDEzZTAwMDAwIHsKIAkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZ3NjIjsK
+IAkJcmVnID0gPDB4MTNlMDAwMDAgMHgxMDAwPjsKQEAgLTEwNTksNiArMTA2OCwxNiBAQAogCQkj
+aW9tbXUtY2VsbHMgPSA8MD47CiAJfTsKIAorCXN5c21tdV9yb3RhdG9yOiBzeXNtbXVAMHgxMUQ0
+MDAwMCB7CisJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3Mtc3lzbW11IjsKKwkJcmVnID0g
+PDB4MTFENDAwMDAgMHgxMDAwPjsKKwkJaW50ZXJydXB0LXBhcmVudCA9IDwmY29tYmluZXI+Owor
+CQlpbnRlcnJ1cHRzID0gPDQgMD47CisJCWNsb2NrLW5hbWVzID0gInN5c21tdSIsICJtYXN0ZXIi
+OworCQljbG9ja3MgPSA8JmNsb2NrIENMS19TTU1VX1JPVEFUT1I+LCA8JmNsb2NrIENMS19ST1RB
+VE9SPjsKKwkJI2lvbW11LWNlbGxzID0gPDA+OworCX07CisKIAlzeXNtbXVfanBlZzA6IHN5c21t
+dUAweDExRjEwMDAwIHsKIAkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1zeXNtbXUiOwog
+CQlyZWcgPSA8MHgxMUYxMDAwMCAweDEwMDA+OwotLSAKMS45LjIKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
