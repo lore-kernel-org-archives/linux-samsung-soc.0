@@ -1,125 +1,61 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 05/25] drm/exynos: gsc: add device tree support and remove
- usage of static mappings
-Date: Tue, 10 Nov 2015 14:23:21 +0100
-Message-ID: <1447161821-1877-6-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 20/25] drm/exynos: gem: set default alignment for dumb GEM
+ buffers
+Date: Tue, 10 Nov 2015 14:23:36 +0100
+Message-ID: <1447161821-1877-21-git-send-email-m.szyprowski@samsung.com>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55191 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753105AbbKJNY7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Nov 2015 08:24:59 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NXL007KOP9LNFA0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2015 13:24:57 +0000 (GMT)
 In-reply-to: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-VGhpcyBwYXRjaCBhZGRzIGRldmljZSB0cmVlIHN1cHBvcnQgZm9yIGV4eW5vc19kcm1fZ3NjLiBU
-aGlzIHBhdGNoCmFsc28gZml4ZWQgYnVpbGQgaXNzdWUgb24gbm9uLUV4eW5vcyBwbGF0Zm9ybXMs
-IHRodXMgZGVwZW5kZW5jeSBvbgohQVJDSF9NVUxUSVBMQVRGT1JNIGNhbiBiZSBub3cgcmVtb3Zl
-ZC4gVGhlIGRyaXZlciBjYW5ub3QgYmUgdXNlZApzaW11bHRhbmVvdXNseSB3aXRoIFY0TDIgTWVt
-Mk1lbSBHU2NhbGxlciBkcml2ZXIgdGhvdWdodC4KClNpZ25lZC1vZmYtYnk6IFNldW5nLVdvbyBL
-aW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+Clt1cGRhdGVkIGNvbW1pdCBtZXNzYWdlLCByZW1v
-dmVkIHRoZSBuZWVkIGZvciB3Yi1sY2QgcHJvcGVydHksIGJlY2F1c2UKYWxsIGdzY2FsbGVycyBo
-YXZlIHN1cHBvcnQgZm9yIGxjZCB3cml0ZWJhY2ssIHJlcGxhY2VkIGRlcGVuZGVuY3kgb24KIUFS
-Q0hfTVVMVElQTEFURk9STSB3aXRoICFWSURFT19TQU1TVU5HX0VYWU5PU19HU0NdClNpZ25lZC1v
-ZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiAu
-Li4vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9leHlub3M1LWdzYy50eHQgICAgICB8ICA0ICsr
-KwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgfCAg
-MiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAgICAgICAgICAg
-fCAzMCArKysrKysrKysrKysrKysrKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3Mt
-Z3NjLmggICAgICAgICAgICAgICAgICB8ICA0ICstLQogNCBmaWxlcyBjaGFuZ2VkLCAzMyBpbnNl
-cnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9leHlub3M1LWdzYy50eHQgYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvbWVkaWEvZXh5bm9zNS1nc2MudHh0CmluZGV4IDA2MDRkNDJmMzhk
-MS4uNWZlOTM3MmFiYjM3IDEwMDY0NAotLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWVkaWEvZXh5bm9zNS1nc2MudHh0CisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9tZWRpYS9leHlub3M1LWdzYy50eHQKQEAgLTcsNiArNywxMCBAQCBSZXF1aXJl
-ZCBwcm9wZXJ0aWVzOgogLSByZWc6IHNob3VsZCBjb250YWluIEctU2NhbGVyIHBoeXNpY2FsIGFk
-ZHJlc3MgbG9jYXRpb24gYW5kIGxlbmd0aC4KIC0gaW50ZXJydXB0czogc2hvdWxkIGNvbnRhaW4g
-Ry1TY2FsZXIgaW50ZXJydXB0IG51bWJlcgogCitPcHRpb25hbCBwcm9wZXJ0aWVzOgorLSBzYW1z
-dW5nLHN5c3JlZzogaGFuZGxlIHRvIHN5c2NvbiB1c2VkIHRvIGNvbnRyb2wgdGhlIHN5c3RlbSBy
-ZWdpc3RlcnMgdG8KKyAgc2V0IHdyaXRlYmFjayBpbnB1dCBhbmQgZGVzdGluYXRpb24KKwogRXhh
-bXBsZToKIAogZ3NjXzA6ICBnc2NAMHgxM2UwMDAwMCB7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcKaW5k
-ZXggOTZlODZjZjQ0NTViLi44M2VmY2E5NDEzODggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvS2NvbmZpZworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcKQEAg
-LTExOCw3ICsxMTgsNyBAQCBjb25maWcgRFJNX0VYWU5PU19ST1RBVE9SCiAKIGNvbmZpZyBEUk1f
-RVhZTk9TX0dTQwogCWJvb2wgIkdTY2FsZXIiCi0JZGVwZW5kcyBvbiBEUk1fRVhZTk9TX0lQUCAm
-JiBBUkNIX0VYWU5PUzUgJiYgIUFSQ0hfTVVMVElQTEFURk9STQorCWRlcGVuZHMgb24gRFJNX0VY
-WU5PU19JUFAgJiYgQVJDSF9FWFlOT1M1ICYmICFWSURFT19TQU1TVU5HX0VYWU5PU19HU0MKIAlo
-ZWxwCiAJICBDaG9vc2UgdGhpcyBvcHRpb24gaWYgeW91IHdhbnQgdG8gdXNlIEV4eW5vcyBHU0Mg
-Zm9yIERSTS4KIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2dzYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jCmluZGV4IGVk
-NTVkMzdiNjMzMC4uN2FlY2QyM2NmYTExIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZ3NjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2dzYy5jCkBAIC0xNSw3ICsxNSw4IEBACiAjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2
-aWNlLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CiAjaW5jbHVkZSA8bGludXgvcG1fcnVudGlt
-ZS5oPgotI2luY2x1ZGUgPHBsYXQvbWFwLWJhc2UuaD4KKyNpbmNsdWRlIDxsaW51eC9tZmQvc3lz
-Y29uLmg+CisjaW5jbHVkZSA8bGludXgvcmVnbWFwLmg+CiAKICNpbmNsdWRlIDxkcm0vZHJtUC5o
-PgogI2luY2x1ZGUgPGRybS9leHlub3NfZHJtLmg+CkBAIC0xMjYsNiArMTI3LDcgQEAgc3RydWN0
-IGdzY19jYXBhYmlsaXR5IHsKICAqIEBpcHBkcnY6IHByZXBhcmUgaW5pdGlhbGl6YXRpb24gdXNp
-bmcgaXBwZHJ2LgogICogQHJlZ3NfcmVzOiByZWdpc3RlciByZXNvdXJjZXMuCiAgKiBAcmVnczog
-bWVtb3J5IG1hcHBlZCBpbyByZWdpc3RlcnMuCisgKiBAc3lzcmVnOiBoYW5kbGUgdG8gU1lTUkVH
-IGJsb2NrIHJlZ21hcC4KICAqIEBsb2NrOiBsb2NraW5nIG9mIG9wZXJhdGlvbnMuCiAgKiBAZ3Nj
-X2NsazogZ3NjIGdhdGUgY2xvY2suCiAgKiBAc2M6IHNjYWxlciBpbmZvbWF0aW9ucy4KQEAgLTEz
-OCw2ICsxNDAsNyBAQCBzdHJ1Y3QgZ3NjX2NvbnRleHQgewogCXN0cnVjdCBleHlub3NfZHJtX2lw
-cGRydglpcHBkcnY7CiAJc3RydWN0IHJlc291cmNlCSpyZWdzX3JlczsKIAl2b2lkIF9faW9tZW0J
-KnJlZ3M7CisJc3RydWN0IHJlZ21hcAkqc3lzcmVnOwogCXN0cnVjdCBtdXRleAlsb2NrOwogCXN0
-cnVjdCBjbGsJKmdzY19jbGs7CiAJc3RydWN0IGdzY19zY2FsZXIJc2M7CkBAIC00MzcsOSArNDQw
-LDEyIEBAIHN0YXRpYyBpbnQgZ3NjX3N3X3Jlc2V0KHN0cnVjdCBnc2NfY29udGV4dCAqY3R4KQog
-CiBzdGF0aWMgdm9pZCBnc2Nfc2V0X2dzY2Jsa19maW1kX3diKHN0cnVjdCBnc2NfY29udGV4dCAq
-Y3R4LCBib29sIGVuYWJsZSkKIHsKLQl1MzIgZ3NjYmxrX2NmZzsKKwl1bnNpZ25lZCBpbnQgZ3Nj
-YmxrX2NmZzsKIAotCWdzY2Jsa19jZmcgPSByZWFkbChTWVNSRUdfR1NDQkxLX0NGRzEpOworCWlm
-ICghY3R4LT5zeXNyZWcpCisJCXJldHVybjsKKworCXJlZ21hcF9yZWFkKGN0eC0+c3lzcmVnLCBT
-WVNSRUdfR1NDQkxLX0NGRzEsICZnc2NibGtfY2ZnKTsKIAogCWlmIChlbmFibGUpCiAJCWdzY2Js
-a19jZmcgfD0gR1NDX0JMS19ESVNQMVdCX0RFU1QoY3R4LT5pZCkgfApAQCAtNDQ4LDcgKzQ1NCw3
-IEBAIHN0YXRpYyB2b2lkIGdzY19zZXRfZ3NjYmxrX2ZpbWRfd2Ioc3RydWN0IGdzY19jb250ZXh0
-ICpjdHgsIGJvb2wgZW5hYmxlKQogCWVsc2UKIAkJZ3NjYmxrX2NmZyB8PSBHU0NfQkxLX1BYTEFT
-WU5DX0xPX01BU0tfV0IoY3R4LT5pZCk7CiAKLQl3cml0ZWwoZ3NjYmxrX2NmZywgU1lTUkVHX0dT
-Q0JMS19DRkcxKTsKKwlyZWdtYXBfd3JpdGUoY3R4LT5zeXNyZWcsIFNZU1JFR19HU0NCTEtfQ0ZH
-MSwgZ3NjYmxrX2NmZyk7CiB9CiAKIHN0YXRpYyB2b2lkIGdzY19oYW5kbGVfaXJxKHN0cnVjdCBn
-c2NfY29udGV4dCAqY3R4LCBib29sIGVuYWJsZSwKQEAgLTE2NjMsNiArMTY2OSwxNSBAQCBzdGF0
-aWMgaW50IGdzY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCWlmICghY3R4
-KQogCQlyZXR1cm4gLUVOT01FTTsKIAorCWlmIChkZXYtPm9mX25vZGUpIHsKKwkJY3R4LT5zeXNy
-ZWcgPSBzeXNjb25fcmVnbWFwX2xvb2t1cF9ieV9waGFuZGxlKGRldi0+b2Zfbm9kZSwKKwkJCQkJ
-CQkic2Ftc3VuZyxzeXNyZWciKTsKKwkJaWYgKElTX0VSUihjdHgtPnN5c3JlZykpIHsKKwkJCWRl
-dl93YXJuKGRldiwgImZhaWxlZCB0byBnZXQgc3lzdGVtIHJlZ2lzdGVyLlxuIik7CisJCQljdHgt
-PnN5c3JlZyA9IE5VTEw7CisJCX0KKwl9CisKIAkvKiBjbG9jayBjb250cm9sICovCiAJY3R4LT5n
-c2NfY2xrID0gZGV2bV9jbGtfZ2V0KGRldiwgImdzY2wiKTsKIAlpZiAoSVNfRVJSKGN0eC0+Z3Nj
-X2NsaykpIHsKQEAgLTE3OTYsNiArMTgxMSwxMiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9w
-bV9vcHMgZ3NjX3BtX29wcyA9IHsKIAlTRVRfUlVOVElNRV9QTV9PUFMoZ3NjX3J1bnRpbWVfc3Vz
-cGVuZCwgZ3NjX3J1bnRpbWVfcmVzdW1lLCBOVUxMKQogfTsKIAorc3RhdGljIGNvbnN0IHN0cnVj
-dCBvZl9kZXZpY2VfaWQgZXh5bm9zX2RybV9nc2Nfb2ZfbWF0Y2hbXSA9IHsKKwl7IC5jb21wYXRp
-YmxlID0gInNhbXN1bmcsZXh5bm9zNS1nc2MiIH0sCisJeyB9LAorfTsKK01PRFVMRV9ERVZJQ0Vf
-VEFCTEUob2YsIGV4eW5vc19kcm1fZ3NjX29mX21hdGNoKTsKKwogc3RydWN0IHBsYXRmb3JtX2Ry
-aXZlciBnc2NfZHJpdmVyID0gewogCS5wcm9iZQkJPSBnc2NfcHJvYmUsCiAJLnJlbW92ZQkJPSBn
-c2NfcmVtb3ZlLApAQCAtMTgwMyw2ICsxODI0LDcgQEAgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBn
-c2NfZHJpdmVyID0gewogCQkubmFtZQk9ICJleHlub3MtZHJtLWdzYyIsCiAJCS5vd25lcgk9IFRI
-SVNfTU9EVUxFLAogCQkucG0JPSAmZ3NjX3BtX29wcywKKwkJLm9mX21hdGNoX3RhYmxlID0gb2Zf
-bWF0Y2hfcHRyKGV4eW5vc19kcm1fZ3NjX29mX21hdGNoKSwKIAl9LAogfTsKIApkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWdzYy5oIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9yZWdzLWdzYy5oCmluZGV4IDlhZDU5MjcwN2FhZi4uNDcwNGE5OTNjYmI3IDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtZ3NjLmgKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9yZWdzLWdzYy5oCkBAIC0yNzMsMTIgKzI3MywxMiBAQAogI2RlZmluZSBHU0Nf
-Q0xLX0dBVEVfTU9ERV9TTk9PUF9DTlQoeCkJKCh4KSA8PCAwKQogCiAvKiBTWVNDT04uIEdTQ0JM
-S19DRkcgKi8KLSNkZWZpbmUgU1lTUkVHX0dTQ0JMS19DRkcxCQkoUzNDX1ZBX1NZUyArIDB4MDIy
-NCkKKyNkZWZpbmUgU1lTUkVHX0dTQ0JMS19DRkcxCQkweDAyMjQKICNkZWZpbmUgR1NDX0JMS19E
-SVNQMVdCX0RFU1QoeCkJCSh4IDw8IDEwKQogI2RlZmluZSBHU0NfQkxLX1NXX1JFU0VUX1dCX0RF
-U1QoeCkJKDEgPDwgKDE4ICsgeCkpCiAjZGVmaW5lIEdTQ19CTEtfUFhMQVNZTkNfTE9fTUFTS19X
-Qih4KQkoMCA8PCAoMTQgKyB4KSkKICNkZWZpbmUgR1NDX0JMS19HU0NMX1dCX0lOX1NSQ19TRUwo
-eCkJKDEgPDwgKDIgKiB4KSkKLSNkZWZpbmUgU1lTUkVHX0dTQ0JMS19DRkcyCQkoUzNDX1ZBX1NZ
-UyArIDB4MjAwMCkKKyNkZWZpbmUgU1lTUkVHX0dTQ0JMS19DRkcyCQkweDIwMDAKICNkZWZpbmUg
-UFhMQVNZTkNfTE9fTUFTS19DQU1JRl9HU0NMKHgpCSgxIDw8ICh4KSkKIAogI2VuZGlmIC8qIEVY
-WU5PU19SRUdTX0dTQ19IXyAqLwotLSAKMS45LjIKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+This patch forces all GEM buffers to have pitch aligned at least to 8
+pixels. This is a common requirement for various Exynos IPP blocks,
+which otherwise won't be able to operate on buffers of random size.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h | 2 ++
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 9ed52b04c0ba..0890e6709f10 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -24,6 +24,8 @@
+ 
+ #define DEFAULT_WIN	0
+ 
++#define EXYNOS_DRM_PITCH_ALIGN	8
++
+ #define EXYNOS_BAD_PIXEL_FORMAT 0xffffffffu
+ 
+ #define to_exynos_crtc(x)	container_of(x, struct exynos_drm_crtc, base)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 252eb301470c..b5db6e6cc043 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -417,7 +417,7 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+ 	 *	with DRM_IOCTL_MODE_CREATE_DUMB command.
+ 	 */
+ 
+-	args->pitch = args->width * ((args->bpp + 7) / 8);
++	args->pitch = roundup(args->width, EXYNOS_DRM_PITCH_ALIGN) * ((args->bpp + 7) / 8);
+ 	args->size = args->pitch * args->height;
+ 
+ 	if (is_drm_iommu_supported(dev))
+-- 
+1.9.2
