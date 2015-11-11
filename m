@@ -1,69 +1,71 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing) subsystem
-Date: Wed, 11 Nov 2015 22:30:50 +0000
-Message-ID: <CACvgo50ZoZ-uM4JMvn+1GY=E08_CNZpV0tDfE33L54_hqGVqXw@mail.gmail.com>
-References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v9 15/17] drm: bridge: analogix/dp: try force hpd after
+ plug in lookup failed
+Date: Wed, 11 Nov 2015 17:10:42 -0600
+Message-ID: <20151111231042.GA29893@rob-hp-laptop>
+References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
+ <1446167355-6387-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:34064 "EHLO
-	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753043AbbKKWau (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:34637 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752587AbbKKXKv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Nov 2015 17:30:50 -0500
-Received: by ioir85 with SMTP id r85so7187432ioi.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2015 14:30:50 -0800 (PST)
-In-Reply-To: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
+	Wed, 11 Nov 2015 18:10:51 -0500
+Content-Disposition: inline
+In-Reply-To: <1446167355-6387-1-git-send-email-ykk@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: ML dri-devel <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-deve
 
-Hello Marek,
+On Fri, Oct 30, 2015 at 09:09:15AM +0800, Yakir Yang wrote:
+> Some edp screen do not have hpd signal, so we can't just return
+> failed when hpd plug in detect failed.
+> 
+> This is an hardware property, so we need add a devicetree property
+> "analogix,need-force-hpd" to indicate this sutiation.
+> 
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> ---
 
-On 10 November 2015 at 13:23, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Dear All,
->
-> This patch series introduces a new life into Exynos IPP (Image Post
-> Processing) subsystem by integrating it (transparently for userspace
-> applications) with Exynos DRM core plane management. This means that all
-> CRTC drivers transparently get support for standard features of IPP
-> subsystem like rotation and scaling.
->
-> Support for features not supported natively by CRTC drivers is
-> implemented with a help of temporary framebuffers, where image data is
-> processed by IPP subsystem before performing the scanout by a CRTC driver.
->
-> This patchset is a first version of this 'new feature' and I would like
-> get some comments on the proposed approach. I plan to continue working
-> on enhancing Exynos DRM drivers and especially do the cleanup the IPP
-> subsystem.
->
-> Most of the new features are added by the last 2 patches. All other
-> patches are bugfixes in various Exynos DRM subdrivers and significant
-> core rewrite - introducing a subclass of drm_plane_state was needed and
-> all drivers have been converted to use it. Some initial cleanups in IPP
-> subsystem were also needed to let Exynos core to call it internally from
-> the driver core. This part will be cleaned even more in the future.
->
->
-> My solution has been tested on Exynos4412-based Odroid U3 and
-> Exynos5420-based Odroid XU3. To check rotation, cropping and scaling
-> I've developed a simple test application, which use atomic mode
-> setting/page flipping API. You can download it here:
->
-> https://git.linaro.org/?p=people/marek.szyprowski/atomictest.git
->
-Can I interest you in up-streaming this code into place such as libdrm
-? This way other developers can benefit from your tool.
+I didn't find this one in v10. Did it get dropped?
 
-Admittedly I've not looked at the tool but it seems to me that it
-duplicates some of the functionality we already in modetest (+atomic).
-The latter of which send by your colleague Hyungwon Hwang [1] (and I
-seemingly forgot do a final review/push). If you can share a few
-cycles worth of review and/or importing your app.
+> Changes in v9: None
+> Changes in v8: None
+> Changes in v7: None
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3:
+> - Add "analogix,need-force-hpd" to indicate whether driver need foce
+>   hpd when hpd detect failed.
+> 
+> Changes in v2: None
+> 
+>  .../bindings/display/bridge/analogix_dp.txt        |  4 ++-
+>  .../bindings/display/exynos/exynos_dp.txt          |  1 +
+>  .../display/rockchip/analogix_dp-rockchip.txt      |  1 +
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 36 +++++++++++++++++++---
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  2 ++
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  9 ++++++
+>  6 files changed, 47 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+> index 7659a7a..74f0e80 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+> @@ -22,6 +22,9 @@ Required properties for dp-controller:
+>  		from general PHY binding: Should be "dp".
+>  
+>  Optional properties for dp-controller:
+> +	-analogix,need-force-hpd:
+> +		Indicate driver need force hpd when hpd detect failed, this
+> +		is used for some eDP screen which don't have hpd signal.
 
-Thanks
-Emil
+This should be a generic property.
 
-[1] http://lists.freedesktop.org/archives/dri-devel/2015-September/090748.html
+Rob
