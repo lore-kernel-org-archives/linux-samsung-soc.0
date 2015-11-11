@@ -1,125 +1,64 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH V3 5/5] ARM: dts: exynos4412: Rename OPP nodes as opp@<opp-hz>
-Date: Wed, 11 Nov 2015 08:10:58 +0530
-Message-ID: <af18ab62fc9c52e082380ce5989ea287304c9bde.1447209519.git.viresh.kumar@linaro.org>
-References: <cover.1447209519.git.viresh.kumar@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:35170 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752371AbbKKClb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Nov 2015 21:41:31 -0500
-Received: by pasz6 with SMTP id z6so16931911pas.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Nov 2015 18:41:30 -0800 (PST)
-In-Reply-To: <cover.1447209519.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1447209519.git.viresh.kumar@linaro.org>
-References: <cover.1447209519.git.viresh.kumar@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v7 1/4] Documentation: dt-bindings: Describe SROMc
+ configuration
+Date: Wed, 11 Nov 2015 09:44:35 +0300
+Message-ID: <009301d11c4c$6eaa1eb0$4bfe5c10$@samsung.com>
+References: <cover.1446799912.git.p.fedin@samsung.com>
+ <0bc58ce0fd39767834f486c4c0cfbbd70044caed.1446799912.git.p.fedin@samsung.com>
+ <CAL_JsqLsD9gA2-AWYGaHvOuZhhDmE2BHmPMU2nJjPYEvQJdNHQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAL_JsqLsD9gA2-AWYGaHvOuZhhDmE2BHmPMU2nJjPYEvQJdNHQ@mail.gmail.com>
+Content-language: ru
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Rob Herring' <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rafael Wysocki <rjw@rjwysocki.net>, robh+dt@kernel.org, sboyd@codeaurora.org, lee.jones@linaro.org
-Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, nm@ti.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS
-	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-OPP bindings got updated to name OPP nodes this way, make changes
-according to that.
+ Hello!
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/exynos4412.dtsi | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+> > +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
+> > +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> > +                        Each value is specified in cycles and has the following
+> > +                        meaning and valid range:
+> > +                        Tacp : Page mode access cycle at Page mode (0 - 15)
+> > +                        Tcah : Address holding time after CSn (0 - 15)
+> > +                        Tcoh : Chip selection hold on OEn (0 - 15)
+> > +                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
+> > +                        Tcos : Chip selection set-up before OEn (0 - 15)
+> > +                        Tacs : Address set-up before CSn (0 - 15)
+> 
+> This is not easily extended. Perhaps a property per value instead.
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 294cfe40388d..40beede46e55 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -64,73 +64,73 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp00 {
-+		opp@200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
- 			opp-microvolt = <900000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp01 {
-+		opp@300000000 {
- 			opp-hz = /bits/ 64 <300000000>;
- 			opp-microvolt = <900000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp02 {
-+		opp@400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
- 			opp-microvolt = <925000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp03 {
-+		opp@500000000 {
- 			opp-hz = /bits/ 64 <500000000>;
- 			opp-microvolt = <950000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp04 {
-+		opp@600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
- 			opp-microvolt = <975000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp05 {
-+		opp@700000000 {
- 			opp-hz = /bits/ 64 <700000000>;
- 			opp-microvolt = <987500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp06 {
-+		opp@800000000 {
- 			opp-hz = /bits/ 64 <800000000>;
- 			opp-microvolt = <1000000>;
- 			clock-latency-ns = <200000>;
- 			opp-suspend;
- 		};
--		opp07 {
-+		opp@900000000 {
- 			opp-hz = /bits/ 64 <900000000>;
- 			opp-microvolt = <1037500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp08 {
-+		opp@1000000000 {
- 			opp-hz = /bits/ 64 <1000000000>;
- 			opp-microvolt = <1087500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp09 {
-+		opp@1100000000 {
- 			opp-hz = /bits/ 64 <1100000000>;
- 			opp-microvolt = <1137500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp10 {
-+		opp@1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <1187500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp11 {
-+		opp@1300000000 {
- 			opp-hz = /bits/ 64 <1300000000>;
- 			opp-microvolt = <1250000>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp12 {
-+		opp@1400000000 {
- 			opp-hz = /bits/ 64 <1400000000>;
- 			opp-microvolt = <1287500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp13 {
-+		opp@1500000000 {
- 			opp-hz = /bits/ 64 <1500000000>;
- 			opp-microvolt = <1350000>;
- 			clock-latency-ns = <200000>;
--- 
-2.6.2.198.g614a2ac
+ We had a discussion with Krzysztof about it, he agreed with this form of the property.
+My concern was that it's just too much typing, and makes little sense because these
+settings always go together. If register layout changes, or parameter set changes in
+incompatible way, then it's another device, not exynos-srom anymore.
+ So would you agree with that, or is your position strong?
+
+> >                 compatible = "samsung,exynos-srom";
+> > -               reg = <0x12570000 0x10>;
+> > +               reg = <0x12570000 0x14>;
+> > +
+> > +               ethernet@3 {
+> > +                       compatible = "smsc,lan9115";
+> > +                       reg = <3 0 0x10000>;       // Bank 3, offset = 0
+> > +                       phy-mode = "mii";
+> > +                       interrupt-parent = <&gpx0>;
+> > +                       interrupts = <5 8>;
+> > +                       reg-io-width = <2>;
+> > +                       smsc,irq-push-pull;
+> > +                       smsc,force-internal-phy;
+> > +
+> > +                       samsung,srom-config = <1 9 12 1 9 1 1>;
+> 
+> This doesn't match the doc.
+
+ Damn, overlooked. :(
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
