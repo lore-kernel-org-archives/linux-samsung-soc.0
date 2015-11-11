@@ -1,43 +1,69 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v7 1/4] Documentation: dt-bindings: Describe SROMc configuration
-Date: Wed, 11 Nov 2015 14:43:12 -0600
-Message-ID: <CAL_JsqLtWwdGHKKfS8b6E0Urh6gYopZcwpdyvJGWCRm7x81YzA@mail.gmail.com>
-References: <cover.1446799912.git.p.fedin@samsung.com> <0bc58ce0fd39767834f486c4c0cfbbd70044caed.1446799912.git.p.fedin@samsung.com>
- <CAL_JsqLsD9gA2-AWYGaHvOuZhhDmE2BHmPMU2nJjPYEvQJdNHQ@mail.gmail.com> <009301d11c4c$6eaa1eb0$4bfe5c10$@samsung.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing) subsystem
+Date: Wed, 11 Nov 2015 22:30:50 +0000
+Message-ID: <CACvgo50ZoZ-uM4JMvn+1GY=E08_CNZpV0tDfE33L54_hqGVqXw@mail.gmail.com>
+References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <009301d11c4c$6eaa1eb0$4bfe5c10$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:34064 "EHLO
+	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753043AbbKKWau (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Nov 2015 17:30:50 -0500
+Received: by ioir85 with SMTP id r85so7187432ioi.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2015 14:30:50 -0800 (PST)
+In-Reply-To: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: ML dri-devel <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Wed, Nov 11, 2015 at 12:44 AM, Pavel Fedin <p.fedin@samsung.com> wrote:
->  Hello!
+Hello Marek,
+
+On 10 November 2015 at 13:23, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> Dear All,
 >
->> > +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
->> > +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
->> > +                        Each value is specified in cycles and has the following
->> > +                        meaning and valid range:
->> > +                        Tacp : Page mode access cycle at Page mode (0 - 15)
->> > +                        Tcah : Address holding time after CSn (0 - 15)
->> > +                        Tcoh : Chip selection hold on OEn (0 - 15)
->> > +                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
->> > +                        Tcos : Chip selection set-up before OEn (0 - 15)
->> > +                        Tacs : Address set-up before CSn (0 - 15)
->>
->> This is not easily extended. Perhaps a property per value instead.
+> This patch series introduces a new life into Exynos IPP (Image Post
+> Processing) subsystem by integrating it (transparently for userspace
+> applications) with Exynos DRM core plane management. This means that all
+> CRTC drivers transparently get support for standard features of IPP
+> subsystem like rotation and scaling.
 >
->  We had a discussion with Krzysztof about it, he agreed with this form of the property.
-> My concern was that it's just too much typing, and makes little sense because these
-> settings always go together. If register layout changes, or parameter set changes in
-> incompatible way, then it's another device, not exynos-srom anymore.
->  So would you agree with that, or is your position strong?
+> Support for features not supported natively by CRTC drivers is
+> implemented with a help of temporary framebuffers, where image data is
+> processed by IPP subsystem before performing the scanout by a CRTC driver.
+>
+> This patchset is a first version of this 'new feature' and I would like
+> get some comments on the proposed approach. I plan to continue working
+> on enhancing Exynos DRM drivers and especially do the cleanup the IPP
+> subsystem.
+>
+> Most of the new features are added by the last 2 patches. All other
+> patches are bugfixes in various Exynos DRM subdrivers and significant
+> core rewrite - introducing a subclass of drm_plane_state was needed and
+> all drivers have been converted to use it. Some initial cleanups in IPP
+> subsystem were also needed to let Exynos core to call it internally from
+> the driver core. This part will be cleaned even more in the future.
+>
+>
+> My solution has been tested on Exynos4412-based Odroid U3 and
+> Exynos5420-based Odroid XU3. To check rotation, cropping and scaling
+> I've developed a simple test application, which use atomic mode
+> setting/page flipping API. You can download it here:
+>
+> https://git.linaro.org/?p=people/marek.szyprowski/atomictest.git
+>
+Can I interest you in up-streaming this code into place such as libdrm
+? This way other developers can benefit from your tool.
 
-I'm thinking for a new version of the controller which could add (or
-remove) new timing parameters, but then I guess you can interpret the
-field differently based on the compatible string. Anyway, your problem
-to deal with.
+Admittedly I've not looked at the tool but it seems to me that it
+duplicates some of the functionality we already in modetest (+atomic).
+The latter of which send by your colleague Hyungwon Hwang [1] (and I
+seemingly forgot do a final review/push). If you can share a few
+cycles worth of review and/or importing your app.
 
-Rob
+Thanks
+Emil
+
+[1] http://lists.freedesktop.org/archives/dri-devel/2015-September/090748.html
