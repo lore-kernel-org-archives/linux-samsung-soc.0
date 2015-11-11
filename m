@@ -1,42 +1,48 @@
-From: Thomas Pietrowski <thopiekar@gmail.com>
-Subject: Devicetree gpu entry for Mali400-MP4 embedded in Exynos4412 Prime SoC'S
-Date: Wed, 11 Nov 2015 19:31:25 +0100
-Message-ID: <CAE-5t2vrv=BgrdS4ft4hCe9FG8Vz_uKHoGxjxJi55MO1r9xNQw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/2] [media] include/media: move platform driver headers
+ to a separate dir
+Date: Wed, 11 Nov 2015 21:26:31 +0100
+Message-ID: <4220808.QEkJDXYE1T@wuerfel>
+References: <413d2bb0b813a7e62867de7a94b0ab61e16cb1cb.1447261977.git.mchehab@osg.samsung.com>
+ <09e182fa61a7122356b790cd2a4a7f622dabb4ce.1447261977.git.mchehab@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f173.google.com ([209.85.160.173]:35117 "EHLO
-	mail-yk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751275AbbKKSb1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Nov 2015 13:31:27 -0500
-Received: by ykba77 with SMTP id a77so63054332ykb.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2015 10:31:26 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <09e182fa61a7122356b790cd2a4a7f622dabb4ce.1447261977.git.mchehab@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Sergey Lapin <slapin@ossfans.org>, Sekhar Nori <nsekhar@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Lad,
+ Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Harald Welte <laforge@openezx.org>, devel@driverdev.osuosl.org, Boris BREZILLON <boris.brezillon@free-electrons.com>, openezx-devel@lists.openezx.org, Russell King <linux@arm.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Vinod Koul <vinod.koul@intel.com>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Junghak Sung <jh1009>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+On Wednesday 11 November 2015 15:14:48 Mauro Carvalho Chehab wrote:
+>  rename include/media/{ => platform}/exynos-fimc.h (100%)
+>  rename include/media/{ => platform}/mmp-camera.h (100%)
+>  rename include/media/{ => platform}/omap1_camera.h (100%)
+>  rename include/media/{ => platform}/omap4iss.h (100%)
+>  rename include/media/{ => platform}/s3c_camif.h (100%)
+>  rename include/media/{ => platform}/s5p_hdmi.h (100%)
+>  rename include/media/{ => platform}/sh_mobile_ceu.h (100%)
+>  rename include/media/{ => platform}/sh_mobile_csi2.h (100%)
+>  rename include/media/{ => platform}/sh_vou.h (100%)
+>  rename include/media/{ => platform}/sii9234.h (100%)
+>  rename include/media/{ => platform}/soc_camera.h (100%)
+>  rename include/media/{ => platform}/soc_camera_platform.h (98%)
+>  rename include/media/{ => platform}/soc_mediabus.h (100%)
 
-while using the mainline kernel on my Odroid U3+ for a while, I tried
-to make it working with the latest ARM Mali driver supported by my
-vendor (Hardkernel), which is r5p0.
-I found a pdf document on the net for the Exynos4412 and also took a
-look at the dt entry by Tobias Jakobi, who has got a individual dt
-implementation for an older (r4p0) mali driver.
-But I ended with error messages at driver initialization, so added a
-question at community.com [1] to understand the reason and they said
-that there is a lot wrong in the dt entry. So I assume that there are
-much differences between Exynos4412 and Exynos4412 Prime (?).
+This still seems to be a mix of various things. Some of these are interfaces
+between drivers, while others declare a foo_platform_data structure that
+is used to interface between platform code and the driver.
 
-Additionally: Is it possible to merge dtb files? Just in case I have
-an installation with a kernel + dtb's preinstalled, is it possible to
-cat the missing gpu@ entry from a seperate dtb? Or better: Are you
-planning to add the missing gpu@ entries? I know Greg Kroah-Hartman
-made a statement in the past about the mali driver, but as the device
-trees just have to describe the hardware layout it shouldn't be a
-problem adding these entries, isn't it?
+I think the latter should go into include/linux/platform_data/media/*.h instead.
 
-Regards
-
-[1] https://community.arm.com/thread/9145
+	Arnd
