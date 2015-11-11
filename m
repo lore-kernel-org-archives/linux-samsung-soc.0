@@ -1,48 +1,43 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] [media] include/media: move platform driver headers
- to a separate dir
-Date: Wed, 11 Nov 2015 21:26:31 +0100
-Message-ID: <4220808.QEkJDXYE1T@wuerfel>
-References: <413d2bb0b813a7e62867de7a94b0ab61e16cb1cb.1447261977.git.mchehab@osg.samsung.com>
- <09e182fa61a7122356b790cd2a4a7f622dabb4ce.1447261977.git.mchehab@osg.samsung.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v7 1/4] Documentation: dt-bindings: Describe SROMc configuration
+Date: Wed, 11 Nov 2015 14:43:12 -0600
+Message-ID: <CAL_JsqLtWwdGHKKfS8b6E0Urh6gYopZcwpdyvJGWCRm7x81YzA@mail.gmail.com>
+References: <cover.1446799912.git.p.fedin@samsung.com> <0bc58ce0fd39767834f486c4c0cfbbd70044caed.1446799912.git.p.fedin@samsung.com>
+ <CAL_JsqLsD9gA2-AWYGaHvOuZhhDmE2BHmPMU2nJjPYEvQJdNHQ@mail.gmail.com> <009301d11c4c$6eaa1eb0$4bfe5c10$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <09e182fa61a7122356b790cd2a4a7f622dabb4ce.1447261977.git.mchehab@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Sergey Lapin <slapin@ossfans.org>, Sekhar Nori <nsekhar@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Lad,
- Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Harald Welte <laforge@openezx.org>, devel@driverdev.osuosl.org, Boris BREZILLON <boris.brezillon@free-electrons.com>, openezx-devel@lists.openezx.org, Russell King <linux@arm.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Vinod Koul <vinod.koul@intel.com>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Junghak Sung <jh1009>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <009301d11c4c$6eaa1eb0$4bfe5c10$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Fedin <p.fedin@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday 11 November 2015 15:14:48 Mauro Carvalho Chehab wrote:
->  rename include/media/{ => platform}/exynos-fimc.h (100%)
->  rename include/media/{ => platform}/mmp-camera.h (100%)
->  rename include/media/{ => platform}/omap1_camera.h (100%)
->  rename include/media/{ => platform}/omap4iss.h (100%)
->  rename include/media/{ => platform}/s3c_camif.h (100%)
->  rename include/media/{ => platform}/s5p_hdmi.h (100%)
->  rename include/media/{ => platform}/sh_mobile_ceu.h (100%)
->  rename include/media/{ => platform}/sh_mobile_csi2.h (100%)
->  rename include/media/{ => platform}/sh_vou.h (100%)
->  rename include/media/{ => platform}/sii9234.h (100%)
->  rename include/media/{ => platform}/soc_camera.h (100%)
->  rename include/media/{ => platform}/soc_camera_platform.h (98%)
->  rename include/media/{ => platform}/soc_mediabus.h (100%)
+On Wed, Nov 11, 2015 at 12:44 AM, Pavel Fedin <p.fedin@samsung.com> wrote:
+>  Hello!
+>
+>> > +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
+>> > +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+>> > +                        Each value is specified in cycles and has the following
+>> > +                        meaning and valid range:
+>> > +                        Tacp : Page mode access cycle at Page mode (0 - 15)
+>> > +                        Tcah : Address holding time after CSn (0 - 15)
+>> > +                        Tcoh : Chip selection hold on OEn (0 - 15)
+>> > +                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
+>> > +                        Tcos : Chip selection set-up before OEn (0 - 15)
+>> > +                        Tacs : Address set-up before CSn (0 - 15)
+>>
+>> This is not easily extended. Perhaps a property per value instead.
+>
+>  We had a discussion with Krzysztof about it, he agreed with this form of the property.
+> My concern was that it's just too much typing, and makes little sense because these
+> settings always go together. If register layout changes, or parameter set changes in
+> incompatible way, then it's another device, not exynos-srom anymore.
+>  So would you agree with that, or is your position strong?
 
-This still seems to be a mix of various things. Some of these are interfaces
-between drivers, while others declare a foo_platform_data structure that
-is used to interface between platform code and the driver.
+I'm thinking for a new version of the controller which could add (or
+remove) new timing parameters, but then I guess you can interpret the
+field differently based on the compatible string. Anyway, your problem
+to deal with.
 
-I think the latter should go into include/linux/platform_data/media/*.h instead.
-
-	Arnd
+Rob
