@@ -1,38 +1,105 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 04/25] drm/exynos: gsc: fix wrong pm_runtime state
-Date: Thu, 12 Nov 2015 13:12:44 -0200
-Message-ID: <20151112151244.GC2264@joana>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 18/25] drm/exynos: fimd: fix dma burst size setting for
+ small plane size
+Date: Thu, 12 Nov 2015 16:17:09 +0100
+Message-ID: <5644AD75.6000103@math.uni-bielefeld.de>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-5-git-send-email-m.szyprowski@samsung.com>
+ <1447161821-1877-19-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1447161821-1877-5-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59154 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754494AbbKLPRM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Nov 2015 10:17:12 -0500
+In-Reply-To: <1447161821-1877-19-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-SGkgTWFyZWssCgoyMDE1LTExLTEwIE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1z
-dW5nLmNvbT46Cgo+IEZyb206IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+
-Cj4gCj4gQXQgcHJvYmUgdGltZSwgZ3NjIGNsb2NrIGlzIG5vdCBlbmFibGVkLCBzbyBwbV9ydW50
-aW1lIHN0YXRlIHNob3VsZAo+IGJlIGRlYWN0aXZlLiBTbyB0aGlzIHBhdGNoIHJlbW92ZXMgcG1f
-cnVudGltZV9zZXRfYWN0aXZlKCkgZnJvbQo+IGdzY19wcm9iZSgpLgo+IAo+IFNpZ25lZC1vZmYt
-Ynk6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1i
-eTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMgfCAxIC0KPiAgMSBmaWxlIGNo
-YW5nZWQsIDEgZGVsZXRpb24oLSkKClJldmlld2VkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rh
-dm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+CgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This one looks a bit strange. It only changes the argument list of
+fimd_win_set_pixfmt() but the commit message that it actually fixes
+something.
+
+The corresponding upstream commit:
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=66367461e573321f0fbb0be0391165b5a54d5fe4
+
+With best wishes,
+Tobias
+
+
+Marek Szyprowski wrote:
+> This patch fixes trashed display of buffers cropped to very small width.
+> Even if DMA is unstable and causes tearing when changing the burst size,
+> it is still better than displaying a garbage.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 24 +++++++++++-------------
+>  1 file changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 44226b2b46c7..6c04ff6432d4 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -487,7 +487,7 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
+>  
+>  
+>  static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+> -				struct drm_framebuffer *fb)
+> +				uint32_t pixel_format, int width)
+>  {
+>  	unsigned long val;
+>  
+> @@ -498,11 +498,11 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+>  	 * So the request format is ARGB8888 then change it to XRGB8888.
+>  	 */
+>  	if (ctx->driver_data->has_limited_fmt && !win) {
+> -		if (fb->pixel_format == DRM_FORMAT_ARGB8888)
+> -			fb->pixel_format = DRM_FORMAT_XRGB8888;
+> +		if (pixel_format == DRM_FORMAT_ARGB8888)
+> +			pixel_format = DRM_FORMAT_XRGB8888;
+>  	}
+>  
+> -	switch (fb->pixel_format) {
+> +	switch (pixel_format) {
+>  	case DRM_FORMAT_C8:
+>  		val |= WINCON0_BPPMODE_8BPP_PALETTE;
+>  		val |= WINCONx_BURSTLEN_8WORD;
+> @@ -538,17 +538,15 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+>  		break;
+>  	}
+>  
+> -	DRM_DEBUG_KMS("bpp = %d\n", fb->bits_per_pixel);
+> -
+>  	/*
+> -	 * In case of exynos, setting dma-burst to 16Word causes permanent
+> -	 * tearing for very small buffers, e.g. cursor buffer. Burst Mode
+> -	 * switching which is based on plane size is not recommended as
+> -	 * plane size varies alot towards the end of the screen and rapid
+> -	 * movement causes unstable DMA which results into iommu crash/tear.
+> +	 * Setting dma-burst to 16Word causes permanent tearing for very small
+> +	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
+> +	 * plane size is not recommended as plane size varies alot towards the
+> +	 * end of the screen and rapid movement causes unstable DMA, but it is
+> +	 * still better to change dma-burst than displaying garbage.
+>  	 */
+>  
+> -	if (fb->width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+> +	if (width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+>  		val &= ~WINCONx_BURSTLEN_MASK;
+>  		val |= WINCONx_BURSTLEN_4WORD;
+>  	}
+> @@ -723,7 +721,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
+>  		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
+>  	}
+>  
+> -	fimd_win_set_pixfmt(ctx, win, fb);
+> +	fimd_win_set_pixfmt(ctx, win, fb->pixel_format, state->src.w);
+>  
+>  	/* hardware window 0 doesn't support color key. */
+>  	if (win != 0)
+> 
