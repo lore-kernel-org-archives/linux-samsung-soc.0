@@ -1,62 +1,50 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing) subsystem
-Date: Thu, 12 Nov 2015 11:14:01 +0000
-Message-ID: <CAPj87rNz6vYrcjgV1fdSgE-ZCHnFFNfJKqskTsu2C1+KkmW_gQ@mail.gmail.com>
-References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:34178 "EHLO
-	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752679AbbKLLOD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Nov 2015 06:14:03 -0500
-Received: by wmvv187 with SMTP id v187so27378147wmv.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Nov 2015 03:14:01 -0800 (PST)
-In-Reply-To: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Hans Verkuil <hansverk@cisco.com>
+Subject: [PATCHv10 02/16] dts: exynos4: add node for the HDMI CEC device
+Date: Thu, 12 Nov 2015 13:21:31 +0100
+Message-ID: <15e22f701c6e2ba18aa321a166e4dbee94275103.1447329279.git.hansverk@cisco.com>
+References: <cover.1447329279.git.hansverk@cisco.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <cover.1447329279.git.hansverk@cisco.com>
+In-Reply-To: <cover.1447329279.git.hansverk@cisco.com>
+References: <cover.1447329279.git.hansverk@cisco.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Vetter <daniel@ffwll.ch>, eric@anholt.net
 
-Hi Marek,
+From: Kamil Debski <kamil@wypas.org>
 
-On 10 November 2015 at 13:23, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> This patch series introduces a new life into Exynos IPP (Image Post
-> Processing) subsystem by integrating it (transparently for userspace
-> applications) with Exynos DRM core plane management. This means that all
-> CRTC drivers transparently get support for standard features of IPP
-> subsystem like rotation and scaling.
->
-> Support for features not supported natively by CRTC drivers is
-> implemented with a help of temporary framebuffers, where image data is
-> processed by IPP subsystem before performing the scanout by a CRTC driver.
->
-> This patchset is a first version of this 'new feature' and I would like
-> get some comments on the proposed approach. I plan to continue working
-> on enhancing Exynos DRM drivers and especially do the cleanup the IPP
-> subsystem.
->
-> Most of the new features are added by the last 2 patches. All other
-> patches are bugfixes in various Exynos DRM subdrivers and significant
-> core rewrite - introducing a subclass of drm_plane_state was needed and
-> all drivers have been converted to use it. Some initial cleanups in IPP
-> subsystem were also needed to let Exynos core to call it internally from
-> the driver core. This part will be cleaned even more in the future.
+This patch adds HDMI CEC node specific to the Exynos4210/4x12 SoC series.
 
-Hm, interesting. The RPi has a similar setup - VC4 can work either
-online (realtime scanout) or offline (mem2mem). Once the scene crosses
-a certain complexity boundary, it can no longer be composed in
-realtime and must fall back to mem2mem before it can be displayed.
+Signed-off-by: Kamil Debski <kamil@wypas.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-There was talk of having the fallback handled transparently in KMS for
-VC4 - similar to this - but the conclusion seemed to be that it was an
-inappropriate level of hidden complexity for KMS, and instead would
-best be handled by something like HWComposer directing it. Using HWC
-would then let you more intelligently split the scene from userspace
-(e.g. flatten some components but retain others as active planes).
-
-Dan V, Eric - thoughts?
-
-Cheers,
-Daniel
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 98c0a36..7baff26 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -720,6 +720,18 @@
+ 		status = "disabled";
+ 	};
+ 
++	hdmicec: cec@100B0000 {
++		compatible = "samsung,s5p-cec";
++		reg = <0x100B0000 0x200>;
++		interrupts = <0 114 0>;
++		clocks = <&clock CLK_HDMI_CEC>;
++		clock-names = "hdmicec";
++		samsung,syscon-phandle = <&pmu_system_controller>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmi_cec>;
++		status = "disabled";
++	};
++
+ 	mixer: mixer@12C10000 {
+ 		compatible = "samsung,exynos4210-mixer";
+ 		interrupts = <0 91 0>;
+-- 
+2.6.2
