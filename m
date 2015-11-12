@@ -1,105 +1,158 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 18/25] drm/exynos: fimd: fix dma burst size setting for
- small plane size
-Date: Thu, 12 Nov 2015 16:17:09 +0100
-Message-ID: <5644AD75.6000103@math.uni-bielefeld.de>
+Subject: Re: [PATCH 06/25] drm/exynos: fix to calculate offset of each plane
+ for ipp fimc
+Date: Thu, 12 Nov 2015 16:20:50 +0100
+Message-ID: <5644AE52.6070303@math.uni-bielefeld.de>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-19-git-send-email-m.szyprowski@samsung.com>
+ <1447161821-1877-7-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59154 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754494AbbKLPRM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Nov 2015 10:17:12 -0500
-In-Reply-To: <1447161821-1877-19-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1447161821-1877-7-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This one looks a bit strange. It only changes the argument list of
-fimd_win_set_pixfmt() but the commit message that it actually fixes
-something.
-
-The corresponding upstream commit:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=66367461e573321f0fbb0be0391165b5a54d5fe4
-
-With best wishes,
-Tobias
-
-
-Marek Szyprowski wrote:
-> This patch fixes trashed display of buffers cropped to very small width.
-> Even if DMA is unstable and causes tearing when changing the burst size,
-> it is still better than displaying a garbage.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 24 +++++++++++-------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 44226b2b46c7..6c04ff6432d4 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -487,7 +487,7 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
->  
->  
->  static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
-> -				struct drm_framebuffer *fb)
-> +				uint32_t pixel_format, int width)
->  {
->  	unsigned long val;
->  
-> @@ -498,11 +498,11 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
->  	 * So the request format is ARGB8888 then change it to XRGB8888.
->  	 */
->  	if (ctx->driver_data->has_limited_fmt && !win) {
-> -		if (fb->pixel_format == DRM_FORMAT_ARGB8888)
-> -			fb->pixel_format = DRM_FORMAT_XRGB8888;
-> +		if (pixel_format == DRM_FORMAT_ARGB8888)
-> +			pixel_format = DRM_FORMAT_XRGB8888;
->  	}
->  
-> -	switch (fb->pixel_format) {
-> +	switch (pixel_format) {
->  	case DRM_FORMAT_C8:
->  		val |= WINCON0_BPPMODE_8BPP_PALETTE;
->  		val |= WINCONx_BURSTLEN_8WORD;
-> @@ -538,17 +538,15 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
->  		break;
->  	}
->  
-> -	DRM_DEBUG_KMS("bpp = %d\n", fb->bits_per_pixel);
-> -
->  	/*
-> -	 * In case of exynos, setting dma-burst to 16Word causes permanent
-> -	 * tearing for very small buffers, e.g. cursor buffer. Burst Mode
-> -	 * switching which is based on plane size is not recommended as
-> -	 * plane size varies alot towards the end of the screen and rapid
-> -	 * movement causes unstable DMA which results into iommu crash/tear.
-> +	 * Setting dma-burst to 16Word causes permanent tearing for very small
-> +	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
-> +	 * plane size is not recommended as plane size varies alot towards the
-> +	 * end of the screen and rapid movement causes unstable DMA, but it is
-> +	 * still better to change dma-burst than displaying garbage.
->  	 */
->  
-> -	if (fb->width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
-> +	if (width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
->  		val &= ~WINCONx_BURSTLEN_MASK;
->  		val |= WINCONx_BURSTLEN_4WORD;
->  	}
-> @@ -723,7 +721,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
->  		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
->  	}
->  
-> -	fimd_win_set_pixfmt(ctx, win, fb);
-> +	fimd_win_set_pixfmt(ctx, win, fb->pixel_format, state->src.w);
->  
->  	/* hardware window 0 doesn't support color key. */
->  	if (win != 0)
-> 
+SGVsbG8sCgoKCk1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4gRnJvbTogU2V1bmctV29vIEtpbSA8
+c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiAKPiBOVjEyIGFuZCBZVVY0MjAgZm9ybWF0cyBhcmUg
+bmVlZCB0byBjYWxjdWxhdGUgb2Zmc2V0IG9mIGVhY2ggcGxhbmUKPiBmb3IgaXBwIGZpbWMgaW4g
+YSBnZW0gYnVmZmVyLiBXaXRob3V0IHByb3BlciBvZmZzZXQsIG9ubHkgWSBwbGFuZQo+IGNhbiBi
+ZSBwcm9jZXNzZWQsIHNvIHJlc3VsdCBzaG93cyBncmVlbiBmcmFtZS4KPiBUaGlzIHBhdGNoIGZp
+eGVzIHRvIGNhbGN1bGF0ZSBvZmZzZXQgZm9yIGNiY3IgcGxhbmVzIGZvciBOVjEyIGFuZAo+IFlV
+VjQyMCBmb3JtYXRzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5r
+aW1Ac2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlw
+cm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZmltYy5jIHwgMTA2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jICB8ICAxNSArKysrLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmggIHwgICAyICsKPiAgMyBmaWxlcyBj
+aGFuZ2VkLCAxMjEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPiBpbmRleCBjNzQ3ODI0ZjNjOTguLjcyYTdj
+YTE4OGJlNSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZmltYy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYwo+
+IEBAIC00MDMsNiArNDAzLDk3IEBAIHN0YXRpYyB2b2lkIGZpbWNfaGFuZGxlX2xhc3RlbmQoc3Ry
+dWN0IGZpbWNfY29udGV4dCAqY3R4LCBib29sIGVuYWJsZSkKPiAgCWZpbWNfd3JpdGUoY3R4LCBj
+ZmcsIEVYWU5PU19DSU9DVFJMKTsKPiAgfQo+ICAKPiArc3RhdGljIGludCBmaW1jX3NldF9wbGFu
+YXJfYWRkcihzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfYnVmX2luZm8gKmJ1Zl9pbmZvLAo+ICsJCQkJ
+dTMyIGZtdCwgc3RydWN0IGRybV9leHlub3Nfc3ogKnN6KQo+ICt7Cj4gKwlkbWFfYWRkcl90ICpi
+YXNlW0VYWU5PU19EUk1fUExBTkFSX01BWF07CkkgdGhpbmsgSSd2ZSBzZWVuIHRoaXMgYXQgc2V2
+ZXJhbCBvdGhlciBwbGFjZXMgYWxyZWFkeSwgYnV0IEkgbmV2ZXIKZnVsbHkgdW5kZXJzdG9vZCBp
+dC4KCldoeSBhcmUgd2UgdXNpbmcgZG1hX2FkZHJfdCogaGVyZSwgaW5zdGVhZCBvZiBqdXN0IGRt
+YV9hZGRyX3Q/IEkgbWVhbiBpbgp0aGUgZm9sbG93aW5nIGNvZGUgdGhlIHBvaW50ZXIgaXMganVz
+dCBpbiB0aGUgZGVyZWZlcmVuY2VkIGZvcm0gYW55d2F5LApzbyB3aHkgdGhpcyBhZGRlZCBpbmRp
+cmVjdGlvbj8KCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgoKPiArCXVpbnQ2NF90IHNpemVb
+RVhZTk9TX0RSTV9QTEFOQVJfTUFYXTsKPiArCXVpbnQ2NF90IG9mc1tFWFlOT1NfRFJNX1BMQU5B
+Ul9NQVhdOwo+ICsJYm9vbCBieXBhc3MgPSBmYWxzZTsKPiArCXVpbnQ2NF90IHRzaXplID0gMDsK
+PiArCWludCBpOwo+ICsKPiArCWZvcl9lYWNoX2lwcF9wbGFuYXIoaSkgewo+ICsJCWJhc2VbaV0g
+PSAmYnVmX2luZm8tPmJhc2VbaV07Cj4gKwkJc2l6ZVtpXSA9IGJ1Zl9pbmZvLT5zaXplW2ldOwo+
+ICsJCW9mc1tpXSA9IDA7Cj4gKwkJdHNpemUgKz0gc2l6ZVtpXTsKPiArCX0KPiArCj4gKwlpZiAo
+IXRzaXplKSB7Cj4gKwkJRFJNX0lORk8oIiVzOmZhaWxlZCB0byBnZXQgYnVmZmVyIHNpemUuXG4i
+LCBfX2Z1bmNfXyk7Cj4gKwkJcmV0dXJuIDA7Cj4gKwl9Cj4gKwo+ICsJc3dpdGNoIChmbXQpIHsK
+PiArCWNhc2UgRFJNX0ZPUk1BVF9OVjEyOgo+ICsJY2FzZSBEUk1fRk9STUFUX05WMjE6Cj4gKwlj
+YXNlIERSTV9GT1JNQVRfTlYxNjoKPiArCWNhc2UgRFJNX0ZPUk1BVF9OVjYxOgo+ICsJCW9mc1sw
+XSA9IHN6LT5oc2l6ZSAqIHN6LT52c2l6ZTsKPiArCQlvZnNbMV0gPSBvZnNbMF0gPj4gMTsKPiAr
+CQlpZiAoKmJhc2VbMF0gJiYgKmJhc2VbMV0pIHsKPiArCQkJaWYgKHNpemVbMF0gKyBzaXplWzFd
+IDwgb2ZzWzBdICsgb2ZzWzFdKQo+ICsJCQkJZ290byBlcnJfaW5mbzsKPiArCQkJYnlwYXNzID0g
+dHJ1ZTsKPiArCQl9Cj4gKwkJYnJlYWs7Cj4gKwljYXNlIERSTV9GT1JNQVRfWVVWNDEwOgo+ICsJ
+Y2FzZSBEUk1fRk9STUFUX1lWVTQxMDoKPiArCWNhc2UgRFJNX0ZPUk1BVF9ZVVY0MTE6Cj4gKwlj
+YXNlIERSTV9GT1JNQVRfWVZVNDExOgo+ICsJY2FzZSBEUk1fRk9STUFUX1lVVjQyMDoKPiArCWNh
+c2UgRFJNX0ZPUk1BVF9ZVlU0MjA6Cj4gKwljYXNlIERSTV9GT1JNQVRfWVVWNDIyOgo+ICsJY2Fz
+ZSBEUk1fRk9STUFUX1lWVTQyMjoKPiArCWNhc2UgRFJNX0ZPUk1BVF9ZVVY0NDQ6Cj4gKwljYXNl
+IERSTV9GT1JNQVRfWVZVNDQ0Ogo+ICsJCW9mc1swXSA9IHN6LT5oc2l6ZSAqIHN6LT52c2l6ZTsK
+PiArCQlvZnNbMV0gPSBvZnNbMl0gPSBvZnNbMF0gPj4gMjsKPiArCQlpZiAoKmJhc2VbMF0gJiYg
+KmJhc2VbMV0gJiYgKmJhc2VbMl0pIHsKPiArCQkJaWYgKHNpemVbMF0rc2l6ZVsxXStzaXplWzJd
+IDwgb2ZzWzBdK29mc1sxXStvZnNbMl0pCj4gKwkJCQlnb3RvIGVycl9pbmZvOwo+ICsJCQlieXBh
+c3MgPSB0cnVlOwo+ICsJCX0KPiArCQlicmVhazsKPiArCWNhc2UgRFJNX0ZPUk1BVF9YUkdCODg4
+ODoKPiArCWNhc2UgRFJNX0ZPUk1BVF9BUkdCODg4ODoKPiArCQlvZnNbMF0gPSBzei0+aHNpemUg
+KiBzei0+dnNpemUgPDwgMjsKPiArCQlpZiAoKmJhc2VbMF0pIHsKPiArCQkJaWYgKHNpemVbMF0g
+PCBvZnNbMF0pCj4gKwkJCQlnb3RvIGVycl9pbmZvOwo+ICsJCX0KPiArCQlieXBhc3MgPSB0cnVl
+Owo+ICsJCWJyZWFrOwo+ICsJZGVmYXVsdDoKPiArCQlieXBhc3MgPSB0cnVlOwo+ICsJCWJyZWFr
+Owo+ICsJfQo+ICsKPiArCWlmICghYnlwYXNzKSB7Cj4gKwkJKmJhc2VbMV0gPSAqYmFzZVswXSAr
+IG9mc1swXTsKPiArCQlpZiAob2ZzWzFdICYmIG9mc1syXSkKPiArCQkJKmJhc2VbMl0gPSAqYmFz
+ZVsxXSArIG9mc1sxXTsKPiArCX0KPiArCj4gKwlEUk1fREVCVUdfS01TKCIlczp5WzB4JXhdLGNi
+WzB4JXhdLGNyWzB4JXhdXG4iLCBfX2Z1bmNfXywKPiArCQkqYmFzZVswXSwgKmJhc2VbMV0sICpi
+YXNlWzJdKTsKPiArCj4gKwlyZXR1cm4gMDsKPiArCj4gK2Vycl9pbmZvOgo+ICsJRFJNX0VSUk9S
+KCJpbnZhbGlkIHNpemUgZm9yIGZtdFsweCV4XVxuIiwgZm10KTsKPiArCj4gKwlmb3JfZWFjaF9p
+cHBfcGxhbmFyKGkpIHsKPiArCQliYXNlW2ldID0gJmJ1Zl9pbmZvLT5iYXNlW2ldOwo+ICsJCXNp
+emVbaV0gPSBidWZfaW5mby0+c2l6ZVtpXTsKPiArCj4gKwkJRFJNX0VSUk9SKCJidWZbJWRdIC0g
+YmFzZVsweCV4XSBzelslbGx1XSBvZnNbJWxsdV1cbiIsCj4gKwkJCWksICpiYXNlW2ldLCBzaXpl
+W2ldLCBvZnNbaV0pOwo+ICsJfQo+ICsKPiArCXJldHVybiAtRUlOVkFMOwo+ICt9Cj4gIAo+ICBz
+dGF0aWMgaW50IGZpbWNfc3JjX3NldF9mbXRfb3JkZXIoc3RydWN0IGZpbWNfY29udGV4dCAqY3R4
+LCB1MzIgZm10KQo+ICB7Cj4gQEAgLTY4OSw2ICs3ODAsNyBAQCBzdGF0aWMgaW50IGZpbWNfc3Jj
+X3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF9j
+bWRfbm9kZSAqY19ub2RlID0gaXBwZHJ2LT5jX25vZGU7Cj4gIAlzdHJ1Y3QgZHJtX2V4eW5vc19p
+cHBfcHJvcGVydHkgKnByb3BlcnR5Owo+ICAJc3RydWN0IGRybV9leHlub3NfaXBwX2NvbmZpZyAq
+Y29uZmlnOwo+ICsJaW50IHJldDsKPiAgCj4gIAlpZiAoIWNfbm9kZSkgewo+ICAJCURSTV9FUlJP
+UigiZmFpbGVkIHRvIGdldCBjX25vZGUuXG4iKTsKPiBAQCAtNzA5LDYgKzgwMSwxMiBAQCBzdGF0
+aWMgaW50IGZpbWNfc3JjX3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgCXN3aXRjaCAo
+YnVmX3R5cGUpIHsKPiAgCWNhc2UgSVBQX0JVRl9FTlFVRVVFOgo+ICAJCWNvbmZpZyA9ICZwcm9w
+ZXJ0eS0+Y29uZmlnW0VYWU5PU19EUk1fT1BTX1NSQ107Cj4gKwkJcmV0ID0gZmltY19zZXRfcGxh
+bmFyX2FkZHIoYnVmX2luZm8sIGNvbmZpZy0+Zm10LCAmY29uZmlnLT5zeik7Cj4gKwkJaWYgKHJl
+dCkgewo+ICsJCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBzZXQgcGxhbmUgc3JjIGFkZHIuXG4i
+KTsKPiArCQkJcmV0dXJuIHJldDsKPiArCQl9Cj4gKwo+ICAJCWZpbWNfd3JpdGUoY3R4LCBidWZf
+aW5mby0+YmFzZVtFWFlOT1NfRFJNX1BMQU5BUl9ZXSwKPiAgCQkJRVhZTk9TX0NJSVlTQTApOwo+
+ICAKPiBAQCAtMTE0OCw2ICsxMjQ2LDcgQEAgc3RhdGljIGludCBmaW1jX2RzdF9zZXRfYWRkcihz
+dHJ1Y3QgZGV2aWNlICpkZXYsCj4gIAlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfY21kX25vZGUgKmNf
+bm9kZSA9IGlwcGRydi0+Y19ub2RlOwo+ICAJc3RydWN0IGRybV9leHlub3NfaXBwX3Byb3BlcnR5
+ICpwcm9wZXJ0eTsKPiAgCXN0cnVjdCBkcm1fZXh5bm9zX2lwcF9jb25maWcgKmNvbmZpZzsKPiAr
+CWludCByZXQ7Cj4gIAo+ICAJaWYgKCFjX25vZGUpIHsKPiAgCQlEUk1fRVJST1IoImZhaWxlZCB0
+byBnZXQgY19ub2RlLlxuIik7Cj4gQEAgLTExNjgsNiArMTI2NywxMSBAQCBzdGF0aWMgaW50IGZp
+bWNfZHN0X3NldF9hZGRyKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgCXN3aXRjaCAoYnVmX3R5cGUp
+IHsKPiAgCWNhc2UgSVBQX0JVRl9FTlFVRVVFOgo+ICAJCWNvbmZpZyA9ICZwcm9wZXJ0eS0+Y29u
+ZmlnW0VYWU5PU19EUk1fT1BTX0RTVF07Cj4gKwkJcmV0ID0gZmltY19zZXRfcGxhbmFyX2FkZHIo
+YnVmX2luZm8sIGNvbmZpZy0+Zm10LCAmY29uZmlnLT5zeik7Cj4gKwkJaWYgKHJldCkgewo+ICsJ
+CQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBzZXQgcGxhbmUgZHN0IGFkZHIuXG4iKTsKPiArCQkJ
+cmV0dXJuIHJldDsKPiArCQl9Cj4gIAo+ICAJCWZpbWNfd3JpdGUoY3R4LCBidWZfaW5mby0+YmFz
+ZVtFWFlOT1NfRFJNX1BMQU5BUl9ZXSwKPiAgCQkJRVhZTk9TX0NJT1lTQShidWZfaWQpKTsKPiBA
+QCAtMTU2Miw2ICsxNjY2LDggQEAgc3RhdGljIHZvaWQgZmltY19pcHBkcnZfc3RvcChzdHJ1Y3Qg
+ZGV2aWNlICpkZXYsIGVudW0gZHJtX2V4eW5vc19pcHBfY21kIGNtZCkKPiAgCS8qIHJlc2V0IHNl
+cXVlbmNlICovCj4gIAlmaW1jX3dyaXRlKGN0eCwgMHgwLCBFWFlOT1NfQ0lGQ05UU0VRKTsKPiAg
+Cj4gKwlmaW1jX2NsZWFyX2FkZHIoY3R4KTsKPiArCj4gIAkvKiBTY2FsZXIgZGlzYWJsZSAqLwo+
+ICAJZmltY19jbGVhcl9iaXRzKGN0eCwgRVhZTk9TX0NJU0NDVFJMLCBFWFlOT1NfQ0lTQ0NUUkxf
+U0NBTEVSU1RBUlQpOwo+ICAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2lwcC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5j
+Cj4gaW5kZXggNjdkMjQyMzZlNzQ1Li40MDhhMTRhOWExODAgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2lwcC5jCj4gQEAgLTU3MSw2ICs1NzEsNyBAQCBzdGF0aWMgc3Ry
+dWN0IGRybV9leHlub3NfaXBwX21lbV9ub2RlCj4gIAkJLyogZ2V0IGRtYSBhZGRyZXNzIGJ5IGhh
+bmRsZSAqLwo+ICAJCWlmIChxYnVmLT5oYW5kbGVbaV0pIHsKPiAgCQkJZG1hX2FkZHJfdCAqYWRk
+cjsKPiArCQkJdW5zaWduZWQgbG9uZyBzaXplOwo+ICAKPiAgCQkJYWRkciA9IGV4eW5vc19kcm1f
+Z2VtX2dldF9kbWFfYWRkcihkcm1fZGV2LAo+ICAJCQkJCXFidWYtPmhhbmRsZVtpXSwgY19ub2Rl
+LT5maWxwKTsKPiBAQCAtNTgwLDEwICs1ODEsMjAgQEAgc3RhdGljIHN0cnVjdCBkcm1fZXh5bm9z
+X2lwcF9tZW1fbm9kZQo+ICAJCQkJcmV0dXJuIEVSUl9QVFIoLUVGQVVMVCk7Cj4gIAkJCX0KPiAg
+Cj4gKwkJCXNpemUgPSBleHlub3NfZHJtX2dlbV9nZXRfc2l6ZShkcm1fZGV2LAo+ICsJCQkJCXFi
+dWYtPmhhbmRsZVtpXSwgY19ub2RlLT5maWxwKTsKPiArCQkJaWYgKCFzaXplKSB7Cj4gKwkJCQlE
+Uk1fRVJST1IoImZhaWxlZCB0byBnZXQgc2l6ZS5cbiIpOwo+ICsJCQkJaXBwX3B1dF9tZW1fbm9k
+ZShkcm1fZGV2LCBjX25vZGUsIG1fbm9kZSk7Cj4gKwkJCQlyZXR1cm4gRVJSX1BUUigtRUZBVUxU
+KTsKPiArCQkJfQo+ICsKPiAgCQkJYnVmX2luZm8tPmhhbmRsZXNbaV0gPSBxYnVmLT5oYW5kbGVb
+aV07Cj4gIAkJCWJ1Zl9pbmZvLT5iYXNlW2ldID0gKmFkZHI7Cj4gLQkJCURSTV9ERUJVR19LTVMo
+ImlbJWRdYmFzZVsweCV4XWhkWzB4JWx4XVxuIiwgaSwKPiAtCQkJCSAgICAgIGJ1Zl9pbmZvLT5i
+YXNlW2ldLCBidWZfaW5mby0+aGFuZGxlc1tpXSk7Cj4gKwkJCWJ1Zl9pbmZvLT5zaXplW2ldID0g
+KHVpbnQ2NF90KXNpemU7Cj4gKwkJCURSTV9ERUJVR19LTVMoImlbJWRdYmFzZVslcGFkXWhkWzB4
+JWx4XXN6WyVsbHhdXG4iLCBpLAo+ICsJCQkJICAgICAgJmJ1Zl9pbmZvLT5iYXNlW2ldLCBidWZf
+aW5mby0+aGFuZGxlc1tpXSwKPiArCQkJCSAgICAgIGJ1Zl9pbmZvLT5zaXplW2ldKTsKPiAgCQl9
+Cj4gIAl9Cj4gIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1faXBwLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmgKPiBpbmRl
+eCAyYTYxNTQ3YTM5ZDAuLmQ0ZjBiNTg4MjIwYiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1faXBwLmgKPiBAQCAtODUsMTAgKzg1LDEyIEBAIHN0cnVjdCBkcm1fZXh5bm9z
+X2lwcF9jbWRfbm9kZSB7Cj4gICAqCj4gICAqIEBoYW5kbGVzOiBZLCBDYiwgQ3IgZWFjaCBnZW0g
+b2JqZWN0IGhhbmRsZS4KPiAgICogQGJhc2U6IFksIENiLCBDciBlYWNoIHBsYW5hciBhZGRyZXNz
+Lgo+ICsgKiBAc2l6ZTogWSwgQ2IsIENyIGVhY2ggcGxhbmFyIHNpemUuCj4gICAqLwo+ICBzdHJ1
+Y3QgZHJtX2V4eW5vc19pcHBfYnVmX2luZm8gewo+ICAJdW5zaWduZWQgbG9uZwloYW5kbGVzW0VY
+WU5PU19EUk1fUExBTkFSX01BWF07Cj4gIAlkbWFfYWRkcl90CWJhc2VbRVhZTk9TX0RSTV9QTEFO
+QVJfTUFYXTsKPiArCXVpbnQ2NF90CXNpemVbRVhZTk9TX0RSTV9QTEFOQVJfTUFYXTsKPiAgfTsK
+PiAgCj4gIC8qCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
