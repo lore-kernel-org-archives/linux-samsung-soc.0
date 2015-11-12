@@ -1,102 +1,230 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/exynos: only run atomic_check() if crtc is active
-Date: Thu, 12 Nov 2015 14:49:29 +0100
-Message-ID: <20151112134929.GC645@ulmo>
-References: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
+From: Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH] PCI: designware: bail out if host_init failed
+Date: Thu, 12 Nov 2015 21:48:45 +0800
+Message-ID: <1447336125-5010-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0856896468=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: kishon@ti.com, bhelgaas@google.com, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, Richard.Zhu@freescale.com, l.stach@pengutronix.de, m-karicheri2@ti.com, minghuan.Lian@freescale.com, mingkai.hu@freescale.com, tie-fei.zang@freescale.com, pratyush.anand@gmail.com
+Cc: linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Jisheng Zhang <jszhang@marvell.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+There's no reason to continue the initialization such as configure
+register, scan root bus etc. if customized host_init() failed. This
+patch tries to check the host_init result, bail out if failed.
 
---===============0856896468==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
-Content-Disposition: inline
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ drivers/pci/host/pci-dra7xx.c      |  4 +++-
+ drivers/pci/host/pci-exynos.c      |  4 +++-
+ drivers/pci/host/pci-imx6.c        |  4 +++-
+ drivers/pci/host/pci-keystone.c    |  4 +++-
+ drivers/pci/host/pci-layerscape.c  | 25 ++++++++++++++++---------
+ drivers/pci/host/pcie-designware.c |  7 +++++--
+ drivers/pci/host/pcie-designware.h |  2 +-
+ drivers/pci/host/pcie-spear13xx.c  |  4 +++-
+ 8 files changed, 37 insertions(+), 17 deletions(-)
 
-
---gr/z0/N6AeWAPJVB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 12, 2015 at 11:11:20AM -0200, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->=20
-> Fixes an regression added by 3ae2436 (drm/exynos/mixer: replace
-> direct cross-driver call with drm mode). The whole atomic update
-> was failing if the hdmi display is not present/active. Add a test
-> to only run atomic_check() if the CRTC is active.
->=20
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/e=
-xynos/exynos_drm_crtc.c
-> index b3ba27f..1d3ca0a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -55,6 +55,9 @@ static int exynos_crtc_atomic_check(struct drm_crtc *cr=
-tc,
->  {
->  	struct exynos_drm_crtc *exynos_crtc =3D to_exynos_crtc(crtc);
-> =20
-> +	if (!state->active)
-> +		return 0;
-> +
->  	if (exynos_crtc->ops->atomic_check)
->  		return exynos_crtc->ops->atomic_check(exynos_crtc, state);
-> =20
-
-This looks like something that the core should be doing.
-
-Thierry
-
---gr/z0/N6AeWAPJVB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWRJjoAAoJEN0jrNd/PrOhOIsP/3wJ1kNourupyuTyaKPJcTpr
-Xqeb5KMmaB2a6U6J32N3o6BzOygLCNySSLL8EyV/prlxkz1O30mXLfZl155+PTm2
-CtV+NN7fPKORwEHvM/F8bh1h2R9jXjyjUvauBx/UNz8HFvIxYyXuF8h5jWbx26zH
-RU9aAyikHc0ojdjdshxIT4QY/zScjw2cgO9WpvNKBw1iOriYJVPRSphGxP4QG44Z
-SYAhH2k3x9K25yiPfrsPPo7gbCZ+V73AuvEqLliF7DaMeJ2eSv2OSbvc4amZuhXv
-bMdG7osq1lxqJUvSJGysEAYGhTKaJnDv6VFzvcpD3y32Z357hw8hTJdCBBtdipSN
-Py7IldoCDG9uyfwICnj+nxNrRakpBhwmzxDAQJZRGqibwPSONCghUqh6JqIgrFL1
-oBCyiHELgrbd1DjrDIBlxo9+IU61O6Fiqj2g//CDc6U/Z8+1tQf+9hhzmHpQmauc
-NnlsqtMT+yh+kExp0ss/5wGXW6gRS4zhaXxcfu2lLxu2x54akDdz2axQPwRcjACf
-sOqBwir+/jIZ9YeV3ExWE/71GGdTpD2zh1Eaq+BhyiVVXl+jxC//tOSsH4vBE5v4
-GjXTjsQHU9SBUPYsF1FIhr/Y5w3Tmwl03sZQHkojNVh7k+x5635Ph7XuIEcwBrGU
-gpJ6uk1dqL+SRPIL8gqG
-=dqRC
------END PGP SIGNATURE-----
-
---gr/z0/N6AeWAPJVB--
-
---===============0856896468==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============0856896468==--
+diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
+index 8c36880..b3160a1 100644
+--- a/drivers/pci/host/pci-dra7xx.c
++++ b/drivers/pci/host/pci-dra7xx.c
+@@ -149,7 +149,7 @@ static void dra7xx_pcie_enable_interrupts(struct pcie_port *pp)
+ 				   LEG_EP_INTERRUPTS);
+ }
+ 
+-static void dra7xx_pcie_host_init(struct pcie_port *pp)
++static int dra7xx_pcie_host_init(struct pcie_port *pp)
+ {
+ 	dw_pcie_setup_rc(pp);
+ 
+@@ -162,6 +162,8 @@ static void dra7xx_pcie_host_init(struct pcie_port *pp)
+ 	if (IS_ENABLED(CONFIG_PCI_MSI))
+ 		dw_pcie_msi_init(pp);
+ 	dra7xx_pcie_enable_interrupts(pp);
++
++	return 0;
+ }
+ 
+ static struct pcie_host_ops dra7xx_pcie_host_ops = {
+diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+index 01095e1..57f370b 100644
+--- a/drivers/pci/host/pci-exynos.c
++++ b/drivers/pci/host/pci-exynos.c
+@@ -481,10 +481,12 @@ static int exynos_pcie_link_up(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
+-static void exynos_pcie_host_init(struct pcie_port *pp)
++static int exynos_pcie_host_init(struct pcie_port *pp)
+ {
+ 	exynos_pcie_establish_link(pp);
+ 	exynos_pcie_enable_interrupts(pp);
++
++	return 0;
+ }
+ 
+ static struct pcie_host_ops exynos_pcie_host_ops = {
+diff --git a/drivers/pci/host/pci-imx6.c b/drivers/pci/host/pci-imx6.c
+index 22e8224..9a46680 100644
+--- a/drivers/pci/host/pci-imx6.c
++++ b/drivers/pci/host/pci-imx6.c
+@@ -425,7 +425,7 @@ static int imx6_pcie_establish_link(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
+-static void imx6_pcie_host_init(struct pcie_port *pp)
++static int imx6_pcie_host_init(struct pcie_port *pp)
+ {
+ 	imx6_pcie_assert_core_reset(pp);
+ 
+@@ -439,6 +439,8 @@ static void imx6_pcie_host_init(struct pcie_port *pp)
+ 
+ 	if (IS_ENABLED(CONFIG_PCI_MSI))
+ 		dw_pcie_msi_init(pp);
++
++	return 0;
+ }
+ 
+ static void imx6_pcie_reset_phy(struct pcie_port *pp)
+diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
+index 0aa81bd..2604571 100644
+--- a/drivers/pci/host/pci-keystone.c
++++ b/drivers/pci/host/pci-keystone.c
+@@ -250,7 +250,7 @@ static int keystone_pcie_fault(unsigned long addr, unsigned int fsr,
+ 	return 0;
+ }
+ 
+-static void __init ks_pcie_host_init(struct pcie_port *pp)
++static int __init ks_pcie_host_init(struct pcie_port *pp)
+ {
+ 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pp);
+ 	u32 val;
+@@ -277,6 +277,8 @@ static void __init ks_pcie_host_init(struct pcie_port *pp)
+ 	 */
+ 	hook_fault_code(17, keystone_pcie_fault, SIGBUS, 0,
+ 			"Asynchronous external abort");
++
++	return 0;
+ }
+ 
+ static struct pcie_host_ops keystone_pcie_host_ops = {
+diff --git a/drivers/pci/host/pci-layerscape.c b/drivers/pci/host/pci-layerscape.c
+index 3923bed..a6e9070 100644
+--- a/drivers/pci/host/pci-layerscape.c
++++ b/drivers/pci/host/pci-layerscape.c
+@@ -94,8 +94,9 @@ static int ls1021_pcie_link_up(struct pcie_port *pp)
+ 	return 1;
+ }
+ 
+-static void ls1021_pcie_host_init(struct pcie_port *pp)
++static int ls1021_pcie_host_init(struct pcie_port *pp)
+ {
++	int ret;
+ 	struct ls_pcie *pcie = to_ls_pcie(pp);
+ 	u32 val, index[2];
+ 
+@@ -103,15 +104,14 @@ static void ls1021_pcie_host_init(struct pcie_port *pp)
+ 						     "fsl,pcie-scfg");
+ 	if (IS_ERR(pcie->scfg)) {
+ 		dev_err(pp->dev, "No syscfg phandle specified\n");
+-		pcie->scfg = NULL;
+-		return;
++		ret = PTR_ERR(pcie->scfg);
++		goto err;
+ 	}
+ 
+-	if (of_property_read_u32_array(pp->dev->of_node,
+-				       "fsl,pcie-scfg", index, 2)) {
+-		pcie->scfg = NULL;
+-		return;
+-	}
++	ret = of_property_read_u32_array(pp->dev->of_node,
++					 "fsl,pcie-scfg", index, 2);
++	if (ret)
++		goto err;
+ 	pcie->index = index[1];
+ 
+ 	dw_pcie_setup_rc(pp);
+@@ -123,6 +123,11 @@ static void ls1021_pcie_host_init(struct pcie_port *pp)
+ 	val = ioread32(pcie->dbi + PCIE_STRFMR1);
+ 	val &= 0xffff;
+ 	iowrite32(val, pcie->dbi + PCIE_STRFMR1);
++
++	return 0;
++err:
++	pcie->scfg = NULL;
++	return ret;
+ }
+ 
+ static int ls_pcie_link_up(struct pcie_port *pp)
+@@ -140,7 +145,7 @@ static int ls_pcie_link_up(struct pcie_port *pp)
+ 	return 1;
+ }
+ 
+-static void ls_pcie_host_init(struct pcie_port *pp)
++static int ls_pcie_host_init(struct pcie_port *pp)
+ {
+ 	struct ls_pcie *pcie = to_ls_pcie(pp);
+ 
+@@ -148,6 +153,8 @@ static void ls_pcie_host_init(struct pcie_port *pp)
+ 	ls_pcie_fix_class(pcie);
+ 	ls_pcie_clear_multifunction(pcie);
+ 	iowrite32(0, pcie->dbi + PCIE_DBI_RO_WR_EN);
++
++	return 0;
+ }
+ 
+ static int ls_pcie_msi_host_init(struct pcie_port *pp,
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+index 540f077..a80a9ba 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -515,8 +515,11 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		}
+ 	}
+ 
+-	if (pp->ops->host_init)
+-		pp->ops->host_init(pp);
++	if (pp->ops->host_init) {
++		ret = pp->ops->host_init(pp);
++		if (ret)
++			return ret;
++	}
+ 
+ 	if (!pp->ops->rd_other_conf)
+ 		dw_pcie_prog_outbound_atu(pp, PCIE_ATU_REGION_INDEX1,
+diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
+index 2356d29..7b5317f 100644
+--- a/drivers/pci/host/pcie-designware.h
++++ b/drivers/pci/host/pcie-designware.h
+@@ -63,7 +63,7 @@ struct pcie_host_ops {
+ 	int (*wr_other_conf)(struct pcie_port *pp, struct pci_bus *bus,
+ 			unsigned int devfn, int where, int size, u32 val);
+ 	int (*link_up)(struct pcie_port *pp);
+-	void (*host_init)(struct pcie_port *pp);
++	int (*host_init)(struct pcie_port *pp);
+ 	void (*msi_set_irq)(struct pcie_port *pp, int irq);
+ 	void (*msi_clear_irq)(struct pcie_port *pp, int irq);
+ 	phys_addr_t (*get_msi_addr)(struct pcie_port *pp);
+diff --git a/drivers/pci/host/pcie-spear13xx.c b/drivers/pci/host/pcie-spear13xx.c
+index b95b756..50b3b31 100644
+--- a/drivers/pci/host/pcie-spear13xx.c
++++ b/drivers/pci/host/pcie-spear13xx.c
+@@ -256,10 +256,12 @@ static int spear13xx_pcie_link_up(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
+-static void spear13xx_pcie_host_init(struct pcie_port *pp)
++static int spear13xx_pcie_host_init(struct pcie_port *pp)
+ {
+ 	spear13xx_pcie_establish_link(pp);
+ 	spear13xx_pcie_enable_interrupts(pp);
++
++	return 0;
+ }
+ 
+ static struct pcie_host_ops spear13xx_pcie_host_ops = {
+-- 
+2.6.2
