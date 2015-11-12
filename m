@@ -1,48 +1,84 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 10/25] drm/exynos: move dma_addr attribute from exynos
- plane to exynos fb
-Date: Thu, 12 Nov 2015 16:25:36 -0200
-Message-ID: <20151112182536.GF2264@joana>
-References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-11-git-send-email-m.szyprowski@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v9 15/17] drm: bridge: analogix/dp: try force hpd after
+ plug in lookup failed
+Date: Thu, 12 Nov 2015 17:38:07 -0600
+Message-ID: <20151112233807.GA9899@rob-hp-laptop>
+References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
+ <1446167355-6387-1-git-send-email-ykk@rock-chips.com>
+ <20151111231042.GA29893@rob-hp-laptop>
+ <5643EAF9.9020508@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f176.google.com ([209.85.160.176]:33153 "EHLO
-	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753564AbbKLSZn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Nov 2015 13:25:43 -0500
-Received: by ykdv3 with SMTP id v3so106239759ykd.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Nov 2015 10:25:43 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1447161821-1877-11-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <5643EAF9.9020508@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-deve
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi Marek,
-
-2015-11-10 Marek Szyprowski <m.szyprowski@samsung.com>:
-
-> DMA address is a framebuffer attribute and the right place for it is
-> exynos_drm_framebuffer not exynos_drm_plane. This patch also introduces
-> helper function for getting dma address of the given framebuffer.
+On Thu, Nov 12, 2015 at 09:27:21AM +0800, Yakir Yang wrote:
+> Hi Rob,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 13 ++++++++-----
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 16 +++++++++-------
->  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  3 ---
->  drivers/gpu/drm/exynos/exynos_drm_fb.c        | 16 ++++++----------
->  drivers/gpu/drm/exynos/exynos_drm_fb.h        |  3 +--
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 10 ++++++----
->  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 18 ------------------
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  5 ++++-
->  drivers/gpu/drm/exynos/exynos_mixer.c         |  7 ++++---
->  9 files changed, 38 insertions(+), 53 deletions(-)
+> On 11/12/2015 07:10 AM, Rob Herring wrote:
+> >On Fri, Oct 30, 2015 at 09:09:15AM +0800, Yakir Yang wrote:
+> >>Some edp screen do not have hpd signal, so we can't just return
+> >>failed when hpd plug in detect failed.
+> >>
+> >>This is an hardware property, so we need add a devicetree property
+> >>"analogix,need-force-hpd" to indicate this sutiation.
+> >>
+> >>Tested-by: Heiko Stuebner <heiko@sntech.de>
+> >>Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> >>Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> >>---
+> >I didn't find this one in v10. Did it get dropped?
+> 
+> You are in my 'to' list, but I haven't send the whole v10 out,
+> most of them don't need update :)
 
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Okay, it's just gmail's inability to follow threading...
+ 
+> This series should be:
+> ---- [v8 0/17 ...]
+>   |---- [v8 1/17 ...]
+>   |---- [v8 2/17 ...]
+>   |---- [v8 3/17 ...]
+>   |---- [...]
+>   |---- [v8 15/17 ...]
+>   |---- [v8 16/17 ...]
+>   |---- [v8 17/17 ...]
+>   |
+>   |---- [v9 10/17 ...]
+>   |---- [v9 15/17 ...]
+>      |---- We are here
+>   |---- [v9 09/17 ...]
+>   |---- [v10 09/17 ...]
+>      |---- Received an acked from you
 
-	Gustavo
+
+> >>diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+> >>index 7659a7a..74f0e80 100644
+> >>--- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+> >>+++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+> >>@@ -22,6 +22,9 @@ Required properties for dp-controller:
+> >>  		from general PHY binding: Should be "dp".
+> >>  Optional properties for dp-controller:
+> >>+	-analogix,need-force-hpd:
+> >>+		Indicate driver need force hpd when hpd detect failed, this
+> >>+		is used for some eDP screen which don't have hpd signal.
+> >This should be a generic property.
+> 
+> This property would only need in some no-hpd case, it would be dropped if
+> panel keep the hotplug signal, that's why I thought it should be optional.
+
+I agree it is optional. I just mean drop the analogix and put in a 
+common binding doc (i.e. create a display/bridge/common.txt). Needing to 
+ignore HPD is probably a common problem.
+
+> I thought if we put this a property to generic property, then we must need
+> to define it in normal device node, not sure whether it is right :)
+
+Sorry, I don't follow.
+
+Rob
