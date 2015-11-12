@@ -1,41 +1,84 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH] drm/exynos: only run atomic_check() if crtc is active
-Date: Thu, 12 Nov 2015 11:11:20 -0200
-Message-ID: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: [PATCH v8 0/4] Exynos SROMc configuration and Ethernet support for
+ SMDK5410
+Date: Thu, 12 Nov 2015 16:12:03 +0300
+Message-ID: <cover.1447333689.git.p.fedin@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:56912 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752497AbbKLNMQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Nov 2015 08:12:16 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-Rml4ZXMgYW4gcmVncmVzc2lvbiBhZGRlZCBieSAzYWUyNDM2IChkcm0vZXh5bm9zL21peGVyOiBy
-ZXBsYWNlCmRpcmVjdCBjcm9zcy1kcml2ZXIgY2FsbCB3aXRoIGRybSBtb2RlKS4gVGhlIHdob2xl
-IGF0b21pYyB1cGRhdGUKd2FzIGZhaWxpbmcgaWYgdGhlIGhkbWkgZGlzcGxheSBpcyBub3QgcHJl
-c2VudC9hY3RpdmUuIEFkZCBhIHRlc3QKdG8gb25seSBydW4gYXRvbWljX2NoZWNrKCkgaWYgdGhl
-IENSVEMgaXMgYWN0aXZlLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZv
-LnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMgfCAzICsrKwogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQoK
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IGIzYmEyN2YuLjFk
-M2NhMGEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
-LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtNTUs
-NiArNTUsOSBAQCBzdGF0aWMgaW50IGV4eW5vc19jcnRjX2F0b21pY19jaGVjayhzdHJ1Y3QgZHJt
-X2NydGMgKmNydGMsCiB7CiAJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0
-b19leHlub3NfY3J0YyhjcnRjKTsKIAorCWlmICghc3RhdGUtPmFjdGl2ZSkKKwkJcmV0dXJuIDA7
-CisKIAlpZiAoZXh5bm9zX2NydGMtPm9wcy0+YXRvbWljX2NoZWNrKQogCQlyZXR1cm4gZXh5bm9z
-X2NydGMtPm9wcy0+YXRvbWljX2NoZWNrKGV4eW5vc19jcnRjLCBzdGF0ZSk7CiAKLS0gCjIuMS4w
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch extends Exynos SROM controller driver with ability to configure
+controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+which is connected via SROMc bank #3.
+
+With this patchset, support for the whole existing SMDK range can be added.
+Actually, only bank number is different.
+
+This patchset also depends on Exynos 5410 pinctrl support, introduced by
+patches 0003 and 0004 from this set:
+[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
+
+Pinctrl support is necessary in order to correctly configure
+multifunctional pins of the Exynos chip.
+
+v7 => v8:
+- More fixes to documentation
+
+v6 => v7:
+- Fixed stupid error in Tacc description in the documentation
+
+v5 => v6:
+- Even more improvements to the documentation, fixed some errors and typos.
+- Separated adding bus ranges from generic SROMc support
+- Some stuff renamed for even better code readability
+- Stylistic cleanups in the DTS (everything in alphabetic order, use named
+  constant name for interrupt config byte)
+
+v4 => v5:
+- Some cosmetic changes in the dtsi ("compatible" goes first)
+- Use correctly specified ranges for the SROMc node
+- Reuse existing properties where possible ("reg" for bank# and
+  "reg-io-width" for data width)
+- Separated page-mode property from timings array
+- More improvements to the documentation
+
+v3 => v4:
+- Devices are now added as subnodes, with additional properties. This allows
+  to cleary specify dependency. If configuration fails, error will be reported
+  and child devices will not be probed.
+- These additional properties now have "samsung,srom-XXX" format
+- Fixed code style, now better understood.
+
+v2 => v3:
+- Fixed up SROMc region size in the device tree
+- Reordered patches, documentation goes first now
+
+v1 => v2:
+- Fixed some typos and bad labels in device tree
+- Improved documentation
+
+
+Pavel Fedin (4):
+  Documentation: dt-bindings: Describe SROMc configuration
+  ARM: dts: Add SROMc to Exynos 5410
+  drivers: exynos-srom: Add support for bank configuration
+  ARM: dts: Add Ethernet chip to SMDK5410
+
+ .../bindings/arm/samsung/exynos-srom.txt           | 73 +++++++++++++++++++++-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          | 41 ++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi                  | 11 ++++
+ arch/arm/mach-exynos/Kconfig                       |  2 +-
+ drivers/soc/samsung/Kconfig                        |  2 +-
+ drivers/soc/samsung/exynos-srom.c                  | 61 +++++++++++++++++-
+ 6 files changed, 184 insertions(+), 6 deletions(-)
+
+-- 
+2.4.4
