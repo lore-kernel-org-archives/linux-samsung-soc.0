@@ -1,92 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 8/9] ARM: EXYNOS: rearrange static and non-static
- functions of PMU driver
-Date: Thu, 12 Nov 2015 13:39:02 +0900
-Message-ID: <564417E6.8070905@samsung.com>
-References: <1447155784-12667-1-git-send-email-pankaj.dubey@samsung.com>
- <1447155784-12667-9-git-send-email-pankaj.dubey@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v7 1/4] Documentation: dt-bindings: Describe SROMc
+ configuration
+Date: Thu, 12 Nov 2015 10:02:06 +0300
+Message-ID: <00f901d11d18$0b68e760$223ab620$@samsung.com>
+References: <cover.1446799912.git.p.fedin@samsung.com>
+ <0bc58ce0fd39767834f486c4c0cfbbd70044caed.1446799912.git.p.fedin@samsung.com>
+ <CAL_JsqLsD9gA2-AWYGaHvOuZhhDmE2BHmPMU2nJjPYEvQJdNHQ@mail.gmail.com>
+ <009301d11c4c$6eaa1eb0$4bfe5c10$@samsung.com>
+ <CAL_JsqLtWwdGHKKfS8b6E0Urh6gYopZcwpdyvJGWCRm7x81YzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:23204 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753203AbbKLEjF (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:22881 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751434AbbKLHCL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Nov 2015 23:39:05 -0500
-In-reply-to: <1447155784-12667-9-git-send-email-pankaj.dubey@samsung.com>
+	Thu, 12 Nov 2015 02:02:11 -0500
+In-reply-to: <CAL_JsqLtWwdGHKKfS8b6E0Urh6gYopZcwpdyvJGWCRm7x81YzA@mail.gmail.com>
+Content-language: ru
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, olof@lixom.net, khilman@linaro.org, arnd@arndb.de
+To: 'Rob Herring' <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
 
-On 10.11.2015 20:43, Pankaj Dubey wrote:
-> This patch moves exynos_sys_powerdown_conf function above all
-> static functions.
+ Hello!
 
-Please (always) describe the reason, the answer to "why?". In this case
-I know why, but other reviewers may not and other people grepping
-through history definitely won't know.
-
-Best regards,
-Krzysztof
-
+> >> > +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
+> >> > +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> >> > +                        Each value is specified in cycles and has the following
+> >> > +                        meaning and valid range:
+> >> > +                        Tacp : Page mode access cycle at Page mode (0 - 15)
+> >> > +                        Tcah : Address holding time after CSn (0 - 15)
+> >> > +                        Tcoh : Chip selection hold on OEn (0 - 15)
+> >> > +                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
+> >> > +                        Tcos : Chip selection set-up before OEn (0 - 15)
+> >> > +                        Tacs : Address set-up before CSn (0 - 15)
+> >>
+> >> This is not easily extended. Perhaps a property per value instead.
+> >
+> >  We had a discussion with Krzysztof about it, he agreed with this form of the property.
+> > My concern was that it's just too much typing, and makes little sense because these
+> > settings always go together. If register layout changes, or parameter set changes in
+> > incompatible way, then it's another device, not exynos-srom anymore.
+> >  So would you agree with that, or is your position strong?
 > 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/mach-exynos/pmu.c | 34 +++++++++++++++++-----------------
->  1 file changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-> index e01bdf1..f300ac9 100644
-> --- a/arch/arm/mach-exynos/pmu.c
-> +++ b/arch/arm/mach-exynos/pmu.c
-> @@ -39,23 +39,6 @@ u32 pmu_raw_readl(u32 offset)
->  	return readl_relaxed(pmu_base_addr + offset);
->  }
->  
-> -static void exynos_power_off(void)
-> -{
-> -	unsigned int tmp;
-> -
-> -	pr_info("Power down.\n");
-> -	tmp = pmu_raw_readl(EXYNOS_PS_HOLD_CONTROL);
-> -	tmp ^= (1 << 8);
-> -	pmu_raw_writel(tmp, EXYNOS_PS_HOLD_CONTROL);
-> -
-> -	/* Wait a little so we don't give a false warning below */
-> -	mdelay(100);
-> -
-> -	pr_err("Power down failed, please power off system manually.\n");
-> -	while (1)
-> -		;
-> -}
-> -
->  void exynos_sys_powerdown_conf(enum sys_powerdown mode)
->  {
->  	unsigned int i;
-> @@ -85,6 +68,23 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
->  	}
->  }
->  
-> +static void exynos_power_off(void)
-> +{
-> +	unsigned int tmp;
-> +
-> +	pr_info("Power down.\n");
-> +	tmp = pmu_raw_readl(EXYNOS_PS_HOLD_CONTROL);
-> +	tmp ^= (1 << 8);
-> +	pmu_raw_writel(tmp, EXYNOS_PS_HOLD_CONTROL);
-> +
-> +	/* Wait a little so we don't give a false warning below */
-> +	mdelay(100);
-> +
-> +	pr_err("Power down failed, please power off system manually.\n");
-> +	while (1)
-> +		;
-> +}
-> +
->  static int pmu_restart_notify(struct notifier_block *this,
->  		unsigned long code, void *unused)
->  {
-> 
+> I'm thinking for a new version of the controller which could add (or
+> remove) new timing parameters, but then I guess you can interpret the
+> field differently based on the compatible string. Anyway, your problem
+> to deal with.
+
+ Of course, my thought is that if compatible string is different,
+then it's already a different device. And of course it would have different parameters.
+ So, OK, i'll post new version with fixed documentation today.
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
