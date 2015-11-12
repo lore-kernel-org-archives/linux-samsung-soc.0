@@ -1,84 +1,102 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v8 0/4] Exynos SROMc configuration and Ethernet support for
- SMDK5410
-Date: Thu, 12 Nov 2015 16:12:03 +0300
-Message-ID: <cover.1447333689.git.p.fedin@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:56912 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752497AbbKLNMQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Nov 2015 08:12:16 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v8 4/4] ARM: dts: Add Ethernet chip to SMDK5410
+Date: Thu, 12 Nov 2015 16:12:07 +0300
+Message-ID: <bd7c2eaea00bb18145c56f74b9592a96efb9fb77.1447333690.git.p.fedin@samsung.com>
+References: <cover.1447333689.git.p.fedin@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <cover.1447333689.git.p.fedin@samsung.com>
+In-reply-to: <cover.1447333689.git.p.fedin@samsung.com>
+References: <cover.1447333689.git.p.fedin@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch extends Exynos SROM controller driver with ability to configure
-controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
-which is connected via SROMc bank #3.
+The chip is smsc9115, connected via SROMc bank 3. Additionally, some GPIO
+initialization is required.
 
-With this patchset, support for the whole existing SMDK range can be added.
-Actually, only bank number is different.
+Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 41 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi         |  6 +++++
+ 2 files changed, 47 insertions(+)
 
-This patchset also depends on Exynos 5410 pinctrl support, introduced by
-patches 0003 and 0004 from this set:
-[PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
-
-Pinctrl support is necessary in order to correctly configure
-multifunctional pins of the Exynos chip.
-
-v7 => v8:
-- More fixes to documentation
-
-v6 => v7:
-- Fixed stupid error in Tacc description in the documentation
-
-v5 => v6:
-- Even more improvements to the documentation, fixed some errors and typos.
-- Separated adding bus ranges from generic SROMc support
-- Some stuff renamed for even better code readability
-- Stylistic cleanups in the DTS (everything in alphabetic order, use named
-  constant name for interrupt config byte)
-
-v4 => v5:
-- Some cosmetic changes in the dtsi ("compatible" goes first)
-- Use correctly specified ranges for the SROMc node
-- Reuse existing properties where possible ("reg" for bank# and
-  "reg-io-width" for data width)
-- Separated page-mode property from timings array
-- More improvements to the documentation
-
-v3 => v4:
-- Devices are now added as subnodes, with additional properties. This allows
-  to cleary specify dependency. If configuration fails, error will be reported
-  and child devices will not be probed.
-- These additional properties now have "samsung,srom-XXX" format
-- Fixed code style, now better understood.
-
-v2 => v3:
-- Fixed up SROMc region size in the device tree
-- Reordered patches, documentation goes first now
-
-v1 => v2:
-- Fixed some typos and bad labels in device tree
-- Improved documentation
-
-
-Pavel Fedin (4):
-  Documentation: dt-bindings: Describe SROMc configuration
-  ARM: dts: Add SROMc to Exynos 5410
-  drivers: exynos-srom: Add support for bank configuration
-  ARM: dts: Add Ethernet chip to SMDK5410
-
- .../bindings/arm/samsung/exynos-srom.txt           | 73 +++++++++++++++++++++-
- arch/arm/boot/dts/exynos5410-smdk5410.dts          | 41 ++++++++++++
- arch/arm/boot/dts/exynos5410.dtsi                  | 11 ++++
- arch/arm/mach-exynos/Kconfig                       |  2 +-
- drivers/soc/samsung/Kconfig                        |  2 +-
- drivers/soc/samsung/exynos-srom.c                  | 61 +++++++++++++++++-
- 6 files changed, 184 insertions(+), 6 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index cebeaab..373abf7 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "exynos5410.dtsi"
++#include <dt-bindings/interrupt-controller/irq.h>
+ / {
+ 	model = "Samsung SMDK5410 board based on EXYNOS5410";
+ 	compatible = "samsung,smdk5410", "samsung,exynos5410", "samsung,exynos5";
+@@ -61,6 +62,46 @@
+ 	disable-wp;
+ };
+ 
++&pinctrl_0 {
++	srom_ctl: srom-ctl {
++		samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
++			       "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
++		samsung,pin-function = <2>;
++		samsung,pin-drv = <0>;
++	};
++
++	srom_ebi: srom-ebi {
++		samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
++			       "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
++			       "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
++			       "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
++			       "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
++			       "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&sromc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
++
++	ethernet@3 {
++		compatible = "smsc,lan9115";
++		reg = <3 0 0x10000>;
++		phy-mode = "mii";
++		interrupt-parent = <&gpx0>;
++		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
++		reg-io-width = <2>;
++		smsc,irq-push-pull;
++		smsc,force-internal-phy;
++
++		samsung,srom-page-mode = <1>;
++		samsung,srom-timing = <9 12 1 9 1 1>;
++	};
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index e2b58f8..9cfb814 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -104,6 +104,12 @@
+ 		sromc: sromc@12250000 {
+ 			compatible = "samsung,exynos-srom";
+ 			reg = <0x12250000 0x14>;
++			#address-cells = <2>;
++			#size-cells = <1>;
++			ranges = <0 0 0x04000000 0x20000
++				  1 0 0x05000000 0x20000
++				  2 0 0x06000000 0x20000
++				  3 0 0x07000000 0x20000>;
+ 		};
+ 
+ 		pmu_system_controller: system-controller@10040000 {
 -- 
 2.4.4
