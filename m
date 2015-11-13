@@ -1,22 +1,22 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 12/25] drm/exynos: mixer: use crtc->state->adjusted_mode
- instead of crtc->mode
-Date: Fri, 13 Nov 2015 09:47:17 -0200
-Message-ID: <20151113114717.GH2264@joana>
+Subject: Re: [PATCH 13/25] drm/exynos: mixer: enable video overlay plane only
+ when VP is available
+Date: Fri, 13 Nov 2015 09:49:05 -0200
+Message-ID: <20151113114905.GI2264@joana>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-13-git-send-email-m.szyprowski@samsung.com>
+ <1447161821-1877-14-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f170.google.com ([209.85.160.170]:35064 "EHLO
-	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932553AbbKMLrV (ORCPT
+Received: from mail-yk0-f175.google.com ([209.85.160.175]:34060 "EHLO
+	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752526AbbKMLtI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Nov 2015 06:47:21 -0500
-Received: by ykba77 with SMTP id a77so141091019ykb.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2015 03:47:20 -0800 (PST)
+	Fri, 13 Nov 2015 06:49:08 -0500
+Received: by ykfs79 with SMTP id s79so141929259ykf.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2015 03:49:08 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1447161821-1877-13-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1447161821-1877-14-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -26,13 +26,15 @@ Hi Marek,
 
 2015-11-10 Marek Szyprowski <m.szyprowski@samsung.com>:
 
-> This patch replaces usage of crtc->mode with crtc->state->adjusted_mode
-> like it is already done in common plane code.
+> Video overlay plane should be registered only when suitable hardware
+> sub-block (Video Processor) is available.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 3 +++
+>  1 file changed, 3 insertions(+)
+
+Good catch.
 
 Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
