@@ -1,97 +1,141 @@
-From: Han Jingoo <jingoohan1@gmail.com>
-Subject: Re: [PATCH] PCI: designware: bail out if host_init failed
-Date: Fri, 13 Nov 2015 18:49:08 +0900
-Message-ID: <CAPOBaE5AwxQz6pscN3HfMuZjSFU61VLrkmO7DG-r5+czLFkO8w@mail.gmail.com>
-References: <1447336125-5010-1-git-send-email-jszhang@marvell.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 9/9] drivers: soc: Add support for Exynos PMU driver
+Date: Fri, 13 Nov 2015 19:28:55 +0900
+Message-ID: <5645BB67.8050102@samsung.com>
+References: <1447406983-27835-1-git-send-email-pankaj.dubey@samsung.com>
+ <1447406983-27835-10-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1827096267512022244=="
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1447336125-5010-1-git-send-email-jszhang@marvell.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: "k.kozlowski@samsung.com" <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "pratyush.anand@gmail.com" <pratyush.anand@gmail.com>, "Richard.Zhu@freescale.com" <Richard.Zhu@freescale.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kishon@ti.com" <kishon@ti.com>, "minghuan.Lian@freescale.com" <minghuan.Lian@freescale.com>, "kgene@kernel.org" <kgene@kernel.org>, "m-karicheri2@ti.com" <m-karicheri2@ti.com>, Han Jingoo <jingoohan1@gmail.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "mingkai.hu@freescale.com" <mingkai.hu@freescale.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, l.stac
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1447406983-27835-10-git-send-email-pankaj.dubey@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: amitdanielk@gmail.com, kgene.kim@samsung.com, arnd@arndb.de, thomas.ab@samsung.com, olof@lixom.net, khilman@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============1827096267512022244==
-Content-Type: multipart/alternative; boundary=001a113fe6c290e147052468f8ff
+On 13.11.2015 18:29, Pankaj Dubey wrote:
+> This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
+> to "drivers/soc/samsung". This driver is mainly used for setting misc
+> bits of register from PMU IP of Exynos SoC which will be required to
+> configure before Suspend/Resume. Currently all these settings are done
+> in "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
+> support, there is a need of this PMU driver in driver/* folder.
+> 
+> This driver uses existing DT binding information and there should
+> be no functionality change in the supported platforms.
+> 
+> Signed-off-by: Amit Daniel Kachhap <amitdanielk@gmail.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig                                   | 1 +
+>  arch/arm/mach-exynos/Makefile                                  | 4 +---
+>  drivers/soc/samsung/Kconfig                                    | 4 ++++
+>  drivers/soc/samsung/Makefile                                   | 4 ++++
+>  arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h     | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c    | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c | 0
+>  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c | 0
+>  10 files changed, 10 insertions(+), 3 deletions(-)
+>  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c (100%)
+>  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c (100%)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 83c85f5..874cb38 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -16,6 +16,7 @@ menuconfig ARCH_EXYNOS
+>  	select ARM_GIC
+>  	select COMMON_CLK_SAMSUNG
+>  	select EXYNOS_THERMAL
+> +	select EXYNOS_PMU
+>  	select EXYNOS_SROM if PM
+>  	select HAVE_ARM_SCU if SMP
+>  	select HAVE_S3C2410_I2C if I2C
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> index 2d58063..34d29df 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -9,9 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
+>  
+>  # Core
+>  
+> -obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o \
+> -					exynos3250-pmu.o exynos4-pmu.o \
+> -					exynos5250-pmu.o exynos5420-pmu.o
+> +obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
+>  
+>  obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+>  obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 2833b5b..f545d6c 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -10,4 +10,8 @@ config EXYNOS_SROM
+>  	bool
+>  	depends on ARM && ARCH_EXYNOS && PM
+>  
+> +config EXYNOS_PMU
+> +	bool
+> +	depends on ARCH_EXYNOS
+> +
+>  endmenu
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 9c554d5..26fb489 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -1 +1,5 @@
+>  obj-$(CONFIG_EXYNOS_SROM)	+= exynos-srom.o
+> +ifdef CONFIG_ARM
+> +obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+> +					exynos5250-pmu.o exynos5420-pmu.o
+> +endif
 
---001a113fe6c290e147052468f8ff
-Content-Type: text/plain; charset=UTF-8
+Why ifdef CONFIG_ARM? This already depends on ARCH_EXYNOS. If you want
+to limit to ARMv7 then add the dependency to Kconfig (just like
+EXYNOS_SROM).
 
-2015. 11. 12. Thusday, Jisheng Zhang<jszhang@marvell.com> wrote:
+Rest looks ok - nice renames.
 
-> There's no reason to continue the initialization such as configure
-> register, scan root bus etc. if customized host_init() failed. This
-> patch tries to check the host_init result, bail out if failed.
->
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com <javascript:;>>
+Best regards,
+Krzysztof
 
-
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
-
----
->  drivers/pci/host/pci-dra7xx.c      |  4 +++-
->  drivers/pci/host/pci-exynos.c      |  4 +++-
->  drivers/pci/host/pci-imx6.c        |  4 +++-
->  drivers/pci/host/pci-keystone.c    |  4 +++-
->  drivers/pci/host/pci-layerscape.c  | 25 ++++++++++++++++---------
->  drivers/pci/host/pcie-designware.c |  7 +++++--
->  drivers/pci/host/pcie-designware.h |  2 +-
->  drivers/pci/host/pcie-spear13xx.c  |  4 +++-
->  8 files changed, 37 insertions(+), 17 deletions(-)
->
-
---001a113fe6c290e147052468f8ff
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-2015. 11. 12.=C2=A0Thusday, Jisheng Zhang&lt;<a href=3D"mailto:jszhang@marv=
-ell.com">jszhang@marvell.com</a>&gt; wrote:<br><blockquote class=3D"gmail_q=
-uote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1e=
-x">There&#39;s no reason to continue the initialization such as configure<b=
-r>
-register, scan root bus etc. if customized host_init() failed. This<br>
-patch tries to check the host_init result, bail out if failed.<br>
-<br>
-Signed-off-by: Jisheng Zhang &lt;<a href=3D"javascript:;" onclick=3D"_e(eve=
-nt, &#39;cvml&#39;, &#39;jszhang@marvell.com&#39;)">jszhang@marvell.com</a>=
-&gt;</blockquote><div><br></div><div>Acked-by: Jingoo Han &lt;<a href=3D"ma=
-ilto:jingoohan1@gmail.com">jingoohan1@gmail.com</a>&gt;</div><div><br></div=
-><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1=
-px #ccc solid;padding-left:1ex">
----<br>
-=C2=A0drivers/pci/host/pci-dra7xx.c=C2=A0 =C2=A0 =C2=A0 |=C2=A0 4 +++-<br>
-=C2=A0drivers/pci/host/pci-exynos.c=C2=A0 =C2=A0 =C2=A0 |=C2=A0 4 +++-<br>
-=C2=A0drivers/pci/host/pci-imx6.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 4 +++-=
-<br>
-=C2=A0drivers/pci/host/pci-keystone.c=C2=A0 =C2=A0 |=C2=A0 4 +++-<br>
-=C2=A0drivers/pci/host/pci-layerscape.c=C2=A0 | 25 ++++++++++++++++--------=
--<br>
-=C2=A0drivers/pci/host/pcie-designware.c |=C2=A0 7 +++++--<br>
-=C2=A0drivers/pci/host/pcie-designware.h |=C2=A0 2 +-<br>
-=C2=A0drivers/pci/host/pcie-spear13xx.c=C2=A0 |=C2=A0 4 +++-<br>
-=C2=A08 files changed, 37 insertions(+), 17 deletions(-)<br>
-</blockquote>
-
---001a113fe6c290e147052468f8ff--
-
---===============1827096267512022244==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMt
-ZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRwczovL2xp
-c3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
-
---===============1827096267512022244==--
+> diff --git a/arch/arm/mach-exynos/pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/pmu.c
+> rename to drivers/soc/samsung/exynos-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos-pmu.h
+> rename to drivers/soc/samsung/exynos-pmu.h
+> diff --git a/arch/arm/mach-exynos/exynos3250-pmu.c b/drivers/soc/samsung/exynos3250-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos3250-pmu.c
+> rename to drivers/soc/samsung/exynos3250-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos4-pmu.c b/drivers/soc/samsung/exynos4-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos4-pmu.c
+> rename to drivers/soc/samsung/exynos4-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos5250-pmu.c
+> rename to drivers/soc/samsung/exynos5250-pmu.c
+> diff --git a/arch/arm/mach-exynos/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/exynos5420-pmu.c
+> rename to drivers/soc/samsung/exynos5420-pmu.c
+> 
