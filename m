@@ -1,68 +1,43 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 01/25] ARM: dts: exynos4: add rotator nodes
-Date: Fri, 13 Nov 2015 11:23:03 +0900
-Message-ID: <56454987.8000501@samsung.com>
+Subject: Re: [PATCH 02/25] ARM: dts: exynos542x: add rotator node
+Date: Fri, 13 Nov 2015 11:28:11 +0900
+Message-ID: <56454ABB.2070508@samsung.com>
 References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-2-git-send-email-m.szyprowski@samsung.com>
+ <1447161821-1877-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1447161821-1877-2-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58503 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932370AbbKMC2N (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Nov 2015 21:28:13 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NXQ00CQOEUZS020@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Nov 2015 02:28:11 +0000 (GMT)
+In-reply-to: <1447161821-1877-3-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-T24gMTAuMTEuMjAxNSAyMjoyMywgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBUaGlzIHBhdGNo
-IGFkZHMgZGV2aWNlIG5vZGUgZm9yIFJvdGF0b3IgZGV2aWNlIHRvIEV4eW5vcyA0MjEwIGFuZCA0
-eDEyCj4gZGV2aWNlIHRyZWUgZmlsZXMuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJv
-d3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0
-cy9leHlub3M0LmR0c2kgICAgfCAxMCArKysrKysrKystCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczQyMTAuZHRzaSB8ICA4ICsrKysrKysrCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczR4
-MTIuZHRzaSB8ICA0ICsrKysKPiAgMyBmaWxlcyBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspLCAx
-IGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQu
-ZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQuZHRzaQo+IGluZGV4IDJmMzFmNzczYjA5
-Ni4uM2ZhNTc1YWQ3NjkzIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQu
-ZHRzaQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQuZHRzaQo+IEBAIC03MTgsNiAr
-NzE4LDE1IEBACj4gIAkJaW9tbXVzID0gPCZzeXNtbXVfanBlZz47Cj4gIAl9Owo+ICAKPiArCXJv
-dGF0b3I6IHJvdGF0b3JAMTI4MTAwMDAgewo+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlu
-b3M0MjEwLXJvdGF0b3IiOwo+ICsJCXJlZyA9IDwweDEyODEwMDAwIDB4MTAwMD47Cj4gKwkJaW50
-ZXJydXB0cyA9IDwwIDgzIDA+Owo+ICsJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX1JPVEFUT1I+Owo+
-ICsJCWNsb2NrLW5hbWVzID0gInJvdGF0b3IiOwo+ICsJCWlvbW11cyA9IDwmc3lzbW11X3JvdGF0
-b3I+Owo+ICsJfTsKPiArCj4gIAloZG1pOiBoZG1pQDEyRDAwMDAwIHsKPiAgCQljb21wYXRpYmxl
-ID0gInNhbXN1bmcsZXh5bm9zNDIxMC1oZG1pIjsKPiAgCQlyZWcgPSA8MHgxMkQwMDAwMCAweDcw
-MDAwPjsKPiBAQCAtOTQ1LDcgKzk1NCw2IEBACj4gIAkJaW50ZXJydXB0cyA9IDw1IDA+Owo+ICAJ
-CWNsb2NrLW5hbWVzID0gInN5c21tdSIsICJtYXN0ZXIiOwo+ICAJCWNsb2NrcyA9IDwmY2xvY2sg
-Q0xLX1NNTVVfUk9UQVRPUj4sIDwmY2xvY2sgQ0xLX1JPVEFUT1I+Owo+IC0JCXBvd2VyLWRvbWFp
-bnMgPSA8JnBkX2xjZDA+OwoKSG1tLi4uLiBJIHdvbmRlciB3aHkgeW91IGNoYW5nZWQgdGhpcy4g
-U3lzbW11IHJvdGF0b3IgYW5kIHJvdGF0b3IgYXJlCm5vdCBhIHBhcnQgb2YgTENEIHBvd2VyIGRv
-bWFpbiBvbiBFeHlub3M0eDEyIChvciB0aGV5IHNob3VsZCBub3QgYmU/KT8gV2h5PwoKQmVzdCBy
-ZWdhcmRzLApLcnp5c3p0b2YKCgo+ICAJCSNpb21tdS1jZWxscyA9IDwwPjsKPiAgCX07Cj4gIAo+
-IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kgYi9hcmNoL2Fy
-bS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kKPiBpbmRleCAzZTViYTY2NWQyMDAuLmI3NDc0Y2Yy
-N2U4MiAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kKPiAr
-KysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kKPiBAQCAtMjc5LDMgKzI3OSwx
-MSBAQAo+ICAJCTwmY2xvY2sgQ0xLX09VVF9DUFU+LCA8JmNsb2NrIENMS19YWFRJPiwgPCZjbG9j
-ayBDTEtfWFVTQlhUST47Cj4gIAkjY2xvY2stY2VsbHMgPSA8MT47Cj4gIH07Cj4gKwo+ICsmcm90
-YXRvciB7Cj4gKwlwb3dlci1kb21haW5zID0gPCZwZF9sY2QwPjsKPiArfTsKPiArCj4gKyZzeXNt
-bXVfcm90YXRvciB7Cj4gKwlwb3dlci1kb21haW5zID0gPCZwZF9sY2QwPjsKPiArfTsKPiBkaWZm
-IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNpIGIvYXJjaC9hcm0vYm9v
-dC9kdHMvZXh5bm9zNHgxMi5kdHNpCj4gaW5kZXggYjc3ZGFjNjFmZmI1Li4xNDhiNDdhZDMxMjAg
-MTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNpCj4gKysrIGIv
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNpCj4gQEAgLTMzOSw2ICszMzksMTAgQEAK
-PiAgCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEyLWpwZWciOwo+ICB9Owo+ICAKPiAr
-JnJvdGF0b3Igewo+ICsJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQyMTItcm90YXRvciI7
-Cj4gK307Cj4gKwo+ICAmbWl4ZXIgewo+ICAJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQy
-MTItbWl4ZXIiOwo+ICAJY2xvY2stbmFtZXMgPSAibWl4ZXIiLCAiaGRtaSIsICJzY2xrX2hkbWki
-LCAidnAiOwo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 10.11.2015 22:23, Marek Szyprowski wrote:
+> This patch adds device node for Rotator device to Exynos 542x device
+> tree file.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+
+Looks good, thanks!
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+
+Best regards,
+Krzysztof
