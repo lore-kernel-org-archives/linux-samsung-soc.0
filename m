@@ -1,84 +1,68 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v9 15/17] drm: bridge: analogix/dp: try force hpd after
- plug in lookup failed
-Date: Thu, 12 Nov 2015 17:38:07 -0600
-Message-ID: <20151112233807.GA9899@rob-hp-laptop>
-References: <1446020143-32645-1-git-send-email-ykk@rock-chips.com>
- <1446167355-6387-1-git-send-email-ykk@rock-chips.com>
- <20151111231042.GA29893@rob-hp-laptop>
- <5643EAF9.9020508@rock-chips.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 01/25] ARM: dts: exynos4: add rotator nodes
+Date: Fri, 13 Nov 2015 11:23:03 +0900
+Message-ID: <56454987.8000501@samsung.com>
+References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
+ <1447161821-1877-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5643EAF9.9020508@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, dianders@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-deve
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1447161821-1877-2-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 12, 2015 at 09:27:21AM +0800, Yakir Yang wrote:
-> Hi Rob,
-> 
-> On 11/12/2015 07:10 AM, Rob Herring wrote:
-> >On Fri, Oct 30, 2015 at 09:09:15AM +0800, Yakir Yang wrote:
-> >>Some edp screen do not have hpd signal, so we can't just return
-> >>failed when hpd plug in detect failed.
-> >>
-> >>This is an hardware property, so we need add a devicetree property
-> >>"analogix,need-force-hpd" to indicate this sutiation.
-> >>
-> >>Tested-by: Heiko Stuebner <heiko@sntech.de>
-> >>Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> >>Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> >>---
-> >I didn't find this one in v10. Did it get dropped?
-> 
-> You are in my 'to' list, but I haven't send the whole v10 out,
-> most of them don't need update :)
-
-Okay, it's just gmail's inability to follow threading...
- 
-> This series should be:
-> ---- [v8 0/17 ...]
->   |---- [v8 1/17 ...]
->   |---- [v8 2/17 ...]
->   |---- [v8 3/17 ...]
->   |---- [...]
->   |---- [v8 15/17 ...]
->   |---- [v8 16/17 ...]
->   |---- [v8 17/17 ...]
->   |
->   |---- [v9 10/17 ...]
->   |---- [v9 15/17 ...]
->      |---- We are here
->   |---- [v9 09/17 ...]
->   |---- [v10 09/17 ...]
->      |---- Received an acked from you
-
-
-> >>diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-> >>index 7659a7a..74f0e80 100644
-> >>--- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-> >>+++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-> >>@@ -22,6 +22,9 @@ Required properties for dp-controller:
-> >>  		from general PHY binding: Should be "dp".
-> >>  Optional properties for dp-controller:
-> >>+	-analogix,need-force-hpd:
-> >>+		Indicate driver need force hpd when hpd detect failed, this
-> >>+		is used for some eDP screen which don't have hpd signal.
-> >This should be a generic property.
-> 
-> This property would only need in some no-hpd case, it would be dropped if
-> panel keep the hotplug signal, that's why I thought it should be optional.
-
-I agree it is optional. I just mean drop the analogix and put in a 
-common binding doc (i.e. create a display/bridge/common.txt). Needing to 
-ignore HPD is probably a common problem.
-
-> I thought if we put this a property to generic property, then we must need
-> to define it in normal device node, not sure whether it is right :)
-
-Sorry, I don't follow.
-
-Rob
+T24gMTAuMTEuMjAxNSAyMjoyMywgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBUaGlzIHBhdGNo
+IGFkZHMgZGV2aWNlIG5vZGUgZm9yIFJvdGF0b3IgZGV2aWNlIHRvIEV4eW5vcyA0MjEwIGFuZCA0
+eDEyCj4gZGV2aWNlIHRyZWUgZmlsZXMuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJv
+d3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0
+cy9leHlub3M0LmR0c2kgICAgfCAxMCArKysrKysrKystCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4
+eW5vczQyMTAuZHRzaSB8ICA4ICsrKysrKysrCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczR4
+MTIuZHRzaSB8ICA0ICsrKysKPiAgMyBmaWxlcyBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspLCAx
+IGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQu
+ZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQuZHRzaQo+IGluZGV4IDJmMzFmNzczYjA5
+Ni4uM2ZhNTc1YWQ3NjkzIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQu
+ZHRzaQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQuZHRzaQo+IEBAIC03MTgsNiAr
+NzE4LDE1IEBACj4gIAkJaW9tbXVzID0gPCZzeXNtbXVfanBlZz47Cj4gIAl9Owo+ICAKPiArCXJv
+dGF0b3I6IHJvdGF0b3JAMTI4MTAwMDAgewo+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlu
+b3M0MjEwLXJvdGF0b3IiOwo+ICsJCXJlZyA9IDwweDEyODEwMDAwIDB4MTAwMD47Cj4gKwkJaW50
+ZXJydXB0cyA9IDwwIDgzIDA+Owo+ICsJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX1JPVEFUT1I+Owo+
+ICsJCWNsb2NrLW5hbWVzID0gInJvdGF0b3IiOwo+ICsJCWlvbW11cyA9IDwmc3lzbW11X3JvdGF0
+b3I+Owo+ICsJfTsKPiArCj4gIAloZG1pOiBoZG1pQDEyRDAwMDAwIHsKPiAgCQljb21wYXRpYmxl
+ID0gInNhbXN1bmcsZXh5bm9zNDIxMC1oZG1pIjsKPiAgCQlyZWcgPSA8MHgxMkQwMDAwMCAweDcw
+MDAwPjsKPiBAQCAtOTQ1LDcgKzk1NCw2IEBACj4gIAkJaW50ZXJydXB0cyA9IDw1IDA+Owo+ICAJ
+CWNsb2NrLW5hbWVzID0gInN5c21tdSIsICJtYXN0ZXIiOwo+ICAJCWNsb2NrcyA9IDwmY2xvY2sg
+Q0xLX1NNTVVfUk9UQVRPUj4sIDwmY2xvY2sgQ0xLX1JPVEFUT1I+Owo+IC0JCXBvd2VyLWRvbWFp
+bnMgPSA8JnBkX2xjZDA+OwoKSG1tLi4uLiBJIHdvbmRlciB3aHkgeW91IGNoYW5nZWQgdGhpcy4g
+U3lzbW11IHJvdGF0b3IgYW5kIHJvdGF0b3IgYXJlCm5vdCBhIHBhcnQgb2YgTENEIHBvd2VyIGRv
+bWFpbiBvbiBFeHlub3M0eDEyIChvciB0aGV5IHNob3VsZCBub3QgYmU/KT8gV2h5PwoKQmVzdCBy
+ZWdhcmRzLApLcnp5c3p0b2YKCgo+ICAJCSNpb21tdS1jZWxscyA9IDwwPjsKPiAgCX07Cj4gIAo+
+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kgYi9hcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kKPiBpbmRleCAzZTViYTY2NWQyMDAuLmI3NDc0Y2Yy
+N2U4MiAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kKPiAr
+KysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kKPiBAQCAtMjc5LDMgKzI3OSwx
+MSBAQAo+ICAJCTwmY2xvY2sgQ0xLX09VVF9DUFU+LCA8JmNsb2NrIENMS19YWFRJPiwgPCZjbG9j
+ayBDTEtfWFVTQlhUST47Cj4gIAkjY2xvY2stY2VsbHMgPSA8MT47Cj4gIH07Cj4gKwo+ICsmcm90
+YXRvciB7Cj4gKwlwb3dlci1kb21haW5zID0gPCZwZF9sY2QwPjsKPiArfTsKPiArCj4gKyZzeXNt
+bXVfcm90YXRvciB7Cj4gKwlwb3dlci1kb21haW5zID0gPCZwZF9sY2QwPjsKPiArfTsKPiBkaWZm
+IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNpIGIvYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zNHgxMi5kdHNpCj4gaW5kZXggYjc3ZGFjNjFmZmI1Li4xNDhiNDdhZDMxMjAg
+MTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNpCj4gKysrIGIv
+YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi5kdHNpCj4gQEAgLTMzOSw2ICszMzksMTAgQEAK
+PiAgCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEyLWpwZWciOwo+ICB9Owo+ICAKPiAr
+JnJvdGF0b3Igewo+ICsJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQyMTItcm90YXRvciI7
+Cj4gK307Cj4gKwo+ICAmbWl4ZXIgewo+ICAJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQy
+MTItbWl4ZXIiOwo+ICAJY2xvY2stbmFtZXMgPSAibWl4ZXIiLCAiaGRtaSIsICJzY2xrX2hkbWki
+LCAidnAiOwo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
