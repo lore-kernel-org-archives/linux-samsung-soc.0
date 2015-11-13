@@ -1,62 +1,129 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-Date: Fri, 13 Nov 2015 08:46:42 -0600
-Message-ID: <20151113144642.GA20904@rob-hp-laptop>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v5 9/9] drivers: soc: Add support for Exynos PMU driver
+Date: Fri, 13 Nov 2015 21:06:20 +0530
+Message-ID: <CAGcde9HMDNgu2YHXE7=KqhxdXwyNwqCZn0BLsoHtaOvpYjjSqw@mail.gmail.com>
+References: <1447406983-27835-1-git-send-email-pankaj.dubey@samsung.com>
+ <1447406983-27835-10-git-send-email-pankaj.dubey@samsung.com> <5645BB67.8050102@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1445860796-23045-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5645BB67.8050102@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-pm@vger.kernel.org, Amit Daniel <amitdanielk@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, olof@lixom.net, khilman@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 26, 2015 at 12:59:56PM +0100, Andrzej Hajda wrote:
-> DECON-TV(Display and Enhancement Controller for TV) is a variation
-> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On 13 November 2015 at 15:58, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+>
+> On 13.11.2015 18:29, Pankaj Dubey wrote:
+> > This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
+> > to "drivers/soc/samsung". This driver is mainly used for setting misc
+> > bits of register from PMU IP of Exynos SoC which will be required to
+> > configure before Suspend/Resume. Currently all these settings are done
+> > in "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
+> > support, there is a need of this PMU driver in driver/* folder.
+> >
+> > This driver uses existing DT binding information and there should
+> > be no functionality change in the supported platforms.
+> >
+> > Signed-off-by: Amit Daniel Kachhap <amitdanielk@gmail.com>
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/Kconfig                                   | 1 +
+> >  arch/arm/mach-exynos/Makefile                                  | 4 +---
+> >  drivers/soc/samsung/Kconfig                                    | 4 ++++
+> >  drivers/soc/samsung/Makefile                                   | 4 ++++
+> >  arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c | 0
+> >  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h     | 0
+> >  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c | 0
+> >  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c    | 0
+> >  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c | 0
+> >  {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c | 0
+> >  10 files changed, 10 insertions(+), 3 deletions(-)
+> >  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
+> >  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h (100%)
+> >  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c (100%)
+> >  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c (100%)
+> >  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c (100%)
+> >  rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c (100%)
+> >
+> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> > index 83c85f5..874cb38 100644
+> > --- a/arch/arm/mach-exynos/Kconfig
+> > +++ b/arch/arm/mach-exynos/Kconfig
+> > @@ -16,6 +16,7 @@ menuconfig ARCH_EXYNOS
+> >       select ARM_GIC
+> >       select COMMON_CLK_SAMSUNG
+> >       select EXYNOS_THERMAL
+> > +     select EXYNOS_PMU
+> >       select EXYNOS_SROM if PM
+> >       select HAVE_ARM_SCU if SMP
+> >       select HAVE_S3C2410_I2C if I2C
+> > diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> > index 2d58063..34d29df 100644
+> > --- a/arch/arm/mach-exynos/Makefile
+> > +++ b/arch/arm/mach-exynos/Makefile
+> > @@ -9,9 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
+> >
+> >  # Core
+> >
+> > -obj-$(CONFIG_ARCH_EXYNOS)    += exynos.o pmu.o exynos-smc.o firmware.o \
+> > -                                     exynos3250-pmu.o exynos4-pmu.o \
+> > -                                     exynos5250-pmu.o exynos5420-pmu.o
+> > +obj-$(CONFIG_ARCH_EXYNOS)    += exynos.o exynos-smc.o firmware.o
+> >
+> >  obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+> >  obj-$(CONFIG_PM_SLEEP)               += suspend.o
+> > diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> > index 2833b5b..f545d6c 100644
+> > --- a/drivers/soc/samsung/Kconfig
+> > +++ b/drivers/soc/samsung/Kconfig
+> > @@ -10,4 +10,8 @@ config EXYNOS_SROM
+> >       bool
+> >       depends on ARM && ARCH_EXYNOS && PM
+> >
+> > +config EXYNOS_PMU
+> > +     bool
+> > +     depends on ARCH_EXYNOS
+> > +
+> >  endmenu
+> > diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> > index 9c554d5..26fb489 100644
+> > --- a/drivers/soc/samsung/Makefile
+> > +++ b/drivers/soc/samsung/Makefile
+> > @@ -1 +1,5 @@
+> >  obj-$(CONFIG_EXYNOS_SROM)    += exynos-srom.o
+> > +ifdef CONFIG_ARM
+> > +obj-$(CONFIG_EXYNOS_PMU)     += exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+> > +                                     exynos5250-pmu.o exynos5420-pmu.o
+> > +endif
+>
+> Why ifdef CONFIG_ARM? This already depends on ARCH_EXYNOS. If you want
+> to limit to ARMv7 then add the dependency to Kconfig (just like
+> EXYNOS_SROM).
+>
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+This is required, so that 32-bit based Exynos SoC's PMU should not get
+compiled when we are compiling for ARM64 and vice-versa.
 
-> ---
-> Hi Krzysztof,
-> 
-> I have decided to skip cleanup part as it would require more work,
-> not related to this patchset.
-> 
-> Regards
-> Andrzej
-> 
->  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> index 3dff78b..c9fd7b3 100644
-> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
->  buffer to an external LCD interface.
->  
->  Required properties:
-> -- compatible: value should be "samsung,exynos5433-decon";
-> +- compatible: value should be one of:
-> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
->  - reg: physical base address and length of the DECON registers set.
->  - interrupts: should contain a list of all DECON IP block interrupts in the
->  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+For example: In future, I have plan to add exynos7 PMU support as -
+
+ifdef CONFIG_ARM64
+obj-$(CONFIG_EXYNOS_PMU) += exynos-pmu.o exynos7-pmu.o
+endif
+
+Thus preventing compilation of ARM64 based SoCs PMU data files when we
+are compiling for ARM.
+
+Only exynos-pmu.c will be shared and compiled in both cases.
+
+Thanks,
+Pankaj Dubey
+
+>
+> Rest looks ok - nice renames.
+>
+> Best regards,
+> Krzysztof
+>
