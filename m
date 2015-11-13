@@ -1,79 +1,104 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v4 3/9] ARM: EXYNOS: Move pmu specific headers under
- "linux/soc/samsung"
-Date: Fri, 13 Nov 2015 14:57:26 +0530
-Message-ID: <000801d11df5$86ccd960$94668c20$@samsung.com>
-References: <1447155784-12667-1-git-send-email-pankaj.dubey@samsung.com>
- <1447155784-12667-4-git-send-email-pankaj.dubey@samsung.com>
- <564410FB.2000802@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42642 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752670AbbKMJ0A (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Nov 2015 04:26:00 -0500
-In-reply-to: <564410FB.2000802@samsung.com>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v5 0/9] samsung: pmu: split up SoC specific PMU data
+Date: Fri, 13 Nov 2015 14:59:34 +0530
+Message-ID: <1447406983-27835-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, olof@lixom.net, khilman@linaro.org, arnd@arndb.de, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, olof@lixom.net, khilman@linaro.org, arnd@arndb.de
 
-Hi Krzysztof,
+This patch series is a part of continuation work from following series
+[1], [2], [3] and [4]
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski [mailto:k.kozlowski@samsung.com]
-> Sent: Thursday, November 12, 2015 9:40 AM
-> To: Pankaj Dubey; linux-samsung-soc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Cc: kgene.kim@samsung.com; thomas.ab@samsung.com; amitdanielk@gmail.com;
-> olof@lixom.net; khilman@linaro.org; arnd@arndb.de
-> Subject: Re: [PATCH v4 3/9] ARM: EXYNOS: Move pmu specific headers under
-> "linux/soc/samsung"
-> 
-> On 10.11.2015 20:42, Pankaj Dubey wrote:
-> > Moving Exynos PMU specific header file into "include/linux/soc/samsung"
-> > thus updated affected files under "mach-exynos" to use new location of
-> > these header files.
-> >
-> > Signed-off-by: Amit Daniel Kachhap <amitdanielk@gmail.com>
-> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/exynos-pmu.h           |  24 -
-> >  arch/arm/mach-exynos/exynos.c               |   2 +-
-> >  arch/arm/mach-exynos/mcpm-exynos.c          |   2 +-
-> >  arch/arm/mach-exynos/platsmp.c              |   2 +-
-> >  arch/arm/mach-exynos/pm.c                   |   4 +-
-> >  arch/arm/mach-exynos/pmu.c                  |   6 +-
-> >  arch/arm/mach-exynos/regs-pmu.h             | 693
-----------------------------
-> >  arch/arm/mach-exynos/suspend.c              |   4 +-
-> >  include/linux/soc/samsung/exynos-pmu.h      |  24 +
-> >  include/linux/soc/samsung/exynos-regs-pmu.h | 693
-> > ++++++++++++++++++++++++++++
-> 
-> Did you disable the rename-detection for format-patch? Default rename
-detection
-> mechanism (50% of similarity) should detect two renames here:
-> exynos-pmu.h and exynos-regs-pmu.h
-> 
+1: exynos: Move pmu driver to driver/soc folder and add exynos7 support
+   http://www.spinics.net/lists/linux-samsung-soc/msg39797.html from Amit Daniel Kacchap
+2: soc: samsung: pmu: split up SoC specific PMU data
+   https://lkml.org/lkml/2015/1/7/12 from me
+3: https://lkml.org/lkml/2015/10/26/245
+4: https://lkml.org/lkml/2015/11/10/180
 
-Yes. I missed to enable rename detection while creating patches.
-Soon will resubmit patches with addressing your comments to all the patches
-reviewed.
+In this series I am splitting up SoC specific PMU configuration data into
+mach-exynos folder itself, before moving all of them under
+drivers/soc/samsung/. Also instead of making all changes in single patch it
+has been broken into SoC specific patches to avoid large size of patch.
+With this approach there will not be unwanted big churns just after
+adding exynos-pmu under drivers/soc/samsung.
 
-Thanks,
-Pankaj Dubey
+All these patches are just refactoring to keep minimal changes while moving
+exynos-pmu driver under drivers/soc/samsung/. Support for exynos7 PMU can
+be added on top of it, in such a manner that for ARM64 build, ARM related
+SoC's PMU will not get compiled and thus unnecessary increasing kernel image size.
 
-> Best regards,
-> Krzysztof
-> 
-> 
-> >  10 files changed, 727 insertions(+), 727 deletions(-)  delete mode
-> > 100644 arch/arm/mach-exynos/exynos-pmu.h  delete mode 100644
-> > arch/arm/mach-exynos/regs-pmu.h  create mode 100644
-> > include/linux/soc/samsung/exynos-pmu.h
-> >  create mode 100644 include/linux/soc/samsung/exynos-regs-pmu.h
+I have tested on Peach-Pi (Exynos5880) based chromebook for boot
+and S2R functionality.
+
+These patches have been prepared on top of Kukjin Kim's for-next and on top of
+cherry-picked change from [5].
+
+5: ARM: EXYNOS: Constify local exynos_pmu_data structure
+   https://lkml.org/lkml/2015/10/28/917
+
+Changes since v4:
+ - In v3 I missed to give -M flag to detect rename, which made patches hard
+   to review, so resubmitting patches with rename detector flag.
+ - Addressed review comments from Krzysztof.
+
+Changes since v3:
+ - Keeping intact copyright dates in existing header files.
+ - Addressed review comments from Krzysztof for v3.
+ - Removing static inline function from exynos-pmu.h and
+   keeping them in PMU driver.
+ - Added new patch (2/9) for fixing potential null pointer reference in
+   exynos_sys_powerdown_conf.
+ - Added new patch (8/9) for rearranging static and non-static function for
+   better readability.
+
+Changes since v2:
+ - Removed Amit's Samsung id as it's no more valid.
+ - Rebased on latest kgene tree.
+ - Removed redundant code from regs-pmu.h
+
+Pankaj Dubey (9):
+  ARM: EXYNOS: removing redundant code from regs-pmu.h
+  ARM: EXYNOS: Fix potential NULL pointer access in
+    exynos_sys_powerdown_conf
+  ARM: EXYNOS: Move pmu specific headers under "linux/soc/samsung"
+  ARM: EXYNOS: split up exynos3250 SoC specific PMU data
+  ARM: EXYNOS: split up exynos4 SoC specific PMU data
+  ARM: EXYNOS: split up exynos5250 SoC specific PMU data
+  ARM: EXYNOS: split up exynos5420 SoC specific PMU data
+  ARM: EXYNOS: rearrange static and non-static functions of PMU driver
+  drivers: soc: Add support for Exynos PMU driver
+
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ arch/arm/mach-exynos/Makefile                      |    2 +-
+ arch/arm/mach-exynos/exynos.c                      |    4 +-
+ arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
+ arch/arm/mach-exynos/platsmp.c                     |    2 +-
+ arch/arm/mach-exynos/pm.c                          |    4 +-
+ arch/arm/mach-exynos/pmu.c                         | 1004 --------------------
+ arch/arm/mach-exynos/suspend.c                     |    4 +-
+ drivers/soc/samsung/Kconfig                        |    4 +
+ drivers/soc/samsung/Makefile                       |    4 +
+ drivers/soc/samsung/exynos-pmu.c                   |  183 ++++
+ drivers/soc/samsung/exynos-pmu.h                   |   44 +
+ drivers/soc/samsung/exynos3250-pmu.c               |  175 ++++
+ drivers/soc/samsung/exynos4-pmu.c                  |  223 +++++
+ drivers/soc/samsung/exynos5250-pmu.c               |  196 ++++
+ drivers/soc/samsung/exynos5420-pmu.c               |  280 ++++++
+ .../linux/soc/samsung}/exynos-pmu.h                |    6 +-
+ .../linux/soc/samsung/exynos-regs-pmu.h            |   15 +-
+ 18 files changed, 1124 insertions(+), 1029 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/pmu.c
+ create mode 100644 drivers/soc/samsung/exynos-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos-pmu.h
+ create mode 100644 drivers/soc/samsung/exynos3250-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos4-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos5250-pmu.c
+ create mode 100644 drivers/soc/samsung/exynos5420-pmu.c
+ rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (81%)
+ rename arch/arm/mach-exynos/regs-pmu.h => include/linux/soc/samsung/exynos-regs-pmu.h (98%)
+
+-- 
+2.4.5
