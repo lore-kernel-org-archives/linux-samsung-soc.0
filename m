@@ -1,35 +1,31 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: exynos5250: add rotator node
-Date: Sat, 14 Nov 2015 20:37:45 +0900
-Message-ID: <56471D09.1020108@samsung.com>
-References: <5645A0C5.3090006@samsung.com>
- <1447421386-8084-1-git-send-email-m.szyprowski@samsung.com>
- <1447421386-8084-3-git-send-email-m.szyprowski@samsung.com>
+From: zhongjun@asia.com
+Subject: Greetings.
+Date: Sun, 15 Nov 2015 10:48:14 +0100
+Message-ID: <20151115142522.22A7D148D83__14029.7025129714$1447599052$gmane$org@ampsrv1.comunidad-ameripol.org>
+Reply-To: fuzhong348@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1447421386-8084-3-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, k.kozlowski.k@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from Static-IP-cr200118122217.cable.net.co ([200.118.122.217]:56889
+	"EHLO ampsrv1.comunidad-ameripol.org" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751808AbbKOOtx convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 15 Nov 2015 09:49:53 -0500
+Content-Description: Mail message body
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Recipients <zhongjun@asia.com>
 
-VyBkbml1IDEzLjExLjIwMTUgbyAyMjoyOSwgTWFyZWsgU3p5cHJvd3NraSBwaXN6ZToKPiBUaGlz
-IHBhdGNoIGFkZHMgZGV2aWNlIG5vZGUgZm9yIFJvdGF0b3IgZGV2aWNlIHRvIEV4eW5vcyA1MjUw
-IGRldmljZQo+IHRyZWUgZmlsZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tp
-IDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczUyNTAuZHRzaSB8IDkgKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlv
-bnMoKykKPiAKClJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBz
-YW1zdW5nLmNvbT4KCkJlc3QgcmVnYXJkcywKS3J6eXN6dG9mCgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Good Day,
+
+I need a foreign partner for a proposed mutual business, which refers to the transfer of a large sum of money to an account abroad, as the beneficiary of the funds. Everything about this operation, will be legally done without any bridge financial authority, both in my country and yours.I wil indulge you exercise the utmost discretion in all matters concerning this issue. If you are interested, please reply back through my private email address written down, I'll give you more information about myself with the financial institution I represented and the actual amounts involved about the project so I receive your positive response.
+
+Private E-mail: fu.zhong@hotmail.com
+
+
+Friendly greeting,
+
+Executive director.
+
+China Bank.
