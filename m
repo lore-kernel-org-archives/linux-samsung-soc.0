@@ -1,112 +1,107 @@
 From: Pavel Fedin <p.fedin@samsung.com>
-Subject: [PATCH v9 1/4] Documentation: dt-bindings: Describe SROMc configuration
-Date: Mon, 16 Nov 2015 10:43:02 +0300
-Message-ID: <a4010ed875753977d6691ea2a04a27b06beb59b2.1447659546.git.p.fedin@samsung.com>
+Subject: [PATCH v9 4/4] ARM: dts: Add Ethernet chip to SMDK5410
+Date: Mon, 16 Nov 2015 10:43:05 +0300
+Message-ID: <e2193b8a4c36a7072f8a7ed025be68a524451262.1447659546.git.p.fedin@samsung.com>
 References: <cover.1447659546.git.p.fedin@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:62575 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751985AbbKPHnX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Nov 2015 02:43:23 -0500
 In-reply-to: <cover.1447659546.git.p.fedin@samsung.com>
 In-reply-to: <cover.1447659546.git.p.fedin@samsung.com>
 References: <cover.1447659546.git.p.fedin@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Add documentation for new subnode properties, allowing bank configuration.
-Based on u-boot implementation, but heavily reworked.
-
-Also, fix size of SROMc mapping in the example.
+The chip is smsc9115, connected via SROMc bank 3. Additionally, some GPIO
+initialization is required.
 
 Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/arm/samsung/exynos-srom.txt           | 73 +++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 41 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi         |  6 +++++
+ 2 files changed, 47 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-index 33886d5..e5c18df 100644
---- a/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
-@@ -5,8 +5,77 @@ Required properties:
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index cebeaab..a731fbe 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -11,6 +11,7 @@
  
- - reg: offset and length of the register set
+ /dts-v1/;
+ #include "exynos5410.dtsi"
++#include <dt-bindings/interrupt-controller/irq.h>
+ / {
+ 	model = "Samsung SMDK5410 board based on EXYNOS5410";
+ 	compatible = "samsung,smdk5410", "samsung,exynos5410", "samsung,exynos5";
+@@ -61,6 +62,46 @@
+ 	disable-wp;
+ };
  
--Example:
-+Optional properties:
-+The SROM controller can be used to attach external peripherals. In this case
-+extra properties, describing the bus behind it, should be specified as below:
-+
-+- #address-cells: Must be set to 2 to allow device address translation.
-+		  Address is specified as (bank#, offset).
-+
-+- #size-cells: Must be set to 1 to allow device size passing
-+
-+- ranges: Must be set up to reflect the memory layout with four integer values
-+	  per bank:
-+		<bank-number> 0 <parent address of bank> <size>
-+
-+Sub-nodes:
-+The actual device nodes should be added as subnodes to the SROMc node. These
-+subnodes, except regular device specification, should contain the following
-+properties, describing configuration of the relevant SROM bank:
-+
-+Required properties:
-+- reg: bank number, base address (relative to start of the bank) and size of
-+       the memory mapped for the device. Note that base address will be
-+       typically 0 as this is the start of the bank.
-+
-+- samsung,srom-timing : array of 6 integers, specifying bank timings in the
-+                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
-+                        Each value is specified in cycles and has the following
-+                        meaning and valid range:
-+                        Tacp : Page mode access cycle at Page mode (0 - 15)
-+                        Tcah : Address holding time after CSn (0 - 15)
-+                        Tcoh : Chip selection hold on OEn (0 - 15)
-+                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
-+                        Tcos : Chip selection set-up before OEn (0 - 15)
-+                        Tacs : Address set-up before CSn (0 - 15)
-+
-+Optional properties:
-+- reg-io-width : data width in bytes (1 or 2). If omitted, default of 1 is used.
-+
-+- samsung,srom-page-mode : page mode configuration for the bank:
-+			   0 - normal (one data)
-+			   1 - four data
-+			   If omitted, default of 0 is used.
-+
-+Example: basic definition, no banks are configured
-+	sromc@12570000 {
-+		compatible = "samsung,exynos-srom";
-+		reg = <0x12570000 0x14>;
++&pinctrl_0 {
++	srom_ctl: srom-ctl {
++		samsung,pins = "gpy0-3", "gpy0-4", "gpy0-5",
++			       "gpy1-0", "gpy1-1", "gpy1-2", "gpy1-3";
++		samsung,pin-function = <2>;
++		samsung,pin-drv = <0>;
 +	};
 +
-+Example: SROMc with SMSC911x ethernet chip on bank 3
- 	sromc@12570000 {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0x04000000 0x20000   // Bank0
-+			  1 0 0x05000000 0x20000   // Bank1
-+			  2 0 0x06000000 0x20000   // Bank2
-+			  3 0 0x07000000 0x20000>; // Bank3
++	srom_ebi: srom-ebi {
++		samsung,pins = "gpy3-0", "gpy3-1", "gpy3-2", "gpy3-3",
++			       "gpy3-4", "gpy3-5", "gpy3-6", "gpy3-7",
++			       "gpy5-0", "gpy5-1", "gpy5-2", "gpy5-3",
++			       "gpy5-4", "gpy5-5", "gpy5-6", "gpy5-7",
++			       "gpy6-0", "gpy6-1", "gpy6-2", "gpy6-3",
++			       "gpy6-4", "gpy6-5", "gpy6-6", "gpy6-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++};
 +
- 		compatible = "samsung,exynos-srom";
--		reg = <0x12570000 0x10>;
-+		reg = <0x12570000 0x14>;
++&sromc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&srom_ctl>, <&srom_ebi>;
 +
-+		ethernet@3,0 {
-+			compatible = "smsc,lan9115";
-+			reg = <3 0 0x10000>;	   // Bank 3, offset = 0
-+			phy-mode = "mii";
-+			interrupt-parent = <&gpx0>;
-+			interrupts = <5 8>;
-+			reg-io-width = <2>;
-+			smsc,irq-push-pull;
-+			smsc,force-internal-phy;
++	ethernet@3,0 {
++		compatible = "smsc,lan9115";
++		reg = <3 0 0x10000>;
++		phy-mode = "mii";
++		interrupt-parent = <&gpx0>;
++		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
++		reg-io-width = <2>;
++		smsc,irq-push-pull;
++		smsc,force-internal-phy;
 +
-+			samsung,srom-page-mode = <1>;
-+			samsung,srom-timing = <9 12 1 9 1 1>;
-+		};
- 	};
++		samsung,srom-page-mode = <1>;
++		samsung,srom-timing = <9 12 1 9 1 1>;
++	};
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index e2b58f8..9cfb814 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -104,6 +104,12 @@
+ 		sromc: sromc@12250000 {
+ 			compatible = "samsung,exynos-srom";
+ 			reg = <0x12250000 0x14>;
++			#address-cells = <2>;
++			#size-cells = <1>;
++			ranges = <0 0 0x04000000 0x20000
++				  1 0 0x05000000 0x20000
++				  2 0 0x06000000 0x20000
++				  3 0 0x07000000 0x20000>;
+ 		};
+ 
+ 		pmu_system_controller: system-controller@10040000 {
 -- 
 2.4.4
