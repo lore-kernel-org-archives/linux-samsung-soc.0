@@ -1,106 +1,92 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-Date: Mon, 16 Nov 2015 11:55:34 +0900
-Message-ID: <564945A6.904@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Date: Mon, 16 Nov 2015 12:05:05 +0900
+Message-ID: <564947E1.1030409@samsung.com>
 References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+ <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
 On 2015=EB=85=84 11=EC=9B=94 16=EC=9D=BC 10:36, Krzysztof Kozlowski wro=
 te:
-> The ARMv8 Exynos family SoCs in Linux kernel are currently:
->  - Exynos5433 (controlled by ARCH_EXYNOS),
->  - Exynos7 (controlled by ARCH_EXYNOS7).
+> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXY=
+NOS
+> so it is built also on ARMv7. This does not bring any kind of benefit=
+=2E
+> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> multi_v7 for ARMv7).
 >=20
-> It duplicates Kconfig symbols unnecessarily, so consolidate them into
-> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-> symbol.
->=20
-> The commit should not bring any visible functional change.
+> Instead build clock drivers only for respective SoC's architecture.
 >=20
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  arch/arm64/Kconfig.platforms        | 11 ++---------
->  arch/arm64/boot/dts/exynos/Makefile |  2 +-
->  arch/arm64/configs/defconfig        |  2 +-
->  3 files changed, 4 insertions(+), 11 deletions(-)
+>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
+>  drivers/clk/samsung/Makefile |  4 ++--
+>  2 files changed, 15 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platfo=
-rms
-> index 4043c35962cc..afa19baca94e 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -13,21 +13,14 @@ config ARCH_BERLIN
->  	  This enables support for Marvell Berlin SoC Family
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfi=
+g
+> index 84196ecdaa12..5f138fc4d84d 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
+>  	bool
+>  	select COMMON_CLK
 > =20
->  config ARCH_EXYNOS
-> -	bool
-> -	help
-> -	  This enables support for Samsung Exynos SoC family
-> -
-> -config ARCH_EXYNOS7
-> -	bool "ARMv8 based Samsung Exynos7"
-> -	select ARCH_EXYNOS
-> +	bool "ARMv8 based Samsung Exynos SoC family"
+> +# ARMv7 SoCs:
+>  config S3C2410_COMMON_CLK
+>  	bool
 >  	select COMMON_CLK_SAMSUNG
->  	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_S3C_RTC if RTC_CLASS
->  	select PINCTRL
->  	select PINCTRL_EXYNOS
-> -
->  	help
-> -	  This enables support for Samsung Exynos7 SoC family
-> +	  This enables support for Samsung Exynos ARMv8 SoC family
+> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
+>  	bool
+>  	select COMMON_CLK_SAMSUNG
 > =20
->  config ARCH_LAYERSCAPE
->  	bool "ARMv8 based Freescale Layerscape SoC family"
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dt=
-s/exynos/Makefile
-> index 20310e5b6d6f..50c9b9383cfa 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -1,4 +1,4 @@
-> -dtb-$(CONFIG_ARCH_EXYNOS7) +=3D exynos7-espresso.dtb
-> +dtb-$(CONFIG_ARCH_EXYNOS) +=3D exynos7-espresso.dtb
-> =20
->  always		:=3D $(dtb-y)
->  subdir-y	:=3D $(dts-dirs)
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defcon=
-fig
-> index bdd7aa358d2a..a396fa7c69a5 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=3Dy
->  # CONFIG_IOSCHED_DEADLINE is not set
->  CONFIG_ARCH_BCM_IPROC=3Dy
->  CONFIG_ARCH_BERLIN=3Dy
-> -CONFIG_ARCH_EXYNOS7=3Dy
-> +CONFIG_ARCH_EXYNOS=3Dy
->  CONFIG_ARCH_LAYERSCAPE=3Dy
->  CONFIG_ARCH_HISI=3Dy
->  CONFIG_ARCH_MEDIATEK=3Dy
+> +# ARMv8 SoCs:
+> +config EXYNOS5433_COMMON_CLK
+> +	bool
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARCH_EXYNOS
+> +	select COMMON_CLK_SAMSUNG
+> +
+> +config EXYNOS7_COMMON_CLK
+> +	bool
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARCH_EXYNOS
+> +	select COMMON_CLK_SAMSUNG
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makef=
+ile
+> index 5f6833ea355d..a31332a24ef4 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+=3D clk-exynos5250.=
+o
+>  obj-$(CONFIG_SOC_EXYNOS5260)	+=3D clk-exynos5260.o
+>  obj-$(CONFIG_SOC_EXYNOS5410)	+=3D clk-exynos5410.o
+>  obj-$(CONFIG_SOC_EXYNOS5420)	+=3D clk-exynos5420.o
+> -obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos5433.o
+> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+=3D clk-exynos5433.o
+>  obj-$(CONFIG_SOC_EXYNOS5440)	+=3D clk-exynos5440.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos-audss.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos-clkout.o
+> -obj-$(CONFIG_ARCH_EXYNOS7)	+=3D clk-exynos7.o
+> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+=3D clk-exynos7.o
+>  obj-$(CONFIG_S3C2410_COMMON_CLK)+=3D clk-s3c2410.o
+>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+=3D clk-s3c2410-dclk.o
+>  obj-$(CONFIG_S3C2412_COMMON_CLK)+=3D clk-s3c2412.o
 >=20
 
-When I sent the EXYNOS5433 patch[1], we don't want to add the each conf=
-ig
-for each Exynos SoC. So, I think this patch is good to use only one ARC=
-H_EXYNOS config
-for all ARMv8 Exynos SoC.
-[1] https://lkml.org/lkml/2015/2/24/85
+Looks good to me.
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 Regards,
 Chanwoo Choi
-
