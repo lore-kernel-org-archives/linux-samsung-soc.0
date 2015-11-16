@@ -1,200 +1,79 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] SPI: s3c64xx: pass DMA arguments in platform data
-Date: Mon, 16 Nov 2015 17:00:21 +0100
-Message-ID: <8391350.6B0EUH1WXO@wuerfel>
+Subject: [PATCH] cpufreq: do not mark s3c2410_plls_add as __init
+Date: Mon, 16 Nov 2015 22:26:43 +0100
+Message-ID: <8497197.sYxqVOch7s@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:59743 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.131]:65170 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752501AbbKPQBB (ORCPT
+	with ESMTP id S1752624AbbKPV10 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Nov 2015 11:01:01 -0500
+	Mon, 16 Nov 2015 16:27:26 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 
-The s3c64xx platform data already contains a pointer to the
-DMA filter function, but not to the associated data.
+s3c2410_plls_add is a device notifier that may be called at runtime and
+is correctly not marked __init. However it calls s3c_plltab_register()
+which is marked __init, and that triggers a build error when we are
+checking for section mismatches:
 
-This simplifies the code and makes it more generic by
-passing the data along with the filter function like
-we do for other drivers.
+WARNING: vmlinux.o(.text+0x195e0): Section mismatch in reference from the function s3c2410_plls_add() to the function .init.text:s3c_plltab_register()
+The function s3c2410_plls_add() references
+the function __init s3c_plltab_register().
+This is often because s3c2410_plls_add lacks a __init
+annotation or the annotation of s3c_plltab_register is wrong.
+
+This removes the __init annotation from s3c2410_plls_add as well as the
+__initdata section annotations from s3c2440_plls_12 and s3c2440_plls_169344,
+which in turn are referenced from s3c2410_plls_add.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/plat-samsung/devs.c              | 32 ++++++++++++++------------------
- drivers/spi/spi-s3c64xx.c                 | 28 ++++++++--------------------
- include/linux/platform_data/spi-s3c64xx.h |  2 ++
- 3 files changed, 24 insertions(+), 38 deletions(-)
+----
+It would be nice to get this merged through the cpufreq tree. Most likely
+this has never caused problems because the device notifiers in practice
+only get called at boot time, so I assume it's enough to have this fixed
+in 4.4 or 4.5 but not backported.
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 314131a4525d..817981c05d73 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -1105,9 +1105,7 @@ struct platform_device s3c_device_wdt = {
- #ifdef CONFIG_S3C64XX_DEV_SPI0
- static struct resource s3c64xx_spi0_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
--	[1] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI0_TX),
--	[2] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI0_RX),
--	[3] = DEFINE_RES_IRQ(IRQ_SPI0),
-+	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
- };
+diff --git a/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+index a19460e6e7b0..b355fca6cc2e 100644
+--- a/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
++++ b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+@@ -20,7 +20,7 @@
+ #include <plat/cpu.h>
+ #include <plat/cpu-freq-core.h>
  
- struct platform_device s3c64xx_device_spi0 = {
-@@ -1135,11 +1133,13 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- 	pd.num_cs = num_cs;
- 	pd.src_clk_nr = src_clk_nr;
- 	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
--#if defined(CONFIG_PL330_DMA)
--	pd.filter = pl330_filter;
--#elif defined(CONFIG_S3C64XX_PL080)
-+#if defined(CONFIG_S3C64XX_PL080)
-+	pd.dma_tx = DMACH_SPI0_TX;
-+	pd.dma_rx = DMACH_SPI0_RX;
- 	pd.filter = pl08x_filter_id;
- #elif defined(CONFIG_S3C24XX_DMAC)
-+	pd.dma_tx = (void *)DMACH_SPI0_TX;
-+	pd.dma_rx = (void *)DMACH_SPI0_RX;
- 	pd.filter = s3c24xx_dma_filter;
- #endif
+-static struct cpufreq_frequency_table s3c2440_plls_12[] __initdata = {
++static struct cpufreq_frequency_table s3c2440_plls_12[] = {
+ 	{ .frequency = 75000000,	.driver_data = PLLVAL(0x75, 3, 3),  }, 	/* FVco 600.000000 */
+ 	{ .frequency = 80000000,	.driver_data = PLLVAL(0x98, 4, 3),  }, 	/* FVco 640.000000 */
+ 	{ .frequency = 90000000,	.driver_data = PLLVAL(0x70, 2, 3),  }, 	/* FVco 720.000000 */
+diff --git a/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+index 1191b2905625..be9a248b5ce9 100644
+--- a/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
++++ b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+@@ -20,7 +20,7 @@
+ #include <plat/cpu.h>
+ #include <plat/cpu-freq-core.h>
  
-@@ -1150,9 +1150,7 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- #ifdef CONFIG_S3C64XX_DEV_SPI1
- static struct resource s3c64xx_spi1_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C_PA_SPI1, SZ_256),
--	[1] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI1_TX),
--	[2] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI1_RX),
--	[3] = DEFINE_RES_IRQ(IRQ_SPI1),
-+	[1] = DEFINE_RES_IRQ(IRQ_SPI1),
- };
- 
- struct platform_device s3c64xx_device_spi1 = {
-@@ -1180,9 +1178,9 @@ void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- 	pd.num_cs = num_cs;
- 	pd.src_clk_nr = src_clk_nr;
- 	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi1_cfg_gpio;
--#if defined(CONFIG_PL330_DMA)
--	pd.filter = pl330_filter;
--#elif defined(CONFIG_S3C64XX_PL080)
-+#if defined(CONFIG_S3C64XX_PL080)
-+	pd.dma_tx = DMACH_SPI1_TX;
-+	pd.dma_rx = DMACH_SPI1_RX;
- 	pd.filter = pl08x_filter_id;
- #endif
- 
-@@ -1193,9 +1191,7 @@ void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- #ifdef CONFIG_S3C64XX_DEV_SPI2
- static struct resource s3c64xx_spi2_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C_PA_SPI2, SZ_256),
--	[1] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI2_TX),
--	[2] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI2_RX),
--	[3] = DEFINE_RES_IRQ(IRQ_SPI2),
-+	[1] = DEFINE_RES_IRQ(IRQ_SPI2),
- };
- 
- struct platform_device s3c64xx_device_spi2 = {
-@@ -1223,9 +1219,9 @@ void __init s3c64xx_spi2_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- 	pd.num_cs = num_cs;
- 	pd.src_clk_nr = src_clk_nr;
- 	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi2_cfg_gpio;
--#if defined(CONFIG_PL330_DMA)
--	pd.filter = pl330_filter;
--#elif defined(CONFIG_S3C64XX_PL080)
-+#if defined(CONFIG_S3C64XX_PL080)
-+	pd.dma_tx = DMACH_SPI2_TX;
-+	pd.dma_rx = DMACH_SPI2_RX;
- 	pd.filter = pl08x_filter_id;
- #endif
- 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 8e86e7f6663a..8b7499623957 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -133,7 +133,6 @@
- struct s3c64xx_spi_dma_data {
- 	struct dma_chan *ch;
- 	enum dma_transfer_direction direction;
--	unsigned int dmach;
- };
- 
- /**
-@@ -325,7 +324,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 
- 		/* Acquire DMA channels */
- 		sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				   (void *)(long)sdd->rx_dma.dmach, dev, "rx");
-+				   sdd->cntrlr_info->dma_rx, dev, "rx");
- 		if (!sdd->rx_dma.ch) {
- 			dev_err(dev, "Failed to get RX DMA channel\n");
- 			ret = -EBUSY;
-@@ -334,7 +333,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 		spi->dma_rx = sdd->rx_dma.ch;
- 
- 		sdd->tx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				   (void *)(long)sdd->tx_dma.dmach, dev, "tx");
-+				   sdd->cntrlr_info->dma_tx, dev, "tx");
- 		if (!sdd->tx_dma.ch) {
- 			dev_err(dev, "Failed to get TX DMA channel\n");
- 			ret = -EBUSY;
-@@ -1028,7 +1027,6 @@ static inline struct s3c64xx_spi_port_config *s3c64xx_spi_get_port_config(
- static int s3c64xx_spi_probe(struct platform_device *pdev)
+-static struct cpufreq_frequency_table s3c2440_plls_169344[] __initdata = {
++static struct cpufreq_frequency_table s3c2440_plls_169344[] = {
+ 	{ .frequency = 78019200,	.driver_data = PLLVAL(121, 5, 3), 	}, 	/* FVco 624.153600 */
+ 	{ .frequency = 84067200,	.driver_data = PLLVAL(131, 5, 3), 	}, 	/* FVco 672.537600 */
+ 	{ .frequency = 90115200,	.driver_data = PLLVAL(141, 5, 3), 	}, 	/* FVco 720.921600 */
+diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
+index 733aa5153e74..68ef8fd9482f 100644
+--- a/drivers/cpufreq/s3c24xx-cpufreq.c
++++ b/drivers/cpufreq/s3c24xx-cpufreq.c
+@@ -648,7 +648,7 @@ late_initcall(s3c_cpufreq_initcall);
+  *
+  * Register the given set of PLLs with the system.
+  */
+-int __init s3c_plltab_register(struct cpufreq_frequency_table *plls,
++int s3c_plltab_register(struct cpufreq_frequency_table *plls,
+ 			       unsigned int plls_no)
  {
- 	struct resource	*mem_res;
--	struct resource	*res;
- 	struct s3c64xx_spi_driver_data *sdd;
- 	struct s3c64xx_spi_info *sci = dev_get_platdata(&pdev->dev);
- 	struct spi_master *master;
-@@ -1087,20 +1085,9 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	sdd->cur_bpw = 8;
- 
--	if (!sdd->pdev->dev.of_node) {
--		res = platform_get_resource(pdev, IORESOURCE_DMA,  0);
--		if (!res) {
--			dev_warn(&pdev->dev, "Unable to get SPI tx dma resource. Switching to poll mode\n");
--			sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
--		} else
--			sdd->tx_dma.dmach = res->start;
--
--		res = platform_get_resource(pdev, IORESOURCE_DMA,  1);
--		if (!res) {
--			dev_warn(&pdev->dev, "Unable to get SPI rx dma resource. Switching to poll mode\n");
--			sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
--		} else
--			sdd->rx_dma.dmach = res->start;
-+	if (sci && (!sci->dma_tx || !sci->dma_rx)) {
-+		dev_warn(&pdev->dev, "Unable to get SPI tx data. Switching to poll mode\n");
-+		sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
- 	}
- 
- 	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
-@@ -1197,9 +1184,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
- 					sdd->port_id, master->num_chipselect);
--	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\tDMA=[Rx-%d, Tx-%d]\n",
-+	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\tDMA=[Rx-%p, Tx-%p]\n",
- 					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1,
--					sdd->rx_dma.dmach, sdd->tx_dma.dmach);
-+					sdd->cntrlr_info->dma_rx,
-+					sdd->cntrlr_info->dma_tx);
- 
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
-diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index d3889b98a1a1..fb5625bcca9a 100644
---- a/include/linux/platform_data/spi-s3c64xx.h
-+++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -40,6 +40,8 @@ struct s3c64xx_spi_info {
- 	int num_cs;
- 	int (*cfg_gpio)(void);
- 	dma_filter_fn filter;
-+	void *dma_tx;
-+	void *dma_rx;
- };
- 
- /**
+ 	struct cpufreq_frequency_table *vals;
