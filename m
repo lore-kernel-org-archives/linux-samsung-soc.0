@@ -1,82 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 3/3] [media] include/media: move platform_data to
- linux/platform_data/media
-Date: Mon, 16 Nov 2015 22:13:07 +0900
-Message-ID: <5649D663.4070104@samsung.com>
-References: <013152dcb3d4eaddd39aa4a37868430567bdc2d6.1447671420.git.mchehab@osg.samsung.com>
- <b8bd73bedde742571b1ab8a7c0917a732dbf2ca1.1447671420.git.mchehab@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <b8bd73bedde742571b1ab8a7c0917a732dbf2ca1.1447671420.git.mchehab@osg.samsung.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-doc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Hans Verkuil <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lee Jones <lee.jones@linaro.org>, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Vinod Koul <vinod.koul@intel.com>, linux-sh@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Jiri Slaby <jslaby@suse.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@infradead.org>, Eduardo Valentin <edubezval@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infr
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 22/27] mtd: nand: simplify nand_dt_init() usage
+Date: Mon, 16 Nov 2015 14:37:55 +0100
+Message-ID: <1447681080-31232-23-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447681080-31232-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1447681080-31232-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Alexander Clouter <alex@digriz.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Marek Vasut <marek.vasut@gmail.com>, Steven Miao <realmz6@gmail.com>, adi-b
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 16.11.2015 o 20:00, Mauro Carvalho Chehab pisze:
-> Let's not mix platform_data headers with the core headers. Instead, let's
-> create a subdir at linux/platform_data and move the headers to that
-> common place, adding it to MAINTAINERS.
-> 
-> The headers were moved with:
-> 	mkdir include/linux/platform_data/media/; git mv include/media/gpio-ir-recv.h include/media/ir-rx51.h include/media/mmp-camera.h include/media/omap1_camera.h include/media/omap4iss.h include/media/s5p_hdmi.h include/media/si4713.h include/media/sii9234.h include/media/smiapp.h include/media/soc_camera.h include/media/soc_camera_platform.h include/media/timb_radio.h include/media/timb_video.h include/linux/platform_data/media/
-> 
-> And the references fixed with this script:
->     MAIN_DIR="linux/platform_data/"
->     PREV_DIR="media/"
->     DIRS="media/"
-> 
->     echo "Checking affected files" >&2
->     for i in $DIRS; do
-> 	for j in $(find include/$MAIN_DIR/$i -type f -name '*.h'); do
-> 		 n=`basename $j`
-> 		git grep -l $n
-> 	done
->     done|sort|uniq >files && (
-> 	echo "Handling files..." >&2;
-> 	echo "for i in \$(cat files|grep -v Documentation); do cat \$i | \\";
-> 	(
-> 		cd include/$MAIN_DIR;
-> 		for j in $DIRS; do
-> 			for i in $(ls $j); do
-> 				echo "perl -ne 's,(include [\\\"\\<])$PREV_DIR($i)([\\\"\\>]),\1$MAIN_DIR$j\2\3,; print \$_' |\\";
-> 			done;
-> 		done;
-> 		echo "cat > a && mv a \$i; done";
-> 	);
-> 	echo "Handling documentation..." >&2;
-> 	echo "for i in MAINTAINERS \$(cat files); do cat \$i | \\";
-> 	(
-> 		cd include/$MAIN_DIR;
-> 		for j in $DIRS; do
-> 			for i in $(ls $j); do
-> 				echo "  perl -ne 's,include/$PREV_DIR($i)\b,include/$MAIN_DIR$j\1,; print \$_' |\\";
-> 			done;
-> 		done;
-> 		echo "cat > a && mv a \$i; done"
-> 	);
->     ) >script && . ./script
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-> ---
->  Documentation/video4linux/omap4_camera.txt                    | 2 +-
->  Documentation/video4linux/si4713.txt                          | 2 +-
->  MAINTAINERS                                                   | 1 +
->  arch/arm/mach-omap1/include/mach/camera.h                     | 2 +-
->  arch/arm/mach-omap2/board-rx51-peripherals.c                  | 4 ++--
->  arch/arm/plat-samsung/devs.c                                  | 2 +-
+nand_dt_init() function requires 3 arguments where it actually needs one
+(dn and mtd can both be retrieved from chip). Drop these parameters.
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Testing for dn != NULL inside nand_dt_init() also helps simplifying the
+caller code.
 
-Best regards,
-Krzysztof
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/mtd/nand/nand_base.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+index 71cc029..2f75eb1 100644
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -3937,11 +3937,17 @@ ident_done:
+ 	return type;
+ }
+ 
+-static int nand_dt_init(struct mtd_info *mtd, struct nand_chip *chip,
+-			struct device_node *dn)
++static int nand_dt_init(struct nand_chip *chip)
+ {
++	struct device_node *dn = nand_get_flash_node(chip);
+ 	int ecc_mode, ecc_strength, ecc_step;
+ 
++	if (!dn)
++		return 0;
++
++	/* MTD can automatically handle DT partitions, etc. */
++	mtd_set_of_node(nand_to_mtd(chip), dn);
++
+ 	if (of_get_nand_bus_width(dn) == 16)
+ 		chip->options |= NAND_BUSWIDTH_16;
+ 
+@@ -3989,14 +3995,9 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips,
+ 	struct nand_flash_dev *type;
+ 	int ret;
+ 
+-	if (nand_get_flash_node(chip)) {
+-		/* MTD can automatically handle DT partitions, etc. */
+-		mtd_set_of_node(mtd, nand_get_flash_node(chip));
+-
+-		ret = nand_dt_init(mtd, chip, nand_get_flash_node(chip));
+-		if (ret)
+-			return ret;
+-	}
++	ret = nand_dt_init(chip);
++	if (ret)
++		return ret;
+ 
+ 	/* Set the default functions */
+ 	nand_set_defaults(chip, chip->options & NAND_BUSWIDTH_16);
+-- 
+2.1.4
