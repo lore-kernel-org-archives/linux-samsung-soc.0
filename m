@@ -1,110 +1,88 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing) subsystem
-Date: Mon, 16 Nov 2015 11:52:07 +0000
-Message-ID: <CAPj87rNS2GFrfZKF6_RaizFW_PM1vGAPVwRGWt3GogDvbwrPgA@mail.gmail.com>
-References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
-	<CAPj87rNz6vYrcjgV1fdSgE-ZCHnFFNfJKqskTsu2C1+KkmW_gQ@mail.gmail.com>
-	<564489A9.5040709@math.uni-bielefeld.de>
-	<CAPj87rNOH59fssu2CTJEt6MEn-zhGEE=5VxiscCWiRjtTwH-wQ@mail.gmail.com>
-	<5649BF91.5030901@samsung.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
+ after prompt
+Date: Mon, 16 Nov 2015 11:05:16 +0100
+Message-ID: <4171977.M1BLuS2ZzP@wuerfel>
+References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:38552 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751628AbbKPLwI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Nov 2015 06:52:08 -0500
-Received: by wmec201 with SMTP id c201so115899661wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2015 03:52:07 -0800 (PST)
-In-Reply-To: <5649BF91.5030901@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens@csie>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Eric Anholt <eric@anholt.net>
 
-Hi Marek,
+On Monday 16 November 2015 12:06:10 Masahiro Yamada wrote:
+> Many ARM sub-architectures use prompts followed by "if" conditional,
+> but it is wrong.
+> 
+> Please notice the difference between
+> 
+>     config ARCH_FOO
+>             bool "Foo SoCs" if ARCH_MULTI_V7
+> 
+> and
+> 
+>     config ARCH_FOO
+>             bool "Foo SoCs"
+>             depends on ARCH_MULTI_V7
+> 
+> These two are *not* equivalent!
+> 
+> In the former statement, it is not ARCH_FOO, but its prompt that
+> depends on ARCH_MULTI_V7.  So, it is completely valid that ARCH_FOO
+> is selected by another, but ARCH_MULTI_V7 is still disabled. As it is
+> not unmet dependency, Kconfig never warns.  This is probably not what
+> you want.
 
-On 16 November 2015 at 11:35, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> On 2015-11-12 15:46, Daniel Stone wrote:
->> On 12 November 2015 at 12:44, Tobias Jakobi
->> <tjakobi@math.uni-bielefeld.de> wrote:
->>> I wonder how this interacts with page flipping. If I queue a pageflip
->>> event with a buffer that needs to go through the IPP for display, where
->>> does the delay caused by the operation factor it? If I understand this
->>> correctly drmModePageFlip() still is going to return immediately, but I
->>> might miss the next vblank period because the FIMC is still working on
->>> the buffer.
->>
->> Hmm, from my reading of the patches, this didn't affect page-flip
->> timings. In the sync case, it would block until the buffer was
->> actually displayed, and in the async case, the event would still be
->> delivered at the right time. But you're right that it does introduce
->> hugely variable timings, which can be a problem for userspace which
->> tries to be intelligent. And even then potentially misleading from a
->> performance point of view: if userspace can rotate natively (e.g. as
->> part of a composition blit, or when rendering buffers in the first
->> place), then we can skip the extra work from G2D.
->
->
-> Page flip events are delivered to userspace at the right time. You are right
-> that there will be some delay between scheduling a buffer for display and
-> the
-> moment it gets displayed by hardware, but imho good application should sync
-> audio/video to the vblank events not the moment of scheduling a buffer. So
-> this delay should not influence on the final quality of displayed
+Did you encounter a case where someone actually did a 'select' on one
+of those symbols? I probably introduced a lot of them and did not
+expect that to happen.
 
-Yes, of course: Weston does that as well. But the problem is that it
-introduces a delay into the very last part of the pipeline: if I
-submit a pageflip 8ms before vblank is due, I no longer have a
-guarantee that it will land in time for the next frame.
+> The former should be used only when you need to do so, and you really
+> understand what you are doing.  (In most cases, it should be wrong!)
+> 
+> For enabling/disabling sub-architectures, the latter is always correct.
+> 
+> As a good side effect, this commit fixes some entries over 80 columns
+> (mach-imx, mach-integrator, mach-mbevu).
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> ---
+> 
+> I hope this patch is applied to ARM-SOC, but am CCing Kbuild ML
+> because the correct understanding of Kconfig is required for this patch.
 
-> The only problem I see, especially when color space conversion will be
-> added,
-> is how to tell generic application that some modes are preferred / not
-> preferred, so application would prefer native modes which are faster. On the
-> other hand application should be aware of the fact that hw scaling is
-> usually
-> faster / less power demanding than cpu scaling, so it is better to use such
-> mode with additional processing instead of doing that work with the cpu.
+Yes, we can take it through arm-soc, I don't think it's important but
+I also don't mind the change.
 
-Of course, yes. The alternative is usually the GPU rather than CPU: if
-you tried to do it in CPU you wouldn't come anywhere close to native
-framerate.
+> diff --git a/arch/arm/mach-integrator/Kconfig b/arch/arm/mach-integrator/Kconfig
+> index 02d0834..2fa9d11 100644
+> --- a/arch/arm/mach-integrator/Kconfig
+> +++ b/arch/arm/mach-integrator/Kconfig
+> @@ -1,5 +1,6 @@
+>  config ARCH_INTEGRATOR
+> -	bool "ARM Ltd. Integrator family" if (ARCH_MULTI_V4T || ARCH_MULTI_V5 || ARCH_MULTI_V6)
+> +	bool "ARM Ltd. Integrator family"
+> +	depends on ARCH_MULTI_V4T || ARCH_MULTI_V5 || ARCH_MULTI_V6
+>  	select ARM_AMBA
+>  	select ARM_PATCH_PHYS_VIRT if MMU
+>  	select AUTO_ZRELADDR
 
->>> My problem here is that this abstraction would take too much control
->>> from the user.
->>>
->>> Correct me if I have this wrong!
->>
->> I believe that was the concern previously, yeah. :) That, and encoding
->> these semantics in a user-visible way could potentially be dangerous.
->
-> I believe that having this feature is quite beneficial for generic
-> applications
-> (like weston for example). It is especially very useful for video overlay
-> display, where scaling, rotation and colorspace conversion are typical
-> use-cases. An alternative would be to introduce some generic API for a frame
-> buffer conversions.
+There is one related change that I would like to see, and that is
+to convert all top-level 'config' statements that have sub-options
+into 'menuconfig' statements for consistency. At the moment, the
+platform menu has a mix of platform-selection and platform-specific
+options, and I'd like to make that more consistent.
 
-Well, it depends really. Weston is aware of rotation and passes this
-information down to the clients, which are able to provide pre-rotated
-buffers, so from a pure performance/profiling point of view, really
-the clients should be doing this. In the case of V4L2/media clients,
-if they fed the buffer into IPP themselves and scheduled the rotation,
-this would push the performance hit earlier in the pipeline, when you
-have more parallelism and buffering, rather than at the very last
-point where it's quite serialised. In the case of GL/GPU clients, they
-could perform the rotation as part of their rendering pipeline, and in
-fact get the transformation for free.
-
-The objection isn't to the functionality itself - which is very
-useful! - but that it's done in a way that makes it very opaque. It is
-quite clever, but having this as part of the semantics of core
-functionality is problematic in a lot of ways. When this was
-previously proposed, e.g. for VC4, the conclusion seemed to be that
-for these reasons, any memory-to-memory buffer processing should be
-performed in a separate step with a new API.
-
-Cheers,
-Daniel
+	Arnd
