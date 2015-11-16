@@ -1,84 +1,116 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
- after prompt
-Date: Mon, 16 Nov 2015 11:06:22 +0000
-Message-ID: <20151116110622.GL8644@n2100.arm.linux.org.uk>
-References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
- <4171977.M1BLuS2ZzP@wuerfel>
- <d5271606263b496c841abd62647f9db0@SOC-EX02V.e01.socionext.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing)
+ subsystem
+Date: Mon, 16 Nov 2015 12:35:45 +0100
+Message-ID: <5649BF91.5030901@samsung.com>
+References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
+ <CAPj87rNz6vYrcjgV1fdSgE-ZCHnFFNfJKqskTsu2C1+KkmW_gQ@mail.gmail.com>
+ <564489A9.5040709@math.uni-bielefeld.de>
+ <CAPj87rNOH59fssu2CTJEt6MEn-zhGEE=5VxiscCWiRjtTwH-wQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:59127 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751827AbbKPLHJ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52887 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751099AbbKPLft (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Nov 2015 06:07:09 -0500
-Content-Disposition: inline
-In-Reply-To: <d5271606263b496c841abd62647f9db0@SOC-EX02V.e01.socionext.com>
+	Mon, 16 Nov 2015 06:35:49 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NXW00EV4O7NE030@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 Nov 2015 11:35:47 +0000 (GMT)
+In-reply-to: <CAPj87rNOH59fssu2CTJEt6MEn-zhGEE=5VxiscCWiRjtTwH-wQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: yamada.masahiro@socionext.com
-Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org, arm@kernel.org, mmarek@suse.com, olof@lixom.net, linux-kbuild@vger.kernel.org, jamie@jamieiles.com, agross@codeaurora.org, kernel@pengutronix.de, gregory.clement@free-electrons.com, linux-sh@vger.kernel.org, tsahee@annapurnalabs.com, linux-arm-msm@vger.kernel.org, linus.walleij@linaro.org, galak@codeaurora.org, plagnioj@jcrosoft.com, dinguyen@opensource.altera.com, baohua@kernel.org, shiraz.linux.kernel@gmail.com, rjui@broadcom.com, patrice.chotard@st.com, kernel@stlinux.com, soren.brinkmann@xilinx.com, horms@verge.net.au, michal.simek@xilinx.com, heiko@sntech.de, linux-rockchip@lists.infradead.org, linux-soc@vger.kernel.org, davidb@codeaurora.org, sbranden@broadcom.com, vireshk@kernel.org, alexandre.belloni@free-electrons.com, kyungmin.park@samsung.com, mappyland78@gmail.com, k.kozlowski@samsung.com, bcm-kernel-fee
+To: Daniel Stone <daniel@fooishbar.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Eric Anholt <eric@anholt.net>
 
-On Mon, Nov 16, 2015 at 10:32:51AM +0000, yamada.masahiro@socionext.com wrote:
-> Hi Arnd,
-> 
->  
-> > On Monday 16 November 2015 12:06:10 Masahiro Yamada wrote:
-> > > Many ARM sub-architectures use prompts followed by "if" conditional,
-> > > but it is wrong.
-> > >
-> > > Please notice the difference between
-> > >
-> > >     config ARCH_FOO
-> > >             bool "Foo SoCs" if ARCH_MULTI_V7
-> > >
-> > > and
-> > >
-> > >     config ARCH_FOO
-> > >             bool "Foo SoCs"
-> > >             depends on ARCH_MULTI_V7
-> > >
-> > > These two are *not* equivalent!
-> > >
-> > > In the former statement, it is not ARCH_FOO, but its prompt that
-> > > depends on ARCH_MULTI_V7.  So, it is completely valid that ARCH_FOO is
-> > > selected by another, but ARCH_MULTI_V7 is still disabled. As it is not
-> > > unmet dependency, Kconfig never warns.  This is probably not what you
-> > > want.
-> > 
-> > Did you encounter a case where someone actually did a 'select' on one of
-> > those symbols? I probably introduced a lot of them and did not expect that
-> > to happen.
-> 
-> No, for ARM sub-architectures.
-> But, yes for the ARM core part.
-> 
-> 
-> For example, the following entry in arch/arm/Kconfig is suspicous.
-> 
-> config PCI
->         bool "PCI support" if MIGHT_HAVE_PCI
->         help
->           Find out whether you have a PCI motherboard. PCI is the name of a
->           bus system, i.e. the way the CPU talks to the other stuff inside
->           your box. Other bus systems are ISA, EISA, MicroChannel (MCA) or
->           VESA. If you have PCI, say Y, otherwise N.
-> 
-> 
-> 
-> 
-> Try "make ARCH=arm footbridge_defconfig" and check the .config file.
-> 
-> It defines CONFIG_PCI=y, but not CONFIG_MIGHT_HAVE_PCI.
-> I am not sure this is a sane .config or not.
+Hello,
 
-It's correct.  "MIGHT_HAVE_PCI" is used by platforms which _might_ _have_
-_PCI_, not by platforms which _do_ _have_ _PCI_.  Platforms which _do_
-_have_ _PCI_ select PCI directly, and because "MIGHT_HAVE_PCI" is not
-set, users are not offered an option that they can never disable.
+On 2015-11-12 15:46, Daniel Stone wrote:
+> On 12 November 2015 at 12:44, Tobias Jakobi
+> <tjakobi@math.uni-bielefeld.de> wrote:
+>> Daniel Stone wrote:
+>>> On 10 November 2015 at 13:23, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>>> This patch series introduces a new life into Exynos IPP (Image Post
+>>>> Processing) subsystem by integrating it (transparently for userspace
+>>>> applications) with Exynos DRM core plane management. This means that all
+>>>> CRTC drivers transparently get support for standard features of IPP
+>>>> subsystem like rotation and scaling.
+>>>>
+>>>> Support for features not supported natively by CRTC drivers is
+>>>> implemented with a help of temporary framebuffers, where image data is
+>>>> processed by IPP subsystem before performing the scanout by a CRTC driver.
+>>> Hm, interesting. The RPi has a similar setup - VC4 can work either
+>>> online (realtime scanout) or offline (mem2mem). Once the scene crosses
+>>> a certain complexity boundary, it can no longer be composed in
+>>> realtime and must fall back to mem2mem before it can be displayed.
+>>>
+>>> There was talk of having the fallback handled transparently in KMS for
+>>> VC4 - similar to this - but the conclusion seemed to be that it was an
+>>> inappropriate level of hidden complexity for KMS, and instead would
+>>> best be handled by something like HWComposer directing it. Using HWC
+>>> would then let you more intelligently split the scene from userspace
+>>> (e.g. flatten some components but retain others as active planes).
+>> I would be intererested in the performance implications of this
+>> abstraction as well.
+>>
+>> I'd like to use the Exynos FIMC for CSC and scaling, but this operation
+>> of course takes some time.
+>>
+>> I wonder how this interacts with page flipping. If I queue a pageflip
+>> event with a buffer that needs to go through the IPP for display, where
+>> does the delay caused by the operation factor it? If I understand this
+>> correctly drmModePageFlip() still is going to return immediately, but I
+>> might miss the next vblank period because the FIMC is still working on
+>> the buffer.
+> Hmm, from my reading of the patches, this didn't affect page-flip
+> timings. In the sync case, it would block until the buffer was
+> actually displayed, and in the async case, the event would still be
+> delivered at the right time. But you're right that it does introduce
+> hugely variable timings, which can be a problem for userspace which
+> tries to be intelligent. And even then potentially misleading from a
+> performance point of view: if userspace can rotate natively (e.g. as
+> part of a composition blit, or when rendering buffers in the first
+> place), then we can skip the extra work from G2D.
 
+Page flip events are delivered to userspace at the right time. You are right
+that there will be some delay between scheduling a buffer for display 
+and the
+moment it gets displayed by hardware, but imho good application should sync
+audio/video to the vblank events not the moment of scheduling a buffer. So
+this delay should not influence on the final quality of displayed
+
+The only problem I see, especially when color space conversion will be 
+added,
+is how to tell generic application that some modes are preferred / not
+preferred, so application would prefer native modes which are faster. On the
+other hand application should be aware of the fact that hw scaling is 
+usually
+faster / less power demanding than cpu scaling, so it is better to use such
+mode with additional processing instead of doing that work with the cpu.
+
+On the other hand Exynos hardware also provides so called LOCAL PATH feature
+for image processing, in case of which no temporary buffer is needed. This
+mode should not introduce a delay. Implementing it is on my TODO list.
+
+>> My problem here is that this abstraction would take too much control
+>> from the user.
+>>
+>> Correct me if I have this wrong!
+> I believe that was the concern previously, yeah. :) That, and encoding
+> these semantics in a user-visible way could potentially be dangerous.
+
+I believe that having this feature is quite beneficial for generic 
+applications
+(like weston for example). It is especially very useful for video overlay
+display, where scaling, rotation and colorspace conversion are typical
+use-cases. An alternative would be to introduce some generic API for a frame
+buffer conversions.
+
+Best regards
 -- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
