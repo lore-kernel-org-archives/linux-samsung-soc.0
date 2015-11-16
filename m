@@ -1,82 +1,36 @@
-From: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
- after prompt
-Date: Mon, 16 Nov 2015 13:26:09 +0100
-Message-ID: <5649CB61.9090201@st.com>
-References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 2/3] [media] include/media: move driver interface headers to a separate dir
+Date: Mon, 16 Nov 2015 13:30:19 +0100
+Message-ID: <11305053.FloWFxl3Yn@wuerfel>
+References: <013152dcb3d4eaddd39aa4a37868430567bdc2d6.1447671420.git.mchehab@osg.samsung.com> <23e53dd0223c40ecf7128e0b270fcfbea8e1c43b.1447671420.git.mchehab@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene@kern>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <23e53dd0223c40ecf7128e0b270fcfbea8e1c43b.1447671420.git.mchehab@osg.samsung.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Hans Verkuil <hverkuil@xs4all.nl>, Kyungmin Park <kyungmin.park@samsung.com>, Heungjun Kim <riverful.kim@samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Andy Walls <awalls@md.metrocast.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Josh Wu <josh.wu@atmel.com>, Hans de Goede <hdegoede@redhat.com>, Mike Isely <isely@pobox.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Vinod Koul <vinod.koul@intel.com>, Ul
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi
+On Monday 16 November 2015 09:00:44 Mauro Carvalho Chehab wrote:
+> Let's not mix headers used by the core with those headers that
+> are needed by some driver-specific interface header.
+> 
+> The headers used on drivers were manually moved using:
+>     mkdir include/media/drv-intf/
+>     git mv include/media/cx2341x.h include/media/cx25840.h \
+> 	include/media/exynos-fimc.h include/media/msp3400.h \
+> 	include/media/s3c_camif.h include/media/saa7146.h \
+> 	include/media/saa7146_vv.h  include/media/sh_mobile_ceu.h \
+> 	include/media/sh_mobile_csi2.h include/media/sh_vou.h \
+> 	include/media/si476x.h include/media/soc_mediabus.h \
+> 	include/media/tea575x.h include/media/drv-intf/
+> 
 
-On 11/16/2015 04:06 AM, Masahiro Yamada wrote:
-> Many ARM sub-architectures use prompts followed by "if" conditional,
-> but it is wrong.
->
-> Please notice the difference between
->
->      config ARCH_FOO
->              bool "Foo SoCs" if ARCH_MULTI_V7
->
-> and
->
->      config ARCH_FOO
->              bool "Foo SoCs"
->              depends on ARCH_MULTI_V7
->
-> These two are *not* equivalent!
->
-> In the former statement, it is not ARCH_FOO, but its prompt that
-> depends on ARCH_MULTI_V7.  So, it is completely valid that ARCH_FOO
-> is selected by another, but ARCH_MULTI_V7 is still disabled. As it is
-> not unmet dependency, Kconfig never warns.  This is probably not what
-> you want.
->
-> The former should be used only when you need to do so, and you really
-> understand what you are doing.  (In most cases, it should be wrong!)
->
-> For enabling/disabling sub-architectures, the latter is always correct.
->
-> As a good side effect, this commit fixes some entries over 80 columns
-> (mach-imx, mach-integrator, mach-mbevu).
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-> ---
->
-> I hope this patch is applied to ARM-SOC, but am CCing Kbuild ML
-> because the correct understanding of Kconfig is required for this patch.
-[...]
->
-> diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
-> index 125865d..736abe6 100644
-> --- a/arch/arm/mach-sti/Kconfig
-> +++ b/arch/arm/mach-sti/Kconfig
-> @@ -1,5 +1,6 @@
->   menuconfig ARCH_STI
-> -	bool "STMicroelectronics Consumer Electronics SOCs" if ARCH_MULTI_V7
-> +	bool "STMicroelectronics Consumer Electronics SOCs"
-> +	depends on ARCH_MULTI_V7
->   	select ARM_GIC
->   	select ST_IRQCHIP
->   	select ARM_GLOBAL_TIMER
->
-For STI part:
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
+I probably would have left soc_mediabus.h where it is, but I can
+see there are reasons to move it.
 
-Thanks
+	Arnd
