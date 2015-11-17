@@ -1,141 +1,77 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 14/25] drm/exynos: introduce exynos_drm_plane_config
- structure
-Date: Tue, 17 Nov 2015 19:00:46 +0100
-Message-ID: <564B6B4E.7000200@math.uni-bielefeld.de>
-References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-15-git-send-email-m.szyprowski@samsung.com>
+From: Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
+ after prompt
+Date: Tue, 17 Nov 2015 10:04:10 -0800
+Message-ID: <20151117180410.GJ23979@verge.net.au>
+References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:38751 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753663AbbKQSAt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Nov 2015 13:00:49 -0500
-In-Reply-To: <1447161821-1877-15-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens@csie>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hello Marek,
-
-
-Marek Szyprowski wrote:
-> This patch adds common structure for keeping plane configuration and
-> capabilities data. This patch is inspired by similar code developed by
-> Tobias Jakobi.
+On Mon, Nov 16, 2015 at 12:06:10PM +0900, Masahiro Yamada wrote:
+> Many ARM sub-architectures use prompts followed by "if" conditional,
+> but it is wrong.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Please notice the difference between
+> 
+>     config ARCH_FOO
+>             bool "Foo SoCs" if ARCH_MULTI_V7
+> 
+> and
+> 
+>     config ARCH_FOO
+>             bool "Foo SoCs"
+>             depends on ARCH_MULTI_V7
+> 
+> These two are *not* equivalent!
+> 
+> In the former statement, it is not ARCH_FOO, but its prompt that
+> depends on ARCH_MULTI_V7.  So, it is completely valid that ARCH_FOO
+> is selected by another, but ARCH_MULTI_V7 is still disabled. As it is
+> not unmet dependency, Kconfig never warns.  This is probably not what
+> you want.
+> 
+> The former should be used only when you need to do so, and you really
+> understand what you are doing.  (In most cases, it should be wrong!)
+> 
+> For enabling/disabling sub-architectures, the latter is always correct.
+> 
+> As a good side effect, this commit fixes some entries over 80 columns
+> (mach-imx, mach-integrator, mach-mbevu).
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
 > ---
->  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 18 +++++++---
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 23 +++++++-----
->  drivers/gpu/drm/exynos/exynos_drm_drv.h       | 22 ++++++++++++
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 25 ++++++++-----
->  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 34 ++++++++----------
->  drivers/gpu/drm/exynos/exynos_drm_plane.h     |  7 ++--
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 25 ++++++++-----
->  drivers/gpu/drm/exynos/exynos_mixer.c         | 51 ++++++++++++++++-----------
->  8 files changed, 131 insertions(+), 74 deletions(-)
 > 
-<SNIP>
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 015e85cabcc9..cdec3c1827c6 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -43,7 +43,6 @@
->  
->  #define MIXER_WIN_NR		3
->  #define VP_DEFAULT_WIN		2
-> -#define CURSOR_WIN		1
->  
->  /* The pixelformats that are natively supported by the mixer. */
->  #define MXR_FORMAT_RGB565	4
-> @@ -112,6 +111,31 @@ struct mixer_drv_data {
->  	bool					has_sclk;
->  };
->  
-> +static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
-> +	{
-> +		.zpos = 0,
-> +		.type = DRM_PLANE_TYPE_PRIMARY,
-> +		.pixel_formats = mixer_formats,
-> +		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
-> +		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE_X |
-> +				EXYNOS_DRM_PLANE_CAP_DOUBLE_Y,
-> +	}, {
-> +		.zpos = 1,
-> +		.type = DRM_PLANE_TYPE_CURSOR,
-> +		.pixel_formats = mixer_formats,
-> +		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
-> +		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE_X |
-> +				EXYNOS_DRM_PLANE_CAP_DOUBLE_Y,
-> +	}, {
-> +		.zpos = 2,
-> +		.type = DRM_PLANE_TYPE_OVERLAY,
-> +		.pixel_formats = vp_formats,
-> +		.num_pixel_formats = ARRAY_SIZE(vp_formats),
-> +		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE_X |
-> +				EXYNOS_DRM_PLANE_CAP_DOUBLE_Y,
-As far as I know the video plane supports arbitrary scaling and provides
-no dedicated 'pixel doubling' mode.
+> I hope this patch is applied to ARM-SOC, but am CCing Kbuild ML
+> because the correct understanding of Kconfig is required for this patch.
+
+Thanks for cleaning this up.
 
 
-With best wishes,
-Tobias
+As per a response to another ARM-SoC-wide patch:
 
+My suggestion is to split this patch up. In its current form
+it seems bound to cause some merge conflicts at some point.
+If you were to submit the mach-shmobile portion as a separate patch
+I would be happy to queue it up.
 
-> +	},
-> +};
-> +
->  static const u8 filter_y_horiz_tap8[] = {
->  	0,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
->  	-1,	-1,	-1,	-1,	-1,	0,	0,	0,
-> @@ -1188,38 +1212,25 @@ static struct of_device_id mixer_match_types[] = {
->  };
->  MODULE_DEVICE_TABLE(of, mixer_match_types);
->  
-> +
->  static int mixer_bind(struct device *dev, struct device *manager, void *data)
->  {
->  	struct mixer_context *ctx = dev_get_drvdata(dev);
->  	struct drm_device *drm_dev = data;
->  	struct exynos_drm_plane *exynos_plane;
-> -	unsigned int zpos;
-> +	unsigned int i;
->  	int ret;
->  
->  	ret = mixer_initialize(ctx, drm_dev);
->  	if (ret)
->  		return ret;
->  
-> -	for (zpos = 0; zpos < MIXER_WIN_NR; zpos++) {
-> -		enum drm_plane_type type;
-> -		const uint32_t *formats;
-> -		unsigned int fcount;
-> -
-> -		if (zpos == VP_DEFAULT_WIN && !ctx->vp_enabled)
-> +	for (i = 0; i < MIXER_WIN_NR; i++) {
-> +		if (i == VP_DEFAULT_WIN && !ctx->vp_enabled)
->  			continue;
->  
-> -		if (zpos < VP_DEFAULT_WIN) {
-> -			formats = mixer_formats;
-> -			fcount = ARRAY_SIZE(mixer_formats);
-> -		} else {
-> -			formats = vp_formats;
-> -			fcount = ARRAY_SIZE(vp_formats);
-> -		}
-> -
-> -		type = exynos_plane_get_type(zpos, CURSOR_WIN);
-> -		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
-> -					1 << ctx->pipe, type, formats, fcount,
-> -					zpos);
-> +		ret = exynos_plane_init(drm_dev, &ctx->planes[i],
-> +					1 << ctx->pipe, &plane_configs[i]);
->  		if (ret)
->  			return ret;
->  	}
-> 
+That aside, I don't have any objections to the mach-shmobile change.
+So if you wish to proceed with a large patch then for the mach-shmobile
+portion:
+
+Acked-by: Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>
