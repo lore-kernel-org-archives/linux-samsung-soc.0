@@ -1,57 +1,80 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: only run atomic_check() if crtc is active
-Date: Tue, 17 Nov 2015 11:06:11 +0100
-Message-ID: <20151117100611.GO16848@phenom.ffwll.local>
-References: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
- <20151112134929.GC645@ulmo>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/3] ASoC: s3c24xx-i2s: pass DMA channels
+	as platform data
+Date: Tue, 17 Nov 2015 11:19:51 +0100
+Message-ID: <5663555.neFjt3nUNJ@wuerfel>
+References: <5466463.9HBcuLFGQf@wuerfel> <4171669.Y8FyLG5WLL@wuerfel>
+ <564A84AE.2000502@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20151112134929.GC645@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <564A84AE.2000502@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene@kernel.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBOb3YgMTIsIDIwMTUgYXQgMDI6NDk6MjlQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4gT24gVGh1LCBOb3YgMTIsIDIwMTUgYXQgMTE6MTE6MjBBTSAtMDIwMCwgR3VzdGF2
-byBQYWRvdmFuIHdyb3RlOgo+ID4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92
-YW5AY29sbGFib3JhLmNvLnVrPgo+ID4gCj4gPiBGaXhlcyBhbiByZWdyZXNzaW9uIGFkZGVkIGJ5
-IDNhZTI0MzYgKGRybS9leHlub3MvbWl4ZXI6IHJlcGxhY2UKPiA+IGRpcmVjdCBjcm9zcy1kcml2
-ZXIgY2FsbCB3aXRoIGRybSBtb2RlKS4gVGhlIHdob2xlIGF0b21pYyB1cGRhdGUKPiA+IHdhcyBm
-YWlsaW5nIGlmIHRoZSBoZG1pIGRpc3BsYXkgaXMgbm90IHByZXNlbnQvYWN0aXZlLiBBZGQgYSB0
-ZXN0Cj4gPiB0byBvbmx5IHJ1biBhdG9taWNfY2hlY2soKSBpZiB0aGUgQ1JUQyBpcyBhY3RpdmUu
-Cj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
-QGNvbGxhYm9yYS5jby51az4KPiA+IC0tLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMgfCAzICsrKwo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
-KykKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gPiBp
-bmRleCBiM2JhMjdmLi4xZDNjYTBhIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYwo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2NydGMuYwo+ID4gQEAgLTU1LDYgKzU1LDkgQEAgc3RhdGljIGludCBleHlub3Nf
-Y3J0Y19hdG9taWNfY2hlY2soc3RydWN0IGRybV9jcnRjICpjcnRjLAo+ID4gIHsKPiA+ICAJc3Ry
-dWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsK
-PiA+ICAKPiA+ICsJaWYgKCFzdGF0ZS0+YWN0aXZlKQo+ID4gKwkJcmV0dXJuIDA7Cj4gPiArCj4g
-PiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT5hdG9taWNfY2hlY2spCj4gPiAgCQlyZXR1cm4gZXh5
-bm9zX2NydGMtPm9wcy0+YXRvbWljX2NoZWNrKGV4eW5vc19jcnRjLCBzdGF0ZSk7Cj4gPiAgCj4g
-Cj4gVGhpcyBsb29rcyBsaWtlIHNvbWV0aGluZyB0aGF0IHRoZSBjb3JlIHNob3VsZCBiZSBkb2lu
-Zy4KCk5haCwgdGhpcyBpcyBhIGJ1ZyBpbiBleHlub3MgYXRvbWljX2NoZWNrIGNvZGUuIERyaXZl
-cnMgX211c3RfIGNoZWNrIHN0YXRlCmlycmVzcGVjdGl2ZSBvZiBzdGF0ZS0+YWN0aXZlIC0gaWYg
-dGhleSBmb3Jnb2UgYW55IGNoZWNraW5nIHdoZW4gYWN0aXZlID0KZmFsc2UgdGhlbiBsZWdhY3kg
-RFBNUyBPbiBtaWdodCBzcHVyaXVvc2x5IGZhaWwsIHdoaWNoIHdpbGwgdXBzZXQKdXNlcnNwYWNl
-LiBUaGVyZSBzaG91bGRuJ3QgYmUgYW55IGV4Y2VwdGlvbnMgdG8gdGhpcyBydWxlLgoKQ2hlZXJz
-LCBEYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBv
-cmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+On Tuesday 17 November 2015 10:36:46 Krzysztof Kozlowski wrote:
+> On 14.11.2015 02:23, Arnd Bergmann wrote:
+> > This is a minor cleanup to make the s3c2412-i2s and s3c24xx-i2s
+> > drivers independent of the mach/dma.h header file and to allow
+> > removing the dependency on the specific dmaengine driver in the
+> > next patch.
+> > 
+> > As a side not, only the s3c24xx-i2s driver seems to still be
+> > used, while the definition of the s3c2412-i2s platform device was
+> > removed in commit 6d259a25b56d ("ARM: SAMSUNG: use static
+> > declaration when it is not used in other files") after it had
+> > never been referenced since its introduction in f0fba2ad1b6b
+> > ("ASoC: multi-component - ASoC Multi-Component Support").
+> > 
+> > Apparently it should have been used by mach-jive.c, but that
+> > never happened. My patch at this point leaves the current state
+> > unchanged, we can decide whether to fix or delete the jive
+> > driver and s3c2412-i2s another time.
+> > 
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> > index 3ce234f4c872..e5e91669dd2b 100644
+> > --- a/arch/arm/plat-samsung/devs.c
+> > +++ b/arch/arm/plat-samsung/devs.c
+> > @@ -571,6 +571,11 @@ static struct resource s3c_iis_resource[] = {
+> >  	[0] = DEFINE_RES_MEM(S3C24XX_PA_IIS, S3C24XX_SZ_IIS),
+> >  };
+> >  
+> > +static struct s3c_audio_pdata s3c_iis_platdata = {
+> > +	.dma_playback = (void *)DMACH_I2S_OUT,
+> > +	.dma_capture = (void *)DMACH_I2S_IN,
+> 
+> Why casting? Is it needed?
+
+s3c64xx uses strings here, but s3c24xx uses integer indexes into an array.
+I thought about changing the indexes to direct pointers to entries in
+the array, but decided to leave that for another day.
+
+> > @@ -454,6 +454,7 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+> >  {
+> >  	int ret = 0;
+> >  	struct resource *res;
+> > +	struct s3c_audio_pdata *pdata = dev_get_platdata(&pdev->dev);
+> 
+> Maybe:
+> if (!pdata) {
+> 	pr_err("bla bla bla");
+> 	return -EINVAL;
+> }
+
+Yes, that might be helpful in case there are any out of tree users, or
+I missed one of the in-tree users.
+
+	Arnd
