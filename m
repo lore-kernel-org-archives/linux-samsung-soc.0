@@ -1,106 +1,67 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Tue, 17 Nov 2015 15:01:18 +0100
-Message-ID: <564B332E.6010608@samsung.com>
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
- <564AADB2.3030400@samsung.com> <564AAF70.9080507@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: only run atomic_check() if crtc is active
+Date: Tue, 17 Nov 2015 15:19:35 +0100
+Message-ID: <564B3777.1020804@samsung.com>
+References: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
+ <20151112134929.GC645@ulmo> <20151117100611.GO16848@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <564AAF70.9080507@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: "pankaj.dubey" <pankaj.dubey@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20151117100611.GO16848@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>
+Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, "Szyprowski,
+ Marek" <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17/11/15 05:39, Krzysztof Kozlowski wrote:
-> On 17.11.2015 13:31, pankaj.dubey wrote:
->> On Monday 16 November 2015 07:06 AM, Krzysztof Kozlowski wrote:
->>> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
->>> so it is built also on ARMv7. This does not bring any kind of benefit.
->>> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
->>> multi_v7 for ARMv7).
->>>
->>> Instead build clock drivers only for respective SoC's architecture.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> ---
->>>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
->>>  drivers/clk/samsung/Makefile |  4 ++--
->>>  2 files changed, 15 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->>> index 84196ecdaa12..5f138fc4d84d 100644
->>> --- a/drivers/clk/samsung/Kconfig
->>> +++ b/drivers/clk/samsung/Kconfig
->>> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
->>>  	bool
->>>  	select COMMON_CLK
->>>  
->>> +# ARMv7 SoCs:
->>>  config S3C2410_COMMON_CLK
->>>  	bool
->>>  	select COMMON_CLK_SAMSUNG
->>> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
->>>  	bool
->>>  	select COMMON_CLK_SAMSUNG
->>>  
->>> +# ARMv8 SoCs:
->>> +config EXYNOS5433_COMMON_CLK
->>> +	bool
->>> +	depends on ARM64 || COMPILE_TEST
->>> +	default ARCH_EXYNOS
->>> +	select COMMON_CLK_SAMSUNG
->>> +
->>> +config EXYNOS7_COMMON_CLK
->>> +	bool
->>> +	depends on ARM64 || COMPILE_TEST
->>> +	default ARCH_EXYNOS
->>> +	select COMMON_CLK_SAMSUNG
->>> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
->>> index 5f6833ea355d..a31332a24ef4 100644
->>> --- a/drivers/clk/samsung/Makefile
->>> +++ b/drivers/clk/samsung/Makefile
->>> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->>>  obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
->>>  obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
->>>  obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
->>> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
->>> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+= clk-exynos5433.o
->>>  obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
->>>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
->>>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
->>> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
->>> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+= clk-exynos7.o
->>>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->>>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->>>  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
->>>
->>
->> So in this approach we need to add separate config for clock support of
->> each ARM64 Exynos64 SoC. Is this fine?
->>
->> Can we club compilation of each ARM64 Exynos SoC clock file under
->> EXYNOS7_COMMON_CLK? As for all ARM64 SoC there is single defconfig and
->> binary.
-> 
-> Yes, it can be one config symbol for all clocks of ARMv8 Exynos SoCs.
-> From my point of view both has some advantages and disadvantages (kernel
-> size, granularity, number of Kconfig symbols etc.) and I don't mind
-> choosing different than I selected before.
-> 
-> Any opinion from Samsung clock maintainers? Which do you prefer?
-
-It would have been a bit unfortunate to not be able to exclude
-the unneeded clk drivers from build.  From my side both patches
-look like a step in right direction.
-
-For the $subject patch:
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
--- 
-Thanks
-Sylwester
+SGkgRGFuaWVsLAoKT24gMTEvMTcvMjAxNSAxMTowNiBBTSwgRGFuaWVsIFZldHRlciB3cm90ZToK
+PiBPbiBUaHUsIE5vdiAxMiwgMjAxNSBhdCAwMjo0OToyOVBNICswMTAwLCBUaGllcnJ5IFJlZGlu
+ZyB3cm90ZToKPj4gT24gVGh1LCBOb3YgMTIsIDIwMTUgYXQgMTE6MTE6MjBBTSAtMDIwMCwgR3Vz
+dGF2byBQYWRvdmFuIHdyb3RlOgo+Pj4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBh
+ZG92YW5AY29sbGFib3JhLmNvLnVrPgo+Pj4KPj4+IEZpeGVzIGFuIHJlZ3Jlc3Npb24gYWRkZWQg
+YnkgM2FlMjQzNiAoZHJtL2V4eW5vcy9taXhlcjogcmVwbGFjZQo+Pj4gZGlyZWN0IGNyb3NzLWRy
+aXZlciBjYWxsIHdpdGggZHJtIG1vZGUpLiBUaGUgd2hvbGUgYXRvbWljIHVwZGF0ZQo+Pj4gd2Fz
+IGZhaWxpbmcgaWYgdGhlIGhkbWkgZGlzcGxheSBpcyBub3QgcHJlc2VudC9hY3RpdmUuIEFkZCBh
+IHRlc3QKPj4+IHRvIG9ubHkgcnVuIGF0b21pY19jaGVjaygpIGlmIHRoZSBDUlRDIGlzIGFjdGl2
+ZS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3Zh
+bkBjb2xsYWJvcmEuY28udWs+Cj4+PiAtLS0KPj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fY3J0Yy5jIHwgMyArKysKPj4+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25z
+KCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+PiBp
+bmRleCBiM2JhMjdmLi4xZDNjYTBhIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2NydGMuYwo+Pj4gQEAgLTU1LDYgKzU1LDkgQEAgc3RhdGljIGludCBleHlub3Nf
+Y3J0Y19hdG9taWNfY2hlY2soc3RydWN0IGRybV9jcnRjICpjcnRjLAo+Pj4gIHsKPj4+ICAJc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsK
+Pj4+ICAKPj4+ICsJaWYgKCFzdGF0ZS0+YWN0aXZlKQo+Pj4gKwkJcmV0dXJuIDA7Cj4+PiArCj4+
+PiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT5hdG9taWNfY2hlY2spCj4+PiAgCQlyZXR1cm4gZXh5
+bm9zX2NydGMtPm9wcy0+YXRvbWljX2NoZWNrKGV4eW5vc19jcnRjLCBzdGF0ZSk7Cj4+PiAgCj4+
+Cj4+IFRoaXMgbG9va3MgbGlrZSBzb21ldGhpbmcgdGhhdCB0aGUgY29yZSBzaG91bGQgYmUgZG9p
+bmcuCj4gCj4gTmFoLCB0aGlzIGlzIGEgYnVnIGluIGV4eW5vcyBhdG9taWNfY2hlY2sgY29kZS4g
+RHJpdmVycyBfbXVzdF8gY2hlY2sgc3RhdGUKPiBpcnJlc3BlY3RpdmUgb2Ygc3RhdGUtPmFjdGl2
+ZSAtIGlmIHRoZXkgZm9yZ29lIGFueSBjaGVja2luZyB3aGVuIGFjdGl2ZSA9Cj4gZmFsc2UgdGhl
+biBsZWdhY3kgRFBNUyBPbiBtaWdodCBzcHVyaXVvc2x5IGZhaWwsIHdoaWNoIHdpbGwgdXBzZXQK
+PiB1c2Vyc3BhY2UuIFRoZXJlIHNob3VsZG4ndCBiZSBhbnkgZXhjZXB0aW9ucyB0byB0aGlzIHJ1
+bGUuCj4gCj4gQ2hlZXJzLCBEYW5pZWwKPiAKCldoYXQgYWJvdXQgdGhlIHNpdHVhdGlvbiB3aGVu
+IHdlIGhhdmUgdHdvIGRpc3BsYXkgcGlwZWxpbmVzCndpdGggc2VwYXJhdGUgY3J0Y3M6Ci0gb25l
+IGZvciBwYW5lbCwgZmltZC0+ZHNpLT5wYW5lbCwKLSBvbmUgZm9yIGhkbWksIG1peGVyLT5oZG1p
+LT5UVi4KClNpbmNlIFRWIGlzIG5vdCBjb25uZWN0ZWQgbWl4ZXIgc3RhdGUgaGF2ZSBtb2RlIGlu
+aXRpYWxseSBmaWxsZWQKd2l0aCB6ZXJvcyBhbmQgYWN0aXZlIGZpZWxkIHNldCB0byAwLiBIb3cg
+c2hvdWxkIHdlIGhhbmRsZSBzaXR1YXRpb24KaWYgdXNlcnNwYWNlIHRyaWVzIHRvIGVuYWJsZSBk
+cG1zIG9uIEhETUkgY29ubmVjdG9yPwpIb3cgc2hvdWxkIHdlIGhhbmRsZSBzaXR1YXRpb24gdXNl
+cnNwYWNlIHRyaWVzIHRvIHN0YXJ0IHBhbmVsIHBpcGVsaW5lPwpJbiB0aGlzIGNhc2UgYXRvbWlj
+X2NoZWNrIGZvciBtaXhlciBpcyBjYWxsZWQgYWxzbywgYnV0IHNpbmNlCml0IHdpbGwgbm90IGJl
+IHVzZWQgYW5kIGl0cyBzdGF0ZSB3aWxsIG5vdCBiZSBjaGFuZ2VkIGl0CnNob3VsZCBub3QgcmV0
+dXJuIGVycm9yLCBhbSBJIHJpZ2h0PwoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
