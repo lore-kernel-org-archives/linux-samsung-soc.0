@@ -1,67 +1,119 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: only run atomic_check() if crtc is active
-Date: Tue, 17 Nov 2015 15:19:35 +0100
-Message-ID: <564B3777.1020804@samsung.com>
-References: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
- <20151112134929.GC645@ulmo> <20151117100611.GO16848@phenom.ffwll.local>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 14/27] mtd: nand: use the mtd instance
+ embedded in struct nand_chip
+Date: Tue, 17 Nov 2015 15:22:16 +0100
+Message-ID: <20151117152216.539fc09b@bbrezillon>
+References: <1447681080-31232-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447681080-31232-15-git-send-email-boris.brezillon@free-electrons.com>
+	<20151117030019.GY8456@google.com>
+	<20151117093836.052c86b5@bbrezillon>
+	<alpine.DEB.2.10.1511170957100.2455@hadrien>
+Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20151117100611.GO16848@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>
-Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, "Szyprowski,
- Marek" <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBHXQVSZAKGQEF7XCHNY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.10.1511170957100.2455@hadrien>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Krzysztof Halasa <khalasa-NlWvg49iv0c@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGFuaWVsLAoKT24gMTEvMTcvMjAxNSAxMTowNiBBTSwgRGFuaWVsIFZldHRlciB3cm90ZToK
-PiBPbiBUaHUsIE5vdiAxMiwgMjAxNSBhdCAwMjo0OToyOVBNICswMTAwLCBUaGllcnJ5IFJlZGlu
-ZyB3cm90ZToKPj4gT24gVGh1LCBOb3YgMTIsIDIwMTUgYXQgMTE6MTE6MjBBTSAtMDIwMCwgR3Vz
-dGF2byBQYWRvdmFuIHdyb3RlOgo+Pj4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBh
-ZG92YW5AY29sbGFib3JhLmNvLnVrPgo+Pj4KPj4+IEZpeGVzIGFuIHJlZ3Jlc3Npb24gYWRkZWQg
-YnkgM2FlMjQzNiAoZHJtL2V4eW5vcy9taXhlcjogcmVwbGFjZQo+Pj4gZGlyZWN0IGNyb3NzLWRy
-aXZlciBjYWxsIHdpdGggZHJtIG1vZGUpLiBUaGUgd2hvbGUgYXRvbWljIHVwZGF0ZQo+Pj4gd2Fz
-IGZhaWxpbmcgaWYgdGhlIGhkbWkgZGlzcGxheSBpcyBub3QgcHJlc2VudC9hY3RpdmUuIEFkZCBh
-IHRlc3QKPj4+IHRvIG9ubHkgcnVuIGF0b21pY19jaGVjaygpIGlmIHRoZSBDUlRDIGlzIGFjdGl2
-ZS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3Zh
-bkBjb2xsYWJvcmEuY28udWs+Cj4+PiAtLS0KPj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fY3J0Yy5jIHwgMyArKysKPj4+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25z
-KCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+PiBp
-bmRleCBiM2JhMjdmLi4xZDNjYTBhIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2NydGMuYwo+Pj4gQEAgLTU1LDYgKzU1LDkgQEAgc3RhdGljIGludCBleHlub3Nf
-Y3J0Y19hdG9taWNfY2hlY2soc3RydWN0IGRybV9jcnRjICpjcnRjLAo+Pj4gIHsKPj4+ICAJc3Ry
-dWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsK
-Pj4+ICAKPj4+ICsJaWYgKCFzdGF0ZS0+YWN0aXZlKQo+Pj4gKwkJcmV0dXJuIDA7Cj4+PiArCj4+
-PiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT5hdG9taWNfY2hlY2spCj4+PiAgCQlyZXR1cm4gZXh5
-bm9zX2NydGMtPm9wcy0+YXRvbWljX2NoZWNrKGV4eW5vc19jcnRjLCBzdGF0ZSk7Cj4+PiAgCj4+
-Cj4+IFRoaXMgbG9va3MgbGlrZSBzb21ldGhpbmcgdGhhdCB0aGUgY29yZSBzaG91bGQgYmUgZG9p
-bmcuCj4gCj4gTmFoLCB0aGlzIGlzIGEgYnVnIGluIGV4eW5vcyBhdG9taWNfY2hlY2sgY29kZS4g
-RHJpdmVycyBfbXVzdF8gY2hlY2sgc3RhdGUKPiBpcnJlc3BlY3RpdmUgb2Ygc3RhdGUtPmFjdGl2
-ZSAtIGlmIHRoZXkgZm9yZ29lIGFueSBjaGVja2luZyB3aGVuIGFjdGl2ZSA9Cj4gZmFsc2UgdGhl
-biBsZWdhY3kgRFBNUyBPbiBtaWdodCBzcHVyaXVvc2x5IGZhaWwsIHdoaWNoIHdpbGwgdXBzZXQK
-PiB1c2Vyc3BhY2UuIFRoZXJlIHNob3VsZG4ndCBiZSBhbnkgZXhjZXB0aW9ucyB0byB0aGlzIHJ1
-bGUuCj4gCj4gQ2hlZXJzLCBEYW5pZWwKPiAKCldoYXQgYWJvdXQgdGhlIHNpdHVhdGlvbiB3aGVu
-IHdlIGhhdmUgdHdvIGRpc3BsYXkgcGlwZWxpbmVzCndpdGggc2VwYXJhdGUgY3J0Y3M6Ci0gb25l
-IGZvciBwYW5lbCwgZmltZC0+ZHNpLT5wYW5lbCwKLSBvbmUgZm9yIGhkbWksIG1peGVyLT5oZG1p
-LT5UVi4KClNpbmNlIFRWIGlzIG5vdCBjb25uZWN0ZWQgbWl4ZXIgc3RhdGUgaGF2ZSBtb2RlIGlu
-aXRpYWxseSBmaWxsZWQKd2l0aCB6ZXJvcyBhbmQgYWN0aXZlIGZpZWxkIHNldCB0byAwLiBIb3cg
-c2hvdWxkIHdlIGhhbmRsZSBzaXR1YXRpb24KaWYgdXNlcnNwYWNlIHRyaWVzIHRvIGVuYWJsZSBk
-cG1zIG9uIEhETUkgY29ubmVjdG9yPwpIb3cgc2hvdWxkIHdlIGhhbmRsZSBzaXR1YXRpb24gdXNl
-cnNwYWNlIHRyaWVzIHRvIHN0YXJ0IHBhbmVsIHBpcGVsaW5lPwpJbiB0aGlzIGNhc2UgYXRvbWlj
-X2NoZWNrIGZvciBtaXhlciBpcyBjYWxsZWQgYWxzbywgYnV0IHNpbmNlCml0IHdpbGwgbm90IGJl
-IHVzZWQgYW5kIGl0cyBzdGF0ZSB3aWxsIG5vdCBiZSBjaGFuZ2VkIGl0CnNob3VsZCBub3QgcmV0
-dXJuIGVycm9yLCBhbSBJIHJpZ2h0PwoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Julia,
+
+On Tue, 17 Nov 2015 10:05:03 +0100 (CET)
+Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org> wrote:
+
+> > > (This isn't the worst one, but it just happens to be one of the first.)
+> > > There are many cases where the typical style would be to declare a new
+> > > variable at the top of the function, where you perform the
+> > > macro/function-call to convert from one abstraction to another. Like
+> > >
+> > > static int nfc_set_sram_bank(struct atmel_nand_host *host, unsigned int bank)
+> > > {
+> > > 	struct mtd_info *mtd = nand_to_mtd(&hot->nand_chip);
+> > > 	...
+> > >
+> > > and then use it later. Can that be done very easily?
+> > >
+> > > >  			return -EINVAL;
+> > > >  		nfc_writel(host->nfc->hsmc_regs, BANK, ATMEL_HSMC_NFC_BANK1);
+> > > >  	} else {
+> > >
+> > > ...
+> >
+> > Honestly, I don't know how to do that with a coccinelle script, and it
+> > will probably take me more time to find how to do it than addressing
+> > those problems manually.
+> >
+> > Julia, could you give us some hint?
+> 
+> Probably something like the following would be easiest.  You can just run
+> it after your other transformations:
+> 
+> @r exists@
+> identifier f;
+> expression e;
+> @@
+> 
+> f(...) { <+...  nand_to_mtd(e) ...+> }
+> 
+> @@
+> identifier r.f;
+> expression r.e;
+> @@
+> 
+> f(...) {
+> + struct mtd_info *mtd = nand_to_mtd(e);
+> ...
+> }
+
+Thanks for the the suggestion...
+
+> 
+> This won't work if there is more than one possible value of e.  If that is
+> likely, then I could come up with something more complex.  It also assumes
+> that you want to convert all such calls.  If you only want to convert calls
+> that occur in a particular context, eg a field reference, then you could
+> enhance the pattern inside the <+... ...+> in the first rule.
+
+... unfortunately, as you've guessed, it's a bit more complicated.
+This mtd local variable is usually extracted from another local
+variable (struct nand_chip *chip), so we have to declare
+
+struct mtd_info *mtd = nand_to_mtd(e);
+
+after
+
+struct nand_chip *chip = expression;
+
+But this is not the only particular case. Sometime the chip variable is
+not assigned where it's declared (especially when it is dynamically
+allocated), and sometime it does not exist at all (we just extract it
+from a private struct: &priv->chip).
+The mtd variable can also be declared in sub-code blocks (loop or
+conditional statements).
+And, as you stated, we might want to keep direct calls to nand_to_mtd()
+if it's only called once in a function context.
+
+I'm pretty sure we could describe all those cases with specific context
+description, but I must admit that it takes less time for me to fix
+those specific cases manually than figuring out how to describe them
+correctly in a coccinelle script :).
+
+This being said, I'd be happy to see how you would handle all these
+different cases.
+
+Thanks,
+
+Boris
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
