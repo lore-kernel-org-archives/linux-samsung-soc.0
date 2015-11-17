@@ -1,49 +1,39 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 3/3] ASoC: samsung: pass filter function as
-	pointer
-Date: Tue, 17 Nov 2015 11:25:44 +0100
-Message-ID: <22364793.tICMzOOh4L@wuerfel>
-References: <5466463.9HBcuLFGQf@wuerfel> <8896684.3di3I3vzeA@wuerfel>
- <564A78A6.9010501@samsung.com>
+Subject: Re: [PATCH] SPI: s3c64xx: pass DMA arguments in platform data
+Date: Tue, 17 Nov 2015 11:33:45 +0100
+Message-ID: <16591294.iqvGkiFfez@wuerfel>
+References: <8391350.6B0EUH1WXO@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <564A78A6.9010501@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.133]:49462 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750913AbbKQKeW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Nov 2015 05:34:22 -0500
+In-Reply-To: <8391350.6B0EUH1WXO@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-On Tuesday 17 November 2015 09:45:26 Krzysztof Kozlowski wrote:
-> On 14.11.2015 02:24, Arnd Bergmann wrote:
-> > diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> > index 0945b5de39e7..5a4133b6e6a6 100644
-> > --- a/sound/soc/samsung/i2s.c
-> > +++ b/sound/soc/samsung/i2s.c
-> > @@ -1244,7 +1244,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
-> >  		if (ret != 0)
-> >  			return ret;
-> >  
-> > -		return samsung_asoc_dma_platform_register(&pdev->dev);
-> > +		return samsung_asoc_dma_platform_register(&pdev->dev,
-> > +						  i2s_pdata->dma_filter);
-> >  	}
+On Monday 16 November 2015 17:00:21 Arnd Bergmann wrote:
+> The s3c64xx platform data already contains a pointer to the
+> DMA filter function, but not to the associated data.
 > 
-> Here (and maybe in other places?) - NULL pointer exception. The pdata is
-> NULL on all newer platforms (e.g. all Exynos).
+> This simplifies the code and makes it more generic by
+> passing the data along with the filter function like
+> we do for other drivers.
 > 
-> BTW, later there is even check for NULL pdata which is pointed also by
-> Smatch.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks for spotting this! I'll fix it up.
+While rebasing the ASoC patches, I realized that they are not independent
+of this one, which I did on top of the others.
+
+None of them are urgent, so if the maintainers all agree that we want them,
+I can wait another merge window with this one. Alternatively, I could
+rework the patches to avoid the dependency, or we could merge them
+all through the samsung git tree in order.
 
 	Arnd
