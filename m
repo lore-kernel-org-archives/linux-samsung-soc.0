@@ -1,103 +1,345 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
- after prompt
-Date: Tue, 17 Nov 2015 08:49:53 +0900
-Message-ID: <564A6BA1.6020103@samsung.com>
-References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] ASoC: samsung: pass filter function as pointer
+Date: Tue, 17 Nov 2015 09:45:26 +0900
+Message-ID: <564A78A6.9010501@samsung.com>
+References: <5466463.9HBcuLFGQf@wuerfel> <8896684.3di3I3vzeA@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-reply-to: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kerne
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <8896684.3di3I3vzeA@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vinod Koul <vinod.koul@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16.11.2015 12:06, Masahiro Yamada wrote:
-> Many ARM sub-architectures use prompts followed by "if" conditional,
-> but it is wrong.
+On 14.11.2015 02:24, Arnd Bergmann wrote:
+> As we are now passing the filter data as pointers to the drivers,
+> we can take the final step and also pass the filter function the
+> same way. I'm keeping this change separate, as there it's less
+> obvious that this is a net win.
 > 
-> Please notice the difference between
+> Upsides of this are:
 > 
->     config ARCH_FOO
->             bool "Foo SoCs" if ARCH_MULTI_V7
+> - The ASoC drivers are completely independent from the DMA engine
+>   implementation, which simplifies the Kconfig logic and in theory
+>   allows the same sound drivers to be built in a kernel that supports
+>   different kinds of dmaengine drivers.
 > 
-> and
+> - Consistency with other subsystems and drivers
 > 
->     config ARCH_FOO
->             bool "Foo SoCs"
->             depends on ARCH_MULTI_V7
+> On the other hand, we have a few downsides:
 > 
-> These two are *not* equivalent!
+> - The s3c24xx-dma driver now needs to be built-in for the ac97 platform
+>   device to be instantiated on s3c2440.
 > 
-> In the former statement, it is not ARCH_FOO, but its prompt that
-> depends on ARCH_MULTI_V7.  So, it is completely valid that ARCH_FOO
-> is selected by another, but ARCH_MULTI_V7 is still disabled. As it is
-> not unmet dependency, Kconfig never warns.  This is probably not what
-> you want.
+> - samsung_dmaengine_pcm_config cannot be marked 'const' any more
+>   because the filter function pointer needs to be set at runtime.
+>   This is safe as long we don't have multiple different DMA engines
+>   in thet same system at runtime, but is nonetheless ugly.
 > 
-> The former should be used only when you need to do so, and you really
-> understand what you are doing.  (In most cases, it should be wrong!)
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > 
-> For enabling/disabling sub-architectures, the latter is always correct.
-> 
-> As a good side effect, this commit fixes some entries over 80 columns
-> (mach-imx, mach-integrator, mach-mbevu).
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-> ---
-> 
-> I hope this patch is applied to ARM-SOC, but am CCing Kbuild ML
-> because the correct understanding of Kconfig is required for this patch.
-> 
-> 
->  arch/arm/Kconfig                 |  3 ++-
->  arch/arm/mach-alpine/Kconfig     |  3 ++-
->  arch/arm/mach-at91/Kconfig       | 15 ++++++++++-----
->  arch/arm/mach-axxia/Kconfig      |  3 ++-
->  arch/arm/mach-bcm/Kconfig        | 27 ++++++++++++++++++---------
->  arch/arm/mach-berlin/Kconfig     |  3 ++-
->  arch/arm/mach-cns3xxx/Kconfig    |  3 ++-
->  arch/arm/mach-exynos/Kconfig     |  3 ++-
->  arch/arm/mach-highbank/Kconfig   |  3 ++-
->  arch/arm/mach-hisi/Kconfig       | 12 ++++++++----
->  arch/arm/mach-imx/Kconfig        |  6 ++++--
->  arch/arm/mach-integrator/Kconfig |  3 ++-
->  arch/arm/mach-mediatek/Kconfig   |  3 ++-
->  arch/arm/mach-meson/Kconfig      |  3 ++-
->  arch/arm/mach-moxart/Kconfig     |  3 ++-
->  arch/arm/mach-mvebu/Kconfig      | 24 ++++++++++++++++--------
->  arch/arm/mach-picoxcell/Kconfig  |  3 ++-
->  arch/arm/mach-prima2/Kconfig     |  3 ++-
->  arch/arm/mach-qcom/Kconfig       |  3 ++-
->  arch/arm/mach-rockchip/Kconfig   |  3 ++-
->  arch/arm/mach-s5pv210/Kconfig    |  3 ++-
+> diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+> index 9a42736ef4ac..b57783371d52 100644
+> --- a/arch/arm/mach-s3c64xx/dev-audio.c
+> +++ b/arch/arm/mach-s3c64xx/dev-audio.c
+> @@ -58,6 +58,7 @@ static struct resource s3c64xx_iis0_resource[] = {
+>  
+>  static struct s3c_audio_pdata i2s0_pdata = {
+>  	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
+> +	.dma_filter = pl08x_filter_id,
+>  	.dma_playback = DMACH_I2S0_OUT,
+>  	.dma_capture = DMACH_I2S0_IN,
+>  };
+> @@ -79,6 +80,7 @@ static struct resource s3c64xx_iis1_resource[] = {
+>  
+>  static struct s3c_audio_pdata i2s1_pdata = {
+>  	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
+> +	.dma_filter = pl08x_filter_id,
+>  	.dma_playback = DMACH_I2S1_OUT,
+>  	.dma_capture = DMACH_I2S1_IN,
+>  };
+> @@ -100,6 +102,7 @@ static struct resource s3c64xx_iisv4_resource[] = {
+>  
+>  static struct s3c_audio_pdata i2sv4_pdata = {
+>  	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
+> +	.dma_filter = pl08x_filter_id,
+>  	.dma_playback = DMACH_HSI_I2SV40_TX,
+>  	.dma_capture = DMACH_HSI_I2SV40_RX,
+>  	.type = {
+> @@ -150,6 +153,7 @@ static struct resource s3c64xx_pcm0_resource[] = {
+>  
+>  static struct s3c_audio_pdata s3c_pcm0_pdata = {
+>  	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
+> +	.dma_filter = pl08x_filter_id,
+>  	.dma_capture = DMACH_PCM0_RX,
+>  	.dma_playback = DMACH_PCM0_TX,
+>  };
+> @@ -171,6 +175,7 @@ static struct resource s3c64xx_pcm1_resource[] = {
+>  
+>  static struct s3c_audio_pdata s3c_pcm1_pdata = {
+>  	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
+> +	.dma_filter = pl08x_filter_id,
+>  	.dma_playback = DMACH_PCM1_TX,
+>  	.dma_capture = DMACH_PCM1_RX,
+>  };
+> @@ -205,6 +210,7 @@ static struct resource s3c64xx_ac97_resource[] = {
+>  
+>  static struct s3c_audio_pdata s3c_ac97_pdata = {
+>  	.dma_playback = DMACH_AC97_PCMOUT,
+> +	.dma_filter = pl08x_filter_id,
+>  	.dma_capture = DMACH_AC97_PCMIN,
+>  	.dma_capture_mic = DMACH_AC97_MICIN,
+>  };
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index e5e91669dd2b..314131a4525d 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -78,6 +78,9 @@ static struct resource s3c_ac97_resource[] = {
+>  };
+>  
+>  static struct s3c_audio_pdata s3c_ac97_pdata = {
+> +#ifdef CONFIG_S3C24XX_DMAC
+> +	.dma_filter = s3c24xx_dma_filter,
+> +#endif
+>  	.dma_playback = (void *)DMACH_PCM_OUT,
+>  	.dma_capture = (void *)DMACH_PCM_IN,
+>  	.dma_capture_mic = (void *)DMACH_MIC_IN,
+> @@ -572,6 +575,9 @@ static struct resource s3c_iis_resource[] = {
+>  };
+>  
+>  static struct s3c_audio_pdata s3c_iis_platdata = {
+> +#ifdef CONFIG_S3C24XX_DMAC
+> +	.dma_filter = s3c24xx_dma_filter,
+> +#endif
+>  	.dma_playback = (void *)DMACH_I2S_OUT,
+>  	.dma_capture = (void *)DMACH_I2S_IN,
+>  };
+> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+> index b93b75bf0a2d..e5ee0ce41054 100644
+> --- a/drivers/dma/Kconfig
+> +++ b/drivers/dma/Kconfig
+> @@ -431,7 +431,7 @@ config STE_DMA40
+>  	  Support for ST-Ericsson DMA40 controller
+>  
+>  config S3C24XX_DMAC
+> -	tristate "Samsung S3C24XX DMA support"
+> +	bool "Samsung S3C24XX DMA support"
+>  	depends on ARCH_S3C24XX
+>  	select DMA_ENGINE
+>  	select DMA_VIRTUAL_CHANNELS
+> diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
+> index 33f88b4479e4..15bf56ee8af7 100644
+> --- a/include/linux/platform_data/asoc-s3c.h
+> +++ b/include/linux/platform_data/asoc-s3c.h
+> @@ -13,6 +13,9 @@
+>   */
+>  #define S3C64XX_AC97_GPD  0
+>  #define S3C64XX_AC97_GPE  1
+> +
+> +#include <linux/dmaengine.h>
+> +
+>  extern void s3c64xx_ac97_setup_gpio(int);
+>  
+>  struct samsung_i2s {
+> @@ -39,6 +42,7 @@ struct samsung_i2s {
+>   */
+>  struct s3c_audio_pdata {
+>  	int (*cfg_gpio)(struct platform_device *);
+> +	dma_filter_fn dma_filter;
+>  	void *dma_playback;
+>  	void *dma_capture;
+>  	void *dma_play_sec;
+> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+> index 3744c9ed5370..78baa26e938b 100644
+> --- a/sound/soc/samsung/Kconfig
+> +++ b/sound/soc/samsung/Kconfig
+> @@ -1,8 +1,6 @@
+>  config SND_SOC_SAMSUNG
+>  	tristate "ASoC support for Samsung"
+>  	depends on (PLAT_SAMSUNG || ARCH_EXYNOS)
+> -	depends on S3C64XX_PL080 || !ARCH_S3C64XX
+> -	depends on S3C24XX_DMAC || !ARCH_S3C24XX
+>  	select SND_SOC_GENERIC_DMAENGINE_PCM
+>  	help
+>  	  Say Y or M if you want to add support for codecs attached to
+> diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+> index 9c5219392460..4a7a503fe13c 100644
+> --- a/sound/soc/samsung/ac97.c
+> +++ b/sound/soc/samsung/ac97.c
+> @@ -388,7 +388,8 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err5;
+>  
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
+> +						 ac97_pdata->dma_filter);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
+>  		goto err5;
+> diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+> index 085ef30f5ca2..a7616cc9b39e 100644
+> --- a/sound/soc/samsung/dma.h
+> +++ b/sound/soc/samsung/dma.h
+> @@ -13,6 +13,7 @@
+>  #define _S3C_AUDIO_H
+>  
+>  #include <sound/dmaengine_pcm.h>
+> +#include <linux/dmaengine.h>
+>  
+>  struct s3c_dma_params {
+>  	void *slave;				/* Channel ID */
+> @@ -25,6 +26,7 @@ struct s3c_dma_params {
+>  void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
+>  				struct s3c_dma_params *playback,
+>  				struct s3c_dma_params *capture);
+> -int samsung_asoc_dma_platform_register(struct device *dev);
+> +int samsung_asoc_dma_platform_register(struct device *dev,
+> +				       dma_filter_fn fn);
+>  
+>  #endif
+> diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
+> index 727008d57d14..063125937311 100644
+> --- a/sound/soc/samsung/dmaengine.c
+> +++ b/sound/soc/samsung/dmaengine.c
+> @@ -28,17 +28,8 @@
+>  
+>  #include "dma.h"
+>  
+> -#ifdef CONFIG_ARCH_S3C64XX
+> -#define filter_fn pl08x_filter_id
+> -#elif defined(CONFIG_ARCH_S3C24XX)
+> -#define filter_fn s3c24xx_dma_filter
+> -#else
+> -#define filter_fn NULL
+> -#endif
+> -
+> -static const struct snd_dmaengine_pcm_config samsung_dmaengine_pcm_config = {
+> +static struct snd_dmaengine_pcm_config samsung_dmaengine_pcm_config = {
+>  	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
+> -	.compat_filter_fn = filter_fn,
+>  };
+>  
+>  void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
+> @@ -67,8 +58,11 @@ void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
+>  }
+>  EXPORT_SYMBOL_GPL(samsung_asoc_init_dma_data);
+>  
+> -int samsung_asoc_dma_platform_register(struct device *dev)
+> +int samsung_asoc_dma_platform_register(struct device *dev,
+> +				       dma_filter_fn filter)
+>  {
+> +	samsung_dmaengine_pcm_config.compat_filter_fn = filter;
+> +
+>  	return devm_snd_dmaengine_pcm_register(dev,
+>  			&samsung_dmaengine_pcm_config,
+>  			SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME |
+> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+> index 0945b5de39e7..5a4133b6e6a6 100644
+> --- a/sound/soc/samsung/i2s.c
+> +++ b/sound/soc/samsung/i2s.c
+> @@ -1244,7 +1244,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+>  		if (ret != 0)
+>  			return ret;
+>  
+> -		return samsung_asoc_dma_platform_register(&pdev->dev);
+> +		return samsung_asoc_dma_platform_register(&pdev->dev,
+> +						  i2s_pdata->dma_filter);
+>  	}
 
-For Exynos and S5PV210:
-Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Here (and maybe in other places?) - NULL pointer exception. The pdata is
+NULL on all newer platforms (e.g. all Exynos).
+
+BTW, later there is even check for NULL pdata which is pointed also by
+Smatch.
 
 Best regards,
 Krzysztof
 
->  arch/arm/mach-shmobile/Kconfig   |  4 ++--
->  arch/arm/mach-socfpga/Kconfig    |  3 ++-
->  arch/arm/mach-spear/Kconfig      |  3 ++-
->  arch/arm/mach-sti/Kconfig        |  3 ++-
->  arch/arm/mach-sunxi/Kconfig      |  3 ++-
->  arch/arm/mach-tegra/Kconfig      |  3 ++-
->  arch/arm/mach-u300/Kconfig       |  4 ++--
->  arch/arm/mach-ux500/Kconfig      |  4 ++--
->  arch/arm/mach-vexpress/Kconfig   |  3 ++-
->  arch/arm/mach-zx/Kconfig         |  3 ++-
->  arch/arm/mach-zynq/Kconfig       |  3 ++-
->  32 files changed, 110 insertions(+), 58 deletions(-)
+>  
+>  	pri_dai = i2s_alloc_dai(pdev, false);
+> @@ -1348,7 +1349,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+>  
+>  	pm_runtime_enable(&pdev->dev);
+>  
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
+> +					i2s_pdata->dma_filter);
+>  	if (ret != 0)
+>  		return ret;
+>  
+> diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+> index b5ee054dddc9..e188f2e7d7fd 100644
+> --- a/sound/soc/samsung/pcm.c
+> +++ b/sound/soc/samsung/pcm.c
+> @@ -571,7 +571,8 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
+>  		goto err5;
+>  	}
+>  
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
+> +						 pcm_pdata->dma_filter);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
+>  		goto err5;
+> diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
+> index 455a0be2278e..b926002d71b2 100644
+> --- a/sound/soc/samsung/s3c2412-i2s.c
+> +++ b/sound/soc/samsung/s3c2412-i2s.c
+> @@ -25,7 +25,6 @@
+>  #include <sound/soc.h>
+>  #include <sound/pcm_params.h>
+>  
+> -#include <mach/dma.h>
+>  #include <mach/gpio-samsung.h>
+>  #include <plat/gpio-cfg.h>
+>  
+> @@ -172,7 +171,8 @@ static int s3c2412_iis_dev_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
+> +						 pdata->dma_filter);
+>  	if (ret)
+>  		pr_err("failed to register the DMA: %d\n", ret);
+>  
+> diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+> index 807dcc0d7421..580072f21055 100644
+> --- a/sound/soc/samsung/s3c24xx-i2s.c
+> +++ b/sound/soc/samsung/s3c24xx-i2s.c
+> @@ -23,7 +23,6 @@
+>  #include <sound/soc.h>
+>  #include <sound/pcm_params.h>
+>  
+> -#include <mach/dma.h>
+>  #include <mach/gpio-samsung.h>
+>  #include <plat/gpio-cfg.h>
+>  #include "regs-iis.h"
+> @@ -477,7 +476,8 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
+> +						 pdata->dma_filter);
+>  	if (ret)
+>  		pr_err("failed to register the dma: %d\n", ret);
+>  
+> diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
+> index 087d49d1787c..2069d2008033 100644
+> --- a/sound/soc/samsung/spdif.c
+> +++ b/sound/soc/samsung/spdif.c
+> @@ -430,7 +430,8 @@ static int spdif_probe(struct platform_device *pdev)
+>  
+>  	spdif->dma_playback = &spdif_stereo_out;
+>  
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
+> +						 spdif_pdata->dma_filter);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to register DMA: %d\n", ret);
+>  		goto err4;
+> 
 > 
