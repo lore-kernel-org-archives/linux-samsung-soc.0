@@ -1,77 +1,36 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 14/27] mtd: nand: use the mtd instance embedded in struct
- nand_chip
-Date: Tue, 17 Nov 2015 10:05:03 +0100 (CET)
-Message-ID: <alpine.DEB.2.10.1511170957100.2455@hadrien>
-References: <1447681080-31232-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447681080-31232-15-git-send-email-boris.brezillon@free-electrons.com>
- <20151117030019.GY8456@google.com> <20151117093836.052c86b5@bbrezillon>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH v2 3/3] [media] include/media: move platform_data to
+ linux/platform_data/media
+Date: Tue, 17 Nov 2015 07:16:56 -0200
+Message-ID: <20151117071656.498013a9@recife.lan>
+References: <013152dcb3d4eaddd39aa4a37868430567bdc2d6.1447671420.git.mchehab@osg.samsung.com>
+	<b8bd73bedde742571b1ab8a7c0917a732dbf2ca1.1447671420.git.mchehab@osg.samsung.com>
+	<4084946.Zz4s9XrKbs@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20151117093836.052c86b5@bbrezillon>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-doc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Stefan Agner <stefan@agner.ch>, linux-sunxi@googlegroups.com, linux-mtd@lists.infradead.org, Robert Jarzmik <robert.jarzmik@free.fr>, Alexander Clouter <alex@digriz.org.uk>, devel@driverdev.osuosl.org, Jesper Nilsson <jesper.nilsson@axis.com>, linux-samsung-soc@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Marek Vasut <marek.vasut@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Josh Wu <josh.wu@atmel.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Wan ZongShun <mcuos.com@gmail.com>, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ha
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <4084946.Zz4s9XrKbs@wuerfel>
+Sender: linux-doc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hverkuil@xs4all.nl>, Eduardo Valentin <edubezval@gmail.com>, Lee Jones <lee.jones@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vinod Koul <vinod.koul@intel.com>Kuninori Morimoto <k>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> > (This isn't the worst one, but it just happens to be one of the first.)
-> > There are many cases where the typical style would be to declare a new
-> > variable at the top of the function, where you perform the
-> > macro/function-call to convert from one abstraction to another. Like
-> >
-> > static int nfc_set_sram_bank(struct atmel_nand_host *host, unsigned int bank)
-> > {
-> > 	struct mtd_info *mtd = nand_to_mtd(&hot->nand_chip);
-> > 	...
-> >
-> > and then use it later. Can that be done very easily?
-> >
-> > >  			return -EINVAL;
-> > >  		nfc_writel(host->nfc->hsmc_regs, BANK, ATMEL_HSMC_NFC_BANK1);
-> > >  	} else {
-> >
-> > ...
->
-> Honestly, I don't know how to do that with a coccinelle script, and it
-> will probably take me more time to find how to do it than addressing
-> those problems manually.
->
-> Julia, could you give us some hint?
+Em Mon, 16 Nov 2015 13:28:10 +0100
+Arnd Bergmann <arnd@arndb.de> escreveu:
 
-Probably something like the following would be easiest.  You can just run
-it after your other transformations:
+> I think we can also move some of the existing platform data headers to the same
+> place, but that could be a separate patch:
+> 
+> $ git grep linux/platform_data drivers/media/
+> drivers/media/platform/coda/coda-common.c:#include <linux/platform_data/coda.h>
+> drivers/media/platform/soc_camera/mx2_camera.c:#include <linux/platform_data/camera-mx2.h>
+> drivers/media/platform/soc_camera/mx3_camera.c:#include <linux/platform_data/camera-mx3.h>
+> drivers/media/platform/soc_camera/mx3_camera.c:#include <linux/platform_data/dma-imx.h>
+> drivers/media/platform/soc_camera/pxa_camera.c:#include <linux/platform_data/camera-pxa.h>
+> drivers/media/platform/soc_camera/rcar_vin.c:#include <linux/platform_data/camera-rcar.h>
 
-@r exists@
-identifier f;
-expression e;
-@@
+Fair enough. Just sent a separate patch to address that.
 
-f(...) { <+...  nand_to_mtd(e) ...+> }
-
-@@
-identifier r.f;
-expression r.e;
-@@
-
-f(...) {
-+ struct mtd_info *mtd = nand_to_mtd(e);
-...
-}
-
-This won't work if there is more than one possible value of e.  If that is
-likely, then I could come up with something more complex.  It also assumes
-that you want to convert all such calls.  If you only want to convert calls
-that occur in a particular context, eg a field reference, then you could
-enhance the pattern inside the <+... ...+> in the first rule.
-
-julia
+Regards,
+Mauro
