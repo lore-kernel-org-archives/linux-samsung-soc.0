@@ -1,57 +1,39 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH 18/27] mtd: nand: update mtd_to_nand()
-Date: Mon, 16 Nov 2015 19:03:53 -0800
-Message-ID: <20151117030353.GZ8456@google.com>
-References: <1447681080-31232-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447681080-31232-19-git-send-email-boris.brezillon@free-electrons.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 02/16] dt-bindings: remove deprecated compatible string
+ from exynos-hdmi
+Date: Tue, 17 Nov 2015 12:40:26 +0900
+Message-ID: <CAJKOXPfojLMoq=nwfOVmZ_eiM-aoSx8-ULJ_ExS0gWNXWRJnkQ@mail.gmail.com>
+References: <1443185309-13827-1-git-send-email-a.hajda@samsung.com>
+ <1443185309-13827-3-git-send-email-a.hajda@samsung.com>
+ <20150930143616.GE21618@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f65.google.com ([209.85.220.65]:36853 "EHLO
-	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbbKQDD5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Nov 2015 22:03:57 -0500
-Content-Disposition: inline
-In-Reply-To: <1447681080-31232-19-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150930143616.GE21618@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Alexander Clouter <alex@digriz.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Marek
 
-On Mon, Nov 16, 2015 at 02:37:51PM +0100, Boris Brezillon wrote:
-> Now that all drivers are using the mtd instance embedded in the nand_chip
-
-Do you have a script that verifies this? I thought you did at some
-point, and it'd be nice to note it, so I can also use it to verify
-things once it gets applied.
-
-> struct we can safely update the mtd_to_nand_chip() implementation to use
-
-Nit: s/mtd_to_nand_chip/mtd_to_nand/
-
-> the container_of macro instead of returning the content of mtd->priv.
-> This will allow us to remove mtd->priv = chip assignments done in all
-> NAND controller drivers.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
->  include/linux/mtd/nand.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mtd/nand.h b/include/linux/mtd/nand.h
-> index 8ec071e..873646d 100644
-> --- a/include/linux/mtd/nand.h
-> +++ b/include/linux/mtd/nand.h
-> @@ -734,7 +734,7 @@ static inline struct device_node *nand_get_flash_node(struct nand_chip *chip)
->  
->  static inline struct nand_chip *mtd_to_nand(struct mtd_info *mtd)
->  {
-> -	return mtd->priv;
-> +	return container_of(mtd, struct nand_chip, mtd);
->  }
->  
->  static inline struct mtd_info *nand_to_mtd(struct nand_chip *chip)
-> -- 
-> 2.1.4
-> 
+MjAxNS0wOS0zMCAyMzozNiBHTVQrMDk6MDAgR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvQHBhZG92
+YW4ub3JnPjoKPiBIaSBBbmRyemVqLAo+Cj4gMjAxNS0wOS0yNSBBbmRyemVqIEhhamRhIDxhLmhh
+amRhQHNhbXN1bmcuY29tPjoKPgo+PiBzYW1zdW5nLGV4eW5vczUtaGRtaSBjb21wYXRpYmxlIHdh
+cyBtYXJrZWQgYXMgZGVwcmVjYXRlZCBpbiBKdW4gMjAxMy4KPj4gSXQgd2FzIG5ldmVyIHVzZWQg
+c2luY2UgdGhlbi4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBz
+YW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+dmlkZW8vZXh5bm9zX2hkbWkudHh0IHwgNyArKystLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgMyBp
+bnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+Cj4gUmV2aWV3ZWQtYnk6IEd1c3Rhdm8gUGFk
+b3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KCkhpIEFuZHJ6ZWosCgpZb3Ug
+YXNrZWQgbWUgdG8gdGFrZSB0aGlzIHBhdGNoIGJ1dCB1bmZvcnR1bmF0ZWx5IGl0IG5vIGxvbmdl
+cgphcHBsaWVzLiBDYW4geW91IHJlYmFzZSBpdCBvbiA0LjQtcmMxPwoKQmVzdCByZWdhcmRzLApL
+cnp5c3p0b2YKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
