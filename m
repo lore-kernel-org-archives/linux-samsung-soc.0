@@ -1,157 +1,138 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/3] ASoC: s3c24xx-i2s: pass DMA channels as platform data
-Date: Tue, 17 Nov 2015 10:36:46 +0900
-Message-ID: <564A84AE.2000502@samsung.com>
-References: <5466463.9HBcuLFGQf@wuerfel> <4171669.Y8FyLG5WLL@wuerfel>
+Subject: Re: [PATCH] cpufreq: do not mark s3c2410_plls_add as __init
+Date: Tue, 17 Nov 2015 10:57:48 +0900
+Message-ID: <564A899C.4040402@samsung.com>
+References: <8497197.sYxqVOch7s@wuerfel> <28389377.zxoR5rtJ13@vostro.rjw.lan>
+ <4389196.cuM78vZZnJ@wuerfel>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary=------------080504020908010100070006
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <4389196.cuM78vZZnJ@wuerfel>
+Sender: linux-pm-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------080504020908010100070006
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:32484 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750797AbbKQBgy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Nov 2015 20:36:54 -0500
-In-reply-to: <4171669.Y8FyLG5WLL@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vinod Koul <vinod.koul@intel.com>, Ben Dooks <ben-linux@fluff.org>
 
-On 14.11.2015 02:23, Arnd Bergmann wrote:
-> This is a minor cleanup to make the s3c2412-i2s and s3c24xx-i2s
-> drivers independent of the mach/dma.h header file and to allow
-> removing the dependency on the specific dmaengine driver in the
-> next patch.
+On 17.11.2015 07:17, Arnd Bergmann wrote:
+> On Monday 16 November 2015 23:36:42 Rafael J. Wysocki wrote:
+>>
+>> This should go in through the Samsung tree, so I'll leave it for them to pick
+>> it up (at least for the time being).
 > 
-> As a side not, only the s3c24xx-i2s driver seems to still be
-> used, while the definition of the s3c2412-i2s platform device was
-> removed in commit 6d259a25b56d ("ARM: SAMSUNG: use static
-> declaration when it is not used in other files") after it had
-> never been referenced since its introduction in f0fba2ad1b6b
-> ("ASoC: multi-component - ASoC Multi-Component Support").
-> 
-> Apparently it should have been used by mach-jive.c, but that
-> never happened. My patch at this point leaves the current state
-> unchanged, we can decide whether to fix or delete the jive
-> driver and s3c2412-i2s another time.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 3ce234f4c872..e5e91669dd2b 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -571,6 +571,11 @@ static struct resource s3c_iis_resource[] = {
->  	[0] = DEFINE_RES_MEM(S3C24XX_PA_IIS, S3C24XX_SZ_IIS),
->  };
->  
-> +static struct s3c_audio_pdata s3c_iis_platdata = {
-> +	.dma_playback = (void *)DMACH_I2S_OUT,
-> +	.dma_capture = (void *)DMACH_I2S_IN,
+> Ok, fair enough. Kukjin or Krzysztof, can you pick this up?
 
-Why casting? Is it needed?
+Sure.
 
-> +};
-> +
->  struct platform_device s3c_device_iis = {
->  	.name		= "s3c24xx-iis",
->  	.id		= -1,
-> @@ -579,6 +584,7 @@ struct platform_device s3c_device_iis = {
->  	.dev		= {
->  		.dma_mask		= &samsung_device_dma_mask,
->  		.coherent_dma_mask	= DMA_BIT_MASK(32),
-> +		.platform_data		= &s3c_iis_platdata,
->  	}
->  };
->  #endif /* CONFIG_PLAT_S3C24XX */
-> diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
-> index 77d27c85a32a..455a0be2278e 100644
-> --- a/sound/soc/samsung/s3c2412-i2s.c
-> +++ b/sound/soc/samsung/s3c2412-i2s.c
-> @@ -33,14 +33,14 @@
->  #include "regs-i2s-v2.h"
->  #include "s3c2412-i2s.h"
->  
-> +#include <linux/platform_data/asoc-s3c.h.h>
-> +
->  static struct s3c_dma_params s3c2412_i2s_pcm_stereo_out = {
-> -	.slave		= (void *)(uintptr_t)DMACH_I2S_OUT,
->  	.ch_name	= "tx",
->  	.dma_size	= 4,
->  };
->  
->  static struct s3c_dma_params s3c2412_i2s_pcm_stereo_in = {
-> -	.slave		= (void *)(uintptr_t)DMACH_I2S_IN,
->  	.ch_name	= "rx",
->  	.dma_size	= 4,
->  };
-> @@ -152,6 +152,7 @@ static int s3c2412_iis_dev_probe(struct platform_device *pdev)
->  {
->  	int ret = 0;
->  	struct resource *res;
-> +	struct s3c_audio_pdata *pdata = dev_get_platdata(&pdev->dev);
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	s3c2412_i2s.regs = devm_ioremap_resource(&pdev->dev, res);
-> @@ -159,7 +160,9 @@ static int s3c2412_iis_dev_probe(struct platform_device *pdev)
->  		return PTR_ERR(s3c2412_i2s.regs);
->  
->  	s3c2412_i2s_pcm_stereo_out.dma_addr = res->start + S3C2412_IISTXD;
-> +	s3c2412_i2s_pcm_stereo_out.slave = pdata->dma_playback;
->  	s3c2412_i2s_pcm_stereo_in.dma_addr = res->start + S3C2412_IISRXD;
-> +	s3c2412_i2s_pcm_stereo_in.slave = pdata->dma_capture;
->  
->  	ret = s3c_i2sv2_register_component(&pdev->dev, -1,
->  					   &s3c2412_i2s_component,
-> diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-> index 9da3a77ea2c7..807dcc0d7421 100644
-> --- a/sound/soc/samsung/s3c24xx-i2s.c
-> +++ b/sound/soc/samsung/s3c24xx-i2s.c
-> @@ -31,14 +31,14 @@
->  #include "dma.h"
->  #include "s3c24xx-i2s.h"
->  
-> +#include <linux/platform_data/asoc-s3c.h>
-> +
->  static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_out = {
-> -	.slave		= (void *)(uintptr_t)DMACH_I2S_OUT,
->  	.ch_name	= "tx",
->  	.dma_size	= 2,
->  };
->  
->  static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_in = {
-> -	.slave		= (void *)(uintptr_t)DMACH_I2S_IN,
->  	.ch_name	= "rx",
->  	.dma_size	= 2,
->  };
-> @@ -454,6 +454,7 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
->  {
->  	int ret = 0;
->  	struct resource *res;
-> +	struct s3c_audio_pdata *pdata = dev_get_platdata(&pdev->dev);
-
-Maybe:
-if (!pdata) {
-	pr_err("bla bla bla");
-	return -EINVAL;
-}
+As for the patch I think everything can be converted to init/initdata
+(as in attachment).
 
 Best regards,
 Krzysztof
 
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (!res) {
-> @@ -465,7 +466,9 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
->  		return PTR_ERR(s3c24xx_i2s.regs);
->  
->  	s3c24xx_i2s_pcm_stereo_out.dma_addr = res->start + S3C2410_IISFIFO;
-> +	s3c24xx_i2s_pcm_stereo_out.slave = pdata->dma_playback;
->  	s3c24xx_i2s_pcm_stereo_in.dma_addr = res->start + S3C2410_IISFIFO;
-> +	s3c24xx_i2s_pcm_stereo_in.slave = pdata->dma_capture;
->  
->  	ret = devm_snd_soc_register_component(&pdev->dev,
->  			&s3c24xx_i2s_component, &s3c24xx_i2s_dai, 1);
-> 
-> 
+
+
+
+--------------080504020908010100070006
+Content-Type: text/x-patch;
+ name="init_data.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="init_data.patch"
+
+diff --git a/arch/arm/mach-s3c24xx/pll-s3c2410.c b/arch/arm/mach-s3c24xx/pll-s3c2410.c
+index 5e37d368594b..d9fd5319379b 100644
+--- a/arch/arm/mach-s3c24xx/pll-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/pll-s3c2410.c
+@@ -65,12 +65,12 @@ static struct cpufreq_frequency_table pll_vals_12MHz[] = {
+     { .frequency = 270000000, .driver_data = PLLVAL(127, 1, 1),  },
+ };
+ 
+-static int s3c2410_plls_add(struct device *dev, struct subsys_interface *sif)
++static int __init s3c2410_plls_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	return s3c_plltab_register(pll_vals_12MHz, ARRAY_SIZE(pll_vals_12MHz));
+ }
+ 
+-static struct subsys_interface s3c2410_plls_interface = {
++static struct subsys_interface s3c2410_plls_interface __initdata = {
+ 	.name		= "s3c2410_plls",
+ 	.subsys		= &s3c2410_subsys,
+ 	.add_dev	= s3c2410_plls_add,
+@@ -83,7 +83,7 @@ static int __init s3c2410_pll_init(void)
+ }
+ arch_initcall(s3c2410_pll_init);
+ 
+-static struct subsys_interface s3c2410a_plls_interface = {
++static struct subsys_interface s3c2410a_plls_interface __initdata = {
+ 	.name		= "s3c2410a_plls",
+ 	.subsys		= &s3c2410a_subsys,
+ 	.add_dev	= s3c2410_plls_add,
+diff --git a/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+index a19460e6e7b0..01958230cf2f 100644
+--- a/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
++++ b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+@@ -50,7 +50,7 @@ static struct cpufreq_frequency_table s3c2440_plls_12[] __initdata = {
+ 	{ .frequency = 400000000,	.driver_data = PLLVAL(0x5c, 1, 1),  }, 	/* FVco 800.000000 */
+ };
+ 
+-static int s3c2440_plls12_add(struct device *dev, struct subsys_interface *sif)
++static int __init s3c2440_plls12_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	struct clk *xtal_clk;
+ 	unsigned long xtal;
+@@ -71,7 +71,7 @@ static int s3c2440_plls12_add(struct device *dev, struct subsys_interface *sif)
+ 	return 0;
+ }
+ 
+-static struct subsys_interface s3c2440_plls12_interface = {
++static struct subsys_interface s3c2440_plls12_interface __initdata = {
+ 	.name		= "s3c2440_plls12",
+ 	.subsys		= &s3c2440_subsys,
+ 	.add_dev	= s3c2440_plls12_add,
+@@ -84,7 +84,7 @@ static int __init s3c2440_pll_12mhz(void)
+ }
+ arch_initcall(s3c2440_pll_12mhz);
+ 
+-static struct subsys_interface s3c2442_plls12_interface = {
++static struct subsys_interface s3c2442_plls12_interface __initdata = {
+ 	.name		= "s3c2442_plls12",
+ 	.subsys		= &s3c2442_subsys,
+ 	.add_dev	= s3c2440_plls12_add,
+diff --git a/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+index 1191b2905625..db9f476ab581 100644
+--- a/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
++++ b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+@@ -78,7 +78,7 @@ static struct cpufreq_frequency_table s3c2440_plls_169344[] __initdata = {
+ 	{ .frequency = 402192000,	.driver_data = PLLVAL(87, 2, 1), 	}, 	/* FVco 804.384000 */
+ };
+ 
+-static int s3c2440_plls169344_add(struct device *dev,
++static int __init s3c2440_plls169344_add(struct device *dev,
+ 				  struct subsys_interface *sif)
+ {
+ 	struct clk *xtal_clk;
+@@ -100,7 +100,7 @@ static int s3c2440_plls169344_add(struct device *dev,
+ 	return 0;
+ }
+ 
+-static struct subsys_interface s3c2440_plls169344_interface = {
++static struct subsys_interface s3c2440_plls169344_interface __initdata  = {
+ 	.name		= "s3c2440_plls169344",
+ 	.subsys		= &s3c2440_subsys,
+ 	.add_dev	= s3c2440_plls169344_add,
+@@ -112,7 +112,7 @@ static int __init s3c2440_pll_16934400(void)
+ }
+ arch_initcall(s3c2440_pll_16934400);
+ 
+-static struct subsys_interface s3c2442_plls169344_interface = {
++static struct subsys_interface s3c2442_plls169344_interface __initdata = {
+ 	.name		= "s3c2442_plls169344",
+ 	.subsys		= &s3c2442_subsys,
+ 	.add_dev	= s3c2440_plls169344_add,
+
+--------------080504020908010100070006--
