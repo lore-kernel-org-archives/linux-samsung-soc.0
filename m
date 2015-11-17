@@ -1,345 +1,582 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] ASoC: samsung: pass filter function as pointer
-Date: Tue, 17 Nov 2015 09:45:26 +0900
-Message-ID: <564A78A6.9010501@samsung.com>
-References: <5466463.9HBcuLFGQf@wuerfel> <8896684.3di3I3vzeA@wuerfel>
+Subject: Re: [PATCH 1/3] ASoC: samsung: pass DMA channels as pointers
+Date: Tue, 17 Nov 2015 10:16:36 +0900
+Message-ID: <564A7FF4.7030603@samsung.com>
+References: <5466463.9HBcuLFGQf@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <8896684.3di3I3vzeA@wuerfel>
+In-reply-to: <5466463.9HBcuLFGQf@wuerfel>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vinod Koul <vinod.koul@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vinod Koul <vinod.koul@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 14.11.2015 02:24, Arnd Bergmann wrote:
-> As we are now passing the filter data as pointers to the drivers,
-> we can take the final step and also pass the filter function the
-> same way. I'm keeping this change separate, as there it's less
-> obvious that this is a net win.
+On 14.11.2015 02:22, Arnd Bergmann wrote:
+> ARM64 allmodconfig produces a bunch of warnings when building the
+> samsung ASoC code:
 > 
-> Upsides of this are:
+> sound/soc/samsung/dmaengine.c: In function 'samsung_asoc_init_dma_data':
+> sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>    playback_data->filter_data = (void *)playback->channel;
+> sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>    capture_data->filter_data = (void *)capture->channel;
 > 
-> - The ASoC drivers are completely independent from the DMA engine
->   implementation, which simplifies the Kconfig logic and in theory
->   allows the same sound drivers to be built in a kernel that supports
->   different kinds of dmaengine drivers.
+> We could easily shut up the warning by adding an intermediate cast,
+> but there is a bigger underlying problem: The use of IORESOURCE_DMA
+> to pass data from platform code to device drivers is dubious to start
+> with, as what we really want is a pointer that can be passed into
+> a filter function.
 > 
-> - Consistency with other subsystems and drivers
-> 
-> On the other hand, we have a few downsides:
-> 
-> - The s3c24xx-dma driver now needs to be built-in for the ac97 platform
->   device to be instantiated on s3c2440.
-> 
-> - samsung_dmaengine_pcm_config cannot be marked 'const' any more
->   because the filter function pointer needs to be set at runtime.
->   This is safe as long we don't have multiple different DMA engines
->   in thet same system at runtime, but is nonetheless ugly.
+> Note that on s3c64xx, the pl08x DMA data is already a pointer, but
+> gets cast to resource_size_t so we can pass it as a resource, and it
+> then gets converted back to a pointer. In contrast, the data we pass
+> for s3c24xx is an index into a device specific table, and we artificially
+> convert that into a pointer for the filter function.
 > 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+The patch looks good. I have only two questions below.
+
 > 
 > diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-> index 9a42736ef4ac..b57783371d52 100644
+> index ff780a8d8366..9a42736ef4ac 100644
 > --- a/arch/arm/mach-s3c64xx/dev-audio.c
 > +++ b/arch/arm/mach-s3c64xx/dev-audio.c
-> @@ -58,6 +58,7 @@ static struct resource s3c64xx_iis0_resource[] = {
+> @@ -54,12 +54,12 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
 >  
->  static struct s3c_audio_pdata i2s0_pdata = {
->  	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
-> +	.dma_filter = pl08x_filter_id,
->  	.dma_playback = DMACH_I2S0_OUT,
->  	.dma_capture = DMACH_I2S0_IN,
+>  static struct resource s3c64xx_iis0_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C64XX_PA_IIS0, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_I2S0_OUT),
+> -	[2] = DEFINE_RES_DMA(DMACH_I2S0_IN),
 >  };
-> @@ -79,6 +80,7 @@ static struct resource s3c64xx_iis1_resource[] = {
 >  
->  static struct s3c_audio_pdata i2s1_pdata = {
+> -static struct s3c_audio_pdata i2sv3_pdata = {
+> +static struct s3c_audio_pdata i2s0_pdata = {
 >  	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
-> +	.dma_filter = pl08x_filter_id,
->  	.dma_playback = DMACH_I2S1_OUT,
->  	.dma_capture = DMACH_I2S1_IN,
+> +	.dma_playback = DMACH_I2S0_OUT,
+> +	.dma_capture = DMACH_I2S0_IN,
 >  };
-> @@ -100,6 +102,7 @@ static struct resource s3c64xx_iisv4_resource[] = {
+>  
+>  struct platform_device s3c64xx_device_iis0 = {
+> @@ -68,15 +68,19 @@ struct platform_device s3c64xx_device_iis0 = {
+>  	.num_resources	  = ARRAY_SIZE(s3c64xx_iis0_resource),
+>  	.resource	  = s3c64xx_iis0_resource,
+>  	.dev = {
+> -		.platform_data = &i2sv3_pdata,
+> +		.platform_data = &i2s0_pdata,
+>  	},
+>  };
+>  EXPORT_SYMBOL(s3c64xx_device_iis0);
+>  
+>  static struct resource s3c64xx_iis1_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C64XX_PA_IIS1, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_I2S1_OUT),
+> -	[2] = DEFINE_RES_DMA(DMACH_I2S1_IN),
+> +};
+> +
+> +static struct s3c_audio_pdata i2s1_pdata = {
+> +	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
+> +	.dma_playback = DMACH_I2S1_OUT,
+> +	.dma_capture = DMACH_I2S1_IN,
+>  };
+>  
+>  struct platform_device s3c64xx_device_iis1 = {
+> @@ -85,19 +89,19 @@ struct platform_device s3c64xx_device_iis1 = {
+>  	.num_resources	  = ARRAY_SIZE(s3c64xx_iis1_resource),
+>  	.resource	  = s3c64xx_iis1_resource,
+>  	.dev = {
+> -		.platform_data = &i2sv3_pdata,
+> +		.platform_data = &i2s1_pdata,
+>  	},
+>  };
+>  EXPORT_SYMBOL(s3c64xx_device_iis1);
+>  
+>  static struct resource s3c64xx_iisv4_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C64XX_PA_IISV4, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_HSI_I2SV40_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_HSI_I2SV40_RX),
+>  };
 >  
 >  static struct s3c_audio_pdata i2sv4_pdata = {
 >  	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
-> +	.dma_filter = pl08x_filter_id,
->  	.dma_playback = DMACH_HSI_I2SV40_TX,
->  	.dma_capture = DMACH_HSI_I2SV40_RX,
+> +	.dma_playback = DMACH_HSI_I2SV40_TX,
+> +	.dma_capture = DMACH_HSI_I2SV40_RX,
 >  	.type = {
-> @@ -150,6 +153,7 @@ static struct resource s3c64xx_pcm0_resource[] = {
+>  		.i2s = {
+>  			.quirks = QUIRK_PRI_6CHAN,
+> @@ -142,12 +146,12 @@ static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
+>  
+>  static struct resource s3c64xx_pcm0_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C64XX_PA_PCM0, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_PCM0_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_PCM0_RX),
+>  };
 >  
 >  static struct s3c_audio_pdata s3c_pcm0_pdata = {
 >  	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
-> +	.dma_filter = pl08x_filter_id,
->  	.dma_capture = DMACH_PCM0_RX,
->  	.dma_playback = DMACH_PCM0_TX,
+> +	.dma_capture = DMACH_PCM0_RX,
+> +	.dma_playback = DMACH_PCM0_TX,
 >  };
-> @@ -171,6 +175,7 @@ static struct resource s3c64xx_pcm1_resource[] = {
+>  
+>  struct platform_device s3c64xx_device_pcm0 = {
+> @@ -163,12 +167,12 @@ EXPORT_SYMBOL(s3c64xx_device_pcm0);
+>  
+>  static struct resource s3c64xx_pcm1_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C64XX_PA_PCM1, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_PCM1_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_PCM1_RX),
+>  };
 >  
 >  static struct s3c_audio_pdata s3c_pcm1_pdata = {
 >  	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
-> +	.dma_filter = pl08x_filter_id,
->  	.dma_playback = DMACH_PCM1_TX,
->  	.dma_capture = DMACH_PCM1_RX,
+> +	.dma_playback = DMACH_PCM1_TX,
+> +	.dma_capture = DMACH_PCM1_RX,
 >  };
-> @@ -205,6 +210,7 @@ static struct resource s3c64xx_ac97_resource[] = {
 >  
->  static struct s3c_audio_pdata s3c_ac97_pdata = {
->  	.dma_playback = DMACH_AC97_PCMOUT,
-> +	.dma_filter = pl08x_filter_id,
->  	.dma_capture = DMACH_AC97_PCMIN,
->  	.dma_capture_mic = DMACH_AC97_MICIN,
+>  struct platform_device s3c64xx_device_pcm1 = {
+> @@ -196,13 +200,14 @@ static int s3c64xx_ac97_cfg_gpe(struct platform_device *pdev)
+>  
+>  static struct resource s3c64xx_ac97_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C64XX_PA_AC97, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_AC97_PCMOUT),
+> -	[2] = DEFINE_RES_DMA(DMACH_AC97_PCMIN),
+> -	[3] = DEFINE_RES_DMA(DMACH_AC97_MICIN),
+> -	[4] = DEFINE_RES_IRQ(IRQ_AC97),
+> +	[1] = DEFINE_RES_IRQ(IRQ_AC97),
 >  };
+>  
+> -static struct s3c_audio_pdata s3c_ac97_pdata;
+> +static struct s3c_audio_pdata s3c_ac97_pdata = {
+> +	.dma_playback = DMACH_AC97_PCMOUT,
+> +	.dma_capture = DMACH_AC97_PCMIN,
+> +	.dma_capture_mic = DMACH_AC97_MICIN,
+> +};
+>  
+>  static u64 s3c64xx_ac97_dmamask = DMA_BIT_MASK(32);
+>  
+> diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
+> index 096e14073bd9..7a277dc15274 100644
+> --- a/arch/arm/mach-s3c64xx/include/mach/dma.h
+> +++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
+> @@ -11,41 +11,39 @@
+>  #ifndef __ASM_ARCH_DMA_H
+>  #define __ASM_ARCH_DMA_H __FILE__
+>  
+> -#define S3C64XX_DMA_CHAN(name)		((unsigned long)(name))
+> -
+>  /* DMA0/SDMA0 */
+> -#define DMACH_UART0		S3C64XX_DMA_CHAN("uart0_tx")
+> -#define DMACH_UART0_SRC2	S3C64XX_DMA_CHAN("uart0_rx")
+> -#define DMACH_UART1		S3C64XX_DMA_CHAN("uart1_tx")
+> -#define DMACH_UART1_SRC2	S3C64XX_DMA_CHAN("uart1_rx")
+> -#define DMACH_UART2		S3C64XX_DMA_CHAN("uart2_tx")
+> -#define DMACH_UART2_SRC2	S3C64XX_DMA_CHAN("uart2_rx")
+> -#define DMACH_UART3		S3C64XX_DMA_CHAN("uart3_tx")
+> -#define DMACH_UART3_SRC2	S3C64XX_DMA_CHAN("uart3_rx")
+> -#define DMACH_PCM0_TX		S3C64XX_DMA_CHAN("pcm0_tx")
+> -#define DMACH_PCM0_RX		S3C64XX_DMA_CHAN("pcm0_rx")
+> -#define DMACH_I2S0_OUT		S3C64XX_DMA_CHAN("i2s0_tx")
+> -#define DMACH_I2S0_IN		S3C64XX_DMA_CHAN("i2s0_rx")
+> -#define DMACH_SPI0_TX		S3C64XX_DMA_CHAN("spi0_tx")
+> -#define DMACH_SPI0_RX		S3C64XX_DMA_CHAN("spi0_rx")
+> -#define DMACH_HSI_I2SV40_TX	S3C64XX_DMA_CHAN("i2s2_tx")
+> -#define DMACH_HSI_I2SV40_RX	S3C64XX_DMA_CHAN("i2s2_rx")
+> +#define DMACH_UART0		"uart0_tx"
+> +#define DMACH_UART0_SRC2	"uart0_rx"
+> +#define DMACH_UART1		"uart1_tx"
+> +#define DMACH_UART1_SRC2	"uart1_rx"
+> +#define DMACH_UART2		"uart2_tx"
+> +#define DMACH_UART2_SRC2	"uart2_rx"
+> +#define DMACH_UART3		"uart3_tx"
+> +#define DMACH_UART3_SRC2	"uart3_rx"
+> +#define DMACH_PCM0_TX		"pcm0_tx"
+> +#define DMACH_PCM0_RX		"pcm0_rx"
+> +#define DMACH_I2S0_OUT		"i2s0_tx"
+> +#define DMACH_I2S0_IN		"i2s0_rx"
+> +#define DMACH_SPI0_TX		"spi0_tx"
+> +#define DMACH_SPI0_RX		"spi0_rx"
+> +#define DMACH_HSI_I2SV40_TX	"i2s2_tx"
+> +#define DMACH_HSI_I2SV40_RX	"i2s2_rx"
+>  
+>  /* DMA1/SDMA1 */
+> -#define DMACH_PCM1_TX		S3C64XX_DMA_CHAN("pcm1_tx")
+> -#define DMACH_PCM1_RX		S3C64XX_DMA_CHAN("pcm1_rx")
+> -#define DMACH_I2S1_OUT		S3C64XX_DMA_CHAN("i2s1_tx")
+> -#define DMACH_I2S1_IN		S3C64XX_DMA_CHAN("i2s1_rx")
+> -#define DMACH_SPI1_TX		S3C64XX_DMA_CHAN("spi1_tx")
+> -#define DMACH_SPI1_RX		S3C64XX_DMA_CHAN("spi1_rx")
+> -#define DMACH_AC97_PCMOUT	S3C64XX_DMA_CHAN("ac97_out")
+> -#define DMACH_AC97_PCMIN	S3C64XX_DMA_CHAN("ac97_in")
+> -#define DMACH_AC97_MICIN	S3C64XX_DMA_CHAN("ac97_mic")
+> -#define DMACH_PWM		S3C64XX_DMA_CHAN("pwm")
+> -#define DMACH_IRDA		S3C64XX_DMA_CHAN("irda")
+> -#define DMACH_EXTERNAL		S3C64XX_DMA_CHAN("external")
+> -#define DMACH_SECURITY_RX	S3C64XX_DMA_CHAN("sec_rx")
+> -#define DMACH_SECURITY_TX	S3C64XX_DMA_CHAN("sec_tx")
+> +#define DMACH_PCM1_TX		"pcm1_tx"
+> +#define DMACH_PCM1_RX		"pcm1_rx"
+> +#define DMACH_I2S1_OUT		"i2s1_tx"
+> +#define DMACH_I2S1_IN		"i2s1_rx"
+> +#define DMACH_SPI1_TX		"spi1_tx"
+> +#define DMACH_SPI1_RX		"spi1_rx"
+> +#define DMACH_AC97_PCMOUT	"ac97_out"
+> +#define DMACH_AC97_PCMIN	"ac97_in"
+> +#define DMACH_AC97_MICIN	"ac97_mic"
+> +#define DMACH_PWM		"pwm"
+> +#define DMACH_IRDA		"irda"
+> +#define DMACH_EXTERNAL		"external"
+> +#define DMACH_SECURITY_RX	"sec_rx"
+> +#define DMACH_SECURITY_TX	"sec_tx"
+>  
+>  enum dma_ch {
+>  	DMACH_MAX = 32
 > diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index e5e91669dd2b..314131a4525d 100644
+> index 771729b3f102..3ce234f4c872 100644
 > --- a/arch/arm/plat-samsung/devs.c
 > +++ b/arch/arm/plat-samsung/devs.c
-> @@ -78,6 +78,9 @@ static struct resource s3c_ac97_resource[] = {
+> @@ -65,6 +65,7 @@
+>  #include <linux/platform_data/usb-ohci-s3c2410.h>
+>  #include <plat/usb-phy.h>
+>  #include <plat/regs-spi.h>
+> +#include <linux/platform_data/asoc-s3c.h>
+>  #include <linux/platform_data/spi-s3c64xx.h>
+>  
+>  static u64 samsung_device_dma_mask = DMA_BIT_MASK(32);
+> @@ -74,9 +75,12 @@ static u64 samsung_device_dma_mask = DMA_BIT_MASK(32);
+>  static struct resource s3c_ac97_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C2440_PA_AC97, S3C2440_SZ_AC97),
+>  	[1] = DEFINE_RES_IRQ(IRQ_S3C244X_AC97),
+> -	[2] = DEFINE_RES_DMA_NAMED(DMACH_PCM_OUT, "PCM out"),
+> -	[3] = DEFINE_RES_DMA_NAMED(DMACH_PCM_IN, "PCM in"),
+> -	[4] = DEFINE_RES_DMA_NAMED(DMACH_MIC_IN, "Mic in"),
+> +};
+> +
+> +static struct s3c_audio_pdata s3c_ac97_pdata = {
+> +	.dma_playback = (void *)DMACH_PCM_OUT,
+> +	.dma_capture = (void *)DMACH_PCM_IN,
+> +	.dma_capture_mic = (void *)DMACH_MIC_IN,
 >  };
 >  
->  static struct s3c_audio_pdata s3c_ac97_pdata = {
-> +#ifdef CONFIG_S3C24XX_DMAC
-> +	.dma_filter = s3c24xx_dma_filter,
-> +#endif
->  	.dma_playback = (void *)DMACH_PCM_OUT,
->  	.dma_capture = (void *)DMACH_PCM_IN,
->  	.dma_capture_mic = (void *)DMACH_MIC_IN,
-> @@ -572,6 +575,9 @@ static struct resource s3c_iis_resource[] = {
+>  struct platform_device s3c_device_ac97 = {
+> @@ -87,6 +91,7 @@ struct platform_device s3c_device_ac97 = {
+>  	.dev		= {
+>  		.dma_mask		= &samsung_device_dma_mask,
+>  		.coherent_dma_mask	= DMA_BIT_MASK(32),
+> +		.platform_data		= &s3c_ac97_pdata,
+>  	}
+>  };
+>  #endif /* CONFIG_CPU_S3C2440 */
+> @@ -1088,8 +1093,8 @@ struct platform_device s3c_device_wdt = {
+>  #ifdef CONFIG_S3C64XX_DEV_SPI0
+>  static struct resource s3c64xx_spi0_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_SPI0_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_SPI0_RX),
+> +	[1] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI0_TX),
+> +	[2] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI0_RX),
+>  	[3] = DEFINE_RES_IRQ(IRQ_SPI0),
 >  };
 >  
->  static struct s3c_audio_pdata s3c_iis_platdata = {
-> +#ifdef CONFIG_S3C24XX_DMAC
-> +	.dma_filter = s3c24xx_dma_filter,
-> +#endif
->  	.dma_playback = (void *)DMACH_I2S_OUT,
->  	.dma_capture = (void *)DMACH_I2S_IN,
+> @@ -1133,8 +1138,8 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
+>  #ifdef CONFIG_S3C64XX_DEV_SPI1
+>  static struct resource s3c64xx_spi1_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C_PA_SPI1, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_SPI1_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_SPI1_RX),
+> +	[1] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI1_TX),
+> +	[2] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI1_RX),
+>  	[3] = DEFINE_RES_IRQ(IRQ_SPI1),
 >  };
-> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-> index b93b75bf0a2d..e5ee0ce41054 100644
-> --- a/drivers/dma/Kconfig
-> +++ b/drivers/dma/Kconfig
-> @@ -431,7 +431,7 @@ config STE_DMA40
->  	  Support for ST-Ericsson DMA40 controller
 >  
->  config S3C24XX_DMAC
-> -	tristate "Samsung S3C24XX DMA support"
-> +	bool "Samsung S3C24XX DMA support"
->  	depends on ARCH_S3C24XX
->  	select DMA_ENGINE
->  	select DMA_VIRTUAL_CHANNELS
+> @@ -1176,8 +1181,8 @@ void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
+>  #ifdef CONFIG_S3C64XX_DEV_SPI2
+>  static struct resource s3c64xx_spi2_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C_PA_SPI2, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_SPI2_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_SPI2_RX),
+> +	[1] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI2_TX),
+> +	[2] = DEFINE_RES_DMA((uintptr_t)DMACH_SPI2_RX),
+>  	[3] = DEFINE_RES_IRQ(IRQ_SPI2),
+>  };
+>  
 > diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
-> index 33f88b4479e4..15bf56ee8af7 100644
+> index 5e0bc779e6c5..33f88b4479e4 100644
 > --- a/include/linux/platform_data/asoc-s3c.h
 > +++ b/include/linux/platform_data/asoc-s3c.h
-> @@ -13,6 +13,9 @@
->   */
->  #define S3C64XX_AC97_GPD  0
->  #define S3C64XX_AC97_GPE  1
-> +
-> +#include <linux/dmaengine.h>
-> +
->  extern void s3c64xx_ac97_setup_gpio(int);
->  
->  struct samsung_i2s {
-> @@ -39,6 +42,7 @@ struct samsung_i2s {
+> @@ -39,6 +39,10 @@ struct samsung_i2s {
 >   */
 >  struct s3c_audio_pdata {
 >  	int (*cfg_gpio)(struct platform_device *);
-> +	dma_filter_fn dma_filter;
->  	void *dma_playback;
->  	void *dma_capture;
->  	void *dma_play_sec;
-> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-> index 3744c9ed5370..78baa26e938b 100644
-> --- a/sound/soc/samsung/Kconfig
-> +++ b/sound/soc/samsung/Kconfig
-> @@ -1,8 +1,6 @@
->  config SND_SOC_SAMSUNG
->  	tristate "ASoC support for Samsung"
->  	depends on (PLAT_SAMSUNG || ARCH_EXYNOS)
-> -	depends on S3C64XX_PL080 || !ARCH_S3C64XX
-> -	depends on S3C24XX_DMAC || !ARCH_S3C24XX
->  	select SND_SOC_GENERIC_DMAENGINE_PCM
->  	help
->  	  Say Y or M if you want to add support for codecs attached to
+> +	void *dma_playback;
+> +	void *dma_capture;
+> +	void *dma_play_sec;
+> +	void *dma_capture_mic;
+>  	union {
+>  		struct samsung_i2s i2s;
+>  	} type;
 > diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-> index 9c5219392460..4a7a503fe13c 100644
+> index e4145509d63c..9c5219392460 100644
 > --- a/sound/soc/samsung/ac97.c
 > +++ b/sound/soc/samsung/ac97.c
-> @@ -388,7 +388,8 @@ static int s3c_ac97_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err5;
+> @@ -324,7 +324,7 @@ static const struct snd_soc_component_driver s3c_ac97_component = {
 >  
-> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
-> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
-> +						 ac97_pdata->dma_filter);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
->  		goto err5;
+>  static int s3c_ac97_probe(struct platform_device *pdev)
+>  {
+> -	struct resource *mem_res, *dmatx_res, *dmarx_res, *dmamic_res, *irq_res;
+> +	struct resource *mem_res, *irq_res;
+>  	struct s3c_audio_pdata *ac97_pdata;
+>  	int ret;
+>  
+> @@ -335,24 +335,6 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/* Check for availability of necessary resource */
+> -	dmatx_res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+> -	if (!dmatx_res) {
+> -		dev_err(&pdev->dev, "Unable to get AC97-TX dma resource\n");
+> -		return -ENXIO;
+> -	}
+> -
+> -	dmarx_res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+> -	if (!dmarx_res) {
+> -		dev_err(&pdev->dev, "Unable to get AC97-RX dma resource\n");
+> -		return -ENXIO;
+> -	}
+> -
+> -	dmamic_res = platform_get_resource(pdev, IORESOURCE_DMA, 2);
+> -	if (!dmamic_res) {
+> -		dev_err(&pdev->dev, "Unable to get AC97-MIC dma resource\n");
+> -		return -ENXIO;
+> -	}
+> -
+>  	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+>  	if (!irq_res) {
+>  		dev_err(&pdev->dev, "AC97 IRQ not provided!\n");
+> @@ -364,11 +346,11 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+>  	if (IS_ERR(s3c_ac97.regs))
+>  		return PTR_ERR(s3c_ac97.regs);
+>  
+> -	s3c_ac97_pcm_out.channel = dmatx_res->start;
+> +	s3c_ac97_pcm_out.slave = ac97_pdata->dma_playback;
+>  	s3c_ac97_pcm_out.dma_addr = mem_res->start + S3C_AC97_PCM_DATA;
+> -	s3c_ac97_pcm_in.channel = dmarx_res->start;
+> +	s3c_ac97_pcm_in.slave = ac97_pdata->dma_capture;
+>  	s3c_ac97_pcm_in.dma_addr = mem_res->start + S3C_AC97_PCM_DATA;
+> -	s3c_ac97_mic_in.channel = dmamic_res->start;
+> +	s3c_ac97_mic_in.slave = ac97_pdata->dma_capture_mic;
+>  	s3c_ac97_mic_in.dma_addr = mem_res->start + S3C_AC97_MIC_DATA;
+>  
+>  	init_completion(&s3c_ac97.done);
 > diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
-> index 085ef30f5ca2..a7616cc9b39e 100644
+> index 0e85dcfec023..085ef30f5ca2 100644
 > --- a/sound/soc/samsung/dma.h
 > +++ b/sound/soc/samsung/dma.h
-> @@ -13,6 +13,7 @@
->  #define _S3C_AUDIO_H
->  
+> @@ -15,7 +15,7 @@
 >  #include <sound/dmaengine_pcm.h>
-> +#include <linux/dmaengine.h>
 >  
 >  struct s3c_dma_params {
->  	void *slave;				/* Channel ID */
-> @@ -25,6 +26,7 @@ struct s3c_dma_params {
->  void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
->  				struct s3c_dma_params *playback,
->  				struct s3c_dma_params *capture);
-> -int samsung_asoc_dma_platform_register(struct device *dev);
-> +int samsung_asoc_dma_platform_register(struct device *dev,
-> +				       dma_filter_fn fn);
->  
->  #endif
+> -	int channel;				/* Channel ID */
+> +	void *slave;				/* Channel ID */
+>  	dma_addr_t dma_addr;
+>  	int dma_size;			/* Size of the DMA transfer */
+>  	char *ch_name;
 > diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
-> index 727008d57d14..063125937311 100644
+> index 506f5bf6d082..727008d57d14 100644
 > --- a/sound/soc/samsung/dmaengine.c
 > +++ b/sound/soc/samsung/dmaengine.c
-> @@ -28,17 +28,8 @@
+> @@ -50,14 +50,14 @@ void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
 >  
->  #include "dma.h"
->  
-> -#ifdef CONFIG_ARCH_S3C64XX
-> -#define filter_fn pl08x_filter_id
-> -#elif defined(CONFIG_ARCH_S3C24XX)
-> -#define filter_fn s3c24xx_dma_filter
-> -#else
-> -#define filter_fn NULL
-> -#endif
-> -
-> -static const struct snd_dmaengine_pcm_config samsung_dmaengine_pcm_config = {
-> +static struct snd_dmaengine_pcm_config samsung_dmaengine_pcm_config = {
->  	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
-> -	.compat_filter_fn = filter_fn,
->  };
->  
->  void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
-> @@ -67,8 +58,11 @@ void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
->  }
->  EXPORT_SYMBOL_GPL(samsung_asoc_init_dma_data);
->  
-> -int samsung_asoc_dma_platform_register(struct device *dev)
-> +int samsung_asoc_dma_platform_register(struct device *dev,
-> +				       dma_filter_fn filter)
->  {
-> +	samsung_dmaengine_pcm_config.compat_filter_fn = filter;
-> +
->  	return devm_snd_dmaengine_pcm_register(dev,
->  			&samsung_dmaengine_pcm_config,
->  			SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME |
+>  	if (playback) {
+>  		playback_data = &playback->dma_data;
+> -		playback_data->filter_data = (void *)playback->channel;
+> +		playback_data->filter_data = playback->slave;
+>  		playback_data->chan_name = playback->ch_name;
+>  		playback_data->addr = playback->dma_addr;
+>  		playback_data->addr_width = playback->dma_size;
+>  	}
+>  	if (capture) {
+>  		capture_data = &capture->dma_data;
+> -		capture_data->filter_data = (void *)capture->channel;
+> +		capture_data->filter_data = capture->slave;
+>  		capture_data->chan_name = capture->ch_name;
+>  		capture_data->addr = capture->dma_addr;
+>  		capture_data->addr_width = capture->dma_size;
 > diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 0945b5de39e7..5a4133b6e6a6 100644
+> index ea4ab374a223..0945b5de39e7 100644
 > --- a/sound/soc/samsung/i2s.c
 > +++ b/sound/soc/samsung/i2s.c
-> @@ -1244,7 +1244,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
->  		if (ret != 0)
->  			return ret;
+> @@ -1257,27 +1257,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+>  	pri_dai->lock = &pri_dai->spinlock;
 >  
-> -		return samsung_asoc_dma_platform_register(&pdev->dev);
-> +		return samsung_asoc_dma_platform_register(&pdev->dev,
-> +						  i2s_pdata->dma_filter);
->  	}
+>  	if (!np) {
+> -		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+> -		if (!res) {
+> -			dev_err(&pdev->dev,
+> -				"Unable to get I2S-TX dma resource\n");
+> -			return -ENXIO;
+> -		}
+> -		pri_dai->dma_playback.channel = res->start;
+> -
+> -		res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+> -		if (!res) {
+> -			dev_err(&pdev->dev,
+> -				"Unable to get I2S-RX dma resource\n");
+> -			return -ENXIO;
+> -		}
+> -		pri_dai->dma_capture.channel = res->start;
+> -
+>  		if (i2s_pdata == NULL) {
+>  			dev_err(&pdev->dev, "Can't work without s3c_audio_pdata\n");
+>  			return -EINVAL;
+>  		}
+>  
+> +		pri_dai->dma_playback.slave = i2s_pdata->dma_playback;
+> +		pri_dai->dma_capture.slave = i2s_pdata->dma_capture;
+> +
+>  		if (&i2s_pdata->type)
+>  			i2s_cfg = &i2s_pdata->type.i2s;
+>  
+> @@ -1338,11 +1325,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+>  		sec_dai->dma_playback.dma_addr = regs_base + I2STXDS;
+>  		sec_dai->dma_playback.ch_name = "tx-sec";
+>  
+> -		if (!np) {
+> -			res = platform_get_resource(pdev, IORESOURCE_DMA, 2);
+> -			if (res)
+> -				sec_dai->dma_playback.channel = res->start;
+> -		}
+> +		if (!np)
+> +			sec_dai->dma_playback.slave = i2s_pdata->dma_play_sec;
 
-Here (and maybe in other places?) - NULL pointer exception. The pdata is
-NULL on all newer platforms (e.g. all Exynos).
+I cannot this resource in original patch nor setting the 'dma_play_sec'
+part. I guess this does not really matter as newer platforms were
+converted to DT so 'np' will be set, right?
 
-BTW, later there is even check for NULL pdata which is pointed also by
-Smatch.
+>  
+>  		sec_dai->dma_playback.dma_size = 4;
+>  		sec_dai->addr = pri_dai->addr;
+> diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+> index b320a9d3fbf8..b5ee054dddc9 100644
+> --- a/sound/soc/samsung/pcm.c
+> +++ b/sound/soc/samsung/pcm.c
+> @@ -486,7 +486,7 @@ static const struct snd_soc_component_driver s3c_pcm_component = {
+>  static int s3c_pcm_dev_probe(struct platform_device *pdev)
+>  {
+>  	struct s3c_pcm_info *pcm;
+> -	struct resource *mem_res, *dmatx_res, *dmarx_res;
+> +	struct resource *mem_res;
+>  	struct s3c_audio_pdata *pcm_pdata;
+>  	int ret;
+>  
+> @@ -499,18 +499,6 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
+>  	pcm_pdata = pdev->dev.platform_data;
+>  
+>  	/* Check for availability of necessary resource */
+> -	dmatx_res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+> -	if (!dmatx_res) {
+> -		dev_err(&pdev->dev, "Unable to get PCM-TX dma resource\n");
+> -		return -ENXIO;
+> -	}
+> -
+> -	dmarx_res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+> -	if (!dmarx_res) {
+> -		dev_err(&pdev->dev, "Unable to get PCM-RX dma resource\n");
+> -		return -ENXIO;
+> -	}
+> -
+>  	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (!mem_res) {
+>  		dev_err(&pdev->dev, "Unable to get register resource\n");
+> @@ -568,8 +556,8 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
+>  	s3c_pcm_stereo_out[pdev->id].dma_addr = mem_res->start
+>  							+ S3C_PCM_TXFIFO;
+>  
+> -	s3c_pcm_stereo_in[pdev->id].channel = dmarx_res->start;
+> -	s3c_pcm_stereo_out[pdev->id].channel = dmatx_res->start;
+> +	s3c_pcm_stereo_in[pdev->id].slave = pcm_pdata->dma_capture;
+> +	s3c_pcm_stereo_out[pdev->id].slave = pcm_pdata->dma_playback;
+>  
+>  	pcm->dma_capture = &s3c_pcm_stereo_in[pdev->id];
+>  	pcm->dma_playback = &s3c_pcm_stereo_out[pdev->id];
+> diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
+> index 2b766d212ce0..77d27c85a32a 100644
+> --- a/sound/soc/samsung/s3c2412-i2s.c
+> +++ b/sound/soc/samsung/s3c2412-i2s.c
+> @@ -34,13 +34,13 @@
+>  #include "s3c2412-i2s.h"
+>  
+>  static struct s3c_dma_params s3c2412_i2s_pcm_stereo_out = {
+> -	.channel	= DMACH_I2S_OUT,
+> +	.slave		= (void *)(uintptr_t)DMACH_I2S_OUT,
+>  	.ch_name	= "tx",
+>  	.dma_size	= 4,
+>  };
+>  
+>  static struct s3c_dma_params s3c2412_i2s_pcm_stereo_in = {
+> -	.channel	= DMACH_I2S_IN,
+> +	.slave		= (void *)(uintptr_t)DMACH_I2S_IN,
+>  	.ch_name	= "rx",
+>  	.dma_size	= 4,
+>  };
+> diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+> index 5bf723689692..9da3a77ea2c7 100644
+> --- a/sound/soc/samsung/s3c24xx-i2s.c
+> +++ b/sound/soc/samsung/s3c24xx-i2s.c
+> @@ -32,13 +32,13 @@
+>  #include "s3c24xx-i2s.h"
+>  
+>  static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_out = {
+> -	.channel	= DMACH_I2S_OUT,
+> +	.slave		= (void *)(uintptr_t)DMACH_I2S_OUT,
+>  	.ch_name	= "tx",
+>  	.dma_size	= 2,
+>  };
+>  
+>  static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_in = {
+> -	.channel	= DMACH_I2S_IN,
+> +	.slave		= (void *)(uintptr_t)DMACH_I2S_IN,
+>  	.ch_name	= "rx",
+>  	.dma_size	= 2,
+>  };
+> diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
+> index 36dbc0e96004..087d49d1787c 100644
+> --- a/sound/soc/samsung/spdif.c
+> +++ b/sound/soc/samsung/spdif.c
+> @@ -359,7 +359,7 @@ static const struct snd_soc_component_driver samsung_spdif_component = {
+>  static int spdif_probe(struct platform_device *pdev)
+>  {
+>  	struct s3c_audio_pdata *spdif_pdata;
+> -	struct resource *mem_res, *dma_res;
+> +	struct resource *mem_res;
+>  	struct samsung_spdif_info *spdif;
+>  	int ret;
+>  
+> @@ -367,12 +367,6 @@ static int spdif_probe(struct platform_device *pdev)
+>  
+>  	dev_dbg(&pdev->dev, "Entered %s\n", __func__);
+>  
+> -	dma_res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+> -	if (!dma_res) {
+> -		dev_err(&pdev->dev, "Unable to get dma resource.\n");
+> -		return -ENXIO;
+> -	}
+> -
+>  	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (!mem_res) {
+>  		dev_err(&pdev->dev, "Unable to get register resource.\n");
+> @@ -432,7 +426,7 @@ static int spdif_probe(struct platform_device *pdev)
+>  
+>  	spdif_stereo_out.dma_size = 2;
+>  	spdif_stereo_out.dma_addr = mem_res->start + DATA_OUTBUF;
+> -	spdif_stereo_out.channel = dma_res->start;
+> +	spdif_stereo_out.slave = spdif_pdata->dma_playback;
+>  
+>  	spdif->dma_playback = &spdif_stereo_out;
+
+No one sets ioresources and pdata for spdif device. No in-kernel board
+files for it?
 
 Best regards,
 Krzysztof
-
->  
->  	pri_dai = i2s_alloc_dai(pdev, false);
-> @@ -1348,7 +1349,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
->  
->  	pm_runtime_enable(&pdev->dev);
->  
-> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
-> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
-> +					i2s_pdata->dma_filter);
->  	if (ret != 0)
->  		return ret;
->  
-> diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
-> index b5ee054dddc9..e188f2e7d7fd 100644
-> --- a/sound/soc/samsung/pcm.c
-> +++ b/sound/soc/samsung/pcm.c
-> @@ -571,7 +571,8 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
->  		goto err5;
->  	}
->  
-> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
-> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
-> +						 pcm_pdata->dma_filter);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
->  		goto err5;
-> diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
-> index 455a0be2278e..b926002d71b2 100644
-> --- a/sound/soc/samsung/s3c2412-i2s.c
-> +++ b/sound/soc/samsung/s3c2412-i2s.c
-> @@ -25,7 +25,6 @@
->  #include <sound/soc.h>
->  #include <sound/pcm_params.h>
->  
-> -#include <mach/dma.h>
->  #include <mach/gpio-samsung.h>
->  #include <plat/gpio-cfg.h>
->  
-> @@ -172,7 +171,8 @@ static int s3c2412_iis_dev_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
-> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
-> +						 pdata->dma_filter);
->  	if (ret)
->  		pr_err("failed to register the DMA: %d\n", ret);
->  
-> diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-> index 807dcc0d7421..580072f21055 100644
-> --- a/sound/soc/samsung/s3c24xx-i2s.c
-> +++ b/sound/soc/samsung/s3c24xx-i2s.c
-> @@ -23,7 +23,6 @@
->  #include <sound/soc.h>
->  #include <sound/pcm_params.h>
->  
-> -#include <mach/dma.h>
->  #include <mach/gpio-samsung.h>
->  #include <plat/gpio-cfg.h>
->  #include "regs-iis.h"
-> @@ -477,7 +476,8 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
-> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
-> +						 pdata->dma_filter);
->  	if (ret)
->  		pr_err("failed to register the dma: %d\n", ret);
->  
-> diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
-> index 087d49d1787c..2069d2008033 100644
-> --- a/sound/soc/samsung/spdif.c
-> +++ b/sound/soc/samsung/spdif.c
-> @@ -430,7 +430,8 @@ static int spdif_probe(struct platform_device *pdev)
->  
->  	spdif->dma_playback = &spdif_stereo_out;
->  
-> -	ret = samsung_asoc_dma_platform_register(&pdev->dev);
-> +	ret = samsung_asoc_dma_platform_register(&pdev->dev,
-> +						 spdif_pdata->dma_filter);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to register DMA: %d\n", ret);
->  		goto err4;
-> 
-> 
