@@ -1,36 +1,57 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH v2 3/3] [media] include/media: move platform_data to
- linux/platform_data/media
-Date: Tue, 17 Nov 2015 07:16:56 -0200
-Message-ID: <20151117071656.498013a9@recife.lan>
-References: <013152dcb3d4eaddd39aa4a37868430567bdc2d6.1447671420.git.mchehab@osg.samsung.com>
-	<b8bd73bedde742571b1ab8a7c0917a732dbf2ca1.1447671420.git.mchehab@osg.samsung.com>
-	<4084946.Zz4s9XrKbs@wuerfel>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/exynos: only run atomic_check() if crtc is active
+Date: Tue, 17 Nov 2015 11:06:11 +0100
+Message-ID: <20151117100611.GO16848@phenom.ffwll.local>
+References: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
+ <20151112134929.GC645@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <4084946.Zz4s9XrKbs@wuerfel>
-Sender: linux-doc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hverkuil@xs4all.nl>, Eduardo Valentin <edubezval@gmail.com>, Lee Jones <lee.jones@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Jiri Slaby <jslaby@suse.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vinod Koul <vinod.koul@intel.com>Kuninori Morimoto <k>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20151112134929.GC645@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Em Mon, 16 Nov 2015 13:28:10 +0100
-Arnd Bergmann <arnd@arndb.de> escreveu:
-
-> I think we can also move some of the existing platform data headers to the same
-> place, but that could be a separate patch:
-> 
-> $ git grep linux/platform_data drivers/media/
-> drivers/media/platform/coda/coda-common.c:#include <linux/platform_data/coda.h>
-> drivers/media/platform/soc_camera/mx2_camera.c:#include <linux/platform_data/camera-mx2.h>
-> drivers/media/platform/soc_camera/mx3_camera.c:#include <linux/platform_data/camera-mx3.h>
-> drivers/media/platform/soc_camera/mx3_camera.c:#include <linux/platform_data/dma-imx.h>
-> drivers/media/platform/soc_camera/pxa_camera.c:#include <linux/platform_data/camera-pxa.h>
-> drivers/media/platform/soc_camera/rcar_vin.c:#include <linux/platform_data/camera-rcar.h>
-
-Fair enough. Just sent a separate patch to address that.
-
-Regards,
-Mauro
+T24gVGh1LCBOb3YgMTIsIDIwMTUgYXQgMDI6NDk6MjlQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cj4gT24gVGh1LCBOb3YgMTIsIDIwMTUgYXQgMTE6MTE6MjBBTSAtMDIwMCwgR3VzdGF2
+byBQYWRvdmFuIHdyb3RlOgo+ID4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92
+YW5AY29sbGFib3JhLmNvLnVrPgo+ID4gCj4gPiBGaXhlcyBhbiByZWdyZXNzaW9uIGFkZGVkIGJ5
+IDNhZTI0MzYgKGRybS9leHlub3MvbWl4ZXI6IHJlcGxhY2UKPiA+IGRpcmVjdCBjcm9zcy1kcml2
+ZXIgY2FsbCB3aXRoIGRybSBtb2RlKS4gVGhlIHdob2xlIGF0b21pYyB1cGRhdGUKPiA+IHdhcyBm
+YWlsaW5nIGlmIHRoZSBoZG1pIGRpc3BsYXkgaXMgbm90IHByZXNlbnQvYWN0aXZlLiBBZGQgYSB0
+ZXN0Cj4gPiB0byBvbmx5IHJ1biBhdG9taWNfY2hlY2soKSBpZiB0aGUgQ1JUQyBpcyBhY3RpdmUu
+Cj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
+QGNvbGxhYm9yYS5jby51az4KPiA+IC0tLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMgfCAzICsrKwo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
+KykKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gPiBp
+bmRleCBiM2JhMjdmLi4xZDNjYTBhIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2NydGMuYwo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2NydGMuYwo+ID4gQEAgLTU1LDYgKzU1LDkgQEAgc3RhdGljIGludCBleHlub3Nf
+Y3J0Y19hdG9taWNfY2hlY2soc3RydWN0IGRybV9jcnRjICpjcnRjLAo+ID4gIHsKPiA+ICAJc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsK
+PiA+ICAKPiA+ICsJaWYgKCFzdGF0ZS0+YWN0aXZlKQo+ID4gKwkJcmV0dXJuIDA7Cj4gPiArCj4g
+PiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT5hdG9taWNfY2hlY2spCj4gPiAgCQlyZXR1cm4gZXh5
+bm9zX2NydGMtPm9wcy0+YXRvbWljX2NoZWNrKGV4eW5vc19jcnRjLCBzdGF0ZSk7Cj4gPiAgCj4g
+Cj4gVGhpcyBsb29rcyBsaWtlIHNvbWV0aGluZyB0aGF0IHRoZSBjb3JlIHNob3VsZCBiZSBkb2lu
+Zy4KCk5haCwgdGhpcyBpcyBhIGJ1ZyBpbiBleHlub3MgYXRvbWljX2NoZWNrIGNvZGUuIERyaXZl
+cnMgX211c3RfIGNoZWNrIHN0YXRlCmlycmVzcGVjdGl2ZSBvZiBzdGF0ZS0+YWN0aXZlIC0gaWYg
+dGhleSBmb3Jnb2UgYW55IGNoZWNraW5nIHdoZW4gYWN0aXZlID0KZmFsc2UgdGhlbiBsZWdhY3kg
+RFBNUyBPbiBtaWdodCBzcHVyaXVvc2x5IGZhaWwsIHdoaWNoIHdpbGwgdXBzZXQKdXNlcnNwYWNl
+LiBUaGVyZSBzaG91bGRuJ3QgYmUgYW55IGV4Y2VwdGlvbnMgdG8gdGhpcyBydWxlLgoKQ2hlZXJz
+LCBEYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBv
+cmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
