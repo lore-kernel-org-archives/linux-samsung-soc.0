@@ -1,97 +1,42 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 14/25] drm/exynos: introduce exynos_drm_plane_config
- structure
-Date: Wed, 18 Nov 2015 11:25:50 +0100
-Message-ID: <564C522E.1030503@samsung.com>
-References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-15-git-send-email-m.szyprowski@samsung.com>
- <564B6B4E.7000200@math.uni-bielefeld.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: use const and __initconst for smp_operations
+Date: Wed, 18 Nov 2015 12:22:43 +0100
+Message-ID: <3065145.pJG8zhbl48@diego>
+References: <1447551593-22246-1-git-send-email-yamada.masahiro@socionext.com>
+ <1447551593-22246-3-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43229 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750808AbbKRKZy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Nov 2015 05:25:54 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NY000GDBAB3CXA0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2015 10:25:51 +0000 (GMT)
-In-reply-to: <564B6B4E.7000200@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1447551593-22246-3-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Maxime Ripard <maxime.ripard@fr>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hello,
+Am Sonntag, 15. November 2015, 10:39:53 schrieb Masahiro Yamada:
+> These smp_operations structures are not over-written, so add "const"
+> qualifier and replace __initdata with __initconst.
+> 
+> Also, add "static" where it is possible.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Acked-by: Moritz Fischer <moritz.fischer-+aYTwkv1SeIAvxtiuMwx3w@public.gmane.org>
+> ---
+> 
 
-On 2015-11-17 19:00, Tobias Jakobi wrote:
-> Marek Szyprowski wrote:
->> This patch adds common structure for keeping plane configuration and
->> capabilities data. This patch is inspired by similar code developed by
->> Tobias Jakobi.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 18 +++++++---
->>   drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 23 +++++++-----
->>   drivers/gpu/drm/exynos/exynos_drm_drv.h       | 22 ++++++++++++
->>   drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 25 ++++++++-----
->>   drivers/gpu/drm/exynos/exynos_drm_plane.c     | 34 ++++++++----------
->>   drivers/gpu/drm/exynos/exynos_drm_plane.h     |  7 ++--
->>   drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 25 ++++++++-----
->>   drivers/gpu/drm/exynos/exynos_mixer.c         | 51 ++++++++++++++++-----------
->>   8 files changed, 131 insertions(+), 74 deletions(-)
->>
-> <SNIP>
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->> index 015e85cabcc9..cdec3c1827c6 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -43,7 +43,6 @@
->>   
->>   #define MIXER_WIN_NR		3
->>   #define VP_DEFAULT_WIN		2
->> -#define CURSOR_WIN		1
->>   
->>   /* The pixelformats that are natively supported by the mixer. */
->>   #define MXR_FORMAT_RGB565	4
->> @@ -112,6 +111,31 @@ struct mixer_drv_data {
->>   	bool					has_sclk;
->>   };
->>   
->> +static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
->> +	{
->> +		.zpos = 0,
->> +		.type = DRM_PLANE_TYPE_PRIMARY,
->> +		.pixel_formats = mixer_formats,
->> +		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
->> +		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE_X |
->> +				EXYNOS_DRM_PLANE_CAP_DOUBLE_Y,
->> +	}, {
->> +		.zpos = 1,
->> +		.type = DRM_PLANE_TYPE_CURSOR,
->> +		.pixel_formats = mixer_formats,
->> +		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
->> +		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE_X |
->> +				EXYNOS_DRM_PLANE_CAP_DOUBLE_Y,
->> +	}, {
->> +		.zpos = 2,
->> +		.type = DRM_PLANE_TYPE_OVERLAY,
->> +		.pixel_formats = vp_formats,
->> +		.num_pixel_formats = ARRAY_SIZE(vp_formats),
->> +		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE_X |
->> +				EXYNOS_DRM_PLANE_CAP_DOUBLE_Y,
-> As far as I know the video plane supports arbitrary scaling and provides
-> no dedicated 'pixel doubling' mode.
+>  arch/arm/mach-rockchip/platsmp.c     | 2 +-
 
-Right, I've forgotten that, I will update the code then. BTW, do you plan to
-submit your patches for Mixer, which fixes alpha blending setup?
+For the Rockchip-part
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Acked-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
