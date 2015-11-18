@@ -1,36 +1,32 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Build ChromeOS EC drivers as
- modules
-Date: Wed, 18 Nov 2015 21:47:59 +0900
-Message-ID: <564C737F.9060405@samsung.com>
-References: <1447775924-2189-1-git-send-email-javier@osg.samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv2 2/3] ASoC: s3c24xx-i2s: pass DMA channels
+	as platform data
+Date: Wed, 18 Nov 2015 14:20:32 +0100
+Message-ID: <4029229.ZxVVfeA0q2@wuerfel>
+References: <6346833.MfUC71I3uD@wuerfel> <4020501.kQLt6nnIEv@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447775924-2189-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <4020501.kQLt6nnIEv@wuerfel>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 18.11.2015 o 00:58, Javier Martinez Canillas pisze:
-> Since the multi_v7_defconfig is used to build an image for different
-> platforms, the options should be enabled as module whenever possible.
+On Tuesday 17 November 2015 16:54:16 Arnd Bergmann wrote:
+> +#include <linux/platform_data/asoc-s3c.h.h>
 > 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> The patch was tested on an Exynos5800 Peach Pi Chromebook
-> and the drivers' modules were correctly autoloaded.
-> 
->  arch/arm/configs/multi_v7_defconfig | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
 
-I suppose this could go through Samsung-soc. I got few other patches for
-multi_v7.
+My randconfig test setup has now found the typo above. Resending the
+fixed version.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+	Arnd
