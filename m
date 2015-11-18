@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [RESEND PATCH v2 6/6] ARM: dts: Mark eMMC as non-removable in exynos5250-snow-common
-Date: Wed, 18 Nov 2015 10:23:54 -0300
-Message-ID: <1447853034-22508-7-git-send-email-javier@osg.samsung.com>
+Subject: [RESEND PATCH v2 4/6] ARM: dts: Remove broken-cd from eMMC node in exynos5800-peach-pi
+Date: Wed, 18 Nov 2015 10:23:52 -0300
+Message-ID: <1447853034-22508-5-git-send-email-javier@osg.samsung.com>
 References: <1447853034-22508-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1447853034-22508-1-git-send-email-javier@osg.samsung.com>
@@ -10,37 +10,40 @@ To: linux-kernel@vger.kernel.org
 Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The eMMC is non-removable so mark it using the non-removable DT
+The eMMC is non-removable so is marked with the non-removable DT
 property to avoid having to redetect it after a suspend/resume.
+
+But it also has the broken-cd property which is wrong since only
+one of the DT properties for card detection should be used.
 
 Also remove the card-detect-delay property that is not needed with
 non-removable.
 
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Tested-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-Series-cc Alim Akhtar <alim.akhtar@samsung.com>
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
 
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5800-peach-pi.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index 1822c502a25a..5cb33ba5e296 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -520,8 +520,7 @@
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index ca3a467a585d..7b018e451880 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -652,12 +652,10 @@
  &mmc_0 {
  	status = "okay";
  	num-slots = <1>;
 -	broken-cd;
+ 	mmc-hs200-1_8v;
+ 	mmc-hs400-1_8v;
+ 	cap-mmc-highspeed;
+ 	non-removable;
 -	card-detect-delay = <200>;
-+	non-removable;
+ 	clock-frequency = <800000000>;
  	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <2 3>;
- 	samsung,dw-mshc-ddr-timing = <1 2>;
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
 -- 
 2.4.3
