@@ -1,114 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/3] ASoC: samsung: pass DMA channels as
-	pointers
-Date: Wed, 18 Nov 2015 10:26:49 +0900
-Message-ID: <564BD3D9.7000701@samsung.com>
-References: <5466463.9HBcuLFGQf@wuerfel> <564A7FF4.7030603@samsung.com>
- <25607973.ZAWqqjj8F4@wuerfel>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: use const and __initconst for smp_operations
+Date: Tue, 17 Nov 2015 17:30:46 -0800
+Message-ID: <20151118013046.GA32672@codeaurora.org>
+References: <1447551593-22246-1-git-send-email-yamada.masahiro@socionext.com>
+ <1447551593-22246-3-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <25607973.ZAWqqjj8F4@wuerfel>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1447551593-22246-3-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio =?iso-8859-1?Q?L=F3pez?= <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17.11.2015 19:24, Arnd Bergmann wrote:
-> On Tuesday 17 November 2015 10:16:36 Krzysztof Kozlowski wrote:
->> On 14.11.2015 02:22, Arnd Bergmann wrote:
->>> ARM64 allmodconfig produces a bunch of warnings when building the
->>> samsung ASoC code:
->>>
->>> sound/soc/samsung/dmaengine.c: In function 'samsung_asoc_init_dma_data':
->>> sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->>>    playback_data->filter_data = (void *)playback->channel;
->>> sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->>>    capture_data->filter_data = (void *)capture->channel;
->>>
->>> We could easily shut up the warning by adding an intermediate cast,
->>> but there is a bigger underlying problem: The use of IORESOURCE_DMA
->>> to pass data from platform code to device drivers is dubious to start
->>> with, as what we really want is a pointer that can be passed into
->>> a filter function.
->>>
->>> Note that on s3c64xx, the pl08x DMA data is already a pointer, but
->>> gets cast to resource_size_t so we can pass it as a resource, and it
->>> then gets converted back to a pointer. In contrast, the data we pass
->>> for s3c24xx is an index into a device specific table, and we artificially
->>> convert that into a pointer for the filter function.
->>>
->>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>
->> The patch looks good. I have only two questions below.
+On 11/15, Masahiro Yamada wrote:
+> These smp_operations structures are not over-written, so add "const"
+> qualifier and replace __initdata with __initconst.
 > 
-> Thanks for taking a look!
+> Also, add "static" where it is possible.
 > 
->>> @@ -1338,11 +1325,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
->>>               sec_dai->dma_playback.dma_addr = regs_base + I2STXDS;
->>>               sec_dai->dma_playback.ch_name = "tx-sec";
->>>  
->>> -             if (!np) {
->>> -                     res = platform_get_resource(pdev, IORESOURCE_DMA, 2);
->>> -                     if (res)
->>> -                             sec_dai->dma_playback.channel = res->start;
->>> -             }
->>> +             if (!np)
->>> +                     sec_dai->dma_playback.slave = i2s_pdata->dma_play_sec;
->>
->> I cannot this resource in original patch nor setting the 'dma_play_sec'
->> part. I guess this does not really matter as newer platforms were
->> converted to DT so 'np' will be set, right?
-> 
-> Yes, that sounds correct.
-> 
->>> @@ -367,12 +367,6 @@ static int spdif_probe(struct platform_device *pdev)
->>>  
->>>       dev_dbg(&pdev->dev, "Entered %s\n", __func__);
->>>  
->>> -     dma_res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
->>> -     if (!dma_res) {
->>> -             dev_err(&pdev->dev, "Unable to get dma resource.\n");
->>> -             return -ENXIO;
->>> -     }
->>> -
->>>       mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>>       if (!mem_res) {
->>>               dev_err(&pdev->dev, "Unable to get register resource.\n");
->>> @@ -432,7 +426,7 @@ static int spdif_probe(struct platform_device *pdev)
->>>  
->>>       spdif_stereo_out.dma_size = 2;
->>>       spdif_stereo_out.dma_addr = mem_res->start + DATA_OUTBUF;
->>> -     spdif_stereo_out.channel = dma_res->start;
->>> +     spdif_stereo_out.slave = spdif_pdata->dma_playback;
->>>  
->>>       spdif->dma_playback = &spdif_stereo_out;
->>
->> No one sets ioresources and pdata for spdif device. No in-kernel board
->> files for it?
-> 
-> Hmm, probably also a missing conversion to devicetree. The symbol used to be 
-> 
->  config SND_SOC_SAMSUNG_SMDK_SPDIF
->         tristate "SoC S/PDIF Audio support for SMDK"
-> -       depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212)
-> +       depends on SND_SOC_SAMSUNG
->         select SND_SAMSUNG_SPDIF
-> 
-> We still support all four of the above boards, but they are all DT-only
-> and neither spdif.c nor smdk-spdif.c ever gained DT support. Is there
-> anything I should change in this patch for this?
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Acked-by: Moritz Fischer <moritz.fischer-+aYTwkv1SeIAvxtiuMwx3w@public.gmane.org>
+> ---
 
-No, I think it is okay. I'll review the v2 you sent.
+Acked-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> # qcom part
 
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
