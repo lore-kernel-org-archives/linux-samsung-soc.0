@@ -1,58 +1,45 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] ASoC: samsung: pass DMA channels as
-	pointers
-Date: Wed, 18 Nov 2015 10:33:41 +0900
-Message-ID: <564BD575.3070702@samsung.com>
-References: <6346833.MfUC71I3uD@wuerfel>
+Subject: Re: [PATCHv2 2/3] ASoC: s3c24xx-i2s: pass DMA channels as platform data
+Date: Wed, 18 Nov 2015 10:53:23 +0900
+Message-ID: <564BDA13.3040907@samsung.com>
+References: <6346833.MfUC71I3uD@wuerfel> <4020501.kQLt6nnIEv@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <6346833.MfUC71I3uD@wuerfel>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc: linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:24980 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752856AbbKRBxb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Nov 2015 20:53:31 -0500
+In-reply-to: <4020501.kQLt6nnIEv@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On 18.11.2015 00:53, Arnd Bergmann wrote:
-> ARM64 allmodconfig produces a bunch of warnings when building the
-> samsung ASoC code:
+On 18.11.2015 00:54, Arnd Bergmann wrote:
+> This is a minor cleanup to make the s3c2412-i2s and s3c24xx-i2s
+> drivers independent of the mach/dma.h header file and to allow
+> removing the dependency on the specific dmaengine driver in the
+> next patch.
 > 
-> sound/soc/samsung/dmaengine.c: In function 'samsung_asoc_init_dma_data':
-> sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->    playback_data->filter_data = (void *)playback->channel;
-> sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->    capture_data->filter_data = (void *)capture->channel;
+> As a side not, only the s3c24xx-i2s driver seems to still be
+> used, while the definition of the s3c2412-i2s platform device was
+> removed in commit 6d259a25b56d ("ARM: SAMSUNG: use static
+> declaration when it is not used in other files") after it had
+> never been referenced since its introduction in f0fba2ad1b6b
+> ("ASoC: multi-component - ASoC Multi-Component Support").
 > 
-> We could easily shut up the warning by adding an intermediate cast,
-> but there is a bigger underlying problem: The use of IORESOURCE_DMA
-> to pass data from platform code to device drivers is dubious to start
-> with, as what we really want is a pointer that can be passed into
-> a filter function.
-> 
-> Note that on s3c64xx, the pl08x DMA data is already a pointer, but
-> gets cast to resource_size_t so we can pass it as a resource, and it
-> then gets converted back to a pointer. In contrast, the data we pass
-> for s3c24xx is an index into a device specific table, and we artificially
-> convert that into a pointer for the filter function.
+> Apparently it should have been used by mach-jive.c, but that
+> never happened. My patch at this point leaves the current state
+> unchanged, we can decide whether to fix or delete the jive
+> driver and s3c2412-i2s another time.
 > 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> v2:
+> v2: check for NULL pdata
 > 
-> - no longer clash with SPI patch
-> - don't reference platform data that might be NULL
-> 
-
-Looks good:
 
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
