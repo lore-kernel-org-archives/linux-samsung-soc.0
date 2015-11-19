@@ -1,65 +1,59 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Thu, 19 Nov 2015 12:05:46 +0100
-Message-ID: <564DAD0A.3000007@samsung.com>
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
- <CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
- <564D5552.4070806@samsung.com>
- <CA+Ln22GTPFk6KpWZPDzLRBqO8B+iwwesQEzBwYikXnf0gr3Csg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <CA+Ln22GTPFk6KpWZPDzLRBqO8B+iwwesQEzBwYikXnf0gr3Csg@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos5422-odroidxu3*: use peripheral mode for dwc3_1
+Date: Thu, 19 Nov 2015 12:51:22 +0100
+Message-ID: <1447933882-3030-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:58200 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758492AbbKSLvk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Nov 2015 06:51:40 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NY2006IC8Y1ERB0@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 19 Nov 2015 11:51:37 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 19/11/15 10:16, Tomasz Figa wrote:
-> 2015-11-19 13:51 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> > On 19.11.2015 13:18, Tomasz Figa wrote:
->>> >> However, I don't think we can disable compilation of particular
->>> >> 64-bit SoCs, so maybe there isn't much sense in splitting their 
->>> >> clock drivers into separate symbols?
->> >
->> > To me it does not really matter. Indeed as you said one cannot 
->> > disable building of one particular Exynos SoCs.
->> >
->> > However we could still want not build some parts of such SoCs (like
->> > clock, pinctrl etc). I don't see much benefit for such case except
->> > when someone would like to drastically reduce the size of kernel 
->> > image (for whatever reasons he has.).
->
-> Can we really build a kernel that support selected Exynos SoC without
-> its clock driver? Actually I don't think we even allow deselecting
-> clock drivers currently, because they are not visible in menuconfig.
-> Unless there is a clear goal to separate ARCH level Kconfig symbol for
-> particular ARM64-based Exynos SoCs, I don't think it makes any sense
-> to keep the clock-related symbols separate.
-> 
->> >
->> > On the other hand having separate symbols causes duplication and
->> > obfuscates a little the Kconfig/Makefile. I like keeping things 
->> > simple so one symbol for all ARM64 Exynos clocks sounds good.
->> >
->> > Sylwester preferred current approach. You and Pankaj seem to prefer
->> > one symbol-way.
->
-> Hmm, I read Sylwester's post as a reply to your original message and
-> not Pankaj's. Sylwester, could you clarify?
+DWC3 device found on Exynos SoCs cannot work in OTG mode alone, because
+it lacks some OTG related control part. OTG mode operation is possible
+only with external hardware logic (usually GPIO-based) specific to
+the board. Right now, however, there is no driver for such logic and no
+bindings, so the OTG mode is disfunctional at all (this means that it
+doesn't work as a peripheral nor as a host). This patch sets the operation
+mode to peripheral to get DWC3_1 device at least somehow working. This can
+be later updated, when proper OTG driver and bindings get developed.
 
-OK, let's just use a common clk Kconfig symbol for Exynos ARM64.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 2 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-What I tried to say is that with addition of support for few more
-of those SoCs the kernel image size can easily grow by 1MB order,
-due to just clk drivers inclusion. Perhaps it's not a big issue
-with current hardware configuration.
-Maybe in long term we should think about splitting CMU drivers
-into a built-in critical clocks part and the rest in loadable
-modules.
-
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+index b1b3608..2ae1cf4 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+@@ -67,5 +67,5 @@
+ };
+ 
+ &usbdrd_dwc3_1 {
+-	dr_mode = "otg";
++	dr_mode = "peripheral";
+ };
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 0c0bbdb..432406d 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -98,5 +98,5 @@
+ };
+ 
+ &usbdrd_dwc3_1 {
+-	dr_mode = "otg";
++	dr_mode = "peripheral";
+ };
 -- 
-Thanks,
-Sylwester
+1.9.2
