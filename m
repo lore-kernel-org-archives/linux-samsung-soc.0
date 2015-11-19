@@ -1,57 +1,46 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
 Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
-Date: Thu, 19 Nov 2015 11:55:23 -0300
-Message-ID: <564DE2DB.6050608@osg.samsung.com>
+Date: Thu, 19 Nov 2015 12:51:08 -0300
+Message-ID: <564DEFEC.50802@osg.samsung.com>
 References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
- <564DE209.8030004@osg.samsung.com>
+ <564DE209.8030004@osg.samsung.com> <564DE2DB.6050608@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <564DE209.8030004@osg.samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:36436 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934217AbbKSPvO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Nov 2015 10:51:14 -0500
+In-Reply-To: <564DE2DB.6050608@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-T24gMTEvMTkvMjAxNSAxMTo1MSBBTSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgo+
-IFthZGRpbmcgS2V2aW4gYW5kIFR5bGVyIHRvIGNjIGxpc3RdCj4KPiBIZWxsbyBJbmtpIGFuZCBH
-dXN0YXZvLAoKSSBkaWRuJ3Qgbm90aWNlIGJlZm9yZSB0aGF0IEd1c3Rhdm8gd2FzIG5vdCBjYydl
-ZCBpbiB0aGUKb3JpZ2luYWwgZW1haWwgZnJvbSBJbmtpIHNvIEknbSBhZGRpbmcgaGltIGFzIHdl
-bGwuCgpTb3JyeSB0byBvdGhlcnMgZm9yIHRoZSBub2lzZS4KCj4gCj4gT24gMTEvMDMvMjAxNSAw
-Nzo0NyBBTSwgSW5raSBEYWUgd3JvdGU6Cj4+IFRoaXMgcGF0Y2ggc2VyaWVzIGFkZHMgcG0gcnVu
-dGltZSBzdXBwb3J0IGZvciBFeHlub3MgZHJtLgo+Pgo+PiBPcmlnaW5hbGx5LCB0aGlzIHBhdGNo
-IHdhcyBwb3N0ZWQgYnkgR3VzdGF2byBidXQgdGhlcmUgd2FzIG5vIGFueQo+PiBhbnN3ZXIgYWJv
-dXQgc29tZSBjb21tZW50cy4gU28gSSByZWJhc2VkIHRoaXMgcGF0Y2ggc2VyaWVzIG9uIHRvcCBv
-Zgo+PiBleHlub3MtZHJtLW5leHQsIHJlbW92ZWQgdW5uZWNlc3NhcnkgcGF0Y2hlcyBhbmQgbW9k
-aWZpZWQgd3JvbmcgbWFjcm8uCj4+Cj4+IENoYW5nZWxvZyB2MjoKPj4gLSBSZW1vdmUgcGF0Y2gg
-NSBhbmQgNi4KPj4gICAuIGNvbW1pdCBjYWxsYmFjayBhcmUgYWxyZWFkeSByZW1vdmVkIHNvIGlz
-bid0IHJlcXVpcmVkIGFueW1vcmUuCj4+IC0gUmVtb3ZlIHBhdGNoIDggd2hpY2ggbWFrZXMgZHAg
-Y2xvY2sgZW5hYmxlZCBkaXJlY3RseSBmcm9tIEZJTUQuCj4+ICAgLiBSZWFsbHkgbm90IG1lbmRh
-dG9yeSBmb3IgRklNRCB1c2VzIERQLCBhbmQgaXQgY291bGQgYmUgZGlmZmVyZW50Cj4+ICAgICBh
-Y2NvcmRpbmcgdG8gQm9hcmQuCj4+IC0gTW9kaWZpZWQgQ09ORklHX1BNX1NMRUVQIHRvIENPTkZJ
-R19QTS4KPj4gICAuIEluIGNhc2Ugb2YgcnVudGltZSBwbSwgQ09ORklHX1BNIG1hY3JvIHNob3Vs
-ZCBiZSB1c2VkIGluc3RlYWQgb2YKPj4gICAgIENPTkZJR19QTV9TTEVFUC4KPj4KPiAKPiBUaGlz
-IHNlcmllcyBjYXVzZXMgYSBib290IGZhaWx1cmUgb24gYXQgbGVhc3QgYW4gRXh5bm9zNTgwMCBQ
-ZWFjaCBQaQo+IENocm9tZWJvb2sgKHRlc3RlZCBteXNlbGYpIGFuZCBzZWVtcyB0byBiZSB0aGUg
-Y2F1c2Ugb2Ygb3RoZXIgRXh5bm9zCj4gYm9hcmRzIGZhaWxpbmcgdG8gYm9vdDogaHR0cDovL2tl
-cm5lbGNpLm9yZy9ib290Lz9leHlub3MmZmFpbAo+IAo+IFtzbmlwXQo+IAo+PiAgIGRybS9leHlu
-b3M6IGFkZCBwbV9ydW50aW1lIHRvIE1peGVyCj4+ICAgZHJtL2V4eW5vczogYWRkIHBtX3J1bnRp
-bWUgdG8gRklNRAo+IAo+IEkgaGFkIHRvIHJldmVydCB0aGVzZSBwYXRjaGVzIGluIG9yZGVyIHRv
-IGdldCB0aGUgbWFjaGluZSBpbiBhIGJvb3RhYmxlCj4gc3RhdGUgYWdhaW4sIHRoZSBzaGExIGhh
-c2ggZm9yIHRoZXNlIHBhdGNoZXMgaW4gbmV4dC0yMDE1MTExOSBhcmU6Cj4gCj4gMDQ1ZmViZDVm
-ODEzIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIEZJTUQKPiBkZDc2NmZiODQ3OWIgZHJt
-L2V4eW5vczogYWRkIHBtX3J1bnRpbWUgdG8gTWl4ZXIKPiAKPiBCZXN0IHJlZ2FyZHMsCj4gCgpC
-ZXN0IHJlZ2FyZHMsCi0tIApKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMKT3BlbiBTb3VyY2UgR3Jv
-dXAKU2Ftc3VuZyBSZXNlYXJjaCBBbWVyaWNhCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+On 11/19/2015 11:55 AM, Javier Martinez Canillas wrote:
+>>>
+>>
+>> This series causes a boot failure on at least an Exynos5800 Peach Pi
+>> Chromebook (tested myself) and seems to be the cause of other Exynos
+>> boards failing to boot: http://kernelci.org/boot/?exynos&fail
+>>
+>> [snip]
+>>
+>>>   drm/exynos: add pm_runtime to Mixer
+>>>   drm/exynos: add pm_runtime to FIMD
+>>
+>> I had to revert these patches in order to get the machine in a bootable
+>> state again, the sha1 hash for these patches in next-20151119 are:
+>>
+>> 045febd5f813 drm/exynos: add pm_runtime to FIMD
+
+On a closer look, only reverting the FIMD patch is enough
+to make at least the Exynos5800 Peach Pi to boot again.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
