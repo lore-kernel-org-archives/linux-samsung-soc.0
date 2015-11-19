@@ -1,86 +1,65 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 14/25] drm/exynos: introduce exynos_drm_plane_config
- structure
-Date: Thu, 19 Nov 2015 11:34:11 +0100
-Message-ID: <564DA5A3.1070805@samsung.com>
-References: <1447161821-1877-1-git-send-email-m.szyprowski@samsung.com>
- <1447161821-1877-15-git-send-email-m.szyprowski@samsung.com>
- <564B6B4E.7000200@math.uni-bielefeld.de> <564C522E.1030503@samsung.com>
- <564C9BF6.8030603@math.uni-bielefeld.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Date: Thu, 19 Nov 2015 12:05:46 +0100
+Message-ID: <564DAD0A.3000007@samsung.com>
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+ <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+ <CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
+ <564D5552.4070806@samsung.com>
+ <CA+Ln22GTPFk6KpWZPDzLRBqO8B+iwwesQEzBwYikXnf0gr3Csg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <564C9BF6.8030603@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <CA+Ln22GTPFk6KpWZPDzLRBqO8B+iwwesQEzBwYikXnf0gr3Csg@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8sCgpPbiAyMDE1LTExLTE4IDE2OjQwLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+IE1hcmVr
-IFN6eXByb3dza2kgd3JvdGU6Cj4+IE9uIDIwMTUtMTEtMTcgMTk6MDAsIFRvYmlhcyBKYWtvYmkg
-d3JvdGU6Cj4+PiBNYXJlayBTenlwcm93c2tpIHdyb3RlOgo+Pj4+IFRoaXMgcGF0Y2ggYWRkcyBj
-b21tb24gc3RydWN0dXJlIGZvciBrZWVwaW5nIHBsYW5lIGNvbmZpZ3VyYXRpb24gYW5kCj4+Pj4g
-Y2FwYWJpbGl0aWVzIGRhdGEuIFRoaXMgcGF0Y2ggaXMgaW5zcGlyZWQgYnkgc2ltaWxhciBjb2Rl
-IGRldmVsb3BlZCBieQo+Pj4+IFRvYmlhcyBKYWtvYmkuCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5
-OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4+Pj4gLS0tCj4+
-Pj4gICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMTgg
-KysrKysrKy0tLQo+Pj4+ICAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVj
-b24uYyAgICB8IDIzICsrKysrKystLS0tLQo+Pj4+ICAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kcnYuaCAgICAgICB8IDIyICsrKysrKysrKysrKwo+Pj4+ICAgIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICAgICB8IDI1ICsrKysrKysrLS0tLS0K
-Pj4+PiAgICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgICAgfCAz
-NCArKysrKysrKy0tLS0tLS0tLS0KPj4+PiAgICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fcGxhbmUuaCAgICAgfCAgNyArKy0tCj4+Pj4gICAgZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX3ZpZGkuYyAgICAgIHwgMjUgKysrKysrKystLS0tLQo+Pj4+ICAgIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgICAgICAgICB8IDUxCj4+Pj4gKysrKysr
-KysrKysrKysrKy0tLS0tLS0tLS0tCj4+Pj4gICAgOCBmaWxlcyBjaGFuZ2VkLCAxMzEgaW5zZXJ0
-aW9ucygrKSwgNzQgZGVsZXRpb25zKC0pCj4+Pj4KPj4+IDxTTklQPgo+Pj4+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+Pj4gYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+Pj4gaW5kZXggMDE1ZTg1Y2FiY2M5Li5jZGVj
-M2MxODI3YzYgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-bWl4ZXIuYwo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMK
-Pj4+PiBAQCAtNDMsNyArNDMsNiBAQAo+Pj4+ICAgICAgI2RlZmluZSBNSVhFUl9XSU5fTlIgICAg
-ICAgIDMKPj4+PiAgICAjZGVmaW5lIFZQX0RFRkFVTFRfV0lOICAgICAgICAyCj4+Pj4gLSNkZWZp
-bmUgQ1VSU09SX1dJTiAgICAgICAgMQo+Pj4+ICAgICAgLyogVGhlIHBpeGVsZm9ybWF0cyB0aGF0
-IGFyZSBuYXRpdmVseSBzdXBwb3J0ZWQgYnkgdGhlIG1peGVyLiAqLwo+Pj4+ICAgICNkZWZpbmUg
-TVhSX0ZPUk1BVF9SR0I1NjUgICAgNAo+Pj4+IEBAIC0xMTIsNiArMTExLDMxIEBAIHN0cnVjdCBt
-aXhlcl9kcnZfZGF0YSB7Cj4+Pj4gICAgICAgIGJvb2wgICAgICAgICAgICAgICAgICAgIGhhc19z
-Y2xrOwo+Pj4+ICAgIH07Cj4+Pj4gICAgK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9w
-bGFuZV9jb25maWcKPj4+PiBwbGFuZV9jb25maWdzW01JWEVSX1dJTl9OUl0gPSB7Cj4+Pj4gKyAg
-ICB7Cj4+Pj4gKyAgICAgICAgLnpwb3MgPSAwLAo+Pj4+ICsgICAgICAgIC50eXBlID0gRFJNX1BM
-QU5FX1RZUEVfUFJJTUFSWSwKPj4+PiArICAgICAgICAucGl4ZWxfZm9ybWF0cyA9IG1peGVyX2Zv
-cm1hdHMsCj4+Pj4gKyAgICAgICAgLm51bV9waXhlbF9mb3JtYXRzID0gQVJSQVlfU0laRShtaXhl
-cl9mb3JtYXRzKSwKPj4+PiArICAgICAgICAuY2FwYWJpbGl0aWVzID0gRVhZTk9TX0RSTV9QTEFO
-RV9DQVBfRE9VQkxFX1ggfAo+Pj4+ICsgICAgICAgICAgICAgICAgRVhZTk9TX0RSTV9QTEFORV9D
-QVBfRE9VQkxFX1ksCj4+Pj4gKyAgICB9LCB7Cj4+Pj4gKyAgICAgICAgLnpwb3MgPSAxLAo+Pj4+
-ICsgICAgICAgIC50eXBlID0gRFJNX1BMQU5FX1RZUEVfQ1VSU09SLAo+Pj4+ICsgICAgICAgIC5w
-aXhlbF9mb3JtYXRzID0gbWl4ZXJfZm9ybWF0cywKPj4+PiArICAgICAgICAubnVtX3BpeGVsX2Zv
-cm1hdHMgPSBBUlJBWV9TSVpFKG1peGVyX2Zvcm1hdHMpLAo+Pj4+ICsgICAgICAgIC5jYXBhYmls
-aXRpZXMgPSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9ET1VCTEVfWCB8Cj4+Pj4gKyAgICAgICAgICAg
-ICAgICBFWFlOT1NfRFJNX1BMQU5FX0NBUF9ET1VCTEVfWSwKPj4+PiArICAgIH0sIHsKPj4+PiAr
-ICAgICAgICAuenBvcyA9IDIsCj4+Pj4gKyAgICAgICAgLnR5cGUgPSBEUk1fUExBTkVfVFlQRV9P
-VkVSTEFZLAo+Pj4+ICsgICAgICAgIC5waXhlbF9mb3JtYXRzID0gdnBfZm9ybWF0cywKPj4+PiAr
-ICAgICAgICAubnVtX3BpeGVsX2Zvcm1hdHMgPSBBUlJBWV9TSVpFKHZwX2Zvcm1hdHMpLAo+Pj4+
-ICsgICAgICAgIC5jYXBhYmlsaXRpZXMgPSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9ET1VCTEVfWCB8
-Cj4+Pj4gKyAgICAgICAgICAgICAgICBFWFlOT1NfRFJNX1BMQU5FX0NBUF9ET1VCTEVfWSwKPj4+
-IEFzIGZhciBhcyBJIGtub3cgdGhlIHZpZGVvIHBsYW5lIHN1cHBvcnRzIGFyYml0cmFyeSBzY2Fs
-aW5nIGFuZCBwcm92aWRlcwo+Pj4gbm8gZGVkaWNhdGVkICdwaXhlbCBkb3VibGluZycgbW9kZS4K
-Pj4gUmlnaHQsIEkndmUgZm9yZ290dGVuIHRoYXQsIEkgd2lsbCB1cGRhdGUgdGhlIGNvZGUgdGhl
-bi4gQlRXLCBkbyB5b3UKPj4gcGxhbiB0bwo+PiBzdWJtaXQgeW91ciBwYXRjaGVzIGZvciBNaXhl
-ciwgd2hpY2ggZml4ZXMgYWxwaGEgYmxlbmRpbmcgc2V0dXA/Cj4gSSdsbCB0cnkgdG8gc2VuZCBh
-IG5ldyB2ZXJzaW9uIG91dCB0aGlzIHdlZWtlbmQuIEFueSBzcGVjaWZpYyBicmFuY2ggSQo+IHNo
-b3VsZCBiYXNlIHRoZXNlIG9uPyAoZS5nLiBJbmtpJ3MgZXh5bm9zLWRybS1uZXh0KQoKZXh5bm9z
-LWRybS1uZXh0IHdpbGwgYmUgb2theS4KCkJlc3QgcmVnYXJkcwotLSAKTWFyZWsgU3p5cHJvd3Nr
-aSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 19/11/15 10:16, Tomasz Figa wrote:
+> 2015-11-19 13:51 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+>> > On 19.11.2015 13:18, Tomasz Figa wrote:
+>>> >> However, I don't think we can disable compilation of particular
+>>> >> 64-bit SoCs, so maybe there isn't much sense in splitting their 
+>>> >> clock drivers into separate symbols?
+>> >
+>> > To me it does not really matter. Indeed as you said one cannot 
+>> > disable building of one particular Exynos SoCs.
+>> >
+>> > However we could still want not build some parts of such SoCs (like
+>> > clock, pinctrl etc). I don't see much benefit for such case except
+>> > when someone would like to drastically reduce the size of kernel 
+>> > image (for whatever reasons he has.).
+>
+> Can we really build a kernel that support selected Exynos SoC without
+> its clock driver? Actually I don't think we even allow deselecting
+> clock drivers currently, because they are not visible in menuconfig.
+> Unless there is a clear goal to separate ARCH level Kconfig symbol for
+> particular ARM64-based Exynos SoCs, I don't think it makes any sense
+> to keep the clock-related symbols separate.
+> 
+>> >
+>> > On the other hand having separate symbols causes duplication and
+>> > obfuscates a little the Kconfig/Makefile. I like keeping things 
+>> > simple so one symbol for all ARM64 Exynos clocks sounds good.
+>> >
+>> > Sylwester preferred current approach. You and Pankaj seem to prefer
+>> > one symbol-way.
+>
+> Hmm, I read Sylwester's post as a reply to your original message and
+> not Pankaj's. Sylwester, could you clarify?
+
+OK, let's just use a common clk Kconfig symbol for Exynos ARM64.
+
+What I tried to say is that with addition of support for few more
+of those SoCs the kernel image size can easily grow by 1MB order,
+due to just clk drivers inclusion. Perhaps it's not a big issue
+with current hardware configuration.
+Maybe in long term we should think about splitting CMU drivers
+into a built-in critical clocks part and the rest in loadable
+modules.
+
+-- 
+Thanks,
+Sylwester
