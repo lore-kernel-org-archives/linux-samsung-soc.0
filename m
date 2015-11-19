@@ -1,121 +1,94 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [RESEND PATCH v3] dt-bindings: Consolidate SRAM bindings from all
- vendors
-Date: Thu, 19 Nov 2015 09:42:49 +0900
-Message-ID: <1447893769-17088-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Subject: Re: [PATCH v3] SPI: s3c64xx: pass DMA arguments in platform data
+Date: Thu, 19 Nov 2015 09:57:40 +0900
+Message-ID: <564D1E84.6070808@samsung.com>
+References: <3835977.ZFLKtOk346@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <3835977.ZFLKtOk346@wuerfel>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SRAM bindings for various SoCs, using the mmio-sram genalloc
-API, are spread over different places - per SoC vendor. Since all of
-these are quite similar (they depend on mmio-sram) move them to a common
-place.
+On 18.11.2015 23:21, Arnd Bergmann wrote:
+> The s3c64xx platform data already contains a pointer to the
+> DMA filter function, but not to the associated data.
+> 
+> This simplifies the code and makes it more generic by
+> passing the data along with the filter function like
+> we do for other drivers.
+> 
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> ---
+> v3: leave pl330 support in place. this is not needed any more, but this
+>     patch should not remove it. We will however need to come back to
+>     this for multiplatform support, so a combined s3c64xx+s5p gets the
+>     right filter function
+> v3: fix bug in probe function that caused the DT case to use polling mode
+> v2: This version is now independent of the ASoC changes.
+> 
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 07a5a6e6dcaa..b53d4ff3befb 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -1105,9 +1105,7 @@ struct platform_device s3c_device_wdt = {
+>  #ifdef CONFIG_S3C64XX_DEV_SPI0
+>  static struct resource s3c64xx_spi0_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_SPI0_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_SPI0_RX),
+> -	[3] = DEFINE_RES_IRQ(IRQ_SPI0),
+> +	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
+>  };
+>  
+>  struct platform_device s3c64xx_device_spi0 = {
+> @@ -1135,6 +1133,8 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
+>  	pd.num_cs = num_cs;
+>  	pd.src_clk_nr = src_clk_nr;
+>  	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
+> +	pd.dma_tx = (void *)DMACH_SPI0_TX;
+> +	pd.dma_rx = (void *)DMACH_SPI0_RX;
+>  #if defined(CONFIG_PL330_DMA)
+>  	pd.filter = pl330_filter;
+>  #elif defined(CONFIG_S3C64XX_PL080)
+> @@ -1150,9 +1150,7 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
+>  #ifdef CONFIG_S3C64XX_DEV_SPI1
+>  static struct resource s3c64xx_spi1_resource[] = {
+>  	[0] = DEFINE_RES_MEM(S3C_PA_SPI1, SZ_256),
+> -	[1] = DEFINE_RES_DMA(DMACH_SPI1_TX),
+> -	[2] = DEFINE_RES_DMA(DMACH_SPI1_RX),
+> -	[3] = DEFINE_RES_IRQ(IRQ_SPI1),
+> +	[1] = DEFINE_RES_IRQ(IRQ_SPI1),
+>  };
+>  
+>  struct platform_device s3c64xx_device_spi1 = {
+> @@ -1180,12 +1178,15 @@ void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
+>  	pd.num_cs = num_cs;
+>  	pd.src_clk_nr = src_clk_nr;
+>  	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi1_cfg_gpio;
+> +	pd.dma_tx = (void *)DMACH_SPI1_TX;
+> +	pd.dma_rx = (void *)DMACH_SPI1_RX;
+>  #if defined(CONFIG_PL330_DMA)
+>  	pd.filter = pl330_filter;
+>  #elif defined(CONFIG_S3C64XX_PL080)
+>  	pd.filter = pl08x_filter_id;
+>  #endif
+>  
+> +
 
-Suggested-by: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Acked-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+That empty line is not needed here.
 
----
+Rest is good so with removal of this empty line:
 
-Changes since v2:
-1. Update paths to sram.txt.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Changes since v1:
-1. New patch. Extended suggestion from Rob.
----
- Documentation/devicetree/bindings/arm/arm,scpi.txt                      | 2 +-
- .../bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt}  | 0
- .../bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt}  | 2 +-
- .../bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt}       | 2 +-
- Documentation/devicetree/bindings/{misc => sram}/sram.txt               | 0
- .../devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt}     | 2 +-
- 6 files changed, 4 insertions(+), 4 deletions(-)
- rename Documentation/devicetree/bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt} (100%)
- rename Documentation/devicetree/bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt} (92%)
- rename Documentation/devicetree/bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt} (95%)
- rename Documentation/devicetree/bindings/{misc => sram}/sram.txt (100%)
- rename Documentation/devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt} (97%)
-
-diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-index 86302de67c2c..313dabdc14f9 100644
---- a/Documentation/devicetree/bindings/arm/arm,scpi.txt
-+++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-@@ -63,7 +63,7 @@ Required properties:
- - compatible : should be "arm,juno-sram-ns" for Non-secure SRAM on Juno
- 
- The rest of the properties should follow the generic mmio-sram description
--found in ../../misc/sysram.txt
-+found in ../../sram/sram.txt
- 
- Each sub-node represents the reserved area for SCPI.
- 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip/pmu-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/arm/rockchip/pmu-sram.txt
-rename to Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
-diff --git a/Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
-similarity index 92%
-rename from Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt
-rename to Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
-index d9416fb8db6f..800701ecffca 100644
---- a/Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt
-+++ b/Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
-@@ -12,7 +12,7 @@ Required sub-node properties:
- - compatible : should be "rockchip,rk3066-smp-sram"
- 
- The rest of the properties should follow the generic mmio-sram discription
--found in ../../misc/sram.txt
-+found in Documentation/devicetree/bindings/sram/sram.txt
- 
- Example:
- 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt b/Documentation/devicetree/bindings/sram/samsung-sram.txt
-similarity index 95%
-rename from Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt
-rename to Documentation/devicetree/bindings/sram/samsung-sram.txt
-index 4a0a4f70a0ce..6bc474b2b885 100644
---- a/Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt
-+++ b/Documentation/devicetree/bindings/sram/samsung-sram.txt
-@@ -15,7 +15,7 @@ Required sub-node properties:
- 		"samsung,exynos4210-sysram-ns" : for Non-secure SYSRAM
- 
- The rest of the properties should follow the generic mmio-sram discription
--found in ../../misc/sysram.txt
-+found in Documentation/devicetree/bindings/sram/sram.txt
- 
- Example:
- 
-diff --git a/Documentation/devicetree/bindings/misc/sram.txt b/Documentation/devicetree/bindings/sram/sram.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/misc/sram.txt
-rename to Documentation/devicetree/bindings/sram/sram.txt
-diff --git a/Documentation/devicetree/bindings/soc/sunxi/sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-similarity index 97%
-rename from Documentation/devicetree/bindings/soc/sunxi/sram.txt
-rename to Documentation/devicetree/bindings/sram/sunxi-sram.txt
-index 067698112f5f..8d5665468fe7 100644
---- a/Documentation/devicetree/bindings/soc/sunxi/sram.txt
-+++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-@@ -16,7 +16,7 @@ SRAM nodes
- ----------
- 
- Each SRAM is described using the mmio-sram bindings documented in
--Documentation/devicetree/bindings/misc/sram.txt
-+Documentation/devicetree/bindings/sram/sram.txt
- 
- Each SRAM will have SRAM sections that are going to be handled by the
- SRAM controller as subnodes. These sections are represented following
--- 
-1.9.1
+Best regards,
+Krzysztof
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
