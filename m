@@ -1,94 +1,100 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3] SPI: s3c64xx: pass DMA arguments in platform data
-Date: Thu, 19 Nov 2015 09:57:40 +0900
-Message-ID: <564D1E84.6070808@samsung.com>
-References: <3835977.ZFLKtOk346@wuerfel>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
+ ARCH_EXYNOS
+Date: Thu, 19 Nov 2015 09:34:06 +0530
+Message-ID: <564D4A36.8040803@samsung.com>
+References: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <3835977.ZFLKtOk346@wuerfel>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:41756 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932099AbbKSEDR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Nov 2015 23:03:17 -0500
+In-reply-to: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 18.11.2015 23:21, Arnd Bergmann wrote:
-> The s3c64xx platform data already contains a pointer to the
-> DMA filter function, but not to the associated data.
-> 
-> This simplifies the code and makes it more generic by
-> passing the data along with the filter function like
-> we do for other drivers.
-> 
-> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Hi Krzysztof,
+
+On 11/16/2015 07:06 AM, Krzysztof Kozlowski wrote:
+> The ARMv8 Exynos family SoCs in Linux kernel are currently:
+>   - Exynos5433 (controlled by ARCH_EXYNOS),
+>   - Exynos7 (controlled by ARCH_EXYNOS7).
+>
+> It duplicates Kconfig symbols unnecessarily, so consolidate them into
+> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+> symbol.
+>
+> The commit should not bring any visible functional change.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>
+
+Tested on exynos7-espresso board, so
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+
 > ---
-> v3: leave pl330 support in place. this is not needed any more, but this
->     patch should not remove it. We will however need to come back to
->     this for multiplatform support, so a combined s3c64xx+s5p gets the
->     right filter function
-> v3: fix bug in probe function that caused the DT case to use polling mode
-> v2: This version is now independent of the ASoC changes.
-> 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 07a5a6e6dcaa..b53d4ff3befb 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -1105,9 +1105,7 @@ struct platform_device s3c_device_wdt = {
->  #ifdef CONFIG_S3C64XX_DEV_SPI0
->  static struct resource s3c64xx_spi0_resource[] = {
->  	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
-> -	[1] = DEFINE_RES_DMA(DMACH_SPI0_TX),
-> -	[2] = DEFINE_RES_DMA(DMACH_SPI0_RX),
-> -	[3] = DEFINE_RES_IRQ(IRQ_SPI0),
-> +	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
->  };
->  
->  struct platform_device s3c64xx_device_spi0 = {
-> @@ -1135,6 +1133,8 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
->  	pd.num_cs = num_cs;
->  	pd.src_clk_nr = src_clk_nr;
->  	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
-> +	pd.dma_tx = (void *)DMACH_SPI0_TX;
-> +	pd.dma_rx = (void *)DMACH_SPI0_RX;
->  #if defined(CONFIG_PL330_DMA)
->  	pd.filter = pl330_filter;
->  #elif defined(CONFIG_S3C64XX_PL080)
-> @@ -1150,9 +1150,7 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
->  #ifdef CONFIG_S3C64XX_DEV_SPI1
->  static struct resource s3c64xx_spi1_resource[] = {
->  	[0] = DEFINE_RES_MEM(S3C_PA_SPI1, SZ_256),
-> -	[1] = DEFINE_RES_DMA(DMACH_SPI1_TX),
-> -	[2] = DEFINE_RES_DMA(DMACH_SPI1_RX),
-> -	[3] = DEFINE_RES_IRQ(IRQ_SPI1),
-> +	[1] = DEFINE_RES_IRQ(IRQ_SPI1),
->  };
->  
->  struct platform_device s3c64xx_device_spi1 = {
-> @@ -1180,12 +1178,15 @@ void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
->  	pd.num_cs = num_cs;
->  	pd.src_clk_nr = src_clk_nr;
->  	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi1_cfg_gpio;
-> +	pd.dma_tx = (void *)DMACH_SPI1_TX;
-> +	pd.dma_rx = (void *)DMACH_SPI1_RX;
->  #if defined(CONFIG_PL330_DMA)
->  	pd.filter = pl330_filter;
->  #elif defined(CONFIG_S3C64XX_PL080)
->  	pd.filter = pl08x_filter_id;
->  #endif
->  
-> +
-
-That empty line is not needed here.
-
-Rest is good so with removal of this empty line:
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-Best regards,
-Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> arch/arm64/Kconfig.platforms        | 11 ++---------
+>   arch/arm64/boot/dts/exynos/Makefile |  2 +-
+>   arch/arm64/configs/defconfig        |  2 +-
+>   3 files changed, 4 insertions(+), 11 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 4043c35962cc..afa19baca94e 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -13,21 +13,14 @@ config ARCH_BERLIN
+>   	  This enables support for Marvell Berlin SoC Family
+>
+>   config ARCH_EXYNOS
+> -	bool
+> -	help
+> -	  This enables support for Samsung Exynos SoC family
+> -
+> -config ARCH_EXYNOS7
+> -	bool "ARMv8 based Samsung Exynos7"
+> -	select ARCH_EXYNOS
+> +	bool "ARMv8 based Samsung Exynos SoC family"
+>   	select COMMON_CLK_SAMSUNG
+>   	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>   	select HAVE_S3C_RTC if RTC_CLASS
+>   	select PINCTRL
+>   	select PINCTRL_EXYNOS
+> -
+>   	help
+> -	  This enables support for Samsung Exynos7 SoC family
+> +	  This enables support for Samsung Exynos ARMv8 SoC family
+>
+>   config ARCH_LAYERSCAPE
+>   	bool "ARMv8 based Freescale Layerscape SoC family"
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index 20310e5b6d6f..50c9b9383cfa 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -1,4 +1,4 @@
+> -dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
+> +dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
+>
+>   always		:= $(dtb-y)
+>   subdir-y	:= $(dts-dirs)
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index bdd7aa358d2a..a396fa7c69a5 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
+>   # CONFIG_IOSCHED_DEADLINE is not set
+>   CONFIG_ARCH_BCM_IPROC=y
+>   CONFIG_ARCH_BERLIN=y
+> -CONFIG_ARCH_EXYNOS7=y
+> +CONFIG_ARCH_EXYNOS=y
+>   CONFIG_ARCH_LAYERSCAPE=y
+>   CONFIG_ARCH_HISI=y
+>   CONFIG_ARCH_MEDIATEK=y
+>
