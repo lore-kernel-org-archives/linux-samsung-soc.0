@@ -1,26 +1,34 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Thu, 19 Nov 2015 09:40:34 +0530
-Message-ID: <564D4BBA.5060406@samsung.com>
-References: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Date: Thu, 19 Nov 2015 13:18:38 +0900
+Message-ID: <CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+ <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35329 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932734AbbKSEJ5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Nov 2015 23:09:57 -0500
-In-reply-to: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
 
 Hi Krzysztof,
 
-On 11/16/2015 07:06 AM, Krzysztof Kozlowski wrote:
+Good idea, just a couple of nits inline. Other than that:
+
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+2015-11-16 10:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
 > Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
 > so it is built also on ARMv7. This does not bring any kind of benefit.
 > There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
@@ -29,62 +37,55 @@ On 11/16/2015 07:06 AM, Krzysztof Kozlowski wrote:
 > Instead build clock drivers only for respective SoC's architecture.
 >
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-
-Tested $SUBJECT patch on exynos7-espresso board, so
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-
 > ---
-> drivers/clk/samsung/Kconfig  | 13 +++++++++++++
->   drivers/clk/samsung/Makefile |  4 ++--
->   2 files changed, 15 insertions(+), 2 deletions(-)
+>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
+>  drivers/clk/samsung/Makefile |  4 ++--
+>  2 files changed, 15 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
 > index 84196ecdaa12..5f138fc4d84d 100644
 > --- a/drivers/clk/samsung/Kconfig
 > +++ b/drivers/clk/samsung/Kconfig
 > @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
->   	bool
->   	select COMMON_CLK
+>         bool
+>         select COMMON_CLK
 >
 > +# ARMv7 SoCs:
->   config S3C2410_COMMON_CLK
->   	bool
->   	select COMMON_CLK_SAMSUNG
+
+nit: I'm not aware of any recent upgrade of the S3C24xx line-up to
+ARMv7 cores. ;) I'd suggest "32-bit ARM SoCs" or just "ARM SoCs"...
+
+>  config S3C2410_COMMON_CLK
+>         bool
+>         select COMMON_CLK_SAMSUNG
 > @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
->   	bool
->   	select COMMON_CLK_SAMSUNG
+>         bool
+>         select COMMON_CLK_SAMSUNG
 >
 > +# ARMv8 SoCs:
+
+and then here "64-bit ARM SoCs" or "ARM64 SoCs", whichever you prefer.
+I'd lean towards simple "ARM" and "ARM64".
+
 > +config EXYNOS5433_COMMON_CLK
-> +	bool
-> +	depends on ARM64 || COMPILE_TEST
-> +	default ARCH_EXYNOS
-> +	select COMMON_CLK_SAMSUNG
+> +       bool
+> +       depends on ARM64 || COMPILE_TEST
+> +       default ARCH_EXYNOS
+
+nit: bool and default can be combined into def_bool ARCH_EXYNOS
+
+> +       select COMMON_CLK_SAMSUNG
 > +
 > +config EXYNOS7_COMMON_CLK
-> +	bool
-> +	depends on ARM64 || COMPILE_TEST
-> +	default ARCH_EXYNOS
-> +	select COMMON_CLK_SAMSUNG
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 5f6833ea355d..a31332a24ef4 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->   obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
->   obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
->   obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
-> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+= clk-exynos5433.o
->   obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
->   obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
->   obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
-> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
-> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+= clk-exynos7.o
->   obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->   obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->   obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
->
+> +       bool
+> +       depends on ARM64 || COMPILE_TEST
+> +       default ARCH_EXYNOS
+
+nit: See above.
+
+However, I don't think we can disable compilation of particular 64-bit
+SoCs, so maybe there isn't much sense in splitting their clock drivers
+into separate symbols?
+
+Best regards,
+Tomasz
