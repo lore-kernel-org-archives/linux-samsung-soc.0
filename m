@@ -1,48 +1,94 @@
-From: Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: use const and __initconst for smp_operations
-Date: Thu, 19 Nov 2015 16:52:38 +0000
-Message-ID: <564DFE56.3030508@hisilicon.com>
-References: <1447551593-22246-1-git-send-email-yamada.masahiro@socionext.com>
- <1447551593-22246-3-git-send-email-yamada.masahiro@socionext.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH v5 0/4] mfd: sec: add S2MPS15 PMIC support
+Date: Thu, 19 Nov 2015 23:30:32 +0530
+Message-ID: <CAGOxZ51aPo3rdB6R6x-Y4SUD4nsAcUo3X5XoEUSg0gfxuJpdyQ@mail.gmail.com>
+References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1447551593-22246-3-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, =?windows-1252?Q?Emilio_L=F3pez?= <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Maxime Ripard <maxime.ripa>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>, broonie@kernel.org, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, rtc-linux@googlegroups.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Masahiro,
+Hi Lee,
+Do I need to resend this series? This series still apply cleanly on
+top of v4.4-rc1.
+I can see 1/4 is already applied.
 
-On 15/11/2015 01:39, Masahiro Yamada wrote:
-> These smp_operations structures are not over-written, so add "const"
-> qualifier and replace __initdata with __initconst.
-> 
-> Also, add "static" where it is possible.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-> Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> Acked-by: Moritz Fischer <moritz.fischer-+aYTwkv1SeIAvxtiuMwx3w@public.gmane.org>
-> ---
-> 
->  arch/arm/mach-hisi/platmcpm.c        | 2 +-
->  arch/arm/mach-hisi/platsmp.c         | 6 +++---
+Thanks & Regards,
+Alim
+
+On Fri, Oct 30, 2015 at 11:55 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+> Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
+> The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
+> 27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
+> programming these blocks via a I2C interface. This patch series adds initial
+> support for LDO/Buck regulators of S2MPS15 PMIC.
+>
+> Changes since v4:
+> * Dorpped Krzysztof reviewed-by and Lee Acked-by tags from patch 1/4,
+>   because of the new changes to DT bindings. Seeking a fresh review/ack tags.
+> * Removed samsung,s2mps15-clk compatible as we can reuse exsisting compatible of s2mps13.
+> * Added acked-by on patch 2/4
+> * Modified rtc driver as s2mps15 differs from s2mps14/13 etc, addressed Krzysztof
+>   concerns on rtc patch.
+>   There are some other improvement suggestion from Krzystof for the rtc, I feel that can be done
+>   as a sperate patch later.
+>
+> Changes since v3:
+> * Changes regulator driver name from s2mps15-pmic -> s2mps15-regulator as disscussed here [2]
+> * Re-use the exsisting compatible/names for s2mps15 clock block.
+>
+> Changes since v2:
+> * Addressed Lee Jones review comments.
+>
+> Changes since v1:
+> * Added suggestion from Krzysztof [1].
+> * Added s2mps15's 32.768 clocks support.
+> * Added s2mps15's rtc support.
+>
+> V1 of these patches (with a lesser features) were posted a year back,
+> since then there is not much progress on this, this is my attempt to
+> move things forward.
+>
+> [1]-> https://lkml.org/lkml/2014/10/14/67
+> [2]-> https://lkml.org/lkml/2015/10/28/417
+>
+> This series is based on linux-next-20151022.
+> This is tested on exynos7-espresso board.
+>
+> Alim Akhtar (1):
+>   drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+>
+> Thomas Abraham (3):
+>   dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
+>   mfd: sec: Add support for S2MPS15 PMIC
+>   regulator: s2mps11: add support for S2MPS15 regulators
+>
+>  Documentation/devicetree/bindings/mfd/s2mps11.txt |   21 ++-
+>  drivers/mfd/sec-core.c                            |   31 ++++
+>  drivers/mfd/sec-irq.c                             |    8 ++
+>  drivers/regulator/Kconfig                         |    4 +-
+>  drivers/regulator/s2mps11.c                       |  135 +++++++++++++++++-
+>  drivers/rtc/rtc-s5m.c                             |   37 ++++-
+>  include/linux/mfd/samsung/core.h                  |    1 +
+>  include/linux/mfd/samsung/rtc.h                   |    2 +
+>  include/linux/mfd/samsung/s2mps15.h               |  158 +++++++++++++++++++++
+>  9 files changed, 383 insertions(+), 14 deletions(-)
+>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
+>
+> --
+> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
-Thanks!
-For the Hisilicon part,
-Acked-by: Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>
 
-Best Regards,
-Wei
+-- 
+Regards,
+Alim
