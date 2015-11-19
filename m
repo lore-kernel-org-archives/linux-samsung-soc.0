@@ -1,78 +1,51 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: exynos5: register driver early in subsys initcall
- to avoid probe defer
-Date: Thu, 19 Nov 2015 14:46:28 +0100
-Message-ID: <20151119134627.GA1567@katana>
-References: <1446215008-30506-1-git-send-email-m.szyprowski@samsung.com>
- <20151101160203.GB2295@katana>
- <564DCCA9.3050604@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
+Date: Thu, 19 Nov 2015 11:51:53 -0300
+Message-ID: <564DE209.8030004@osg.samsung.com>
+References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <564DCCA9.3050604@samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, "balbi@ti.com" <balbi@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Marek,
-
-> This problem is known for ages, there were number of attempts to add
-
-Yes, I heard of it, too.
-
-> support for deferred probe or solve the problem of deferred UDC driver
-> probe, but none got accepted so far:
-
-Then they need to be worked on. AFAIK the rejection is based on
-implementation details, not because the feature itself is not wanted,
-or?
-
-> Till now it worked somehow for boards with older i2c bus drivers, which
-> were registered in subsys initcall. Boards, which use newer i2c bus drivers
-> cannot be used with usb gadgets compiled-in.
-
-Yes, because the above issue needs to be *fixed*, not workarounded. You
-still have the option to carry your patch out-of-tree if fixing the
-issue is not an option for you.
-
-We already had problems here when someone tried to revert
-subsys_initcall to module_init because of other dependency issues on
-another particular board. So, the pain should really go where the fixing
-is needed.
-
-I hope you understand,
-
-   Wolfram
-
-
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWTdKzAAoJEBQN5MwUoCm2d/wP/A4SldgSNorls0otiPkAubpA
-tTradDpB7PdU1ajFgmlZTk3nkcj6OWceDLmxass3ZksaDz5en5U2IkGYNjsQVTuv
-6BhxSkWnGCxXozEkodVnHEKE/yDLTvaMB4zKc9Vy9rd/UJKNWns4DdxPL1bNRNRh
-b8uK41jft0kTL0phZ7oFmpLstW33C8V0MY0XzLssyinDqSlsbKkRJZZiZRNBqafz
-wD6HW1laP1H01rhubnR8246rh2MJlSm/Odv+NUBxLlwFWsKRpdu+OhdFHK5jomCo
-srZ9XMdqT05kKpLs4iVmHsd/6H5O4ZeOOdoyXCxS5MgvJfQpxgMPcYtH8MZk5oxE
-he90tXEI9PiQfLCHbWWT1BbsyDiL2aOcLj5TQcZVxGh3TJXIl5ZmcH+B42tJmpON
-/i2Q9zdHdtq7N7EoGpYD3hLi818lj+WHHProf33DTxXp1Tkvkemt+o8d7iRREeD/
-35SEC39iMqqQzVyM/ipcR2PVhwGK4UM6y2OpucI88pJmQMpcehz5kqEedEBetqsK
-kdvo+aNoGLEmoUrCXeA1kS6xZu6Yxdd5TeLNRkmz+MKguvog98Q8lBCEhcKoYz6M
-Umol5SougZzmF5UZ0xaHMocdeOB3/xnJDt0+N+Wny9fDD84TbzsxeSKybNnfpviU
-fXzs3QALjbRKXAFCPpeg
-=0B5l
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
+W2FkZGluZyBLZXZpbiBhbmQgVHlsZXIgdG8gY2MgbGlzdF0KCkhlbGxvIElua2kgYW5kIEd1c3Rh
+dm8sCgpPbiAxMS8wMy8yMDE1IDA3OjQ3IEFNLCBJbmtpIERhZSB3cm90ZToKPiBUaGlzIHBhdGNo
+IHNlcmllcyBhZGRzIHBtIHJ1bnRpbWUgc3VwcG9ydCBmb3IgRXh5bm9zIGRybS4KPiAKPiBPcmln
+aW5hbGx5LCB0aGlzIHBhdGNoIHdhcyBwb3N0ZWQgYnkgR3VzdGF2byBidXQgdGhlcmUgd2FzIG5v
+IGFueQo+IGFuc3dlciBhYm91dCBzb21lIGNvbW1lbnRzLiBTbyBJIHJlYmFzZWQgdGhpcyBwYXRj
+aCBzZXJpZXMgb24gdG9wIG9mCj4gZXh5bm9zLWRybS1uZXh0LCByZW1vdmVkIHVubmVjZXNzYXJ5
+IHBhdGNoZXMgYW5kIG1vZGlmaWVkIHdyb25nIG1hY3JvLgo+IAo+IENoYW5nZWxvZyB2MjoKPiAt
+IFJlbW92ZSBwYXRjaCA1IGFuZCA2Lgo+ICAgLiBjb21taXQgY2FsbGJhY2sgYXJlIGFscmVhZHkg
+cmVtb3ZlZCBzbyBpc24ndCByZXF1aXJlZCBhbnltb3JlLgo+IC0gUmVtb3ZlIHBhdGNoIDggd2hp
+Y2ggbWFrZXMgZHAgY2xvY2sgZW5hYmxlZCBkaXJlY3RseSBmcm9tIEZJTUQuCj4gICAuIFJlYWxs
+eSBub3QgbWVuZGF0b3J5IGZvciBGSU1EIHVzZXMgRFAsIGFuZCBpdCBjb3VsZCBiZSBkaWZmZXJl
+bnQKPiAgICAgYWNjb3JkaW5nIHRvIEJvYXJkLgo+IC0gTW9kaWZpZWQgQ09ORklHX1BNX1NMRUVQ
+IHRvIENPTkZJR19QTS4KPiAgIC4gSW4gY2FzZSBvZiBydW50aW1lIHBtLCBDT05GSUdfUE0gbWFj
+cm8gc2hvdWxkIGJlIHVzZWQgaW5zdGVhZCBvZgo+ICAgICBDT05GSUdfUE1fU0xFRVAuCj4KClRo
+aXMgc2VyaWVzIGNhdXNlcyBhIGJvb3QgZmFpbHVyZSBvbiBhdCBsZWFzdCBhbiBFeHlub3M1ODAw
+IFBlYWNoIFBpCkNocm9tZWJvb2sgKHRlc3RlZCBteXNlbGYpIGFuZCBzZWVtcyB0byBiZSB0aGUg
+Y2F1c2Ugb2Ygb3RoZXIgRXh5bm9zCmJvYXJkcyBmYWlsaW5nIHRvIGJvb3Q6IGh0dHA6Ly9rZXJu
+ZWxjaS5vcmcvYm9vdC8/ZXh5bm9zJmZhaWwKCltzbmlwXQoKPiAgIGRybS9leHlub3M6IGFkZCBw
+bV9ydW50aW1lIHRvIE1peGVyCj4gICBkcm0vZXh5bm9zOiBhZGQgcG1fcnVudGltZSB0byBGSU1E
+CgpJIGhhZCB0byByZXZlcnQgdGhlc2UgcGF0Y2hlcyBpbiBvcmRlciB0byBnZXQgdGhlIG1hY2hp
+bmUgaW4gYSBib290YWJsZQpzdGF0ZSBhZ2FpbiwgdGhlIHNoYTEgaGFzaCBmb3IgdGhlc2UgcGF0
+Y2hlcyBpbiBuZXh0LTIwMTUxMTE5IGFyZToKCjA0NWZlYmQ1ZjgxMyBkcm0vZXh5bm9zOiBhZGQg
+cG1fcnVudGltZSB0byBGSU1ECmRkNzY2ZmI4NDc5YiBkcm0vZXh5bm9zOiBhZGQgcG1fcnVudGlt
+ZSB0byBNaXhlcgoKQmVzdCByZWdhcmRzLAotLSAKSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzCk9w
+ZW4gU291cmNlIEdyb3VwClNhbXN1bmcgUmVzZWFyY2ggQW1lcmljYQpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
