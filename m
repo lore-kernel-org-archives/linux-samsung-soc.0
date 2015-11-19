@@ -1,111 +1,51 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Thu, 19 Nov 2015 13:51:30 +0900
-Message-ID: <564D5552.4070806@samsung.com>
+Date: Thu, 19 Nov 2015 18:16:18 +0900
+Message-ID: <CA+Ln22GTPFk6KpWZPDzLRBqO8B+iwwesQEzBwYikXnf0gr3Csg@mail.gmail.com>
 References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
- <CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
+	<1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+	<CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
+	<564D5552.4070806@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <564D5552.4070806@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 19.11.2015 13:18, Tomasz Figa wrote:
-> Hi Krzysztof,
-> 
-> Good idea, just a couple of nits inline. Other than that:
-> 
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> 2015-11-16 10:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
->> so it is built also on ARMv7. This does not bring any kind of benefit.
->> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
->> multi_v7 for ARMv7).
->>
->> Instead build clock drivers only for respective SoC's architecture.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
->>  drivers/clk/samsung/Makefile |  4 ++--
->>  2 files changed, 15 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->> index 84196ecdaa12..5f138fc4d84d 100644
->> --- a/drivers/clk/samsung/Kconfig
->> +++ b/drivers/clk/samsung/Kconfig
->> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
->>         bool
->>         select COMMON_CLK
->>
->> +# ARMv7 SoCs:
-> 
-> nit: I'm not aware of any recent upgrade of the S3C24xx line-up to
-> ARMv7 cores. ;) I'd suggest "32-bit ARM SoCs" or just "ARM SoCs"...
+2015-11-19 13:51 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> On 19.11.2015 13:18, Tomasz Figa wrote:
+>> However, I don't think we can disable compilation of particular 64-bit
+>> SoCs, so maybe there isn't much sense in splitting their clock drivers
+>> into separate symbols?
+>
+> To me it does not really matter. Indeed as you said one cannot disable
+> building of one particular Exynos SoCs.
+>
+> However we could still want not build some parts of such SoCs (like
+> clock, pinctrl etc). I don't see much benefit for such case except when
+> someone would like to drastically reduce the size of kernel image (for
+> whatever reasons he has.).
 
-okay
+Can we really build a kernel that support selected Exynos SoC without
+its clock driver? Actually I don't think we even allow deselecting
+clock drivers currently, because they are not visible in menuconfig.
+Unless there is a clear goal to separate ARCH level Kconfig symbol for
+particular ARM64-based Exynos SoCs, I don't think it makes any sense
+to keep the clock-related symbols separate.
 
-> 
->>  config S3C2410_COMMON_CLK
->>         bool
->>         select COMMON_CLK_SAMSUNG
->> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
->>         bool
->>         select COMMON_CLK_SAMSUNG
->>
->> +# ARMv8 SoCs:
-> 
-> and then here "64-bit ARM SoCs" or "ARM64 SoCs", whichever you prefer.
-> I'd lean towards simple "ARM" and "ARM64".
+>
+> On the other hand having separate symbols causes duplication and
+> obfuscates a little the Kconfig/Makefile. I like keeping things simple
+> so one symbol for all ARM64 Exynos clocks sounds good.
+>
+> Sylwester preferred current approach. You and Pankaj seem to prefer one
+> symbol-way.
 
-ARM64 sounds good.
-
-> 
->> +config EXYNOS5433_COMMON_CLK
->> +       bool
->> +       depends on ARM64 || COMPILE_TEST
->> +       default ARCH_EXYNOS
-> 
-> nit: bool and default can be combined into def_bool ARCH_EXYNOS
-> 
-
-Right.
-
->> +       select COMMON_CLK_SAMSUNG
->> +
->> +config EXYNOS7_COMMON_CLK
->> +       bool
->> +       depends on ARM64 || COMPILE_TEST
->> +       default ARCH_EXYNOS
-> 
-> nit: See above.
-> 
-> However, I don't think we can disable compilation of particular 64-bit
-> SoCs, so maybe there isn't much sense in splitting their clock drivers
-> into separate symbols?
-
-To me it does not really matter. Indeed as you said one cannot disable
-building of one particular Exynos SoCs.
-
-However we could still want not build some parts of such SoCs (like
-clock, pinctrl etc). I don't see much benefit for such case except when
-someone would like to drastically reduce the size of kernel image (for
-whatever reasons he has.).
-
-On the other hand having separate symbols causes duplication and
-obfuscates a little the Kconfig/Makefile. I like keeping things simple
-so one symbol for all ARM64 Exynos clocks sounds good.
-
-Sylwester preferred current approach. You and Pankaj seem to prefer one
-symbol-way.
-
-Should we make a voting? :)
+Hmm, I read Sylwester's post as a reply to your original message and
+not Pankaj's. Sylwester, could you clarify?
 
 Best regards,
-Krzysztof
+Tomasz
