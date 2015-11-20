@@ -1,191 +1,78 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
-Date: Fri, 20 Nov 2015 13:44:37 -0300
-Message-ID: <564F4DF5.2010301@osg.samsung.com>
-References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
- <564DE209.8030004@osg.samsung.com> <564DE2DB.6050608@osg.samsung.com>
- <564DEFEC.50802@osg.samsung.com> <564EFD13.7040409@samsung.com>
- <564F0053.6020401@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH] pwm: Avoid double mutex lock on pwm_enable
+Date: Fri, 20 Nov 2015 16:59:00 +0000
+Message-ID: <1448038740-2811-1-git-send-email-linux.amoon@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:38105 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161900AbbKTQon (ORCPT
+Received: from mail-pa0-f68.google.com ([209.85.220.68]:35214 "EHLO
+	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161582AbbKTQ7Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Nov 2015 11:44:43 -0500
-In-Reply-To: <564F0053.6020401@samsung.com>
+	Fri, 20 Nov 2015 11:59:16 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Inki,
+Commit d1cd21427747f15920cd726f5f67a07880e7dee4
+(pwm: Set enable state properly on failed call to enable)
+introduce double lock of mutex on pwm_enable
 
-On 11/20/2015 08:13 AM, Inki Dae wrote:
->=20
->=20
-> 2015=EB=85=84 11=EC=9B=94 20=EC=9D=BC 19:59=EC=97=90 Inki Dae =EC=9D=B4=
-(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->> Hi Javier,
->>
->> 2015=EB=85=84 11=EC=9B=94 20=EC=9D=BC 00:51=EC=97=90 Javier Martinez=
- Canillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->>> On 11/19/2015 11:55 AM, Javier Martinez Canillas wrote:
->>>>>>
->>>>>
->>>>> This series causes a boot failure on at least an Exynos5800 Peach=
- Pi
->>>>> Chromebook (tested myself) and seems to be the cause of other Exy=
-nos
->>>>> boards failing to boot: http://kernelci.org/boot/?exynos&fail
->>>>>
->>>>> [snip]
->>>>>
->>>>>>   drm/exynos: add pm_runtime to Mixer
->>>>>>   drm/exynos: add pm_runtime to FIMD
->>>>>
->>>>> I had to revert these patches in order to get the machine in a bo=
-otable
->>>>> state again, the sha1 hash for these patches in next-20151119 are=
-:
->>>>>
->>>>> 045febd5f813 drm/exynos: add pm_runtime to FIMD
->>>
->>> On a closer look, only reverting the FIMD patch is enough
->>> to make at least the Exynos5800 Peach Pi to boot again.
->>
->> Thanks for report.
->>
->> I assume that the issue is because above patch removed 'suspended' v=
-ariable
->> for checking the suspend status in runtime so I revived it.
->>
->> I'm not sure that the change could resolve the issue. Could you test=
- it
->> with the change again? I have no Exynos5800 Peach Pi board. :(
->>
->> For this, I pushed it to below exynos-drm/for-next branch,
->> 	https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git=
-/commit/?h=3Dexynos-drm/for-next&id=3De84f43e2b2c3388694b0b3a58c2c4447f=
-1fbae7c
->>
->> If the issue is resolved by the change then I will modify other patc=
-hes for
->> DECON series. And if really so, there may be a corner case we missed=
-=2E
->=20
-> Oops, I found out one error at the boot log,
-> http://storage.kernelci.org/next/next-20151120/arm-multi_v7_defconfig=
-+CONFIG_LKDTM=3Dy/lab-collabora/boot-exynos5800-peach-pi.html
->=20
-> The boot log says,
-> [    5.754493] vdd_ldo9: supplied by vdd_2v
-> [    5.765510] of_graph_get_next_endpoint(): no port node found in /d=
-p-controller@145B0000
->
+Changes fix the following debug lock warning.
 
-This message is a red herring for the reported issue, the message is al=
-so
-present when the machine boots and the display is brought correctly.
-=20
-> Seems this error is because exynos5800-peach-pit.dts file doesn't hav=
-e 'ports' node in dp node.
->
-> Below is dp node description of exynos5420-peach-pit.dts file.
-> &dp {
-> 	status =3D "okay";
-> 	pinctrl-names =3D "default";
-> 	pinctrl-0 =3D <&dp_hpd_gpio>;
-> 	samsung,color-space =3D <0>;
-> 	samsung,dynamic-range =3D <0>;
-> 	samsung,ycbcr-coeff =3D <0>;
-> 	samsung,color-depth =3D <1>;
-> 	samsung,link-rate =3D <0x06>;
-> 	samsung,lane-count =3D <2>;
-> 	samsung,hpd-gpio =3D <&gpx2 6 GPIO_ACTIVE_HIGH>;
->=20
-> 	ports {
-> 		port@0 {
-> 			dp_out: endpoint {
-> 				remote-endpoint =3D <&bridge_in>;
-> 			};
-> 		};
-> 	};
-> };
->=20
-> And below is for exynos5800-peash-pit.dts,
-> &dp {
-> 	status =3D "okay";
-> 	pinctrl-names =3D "default";
-> 	pinctrl-0 =3D <&dp_hpd_gpio>;
-> 	samsung,color-space =3D <0>;
-> 	samsung,dynamic-range =3D <0>;
-> 	samsung,ycbcr-coeff =3D <0>;
-> 	samsung,color-depth =3D <1>;
-> 	samsung,link-rate =3D <0x0a>;
-> 	samsung,lane-count =3D <2>;
-> 	samsung,hpd-gpio =3D <&gpx2 6 GPIO_ACTIVE_HIGH>;
-> 	panel =3D <&panel>;
-> };
->=20
+[    2.701720] WARNING: CPU: 3 PID: 0 at kernel/locking/mutex.c:526 __mutex_lock_slowpath+0x3bc/0x404()
+[    2.701731] DEBUG_LOCKS_WARN_ON(in_interrupt())
+[    2.701737] Modules linked in:
+[    2.701748] CPU: 3 PID: 0 Comm: swapper/3 Not tainted 4.4.0-rc1-xu4f #24
+[    2.701753] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    2.701787] [<c0015f48>] (unwind_backtrace) from [<c0012d04>] (show_stack+0x10/0x14)
+[    2.701808] [<c0012d04>] (show_stack) from [<c01f83fc>] (dump_stack+0x84/0xc4)
+[    2.701824] [<c01f83fc>] (dump_stack) from [<c0023494>] (warn_slowpath_common+0x80/0xb0)
+[    2.701836] [<c0023494>] (warn_slowpath_common) from [<c00234f4>] (warn_slowpath_fmt+0x30/0x40)
+[    2.701849] [<c00234f4>] (warn_slowpath_fmt) from [<c056e6b8>] (__mutex_lock_slowpath+0x3bc/0x404)
+[    2.701864] [<c056e6b8>] (__mutex_lock_slowpath) from [<c056e70c>] (mutex_lock+0xc/0x24)
+[    2.701884] [<c056e70c>] (mutex_lock) from [<c0228984>] (pwm_enable+0x20/0x7c)
+[    2.701903] [<c0228984>] (pwm_enable) from [<c03f0000>] (led_heartbeat_function+0x74/0x144)
+[    2.701919] [<c03f0000>] (led_heartbeat_function) from [<c0074368>] (call_timer_fn+0x24/0x98)
+[    2.701932] [<c0074368>] (call_timer_fn) from [<c007453c>] (run_timer_softirq+0x160/0x21c)
+[    2.701946] [<c007453c>] (run_timer_softirq) from [<c0026e10>] (__do_softirq+0x110/0x228)
+[    2.701959] [<c0026e10>] (__do_softirq) from [<c00271c8>] (irq_exit+0xc0/0xfc)
+[    2.701976] [<c00271c8>] (irq_exit) from [<c0065180>] (__handle_domain_irq+0x80/0xec)
+[    2.701990] [<c0065180>] (__handle_domain_irq) from [<c0009494>] (gic_handle_irq+0x54/0x94)
+[    2.702001] [<c0009494>] (gic_handle_irq) from [<c0013794>] (__irq_svc+0x54/0x90)
+[    2.702008] Exception stack(0xee8bdf88 to 0xee8bdfd0)
+[    2.702019] df80:                   00000001 00000000 00000000 c001b720 ee8bc000 c0573354
+[    2.702031] dfa0: 00000000 00000000 ee8bdfe0 c07f92e4 c08004b4 c08004bc f0806640 ee8bdfd8
+[    2.702039] dfc0: c0010180 c0010184 60000013 ffffffff
+[    2.702053] [<c0013794>] (__irq_svc) from [<c0010184>] (arch_cpu_idle+0x38/0x3c)
+[    2.702073] [<c0010184>] (arch_cpu_idle) from [<c0058ed4>] (cpu_startup_entry+0x1ec/0x270)
+[    2.702086] [<c0058ed4>] (cpu_startup_entry) from [<4000956c>] (0x4000956c)
+[    2.702093] ---[ end trace 539af70491f4f1a9 ]---
 
-The difference is because the Exynos5420 Peach Pit Display Port is not
-attached directly to the display panel, there is an eDP/LVDS bridge chi=
-p
-in the middle (PS8622) while the Exynos5800 Peach Pi doesn't have that.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/pwm/core.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-The Exynos DP driver lookups for either a panel phandle or an OF graph
-endpoint that points to a bridge chip and the bridge enpoint has a port
-that points to the panel.
-
-So the DT is correct but of_graph_get_next_endpoint() always prints an
-error if the port so OF graph endpoints it seems can't be optional as
-used in this driver. Maybe that message should be change to debug then?
-
-Another option is to extend the DP driver DT binding to be more generic
-supporting having a port to a panel besides a bridge, so we could have
-something like this for Exynos5800 Peach and be consistent in both case=
-s:
-
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/=
-dts/exynos5800-peach-pi.dts
-index 7b018e451880..9c6fd7314ee0 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -122,6 +122,12 @@
- 		compatible =3D "auo,b133htn01";
- 		power-supply =3D <&tps65090_fet6>;
- 		backlight =3D <&backlight>;
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint =3D <&dp_out>;
-+			};
-+		};
- 	};
-=20
- 	mmc1_pwrseq: mmc1_pwrseq {
-@@ -148,7 +154,14 @@
- 	samsung,link-rate =3D <0x0a>;
- 	samsung,lane-count =3D <2>;
- 	samsung,hpd-gpio =3D <&gpx2 6 GPIO_ACTIVE_HIGH>;
--	panel =3D <&panel>;
-+
-+	ports {
-+		port@0 {
-+			dp_out: endpoint {
-+				remote-endpoint =3D <&panel_in>;
-+			};
-+		};
-+	};
- };
-=20
- &fimd {
-
-Best regards,
---=20
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index d24ca5f..b8f035a 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -506,16 +506,12 @@ int pwm_enable(struct pwm_device *pwm)
+ 	if (!pwm)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&pwm->lock);
+-
+ 	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
+ 		err = pwm->chip->ops->enable(pwm->chip, pwm);
+ 		if (err)
+ 			clear_bit(PWMF_ENABLED, &pwm->flags);
+ 	}
+ 
+-	mutex_unlock(&pwm->lock);
+-
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(pwm_enable);
+-- 
+2.1.4
