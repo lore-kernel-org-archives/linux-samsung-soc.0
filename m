@@ -1,79 +1,90 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
 Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
-Date: Fri, 20 Nov 2015 20:13:23 +0900
-Message-ID: <564F0053.6020401@samsung.com>
+Date: Fri, 20 Nov 2015 13:23:13 -0300
+Message-ID: <564F48F1.9070205@osg.samsung.com>
 References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
  <564DE209.8030004@osg.samsung.com> <564DE2DB.6050608@osg.samsung.com>
  <564DEFEC.50802@osg.samsung.com> <564EFD13.7040409@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <564EFD13.7040409@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:38090 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759269AbbKTQXU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Nov 2015 11:23:20 -0500
+In-Reply-To: <564EFD13.7040409@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-CgoyMDE164WEIDEx7JuUIDIw7J28IDE5OjU57JeQIElua2kgRGFlIOydtCjqsIApIOyTtCDquIA6
-Cj4gSGkgSmF2aWVyLAo+IAo+IDIwMTXrhYQgMTHsm5QgMjDsnbwgMDA6NTHsl5AgSmF2aWVyIE1h
-cnRpbmV6IENhbmlsbGFzIOydtCjqsIApIOyTtCDquIA6Cj4+IE9uIDExLzE5LzIwMTUgMTE6NTUg
-QU0sIEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyB3cm90ZToKPj4+Pj4KPj4+Pgo+Pj4+IFRoaXMg
-c2VyaWVzIGNhdXNlcyBhIGJvb3QgZmFpbHVyZSBvbiBhdCBsZWFzdCBhbiBFeHlub3M1ODAwIFBl
-YWNoIFBpCj4+Pj4gQ2hyb21lYm9vayAodGVzdGVkIG15c2VsZikgYW5kIHNlZW1zIHRvIGJlIHRo
-ZSBjYXVzZSBvZiBvdGhlciBFeHlub3MKPj4+PiBib2FyZHMgZmFpbGluZyB0byBib290OiBodHRw
-Oi8va2VybmVsY2kub3JnL2Jvb3QvP2V4eW5vcyZmYWlsCj4+Pj4KPj4+PiBbc25pcF0KPj4+Pgo+
-Pj4+PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIE1peGVyCj4+Pj4+ICAgZHJtL2V4
-eW5vczogYWRkIHBtX3J1bnRpbWUgdG8gRklNRAo+Pj4+Cj4+Pj4gSSBoYWQgdG8gcmV2ZXJ0IHRo
-ZXNlIHBhdGNoZXMgaW4gb3JkZXIgdG8gZ2V0IHRoZSBtYWNoaW5lIGluIGEgYm9vdGFibGUKPj4+
-PiBzdGF0ZSBhZ2FpbiwgdGhlIHNoYTEgaGFzaCBmb3IgdGhlc2UgcGF0Y2hlcyBpbiBuZXh0LTIw
-MTUxMTE5IGFyZToKPj4+Pgo+Pj4+IDA0NWZlYmQ1ZjgxMyBkcm0vZXh5bm9zOiBhZGQgcG1fcnVu
-dGltZSB0byBGSU1ECj4+Cj4+IE9uIGEgY2xvc2VyIGxvb2ssIG9ubHkgcmV2ZXJ0aW5nIHRoZSBG
-SU1EIHBhdGNoIGlzIGVub3VnaAo+PiB0byBtYWtlIGF0IGxlYXN0IHRoZSBFeHlub3M1ODAwIFBl
-YWNoIFBpIHRvIGJvb3QgYWdhaW4uCj4gCj4gVGhhbmtzIGZvciByZXBvcnQuCj4gCj4gSSBhc3N1
-bWUgdGhhdCB0aGUgaXNzdWUgaXMgYmVjYXVzZSBhYm92ZSBwYXRjaCByZW1vdmVkICdzdXNwZW5k
-ZWQnIHZhcmlhYmxlCj4gZm9yIGNoZWNraW5nIHRoZSBzdXNwZW5kIHN0YXR1cyBpbiBydW50aW1l
-IHNvIEkgcmV2aXZlZCBpdC4KPiAKPiBJJ20gbm90IHN1cmUgdGhhdCB0aGUgY2hhbmdlIGNvdWxk
-IHJlc29sdmUgdGhlIGlzc3VlLiBDb3VsZCB5b3UgdGVzdCBpdAo+IHdpdGggdGhlIGNoYW5nZSBh
-Z2Fpbj8gSSBoYXZlIG5vIEV4eW5vczU4MDAgUGVhY2ggUGkgYm9hcmQuIDooCj4gCj4gRm9yIHRo
-aXMsIEkgcHVzaGVkIGl0IHRvIGJlbG93IGV4eW5vcy1kcm0vZm9yLW5leHQgYnJhbmNoLAo+IAlo
-dHRwczovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1l
-eHlub3MuZ2l0L2NvbW1pdC8/aD1leHlub3MtZHJtL2Zvci1uZXh0JmlkPWU4NGY0M2UyYjJjMzM4
-ODY5NGIwYjNhNThjMmM0NDQ3ZjFmYmFlN2MKPiAKPiBJZiB0aGUgaXNzdWUgaXMgcmVzb2x2ZWQg
-YnkgdGhlIGNoYW5nZSB0aGVuIEkgd2lsbCBtb2RpZnkgb3RoZXIgcGF0Y2hlcyBmb3IKPiBERUNP
-TiBzZXJpZXMuIEFuZCBpZiByZWFsbHkgc28sIHRoZXJlIG1heSBiZSBhIGNvcm5lciBjYXNlIHdl
-IG1pc3NlZC4KCk9vcHMsIEkgZm91bmQgb3V0IG9uZSBlcnJvciBhdCB0aGUgYm9vdCBsb2csCmh0
-dHA6Ly9zdG9yYWdlLmtlcm5lbGNpLm9yZy9uZXh0L25leHQtMjAxNTExMjAvYXJtLW11bHRpX3Y3
-X2RlZmNvbmZpZytDT05GSUdfTEtEVE09eS9sYWItY29sbGFib3JhL2Jvb3QtZXh5bm9zNTgwMC1w
-ZWFjaC1waS5odG1sCgpUaGUgYm9vdCBsb2cgc2F5cywKWyAgICA1Ljc1NDQ5M10gdmRkX2xkbzk6
-IHN1cHBsaWVkIGJ5IHZkZF8ydgpbICAgIDUuNzY1NTEwXSBvZl9ncmFwaF9nZXRfbmV4dF9lbmRw
-b2ludCgpOiBubyBwb3J0IG5vZGUgZm91bmQgaW4gL2RwLWNvbnRyb2xsZXJAMTQ1QjAwMDAKClNl
-ZW1zIHRoaXMgZXJyb3IgaXMgYmVjYXVzZSBleHlub3M1ODAwLXBlYWNoLXBpdC5kdHMgZmlsZSBk
-b2Vzbid0IGhhdmUgJ3BvcnRzJyBub2RlIGluIGRwIG5vZGUuCgpCZWxvdyBpcyBkcCBub2RlIGRl
-c2NyaXB0aW9uIG9mIGV4eW5vczU0MjAtcGVhY2gtcGl0LmR0cyBmaWxlLgomZHAgewoJc3RhdHVz
-ID0gIm9rYXkiOwoJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCXBpbmN0cmwtMCA9IDwmZHBf
-aHBkX2dwaW8+OwoJc2Ftc3VuZyxjb2xvci1zcGFjZSA9IDwwPjsKCXNhbXN1bmcsZHluYW1pYy1y
-YW5nZSA9IDwwPjsKCXNhbXN1bmcseWNiY3ItY29lZmYgPSA8MD47CglzYW1zdW5nLGNvbG9yLWRl
-cHRoID0gPDE+OwoJc2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwNj47CglzYW1zdW5nLGxhbmUtY291
-bnQgPSA8Mj47CglzYW1zdW5nLGhwZC1ncGlvID0gPCZncHgyIDYgR1BJT19BQ1RJVkVfSElHSD47
-CgoJcG9ydHMgewoJCXBvcnRAMCB7CgkJCWRwX291dDogZW5kcG9pbnQgewoJCQkJcmVtb3RlLWVu
-ZHBvaW50ID0gPCZicmlkZ2VfaW4+OwoJCQl9OwoJCX07Cgl9Owp9OwoKQW5kIGJlbG93IGlzIGZv
-ciBleHlub3M1ODAwLXBlYXNoLXBpdC5kdHMsCiZkcCB7CglzdGF0dXMgPSAib2theSI7CglwaW5j
-dHJsLW5hbWVzID0gImRlZmF1bHQiOwoJcGluY3RybC0wID0gPCZkcF9ocGRfZ3Bpbz47CglzYW1z
-dW5nLGNvbG9yLXNwYWNlID0gPDA+OwoJc2Ftc3VuZyxkeW5hbWljLXJhbmdlID0gPDA+OwoJc2Ft
-c3VuZyx5Y2Jjci1jb2VmZiA9IDwwPjsKCXNhbXN1bmcsY29sb3ItZGVwdGggPSA8MT47CglzYW1z
-dW5nLGxpbmstcmF0ZSA9IDwweDBhPjsKCXNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKCXNhbXN1
-bmcsaHBkLWdwaW8gPSA8JmdweDIgNiBHUElPX0FDVElWRV9ISUdIPjsKCXBhbmVsID0gPCZwYW5l
-bD47Cn07CgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFRoYW5rcywKPiBJbmtpIERhZQo+IAo+Pgo+
-PiBCZXN0IHJlZ2FyZHMsCj4+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+Hello Inki,
+
+On 11/20/2015 07:59 AM, Inki Dae wrote:
+> Hi Javier,
+>=20
+> 2015=EB=85=84 11=EC=9B=94 20=EC=9D=BC 00:51=EC=97=90 Javier Martinez =
+Canillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>> On 11/19/2015 11:55 AM, Javier Martinez Canillas wrote:
+>>>>>
+>>>>
+>>>> This series causes a boot failure on at least an Exynos5800 Peach =
+Pi
+>>>> Chromebook (tested myself) and seems to be the cause of other Exyn=
+os
+>>>> boards failing to boot: http://kernelci.org/boot/?exynos&fail
+>>>>
+>>>> [snip]
+>>>>
+>>>>>   drm/exynos: add pm_runtime to Mixer
+>>>>>   drm/exynos: add pm_runtime to FIMD
+>>>>
+>>>> I had to revert these patches in order to get the machine in a boo=
+table
+>>>> state again, the sha1 hash for these patches in next-20151119 are:
+>>>>
+>>>> 045febd5f813 drm/exynos: add pm_runtime to FIMD
+>>
+>> On a closer look, only reverting the FIMD patch is enough
+>> to make at least the Exynos5800 Peach Pi to boot again.
+>=20
+> Thanks for report.
+>
+
+Thanks to you for the quick answer and providing a fix.
+=20
+> I assume that the issue is because above patch removed 'suspended' va=
+riable
+> for checking the suspend status in runtime so I revived it.
+>
+
+It seems your assumption was correct...
+=20
+> I'm not sure that the change could resolve the issue. Could you test =
+it
+> with the change again? I have no Exynos5800 Peach Pi board. :(
+>=20
+> For this, I pushed it to below exynos-drm/for-next branch,
+> 	https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/=
+commit/?h=3Dexynos-drm/for-next&id=3De84f43e2b2c3388694b0b3a58c2c4447f1=
+fbae7c
+>=20
+> If the issue is resolved by the change then I will modify other patch=
+es for
+> DECON series. And if really so, there may be a corner case we missed.
+>
+
+=2E.. since I reverted the offending commit and cherry-picked the one
+in your for-next branch and the machine booted again.
+=20
+> Thanks,
+> Inki Dae
+>=20
+
+Best regards,
+--=20
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
