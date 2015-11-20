@@ -1,100 +1,40 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v5 0/4] mfd: sec: add S2MPS15 PMIC support
-Date: Fri, 20 Nov 2015 14:45:45 +0530
-Message-ID: <564EE4C1.3020907@samsung.com>
-References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
- <CAGOxZ51aPo3rdB6R6x-Y4SUD4nsAcUo3X5XoEUSg0gfxuJpdyQ@mail.gmail.com>
- <20151120090528.GC3098@x1>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: only run atomic_check() if crtc is active
+Date: Fri, 20 Nov 2015 10:15:10 +0100
+Message-ID: <564EE49E.1030308@samsung.com>
+References: <1447333880-16555-1-git-send-email-gustavo@padovan.org>
+ <20151112134929.GC645@ulmo> <20151117100611.GO16848@phenom.ffwll.local>
+ <564B3777.1020804@samsung.com> <20151117161239.GI16848@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:40116 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934857AbbKTJOt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Nov 2015 04:14:49 -0500
-In-reply-to: <20151120090528.GC3098@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20151117161239.GI16848@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "Szyprowski,
+ Marek" <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Alim Akhtar <alim.akhtar@gmail.com>
-Cc: broonie@kernel.org, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, rtc-linux@googlegroups.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Lee,
-
-On 11/20/2015 02:35 PM, Lee Jones wrote:
-> On Thu, 19 Nov 2015, Alim Akhtar wrote:
->
->> Hi Lee,
->> Do I need to resend this series? This series still apply cleanly on
->> top of v4.4-rc1.
->> I can see 1/4 is already applied.
->
-> Yes, rebase and resend please.
->
-Ok will resend, but I will drop patch #1/4 as this is already applied.
-
->> On Fri, Oct 30, 2015 at 11:55 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->>> Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
->>> The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
->>> 27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
->>> programming these blocks via a I2C interface. This patch series adds initial
->>> support for LDO/Buck regulators of S2MPS15 PMIC.
->>>
->>> Changes since v4:
->>> * Dorpped Krzysztof reviewed-by and Lee Acked-by tags from patch 1/4,
->>>    because of the new changes to DT bindings. Seeking a fresh review/ack tags.
->>> * Removed samsung,s2mps15-clk compatible as we can reuse exsisting compatible of s2mps13.
->>> * Added acked-by on patch 2/4
->>> * Modified rtc driver as s2mps15 differs from s2mps14/13 etc, addressed Krzysztof
->>>    concerns on rtc patch.
->>>    There are some other improvement suggestion from Krzystof for the rtc, I feel that can be done
->>>    as a sperate patch later.
->>>
->>> Changes since v3:
->>> * Changes regulator driver name from s2mps15-pmic -> s2mps15-regulator as disscussed here [2]
->>> * Re-use the exsisting compatible/names for s2mps15 clock block.
->>>
->>> Changes since v2:
->>> * Addressed Lee Jones review comments.
->>>
->>> Changes since v1:
->>> * Added suggestion from Krzysztof [1].
->>> * Added s2mps15's 32.768 clocks support.
->>> * Added s2mps15's rtc support.
->>>
->>> V1 of these patches (with a lesser features) were posted a year back,
->>> since then there is not much progress on this, this is my attempt to
->>> move things forward.
->>>
->>> [1]-> https://lkml.org/lkml/2014/10/14/67
->>> [2]-> https://lkml.org/lkml/2015/10/28/417
->>>
->>> This series is based on linux-next-20151022.
->>> This is tested on exynos7-espresso board.
->>>
->>> Alim Akhtar (1):
->>>    drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
->>>
->>> Thomas Abraham (3):
->>>    dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
->>>    mfd: sec: Add support for S2MPS15 PMIC
->>>    regulator: s2mps11: add support for S2MPS15 regulators
->>>
->>>   Documentation/devicetree/bindings/mfd/s2mps11.txt |   21 ++-
->>>   drivers/mfd/sec-core.c                            |   31 ++++
->>>   drivers/mfd/sec-irq.c                             |    8 ++
->>>   drivers/regulator/Kconfig                         |    4 +-
->>>   drivers/regulator/s2mps11.c                       |  135 +++++++++++++++++-
->>>   drivers/rtc/rtc-s5m.c                             |   37 ++++-
->>>   include/linux/mfd/samsung/core.h                  |    1 +
->>>   include/linux/mfd/samsung/rtc.h                   |    2 +
->>>   include/linux/mfd/samsung/s2mps15.h               |  158 +++++++++++++++++++++
->>>   9 files changed, 383 insertions(+), 14 deletions(-)
->>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
->>>
->>>
->>
->>
->>
->
+T24gMTEvMTcvMjAxNSAwNToxMiBQTSwgRGFuaWVsIFZldHRlciB3cm90ZToKCiguLi4pCj4gCj4g
+Q2hlY2sgY3J0Y19zdGF0ZS0+ZW5hYmxlLCBza2lwIGlmIGZhbHNlLiBUaGF0J3MgdGhlICJpcyB0
+aGlzIHBpcGVsaW5lCj4gY29uZmlndXJlZCIga25vYi4gRm9yIHBsYW5lL2Nvbm5lY3RvciBpdCdz
+IHN0YXRlLT5jcnRjLCBidXQgd2l0aCB0aGUgc2FtZQo+IHJvbGUuCj4gCj4gSSBndWVzcyB3ZSBj
+b3VsZCBjaGVjayB0aGF0IGluIHRoZSBoZWxwZXJzLCBidXQgd2UgbmVlZCB0byBiZSBjYXJlZnVs
+IHRvCj4gc3RpbGwgY2FsbCAtPmF0b21pY19jaGVjayBmb3IgdGhlIGRpc2FibGluZyB0cmFuc2l0
+aW9uLCBpbiBjYXNlIHVzZXJzcGFjZQo+IGlzIGFza2luZyBmb3IgYSB2Ymxhbmstc3luY2VkIGZs
+aXAgdGhhdCBkaXNhYmxlcyBhIHBsYW5lIGJ1dCBzb21laG93Cj4gdGhhdCdzIG5vdCBwb3NzaWJs
+ZS4gSSBzb21ld2hhdCBwcmVmZXIgdG8gaGFuZGxlIHRoYXQgYWxsIGluIGRyaXZlcnMKPiB0aG91
+Z2guCj4gLURhbmllbAo+IAoKVGhhbmtzIGZvciB0aGUgZXhwbGFuYXRpb24sIEd1c3Rhdm8gd2ls
+bCB5b3UgdXBkYXRlIHlvdXIgcGF0Y2g/CgpSZWdhcmRzCkFuZHJ6ZWoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
