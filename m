@@ -1,105 +1,79 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [RESEND PATCH v2] mfd: sec-core: Rename MFD and regulator names
- differently
-Date: Fri, 20 Nov 2015 16:18:26 +0530
-Message-ID: <1448016506-8980-1-git-send-email-alim.akhtar@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
+Date: Fri, 20 Nov 2015 19:59:31 +0900
+Message-ID: <564EFD13.7040409@samsung.com>
+References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
+ <564DE209.8030004@osg.samsung.com> <564DE2DB.6050608@osg.samsung.com>
+ <564DEFEC.50802@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51028 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:47648 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759644AbbKTKsV (ORCPT
+	with ESMTP id S1759756AbbKTK7d convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Nov 2015 05:48:21 -0500
+	Fri, 20 Nov 2015 05:59:33 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NY4002G81775140@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2015 19:59:31 +0900 (KST)
+In-reply-to: <564DEFEC.50802@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: lee.jones@linaro.org, broonie@kernel.org
-Cc: k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com
+To: Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Currently S2MPSXX multifunction device is named as *-pmic,
-and these MFDs also supports regulator as a one of its MFD cell which
-has the same name, because current name is confusing and we want to
-sort it out.
+Hi Javier,
 
-We did discussed different approaches about how the MFD and it
-cells need to be named here [1].
-Based in the discussion this patch rename MFD regulator name as
-*-regulator instead of current *-pmic.
+2015=EB=85=84 11=EC=9B=94 20=EC=9D=BC 00:51=EC=97=90 Javier Martinez Ca=
+nillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> On 11/19/2015 11:55 AM, Javier Martinez Canillas wrote:
+>>>>
+>>>
+>>> This series causes a boot failure on at least an Exynos5800 Peach P=
+i
+>>> Chromebook (tested myself) and seems to be the cause of other Exyno=
+s
+>>> boards failing to boot: http://kernelci.org/boot/?exynos&fail
+>>>
+>>> [snip]
+>>>
+>>>>   drm/exynos: add pm_runtime to Mixer
+>>>>   drm/exynos: add pm_runtime to FIMD
+>>>
+>>> I had to revert these patches in order to get the machine in a boot=
+able
+>>> state again, the sha1 hash for these patches in next-20151119 are:
+>>>
+>>> 045febd5f813 drm/exynos: add pm_runtime to FIMD
+>=20
+> On a closer look, only reverting the FIMD patch is enough
+> to make at least the Exynos5800 Peach Pi to boot again.
 
-This patch also changes the corresponding entries in the regulator driver
-to keep git-bisect happy.
+Thanks for report.
 
-[1]-> https://lkml.org/lkml/2015/10/28/417
+I assume that the issue is because above patch removed 'suspended' vari=
+able
+for checking the suspend status in runtime so I revived it.
 
-Suggested-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
-Resending with collected Reviwed-by, Acked-by tags.
+I'm not sure that the change could resolve the issue. Could you test it
+with the change again? I have no Exynos5800 Peach Pi board. :(
 
- drivers/mfd/sec-core.c      |    8 ++++----
- drivers/regulator/s2mps11.c |    8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+=46or this, I pushed it to below exynos-drm/for-next branch,
+	https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/co=
+mmit/?h=3Dexynos-drm/for-next&id=3De84f43e2b2c3388694b0b3a58c2c4447f1fb=
+ae7c
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 7c4e7be17f1e..c9802ba9be72 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -68,7 +68,7 @@ static const struct mfd_cell s5m8767_devs[] = {
- 
- static const struct mfd_cell s2mps11_devs[] = {
- 	{
--		.name = "s2mps11-pmic",
-+		.name = "s2mps11-regulator",
- 	}, {
- 		.name = "s2mps14-rtc",
- 	}, {
-@@ -78,7 +78,7 @@ static const struct mfd_cell s2mps11_devs[] = {
- };
- 
- static const struct mfd_cell s2mps13_devs[] = {
--	{ .name = "s2mps13-pmic", },
-+	{ .name = "s2mps13-regulator", },
- 	{ .name = "s2mps13-rtc", },
- 	{
- 		.name = "s2mps13-clk",
-@@ -88,7 +88,7 @@ static const struct mfd_cell s2mps13_devs[] = {
- 
- static const struct mfd_cell s2mps14_devs[] = {
- 	{
--		.name = "s2mps14-pmic",
-+		.name = "s2mps14-regulator",
- 	}, {
- 		.name = "s2mps14-rtc",
- 	}, {
-@@ -116,7 +116,7 @@ static const struct mfd_cell s2mpa01_devs[] = {
- 
- static const struct mfd_cell s2mpu02_devs[] = {
- 	{
--		.name = "s2mpu02-pmic",
-+		.name = "s2mpu02-regulator",
- 	},
- };
- 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index b2f3a28e720c..3242ffc0cb25 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1199,11 +1199,11 @@ out:
- }
- 
- static const struct platform_device_id s2mps11_pmic_id[] = {
--	{ "s2mps11-pmic", S2MPS11X},
--	{ "s2mps13-pmic", S2MPS13X},
--	{ "s2mps14-pmic", S2MPS14X},
-+	{ "s2mps11-regulator", S2MPS11X},
-+	{ "s2mps13-regulator", S2MPS13X},
-+	{ "s2mps14-regulator", S2MPS14X},
- 	{ "s2mps15-regulator", S2MPS15X},
--	{ "s2mpu02-pmic", S2MPU02},
-+	{ "s2mpu02-regulator", S2MPU02},
- 	{ },
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
--- 
-1.7.10.4
+If the issue is resolved by the change then I will modify other patches=
+ for
+DECON series. And if really so, there may be a corner case we missed.
+
+Thanks,
+Inki Dae
+
+>=20
+> Best regards,
+>=20
