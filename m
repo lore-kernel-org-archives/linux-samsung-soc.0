@@ -1,40 +1,44 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 0/4] mfd: sec: add S2MPS15 PMIC support
-Date: Fri, 20 Nov 2015 10:31:12 +0000
-Message-ID: <20151120103112.GE3098@x1>
-References: <1446186334-16510-1-git-send-email-alim.akhtar@samsung.com>
- <CAGOxZ51aPo3rdB6R6x-Y4SUD4nsAcUo3X5XoEUSg0gfxuJpdyQ@mail.gmail.com>
- <20151120090528.GC3098@x1>
- <564EE4C1.3020907@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <564EE4C1.3020907@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@gmail.com>, broonie@kernel.org, Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, rtc-linux@googlegroups.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [RESEND PATCH v5 0/3] mfd: sec: add S2MPS15 PMIC support
+Date: Fri, 20 Nov 2015 16:07:50 +0530
+Message-ID: <1448015873-8743-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:48402 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753257AbbKTKhA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Nov 2015 05:37:00 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, alim.akhtar@samsung.com
 
-On Fri, 20 Nov 2015, Alim Akhtar wrote:
-> On 11/20/2015 02:35 PM, Lee Jones wrote:
-> >On Thu, 19 Nov 2015, Alim Akhtar wrote:
-> >
-> >>Hi Lee,
-> >>Do I need to resend this series? This series still apply cleanly on
-> >>top of v4.4-rc1.
-> >>I can see 1/4 is already applied.
-> >
-> >Yes, rebase and resend please.
-> >
-> Ok will resend, but I will drop patch #1/4 as this is already applied=
-=2E
+Hi Lee/Mark,
 
-Git should automatically do that when you rebase.
+This a resend of series [0] that adds s2mps15 pmic support.
+These patches have no changes, just collected some Reviewed-by and Acked-by tags.
+[0] -> https://lkml.org/lkml/2015/10/30/44
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Mark,
+Can I have you acked-by for patch# 2/3? so that these can go in via MFD tree.
+
+Alim Akhtar (1):
+  drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+
+Thomas Abraham (2):
+  mfd: sec: Add support for S2MPS15 PMIC
+  regulator: s2mps11: add support for S2MPS15 regulators
+
+ drivers/mfd/sec-core.c              |   31 +++++++
+ drivers/mfd/sec-irq.c               |    8 ++
+ drivers/regulator/Kconfig           |    4 +-
+ drivers/regulator/s2mps11.c         |  135 +++++++++++++++++++++++++++++-
+ drivers/rtc/rtc-s5m.c               |   37 +++++++-
+ include/linux/mfd/samsung/core.h    |    1 +
+ include/linux/mfd/samsung/rtc.h     |    2 +
+ include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
+ 8 files changed, 369 insertions(+), 7 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps15.h
+
+-- 
+1.7.10.4
