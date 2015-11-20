@@ -1,25 +1,41 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH 03/27] mtd: nand: update examples in the documentation to
- use mtd_to_nand()
-Date: Thu, 19 Nov 2015 11:22:07 -0800
-Message-ID: <20151119192207.GG64635@google.com>
-References: <1447681080-31232-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447681080-31232-4-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1447681080-31232-4-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Alexander Clouter <alex@digriz.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Marek
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 0/2] arm64: EXYNOS: Consolidate Exynos7 symbol
+Date: Fri, 20 Nov 2015 09:12:39 +0900
+Message-ID: <1447978361-18010-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>, devicetree@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 16, 2015 at 02:37:36PM +0100, Boris Brezillon wrote:
-> mtd_to_nand() has been introduced to hide accesses to mtd->priv.
-> All NAND controller drivers should use it instead of directly accessing
-> the ->priv field.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Hi,
 
-Pushed to l2-mtd.git
+We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+fall under generic ARCH_EXYNOS. In the same time there is no sense
+in building clocks for these ARMv8 SoCs on ARMv7 builds. In future
+this will also influence PMU [1] driver.
+
+Patch 2 *depends* on patch 1. Patch 1 received acks from Samsung clock
+folks so everything can go through Samsung-soc or ARM64 tree.
+
+Best regards,
+Krzysztof
+
+
+[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg48090.html
+
+
+Krzysztof Kozlowski (2):
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ drivers/clk/samsung/Kconfig         |  6 ++++++
+ drivers/clk/samsung/Makefile        |  4 ++--
+ 5 files changed, 12 insertions(+), 13 deletions(-)
+
+-- 
+1.9.1
+
