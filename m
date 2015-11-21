@@ -1,149 +1,137 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] pwm: Avoid double mutex lock on pwm_enable
-Date: Sat, 21 Nov 2015 13:26:47 +0900
-Message-ID: <564FF287.8000201@samsung.com>
-References: <1448038740-2811-1-git-send-email-linux.amoon@gmail.com>
+From: Inki Dae <daeinki@gmail.com>
+Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
+Date: Sat, 21 Nov 2015 18:38:05 +0900
+Message-ID: <CAAQKjZOSe3TSny07DHf8hstB-bWchS1WusPCnOhKvU5seK4JRA@mail.gmail.com>
+References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
+ <564DE209.8030004@osg.samsung.com> <564DE2DB.6050608@osg.samsung.com>
+ <564DEFEC.50802@osg.samsung.com> <564EFD13.7040409@samsung.com>
+ <564F0053.6020401@samsung.com> <564F4DF5.2010301@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1448038740-2811-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: k.kozlowski.k@gmail.com, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <564F4DF5.2010301@osg.samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 21.11.2015 o 01:59, Anand Moon pisze:
-> Commit d1cd21427747f15920cd726f5f67a07880e7dee4
-> (pwm: Set enable state properly on failed call to enable)
-> introduce double lock of mutex on pwm_enable
-> 
-> Changes fix the following debug lock warning.
-> 
-> [    2.701720] WARNING: CPU: 3 PID: 0 at kernel/locking/mutex.c:526 __mutex_lock_slowpath+0x3bc/0x404()
-> [    2.701731] DEBUG_LOCKS_WARN_ON(in_interrupt())
-
-Hi Anand!
-
-Yeah, I am hitting this as well. Annoying. However your description is
-inaccurate. Double lock of mutex does not cause warnings of sleeping or
-locking in atomic context (if you build with debug sleep atomic you will
-see different warning). More over you are partially reverting the commit
-d1cd21427747 ("pwm: Set enable state properly on failed call to enable")
-without proper explanation:
-1. why this locking is inappropriate;
-2. why it is safe to remove the mutex_lock().
-
-Please find the real problem, fix the real problem and throughly explain
-the real issue.
-
-I was suspecting some weird changes in timers. For !irqsafe timer I
-think it is safe to use mutexes... but apparently not. Maybe a work
-should be scheduled from function called by timer?
-
-Warning with debug atomic sleep:
-[   16.047517] BUG: sleeping function called from invalid context at
-../kernel/locking/mutex.c:617
-[   16.054866] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
-[   16.061402] INFO: lockdep is turned off.
-[   16.065281] Preemption disabled at:[<  (null)>]   (null)
-[   16.070524]
-[   16.072002] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
-4.4.0-rc1-00040-g28c429565d4f #290
-[   16.080150] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   16.086215] [<c0016780>] (unwind_backtrace) from [<c00132f0>]
-(show_stack+0x10/0x14)
-[   16.093938] [<c00132f0>] (show_stack) from [<c0223ba4>]
-(dump_stack+0x70/0xbc)
-[   16.101122] [<c0223ba4>] (dump_stack) from [<c05ed8e0>]
-(mutex_lock_nested+0x24/0x474)
-[   16.109009] [<c05ed8e0>] (mutex_lock_nested) from [<c0259154>]
-(pwm_enable+0x20/0x7c)
-[   16.116799] [<c0259154>] (pwm_enable) from [<c04400bc>]
-(led_heartbeat_function+0xdc/0x140)
-[   16.125119] [<c04400bc>] (led_heartbeat_function) from [<c00864c8>]
-(call_timer_fn+0x6c/0xf4)
-[   16.133606] [<c00864c8>] (call_timer_fn) from [<c00866f8>]
-(run_timer_softirq+0x1a8/0x230)
-[   16.141846] [<c00866f8>] (run_timer_softirq) from [<c0028e68>]
-(__do_softirq+0x134/0x2c0)
-[   16.149982] [<c0028e68>] (__do_softirq) from [<c0029334>]
-(irq_exit+0xd0/0x114)
-[   16.157255] [<c0029334>] (irq_exit) from [<c0076610>]
-(__handle_domain_irq+0x70/0xe4)
-[   16.165056] [<c0076610>] (__handle_domain_irq) from [<c00094e8>]
-(gic_handle_irq+0x4c/0x94)
-[   16.173376] [<c00094e8>] (gic_handle_irq) from [<c0013db8>]
-(__irq_svc+0x58/0x98)
-[   16.180817] Exception stack(0xc08cdf58 to 0xc08cdfa0)
-[   16.185823] df40:
-   c0010dcc 00000000
-[   16.193997] df60: c08cdfa8 00000000 c05f57c4 00000000 c08ca520
-c08ce4bc c08c7364 c08ce4b4
-[   16.202141] df80: c09121ca 00000000 00000001 c08cdfa8 c0010dcc
-c0010dd0 600f0013 ffffffff
-[   16.210291] [<c0013db8>] (__irq_svc) from [<c0010dd0>]
-(arch_cpu_idle+0x20/0x3c)
-[   16.217661] [<c0010dd0>] (arch_cpu_idle) from [<c0063174>]
-(cpu_startup_entry+0x17c/0x26c)
-[   16.225899] [<c0063174>] (cpu_startup_entry) from [<c0860c40>]
-(start_kernel+0x368/0x3d0)
-
-Best regards,
-Krzysztof
-
-
-> [    2.701737] Modules linked in:
-> [    2.701748] CPU: 3 PID: 0 Comm: swapper/3 Not tainted 4.4.0-rc1-xu4f #24
-> [    2.701753] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [    2.701787] [<c0015f48>] (unwind_backtrace) from [<c0012d04>] (show_stack+0x10/0x14)
-> [    2.701808] [<c0012d04>] (show_stack) from [<c01f83fc>] (dump_stack+0x84/0xc4)
-> [    2.701824] [<c01f83fc>] (dump_stack) from [<c0023494>] (warn_slowpath_common+0x80/0xb0)
-> [    2.701836] [<c0023494>] (warn_slowpath_common) from [<c00234f4>] (warn_slowpath_fmt+0x30/0x40)
-> [    2.701849] [<c00234f4>] (warn_slowpath_fmt) from [<c056e6b8>] (__mutex_lock_slowpath+0x3bc/0x404)
-> [    2.701864] [<c056e6b8>] (__mutex_lock_slowpath) from [<c056e70c>] (mutex_lock+0xc/0x24)
-> [    2.701884] [<c056e70c>] (mutex_lock) from [<c0228984>] (pwm_enable+0x20/0x7c)
-> [    2.701903] [<c0228984>] (pwm_enable) from [<c03f0000>] (led_heartbeat_function+0x74/0x144)
-> [    2.701919] [<c03f0000>] (led_heartbeat_function) from [<c0074368>] (call_timer_fn+0x24/0x98)
-> [    2.701932] [<c0074368>] (call_timer_fn) from [<c007453c>] (run_timer_softirq+0x160/0x21c)
-> [    2.701946] [<c007453c>] (run_timer_softirq) from [<c0026e10>] (__do_softirq+0x110/0x228)
-> [    2.701959] [<c0026e10>] (__do_softirq) from [<c00271c8>] (irq_exit+0xc0/0xfc)
-> [    2.701976] [<c00271c8>] (irq_exit) from [<c0065180>] (__handle_domain_irq+0x80/0xec)
-> [    2.701990] [<c0065180>] (__handle_domain_irq) from [<c0009494>] (gic_handle_irq+0x54/0x94)
-> [    2.702001] [<c0009494>] (gic_handle_irq) from [<c0013794>] (__irq_svc+0x54/0x90)
-> [    2.702008] Exception stack(0xee8bdf88 to 0xee8bdfd0)
-> [    2.702019] df80:                   00000001 00000000 00000000 c001b720 ee8bc000 c0573354
-> [    2.702031] dfa0: 00000000 00000000 ee8bdfe0 c07f92e4 c08004b4 c08004bc f0806640 ee8bdfd8
-> [    2.702039] dfc0: c0010180 c0010184 60000013 ffffffff
-> [    2.702053] [<c0013794>] (__irq_svc) from [<c0010184>] (arch_cpu_idle+0x38/0x3c)
-> [    2.702073] [<c0010184>] (arch_cpu_idle) from [<c0058ed4>] (cpu_startup_entry+0x1ec/0x270)
-> [    2.702086] [<c0058ed4>] (cpu_startup_entry) from [<4000956c>] (0x4000956c)
-> [    2.702093] ---[ end trace 539af70491f4f1a9 ]---
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  drivers/pwm/core.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index d24ca5f..b8f035a 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -506,16 +506,12 @@ int pwm_enable(struct pwm_device *pwm)
->  	if (!pwm)
->  		return -EINVAL;
->  
-> -	mutex_lock(&pwm->lock);
-> -
->  	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
->  		err = pwm->chip->ops->enable(pwm->chip, pwm);
->  		if (err)
->  			clear_bit(PWMF_ENABLED, &pwm->flags);
->  	}
->  
-> -	mutex_unlock(&pwm->lock);
-> -
->  	return err;
->  }
->  EXPORT_SYMBOL_GPL(pwm_enable);
-> 
+SGkgSmF2aWVyLAoKMjAxNS0xMS0yMSAxOjQ0IEdNVCswOTowMCBKYXZpZXIgTWFydGluZXogQ2Fu
+aWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+Ogo+IEhlbGxvIElua2ksCj4KPiBPbiAxMS8y
+MC8yMDE1IDA4OjEzIEFNLCBJbmtpIERhZSB3cm90ZToKPj4KPj4KPj4gMjAxNeuFhCAxMeyblCAy
+MOydvCAxOTo1OeyXkCBJbmtpIERhZSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4gSGkgSmF2aWVyLAo+
+Pj4KPj4+IDIwMTXrhYQgMTHsm5QgMjDsnbwgMDA6NTHsl5AgSmF2aWVyIE1hcnRpbmV6IENhbmls
+bGFzIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4gT24gMTEvMTkvMjAxNSAxMTo1NSBBTSwgSmF2aWVy
+IE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgo+Pj4+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4gVGhpcyBzZXJp
+ZXMgY2F1c2VzIGEgYm9vdCBmYWlsdXJlIG9uIGF0IGxlYXN0IGFuIEV4eW5vczU4MDAgUGVhY2gg
+UGkKPj4+Pj4+IENocm9tZWJvb2sgKHRlc3RlZCBteXNlbGYpIGFuZCBzZWVtcyB0byBiZSB0aGUg
+Y2F1c2Ugb2Ygb3RoZXIgRXh5bm9zCj4+Pj4+PiBib2FyZHMgZmFpbGluZyB0byBib290OiBodHRw
+Oi8va2VybmVsY2kub3JnL2Jvb3QvP2V4eW5vcyZmYWlsCj4+Pj4+Pgo+Pj4+Pj4gW3NuaXBdCj4+
+Pj4+Pgo+Pj4+Pj4+ICAgZHJtL2V4eW5vczogYWRkIHBtX3J1bnRpbWUgdG8gTWl4ZXIKPj4+Pj4+
+PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIEZJTUQKPj4+Pj4+Cj4+Pj4+PiBJIGhh
+ZCB0byByZXZlcnQgdGhlc2UgcGF0Y2hlcyBpbiBvcmRlciB0byBnZXQgdGhlIG1hY2hpbmUgaW4g
+YSBib290YWJsZQo+Pj4+Pj4gc3RhdGUgYWdhaW4sIHRoZSBzaGExIGhhc2ggZm9yIHRoZXNlIHBh
+dGNoZXMgaW4gbmV4dC0yMDE1MTExOSBhcmU6Cj4+Pj4+Pgo+Pj4+Pj4gMDQ1ZmViZDVmODEzIGRy
+bS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIEZJTUQKPj4+Pgo+Pj4+IE9uIGEgY2xvc2VyIGxv
+b2ssIG9ubHkgcmV2ZXJ0aW5nIHRoZSBGSU1EIHBhdGNoIGlzIGVub3VnaAo+Pj4+IHRvIG1ha2Ug
+YXQgbGVhc3QgdGhlIEV4eW5vczU4MDAgUGVhY2ggUGkgdG8gYm9vdCBhZ2Fpbi4KPj4+Cj4+PiBU
+aGFua3MgZm9yIHJlcG9ydC4KPj4+Cj4+PiBJIGFzc3VtZSB0aGF0IHRoZSBpc3N1ZSBpcyBiZWNh
+dXNlIGFib3ZlIHBhdGNoIHJlbW92ZWQgJ3N1c3BlbmRlZCcgdmFyaWFibGUKPj4+IGZvciBjaGVj
+a2luZyB0aGUgc3VzcGVuZCBzdGF0dXMgaW4gcnVudGltZSBzbyBJIHJldml2ZWQgaXQuCj4+Pgo+
+Pj4gSSdtIG5vdCBzdXJlIHRoYXQgdGhlIGNoYW5nZSBjb3VsZCByZXNvbHZlIHRoZSBpc3N1ZS4g
+Q291bGQgeW91IHRlc3QgaXQKPj4+IHdpdGggdGhlIGNoYW5nZSBhZ2Fpbj8gSSBoYXZlIG5vIEV4
+eW5vczU4MDAgUGVhY2ggUGkgYm9hcmQuIDooCj4+Pgo+Pj4gRm9yIHRoaXMsIEkgcHVzaGVkIGl0
+IHRvIGJlbG93IGV4eW5vcy1kcm0vZm9yLW5leHQgYnJhbmNoLAo+Pj4gICAgICBodHRwczovL2dp
+dC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MuZ2l0
+L2NvbW1pdC8/aD1leHlub3MtZHJtL2Zvci1uZXh0JmlkPWU4NGY0M2UyYjJjMzM4ODY5NGIwYjNh
+NThjMmM0NDQ3ZjFmYmFlN2MKPj4+Cj4+PiBJZiB0aGUgaXNzdWUgaXMgcmVzb2x2ZWQgYnkgdGhl
+IGNoYW5nZSB0aGVuIEkgd2lsbCBtb2RpZnkgb3RoZXIgcGF0Y2hlcyBmb3IKPj4+IERFQ09OIHNl
+cmllcy4gQW5kIGlmIHJlYWxseSBzbywgdGhlcmUgbWF5IGJlIGEgY29ybmVyIGNhc2Ugd2UgbWlz
+c2VkLgo+Pgo+PiBPb3BzLCBJIGZvdW5kIG91dCBvbmUgZXJyb3IgYXQgdGhlIGJvb3QgbG9nLAo+
+PiBodHRwOi8vc3RvcmFnZS5rZXJuZWxjaS5vcmcvbmV4dC9uZXh0LTIwMTUxMTIwL2FybS1tdWx0
+aV92N19kZWZjb25maWcrQ09ORklHX0xLRFRNPXkvbGFiLWNvbGxhYm9yYS9ib290LWV4eW5vczU4
+MDAtcGVhY2gtcGkuaHRtbAo+Pgo+PiBUaGUgYm9vdCBsb2cgc2F5cywKPj4gWyAgICA1Ljc1NDQ5
+M10gdmRkX2xkbzk6IHN1cHBsaWVkIGJ5IHZkZF8ydgo+PiBbICAgIDUuNzY1NTEwXSBvZl9ncmFw
+aF9nZXRfbmV4dF9lbmRwb2ludCgpOiBubyBwb3J0IG5vZGUgZm91bmQgaW4gL2RwLWNvbnRyb2xs
+ZXJAMTQ1QjAwMDAKPj4KPgo+IFRoaXMgbWVzc2FnZSBpcyBhIHJlZCBoZXJyaW5nIGZvciB0aGUg
+cmVwb3J0ZWQgaXNzdWUsIHRoZSBtZXNzYWdlIGlzIGFsc28KPiBwcmVzZW50IHdoZW4gdGhlIG1h
+Y2hpbmUgYm9vdHMgYW5kIHRoZSBkaXNwbGF5IGlzIGJyb3VnaHQgY29ycmVjdGx5Lgo+Cj4+IFNl
+ZW1zIHRoaXMgZXJyb3IgaXMgYmVjYXVzZSBleHlub3M1ODAwLXBlYWNoLXBpdC5kdHMgZmlsZSBk
+b2Vzbid0IGhhdmUgJ3BvcnRzJyBub2RlIGluIGRwIG5vZGUuCj4+Cj4+IEJlbG93IGlzIGRwIG5v
+ZGUgZGVzY3JpcHRpb24gb2YgZXh5bm9zNTQyMC1wZWFjaC1waXQuZHRzIGZpbGUuCj4+ICZkcCB7
+Cj4+ICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPj4gICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZh
+dWx0IjsKPj4gICAgICAgcGluY3RybC0wID0gPCZkcF9ocGRfZ3Bpbz47Cj4+ICAgICAgIHNhbXN1
+bmcsY29sb3Itc3BhY2UgPSA8MD47Cj4+ICAgICAgIHNhbXN1bmcsZHluYW1pYy1yYW5nZSA9IDww
+PjsKPj4gICAgICAgc2Ftc3VuZyx5Y2Jjci1jb2VmZiA9IDwwPjsKPj4gICAgICAgc2Ftc3VuZyxj
+b2xvci1kZXB0aCA9IDwxPjsKPj4gICAgICAgc2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwNj47Cj4+
+ICAgICAgIHNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKPj4gICAgICAgc2Ftc3VuZyxocGQtZ3Bp
+byA9IDwmZ3B4MiA2IEdQSU9fQUNUSVZFX0hJR0g+Owo+Pgo+PiAgICAgICBwb3J0cyB7Cj4+ICAg
+ICAgICAgICAgICAgcG9ydEAwIHsKPj4gICAgICAgICAgICAgICAgICAgICAgIGRwX291dDogZW5k
+cG9pbnQgewo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9pbnQg
+PSA8JmJyaWRnZV9pbj47Cj4+ICAgICAgICAgICAgICAgICAgICAgICB9Owo+PiAgICAgICAgICAg
+ICAgIH07Cj4+ICAgICAgIH07Cj4+IH07Cj4+Cj4+IEFuZCBiZWxvdyBpcyBmb3IgZXh5bm9zNTgw
+MC1wZWFzaC1waXQuZHRzLAo+PiAmZHAgewo+PiAgICAgICBzdGF0dXMgPSAib2theSI7Cj4+ICAg
+ICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4+ICAgICAgIHBpbmN0cmwtMCA9IDwmZHBf
+aHBkX2dwaW8+Owo+PiAgICAgICBzYW1zdW5nLGNvbG9yLXNwYWNlID0gPDA+Owo+PiAgICAgICBz
+YW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Cj4+ICAgICAgIHNhbXN1bmcseWNiY3ItY29lZmYg
+PSA8MD47Cj4+ICAgICAgIHNhbXN1bmcsY29sb3ItZGVwdGggPSA8MT47Cj4+ICAgICAgIHNhbXN1
+bmcsbGluay1yYXRlID0gPDB4MGE+Owo+PiAgICAgICBzYW1zdW5nLGxhbmUtY291bnQgPSA8Mj47
+Cj4+ICAgICAgIHNhbXN1bmcsaHBkLWdwaW8gPSA8JmdweDIgNiBHUElPX0FDVElWRV9ISUdIPjsK
+Pj4gICAgICAgcGFuZWwgPSA8JnBhbmVsPjsKPj4gfTsKPj4KPgo+IFRoZSBkaWZmZXJlbmNlIGlz
+IGJlY2F1c2UgdGhlIEV4eW5vczU0MjAgUGVhY2ggUGl0IERpc3BsYXkgUG9ydCBpcyBub3QKPiBh
+dHRhY2hlZCBkaXJlY3RseSB0byB0aGUgZGlzcGxheSBwYW5lbCwgdGhlcmUgaXMgYW4gZURQL0xW
+RFMgYnJpZGdlIGNoaXAKPiBpbiB0aGUgbWlkZGxlIChQUzg2MjIpIHdoaWxlIHRoZSBFeHlub3M1
+ODAwIFBlYWNoIFBpIGRvZXNuJ3QgaGF2ZSB0aGF0Lgo+Cj4gVGhlIEV4eW5vcyBEUCBkcml2ZXIg
+bG9va3VwcyBmb3IgZWl0aGVyIGEgcGFuZWwgcGhhbmRsZSBvciBhbiBPRiBncmFwaAo+IGVuZHBv
+aW50IHRoYXQgcG9pbnRzIHRvIGEgYnJpZGdlIGNoaXAgYW5kIHRoZSBicmlkZ2UgZW5wb2ludCBo
+YXMgYSBwb3J0Cj4gdGhhdCBwb2ludHMgdG8gdGhlIHBhbmVsLgo+Cj4gU28gdGhlIERUIGlzIGNv
+cnJlY3QgYnV0IG9mX2dyYXBoX2dldF9uZXh0X2VuZHBvaW50KCkgYWx3YXlzIHByaW50cyBhbgoK
+VGhlbiwgdGhlIERUIGlzIHJlYWxseSBpbmNvcnJlY3QuIEFzIHlvdSBtZW50aW9uZWQsIGlmIHRo
+ZSBFeHlub3M1ODAwIFBlYWNoIFBJCmJvYXJkIGRvZXNuJ3QgdXNlIGVEUCwgdGhlbiB0aGUgZHAg
+bm9kZSBfX3Nob3VsZCBiZSByZW1vdmVkX18gZnJvbQpleHlub3M1ODAwLXBlYWNoLXBpdC5kdHMu
+CgpGcm9tIGEgY29tbW9uLXNlbnNlIHN0YW5kcG9pbnQsIHRoZXJlIGlzIG5vIGFueSByZWFzb24g
+dG8gYnVpbGQKYW5kIHByb2JlIGRwIGRyaXZlciBpZiB0aGUgYm9hcmQgZG9lc24ndCB1c2UgZHAg
+aGFyZHdhcmUuCgo+IGVycm9yIGlmIHRoZSBwb3J0IHNvIE9GIGdyYXBoIGVuZHBvaW50cyBpdCBz
+ZWVtcyBjYW4ndCBiZSBvcHRpb25hbCBhcwo+IHVzZWQgaW4gdGhpcyBkcml2ZXIuIE1heWJlIHRo
+YXQgbWVzc2FnZSBzaG91bGQgYmUgY2hhbmdlIHRvIGRlYnVnIHRoZW4/Cj4KPiBBbm90aGVyIG9w
+dGlvbiBpcyB0byBleHRlbmQgdGhlIERQIGRyaXZlciBEVCBiaW5kaW5nIHRvIGJlIG1vcmUgZ2Vu
+ZXJpYwo+IHN1cHBvcnRpbmcgaGF2aW5nIGEgcG9ydCB0byBhIHBhbmVsIGJlc2lkZXMgYSBicmlk
+Z2UsIHNvIHdlIGNvdWxkIGhhdmUKPiBzb21ldGhpbmcgbGlrZSB0aGlzIGZvciBFeHlub3M1ODAw
+IFBlYWNoIGFuZCBiZSBjb25zaXN0ZW50IGluIGJvdGggY2FzZXM6CgpJdCdzIHJlYWxseSBub3Qg
+Z29vZC4gVGhpcyB3b3VsZCBtYWtlIGl0IG1vcmUgY29tcGxleC4gVGhlIGJlc3QKc29sdXRpb24g
+aXMganVzdCB0bwpyZW1vdmUgdGhlIGR0IG5vZGUgZnJvbSB0aGUgZGV2aWNlIHRyZWUgZmlsZS4K
+ClRoYW5rcywKSW5raSBEYWUKCj4KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
+bm9zNTgwMC1wZWFjaC1waS5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1ODAwLXBlYWNo
+LXBpLmR0cwo+IGluZGV4IDdiMDE4ZTQ1MTg4MC4uOWM2ZmQ3MzE0ZWUwIDEwMDY0NAo+IC0tLSBh
+L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAtcGVhY2gtcGkuZHRzCj4gKysrIGIvYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMKPiBAQCAtMTIyLDYgKzEyMiwxMiBA
+QAo+ICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gImF1byxiMTMzaHRuMDEiOwo+ICAgICAg
+ICAgICAgICAgICBwb3dlci1zdXBwbHkgPSA8JnRwczY1MDkwX2ZldDY+Owo+ICAgICAgICAgICAg
+ICAgICBiYWNrbGlnaHQgPSA8JmJhY2tsaWdodD47Cj4gKwo+ICsgICAgICAgICAgICAgICBwb3J0
+IHsKPiArICAgICAgICAgICAgICAgICAgICAgICBwYW5lbF9pbjogZW5kcG9pbnQgewo+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9vdXQ+Owo+
+ICsgICAgICAgICAgICAgICAgICAgICAgIH07Cj4gKyAgICAgICAgICAgICAgIH07Cj4gICAgICAg
+ICB9Owo+Cj4gICAgICAgICBtbWMxX3B3cnNlcTogbW1jMV9wd3JzZXEgewo+IEBAIC0xNDgsNyAr
+MTU0LDE0IEBACj4gICAgICAgICBzYW1zdW5nLGxpbmstcmF0ZSA9IDwweDBhPjsKPiAgICAgICAg
+IHNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKPiAgICAgICAgIHNhbXN1bmcsaHBkLWdwaW8gPSA8
+JmdweDIgNiBHUElPX0FDVElWRV9ISUdIPjsKPiAtICAgICAgIHBhbmVsID0gPCZwYW5lbD47Cj4g
+Kwo+ICsgICAgICAgcG9ydHMgewo+ICsgICAgICAgICAgICAgICBwb3J0QDAgewo+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIGRwX291dDogZW5kcG9pbnQgewo+ICsgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZwYW5lbF9pbj47Cj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgfTsKPiArICAgICAgICAgICAgICAgfTsKPiArICAgICAgIH07Cj4gIH07Cj4K
+PiAgJmZpbWQgewo+Cj4gQmVzdCByZWdhcmRzLAo+IC0tCj4gSmF2aWVyIE1hcnRpbmV6IENhbmls
+bGFzCj4gT3BlbiBTb3VyY2UgR3JvdXAKPiBTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKPiBfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
