@@ -1,118 +1,263 @@
-From: Inki Dae <daeinki@gmail.com>
-Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
-Date: Sat, 21 Nov 2015 23:59:22 +0900
-Message-ID: <CAAQKjZNBeW9u6CtuL__mej1QLGV53Ft2A_RxPz8RMuda0wegLg@mail.gmail.com>
-References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
- <564DE209.8030004@osg.samsung.com> <564DE2DB.6050608@osg.samsung.com>
- <564DEFEC.50802@osg.samsung.com> <564EFD13.7040409@samsung.com>
- <564F0053.6020401@samsung.com> <564F4DF5.2010301@osg.samsung.com>
- <CAAQKjZOSe3TSny07DHf8hstB-bWchS1WusPCnOhKvU5seK4JRA@mail.gmail.com>
- <CAPj87rOBJh417xkomoJkTse6fY8p1o-6VvVyXk91c9ik5atzsw@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] pwm: Avoid double mutex lock on pwm_enable
+Date: Sat, 21 Nov 2015 23:44:11 +0530
+Message-ID: <CANAwSgQeQy4=V7fociFJ36KibyAvbBbqTOHty3bodaajKpOBNw@mail.gmail.com>
+References: <1448038740-2811-1-git-send-email-linux.amoon@gmail.com>
+ <564FF287.8000201@samsung.com> <CANAwSgSRT8KYr1gAYUvspzMaqT3-3W_c7taMq5YdMo4nB3oB2Q@mail.gmail.com>
+ <CAJKOXPdejej2eo4M3fuV9jn7sMMwi7zADsvmvP0n60hW9ER_oQ@mail.gmail.com>
+ <CANAwSgQZnUxRR_2077Hmj=qLzAz_UNUqVWmaiy5MxSCNrk=nJg@mail.gmail.com> <CAJKOXPc=607yqBRThcRm+342-pBq2PozEqiE9zyHcKztDXDeBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPj87rOBJh417xkomoJkTse6fY8p1o-6VvVyXk91c9ik5atzsw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPc=607yqBRThcRm+342-pBq2PozEqiE9zyHcKztDXDeBA@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pwm@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jonathan Richardson <jonathar@broadcom.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGFuaWVsLAoKCjIwMTUtMTEtMjEgMjI6NDAgR01UKzA5OjAwIERhbmllbCBTdG9uZSA8ZGFu
-aWVsQGZvb2lzaGJhci5vcmc+Ogo+IEhpIElua2ksCj4KPiBPbiAyMSBOb3ZlbWJlciAyMDE1IGF0
-IDA5OjM4LCBJbmtpIERhZSA8ZGFlaW5raUBnbWFpbC5jb20+IHdyb3RlOgo+PiAyMDE1LTExLTIx
-IDE6NDQgR01UKzA5OjAwIEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1z
-dW5nLmNvbT46Cj4+PiBPbiAxMS8yMC8yMDE1IDA4OjEzIEFNLCBJbmtpIERhZSB3cm90ZToKPj4+
-PiBUaGUgYm9vdCBsb2cgc2F5cywKPj4+PiBbICAgIDUuNzU0NDkzXSB2ZGRfbGRvOTogc3VwcGxp
-ZWQgYnkgdmRkXzJ2Cj4+Pj4gWyAgICA1Ljc2NTUxMF0gb2ZfZ3JhcGhfZ2V0X25leHRfZW5kcG9p
-bnQoKTogbm8gcG9ydCBub2RlIGZvdW5kIGluIC9kcC1jb250cm9sbGVyQDE0NUIwMDAwCj4+Pj4K
-Pj4+Cj4+PiBUaGlzIG1lc3NhZ2UgaXMgYSByZWQgaGVycmluZyBmb3IgdGhlIHJlcG9ydGVkIGlz
-c3VlLCB0aGUgbWVzc2FnZSBpcyBhbHNvCj4+PiBwcmVzZW50IHdoZW4gdGhlIG1hY2hpbmUgYm9v
-dHMgYW5kIHRoZSBkaXNwbGF5IGlzIGJyb3VnaHQgY29ycmVjdGx5Lgo+Pj4KPj4+PiBTZWVtcyB0
-aGlzIGVycm9yIGlzIGJlY2F1c2UgZXh5bm9zNTgwMC1wZWFjaC1waXQuZHRzIGZpbGUgZG9lc24n
-dCBoYXZlICdwb3J0cycgbm9kZSBpbiBkcCBub2RlLgo+Pj4+Cj4+Pj4gQmVsb3cgaXMgZHAgbm9k
-ZSBkZXNjcmlwdGlvbiBvZiBleHlub3M1NDIwLXBlYWNoLXBpdC5kdHMgZmlsZS4KPj4+PiAmZHAg
-ewo+Pj4+ICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPj4+PiAgICAgICBwaW5jdHJsLW5hbWVzID0g
-ImRlZmF1bHQiOwo+Pj4+ICAgICAgIHBpbmN0cmwtMCA9IDwmZHBfaHBkX2dwaW8+Owo+Pj4+ICAg
-ICAgIHNhbXN1bmcsY29sb3Itc3BhY2UgPSA8MD47Cj4+Pj4gICAgICAgc2Ftc3VuZyxkeW5hbWlj
-LXJhbmdlID0gPDA+Owo+Pj4+ICAgICAgIHNhbXN1bmcseWNiY3ItY29lZmYgPSA8MD47Cj4+Pj4g
-ICAgICAgc2Ftc3VuZyxjb2xvci1kZXB0aCA9IDwxPjsKPj4+PiAgICAgICBzYW1zdW5nLGxpbmst
-cmF0ZSA9IDwweDA2PjsKPj4+PiAgICAgICBzYW1zdW5nLGxhbmUtY291bnQgPSA8Mj47Cj4+Pj4g
-ICAgICAgc2Ftc3VuZyxocGQtZ3BpbyA9IDwmZ3B4MiA2IEdQSU9fQUNUSVZFX0hJR0g+Owo+Pj4+
-Cj4+Pj4gICAgICAgcG9ydHMgewo+Pj4+ICAgICAgICAgICAgICAgcG9ydEAwIHsKPj4+PiAgICAg
-ICAgICAgICAgICAgICAgICAgZHBfb3V0OiBlbmRwb2ludCB7Cj4+Pj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZicmlkZ2VfaW4+Owo+Pj4+ICAgICAg
-ICAgICAgICAgICAgICAgICB9Owo+Pj4+ICAgICAgICAgICAgICAgfTsKPj4+PiAgICAgICB9Owo+
-Pj4+IH07Cj4+Pj4KPj4+PiBBbmQgYmVsb3cgaXMgZm9yIGV4eW5vczU4MDAtcGVhc2gtcGl0LmR0
-cywKPj4+PiAmZHAgewo+Pj4+ICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPj4+PiAgICAgICBwaW5j
-dHJsLW5hbWVzID0gImRlZmF1bHQiOwo+Pj4+ICAgICAgIHBpbmN0cmwtMCA9IDwmZHBfaHBkX2dw
-aW8+Owo+Pj4+ICAgICAgIHNhbXN1bmcsY29sb3Itc3BhY2UgPSA8MD47Cj4+Pj4gICAgICAgc2Ft
-c3VuZyxkeW5hbWljLXJhbmdlID0gPDA+Owo+Pj4+ICAgICAgIHNhbXN1bmcseWNiY3ItY29lZmYg
-PSA8MD47Cj4+Pj4gICAgICAgc2Ftc3VuZyxjb2xvci1kZXB0aCA9IDwxPjsKPj4+PiAgICAgICBz
-YW1zdW5nLGxpbmstcmF0ZSA9IDwweDBhPjsKPj4+PiAgICAgICBzYW1zdW5nLGxhbmUtY291bnQg
-PSA8Mj47Cj4+Pj4gICAgICAgc2Ftc3VuZyxocGQtZ3BpbyA9IDwmZ3B4MiA2IEdQSU9fQUNUSVZF
-X0hJR0g+Owo+Pj4+ICAgICAgIHBhbmVsID0gPCZwYW5lbD47Cj4+Pj4gfTsKPj4+Pgo+Pj4KPj4+
-IFRoZSBkaWZmZXJlbmNlIGlzIGJlY2F1c2UgdGhlIEV4eW5vczU0MjAgUGVhY2ggUGl0IERpc3Bs
-YXkgUG9ydCBpcyBub3QKPj4+IGF0dGFjaGVkIGRpcmVjdGx5IHRvIHRoZSBkaXNwbGF5IHBhbmVs
-LCB0aGVyZSBpcyBhbiBlRFAvTFZEUyBicmlkZ2UgY2hpcAo+Pj4gaW4gdGhlIG1pZGRsZSAoUFM4
-NjIyKSB3aGlsZSB0aGUgRXh5bm9zNTgwMCBQZWFjaCBQaSBkb2Vzbid0IGhhdmUgdGhhdC4KPj4+
-Cj4+PiBUaGUgRXh5bm9zIERQIGRyaXZlciBsb29rdXBzIGZvciBlaXRoZXIgYSBwYW5lbCBwaGFu
-ZGxlIG9yIGFuIE9GIGdyYXBoCj4+PiBlbmRwb2ludCB0aGF0IHBvaW50cyB0byBhIGJyaWRnZSBj
-aGlwIGFuZCB0aGUgYnJpZGdlIGVucG9pbnQgaGFzIGEgcG9ydAo+Pj4gdGhhdCBwb2ludHMgdG8g
-dGhlIHBhbmVsLgo+Pj4KPj4+IFNvIHRoZSBEVCBpcyBjb3JyZWN0IGJ1dCBvZl9ncmFwaF9nZXRf
-bmV4dF9lbmRwb2ludCgpIGFsd2F5cyBwcmludHMgYW4KPj4KPj4gVGhlbiwgdGhlIERUIGlzIHJl
-YWxseSBpbmNvcnJlY3QuIEFzIHlvdSBtZW50aW9uZWQsIGlmIHRoZSBFeHlub3M1ODAwIFBlYWNo
-IFBJCj4+IGJvYXJkIGRvZXNuJ3QgdXNlIGVEUCwgdGhlbiB0aGUgZHAgbm9kZSBfX3Nob3VsZCBi
-ZSByZW1vdmVkX18gZnJvbQo+PiBleHlub3M1ODAwLXBlYWNoLXBpdC5kdHMuCj4+Cj4+IEZyb20g
-YSBjb21tb24tc2Vuc2Ugc3RhbmRwb2ludCwgdGhlcmUgaXMgbm8gYW55IHJlYXNvbiB0byBidWls
-ZAo+PiBhbmQgcHJvYmUgZHAgZHJpdmVyIGlmIHRoZSBib2FyZCBkb2Vzbid0IHVzZSBkcCBoYXJk
-d2FyZS4KPgo+IEkgYWdyZWUgd2l0aCB3aGF0IHlvdSBzYXksIGJ1dCB1bmZvcnR1bmF0ZWx5IHlv
-dSd2ZSBzbGlnaHRseSBtaXNyZWFkCj4gd2hhdCBKYXZpZXIgaGFzIHNhaWQuIDopIGV4eW5vczU0
-MjAtcGVhY2gtcGl0IGhhcyBhbiBMVkRTIHBhbmVsLCB3aXRoCj4gdGhlIGVEUCAtPiBMVkRTIGJy
-aWRnZSBpbiBiZXR3ZWVuIChwczg2MjIpLiBleHlub3M1ODAwLXBlYWNoLXBpIChmcm9tCj4gd2hp
-Y2ggSSBhbSB3cml0aW5nIHRoaXMpIGhhcyBhbiBlRFAgcGFuZWwgZGlyZWN0bHkgY29ubmVjdGVk
-LiBUaGUgRFQKPiBkZXNjcmliZXMgYm90aCB0aGUgZURQIGNvbm5lY3RvciBmcm9tIEZJTUQgYW5k
-IHRoZSBlRFAgcGFuZWwsIGV4Y2VwdAo+IHRoYXQgdGhlcmUgaXMgbm8gY29ubmVjdGlvbiBiZXR3
-ZWVuIHRoZSBEVCBub2Rlcy4KClJpZ2h0LiBJIG1pc3JlYWQgd2hhdCBKYXZpZXIgc2FpZC4gOikK
-Cj4KPj4+IGVycm9yIGlmIHRoZSBwb3J0IHNvIE9GIGdyYXBoIGVuZHBvaW50cyBpdCBzZWVtcyBj
-YW4ndCBiZSBvcHRpb25hbCBhcwo+Pj4gdXNlZCBpbiB0aGlzIGRyaXZlci4gTWF5YmUgdGhhdCBt
-ZXNzYWdlIHNob3VsZCBiZSBjaGFuZ2UgdG8gZGVidWcgdGhlbj8KPj4+Cj4+PiBBbm90aGVyIG9w
-dGlvbiBpcyB0byBleHRlbmQgdGhlIERQIGRyaXZlciBEVCBiaW5kaW5nIHRvIGJlIG1vcmUgZ2Vu
-ZXJpYwo+Pj4gc3VwcG9ydGluZyBoYXZpbmcgYSBwb3J0IHRvIGEgcGFuZWwgYmVzaWRlcyBhIGJy
-aWRnZSwgc28gd2UgY291bGQgaGF2ZQo+Pj4gc29tZXRoaW5nIGxpa2UgdGhpcyBmb3IgRXh5bm9z
-NTgwMCBQZWFjaCBhbmQgYmUgY29uc2lzdGVudCBpbiBib3RoIGNhc2VzOgo+Pgo+PiBJdCdzIHJl
-YWxseSBub3QgZ29vZC4gVGhpcyB3b3VsZCBtYWtlIGl0IG1vcmUgY29tcGxleC4gVGhlIGJlc3QK
-Pj4gc29sdXRpb24gaXMganVzdCB0bwo+PiByZW1vdmUgdGhlIGR0IG5vZGUgZnJvbSB0aGUgZGV2
-aWNlIHRyZWUgZmlsZS4KPgo+IEdpdmVuIHRoZSBhYm92ZSwgbm90IHJlYWxseS4gSmF2aWVyJ3Mg
-cGF0Y2ggc2VlbXMgY29ycmVjdCB0byBtZSAtIGFzCj4geW91IGNhbiBzZWUsIHRoZXJlIGlzIGEg
-cGFuZWwgbm9kZSwgYW5kIHRoYXQgaXMgdGhlIHBhbmVsIHRoYXQncwo+IHJlYWxseSBjb25uZWN0
-ZWQuCgpJbmRlZWQuIEphdmllcidzIHBhdGNoIHdpbGwgY29ycmVjdCBpdC4KClRoYW5rcywKSW5r
-aSBEYWUKCj4KPj4+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAtcGVhY2gtcGku
-ZHRzCj4+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1ODAwLXBlYWNoLXBpLmR0cwo+
-Pj4gQEAgLTEyMiw2ICsxMjIsMTIgQEAKPj4+ICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0g
-ImF1byxiMTMzaHRuMDEiOwo+Pj4gICAgICAgICAgICAgICAgIHBvd2VyLXN1cHBseSA9IDwmdHBz
-NjUwOTBfZmV0Nj47Cj4+PiAgICAgICAgICAgICAgICAgYmFja2xpZ2h0ID0gPCZiYWNrbGlnaHQ+
-Owo+Pj4gKwo+Pj4gKyAgICAgICAgICAgICAgIHBvcnQgewo+Pj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgcGFuZWxfaW46IGVuZHBvaW50IHsKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9vdXQ+Owo+Pj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgfTsKPj4+ICsgICAgICAgICAgICAgICB9Owo+Pj4gICAgICAgICB9Owo+Pj4KPj4+ICAg
-ICAgICAgbW1jMV9wd3JzZXE6IG1tYzFfcHdyc2VxIHsKPj4+IEBAIC0xNDgsNyArMTU0LDE0IEBA
-Cj4+PiAgICAgICAgIHNhbXN1bmcsbGluay1yYXRlID0gPDB4MGE+Owo+Pj4gICAgICAgICBzYW1z
-dW5nLGxhbmUtY291bnQgPSA8Mj47Cj4+PiAgICAgICAgIHNhbXN1bmcsaHBkLWdwaW8gPSA8Jmdw
-eDIgNiBHUElPX0FDVElWRV9ISUdIPjsKPj4+IC0gICAgICAgcGFuZWwgPSA8JnBhbmVsPjsKPj4+
-ICsKPj4+ICsgICAgICAgcG9ydHMgewo+Pj4gKyAgICAgICAgICAgICAgIHBvcnRAMCB7Cj4+PiAr
-ICAgICAgICAgICAgICAgICAgICAgICBkcF9vdXQ6IGVuZHBvaW50IHsKPj4+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZwYW5lbF9pbj47Cj4+PiAr
-ICAgICAgICAgICAgICAgICAgICAgICB9Owo+Pj4gKyAgICAgICAgICAgICAgIH07Cj4+PiArICAg
-ICAgIH07Cj4+PiAgfTsKPgo+IENoZWVycywKPiBEYW5pZWwKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Krzysztof,
+
+On 21 November 2015 at 18:37, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> 2015-11-21 21:11 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> hi Krzysztof,
+>>
+>> On 21 November 2015 at 15:22, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> 2015-11-21 18:40 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>>>> hi Krzysztof,
+>>>>
+>>>> On 21 November 2015 at 09:56, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> wrote:
+>>>>>
+>>>>> W dniu 21.11.2015 o 01:59, Anand Moon pisze:
+>>>>> > Commit d1cd21427747f15920cd726f5f67a07880e7dee4
+>>>>> > (pwm: Set enable state properly on failed call to enable)
+>>>>> > introduce double lock of mutex on pwm_enable
+>>>>> >
+>>>>> > Changes fix the following debug lock warning.
+>>>>> >
+>>>>> > [    2.701720] WARNING: CPU: 3 PID: 0 at kernel/locking/mutex.c:526
+>>>>> > __mutex_lock_slowpath+0x3bc/0x404()
+>>>>> > [    2.701731] DEBUG_LOCKS_WARN_ON(in_interrupt())
+>>>>>
+>>>>> Hi Anand!
+>>>>>
+>>>>> Yeah, I am hitting this as well. Annoying. However your description is
+>>>>> inaccurate. Double lock of mutex does not cause warnings of sleeping or
+>>>>> locking in atomic context (if you build with debug sleep atomic you will
+>>>>> see different warning). More over you are partially reverting the commit
+>>>>> d1cd21427747 ("pwm: Set enable state properly on failed call to enable")
+>>>>> without proper explanation:
+>>>>> 1. why this locking is inappropriate;
+>>>>> 2. why it is safe to remove the mutex_lock().
+>>>>>
+>>>>> Please find the real problem, fix the real problem and throughly explain
+>>>>> the real issue.
+>>>>>
+>>>>> I was suspecting some weird changes in timers. For !irqsafe timer I
+>>>>> think it is safe to use mutexes... but apparently not. Maybe a work
+>>>>> should be scheduled from function called by timer?
+>>>>>
+>>>>> Warning with debug atomic sleep:
+>>>>> [   16.047517] BUG: sleeping function called from invalid context at
+>>>>> ../kernel/locking/mutex.c:617
+>>>>> [   16.054866] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
+>>>>> [   16.061402] INFO: lockdep is turned off.
+>>>>> [   16.065281] Preemption disabled at:[<  (null)>]   (null)
+>>>>> [   16.070524]
+>>>>> [   16.072002] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
+>>>>> 4.4.0-rc1-00040-g28c429565d4f #290
+>>>>> [   16.080150] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>>>>> [   16.086215] [<c0016780>] (unwind_backtrace) from [<c00132f0>]
+>>>>> (show_stack+0x10/0x14)
+>>>>> [   16.093938] [<c00132f0>] (show_stack) from [<c0223ba4>]
+>>>>> (dump_stack+0x70/0xbc)
+>>>>> [   16.101122] [<c0223ba4>] (dump_stack) from [<c05ed8e0>]
+>>>>> (mutex_lock_nested+0x24/0x474)
+>>>>> [   16.109009] [<c05ed8e0>] (mutex_lock_nested) from [<c0259154>]
+>>>>> (pwm_enable+0x20/0x7c)
+>>>>> [   16.116799] [<c0259154>] (pwm_enable) from [<c04400bc>]
+>>>>> (led_heartbeat_function+0xdc/0x140)
+>>>>> [   16.125119] [<c04400bc>] (led_heartbeat_function) from [<c00864c8>]
+>>>>> (call_timer_fn+0x6c/0xf4)
+>>>>> [   16.133606] [<c00864c8>] (call_timer_fn) from [<c00866f8>]
+>>>>> (run_timer_softirq+0x1a8/0x230)
+>>>>> [   16.141846] [<c00866f8>] (run_timer_softirq) from [<c0028e68>]
+>>>>> (__do_softirq+0x134/0x2c0)
+>>>>> [   16.149982] [<c0028e68>] (__do_softirq) from [<c0029334>]
+>>>>> (irq_exit+0xd0/0x114)
+>>>>> [   16.157255] [<c0029334>] (irq_exit) from [<c0076610>]
+>>>>> (__handle_domain_irq+0x70/0xe4)
+>>>>> [   16.165056] [<c0076610>] (__handle_domain_irq) from [<c00094e8>]
+>>>>> (gic_handle_irq+0x4c/0x94)
+>>>>> [   16.173376] [<c00094e8>] (gic_handle_irq) from [<c0013db8>]
+>>>>> (__irq_svc+0x58/0x98)
+>>>>> [   16.180817] Exception stack(0xc08cdf58 to 0xc08cdfa0)
+>>>>> [   16.185823] df40:
+>>>>>    c0010dcc 00000000
+>>>>> [   16.193997] df60: c08cdfa8 00000000 c05f57c4 00000000 c08ca520
+>>>>> c08ce4bc c08c7364 c08ce4b4
+>>>>> [   16.202141] df80: c09121ca 00000000 00000001 c08cdfa8 c0010dcc
+>>>>> c0010dd0 600f0013 ffffffff
+>>>>> [   16.210291] [<c0013db8>] (__irq_svc) from [<c0010dd0>]
+>>>>> (arch_cpu_idle+0x20/0x3c)
+>>>>> [   16.217661] [<c0010dd0>] (arch_cpu_idle) from [<c0063174>]
+>>>>> (cpu_startup_entry+0x17c/0x26c)
+>>>>> [   16.225899] [<c0063174>] (cpu_startup_entry) from [<c0860c40>]
+>>>>> (start_kernel+0x368/0x3d0)
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>>
+>>>>>
+>>>>> > [    2.701737] Modules linked in:
+>>>>> > [    2.701748] CPU: 3 PID: 0 Comm: swapper/3 Not tainted 4.4.0-rc1-xu4f
+>>>>> > #24
+>>>>> > [    2.701753] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>>>>> > [    2.701787] [<c0015f48>] (unwind_backtrace) from [<c0012d04>]
+>>>>> > (show_stack+0x10/0x14)
+>>>>> > [    2.701808] [<c0012d04>] (show_stack) from [<c01f83fc>]
+>>>>> > (dump_stack+0x84/0xc4)
+>>>>> > [    2.701824] [<c01f83fc>] (dump_stack) from [<c0023494>]
+>>>>> > (warn_slowpath_common+0x80/0xb0)
+>>>>> > [    2.701836] [<c0023494>] (warn_slowpath_common) from [<c00234f4>]
+>>>>> > (warn_slowpath_fmt+0x30/0x40)
+>>>>> > [    2.701849] [<c00234f4>] (warn_slowpath_fmt) from [<c056e6b8>]
+>>>>> > (__mutex_lock_slowpath+0x3bc/0x404)
+>>>>> > [    2.701864] [<c056e6b8>] (__mutex_lock_slowpath) from [<c056e70c>]
+>>>>> > (mutex_lock+0xc/0x24)
+>>>>> > [    2.701884] [<c056e70c>] (mutex_lock) from [<c0228984>]
+>>>>> > (pwm_enable+0x20/0x7c)
+>>>>> > [    2.701903] [<c0228984>] (pwm_enable) from [<c03f0000>]
+>>>>> > (led_heartbeat_function+0x74/0x144)
+>>>>> > [    2.701919] [<c03f0000>] (led_heartbeat_function) from [<c0074368>]
+>>>>> > (call_timer_fn+0x24/0x98)
+>>>>> > [    2.701932] [<c0074368>] (call_timer_fn) from [<c007453c>]
+>>>>> > (run_timer_softirq+0x160/0x21c)
+>>>>> > [    2.701946] [<c007453c>] (run_timer_softirq) from [<c0026e10>]
+>>>>> > (__do_softirq+0x110/0x228)
+>>>>> > [    2.701959] [<c0026e10>] (__do_softirq) from [<c00271c8>]
+>>>>> > (irq_exit+0xc0/0xfc)
+>>>>> > [    2.701976] [<c00271c8>] (irq_exit) from [<c0065180>]
+>>>>> > (__handle_domain_irq+0x80/0xec)
+>>>>> > [    2.701990] [<c0065180>] (__handle_domain_irq) from [<c0009494>]
+>>>>> > (gic_handle_irq+0x54/0x94)
+>>>>> > [    2.702001] [<c0009494>] (gic_handle_irq) from [<c0013794>]
+>>>>> > (__irq_svc+0x54/0x90)
+>>>>> > [    2.702008] Exception stack(0xee8bdf88 to 0xee8bdfd0)
+>>>>> > [    2.702019] df80:                   00000001 00000000 00000000
+>>>>> > c001b720 ee8bc000 c0573354
+>>>>> > [    2.702031] dfa0: 00000000 00000000 ee8bdfe0 c07f92e4 c08004b4
+>>>>> > c08004bc f0806640 ee8bdfd8
+>>>>> > [    2.702039] dfc0: c0010180 c0010184 60000013 ffffffff
+>>>>> > [    2.702053] [<c0013794>] (__irq_svc) from [<c0010184>]
+>>>>> > (arch_cpu_idle+0x38/0x3c)
+>>>>> > [    2.702073] [<c0010184>] (arch_cpu_idle) from [<c0058ed4>]
+>>>>> > (cpu_startup_entry+0x1ec/0x270)
+>>>>> > [    2.702086] [<c0058ed4>] (cpu_startup_entry) from [<4000956c>]
+>>>>> > (0x4000956c)
+>>>>> > [    2.702093] ---[ end trace 539af70491f4f1a9 ]---
+>>>>> >
+>>>>> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>>>> > ---
+>>>>> >  drivers/pwm/core.c | 4 ----
+>>>>> >  1 file changed, 4 deletions(-)
+>>>>> >
+>>>>> > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+>>>>> > index d24ca5f..b8f035a 100644
+>>>>> > --- a/drivers/pwm/core.c
+>>>>> > +++ b/drivers/pwm/core.c
+>>>>> > @@ -506,16 +506,12 @@ int pwm_enable(struct pwm_device *pwm)
+>>>>> >       if (!pwm)
+>>>>> >               return -EINVAL;
+>>>>> >
+>>>>> > -     mutex_lock(&pwm->lock);
+>>>>> > -
+>>>>> >       if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
+>>>>> >               err = pwm->chip->ops->enable(pwm->chip, pwm);
+>>>>> >               if (err)
+>>>>> >                       clear_bit(PWMF_ENABLED, &pwm->flags);
+>>>>> >       }
+>>>>> >
+>>>>> > -     mutex_unlock(&pwm->lock);
+>>>>> > -
+>>>>> >       return err;
+>>>>> >  }
+>>>>> >  EXPORT_SYMBOL_GPL(pwm_enable);
+>>>>> >
+>>>>
+>>>>
+>>>> Adding Jonathan Richardson.
+>>>>
+>>>> Yes I am
+>>>>
+>>>> aware I am reverting some part of the d1cd21427747 ("pwm: Set enable state
+>>>> properly on failed call to enable")
+>>>>
+>>>> Please take a look at this below commit.
+>>>>
+>>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/drivers/pwm/core.c?id=d1cd21427747f15920cd726f5f67a07880e7dee4
+>>>>
+>>>> Actually reverting this change it work fine.
+>>>>
+>>>> This changes introduce the new mutex lock pwm->lock to protect enabled bit
+>>>> by drivers while setting polarity.
+>>>>
+>>>> Well pwm_set_polarity already acquires the pwm->lock and calls
+>>>> pwm_is_enabled function.
+>>>> Again within pwm_is_enabled we are trying to acquire the same mutex lock.
+>>>
+>>> You are describing a lockdown by trying to acquire the same mutex twice.
+>>>
+>>> However pwm_is_enabled() does not acquire mutex.
+>>>
+>>> Again, please look at generated warnings:
+>>> 1. BUG: sleeping function called from invalid context
+>>> 2. DEBUG_LOCKS_WARN_ON(in_interrupt())
+>>>
+>>> They are not related anyhow to what you described (acquiring already
+>>> locked mutex).
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>
+>> My last reply mail went in HTML format so resend this.
+>>
+>> First it was a typo on my part.
+>> It not pwm_is_enabled function its pwm_enabled.
+>
+> There is no such function as "pwm_enabled".
+>
+> Sorry, I don't get your point.
+>
+> Instead of pasting some commit use a descriptive way to show the calls
+> leading lockdown. But please use real function names.
+>
+> Best regards,
+> Krzysztof
+
+Earlier my assumption of double mutex lock up totally rubbish.
+
+After reverting my changes and building image with CONFIG_DEBUG_ATOMIC_SLEEP.
+
+[  390.415370] BUG: sleeping function called from invalid context at
+kernel/locking/mutex.c:97
+[  390.422274] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
+[  390.428831] Preemption disabled at:[<  (null)>]   (null)
+[  391.970352] BUG: sleeping function called from invalid context at
+kernel/locking/mutex.c:97
+[  391.977251] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
+[  391.983814] Preemption disabled at:[<  (null)>]   (null)
+[  393.520376] BUG: sleeping function called from invalid context at
+kernel/locking/mutex.c:97
+[  393.527312] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
+[  393.533925] Preemption disabled at:[<  (null)>]   (null)
+
+I don't understand why their is requirement for mutex lock in
+pwm_enable function.
+mutexes are sleeping locks which behave similarly to binary semaphores.
+
+Please correct me if I am wrong.
+
+-Anand Moon
