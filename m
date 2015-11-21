@@ -1,137 +1,106 @@
 From: Inki Dae <daeinki@gmail.com>
 Subject: Re: [PATCH v2 0/7] drm/exynos: add pm runtime support
-Date: Sat, 21 Nov 2015 18:38:05 +0900
-Message-ID: <CAAQKjZOSe3TSny07DHf8hstB-bWchS1WusPCnOhKvU5seK4JRA@mail.gmail.com>
+Date: Sat, 21 Nov 2015 18:40:13 +0900
+Message-ID: <CAAQKjZPJhwuZ_wnSoU6ZpCCAVhHXfLFsNQeVxEbPXNwjrHy3Jg@mail.gmail.com>
 References: <1446547629-12521-1-git-send-email-inki.dae@samsung.com>
  <564DE209.8030004@osg.samsung.com> <564DE2DB.6050608@osg.samsung.com>
- <564DEFEC.50802@osg.samsung.com> <564EFD13.7040409@samsung.com>
- <564F0053.6020401@samsung.com> <564F4DF5.2010301@osg.samsung.com>
+ <564DEFEC.50802@osg.samsung.com> <564EFD13.7040409@samsung.com> <564F48F1.9070205@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <564F4DF5.2010301@osg.samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f172.google.com ([209.85.160.172]:36611 "EHLO
+	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755986AbbKUJkx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 21 Nov 2015 04:40:53 -0500
+Received: by ykdr82 with SMTP id r82so190701389ykd.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Nov 2015 01:40:52 -0800 (PST)
+In-Reply-To: <564F48F1.9070205@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@linaro.org>
 
-SGkgSmF2aWVyLAoKMjAxNS0xMS0yMSAxOjQ0IEdNVCswOTowMCBKYXZpZXIgTWFydGluZXogQ2Fu
-aWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+Ogo+IEhlbGxvIElua2ksCj4KPiBPbiAxMS8y
-MC8yMDE1IDA4OjEzIEFNLCBJbmtpIERhZSB3cm90ZToKPj4KPj4KPj4gMjAxNeuFhCAxMeyblCAy
-MOydvCAxOTo1OeyXkCBJbmtpIERhZSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4gSGkgSmF2aWVyLAo+
-Pj4KPj4+IDIwMTXrhYQgMTHsm5QgMjDsnbwgMDA6NTHsl5AgSmF2aWVyIE1hcnRpbmV6IENhbmls
-bGFzIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4gT24gMTEvMTkvMjAxNSAxMTo1NSBBTSwgSmF2aWVy
-IE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgo+Pj4+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4gVGhpcyBzZXJp
-ZXMgY2F1c2VzIGEgYm9vdCBmYWlsdXJlIG9uIGF0IGxlYXN0IGFuIEV4eW5vczU4MDAgUGVhY2gg
-UGkKPj4+Pj4+IENocm9tZWJvb2sgKHRlc3RlZCBteXNlbGYpIGFuZCBzZWVtcyB0byBiZSB0aGUg
-Y2F1c2Ugb2Ygb3RoZXIgRXh5bm9zCj4+Pj4+PiBib2FyZHMgZmFpbGluZyB0byBib290OiBodHRw
-Oi8va2VybmVsY2kub3JnL2Jvb3QvP2V4eW5vcyZmYWlsCj4+Pj4+Pgo+Pj4+Pj4gW3NuaXBdCj4+
-Pj4+Pgo+Pj4+Pj4+ICAgZHJtL2V4eW5vczogYWRkIHBtX3J1bnRpbWUgdG8gTWl4ZXIKPj4+Pj4+
-PiAgIGRybS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIEZJTUQKPj4+Pj4+Cj4+Pj4+PiBJIGhh
-ZCB0byByZXZlcnQgdGhlc2UgcGF0Y2hlcyBpbiBvcmRlciB0byBnZXQgdGhlIG1hY2hpbmUgaW4g
-YSBib290YWJsZQo+Pj4+Pj4gc3RhdGUgYWdhaW4sIHRoZSBzaGExIGhhc2ggZm9yIHRoZXNlIHBh
-dGNoZXMgaW4gbmV4dC0yMDE1MTExOSBhcmU6Cj4+Pj4+Pgo+Pj4+Pj4gMDQ1ZmViZDVmODEzIGRy
-bS9leHlub3M6IGFkZCBwbV9ydW50aW1lIHRvIEZJTUQKPj4+Pgo+Pj4+IE9uIGEgY2xvc2VyIGxv
-b2ssIG9ubHkgcmV2ZXJ0aW5nIHRoZSBGSU1EIHBhdGNoIGlzIGVub3VnaAo+Pj4+IHRvIG1ha2Ug
-YXQgbGVhc3QgdGhlIEV4eW5vczU4MDAgUGVhY2ggUGkgdG8gYm9vdCBhZ2Fpbi4KPj4+Cj4+PiBU
-aGFua3MgZm9yIHJlcG9ydC4KPj4+Cj4+PiBJIGFzc3VtZSB0aGF0IHRoZSBpc3N1ZSBpcyBiZWNh
-dXNlIGFib3ZlIHBhdGNoIHJlbW92ZWQgJ3N1c3BlbmRlZCcgdmFyaWFibGUKPj4+IGZvciBjaGVj
-a2luZyB0aGUgc3VzcGVuZCBzdGF0dXMgaW4gcnVudGltZSBzbyBJIHJldml2ZWQgaXQuCj4+Pgo+
-Pj4gSSdtIG5vdCBzdXJlIHRoYXQgdGhlIGNoYW5nZSBjb3VsZCByZXNvbHZlIHRoZSBpc3N1ZS4g
-Q291bGQgeW91IHRlc3QgaXQKPj4+IHdpdGggdGhlIGNoYW5nZSBhZ2Fpbj8gSSBoYXZlIG5vIEV4
-eW5vczU4MDAgUGVhY2ggUGkgYm9hcmQuIDooCj4+Pgo+Pj4gRm9yIHRoaXMsIEkgcHVzaGVkIGl0
-IHRvIGJlbG93IGV4eW5vcy1kcm0vZm9yLW5leHQgYnJhbmNoLAo+Pj4gICAgICBodHRwczovL2dp
-dC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MuZ2l0
-L2NvbW1pdC8/aD1leHlub3MtZHJtL2Zvci1uZXh0JmlkPWU4NGY0M2UyYjJjMzM4ODY5NGIwYjNh
-NThjMmM0NDQ3ZjFmYmFlN2MKPj4+Cj4+PiBJZiB0aGUgaXNzdWUgaXMgcmVzb2x2ZWQgYnkgdGhl
-IGNoYW5nZSB0aGVuIEkgd2lsbCBtb2RpZnkgb3RoZXIgcGF0Y2hlcyBmb3IKPj4+IERFQ09OIHNl
-cmllcy4gQW5kIGlmIHJlYWxseSBzbywgdGhlcmUgbWF5IGJlIGEgY29ybmVyIGNhc2Ugd2UgbWlz
-c2VkLgo+Pgo+PiBPb3BzLCBJIGZvdW5kIG91dCBvbmUgZXJyb3IgYXQgdGhlIGJvb3QgbG9nLAo+
-PiBodHRwOi8vc3RvcmFnZS5rZXJuZWxjaS5vcmcvbmV4dC9uZXh0LTIwMTUxMTIwL2FybS1tdWx0
-aV92N19kZWZjb25maWcrQ09ORklHX0xLRFRNPXkvbGFiLWNvbGxhYm9yYS9ib290LWV4eW5vczU4
-MDAtcGVhY2gtcGkuaHRtbAo+Pgo+PiBUaGUgYm9vdCBsb2cgc2F5cywKPj4gWyAgICA1Ljc1NDQ5
-M10gdmRkX2xkbzk6IHN1cHBsaWVkIGJ5IHZkZF8ydgo+PiBbICAgIDUuNzY1NTEwXSBvZl9ncmFw
-aF9nZXRfbmV4dF9lbmRwb2ludCgpOiBubyBwb3J0IG5vZGUgZm91bmQgaW4gL2RwLWNvbnRyb2xs
-ZXJAMTQ1QjAwMDAKPj4KPgo+IFRoaXMgbWVzc2FnZSBpcyBhIHJlZCBoZXJyaW5nIGZvciB0aGUg
-cmVwb3J0ZWQgaXNzdWUsIHRoZSBtZXNzYWdlIGlzIGFsc28KPiBwcmVzZW50IHdoZW4gdGhlIG1h
-Y2hpbmUgYm9vdHMgYW5kIHRoZSBkaXNwbGF5IGlzIGJyb3VnaHQgY29ycmVjdGx5Lgo+Cj4+IFNl
-ZW1zIHRoaXMgZXJyb3IgaXMgYmVjYXVzZSBleHlub3M1ODAwLXBlYWNoLXBpdC5kdHMgZmlsZSBk
-b2Vzbid0IGhhdmUgJ3BvcnRzJyBub2RlIGluIGRwIG5vZGUuCj4+Cj4+IEJlbG93IGlzIGRwIG5v
-ZGUgZGVzY3JpcHRpb24gb2YgZXh5bm9zNTQyMC1wZWFjaC1waXQuZHRzIGZpbGUuCj4+ICZkcCB7
-Cj4+ICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPj4gICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZh
-dWx0IjsKPj4gICAgICAgcGluY3RybC0wID0gPCZkcF9ocGRfZ3Bpbz47Cj4+ICAgICAgIHNhbXN1
-bmcsY29sb3Itc3BhY2UgPSA8MD47Cj4+ICAgICAgIHNhbXN1bmcsZHluYW1pYy1yYW5nZSA9IDww
-PjsKPj4gICAgICAgc2Ftc3VuZyx5Y2Jjci1jb2VmZiA9IDwwPjsKPj4gICAgICAgc2Ftc3VuZyxj
-b2xvci1kZXB0aCA9IDwxPjsKPj4gICAgICAgc2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwNj47Cj4+
-ICAgICAgIHNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKPj4gICAgICAgc2Ftc3VuZyxocGQtZ3Bp
-byA9IDwmZ3B4MiA2IEdQSU9fQUNUSVZFX0hJR0g+Owo+Pgo+PiAgICAgICBwb3J0cyB7Cj4+ICAg
-ICAgICAgICAgICAgcG9ydEAwIHsKPj4gICAgICAgICAgICAgICAgICAgICAgIGRwX291dDogZW5k
-cG9pbnQgewo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9pbnQg
-PSA8JmJyaWRnZV9pbj47Cj4+ICAgICAgICAgICAgICAgICAgICAgICB9Owo+PiAgICAgICAgICAg
-ICAgIH07Cj4+ICAgICAgIH07Cj4+IH07Cj4+Cj4+IEFuZCBiZWxvdyBpcyBmb3IgZXh5bm9zNTgw
-MC1wZWFzaC1waXQuZHRzLAo+PiAmZHAgewo+PiAgICAgICBzdGF0dXMgPSAib2theSI7Cj4+ICAg
-ICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4+ICAgICAgIHBpbmN0cmwtMCA9IDwmZHBf
-aHBkX2dwaW8+Owo+PiAgICAgICBzYW1zdW5nLGNvbG9yLXNwYWNlID0gPDA+Owo+PiAgICAgICBz
-YW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Cj4+ICAgICAgIHNhbXN1bmcseWNiY3ItY29lZmYg
-PSA8MD47Cj4+ICAgICAgIHNhbXN1bmcsY29sb3ItZGVwdGggPSA8MT47Cj4+ICAgICAgIHNhbXN1
-bmcsbGluay1yYXRlID0gPDB4MGE+Owo+PiAgICAgICBzYW1zdW5nLGxhbmUtY291bnQgPSA8Mj47
-Cj4+ICAgICAgIHNhbXN1bmcsaHBkLWdwaW8gPSA8JmdweDIgNiBHUElPX0FDVElWRV9ISUdIPjsK
-Pj4gICAgICAgcGFuZWwgPSA8JnBhbmVsPjsKPj4gfTsKPj4KPgo+IFRoZSBkaWZmZXJlbmNlIGlz
-IGJlY2F1c2UgdGhlIEV4eW5vczU0MjAgUGVhY2ggUGl0IERpc3BsYXkgUG9ydCBpcyBub3QKPiBh
-dHRhY2hlZCBkaXJlY3RseSB0byB0aGUgZGlzcGxheSBwYW5lbCwgdGhlcmUgaXMgYW4gZURQL0xW
-RFMgYnJpZGdlIGNoaXAKPiBpbiB0aGUgbWlkZGxlIChQUzg2MjIpIHdoaWxlIHRoZSBFeHlub3M1
-ODAwIFBlYWNoIFBpIGRvZXNuJ3QgaGF2ZSB0aGF0Lgo+Cj4gVGhlIEV4eW5vcyBEUCBkcml2ZXIg
-bG9va3VwcyBmb3IgZWl0aGVyIGEgcGFuZWwgcGhhbmRsZSBvciBhbiBPRiBncmFwaAo+IGVuZHBv
-aW50IHRoYXQgcG9pbnRzIHRvIGEgYnJpZGdlIGNoaXAgYW5kIHRoZSBicmlkZ2UgZW5wb2ludCBo
-YXMgYSBwb3J0Cj4gdGhhdCBwb2ludHMgdG8gdGhlIHBhbmVsLgo+Cj4gU28gdGhlIERUIGlzIGNv
-cnJlY3QgYnV0IG9mX2dyYXBoX2dldF9uZXh0X2VuZHBvaW50KCkgYWx3YXlzIHByaW50cyBhbgoK
-VGhlbiwgdGhlIERUIGlzIHJlYWxseSBpbmNvcnJlY3QuIEFzIHlvdSBtZW50aW9uZWQsIGlmIHRo
-ZSBFeHlub3M1ODAwIFBlYWNoIFBJCmJvYXJkIGRvZXNuJ3QgdXNlIGVEUCwgdGhlbiB0aGUgZHAg
-bm9kZSBfX3Nob3VsZCBiZSByZW1vdmVkX18gZnJvbQpleHlub3M1ODAwLXBlYWNoLXBpdC5kdHMu
-CgpGcm9tIGEgY29tbW9uLXNlbnNlIHN0YW5kcG9pbnQsIHRoZXJlIGlzIG5vIGFueSByZWFzb24g
-dG8gYnVpbGQKYW5kIHByb2JlIGRwIGRyaXZlciBpZiB0aGUgYm9hcmQgZG9lc24ndCB1c2UgZHAg
-aGFyZHdhcmUuCgo+IGVycm9yIGlmIHRoZSBwb3J0IHNvIE9GIGdyYXBoIGVuZHBvaW50cyBpdCBz
-ZWVtcyBjYW4ndCBiZSBvcHRpb25hbCBhcwo+IHVzZWQgaW4gdGhpcyBkcml2ZXIuIE1heWJlIHRo
-YXQgbWVzc2FnZSBzaG91bGQgYmUgY2hhbmdlIHRvIGRlYnVnIHRoZW4/Cj4KPiBBbm90aGVyIG9w
-dGlvbiBpcyB0byBleHRlbmQgdGhlIERQIGRyaXZlciBEVCBiaW5kaW5nIHRvIGJlIG1vcmUgZ2Vu
-ZXJpYwo+IHN1cHBvcnRpbmcgaGF2aW5nIGEgcG9ydCB0byBhIHBhbmVsIGJlc2lkZXMgYSBicmlk
-Z2UsIHNvIHdlIGNvdWxkIGhhdmUKPiBzb21ldGhpbmcgbGlrZSB0aGlzIGZvciBFeHlub3M1ODAw
-IFBlYWNoIGFuZCBiZSBjb25zaXN0ZW50IGluIGJvdGggY2FzZXM6CgpJdCdzIHJlYWxseSBub3Qg
-Z29vZC4gVGhpcyB3b3VsZCBtYWtlIGl0IG1vcmUgY29tcGxleC4gVGhlIGJlc3QKc29sdXRpb24g
-aXMganVzdCB0bwpyZW1vdmUgdGhlIGR0IG5vZGUgZnJvbSB0aGUgZGV2aWNlIHRyZWUgZmlsZS4K
-ClRoYW5rcywKSW5raSBEYWUKCj4KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTgwMC1wZWFjaC1waS5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1ODAwLXBlYWNo
-LXBpLmR0cwo+IGluZGV4IDdiMDE4ZTQ1MTg4MC4uOWM2ZmQ3MzE0ZWUwIDEwMDY0NAo+IC0tLSBh
-L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAtcGVhY2gtcGkuZHRzCj4gKysrIGIvYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMKPiBAQCAtMTIyLDYgKzEyMiwxMiBA
-QAo+ICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gImF1byxiMTMzaHRuMDEiOwo+ICAgICAg
-ICAgICAgICAgICBwb3dlci1zdXBwbHkgPSA8JnRwczY1MDkwX2ZldDY+Owo+ICAgICAgICAgICAg
-ICAgICBiYWNrbGlnaHQgPSA8JmJhY2tsaWdodD47Cj4gKwo+ICsgICAgICAgICAgICAgICBwb3J0
-IHsKPiArICAgICAgICAgICAgICAgICAgICAgICBwYW5lbF9pbjogZW5kcG9pbnQgewo+ICsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9vdXQ+Owo+
-ICsgICAgICAgICAgICAgICAgICAgICAgIH07Cj4gKyAgICAgICAgICAgICAgIH07Cj4gICAgICAg
-ICB9Owo+Cj4gICAgICAgICBtbWMxX3B3cnNlcTogbW1jMV9wd3JzZXEgewo+IEBAIC0xNDgsNyAr
-MTU0LDE0IEBACj4gICAgICAgICBzYW1zdW5nLGxpbmstcmF0ZSA9IDwweDBhPjsKPiAgICAgICAg
-IHNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKPiAgICAgICAgIHNhbXN1bmcsaHBkLWdwaW8gPSA8
-JmdweDIgNiBHUElPX0FDVElWRV9ISUdIPjsKPiAtICAgICAgIHBhbmVsID0gPCZwYW5lbD47Cj4g
-Kwo+ICsgICAgICAgcG9ydHMgewo+ICsgICAgICAgICAgICAgICBwb3J0QDAgewo+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIGRwX291dDogZW5kcG9pbnQgewo+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZwYW5lbF9pbj47Cj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgfTsKPiArICAgICAgICAgICAgICAgfTsKPiArICAgICAgIH07Cj4gIH07Cj4K
-PiAgJmZpbWQgewo+Cj4gQmVzdCByZWdhcmRzLAo+IC0tCj4gSmF2aWVyIE1hcnRpbmV6IENhbmls
-bGFzCj4gT3BlbiBTb3VyY2UgR3JvdXAKPiBTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKPiBfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+2015-11-21 1:23 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.=
+com>:
+> Hello Inki,
+>
+> On 11/20/2015 07:59 AM, Inki Dae wrote:
+>> Hi Javier,
+>>
+>> 2015=EB=85=84 11=EC=9B=94 20=EC=9D=BC 00:51=EC=97=90 Javier Martinez=
+ Canillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>>> On 11/19/2015 11:55 AM, Javier Martinez Canillas wrote:
+>>>>>>
+>>>>>
+>>>>> This series causes a boot failure on at least an Exynos5800 Peach=
+ Pi
+>>>>> Chromebook (tested myself) and seems to be the cause of other Exy=
+nos
+>>>>> boards failing to boot: http://kernelci.org/boot/?exynos&fail
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>>   drm/exynos: add pm_runtime to Mixer
+>>>>>>   drm/exynos: add pm_runtime to FIMD
+>>>>>
+>>>>> I had to revert these patches in order to get the machine in a bo=
+otable
+>>>>> state again, the sha1 hash for these patches in next-20151119 are=
+:
+>>>>>
+>>>>> 045febd5f813 drm/exynos: add pm_runtime to FIMD
+>>>
+>>> On a closer look, only reverting the FIMD patch is enough
+>>> to make at least the Exynos5800 Peach Pi to boot again.
+>>
+>> Thanks for report.
+>>
+>
+> Thanks to you for the quick answer and providing a fix.
+>
+>> I assume that the issue is because above patch removed 'suspended' v=
+ariable
+>> for checking the suspend status in runtime so I revived it.
+>>
+>
+> It seems your assumption was correct...
+>
+>> I'm not sure that the change could resolve the issue. Could you test=
+ it
+>> with the change again? I have no Exynos5800 Peach Pi board. :(
+>>
+>> For this, I pushed it to below exynos-drm/for-next branch,
+>>       https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exyno=
+s.git/commit/?h=3Dexynos-drm/for-next&id=3De84f43e2b2c3388694b0b3a58c2c=
+4447f1fbae7c
+>>
+>> If the issue is resolved by the change then I will modify other patc=
+hes for
+>> DECON series. And if really so, there may be a corner case we missed=
+=2E
+>>
+>
+> ... since I reverted the offending commit and cherry-picked the one
+> in your for-next branch and the machine booted again.
+
+Great. I'll update and post the patch series again.
+
+Thanks,
+Inki Dae
+
+>
+>> Thanks,
+>> Inki Dae
+>>
+>
+> Best regards,
+> --
+> Javier Martinez Canillas
+> Open Source Group
+> Samsung Research America
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
