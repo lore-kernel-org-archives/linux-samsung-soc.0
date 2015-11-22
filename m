@@ -1,95 +1,117 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 00/13] drm/exynos: async G2D and g2d_move()
-Date: Sun, 22 Nov 2015 19:48:30 +0100
-Message-ID: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 01/13] drm: Implement drmHandleEvent2()
+Date: Sun, 22 Nov 2015 19:48:31 +0100
+Message-ID: <1448218123-21292-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45748 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45753 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751632AbbKVSsx (ORCPT
+	by vger.kernel.org with ESMTP id S1751632AbbKVSsz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Nov 2015 13:48:53 -0500
+	Sun, 22 Nov 2015 13:48:55 -0500
+In-Reply-To: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, inki.dae@samsung.com, human.hwang@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hello,
+Basically this is an extended version of drmHandleEvent().
 
-this series mostly touches G2D code. It introduces the following:
+drmHandleEvent() only handles core events (like e.g. page flips),
+but since kernel DRM drivers might use vendor-specific events
+to signal userspace the completion of pending jobs, etc., its
+desirable to provide a way to handle these without putting
+vendor-specific code in the core libdrm.
 
-(1) drmHandleEvent2() is added to enable processing of vendor-specific
-    events. This will be used to expose asynchronous operation of the
-    G2D. The necessary kernel infrastructure is already there since
-    a lot of kernel versions. [This touches libdrm core code!]
+To use this you provide drmHandleEvent2() with a function that
+handles your non-core events.
 
-(2) The necessary infrastructure to handle G2D events. This includes
-    adding g2d_config_event() and g2d_exec2() to the public API.
-    A test application is provided to ensure that everything works
-    as expected.
+The signature of that function looks like this:
+void vendor(int fd, struct drm_event *e, void *ctx);
 
-(3) A small performance test application which can be used to measure
-    the speed of solid color clear operations. Interesting for
-    benchmarking and plotting colorful graphs (e.g. through
-    Mathematica).
+'fd' is the DRM file descriptor, 'e' the non-core event
+and 'ctx' the event context (casted to void).
 
-(4) g2d_move() which works similar to g2d_copy() but like the C
-    memmove() properly handles overlapping buffer copies.
-    Again a test application is present to check that this
-    indeed does what it should.
+This way we don't have to maintain a copy of drmHandleEvent()
+in the vendor code.
 
-(5) Various small changes. A framebuffer colorformat fix for the
-    general G2D test application. Moving the currently unused
-    g2d_reset() to the public API. Adding a counterpart to
-    exynos_bo_map() to unmap buffers again.
+v2: Remove the opaque pointer, since this can be better
+    handled with a container approach.
 
-(6) Last but not least a small bump of the Exynos version number.
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ xf86drm.h     | 21 +++++++++++++++++++++
+ xf86drmMode.c | 10 +++++++++-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
 
-Please review and let me know what I should change/improve.
-
-
-With best wishes,
-Tobias
-
-P.S.: Most patches were submitted already some time ago but never
-made it upstream. So if something looks familiar, don't worry! ;)
-
-Changes since v1:
-- Added wording changes suggested by Hyungwon Hwang.
-- Added binaries for new test applications to .gitignore.
-- Collected r-b and t-b tags.
-
-Tobias Jakobi (13):
-  drm: Implement drmHandleEvent2()
-  exynos: Introduce exynos_handle_event()
-  tests/exynos: add fimg2d performance analysis
-  exynos/fimg2d: add g2d_config_event
-  exynos: fimg2d: add g2d_exec2
-  tests/exynos: add fimg2d event test
-  tests/exynos: use XRGB8888 for framebuffer
-  exynos: fimg2d: add g2d_set_direction
-  exynos/fimg2d: add g2d_move
-  tests/exynos: add test for g2d_move
-  exynos/fimg2d: add exynos_bo_unmap()
-  exynos/fimg2d: add g2d_reset() to public API
-  exynos: bump version number
-
- .gitignore                         |   2 +
- exynos/exynos-symbol-check         |   5 +
- exynos/exynos_drm.c                |  48 ++++++
- exynos/exynos_drm.h                |  12 ++
- exynos/exynos_drmif.h              |  27 +++
- exynos/exynos_fimg2d.c             | 165 +++++++++++++++++--
- exynos/exynos_fimg2d.h             |  49 ++++++
- exynos/libdrm_exynos.pc.in         |   2 +-
- tests/exynos/Makefile.am           |  26 ++-
- tests/exynos/exynos_fimg2d_event.c | 326 ++++++++++++++++++++++++++++++++++++
- tests/exynos/exynos_fimg2d_perf.c  | 327 +++++++++++++++++++++++++++++++++++++
- tests/exynos/exynos_fimg2d_test.c  | 134 ++++++++++++++-
- xf86drm.h                          |  21 +++
- xf86drmMode.c                      |  10 +-
- 14 files changed, 1138 insertions(+), 16 deletions(-)
- create mode 100644 tests/exynos/exynos_fimg2d_event.c
- create mode 100644 tests/exynos/exynos_fimg2d_perf.c
-
+diff --git a/xf86drm.h b/xf86drm.h
+index 481d882..1e474a3 100644
+--- a/xf86drm.h
++++ b/xf86drm.h
+@@ -750,8 +750,29 @@ typedef struct _drmEventContext {
+ 
+ } drmEventContext, *drmEventContextPtr;
+ 
++typedef void (*drmEventVendorHandler)(int fd, struct drm_event *e, void *ctx);
++
+ extern int drmHandleEvent(int fd, drmEventContextPtr evctx);
+ 
++/*
++ * drmHandleEvent2() is an extended variant of drmHandleEvent() which
++ * allows handling of vendor-specific/non-core events.
++ * The function pointer 'vendorhandler' is used (if non-zero) to
++ * process non-core events. Users of have to prepare a container struct
++ * in the following way:
++ *
++ * struct vendor_event_context {
++ *		drmEventContext base;
++ *		int vendor_specific_data[num];
++ * };
++ *
++ * And then call:
++ * struct vendor_event_context ctx = {0};
++ * drmHandleEvent2(fd, &ctx.base, handler);
++ */
++extern int drmHandleEvent2(int fd, drmEventContextPtr evctx,
++	drmEventVendorHandler vendorhandler);
++
+ extern char *drmGetDeviceNameFromFd(int fd);
+ extern int drmGetNodeTypeFromFd(int fd);
+ 
+diff --git a/xf86drmMode.c b/xf86drmMode.c
+index ab6b519..89698da 100644
+--- a/xf86drmMode.c
++++ b/xf86drmMode.c
+@@ -867,7 +867,8 @@ int drmModeCrtcSetGamma(int fd, uint32_t crtc_id, uint32_t size,
+ 	return DRM_IOCTL(fd, DRM_IOCTL_MODE_SETGAMMA, &l);
+ }
+ 
+-int drmHandleEvent(int fd, drmEventContextPtr evctx)
++int drmHandleEvent2(int fd, drmEventContextPtr evctx,
++			drmEventVendorHandler vendorhandler)
+ {
+ 	char buffer[1024];
+ 	int len, i;
+@@ -910,6 +911,8 @@ int drmHandleEvent(int fd, drmEventContextPtr evctx)
+ 						 U642VOID (vblank->user_data));
+ 			break;
+ 		default:
++			if (vendorhandler)
++				vendorhandler(fd, e, evctx);
+ 			break;
+ 		}
+ 		i += e->length;
+@@ -918,6 +921,11 @@ int drmHandleEvent(int fd, drmEventContextPtr evctx)
+ 	return 0;
+ }
+ 
++int drmHandleEvent(int fd, drmEventContextPtr evctx)
++{
++	return drmHandleEvent2(fd, evctx, NULL);
++}
++
+ int drmModePageFlip(int fd, uint32_t crtc_id, uint32_t fb_id,
+ 		    uint32_t flags, void *user_data)
+ {
 -- 
 2.4.9
