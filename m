@@ -1,52 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RESEND PATCH v5 2/3] regulator: s2mps11: add support for
- S2MPS15 regulators
-Date: Sun, 22 Nov 2015 13:24:55 +0000
-Message-ID: <20151122132455.GP26072@sirena.org.uk>
-References: <1448015873-8743-1-git-send-email-alim.akhtar@samsung.com>
- <1448015873-8743-3-git-send-email-alim.akhtar@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [RFC PATCH v1 0/2] Add basic HDCP function support for dw_hdmi driver
+Date: Sun, 22 Nov 2015 21:31:17 +0800
+Message-ID: <1448199077-10221-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="e2bLSPRkEYxxSNev"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1448015873-8743-3-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: lee.jones@linaro.org, k.kozlowski@samsung.com, alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Thomas Abraham <thomas.ab@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Russell King <rmk+kernel@arm.linux.org.uk>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Thierry Reding <treding@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, Andy Yan <andy.yan@rock-chips.com>
+Cc: Fabio Estevam <fabio.estevam@freescale.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---e2bLSPRkEYxxSNev
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Nov 20, 2015 at 04:07:52PM +0530, Alim Akhtar wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
->=20
-> The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It conta=
-ins
-> 27 LDO and 10 Buck regulators and allows programming these regulators via=
- a
-> I2C interface. This patch adds initial support for LDO/Buck regulators of
-> S2MPS15 PMIC.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---e2bLSPRkEYxxSNev
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWUcImAAoJECTWi3JdVIfQRfsH/0z7aVPEZ/0UewsXS6a1T+ck
-ZY5lIkR3J2SVWgNHkrJaXT+5sZGsq/gdpWCUsT1MCEXmNii8E9PporqFPS4OVwKf
-maBUu9zWAupBmXdf8YoXCq1DYE/GWDxp0nU/ouMn5O9MwQpyefNdsU3Vz8z/K2kx
-e5TLMvmWH8bDCR1H07GpSMD6Sc3DF9m2PGWMQZ9seS3GazuWZe0Es/Ut2XJUB8GW
-I4MbCekgdq3i6ehct/lx4ou4iLfuQn0wigDwlbvSLTXb3hDNZZbUmRAS0WvVCISU
-gbAT0cV2ah1/W8vTIvrpaBGnwTli2w7VGK3QYBHClq5bEhieSkIvNPr0WgkvdRI=
-=U7YO
------END PGP SIGNATURE-----
-
---e2bLSPRkEYxxSNev--
+SGksCgpUaGlzIHNlcmllcyB0cnkgdG8gYWRkIHRoZSBiYXNpYyBIRENQIGZ1bmN0aW9uIHN1cHBv
+cnQgZm9yIGJyaWRnZQpkd19oZG1pIGRyaXZlci4gQmVzaWRlIHRoaXMgc2VyaWVzIGFsc28gcmVz
+ZW5kIHRoZSBwYXRjaCBmcm9tIFNlYW4KUGF1bCB0aGF0IHRyeSB0byBpbnRyb2R1Y2UgYSBjb21t
+b24gd2F5IGZvciB1c2Vyc3BhY2UgdG8gb3BlcmF0ZQp0aGUgSERDUCBmdW5jdGlvbi4KClVzZXJz
+cGFjZSBjb3VsZCBjaG9zZSB0byBlbmFibGUvZGlzYWJsZSB0aGUgSERDUCBmdW5jdGlvbiB0aHJv
+dWdodAp0aGUgbmV3IHN0YW5kYXJkIHByb3BlcnRpZXMgIkNvbnRlbnQgUHJvdGVjdGlvbiIsIGFu
+ZCBkcml2ZXIgd291bGQKcmVmbGVjdCB0aGUgSERDUCBhdXRoIHN0YXR1cyB0byAiQ29udGVudCBQ
+cm90ZWN0aW9uIEtTViIgcHJvcGVydHkuCgpCZXNpZGUgdGhpcyBzZXJpZXMgYWxzbyBiYXNlIG9u
+IFZsYWRpbWlyIFphcG9sc2tpeSdzIHBhdGNoIHRoYXQgaGVscAp0byBpbnRyb2R1Y2UgRERDIHN1
+cHBvcnQgZm9yIGR3X2hkbWkgZHJpdmVyLgoKW1Jlc2VuZF0gU2VhbiBQdWFsOiBodHRwczovL3Bh
+dGNod29yay5rZXJuZWwub3JnL3BhdGNoLzcyNzk4MDEKW1JlYmFzZWQgb25dIFZsYWRpbWlyIFph
+cG9sc2tpeTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC83Mjc5ODAxCgpUaGFu
+a3MKLSBZYWtpcgoKCgpTZWFuIFBhdWwgKDEpOgogIGRybTogQWRkIENvbnRlbnQgUHJvdGVjdGlv
+biBwcm9wZXJ0aWVzIHRvIGRybQoKWWFraXIgWWFuZyAoMSk6CiAgZHJtOiBicmlkZ3cvZHdfaGRt
+aTogYWRkIGJhc2ljIGhkbWkgaGRjcCBkcml2ZXIKCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2R3
+X2hkbWkuYyB8IDM1NSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0KIGRy
+aXZlcnMvZ3B1L2RybS9icmlkZ2UvZHdfaGRtaS5oIHwgIDIwICsrKwogZHJpdmVycy9ncHUvZHJt
+L2RybV9jcnRjLmMgICAgICAgfCAgMjEgKysrCiBkcml2ZXJzL2dwdS9kcm0vZHJtX3N5c2ZzLmMg
+ICAgICB8ICA0NiArKysrKwogaW5jbHVkZS9kcm0vYnJpZGdlL2R3X2hkbWkuaCAgICAgfCAgMTcg
+KysKIGluY2x1ZGUvZHJtL2RybV9jcnRjLmggICAgICAgICAgIHwgICAzICsKIGluY2x1ZGUvdWFw
+aS9kcm0vZHJtX21vZGUuaCAgICAgIHwgICA0ICsKIDcgZmlsZXMgY2hhbmdlZCwgNDQ3IGluc2Vy
+dGlvbnMoKyksIDE5IGRlbGV0aW9ucygtKQoKLS0gCjEuOS4xCgoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
