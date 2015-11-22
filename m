@@ -1,111 +1,155 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 08/13] exynos: fimg2d: add g2d_set_direction
-Date: Sun, 22 Nov 2015 19:48:38 +0100
-Message-ID: <1448218123-21292-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 09/13] exynos/fimg2d: add g2d_move
+Date: Sun, 22 Nov 2015 19:48:39 +0100
+Message-ID: <1448218123-21292-10-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45803 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45810 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751886AbbKVSx1 (ORCPT
+	by vger.kernel.org with ESMTP id S1751870AbbKVSxl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Nov 2015 13:53:27 -0500
+	Sun, 22 Nov 2015 13:53:41 -0500
 In-Reply-To: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, inki.dae@samsung.com, human.hwang@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-This allows setting the two direction registers, which specify how
-the engine blits pixels. This can be used for overlapping blits,
-which happen e.g. when 'moving' a rectangular region inside a
-fixed buffer.
+We already have g2d_copy() which implements G2D copy
+operations from one buffer to another. However we can't
+do a overlapping copy operation in one buffer.
 
-Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
+Add g2d_move() which acts like the standard memmove()
+and properly handles overlapping copies.
+
+v2: Change wording in the description of g2d_move()
+    as suggested by Hyungwon Hwang.
+
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- exynos/exynos_fimg2d.c | 13 +++++++++++++
- exynos/exynos_fimg2d.h | 38 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
+ exynos/exynos_fimg2d.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ exynos/exynos_fimg2d.h |  3 ++
+ 2 files changed, 98 insertions(+)
 
 diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index e997d4b..4d5419c 100644
+index 4d5419c..25426a2 100644
 --- a/exynos/exynos_fimg2d.c
 +++ b/exynos/exynos_fimg2d.c
-@@ -242,6 +242,19 @@ static void g2d_add_base_addr(struct g2d_context *ctx, struct g2d_image *img,
+@@ -540,6 +540,101 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
  }
  
- /*
-+ * g2d_set_direction - setup direction register (useful for overlapping blits).
+ /**
++ * g2d_move - copy content inside single buffer.
++ *	Similar to libc's memmove() this copies a rectangular
++ *	region of the provided buffer to another location, while
++ *	properly handling the situation where source and
++ *	destination rectangle overlap.
 + *
 + * @ctx: a pointer to g2d_context structure.
-+ * @dir: a pointer to the g2d_direction_val structure.
++ * @img: a pointer to g2d_image structure providing
++ *	buffer information.
++ * @src_x: x position of source rectangle.
++ * @src_y: y position of source rectangle.
++ * @dst_x: x position of destination rectangle.
++ * @dst_y: y position of destination rectangle.
++ * @w: width of rectangle to move.
++ * @h: height of rectangle to move.
 + */
-+static void g2d_set_direction(struct g2d_context *ctx,
-+			const union g2d_direction_val *dir)
++int
++g2d_move(struct g2d_context *ctx, struct g2d_image *img,
++		unsigned int src_x, unsigned int src_y,
++		unsigned int dst_x, unsigned dst_y, unsigned int w,
++		unsigned int h)
 +{
-+	g2d_add_cmd(ctx, SRC_MASK_DIRECT_REG, dir->val[0]);
-+	g2d_add_cmd(ctx, DST_PAT_DIRECT_REG, dir->val[1]);
++	union g2d_rop4_val rop4;
++	union g2d_point_val pt;
++	union g2d_direction_val dir;
++	unsigned int src_w, src_h, dst_w, dst_h;
++
++	src_w = w;
++	src_h = h;
++	if (src_x + img->width > w)
++		src_w = img->width - src_x;
++	if (src_y + img->height > h)
++		src_h = img->height - src_y;
++
++	dst_w = w;
++	dst_h = w;
++	if (dst_x + img->width > w)
++		dst_w = img->width - dst_x;
++	if (dst_y + img->height > h)
++		dst_h = img->height - dst_y;
++
++	w = MIN(src_w, dst_w);
++	h = MIN(src_h, dst_h);
++
++	if (w == 0 || h == 0) {
++		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
++		return -EINVAL;
++	}
++
++	if (g2d_check_space(ctx, 13, 2))
++		return -ENOSPC;
++
++	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
++	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
++
++	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
++	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, img->color_mode);
++
++	g2d_add_base_addr(ctx, img, g2d_dst);
++	g2d_add_base_addr(ctx, img, g2d_src);
++
++	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
++	g2d_add_cmd(ctx, SRC_STRIDE_REG, img->stride);
++
++	dir.val[0] = dir.val[1] = 0;
++
++	if (dst_x >= src_x)
++		dir.data.src_x_direction = dir.data.dst_x_direction = 1;
++	if (dst_y >= src_y)
++		dir.data.src_y_direction = dir.data.dst_y_direction = 1;
++
++	g2d_set_direction(ctx, &dir);
++
++	pt.data.x = src_x;
++	pt.data.y = src_y;
++	g2d_add_cmd(ctx, SRC_LEFT_TOP_REG, pt.val);
++	pt.data.x = src_x + w;
++	pt.data.y = src_y + h;
++	g2d_add_cmd(ctx, SRC_RIGHT_BOTTOM_REG, pt.val);
++
++	pt.data.x = dst_x;
++	pt.data.y = dst_y;
++	g2d_add_cmd(ctx, DST_LEFT_TOP_REG, pt.val);
++	pt.data.x = dst_x + w;
++	pt.data.y = dst_y + h;
++	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
++
++	rop4.val = 0;
++	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
++	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
++
++	return g2d_flush(ctx);
 +}
 +
-+/*
-  * g2d_reset - reset fimg2d hardware.
++/**
+  * g2d_copy_with_scale - copy contents in source buffer to destination buffer
+  *	scaling up or down properly.
   *
-  * @ctx: a pointer to g2d_context structure.
 diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
-index c6b58ac..9eee7c0 100644
+index 9eee7c0..2700686 100644
 --- a/exynos/exynos_fimg2d.h
 +++ b/exynos/exynos_fimg2d.h
-@@ -189,6 +189,11 @@ enum e_g2d_exec_flag {
- 	G2D_EXEC_FLAG_ASYNC = (1 << 0)
- };
- 
-+enum e_g2d_dir_mode {
-+	G2D_DIR_MODE_POSITIVE = 0,
-+	G2D_DIR_MODE_NEGATIVE = 1
-+};
-+
- union g2d_point_val {
- 	unsigned int val;
- 	struct {
-@@ -269,6 +274,39 @@ union g2d_blend_func_val {
- 	} data;
- };
- 
-+union g2d_direction_val {
-+	unsigned int val[2];
-+	struct {
-+		/* SRC_MSK_DIRECT_REG [0:1] (source) */
-+		enum e_g2d_dir_mode		src_x_direction:1;
-+		enum e_g2d_dir_mode		src_y_direction:1;
-+
-+		/* SRC_MSK_DIRECT_REG [2:3] */
-+		unsigned int			reversed1:2;
-+
-+		/* SRC_MSK_DIRECT_REG [4:5] (mask) */
-+		enum e_g2d_dir_mode		mask_x_direction:1;
-+		enum e_g2d_dir_mode		mask_y_direction:1;
-+
-+		/* SRC_MSK_DIRECT_REG [6:31] */
-+		unsigned int			padding1:26;
-+
-+		/* DST_PAT_DIRECT_REG [0:1] (destination) */
-+		enum e_g2d_dir_mode		dst_x_direction:1;
-+		enum e_g2d_dir_mode		dst_y_direction:1;
-+
-+		/* DST_PAT_DIRECT_REG [2:3] */
-+		unsigned int			reversed2:2;
-+
-+		/* DST_PAT_DIRECT_REG [4:5] (pattern) */
-+		enum e_g2d_dir_mode		pat_x_direction:1;
-+		enum e_g2d_dir_mode		pat_y_direction:1;
-+
-+		/* DST_PAT_DIRECT_REG [6:31] */
-+		unsigned int			padding2:26;
-+	} data;
-+};
-+
- struct g2d_image {
- 	enum e_g2d_select_mode		select_mode;
- 	enum e_g2d_color_mode		color_mode;
+@@ -343,6 +343,9 @@ int g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
+ 		struct g2d_image *dst, unsigned int src_x,
+ 		unsigned int src_y, unsigned int dst_x, unsigned int dst_y,
+ 		unsigned int w, unsigned int h);
++int g2d_move(struct g2d_context *ctx, struct g2d_image *img,
++		unsigned int src_x, unsigned int src_y, unsigned int dst_x,
++		unsigned dst_y, unsigned int w, unsigned int h);
+ int g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 				struct g2d_image *dst, unsigned int src_x,
+ 				unsigned int src_y, unsigned int src_w,
 -- 
 2.4.9
