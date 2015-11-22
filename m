@@ -1,155 +1,181 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 09/13] exynos/fimg2d: add g2d_move
-Date: Sun, 22 Nov 2015 19:48:39 +0100
-Message-ID: <1448218123-21292-10-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 10/13] tests/exynos: add test for g2d_move
+Date: Sun, 22 Nov 2015 19:48:40 +0100
+Message-ID: <1448218123-21292-11-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45810 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45814 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751870AbbKVSxl (ORCPT
+	by vger.kernel.org with ESMTP id S1751870AbbKVSyC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Nov 2015 13:53:41 -0500
+	Sun, 22 Nov 2015 13:54:02 -0500
 In-Reply-To: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, inki.dae@samsung.com, human.hwang@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-We already have g2d_copy() which implements G2D copy
-operations from one buffer to another. However we can't
-do a overlapping copy operation in one buffer.
+To check if g2d_move() works properly we create a small checkerboard
+pattern in the center of the screen and then shift this pattern
+around with g2d_move(). The pattern should be properly preserved
+by the operation (but not the surrounding area).
 
-Add g2d_move() which acts like the standard memmove()
-and properly handles overlapping copies.
-
-v2: Change wording in the description of g2d_move()
-    as suggested by Hyungwon Hwang.
-
+Tested-by: Hyungwon Hwang <human.hwang@samsung.com>
+Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- exynos/exynos_fimg2d.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++
- exynos/exynos_fimg2d.h |  3 ++
- 2 files changed, 98 insertions(+)
+ tests/exynos/exynos_fimg2d_test.c | 132 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
 
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 4d5419c..25426a2 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -540,6 +540,101 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
+diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
+index dfb00a0..797fb6e 100644
+--- a/tests/exynos/exynos_fimg2d_test.c
++++ b/tests/exynos/exynos_fimg2d_test.c
+@@ -313,6 +313,130 @@ fail:
+ 	return ret;
  }
  
- /**
-+ * g2d_move - copy content inside single buffer.
-+ *	Similar to libc's memmove() this copies a rectangular
-+ *	region of the provided buffer to another location, while
-+ *	properly handling the situation where source and
-+ *	destination rectangle overlap.
-+ *
-+ * @ctx: a pointer to g2d_context structure.
-+ * @img: a pointer to g2d_image structure providing
-+ *	buffer information.
-+ * @src_x: x position of source rectangle.
-+ * @src_y: y position of source rectangle.
-+ * @dst_x: x position of destination rectangle.
-+ * @dst_y: y position of destination rectangle.
-+ * @w: width of rectangle to move.
-+ * @h: height of rectangle to move.
-+ */
-+int
-+g2d_move(struct g2d_context *ctx, struct g2d_image *img,
-+		unsigned int src_x, unsigned int src_y,
-+		unsigned int dst_x, unsigned dst_y, unsigned int w,
-+		unsigned int h)
++static int g2d_move_test(struct exynos_device *dev,
++				struct exynos_bo *tmp,
++				struct exynos_bo *buf,
++				enum e_g2d_buf_type type)
 +{
-+	union g2d_rop4_val rop4;
-+	union g2d_point_val pt;
-+	union g2d_direction_val dir;
-+	unsigned int src_w, src_h, dst_w, dst_h;
++	struct g2d_context *ctx;
++	struct g2d_image img = {0}, tmp_img = {0};
++	unsigned int img_w, img_h, count;
++	int cur_x, cur_y;
++	void *checkerboard;
++	int ret;
 +
-+	src_w = w;
-+	src_h = h;
-+	if (src_x + img->width > w)
-+		src_w = img->width - src_x;
-+	if (src_y + img->height > h)
-+		src_h = img->height - src_y;
++	static const struct g2d_step {
++		int x, y;
++	} steps[] = {
++		{ 1,  0}, { 0,  1},
++		{-1,  0}, { 0, -1},
++		{ 1,  1}, {-1, -1},
++		{ 1, -1}, {-1,  1},
++		{ 2,  1}, { 1,  2},
++		{-2, -1}, {-1, -2},
++		{ 2, -1}, { 1, -2},
++		{-2,  1}, {-1,  2}
++	};
++	static const unsigned int num_steps =
++		sizeof(steps) / sizeof(struct g2d_step);
 +
-+	dst_w = w;
-+	dst_h = w;
-+	if (dst_x + img->width > w)
-+		dst_w = img->width - dst_x;
-+	if (dst_y + img->height > h)
-+		dst_h = img->height - dst_y;
++	ctx = g2d_init(dev->fd);
++	if (!ctx)
++		return -EFAULT;
 +
-+	w = MIN(src_w, dst_w);
-+	h = MIN(src_h, dst_h);
++	img.bo[0] = buf->handle;
 +
-+	if (w == 0 || h == 0) {
-+		fprintf(stderr, MSG_PREFIX "invalid width or height.\n");
-+		return -EINVAL;
++	/* create pattern of half the screen size */
++	checkerboard = create_checkerboard_pattern(screen_width / 64, screen_height / 64, 32);
++	if (!checkerboard) {
++		ret = -EFAULT;
++		goto fail;
 +	}
 +
-+	if (g2d_check_space(ctx, 13, 2))
-+		return -ENOSPC;
++	img_w = (screen_width / 64) * 32;
++	img_h = (screen_height / 64) * 32;
 +
-+	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
-+	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
++	switch (type) {
++	case G2D_IMGBUF_GEM:
++		memcpy(tmp->vaddr, checkerboard, img_w * img_h * 4);
++		tmp_img.bo[0] = tmp->handle;
++		break;
++	case G2D_IMGBUF_USERPTR:
++		tmp_img.user_ptr[0].userptr = (unsigned long)checkerboard;
++		tmp_img.user_ptr[0].size = img_w * img_h * 4;
++		break;
++	case G2D_IMGBUF_COLOR:
++	default:
++		ret = -EFAULT;
++		goto fail;
++	}
 +
-+	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
-+	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, img->color_mode);
++	/* solid fill framebuffer with white color */
++	img.width = screen_width;
++	img.height = screen_height;
++	img.stride = screen_width * 4;
++	img.buf_type = G2D_IMGBUF_GEM;
++	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
++	img.color = 0xffffffff;
 +
-+	g2d_add_base_addr(ctx, img, g2d_dst);
-+	g2d_add_base_addr(ctx, img, g2d_src);
++	/* put checkerboard pattern in the center of the framebuffer */
++	cur_x = (screen_width - img_w) / 2;
++	cur_y = (screen_height - img_h) / 2;
++	tmp_img.width = img_w;
++	tmp_img.height = img_h;
++	tmp_img.stride = img_w * 4;
++	tmp_img.buf_type = type;
++	tmp_img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
 +
-+	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
-+	g2d_add_cmd(ctx, SRC_STRIDE_REG, img->stride);
++	ret = g2d_solid_fill(ctx, &img, 0, 0, screen_width, screen_height) ||
++		g2d_copy(ctx, &tmp_img, &img, 0, 0, cur_x, cur_y, img_w, img_h);
 +
-+	dir.val[0] = dir.val[1] = 0;
++	if (!ret)
++		ret = g2d_exec(ctx);
++	if (ret < 0)
++			goto fail;
 +
-+	if (dst_x >= src_x)
-+		dir.data.src_x_direction = dir.data.dst_x_direction = 1;
-+	if (dst_y >= src_y)
-+		dir.data.src_y_direction = dir.data.dst_y_direction = 1;
++	printf("move test with %s.\n",
++			type == G2D_IMGBUF_GEM ? "gem" : "userptr");
 +
-+	g2d_set_direction(ctx, &dir);
++	srand(time(NULL));
++	for (count = 0; count < 256; ++count) {
++		const struct g2d_step *s;
 +
-+	pt.data.x = src_x;
-+	pt.data.y = src_y;
-+	g2d_add_cmd(ctx, SRC_LEFT_TOP_REG, pt.val);
-+	pt.data.x = src_x + w;
-+	pt.data.y = src_y + h;
-+	g2d_add_cmd(ctx, SRC_RIGHT_BOTTOM_REG, pt.val);
++		/* select step and validate it */
++		while (1) {
++			s = &steps[random() % num_steps];
 +
-+	pt.data.x = dst_x;
-+	pt.data.y = dst_y;
-+	g2d_add_cmd(ctx, DST_LEFT_TOP_REG, pt.val);
-+	pt.data.x = dst_x + w;
-+	pt.data.y = dst_y + h;
-+	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
++			if (cur_x + s->x < 0 || cur_y + s->y < 0 ||
++				cur_x + img_w + s->x >= screen_width ||
++				cur_y + img_h + s->y >= screen_height)
++				continue;
++			else
++				break;
++		}
 +
-+	rop4.val = 0;
-+	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
-+	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
++		ret = g2d_move(ctx, &img, cur_x, cur_y, cur_x + s->x, cur_y + s->y,
++			img_w, img_h);
++		if (!ret)
++			ret = g2d_exec(ctx);
 +
-+	return g2d_flush(ctx);
++		if (ret < 0)
++			goto fail;
++
++		cur_x += s->x;
++		cur_y += s->y;
++
++		usleep(100000);
++	}
++
++fail:
++	g2d_fini(ctx);
++
++	free(checkerboard);
++
++	return ret;
 +}
 +
-+/**
-  * g2d_copy_with_scale - copy contents in source buffer to destination buffer
-  *	scaling up or down properly.
-  *
-diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
-index 9eee7c0..2700686 100644
---- a/exynos/exynos_fimg2d.h
-+++ b/exynos/exynos_fimg2d.h
-@@ -343,6 +343,9 @@ int g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
- 		struct g2d_image *dst, unsigned int src_x,
- 		unsigned int src_y, unsigned int dst_x, unsigned int dst_y,
- 		unsigned int w, unsigned int h);
-+int g2d_move(struct g2d_context *ctx, struct g2d_image *img,
-+		unsigned int src_x, unsigned int src_y, unsigned int dst_x,
-+		unsigned dst_y, unsigned int w, unsigned int h);
- int g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
- 				struct g2d_image *dst, unsigned int src_x,
- 				unsigned int src_y, unsigned int src_w,
+ static int g2d_copy_with_scale_test(struct exynos_device *dev,
+ 					struct exynos_bo *src,
+ 					struct exynos_bo *dst,
+@@ -708,6 +832,14 @@ int main(int argc, char **argv)
+ 
+ 	wait_for_user_input(0);
+ 
++	ret = g2d_move_test(dev, src, bo, G2D_IMGBUF_GEM);
++	if (ret < 0) {
++		fprintf(stderr, "failed to test move operation.\n");
++		goto err_free_src;
++	}
++
++	wait_for_user_input(0);
++
+ 	ret = g2d_copy_with_scale_test(dev, src, bo, G2D_IMGBUF_GEM);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "failed to test copy and scale operation.\n");
 -- 
 2.4.9
