@@ -1,181 +1,84 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 10/13] tests/exynos: add test for g2d_move
-Date: Sun, 22 Nov 2015 19:48:40 +0100
-Message-ID: <1448218123-21292-11-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 11/13] exynos/fimg2d: add exynos_bo_unmap()
+Date: Sun, 22 Nov 2015 19:48:41 +0100
+Message-ID: <1448218123-21292-12-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45814 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45820 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751870AbbKVSyC (ORCPT
+	by vger.kernel.org with ESMTP id S1751870AbbKVSyY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Nov 2015 13:54:02 -0500
+	Sun, 22 Nov 2015 13:54:24 -0500
 In-Reply-To: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, inki.dae@samsung.com, human.hwang@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-To check if g2d_move() works properly we create a small checkerboard
-pattern in the center of the screen and then shift this pattern
-around with g2d_move(). The pattern should be properly preserved
-by the operation (but not the surrounding area).
+This unmaps a previously mapped (via exynos_bo_map())
+buffer object.
 
-Tested-by: Hyungwon Hwang <human.hwang@samsung.com>
-Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- tests/exynos/exynos_fimg2d_test.c | 132 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 132 insertions(+)
+ exynos/exynos-symbol-check |  1 +
+ exynos/exynos_drm.c        | 20 ++++++++++++++++++++
+ exynos/exynos_drmif.h      |  1 +
+ 3 files changed, 22 insertions(+)
 
-diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
-index dfb00a0..797fb6e 100644
---- a/tests/exynos/exynos_fimg2d_test.c
-+++ b/tests/exynos/exynos_fimg2d_test.c
-@@ -313,6 +313,130 @@ fail:
- 	return ret;
+diff --git a/exynos/exynos-symbol-check b/exynos/exynos-symbol-check
+index 2bb7718..2e4ba56 100755
+--- a/exynos/exynos-symbol-check
++++ b/exynos/exynos-symbol-check
+@@ -17,6 +17,7 @@ exynos_bo_get_info
+ exynos_bo_get_name
+ exynos_bo_handle
+ exynos_bo_map
++exynos_bo_unmap
+ exynos_device_create
+ exynos_device_destroy
+ exynos_prime_fd_to_handle
+diff --git a/exynos/exynos_drm.c b/exynos/exynos_drm.c
+index 7a400ad..e086a00 100644
+--- a/exynos/exynos_drm.c
++++ b/exynos/exynos_drm.c
+@@ -309,6 +309,26 @@ void *exynos_bo_map(struct exynos_bo *bo)
+ 	return bo->vaddr;
  }
  
-+static int g2d_move_test(struct exynos_device *dev,
-+				struct exynos_bo *tmp,
-+				struct exynos_bo *buf,
-+				enum e_g2d_buf_type type)
++int exynos_bo_unmap(struct exynos_bo *bo)
 +{
-+	struct g2d_context *ctx;
-+	struct g2d_image img = {0}, tmp_img = {0};
-+	unsigned int img_w, img_h, count;
-+	int cur_x, cur_y;
-+	void *checkerboard;
-+	int ret;
++	int ret = 0;
 +
-+	static const struct g2d_step {
-+		int x, y;
-+	} steps[] = {
-+		{ 1,  0}, { 0,  1},
-+		{-1,  0}, { 0, -1},
-+		{ 1,  1}, {-1, -1},
-+		{ 1, -1}, {-1,  1},
-+		{ 2,  1}, { 1,  2},
-+		{-2, -1}, {-1, -2},
-+		{ 2, -1}, { 1, -2},
-+		{-2,  1}, {-1,  2}
-+	};
-+	static const unsigned int num_steps =
-+		sizeof(steps) / sizeof(struct g2d_step);
++	if (!bo->vaddr)
++		goto out;
 +
-+	ctx = g2d_init(dev->fd);
-+	if (!ctx)
-+		return -EFAULT;
-+
-+	img.bo[0] = buf->handle;
-+
-+	/* create pattern of half the screen size */
-+	checkerboard = create_checkerboard_pattern(screen_width / 64, screen_height / 64, 32);
-+	if (!checkerboard) {
-+		ret = -EFAULT;
-+		goto fail;
++	ret = munmap(bo->vaddr, bo->size);
++	if (ret) {
++		fprintf(stderr, "failed to unmap buffer [%s].\n",
++			strerror(errno));
++		goto out;
 +	}
 +
-+	img_w = (screen_width / 64) * 32;
-+	img_h = (screen_height / 64) * 32;
++	bo->vaddr = NULL;
 +
-+	switch (type) {
-+	case G2D_IMGBUF_GEM:
-+		memcpy(tmp->vaddr, checkerboard, img_w * img_h * 4);
-+		tmp_img.bo[0] = tmp->handle;
-+		break;
-+	case G2D_IMGBUF_USERPTR:
-+		tmp_img.user_ptr[0].userptr = (unsigned long)checkerboard;
-+		tmp_img.user_ptr[0].size = img_w * img_h * 4;
-+		break;
-+	case G2D_IMGBUF_COLOR:
-+	default:
-+		ret = -EFAULT;
-+		goto fail;
-+	}
-+
-+	/* solid fill framebuffer with white color */
-+	img.width = screen_width;
-+	img.height = screen_height;
-+	img.stride = screen_width * 4;
-+	img.buf_type = G2D_IMGBUF_GEM;
-+	img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-+	img.color = 0xffffffff;
-+
-+	/* put checkerboard pattern in the center of the framebuffer */
-+	cur_x = (screen_width - img_w) / 2;
-+	cur_y = (screen_height - img_h) / 2;
-+	tmp_img.width = img_w;
-+	tmp_img.height = img_h;
-+	tmp_img.stride = img_w * 4;
-+	tmp_img.buf_type = type;
-+	tmp_img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-+
-+	ret = g2d_solid_fill(ctx, &img, 0, 0, screen_width, screen_height) ||
-+		g2d_copy(ctx, &tmp_img, &img, 0, 0, cur_x, cur_y, img_w, img_h);
-+
-+	if (!ret)
-+		ret = g2d_exec(ctx);
-+	if (ret < 0)
-+			goto fail;
-+
-+	printf("move test with %s.\n",
-+			type == G2D_IMGBUF_GEM ? "gem" : "userptr");
-+
-+	srand(time(NULL));
-+	for (count = 0; count < 256; ++count) {
-+		const struct g2d_step *s;
-+
-+		/* select step and validate it */
-+		while (1) {
-+			s = &steps[random() % num_steps];
-+
-+			if (cur_x + s->x < 0 || cur_y + s->y < 0 ||
-+				cur_x + img_w + s->x >= screen_width ||
-+				cur_y + img_h + s->y >= screen_height)
-+				continue;
-+			else
-+				break;
-+		}
-+
-+		ret = g2d_move(ctx, &img, cur_x, cur_y, cur_x + s->x, cur_y + s->y,
-+			img_w, img_h);
-+		if (!ret)
-+			ret = g2d_exec(ctx);
-+
-+		if (ret < 0)
-+			goto fail;
-+
-+		cur_x += s->x;
-+		cur_y += s->y;
-+
-+		usleep(100000);
-+	}
-+
-+fail:
-+	g2d_fini(ctx);
-+
-+	free(checkerboard);
-+
++out:
 +	return ret;
 +}
 +
- static int g2d_copy_with_scale_test(struct exynos_device *dev,
- 					struct exynos_bo *src,
- 					struct exynos_bo *dst,
-@@ -708,6 +832,14 @@ int main(int argc, char **argv)
- 
- 	wait_for_user_input(0);
- 
-+	ret = g2d_move_test(dev, src, bo, G2D_IMGBUF_GEM);
-+	if (ret < 0) {
-+		fprintf(stderr, "failed to test move operation.\n");
-+		goto err_free_src;
-+	}
-+
-+	wait_for_user_input(0);
-+
- 	ret = g2d_copy_with_scale_test(dev, src, bo, G2D_IMGBUF_GEM);
- 	if (ret < 0) {
- 		fprintf(stderr, "failed to test copy and scale operation.\n");
+ /*
+  * Export gem object to dmabuf as file descriptor.
+  *
+diff --git a/exynos/exynos_drmif.h b/exynos/exynos_drmif.h
+index 626e399..3b26ebf 100644
+--- a/exynos/exynos_drmif.h
++++ b/exynos/exynos_drmif.h
+@@ -91,6 +91,7 @@ struct exynos_bo * exynos_bo_from_name(struct exynos_device *dev, uint32_t name)
+ int exynos_bo_get_name(struct exynos_bo *bo, uint32_t *name);
+ uint32_t exynos_bo_handle(struct exynos_bo *bo);
+ void * exynos_bo_map(struct exynos_bo *bo);
++int exynos_bo_unmap(struct exynos_bo *bo);
+ int exynos_prime_handle_to_fd(struct exynos_device *dev, uint32_t handle,
+ 					int *fd);
+ int exynos_prime_fd_to_handle(struct exynos_device *dev, int fd,
 -- 
 2.4.9
