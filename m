@@ -1,164 +1,79 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v2 4/5] drm/exynos: mixer: do blending setup in
- mixer_cfg_layer()
-Date: Mon, 23 Nov 2015 18:44:54 +0100
-Message-ID: <56535096.3000809@math.uni-bielefeld.de>
-References: <1448208584-6621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1448208584-6621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5652C172.4090701@samsung.com>
+From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
+ after prompt
+Date: Mon, 23 Nov 2015 19:10:04 +0100
+Message-ID: <877fl8fuyr.fsf@free-electrons.com>
+References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:47432 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755098AbbKWRo5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Nov 2015 12:44:57 -0500
-In-Reply-To: <5652C172.4090701@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+ (Masahiro Yamada's message of "Mon, 16 Nov 2015 12:06:10 +0900")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, arm@ke
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com
 
-Hey Inki,
+Hi Masahiro,
+ 
+ On lun., nov. 16 2015, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
 
+> Many ARM sub-architectures use prompts followed by "if" conditional,
+> but it is wrong.
+>
+> Please notice the difference between
+>
+>     config ARCH_FOO
+>             bool "Foo SoCs" if ARCH_MULTI_V7
+>
+> and
+>
+>     config ARCH_FOO
+>             bool "Foo SoCs"
+>             depends on ARCH_MULTI_V7
+>
+> These two are *not* equivalent!
+>
+> In the former statement, it is not ARCH_FOO, but its prompt that
+> depends on ARCH_MULTI_V7.  So, it is completely valid that ARCH_FOO
+> is selected by another, but ARCH_MULTI_V7 is still disabled. As it is
+> not unmet dependency, Kconfig never warns.  This is probably not what
+> you want.
+>
+> The former should be used only when you need to do so, and you really
+> understand what you are doing.  (In most cases, it should be wrong!)
+>
+> For enabling/disabling sub-architectures, the latter is always correct.
+>
+> As a good side effect, this commit fixes some entries over 80 columns
+> (mach-imx, mach-integrator, mach-mbevu).
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> ---
+>
+> I hope this patch is applied to ARM-SOC, but am CCing Kbuild ML
+> because the correct understanding of Kconfig is required for this patch.
+>
 
-Inki Dae wrote:
->=20
->=20
-> 2015=EB=85=84 11=EC=9B=94 23=EC=9D=BC 01:09=EC=97=90 Tobias Jakobi =EC=
-=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->> This updates the blending setup when the layer configuration
->> changes (triggered by mixer_win_{commit,disable}).
->>
->> To avoid unnecesary reconfigurations we cache the layer
->> state in the mixer context.
->>
->> Extra care has to be taken for the layer that is currently
->> being enabled/disabled.
->>
->> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  drivers/gpu/drm/exynos/exynos_mixer.c | 41 ++++++++++++++++++++++++=
-+++++++++--
->>  1 file changed, 39 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm=
-/exynos/exynos_mixer.c
->> index ec9659e..1c24fb5 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -99,6 +99,7 @@ struct mixer_context {
->>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->>  	const struct layer_cfg	*layer_cfg;
->>  	unsigned int		num_layer;
->> +	u32			layer_state;
->>  	int			pipe;
->>  	unsigned long		flags;
->>  	bool			interlace;
->> @@ -189,6 +190,27 @@ static inline bool is_alpha_format(const struct=
- mixer_context* ctx, unsigned int
->>  	}
->>  }
->> =20
->> +static inline u32 get_layer_state(const struct mixer_context *ctx,
->> +	unsigned int win, bool enable)
->> +{
->> +	u32 enable_state, alpha_state;
->> +
->> +	enable_state =3D ctx->layer_state & 0xffff;
->> +	alpha_state =3D ctx->layer_state >> 16;
->> +
->> +	if (enable)
->> +		enable_state |=3D (1 << win);
->> +	else
->> +		enable_state &=3D ~(1 << win);
->> +
->> +	if (enable && is_alpha_format(ctx, win))
->> +		alpha_state |=3D (1 << win);
->> +	else
->> +		alpha_state &=3D ~(1 << win);
->> +
->> +	return ((alpha_state << 16) | enable_state);
->> +}
->> +
->>  static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_=
-id)
->>  {
->>  	return readl(res->vp_regs + reg_id);
->> @@ -370,8 +392,9 @@ static void mixer_general_layer(struct mixer_con=
-text *ctx,
->>  {
->>  	u32 val;
->>  	struct mixer_resources *res =3D &ctx->mixer_res;
->> +	const u32 alpha_state =3D ctx->layer_state >> 16;
->> =20
->> -	if (is_alpha_format(ctx, cfg->index)) {
->> +	if (alpha_state & (1 << cfg->index)) {
->>  		val  =3D MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
->>  		val |=3D MXR_GRP_CFG_BLEND_PRE_MUL;
->>  		val |=3D MXR_GRP_CFG_PIXEL_BLEND_EN; /* blending based on pixel a=
-lpha */
->> @@ -397,10 +420,11 @@ static void mixer_general_layer(struct mixer_c=
-ontext *ctx,
->>  	}
->>  }
->> =20
->> -static void mixer_layer_blending(struct mixer_context *ctx, unsigne=
-d int enable_state)
->> +static void mixer_layer_blending(struct mixer_context *ctx)
->>  {
->>  	unsigned int i, index;
->>  	bool bottom_layer =3D false;
->> +	const u32 enable_state =3D ctx->layer_state & 0xffff;
->> =20
->>  	for (i =3D 0; i < ctx->num_layer; ++i) {
->>  		index =3D ctx->layer_cfg[i].index;
->> @@ -503,8 +527,19 @@ static void mixer_cfg_layer(struct mixer_contex=
-t *ctx, unsigned int win,
->>  				bool enable)
->>  {
->>  	struct mixer_resources *res =3D &ctx->mixer_res;
->> +	u32 new_layer_state;
->>  	u32 val =3D enable ? ~0 : 0;
->> =20
->> +	new_layer_state =3D get_layer_state(ctx, win, enable);
->> +	if (new_layer_state =3D=3D ctx->layer_state)
->> +		return;
->> +
->> +	/*
->> +	 * Update the layer state so that mixer_layer_blending()
->> +	 * below can use it.
->> +	 */
->> +	ctx->layer_state =3D new_layer_state;
->=20
-> It may be trivial but I think it'd be better to move above line to mo=
-st bottom of this function.
-Sure, I can do that, but I would rather know what's the rationale here.
+[...]
+>  arch/arm/mach-mvebu/Kconfig      | 24 ++++++++++++++++--------
+For mvebu part
+Acked-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
+Thanks,
 
-With best wishes,
-Tobias
-
->> +
->>  	switch (win) {
->>  	case 0:
->>  		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP0_ENABLE);
->> @@ -520,6 +555,8 @@ static void mixer_cfg_layer(struct mixer_context=
- *ctx, unsigned int win,
->>  		}
->>  		break;
->>  	}
->> +
->> +	mixer_layer_blending(ctx);
->=20
-> Here.
->=20
-> Thanks,
-> Inki Dae
->=20
->>  }
->> =20
->>  static void mixer_run(struct mixer_context *ctx)
->>
+Gregory
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
