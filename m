@@ -1,116 +1,122 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND PATCH v2] mfd: sec-core: Rename MFD and regulator names
- differently
-Date: Mon, 23 Nov 2015 08:20:58 +0000
-Message-ID: <20151123082058.GH3098@x1>
-References: <1448016506-8980-1-git-send-email-alim.akhtar@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 2/5] drm/exynos: mixer: introduce mixer_layer_blending()
+Date: Mon, 23 Nov 2015 17:33:21 +0900
+Message-ID: <5652CF51.3010705@samsung.com>
+References: <1448208584-6621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1448208584-6621-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1448016506-8980-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: broonie@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1448208584-6621-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 20 Nov 2015, Alim Akhtar wrote:
-
-> Currently S2MPSXX multifunction device is named as *-pmic,
-> and these MFDs also supports regulator as a one of its MFD cell which
-> has the same name, because current name is confusing and we want to
-> sort it out.
->=20
-> We did discussed different approaches about how the MFD and it
-> cells need to be named here [1].
-> Based in the discussion this patch rename MFD regulator name as
-> *-regulator instead of current *-pmic.
->=20
-> This patch also changes the corresponding entries in the regulator dr=
-iver
-> to keep git-bisect happy.
->=20
-> [1]-> https://lkml.org/lkml/2015/10/28/417
->=20
-> Suggested-by: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
-> Resending with collected Reviwed-by, Acked-by tags.
->=20
->  drivers/mfd/sec-core.c      |    8 ++++----
->  drivers/regulator/s2mps11.c |    8 ++++----
->  2 files changed, 8 insertions(+), 8 deletions(-)
-
-Applied, thanks.
-
-> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> index 7c4e7be17f1e..c9802ba9be72 100644
-> --- a/drivers/mfd/sec-core.c
-> +++ b/drivers/mfd/sec-core.c
-> @@ -68,7 +68,7 @@ static const struct mfd_cell s5m8767_devs[] =3D {
-> =20
->  static const struct mfd_cell s2mps11_devs[] =3D {
->  	{
-> -		.name =3D "s2mps11-pmic",
-> +		.name =3D "s2mps11-regulator",
->  	}, {
->  		.name =3D "s2mps14-rtc",
->  	}, {
-> @@ -78,7 +78,7 @@ static const struct mfd_cell s2mps11_devs[] =3D {
->  };
-> =20
->  static const struct mfd_cell s2mps13_devs[] =3D {
-> -	{ .name =3D "s2mps13-pmic", },
-> +	{ .name =3D "s2mps13-regulator", },
->  	{ .name =3D "s2mps13-rtc", },
->  	{
->  		.name =3D "s2mps13-clk",
-> @@ -88,7 +88,7 @@ static const struct mfd_cell s2mps13_devs[] =3D {
-> =20
->  static const struct mfd_cell s2mps14_devs[] =3D {
->  	{
-> -		.name =3D "s2mps14-pmic",
-> +		.name =3D "s2mps14-regulator",
->  	}, {
->  		.name =3D "s2mps14-rtc",
->  	}, {
-> @@ -116,7 +116,7 @@ static const struct mfd_cell s2mpa01_devs[] =3D {
-> =20
->  static const struct mfd_cell s2mpu02_devs[] =3D {
->  	{
-> -		.name =3D "s2mpu02-pmic",
-> +		.name =3D "s2mpu02-regulator",
->  	},
->  };
-> =20
-> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.=
-c
-> index b2f3a28e720c..3242ffc0cb25 100644
-> --- a/drivers/regulator/s2mps11.c
-> +++ b/drivers/regulator/s2mps11.c
-> @@ -1199,11 +1199,11 @@ out:
->  }
-> =20
->  static const struct platform_device_id s2mps11_pmic_id[] =3D {
-> -	{ "s2mps11-pmic", S2MPS11X},
-> -	{ "s2mps13-pmic", S2MPS13X},
-> -	{ "s2mps14-pmic", S2MPS14X},
-> +	{ "s2mps11-regulator", S2MPS11X},
-> +	{ "s2mps13-regulator", S2MPS13X},
-> +	{ "s2mps14-regulator", S2MPS14X},
->  	{ "s2mps15-regulator", S2MPS15X},
-> -	{ "s2mpu02-pmic", S2MPU02},
-> +	{ "s2mpu02-regulator", S2MPU02},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+CgoyMDE164WEIDEx7JuUIDIz7J28IDAxOjA57JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
+IOq4gDoKPiBUaGlzIGFuYWx5c2VzIHRoZSBjdXJyZW50IGxheWVyIGNvbmZpZ3VyYXRpb24gKHdo
+aWNoIGxheWVycwo+IGFyZSBlbmFibGVkLCB3aGljaCBoYXZlIGFscGhhLXBpeGVsZm9ybWF0LCBl
+dGMuKSBhbmQgc2V0dXBzCj4gYmxlbmRpbmcgYWNjb3JkaW5nbHkuCj4gCj4gV2UgY3VycmVudGx5
+IGRpc2FibGUgYWxsIGtpbmRzIG9mIGJsZW5kaW5nIGZvciB0aGUgYm90dG9tLW1vc3QKPiBsYXll
+ciwgc2luY2UgY29uZmlndXJhdGlvbiBvZiB0aGUgbWl4ZXIgYmFja2dyb3VuZCBpcyBub3QKPiB5
+ZXQgZXhwb3NlZC4KPiBBbHNvIGJsZW5kaW5nIGlzIG9ubHkgZW5hYmxlZCB3aGVuIHRoZSBsYXll
+ciBoYXMgYSBwaXhlbGZvcm1hdAo+IHdpdGggYWxwaGEgYXR0YWNoZWQuCj4gCj4gU2lnbmVkLW9m
+Zi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gLS0t
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCA4OCArKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3Mt
+bWl4ZXIuaCAgIHwgIDEgKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDg5IGluc2VydGlvbnMoKykKPiAK
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBpbmRleCAyYzFjZWEzLi5lYzc3
+YWFkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMK
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gQEAgLTE3NCw2
+ICsxNzQsMjEgQEAgc3RhdGljIGNvbnN0IHU4IGZpbHRlcl9jcl9ob3Jpel90YXA0W10gPSB7Cj4g
+IAk3MCwJNTksCTQ4LAkzNywJMjcsCTE5LAkxMSwJNSwKPiAgfTsKPiAgCj4gK3N0YXRpYyBpbmxp
+bmUgYm9vbCBpc19hbHBoYV9mb3JtYXQoY29uc3Qgc3RydWN0IG1peGVyX2NvbnRleHQqIGN0eCwg
+dW5zaWduZWQgaW50IHdpbikKPiArewo+ICsJY29uc3Qgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAq
+c3RhdGUgPSBjdHgtPnBsYW5lc1t3aW5dLmJhc2Uuc3RhdGU7Cj4gKwljb25zdCBzdHJ1Y3QgZHJt
+X2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRlLT5mYjsKPiArCj4gKwlzd2l0Y2ggKGZiLT5waXhlbF9m
+b3JtYXQpIHsKPiArCWNhc2UgRFJNX0ZPUk1BVF9BUkdCODg4ODoKPiArCWNhc2UgRFJNX0ZPUk1B
+VF9BUkdCMTU1NToKPiArCWNhc2UgRFJNX0ZPUk1BVF9BUkdCNDQ0NDoKPiArCQlyZXR1cm4gdHJ1
+ZTsKPiArCWRlZmF1bHQ6Cj4gKwkJcmV0dXJuIGZhbHNlOwo+ICsJfQo+ICt9Cj4gKwo+ICBzdGF0
+aWMgaW5saW5lIHUzMiB2cF9yZWdfcmVhZChzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMsIHUz
+MiByZWdfaWQpCj4gIHsKPiAgCXJldHVybiByZWFkbChyZXMtPnZwX3JlZ3MgKyByZWdfaWQpOwo+
+IEBAIC0zMzEsNiArMzQ2LDc5IEBAIHN0YXRpYyB2b2lkIG1peGVyX2xheWVyX3ByaW9yaXR5KHN0
+cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4gIAltaXhlcl9yZWdfd3JpdGUoJmN0eC0+bWl4ZXJf
+cmVzLCBNWFJfTEFZRVJfQ0ZHLCB2YWwpOwo+ICB9Cj4gIAo+ICsvKiBDb25maWd1cmUgYmxlbmRp
+bmcgZm9yIGJvdHRvbS1tb3N0IGxheWVyLiAqLwo+ICtzdGF0aWMgdm9pZCBtaXhlcl9ib3R0b21f
+bGF5ZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPiArCQljb25zdCBzdHJ1Y3QgbGF5ZXJf
+Y2ZnICpjZmcpCj4gK3sKPiArCXUzMiB2YWw7Cj4gKwlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpy
+ZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4gKwo+ICsJaWYgKGNmZy0+aW5kZXggPT0gMikgewo+ICsJ
+CXZhbCA9IDA7IC8qIHVzZSBkZWZhdWx0cyBmb3IgdmlkZW8gbGF5ZXIgKi8KPiArCQltaXhlcl9y
+ZWdfd3JpdGUocmVzLCBNWFJfVklERU9fQ0ZHLCB2YWwpOwo+ICsJfSBlbHNlIHsKPiArCQl2YWwg
+PSBNWFJfR1JQX0NGR19DT0xPUl9LRVlfRElTQUJMRTsgLyogbm8gYmxhbmsga2V5ICovCj4gKwo+
+ICsJCS8qIERvbid0IGJsZW5kIGJvdHRvbS1tb3N0IGxheWVyIG9udG8gdGhlIG1peGVyIGJhY2tn
+cm91bmQuICovCj4gKwkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9HUkFQSElDX0NGRyhj
+ZmctPmluZGV4KSwKPiArCQkJCSAgICB2YWwsIE1YUl9HUlBfQ0ZHX01JU0NfTUFTSyk7Cj4gKwl9
+Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkIG1peGVyX2dlbmVyYWxfbGF5ZXIoc3RydWN0IG1peGVy
+X2NvbnRleHQgKmN0eCwKPiArCQljb25zdCBzdHJ1Y3QgbGF5ZXJfY2ZnICpjZmcpCj4gK3sKPiAr
+CXUzMiB2YWw7Cj4gKwlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9y
+ZXM7Cj4gKwo+ICsJaWYgKGlzX2FscGhhX2Zvcm1hdChjdHgsIGNmZy0+aW5kZXgpKSB7Cj4gKwkJ
+dmFsICA9IE1YUl9HUlBfQ0ZHX0NPTE9SX0tFWV9ESVNBQkxFOyAvKiBubyBibGFuayBrZXkgKi8K
+PiArCQl2YWwgfD0gTVhSX0dSUF9DRkdfQkxFTkRfUFJFX01VTDsKPiArCQl2YWwgfD0gTVhSX0dS
+UF9DRkdfUElYRUxfQkxFTkRfRU47IC8qIGJsZW5kaW5nIGJhc2VkIG9uIHBpeGVsIGFscGhhICov
+Cj4gKwo+ICsJCS8qIFRoZSB2aWRlbyBsYXllciBuZXZlciBoYXMgYW4gYWxwaGEgcGl4ZWxmb3Jt
+YXQuICovCgpMb29rcyBsaWtlIGFib3ZlIGNvbW1lbnQgaXNuJ3QgcmVsYXRlZCB0byBncmFwaGlj
+cyBsYXllci4KCj4gKwkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9HUkFQSElDX0NGRyhj
+ZmctPmluZGV4KSwKPiArCQkJCSAgICB2YWwsIE1YUl9HUlBfQ0ZHX01JU0NfTUFTSyk7Cj4gKwl9
+IGVsc2Ugewo+ICsJCWlmIChjZmctPmluZGV4ID09IDIpIHsKPiArCQkJLyoKPiArCQkJICogTm8g
+YmxlbmRpbmcgYXQgdGhlIG1vbWVudCBzaW5jZSB0aGUgTlYxMi9OVjIxIHBpeGVsZm9ybWF0cyBk
+b24ndAo+ICsJCQkgKiBoYXZlIGFuIGFscGhhIGNoYW5uZWwuIEhvd2V2ZXIgdGhlIG1peGVyIHN1
+cHBvcnRzIGEgZ2xvYmFsIGFscGhhCj4gKwkJCSAqIHZhbHVlIGZvciBhIGxheWVyLiBPbmNlIHRo
+aXMgZnVuY3Rpb25hbGl0eSBpcyBleHBvc2VkLCB3ZSBjYW4KPiArCQkJICogc3VwcG9ydCBibGVu
+ZGluZyBvZiB0aGUgdmlkZW8gbGF5ZXIgdGhyb3VnaCB0aGlzLgo+ICsJCQkgKi8KPiArCQkJdmFs
+ID0gMDsKPiArCQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX1ZJREVPX0NGRywgdmFsKTsKCkFi
+b3ZlICdpZiBzdGF0ZW1lbnQnIHdvdWxkbid0IGJlIGNhbGxlZCBiZWNhdXNlIGNmZy0+aW5kZXgg
+aGFzIGFsd2F5cyBhIHZhbHVlIGxlc3MgdGhhbiAyCnNvIGl0IHNob3VsZCBiZSByZW1vdmVkLgoK
+PiArCQl9IGVsc2Ugewo+ICsJCQl2YWwgPSBNWFJfR1JQX0NGR19DT0xPUl9LRVlfRElTQUJMRTsK
+PiArCQkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9HUkFQSElDX0NGRyhjZmctPmluZGV4
+KSwKPiArCQkJCQkgICAgdmFsLCBNWFJfR1JQX0NGR19NSVNDX01BU0spOwo+ICsJCX0KPiArCX0K
+PiArfQo+ICsKPiArc3RhdGljIHZvaWQgbWl4ZXJfbGF5ZXJfYmxlbmRpbmcoc3RydWN0IG1peGVy
+X2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGVuYWJsZV9zdGF0ZSkKPiArewo+ICsJdW5zaWdu
+ZWQgaW50IGksIGluZGV4Owo+ICsJYm9vbCBib3R0b21fbGF5ZXIgPSBmYWxzZTsKPiArCj4gKwlm
+b3IgKGkgPSAwOyBpIDwgY3R4LT5udW1fbGF5ZXI7ICsraSkgewo+ICsJCWluZGV4ID0gY3R4LT5s
+YXllcl9jZmdbaV0uaW5kZXg7Cj4gKwo+ICsJCS8qIFNraXAgbGF5ZXIgaWYgaXQncyBub3QgZW5h
+YmxlZC4gKi8KPiArCQlpZiAoIShlbmFibGVfc3RhdGUgJiAoMSA8PCBpbmRleCkpKQo+ICsJCQlj
+b250aW51ZTsKPiArCj4gKwkJLyogQm90dG9tIGxheWVyIG5lZWRzIHNwZWNpYWwgaGFuZGxpbmcu
+ICovCj4gKwkJaWYgKGJvdHRvbV9sYXllcikgewo+ICsJCQltaXhlcl9nZW5lcmFsX2xheWVyKGN0
+eCwgJmN0eC0+bGF5ZXJfY2ZnW2ldKTsKPiArCQl9IGVsc2Ugewo+ICsJCQltaXhlcl9ib3R0b21f
+bGF5ZXIoY3R4LCAmY3R4LT5sYXllcl9jZmdbaV0pOwo+ICsJCQlib3R0b21fbGF5ZXIgPSB0cnVl
+Owo+ICsJCX0KCkkgdGhpbmsgYWJvdmUgY29kZXMgY291bGQgYmUgbW9yZSBjbGVhbm5lZCB1cCBs
+aWtlIGJlbG93IGlmIEkgdW5kZXJzdG9vZCBjb3JyZWN0bHksCgoJCWlmIChjZmctPmluZGV4ID09
+IDIpIHsKCQkJdmFsID0gMDsKCQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX1ZJREVPX0NGRywg
+dmFsKTsKCQl9IGVsc2UgewoJCQltaXhlcl9nZW5lcmFsX2xheWVyKGN0eCwgJmN0eC0+bGF5ZXJf
+Y2ZnW2ldKTsKCQl9CgoKSXQnZCBiZSBiZXR0ZXIgdG8gdXNlIGEgbWFjcm8gLSBpLmUuLCBWSURF
+T19MQVlFUiAtIGluc3RlYWQgb2YgMi4KQW5kIGhvdyBhYm91dCBjaGFuZ2luZyB0aGUgZnVuY3Rp
+b24gbmFtZSwgbWl4ZXJfZ2VuZXJhbF9sYXllciB0byBtaXhlcl9ncnBfbGF5ZXJfc2V0X2JsZW5k
+aW5nPwpPciBob3cgYWJvdXQganVzdCBhZGRpbmcgYWxsIGNvZGVzIG9mIHRoZSBmdW5jdGlvbj8K
+ClRoYW5rcywKSW5raSBEYWUKCj4gKwl9Cj4gK30KPiArCj4gIHN0YXRpYyB2b2lkIG1peGVyX3Zz
+eW5jX3NldF91cGRhdGUoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgYm9vbCBlbmFibGUpCj4g
+IHsKPiAgCXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmggYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaAo+IGluZGV4IGFjNjAyNjAuLjExODg3MmUgMTAw
+NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKPiArKysgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaAo+IEBAIC0xMTMsNiArMTEzLDcgQEAK
+PiAgI2RlZmluZSBNWFJfR1JQX0NGR19CTEVORF9QUkVfTVVMCSgxIDw8IDIwKQo+ICAjZGVmaW5l
+IE1YUl9HUlBfQ0ZHX1dJTl9CTEVORF9FTgkoMSA8PCAxNykKPiAgI2RlZmluZSBNWFJfR1JQX0NG
+R19QSVhFTF9CTEVORF9FTgkoMSA8PCAxNikKPiArI2RlZmluZSBNWFJfR1JQX0NGR19NSVNDX01B
+U0sJCSgoMyA8PCAxNikgfCAoMyA8PCAyMCkpCj4gICNkZWZpbmUgTVhSX0dSUF9DRkdfRk9STUFU
+X1ZBTCh4KQlNWFJfTUFTS19WQUwoeCwgMTEsIDgpCj4gICNkZWZpbmUgTVhSX0dSUF9DRkdfRk9S
+TUFUX01BU0sJCU1YUl9HUlBfQ0ZHX0ZPUk1BVF9WQUwofjApCj4gICNkZWZpbmUgTVhSX0dSUF9D
+RkdfQUxQSEFfVkFMKHgpCU1YUl9NQVNLX1ZBTCh4LCA3LCAwKQo+IApfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
