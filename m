@@ -1,78 +1,63 @@
-From: Saurabh Sengar <saurabh.truth@gmail.com>
-Subject: [PATCH] thermal: exynos: use of_property_read_u8()
-Date: Mon, 23 Nov 2015 19:40:41 +0530
-Message-ID: <1448287841-4816-1-git-send-email-saurabh.truth@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND PATCH v5 0/3] mfd: sec: add S2MPS15 PMIC support
+Date: Mon, 23 Nov 2015 14:27:37 +0000
+Message-ID: <20151123142737.GK3098@x1>
+References: <1448015873-8743-1-git-send-email-alim.akhtar@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1448015873-8743-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: l.majewski@samsung.com, rui.zhang@intel.com, edubezval@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Saurabh Sengar <saurabh.truth@gmail.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: broonie@kernel.org, k.kozlowski@samsung.com, alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-use of_property_read_u8() for u8 variables,
-also changed the return type to void as this function return type
-is nowhere used.
+Mark, Alexandre,
 
-Signed-off-by: Saurabh Sengar <saurabh.truth@gmail.com>
----
- drivers/thermal/samsung/exynos_tmu.c | 30 +++++++++++++-----------------
- 1 file changed, 13 insertions(+), 17 deletions(-)
+Enjoy!
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index fa61eff..b692c95 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1128,20 +1128,16 @@ static int exynos_of_get_soc_type(struct device_node *np)
- 	return -EINVAL;
- }
- 
--static int exynos_of_sensor_conf(struct device_node *np,
-+static void exynos_of_sensor_conf(struct device_node *np,
- 				 struct exynos_tmu_platform_data *pdata)
- {
--	u32 value;
--	int ret;
--
- 	of_node_get(np);
- 
--	ret = of_property_read_u32(np, "samsung,tmu_gain", &value);
--	pdata->gain = (u8)value;
--	of_property_read_u32(np, "samsung,tmu_reference_voltage", &value);
--	pdata->reference_voltage = (u8)value;
--	of_property_read_u32(np, "samsung,tmu_noise_cancel_mode", &value);
--	pdata->noise_cancel_mode = (u8)value;
-+	of_property_read_u8(np, "samsung,tmu_gain", &pdata->gain);
-+	of_property_read_u8(np, "samsung,tmu_reference_voltage",
-+				&pdata->reference_voltage);
-+	of_property_read_u8(np, "samsung,tmu_noise_cancel_mode",
-+				&pdata->noise_cancel_mode);
- 
- 	of_property_read_u32(np, "samsung,tmu_efuse_value",
- 			     &pdata->efuse_value);
-@@ -1150,18 +1146,18 @@ static int exynos_of_sensor_conf(struct device_node *np,
- 	of_property_read_u32(np, "samsung,tmu_max_efuse_value",
- 			     &pdata->max_efuse_value);
- 
--	of_property_read_u32(np, "samsung,tmu_first_point_trim", &value);
--	pdata->first_point_trim = (u8)value;
--	of_property_read_u32(np, "samsung,tmu_second_point_trim", &value);
--	pdata->second_point_trim = (u8)value;
--	of_property_read_u32(np, "samsung,tmu_default_temp_offset", &value);
--	pdata->default_temp_offset = (u8)value;
-+	of_property_read_u8(np, "samsung,tmu_first_point_trim",
-+				&pdata->first_point_trim);
-+	of_property_read_u8(np, "samsung,tmu_second_point_trim",
-+				&pdata->second_point_trim);
-+	of_property_read_u8(np, "samsung,tmu_default_temp_offset",
-+				&pdata->default_temp_offset);
- 
- 	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
- 	of_property_read_u32(np, "samsung,tmu_cal_mode", &pdata->cal_mode);
- 
- 	of_node_put(np);
--	return 0;
-+	return;
- }
- 
- static int exynos_map_dt_data(struct platform_device *pdev)
--- 
-1.9.1
+The following changes since commit 1ec218373b8ebda821aec00bb156a9c94fad=
+9cd4:
+
+  Linux 4.4-rc2 (2015-11-22 16:45:59 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd=
+-regulator-rtc-v4.5
+
+for you to fetch changes up to a65e5efa7c5faa8c320fe56cc351d47fcd006749=
+:
+
+  rtc: s5m.c: Add support for S2MPS15 RTC (2015-11-23 10:34:38 +0000)
+
+----------------------------------------------------------------
+Immutable branch between MFD, Regulator and RTC for the v4.5 merge wind=
+ow
+
+----------------------------------------------------------------
+Alim Akhtar (1):
+      rtc: s5m.c: Add support for S2MPS15 RTC
+
+Thomas Abraham (2):
+      mfd: sec: Add support for S2MPS15 PMIC
+      regulator: s2mps11: Add support for S2MPS15 regulators
+
+ drivers/mfd/sec-core.c              |  31 +++++
+ drivers/mfd/sec-irq.c               |   8 ++
+ drivers/regulator/Kconfig           |   4 +-
+ drivers/regulator/s2mps11.c         | 135 +++++++++++++++++-
+ drivers/rtc/rtc-s5m.c               |  37 ++++-
+ include/linux/mfd/samsung/core.h    |   1 +
+ include/linux/mfd/samsung/rtc.h     |   2 +
+ include/linux/mfd/samsung/s2mps15.h | 158 ++++++++++++++++++++++
+ 8 files changed, 369 insertions(+), 7 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps15.h
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
