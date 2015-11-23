@@ -1,133 +1,164 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v2 2/5] drm/exynos: mixer: introduce mixer_layer_blending()
-Date: Mon, 23 Nov 2015 18:44:49 +0100
-Message-ID: <56535091.5080907@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 4/5] drm/exynos: mixer: do blending setup in
+ mixer_cfg_layer()
+Date: Mon, 23 Nov 2015 18:44:54 +0100
+Message-ID: <56535096.3000809@math.uni-bielefeld.de>
 References: <1448208584-6621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1448208584-6621-3-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5652CF51.3010705@samsung.com>
+ <1448208584-6621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <5652C172.4090701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5652CF51.3010705@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:47432 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755098AbbKWRo5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Nov 2015 12:44:57 -0500
+In-Reply-To: <5652C172.4090701@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com
 
-SGV5IElua2ksCgoKSW5raSBEYWUgd3JvdGU6Cj4gCj4gCj4gMjAxNeuFhCAxMeyblCAyM+ydvCAw
-MTowOeyXkCBUb2JpYXMgSmFrb2JpIOydtCjqsIApIOyTtCDquIA6Cj4+IFRoaXMgYW5hbHlzZXMg
-dGhlIGN1cnJlbnQgbGF5ZXIgY29uZmlndXJhdGlvbiAod2hpY2ggbGF5ZXJzCj4+IGFyZSBlbmFi
-bGVkLCB3aGljaCBoYXZlIGFscGhhLXBpeGVsZm9ybWF0LCBldGMuKSBhbmQgc2V0dXBzCj4+IGJs
-ZW5kaW5nIGFjY29yZGluZ2x5Lgo+Pgo+PiBXZSBjdXJyZW50bHkgZGlzYWJsZSBhbGwga2luZHMg
-b2YgYmxlbmRpbmcgZm9yIHRoZSBib3R0b20tbW9zdAo+PiBsYXllciwgc2luY2UgY29uZmlndXJh
-dGlvbiBvZiB0aGUgbWl4ZXIgYmFja2dyb3VuZCBpcyBub3QKPj4geWV0IGV4cG9zZWQuCj4+IEFs
-c28gYmxlbmRpbmcgaXMgb25seSBlbmFibGVkIHdoZW4gdGhlIGxheWVyIGhhcyBhIHBpeGVsZm9y
-bWF0Cj4+IHdpdGggYWxwaGEgYXR0YWNoZWQuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBK
-YWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+PiAtLS0KPj4gIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCA4OCArKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKwo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmggICB8
-ICAxICsKPj4gIDIgZmlsZXMgY2hhbmdlZCwgODkgaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gaW5kZXggMmMxY2VhMy4uZWM3N2FhZCAxMDA2
-NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+PiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+IEBAIC0xNzQsNiArMTc0
-LDIxIEBAIHN0YXRpYyBjb25zdCB1OCBmaWx0ZXJfY3JfaG9yaXpfdGFwNFtdID0gewo+PiAgCTcw
-LAk1OSwJNDgsCTM3LAkyNywJMTksCTExLAk1LAo+PiAgfTsKPj4gIAo+PiArc3RhdGljIGlubGlu
-ZSBib29sIGlzX2FscGhhX2Zvcm1hdChjb25zdCBzdHJ1Y3QgbWl4ZXJfY29udGV4dCogY3R4LCB1
-bnNpZ25lZCBpbnQgd2luKQo+PiArewo+PiArCWNvbnN0IHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUg
-KnN0YXRlID0gY3R4LT5wbGFuZXNbd2luXS5iYXNlLnN0YXRlOwo+PiArCWNvbnN0IHN0cnVjdCBk
-cm1fZnJhbWVidWZmZXIgKmZiID0gc3RhdGUtPmZiOwo+PiArCj4+ICsJc3dpdGNoIChmYi0+cGl4
-ZWxfZm9ybWF0KSB7Cj4+ICsJY2FzZSBEUk1fRk9STUFUX0FSR0I4ODg4Ogo+PiArCWNhc2UgRFJN
-X0ZPUk1BVF9BUkdCMTU1NToKPj4gKwljYXNlIERSTV9GT1JNQVRfQVJHQjQ0NDQ6Cj4+ICsJCXJl
-dHVybiB0cnVlOwo+PiArCWRlZmF1bHQ6Cj4+ICsJCXJldHVybiBmYWxzZTsKPj4gKwl9Cj4+ICt9
-Cj4+ICsKPj4gIHN0YXRpYyBpbmxpbmUgdTMyIHZwX3JlZ19yZWFkKHN0cnVjdCBtaXhlcl9yZXNv
-dXJjZXMgKnJlcywgdTMyIHJlZ19pZCkKPj4gIHsKPj4gIAlyZXR1cm4gcmVhZGwocmVzLT52cF9y
-ZWdzICsgcmVnX2lkKTsKPj4gQEAgLTMzMSw2ICszNDYsNzkgQEAgc3RhdGljIHZvaWQgbWl4ZXJf
-bGF5ZXJfcHJpb3JpdHkoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKPj4gIAltaXhlcl9yZWdf
-d3JpdGUoJmN0eC0+bWl4ZXJfcmVzLCBNWFJfTEFZRVJfQ0ZHLCB2YWwpOwo+PiAgfQo+PiAgCj4+
-ICsvKiBDb25maWd1cmUgYmxlbmRpbmcgZm9yIGJvdHRvbS1tb3N0IGxheWVyLiAqLwo+PiArc3Rh
-dGljIHZvaWQgbWl4ZXJfYm90dG9tX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4+
-ICsJCWNvbnN0IHN0cnVjdCBsYXllcl9jZmcgKmNmZykKPj4gK3sKPj4gKwl1MzIgdmFsOwo+PiAr
-CXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPj4gKwo+PiAr
-CWlmIChjZmctPmluZGV4ID09IDIpIHsKPj4gKwkJdmFsID0gMDsgLyogdXNlIGRlZmF1bHRzIGZv
-ciB2aWRlbyBsYXllciAqLwo+PiArCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfVklERU9fQ0ZH
-LCB2YWwpOwo+PiArCX0gZWxzZSB7Cj4+ICsJCXZhbCA9IE1YUl9HUlBfQ0ZHX0NPTE9SX0tFWV9E
-SVNBQkxFOyAvKiBubyBibGFuayBrZXkgKi8KPj4gKwo+PiArCQkvKiBEb24ndCBibGVuZCBib3R0
-b20tbW9zdCBsYXllciBvbnRvIHRoZSBtaXhlciBiYWNrZ3JvdW5kLiAqLwo+PiArCQltaXhlcl9y
-ZWdfd3JpdGVtYXNrKHJlcywgTVhSX0dSQVBISUNfQ0ZHKGNmZy0+aW5kZXgpLAo+PiArCQkJCSAg
-ICB2YWwsIE1YUl9HUlBfQ0ZHX01JU0NfTUFTSyk7Cj4+ICsJfQo+PiArfQo+PiArCj4+ICtzdGF0
-aWMgdm9pZCBtaXhlcl9nZW5lcmFsX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4+
-ICsJCWNvbnN0IHN0cnVjdCBsYXllcl9jZmcgKmNmZykKPj4gK3sKPj4gKwl1MzIgdmFsOwo+PiAr
-CXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPj4gKwo+PiAr
-CWlmIChpc19hbHBoYV9mb3JtYXQoY3R4LCBjZmctPmluZGV4KSkgewo+PiArCQl2YWwgID0gTVhS
-X0dSUF9DRkdfQ09MT1JfS0VZX0RJU0FCTEU7IC8qIG5vIGJsYW5rIGtleSAqLwo+PiArCQl2YWwg
-fD0gTVhSX0dSUF9DRkdfQkxFTkRfUFJFX01VTDsKPj4gKwkJdmFsIHw9IE1YUl9HUlBfQ0ZHX1BJ
-WEVMX0JMRU5EX0VOOyAvKiBibGVuZGluZyBiYXNlZCBvbiBwaXhlbCBhbHBoYSAqLwo+PiArCj4+
-ICsJCS8qIFRoZSB2aWRlbyBsYXllciBuZXZlciBoYXMgYW4gYWxwaGEgcGl4ZWxmb3JtYXQuICov
-Cj4gCj4gTG9va3MgbGlrZSBhYm92ZSBjb21tZW50IGlzbid0IHJlbGF0ZWQgdG8gZ3JhcGhpY3Mg
-bGF5ZXIuCldoeSBkbyB5b3UgdGhpbmsgc28/IEJlY2F1c2UgaXQgY2VydGFpbmx5IGlzLgoKCj4+
-ICsJCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfR1JBUEhJQ19DRkcoY2ZnLT5pbmRleCks
-Cj4+ICsJCQkJICAgIHZhbCwgTVhSX0dSUF9DRkdfTUlTQ19NQVNLKTsKPj4gKwl9IGVsc2Ugewo+
-PiArCQlpZiAoY2ZnLT5pbmRleCA9PSAyKSB7Cj4+ICsJCQkvKgo+PiArCQkJICogTm8gYmxlbmRp
-bmcgYXQgdGhlIG1vbWVudCBzaW5jZSB0aGUgTlYxMi9OVjIxIHBpeGVsZm9ybWF0cyBkb24ndAo+
-PiArCQkJICogaGF2ZSBhbiBhbHBoYSBjaGFubmVsLiBIb3dldmVyIHRoZSBtaXhlciBzdXBwb3J0
-cyBhIGdsb2JhbCBhbHBoYQo+PiArCQkJICogdmFsdWUgZm9yIGEgbGF5ZXIuIE9uY2UgdGhpcyBm
-dW5jdGlvbmFsaXR5IGlzIGV4cG9zZWQsIHdlIGNhbgo+PiArCQkJICogc3VwcG9ydCBibGVuZGlu
-ZyBvZiB0aGUgdmlkZW8gbGF5ZXIgdGhyb3VnaCB0aGlzLgo+PiArCQkJICovCj4+ICsJCQl2YWwg
-PSAwOwo+PiArCQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX1ZJREVPX0NGRywgdmFsKTsKPiAK
-PiBBYm92ZSAnaWYgc3RhdGVtZW50JyB3b3VsZG4ndCBiZSBjYWxsZWQgYmVjYXVzZSBjZmctPmlu
-ZGV4IGhhcyBhbHdheXMgYSB2YWx1ZSBsZXNzIHRoYW4gMgo+IHNvIGl0IHNob3VsZCBiZSByZW1v
-dmVkLgpDYW4geW91IGV4cGxhaW4gd2h5IHlvdSB0aGluayB0aGF0IGluZGV4IGlzIGFsd2F5cyA8
-IDIgaGVyZT8KCgo+PiArCQl9IGVsc2Ugewo+PiArCQkJdmFsID0gTVhSX0dSUF9DRkdfQ09MT1Jf
-S0VZX0RJU0FCTEU7Cj4+ICsJCQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0dSQVBISUNf
-Q0ZHKGNmZy0+aW5kZXgpLAo+PiArCQkJCQkgICAgdmFsLCBNWFJfR1JQX0NGR19NSVNDX01BU0sp
-Owo+PiArCQl9Cj4+ICsJfQo+PiArfQo+PiArCj4+ICtzdGF0aWMgdm9pZCBtaXhlcl9sYXllcl9i
-bGVuZGluZyhzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgZW5hYmxlX3N0
-YXRlKQo+PiArewo+PiArCXVuc2lnbmVkIGludCBpLCBpbmRleDsKPj4gKwlib29sIGJvdHRvbV9s
-YXllciA9IGZhbHNlOwo+PiArCj4+ICsJZm9yIChpID0gMDsgaSA8IGN0eC0+bnVtX2xheWVyOyAr
-K2kpIHsKPj4gKwkJaW5kZXggPSBjdHgtPmxheWVyX2NmZ1tpXS5pbmRleDsKPj4gKwo+PiArCQkv
-KiBTa2lwIGxheWVyIGlmIGl0J3Mgbm90IGVuYWJsZWQuICovCj4+ICsJCWlmICghKGVuYWJsZV9z
-dGF0ZSAmICgxIDw8IGluZGV4KSkpCj4+ICsJCQljb250aW51ZTsKPj4gKwo+PiArCQkvKiBCb3R0
-b20gbGF5ZXIgbmVlZHMgc3BlY2lhbCBoYW5kbGluZy4gKi8KPj4gKwkJaWYgKGJvdHRvbV9sYXll
-cikgewo+PiArCQkJbWl4ZXJfZ2VuZXJhbF9sYXllcihjdHgsICZjdHgtPmxheWVyX2NmZ1tpXSk7
-Cj4+ICsJCX0gZWxzZSB7Cj4+ICsJCQltaXhlcl9ib3R0b21fbGF5ZXIoY3R4LCAmY3R4LT5sYXll
-cl9jZmdbaV0pOwo+PiArCQkJYm90dG9tX2xheWVyID0gdHJ1ZTsKPj4gKwkJfQo+IAo+IEkgdGhp
-bmsgYWJvdmUgY29kZXMgY291bGQgYmUgbW9yZSBjbGVhbm5lZCB1cCBsaWtlIGJlbG93IGlmIEkg
-dW5kZXJzdG9vZCBjb3JyZWN0bHksCkFuZCB0aGVuIHdlIGVuZCB1cCB3aXRoIHRoZSBzYW1lIHN0
-YXRpYyBzZXR1cCBhZ2FpbiwgdGhpcyBpcyBub3Qgd2hhdCBJCnRyeSB0byBhY2hpZXZlIGhlcmUu
-IFRoZSBmaW5hbCBnb2FsIGlzIHRvIGxldCB1c2Vyc3BhY2UgcHJvdmlkZSBsYXllcgpwcmlvcml0
-aWVzLCBzbyBhbGwgdGhlc2UgY2FsbHMgc2hvdWxkIHdvcmsgd2l0aCBhcmJpdHJhcnkgcHJpb3Jp
-dGllcy4KCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgo+IAkJaWYgKGNmZy0+aW5kZXggPT0g
-Mikgewo+IAkJCXZhbCA9IDA7Cj4gCQkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX1ZJREVPX0NG
-RywgdmFsKTsKPiAJCX0gZWxzZSB7Cj4gCQkJbWl4ZXJfZ2VuZXJhbF9sYXllcihjdHgsICZjdHgt
-PmxheWVyX2NmZ1tpXSk7Cj4gCQl9Cj4gCj4gCj4gSXQnZCBiZSBiZXR0ZXIgdG8gdXNlIGEgbWFj
-cm8gLSBpLmUuLCBWSURFT19MQVlFUiAtIGluc3RlYWQgb2YgMi4KPiBBbmQgaG93IGFib3V0IGNo
-YW5naW5nIHRoZSBmdW5jdGlvbiBuYW1lLCBtaXhlcl9nZW5lcmFsX2xheWVyIHRvIG1peGVyX2dy
-cF9sYXllcl9zZXRfYmxlbmRpbmc/Cj4gT3IgaG93IGFib3V0IGp1c3QgYWRkaW5nIGFsbCBjb2Rl
-cyBvZiB0aGUgZnVuY3Rpb24/Cj4gCj4gVGhhbmtzLAo+IElua2kgRGFlCj4gCj4+ICsJfQo+PiAr
-fQo+PiArCj4+ICBzdGF0aWMgdm9pZCBtaXhlcl92c3luY19zZXRfdXBkYXRlKHN0cnVjdCBtaXhl
-cl9jb250ZXh0ICpjdHgsIGJvb2wgZW5hYmxlKQo+PiAgewo+PiAgCXN0cnVjdCBtaXhlcl9yZXNv
-dXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvcmVncy1taXhlci5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1p
-eGVyLmgKPj4gaW5kZXggYWM2MDI2MC4uMTE4ODcyZSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9yZWdzLW1peGVyLmgKPj4gQEAgLTExMyw2ICsxMTMsNyBAQAo+PiAgI2RlZmluZSBNWFJfR1JQ
-X0NGR19CTEVORF9QUkVfTVVMCSgxIDw8IDIwKQo+PiAgI2RlZmluZSBNWFJfR1JQX0NGR19XSU5f
-QkxFTkRfRU4JKDEgPDwgMTcpCj4+ICAjZGVmaW5lIE1YUl9HUlBfQ0ZHX1BJWEVMX0JMRU5EX0VO
-CSgxIDw8IDE2KQo+PiArI2RlZmluZSBNWFJfR1JQX0NGR19NSVNDX01BU0sJCSgoMyA8PCAxNikg
-fCAoMyA8PCAyMCkpCj4+ICAjZGVmaW5lIE1YUl9HUlBfQ0ZHX0ZPUk1BVF9WQUwoeCkJTVhSX01B
-U0tfVkFMKHgsIDExLCA4KQo+PiAgI2RlZmluZSBNWFJfR1JQX0NGR19GT1JNQVRfTUFTSwkJTVhS
-X0dSUF9DRkdfRk9STUFUX1ZBTCh+MCkKPj4gICNkZWZpbmUgTVhSX0dSUF9DRkdfQUxQSEFfVkFM
-KHgpCU1YUl9NQVNLX1ZBTCh4LCA3LCAwKQo+PgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+Hey Inki,
+
+
+Inki Dae wrote:
+>=20
+>=20
+> 2015=EB=85=84 11=EC=9B=94 23=EC=9D=BC 01:09=EC=97=90 Tobias Jakobi =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>> This updates the blending setup when the layer configuration
+>> changes (triggered by mixer_win_{commit,disable}).
+>>
+>> To avoid unnecesary reconfigurations we cache the layer
+>> state in the mixer context.
+>>
+>> Extra care has to be taken for the layer that is currently
+>> being enabled/disabled.
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_mixer.c | 41 ++++++++++++++++++++++++=
++++++++++--
+>>  1 file changed, 39 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm=
+/exynos/exynos_mixer.c
+>> index ec9659e..1c24fb5 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -99,6 +99,7 @@ struct mixer_context {
+>>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+>>  	const struct layer_cfg	*layer_cfg;
+>>  	unsigned int		num_layer;
+>> +	u32			layer_state;
+>>  	int			pipe;
+>>  	unsigned long		flags;
+>>  	bool			interlace;
+>> @@ -189,6 +190,27 @@ static inline bool is_alpha_format(const struct=
+ mixer_context* ctx, unsigned int
+>>  	}
+>>  }
+>> =20
+>> +static inline u32 get_layer_state(const struct mixer_context *ctx,
+>> +	unsigned int win, bool enable)
+>> +{
+>> +	u32 enable_state, alpha_state;
+>> +
+>> +	enable_state =3D ctx->layer_state & 0xffff;
+>> +	alpha_state =3D ctx->layer_state >> 16;
+>> +
+>> +	if (enable)
+>> +		enable_state |=3D (1 << win);
+>> +	else
+>> +		enable_state &=3D ~(1 << win);
+>> +
+>> +	if (enable && is_alpha_format(ctx, win))
+>> +		alpha_state |=3D (1 << win);
+>> +	else
+>> +		alpha_state &=3D ~(1 << win);
+>> +
+>> +	return ((alpha_state << 16) | enable_state);
+>> +}
+>> +
+>>  static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_=
+id)
+>>  {
+>>  	return readl(res->vp_regs + reg_id);
+>> @@ -370,8 +392,9 @@ static void mixer_general_layer(struct mixer_con=
+text *ctx,
+>>  {
+>>  	u32 val;
+>>  	struct mixer_resources *res =3D &ctx->mixer_res;
+>> +	const u32 alpha_state =3D ctx->layer_state >> 16;
+>> =20
+>> -	if (is_alpha_format(ctx, cfg->index)) {
+>> +	if (alpha_state & (1 << cfg->index)) {
+>>  		val  =3D MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
+>>  		val |=3D MXR_GRP_CFG_BLEND_PRE_MUL;
+>>  		val |=3D MXR_GRP_CFG_PIXEL_BLEND_EN; /* blending based on pixel a=
+lpha */
+>> @@ -397,10 +420,11 @@ static void mixer_general_layer(struct mixer_c=
+ontext *ctx,
+>>  	}
+>>  }
+>> =20
+>> -static void mixer_layer_blending(struct mixer_context *ctx, unsigne=
+d int enable_state)
+>> +static void mixer_layer_blending(struct mixer_context *ctx)
+>>  {
+>>  	unsigned int i, index;
+>>  	bool bottom_layer =3D false;
+>> +	const u32 enable_state =3D ctx->layer_state & 0xffff;
+>> =20
+>>  	for (i =3D 0; i < ctx->num_layer; ++i) {
+>>  		index =3D ctx->layer_cfg[i].index;
+>> @@ -503,8 +527,19 @@ static void mixer_cfg_layer(struct mixer_contex=
+t *ctx, unsigned int win,
+>>  				bool enable)
+>>  {
+>>  	struct mixer_resources *res =3D &ctx->mixer_res;
+>> +	u32 new_layer_state;
+>>  	u32 val =3D enable ? ~0 : 0;
+>> =20
+>> +	new_layer_state =3D get_layer_state(ctx, win, enable);
+>> +	if (new_layer_state =3D=3D ctx->layer_state)
+>> +		return;
+>> +
+>> +	/*
+>> +	 * Update the layer state so that mixer_layer_blending()
+>> +	 * below can use it.
+>> +	 */
+>> +	ctx->layer_state =3D new_layer_state;
+>=20
+> It may be trivial but I think it'd be better to move above line to mo=
+st bottom of this function.
+Sure, I can do that, but I would rather know what's the rationale here.
+
+
+With best wishes,
+Tobias
+
+>> +
+>>  	switch (win) {
+>>  	case 0:
+>>  		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP0_ENABLE);
+>> @@ -520,6 +555,8 @@ static void mixer_cfg_layer(struct mixer_context=
+ *ctx, unsigned int win,
+>>  		}
+>>  		break;
+>>  	}
+>> +
+>> +	mixer_layer_blending(ctx);
+>=20
+> Here.
+>=20
+> Thanks,
+> Inki Dae
+>=20
+>>  }
+>> =20
+>>  static void mixer_run(struct mixer_context *ctx)
+>>
