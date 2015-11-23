@@ -1,58 +1,78 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos5422-odroid*: remove fimd node
-Date: Mon, 23 Nov 2015 10:56:47 -0300
-Message-ID: <56531B1F.9050502@osg.samsung.com>
-References: <1447151049-25370-1-git-send-email-m.szyprowski@samsung.com>
- <56428F34.7060003@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:45634 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753139AbbKWN4y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Nov 2015 08:56:54 -0500
-In-Reply-To: <56428F34.7060003@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Saurabh Sengar <saurabh.truth@gmail.com>
+Subject: [PATCH] thermal: exynos: use of_property_read_u8()
+Date: Mon, 23 Nov 2015 19:40:41 +0530
+Message-ID: <1448287841-4816-1-git-send-email-saurabh.truth@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: l.majewski@samsung.com, rui.zhang@intel.com, edubezval@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Saurabh Sengar <saurabh.truth@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Krzysztof,
+use of_property_read_u8() for u8 variables,
+also changed the return type to void as this function return type
+is nowhere used.
 
-On 11/10/2015 09:43 PM, Krzysztof Kozlowski wrote:
+Signed-off-by: Saurabh Sengar <saurabh.truth@gmail.com>
+---
+ drivers/thermal/samsung/exynos_tmu.c | 30 +++++++++++++-----------------
+ 1 file changed, 13 insertions(+), 17 deletions(-)
 
-[snip]
-
-> 
-> 
-> BTW, do you know why we don't have EXYNOS_IOMMU enabled in defconfig?
-> Any reasons against?
->
-
-It was explicitly disabled by commit 6562f3bd396a ("ARM: exynos_defconfig:
-Disable IOMMU support") because Exynos IOMMU support was broken and caused
-a BUG on boot, the discussion of the patch is [0].
-
-But I just tested booting a v4.4-rc2 kernel on an Exynos5800 Peach Pi with
-Exynos IOMMU enabled and the machine boots, display is working and
-/sys/kernel/iommu_grups/*/devices shows that the devices were correctly
-attached to an IOMMU group so things seems to have been sorted out now.
-
-So it seems that EXYNOS_IOMMU could be enabled again. It would be good to
-give such a patch a spin at kernelci before posting IMHO though just to be
-sure there are no issues remaining.
-
-> Best regards,
-> Krzysztof
-> 
-> 
-
-[0]: https://lkml.org/lkml/2015/2/17/163
-
-Best regards,
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index fa61eff..b692c95 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -1128,20 +1128,16 @@ static int exynos_of_get_soc_type(struct device_node *np)
+ 	return -EINVAL;
+ }
+ 
+-static int exynos_of_sensor_conf(struct device_node *np,
++static void exynos_of_sensor_conf(struct device_node *np,
+ 				 struct exynos_tmu_platform_data *pdata)
+ {
+-	u32 value;
+-	int ret;
+-
+ 	of_node_get(np);
+ 
+-	ret = of_property_read_u32(np, "samsung,tmu_gain", &value);
+-	pdata->gain = (u8)value;
+-	of_property_read_u32(np, "samsung,tmu_reference_voltage", &value);
+-	pdata->reference_voltage = (u8)value;
+-	of_property_read_u32(np, "samsung,tmu_noise_cancel_mode", &value);
+-	pdata->noise_cancel_mode = (u8)value;
++	of_property_read_u8(np, "samsung,tmu_gain", &pdata->gain);
++	of_property_read_u8(np, "samsung,tmu_reference_voltage",
++				&pdata->reference_voltage);
++	of_property_read_u8(np, "samsung,tmu_noise_cancel_mode",
++				&pdata->noise_cancel_mode);
+ 
+ 	of_property_read_u32(np, "samsung,tmu_efuse_value",
+ 			     &pdata->efuse_value);
+@@ -1150,18 +1146,18 @@ static int exynos_of_sensor_conf(struct device_node *np,
+ 	of_property_read_u32(np, "samsung,tmu_max_efuse_value",
+ 			     &pdata->max_efuse_value);
+ 
+-	of_property_read_u32(np, "samsung,tmu_first_point_trim", &value);
+-	pdata->first_point_trim = (u8)value;
+-	of_property_read_u32(np, "samsung,tmu_second_point_trim", &value);
+-	pdata->second_point_trim = (u8)value;
+-	of_property_read_u32(np, "samsung,tmu_default_temp_offset", &value);
+-	pdata->default_temp_offset = (u8)value;
++	of_property_read_u8(np, "samsung,tmu_first_point_trim",
++				&pdata->first_point_trim);
++	of_property_read_u8(np, "samsung,tmu_second_point_trim",
++				&pdata->second_point_trim);
++	of_property_read_u8(np, "samsung,tmu_default_temp_offset",
++				&pdata->default_temp_offset);
+ 
+ 	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
+ 	of_property_read_u32(np, "samsung,tmu_cal_mode", &pdata->cal_mode);
+ 
+ 	of_node_put(np);
+-	return 0;
++	return;
+ }
+ 
+ static int exynos_map_dt_data(struct platform_device *pdev)
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
