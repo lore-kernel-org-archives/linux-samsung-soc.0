@@ -1,86 +1,41 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos5422-odroid*: remove fimd node
-Date: Tue, 24 Nov 2015 01:32:17 -0300
-Message-ID: <5653E851.4070608@osg.samsung.com>
-References: <1447151049-25370-1-git-send-email-m.szyprowski@samsung.com>
- <56428F34.7060003@samsung.com> <56531B1F.9050502@osg.samsung.com>
- <5653DEA2.6060802@samsung.com>
+From: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: use const and __initconst for smp_operations
+Date: Tue, 24 Nov 2015 16:56:25 +0800
+Message-ID: <20151124085625.GT11999@tiger>
+References: <1447551593-22246-1-git-send-email-yamada.masahiro@socionext.com>
+ <1447551593-22246-3-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48732 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751814AbbKXEcX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Nov 2015 23:32:23 -0500
-In-Reply-To: <5653DEA2.6060802@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1447551593-22246-3-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio =?iso-8859-1?Q?L=F3pez?= <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Krzysztof,
-
-On 11/24/2015 12:50 AM, Krzysztof Kozlowski wrote:
-> On 23.11.2015 22:56, Javier Martinez Canillas wrote:
->> Hello Krzysztof,
->>
->> On 11/10/2015 09:43 PM, Krzysztof Kozlowski wrote:
->>
->> [snip]
->>
->>>
->>>
->>> BTW, do you know why we don't have EXYNOS_IOMMU enabled in defconfig?
->>> Any reasons against?
->>>
->>
->> It was explicitly disabled by commit 6562f3bd396a ("ARM: exynos_defconfig:
->> Disable IOMMU support") because Exynos IOMMU support was broken and caused
->> a BUG on boot, the discussion of the patch is [0].
+On Sun, Nov 15, 2015 at 10:39:53AM +0900, Masahiro Yamada wrote:
+> These smp_operations structures are not over-written, so add "const"
+> qualifier and replace __initdata with __initconst.
 > 
-> Right, now I remember.
+> Also, add "static" where it is possible.
 > 
-> 
->> But I just tested booting a v4.4-rc2 kernel on an Exynos5800 Peach Pi with
->> Exynos IOMMU enabled and the machine boots, display is working and
->> /sys/kernel/iommu_grups/*/devices shows that the devices were correctly
->> attached to an IOMMU group so things seems to have been sorted out now.
->>
->> So it seems that EXYNOS_IOMMU could be enabled again. It would be good to
->> give such a patch a spin at kernelci before posting IMHO though just to be
->> sure there are no issues remaining.
-> 
-> Yes for enabling. No for testing only on kernelci. Booting is not a
-> sufficient test in this case. I would expect testing also display - at
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Acked-by: Moritz Fischer <moritz.fischer-+aYTwkv1SeIAvxtiuMwx3w@public.gmane.org>
+> ---
+...
+>  arch/arm/mach-imx/common.h           | 4 ++--
+>  arch/arm/mach-imx/platsmp.c          | 4 ++--
 
-Sorry if I didn't explain myself clearly. I didn't mean that kernelci was
-enough to test Exynos IOMMU support, what I said is that would be nice to
-have some boot coverage besides the normal manual (or automated) display
-testing that someone could do on available platforms as discussed over IRC.
-
-> least some frame buffer console on DP or HDMI (or whatever output could
-> be generated... Xorg/Wayland would be better of course). You need it
-
-Yes, as I mentioned in the previous email, I tested display (with X) on an
-Exynos5800 Peach Pi. I don't have a rootfs with wayland/weston handy but I
-could prepare one tomorrow to give a try.
-
-> because display and camera (including complementary modules like JPEG,
-> MFC etc) are actually the only users of Exynos IOMMU in mainline.
->
-
-Do you have some test cases for MFC? I know that Gstreamer has support
-for it but I don't know what Gst pipelines I can use to test if all is
-working correctly.
-
-> Best regards,
-> Krzysztof
->
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Acked-by: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
