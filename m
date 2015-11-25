@@ -1,114 +1,84 @@
-From: Inki Dae <daeinki@gmail.com>
-Subject: Re: [PATCH v2 4/5] drm/exynos: mixer: do blending setup in
- mixer_cfg_layer()
-Date: Thu, 26 Nov 2015 01:00:00 +0900
-Message-ID: <CAAQKjZOj=cT0NjsZ-M1uL0QFaXm=oxprO1brjRfnCT=F0DPqbA@mail.gmail.com>
-References: <1448208584-6621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1448208584-6621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5652C172.4090701@samsung.com> <56535096.3000809@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <56535096.3000809@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 00/10] ARM: s3c64xx multiplatform
+Date: Wed, 25 Nov 2015 17:06:45 +0100
+Message-ID: <1448467615-447097-1-git-send-email-arnd@arndb.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([217.72.192.75]:62347 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751198AbbKYQHm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Nov 2015 11:07:42 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Tomasz Figa <tfiga@chromium.org>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-MjAxNS0xMS0yNCAyOjQ0IEdNVCswOTowMCBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5p
-LWJpZWxlZmVsZC5kZT46Cj4gSGV5IElua2ksCj4KPgo+IElua2kgRGFlIHdyb3RlOgo+Pgo+Pgo+
-PiAyMDE164WEIDEx7JuUIDIz7J28IDAxOjA57JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
-IOq4gDoKPj4+IFRoaXMgdXBkYXRlcyB0aGUgYmxlbmRpbmcgc2V0dXAgd2hlbiB0aGUgbGF5ZXIg
-Y29uZmlndXJhdGlvbgo+Pj4gY2hhbmdlcyAodHJpZ2dlcmVkIGJ5IG1peGVyX3dpbl97Y29tbWl0
-LGRpc2FibGV9KS4KPj4+Cj4+PiBUbyBhdm9pZCB1bm5lY2VzYXJ5IHJlY29uZmlndXJhdGlvbnMg
-d2UgY2FjaGUgdGhlIGxheWVyCj4+PiBzdGF0ZSBpbiB0aGUgbWl4ZXIgY29udGV4dC4KPj4+Cj4+
-PiBFeHRyYSBjYXJlIGhhcyB0byBiZSB0YWtlbiBmb3IgdGhlIGxheWVyIHRoYXQgaXMgY3VycmVu
-dGx5Cj4+PiBiZWluZyBlbmFibGVkL2Rpc2FibGVkLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IFRv
-YmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+Pj4gLS0tCj4+PiAg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDQxICsrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKy0tCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDM5IGluc2VydGlvbnMo
-KyksIDIgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCj4+PiBpbmRleCBlYzk2NTllLi4xYzI0ZmI1IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gQEAgLTk5LDYgKzk5LDcgQEAgc3RydWN0IG1peGVyX2Nv
-bnRleHQgewo+Pj4gICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSBwbGFuZXNbTUlYRVJfV0lO
-X05SXTsKPj4+ICAgICAgY29uc3Qgc3RydWN0IGxheWVyX2NmZyAgKmxheWVyX2NmZzsKPj4+ICAg
-ICAgdW5zaWduZWQgaW50ICAgICAgICAgICAgbnVtX2xheWVyOwo+Pj4gKyAgICB1MzIgICAgICAg
-ICAgICAgICAgICAgICBsYXllcl9zdGF0ZTsKPj4+ICAgICAgaW50ICAgICAgICAgICAgICAgICAg
-ICAgcGlwZTsKPj4+ICAgICAgdW5zaWduZWQgbG9uZyAgICAgICAgICAgZmxhZ3M7Cj4+PiAgICAg
-IGJvb2wgICAgICAgICAgICAgICAgICAgIGludGVybGFjZTsKPj4+IEBAIC0xODksNiArMTkwLDI3
-IEBAIHN0YXRpYyBpbmxpbmUgYm9vbCBpc19hbHBoYV9mb3JtYXQoY29uc3Qgc3RydWN0IG1peGVy
-X2NvbnRleHQqIGN0eCwgdW5zaWduZWQgaW50Cj4+PiAgICAgIH0KPj4+ICB9Cj4+Pgo+Pj4gK3N0
-YXRpYyBpbmxpbmUgdTMyIGdldF9sYXllcl9zdGF0ZShjb25zdCBzdHJ1Y3QgbWl4ZXJfY29udGV4
-dCAqY3R4LAo+Pj4gKyAgICB1bnNpZ25lZCBpbnQgd2luLCBib29sIGVuYWJsZSkKPj4+ICt7Cj4+
-PiArICAgIHUzMiBlbmFibGVfc3RhdGUsIGFscGhhX3N0YXRlOwo+Pj4gKwo+Pj4gKyAgICBlbmFi
-bGVfc3RhdGUgPSBjdHgtPmxheWVyX3N0YXRlICYgMHhmZmZmOwo+Pj4gKyAgICBhbHBoYV9zdGF0
-ZSA9IGN0eC0+bGF5ZXJfc3RhdGUgPj4gMTY7Cj4+PiArCj4+PiArICAgIGlmIChlbmFibGUpCj4+
-PiArICAgICAgICAgICAgZW5hYmxlX3N0YXRlIHw9ICgxIDw8IHdpbik7Cj4+PiArICAgIGVsc2UK
-Pj4+ICsgICAgICAgICAgICBlbmFibGVfc3RhdGUgJj0gfigxIDw8IHdpbik7Cj4+PiArCj4+PiAr
-ICAgIGlmIChlbmFibGUgJiYgaXNfYWxwaGFfZm9ybWF0KGN0eCwgd2luKSkKPj4+ICsgICAgICAg
-ICAgICBhbHBoYV9zdGF0ZSB8PSAoMSA8PCB3aW4pOwo+Pj4gKyAgICBlbHNlCj4+PiArICAgICAg
-ICAgICAgYWxwaGFfc3RhdGUgJj0gfigxIDw8IHdpbik7Cj4+PiArCj4+PiArICAgIHJldHVybiAo
-KGFscGhhX3N0YXRlIDw8IDE2KSB8IGVuYWJsZV9zdGF0ZSk7Cj4+PiArfQo+Pj4gKwo+Pj4gIHN0
-YXRpYyBpbmxpbmUgdTMyIHZwX3JlZ19yZWFkKHN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcywg
-dTMyIHJlZ19pZCkKPj4+ICB7Cj4+PiAgICAgIHJldHVybiByZWFkbChyZXMtPnZwX3JlZ3MgKyBy
-ZWdfaWQpOwo+Pj4gQEAgLTM3MCw4ICszOTIsOSBAQCBzdGF0aWMgdm9pZCBtaXhlcl9nZW5lcmFs
-X2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4+PiAgewo+Pj4gICAgICB1MzIgdmFs
-Owo+Pj4gICAgICBzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7
-Cj4+PiArICAgIGNvbnN0IHUzMiBhbHBoYV9zdGF0ZSA9IGN0eC0+bGF5ZXJfc3RhdGUgPj4gMTY7
-Cj4+Pgo+Pj4gLSAgICBpZiAoaXNfYWxwaGFfZm9ybWF0KGN0eCwgY2ZnLT5pbmRleCkpIHsKPj4+
-ICsgICAgaWYgKGFscGhhX3N0YXRlICYgKDEgPDwgY2ZnLT5pbmRleCkpIHsKPj4+ICAgICAgICAg
-ICAgICB2YWwgID0gTVhSX0dSUF9DRkdfQ09MT1JfS0VZX0RJU0FCTEU7IC8qIG5vIGJsYW5rIGtl
-eSAqLwo+Pj4gICAgICAgICAgICAgIHZhbCB8PSBNWFJfR1JQX0NGR19CTEVORF9QUkVfTVVMOwo+
-Pj4gICAgICAgICAgICAgIHZhbCB8PSBNWFJfR1JQX0NGR19QSVhFTF9CTEVORF9FTjsgLyogYmxl
-bmRpbmcgYmFzZWQgb24gcGl4ZWwgYWxwaGEgKi8KPj4+IEBAIC0zOTcsMTAgKzQyMCwxMSBAQCBz
-dGF0aWMgdm9pZCBtaXhlcl9nZW5lcmFsX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgs
-Cj4+PiAgICAgIH0KPj4+ICB9Cj4+Pgo+Pj4gLXN0YXRpYyB2b2lkIG1peGVyX2xheWVyX2JsZW5k
-aW5nKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCBlbmFibGVfc3RhdGUp
-Cj4+PiArc3RhdGljIHZvaWQgbWl4ZXJfbGF5ZXJfYmxlbmRpbmcoc3RydWN0IG1peGVyX2NvbnRl
-eHQgKmN0eCkKPj4+ICB7Cj4+PiAgICAgIHVuc2lnbmVkIGludCBpLCBpbmRleDsKPj4+ICAgICAg
-Ym9vbCBib3R0b21fbGF5ZXIgPSBmYWxzZTsKPj4+ICsgICAgY29uc3QgdTMyIGVuYWJsZV9zdGF0
-ZSA9IGN0eC0+bGF5ZXJfc3RhdGUgJiAweGZmZmY7Cj4+Pgo+Pj4gICAgICBmb3IgKGkgPSAwOyBp
-IDwgY3R4LT5udW1fbGF5ZXI7ICsraSkgewo+Pj4gICAgICAgICAgICAgIGluZGV4ID0gY3R4LT5s
-YXllcl9jZmdbaV0uaW5kZXg7Cj4+PiBAQCAtNTAzLDggKzUyNywxOSBAQCBzdGF0aWMgdm9pZCBt
-aXhlcl9jZmdfbGF5ZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IHdp
-biwKPj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYm9vbCBlbmFibGUpCj4+PiAgewo+
-Pj4gICAgICBzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+
-PiArICAgIHUzMiBuZXdfbGF5ZXJfc3RhdGU7Cj4+PiAgICAgIHUzMiB2YWwgPSBlbmFibGUgPyB+
-MCA6IDA7Cj4+Pgo+Pj4gKyAgICBuZXdfbGF5ZXJfc3RhdGUgPSBnZXRfbGF5ZXJfc3RhdGUoY3R4
-LCB3aW4sIGVuYWJsZSk7Cj4+PiArICAgIGlmIChuZXdfbGF5ZXJfc3RhdGUgPT0gY3R4LT5sYXll
-cl9zdGF0ZSkKPj4+ICsgICAgICAgICAgICByZXR1cm47Cj4+PiArCj4+PiArICAgIC8qCj4+PiAr
-ICAgICAqIFVwZGF0ZSB0aGUgbGF5ZXIgc3RhdGUgc28gdGhhdCBtaXhlcl9sYXllcl9ibGVuZGlu
-ZygpCj4+PiArICAgICAqIGJlbG93IGNhbiB1c2UgaXQuCj4+PiArICAgICAqLwo+Pj4gKyAgICBj
-dHgtPmxheWVyX3N0YXRlID0gbmV3X2xheWVyX3N0YXRlOwo+Pgo+PiBJdCBtYXkgYmUgdHJpdmlh
-bCBidXQgSSB0aGluayBpdCdkIGJlIGJldHRlciB0byBtb3ZlIGFib3ZlIGxpbmUgdG8gbW9zdCBi
-b3R0b20gb2YgdGhpcyBmdW5jdGlvbi4KPiBTdXJlLCBJIGNhbiBkbyB0aGF0LCBidXQgSSB3b3Vs
-ZCByYXRoZXIga25vdyB3aGF0J3MgdGhlIHJhdGlvbmFsZSBoZXJlLgoKVmVyeSBzaW1wbGUuIEFi
-b3ZlIGxpbmUgc2V0cyBsYXllcl9zdGF0ZSB0byBuZXdfbGF5ZXJfc3RhdGUgbG9naWNhbGx5CmJ1
-dCBwaHlzaWNhbGx5IG5vdC4KU28gaXQnZCBiZSByZWFzb25hYmxlIHRvIHVwZGF0ZSBsYXllciBz
-dGF0ZSBhZnRlciBwaHlzaWNhbGx5IHNldHRpbmcKdGhlIG1peGVyIGxheWVyLgoKVGhhbmtzLApJ
-bmtpIERhZQoKPgo+Cj4gV2l0aCBiZXN0IHdpc2hlcywKPiBUb2JpYXMKPgo+Pj4gKwo+Pj4gICAg
-ICBzd2l0Y2ggKHdpbikgewo+Pj4gICAgICBjYXNlIDA6Cj4+PiAgICAgICAgICAgICAgbWl4ZXJf
-cmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhSX0NGR19HUlAwX0VOQUJMRSk7Cj4+
-PiBAQCAtNTIwLDYgKzU1NSw4IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19sYXllcihzdHJ1Y3Qg
-bWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2luLAo+Pj4gICAgICAgICAgICAgIH0K
-Pj4+ICAgICAgICAgICAgICBicmVhazsKPj4+ICAgICAgfQo+Pj4gKwo+Pj4gKyAgICBtaXhlcl9s
-YXllcl9ibGVuZGluZyhjdHgpOwo+Pgo+PiBIZXJlLgo+Pgo+PiBUaGFua3MsCj4+IElua2kgRGFl
-Cj4+Cj4+PiAgfQo+Pj4KPj4+ICBzdGF0aWMgdm9pZCBtaXhlcl9ydW4oc3RydWN0IG1peGVyX2Nv
-bnRleHQgKmN0eCkKPj4+Cj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+I've posted the series before and we got a few people to test it
+the last time, though I think the touchscreen portion is still
+untested.
+
+I'd really like to get this merged for 4.5 and would put it into
+a next/multiplatform branch unless there are any objections
+or concerns.
+
+Arnd Bergmann (10):
+  Input: s3c2410_ts: fix S3C_ADC dependency
+  ASoC: samsung/smartq: use dynamic registration
+  gpio: samsung: move gpio-samsung driver back to platform code
+  ARM: s3c64xx: prepare initcalls for multiplatform
+  ARM: s3c64xx: enable sparse IRQ support
+  iio: exynos-adc: add experimental touchscreen support
+  ARM: s3c64xx: use new adc/touchscreen driver
+  ARM: s3c64xx: use common debug-ll implementation
+  ARM: s3c64xx: multiplatform support
+  ARM: s3c64xx: allow building without board support
+
+ .../devicetree/bindings/arm/samsung/exynos-adc.txt |   3 +
+ arch/arm/Kconfig                                   |  26 ---
+ arch/arm/Kconfig.debug                             |  19 +-
+ arch/arm/configs/multi_v7_defconfig                |   3 +
+ arch/arm/configs/s3c6400_defconfig                 |   2 +
+ arch/arm/mach-s3c64xx/Kconfig                      |  31 ++-
+ arch/arm/mach-s3c64xx/Makefile                     |  24 ++-
+ arch/arm/mach-s3c64xx/common.c                     |   5 +-
+ arch/arm/mach-s3c64xx/cpuidle.c                    |   5 +-
+ arch/arm/mach-s3c64xx/dev-uart.c                   |   1 +
+ arch/arm/mach-s3c64xx/include/mach/debug-macro.S   |  38 ----
+ arch/arm/mach-s3c64xx/include/mach/gpio-samsung.h  |   3 +
+ arch/arm/mach-s3c64xx/include/mach/irqs.h          |  20 +-
+ arch/arm/mach-s3c64xx/include/mach/pm-core.h       |   1 +
+ arch/arm/mach-s3c64xx/irq-pm.c                     |   2 +-
+ arch/arm/mach-s3c64xx/mach-anw6410.c               |   3 +-
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c       |   6 +
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |   2 +
+ arch/arm/mach-s3c64xx/mach-hmt.c                   |   2 +
+ arch/arm/mach-s3c64xx/mach-mini6410.c              |   5 +-
+ arch/arm/mach-s3c64xx/mach-ncp.c                   |   2 +
+ arch/arm/mach-s3c64xx/mach-real6410.c              |   6 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |  16 +-
+ arch/arm/mach-s3c64xx/mach-smartq5.c               |   2 +
+ arch/arm/mach-s3c64xx/mach-smartq7.c               |   2 +
+ arch/arm/mach-s3c64xx/mach-smdk6400.c              |   3 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |   6 +-
+ arch/arm/mach-s3c64xx/pl080.c                      |   4 +
+ arch/arm/mach-s3c64xx/pm.c                         |   4 +
+ arch/arm/mach-s3c64xx/s3c6400.c                    |   2 +-
+ arch/arm/mach-s3c64xx/s3c6410.c                    |   2 +-
+ arch/arm/plat-samsung/Kconfig                      |   5 +-
+ arch/arm/plat-samsung/Makefile                     |   5 +-
+ arch/arm/plat-samsung/devs.c                       |  22 +-
+ .../gpio => arch/arm/plat-samsung}/gpio-samsung.c  |  12 +-
+ arch/arm/plat-samsung/init.c                       |   5 +
+ arch/arm/plat-samsung/pm.c                         |   4 -
+ drivers/gpio/Kconfig                               |   7 -
+ drivers/gpio/Makefile                              |   1 -
+ drivers/iio/adc/exynos_adc.c                       | 224 ++++++++++++++++++++-
+ drivers/input/touchscreen/Kconfig                  |   2 +-
+ include/linux/platform_data/touchscreen-s3c2410.h  |   1 +
+ sound/soc/samsung/smartq_wm8987.c                  |  77 +++----
+ 43 files changed, 410 insertions(+), 205 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c64xx/include/mach/debug-macro.S
+ rename {drivers/gpio => arch/arm/plat-samsung}/gpio-samsung.c (99%)
+
+-- 
+2.1.0.rc2
