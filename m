@@ -1,256 +1,130 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH] PCI: designware: bail out if host_init failed
-Date: Wed, 25 Nov 2015 14:01:03 -0600
-Message-ID: <20151125200103.GF8869@localhost>
-References: <1447336125-5010-1-git-send-email-jszhang@marvell.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RESEND PATCH v3] dt-bindings: Consolidate SRAM bindings from
+ all vendors
+Date: Wed, 25 Nov 2015 17:48:25 -0600
+Message-ID: <20151125234825.GA17558@rob-hp-laptop>
+References: <1447893769-17088-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1447336125-5010-1-git-send-email-jszhang@marvell.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: kishon@ti.com, bhelgaas@google.com, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, Richard.Zhu@freescale.com, l.stach@pengutronix.de, m-karicheri2@ti.com, minghuan.Lian@freescale.com, mingkai.hu@freescale.com, tie-fei.zang@freescale.com, pratyush.anand@gmail.com, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <1447893769-17088-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Arnd Bergmann <arnd@arndb.de>, Hans de Goede <hdegoede@redhat.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jisheng,
+On Thu, Nov 19, 2015 at 09:42:49AM +0900, Krzysztof Kozlowski wrote:
+> SRAM bindings for various SoCs, using the mmio-sram genalloc
+> API, are spread over different places - per SoC vendor. Since all of
+> these are quite similar (they depend on mmio-sram) move them to a common
+> place.
+> 
+> Suggested-by: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-On Thu, Nov 12, 2015 at 09:48:45PM +0800, Jisheng Zhang wrote:
-> There's no reason to continue the initialization such as configure
-> register, scan root bus etc. if customized host_init() failed. This
-> patch tries to check the host_init result, bail out if failed.
+Applied, thanks. I said I would apply for 4.4, but it is not really 
+urgent, so I've just applied it for 4.5.
 
-This patch changes the (*host_init) return type and adds "return 0" to
-the host_init() implementations of ten different drivers, all to
-support a possible error in one driver.
+Rob
 
-Is there any way to detect and handle the error in
-ls1021_pcie_host_init() earlier, maybe by doing the syscon_regmap
-lookup in ls_pcie_probe() instead of in the host_init() function?
-
-That would be even better because you wouldn't have to touch any of
-the other drivers, and you'd detect the error even earlier, before
-we've done any of the designware setup.
-
-Bjorn
-
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> 
 > ---
->  drivers/pci/host/pci-dra7xx.c      |  4 +++-
->  drivers/pci/host/pci-exynos.c      |  4 +++-
->  drivers/pci/host/pci-imx6.c        |  4 +++-
->  drivers/pci/host/pci-keystone.c    |  4 +++-
->  drivers/pci/host/pci-layerscape.c  | 25 ++++++++++++++++---------
->  drivers/pci/host/pcie-designware.c |  7 +++++--
->  drivers/pci/host/pcie-designware.h |  2 +-
->  drivers/pci/host/pcie-spear13xx.c  |  4 +++-
->  8 files changed, 37 insertions(+), 17 deletions(-)
 > 
-> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
-> index 8c36880..b3160a1 100644
-> --- a/drivers/pci/host/pci-dra7xx.c
-> +++ b/drivers/pci/host/pci-dra7xx.c
-> @@ -149,7 +149,7 @@ static void dra7xx_pcie_enable_interrupts(struct pcie_port *pp)
->  				   LEG_EP_INTERRUPTS);
->  }
+> Changes since v2:
+> 1. Update paths to sram.txt.
+> 
+> Changes since v1:
+> 1. New patch. Extended suggestion from Rob.
+> ---
+>  Documentation/devicetree/bindings/arm/arm,scpi.txt                      | 2 +-
+>  .../bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt}  | 0
+>  .../bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt}  | 2 +-
+>  .../bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt}       | 2 +-
+>  Documentation/devicetree/bindings/{misc => sram}/sram.txt               | 0
+>  .../devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt}     | 2 +-
+>  6 files changed, 4 insertions(+), 4 deletions(-)
+>  rename Documentation/devicetree/bindings/{arm/rockchip/pmu-sram.txt => sram/rockchip-pmu-sram.txt} (100%)
+>  rename Documentation/devicetree/bindings/{arm/rockchip/smp-sram.txt => sram/rockchip-smp-sram.txt} (92%)
+>  rename Documentation/devicetree/bindings/{arm/exynos/smp-sysram.txt => sram/samsung-sram.txt} (95%)
+>  rename Documentation/devicetree/bindings/{misc => sram}/sram.txt (100%)
+>  rename Documentation/devicetree/bindings/{soc/sunxi/sram.txt => sram/sunxi-sram.txt} (97%)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> index 86302de67c2c..313dabdc14f9 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> @@ -63,7 +63,7 @@ Required properties:
+>  - compatible : should be "arm,juno-sram-ns" for Non-secure SRAM on Juno
 >  
-> -static void dra7xx_pcie_host_init(struct pcie_port *pp)
-> +static int dra7xx_pcie_host_init(struct pcie_port *pp)
->  {
->  	dw_pcie_setup_rc(pp);
+>  The rest of the properties should follow the generic mmio-sram description
+> -found in ../../misc/sysram.txt
+> +found in ../../sram/sram.txt
 >  
-> @@ -162,6 +162,8 @@ static void dra7xx_pcie_host_init(struct pcie_port *pp)
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		dw_pcie_msi_init(pp);
->  	dra7xx_pcie_enable_interrupts(pp);
-> +
-> +	return 0;
->  }
+>  Each sub-node represents the reserved area for SCPI.
 >  
->  static struct pcie_host_ops dra7xx_pcie_host_ops = {
-> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-> index 01095e1..57f370b 100644
-> --- a/drivers/pci/host/pci-exynos.c
-> +++ b/drivers/pci/host/pci-exynos.c
-> @@ -481,10 +481,12 @@ static int exynos_pcie_link_up(struct pcie_port *pp)
->  	return 0;
->  }
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip/pmu-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+> similarity index 100%
+> rename from Documentation/devicetree/bindings/arm/rockchip/pmu-sram.txt
+> rename to Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
+> similarity index 92%
+> rename from Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt
+> rename to Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
+> index d9416fb8db6f..800701ecffca 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip/smp-sram.txt
+> +++ b/Documentation/devicetree/bindings/sram/rockchip-smp-sram.txt
+> @@ -12,7 +12,7 @@ Required sub-node properties:
+>  - compatible : should be "rockchip,rk3066-smp-sram"
 >  
-> -static void exynos_pcie_host_init(struct pcie_port *pp)
-> +static int exynos_pcie_host_init(struct pcie_port *pp)
->  {
->  	exynos_pcie_establish_link(pp);
->  	exynos_pcie_enable_interrupts(pp);
-> +
-> +	return 0;
->  }
+>  The rest of the properties should follow the generic mmio-sram discription
+> -found in ../../misc/sram.txt
+> +found in Documentation/devicetree/bindings/sram/sram.txt
 >  
->  static struct pcie_host_ops exynos_pcie_host_ops = {
-> diff --git a/drivers/pci/host/pci-imx6.c b/drivers/pci/host/pci-imx6.c
-> index 22e8224..9a46680 100644
-> --- a/drivers/pci/host/pci-imx6.c
-> +++ b/drivers/pci/host/pci-imx6.c
-> @@ -425,7 +425,7 @@ static int imx6_pcie_establish_link(struct pcie_port *pp)
->  	return 0;
->  }
+>  Example:
 >  
-> -static void imx6_pcie_host_init(struct pcie_port *pp)
-> +static int imx6_pcie_host_init(struct pcie_port *pp)
->  {
->  	imx6_pcie_assert_core_reset(pp);
+> diff --git a/Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt b/Documentation/devicetree/bindings/sram/samsung-sram.txt
+> similarity index 95%
+> rename from Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt
+> rename to Documentation/devicetree/bindings/sram/samsung-sram.txt
+> index 4a0a4f70a0ce..6bc474b2b885 100644
+> --- a/Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt
+> +++ b/Documentation/devicetree/bindings/sram/samsung-sram.txt
+> @@ -15,7 +15,7 @@ Required sub-node properties:
+>  		"samsung,exynos4210-sysram-ns" : for Non-secure SYSRAM
 >  
-> @@ -439,6 +439,8 @@ static void imx6_pcie_host_init(struct pcie_port *pp)
+>  The rest of the properties should follow the generic mmio-sram discription
+> -found in ../../misc/sysram.txt
+> +found in Documentation/devicetree/bindings/sram/sram.txt
 >  
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		dw_pcie_msi_init(pp);
-> +
-> +	return 0;
->  }
+>  Example:
 >  
->  static void imx6_pcie_reset_phy(struct pcie_port *pp)
-> diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
-> index 0aa81bd..2604571 100644
-> --- a/drivers/pci/host/pci-keystone.c
-> +++ b/drivers/pci/host/pci-keystone.c
-> @@ -250,7 +250,7 @@ static int keystone_pcie_fault(unsigned long addr, unsigned int fsr,
->  	return 0;
->  }
+> diff --git a/Documentation/devicetree/bindings/misc/sram.txt b/Documentation/devicetree/bindings/sram/sram.txt
+> similarity index 100%
+> rename from Documentation/devicetree/bindings/misc/sram.txt
+> rename to Documentation/devicetree/bindings/sram/sram.txt
+> diff --git a/Documentation/devicetree/bindings/soc/sunxi/sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+> similarity index 97%
+> rename from Documentation/devicetree/bindings/soc/sunxi/sram.txt
+> rename to Documentation/devicetree/bindings/sram/sunxi-sram.txt
+> index 067698112f5f..8d5665468fe7 100644
+> --- a/Documentation/devicetree/bindings/soc/sunxi/sram.txt
+> +++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+> @@ -16,7 +16,7 @@ SRAM nodes
+>  ----------
 >  
-> -static void __init ks_pcie_host_init(struct pcie_port *pp)
-> +static int __init ks_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pp);
->  	u32 val;
-> @@ -277,6 +277,8 @@ static void __init ks_pcie_host_init(struct pcie_port *pp)
->  	 */
->  	hook_fault_code(17, keystone_pcie_fault, SIGBUS, 0,
->  			"Asynchronous external abort");
-> +
-> +	return 0;
->  }
+>  Each SRAM is described using the mmio-sram bindings documented in
+> -Documentation/devicetree/bindings/misc/sram.txt
+> +Documentation/devicetree/bindings/sram/sram.txt
 >  
->  static struct pcie_host_ops keystone_pcie_host_ops = {
-> diff --git a/drivers/pci/host/pci-layerscape.c b/drivers/pci/host/pci-layerscape.c
-> index 3923bed..a6e9070 100644
-> --- a/drivers/pci/host/pci-layerscape.c
-> +++ b/drivers/pci/host/pci-layerscape.c
-> @@ -94,8 +94,9 @@ static int ls1021_pcie_link_up(struct pcie_port *pp)
->  	return 1;
->  }
->  
-> -static void ls1021_pcie_host_init(struct pcie_port *pp)
-> +static int ls1021_pcie_host_init(struct pcie_port *pp)
->  {
-> +	int ret;
->  	struct ls_pcie *pcie = to_ls_pcie(pp);
->  	u32 val, index[2];
->  
-> @@ -103,15 +104,14 @@ static void ls1021_pcie_host_init(struct pcie_port *pp)
->  						     "fsl,pcie-scfg");
->  	if (IS_ERR(pcie->scfg)) {
->  		dev_err(pp->dev, "No syscfg phandle specified\n");
-> -		pcie->scfg = NULL;
-> -		return;
-> +		ret = PTR_ERR(pcie->scfg);
-> +		goto err;
->  	}
->  
-> -	if (of_property_read_u32_array(pp->dev->of_node,
-> -				       "fsl,pcie-scfg", index, 2)) {
-> -		pcie->scfg = NULL;
-> -		return;
-> -	}
-> +	ret = of_property_read_u32_array(pp->dev->of_node,
-> +					 "fsl,pcie-scfg", index, 2);
-> +	if (ret)
-> +		goto err;
->  	pcie->index = index[1];
->  
->  	dw_pcie_setup_rc(pp);
-> @@ -123,6 +123,11 @@ static void ls1021_pcie_host_init(struct pcie_port *pp)
->  	val = ioread32(pcie->dbi + PCIE_STRFMR1);
->  	val &= 0xffff;
->  	iowrite32(val, pcie->dbi + PCIE_STRFMR1);
-> +
-> +	return 0;
-> +err:
-> +	pcie->scfg = NULL;
-> +	return ret;
->  }
->  
->  static int ls_pcie_link_up(struct pcie_port *pp)
-> @@ -140,7 +145,7 @@ static int ls_pcie_link_up(struct pcie_port *pp)
->  	return 1;
->  }
->  
-> -static void ls_pcie_host_init(struct pcie_port *pp)
-> +static int ls_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct ls_pcie *pcie = to_ls_pcie(pp);
->  
-> @@ -148,6 +153,8 @@ static void ls_pcie_host_init(struct pcie_port *pp)
->  	ls_pcie_fix_class(pcie);
->  	ls_pcie_clear_multifunction(pcie);
->  	iowrite32(0, pcie->dbi + PCIE_DBI_RO_WR_EN);
-> +
-> +	return 0;
->  }
->  
->  static int ls_pcie_msi_host_init(struct pcie_port *pp,
-> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
-> index 540f077..a80a9ba 100644
-> --- a/drivers/pci/host/pcie-designware.c
-> +++ b/drivers/pci/host/pcie-designware.c
-> @@ -515,8 +515,11 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  		}
->  	}
->  
-> -	if (pp->ops->host_init)
-> -		pp->ops->host_init(pp);
-> +	if (pp->ops->host_init) {
-> +		ret = pp->ops->host_init(pp);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
->  	if (!pp->ops->rd_other_conf)
->  		dw_pcie_prog_outbound_atu(pp, PCIE_ATU_REGION_INDEX1,
-> diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
-> index 2356d29..7b5317f 100644
-> --- a/drivers/pci/host/pcie-designware.h
-> +++ b/drivers/pci/host/pcie-designware.h
-> @@ -63,7 +63,7 @@ struct pcie_host_ops {
->  	int (*wr_other_conf)(struct pcie_port *pp, struct pci_bus *bus,
->  			unsigned int devfn, int where, int size, u32 val);
->  	int (*link_up)(struct pcie_port *pp);
-> -	void (*host_init)(struct pcie_port *pp);
-> +	int (*host_init)(struct pcie_port *pp);
->  	void (*msi_set_irq)(struct pcie_port *pp, int irq);
->  	void (*msi_clear_irq)(struct pcie_port *pp, int irq);
->  	phys_addr_t (*get_msi_addr)(struct pcie_port *pp);
-> diff --git a/drivers/pci/host/pcie-spear13xx.c b/drivers/pci/host/pcie-spear13xx.c
-> index b95b756..50b3b31 100644
-> --- a/drivers/pci/host/pcie-spear13xx.c
-> +++ b/drivers/pci/host/pcie-spear13xx.c
-> @@ -256,10 +256,12 @@ static int spear13xx_pcie_link_up(struct pcie_port *pp)
->  	return 0;
->  }
->  
-> -static void spear13xx_pcie_host_init(struct pcie_port *pp)
-> +static int spear13xx_pcie_host_init(struct pcie_port *pp)
->  {
->  	spear13xx_pcie_establish_link(pp);
->  	spear13xx_pcie_enable_interrupts(pp);
-> +
-> +	return 0;
->  }
->  
->  static struct pcie_host_ops spear13xx_pcie_host_ops = {
+>  Each SRAM will have SRAM sections that are going to be handled by the
+>  SRAM controller as subnodes. These sections are represented following
 > -- 
-> 2.6.2
+> 1.9.1
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
