@@ -1,7 +1,7 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 02/10] ASoC: samsung/smartq: use dynamic registration
-Date: Wed, 25 Nov 2015 17:06:47 +0100
-Message-ID: <1448467615-447097-3-git-send-email-arnd@arndb.de>
+Subject: [PATCH 06/10] iio: exynos-adc: add experimental touchscreen support
+Date: Wed, 25 Nov 2015 17:06:51 +0100
+Message-ID: <1448467615-447097-7-git-send-email-arnd@arndb.de>
 References: <1448467615-447097-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1448467615-447097-1-git-send-email-arnd@arndb.de>
@@ -10,183 +10,404 @@ To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Tomasz Figa <tfiga@chromium.org>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-As a prerequisite for moving s3c64xx into multiplatform configurations,
-we need to change the smartq audio driver to stop using hardcoded
-gpio numbers from the header file, and instead pass the gpio data
-through platform_data.
+This adds support for the touchscreen on Samsung s3c64xx.
+The driver is completely untested but shows roughly how
+it could be done, following the example of the at91 driver.
 
-In order to do that, we also move the code to use module_platform_driver
-and register the platform device using platform_device_register_simple
-and register the gpios through the gpiod API.
+compared to the old plat-samsung/adc driver, there is
+no support for prioritizing ts over other clients, nor
+for oversampling. From my reading of the code, the
+priorities didn't actually have any effect at all, but
+the oversampling might be needed.
+
+Verifying this driver is the main issue that is currently
+holding up multiplatform support for s3c64xx, so any help
+in testing is very much appreciated.
+
+The current version uses the IS_REACHABLE() that is
+going to be introduced in the linux-media tree, please
+comment this out for testing.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/arm/mach-s3c64xx/mach-smartq.c | 13 +++++++
- sound/soc/samsung/smartq_wm8987.c   | 77 +++++++++++++------------------------
- 2 files changed, 40 insertions(+), 50 deletions(-)
+ .../devicetree/bindings/arm/samsung/exynos-adc.txt |   3 +
+ drivers/iio/adc/exynos_adc.c                       | 224 ++++++++++++++++++++-
+ 2 files changed, 220 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index acdfb5fac40f..96784e7f894a 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -12,6 +12,7 @@
- #include <linux/delay.h>
- #include <linux/fb.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
-@@ -383,6 +384,15 @@ void __init smartq_map_io(void)
- 	smartq_lcd_mode_set();
- }
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+index f46ca9a316a2..ccaaec6014bd 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+@@ -47,6 +47,9 @@ Required properties:
  
-+static struct gpiod_lookup_table smartq_audio_gpios = {
-+	.dev_id = "smartq-audio",
-+	.table = {
-+		GPIO_LOOKUP("GPL", 12, "headphone detect", 0),
-+		GPIO_LOOKUP("GPK", 12, "amplifiers shutdown", 0),
-+		{ },
-+	},
-+};
+ - samsung,syscon-phandle Contains the PMU system controller node
+ 			(To access the ADC_PHY register on Exynos5250/5420/5800/3250)
++Optional properties:
++- has-touchscreen:	If present, indicates that a touchscreen is
++			connected an usable.
+ 
+ Note: child nodes can be added for auto probing from device tree.
+ 
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index 3a2dbb3b4926..d11cd604562c 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -35,6 +35,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/of_platform.h>
+ #include <linux/err.h>
++#include <linux/input.h>
+ 
+ #include <linux/iio/iio.h>
+ #include <linux/iio/machine.h>
+@@ -42,12 +43,18 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+ 
++#include <linux/platform_data/touchscreen-s3c2410.h>
 +
- void __init smartq_machine_init(void)
- {
- 	s3c_i2c0_set_platdata(NULL);
-@@ -402,4 +412,7 @@ void __init smartq_machine_init(void)
+ /* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
+ #define ADC_V1_CON(x)		((x) + 0x00)
++#define ADC_V1_TSC(x)		((x) + 0x04)
+ #define ADC_V1_DLY(x)		((x) + 0x08)
+ #define ADC_V1_DATX(x)		((x) + 0x0C)
++#define ADC_V1_DATY(x)		((x) + 0x10)
++#define ADC_V1_UPDN(x)		((x) + 0x14)
+ #define ADC_V1_INTCLR(x)	((x) + 0x18)
+ #define ADC_V1_MUX(x)		((x) + 0x1c)
++#define ADC_V1_CLRINTPNDNUP(x)	((x) + 0x20)
  
- 	pwm_add_table(smartq_pwm_lookup, ARRAY_SIZE(smartq_pwm_lookup));
- 	platform_add_devices(smartq_devices, ARRAY_SIZE(smartq_devices));
+ /* S3C2410 ADC registers definitions */
+ #define ADC_S3C2410_MUX(x)	((x) + 0x18)
+@@ -71,6 +78,30 @@
+ #define ADC_S3C2410_DATX_MASK	0x3FF
+ #define ADC_S3C2416_CON_RES_SEL	(1u << 3)
+ 
++/* touch screen always uses channel 0 */
++#define ADC_S3C2410_MUX_TS	0
 +
-+	gpiod_add_lookup_table(&smartq_audio_gpios);
-+	platform_device_register_simple("smartq-audio", -1, NULL, 0);
- }
-diff --git a/sound/soc/samsung/smartq_wm8987.c b/sound/soc/samsung/smartq_wm8987.c
-index a0fe37fbed9f..c6769b16eb19 100644
---- a/sound/soc/samsung/smartq_wm8987.c
-+++ b/sound/soc/samsung/smartq_wm8987.c
-@@ -13,15 +13,12 @@
-  *
-  */
- 
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- 
- #include <sound/soc.h>
- #include <sound/jack.h>
- 
--#include <mach/gpio-samsung.h>
--#include <asm/mach-types.h>
--
- #include "i2s.h"
- #include "../codecs/wm8750.h"
- 
-@@ -96,7 +93,7 @@ static struct snd_soc_jack_pin smartq_jack_pins[] = {
- 
- static struct snd_soc_jack_gpio smartq_jack_gpios[] = {
- 	{
--		.gpio		= S3C64XX_GPL(12),
-+		.gpio		= -1,
- 		.name		= "headphone detect",
- 		.report		= SND_JACK_HEADPHONE,
- 		.debounce_time	= 200,
-@@ -113,7 +110,9 @@ static int smartq_speaker_event(struct snd_soc_dapm_widget *w,
- 				struct snd_kcontrol *k,
- 				int event)
- {
--	gpio_set_value(S3C64XX_GPK(12), SND_SOC_DAPM_EVENT_OFF(event));
-+	struct gpio_desc *gpio = snd_soc_card_get_drvdata(&snd_soc_smartq);
++/* ADCTSC Register Bits */
++#define ADC_S3C2443_TSC_UD_SEN		(1u << 8)
++#define ADC_S3C2410_TSC_YM_SEN		(1u << 7)
++#define ADC_S3C2410_TSC_YP_SEN		(1u << 6)
++#define ADC_S3C2410_TSC_XM_SEN		(1u << 5)
++#define ADC_S3C2410_TSC_XP_SEN		(1u << 4)
++#define ADC_S3C2410_TSC_PULL_UP_DISABLE	(1u << 3)
++#define ADC_S3C2410_TSC_AUTO_PST	(1u << 2)
++#define ADC_S3C2410_TSC_XY_PST(x)	(((x) & 0x3) << 0)
 +
-+	gpiod_set_value(gpio, SND_SOC_DAPM_EVENT_OFF(event));
++#define ADC_TSC_WAIT4INT (ADC_S3C2410_TSC_YM_SEN | \
++			 ADC_S3C2410_TSC_YP_SEN | \
++			 ADC_S3C2410_TSC_XP_SEN | \
++			 ADC_S3C2410_TSC_XY_PST(3))
++
++#define ADC_TSC_AUTOPST	(ADC_S3C2410_TSC_YM_SEN | \
++			 ADC_S3C2410_TSC_YP_SEN | \
++			 ADC_S3C2410_TSC_XP_SEN | \
++			 ADC_S3C2410_TSC_AUTO_PST | \
++			 ADC_S3C2410_TSC_XY_PST(0))
++
+ /* Bit definitions for ADC_V2 */
+ #define ADC_V2_CON1_SOFT_RESET	(1u << 2)
  
- 	return 0;
- }
-@@ -199,62 +198,40 @@ static struct snd_soc_card snd_soc_smartq = {
- 	.num_controls = ARRAY_SIZE(wm8987_smartq_controls),
+@@ -88,7 +119,9 @@
+ /* Bit definitions common for ADC_V1 and ADC_V2 */
+ #define ADC_CON_EN_START	(1u << 0)
+ #define ADC_CON_EN_START_MASK	(0x3 << 0)
++#define ADC_DATX_PRESSED	(1u << 15)
+ #define ADC_DATX_MASK		0xFFF
++#define ADC_DATY_MASK		0xFFF
+ 
+ #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
+ 
+@@ -98,17 +131,24 @@
+ struct exynos_adc {
+ 	struct exynos_adc_data	*data;
+ 	struct device		*dev;
++	struct input_dev	*input;
+ 	void __iomem		*regs;
+ 	struct regmap		*pmu_map;
+ 	struct clk		*clk;
+ 	struct clk		*sclk;
+ 	unsigned int		irq;
++	unsigned int		tsirq;
++	unsigned int		delay;
+ 	struct regulator	*vdd;
+ 
+ 	struct completion	completion;
+ 
+ 	u32			value;
+ 	unsigned int            version;
++
++	bool			read_ts;
++	u32			ts_x;
++	u32			ts_y;
  };
  
--static struct platform_device *smartq_snd_device;
--
--static int __init smartq_init(void)
-+static int smartq_probe(struct platform_device *pdev)
- {
-+	struct gpio_desc *gpio;
- 	int ret;
+ struct exynos_adc_data {
+@@ -197,6 +237,9 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
+ 	/* Enable 12-bit ADC resolution */
+ 	con1 |= ADC_V1_CON_RES;
+ 	writel(con1, ADC_V1_CON(info->regs));
++
++	/* set touchscreen delay */
++	writel(info->delay, ADC_V1_DLY(info->regs));
+ }
  
--	if (!machine_is_smartq7() && !machine_is_smartq5()) {
--		pr_info("Only SmartQ is supported by this ASoC driver\n");
--		return -ENODEV;
--	}
--
--	smartq_snd_device = platform_device_alloc("soc-audio", -1);
--	if (!smartq_snd_device)
--		return -ENOMEM;
--
--	platform_set_drvdata(smartq_snd_device, &snd_soc_smartq);
--
--	ret = platform_device_add(smartq_snd_device);
--	if (ret) {
--		platform_device_put(smartq_snd_device);
--		return ret;
--	}
-+	platform_set_drvdata(pdev, &snd_soc_smartq);
+ static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
+@@ -480,8 +523,8 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 	if (info->data->start_conv)
+ 		info->data->start_conv(info, chan->address);
  
- 	/* Initialise GPIOs used by amplifiers */
--	ret = gpio_request(S3C64XX_GPK(12), "amplifiers shutdown");
--	if (ret) {
--		dev_err(&smartq_snd_device->dev, "Failed to register GPK12\n");
--		goto err_unregister_device;
-+	gpio = devm_gpiod_get(&pdev->dev, "amplifiers shutdown",
-+			      GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpio)) {
-+		dev_err(&pdev->dev, "Failed to register GPK12\n");
-+		ret = PTR_ERR(gpio);
-+		goto out;
- 	}
-+	snd_soc_card_set_drvdata(&snd_soc_smartq, gpio);
- 
--	/* Disable amplifiers */
--	ret = gpio_direction_output(S3C64XX_GPK(12), 1);
--	if (ret) {
--		dev_err(&smartq_snd_device->dev, "Failed to configure GPK12\n");
--		goto err_free_gpio_amp_shut;
--	}
--
--	return 0;
--
--err_free_gpio_amp_shut:
--	gpio_free(S3C64XX_GPK(12));
--err_unregister_device:
--	platform_device_unregister(smartq_snd_device);
-+	ret = devm_snd_soc_register_card(&pdev->dev, &snd_soc_smartq);
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to register card\n");
- 
-+out:
+-	timeout = wait_for_completion_timeout
+-			(&info->completion, EXYNOS_ADC_TIMEOUT);
++	timeout = wait_for_completion_timeout(&info->completion,
++					      EXYNOS_ADC_TIMEOUT);
+ 	if (timeout == 0) {
+ 		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
+ 		if (info->data->init_hw)
+@@ -498,13 +541,55 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
  	return ret;
  }
  
--static void __exit smartq_exit(void)
--{
--	gpio_free(S3C64XX_GPK(12));
++static int exynos_read_s3c64xx_ts(struct iio_dev *indio_dev, int *x, int *y)
++{
++	struct exynos_adc *info = iio_priv(indio_dev);
++	unsigned long timeout;
++	int ret;
++
++	mutex_lock(&indio_dev->mlock);
++	info->read_ts = true;
++
++	reinit_completion(&info->completion);
++
++	writel(ADC_S3C2410_TSC_PULL_UP_DISABLE | ADC_TSC_AUTOPST,
++	       ADC_V1_TSC(info->regs));
++
++	/* Select the ts channel to be used and Trigger conversion */
++	info->data->start_conv(info, ADC_S3C2410_MUX_TS);
++
++	timeout = wait_for_completion_timeout(&info->completion,
++					      EXYNOS_ADC_TIMEOUT);
++	if (timeout == 0) {
++		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
++		if (info->data->init_hw)
++			info->data->init_hw(info);
++		ret = -ETIMEDOUT;
++	} else {
++		*x = info->ts_x;
++		*y = info->ts_y;
++		ret = 0;
++	}
++
++	info->read_ts = false;
++	mutex_unlock(&indio_dev->mlock);
++
++	return ret;
++}
++
+ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+ {
+ 	struct exynos_adc *info = (struct exynos_adc *)dev_id;
+ 	u32 mask = info->data->mask;
+ 
+ 	/* Read value */
+-	info->value = readl(ADC_V1_DATX(info->regs)) & mask;
++	if (info->read_ts) {
++		info->ts_x = readl(ADC_V1_DATX(info->regs));
++		info->ts_y = readl(ADC_V1_DATY(info->regs));
++		writel(ADC_TSC_WAIT4INT | ADC_S3C2443_TSC_UD_SEN, ADC_V1_TSC(info->regs));
++	} else {
++		info->value = readl(ADC_V1_DATX(info->regs)) & mask;
++	}
+ 
+ 	/* clear irq */
+ 	if (info->data->clear_irq)
+@@ -515,6 +600,46 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++/*
++ * Here we (ab)use a threaded interrupt handler to stay running
++ * for as long as the touchscreen remains pressed, we report
++ * a new event with the latest data and then sleep until the
++ * next timer tick. This mirrors the behavior of the old
++ * driver, with much less code.
++ */
++static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
++{
++	struct exynos_adc *info = dev_id;
++	struct iio_dev *dev = dev_get_drvdata(info->dev);
++	u32 x, y;
++	bool pressed;
++	int ret;
++
++	while (info->input->users) {
++		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
++		if (ret == -ETIMEDOUT)
++			break;
++
++		pressed = x & y & ADC_DATX_PRESSED;
++		if (!pressed) {
++			input_report_key(info->input, BTN_TOUCH, 0);
++			input_sync(info->input);
++			break;
++		}
++
++		input_report_abs(info->input, ABS_X, x & ADC_DATX_MASK);
++		input_report_abs(info->input, ABS_Y, y & ADC_DATY_MASK);
++		input_report_key(info->input, BTN_TOUCH, 1);
++		input_sync(info->input);
++
++		msleep(1);
++	};
++
++	writel(0, ADC_V1_CLRINTPNDNUP(info->regs));
++
++	return IRQ_HANDLED;
++}
++
+ static int exynos_adc_reg_access(struct iio_dev *indio_dev,
+ 			      unsigned reg, unsigned writeval,
+ 			      unsigned *readval)
+@@ -566,18 +691,72 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
+ 	return 0;
+ }
+ 
++static int exynos_adc_ts_open(struct input_dev *dev)
++{
++	struct exynos_adc *info = input_get_drvdata(dev);
++
++	enable_irq(info->tsirq);
++
++	return 0;
++}
++
++static void exynos_adc_ts_close(struct input_dev *dev)
++{
++	struct exynos_adc *info = input_get_drvdata(dev);
++
++	disable_irq(info->tsirq);
++}
++
++static int exynos_adc_ts_init(struct exynos_adc *info)
++{
++	int ret;
++
++	if (info->tsirq <= 0)
++		return -ENODEV;
++
++	info->input = input_allocate_device();
++	if (!info->input)
++		return -ENOMEM;
++
++	info->input->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
++	info->input->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
++
++	input_set_abs_params(info->input, ABS_X, 0, 0x3FF, 0, 0);
++	input_set_abs_params(info->input, ABS_Y, 0, 0x3FF, 0, 0);
++
++	info->input->name = "S3C24xx TouchScreen";
++	info->input->id.bustype = BUS_HOST;
++	info->input->open = exynos_adc_ts_open;
++	info->input->close = exynos_adc_ts_close;
++
++	input_set_drvdata(info->input, info);
++
++	ret = input_register_device(info->input);
++	if (ret) {
++		input_free_device(info->input);
++		return ret;
++	}
++
++	disable_irq(info->tsirq);
++	ret = request_threaded_irq(info->tsirq, NULL, exynos_ts_isr,
++				   0, "touchscreen", info);
++	if (ret)
++		input_unregister_device(info->input);
++
++	return ret;
++}
++
+ static int exynos_adc_probe(struct platform_device *pdev)
+ {
+ 	struct exynos_adc *info = NULL;
+ 	struct device_node *np = pdev->dev.of_node;
++	struct s3c2410_ts_mach_info *pdata = dev_get_platdata(&pdev->dev);
+ 	struct iio_dev *indio_dev = NULL;
+ 	struct resource	*mem;
++	bool has_ts = false;
+ 	int ret = -ENODEV;
+ 	int irq;
+ 
+-	if (!np)
+-		return ret;
 -
--	platform_device_unregister(smartq_snd_device);
--}
-+static struct platform_driver smartq_driver = {
-+	.driver = {
-+		.name = "smartq-audio",
-+		.owner = THIS_MODULE,
-+	},
-+	.probe = smartq_probe,
-+};
+ 	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct exynos_adc));
+ 	if (!indio_dev) {
+ 		dev_err(&pdev->dev, "failed allocating iio device\n");
+@@ -613,8 +792,14 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "no irq resource?\n");
+ 		return irq;
+ 	}
+-
+ 	info->irq = irq;
++
++	irq = platform_get_irq(pdev, 1);
++	if (irq == -EPROBE_DEFER)
++		return irq;
++
++	info->tsirq = irq;
++
+ 	info->dev = &pdev->dev;
  
--module_init(smartq_init);
--module_exit(smartq_exit);
-+module_platform_driver(smartq_driver);
+ 	init_completion(&info->completion);
+@@ -680,6 +865,22 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 	if (info->data->init_hw)
+ 		info->data->init_hw(info);
  
- /* Module information */
- MODULE_AUTHOR("Maurus Cuelenaere <mcuelenaere@gmail.com>");
++	/* leave out any TS related code if unreachable */
++	if (IS_REACHABLE(CONFIG_INPUT)) {
++		has_ts = of_property_read_bool(pdev->dev.of_node,
++					       "has-touchscreen") || pdata;
++	}
++
++	if (pdata)
++		info->delay = pdata->delay;
++	else
++		info->delay = 10000;
++
++	if (has_ts)
++		ret = exynos_adc_ts_init(info);
++	if (ret)
++		goto err_iio;
++
+ 	ret = of_platform_populate(np, exynos_adc_match, NULL, &indio_dev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed adding child nodes\n");
+@@ -691,6 +892,11 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ err_of_populate:
+ 	device_for_each_child(&indio_dev->dev, NULL,
+ 				exynos_adc_remove_devices);
++	if (has_ts) {
++		input_unregister_device(info->input);
++		free_irq(info->tsirq, info);
++	}
++err_iio:
+ 	iio_device_unregister(indio_dev);
+ err_irq:
+ 	free_irq(info->irq, info);
+@@ -710,6 +916,10 @@ static int exynos_adc_remove(struct platform_device *pdev)
+ 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+ 	struct exynos_adc *info = iio_priv(indio_dev);
+ 
++	if (IS_REACHABLE(CONFIG_INPUT)) {
++		free_irq(info->tsirq, info);
++		input_unregister_device(info->input);
++	}
+ 	device_for_each_child(&indio_dev->dev, NULL,
+ 				exynos_adc_remove_devices);
+ 	iio_device_unregister(indio_dev);
 -- 
 2.1.0.rc2
