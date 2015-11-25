@@ -1,55 +1,40 @@
-From: <yamada.masahiro@socionext.com>
-Subject: RE: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
- after prompt
-Date: Wed, 25 Nov 2015 02:09:46 +0000
-Message-ID: <4da749fb0cb34349babe18dc3c0d585a@SOC-EX02V.e01.socionext.com>
-References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
- <20151124155857.GB32623@ulmo.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20151124155857.GB32623@ulmo.nvidia.com>
-Content-Language: ja-JP
-Sender: linux-kbuild-owner@vger.kernel.org
-To: thierry.reding@gmail.com, arnd@arndb.de, arm@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, mmarek@suse.com, olof@lixom.net, linux-kbuild@vger.kernel.org, jamie@jamieiles.com, agross@codeaurora.org, kernel@pengutronix.de, gregory.clement@free-electrons.com, linux-sh@vger.kernel.org, tsahee@annapurnalabs.com, linux-arm-msm@vger.kernel.org, linus.walleij@linaro.org, galak@codeaurora.org, plagnioj@jcrosoft.com, dinguyen@opensource.altera.com, baohua@kernel.org, shiraz.linux.kernel@gmail.com, rjui@broadcom.com, patrice.chotard@st.com, kernel@stlinux.com, soren.brinkmann@xilinx.com, horms@verge.net.au, michal.simek@xilinx.com, heiko@sntech.de, linux-rockchip@lists.infradead.org, linux-soc@vger.kernel.org, davidb@codeaurora.org, sbranden@broadcom.com, vireshk@kernel.org, alexandre.belloni@free-electrons.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, bcm
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: Enable NFSv4 client
+Date: Wed, 25 Nov 2015 13:13:35 +0900
+Message-ID: <1448424815-30192-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:32805 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754660AbbKYENo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Nov 2015 23:13:44 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgQXJuZCwNCg0KQ291bGQgeW91IGFwcGx5IHRoaXMgcGF0Y2ggd2l0aCBBY2tlZC1ieSBzdG9y
-bQ0Kc28gdGhhdCBvdGhlciBzdWJhcmNodGVjdHVyZXMgY2FuIGJhc2Ugb24gaXQ/DQoNCkFsc28s
-IHRoZSBmb2xsb3dpbmcgc2VyaWVzOg0KDQoxLzI6IEFSTTogaGlzaTogZG8gbm90IGV4cG9ydCBz
-bXBfb3BlcmF0aW9ucyBzdHJ1Y3R1cmVzDQoyLzI6IEFSTTogdXNlIGNvbnN0IGFuZCBfX2luaXRj
-b25zdCBmb3Igc21wX29wZXJhdGlvbnMNCg0KDQoNCg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
-ZS0tLS0tDQo+IEZyb206IFRoaWVycnkgUmVkaW5nIFttYWlsdG86dGhpZXJyeS5yZWRpbmdAZ21h
-aWwuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIE5vdmVtYmVyIDI1LCAyMDE1IDEyOjU5IEFNDQo+
-IFRvOiBZYW1hZGEsIE1hc2FoaXJvDQo+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
-ZGVhZC5vcmc7IGFybUBrZXJuZWwub3JnOyBNaWNoYWwgTWFyZWs7DQo+IEFybmQgQmVyZ21hbm47
-IE9sb2YgSm9oYW5zc29uOyBsaW51eC1rYnVpbGRAdmdlci5rZXJuZWwub3JnOyBKYW1pZSBJbGVz
-Ow0KPiBBbmR5IEdyb3NzOyBTYXNjaGEgSGF1ZXI7IEdyZWdvcnkgQ2xlbWVudDsgbGludXgtc2hA
-dmdlci5rZXJuZWwub3JnOw0KPiBUc2FoZWUgWmlkZW5iZXJnOyBsaW51eC1hcm0tbXNtQHZnZXIu
-a2VybmVsLm9yZzsgTGludXMgV2FsbGVpajsgS3VtYXINCj4gR2FsYTsgSmVhbi1DaHJpc3RvcGhl
-IFBsYWduaW9sLVZpbGxhcmQ7IERpbmggTmd1eWVuOyBCYXJyeSBTb25nOyBTaGlyYXoNCj4gSGFz
-aGltOyBSYXkgSnVpOyBQYXRyaWNlIENob3RhcmQ7IGtlcm5lbEBzdGxpbnV4LmNvbTsgU8O2cmVu
-IEJyaW5rbWFubjsNCj4gU2ltb24gSG9ybWFuOyBNaWNoYWwgU2ltZWs7IEhlaWtvIFN0dWVibmVy
-Ow0KPiBsaW51eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zb2NAdmdlci5r
-ZXJuZWwub3JnOyBEYXZpZA0KPiBCcm93bjsgU2NvdHQgQnJhbmRlbjsgVmlyZXNoIEt1bWFyOyBB
-bGV4YW5kcmUgQmVsbG9uaTsgS3l1bmdtaW4gUGFyazsNCj4gS3J6eXN6dG9mIEtvemxvd3NraTsg
-YmNtLWtlcm5lbC1mZWVkYmFjay1saXN0QGJyb2FkY29tLmNvbTsgRmxvcmlhbg0KPiBGYWluZWxs
-aTsgQWxleGFuZHJlIENvdXJib3Q7IE1hdHRoaWFzIEJydWdnZXI7IEt1a2ppbiBLaW07IFJvYiBI
-ZXJyaW5nOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBzcGVhci1kZXZlbEBsaXN0
-LnN0LmNvbTsgU2ViYXN0aWFuDQo+IEhlc3NlbGJhcnRoOyBTdWRlZXAgSG9sbGE7IEFuZHJldyBM
-dW5uOyBSdXNzZWxsIEtpbmc7DQo+IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZzsg
-bGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgtdGVncmFAdmdlci5r
-ZXJuZWwub3JnOyBNYXhpbWUgQ29xdWVsaW47IFNyaW5pdmFzIEthbmRhZ2F0bGE7IFNoYXduDQo+
-IEd1bzsgTGl2aXUgRHVkYXU7IEp1biBOaWU7IExvcmVuem8gUGllcmFsaXNpOyBOaWNvbGFzIEZl
-cnJlOyBKYXNvbiBDb29wZXI7DQo+IFN0ZXBoZW4gV2FycmVuOyBLcnp5c3p0b2YgSGFsYXNhOyBX
-ZWkgWHU7IE1hZ251cyBEYW1tOyBDaGVuLVl1IFRzYWk7IE1heGltZQ0KPiBSaXBhcmQNCj4gU3Vi
-amVjdDogUmU6IFtQQVRDSF0gQVJNOiB1c2UgImRlcGVuZHMgb24iIGZvciBTb0MgY29uZmlncyBp
-bnN0ZWFkIG9mICJpZiINCj4gYWZ0ZXIgcHJvbXB0DQo+IA0KPiBPbiBNb24sIE5vdiAxNiwgMjAx
-NSBhdCAxMjowNjoxMFBNICswOTAwLCBNYXNhaGlybyBZYW1hZGEgd3JvdGU6DQo+IFsuLi5dDQo+
-ID4gIGFyY2gvYXJtL21hY2gtdGVncmEvS2NvbmZpZyAgICAgIHwgIDMgKystDQo+IA0KPiBUaGVy
-ZSB3aWxsIGJlIGEgc2xpZ2h0IGNvbmZsaWN0IGJldHdlZW4gdGhpcyBhbmQgYSBwYXRjaCBpbiB0
-aGUgdGVncmEgdHJlZSwNCj4gYnV0IG5vdGhpbmcgdGhhdCB0aGUgQVJNIFNvQyBtYWludGFpbmVy
-cyBjYW4ndCBoYW5kbGUsIHNvOg0KPiANCj4gQWNrZWQtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVk
-aW5nQG52aWRpYS5jb20+DQo=
+NFS client is already enabled (NFS_FS) and by default it enables clients
+for version 2 and 3. Enable explicitly the version 4 client to utilize
+the newer protocol.
+
+The NFS client is especially useful for testing kernel in automated
+environments (network boot with network file system).
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index b3f9c7558851..409adc1eaf33 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -224,6 +224,7 @@ CONFIG_TMPFS_POSIX_ACL=y
+ CONFIG_CRAMFS=y
+ CONFIG_ROMFS_FS=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V4=y
+ CONFIG_ROOT_NFS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ASCII=y
+-- 
+1.9.1
