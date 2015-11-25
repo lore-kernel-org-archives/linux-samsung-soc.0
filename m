@@ -1,229 +1,235 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 10/10] ARM: s3c64xx: allow building without board support
-Date: Wed, 25 Nov 2015 17:06:55 +0100
-Message-ID: <1448467615-447097-11-git-send-email-arnd@arndb.de>
+Subject: [PATCH 04/10] ARM: s3c64xx: prepare initcalls for multiplatform
+Date: Wed, 25 Nov 2015 17:06:49 +0100
+Message-ID: <1448467615-447097-5-git-send-email-arnd@arndb.de>
 References: <1448467615-447097-1-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1448467615-447097-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Kukjin Kim <kgene@kernel.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Tomasz Figa <tfiga@chromium.org>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Most of the code for the s3c64xx platform is only used when booting
-with ATAGS based board files, but not when using device-tree.
+In a multiplatform kernel, each initcall is run regardless
+of the platform it is meant for, so it must not attempt to
+access SoC-specific registers.
 
-This tries to identify all the s3c64xx specific code that is
-unneeded when CONFIG_ATAGS is not set, so we can build a smaller
-DT-only kernel if configured that way.
-
-All board support is still left intact but now depends on the
-CONFIG_ATAGS symbol that users may intentionally disable.
+This adds 'if (soc_is_s3c64xx)' to all initcalls that are
+specific to the s3c64xx platform, to prevent them from breaking
+other platforms once we can build them into a combined kernel.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c64xx/Kconfig                     | 19 ++++++++++++++-----
- arch/arm/mach-s3c64xx/Makefile                    | 21 ++++++++++++---------
- arch/arm/mach-s3c64xx/include/mach/gpio-samsung.h |  3 +++
- arch/arm/plat-samsung/pm.c                        |  4 ----
- 4 files changed, 29 insertions(+), 18 deletions(-)
+ arch/arm/mach-s3c64xx/common.c               |  4 ++--
+ arch/arm/mach-s3c64xx/cpuidle.c              |  5 ++++-
+ arch/arm/mach-s3c64xx/irq-pm.c               |  2 +-
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c |  4 ++++
+ arch/arm/mach-s3c64xx/pl080.c                |  4 ++++
+ arch/arm/mach-s3c64xx/pm.c                   |  4 ++++
+ arch/arm/mach-s3c64xx/s3c6400.c              |  2 +-
+ arch/arm/mach-s3c64xx/s3c6410.c              |  2 +-
+ arch/arm/plat-samsung/gpio-samsung.c         | 11 +++++------
+ arch/arm/plat-samsung/init.c                 |  5 +++++
+ 10 files changed, 31 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index caf71a99389e..7c0c420c3016 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -7,18 +7,17 @@ menuconfig ARCH_S3C64XX
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_AMBA
- 	select ARM_VIC
--	select ATAGS
- 	select CLKSRC_SAMSUNG_PWM
- 	select COMMON_CLK_SAMSUNG
--	select GPIO_SAMSUNG
-+	select GPIO_SAMSUNG if ATAGS
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_TCM
- 	select PLAT_SAMSUNG
- 	select PM_GENERIC_DOMAINS if PM
--	select S3C_DEV_NAND
--	select S3C_GPIO_TRACK
--	select SAMSUNG_ATAGS
-+	select S3C_DEV_NAND if ATAGS
-+	select S3C_GPIO_TRACK if ATAGS
-+	select SAMSUNG_ATAGS if ATAGS
- 	select SAMSUNG_WAKEMASK if PM
- 	select SAMSUNG_WDT_RESET
- 	help
-@@ -111,6 +110,7 @@ config S3C64XX_SETUP_USB_PHY
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+index ddb30b8434c5..3dea4a4ef165 100644
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -208,7 +208,7 @@ void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
+ static __init int s3c64xx_dev_init(void)
+ {
+ 	/* Not applicable when using DT. */
+-	if (of_have_populated_dt())
++	if (of_have_populated_dt() || !soc_is_s3c64xx())
+ 		return 0;
  
- config MACH_SMDK6400
-        bool "SMDK6400"
-+	depends on ATAGS
- 	select CPU_S3C6400
- 	select S3C64XX_SETUP_SDHCI
- 	select S3C_DEV_HSMMC1
-@@ -121,6 +121,7 @@ config MACH_SMDK6400
+ 	subsys_system_register(&s3c64xx_subsys, NULL);
+@@ -413,7 +413,7 @@ static int __init s3c64xx_init_irq_eint(void)
+ 	int irq;
  
- config MACH_ANW6410
- 	bool "A&W6410"
-+	depends on ATAGS
- 	select CPU_S3C6410
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C_DEV_FB
-@@ -129,6 +130,7 @@ config MACH_ANW6410
+ 	/* On DT-enabled systems EINTs are handled by pinctrl-s3c64xx driver. */
+-	if (of_have_populated_dt())
++	if (of_have_populated_dt() || !soc_is_s3c64xx())
+ 		return -ENODEV;
  
- config MACH_MINI6410
- 	bool "MINI6410"
-+	depends on ATAGS
- 	select CPU_S3C6410
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C64XX_SETUP_SDHCI
-@@ -144,6 +146,7 @@ config MACH_MINI6410
+ 	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(27); irq++) {
+diff --git a/arch/arm/mach-s3c64xx/cpuidle.c b/arch/arm/mach-s3c64xx/cpuidle.c
+index 93aa8cb70195..5322db51150e 100644
+--- a/arch/arm/mach-s3c64xx/cpuidle.c
++++ b/arch/arm/mach-s3c64xx/cpuidle.c
+@@ -18,6 +18,7 @@
  
- config MACH_REAL6410
- 	bool "REAL6410"
-+	depends on ATAGS
- 	select CPU_S3C6410
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C64XX_SETUP_SDHCI
-@@ -159,6 +162,7 @@ config MACH_REAL6410
+ #include <asm/cpuidle.h>
  
- config MACH_SMDK6410
- 	bool "SMDK6410"
-+	depends on ATAGS
- 	select CPU_S3C6410
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select S3C64XX_SETUP_FB_24BPP
-@@ -246,6 +250,7 @@ config SMDK6410_WM1192_EV1
- 
- config MACH_NCP
- 	bool "NCP"
-+	depends on ATAGS
- 	select CPU_S3C6410
- 	select S3C64XX_SETUP_I2C1
- 	select S3C_DEV_HSMMC1
-@@ -255,6 +260,7 @@ config MACH_NCP
- 
- config MACH_HMT
- 	bool "Airgoo HMT"
-+	depends on ATAGS
- 	select CPU_S3C6410
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C_DEV_FB
-@@ -286,18 +292,21 @@ config MACH_SMARTQ
- 
- config MACH_SMARTQ5
- 	bool "SmartQ 5"
-+	depends on ATAGS
- 	select MACH_SMARTQ
- 	help
- 	    Machine support for the SmartQ 5
- 
- config MACH_SMARTQ7
- 	bool "SmartQ 7"
-+	depends on ATAGS
- 	select MACH_SMARTQ
- 	help
- 	    Machine support for the SmartQ 7
- 
- config MACH_WLF_CRAGG_6410
- 	bool "Wolfson Cragganmore 6410"
-+	depends on ATAGS
- 	depends on I2C=y
- 	select CPU_S3C6410
- 	select LEDS_GPIO_REGISTER
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index 04cdcd40e23c..256cd5b40c60 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -8,20 +8,21 @@
- ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
- asflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
- 
--# Core
-+# PM
- 
--obj-y				+= common.o
-+obj-$(CONFIG_PM)		+= pm.o
-+obj-$(CONFIG_PM_SLEEP)		+= sleep.o
-+obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
- 
--# Core support
-+ifdef CONFIG_SAMSUNG_ATAGS
- 
--obj-$(CONFIG_CPU_S3C6400)	+= s3c6400.o
--obj-$(CONFIG_CPU_S3C6410)	+= s3c6410.o
-+obj-$(CONFIG_PM_SLEEP)          += irq-pm.o
- 
--# PM
-+# Core
- 
--obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM_SLEEP)		+= irq-pm.o sleep.o
--obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
-+obj-y				+= common.o
-+obj-$(CONFIG_CPU_S3C6400)	+= s3c6400.o
-+obj-$(CONFIG_CPU_S3C6410)	+= s3c6410.o
- 
- # DMA support
- 
-@@ -58,4 +59,6 @@ obj-$(CONFIG_MACH_SMARTQ7)		+= mach-smartq7.o
- obj-$(CONFIG_MACH_SMDK6400)		+= mach-smdk6400.o
- obj-$(CONFIG_MACH_SMDK6410)		+= mach-smdk6410.o
- obj-$(CONFIG_MACH_WLF_CRAGG_6410)	+= mach-crag6410.o mach-crag6410-module.o
-+endif
-+
- obj-$(CONFIG_MACH_S3C64XX_DT)		+= mach-s3c64xx-dt.o
-diff --git a/arch/arm/mach-s3c64xx/include/mach/gpio-samsung.h b/arch/arm/mach-s3c64xx/include/mach/gpio-samsung.h
-index 9c81fac3b2d5..1d3636512e33 100644
---- a/arch/arm/mach-s3c64xx/include/mach/gpio-samsung.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/gpio-samsung.h
-@@ -14,6 +14,8 @@
- #ifndef GPIO_SAMSUNG_S3C64XX_H
- #define GPIO_SAMSUNG_S3C64XX_H
- 
-+#ifdef CONFIG_GPIO_SAMSUNG
-+
- /* GPIO bank sizes */
- #define S3C64XX_GPIO_A_NR	(8)
- #define S3C64XX_GPIO_B_NR	(7)
-@@ -90,5 +92,6 @@ enum s3c_gpio_number {
- /* define the number of gpios we need to the one after the GPQ() range */
- #define GPIO_BOARD_START (S3C64XX_GPQ(S3C64XX_GPIO_Q_NR) + 1)
- 
-+#endif /* GPIO_SAMSUNG */
- #endif /* GPIO_SAMSUNG_S3C64XX_H */
- 
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 82777c649774..d7803b434732 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -23,14 +23,10 @@
- #include <asm/cacheflush.h>
- #include <asm/suspend.h>
- 
--#ifdef CONFIG_SAMSUNG_ATAGS
++#include <plat/cpu.h>
  #include <mach/map.h>
--#ifndef CONFIG_ARCH_EXYNOS
- #include <mach/regs-clock.h>
- #include <mach/regs-irq.h>
--#endif
+ 
+ #include "regs-sys.h"
+@@ -57,6 +58,8 @@ static struct cpuidle_driver s3c64xx_cpuidle_driver = {
+ 
+ static int __init s3c64xx_init_cpuidle(void)
+ {
+-	return cpuidle_register(&s3c64xx_cpuidle_driver, NULL);
++	if (soc_is_s3c64xx())
++		return cpuidle_register(&s3c64xx_cpuidle_driver, NULL);
++	return 0;
+ }
+ device_initcall(s3c64xx_init_cpuidle);
+diff --git a/arch/arm/mach-s3c64xx/irq-pm.c b/arch/arm/mach-s3c64xx/irq-pm.c
+index ae4ea7601f60..0bbf1faaee42 100644
+--- a/arch/arm/mach-s3c64xx/irq-pm.c
++++ b/arch/arm/mach-s3c64xx/irq-pm.c
+@@ -113,7 +113,7 @@ static struct syscore_ops s3c64xx_irq_syscore_ops = {
+ static __init int s3c64xx_syscore_init(void)
+ {
+ 	/* Appropriate drivers (pinctrl, uart) handle this when using DT. */
+-	if (of_have_populated_dt())
++	if (of_have_populated_dt() || !soc_is_s3c64xx())
+ 		return 0;
+ 
+ 	register_syscore_ops(&s3c64xx_irq_syscore_ops);
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 9c00d83f7151..be21f06e6b3f 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -29,6 +29,7 @@
+ 
+ #include <linux/platform_data/spi-s3c64xx.h>
+ 
++#include <plat/cpu.h>
+ #include "crag6410.h"
+ 
+ static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
+@@ -399,6 +400,9 @@ static struct i2c_driver wlf_gf_module_driver = {
+ 
+ static int __init wlf_gf_module_register(void)
+ {
++	if (!soc_is_s3c64xx())
++		return 0;
++
+ 	return i2c_add_driver(&wlf_gf_module_driver);
+ }
+ device_initcall(wlf_gf_module_register);
+diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
+index 901a984bddc2..89c5a62830a7 100644
+--- a/arch/arm/mach-s3c64xx/pl080.c
++++ b/arch/arm/mach-s3c64xx/pl080.c
+@@ -14,6 +14,7 @@
+ #include <linux/amba/pl08x.h>
+ #include <linux/of.h>
+ 
++#include <plat/cpu.h>
  #include <mach/irqs.h>
--#endif
+ #include <mach/map.h>
  
- #include <asm/irq.h>
+@@ -230,6 +231,9 @@ static AMBA_AHB_DEVICE(s3c64xx_dma1, "dma-pl080s.1", 0,
  
+ static int __init s3c64xx_pl080_init(void)
+ {
++	if (!soc_is_s3c64xx())
++		return 0;
++
+ 	/* Set all DMA configuration to be DMA, not SDMA */
+ 	writel(0xffffff, S3C64XX_SDMA_SEL);
+ 
+diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
+index 75b14e756383..59d91b83b03d 100644
+--- a/arch/arm/mach-s3c64xx/pm.c
++++ b/arch/arm/mach-s3c64xx/pm.c
+@@ -22,6 +22,7 @@
+ #include <mach/map.h>
+ #include <mach/irqs.h>
+ 
++#include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/pm.h>
+ #include <plat/wakeup-mask.h>
+@@ -332,6 +333,9 @@ int __init s3c64xx_pm_init(void)
+ 
+ static __init int s3c64xx_pm_initcall(void)
+ {
++	if (!soc_is_s3c64xx())
++		return 0;
++
+ 	pm_cpu_prep = s3c64xx_pm_prepare;
+ 	pm_cpu_sleep = s3c64xx_cpu_suspend;
+ 
+diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
+index 33273abef669..5ea82accc773 100644
+--- a/arch/arm/mach-s3c64xx/s3c6400.c
++++ b/arch/arm/mach-s3c64xx/s3c6400.c
+@@ -81,7 +81,7 @@ static struct device s3c6400_dev = {
+ static int __init s3c6400_core_init(void)
+ {
+ 	/* Not applicable when using DT. */
+-	if (of_have_populated_dt())
++	if (of_have_populated_dt() || soc_is_s3c64xx())
+ 		return 0;
+ 
+ 	return subsys_system_register(&s3c6400_subsys, NULL);
+diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
+index eadc48dee0e4..92bb927c4478 100644
+--- a/arch/arm/mach-s3c64xx/s3c6410.c
++++ b/arch/arm/mach-s3c64xx/s3c6410.c
+@@ -84,7 +84,7 @@ static struct device s3c6410_dev = {
+ static int __init s3c6410_core_init(void)
+ {
+ 	/* Not applicable when using DT. */
+-	if (of_have_populated_dt())
++	if (of_have_populated_dt() || !soc_is_s3c64xx())
+ 		return 0;
+ 
+ 	return subsys_system_register(&s3c6410_subsys, NULL);
+diff --git a/arch/arm/plat-samsung/gpio-samsung.c b/arch/arm/plat-samsung/gpio-samsung.c
+index 7c288ba4dc87..37faa8eab78f 100644
+--- a/arch/arm/plat-samsung/gpio-samsung.c
++++ b/arch/arm/plat-samsung/gpio-samsung.c
+@@ -1176,14 +1176,16 @@ static __init int samsung_gpiolib_init(void)
+ 	 * interfaces. For legacy (non-DT) platforms this driver is used.
+ 	 */
+ 	if (of_have_populated_dt())
+-		return -ENODEV;
+-
+-	samsung_gpiolib_set_cfg(samsung_gpio_cfgs, ARRAY_SIZE(samsung_gpio_cfgs));
++		return 0;
+ 
+ 	if (soc_is_s3c24xx()) {
++		samsung_gpiolib_set_cfg(samsung_gpio_cfgs,
++				ARRAY_SIZE(samsung_gpio_cfgs));
+ 		s3c24xx_gpiolib_add_chips(s3c24xx_gpios,
+ 				ARRAY_SIZE(s3c24xx_gpios), S3C24XX_VA_GPIO);
+ 	} else if (soc_is_s3c64xx()) {
++		samsung_gpiolib_set_cfg(samsung_gpio_cfgs,
++				ARRAY_SIZE(samsung_gpio_cfgs));
+ 		samsung_gpiolib_add_2bit_chips(s3c64xx_gpios_2bit,
+ 				ARRAY_SIZE(s3c64xx_gpios_2bit),
+ 				S3C64XX_VA_GPIO + 0xE0, 0x20);
+@@ -1192,9 +1194,6 @@ static __init int samsung_gpiolib_init(void)
+ 				S3C64XX_VA_GPIO);
+ 		samsung_gpiolib_add_4bit2_chips(s3c64xx_gpios_4bit2,
+ 				ARRAY_SIZE(s3c64xx_gpios_4bit2));
+-	} else {
+-		WARN(1, "Unknown SoC in gpio-samsung, no GPIOs added\n");
+-		return -ENODEV;
+ 	}
+ 
+ 	return 0;
+diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
+index 11fbbc26e49f..3776f7e752f0 100644
+--- a/arch/arm/plat-samsung/init.c
++++ b/arch/arm/plat-samsung/init.c
+@@ -152,6 +152,11 @@ static int __init s3c_arch_init(void)
+ {
+ 	int ret;
+ 
++	/* init is only needed for ATAGS based platforms */
++	if (!IS_ENABLED(CONFIG_ATAGS) ||
++	    (!soc_is_s3c24xx() && !soc_is_s3c64xx()))
++		return 0;
++
+ 	// do the correct init for cpu
+ 
+ 	if (cpu == NULL) {
 -- 
 2.1.0.rc2
