@@ -1,78 +1,55 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 2/7] drm/exynos/mixer: replace direct cross-driver call
- with drm mode validation
-Date: Tue, 24 Nov 2015 18:40:19 -0300
-Message-ID: <CABxcv=kKWbS5bWNE--wP8nuFEkTR=2vghQpAo-AtnYvm34tnow@mail.gmail.com>
-References: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
-	<1445861025-23266-3-git-send-email-a.hajda@samsung.com>
+From: <yamada.masahiro@socionext.com>
+Subject: RE: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
+ after prompt
+Date: Wed, 25 Nov 2015 02:09:46 +0000
+Message-ID: <4da749fb0cb34349babe18dc3c0d585a@SOC-EX02V.e01.socionext.com>
+References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
+ <20151124155857.GB32623@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f181.google.com ([209.85.160.181]:36444 "EHLO
-	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754706AbbKXVkT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Nov 2015 16:40:19 -0500
-Received: by ykdr82 with SMTP id r82so35057172ykd.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2015 13:40:19 -0800 (PST)
-In-Reply-To: <1445861025-23266-3-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <20151124155857.GB32623@ulmo.nvidia.com>
+Content-Language: ja-JP
+Sender: linux-kbuild-owner@vger.kernel.org
+To: thierry.reding@gmail.com, arnd@arndb.de, arm@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, mmarek@suse.com, olof@lixom.net, linux-kbuild@vger.kernel.org, jamie@jamieiles.com, agross@codeaurora.org, kernel@pengutronix.de, gregory.clement@free-electrons.com, linux-sh@vger.kernel.org, tsahee@annapurnalabs.com, linux-arm-msm@vger.kernel.org, linus.walleij@linaro.org, galak@codeaurora.org, plagnioj@jcrosoft.com, dinguyen@opensource.altera.com, baohua@kernel.org, shiraz.linux.kernel@gmail.com, rjui@broadcom.com, patrice.chotard@st.com, kernel@stlinux.com, soren.brinkmann@xilinx.com, horms@verge.net.au, michal.simek@xilinx.com, heiko@sntech.de, linux-rockchip@lists.infradead.org, linux-soc@vger.kernel.org, davidb@codeaurora.org, sbranden@broadcom.com, vireshk@kernel.org, alexandre.belloni@free-electrons.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, bcm
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-Hello Andrzej,
-
-On Mon, Oct 26, 2015 at 9:03 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> HDMI driver called directly function from MIXER driver to invalidate modes
-> not supported by MIXER. The patch replaces the hack with proper .atomic_check
-> callback.
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-
-It seems this patch is not a drop-in replacement since it causes a
-"Division by zero in kernel" error with v4.4-rc2 on an Exynos5800
-Peach Pi, causing the display console to not be initialized. X works
-correctly though.
-
-An interesting data point is that it only happens when the HDMI
-monitor is not plugged on the first mode set, everything works
-correctly when booting with a HDMI monitor plugged.
-
-Following is the relevant messages from the kernel log buffer:
-
-[   14.295702] Division by zero in kernel.
-[   14.298191] CPU: 0 PID: 2008 Comm: Xorg Not tainted 4.4.0-rc2 #111
-[   14.304243] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   14.310334] [<c0015f08>] (unwind_backtrace) from [<c0012c94>]
-(show_stack+0x10/0x14)
-[   14.318072] [<c0012c94>] (show_stack) from [<c01f8f80>]
-(dump_stack+0x84/0xc4)
-[   14.325264] [<c01f8f80>] (dump_stack) from [<c01f7a90>] (Ldiv0+0x8/0x10)
-[   14.331943] [<c01f7a90>] (Ldiv0) from [<c02b34f8>] (fimd_commit+0x1f0/0x2b4)
-[   14.338968] [<c02b34f8>] (fimd_commit) from [<c02b0788>]
-(exynos_drm_crtc_enable+0x1c/0x28)
-[   14.347303] [<c02b0788>] (exynos_drm_crtc_enable) from [<c028b328>]
-(drm_atomic_helper_commit_modeset_enables+0x98/0x198)
-[   14.358227] [<c028b328>] (drm_atomic_helper_commit_modeset_enables)
-from [<c02afc40>] (exynos_atomic_commit_complete+0x2c/0x1c4)
-[   14.369761] [<c02afc40>] (exynos_atomic_commit_complete) from
-[<c02b0604>] (exynos_atomic_commit+0x180/0x1cc)
-[   14.379681] [<c02b0604>] (exynos_atomic_commit) from [<c028c770>]
-(drm_atomic_helper_set_config+0x6c/0x90)
-[   14.389301] [<c028c770>] (drm_atomic_helper_set_config) from
-[<c029cabc>] (drm_mode_set_config_internal+0x58/0xd4)
-[   14.399629] [<c029cabc>] (drm_mode_set_config_internal) from
-[<c02a18d0>] (drm_mode_setcrtc+0x148/0x4bc)
-[   14.409078] [<c02a18d0>] (drm_mode_setcrtc) from [<c029489c>]
-(drm_ioctl+0x12c/0x49c)
-[   14.416892] [<c029489c>] (drm_ioctl) from [<c00ec19c>]
-(do_vfs_ioctl+0x498/0x6c8)
-[   14.424346] [<c00ec19c>] (do_vfs_ioctl) from [<c00ec400>]
-(SyS_ioctl+0x34/0x5c)
-[   14.431638] [<c00ec400>] (SyS_ioctl) from [<c000f600>]
-(ret_fast_syscall+0x0/0x3c)
-
-Best regards,
-Javier
+SGkgQXJuZCwNCg0KQ291bGQgeW91IGFwcGx5IHRoaXMgcGF0Y2ggd2l0aCBBY2tlZC1ieSBzdG9y
+bQ0Kc28gdGhhdCBvdGhlciBzdWJhcmNodGVjdHVyZXMgY2FuIGJhc2Ugb24gaXQ/DQoNCkFsc28s
+IHRoZSBmb2xsb3dpbmcgc2VyaWVzOg0KDQoxLzI6IEFSTTogaGlzaTogZG8gbm90IGV4cG9ydCBz
+bXBfb3BlcmF0aW9ucyBzdHJ1Y3R1cmVzDQoyLzI6IEFSTTogdXNlIGNvbnN0IGFuZCBfX2luaXRj
+b25zdCBmb3Igc21wX29wZXJhdGlvbnMNCg0KDQoNCg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
+ZS0tLS0tDQo+IEZyb206IFRoaWVycnkgUmVkaW5nIFttYWlsdG86dGhpZXJyeS5yZWRpbmdAZ21h
+aWwuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIE5vdmVtYmVyIDI1LCAyMDE1IDEyOjU5IEFNDQo+
+IFRvOiBZYW1hZGEsIE1hc2FoaXJvDQo+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
+ZGVhZC5vcmc7IGFybUBrZXJuZWwub3JnOyBNaWNoYWwgTWFyZWs7DQo+IEFybmQgQmVyZ21hbm47
+IE9sb2YgSm9oYW5zc29uOyBsaW51eC1rYnVpbGRAdmdlci5rZXJuZWwub3JnOyBKYW1pZSBJbGVz
+Ow0KPiBBbmR5IEdyb3NzOyBTYXNjaGEgSGF1ZXI7IEdyZWdvcnkgQ2xlbWVudDsgbGludXgtc2hA
+dmdlci5rZXJuZWwub3JnOw0KPiBUc2FoZWUgWmlkZW5iZXJnOyBsaW51eC1hcm0tbXNtQHZnZXIu
+a2VybmVsLm9yZzsgTGludXMgV2FsbGVpajsgS3VtYXINCj4gR2FsYTsgSmVhbi1DaHJpc3RvcGhl
+IFBsYWduaW9sLVZpbGxhcmQ7IERpbmggTmd1eWVuOyBCYXJyeSBTb25nOyBTaGlyYXoNCj4gSGFz
+aGltOyBSYXkgSnVpOyBQYXRyaWNlIENob3RhcmQ7IGtlcm5lbEBzdGxpbnV4LmNvbTsgU8O2cmVu
+IEJyaW5rbWFubjsNCj4gU2ltb24gSG9ybWFuOyBNaWNoYWwgU2ltZWs7IEhlaWtvIFN0dWVibmVy
+Ow0KPiBsaW51eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zb2NAdmdlci5r
+ZXJuZWwub3JnOyBEYXZpZA0KPiBCcm93bjsgU2NvdHQgQnJhbmRlbjsgVmlyZXNoIEt1bWFyOyBB
+bGV4YW5kcmUgQmVsbG9uaTsgS3l1bmdtaW4gUGFyazsNCj4gS3J6eXN6dG9mIEtvemxvd3NraTsg
+YmNtLWtlcm5lbC1mZWVkYmFjay1saXN0QGJyb2FkY29tLmNvbTsgRmxvcmlhbg0KPiBGYWluZWxs
+aTsgQWxleGFuZHJlIENvdXJib3Q7IE1hdHRoaWFzIEJydWdnZXI7IEt1a2ppbiBLaW07IFJvYiBI
+ZXJyaW5nOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBzcGVhci1kZXZlbEBsaXN0
+LnN0LmNvbTsgU2ViYXN0aWFuDQo+IEhlc3NlbGJhcnRoOyBTdWRlZXAgSG9sbGE7IEFuZHJldyBM
+dW5uOyBSdXNzZWxsIEtpbmc7DQo+IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZzsg
+bGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgtdGVncmFAdmdlci5r
+ZXJuZWwub3JnOyBNYXhpbWUgQ29xdWVsaW47IFNyaW5pdmFzIEthbmRhZ2F0bGE7IFNoYXduDQo+
+IEd1bzsgTGl2aXUgRHVkYXU7IEp1biBOaWU7IExvcmVuem8gUGllcmFsaXNpOyBOaWNvbGFzIEZl
+cnJlOyBKYXNvbiBDb29wZXI7DQo+IFN0ZXBoZW4gV2FycmVuOyBLcnp5c3p0b2YgSGFsYXNhOyBX
+ZWkgWHU7IE1hZ251cyBEYW1tOyBDaGVuLVl1IFRzYWk7IE1heGltZQ0KPiBSaXBhcmQNCj4gU3Vi
+amVjdDogUmU6IFtQQVRDSF0gQVJNOiB1c2UgImRlcGVuZHMgb24iIGZvciBTb0MgY29uZmlncyBp
+bnN0ZWFkIG9mICJpZiINCj4gYWZ0ZXIgcHJvbXB0DQo+IA0KPiBPbiBNb24sIE5vdiAxNiwgMjAx
+NSBhdCAxMjowNjoxMFBNICswOTAwLCBNYXNhaGlybyBZYW1hZGEgd3JvdGU6DQo+IFsuLi5dDQo+
+ID4gIGFyY2gvYXJtL21hY2gtdGVncmEvS2NvbmZpZyAgICAgIHwgIDMgKystDQo+IA0KPiBUaGVy
+ZSB3aWxsIGJlIGEgc2xpZ2h0IGNvbmZsaWN0IGJldHdlZW4gdGhpcyBhbmQgYSBwYXRjaCBpbiB0
+aGUgdGVncmEgdHJlZSwNCj4gYnV0IG5vdGhpbmcgdGhhdCB0aGUgQVJNIFNvQyBtYWludGFpbmVy
+cyBjYW4ndCBoYW5kbGUsIHNvOg0KPiANCj4gQWNrZWQtYnk6IFRoaWVycnkgUmVkaW5nIDx0cmVk
+aW5nQG52aWRpYS5jb20+DQo=
