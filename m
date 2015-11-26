@@ -1,71 +1,98 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH v2 00/13] drm/exynos: async G2D and g2d_move()
-Date: Thu, 26 Nov 2015 16:35:29 +0000
-Message-ID: <CACvgo51z_t-4D8_QKo3tQngB5b=+c7ReDBM3h7ikTEuKt=+vMA@mail.gmail.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH v2 08/13] exynos: fimg2d: add g2d_set_direction
+Date: Thu, 26 Nov 2015 17:41:04 +0100
+Message-ID: <56573620.1040600@gmx.net>
 References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1448218123-21292-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CACvgo53G9a7kqYgWKs+Mvxs=4Y_ZDnFZBzRirEmxLN3s_U2Z=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:34978 "EHLO
-	mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751738AbbKZQfa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 11:35:30 -0500
-Received: by ioc74 with SMTP id 74so91202718ioc.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2015 08:35:29 -0800 (PST)
-In-Reply-To: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACvgo53G9a7kqYgWKs+Mvxs=4Y_ZDnFZBzRirEmxLN3s_U2Z=A@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Emil Velikov <emil.l.velikov@gmail.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 
-Hi Tobias,
-
-On 22 November 2015 at 18:48, Tobias Jakobi
-<tjakobi@math.uni-bielefeld.de> wrote:
-> Hello,
->
-> this series mostly touches G2D code. It introduces the following:
->
-> (1) drmHandleEvent2() is added to enable processing of vendor-specific
->     events. This will be used to expose asynchronous operation of the
->     G2D. The necessary kernel infrastructure is already there since
->     a lot of kernel versions. [This touches libdrm core code!]
->
-Considering the shortage of input on this can you please respin the
-series without it (and related work mentioned below). This way we can
-pick merge the remaining work now and discuss (ping) about the rest.
-
-> (2) The necessary infrastructure to handle G2D events. This includes
->     adding g2d_config_event() and g2d_exec2() to the public API.
->     A test application is provided to ensure that everything works
->     as expected.
->
-With above in mind the g2d event will need to be split out, although
-g2d_exec2() should be ok (although of limited use), imho.
-
-> (3) A small performance test application which can be used to measure
->     the speed of solid color clear operations. Interesting for
->     benchmarking and plotting colorful graphs (e.g. through
->     Mathematica).
->
-> (4) g2d_move() which works similar to g2d_copy() but like the C
->     memmove() properly handles overlapping buffer copies.
->     Again a test application is present to check that this
->     indeed does what it should.
->
-> (5) Various small changes. A framebuffer colorformat fix for the
->     general G2D test application. Moving the currently unused
->     g2d_reset() to the public API.
-I am more of a "add API when it's needed" kind of person, although I
-cannot see anything serious misuse that can arise from g2d_reset().
-
-> Adding a counterpart to
->     exynos_bo_map() to unmap buffers again.
->
-The exynos bo map compatibility was broken a few times already so I'm
-wondering if we really want this one. I guess that with the lack of
-any (outside of tizen) user space things cannot go that wrong :-P
-
-Thanks
-Emil
+SGVsbG8gRW1pbCwKCm15IG1haW4gc3lzdGVtIHdoaWNoIEkgYWxzbyB1c2VkIGZvciBkZXZlbG9w
+bWVudCB3YXMgc3RvbGVuIG9uIFR1ZXNkYXksCnNvIEkgd29uJ3QgYmUgd29ya2luZyBvbiB0aGlz
+IHNlcmllcyBhbnl0aW1lIHNvb24uIElmIGFueW9uZSB3YW50cyB0bwpwaWNrIGl0IHVwLCBwbGVh
+c2UgZ28gYWhlYWQuCgotIFRvYmlhcwoKCkVtaWwgVmVsaWtvdiB3cm90ZToKPiBPbiAyMiBOb3Zl
+bWJlciAyMDE1IGF0IDE4OjQ4LCBUb2JpYXMgSmFrb2JpCj4gPHRqYWtvYmlAbWF0aC51bmktYmll
+bGVmZWxkLmRlPiB3cm90ZToKPj4gVGhpcyBhbGxvd3Mgc2V0dGluZyB0aGUgdHdvIGRpcmVjdGlv
+biByZWdpc3RlcnMsIHdoaWNoIHNwZWNpZnkgaG93Cj4+IHRoZSBlbmdpbmUgYmxpdHMgcGl4ZWxz
+LiBUaGlzIGNhbiBiZSB1c2VkIGZvciBvdmVybGFwcGluZyBibGl0cywKPj4gd2hpY2ggaGFwcGVu
+IGUuZy4gd2hlbiAnbW92aW5nJyBhIHJlY3Rhbmd1bGFyIHJlZ2lvbiBpbnNpZGUgYQo+PiBmaXhl
+ZCBidWZmZXIuCj4+Cj4+IFJldmlld2VkLWJ5OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4uaHdhbmdA
+c2Ftc3VuZy5jb20+Cj4+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0
+aC51bmktYmllbGVmZWxkLmRlPgo+PiAtLS0KPj4gIGV4eW5vcy9leHlub3NfZmltZzJkLmMgfCAx
+MyArKysrKysrKysrKysrCj4+ICBleHlub3MvZXh5bm9zX2ZpbWcyZC5oIHwgMzggKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPj4gIDIgZmlsZXMgY2hhbmdlZCwgNTEgaW5z
+ZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYyBiL2V4
+eW5vcy9leHlub3NfZmltZzJkLmMKPj4gaW5kZXggZTk5N2Q0Yi4uNGQ1NDE5YyAxMDA2NDQKPj4g
+LS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYwo+PiArKysgYi9leHlub3MvZXh5bm9zX2ZpbWcy
+ZC5jCj4+IEBAIC0yNDIsNiArMjQyLDE5IEBAIHN0YXRpYyB2b2lkIGcyZF9hZGRfYmFzZV9hZGRy
+KHN0cnVjdCBnMmRfY29udGV4dCAqY3R4LCBzdHJ1Y3QgZzJkX2ltYWdlICppbWcsCj4+ICB9Cj4+
+Cj4+ICAvKgo+PiArICogZzJkX3NldF9kaXJlY3Rpb24gLSBzZXR1cCBkaXJlY3Rpb24gcmVnaXN0
+ZXIgKHVzZWZ1bCBmb3Igb3ZlcmxhcHBpbmcgYmxpdHMpLgo+PiArICoKPj4gKyAqIEBjdHg6IGEg
+cG9pbnRlciB0byBnMmRfY29udGV4dCBzdHJ1Y3R1cmUuCj4+ICsgKiBAZGlyOiBhIHBvaW50ZXIg
+dG8gdGhlIGcyZF9kaXJlY3Rpb25fdmFsIHN0cnVjdHVyZS4KPj4gKyAqLwo+PiArc3RhdGljIHZv
+aWQgZzJkX3NldF9kaXJlY3Rpb24oc3RydWN0IGcyZF9jb250ZXh0ICpjdHgsCj4+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIGNvbnN0IHVuaW9uIGcyZF9kaXJlY3Rpb25fdmFsICpkaXIpCj4+ICt7
+Cj4+ICsgICAgICAgZzJkX2FkZF9jbWQoY3R4LCBTUkNfTUFTS19ESVJFQ1RfUkVHLCBkaXItPnZh
+bFswXSk7Cj4+ICsgICAgICAgZzJkX2FkZF9jbWQoY3R4LCBEU1RfUEFUX0RJUkVDVF9SRUcsIGRp
+ci0+dmFsWzFdKTsKPj4gK30KPj4gKwo+PiArLyoKPj4gICAqIGcyZF9yZXNldCAtIHJlc2V0IGZp
+bWcyZCBoYXJkd2FyZS4KPj4gICAqCj4+ICAgKiBAY3R4OiBhIHBvaW50ZXIgdG8gZzJkX2NvbnRl
+eHQgc3RydWN0dXJlLgo+PiBkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuaCBiL2V4
+eW5vcy9leHlub3NfZmltZzJkLmgKPj4gaW5kZXggYzZiNThhYy4uOWVlZTdjMCAxMDA2NDQKPj4g
+LS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuaAo+PiArKysgYi9leHlub3MvZXh5bm9zX2ZpbWcy
+ZC5oCj4+IEBAIC0xODksNiArMTg5LDExIEBAIGVudW0gZV9nMmRfZXhlY19mbGFnIHsKPj4gICAg
+ICAgICBHMkRfRVhFQ19GTEFHX0FTWU5DID0gKDEgPDwgMCkKPj4gIH07Cj4+Cj4+ICtlbnVtIGVf
+ZzJkX2Rpcl9tb2RlIHsKPj4gKyAgICAgICBHMkRfRElSX01PREVfUE9TSVRJVkUgPSAwLAo+PiAr
+ICAgICAgIEcyRF9ESVJfTU9ERV9ORUdBVElWRSA9IDEKPj4gK307Cj4+ICsKPj4gIHVuaW9uIGcy
+ZF9wb2ludF92YWwgewo+PiAgICAgICAgIHVuc2lnbmVkIGludCB2YWw7Cj4+ICAgICAgICAgc3Ry
+dWN0IHsKPj4gQEAgLTI2OSw2ICsyNzQsMzkgQEAgdW5pb24gZzJkX2JsZW5kX2Z1bmNfdmFsIHsK
+Pj4gICAgICAgICB9IGRhdGE7Cj4+ICB9Owo+Pgo+PiArdW5pb24gZzJkX2RpcmVjdGlvbl92YWwg
+ewo+PiArICAgICAgIHVuc2lnbmVkIGludCB2YWxbMl07Cj4+ICsgICAgICAgc3RydWN0IHsKPj4g
+KyAgICAgICAgICAgICAgIC8qIFNSQ19NU0tfRElSRUNUX1JFRyBbMDoxXSAoc291cmNlKSAqLwo+
+PiArICAgICAgICAgICAgICAgZW51bSBlX2cyZF9kaXJfbW9kZSAgICAgICAgICAgICBzcmNfeF9k
+aXJlY3Rpb246MTsKPj4gKyAgICAgICAgICAgICAgIGVudW0gZV9nMmRfZGlyX21vZGUgICAgICAg
+ICAgICAgc3JjX3lfZGlyZWN0aW9uOjE7Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIC8qIFNSQ19N
+U0tfRElSRUNUX1JFRyBbMjozXSAqLwo+PiArICAgICAgICAgICAgICAgdW5zaWduZWQgaW50ICAg
+ICAgICAgICAgICAgICAgICByZXZlcnNlZDE6MjsKPj4gKwo+PiArICAgICAgICAgICAgICAgLyog
+U1JDX01TS19ESVJFQ1RfUkVHIFs0OjVdIChtYXNrKSAqLwo+PiArICAgICAgICAgICAgICAgZW51
+bSBlX2cyZF9kaXJfbW9kZSAgICAgICAgICAgICBtYXNrX3hfZGlyZWN0aW9uOjE7Cj4+ICsgICAg
+ICAgICAgICAgICBlbnVtIGVfZzJkX2Rpcl9tb2RlICAgICAgICAgICAgIG1hc2tfeV9kaXJlY3Rp
+b246MTsKPj4gKwo+PiArICAgICAgICAgICAgICAgLyogU1JDX01TS19ESVJFQ1RfUkVHIFs2OjMx
+XSAqLwo+PiArICAgICAgICAgICAgICAgdW5zaWduZWQgaW50ICAgICAgICAgICAgICAgICAgICBw
+YWRkaW5nMToyNjsKPj4gKwo+PiArICAgICAgICAgICAgICAgLyogRFNUX1BBVF9ESVJFQ1RfUkVH
+IFswOjFdIChkZXN0aW5hdGlvbikgKi8KPj4gKyAgICAgICAgICAgICAgIGVudW0gZV9nMmRfZGly
+X21vZGUgICAgICAgICAgICAgZHN0X3hfZGlyZWN0aW9uOjE7Cj4+ICsgICAgICAgICAgICAgICBl
+bnVtIGVfZzJkX2Rpcl9tb2RlICAgICAgICAgICAgIGRzdF95X2RpcmVjdGlvbjoxOwo+PiArCj4+
+ICsgICAgICAgICAgICAgICAvKiBEU1RfUEFUX0RJUkVDVF9SRUcgWzI6M10gKi8KPj4gKyAgICAg
+ICAgICAgICAgIHVuc2lnbmVkIGludCAgICAgICAgICAgICAgICAgICAgcmV2ZXJzZWQyOjI7Cj4+
+ICsKPj4gKyAgICAgICAgICAgICAgIC8qIERTVF9QQVRfRElSRUNUX1JFRyBbNDo1XSAocGF0dGVy
+bikgKi8KPj4gKyAgICAgICAgICAgICAgIGVudW0gZV9nMmRfZGlyX21vZGUgICAgICAgICAgICAg
+cGF0X3hfZGlyZWN0aW9uOjE7Cj4+ICsgICAgICAgICAgICAgICBlbnVtIGVfZzJkX2Rpcl9tb2Rl
+ICAgICAgICAgICAgIHBhdF95X2RpcmVjdGlvbjoxOwo+PiArCj4+ICsgICAgICAgICAgICAgICAv
+KiBEU1RfUEFUX0RJUkVDVF9SRUcgWzY6MzFdICovCj4+ICsgICAgICAgICAgICAgICB1bnNpZ25l
+ZCBpbnQgICAgICAgICAgICAgICAgICAgIHBhZGRpbmcyOjI2Owo+PiArICAgICAgIH0gZGF0YTsK
+Pj4gK307Cj4+ICsKPiBZb3UgZG9uJ3QgcmVhbGx5IHdhbnQgYWxsIHRoaXMgaW4gdGhlIHB1Ymxp
+YyBoZWFkZXIuIEF0IHRoZSBtb21lbnQKPiB5b3UncmUgdXNpbmcgaXQgb25seSBpbnRlcm5hbGx5
+IHNvIG1pZ2h0IGFzIHdlbGwgbm90IG1ha2UgaXQgcGFydCBvZgo+IHRoZSBBUEkuCj4KPiBUaGFu
+a3MKPiBFbWlsCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUg
+bGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBt
+ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZv
+IGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
