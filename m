@@ -1,42 +1,60 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH v2 08/13] exynos: fimg2d: add g2d_set_direction
-Date: Thu, 26 Nov 2015 16:48:10 +0000
-Message-ID: <CACvgo517bouJ+sdFTg2nX79y-CYqqZW+vd6e7Oi+PsS_jrorWg@mail.gmail.com>
-References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<1448218123-21292-9-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<CACvgo53G9a7kqYgWKs+Mvxs=4Y_ZDnFZBzRirEmxLN3s_U2Z=A@mail.gmail.com>
-	<56573620.1040600@gmx.net>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [RFC PATCH 01/15] PM / devfreq: exynos: Add generic exynos bus
+ frequency driver
+Date: Thu, 26 Nov 2015 22:47:19 +0530
+Message-ID: <CANAwSgQtvp_7hODvLz--5QmXMYqhOQYyBjihyRqWYv5HEk0u5A@mail.gmail.com>
+References: <1448545659-32287-1-git-send-email-cw00.choi@samsung.com>
+ <1448545659-32287-2-git-send-email-cw00.choi@samsung.com> <CAJ0PZbSJ26q9MWSXihQjZih0hSU=w+dR2HKxa67kJhmZtt1tJQ@mail.gmail.com>
+ <CAGTfZH295rGWh4S0mPgC7GMiA04NKgDybRUVnfzZP5o9-HffMw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f177.google.com ([209.85.213.177]:33015 "EHLO
-	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752031AbbKZQsL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 11:48:11 -0500
-Received: by igcmv3 with SMTP id mv3so17585795igc.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2015 08:48:10 -0800 (PST)
-In-Reply-To: <56573620.1040600@gmx.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAGTfZH295rGWh4S0mPgC7GMiA04NKgDybRUVnfzZP5o9-HffMw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, LKML <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 
-On 26 November 2015 at 16:41, Tobias Jakobi <liquid.acid@gmx.net> wrote:
-> Hello Emil,
+Hi Chanwoo,
+
+On 26 November 2015 at 21:42, Chanwoo Choi <cwchoi00@gmail.com> wrote:
+> On Thu, Nov 26, 2015 at 11:00 PM, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
+>> On Thu, Nov 26, 2015 at 10:47 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>>> This patch adds the generic exynos bus frequency driver for AMBA AXI bus
+>>> of sub-blocks in exynos SoC with DEVFREQ framework. The Samsung Exynos SoC
+>>> have the common architecture for bus between DRAM and sub-blocks in SoC.
+>>> This driver can support the generic bus frequency driver for Exynos SoCs.
+>>>
+>>> In devicetree, Each bus block has a bus clock, regulator, operation-point
+>>> and devfreq-event devices which measure the utilization of each bus block.
+>>>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> ---
+>>>  drivers/devfreq/Kconfig             |  15 ++
+>>>  drivers/devfreq/Makefile            |   1 +
+>>>  drivers/devfreq/exynos/Makefile     |   1 +
+>>>  drivers/devfreq/exynos/exynos-bus.c | 443 ++++++++++++++++++++++++++++++++++++
+>>>  4 files changed, 460 insertions(+)
+>>>  create mode 100644 drivers/devfreq/exynos/exynos-bus.c
+>>>
+>>
+>> Are we finally getting a common Exynos bus driver with full DT support?
+>> (can this replace both Exynos4/5 drivers and support Exynos7 series?)
 >
-> my main system which I also used for development was stolen on Tuesday,
-> so I won't be working on this series anytime soon. If anyone wants to
-> pick it up, please go ahead.
+> Yes.
+> This patch-set would support all Exynos SoCs for bus frequency driver.
+> To make sure the support for Exynos7 series, I need to check the TRM
+> document of Exynos7.  I think it is possible for support Exynos7.
 >
-Sad to hear that x2. You've been doing some good work, despite that we
-weren't always quick to review/pick it. Hope you had some insurance
-and you manage to sort things out, relatively stress free.
+> I'm going to test this driver on various Exynos-based board.
+>
+> Regards,
+> Chanwoo Choi
 
-Inki, Hyungwon, other Exynos devs,
+Please do consider Exynos 542x series as well.
 
-Will you guys be able to pick any of this work ? Most of it can go in
-with the small suggestion in this patch addressed.
-
-Thanks
-Emil
+-Anand Moon
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
