@@ -1,39 +1,186 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 1/4] ARM: dts: exynos4210: MDMA1 device belongs to LCD0
- power domain
-Date: Thu, 26 Nov 2015 13:49:47 +0100
-Message-ID: <1448542190-19498-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 3/4] ARM: amba: Move reading of periphid to amba_match()
+Date: Thu, 26 Nov 2015 13:49:49 +0100
+Message-ID: <1448542190-19498-4-git-send-email-m.szyprowski@samsung.com>
 References: <1448542190-19498-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56621 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173AbbKZMuF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Nov 2015 07:50:05 -0500
 In-reply-to: <1448542190-19498-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-On Exynos 4210 MDMA1 device belongs to LCD0 power domain, so add proper
-power-domains property. On Exynos 4x12, it belongs to TOP power domain,
-which is always enabled, thus require no assignment in exynos4x12.dtsi.
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
+Reading the periphid when the Primecell device is registered means that
+the apb pclk must be available by then or the device won't be registered
+at all.
+
+By reading the periphid in amba_match() we can return -EPROBE_DEFER if
+the apb pclk isn't there yet and the device will be retried later.
+
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4210.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/amba/bus.c | 88 ++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 46 insertions(+), 42 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index b7474cf2..aac0f17 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -271,6 +271,10 @@
- 		     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
- };
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index f009936..72ebf9b 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -24,6 +24,8 @@
  
-+&mdma1 {
-+	power-domains = <&pd_lcd0>;
-+};
+ #define to_amba_driver(d)	container_of(d, struct amba_driver, drv)
+ 
++static int read_periphid(struct amba_device *d, unsigned int *periphid);
 +
- &pmu_system_controller {
- 	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
- 			"clkout4", "clkout8", "clkout9";
+ static const struct amba_id *
+ amba_lookup(const struct amba_id *table, struct amba_device *dev)
+ {
+@@ -43,11 +45,22 @@ static int amba_match(struct device *dev, struct device_driver *drv)
+ {
+ 	struct amba_device *pcdev = to_amba_device(dev);
+ 	struct amba_driver *pcdrv = to_amba_driver(drv);
++	int ret;
+ 
+ 	/* When driver_override is set, only bind to the matching driver */
+ 	if (pcdev->driver_override)
+ 		return !strcmp(pcdev->driver_override, drv->name);
+ 
++	if (!pcdev->periphid) {
++		ret = read_periphid(pcdev, &pcdev->periphid);
++		if (ret) {
++			if (ret != -EPROBE_DEFER)
++				dev_err(dev, "Failed to read periphid: %d",
++					ret);
++			return ret;
++		}
++	}
++
+ 	return amba_lookup(pcdrv->id_table, pcdev) != NULL;
+ }
+ 
+@@ -336,44 +349,22 @@ static void amba_device_release(struct device *dev)
+ 	kfree(d);
+ }
+ 
+-/**
+- *	amba_device_add - add a previously allocated AMBA device structure
+- *	@dev: AMBA device allocated by amba_device_alloc
+- *	@parent: resource parent for this devices resources
+- *
+- *	Claim the resource, and read the device cell ID if not already
+- *	initialized.  Register the AMBA device with the Linux device
+- *	manager.
+- */
+-int amba_device_add(struct amba_device *dev, struct resource *parent)
++static int read_periphid(struct amba_device *d, unsigned int *periphid)
+ {
+ 	u32 size;
+ 	void __iomem *tmp;
+-	int i, ret;
+-
+-	WARN_ON(dev->irq[0] == (unsigned int)-1);
+-	WARN_ON(dev->irq[1] == (unsigned int)-1);
+-
+-	ret = request_resource(parent, &dev->res);
+-	if (ret)
+-		goto err_out;
+-
+-	/* Hard-coded primecell ID instead of plug-n-play */
+-	if (dev->periphid != 0)
+-		goto skip_probe;
++	int i, ret = 0;
+ 
+ 	/*
+ 	 * Dynamically calculate the size of the resource
+ 	 * and use this for iomap
+ 	 */
+-	size = resource_size(&dev->res);
+-	tmp = ioremap(dev->res.start, size);
+-	if (!tmp) {
+-		ret = -ENOMEM;
+-		goto err_release;
+-	}
++	size = resource_size(&d->res);
++	tmp = ioremap(d->res.start, size);
++	if (!tmp)
++		return -ENOMEM;
+ 
+-	ret = amba_get_enable_pclk(dev);
++	ret = amba_get_enable_pclk(d);
+ 	if (ret == 0) {
+ 		u32 pid, cid;
+ 
+@@ -388,37 +379,50 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
+ 			cid |= (readl(tmp + size - 0x10 + 4 * i) & 255) <<
+ 				(i * 8);
+ 
+-		amba_put_disable_pclk(dev);
++		amba_put_disable_pclk(d);
+ 
+ 		if (cid == AMBA_CID || cid == CORESIGHT_CID)
+-			dev->periphid = pid;
++			*periphid = pid;
+ 
+-		if (!dev->periphid)
++		if (!*periphid)
+ 			ret = -ENODEV;
+ 	}
+ 
+ 	iounmap(tmp);
+ 
++	return ret;
++}
++
++/**
++ *	amba_device_add - add a previously allocated AMBA device structure
++ *	@dev: AMBA device allocated by amba_device_alloc
++ *	@parent: resource parent for this devices resources
++ *
++ *	Claim the resource, and register the AMBA device with the Linux device
++ *	manager.
++ */
++int amba_device_add(struct amba_device *dev, struct resource *parent)
++{
++	int ret;
++
++	WARN_ON(dev->irq[0] == (unsigned int)-1);
++	WARN_ON(dev->irq[1] == (unsigned int)-1);
++
++	ret = request_resource(parent, &dev->res);
+ 	if (ret)
+-		goto err_release;
++		return ret;
+ 
+- skip_probe:
+ 	ret = device_add(&dev->dev);
+ 	if (ret)
+-		goto err_release;
++		return ret;
+ 
+ 	if (dev->irq[0])
+ 		ret = device_create_file(&dev->dev, &dev_attr_irq0);
+ 	if (ret == 0 && dev->irq[1])
+ 		ret = device_create_file(&dev->dev, &dev_attr_irq1);
+-	if (ret == 0)
+-		return ret;
+-
+-	device_unregister(&dev->dev);
++	if (ret)
++		device_unregister(&dev->dev);
+ 
+- err_release:
+-	release_resource(&dev->res);
+- err_out:
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(amba_device_add);
 -- 
 1.9.2
