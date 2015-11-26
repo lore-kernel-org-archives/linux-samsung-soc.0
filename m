@@ -1,72 +1,67 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/2] drivers: amba: properly handle devices with power
- domains
-Date: Thu, 26 Nov 2015 13:55:10 +0100
-Message-ID: <5657012E.1010702@samsung.com>
-References: <1448456127-31842-1-git-send-email-m.szyprowski@samsung.com>
- <1448456289-31960-1-git-send-email-m.szyprowski@samsung.com>
- <20151125132458.GL8644@n2100.arm.linux.org.uk> <5655B8F6.1070104@samsung.com>
- <CAPDyKFqTqPijF+Lbq0+a-Gv8CyaAr13JvZPjUN1-GNL5i3-mAw@mail.gmail.com>
- <20151125180953.GN8644@n2100.arm.linux.org.uk> <5656C527.8040804@samsung.com>
- <CAPDyKFqQ_BuvtVnrsEdZCpXVKcDW9rAxteK1DOvHNqN7TN4sLw@mail.gmail.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/2] drm/exynos: dp: fix wrong return type
+Date: Thu, 26 Nov 2015 10:35:45 -0300
+Message-ID: <56570AB1.3070408@osg.samsung.com>
+References: <1448542040-22057-1-git-send-email-inki.dae@samsung.com>
+ <1448542040-22057-3-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54453 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750943AbbKZMzO (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:59234 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751060AbbKZNfx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 07:55:14 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NYF00I3GAJZTCB0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Nov 2015 12:55:12 +0000 (GMT)
-In-reply-to: <CAPDyKFqQ_BuvtVnrsEdZCpXVKcDW9rAxteK1DOvHNqN7TN4sLw@mail.gmail.com>
+	Thu, 26 Nov 2015 08:35:53 -0500
+In-Reply-To: <1448542040-22057-3-git-send-email-inki.dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hello,
+[adding Ajay Kumar who added the bridge support]
 
-On 2015-11-26 11:24, Ulf Hansson wrote:
-> On 26 November 2015 at 09:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> On 2015-11-25 19:09, Russell King - ARM Linux wrote:
->>> On Wed, Nov 25, 2015 at 02:56:10PM +0100, Ulf Hansson wrote:
->>>> On 25 November 2015 at 14:34, Marek Szyprowski <m.szyprowski@samsung.com>
->>>> wrote:
->>>>> Is ignoring dev_pm_domain_attach() return value a solution for you?
->>>> That's probably better than nothing, but I wonder if it in practice
->>>> will have any effect?
->>> If the PM domain is down, then trying to tread the ID is likely to oops
->>> the kernel.
->>
->> In my case kernel simply hangs (no single message, even when earlyprintk is
->> enabled)
->> instead of oopsing, that's why I've submitted this patch.
->>
-> Okay.
->
-> I suggest we go ahead and try that approach (ignoring the return
-> value). It's "quick fix", but the easiest way forward to solve the
-> problem.
->
-> My only concern is if such change impacts the boot time. We should do
-> some tests to see if the change is negligible, if not we should
-> probably think of something else (like keeping the PM domain powered
-> until late_init).
->
-> Russell, what do you think?
+Hello Inki,
 
-Keeping PM domains powered until late_init would be a good idea 
-regardless of
-the problem discussed here, because I often see that pm domains are 
-turned on
-and off a dozen of times during typical boot of Exynos based systems.
+On 11/26/2015 09:47 AM, Inki Dae wrote:
+> This patch fixes wrong return type when dt binding of bridge device
+> failed.
+> 
+> If a board has a bridge device then of_graph_get_remote_port_parent
+> function shouldn't be NULL. So this patch will return a proper error
+> type so that the deferred probe isn't triggered.
+> 
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_dp_core.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> index 0b53045..c77fb83 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -1436,8 +1436,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>  			of_node_put(bridge_node);
+>  			if (!dp->ptn_bridge)
+>  				return -EPROBE_DEFER;
+> -		} else
+> -			return -EPROBE_DEFER;
+> +		} else {
+> +			DRM_ERROR("no port node for bridge device.\n");
+> +			return -ENXIO;
+> +		}
+>  	}
+>  
 
-Best regards
+As I mentioned in the other thread, I wonder if -ENXIO is the best errno
+code in this case. Shouldn't -EINVAL be more appropriate since is about
+an invalid DTB?
+
+>  	pm_runtime_enable(dev);
+> 
+
+Best regards,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
