@@ -1,89 +1,80 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos5422-odroid*: remove fimd node
-Date: Thu, 26 Nov 2015 11:39:26 -0300
-Message-ID: <5657199E.8040503@osg.samsung.com>
-References: <1447151049-25370-1-git-send-email-m.szyprowski@samsung.com>
- <56428F34.7060003@samsung.com> <56531B1F.9050502@osg.samsung.com>
- <5653DEA2.6060802@samsung.com> <5653E851.4070608@osg.samsung.com>
- <5657173F.6070301@samsung.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 1/2] drivers: amba: properly handle devices with power domains
+Date: Thu, 26 Nov 2015 08:04:35 -0700
+Message-ID: <CANLsYkynahvfiiEqgbQ34iRBf+_ZCXH2WjkugmZaAc4ExDFH6g@mail.gmail.com>
+References: <1448456127-31842-1-git-send-email-m.szyprowski@samsung.com>
+	<1448456289-31960-1-git-send-email-m.szyprowski@samsung.com>
+	<20151125132458.GL8644@n2100.arm.linux.org.uk>
+	<5655B8F6.1070104@samsung.com>
+	<CAPDyKFqTqPijF+Lbq0+a-Gv8CyaAr13JvZPjUN1-GNL5i3-mAw@mail.gmail.com>
+	<20151125180953.GN8644@n2100.arm.linux.org.uk>
+	<5656C527.8040804@samsung.com>
+	<CAPDyKFqQ_BuvtVnrsEdZCpXVKcDW9rAxteK1DOvHNqN7TN4sLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:59342 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751609AbbKZOjd (ORCPT
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:34740 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751441AbbKZPEf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 09:39:33 -0500
-In-Reply-To: <5657173F.6070301@samsung.com>
+	Thu, 26 Nov 2015 10:04:35 -0500
+Received: by obbbj7 with SMTP id bj7so64393592obb.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2015 07:04:35 -0800 (PST)
+In-Reply-To: <CAPDyKFqQ_BuvtVnrsEdZCpXVKcDW9rAxteK1DOvHNqN7TN4sLw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Marek,
-
-On 11/26/2015 11:29 AM, Marek Szyprowski wrote:
-> Hello,
-> 
-> On 2015-11-24 05:32, Javier Martinez Canillas wrote:
->> Hello Krzysztof,
+On 26 November 2015 at 03:24, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 26 November 2015 at 09:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> Hello,
 >>
->> On 11/24/2015 12:50 AM, Krzysztof Kozlowski wrote:
->>> On 23.11.2015 22:56, Javier Martinez Canillas wrote:
->>>> Hello Krzysztof,
->>>>
->>>> On 11/10/2015 09:43 PM, Krzysztof Kozlowski wrote:
->>>>
->>>> [snip]
->>>>
->>>>> BTW, do you know why we don't have EXYNOS_IOMMU enabled in defconfig?
->>>>> Any reasons against?
->>>> It was explicitly disabled by commit 6562f3bd396a ("ARM: exynos_defconfig:
->>>> Disable IOMMU support") because Exynos IOMMU support was broken and caused
->>>> a BUG on boot, the discussion of the patch is [0].
->>> Right, now I remember.
+>> On 2015-11-25 19:09, Russell King - ARM Linux wrote:
 >>>
->>>
->>>> But I just tested booting a v4.4-rc2 kernel on an Exynos5800 Peach Pi with
->>>> Exynos IOMMU enabled and the machine boots, display is working and
->>>> /sys/kernel/iommu_grups/*/devices shows that the devices were correctly
->>>> attached to an IOMMU group so things seems to have been sorted out now.
+>>> On Wed, Nov 25, 2015 at 02:56:10PM +0100, Ulf Hansson wrote:
 >>>>
->>>> So it seems that EXYNOS_IOMMU could be enabled again. It would be good to
->>>> give such a patch a spin at kernelci before posting IMHO though just to be
->>>> sure there are no issues remaining.
->>> Yes for enabling. No for testing only on kernelci. Booting is not a
->>> sufficient test in this case. I would expect testing also display - at
->> Sorry if I didn't explain myself clearly. I didn't mean that kernelci was
->> enough to test Exynos IOMMU support, what I said is that would be nice to
->> have some boot coverage besides the normal manual (or automated) display
->> testing that someone could do on available platforms as discussed over IRC.
+>>>> On 25 November 2015 at 14:34, Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> wrote:
+>>>>>
+>>>>> Is ignoring dev_pm_domain_attach() return value a solution for you?
+>>>>
+>>>> That's probably better than nothing, but I wonder if it in practice
+>>>> will have any effect?
+>>>
+>>> If the PM domain is down, then trying to tread the ID is likely to oops
+>>> the kernel.
 >>
->>> least some frame buffer console on DP or HDMI (or whatever output could
->>> be generated... Xorg/Wayland would be better of course). You need it
->> Yes, as I mentioned in the previous email, I tested display (with X) on an
->> Exynos5800 Peach Pi. I don't have a rootfs with wayland/weston handy but I
->> could prepare one tomorrow to give a try.
 >>
->>> because display and camera (including complementary modules like JPEG,
->>> MFC etc) are actually the only users of Exynos IOMMU in mainline.
->>>
->> Do you have some test cases for MFC? I know that Gstreamer has support
->> for it but I don't know what Gst pipelines I can use to test if all is
->> working correctly.
-> 
-> Please note that mainline driver for MFC doesn't work with IOMMU enabled yet.
-> I plan to finish a patch for it when I find some free time.
+>> In my case kernel simply hangs (no single message, even when earlyprintk is
+>> enabled)
+>> instead of oopsing, that's why I've submitted this patch.
+>>
 >
+> Okay.
+>
+> I suggest we go ahead and try that approach (ignoring the return
+> value). It's "quick fix", but the easiest way forward to solve the
+> problem.
+>
+> My only concern is if such change impacts the boot time. We should do
+> some tests to see if the change is negligible, if not we should
+> probably think of something else (like keeping the PM domain powered
+> until late_init).
+>
+> Russell, what do you think?
 
-Thanks a lot for the information. Then that's a reason to not enable IOMMU
-by default in the defconfig until the MFC driver works correctly with that.
- 
-> Best regards
+That's the approach I took for coresight on Juno - simply initialise
+the power domain very early on and keep it on for things like amba
+probing to be successful.  When the boot process is done unused genPDs
+are switched off automatically.  That way we don't need to add extra
+code to amba.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+>
+> Kind regards
+> Uffe
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
