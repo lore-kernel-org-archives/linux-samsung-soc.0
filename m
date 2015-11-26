@@ -1,185 +1,89 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v3] drm/exynos: add pm_runtime to DECON 7
-Date: Thu, 26 Nov 2015 20:53:50 +0900
-Message-ID: <1448538834-26378-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53024 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750755AbbKZLx5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 06:53:57 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NYF029G77PVJ2E0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Nov 2015 20:53:55 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3] drm/exynos: add pm_runtime to DP
+Date: Thu, 26 Nov 2015 20:53:51 +0900
+Message-ID: <1448538834-26378-2-git-send-email-inki.dae@samsung.com>
+References: <1448538834-26378-1-git-send-email-inki.dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1448538834-26378-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Let pm_runtime handle the enabling/disabling of the device with
-proper refcnt instead of rely on specific flags to track the enabled
-state.
-
-Changelog v3:
-- revive suspended to keep current dpms mode
-
-Changelog v2:
-- Modify CONFIG_PM_SLEEP -> CONFIG_PM
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 93 ++++++++++++++++++------------
- 1 file changed, 55 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index ead2b16..38d7762 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -119,13 +119,8 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
- 	}
- 
- 	/* Wait for vsync, as disable channel takes effect at next vsync */
--	if (ch_enabled) {
--		unsigned int state = ctx->suspended;
--
--		ctx->suspended = 0;
-+	if (ch_enabled)
- 		decon_wait_for_vblank(ctx->crtc);
--		ctx->suspended = state;
--	}
- }
- 
- static int decon_ctx_initialize(struct decon_context *ctx,
-@@ -555,39 +550,12 @@ static void decon_init(struct decon_context *ctx)
- static void decon_enable(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
--	int ret;
- 
- 	if (!ctx->suspended)
- 		return;
- 
--	ctx->suspended = false;
--
- 	pm_runtime_get_sync(ctx->dev);
- 
--	ret = clk_prepare_enable(ctx->pclk);
--	if (ret < 0) {
--		DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
--		return;
--	}
--
--	ret = clk_prepare_enable(ctx->aclk);
--	if (ret < 0) {
--		DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
--		return;
--	}
--
--	ret = clk_prepare_enable(ctx->eclk);
--	if  (ret < 0) {
--		DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
--		return;
--	}
--
--	ret = clk_prepare_enable(ctx->vclk);
--	if  (ret < 0) {
--		DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
--		return;
--	}
--
- 	decon_init(ctx);
- 
- 	/* if vblank was enabled status, enable it again. */
-@@ -595,6 +563,8 @@ static void decon_enable(struct exynos_drm_crtc *crtc)
- 		decon_enable_vblank(ctx->crtc);
- 
- 	decon_commit(ctx->crtc);
-+
-+	ctx->suspended = false;
- }
- 
- static void decon_disable(struct exynos_drm_crtc *crtc)
-@@ -613,11 +583,6 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
- 	for (i = 0; i < WINDOWS_NR; i++)
- 		decon_disable_plane(crtc, &ctx->planes[i]);
- 
--	clk_disable_unprepare(ctx->vclk);
--	clk_disable_unprepare(ctx->eclk);
--	clk_disable_unprepare(ctx->aclk);
--	clk_disable_unprepare(ctx->pclk);
--
- 	pm_runtime_put_sync(ctx->dev);
- 
- 	ctx->suspended = true;
-@@ -843,11 +808,63 @@ static int decon_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
-+static int exynos7_decon_suspend(struct device *dev)
-+{
-+	struct decon_context *ctx = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(ctx->vclk);
-+	clk_disable_unprepare(ctx->eclk);
-+	clk_disable_unprepare(ctx->aclk);
-+	clk_disable_unprepare(ctx->pclk);
-+
-+	return 0;
-+}
-+
-+static int exynos7_decon_resume(struct device *dev)
-+{
-+	struct decon_context *ctx = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(ctx->pclk);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(ctx->aclk);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(ctx->eclk);
-+	if  (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(ctx->vclk);
-+	if  (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops exynos7_decon_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos7_decon_suspend, exynos7_decon_resume,
-+			   NULL)
-+};
-+
- struct platform_driver decon_driver = {
- 	.probe		= decon_probe,
- 	.remove		= decon_remove,
- 	.driver		= {
- 		.name	= "exynos-decon",
-+		.pm	= &exynos7_decon_pm_ops,
- 		.of_match_table = decon_driver_dt_match,
- 	},
- };
--- 
-1.9.1
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+TGV0IHBtX3J1bnRpbWUgaGFuZGxlIHRoZSBlbmFibGluZy9kaXNhYmxpbmcgb2YgdGhlIGRldmlj
+ZSB3aXRoCnByb3BlciByZWZjbnQgaW5zdGVhZCBvZiByZWx5IG9uIHNwZWNpZmljIGZsYWdzIHRv
+IHRyYWNrIHRoZSBlbmFibGVkCnN0YXRlLgoKQ2huYWdlbG9nIHYzOgotIHJldml2ZSBkcG1zX21v
+ZGUgdG8ga2VlcCBjdXJyZW50IGRwbXMgbW9kZS4KCkNoYW5nZWxvZyB2MjoKLSBubyBjaGFuZ2UK
+ClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9y
+YS5jby51az4KU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgot
+LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyB8IDUxICsrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKystLQogMSBmaWxlIGNoYW5nZWQsIDQ4IGluc2VydGlvbnMo
+KyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5j
+CmluZGV4IGU0ZDMyYTEuLjk0ZjAyYTAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RwX2NvcmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cF9jb3JlLmMKQEAgLTEwNjEsNiArMTA2MSw4IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcF9icmlk
+Z2VfZW5hYmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiAJaWYgKGRwLT5kcG1zX21vZGUg
+PT0gRFJNX01PREVfRFBNU19PTikKIAkJcmV0dXJuOwogCisJcG1fcnVudGltZV9nZXRfc3luYyhk
+cC0+ZGV2KTsKKwogCWlmIChkcC0+cGFuZWwpIHsKIAkJaWYgKGRybV9wYW5lbF9wcmVwYXJlKGRw
+LT5wYW5lbCkpIHsKIAkJCURSTV9FUlJPUigiZmFpbGVkIHRvIHNldHVwIHRoZSBwYW5lbFxuIik7
+CkBAIC0xMDcxLDcgKzEwNzMsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHBfYnJpZGdlX2VuYWJs
+ZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQogCWlmIChjcnRjLT5vcHMtPmNsb2NrX2VuYWJs
+ZSkKIAkJY3J0Yy0+b3BzLT5jbG9ja19lbmFibGUoZHBfdG9fY3J0YyhkcCksIHRydWUpOwogCi0J
+Y2xrX3ByZXBhcmVfZW5hYmxlKGRwLT5jbG9jayk7CiAJcGh5X3Bvd2VyX29uKGRwLT5waHkpOwog
+CWV4eW5vc19kcF9pbml0X2RwKGRwKTsKIAllbmFibGVfaXJxKGRwLT5pcnEpOwpAQCAtMTA5OCw3
+ICsxMDk5LDYgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RwX2JyaWRnZV9kaXNhYmxlKHN0cnVjdCBk
+cm1fYnJpZGdlICpicmlkZ2UpCiAJZGlzYWJsZV9pcnEoZHAtPmlycSk7CiAJZmx1c2hfd29yaygm
+ZHAtPmhvdHBsdWdfd29yayk7CiAJcGh5X3Bvd2VyX29mZihkcC0+cGh5KTsKLQljbGtfZGlzYWJs
+ZV91bnByZXBhcmUoZHAtPmNsb2NrKTsKIAogCWlmIChjcnRjLT5vcHMtPmNsb2NrX2VuYWJsZSkK
+IAkJY3J0Yy0+b3BzLT5jbG9ja19lbmFibGUoZHBfdG9fY3J0YyhkcCksIGZhbHNlKTsKQEAgLTEx
+MDgsNiArMTEwOCw4IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcF9icmlkZ2VfZGlzYWJsZShzdHJ1
+Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQogCQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gdHVybm9mZiB0
+aGUgcGFuZWxcbiIpOwogCX0KIAorCXBtX3J1bnRpbWVfcHV0X3N5bmMoZHAtPmRldik7CisKIAlk
+cC0+ZHBtc19tb2RlID0gRFJNX01PREVfRFBNU19PRkY7CiB9CiAKQEAgLTEzOTIsNiArMTM5NCw3
+IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RwX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpCiAJc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsKIAlzdHJ1Y3QgZGV2aWNlX25v
+ZGUgKnBhbmVsX25vZGUsICpicmlkZ2Vfbm9kZSwgKmVuZHBvaW50OwogCXN0cnVjdCBleHlub3Nf
+ZHBfZGV2aWNlICpkcDsKKwlpbnQgcmV0OwogCiAJZHAgPSBkZXZtX2t6YWxsb2MoJnBkZXYtPmRl
+diwgc2l6ZW9mKHN0cnVjdCBleHlub3NfZHBfZGV2aWNlKSwKIAkJCQlHRlBfS0VSTkVMKTsKQEAg
+LTE0MjAsMTYgKzE0MjMsNTcgQEAgc3RhdGljIGludCBleHlub3NfZHBfcHJvYmUoc3RydWN0IHBs
+YXRmb3JtX2RldmljZSAqcGRldikKIAkJCXJldHVybiAtRVBST0JFX0RFRkVSOwogCX0KIAotCXJl
+dHVybiBjb21wb25lbnRfYWRkKCZwZGV2LT5kZXYsICZleHlub3NfZHBfb3BzKTsKKwlwbV9ydW50
+aW1lX2VuYWJsZShkZXYpOworCisJcmV0ID0gY29tcG9uZW50X2FkZCgmcGRldi0+ZGV2LCAmZXh5
+bm9zX2RwX29wcyk7CisJaWYgKHJldCkKKwkJZ290byBlcnJfZGlzYWJsZV9wbV9ydW50aW1lOwor
+CisJcmV0dXJuIHJldDsKKworZXJyX2Rpc2FibGVfcG1fcnVudGltZToKKwlwbV9ydW50aW1lX2Rp
+c2FibGUoZGV2KTsKKworCXJldHVybiByZXQ7CiB9CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2RwX3Jl
+bW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogeworCXBtX3J1bnRpbWVfZGlzYWJs
+ZSgmcGRldi0+ZGV2KTsKIAljb21wb25lbnRfZGVsKCZwZGV2LT5kZXYsICZleHlub3NfZHBfb3Bz
+KTsKIAogCXJldHVybiAwOwogfQogCisjaWZkZWYgQ09ORklHX1BNCitzdGF0aWMgaW50IGV4eW5v
+c19kcF9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKK3sKKwlzdHJ1Y3QgZXh5bm9zX2RwX2Rl
+dmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKKworCWNsa19kaXNhYmxlX3VucHJlcGFy
+ZShkcC0+Y2xvY2spOworCisJcmV0dXJuIDA7Cit9CisKK3N0YXRpYyBpbnQgZXh5bm9zX2RwX3Jl
+c3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCit7CisJc3RydWN0IGV4eW5vc19kcF9kZXZpY2UgKmRw
+ID0gZGV2X2dldF9kcnZkYXRhKGRldik7CisJaW50IHJldDsKKworCXJldCA9IGNsa19wcmVwYXJl
+X2VuYWJsZShkcC0+Y2xvY2spOworCWlmIChyZXQgPCAwKSB7CisJCURSTV9FUlJPUigiRmFpbGVk
+IHRvIHByZXBhcmVfZW5hYmxlIHRoZSBjbG9jayBjbGsgWyVkXVxuIiwgcmV0KTsKKwkJcmV0dXJu
+IHJldDsKKwl9CisKKwlyZXR1cm4gMDsKK30KKyNlbmRpZgorCitzdGF0aWMgY29uc3Qgc3RydWN0
+IGRldl9wbV9vcHMgZXh5bm9zX2RwX3BtX29wcyA9IHsKKwlTRVRfUlVOVElNRV9QTV9PUFMoZXh5
+bm9zX2RwX3N1c3BlbmQsIGV4eW5vc19kcF9yZXN1bWUsIE5VTEwpCit9OworCiBzdGF0aWMgY29u
+c3Qgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfZHBfbWF0Y2hbXSA9IHsKIAl7IC5jb21wYXRp
+YmxlID0gInNhbXN1bmcsZXh5bm9zNS1kcCIgfSwKIAl7fSwKQEAgLTE0NDIsNiArMTQ4Niw3IEBA
+IHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgZHBfZHJpdmVyID0gewogCS5kcml2ZXIJCT0gewogCQku
+bmFtZQk9ICJleHlub3MtZHAiLAogCQkub3duZXIJPSBUSElTX01PRFVMRSwKKwkJLnBtCT0gJmV4
+eW5vc19kcF9wbV9vcHMsCiAJCS5vZl9tYXRjaF90YWJsZSA9IGV4eW5vc19kcF9tYXRjaCwKIAl9
+LAogfTsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
