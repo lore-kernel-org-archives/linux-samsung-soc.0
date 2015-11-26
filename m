@@ -1,67 +1,65 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: dp: fix wrong return type
-Date: Thu, 26 Nov 2015 10:35:45 -0300
-Message-ID: <56570AB1.3070408@osg.samsung.com>
-References: <1448542040-22057-1-git-send-email-inki.dae@samsung.com>
- <1448542040-22057-3-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:59234 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751060AbbKZNfx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 08:35:53 -0500
-In-Reply-To: <1448542040-22057-3-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [RFC PATCH 04/15] ARM: dts: Add DMC bus freqeuncy for
+ exynos3250-rinato/monk
+Date: Thu, 26 Nov 2015 22:47:28 +0900
+Message-ID: <1448545659-32287-5-git-send-email-cw00.choi@samsung.com>
+References: <1448545659-32287-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1448545659-32287-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, cw00.choi@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-[adding Ajay Kumar who added the bridge support]
+This patch adds the DMC (DRAM Memory Controller) bus frequency node
+which includes the devfreq-events and regulator properties. The bus
+frequency support the DVFS (Dynamic Voltage Frequency Scaling) feature
+with ondemand governor.
 
-Hello Inki,
+The devfreq-events (ppmu_dmc0*) can monitor the utilization of DMC bus
+on runtime and the buck1_reg (VDD_MIF power line) supplies the power to
+the DMC block.
 
-On 11/26/2015 09:47 AM, Inki Dae wrote:
-> This patch fixes wrong return type when dt binding of bridge device
-> failed.
-> 
-> If a board has a bridge device then of_graph_get_remote_port_parent
-> function shouldn't be NULL. So this patch will return a proper error
-> type so that the deferred probe isn't triggered.
-> 
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_dp_core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> index 0b53045..c77fb83 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> @@ -1436,8 +1436,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
->  			of_node_put(bridge_node);
->  			if (!dp->ptn_bridge)
->  				return -EPROBE_DEFER;
-> -		} else
-> -			return -EPROBE_DEFER;
-> +		} else {
-> +			DRM_ERROR("no port node for bridge device.\n");
-> +			return -ENXIO;
-> +		}
->  	}
->  
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-monk.dts   | 6 ++++++
+ arch/arm/boot/dts/exynos3250-rinato.dts | 6 ++++++
+ 2 files changed, 12 insertions(+)
 
-As I mentioned in the other thread, I wonder if -ENXIO is the best errno
-code in this case. Shouldn't -EINVAL be more appropriate since is about
-an invalid DTB?
-
->  	pm_runtime_enable(dev);
-> 
-
-Best regards,
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index 443a35085846..d982586a6533 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -498,6 +498,12 @@
+ 	};
+ };
+ 
++&bus_dmc {
++	devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
++	vdd-supply = <&buck1_reg>;
++	status = "okay";
++};
++
+ &xusbxti {
+ 	clock-frequency = <24000000>;
+ };
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 3e64d5dcdd60..61477943015b 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -675,6 +675,12 @@
+ 	};
+ };
+ 
++&bus_dmc {
++	devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
++	vdd-supply = <&buck1_reg>;
++	status = "okay";
++};
++
+ &xusbxti {
+ 	clock-frequency = <24000000>;
+ };
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
+
