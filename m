@@ -1,79 +1,58 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC PATCH 01/15] PM / devfreq: exynos: Add generic exynos bus
- frequency driver
-Date: Fri, 27 Nov 2015 09:34:00 +0900
-Message-ID: <5657A4F8.4080003@samsung.com>
-References: <1448545659-32287-1-git-send-email-cw00.choi@samsung.com>
- <1448545659-32287-2-git-send-email-cw00.choi@samsung.com>
- <CAJ0PZbSJ26q9MWSXihQjZih0hSU=w+dR2HKxa67kJhmZtt1tJQ@mail.gmail.com>
- <CAGTfZH295rGWh4S0mPgC7GMiA04NKgDybRUVnfzZP5o9-HffMw@mail.gmail.com>
- <CANAwSgQtvp_7hODvLz--5QmXMYqhOQYyBjihyRqWYv5HEk0u5A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CANAwSgQtvp_7hODvLz--5QmXMYqhOQYyBjihyRqWYv5HEk0u5A@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: MyungJoo Ham <myungjoo.ham@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, LKML <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL] ARM: Exynos fixes for v4.4
+Date: Fri, 27 Nov 2015 10:26:03 +0900
+Message-ID: <1448587563-31346-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:21945 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753688AbbK0B0P (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Nov 2015 20:26:15 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Anand,
+Hi Kukjin,
 
-On 2015=EB=85=84 11=EC=9B=94 27=EC=9D=BC 02:17, Anand Moon wrote:
-> Hi Chanwoo,
->=20
-> On 26 November 2015 at 21:42, Chanwoo Choi <cwchoi00@gmail.com> wrote=
-:
->> On Thu, Nov 26, 2015 at 11:00 PM, MyungJoo Ham <myungjoo.ham@samsung=
-=2Ecom> wrote:
->>> On Thu, Nov 26, 2015 at 10:47 PM, Chanwoo Choi <cw00.choi@samsung.c=
-om> wrote:
->>>> This patch adds the generic exynos bus frequency driver for AMBA A=
-XI bus
->>>> of sub-blocks in exynos SoC with DEVFREQ framework. The Samsung Ex=
-ynos SoC
->>>> have the common architecture for bus between DRAM and sub-blocks i=
-n SoC.
->>>> This driver can support the generic bus frequency driver for Exyno=
-s SoCs.
->>>>
->>>> In devicetree, Each bus block has a bus clock, regulator, operatio=
-n-point
->>>> and devfreq-event devices which measure the utilization of each bu=
-s block.
->>>>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> ---
->>>>  drivers/devfreq/Kconfig             |  15 ++
->>>>  drivers/devfreq/Makefile            |   1 +
->>>>  drivers/devfreq/exynos/Makefile     |   1 +
->>>>  drivers/devfreq/exynos/exynos-bus.c | 443 +++++++++++++++++++++++=
-+++++++++++++
->>>>  4 files changed, 460 insertions(+)
->>>>  create mode 100644 drivers/devfreq/exynos/exynos-bus.c
->>>>
->>>
->>> Are we finally getting a common Exynos bus driver with full DT supp=
-ort?
->>> (can this replace both Exynos4/5 drivers and support Exynos7 series=
-?)
->>
->> Yes.
->> This patch-set would support all Exynos SoCs for bus frequency drive=
-r.
->> To make sure the support for Exynos7 series, I need to check the TRM
->> document of Exynos7.  I think it is possible for support Exynos7.
->>
->> I'm going to test this driver on various Exynos-based board.
->>
->> Regards,
->> Chanwoo Choi
->=20
-> Please do consider Exynos 542x series as well.
 
-Sure. I'll to test it on Exynos5422-based Odroid-XU3.
+Two fixes for v4.4 cycle. Rafael wanted the cpufreq fix to go through
+arm-soc tree.
 
-Regards,
-Chanwoo Choi
+Please note that location of repository has changed to kernel.org.
 
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+
+  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-4.4
+
+for you to fetch changes up to 62f49ee26f14753bd7fa634f51d537a79061bf0f:
+
+  cpufreq: s3c24xx: Do not mark s3c2410_plls_add as __init (2015-11-27 10:10:32 +0900)
+
+----------------------------------------------------------------
+Fixes for Exynos:
+1. Fix potential NULL pointer dereference in Exynos PMU driver.
+2. Remove incorrect __init annotation from s3c24xx cpufreq driver
+   structures.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      cpufreq: s3c24xx: Do not mark s3c2410_plls_add as __init
+
+Pankaj Dubey (1):
+      ARM: EXYNOS: Fix potential NULL pointer access in exynos_sys_powerdown_conf
+
+ arch/arm/mach-exynos/pmu.c                   | 6 +++++-
+ arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c | 2 +-
+ arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c | 2 +-
+ drivers/cpufreq/s3c24xx-cpufreq.c            | 2 +-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
