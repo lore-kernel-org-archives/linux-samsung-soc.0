@@ -1,58 +1,61 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: Exynos fixes for v4.4
-Date: Fri, 27 Nov 2015 10:26:03 +0900
-Message-ID: <1448587563-31346-1-git-send-email-k.kozlowski@samsung.com>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: Re: [PATCH v2 08/13] exynos: fimg2d: add g2d_set_direction
+Date: Fri, 27 Nov 2015 11:03:28 +0900
+Message-ID: <20151127110328.747ac8fc@hwh-ubuntu>
+References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1448218123-21292-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CACvgo53G9a7kqYgWKs+Mvxs=4Y_ZDnFZBzRirEmxLN3s_U2Z=A@mail.gmail.com>
+ <56573620.1040600@gmx.net>
+ <CACvgo517bouJ+sdFTg2nX79y-CYqqZW+vd6e7Oi+PsS_jrorWg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:21945 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753688AbbK0B0P (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:47948 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753674AbbK0CDa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 20:26:15 -0500
+	Thu, 26 Nov 2015 21:03:30 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NYG01MIXB1T8960@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 27 Nov 2015 11:03:29 +0900 (KST)
+In-reply-to: <CACvgo517bouJ+sdFTg2nX79y-CYqqZW+vd6e7Oi+PsS_jrorWg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-Hi Kukjin,
+Dear all,
 
+Yes. I can pick it on behalf of Tobias, if there is no one who can do
+that.
 
-Two fixes for v4.4 cycle. Rafael wanted the cpufreq fix to go through
-arm-soc tree.
+BRs,
+Hyungwon Hwang
 
-Please note that location of repository has changed to kernel.org.
+On Thu, 26 Nov 2015 16:48:10 +0000
+Emil Velikov <emil.l.velikov@gmail.com> wrote:
 
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-4.4
-
-for you to fetch changes up to 62f49ee26f14753bd7fa634f51d537a79061bf0f:
-
-  cpufreq: s3c24xx: Do not mark s3c2410_plls_add as __init (2015-11-27 10:10:32 +0900)
-
-----------------------------------------------------------------
-Fixes for Exynos:
-1. Fix potential NULL pointer dereference in Exynos PMU driver.
-2. Remove incorrect __init annotation from s3c24xx cpufreq driver
-   structures.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      cpufreq: s3c24xx: Do not mark s3c2410_plls_add as __init
-
-Pankaj Dubey (1):
-      ARM: EXYNOS: Fix potential NULL pointer access in exynos_sys_powerdown_conf
-
- arch/arm/mach-exynos/pmu.c                   | 6 +++++-
- arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c | 2 +-
- arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c | 2 +-
- drivers/cpufreq/s3c24xx-cpufreq.c            | 2 +-
- 4 files changed, 8 insertions(+), 4 deletions(-)
+> On 26 November 2015 at 16:41, Tobias Jakobi <liquid.acid@gmx.net>
+> wrote:
+> > Hello Emil,
+> >
+> > my main system which I also used for development was stolen on
+> > Tuesday, so I won't be working on this series anytime soon. If
+> > anyone wants to pick it up, please go ahead.
+> >
+> Sad to hear that x2. You've been doing some good work, despite that we
+> weren't always quick to review/pick it. Hope you had some insurance
+> and you manage to sort things out, relatively stress free.
+> 
+> Inki, Hyungwon, other Exynos devs,
+> 
+> Will you guys be able to pick any of this work ? Most of it can go in
+> with the small suggestion in this patch addressed.
+> 
+> Thanks
+> Emil
+> 
