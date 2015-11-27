@@ -1,151 +1,147 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos: simplify sleep PM ops
-Date: Fri, 27 Nov 2015 15:32:45 +0100
-Message-ID: <1448634765-19480-1-git-send-email-a.hajda@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH 02/15] PM / devfreq: exynos: Add documentation for
+ generic exynos bus frequency driver
+Date: Fri, 27 Nov 2015 14:30:45 -0600
+Message-ID: <20151127203045.GA3159@rob-hp-laptop>
+References: <1448545659-32287-1-git-send-email-cw00.choi@samsung.com>
+ <1448545659-32287-3-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:56282 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754013AbbK0Odh (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:54293 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753608AbbK0Uav (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Nov 2015 09:33:37 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NYH0007F9RYBFC0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 27 Nov 2015 14:33:34 +0000 (GMT)
+	Fri, 27 Nov 2015 15:30:51 -0500
+Content-Disposition: inline
+In-Reply-To: <1448545659-32287-3-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, k.kozlowski@samsung.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 
-PM ops in exynos_drm_drv were split into two separate function as they were
-used also by drm device. Since PM ops have been removed from drm device, the
-functions can be merged together.
+On Thu, Nov 26, 2015 at 10:47:26PM +0900, Chanwoo Choi wrote:
+> This patch adds the documentation for generic exynos bus frequency
+> driver.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 92 ++++++++++++++++++++++
+>  1 file changed, 92 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> new file mode 100644
+> index 000000000000..5d90623bd173
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> @@ -0,0 +1,92 @@
+> +* Generic Exynos Bus frequency device
+> +
+> +The Samsung Exynos SoC have many buses for data transfer between DRAM
+> +and sub-blocks in SoC. Almost Exynos SoC have the common architecture
+> +for buses. Generally, the each bus of Exynos SoC includes the source clock
+> +and power line and then is able to change the clock according to the usage
+> +of each buses on runtime. When gathering the usage of each buses on runtime,
+> +thie driver uses the exynos-ppmu.c driver with DEVFREQ-EVENT framework.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-Hi Inki,
+Please don't refer to Linux subsystem specifics in bindings. It looks 
+like you are creating devices to match what you have for drivers, not 
+what the h/w looks like.
 
-This is the patch I have promised during our discussion about
-PM callbcks in components.
 
-Regards
-Andrzej
+> +There are a little different composition among Exynos SoC because each Exynos
+> +SoC has the different sub-blocks. So, this difference should be specified
+> +in devicetree file instead of each device driver. In result, this driver
+> +is able to support the bus frequency for all Exynos SoCs.
+> +
+> +Required properties for bus device:
+> +- compatible: Should be "samsung,exynos-bus".
+> +- clock-names : the name of clock used by the bus, "bus".
+> +- clocks : phandles for clock specified in "clock-names" property.
+> +- #clock-cells: should be 1.
+> +- operating-points-v2: the OPP table including frequency/voltage information
+> +  to support DVFS (Dynamic Voltage/Frequency Scaling) feature.
+> +- vdd-supply: the regulator to provide the buses with the voltage.
+> +- devfreq-events: the devfreq-event device to monitor the curret utilization
+> +  of buses.
+> +
+> +Optional properties for bus device:
+> +- exynos,saturation-ratio: the percentage value which is used to calibrate
+> +                   the performance count againt total cycle count.
+> +
+> +Example1:
+> +	Show the AXI buses of Exynos3250 SoC. Exynos3250 divides the buses to
+> +	power line (regulator). The MIF (Memory Interface) AXI bus is used to
+> +	transfer data between DRAM and CPU and uses the VDD_MIF regualtor.
+> +
+> +	- power line(VDD_MIF) --> bus for DMC block (dmc clock)
+> +
+> +	- MIF bus's frequency/voltage table
+> +	-----------------------
+> +	|Lv| Freq   | Voltage |
+> +	-----------------------
+> +	|L1| 50000  |800000   |
+> +	|L2| 100000 |800000   |
+> +	|L3| 133000 |800000   |
+> +	|L4| 200000 |800000   |
+> +	|L5| 400000 |875000   |
+> +	-----------------------
+> +
+> +Example2 :
+> +	The bus of DMC block in exynos3250.dtsi are listed below:
 
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 76 +++++++++++++--------------------
- 1 file changed, 30 insertions(+), 46 deletions(-)
+What is DMC?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 2c6019d..9756797a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -304,45 +304,6 @@ int exynos_atomic_commit(struct drm_device *dev, struct drm_atomic_state *state,
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int exynos_drm_suspend(struct drm_device *dev, pm_message_t state)
--{
--	struct drm_connector *connector;
--
--	drm_modeset_lock_all(dev);
--	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
--		int old_dpms = connector->dpms;
--
--		if (connector->funcs->dpms)
--			connector->funcs->dpms(connector, DRM_MODE_DPMS_OFF);
--
--		/* Set the old mode back to the connector for resume */
--		connector->dpms = old_dpms;
--	}
--	drm_modeset_unlock_all(dev);
--
--	return 0;
--}
--
--static int exynos_drm_resume(struct drm_device *dev)
--{
--	struct drm_connector *connector;
--
--	drm_modeset_lock_all(dev);
--	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
--		if (connector->funcs->dpms) {
--			int dpms = connector->dpms;
--
--			connector->dpms = DRM_MODE_DPMS_OFF;
--			connector->funcs->dpms(connector, dpms);
--		}
--	}
--	drm_modeset_unlock_all(dev);
--
--	return 0;
--}
--#endif
--
- static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
- {
- 	struct drm_exynos_file_private *file_priv;
-@@ -476,31 +437,54 @@ static struct drm_driver exynos_drm_driver = {
- };
- 
- #ifdef CONFIG_PM_SLEEP
--static int exynos_drm_sys_suspend(struct device *dev)
-+static int exynos_drm_suspend(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	pm_message_t message;
-+	struct drm_connector *connector;
- 
- 	if (pm_runtime_suspended(dev) || !drm_dev)
- 		return 0;
- 
--	message.event = PM_EVENT_SUSPEND;
--	return exynos_drm_suspend(drm_dev, message);
-+	drm_modeset_lock_all(drm_dev);
-+	drm_for_each_connector(connector, drm_dev) {
-+		int old_dpms = connector->dpms;
-+
-+		if (connector->funcs->dpms)
-+			connector->funcs->dpms(connector, DRM_MODE_DPMS_OFF);
-+
-+		/* Set the old mode back to the connector for resume */
-+		connector->dpms = old_dpms;
-+	}
-+	drm_modeset_unlock_all(drm_dev);
-+
-+	return 0;
- }
- 
--static int exynos_drm_sys_resume(struct device *dev)
-+static int exynos_drm_resume(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
-+	struct drm_connector *connector;
- 
- 	if (pm_runtime_suspended(dev) || !drm_dev)
- 		return 0;
- 
--	return exynos_drm_resume(drm_dev);
-+	drm_modeset_lock_all(drm_dev);
-+	drm_for_each_connector(connector, drm_dev) {
-+		if (connector->funcs->dpms) {
-+			int dpms = connector->dpms;
-+
-+			connector->dpms = DRM_MODE_DPMS_OFF;
-+			connector->funcs->dpms(connector, dpms);
-+		}
-+	}
-+	drm_modeset_unlock_all(drm_dev);
-+
-+	return 0;
- }
- #endif
- 
- static const struct dev_pm_ops exynos_drm_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(exynos_drm_sys_suspend, exynos_drm_sys_resume)
-+	SET_SYSTEM_SLEEP_PM_OPS(exynos_drm_suspend, exynos_drm_resume)
- };
- 
- /* forward declaration */
--- 
-1.9.1
+> +
+> +	bus_dmc: bus_dmc {
+> +		compatible = "samsung,exynos-bus";
+
+I would expect the children of this bus to be under this node.
+
+> +		clocks = <&cmu_dmc CLK_DIV_DMC>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_dmc_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_dmc_opp_table: opp_table0 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp00 {
+> +			opp-hz = /bits/ 64 <50000000>;
+> +			opp-microvolt = <800000>;
+> +		};
+> +		opp01 {
+> +			opp-hz = /bits/ 64 <100000000>;
+> +			opp-microvolt = <800000>;
+> +		};
+> +		opp02 {
+> +			opp-hz = /bits/ 64 <133000000>;
+> +			opp-microvolt = <800000>;
+> +		};
+> +		opp03 {
+> +			opp-hz = /bits/ 64 <200000000>;
+> +			opp-microvolt = <800000>;
+> +		};
+> +		opp04 {
+> +			opp-hz = /bits/ 64 <400000000>;
+> +			opp-microvolt = <875000>;
+> +		};
+> +	};
+> +
+> +	Usage case to handle the frequency and voltage of bus on runtime
+> +	in exynos3250-rinato.dts are listed below:
+> +
+> +	&bus_dmc {
+> +		devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+
+What do these phandles point to exactly?
+
+> +		vdd-supply = <&buck1_reg>;	/* VDD_MIF */
+> +		status = "okay";
+> +	};
+> -- 
+> 1.9.1
+> 
