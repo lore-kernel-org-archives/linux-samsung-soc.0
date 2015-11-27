@@ -1,96 +1,161 @@
-From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH v2 00/13] drm/exynos: async G2D and g2d_move()
-Date: Fri, 27 Nov 2015 11:11:08 +0900
-Message-ID: <20151127111108.68b4c99a@hwh-ubuntu>
-References: <1448218123-21292-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CACvgo51z_t-4D8_QKo3tQngB5b=+c7ReDBM3h7ikTEuKt=+vMA@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv2] ARM: dts: use vmmc-supply of emmc/sd for exynos5422-odroidxu3
+Date: Fri, 27 Nov 2015 12:12:30 +0530
+Message-ID: <CANAwSgR+UTZSQYhXcP1a_T9AvJCS98dj1fafzJZ1S3oXvMUx+A@mail.gmail.com>
+References: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
+ <56283582.5010908@samsung.com> <CANAwSgQFqcM++D6FoTXTnZJryaoi92pEiSvbjyz8rj79VmGOMQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:32976 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753674AbbK0CLL (ORCPT
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:34223 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750837AbbK0Gmw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Nov 2015 21:11:11 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NYG00BTWBELXM40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 27 Nov 2015 11:11:09 +0900 (KST)
-In-reply-to: <CACvgo51z_t-4D8_QKo3tQngB5b=+c7ReDBM3h7ikTEuKt=+vMA@mail.gmail.com>
+	Fri, 27 Nov 2015 01:42:52 -0500
+In-Reply-To: <CANAwSgQFqcM++D6FoTXTnZJryaoi92pEiSvbjyz8rj79VmGOMQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Dear All,
+hi Krzysztof,
 
-On Thu, 26 Nov 2015 16:35:29 +0000
-Emil Velikov <emil.l.velikov@gmail.com> wrote:
+On 22 October 2015 at 18:34, Anand Moon <linux.amoon@gmail.com> wrote:
+> hi Krzysztof,
+>
+> On 22 October 2015 at 06:31, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On 20.10.2015 21:56, Anand Moon wrote:
+>>> Changes need for host controller to detect UHS-I highspeed cards.
+>>> Changes in VDDQ_MMC2 voltage range help scale
+>>> the required voltage to detect and load the microSD cards.
+>>
+>> Thanks for updating description of commit.
+>>
+>>>
+>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>> ---
+>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
+>>>
+>>> Changes:
+>>> Drop the ranp_delay for LDO9.
+>>>
+>>> Thanks to : Krzysztof, Doug Anderson, Jaehoon Chung for helping
+>>> me out figure out the mmc core requirement.
+>>>
+>>> Also drop the previous changes:
+>>> use cd-gpio method to detect sd-card.
+>>> Added UHS-I bus speed support.
+>>>
+>>> [    4.713553] random: nonblocking pool is initialized
+>>> [    4.718423] 14530000.hdmi supply hdmi-en not found, using dummy regulator
+>>> [    4.726206] exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
+>>> [    4.732555] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
+>>> [    4.740180] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
+>>> [    4.746936] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+>>> [    4.753428] [drm] No driver support for vblank timestamp query.
+>>> [    4.940794] Console: switching to colour frame buffer device 274x77
+>>> [    4.995344] exynos-drm exynos-drm: fb0:  frame buffer device
+>>> [    5.024573] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+>>> [    5.031164] exynos-dwc3 usb@12000000: no suspend clk specified
+>>> [    5.054571] usb 2-1: new full-speed USB device number 2 using exynos-ohci
+>>> [    5.159527] dwmmc_exynos 12220000.mmc: Busy; trying anyway
+>>> [    5.163705] mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x0)
+>>> ---
+>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++++++-
+>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> index 1af5bdc..a4be3e0 100644
+>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>>> @@ -182,9 +182,10 @@
+>>>
+>>>                       ldo13_reg: LDO13 {
+>>>                               regulator-name = "vdd_ldo13";
+>>> -                             regulator-min-microvolt = <2800000>;
+>>> +                             regulator-min-microvolt = <1800000>;
+>>
+>> You did not convinced me in previous discussion about the change to
+>> 1.8V. I said that:
+>>> On the same diagram few lines below:
+>>> VDDQ_MMC2: 2.8V 250mA
+>>
+>> You responded:
+>>> You are correct.
+>>
+>> So I am confused. Are you sure that this SD card block can/should
+>> operate on 1.8V? Have you actually tried this?
+>>
+>
+> Look like I missed this point. Here is the link I would like to share.
+>
+> http://www.hjreggel.net/cardspeed/cs_sdxc.html
+> Section: Summary of SD modes
+>
+> https://en.wikipedia.org/wiki/Secure_Digital
+> Section: Power consumption
+>
+> Their different requirement for voltage requirement for UHS-I, the max
+> value is around 3.3V
 
-> Hi Tobias,
-> 
-> On 22 November 2015 at 18:48, Tobias Jakobi
-> <tjakobi@math.uni-bielefeld.de> wrote:
-> > Hello,
-> >
-> > this series mostly touches G2D code. It introduces the following:
-> >
-> > (1) drmHandleEvent2() is added to enable processing of
-> > vendor-specific events. This will be used to expose asynchronous
-> > operation of the G2D. The necessary kernel infrastructure is
-> > already there since a lot of kernel versions. [This touches libdrm
-> > core code!]
-> >
-> Considering the shortage of input on this can you please respin the
-> series without it (and related work mentioned below). This way we can
-> pick merge the remaining work now and discuss (ping) about the rest.
+Do you have any comment on this voltage selection for UHS-I card (1.8V).
 
-I am confused a little here. Did you mean that adding drmHandleEvent2()
-is not necessary, and the related code which uses drmHandleEvent2() must
-be re-implemented?
+>
+>>>                               regulator-max-microvolt = <2800000>;
+>>>                               regulator-always-on;
+>>> +                             regulator-ramp-delay = <12000>;
+>>
+>> NAK
+>>
+>> We've been talking about this. Sooo maaaanyyyy times.
+>>
+>> If you are going to send v3 please come up with detailed reasoning,
+>> which will convince my stubborn mind.
+>>
+>
+> Look like I missed this point. my typo. Will drop this in next version.
+> No matter I try hard, it turn out I make silly and annoying mistake.
+>
+> -Anand Moon
+>
 
-> 
-> > (2) The necessary infrastructure to handle G2D events. This includes
-> >     adding g2d_config_event() and g2d_exec2() to the public API.
-> >     A test application is provided to ensure that everything works
-> >     as expected.
-> >
-> With above in mind the g2d event will need to be split out, although
-> g2d_exec2() should be ok (although of limited use), imho.
-> 
-> > (3) A small performance test application which can be used to
-> > measure the speed of solid color clear operations. Interesting for
-> >     benchmarking and plotting colorful graphs (e.g. through
-> >     Mathematica).
-> >
-> > (4) g2d_move() which works similar to g2d_copy() but like the C
-> >     memmove() properly handles overlapping buffer copies.
-> >     Again a test application is present to check that this
-> >     indeed does what it should.
-> >
-> > (5) Various small changes. A framebuffer colorformat fix for the
-> >     general G2D test application. Moving the currently unused
-> >     g2d_reset() to the public API.
-> I am more of a "add API when it's needed" kind of person, although I
-> cannot see anything serious misuse that can arise from g2d_reset().
-> 
-> > Adding a counterpart to
-> >     exynos_bo_map() to unmap buffers again.
-> >
-> The exynos bo map compatibility was broken a few times already so I'm
-> wondering if we really want this one. I guess that with the lack of
-> any (outside of tizen) user space things cannot go that wrong :-P
-> 
+Well I will drop this.
 
-Yes. I agree that adding them at this time is not needed and it would
-be OK to add them, when the userspace using them comes.
+>> Best regards,
+>> Krzysztof
+>>
+>>>                       };
+>>>
+>>>                       ldo15_reg: LDO15 {
+>>> @@ -213,6 +214,7 @@
+>>>                               regulator-min-microvolt = <2800000>;
+>>>                               regulator-max-microvolt = <2800000>;
+>>>                               regulator-always-on;
+>>> +                             regulator-ramp-delay = <12000>;
+>>>                       };
+>>>
+>>>                       ldo24_reg: LDO24 {
+>>> @@ -338,6 +340,7 @@
+>>>       samsung,dw-mshc-ddr-timing = <0 2>;
+>>>       samsung,dw-mshc-hs400-timing = <0 2>;
+>>>       samsung,read-strobe-delay = <90>;
+>>> +     vmmc-supply = <&ldo3_reg>;
+>>>       pinctrl-names = "default";
+>>>       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+>>>       bus-width = <8>;
+>>> @@ -355,6 +358,8 @@
+>>>       pinctrl-names = "default";
+>>>       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+>>>       bus-width = <4>;
+>>> +     vmmc-supply = <&ldo19_reg>;
+>>> +     vqmmc-supply = <&ldo13_reg>;
+>>>       cap-sd-highspeed;
+>>>  };
+>>>
+>>>
+>>
 
-BRs,
-Hyungwon Hwang
+I will take care on not repeating my mistake again.
 
-> Thanks
-> Emil
-> 
+-Anand Moon
