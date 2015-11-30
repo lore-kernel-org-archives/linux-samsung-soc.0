@@ -1,48 +1,60 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 09/22] drm/exynos: mixer: enable video overlay plane only
- when VP is available
-Date: Mon, 30 Nov 2015 14:53:24 +0100
-Message-ID: <1448891617-18830-10-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 12/22] drm/exynos: mixer: use ratio precalculated in
+ exynos_state
+Date: Mon, 30 Nov 2015 14:53:27 +0100
+Message-ID: <1448891617-18830-13-git-send-email-m.szyprowski@samsung.com>
 References: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:50748 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754213AbbK3Nxv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 08:53:51 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NYM000T9RXP7HB0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 Nov 2015 13:53:49 +0000 (GMT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Video overlay plane should be registered only when suitable hardware
-sub-block (Video Processor) is available.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 84ee3396c429..8d2ce13eb725 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1167,6 +1167,9 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
- 		const uint32_t *formats;
- 		unsigned int fcount;
- 
-+		if (zpos == VP_DEFAULT_WIN && !ctx->vp_enabled)
-+			continue;
-+
- 		if (zpos < VP_DEFAULT_WIN) {
- 			formats = mixer_formats;
- 			fcount = ARRAY_SIZE(mixer_formats);
--- 
-1.9.2
+Q29tbW9uIHBsYW5lIGNvZGUgYWxyZWFkeSBjYWxjdWxhdGVzIGFuZCBjaGVja3MgZm9yIHN1cHBv
+cnRlZCBzY2FsbGluZwptb2Rlcywgc28gYWRkaXRpb25hbCBjb2RlIGluIG1peGVyIGRyaXZlciBj
+YW4gYmUgbm93IHJlbW92ZWQuCgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6
+eXByb3dza2lAc2Ftc3VuZy5jb20+ClJldmlld2VkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rh
+dm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfbWl4ZXIuYyB8IDMzICsrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBm
+aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMzAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggNDE5MDI4NTc5OGVmLi5kZmIzNWUyZGE0ZGIg
+MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtNTI4LDMzICs1MjgsNiBA
+QCBzdGF0aWMgdm9pZCBtaXhlcl9sYXllcl91cGRhdGUoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0
+eCkKIAltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgfjAsIE1YUl9DRkdfTEFZRVJf
+VVBEQVRFKTsKIH0KIAotc3RhdGljIGludCBtaXhlcl9zZXR1cF9zY2FsZShjb25zdCBzdHJ1Y3Qg
+ZXh5bm9zX2RybV9wbGFuZSAqcGxhbmUsCi0JCXVuc2lnbmVkIGludCAqeF9yYXRpbywgdW5zaWdu
+ZWQgaW50ICp5X3JhdGlvKQotewotCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpzdGF0
+ZSA9Ci0JCQkJdG9fZXh5bm9zX3BsYW5lX3N0YXRlKHBsYW5lLT5iYXNlLnN0YXRlKTsKLQotCWlm
+IChzdGF0ZS0+Y3J0Yy53ICE9IHN0YXRlLT5zcmMudykgewotCQlpZiAoc3RhdGUtPmNydGMudyA9
+PSAyICogc3RhdGUtPnNyYy53KQotCQkJKnhfcmF0aW8gPSAxOwotCQllbHNlCi0JCQlnb3RvIGZh
+aWw7Ci0JfQotCi0JaWYgKHN0YXRlLT5jcnRjLmggIT0gc3RhdGUtPnNyYy5oKSB7Ci0JCWlmIChz
+dGF0ZS0+Y3J0Yy5oID09IDIgKiBzdGF0ZS0+c3JjLmgpCi0JCQkqeV9yYXRpbyA9IDE7Ci0JCWVs
+c2UKLQkJCWdvdG8gZmFpbDsKLQl9Ci0KLQlyZXR1cm4gMDsKLQotZmFpbDoKLQlEUk1fREVCVUdf
+S01TKCJvbmx5IDJ4IHdpZHRoL2hlaWdodCBzY2FsaW5nIG9mIHBsYW5lIHN1cHBvcnRlZFxuIik7
+Ci0JcmV0dXJuIC1FTk9UU1VQUDsKLX0KLQogc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVy
+KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJCQkgICAgICAgc3RydWN0IGV4eW5vc19kcm1f
+cGxhbmUgKnBsYW5lKQogewpAQCAtNTk0LDkgKzU2Nyw5IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dy
+YXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAogCQlyZXR1cm47CiAJfQogCi0J
+LyogY2hlY2sgaWYgbWl4ZXIgc3VwcG9ydHMgcmVxdWVzdGVkIHNjYWxpbmcgc2V0dXAgKi8KLQlp
+ZiAobWl4ZXJfc2V0dXBfc2NhbGUocGxhbmUsICZ4X3JhdGlvLCAmeV9yYXRpbykpCi0JCXJldHVy
+bjsKKwkvKiByYXRpbyBpcyBhbHJlYWR5IGNoZWNrZWQgYnkgY29tbW9uIHBsYW5lIGNvZGUgKi8K
+Kwl4X3JhdGlvID0gc3RhdGUtPmhfcmF0aW8gPT0gKDEgPDwgMTUpOworCXlfcmF0aW8gPSBzdGF0
+ZS0+dl9yYXRpbyA9PSAoMSA8PCAxNSk7CiAKIAlkc3RfeF9vZmZzZXQgPSBzdGF0ZS0+Y3J0Yy54
+OwogCWRzdF95X29mZnNldCA9IHN0YXRlLT5jcnRjLnk7Ci0tIAoxLjkuMgoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
