@@ -1,55 +1,95 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 08/22] drm/exynos: mixer: use crtc->state->adjusted_mode
- instead of crtc->mode
-Date: Mon, 30 Nov 2015 14:53:23 +0100
-Message-ID: <1448891617-18830-9-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 14/22] drm/exynos: fimd: fix dma burst size setting for
+ small plane size
+Date: Mon, 30 Nov 2015 14:53:29 +0100
+Message-ID: <1448891617-18830-15-git-send-email-m.szyprowski@samsung.com>
 References: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54563 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754245AbbK3Nxy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Nov 2015 08:53:54 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NYM008VORXS7EB0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Nov 2015 13:53:52 +0000 (GMT)
 In-reply-to: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-VGhpcyBwYXRjaCByZXBsYWNlcyB1c2FnZSBvZiBjcnRjLT5tb2RlIHdpdGggY3J0Yy0+c3RhdGUt
-PmFkanVzdGVkX21vZGUKbGlrZSBpdCBpcyBhbHJlYWR5IGRvbmUgaW4gY29tbW9uIHBsYW5lIGNv
-ZGUuCgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3Vu
-Zy5jb20+ClJldmlld2VkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xs
-YWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8
-IDQgKystLQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwppbmRleCAxNTQ1MzdhMjNjOTAuLjg0
-ZWUzMzk2YzQyOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
-ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC00MDIs
-OSArNDAyLDkgQEAgc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250
-ZXh0ICpjdHgsCiB7CiAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKnN0YXRlID0KIAkJ
-CQl0b19leHlub3NfcGxhbmVfc3RhdGUocGxhbmUtPmJhc2Uuc3RhdGUpOworCXN0cnVjdCBkcm1f
-ZGlzcGxheV9tb2RlICptb2RlID0gJnN0YXRlLT5iYXNlLmNydGMtPnN0YXRlLT5hZGp1c3RlZF9t
-b2RlOwogCXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKIAlz
-dHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRlLT5iYXNlLmZiOwotCXN0cnVjdCBkcm1f
-ZGlzcGxheV9tb2RlICptb2RlID0gJnN0YXRlLT5iYXNlLmNydGMtPm1vZGU7CiAJdW5zaWduZWQg
-bG9uZyBmbGFnczsKIAlkbWFfYWRkcl90IGx1bWFfYWRkclsyXSwgY2hyb21hX2FkZHJbMl07CiAJ
-Ym9vbCB0aWxlZF9tb2RlID0gZmFsc2U7CkBAIC01MzksOSArNTM5LDkgQEAgc3RhdGljIHZvaWQg
-bWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiB7CiAJc3RydWN0
-IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKnN0YXRlID0KIAkJCQl0b19leHlub3NfcGxhbmVfc3Rh
-dGUocGxhbmUtPmJhc2Uuc3RhdGUpOworCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0g
-JnN0YXRlLT5iYXNlLmNydGMtPnN0YXRlLT5hZGp1c3RlZF9tb2RlOwogCXN0cnVjdCBtaXhlcl9y
-ZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVy
-ICpmYiA9IHN0YXRlLT5iYXNlLmZiOwotCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0g
-JnN0YXRlLT5iYXNlLmNydGMtPm1vZGU7CiAJdW5zaWduZWQgbG9uZyBmbGFnczsKIAl1bnNpZ25l
-ZCBpbnQgd2luID0gcGxhbmUtPnpwb3M7CiAJdW5zaWduZWQgaW50IHhfcmF0aW8gPSAwLCB5X3Jh
-dGlvID0gMDsKLS0gCjEuOS4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+This patch fixes trashed display of buffers cropped to very small width.
+Even if DMA is unstable and causes tearing when changing the burst size,
+it is still better than displaying a garbage.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 70cd2681e343..2e2247126581 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -487,7 +487,7 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
+ 
+ 
+ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+-				struct drm_framebuffer *fb)
++				uint32_t pixel_format, int width)
+ {
+ 	unsigned long val;
+ 
+@@ -498,11 +498,11 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 	 * So the request format is ARGB8888 then change it to XRGB8888.
+ 	 */
+ 	if (ctx->driver_data->has_limited_fmt && !win) {
+-		if (fb->pixel_format == DRM_FORMAT_ARGB8888)
+-			fb->pixel_format = DRM_FORMAT_XRGB8888;
++		if (pixel_format == DRM_FORMAT_ARGB8888)
++			pixel_format = DRM_FORMAT_XRGB8888;
+ 	}
+ 
+-	switch (fb->pixel_format) {
++	switch (pixel_format) {
+ 	case DRM_FORMAT_C8:
+ 		val |= WINCON0_BPPMODE_8BPP_PALETTE;
+ 		val |= WINCONx_BURSTLEN_8WORD;
+@@ -538,17 +538,15 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 		break;
+ 	}
+ 
+-	DRM_DEBUG_KMS("bpp = %d\n", fb->bits_per_pixel);
+-
+ 	/*
+-	 * In case of exynos, setting dma-burst to 16Word causes permanent
+-	 * tearing for very small buffers, e.g. cursor buffer. Burst Mode
+-	 * switching which is based on plane size is not recommended as
+-	 * plane size varies alot towards the end of the screen and rapid
+-	 * movement causes unstable DMA which results into iommu crash/tear.
++	 * Setting dma-burst to 16Word causes permanent tearing for very small
++	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
++	 * plane size is not recommended as plane size varies alot towards the
++	 * end of the screen and rapid movement causes unstable DMA, but it is
++	 * still better to change dma-burst than displaying garbage.
+ 	 */
+ 
+-	if (fb->width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
++	if (width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+ 		val &= ~WINCONx_BURSTLEN_MASK;
+ 		val |= WINCONx_BURSTLEN_4WORD;
+ 	}
+@@ -723,7 +721,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
+ 		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
+ 	}
+ 
+-	fimd_win_set_pixfmt(ctx, win, fb);
++	fimd_win_set_pixfmt(ctx, win, fb->pixel_format, state->src.w);
+ 
+ 	/* hardware window 0 doesn't support color key. */
+ 	if (win != 0)
+-- 
+1.9.2
