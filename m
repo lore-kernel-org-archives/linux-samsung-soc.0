@@ -1,60 +1,32 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] CLK: s3c2410: removed unneeded code in
- s3c24xx_clkout_set_parent
-Date: Mon, 30 Nov 2015 16:10:55 +0900
-Message-ID: <565BF67F.3070705@samsung.com>
-References: <20151130070044.GA23071@jci-VirtualBox>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: Re: [RFC PATCH 02/15] PM / devfreq: exynos: Add documentation for
+ generic exynos bus frequency driver
+Date: Mon, 30 Nov 2015 07:23:31 +0000 (GMT)
+Message-ID: <962403713.42381448868207072.JavaMail.weblogic@epmlwas08c>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <20151130070044.GA23071@jci-VirtualBox>
-Sender: linux-clk-owner@vger.kernel.org
-To: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cwchoi00@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, =?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?= <k.kozlowski@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 30.11.2015 16:01, Mutharaju, Prasanna (P.) wrote:
-> From: Prasanna Karthik <mkarthi3@visteon.com>
-> 
-> Remove unneeded variable used to store return value.
-> 
-> Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
-
-You need to sign it off too.
-
-The prefix in subject should be lowercase 'clk:' and you are removing
-rather a variable, not code.
-
-The patch looks good, so with these changes:
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
-
-> ---
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index e9eb935..ec6fb14 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
->  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
-> -	int ret = 0;
->  
->  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
->  			      (index << clkout->shift));
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static const struct clk_ops s3c24xx_clkout_ops = {
-> 
-
+PiBIaSBSb2IsDQo+IA0KPiBPbiBTYXQsIE5vdiAyOCwgMjAxNSBhdCA1OjMwIEFNLCBSb2IgSGVy
+cmluZyA8cm9iaEBrZXJuZWwub3JnPiB3cm90ZToNCj4gPiBPbiBUaHUsIE5vdiAyNiwgMjAxNSBh
+dCAxMDo0NzoyNlBNICswOTAwLCBDaGFud29vIENob2kgd3JvdGU6DQo+ID4+IFRoaXMgcGF0Y2gg
+YWRkcyB0aGUgZG9jdW1lbnRhdGlvbiBmb3IgZ2VuZXJpYyBleHlub3MgYnVzIGZyZXF1ZW5jeQ0K
+PiA+PiBkcml2ZXIuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cw
+MC5jaG9pQHNhbXN1bmcuY29tPg0KPiA+PiAtLS0NCj4gPj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2RldmZyZXEvZXh5bm9zLWJ1cy50eHQgICAgIHwgOTIgKysrKysrKysrKysrKysrKysrKysr
+Kw0KPiA+PiAgMSBmaWxlIGNoYW5nZWQsIDkyIGluc2VydGlvbnMoKykNCj4gPj4gIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGV2ZnJlcS9leHlu
+b3MtYnVzLnR4dA0KPiA+PiArRXhhbXBsZTIgOg0KPiA+PiArICAgICBUaGUgYnVzIG9mIERNQyBi
+bG9jayBpbiBleHlub3MzMjUwLmR0c2kgYXJlIGxpc3RlZCBiZWxvdzoNCj4gPg0KPiA+IFdoYXQg
+aXMgRE1DPw0KPiANCj4gRE1DIChEUkFNIE1lbW9yeSBDb250cm9sbGVyKQ0KDQpJdCdzIER5bmFt
+aWMgTWVtb3J5IENvbnRyb2xsZXIuIChEUkFNID1+IER5bmFtaWMgTWVtb3J5KQ0KDQpZb3UgbWF5
+IG5lZWQgdG8gd3JpdGUgdGhlIGZ1bGwgbmFtZSB3aXRoIHRoZSBmaXJzdCByZWZlcmVuY2Ugb2Yg
+RE1DIHRoZXJlDQppbiB0aGUgZG9jdW1lbnRhdGlvbiBhcyAiRE1DIiBtYXkgY29uZnVzZSBhIGxv
+dCBvZiBwZW9wbGUuDQoNCg0KDQpDaGVlcnMsDQpNeXVuZ0pvbw0KDQo=
