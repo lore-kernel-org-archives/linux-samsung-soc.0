@@ -1,105 +1,103 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] arm: dts: Fix audio card detection on peach boards
-Date: Mon, 30 Nov 2015 15:24:03 -0300
-Message-ID: <565C9443.3010303@osg.samsung.com>
-References: <1444653438-6532-1-git-send-email-alim.akhtar@samsung.com>
- <565C56BD.2050002@osg.samsung.com>
- <CAGOxZ52=rci6MaEL4aa_G8VP16kDi9QhYUcYS8qF263nZeHgpg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH 09/15] PM / devfreq: exynos: Update documentation for
+ bus devices using passive governor
+Date: Mon, 30 Nov 2015 15:14:53 -0600
+Message-ID: <20151130211453.GA29423@rob-hp-laptop>
+References: <1448545659-32287-1-git-send-email-cw00.choi@samsung.com>
+ <1448545659-32287-10-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGOxZ52=rci6MaEL4aa_G8VP16kDi9QhYUcYS8qF263nZeHgpg@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1448545659-32287-10-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, kgene <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, stable@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, k.kozlowski@samsung.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Alim,
-
-On 11/30/2015 01:59 PM, Alim Akhtar wrote:
-> Hi Javier,
+On Thu, Nov 26, 2015 at 10:47:33PM +0900, Chanwoo Choi wrote:
+> This patch updates the documentation for passive bus devices and adds the
+> detailed example of Exynos3250.
 > 
-> On Mon, Nov 30, 2015 at 7:31 PM, Javier Martinez Canillas
-> <javier@osg.samsung.com> wrote:
->> Hello Alim,
->>
->> On 10/12/2015 09:37 AM, Alim Akhtar wrote:
->>> Since commit 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards"),
->>> sound card detection is broken on peach boards and gives below errors:
->>>
->>> [    3.630457] max98090 7-0010: MAX98091 REVID=0x51
->>> [    3.634233] max98090 7-0010: use default 2.8v micbias
->>> [    3.640985] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
->>> [    3.645307] max98090 7-0010: Invalid master clock frequency
->>> [    3.650824] snow-audio sound: ASoC: Peach-Pi-I2S-MAX98091 late_probe() failed: -22
->>> [    3.658914] snow-audio sound: snd_soc_register_card failed (-22)
->>> [    3.664366] snow-audio: probe of sound failed with error -22
->>>
->>> This patch adds missing assigned-clocks and assigned-clock-parents for
->>> pmu_system_controller node which is used as "mclk" for audio codec.
->>>
->>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>> Fixes: 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards")
->>
->> I found that this patch is not enough to have proper audio working
->> on an Exynos5800 Peach Pi. Even playing a simple wav does not work:
->>
->> $ time aplay -D sysdefault /usr/share/sounds/alsa/Front_Center.wav
->> Playing WAVE '/usr/share/sounds/alsa/Front_Center.wav' : Signed 16 bit Little Endian, Rate 48000 Hz, Mono
->>
->> real    0m1.138s
->> user    0m0.005s
->> sys     0m0.005s
->>
->> This should be ~1.5 seconds so audio is processed faster than expected.
->>
-> Did you tried playing any other file, like 128 KHz rate files etc..?
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 226 ++++++++++++++++++++-
+>  1 file changed, 223 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> index 5d90623bd173..c4a6fe30075e 100644
+> --- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> @@ -12,18 +12,23 @@ SoC has the different sub-blocks. So, this difference should be specified
+>  in devicetree file instead of each device driver. In result, this driver
+>  is able to support the bus frequency for all Exynos SoCs.
+>  
+> -Required properties for bus device:
+> +Required properties for all bus devices:
+>  - compatible: Should be "samsung,exynos-bus".
+>  - clock-names : the name of clock used by the bus, "bus".
+>  - clocks : phandles for clock specified in "clock-names" property.
+>  - #clock-cells: should be 1.
+>  - operating-points-v2: the OPP table including frequency/voltage information
+>    to support DVFS (Dynamic Voltage/Frequency Scaling) feature.
+> +
+> +Required properties for only parent bus device:
+>  - vdd-supply: the regulator to provide the buses with the voltage.
+>  - devfreq-events: the devfreq-event device to monitor the curret utilization
+>    of buses.
+>  
+> -Optional properties for bus device:
+> +Required properties for only passive bus device:
+> +- devfreq: the parent bus device.
+> +
+> +Optional properties for only parent bus device:
+>  - exynos,saturation-ratio: the percentage value which is used to calibrate
+>                     the performance count againt total cycle count.
+>  
+> @@ -32,7 +37,19 @@ Example1:
+>  	power line (regulator). The MIF (Memory Interface) AXI bus is used to
+>  	transfer data between DRAM and CPU and uses the VDD_MIF regualtor.
+>  
+> -	- power line(VDD_MIF) --> bus for DMC block (dmc clock)
+> +	- MIF (Memory Interface) block
+> +	: VDD_MIF |--- DMC
+> +
+> +	- INT (Internal) block
+> +	: VDD_INT |--- LEFTBUS  |--- PERIL
+> +		  |    (parent) |--- MFC
+> +		  |             |--- G3D
+> +		  |
+> +		  |--- RIGHTBUS |--- FSYS
+> +				|--- LCD0
+> +				|--- PERIR
+> +				|--- ISP
+> +				|--- CAM
 
-Yes, I see the same problem with all the files I tested.
+I would expect the DT to mirror this topology which doesn't seem to be 
+the case in the example.
 
->> So something else besides making the CLKOUT to provide a valid frequency
->> for the codec's master clock is needed.
->>
-> The $SUBJECT patch actually  fix the audio card detection issue, which
-> was failing because of the missing master clock.
->
 
-I thought the problem was not a missing master clock, but an invalid clock
-frequency. Since the error message in the patch change log was:
+>  	- MIF bus's frequency/voltage table
+>  	-----------------------
+> @@ -45,6 +62,20 @@ Example1:
+>  	|L5| 400000 |875000   |
+>  	-----------------------
+>  
+> +	- INT bus's frequency/voltage table
+> +	-----------------------------------------------------------------------
+> +	|Lv| Freq                                                   | Voltage |
+> +	-----------------------------------------------------------------------
+> +	|  |LEFTBUS|RIGHTBUS|LCD0   |FSYS   |MCUISP |ISP    |PERIL  |VDD_INT  |
+> +	|  |*parent|passive |passive|passive|passive|passive|passive|         |
+> +	-----------------------------------------------------------------------
+> +	|L1|50000  |50000   |50000  |50000  |50000  |50000  |50000  |900000   |
+> +	|L2|80000  |80000   |80000  |80000  |80000  |80000  |80000  |900000   |
+> +	|L3|100000 |100000  |100000 |100000 |100000 |100000 |100000 |1000000  |
+> +	|L4|133000 |133000  |133000 |133000 |200000 |200000 |       |1000000  |
+> +	|L5|200000 |200000  |200000 |200000 |400000 |300000 |       |1000000  |
+> +	-----------------------------------------------------------------------
 
-"max98090 7-0010: Invalid master clock frequency"
+Do you really have 5 states? It look like there are 2 to me because the 
+OPP tables only really need to have the max freq at each voltage point. 
 
-But what I tried to ask was what else was missing to have playback working.
-
->> Do you know what's missing in mainline? For instance, I see that the
->> sound/soc/samsung/snow.c ASoC machine driver doesn't have a hw_params
->> but I'm not that familiar with ALSA to know if that makes sense or not.
->>
-> I need to check this, currently I am out on a business travel, so
-> won't be able to check.
-
-No worries, I was asked in case you had more information. Audio is the
-only thing that is missing to have all peripherals working correctly with
-mainline.
-
-> Probably we can go back to before "2fad972d45c4" and check that.
->
-
-Do you mean to revert $SUBJECT and "2fad972d45c4" to see if the bootloader
-sets this correctly? If I revert both patches then I have no audio at all.
- 
->> Also, do you know if the "simple-audio-card" can be used instead for
->> snow and peachs as it is used for other Exynos5 boards or a specific
->> ASoC machine driver is really needed for these Chromebooks?
->>
-> Not sure, AFAIR, I used machine driver on chromebooks (snow and peach).
->
-
-Yes, the downstream 3.8 ChromiumOS tree has also a machine driver but I
-don't see a simple-audio-card in that tree so it seems that predates it.
-
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Rob
