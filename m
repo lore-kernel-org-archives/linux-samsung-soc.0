@@ -1,59 +1,40 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: exynos_defconfig: Set recommended options for systemd
-Date: Mon, 30 Nov 2015 15:31:23 +0900
-Message-ID: <1448865083-13272-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: exynos4210: MDMA1 device belongs to LCD0
+ power domain
+Date: Mon, 30 Nov 2015 15:58:45 +0900
+Message-ID: <565BF3A5.30103@samsung.com>
+References: <1448542190-19498-1-git-send-email-m.szyprowski@samsung.com>
+ <1448542190-19498-2-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:26598 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751907AbbK3GcH (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24030 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751788AbbK3G64 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 01:32:07 -0500
+	Mon, 30 Nov 2015 01:58:56 -0500
+In-reply-to: <1448542190-19498-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Set following options to recommended value by systemd (which also
-matches the multi_v7 deconfig):
-1. Enable AUTOFS4_FS - for systemd.automount [0];
-2. Enable BLK_DEV_BSG - SG v4 for recend udev [0][1];
-3. Disable UEVENT_HELPER_PATH - legacy hook for hotplug, forked for each
-   uevent, slows down booting [0];
+On 26.11.2015 21:49, Marek Szyprowski wrote:
+> On Exynos 4210 MDMA1 device belongs to LCD0 power domain, so add proper
+> power-domains property. On Exynos 4x12, it belongs to TOP power domain,
+> which is always enabled, thus require no assignment in exynos4x12.dtsi.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-[0] http://cgit.freedesktop.org/systemd/systemd/tree/README
-[1] http://patchwork.ozlabs.org/patch/47921/
+Makes sense. I suppose the rest of the patchset does not depends on it
+directly so it can go through samsung-soc tree (otherwise please let us
+know).
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/exynos_defconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 409adc1eaf33..24dcd2bb1215 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -7,7 +7,6 @@ CONFIG_BLK_DEV_INITRD=y
- CONFIG_KALLSYMS_ALL=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
--# CONFIG_BLK_DEV_BSG is not set
- CONFIG_PARTITION_ADVANCED=y
- CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_EXYNOS3=y
-@@ -44,7 +43,6 @@ CONFIG_IP_PNP_BOOTP=y
- CONFIG_IP_PNP_RARP=y
- CONFIG_CFG80211=y
- CONFIG_RFKILL_REGULATOR=y
--CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_DMA_CMA=y
-@@ -217,6 +215,7 @@ CONFIG_PHY_EXYNOS5250_SATA=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT3_FS=y
- CONFIG_EXT4_FS=y
-+CONFIG_AUTOFS4_FS=y
- CONFIG_MSDOS_FS=y
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
--- 
-1.9.1
+Best regards,
+Krzysztof
