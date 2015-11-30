@@ -1,121 +1,59 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] ARM: dts: use vmmc-supply of emmc/sd for
- exynos5422-odroidxu3
-Date: Mon, 30 Nov 2015 14:42:11 +0900
-Message-ID: <565BE1B3.1070505@samsung.com>
-References: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
- <56283582.5010908@samsung.com>
- <CANAwSgQFqcM++D6FoTXTnZJryaoi92pEiSvbjyz8rj79VmGOMQ@mail.gmail.com>
- <CANAwSgR+UTZSQYhXcP1a_T9AvJCS98dj1fafzJZ1S3oXvMUx+A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: exynos_defconfig: Set recommended options for systemd
+Date: Mon, 30 Nov 2015 15:31:23 +0900
+Message-ID: <1448865083-13272-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:21779 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751325AbbK3FmY (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:26598 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751907AbbK3GcH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 00:42:24 -0500
-In-reply-to: <CANAwSgR+UTZSQYhXcP1a_T9AvJCS98dj1fafzJZ1S3oXvMUx+A@mail.gmail.com>
+	Mon, 30 Nov 2015 01:32:07 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 27.11.2015 15:42, Anand Moon wrote:
-> hi Krzysztof,
-> 
-> On 22 October 2015 at 18:34, Anand Moon <linux.amoon@gmail.com> wrote:
->> hi Krzysztof,
->>
->> On 22 October 2015 at 06:31, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> On 20.10.2015 21:56, Anand Moon wrote:
->>>> Changes need for host controller to detect UHS-I highspeed cards.
->>>> Changes in VDDQ_MMC2 voltage range help scale
->>>> the required voltage to detect and load the microSD cards.
->>>
->>> Thanks for updating description of commit.
->>>
->>>>
->>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>> ---
->>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
->>>>
->>>> Changes:
->>>> Drop the ranp_delay for LDO9.
->>>>
->>>> Thanks to : Krzysztof, Doug Anderson, Jaehoon Chung for helping
->>>> me out figure out the mmc core requirement.
->>>>
->>>> Also drop the previous changes:
->>>> use cd-gpio method to detect sd-card.
->>>> Added UHS-I bus speed support.
->>>>
->>>> [    4.713553] random: nonblocking pool is initialized
->>>> [    4.718423] 14530000.hdmi supply hdmi-en not found, using dummy regulator
->>>> [    4.726206] exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
->>>> [    4.732555] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
->>>> [    4.740180] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
->>>> [    4.746936] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->>>> [    4.753428] [drm] No driver support for vblank timestamp query.
->>>> [    4.940794] Console: switching to colour frame buffer device 274x77
->>>> [    4.995344] exynos-drm exynos-drm: fb0:  frame buffer device
->>>> [    5.024573] [drm] Initialized exynos 1.0.0 20110530 on minor 0
->>>> [    5.031164] exynos-dwc3 usb@12000000: no suspend clk specified
->>>> [    5.054571] usb 2-1: new full-speed USB device number 2 using exynos-ohci
->>>> [    5.159527] dwmmc_exynos 12220000.mmc: Busy; trying anyway
->>>> [    5.163705] mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x0)
->>>> ---
->>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++++++-
->>>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> index 1af5bdc..a4be3e0 100644
->>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> @@ -182,9 +182,10 @@
->>>>
->>>>                       ldo13_reg: LDO13 {
->>>>                               regulator-name = "vdd_ldo13";
->>>> -                             regulator-min-microvolt = <2800000>;
->>>> +                             regulator-min-microvolt = <1800000>;
->>>
->>> You did not convinced me in previous discussion about the change to
->>> 1.8V. I said that:
->>>> On the same diagram few lines below:
->>>> VDDQ_MMC2: 2.8V 250mA
->>>
->>> You responded:
->>>> You are correct.
->>>
->>> So I am confused. Are you sure that this SD card block can/should
->>> operate on 1.8V? Have you actually tried this?
->>>
->>
->> Look like I missed this point. Here is the link I would like to share.
->>
->> http://www.hjreggel.net/cardspeed/cs_sdxc.html
->> Section: Summary of SD modes
->>
->> https://en.wikipedia.org/wiki/Secure_Digital
->> Section: Power consumption
->>
->> Their different requirement for voltage requirement for UHS-I, the max
->> value is around 3.3V
-> 
-> Do you have any comment on this voltage selection for UHS-I card (1.8V).
+Set following options to recommended value by systemd (which also
+matches the multi_v7 deconfig):
+1. Enable AUTOFS4_FS - for systemd.automount [0];
+2. Enable BLK_DEV_BSG - SG v4 for recend udev [0][1];
+3. Disable UEVENT_HELPER_PATH - legacy hook for hotplug, forked for each
+   uevent, slows down booting [0];
 
-I asked whether you tried this, whether setting real 1.8V works fine.
-You did not respond. As you can see on Odroid schematics, the VDDQ for
-MMC[01] operates under 1.8V.
+[0] http://cgit.freedesktop.org/systemd/systemd/tree/README
+[1] http://patchwork.ozlabs.org/patch/47921/
 
-The VDDQ for MMC2 - under 2.8V.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-In commit description you mentioned that this voltage "helps scale the
-required voltage to detect and load the microSD cards". What does it
-mean "help"? I would expect that detecting and loading of microSD cards
-either works or does not work. I am not sure how does it help.
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 409adc1eaf33..24dcd2bb1215 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -7,7 +7,6 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+-# CONFIG_BLK_DEV_BSG is not set
+ CONFIG_PARTITION_ADVANCED=y
+ CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_EXYNOS3=y
+@@ -44,7 +43,6 @@ CONFIG_IP_PNP_BOOTP=y
+ CONFIG_IP_PNP_RARP=y
+ CONFIG_CFG80211=y
+ CONFIG_RFKILL_REGULATOR=y
+-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_DMA_CMA=y
+@@ -217,6 +215,7 @@ CONFIG_PHY_EXYNOS5250_SATA=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
+ CONFIG_EXT4_FS=y
++CONFIG_AUTOFS4_FS=y
+ CONFIG_MSDOS_FS=y
+ CONFIG_VFAT_FS=y
+ CONFIG_TMPFS=y
+-- 
+1.9.1
