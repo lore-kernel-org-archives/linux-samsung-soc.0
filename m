@@ -1,95 +1,61 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 14/22] drm/exynos: fimd: fix dma burst size setting for
- small plane size
-Date: Mon, 30 Nov 2015 14:53:29 +0100
-Message-ID: <1448891617-18830-15-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 05/22] drm/exynos: exynos7-decon: remove excessive check
+Date: Mon, 30 Nov 2015 14:53:20 +0100
+Message-ID: <1448891617-18830-6-git-send-email-m.szyprowski@samsung.com>
 References: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54563 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54549 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754245AbbK3Nxy (ORCPT
+	with ESMTP id S1754043AbbK3Nxs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 08:53:54 -0500
+	Mon, 30 Nov 2015 08:53:48 -0500
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
  by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NYM008VORXS7EB0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 Nov 2015 13:53:52 +0000 (GMT)
+ with ESMTP id <0NYM009RXRXMABB0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Nov 2015 13:53:46 +0000 (GMT)
 In-reply-to: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-This patch fixes trashed display of buffers cropped to very small width.
-Even if DMA is unstable and causes tearing when changing the burst size,
-it is still better than displaying a garbage.
+Display area is already checked by exynos plane core, so there is no
+need for such check in driver code.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 70cd2681e343..2e2247126581 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -487,7 +487,7 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
- 
- 
- static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
--				struct drm_framebuffer *fb)
-+				uint32_t pixel_format, int width)
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 38d7762ebdcb..4db04f244c17 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -394,7 +394,6 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 			       struct exynos_drm_plane *plane)
  {
- 	unsigned long val;
+ 	struct decon_context *ctx = crtc->ctx;
+-	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
+ 	struct drm_plane_state *state = plane->base.state;
+ 	int padding;
+ 	unsigned long val, alpha;
+@@ -436,15 +435,6 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 	DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
+ 			plane->crtc_w, plane->crtc_h);
  
-@@ -498,11 +498,11 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
- 	 * So the request format is ARGB8888 then change it to XRGB8888.
- 	 */
- 	if (ctx->driver_data->has_limited_fmt && !win) {
--		if (fb->pixel_format == DRM_FORMAT_ARGB8888)
--			fb->pixel_format = DRM_FORMAT_XRGB8888;
-+		if (pixel_format == DRM_FORMAT_ARGB8888)
-+			pixel_format = DRM_FORMAT_XRGB8888;
- 	}
- 
--	switch (fb->pixel_format) {
-+	switch (pixel_format) {
- 	case DRM_FORMAT_C8:
- 		val |= WINCON0_BPPMODE_8BPP_PALETTE;
- 		val |= WINCONx_BURSTLEN_8WORD;
-@@ -538,17 +538,15 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
- 		break;
- 	}
- 
--	DRM_DEBUG_KMS("bpp = %d\n", fb->bits_per_pixel);
+-	/*
+-	 * OSD position.
+-	 * In case the window layout goes of LCD layout, DECON fails.
+-	 */
+-	if ((plane->crtc_x + plane->crtc_w) > mode->hdisplay)
+-		plane->crtc_x = mode->hdisplay - plane->crtc_w;
+-	if ((plane->crtc_y + plane->crtc_h) > mode->vdisplay)
+-		plane->crtc_y = mode->vdisplay - plane->crtc_h;
 -
- 	/*
--	 * In case of exynos, setting dma-burst to 16Word causes permanent
--	 * tearing for very small buffers, e.g. cursor buffer. Burst Mode
--	 * switching which is based on plane size is not recommended as
--	 * plane size varies alot towards the end of the screen and rapid
--	 * movement causes unstable DMA which results into iommu crash/tear.
-+	 * Setting dma-burst to 16Word causes permanent tearing for very small
-+	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
-+	 * plane size is not recommended as plane size varies alot towards the
-+	 * end of the screen and rapid movement causes unstable DMA, but it is
-+	 * still better to change dma-burst than displaying garbage.
- 	 */
- 
--	if (fb->width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
-+	if (width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
- 		val &= ~WINCONx_BURSTLEN_MASK;
- 		val |= WINCONx_BURSTLEN_4WORD;
- 	}
-@@ -723,7 +721,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
- 	}
- 
--	fimd_win_set_pixfmt(ctx, win, fb);
-+	fimd_win_set_pixfmt(ctx, win, fb->pixel_format, state->src.w);
- 
- 	/* hardware window 0 doesn't support color key. */
- 	if (win != 0)
+ 	val = VIDOSDxA_TOPLEFT_X(plane->crtc_x) |
+ 		VIDOSDxA_TOPLEFT_Y(plane->crtc_y);
+ 	writel(val, ctx->regs + VIDOSD_A(win));
 -- 
 1.9.2
