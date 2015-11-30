@@ -1,40 +1,53 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 1/4] ARM: dts: exynos4210: MDMA1 device belongs to LCD0
- power domain
-Date: Mon, 30 Nov 2015 15:58:45 +0900
-Message-ID: <565BF3A5.30103@samsung.com>
-References: <1448542190-19498-1-git-send-email-m.szyprowski@samsung.com>
- <1448542190-19498-2-git-send-email-m.szyprowski@samsung.com>
+From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
+Subject: [PATCH] CLK: s3c2410: removed unneeded code in
+ s3c24xx_clkout_set_parent
+Date: Mon, 30 Nov 2015 07:01:08 +0000
+Message-ID: <20151130070044.GA23071@jci-VirtualBox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:24030 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751788AbbK3G64 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 01:58:56 -0500
-In-reply-to: <1448542190-19498-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Language: en-US
+Content-ID: <068B5DE98F0EF4498ECBDB103FF7C7BF@eurprd06.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 26.11.2015 21:49, Marek Szyprowski wrote:
-> On Exynos 4210 MDMA1 device belongs to LCD0 power domain, so add proper
-> power-domains property. On Exynos 4x12, it belongs to TOP power domain,
-> which is always enabled, thus require no assignment in exynos4x12.dtsi.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
+From: Prasanna Karthik <mkarthi3@visteon.com>
 
-Makes sense. I suppose the rest of the patchset does not depends on it
-directly so it can go through samsung-soc tree (otherwise please let us
-know).
+Remove unneeded variable used to store return value.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
+---
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index e9eb935..ec6fb14 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
+ static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
+-	int ret = 0;
+ 
+ 	s3c2410_modify_misccr((clkout->mask << clkout->shift),
+ 			      (index << clkout->shift));
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct clk_ops s3c24xx_clkout_ops = {
+-- 
+1.9.1
