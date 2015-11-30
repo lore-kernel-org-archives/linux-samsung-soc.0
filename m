@@ -1,13 +1,15 @@
-From: Gabriel Laskar <gabriel@lse.epita.fr>
-Subject: [PATCH 07/20] drm: fix inclusion of drm.h in exynos_sarea.h
-Date: Mon, 30 Nov 2015 15:10:45 +0100
-Message-ID: <1448892658-14256-8-git-send-email-gabriel@lse.epita.fr>
-References: <1448892658-14256-1-git-send-email-gabriel@lse.epita.fr>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v2 14/22] drm/exynos: fimd: fix dma burst size setting for
+ small plane size
+Date: Mon, 30 Nov 2015 15:40:32 +0000
+Message-ID: <CAPj87rN7vgTUkUqY+qNN7NafF-aK8fYQWdFLokyeHum6q5rH3w@mail.gmail.com>
+References: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
+ <1448891617-18830-15-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1448892658-14256-1-git-send-email-gabriel@lse.epita.fr>
+In-Reply-To: <1448891617-18830-15-git-send-email-m.szyprowski@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -17,25 +19,18 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "open list:ABI/API" <linux-api@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM
- ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM
- ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: Mikko Rapeli <mikko.rapeli@iki.fi>, Emil Velikov <emil.l.velikov@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VXNpbmcgYCNpbmNsdWRlICJkcm0uaCJgIGluc3RlYWQgb2YgYCNpbmNsdWRlIDxkcm0vZHJtLmg+
-YCBhbGxvdyBkcm0KaGVhZGVycyB0byBiZSBtb3ZlZCBpbiBhbm90aGVyIGRpcmVjdG9yeSB3aXRo
-b3V0IGNoYW5nZXMsIGxpa2UgZm9yIHRoZQpsaWJkcm0gaW1wb3J0cy4KClNpZ25lZC1vZmYtYnk6
-IEdhYnJpZWwgTGFza2FyIDxnYWJyaWVsQGxzZS5lcGl0YS5mcj4KQ0M6IEVtaWwgVmVsaWtvdiA8
-ZW1pbC5sLnZlbGlrb3ZAZ21haWwuY29tPgpDQzogTWlra28gUmFwZWxpIDxtaWtrby5yYXBlbGlA
-aWtpLmZpPgoKLS0tCiBpbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaCB8IDIgKy0KIDEgZmls
-ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2lu
-Y2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oIGIvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJt
-LmgKaW5kZXggNTU3NWVkMS4uYTViMmRkOSAxMDA2NDQKLS0tIGEvaW5jbHVkZS91YXBpL2RybS9l
-eHlub3NfZHJtLmgKKysrIGIvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmgKQEAgLTE1LDcg
-KzE1LDcgQEAKICNpZm5kZWYgX1VBUElfRVhZTk9TX0RSTV9IXwogI2RlZmluZSBfVUFQSV9FWFlO
-T1NfRFJNX0hfCiAKLSNpbmNsdWRlIDxkcm0vZHJtLmg+CisjaW5jbHVkZSAiZHJtLmgiCiAKIC8q
-KgogICogVXNlci1kZXNpcmVkIGJ1ZmZlciBjcmVhdGlvbiBpbmZvcm1hdGlvbiBzdHJ1Y3R1cmUu
-Ci0tIAoyLjYuMgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+SGksCgpPbiAzMCBOb3ZlbWJlciAyMDE1IGF0IDEzOjUzLCBNYXJlayBTenlwcm93c2tpIDxtLnN6
+eXByb3dza2lAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IFRoaXMgcGF0Y2ggZml4ZXMgdHJhc2hlZCBk
+aXNwbGF5IG9mIGJ1ZmZlcnMgY3JvcHBlZCB0byB2ZXJ5IHNtYWxsIHdpZHRoLgo+IEV2ZW4gaWYg
+RE1BIGlzIHVuc3RhYmxlIGFuZCBjYXVzZXMgdGVhcmluZyB3aGVuIGNoYW5naW5nIHRoZSBidXJz
+dCBzaXplLAo+IGl0IGlzIHN0aWxsIGJldHRlciB0aGFuIGRpc3BsYXlpbmcgYSBnYXJiYWdlLgo+
+Cj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcu
+Y29tPgoKUmV2aWV3ZWQtYnk6IERhbmllbCBTdG9uZSA8ZGFuaWVsc0Bjb2xsYWJvcmEuY29tPgoK
+Q2hlZXJzLApEYW5pZWwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
