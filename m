@@ -1,206 +1,41 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 3/4] ARM: amba: Move reading of periphid to amba_match()
-Date: Mon, 30 Nov 2015 15:07:35 +0100
-Message-ID: <CAPDyKFoj1VTYY-uwzQW+XSzdfYkpATgkQNOAO38SCfqTVJYWKw@mail.gmail.com>
-References: <1448542190-19498-1-git-send-email-m.szyprowski@samsung.com>
-	<1448542190-19498-4-git-send-email-m.szyprowski@samsung.com>
+From: Gabriel Laskar <gabriel@lse.epita.fr>
+Subject: [PATCH 07/20] drm: fix inclusion of drm.h in exynos_sarea.h
+Date: Mon, 30 Nov 2015 15:10:45 +0100
+Message-ID: <1448892658-14256-8-git-send-email-gabriel@lse.epita.fr>
+References: <1448892658-14256-1-git-send-email-gabriel@lse.epita.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f177.google.com ([209.85.160.177]:33178 "EHLO
-	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752223AbbK3OHg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 09:07:36 -0500
-Received: by ykdv3 with SMTP id v3so184116206ykd.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Nov 2015 06:07:35 -0800 (PST)
-In-Reply-To: <1448542190-19498-4-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1448892658-14256-1-git-send-email-gabriel@lse.epita.fr>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "open list:ABI/API" <linux-api@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM
+ ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM
+ ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: Mikko Rapeli <mikko.rapeli@iki.fi>, Emil Velikov <emil.l.velikov@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 26 November 2015 at 13:49, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->
-> Reading the periphid when the Primecell device is registered means that
-> the apb pclk must be available by then or the device won't be registered
-> at all.
->
-> By reading the periphid in amba_match() we can return -EPROBE_DEFER if
-> the apb pclk isn't there yet and the device will be retried later.
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/amba/bus.c | 88 ++++++++++++++++++++++++++++--------------------------
->  1 file changed, 46 insertions(+), 42 deletions(-)
->
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index f009936..72ebf9b 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -24,6 +24,8 @@
->
->  #define to_amba_driver(d)      container_of(d, struct amba_driver, drv)
->
-> +static int read_periphid(struct amba_device *d, unsigned int *periphid);
-
-I would change this to:
-static int amba_read_periphid(struct amba_device *dev);
-
-That will actually also make the patch smaller.
-
-> +
->  static const struct amba_id *
->  amba_lookup(const struct amba_id *table, struct amba_device *dev)
->  {
-> @@ -43,11 +45,22 @@ static int amba_match(struct device *dev, struct device_driver *drv)
->  {
->         struct amba_device *pcdev = to_amba_device(dev);
->         struct amba_driver *pcdrv = to_amba_driver(drv);
-> +       int ret;
->
->         /* When driver_override is set, only bind to the matching driver */
->         if (pcdev->driver_override)
->                 return !strcmp(pcdev->driver_override, drv->name);
->
-> +       if (!pcdev->periphid) {
-> +               ret = read_periphid(pcdev, &pcdev->periphid);
-> +               if (ret) {
-> +                       if (ret != -EPROBE_DEFER)
-> +                               dev_err(dev, "Failed to read periphid: %d",
-> +                                       ret);
-> +                       return ret;
-> +               }
-> +       }
-> +
->         return amba_lookup(pcdrv->id_table, pcdev) != NULL;
->  }
->
-> @@ -336,44 +349,22 @@ static void amba_device_release(struct device *dev)
->         kfree(d);
->  }
->
-> -/**
-> - *     amba_device_add - add a previously allocated AMBA device structure
-> - *     @dev: AMBA device allocated by amba_device_alloc
-> - *     @parent: resource parent for this devices resources
-> - *
-> - *     Claim the resource, and read the device cell ID if not already
-> - *     initialized.  Register the AMBA device with the Linux device
-> - *     manager.
-> - */
-> -int amba_device_add(struct amba_device *dev, struct resource *parent)
-> +static int read_periphid(struct amba_device *d, unsigned int *periphid)
->  {
->         u32 size;
->         void __iomem *tmp;
-> -       int i, ret;
-> -
-> -       WARN_ON(dev->irq[0] == (unsigned int)-1);
-> -       WARN_ON(dev->irq[1] == (unsigned int)-1);
-> -
-> -       ret = request_resource(parent, &dev->res);
-> -       if (ret)
-> -               goto err_out;
-> -
-> -       /* Hard-coded primecell ID instead of plug-n-play */
-
-This line now belongs in amba_match(), please move it there instead of
-just deleting it.
-
-> -       if (dev->periphid != 0)
-> -               goto skip_probe;
-> +       int i, ret = 0;
->
->         /*
->          * Dynamically calculate the size of the resource
->          * and use this for iomap
->          */
-> -       size = resource_size(&dev->res);
-> -       tmp = ioremap(dev->res.start, size);
-> -       if (!tmp) {
-> -               ret = -ENOMEM;
-> -               goto err_release;
-> -       }
-> +       size = resource_size(&d->res);
-> +       tmp = ioremap(d->res.start, size);
-> +       if (!tmp)
-> +               return -ENOMEM;
->
-> -       ret = amba_get_enable_pclk(dev);
-> +       ret = amba_get_enable_pclk(d);
->         if (ret == 0) {
->                 u32 pid, cid;
->
-> @@ -388,37 +379,50 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
->                         cid |= (readl(tmp + size - 0x10 + 4 * i) & 255) <<
->                                 (i * 8);
->
-> -               amba_put_disable_pclk(dev);
-> +               amba_put_disable_pclk(d);
->
->                 if (cid == AMBA_CID || cid == CORESIGHT_CID)
-> -                       dev->periphid = pid;
-> +                       *periphid = pid;
->
-> -               if (!dev->periphid)
-> +               if (!*periphid)
->                         ret = -ENODEV;
->         }
->
->         iounmap(tmp);
->
-> +       return ret;
-> +}
-> +
-> +/**
-> + *     amba_device_add - add a previously allocated AMBA device structure
-> + *     @dev: AMBA device allocated by amba_device_alloc
-> + *     @parent: resource parent for this devices resources
-> + *
-> + *     Claim the resource, and register the AMBA device with the Linux device
-> + *     manager.
-> + */
-> +int amba_device_add(struct amba_device *dev, struct resource *parent)
-> +{
-> +       int ret;
-> +
-> +       WARN_ON(dev->irq[0] == (unsigned int)-1);
-> +       WARN_ON(dev->irq[1] == (unsigned int)-1);
-> +
-> +       ret = request_resource(parent, &dev->res);
->         if (ret)
-> -               goto err_release;
-> +               return ret;
->
-> - skip_probe:
->         ret = device_add(&dev->dev);
->         if (ret)
-> -               goto err_release;
-> +               return ret;
->
->         if (dev->irq[0])
->                 ret = device_create_file(&dev->dev, &dev_attr_irq0);
->         if (ret == 0 && dev->irq[1])
->                 ret = device_create_file(&dev->dev, &dev_attr_irq1);
-> -       if (ret == 0)
-> -               return ret;
-> -
-> -       device_unregister(&dev->dev);
-> +       if (ret)
-> +               device_unregister(&dev->dev);
->
-> - err_release:
-> -       release_resource(&dev->res);
-> - err_out:
->         return ret;
->  }
->  EXPORT_SYMBOL_GPL(amba_device_add);
-> --
-> 1.9.2
->
-
-Kind regards
-Uffe
+VXNpbmcgYCNpbmNsdWRlICJkcm0uaCJgIGluc3RlYWQgb2YgYCNpbmNsdWRlIDxkcm0vZHJtLmg+
+YCBhbGxvdyBkcm0KaGVhZGVycyB0byBiZSBtb3ZlZCBpbiBhbm90aGVyIGRpcmVjdG9yeSB3aXRo
+b3V0IGNoYW5nZXMsIGxpa2UgZm9yIHRoZQpsaWJkcm0gaW1wb3J0cy4KClNpZ25lZC1vZmYtYnk6
+IEdhYnJpZWwgTGFza2FyIDxnYWJyaWVsQGxzZS5lcGl0YS5mcj4KQ0M6IEVtaWwgVmVsaWtvdiA8
+ZW1pbC5sLnZlbGlrb3ZAZ21haWwuY29tPgpDQzogTWlra28gUmFwZWxpIDxtaWtrby5yYXBlbGlA
+aWtpLmZpPgoKLS0tCiBpbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaCB8IDIgKy0KIDEgZmls
+ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2lu
+Y2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oIGIvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJt
+LmgKaW5kZXggNTU3NWVkMS4uYTViMmRkOSAxMDA2NDQKLS0tIGEvaW5jbHVkZS91YXBpL2RybS9l
+eHlub3NfZHJtLmgKKysrIGIvaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmgKQEAgLTE1LDcg
+KzE1LDcgQEAKICNpZm5kZWYgX1VBUElfRVhZTk9TX0RSTV9IXwogI2RlZmluZSBfVUFQSV9FWFlO
+T1NfRFJNX0hfCiAKLSNpbmNsdWRlIDxkcm0vZHJtLmg+CisjaW5jbHVkZSAiZHJtLmgiCiAKIC8q
+KgogICogVXNlci1kZXNpcmVkIGJ1ZmZlciBjcmVhdGlvbiBpbmZvcm1hdGlvbiBzdHJ1Y3R1cmUu
+Ci0tIAoyLjYuMgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
