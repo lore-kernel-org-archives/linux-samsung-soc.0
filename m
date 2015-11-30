@@ -1,134 +1,86 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCHv2] ARM: dts: use vmmc-supply of emmc/sd for exynos5422-odroidxu3
-Date: Mon, 30 Nov 2015 21:19:13 +0530
-Message-ID: <CANAwSgRu7m06-vVtowxP6JKFhcAN5tZURbEaDhV=ULeL_NwUXQ@mail.gmail.com>
-References: <1445345793-5189-1-git-send-email-linux.amoon@gmail.com>
- <56283582.5010908@samsung.com> <CANAwSgQFqcM++D6FoTXTnZJryaoi92pEiSvbjyz8rj79VmGOMQ@mail.gmail.com>
- <CANAwSgR+UTZSQYhXcP1a_T9AvJCS98dj1fafzJZ1S3oXvMUx+A@mail.gmail.com> <565BE1B3.1070505@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH v2] arm: dts: Fix audio card detection on peach boards
+Date: Mon, 30 Nov 2015 22:29:26 +0530
+Message-ID: <CAGOxZ52=rci6MaEL4aa_G8VP16kDi9QhYUcYS8qF263nZeHgpg@mail.gmail.com>
+References: <1444653438-6532-1-git-send-email-alim.akhtar@samsung.com> <565C56BD.2050002@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:35531 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752550AbbK3Pte (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 10:49:34 -0500
-In-Reply-To: <565BE1B3.1070505@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <565C56BD.2050002@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, kgene <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi Krzysztof,
+Hi Javier,
 
-On 30 November 2015 at 11:12, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 27.11.2015 15:42, Anand Moon wrote:
->> hi Krzysztof,
+On Mon, Nov 30, 2015 at 7:31 PM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> Hello Alim,
+>
+> On 10/12/2015 09:37 AM, Alim Akhtar wrote:
+>> Since commit 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards"),
+>> sound card detection is broken on peach boards and gives below errors:
 >>
->> On 22 October 2015 at 18:34, Anand Moon <linux.amoon@gmail.com> wrote:
->>> hi Krzysztof,
->>>
->>> On 22 October 2015 at 06:31, Krzysztof Kozlowski
->>> <k.kozlowski@samsung.com> wrote:
->>>> On 20.10.2015 21:56, Anand Moon wrote:
->>>>> Changes need for host controller to detect UHS-I highspeed cards.
->>>>> Changes in VDDQ_MMC2 voltage range help scale
->>>>> the required voltage to detect and load the microSD cards.
->>>>
->>>> Thanks for updating description of commit.
->>>>
->>>>>
->>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>>> ---
->>>>> Changes based on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v4.4-next/dt-samsung branch
->>>>>
->>>>> Changes:
->>>>> Drop the ranp_delay for LDO9.
->>>>>
->>>>> Thanks to : Krzysztof, Doug Anderson, Jaehoon Chung for helping
->>>>> me out figure out the mmc core requirement.
->>>>>
->>>>> Also drop the previous changes:
->>>>> use cd-gpio method to detect sd-card.
->>>>> Added UHS-I bus speed support.
->>>>>
->>>>> [    4.713553] random: nonblocking pool is initialized
->>>>> [    4.718423] 14530000.hdmi supply hdmi-en not found, using dummy regulator
->>>>> [    4.726206] exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
->>>>> [    4.732555] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
->>>>> [    4.740180] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
->>>>> [    4.746936] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->>>>> [    4.753428] [drm] No driver support for vblank timestamp query.
->>>>> [    4.940794] Console: switching to colour frame buffer device 274x77
->>>>> [    4.995344] exynos-drm exynos-drm: fb0:  frame buffer device
->>>>> [    5.024573] [drm] Initialized exynos 1.0.0 20110530 on minor 0
->>>>> [    5.031164] exynos-dwc3 usb@12000000: no suspend clk specified
->>>>> [    5.054571] usb 2-1: new full-speed USB device number 2 using exynos-ohci
->>>>> [    5.159527] dwmmc_exynos 12220000.mmc: Busy; trying anyway
->>>>> [    5.163705] mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x0)
->>>>> ---
->>>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 ++++++-
->>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>>> index 1af5bdc..a4be3e0 100644
->>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>>> @@ -182,9 +182,10 @@
->>>>>
->>>>>                       ldo13_reg: LDO13 {
->>>>>                               regulator-name = "vdd_ldo13";
->>>>> -                             regulator-min-microvolt = <2800000>;
->>>>> +                             regulator-min-microvolt = <1800000>;
->>>>
->>>> You did not convinced me in previous discussion about the change to
->>>> 1.8V. I said that:
->>>>> On the same diagram few lines below:
->>>>> VDDQ_MMC2: 2.8V 250mA
->>>>
->>>> You responded:
->>>>> You are correct.
->>>>
->>>> So I am confused. Are you sure that this SD card block can/should
->>>> operate on 1.8V? Have you actually tried this?
->>>>
->>>
->>> Look like I missed this point. Here is the link I would like to share.
->>>
->>> http://www.hjreggel.net/cardspeed/cs_sdxc.html
->>> Section: Summary of SD modes
->>>
->>> https://en.wikipedia.org/wiki/Secure_Digital
->>> Section: Power consumption
->>>
->>> Their different requirement for voltage requirement for UHS-I, the max
->>> value is around 3.3V
+>> [    3.630457] max98090 7-0010: MAX98091 REVID=0x51
+>> [    3.634233] max98090 7-0010: use default 2.8v micbias
+>> [    3.640985] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
+>> [    3.645307] max98090 7-0010: Invalid master clock frequency
+>> [    3.650824] snow-audio sound: ASoC: Peach-Pi-I2S-MAX98091 late_probe() failed: -22
+>> [    3.658914] snow-audio sound: snd_soc_register_card failed (-22)
+>> [    3.664366] snow-audio: probe of sound failed with error -22
 >>
->> Do you have any comment on this voltage selection for UHS-I card (1.8V).
+>> This patch adds missing assigned-clocks and assigned-clock-parents for
+>> pmu_system_controller node which is used as "mclk" for audio codec.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> Fixes: 2fad972d45c4 ("ARM: dts: Add mclk entry for Peach boards")
 >
-> I asked whether you tried this, whether setting real 1.8V works fine.
-> You did not respond. As you can see on Odroid schematics, the VDDQ for
-> MMC[01] operates under 1.8V.
+> I found that this patch is not enough to have proper audio working
+> on an Exynos5800 Peach Pi. Even playing a simple wav does not work:
 >
-> The VDDQ for MMC2 - under 2.8V.
+> $ time aplay -D sysdefault /usr/share/sounds/alsa/Front_Center.wav
+> Playing WAVE '/usr/share/sounds/alsa/Front_Center.wav' : Signed 16 bit Little Endian, Rate 48000 Hz, Mono
 >
-> In commit description you mentioned that this voltage "helps scale the
-> required voltage to detect and load the microSD cards". What does it
-> mean "help"? I would expect that detecting and loading of microSD cards
-> either works or does not work. I am not sure how does it help.
+> real    0m1.138s
+> user    0m0.005s
+> sys     0m0.005s
 >
+> This should be ~1.5 seconds so audio is processed faster than expected.
+>
+Did you tried playing any other file, like 128 KHz rate files etc..?
+> So something else besides making the CLKOUT to provide a valid frequency
+> for the codec's master clock is needed.
+>
+The $SUBJECT patch actually  fix the audio card detection issue, which
+was failing because of the missing master clock.
+
+> Do you know what's missing in mainline? For instance, I see that the
+> sound/soc/samsung/snow.c ASoC machine driver doesn't have a hw_params
+> but I'm not that familiar with ALSA to know if that makes sense or not.
+>
+I need to check this, currently I am out on a business travel, so
+won't be able to check.
+Probably we can go back to before "2fad972d45c4" and check that.
+
+> Also, do you know if the "simple-audio-card" can be used instead for
+> snow and peachs as it is used for other Exynos5 boards or a specific
+> ASoC machine driver is really needed for these Chromebooks?
+>
+Not sure, AFAIR, I used machine driver on chromebooks (snow and peach).
+
 > Best regards,
-> Krzysztof
+> --
+> Javier Martinez Canillas
+> Open Source Group
+> Samsung Research America
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I will fix the commit message.
 
-Earlier around v4.2 detection of UHS-I card was not working,but now it
-seen to work in v4.4 kernel.
-May be some driver issue which might have been fixed.
 
-I am just trying to set the voltage range for LDO13 from 1.8V (min) to
-2.8V (max).
-If setting this is wrong according to datasheet then I will drop this setting.
-
--Anand Moon
+-- 
+Regards,
+Alim
