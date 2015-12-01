@@ -1,132 +1,31 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 1/3] driver core: handle -EPROBE_DEFER from bus_type.match()
-Date: Tue, 01 Dec 2015 14:34:24 +0100
-Message-ID: <1448976866-7892-2-git-send-email-m.szyprowski@samsung.com>
-References: <1448976866-7892-1-git-send-email-m.szyprowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 02/10] ASoC: samsung/smartq: use dynamic registration
+Date: Tue, 01 Dec 2015 16:11:40 +0100
+Message-ID: <1538856.GqqaeJI10z@wuerfel>
+References: <1448467615-447097-1-git-send-email-arnd@arndb.de> <1448467615-447097-3-git-send-email-arnd@arndb.de> <565CE8B8.3090903@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1448976866-7892-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <565CE8B8.3090903@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Tomasz Figa <tfiga@chromium.org>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+On Tuesday 01 December 2015 09:24:24 Krzysztof Kozlowski wrote:
+> > +static struct platform_driver smartq_driver = {
+> > +     .driver = {
+> > +             .name = "smartq-audio",
+> > +             .owner = THIS_MODULE,
+> 
+> The owner should not be needed (coccicheck should also complain). Rest
+> looks good, so:
 
-Allow implementations of the match() callback in struct bus_type to
-return errors and if it's -EPROBE_DEFER then queue the device for
-deferred probing.
+Good catch, fixed now!
+ 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This is useful to buses such as AMBA in which devices are registered
-before their matching information can be retrieved from the HW
-(typically because a clock driver hasn't probed yet).
+thanks,
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-[changed if-else code structure, adjusted documentation to match the code]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- Documentation/driver-model/porting.txt |  6 ++++--
- drivers/base/dd.c                      | 24 ++++++++++++++++++++++--
- include/linux/device.h                 |  2 +-
- 3 files changed, 27 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/driver-model/porting.txt b/Documentation/driver-model/porting.txt
-index 92d86f7..453053f 100644
---- a/Documentation/driver-model/porting.txt
-+++ b/Documentation/driver-model/porting.txt
-@@ -340,8 +340,10 @@ comparison:
- 
-   int (*match)(struct device * dev, struct device_driver * drv);
- 
--match should return '1' if the driver supports the device, and '0'
--otherwise. 
-+match should return positive value if the driver supports the device,
-+and zero otherwise. It may also return error code (for example
-+-EPROBE_DEFER) if determining that given driver supports the device is
-+not possible.
- 
- When a device is registered, the bus's list of drivers is iterated
- over. bus->match() is called for each one until a match is found. 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index a641cf3..793e915 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -490,6 +490,7 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
- 	struct device_attach_data *data = _data;
- 	struct device *dev = data->dev;
- 	bool async_allowed;
-+	int ret;
- 
- 	/*
- 	 * Check if device has already been claimed. This may
-@@ -500,8 +501,17 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
- 	if (dev->driver)
- 		return -EBUSY;
- 
--	if (!driver_match_device(drv, dev))
-+	ret = driver_match_device(drv, dev);
-+	if (ret == 0) {
-+		/* no match */
- 		return 0;
-+	} else if (ret == -EPROBE_DEFER) {
-+		dev_dbg(dev, "Device match requests probe deferral\n");
-+		driver_deferred_probe_add(dev);
-+	} else if (ret < 0) {
-+		dev_dbg(dev, "Bus failed to match device: %d", ret);
-+		return ret;
-+	} /* ret > 0 means positive match */
- 
- 	async_allowed = driver_allows_async_probing(drv);
- 
-@@ -621,6 +631,7 @@ void device_initial_probe(struct device *dev)
- static int __driver_attach(struct device *dev, void *data)
- {
- 	struct device_driver *drv = data;
-+	int ret;
- 
- 	/*
- 	 * Lock device and try to bind to it. We drop the error
-@@ -632,8 +643,17 @@ static int __driver_attach(struct device *dev, void *data)
- 	 * is an error.
- 	 */
- 
--	if (!driver_match_device(drv, dev))
-+	ret = driver_match_device(drv, dev);
-+	if (ret == 0) {
-+		/* no match */
- 		return 0;
-+	} else if (ret == -EPROBE_DEFER) {
-+		dev_dbg(dev, "Device match requests probe deferral\n");
-+		driver_deferred_probe_add(dev);
-+	} else if (ret < 0) {
-+		dev_dbg(dev, "Bus failed to match device: %d", ret);
-+		return ret;
-+	} /* ret > 0 means positive match */
- 
- 	if (dev->parent)	/* Needed for USB */
- 		device_lock(dev->parent);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index b8f411b..d4e7d1f 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -70,7 +70,7 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
-  * @dev_groups:	Default attributes of the devices on the bus.
-  * @drv_groups: Default attributes of the device drivers on the bus.
-  * @match:	Called, perhaps multiple times, whenever a new device or driver
-- *		is added for this bus. It should return a nonzero value if the
-+ *		is added for this bus. It should return a positive value if the
-  *		given device can be handled by the given driver.
-  * @uevent:	Called when a device is added, removed, or a few other things
-  *		that generate uevents to add the environment variables.
--- 
-1.9.2
+	Arnd
