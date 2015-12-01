@@ -1,58 +1,185 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v3 5/5] ARM: exynos: select POWER_RESET_SYSCON and
- POWER_RESET_SYSCON_POWEROFF
-Date: Tue, 01 Dec 2015 12:03:16 +0300
-Message-ID: <010401d12c17$1e883d10$5b98b730$@samsung.com>
-References: <1447996629-18232-1-git-send-email-alim.akhtar@samsung.com>
- <1447996629-18232-6-git-send-email-alim.akhtar@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 2/4] driver core: handle -EPROBE_DEFER from
+ bus_type.match()
+Date: Tue, 01 Dec 2015 10:25:46 +0100
+Message-ID: <565D679A.6010303@samsung.com>
+References: <1448542190-19498-1-git-send-email-m.szyprowski@samsung.com>
+ <1448542190-19498-3-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFrhWeY_2-1np72TLbibMUPJ2s+As48WMGgfbj2CS-waBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:25279 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755446AbbLAJDU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Dec 2015 04:03:20 -0500
-In-reply-to: <1447996629-18232-6-git-send-email-alim.akhtar@samsung.com>
-Content-language: ru
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAPDyKFrhWeY_2-1np72TLbibMUPJ2s+As48WMGgfbj2CS-waBw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Alim Akhtar' <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, ulf.hansson@linaro.org
 
- Hello!
+Hello,
 
-Tested it on top of 4.4-rc3.
- 
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 3a10f1a8317a..d279edf9b10d 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -27,6 +27,9 @@ menuconfig ARCH_EXYNOS
->  	select SRAM
->  	select THERMAL
->  	select MFD_SYSCON
-> +	select POWER_RESET
-> +	select POWER_RESET_SYSCON
-> +	select POWER_RESET_SYSCON_POWEROFF
+On 2015-11-30 14:36, Ulf Hansson wrote:
+> On 26 November 2015 at 13:49, Marek Szyprowski <m.szyprowski@samsung.=
+com> wrote:
+>> From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>
+>> Lets implementations of the match() callback in struct bus_type to
+> /s/Lets/Allow
+>
+>> return errors and if it's -EPROBE_DEFER then queue the device for
+>> deferred probing.
+>>
+>> This is useful to buses such as AMBA in which devices are registered
+>> before their matching information can be retrieved from the HW
+>> (typically because a clock driver hasn't probed yet).
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/base/dd.c      | 24 ++++++++++++++++++++++--
+>>   include/linux/device.h |  2 +-
+>>   2 files changed, 23 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>> index a641cf3..a20c119 100644
+>> --- a/drivers/base/dd.c
+>> +++ b/drivers/base/dd.c
+>> @@ -490,6 +490,7 @@ static int __device_attach_driver(struct device_=
+driver *drv, void *_data)
+>>          struct device_attach_data *data =3D _data;
+>>          struct device *dev =3D data->dev;
+>>          bool async_allowed;
+>> +       int ret;
+>>
+>>          /*
+>>           * Check if device has already been claimed. This may
+>> @@ -500,8 +501,17 @@ static int __device_attach_driver(struct device=
+_driver *drv, void *_data)
+>>          if (dev->driver)
+>>                  return -EBUSY;
+>>
+>> -       if (!driver_match_device(drv, dev))
+>> +       ret =3D driver_match_device(drv, dev);
+>> +       if (!ret)
+>>                  return 0;
+>> +       else if (ret < 0) {
+> Depending on what happens with the added dev_warn() below, perhaps a
+> switch statement can make it a bit clearer, instead of these messy if
+> clauses?
 
-"select POWER_SUPPLY" is missing here. Without is we get:
---- cut ---
-warning: (ARCH_HISI && ARCH_INTEGRATOR && ARCH_EXYNOS && ARCH_VEXPRESS && REALVIEW_DT) selects POWER_RESET which has unmet direct
-dependencies (POWER_SUPPLY)
-warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
-warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON_POWEROFF which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
---- cut ---
+=46rankly, I have no idea how to convert this to switch statement and m=
+ake
+the code easier to read. Please note that we have the following 4 cases=
+:
 
->  	help
->  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+ret > 0: positive match
+ret =3D=3D 0: negative match
+ret =3D=3D -EPROBE_DEFER: deferred probe
+ret < 0: other, unknown error
 
- Otherwise works fine.
+Another way to encode this logic is the following code:
 
- Tested-by: Pavel Fedin <p.fedin@samsung.com>
+if (ret =3D=3D 0) {
+         /* no match */
+         return 0;
+} else if (ret =3D=3D -EPROBE_DEFER) {
+         dev_dbg(dev, "Device match requests probe deferral\n");
+         driver_deferred_probe_add(dev);
+         return ret;
+} else if (ret < 0) {
+         dev_dbg(dev, "Bus failed to match device: %d", ret);
+         return ret;
+} /* ret > 0 means positive match */
 
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+
+>> +               if (ret =3D=3D -EPROBE_DEFER) {
+>> +                       dev_dbg(dev, "Device match requests probe de=
+ferral\n");
+>> +                       driver_deferred_probe_add(dev);
+>> +               } else
+>> +                       dev_warn(dev, "Bus failed to match device: %=
+d", ret);
+> Greg commented on this before, as it may introduce some noise [1].
+>
+> I started browsing various bus=E2=80=99s implementation of the ->matc=
+h()
+> callback. A quick search tells me that most implementations are
+> following the Documentation/driver-model/porting.txt, which means
+> returning 0 or 1. Actually I couldn't find anyone returning any other
+> value, though it was a quick search.
+>
+> On the other hand, include/linux/device.h states a "non-zero" value i=
+s
+> allowed to be return, so there's a tiny conflict between the code and
+> the documentation. I guess we should fix that!?
+
+Okay, I will update the documentation as well.
+
+> No matter what, I realize that it could be useful to print a message
+> when receiving a negative error code, maybe dev_dbg() could be
+> sufficient?
+>
+>> +               return ret;
+>> +       }
+>>
+>>          async_allowed =3D driver_allows_async_probing(drv);
+>>
+>> @@ -621,6 +631,7 @@ void device_initial_probe(struct device *dev)
+>>   static int __driver_attach(struct device *dev, void *data)
+>>   {
+>>          struct device_driver *drv =3D data;
+>> +       int ret;
+>>
+>>          /*
+>>           * Lock device and try to bind to it. We drop the error
+>> @@ -632,8 +643,17 @@ static int __driver_attach(struct device *dev, =
+void *data)
+>>           * is an error.
+>>           */
+>>
+>> -       if (!driver_match_device(drv, dev))
+>> +       ret =3D driver_match_device(drv, dev);
+>> +       if (!ret)
+>> +               return 0;
+>> +       else if (ret < 0) {
+>> +               if (ret =3D=3D -EPROBE_DEFER) {
+>> +                       dev_dbg(dev, "Device match requests probe de=
+ferral\n");
+>> +                       driver_deferred_probe_add(dev);
+>> +               } else
+>> +                       dev_warn(dev, "Bus failed to match device: %=
+d", ret);
+>>                  return 0;
+>> +       }
+>>
+>>          if (dev->parent)        /* Needed for USB */
+>>                  device_lock(dev->parent);
+>> diff --git a/include/linux/device.h b/include/linux/device.h
+>> index b8f411b..d4e7d1f 100644
+>> --- a/include/linux/device.h
+>> +++ b/include/linux/device.h
+>> @@ -70,7 +70,7 @@ extern void bus_remove_file(struct bus_type *, str=
+uct bus_attribute *);
+>>    * @dev_groups:        Default attributes of the devices on the bu=
+s.
+>>    * @drv_groups: Default attributes of the device drivers on the bu=
+s.
+>>    * @match:     Called, perhaps multiple times, whenever a new devi=
+ce or driver
+>> - *             is added for this bus. It should return a nonzero va=
+lue if the
+>> + *             is added for this bus. It should return a positive v=
+alue if the
+>>    *             given device can be handled by the given driver.
+>>    * @uevent:    Called when a device is added, removed, or a few ot=
+her things
+>>    *             that generate uevents to add the environment variab=
+les.
+>> --
+>> 1.9.2
+
+Best regards
+--=20
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
