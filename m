@@ -1,48 +1,58 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 04/10] ARM: s3c64xx: prepare initcalls for multiplatform
-Date: Tue, 01 Dec 2015 10:23:48 +0900
-Message-ID: <565CF6A4.1030608@samsung.com>
-References: <1448467615-447097-1-git-send-email-arnd@arndb.de>
- <1448467615-447097-5-git-send-email-arnd@arndb.de>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v3 5/5] ARM: exynos: select POWER_RESET_SYSCON and
+ POWER_RESET_SYSCON_POWEROFF
+Date: Tue, 01 Dec 2015 12:03:16 +0300
+Message-ID: <010401d12c17$1e883d10$5b98b730$@samsung.com>
+References: <1447996629-18232-1-git-send-email-alim.akhtar@samsung.com>
+ <1447996629-18232-6-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:12661 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:25279 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751841AbbLABXy (ORCPT
+	with ESMTP id S1755446AbbLAJDU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Nov 2015 20:23:54 -0500
-In-reply-to: <1448467615-447097-5-git-send-email-arnd@arndb.de>
+	Tue, 1 Dec 2015 04:03:20 -0500
+In-reply-to: <1447996629-18232-6-git-send-email-alim.akhtar@samsung.com>
+Content-language: ru
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Tomasz Figa <tfiga@chromium.org>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org
+To: 'Alim Akhtar' <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, ulf.hansson@linaro.org
 
-On 26.11.2015 01:06, Arnd Bergmann wrote:
-> In a multiplatform kernel, each initcall is run regardless
-> of the platform it is meant for, so it must not attempt to
-> access SoC-specific registers.
-> 
-> This adds 'if (soc_is_s3c64xx)' to all initcalls that are
-> specific to the s3c64xx platform, to prevent them from breaking
-> other platforms once we can build them into a combined kernel.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/mach-s3c64xx/common.c               |  4 ++--
->  arch/arm/mach-s3c64xx/cpuidle.c              |  5 ++++-
->  arch/arm/mach-s3c64xx/irq-pm.c               |  2 +-
->  arch/arm/mach-s3c64xx/mach-crag6410-module.c |  4 ++++
->  arch/arm/mach-s3c64xx/pl080.c                |  4 ++++
->  arch/arm/mach-s3c64xx/pm.c                   |  4 ++++
->  arch/arm/mach-s3c64xx/s3c6400.c              |  2 +-
->  arch/arm/mach-s3c64xx/s3c6410.c              |  2 +-
->  arch/arm/plat-samsung/gpio-samsung.c         | 11 +++++------
->  arch/arm/plat-samsung/init.c                 |  5 +++++
->  10 files changed, 31 insertions(+), 12 deletions(-)
+ Hello!
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Tested it on top of 4.4-rc3.
+ 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 3a10f1a8317a..d279edf9b10d 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -27,6 +27,9 @@ menuconfig ARCH_EXYNOS
+>  	select SRAM
+>  	select THERMAL
+>  	select MFD_SYSCON
+> +	select POWER_RESET
+> +	select POWER_RESET_SYSCON
+> +	select POWER_RESET_SYSCON_POWEROFF
 
-Best regards,
-Krzysztof
+"select POWER_SUPPLY" is missing here. Without is we get:
+--- cut ---
+warning: (ARCH_HISI && ARCH_INTEGRATOR && ARCH_EXYNOS && ARCH_VEXPRESS && REALVIEW_DT) selects POWER_RESET which has unmet direct
+dependencies (POWER_SUPPLY)
+warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
+warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON_POWEROFF which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
+--- cut ---
+
+>  	help
+>  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+
+ Otherwise works fine.
+
+ Tested-by: Pavel Fedin <p.fedin@samsung.com>
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
