@@ -1,96 +1,169 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v2 17/25] mtd: nand: remove useless
- mtd->priv = chip assignments
-Date: Wed, 2 Dec 2015 09:53:40 +0100
-Message-ID: <20151202095340.2f84e80f@bbrezillon>
-References: <1448967802-25796-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1448967802-25796-18-git-send-email-boris.brezillon@free-electrons.com>
-	<20151201221747.GB64635@google.com>
-Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: Re: [PATCH 3/3] Addition of binding for firmware signals on peach-pi
+Date: Wed, 02 Dec 2015 09:36:05 +0000
+Message-ID: <565EBB85.2030607@collabora.co.uk>
+References: <1448997171-7064-1-git-send-email-martyn.welch@collabora.co.uk> <1448997171-7064-4-git-send-email-martyn.welch@collabora.co.uk> <565E327E.90404@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBFXD7KZAKGQE4XKKCUA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20151201221747.GB64635-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Krzysztof Halasa <khalasa-NlWvg49iv0c@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Marek
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <565E327E.90404@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Brian,
 
-On Tue, 1 Dec 2015 14:17:47 -0800
-Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-> On Tue, Dec 01, 2015 at 12:03:14PM +0100, Boris Brezillon wrote:
-> > mtd_to_nand() now uses the container_of() approach to transform an
-> > mtd_info pointer into a nand_chip one. Drop useless mtd->priv
-> > assignments from NAND controller drivers.
-> >=20
-> > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > ---
-> > Patch generated with the following coccinelle script:
-> >=20
-> > ---8<----
-> > virtual patch
-> >=20
-> > @@
-> > struct mtd_info m;
-> > struct mtd_info *mp;
-> > struct nand_chip *c;
-> > @@
-> > (
-> > -(m).priv =3D c;
-> > |
-> > -(mp)->priv =3D c;
-> > |
-> > -(mp)->priv =3D (void *)c;
-> > )
-> > ---8<----
-> > ---
->=20
-> ...
->=20
-> > diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-> > index 3f29734..ed4184c 100644
-> > --- a/drivers/mtd/nand/s3c2410.c
-> > +++ b/drivers/mtd/nand/s3c2410.c
-> > @@ -834,7 +834,6 @@ static void s3c2410_nand_init_chip(struct s3c2410_n=
-and_info *info,
-> >  	chip->IO_ADDR_R =3D chip->IO_ADDR_W;
-> > =20
-> >  	nmtd->info	   =3D info;
-> > -	mtd->priv	   =3D chip;
->=20
-> After this one, we have:
->=20
-> drivers/mtd/nand/s3c2410.c: In function =E2=80=98s3c2410_nand_init_chip=
-=E2=80=99:
-> drivers/mtd/nand/s3c2410.c:791:19: warning: unused variable =E2=80=98mtd=
-=E2=80=99 [-Wunused-variable]
+On 01/12/15 23:51, Krzysztof Kozlowski wrote:
+> On 02.12.2015 04:12, Martyn Welch wrote:
+>> The peach pi has a GPIO connected to the firmware write protect, developer
+>> mode and recovery mode lines. This patch adds the required nodes to the
+>> device tree to configure the pinmuxing and allow these to be read from
+>> user space.
+>>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Pawel Moll <pawel.moll@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>> Cc: Kumar Gala <galak@codeaurora.org>
+>> Cc: Russell King <linux@arm.linux.org.uk>
+>> Cc: Kukjin Kim <kgene@kernel.org>
+>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Cc: devicetree@vger.kernel.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-samsung-soc@vger.kernel.org
+>> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+>> ---
+>>   arch/arm/boot/dts/exynos5800-peach-pi.dts | 40 +++++++++++++++++++++++++++++++
+>>   1 file changed, 40 insertions(+)
+>
+> Hi,
+>
+> Thanks for the patch.
+>
+> Few points from my side:
+> 1. Please add a prefix to the subject: "ARM: dts:".
+>
 
-I fixed all the warnings/errors you pointed in patch 12 and 17 and
-resent a v3 only for those patches to avoid annoying all recipients
-again. Let me know if you want me to resend the whole patchset.
+Ok, sorry.
 
-Best Regards,
+> 2. There is no need of such huge CC-list in the body of commit. This
+> CC-list comes from get_maintainer so there is no benefit of duplicating
+> it here. The CC is usually used to notify other people who might be
+> interested but get_maintainer does not point them.
+>
 
-Boris
+Ok, yes these were pulled from get_maintainer.
 
---=20
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> 3. I received only this third patch. I did not receive cover letter
+> explaining possible dependencies so I am not sure how to deal with the
+> patch. It looks like there are no dependencies... but maybe there are?
+> Is this is a new binding or no? Please provide a cover letter (if it
+> exists already be sure to send it to all interested parties) or send
+> entire patchset so the big picture could be seen.
+>
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+I'll make sure I do that next time.
+
+The cover letter read:
+
+Some Chromebooks have gpio attached to signals used to cause the 
+firmware to enter alternative modes of operation and/or control other 
+device characteristics (such as write protection on flash devices). This 
+patch adds a driver that exposes a read-only interface to allow these 
+signals to be read from user space.
+
+In addition this patch series provides the required bindings for this to 
+the peach-pi Chromebook.
+
+
+This is a new binding, but the driver is based on functionality in the 
+kernel shipped on Chromebooks. The binding has been modified based on 
+the form of existing bindings in the mainline kernel.
+
+Does that help?
+
+Martyn
+
+> The patch itself looks good but I'll wait with a review tag for #3.
+>
+> Best regards,
+> Krzysztof
+>
+>
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> index 49a4f43..485c18f 100644
+>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> @@ -53,6 +53,25 @@
+>>   		};
+>>   	};
+>>
+>> +	chromeos-firmware {
+>> +		compatible = "google,gpio-firmware";
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&wp_gpio &dev_mode &rec_mode>;
+>> +
+>> +		write-protect {
+>> +			gpios = <&gpx3 0 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +
+>> +		developer-switch {
+>> +			gpios = <&gpx1 3 GPIO_ACTIVE_HIGH>;
+>> +		};
+>> +
+>> +		recovery-switch {
+>> +			gpios = <&gpx0 7 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +	};
+>> +
+>>   	gpio-keys {
+>>   		compatible = "gpio-keys";
+>>
+>> @@ -731,6 +750,13 @@
+>>   		samsung,pin-val = <0>;
+>>   	};
+>>
+>> +	rec_mode: rec-mode {
+>> +		samsung,pins = "gpx0-7";
+>> +		samsung,pin-function = <0>;
+>> +		samsung,pin-pud = <0>;
+>> +		samsung,pin-drv = <0>;
+>> +	};
+>> +
+>>   	tpm_irq: tpm-irq {
+>>   		samsung,pins = "gpx1-0";
+>>   		samsung,pin-function = <0>;
+>> @@ -752,6 +778,13 @@
+>>   		samsung,pin-drv = <0>;
+>>   	};
+>>
+>> +	dev_mode: dev-mode {
+>> +		samsung,pins = "gpx1-3";
+>> +		samsung,pin-function = <0>;
+>> +		samsung,pin-pud = <3>;
+>> +		samsung,pin-drv = <0>;
+>> +	};
+>> +
+>>   	ec_irq: ec-irq {
+>>   		samsung,pins = "gpx1-5";
+>>   		samsung,pin-function = <0>;
+>> @@ -773,6 +806,13 @@
+>>   		samsung,pin-drv = <0>;
+>>   	};
+>>
+>> +	wp_gpio: wp_gpio {
+>> +		samsung,pins = "gpx3-0";
+>> +		samsung,pin-function = <0>;
+>> +		samsung,pin-pud = <0>;
+>> +		samsung,pin-drv = <0>;
+>> +	};
+>> +
+>>   	max77802_irq: max77802-irq {
+>>   		samsung,pins = "gpx3-1";
+>>   		samsung,pin-function = <0>;
+>>
+>
