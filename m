@@ -1,50 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] power: Build power/avs when POWER_AVS is selected but
- POWER_SUPPLY is not
-Date: Wed, 02 Dec 2015 14:59:07 +0900
-Message-ID: <1449035947-16758-2-git-send-email-k.kozlowski@samsung.com>
-References: <1449035947-16758-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1449035947-16758-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Pavel Fedin <p.fedin@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v4 0/3] Exynos4210: fix power domain for MDMA1 device
+Date: Wed, 02 Dec 2015 08:21:40 +0100
+Message-ID: <1449040903-26674-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:16044 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754535AbbLBHVx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Dec 2015 02:21:53 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-POWER_AVS can be selected from top-drivers menu and it does not depend
-on POWER_SUPPLY. However in such case (POWER_SUPPLY is not enabled) all
-objects will be skipped by make.
+This patchset fixes mysterious boot hang on Exynos 4210 SoCs, when IOMMU
+is enabled. There is no direct dependency between IOMMU devices and
+MDMA1. However enabling IOMMU changes the device probe order, what
+results in LCD0 power domain being turned off for some time. During that
+time the registration of MDMA1 device happens, what results in system
+hangs, because the common bus code tries to read PID/CID registers from
+turned-off device.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/Makefile       | 1 +
- drivers/power/Makefile | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+Changes since v3 include some more code refactoring done to fix issues
+pointed by Ulf Hansson and Russel King.
 
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 0ebb49d0e57e..a3717decf3e7 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -106,6 +106,7 @@ obj-y				+= i2c/ media/
- obj-$(CONFIG_PPS)		+= pps/
- obj-$(CONFIG_PTP_1588_CLOCK)	+= ptp/
- obj-$(CONFIG_W1)		+= w1/
-+obj-$(CONFIG_POWER_AVS)		+= power/avs/
- obj-$(CONFIG_POWER_RESET)	+= power/reset/
- obj-$(CONFIG_POWER_SUPPLY)	+= power/
- obj-$(CONFIG_HWMON)		+= hwmon/
-diff --git a/drivers/power/Makefile b/drivers/power/Makefile
-index ac430b373f84..d6a1ddb20fec 100644
---- a/drivers/power/Makefile
-+++ b/drivers/power/Makefile
-@@ -65,7 +65,6 @@ obj-$(CONFIG_CHARGER_BQ24190)	+= bq24190_charger.o
- obj-$(CONFIG_CHARGER_BQ24257)	+= bq24257_charger.o
- obj-$(CONFIG_CHARGER_BQ24735)	+= bq24735-charger.o
- obj-$(CONFIG_CHARGER_BQ25890)	+= bq25890_charger.o
--obj-$(CONFIG_POWER_AVS)		+= avs/
- obj-$(CONFIG_CHARGER_SMB347)	+= smb347-charger.o
- obj-$(CONFIG_CHARGER_TPS65090)	+= tps65090-charger.o
- obj-$(CONFIG_CHARGER_TPS65217)	+= tps65217_charger.o
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Changelog:
+
+v4:
+- fixed more issues pointed by Ulf Hansson and Russell King
+
+v3: https://lkml.org/lkml/2015/12/1/334
+- fixed issues pointed by Ulf Hansson
+- dropped patch for exynos4210 dts, because it already got queued for merging
+
+v2: https://lkml.org/lkml/2015/11/26/229
+- added 2 patches from 'On-demand device probing' thread
+  (https://lkml.org/lkml/2015/9/29/189), which move PID/CIR reading
+  from amba_device_add() to amba_match()
+- moved dev_pm_domain_attach() to amba_match(), which is allowed to
+  return -EPROBE_DEFER
+
+v1: http://www.spinics.net/lists/arm-kernel/msg463185.html
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (1):
+  ARM: amba: Properly handle devices with power domains
+
+Tomeu Vizoso (2):
+  driver core: handle -EPROBE_DEFER from bus_type.match()
+  ARM: amba: Move reading of periphid to amba_match()
+
+ Documentation/driver-model/porting.txt |   6 +-
+ drivers/amba/bus.c                     | 152 ++++++++++++++++++---------------
+ drivers/base/dd.c                      |  24 +++++-
+ include/linux/device.h                 |   7 +-
+ 4 files changed, 112 insertions(+), 77 deletions(-)
+
 -- 
-1.9.1
-
+1.9.2
