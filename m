@@ -1,31 +1,18 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 6/9] ARM: EXYNOS: clk: Another clock dependency, ARMv7,
- for v4.5
-Date: Wed, 02 Dec 2015 10:39:43 +0900
-Message-ID: <1449020386-20250-7-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 8/9] ARM64: EXYNOS: dts: DeviceTree for ARM64 for v4.5
+Date: Wed, 02 Dec 2015 10:39:45 +0900
+Message-ID: <1449020386-20250-9-git-send-email-k.kozlowski@samsung.com>
 References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, k.kozlowski@samsung.com, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>, k.kozlowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Kukjin,
 
-This is also clock dependency. I put it in separate tag in case clock
-folks want to pull it also.
+Few changes for Espresso board.
 
 Best regards,
 Krzysztof
@@ -37,20 +24,25 @@ The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-exynos4-4.5
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.5
 
-for you to fetch changes up to 94af7a3c310f5877dc6f756179b92f24f89a9b08:
+for you to fetch changes up to fb026cb6524744c8bd0f133f4b0d8e2595d04e15:
 
-  clk: samsung: exynos4: Add SSS gate clock (2015-11-18 22:02:02 +0900)
-
-----------------------------------------------------------------
-Add a Security SubSystem (SSS) clock for Exynos4, needed by exynos-rng
-driver (Pseudo Random Number Generator).
+  arm64: dts: Add reboot node for exynos7 (2015-11-18 22:47:16 +0900)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      clk: samsung: exynos4: Add SSS gate clock
+Samsung DeviceTree ARM64 updates and improvements for 4.5:
+1. Add S2MPS15 PMIC node to Espresso board. This gives proper
+   control over regulators, provides 32KHz clocks and RTC driver.
+2. Enable HS200 mode operation on Espresso board for MMC0.
+3. Add reboot capability (generic syscon-reboot).
 
- drivers/clk/samsung/clk-exynos4.c   | 1 +
- include/dt-bindings/clock/exynos4.h | 1 +
- 2 files changed, 2 insertions(+)
+----------------------------------------------------------------
+Alim Akhtar (3):
+      arm64: dts: Add S2MPS15 PMIC node on exynos7-espresso
+      arm64: dts: Enable HS200 mode operation on exynos7-espresso
+      arm64: dts: Add reboot node for exynos7
+
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 282 +++++++++++++++++++++++-
+ arch/arm64/boot/dts/exynos/exynos7.dtsi         |   7 +
+ 2 files changed, 288 insertions(+), 1 deletion(-)
