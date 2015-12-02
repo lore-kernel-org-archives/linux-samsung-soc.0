@@ -1,43 +1,52 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 0/9] ARM: EXYNOS: Pull request for v4.5
-Date: Wed, 02 Dec 2015 10:39:37 +0900
-Message-ID: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:62719 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753637AbbLBBkI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Dec 2015 20:40:08 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL 1/9] ARM: EXYNOS: dts: Syscon dependency for v4.5
+Date: Wed, 02 Dec 2015 10:39:38 +0900
+Message-ID: <1449020386-20250-2-git-send-email-k.kozlowski@samsung.com>
+References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>, k.kozlowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Kukjin,
 
-A lot of stuff for v4.5 with 3 dependencies split into
-separate tags. The need for dependency is explained both
-in merge-commit and in description of a tag which is using
-the dependency.
+The DT changes are needed before switching to syscon-based reboot
+and power off method.
 
-The order goes like (but of course dependencies
-could be pulled all at once at beginning):
-1. tags/samsung-dt-syscon-restart-4.5
-2. tags/samsung-soc-4.5
-3. tags/samsung-clk-arm64-symbols-4.5
-4. tags/samsung-soc64-4.5
-5. tags/samsung-drivers-4.5
-6. tags/samsung-clk-exynos4-4.5
-7. tags/samsung-dt-4.5
-8. tags/samsung-dt64-4.5
-9. tags/samsung-defconfig-4.5
-
-I split dependencies to three tags so clock or other folks could
-easily grab them if needed.
-
-Please share your comments or pull as early as possible as we have here
-some more dependencies than usual.
-
-
-Kind regards,
+Best regards,
 Krzysztof
+
+
+
+The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+
+  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-syscon-restart-4.5
+
+for you to fetch changes up to 35135f4b95f03be7ebbf31221ce738f1ec0faa02:
+
+  ARM: dts: Add syscon-{reboot, poweroff} nodes for exynos5410 (2015-11-20 15:58:44 +0900)
+
+----------------------------------------------------------------
+Device Tree changes adding necessary nodes for syscon reboot/poweroff
+handlers on Exynos boards. The mach-exynos changes must base on top
+of this to retain the bisectability of not loosing reboot/poweroff
+features.
+
+----------------------------------------------------------------
+Alim Akhtar (4):
+      ARM: dts: Add syscon-{reboot, poweroff} nodes for exynos3250
+      ARM: dts: Add syscon-{reboot, poweroff} nodes for exynos4
+      ARM: dts: Add syscon-{reboot, poweroff} nodes for exynos5
+      ARM: dts: Add syscon-{reboot, poweroff} nodes for exynos5410
+
+ arch/arm/boot/dts/exynos3250.dtsi | 14 ++++++++++++++
+ arch/arm/boot/dts/exynos4.dtsi    | 14 ++++++++++++++
+ arch/arm/boot/dts/exynos5.dtsi    | 14 ++++++++++++++
+ arch/arm/boot/dts/exynos5410.dtsi | 14 ++++++++++++++
+ 4 files changed, 56 insertions(+)
