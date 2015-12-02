@@ -1,61 +1,95 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 4/9] ARM64: EXYNOS: Soc specific code for v4.5
-Date: Wed, 02 Dec 2015 10:39:41 +0900
-Message-ID: <1449020386-20250-5-git-send-email-k.kozlowski@samsung.com>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: simplify sleep PM ops
+Date: Wed, 02 Dec 2015 11:03:20 +0900
+Message-ID: <565E5168.3060803@samsung.com>
+References: <1448634765-19480-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, k.kozlowski@samsung.com, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1448634765-19480-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
-
-ARM64 change touch also defconfig.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.5
-
-for you to fetch changes up to db44c07a3f0b32815bd1f3e731db9e043e57cf9c:
-
-  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS (2015-11-22 19:31:30 +0900)
-
-----------------------------------------------------------------
-Samsung Exynos ARM64 improvements:
-1. Use just one Kconfig symbol for Exynos SoC: ARCH_EXYNOS.
-   This depends on change in drivers/clk where the old ARCH_EXYNOS7
-   was used.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (3):
-      clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-      Merge tag 'samsung-clk-arm64-symbols-4.5' into next/soc64
-      arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
-
- arch/arm64/Kconfig.platforms        | 11 ++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- drivers/clk/samsung/Kconfig         |  6 ++++++
- drivers/clk/samsung/Makefile        |  4 ++--
- 5 files changed, 12 insertions(+), 13 deletions(-)
+SGkgQW5kcnplaiwKCjIwMTXrhYQgMTHsm5QgMjfsnbwgMjM6MzLsl5AgQW5kcnplaiBIYWpkYSDs
+nbQo6rCAKSDsk7Qg6riAOgo+IFBNIG9wcyBpbiBleHlub3NfZHJtX2RydiB3ZXJlIHNwbGl0IGlu
+dG8gdHdvIHNlcGFyYXRlIGZ1bmN0aW9uIGFzIHRoZXkgd2VyZQo+IHVzZWQgYWxzbyBieSBkcm0g
+ZGV2aWNlLiBTaW5jZSBQTSBvcHMgaGF2ZSBiZWVuIHJlbW92ZWQgZnJvbSBkcm0gZGV2aWNlLCB0
+aGUKPiBmdW5jdGlvbnMgY2FuIGJlIG1lcmdlZCB0b2dldGhlci4KPiAKPiBTaWduZWQtb2ZmLWJ5
+OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IC0tLQo+IEhpIElua2ksCj4g
+Cj4gVGhpcyBpcyB0aGUgcGF0Y2ggSSBoYXZlIHByb21pc2VkIGR1cmluZyBvdXIgZGlzY3Vzc2lv
+biBhYm91dAo+IFBNIGNhbGxiY2tzIGluIGNvbXBvbmVudHMuCgpUaGFua3MgZm9yIHlvdXIgcGF0
+Y2guIEkgd2lsbCBjaGVjayBpdC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmVnYXJkcwo+IEFu
+ZHJ6ZWoKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgNzYg
+KysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAzMCBp
+bnNlcnRpb25zKCspLCA0NiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2Rydi5jCj4gaW5kZXggMmM2MDE5ZC4uOTc1Njc5N2EgMTAwNjQ0Cj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gQEAgLTMwNCw0NSArMzA0LDYgQEAgaW50
+IGV4eW5vc19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1f
+YXRvbWljX3N0YXRlICpzdGF0ZSwKPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+IC0jaWZkZWYgQ09O
+RklHX1BNX1NMRUVQCj4gLXN0YXRpYyBpbnQgZXh5bm9zX2RybV9zdXNwZW5kKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYsIHBtX21lc3NhZ2VfdCBzdGF0ZSkKPiAtewo+IC0Jc3RydWN0IGRybV9jb25u
+ZWN0b3IgKmNvbm5lY3RvcjsKPiAtCj4gLQlkcm1fbW9kZXNldF9sb2NrX2FsbChkZXYpOwo+IC0J
+bGlzdF9mb3JfZWFjaF9lbnRyeShjb25uZWN0b3IsICZkZXYtPm1vZGVfY29uZmlnLmNvbm5lY3Rv
+cl9saXN0LCBoZWFkKSB7Cj4gLQkJaW50IG9sZF9kcG1zID0gY29ubmVjdG9yLT5kcG1zOwo+IC0K
+PiAtCQlpZiAoY29ubmVjdG9yLT5mdW5jcy0+ZHBtcykKPiAtCQkJY29ubmVjdG9yLT5mdW5jcy0+
+ZHBtcyhjb25uZWN0b3IsIERSTV9NT0RFX0RQTVNfT0ZGKTsKPiAtCj4gLQkJLyogU2V0IHRoZSBv
+bGQgbW9kZSBiYWNrIHRvIHRoZSBjb25uZWN0b3IgZm9yIHJlc3VtZSAqLwo+IC0JCWNvbm5lY3Rv
+ci0+ZHBtcyA9IG9sZF9kcG1zOwo+IC0JfQo+IC0JZHJtX21vZGVzZXRfdW5sb2NrX2FsbChkZXYp
+Owo+IC0KPiAtCXJldHVybiAwOwo+IC19Cj4gLQo+IC1zdGF0aWMgaW50IGV4eW5vc19kcm1fcmVz
+dW1lKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4gLXsKPiAtCXN0cnVjdCBkcm1fY29ubmVjdG9y
+ICpjb25uZWN0b3I7Cj4gLQo+IC0JZHJtX21vZGVzZXRfbG9ja19hbGwoZGV2KTsKPiAtCWxpc3Rf
+Zm9yX2VhY2hfZW50cnkoY29ubmVjdG9yLCAmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfbGlz
+dCwgaGVhZCkgewo+IC0JCWlmIChjb25uZWN0b3ItPmZ1bmNzLT5kcG1zKSB7Cj4gLQkJCWludCBk
+cG1zID0gY29ubmVjdG9yLT5kcG1zOwo+IC0KPiAtCQkJY29ubmVjdG9yLT5kcG1zID0gRFJNX01P
+REVfRFBNU19PRkY7Cj4gLQkJCWNvbm5lY3Rvci0+ZnVuY3MtPmRwbXMoY29ubmVjdG9yLCBkcG1z
+KTsKPiAtCQl9Cj4gLQl9Cj4gLQlkcm1fbW9kZXNldF91bmxvY2tfYWxsKGRldik7Cj4gLQo+IC0J
+cmV0dXJuIDA7Cj4gLX0KPiAtI2VuZGlmCj4gLQo+ICBzdGF0aWMgaW50IGV4eW5vc19kcm1fb3Bl
+bihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCj4gIHsKPiAg
+CXN0cnVjdCBkcm1fZXh5bm9zX2ZpbGVfcHJpdmF0ZSAqZmlsZV9wcml2Owo+IEBAIC00NzYsMzEg
+KzQzNyw1NCBAQCBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIgZXh5bm9zX2RybV9kcml2ZXIgPSB7
+Cj4gIH07Cj4gIAo+ICAjaWZkZWYgQ09ORklHX1BNX1NMRUVQCj4gLXN0YXRpYyBpbnQgZXh5bm9z
+X2RybV9zeXNfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gK3N0YXRpYyBpbnQgZXh5bm9z
+X2RybV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPiAgewo+ICAJc3RydWN0IGRybV9kZXZp
+Y2UgKmRybV9kZXYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAtCXBtX21lc3NhZ2VfdCBtZXNz
+YWdlOwo+ICsJc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcjsKPiAgCj4gIAlpZiAocG1f
+cnVudGltZV9zdXNwZW5kZWQoZGV2KSB8fCAhZHJtX2RldikKPiAgCQlyZXR1cm4gMDsKPiAgCj4g
+LQltZXNzYWdlLmV2ZW50ID0gUE1fRVZFTlRfU1VTUEVORDsKPiAtCXJldHVybiBleHlub3NfZHJt
+X3N1c3BlbmQoZHJtX2RldiwgbWVzc2FnZSk7Cj4gKwlkcm1fbW9kZXNldF9sb2NrX2FsbChkcm1f
+ZGV2KTsKPiArCWRybV9mb3JfZWFjaF9jb25uZWN0b3IoY29ubmVjdG9yLCBkcm1fZGV2KSB7Cj4g
+KwkJaW50IG9sZF9kcG1zID0gY29ubmVjdG9yLT5kcG1zOwo+ICsKPiArCQlpZiAoY29ubmVjdG9y
+LT5mdW5jcy0+ZHBtcykKPiArCQkJY29ubmVjdG9yLT5mdW5jcy0+ZHBtcyhjb25uZWN0b3IsIERS
+TV9NT0RFX0RQTVNfT0ZGKTsKPiArCj4gKwkJLyogU2V0IHRoZSBvbGQgbW9kZSBiYWNrIHRvIHRo
+ZSBjb25uZWN0b3IgZm9yIHJlc3VtZSAqLwo+ICsJCWNvbm5lY3Rvci0+ZHBtcyA9IG9sZF9kcG1z
+Owo+ICsJfQo+ICsJZHJtX21vZGVzZXRfdW5sb2NrX2FsbChkcm1fZGV2KTsKPiArCj4gKwlyZXR1
+cm4gMDsKPiAgfQo+ICAKPiAtc3RhdGljIGludCBleHlub3NfZHJtX3N5c19yZXN1bWUoc3RydWN0
+IGRldmljZSAqZGV2KQo+ICtzdGF0aWMgaW50IGV4eW5vc19kcm1fcmVzdW1lKHN0cnVjdCBkZXZp
+Y2UgKmRldikKPiAgewo+ICAJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkZXZfZ2V0X2Ry
+dmRhdGEoZGV2KTsKPiArCXN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3I7Cj4gIAo+ICAJ
+aWYgKHBtX3J1bnRpbWVfc3VzcGVuZGVkKGRldikgfHwgIWRybV9kZXYpCj4gIAkJcmV0dXJuIDA7
+Cj4gIAo+IC0JcmV0dXJuIGV4eW5vc19kcm1fcmVzdW1lKGRybV9kZXYpOwo+ICsJZHJtX21vZGVz
+ZXRfbG9ja19hbGwoZHJtX2Rldik7Cj4gKwlkcm1fZm9yX2VhY2hfY29ubmVjdG9yKGNvbm5lY3Rv
+ciwgZHJtX2Rldikgewo+ICsJCWlmIChjb25uZWN0b3ItPmZ1bmNzLT5kcG1zKSB7Cj4gKwkJCWlu
+dCBkcG1zID0gY29ubmVjdG9yLT5kcG1zOwo+ICsKPiArCQkJY29ubmVjdG9yLT5kcG1zID0gRFJN
+X01PREVfRFBNU19PRkY7Cj4gKwkJCWNvbm5lY3Rvci0+ZnVuY3MtPmRwbXMoY29ubmVjdG9yLCBk
+cG1zKTsKPiArCQl9Cj4gKwl9Cj4gKwlkcm1fbW9kZXNldF91bmxvY2tfYWxsKGRybV9kZXYpOwo+
+ICsKPiArCXJldHVybiAwOwo+ICB9Cj4gICNlbmRpZgo+ICAKPiAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBkZXZfcG1fb3BzIGV4eW5vc19kcm1fcG1fb3BzID0gewo+IC0JU0VUX1NZU1RFTV9TTEVFUF9Q
+TV9PUFMoZXh5bm9zX2RybV9zeXNfc3VzcGVuZCwgZXh5bm9zX2RybV9zeXNfcmVzdW1lKQo+ICsJ
+U0VUX1NZU1RFTV9TTEVFUF9QTV9PUFMoZXh5bm9zX2RybV9zdXNwZW5kLCBleHlub3NfZHJtX3Jl
+c3VtZSkKPiAgfTsKPiAgCj4gIC8qIGZvcndhcmQgZGVjbGFyYXRpb24gKi8KPiAKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
