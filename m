@@ -1,18 +1,31 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 9/9] ARM: EXYNOS: Defconfig for v4.5
-Date: Wed, 02 Dec 2015 10:39:46 +0900
-Message-ID: <1449020386-20250-10-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 6/9] ARM: EXYNOS: clk: Another clock dependency, ARMv7,
+ for v4.5
+Date: Wed, 02 Dec 2015 10:39:43 +0900
+Message-ID: <1449020386-20250-7-git-send-email-k.kozlowski@samsung.com>
 References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>, k.kozlowski@samsung.com
+Cc: devicetree@vger.kernel.org, k.kozlowski@samsung.com, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Kukjin,
 
-This may conflict with other arm-soc updates...
+This is also clock dependency. I put it in separate tag in case clock
+folks want to pull it also.
 
 Best regards,
 Krzysztof
@@ -24,37 +37,20 @@ The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
 are available in the git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.5
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-exynos4-4.5
 
-for you to fetch changes up to 00a5e81fff2d81c3b1bf45712d3a12c905bc7c66:
+for you to fetch changes up to 94af7a3c310f5877dc6f756179b92f24f89a9b08:
 
-  ARM: exynos_defconfig: Set recommended options for systemd (2015-12-01 08:28:44 +0900)
-
-----------------------------------------------------------------
-Defconfig (exynos and multi_v7) changes for Exynos based boards for 4.5:
-1. Enable Maxim 8997 and 77693 family drivers (charger, extcon, LED,
-   RTC, haptic/motor, regulator).
-2. Build ChromeOS EC drivers as modules on multi_v7.
-3. Enable drivers important for Exynos4210-based Universal C210 board.
-4. Enable NFSv4 client.
-5. On exynos_defconfig set some options to a value recommended
-   by systemd. This also makes it more consistent with multi_v7.
+  clk: samsung: exynos4: Add SSS gate clock (2015-11-18 22:02:02 +0900)
 
 ----------------------------------------------------------------
-Javier Martinez Canillas (1):
-      ARM: multi_v7_defconfig: Build ChromeOS EC drivers as modules
+Add a Security SubSystem (SSS) clock for Exynos4, needed by exynos-rng
+driver (Pseudo Random Number Generator).
 
-Krzysztof Kozlowski (6):
-      ARM: exynos_defconfig: Enable Maxim 8997 family drivers
-      ARM: exynos_defconfig: Enable Maxim 77693 LED and haptic drivers
-      ARM: multi_v7_defconfig: Enable Maxim 8997 family drivers
-      ARM: multi_v7_defconfig: Enable Maxim 77693 LED and haptic drivers
-      ARM: exynos_defconfig: Enable NFSv4 client
-      ARM: exynos_defconfig: Set recommended options for systemd
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      clk: samsung: exynos4: Add SSS gate clock
 
-Marek Szyprowski (1):
-      ARM: exynos_defconfig: Add drivers for Exynos4210 Universal C210 board
-
- arch/arm/configs/exynos_defconfig   | 18 ++++++++++++++++--
- arch/arm/configs/multi_v7_defconfig | 15 ++++++++++++---
- 2 files changed, 28 insertions(+), 5 deletions(-)
+ drivers/clk/samsung/clk-exynos4.c   | 1 +
+ include/dt-bindings/clock/exynos4.h | 1 +
+ 2 files changed, 2 insertions(+)
