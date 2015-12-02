@@ -1,54 +1,57 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: dp: fix wrong return type
-Date: Wed, 02 Dec 2015 20:51:49 +0900
-Message-ID: <565EDB55.2030701@samsung.com>
-References: <1448542040-22057-1-git-send-email-inki.dae@samsung.com>
- <1448542040-22057-3-git-send-email-inki.dae@samsung.com>
- <56570AB1.3070408@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <56570AB1.3070408@osg.samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH v2 2/2] drm/exynos: dp: fix wrong return type
+Date: Wed, 02 Dec 2015 20:57:52 +0900
+Message-ID: <1449057472-4389-2-git-send-email-inki.dae@samsung.com>
+References: <1449057472-4389-1-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49895 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757998AbbLBL54 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Dec 2015 06:57:56 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NYQ02Y0QBWIUIE0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 02 Dec 2015 20:57:54 +0900 (KST)
+In-reply-to: <1449057472-4389-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com, Inki Dae <inki.dae@samsung.com>
 
-SGkgSmF2aWVyLAoKMjAxNeuFhCAxMeyblCAyNuydvCAyMjozNeyXkCBKYXZpZXIgTWFydGluZXog
-Q2FuaWxsYXMg7J20KOqwgCkg7JO0IOq4gDoKPiBbYWRkaW5nIEFqYXkgS3VtYXIgd2hvIGFkZGVk
-IHRoZSBicmlkZ2Ugc3VwcG9ydF0KPiAKPiBIZWxsbyBJbmtpLAo+IAo+IE9uIDExLzI2LzIwMTUg
-MDk6NDcgQU0sIElua2kgRGFlIHdyb3RlOgo+PiBUaGlzIHBhdGNoIGZpeGVzIHdyb25nIHJldHVy
-biB0eXBlIHdoZW4gZHQgYmluZGluZyBvZiBicmlkZ2UgZGV2aWNlCj4+IGZhaWxlZC4KPj4KPj4g
-SWYgYSBib2FyZCBoYXMgYSBicmlkZ2UgZGV2aWNlIHRoZW4gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9w
-b3J0X3BhcmVudAo+PiBmdW5jdGlvbiBzaG91bGRuJ3QgYmUgTlVMTC4gU28gdGhpcyBwYXRjaCB3
-aWxsIHJldHVybiBhIHByb3BlciBlcnJvcgo+PiB0eXBlIHNvIHRoYXQgdGhlIGRlZmVycmVkIHBy
-b2JlIGlzbid0IHRyaWdnZXJlZC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2ku
-ZGFlQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RwX2NvcmUuYyB8IDYgKysrKy0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCsp
-LCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29y
-ZS5jCj4+IGluZGV4IDBiNTMwNDUuLmM3N2ZiODMgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcF9jb3JlLmMKPj4gQEAgLTE0MzYsOCArMTQzNiwxMCBAQCBzdGF0aWMgaW50
-IGV4eW5vc19kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAgCQkJb2Zf
-bm9kZV9wdXQoYnJpZGdlX25vZGUpOwo+PiAgCQkJaWYgKCFkcC0+cHRuX2JyaWRnZSkKPj4gIAkJ
-CQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsKPj4gLQkJfSBlbHNlCj4+IC0JCQlyZXR1cm4gLUVQUk9C
-RV9ERUZFUjsKPj4gKwkJfSBlbHNlIHsKPj4gKwkJCURSTV9FUlJPUigibm8gcG9ydCBub2RlIGZv
-ciBicmlkZ2UgZGV2aWNlLlxuIik7Cj4+ICsJCQlyZXR1cm4gLUVOWElPOwo+PiArCQl9Cj4+ICAJ
-fQo+PiAgCj4gCj4gQXMgSSBtZW50aW9uZWQgaW4gdGhlIG90aGVyIHRocmVhZCwgSSB3b25kZXIg
-aWYgLUVOWElPIGlzIHRoZSBiZXN0IGVycm5vCj4gY29kZSBpbiB0aGlzIGNhc2UuIFNob3VsZG4n
-dCAtRUlOVkFMIGJlIG1vcmUgYXBwcm9wcmlhdGUgc2luY2UgaXMgYWJvdXQKPiBhbiBpbnZhbGlk
-IERUQj8KClNlZW1zIGJldHRlciB0byB1c2UgLUVJTlZBTC4KClRoYW5rcywKSW5raSBEYWUKCj4g
-Cj4+ICAJcG1fcnVudGltZV9lbmFibGUoZGV2KTsKPj4KPiAKPiBCZXN0IHJlZ2FyZHMsCj4gCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+This patch fixes wrong return type when dt binding of bridge device
+failed.
+
+If a board has a bridge device then of_graph_get_remote_port_parent
+function shouldn't be NULL. So this patch will return a proper error
+type so that the deferred probe isn't triggered.
+
+Changelog v2:
+- return -EINVAL if getting a port node failed.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_dp_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 0b53045..c77fb83 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -1436,8 +1436,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 			of_node_put(bridge_node);
+ 			if (!dp->ptn_bridge)
+ 				return -EPROBE_DEFER;
+-		} else
+-			return -EPROBE_DEFER;
++		} else {
++			DRM_ERROR("no port node for bridge device.\n");
++			return -EINVAL;
++		}
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+-- 
+1.9.1
