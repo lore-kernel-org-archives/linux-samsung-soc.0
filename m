@@ -1,95 +1,64 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: simplify sleep PM ops
-Date: Wed, 02 Dec 2015 11:03:20 +0900
-Message-ID: <565E5168.3060803@samsung.com>
-References: <1448634765-19480-1-git-send-email-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 5/5] ARM: exynos: select POWER_RESET_SYSCON and
+ POWER_RESET_SYSCON_POWEROFF
+Date: Wed, 02 Dec 2015 14:21:47 +0900
+Message-ID: <565E7FEB.3040806@samsung.com>
+References: <1447996629-18232-1-git-send-email-alim.akhtar@samsung.com>
+ <1447996629-18232-6-git-send-email-alim.akhtar@samsung.com>
+ <010401d12c17$1e883d10$5b98b730$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1448634765-19480-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:64597 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751002AbbLBFVv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Dec 2015 00:21:51 -0500
+In-reply-to: <010401d12c17$1e883d10$5b98b730$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pavel Fedin <p.fedin@samsung.com>, 'Alim Akhtar' <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, ulf.hansson@linaro.org
 
-SGkgQW5kcnplaiwKCjIwMTXrhYQgMTHsm5QgMjfsnbwgMjM6MzLsl5AgQW5kcnplaiBIYWpkYSDs
-nbQo6rCAKSDsk7Qg6riAOgo+IFBNIG9wcyBpbiBleHlub3NfZHJtX2RydiB3ZXJlIHNwbGl0IGlu
-dG8gdHdvIHNlcGFyYXRlIGZ1bmN0aW9uIGFzIHRoZXkgd2VyZQo+IHVzZWQgYWxzbyBieSBkcm0g
-ZGV2aWNlLiBTaW5jZSBQTSBvcHMgaGF2ZSBiZWVuIHJlbW92ZWQgZnJvbSBkcm0gZGV2aWNlLCB0
-aGUKPiBmdW5jdGlvbnMgY2FuIGJlIG1lcmdlZCB0b2dldGhlci4KPiAKPiBTaWduZWQtb2ZmLWJ5
-OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IC0tLQo+IEhpIElua2ksCj4g
-Cj4gVGhpcyBpcyB0aGUgcGF0Y2ggSSBoYXZlIHByb21pc2VkIGR1cmluZyBvdXIgZGlzY3Vzc2lv
-biBhYm91dAo+IFBNIGNhbGxiY2tzIGluIGNvbXBvbmVudHMuCgpUaGFua3MgZm9yIHlvdXIgcGF0
-Y2guIEkgd2lsbCBjaGVjayBpdC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmVnYXJkcwo+IEFu
-ZHJ6ZWoKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgNzYg
-KysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAzMCBp
-bnNlcnRpb25zKCspLCA0NiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2Rydi5jCj4gaW5kZXggMmM2MDE5ZC4uOTc1Njc5N2EgMTAwNjQ0Cj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gQEAgLTMwNCw0NSArMzA0LDYgQEAgaW50
-IGV4eW5vc19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1f
-YXRvbWljX3N0YXRlICpzdGF0ZSwKPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+IC0jaWZkZWYgQ09O
-RklHX1BNX1NMRUVQCj4gLXN0YXRpYyBpbnQgZXh5bm9zX2RybV9zdXNwZW5kKHN0cnVjdCBkcm1f
-ZGV2aWNlICpkZXYsIHBtX21lc3NhZ2VfdCBzdGF0ZSkKPiAtewo+IC0Jc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvcjsKPiAtCj4gLQlkcm1fbW9kZXNldF9sb2NrX2FsbChkZXYpOwo+IC0J
-bGlzdF9mb3JfZWFjaF9lbnRyeShjb25uZWN0b3IsICZkZXYtPm1vZGVfY29uZmlnLmNvbm5lY3Rv
-cl9saXN0LCBoZWFkKSB7Cj4gLQkJaW50IG9sZF9kcG1zID0gY29ubmVjdG9yLT5kcG1zOwo+IC0K
-PiAtCQlpZiAoY29ubmVjdG9yLT5mdW5jcy0+ZHBtcykKPiAtCQkJY29ubmVjdG9yLT5mdW5jcy0+
-ZHBtcyhjb25uZWN0b3IsIERSTV9NT0RFX0RQTVNfT0ZGKTsKPiAtCj4gLQkJLyogU2V0IHRoZSBv
-bGQgbW9kZSBiYWNrIHRvIHRoZSBjb25uZWN0b3IgZm9yIHJlc3VtZSAqLwo+IC0JCWNvbm5lY3Rv
-ci0+ZHBtcyA9IG9sZF9kcG1zOwo+IC0JfQo+IC0JZHJtX21vZGVzZXRfdW5sb2NrX2FsbChkZXYp
-Owo+IC0KPiAtCXJldHVybiAwOwo+IC19Cj4gLQo+IC1zdGF0aWMgaW50IGV4eW5vc19kcm1fcmVz
-dW1lKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4gLXsKPiAtCXN0cnVjdCBkcm1fY29ubmVjdG9y
-ICpjb25uZWN0b3I7Cj4gLQo+IC0JZHJtX21vZGVzZXRfbG9ja19hbGwoZGV2KTsKPiAtCWxpc3Rf
-Zm9yX2VhY2hfZW50cnkoY29ubmVjdG9yLCAmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfbGlz
-dCwgaGVhZCkgewo+IC0JCWlmIChjb25uZWN0b3ItPmZ1bmNzLT5kcG1zKSB7Cj4gLQkJCWludCBk
-cG1zID0gY29ubmVjdG9yLT5kcG1zOwo+IC0KPiAtCQkJY29ubmVjdG9yLT5kcG1zID0gRFJNX01P
-REVfRFBNU19PRkY7Cj4gLQkJCWNvbm5lY3Rvci0+ZnVuY3MtPmRwbXMoY29ubmVjdG9yLCBkcG1z
-KTsKPiAtCQl9Cj4gLQl9Cj4gLQlkcm1fbW9kZXNldF91bmxvY2tfYWxsKGRldik7Cj4gLQo+IC0J
-cmV0dXJuIDA7Cj4gLX0KPiAtI2VuZGlmCj4gLQo+ICBzdGF0aWMgaW50IGV4eW5vc19kcm1fb3Bl
-bihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCj4gIHsKPiAg
-CXN0cnVjdCBkcm1fZXh5bm9zX2ZpbGVfcHJpdmF0ZSAqZmlsZV9wcml2Owo+IEBAIC00NzYsMzEg
-KzQzNyw1NCBAQCBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIgZXh5bm9zX2RybV9kcml2ZXIgPSB7
-Cj4gIH07Cj4gIAo+ICAjaWZkZWYgQ09ORklHX1BNX1NMRUVQCj4gLXN0YXRpYyBpbnQgZXh5bm9z
-X2RybV9zeXNfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gK3N0YXRpYyBpbnQgZXh5bm9z
-X2RybV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPiAgewo+ICAJc3RydWN0IGRybV9kZXZp
-Y2UgKmRybV9kZXYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiAtCXBtX21lc3NhZ2VfdCBtZXNz
-YWdlOwo+ICsJc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcjsKPiAgCj4gIAlpZiAocG1f
-cnVudGltZV9zdXNwZW5kZWQoZGV2KSB8fCAhZHJtX2RldikKPiAgCQlyZXR1cm4gMDsKPiAgCj4g
-LQltZXNzYWdlLmV2ZW50ID0gUE1fRVZFTlRfU1VTUEVORDsKPiAtCXJldHVybiBleHlub3NfZHJt
-X3N1c3BlbmQoZHJtX2RldiwgbWVzc2FnZSk7Cj4gKwlkcm1fbW9kZXNldF9sb2NrX2FsbChkcm1f
-ZGV2KTsKPiArCWRybV9mb3JfZWFjaF9jb25uZWN0b3IoY29ubmVjdG9yLCBkcm1fZGV2KSB7Cj4g
-KwkJaW50IG9sZF9kcG1zID0gY29ubmVjdG9yLT5kcG1zOwo+ICsKPiArCQlpZiAoY29ubmVjdG9y
-LT5mdW5jcy0+ZHBtcykKPiArCQkJY29ubmVjdG9yLT5mdW5jcy0+ZHBtcyhjb25uZWN0b3IsIERS
-TV9NT0RFX0RQTVNfT0ZGKTsKPiArCj4gKwkJLyogU2V0IHRoZSBvbGQgbW9kZSBiYWNrIHRvIHRo
-ZSBjb25uZWN0b3IgZm9yIHJlc3VtZSAqLwo+ICsJCWNvbm5lY3Rvci0+ZHBtcyA9IG9sZF9kcG1z
-Owo+ICsJfQo+ICsJZHJtX21vZGVzZXRfdW5sb2NrX2FsbChkcm1fZGV2KTsKPiArCj4gKwlyZXR1
-cm4gMDsKPiAgfQo+ICAKPiAtc3RhdGljIGludCBleHlub3NfZHJtX3N5c19yZXN1bWUoc3RydWN0
-IGRldmljZSAqZGV2KQo+ICtzdGF0aWMgaW50IGV4eW5vc19kcm1fcmVzdW1lKHN0cnVjdCBkZXZp
-Y2UgKmRldikKPiAgewo+ICAJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkZXZfZ2V0X2Ry
-dmRhdGEoZGV2KTsKPiArCXN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3I7Cj4gIAo+ICAJ
-aWYgKHBtX3J1bnRpbWVfc3VzcGVuZGVkKGRldikgfHwgIWRybV9kZXYpCj4gIAkJcmV0dXJuIDA7
-Cj4gIAo+IC0JcmV0dXJuIGV4eW5vc19kcm1fcmVzdW1lKGRybV9kZXYpOwo+ICsJZHJtX21vZGVz
-ZXRfbG9ja19hbGwoZHJtX2Rldik7Cj4gKwlkcm1fZm9yX2VhY2hfY29ubmVjdG9yKGNvbm5lY3Rv
-ciwgZHJtX2Rldikgewo+ICsJCWlmIChjb25uZWN0b3ItPmZ1bmNzLT5kcG1zKSB7Cj4gKwkJCWlu
-dCBkcG1zID0gY29ubmVjdG9yLT5kcG1zOwo+ICsKPiArCQkJY29ubmVjdG9yLT5kcG1zID0gRFJN
-X01PREVfRFBNU19PRkY7Cj4gKwkJCWNvbm5lY3Rvci0+ZnVuY3MtPmRwbXMoY29ubmVjdG9yLCBk
-cG1zKTsKPiArCQl9Cj4gKwl9Cj4gKwlkcm1fbW9kZXNldF91bmxvY2tfYWxsKGRybV9kZXYpOwo+
-ICsKPiArCXJldHVybiAwOwo+ICB9Cj4gICNlbmRpZgo+ICAKPiAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBkZXZfcG1fb3BzIGV4eW5vc19kcm1fcG1fb3BzID0gewo+IC0JU0VUX1NZU1RFTV9TTEVFUF9Q
-TV9PUFMoZXh5bm9zX2RybV9zeXNfc3VzcGVuZCwgZXh5bm9zX2RybV9zeXNfcmVzdW1lKQo+ICsJ
-U0VUX1NZU1RFTV9TTEVFUF9QTV9PUFMoZXh5bm9zX2RybV9zdXNwZW5kLCBleHlub3NfZHJtX3Jl
-c3VtZSkKPiAgfTsKPiAgCj4gIC8qIGZvcndhcmQgZGVjbGFyYXRpb24gKi8KPiAKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 01.12.2015 18:03, Pavel Fedin wrote:
+>  Hello!
+> 
+> Tested it on top of 4.4-rc3.
+>  
+>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+>> index 3a10f1a8317a..d279edf9b10d 100644
+>> --- a/arch/arm/mach-exynos/Kconfig
+>> +++ b/arch/arm/mach-exynos/Kconfig
+>> @@ -27,6 +27,9 @@ menuconfig ARCH_EXYNOS
+>>  	select SRAM
+>>  	select THERMAL
+>>  	select MFD_SYSCON
+>> +	select POWER_RESET
+>> +	select POWER_RESET_SYSCON
+>> +	select POWER_RESET_SYSCON_POWEROFF
+> 
+> "select POWER_SUPPLY" is missing here. Without is we get:
+> --- cut ---
+> warning: (ARCH_HISI && ARCH_INTEGRATOR && ARCH_EXYNOS && ARCH_VEXPRESS && REALVIEW_DT) selects POWER_RESET which has unmet direct
+> dependencies (POWER_SUPPLY)
+> warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
+> warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON_POWEROFF which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
+> --- cut ---
+> 
+>>  	help
+>>  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+> 
+>  Otherwise works fine.
+> 
+>  Tested-by: Pavel Fedin <p.fedin@samsung.com>
+
+Testing was a little bit too late (late not only looking at date of v1
+and v2 but even for v3)... I appreciate it but I applied it already and
+in fact I sent a pull request with it.
+
+Actually the proper fix I think is to remove the dependency between
+POWER_RESET and POWER_SUPPLY.
+
+Best regards,
+Krzysztof
