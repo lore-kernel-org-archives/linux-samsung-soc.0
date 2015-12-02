@@ -1,169 +1,54 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: Re: [PATCH 3/3] Addition of binding for firmware signals on peach-pi
-Date: Wed, 02 Dec 2015 09:36:05 +0000
-Message-ID: <565EBB85.2030607@collabora.co.uk>
-References: <1448997171-7064-1-git-send-email-martyn.welch@collabora.co.uk> <1448997171-7064-4-git-send-email-martyn.welch@collabora.co.uk> <565E327E.90404@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 2/2] drm/exynos: dp: fix wrong return type
+Date: Wed, 02 Dec 2015 20:51:49 +0900
+Message-ID: <565EDB55.2030701@samsung.com>
+References: <1448542040-22057-1-git-send-email-inki.dae@samsung.com>
+ <1448542040-22057-3-git-send-email-inki.dae@samsung.com>
+ <56570AB1.3070408@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <565E327E.90404@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <56570AB1.3070408@osg.samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On 01/12/15 23:51, Krzysztof Kozlowski wrote:
-> On 02.12.2015 04:12, Martyn Welch wrote:
->> The peach pi has a GPIO connected to the firmware write protect, developer
->> mode and recovery mode lines. This patch adds the required nodes to the
->> device tree to configure the pinmuxing and allow these to be read from
->> user space.
->>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Pawel Moll <pawel.moll@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
->> Cc: Kumar Gala <galak@codeaurora.org>
->> Cc: Russell King <linux@arm.linux.org.uk>
->> Cc: Kukjin Kim <kgene@kernel.org>
->> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Cc: devicetree@vger.kernel.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-samsung-soc@vger.kernel.org
->> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
->> ---
->>   arch/arm/boot/dts/exynos5800-peach-pi.dts | 40 +++++++++++++++++++++++++++++++
->>   1 file changed, 40 insertions(+)
->
-> Hi,
->
-> Thanks for the patch.
->
-> Few points from my side:
-> 1. Please add a prefix to the subject: "ARM: dts:".
->
-
-Ok, sorry.
-
-> 2. There is no need of such huge CC-list in the body of commit. This
-> CC-list comes from get_maintainer so there is no benefit of duplicating
-> it here. The CC is usually used to notify other people who might be
-> interested but get_maintainer does not point them.
->
-
-Ok, yes these were pulled from get_maintainer.
-
-> 3. I received only this third patch. I did not receive cover letter
-> explaining possible dependencies so I am not sure how to deal with the
-> patch. It looks like there are no dependencies... but maybe there are?
-> Is this is a new binding or no? Please provide a cover letter (if it
-> exists already be sure to send it to all interested parties) or send
-> entire patchset so the big picture could be seen.
->
-
-I'll make sure I do that next time.
-
-The cover letter read:
-
-Some Chromebooks have gpio attached to signals used to cause the 
-firmware to enter alternative modes of operation and/or control other 
-device characteristics (such as write protection on flash devices). This 
-patch adds a driver that exposes a read-only interface to allow these 
-signals to be read from user space.
-
-In addition this patch series provides the required bindings for this to 
-the peach-pi Chromebook.
-
-
-This is a new binding, but the driver is based on functionality in the 
-kernel shipped on Chromebooks. The binding has been modified based on 
-the form of existing bindings in the mainline kernel.
-
-Does that help?
-
-Martyn
-
-> The patch itself looks good but I'll wait with a review tag for #3.
->
-> Best regards,
-> Krzysztof
->
->
->>
->> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> index 49a4f43..485c18f 100644
->> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> @@ -53,6 +53,25 @@
->>   		};
->>   	};
->>
->> +	chromeos-firmware {
->> +		compatible = "google,gpio-firmware";
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&wp_gpio &dev_mode &rec_mode>;
->> +
->> +		write-protect {
->> +			gpios = <&gpx3 0 GPIO_ACTIVE_LOW>;
->> +		};
->> +
->> +		developer-switch {
->> +			gpios = <&gpx1 3 GPIO_ACTIVE_HIGH>;
->> +		};
->> +
->> +		recovery-switch {
->> +			gpios = <&gpx0 7 GPIO_ACTIVE_LOW>;
->> +		};
->> +	};
->> +
->>   	gpio-keys {
->>   		compatible = "gpio-keys";
->>
->> @@ -731,6 +750,13 @@
->>   		samsung,pin-val = <0>;
->>   	};
->>
->> +	rec_mode: rec-mode {
->> +		samsung,pins = "gpx0-7";
->> +		samsung,pin-function = <0>;
->> +		samsung,pin-pud = <0>;
->> +		samsung,pin-drv = <0>;
->> +	};
->> +
->>   	tpm_irq: tpm-irq {
->>   		samsung,pins = "gpx1-0";
->>   		samsung,pin-function = <0>;
->> @@ -752,6 +778,13 @@
->>   		samsung,pin-drv = <0>;
->>   	};
->>
->> +	dev_mode: dev-mode {
->> +		samsung,pins = "gpx1-3";
->> +		samsung,pin-function = <0>;
->> +		samsung,pin-pud = <3>;
->> +		samsung,pin-drv = <0>;
->> +	};
->> +
->>   	ec_irq: ec-irq {
->>   		samsung,pins = "gpx1-5";
->>   		samsung,pin-function = <0>;
->> @@ -773,6 +806,13 @@
->>   		samsung,pin-drv = <0>;
->>   	};
->>
->> +	wp_gpio: wp_gpio {
->> +		samsung,pins = "gpx3-0";
->> +		samsung,pin-function = <0>;
->> +		samsung,pin-pud = <0>;
->> +		samsung,pin-drv = <0>;
->> +	};
->> +
->>   	max77802_irq: max77802-irq {
->>   		samsung,pins = "gpx3-1";
->>   		samsung,pin-function = <0>;
->>
->
+SGkgSmF2aWVyLAoKMjAxNeuFhCAxMeyblCAyNuydvCAyMjozNeyXkCBKYXZpZXIgTWFydGluZXog
+Q2FuaWxsYXMg7J20KOqwgCkg7JO0IOq4gDoKPiBbYWRkaW5nIEFqYXkgS3VtYXIgd2hvIGFkZGVk
+IHRoZSBicmlkZ2Ugc3VwcG9ydF0KPiAKPiBIZWxsbyBJbmtpLAo+IAo+IE9uIDExLzI2LzIwMTUg
+MDk6NDcgQU0sIElua2kgRGFlIHdyb3RlOgo+PiBUaGlzIHBhdGNoIGZpeGVzIHdyb25nIHJldHVy
+biB0eXBlIHdoZW4gZHQgYmluZGluZyBvZiBicmlkZ2UgZGV2aWNlCj4+IGZhaWxlZC4KPj4KPj4g
+SWYgYSBib2FyZCBoYXMgYSBicmlkZ2UgZGV2aWNlIHRoZW4gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9w
+b3J0X3BhcmVudAo+PiBmdW5jdGlvbiBzaG91bGRuJ3QgYmUgTlVMTC4gU28gdGhpcyBwYXRjaCB3
+aWxsIHJldHVybiBhIHByb3BlciBlcnJvcgo+PiB0eXBlIHNvIHRoYXQgdGhlIGRlZmVycmVkIHBy
+b2JlIGlzbid0IHRyaWdnZXJlZC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2ku
+ZGFlQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RwX2NvcmUuYyB8IDYgKysrKy0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCsp
+LCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29y
+ZS5jCj4+IGluZGV4IDBiNTMwNDUuLmM3N2ZiODMgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcF9jb3JlLmMKPj4gQEAgLTE0MzYsOCArMTQzNiwxMCBAQCBzdGF0aWMgaW50
+IGV4eW5vc19kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAgCQkJb2Zf
+bm9kZV9wdXQoYnJpZGdlX25vZGUpOwo+PiAgCQkJaWYgKCFkcC0+cHRuX2JyaWRnZSkKPj4gIAkJ
+CQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsKPj4gLQkJfSBlbHNlCj4+IC0JCQlyZXR1cm4gLUVQUk9C
+RV9ERUZFUjsKPj4gKwkJfSBlbHNlIHsKPj4gKwkJCURSTV9FUlJPUigibm8gcG9ydCBub2RlIGZv
+ciBicmlkZ2UgZGV2aWNlLlxuIik7Cj4+ICsJCQlyZXR1cm4gLUVOWElPOwo+PiArCQl9Cj4+ICAJ
+fQo+PiAgCj4gCj4gQXMgSSBtZW50aW9uZWQgaW4gdGhlIG90aGVyIHRocmVhZCwgSSB3b25kZXIg
+aWYgLUVOWElPIGlzIHRoZSBiZXN0IGVycm5vCj4gY29kZSBpbiB0aGlzIGNhc2UuIFNob3VsZG4n
+dCAtRUlOVkFMIGJlIG1vcmUgYXBwcm9wcmlhdGUgc2luY2UgaXMgYWJvdXQKPiBhbiBpbnZhbGlk
+IERUQj8KClNlZW1zIGJldHRlciB0byB1c2UgLUVJTlZBTC4KClRoYW5rcywKSW5raSBEYWUKCj4g
+Cj4+ICAJcG1fcnVudGltZV9lbmFibGUoZGV2KTsKPj4KPiAKPiBCZXN0IHJlZ2FyZHMsCj4gCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
