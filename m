@@ -1,59 +1,111 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 3/3] dt-bindings: exynos-dp: update ports node binding for
- panel
-Date: Thu, 03 Dec 2015 18:30:10 +0900
-Message-ID: <1449135010-8111-4-git-send-email-inki.dae@samsung.com>
-References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
+From: Ben Gamari <ben@smart-cactus.org>
+Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
+Date: Thu, 03 Dec 2015 11:26:31 +0100
+Message-ID: <877fkv4ylk.fsf@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <20151203060527.GH4302@ubuntu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, javier@osg.samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20151203060527.GH4302@ubuntu>
+Sender: linux-clk-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Sudeep Holla <Sudeep.Holla@arm.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyBwYXRjaCB1cGRhdGVzIGEgcG9ydHMgbm9kZSBiaW5kaW5nIGZvciBwYW5lbC4KCldpdGgg
-dGhpcywgZHAgbm9kZSBjYW4gaGF2ZSBhIHBvcnRzIG5vZGUgd2hpY2ggZGVzY3JpYmVzCmEgcmVt
-b3RlIGVuZHBvaW50IG5vZGUgdGhhdCBjYW4gYmUgY29ubmVjdGVkIHRvIHBhbmVsIG9yIGJyaWRn
-ZQpub2RlLgoKU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgot
-LS0KIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0ICAgICAgICAgIHwg
-MjggKysrKysrKysrKysrKysrKysrLS0tLQogMSBmaWxlIGNoYW5nZWQsIDI0IGluc2VydGlvbnMo
-KyksIDQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19kcC50eHQgYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dAppbmRleCA2NDY5
-M2YyLi4xNWI1MmNiIDEwMDY0NAotLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dApAQCAtNjYsOCArNjYs
-MTUgQEAgT3B0aW9uYWwgcHJvcGVydGllcyBmb3IgZHAtY29udHJvbGxlcjoKIAkJSG90cGx1ZyBk
-ZXRlY3QgR1BJTy4KIAkJCUluZGljYXRlcyB3aGljaCBHUElPIHNob3VsZCBiZSB1c2VkIGZvciBo
-b3RwbHVnCiAJCQlkZXRlY3Rpb24KLQktdmlkZW8gaW50ZXJmYWNlczogRGV2aWNlIG5vZGUgY2Fu
-IGNvbnRhaW4gdmlkZW8gaW50ZXJmYWNlIHBvcnQKLQkJCSAgICBub2RlcyBhY2NvcmRpbmcgdG8g
-WzFdLgorVmlkZW8gaW50ZXJmYWNlczoKKyAgRGV2aWNlIG5vZGUgY2FuIGNvbnRhaW4gdmlkZW8g
-aW50ZXJmYWNlIHBvcnQgbm9kZXMgYWNjb3JkaW5nIHRvIFsxXS4KKyAgVGhlIGZvbGxvd2luZyBh
-cmUgcHJvcGVydGllcyBzcGVjaWZpYyB0byB0aG9zZSBub2RlczoKKworICBlbmRwb2ludCBub2Rl
-IGNvbm5lY3RlZCB0byBicmlkZ2Ugb3IgcGFuZWwgbm9kZToKKyAgIC0gcmVtb3RlLWVuZHBvaW50
-OiBzcGVjaWZpZXMgdGhlIGVuZHBvaW50IGluIHBhbmVsIG9yIGJyaWRnZSBub2RlLgorCQkgICAg
-ICBUaGlzIG5vZGUgaXMgcmVxdWlyZWQgaW4gYWxsIGtpbmRzIG9mIGV4eW5vcyBkcAorCQkgICAg
-ICB0byByZXByZXNlbnQgdGhlIGNvbm5lY3Rpb24gYmV0d2VlbiBkcCBhbmQgYnJpZGdlCisJCSAg
-ICAgICxvciBkcCBhbmQgcGFuZWwuCiAKIFsxXTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMudHh0CiAKQEAgLTExMSw5ICsxMTgsMjIgQEAg
-Qm9hcmQgU3BlY2lmaWMgcG9ydGlvbjoKIAkJfTsKIAogCQlwb3J0cyB7Ci0JCQlwb3J0QDAgewor
-CQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47CisJCQkjc2l6ZS1jZWxscyA9IDwwPjsKKworCQkJcG9y
-dCB7CiAJCQkJZHBfb3V0OiBlbmRwb2ludCB7Ci0JCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmYnJp
-ZGdlX2luPjsKKwkJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9pbj47CisJCQkJfTsKKwkJCX07
-CisJCX07CisKKwkJcGFuZWxAMCB7CisJCQlyZWcgPSA8MD47CisJCQkuLi4KKwkJCXBvcnQgewor
-CQkJCWRwX2luOiBlbmRwb2ludCB7CisJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHBfb3V0PjsK
-IAkJCQl9OwogCQkJfTsKIAkJfTsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+Viresh Kumar <viresh.kumar@linaro.org> writes:
+
+> Hi Ben,
+
+Hi Viresh,
+
+> On 02-12-15, 22:19, Ben Gamari wrote:
+>>=20
+>> This patch series adds cpufreq support for the Exynos 5800, 5420, and 54=
+22
+>> SOCs. In particular, it adds support for operating-points-v2 bindings to=
+ the
+>> arm-big-little cpufreq driver and updates the above-mentioned SOCs' devi=
+cetrees
+>> to take advantage of this support. There are also a couple of patches im=
+proving
+>> the clarify of the arm-big-little implementation. It is built on a set p=
+osted
+>> by Bartlomiej Zolnierkiewicz in April 2015.
+>>=20
+>> The most signficant change from the original series is porting to the
+>> operating-points-v2 devicetree bindings. The series has been tested by m=
+e on
+>> and Odroid XU4 and by Javier Martinez Canillas on a Peach Pit.
+>
+> Thanks for working with opp-v2 bindings, really appreciate it.
+
+My pleasure.
+
+> But, before I start reviewing this series, I have few comments.
+> - We weren't able to use cpufreq-dt driver for big LITTLE platforms
+>   earlier, as it never had multi cluster support and we wanted
+>   clock-sharing information via DT.
+
+Fair enough.
+
+> - That is all fixed now.
+
+I did not see any mention of this in the cpufreq-dt driver binding
+documentation, otherwise I would have tried going this route.
+
+Do you have any references? I'd be happy to examine what would be
+necessary to go this route although, being an independent contributor,
+it may take time.
+
+> - I want Samsung's big LITTLE platforms to use cpufreq-dt and drop
+>   arm_big_little driver completely.
+
+That sounds like a great direction going forward. However, I would still
+kindly request that you consider this series.
+
+The existence of future plans of course does not change the fact that
+users have real hardware today; hardware that they have spent money on
+and would like to use. Cpufreq support has already been deferred once
+for similar reasons of interface churn which essentially forestalled
+working functionality from entering the kernel by eight months; I'd
+really like to avoid having this happen again.
+
+> - The only case for which it (arm_big_little) driver might be useful
+>   is the IKS solution. Which I don't believe you are going to use in
+>   future :)
+
+Indeed.
+
+> My plan for the arm-big-little driver:
+> - Migrate all platforms to use cpufreq-dt instead for non-IKS
+>   solution
+> - Make arm-big-little driver arm-big-little-iks only driver.
+
+Sounds reasonable to me. However, I'd just like to reiterate that this
+line of work can be pursued independently from the upstreaming of this
+series.
+
+Thanks for your time,
+
+=2D Ben
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJWYBjXAAoJEHPt6ejPuu8BMwgH/2wRShAxTQm02bJ0bnfi6LQc
+zcE5H6jhAr5GLneojfiPHyZmLcO9eD1l7G0BXQIYIEYN+b+dDYb4hDowl8F5Xa7f
+KofQxesWjBEFc4ENKlkpnYKlm9Ou+eOAlY0hcibCcT+LdG8qvGsuC3lIfxqfiz0d
+EwL70kGiJVctguapKuqY58/O8P7YF48ayew0KfmhBpGCbeQpeTSW6eIcLfGbYwGf
+QSTA9Vl42Ft6PffHxNq07zxUhBnlHStTyM+bIKJ7s6MzY0MRloG3eUQNT39yetKI
+CAcJHnbU+LI5OVzFiczmq915dLUwiwOgZBsyzVLlgB5wv6cTsHUi6k2CIzu6NmE=
+=YVtd
+-----END PGP SIGNATURE-----
+--=-=-=--
