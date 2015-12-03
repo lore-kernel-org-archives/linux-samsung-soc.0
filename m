@@ -1,142 +1,132 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 1/3] drm/exynos: dp: add of_graph dt binding support
- for panel
-Date: Thu, 3 Dec 2015 10:55:28 -0300
-Message-ID: <566049D0.8070404@osg.samsung.com>
-References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
- <1449135010-8111-2-git-send-email-inki.dae@samsung.com>
+From: "Jon Medhurst (Tixy)" <tixy@linaro.org>
+Subject: Re: [PATCH 11/12] cpufreq: arm-big-little: clarify frequency units
+Date: Thu, 03 Dec 2015 14:22:14 +0000
+Message-ID: <1449152534.2817.26.camel@linaro.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+	 <1449091167-20758-12-git-send-email-ben@smart-cactus.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:56124 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755720AbbLCNzd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Dec 2015 08:55:33 -0500
-In-Reply-To: <1449135010-8111-2-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1449091167-20758-12-git-send-email-ben@smart-cactus.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ben Gamari <ben@smart-cactus.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, k.kozlowski@samsung.com
 
-Hello Inki,
-
-I found that v2 of this patch is alredy in your exynos-drm for-next branch so
-so I had to revert it in linux-next to apply this one to test. You shouldn't
-push patches that were still not reviewed (specially the ones that weren't
-tested like this one) to your branch that gets pulled by -next. The idea of
--next is to have some test coverage but it should be as stable as possible.
-
-On 12/03/2015 06:30 AM, Inki Dae wrote:
-> This patch adds of_graph dt binding support for panel device
-> and also keeps the backward compatibility.
+On Wed, 2015-12-02 at 22:19 +0100, Ben Gamari wrote:
+> The frequency units are very confusing in this area as OPPs use Hz
+> whereas cpufreq uses kHz. Be explicit about this in variable naming.
 > 
-> i.e.,
-> The dts file for Exynos5800 based peach pi board
-> has a panel property so we need to keep the backward compatibility.
-> 
-> Changelog v3:
-> - bind only one of two nodes outbound - panel or bridge.
->
-
-This patch fixes one of the comments I had for v2 but I've another
-comment below.
- 
-> Changelog v2:
-> - return -EINVAL if getting a port node failed.
-> 
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Ben Gamari <ben@smart-cactus.org>
 > ---
->  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
+>  drivers/cpufreq/arm_big_little.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> index 94f02a0..60260a0 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> @@ -1392,7 +1392,7 @@ static const struct component_ops exynos_dp_ops = {
->  static int exynos_dp_probe(struct platform_device *pdev)
+> diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
+> index 855599b..2d5761c 100644
+> --- a/drivers/cpufreq/arm_big_little.c
+> +++ b/drivers/cpufreq/arm_big_little.c
+> @@ -130,14 +130,14 @@ static unsigned int bL_cpufreq_get_rate(unsigned int cpu)
+>  }
+>  
+>  static int
+> -bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+> +bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
 >  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *panel_node, *bridge_node, *endpoint;
-> +	struct device_node *panel_node = NULL, *bridge_node, *endpoint = NULL;
->  	struct exynos_dp_device *dp;
+>  	unsigned long volt = 0, volt_old = 0;
+>  	long freq_Hz;
+>  	u32 old_rate;
+
+IMO variable renaming doesn't seem necessary, if cpufreq uses kHz then
+in a cpufreq driver adding 'kHz' to variable seems redundant, especially
+if Hz values like freq_Hz above are named especially to signal their
+different units. However, if renaming is going to happen it should at
+least be consistent within the same function i.e. also rename the old
+old_rate variable above.
+
 >  	int ret;
 >  
-> @@ -1403,14 +1403,32 @@ static int exynos_dp_probe(struct platform_device *pdev)
+> -	freq_Hz = new_rate * 1000;
+> +	freq_Hz = new_rate_kHz * 1000;
+>  	old_rate = clk_get_rate(clk[cluster]) / 1000;
 >  
->  	platform_set_drvdata(pdev, dp);
+>  	if (!IS_ERR(reg[cluster])) {
+> @@ -163,10 +163,10 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>  	pr_debug("%s: cpu %d, cluster: %d, %u MHz, %ld mV --> %u MHz, %ld mV\n",
+>  		__func__, cpu, cluster,
+>  		old_rate / 1000, (volt_old > 0) ? volt_old / 1000 : -1,
+> -		new_rate / 1000, volt ? volt / 1000 : -1);
+> +		new_rate_kHz / 1000, volt ? volt / 1000 : -1);
 >  
-> +	/* This is for the backward compatibility. */
->  	panel_node = of_parse_phandle(dev->of_node, "panel", 0);
->  	if (panel_node) {
->  		dp->panel = of_drm_find_panel(panel_node);
->  		of_node_put(panel_node);
->  		if (!dp->panel)
->  			return -EPROBE_DEFER;
-> +	} else {
-> +		endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-> +		if (endpoint) {
-> +			panel_node = of_graph_get_remote_port_parent(endpoint);
-
-Here is asssumed that the endpoint will be a panel but it could be that there
-is no "panel" phandle but the port is for a bridge chip (i.e: Peach Pit) so
-this assumption seems fragile to me.
-
-That's what I meant when I said "Assuming you can make a distinction if the
-endpoint is a panel or a bridge" in the other thread.
-
-> +			if (panel_node) {
-> +				dp->panel = of_drm_find_panel(panel_node);
-> +				of_node_put(panel_node);
-> +				if (!dp->panel)
-> +					return -EPROBE_DEFER;
-> +			} else {
-> +				DRM_ERROR("no port node for panel device.\n");
-> +				return -EINVAL;
-> +			}
-> +		}
+>  	/* scaling up? scale voltage before frequency */
+> -	if (!IS_ERR(reg[cluster]) && new_rate > old_rate) {
+> +	if (!IS_ERR(reg[cluster]) && new_rate_kHz > old_rate) {
+>  		ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+>  		if (ret) {
+>  			pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage up: %d\n",
+> @@ -175,7 +175,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>  		}
 >  	}
 >  
-> +	if (endpoint)
-> +		goto out;
-> +
-
-Ok, so IIUC what's done here is to test if the panel lookup failed, then the
-endpoint is looked up again but this time a call to of_drm_find_bridge() is
-made instead of a call to of_drm_find_panel(). I wonder if there is a better
-way to do this...
-
-In any case then I think you should test if (panel_node) instead of endpoint.
-
->  	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
->  	if (endpoint) {
->  		bridge_node = of_graph_get_remote_port_parent(endpoint);
-> @@ -1423,6 +1441,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
->  			return -EPROBE_DEFER;
+> -	ret = clk_set_rate(clk[cluster], new_rate * 1000);
+> +	ret = clk_set_rate(clk[cluster], new_rate_kHz * 1000);
+>  	if (WARN_ON(ret)) {
+>  		pr_err("%s: clk_set_rate failed: %d, cluster: %d\n",
+>  			__func__, cluster, ret);
+> @@ -185,7 +185,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
 >  	}
 >  
-> +out:
->  	pm_runtime_enable(dev);
+>  	/* scaling down? scale voltage after frequency */
+> -	if (!IS_ERR(reg[cluster]) && new_rate < old_rate) {
+> +	if (!IS_ERR(reg[cluster]) && new_rate_kHz < old_rate) {
+>  		ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+>  		if (ret) {
+>  			pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage down: %d\n",
+> @@ -199,7 +199,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>  }
 >  
->  	ret = component_add(&pdev->dev, &exynos_dp_ops);
-> 
+>  static unsigned int
+> -bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+> +bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate_kHz)
+>  {
+>  	u32 new_rate, prev_rate;
 
-I can't think of a better way to lookup either a panel or a bridge though
-and I'm not that familiar with DRM so with the correct check, the patch
-looks good to me.
+Ditto. Rename these too to add '_kHz' ?
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>  	int ret;
+> @@ -209,13 +209,13 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>  
+>  	if (bLs) {
+>  		prev_rate = per_cpu(cpu_last_req_freq, cpu);
+> -		per_cpu(cpu_last_req_freq, cpu) = rate;
+> +		per_cpu(cpu_last_req_freq, cpu) = rate_kHz;
+>  		per_cpu(physical_cluster, cpu) = new_cluster;
+>  
+>  		new_rate = find_cluster_maxfreq(new_cluster);
+>  		new_rate = ACTUAL_FREQ(new_cluster, new_rate);
+>  	} else {
+> -		new_rate = rate;
+> +		new_rate = rate_kHz;
+>  	}
+>  
+>  	pr_debug("%s: cpu: %d, old cluster: %d, new cluster: %d, freq: %d\n",
+> @@ -236,7 +236,7 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>  	} else if (ret && bLs) {
+>  		per_cpu(cpu_last_req_freq, cpu) = prev_rate;
+>  		per_cpu(physical_cluster, cpu) = old_cluster;
+> -	} 
+> +	}
 
-Also on an Exynos5800 Peach Pi with the DTS patch I shared, the display
-is working correctly and also I tested without the DTS patch to make
-sure that it does not cause a regression for older DTBs.
+There's a spurious whitespace change here. I know the space you deleted
+shouldn't have been there, but doing tidyups like that generally isn't
+done in patches that don't otherwise affect the code in question.
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>  
+>  	mutex_unlock(&cluster_lock[new_cluster]);
+>  
 
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Tixy
+
