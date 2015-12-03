@@ -1,67 +1,39 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v3 1/3] drm/exynos: dp: add of_graph dt binding support for
- panel
-Date: Thu, 03 Dec 2015 18:30:08 +0900
-Message-ID: <1449135010-8111-2-git-send-email-inki.dae@samsung.com>
-References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, javier@osg.samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Subject: [PATCH 0/3] drm/exynos: dp: consider port node outbound for panel
+Date: Thu, 03 Dec 2015 18:30:07 +0900
+Message-ID: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:54381 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757678AbbLCJaN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 3 Dec 2015 04:30:13 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, k.kozlowski@samsung.com, javier@osg.samsung.com, Inki Dae <inki.dae@samsung.com>
 
-VGhpcyBwYXRjaCBhZGRzIG9mX2dyYXBoIGR0IGJpbmRpbmcgc3VwcG9ydCBmb3IgcGFuZWwgZGV2
-aWNlCmFuZCBhbHNvIGtlZXBzIHRoZSBiYWNrd2FyZCBjb21wYXRpYmlsaXR5LgoKaS5lLiwKVGhl
-IGR0cyBmaWxlIGZvciBFeHlub3M1ODAwIGJhc2VkIHBlYWNoIHBpIGJvYXJkCmhhcyBhIHBhbmVs
-IHByb3BlcnR5IHNvIHdlIG5lZWQgdG8ga2VlcCB0aGUgYmFja3dhcmQgY29tcGF0aWJpbGl0eS4K
-CkNoYW5nZWxvZyB2MzoKLSBiaW5kIG9ubHkgb25lIG9mIHR3byBub2RlcyBvdXRib3VuZCAtIHBh
-bmVsIG9yIGJyaWRnZS4KCkNoYW5nZWxvZyB2MjoKLSByZXR1cm4gLUVJTlZBTCBpZiBnZXR0aW5n
-IGEgcG9ydCBub2RlIGZhaWxlZC4KClNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBz
-YW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMg
-fCAyMSArKysrKysrKysrKysrKysrKysrKy0KIDEgZmlsZSBjaGFuZ2VkLCAyMCBpbnNlcnRpb25z
-KCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5j
-CmluZGV4IDk0ZjAyYTAuLjYwMjYwYTAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RwX2NvcmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cF9jb3JlLmMKQEAgLTEzOTIsNyArMTM5Miw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgY29tcG9u
-ZW50X29wcyBleHlub3NfZHBfb3BzID0gewogc3RhdGljIGludCBleHlub3NfZHBfcHJvYmUoc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIHsKIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRl
-di0+ZGV2OwotCXN0cnVjdCBkZXZpY2Vfbm9kZSAqcGFuZWxfbm9kZSwgKmJyaWRnZV9ub2RlLCAq
-ZW5kcG9pbnQ7CisJc3RydWN0IGRldmljZV9ub2RlICpwYW5lbF9ub2RlID0gTlVMTCwgKmJyaWRn
-ZV9ub2RlLCAqZW5kcG9pbnQgPSBOVUxMOwogCXN0cnVjdCBleHlub3NfZHBfZGV2aWNlICpkcDsK
-IAlpbnQgcmV0OwogCkBAIC0xNDAzLDE0ICsxNDAzLDMyIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Rw
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAKIAlwbGF0Zm9ybV9zZXRfZHJ2
-ZGF0YShwZGV2LCBkcCk7CiAKKwkvKiBUaGlzIGlzIGZvciB0aGUgYmFja3dhcmQgY29tcGF0aWJp
-bGl0eS4gKi8KIAlwYW5lbF9ub2RlID0gb2ZfcGFyc2VfcGhhbmRsZShkZXYtPm9mX25vZGUsICJw
-YW5lbCIsIDApOwogCWlmIChwYW5lbF9ub2RlKSB7CiAJCWRwLT5wYW5lbCA9IG9mX2RybV9maW5k
-X3BhbmVsKHBhbmVsX25vZGUpOwogCQlvZl9ub2RlX3B1dChwYW5lbF9ub2RlKTsKIAkJaWYgKCFk
-cC0+cGFuZWwpCiAJCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsKKwl9IGVsc2UgeworCQllbmRwb2lu
-dCA9IG9mX2dyYXBoX2dldF9uZXh0X2VuZHBvaW50KGRldi0+b2Zfbm9kZSwgTlVMTCk7CisJCWlm
-IChlbmRwb2ludCkgeworCQkJcGFuZWxfbm9kZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVfcG9ydF9w
-YXJlbnQoZW5kcG9pbnQpOworCQkJaWYgKHBhbmVsX25vZGUpIHsKKwkJCQlkcC0+cGFuZWwgPSBv
-Zl9kcm1fZmluZF9wYW5lbChwYW5lbF9ub2RlKTsKKwkJCQlvZl9ub2RlX3B1dChwYW5lbF9ub2Rl
-KTsKKwkJCQlpZiAoIWRwLT5wYW5lbCkKKwkJCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7CisJCQl9
-IGVsc2UgeworCQkJCURSTV9FUlJPUigibm8gcG9ydCBub2RlIGZvciBwYW5lbCBkZXZpY2UuXG4i
-KTsKKwkJCQlyZXR1cm4gLUVJTlZBTDsKKwkJCX0KKwkJfQogCX0KIAorCWlmIChlbmRwb2ludCkK
-KwkJZ290byBvdXQ7CisKIAllbmRwb2ludCA9IG9mX2dyYXBoX2dldF9uZXh0X2VuZHBvaW50KGRl
-di0+b2Zfbm9kZSwgTlVMTCk7CiAJaWYgKGVuZHBvaW50KSB7CiAJCWJyaWRnZV9ub2RlID0gb2Zf
-Z3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVudChlbmRwb2ludCk7CkBAIC0xNDIzLDYgKzE0NDEs
-NyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
-ZGV2KQogCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7CiAJfQogCitvdXQ6CiAJcG1fcnVudGltZV9l
-bmFibGUoZGV2KTsKIAogCXJldCA9IGNvbXBvbmVudF9hZGQoJnBkZXYtPmRldiwgJmV4eW5vc19k
-cF9vcHMpOwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+This patch series considers a port node outbound for panel device node,
+including dt binding for it. And also it fixes a wrong error type.
+
+P.s.,
+I already posted relevant patch series[1] before but missed dt binding.
+So please, ignore the patch series - I couldn't search the patch series
+on google.com so couldn't link it.
+
+Thanks,
+Inki Dae
+
+[1] [PATCH 0/2] drm/exynos: dp: add of_graph dt binding for panel device
+
+Inki Dae (3):
+  drm/exynos: dp: add of_graph dt binding support for panel
+  drm/exynos: dp: fix wrong return type
+  dt-bindings: exynos-dp: update ports node binding for panel
+
+ .../bindings/display/exynos/exynos_dp.txt          | 28 ++++++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_dp_core.c            | 27 ++++++++++++++++++---
+ 2 files changed, 48 insertions(+), 7 deletions(-)
+
+-- 
+1.9.1
