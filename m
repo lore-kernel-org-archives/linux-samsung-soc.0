@@ -1,34 +1,194 @@
-From: Ben Gamari <ben@smart-cactus.org>
-Subject: [PATCH 12/12] cpufreq: arm-big-little: warn on invalid regulator
-Date: Wed,  2 Dec 2015 22:19:27 +0100
-Message-ID: <1449091167-20758-13-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, Ben Gamari <ben@smart-cactus.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] Addition of binding for firmware signals on peach-pi
+Date: Thu, 03 Dec 2015 09:10:40 +0900
+Message-ID: <565F8880.6000108@samsung.com>
+References: <1448997171-7064-1-git-send-email-martyn.welch@collabora.co.uk>
+ <1448997171-7064-4-git-send-email-martyn.welch@collabora.co.uk>
+ <565E327E.90404@samsung.com> <565EBB85.2030607@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54405 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756518AbbLCAKp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Dec 2015 19:10:45 -0500
+In-reply-to: <565EBB85.2030607@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Martyn Welch <martyn.welch@collabora.co.uk>
+Cc: Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
----
- drivers/cpufreq/arm_big_little.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 02.12.2015 18:36, Martyn Welch wrote:
+> 
+> 
+> On 01/12/15 23:51, Krzysztof Kozlowski wrote:
+>> On 02.12.2015 04:12, Martyn Welch wrote:
+>>> The peach pi has a GPIO connected to the firmware write protect,
+>>> developer
+>>> mode and recovery mode lines. This patch adds the required nodes to the
+>>> device tree to configure the pinmuxing and allow these to be read from
+>>> user space.
+>>>
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: Pawel Moll <pawel.moll@arm.com>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>>> Cc: Kumar Gala <galak@codeaurora.org>
+>>> Cc: Russell King <linux@arm.linux.org.uk>
+>>> Cc: Kukjin Kim <kgene@kernel.org>
+>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> Cc: devicetree@vger.kernel.org
+>>> Cc: linux-arm-kernel@lists.infradead.org
+>>> Cc: linux-samsung-soc@vger.kernel.org
+>>> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+>>> ---
+>>>   arch/arm/boot/dts/exynos5800-peach-pi.dts | 40
+>>> +++++++++++++++++++++++++++++++
+>>>   1 file changed, 40 insertions(+)
+>>
+>> Hi,
+>>
+>> Thanks for the patch.
+>>
+>> Few points from my side:
+>> 1. Please add a prefix to the subject: "ARM: dts:".
+>>
+> 
+> Ok, sorry.
+> 
+>> 2. There is no need of such huge CC-list in the body of commit. This
+>> CC-list comes from get_maintainer so there is no benefit of duplicating
+>> it here. The CC is usually used to notify other people who might be
+>> interested but get_maintainer does not point them.
+>>
+> 
+> Ok, yes these were pulled from get_maintainer.
+> 
+>> 3. I received only this third patch. I did not receive cover letter
+>> explaining possible dependencies so I am not sure how to deal with the
+>> patch. It looks like there are no dependencies... but maybe there are?
+>> Is this is a new binding or no? Please provide a cover letter (if it
+>> exists already be sure to send it to all interested parties) or send
+>> entire patchset so the big picture could be seen.
+>>
+> 
+> I'll make sure I do that next time.
+> 
+> The cover letter read:
+> 
+> Some Chromebooks have gpio attached to signals used to cause the
+> firmware to enter alternative modes of operation and/or control other
+> device characteristics (such as write protection on flash devices). This
+> patch adds a driver that exposes a read-only interface to allow these
+> signals to be read from user space.
+> 
+> In addition this patch series provides the required bindings for this to
+> the peach-pi Chromebook.
+> 
+> 
+> This is a new binding, but the driver is based on functionality in the
+> kernel shipped on Chromebooks. The binding has been modified based on
+> the form of existing bindings in the mainline kernel.
+> 
+> Does that help?
 
-diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
-index 2d5761c..5d30c26 100644
---- a/drivers/cpufreq/arm_big_little.c
-+++ b/drivers/cpufreq/arm_big_little.c
-@@ -158,6 +158,9 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
- 		volt_old = regulator_get_voltage(reg[cluster]);
- 		pr_debug("%s: cpu %d, cluster: %d, Found OPP: %ld kHz, %ld uV\n",
- 			__func__, cpu, cluster, opp_freq / 1000, volt);
-+	} else {
-+		pr_err("%s: cpu %d, cluster: %d, Have no regulator\n",
-+					 __func__, cpu, cluster);
- 	}
- 
- 	pr_debug("%s: cpu %d, cluster: %d, %u MHz, %ld mV --> %u MHz, %ld mV\n",
--- 
-2.6.2
+Yes, that helps. With the changes above (subject and reduced CC-line in
+commit message):
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+As there are no dependencies this should go through samsung-soc. Just
+let us know about DT bindings being accepted/applied.
+
+Best regards,
+Krzysztof
+
+
+> 
+> Martyn
+> 
+>> The patch itself looks good but I'll wait with a review tag for #3.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>> b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>> index 49a4f43..485c18f 100644
+>>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>> @@ -53,6 +53,25 @@
+>>>           };
+>>>       };
+>>>
+>>> +    chromeos-firmware {
+>>> +        compatible = "google,gpio-firmware";
+>>> +
+>>> +        pinctrl-names = "default";
+>>> +        pinctrl-0 = <&wp_gpio &dev_mode &rec_mode>;
+>>> +
+>>> +        write-protect {
+>>> +            gpios = <&gpx3 0 GPIO_ACTIVE_LOW>;
+>>> +        };
+>>> +
+>>> +        developer-switch {
+>>> +            gpios = <&gpx1 3 GPIO_ACTIVE_HIGH>;
+>>> +        };
+>>> +
+>>> +        recovery-switch {
+>>> +            gpios = <&gpx0 7 GPIO_ACTIVE_LOW>;
+>>> +        };
+>>> +    };
+>>> +
+>>>       gpio-keys {
+>>>           compatible = "gpio-keys";
+>>>
+>>> @@ -731,6 +750,13 @@
+>>>           samsung,pin-val = <0>;
+>>>       };
+>>>
+>>> +    rec_mode: rec-mode {
+>>> +        samsung,pins = "gpx0-7";
+>>> +        samsung,pin-function = <0>;
+>>> +        samsung,pin-pud = <0>;
+>>> +        samsung,pin-drv = <0>;
+>>> +    };
+>>> +
+>>>       tpm_irq: tpm-irq {
+>>>           samsung,pins = "gpx1-0";
+>>>           samsung,pin-function = <0>;
+>>> @@ -752,6 +778,13 @@
+>>>           samsung,pin-drv = <0>;
+>>>       };
+>>>
+>>> +    dev_mode: dev-mode {
+>>> +        samsung,pins = "gpx1-3";
+>>> +        samsung,pin-function = <0>;
+>>> +        samsung,pin-pud = <3>;
+>>> +        samsung,pin-drv = <0>;
+>>> +    };
+>>> +
+>>>       ec_irq: ec-irq {
+>>>           samsung,pins = "gpx1-5";
+>>>           samsung,pin-function = <0>;
+>>> @@ -773,6 +806,13 @@
+>>>           samsung,pin-drv = <0>;
+>>>       };
+>>>
+>>> +    wp_gpio: wp_gpio {
+>>> +        samsung,pins = "gpx3-0";
+>>> +        samsung,pin-function = <0>;
+>>> +        samsung,pin-pud = <0>;
+>>> +        samsung,pin-drv = <0>;
+>>> +    };
+>>> +
+>>>       max77802_irq: max77802-irq {
+>>>           samsung,pins = "gpx3-1";
+>>>           samsung,pin-function = <0>;
+>>>
+>>
+> 
+> 
