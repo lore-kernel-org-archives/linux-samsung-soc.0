@@ -1,166 +1,63 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 1/2] drm/exynos: dp: add of_graph dt binding support
- for panel
-Date: Thu, 3 Dec 2015 10:05:48 -0300
-Message-ID: <56603E2C.2090005@osg.samsung.com>
-References: <1449057472-4389-1-git-send-email-inki.dae@samsung.com>
- <565F0871.6080109@osg.samsung.com> <565FA4C8.4080502@samsung.com>
+Subject: Re: [PATCH] drm/exynos: dsi: modify a error type when getting a node
+ failed
+Date: Thu, 3 Dec 2015 10:18:30 -0300
+Message-ID: <56604126.2040009@osg.samsung.com>
+References: <1449121541-4693-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:56031 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:56050 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750805AbbLCNFx (ORCPT
+	id S1750964AbbLCNSe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Dec 2015 08:05:53 -0500
-In-Reply-To: <565FA4C8.4080502@samsung.com>
+	Thu, 3 Dec 2015 08:18:34 -0500
+In-Reply-To: <1449121541-4693-1-git-send-email-inki.dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org
-
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com
 
 Hello Inki,
 
-On 12/02/2015 11:11 PM, Inki Dae wrote:
-> Hi Javier,
->=20
-> 2015=EB=85=84 12=EC=9B=94 03=EC=9D=BC 00:04=EC=97=90 Javier Martinez =
-Canillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->> Hello Inki,
->>
->> On 12/02/2015 08:57 AM, Inki Dae wrote:
->>> This patch adds of_graph dt binding support for panel device
->>> and also keeps the backward compatibility.
->>>
->>
->> You have to also update the DT binding doc which seems to be
->> outdated already:
->>
->> Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
->=20
-> Right. It should be updated.
->
+On 12/03/2015 02:45 AM, Inki Dae wrote:
+> This patch makes it to return -EINVAL instead of -ENXIO
+> when getting a port or endpoint node failed.
+> 
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index 7c3606a..a24bf8b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -1735,13 +1735,13 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
+>  
+>  	ep = of_graph_get_next_endpoint(node, NULL);
+>  	if (!ep) {
+> -		ret = -ENXIO;
+> +		ret = -EINVAL;
+>  		goto end;
+>  	}
+>  
+>  	dsi->bridge_node = of_graph_get_remote_port_parent(ep);
+>  	if (!dsi->bridge_node) {
+> -		ret = -ENXIO;
+> +		ret = -EINVAL;
+>  		goto end;
+>  	}
+>  end:
+> 
 
-Great, I see you already posted that.
+Yes, I also think that -EINVAL is a better error code in this case.
 
->>
->>> i.e.,
->>> The dts file for Exynos5800 based peach pi board
->>> has a panel property so we need to keep the backward compatibility.
->>>
->>
->> How did you test this patch?
->=20
-> I thought you will test it and give me tested-by because you commente=
-d like below,
-> " Assuming you can make a distinction if the endpoint is a panel or a=
- bridge,
-> then yes, I agree with the idea of the patch. Please feel free to cc =
-me if
-> you post such a patch and I'll gladly test it on my Exynos5800 Peach =
-Pi."
->=20
-> That is why I cced you. I really have no any Exynos5800 Peach Pi boar=
-d.
->
-
-Yes, but if you didn't test a patch, then it should be marked with a RF=
-T
-prefix in the subject line or at least mention that needs testing since
-you lack the HW to test. I've no way to know if you have another board
-with a similar design :)
-
-But what I meant is how the patch is supposed to be tested since there
-ins't a change in the Exynos5800 Peach Pi DTS? We can of course test
-that doesn't break backward compatibility but we don't have a way to
-test the actual change.
-
-So I tested with the patch following patch [0] and things are working
-correctly. Please include that patch in your series.
-
-I've some comments on your patch though but I'll comment on your lastes=
-t
-version.
-
-> Thanks,
-> Inki Dae
->=20
->> =20
->> Best regards,
->>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
---=20
+-- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
-
-[0]:
-=46rom 644bab7949ac17a8d42ca0cf36cd55d61bc88928 Mon Sep 17 00:00:00 200=
-1
-=46rom: Javier Martinez Canillas <javier@osg.samsung.com>
-Date: Thu, 3 Dec 2015 09:32:17 -0300
-Subject: [PATCH 1/1] ARM: dts: Use OF graph for DP to panel connection =
-in
- exynos5800-peach-pi
-
-The DT binding for the Exynos DRM Display Port (DP) driver isn't consis=
-tent
-since it uses a phandle to describe the connection between the DP port =
-and
-the display panel but uses the OF graph ports and endpoints to describe=
- the
-connection betwen the DP port, a bridge chip and the panel.
-
-The Exynos DP driver and the DT binding have been changed to allow also=
- to
-describe the DP port to panel connection using ports / endpoints (OF gr=
-aph)
-so this patch changes the Exynos5800 Peach Pi DT to make it consistent =
-with
-the Exynos5420 Peach Pit that has a eDP to LVDS chip and uses OF graph =
-too.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- arch/arm/boot/dts/exynos5800-peach-pi.dts | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/=
-dts/exynos5800-peach-pi.dts
-index 7b018e451880..9c6fd7314ee0 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -122,6 +122,12 @@
- 		compatible =3D "auo,b133htn01";
- 		power-supply =3D <&tps65090_fet6>;
- 		backlight =3D <&backlight>;
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint =3D <&dp_out>;
-+			};
-+		};
- 	};
-=20
- 	mmc1_pwrseq: mmc1_pwrseq {
-@@ -148,7 +154,14 @@
- 	samsung,link-rate =3D <0x0a>;
- 	samsung,lane-count =3D <2>;
- 	samsung,hpd-gpio =3D <&gpx2 6 GPIO_ACTIVE_HIGH>;
--	panel =3D <&panel>;
-+
-+	ports {
-+		port@0 {
-+			dp_out: endpoint {
-+				remote-endpoint =3D <&panel_in>;
-+			};
-+		};
-+	};
- };
-=20
- &fimd {
---=20
-2.4.3
