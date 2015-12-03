@@ -1,39 +1,59 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 0/3] drm/exynos: dp: consider port node outbound for panel
-Date: Thu, 03 Dec 2015 18:30:07 +0900
-Message-ID: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54381 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757678AbbLCJaN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Dec 2015 04:30:13 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 3/3] dt-bindings: exynos-dp: update ports node binding for
+ panel
+Date: Thu, 03 Dec 2015 18:30:10 +0900
+Message-ID: <1449135010-8111-4-git-send-email-inki.dae@samsung.com>
+References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, k.kozlowski@samsung.com, javier@osg.samsung.com, Inki Dae <inki.dae@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, javier@osg.samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series considers a port node outbound for panel device node,
-including dt binding for it. And also it fixes a wrong error type.
-
-P.s.,
-I already posted relevant patch series[1] before but missed dt binding.
-So please, ignore the patch series - I couldn't search the patch series
-on google.com so couldn't link it.
-
-Thanks,
-Inki Dae
-
-[1] [PATCH 0/2] drm/exynos: dp: add of_graph dt binding for panel device
-
-Inki Dae (3):
-  drm/exynos: dp: add of_graph dt binding support for panel
-  drm/exynos: dp: fix wrong return type
-  dt-bindings: exynos-dp: update ports node binding for panel
-
- .../bindings/display/exynos/exynos_dp.txt          | 28 ++++++++++++++++++----
- drivers/gpu/drm/exynos/exynos_dp_core.c            | 27 ++++++++++++++++++---
- 2 files changed, 48 insertions(+), 7 deletions(-)
-
--- 
-1.9.1
+VGhpcyBwYXRjaCB1cGRhdGVzIGEgcG9ydHMgbm9kZSBiaW5kaW5nIGZvciBwYW5lbC4KCldpdGgg
+dGhpcywgZHAgbm9kZSBjYW4gaGF2ZSBhIHBvcnRzIG5vZGUgd2hpY2ggZGVzY3JpYmVzCmEgcmVt
+b3RlIGVuZHBvaW50IG5vZGUgdGhhdCBjYW4gYmUgY29ubmVjdGVkIHRvIHBhbmVsIG9yIGJyaWRn
+ZQpub2RlLgoKU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgot
+LS0KIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0ICAgICAgICAgIHwg
+MjggKysrKysrKysrKysrKysrKysrLS0tLQogMSBmaWxlIGNoYW5nZWQsIDI0IGluc2VydGlvbnMo
+KyksIDQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19kcC50eHQgYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dAppbmRleCA2NDY5
+M2YyLi4xNWI1MmNiIDEwMDY0NAotLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dApAQCAtNjYsOCArNjYs
+MTUgQEAgT3B0aW9uYWwgcHJvcGVydGllcyBmb3IgZHAtY29udHJvbGxlcjoKIAkJSG90cGx1ZyBk
+ZXRlY3QgR1BJTy4KIAkJCUluZGljYXRlcyB3aGljaCBHUElPIHNob3VsZCBiZSB1c2VkIGZvciBo
+b3RwbHVnCiAJCQlkZXRlY3Rpb24KLQktdmlkZW8gaW50ZXJmYWNlczogRGV2aWNlIG5vZGUgY2Fu
+IGNvbnRhaW4gdmlkZW8gaW50ZXJmYWNlIHBvcnQKLQkJCSAgICBub2RlcyBhY2NvcmRpbmcgdG8g
+WzFdLgorVmlkZW8gaW50ZXJmYWNlczoKKyAgRGV2aWNlIG5vZGUgY2FuIGNvbnRhaW4gdmlkZW8g
+aW50ZXJmYWNlIHBvcnQgbm9kZXMgYWNjb3JkaW5nIHRvIFsxXS4KKyAgVGhlIGZvbGxvd2luZyBh
+cmUgcHJvcGVydGllcyBzcGVjaWZpYyB0byB0aG9zZSBub2RlczoKKworICBlbmRwb2ludCBub2Rl
+IGNvbm5lY3RlZCB0byBicmlkZ2Ugb3IgcGFuZWwgbm9kZToKKyAgIC0gcmVtb3RlLWVuZHBvaW50
+OiBzcGVjaWZpZXMgdGhlIGVuZHBvaW50IGluIHBhbmVsIG9yIGJyaWRnZSBub2RlLgorCQkgICAg
+ICBUaGlzIG5vZGUgaXMgcmVxdWlyZWQgaW4gYWxsIGtpbmRzIG9mIGV4eW5vcyBkcAorCQkgICAg
+ICB0byByZXByZXNlbnQgdGhlIGNvbm5lY3Rpb24gYmV0d2VlbiBkcCBhbmQgYnJpZGdlCisJCSAg
+ICAgICxvciBkcCBhbmQgcGFuZWwuCiAKIFsxXTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMudHh0CiAKQEAgLTExMSw5ICsxMTgsMjIgQEAg
+Qm9hcmQgU3BlY2lmaWMgcG9ydGlvbjoKIAkJfTsKIAogCQlwb3J0cyB7Ci0JCQlwb3J0QDAgewor
+CQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47CisJCQkjc2l6ZS1jZWxscyA9IDwwPjsKKworCQkJcG9y
+dCB7CiAJCQkJZHBfb3V0OiBlbmRwb2ludCB7Ci0JCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmYnJp
+ZGdlX2luPjsKKwkJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9pbj47CisJCQkJfTsKKwkJCX07
+CisJCX07CisKKwkJcGFuZWxAMCB7CisJCQlyZWcgPSA8MD47CisJCQkuLi4KKwkJCXBvcnQgewor
+CQkJCWRwX2luOiBlbmRwb2ludCB7CisJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHBfb3V0PjsK
+IAkJCQl9OwogCQkJfTsKIAkJfTsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
