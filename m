@@ -1,170 +1,106 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 02/12] clk: samsung: exynos5420: add cpu clock
- configuration data and instantiate cpu clock
-Date: Thu, 03 Dec 2015 15:08:26 +0900
-Message-ID: <565FDC5A.1010504@samsung.com>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
- <1449091167-20758-3-git-send-email-ben@smart-cactus.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/2] drm/exynos: dp: add of_graph dt binding support for
+ panel
+Date: Thu, 03 Dec 2015 16:11:11 +0900
+Message-ID: <565FEB0F.4010900@samsung.com>
+References: <1449057472-4389-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1449091167-20758-3-git-send-email-ben@smart-cactus.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Ben Gamari <ben@smart-cactus.org>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, Mike Turquette <mturquette@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:36017 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750897AbbLCHLS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 3 Dec 2015 02:11:18 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NYR01P3ATASOZ10@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Dec 2015 16:11:16 +0900 (KST)
+In-reply-to: <1449057472-4389-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com
 
-On 03.12.2015 06:19, Ben Gamari wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> With the addition of the new Samsung specific cpu-clock type, the
-> arm clock can be represented as a cpu-clock type. Add the CPU clock
-> configuration data and instantiate the CPU clock type for Exynos5420.
-> 
-> Changes by Bartlomiej:
-> - split Exynos5420 support from the original patches
-> - moved E5420_[EGL,KFC]_DIV0() macros to clk-exynos5420.c
-> 
-> Changes by Ben Gamari:
-> - Rebased
 
-If only rebasing then you should retain the Lukasz's review tag. He
-doesn't have to review it again, right? :)
+It seems that below patch should be modifed for only one of two outboun=
+d nodes - panel
+and bridge - to be bound because in case of using bridge device, the br=
+idge driver will
+bind the panel. I will fix and post it again.
 
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Ben Gamari <ben@smart-cactus.org>
+Thanks,
+Inki Dae
+
+2015=EB=85=84 12=EC=9B=94 02=EC=9D=BC 20:57=EC=97=90 Inki Dae =EC=9D=B4=
+(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> This patch adds of_graph dt binding support for panel device
+> and also keeps the backward compatibility.
+>=20
+> i.e.,
+> The dts file for Exynos5800 based peach pi board
+> has a panel property so we need to keep the backward compatibility.
+>=20
+> Changelog v2:
+> - return -EINVAL if getting a port node failed.
+>=20
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos5420.c   | 58 ++++++++++++++++++++++++++++++++--
->  include/dt-bindings/clock/exynos5420.h |  2 ++
->  2 files changed, 58 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 389af3c..2288052 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -18,6 +18,7 @@
->  #include <linux/syscore_ops.h>
->  
->  #include "clk.h"
-> +#include "clk-cpu.h"
->  
->  #define APLL_LOCK		0x0
->  #define APLL_CON0		0x100
-> @@ -616,9 +617,11 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
->  	MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
->  	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
->  
-> -	MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
-> +	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-> +	      CLK_SET_RATE_PARENT, 0),
->  	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
-> -	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
-> +	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
-> +	      CLK_SET_RATE_PARENT, 0),
->  	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
->  
->  	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
-> @@ -1246,6 +1249,50 @@ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
->  		KPLL_CON0, NULL),
->  };
->  
-> +#define E5420_EGL_DIV0(apll, pclk_dbg, atb, cpud)			\
-> +		((((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |	\
-> +		 ((cpud) << 4)))
-> +
-> +static const struct exynos_cpuclk_cfg_data exynos5420_eglclk_d[] __initconst = {
-> +	{ 1800000, E5420_EGL_DIV0(3, 7, 7, 4), },
-> +	{ 1700000, E5420_EGL_DIV0(3, 7, 7, 3), },
-> +	{ 1600000, E5420_EGL_DIV0(3, 7, 7, 3), },
-> +	{ 1500000, E5420_EGL_DIV0(3, 7, 7, 3), },
-> +	{ 1400000, E5420_EGL_DIV0(3, 7, 7, 3), },
-> +	{ 1300000, E5420_EGL_DIV0(3, 7, 7, 2), },
-> +	{ 1200000, E5420_EGL_DIV0(3, 7, 7, 2), },
-> +	{ 1100000, E5420_EGL_DIV0(3, 7, 7, 2), },
-> +	{ 1000000, E5420_EGL_DIV0(3, 6, 6, 2), },
-> +	{  900000, E5420_EGL_DIV0(3, 6, 6, 2), },
-> +	{  800000, E5420_EGL_DIV0(3, 5, 5, 2), },
-> +	{  700000, E5420_EGL_DIV0(3, 5, 5, 2), },
-> +	{  600000, E5420_EGL_DIV0(3, 4, 4, 2), },
-> +	{  500000, E5420_EGL_DIV0(3, 3, 3, 2), },
-> +	{  400000, E5420_EGL_DIV0(3, 3, 3, 2), },
-> +	{  300000, E5420_EGL_DIV0(3, 3, 3, 2), },
-> +	{  200000, E5420_EGL_DIV0(3, 3, 3, 2), },
-> +	{  0 },
-
-The vendor code (Galaxy S5 with Exynos5422) sets pclk_dbg divider to 7.
-In the same time APLL divider is only 1.
-
-For the ACLK divider (of KFC below) the vendor sets 3, not 2.
-
-The values also don't match the Exynos5420 from Note 3.
-
-The Exynos5800 apparently has values more similar to 5422.
-
-The question is: for which exact model this is? We can of course choose
-the safest values here but probably these would be with the highest
-dividers?
-
-Best regards,
-Krzyztof
-
-
-> +};
-> +
-> +#define E5420_KFC_DIV(kpll, pclk, aclk)					\
-> +		((((kpll) << 24) | ((pclk) << 20) | ((aclk) << 4)))
-> +
-> +static const struct exynos_cpuclk_cfg_data exynos5420_kfcclk_d[] __initconst = {
-> +	{ 1300000, E5420_KFC_DIV(3, 5, 2), },
-> +	{ 1200000, E5420_KFC_DIV(3, 5, 2), },
-> +	{ 1100000, E5420_KFC_DIV(3, 5, 2), },
-> +	{ 1000000, E5420_KFC_DIV(3, 5, 2), },
-> +	{  900000, E5420_KFC_DIV(3, 5, 2), },
-> +	{  800000, E5420_KFC_DIV(3, 5, 2), },
-> +	{  700000, E5420_KFC_DIV(3, 4, 2), },
-> +	{  600000, E5420_KFC_DIV(3, 4, 2), },
-> +	{  500000, E5420_KFC_DIV(3, 4, 2), },
-> +	{  400000, E5420_KFC_DIV(3, 3, 2), },
-> +	{  300000, E5420_KFC_DIV(3, 3, 2), },
-> +	{  200000, E5420_KFC_DIV(3, 3, 2), },
-> +	{  0 },
-> +};
-> +
->  static const struct of_device_id ext_clk_match[] __initconst = {
->  	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
->  	{ },
-> @@ -1310,6 +1357,13 @@ static void __init exynos5x_clk_init(struct device_node *np,
->  				ARRAY_SIZE(exynos5800_gate_clks));
+>  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/dr=
+m/exynos/exynos_dp_core.c
+> index 94f02a0..0b53045 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -1392,7 +1392,7 @@ static const struct component_ops exynos_dp_ops=
+ =3D {
+>  static int exynos_dp_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev =3D &pdev->dev;
+> -	struct device_node *panel_node, *bridge_node, *endpoint;
+> +	struct device_node *panel_node =3D NULL, *bridge_node, *endpoint =3D=
+ NULL;
+>  	struct exynos_dp_device *dp;
+>  	int ret;
+> =20
+> @@ -1403,15 +1403,32 @@ static int exynos_dp_probe(struct platform_de=
+vice *pdev)
+> =20
+>  	platform_set_drvdata(pdev, dp);
+> =20
+> +	/* This is for the backward compatibility. */
+>  	panel_node =3D of_parse_phandle(dev->of_node, "panel", 0);
+>  	if (panel_node) {
+>  		dp->panel =3D of_drm_find_panel(panel_node);
+>  		of_node_put(panel_node);
+>  		if (!dp->panel)
+>  			return -EPROBE_DEFER;
+> +	} else {
+> +		endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
+> +		if (endpoint) {
+> +			panel_node =3D of_graph_get_remote_port_parent(endpoint);
+> +			if (panel_node) {
+> +				dp->panel =3D of_drm_find_panel(panel_node);
+> +				of_node_put(panel_node);
+> +				if (!dp->panel)
+> +					return -EPROBE_DEFER;
+> +			} else {
+> +				DRM_ERROR("no port node for panel device.\n");
+> +				return -EINVAL;
+> +			}
+> +		}
 >  	}
->  
-> +	exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-> +		mout_cpu_p[0], mout_cpu_p[1], 0x200,
-> +		exynos5420_eglclk_d, ARRAY_SIZE(exynos5420_eglclk_d), 0);
-> +	exynos_register_cpu_clock(ctx, CLK_KFC_CLK, "kfcclk",
-> +		mout_kfc_p[0], mout_kfc_p[1], 0x28200,
-> +		exynos5420_kfcclk_d, ARRAY_SIZE(exynos5420_kfcclk_d), 0);
+> =20
+> -	endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
+> +	panel_node =3D !endpoint ? NULL : panel_node;
 > +
->  	exynos5420_clk_sleep_init();
->  
->  	samsung_clk_of_add_provider(np, ctx);
-> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-> index 99da0d1..dde9664 100644
-> --- a/include/dt-bindings/clock/exynos5420.h
-> +++ b/include/dt-bindings/clock/exynos5420.h
-> @@ -25,6 +25,8 @@
->  #define CLK_FOUT_MPLL		10
->  #define CLK_FOUT_BPLL		11
->  #define CLK_FOUT_KPLL		12
-> +#define CLK_ARM_CLK		13
-> +#define CLK_KFC_CLK		14
->  
->  /* gate for special clocks (sclk) */
->  #define CLK_SCLK_UART0		128
-> 
-
+> +	endpoint =3D of_graph_get_next_endpoint(dev->of_node, panel_node);
+>  	if (endpoint) {
+>  		bridge_node =3D of_graph_get_remote_port_parent(endpoint);
+>  		if (bridge_node) {
+>=20
