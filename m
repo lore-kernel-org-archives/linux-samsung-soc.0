@@ -1,181 +1,81 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3 1/3] drm/exynos: dp: add of_graph dt binding support for
+Subject: Re: [PATCH 3/3] dt-bindings: exynos-dp: update ports node binding for
  panel
-Date: Fri, 04 Dec 2015 18:00:09 +0900
-Message-ID: <56615619.2040208@samsung.com>
+Date: Fri, 04 Dec 2015 18:07:03 +0900
+Message-ID: <566157B7.3090207@samsung.com>
 References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
- <1449135010-8111-2-git-send-email-inki.dae@samsung.com>
- <566049D0.8070404@osg.samsung.com>
+ <1449135010-8111-4-git-send-email-inki.dae@samsung.com>
+ <566043A6.8090604@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41653 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755751AbbLDJAR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Dec 2015 04:00:17 -0500
-In-reply-to: <566049D0.8070404@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <566043A6.8090604@osg.samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, k.kozlowski@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Javier,
-
-2015=EB=85=84 12=EC=9B=94 03=EC=9D=BC 22:55=EC=97=90 Javier Martinez Ca=
-nillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> Hello Inki,
->=20
-> I found that v2 of this patch is alredy in your exynos-drm for-next b=
-ranch so
-> so I had to revert it in linux-next to apply this one to test. You sh=
-ouldn't
-> push patches that were still not reviewed (specially the ones that we=
-ren't
-> tested like this one) to your branch that gets pulled by -next. The i=
-dea of
-> -next is to have some test coverage but it should be as stable as pos=
-sible.
-
-exynos-drm/for-next branch is not really for-next branch. This branch i=
-s used
-only for integration test. As you know, there are many exynos maintaine=
-rs
-and they have their own repository. So we would need to test the integr=
-ation.
-=46or this, exynos-drm/for-next is merged to linux-next not Dave's tree=
-=2E
-Only exynos-drm-next branch will be merged to Dave's tree so only revie=
-wed and
-tested patches will be merged to exynos-drm-next.
-
->=20
-> On 12/03/2015 06:30 AM, Inki Dae wrote:
->> This patch adds of_graph dt binding support for panel device
->> and also keeps the backward compatibility.
->>
->> i.e.,
->> The dts file for Exynos5800 based peach pi board
->> has a panel property so we need to keep the backward compatibility.
->>
->> Changelog v3:
->> - bind only one of two nodes outbound - panel or bridge.
->>
->=20
-> This patch fixes one of the comments I had for v2 but I've another
-> comment below.
-> =20
->> Changelog v2:
->> - return -EINVAL if getting a port node failed.
->>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 ++++++++++++++++++++-
->>  1 file changed, 20 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/d=
-rm/exynos/exynos_dp_core.c
->> index 94f02a0..60260a0 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> @@ -1392,7 +1392,7 @@ static const struct component_ops exynos_dp_op=
-s =3D {
->>  static int exynos_dp_probe(struct platform_device *pdev)
->>  {
->>  	struct device *dev =3D &pdev->dev;
->> -	struct device_node *panel_node, *bridge_node, *endpoint;
->> +	struct device_node *panel_node =3D NULL, *bridge_node, *endpoint =3D=
- NULL;
->>  	struct exynos_dp_device *dp;
->>  	int ret;
->> =20
->> @@ -1403,14 +1403,32 @@ static int exynos_dp_probe(struct platform_d=
-evice *pdev)
->> =20
->>  	platform_set_drvdata(pdev, dp);
->> =20
->> +	/* This is for the backward compatibility. */
->>  	panel_node =3D of_parse_phandle(dev->of_node, "panel", 0);
->>  	if (panel_node) {
->>  		dp->panel =3D of_drm_find_panel(panel_node);
->>  		of_node_put(panel_node);
->>  		if (!dp->panel)
->>  			return -EPROBE_DEFER;
->> +	} else {
->> +		endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
->> +		if (endpoint) {
->> +			panel_node =3D of_graph_get_remote_port_parent(endpoint);
->=20
-> Here is asssumed that the endpoint will be a panel but it could be th=
-at there
-> is no "panel" phandle but the port is for a bridge chip (i.e: Peach P=
-it) so
-> this assumption seems fragile to me.
->=20
-> That's what I meant when I said "Assuming you can make a distinction =
-if the
-> endpoint is a panel or a bridge" in the other thread.
->=20
->> +			if (panel_node) {
->> +				dp->panel =3D of_drm_find_panel(panel_node);
->> +				of_node_put(panel_node);
->> +				if (!dp->panel)
->> +					return -EPROBE_DEFER;
->> +			} else {
->> +				DRM_ERROR("no port node for panel device.\n");
->> +				return -EINVAL;
->> +			}
->> +		}
->>  	}
->> =20
->> +	if (endpoint)
->> +		goto out;
->> +
->=20
-> Ok, so IIUC what's done here is to test if the panel lookup failed, t=
-hen the
-> endpoint is looked up again but this time a call to of_drm_find_bridg=
-e() is
-> made instead of a call to of_drm_find_panel(). I wonder if there is a=
- better
-> way to do this...
->=20
-> In any case then I think you should test if (panel_node) instead of e=
-ndpoint.
->=20
->>  	endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
->>  	if (endpoint) {
->>  		bridge_node =3D of_graph_get_remote_port_parent(endpoint);
->> @@ -1423,6 +1441,7 @@ static int exynos_dp_probe(struct platform_dev=
-ice *pdev)
->>  			return -EPROBE_DEFER;
->>  	}
->> =20
->> +out:
->>  	pm_runtime_enable(dev);
->> =20
->>  	ret =3D component_add(&pdev->dev, &exynos_dp_ops);
->>
->=20
-> I can't think of a better way to lookup either a panel or a bridge th=
-ough
-> and I'm not that familiar with DRM so with the correct check, the pat=
-ch
-> looks good to me.
->=20
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
->=20
-> Also on an Exynos5800 Peach Pi with the DTS patch I shared, the displ=
-ay
-> is working correctly and also I tested without the DTS patch to make
-> sure that it does not cause a regression for older DTBs.
->=20
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Thanks,
-Inki Dae
-
->=20
-> Best regards,
->=20
+SGkgSmF2aWVyLAoKMjAxNeuFhCAxMuyblCAwM+ydvCAyMjoyOeyXkCBKYXZpZXIgTWFydGluZXog
+Q2FuaWxsYXMg7J20KOqwgCkg7JO0IOq4gDoKPiBIZWxsbyBJbmtpLAo+IAo+IE9uIDEyLzAzLzIw
+MTUgMDY6MzAgQU0sIElua2kgRGFlIHdyb3RlOgo+PiBUaGlzIHBhdGNoIHVwZGF0ZXMgYSBwb3J0
+cyBub2RlIGJpbmRpbmcgZm9yIHBhbmVsLgo+Pgo+PiBXaXRoIHRoaXMsIGRwIG5vZGUgY2FuIGhh
+dmUgYSBwb3J0cyBub2RlIHdoaWNoIGRlc2NyaWJlcwo+PiBhIHJlbW90ZSBlbmRwb2ludCBub2Rl
+IHRoYXQgY2FuIGJlIGNvbm5lY3RlZCB0byBwYW5lbCBvciBicmlkZ2UKPj4gbm9kZS4KPj4KPj4g
+U2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4g
+IC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0ICAgICAgICAgIHwgMjgg
+KysrKysrKysrKysrKysrKysrLS0tLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDI0IGluc2VydGlvbnMo
+KyksIDQgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dCBiL0RvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0Cj4+IGlu
+ZGV4IDY0NjkzZjIuLjE1YjUyY2IgMTAwNjQ0Cj4+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0Cj4+ICsrKyBiL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0
+Cj4+IEBAIC02Niw4ICs2NiwxNSBAQCBPcHRpb25hbCBwcm9wZXJ0aWVzIGZvciBkcC1jb250cm9s
+bGVyOgo+PiAgCQlIb3RwbHVnIGRldGVjdCBHUElPLgo+PiAgCQkJSW5kaWNhdGVzIHdoaWNoIEdQ
+SU8gc2hvdWxkIGJlIHVzZWQgZm9yIGhvdHBsdWcKPj4gIAkJCWRldGVjdGlvbgo+PiAtCS12aWRl
+byBpbnRlcmZhY2VzOiBEZXZpY2Ugbm9kZSBjYW4gY29udGFpbiB2aWRlbyBpbnRlcmZhY2UgcG9y
+dAo+PiAtCQkJICAgIG5vZGVzIGFjY29yZGluZyB0byBbMV0uCj4+ICtWaWRlbyBpbnRlcmZhY2Vz
+Ogo+PiArICBEZXZpY2Ugbm9kZSBjYW4gY29udGFpbiB2aWRlbyBpbnRlcmZhY2UgcG9ydCBub2Rl
+cyBhY2NvcmRpbmcgdG8gWzFdLgo+PiArICBUaGUgZm9sbG93aW5nIGFyZSBwcm9wZXJ0aWVzIHNw
+ZWNpZmljIHRvIHRob3NlIG5vZGVzOgo+PiArCj4+ICsgIGVuZHBvaW50IG5vZGUgY29ubmVjdGVk
+IHRvIGJyaWRnZSBvciBwYW5lbCBub2RlOgo+PiArICAgLSByZW1vdGUtZW5kcG9pbnQ6IHNwZWNp
+ZmllcyB0aGUgZW5kcG9pbnQgaW4gcGFuZWwgb3IgYnJpZGdlIG5vZGUuCj4+ICsJCSAgICAgIFRo
+aXMgbm9kZSBpcyByZXF1aXJlZCBpbiBhbGwga2luZHMgb2YgZXh5bm9zIGRwCj4+ICsJCSAgICAg
+IHRvIHJlcHJlc2VudCB0aGUgY29ubmVjdGlvbiBiZXR3ZWVuIGRwIGFuZCBicmlkZ2UKPj4gKwkJ
+ICAgICAgLG9yIGRwIGFuZCBwYW5lbC4KPj4KPiAKPiBUaGlzIGlzIG5pY2UgYnV0IEkgdGhpbmsg
+dGhlIERUIGJpbmRpbmcgc2hvdWxkIGFsc28gZG9jdW1lbnQgdGhhdCBpdCB1c2VzCj4gYSBwaGFu
+ZGxlIHRvIGRlZmluZSB0aGUgY29ubmVjdGlvbiB3aXRoIHRoZSBwYW5lbCAoYnV0IGV4cGxhaW4g
+dGhhdCBpcwo+IGRlcHJlY2F0ZWQpLiBJZiBvbmx5IHNvIHBlb3BsZSBsb29raW5nIGF0IGEgRFRT
+IGFuZCB0aGVuIGdvaW5nIHRvIHRoZSBEVAo+IGJpbmRpbmcgY2FuIHVuZGVyc3RhbmQgd2h5IHRo
+ZXJlIGlzIHR3byB3YXlzIHRvIGRlZmluZSB0aGUgc2FtZS4KPiAgIAo+PiAgWzFdOiBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8taW50ZXJmYWNlcy50eHQKPj4g
+IAo+PiBAQCAtMTExLDkgKzExOCwyMiBAQCBCb2FyZCBTcGVjaWZpYyBwb3J0aW9uOgo+PiAgCQl9
+Owo+PiAgCj4+ICAJCXBvcnRzIHsKPj4gLQkJCXBvcnRAMCB7Cj4+ICsJCQkjYWRkcmVzcy1jZWxs
+cyA9IDwxPjsKPj4gKwkJCSNzaXplLWNlbGxzID0gPDA+Owo+PiArCj4gCj4gVGhlc2UgdHdvIHBy
+b3BlcnRpZXMgYXJlIG9ubHkgbmVlZGVkIHdoZW4gdGhlcmUgaXMgbW9yZSB0aGFuIDIgcG9ydHMg
+YW5kCj4gYSByZWcgcHJvcGVydHkgaXMgdXNlZCB0byBudW1iZXIgdGhlIHBvcnQgbm9kZXMgYnV0
+IEkgZG9uJ3QgdGhpbmsgdGhhdCdzCj4gdGhlIGNhc2UgZm9yIEV4eW5vcyBEUCBhbmQgY2VydGFp
+bmx5IGlzIG5vdCB0aGUgY2FzZSBpbiB0aGlzIGV4YW1wbGUgc28KPiBJIHRoaW5rIHlvdSBzaG91
+bGQganVzdCByZW1vdmUgdGhlbS4KClJpZ2h0LiBJIGZvdW5kIG91dCB0aGF0IHRoZSBkcCBjYW4g
+aGF2ZSBvbmx5IG9uZSBwb3J0IG91dGJvdW5kLiBXaWxsIHJlbW92ZSB0aGVtLgoKPiAKPj4gKwkJ
+CXBvcnQgewo+PiAgCQkJCWRwX291dDogZW5kcG9pbnQgewo+PiAtCQkJCQlyZW1vdGUtZW5kcG9p
+bnQgPSA8JmJyaWRnZV9pbj47Cj4+ICsJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHBfaW4+Owo+
+PiArCQkJCX07Cj4+ICsJCQl9Owo+PiArCQl9Owo+PiArCj4+ICsJCXBhbmVsQDAgewo+PiArCQkJ
+cmVnID0gPDA+Owo+PiArCQkJLi4uCj4+ICsJCQlwb3J0IHsKPj4gKwkJCQlkcF9pbjogZW5kcG9p
+bnQgewo+PiArCQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRwX291dD47Cj4+ICAJCQkJfTsKPj4g
+IAkJCX07Cj4+ICAJCX07Cj4+Cj4gCj4gVGhlIHJlc3QgbG9va3MgZ29vZCB0byBtZSBzbyB3aXRo
+IHRoZSB0d28gY2hhbmdlcyBmZWVsIGZyZWUgdG8gYWRkOgo+IAo+IFJldmlld2VkLWJ5OiBKYXZp
+ZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+CgpUaGFua3MsCklu
+a2kgRGFlCgo+IAo+IEJlc3QgcmVnYXJkcywKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
