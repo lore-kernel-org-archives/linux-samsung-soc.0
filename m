@@ -1,52 +1,36 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 10/10] cpufreq: arm-big-little: accept operating-points-v2
- nodes
-Date: Fri, 04 Dec 2015 18:30:35 +0100
-Message-ID: <1449250235-9613-11-git-send-email-b.zolnierkie@samsung.com>
-References: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 2/3] Add support for monitoring gpio switches
+Date: Sat, 5 Dec 2015 02:14:48 +0800
+Message-ID: <201512050224.lVULPyNu%fengguang.wu@intel.com>
+References: <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:50185 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752046AbbLDSNZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Dec 2015 13:13:25 -0500
+Content-Disposition: inline
+In-Reply-To: <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+Cc: kbuild-all@01.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Martyn Welch <martyn.welch@collabora.co.uk>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-From: Ben Gamari <ben@smart-cactus.org>
+Hi Martyn,
 
-The arm_big_little cpufreq driver can use operating points from
-operating-points-v2 nodes without any trouble.
+[auto build test WARNING on char-misc/char-misc-testing]
+[also build test WARNING on v4.4-rc3 next-20151203]
 
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+url:    https://github.com/0day-ci/linux/commits/Martyn-Welch/Device-tree-binding-documentation-for-gpio-switch/20151205-014105
+
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/misc/gpio-switch.c:98:34-40: ERROR: application of sizeof to pointer
+
+Please review and possibly fold the followup patch.
+
 ---
- drivers/cpufreq/arm_big_little_dt.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/cpufreq/arm_big_little_dt.c b/drivers/cpufreq/arm_big_little_dt.c
-index 16ddeef..be7f632 100644
---- a/drivers/cpufreq/arm_big_little_dt.c
-+++ b/drivers/cpufreq/arm_big_little_dt.c
-@@ -35,12 +35,16 @@ static struct device_node *get_cpu_node_with_valid_op(int cpu)
- {
- 	struct device_node *np = of_cpu_device_node_get(cpu);
- 
--	if (!of_get_property(np, "operating-points", NULL)) {
--		of_node_put(np);
--		np = NULL;
-+	if (of_get_property(np, "operating-points-v2", NULL)) {
-+		return np;
- 	}
- 
--	return np;
-+	if (of_get_property(np, "operating-points", NULL)) {
-+		return np;
-+	}
-+
-+	of_node_put(np);
-+	return NULL;
- }
- 
- static int dt_init_opp_table(struct device *cpu_dev)
--- 
-1.9.1
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
