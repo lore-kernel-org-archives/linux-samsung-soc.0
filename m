@@ -1,258 +1,147 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: regulator/mfd: Reorganize S2MPA01
- bindings
-Date: Fri, 4 Dec 2015 09:55:09 -0600
-Message-ID: <20151204155509.GA27455@rob-hp-laptop>
-References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
- <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 1/3] drm/exynos: dp: add of_graph dt binding support
+ for panel
+Date: Fri, 4 Dec 2015 13:18:04 -0300
+Message-ID: <5661BCBC.4090207@osg.samsung.com>
+References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
+ <1449135010-8111-2-git-send-email-inki.dae@samsung.com>
+ <566049D0.8070404@osg.samsung.com> <56615619.2040208@samsung.com>
+ <5661894B.1090105@osg.samsung.com>
+ <CAAQKjZMT0d=r7qMVtBLTC3EJaJ0PYZppPX9pCJu4dEeKcpApXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54396 "EHLO mail.kernel.org"
+Received: from lists.s-osg.org ([54.187.51.154]:33234 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753309AbbLDPzP (ORCPT
+	id S1753887AbbLDQSL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Dec 2015 10:55:15 -0500
-Content-Disposition: inline
-In-Reply-To: <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
+	Fri, 4 Dec 2015 11:18:11 -0500
+In-Reply-To: <CAAQKjZMT0d=r7qMVtBLTC3EJaJ0PYZppPX9pCJu4dEeKcpApXQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org
+To: Inki Dae <daeinki@gmail.com>
+Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, Dec 04, 2015 at 10:10:05AM +0900, Krzysztof Kozlowski wrote:
-> The mfd/s2mpa01.txt duplicates some of the information about bindings
-> with old mfd/s2mps11.txt. Now common part exists entirely in
-> mfd/samsung,sec-core.txt so:
->  - add company prefix to file name (regulator/samsung,s2mpa01.txt),
->  - remove duplicated information,
->  - reorganize the contents to match style of
->    regulator/samsung,s2mps11.txt.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hello Inki,
 
-Next time, use git format-patch -M option.
+On 12/04/2015 11:57 AM, Inki Dae wrote:
+> Hi Javier,
+>=20
+> 2015-12-04 21:38 GMT+09:00 Javier Martinez Canillas <javier@osg.samsu=
+ng.com>:
+>> Hello Inki,
+>>
+>> On 12/04/2015 06:00 AM, Inki Dae wrote:
+>>> Hi Javier,
+>>>
+>>> 2015=EB=85=84 12=EC=9B=94 03=EC=9D=BC 22:55=EC=97=90 Javier Martine=
+z Canillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>>>> Hello Inki,
+>>>>
+>>>> I found that v2 of this patch is alredy in your exynos-drm for-nex=
+t branch so
+>>>> so I had to revert it in linux-next to apply this one to test. You=
+ shouldn't
+>>>> push patches that were still not reviewed (specially the ones that=
+ weren't
+>>>> tested like this one) to your branch that gets pulled by -next. Th=
+e idea of
+>>>> -next is to have some test coverage but it should be as stable as =
+possible.
+>>>
+>>> exynos-drm/for-next branch is not really for-next branch. This bran=
+ch is used
+>>
+>> Well, it is a for-next branch because is pulled by -next. It is list=
+ed in:
+>> http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree=
+/Next/Trees
+>>
+>> drm-exynos      git     git://git.kernel.org/pub/scm/linux/kernel/gi=
+t/daeinki/drm-exynos.git#exynos-drm/for-next
+>>
+>>> only for integration test. As you know, there are many exynos maint=
+ainers
+>>> and they have their own repository. So we would need to test the in=
+tegration.
+>>
+>> Integration testing is of course very needed and linux-next is for t=
+hat but
+>> what should be tested are the patches that are targeted to mainline.
+>>
+>>> For this, exynos-drm/for-next is merged to linux-next not Dave's tr=
+ee.
+>>> Only exynos-drm-next branch will be merged to Dave's tree so only r=
+eviewed and
+>>> tested patches will be merged to exynos-drm-next.
+>>>
+>>
+>> In that case, exynos-drm-next is what should be pulled by linux-next=
+, no the
+>> for-next branch. Linux-next is a simulation of what Torvalds would d=
+o next
+>> so problems are found earlier, ideally before the patches land into =
+mainline.
+>=20
+> Seems I didn't comment enough. exynos-drm/for-next branch includes al=
+l
+> patches of exynos-drm-next
+> and actually, they keep same patches for most time but sometimes, I
+> merge additional patches only to
+> exynos-drm/for-next, which should be more tested with other trees
+> before going to Dave's tree.
+>=20
 
-Acked-by: Rob Herring <robh@kernel.org>
+Ok, but unreviewed and more importantly untested patches should not
+go to to exynos-drm/for-next because those will be made available in
+linux-next and can cause issues.
 
-> ---
->  Documentation/devicetree/bindings/mfd/s2mpa01.txt  | 90 ----------------------
->  .../devicetree/bindings/mfd/samsung,sec-core.txt   |  4 +-
->  .../bindings/regulator/samsung,s2mpa01.txt         | 79 +++++++++++++++++++
->  3 files changed, 82 insertions(+), 91 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mfd/s2mpa01.txt
->  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/s2mpa01.txt b/Documentation/devicetree/bindings/mfd/s2mpa01.txt
-> deleted file mode 100644
-> index c13d3d8c3947..000000000000
-> --- a/Documentation/devicetree/bindings/mfd/s2mpa01.txt
-> +++ /dev/null
-> @@ -1,90 +0,0 @@
-> -
-> -* Samsung S2MPA01 Voltage and Current Regulator
-> -
-> -The Samsung S2MPA01 is a multi-function device which includes high
-> -efficiency buck converters including Dual-Phase buck converter, various LDOs,
-> -and an RTC. It is interfaced to the host controller using an I2C interface.
-> -Each sub-block is addressed by the host system using different I2C slave
-> -addresses.
-> -
-> -Required properties:
-> -- compatible: Should be "samsung,s2mpa01-pmic".
-> -- reg: Specifies the I2C slave address of the PMIC block. It should be 0x66.
-> -
-> -Optional properties:
-> -- interrupt-parent: Specifies the phandle of the interrupt controller to which
-> -  the interrupts from s2mpa01 are delivered to.
-> -- interrupts: An interrupt specifier for the sole interrupt generated by the
-> -  device.
-> -
-> -Optional nodes:
-> -- regulators: The regulators of s2mpa01 that have to be instantiated should be
-> -  included in a sub-node named 'regulators'. Regulator nodes and constraints
-> -  included in this sub-node use the standard regulator bindings which are
-> -  documented elsewhere.
-> -
-> -Properties for BUCK regulator nodes:
-> -- regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
-> -  (default), 25000, or 50000. May be 0 for disabling the ramp delay on
-> -  BUCK{1,2,3,4}.
-> -
-> - In the absence of the regulator-ramp-delay property, the default ramp
-> - delay will be used.
-> -
-> -  NOTE: Some BUCKs share the ramp rate setting i.e. same ramp value will be set
-> -  for a particular group of BUCKs. So provide same regulator-ramp-delay=<value>.
-> -
-> -  The following BUCKs share ramp settings:
-> -  * 1 and 6
-> -  * 2 and 4
-> -  * 8, 9, and 10
-> -
-> -The following are the names of the regulators that the s2mpa01 PMIC block
-> -supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-> -as per the datasheet of s2mpa01.
-> -
-> -	- LDOn
-> -		  - valid values for n are 1 to 26
-> -		  - Example: LDO1, LD02, LDO26
-> -	- BUCKn
-> -		  - valid values for n are 1 to 10.
-> -		  - Example: BUCK1, BUCK2, BUCK9
-> -
-> -Example:
-> -
-> -	s2mpa01_pmic@66 {
-> -		compatible = "samsung,s2mpa01-pmic";
-> -		reg = <0x66>;
-> -
-> -		regulators {
-> -			ldo1_reg: LDO1 {
-> -				regulator-name = "VDD_ALIVE";
-> -				regulator-min-microvolt = <1000000>;
-> -				regulator-max-microvolt = <1000000>;
-> -			};
-> -
-> -			ldo2_reg: LDO2 {
-> -				regulator-name = "VDDQ_MMC2";
-> -				regulator-min-microvolt = <2800000>;
-> -				regulator-max-microvolt = <2800000>;
-> -				regulator-always-on;
-> -			};
-> -
-> -			buck1_reg: BUCK1 {
-> -				regulator-name = "vdd_mif";
-> -				regulator-min-microvolt = <950000>;
-> -				regulator-max-microvolt = <1350000>;
-> -				regulator-always-on;
-> -				regulator-boot-on;
-> -			};
-> -
-> -			buck2_reg: BUCK2 {
-> -				regulator-name = "vdd_arm";
-> -				regulator-min-microvolt = <950000>;
-> -				regulator-max-microvolt = <1350000>;
-> -				regulator-always-on;
-> -				regulator-boot-on;
-> -				regulator-ramp-delay = <50000>;
-> -			};
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> index 4aeb95c82304..cdd079bfc287 100644
-> --- a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> @@ -4,7 +4,7 @@ Binding for Samsung S2M and S5M family multi-function device
->  This is a part of device tree bindings for S2M and S5M family multi-function
->  devices.
->  
-> -The Samsung S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
-> +The Samsung S2MPA01, S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
->  of multi-function devices which include voltage and current regulators, RTC,
->  charger controller, clock outputs and other sub-blocks. It is interfaced
->  to the host controller using an I2C interface. Each sub-block is usually
-> @@ -13,6 +13,7 @@ addressed by the host system using different I2C slave addresses.
->  
->  This document describes bindings for main device node. Optional sub-blocks
->  must be a sub-nodes to it. Bindings for them can be found in:
-> + - bindings/regulator/samsung,s2mpa01.txt
->   - bindings/regulator/samsung,s2mps11.txt
->   - bindings/regulator/samsung,s5m8767.txt
->   - bindings/clock/samsung,s2mps11.txt
-> @@ -20,6 +21,7 @@ must be a sub-nodes to it. Bindings for them can be found in:
->  
->  Required properties:
->   - compatible: Should be one of the following
-> +	- "samsung,s2mpa01-pmic",
->  	- "samsung,s2mps11-pmic",
->  	- "samsung,s2mps13-pmic",
->  	- "samsung,s2mps14-pmic",
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-> new file mode 100644
-> index 000000000000..bae3c7f838cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-> @@ -0,0 +1,79 @@
-> +Binding for Samsung S2MPA01 regulator block
-> +===========================================
-> +
-> +This is a part of device tree bindings for S2M family multi-function devices.
-> +More information can be found in bindings/mfd/sec-core.txt file.
-> +
-> +The S2MPA01 device provide buck and LDO regulators.
-> +
-> +To register these with regulator framework instantiate under main device node
-> +a sub-node named "regulators" with more sub-nodes for each regulator using the
-> +common regulator binding documented in:
-> + - Documentation/devicetree/bindings/regulator/regulator.txt
-> +
-> +
-> +Names of regulators supported by S2MPA01 device:
-> +	- LDOn
-> +		  - valid values for n are 1 to 26
-> +		  - Example: LDO1, LD02, LDO26
-> +	- BUCKn
-> +		  - valid values for n are 1 to 10.
-> +		  - Example: BUCK1, BUCK2, BUCK9
-> +Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-> +as per the datasheet of device.
-> +
-> +
-> +Optional properties of buck regulator nodes under "regulators" sub-node:
-> + - regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
-> +   (default), 25000, or 50000. May be 0 for disabling the ramp delay on
-> +   BUCK{1,2,3,4}.
-> +
-> +   In the absence of the regulator-ramp-delay property, the default ramp
-> +   delay will be used.
-> +
-> +   Note: Some bucks share the ramp rate setting i.e. same ramp value
-> +   will be set for a particular group of bucks so provide the same
-> +   regulator-ramp-delay value for them.
-> +   Groups sharing ramp rate:
-> +    - buck{1,6},
-> +    - buck{2,4},
-> +    - buck{8,9,10}.
-> +
-> +Example:
-> +
-> +	s2mpa01_pmic@66 {
-> +		compatible = "samsung,s2mpa01-pmic";
-> +		reg = <0x66>;
-> +
-> +		regulators {
-> +			ldo1_reg: LDO1 {
-> +				regulator-name = "VDD_ALIVE";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +			};
-> +
-> +			ldo2_reg: LDO2 {
-> +				regulator-name = "VDDQ_MMC2";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			buck1_reg: BUCK1 {
-> +				regulator-name = "vdd_mif";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			buck2_reg: BUCK2 {
-> +				regulator-name = "vdd_arm";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-ramp-delay = <50000>;
-> +			};
-> +		};
-> +	};
-> -- 
-> 1.9.1
-> 
+Only patches that are known to be good and have been reviewed/acked
+should go there.
+
+> One more thing, there is other difference between exynos-drm-next and
+> exynos-drm/for-next.
+> That is all patches of exynos-drm-next are merged on top of based on
+> Dave's drm-next branch.
+> On the other hand, all of exynos-drm/for-next are merged on top of
+> mainline. So if exynos-drm-next
+
+It's OK if you keep a different branch because you need a different
+base before sending your pull request but IMHO the patches in both
+branches should always be the same.
+
+> is merged to linux-next then all patches will be conflicted with
+> Dave's tree because his branch
+> is also merged to linux-next.
+>
+> I'm not sure that other maintainers always keep only the for-next
+> branch in their repository but
+> in my case, I use exynos-drm/for-next branch for the test before goin=
+g
+> to drm-next.
+> Anyway, exynos-drm-next will go to Dave's tree and then Dave's tree
+> will also be pulled by
+> linux-next, which would allow exynos-drm-next to be tested altogether
+> again before going to mainline.
+>
+
+This should be a common problem for subsystems with different levels
+of maintainership. I'm not a subsystem maintainer so I don't know how
+this should be solved but I thought that git merge would take care
+of this when both trees are pulled by linux-next.
+
+Maybe Krzysztof can comment on this since he has to do the same for
+the Exynos SoC support? He maintains a for-next branch and has to
+send pull request to Kukjin (and sometimes may need to rebase on top
+of Kukjin's tree) but both trees are pulled by linux-next to test.
+
+> Thanks,
+> Inki Dae
+>=20
+
+Best regards,
+--=20
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
