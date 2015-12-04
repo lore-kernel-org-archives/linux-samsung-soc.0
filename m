@@ -1,45 +1,41 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/3] Add support for monitoring gpio switches
-Date: Fri, 4 Dec 2015 10:57:13 -0800
-Message-ID: <20151204185713.GA22925@kroah.com>
-References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk>
- <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] [media] exynos4-is: make VIDEO_SAMSUNG_EXYNOS4_IS tristate
+Date: Fri, 04 Dec 2015 23:20:09 +0100
+Message-ID: <2086080.9y3TX8CFJu@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44700 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751005AbbLDS5O (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Dec 2015 13:57:14 -0500
-Content-Disposition: inline
-In-Reply-To: <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Martyn Welch <martyn.welch@collabora.co.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On Fri, Dec 04, 2015 at 05:31:14PM +0000, Martyn Welch wrote:
-> Select Chromebooks have gpio attached to switches used to cause the
-> firmware to enter alternative modes of operation and/or control other
-> device characteristics (such as write protection on flash devices). This
-> patch adds a driver that exposes a read-only interface to allow these
-> signals to be read from user space.
-> 
-> This functionality has been generalised to provide support for any device
-> with device tree support which needs to identify a gpio as being used for a
-> specific task.
-> 
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
-> ---
->  drivers/misc/Kconfig       |  11 ++++
->  drivers/misc/Makefile      |   1 +
->  drivers/misc/gpio-switch.c | 160 +++++++++++++++++++++++++++++++++++++++++++++
+With CONFIG_V4L2=m and VIDEO_SAMSUNG_EXYNOS4_IS=y, we can select the
+individual drivers as built-in code when that should not be possible:
 
-Why isn't this in drivers/gpio/ ?
+drivers/built-in.o: In function `s5pcsis_set_fmt':
+policy.c:(.text+0x13afdc): undefined reference to `v4l_bound_align_image'
+drivers/built-in.o: In function `s5pcsis_probe':
+policy.c:(.text+0x13b440): undefined reference to `v4l2_of_parse_endpoint'
+policy.c:(.text+0x13b72c): undefined reference to `v4l2_subdev_init'
 
-why make it a misc driver?
+Changing VIDEO_SAMSUNG_EXYNOS4_IS to tristate means that the dependency
+from CONFIG_V4L2 propates to the individual Kconfig symbols and they
+can only be built as loadable modules if V4L2 or any other of the
+dependencies itself is a module.
 
-thanks,
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-greg k-h
+diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
+index 40423c6c5324..57d42c6172c5 100644
+--- a/drivers/media/platform/exynos4-is/Kconfig
++++ b/drivers/media/platform/exynos4-is/Kconfig
+@@ -1,6 +1,6 @@
+ 
+ config VIDEO_SAMSUNG_EXYNOS4_IS
+-	bool "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
++	tristate "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
+ 	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+ 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+ 	depends on OF && COMMON_CLK
