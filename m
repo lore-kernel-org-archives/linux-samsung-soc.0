@@ -1,231 +1,240 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 04/10] ARM: dts: Exynos5420: add CPU OPP and regulator
- supply property
-Date: Fri, 04 Dec 2015 18:30:29 +0100
-Message-ID: <1449250235-9613-5-git-send-email-b.zolnierkie@samsung.com>
-References: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
+From: Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: [PATCH 2/3] Add support for monitoring gpio switches
+Date: Fri,  4 Dec 2015 17:31:14 +0000
+Message-ID: <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk>
+References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Martyn Welch <martyn.welch@collabora.co.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+Select Chromebooks have gpio attached to switches used to cause the
+firmware to enter alternative modes of operation and/or control other
+device characteristics (such as write protection on flash devices). This
+patch adds a driver that exposes a read-only interface to allow these
+signals to be read from user space.
 
-For Exynos5420 platforms, add CPU operating points and CPU
-regulator supply properties for migrating from Exynos specific
-cpufreq driver to using generic cpufreq driver.
+This functionality has been generalised to provide support for any device
+with device tree support which needs to identify a gpio as being used for a
+specific task.
 
-Changes by Bartlomiej:
-- split Exynos5420 support from the original patch
-
-Changes by Ben Gamari:
-- Port to operating-points-v2
-
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 122 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
+ drivers/misc/Kconfig       |  11 ++++
+ drivers/misc/Makefile      |   1 +
+ drivers/misc/gpio-switch.c | 160 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 172 insertions(+)
+ create mode 100644 drivers/misc/gpio-switch.c
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 48a0a55..f8f70a5 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -50,6 +50,116 @@
- 		usbdrdphy1 = &usbdrd_phy1;
- 	};
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 22892c7..d24367c 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -525,6 +525,17 @@ config VEXPRESS_SYSCFG
+ 	  bus. System Configuration interface is one of the possible means
+ 	  of generating transactions on this bus.
  
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp00@1800000000 {
-+			opp-hz = /bits/ 64 <1800000000>;
-+			opp-microvolt = <1250000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp01@1700000000 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <1212500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp02@1600000000 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-microvolt = <1175000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp03@1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <1137500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp04@1400000000 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-microvolt = <1112500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp05@1300000000 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1062500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp06@1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1037500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp07@1100000000 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1012500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp08@1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = < 987500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp09@900000000 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = < 962500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp10@800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = < 937500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp11@700000000 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = < 912500>;
-+			clock-latency-ns = <140000>;
-+		};
-+	};
++config GPIO_SWITCH
++	tristate "GPIO Switch driver"
++	depends on GPIO_SYSFS
++	---help---
++	 Some devices have gpio attached to dedicated switches, an example of
++	 this are chromebooks (where connection to some switches for predefined
++	 purposes are provided on the generic development card). This driver
++	 provides the ability to create consistently named sysfs entries to the
++	 functionally equivalent signals across a range of devices. This
++	 functionality currently requires a device which supports device tree.
 +
-+	cpu1_opp_table: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp00@1300000000 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1275000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp01@1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1212500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp02@1100000000 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1162500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp03@1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1112500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp04@900000000 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = <1062500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp05@800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <1025000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp06@700000000 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = <975000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp07@600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <937500>;
-+			clock-latency-ns = <140000>;
-+		};
-+	};
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 537d7f3..7a7e11a 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -56,3 +56,4 @@ obj-$(CONFIG_GENWQE)		+= genwqe/
+ obj-$(CONFIG_ECHO)		+= echo/
+ obj-$(CONFIG_VEXPRESS_SYSCFG)	+= vexpress-syscfg.o
+ obj-$(CONFIG_CXL_BASE)		+= cxl/
++obj-$(CONFIG_GPIO_SWITCH)	+= gpio-switch.o
+diff --git a/drivers/misc/gpio-switch.c b/drivers/misc/gpio-switch.c
+new file mode 100644
+index 0000000..1f381d6
+--- /dev/null
++++ b/drivers/misc/gpio-switch.c
+@@ -0,0 +1,160 @@
++/*
++ * Copyright (C) 2015 Collabora Ltd.
++ *
++ * based on vendor driver,
++ *
++ * Copyright (C) 2011 The Chromium OS Authors
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#include <linux/bcd.h>
++#include <linux/gpio.h>
++#include <linux/notifier.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_gpio.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -58,8 +168,11 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu-cluster.0";
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -68,6 +181,7 @@
- 			reg = <0x1>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -76,6 +190,7 @@
- 			reg = <0x2>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -84,14 +199,18 @@
- 			reg = <0x3>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu4: cpu@100 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
-+			clocks = <&clock CLK_KFC_CLK>;
-+			clock-names = "cpu-cluster.1";
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 
- 		cpu5: cpu@101 {
-@@ -100,6 +219,7 @@
- 			reg = <0x101>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 
- 		cpu6: cpu@102 {
-@@ -108,6 +228,7 @@
- 			reg = <0x102>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 
- 		cpu7: cpu@103 {
-@@ -116,6 +237,7 @@
- 			reg = <0x103>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 	};
- 
++struct gpio_switch_gpio_info {
++	int gpio;
++	const char *link;
++};
++
++static int dt_gpio_init(struct platform_device *pdev, struct device_node *child,
++			struct gpio_switch_gpio_info *gpio)
++{
++	int err;
++	enum of_gpio_flags of_flags;
++	unsigned long flags = GPIOF_DIR_IN | GPIOF_EXPORT;
++	const char *name;
++
++	err = of_property_read_string(child, "label", &name);
++	if (err)
++		return err;
++
++	gpio->gpio = of_get_named_gpio_flags(child, "gpios", 0, &of_flags);
++	if (!gpio_is_valid(gpio->gpio)) {
++		err = -EINVAL;
++		goto err_prop;
++	}
++
++	if (of_flags & OF_GPIO_ACTIVE_LOW)
++		flags |= GPIOF_ACTIVE_LOW;
++
++	if (!of_property_read_bool(child, "read-only"))
++		flags |= GPIOF_EXPORT_CHANGEABLE;
++
++	err = gpio_request_one(gpio->gpio, flags, name);
++	if (err)
++		goto err_prop;
++
++	err = gpio_export_link(&pdev->dev, name, gpio->gpio);
++	if (err)
++		goto err_gpio;
++
++	gpio->link = name;
++
++	return 0;
++
++err_gpio:
++	gpio_free(gpio->gpio);
++err_prop:
++	of_node_put(child);
++
++	return err;
++}
++
++static void gpio_switch_rem(struct device *dev,
++			    struct gpio_switch_gpio_info *gpio)
++{
++	sysfs_remove_link(&dev->kobj, gpio->link);
++
++	gpio_unexport(gpio->gpio);
++
++	gpio_free(gpio->gpio);
++}
++
++static int gpio_switch_probe(struct platform_device *pdev)
++{
++	struct gpio_switch_gpio_info *gpios;
++	struct device_node *child;
++	struct device_node *np = pdev->dev.of_node;
++	int ret;
++	int i;
++
++	i = of_get_child_count(np);
++	if (i < 1)
++		return i;
++
++	gpios = devm_kmalloc(&pdev->dev, sizeof(gpios) * i, GFP_KERNEL);
++	if (!gpios)
++		return -ENOMEM;
++
++	i = 0;
++
++	for_each_child_of_node(np, child) {
++		ret = dt_gpio_init(pdev, child, &gpios[i]);
++		if (ret) {
++			dev_err(&pdev->dev, "Failed to init child node %d.\n",
++				i);
++			goto err;
++		}
++
++		i++;
++	}
++
++	platform_set_drvdata(pdev, gpios);
++
++	return 0;
++
++err:
++	while (i > 0) {
++		i--;
++		gpio_switch_rem(&pdev->dev, &gpios[i]);
++	}
++
++	return ret;
++}
++
++static int gpio_switch_remove(struct platform_device *pdev)
++{
++	struct gpio_switch_gpio_info *gpios = platform_get_drvdata(pdev);
++	struct device_node *np = pdev->dev.of_node;
++	int i;
++
++	i = of_get_child_count(np);
++
++	while (i > 0) {
++		i--;
++		gpio_switch_rem(&pdev->dev, &gpios[i]);
++	}
++
++	return 0;
++}
++
++static const struct of_device_id gpio_switch_of_match[] = {
++	{ .compatible = "gpio-switch" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, gpio_switch_of_match);
++
++static struct platform_driver gpio_switch_driver = {
++	.probe = gpio_switch_probe,
++	.remove = gpio_switch_remove,
++	.driver = {
++		.name = "gpio_switch",
++		.of_match_table = gpio_switch_of_match,
++	},
++};
++module_platform_driver(gpio_switch_driver);
++
++MODULE_LICENSE("GPL");
 -- 
-1.9.1
+2.1.4
