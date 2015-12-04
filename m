@@ -1,240 +1,50 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: [PATCH 2/3] Add support for monitoring gpio switches
-Date: Fri,  4 Dec 2015 17:31:14 +0000
-Message-ID: <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk>
-References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Martyn Welch <martyn.welch@collabora.co.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 05/10] ARM: Exynos: use generic cpufreq driver for Exynos5420
+Date: Fri, 04 Dec 2015 18:30:30 +0100
+Message-ID: <1449250235-9613-6-git-send-email-b.zolnierkie@samsung.com>
+References: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Select Chromebooks have gpio attached to switches used to cause the
-firmware to enter alternative modes of operation and/or control other
-device characteristics (such as write protection on flash devices). This
-patch adds a driver that exposes a read-only interface to allow these
-signals to be read from user space.
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-This functionality has been generalised to provide support for any device
-with device tree support which needs to identify a gpio as being used for a
-specific task.
+The new CPU clock type allows the use of generic arm_big_little_dt
+cpufreq driver for Exynos5420.
 
-Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+Changes by Bartlomiej:
+- split Exynos5420 support from the original patch
+- disable cpufreq if big.LITTLE switcher support is enabled
+
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/misc/Kconfig       |  11 ++++
- drivers/misc/Makefile      |   1 +
- drivers/misc/gpio-switch.c | 160 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 172 insertions(+)
- create mode 100644 drivers/misc/gpio-switch.c
+ arch/arm/mach-exynos/exynos.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 22892c7..d24367c 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -525,6 +525,17 @@ config VEXPRESS_SYSCFG
- 	  bus. System Configuration interface is one of the possible means
- 	  of generating transactions on this bus.
- 
-+config GPIO_SWITCH
-+	tristate "GPIO Switch driver"
-+	depends on GPIO_SYSFS
-+	---help---
-+	 Some devices have gpio attached to dedicated switches, an example of
-+	 this are chromebooks (where connection to some switches for predefined
-+	 purposes are provided on the generic development card). This driver
-+	 provides the ability to create consistently named sysfs entries to the
-+	 functionally equivalent signals across a range of devices. This
-+	 functionality currently requires a device which supports device tree.
-+
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index 537d7f3..7a7e11a 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -56,3 +56,4 @@ obj-$(CONFIG_GENWQE)		+= genwqe/
- obj-$(CONFIG_ECHO)		+= echo/
- obj-$(CONFIG_VEXPRESS_SYSCFG)	+= vexpress-syscfg.o
- obj-$(CONFIG_CXL_BASE)		+= cxl/
-+obj-$(CONFIG_GPIO_SWITCH)	+= gpio-switch.o
-diff --git a/drivers/misc/gpio-switch.c b/drivers/misc/gpio-switch.c
-new file mode 100644
-index 0000000..1f381d6
---- /dev/null
-+++ b/drivers/misc/gpio-switch.c
-@@ -0,0 +1,160 @@
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 1c47aee..6d97145 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -230,6 +230,13 @@ static const struct of_device_id exynos_cpufreq_matches[] = {
+ 	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
+ 	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+ 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
 +/*
-+ * Copyright (C) 2015 Collabora Ltd.
-+ *
-+ * based on vendor driver,
-+ *
-+ * Copyright (C) 2011 The Chromium OS Authors
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * FIXME: When big.LITTLE switcher is enabled system lockups during
++ * ondemand governor stress testing (observed on ODROID-XU3 board).
 + */
-+#include <linux/bcd.h>
-+#include <linux/gpio.h>
-+#include <linux/notifier.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+struct gpio_switch_gpio_info {
-+	int gpio;
-+	const char *link;
-+};
-+
-+static int dt_gpio_init(struct platform_device *pdev, struct device_node *child,
-+			struct gpio_switch_gpio_info *gpio)
-+{
-+	int err;
-+	enum of_gpio_flags of_flags;
-+	unsigned long flags = GPIOF_DIR_IN | GPIOF_EXPORT;
-+	const char *name;
-+
-+	err = of_property_read_string(child, "label", &name);
-+	if (err)
-+		return err;
-+
-+	gpio->gpio = of_get_named_gpio_flags(child, "gpios", 0, &of_flags);
-+	if (!gpio_is_valid(gpio->gpio)) {
-+		err = -EINVAL;
-+		goto err_prop;
-+	}
-+
-+	if (of_flags & OF_GPIO_ACTIVE_LOW)
-+		flags |= GPIOF_ACTIVE_LOW;
-+
-+	if (!of_property_read_bool(child, "read-only"))
-+		flags |= GPIOF_EXPORT_CHANGEABLE;
-+
-+	err = gpio_request_one(gpio->gpio, flags, name);
-+	if (err)
-+		goto err_prop;
-+
-+	err = gpio_export_link(&pdev->dev, name, gpio->gpio);
-+	if (err)
-+		goto err_gpio;
-+
-+	gpio->link = name;
-+
-+	return 0;
-+
-+err_gpio:
-+	gpio_free(gpio->gpio);
-+err_prop:
-+	of_node_put(child);
-+
-+	return err;
-+}
-+
-+static void gpio_switch_rem(struct device *dev,
-+			    struct gpio_switch_gpio_info *gpio)
-+{
-+	sysfs_remove_link(&dev->kobj, gpio->link);
-+
-+	gpio_unexport(gpio->gpio);
-+
-+	gpio_free(gpio->gpio);
-+}
-+
-+static int gpio_switch_probe(struct platform_device *pdev)
-+{
-+	struct gpio_switch_gpio_info *gpios;
-+	struct device_node *child;
-+	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+	int i;
-+
-+	i = of_get_child_count(np);
-+	if (i < 1)
-+		return i;
-+
-+	gpios = devm_kmalloc(&pdev->dev, sizeof(gpios) * i, GFP_KERNEL);
-+	if (!gpios)
-+		return -ENOMEM;
-+
-+	i = 0;
-+
-+	for_each_child_of_node(np, child) {
-+		ret = dt_gpio_init(pdev, child, &gpios[i]);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Failed to init child node %d.\n",
-+				i);
-+			goto err;
-+		}
-+
-+		i++;
-+	}
-+
-+	platform_set_drvdata(pdev, gpios);
-+
-+	return 0;
-+
-+err:
-+	while (i > 0) {
-+		i--;
-+		gpio_switch_rem(&pdev->dev, &gpios[i]);
-+	}
-+
-+	return ret;
-+}
-+
-+static int gpio_switch_remove(struct platform_device *pdev)
-+{
-+	struct gpio_switch_gpio_info *gpios = platform_get_drvdata(pdev);
-+	struct device_node *np = pdev->dev.of_node;
-+	int i;
-+
-+	i = of_get_child_count(np);
-+
-+	while (i > 0) {
-+		i--;
-+		gpio_switch_rem(&pdev->dev, &gpios[i]);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id gpio_switch_of_match[] = {
-+	{ .compatible = "gpio-switch" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, gpio_switch_of_match);
-+
-+static struct platform_driver gpio_switch_driver = {
-+	.probe = gpio_switch_probe,
-+	.remove = gpio_switch_remove,
-+	.driver = {
-+		.name = "gpio_switch",
-+		.of_match_table = gpio_switch_of_match,
-+	},
-+};
-+module_platform_driver(gpio_switch_driver);
-+
-+MODULE_LICENSE("GPL");
++#ifndef CONFIG_BL_SWITCHER
++	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
++#endif
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
-2.1.4
+1.9.1
