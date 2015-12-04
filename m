@@ -1,66 +1,54 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: exynos-dp: update ports node binding
- for panel
-Date: Thu, 3 Dec 2015 17:38:53 -0600
-Message-ID: <20151203233853.GA8608@rob-hp-laptop>
-References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
- <1449135010-8111-4-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1449135010-8111-4-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, kgene.kim@samsung.com, galak@codeaurora.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 0/3] dt-bindings: regulator/clock/mfd: Reorganize S2M/S5M
+ bindings
+Date: Fri, 04 Dec 2015 10:10:02 +0900
+Message-ID: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBEZWMgMDMsIDIwMTUgYXQgMDY6MzA6MTBQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
-Cj4gVGhpcyBwYXRjaCB1cGRhdGVzIGEgcG9ydHMgbm9kZSBiaW5kaW5nIGZvciBwYW5lbC4KPiAK
-PiBXaXRoIHRoaXMsIGRwIG5vZGUgY2FuIGhhdmUgYSBwb3J0cyBub2RlIHdoaWNoIGRlc2NyaWJl
-cwo+IGEgcmVtb3RlIGVuZHBvaW50IG5vZGUgdGhhdCBjYW4gYmUgY29ubmVjdGVkIHRvIHBhbmVs
-IG9yIGJyaWRnZQo+IG5vZGUuCj4gCj4gU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFl
-QHNhbXN1bmcuY29tPgo+IC0tLQo+ICAuLi4vYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9z
-X2RwLnR4dCAgICAgICAgICB8IDI4ICsrKysrKysrKysrKysrKysrKy0tLS0KPiAgMSBmaWxlIGNo
-YW5nZWQsIDI0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBh
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3Nf
-ZHAudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9z
-L2V4eW5vc19kcC50eHQKPiBpbmRleCA2NDY5M2YyLi4xNWI1MmNiIDEwMDY0NAo+IC0tLSBhL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAu
-dHh0Cj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5
-bm9zL2V4eW5vc19kcC50eHQKPiBAQCAtNjYsOCArNjYsMTUgQEAgT3B0aW9uYWwgcHJvcGVydGll
-cyBmb3IgZHAtY29udHJvbGxlcjoKPiAgCQlIb3RwbHVnIGRldGVjdCBHUElPLgo+ICAJCQlJbmRp
-Y2F0ZXMgd2hpY2ggR1BJTyBzaG91bGQgYmUgdXNlZCBmb3IgaG90cGx1Zwo+ICAJCQlkZXRlY3Rp
-b24KPiAtCS12aWRlbyBpbnRlcmZhY2VzOiBEZXZpY2Ugbm9kZSBjYW4gY29udGFpbiB2aWRlbyBp
-bnRlcmZhY2UgcG9ydAo+IC0JCQkgICAgbm9kZXMgYWNjb3JkaW5nIHRvIFsxXS4KPiArVmlkZW8g
-aW50ZXJmYWNlczoKPiArICBEZXZpY2Ugbm9kZSBjYW4gY29udGFpbiB2aWRlbyBpbnRlcmZhY2Ug
-cG9ydCBub2RlcyBhY2NvcmRpbmcgdG8gWzFdLgo+ICsgIFRoZSBmb2xsb3dpbmcgYXJlIHByb3Bl
-cnRpZXMgc3BlY2lmaWMgdG8gdGhvc2Ugbm9kZXM6Cj4gKwo+ICsgIGVuZHBvaW50IG5vZGUgY29u
-bmVjdGVkIHRvIGJyaWRnZSBvciBwYW5lbCBub2RlOgo+ICsgICAtIHJlbW90ZS1lbmRwb2ludDog
-c3BlY2lmaWVzIHRoZSBlbmRwb2ludCBpbiBwYW5lbCBvciBicmlkZ2Ugbm9kZS4KPiArCQkgICAg
-ICBUaGlzIG5vZGUgaXMgcmVxdWlyZWQgaW4gYWxsIGtpbmRzIG9mIGV4eW5vcyBkcAo+ICsJCSAg
-ICAgIHRvIHJlcHJlc2VudCB0aGUgY29ubmVjdGlvbiBiZXR3ZWVuIGRwIGFuZCBicmlkZ2UKPiAr
-CQkgICAgICAsb3IgZHAgYW5kIHBhbmVsLgoKRml4IHlvdXIgcHVuY3R1YXRpb24uCgo+ICAKPiAg
-WzFdOiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8taW50ZXJm
-YWNlcy50eHQKPiAgCj4gQEAgLTExMSw5ICsxMTgsMjIgQEAgQm9hcmQgU3BlY2lmaWMgcG9ydGlv
-bjoKPiAgCQl9Owo+ICAKPiAgCQlwb3J0cyB7Cj4gLQkJCXBvcnRAMCB7Cj4gKwkJCSNhZGRyZXNz
-LWNlbGxzID0gPDE+Owo+ICsJCQkjc2l6ZS1jZWxscyA9IDwwPjsKCllvdSBkb24ndCBuZWVkIHRo
-ZXNlLgoKPiArCj4gKwkJCXBvcnQgewo+ICAJCQkJZHBfb3V0OiBlbmRwb2ludCB7Cj4gLQkJCQkJ
-cmVtb3RlLWVuZHBvaW50ID0gPCZicmlkZ2VfaW4+Owo+ICsJCQkJCXJlbW90ZS1lbmRwb2ludCA9
-IDwmZHBfaW4+Owo+ICsJCQkJfTsKPiArCQkJfTsKPiArCQl9Owo+ICsKPiArCQlwYW5lbEAwIHsK
-PiArCQkJcmVnID0gPDA+OwoKRHJvcCB0aGUgQDAgYW5kIHJlZyBhcyB5b3Ugb25seSBoYXZlIDEu
-Cgo+ICsJCQkuLi4KPiArCQkJcG9ydCB7Cj4gKwkJCQlkcF9pbjogZW5kcG9pbnQgewo+ICsJCQkJ
-CXJlbW90ZS1lbmRwb2ludCA9IDwmZHBfb3V0PjsKPiAgCQkJCX07Cj4gIAkJCX07Cj4gIAkJfTsK
-PiAtLSAKPiAxLjkuMQo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Hi,
+
+
+The patchset tries to bring some order to the chaotic bindings for family
+of Samsung PMIC devices: S2MPS/S2MPA/S5M.
+
+Beside of renaming and removal of common parts I also tried to make
+a consistent style used in the files. The bindings itself were not
+modified.
+
+The patchset should be probably pulled at once (later patches depend on
+previous). With respective acks maybe through MFD tree?
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (3):
+  dt-bindings: regulator/clock/mfd: Reorganize S2MPS-family bindings
+  dt-bindings: regulator/mfd: Reorganize S5M8767 bindings
+  dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
+
+ .../devicetree/bindings/clock/samsung,s2mps11.txt  |  49 +++++++
+ Documentation/devicetree/bindings/mfd/s2mpa01.txt  |  90 ------------
+ Documentation/devicetree/bindings/mfd/s2mps11.txt  | 153 -------------------
+ .../devicetree/bindings/mfd/samsung,sec-core.txt   |  88 +++++++++++
+ .../bindings/regulator/s5m8767-regulator.txt       | 163 ---------------------
+ .../bindings/regulator/samsung,s2mpa01.txt         |  79 ++++++++++
+ .../bindings/regulator/samsung,s2mps11.txt         | 102 +++++++++++++
+ .../bindings/regulator/samsung,s5m8767.txt         | 145 ++++++++++++++++++
+ MAINTAINERS                                        |   6 +-
+ 9 files changed, 467 insertions(+), 408 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/s2mpa01.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/s2mps11.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+ delete mode 100644 Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+
+-- 
+1.9.1
