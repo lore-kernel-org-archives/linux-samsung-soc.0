@@ -1,73 +1,47 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 3/3] dt-bindings: exynos-dp: update ports node binding for
- panel
-Date: Fri, 04 Dec 2015 18:08:47 +0900
-Message-ID: <5661581F.8040505@samsung.com>
-References: <1449135010-8111-1-git-send-email-inki.dae@samsung.com>
- <1449135010-8111-4-git-send-email-inki.dae@samsung.com>
- <20151203233853.GA8608@rob-hp-laptop>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: regulator/clock/mfd: Reorganize
+ S2MPS-family bindings
+Date: Fri, 4 Dec 2015 12:06:28 +0000
+Message-ID: <20151204120628.GX26072@sirena.org.uk>
+References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
+ <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20151203233853.GA8608@rob-hp-laptop>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Herring <robh@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, kgene.kim@samsung.com, galak@codeaurora.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/Kwy1es1GwkEJhNg"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgUm9iLAoKMjAxNeuFhCAxMuyblCAwNOydvCAwODozOOyXkCBSb2IgSGVycmluZyDsnbQo6rCA
-KSDsk7Qg6riAOgo+IE9uIFRodSwgRGVjIDAzLCAyMDE1IGF0IDA2OjMwOjEwUE0gKzA5MDAsIElu
-a2kgRGFlIHdyb3RlOgo+PiBUaGlzIHBhdGNoIHVwZGF0ZXMgYSBwb3J0cyBub2RlIGJpbmRpbmcg
-Zm9yIHBhbmVsLgo+Pgo+PiBXaXRoIHRoaXMsIGRwIG5vZGUgY2FuIGhhdmUgYSBwb3J0cyBub2Rl
-IHdoaWNoIGRlc2NyaWJlcwo+PiBhIHJlbW90ZSBlbmRwb2ludCBub2RlIHRoYXQgY2FuIGJlIGNv
-bm5lY3RlZCB0byBwYW5lbCBvciBicmlkZ2UKPj4gbm9kZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTog
-SW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIC4uLi9iaW5kaW5ncy9k
-aXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0ICAgICAgICAgIHwgMjggKysrKysrKysrKysrKysr
-KysrLS0tLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDI0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25z
-KC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-ZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0Cj4+IGluZGV4IDY0NjkzZjIuLjE1
-YjUyY2IgMTAwNjQ0Cj4+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9k
-aXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0Cj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0Cj4+IEBAIC02Niw4ICs2
-NiwxNSBAQCBPcHRpb25hbCBwcm9wZXJ0aWVzIGZvciBkcC1jb250cm9sbGVyOgo+PiAgCQlIb3Rw
-bHVnIGRldGVjdCBHUElPLgo+PiAgCQkJSW5kaWNhdGVzIHdoaWNoIEdQSU8gc2hvdWxkIGJlIHVz
-ZWQgZm9yIGhvdHBsdWcKPj4gIAkJCWRldGVjdGlvbgo+PiAtCS12aWRlbyBpbnRlcmZhY2VzOiBE
-ZXZpY2Ugbm9kZSBjYW4gY29udGFpbiB2aWRlbyBpbnRlcmZhY2UgcG9ydAo+PiAtCQkJICAgIG5v
-ZGVzIGFjY29yZGluZyB0byBbMV0uCj4+ICtWaWRlbyBpbnRlcmZhY2VzOgo+PiArICBEZXZpY2Ug
-bm9kZSBjYW4gY29udGFpbiB2aWRlbyBpbnRlcmZhY2UgcG9ydCBub2RlcyBhY2NvcmRpbmcgdG8g
-WzFdLgo+PiArICBUaGUgZm9sbG93aW5nIGFyZSBwcm9wZXJ0aWVzIHNwZWNpZmljIHRvIHRob3Nl
-IG5vZGVzOgo+PiArCj4+ICsgIGVuZHBvaW50IG5vZGUgY29ubmVjdGVkIHRvIGJyaWRnZSBvciBw
-YW5lbCBub2RlOgo+PiArICAgLSByZW1vdGUtZW5kcG9pbnQ6IHNwZWNpZmllcyB0aGUgZW5kcG9p
-bnQgaW4gcGFuZWwgb3IgYnJpZGdlIG5vZGUuCj4+ICsJCSAgICAgIFRoaXMgbm9kZSBpcyByZXF1
-aXJlZCBpbiBhbGwga2luZHMgb2YgZXh5bm9zIGRwCj4+ICsJCSAgICAgIHRvIHJlcHJlc2VudCB0
-aGUgY29ubmVjdGlvbiBiZXR3ZWVuIGRwIGFuZCBicmlkZ2UKPj4gKwkJICAgICAgLG9yIGRwIGFu
-ZCBwYW5lbC4KPiAKPiBGaXggeW91ciBwdW5jdHVhdGlvbi4KClJpZ2h0LiAKCj4gCj4+ICAKPj4g
-IFsxXTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3ZpZGVvLWludGVy
-ZmFjZXMudHh0Cj4+ICAKPj4gQEAgLTExMSw5ICsxMTgsMjIgQEAgQm9hcmQgU3BlY2lmaWMgcG9y
-dGlvbjoKPj4gIAkJfTsKPj4gIAo+PiAgCQlwb3J0cyB7Cj4+IC0JCQlwb3J0QDAgewo+PiArCQkJ
-I2FkZHJlc3MtY2VsbHMgPSA8MT47Cj4+ICsJCQkjc2l6ZS1jZWxscyA9IDwwPjsKPiAKPiBZb3Ug
-ZG9uJ3QgbmVlZCB0aGVzZS4KCkRpdHRvLgoKPiAKPj4gKwo+PiArCQkJcG9ydCB7Cj4+ICAJCQkJ
-ZHBfb3V0OiBlbmRwb2ludCB7Cj4+IC0JCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmYnJpZGdlX2lu
-PjsKPj4gKwkJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9pbj47Cj4+ICsJCQkJfTsKPj4gKwkJ
-CX07Cj4+ICsJCX07Cj4+ICsKPj4gKwkJcGFuZWxAMCB7Cj4+ICsJCQlyZWcgPSA8MD47Cj4gCj4g
-RHJvcCB0aGUgQDAgYW5kIHJlZyBhcyB5b3Ugb25seSBoYXZlIDEuCgpEaXR0by4KClRoYW5rcywK
-SW5raSBEYWUKCj4gCj4+ICsJCQkuLi4KPj4gKwkJCXBvcnQgewo+PiArCQkJCWRwX2luOiBlbmRw
-b2ludCB7Cj4+ICsJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHBfb3V0PjsKPj4gIAkJCQl9Owo+
-PiAgCQkJfTsKPj4gIAkJfTsKPj4gLS0gCj4+IDEuOS4xCj4+Cj4gLS0KPiBUbyB1bnN1YnNjcmli
-ZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgZGV2aWNldHJlZSIg
-aW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+
-IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21v
-LWluZm8uaHRtbAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+
+--/Kwy1es1GwkEJhNg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Dec 04, 2015 at 10:10:03AM +0900, Krzysztof Kozlowski wrote:
+> Bindings for Samsung S2M and S5M family PMICs are in mess. They are
+> spread over different files and subdirectories in a non-consistent way.
+> The devices and respective drivers for them share a lot in common so
+> everything could be organized in a more readable way.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--/Kwy1es1GwkEJhNg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWYYHDAAoJECTWi3JdVIfQ4CoH/A/nCU65TYVWgjUZDnKobol1
+uNeSvBXaNfvP10fonQZGxozdEkSKjR4enT+Y69C7ykR54/0ZidliOZNjPPno+Q43
+le3/VIVI5mEIkOJ+o8pB/wLzFH8PpGycyhFK5g6h1r1B08N1bD/74l46JdivJaKj
+qNhuZO5g5Gbn5N9JGq88cOtHu8oJcZjCcZuiHy5gGirtdYPVCJHgHPkB7smJmMFH
+QIbcSX2n3tW00N+OXYW2dCxmwcLth+LkTR4ZM21kNKX+LFatKDeUQVFXyxLp1ot6
+aSOdCHL5MZUY941xjrDzlkmCssqkwQNAeu7XqBy2GRTfMRv4AOHbKcuQqHFbDEY=
+=yyl8
+-----END PGP SIGNATURE-----
+
+--/Kwy1es1GwkEJhNg--
