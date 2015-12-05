@@ -1,41 +1,72 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] [media] exynos4-is: make VIDEO_SAMSUNG_EXYNOS4_IS tristate
-Date: Fri, 04 Dec 2015 23:20:09 +0100
-Message-ID: <2086080.9y3TX8CFJu@wuerfel>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH 1/2] power: Fix unmet dependency on POWER_SUPPLY by
+ POWER_RESET by uncoupling them
+Date: Sat, 5 Dec 2015 01:59:37 +0100
+Message-ID: <20151205005937.GF22936@earth>
+References: <1449035947-16758-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0hHDr/TIsw4o3iPK"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:35199 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932085AbbLEA7n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Dec 2015 19:59:43 -0500
+Content-Disposition: inline
+In-Reply-To: <1449035947-16758-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pavel Fedin <p.fedin@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-With CONFIG_V4L2=m and VIDEO_SAMSUNG_EXYNOS4_IS=y, we can select the
-individual drivers as built-in code when that should not be possible:
 
-drivers/built-in.o: In function `s5pcsis_set_fmt':
-policy.c:(.text+0x13afdc): undefined reference to `v4l_bound_align_image'
-drivers/built-in.o: In function `s5pcsis_probe':
-policy.c:(.text+0x13b440): undefined reference to `v4l2_of_parse_endpoint'
-policy.c:(.text+0x13b72c): undefined reference to `v4l2_subdev_init'
+--0hHDr/TIsw4o3iPK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changing VIDEO_SAMSUNG_EXYNOS4_IS to tristate means that the dependency
-from CONFIG_V4L2 propates to the individual Kconfig symbols and they
-can only be built as loadable modules if V4L2 or any other of the
-dependencies itself is a module.
+Hi,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Wed, Dec 02, 2015 at 02:59:06PM +0900, Krzysztof Kozlowski wrote:
+> Actually reset/power off handlers do not really depend on power supply.
+> Move the power reset out of power supply block so it will appear in main
+> drivers section. This fixes following build warning (encountered on ARM
+> exynos defconfig when POWER_SUPPLY is disabled manually):
+>=20
+> warning: (ARCH_HISI && ARCH_INTEGRATOR && ARCH_EXYNOS && ARCH_VEXPRESS &&=
+ REALVIEW_DT) selects POWER_RESET which has unmet direct dependencies (POWE=
+R_SUPPLY)
+> warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON which has unmet direct =
+dependencies (POWER_SUPPLY && POWER_RESET && OF)
+> warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON_POWEROFF which has unme=
+t direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
 
-diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-index 40423c6c5324..57d42c6172c5 100644
---- a/drivers/media/platform/exynos4-is/Kconfig
-+++ b/drivers/media/platform/exynos4-is/Kconfig
-@@ -1,6 +1,6 @@
- 
- config VIDEO_SAMSUNG_EXYNOS4_IS
--	bool "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
-+	tristate "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
- 	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	depends on OF && COMMON_CLK
+nice catch. I don't really like the Makefile changes, though. I think
+it would be better to make the power/ entry in drivers/Makefile into
+"obj-y" and handle the details in drivers/power/Makefile.
+
+-- Sebastian
+
+--0hHDr/TIsw4o3iPK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWYjb2AAoJENju1/PIO/qaJbAP/jH/uj7XLvaG4ZoxU0JO4R63
+vaaIRwuLJb0kihaiBFkBUA0p2bo/7U/iUnTMuLF00NS7Lp1LUQrUAIva3Y73WVwD
+mAb3I9uy1EgwcRjF/d6fFS9hf8r8qPl0w6RE+4VBgZtPltArGvJbUdnEJSSOa51j
+6ONRtsnlDQYB6ROSI2YW4C7TTB3ZHJDhlTy4FOqabNgpyP3zObJxzgrmAyr7zqML
+pUTAZ8oD34YY+IWiy8dEqfKFJQxaQuPq6ZbEzSK8U3mqLWD8R6vqYhbxhDnbnMoJ
+nLit2vitDqKwuDoZ5CfNTxQs5Nzh9rt8IiBY7D7q2JU+oSx4arHF2TzJchDodlb0
+ObpTlC3TxizJIHfGO+ZZuntZJkTeIJCrIwW+XrZgf6PQr6Z1JNLg6DKd40g25pWn
+YT0zrT9hoJnlgN226hBTsqo4eGE57qtyiamnCLtuvy/x2n3Frt5g7teK6KWDU/nW
+FHaZakEcGUPd+SYbaccs5Yg9Nw0UF1nKhZpLwl7KaVV0x947YRXWeMQh+PMAlS8b
+9TvXX7KEOarhz2zF+yxZxVhtpTiaWv6uCQQm4ucyzygSpO+OtWL2v89dKqgcRCwR
+F8XoaL5dxrHs902DmyCx86tLYos0FkBJSo+KHjkqGC3q917kyEURcX+IAvcaYa7c
+RYtD/kws7H1c8AezWVjn
+=OZxX
+-----END PGP SIGNATURE-----
+
+--0hHDr/TIsw4o3iPK--
