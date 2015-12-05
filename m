@@ -1,58 +1,52 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v3 0/10] cpufreq: add generic cpufreq driver support for
- Exynos542x/5800 platforms
-Date: Sat, 05 Dec 2015 08:49:49 +0100
-Message-ID: <3776700.7KBsWa2Q4V@amdc1976>
-References: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
- <20151205035444.GR3430@ubuntu>
+From: Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: Re: [PATCH 2/3] Add support for monitoring gpio switches
+Date: Sat, 05 Dec 2015 10:42:44 +0000
+Message-ID: <5662BFA4.1010304@collabora.co.uk>
+References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk> <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk> <20151204185713.GA22925@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20151205035444.GR3430@ubuntu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20151204185713.GA22925@kroah.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
-Hi,
 
-On Saturday, December 05, 2015 09:24:44 AM Viresh Kumar wrote:
-> On 04-12-15, 18:30, Bartlomiej Zolnierkiewicz wrote:
-> > Hi,
-> > 
-> > This patch series adds generic arm_big_little_dt cpufreq driver
-> > support for Exynos542x/5800 (using the new CPU clock type which
-> > allows it).  It also:
-> > - enhances arm_big_little[_dt] driver with CPU cluster regulator
-> >   support
-> > - adds CPU clock configuration data and CPU operating points
-> >   setup for Exynos542x/5800
-> > - adds CPU cluster regulator supplies for Exynos542x/5800 boards
-> > 
-> > This patch series has been tested on Exynos5422 based ODROID-XU3
-> > Lite board.
-> > 
-> > Please note that this is not a final version of the patchset.
-> > I just wanted to push out current work-in-progress patches that
-> > integrate changes from Anand, Ben and me.
-> 
-> What's going on guys, Ben tried exactly same thing few days back:
-> 
-> http://marc.info/?l=linux-kernel&m=144909193925508&w=2
+On 04/12/15 18:57, Greg Kroah-Hartman wrote:
+> On Fri, Dec 04, 2015 at 05:31:14PM +0000, Martyn Welch wrote:
+>> Select Chromebooks have gpio attached to switches used to cause the
+>> firmware to enter alternative modes of operation and/or control other
+>> device characteristics (such as write protection on flash devices). This
+>> patch adds a driver that exposes a read-only interface to allow these
+>> signals to be read from user space.
+>>
+>> This functionality has been generalised to provide support for any device
+>> with device tree support which needs to identify a gpio as being used for a
+>> specific task.
+>>
+>> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+>> ---
+>>   drivers/misc/Kconfig       |  11 ++++
+>>   drivers/misc/Makefile      |   1 +
+>>   drivers/misc/gpio-switch.c | 160 +++++++++++++++++++++++++++++++++++++++++++++
+>
+> Why isn't this in drivers/gpio/ ?
+>
+> why make it a misc driver?
+>
 
-Why I appreciate Ben's work this not exactly the same thing as
-the above patchset lacks critical CLK_RECALC_NEW_RATES bugfix and
-few other minor fixes.
+I thought all the drivers in /drivers/gpio were gpio drivers, rather 
+than users of the gpio framework. Is that not the case?
 
-> And the comments given there applies to you as well.
+Happy to move it if the consensus is that that's the correct place to 
+put it.
 
-Yes, sure.  That's why I wrote that this is work-in-progress
-and put the TODO in the cover letter.
+Martyn
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> thanks,
+>
+> greg k-h
+>
