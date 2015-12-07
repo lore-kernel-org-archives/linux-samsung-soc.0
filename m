@@ -1,171 +1,99 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH 23/23] mtd: kill the nand_ecclayout struct
-Date: Mon,  7 Dec 2015 23:26:18 +0100
-Message-ID: <1449527178-5930-24-git-send-email-boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 21/23] staging: mt29f_spinand: switch to mtd_ooblayout_ops
+Date: Mon,  7 Dec 2015 23:26:16 +0100
+Message-ID: <1449527178-5930-22-git-send-email-boris.brezillon@free-electrons.com>
 References: <1449527178-5930-1-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBB34PTCZQKGQEZYC6FII-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1449527178-5930-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1449527178-5930-1-git-send-email-boris.brezillon@free-electrons.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org
+Cc: devel@driverdev.osuosl.org, linux-mips@linux-mips.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-sunxi@googlegroups.com, Ralf Baechle <ralf@linux-mips.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-kernel@vger.kernel.org, Josh Wu <josh.wu@atmel.com>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, punnaiah choudary kalluri <punnaia@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Stefan Agner <stefan@agner.ch>, Daniel Mack <daniel@zonque.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Now that all mtd drivers have moved to the mtd_ooblayout_ops model we can
-safely remove the struct nand_ecclayout definition, and all the remaining
-places where it was still used.
-
-Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/mtd/mtdchar.c      | 12 ++++++------
- drivers/mtd/mtdcore.c      | 44 --------------------------------------------
- include/linux/mtd/mtd.h    | 20 --------------------
- include/uapi/mtd/mtd-abi.h |  2 +-
- 4 files changed, 7 insertions(+), 71 deletions(-)
+ drivers/staging/mt29f_spinand/mt29f_spinand.c | 44 ++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-index c03b678..322e838 100644
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -465,12 +465,12 @@ static int mtdchar_readoob(struct file *file, struct mtd_info *mtd,
- }
+diff --git a/drivers/staging/mt29f_spinand/mt29f_spinand.c b/drivers/staging/mt29f_spinand/mt29f_spinand.c
+index cb9d5ab..967d50a 100644
+--- a/drivers/staging/mt29f_spinand/mt29f_spinand.c
++++ b/drivers/staging/mt29f_spinand/mt29f_spinand.c
+@@ -42,23 +42,29 @@ static inline struct spinand_state *mtd_to_state(struct mtd_info *mtd)
+ static int enable_hw_ecc;
+ static int enable_read_hw_ecc;
  
- /*
-- * Copies (and truncates, if necessary) data from the larger struct,
-- * nand_ecclayout, to the smaller, deprecated layout struct,
-- * nand_ecclayout_user. This is necessary only to support the deprecated
-- * API ioctl ECCGETLAYOUT while allowing all new functionality to use
-- * nand_ecclayout flexibly (i.e. the struct may change size in new
-- * releases without requiring major rewrites).
-+ * Copies (and truncates, if necessary) OOB layout information to the
-+ * deprecated layout struct, nand_ecclayout_user. This is necessary only to
-+ * support the deprecated API ioctl ECCGETLAYOUT while allowing all new
-+ * functionality to use mtd_ooblayout_ops flexibly (i.e. mtd_ooblayout_ops
-+ * can describe any kind of OOB layout with almost zero overhead from a
-+ * memory usage point of view).
-  */
- static int shrink_ecclayout(struct mtd_info *mtd,
- 			    struct nand_ecclayout_user *to)
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index d87f3621..62f83b0 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -833,50 +833,6 @@ void __put_mtd_device(struct mtd_info *mtd)
- }
- EXPORT_SYMBOL_GPL(__put_mtd_device);
+-static struct nand_ecclayout spinand_oob_64 = {
+-	.eccbytes = 24,
+-	.eccpos = {
+-		1, 2, 3, 4, 5, 6,
+-		17, 18, 19, 20, 21, 22,
+-		33, 34, 35, 36, 37, 38,
+-		49, 50, 51, 52, 53, 54, },
+-	.oobfree = {
+-		{.offset = 8,
+-			.length = 8},
+-		{.offset = 24,
+-			.length = 8},
+-		{.offset = 40,
+-			.length = 8},
+-		{.offset = 56,
+-			.length = 8},
+-	}
++static int spinand_oob_64_eccpos(struct mtd_info *mtd, int eccbyte)
++{
++	if (eccbyte > 23)
++		return -ERANGE;
++
++	return ((eccbyte / 6) * 16) + 1;
++}
++
++static int spinand_oob_64_oobfree(struct mtd_info *mtd, int section,
++				  struct nand_oobfree *oobfree)
++{
++	if (section > 3)
++		return -ERANGE;
++
++	oobfree->offset = (section * 16) + 8;
++	oobfree->length = 8;
++
++	return 0;
++}
++
++const struct mtd_ooblayout_ops spinand_oob_64_ops = {
++	.eccpos = spinand_oob_64_eccpos,
++	.oobfree = spinand_oob_64_oobfree,
+ };
+ #endif
  
--static int nand_ecclayout_eccpos(struct mtd_info *mtd, int eccbyte)
--{
--	struct nand_ecclayout *layout = mtd->ecclayout;
--
--	if (!layout)
--		return -ENOTSUPP;
--
--	if (eccbyte >= layout->eccbytes)
--		return -ERANGE;
--
--	return layout->eccpos[eccbyte];
--}
--
--static int nand_ecclayout_oobfree(struct mtd_info *mtd, int section,
--				  struct nand_oobfree *oobfree)
--{
--	struct nand_ecclayout *layout = mtd->ecclayout;
--
--	if (!layout)
--		return -ENOTSUPP;
--
--	if (section >= MTD_MAX_OOBFREE_ENTRIES_LARGE)
--		return -ERANGE;
--
--	*oobfree = layout->oobfree[section];
--
--	return 0;
--}
--
--static const struct mtd_ooblayout_ops nand_ecclayout_ops = {
--	.eccpos = nand_ecclayout_eccpos,
--	.oobfree = nand_ecclayout_oobfree,
--};
--
--void mtd_set_ecclayout(struct mtd_info *mtd, struct nand_ecclayout *ecclayout)
--{
--	if (!mtd || !ecclayout)
--		return;
--
--	mtd->ecclayout = ecclayout;
--	mtd_set_ooblayout(mtd, &nand_ecclayout_ops);
--}
--EXPORT_SYMBOL_GPL(mtd_set_ecclayout);
--
- /*
-  * Erase is an asynchronous operation.  Device drivers are supposed
-  * to call instr->callback() whenever the operation completes, even
-diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-index 9c3699b..3a4bab7 100644
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@ -96,21 +96,6 @@ struct mtd_oob_ops {
+@@ -883,7 +889,6 @@ static int spinand_probe(struct spi_device *spi_nand)
  
- #define MTD_MAX_OOBFREE_ENTRIES_LARGE	32
- #define MTD_MAX_ECCPOS_ENTRIES_LARGE	640
--/*
-- * Internal ECC layout control structure. For historical reasons, there is a
-- * similar, smaller struct nand_ecclayout_user (in mtd-abi.h) that is retained
-- * for export to user-space via the ECCGETLAYOUT ioctl.
-- * nand_ecclayout should be expandable in the future simply by the above macros.
-- *
-- * This structure is now deprecated, you should use struct nand_ecclayout_ops
-- * to describe your OOB layout.
-- */
--struct nand_ecclayout {
--	__u32 eccbytes;
--	__u32 eccpos[MTD_MAX_ECCPOS_ENTRIES_LARGE];
--	struct nand_oobfree oobfree[MTD_MAX_OOBFREE_ENTRIES_LARGE];
--};
--
- /**
-  * struct mtd_ooblayout_ops - NAND OOB layout operations.
-  *
-@@ -183,9 +168,6 @@ struct mtd_info {
- 	const char *name;
- 	int index;
+ 	chip->ecc.strength = 1;
+ 	chip->ecc.total	= chip->ecc.steps * chip->ecc.bytes;
+-	chip->ecc.layout = &spinand_oob_64;
+ 	chip->ecc.read_page = spinand_read_page_hwecc;
+ 	chip->ecc.write_page = spinand_write_page_hwecc;
+ #else
+@@ -911,6 +916,9 @@ static int spinand_probe(struct spi_device *spi_nand)
+ 	mtd->priv = chip;
+ 	mtd->dev.parent = &spi_nand->dev;
+ 	mtd->oobsize = 64;
++#ifdef CONFIG_MTD_SPINAND_ONDIEECC
++	mtd_set_ooblayout(mtd, &spinand_oob_64_ops);
++#endif
  
--	/* [Deprecated] ECC layout structure pointer - read only! */
--	struct nand_ecclayout *ecclayout;
--
- 	/* OOB layout description */
- 	const struct mtd_ooblayout_ops *ooblayout;
- 
-@@ -279,8 +261,6 @@ static inline void mtd_set_ooblayout(struct mtd_info *mtd,
- 	mtd->ooblayout = ooblayout;
- }
- 
--void mtd_set_ecclayout(struct mtd_info *mtd, struct nand_ecclayout *ecclayout);
--
- static inline int mtd_eccpos(struct mtd_info *mtd, int eccbyte)
- {
- 	if (!mtd->ooblayout || !mtd->ooblayout->eccpos)
-diff --git a/include/uapi/mtd/mtd-abi.h b/include/uapi/mtd/mtd-abi.h
-index 763bb69..0ec1da2 100644
---- a/include/uapi/mtd/mtd-abi.h
-+++ b/include/uapi/mtd/mtd-abi.h
-@@ -228,7 +228,7 @@ struct nand_oobfree {
-  * complete set of ECC information. The ioctl truncates the larger internal
-  * structure to retain binary compatibility with the static declaration of the
-  * ioctl. Note that the "MTD_MAX_..._ENTRIES" macros represent the max size of
-- * the user struct, not the MAX size of the internal struct nand_ecclayout.
-+ * the user struct, not the MAX size of the internal OOB layout representation.
-  */
- struct nand_ecclayout_user {
- 	__u32 eccbytes;
+ 	if (nand_scan(mtd, 1))
+ 		return -ENXIO;
 -- 
 2.1.4
