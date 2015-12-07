@@ -1,46 +1,87 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable fan, sensors and audio
- for Odroid XU3
-Date: Mon, 7 Dec 2015 09:03:05 -0300
-Message-ID: <56657579.6070103@osg.samsung.com>
-References: <1449449994-10110-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:40890 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754972AbbLGMDN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Dec 2015 07:03:13 -0500
-In-Reply-To: <1449449994-10110-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/7] Exynos: MFC driver: reserved memory cleanup and IOMMU
+ support
+Date: Mon, 07 Dec 2015 13:08:55 +0100
+Message-ID: <1449490142-27502-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>
 
-Hello Krzysztof,
+Hello,
 
-On 12/06/2015 09:59 PM, Krzysztof Kozlowski wrote:
-> For Odroid XU3-family enable the:
->  - PWM fan (to control the CPU fan using thermal subsystem),
->  - TI INA231 sensors (provide power measurements of big.LITTLE cores,
->    DRAM and GPU),
->  - Samsung sound (for Odroid XU3 and Snow as well).
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm/configs/multi_v7_defconfig | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index f6a2557b55df..419f9413402c 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
+This patchset finally perform cleanup of custom code in s5p-mfc codec
+driver. The first part is removal of custom, driver specific code for
+intializing and handling of reserved memory. Instead, a generic code for
+reserved memory regions is used. Then, once it is done, the proper setup
+of DMA parameters (max segment size) is applied for all multimedia
+devices found on Exynos SoCs to let them properly handle shared buffers
+mapped into contiguous DMA address space. The last patch adds support
+for IOMMU to MFC driver. Some additional code is needed because of
+specific requirements of MFC device firmware (see patch 7 for more
+details). When no IOMMU is available, the code fallbacks to generic
+reserved memory regions.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+After applying this patchset, MFC device works correctly when IOMMU is
+either enabled or disabled.
 
-Best regards,
+Patches have been tested on top of linux-next from 20151207. I would
+prefer to merge patches 1-2 via Samsung tree and patches 3-7 via media
+tree (there are no compile-time dependencies between patches 1-2 and
+3-7). Patches have been tested on Odroid U3 (Exynos 4412 based) and
+Odroid XU3 (Exynos 5422 based) boards.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Patch summary:
+
+Marek Szyprowski (7):
+  ARM: Exynos: convert MFC device to generic reserved memory bindings
+  ARM: dts: exynos4412-odroid*: enable MFC device
+  of: reserved_mem: add support for named reserved mem nodes
+  media: vb2-dma-contig: add helper for setting dma max seg size
+  media: set proper max seg size for devices on Exynos SoCs
+  media: s5p-mfc: replace custom reserved memory init code with generic
+    one
+  media: s5p-mfc: add iommu support
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |  16 +--
+ arch/arm/boot/dts/exynos4210-origen.dts            |  22 ++-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |  22 ++-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  24 ++++
+ arch/arm/boot/dts/exynos4412-origen.dts            |  22 ++-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |  22 ++-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  22 ++-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |  22 ++-
+ arch/arm/boot/dts/exynos5250-spring.dts            |  22 ++-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  22 ++-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |  22 ++-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  22 ++-
+ arch/arm/mach-exynos/Makefile                      |   2 -
+ arch/arm/mach-exynos/exynos.c                      |  19 ---
+ arch/arm/mach-exynos/mfc.h                         |  16 ---
+ arch/arm/mach-exynos/s5p-dev-mfc.c                 |  94 -------------
+ drivers/media/platform/exynos-gsc/gsc-core.c       |   1 +
+ drivers/media/platform/exynos4-is/fimc-core.c      |   1 +
+ drivers/media/platform/exynos4-is/fimc-is.c        |   1 +
+ drivers/media/platform/exynos4-is/fimc-lite.c      |   1 +
+ drivers/media/platform/s5p-g2d/g2d.c               |   1 +
+ drivers/media/platform/s5p-jpeg/jpeg-core.c        |   1 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           | 153 ++++++++++++---------
+ drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h     |  79 +++++++++++
+ drivers/media/platform/s5p-tv/mixer_video.c        |   1 +
+ drivers/media/v4l2-core/videobuf2-dma-contig.c     |  15 ++
+ drivers/of/of_reserved_mem.c                       | 101 +++++++++++---
+ include/linux/of_reserved_mem.h                    |   6 +-
+ include/media/videobuf2-dma-contig.h               |   1 +
+ 29 files changed, 505 insertions(+), 248 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/mfc.h
+ delete mode 100644 arch/arm/mach-exynos/s5p-dev-mfc.c
+ create mode 100644 drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.2
