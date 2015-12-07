@@ -1,72 +1,75 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2] power: Fix unmet dependency on POWER_SUPPLY by POWER_RESET
- by uncoupling them
-Date: Mon, 07 Dec 2015 12:45:12 +0900
-Message-ID: <1449459912-29482-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: p.fedin@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL] ARM: Exynos fixes for v4.4
+Date: Mon, 07 Dec 2015 13:28:42 +0900
+Message-ID: <56650AFA.7010906@samsung.com>
+References: <1448587563-31346-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:56614 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755284AbbLGE2u (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 6 Dec 2015 23:28:50 -0500
+In-reply-to: <1448587563-31346-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Currently the reset/power off handlers (POWER_RESET) and Adaptive Voltage
-Scaling class (POWER_AVS) are not built when POWER_SUPPLY is disabled.
-The POWER_RESET is also not visible in drivers main section of config.
+On 27.11.2015 10:26, Krzysztof Kozlowski wrote:
+> Hi Kukjin,
+> 
+> 
+> Two fixes for v4.4 cycle. Rafael wanted the cpufreq fix to go through
+> arm-soc tree.
+> 
+> Please note that location of repository has changed to kernel.org.
 
-However they do not really depend on power supply so they can be built
-always. The objects for power supply drivers already depend on
-particular Kconfig symbols so there is no need for any changes in
-drivers/power/Makefile.
+Hi Arnd, Kevin and Olof,
 
-This allows selecting POWER_RESET from main drivers config section and
-fixes following build warning (encountered on ARM exynos defconfig when
-POWER_SUPPLY is disabled manually):
+Could you pull this directly for current RC-cycle? Kukjin mentioned that
+he does not have any patches in his queue for fixes.
 
-warning: (ARCH_HISI && ARCH_INTEGRATOR && ARCH_EXYNOS && ARCH_VEXPRESS && REALVIEW_DT) selects POWER_RESET which has unmet direct dependencies (POWER_SUPPLY)
-warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
-warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON_POWEROFF which has unmet direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
+Best regards,
+Krzysztof
 
-Reported-by: Pavel Fedin <p.fedin@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
----
-
-Changes since v1:
-1. Follow Sebastian's suggestion of changing drivers/power to obj-y.
-   This makes patch 2/2 obsolete and everything (POWER_RESET +
-   POWER_AVS) is fixed here.
----
- drivers/Makefile      | 2 +-
- drivers/power/Kconfig | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 795d0ca714bf..8f5d076baeb0 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -106,7 +106,7 @@ obj-y				+= i2c/ media/
- obj-$(CONFIG_PPS)		+= pps/
- obj-$(CONFIG_PTP_1588_CLOCK)	+= ptp/
- obj-$(CONFIG_W1)		+= w1/
--obj-$(CONFIG_POWER_SUPPLY)	+= power/
-+obj-y				+= power/
- obj-$(CONFIG_HWMON)		+= hwmon/
- obj-$(CONFIG_THERMAL)		+= thermal/
- obj-$(CONFIG_WATCHDOG)		+= watchdog/
-diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
-index 2f944d742ed4..c031f901b497 100644
---- a/drivers/power/Kconfig
-+++ b/drivers/power/Kconfig
-@@ -509,8 +509,7 @@ config AXP20X_POWER
- 	  This driver provides support for the power supply features of
- 	  AXP20x PMIC.
- 
--source "drivers/power/reset/Kconfig"
--
- endif # POWER_SUPPLY
- 
-+source "drivers/power/reset/Kconfig"
- source "drivers/power/avs/Kconfig"
--- 
-1.9.1
-
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+> 
+>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-4.4
+> 
+> for you to fetch changes up to 62f49ee26f14753bd7fa634f51d537a79061bf0f:
+> 
+>   cpufreq: s3c24xx: Do not mark s3c2410_plls_add as __init (2015-11-27 10:10:32 +0900)
+> 
+> ----------------------------------------------------------------
+> Fixes for Exynos:
+> 1. Fix potential NULL pointer dereference in Exynos PMU driver.
+> 2. Remove incorrect __init annotation from s3c24xx cpufreq driver
+>    structures.
+> 
+> ----------------------------------------------------------------
+> Arnd Bergmann (1):
+>       cpufreq: s3c24xx: Do not mark s3c2410_plls_add as __init
+> 
+> Pankaj Dubey (1):
+>       ARM: EXYNOS: Fix potential NULL pointer access in exynos_sys_powerdown_conf
+> 
+>  arch/arm/mach-exynos/pmu.c                   | 6 +++++-
+>  arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c | 2 +-
+>  arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c | 2 +-
+>  drivers/cpufreq/s3c24xx-cpufreq.c            | 2 +-
+>  4 files changed, 8 insertions(+), 4 deletions(-)
+> 
