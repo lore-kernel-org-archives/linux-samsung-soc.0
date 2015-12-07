@@ -1,7 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 7/7] media: s5p-mfc: add iommu support
-Date: Mon, 07 Dec 2015 13:09:02 +0100
-Message-ID: <1449490142-27502-8-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 5/7] media: set proper max seg size for devices on Exynos SoCs
+Date: Mon, 07 Dec 2015 13:09:00 +0100
+Message-ID: <1449490142-27502-6-git-send-email-m.szyprowski@samsung.com>
 References: <1449490142-27502-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1449490142-27502-1-git-send-email-m.szyprowski@samsung.com>
@@ -10,158 +10,123 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds support for IOMMU to s5p-mfc device driver. MFC firmware
-is limited and it cannot use the default configuration. If IOMMU is
-available, the patch disables the default DMA address space
-configuration and creates a new address space of size limited to 256M
-and base address set to 0x20000000.
-
-For now the same address space is shared by both 'left' and 'right'
-memory channels, because the DMA/IOMMU frameworks do not support
-configuring them separately. This is not optimal, but besides limiting
-total address space available has no other drawbacks (MFC firmware
-supports 256M of address space per each channel).
+All multimedia devices found on Exynos SoCs support only contiguous
+buffers, so set DMA max segment size to DMA_BIT_MASK(32) to let memory
+allocator to correctly create contiguous memory mappings.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c       | 24 ++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h | 79 ++++++++++++++++++++++++++
- 2 files changed, 103 insertions(+)
- create mode 100644 drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
+ drivers/media/platform/exynos-gsc/gsc-core.c  | 1 +
+ drivers/media/platform/exynos4-is/fimc-core.c | 1 +
+ drivers/media/platform/exynos4-is/fimc-is.c   | 1 +
+ drivers/media/platform/exynos4-is/fimc-lite.c | 1 +
+ drivers/media/platform/s5p-g2d/g2d.c          | 1 +
+ drivers/media/platform/s5p-jpeg/jpeg-core.c   | 1 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c      | 2 ++
+ drivers/media/platform/s5p-tv/mixer_video.c   | 1 +
+ 8 files changed, 9 insertions(+)
 
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 9b9e423e4fc4..4f90be43b5a9 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1140,6 +1140,7 @@ static int gsc_probe(struct platform_device *pdev)
+ 		goto err_m2m;
+ 
+ 	/* Initialize continious memory allocator */
++	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+ 	gsc->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+ 	if (IS_ERR(gsc->alloc_ctx)) {
+ 		ret = PTR_ERR(gsc->alloc_ctx);
+diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/media/platform/exynos4-is/fimc-core.c
+index cef2a7f07cdb..368e19b50498 100644
+--- a/drivers/media/platform/exynos4-is/fimc-core.c
++++ b/drivers/media/platform/exynos4-is/fimc-core.c
+@@ -1019,6 +1019,7 @@ static int fimc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Initialize contiguous memory allocator */
++	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+ 	fimc->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+ 	if (IS_ERR(fimc->alloc_ctx)) {
+ 		ret = PTR_ERR(fimc->alloc_ctx);
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 49658ca39e51..123772fa0241 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -841,6 +841,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_pm;
+ 
++	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+ 	is->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+ 	if (IS_ERR(is->alloc_ctx)) {
+ 		ret = PTR_ERR(is->alloc_ctx);
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index 6f76afd909c4..9cfd2221f53d 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -1564,6 +1564,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
+ 			goto err_sd;
+ 	}
+ 
++	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+ 	fimc->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+ 	if (IS_ERR(fimc->alloc_ctx)) {
+ 		ret = PTR_ERR(fimc->alloc_ctx);
+diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
+index e1936d9d27da..31f6c233b146 100644
+--- a/drivers/media/platform/s5p-g2d/g2d.c
++++ b/drivers/media/platform/s5p-g2d/g2d.c
+@@ -681,6 +681,7 @@ static int g2d_probe(struct platform_device *pdev)
+ 		goto put_clk_gate;
+ 	}
+ 
++	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+ 	dev->alloc_ctx = vb2_dma_contig_init_ctx(&pdev->dev);
+ 	if (IS_ERR(dev->alloc_ctx)) {
+ 		ret = PTR_ERR(dev->alloc_ctx);
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 4a608cbe0fdb..6bd92f014a23 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -2839,6 +2839,7 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ 		goto device_register_rollback;
+ 	}
+ 
++	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+ 	jpeg->alloc_ctx = vb2_dma_contig_init_ctx(&pdev->dev);
+ 	if (IS_ERR(jpeg->alloc_ctx)) {
+ 		v4l2_err(&jpeg->v4l2_dev, "Failed to init memory allocator\n");
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 55c557f835f2..dfbaadd22a3d 100644
+index 81ffb67e6d66..8fcecf8a9a17 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -30,6 +30,7 @@
- #include "s5p_mfc_dec.h"
- #include "s5p_mfc_enc.h"
- #include "s5p_mfc_intr.h"
-+#include "s5p_mfc_iommu.h"
- #include "s5p_mfc_opr.h"
- #include "s5p_mfc_cmd.h"
- #include "s5p_mfc_pm.h"
-@@ -1082,6 +1083,22 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 	struct device *dev = &mfc_dev->plat_dev->dev;
+@@ -1164,11 +1164,13 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
- 	/*
-+	 * When IOMMU is available, we cannot use the default configuration,
-+	 * because of MFC firmware requirements: address space limited to
-+	 * 256M and non-zero default start address.
-+	 * This is still simplified, not optimal configuration, but for now
-+	 * IOMMU core doesn't allow to configure device's IOMMUs channel
-+	 * separately.
-+	 */
-+	if (exynos_is_iommu_available(dev)) {
-+		int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
-+						 S5P_MFC_IOMMU_DMA_SIZE);
-+		if (ret == 0)
-+			mfc_dev->mem_dev_l = mfc_dev->mem_dev_r = dev;
-+		return ret;
-+	}
-+
-+	/*
- 	 * Create and initialize virtual devices for accessing
- 	 * reserved memory regions.
- 	 */
-@@ -1099,6 +1116,13 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++	vb2_dma_contig_set_max_seg_size(dev->mem_dev_l, DMA_BIT_MASK(32));
+ 	dev->alloc_ctx[0] = vb2_dma_contig_init_ctx(dev->mem_dev_l);
+ 	if (IS_ERR(dev->alloc_ctx[0])) {
+ 		ret = PTR_ERR(dev->alloc_ctx[0]);
+ 		goto err_res;
+ 	}
++	vb2_dma_contig_set_max_seg_size(dev->mem_dev_r, DMA_BIT_MASK(32));
+ 	dev->alloc_ctx[1] = vb2_dma_contig_init_ctx(dev->mem_dev_r);
+ 	if (IS_ERR(dev->alloc_ctx[1])) {
+ 		ret = PTR_ERR(dev->alloc_ctx[1]);
+diff --git a/drivers/media/platform/s5p-tv/mixer_video.c b/drivers/media/platform/s5p-tv/mixer_video.c
+index dc1c679e136c..1d9c2d5a10e7 100644
+--- a/drivers/media/platform/s5p-tv/mixer_video.c
++++ b/drivers/media/platform/s5p-tv/mixer_video.c
+@@ -80,6 +80,7 @@ int mxr_acquire_video(struct mxr_device *mdev,
+ 		goto fail;
+ 	}
  
- static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- {
-+	struct device *dev = &mfc_dev->plat_dev->dev;
-+
-+	if (exynos_is_iommu_available(dev)) {
-+		exynos_unconfigure_iommu(dev);
-+		return;
-+	}
-+
- 	device_unregister(mfc_dev->mem_dev_l);
- 	device_unregister(mfc_dev->mem_dev_r);
- }
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-new file mode 100644
-index 000000000000..5d1d1c2922e8
---- /dev/null
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-@@ -0,0 +1,79 @@
-+/*
-+ * Copyright (C) 2015 Samsung Electronics Co.Ltd
-+ * Authors: Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#ifndef S5P_MFC_IOMMU_H_
-+#define S5P_MFC_IOMMU_H_
-+
-+#define S5P_MFC_IOMMU_DMA_BASE	0x20000000lu
-+#define S5P_MFC_IOMMU_DMA_SIZE	SZ_256M
-+
-+#ifdef CONFIG_EXYNOS_IOMMU
-+
-+#include <asm/dma-iommu.h>
-+
-+static inline bool exynos_is_iommu_available(struct device *dev)
-+{
-+	return dev->archdata.iommu != NULL;
-+}
-+
-+static inline void exynos_unconfigure_iommu(struct device *dev)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+
-+	arm_iommu_detach_device(dev);
-+	arm_iommu_release_mapping(mapping);
-+}
-+
-+static inline int exynos_configure_iommu(struct device *dev,
-+					 unsigned int base, unsigned int size)
-+{
-+	struct dma_iommu_mapping *mapping = NULL;
-+	int ret;
-+
-+	/* Disable the default mapping created by device core */
-+	if (to_dma_iommu_mapping(dev))
-+		exynos_unconfigure_iommu(dev);
-+
-+	mapping = arm_iommu_create_mapping(dev->bus, base, size);
-+	if (IS_ERR(mapping)) {
-+		pr_warn("Failed to create IOMMU mapping for device %s\n",
-+			dev_name(dev));
-+		return PTR_ERR(mapping);
-+	}
-+
-+	ret = arm_iommu_attach_device(dev, mapping);
-+	if (ret) {
-+		pr_warn("Failed to attached device %s to IOMMU_mapping\n",
-+				dev_name(dev));
-+		arm_iommu_release_mapping(mapping);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+#else
-+
-+static inline bool exynos_is_iommu_available(struct device *dev)
-+{
-+	return false;
-+}
-+
-+static inline int exynos_configure_iommu(struct device *dev,
-+					 unsigned int base, unsigned int size)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline void exynos_unconfigure_iommu(struct device *dev) { }
-+
-+#endif
-+
-+#endif /* S5P_MFC_IOMMU_H_ */
++	vb2_dma_contig_set_max_seg_size(mdev->dev, DMA_BIT_MASK(32));
+ 	mdev->alloc_ctx = vb2_dma_contig_init_ctx(mdev->dev);
+ 	if (IS_ERR(mdev->alloc_ctx)) {
+ 		mxr_err(mdev, "could not acquire vb2 allocator\n");
 -- 
 1.9.2
