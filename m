@@ -1,57 +1,44 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: multi_v7_defconfig: Enable fan,
- sensors and audio for Odroid XU3
-Date: Mon, 07 Dec 2015 09:59:54 +0900
-Message-ID: <1449449994-10110-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59523 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754155AbbLGBAK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 6 Dec 2015 20:00:10 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
+Date: Mon, 07 Dec 2015 10:05:23 +0900
+Message-ID: <5664DB53.6030801@samsung.com>
+References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
+ <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
+ <20151204155509.GA27455@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20151204155509.GA27455@rob-hp-laptop>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>
 
-For Odroid XU3-family enable the:
- - PWM fan (to control the CPU fan using thermal subsystem),
- - TI INA231 sensors (provide power measurements of big.LITTLE cores,
-   DRAM and GPU),
- - Samsung sound (for Odroid XU3 and Snow as well).
+On 05.12.2015 00:55, Rob Herring wrote:
+> On Fri, Dec 04, 2015 at 10:10:05AM +0900, Krzysztof Kozlowski wrote:
+>> The mfd/s2mpa01.txt duplicates some of the information about bindings
+>> with old mfd/s2mps11.txt. Now common part exists entirely in
+>> mfd/samsung,sec-core.txt so:
+>>  - add company prefix to file name (regulator/samsung,s2mpa01.txt),
+>>  - remove duplicated information,
+>>  - reorganize the contents to match style of
+>>    regulator/samsung,s2mps11.txt.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Next time, use git format-patch -M option.
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/multi_v7_defconfig | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+It is already used but I also changed the style and formatting to the
+similarity dropped below default level of 50%. I could of course first
+rename and then change formatting/contents but that would be a little
+bit too much for this simple patchset, don't you think?
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f6a2557b55df..419f9413402c 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -390,7 +390,8 @@ CONFIG_POWER_RESET_RMOBILE=y
- CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_LM95245=y
- CONFIG_SENSORS_NTC_THERMISTOR=m
--CONFIG_THERMAL=y
-+CONFIG_SENSORS_PWM_FAN=m
-+CONFIG_SENSORS_INA2XX=m
- CONFIG_CPU_THERMAL=y
- CONFIG_ROCKCHIP_THERMAL=y
- CONFIG_RCAR_THERMAL=y
-@@ -521,10 +522,13 @@ CONFIG_SND_HDA_INPUT_BEEP=y
- CONFIG_SND_HDA_PATCH_LOADER=y
- CONFIG_SND_HDA_CODEC_REALTEK=m
- CONFIG_SND_HDA_CODEC_HDMI=m
--CONFIG_SND_USB_AUDIO=y
-+CONFIG_SND_USB_AUDIO=m
- CONFIG_SND_SOC=m
- CONFIG_SND_ATMEL_SOC=m
- CONFIG_SND_ATMEL_SOC_WM8904=m
-+CONFIG_SND_SOC_SAMSUNG=m
-+CONFIG_SND_SOC_SNOW=m
-+CONFIG_SND_SOC_ODROIDX2=m
- CONFIG_SND_SOC_SH4_FSI=m
- CONFIG_SND_SOC_RCAR=m
- CONFIG_SND_SOC_RSRC_CARD=m
--- 
-1.9.1
+Anyway thanks for acks!
+
+Best regards,
+Krzysztof
+
