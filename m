@@ -1,124 +1,53 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: Re: [PATCH 1/3] Device tree binding documentation for gpio-switch
-Date: Mon, 07 Dec 2015 21:10:55 +0000
-Message-ID: <5665F5DF.50002@collabora.co.uk>
-References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk> <1449250275-23435-2-git-send-email-martyn.welch@collabora.co.uk> <20151207173702.GA17659@rob-hp-laptop>
+From: Ben Gamari <ben@smart-cactus.org>
+Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
+Date: Mon, 07 Dec 2015 22:19:05 +0100
+Message-ID: <87mvtm9cty.fsf@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <20151203060527.GH4302@ubuntu> <877fkv4ylk.fsf@smart-cactus.org> <20151203103703.GC2097@ubuntu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36316 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752986AbbLGVK7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Dec 2015 16:10:59 -0500
-In-Reply-To: <20151207173702.GA17659@rob-hp-laptop>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20151203103703.GC2097@ubuntu>
+Sender: linux-clk-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
+--=-=-=
+Content-Type: text/plain
 
+Viresh Kumar <viresh.kumar@linaro.org> writes:
 
-On 07/12/15 17:37, Rob Herring wrote:
-> +Linus W
+> On 03-12-15, 11:26, Ben Gamari wrote:
+>> Sounds reasonable to me. However, I'd just like to reiterate that this
+>> line of work can be pursued independently from the upstreaming of this
+>> series.
 >
-> On Fri, Dec 04, 2015 at 05:31:13PM +0000, Martyn Welch wrote:
->> This patch adds documentation for the gpio-switch binding. This binding
->> provides a mechanism to bind named links to gpio, with the primary
->> purpose of enabling standardised access to switches that might be standard
->> across a group of devices but implemented differently on each device.
+> I think this is the right time to upstream the right solution. Just
+> try it once, if you face lots of difficulties or issues, then we can
+> ofcourse see..
 >
-> This is good and what I suggested, but it now makes me wonder if switch
-> is generic enough. This boils down to needing to expose single gpio
-> lines to userspace with a defined function/use. IIRC, there's been some
-> discussion about this before along with improving the userspace
-> interface for GPIO in general. So I'd like to get Linus' thoughts on
-> this.
->
+It looks like Bartlomiej has picked up this set. Regardless, while
+tracking down various devicetree issues I noticed that the cpu-supply
+and cpu%d-supply bindings appear to be completely undocumented. It
+seem as though this ought to be fixed.
 
-No problem. Rename gpio-signal?
+Cheers,
 
->
->> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
->> ---
->>   .../devicetree/bindings/misc/gpio-switch.txt       | 47 ++++++++++++++++++++++
->>   1 file changed, 47 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/misc/gpio-switch.txt
->>
->> diff --git a/Documentation/devicetree/bindings/misc/gpio-switch.txt b/Documentation/devicetree/bindings/misc/gpio-switch.txt
->> new file mode 100644
->> index 0000000..13528bd
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/misc/gpio-switch.txt
->> @@ -0,0 +1,47 @@
->> +Device-Tree bindings for gpio attached switches.
->> +
->> +This provides a mechanism to provide a named link to specified gpios. This can
->> +be useful in instances such as when theres a need to monitor a switch, which is
->> +common across a family of devices, but attached to different gpios and even
->> +implemented in different ways on differnet devices.
->> +
->> +Required properties:
->> +	- compatible = "gpio-switch";
->> +
->> +Each signal is represented as a sub-node of "gpio-switch". The naming of
->> +sub-nodes is arbitrary.
->> +
->> +Required sub-node properties:
->> +
->> +	- label: Name to be given to gpio switch.
->> +	- gpios: OF device-tree gpio specification.
->> +
->> +Optional sub-node properties:
->> +
->> +	- read-only: Boolean flag to mark the gpio as read-only, i.e. the line
->> +	  should not be driven by the host.
->
-> In terms a a switch use, allowing driving it would be an override of the
-> switch. Is that the idea here?
->
+- Ben
 
-Yeah - since it had become a lot more generic and a lot of 
-switches/signals would probably be implemented with a pull-up resistor 
-of something like that, it seemed to make sense to allow them to be 
-driven as well.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +
->> +Example nodes:
->> +
->> +        gpio-switch {
->> +                compatible = "gpio-switch";
->
-> Both from a binding and driver perspective, there is no point in
-> grouping these. Each node can simply have this compatible string.
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-True. I did it this way as this is how gpio-keys is implemented. OK, 
-that has one optional parameter (autorepeat) for the block and this has 
-none. Though I can also see that these probably have less in common than 
-the individual lines used in gpio-keys.
-
->> +
->> +                write-protect {
->> +                        label = "write-protect";
->> +                        gpios = <&gpx3 0 GPIO_ACTIVE_LOW>;
->> +                        read-only;
->> +                };
->> +
->> +                developer-switch {
->> +                        label = "developer-switch";
->> +                        gpios = <&gpx1 3 GPIO_ACTIVE_HIGH>;
->> +                        read-only;
->> +                };
->> +
->> +                recovery-switch {
->> +                        label = "recovery-switch";
->> +                        gpios = <&gpx0 7 GPIO_ACTIVE_LOW>;
->> +                        read-only;
->> +                };
->> +        };
->> +
->> --
->> 2.1.4
->>
+iQEcBAEBAgAGBQJWZffJAAoJEHPt6ejPuu8B55wIAKhCh+3B6L0jnOwpTB01ThWf
+1x+S2hVSklTT8Fsr/kqvmYtl0rQzuEiZYU5/KcZBGA2Mys5bpLQz+kY84jQ94lvh
+J7QSoZ1kieWFtKE41MZ+TfqJ1k2/xKZ9TIllkl2yNq89zEbIjF+ePgO2j5l+jH81
+s1RK0IbHbmlLhcnqRVUmSBuB+nsvHPVCHWOQvpfIsWQdQmqpYhIPoAZe9UdbjPTC
+qF58N5EPrhTty/1dxQOlXm1LhxGunmSvtsfUGbXAOyuS5PQDph0RDDSCOR5OZmKg
+QW0b8r7Qgz0P3XAOsP4sCT+tk2H6rrWz4BUw5yNPFLcHO+0crZWzZSTvW/2lP0s=
+=on3T
+-----END PGP SIGNATURE-----
+--=-=-=--
