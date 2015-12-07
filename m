@@ -1,12 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH 20/23] mtd: onenand: switch to mtd_ooblayout_ops
-Date: Mon,  7 Dec 2015 23:26:15 +0100
-Message-ID: <1449527178-5930-21-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH 23/23] mtd: kill the nand_ecclayout struct
+Date: Mon,  7 Dec 2015 23:26:18 +0100
+Message-ID: <1449527178-5930-24-git-send-email-boris.brezillon@free-electrons.com>
 References: <1449527178-5930-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBZ4PTCZQKGQE3HCHE4Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBB34PTCZQKGQEZYC6FII-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1449527178-5930-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -19,239 +19,153 @@ To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norri
 Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Implementing the mtd_ooblayout_ops interface is the new way of exposing
-ECC/OOB layout to MTD users. Modify the onenand drivers to switch to this
-approach.
+Now that all mtd drivers have moved to the mtd_ooblayout_ops model we can
+safely remove the struct nand_ecclayout definition, and all the remaining
+places where it was still used.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/onenand/onenand_base.c | 144 +++++++++++++++++++++----------------
- include/linux/mtd/onenand.h        |   2 -
- 2 files changed, 82 insertions(+), 64 deletions(-)
+ drivers/mtd/mtdchar.c      | 12 ++++++------
+ drivers/mtd/mtdcore.c      | 44 --------------------------------------------
+ include/linux/mtd/mtd.h    | 20 --------------------
+ include/uapi/mtd/mtd-abi.h |  2 +-
+ 4 files changed, 7 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/mtd/onenand/onenand_base.c b/drivers/mtd/onenand/onenand_base.c
-index b5937b7..5c7ff9f 100644
---- a/drivers/mtd/onenand/onenand_base.c
-+++ b/drivers/mtd/onenand/onenand_base.c
-@@ -68,21 +68,29 @@ MODULE_PARM_DESC(otp,	"Corresponding behaviour of OneNAND in OTP"
-  * flexonenand_oob_128 - oob info for Flex-Onenand with 4KB page
-  * For now, we expose only 64 out of 80 ecc bytes
-  */
--static struct nand_ecclayout flexonenand_oob_128 = {
--	.eccbytes	= 64,
--	.eccpos		= {
--		6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
--		22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
--		38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
--		54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
--		70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
--		86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
--		102, 103, 104, 105
--		},
--	.oobfree	= {
--		{2, 4}, {18, 4}, {34, 4}, {50, 4},
--		{66, 4}, {82, 4}, {98, 4}, {114, 4}
--	}
-+static int flexonenand_eccpos(struct mtd_info *mtd, int eccbyte)
-+{
-+	if (eccbyte > 79)
-+		return -ERANGE;
-+
-+	return ((eccbyte / 10) * 16) + 6 + (eccbyte % 10);
-+}
-+
-+static int flexonenand_oobfree(struct mtd_info *mtd, int section,
-+			       struct nand_oobfree *oobfree)
-+{
-+	if (section > 7)
-+		return -ERANGE;
-+
-+	oobfree->offset = (section * 16) + 2;
-+	oobfree->length = 4;
-+
-+	return 0;
-+}
-+
-+const struct mtd_ooblayout_ops flexonenand_ooblayout_ops = {
-+	.eccpos = flexonenand_eccpos,
-+	.oobfree = flexonenand_oobfree,
- };
+diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+index c03b678..322e838 100644
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -465,12 +465,12 @@ static int mtdchar_readoob(struct file *file, struct mtd_info *mtd,
+ }
  
  /*
-@@ -91,56 +99,69 @@ static struct nand_ecclayout flexonenand_oob_128 = {
-  * Based on specification:
-  * 4Gb M-die OneNAND Flash (KFM4G16Q4M, KFN8G16Q4M). Rev. 1.3, Apr. 2010
-  *
-- * For eccpos we expose only 64 bytes out of 72 (see struct nand_ecclayout)
-- *
-  * oobfree uses the spare area fields marked as
-  * "Managed by internal ECC logic for Logical Sector Number area"
+- * Copies (and truncates, if necessary) data from the larger struct,
+- * nand_ecclayout, to the smaller, deprecated layout struct,
+- * nand_ecclayout_user. This is necessary only to support the deprecated
+- * API ioctl ECCGETLAYOUT while allowing all new functionality to use
+- * nand_ecclayout flexibly (i.e. the struct may change size in new
+- * releases without requiring major rewrites).
++ * Copies (and truncates, if necessary) OOB layout information to the
++ * deprecated layout struct, nand_ecclayout_user. This is necessary only to
++ * support the deprecated API ioctl ECCGETLAYOUT while allowing all new
++ * functionality to use mtd_ooblayout_ops flexibly (i.e. mtd_ooblayout_ops
++ * can describe any kind of OOB layout with almost zero overhead from a
++ * memory usage point of view).
   */
--static struct nand_ecclayout onenand_oob_128 = {
--	.eccbytes	= 64,
--	.eccpos		= {
--		7, 8, 9, 10, 11, 12, 13, 14, 15,
--		23, 24, 25, 26, 27, 28, 29, 30, 31,
--		39, 40, 41, 42, 43, 44, 45, 46, 47,
--		55, 56, 57, 58, 59, 60, 61, 62, 63,
--		71, 72, 73, 74, 75, 76, 77, 78, 79,
--		87, 88, 89, 90, 91, 92, 93, 94, 95,
--		103, 104, 105, 106, 107, 108, 109, 110, 111,
--		119
--	},
--	.oobfree	= {
--		{2, 3}, {18, 3}, {34, 3}, {50, 3},
--		{66, 3}, {82, 3}, {98, 3}, {114, 3}
--	}
-+static int onenand_oob_128_eccpos(struct mtd_info *mtd, int eccbyte)
-+{
-+	if (eccbyte >= 72)
-+		return -ERANGE;
-+
-+	return ((eccbyte / 9) * 16) + 7 + (eccbyte % 9);
-+}
-+
-+static int onenand_oob_128_oobfree(struct mtd_info *mtd, int section,
-+				   struct nand_oobfree *oobfree)
-+{
-+	if (section >= 8)
-+		return -ERANGE;
-+
-+	oobfree->offset = (section * 16) + 2;
-+	oobfree->length = 3;
-+
-+	return 0;
-+}
-+
-+const struct mtd_ooblayout_ops onenand_oob_128_ooblayout_ops = {
-+	.eccpos = onenand_oob_128_eccpos,
-+	.oobfree = onenand_oob_128_oobfree,
- };
+ static int shrink_ecclayout(struct mtd_info *mtd,
+ 			    struct nand_ecclayout_user *to)
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index d87f3621..62f83b0 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -833,50 +833,6 @@ void __put_mtd_device(struct mtd_info *mtd)
+ }
+ EXPORT_SYMBOL_GPL(__put_mtd_device);
  
- /**
-- * onenand_oob_64 - oob info for large (2KB) page
-+ * onenand_oob_32_64 - oob info for large (2KB) page
-  */
--static struct nand_ecclayout onenand_oob_64 = {
--	.eccbytes	= 20,
--	.eccpos		= {
--		8, 9, 10, 11, 12,
--		24, 25, 26, 27, 28,
--		40, 41, 42, 43, 44,
--		56, 57, 58, 59, 60,
--		},
--	.oobfree	= {
--		{2, 3}, {14, 2}, {18, 3}, {30, 2},
--		{34, 3}, {46, 2}, {50, 3}, {62, 2}
-+static int onenand_oob_32_64_eccpos(struct mtd_info *mtd, int eccbyte)
-+{
-+	int eccbytes = (mtd->oobsize / 32) * 10;
-+
-+	if (eccbyte >= eccbytes)
-+		return -ERANGE;
-+
-+	return ((eccbyte / 5) * 16) + 8 + (eccbyte % 5);
-+}
-+
-+static int onenand_oob_32_64_oobfree(struct mtd_info *mtd, int section,
-+				     struct nand_oobfree *oobfree)
-+{
-+	int sections = (mtd->oobsize / 32) * 2;
-+
-+	if (section >= sections)
-+		return -ERANGE;
-+
-+	if (section & 1) {
-+		oobfree->offset = ((section - 1) * 16) + 14;
-+		oobfree->length = 2;
-+	} else  {
-+		oobfree->offset = (section * 16) + 2;
-+		oobfree->length = 3;
- 	}
+-static int nand_ecclayout_eccpos(struct mtd_info *mtd, int eccbyte)
+-{
+-	struct nand_ecclayout *layout = mtd->ecclayout;
+-
+-	if (!layout)
+-		return -ENOTSUPP;
+-
+-	if (eccbyte >= layout->eccbytes)
+-		return -ERANGE;
+-
+-	return layout->eccpos[eccbyte];
+-}
+-
+-static int nand_ecclayout_oobfree(struct mtd_info *mtd, int section,
+-				  struct nand_oobfree *oobfree)
+-{
+-	struct nand_ecclayout *layout = mtd->ecclayout;
+-
+-	if (!layout)
+-		return -ENOTSUPP;
+-
+-	if (section >= MTD_MAX_OOBFREE_ENTRIES_LARGE)
+-		return -ERANGE;
+-
+-	*oobfree = layout->oobfree[section];
+-
+-	return 0;
+-}
+-
+-static const struct mtd_ooblayout_ops nand_ecclayout_ops = {
+-	.eccpos = nand_ecclayout_eccpos,
+-	.oobfree = nand_ecclayout_oobfree,
 -};
+-
+-void mtd_set_ecclayout(struct mtd_info *mtd, struct nand_ecclayout *ecclayout)
+-{
+-	if (!mtd || !ecclayout)
+-		return;
+-
+-	mtd->ecclayout = ecclayout;
+-	mtd_set_ooblayout(mtd, &nand_ecclayout_ops);
+-}
+-EXPORT_SYMBOL_GPL(mtd_set_ecclayout);
+-
+ /*
+  * Erase is an asynchronous operation.  Device drivers are supposed
+  * to call instr->callback() whenever the operation completes, even
+diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+index 9c3699b..3a4bab7 100644
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@ -96,21 +96,6 @@ struct mtd_oob_ops {
  
--/**
-- * onenand_oob_32 - oob info for middle (1KB) page
+ #define MTD_MAX_OOBFREE_ENTRIES_LARGE	32
+ #define MTD_MAX_ECCPOS_ENTRIES_LARGE	640
+-/*
+- * Internal ECC layout control structure. For historical reasons, there is a
+- * similar, smaller struct nand_ecclayout_user (in mtd-abi.h) that is retained
+- * for export to user-space via the ECCGETLAYOUT ioctl.
+- * nand_ecclayout should be expandable in the future simply by the above macros.
+- *
+- * This structure is now deprecated, you should use struct nand_ecclayout_ops
+- * to describe your OOB layout.
 - */
--static struct nand_ecclayout onenand_oob_32 = {
--	.eccbytes	= 10,
--	.eccpos		= {
--		8, 9, 10, 11, 12,
--		24, 25, 26, 27, 28,
--		},
--	.oobfree	= { {2, 3}, {14, 2}, {18, 3}, {30, 2} }
-+	return 0;
-+}
-+
-+const struct mtd_ooblayout_ops onenand_oob_32_64_ooblayout_ops = {
-+	.eccpos = onenand_oob_32_64_eccpos,
-+	.oobfree = onenand_oob_32_64_oobfree,
- };
+-struct nand_ecclayout {
+-	__u32 eccbytes;
+-	__u32 eccpos[MTD_MAX_ECCPOS_ENTRIES_LARGE];
+-	struct nand_oobfree oobfree[MTD_MAX_OOBFREE_ENTRIES_LARGE];
+-};
+-
+ /**
+  * struct mtd_ooblayout_ops - NAND OOB layout operations.
+  *
+@@ -183,9 +168,6 @@ struct mtd_info {
+ 	const char *name;
+ 	int index;
  
- static const unsigned char ffchars[] = {
-@@ -4019,22 +4040,22 @@ int onenand_scan(struct mtd_info *mtd, int maxchips)
- 	switch (mtd->oobsize) {
- 	case 128:
- 		if (FLEXONENAND(this)) {
--			this->ecclayout = &flexonenand_oob_128;
-+			mtd_set_ooblayout(mtd, &flexonenand_ooblayout_ops);
- 			mtd->subpage_sft = 0;
- 		} else {
--			this->ecclayout = &onenand_oob_128;
-+			mtd_set_ooblayout(mtd, &onenand_oob_128_ooblayout_ops);
- 			mtd->subpage_sft = 2;
- 		}
- 		if (ONENAND_IS_NOP_1(this))
- 			mtd->subpage_sft = 0;
- 		break;
- 	case 64:
--		this->ecclayout = &onenand_oob_64;
-+		mtd_set_ooblayout(mtd, &onenand_oob_32_64_ooblayout_ops);
- 		mtd->subpage_sft = 2;
- 		break;
+-	/* [Deprecated] ECC layout structure pointer - read only! */
+-	struct nand_ecclayout *ecclayout;
+-
+ 	/* OOB layout description */
+ 	const struct mtd_ooblayout_ops *ooblayout;
  
- 	case 32:
--		this->ecclayout = &onenand_oob_32;
-+		mtd_set_ooblayout(mtd, &onenand_oob_32_64_ooblayout_ops);
- 		mtd->subpage_sft = 1;
- 		break;
+@@ -279,8 +261,6 @@ static inline void mtd_set_ooblayout(struct mtd_info *mtd,
+ 	mtd->ooblayout = ooblayout;
+ }
  
-@@ -4043,7 +4064,7 @@ int onenand_scan(struct mtd_info *mtd, int maxchips)
- 			__func__, mtd->oobsize);
- 		mtd->subpage_sft = 0;
- 		/* To prevent kernel oops */
--		this->ecclayout = &onenand_oob_32;
-+		mtd_set_ooblayout(mtd, &onenand_oob_32_64_ooblayout_ops);
- 		break;
- 	}
- 
-@@ -4059,7 +4080,6 @@ int onenand_scan(struct mtd_info *mtd, int maxchips)
- 	     mtd_oobfree(mtd, i++, &oobfree))
- 		mtd->oobavail += oobfree.length;
- 
--	mtd_set_ecclayout(mtd, this->ecclayout);
- 	mtd->ecc_strength = 1;
- 
- 	/* Fill in remaining MTD driver data */
-diff --git a/include/linux/mtd/onenand.h b/include/linux/mtd/onenand.h
-index 4596503..0aaa98b 100644
---- a/include/linux/mtd/onenand.h
-+++ b/include/linux/mtd/onenand.h
-@@ -80,7 +80,6 @@ struct onenand_bufferram {
-  * @page_buf:		[INTERN] page main data buffer
-  * @oob_buf:		[INTERN] page oob data buffer
-  * @subpagesize:	[INTERN] holds the subpagesize
-- * @ecclayout:		[REPLACEABLE] the default ecc placement scheme
-  * @bbm:		[REPLACEABLE] pointer to Bad Block Management
-  * @priv:		[OPTIONAL] pointer to private chip date
+-void mtd_set_ecclayout(struct mtd_info *mtd, struct nand_ecclayout *ecclayout);
+-
+ static inline int mtd_eccpos(struct mtd_info *mtd, int eccbyte)
+ {
+ 	if (!mtd->ooblayout || !mtd->ooblayout->eccpos)
+diff --git a/include/uapi/mtd/mtd-abi.h b/include/uapi/mtd/mtd-abi.h
+index 763bb69..0ec1da2 100644
+--- a/include/uapi/mtd/mtd-abi.h
++++ b/include/uapi/mtd/mtd-abi.h
+@@ -228,7 +228,7 @@ struct nand_oobfree {
+  * complete set of ECC information. The ioctl truncates the larger internal
+  * structure to retain binary compatibility with the static declaration of the
+  * ioctl. Note that the "MTD_MAX_..._ENTRIES" macros represent the max size of
+- * the user struct, not the MAX size of the internal struct nand_ecclayout.
++ * the user struct, not the MAX size of the internal OOB layout representation.
   */
-@@ -134,7 +133,6 @@ struct onenand_chip {
- #endif
- 
- 	int			subpagesize;
--	struct nand_ecclayout	*ecclayout;
- 
- 	void			*bbm;
- 
+ struct nand_ecclayout_user {
+ 	__u32 eccbytes;
 -- 
 2.1.4
