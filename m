@@ -1,105 +1,124 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v4 7/8] ARM: dts: Exynos5422: fix OPP tables
-Date: Mon, 07 Dec 2015 19:18:19 +0100
-Message-ID: <1449512300-17230-8-git-send-email-b.zolnierkie@samsung.com>
-References: <1449512300-17230-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1449512300-17230-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: Re: [PATCH 1/3] Device tree binding documentation for gpio-switch
+Date: Mon, 07 Dec 2015 21:10:55 +0000
+Message-ID: <5665F5DF.50002@collabora.co.uk>
+References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk> <1449250275-23435-2-git-send-email-martyn.welch@collabora.co.uk> <20151207173702.GA17659@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36316 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752986AbbLGVK7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Dec 2015 16:10:59 -0500
+In-Reply-To: <20151207173702.GA17659@rob-hp-laptop>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-From: Ben Gamari <ben@smart-cactus.org>
 
-The Exynos 5422 is identical to the 5800 except for the fact that it
-boots from the A7 cores. Consequently, the core numbering is different:
-cores 0-3 are A7s whereas 4-7 are A15s.
 
-We can reuse the device tree of the 5800 for the 5422 but we must take
-care to override the OPP tables and CPU clocks.  These are otherwise
-inherited from the exynos5800 devicetree, which has the CPU clusters
-reversed compared to the 5422. This results in the A15 cores only
-reaching 1.4GHz, the maximum rate of the KFC clock.
+On 07/12/15 17:37, Rob Herring wrote:
+> +Linus W
+>
+> On Fri, Dec 04, 2015 at 05:31:13PM +0000, Martyn Welch wrote:
+>> This patch adds documentation for the gpio-switch binding. This binding
+>> provides a mechanism to bind named links to gpio, with the primary
+>> purpose of enabling standardised access to switches that might be standard
+>> across a group of devices but implemented differently on each device.
+>
+> This is good and what I suggested, but it now makes me wonder if switch
+> is generic enough. This boils down to needing to expose single gpio
+> lines to userspace with a defined function/use. IIRC, there's been some
+> discussion about this before along with improving the userspace
+> interface for GPIO in general. So I'd like to get Linus' thoughts on
+> this.
+>
 
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/boot/dts/exynos5422-cpus.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+No problem. Rename gpio-signal?
 
-diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-index b7f60c8..9a5131d 100644
---- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -20,8 +20,10 @@
- 	device_type = "cpu";
- 	compatible = "arm,cortex-a7";
- 	reg = <0x100>;
-+	clocks = <&clock CLK_KFC_CLK>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu1 {
-@@ -30,6 +32,7 @@
- 	reg = <0x101>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu2 {
-@@ -38,6 +41,7 @@
- 	reg = <0x102>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu3 {
-@@ -46,14 +50,17 @@
- 	reg = <0x103>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu4 {
- 	device_type = "cpu";
- 	compatible = "arm,cortex-a15";
- 	reg = <0x0>;
-+	clocks = <&clock CLK_ARM_CLK>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
- 
- &cpu5 {
-@@ -62,6 +69,7 @@
- 	reg = <0x1>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
- 
- &cpu6 {
-@@ -70,6 +78,7 @@
- 	reg = <0x2>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
- 
- &cpu7 {
-@@ -78,4 +87,5 @@
- 	reg = <0x3>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
--- 
-1.9.1
+>
+>> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+>> ---
+>>   .../devicetree/bindings/misc/gpio-switch.txt       | 47 ++++++++++++++++++++++
+>>   1 file changed, 47 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/misc/gpio-switch.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/misc/gpio-switch.txt b/Documentation/devicetree/bindings/misc/gpio-switch.txt
+>> new file mode 100644
+>> index 0000000..13528bd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/misc/gpio-switch.txt
+>> @@ -0,0 +1,47 @@
+>> +Device-Tree bindings for gpio attached switches.
+>> +
+>> +This provides a mechanism to provide a named link to specified gpios. This can
+>> +be useful in instances such as when theres a need to monitor a switch, which is
+>> +common across a family of devices, but attached to different gpios and even
+>> +implemented in different ways on differnet devices.
+>> +
+>> +Required properties:
+>> +	- compatible = "gpio-switch";
+>> +
+>> +Each signal is represented as a sub-node of "gpio-switch". The naming of
+>> +sub-nodes is arbitrary.
+>> +
+>> +Required sub-node properties:
+>> +
+>> +	- label: Name to be given to gpio switch.
+>> +	- gpios: OF device-tree gpio specification.
+>> +
+>> +Optional sub-node properties:
+>> +
+>> +	- read-only: Boolean flag to mark the gpio as read-only, i.e. the line
+>> +	  should not be driven by the host.
+>
+> In terms a a switch use, allowing driving it would be an override of the
+> switch. Is that the idea here?
+>
 
+Yeah - since it had become a lot more generic and a lot of 
+switches/signals would probably be implemented with a pull-up resistor 
+of something like that, it seemed to make sense to allow them to be 
+driven as well.
+
+>> +
+>> +Example nodes:
+>> +
+>> +        gpio-switch {
+>> +                compatible = "gpio-switch";
+>
+> Both from a binding and driver perspective, there is no point in
+> grouping these. Each node can simply have this compatible string.
+>
+
+True. I did it this way as this is how gpio-keys is implemented. OK, 
+that has one optional parameter (autorepeat) for the block and this has 
+none. Though I can also see that these probably have less in common than 
+the individual lines used in gpio-keys.
+
+>> +
+>> +                write-protect {
+>> +                        label = "write-protect";
+>> +                        gpios = <&gpx3 0 GPIO_ACTIVE_LOW>;
+>> +                        read-only;
+>> +                };
+>> +
+>> +                developer-switch {
+>> +                        label = "developer-switch";
+>> +                        gpios = <&gpx1 3 GPIO_ACTIVE_HIGH>;
+>> +                        read-only;
+>> +                };
+>> +
+>> +                recovery-switch {
+>> +                        label = "recovery-switch";
+>> +                        gpios = <&gpx0 7 GPIO_ACTIVE_LOW>;
+>> +                        read-only;
+>> +                };
+>> +        };
+>> +
+>> --
+>> 2.1.4
+>>
