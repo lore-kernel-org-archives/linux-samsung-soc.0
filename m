@@ -1,57 +1,43 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: Use OF graph for DP to panel connection in
- exynos5800-peach-pi
-Date: Mon, 07 Dec 2015 21:52:38 +0900
-Message-ID: <1449492758-19989-5-git-send-email-inki.dae@samsung.com>
-References: <1449492758-19989-1-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1449492758-19989-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, javier@osg.samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Subject: [PATCH] drm/exynos: decon: remove unused variables
+Date: Mon, 07 Dec 2015 21:55:39 +0900
+Message-ID: <1449492939-20120-1-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36682 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753586AbbLGMzm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Dec 2015 07:55:42 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NYZ01W04NWTHZ10@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 07 Dec 2015 21:55:41 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-RnJvbTogSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPgoK
-VGhlIERUIGJpbmRpbmcgZm9yIHRoZSBFeHlub3MgRFJNIERpc3BsYXkgUG9ydCAoRFApIGRyaXZl
-ciBpc24ndCBjb25zaXN0ZW50CnNpbmNlIGl0IHVzZXMgYSBwaGFuZGxlIHRvIGRlc2NyaWJlIHRo
-ZSBjb25uZWN0aW9uIGJldHdlZW4gdGhlIERQIHBvcnQgYW5kCnRoZSBkaXNwbGF5IHBhbmVsIGJ1
-dCB1c2VzIHRoZSBPRiBncmFwaCBwb3J0cyBhbmQgZW5kcG9pbnRzIHRvIGRlc2NyaWJlIHRoZQpj
-b25uZWN0aW9uIGJldHdlbiB0aGUgRFAgcG9ydCwgYSBicmlkZ2UgY2hpcCBhbmQgdGhlIHBhbmVs
-LgoKVGhlIEV4eW5vcyBEUCBkcml2ZXIgYW5kIHRoZSBEVCBiaW5kaW5nIGhhdmUgYmVlbiBjaGFu
-Z2VkIHRvIGFsbG93IGFsc28gdG8KZGVzY3JpYmUgdGhlIERQIHBvcnQgdG8gcGFuZWwgY29ubmVj
-dGlvbiB1c2luZyBwb3J0cyAvIGVuZHBvaW50cyAoT0YgZ3JhcGgpCnNvIHRoaXMgcGF0Y2ggY2hh
-bmdlcyB0aGUgRXh5bm9zNTgwMCBQZWFjaCBQaSBEVCB0byBtYWtlIGl0IGNvbnNpc3RlbnQgd2l0
-aAp0aGUgRXh5bm9zNTQyMCBQZWFjaCBQaXQgdGhhdCBoYXMgYSBlRFAgdG8gTFZEUyBjaGlwIGFu
-ZCB1c2VzIE9GIGdyYXBoIHRvby4KClNpZ25lZC1vZmYtYnk6IEphdmllciBNYXJ0aW5leiBDYW5p
-bGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXog
-Q2FuaWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+ClJldmlld2VkLWJ5OiBJbmtpIERhZSA8
-aW5raS5kYWVAc2Ftc3VuZy5jb20+Ci0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1w
-ZWFjaC1waS5kdHMgfCAxNSArKysrKysrKysrKysrKy0KIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNl
-cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMv
-ZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1ODAwLXBl
-YWNoLXBpLmR0cwppbmRleCA0OWE0ZjQzLi4xY2MyZTk1IDEwMDY0NAotLS0gYS9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M1ODAwLXBlYWNoLXBpLmR0cworKysgYi9hcmNoL2FybS9ib290L2R0cy9l
-eHlub3M1ODAwLXBlYWNoLXBpLmR0cwpAQCAtMTIyLDYgKzEyMiwxMiBAQAogCQljb21wYXRpYmxl
-ID0gImF1byxiMTMzaHRuMDEiOwogCQlwb3dlci1zdXBwbHkgPSA8JnRwczY1MDkwX2ZldDY+Owog
-CQliYWNrbGlnaHQgPSA8JmJhY2tsaWdodD47CisKKwkJcG9ydCB7CisJCQlwYW5lbF9pbjogZW5k
-cG9pbnQgeworCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHBfb3V0PjsKKwkJCX07CisJCX07CiAJ
-fTsKIAogCW1tYzFfcHdyc2VxOiBtbWMxX3B3cnNlcSB7CkBAIC0xNDgsNyArMTU0LDE0IEBACiAJ
-c2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwYT47CiAJc2Ftc3VuZyxsYW5lLWNvdW50ID0gPDI+Owog
-CXNhbXN1bmcsaHBkLWdwaW8gPSA8JmdweDIgNiBHUElPX0FDVElWRV9ISUdIPjsKLQlwYW5lbCA9
-IDwmcGFuZWw+OworCisJcG9ydHMgeworCQlwb3J0IHsKKwkJCWRwX291dDogZW5kcG9pbnQgewor
-CQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmcGFuZWxfaW4+OworCQkJfTsKKwkJfTsKKwl9OwogfTsK
-IAogJmZpbWQgewotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+This patch just removes unused variables, i and ret.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index edfd6e3..2ac1d4d 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -377,8 +377,6 @@ static void decon_swreset(struct decon_context *ctx)
+ static void decon_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+-	int ret;
+-	int i;
+ 
+ 	if (!test_and_clear_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+-- 
+1.9.1
