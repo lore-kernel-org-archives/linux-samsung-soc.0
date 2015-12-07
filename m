@@ -1,170 +1,90 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v10 06/17] ARM: dts: exynos/dp: remove some properties that deprecated by analogix_dp driver
-Date: Mon,  7 Dec 2015 14:39:17 +0800
-Message-ID: <1449470357-31105-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v10 08/17] dt-bindings: add document for rockchip variant of
+ analogix_dp
+Date: Mon,  7 Dec 2015 14:39:34 +0800
+Message-ID: <1449470374-31191-1-git-send-email-ykk@rock-chips.com>
 References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1449470239-30667-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, javier@osg.samsung.com, emil.l.velikov@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-After exynos_dp have been split the common IP code into analogix_dp driver,
-the analogix_dp driver have deprecated some Samsung platform properties which
-could be dynamically parsed from EDID/MODE/DPCD message, so this is an update
-for Exynos DTS file for dp-controller.
-
-Beside the backward compatibility is fully preserved, so there are no
-bisectability break that make this change in a separate patch.
-
-Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
----
-Changes in v10: None
-Changes in v9: None
-Changes in v8: None
-Changes in v7: None
-Changes in v6:
-- Fix Peach Pit hpd property name error:
--       hpd-gpio = <&gpx2 6 0>;
-+       hpd-gpios = <&gpx2 6 0>;
-
-Changes in v5:
-- Correct the misspell in commit message. (Krzysztof)
-
-Changes in v4:
-- Separate all DTS changes to a separate patch. (Krzysztof)
-
-Changes in v3: None
-Changes in v2: None
-
- arch/arm/boot/dts/exynos5250-arndale.dts      | 2 --
- arch/arm/boot/dts/exynos5250-smdk5250.dts     | 2 --
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 +---
- arch/arm/boot/dts/exynos5250-spring.dts       | 4 +---
- arch/arm/boot/dts/exynos5420-peach-pit.dts    | 4 +---
- arch/arm/boot/dts/exynos5420-smdk5420.dts     | 2 --
- arch/arm/boot/dts/exynos5800-peach-pi.dts     | 4 +---
- 7 files changed, 4 insertions(+), 18 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index c000532..b1790cf 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -124,8 +124,6 @@
- &dp {
- 	status = "okay";
- 	samsung,color-space = <0>;
--	samsung,dynamic-range = <0>;
--	samsung,ycbcr-coeff = <0>;
- 	samsung,color-depth = <1>;
- 	samsung,link-rate = <0x0a>;
- 	samsung,lane-count = <4>;
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 0f5dcd4..f30c2db 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -80,8 +80,6 @@
- 
- &dp {
- 	samsung,color-space = <0>;
--	samsung,dynamic-range = <0>;
--	samsung,ycbcr-coeff = <0>;
- 	samsung,color-depth = <1>;
- 	samsung,link-rate = <0x0a>;
- 	samsung,lane-count = <4>;
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index 5cb33ba..b96624b 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -236,12 +236,10 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&dp_hpd>;
- 	samsung,color-space = <0>;
--	samsung,dynamic-range = <0>;
--	samsung,ycbcr-coeff = <0>;
- 	samsung,color-depth = <1>;
- 	samsung,link-rate = <0x0a>;
- 	samsung,lane-count = <2>;
--	samsung,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
-+	hpd-gpios = <&gpx0 7 GPIO_ACTIVE_HIGH>;
- 
- 	ports {
- 		port@0 {
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index c1edd6d..91881d7 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -74,12 +74,10 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&dp_hpd_gpio>;
- 	samsung,color-space = <0>;
--	samsung,dynamic-range = <0>;
--	samsung,ycbcr-coeff = <0>;
- 	samsung,color-depth = <1>;
- 	samsung,link-rate = <0x0a>;
- 	samsung,lane-count = <1>;
--	samsung,hpd-gpio = <&gpc3 0 GPIO_ACTIVE_HIGH>;
-+	hpd-gpios = <&gpc3 0 GPIO_ACTIVE_HIGH>;
- };
- 
- &ehci {
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 35cfb07..2f37c87 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -148,12 +148,10 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&dp_hpd_gpio>;
- 	samsung,color-space = <0>;
--	samsung,dynamic-range = <0>;
--	samsung,ycbcr-coeff = <0>;
- 	samsung,color-depth = <1>;
- 	samsung,link-rate = <0x06>;
- 	samsung,lane-count = <2>;
--	samsung,hpd-gpio = <&gpx2 6 GPIO_ACTIVE_HIGH>;
-+	hpd-gpios = <&gpx2 6 GPIO_ACTIVE_HIGH>;
- 
- 	ports {
- 		port@0 {
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index ac35aef..f67344f 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -93,8 +93,6 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&dp_hpd>;
- 	samsung,color-space = <0>;
--	samsung,dynamic-range = <0>;
--	samsung,ycbcr-coeff = <0>;
- 	samsung,color-depth = <1>;
- 	samsung,link-rate = <0x0a>;
- 	samsung,lane-count = <4>;
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 7b018e4..363c95f 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -142,12 +142,10 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&dp_hpd_gpio>;
- 	samsung,color-space = <0>;
--	samsung,dynamic-range = <0>;
--	samsung,ycbcr-coeff = <0>;
- 	samsung,color-depth = <1>;
- 	samsung,link-rate = <0x0a>;
- 	samsung,lane-count = <2>;
--	samsung,hpd-gpio = <&gpx2 6 GPIO_ACTIVE_HIGH>;
-+	hpd-gpios = <&gpx2 6 GPIO_ACTIVE_HIGH>;
- 	panel = <&panel>;
- };
- 
--- 
-1.9.1
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Um9ja2NoaXAgRFAgZHJpdmVyIGlzIGEgaGVscGVyIGRyaXZlciBvZiBhbmFsb2dpeF9kcCBjb2Rl
+ciBkcml2ZXIsCnNvIG1vc3Qgb2YgdGhlIERUIHByb3BlcnR5IHNob3VsZCBiZSBkZXNjcmlwZWQg
+aW4gYW5hbG9naXhfZHAgZG9jdW1lbnQuCgpTaWduZWQtb2ZmLWJ5OiBZYWtpciBZYW5nIDx5a2tA
+cm9jay1jaGlwcy5jb20+ClJldmlld2VkLWJ5OiBIZWlrbyBTdHVlYm5lciA8aGVpa29Ac250ZWNo
+LmRlPgotLS0KQ2hhbmdlcyBpbiB2MTA6IE5vbmUKQ2hhbmdlcyBpbiB2OToKLSBEb2N1bWVudCBt
+b3JlIGRldGFpbHMgZm9yICdwb3J0cycgcHJvcGVydHkuCgpDaGFuZ2VzIGluIHY4OgotIE1vZGlm
+eSB0aGUgY29tbWl0IHN1YmplY3QgbmFtZS4gKEhlaWtvKQoKQ2hhbmdlcyBpbiB2NzogTm9uZQpD
+aGFuZ2VzIGluIHY2OiBOb25lCkNoYW5nZXMgaW4gdjU6Ci0gU3BsaXQgYmluZGluZyBkb2MncyBm
+cm9tIGRyaXZlciBjaGFuZ2VzLiAoUm9iKQotIEFkZCBlRFAgaG90cGx1ZyBwaW5jdHJsIHByb3Bl
+cnR5LiAoSGVpa28pCgpDaGFuZ2VzIGluIHY0OiBOb25lCkNoYW5nZXMgaW4gdjM6IE5vbmUKQ2hh
+bmdlcyBpbiB2MjogTm9uZQoKIC4uLi9kaXNwbGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tj
+aGlwLnR4dCAgICAgIHwgOTEgKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQs
+IDkxIGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQK
+CmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9y
+b2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKbmV3
+IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uZGFlODZjNAotLS0gL2Rldi9udWxsCisr
+KyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3JvY2tjaGlwL2Fu
+YWxvZ2l4X2RwLXJvY2tjaGlwLnR4dApAQCAtMCwwICsxLDkxIEBACitSb2NrY2hpcCBSSzMyODgg
+c3BlY2lmaWMgZXh0ZW5zaW9ucyB0byB0aGUgQW5hbG9naXggRGlzcGxheSBQb3J0Cis9PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PQorCitSZXF1aXJlZCBwcm9wZXJ0aWVzOgorLSBjb21w
+YXRpYmxlOiAicm9ja2NoaXAscmszMjg4LWVkcCI7CisKKy0gcmVnOiBwaHlzaWNhbCBiYXNlIGFk
+ZHJlc3Mgb2YgdGhlIGNvbnRyb2xsZXIgYW5kIGxlbmd0aAorCistIGNsb2NrczogZnJvbSBjb21t
+b24gY2xvY2sgYmluZGluZzogaGFuZGxlIHRvIGRwIGNsb2NrLgorCSAgb2YgbWVtb3J5IG1hcHBl
+ZCByZWdpb24uCisKKy0gY2xvY2stbmFtZXM6IGZyb20gY29tbW9uIGNsb2NrIGJpbmRpbmc6CisJ
+ICAgICAgIFJlcXVpcmVkIGVsZW1lbnRzOiAiZHAiICJwY2xrIgorCistIHJlc2V0czogTXVzdCBj
+b250YWluIGFuIGVudHJ5IGZvciBlYWNoIGVudHJ5IGluIHJlc2V0LW5hbWVzLgorCSAgU2VlIC4u
+L3Jlc2V0L3Jlc2V0LnR4dCBmb3IgZGV0YWlscy4KKworLSBwaW5jdHJsLW5hbWVzOiBOYW1lcyBj
+b3JyZXNwb25kaW5nIHRvIHRoZSBjaGlwIGhvdHBsdWcgcGluY3RybCBzdGF0ZXMuCistIHBpbmN0
+cmwtMDogcGluLWNvbnRyb2wgbW9kZS4gc2hvdWxkIGJlIDwmZWRwX2hwZD4KKworLSByZXNldC1u
+YW1lczogTXVzdCBpbmNsdWRlIHRoZSBuYW1lICJkcCIKKworLSByb2NrY2hpcCxncmY6IHRoaXMg
+c29jIHNob3VsZCBzZXQgR1JGIHJlZ3MsIHNvIG5lZWQgZ2V0IGdyZiBoZXJlLgorCistIHBvcnRz
+OiB0aGVyZSBhcmUgMiBwb3J0IG5vZGVzIHdpdGggZW5kcG9pbnQgZGVmaW5pdGlvbnMgYXMgZGVm
+aW5lZCBpbgorICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8t
+aW50ZXJmYWNlcy50eHQuCisgICAgUG9ydCAwOiBjb250YWluZWQgMiBlbmRwb2ludHMsIGNvbm5l
+Y3RpbmcgdG8gdGhlIG91cHV0IG9mIHZvcC4KKyAgICBQb3J0IDE6IGNvbnRhaW5lZCAxIGVuZHBv
+aW50LCBjb25uZWN0aW5nIHRvIHRoZSBpbnB1dCBvZiBwYW5lbC4KKworRm9yIHRoZSBiZWxvdyBw
+cm9wZXJ0aWVzLCBwbGVhc2UgcmVmZXIgdG8gQW5hbG9naXggRFAgYmluZGluZyBkb2N1bWVudDoK
+KyAqIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kcm0vYnJpZGdlL2FuYWxvZ2l4
+X2RwLnR4dAorLSBwaHlzIChyZXF1aXJlZCkKKy0gcGh5LW5hbWVzIChyZXF1aXJlZCkKKy0gaHBk
+LWdwaW9zIChvcHRpb25hbCkKKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KKworRXhhbXBsZToKKwlk
+cC1jb250cm9sbGVyOiBkcEBmZjk3MDAwMCB7CisJCWNvbXBhdGlibGUgPSAicm9ja2NoaXAscmsz
+Mjg4LWRwIjsKKwkJcmVnID0gPDB4ZmY5NzAwMDAgMHg0MDAwPjsKKwkJaW50ZXJydXB0cyA9IDxH
+SUNfU1BJIDk4IElSUV9UWVBFX0xFVkVMX0hJR0g+OworCQljbG9ja3MgPSA8JmNydSBTQ0xLX0VE
+UD4sIDwmY3J1IFBDTEtfRURQX0NUUkw+OworCQljbG9jay1uYW1lcyA9ICJkcCIsICJwY2xrIjsK
+KwkJcGh5cyA9IDwmZHBfcGh5PjsKKwkJcGh5LW5hbWVzID0gImRwIjsKKworCQlyb2NrY2hpcCxn
+cmYgPSA8JmdyZj47CisJCXJlc2V0cyA9IDwmY3J1IDExMT47CisJCXJlc2V0LW5hbWVzID0gImRw
+IjsKKworCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOworCQlwaW5jdHJsLTAgPSA8JmVkcF9o
+cGQ+OworCisJCXN0YXR1cyA9ICJkaXNhYmxlZCI7CisKKwkJcG9ydHMgeworCQkJI2FkZHJlc3Mt
+Y2VsbHMgPSA8MT47CisJCQkjc2l6ZS1jZWxscyA9IDwwPjsKKwkJCWVkcF9pbjogcG9ydEAwIHsK
+KwkJCQlyZWcgPSA8MD47CisJCQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47CisJCQkJI3NpemUtY2Vs
+bHMgPSA8MD47CisJCQkJZWRwX2luX3ZvcGI6IGVuZHBvaW50QDAgeworCQkJCQlyZWcgPSA8MD47
+CisJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmdm9wYl9vdXRfZWRwPjsKKwkJCQl9OworCQkJCWVk
+cF9pbl92b3BsOiBlbmRwb2ludEAxIHsKKwkJCQkJcmVnID0gPDE+OworCQkJCQlyZW1vdGUtZW5k
+cG9pbnQgPSA8JnZvcGxfb3V0X2VkcD47CisJCQkJfTsKKwkJCX07CisKKwkJCWVkcF9vdXQ6IHBv
+cnRAMSB7CisJCQkJcmVnID0gPDE+OworCQkJCSNhZGRyZXNzLWNlbGxzID0gPDE+OworCQkJCSNz
+aXplLWNlbGxzID0gPDA+OworCQkJCWVkcF9vdXRfcGFuZWw6IGVuZHBvaW50IHsKKwkJCQkJcmVn
+ID0gPDA+OworCQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JnBhbmVsX2luX2VkcD4KKwkJCQl9Owor
+CQkJfTsKKwkJfTsKKwl9OworCisJcGluY3RybCB7CisJCWVkcCB7CisJCQllZHBfaHBkOiBlZHAt
+aHBkIHsKKwkJCQlyb2NrY2hpcCxwaW5zID0gPDcgMTEgUktfRlVOQ18yICZwY2ZnX3B1bGxfbm9u
+ZT47CisJCQl9OworCQl9OworCX07Ci0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
