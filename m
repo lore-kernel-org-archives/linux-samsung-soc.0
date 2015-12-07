@@ -1,40 +1,58 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 06/10] clk: samsung: exynos5800: fix cpu clock
- configuration data
-Date: Mon, 07 Dec 2015 16:25:37 +0100
-Message-ID: <5665A4F1.8000504@samsung.com>
-References: <1449250235-9613-1-git-send-email-b.zolnierkie@samsung.com>
- <1449250235-9613-7-git-send-email-b.zolnierkie@samsung.com>
+From: Inki Dae <daeinki@gmail.com>
+Subject: Re: [PATCH 4/4] ARM: dts: Use OF graph for DP to panel connection in
+ exynos5800-peach-pi
+Date: Tue, 8 Dec 2015 00:36:48 +0900
+Message-ID: <CAAQKjZMgse2n0TcjLiBxDn6ddTNSaRKMxoBqU7u8u002W=hRWQ@mail.gmail.com>
+References: <1449492758-19989-1-git-send-email-inki.dae@samsung.com>
+ <1449492758-19989-5-git-send-email-inki.dae@samsung.com>
+ <56658C78.8090509@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35903 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755521AbbLGP1c (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Dec 2015 10:27:32 -0500
-In-reply-to: <1449250235-9613-7-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <56658C78.8090509@osg.samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 04/12/15 18:30, Bartlomiej Zolnierkiewicz wrote:
-> Fix cpu clock configuration data for Exynos5800 (it uses
-> higher PCLK_DBG divider values than Exynos5420 and supports
-> additional frequencies).
-> 
-> Based on Hardkernel's kernel for ODROID-XU3 board.
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
--- 
-Regards,
-Sylwester
+SGkgSmF2aWVyLAoKMjAxNS0xMi0wNyAyMjo0MSBHTVQrMDk6MDAgSmF2aWVyIE1hcnRpbmV6IENh
+bmlsbGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPjoKPiBIZWxsbyBJbmtpLAo+Cj4gT24gMTIv
+MDcvMjAxNSAwOTo1MiBBTSwgSW5raSBEYWUgd3JvdGU6Cj4+IEZyb206IEphdmllciBNYXJ0aW5l
+eiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KPj4KPgo+IFRoYW5rcyBhIGxvdCBm
+b3IgcG9zdGluZyB0aGlzIHBhdGNoLgo+Cj4+IFRoZSBEVCBiaW5kaW5nIGZvciB0aGUgRXh5bm9z
+IERSTSBEaXNwbGF5IFBvcnQgKERQKSBkcml2ZXIgaXNuJ3QgY29uc2lzdGVudAo+PiBzaW5jZSBp
+dCB1c2VzIGEgcGhhbmRsZSB0byBkZXNjcmliZSB0aGUgY29ubmVjdGlvbiBiZXR3ZWVuIHRoZSBE
+UCBwb3J0IGFuZAo+PiB0aGUgZGlzcGxheSBwYW5lbCBidXQgdXNlcyB0aGUgT0YgZ3JhcGggcG9y
+dHMgYW5kIGVuZHBvaW50cyB0byBkZXNjcmliZSB0aGUKPj4gY29ubmVjdGlvbiBiZXR3ZW4gdGhl
+IERQIHBvcnQsIGEgYnJpZGdlIGNoaXAgYW5kIHRoZSBwYW5lbC4KPj4KPj4gVGhlIEV4eW5vcyBE
+UCBkcml2ZXIgYW5kIHRoZSBEVCBiaW5kaW5nIGhhdmUgYmVlbiBjaGFuZ2VkIHRvIGFsbG93IGFs
+c28gdG8KPj4gZGVzY3JpYmUgdGhlIERQIHBvcnQgdG8gcGFuZWwgY29ubmVjdGlvbiB1c2luZyBw
+b3J0cyAvIGVuZHBvaW50cyAoT0YgZ3JhcGgpCj4+IHNvIHRoaXMgcGF0Y2ggY2hhbmdlcyB0aGUg
+RXh5bm9zNTgwMCBQZWFjaCBQaSBEVCB0byBtYWtlIGl0IGNvbnNpc3RlbnQgd2l0aAo+PiB0aGUg
+RXh5bm9zNTQyMCBQZWFjaCBQaXQgdGhhdCBoYXMgYSBlRFAgdG8gTFZEUyBjaGlwIGFuZCB1c2Vz
+IE9GIGdyYXBoIHRvby4KPj4KPj4gU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6IENhbmls
+bGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPgo+PiBUZXN0ZWQtYnk6IEphdmllciBNYXJ0aW5l
+eiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KPgo+IFRoaXMgdGFnIHdhcyBub3Qg
+aW4gbXkgb3JpZ2luYWwgcGF0Y2gsIGl0J3MgdHJ1ZSB0aGF0IEkgdGVzdGVkCj4gaXQgYnV0IHdp
+bGwgc29tZW9uZSBiZWxpZXZlIG1lPyA7KQoKT29wcy4gSSBjb25mdXNlZCB5b3Ugc3ByZWFkIFJl
+dmlld2VkLWJ5IGFuZCBUZXN0ZWQtYnkgaGVyZSBhbmQgdGhlcmUuCkRvbid0IHdvcnJ5IGFib3V0
+IHRoYXQuIFdpbGwgcmVtb3ZlIGl0IGlmIHlvdSBkb24ndCBnaXZlIG1lIFRlc3RlZC1ieS4KOikK
+ClRoYW5rcywKSW5raSBEYWUKCj4KPj4gUmV2aWV3ZWQtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBz
+YW1zdW5nLmNvbT4KPgo+IFRoYW5rcyBmb3IgdGhlIHJldmlldy4KPgo+IEJlc3QgcmVnYXJkcywK
+PiAtLQo+IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcwo+IE9wZW4gU291cmNlIEdyb3VwCj4gU2Ft
+c3VuZyBSZXNlYXJjaCBBbWVyaWNhCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwo+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
