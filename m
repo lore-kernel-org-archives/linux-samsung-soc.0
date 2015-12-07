@@ -1,7 +1,7 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH 04/23] mtd: nand: s3c2410: kill the ->ecc_layout field
-Date: Mon,  7 Dec 2015 23:25:59 +0100
-Message-ID: <1449527178-5930-5-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH 03/23] mtd: nftl: kill unused oobinfo field
+Date: Mon,  7 Dec 2015 23:25:58 +0100
+Message-ID: <1449527178-5930-4-git-send-email-boris.brezillon@free-electrons.com>
 References: <1449527178-5930-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
@@ -19,64 +19,22 @@ To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norri
 Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The s3c2410 is allowing board data to overload the default ECC layout
-defined inside the driver, but this feature is not used by board
-specific definitions.
-Kill this field so that we can easily move to a model where ecclayout
-are dynamically allocated by the NAND controller driver.
-
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- arch/arm/plat-samsung/devs.c                   | 9 ---------
- drivers/mtd/nand/s3c2410.c                     | 3 ---
- include/linux/platform_data/mtd-nand-s3c2410.h | 1 -
- 3 files changed, 13 deletions(-)
+ include/linux/mtd/nftl.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 8207462..a903ee8 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -710,15 +710,6 @@ static int __init s3c_nand_copy_set(struct s3c2410_nand_set *set)
- 			return -ENOMEM;
- 	}
- 
--	if (set->ecc_layout) {
--		ptr = kmemdup(set->ecc_layout,
--			      sizeof(struct nand_ecclayout), GFP_KERNEL);
--		set->ecc_layout = ptr;
--
--		if (!ptr)
--			return -ENOMEM;
--	}
--
- 	return 0;
- }
- 
-diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-index 05105ca..b569200 100644
---- a/drivers/mtd/nand/s3c2410.c
-+++ b/drivers/mtd/nand/s3c2410.c
-@@ -860,9 +860,6 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
- 	chip->ecc.mode	    = NAND_ECC_SOFT;
- #endif
- 
--	if (set->ecc_layout != NULL)
--		chip->ecc.layout = set->ecc_layout;
--
- 	if (set->disable_ecc)
- 		chip->ecc.mode	= NAND_ECC_NONE;
- 
-diff --git a/include/linux/platform_data/mtd-nand-s3c2410.h b/include/linux/platform_data/mtd-nand-s3c2410.h
-index 36bb921..c55e42ee 100644
---- a/include/linux/platform_data/mtd-nand-s3c2410.h
-+++ b/include/linux/platform_data/mtd-nand-s3c2410.h
-@@ -40,7 +40,6 @@ struct s3c2410_nand_set {
- 	char			*name;
- 	int			*nr_map;
- 	struct mtd_partition	*partitions;
--	struct nand_ecclayout	*ecc_layout;
+diff --git a/include/linux/mtd/nftl.h b/include/linux/mtd/nftl.h
+index b059629..044daa0 100644
+--- a/include/linux/mtd/nftl.h
++++ b/include/linux/mtd/nftl.h
+@@ -50,7 +50,6 @@ struct NFTLrecord {
+         unsigned int nb_blocks;		/* number of physical blocks */
+         unsigned int nb_boot_blocks;	/* number of blocks used by the bios */
+         struct erase_info instr;
+-	struct nand_ecclayout oobinfo;
  };
  
- struct s3c2410_platform_nand {
+ int NFTL_mount(struct NFTLrecord *s);
 -- 
 2.1.4
