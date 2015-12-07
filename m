@@ -1,657 +1,208 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/7] ARM: Exynos: convert MFC device to generic reserved memory
- bindings
-Date: Mon, 07 Dec 2015 13:08:56 +0100
-Message-ID: <1449490142-27502-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 6/7] media: s5p-mfc: replace custom reserved memory init code
+ with generic one
+Date: Mon, 07 Dec 2015 13:09:01 +0100
+Message-ID: <1449490142-27502-7-git-send-email-m.szyprowski@samsung.com>
 References: <1449490142-27502-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:24808 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755155AbbLGMJk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Dec 2015 07:09:40 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1449490142-27502-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch replaces custom properties for definining reserved memory
-regions with generic reserved memory bindings. All custom code for
-handling MFC-specific reserved memory can be now removed from Exynos-DT
-generic board code.
+This patch removes custom code for initialization and handling of
+reserved memory regions in s5p-mfc driver and replaces it with generic
+named reserved memory regions specified in device tree.
+
+s5p-mfc driver now handles two reserved memory regions: "left" and
+"right", defined by generic reserved memory bindings. Support for non-dt
+platform has been removed, because all supported platforms have been
+converted to device tree.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- .../devicetree/bindings/media/s5p-mfc.txt          | 16 ++--
- arch/arm/boot/dts/exynos4210-origen.dts            | 22 ++++-
- arch/arm/boot/dts/exynos4210-smdkv310.dts          | 22 ++++-
- arch/arm/boot/dts/exynos4412-origen.dts            | 22 ++++-
- arch/arm/boot/dts/exynos4412-smdk4412.dts          | 22 ++++-
- arch/arm/boot/dts/exynos5250-arndale.dts           | 22 ++++-
- arch/arm/boot/dts/exynos5250-smdk5250.dts          | 22 ++++-
- arch/arm/boot/dts/exynos5250-spring.dts            | 22 ++++-
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 22 ++++-
- arch/arm/boot/dts/exynos5420-smdk5420.dts          | 22 ++++-
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 22 ++++-
- arch/arm/mach-exynos/Makefile                      |  2 -
- arch/arm/mach-exynos/exynos.c                      | 19 -----
- arch/arm/mach-exynos/mfc.h                         | 16 ----
- arch/arm/mach-exynos/s5p-dev-mfc.c                 | 94 ----------------------
- 15 files changed, 208 insertions(+), 159 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/mfc.h
- delete mode 100644 arch/arm/mach-exynos/s5p-dev-mfc.c
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 129 +++++++++++++++----------------
+ 1 file changed, 62 insertions(+), 67 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-index 2d5787eac91a..4603673c593b 100644
---- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
-+++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-@@ -21,16 +21,16 @@ Required properties:
-   - clock-names : from common clock binding: must contain "mfc",
- 		  corresponding to entry in the clocks property.
- 
--  - samsung,mfc-r : Base address of the first memory bank used by MFC
--		    for DMA contiguous memory allocation and its size.
--
--  - samsung,mfc-l : Base address of the second memory bank used by MFC
--		    for DMA contiguous memory allocation and its size.
--
- Optional properties:
-   - power-domains : power-domain property defined with a phandle
- 			   to respective power domain.
- 
-+  - memory-region : from reserved memory binding: phandles to two reserved
-+	memory regions: accessed by "left" and "right" mfc memory bus
-+	interfaces, used when no SYSMMU support is available
-+  - memory-region-names : from reserved memory binding: must be "left"
-+	and "right"
-+
- Example:
- SoC specific DT entry:
- 
-@@ -46,6 +46,6 @@ mfc: codec@13400000 {
- Board specific DT entry:
- 
- codec@13400000 {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- };
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 5821ad87e32c..4b7637dfa392 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -30,6 +30,24 @@
- 		       0x70000000 0x10000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
- 		stdout-path = &serial_2;
-@@ -288,8 +306,8 @@
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 8fcecf8a9a17..55c557f835f2 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -22,6 +22,7 @@
+ #include <media/v4l2-event.h>
+ #include <linux/workqueue.h>
+ #include <linux/of.h>
++#include <linux/of_reserved_mem.h>
+ #include <media/videobuf2-v4l2.h>
+ #include "s5p_mfc_common.h"
+ #include "s5p_mfc_ctrl.h"
+@@ -1043,55 +1044,67 @@ static const struct v4l2_file_operations s5p_mfc_fops = {
+ 	.mmap = s5p_mfc_mmap,
  };
  
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 104cbb33d2bb..efafc5721817 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -26,6 +26,24 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
- 		stdout-path = &serial_1;
-@@ -133,8 +151,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 9e2e24c6177a..fb9291e371bc 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -25,6 +25,24 @@
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs ="console=ttySAC2,115200";
- 		stdout-path = &serial_2;
-@@ -466,8 +484,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index a130ab39fa77..4df182b52665 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -23,6 +23,24 @@
- 		reg = <0x40000000 0x40000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
- 		stdout-path = &serial_1;
-@@ -112,8 +130,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index c000532c1444..30ada98cd078 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -23,6 +23,24 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs = "console=ttySAC2,115200";
- 	};
-@@ -518,8 +536,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- };
- 
- &mmc_0 {
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 0f5dcd418af8..88fe16dda188 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -25,6 +25,24 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
- 	};
-@@ -346,8 +364,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- };
- 
- &mmc_0 {
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index c1edd6d038a9..607d133ac1a9 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -23,6 +23,24 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs = "console=tty1";
- 		stdout-path = "serial3:115200n8";
-@@ -427,8 +445,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- };
- 
- &mmc_0 {
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 4ecef6981d5c..cdaf49a1bd5b 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -24,6 +24,24 @@
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs = "console=ttySAC3,115200";
- 	};
-@@ -345,8 +363,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- };
- 
- &mmc_0 {
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index ac35aefd320f..159e6d9ae0f8 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -21,6 +21,24 @@
- 		reg = <0x20000000 0x80000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		bootargs = "console=ttySAC2,115200 init=/linuxrc";
- 	};
-@@ -355,8 +373,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- };
- 
- &mmc_0 {
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 9134217446b8..864cf1180129 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -23,6 +23,24 @@
- 		reg = <0x40000000 0x7EA00000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	chosen {
- 		linux,stdout-path = &serial_2;
- 	};
-@@ -319,8 +337,8 @@
- };
- 
- &mfc {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
- };
- 
- &mmc_0 {
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 2f306767cdfe..bcefb5473ee4 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -23,5 +23,3 @@ AFLAGS_sleep.o			:=-Wa,-march=armv7-a$(plus_sec)
- 
- obj-$(CONFIG_EXYNOS5420_MCPM)	+= mcpm-exynos.o
- CFLAGS_mcpm-exynos.o		+= -march=armv7-a
--
--obj-$(CONFIG_S5P_DEV_MFC)	+= s5p-dev-mfc.o
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 1c47aee31e9c..662f329e37cd 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -30,7 +30,6 @@
- #include <mach/map.h>
- 
- #include "common.h"
--#include "mfc.h"
- #include "regs-pmu.h"
- 
- void __iomem *pmu_base_addr;
-@@ -290,23 +289,6 @@ static char const *const exynos_dt_compat[] __initconst = {
- 	NULL
- };
- 
--static void __init exynos_reserve(void)
--{
--#ifdef CONFIG_S5P_DEV_MFC
--	int i;
--	char *mfc_mem[] = {
--		"samsung,mfc-v5",
--		"samsung,mfc-v6",
--		"samsung,mfc-v7",
--		"samsung,mfc-v8",
--	};
--
--	for (i = 0; i < ARRAY_SIZE(mfc_mem); i++)
--		if (of_scan_flat_dt(s5p_fdt_alloc_mfc_mem, mfc_mem[i]))
--			break;
--#endif
--}
--
- static void __init exynos_dt_fixup(void)
+-static int match_child(struct device *dev, void *data)
++/* DMA memory related helper functions */
++static void s5p_mfc_memdev_release(struct device *dev)
  {
- 	/*
-@@ -328,6 +310,5 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.init_machine	= exynos_dt_machine_init,
- 	.init_late	= exynos_init_late,
- 	.dt_compat	= exynos_dt_compat,
--	.reserve	= exynos_reserve,
- 	.dt_fixup	= exynos_dt_fixup,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/mfc.h b/arch/arm/mach-exynos/mfc.h
-deleted file mode 100644
-index dec93cd5b3c6..000000000000
---- a/arch/arm/mach-exynos/mfc.h
-+++ /dev/null
-@@ -1,16 +0,0 @@
--/*
-- * Copyright (C) 2013 Samsung Electronics Co.Ltd
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- */
+-	if (!dev_name(dev))
+-		return 0;
+-	return !strcmp(dev_name(dev), (char *)data);
++	of_reserved_mem_device_release(dev);
+ }
+ 
+-static void *mfc_get_drv_data(struct platform_device *pdev);
 -
--#ifndef __MACH_EXYNOS_MFC_H
--#define __MACH_EXYNOS_MFC_H __FILE__
--
--int __init s5p_fdt_alloc_mfc_mem(unsigned long node, const char *uname,
--				int depth, void *data);
--
--#endif /* __MACH_EXYNOS_MFC_H */
-diff --git a/arch/arm/mach-exynos/s5p-dev-mfc.c b/arch/arm/mach-exynos/s5p-dev-mfc.c
-deleted file mode 100644
-index 0b04b6b0fa30..000000000000
---- a/arch/arm/mach-exynos/s5p-dev-mfc.c
-+++ /dev/null
-@@ -1,94 +0,0 @@
--/*
-- * Copyright (C) 2010-2011 Samsung Electronics Co.Ltd
-- *
-- * Base S5P MFC resource and device definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#include <linux/kernel.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/dma-mapping.h>
--#include <linux/memblock.h>
--#include <linux/ioport.h>
--#include <linux/of_fdt.h>
--#include <linux/of.h>
--
--static struct platform_device s5p_device_mfc_l;
--static struct platform_device s5p_device_mfc_r;
--
--struct s5p_mfc_dt_meminfo {
--	unsigned long	loff;
--	unsigned long	lsize;
--	unsigned long	roff;
--	unsigned long	rsize;
--	char		*compatible;
--};
--
--struct s5p_mfc_reserved_mem {
--	phys_addr_t	base;
--	unsigned long	size;
--	struct device	*dev;
--};
--
--static struct s5p_mfc_reserved_mem s5p_mfc_mem[2] __initdata;
--
--
--static void __init s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
--				phys_addr_t lbase, unsigned int lsize)
--{
--	int i;
--
--	s5p_mfc_mem[0].dev = &s5p_device_mfc_r.dev;
--	s5p_mfc_mem[0].base = rbase;
--	s5p_mfc_mem[0].size = rsize;
--
--	s5p_mfc_mem[1].dev = &s5p_device_mfc_l.dev;
--	s5p_mfc_mem[1].base = lbase;
--	s5p_mfc_mem[1].size = lsize;
--
--	for (i = 0; i < ARRAY_SIZE(s5p_mfc_mem); i++) {
--		struct s5p_mfc_reserved_mem *area = &s5p_mfc_mem[i];
--		if (memblock_remove(area->base, area->size)) {
--			printk(KERN_ERR "Failed to reserve memory for MFC device (%ld bytes at 0x%08lx)\n",
--			       area->size, (unsigned long) area->base);
--			area->base = 0;
--		}
+-static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
++static struct device *s5p_mfc_alloc_memdev(struct device *dev, const char *name)
+ {
+-	unsigned int mem_info[2] = { };
++	struct device *child;
++	int ret;
+ 
+-	dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev,
+-			sizeof(struct device), GFP_KERNEL);
+-	if (!dev->mem_dev_l) {
+-		mfc_err("Not enough memory\n");
+-		return -ENOMEM;
 -	}
--}
+-	device_initialize(dev->mem_dev_l);
+-	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+-			"samsung,mfc-l", mem_info, 2);
+-	if (dma_declare_coherent_memory(dev->mem_dev_l, mem_info[0],
+-				mem_info[0], mem_info[1],
+-				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+-		mfc_err("Failed to declare coherent memory for\n"
+-		"MFC device\n");
+-		return -ENOMEM;
++	child = devm_kzalloc(dev, sizeof(struct device), GFP_KERNEL);
++	if (!child)
++		return NULL;
++
++	device_initialize(child);
++	dev_set_name(child, "%s:%s", dev_name(dev), name);
++	child->parent = dev;
++	child->bus = dev->bus;
++	child->coherent_dma_mask = dev->coherent_dma_mask;
++	child->dma_mask = dev->dma_mask;
++	child->release = s5p_mfc_memdev_release;
++
++	if (device_add(child) == 0) {
++		ret = of_reserved_mem_device_init(child, dev->of_node, name);
++		if (ret == 0)
++			return child;
+ 	}
+ 
+-	dev->mem_dev_r = devm_kzalloc(&dev->plat_dev->dev,
+-			sizeof(struct device), GFP_KERNEL);
+-	if (!dev->mem_dev_r) {
+-		mfc_err("Not enough memory\n");
+-		return -ENOMEM;
+-	}
+-	device_initialize(dev->mem_dev_r);
+-	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+-			"samsung,mfc-r", mem_info, 2);
+-	if (dma_declare_coherent_memory(dev->mem_dev_r, mem_info[0],
+-				mem_info[0], mem_info[1],
+-				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+-		pr_err("Failed to declare coherent memory for\n"
+-		"MFC device\n");
+-		return -ENOMEM;
++	put_device(child);
++	return NULL;
++}
++
++static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++{
++	struct device *dev = &mfc_dev->plat_dev->dev;
++
++	/*
++	 * Create and initialize virtual devices for accessing
++	 * reserved memory regions.
++	 */
++	mfc_dev->mem_dev_l = s5p_mfc_alloc_memdev(dev, "left");
++	if (!mfc_dev->mem_dev_l)
++		return -ENODEV;
++	mfc_dev->mem_dev_r = s5p_mfc_alloc_memdev(dev, "right");
++	if (!mfc_dev->mem_dev_r) {
++		device_unregister(mfc_dev->mem_dev_l);
++		return -ENODEV;
+ 	}
++
+ 	return 0;
+ }
+ 
++static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++{
++	device_unregister(mfc_dev->mem_dev_l);
++	device_unregister(mfc_dev->mem_dev_r);
++}
++
++static void *mfc_get_drv_data(struct platform_device *pdev);
++
+ /* MFC probe function */
+ static int s5p_mfc_probe(struct platform_device *pdev)
+ {
+@@ -1117,12 +1130,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 
+ 	dev->variant = mfc_get_drv_data(pdev);
+ 
+-	ret = s5p_mfc_init_pm(dev);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to get mfc clock source\n");
+-		return ret;
+-	}
 -
--int __init s5p_fdt_alloc_mfc_mem(unsigned long node, const char *uname,
--				int depth, void *data)
--{
--	const __be32 *prop;
--	int len;
--	struct s5p_mfc_dt_meminfo mfc_mem;
--
--	if (!data)
--		return 0;
--
--	if (!of_flat_dt_is_compatible(node, data))
--		return 0;
--
--	prop = of_get_flat_dt_prop(node, "samsung,mfc-l", &len);
--	if (!prop || (len != 2 * sizeof(unsigned long)))
--		return 0;
--
--	mfc_mem.loff = be32_to_cpu(prop[0]);
--	mfc_mem.lsize = be32_to_cpu(prop[1]);
--
--	prop = of_get_flat_dt_prop(node, "samsung,mfc-r", &len);
--	if (!prop || (len != 2 * sizeof(unsigned long)))
--		return 0;
--
--	mfc_mem.roff = be32_to_cpu(prop[0]);
--	mfc_mem.rsize = be32_to_cpu(prop[1]);
--
--	s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize,
--			mfc_mem.loff, mfc_mem.lsize);
--
--	return 1;
--}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
+@@ -1143,25 +1150,16 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		goto err_res;
+ 	}
+ 
+-	if (pdev->dev.of_node) {
+-		ret = s5p_mfc_alloc_memdevs(dev);
+-		if (ret < 0)
+-			goto err_res;
+-	} else {
+-		dev->mem_dev_l = device_find_child(&dev->plat_dev->dev,
+-				"s5p-mfc-l", match_child);
+-		if (!dev->mem_dev_l) {
+-			mfc_err("Mem child (L) device get failed\n");
+-			ret = -ENODEV;
+-			goto err_res;
+-		}
+-		dev->mem_dev_r = device_find_child(&dev->plat_dev->dev,
+-				"s5p-mfc-r", match_child);
+-		if (!dev->mem_dev_r) {
+-			mfc_err("Mem child (R) device get failed\n");
+-			ret = -ENODEV;
+-			goto err_res;
+-		}
++	ret = s5p_mfc_configure_dma_memory(dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to configure DMA memory\n");
++		return ret;
++	}
++
++	ret = s5p_mfc_init_pm(dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to get mfc clock source\n");
++		return ret;
+ 	}
+ 
+ 	vb2_dma_contig_set_max_seg_size(dev->mem_dev_l, DMA_BIT_MASK(32));
+@@ -1295,10 +1293,7 @@ static int s5p_mfc_remove(struct platform_device *pdev)
+ 	s5p_mfc_release_firmware(dev);
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[1]);
+-	if (pdev->dev.of_node) {
+-		put_device(dev->mem_dev_l);
+-		put_device(dev->mem_dev_r);
+-	}
++	s5p_mfc_unconfigure_dma_memory(dev);
+ 
+ 	s5p_mfc_final_pm(dev);
+ 	return 0;
 -- 
 1.9.2
