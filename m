@@ -1,53 +1,141 @@
-From: Ben Gamari <ben@smart-cactus.org>
-Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
-Date: Mon, 07 Dec 2015 22:19:05 +0100
-Message-ID: <87mvtm9cty.fsf@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <20151203060527.GH4302@ubuntu> <877fkv4ylk.fsf@smart-cactus.org> <20151203103703.GC2097@ubuntu>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH 00/23] mtd: rework ECC layout definition
+Date: Mon,  7 Dec 2015 23:25:55 +0100
+Message-ID: <1449527178-5930-1-git-send-email-boris.brezillon@free-electrons.com>
+Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20151203103703.GC2097@ubuntu>
-Sender: linux-clk-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBJEPTCZQKGQEKMLMIKI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Hello,
 
-Viresh Kumar <viresh.kumar@linaro.org> writes:
+This patchset aims at getting rid of the nand_ecclayout limitations.
+struct nand_ecclayout is defining fixed eccpos and oobfree arrays which
+can only be increased by modifying the MTD_MAX_ECCPOS_ENTRIES_LARGE and
+MTD_MAX_OOBFREE_ENTRIES_LARGE macros.
+This approach forces us to modify the macro values each time we add a
+new NAND chip with a bigger OOB area, and increasing these arrays also
+penalize all platforms, even those who only support small NAND devices
+(with small OOB area).
 
-> On 03-12-15, 11:26, Ben Gamari wrote:
->> Sounds reasonable to me. However, I'd just like to reiterate that this
->> line of work can be pursued independently from the upstreaming of this
->> series.
->
-> I think this is the right time to upstream the right solution. Just
-> try it once, if you face lots of difficulties or issues, then we can
-> ofcourse see..
->
-It looks like Bartlomiej has picked up this set. Regardless, while
-tracking down various devicetree issues I noticed that the cpu-supply
-and cpu%d-supply bindings appear to be completely undocumented. It
-seem as though this ought to be fixed.
+The idea to overcome this limitation, is to define the ECC/OOB layout
+by the mean of two functions: ->eccpos() and ->oobfree(), which will
+basically return the same information has those stored in the
+nand_ecclayout struct.
 
-Cheers,
+Another advantage of this solution is that ECC layouts are usually
+following a repetitive pattern (i.e. leave X bytes free and put Y bytes
+of ECC per ECC chunk), which allows one to implement the ->eccpos()
+and ->oobfree() functions with a simple logic that can be applied
+to any size of OOB.
 
-- Ben
+Patches 1 to 10 are just cleanups or trivial fixes that can be taken
+independently.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Patch 19 is just an aggregate of several smaller commits (one per
+driver), and has been submitted this way to limit the size of the
+series. If everybody agrees on this approach, I'll resubmit the series
+will those changes separated in different commits (as done here [1]).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Also note that the last two commits are removing the nand_ecclayout
+definition, thus preventing any new driver to use this structure.
+Of course, this step can be delayed if some of the previous patches
+are not accepted.
 
-iQEcBAEBAgAGBQJWZffJAAoJEHPt6ejPuu8B55wIAKhCh+3B6L0jnOwpTB01ThWf
-1x+S2hVSklTT8Fsr/kqvmYtl0rQzuEiZYU5/KcZBGA2Mys5bpLQz+kY84jQ94lvh
-J7QSoZ1kieWFtKE41MZ+TfqJ1k2/xKZ9TIllkl2yNq89zEbIjF+ePgO2j5l+jH81
-s1RK0IbHbmlLhcnqRVUmSBuB+nsvHPVCHWOQvpfIsWQdQmqpYhIPoAZe9UdbjPTC
-qF58N5EPrhTty/1dxQOlXm1LhxGunmSvtsfUGbXAOyuS5PQDph0RDDSCOR5OZmKg
-QW0b8r7Qgz0P3XAOsP4sCT+tk2H6rrWz4BUw5yNPFLcHO+0crZWzZSTvW/2lP0s=
-=on3T
------END PGP SIGNATURE-----
---=-=-=--
+Best Regards,
+
+Boris
+
+[1]https://github.com/bbrezillon/linux-sunxi/commits/nand/ecclayout2
+
+Boris Brezillon (23):
+  mtd: kill the ecclayout->oobavail field
+  mtd: inftl: kill unused oobinfo field
+  mtd: nftl: kill unused oobinfo field
+  mtd: nand: s3c2410: kill the ->ecc_layout field
+  mtd: nand: jz4770: kill the ->ecc_layout field
+  mtd: nand: kill unused ->ecclayout field in platform_nand_chip struct
+  staging: mt29f_spinand: kill unused ecclayout field
+  mtd: nand: lpc32xx_mlc: fix ecc.size
+  mtd: nand: vf610: remove useless mtd->ecclayout assignment
+  mtd: nand: simplify nand_bch_init() usage
+  mtd: add mtd_eccpos(), mtd_oobfree() and mtd_eccbytes() helper
+    functions
+  mtd: use mtd_eccpos() and mtd_oobfree() where appropriate
+  mtd: add mtd_set_ecclayout() helper function
+  mtd: use mtd_set_ecclayout() where appropriate
+  mtd: create an mtd_ooblayout_ops struct to ease ECC layout definition
+  mtd: docg3: switch to mtd_ooblayout_ops
+  mtd: nand: implement the default mtd_ooblayout_ops
+  mtd: nand: bch: switch to nand_ecclayout_pos
+  mtd: nand: switch all drivers to mtd_ooblayout_ops
+  mtd: onenand: switch to mtd_ooblayout_ops
+  staging: mt29f_spinand: switch to mtd_ooblayout_ops
+  mtd: nand: kill layout field
+  mtd: kill the nand_ecclayout struct
+
+ arch/arm/mach-pxa/spitz.c                       |  41 +++-
+ arch/arm/plat-samsung/devs.c                    |   9 -
+ arch/mips/include/asm/mach-jz4740/jz4740_nand.h |   4 +-
+ arch/mips/jz4740/board-qi_lb60.c                |  83 ++++---
+ drivers/mtd/devices/docg3.c                     |  39 +++-
+ drivers/mtd/mtdchar.c                           |  95 +++++---
+ drivers/mtd/mtdconcat.c                         |   2 +-
+ drivers/mtd/mtdpart.c                           |  22 +-
+ drivers/mtd/mtdswap.c                           |  20 +-
+ drivers/mtd/nand/atmel_nand.c                   | 100 ++++----
+ drivers/mtd/nand/bf5xx_nand.c                   |  47 ++--
+ drivers/mtd/nand/brcmnand/brcmnand.c            | 258 ++++++++++++---------
+ drivers/mtd/nand/cafe_nand.c                    |  42 +++-
+ drivers/mtd/nand/davinci_nand.c                 | 114 ++++-----
+ drivers/mtd/nand/denali.c                       |  48 ++--
+ drivers/mtd/nand/diskonchip.c                   |  34 ++-
+ drivers/mtd/nand/docg4.c                        |  30 ++-
+ drivers/mtd/nand/fsl_elbc_nand.c                |  79 ++++---
+ drivers/mtd/nand/fsl_ifc_nand.c                 | 226 +++++-------------
+ drivers/mtd/nand/fsmc_nand.c                    | 294 +++++++-----------------
+ drivers/mtd/nand/gpmi-nand/gpmi-nand.c          |  57 +++--
+ drivers/mtd/nand/hisi504_nand.c                 |  27 ++-
+ drivers/mtd/nand/jz4740_nand.c                  |   5 +-
+ drivers/mtd/nand/lpc32xx_mlc.c                  |  51 ++--
+ drivers/mtd/nand/lpc32xx_slc.c                  |  41 +++-
+ drivers/mtd/nand/mxc_nand.c                     | 206 ++++++++---------
+ drivers/mtd/nand/nand_base.c                    | 229 ++++++++++--------
+ drivers/mtd/nand/nand_bch.c                     |  45 ++--
+ drivers/mtd/nand/omap2.c                        | 219 ++++++++++--------
+ drivers/mtd/nand/plat_nand.c                    |   1 -
+ drivers/mtd/nand/pxa3xx_nand.c                  | 101 ++++----
+ drivers/mtd/nand/s3c2410.c                      |  31 ++-
+ drivers/mtd/nand/sh_flctl.c                     |  80 +++++--
+ drivers/mtd/nand/sharpsl.c                      |   2 +-
+ drivers/mtd/nand/sm_common.c                    |  88 +++++--
+ drivers/mtd/nand/sunxi_nand.c                   | 112 ++++-----
+ drivers/mtd/nand/vf610_nfc.c                    |  36 +--
+ drivers/mtd/onenand/onenand_base.c              | 221 ++++++++++--------
+ drivers/mtd/tests/oobtest.c                     |  49 ++--
+ drivers/staging/mt29f_spinand/mt29f_spinand.c   |  45 ++--
+ drivers/staging/mt29f_spinand/mt29f_spinand.h   |   1 -
+ fs/jffs2/wbuf.c                                 |   6 +-
+ include/linux/mtd/inftl.h                       |   1 -
+ include/linux/mtd/mtd.h                         |  60 ++++-
+ include/linux/mtd/nand.h                        |   6 +-
+ include/linux/mtd/nand_bch.h                    |   8 +-
+ include/linux/mtd/nftl.h                        |   1 -
+ include/linux/mtd/onenand.h                     |   2 -
+ include/linux/mtd/sharpsl.h                     |   2 +-
+ include/linux/platform_data/mtd-nand-s3c2410.h  |   1 -
+ include/uapi/mtd/mtd-abi.h                      |   2 +-
+ 51 files changed, 1763 insertions(+), 1560 deletions(-)
+
+-- 
+2.1.4
