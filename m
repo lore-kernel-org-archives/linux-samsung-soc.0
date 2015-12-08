@@ -1,38 +1,81 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk: samsung: exynos542x: fix MFC clock hierarchy parent
-Date: Tue, 08 Dec 2015 14:29:32 +0100
-Message-ID: <1449581372-29378-1-git-send-email-m.szyprowski@samsung.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH v2] power: Fix unmet dependency on POWER_SUPPLY by
+ POWER_RESET by uncoupling them
+Date: Tue, 8 Dec 2015 14:39:23 +0100
+Message-ID: <20151208133923.GA21934@earth>
+References: <1449459912-29482-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:15855 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755646AbbLHN3u (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:43143 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752182AbbLHNj2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Dec 2015 08:29:50 -0500
+	Tue, 8 Dec 2015 08:39:28 -0500
+Content-Disposition: inline
+In-Reply-To: <1449459912-29482-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, p.fedin@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net
 
-Proper source for MFC block is mout_user_aclk333 (in datasheet named
-USER_MUX_ACLK_333), not the output of CLKDIV_ACLK_333 MUX.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 389af3c15ec4..b2055c4ba237 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -926,7 +926,7 @@ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
- 			GATE_BUS_TOP, 13, 0, 0),
- 	GATE(0, "aclk166", "mout_user_aclk166",
- 			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
--	GATE(0, "aclk333", "mout_aclk333",
-+	GATE(0, "aclk333", "mout_user_aclk333",
- 			GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
- 			GATE_BUS_TOP, 16, 0, 0),
--- 
-1.9.2
+Hi,
+
+On Mon, Dec 07, 2015 at 12:45:12PM +0900, Krzysztof Kozlowski wrote:
+> Currently the reset/power off handlers (POWER_RESET) and Adaptive Voltage
+> Scaling class (POWER_AVS) are not built when POWER_SUPPLY is disabled.
+> The POWER_RESET is also not visible in drivers main section of config.
+>=20
+> However they do not really depend on power supply so they can be built
+> always. The objects for power supply drivers already depend on
+> particular Kconfig symbols so there is no need for any changes in
+> drivers/power/Makefile.
+>=20
+> This allows selecting POWER_RESET from main drivers config section and
+> fixes following build warning (encountered on ARM exynos defconfig when
+> POWER_SUPPLY is disabled manually):
+>=20
+> warning: (ARCH_HISI && ARCH_INTEGRATOR && ARCH_EXYNOS && ARCH_VEXPRESS &&=
+ REALVIEW_DT) selects POWER_RESET which has unmet direct dependencies (POWE=
+R_SUPPLY)
+> warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON which has unmet direct =
+dependencies (POWER_SUPPLY && POWER_RESET && OF)
+> warning: (ARCH_EXYNOS) selects POWER_RESET_SYSCON_POWEROFF which has unme=
+t direct dependencies (POWER_SUPPLY && POWER_RESET && OF)
+>=20
+> Reported-by: Pavel Fedin <p.fedin@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Thanks, queued.
+
+-- Sebastian
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWZt2GAAoJENju1/PIO/qadxIP/024PnOZ7cIutEnHublKEBlH
+7v4J7Y6nkeuN4NTFHebndqKZNI8Ph5tL6RwVzDynTuW6BuOUSu0JtcI9ROT4jnZX
+M8Dach/M22WALvAgIcvn4eT5ljB1CPLxnI/bPrLdtAEh3TrBbA5lJr8cD4PV6wcY
+LmZiH41qF8zd57jeOZtIIsRsQWRXkXcO/vL0XMV25OaMmLdhQOcUdzBRsgYnEDAK
+j/HRttlUHrd7LJK/yj45SGEU6ya99ZgFSXi5wVVFWpLwLI/UShjF6xhaXseXGrKA
+gSSp69j0jeLKbDcQoJ3W3BfRDFu9aUdQJz+JGY4fKdX1N2j7ZCvuat00eHt/xGBV
+gE+fG/hvqh8xaxjowIb8qWe0x7eel3m755zV/2aUwdBr2Qdm6/yl7U66WdpDteXq
+JO70CD24g/J6r6zYa4TK4lmGVSoyx8glGFesDFCfyTTpMPrfYdrBTGo16JpeHYQt
+gYYmbc9KAHZiyZeNOYqbe+Ah370otUFgTVqIBYvDBOrSd3D/qHQXUvdcRqgfR5Xg
+PCLGElbPsk/861ECkW3Z24bnTsboPaNuauWq2ZrK3ri9HBcRO1H311ubNvz88+bU
+JsVhrxZkYNxTL0pV2PK+dEYtVbdt51gXhAvXtT7yY37IAKsHbhYy3hUMWxp5SaL1
+NcgCwjcaeiUkRhaUE5bK
+=70m0
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
