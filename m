@@ -1,204 +1,520 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v10 0/17] Add Analogix Core Display Port Driver
-Date: Tue, 08 Dec 2015 16:33:39 +0100
-Message-ID: <1982691.ZDuzTFTUUe@diego>
-References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH v8 32/55] [media] media: use macros to check for V4L2
+ subdev entities
+Date: Tue, 8 Dec 2015 14:03:45 -0200
+Message-ID: <20151208140345.7d48c120@recife.lan>
+References: <cover.1440902901.git.mchehab@osg.samsung.com>
+	<b94146f3b95e9adb08b11fffc896a9e747b2fa9c.1440902901.git.mchehab@osg.samsung.com>
+	<3216825.M3fFyKeUjZ@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>, Thierry Reding <treding@nvidia.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:46598 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965154AbbLHQEA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Dec 2015 11:04:00 -0500
+In-Reply-To: <3216825.M3fFyKeUjZ@avalon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Markus Elfring <elfring@users.sourceforge.net>, Sakari Ailus <sakari.ailus@linux.intel.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, devel@driverdev.osuosl.org
 
-SGkgWWFraXIsCgpBbSBNb250YWcsIDcuIERlemVtYmVyIDIwMTUsIDE0OjM3OjE5IHNjaHJpZWIg
-WWFraXIgWWFuZzoKPiAgICBUaGUgU2Ftc3VuZyBFeHlub3MgZURQIGNvbnRyb2xsZXIgYW5kIFJv
-Y2tjaGlwIFJLMzI4OCBlRFAgY29udHJvbGxlcgo+IHNoYXJlIHRoZSBzYW1lIElQLCBzbyBhIGxv
-dCBvZiBwYXJ0cyBjYW4gYmUgcmUtdXNlZC4gSSBzcGxpdCB0aGUgY29tbW9uCj4gY29kZSBpbnRv
-IGJyaWRnZSBkaXJlY3RvcnksIHRoZW4gcmszMjg4IGFuZCBleHlub3Mgb25seSBuZWVkIHRvIGtl
-ZXAKPiBzb21lIHBsYXRmb3JtIGNvZGUuIENhdXNlIEkgY2FuJ3QgZmluZCB0aGUgZXhhY3QgSVAg
-bmFtZSBvZiBleHlub3MgZHAKPiBjb250cm9sbGVyLCBzbyBJIGRlY2lkZSB0byBuYW1lIGRwIGNv
-cmUgZHJpdmVyIHdpdGggImFuYWxvZ2l4IiB3aGljaCBJCj4gZmluZCBpbiByazMyODggZURQIFRS
-TQoKWy4uLl0KCj4gQ2hhbmdlcyBpbiB2MTA6Cj4gLSBDb3JyZWN0IHRoZSBST0NLQ0hJUF9BTkFM
-T0dJWF9EUCBpbmRlbnRhdGlvbiBpbiBLY29uZmlnIHRvIHRhYnMgaGVyZQo+IChIZWlrbykgLSBG
-aXggdGhlIHdyb25nIG1hY3JvIHZhbHVlIG9mCj4gR1JGX0VEUF9SRUZfQ0xLX1NFTF9JTlRFUl9I
-SVdPUkRfTUFTSyBCSVQoNCkgLT4gQklUKDIwKQo+IC0gUmVtb3ZlIHRoZSBzdXJwbHVzICJwbGF0
-X2RhdGEiIGNoZWNrLiAoSGVpa28pCj4gLSAgICAgICBzd2l0Y2ggKGRwLT5wbGF0X2RhdGEgJiYg
-ZHAtPnBsYXRfZGF0YS0+ZGV2X3R5cGUpIHsKPiArICAgICAgIHN3aXRjaCAoZHAtPnBsYXRfZGF0
-YS0+ZGV2X3R5cGUpIHsKPiAtIFJldmVydCBwYXJ0cyBvZiBHdXN0YXZvIFBhZG92YW4ncyBjaGFu
-Z2VzIGluIGNvbW1pdDoKPiAJZHJtL2V4eW5vczogZG8gbm90IHN0YXJ0IGVuYWJsaW5nIERQIGF0
-IGJpbmQoKSBwaGFzZQo+ICAgQWRkIGRwIHBoeSBwb3dlcm9uIGZ1bmN0aW9uIGluIGJpbmQgdGlt
-ZS4KClRoZSBob3RwbHVnIGlzc3VlIGlzIHN0aWxsIHByZXNlbnQsIGJ1dCBJIHRoaW5rIEkgZm91
-bmQgdGhlIGNhdXNlLiBXaGVuCnRoZSBmaXJzdCBkZXRlY3QgY2FsbCBoYXBwZW5zLCB0aGUgZGlz
-cGxheSBzaW1wbHkgaXMgc3RpbGwgb2ZmLiBJIGp1c3QgZGlkCnNvbWUgdmVyeSBiYXNpYyB0cmFj
-aW5nIFswXSBhbmQgaXQgc2VlbXMgdGhlIGRpc3BsYXkgc2ltcGx5IGlzIG5vdCBlbmFibGVkCndo
-ZW4gaXQgaXMgc3VwcG9zZWQgdG8gZ2V0IGRldGVjdGVkLgoKQW5kIGl0IHNlZW1zIGluamVjdGlu
-ZyBhIGRybV9wYW5lbF9wcmVwYXJlIGVhcmx5IGZvciBfdGVzdGluZ18gWzFdIHJlYWxseQpkaWQg
-bWFrZSB0aGUgaG90cGx1ZyB3b3JrIG9uIGJvdGggbXkgamVycnkgYW5kIG1pbm5pZS4KClNvIEkg
-Z3Vlc3Mgd2Ugc2hvdWxkIHNvbWVob3cgbWFrZSBzdXJlIHRoZSBwYW5lbCBpcyBhY3R1YWxseSBw
-b3dlcmVkIHdoZW4KZGV0ZWN0aW9uIGlzIHJ1bm5pbmcuIEFsdGhvdWdoIEknbSBub3Qgc3VyZSB5
-ZXQsIGhvdyB0aGF0IHNob3VsZCBsb29rIGxpa2UuCgoKSW50dWl0aW9uIHN1Z2dlc3RzLCBtYWtp
-bmcgZHJtX3BhbmVsIGNhbGxzIG5lc3RhYmxlIChzaW1pbGFyIHRvCmNsa19wcmVwYXJlL3VucHJl
-cGFyZSwgZXRjKSBhbmQgc2ltcGx5IHdyYXBwaW5nIHRoZSBkZXRlY3Rpb24gY29kZQppbiBhIHBy
-ZXBhcmUtdW5wcmVwYXJlIGNhbGxzLCBidXQgSSdtIG5vdCBzdXJlIGlmIFRoaWVycnkgbWlnaHQg
-aGF2ZSBvdGhlcgppZGVhcyA7LSkKCgpBbHNvIG15ICJsb2ciIGJlbG93IHN1Z2dlc3RzIHNvbWUg
-c29ydCBvZiBtaXNtYXRjaCBiZXR3ZWVuCnByZXBhcmUvdW5wcmVwYXJlIGNhbGxzLCBhcyB0aGVy
-ZSBhcmUgYSBsb3QgbW9yZSBvZiB0aGUgcHJlcGFyZS1zaWRlLgoKCkFuZCB0aGUgbG9ja2luZyBp
-c3N1ZSBhbHNvIHNlZW1zIHRvIGJlIHN0aWxsIHRoZXJlIFsyXS4KCgpIZWlrbwoKClswXQpbICAg
-IDIuNzk3MzgzXSBhbmFsb2dpeF9kcF9yZXNldApbICAgIDIuODAwNzA5XSBhbmFsb2dpeF9kcF9p
-bml0X2hwZApbICAgIDIuODAzOTYwXSBhbmFsb2dpeF9kcF9pbml0X3ZpZGVvClsgICAgMi44MDc2
-NTNdIHJvY2tjaGlwLWRybSBkaXNwbGF5LXN1YnN5c3RlbTogYm91bmQgZmY5NzAwMDAuZHAgKG9w
-cyByb2NrY2hpcF9kcF9jb21wb25lbnRfb3BzKQpbICAgIDIuODE3MTc2XSBbZHJtXSBTdXBwb3J0
-cyB2YmxhbmsgdGltZXN0YW1wIGNhY2hpbmcgUmV2IDIgKDIxLjEwLjIwMTMpLgpbICAgIDIuODIz
-Nzk5XSBbZHJtXSBObyBkcml2ZXIgc3VwcG9ydCBmb3IgdmJsYW5rIHRpbWVzdGFtcCBxdWVyeS4K
-WyAgICAyLjgyOTk0N10gYW5hbG9naXhfZHBfZGV0ZWN0ClsgICAgMi44MzMwMTVdIGFuYWxvZ2l4
-X2RwX2dldF9wbHVnX2luX3N0YXR1czogaHBkIHN0YXR1cyAwCi4uLgpbICAgIDIuODkzNDI1XSBh
-bmFsb2dpeF9kcF9nZXRfcGx1Z19pbl9zdGF0dXM6IGhwZCBzdGF0dXMgMApbICAgIDIuODkzNDU2
-XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5kcDogZmFpbGVkIHRvIGdldCBocGQgcGx1ZyBzdGF0dXMs
-IHRyeSB0byBmb3JjZSBocGQKWyAgICAyLjg5MzQ1OF0gYW5hbG9naXhfZHBfZm9yY2VfaHBkClsg
-ICAgMi44OTM0NjRdIGFuYWxvZ2l4X2RwX2dldF9wbHVnX2luX3N0YXR1czogaHBkIHN0YXR1cyAx
-MTIKWyAgICAyLjg5MzQ3MF0gcGFuZWxfc2ltcGxlX3ByZXBhcmUKWyAgICAyLjk1MjE4M10gcm9j
-a2NoaXAtZHAgZmY5NzAwMDAuZHA6IEVESUQgZGF0YSBkb2VzIG5vdCBpbmNsdWRlIGFueSBleHRl
-bnNpb25zLgpbICAgIDIuOTYxNzI3XSBwYW5lbF9zaW1wbGVfZ2V0X21vZGVzClsgICAgMy40MzIx
-NTRdIGFuYWxvZ2l4X2RwX2RldGVjdApbICAgIDMuNDMyMTU4XSBhbmFsb2dpeF9kcF9nZXRfcGx1
-Z19pbl9zdGF0dXM6IGhwZCBzdGF0dXMgMTIwClsgICAgMy40MzIxNjBdIHBhbmVsX3NpbXBsZV9w
-cmVwYXJlClsgICAgMy40MzM3MzFdIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmRwOiBFRElEIGRhdGEg
-ZG9lcyBub3QgaW5jbHVkZSBhbnkgZXh0ZW5zaW9ucy4KWyAgICAzLjQ0MzI2OF0gcGFuZWxfc2lt
-cGxlX2dldF9tb2RlcwpbICAgIDMuNDQ0NjY4XSBwYW5lbF9zaW1wbGVfcHJlcGFyZQpbICAgIDMu
-NDQ0NzU1XSBhbmFsb2dpeF9kcF9yZXNldApbICAgIDMuNDQ1MDc4XSBhbmFsb2dpeF9kcF9pbml0
-X2hwZApbICAgIDMuNDQ1MDk2XSBwYW5lbF9zaW1wbGVfZGlzYWJsZQpbICAgIDMuNDU1MzQ5XSBh
-bmFsb2dpeF9kcF9pbml0X3ZpZGVvClsgICAgMy41NTgzMjNdIHJvY2tjaGlwLWRwIGZmOTcwMDAw
-LmRwOiBUaW1lb3V0IG9mIHZpZGVvIHN0cmVhbWNsayBvawpbICAgIDMuNTU4MzI2XSByb2NrY2hp
-cC1kcCBmZjk3MDAwMC5kcDogdW5hYmxlIHRvIGNvbmZpZyB2aWRlbwpbICAgIDMuNTU4MzI4XSBw
-YW5lbF9zaW1wbGVfZW5hYmxlClsgICAgMy41NzM5MTVdIGFuYWxvZ2l4X2RwX2RldGVjdApbICAg
-IDMuNTczOTE5XSBhbmFsb2dpeF9kcF9nZXRfcGx1Z19pbl9zdGF0dXM6IGhwZCBzdGF0dXMgNzIK
-WyAgICAzLjU3MzkyMV0gcGFuZWxfc2ltcGxlX3ByZXBhcmUKCgpbMV0KZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jIGIvZHJpdmVycy9n
-cHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKaW5kZXggMzk5MDk1MS4uMGMy
-ZGNhNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJv
-Y2tjaGlwLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tj
-aGlwLmMKQEAgLTM5OSw2ICszOTksOCBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX3Byb2JlKHN0
-cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAKICAgICAgICBkcC0+cGxhdF9kYXRhLnBhbmVs
-ID0gcGFuZWw7CiAKK2RybV9wYW5lbF9wcmVwYXJlKGRwLT5wbGF0X2RhdGEucGFuZWwpOworCiAg
-ICAgICAgLyoKICAgICAgICAgKiBXZSBqdXN0IHVzZSB0aGUgZHJ2ZGF0YSB1bnRpbCBkcml2ZXIg
-cnVuIGludG8gY29tcG9uZW50CiAgICAgICAgICogYWRkIGZ1bmN0aW9uLCBhbmQgdGhlbiB3ZSB3
-b3VsZCBzZXQgZHJ2ZGF0YSB0byBudWxsLCBzbwoKClsyXQpbICAgMTEuOTcxMjc3XSBwYW5lbF9z
-aW1wbGVfZ2V0X21vZGVzClsgIE9LICBdIFN0YXJ0ZWQgTFNCOiBYIGRpc3BsYXkgbWFuYWdlciBm
-b3IgS0RFLgpbICBPSyAgXSBTdGFydGVkIExTQjogU3BlZWNoIERpc3BhdGNoZXIuClsgICAxMi4w
-MDcxMjBdIHBhbmVsX3NpbXBsZV9kaXNhYmxlClsgICAxMi4wMTIzMjNdIApbICAgMTIuMDEzODIw
-XSA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0K
-WyAgIDEyLjAxOTk5M10gWyBJTkZPOiBwb3NzaWJsZSBjaXJjdWxhciBsb2NraW5nIGRlcGVuZGVu
-Y3kgZGV0ZWN0ZWQgXQpbICAgMTIuMDI2MjUwXSA0LjQuMC1yYzMrICMyNzU1IE5vdCB0YWludGVk
-ClsgICAxMi4wMzAxNjVdIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KWyAgMTIuMDM2NDE3XSBYb3JnLzc5MyBpcyB0cnlpbmcgdG8gYWNxdWly
-ZSBsb2NrOgpbICAgMTIuMDQwODU1XSAgKCgmZHAtPmhvdHBsdWdfd29yaykpeysuKy4uLn1bICAg
-MTIuMDQwODcwXSAKWyAgIDEyLjA0MDg3MF0gYnV0IHRhc2sgaXMgYWxyZWFkeSBob2xkaW5nIGxv
-Y2s6ClsgICAxMi4wNDA4NzFdICAoY3J0Y193d19jbGFzc19tdXRleCl7Ky4rLisufSwgYXQ6IFs8
-YzAzODM2MDA+XSBkcm1fbW9kZXNldF9sb2NrKzB4ODQvMHgxMDQKWyAgIDEyLjA0MDg4MV0gClsg
-ICAxMi4wNDA4ODFdIHdoaWNoIGxvY2sgYWxyZWFkeSBkZXBlbmRzIG9uIHRoZSBuZXcgbG9jay4K
-WyAgIDEyLjA0MDg4MV0gClsgICAxMi4wNDA4ODJdIApbICAgMTIuMDQwODgyXSB0aGUgZXhpc3Rp
-bmcgZGVwZW5kZW5jeSBjaGFpbiAoaW4gcmV2ZXJzZSBvcmRlcikgaXM6ClsgICAxMi4wNDA4ODNd
-IApbICAgMTIuMDQwODgzXSAtPiAjMiAoY3J0Y193d19jbGFzc19tdXRleCl7Ky4rLisufToKWyAg
-IDEyLjA0MDg4N10gICAgICAgIFs8YzA3NTYzNzQ+XSBtdXRleF9sb2NrX25lc3RlZCsweDc4LzB4
-NDFjClsgICAxMi4wNDA4OTNdICAgICAgICBbPGMwMzgzNjVjPl0gZHJtX21vZGVzZXRfbG9jaysw
-eGUwLzB4MTA0ClsgICAxMi4wNDA4OTZdICAgICAgICBbPGMwMzc3ODg4Pl0gZHJtX21vZGVfZ2V0
-Y29ubmVjdG9yKzB4MTY4LzB4MzhjClsgICAxMi4wNDA5MDJdICAgICAgICBbPGMwMzZhZTU4Pl0g
-ZHJtX2lvY3RsKzB4Mjc0LzB4NDA4ClsgICAxMi4wNDA5MDddICAgICAgICBbPGMwMTdjYmM4Pl0g
-ZG9fdmZzX2lvY3RsKzB4NjcwLzB4NzUwClsgICAxMi4wNDA5MTFdICAgICAgICBbPGMwMTdjZDA0
-Pl0gU3lTX2lvY3RsKzB4NWMvMHg4NApbICAgMTIuMDQwOTE0XSAgICAgICAgWzxjMDAwZmY4MD5d
-IHJldF9mYXN0X3N5c2NhbGwrMHgwLzB4MWMKWyAgIDEyLjA0MDkyMF0gClsgICAxMi4wNDA5MjBd
-IC0+ICMxICgmZGV2LT5tb2RlX2NvbmZpZy5tdXRleCl7Ky4rLisufToKWyAgIDEyLjA0MDkyNF0g
-ICAgICAgIFs8YzA3NTYzNzQ+XSBtdXRleF9sb2NrX25lc3RlZCsweDc4LzB4NDFjClsgICAxMi4w
-NDA5MjhdICAgICAgICBbPGMwMzViM2I0Pl0gZHJtX2hlbHBlcl9ocGRfaXJxX2V2ZW50KzB4NDAv
-MHgxNTAKWyAgIDEyLjA0MDkzNF0gICAgICAgIFs8YzAzOGUwYjA+XSBhbmFsb2dpeF9kcF9ob3Rw
-bHVnKzB4MjQvMHgyOApbICAgMTIuMDQwOTM4XSAgICAgICAgWzxjMDA0NTBjND5dIHByb2Nlc3Nf
-b25lX3dvcmsrMHgzMjgvMHg2NjgKWyAgIDEyLjA0MDk0Ml0gICAgICAgIFs8YzAwNDYzMzQ+XSB3
-b3JrZXJfdGhyZWFkKzB4MmNjLzB4NDFjClsgICAxMi4wNDA5NDVdICAgICAgICBbPGMwMDRiYmU4
-Pl0ga3RocmVhZCsweGY0LzB4MTBjClsgICAxMi4wNDA5NTBdICAgICAgICBbPGMwMDEwMDEwPl0g
-cmV0X2Zyb21fZm9yaysweDE0LzB4MjQKWyAgIDEyLjA0MDk1NF0gClsgICAxMi4wNDA5NTRdIC0+
-ICMwICgoJmRwLT5ob3RwbHVnX3dvcmspKXsrLisuLi59OgpbICAgMTIuMDQwOTU4XSAgICAgICAg
-WzxjMDA3ZjRhYz5dIGxvY2tfYWNxdWlyZSsweDE3OC8weDIxOApbICAgMTIuMDQwOTYzXSAgICAg
-ICAgWzxjMDA0MzdkMD5dIGZsdXNoX3dvcmsrMHg0Yy8weDIyYwpbICAgMTIuMDQwOTY2XSAgICAg
-ICAgWzxjMDM4ZTQ1Yz5dIGFuYWxvZ2l4X2RwX2JyaWRnZV9kaXNhYmxlKzB4NzQvMHhmMApbICAg
-MTIuMDQwOTcwXSAgICAgICAgWzxjMDM4NWVmND5dIGRybV9icmlkZ2VfZGlzYWJsZSsweDM0LzB4
-MzgKWyAgIDEyLjA0MDk3M10gICAgICAgIFs8YzAzNTkwNDQ+XSBkcm1fY3J0Y19oZWxwZXJfc2V0
-X21vZGUrMHgyMDAvMHg0MjQKWyAgIDEyLjA0MDk3N10gICAgICAgIFs8YzAzNTlhMzg+XSBkcm1f
-Y3J0Y19oZWxwZXJfc2V0X2NvbmZpZysweDZjMC8weDk4OApbICAgMTIuMDQwOTgxXSAgICAgICAg
-WzxjMDM3M2JhOD5dIGRybV9tb2RlX3NldF9jb25maWdfaW50ZXJuYWwrMHg2MC8weGRjClsgICAx
-Mi4wNDA5ODRdICAgICAgICBbPGMwMzc4OTM4Pl0gZHJtX21vZGVfc2V0Y3J0YysweDNjYy8weDQ3
-NApbICAgMTIuMDQwOTg4XSAgICAgICAgWzxjMDM2YWU1OD5dIGRybV9pb2N0bCsweDI3NC8weDQw
-OApbICAgMTIuMDQwOTkxXSAgICAgICAgWzxjMDE3Y2JjOD5dIGRvX3Zmc19pb2N0bCsweDY3MC8w
-eDc1MApbICAgMTIuMDQwOTk0XSAgICAgICAgWzxjMDE3Y2QwND5dIFN5U19pb2N0bCsweDVjLzB4
-ODQKWyAgIDEyLjA0MDk5N10gICAgICAgIFs8YzAwMGZmODA+XSByZXRfZmFzdF9zeXNjYWxsKzB4
-MC8weDFjClsgICAxMi4wNDEwMDFdIApbICAgMTIuMDQxMDAxXSBvdGhlciBpbmZvIHRoYXQgbWln
-aHQgaGVscCB1cyBkZWJ1ZyB0aGlzOgpbICAgMTIuMDQxMDAxXSAKWyAgIDEyLjA0MTAwMl0gQ2hh
-aW4gZXhpc3RzIG9mOgpbICAgMTIuMDQxMDAyXSAgICgmZHAtPmhvdHBsdWdfd29yaykgLS0+ICZk
-ZXYtPm1vZGVfY29uZmlnLm11dGV4IC0tPiBjcnRjX3d3X2NsYXNzX211dGV4ClsgICAxMi4wNDEw
-MDddIApbICAgMTIuMDQxMDA4XSAgUG9zc2libGUgdW5zYWZlIGxvY2tpbmcgc2NlbmFyaW86Clsg
-ICAxMi4wNDEwMDhdIApbICAgMTIuMDQxMDA5XSAgICAgICAgQ1BVMCAgICAgICAgICAgICAgICAg
-ICAgQ1BVMQpbICAgMTIuMDQxMDEwXSAgICAgICAgLS0tLSAgICAgICAgICAgICAgICAgICAgLS0t
-LQpbICAgMTIuMDQxMDExXSAgIGxvY2soY3J0Y193d19jbGFzc19tdXRleCk7ClsgICAxMi4wNDEw
-MTNdICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsb2NrKCZkZXYtPm1vZGVfY29uZmln
-Lm11dGV4KTsKWyAgIDEyLjA0MTAxNl0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxv
-Y2soY3J0Y193d19jbGFzc19tdXRleCk7ClsgICAxMi4wNDEwMThdICAgbG9jaygoJmRwLT5ob3Rw
-bHVnX3dvcmspKTsKWyAgIDEyLjA0MTAyMF0gClsgICAxMi4wNDEwMjBdICAqKiogREVBRExPQ0sg
-KioqClsgICAxMi4wNDEwMjBdIApbICAgMTIuMDQxMDIzXSAzIGxvY2tzIGhlbGQgYnkgWG9yZy83
-OTM6ClsgICAxMi4wNDEwMjNdICAjMDogICgmZGV2LT5tb2RlX2NvbmZpZy5tdXRleCl7Ky4rLisu
-fSwgYXQ6IFs8YzAzODNkNDg+XSBkcm1fbW9kZXNldF9sb2NrX2FsbCsweDUwLzB4ZDgKWyAgIDEy
-LjA0MTAzMF0gICMxOiAgKGNydGNfd3dfY2xhc3NfYWNxdWlyZSl7Ky4rLisufSwgYXQ6IFs8YzAz
-ODNkNTg+XSBkcm1fbW9kZXNldF9sb2NrX2FsbCsweDYwLzB4ZDgKWyAgIDEyLjA0MTAzN10gICMy
-OiAgKGNydGNfd3dfY2xhc3NfbXV0ZXgpeysuKy4rLn0sIGF0OiBbPGMwMzgzNjAwPl0gZHJtX21v
-ZGVzZXRfbG9jaysweDg0LzB4MTA0ClsgICAxMi4wNDEwNDRdIApbICAgMTIuMDQxMDQ0XSBzdGFj
-ayBiYWNrdHJhY2U6ClsgICAxMi4wNDEwNDhdIENQVTogMyBQSUQ6IDc5MyBDb21tOiBYb3JnIE5v
-dCB0YWludGVkIDQuNC4wLXJjMysgIzI3NTUKWyAgIDEyLjA0MTA0OV0gSGFyZHdhcmUgbmFtZTog
-Um9ja2NoaXAgKERldmljZSBUcmVlKQpbICAgMTIuMDQxMDU5XSBbPGMwMDE5OTE0Pl0gKHVud2lu
-ZF9iYWNrdHJhY2UpIGZyb20gWzxjMDAxNGJjYz5dIChzaG93X3N0YWNrKzB4MjAvMHgyNCkKWyAg
-IDEyLjA0MTA2Nl0gWzxjMDAxNGJjYz5dIChzaG93X3N0YWNrKSBmcm9tIFs8YzAyYzQ0ODQ+XSAo
-ZHVtcF9zdGFjaysweDg0LzB4YjgpClsgICAxMi4wNDEwNzJdIFs8YzAyYzQ0ODQ+XSAoZHVtcF9z
-dGFjaykgZnJvbSBbPGMwMDdhMmI4Pl0gKHByaW50X2NpcmN1bGFyX2J1ZysweDI3OC8weDJjYykK
-WyAgIDEyLjA0MTA3OF0gWzxjMDA3YTJiOD5dIChwcmludF9jaXJjdWxhcl9idWcpIGZyb20gWzxj
-MDA3ZTg1MD5dIChfX2xvY2tfYWNxdWlyZSsweDE0YTAvMHgxYWVjKQpbICAgMTIuMDQxMDgyXSBb
-PGMwMDdlODUwPl0gKF9fbG9ja19hY3F1aXJlKSBmcm9tIFs8YzAwN2Y0YWM+XSAobG9ja19hY3F1
-aXJlKzB4MTc4LzB4MjE4KQpbICAgMTIuMDQxMDg2XSBbPGMwMDdmNGFjPl0gKGxvY2tfYWNxdWly
-ZSkgZnJvbSBbPGMwMDQzN2QwPl0gKGZsdXNoX3dvcmsrMHg0Yy8weDIyYykKWyAgIDEyLjA0MTA5
-MV0gWzxjMDA0MzdkMD5dIChmbHVzaF93b3JrKSBmcm9tIFs8YzAzOGU0NWM+XSAoYW5hbG9naXhf
-ZHBfYnJpZGdlX2Rpc2FibGUrMHg3NC8weGYwKQpbICAgMTIuMDQxMDk3XSBbPGMwMzhlNDVjPl0g
-KGFuYWxvZ2l4X2RwX2JyaWRnZV9kaXNhYmxlKSBmcm9tIFs8YzAzODVlZjQ+XSAoZHJtX2JyaWRn
-ZV9kaXNhYmxlKzB4MzQvMHgzOCkKWyAgIDEyLjA0MTEwMl0gWzxjMDM4NWVmND5dIChkcm1fYnJp
-ZGdlX2Rpc2FibGUpIGZyb20gWzxjMDM1OTA0ND5dIChkcm1fY3J0Y19oZWxwZXJfc2V0X21vZGUr
-MHgyMDAvMHg0MjQpClsgICAxMi4wNDExMDhdIFs8YzAzNTkwNDQ+XSAoZHJtX2NydGNfaGVscGVy
-X3NldF9tb2RlKSBmcm9tIFs8YzAzNTlhMzg+XSAoZHJtX2NydGNfaGVscGVyX3NldF9jb25maWcr
-MHg2YzAvMHg5ODgpClsgICAxMi4wNDExMTRdIFs8YzAzNTlhMzg+XSAoZHJtX2NydGNfaGVscGVy
-X3NldF9jb25maWcpIGZyb20gWzxjMDM3M2JhOD5dIChkcm1fbW9kZV9zZXRfY29uZmlnX2ludGVy
-bmFsKzB4NjAvMHhkYykKWyAgIDEyLjA0MTExOV0gWzxjMDM3M2JhOD5dIChkcm1fbW9kZV9zZXRf
-Y29uZmlnX2ludGVybmFsKSBmcm9tIFs8YzAzNzg5Mzg+XSAoZHJtX21vZGVfc2V0Y3J0YysweDNj
-Yy8weDQ3NCkKWyAgIDEyLjA0MTEyNF0gWzxjMDM3ODkzOD5dIChkcm1fbW9kZV9zZXRjcnRjKSBm
-cm9tIFs8YzAzNmFlNTg+XSAoZHJtX2lvY3RsKzB4Mjc0LzB4NDA4KQpbICAgMTIuMDQxMTI5XSBb
-PGMwMzZhZTU4Pl0gKGRybV9pb2N0bCkgZnJvbSBbPGMwMTdjYmM4Pl0gKGRvX3Zmc19pb2N0bCsw
-eDY3MC8weDc1MCkKWyAgIDEyLjA0MTEzNF0gWzxjMDE3Y2JjOD5dIChkb192ZnNfaW9jdGwpIGZy
-b20gWzxjMDE3Y2QwND5dIChTeVNfaW9jdGwrMHg1Yy8weDg0KQpbICAgMTIuMDQxMTM4XSBbPGMw
-MTdjZDA0Pl0gKFN5U19pb2N0bCkgZnJvbSBbPGMwMDBmZjgwPl0gKHJldF9mYXN0X3N5c2NhbGwr
-MHgwLzB4MWMpClsgICAxMi4wNDEyMTBdIHBhbmVsX3NpbXBsZV91bnByZXBhcmUKWyAgIDEyLjA0
-MTM1OV0gcGFuZWxfc2ltcGxlX3ByZXBhcmUKWyAgIDEyLjEwMTYzOF0gYW5hbG9naXhfZHBfcmVz
-ZXQKWyAgIDEyLjEwMTg3OV0gYW5hbG9naXhfZHBfaW5pdF9ocGQKWyAgIDEyLjEwMTg5N10gcGFu
-ZWxfc2ltcGxlX2Rpc2FibGUKWyAgIDEyLjEwODU0M10gYW5hbG9naXhfZHBfaXJxX2hhbmRsZXI6
-IGlycS10eXBlIDAKWyAgIDEyLjExMDQ1Ml0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZHA6IExpbmsg
-VHJhaW5pbmcgQ2xvY2sgUmVjb3Zlcnkgc3VjY2VzcwpbICAgMTIuMTExOTAwXSByb2NrY2hpcC1k
-cCBmZjk3MDAwMC5kcDogTGluayBUcmFpbmluZyBzdWNjZXNzIQpbICAgMTIuMTEzMzg0XSBhbmFs
-b2dpeF9kcF9pbml0X3ZpZGVvClsgICAxMi4yMTU4MjVdIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmRw
-OiBUaW1lb3V0IG9mIHZpZGVvIHN0cmVhbWNsayBvawpbICAgMTIuMjE1ODI5XSByb2NrY2hpcC1k
-cCBmZjk3MDAwMC5kcDogdW5hYmxlIHRvIGNvbmZpZyB2aWRlbwpbICAgMTIuMjE1ODMyXSBwYW5l
-bF9zaW1wbGVfZW5hYmxlCixhdDogWzxjMDA0Mzc4ND5dIGZsdXNoX3dvcmsrMHgwLzB4MjJjCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Em Sun, 06 Dec 2015 04:16:15 +0200
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
+
+> Hi Mauro,
+> 
+> Thank you for the patch.
+> 
+> On Sunday 30 August 2015 00:06:43 Mauro Carvalho Chehab wrote:
+> > Instead of relying on media subtype, use the new macros to detect
+> > if an entity is a subdev or an A/V DMA entity.
+> > 
+> > Please note that most drivers assume that there's just AV_DMA or
+> > V4L2 subdevs. This is not true anymore, as we've added MC support
+> > for DVB, and there are plans to add support for ALSA and FB/DRM
+> > too.
+> > 
+> > Ok, on the current pipelines supported by those drivers, just V4L
+> > stuff are there, but, assuming that some day a pipeline that also
+> > works with other subsystems will ever added, it is better to add
+> > explicit checks for the AV_DMA stuff.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> > 
+> > diff --git a/drivers/media/platform/exynos4-is/common.c
+> > b/drivers/media/platform/exynos4-is/common.c index
+> > 0eb34ecb8ee4..8c9a29e0e294 100644
+> > --- a/drivers/media/platform/exynos4-is/common.c
+> > +++ b/drivers/media/platform/exynos4-is/common.c
+> > @@ -22,8 +22,7 @@ struct v4l2_subdev *fimc_find_remote_sensor(struct
+> > media_entity *entity) while (pad->flags & MEDIA_PAD_FL_SINK) {
+> >  		/* source pad */
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		sd = media_entity_to_v4l2_subdev(pad->entity);
+> > diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c
+> > b/drivers/media/platform/exynos4-is/fimc-capture.c index
+> > 0627a93b2f3b..e9810fee4c30 100644
+> > --- a/drivers/media/platform/exynos4-is/fimc-capture.c
+> > +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+> > @@ -1141,8 +1141,7 @@ static int fimc_pipeline_validate(struct fimc_dev
+> > *fimc) }
+> >  		}
+> > 
+> > -		if (src_pad == NULL ||
+> > -		    media_entity_type(src_pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!src_pad || !is_media_entity_v4l2_subdev(src_pad->entity))
+> >  			break;
+> > 
+> >  		/* Don't call FIMC subdev operation to avoid nested locking */
+> > @@ -1397,7 +1396,7 @@ static int fimc_link_setup(struct media_entity
+> > *entity, struct fimc_vid_cap *vc = &fimc->vid_cap;
+> >  	struct v4l2_subdev *sensor;
+> > 
+> > -	if (media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +	if (!is_media_entity_v4l2_subdev(remote->entity))
+> >  		return -EINVAL;
+> > 
+> >  	if (WARN_ON(fimc == NULL))
+> > diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c
+> > b/drivers/media/platform/exynos4-is/fimc-isp-video.c index
+> > 3d9ccbf5f10f..5fbaf5e39903 100644
+> > --- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
+> > +++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+> > @@ -467,8 +467,7 @@ static int isp_video_pipeline_validate(struct fimc_isp
+> > *isp)
+> > 
+> >  		/* Retrieve format at the source pad */
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		sd = media_entity_to_v4l2_subdev(pad->entity);
+> > diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c
+> > b/drivers/media/platform/exynos4-is/fimc-lite.c index
+> > b2607da4ad14..c2327147b360 100644
+> > --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> > +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> > @@ -814,8 +814,7 @@ static int fimc_pipeline_validate(struct fimc_lite
+> > *fimc) }
+> >  		/* Retrieve format at the source pad */
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		sd = media_entity_to_v4l2_subdev(pad->entity);
+> > @@ -988,7 +987,6 @@ static int fimc_lite_link_setup(struct media_entity
+> > *entity, {
+> >  	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+> >  	struct fimc_lite *fimc = v4l2_get_subdevdata(sd);
+> > -	unsigned int remote_ent_type = media_entity_type(remote->entity);
+> >  	int ret = 0;
+> > 
+> >  	if (WARN_ON(fimc == NULL))
+> > @@ -1000,7 +998,7 @@ static int fimc_lite_link_setup(struct media_entity
+> > *entity,
+> > 
+> >  	switch (local->index) {
+> >  	case FLITE_SD_PAD_SINK:
+> > -		if (remote_ent_type != MEDIA_ENT_T_V4L2_SUBDEV) {
+> > +		if (!is_media_entity_v4l2_subdev(remote->entity)) {
+> >  			ret = -EINVAL;
+> >  			break;
+> >  		}
+> > @@ -1018,7 +1016,7 @@ static int fimc_lite_link_setup(struct media_entity
+> > *entity, case FLITE_SD_PAD_SOURCE_DMA:
+> >  		if (!(flags & MEDIA_LNK_FL_ENABLED))
+> >  			atomic_set(&fimc->out_path, FIMC_IO_NONE);
+> > -		else if (remote_ent_type == MEDIA_ENT_T_DEVNODE)
+> > +		else if (is_media_entity_v4l2_io(remote->entity))
+> >  			atomic_set(&fimc->out_path, FIMC_IO_DMA);
+> >  		else
+> >  			ret = -EINVAL;
+> > @@ -1027,7 +1025,7 @@ static int fimc_lite_link_setup(struct media_entity
+> > *entity, case FLITE_SD_PAD_SOURCE_ISP:
+> >  		if (!(flags & MEDIA_LNK_FL_ENABLED))
+> >  			atomic_set(&fimc->out_path, FIMC_IO_NONE);
+> > -		else if (remote_ent_type == MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		else if (is_media_entity_v4l2_subdev(remote->entity))
+> >  			atomic_set(&fimc->out_path, FIMC_IO_ISP);
+> >  		else
+> >  			ret = -EINVAL;
+> > diff --git a/drivers/media/platform/exynos4-is/media-dev.c
+> > b/drivers/media/platform/exynos4-is/media-dev.c index
+> > 92dbade2fffc..4a25df9dd869 100644
+> > --- a/drivers/media/platform/exynos4-is/media-dev.c
+> > +++ b/drivers/media/platform/exynos4-is/media-dev.c
+> > @@ -88,8 +88,7 @@ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+> > break;
+> >  		}
+> > 
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> >  		sd = media_entity_to_v4l2_subdev(pad->entity);
+> > 
+> > @@ -1062,7 +1061,7 @@ static int __fimc_md_modify_pipelines(struct
+> > media_entity *entity, bool enable) media_entity_graph_walk_start(&graph,
+> > entity);
+> > 
+> >  	while ((entity = media_entity_graph_walk_next(&graph))) {
+> > -		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
+> > +		if (!is_media_entity_v4l2_io(entity))
+> >  			continue;
+> > 
+> >  		ret  = __fimc_md_modify_pipeline(entity, enable);
+> > @@ -1076,7 +1075,7 @@ static int __fimc_md_modify_pipelines(struct
+> > media_entity *entity, bool enable) media_entity_graph_walk_start(&graph,
+> > entity_err);
+> > 
+> >  	while ((entity_err = media_entity_graph_walk_next(&graph))) {
+> > -		if (media_entity_type(entity_err) != MEDIA_ENT_T_DEVNODE)
+> > +		if (!is_media_entity_v4l2_io(entity_err))
+> >  			continue;
+> > 
+> >  		__fimc_md_modify_pipeline(entity_err, !enable);
+> > diff --git a/drivers/media/platform/omap3isp/isp.c
+> > b/drivers/media/platform/omap3isp/isp.c index 69e7733d36cd..cb8ac90086c1
+> > 100644
+> > --- a/drivers/media/platform/omap3isp/isp.c
+> > +++ b/drivers/media/platform/omap3isp/isp.c
+> > @@ -691,7 +691,7 @@ static int isp_pipeline_pm_use_count(struct media_entity
+> > *entity) media_entity_graph_walk_start(&graph, entity);
+> > 
+> >  	while ((entity = media_entity_graph_walk_next(&graph))) {
+> > -		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
+> > +		if (is_media_entity_v4l2_io(entity))
+> >  			use += entity->use_count;
+> >  	}
+> > 
+> > @@ -714,7 +714,7 @@ static int isp_pipeline_pm_power_one(struct media_entity
+> > *entity, int change) struct v4l2_subdev *subdev;
+> >  	int ret;
+> > 
+> > -	subdev = media_entity_type(entity) == MEDIA_ENT_T_V4L2_SUBDEV
+> > +	subdev = is_media_entity_v4l2_subdev(entity)
+> >  	       ? media_entity_to_v4l2_subdev(entity) : NULL;
+> > 
+> >  	if (entity->use_count == 0 && change > 0 && subdev != NULL) {
+> > @@ -754,7 +754,7 @@ static int isp_pipeline_pm_power(struct media_entity
+> > *entity, int change) media_entity_graph_walk_start(&graph, entity);
+> > 
+> >  	while (!ret && (entity = media_entity_graph_walk_next(&graph)))
+> > -		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
+> > +		if (is_media_entity_v4l2_subdev(entity))
+> >  			ret = isp_pipeline_pm_power_one(entity, change);
+> > 
+> >  	if (!ret)
+> > @@ -764,7 +764,7 @@ static int isp_pipeline_pm_power(struct media_entity
+> > *entity, int change)
+> > 
+> >  	while ((first = media_entity_graph_walk_next(&graph))
+> >  	       && first != entity)
+> > -		if (media_entity_type(first) != MEDIA_ENT_T_DEVNODE)
+> > +		if (is_media_entity_v4l2_subdev(first))
+> >  			isp_pipeline_pm_power_one(first, -change);
+> > 
+> >  	return ret;
+> > @@ -897,8 +897,7 @@ static int isp_pipeline_enable(struct isp_pipeline
+> > *pipe, break;
+> > 
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		entity = pad->entity;
+> > @@ -988,8 +987,7 @@ static int isp_pipeline_disable(struct isp_pipeline
+> > *pipe) break;
+> > 
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		entity = pad->entity;
+> > diff --git a/drivers/media/platform/omap3isp/ispvideo.c
+> > b/drivers/media/platform/omap3isp/ispvideo.c index
+> > 4c367352b1f7..52843ac2a9ca 100644
+> > --- a/drivers/media/platform/omap3isp/ispvideo.c
+> > +++ b/drivers/media/platform/omap3isp/ispvideo.c
+> > @@ -210,8 +210,7 @@ isp_video_remote_subdev(struct isp_video *video, u32
+> > *pad)
+> > 
+> >  	remote = media_entity_remote_pad(&video->pad);
+> > 
+> > -	if (remote == NULL ||
+> > -	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +	if (!remote || !is_media_entity_v4l2_subdev(remote->entity))
+> >  		return NULL;
+> > 
+> >  	if (pad)
+> > @@ -243,7 +242,7 @@ static int isp_video_get_graph_data(struct isp_video
+> > *video, if (entity == &video->video.entity)
+> >  			continue;
+> > 
+> > -		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
+> > +		if (!is_media_entity_v4l2_io(entity))
+> >  			continue;
+> > 
+> >  		__video = to_isp_video(media_entity_to_video_device(entity));
+> > @@ -917,7 +916,7 @@ static int isp_video_check_external_subdevs(struct
+> > isp_video *video, return -EINVAL;
+> >  	}
+> > 
+> > -	if (media_entity_type(source) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +	if (!is_media_entity_v4l2_subdev(source))
+> >  		return 0;
+> > 
+> >  	pipe->external = media_entity_to_v4l2_subdev(source);
+> > diff --git a/drivers/media/platform/s3c-camif/camif-capture.c
+> > b/drivers/media/platform/s3c-camif/camif-capture.c index
+> > eae667eab1b9..fb5b016cc0a1 100644
+> > --- a/drivers/media/platform/s3c-camif/camif-capture.c
+> > +++ b/drivers/media/platform/s3c-camif/camif-capture.c
+> > @@ -837,7 +837,7 @@ static int camif_pipeline_validate(struct camif_dev
+> > *camif)
+> > 
+> >  	/* Retrieve format at the sensor subdev source pad */
+> >  	pad = media_entity_remote_pad(&camif->pads[0]);
+> > -	if (!pad || media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +	if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  		return -EPIPE;
+> > 
+> >  	src_fmt.pad = pad->index;
+> > diff --git a/drivers/media/platform/vsp1/vsp1_video.c
+> > b/drivers/media/platform/vsp1/vsp1_video.c index 1f94c1a54e00..f74158224b93
+> > 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_video.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> > @@ -160,8 +160,7 @@ vsp1_video_remote_subdev(struct media_pad *local, u32
+> > *pad) struct media_pad *remote;
+> > 
+> >  	remote = media_entity_remote_pad(local);
+> > -	if (remote == NULL ||
+> > -	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +	if (!remote || !is_media_entity_v4l2_subdev(remote->entity))
+> >  		return NULL;
+> > 
+> >  	if (pad)
+> > @@ -326,7 +325,7 @@ static int vsp1_pipeline_validate_branch(struct
+> > vsp1_pipeline *pipe, return -EPIPE;
+> > 
+> >  		/* We've reached a video node, that shouldn't have happened. */
+> > -		if (media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!is_media_entity_v4l2_subdev(pad->entity))
+> >  			return -EPIPE;
+> > 
+> >  		entity = to_vsp1_entity(media_entity_to_v4l2_subdev(pad->entity));
+> > @@ -423,7 +422,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline
+> > *pipe, struct vsp1_rwpf *rwpf;
+> >  		struct vsp1_entity *e;
+> > 
+> > -		if (media_entity_type(entity) != MEDIA_ENT_T_V4L2_SUBDEV) {
+> > +		if (is_media_entity_v4l2_io(entity)) {
+> >  			pipe->num_video++;
+> >  			continue;
+> >  		}
+> > @@ -692,7 +691,7 @@ void vsp1_pipeline_propagate_alpha(struct vsp1_pipeline
+> > *pipe, pad = media_entity_remote_pad(&input->pads[RWPF_PAD_SOURCE]);
+> > 
+> >  	while (pad) {
+> > -		if (media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		entity = to_vsp1_entity(media_entity_to_v4l2_subdev(pad->entity));
+> > diff --git a/drivers/media/platform/xilinx/xilinx-dma.c
+> > b/drivers/media/platform/xilinx/xilinx-dma.c index
+> > 88cd789cdaf7..8e14841bf445 100644
+> > --- a/drivers/media/platform/xilinx/xilinx-dma.c
+> > +++ b/drivers/media/platform/xilinx/xilinx-dma.c
+> > @@ -49,8 +49,7 @@ xvip_dma_remote_subdev(struct media_pad *local, u32 *pad)
+> >  	struct media_pad *remote;
+> > 
+> >  	remote = media_entity_remote_pad(local);
+> > -	if (remote == NULL ||
+> > -	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +	if (!remote || !is_media_entity_v4l2_subdev(remote->entity))
+> >  		return NULL;
+> > 
+> >  	if (pad)
+> > @@ -113,8 +112,7 @@ static int xvip_pipeline_start_stop(struct xvip_pipeline
+> > *pipe, bool start) break;
+> > 
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		entity = pad->entity;
+> > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c
+> > b/drivers/media/v4l2-core/v4l2-subdev.c index e6e1115d8215..60da43772de9
+> > 100644
+> > --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> > @@ -526,7 +526,7 @@ static int
+> >  v4l2_subdev_link_validate_get_format(struct media_pad *pad,
+> >  				     struct v4l2_subdev_format *fmt)
+> >  {
+> > -	if (media_entity_type(pad->entity) == MEDIA_ENT_T_V4L2_SUBDEV) {
+> > +	if (is_media_entity_v4l2_subdev(pad->entity)) {
+> >  		struct v4l2_subdev *sd =
+> >  			media_entity_to_v4l2_subdev(pad->entity);
+> > 
+> > diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c
+> > b/drivers/staging/media/davinci_vpfe/vpfe_video.c index
+> > 92573fa852a9..16763e0831f2 100644
+> > --- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
+> > +++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+> > @@ -148,7 +148,7 @@ static void vpfe_prepare_pipeline(struct
+> > vpfe_video_device *video) while ((entity =
+> > media_entity_graph_walk_next(&graph))) {
+> >  		if (entity == &video->video_dev.entity)
+> >  			continue;
+> > -		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
+> > +		if ((!is_media_entity_v4l2_io(remote->entity))
+> >  			continue;
+> >  		far_end = to_vpfe_video(media_entity_to_video_device(entity));
+> >  		if (far_end->type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > @@ -293,7 +293,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline
+> > *pipe) media_entity_graph_walk_start(&graph, entity);
+> >  	while ((entity = media_entity_graph_walk_next(&graph))) {
+> > 
+> > -		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
+> > +		if !is_media_entity_v4l2_subdev(entity))
+> 
+> With these two chunks fixed,
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> I'm wondering, however, why you replace some occurrences of == 
+> MEDIA_ENT_T_DEVNODE with !is_media_entity_v4l2_subdev and some other with 
+> is_media_entity_v4l2_io.
+
+For devices that don't have non-V4L2 media controller nodes, this would
+work, but if we ever add ALSA, DVB, IIO, etc to the media controller,
+then we may have troubles.
+
+That's why I opted to add a macro for checking for the V4L2 subdev.
+This is more future-proof, as other patches may be adding other
+non-V4L2 types of MC entities have the potential of breaking codes like
+the above.
+
+> 
+> >  			continue;
+> >  		subdev = media_entity_to_v4l2_subdev(entity);
+> >  		ret = v4l2_subdev_call(subdev, video, s_stream, 1);
+> > @@ -334,7 +334,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline
+> > *pipe)
+> > 
+> >  	while ((entity = media_entity_graph_walk_next(&graph))) {
+> > 
+> > -		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
+> > +		if (!is_media_entity_v4l2_subdev(entity))
+> >  			continue;
+> >  		subdev = media_entity_to_v4l2_subdev(entity);
+> >  		ret = v4l2_subdev_call(subdev, video, s_stream, 0);
+> > diff --git a/drivers/staging/media/omap4iss/iss.c
+> > b/drivers/staging/media/omap4iss/iss.c index 40591963b42b..44b88ff3ba83
+> > 100644
+> > --- a/drivers/staging/media/omap4iss/iss.c
+> > +++ b/drivers/staging/media/omap4iss/iss.c
+> > @@ -397,7 +397,7 @@ static int iss_pipeline_pm_use_count(struct media_entity
+> > *entity) media_entity_graph_walk_start(&graph, entity);
+> > 
+> >  	while ((entity = media_entity_graph_walk_next(&graph))) {
+> > -		if (media_entity_type(entity) == MEDIA_ENT_T_DEVNODE)
+> > +		if (is_media_entity_v4l2_io(entity))
+> >  			use += entity->use_count;
+> >  	}
+> > 
+> > @@ -419,7 +419,7 @@ static int iss_pipeline_pm_power_one(struct media_entity
+> > *entity, int change) {
+> >  	struct v4l2_subdev *subdev;
+> > 
+> > -	subdev = media_entity_type(entity) == MEDIA_ENT_T_V4L2_SUBDEV
+> > +	subdev = is_media_entity_v4l2_subdev(entity)
+> >  	       ? media_entity_to_v4l2_subdev(entity) : NULL;
+> > 
+> >  	if (entity->use_count == 0 && change > 0 && subdev != NULL) {
+> > @@ -461,7 +461,7 @@ static int iss_pipeline_pm_power(struct media_entity
+> > *entity, int change) media_entity_graph_walk_start(&graph, entity);
+> > 
+> >  	while (!ret && (entity = media_entity_graph_walk_next(&graph)))
+> > -		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
+> > +		if (is_media_entity_v4l2_subdev(entity))
+> >  			ret = iss_pipeline_pm_power_one(entity, change);
+> > 
+> >  	if (!ret)
+> > @@ -471,7 +471,7 @@ static int iss_pipeline_pm_power(struct media_entity
+> > *entity, int change)
+> > 
+> >  	while ((first = media_entity_graph_walk_next(&graph))
+> >  	       && first != entity)
+> > -		if (media_entity_type(first) != MEDIA_ENT_T_DEVNODE)
+> > +		if (is_media_entity_v4l2_subdev(first))
+> >  			iss_pipeline_pm_power_one(first, -change);
+> > 
+> >  	return ret;
+> > @@ -590,8 +590,7 @@ static int iss_pipeline_disable(struct iss_pipeline
+> > *pipe, break;
+> > 
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		entity = pad->entity;
+> > @@ -658,8 +657,7 @@ static int iss_pipeline_enable(struct iss_pipeline
+> > *pipe, break;
+> > 
+> >  		pad = media_entity_remote_pad(pad);
+> > -		if (pad == NULL ||
+> > -		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
+> >  			break;
+> > 
+> >  		entity = pad->entity;
+> > diff --git a/drivers/staging/media/omap4iss/iss_video.c
+> > b/drivers/staging/media/omap4iss/iss_video.c index
+> > 45a3f2d778fc..cbe5783735dc 100644
+> > --- a/drivers/staging/media/omap4iss/iss_video.c
+> > +++ b/drivers/staging/media/omap4iss/iss_video.c
+> > @@ -191,8 +191,7 @@ iss_video_remote_subdev(struct iss_video *video, u32
+> > *pad)
+> > 
+> >  	remote = media_entity_remote_pad(&video->pad);
+> > 
+> > -	if (remote == NULL ||
+> > -	    media_entity_type(remote->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+> > +	if (!remote || !is_media_entity_v4l2_subdev(remote->entity))
+> >  		return NULL;
+> > 
+> >  	if (pad)
+> > @@ -217,7 +216,7 @@ iss_video_far_end(struct iss_video *video)
+> >  		if (entity == &video->video.entity)
+> >  			continue;
+> > 
+> > -		if (media_entity_type(entity) != MEDIA_ENT_T_DEVNODE)
+> > +		if (!is_media_entity_v4l2_io(entity))
+> >  			continue;
+> > 
+> >  		far_end = to_iss_video(media_entity_to_video_device(entity));
+> 
