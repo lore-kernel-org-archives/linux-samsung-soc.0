@@ -1,36 +1,31 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 0/8] cpufreq: add generic cpufreq driver support for
- Exynos542x/5800 platforms
-Date: Tue, 8 Dec 2015 11:47:28 +0530
-Message-ID: <20151208061728.GU3294@ubuntu>
+Subject: Re: [PATCH v4 3/8] ARM: dts: Exynos5420: add CPU OPP properties
+Date: Tue, 8 Dec 2015 11:58:24 +0530
+Message-ID: <20151208062824.GV3294@ubuntu>
 References: <1449512300-17230-1-git-send-email-b.zolnierkie@samsung.com>
+ <1449512300-17230-4-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:33682 "EHLO
-	mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751475AbbLHGRc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Dec 2015 01:17:32 -0500
-Received: by pfnn128 with SMTP id n128so6895456pfn.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Dec 2015 22:17:32 -0800 (PST)
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1449512300-17230-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1449512300-17230-4-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sach>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 07-12-15, 19:18, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> This patch series adds generic cpufreq-dt driver support for
-> Exynos542x/5800 (using the new CPU clock type which allows it).
-> 
-> It has been tested on Exynos5422 based ODROID-XU3 Lite board.
+> +	cpu1_opp_table: opp_table1 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +		opp00@1300000000 {
 
-Excellent work Bartlomiej. Thanks a lot for adapting cpufreq-dt for
-this. Really appreciate it :)
+This should be just opp@1300000000, you don't need 00/01/02... anymore
+now. Same for the other patch as well..
+
+Fix that in other patches in this series and you also need to fix it
+for arch/arm/boot/dts/exynos4212.dtsi based on what I see in
+linux-next.
 
 -- 
 viresh
