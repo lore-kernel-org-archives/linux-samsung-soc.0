@@ -1,213 +1,99 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v10 05/17] dt-bindings: add document for analogix display
- port driver
-Date: Tue, 8 Dec 2015 09:01:31 -0600
-Message-ID: <20151208150131.GA8646@rob-hp-laptop>
+Subject: Re: [PATCH v10 08/17] dt-bindings: add document for rockchip variant
+ of analogix_dp
+Date: Tue, 8 Dec 2015 09:03:56 -0600
+Message-ID: <20151208150356.GA14750@rob-hp-laptop>
 References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
- <1449470347-31062-1-git-send-email-ykk@rock-chips.com>
+ <1449470374-31191-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:50529 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932383AbbLHPBm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Dec 2015 10:01:42 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1449470347-31062-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1449470374-31191-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Yakir Yang <ykk@rock-chips.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, ajaynumb@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 07, 2015 at 02:39:07PM +0800, Yakir Yang wrote:
-> Analogix dp driver is split from exynos dp driver, so we just
-> make an copy of exynos_dp.txt, and then simplify exynos_dp.txt
-> 
-> Beside update some exynos dtsi file with the latest change
-> according to the devicetree binding documents.
-> 
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-> ---
-> Changes in v10: None
-> Changes in v9: None
-> Changes in v8:
-> - Correct the right document path of display-timing.txt (Heiko)
-> - Correct the misspell of 'from' to 'frm'. (Heiko)
-> 
-> Changes in v7: None
-> Changes in v6: None
-> Changes in v5: None
-> Changes in v4:
-> - Split all DTS changes, and provide backward compatibility. Mark old
->   properties as deprecated but still support them. (Krzysztof)
-> - Update "analogix,hpd-gpio" to "hpd-gpios" prop name. (Rob)
-> - Deprecated some properties which could parsed from Edid/Mode/DPCD. (Thierry)
->     "analogix,color-space" & "analogix,color-depth"   &
->     "analogix,link-rate"   & "analogix,lane-count"    &
->     "analogix,ycbcr-coeff" & "analogix,dynamic-range" &
->     "vsync-active-high"    & "hsync-active-high"      & "interlaces"
-> 
-> Changes in v3:
-> - Add devicetree binding documents. (Heiko)
-> - Remove sync pol & colorimetry properies from the new analogix dp driver
->   devicetree binding. (Thierry)
-> - Update the exist exynos dtsi file with the latest DP DT properies.
-> 
-> Changes in v2: None
-> 
->  .../bindings/display/bridge/analogix_dp.txt        | 50 +++++++++++++++++
->  .../bindings/display/exynos/exynos_dp.txt          | 65 ++++++++--------------
->  2 files changed, 72 insertions(+), 43 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-> new file mode 100644
-> index 0000000..7659a7a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-> @@ -0,0 +1,50 @@
-> +Analogix Display Port bridge bindings
-> +
-> +Required properties for dp-controller:
-> +	-compatible:
-> +		platform specific such as:
-> +		 * "samsung,exynos5-dp"
-> +		 * "rockchip,rk3288-dp"
-> +	-reg:
-> +		physical base address of the controller and length
-> +		of memory mapped region.
-> +	-interrupts:
-> +		interrupt combiner values.
-> +	-clocks:
-> +		from common clock binding: handle to dp clock.
-> +	-clock-names:
-> +		from common clock binding: Shall be "dp".
-> +	-interrupt-parent:
-> +		phandle to Interrupt combiner node.
-> +	-phys:
-> +		from general PHY binding: the phandle for the PHY device.
-> +	-phy-names:
-> +		from general PHY binding: Should be "dp".
-> +
-> +Optional properties for dp-controller:
-> +	-hpd-gpios:
-> +		Hotplug detect GPIO.
-> +		Indicates which GPIO should be used for hotplug detection
-> +	-port@[X]: SoC specific port nodes with endpoint definitions as defined
-> +		in Documentation/devicetree/bindings/media/video-interfaces.txt,
-> +		please refer to the SoC specific binding document:
-> +		* Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-> +		* Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
-> +
-> +
-> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> +-------------------------------------------------------------------------------
-> +
-> +Example:
-> +
-> +	dp-controller {
-> +		compatible = "samsung,exynos5-dp";
-> +		reg = <0x145b0000 0x10000>;
-> +		interrupts = <10 3>;
-> +		interrupt-parent = <&combiner>;
-> +		clocks = <&clock 342>;
-> +		clock-names = "dp";
-> +
-> +		phys = <&dp_phy>;
-> +		phy-names = "dp";
-> +	};
-> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-> index 64693f2..9905081 100644
-> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-> @@ -31,45 +31,31 @@ Required properties for dp-controller:
->  		from general PHY binding: the phandle for the PHY device.
->  	-phy-names:
->  		from general PHY binding: Should be "dp".
-> -	-samsung,color-space:
-> -		input video data format.
-> -			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
-> -	-samsung,dynamic-range:
-> -		dynamic range for input video data.
-> -			VESA = 0, CEA = 1
-> -	-samsung,ycbcr-coeff:
-> -		YCbCr co-efficients for input video.
-> -			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
-> -	-samsung,color-depth:
-> -		number of bits per colour component.
-> -			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
-> -	-samsung,link-rate:
-> -		link rate supported by the panel.
-> -			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
-> -	-samsung,lane-count:
-> -		number of lanes supported by the panel.
-> -			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
-> -	- display-timings: timings for the connected panel as described by
-> -		Documentation/devicetree/bindings/display/display-timing.txt
->  
->  Optional properties for dp-controller:
-> -	-interlaced:
-> -		interlace scan mode.
-> -			Progressive if defined, Interlaced if not defined
-> -	-vsync-active-high:
-> -		VSYNC polarity configuration.
-> -			High if defined, Low if not defined
-> -	-hsync-active-high:
-> -		HSYNC polarity configuration.
-> -			High if defined, Low if not defined
-> -	-samsung,hpd-gpio:
-> -		Hotplug detect GPIO.
-> -			Indicates which GPIO should be used for hotplug
-> -			detection
-> -	-video interfaces: Device node can contain video interface port
-> -			    nodes according to [1].
-> +	- display-timings: timings for the connected panel as described by
-> +		Documentation/devicetree/bindings/display/panel/display-timing.txt
-> +
-> +For the below properties, please refer to Analogix DP binding document:
-> + * Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-> +	-phys (required)
-> +	-phy-names (required)
-> +	-hpd-gpios (optional)
-> +	-video interfaces (optional)
->  
-> -[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> +Deprecated properties for DisplayPort:
-> +-interlaced:            deprecated prop that can parsed from drm_display_mode.
-> +-vsync-active-high:     deprecated prop that can parsed from drm_display_mode.
-> +-hsync-active-high:     deprecated prop that can parsed from drm_display_mode.
-> +-samsung,ycbcr-coeff:   deprecated prop that can parsed from drm_display_mode.
-> +-samsung,dynamic-range: deprecated prop that can parsed from drm_display_mode.
-> +-samsung,color-space:   deprecated prop that can parsed from drm_display_info.
-> +-samsung,color-depth:   deprecated prop that can parsed from drm_display_info.
-> +-samsung,link-rate:     deprecated prop that can reading from monitor by dpcd method.
-> +-samsung,lane-count:    deprecated prop that can reading from monitor by dpcd method.
-> +-samsung,hpd-gpio:      deprecated name for hpd-gpios.
-> +
-> +-------------------------------------------------------------------------------
->  
->  Example:
->  
-> @@ -88,13 +74,6 @@ SOC specific portion:
->  
->  Board Specific portion:
->  	dp-controller {
-> -		samsung,color-space = <0>;
-> -		samsung,dynamic-range = <0>;
-> -		samsung,ycbcr-coeff = <0>;
-> -		samsung,color-depth = <1>;
-> -		samsung,link-rate = <0x0a>;
-> -		samsung,lane-count = <4>;
-> -
->  		display-timings {
->  			native-mode = <&lcd_timing>;
->  			lcd_timing: 1366x768 {
-> -- 
-> 1.9.1
-> 
-> 
+T24gTW9uLCBEZWMgMDcsIDIwMTUgYXQgMDI6Mzk6MzRQTSArMDgwMCwgWWFraXIgWWFuZyB3cm90
+ZToKPiBSb2NrY2hpcCBEUCBkcml2ZXIgaXMgYSBoZWxwZXIgZHJpdmVyIG9mIGFuYWxvZ2l4X2Rw
+IGNvZGVyIGRyaXZlciwKPiBzbyBtb3N0IG9mIHRoZSBEVCBwcm9wZXJ0eSBzaG91bGQgYmUgZGVz
+Y3JpcGVkIGluIGFuYWxvZ2l4X2RwIGRvY3VtZW50Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IFlha2ly
+IFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KPiBSZXZpZXdlZC1ieTogSGVpa28gU3R1ZWJuZXIg
+PGhlaWtvQHNudGVjaC5kZT4KCkkgYWxyZWFkeSBhY2tlZCB0aGUgcHJldmlvdXMgdjEwIHlvdSBz
+ZW50LgoKQWNrZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+Cgo+IC0tLQo+IENo
+YW5nZXMgaW4gdjEwOiBOb25lCj4gQ2hhbmdlcyBpbiB2OToKPiAtIERvY3VtZW50IG1vcmUgZGV0
+YWlscyBmb3IgJ3BvcnRzJyBwcm9wZXJ0eS4KPiAKPiBDaGFuZ2VzIGluIHY4Ogo+IC0gTW9kaWZ5
+IHRoZSBjb21taXQgc3ViamVjdCBuYW1lLiAoSGVpa28pCj4gCj4gQ2hhbmdlcyBpbiB2NzogTm9u
+ZQo+IENoYW5nZXMgaW4gdjY6IE5vbmUKPiBDaGFuZ2VzIGluIHY1Ogo+IC0gU3BsaXQgYmluZGlu
+ZyBkb2MncyBmcm9tIGRyaXZlciBjaGFuZ2VzLiAoUm9iKQo+IC0gQWRkIGVEUCBob3RwbHVnIHBp
+bmN0cmwgcHJvcGVydHkuIChIZWlrbykKPiAKPiBDaGFuZ2VzIGluIHY0OiBOb25lCj4gQ2hhbmdl
+cyBpbiB2MzogTm9uZQo+IENoYW5nZXMgaW4gdjI6IE5vbmUKPiAKPiAgLi4uL2Rpc3BsYXkvcm9j
+a2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAudHh0ICAgICAgfCA5MSArKysrKysrKysrKysrKysr
+KysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCA5MSBpbnNlcnRpb25zKCspCj4gIGNyZWF0ZSBtb2Rl
+IDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hp
+cC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKPiAKPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2No
+aXAudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2No
+aXAvYW5hbG9naXhfZHAtcm9ja2NoaXAudHh0Cj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiBpbmRl
+eCAwMDAwMDAwLi5kYWU4NmM0Cj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlw
+LnR4dAo+IEBAIC0wLDAgKzEsOTEgQEAKPiArUm9ja2NoaXAgUkszMjg4IHNwZWNpZmljIGV4dGVu
+c2lvbnMgdG8gdGhlIEFuYWxvZ2l4IERpc3BsYXkgUG9ydAo+ICs9PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PQo+ICsKPiArUmVxdWlyZWQgcHJvcGVydGllczoKPiArLSBjb21wYXRpYmxl
+OiAicm9ja2NoaXAscmszMjg4LWVkcCI7Cj4gKwo+ICstIHJlZzogcGh5c2ljYWwgYmFzZSBhZGRy
+ZXNzIG9mIHRoZSBjb250cm9sbGVyIGFuZCBsZW5ndGgKPiArCj4gKy0gY2xvY2tzOiBmcm9tIGNv
+bW1vbiBjbG9jayBiaW5kaW5nOiBoYW5kbGUgdG8gZHAgY2xvY2suCj4gKwkgIG9mIG1lbW9yeSBt
+YXBwZWQgcmVnaW9uLgo+ICsKPiArLSBjbG9jay1uYW1lczogZnJvbSBjb21tb24gY2xvY2sgYmlu
+ZGluZzoKPiArCSAgICAgICBSZXF1aXJlZCBlbGVtZW50czogImRwIiAicGNsayIKPiArCj4gKy0g
+cmVzZXRzOiBNdXN0IGNvbnRhaW4gYW4gZW50cnkgZm9yIGVhY2ggZW50cnkgaW4gcmVzZXQtbmFt
+ZXMuCj4gKwkgIFNlZSAuLi9yZXNldC9yZXNldC50eHQgZm9yIGRldGFpbHMuCj4gKwo+ICstIHBp
+bmN0cmwtbmFtZXM6IE5hbWVzIGNvcnJlc3BvbmRpbmcgdG8gdGhlIGNoaXAgaG90cGx1ZyBwaW5j
+dHJsIHN0YXRlcy4KPiArLSBwaW5jdHJsLTA6IHBpbi1jb250cm9sIG1vZGUuIHNob3VsZCBiZSA8
+JmVkcF9ocGQ+Cj4gKwo+ICstIHJlc2V0LW5hbWVzOiBNdXN0IGluY2x1ZGUgdGhlIG5hbWUgImRw
+Igo+ICsKPiArLSByb2NrY2hpcCxncmY6IHRoaXMgc29jIHNob3VsZCBzZXQgR1JGIHJlZ3MsIHNv
+IG5lZWQgZ2V0IGdyZiBoZXJlLgo+ICsKPiArLSBwb3J0czogdGhlcmUgYXJlIDIgcG9ydCBub2Rl
+cyB3aXRoIGVuZHBvaW50IGRlZmluaXRpb25zIGFzIGRlZmluZWQgaW4KPiArICBEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8taW50ZXJmYWNlcy50eHQuCj4gKyAg
+ICBQb3J0IDA6IGNvbnRhaW5lZCAyIGVuZHBvaW50cywgY29ubmVjdGluZyB0byB0aGUgb3VwdXQg
+b2Ygdm9wLgo+ICsgICAgUG9ydCAxOiBjb250YWluZWQgMSBlbmRwb2ludCwgY29ubmVjdGluZyB0
+byB0aGUgaW5wdXQgb2YgcGFuZWwuCj4gKwo+ICtGb3IgdGhlIGJlbG93IHByb3BlcnRpZXMsIHBs
+ZWFzZSByZWZlciB0byBBbmFsb2dpeCBEUCBiaW5kaW5nIGRvY3VtZW50Ogo+ICsgKiBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC50eHQKPiAr
+LSBwaHlzIChyZXF1aXJlZCkKPiArLSBwaHktbmFtZXMgKHJlcXVpcmVkKQo+ICstIGhwZC1ncGlv
+cyAob3B0aW9uYWwpCj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiArCj4gK0V4YW1wbGU6Cj4g
+KwlkcC1jb250cm9sbGVyOiBkcEBmZjk3MDAwMCB7Cj4gKwkJY29tcGF0aWJsZSA9ICJyb2NrY2hp
+cCxyazMyODgtZHAiOwo+ICsJCXJlZyA9IDwweGZmOTcwMDAwIDB4NDAwMD47Cj4gKwkJaW50ZXJy
+dXB0cyA9IDxHSUNfU1BJIDk4IElSUV9UWVBFX0xFVkVMX0hJR0g+Owo+ICsJCWNsb2NrcyA9IDwm
+Y3J1IFNDTEtfRURQPiwgPCZjcnUgUENMS19FRFBfQ1RSTD47Cj4gKwkJY2xvY2stbmFtZXMgPSAi
+ZHAiLCAicGNsayI7Cj4gKwkJcGh5cyA9IDwmZHBfcGh5PjsKPiArCQlwaHktbmFtZXMgPSAiZHAi
+Owo+ICsKPiArCQlyb2NrY2hpcCxncmYgPSA8JmdyZj47Cj4gKwkJcmVzZXRzID0gPCZjcnUgMTEx
+PjsKPiArCQlyZXNldC1uYW1lcyA9ICJkcCI7Cj4gKwo+ICsJCXBpbmN0cmwtbmFtZXMgPSAiZGVm
+YXVsdCI7Cj4gKwkJcGluY3RybC0wID0gPCZlZHBfaHBkPjsKPiArCj4gKwkJc3RhdHVzID0gImRp
+c2FibGVkIjsKPiArCj4gKwkJcG9ydHMgewo+ICsJCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKPiAr
+CQkJI3NpemUtY2VsbHMgPSA8MD47Cj4gKwkJCWVkcF9pbjogcG9ydEAwIHsKPiArCQkJCXJlZyA9
+IDwwPjsKPiArCQkJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICsJCQkJI3NpemUtY2VsbHMgPSA8
+MD47Cj4gKwkJCQllZHBfaW5fdm9wYjogZW5kcG9pbnRAMCB7Cj4gKwkJCQkJcmVnID0gPDA+Owo+
+ICsJCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmdm9wYl9vdXRfZWRwPjsKPiArCQkJCX07Cj4gKwkJ
+CQllZHBfaW5fdm9wbDogZW5kcG9pbnRAMSB7Cj4gKwkJCQkJcmVnID0gPDE+Owo+ICsJCQkJCXJl
+bW90ZS1lbmRwb2ludCA9IDwmdm9wbF9vdXRfZWRwPjsKPiArCQkJCX07Cj4gKwkJCX07Cj4gKwo+
+ICsJCQllZHBfb3V0OiBwb3J0QDEgewo+ICsJCQkJcmVnID0gPDE+Owo+ICsJCQkJI2FkZHJlc3Mt
+Y2VsbHMgPSA8MT47Cj4gKwkJCQkjc2l6ZS1jZWxscyA9IDwwPjsKPiArCQkJCWVkcF9vdXRfcGFu
+ZWw6IGVuZHBvaW50IHsKPiArCQkJCQlyZWcgPSA8MD47Cj4gKwkJCQkJcmVtb3RlLWVuZHBvaW50
+ID0gPCZwYW5lbF9pbl9lZHA+Cj4gKwkJCQl9Owo+ICsJCQl9Owo+ICsJCX07Cj4gKwl9Owo+ICsK
+PiArCXBpbmN0cmwgewo+ICsJCWVkcCB7Cj4gKwkJCWVkcF9ocGQ6IGVkcC1ocGQgewo+ICsJCQkJ
+cm9ja2NoaXAscGlucyA9IDw3IDExIFJLX0ZVTkNfMiAmcGNmZ19wdWxsX25vbmU+Owo+ICsJCQl9
+Owo+ICsJCX07Cj4gKwl9Owo+IC0tIAo+IDEuOS4xCj4gCj4gCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
