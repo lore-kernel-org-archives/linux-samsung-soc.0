@@ -1,45 +1,56 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH] [media] exynos4-is: fix a format string bug
-Date: Tue,  8 Dec 2015 15:15:54 +0100
-Message-ID: <1449584155-20644-1-git-send-email-linux@rasmusvillemoes.dk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] media: s5p-jpeg: Adjust buffer size for Exynos 4412
+Date: Tue, 08 Dec 2015 15:39:08 +0100
+Message-ID: <1449585548-17113-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:35571 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964805AbbLHOQH (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:19710 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756617AbbLHOjX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Dec 2015 09:16:07 -0500
-Received: by lbpu9 with SMTP id u9so11712449lbp.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Dec 2015 06:16:05 -0800 (PST)
+	Tue, 8 Dec 2015 09:39:23 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-Ironically, 7d4020c3c400 ("[media] exynos4-is: fix some warnings when
-compiling on arm64") fixed some format string bugs but introduced a
-new one. buf_index is a simple int, so it should be printed with %d,
-not %pad (which is correctly used for dma_addr_t).
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-Fixes: 7d4020c3c400 ("[media] exynos4-is: fix some warnings when compiling on arm64")
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Eliminate iommu fault during encoding by adjusting image size
+used for buffer size computation and ensuring that the buffer is not
+overrun.
+
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/s5p-jpeg/jpeg-core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index 6e6648446f00..337d49b4d103 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -221,8 +221,8 @@ static void isp_video_capture_buffer_queue(struct vb2_buffer *vb)
- 							ivb->dma_addr[i];
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 4a608cb..49556e2 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -1548,8 +1548,10 @@ static int exynos4_jpeg_get_output_buffer_size(struct s5p_jpeg_ctx *ctx,
+ 	struct v4l2_pix_format *pix = &f->fmt.pix;
+ 	u32 pix_fmt = f->fmt.pix.pixelformat;
+ 	int w = pix->width, h = pix->height, wh_align;
++	int padding = 0;
  
- 			isp_dbg(2, &video->ve.vdev,
--				"dma_buf %pad (%d/%d/%d) addr: %pad\n",
--				&buf_index, ivb->index, i, vb->index,
-+				"dma_buf %d (%d/%d/%d) addr: %pad\n",
-+				buf_index, ivb->index, i, vb->index,
- 				&ivb->dma_addr[i]);
- 		}
+ 	if (pix_fmt == V4L2_PIX_FMT_RGB32 ||
++	    pix_fmt == V4L2_PIX_FMT_RGB565 ||
+ 	    pix_fmt == V4L2_PIX_FMT_NV24 ||
+ 	    pix_fmt == V4L2_PIX_FMT_NV42 ||
+ 	    pix_fmt == V4L2_PIX_FMT_NV12 ||
+@@ -1564,7 +1566,10 @@ static int exynos4_jpeg_get_output_buffer_size(struct s5p_jpeg_ctx *ctx,
+ 			       &h, S5P_JPEG_MIN_HEIGHT,
+ 			       S5P_JPEG_MAX_HEIGHT, wh_align);
  
+-	return w * h * fmt_depth >> 3;
++	if (ctx->jpeg->variant->version == SJPEG_EXYNOS4)
++		padding = PAGE_SIZE;
++
++	return (w * h * fmt_depth >> 3) + padding;
+ }
+ 
+ static int exynos3250_jpeg_try_downscale(struct s5p_jpeg_ctx *ctx,
 -- 
-2.6.1
+1.9.2
