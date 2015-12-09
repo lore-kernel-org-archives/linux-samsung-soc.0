@@ -1,103 +1,111 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v10 08/17] dt-bindings: add document for rockchip variant
- of analogix_dp
-Date: Wed, 9 Dec 2015 09:05:46 +0800
-Message-ID: <56677E6A.5020705@rock-chips.com>
+Subject: Re: [PATCH v10 10/17] dt-bindings: add document for rockchip dp phy
+Date: Wed, 9 Dec 2015 09:16:50 +0800
+Message-ID: <56678102.7000502@rock-chips.com>
 References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
- <1449470374-31191-1-git-send-email-ykk@rock-chips.com>
- <20151208150356.GA14750@rob-hp-laptop>
+ <1449470390-31285-1-git-send-email-ykk@rock-chips.com>
+ <20151208150632.GA16308@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20151208150356.GA14750@rob-hp-laptop>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.131]:58520 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751960AbbLIBRC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Dec 2015 20:17:02 -0500
+In-Reply-To: <20151208150632.GA16308@rob-hp-laptop>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, javier@osg.samsung.com, emil.l.velikov@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 
-SGkgUm9iLAoKT24gMTIvMDgvMjAxNSAxMTowMyBQTSwgUm9iIEhlcnJpbmcgd3JvdGU6Cj4gT24g
-TW9uLCBEZWMgMDcsIDIwMTUgYXQgMDI6Mzk6MzRQTSArMDgwMCwgWWFraXIgWWFuZyB3cm90ZToK
-Pj4gUm9ja2NoaXAgRFAgZHJpdmVyIGlzIGEgaGVscGVyIGRyaXZlciBvZiBhbmFsb2dpeF9kcCBj
-b2RlciBkcml2ZXIsCj4+IHNvIG1vc3Qgb2YgdGhlIERUIHByb3BlcnR5IHNob3VsZCBiZSBkZXNj
-cmlwZWQgaW4gYW5hbG9naXhfZHAgZG9jdW1lbnQuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IFlha2ly
-IFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KPj4gUmV2aWV3ZWQtYnk6IEhlaWtvIFN0dWVibmVy
-IDxoZWlrb0BzbnRlY2guZGU+Cj4gSSBhbHJlYWR5IGFja2VkIHRoZSBwcmV2aW91cyB2MTAgeW91
-IHNlbnQuCj4KPiBBY2tlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KCkFoLCBJ
-IHJlbWVtYmVyIGl0LCBzb3JyeSBhYm91dCB0aGUgbWlzdGFrZW4gOi1ECgpUaGFua3MKLSBZYWtp
-cgoKPgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2MTA6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2OToKPj4g
-LSBEb2N1bWVudCBtb3JlIGRldGFpbHMgZm9yICdwb3J0cycgcHJvcGVydHkuCj4+Cj4+IENoYW5n
-ZXMgaW4gdjg6Cj4+IC0gTW9kaWZ5IHRoZSBjb21taXQgc3ViamVjdCBuYW1lLiAoSGVpa28pCj4+
-Cj4+IENoYW5nZXMgaW4gdjc6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2NjogTm9uZQo+PiBDaGFuZ2Vz
-IGluIHY1Ogo+PiAtIFNwbGl0IGJpbmRpbmcgZG9jJ3MgZnJvbSBkcml2ZXIgY2hhbmdlcy4gKFJv
-YikKPj4gLSBBZGQgZURQIGhvdHBsdWcgcGluY3RybCBwcm9wZXJ0eS4gKEhlaWtvKQo+Pgo+PiBD
-aGFuZ2VzIGluIHY0OiBOb25lCj4+IENoYW5nZXMgaW4gdjM6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2
-MjogTm9uZQo+Pgo+PiAgIC4uLi9kaXNwbGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlw
-LnR4dCAgICAgIHwgOTEgKysrKysrKysrKysrKysrKysrKysrKwo+PiAgIDEgZmlsZSBjaGFuZ2Vk
-LCA5MSBpbnNlcnRpb25zKCspCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlw
-LnR4dAo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAudHh0IGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2No
-aXAudHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAuLmRhZTg2YzQK
-Pj4gLS0tIC9kZXYvbnVsbAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKPj4gQEAgLTAsMCAr
-MSw5MSBAQAo+PiArUm9ja2NoaXAgUkszMjg4IHNwZWNpZmljIGV4dGVuc2lvbnMgdG8gdGhlIEFu
-YWxvZ2l4IERpc3BsYXkgUG9ydAo+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0K
-Pj4gKwo+PiArUmVxdWlyZWQgcHJvcGVydGllczoKPj4gKy0gY29tcGF0aWJsZTogInJvY2tjaGlw
-LHJrMzI4OC1lZHAiOwo+PiArCj4+ICstIHJlZzogcGh5c2ljYWwgYmFzZSBhZGRyZXNzIG9mIHRo
-ZSBjb250cm9sbGVyIGFuZCBsZW5ndGgKPj4gKwo+PiArLSBjbG9ja3M6IGZyb20gY29tbW9uIGNs
-b2NrIGJpbmRpbmc6IGhhbmRsZSB0byBkcCBjbG9jay4KPj4gKwkgIG9mIG1lbW9yeSBtYXBwZWQg
-cmVnaW9uLgo+PiArCj4+ICstIGNsb2NrLW5hbWVzOiBmcm9tIGNvbW1vbiBjbG9jayBiaW5kaW5n
-Ogo+PiArCSAgICAgICBSZXF1aXJlZCBlbGVtZW50czogImRwIiAicGNsayIKPj4gKwo+PiArLSBy
-ZXNldHM6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRyeSBpbiByZXNldC1uYW1l
-cy4KPj4gKwkgIFNlZSAuLi9yZXNldC9yZXNldC50eHQgZm9yIGRldGFpbHMuCj4+ICsKPj4gKy0g
-cGluY3RybC1uYW1lczogTmFtZXMgY29ycmVzcG9uZGluZyB0byB0aGUgY2hpcCBob3RwbHVnIHBp
-bmN0cmwgc3RhdGVzLgo+PiArLSBwaW5jdHJsLTA6IHBpbi1jb250cm9sIG1vZGUuIHNob3VsZCBi
-ZSA8JmVkcF9ocGQ+Cj4+ICsKPj4gKy0gcmVzZXQtbmFtZXM6IE11c3QgaW5jbHVkZSB0aGUgbmFt
-ZSAiZHAiCj4+ICsKPj4gKy0gcm9ja2NoaXAsZ3JmOiB0aGlzIHNvYyBzaG91bGQgc2V0IEdSRiBy
-ZWdzLCBzbyBuZWVkIGdldCBncmYgaGVyZS4KPj4gKwo+PiArLSBwb3J0czogdGhlcmUgYXJlIDIg
-cG9ydCBub2RlcyB3aXRoIGVuZHBvaW50IGRlZmluaXRpb25zIGFzIGRlZmluZWQgaW4KPj4gKyAg
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMu
-dHh0Lgo+PiArICAgIFBvcnQgMDogY29udGFpbmVkIDIgZW5kcG9pbnRzLCBjb25uZWN0aW5nIHRv
-IHRoZSBvdXB1dCBvZiB2b3AuCj4+ICsgICAgUG9ydCAxOiBjb250YWluZWQgMSBlbmRwb2ludCwg
-Y29ubmVjdGluZyB0byB0aGUgaW5wdXQgb2YgcGFuZWwuCj4+ICsKPj4gK0ZvciB0aGUgYmVsb3cg
-cHJvcGVydGllcywgcGxlYXNlIHJlZmVyIHRvIEFuYWxvZ2l4IERQIGJpbmRpbmcgZG9jdW1lbnQ6
-Cj4+ICsgKiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZHJtL2JyaWRnZS9hbmFs
-b2dpeF9kcC50eHQKPj4gKy0gcGh5cyAocmVxdWlyZWQpCj4+ICstIHBoeS1uYW1lcyAocmVxdWly
-ZWQpCj4+ICstIGhwZC1ncGlvcyAob3B0aW9uYWwpCj4+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-Cj4+ICsKPj4gK0V4YW1wbGU6Cj4+ICsJZHAtY29udHJvbGxlcjogZHBAZmY5NzAwMDAgewo+PiAr
-CQljb21wYXRpYmxlID0gInJvY2tjaGlwLHJrMzI4OC1kcCI7Cj4+ICsJCXJlZyA9IDwweGZmOTcw
-MDAwIDB4NDAwMD47Cj4+ICsJCWludGVycnVwdHMgPSA8R0lDX1NQSSA5OCBJUlFfVFlQRV9MRVZF
-TF9ISUdIPjsKPj4gKwkJY2xvY2tzID0gPCZjcnUgU0NMS19FRFA+LCA8JmNydSBQQ0xLX0VEUF9D
-VFJMPjsKPj4gKwkJY2xvY2stbmFtZXMgPSAiZHAiLCAicGNsayI7Cj4+ICsJCXBoeXMgPSA8JmRw
-X3BoeT47Cj4+ICsJCXBoeS1uYW1lcyA9ICJkcCI7Cj4+ICsKPj4gKwkJcm9ja2NoaXAsZ3JmID0g
-PCZncmY+Owo+PiArCQlyZXNldHMgPSA8JmNydSAxMTE+Owo+PiArCQlyZXNldC1uYW1lcyA9ICJk
-cCI7Cj4+ICsKPj4gKwkJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKPj4gKwkJcGluY3RybC0w
-ID0gPCZlZHBfaHBkPjsKPj4gKwo+PiArCQlzdGF0dXMgPSAiZGlzYWJsZWQiOwo+PiArCj4+ICsJ
-CXBvcnRzIHsKPj4gKwkJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+PiArCQkJI3NpemUtY2VsbHMg
-PSA8MD47Cj4+ICsJCQllZHBfaW46IHBvcnRAMCB7Cj4+ICsJCQkJcmVnID0gPDA+Owo+PiArCQkJ
-CSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+PiArCQkJCSNzaXplLWNlbGxzID0gPDA+Owo+PiArCQkJ
-CWVkcF9pbl92b3BiOiBlbmRwb2ludEAwIHsKPj4gKwkJCQkJcmVnID0gPDA+Owo+PiArCQkJCQly
-ZW1vdGUtZW5kcG9pbnQgPSA8JnZvcGJfb3V0X2VkcD47Cj4+ICsJCQkJfTsKPj4gKwkJCQllZHBf
-aW5fdm9wbDogZW5kcG9pbnRAMSB7Cj4+ICsJCQkJCXJlZyA9IDwxPjsKPj4gKwkJCQkJcmVtb3Rl
-LWVuZHBvaW50ID0gPCZ2b3BsX291dF9lZHA+Owo+PiArCQkJCX07Cj4+ICsJCQl9Owo+PiArCj4+
-ICsJCQllZHBfb3V0OiBwb3J0QDEgewo+PiArCQkJCXJlZyA9IDwxPjsKPj4gKwkJCQkjYWRkcmVz
-cy1jZWxscyA9IDwxPjsKPj4gKwkJCQkjc2l6ZS1jZWxscyA9IDwwPjsKPj4gKwkJCQllZHBfb3V0
-X3BhbmVsOiBlbmRwb2ludCB7Cj4+ICsJCQkJCXJlZyA9IDwwPjsKPj4gKwkJCQkJcmVtb3RlLWVu
-ZHBvaW50ID0gPCZwYW5lbF9pbl9lZHA+Cj4+ICsJCQkJfTsKPj4gKwkJCX07Cj4+ICsJCX07Cj4+
-ICsJfTsKPj4gKwo+PiArCXBpbmN0cmwgewo+PiArCQllZHAgewo+PiArCQkJZWRwX2hwZDogZWRw
-LWhwZCB7Cj4+ICsJCQkJcm9ja2NoaXAscGlucyA9IDw3IDExIFJLX0ZVTkNfMiAmcGNmZ19wdWxs
-X25vbmU+Owo+PiArCQkJfTsKPj4gKwkJfTsKPj4gKwl9Owo+PiAtLSAKPj4gMS45LjEKPj4KPj4K
-Pgo+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Rob
+
+On 12/08/2015 11:06 PM, Rob Herring wrote:
+> On Mon, Dec 07, 2015 at 02:39:50PM +0800, Yakir Yang wrote:
+>> Add dt binding documentation for rockchip display port PHY.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> One possible typo below, otherwise:
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+
+Thanks, it's a typo :)
+
+>> ---
+>> Changes in v10: None
+>> Changes in v9: None
+>> Changes in v8:
+>> - Remove the specific address in the example node name. (Heiko)
+>>
+>> Changes in v7:
+>> - Simplify the commit message. (Kishon)
+>>
+>> Changes in v6: None
+>> Changes in v5:
+>> - Split binding doc's from driver changes. (Rob)
+>> - Update the rockchip,grf explain in document, and correct the clock required
+>>    elemets in document. (Rob & Heiko)
+>>
+>> Changes in v4: None
+>> Changes in v3: None
+>> Changes in v2: None
+>>
+>>   .../devicetree/bindings/phy/rockchip-dp-phy.txt    | 22 ++++++++++++++++++++++
+>>   1 file changed, 22 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+>> new file mode 100644
+>> index 0000000..00902cb
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt
+>> @@ -0,0 +1,22 @@
+>> +Rockchip Soc Seroes Display Port PHY
+>                     ^
+> Is this supposed to be SerDes?
+
+Hmmm... it shouldn't be SerDes, i guess i may want 'series' which copy 
+from samsung-phy.txt.
+
+Thanks for catch that, for now i think it should be "Rockchip specific 
+extensions to the Analogix Display Port PHY". I would send the v10.1 to 
+fix this typo :)
+
+Thanks,
+- Yakir
+
+>
+>> +------------------------------------
+>> +
+>> +Required properties:
+>> +- compatible : should be one of the following supported values:
+>> +	 - "rockchip.rk3288-dp-phy"
+>> +- clocks: from common clock binding: handle to dp clock.
+>> +	of memory mapped region.
+>> +- clock-names: from common clock binding:
+>> +	Required elements: "24m"
+>> +- rockchip,grf: phandle to the syscon managing the "general register files"
+>> +- #phy-cells : from the generic PHY bindings, must be 0;
+>> +
+>> +Example:
+>> +
+>> +edp_phy: edp-phy {
+>> +	compatible = "rockchip,rk3288-dp-phy";
+>> +	rockchip,grf = <&grf>;
+>> +	clocks = <&cru SCLK_EDP_24M>;
+>> +	clock-names = "24m";
+>> +	#phy-cells = <0>;
+>> +};
+>> -- 
+>> 1.9.1
+>>
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>
