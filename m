@@ -1,59 +1,194 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v10.1 10/17] dt-bindings: add document for rockchip dp phy
-Date: Wed,  9 Dec 2015 10:07:42 +0800
-Message-ID: <1449626862-15494-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v10.1 14/17] drm: bridge: analogix/dp: try force hpd after plug in lookup failed
+Date: Wed,  9 Dec 2015 10:10:39 +0800
+Message-ID: <1449627039-15689-1-git-send-email-ykk@rock-chips.com>
 References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:33841 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750797AbbLICMx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Dec 2015 21:12:53 -0500
 In-Reply-To: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, javier@osg.samsung.com, emil.l.velikov@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, ajaynumb@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-QWRkIGR0IGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3Igcm9ja2NoaXAgZGlzcGxheSBwb3J0IFBI
-WS4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KQWNrZWQt
-Ynk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+ClJldmlld2VkLWJ5OiBIZWlrbyBTdHVl
-Ym5lciA8aGVpa29Ac250ZWNoLmRlPgotLS0KQ2hhbmdlcyBpbiB2MTAuMToKLSBBZGQgdGhlIGFj
-ayBmcm9tIFJvYiBIZXJyaW5nCi0gQ29ycmVjdCB0aGUgdGl0bGUgb2YgdGhpcyByb2NrY2hpcCBk
-cCBwaHkgZG9jdW1lbnQoUm9iKQoKQ2hhbmdlcyBpbiB2OTogTm9uZQpDaGFuZ2VzIGluIHY4Ogot
-IFJlbW92ZSB0aGUgc3BlY2lmaWMgYWRkcmVzcyBpbiB0aGUgZXhhbXBsZSBub2RlIG5hbWUuIChI
-ZWlrbykKCkNoYW5nZXMgaW4gdjc6Ci0gU2ltcGxpZnkgdGhlIGNvbW1pdCBtZXNzYWdlLiAoS2lz
-aG9uKQoKQ2hhbmdlcyBpbiB2NjogTm9uZQpDaGFuZ2VzIGluIHY1OgotIFNwbGl0IGJpbmRpbmcg
-ZG9jJ3MgZnJvbSBkcml2ZXIgY2hhbmdlcy4gKFJvYikKLSBVcGRhdGUgdGhlIHJvY2tjaGlwLGdy
-ZiBleHBsYWluIGluIGRvY3VtZW50LCBhbmQgY29ycmVjdCB0aGUgY2xvY2sgcmVxdWlyZWQKICBl
-bGVtZXRzIGluIGRvY3VtZW50LiAoUm9iICYgSGVpa28pCgpDaGFuZ2VzIGluIHY0OiBOb25lCkNo
-YW5nZXMgaW4gdjM6IE5vbmUKQ2hhbmdlcyBpbiB2MjogTm9uZQoKIC4uLi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL3BoeS9yb2NrY2hpcC1kcC1waHkudHh0ICAgIHwgMjIgKysrKysrKysrKysrKysrKysr
-KysrKwogMSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3JvY2tjaGlwLWRwLXBoeS50
-eHQKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3Jv
-Y2tjaGlwLWRwLXBoeS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5
-L3JvY2tjaGlwLWRwLXBoeS50eHQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4u
-NTBjNGY5YgotLS0gL2Rldi9udWxsCisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9waHkvcm9ja2NoaXAtZHAtcGh5LnR4dApAQCAtMCwwICsxLDIyIEBACitSb2NrY2hpcCBz
-cGVjaWZpYyBleHRlbnNpb25zIHRvIHRoZSBBbmFsb2dpeCBEaXNwbGF5IFBvcnQgUEhZCistLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KKworUmVxdWlyZWQgcHJvcGVydGllczoK
-Ky0gY29tcGF0aWJsZSA6IHNob3VsZCBiZSBvbmUgb2YgdGhlIGZvbGxvd2luZyBzdXBwb3J0ZWQg
-dmFsdWVzOgorCSAtICJyb2NrY2hpcC5yazMyODgtZHAtcGh5IgorLSBjbG9ja3M6IGZyb20gY29t
-bW9uIGNsb2NrIGJpbmRpbmc6IGhhbmRsZSB0byBkcCBjbG9jay4KKwlvZiBtZW1vcnkgbWFwcGVk
-IHJlZ2lvbi4KKy0gY2xvY2stbmFtZXM6IGZyb20gY29tbW9uIGNsb2NrIGJpbmRpbmc6CisJUmVx
-dWlyZWQgZWxlbWVudHM6ICIyNG0iCistIHJvY2tjaGlwLGdyZjogcGhhbmRsZSB0byB0aGUgc3lz
-Y29uIG1hbmFnaW5nIHRoZSAiZ2VuZXJhbCByZWdpc3RlciBmaWxlcyIKKy0gI3BoeS1jZWxscyA6
-IGZyb20gdGhlIGdlbmVyaWMgUEhZIGJpbmRpbmdzLCBtdXN0IGJlIDA7CisKK0V4YW1wbGU6CisK
-K2VkcF9waHk6IGVkcC1waHkgeworCWNvbXBhdGlibGUgPSAicm9ja2NoaXAscmszMjg4LWRwLXBo
-eSI7CisJcm9ja2NoaXAsZ3JmID0gPCZncmY+OworCWNsb2NrcyA9IDwmY3J1IFNDTEtfRURQXzI0
-TT47CisJY2xvY2stbmFtZXMgPSAiMjRtIjsKKwkjcGh5LWNlbGxzID0gPDA+OworfTsKLS0gCjEu
-OS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Some edp screen do not have hpd signal, so we can't just return
+failed when hpd plug in detect failed.
+
+This is an hardware property, so we need add a devicetree property
+"analogix,need-force-hpd" to indicate this sutiation.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+Changes in v10.1:
+- Rename the "analogix,need-force-hpd" to common 'force-hpd' (Rob)
+
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3:
+- Add "analogix,need-force-hpd" to indicate whether driver need foce
+  hpd when hpd detect failed.
+
+Changes in v2: None
+
+ .../bindings/display/bridge/analogix_dp.txt        |  4 ++-
+ .../bindings/display/exynos/exynos_dp.txt          |  1 +
+ .../display/rockchip/analogix_dp-rockchip.txt      |  1 +
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 35 ++++++++++++++++++----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  2 ++
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  9 ++++++
+ 6 files changed, 46 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+index 7659a7a..4f2ba8c 100644
+--- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
++++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+@@ -22,6 +22,9 @@ Required properties for dp-controller:
+ 		from general PHY binding: Should be "dp".
+ 
+ Optional properties for dp-controller:
++	-force-hpd:
++		Indicate driver need force hpd when hpd detect failed, this
++		is used for some eDP screen which don't have hpd signal.
+ 	-hpd-gpios:
+ 		Hotplug detect GPIO.
+ 		Indicates which GPIO should be used for hotplug detection
+@@ -31,7 +34,6 @@ Optional properties for dp-controller:
+ 		* Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+ 		* Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
+ 
+-
+ [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+ -------------------------------------------------------------------------------
+ 
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+index 9905081..8800164 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
+@@ -41,6 +41,7 @@ For the below properties, please refer to Analogix DP binding document:
+ 	-phys (required)
+ 	-phy-names (required)
+ 	-hpd-gpios (optional)
++	-analogix,need-force-hpd (optional)
+ 	-video interfaces (optional)
+ 
+ Deprecated properties for DisplayPort:
+diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+index dae86c4..187a708e 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
++++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+@@ -32,6 +32,7 @@ For the below properties, please refer to Analogix DP binding document:
+ - phys (required)
+ - phy-names (required)
+ - hpd-gpios (optional)
++- force-hpd (optional)
+ -------------------------------------------------------------------------------
+ 
+ Example:
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index a11504b..00aee44 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -59,15 +59,38 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
+ {
+ 	int timeout_loop = 0;
+ 
+-	while (analogix_dp_get_plug_in_status(dp) != 0) {
++	while (timeout_loop < DP_TIMEOUT_LOOP_COUNT) {
++		if (analogix_dp_get_plug_in_status(dp) == 0)
++			return 0;
++
+ 		timeout_loop++;
+-		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+-			dev_err(dp->dev, "failed to get hpd plug status\n");
+-			return -ETIMEDOUT;
+-		}
+ 		usleep_range(10, 11);
+ 	}
+ 
++	/*
++	 * Some edp screen do not have hpd signal, so we can't just
++	 * return failed when hpd plug in detect failed, DT property
++	 * "need-force-hpd" would indicate whether driver need this.
++	 */
++	if (!dp->force_hpd)
++		return -ETIMEDOUT;
++
++	/*
++	 * The eDP TRM indicate that if HPD_STATUS(RO) is 0, AUX CH
++	 * will not work, so we need to give a force hpd action to
++	 * set HPD_STATUS manually.
++	 */
++	dev_dbg(dp->dev, "failed to get hpd plug status, try to force hpd\n");
++
++	analogix_dp_force_hpd(dp);
++
++	if (analogix_dp_get_plug_in_status(dp) != 0) {
++		dev_err(dp->dev, "failed to get hpd plug in status\n");
++		return -EINVAL;
++	}
++
++	dev_dbg(dp->dev, "success to get plug in status after force hpd\n");
++
+ 	return 0;
+ }
+ 
+@@ -1246,6 +1269,8 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+ 	if (IS_ERR(dp->reg_base))
+ 		return PTR_ERR(dp->reg_base);
+ 
++	dp->force_hpd = of_property_read_bool(dev->of_node, "force-hpd");
++
+ 	dp->hpd_gpio = of_get_named_gpio(dev->of_node, "hpd-gpios", 0);
+ 	if (!gpio_is_valid(dp->hpd_gpio))
+ 		dp->hpd_gpio = of_get_named_gpio(dev->of_node,
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+index e6f8243..07e147c 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -160,6 +160,7 @@ struct analogix_dp_device {
+ 	struct phy		*phy;
+ 	int			dpms_mode;
+ 	int			hpd_gpio;
++	bool                    force_hpd;
+ 
+ 	struct analogix_dp_plat_data *plat_data;
+ };
+@@ -180,6 +181,7 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 				       bool enable);
+ void analogix_dp_init_analog_func(struct analogix_dp_device *dp);
+ void analogix_dp_init_hpd(struct analogix_dp_device *dp);
++void analogix_dp_force_hpd(struct analogix_dp_device *dp);
+ enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp);
+ void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp);
+ void analogix_dp_reset_aux(struct analogix_dp_device *dp);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 21a3287..c7e2959 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -365,6 +365,15 @@ void analogix_dp_init_hpd(struct analogix_dp_device *dp)
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
+ }
+ 
++void analogix_dp_force_hpd(struct analogix_dp_device *dp)
++{
++	u32 reg;
++
++	reg = readl(dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
++	reg = (F_HPD | HPD_CTRL);
++	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
++}
++
+ enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp)
+ {
+ 	u32 reg;
+-- 
+1.9.1
