@@ -1,147 +1,59 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v10.1 08/17] dt-bindings: add document for rockchip variant of analogix_dp
-Date: Wed,  9 Dec 2015 10:07:10 +0800
-Message-ID: <1449626830-15385-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v10.1 10/17] dt-bindings: add document for rockchip dp phy
+Date: Wed,  9 Dec 2015 10:07:42 +0800
+Message-ID: <1449626862-15494-1-git-send-email-ykk@rock-chips.com>
 References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:34470 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750777AbbLICHX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Dec 2015 21:07:23 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, ajaynumb@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, javier@osg.samsung.com, emil.l.velikov@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Rockchip DP driver is a helper driver of analogix_dp coder driver,
-so most of the DT property should be descriped in analogix_dp document.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
----
-Changes in v10.1:
-- Add the ack from Rob Herring
-
-Changes in v10: None
-Changes in v9:
-- Document more details for 'ports' property.
-
-Changes in v8:
-- Modify the commit subject name. (Heiko)
-
-Changes in v7: None
-Changes in v6: None
-Changes in v5:
-- Split binding doc's from driver changes. (Rob)
-- Add eDP hotplug pinctrl property. (Heiko)
-
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
-
- .../display/rockchip/analogix_dp-rockchip.txt      | 91 ++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-
-diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-new file mode 100644
-index 0000000..dae86c4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-@@ -0,0 +1,91 @@
-+Rockchip RK3288 specific extensions to the Analogix Display Port
-+================================
-+
-+Required properties:
-+- compatible: "rockchip,rk3288-edp";
-+
-+- reg: physical base address of the controller and length
-+
-+- clocks: from common clock binding: handle to dp clock.
-+	  of memory mapped region.
-+
-+- clock-names: from common clock binding:
-+	       Required elements: "dp" "pclk"
-+
-+- resets: Must contain an entry for each entry in reset-names.
-+	  See ../reset/reset.txt for details.
-+
-+- pinctrl-names: Names corresponding to the chip hotplug pinctrl states.
-+- pinctrl-0: pin-control mode. should be <&edp_hpd>
-+
-+- reset-names: Must include the name "dp"
-+
-+- rockchip,grf: this soc should set GRF regs, so need get grf here.
-+
-+- ports: there are 2 port nodes with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt.
-+    Port 0: contained 2 endpoints, connecting to the ouput of vop.
-+    Port 1: contained 1 endpoint, connecting to the input of panel.
-+
-+For the below properties, please refer to Analogix DP binding document:
-+ * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-+- phys (required)
-+- phy-names (required)
-+- hpd-gpios (optional)
-+-------------------------------------------------------------------------------
-+
-+Example:
-+	dp-controller: dp@ff970000 {
-+		compatible = "rockchip,rk3288-dp";
-+		reg = <0xff970000 0x4000>;
-+		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
-+		clock-names = "dp", "pclk";
-+		phys = <&dp_phy>;
-+		phy-names = "dp";
-+
-+		rockchip,grf = <&grf>;
-+		resets = <&cru 111>;
-+		reset-names = "dp";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&edp_hpd>;
-+
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			edp_in: port@0 {
-+				reg = <0>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				edp_in_vopb: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&vopb_out_edp>;
-+				};
-+				edp_in_vopl: endpoint@1 {
-+					reg = <1>;
-+					remote-endpoint = <&vopl_out_edp>;
-+				};
-+			};
-+
-+			edp_out: port@1 {
-+				reg = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				edp_out_panel: endpoint {
-+					reg = <0>;
-+					remote-endpoint = <&panel_in_edp>
-+				};
-+			};
-+		};
-+	};
-+
-+	pinctrl {
-+		edp {
-+			edp_hpd: edp-hpd {
-+				rockchip,pins = <7 11 RK_FUNC_2 &pcfg_pull_none>;
-+			};
-+		};
-+	};
--- 
-1.9.1
+QWRkIGR0IGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3Igcm9ja2NoaXAgZGlzcGxheSBwb3J0IFBI
+WS4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KQWNrZWQt
+Ynk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+ClJldmlld2VkLWJ5OiBIZWlrbyBTdHVl
+Ym5lciA8aGVpa29Ac250ZWNoLmRlPgotLS0KQ2hhbmdlcyBpbiB2MTAuMToKLSBBZGQgdGhlIGFj
+ayBmcm9tIFJvYiBIZXJyaW5nCi0gQ29ycmVjdCB0aGUgdGl0bGUgb2YgdGhpcyByb2NrY2hpcCBk
+cCBwaHkgZG9jdW1lbnQoUm9iKQoKQ2hhbmdlcyBpbiB2OTogTm9uZQpDaGFuZ2VzIGluIHY4Ogot
+IFJlbW92ZSB0aGUgc3BlY2lmaWMgYWRkcmVzcyBpbiB0aGUgZXhhbXBsZSBub2RlIG5hbWUuIChI
+ZWlrbykKCkNoYW5nZXMgaW4gdjc6Ci0gU2ltcGxpZnkgdGhlIGNvbW1pdCBtZXNzYWdlLiAoS2lz
+aG9uKQoKQ2hhbmdlcyBpbiB2NjogTm9uZQpDaGFuZ2VzIGluIHY1OgotIFNwbGl0IGJpbmRpbmcg
+ZG9jJ3MgZnJvbSBkcml2ZXIgY2hhbmdlcy4gKFJvYikKLSBVcGRhdGUgdGhlIHJvY2tjaGlwLGdy
+ZiBleHBsYWluIGluIGRvY3VtZW50LCBhbmQgY29ycmVjdCB0aGUgY2xvY2sgcmVxdWlyZWQKICBl
+bGVtZXRzIGluIGRvY3VtZW50LiAoUm9iICYgSGVpa28pCgpDaGFuZ2VzIGluIHY0OiBOb25lCkNo
+YW5nZXMgaW4gdjM6IE5vbmUKQ2hhbmdlcyBpbiB2MjogTm9uZQoKIC4uLi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL3BoeS9yb2NrY2hpcC1kcC1waHkudHh0ICAgIHwgMjIgKysrKysrKysrKysrKysrKysr
+KysrKwogMSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0
+NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3JvY2tjaGlwLWRwLXBoeS50
+eHQKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3Jv
+Y2tjaGlwLWRwLXBoeS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5
+L3JvY2tjaGlwLWRwLXBoeS50eHQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4u
+NTBjNGY5YgotLS0gL2Rldi9udWxsCisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9waHkvcm9ja2NoaXAtZHAtcGh5LnR4dApAQCAtMCwwICsxLDIyIEBACitSb2NrY2hpcCBz
+cGVjaWZpYyBleHRlbnNpb25zIHRvIHRoZSBBbmFsb2dpeCBEaXNwbGF5IFBvcnQgUEhZCistLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KKworUmVxdWlyZWQgcHJvcGVydGllczoK
+Ky0gY29tcGF0aWJsZSA6IHNob3VsZCBiZSBvbmUgb2YgdGhlIGZvbGxvd2luZyBzdXBwb3J0ZWQg
+dmFsdWVzOgorCSAtICJyb2NrY2hpcC5yazMyODgtZHAtcGh5IgorLSBjbG9ja3M6IGZyb20gY29t
+bW9uIGNsb2NrIGJpbmRpbmc6IGhhbmRsZSB0byBkcCBjbG9jay4KKwlvZiBtZW1vcnkgbWFwcGVk
+IHJlZ2lvbi4KKy0gY2xvY2stbmFtZXM6IGZyb20gY29tbW9uIGNsb2NrIGJpbmRpbmc6CisJUmVx
+dWlyZWQgZWxlbWVudHM6ICIyNG0iCistIHJvY2tjaGlwLGdyZjogcGhhbmRsZSB0byB0aGUgc3lz
+Y29uIG1hbmFnaW5nIHRoZSAiZ2VuZXJhbCByZWdpc3RlciBmaWxlcyIKKy0gI3BoeS1jZWxscyA6
+IGZyb20gdGhlIGdlbmVyaWMgUEhZIGJpbmRpbmdzLCBtdXN0IGJlIDA7CisKK0V4YW1wbGU6CisK
+K2VkcF9waHk6IGVkcC1waHkgeworCWNvbXBhdGlibGUgPSAicm9ja2NoaXAscmszMjg4LWRwLXBo
+eSI7CisJcm9ja2NoaXAsZ3JmID0gPCZncmY+OworCWNsb2NrcyA9IDwmY3J1IFNDTEtfRURQXzI0
+TT47CisJY2xvY2stbmFtZXMgPSAiMjRtIjsKKwkjcGh5LWNlbGxzID0gPDA+OworfTsKLS0gCjEu
+OS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
