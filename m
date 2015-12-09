@@ -1,205 +1,166 @@
-From: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 00/25] mtd: nand: refactor the NAND
- subsystem (part 1)
-Date: Tue, 8 Dec 2015 16:36:24 -0800
-Message-ID: <20151209003624.GU120110@google.com>
-References: <1448967802-25796-1-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v10 05/17] dt-bindings: add document for analogix display
+ port driver
+Date: Wed, 9 Dec 2015 09:02:56 +0800
+Message-ID: <56677DC0.3080903@rock-chips.com>
+References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
+ <1449470347-31062-1-git-send-email-ykk@rock-chips.com>
+ <20151208150131.GA8646@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCZ6PSPVXMNBBDHPTWZQKGQE67ZQBNA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1448967802-25796-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Krzysztof Halasa <khalasa-NlWvg49iv0c@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Marek
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20151208150131.GA8646@rob-hp-laptop>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Tue, Dec 01, 2015 at 12:02:57PM +0100, Boris Brezillon wrote:
-> Hello,
-> 
-> This huge series aims at clarifying the relationship between the mtd and
-> nand_chip structures and hiding NAND framework internals to NAND
-> controller drivers.
-> 
-> The first part of the series provide an mtd_to_nand() helper to hide the
-> way mtd and nand_chip are linked together.
-> 
-> The second part of the series embeds the mtd structure into the nand_chip
-> one so that NAND controller drivers don't have to bother allocating the
-> MTD device and linking it with the NAND chip.
-> 
-> The last part of the series hides accesses to the chip->priv field behind
-> two helper functions.
-> 
-> This allows removal of some of the boilerplate code done in all NAND
-> controller drivers, but most importantly, it unifies a bit the way NAND
-> chip structures are instantiated (even though we still have two different
-> kinds of drivers: those embedding the nand_chip struct into their private
-> nand chip representation, and those allocating two different structures
-> and linking them together with the chip->priv field).
-> 
-> As said in the title, this refactoring is only the first step. I plan to
-> rework the NAND controller / NAND chip separation for pretty much the same
-> reasons: clarifying the separation between the two concepts, and getting
-> rid of more boilerplate code in NAND controller drivers.
-> 
-> Stay tuned ;-).
-> 
-> Best Regards,
-> 
-> Boris
-> 
-> Changes since v1:
-> - dropped already applied patches
-> - fixed some typos
-> - manually fixed some modifications omitted by the coccinelle scripts
-> - manually reworked modifactions done by coccinelle scripts to improve
->   readability and fix coding style issues
-> 
-> Boris Brezillon (25):
->   ARM: nand: make use of mtd_to_nand() where appropriate
-
-I've sent this (+ the introduction of mtd_to_nand()) in a pull request
-to arm-soc, as well as to l2-mtd.git.
-
->   blackfin: nand: make use of mtd_to_nand() where appropriate
->   cris: nand: make use of mtd_to_nand() where appropriate
->   mips: nand: make use of mtd_to_nand() where appropriate
-
-I've based these on v4.4-rc1 and brought them into l2-mtd.git, in case
-any arch/{blackfin,cris,mips}/ people want to pull them in too.
-
->   sh: nand: make use of mtd_to_nand() where appropriate
->   mtd: nand: make use of mtd_to_nand() in NAND core code
->   mtd: nand: make use of mtd_to_nand() in NAND drivers
->   staging: mt29f_spinand: make use of mtd_to_nand()
->   mtd: nand: embed an mtd_info structure into nand_chip
->   mtd: nand: add nand_to_mtd() helper
-
-Pulled the rest up to here into l2-mtd.git.
-
->   coccinelle: nand: detect and correct drivers embedding an mtd_info
->     object
-
-I believe Julia had comments on this. That probably would go through the
-kbuild tree in the end anyway (?).
-
->   mtd: nand: use the mtd instance embedded in struct nand_chip
-
-There's still at least one problem in this patch (commented on the
-patch). It touches a lot of drivers, so any extra review would be great.
-
->   mtd: nand: update the documentation to reflect framework changes
->   staging: mt29f_spinand: use the mtd instance embedded in struct
->     nand_chip
->   cris: nand: use the mtd instance embedded in struct nand_chip
->   mtd: nand: update mtd_to_nand()
->   mtd: nand: remove useless mtd->priv = chip assignments
->   cris: nand: remove useless mtd->priv = chip assignments
->   staging: mt29f_spinand: remove useless mtd->priv = chip assignment
->   mtd: nand: simplify nand_dt_init() usage
->   mtd: nand: kill the chip->flash_node field
->   mtd: nand: add helpers to access ->priv
->   ARM: make use of nand_set/get_controller_data() helpers
->   mtd: nand: make use of nand_set/get_controller_data() helpers
->   staging: mt29f_spinand: make use of nand_set/get_controller_data()
->     helpers
-
-All the rest look good to me. I'll wait until I get a good copy of patch
-12 before taking them.
-
-Brian
-
->  Documentation/DocBook/mtdnand.tmpl             |  31 +++---
->  arch/arm/mach-ep93xx/snappercl15.c             |   4 +-
->  arch/arm/mach-ep93xx/ts72xx.c                  |   4 +-
->  arch/arm/mach-imx/mach-qong.c                  |   2 +-
->  arch/arm/mach-ixp4xx/ixdp425-setup.c           |   6 +-
->  arch/arm/mach-omap1/board-nand.c               |   2 +-
->  arch/arm/mach-orion5x/ts78xx-setup.c           |   6 +-
->  arch/arm/mach-pxa/balloon3.c                   |   2 +-
->  arch/arm/mach-pxa/em-x270.c                    |   2 +-
->  arch/arm/mach-pxa/palmtx.c                     |   2 +-
->  arch/blackfin/mach-bf537/boards/stamp.c        |   2 +-
->  arch/blackfin/mach-bf561/boards/acvilon.c      |   2 +-
->  arch/cris/arch-v32/drivers/mach-a3/nandflash.c |   8 +-
->  arch/cris/arch-v32/drivers/mach-fs/nandflash.c |   8 +-
->  arch/mips/alchemy/devboards/db1200.c           |   2 +-
->  arch/mips/alchemy/devboards/db1300.c           |   2 +-
->  arch/mips/alchemy/devboards/db1550.c           |   2 +-
->  arch/mips/pnx833x/common/platform.c            |   2 +-
->  arch/mips/rb532/devices.c                      |   2 +-
->  arch/sh/boards/mach-migor/setup.c              |   2 +-
->  drivers/mtd/nand/ams-delta.c                   |  26 ++---
->  drivers/mtd/nand/atmel_nand.c                  | 118 ++++++++++----------
->  drivers/mtd/nand/au1550nd.c                    |  40 +++----
->  drivers/mtd/nand/bcm47xxnflash/bcm47xxnflash.h |   1 -
->  drivers/mtd/nand/bcm47xxnflash/main.c          |   9 +-
->  drivers/mtd/nand/bcm47xxnflash/ops_bcm4706.c   |  34 +++---
->  drivers/mtd/nand/bf5xx_nand.c                  |  25 ++---
->  drivers/mtd/nand/brcmnand/brcmnand.c           |  54 +++++----
->  drivers/mtd/nand/cafe_nand.c                   |  51 +++++----
->  drivers/mtd/nand/cmx270_nand.c                 |  20 ++--
->  drivers/mtd/nand/cs553x_nand.c                 |  30 +++--
->  drivers/mtd/nand/davinci_nand.c                |  37 ++++---
->  drivers/mtd/nand/denali.c                      |  67 ++++++-----
->  drivers/mtd/nand/denali.h                      |   1 -
->  drivers/mtd/nand/diskonchip.c                  | 148 ++++++++++++-------------
->  drivers/mtd/nand/docg4.c                       |  91 ++++++++-------
->  drivers/mtd/nand/fsl_elbc_nand.c               |  61 +++++-----
->  drivers/mtd/nand/fsl_ifc_nand.c                |  71 ++++++------
->  drivers/mtd/nand/fsl_upm.c                     |  31 +++---
->  drivers/mtd/nand/fsmc_nand.c                   |  69 ++++++------
->  drivers/mtd/nand/gpio.c                        |  19 ++--
->  drivers/mtd/nand/gpmi-nand/gpmi-lib.c          |   2 +-
->  drivers/mtd/nand/gpmi-nand/gpmi-nand.c         |  67 ++++++-----
->  drivers/mtd/nand/gpmi-nand/gpmi-nand.h         |   1 -
->  drivers/mtd/nand/hisi504_nand.c                |  48 ++++----
->  drivers/mtd/nand/jz4740_nand.c                 |  14 +--
->  drivers/mtd/nand/lpc32xx_mlc.c                 |  32 +++---
->  drivers/mtd/nand/lpc32xx_slc.c                 |  42 ++++---
->  drivers/mtd/nand/mpc5121_nfc.c                 |  52 +++++----
->  drivers/mtd/nand/mxc_nand.c                    |  76 +++++++------
->  drivers/mtd/nand/nand_base.c                   | 102 +++++++++--------
->  drivers/mtd/nand/nand_bbt.c                    |  32 +++---
->  drivers/mtd/nand/nand_bch.c                    |   4 +-
->  drivers/mtd/nand/nand_ecc.c                    |   4 +-
->  drivers/mtd/nand/nandsim.c                     |  35 +++---
->  drivers/mtd/nand/ndfc.c                        |  53 ++++-----
->  drivers/mtd/nand/nuc900_nand.c                 |  25 ++---
->  drivers/mtd/nand/omap2.c                       | 109 ++++++++++--------
->  drivers/mtd/nand/orion_nand.c                  |  13 +--
->  drivers/mtd/nand/pasemi_nand.c                 |  21 ++--
->  drivers/mtd/nand/plat_nand.c                   |  16 +--
->  drivers/mtd/nand/pxa3xx_nand.c                 |  70 ++++++------
->  drivers/mtd/nand/r852.c                        |  41 +++----
->  drivers/mtd/nand/r852.h                        |   1 -
->  drivers/mtd/nand/s3c2410.c                     |  32 +++---
->  drivers/mtd/nand/sh_flctl.c                    |   9 +-
->  drivers/mtd/nand/sharpsl.c                     |  23 ++--
->  drivers/mtd/nand/sm_common.c                   |   2 +-
->  drivers/mtd/nand/socrates_nand.c               |  24 ++--
->  drivers/mtd/nand/sunxi_nand.c                  |  40 ++++---
->  drivers/mtd/nand/tmio_nand.c                   |  13 ++-
->  drivers/mtd/nand/txx9ndfmc.c                   |  25 ++---
->  drivers/mtd/nand/vf610_nfc.c                   |   9 +-
->  drivers/mtd/nand/xway_nand.c                   |   4 +-
->  drivers/staging/mt29f_spinand/mt29f_spinand.c  |  19 ++--
->  include/linux/mtd/nand.h                       |  26 ++++-
->  include/linux/mtd/sh_flctl.h                   |   3 +-
->  scripts/coccinelle/api/nand-priv-no-mtd.cocci  |  91 +++++++++++++++
->  78 files changed, 1179 insertions(+), 1097 deletions(-)
->  create mode 100644 scripts/coccinelle/api/nand-priv-no-mtd.cocci
-> 
-> -- 
-> 2.1.4
-> 
+SGkgUm9iLAoKVGhhbmtzCgotIFlha2lyCgpPbiAxMi8wOC8yMDE1IDExOjAxIFBNLCBSb2IgSGVy
+cmluZyB3cm90ZToKPiBPbiBNb24sIERlYyAwNywgMjAxNSBhdCAwMjozOTowN1BNICswODAwLCBZ
+YWtpciBZYW5nIHdyb3RlOgo+PiBBbmFsb2dpeCBkcCBkcml2ZXIgaXMgc3BsaXQgZnJvbSBleHlu
+b3MgZHAgZHJpdmVyLCBzbyB3ZSBqdXN0Cj4+IG1ha2UgYW4gY29weSBvZiBleHlub3NfZHAudHh0
+LCBhbmQgdGhlbiBzaW1wbGlmeSBleHlub3NfZHAudHh0Cj4+Cj4+IEJlc2lkZSB1cGRhdGUgc29t
+ZSBleHlub3MgZHRzaSBmaWxlIHdpdGggdGhlIGxhdGVzdCBjaGFuZ2UKPj4gYWNjb3JkaW5nIHRv
+IHRoZSBkZXZpY2V0cmVlIGJpbmRpbmcgZG9jdW1lbnRzLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBZ
+YWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Cj4+IFRlc3RlZC1ieTogSmF2aWVyIE1hcnRp
+bmV6IENhbmlsbGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPgo+IEFja2VkLWJ5OiBSb2IgSGVy
+cmluZyA8cm9iaEBrZXJuZWwub3JnPgo+Cj4+IC0tLQo+PiBDaGFuZ2VzIGluIHYxMDogTm9uZQo+
+PiBDaGFuZ2VzIGluIHY5OiBOb25lCj4+IENoYW5nZXMgaW4gdjg6Cj4+IC0gQ29ycmVjdCB0aGUg
+cmlnaHQgZG9jdW1lbnQgcGF0aCBvZiBkaXNwbGF5LXRpbWluZy50eHQgKEhlaWtvKQo+PiAtIENv
+cnJlY3QgdGhlIG1pc3NwZWxsIG9mICdmcm9tJyB0byAnZnJtJy4gKEhlaWtvKQo+Pgo+PiBDaGFu
+Z2VzIGluIHY3OiBOb25lCj4+IENoYW5nZXMgaW4gdjY6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2NTog
+Tm9uZQo+PiBDaGFuZ2VzIGluIHY0Ogo+PiAtIFNwbGl0IGFsbCBEVFMgY2hhbmdlcywgYW5kIHBy
+b3ZpZGUgYmFja3dhcmQgY29tcGF0aWJpbGl0eS4gTWFyayBvbGQKPj4gICAgcHJvcGVydGllcyBh
+cyBkZXByZWNhdGVkIGJ1dCBzdGlsbCBzdXBwb3J0IHRoZW0uIChLcnp5c3p0b2YpCj4+IC0gVXBk
+YXRlICJhbmFsb2dpeCxocGQtZ3BpbyIgdG8gImhwZC1ncGlvcyIgcHJvcCBuYW1lLiAoUm9iKQo+
+PiAtIERlcHJlY2F0ZWQgc29tZSBwcm9wZXJ0aWVzIHdoaWNoIGNvdWxkIHBhcnNlZCBmcm9tIEVk
+aWQvTW9kZS9EUENELiAoVGhpZXJyeSkKPj4gICAgICAiYW5hbG9naXgsY29sb3Itc3BhY2UiICYg
+ImFuYWxvZ2l4LGNvbG9yLWRlcHRoIiAgICYKPj4gICAgICAiYW5hbG9naXgsbGluay1yYXRlIiAg
+ICYgImFuYWxvZ2l4LGxhbmUtY291bnQiICAgICYKPj4gICAgICAiYW5hbG9naXgseWNiY3ItY29l
+ZmYiICYgImFuYWxvZ2l4LGR5bmFtaWMtcmFuZ2UiICYKPj4gICAgICAidnN5bmMtYWN0aXZlLWhp
+Z2giICAgICYgImhzeW5jLWFjdGl2ZS1oaWdoIiAgICAgICYgImludGVybGFjZXMiCj4+Cj4+IENo
+YW5nZXMgaW4gdjM6Cj4+IC0gQWRkIGRldmljZXRyZWUgYmluZGluZyBkb2N1bWVudHMuIChIZWlr
+bykKPj4gLSBSZW1vdmUgc3luYyBwb2wgJiBjb2xvcmltZXRyeSBwcm9wZXJpZXMgZnJvbSB0aGUg
+bmV3IGFuYWxvZ2l4IGRwIGRyaXZlcgo+PiAgICBkZXZpY2V0cmVlIGJpbmRpbmcuIChUaGllcnJ5
+KQo+PiAtIFVwZGF0ZSB0aGUgZXhpc3QgZXh5bm9zIGR0c2kgZmlsZSB3aXRoIHRoZSBsYXRlc3Qg
+RFAgRFQgcHJvcGVyaWVzLgo+Pgo+PiBDaGFuZ2VzIGluIHYyOiBOb25lCj4+Cj4+ICAgLi4uL2Jp
+bmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCAgICAgICAgfCA1MCArKysrKysr
+KysrKysrKysrKwo+PiAgIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0
+ICAgICAgICAgIHwgNjUgKysrKysrKystLS0tLS0tLS0tLS0tLQo+PiAgIDIgZmlsZXMgY2hhbmdl
+ZCwgNzIgaW5zZXJ0aW9ucygrKSwgNDMgZGVsZXRpb25zKC0pCj4+ICAgY3JlYXRlIG1vZGUgMTAw
+NjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9hbmFs
+b2dpeF9kcC50eHQKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9hbmFsb2dpeF9kcC50eHQgYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2UvYW5hbG9naXhfZHAudHh0Cj4+IG5ldyBm
+aWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAuLjc2NTlhN2EKPj4gLS0tIC9kZXYvbnVs
+bAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlk
+Z2UvYW5hbG9naXhfZHAudHh0Cj4+IEBAIC0wLDAgKzEsNTAgQEAKPj4gK0FuYWxvZ2l4IERpc3Bs
+YXkgUG9ydCBicmlkZ2UgYmluZGluZ3MKPj4gKwo+PiArUmVxdWlyZWQgcHJvcGVydGllcyBmb3Ig
+ZHAtY29udHJvbGxlcjoKPj4gKwktY29tcGF0aWJsZToKPj4gKwkJcGxhdGZvcm0gc3BlY2lmaWMg
+c3VjaCBhczoKPj4gKwkJICogInNhbXN1bmcsZXh5bm9zNS1kcCIKPj4gKwkJICogInJvY2tjaGlw
+LHJrMzI4OC1kcCIKPj4gKwktcmVnOgo+PiArCQlwaHlzaWNhbCBiYXNlIGFkZHJlc3Mgb2YgdGhl
+IGNvbnRyb2xsZXIgYW5kIGxlbmd0aAo+PiArCQlvZiBtZW1vcnkgbWFwcGVkIHJlZ2lvbi4KPj4g
+KwktaW50ZXJydXB0czoKPj4gKwkJaW50ZXJydXB0IGNvbWJpbmVyIHZhbHVlcy4KPj4gKwktY2xv
+Y2tzOgo+PiArCQlmcm9tIGNvbW1vbiBjbG9jayBiaW5kaW5nOiBoYW5kbGUgdG8gZHAgY2xvY2su
+Cj4+ICsJLWNsb2NrLW5hbWVzOgo+PiArCQlmcm9tIGNvbW1vbiBjbG9jayBiaW5kaW5nOiBTaGFs
+bCBiZSAiZHAiLgo+PiArCS1pbnRlcnJ1cHQtcGFyZW50Ogo+PiArCQlwaGFuZGxlIHRvIEludGVy
+cnVwdCBjb21iaW5lciBub2RlLgo+PiArCS1waHlzOgo+PiArCQlmcm9tIGdlbmVyYWwgUEhZIGJp
+bmRpbmc6IHRoZSBwaGFuZGxlIGZvciB0aGUgUEhZIGRldmljZS4KPj4gKwktcGh5LW5hbWVzOgo+
+PiArCQlmcm9tIGdlbmVyYWwgUEhZIGJpbmRpbmc6IFNob3VsZCBiZSAiZHAiLgo+PiArCj4+ICtP
+cHRpb25hbCBwcm9wZXJ0aWVzIGZvciBkcC1jb250cm9sbGVyOgo+PiArCS1ocGQtZ3Bpb3M6Cj4+
+ICsJCUhvdHBsdWcgZGV0ZWN0IEdQSU8uCj4+ICsJCUluZGljYXRlcyB3aGljaCBHUElPIHNob3Vs
+ZCBiZSB1c2VkIGZvciBob3RwbHVnIGRldGVjdGlvbgo+PiArCS1wb3J0QFtYXTogU29DIHNwZWNp
+ZmljIHBvcnQgbm9kZXMgd2l0aCBlbmRwb2ludCBkZWZpbml0aW9ucyBhcyBkZWZpbmVkCj4+ICsJ
+CWluIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS92aWRlby1pbnRlcmZh
+Y2VzLnR4dCwKPj4gKwkJcGxlYXNlIHJlZmVyIHRvIHRoZSBTb0Mgc3BlY2lmaWMgYmluZGluZyBk
+b2N1bWVudDoKPj4gKwkJKiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxh
+eS9leHlub3MvZXh5bm9zX2RwLnR4dAo+PiArCQkqIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy92aWRlby9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKPj4gKwo+PiArCj4+ICtbMV06
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS92aWRlby1pbnRlcmZhY2Vz
+LnR4dAo+PiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+PiArCj4+ICtFeGFtcGxlOgo+PiArCj4+
+ICsJZHAtY29udHJvbGxlciB7Cj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1LWRw
+IjsKPj4gKwkJcmVnID0gPDB4MTQ1YjAwMDAgMHgxMDAwMD47Cj4+ICsJCWludGVycnVwdHMgPSA8
+MTAgMz47Cj4+ICsJCWludGVycnVwdC1wYXJlbnQgPSA8JmNvbWJpbmVyPjsKPj4gKwkJY2xvY2tz
+ID0gPCZjbG9jayAzNDI+Owo+PiArCQljbG9jay1uYW1lcyA9ICJkcCI7Cj4+ICsKPj4gKwkJcGh5
+cyA9IDwmZHBfcGh5PjsKPj4gKwkJcGh5LW5hbWVzID0gImRwIjsKPj4gKwl9Owo+PiBkaWZmIC0t
+Z2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4
+eW5vc19kcC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9l
+eHlub3MvZXh5bm9zX2RwLnR4dAo+PiBpbmRleCA2NDY5M2YyLi45OTA1MDgxIDEwMDY0NAo+PiAt
+LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5
+bm9zX2RwLnR4dAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
+cGxheS9leHlub3MvZXh5bm9zX2RwLnR4dAo+PiBAQCAtMzEsNDUgKzMxLDMxIEBAIFJlcXVpcmVk
+IHByb3BlcnRpZXMgZm9yIGRwLWNvbnRyb2xsZXI6Cj4+ICAgCQlmcm9tIGdlbmVyYWwgUEhZIGJp
+bmRpbmc6IHRoZSBwaGFuZGxlIGZvciB0aGUgUEhZIGRldmljZS4KPj4gICAJLXBoeS1uYW1lczoK
+Pj4gICAJCWZyb20gZ2VuZXJhbCBQSFkgYmluZGluZzogU2hvdWxkIGJlICJkcCIuCj4+IC0JLXNh
+bXN1bmcsY29sb3Itc3BhY2U6Cj4+IC0JCWlucHV0IHZpZGVvIGRhdGEgZm9ybWF0Lgo+PiAtCQkJ
+Q09MT1JfUkdCID0gMCwgQ09MT1JfWUNCQ1I0MjIgPSAxLCBDT0xPUl9ZQ0JDUjQ0NCA9IDIKPj4g
+LQktc2Ftc3VuZyxkeW5hbWljLXJhbmdlOgo+PiAtCQlkeW5hbWljIHJhbmdlIGZvciBpbnB1dCB2
+aWRlbyBkYXRhLgo+PiAtCQkJVkVTQSA9IDAsIENFQSA9IDEKPj4gLQktc2Ftc3VuZyx5Y2Jjci1j
+b2VmZjoKPj4gLQkJWUNiQ3IgY28tZWZmaWNpZW50cyBmb3IgaW5wdXQgdmlkZW8uCj4+IC0JCQlD
+T0xPUl9ZQ0JDUjYwMSA9IDAsIENPTE9SX1lDQkNSNzA5ID0gMQo+PiAtCS1zYW1zdW5nLGNvbG9y
+LWRlcHRoOgo+PiAtCQludW1iZXIgb2YgYml0cyBwZXIgY29sb3VyIGNvbXBvbmVudC4KPj4gLQkJ
+CUNPTE9SXzYgPSAwLCBDT0xPUl84ID0gMSwgQ09MT1JfMTAgPSAyLCBDT0xPUl8xMiA9IDMKPj4g
+LQktc2Ftc3VuZyxsaW5rLXJhdGU6Cj4+IC0JCWxpbmsgcmF0ZSBzdXBwb3J0ZWQgYnkgdGhlIHBh
+bmVsLgo+PiAtCQkJTElOS19SQVRFXzFfNjJHQlBTID0gMHg2LCBMSU5LX1JBVEVfMl83MEdCUFMg
+PSAweDBBCj4+IC0JLXNhbXN1bmcsbGFuZS1jb3VudDoKPj4gLQkJbnVtYmVyIG9mIGxhbmVzIHN1
+cHBvcnRlZCBieSB0aGUgcGFuZWwuCj4+IC0JCQlMQU5FX0NPVU5UMSA9IDEsIExBTkVfQ09VTlQy
+ID0gMiwgTEFORV9DT1VOVDQgPSA0Cj4+IC0JLSBkaXNwbGF5LXRpbWluZ3M6IHRpbWluZ3MgZm9y
+IHRoZSBjb25uZWN0ZWQgcGFuZWwgYXMgZGVzY3JpYmVkIGJ5Cj4+IC0JCURvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2Rpc3BsYXktdGltaW5nLnR4dAo+PiAgIAo+PiAg
+IE9wdGlvbmFsIHByb3BlcnRpZXMgZm9yIGRwLWNvbnRyb2xsZXI6Cj4+IC0JLWludGVybGFjZWQ6
+Cj4+IC0JCWludGVybGFjZSBzY2FuIG1vZGUuCj4+IC0JCQlQcm9ncmVzc2l2ZSBpZiBkZWZpbmVk
+LCBJbnRlcmxhY2VkIGlmIG5vdCBkZWZpbmVkCj4+IC0JLXZzeW5jLWFjdGl2ZS1oaWdoOgo+PiAt
+CQlWU1lOQyBwb2xhcml0eSBjb25maWd1cmF0aW9uLgo+PiAtCQkJSGlnaCBpZiBkZWZpbmVkLCBM
+b3cgaWYgbm90IGRlZmluZWQKPj4gLQktaHN5bmMtYWN0aXZlLWhpZ2g6Cj4+IC0JCUhTWU5DIHBv
+bGFyaXR5IGNvbmZpZ3VyYXRpb24uCj4+IC0JCQlIaWdoIGlmIGRlZmluZWQsIExvdyBpZiBub3Qg
+ZGVmaW5lZAo+PiAtCS1zYW1zdW5nLGhwZC1ncGlvOgo+PiAtCQlIb3RwbHVnIGRldGVjdCBHUElP
+Lgo+PiAtCQkJSW5kaWNhdGVzIHdoaWNoIEdQSU8gc2hvdWxkIGJlIHVzZWQgZm9yIGhvdHBsdWcK
+Pj4gLQkJCWRldGVjdGlvbgo+PiAtCS12aWRlbyBpbnRlcmZhY2VzOiBEZXZpY2Ugbm9kZSBjYW4g
+Y29udGFpbiB2aWRlbyBpbnRlcmZhY2UgcG9ydAo+PiAtCQkJICAgIG5vZGVzIGFjY29yZGluZyB0
+byBbMV0uCj4+ICsJLSBkaXNwbGF5LXRpbWluZ3M6IHRpbWluZ3MgZm9yIHRoZSBjb25uZWN0ZWQg
+cGFuZWwgYXMgZGVzY3JpYmVkIGJ5Cj4+ICsJCURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9kaXNwbGF5L3BhbmVsL2Rpc3BsYXktdGltaW5nLnR4dAo+PiArCj4+ICtGb3IgdGhlIGJl
+bG93IHByb3BlcnRpZXMsIHBsZWFzZSByZWZlciB0byBBbmFsb2dpeCBEUCBiaW5kaW5nIGRvY3Vt
+ZW50Ogo+PiArICogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJp
+ZGdlL2FuYWxvZ2l4X2RwLnR4dAo+PiArCS1waHlzIChyZXF1aXJlZCkKPj4gKwktcGh5LW5hbWVz
+IChyZXF1aXJlZCkKPj4gKwktaHBkLWdwaW9zIChvcHRpb25hbCkKPj4gKwktdmlkZW8gaW50ZXJm
+YWNlcyAob3B0aW9uYWwpCj4+ICAgCj4+IC1bMV06IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9tZWRpYS92aWRlby1pbnRlcmZhY2VzLnR4dAo+PiArRGVwcmVjYXRlZCBwcm9wZXJ0
+aWVzIGZvciBEaXNwbGF5UG9ydDoKPj4gKy1pbnRlcmxhY2VkOiAgICAgICAgICAgIGRlcHJlY2F0
+ZWQgcHJvcCB0aGF0IGNhbiBwYXJzZWQgZnJvbSBkcm1fZGlzcGxheV9tb2RlLgo+PiArLXZzeW5j
+LWFjdGl2ZS1oaWdoOiAgICAgZGVwcmVjYXRlZCBwcm9wIHRoYXQgY2FuIHBhcnNlZCBmcm9tIGRy
+bV9kaXNwbGF5X21vZGUuCj4+ICstaHN5bmMtYWN0aXZlLWhpZ2g6ICAgICBkZXByZWNhdGVkIHBy
+b3AgdGhhdCBjYW4gcGFyc2VkIGZyb20gZHJtX2Rpc3BsYXlfbW9kZS4KPj4gKy1zYW1zdW5nLHlj
+YmNyLWNvZWZmOiAgIGRlcHJlY2F0ZWQgcHJvcCB0aGF0IGNhbiBwYXJzZWQgZnJvbSBkcm1fZGlz
+cGxheV9tb2RlLgo+PiArLXNhbXN1bmcsZHluYW1pYy1yYW5nZTogZGVwcmVjYXRlZCBwcm9wIHRo
+YXQgY2FuIHBhcnNlZCBmcm9tIGRybV9kaXNwbGF5X21vZGUuCj4+ICstc2Ftc3VuZyxjb2xvci1z
+cGFjZTogICBkZXByZWNhdGVkIHByb3AgdGhhdCBjYW4gcGFyc2VkIGZyb20gZHJtX2Rpc3BsYXlf
+aW5mby4KPj4gKy1zYW1zdW5nLGNvbG9yLWRlcHRoOiAgIGRlcHJlY2F0ZWQgcHJvcCB0aGF0IGNh
+biBwYXJzZWQgZnJvbSBkcm1fZGlzcGxheV9pbmZvLgo+PiArLXNhbXN1bmcsbGluay1yYXRlOiAg
+ICAgZGVwcmVjYXRlZCBwcm9wIHRoYXQgY2FuIHJlYWRpbmcgZnJvbSBtb25pdG9yIGJ5IGRwY2Qg
+bWV0aG9kLgo+PiArLXNhbXN1bmcsbGFuZS1jb3VudDogICAgZGVwcmVjYXRlZCBwcm9wIHRoYXQg
+Y2FuIHJlYWRpbmcgZnJvbSBtb25pdG9yIGJ5IGRwY2QgbWV0aG9kLgo+PiArLXNhbXN1bmcsaHBk
+LWdwaW86ICAgICAgZGVwcmVjYXRlZCBuYW1lIGZvciBocGQtZ3Bpb3MuCj4+ICsKPj4gKy0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0KPj4gICAKPj4gICBFeGFtcGxlOgo+PiAgIAo+PiBAQCAtODgsMTMg
+Kzc0LDYgQEAgU09DIHNwZWNpZmljIHBvcnRpb246Cj4+ICAgCj4+ICAgQm9hcmQgU3BlY2lmaWMg
+cG9ydGlvbjoKPj4gICAJZHAtY29udHJvbGxlciB7Cj4+IC0JCXNhbXN1bmcsY29sb3Itc3BhY2Ug
+PSA8MD47Cj4+IC0JCXNhbXN1bmcsZHluYW1pYy1yYW5nZSA9IDwwPjsKPj4gLQkJc2Ftc3VuZyx5
+Y2Jjci1jb2VmZiA9IDwwPjsKPj4gLQkJc2Ftc3VuZyxjb2xvci1kZXB0aCA9IDwxPjsKPj4gLQkJ
+c2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwYT47Cj4+IC0JCXNhbXN1bmcsbGFuZS1jb3VudCA9IDw0
+PjsKPj4gLQo+PiAgIAkJZGlzcGxheS10aW1pbmdzIHsKPj4gICAJCQluYXRpdmUtbW9kZSA9IDwm
+bGNkX3RpbWluZz47Cj4+ICAgCQkJbGNkX3RpbWluZzogMTM2Nng3Njggewo+PiAtLSAKPj4gMS45
+LjEKPj4KPj4KPgo+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
