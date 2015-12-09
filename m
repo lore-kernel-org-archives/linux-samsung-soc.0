@@ -1,39 +1,47 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 0/8] cpufreq: add generic cpufreq driver support for
- Exynos542x/5800 platforms
-Date: Wed, 9 Dec 2015 10:13:42 -0300
-Message-ID: <56682906.50607@osg.samsung.com>
-References: <1449512300-17230-1-git-send-email-b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
+ block clocks
+Date: Wed, 9 Dec 2015 22:36:04 +0900
+Message-ID: <56682E44.6020303@samsung.com>
+References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
+ <5667B2F3.9040807@samsung.com> <5667FEF3.4080703@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1449512300-17230-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5667FEF3.4080703@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: k.kozlowski.k@gmail.com, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Bartlomiej,
-
-On 12/07/2015 03:18 PM, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
+W dniu 09.12.2015 o 19:14, Sylwester Nawrocki pisze:
+> Adding Stephen and linux-clk at Cc.
 > 
-> This patch series adds generic cpufreq-dt driver support for
-> Exynos542x/5800 (using the new CPU clock type which allows it).
+> On 09/12/15 05:49, Krzysztof Kozlowski wrote:
+>> On 08.12.2015 22:46, Marek Szyprowski wrote:
+>>>> This patch adds clocks, which are required for preserving parent clock
+>>>> configuration on GSCL power domain on/off.
+>>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> ---
+>>>>  drivers/clk/samsung/clk-exynos5420.c   | 8 ++++----
+>>>>  include/dt-bindings/clock/exynos5420.h | 2 ++
+>>>>  2 files changed, 6 insertions(+), 4 deletions(-)
+>>
+>> I suppose that, with ack from clock folks, this can go through samsung-soc?
 > 
-> It has been tested on Exynos5422 based ODROID-XU3 Lite board.
->
+> I guess it makes more sense that making a stable branch with just
+> this patch to be pulled into arm-soc and clk tree. I'm fine with
+> applying this patch through arm-soc, but I think we also need
+> Mike's or Stephen ack for this.
+> 
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-I tested on an Exynos5800 Peach Pi and all governors are working
-as expected on both the Cortex-A7 and Cortex-A15 cores.
+I am fine with the branch approach (actually in such cases I make them
+anyway just in case).
 
-So for the whole series:
+As you suggested I'll wait for Mike's or Stepen's acks.
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+BR,
+Krzysztof
