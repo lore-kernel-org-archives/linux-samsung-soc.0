@@ -1,152 +1,147 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v10.1 05/17] dt-bindings: add document for analogix display
- port driver
-Date: Wed,  9 Dec 2015 10:06:18 +0800
-Message-ID: <1449626778-15207-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v10.1 08/17] dt-bindings: add document for rockchip variant of analogix_dp
+Date: Wed,  9 Dec 2015 10:07:10 +0800
+Message-ID: <1449626830-15385-1-git-send-email-ykk@rock-chips.com>
 References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:34470 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbbLICHX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Dec 2015 21:07:23 -0500
 In-Reply-To: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, javier@osg.samsung.com, emil.l.velikov@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, ajaynumb@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-QW5hbG9naXggZHAgZHJpdmVyIGlzIHNwbGl0IGZyb20gZXh5bm9zIGRwIGRyaXZlciwgc28gd2Ug
-anVzdAptYWtlIGFuIGNvcHkgb2YgZXh5bm9zX2RwLnR4dCwgYW5kIHRoZW4gc2ltcGxpZnkgZXh5
-bm9zX2RwLnR4dAoKQmVzaWRlIHVwZGF0ZSBzb21lIGV4eW5vcyBkdHNpIGZpbGUgd2l0aCB0aGUg
-bGF0ZXN0IGNoYW5nZQphY2NvcmRpbmcgdG8gdGhlIGRldmljZXRyZWUgYmluZGluZyBkb2N1bWVu
-dHMuCgpTaWduZWQtb2ZmLWJ5OiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+CkFja2Vk
-LWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPgpUZXN0ZWQtYnk6IEphdmllciBNYXJ0
-aW5leiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjEw
-LjE6Ci0gQWRkIHRoZSBhY2sgZnJvbSBSb2IgSGVycmluZwoKQ2hhbmdlcyBpbiB2MTA6IE5vbmUK
-Q2hhbmdlcyBpbiB2OTogTm9uZQpDaGFuZ2VzIGluIHY4OgotIENvcnJlY3QgdGhlIHJpZ2h0IGRv
-Y3VtZW50IHBhdGggb2YgZGlzcGxheS10aW1pbmcudHh0IChIZWlrbykKLSBDb3JyZWN0IHRoZSBt
-aXNzcGVsbCBvZiAnZnJvbScgdG8gJ2ZybScuIChIZWlrbykKCkNoYW5nZXMgaW4gdjc6IE5vbmUK
-Q2hhbmdlcyBpbiB2NjogTm9uZQpDaGFuZ2VzIGluIHY1OiBOb25lCkNoYW5nZXMgaW4gdjQ6Ci0g
-U3BsaXQgYWxsIERUUyBjaGFuZ2VzLCBhbmQgcHJvdmlkZSBiYWNrd2FyZCBjb21wYXRpYmlsaXR5
-LiBNYXJrIG9sZAogIHByb3BlcnRpZXMgYXMgZGVwcmVjYXRlZCBidXQgc3RpbGwgc3VwcG9ydCB0
-aGVtLiAoS3J6eXN6dG9mKQotIFVwZGF0ZSAiYW5hbG9naXgsaHBkLWdwaW8iIHRvICJocGQtZ3Bp
-b3MiIHByb3AgbmFtZS4gKFJvYikKLSBEZXByZWNhdGVkIHNvbWUgcHJvcGVydGllcyB3aGljaCBj
-b3VsZCBwYXJzZWQgZnJvbSBFZGlkL01vZGUvRFBDRC4gKFRoaWVycnkpCiAgICAiYW5hbG9naXgs
-Y29sb3Itc3BhY2UiICYgImFuYWxvZ2l4LGNvbG9yLWRlcHRoIiAgICYKICAgICJhbmFsb2dpeCxs
-aW5rLXJhdGUiICAgJiAiYW5hbG9naXgsbGFuZS1jb3VudCIgICAgJgogICAgImFuYWxvZ2l4LHlj
-YmNyLWNvZWZmIiAmICJhbmFsb2dpeCxkeW5hbWljLXJhbmdlIiAmCiAgICAidnN5bmMtYWN0aXZl
-LWhpZ2giICAgICYgImhzeW5jLWFjdGl2ZS1oaWdoIiAgICAgICYgImludGVybGFjZXMiCgpDaGFu
-Z2VzIGluIHYzOgotIEFkZCBkZXZpY2V0cmVlIGJpbmRpbmcgZG9jdW1lbnRzLiAoSGVpa28pCi0g
-UmVtb3ZlIHN5bmMgcG9sICYgY29sb3JpbWV0cnkgcHJvcGVyaWVzIGZyb20gdGhlIG5ldyBhbmFs
-b2dpeCBkcCBkcml2ZXIKICBkZXZpY2V0cmVlIGJpbmRpbmcuIChUaGllcnJ5KQotIFVwZGF0ZSB0
-aGUgZXhpc3QgZXh5bm9zIGR0c2kgZmlsZSB3aXRoIHRoZSBsYXRlc3QgRFAgRFQgcHJvcGVyaWVz
-LgoKQ2hhbmdlcyBpbiB2MjogTm9uZQoKIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9hbmFs
-b2dpeF9kcC50eHQgICAgICAgIHwgNTAgKysrKysrKysrKysrKysrKysKIC4uLi9iaW5kaW5ncy9k
-aXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0ICAgICAgICAgIHwgNjUgKysrKysrKystLS0tLS0t
-LS0tLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCA3MiBpbnNlcnRpb25zKCspLCA0MyBkZWxldGlvbnMo
-LSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-ZGlzcGxheS9icmlkZ2UvYW5hbG9naXhfZHAudHh0CgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9hbmFsb2dpeF9k
-cC50eHQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uNzY1OWE3YQotLS0gL2Rl
-di9udWxsCisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2Jy
-aWRnZS9hbmFsb2dpeF9kcC50eHQKQEAgLTAsMCArMSw1MCBAQAorQW5hbG9naXggRGlzcGxheSBQ
-b3J0IGJyaWRnZSBiaW5kaW5ncworCitSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciBkcC1jb250cm9s
-bGVyOgorCS1jb21wYXRpYmxlOgorCQlwbGF0Zm9ybSBzcGVjaWZpYyBzdWNoIGFzOgorCQkgKiAi
-c2Ftc3VuZyxleHlub3M1LWRwIgorCQkgKiAicm9ja2NoaXAscmszMjg4LWRwIgorCS1yZWc6CisJ
-CXBoeXNpY2FsIGJhc2UgYWRkcmVzcyBvZiB0aGUgY29udHJvbGxlciBhbmQgbGVuZ3RoCisJCW9m
-IG1lbW9yeSBtYXBwZWQgcmVnaW9uLgorCS1pbnRlcnJ1cHRzOgorCQlpbnRlcnJ1cHQgY29tYmlu
-ZXIgdmFsdWVzLgorCS1jbG9ja3M6CisJCWZyb20gY29tbW9uIGNsb2NrIGJpbmRpbmc6IGhhbmRs
-ZSB0byBkcCBjbG9jay4KKwktY2xvY2stbmFtZXM6CisJCWZyb20gY29tbW9uIGNsb2NrIGJpbmRp
-bmc6IFNoYWxsIGJlICJkcCIuCisJLWludGVycnVwdC1wYXJlbnQ6CisJCXBoYW5kbGUgdG8gSW50
-ZXJydXB0IGNvbWJpbmVyIG5vZGUuCisJLXBoeXM6CisJCWZyb20gZ2VuZXJhbCBQSFkgYmluZGlu
-ZzogdGhlIHBoYW5kbGUgZm9yIHRoZSBQSFkgZGV2aWNlLgorCS1waHktbmFtZXM6CisJCWZyb20g
-Z2VuZXJhbCBQSFkgYmluZGluZzogU2hvdWxkIGJlICJkcCIuCisKK09wdGlvbmFsIHByb3BlcnRp
-ZXMgZm9yIGRwLWNvbnRyb2xsZXI6CisJLWhwZC1ncGlvczoKKwkJSG90cGx1ZyBkZXRlY3QgR1BJ
-Ty4KKwkJSW5kaWNhdGVzIHdoaWNoIEdQSU8gc2hvdWxkIGJlIHVzZWQgZm9yIGhvdHBsdWcgZGV0
-ZWN0aW9uCisJLXBvcnRAW1hdOiBTb0Mgc3BlY2lmaWMgcG9ydCBub2RlcyB3aXRoIGVuZHBvaW50
-IGRlZmluaXRpb25zIGFzIGRlZmluZWQKKwkJaW4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMudHh0LAorCQlwbGVhc2UgcmVmZXIgdG8gdGhl
-IFNvQyBzcGVjaWZpYyBiaW5kaW5nIGRvY3VtZW50OgorCQkqIERvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0CisJCSogRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dAor
-CisKK1sxXTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3ZpZGVvLWlu
-dGVyZmFjZXMudHh0CistLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCisKK0V4YW1wbGU6CisKKwlkcC1j
-b250cm9sbGVyIHsKKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUtZHAiOworCQlyZWcg
-PSA8MHgxNDViMDAwMCAweDEwMDAwPjsKKwkJaW50ZXJydXB0cyA9IDwxMCAzPjsKKwkJaW50ZXJy
-dXB0LXBhcmVudCA9IDwmY29tYmluZXI+OworCQljbG9ja3MgPSA8JmNsb2NrIDM0Mj47CisJCWNs
-b2NrLW5hbWVzID0gImRwIjsKKworCQlwaHlzID0gPCZkcF9waHk+OworCQlwaHktbmFtZXMgPSAi
-ZHAiOworCX07CmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-ZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0CmluZGV4IDY0NjkzZjIuLjk5MDUw
-ODEgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
-L2V4eW5vcy9leHlub3NfZHAudHh0CisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0CkBAIC0zMSw0NSArMzEsMzEgQEAgUmVx
-dWlyZWQgcHJvcGVydGllcyBmb3IgZHAtY29udHJvbGxlcjoKIAkJZnJvbSBnZW5lcmFsIFBIWSBi
-aW5kaW5nOiB0aGUgcGhhbmRsZSBmb3IgdGhlIFBIWSBkZXZpY2UuCiAJLXBoeS1uYW1lczoKIAkJ
-ZnJvbSBnZW5lcmFsIFBIWSBiaW5kaW5nOiBTaG91bGQgYmUgImRwIi4KLQktc2Ftc3VuZyxjb2xv
-ci1zcGFjZToKLQkJaW5wdXQgdmlkZW8gZGF0YSBmb3JtYXQuCi0JCQlDT0xPUl9SR0IgPSAwLCBD
-T0xPUl9ZQ0JDUjQyMiA9IDEsIENPTE9SX1lDQkNSNDQ0ID0gMgotCS1zYW1zdW5nLGR5bmFtaWMt
-cmFuZ2U6Ci0JCWR5bmFtaWMgcmFuZ2UgZm9yIGlucHV0IHZpZGVvIGRhdGEuCi0JCQlWRVNBID0g
-MCwgQ0VBID0gMQotCS1zYW1zdW5nLHljYmNyLWNvZWZmOgotCQlZQ2JDciBjby1lZmZpY2llbnRz
-IGZvciBpbnB1dCB2aWRlby4KLQkJCUNPTE9SX1lDQkNSNjAxID0gMCwgQ09MT1JfWUNCQ1I3MDkg
-PSAxCi0JLXNhbXN1bmcsY29sb3ItZGVwdGg6Ci0JCW51bWJlciBvZiBiaXRzIHBlciBjb2xvdXIg
-Y29tcG9uZW50LgotCQkJQ09MT1JfNiA9IDAsIENPTE9SXzggPSAxLCBDT0xPUl8xMCA9IDIsIENP
-TE9SXzEyID0gMwotCS1zYW1zdW5nLGxpbmstcmF0ZToKLQkJbGluayByYXRlIHN1cHBvcnRlZCBi
-eSB0aGUgcGFuZWwuCi0JCQlMSU5LX1JBVEVfMV82MkdCUFMgPSAweDYsIExJTktfUkFURV8yXzcw
-R0JQUyA9IDB4MEEKLQktc2Ftc3VuZyxsYW5lLWNvdW50OgotCQludW1iZXIgb2YgbGFuZXMgc3Vw
-cG9ydGVkIGJ5IHRoZSBwYW5lbC4KLQkJCUxBTkVfQ09VTlQxID0gMSwgTEFORV9DT1VOVDIgPSAy
-LCBMQU5FX0NPVU5UNCA9IDQKLQktIGRpc3BsYXktdGltaW5nczogdGltaW5ncyBmb3IgdGhlIGNv
-bm5lY3RlZCBwYW5lbCBhcyBkZXNjcmliZWQgYnkKLQkJRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2Rpc3BsYXkvZGlzcGxheS10aW1pbmcudHh0CiAKIE9wdGlvbmFsIHByb3BlcnRp
-ZXMgZm9yIGRwLWNvbnRyb2xsZXI6Ci0JLWludGVybGFjZWQ6Ci0JCWludGVybGFjZSBzY2FuIG1v
-ZGUuCi0JCQlQcm9ncmVzc2l2ZSBpZiBkZWZpbmVkLCBJbnRlcmxhY2VkIGlmIG5vdCBkZWZpbmVk
-Ci0JLXZzeW5jLWFjdGl2ZS1oaWdoOgotCQlWU1lOQyBwb2xhcml0eSBjb25maWd1cmF0aW9uLgot
-CQkJSGlnaCBpZiBkZWZpbmVkLCBMb3cgaWYgbm90IGRlZmluZWQKLQktaHN5bmMtYWN0aXZlLWhp
-Z2g6Ci0JCUhTWU5DIHBvbGFyaXR5IGNvbmZpZ3VyYXRpb24uCi0JCQlIaWdoIGlmIGRlZmluZWQs
-IExvdyBpZiBub3QgZGVmaW5lZAotCS1zYW1zdW5nLGhwZC1ncGlvOgotCQlIb3RwbHVnIGRldGVj
-dCBHUElPLgotCQkJSW5kaWNhdGVzIHdoaWNoIEdQSU8gc2hvdWxkIGJlIHVzZWQgZm9yIGhvdHBs
-dWcKLQkJCWRldGVjdGlvbgotCS12aWRlbyBpbnRlcmZhY2VzOiBEZXZpY2Ugbm9kZSBjYW4gY29u
-dGFpbiB2aWRlbyBpbnRlcmZhY2UgcG9ydAotCQkJICAgIG5vZGVzIGFjY29yZGluZyB0byBbMV0u
-CisJLSBkaXNwbGF5LXRpbWluZ3M6IHRpbWluZ3MgZm9yIHRoZSBjb25uZWN0ZWQgcGFuZWwgYXMg
-ZGVzY3JpYmVkIGJ5CisJCURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
-L3BhbmVsL2Rpc3BsYXktdGltaW5nLnR4dAorCitGb3IgdGhlIGJlbG93IHByb3BlcnRpZXMsIHBs
-ZWFzZSByZWZlciB0byBBbmFsb2dpeCBEUCBiaW5kaW5nIGRvY3VtZW50OgorICogRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dAor
-CS1waHlzIChyZXF1aXJlZCkKKwktcGh5LW5hbWVzIChyZXF1aXJlZCkKKwktaHBkLWdwaW9zIChv
-cHRpb25hbCkKKwktdmlkZW8gaW50ZXJmYWNlcyAob3B0aW9uYWwpCiAKLVsxXTogRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMudHh0CitEZXBy
-ZWNhdGVkIHByb3BlcnRpZXMgZm9yIERpc3BsYXlQb3J0OgorLWludGVybGFjZWQ6ICAgICAgICAg
-ICAgZGVwcmVjYXRlZCBwcm9wIHRoYXQgY2FuIHBhcnNlZCBmcm9tIGRybV9kaXNwbGF5X21vZGUu
-CistdnN5bmMtYWN0aXZlLWhpZ2g6ICAgICBkZXByZWNhdGVkIHByb3AgdGhhdCBjYW4gcGFyc2Vk
-IGZyb20gZHJtX2Rpc3BsYXlfbW9kZS4KKy1oc3luYy1hY3RpdmUtaGlnaDogICAgIGRlcHJlY2F0
-ZWQgcHJvcCB0aGF0IGNhbiBwYXJzZWQgZnJvbSBkcm1fZGlzcGxheV9tb2RlLgorLXNhbXN1bmcs
-eWNiY3ItY29lZmY6ICAgZGVwcmVjYXRlZCBwcm9wIHRoYXQgY2FuIHBhcnNlZCBmcm9tIGRybV9k
-aXNwbGF5X21vZGUuCistc2Ftc3VuZyxkeW5hbWljLXJhbmdlOiBkZXByZWNhdGVkIHByb3AgdGhh
-dCBjYW4gcGFyc2VkIGZyb20gZHJtX2Rpc3BsYXlfbW9kZS4KKy1zYW1zdW5nLGNvbG9yLXNwYWNl
-OiAgIGRlcHJlY2F0ZWQgcHJvcCB0aGF0IGNhbiBwYXJzZWQgZnJvbSBkcm1fZGlzcGxheV9pbmZv
-LgorLXNhbXN1bmcsY29sb3ItZGVwdGg6ICAgZGVwcmVjYXRlZCBwcm9wIHRoYXQgY2FuIHBhcnNl
-ZCBmcm9tIGRybV9kaXNwbGF5X2luZm8uCistc2Ftc3VuZyxsaW5rLXJhdGU6ICAgICBkZXByZWNh
-dGVkIHByb3AgdGhhdCBjYW4gcmVhZGluZyBmcm9tIG1vbml0b3IgYnkgZHBjZCBtZXRob2QuCist
-c2Ftc3VuZyxsYW5lLWNvdW50OiAgICBkZXByZWNhdGVkIHByb3AgdGhhdCBjYW4gcmVhZGluZyBm
-cm9tIG1vbml0b3IgYnkgZHBjZCBtZXRob2QuCistc2Ftc3VuZyxocGQtZ3BpbzogICAgICBkZXBy
-ZWNhdGVkIG5hbWUgZm9yIGhwZC1ncGlvcy4KKworLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogCiBF
-eGFtcGxlOgogCkBAIC04OCwxMyArNzQsNiBAQCBTT0Mgc3BlY2lmaWMgcG9ydGlvbjoKIAogQm9h
-cmQgU3BlY2lmaWMgcG9ydGlvbjoKIAlkcC1jb250cm9sbGVyIHsKLQkJc2Ftc3VuZyxjb2xvci1z
-cGFjZSA9IDwwPjsKLQkJc2Ftc3VuZyxkeW5hbWljLXJhbmdlID0gPDA+OwotCQlzYW1zdW5nLHlj
-YmNyLWNvZWZmID0gPDA+OwotCQlzYW1zdW5nLGNvbG9yLWRlcHRoID0gPDE+OwotCQlzYW1zdW5n
-LGxpbmstcmF0ZSA9IDwweDBhPjsKLQkJc2Ftc3VuZyxsYW5lLWNvdW50ID0gPDQ+OwotCiAJCWRp
-c3BsYXktdGltaW5ncyB7CiAJCQluYXRpdmUtbW9kZSA9IDwmbGNkX3RpbWluZz47CiAJCQlsY2Rf
-dGltaW5nOiAxMzY2eDc2OCB7Ci0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+Rockchip DP driver is a helper driver of analogix_dp coder driver,
+so most of the DT property should be descriped in analogix_dp document.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+Changes in v10.1:
+- Add the ack from Rob Herring
+
+Changes in v10: None
+Changes in v9:
+- Document more details for 'ports' property.
+
+Changes in v8:
+- Modify the commit subject name. (Heiko)
+
+Changes in v7: None
+Changes in v6: None
+Changes in v5:
+- Split binding doc's from driver changes. (Rob)
+- Add eDP hotplug pinctrl property. (Heiko)
+
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+
+ .../display/rockchip/analogix_dp-rockchip.txt      | 91 ++++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+
+diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+new file mode 100644
+index 0000000..dae86c4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+@@ -0,0 +1,91 @@
++Rockchip RK3288 specific extensions to the Analogix Display Port
++================================
++
++Required properties:
++- compatible: "rockchip,rk3288-edp";
++
++- reg: physical base address of the controller and length
++
++- clocks: from common clock binding: handle to dp clock.
++	  of memory mapped region.
++
++- clock-names: from common clock binding:
++	       Required elements: "dp" "pclk"
++
++- resets: Must contain an entry for each entry in reset-names.
++	  See ../reset/reset.txt for details.
++
++- pinctrl-names: Names corresponding to the chip hotplug pinctrl states.
++- pinctrl-0: pin-control mode. should be <&edp_hpd>
++
++- reset-names: Must include the name "dp"
++
++- rockchip,grf: this soc should set GRF regs, so need get grf here.
++
++- ports: there are 2 port nodes with endpoint definitions as defined in
++  Documentation/devicetree/bindings/media/video-interfaces.txt.
++    Port 0: contained 2 endpoints, connecting to the ouput of vop.
++    Port 1: contained 1 endpoint, connecting to the input of panel.
++
++For the below properties, please refer to Analogix DP binding document:
++ * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
++- phys (required)
++- phy-names (required)
++- hpd-gpios (optional)
++-------------------------------------------------------------------------------
++
++Example:
++	dp-controller: dp@ff970000 {
++		compatible = "rockchip,rk3288-dp";
++		reg = <0xff970000 0x4000>;
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
++		clock-names = "dp", "pclk";
++		phys = <&dp_phy>;
++		phy-names = "dp";
++
++		rockchip,grf = <&grf>;
++		resets = <&cru 111>;
++		reset-names = "dp";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&edp_hpd>;
++
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			edp_in: port@0 {
++				reg = <0>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				edp_in_vopb: endpoint@0 {
++					reg = <0>;
++					remote-endpoint = <&vopb_out_edp>;
++				};
++				edp_in_vopl: endpoint@1 {
++					reg = <1>;
++					remote-endpoint = <&vopl_out_edp>;
++				};
++			};
++
++			edp_out: port@1 {
++				reg = <1>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				edp_out_panel: endpoint {
++					reg = <0>;
++					remote-endpoint = <&panel_in_edp>
++				};
++			};
++		};
++	};
++
++	pinctrl {
++		edp {
++			edp_hpd: edp-hpd {
++				rockchip,pins = <7 11 RK_FUNC_2 &pcfg_pull_none>;
++			};
++		};
++	};
+-- 
+1.9.1
