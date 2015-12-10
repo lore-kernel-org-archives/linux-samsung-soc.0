@@ -1,84 +1,197 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 14/22] drm/exynos: fimd: fix dma burst size setting for
- small plane size
-Date: Thu, 10 Dec 2015 20:35:56 +0900
-Message-ID: <5669639C.9080701@samsung.com>
+Subject: Re: [PATCH v2 10/22] drm/exynos: introduce exynos_drm_plane_config
+ structure
+Date: Thu, 10 Dec 2015 20:47:32 +0900
+Message-ID: <56696654.4000102@samsung.com>
 References: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
- <1448891617-18830-15-git-send-email-m.szyprowski@samsung.com>
+ <1448891617-18830-11-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1448891617-18830-15-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:49277 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751238AbbLJLrg convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Dec 2015 06:47:36 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NZ501UVB4RA8D10@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Dec 2015 20:47:34 +0900 (KST)
+In-reply-to: <1448891617-18830-11-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-SGkgTWFyZWssCgoyMDE164WEIDEx7JuUIDMw7J28IDIyOjUz7JeQIE1hcmVrIFN6eXByb3dza2kg
-7J20KOqwgCkg7JO0IOq4gDoKPiBUaGlzIHBhdGNoIGZpeGVzIHRyYXNoZWQgZGlzcGxheSBvZiBi
-dWZmZXJzIGNyb3BwZWQgdG8gdmVyeSBzbWFsbCB3aWR0aC4KPiBFdmVuIGlmIERNQSBpcyB1bnN0
-YWJsZSBhbmQgY2F1c2VzIHRlYXJpbmcgd2hlbiBjaGFuZ2luZyB0aGUgYnVyc3Qgc2l6ZSwKPiBp
-dCBpcyBzdGlsbCBiZXR0ZXIgdGhhbiBkaXNwbGF5aW5nIGEgZ2FyYmFnZS4KCkl0IHNlZW1zIHRo
-YXQgdGhpcyBwYXRjaCBpcyBkaWZmZXJlbnQgZnJvbSBhYm92ZSBkZXNjcmlwdGlvbi4gSSB0aGlu
-ayBiZWxvdyBwYXRjaCBpcyBqdXN0IGNsZWFudXAsCndoaWNoIHBhc3NlcyBlYWNoIG1lbWJlciBu
-ZWNlc3NhcnkgaW5zdGVhZCBvZiBwYXNzaW5nIGEgZHJtX2ZyYW1lYnVmZmVyIG9iamVjdC4KClRo
-YW5rcywKSW5raSBEYWUKCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5z
-enlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmltZC5jIHwgMjQgKysrKysrKysrKystLS0tLS0tLS0tLS0tCj4gIDEgZmlsZSBj
-aGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCAxMyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBpbmRleCA3MGNkMjY4MWUzNDMuLjJlMjI0
-NzEyNjU4MSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmltZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+
-IEBAIC00ODcsNyArNDg3LDcgQEAgc3RhdGljIHZvaWQgZmltZF9jb21taXQoc3RydWN0IGV4eW5v
-c19kcm1fY3J0YyAqY3J0YykKPiAgCj4gIAo+ICBzdGF0aWMgdm9pZCBmaW1kX3dpbl9zZXRfcGl4
-Zm10KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IHdpbiwKPiAtCQkJCXN0
-cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiKQo+ICsJCQkJdWludDMyX3QgcGl4ZWxfZm9ybWF0LCBp
-bnQgd2lkdGgpCj4gIHsKPiAgCXVuc2lnbmVkIGxvbmcgdmFsOwo+ICAKPiBAQCAtNDk4LDExICs0
-OTgsMTEgQEAgc3RhdGljIHZvaWQgZmltZF93aW5fc2V0X3BpeGZtdChzdHJ1Y3QgZmltZF9jb250
-ZXh0ICpjdHgsIHVuc2lnbmVkIGludCB3aW4sCj4gIAkgKiBTbyB0aGUgcmVxdWVzdCBmb3JtYXQg
-aXMgQVJHQjg4ODggdGhlbiBjaGFuZ2UgaXQgdG8gWFJHQjg4ODguCj4gIAkgKi8KPiAgCWlmIChj
-dHgtPmRyaXZlcl9kYXRhLT5oYXNfbGltaXRlZF9mbXQgJiYgIXdpbikgewo+IC0JCWlmIChmYi0+
-cGl4ZWxfZm9ybWF0ID09IERSTV9GT1JNQVRfQVJHQjg4ODgpCj4gLQkJCWZiLT5waXhlbF9mb3Jt
-YXQgPSBEUk1fRk9STUFUX1hSR0I4ODg4Owo+ICsJCWlmIChwaXhlbF9mb3JtYXQgPT0gRFJNX0ZP
-Uk1BVF9BUkdCODg4OCkKPiArCQkJcGl4ZWxfZm9ybWF0ID0gRFJNX0ZPUk1BVF9YUkdCODg4ODsK
-PiAgCX0KPiAgCj4gLQlzd2l0Y2ggKGZiLT5waXhlbF9mb3JtYXQpIHsKPiArCXN3aXRjaCAocGl4
-ZWxfZm9ybWF0KSB7Cj4gIAljYXNlIERSTV9GT1JNQVRfQzg6Cj4gIAkJdmFsIHw9IFdJTkNPTjBf
-QlBQTU9ERV84QlBQX1BBTEVUVEU7Cj4gIAkJdmFsIHw9IFdJTkNPTnhfQlVSU1RMRU5fOFdPUkQ7
-Cj4gQEAgLTUzOCwxNyArNTM4LDE1IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2luX3NldF9waXhmbXQo
-c3RydWN0IGZpbWRfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2luLAo+ICAJCWJyZWFrOwo+
-ICAJfQo+ICAKPiAtCURSTV9ERUJVR19LTVMoImJwcCA9ICVkXG4iLCBmYi0+Yml0c19wZXJfcGl4
-ZWwpOwo+IC0KPiAgCS8qCj4gLQkgKiBJbiBjYXNlIG9mIGV4eW5vcywgc2V0dGluZyBkbWEtYnVy
-c3QgdG8gMTZXb3JkIGNhdXNlcyBwZXJtYW5lbnQKPiAtCSAqIHRlYXJpbmcgZm9yIHZlcnkgc21h
-bGwgYnVmZmVycywgZS5nLiBjdXJzb3IgYnVmZmVyLiBCdXJzdCBNb2RlCj4gLQkgKiBzd2l0Y2hp
-bmcgd2hpY2ggaXMgYmFzZWQgb24gcGxhbmUgc2l6ZSBpcyBub3QgcmVjb21tZW5kZWQgYXMKPiAt
-CSAqIHBsYW5lIHNpemUgdmFyaWVzIGFsb3QgdG93YXJkcyB0aGUgZW5kIG9mIHRoZSBzY3JlZW4g
-YW5kIHJhcGlkCj4gLQkgKiBtb3ZlbWVudCBjYXVzZXMgdW5zdGFibGUgRE1BIHdoaWNoIHJlc3Vs
-dHMgaW50byBpb21tdSBjcmFzaC90ZWFyLgo+ICsJICogU2V0dGluZyBkbWEtYnVyc3QgdG8gMTZX
-b3JkIGNhdXNlcyBwZXJtYW5lbnQgdGVhcmluZyBmb3IgdmVyeSBzbWFsbAo+ICsJICogYnVmZmVy
-cywgZS5nLiBjdXJzb3IgYnVmZmVyLiBCdXJzdCBNb2RlIHN3aXRjaGluZyB3aGljaCBiYXNlZCBv
-bgo+ICsJICogcGxhbmUgc2l6ZSBpcyBub3QgcmVjb21tZW5kZWQgYXMgcGxhbmUgc2l6ZSB2YXJp
-ZXMgYWxvdCB0b3dhcmRzIHRoZQo+ICsJICogZW5kIG9mIHRoZSBzY3JlZW4gYW5kIHJhcGlkIG1v
-dmVtZW50IGNhdXNlcyB1bnN0YWJsZSBETUEsIGJ1dCBpdCBpcwo+ICsJICogc3RpbGwgYmV0dGVy
-IHRvIGNoYW5nZSBkbWEtYnVyc3QgdGhhbiBkaXNwbGF5aW5nIGdhcmJhZ2UuCj4gIAkgKi8KPiAg
-Cj4gLQlpZiAoZmItPndpZHRoIDwgTUlOX0ZCX1dJRFRIX0ZPUl8xNldPUkRfQlVSU1QpIHsKPiAr
-CWlmICh3aWR0aCA8IE1JTl9GQl9XSURUSF9GT1JfMTZXT1JEX0JVUlNUKSB7Cj4gIAkJdmFsICY9
-IH5XSU5DT054X0JVUlNUTEVOX01BU0s7Cj4gIAkJdmFsIHw9IFdJTkNPTnhfQlVSU1RMRU5fNFdP
-UkQ7Cj4gIAl9Cj4gQEAgLTcyMyw3ICs3MjEsNyBAQCBzdGF0aWMgdm9pZCBmaW1kX3VwZGF0ZV9w
-bGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAo+ICAJCURSTV9ERUJVR19LTVMoIm9z
-ZCBzaXplID0gMHgleFxuIiwgKHVuc2lnbmVkIGludCl2YWwpOwo+ICAJfQo+ICAKPiAtCWZpbWRf
-d2luX3NldF9waXhmbXQoY3R4LCB3aW4sIGZiKTsKPiArCWZpbWRfd2luX3NldF9waXhmbXQoY3R4
-LCB3aW4sIGZiLT5waXhlbF9mb3JtYXQsIHN0YXRlLT5zcmMudyk7Cj4gIAo+ICAJLyogaGFyZHdh
-cmUgd2luZG93IDAgZG9lc24ndCBzdXBwb3J0IGNvbG9yIGtleS4gKi8KPiAgCWlmICh3aW4gIT0g
-MCkKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Marek,
+
+2015=EB=85=84 11=EC=9B=94 30=EC=9D=BC 22:53=EC=97=90 Marek Szyprowski =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> This patch adds common structure for keeping plane configuration and
+> capabilities data. This patch is inspired by similar code developed b=
+y
+> Tobias Jakobi.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 18 ++++++++---
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 23 +++++++++-----
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h       | 19 ++++++++++++
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 25 ++++++++++-----
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 34 +++++++++--------=
+----
+>  drivers/gpu/drm/exynos/exynos_drm_plane.h     |  7 ++---
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 25 ++++++++++-----
+>  drivers/gpu/drm/exynos/exynos_mixer.c         | 44 +++++++++++++++--=
+----------
+>  8 files changed, 121 insertions(+), 74 deletions(-)
+>=20
+<--snip-->
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_vidi.c
+> index 3ce141236fad..90701647aef1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -30,7 +30,6 @@
+> =20
+>  /* vidi has totally three virtual windows. */
+>  #define WINDOWS_NR		3
+> -#define CURSOR_WIN		2
+> =20
+>  #define ctx_from_connector(c)	container_of(c, struct vidi_context, \
+>  					connector)
+> @@ -90,6 +89,12 @@ static const uint32_t formats[] =3D {
+>  	DRM_FORMAT_NV12,
+>  };
+> =20
+> +static const enum drm_plane_type vidi_win_types[WINDOWS_NR] =3D {
+> +	DRM_PLANE_TYPE_PRIMARY,
+> +	DRM_PLANE_TYPE_OVERLAY,
+> +	DRM_PLANE_TYPE_CURSOR,
+> +};
+> +
+>  static int vidi_enable_vblank(struct exynos_drm_crtc *crtc)
+>  {
+>  	struct vidi_context *ctx =3D crtc->ctx;
+> @@ -442,17 +447,21 @@ static int vidi_bind(struct device *dev, struct=
+ device *master, void *data)
+>  	struct drm_device *drm_dev =3D data;
+>  	struct drm_encoder *encoder =3D &ctx->encoder;
+>  	struct exynos_drm_plane *exynos_plane;
+> -	enum drm_plane_type type;
+> -	unsigned int zpos;
+> +	struct exynos_drm_plane_config plane_config =3D { 0 };
+> +	unsigned int i;
+>  	int pipe, ret;
+> =20
+>  	vidi_ctx_initialize(ctx, drm_dev);
+> =20
+> -	for (zpos =3D 0; zpos < WINDOWS_NR; zpos++) {
+> -		type =3D exynos_plane_get_type(zpos, CURSOR_WIN);
+> -		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> -					1 << ctx->pipe, type, formats,
+> -					ARRAY_SIZE(formats), zpos);
+> +	plane_config.pixel_formats =3D formats;
+> +	plane_config.num_pixel_formats =3D ARRAY_SIZE(formats);
+> +
+> +	for (i =3D 0; i < WINDOWS_NR; i++) {
+> +		plane_config.zpos =3D i;
+> +		plane_config.type =3D vidi_win_types(i);
+
+vidi_win_types is not really a function. So this should be 'vidi_win_ty=
+pe[i]'
+This is a trivial so I can fix it.
+
+Thanks,
+Inki Dae
+
+> +
+> +		ret =3D exynos_plane_init(drm_dev, &ctx->planes[i],
+> +					1 << ctx->pipe, &plane_config);
+>  		if (ret)
+>  			return ret;
+>  	}
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
+exynos/exynos_mixer.c
+> index 8d2ce13eb725..a229f86d221a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -43,7 +43,6 @@
+> =20
+>  #define MIXER_WIN_NR		3
+>  #define VP_DEFAULT_WIN		2
+> -#define CURSOR_WIN		1
+> =20
+>  /* The pixelformats that are natively supported by the mixer. */
+>  #define MXR_FORMAT_RGB565	4
+> @@ -112,6 +111,25 @@ struct mixer_drv_data {
+>  	bool					has_sclk;
+>  };
+> =20
+> +static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_=
+NR] =3D {
+> +	{
+> +		.zpos =3D 0,
+> +		.type =3D DRM_PLANE_TYPE_PRIMARY,
+> +		.pixel_formats =3D mixer_formats,
+> +		.num_pixel_formats =3D ARRAY_SIZE(mixer_formats),
+> +	}, {
+> +		.zpos =3D 1,
+> +		.type =3D DRM_PLANE_TYPE_CURSOR,
+> +		.pixel_formats =3D mixer_formats,
+> +		.num_pixel_formats =3D ARRAY_SIZE(mixer_formats),
+> +	}, {
+> +		.zpos =3D 2,
+> +		.type =3D DRM_PLANE_TYPE_OVERLAY,
+> +		.pixel_formats =3D vp_formats,
+> +		.num_pixel_formats =3D ARRAY_SIZE(vp_formats),
+> +	},
+> +};
+> +
+>  static const u8 filter_y_horiz_tap8[] =3D {
+>  	0,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+>  	-1,	-1,	-1,	-1,	-1,	0,	0,	0,
+> @@ -1155,33 +1173,19 @@ static int mixer_bind(struct device *dev, str=
+uct device *manager, void *data)
+>  	struct mixer_context *ctx =3D dev_get_drvdata(dev);
+>  	struct drm_device *drm_dev =3D data;
+>  	struct exynos_drm_plane *exynos_plane;
+> -	unsigned int zpos;
+> +	unsigned int i;
+>  	int ret;
+> =20
+>  	ret =3D mixer_initialize(ctx, drm_dev);
+>  	if (ret)
+>  		return ret;
+> =20
+> -	for (zpos =3D 0; zpos < MIXER_WIN_NR; zpos++) {
+> -		enum drm_plane_type type;
+> -		const uint32_t *formats;
+> -		unsigned int fcount;
+> -
+> -		if (zpos =3D=3D VP_DEFAULT_WIN && !ctx->vp_enabled)
+> +	for (i =3D 0; i < MIXER_WIN_NR; i++) {
+> +		if (i =3D=3D VP_DEFAULT_WIN && !ctx->vp_enabled)
+>  			continue;
+> =20
+> -		if (zpos < VP_DEFAULT_WIN) {
+> -			formats =3D mixer_formats;
+> -			fcount =3D ARRAY_SIZE(mixer_formats);
+> -		} else {
+> -			formats =3D vp_formats;
+> -			fcount =3D ARRAY_SIZE(vp_formats);
+> -		}
+> -
+> -		type =3D exynos_plane_get_type(zpos, CURSOR_WIN);
+> -		ret =3D exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> -					1 << ctx->pipe, type, formats, fcount,
+> -					zpos);
+> +		ret =3D exynos_plane_init(drm_dev, &ctx->planes[i],
+> +					1 << ctx->pipe, &plane_configs[i]);
+>  		if (ret)
+>  			return ret;
+>  	}
+>=20
