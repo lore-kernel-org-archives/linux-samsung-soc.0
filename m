@@ -1,232 +1,133 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 06/22] drm/exynos: move dma_addr attribute from exynos
- plane to exynos fb
-Date: Thu, 10 Dec 2015 22:05:37 +0900
-Message-ID: <566978A1.60302@samsung.com>
-References: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
- <1448891617-18830-7-git-send-email-m.szyprowski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v4 4/8] ARM: Exynos: use generic cpufreq driver for
+ Exynos5420
+Date: Thu, 10 Dec 2015 15:18:25 +0100
+Message-ID: <4086299.WTtvsacqTF@amdc1976>
+References: <1449512300-17230-1-git-send-email-b.zolnierkie@samsung.com>
+ <1449512300-17230-5-git-send-email-b.zolnierkie@samsung.com>
+ <5666886C.10203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36238 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047AbbLJNFj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Dec 2015 08:05:39 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NZ502G5H8DDYQ50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Dec 2015 22:05:37 +0900 (KST)
-In-reply-to: <1448891617-18830-7-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5666886C.10203@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
 
+Hi,
 
-2015=EB=85=84 11=EC=9B=94 30=EC=9D=BC 22:53=EC=97=90 Marek Szyprowski =EC=
-=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> DMA address is a framebuffer attribute and the right place for it is
-> exynos_drm_framebuffer not exynos_drm_plane. This patch also introduc=
-es
-> helper function for getting dma address of the given framebuffer.
->=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 13 ++++++++-----
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 16 +++++++++-------
->  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  3 ---
->  drivers/gpu/drm/exynos/exynos_drm_fb.c        | 16 ++++++----------
->  drivers/gpu/drm/exynos/exynos_drm_fb.h        |  3 +--
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 10 ++++++----
->  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 18 -----------------=
--
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  5 ++++-
->  drivers/gpu/drm/exynos/exynos_mixer.c         |  7 ++++---
->  9 files changed, 38 insertions(+), 53 deletions(-)
->=20
+On Tuesday, December 08, 2015 04:36:12 PM Krzysztof Kozlowski wrote:
+> On 08.12.2015 03:18, Bartlomiej Zolnierkiewicz wrote:
+> > From: Thomas Abraham <thomas.ab@samsung.com>
+> > 
+> > The new CPU clock type allows the use of cpufreq-dt driver
+> > for Exynos5420.
+> > 
+> > Changes by Bartlomiej:
+> > - split Exynos5420 support from the original patch
+> > - disable cpufreq if big.LITTLE switcher support is enabled
+> > - switch to using cpufreq-dt driver
+> > 
+> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> > Cc: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/exynos.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> 
+> I think this is actually now your patch, not Thomas any more. :)
 
-<--snip-->
+It seems so, I'll update the patch.
 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_vidi.c
-> index 669362c53f49..3ce141236fad 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> @@ -24,6 +24,7 @@
-> =20
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_crtc.h"
-> +#include "exynos_drm_fb.h"
->  #include "exynos_drm_plane.h"
->  #include "exynos_drm_vidi.h"
-> =20
-> @@ -126,11 +127,13 @@ static void vidi_update_plane(struct exynos_drm=
-_crtc *crtc,
->  			      struct exynos_drm_plane *plane)
->  {
->  	struct vidi_context *ctx =3D crtc->ctx;
-> +	dma_addr_t addr;
-> =20
->  	if (ctx->suspended)
->  		return;
-> =20
-> -	DRM_DEBUG_KMS("dma_addr =3D %pad\n", plane->dma_addr);
-> +	addr =3D exynos_drm_fb_dma_addr(plane->base.fb, 0);
+> > diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> > index 1c47aee..7a89c9d 100644
+> > --- a/arch/arm/mach-exynos/exynos.c
+> > +++ b/arch/arm/mach-exynos/exynos.c
+> > @@ -230,6 +230,9 @@ static const struct of_device_id exynos_cpufreq_matches[] = {
+> >  	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
+> >  	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+> >  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+> > +#ifndef CONFIG_BL_SWITCHER
+> > +	{ .compatible = "samsung,exynos5420", .data = "cpufreq-dt" },
+> > +#endif
+> 
+> Why not on BL_SWITCHER? Shouldn't be enough to disable ARM_DT_BL_CPUFREQ?
 
-At this point, plane->base.fb is NULL so null pointer access happens li=
-ke below,
+ARM_DT_BL_CPUFREQ is not relevant here (it requires to be explicitly
+enabled by platform code, just like cpufreq-dt) and the dependency on
+!BL_SWITCHER is needed because when BL_SWITCHER is enabled big and
+LITTLE cores are grouped in pairs and presented as "virtual" CPUs to
+the system:
 
-[    5.969422] Unable to handle kernel NULL pointer dereference at virt=
-ual address 00000090
-[    5.977481] pgd =3D ee590000
-[    5.980142] [00000090] *pgd=3D6e526831, *pte=3D00000000, *ppte=3D000=
-00000
-[    5.986347] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-[    5.991712] Modules linked in:
-[    5.994770] CPU: 3 PID: 1598 Comm: sh Not tainted 4.4.0-rc3-00052-gc=
-60d7e2-dirty #199
-[    6.002565] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[    6.008647] task: ef328000 ti: ee4d4000 task.ti: ee4d4000
-[    6.014053] PC is at exynos_drm_fb_dma_addr+0x8/0x14
-[    6.018990] LR is at vidi_update_plane+0x4c/0xc4
-[    6.023581] pc : [<c02b1fb4>]    lr : [<c02c3cc4>]    psr: 80000013
-[    6.023581] sp : ee4d5d90  ip : 00000001  fp : 00000000
-[    6.035029] r10: 00000000  r9 : c05b965c  r8 : ee813e00
-[    6.040241] r7 : 00000000  r6 : ee8e3330  r5 : 00000000  r4 : ee8e30=
-10
-[    6.046749] r3 : 00000000  r2 : 00000000  r1 : 00000024  r0 : 000000=
-00
-[    6.053264] Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Seg=
-ment none
-[    6.060379] Control: 10c5387d  Table: 6e59004a  DAC: 00000051
-[    6.066107] Process sh (pid: 1598, stack limit =3D 0xee4d4210)
-[    6.071748] Stack: (0xee4d5d90 to 0xee4d6000)
-[    6.076100] 5d80:                                     00000000 ee813=
-300 ee476e40 00000005
-[    6.084236] 5da0: ee8e3330 c028ac14 00000008 ee476e40 ee476fc0 ef3b3=
-800 ee476fc0 eeb3e380
-[    6.092395] 5dc0: 00000002 c02b08e4 00000000 eeb3e3a4 ee476fc0 ee476=
-e40 ef3b3800 eeb3e380
-[    6.100554] 5de0: 00000002 c02b12b8 ee854400 00000000 00000001 ee850=
-1a8 00000000 ee476e40
-[    6.108714] 5e00: ef3b3800 00000001 ee476e40 00000050 ee850c80 00000=
-001 ee476e40 ef3b3aac
-[    6.116873] 5e20: 00000002 000000ff 00000000 c028e0ec 000a82b4 c02ac=
-c50 ee8e36a0 ee476c80
-[    6.125032] 5e40: ef3b3aac ef3b3800 ee476c9c ee850c80 ef3b3800 ef3b3=
-800 ef3b3800 ef3b398c
-[    6.133191] 5e60: c088c390 00000002 000a82b4 c028f8d4 00000000 ef3b3=
-800 ef0f4300 c028f948
-[    6.141350] 5e80: ee850c80 c028f864 ef3b3a84 00000001 ef3b3a90 c0285=
-3e4 00000001 00000000
-[    6.149509] 5ea0: 000a82b4 ee4d5ec0 00000002 ee8e3010 00000002 00000=
-002 ee4d5f88 00000000
-[    6.157669] 5ec0: 00000000 eeb8df00 000a82b4 c02c4278 00000002 ee476=
-b00 eeb8df0c c01390ac
-[    6.165828] 5ee0: 00000000 00000000 ee4e1f00 00000002 000a9540 ee4d5=
-f88 c000f844 ee4d4000
-[    6.173987] 5f00: 00000000 c00dbf70 000a82b4 c00093dc ee4d4000 ee4d5=
-f78 ef328234 c0579bec
-[    6.182146] 5f20: 00000001 00000001 ee4d5f3c 00000001 ee45e9c4 00000=
-001 000a82b4 c005ca74
-[    6.190306] 5f40: ee45e9c4 00000002 000a9540 c005cad4 ee4e1f00 00000=
-002 000a9540 ee4d5f88
-[    6.198465] 5f60: c000f844 c00dc770 00000000 00000000 ee4e1f00 ee4e1=
-f00 00000002 000a9540
-[    6.206624] 5f80: c000f844 c00dcf98 00000000 00000000 00000003 000a7=
-c40 00000001 000a9540
-[    6.214783] 5fa0: 00000004 c000f680 000a7c40 00000001 00000001 000a9=
-540 00000002 00000000
-[    6.222942] 5fc0: 000a7c40 00000001 000a9540 00000004 00000020 000a8=
-2c8 000a8294 000a82b4
-[    6.231102] 5fe0: 00000000 be8b1624 00012345 b6e94166 40000030 00000=
-001 00000000 00000000
-[    6.239270] [<c02b1fb4>] (exynos_drm_fb_dma_addr) from [<c02c3cc4>] =
-(vidi_update_plane+0x4c/0xc4)
-[    6.248122] [<c02c3cc4>] (vidi_update_plane) from [<c028ac14>] (drm_=
-atomic_helper_commit_planes+0x1f4/0x258)
-[    6.257928] [<c028ac14>] (drm_atomic_helper_commit_planes) from [<c0=
-2b08e4>] (exynos_atomic_commit_complete+0xe4/0x1c4)
-[    6.268688] [<c02b08e4>] (exynos_atomic_commit_complete) from [<c02b=
-12b8>] (exynos_atomic_commit+0x180/0x1cc)
-[    6.278584] [<c02b12b8>] (exynos_atomic_commit) from [<c028e0ec>] (r=
-estore_fbdev_mode+0x260/0x290)
-[    6.287525] [<c028e0ec>] (restore_fbdev_mode) from [<c028f8d4>] (drm=
-_fb_helper_restore_fbdev_mode_unlocked+0x30/0x74)
-[    6.298111] [<c028f8d4>] (drm_fb_helper_restore_fbdev_mode_unlocked)=
- from [<c028f948>] (drm_fb_helper_set_par+0x30/0x54)
-[    6.308961] [<c028f948>] (drm_fb_helper_set_par) from [<c028f864>] (=
-drm_fb_helper_hotplug_event+0x9c/0xdc)
-[    6.318595] [<c028f864>] (drm_fb_helper_hotplug_event) from [<c02853=
-e4>] (drm_helper_hpd_irq_event+0xd4/0x160)
-[    6.328578] [<c02853e4>] (drm_helper_hpd_irq_event) from [<c02c4278>=
-] (vidi_store_connection+0x94/0xcc)
-[    6.337954] [<c02c4278>] (vidi_store_connection) from [<c01390ac>] (=
-kernfs_fop_write+0xb8/0x1bc)
-[    6.346723] [<c01390ac>] (kernfs_fop_write) from [<c00dbf70>] (__vfs=
-_write+0x20/0xd8)
-[    6.354531] [<c00dbf70>] (__vfs_write) from [<c00dc770>] (vfs_write+=
-0x90/0x164)
-[    6.361821] [<c00dc770>] (vfs_write) from [<c00dcf98>] (SyS_write+0x=
-44/0x9c)
-[    6.368855] [<c00dcf98>] (SyS_write) from [<c000f680>] (ret_fast_sys=
-call+0x0/0x3c)
-[    6.376404] Code: eb0b17f1 eaffffe7 e3510003 d2811024 (d7900101)=20
+...
+[    0.002630] CPU0: update cpu_capacity 448
+[    0.002646] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
+[    0.002835] Setting up static identity map for 0x40008280 - 0x400082d8
+[    0.003106] ARM CCI driver probed
+[    0.003351] Exynos MCPM support installed
+[    0.045350] CPU1: update cpu_capacity 448
+[    0.045358] CPU1: thread -1, cpu 1, socket 1, mpidr 80000101
+[    0.060326] CPU2: update cpu_capacity 448
+[    0.060334] CPU2: thread -1, cpu 2, socket 1, mpidr 80000102
+[    0.075326] CPU3: update cpu_capacity 448
+[    0.075334] CPU3: thread -1, cpu 3, socket 1, mpidr 80000103
+[    0.090337] CPU4: update cpu_capacity 1535
+[    0.090345] CPU4: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.105314] CPU5: update cpu_capacity 1535
+[    0.105321] CPU5: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.120338] CPU6: update cpu_capacity 1535
+[    0.120345] CPU6: thread -1, cpu 2, socket 0, mpidr 80000002
+[    0.135330] CPU7: update cpu_capacity 1535
+[    0.135338] CPU7: thread -1, cpu 3, socket 0, mpidr 80000003
+[    0.135466] Brought up 8 CPUs
+...
+[    3.027498] big.LITTLE switcher initializing
+[    3.031761] CPU0 paired with CPU7
+[    3.035055] CPU1 paired with CPU6
+[    3.038332] CPU2 paired with CPU5
+[    3.041598] CPU3 paired with CPU4
+[    3.044930] GIC ID for CPU 0 cluster 1 is 4
+[    3.049078] GIC ID for CPU 1 cluster 1 is 5
+[    3.053258] GIC ID for CPU 2 cluster 1 is 6
+[    3.057370] GIC ID for CPU 3 cluster 1 is 7
+[    3.061558] GIC ID for CPU 0 cluster 0 is 0
+[    3.083336] IRQ53 no longer affine to CPU4
+[    3.084336] CPU4: shutdown
+[    3.107059] GIC ID for CPU 1 cluster 0 is 1
+[    3.123303] IRQ54 no longer affine to CPU5
+[    3.124213] CPU5: shutdown
+[    3.146387] GIC ID for CPU 2 cluster 0 is 2
+[    3.158143] cpu cpu0: 1100 MHz, 1250 mV --> 900 MHz, 1100 mV
+[    3.168228] IRQ55 no longer affine to CPU6
+[    3.169135] CPU6: shutdown
+[    3.191485] GIC ID for CPU 3 cluster 0 is 3
+[    3.208264] IRQ56 no longer affine to CPU7
+[    3.209166] CPU7: shutdown
+[    3.236752] big.LITTLE switcher initialized
+...
 
-When vidi driver is intiated by triggering a connection sysfs file, vid=
-i driver tries modeset binding by calling drm_fb_helper_hotplug_event.
-However, at this time it seems there is a case that plan->state->crtc e=
-xists but plane->fb is NULL, which would be related to vidi driver.
+Only arm_big_little_dt driver knows how to handle this setup
+correctly.  cpufreq-dt just treats "virtual" CPUs as a LITTLE
+ones.  Thus when "virtual CPU"'s current core is switched to
+a big one cpufreq-dt is unable to update its voltage.
 
-I just looked into this issue roughly so we would need to check this is=
-sue in more details.
+[ I tried using BL_SWITCHER_DUMMY_IF functionality to simulate
+  this with:
 
-Thanks,
-Inki Dae
+	echo 0,0 > /dev/b.L_switcher
 
-> +	DRM_DEBUG_KMS("dma_addr =3D %pad\n", &addr);
-> =20
->  	if (ctx->vblank_on)
->  		schedule_work(&ctx->work);
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
-exynos/exynos_mixer.c
-> index 47777be1a754..f40de82848dc 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -37,6 +37,7 @@
-> =20
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_crtc.h"
-> +#include "exynos_drm_fb.h"
->  #include "exynos_drm_plane.h"
->  #include "exynos_drm_iommu.h"
-> =20
-> @@ -422,8 +423,8 @@ static void vp_video_buffer(struct mixer_context =
-*ctx,
->  		return;
->  	}
-> =20
-> -	luma_addr[0] =3D plane->dma_addr[0];
-> -	chroma_addr[0] =3D plane->dma_addr[1];
-> +	luma_addr[0] =3D exynos_drm_fb_dma_addr(fb, 0);
-> +	chroma_addr[0] =3D exynos_drm_fb_dma_addr(fb, 1);
-> =20
->  	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
->  		ctx->interlace =3D true;
-> @@ -575,7 +576,7 @@ static void mixer_graph_buffer(struct mixer_conte=
-xt *ctx,
->  	dst_y_offset =3D plane->crtc_y;
-> =20
->  	/* converting dma address base and source offset */
-> -	dma_addr =3D plane->dma_addr[0]
-> +	dma_addr =3D exynos_drm_fb_dma_addr(fb, 0)
->  		+ (plane->src_x * fb->bits_per_pixel >> 3)
->  		+ (plane->src_y * fb->pitches[0]);
->  	src_x_offset =3D 0;
->=20
+  but it doesn't seem to work for some reason (from looking at
+  arch/arm/common/bL_switcher_dummy_if.c code it seems that at
+  least "bL_switcher_write" line should get logged but it does
+  not happen). ]
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
