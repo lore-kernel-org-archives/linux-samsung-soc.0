@@ -1,107 +1,96 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 004/182] gpio: generic: factor into gpio_chip struct
-Date: Thu, 10 Dec 2015 08:06:32 +0000
-Message-ID: <20151210080632.GC17876@x1>
-References: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v10.1 15/19] drm: bridge: analogix/dp: move hpd detect to
+ connector detect function
+Date: Thu, 10 Dec 2015 16:50:08 +0800
+Message-ID: <1449737408-12920-1-git-send-email-ykk@rock-chips.com>
+References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:35576 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753279AbbLJIGh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Dec 2015 03:06:37 -0500
-Received: by mail-wm0-f48.google.com with SMTP id u63so12575406wmu.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Dec 2015 00:06:36 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, javier@osg.samsung.com, emil.l.velikov@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-rockchip@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Anton Vorontsov <anton@enomsg.org>, arm@kernel.org, Alexander Shiyan <shc_work@mail.ru>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Rabin Vincent <rab>
 
-On Wed, 09 Dec 2015, Linus Walleij wrote:
-
-> The separate struct bgpio_chip has been a pain to handle, both
-> by being confusingly similar in name to struct gpio_chip and
-> for being contained inside a struct so that struct gpio_chip
-> is contained in a struct contained in a struct, making several
-> steps of dereferencing necessary.
->=20
-> Make things simpler: include the fields directly into
-> <linux/gpio/driver.h>, #ifdef:ed for CONFIG_GENERIC_GPIO, and
-> get rid of the <linux/basic_mmio_gpio.h> altogether. Prefix
-> some of the member variables with bgpio_* and add proper
-> kerneldoc while we're at it.
->=20
-> Modify all users to handle the change and use a struct
-> gpio_chip directly. And while we're at it: replace all
-> container_of() dereferencing by gpiochip_get_data() and
-> registering the gpio_chip with gpiochip_add_data().
->=20
-> Cc: arm@kernel.org
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Alexander Shiyan <shc_work@mail.ru>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Gregory Fong <gregory.0xf0@gmail.com>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> Cc: Rabin Vincent <rabin@rab.in>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ARM SoC folks and Lee: it would be great if you could
-> ACK the few lines hitting arch/arm/* and drivers/mfd/* in this
-> so I can take it through the GPIO tree.
-> ---
->  arch/arm/mach-clps711x/board-autcpu12.c |   2 +-
->  arch/arm/mach-clps711x/board-p720t.c    |   2 +-
->  arch/arm/mach-imx/mach-mx21ads.c        |   2 +-
->  arch/arm/mach-omap1/board-ams-delta.c   |   2 +-
->  arch/arm/mach-s3c64xx/mach-crag6410.c   |   2 +-
->  drivers/gpio/gpio-74xx-mmio.c           |  37 ++--
->  drivers/gpio/gpio-brcmstb.c             |  80 ++++-----
->  drivers/gpio/gpio-clps711x.c            |  28 +--
->  drivers/gpio/gpio-dwapb.c               |  92 +++++-----
->  drivers/gpio/gpio-ep93xx.c              |  25 +--
->  drivers/gpio/gpio-etraxfs.c             |  49 +++---
->  drivers/gpio/gpio-ge.c                  |  24 +--
->  drivers/gpio/gpio-generic.c             | 292 +++++++++++++++-------=
-----------
->  drivers/gpio/gpio-grgpio.c              |  73 ++++----
->  drivers/gpio/gpio-moxart.c              |  29 ++--
->  drivers/gpio/gpio-mxc.c                 |  27 ++-
->  drivers/gpio/gpio-mxs.c                 |  33 ++--
->  drivers/gpio/gpio-sodaville.c           |  13 +-
->  drivers/gpio/gpio-xgene-sb.c            |  40 ++---
->  drivers/mfd/vexpress-sysreg.c           |   8 +-
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
->  include/linux/basic_mmio_gpio.h         |  80 ---------
->  include/linux/gpio/driver.h             |  54 ++++++
->  22 files changed, 442 insertions(+), 552 deletions(-)
->  delete mode 100644 include/linux/basic_mmio_gpio.h
-
-[...]
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+VGhpcyBjaGFuZ2UganVzdCBtYWtlIGEgbGl0dGxlIGNsZWFuIHRvIG1ha2UgY29kZSBtb3JlIGxp
+a2UKZHJtIGNvcmUgZXhwZWN0LCBtb3ZlIGhkcCBkZXRlY3QgY29kZSBmcm9tIGJyaWRnZS0+ZW5h
+YmxlKCksCmFuZCBwbGFjZSB0aGVtIGludG8gY29ubmVjdG9yLT5kZXRlY3QoKS4KCk5vdGU6IEd1
+c3Rhdm8gUGFkb3ZhbiB0cnkgdG8gcmVtb3ZlIHRoZSBjb250cm9sbGVyIGFuZCBwaHkKcG93ZXIg
+b24gZnVuY3Rpb24gaW4gYmluZCB0aW1lIGF0IGJlbGxvdyBjb21taXQ6Cglkcm0vZXh5bm9zOiBk
+byBub3Qgc3RhcnQgZW5hYmxpbmcgRFAgYXQgYmluZCgpIHBoYXNlCgpCdXQgZm9yIG5vdyB0aGUg
+Y29ubmVjdG9yIHN0YXR1cyBkb24ndCBoYXJkY29kZSB0byBjb25uZWN0ZWQsCm5lZWQgdG8gb3Bl
+cmF0ZSBkcCBwaHkgaW4gLmRldGVjdCBmdW5jdGlvbiwgc28gd2UgbmVlZCB0byByZXZlcnQKcGFy
+dHMgaWYgR3VzdGF2byBQYWRvdmFuJ3MgY2hhbmdlcywgYWRkIHBoeSBwb3dlcm9uCmZ1bmN0aW9u
+IGluIGJpbmQgdGltZS4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBz
+LmNvbT4KVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBvc2cuc2Ft
+c3VuZy5jb20+Ci0tLQpDaGFuZ2VzIGluIHYxMC4xOgotIE1vdmUgdGhlIHBhbmVsIHByZXBhcmUg
+ZnJvbSBnZXRfbW9kZXMgdGltZSB0byBiaW5kIHRpbWUsIGFuZCBtb3ZlCiAgdGhlIHBhbmVsIHVu
+cHJlcGFyZSBmcm9tIGJyaWRnZS0+ZGlzYWJsZSB0byB1bmJpbmQgdGltZS4gKEhlaWtvKQoKQ2hh
+bmdlcyBpbiB2MTA6Ci0gUmV2ZXJ0IHBhcnRzIG9mIEd1c3Rhdm8gUGFkb3ZhbidzIGNoYW5nZXMg
+aW4gY29tbWl0OgoJZHJtL2V4eW5vczogZG8gbm90IHN0YXJ0IGVuYWJsaW5nIERQIGF0IGJpbmQo
+KSBwaGFzZQogIEFkZCBkcCBwaHkgcG93ZXJvbiBmdW5jdGlvbiBpbiBiaW5kIHRpbWUuCgpDaGFu
+Z2VzIGluIHY5OiBOb25lCkNoYW5nZXMgaW4gdjg6IE5vbmUKQ2hhbmdlcyBpbiB2NzogTm9uZQpD
+aGFuZ2VzIGluIHY2OiBOb25lCkNoYW5nZXMgaW4gdjU6IE5vbmUKQ2hhbmdlcyBpbiB2NDoKLSBU
+YWtlIEppbmdvbyBzdWdnZXN0LCBhZGQgY29tbWl0IG1lc3NhZ2VzLgoKQ2hhbmdlcyBpbiB2MzoK
+LSBtb3ZlIGRwIGhwZCBkZXRlY3QgdG8gY29ubmVjdG9yIGRldGVjdCBmdW5jdGlvbi4KCkNoYW5n
+ZXMgaW4gdjI6IE5vbmUKCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4
+X2RwX2NvcmUuYyB8IDM4ICsrKysrKysrKysrKy0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAy
+MCBpbnNlcnRpb25zKCspLCAxOCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCmluZGV4IDAwYWVlNDQuLjZhMTMx
+NjcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
+ZHBfY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
+ZHBfY29yZS5jCkBAIC05MDEsMTIgKzkwMSw2IEBAIHN0YXRpYyB2b2lkIGFuYWxvZ2l4X2RwX2Nv
+bW1pdChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKIAkJCURSTV9FUlJPUigiZmFpbGVk
+IHRvIGRpc2FibGUgdGhlIHBhbmVsXG4iKTsKIAl9CiAKLQlyZXQgPSBhbmFsb2dpeF9kcF9kZXRl
+Y3RfaHBkKGRwKTsKLQlpZiAocmV0KSB7Ci0JCS8qIENhYmxlIGhhcyBiZWVuIGRpc2Nvbm5lY3Rl
+ZCwgd2UncmUgZG9uZSAqLwotCQlyZXR1cm47Ci0JfQotCiAJcmV0ID0gYW5hbG9naXhfZHBfaGFu
+ZGxlX2VkaWQoZHApOwogCWlmIChyZXQpIHsKIAkJZGV2X2VycihkcC0+ZGV2LCAidW5hYmxlIHRv
+IGhhbmRsZSBlZGlkXG4iKTsKQEAgLTk0MSw2ICs5MzUsMTEgQEAgc3RhdGljIHZvaWQgYW5hbG9n
+aXhfZHBfY29tbWl0KHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQogCiBlbnVtIGRybV9j
+b25uZWN0b3Jfc3RhdHVzIGFuYWxvZ2l4X2RwX2RldGVjdChzdHJ1Y3QgZGV2aWNlICpkZXYsIGJv
+b2wgZm9yY2UpCiB7CisJc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2Ry
+dmRhdGEoZGV2KTsKKworCWlmIChhbmFsb2dpeF9kcF9kZXRlY3RfaHBkKGRwKSkKKwkJcmV0dXJu
+IGNvbm5lY3Rvcl9zdGF0dXNfZGlzY29ubmVjdGVkOworCiAJcmV0dXJuIGNvbm5lY3Rvcl9zdGF0
+dXNfY29ubmVjdGVkOwogfQogRVhQT1JUX1NZTUJPTF9HUEwoYW5hbG9naXhfZHBfZGV0ZWN0KTsK
+QEAgLTEwMDYsMTMgKzEwMDUsNiBAQCBzdGF0aWMgdm9pZCBhbmFsb2dpeF9kcF9icmlkZ2VfZW5h
+YmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiAKIAlwbV9ydW50aW1lX2dldF9zeW5jKGRw
+LT5kZXYpOwogCi0JaWYgKGRwLT5wbGF0X2RhdGEtPnBhbmVsKSB7Ci0JCWlmIChkcm1fcGFuZWxf
+cHJlcGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCkpIHsKLQkJCURSTV9FUlJPUigiZmFpbGVkIHRv
+IHNldHVwIHRoZSBwYW5lbFxuIik7Ci0JCQlyZXR1cm47Ci0JCX0KLQl9Ci0KIAlpZiAoZHAtPnBs
+YXRfZGF0YS0+cG93ZXJfb24pCiAJCWRwLT5wbGF0X2RhdGEtPnBvd2VyX29uKGRwLT5wbGF0X2Rh
+dGEpOwogCkBAIC0xMDQ1LDExICsxMDM3LDYgQEAgc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfYnJp
+ZGdlX2Rpc2FibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKIAlpZiAoZHAtPnBsYXRfZGF0
+YS0+cG93ZXJfb2ZmKQogCQlkcC0+cGxhdF9kYXRhLT5wb3dlcl9vZmYoZHAtPnBsYXRfZGF0YSk7
+CiAKLQlpZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwpIHsKLQkJaWYgKGRybV9wYW5lbF91bnByZXBh
+cmUoZHAtPnBsYXRfZGF0YS0+cGFuZWwpKQotCQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gdHVybm9m
+ZiB0aGUgcGFuZWxcbiIpOwotCX0KLQogCXBtX3J1bnRpbWVfcHV0X3N5bmMoZHAtPmRldik7CiAK
+IAlkcC0+ZHBtc19tb2RlID0gRFJNX01PREVfRFBNU19PRkY7CkBAIC0xMzA3LDYgKzEyOTQsMTUg
+QEAgaW50IGFuYWxvZ2l4X2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2Rl
+dmljZSAqZHJtX2RldiwKIAogCXBtX3J1bnRpbWVfZW5hYmxlKGRldik7CiAKKwlwaHlfcG93ZXJf
+b24oZHAtPnBoeSk7CisKKwlpZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwpIHsKKwkJaWYgKGRybV9w
+YW5lbF9wcmVwYXJlKGRwLT5wbGF0X2RhdGEtPnBhbmVsKSkgeworCQkJRFJNX0VSUk9SKCJmYWls
+ZWQgdG8gc2V0dXAgdGhlIHBhbmVsXG4iKTsKKwkJCXJldHVybiAtRUJVU1k7CisJCX0KKwl9CisK
+IAlyZXQgPSBkZXZtX3JlcXVlc3RfaXJxKCZwZGV2LT5kZXYsIGRwLT5pcnEsIGFuYWxvZ2l4X2Rw
+X2lycV9oYW5kbGVyLAogCQkJICAgICAgIGlycV9mbGFncywgImFuYWxvZ2l4LWRwIiwgZHApOwog
+CWlmIChyZXQpIHsKQEAgLTEzNDAsNiArMTMzNiwxMiBAQCB2b2lkIGFuYWxvZ2l4X2RwX3VuYmlu
+ZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKIAlzdHJ1Y3QgYW5h
+bG9naXhfZHBfZGV2aWNlICpkcCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwogCiAJYW5hbG9naXhf
+ZHBfYnJpZGdlX2Rpc2FibGUoZHAtPmJyaWRnZSk7CisKKwlpZiAoZHAtPnBsYXRfZGF0YS0+cGFu
+ZWwpIHsKKwkJaWYgKGRybV9wYW5lbF91bnByZXBhcmUoZHAtPnBsYXRfZGF0YS0+cGFuZWwpKQor
+CQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gdHVybm9mZiB0aGUgcGFuZWxcbiIpOworCX0KKwogCXBt
+X3J1bnRpbWVfZGlzYWJsZSgmcGRldi0+ZGV2KTsKIH0KIEVYUE9SVF9TWU1CT0xfR1BMKGFuYWxv
+Z2l4X2RwX3VuYmluZCk7Ci0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
