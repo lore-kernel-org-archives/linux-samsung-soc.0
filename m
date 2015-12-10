@@ -1,58 +1,50 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 17/19] ARM: dts: Add support of bus frequency using
- VDD_INT for exynos3250-rinato
-Date: Thu, 10 Dec 2015 16:24:56 +0900
-Message-ID: <566928C8.5080109@samsung.com>
-References: <1449634091-1842-1-git-send-email-cw00.choi@samsung.com>
- <1449634091-1842-18-git-send-email-cw00.choi@samsung.com>
- <566922A4.5090807@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 2/7] ARM: dts: exynos4412-odroid*: enable MFC device
+Date: Thu, 10 Dec 2015 16:44:02 +0900
+Message-ID: <56692D42.2090809@samsung.com>
+References: <1449669502-24601-1-git-send-email-m.szyprowski@samsung.com>
+ <1449669502-24601-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57452 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753268AbbLJHZG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Dec 2015 02:25:06 -0500
-In-reply-to: <566922A4.5090807@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1449669502-24601-3-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 
-On 2015=EB=85=84 12=EC=9B=94 10=EC=9D=BC 15:58, Krzysztof Kozlowski wro=
-te:
-> On 09.12.2015 13:08, Chanwoo Choi wrote:
->> This patch adds the bus device-tree node of INT (internal) block
->> to enable the bus frequency. The following sub-blocks share
->=20
-> "to enable the bus frequency scaling"
->=20
->> the VDD_INT power source:
->> - LEFTBUS (parent device)
->> - RIGHTBUS
->> - PERIL
->> - LCD0
->> - FSYS
->> - MCUISP / ISP
->> - MFC
->>
->> The LEFTBUS is parent device with devfreq ondemand governor
->> and the rest devices has the dependency on LEFTBUS bus.
->=20
-> How about:
-> "and the rest of devices depend on the LEFTBUS device."
-> ?
+On 09.12.2015 22:58, Marek Szyprowski wrote:
+> Enable support for Multimedia Codec (MFC) device for all Exynos4412-based
+> Odroid boards.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index edf0fc8..5825abf 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -18,6 +18,24 @@
+>  		stdout-path = &serial_1;
+>  	};
+>  
+> +	reserved-memory {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		mfc_left: region@77000000 {
+> +			compatible = "shared-dma-pool";
+> +			reusable;
+> +			reg = <0x77000000 0x1000000>;
 
-OK, I'll modify it.
+Doesn't this exceed the memory of Odroid X?
 
->=20
-> The patch is good:
->=20
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+For other Exynos4412 boards the length is 0x800000. I am curious: any
+particular reason for the difference?
 
-Thanks for your review.
-
-Best Regards,
-Chanwoo Choi
+Best regards,
+Krzysztof
