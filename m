@@ -1,112 +1,63 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH v2 09/19] PM / devfreq: exynos: Update documentation for
- bus devices using passive governor
-Date: Fri, 11 Dec 2015 00:10:13 +0900
-Message-ID: <CAGTfZH0T8ufrBKT3vKoivk5Vn_AUHnB+or0QRgr=D77q7puAJA@mail.gmail.com>
-References: <1449634091-1842-1-git-send-email-cw00.choi@samsung.com>
-	<1449634091-1842-10-git-send-email-cw00.choi@samsung.com>
-	<20151210142109.GA32109@rob-hp-laptop>
-Reply-To: cw00.choi@samsung.com
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v2 14/22] drm/exynos: fimd: fix dma burst size setting for
+ small plane size
+Date: Thu, 10 Dec 2015 15:36:47 +0000
+Message-ID: <CAPj87rP-34txHEE0mxZrc4j3q0Ubgk3z0dYdPo8vNViSq8uksQ@mail.gmail.com>
+References: <1448891617-18830-1-git-send-email-m.szyprowski@samsung.com>
+	<1448891617-18830-15-git-send-email-m.szyprowski@samsung.com>
+	<5669639C.9080701@samsung.com>
+	<56697720.8000901@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:33095 "EHLO
-	mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753521AbbLJPKP (ORCPT
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:33894 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751005AbbLJPgs convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Dec 2015 10:10:15 -0500
-In-Reply-To: <20151210142109.GA32109@rob-hp-laptop>
+	Thu, 10 Dec 2015 10:36:48 -0500
+Received: by mail-wm0-f46.google.com with SMTP id v187so39063353wmv.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Dec 2015 07:36:48 -0800 (PST)
+In-Reply-To: <56697720.8000901@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-On Thu, Dec 10, 2015 at 11:21 PM, Rob Herring <robh@kernel.org> wrote:
-> On Wed, Dec 09, 2015 at 01:08:01PM +0900, Chanwoo Choi wrote:
->> This patch updates the documentation for passive bus devices and adds the
->> detailed example of Exynos3250.
+Hi Inki,
+
+On 10 December 2015 at 12:59, Marek Szyprowski <m.szyprowski@samsung.co=
+m> wrote:
+> On 2015-12-10 12:35, Inki Dae wrote:
+>> 2015=EB=85=84 11=EC=9B=94 30=EC=9D=BC 22:53=EC=97=90 Marek Szyprowsk=
+i =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>>> This patch fixes trashed display of buffers cropped to very small w=
+idth.
+>>> Even if DMA is unstable and causes tearing when changing the burst =
+size,
+>>> it is still better than displaying a garbage.
 >>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 244 ++++++++++++++++++++-
->>  1 file changed, 241 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->> index 54a1f9c46c88..c4fdc70f8eac 100644
->> --- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->> @@ -13,18 +13,23 @@ SoC has the different sub-blocks. So, this difference should be specified
->>  in devicetree file instead of each device driver. In result, this driver
->>  is able to support the bus frequency for all Exynos SoCs.
->>
->> -Required properties for bus device:
->> +Required properties for all bus devices:
->>  - compatible: Should be "samsung,exynos-bus".
->>  - clock-names : the name of clock used by the bus, "bus".
->>  - clocks : phandles for clock specified in "clock-names" property.
->>  - #clock-cells: should be 1.
->>  - operating-points-v2: the OPP table including frequency/voltage information
->>    to support DVFS (Dynamic Voltage/Frequency Scaling) feature.
->> +
->> +Required properties for only parent bus device:
->>  - vdd-supply: the regulator to provide the buses with the voltage.
->>  - devfreq-events: the devfreq-event device to monitor the curret utilization
->>    of buses.
->>
->> -Optional properties for bus device:
->> +Required properties for only passive bus device:
->> +- devfreq: the parent bus device.
->> +
->> +Optional properties for only parent bus device:
->>  - exynos,saturation-ratio: the percentage value which is used to calibrate
->>                     the performance count againt total cycle count.
->>
->> @@ -33,7 +38,20 @@ Example1:
->>       power line (regulator). The MIF (Memory Interface) AXI bus is used to
->>       transfer data between DRAM and CPU and uses the VDD_MIF regualtor.
->>
->> -     - power line(VDD_MIF) --> bus for DMC (Dynamic Memory Controller) block
->> +     - MIF (Memory Interface) block
->> +     : VDD_MIF |--- DMC (Dynamic Memory Controller)
->> +
->> +     - INT (Internal) block
->> +     : VDD_INT |--- LEFTBUS (parent device)
->> +               |--- PERIL
->> +               |--- MFC
->> +               |--- G3D
->> +               |--- RIGHTBUS
->> +               |--- FSYS
->> +               |--- LCD0
->> +               |--- PERIR
->> +               |--- ISP
->> +               |--- CAM
+>> It seems that this patch is different from above description. I thin=
+k
+>> below patch is just cleanup,
+>> which passes each member necessary instead of passing a drm_framebuf=
+fer
+>> object.
 >
-> This still has the same problem as before. I would expect that the bus
-> hierarchy in the dts match the hierarchy here. You just have flat nodes
-> in the example below. So all IP blocks affected by frequency scaling
-> should be under the bus node defining the OPPs. Something like this:
-
-The each bus of sub-block has not h/w dependency among sub-blocks
-and has the owned source clock / OPP table. Just they share the same
-power line. So, I think that flat nodes in the example below is not problem.
-
-Because of using the same power line, the sub-blocks would be tied
-by devfreq framework only for the behavior of bus frequency scaling .
-
 >
-> soc {
->         compatible = "simple-bus";
->         bus {
->                 compatible = "my-awesome-dvfs-bus"; /* simple-bus too if
-> no setup needed first */
->                 reg = <0x0 0x0>; // Bus control registers
->                 clocks = <&ccm BUS_CLK>;
->                 operating-points-v2 = <&opp>;
->                 device@0 {
->                         compatible = "my-awesome-device-1";
->                 };
->                 device@1 {
->                         compatible = "my-awesome-device-2";
->                 };
->         };
-> };
+> Please note the last chunk of this patch. After applying it width is
+> taken from state->src.w instead of fb->width. If you want, I can spli=
+t
+> this patch into 2 parts - one cleanup without functional change, and
+> second, replacement of fb->width with state->src.w.
+
+As Marek says:
+http://lists.freedesktop.org/archives/dri-devel/2015-November/094321.ht=
+ml
+
+It fixes the case where state->src.w (what we're actually scanning
+out) < MIN_FB_WIDTH_FOR_16WORD_BURST < fb->width (total size of
+allocated buffer). Quite subtle, but also correct.
+
+Cheers,
+Daniel
