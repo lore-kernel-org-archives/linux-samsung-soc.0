@@ -1,62 +1,74 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 00/19] PM / devferq: Add generic exynos bus frequency
- driver and new passive governor
-Date: Thu, 10 Dec 2015 11:16:16 +0900
-Message-ID: <5668E070.7020503@samsung.com>
-References: <1449634091-1842-1-git-send-email-cw00.choi@samsung.com>
- <5668CE09.3030503@samsung.com> <5668D3D5.3030509@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 004/182] gpio: generic: factor into gpio_chip struct
+Date: Thu, 10 Dec 2015 11:19:58 +0900
+Message-ID: <5668E14E.8010302@samsung.com>
+References: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <5668D3D5.3030509@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Anton Vorontsov <anton@enomsg.org>
+Cc: arm@kernel.org, Lee Jones <lee.jones@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Rabin Vincent <rabin@rab.in>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2015=EB=85=84 12=EC=9B=94 10=EC=9D=BC 10:22, Krzysztof Kozlowski wro=
-te:
-> On 10.12.2015 09:57, Krzysztof Kozlowski wrote:
->> On 09.12.2015 13:07, Chanwoo Choi wrote:
->>
->> (...)
->>
->>>  .../devicetree/bindings/devfreq/exynos-bus.txt     |  383 +++++++
->>
->> How about adding this file to the MAINTAINERS to devfreq exynos entr=
-y?
+On 09.12.2015 22:12, Linus Walleij wrote:
+> The separate struct bgpio_chip has been a pain to handle, both
+> by being confusingly similar in name to struct gpio_chip and
+> for being contained inside a struct so that struct gpio_chip
+> is contained in a struct contained in a struct, making several
+> steps of dereferencing necessary.
+> 
+> Make things simpler: include the fields directly into
+> <linux/gpio/driver.h>, #ifdef:ed for CONFIG_GENERIC_GPIO, and
+> get rid of the <linux/basic_mmio_gpio.h> altogether. Prefix
+> some of the member variables with bgpio_* and add proper
+> kerneldoc while we're at it.
+> 
+> Modify all users to handle the change and use a struct
+> gpio_chip directly. And while we're at it: replace all
+> container_of() dereferencing by gpiochip_get_data() and
+> registering the gpio_chip with gpiochip_add_data().
+> 
+> Cc: arm@kernel.org
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Alexander Shiyan <shc_work@mail.ru>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Gregory Fong <gregory.0xf0@gmail.com>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> Cc: Rabin Vincent <rabin@rab.in>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ARM SoC folks and Lee: it would be great if you could
+> ACK the few lines hitting arch/arm/* and drivers/mfd/* in this
+> so I can take it through the GPIO tree.
+> ---
+>  arch/arm/mach-clps711x/board-autcpu12.c |   2 +-
+>  arch/arm/mach-clps711x/board-p720t.c    |   2 +-
+>  arch/arm/mach-imx/mach-mx21ads.c        |   2 +-
+>  arch/arm/mach-omap1/board-ams-delta.c   |   2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c   |   2 +-
 
-OK. I'll add new entry for 'devfreq exynos' as following:
-=20
-+SAMSUNG BUS DEVICE FREQUENCY SUPPORT
-+M:     Chanwoo Choi <cw00.choi@samsung.com>
-+L:     linux-pm@vger.kernel.org
-+L:     linux-samsung-soc@vger.kernel.org
-+T:     git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.g=
-it
-+S:     Supported
-+F:     drivers/devfreq/exynos/exynos-bus.c
-+F:     Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+For s3c64xx:
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
->> Unfortunately, in current linux-next, I can find the entry for devfr=
-eq
->=20
-> D'oh! I meant:                        ^ I cannot find the entry for..=
-=2E
->=20
-> BR,
-> Krzysztof
->=20
->> exynos. However I saw patches adding such entries... aren't they mer=
-ged
->> to linux-next?
+Best regards,
+Krzysztof
 
-Yes, it is not merged to linux-next because any git repository
-don't apply this patchset. To merge the devfreq patchset to linux-next,
-devfreq maintainer should send the request mail to Stephen Rothwell.
-
-[snip]
-
-Best Regards,
-Chanwoo Choi
