@@ -1,86 +1,108 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] pwm: Avoid double mutex lock on pwm_enable
-Date: Fri, 11 Dec 2015 13:23:42 +0900
-Message-ID: <566A4FCE.2050303@samsung.com>
-References: <1448038740-2811-1-git-send-email-linux.amoon@gmail.com>
- <564FF287.8000201@samsung.com>
- <CANAwSgSRT8KYr1gAYUvspzMaqT3-3W_c7taMq5YdMo4nB3oB2Q@mail.gmail.com>
- <CAJKOXPdejej2eo4M3fuV9jn7sMMwi7zADsvmvP0n60hW9ER_oQ@mail.gmail.com>
- <CANAwSgQZnUxRR_2077Hmj=qLzAz_UNUqVWmaiy5MxSCNrk=nJg@mail.gmail.com>
- <CAJKOXPc=607yqBRThcRm+342-pBq2PozEqiE9zyHcKztDXDeBA@mail.gmail.com>
- <CANAwSgQeQy4=V7fociFJ36KibyAvbBbqTOHty3bodaajKpOBNw@mail.gmail.com>
- <CAJKOXPdvA4ovVDFyOgaagT+0sOpkUArk9FzWB_Z7iptRCsSAcA@mail.gmail.com>
- <CANAwSgTuTWntpdCrry4KNe9_b9ekJTM_gT-7-bsY53nmorb-tw@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v5 3/7] ARM: dts: Exynos542x/5800: add CPU OPP properties
+Date: Fri, 11 Dec 2015 10:08:02 +0530
+Message-ID: <20151211043802.GP3612@ubuntu>
+References: <1449766729-435-1-git-send-email-b.zolnierkie@samsung.com>
+ <1449766729-435-4-git-send-email-b.zolnierkie@samsung.com>
+ <20151211031646.GL3612@ubuntu>
+ <566A4231.9050608@osg.samsung.com>
+ <20151211033253.GN3612@ubuntu>
+ <566A4A60.8060402@samsung.com>
+ <20151211041349.GO3612@ubuntu>
+ <566A4E82.3040203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:18752 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751855AbbLKEXt (ORCPT
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:36153 "EHLO
+	mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752502AbbLKEiI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Dec 2015 23:23:49 -0500
-In-reply-to: <CANAwSgTuTWntpdCrry4KNe9_b9ekJTM_gT-7-bsY53nmorb-tw@mail.gmail.com>
+	Thu, 10 Dec 2015 23:38:08 -0500
+Received: by pfbu66 with SMTP id u66so15726964pfb.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Dec 2015 20:38:06 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <566A4E82.3040203@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pwm@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jonathan Richardson <jonathar@broadcom.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>
 
-On 11.12.2015 13:07, Anand Moon wrote:
-> Hi Krzysztof,
-> 
-> On 22 November 2015 at 05:43, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> 2015-11-22 3:14 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>> Hi Krzysztof,
+On 11-12-15, 13:18, Krzysztof Kozlowski wrote:
+> We had such configuration before (before df09df6f9ac3). I don't see any
+> benefit in what you described. Where is the "thing" to be fixed? It is
+> mixed up. The contiguous ordering is easier to read and more natural.
 
-[...]
+This is what you are doing today (keeping on one CPU per cluster to
+simplify it):
 
->> Yes, now you pasted the same warning I did...
->>
->> This is still the same issue. I already wrote it:
->>> 1. BUG: sleeping function called from invalid context
->>> 2. DEBUG_LOCKS_WARN_ON(in_interrupt())
->>
->> We can repeat it many times but that won't change anything...
->>
->> Best regards,
->> Krzysztof
-> 
-> Would you consider below changes to fix the above issue.
-> I have tested this change by enabling CONFIG_DEBUG_ATOMIC_SLEEP
-> And I don't observed issue.
-> 
-> 1. BUG: sleeping function called from invalid context
-> 2. DEBUG_LOCKS_WARN_ON(in_interrupt())
-> 
-> Please share your thought on this changes.
-> 
-> root@odroidxu4:/usr/src/odroidxu3-4.y-devel# git diff drivers/pwm/core.c
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index d24ca5f..f3f6cf9 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -506,6 +506,9 @@ int pwm_enable(struct pwm_device *pwm)
->         if (!pwm)
->                 return -EINVAL;
-> 
-> +       if (!mutex_is_locked(&pwm->lock))
-> +               return -EINVAL;
-> +
->         mutex_lock(&pwm->lock);
-> 
->         if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a15";
+			reg = <0x0>;
+			clock-frequency = <1800000000>;
+			cci-control-port = <&cci_control1>;
+		};
 
-First of all, Thierry suggested way of fixing this:
-"Any objections to simply removing it and make all users use a workqueue
-or some such if they need to control a PWM as a result of an interrupt
-trigger?"
-what is wrong with his approach?
+		cpu4: cpu@100 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a7";
+			reg = <0x100>;
+			clock-frequency = <1000000000>;
+			cci-control-port = <&cci_control0>;
+		};
 
-Second, you are writing something that looks like mutex-try-lock...
-which will fail the pwm_enable(). IMHO this *hides* the real issue and
-does not solve anything (except hiding also the warning).
 
-Best regards,
-Krzysztof
+Then you overwrite it with:
+
+                &cpu0 {
+                	device_type = "cpu";
+                	compatible = "arm,cortex-a7";
+                	reg = <0x100>;
+                	clock-frequency = <1000000000>;
+                	cci-control-port = <&cci_control0>;
+                };
+                
+                &cpu4 {
+                	device_type = "cpu";
+                	compatible = "arm,cortex-a15";
+                	reg = <0x0>;
+                	clock-frequency = <1800000000>;
+                	cci-control-port = <&cci_control1>;
+                };
+
+
+Don't you think this isn't the right way of solving problems?
+
+The DT overwrite feature isn't there to do such kind of stuff, though
+it doesn't stop you from doing that.
+
+Either you should keep separate paths for both the SoCs, or can solve
+it the way I suggested earlier.
+
+This came up because in the current series you are doing this:
+
+		cpu0: cpu@0 {
+			compatible = "arm,cortex-a15";
+                        operating-points-v2 = <&cpu0_opp_table>;
+		};
+
+		cpu4: cpu@100 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a7";
+                        operating-points-v2 = <&cpu1_opp_table>;
+		};
+
+
+Then you overwrite it with:
+
+                &cpu0 {
+                	compatible = "arm,cortex-a7";
+                        operating-points-v2 = <&cpu1_opp_table>;
+                };
+                
+                &cpu4 {
+                	compatible = "arm,cortex-a15";
+                        operating-points-v2 = <&cpu0_opp_table>;
+                };
+-- 
+viresh
