@@ -1,38 +1,39 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Make CPU configuration more readable for
- exynos542x/5800
-Date: Fri, 11 Dec 2015 15:24:55 +0900
-Message-ID: <566A6C37.30603@samsung.com>
-References: <1449814657-25685-1-git-send-email-k.kozlowski@samsung.com>
- <20151211062143.GT3612@ubuntu>
+Subject: Re: [PATCH v3 02/20] PM / devfreq: exynos: Add documentation for
+ generic exynos bus frequency driver
+Date: Fri, 11 Dec 2015 15:35:29 +0900
+Message-ID: <566A6EB1.4050803@samsung.com>
+References: <1449810479-14763-1-git-send-email-cw00.choi@samsung.com>
+ <1449810479-14763-3-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:24444 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841AbbLKGZH (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:21836 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751537AbbLKGfn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Dec 2015 01:25:07 -0500
-In-reply-to: <20151211062143.GT3612@ubuntu>
+	Fri, 11 Dec 2015 01:35:43 -0500
+In-reply-to: <1449810479-14763-3-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanho Park <parkch98@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 
-On 11.12.2015 15:21, Viresh Kumar wrote:
-> On 11-12-15, 15:17, Krzysztof Kozlowski wrote:
->> Exynos5420 and Exynos5800 boards boot from big core (A15) but
->> Exynos5420 boards choose otherwise: LITTLE core (A7) (on Exynos5422 this
+On 11.12.2015 14:07, Chanwoo Choi wrote:
+> This patch adds the documentation for generic exynos bus frequency
+> driver.
 > 
-> s/Exynos5420/Exynos5422
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 93 ++++++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> 
 
-Damn, one can get confused.
+Thanks, now it looks good to me.
 
-Thanks for review!
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
 Krzysztof
-
-> and then you can add
-> 
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
