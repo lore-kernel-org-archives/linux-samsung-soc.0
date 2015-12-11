@@ -1,103 +1,54 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v5 41/58] mtd: nand: socrates: use the mtd instance embedded in struct nand_chip
-Date: Fri, 11 Dec 2015 15:04:06 +0100
-Message-ID: <1449842646-30105-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1449734442-18672-42-git-send-email-boris.brezillon@free-electrons.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:60356 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751407AbbLKOEM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Dec 2015 09:04:12 -0500
-In-Reply-To: <1449734442-18672-42-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 03/10] media framework: rename pads init function to
+ media_entity_pads_init()
+Date: Fri, 11 Dec 2015 15:04:52 +0100
+Message-ID: <566AD804.5040403@samsung.com>
+References: <cover.1449840443.git.mchehab@osg.samsung.com>
+ <063476f381aebf981106b7d134348a0a9acc67cc.1449840443.git.mchehab@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=true; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <063476f381aebf981106b7d134348a0a9acc67cc.1449840443.git.mchehab@osg.samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@iki.fi>, Lars-Peter Clausen <lars@metafoo.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kyungmin Park <kyungmin.park@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>, Mats Randgaard <matrandg@cisco.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?EUC-KR?Q?S=C3=B6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael =?EUC-KR?Q?Louren=C3=A7o_de?= Lima Chehab <chehabrafael@>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Alexander Clouter <alex@digriz.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Marek Vasut <marek.vasut@gmail.com>, Steven Miao <realmz6@gmail.com>, Mikae
 
-struct nand_chip now embeds an mtd device. Make use of this mtd instance.
+On 12/11/2015 02:34 PM, Mauro Carvalho Chehab wrote:
+> With the MC next gen rework, what's left for media_entity_init()
+> is to just initialize the PADs. However, certain devices, like
+> a FLASH led/light doesn't have any input or output PAD.
+>
+> So, there's no reason why calling media_entity_init() would be
+> mandatory. Also, despite its name, what this function actually
+> does is to initialize the PADs data. So, rename it to
+> media_entity_pads_init() in order to reflect that.
+>
+> The media entity actual init happens during entity register,
+> at media_device_register_entity(). We should move init of
+> num_links and num_backlinks to it.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+[...]
+> diff --git a/drivers/media/v4l2-core/v4l2-flash-led-class.c b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> index 5c686a24712b..13d5a36bc5d8 100644
+> --- a/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> +++ b/drivers/media/v4l2-core/v4l2-flash-led-class.c
+> @@ -651,7 +651,7 @@ struct v4l2_flash *v4l2_flash_init(
+>   	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+>   	strlcpy(sd->name, config->dev_name, sizeof(sd->name));
+>
+> -	ret = media_entity_init(&sd->entity, 0, NULL);
+> +	ret = media_entity_pads_init(&sd->entity, 0, NULL);
+>   	if (ret < 0)
+>   		return ERR_PTR(ret);
+>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
-Changes since v4:
-- fix build error
+For this part:
 
----
-Changes generated with the following coccinelle script
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
---->8---
-virtual patch
-
-@fix1@
-identifier __chipfield, __mtdfield;
-type __type;
-@@
-(
-	__type {
-		...
-		struct nand_chip __chipfield;
-		...
--		struct mtd_info __mtdfield;
-		...
-	};
-|
-	__type {
-		...
--		struct mtd_info __mtdfield;
-		...
-		struct nand_chip __chipfield;
-		...
-	};
-)
-
-@fix2 depends on fix1@
-identifier fix1.__chipfield, fix1.__mtdfield;
-identifier __subfield;
-type fix1.__type;
-__type *__priv;
-@@
-(
--	__priv->__mtdfield.__subfield
-+	nand_to_mtd(&__priv->__chipfield)->__subfield
-|
--	&(__priv->__mtdfield)
-+	nand_to_mtd(&__priv->__chipfield)
-)
---->8---
----
- drivers/mtd/nand/socrates_nand.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/nand/socrates_nand.c b/drivers/mtd/nand/socrates_nand.c
-index 2dfb1e0..925761c 100644
---- a/drivers/mtd/nand/socrates_nand.c
-+++ b/drivers/mtd/nand/socrates_nand.c
-@@ -30,7 +30,6 @@
- 
- struct socrates_nand_host {
- 	struct nand_chip	nand_chip;
--	struct mtd_info		mtd;
- 	void __iomem		*io_base;
- 	struct device		*dev;
- };
-@@ -159,8 +158,8 @@ static int socrates_nand_probe(struct platform_device *ofdev)
- 		return -EIO;
- 	}
- 
--	mtd = &host->mtd;
- 	nand_chip = &host->nand_chip;
-+	mtd = nand_to_mtd(nand_chip);
- 	host->dev = &ofdev->dev;
- 
- 	nand_chip->priv = host;		/* link the private data structures */
-@@ -216,7 +215,7 @@ out:
- static int socrates_nand_remove(struct platform_device *ofdev)
- {
- 	struct socrates_nand_host *host = dev_get_drvdata(&ofdev->dev);
--	struct mtd_info *mtd = &host->mtd;
-+	struct mtd_info *mtd = nand_to_mtd(&host->nand_chip);
- 
- 	nand_release(mtd);
- 
 -- 
-2.1.4
+Best Regards,
+Jacek Anaszewski
