@@ -1,50 +1,66 @@
-From: Inki Dae <daeinki@gmail.com>
-Subject: Re: [PATCH] drm/exynos: atomic check only enabled crtc states
-Date: Sat, 12 Dec 2015 00:18:29 +0900
-Message-ID: <CAAQKjZM4i+PvyTEF9PY-DA44LKqa5dyFHiK-WDe1+hCG2-eXsw@mail.gmail.com>
-References: <CABxcv=kKWbS5bWNE--wP8nuFEkTR=2vghQpAo-AtnYvm34tnow@mail.gmail.com>
- <1448607451-13784-1-git-send-email-a.hajda@samsung.com>
- <565853DE.602@osg.samsung.com> <566807A6.3070701@osg.samsung.com>
+From: Dinh Nguyen <dinh.linux@gmail.com>
+Subject: Re: [PATCH v5 01/58] mtd: nand: denali: add missing nand_release()
+ call in denali_remove()
+Date: Fri, 11 Dec 2015 10:50:21 -0600
+Message-ID: <CADhT+wcNFxD6Zv9w8W0sontVWa6zOkHjyK42Tw=Y_1X2XCTZfQ@mail.gmail.com>
+References: <1449734442-18672-2-git-send-email-boris.brezillon@free-electrons.com>
+	<1449842554-29898-1-git-send-email-boris.brezillon@free-electrons.com>
+	<20151211161008.056a0f47@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <566807A6.3070701@osg.samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20151211161008.056a0f47@bbrezillon>
+Sender: linux-doc-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Stefan Agner <stefan@agner.ch>, linux-sunxi@googlegroups.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexander Clouter <alex@digriz.org.uk>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Jesper Nilsson <jesper.nilsson@axis.com>, linux-samsung-soc@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Marek Vasut <marek.vasut@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electr>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSmF2aWVyLAoKMjAxNS0xMi0wOSAxOTo1MSBHTVQrMDk6MDAgSmF2aWVyIE1hcnRpbmV6IENh
-bmlsbGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPjoKPiBIZWxsbyBJbmtpLAo+Cj4gT24gMTEv
-MjcvMjAxNSAxMDowMCBBTSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgo+PiBIZWxs
-byBBbmRyemVqLAo+Pgo+PiBPbiAxMS8yNy8yMDE1IDAzOjU3IEFNLCBBbmRyemVqIEhhamRhIHdy
-b3RlOgo+Pj4gU2luY2UgYXRvbWljIGNoZWNrIGlzIGNhbGxlZCBhbHNvIGZvciBkaXNhYmxlZCBj
-cnRjcyBpdCBzaG91bGQgc2tpcAo+Pj4gbW9kZSBjaGVja2luZyBhcyBpdCBjYW4gYmUgdW5pbml0
-aWFsaXplZC4gVGhlIHBhdGNoIGZpeGVzIGl0Lgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6
-ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+PiBTdWdnZXN0ZWQtYnk6IERhbmllbCBW
-ZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+Cj4+PiAtLS0KPj4+IEhpIEphdmllciwKPj4+
-Cj4+PiBDb3VsZCB5b3UgY2hlY2sgd2l0aCB0aGlzIHBhdGNoLgo+Pj4KPj4KPj4gVGhlIHBhdGNo
-IGZpeGVzIHRoZSBpc3N1ZSBJIHJlcG9ydGVkLiBUaGUgZGlzcGxheSBtb2RlIGlzIGNvcnJlY3Rs
-eSBzZXQKPj4gd2l0aCBhbmQgd2l0aG91dCBhIEhETUkgbW9uaXRvciBwbHVnZ2VkLiBTbyBvbiBh
-biBFeHlub3M1ODAwIFBlYWNoIFBpOgo+Pgo+PiBUZXN0ZWQtYnk6IEphdmllciBNYXJ0aW5leiBD
-YW5pbGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KPj4KPgo+IFRoaXMgcGF0Y2ggd2FzIG5l
-dmVyIHBpY2tlZCBidXQgZml4ZXMgYW5kIGltcG9ydGFudAo+IGJ1ZyBpbnRyb2R1Y2VkIGluIHRo
-ZSB2NC40IG1lcmdlIHdpbmRvdyBzbyBpdCBzaG91bGQKPiBiZSBzZW50IGR1cmluZyB0aGUgdjQu
-NC1yYyBjeWNsZS4KCkRvbid0IHdvcnJ5IGFib3V0IHRoYXQuCgpUaGFua3MsCklua2kgRGFlCgo+
-Cj4gQmVzdCByZWdhcmRzLAo+IC0tCj4gSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzCj4gT3BlbiBT
-b3VyY2UgR3JvdXAKPiBTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKPiBfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-PiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Boris,
+
+On Fri, Dec 11, 2015 at 9:10 AM, Boris Brezillon
+<boris.brezillon@free-electrons.com> wrote:
+> + Dinh (who made commit 2a0a288ec258)
+>
+> Also added back the Fixes tag.
+>
+> On Fri, 11 Dec 2015 15:02:34 +0100
+> Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+>
+>> Unregister the NAND device from the NAND subsystem when removing a denali
+>> NAND controller, otherwise the MTD attached to the NAND device is still
+>> exposed by the MTD layer, and accesses to this device will likely crash
+>> the system.
+>>
+>> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+>
+> Fixes: 2a0a288ec258 ("mtd: denali: split the generic driver and PCI layer")
+>
+>> ---
+>> Changes since v4:
+>> - remove Cc stable and fixes tags
+>> - calculate the dma buffer size before calling nand_release()
+>>
+>>  drivers/mtd/nand/denali.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/mtd/nand/denali.c b/drivers/mtd/nand/denali.c
+>> index 67eb2be..fdfea05 100644
+>> --- a/drivers/mtd/nand/denali.c
+>> +++ b/drivers/mtd/nand/denali.c
+>> @@ -1622,9 +1622,11 @@ EXPORT_SYMBOL(denali_init);
+>>  /* driver exit point */
+>>  void denali_remove(struct denali_nand_info *denali)
+>>  {
+>> +     int bufsize = denali->mtd.writesize + denali->mtd.oobsize;
+>> +
+>> +     nand_release(&denali->mtd);
+>>       denali_irq_cleanup(denali->irq, denali);
+>> -     dma_unmap_single(denali->dev, denali->buf.dma_buf,
+>> -                      denali->mtd.writesize + denali->mtd.oobsize,
+>> +     dma_unmap_single(denali->dev, denali->buf.dma_buf, bufsize,
+>>                        DMA_BIDIRECTIONAL);
+
+Not sure what is the need to add bufsize here, but the commit message
+doesn't reflect the change.
+
+Dinh
