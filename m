@@ -1,80 +1,46 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 38/58] mtd: nand: s3c2410: use the mtd
- instance embedded in struct nand_chip
-Date: Fri, 11 Dec 2015 11:38:20 +0900
-Message-ID: <566A371C.7030507@samsung.com>
-References: <1449734442-18672-1-git-send-email-boris.brezillon@free-electrons.com>
- <1449734442-18672-39-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v5 3/7] ARM: dts: Exynos542x/5800: add CPU OPP properties
+Date: Fri, 11 Dec 2015 08:46:46 +0530
+Message-ID: <20151211031646.GL3612@ubuntu>
+References: <1449766729-435-1-git-send-email-b.zolnierkie@samsung.com>
+ <1449766729-435-4-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDKZNNNLXAHBBMXOVCZQKGQEGUHX5OY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-reply-to: <1449734442-18672-39-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Krzysztof Halasa <khalasa-NlWvg49iv0c@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Steven Miao <realmz6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, adi-buildr
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:36448 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751307AbbLKDQv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Dec 2015 22:16:51 -0500
+Received: by pacdm15 with SMTP id dm15so57905904pac.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Dec 2015 19:16:50 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1449766729-435-4-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>
 
-On 10.12.2015 17:00, Boris Brezillon wrote:
-> struct nand_chip now embeds an mtd device. Make use of this mtd instance.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
-> Changes generated with the following coccinelle script
-> 
-> --->8---
-> virtual patch
-> 
-> @fix1@
-> identifier __chipfield, __mtdfield;
-> type __type;
-> @@
-> (
-> 	__type {
-> 		...
-> 		struct nand_chip __chipfield;
-> 		...
-> -		struct mtd_info __mtdfield;
-> 		...
-> 	};
-> |
-> 	__type {
-> 		...
-> -		struct mtd_info __mtdfield;
-> 		...
-> 		struct nand_chip __chipfield;
-> 		...
-> 	};
-> )
-> 
-> @fix2 depends on fix1@
-> identifier fix1.__chipfield, fix1.__mtdfield;
-> identifier __subfield;
-> type fix1.__type;
-> __type *__priv;
-> @@
-> (
-> -	__priv->__mtdfield.__subfield
-> +	nand_to_mtd(&__priv->__chipfield)->__subfield
-> |
-> -	&(__priv->__mtdfield)
-> +	nand_to_mtd(&__priv->__chipfield)
-> )
-> --->8---
-> ---
->  drivers/mtd/nand/s3c2410.c | 23 ++++++++++++++---------
->  1 file changed, 14 insertions(+), 9 deletions(-)
-> 
+On 10-12-15, 17:58, Bartlomiej Zolnierkiewicz wrote:
+> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> index b7f60c8..9a5131d 100644
+> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> @@ -20,8 +20,10 @@
+>  	device_type = "cpu";
+>  	compatible = "arm,cortex-a7";
+>  	reg = <0x100>;
+> +	clocks = <&clock CLK_KFC_CLK>;
+>  	clock-frequency = <1000000000>;
+>  	cci-control-port = <&cci_control0>;
+> +	operating-points-v2 = <&cpu1_opp_table>;
+>  };
 
-Looks correct:
+Why do you need to update this file? This file is included by
+exynos5422-odroidxu3-common.dtsi, which already inherits cpus nodes
+from exynos5800.dtsi (which inherits exynos5420.dtsi).
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+i.e. operating-points-v2 should already be set.
 
-Best regards,
-Krzysztof
+-- 
+viresh
