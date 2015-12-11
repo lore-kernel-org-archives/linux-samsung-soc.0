@@ -1,45 +1,80 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 16/19] ARM: dts: Add PPMU node for exynos4412-odroidu3
-Date: Fri, 11 Dec 2015 11:27:46 +0900
-Message-ID: <566A34A2.7040001@samsung.com>
-References: <1449634091-1842-1-git-send-email-cw00.choi@samsung.com>
- <1449634091-1842-17-git-send-email-cw00.choi@samsung.com>
- <56691F54.7040704@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 38/58] mtd: nand: s3c2410: use the mtd
+ instance embedded in struct nand_chip
+Date: Fri, 11 Dec 2015 11:38:20 +0900
+Message-ID: <566A371C.7030507@samsung.com>
+References: <1449734442-18672-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1449734442-18672-39-git-send-email-boris.brezillon@free-electrons.com>
+Reply-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56691F54.7040704@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-sunxi+bncBDKZNNNLXAHBBMXOVCZQKGQEGUHX5OY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-reply-to: <1449734442-18672-39-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Krzysztof Halasa <khalasa-NlWvg49iv0c@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Steven Miao <realmz6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, adi-buildr
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2015=EB=85=84 12=EC=9B=94 10=EC=9D=BC 15:44, Krzysztof Kozlowski wro=
-te:
-> On 09.12.2015 13:08, Chanwoo Choi wrote:
->> This patch add dt node for PPMU_{DMC0|DMC1|LEFTBUS|RIGHTBUS} for
->> exynos4412-odroidu3 board. Each PPMU dt node includes one event of
->> 'PPMU Count3'.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 40 ++++++++++++++=
-+++++++++++
->>  1 file changed, 40 insertions(+)
->>
->=20
-> The patch itself is good but now I see that it is duplicated with
-> Rinato, Monk and Trats2. Probably for all other Exynos4 and
-> one-cluster-Exynos5 boards this would be exactly the same as well.
->=20
-> How about making a DTSI file with common PPMU events configuration?
+On 10.12.2015 17:00, Boris Brezillon wrote:
+> struct nand_chip now embeds an mtd device. Make use of this mtd instance.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> ---
+> Changes generated with the following coccinelle script
+> 
+> --->8---
+> virtual patch
+> 
+> @fix1@
+> identifier __chipfield, __mtdfield;
+> type __type;
+> @@
+> (
+> 	__type {
+> 		...
+> 		struct nand_chip __chipfield;
+> 		...
+> -		struct mtd_info __mtdfield;
+> 		...
+> 	};
+> |
+> 	__type {
+> 		...
+> -		struct mtd_info __mtdfield;
+> 		...
+> 		struct nand_chip __chipfield;
+> 		...
+> 	};
+> )
+> 
+> @fix2 depends on fix1@
+> identifier fix1.__chipfield, fix1.__mtdfield;
+> identifier __subfield;
+> type fix1.__type;
+> __type *__priv;
+> @@
+> (
+> -	__priv->__mtdfield.__subfield
+> +	nand_to_mtd(&__priv->__chipfield)->__subfield
+> |
+> -	&(__priv->__mtdfield)
+> +	nand_to_mtd(&__priv->__chipfield)
+> )
+> --->8---
+> ---
+>  drivers/mtd/nand/s3c2410.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
+> 
 
-OK. I'll make the exynos4412-ppmu-common.dtsi.
+Looks correct:
 
-The Exynos4 series used the PPMU firstly. That is why deciding the file=
-name
-of exynos4412-ppmu-common.dtsi.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Best Regards,
-Chanwoo Choi
+Best regards,
+Krzysztof
