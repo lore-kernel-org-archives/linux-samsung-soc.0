@@ -1,50 +1,99 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v5 3/7] ARM: dts: Exynos542x/5800: add CPU OPP properties
-Date: Fri, 11 Dec 2015 11:11:19 +0530
-Message-ID: <20151211054119.GS3612@ubuntu>
-References: <1449766729-435-4-git-send-email-b.zolnierkie@samsung.com>
- <20151211031646.GL3612@ubuntu>
- <566A4231.9050608@osg.samsung.com>
- <20151211033253.GN3612@ubuntu>
- <566A4A60.8060402@samsung.com>
- <20151211041349.GO3612@ubuntu>
- <566A4E82.3040203@samsung.com>
- <20151211043802.GP3612@ubuntu>
- <566A56DF.5040001@osg.samsung.com>
- <566A5F0B.8040609@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] pwm: Avoid double mutex lock on pwm_enable
+Date: Fri, 11 Dec 2015 11:27:10 +0530
+Message-ID: <CANAwSgSccM06V4xdgdcnW=seW5n3beVKVC8zj79pV1GoDgvYeA@mail.gmail.com>
+References: <1448038740-2811-1-git-send-email-linux.amoon@gmail.com>
+ <564FF287.8000201@samsung.com> <CANAwSgSRT8KYr1gAYUvspzMaqT3-3W_c7taMq5YdMo4nB3oB2Q@mail.gmail.com>
+ <CAJKOXPdejej2eo4M3fuV9jn7sMMwi7zADsvmvP0n60hW9ER_oQ@mail.gmail.com>
+ <CANAwSgQZnUxRR_2077Hmj=qLzAz_UNUqVWmaiy5MxSCNrk=nJg@mail.gmail.com>
+ <CAJKOXPc=607yqBRThcRm+342-pBq2PozEqiE9zyHcKztDXDeBA@mail.gmail.com>
+ <CANAwSgQeQy4=V7fociFJ36KibyAvbBbqTOHty3bodaajKpOBNw@mail.gmail.com>
+ <CAJKOXPdvA4ovVDFyOgaagT+0sOpkUArk9FzWB_Z7iptRCsSAcA@mail.gmail.com>
+ <CANAwSgTuTWntpdCrry4KNe9_b9ekJTM_gT-7-bsY53nmorb-tw@mail.gmail.com> <566A4FCE.2050303@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <566A5F0B.8040609@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:32982 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751005AbbLKF5b (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Dec 2015 00:57:31 -0500
+In-Reply-To: <566A4FCE.2050303@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pwm@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jonathan Richardson <jonathar@broadcom.com>
 
-On 11-12-15, 14:28, Krzysztof Kozlowski wrote:
-> Actually I think there is no nice way of making this as separate paths.
-> As Javier's mentioned, there aren't many differences. Currently the CPU
-> ordering is the only difference in DT.
-> 
-> Making it as separate path would create hierarchy like:
->  - exynos5420-based-board.dts
->    \- include: exynos5420.dtsi
->       \- include: exynos5.dtsi
->    \- include: exynos5420-cpu.dtsi (the cpus are not in exynos5420.dtsi)
-> 
->  - exynos5422-based-board.dts
->    \- include: exynos5420.dtsi
->       \- include: exynos5.dtsi
->    \- include: exynos5422-cpu.dtsi (the cpus are not in exynos5420.dtsi)
-> 
-> which of course is okay... except we keep the definition of CPUs
-> completely outside of main Exynos5420 DTSI. Then we have to include both
-> DTSI for each new DTS.
+Hi Krzysztof
 
-So what? There isn't anything wrong in this case and is just the right
-thing to do, IMHO. We have just kept the CPU devices separately,
-simple.
+On 11 December 2015 at 09:53, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 11.12.2015 13:07, Anand Moon wrote:
+>> Hi Krzysztof,
+>>
+>> On 22 November 2015 at 05:43, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> 2015-11-22 3:14 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>>>> Hi Krzysztof,
+>
+> [...]
+>
+>>> Yes, now you pasted the same warning I did...
+>>>
+>>> This is still the same issue. I already wrote it:
+>>>> 1. BUG: sleeping function called from invalid context
+>>>> 2. DEBUG_LOCKS_WARN_ON(in_interrupt())
+>>>
+>>> We can repeat it many times but that won't change anything...
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>
+>> Would you consider below changes to fix the above issue.
+>> I have tested this change by enabling CONFIG_DEBUG_ATOMIC_SLEEP
+>> And I don't observed issue.
+>>
+>> 1. BUG: sleeping function called from invalid context
+>> 2. DEBUG_LOCKS_WARN_ON(in_interrupt())
+>>
+>> Please share your thought on this changes.
+>>
+>> root@odroidxu4:/usr/src/odroidxu3-4.y-devel# git diff drivers/pwm/core.c
+>> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+>> index d24ca5f..f3f6cf9 100644
+>> --- a/drivers/pwm/core.c
+>> +++ b/drivers/pwm/core.c
+>> @@ -506,6 +506,9 @@ int pwm_enable(struct pwm_device *pwm)
+>>         if (!pwm)
+>>                 return -EINVAL;
+>>
+>> +       if (!mutex_is_locked(&pwm->lock))
+>> +               return -EINVAL;
+>> +
+>>         mutex_lock(&pwm->lock);
+>>
+>>         if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
+>
+> First of all, Thierry suggested way of fixing this:
+> "Any objections to simply removing it and make all users use a workqueue
+> or some such if they need to control a PWM as a result of an interrupt
+> trigger?"
 
--- 
-viresh
+You are correct, current design need to be changes.
+
+> what is wrong with his approach?
+>
+
+pwm->lock is locked but it never get unlocked, although the code looks correct.
+
+> Second, you are writing something that looks like mutex-try-lock...
+> which will fail the pwm_enable(). IMHO this *hides* the real issue and
+> does not solve anything (except hiding also the warning).
+
+Thanks for the inputs. I have realized my mistake.
+
+>
+> Best regards,
+> Krzysztof
+
+-Anand Moon
