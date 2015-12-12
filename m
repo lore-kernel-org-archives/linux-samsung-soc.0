@@ -1,79 +1,107 @@
-From: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 01/58] mtd: nand: denali: add missing
- nand_release() call in denali_remove()
-Date: Fri, 11 Dec 2015 14:11:43 -0800
-Message-ID: <20151211221143.GR144338@google.com>
-References: <1449734442-18672-1-git-send-email-boris.brezillon@free-electrons.com>
- <1449734442-18672-2-git-send-email-boris.brezillon@free-electrons.com>
- <20151211004008.GQ144338@google.com>
- <20151211230305.506e2071@bbrezillon>
-Reply-To: computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Odroid U3 mutex deadlock.
+Date: Sat, 12 Dec 2015 10:02:14 +0530
+Message-ID: <CANAwSgSE4UE5jn4Rp0LfVhDcSP=ynDsbCaUSHmM31_MF849bSw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCZ6PSPVXMNBBJEUVWZQKGQEOLORYVI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20151211230305.506e2071@bbrezillon>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Krzysztof Halasa <khalasa-NlWvg49iv0c@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Clouter <alex-L4GPcECwBoDe9xe1eoZjHA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Marek
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Boris,
+Hi Krzysztof,
 
-On Fri, Dec 11, 2015 at 11:03:05PM +0100, Boris Brezillon wrote:
-> On Thu, 10 Dec 2015 16:40:08 -0800
-> Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > On Thu, Dec 10, 2015 at 08:59:45AM +0100, Boris Brezillon wrote:
-> > > Unregister the NAND device from the NAND subsystem when removing a denali
-> > > NAND controller, otherwise the MTD attached to the NAND device is still
-> > > exposed by the MTD layer, and accesses to this device will likely crash
-> > > the system.
-> > > 
-> > > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > > Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> #3.8+
-> > 
-> > Does this follow these rules, from
-> > Documentation/stable_kernel_rules.txt?
-> > 
-> >  - It must be obviously correct and tested.
-> > 
-> >  - It must fix a real bug that bothers people (not a, "This could be a
-> >    problem..." type thing).
-> 
-> Sorry to bring the "stable or not stable (that is the question :-))"
-> debate back, but after thinking a bit more about the implications of
-> this missing nand_release() call, I think it is worth backporting the
-> fix to all stable kernels.
-> The reason is, it can potentially introduce a security hole, because if
-> the mtd device is not unregister but the underlying mtd object is freed
-> and the kernel reuses the same memory region for a different object,
-> the MTD layer will possibly call one of the mtd->_method() function,
-> and this field might point to another completely different function.
-> 
-> You'll say that denali devices are probably never removed and this is
-> the reason why people have never seen this problem before, which would
-> be a good reason to not bother backporting the patch.
-> But, given that the driver can be compiled as a module (the user can
-> possibly load/unload it, which will in turn create/destroy the
-> NAND/MTD device), and that the denali controller can be exposed through
-> a PCI bus (which, AFAIK is hotpluggable), I really think this fix
-> should be sent to stable.
+I am just observing this deadlock om my Odroid U3.
+------------------------------------------------------------------------------------------------------------------
 
-That's all well and good, but still nobody has told me they've tested
-this.
+[    2.937531] =============================================
+[    2.938733] [ INFO: possible recursive locking detected ]
+[    2.944117] 4.4.0-rc4-xu3s #32 Not tainted
+[    2.948195] ---------------------------------------------
+[    2.953577] swapper/0/1 is trying to acquire lock:
+[    2.958351]  (&genpd->lock){+.+...}, at: [<c0361550>]
+__genpd_poweron+0x64/0x108
+[    2.965727]
+[    2.965727] but task is already holding lock:
+[    2.971543]  (&genpd->lock){+.+...}, at: [<c0361af8>]
+genpd_dev_pm_attach+0x168/0x1b8
+[    2.979355]
+[    2.979355] other info that might help us debug this:
+[    2.985865]  Possible unsafe locking scenario:
+[    2.985865]
+[    2.991768]        CPU0
+[    2.994198]        ----
+[    2.996628]   lock(&genpd->lock);
+[    2.999926]   lock(&genpd->lock);
+[    3.003225]
+[    3.003225]  *** DEADLOCK ***
+[    3.003225]
+[    3.009128]  May be due to missing lock nesting notation
+[    3.009128]
+[    3.015900] 3 locks held by swapper/0/1:
+[    3.019804]  #0:  (&dev->mutex){......}, at: [<c0350910>]
+__driver_attach+0x48/0x98
+[    3.027442]  #1:  (&dev->mutex){......}, at: [<c0350920>]
+__driver_attach+0x58/0x98
+[    3.035081]  #2:  (&genpd->lock){+.+...}, at: [<c0361af8>]
+genpd_dev_pm_attach+0x168/0x1b8
+[    3.043326]
+[    3.043326] stack backtrace:
+[    3.047671] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
+[    3.054351] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    3.060444] [<c0016c98>] (unwind_backtrace) from [<c00139c4>]
+(show_stack+0x10/0x14)
+[    3.068163] [<c00139c4>] (show_stack) from [<c0270df0>]
+(dump_stack+0x84/0xc4)
+[    3.075367] [<c0270df0>] (dump_stack) from [<c00780b8>]
+(__lock_acquire+0x1f88/0x215c)
+[    3.083262] [<c00780b8>] (__lock_acquire) from [<c007886c>]
+(lock_acquire+0xa4/0xd0)
+[    3.090990] [<c007886c>] (lock_acquire) from [<c0641f2c>]
+(mutex_lock_nested+0x70/0x4d4)
+[    3.099061] [<c0641f2c>] (mutex_lock_nested) from [<c0361550>]
+(__genpd_poweron+0x64/0x108)
+[    3.107393] [<c0361550>] (__genpd_poweron) from [<c0361b00>]
+(genpd_dev_pm_attach+0x170/0x1b8)
+[    3.115986] [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>]
+(platform_drv_probe+0x2c/0xac)
+[    3.124667] [<c03520a8>] (platform_drv_probe) from [<c03507d4>]
+(driver_probe_device+0x208/0x2fc)
+[    3.133519] [<c03507d4>] (driver_probe_device) from [<c035095c>]
+(__driver_attach+0x94/0x98)
+[    3.141939] [<c035095c>] (__driver_attach) from [<c034ec14>]
+(bus_for_each_dev+0x68/0x9c)
+[    3.150097] [<c034ec14>] (bus_for_each_dev) from [<c034fec8>]
+(bus_add_driver+0x1a0/0x218)
+[    3.158344] [<c034fec8>] (bus_add_driver) from [<c035115c>]
+(driver_register+0x78/0xf8)
+[    3.166330] [<c035115c>] (driver_register) from [<c0338488>]
+(exynos_drm_register_drivers+0x28/0x74)
+[    3.175441] [<c0338488>] (exynos_drm_register_drivers) from
+[<c0338594>] (exynos_drm_init+0x6c/0xc4)
+[    3.184556] [<c0338594>] (exynos_drm_init) from [<c00097f4>]
+(do_one_initcall+0x90/0x1dc)
+[    3.192718] [<c00097f4>] (do_one_initcall) from [<c0895e08>]
+(kernel_init_freeable+0x158/0x1f8)
+[    3.201396] [<c0895e08>] (kernel_init_freeable) from [<c063ecac>]
+(kernel_init+0x8/0xe8)
+[    3.209469] [<c063ecac>] (kernel_init) from [<c000f7d0>]
+(ret_from_fork+0x14/0x24)
+[    3.217932] exynos-hdmi 12d00000.hdmi: GPIO lookup for consumer hpd
+[    3.223293] exynos-hdmi 12d00000.hdmi: using device tree for GPIO lookup
+[    3.229980] of_get_named_gpiod_flags: can't parse 'hpd-gpios'
+property of node '/hdmi@12D00000[0]'
+[    3.238945] of_get_named_gpiod_flags: parsed 'hpd-gpio' property of
+node '/hdmi@12D00000[0]' - status (0)
+[    3.253430] exynos-drm exynos-drm: bound 12c10000.mixer (ops
+mixer_component_ops)
+[    3.256216] exynos-drm exynos-drm: bound 12d00000.hdmi (ops
+hdmi_component_ops)
+[    3.263245] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    3.269812] [drm] No driver support for vblank timestamp query.
+[    3.323251] exynos-drm exynos-drm: fb0:  frame buffer device
+[    3.341464] [drm] Initialized exynos 1.0.0 20110530 on minor 0
 
-I've pushed your v5 (+ comments, + ack) to l2-mtd.git. If it gets
-testing and this request is made again at that point, we can easily send
-it to stable after it hits Linus' tree. See option 2 in
-Documentation/stable_kernel_rules.txt. You can even send the email
-yourself, just CC me and anyone else relevant. I'll ack it if it's been
-tested.
-
-Regards,
-Brian
+-----------------------------------------------------------------------------------------------------------------------
+-Anand Moon
