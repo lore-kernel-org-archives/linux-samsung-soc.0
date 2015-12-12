@@ -1,107 +1,109 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Odroid U3 mutex deadlock.
-Date: Sat, 12 Dec 2015 10:02:14 +0530
-Message-ID: <CANAwSgSE4UE5jn4Rp0LfVhDcSP=ynDsbCaUSHmM31_MF849bSw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [RESEND PATCH v5 0/8] Add support for Exynos SROM Controller driver
+Date: Sat, 12 Dec 2015 13:13:54 +0530
+Message-ID: <1449906242-20843-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:51449 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750926AbbLLHrY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 12 Dec 2015 02:47:24 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, p.fedin@samsung.com, andi.shyti@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi Krzysztof,
+THIS IS A RESEND OF ONCE MERGED INTO kgene/for-next AND LOST PATCHES
 
-I am just observing this deadlock om my Odroid U3.
-------------------------------------------------------------------------------------------------------------------
+Series v5 got merged in kgene/for-next but due to last moment change before pull
+these patches were not accepted during 4.3 merge window.After that kgene/for-next
+got rebased over 4.4-rc1 these patches got dropped into another branch and till
+date not included to for-next.
 
-[    2.937531] =============================================
-[    2.938733] [ INFO: possible recursive locking detected ]
-[    2.944117] 4.4.0-rc4-xu3s #32 Not tainted
-[    2.948195] ---------------------------------------------
-[    2.953577] swapper/0/1 is trying to acquire lock:
-[    2.958351]  (&genpd->lock){+.+...}, at: [<c0361550>]
-__genpd_poweron+0x64/0x108
-[    2.965727]
-[    2.965727] but task is already holding lock:
-[    2.971543]  (&genpd->lock){+.+...}, at: [<c0361af8>]
-genpd_dev_pm_attach+0x168/0x1b8
-[    2.979355]
-[    2.979355] other info that might help us debug this:
-[    2.985865]  Possible unsafe locking scenario:
-[    2.985865]
-[    2.991768]        CPU0
-[    2.994198]        ----
-[    2.996628]   lock(&genpd->lock);
-[    2.999926]   lock(&genpd->lock);
-[    3.003225]
-[    3.003225]  *** DEADLOCK ***
-[    3.003225]
-[    3.009128]  May be due to missing lock nesting notation
-[    3.009128]
-[    3.015900] 3 locks held by swapper/0/1:
-[    3.019804]  #0:  (&dev->mutex){......}, at: [<c0350910>]
-__driver_attach+0x48/0x98
-[    3.027442]  #1:  (&dev->mutex){......}, at: [<c0350920>]
-__driver_attach+0x58/0x98
-[    3.035081]  #2:  (&genpd->lock){+.+...}, at: [<c0361af8>]
-genpd_dev_pm_attach+0x168/0x1b8
-[    3.043326]
-[    3.043326] stack backtrace:
-[    3.047671] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
-[    3.054351] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[    3.060444] [<c0016c98>] (unwind_backtrace) from [<c00139c4>]
-(show_stack+0x10/0x14)
-[    3.068163] [<c00139c4>] (show_stack) from [<c0270df0>]
-(dump_stack+0x84/0xc4)
-[    3.075367] [<c0270df0>] (dump_stack) from [<c00780b8>]
-(__lock_acquire+0x1f88/0x215c)
-[    3.083262] [<c00780b8>] (__lock_acquire) from [<c007886c>]
-(lock_acquire+0xa4/0xd0)
-[    3.090990] [<c007886c>] (lock_acquire) from [<c0641f2c>]
-(mutex_lock_nested+0x70/0x4d4)
-[    3.099061] [<c0641f2c>] (mutex_lock_nested) from [<c0361550>]
-(__genpd_poweron+0x64/0x108)
-[    3.107393] [<c0361550>] (__genpd_poweron) from [<c0361b00>]
-(genpd_dev_pm_attach+0x170/0x1b8)
-[    3.115986] [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>]
-(platform_drv_probe+0x2c/0xac)
-[    3.124667] [<c03520a8>] (platform_drv_probe) from [<c03507d4>]
-(driver_probe_device+0x208/0x2fc)
-[    3.133519] [<c03507d4>] (driver_probe_device) from [<c035095c>]
-(__driver_attach+0x94/0x98)
-[    3.141939] [<c035095c>] (__driver_attach) from [<c034ec14>]
-(bus_for_each_dev+0x68/0x9c)
-[    3.150097] [<c034ec14>] (bus_for_each_dev) from [<c034fec8>]
-(bus_add_driver+0x1a0/0x218)
-[    3.158344] [<c034fec8>] (bus_add_driver) from [<c035115c>]
-(driver_register+0x78/0xf8)
-[    3.166330] [<c035115c>] (driver_register) from [<c0338488>]
-(exynos_drm_register_drivers+0x28/0x74)
-[    3.175441] [<c0338488>] (exynos_drm_register_drivers) from
-[<c0338594>] (exynos_drm_init+0x6c/0xc4)
-[    3.184556] [<c0338594>] (exynos_drm_init) from [<c00097f4>]
-(do_one_initcall+0x90/0x1dc)
-[    3.192718] [<c00097f4>] (do_one_initcall) from [<c0895e08>]
-(kernel_init_freeable+0x158/0x1f8)
-[    3.201396] [<c0895e08>] (kernel_init_freeable) from [<c063ecac>]
-(kernel_init+0x8/0xe8)
-[    3.209469] [<c063ecac>] (kernel_init) from [<c000f7d0>]
-(ret_from_fork+0x14/0x24)
-[    3.217932] exynos-hdmi 12d00000.hdmi: GPIO lookup for consumer hpd
-[    3.223293] exynos-hdmi 12d00000.hdmi: using device tree for GPIO lookup
-[    3.229980] of_get_named_gpiod_flags: can't parse 'hpd-gpios'
-property of node '/hdmi@12D00000[0]'
-[    3.238945] of_get_named_gpiod_flags: parsed 'hpd-gpio' property of
-node '/hdmi@12D00000[0]' - status (0)
-[    3.253430] exynos-drm exynos-drm: bound 12c10000.mixer (ops
-mixer_component_ops)
-[    3.256216] exynos-drm exynos-drm: bound 12d00000.hdmi (ops
-hdmi_component_ops)
-[    3.263245] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[    3.269812] [drm] No driver support for vblank timestamp query.
-[    3.323251] exynos-drm exynos-drm: fb0:  frame buffer device
-[    3.341464] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+Since then due to minor change in "drivers/soc/", patches are not getting applied
+cleanly so rebasing on current for-next and resending all these with fix in memory
+mapping included.
 
------------------------------------------------------------------------------------------------------------------------
--Anand Moon
+
+This patch set adds support for Exynos SROM controller DT based driver.
+Currently SROM register sets are used only during S2R, so driver
+basically added for taking care of S2R. It will help us in removing
+static mapping from exynos.c and other extra code handline during S2R.
+
+This patch set also updated exynos4 and exynos5 dtsi files for with device
+node for srom, and added binding documentation for the same.
+
+First two patches are some minor cleanup in mach-exynos.
+
+Patchset v1 was posted here[1]
+[1]: https://lkml.org/lkml/2015/4/29/98
+Patchset v2 was posted here[2]
+[2]: https://lkml.org/lkml/2015/8/24/125
+Patchset v3 was posted here[3]
+[3]: https://lkml.org/lkml/2015/10/13/392
+Patchset v3 was posted here[4]
+[4]: https://lkml.org/lkml/2015/10/19/278
+
+This patchset, I have tested on Peach-Pi (Exynos5880) based chromebook for boot
+and S2R functionality.
+
+
+Changes since v5:
+ - Rebased and resolved conflicts on lastest for-next.
+ - Included fix in memory mapping size in exynos4/exynos5 dtsi files.
+
+Change since v4:
+ - Removed unnedded NULL assignments from exynos_srom_remove function.
+ - Added PM depency for selecting CONFIG_EXYNOS_SROM.
+Changes since v3:
+ - Rebased to lastet kgene tree.
+ - Added platform data support, instead of using global variables for srom base
+ - Addressed review comments from LABBE Corentin
+
+Changes since v2:
+ - Rebased to latest kgene tree.
+ - Addressed review comments from Krzysztof Kozlowski.
+ - Add new patch for MAINTAINER list update.
+ - Reordered patch sequence for avoiding git bisect issues.
+
+Changes since v1:
+ - Rebased to latest kgene tree.
+ - Addressed review comments from Krzysztof Kozlowski.
+ - Add two new patches for minor cleanup in exynos.c and map.h
+
+Pankaj Dubey (8):
+  ARM: EXYNOS: remove unused static mapping of CMU for exynos5
+  ARM: EXYNOS: code cleanup in map.h
+  dt-bindings: add exynos-srom device tree binding
+  ARM: dts: add SROM device node for exynos4
+  ARM: dts: add SROM device node for exynos5
+  drivers: soc: add support for exynos SROM driver
+  MAINTAINERS: add maintainers entry for drivers/soc/samsung
+  ARM: EXYNOS: Remove SROM related register settings from mach-exynos
+
+ .../bindings/arm/samsung/exynos-srom.txt           |  12 ++
+ MAINTAINERS                                        |   1 +
+ arch/arm/boot/dts/exynos4.dtsi                     |   5 +
+ arch/arm/boot/dts/exynos5.dtsi                     |   5 +
+ arch/arm/mach-exynos/Kconfig                       |   2 +
+ arch/arm/mach-exynos/exynos.c                      |  22 ---
+ arch/arm/mach-exynos/include/mach/map.h            |   8 -
+ arch/arm/mach-exynos/regs-srom.h                   |  53 -------
+ arch/arm/mach-exynos/suspend.c                     |  20 +--
+ arch/arm/plat-samsung/include/plat/map-s5p.h       |   1 -
+ drivers/soc/Kconfig                                |   1 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/samsung/Kconfig                        |  13 ++
+ drivers/soc/samsung/Makefile                       |   1 +
+ drivers/soc/samsung/exynos-srom.c                  | 175 +++++++++++++++++++++
+ drivers/soc/samsung/exynos-srom.h                  |  51 ++++++
+ 16 files changed, 269 insertions(+), 102 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-srom.txt
+ delete mode 100644 arch/arm/mach-exynos/regs-srom.h
+ create mode 100644 drivers/soc/samsung/Kconfig
+ create mode 100644 drivers/soc/samsung/Makefile
+ create mode 100644 drivers/soc/samsung/exynos-srom.c
+ create mode 100644 drivers/soc/samsung/exynos-srom.h
+
+-- 
+1.9.1
