@@ -1,222 +1,29 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: Odroid U3 mutex deadlock.
-Date: Sun, 13 Dec 2015 08:06:48 +0530
-Message-ID: <CANAwSgRY7SCx0xoRKts2xLEsXKY6X8p14qXqTHR-C8t99wg1Sg@mail.gmail.com>
-References: <CANAwSgSE4UE5jn4Rp0LfVhDcSP=ynDsbCaUSHmM31_MF849bSw@mail.gmail.com>
- <CAE-5t2stNAGnHSW1RG9Ek8Zas6c3wgdULYP9sFRw=9LyLz+rLA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 004/182] gpio: generic: factor into gpio_chip struct
+Date: Sun, 13 Dec 2015 21:15:01 +0100
+Message-ID: <CACRpkdZxGYaRJ_LY0jjHkb67j70Aws53ec2DtwrOzdBfEOj5gQ@mail.gmail.com>
+References: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
+	<20151209230852.GB28304@deathstar>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:33363 "EHLO
-	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751300AbbLMChJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Dec 2015 21:37:09 -0500
-In-Reply-To: <CAE-5t2stNAGnHSW1RG9Ek8Zas6c3wgdULYP9sFRw=9LyLz+rLA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20151209230852.GB28304@deathstar>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Michael Welling <mwelling@ieee.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Anton Vorontsov <anton@enomsg.org>, "arm@kernel.org" <arm@kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Vladimir Zapolskiy <vl>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Pietrowski <thopiekar@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi Thomas,
-
-On 12 December 2015 at 16:58, Thomas Pietrowski <thopiekar@gmail.com> wrote:
-> I'm also using 4.4.0-rc4 here on my U3+. And so far it is working well. I
-> just had a freeze yesterday, but I didn't had the UART connected, so
-> couldn't catch the reason. The curious thing was that the heartbeat LED was
-> still blinking, but USB keyboard and Ethernet/SSH (but LEDs still on) were
-> not working.
+On Thu, Dec 10, 2015 at 12:08 AM, Michael Welling <mwelling@ieee.org> wrote:
+> On Wed, Dec 09, 2015 at 02:12:40PM +0100, Linus Walleij wrote:
+> ...
+>> -     ret = gpiochip_add(&bgc->gc);
+>> +     ret = gpiochip_add_data(gc, NULL);
+>>       if (ret) {
 >
-> Could you upload your .config? Maybe it could be useful for others :)
->
-> Regards
->
-> Am 12.12.2015 05:33 schrieb "Anand Moon" <linux.amoon@gmail.com>:
->>
->> Hi Krzysztof,
->>
->> I am just observing this deadlock om my Odroid U3.
->>
->> ------------------------------------------------------------------------------------------------------------------
->>
->> [    2.937531] =============================================
->> [    2.938733] [ INFO: possible recursive locking detected ]
->> [    2.944117] 4.4.0-rc4-xu3s #32 Not tainted
->> [    2.948195] ---------------------------------------------
->> [    2.953577] swapper/0/1 is trying to acquire lock:
->> [    2.958351]  (&genpd->lock){+.+...}, at: [<c0361550>]
->> __genpd_poweron+0x64/0x108
->> [    2.965727]
->> [    2.965727] but task is already holding lock:
->> [    2.971543]  (&genpd->lock){+.+...}, at: [<c0361af8>]
->> genpd_dev_pm_attach+0x168/0x1b8
->> [    2.979355]
->> [    2.979355] other info that might help us debug this:
->> [    2.985865]  Possible unsafe locking scenario:
->> [    2.985865]
->> [    2.991768]        CPU0
->> [    2.994198]        ----
->> [    2.996628]   lock(&genpd->lock);
->> [    2.999926]   lock(&genpd->lock);
->> [    3.003225]
->> [    3.003225]  *** DEADLOCK ***
->> [    3.003225]
->> [    3.009128]  May be due to missing lock nesting notation
->> [    3.009128]
->> [    3.015900] 3 locks held by swapper/0/1:
->> [    3.019804]  #0:  (&dev->mutex){......}, at: [<c0350910>]
->> __driver_attach+0x48/0x98
->> [    3.027442]  #1:  (&dev->mutex){......}, at: [<c0350920>]
->> __driver_attach+0x58/0x98
->> [    3.035081]  #2:  (&genpd->lock){+.+...}, at: [<c0361af8>]
->> genpd_dev_pm_attach+0x168/0x1b8
->> [    3.043326]
->> [    3.043326] stack backtrace:
->> [    3.047671] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s
->> #32
->> [    3.054351] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> [    3.060444] [<c0016c98>] (unwind_backtrace) from [<c00139c4>]
->> (show_stack+0x10/0x14)
->> [    3.068163] [<c00139c4>] (show_stack) from [<c0270df0>]
->> (dump_stack+0x84/0xc4)
->> [    3.075367] [<c0270df0>] (dump_stack) from [<c00780b8>]
->> (__lock_acquire+0x1f88/0x215c)
->> [    3.083262] [<c00780b8>] (__lock_acquire) from [<c007886c>]
->> (lock_acquire+0xa4/0xd0)
->> [    3.090990] [<c007886c>] (lock_acquire) from [<c0641f2c>]
->> (mutex_lock_nested+0x70/0x4d4)
->> [    3.099061] [<c0641f2c>] (mutex_lock_nested) from [<c0361550>]
->> (__genpd_poweron+0x64/0x108)
->> [    3.107393] [<c0361550>] (__genpd_poweron) from [<c0361b00>]
->> (genpd_dev_pm_attach+0x170/0x1b8)
->> [    3.115986] [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>]
->> (platform_drv_probe+0x2c/0xac)
->> [    3.124667] [<c03520a8>] (platform_drv_probe) from [<c03507d4>]
->> (driver_probe_device+0x208/0x2fc)
->> [    3.133519] [<c03507d4>] (driver_probe_device) from [<c035095c>]
->> (__driver_attach+0x94/0x98)
->> [    3.141939] [<c035095c>] (__driver_attach) from [<c034ec14>]
->> (bus_for_each_dev+0x68/0x9c)
->> [    3.150097] [<c034ec14>] (bus_for_each_dev) from [<c034fec8>]
->> (bus_add_driver+0x1a0/0x218)
->> [    3.158344] [<c034fec8>] (bus_add_driver) from [<c035115c>]
->> (driver_register+0x78/0xf8)
->> [    3.166330] [<c035115c>] (driver_register) from [<c0338488>]
->> (exynos_drm_register_drivers+0x28/0x74)
->> [    3.175441] [<c0338488>] (exynos_drm_register_drivers) from
->> [<c0338594>] (exynos_drm_init+0x6c/0xc4)
->> [    3.184556] [<c0338594>] (exynos_drm_init) from [<c00097f4>]
->> (do_one_initcall+0x90/0x1dc)
->> [    3.192718] [<c00097f4>] (do_one_initcall) from [<c0895e08>]
->> (kernel_init_freeable+0x158/0x1f8)
->> [    3.201396] [<c0895e08>] (kernel_init_freeable) from [<c063ecac>]
->> (kernel_init+0x8/0xe8)
->> [    3.209469] [<c063ecac>] (kernel_init) from [<c000f7d0>]
->> (ret_from_fork+0x14/0x24)
->> [    3.217932] exynos-hdmi 12d00000.hdmi: GPIO lookup for consumer hpd
->> [    3.223293] exynos-hdmi 12d00000.hdmi: using device tree for GPIO
->> lookup
->> [    3.229980] of_get_named_gpiod_flags: can't parse 'hpd-gpios'
->> property of node '/hdmi@12D00000[0]'
->> [    3.238945] of_get_named_gpiod_flags: parsed 'hpd-gpio' property of
->> node '/hdmi@12D00000[0]' - status (0)
->> [    3.253430] exynos-drm exynos-drm: bound 12c10000.mixer (ops
->> mixer_component_ops)
->> [    3.256216] exynos-drm exynos-drm: bound 12d00000.hdmi (ops
->> hdmi_component_ops)
->> [    3.263245] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->> [    3.269812] [drm] No driver support for vblank timestamp query.
->> [    3.323251] exynos-drm exynos-drm: fb0:  frame buffer device
->> [    3.341464] [drm] Initialized exynos 1.0.0 20110530 on minor 0
->>
->>
->> -----------------------------------------------------------------------------------------------------------------------
->> -Anand Moon
+> gpiochip_add is still mentioned in the dev_err below.
 
-I just using exynos_defconfig + kernel hacking flags.
+I explicitly left text string updates aside, I am anyways going to have to go
+over all drivers for a second refactoring with gpiodev_alloc() etc.
 
-diff --git a/arch/arm/configs/exynos_defconfig
-b/arch/arm/configs/exynos_defconfig
-index e0841a5..402a37f 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -1,3 +1,4 @@
-+# CONFIG_LOCALVERSION_AUTO is not set
- CONFIG_SYSVIPC=y
- CONFIG_FHANDLE=y
- CONFIG_NO_HZ=y
-@@ -100,10 +101,8 @@ CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_NTC_THERMISTOR=y
- CONFIG_SENSORS_PWM_FAN=y
- CONFIG_SENSORS_INA2XX=y
--CONFIG_THERMAL=y
- CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
--CONFIG_EXYNOS_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
- CONFIG_MFD_CROS_EC=y
-@@ -132,8 +131,6 @@ CONFIG_MEDIA_CAMERA_SUPPORT=y
- CONFIG_MEDIA_USB_SUPPORT=y
- CONFIG_USB_VIDEO_CLASS=m
- CONFIG_DRM=y
--CONFIG_DRM_NXP_PTN3460=y
--CONFIG_DRM_PARADE_PS8622=y
- CONFIG_DRM_EXYNOS=y
- CONFIG_DRM_EXYNOS_FIMD=y
- CONFIG_DRM_EXYNOS_DSI=y
-@@ -141,6 +138,8 @@ CONFIG_DRM_EXYNOS_MIXER=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=y
-+CONFIG_DRM_NXP_PTN3460=y
-+CONFIG_DRM_PARADE_PS8622=y
- CONFIG_EXYNOS_VIDEO=y
- CONFIG_EXYNOS_MIPI_DSI=y
- CONFIG_LCD_CLASS_DEVICE=y
-@@ -219,10 +218,36 @@ CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_FS=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_KERNEL=y
-+CONFIG_DEBUG_PAGEALLOC=y
-+CONFIG_DEBUG_OBJECTS=y
-+CONFIG_DEBUG_OBJECTS_SELFTEST=y
-+CONFIG_DEBUG_OBJECTS_FREE=y
-+CONFIG_DEBUG_OBJECTS_TIMERS=y
-+CONFIG_DEBUG_OBJECTS_WORK=y
-+CONFIG_DEBUG_OBJECTS_RCU_HEAD=y
-+CONFIG_DEBUG_OBJECTS_PERCPU_COUNTER=y
-+CONFIG_DEBUG_SHIRQ=y
- CONFIG_LOCKUP_DETECTOR=y
-+CONFIG_SCHEDSTATS=y
-+CONFIG_SCHED_STACK_END_CHECK=y
-+CONFIG_TIMER_STATS=y
- CONFIG_DEBUG_RT_MUTEXES=y
--CONFIG_DEBUG_SPINLOCK=y
--CONFIG_DEBUG_MUTEXES=y
-+CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
-+CONFIG_PROVE_LOCKING=y
-+CONFIG_LOCK_STAT=y
-+CONFIG_DEBUG_LOCKDEP=y
-+CONFIG_DEBUG_ATOMIC_SLEEP=y
-+CONFIG_DEBUG_LOCKING_API_SELFTESTS=y
-+CONFIG_LOCK_TORTURE_TEST=m
-+CONFIG_DEBUG_PI_LIST=y
-+CONFIG_DEBUG_SG=y
-+CONFIG_DEBUG_NOTIFIERS=y
-+CONFIG_DEBUG_CREDENTIALS=y
-+CONFIG_PROVE_RCU_REPEATEDLY=y
-+CONFIG_SPARSE_RCU_POINTER=y
-+CONFIG_RCU_TORTURE_TEST=m
-+CONFIG_RCU_TORTURE_TEST_SLOW_PREINIT=y
-+CONFIG_RCU_TRACE=y
- CONFIG_DEBUG_USER=y
- CONFIG_CRYPTO_SHA256=y
- CONFIG_CRC_CCITT=y
-
--Anand Moon
->> --
->> To unsubscribe from this list: send the line "unsubscribe
->> linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
