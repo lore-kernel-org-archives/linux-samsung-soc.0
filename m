@@ -1,51 +1,96 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 0/3] cpuidle: avoid module usage in non-modular code
-Date: Mon, 14 Dec 2015 16:32:32 -0500
-Message-ID: <20151214213231.GE1067@windriver.com>
-References: <1450051032-32329-1-git-send-email-paul.gortmaker@windriver.com>
- <8909604.csvS2fCWyS@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:39601 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932194AbbLNVda (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Dec 2015 16:33:30 -0500
-Content-Disposition: inline
-In-Reply-To: <8909604.csvS2fCWyS@vostro.rjw.lan>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Toshi Kani <toshi.kani@hpe.com>
+Subject: [PATCH 00/11] Support System RAM resource type and EINJ to NVDIMM
+Date: Mon, 14 Dec 2015 16:37:15 -0700
+Message-ID: <1450136235-17012-1-git-send-email-toshi.kani@hpe.com>
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org, bp@alien8.de
+Cc: torvalds@linux-foundation.org, rafael.j.wysocki@intel.com, dan.j.williams@intel.com, x86@kernel.org, konrad.wilk@oracle.com, xen-devel@lists.xenproject.org, dyoung@redhat.com, vgoyal@redhat.com, tangchen@cn.fujitsu.com, kgene@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, vishal.l.verma@intel.com, tony.luck@intel.com, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-nvdimm@lists.01.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-[Re: [PATCH 0/3] cpuidle: avoid module usage in non-modular code] On 14/12/2015 (Mon 22:31) Rafael J. Wysocki wrote:
+This patch-set introduces a new I/O resource type, IORESOURCE_SYSTEM_RAM,
+for System RAM while keeping the current IORESOURCE_MEM type bit set for
+all memory-mapped ranges (including System RAM) for backward compatibility.
+With the new System RAM type, walking through the iomem resource table
+no longer requires to test with strcmp() against "System RAM".  After this
+infrastructure update, this patch changes EINJ to support NVDIMM.
 
-> On Sunday, December 13, 2015 06:57:09 PM Paul Gortmaker wrote:
-> > This series of commits is a part of a larger project to ensure
-> > people don't reference modular support functions in non-modular
-> > code.  Overall there was roughly 5k lines of dead code in the
-> > kernel due to this.  So far we've fixed several areas, like tty,
-> > x86, net, ... and we continue to work on other areas.
+Patches 1-2 add a new System RAM type, and make resource interfaces work
+with resource flags with modifier bits set.
 
-[...]
+Patches 3-7 set the System RAM type to System RAM ranges.
 
-> 
-> If no one objects, I can queue up this series for 4.5 unless you have other
-> plans with respect to it.
+Patches 8-10 extend resource interfaces to check System RAM ranges with
+the System RAM type.
 
-Please do.
+Patch 11 changes the EINJ driver to allow injecting a memory error to
+NVDIMM.
 
-I was hoping to spread as many of these around as possible so I don't
-end up with a giant pull request to Linus.  There is code out there
-without a clear maintainership path, so eventually I'll have to send
-some his way (or via akpm) but the less that end up in that pile, the
-better IMHO.
+---
+v1:
+ - Searching for System RAM in the resource table should not require
+   strcmp(). (Borislav Petkov)
+ - Add a new System RAM type as a modifier to IORESOURCE_MEM.
+   (Linus Torvalds)
+ - NVDIMM check should remain with strcmp() against "Persistent Memory".
+   (Dan Williams)
+ - Reset patch version.
 
-Thanks,
-Paul.
+prev-v3:
+ - Check the param2 value before target memory type. (Tony Luck)
+ - Add a blank line before if-statement. Remove an unnecessary brakets.
+   (Borislav Petkov)
+
+prev-v2:
+ - Change the EINJ driver to call region_intersects_ram() for checking
+   RAM with a specified size. (Dan Williams)
+
+---
+Toshi Kani (11):
+ 01/11 resource: Add System RAM resource type
+ 02/11 resource: make resource flags handled properly
+ 03/11 x86/e820: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 04/11 arch: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 05/11 xen: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 06/11 kexec: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 07/11 memory-hotplug: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 08/11 memremap: Change region_intersects() to use System RAM type
+ 09/11 resource: Change walk_system_ram to use System RAM type
+ 10/11 arm/samsung: Change s3c_pm_run_res() to use System RAM type
+ 11/11 ACPI/EINJ: Allow memory error injection to NVDIMM
+
+---
+ arch/arm/kernel/setup.c          |  6 ++---
+ arch/arm/plat-samsung/pm-check.c |  4 +--
+ arch/arm64/kernel/setup.c        |  6 ++---
+ arch/avr32/kernel/setup.c        |  6 ++---
+ arch/ia64/kernel/efi.c           |  6 +++--
+ arch/ia64/kernel/setup.c         |  6 ++---
+ arch/m32r/kernel/setup.c         |  4 +--
+ arch/mips/kernel/setup.c         | 10 +++++---
+ arch/parisc/mm/init.c            |  6 ++---
+ arch/powerpc/mm/mem.c            |  2 +-
+ arch/s390/kernel/setup.c         |  8 +++---
+ arch/score/kernel/setup.c        |  2 +-
+ arch/sh/kernel/setup.c           |  8 +++---
+ arch/sparc/mm/init_64.c          |  8 +++---
+ arch/tile/kernel/setup.c         | 11 +++++---
+ arch/unicore32/kernel/setup.c    |  6 ++---
+ arch/x86/kernel/e820.c           | 18 +++++++++++++-
+ arch/x86/kernel/setup.c          |  6 ++---
+ drivers/acpi/apei/einj.c         | 15 ++++++++---
+ drivers/xen/balloon.c            |  2 +-
+ include/linux/ioport.h           | 11 ++++++++
+ include/linux/mm.h               |  3 ++-
+ kernel/kexec_core.c              |  6 ++---
+ kernel/kexec_file.c              |  2 +-
+ kernel/memremap.c                | 13 +++++-----
+ kernel/resource.c                | 54 +++++++++++++++++++++-------------------
+ mm/memory_hotplug.c              |  2 +-
+ 27 files changed, 140 insertions(+), 91 deletions(-)
+
 --
-> 
-> Thanks,
-> Rafael
-> 
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
