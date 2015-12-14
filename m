@@ -1,90 +1,37 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: mixer: remove non-devicetree based initialization
- code
-Date: Mon, 14 Dec 2015 11:45:41 +0100
-Message-ID: <1450089941-384-1-git-send-email-m.szyprowski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] clk: exynos: use irqsave version of spin_lock to avoid
+ deadlock with irqs
+Date: Mon, 14 Dec 2015 20:02:54 +0900
+Message-ID: <CA+Ln22Fgn3JjbQ0MgMdsZk_4xsAy3Y6i2DEqm6WN2ORuJYZCPQ@mail.gmail.com>
+References: <1449844798-27384-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:13777 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932200AbbLNKp6 (ORCPT
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:36718 "EHLO
+	mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932176AbbLNLC4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Dec 2015 05:45:58 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NZC002V3GKKN780@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Dec 2015 10:45:56 +0000 (GMT)
+	Mon, 14 Dec 2015 06:02:56 -0500
+In-Reply-To: <1449844798-27384-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Lukasz Majewski <l.majewski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, stable@vger.kernel.org
 
-Exynos platform has been fully converted to device tree, so old platform
-device based init data can be now removed.
+Hi Marek,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 28 ++++++----------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+2015-12-11 23:38 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> It is allowed to enable/disable clocks from interrupts, so common Exynos
+> ARM clock management code for CPUfreq should use 'irqsave' version of
+> spin_lock calls to avoid potential deadlock caused by spin_lock recursion.
+> The same spin_lock is used by gate/mux clocks during enable/disable calls.
+>
+> This deadlock, can be reproduced by enabling CPUfreq (ondemand or
+> userspace) and decoding video with s5p-mfc driver.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 4617b873d91f..ce313486d3bd 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1268,18 +1268,6 @@ static struct mixer_drv_data exynos4210_mxr_drv_data = {
- 	.has_sclk = 1,
- };
- 
--static const struct platform_device_id mixer_driver_types[] = {
--	{
--		.name		= "s5p-mixer",
--		.driver_data	= (unsigned long)&exynos4210_mxr_drv_data,
--	}, {
--		.name		= "exynos5-mixer",
--		.driver_data	= (unsigned long)&exynos5250_mxr_drv_data,
--	}, {
--		/* end node */
--	}
--};
--
- static struct of_device_id mixer_match_types[] = {
- 	{
- 		.compatible = "samsung,exynos4210-mixer",
-@@ -1358,23 +1346,20 @@ static int mixer_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct mixer_drv_data *drv;
- 	struct mixer_context *ctx;
-+	const struct of_device_id *match;
- 	int ret;
- 
-+	if (!dev->of_node)
-+		return -ENODEV;
-+
- 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx) {
- 		DRM_ERROR("failed to alloc mixer context.\n");
- 		return -ENOMEM;
- 	}
- 
--	if (dev->of_node) {
--		const struct of_device_id *match;
--
--		match = of_match_node(mixer_match_types, dev->of_node);
--		drv = (struct mixer_drv_data *)match->data;
--	} else {
--		drv = (struct mixer_drv_data *)
--			platform_get_device_id(pdev)->driver_data;
--	}
-+	match = of_match_node(mixer_match_types, dev->of_node);
-+	drv = (struct mixer_drv_data *)match->data;
- 
- 	ctx->pdev = pdev;
- 	ctx->dev = dev;
-@@ -1479,5 +1464,4 @@ struct platform_driver mixer_driver = {
- 	},
- 	.probe = mixer_probe,
- 	.remove = mixer_remove,
--	.id_table	= mixer_driver_types,
- };
--- 
-1.9.2
+Good catch.
+
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Best regards,
+Tomasz
