@@ -1,135 +1,97 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/3] Device tree binding documentation for gpio-switch
-Date: Mon, 14 Dec 2015 09:45:48 -0600
-Message-ID: <CAL_JsqJXX71Bwbm21H3QAJxYDO60kyHgKVzXxxrH9ze6ZWYtXw@mail.gmail.com>
-References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk>
- <1449250275-23435-2-git-send-email-martyn.welch@collabora.co.uk>
- <CACRpkdYZ-PK9Fb2uq+EMz5RTrtX-isxYkiNvWm2QqAh5WZhpOw@mail.gmail.com>
- <CAL_JsqJ-dht=rCu2-Unm0yOdFfRoOSXd9fkO7eDeQmvWGkGfsQ@mail.gmail.com> <CACRpkdYvU6YG5yRCLsyS7sq816t3shWw51OTR2-fkp-FqSeESg@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 4/7] media: vb2-dma-contig: add helper for setting dma max seg size
+Date: Mon, 14 Dec 2015 17:50:50 +0200
+Message-ID: <1604824.dB2dzDMl5I@avalon>
+References: <1449669502-24601-1-git-send-email-m.szyprowski@samsung.com> <3238962.HlGfVT9mcy@avalon> <566E89D6.40603@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYvU6YG5yRCLsyS7sq816t3shWw51OTR2-fkp-FqSeESg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Welling <mwelling-EkmVulN54Sk@public.gmane.org>, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40148 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752156AbbLNPuh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Dec 2015 10:50:37 -0500
+In-Reply-To: <566E89D6.40603@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Dec 14, 2015 at 8:28 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, Dec 11, 2015 at 3:06 PM, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->> On Fri, Dec 11, 2015 at 6:39 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>> On Fri, Dec 4, 2015 at 6:31 PM, Martyn Welch
->>> <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
+Hi Marek,
 
-[...]
+On Monday 14 December 2015 10:20:22 Marek Szyprowski wrote:
+> On 2015-12-13 20:57, Laurent Pinchart wrote:
+> > On Wednesday 09 December 2015 14:58:19 Marek Szyprowski wrote:
+> >> Add a helper function for device drivers to set DMA's max_seg_size.
+> >> Setting it to largest possible value lets DMA-mapping API always create
+> >> contiguous mappings in DMA address space. This is essential for all
+> >> devices, which use dma-contig videobuf2 memory allocator and shared
+> >> buffers.
+> >> 
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> ---
+> >> 
+> >>   drivers/media/v4l2-core/videobuf2-dma-contig.c | 15 +++++++++++++++
+> >>   include/media/videobuf2-dma-contig.h           |  1 +
+> >>   2 files changed, 16 insertions(+)
+> >> 
+> >> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >> b/drivers/media/v4l2-core/videobuf2-dma-contig.c index c331272..628518d
+> >> 100644
+> >> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >> @@ -742,6 +742,21 @@ void vb2_dma_contig_cleanup_ctx(void *alloc_ctx)
+> >> 
+> >>   }
+> >>   EXPORT_SYMBOL_GPL(vb2_dma_contig_cleanup_ctx);
+> >> 
+> >> +int vb2_dma_contig_set_max_seg_size(struct device *dev, unsigned int
+> >> size)
+> >> +{
+> >> +	if (!dev->dma_parms) {
+> > 
+> > When can this function be called with dev->dma_parms not NULL ?
+> 
+> When one loads a module with multimedia driver (which calls this
+> function), then unloads and loads it again. It is rather safe to have this
+> check.
 
->>> Markus Pargmann also did a series that add initial values to
->>> hogs, which is the inverse usecase of this, where you want to
->>> *output* something by default, then maybe also make it available
->>> to userspace.
->>>
->>> So what we need to see here is a patch series that does all of these
->>> things:
->>>
->>> - Name lines
->>>
->>> - Sets them to initial values
->>>
->>> - Mark them as read-only
->>>
->>> - Mark them as "not used by the operating system" so that they
->>>   can be default-exported to userspace.
->>
->> No! This should not be a DT property.
->>
->> Whether I want to control a GPIO in the kernel or userspace is not
->> known and can change over time. It could simply depend on kernel
->> config. There is also the case that a GPIO has no connection or kernel
->> driver until some time later when a DT overlay for an expansion board
->> is applied.
->
-> That's correct. So from a DT point of view, what really matters is
-> to give things a name, and the hogs and initvals syntax already
-> has a structure for this that is in use
-> (from Documentation/devicetree/bindings/gpio/gpio.txt):
->
->         qe_pio_a: gpio-controller@1400 {
->                 compatible = "fsl,qe-pario-bank-a", "fsl,qe-pario-bank";
->                 reg = <0x1400 0x18>;
->                 gpio-controller;
->                 #gpio-cells = <2>;
->
->                 line_b {
->                         gpio-hog;
->                         gpios = <6 0>;
->                         output-low;
->                         line-name = "foo-bar-gpio";
->                 };
->         };
->
-> Markus use this also for initial values. That could easily be used in
-> a budget version like this:
->
->                 line_b {
->                         /* Just naming */
->                         gpios = <6 0>;
->                         line-name = "foo-bar-gpio";
->                 };
->
-> That could grow kind of big though. Or maybe not? How many
-> GPIO lines are actually properly named in a typical system?
+Don't you have a much bigger problem in that case ? When you unload the module 
+the device will be unbound from the driver, causing the memory allocated by 
+devm_kzalloc to be freed. dev->dma_parms will then point to freed memory, 
+which will get reused by all subsequent calls to dma_get_max_seg_size(), 
+dma_get_max_seg_size() & co (including the ones in this function).
 
-We should limit it to GPIOs with no connection to another node. For
-example, I don't want to see a SD card detect in the list as that
-should be in the SD host node. However, that is hard to enforce and
-can change over time. Removing it would break userspace potentially.
-Of course if the kernel starts own a signal that userspace used, then
-that potentially breaks userspace regardless of the DT changing. OTOH,
-using GPIOs in userspace is kind of use at your own risk.
+> >> +		dev->dma_parms = devm_kzalloc(dev, sizeof(dev->dma_parms),
+> >> +					      GFP_KERNEL);
+> >> +		if (!dev->dma_parms)
+> >> +			return -ENOMEM;
+> >> +	}
+> >> +	if (dma_get_max_seg_size(dev) < size)
+> >> +		return dma_set_max_seg_size(dev, size);
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(vb2_dma_contig_set_max_seg_size);
+> >> +
+> >>   MODULE_DESCRIPTION("DMA-contig memory handling routines for
+> >>   videobuf2");
+> >>   MODULE_AUTHOR("Pawel Osciak <pawel@osciak.com>");
+> >>   MODULE_LICENSE("GPL");
+> >> diff --git a/include/media/videobuf2-dma-contig.h
+> >> b/include/media/videobuf2-dma-contig.h index c33dfa6..0e6ba64 100644
+> >> --- a/include/media/videobuf2-dma-contig.h
+> >> +++ b/include/media/videobuf2-dma-contig.h
+> >> @@ -26,6 +26,7 @@ vb2_dma_contig_plane_dma_addr(struct vb2_buffer *vb,
+> >> unsigned int plane_no)
+> >>  void *vb2_dma_contig_init_ctx(struct device *dev);
+> >>  void vb2_dma_contig_cleanup_ctx(void *alloc_ctx);
+> >> +int vb2_dma_contig_set_max_seg_size(struct device *dev, unsigned int
+> >> size);
+> >>  extern const struct vb2_mem_ops vb2_dma_contig_memops;
 
-The only real differences between this and Martyn's proposal are the
-location of the nodes and having a compatible string. A compatible
-string may be good to have. It indicates type of signal, but not
-specific use. Similar to how gpio-key compatible defines the function,
-but not what key code, or gpio-led does not say what color LED. A
-compatible here could cover switches, mode/id/revision strapping
-signals, jumpers, presence detect, etc.
+-- 
+Regards,
 
-> The problem is that naming is usually imposed by consumers (they
-> are the ones who know how the line is used).
->
-> And then I do not mean naming it after the pin on the capsule
-> where it comes out as per the datasheet, but
-> naming it after the actual use.
-
-Right. We need a way to query "I need the GPIO that does X" which
-works across boards.
-
-> Naming it after the hardware specs is something the operating
-> system can do, in Linux' case by the array char *names; inside the
-> struct gpio_chip and should not be part of the bindings IMO.
-
-Agreed. That just came up with STM32 gpio bindings[1].
-
-> I would rather imagine this is something used in a top-level board
-> file naming it: "header-2-22" for the 22nd pin on some second header
-> on my BeagleBone Black or something like that. And those may not
-> be so vast in numbers so they could be named using this pattern.
-
-Exactly. This is one of the cases I care about. However, this is not
-really a function, but it is SOC independent at least.
-
-We also have to consider how to handle add-on boards. We probably need
-a connector node which can remap connector signals to host signals in
-order to have overlays independent of the host board DT. For GPIOs
-this is probably a gpio-map property similar to interrupt-map. The
-complicated part will be connectors that require pinmux setup of the
-host.
-
-Rob
-
-[1] https://lkml.org/lkml/2015/12/11/600
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Laurent Pinchart
