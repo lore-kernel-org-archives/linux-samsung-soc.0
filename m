@@ -1,85 +1,41 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 01/20] PM / devfreq: exynos: Add generic exynos bus
- frequency driver
-Date: Mon, 14 Dec 2015 16:14:01 +0900
-Message-ID: <566E6C39.6080703@samsung.com>
-References: <1449810479-14763-1-git-send-email-cw00.choi@samsung.com>
- <1449810479-14763-2-git-send-email-cw00.choi@samsung.com>
- <566A80D5.2070703@samsung.com> <566A834C.3040103@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [RESEND PATCH v5 0/8] Add support for Exynos SROM Controller driver
+Date: Mon, 14 Dec 2015 10:39:39 +0300
+Message-ID: <00d301d13642$978c70c0$c6a55240$@samsung.com>
+References: <1449906242-20843-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <566A834C.3040103@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:61310 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751958AbbLNHjn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Dec 2015 02:39:43 -0500
+In-reply-to: <1449906242-20843-1-git-send-email-pankaj.dubey@samsung.com>
+Content-language: ru
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, andi.shyti@samsung.com
 
-Hi Krzysztof and Myungjoo,
+ Hello!
 
-On 2015=EB=85=84 12=EC=9B=94 11=EC=9D=BC 17:03, Krzysztof Kozlowski wro=
-te:
-> On 11.12.2015 16:52, Chanwoo Choi wrote:
->> Dear MyungJoo,
->>
->> Almost device tree patches in this series are reviewed by Exynos mai=
-ntainer.
->> Could you please review this series?
->=20
-> Are there any objections to merging DT patches through Samsung-soc?
->=20
-> Looking at the code, there are no dependencies between DT and drivers=
-,
-> right?
+> THIS IS A RESEND OF ONCE MERGED INTO kgene/for-next AND LOST PATCHES
+> 
+> Series v5 got merged in kgene/for-next but due to last moment change before pull
+> these patches were not accepted during 4.3 merge window.After that kgene/for-next
+> got rebased over 4.4-rc1 these patches got dropped into another branch and till
+> date not included to for-next.
 
-Yes.
-There is no dependency between exynos-bus.c patches and DT patches.
-If the design concept of exynos-bus.c don't be changed,
-there is no problem to merge the DT patches to samsung-soc tree.
+ I will not strictly require it because i'd like to move on with this somehow, and if this gets merged, i'm fine with it, but if you
+happen to send v6, may be you should include this small bit:
 
-Best Regards,
-Chanwoo Choi
+http://www.spinics.net/lists/linux-samsung-soc/msg49008.html
 
->=20
-> Best regards,
-> Krzysztof
->=20
->>
->> Best Regards,
->> Chanwoo Choi
->>
->> On 2015=EB=85=84 12=EC=9B=94 11=EC=9D=BC 14:07, Chanwoo Choi wrote:
->>> This patch adds the generic exynos bus frequency driver for AMBA AX=
-I bus
->>> of sub-blocks in exynos SoC with DEVFREQ framework. The Samsung Exy=
-nos SoC
->>> have the common architecture for bus between DRAM and sub-blocks in=
- SoC.
->>> This driver can support the generic bus frequency driver for Exynos=
- SoCs.
->>>
->>> In devicetree, Each bus block has a bus clock, regulator, operation=
--point
->>> and devfreq-event devices which measure the utilization of each bus=
- block.
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> [linux.amoon: Tested on Odroid U3]
->>> Tested-by: Anand Moon <linux.amoon@gmail.com>
->>> ---
->>>  drivers/devfreq/Kconfig             |  15 ++
->>>  drivers/devfreq/Makefile            |   1 +
->>>  drivers/devfreq/exynos/Makefile     |   1 +
->>>  drivers/devfreq/exynos/exynos-bus.c | 449 ++++++++++++++++++++++++=
-++++++++++++
->>>  4 files changed, 466 insertions(+)
->>>  create mode 100644 drivers/devfreq/exynos/exynos-bus.c
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
->=20
+ ?
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
