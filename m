@@ -1,55 +1,51 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
 Subject: Re: [PATCH 0/3] cpuidle: avoid module usage in non-modular code
-Date: Mon, 14 Dec 2015 22:17:55 +0100
-Message-ID: <566F3203.5010009@linaro.org>
+Date: Mon, 14 Dec 2015 16:32:32 -0500
+Message-ID: <20151214213231.GE1067@windriver.com>
 References: <1450051032-32329-1-git-send-email-paul.gortmaker@windriver.com>
+ <8909604.csvS2fCWyS@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1450051032-32329-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
-Cc: Alexander Shiyan <shc_work@mail.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:39601 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932194AbbLNVda (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Dec 2015 16:33:30 -0500
+Content-Disposition: inline
+In-Reply-To: <8909604.csvS2fCWyS@vostro.rjw.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 12/14/2015 12:57 AM, Paul Gortmaker wrote:
-> This series of commits is a part of a larger project to ensure
-> people don't reference modular support functions in non-modular
-> code.  Overall there was roughly 5k lines of dead code in the
-> kernel due to this.  So far we've fixed several areas, like tty,
-> x86, net, ... and we continue to work on other areas.
->
-> There are several reasons to not use module support for code that
-> can never be built as a module, but the big ones are:
->
->   (1) it is easy to accidentally code up unused module_exit and remov=
-e code
->   (2) it can be misleading when reading the source, thinking it can b=
-e
->        modular when the Makefile and/or Kconfig prohibit it
->   (3) it requires the include of the module.h header file which in tu=
-rn
->       includes nearly everything else.
->
-> Fortunately for cpuidle, the changes are largely trivial and change
-> zero runtime.  All the changes here just remap the modular functions
-> onto the non-modular ones that they would be remapped onto anyway.
->
-> Changes are against linux-next and compile tested on ARM allmodconfig=
-=2E
-> I've Cc'd ARM list because all of these are used on ARM, but I'm
-> thinking these probably can go in via the PM tree.
+[Re: [PATCH 0/3] cpuidle: avoid module usage in non-modular code] On 14/12/2015 (Mon 22:31) Rafael J. Wysocki wrote:
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> On Sunday, December 13, 2015 06:57:09 PM Paul Gortmaker wrote:
+> > This series of commits is a part of a larger project to ensure
+> > people don't reference modular support functions in non-modular
+> > code.  Overall there was roughly 5k lines of dead code in the
+> > kernel due to this.  So far we've fixed several areas, like tty,
+> > x86, net, ... and we continue to work on other areas.
 
+[...]
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+> 
+> If no one objects, I can queue up this series for 4.5 unless you have other
+> plans with respect to it.
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Please do.
 
+I was hoping to spread as many of these around as possible so I don't
+end up with a giant pull request to Linus.  There is code out there
+without a clear maintainership path, so eventually I'll have to send
+some his way (or via akpm) but the less that end up in that pile, the
+better IMHO.
+
+Thanks,
+Paul.
+--
+> 
+> Thanks,
+> Rafael
+> 
