@@ -1,44 +1,40 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v10 0/17] Add Analogix Core Display Port Driver
-Date: Tue, 15 Dec 2015 01:06:30 +0100
-Message-ID: <4659407.pYb0RRCQQX@diego>
-References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 10/11] arm/samsung: Change s3c_pm_run_res() to use System
+ RAM type
+Date: Tue, 15 Dec 2015 09:19:58 +0900
+Message-ID: <566F5CAE.5020004@samsung.com>
+References: <1450136246-17053-1-git-send-email-toshi.kani@hpe.com>
+ <1450136246-17053-10-git-send-email-toshi.kani@hpe.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:33506 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932197AbbLOAGw (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47232 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932649AbbLOAUF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Dec 2015 19:06:52 -0500
-In-Reply-To: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
+	Mon, 14 Dec 2015 19:20:05 -0500
+In-reply-to: <1450136246-17053-10-git-send-email-toshi.kani@hpe.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, ajaynumb@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Toshi Kani <toshi.kani@hpe.com>, akpm@linux-foundation.org, bp@alien8.de
+Cc: linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-Hi Yakir,
+On 15.12.2015 08:37, Toshi Kani wrote:
+> Change s3c_pm_run_res() to check with IORESOURCE_SYSTEM_RAM,
+> instead of strcmp() with "System RAM", in the resource table.
+> 
+> No functional change is made to the interface.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+> ---
+>  arch/arm/plat-samsung/pm-check.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Am Montag, 7. Dezember 2015, 14:37:19 schrieb Yakir Yang:
->    The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
-> share the same IP, so a lot of parts can be re-used. I split the common
-> code into bridge directory, then rk3288 and exynos only need to keep
-> some platform code. Cause I can't find the exact IP name of exynos dp
-> controller, so I decide to name dp core driver with "analogix" which I
-> find in rk3288 eDP TRM
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-so it looks like the hotplug works nicely now. I was able to test it 
-sucessfully on both a Jerry and a Minnie device without needing to force 
-hotplug :-) .
-
-As I needed to adapt some patches when applying the lastest ones, I think it 
-would be good for a full send of the latest version as v11.
-
-When going over the patches before sending, please also fix the indentation 
-issues in analogix_dp_core.h - both newly added elements to analogix_dp_device 
-use spaces between type and name, where the rest uses tabs.
-[This should of course be fixed in the patches adding these lines :-) ]
-
-
-Heiko
+Best regards,
+Krzysztof
