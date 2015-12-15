@@ -1,239 +1,112 @@
-From: Markus Pargmann <mpa@pengutronix.de>
-Subject: Re: [PATCH 1/3] Device tree binding documentation for gpio-switch
-Date: Tue, 15 Dec 2015 10:09:38 +0100
-Message-ID: <1488914.9p6SgUg6XA@adelgunde>
-References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk> <CACRpkdYvU6YG5yRCLsyS7sq816t3shWw51OTR2-fkp-FqSeESg@mail.gmail.com> <CAL_JsqJXX71Bwbm21H3QAJxYDO60kyHgKVzXxxrH9ze6ZWYtXw@mail.gmail.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH 2/2] [media] media-device: split media initialization
+ and registration
+Date: Tue, 15 Dec 2015 09:13:42 -0200
+Message-ID: <20151215091342.2f825d91@recife.lan>
+References: <1441890195-11650-1-git-send-email-javier@osg.samsung.com>
+	<1441890195-11650-3-git-send-email-javier@osg.samsung.com>
+	<55F1BA5C.50508@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2992927.AjHGm4qcri"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqJXX71Bwbm21H3QAJxYDO60kyHgKVzXxxrH9ze6ZWYtXw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Martyn Welch <martyn.welch@collabora.co.uk>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Kukjin Kim <kgene@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Kumar Gala <galak@codeaurora.org>, Michael Welling <mwelling@ieee.org>, Russell King <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <55F1BA5C.50508@linux.intel.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, Luis de Bethencourt <luis@debethencourt.com>, linux-sh@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Matthias Schwarzott <zzam@gentoo.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tommi Rantala <tt.rantala@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michal Simek <michal.simek@xilinx.com>, Olli Salonen <olli.salonen@iki.fi>, linux-arm-kernel@lists.infradead.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, Antti Palosaari <crope@iki.fi>, Shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Em Thu, 10 Sep 2015 20:14:04 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 
---nextPart2992927.AjHGm4qcri
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+> Hi Javier,
+> 
+> Thanks for the set! A few comments below.
+> 
+> Javier Martinez Canillas wrote:
+> > The media device node is registered and so made visible to user-space
+> > before entities are registered and links created which means that the
+> > media graph obtained by user-space could be only partially enumerated
+> > if that happens too early before all the graph has been created.
+> > 
+> > To avoid this race condition, split the media init and registration
+> > in separate functions and only register the media device node when
+> > all the pending subdevices have been registered, either explicitly
+> > by the driver or asynchronously using v4l2_async_register_subdev().
+> > 
+> > Also, add a media_entity_cleanup() function that will destroy the
+> > graph_mutex that is initialized in media_entity_init().
+> > 
+> > Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> > 
+> > ---
+> > 
+> >  drivers/media/common/siano/smsdvb-main.c      |  1 +
+> >  drivers/media/media-device.c                  | 38 +++++++++++++++++++++++----
+> >  drivers/media/platform/exynos4-is/media-dev.c | 12 ++++++---
+> >  drivers/media/platform/omap3isp/isp.c         | 11 +++++---
+> >  drivers/media/platform/s3c-camif/camif-core.c | 13 ++++++---
+> >  drivers/media/platform/vsp1/vsp1_drv.c        | 19 ++++++++++----
+> >  drivers/media/platform/xilinx/xilinx-vipp.c   | 11 +++++---
+> >  drivers/media/usb/au0828/au0828-core.c        | 26 +++++++++++++-----
+> >  drivers/media/usb/cx231xx/cx231xx-cards.c     | 22 +++++++++++-----
+> >  drivers/media/usb/dvb-usb-v2/dvb_usb_core.c   | 11 +++++---
+> >  drivers/media/usb/dvb-usb/dvb-usb-dvb.c       | 13 ++++++---
+> >  drivers/media/usb/siano/smsusb.c              | 14 ++++++++--
+> >  drivers/media/usb/uvc/uvc_driver.c            |  9 +++++--
+> >  include/media/media-device.h                  |  2 ++
+> >  14 files changed, 156 insertions(+), 46 deletions(-)
+> > 
+> > diff --git a/drivers/media/common/siano/smsdvb-main.c b/drivers/media/common/siano/smsdvb-main.c
+> > index ab345490a43a..8a1ea2192439 100644
+> > --- a/drivers/media/common/siano/smsdvb-main.c
+> > +++ b/drivers/media/common/siano/smsdvb-main.c
+> > @@ -617,6 +617,7 @@ static void smsdvb_media_device_unregister(struct smsdvb_client_t *client)
+> >  	if (!coredev->media_dev)
+> >  		return;
+> >  	media_device_unregister(coredev->media_dev);
+> > +	media_device_cleanup(coredev->media_dev);
+> >  	kfree(coredev->media_dev);
+> >  	coredev->media_dev = NULL;
+> >  #endif
+> > diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+> > index 745defb34b33..a8beb0b445a6 100644
+> > --- a/drivers/media/media-device.c
+> > +++ b/drivers/media/media-device.c
+> > @@ -526,7 +526,7 @@ static void media_device_release(struct media_devnode *mdev)
+> >  }
+> >  
+> >  /**
+> > - * media_device_register - register a media device
+> > + * media_device_init() - initialize a media device
+> >   * @mdev:	The media device
+> >   *
+> >   * The caller is responsible for initializing the media device before
+> > @@ -534,12 +534,11 @@ static void media_device_release(struct media_devnode *mdev)
+> >   *
+> >   * - dev must point to the parent device
+> >   * - model must be filled with the device model name
+> > + *
+> > + * returns zero on success or a negative error code.
+> >   */
+> > -int __must_check __media_device_register(struct media_device *mdev,
+> > -					 struct module *owner)
+> > +int __must_check media_device_init(struct media_device *mdev)
+> 
+> I think I suggested making media_device_init() return void as the only
+> remaining source of errors would be driver bugs.
+> 
+> I'd simply replace the WARN_ON() below with BUG().
 
-Hi,
+That sounds like bad idea to me, and it is against the current
+Kernel policy of using BUG() only when there's no other way, e. g. on
+event so severe that the Kernel has no other thing to do except to
+stop running.
 
-On Monday 14 December 2015 09:45:48 Rob Herring wrote:
-> On Mon, Dec 14, 2015 at 8:28 AM, Linus Walleij <linus.walleij@linaro.=
-org> wrote:
-> > On Fri, Dec 11, 2015 at 3:06 PM, Rob Herring <robh+dt@kernel.org> w=
-rote:
-> >> On Fri, Dec 11, 2015 at 6:39 AM, Linus Walleij <linus.walleij@lina=
-ro.org> wrote:
-> >>> On Fri, Dec 4, 2015 at 6:31 PM, Martyn Welch
-> >>> <martyn.welch@collabora.co.uk> wrote:
->=20
-> [...]
->=20
-> >>> Markus Pargmann also did a series that add initial values to
-> >>> hogs, which is the inverse usecase of this, where you want to
-> >>> *output* something by default, then maybe also make it available
-> >>> to userspace.
-> >>>
-> >>> So what we need to see here is a patch series that does all of th=
-ese
-> >>> things:
-> >>>
-> >>> - Name lines
-> >>>
-> >>> - Sets them to initial values
-> >>>
-> >>> - Mark them as read-only
-> >>>
-> >>> - Mark them as "not used by the operating system" so that they
-> >>>   can be default-exported to userspace.
-> >>
-> >> No! This should not be a DT property.
-> >>
-> >> Whether I want to control a GPIO in the kernel or userspace is not=
+For sure, this is not the case here. Also, all drivers have already
+a logic that checks if the device init happened. So, they should already
+be doing the right thing.
 
-> >> known and can change over time. It could simply depend on kernel
-> >> config. There is also the case that a GPIO has no connection or ke=
-rnel
-> >> driver until some time later when a DT overlay for an expansion bo=
-ard
-> >> is applied.
-> >
-> > That's correct. So from a DT point of view, what really matters is
-> > to give things a name, and the hogs and initvals syntax already
-> > has a structure for this that is in use
-> > (from Documentation/devicetree/bindings/gpio/gpio.txt):
-> >
-> >         qe_pio_a: gpio-controller@1400 {
-> >                 compatible =3D "fsl,qe-pario-bank-a", "fsl,qe-pario=
-=2Dbank";
-> >                 reg =3D <0x1400 0x18>;
-> >                 gpio-controller;
-> >                 #gpio-cells =3D <2>;
-> >
-> >                 line_b {
-> >                         gpio-hog;
-> >                         gpios =3D <6 0>;
-> >                         output-low;
-> >                         line-name =3D "foo-bar-gpio";
-> >                 };
-> >         };
-> >
-> > Markus use this also for initial values. That could easily be used =
-in
-> > a budget version like this:
-> >
-> >                 line_b {
-> >                         /* Just naming */
-> >                         gpios =3D <6 0>;
-> >                         line-name =3D "foo-bar-gpio";
-> >                 };
-> >
-> > That could grow kind of big though. Or maybe not? How many
-> > GPIO lines are actually properly named in a typical system?
->=20
-> We should limit it to GPIOs with no connection to another node. For
-> example, I don't want to see a SD card detect in the list as that
-> should be in the SD host node. However, that is hard to enforce and
-> can change over time. Removing it would break userspace potentially.
-> Of course if the kernel starts own a signal that userspace used, then=
-
-> that potentially breaks userspace regardless of the DT changing. OTOH=
-,
-> using GPIOs in userspace is kind of use at your own risk.
-
-I see this a bit differently. I would really like to see the each GPIO =
-having
-two different names:
-=2D GPIO label: This is the name of the GPIO line in the schematic for ex=
-ample
-=2D GPIO use (this is the current semantic of the GPIO name): The use of =
-a GPIO,
-  e.g. 'sd-card-detect', 'LED', ...
-
-I think it would be good to describe all GPIO labels in gpiochip subnod=
-es as
-gpio-hogging introduced it. This would offer a use-independent naming. =
-The use
-of the function could be defined in the device node that is using this =
-gpio.
-
-As an example perhaps something like this:
-
-=09&gpiochip {
-=09=09some_interrupt {
-=09=09=09gpios =3D <4 0>;
-=09=09=09line-name =3D "some_interrupt_line";
-=09=09};
-
-=09=09line_b {
-=09=09=09gpios =3D <6 0>;
-=09=09=09line-name =3D "line-b";
-=09=09};
-=09};
-
-=09randomswitch {
-=09=09compatible =3D "gpio-switch";
-=09=09gpios =3D <&gpiochip 4 0>;
-=09=09use =3D "action-trigger";
-=09=09read-only;
-=09};
-
-Also this does seem kind of inconsistent with gpio-hogging and the prop=
-osed
-gpio-initval. gpio-hogging is defined in subnodes of the gpio chip whil=
-e
-gpio-switches are not. As "gpio-switch" is not really any kind of devic=
-e it
-would perhaps make sense to keep this consistent with gpio-hogging as w=
-ell and
-define it in the same subnodes?
-I would be happy about any consistent way.
-
->=20
-> The only real differences between this and Martyn's proposal are the
-> location of the nodes and having a compatible string. A compatible
-> string may be good to have. It indicates type of signal, but not
-> specific use. Similar to how gpio-key compatible defines the function=
-,
-> but not what key code, or gpio-led does not say what color LED. A
-> compatible here could cover switches, mode/id/revision strapping
-> signals, jumpers, presence detect, etc.
->=20
-> > The problem is that naming is usually imposed by consumers (they
-> > are the ones who know how the line is used).
-> >
-> > And then I do not mean naming it after the pin on the capsule
-> > where it comes out as per the datasheet, but
-> > naming it after the actual use.
->=20
-> Right. We need a way to query "I need the GPIO that does X" which
-> works across boards.
->=20
-> > Naming it after the hardware specs is something the operating
-> > system can do, in Linux' case by the array char *names; inside the
-> > struct gpio_chip and should not be part of the bindings IMO.
->=20
-> Agreed. That just came up with STM32 gpio bindings[1].
->=20
-> > I would rather imagine this is something used in a top-level board
-> > file naming it: "header-2-22" for the 22nd pin on some second heade=
-r
-> > on my BeagleBone Black or something like that. And those may not
-> > be so vast in numbers so they could be named using this pattern.
->=20
-> Exactly. This is one of the cases I care about. However, this is not
-> really a function, but it is SOC independent at least.
->=20
-> We also have to consider how to handle add-on boards. We probably nee=
-d
-> a connector node which can remap connector signals to host signals in=
-
-> order to have overlays independent of the host board DT. For GPIOs
-> this is probably a gpio-map property similar to interrupt-map. The
-> complicated part will be connectors that require pinmux setup of the
-> host.
-
-Also what about hotplugging gpio-chips? Is there any mechanism to let t=
-he
-'gpio-switch' know that the GPIO is not there anymore?
-
-Best Regards,
-
-Markus
-
-=2D-=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
-
---nextPart2992927.AjHGm4qcri
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWb9jYAAoJEEpcgKtcEGQQ0HMP/0KuQ+tafydcpV6Qj/nOsMTl
-mvhtaMv65BbLp+UZV5vLukQ56sE3Lr9Uf42Dq+uSLlFJtwmpPGLeESxGxnGoz/h/
-Cgh4tq3nxet7XlNVD5wxNUz6UZPdvx9z0BgLsLxiaPM7aytZkfNhbW5LvPSofy1H
-kYtWDxONrso2QOYEc2IxSWSduYQIyDIxG2SOLqK9ZscALAL0oUt08stJkw9k9j8P
-BZQF7OUlYBv/P2302Ozt6vpH/NNFm/o+0H5RSfL1XsLjB7tBGsxHFYhd2lIusXbl
-8xmtIADLpVjAQAEdFW0pvbzlGU85oP7mZKnedyh0TlgIoP63v2GbtX+nv5P78Wwi
-AtdQQJN0CG6Z8E6rR4ZOx1HA0T0D6BFzkztp86djlGAzQOvojj0SpVl7idTPoOO6
-eUo0bsztxXB9mk35hPjZoHxo+sZxaq6y4rZPMsYrKsDDZXPYuFq1tjM25HYrLmzX
-U7w6Vz9MDrskCoPCkr4VLHonkHWOa3qIuEG6u+1YWQUxPMC3okz3QXKZMD1WieqQ
-RXzr8bNC0Z0p+ekoErp5YITHxOJHvBW4KWadPUlgNU4jM7il8e5QTNp8oyw3eiEg
-sEjTUwj1xT6l8ix/aPQ5CBYckUbf6dH7Shtpus3INytTfYrLASa2CMCM5OQUSWuF
-rIV6xBV6pNWeosE/AUfG
-=A0NX
------END PGP SIGNATURE-----
-
---nextPart2992927.AjHGm4qcri--
+Regards,
+Mauro
