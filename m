@@ -1,10 +1,10 @@
 From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH] [media] media-device: handle errors at media_device_init()
-Date: Tue, 15 Dec 2015 10:14:01 -0200
-Message-ID: <2ab9b0b406c93928ebfbf910b320d2694a325b23.1450181567.git.mchehab@osg.samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Antti Palosaari <crope@iki.fi>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?q?Rafael=20Louren=C3=A7o=20de=20Lima=20Chehab?= <chehabrafael@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Tommi Rantala <tt.rantala@gmail.com>, Matthias Schwarzott <zzam@gentoo.org>, Olli Salonen <olli.salonen@iki.fi>, Lu
+Subject: [PATCH v2] [media] media-device: handle errors at media_device_init()
+Date: Tue, 15 Dec 2015 10:22:46 -0200
+Message-ID: <e4902f65ceabce2f315e63ba75d4482a4985b351.1450182151.git.mchehab@osg.samsung.com>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Antti Palosaari <crope@iki.fi>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?q?Rafael=20Louren=C3=A7o=20de=20Lima=20Chehab?= <chehabrafael@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Olli Salonen <olli.salonen@iki.fi>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Tommi Rantala <tt.rantala@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Changeset 43ac4401dca9 ("[media] media-device: split media
@@ -20,10 +20,6 @@ to BUG.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 ---
-
-Javier is in vacations. So, instead of waiting for him to fixup those issues,
-let's address ourselves.
-
  drivers/media/media-device.c                  |  8 ++++---
  drivers/media/platform/exynos4-is/media-dev.c |  7 +++++-
  drivers/media/platform/omap3isp/isp.c         |  9 ++++++--
@@ -31,13 +27,13 @@ let's address ourselves.
  drivers/media/platform/vsp1/vsp1_drv.c        |  7 +++++-
  drivers/media/platform/xilinx/xilinx-vipp.c   |  7 +++++-
  drivers/media/usb/au0828/au0828-core.c        | 26 +++++++++++++++++----
- drivers/media/usb/cx231xx/cx231xx-cards.c     | 21 +++++++++++++----
+ drivers/media/usb/cx231xx/cx231xx-cards.c     | 23 +++++++++++++++----
  drivers/media/usb/dvb-usb-v2/dvb_usb_core.c   | 33 +++++++++++++++++++--------
  drivers/media/usb/dvb-usb/dvb-usb-dvb.c       | 32 +++++++++++++++++++-------
  drivers/media/usb/siano/smsusb.c              |  6 ++++-
  drivers/media/usb/uvc/uvc_driver.c            |  3 ++-
  include/media/media-device.h                  |  2 +-
- 13 files changed, 127 insertions(+), 38 deletions(-)
+ 13 files changed, 128 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
 index 76e2b2f3a15f..34621605eed7 100644
@@ -230,10 +226,10 @@ index e7aab47ae4f5..2f91bbc633b4 100644
  #ifdef CONFIG_VIDEO_AU0828_V4L2
  	dev->v4l2_dev.release = au0828_usb_v4l2_release;
 diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index 2e997f09a4cd..d086b3c17969 100644
+index 2e997f09a4cd..35692d19b652 100644
 --- a/drivers/media/usb/cx231xx/cx231xx-cards.c
 +++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -1206,11 +1206,12 @@ void cx231xx_release_resources(struct cx231xx *dev)
+@@ -1206,15 +1206,16 @@ void cx231xx_release_resources(struct cx231xx *dev)
  	clear_bit(dev->devno, &cx231xx_devused);
  }
  
@@ -248,6 +244,11 @@ index 2e997f09a4cd..d086b3c17969 100644
  
  	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
  	if (!mdev)
+-		return;
++		return -ENOMEM;
+ 
+ 	mdev->dev = dev->dev;
+ 	strlcpy(mdev->model, dev->board.name, sizeof(mdev->model));
 @@ -1224,10 +1225,18 @@ static void cx231xx_media_device_init(struct cx231xx *dev,
  	mdev->hw_revision = le16_to_cpu(udev->descriptor.bcdDevice);
  	mdev->driver_version = LINUX_VERSION_CODE;
@@ -259,7 +260,7 @@ index 2e997f09a4cd..d086b3c17969 100644
 +			"Couldn't create a media device. Error: %d\n",
 +			ret);
 +		kfree(mdev);
-+		return;
++		return ret;
 +	}
  
  	dev->media_dev = mdev;
@@ -503,3 +504,4 @@ index 572190860cbb..f09be5d47a7d 100644
   * media_device_cleanup() - Cleanups a media device element
 -- 
 2.5.0
+
