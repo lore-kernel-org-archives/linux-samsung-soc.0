@@ -1,40 +1,38 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 10/11] arm/samsung: Change s3c_pm_run_res() to use System
- RAM type
-Date: Tue, 15 Dec 2015 09:19:58 +0900
-Message-ID: <566F5CAE.5020004@samsung.com>
-References: <1450136246-17053-1-git-send-email-toshi.kani@hpe.com>
- <1450136246-17053-10-git-send-email-toshi.kani@hpe.com>
+Subject: Re: [PATCH v4 20/20] ARM: dts: Add support of bus frequency for
+ exynos4412-trats/odroidu3
+Date: Tue, 15 Dec 2015 09:34:18 +0900
+Message-ID: <566F600A.4060504@samsung.com>
+References: <1450075104-13705-1-git-send-email-cw00.choi@samsung.com>
+ <1450075104-13705-21-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47232 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932649AbbLOAUF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Dec 2015 19:20:05 -0500
-In-reply-to: <1450136246-17053-10-git-send-email-toshi.kani@hpe.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1450075104-13705-21-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Toshi Kani <toshi.kani@hpe.com>, akpm@linux-foundation.org, bp@alien8.de
-Cc: linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On 15.12.2015 08:37, Toshi Kani wrote:
-> Change s3c_pm_run_res() to check with IORESOURCE_SYSTEM_RAM,
-> instead of strcmp() with "System RAM", in the resource table.
+On 14.12.2015 15:38, Chanwoo Choi wrote:
+> THis patch adds the bus device tree nodes for both MIF (Memory) and INT
+> (Internal) block to enable the bus frequency.
 > 
-> No functional change is made to the interface.
+> The DMC bus is parent device in MIF block using VDD_MIF and the LEFTBUS
+> bus is parent device in INT block using VDD_INT.
 > 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> [linux.amoon: Tested on Odroid U3]
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
 > ---
->  arch/arm/plat-samsung/pm-check.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 47 +++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4412-trats2.dts         | 47 +++++++++++++++++++++++++
+>  2 files changed, 94 insertions(+)
+> 
 
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
+
