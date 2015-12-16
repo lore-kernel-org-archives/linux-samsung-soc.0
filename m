@@ -1,64 +1,69 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 2/7] ARM: dts: exynos4412-odroid*: enable MFC device
-Date: Wed, 16 Dec 2015 16:37:24 +0100
-Message-ID: <1450280249-24681-3-git-send-email-m.szyprowski@samsung.com>
-References: <1450280249-24681-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1450280249-24681-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] PM / OPP: Fix parsing of opp-microvolt and opp-microamp
+ properties
+Date: Wed, 16 Dec 2015 16:41:40 +0100
+Message-ID: <18360458.m71vGHrTb9@amdc1976>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:39781 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752442AbbLPPnD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Dec 2015 10:43:03 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Lee Jones <lee.jones@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, nm@ti.com, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dmitry Torokhov <dtor@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, open list <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Shawn Guo <shawnguo@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-Enable support for Multimedia Codec (MFC) device for all Exynos4412-based
-Odroid boards.
+Commit 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name>'
+bindings") broke support for parsing standard opp-microvolt and
+opp-microamp properties.  Fix it by setting 'name' string to
+proper value for !dev_opp->prop_name cases.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name> 'bindings")
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+This fixes Exynos4x12 cpufreq-dt support regression present in
+linux-pm/linux-next tree.  Rafael, please apply.  Thank you.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 395c3ca9601e..349e6cc51283 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -18,6 +18,24 @@
- 		stdout-path = &serial_1;
- 	};
+ drivers/base/power/opp/core.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+Index: b/drivers/base/power/opp/core.c
+===================================================================
+--- a/drivers/base/power/opp/core.c	2015-12-16 16:10:13.509171420 +0100
++++ b/drivers/base/power/opp/core.c	2015-12-16 16:21:18.385183902 +0100
+@@ -806,11 +806,11 @@ static int opp_parse_supplies(struct dev
+ 	struct property *prop = NULL;
+ 	char name[NAME_MAX];
  
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
++	sprintf(name, "opp-microvolt-%s", dev_opp->prop_name);
 +
-+		mfc_left: region@51000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x51000000 0x800000>;
-+		};
-+
-+		mfc_right: region@43000000 {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			reg = <0x43000000 0x800000>;
-+		};
-+	};
-+
- 	firmware@0204F000 {
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x0204F000 0x1000>;
-@@ -447,6 +465,12 @@
- 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
- };
+ 	/* Search for "opp-microvolt-<name>" */
+-	if (dev_opp->prop_name) {
+-		sprintf(name, "opp-microvolt-%s", dev_opp->prop_name);
++	if (dev_opp->prop_name)
+ 		prop = of_find_property(opp->np, name, NULL);
+-	}
  
-+&mfc {
-+	memory-region = <&mfc_left>, <&mfc_right>;
-+	memory-region-names = "left", "right";
-+	status = "okay";
-+};
+ 	if (!prop) {
+ 		/* Search for "opp-microvolt" */
+@@ -848,10 +848,10 @@ static int opp_parse_supplies(struct dev
+ 
+ 	/* Search for "opp-microamp-<name>" */
+ 	prop = NULL;
+-	if (dev_opp->prop_name) {
+-		sprintf(name, "opp-microamp-%s", dev_opp->prop_name);
++	sprintf(name, "opp-microamp-%s", dev_opp->prop_name);
 +
- &mixer {
- 	status = "okay";
- };
--- 
-1.9.2
++	if (dev_opp->prop_name)
+ 		prop = of_find_property(opp->np, name, NULL);
+-	}
+ 
+ 	if (!prop) {
+ 		/* Search for "opp-microamp" */
