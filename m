@@ -1,172 +1,213 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 7/7] media: s5p-mfc: add iommu support
-Date: Wed, 16 Dec 2015 16:37:29 +0100
-Message-ID: <1450280249-24681-8-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 6/7] media: s5p-mfc: replace custom reserved memory init
+ code with generic one
+Date: Wed, 16 Dec 2015 16:37:28 +0100
+Message-ID: <1450280249-24681-7-git-send-email-m.szyprowski@samsung.com>
 References: <1450280249-24681-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:25610 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934045AbbLPPhm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Dec 2015 10:37:42 -0500
-In-reply-to: <1450280249-24681-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1450280249-24681-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch adds support for IOMMU to s5p-mfc device driver. MFC firmware
-is limited and it cannot use the default configuration. If IOMMU is
-available, the patch disables the default DMA address space
-configuration and creates a new address space of size limited to 256M
-and base address set to 0x20000000.
+This patch removes custom code for initialization and handling of
+reserved memory regions in s5p-mfc driver and replaces it with generic
+named reserved memory regions specified in device tree.
 
-For now the same address space is shared by both 'left' and 'right'
-memory channels, because the DMA/IOMMU frameworks do not support
-configuring them separately. This is not optimal, but besides limiting
-total address space available has no other drawbacks (MFC firmware
-supports 256M of address space per each channel).
+s5p-mfc driver now handles two reserved memory regions: "left" and
+"right", defined by generic reserved memory bindings. Support for non-dt
+platform has been removed, because all supported platforms have been
+converted to device tree.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c       | 24 ++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h | 79 ++++++++++++++++++++++++++
- 2 files changed, 103 insertions(+)
- create mode 100644 drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 129 +++++++++++++++----------------
+ 1 file changed, 62 insertions(+), 67 deletions(-)
 
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 306344994c8e..bae7c0f7bfd4 100644
+index 3e9cdafe2168..306344994c8e 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -30,6 +30,7 @@
- #include "s5p_mfc_dec.h"
- #include "s5p_mfc_enc.h"
- #include "s5p_mfc_intr.h"
-+#include "s5p_mfc_iommu.h"
- #include "s5p_mfc_opr.h"
- #include "s5p_mfc_cmd.h"
- #include "s5p_mfc_pm.h"
-@@ -1061,6 +1062,22 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 	struct device *dev = &mfc_dev->plat_dev->dev;
+@@ -22,6 +22,7 @@
+ #include <media/v4l2-event.h>
+ #include <linux/workqueue.h>
+ #include <linux/of.h>
++#include <linux/of_reserved_mem.h>
+ #include <media/videobuf2-v4l2.h>
+ #include "s5p_mfc_common.h"
+ #include "s5p_mfc_ctrl.h"
+@@ -1022,55 +1023,67 @@ static const struct v4l2_file_operations s5p_mfc_fops = {
+ 	.mmap = s5p_mfc_mmap,
+ };
  
- 	/*
-+	 * When IOMMU is available, we cannot use the default configuration,
-+	 * because of MFC firmware requirements: address space limited to
-+	 * 256M and non-zero default start address.
-+	 * This is still simplified, not optimal configuration, but for now
-+	 * IOMMU core doesn't allow to configure device's IOMMUs channel
-+	 * separately.
-+	 */
-+	if (exynos_is_iommu_available(dev)) {
-+		int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
-+						 S5P_MFC_IOMMU_DMA_SIZE);
-+		if (ret == 0)
-+			mfc_dev->mem_dev_l = mfc_dev->mem_dev_r = dev;
-+		return ret;
-+	}
-+
-+	/*
- 	 * Create and initialize virtual devices for accessing
- 	 * reserved memory regions.
- 	 */
-@@ -1078,6 +1095,13 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 
- static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+-static int match_child(struct device *dev, void *data)
++/* DMA memory related helper functions */
++static void s5p_mfc_memdev_release(struct device *dev)
  {
+-	if (!dev_name(dev))
+-		return 0;
+-	return !strcmp(dev_name(dev), (char *)data);
++	of_reserved_mem_device_release(dev);
+ }
+ 
+-static void *mfc_get_drv_data(struct platform_device *pdev);
+-
+-static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
++static struct device *s5p_mfc_alloc_memdev(struct device *dev, const char *name)
+ {
+-	unsigned int mem_info[2] = { };
++	struct device *child;
++	int ret;
+ 
+-	dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev,
+-			sizeof(struct device), GFP_KERNEL);
+-	if (!dev->mem_dev_l) {
+-		mfc_err("Not enough memory\n");
+-		return -ENOMEM;
+-	}
+-	device_initialize(dev->mem_dev_l);
+-	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+-			"samsung,mfc-l", mem_info, 2);
+-	if (dma_declare_coherent_memory(dev->mem_dev_l, mem_info[0],
+-				mem_info[0], mem_info[1],
+-				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+-		mfc_err("Failed to declare coherent memory for\n"
+-		"MFC device\n");
+-		return -ENOMEM;
++	child = devm_kzalloc(dev, sizeof(struct device), GFP_KERNEL);
++	if (!child)
++		return NULL;
++
++	device_initialize(child);
++	dev_set_name(child, "%s:%s", dev_name(dev), name);
++	child->parent = dev;
++	child->bus = dev->bus;
++	child->coherent_dma_mask = dev->coherent_dma_mask;
++	child->dma_mask = dev->dma_mask;
++	child->release = s5p_mfc_memdev_release;
++
++	if (device_add(child) == 0) {
++		ret = of_reserved_mem_init_by_name(child, dev->of_node, name);
++		if (ret == 0)
++			return child;
+ 	}
+ 
+-	dev->mem_dev_r = devm_kzalloc(&dev->plat_dev->dev,
+-			sizeof(struct device), GFP_KERNEL);
+-	if (!dev->mem_dev_r) {
+-		mfc_err("Not enough memory\n");
+-		return -ENOMEM;
+-	}
+-	device_initialize(dev->mem_dev_r);
+-	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+-			"samsung,mfc-r", mem_info, 2);
+-	if (dma_declare_coherent_memory(dev->mem_dev_r, mem_info[0],
+-				mem_info[0], mem_info[1],
+-				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+-		pr_err("Failed to declare coherent memory for\n"
+-		"MFC device\n");
+-		return -ENOMEM;
++	put_device(child);
++	return NULL;
++}
++
++static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++{
 +	struct device *dev = &mfc_dev->plat_dev->dev;
 +
-+	if (exynos_is_iommu_available(dev)) {
-+		exynos_unconfigure_iommu(dev);
-+		return;
-+	}
++	/*
++	 * Create and initialize virtual devices for accessing
++	 * reserved memory regions.
++	 */
++	mfc_dev->mem_dev_l = s5p_mfc_alloc_memdev(dev, "left");
++	if (!mfc_dev->mem_dev_l)
++		return -ENODEV;
++	mfc_dev->mem_dev_r = s5p_mfc_alloc_memdev(dev, "right");
++	if (!mfc_dev->mem_dev_r) {
++		device_unregister(mfc_dev->mem_dev_l);
++		return -ENODEV;
+ 	}
 +
- 	device_unregister(mfc_dev->mem_dev_l);
- 	device_unregister(mfc_dev->mem_dev_r);
+ 	return 0;
  }
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-new file mode 100644
-index 000000000000..5d1d1c2922e8
---- /dev/null
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-@@ -0,0 +1,79 @@
-+/*
-+ * Copyright (C) 2015 Samsung Electronics Co.Ltd
-+ * Authors: Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#ifndef S5P_MFC_IOMMU_H_
-+#define S5P_MFC_IOMMU_H_
-+
-+#define S5P_MFC_IOMMU_DMA_BASE	0x20000000lu
-+#define S5P_MFC_IOMMU_DMA_SIZE	SZ_256M
-+
-+#ifdef CONFIG_EXYNOS_IOMMU
-+
-+#include <asm/dma-iommu.h>
-+
-+static inline bool exynos_is_iommu_available(struct device *dev)
+ 
++static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
 +{
-+	return dev->archdata.iommu != NULL;
++	device_unregister(mfc_dev->mem_dev_l);
++	device_unregister(mfc_dev->mem_dev_r);
 +}
 +
-+static inline void exynos_unconfigure_iommu(struct device *dev)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
++static void *mfc_get_drv_data(struct platform_device *pdev);
 +
-+	arm_iommu_detach_device(dev);
-+	arm_iommu_release_mapping(mapping);
-+}
-+
-+static inline int exynos_configure_iommu(struct device *dev,
-+					 unsigned int base, unsigned int size)
-+{
-+	struct dma_iommu_mapping *mapping = NULL;
-+	int ret;
-+
-+	/* Disable the default mapping created by device core */
-+	if (to_dma_iommu_mapping(dev))
-+		exynos_unconfigure_iommu(dev);
-+
-+	mapping = arm_iommu_create_mapping(dev->bus, base, size);
-+	if (IS_ERR(mapping)) {
-+		pr_warn("Failed to create IOMMU mapping for device %s\n",
-+			dev_name(dev));
-+		return PTR_ERR(mapping);
-+	}
-+
-+	ret = arm_iommu_attach_device(dev, mapping);
-+	if (ret) {
-+		pr_warn("Failed to attached device %s to IOMMU_mapping\n",
-+				dev_name(dev));
-+		arm_iommu_release_mapping(mapping);
+ /* MFC probe function */
+ static int s5p_mfc_probe(struct platform_device *pdev)
+ {
+@@ -1096,12 +1109,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 
+ 	dev->variant = mfc_get_drv_data(pdev);
+ 
+-	ret = s5p_mfc_init_pm(dev);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to get mfc clock source\n");
+-		return ret;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
+@@ -1122,25 +1129,16 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		goto err_res;
+ 	}
+ 
+-	if (pdev->dev.of_node) {
+-		ret = s5p_mfc_alloc_memdevs(dev);
+-		if (ret < 0)
+-			goto err_res;
+-	} else {
+-		dev->mem_dev_l = device_find_child(&dev->plat_dev->dev,
+-				"s5p-mfc-l", match_child);
+-		if (!dev->mem_dev_l) {
+-			mfc_err("Mem child (L) device get failed\n");
+-			ret = -ENODEV;
+-			goto err_res;
+-		}
+-		dev->mem_dev_r = device_find_child(&dev->plat_dev->dev,
+-				"s5p-mfc-r", match_child);
+-		if (!dev->mem_dev_r) {
+-			mfc_err("Mem child (R) device get failed\n");
+-			ret = -ENODEV;
+-			goto err_res;
+-		}
++	ret = s5p_mfc_configure_dma_memory(dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to configure DMA memory\n");
 +		return ret;
 +	}
 +
-+	return 0;
-+}
-+
-+#else
-+
-+static inline bool exynos_is_iommu_available(struct device *dev)
-+{
-+	return false;
-+}
-+
-+static inline int exynos_configure_iommu(struct device *dev,
-+					 unsigned int base, unsigned int size)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline void exynos_unconfigure_iommu(struct device *dev) { }
-+
-+#endif
-+
-+#endif /* S5P_MFC_IOMMU_H_ */
++	ret = s5p_mfc_init_pm(dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to get mfc clock source\n");
++		return ret;
+ 	}
+ 
+ 	vb2_dma_contig_set_max_seg_size(dev->mem_dev_l, DMA_BIT_MASK(32));
+@@ -1274,10 +1272,7 @@ static int s5p_mfc_remove(struct platform_device *pdev)
+ 	s5p_mfc_release_firmware(dev);
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[1]);
+-	if (pdev->dev.of_node) {
+-		put_device(dev->mem_dev_l);
+-		put_device(dev->mem_dev_r);
+-	}
++	s5p_mfc_unconfigure_dma_memory(dev);
+ 
+ 	s5p_mfc_final_pm(dev);
+ 	return 0;
 -- 
 1.9.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
