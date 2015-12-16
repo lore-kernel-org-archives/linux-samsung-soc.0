@@ -1,267 +1,64 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 3/7] of: reserved_mem: add support for named reserved mem
- nodes
-Date: Wed, 16 Dec 2015 16:37:25 +0100
-Message-ID: <1450280249-24681-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v3 2/7] ARM: dts: exynos4412-odroid*: enable MFC device
+Date: Wed, 16 Dec 2015 16:37:24 +0100
+Message-ID: <1450280249-24681-3-git-send-email-m.szyprowski@samsung.com>
 References: <1450280249-24681-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17324 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933822AbbLPPhl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Dec 2015 10:37:41 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1450280249-24681-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch allows device drivers to initialize more than one reserved
-memory region assigned to given device. When driver needs to use more
-than one reserved memory region, it should allocate child devices and
-initialize regions by index or name for each of its child devices.
+Enable support for Multimedia Codec (MFC) device for all Exynos4412-based
+Odroid boards.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- .../bindings/reserved-memory/reserved-memory.txt   |   2 +
- .../devicetree/bindings/resource-names.txt         |   1 +
- drivers/of/of_reserved_mem.c                       | 104 +++++++++++++++++----
- include/linux/of_reserved_mem.h                    |  31 +++++-
- 4 files changed, 115 insertions(+), 23 deletions(-)
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-index 3da0ebdba8d9..43a14957fd64 100644
---- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-@@ -74,6 +74,8 @@ Regions in the /reserved-memory node may be referenced by other device
- nodes by adding a memory-region property to the device node.
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index 395c3ca9601e..349e6cc51283 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -18,6 +18,24 @@
+ 		stdout-path = &serial_1;
+ 	};
  
- memory-region (optional) - phandle, specifier pairs to children of /reserved-memory
-+memory-region-names (optional) - supplemental names property, provide array of
-+				 names to identify memory regions
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		mfc_left: region@51000000 {
++			compatible = "shared-dma-pool";
++			no-map;
++			reg = <0x51000000 0x800000>;
++		};
++
++		mfc_right: region@43000000 {
++			compatible = "shared-dma-pool";
++			no-map;
++			reg = <0x43000000 0x800000>;
++		};
++	};
++
+ 	firmware@0204F000 {
+ 		compatible = "samsung,secure-firmware";
+ 		reg = <0x0204F000 0x1000>;
+@@ -447,6 +465,12 @@
+ 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+ };
  
- Example
- -------
-diff --git a/Documentation/devicetree/bindings/resource-names.txt b/Documentation/devicetree/bindings/resource-names.txt
-index e280fef6f265..51823e99b983 100644
---- a/Documentation/devicetree/bindings/resource-names.txt
-+++ b/Documentation/devicetree/bindings/resource-names.txt
-@@ -12,6 +12,7 @@ Resource Property	Supplemental Names Property
- reg			reg-names
- clocks			clock-names
- interrupts		interrupt-names
-+memory-region		memory-region-names
- 
- Usage:
- 
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index 1a3556a9e9ea..c58b362aaa63 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -21,6 +21,7 @@
- #include <linux/sizes.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/sort.h>
-+#include <linux/slab.h>
- 
- #define MAX_RESERVED_REGIONS	16
- static struct reserved_mem reserved_mem[MAX_RESERVED_REGIONS];
-@@ -287,53 +288,116 @@ static inline struct reserved_mem *__find_rmem(struct device_node *node)
- 	return NULL;
- }
- 
-+struct rmem_assigned_device {
-+	struct device *dev;
-+	struct reserved_mem *rmem;
-+	struct list_head list;
++&mfc {
++	memory-region = <&mfc_left>, <&mfc_right>;
++	memory-region-names = "left", "right";
++	status = "okay";
 +};
 +
-+static LIST_HEAD(of_rmem_assigned_device_list);
-+static DEFINE_MUTEX(of_rmem_assigned_device_mutex);
-+
- /**
-  * of_reserved_mem_device_init() - assign reserved memory region to given device
-+ * @dev:	Pointer to the device to configure
-+ * @np:		Pointer to the device_node with 'reserved-memory' property
-+ * @idx:	Index of selected region
-+ *
-+ * This function assigns respective DMA-mapping operations based on reserved
-+ * memory region specified by 'memory-region' property in @np node to the @dev
-+ * device. When driver needs to use more than one reserved memory region, it
-+ * should allocate child devices and initialize regions by name for each of
-+ * child device.
-  *
-- * This function assign memory region pointed by "memory-region" device tree
-- * property to the given device.
-+ * Returns error code or zero on success.
-  */
--int of_reserved_mem_device_init(struct device *dev)
-+int of_reserved_mem_init(struct device *dev, struct device_node *np, int idx)
- {
-+	struct rmem_assigned_device *rd;
-+	struct device_node *target;
- 	struct reserved_mem *rmem;
--	struct device_node *np;
- 	int ret;
- 
--	np = of_parse_phandle(dev->of_node, "memory-region", 0);
--	if (!np)
--		return -ENODEV;
-+	if (!np || !dev)
-+		return -EINVAL;
-+
-+	target = of_parse_phandle(np, "memory-region", idx);
-+	if (!target)
-+		return -EINVAL;
- 
--	rmem = __find_rmem(np);
--	of_node_put(np);
-+	rmem = __find_rmem(target);
-+	of_node_put(target);
- 
- 	if (!rmem || !rmem->ops || !rmem->ops->device_init)
- 		return -EINVAL;
- 
-+	rd = kmalloc(sizeof(struct rmem_assigned_device), GFP_KERNEL);
-+	if (!rd)
-+		return -ENOMEM;
-+
- 	ret = rmem->ops->device_init(rmem, dev);
--	if (ret == 0)
-+	if (ret == 0) {
-+		rd->dev = dev;
-+		rd->rmem = rmem;
-+
-+		mutex_lock(&of_rmem_assigned_device_mutex);
-+		list_add(&rd->list, &of_rmem_assigned_device_list);
-+		mutex_unlock(&of_rmem_assigned_device_mutex);
-+
- 		dev_info(dev, "assigned reserved memory node %s\n", rmem->name);
-+	} else {
-+		kfree(rd);
-+	}
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(of_reserved_mem_device_init);
-+EXPORT_SYMBOL_GPL(of_reserved_mem_init);
-+
-+/**
-+ * of_reserved_mem_device_init() - assign reserved memory region to given device
-+ * @dev:	Pointer to the device to configure
-+ * @np:		Pointer to the device_node with 'reserved-memory' property
-+ * @name:	Name of the selected region
-+ *
-+ * This function assigns respective DMA-mapping operations based on reserved
-+ * memory region specified by 'memory-region' property in @np node, named @name
-+ * to the @dev device.
-+ *
-+ * Returns error code or zero on success.
-+ */
-+int of_reserved_mem_init_by_name(struct device *dev, struct device_node *np,
-+					   const char *name)
-+{
-+	int idx = of_property_match_string(np, "memory-region-names", name);
-+
-+	if (idx < 0)
-+		return -EINVAL;
-+	return of_reserved_mem_init(dev, np, idx);
-+}
-+EXPORT_SYMBOL_GPL(of_reserved_mem_init_by_name);
- 
- /**
-  * of_reserved_mem_device_release() - release reserved memory device structures
-+ * @dev:	Pointer to the device to deconfigure
-  *
-  * This function releases structures allocated for memory region handling for
-  * the given device.
-  */
- void of_reserved_mem_device_release(struct device *dev)
- {
--	struct reserved_mem *rmem;
--	struct device_node *np;
--
--	np = of_parse_phandle(dev->of_node, "memory-region", 0);
--	if (!np)
--		return;
--
--	rmem = __find_rmem(np);
--	of_node_put(np);
-+	struct rmem_assigned_device *rd;
-+	struct reserved_mem *rmem = NULL;
-+
-+	mutex_lock(&of_rmem_assigned_device_mutex);
-+	list_for_each_entry(rd, &of_rmem_assigned_device_list, list) {
-+		if (rd->dev == dev) {
-+			rmem = rd->rmem;
-+			list_del(&rd->list);
-+			kfree(rd);
-+			break;
-+		}
-+	}
-+	mutex_unlock(&of_rmem_assigned_device_mutex);
- 
- 	if (!rmem || !rmem->ops || !rmem->ops->device_release)
- 		return;
-diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
-index ad2f67054372..0b928ad1ed93 100644
---- a/include/linux/of_reserved_mem.h
-+++ b/include/linux/of_reserved_mem.h
-@@ -1,7 +1,8 @@
- #ifndef __OF_RESERVED_MEM_H
- #define __OF_RESERVED_MEM_H
- 
--struct device;
-+#include <linux/device.h>
-+
- struct of_phandle_args;
- struct reserved_mem_ops;
- 
-@@ -28,14 +29,23 @@ typedef int (*reservedmem_of_init_fn)(struct reserved_mem *rmem);
- 	_OF_DECLARE(reservedmem, name, compat, init, reservedmem_of_init_fn)
- 
- #ifdef CONFIG_OF_RESERVED_MEM
--int of_reserved_mem_device_init(struct device *dev);
-+
-+int of_reserved_mem_init(struct device *dev, struct device_node *np, int idx);
-+int of_reserved_mem_init_by_name(struct device *dev, struct device_node *np,
-+				const char *name);
- void of_reserved_mem_device_release(struct device *dev);
- 
- void fdt_init_reserved_mem(void);
- void fdt_reserved_mem_save_node(unsigned long node, const char *uname,
- 			       phys_addr_t base, phys_addr_t size);
- #else
--static inline int of_reserved_mem_device_init(struct device *dev)
-+static inline int of_reserved_mem_init(struct device *dev,
-+				struct device_node *np, int idx)
-+{
-+	return -ENOSYS;
-+}
-+static inline int of_reserved_mem_init_by_name(struct device *dev,
-+				struct device_node *np, const char *name)
- {
- 	return -ENOSYS;
- }
-@@ -46,4 +56,19 @@ static inline void fdt_reserved_mem_save_node(unsigned long node,
- 		const char *uname, phys_addr_t base, phys_addr_t size) { }
- #endif
- 
-+/**
-+ * of_reserved_mem_device_init() - assign reserved memory region to given device
-+ * @dev:	Pointer to the device to configure
-+ *
-+ * This function assigns respective DMA-mapping operations based on the first
-+ * reserved memory region specified by 'memory-region' property in device tree
-+ * node of the given device.
-+ *
-+ * Returns error code or zero on success.
-+ */
-+static inline int of_reserved_mem_device_init(struct device *dev)
-+{
-+	return of_reserved_mem_init(dev, dev->of_node, 0);
-+}
-+
- #endif /* __OF_RESERVED_MEM_H */
+ &mixer {
+ 	status = "okay";
+ };
 -- 
 1.9.2
