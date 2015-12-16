@@ -1,162 +1,151 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v11 11/19] drm: rockchip: vop: add bpc and color mode setting
-Date: Wed, 16 Dec 2015 11:45:11 +0800
-Message-ID: <1450237511-2390-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v11 12/19] drm: bridge: analogix/dp: add some rk3288 special
+ registers setting
+Date: Wed, 16 Dec 2015 11:47:16 +0800
+Message-ID: <1450237636-2934-1-git-send-email-ykk@rock-chips.com>
 References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:42736 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751445AbbLPDrU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Dec 2015 22:47:20 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Mark Yao <yzq@rock-chips.com>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Mark Yao <yzq@rock-chips.com>
-
-Add bpc and color mode setting in rockchip_drm_vop driver, so
-connector could try to use the edid drm_display_info to config
-vop output mode.
-
-Signed-off-by: Mark Yao <yzq@rock-chips.com>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v11: None
-Changes in v10: None
-Changes in v9: None
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5:
-- Fix compiled error (Heiko)
-- Using the connector display info message to configure eDP driver input
-  video mode, but hard code CRTC video output mode to RGBaaa.
-
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 25 +++++++++++++++----
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c     |  2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_drv.h     |  2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c     | 32 ++++++++++++++++++++++---
- 4 files changed, 51 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 2c82a9a..3990951 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -180,14 +180,29 @@ static void rockchip_dp_drm_encoder_mode_set(struct drm_encoder *encoder,
- static void rockchip_dp_drm_encoder_prepare(struct drm_encoder *encoder)
- {
- 	struct rockchip_dp_device *dp = to_dp(encoder);
-+	struct drm_connector *cn = &dp->connector;
-+	int ret = -1;
- 	u32 val;
--	int ret;
- 
--	ret = rockchip_drm_crtc_mode_config(encoder->crtc,
--					    DRM_MODE_CONNECTOR_eDP,
--					    ROCKCHIP_OUT_MODE_AAAA);
-+	/*
-+	 * FIXME(Yakir): driver should configure the CRTC output video
-+	 * mode with the display information which indicated the monitor
-+	 * support colorimetry.
-+	 *
-+	 * But don't know why the CRTC driver seems could only output the
-+	 * RGBaaa rightly. For example, if connect the "innolux,n116bge"
-+	 * eDP screen, EDID would indicated that screen only accepted the
-+	 * 6bpc mode. But if I configure CRTC to RGB666 output, then eDP
-+	 * screen would show a blue picture (RGB888 show a green picture).
-+	 * But if I configure CTRC to RGBaaa, and eDP driver still keep
-+	 * RGB666 input video mode, then screen would works prefect.
-+	 */
-+	if (cn->display_info.color_formats & DRM_COLOR_FORMAT_RGB444)
-+		ret = rockchip_drm_crtc_mode_config(encoder->crtc,
-+					DRM_MODE_CONNECTOR_eDP,
-+					10, DRM_COLOR_FORMAT_RGB444);
- 	if (ret < 0) {
--		dev_err(dp->dev, "Could not set crtc mode config: %d.\n", ret);
-+		dev_err(dp->dev, "Could not set crtc mode config (%d)\n", ret);
- 		return;
- 	}
- 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 80d6fc8..428a3c1 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -215,7 +215,7 @@ static void dw_hdmi_rockchip_encoder_commit(struct drm_encoder *encoder)
- static void dw_hdmi_rockchip_encoder_prepare(struct drm_encoder *encoder)
- {
- 	rockchip_drm_crtc_mode_config(encoder->crtc, DRM_MODE_CONNECTOR_HDMIA,
--				      ROCKCHIP_OUT_MODE_AAAA);
-+				      10, DRM_COLOR_FORMAT_RGB444);
- }
- 
- static struct drm_encoder_helper_funcs dw_hdmi_rockchip_encoder_helper_funcs = {
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-index dc4e5f0..ef1d7fb 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-@@ -59,7 +59,7 @@ void rockchip_unregister_crtc_funcs(struct drm_device *dev, int pipe);
- int rockchip_drm_encoder_get_mux_id(struct device_node *node,
- 				    struct drm_encoder *encoder);
- int rockchip_drm_crtc_mode_config(struct drm_crtc *crtc, int connector_type,
--				  int out_mode);
-+				  int bpc, int color);
- int rockchip_drm_dma_attach_device(struct drm_device *drm_dev,
- 				   struct device *dev);
- void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 5d8ae5e..9ef4a1f 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1062,14 +1062,40 @@ static const struct drm_plane_funcs vop_plane_funcs = {
- 
- int rockchip_drm_crtc_mode_config(struct drm_crtc *crtc,
- 				  int connector_type,
--				  int out_mode)
-+				  int bpc, int color)
- {
- 	struct vop *vop = to_vop(crtc);
- 
-+	/*
-+	 * RK3288 vop only support RGB Color output.
-+	 */
-+	if (color != DRM_COLOR_FORMAT_RGB444) {
-+		DRM_ERROR("Only support output RGB444, not support%d\n",
-+			  color);
-+		return -EINVAL;
-+	}
-+
- 	vop->connector_type = connector_type;
--	vop->connector_out_mode = out_mode;
- 
--	return 0;
-+	/*
-+	 * Fixme: I don't know how to describe the ROCKCHIP_OUT_MODE_P565's
-+	 * bpc, 5 or 6?
-+	 */
-+	if (bpc >= 10) {
-+		bpc = 10;
-+		vop->connector_out_mode = ROCKCHIP_OUT_MODE_AAAA;
-+	} else if (bpc >= 8) {
-+		bpc = 8;
-+		vop->connector_out_mode = ROCKCHIP_OUT_MODE_P888;
-+	} else if (bpc >= 6) {
-+		bpc = 6;
-+		vop->connector_out_mode = ROCKCHIP_OUT_MODE_P666;
-+	} else {
-+		DRM_ERROR("unsupport bpc %d\n", bpc);
-+		return -EINVAL;
-+	}
-+
-+	return bpc;
- }
- EXPORT_SYMBOL_GPL(rockchip_drm_crtc_mode_config);
- 
--- 
-1.9.1
+UkszMjg4IG5lZWQgc29tZSBzcGVjaWFsIHJlZ2lzdGVycyBzZXR0aW5nLCB3ZSBjYW4gc2VwYXJh
+dGUKdGhlbSBvdXQgYnkgdGhlIGRldl90eXBlIG9mIHBsYXRfZGF0YS4KClNpZ25lZC1vZmYtYnk6
+IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGlu
+ZXogQ2FuaWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+Ci0tLQpDaGFuZ2VzIGluIHYxMTog
+Tm9uZQpDaGFuZ2VzIGluIHYxMDogTm9uZQpDaGFuZ2VzIGluIHY5OiBOb25lCkNoYW5nZXMgaW4g
+djg6IE5vbmUKQ2hhbmdlcyBpbiB2NzogTm9uZQpDaGFuZ2VzIGluIHY2OiBOb25lCkNoYW5nZXMg
+aW4gdjU6IE5vbmUKQ2hhbmdlcyBpbiB2NDogTm9uZQpDaGFuZ2VzIGluIHYzOiBOb25lCkNoYW5n
+ZXMgaW4gdjI6Ci0gRml4IGNvbXBpbGUgZmFpbGVkIGR1dCB0byBwaHlfcGRfYWRkciB2YXJpYWJs
+ZSBtaXNzcGVsbCBlcnJvcgoKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9n
+aXhfZHBfcmVnLmMgfCA3NiArKysrKysrKysrKysrKy0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJt
+L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaCB8IDEyICsrKysKIDIgZmlsZXMgY2hh
+bmdlZCwgNjAgaW5zZXJ0aW9ucygrKSwgMjggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKaW5kZXggODYxMDk3YS4u
+MjFhMzI4NyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFs
+b2dpeF9kcF9yZWcuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
+Z2l4X2RwX3JlZy5jCkBAIC0xNSw2ICsxNSw4IEBACiAjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4K
+ICNpbmNsdWRlIDxsaW51eC9ncGlvLmg+CiAKKyNpbmNsdWRlIDxkcm0vYnJpZGdlL2FuYWxvZ2l4
+X2RwLmg+CisKICNpbmNsdWRlICJhbmFsb2dpeF9kcF9jb3JlLmgiCiAjaW5jbHVkZSAiYW5hbG9n
+aXhfZHBfcmVnLmgiCiAKQEAgLTcyLDYgKzc0LDE0IEBAIHZvaWQgYW5hbG9naXhfZHBfaW5pdF9h
+bmFsb2dfcGFyYW0oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCiAJcmVnID0gU0VMXzI0
+TSB8IFRYX0RWRERfQklUXzFfMDYyNVY7CiAJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgQU5B
+TE9HSVhfRFBfQU5BTE9HX0NUTF8yKTsKIAorCWlmIChkcC0+cGxhdF9kYXRhICYmIChkcC0+cGxh
+dF9kYXRhLT5kZXZfdHlwZSA9PSBSSzMyODhfRFApKSB7CisJCXdyaXRlbChSRUZfQ0xLXzI0TSwg
+ZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JFR18xKTsKKwkJd3JpdGVsKDB4OTUsIGRw
+LT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfMik7CisJCXdyaXRlbCgweDQwLCBkcC0+
+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QTExfUkVHXzMpOworCQl3cml0ZWwoMHg1OCwgZHAtPnJl
+Z19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JFR180KTsKKwkJd3JpdGVsKDB4MjIsIGRwLT5yZWdf
+YmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfNSk7CisJfQorCiAJcmVnID0gRFJJVkVfRFZERF9C
+SVRfMV8wNjI1ViB8IFZDT19CSVRfNjAwX01JQ1JPOwogCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFz
+ZSArIEFOQUxPR0lYX0RQX0FOQUxPR19DVExfMyk7CiAKQEAgLTIwNiw4MSArMjE2LDg1IEBAIHZv
+aWQgYW5hbG9naXhfZHBfc2V0X2FuYWxvZ19wb3dlcl9kb3duKHN0cnVjdCBhbmFsb2dpeF9kcF9k
+ZXZpY2UgKmRwLAogCQkJCSAgICAgICBib29sIGVuYWJsZSkKIHsKIAl1MzIgcmVnOworCXUzMiBw
+aHlfcGRfYWRkciA9IEFOQUxPR0lYX0RQX1BIWV9QRDsKKworCWlmIChkcC0+cGxhdF9kYXRhICYm
+IChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBSSzMyODhfRFApKQorCQlwaHlfcGRfYWRkciA9
+IEFOQUxPR0lYX0RQX1BEOwogCiAJc3dpdGNoIChibG9jaykgewogCWNhc2UgQVVYX0JMT0NLOgog
+CQlpZiAoZW5hYmxlKSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9E
+UF9QSFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwog
+CQkJcmVnIHw9IEFVWF9QRDsKLQkJCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lY
+X0RQX1BIWV9QRCk7CisJCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBwaHlfcGRfYWRkcik7
+CiAJCX0gZWxzZSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9Q
+SFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQkJ
+cmVnICY9IH5BVVhfUEQ7Ci0JCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9E
+UF9QSFlfUEQpOworCQkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwog
+CQl9CiAJCWJyZWFrOwogCWNhc2UgQ0gwX0JMT0NLOgogCQlpZiAoZW5hYmxlKSB7Ci0JCQlyZWcg
+PSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJcmVnID0gcmVh
+ZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQkJcmVnIHw9IENIMF9QRDsKLQkJCXdy
+aXRlbChyZWcsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BIWV9QRCk7CisJCQl3cml0ZWwo
+cmVnLCBkcC0+cmVnX2Jhc2UgKyBwaHlfcGRfYWRkcik7CiAJCX0gZWxzZSB7Ci0JCQlyZWcgPSBy
+ZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJcmVnID0gcmVhZGwo
+ZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQkJcmVnICY9IH5DSDBfUEQ7Ci0JCQl3cml0
+ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJd3JpdGVsKHJl
+ZywgZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQl9CiAJCWJyZWFrOwogCWNhc2UgQ0gx
+X0JMT0NLOgogCQlpZiAoZW5hYmxlKSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBB
+TkFMT0dJWF9EUF9QSFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3Bk
+X2FkZHIpOwogCQkJcmVnIHw9IENIMV9QRDsKLQkJCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSAr
+IEFOQUxPR0lYX0RQX1BIWV9QRCk7CisJCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBwaHlf
+cGRfYWRkcik7CiAJCX0gZWxzZSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFM
+T0dJWF9EUF9QSFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2Fk
+ZHIpOwogCQkJcmVnICY9IH5DSDFfUEQ7Ci0JCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBB
+TkFMT0dJWF9EUF9QSFlfUEQpOworCQkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgcGh5X3Bk
+X2FkZHIpOwogCQl9CiAJCWJyZWFrOwogCWNhc2UgQ0gyX0JMT0NLOgogCQlpZiAoZW5hYmxlKSB7
+Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJ
+cmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQkJcmVnIHw9IENIMl9Q
+RDsKLQkJCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BIWV9QRCk7CisJ
+CQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBwaHlfcGRfYWRkcik7CiAJCX0gZWxzZSB7Ci0J
+CQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJcmVn
+ID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQkJcmVnICY9IH5DSDJfUEQ7
+Ci0JCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJ
+d3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQl9CiAJCWJyZWFrOwog
+CWNhc2UgQ0gzX0JMT0NLOgogCQlpZiAoZW5hYmxlKSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVn
+X2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNl
+ICsgcGh5X3BkX2FkZHIpOwogCQkJcmVnIHw9IENIM19QRDsKLQkJCXdyaXRlbChyZWcsIGRwLT5y
+ZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BIWV9QRCk7CisJCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jh
+c2UgKyBwaHlfcGRfYWRkcik7CiAJCX0gZWxzZSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jh
+c2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsg
+cGh5X3BkX2FkZHIpOwogCQkJcmVnICY9IH5DSDNfUEQ7Ci0JCQl3cml0ZWwocmVnLCBkcC0+cmVn
+X2Jhc2UgKyBBTkFMT0dJWF9EUF9QSFlfUEQpOworCQkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNl
+ICsgcGh5X3BkX2FkZHIpOwogCQl9CiAJCWJyZWFrOwogCWNhc2UgQU5BTE9HX1RPVEFMOgogCQlp
+ZiAoZW5hYmxlKSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9Q
+SFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQkJ
+cmVnIHw9IERQX1BIWV9QRDsKLQkJCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lY
+X0RQX1BIWV9QRCk7CisJCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBwaHlfcGRfYWRkcik7
+CiAJCX0gZWxzZSB7Ci0JCQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9Q
+SFlfUEQpOworCQkJcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIpOwogCQkJ
+cmVnICY9IH5EUF9QSFlfUEQ7Ci0JCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJ
+WF9EUF9QSFlfUEQpOworCQkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgcGh5X3BkX2FkZHIp
+OwogCQl9CiAJCWJyZWFrOwogCWNhc2UgUE9XRVJfQUxMOgogCQlpZiAoZW5hYmxlKSB7CiAJCQly
+ZWcgPSBEUF9QSFlfUEQgfCBBVVhfUEQgfCBDSDNfUEQgfCBDSDJfUEQgfAogCQkJCUNIMV9QRCB8
+IENIMF9QRDsKLQkJCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BIWV9Q
+RCk7CisJCQl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBwaHlfcGRfYWRkcik7CiAJCX0gZWxz
+ZSB7Ci0JCQl3cml0ZWwoMHgwMCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUEhZX1BEKTsK
+KwkJCXdyaXRlbCgweDAwLCBkcC0+cmVnX2Jhc2UgKyBwaHlfcGRfYWRkcik7CiAJCX0KIAkJYnJl
+YWs7CiAJZGVmYXVsdDoKQEAgLTM5OSw4ICs0MTMsMTQgQEAgdm9pZCBhbmFsb2dpeF9kcF9pbml0
+X2F1eChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKIAlhbmFsb2dpeF9kcF9yZXNldF9h
+dXgoZHApOwogCiAJLyogRGlzYWJsZSBBVVggdHJhbnNhY3Rpb24gSC9XIHJldHJ5ICovCi0JcmVn
+ID0gQVVYX0JJVF9QRVJJT0RfRVhQRUNURURfREVMQVkoMykgfCBBVVhfSFdfUkVUUllfQ09VTlRf
+U0VMKDApIHwKLQkgICAgICBBVVhfSFdfUkVUUllfSU5URVJWQUxfNjAwX01JQ1JPU0VDT05EUzsK
+KwlpZiAoZHAtPnBsYXRfZGF0YSAmJiAoZHAtPnBsYXRfZGF0YS0+ZGV2X3R5cGUgPT0gUkszMjg4
+X0RQKSkKKwkJcmVnID0gQVVYX0JJVF9QRVJJT0RfRVhQRUNURURfREVMQVkoMCkgfAorCQkgICAg
+ICBBVVhfSFdfUkVUUllfQ09VTlRfU0VMKDMpIHwKKwkJICAgICAgQVVYX0hXX1JFVFJZX0lOVEVS
+VkFMXzYwMF9NSUNST1NFQ09ORFM7CisJZWxzZQorCQlyZWcgPSBBVVhfQklUX1BFUklPRF9FWFBF
+Q1RFRF9ERUxBWSgzKSB8CisJCSAgICAgIEFVWF9IV19SRVRSWV9DT1VOVF9TRUwoMCkgfAorCQkg
+ICAgICBBVVhfSFdfUkVUUllfSU5URVJWQUxfNjAwX01JQ1JPU0VDT05EUzsKIAl3cml0ZWwocmVn
+LCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9BVVhfSFdfUkVUUllfQ1RMKTsKIAogCS8qIFJl
+Y2VpdmUgQVVYIENoYW5uZWwgREVGRVIgY29tbWFuZHMgZXF1YWwgdG8gREVGRkVSX0NPVU5UKjY0
+ICovCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4
+X2RwX3JlZy5oIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9y
+ZWcuaAppbmRleCA3MzhkYjRjLi4zMzc5MTJiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmgKQEAgLTIyLDYgKzIyLDE0IEBACiAjZGVm
+aW5lIEFOQUxPR0lYX0RQX1ZJREVPX0NUTF84CQkJMHgzQwogI2RlZmluZSBBTkFMT0dJWF9EUF9W
+SURFT19DVExfMTAJCTB4NDQKIAorI2RlZmluZSBBTkFMT0dJWF9EUF9QTExfUkVHXzEJCQkweGZj
+CisjZGVmaW5lIEFOQUxPR0lYX0RQX1BMTF9SRUdfMgkJCTB4OWU0CisjZGVmaW5lIEFOQUxPR0lY
+X0RQX1BMTF9SRUdfMwkJCTB4OWU4CisjZGVmaW5lIEFOQUxPR0lYX0RQX1BMTF9SRUdfNAkJCTB4
+OWVjCisjZGVmaW5lIEFOQUxPR0lYX0RQX1BMTF9SRUdfNQkJCTB4YTAwCisKKyNkZWZpbmUgQU5B
+TE9HSVhfRFBfUEQJCQkJMHgxMmMKKwogI2RlZmluZSBBTkFMT0dJWF9EUF9MQU5FX01BUAkJCTB4
+MzVDCiAKICNkZWZpbmUgQU5BTE9HSVhfRFBfQU5BTE9HX0NUTF8xCQkweDM3MApAQCAtMTU0LDYg
+KzE2MiwxMCBAQAogI2RlZmluZSBWU1lOQ19QT0xBUklUWV9DRkcJCQkoMHgxIDw8IDEpCiAjZGVm
+aW5lIEhTWU5DX1BPTEFSSVRZX0NGRwkJCSgweDEgPDwgMCkKIAorLyogQU5BTE9HSVhfRFBfUExM
+X1JFR18xICovCisjZGVmaW5lIFJFRl9DTEtfMjRNCQkJCSgweDEgPDwgMSkKKyNkZWZpbmUgUkVG
+X0NMS18yN00JCQkJKDB4MCA8PCAxKQorCiAvKiBBTkFMT0dJWF9EUF9MQU5FX01BUCAqLwogI2Rl
+ZmluZSBMQU5FM19NQVBfTE9HSUNfTEFORV8wCQkJKDB4MCA8PCA2KQogI2RlZmluZSBMQU5FM19N
+QVBfTE9HSUNfTEFORV8xCQkJKDB4MSA8PCA2KQotLSAKMS45LjEKCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
