@@ -1,53 +1,48 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v6 3/7] ARM: dts: Exynos542x/5800: add CPU OPP properties
-Date: Wed, 16 Dec 2015 09:43:57 +0900
-Message-ID: <5670B3CD.8010604@samsung.com>
-References: <1450200801-24539-1-git-send-email-b.zolnierkie@samsung.com>
- <1450200801-24539-4-git-send-email-b.zolnierkie@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v10 0/17] Add Analogix Core Display Port Driver
+Date: Wed, 16 Dec 2015 08:50:10 +0800
+Message-ID: <5670B542.4060402@rock-chips.com>
+References: <1449470239-30667-1-git-send-email-ykk@rock-chips.com>
+ <4659407.pYb0RRCQQX@diego>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1450200801-24539-4-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Ben Gamari <ben@smart-cactus.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <4659407.pYb0RRCQQX@diego>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, ajaynumb@gmail.com, Andy Yan <andy.yan@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16.12.2015 02:33, Bartlomiej Zolnierkiewicz wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> For Exynos542x/5800 platforms, add CPU operating points
-> for migrating from Exynos specific cpufreq driver to using
-> generic cpufreq driver.
-> 
-> Changes by Bartlomiej:
-> - split Exynos5420 support from the original patch
-> - merged Exynos5422 fixes from Ben
-> 
-> Changes by Ben Gamari:
-> - Port to operating-points-v2
-> 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Andreas Faerber <afaerber@suse.de>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Ben Gamari <ben@smart-cactus.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420-cpus.dtsi |  10 +++
->  arch/arm/boot/dts/exynos5420.dtsi      | 110 +++++++++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5422-cpus.dtsi |  10 +++
->  3 files changed, 130 insertions(+)
-> 
-
-Thanks for rebasing on "exynos5422-cpus.dtsi" patch, I appreciate this.
-
-Looks good:
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
+SGkgSGVpa28sCgpPbiAxMi8xNS8yMDE1IDA4OjA2IEFNLCBIZWlrbyBTdMO8Ym5lciB3cm90ZToK
+PiBIaSBZYWtpciwKPgo+IEFtIE1vbnRhZywgNy4gRGV6ZW1iZXIgMjAxNSwgMTQ6Mzc6MTkgc2No
+cmllYiBZYWtpciBZYW5nOgo+PiAgICAgVGhlIFNhbXN1bmcgRXh5bm9zIGVEUCBjb250cm9sbGVy
+IGFuZCBSb2NrY2hpcCBSSzMyODggZURQIGNvbnRyb2xsZXIKPj4gc2hhcmUgdGhlIHNhbWUgSVAs
+IHNvIGEgbG90IG9mIHBhcnRzIGNhbiBiZSByZS11c2VkLiBJIHNwbGl0IHRoZSBjb21tb24KPj4g
+Y29kZSBpbnRvIGJyaWRnZSBkaXJlY3RvcnksIHRoZW4gcmszMjg4IGFuZCBleHlub3Mgb25seSBu
+ZWVkIHRvIGtlZXAKPj4gc29tZSBwbGF0Zm9ybSBjb2RlLiBDYXVzZSBJIGNhbid0IGZpbmQgdGhl
+IGV4YWN0IElQIG5hbWUgb2YgZXh5bm9zIGRwCj4+IGNvbnRyb2xsZXIsIHNvIEkgZGVjaWRlIHRv
+IG5hbWUgZHAgY29yZSBkcml2ZXIgd2l0aCAiYW5hbG9naXgiIHdoaWNoIEkKPj4gZmluZCBpbiBy
+azMyODggZURQIFRSTQo+IHNvIGl0IGxvb2tzIGxpa2UgdGhlIGhvdHBsdWcgd29ya3MgbmljZWx5
+IG5vdy4gSSB3YXMgYWJsZSB0byB0ZXN0IGl0Cj4gc3VjZXNzZnVsbHkgb24gYm90aCBhIEplcnJ5
+IGFuZCBhIE1pbm5pZSBkZXZpY2Ugd2l0aG91dCBuZWVkaW5nIHRvIGZvcmNlCj4gaG90cGx1ZyA6
+LSkgLgo+Cj4gQXMgSSBuZWVkZWQgdG8gYWRhcHQgc29tZSBwYXRjaGVzIHdoZW4gYXBwbHlpbmcg
+dGhlIGxhc3Rlc3Qgb25lcywgSSB0aGluayBpdAo+IHdvdWxkIGJlIGdvb2QgZm9yIGEgZnVsbCBz
+ZW5kIG9mIHRoZSBsYXRlc3QgdmVyc2lvbiBhcyB2MTEuCgpHb3QgaXQsIHdpbGwgc2VuZCBzb29u
+ICA7KQoKPiBXaGVuIGdvaW5nIG92ZXIgdGhlIHBhdGNoZXMgYmVmb3JlIHNlbmRpbmcsIHBsZWFz
+ZSBhbHNvIGZpeCB0aGUgaW5kZW50YXRpb24KPiBpc3N1ZXMgaW4gYW5hbG9naXhfZHBfY29yZS5o
+IC0gYm90aCBuZXdseSBhZGRlZCBlbGVtZW50cyB0byBhbmFsb2dpeF9kcF9kZXZpY2UKPiB1c2Ug
+c3BhY2VzIGJldHdlZW4gdHlwZSBhbmQgbmFtZSwgd2hlcmUgdGhlIHJlc3QgdXNlcyB0YWJzLgo+
+IFtUaGlzIHNob3VsZCBvZiBjb3Vyc2UgYmUgZml4ZWQgaW4gdGhlIHBhdGNoZXMgYWRkaW5nIHRo
+ZXNlIGxpbmVzIDotKSBdCgpEb25lLAoKVGhhbmtzLAotIFlha2lyCgo+Cj4gSGVpa28KPgo+Cj4K
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
