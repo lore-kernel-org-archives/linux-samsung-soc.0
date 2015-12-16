@@ -1,70 +1,111 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 0/7] drm/exynos: rework layer blending
-Date: Wed, 16 Dec 2015 13:21:41 +0100
-Message-ID: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11635 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932413AbbLPMWO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Dec 2015 07:22:14 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NZG00DVIAD0LE80@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Dec 2015 12:22:12 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 2/7] drm/exynos: make zpos property configurable
+Date: Wed, 16 Dec 2015 13:21:43 +0100
+Message-ID: <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
+References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello all,
-
-This is a continuation of the work started by Tobias Jakobi. The goal of
-this patch set is to remove hardcoded blending setup from Exynos Mixer
-driver. This patch also enables other Exynos DRM CRTC drivers to use the
-configurable plane zpos feature, however patches for FIMD or Decon are
-not yet ready.
-
-The initial patches prepared by Tobias are available here:
-http://lists.freedesktop.org/archives/dri-devel/2015-November/095080.html
-
-Main changes in v3:
-- added patches for changing zpos property and layer priority
-  configuration
-- simplified blending setup, removed special configuration for the bottom
-  layer, removed layer cache
-- significantly simplified the code
-- rebased on top of exynos-drm-next branch
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (5):
-  drm/exynos: rename zpos to index
-  drm/exynos: make zpos property configurable
-  drm/exynos: mixer: set window priority based on zpos
-  drm/exynos: mixer: refactor layer setup
-  drm/exynos: mixer: unify a check for video-processor window
-
-Tobias Jakobi (2):
-  drm/exynos: mixer: remove all static blending setup
-  drm/exynos: mixer: also allow ARGB1555 and ARGB4444
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  10 +--
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  10 +--
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |   8 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  10 +--
- drivers/gpu/drm/exynos/exynos_drm_plane.c     |  55 ++++++++++--
- drivers/gpu/drm/exynos/exynos_drm_plane.h     |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |   2 +-
- drivers/gpu/drm/exynos/exynos_mixer.c         | 123 ++++++++++++++++----------
- drivers/gpu/drm/exynos/regs-mixer.h           |   4 +
- 9 files changed, 150 insertions(+), 74 deletions(-)
-
--- 
-1.9.2
+VGhpcyBwYXRjaCBhZGRzIGFsbCBpbmZyYXN0cnVjdHVyZSB0byBtYWtlIHpwb3MgcGxhbmUgcHJv
+cGVydHkKY29uZmlndXJhYmxlIGZyb20gdXNlcnNwYWNlLgoKU2lnbmVkLW9mZi1ieTogTWFyZWsg
+U3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgIHwgIDQgKystCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8IDUxICsrKysrKysrKysrKysrKysrKysrKysrKysrKyst
+LS0KIDIgZmlsZXMgY2hhbmdlZCwgNDkgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggNTg4YjY3NjNmOWM3Li5m
+MDgyN2RiZWJiN2QgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAg
+LTY0LDYgKzY0LDcgQEAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgewogCXN0cnVjdCBl
+eHlub3NfZHJtX3JlY3Qgc3JjOwogCXVuc2lnbmVkIGludCBoX3JhdGlvOwogCXVuc2lnbmVkIGlu
+dCB2X3JhdGlvOworCXVuc2lnbmVkIGludCB6cG9zOwogfTsKIAogc3RhdGljIGlubGluZSBzdHJ1
+Y3QgZXh5bm9zX2RybV9wbGFuZV9zdGF0ZSAqCkBAIC05MSwxMSArOTIsMTIgQEAgc3RydWN0IGV4
+eW5vc19kcm1fcGxhbmUgewogCiAjZGVmaW5lIEVYWU5PU19EUk1fUExBTkVfQ0FQX0RPVUJMRQko
+MSA8PCAwKQogI2RlZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9TQ0FMRQkoMSA8PCAxKQorI2Rl
+ZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TCSgxIDw8IDIpCiAKIC8qCiAgKiBFeHlub3Mg
+RFJNIHBsYW5lIGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlLgogICoKLSAqIEB6cG9zOiB6LXBvc2l0
+aW9uIG9mIHRoZSBwbGFuZS4KKyAqIEB6cG9zOiBpbml0aWFsIHotcG9zaXRpb24gb2YgdGhlIHBs
+YW5lLgogICogQHR5cGU6IHR5cGUgb2YgdGhlIHBsYW5lIChwcmltYXJ5LCBjdXJzb3Igb3Igb3Zl
+cmxheSkuCiAgKiBAcGl4ZWxfZm9ybWF0czogc3VwcG9ydGVkIHBpeGVsIGZvcm1hdHMuCiAgKiBA
+bnVtX3BpeGVsX2Zvcm1hdHM6IG51bWJlciBvZiBlbGVtZW50cyBpbiAncGl4ZWxfZm9ybWF0cycu
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCmluZGV4IGZkNmNiNGNl
+ZTAxYS4uYTJiZGFiODM2YjUwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+cGxhbmUuYwpAQCAtMTI0LDYgKzEyNCw3IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9tb2Rl
+X3NldChzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZV9zdGF0ZSAqZXh5bm9zX3N0YXRlKQogCiBzdGF0
+aWMgdm9pZCBleHlub3NfZHJtX3BsYW5lX3Jlc2V0KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQog
+eworCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxh
+bmUocGxhbmUpOwogCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3RhdGU7
+CiAKIAlpZiAocGxhbmUtPnN0YXRlKSB7CkBAIC0xMzYsNiArMTM3LDcgQEAgc3RhdGljIHZvaWQg
+ZXh5bm9zX2RybV9wbGFuZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSkKIAogCWV4eW5v
+c19zdGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpleHlub3Nfc3RhdGUpLCBHRlBfS0VSTkVMKTsKIAlp
+ZiAoZXh5bm9zX3N0YXRlKSB7CisJCWV4eW5vc19zdGF0ZS0+enBvcyA9IGV4eW5vc19wbGFuZS0+
+Y29uZmlnLT56cG9zOwogCQlwbGFuZS0+c3RhdGUgPSAmZXh5bm9zX3N0YXRlLT5iYXNlOwogCQlw
+bGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7CiAJfQpAQCAtMTUzLDYgKzE1NSw3IEBAIGV4eW5v
+c19kcm1fcGxhbmVfZHVwbGljYXRlX3N0YXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQogCQly
+ZXR1cm4gTlVMTDsKIAogCV9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfZHVwbGljYXRlX3N0YXRl
+KHBsYW5lLCAmY29weS0+YmFzZSk7CisJY29weS0+enBvcyA9IGV4eW5vc19zdGF0ZS0+enBvczsK
+IAlyZXR1cm4gJmNvcHktPmJhc2U7CiB9CiAKQEAgLTE2NSwxMyArMTY4LDUzIEBAIHN0YXRpYyB2
+b2lkIGV4eW5vc19kcm1fcGxhbmVfZGVzdHJveV9zdGF0ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFu
+ZSwKIAlrZnJlZShvbGRfZXh5bm9zX3N0YXRlKTsKIH0KIAorc3RhdGljIGludCBleHlub3NfZHJt
+X3BsYW5lX2F0b21pY19zZXRfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCisJCQkJ
+CQlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSwKKwkJCQkJCXN0cnVjdCBkcm1fcHJvcGVy
+dHkgKnByb3BlcnR5LAorCQkJCQkJdWludDY0X3QgdmFsKQoreworCXN0cnVjdCBleHlub3NfZHJt
+X3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOworCXN0cnVjdCBl
+eHlub3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3RhdGUgPQorCQkJCQl0b19leHlub3NfcGxh
+bmVfc3RhdGUoc3RhdGUpOworCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKmRldl9wcml2ID0g
+cGxhbmUtPmRldi0+ZGV2X3ByaXZhdGU7CisJY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVf
+Y29uZmlnICpjb25maWcgPSBleHlub3NfcGxhbmUtPmNvbmZpZzsKKworCWlmIChwcm9wZXJ0eSA9
+PSBkZXZfcHJpdi0+cGxhbmVfenBvc19wcm9wZXJ0eSAmJgorCSAgICAoY29uZmlnLT5jYXBhYmls
+aXRpZXMgJiBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TKSkKKwkJZXh5bm9zX3N0YXRlLT56cG9z
+ID0gdmFsOworCWVsc2UKKwkJcmV0dXJuIC1FSU5WQUw7CisKKwlyZXR1cm4gMDsKK30KKworc3Rh
+dGljIGludCBleHlub3NfZHJtX3BsYW5lX2F0b21pY19nZXRfcHJvcGVydHkoc3RydWN0IGRybV9w
+bGFuZSAqcGxhbmUsCisJCQkJCSAgY29uc3Qgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUs
+CisJCQkJCSAgc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcGVydHksCisJCQkJCSAgdWludDY0X3Qg
+KnZhbCkKK3sKKwljb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZV9zdGF0ZSAqZXh5bm9zX3N0
+YXRlID0KKwkJY29udGFpbmVyX29mKHN0YXRlLCBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFu
+ZV9zdGF0ZSwgYmFzZSk7CisJc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBw
+bGFuZS0+ZGV2LT5kZXZfcHJpdmF0ZTsKKworCWlmIChwcm9wZXJ0eSA9PSBkZXZfcHJpdi0+cGxh
+bmVfenBvc19wcm9wZXJ0eSkKKwkJKnZhbCA9IGV4eW5vc19zdGF0ZS0+enBvczsKKwllbHNlCisJ
+CXJldHVybiAtRUlOVkFMOworCisJcmV0dXJuIDA7Cit9CisKIHN0YXRpYyBzdHJ1Y3QgZHJtX3Bs
+YW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKIAkudXBkYXRlX3BsYW5lCT0gZHJtX2F0
+b21pY19oZWxwZXJfdXBkYXRlX3BsYW5lLAogCS5kaXNhYmxlX3BsYW5lCT0gZHJtX2F0b21pY19o
+ZWxwZXJfZGlzYWJsZV9wbGFuZSwKIAkuZGVzdHJveQk9IGRybV9wbGFuZV9jbGVhbnVwLAorCS5z
+ZXRfcHJvcGVydHkJPSBkcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9zZXRfcHJvcGVydHksCiAJLnJl
+c2V0CQk9IGV4eW5vc19kcm1fcGxhbmVfcmVzZXQsCiAJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUg
+PSBleHlub3NfZHJtX3BsYW5lX2R1cGxpY2F0ZV9zdGF0ZSwKIAkuYXRvbWljX2Rlc3Ryb3lfc3Rh
+dGUgPSBleHlub3NfZHJtX3BsYW5lX2Rlc3Ryb3lfc3RhdGUsCisJLmF0b21pY19zZXRfcHJvcGVy
+dHkgPSBleHlub3NfZHJtX3BsYW5lX2F0b21pY19zZXRfcHJvcGVydHksCisJLmF0b21pY19nZXRf
+cHJvcGVydHkgPSBleHlub3NfZHJtX3BsYW5lX2F0b21pY19nZXRfcHJvcGVydHksCiB9OwogCiBz
+dGF0aWMgaW50CkBAIC0yNjcsOCArMzEwLDggQEAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0
+dGFjaF96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogCiAJcHJvcCA9IGRl
+dl9wcml2LT5wbGFuZV96cG9zX3Byb3BlcnR5OwogCWlmICghcHJvcCkgewotCQlwcm9wID0gZHJt
+X3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShkZXYsIERSTV9NT0RFX1BST1BfSU1NVVRBQkxFLAotCQkJ
+CQkJICJ6cG9zIiwgMCwgTUFYX1BMQU5FIC0gMSk7CisJCXByb3AgPSBkcm1fcHJvcGVydHlfY3Jl
+YXRlX3JhbmdlKGRldiwgMCwgInpwb3MiLAorCQkJCQkJIDAsIE1BWF9QTEFORSAtIDEpOwogCQlp
+ZiAoIXByb3ApCiAJCQlyZXR1cm47CiAKQEAgLTMwMiw5ICszNDUsNyBAQCBpbnQgZXh5bm9zX3Bs
+YW5lX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAlleHlub3NfcGxhbmUtPmluZGV4ID0g
+aW5kZXg7CiAJZXh5bm9zX3BsYW5lLT5jb25maWcgPSBjb25maWc7CiAKLQlpZiAoY29uZmlnLT50
+eXBlID09IERSTV9QTEFORV9UWVBFX09WRVJMQVkpCi0JCWV4eW5vc19wbGFuZV9hdHRhY2hfenBv
+c19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5iYXNlLAotCQkJCQkJICBjb25maWctPnpwb3MpOwor
+CWV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5iYXNlLCBj
+b25maWctPnpwb3MpOwogCiAJcmV0dXJuIDA7CiB9Ci0tIAoxLjkuMgoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
