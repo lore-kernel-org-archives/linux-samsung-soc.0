@@ -1,61 +1,89 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH v3 2/7] drm/exynos: make zpos property configurable
-Date: Wed, 16 Dec 2015 14:54:04 +0100
-Message-ID: <56716CFC.1090006@samsung.com>
+Date: Wed, 16 Dec 2015 15:21:58 +0100
+Message-ID: <20151216142158.GP30437@phenom.ffwll.local>
 References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
  <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
  <20151216132836.GM30437@phenom.ffwll.local>
+ <56716CFC.1090006@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20151216132836.GM30437@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:37908 "EHLO
+	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933082AbbLPOWB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Dec 2015 09:22:01 -0500
+Received: by mail-wm0-f54.google.com with SMTP id l126so40099488wml.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Dec 2015 06:22:00 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <56716CFC.1090006@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-SGVsbG8sCgpPbiAyMDE1LTEyLTE2IDE0OjI4LCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+IE9uIFdl
-ZCwgRGVjIDE2LCAyMDE1IGF0IDAxOjIxOjQzUE0gKzAxMDAsIE1hcmVrIFN6eXByb3dza2kgd3Jv
-dGU6Cj4+IFRoaXMgcGF0Y2ggYWRkcyBhbGwgaW5mcmFzdHJ1Y3R1cmUgdG8gbWFrZSB6cG9zIHBs
-YW5lIHByb3BlcnR5Cj4+IGNvbmZpZ3VyYWJsZSBmcm9tIHVzZXJzcGFjZS4KPj4KPj4gU2lnbmVk
-LW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IElt
-byB6cG9zIHNob3VsZCBiZSBhIGdlbmVyaWMgYXRvbWljIHByb3BlcnR5IHdpdGggd2VsbC1kZWZp
-bmVkIHNlbWFudGljcwo+IHNoYXJlZCBhY3Jvc3MgZHJpdmVycy4gU28KPiAtIHN0b3JlYWQgKGlu
-IGRlY29kZWQgZm9ybSkgaW4gZHJtX3BsYW5lX3N0YXRlCj4gLSBjb21tb24gZnVuY3Rpb25zIHRv
-IHJlZ2lzdGVyL2F0dGFjaCB6cG9zIHByb3AgdG8gYSBwbGFuZSwgd2l0aAo+ICAgIGZ1bGwtYmxv
-d24ga2VybmVsZG9jIGV4cGxhaW5pbmcgaG93IGl0IHNob3VsZCB3b3JrCj4gLSBnZW5lcmljIGtt
-cyBpZ3QgdG8gdmFsaWRhdGUgdGhhdCBpbnRlcmZhY2UKPgo+IE9uZSBvZiB0aGUgYmlnIHRoaW5n
-cyB0aGF0IGFsd2F5cyBjb21lcyB1cCB3aGVuIHdlIHRhbGsgYWJvdXQgenBvcyBpcyBob3cKPiBl
-cXVhbCB6cG9zIHNob3VsZCBiZSBoYW5kbGVkLCBhbmQgaG93IGV4YWN0bHkgdGhleSBzaG91bGQg
-YmUgc29ydGVkLiBJCj4gdGhpbmsgZm9yIHRoYXQgd2Ugc2hvdWxkIGhhdmUgYSBkcm0gZnVuY3Rp
-b24gd2hpY2ggY29tcHV0ZXMgYSBub3JtYWxpemVkCj4genBvcy4gT3IgdGhlIGNvcmUgY2hlY2sg
-Y29kZSBzaG91bGQgcmVqZWN0IHN1Y2ggbm9uc2Vuc2UuCgpJTUhPIGl0IHdpbGwgYmUgZW5vdWdo
-IHRvIHN0YXRlIHRoYXQgdGhlIGNhc2Ugb2YgZXF1YWwgenBvcyBpcyBIVyBzcGVjaWZpYy4KVGhp
-cyBtaWdodCBzaW1wbGlmeSBzb21lIGRyaXZlciBsb2dpYy4gRm9yIGV4YW1wbGUsIGluIGNhc2Ug
-b2YgRXh5bm9zIE1peGVyLAplcXVhbCBwcmlvcml0eSAoenBvcykgbWVhbnMgdGhhdCBIVyBwcmVk
-ZWZpbmVkIG9yZGVyIHdpbGwgYmUgdXNlZCwgc28gdGhlcmUKaXMgbm8gbmVlZCB0byBub3JtYWxp
-emUgenBvcyB2YWx1ZXMuCgpJZiB5b3Ugd2FudCBJIGNhbiBtb3ZlIHpwb3MgdG8gZHJtIGNvcmUg
-YW5kIGFkZCBhIGZ1bmN0aW9uIHRvIG5vcm1hbGl6ZSAKenBvcywKYWx0aG91Z2ggZm9yIHRoaXMg
-cGFydGljdWxhciBkcml2ZXIgbm9ybWFsaXphdGlvbiBpcyBub3QgbmVlZGVkLgoKSXQgc2hvdWxk
-IGJlIHF1aXRlIGVhc3kgdG8gY29udmVydCBvdGhlciBkcml2ZXJzIHRvIHVzZSB0aGUgZ2VuZXJp
-YyB6cG9zCnByb3BlcnR5LiBUaGUgb25seSBwcm9ibGVtIEkgc2VlIGlzIGhvdyB0byBoYW5kbGUg
-b21hcCBkcml2ZXIsIHdoaWNoIHVzZQonem9yZGVyJyBwcm9wZXJ0eS4KCldoYXQgYWJvdXQgc29t
-ZSBvdGhlciB0eXBpY2FsIHByb3BlcnRpZXMgcmVsYXRlZCB0byBibGVuZGluZzoKLSBnbG9iYWwg
-cGxhbmUgYWxwaGEsCi0gY29sb3JrZXksCi0gYWxwaGEgbW9kZSAoc3RhbmRhcmQgb3IgcHJlLW11
-bHRpcGxpZWQpIGZvciBhbHBoYS1lbmFibGVkIG1vZGVzLAotIGNydGMgYmFja2dyb3VuZCBjb2xv
-ci4KCkRvIHlvdSBhbHNvIHdhbnQgdG8gaGFuZGxlIHRoZW0gYXMgZ2VuZXJpYyBvciBkcml2ZXIt
-c3BlY2lmaWMgcHJvcGVydGllcz8KCkkgcGxhbiB0byBhZGQgc3VwcG9ydCBmb3IgdGhlbSB0byBF
-eHlub3MgTWl4ZXIgYW5kIEkgd291bGQgbGlrZSB0byBhdm9pZApkb2luZyB0aGlzIHR3aWNlLgoK
-QmVzdCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0
-dXRlIFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, Dec 16, 2015 at 02:54:04PM +0100, Marek Szyprowski wrote:
+> Hello,
+> 
+> On 2015-12-16 14:28, Daniel Vetter wrote:
+> >On Wed, Dec 16, 2015 at 01:21:43PM +0100, Marek Szyprowski wrote:
+> >>This patch adds all infrastructure to make zpos plane property
+> >>configurable from userspace.
+> >>
+> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >Imo zpos should be a generic atomic property with well-defined semantics
+> >shared across drivers. So
+> >- storead (in decoded form) in drm_plane_state
+> >- common functions to register/attach zpos prop to a plane, with
+> >   full-blown kerneldoc explaining how it should work
+> >- generic kms igt to validate that interface
+> >
+> >One of the big things that always comes up when we talk about zpos is how
+> >equal zpos should be handled, and how exactly they should be sorted. I
+> >think for that we should have a drm function which computes a normalized
+> >zpos. Or the core check code should reject such nonsense.
+> 
+> IMHO it will be enough to state that the case of equal zpos is HW specific.
+> This might simplify some driver logic. For example, in case of Exynos Mixer,
+> equal priority (zpos) means that HW predefined order will be used, so there
+> is no need to normalize zpos values.
+> 
+> If you want I can move zpos to drm core and add a function to normalize
+> zpos,
+> although for this particular driver normalization is not needed.
+> 
+> It should be quite easy to convert other drivers to use the generic zpos
+> property. The only problem I see is how to handle omap driver, which use
+> 'zorder' property.
+> 
+> What about some other typical properties related to blending:
+> - global plane alpha,
+> - colorkey,
+> - alpha mode (standard or pre-multiplied) for alpha-enabled modes,
+> - crtc background color.
+> 
+> Do you also want to handle them as generic or driver-specific properties?
+
+Should all be generic really. And it's also kinda ABI, so userspace
+needed, and preferrably a proper/automated testcase. i915 has
+infrastructure to use display pipeline CRCs to really measure it's all
+correct even, and that's the standard I'd like to see for all KMS API
+extensions like this.
+
+Since if we don't do this we'll end up in a giant mess, and it will be
+impossible to write a kms compositor that's generic and uses all this.
+
+And since this stuff is supposed to be generic, fluffy/unspecified
+semantics aren't good. Especially if your hw can just somehow deal with it
+all.
+
+> I plan to add support for them to Exynos Mixer and I would like to avoid
+> doing this twice.
+
+It's a lot more work than just adding a few members to drm_plane_state.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
