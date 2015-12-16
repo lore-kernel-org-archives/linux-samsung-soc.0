@@ -1,51 +1,53 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 12/19] ARM: dts: exynos: replace legacy *,wakeup property
- with wakeup-source
-Date: Wed, 16 Dec 2015 08:32:02 +0900
-Message-ID: <5670A2F2.5060009@samsung.com>
-References: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
- <1445422216-29375-13-git-send-email-sudeep.holla@arm.com>
- <56704141.8070308@arm.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v6 3/7] ARM: dts: Exynos542x/5800: add CPU OPP properties
+Date: Wed, 16 Dec 2015 09:43:57 +0900
+Message-ID: <5670B3CD.8010604@samsung.com>
+References: <1450200801-24539-1-git-send-email-b.zolnierkie@samsung.com>
+ <1450200801-24539-4-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <56704141.8070308-5wv7dgnIgG8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1450200801-24539-4-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Ben Gamari <ben@smart-cactus.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16.12.2015 01:35, Sudeep Holla wrote:
+On 16.12.2015 02:33, Bartlomiej Zolnierkiewicz wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
 > 
+> For Exynos542x/5800 platforms, add CPU operating points
+> for migrating from Exynos specific cpufreq driver to using
+> generic cpufreq driver.
 > 
-> On 21/10/15 11:10, Sudeep Holla wrote:
->> Though the keyboard and other driver will continue to support the legacy
->> "gpio-key,wakeup", "linux-keypad,wakeup" boolean property to enable the
->> wakeup source, "wakeup-source" is the new standard binding.
->>
->> This patch replaces all the legacy wakeup properties with the unified
->> "wakeup-source" property in order to avoid any futher copy-paste
->> duplication.
->>
->> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Changes by Bartlomiej:
+> - split Exynos5420 support from the original patch
+> - merged Exynos5422 fixes from Ben
 > 
-> Ping, do you prefer taking via your tree or should I send to armsoc
-> directly ?
+> Changes by Ben Gamari:
+> - Port to operating-points-v2
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Andreas Faerber <afaerber@suse.de>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Ben Gamari <ben@smart-cactus.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi |  10 +++
+>  arch/arm/boot/dts/exynos5420.dtsi      | 110 +++++++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi |  10 +++
+>  3 files changed, 130 insertions(+)
+> 
 
-Usually it depends on the dependencies... but:
-1. I just received this patch - 12/19.
-2. No cover letter, no other patches, no explanation about any
-dependencies or other related changes. Nothing. Just one patch.
-3. The patch mentions new standard binding. Was the new binding already
-merged? Or is it part of these series? What about backward compatibility?
+Thanks for rebasing on "exynos5422-cpus.dtsi" patch, I appreciate this.
 
-BR,
+Looks good:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
 Krzysztof
 
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
