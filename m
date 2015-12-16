@@ -1,56 +1,125 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 7/7] drm/exynos: mixer: unify a check for video-processor
- window
-Date: Wed, 16 Dec 2015 13:21:48 +0100
-Message-ID: <1450268508-15028-8-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v3 5/7] drm/exynos: mixer: refactor layer setup
+Date: Wed, 16 Dec 2015 13:21:46 +0100
+Message-ID: <1450268508-15028-6-git-send-email-m.szyprowski@samsung.com>
 References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout2.w1.samsung.com ([210.118.77.12]:12880 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932862AbbLPMWT (ORCPT
+	with ESMTP id S932551AbbLPMWR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Dec 2015 07:22:19 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+	Wed, 16 Dec 2015 07:22:17 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
  by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NZG00IORAD3G480@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Dec 2015 12:22:16 +0000 (GMT)
+ with ESMTP id <0NZG00HPKAD3WA80@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Dec 2015 12:22:15 +0000 (GMT)
 In-reply-to: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>
 
-Always use macro instead of hard-coded '2' value in conditions related
-to video processor window. Additional checks are not needed, because
-video layer is registered only when video processor is available.
+Properly configure blending properties of given hardware layer based on
+the selected pixel format. Currently only per-pixel-based alpha is possible
+when respective pixel format has been selected. Configuration of global,
+per-plane alpha value, color key and background color will be added later.
+
+This patch is heavily inspired by earlier work done by Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de>.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_mixer.c | 43 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/exynos/regs-mixer.h   |  1 +
+ 2 files changed, 44 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 31a9a228744e..bf148dc3623c 100644
+index c572e271579e..ae7b122274ac 100644
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -438,7 +438,7 @@ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
- 				    MXR_LAYER_CFG_GRP1_VAL(priority),
- 				    MXR_LAYER_CFG_GRP1_MASK);
- 		break;
--	case 2:
-+	case VP_DEFAULT_WIN:
- 		if (ctx->vp_enabled) {
- 			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
- 			mixer_reg_writemask(res, MXR_CFG, val,
-@@ -990,7 +990,7 @@ static void mixer_update_plane(struct exynos_drm_crtc *crtc,
- 	if (!test_bit(MXR_BIT_POWERED, &mixer_ctx->flags))
- 		return;
+@@ -165,6 +165,16 @@ static const u8 filter_cr_horiz_tap4[] = {
+ 	70,	59,	48,	37,	27,	19,	11,	5,
+ };
  
--	if (plane->index > 1 && mixer_ctx->vp_enabled)
-+	if (plane->index == VP_DEFAULT_WIN)
- 		vp_video_buffer(mixer_ctx, plane);
- 	else
- 		mixer_graph_buffer(mixer_ctx, plane);
++static inline bool is_alpha_format(unsigned int pixel_format)
++{
++	switch (pixel_format) {
++	case DRM_FORMAT_ARGB8888:
++		return true;
++	default:
++		return false;
++	}
++}
++
+ static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
+ {
+ 	return readl(res->vp_regs + reg_id);
+@@ -294,6 +304,37 @@ static void vp_default_filter(struct mixer_resources *res)
+ 		filter_cr_horiz_tap4, sizeof(filter_cr_horiz_tap4));
+ }
+ 
++static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
++				bool alpha)
++{
++	struct mixer_resources *res = &ctx->mixer_res;
++	u32 val;
++
++	val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
++	if (alpha) {
++		/* blending based on pixel alpha */
++		val |= MXR_GRP_CFG_BLEND_PRE_MUL;
++		val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
++	}
++	mixer_reg_writemask(res, MXR_GRAPHIC_CFG(win),
++			    val, MXR_GRP_CFG_MISC_MASK);
++}
++
++static void mixer_cfg_vp_blend(struct mixer_context *ctx)
++{
++	struct mixer_resources *res = &ctx->mixer_res;
++	u32 val;
++
++	/*
++	 * No blending at the moment since the NV12/NV21 pixelformats don't
++	 * have an alpha channel. However the mixer supports a global alpha
++	 * value for a layer. Once this functionality is exposed, we can
++	 * support blending of the video layer through this.
++	 */
++	val = 0;
++	mixer_reg_write(res, MXR_VIDEO_CFG, val);
++}
++
+ static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
+ {
+ 	struct mixer_resources *res = &ctx->mixer_res;
+@@ -519,6 +560,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+ 	mixer_cfg_layer(ctx, plane->index, state->zpos + 1, true);
++	mixer_cfg_vp_blend(ctx);
+ 	mixer_run(ctx);
+ 
+ 	mixer_vsync_set_update(ctx, true);
+@@ -634,6 +676,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+ 	mixer_cfg_layer(ctx, win, state->zpos + 1, true);
++	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
+ 
+ 	/* layer update mandatory for mixer 16.0.33.0 */
+ 	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
+diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+index dbdbc0af3358..7f22df5bf707 100644
+--- a/drivers/gpu/drm/exynos/regs-mixer.h
++++ b/drivers/gpu/drm/exynos/regs-mixer.h
+@@ -113,6 +113,7 @@
+ #define MXR_GRP_CFG_BLEND_PRE_MUL	(1 << 20)
+ #define MXR_GRP_CFG_WIN_BLEND_EN	(1 << 17)
+ #define MXR_GRP_CFG_PIXEL_BLEND_EN	(1 << 16)
++#define MXR_GRP_CFG_MISC_MASK		((3 << 16) | (3 << 20))
+ #define MXR_GRP_CFG_FORMAT_VAL(x)	MXR_MASK_VAL(x, 11, 8)
+ #define MXR_GRP_CFG_FORMAT_MASK		MXR_GRP_CFG_FORMAT_VAL(~0)
+ #define MXR_GRP_CFG_ALPHA_VAL(x)	MXR_MASK_VAL(x, 7, 0)
 -- 
 1.9.2
