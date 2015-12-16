@@ -1,76 +1,125 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [PATCH 12/19] ARM: dts: exynos: replace legacy *,wakeup property
  with wakeup-source
-Date: Thu, 17 Dec 2015 08:38:03 +0900
-Message-ID: <5671F5DB.305@samsung.com>
+Date: Thu, 17 Dec 2015 08:49:35 +0900
+Message-ID: <5671F88F.7050802@samsung.com>
 References: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
  <1445422216-29375-13-git-send-email-sudeep.holla@arm.com>
- <56704141.8070308@arm.com> <5670A2F2.5060009@samsung.com>
- <56713DD8.1050001@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36865 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751424AbbLPXiF (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:33152 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932125AbbLPXtg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Dec 2015 18:38:05 -0500
-In-reply-to: <56713DD8.1050001@arm.com>
+	Wed, 16 Dec 2015 18:49:36 -0500
+In-reply-to: <1445422216-29375-13-git-send-email-sudeep.holla@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On 16.12.2015 19:32, Sudeep Holla wrote:
+On 21.10.2015 19:10, Sudeep Holla wrote:
+> Though the keyboard and other driver will continue to support the legacy
+> "gpio-key,wakeup", "linux-keypad,wakeup" boolean property to enable the
+> wakeup source, "wakeup-source" is the new standard binding.
 > 
+> This patch replaces all the legacy wakeup properties with the unified
+> "wakeup-source" property in order to avoid any futher copy-paste
+> duplication.
 > 
-> On 15/12/15 23:32, Krzysztof Kozlowski wrote:
->> On 16.12.2015 01:35, Sudeep Holla wrote:
->>>
->>>
->>> On 21/10/15 11:10, Sudeep Holla wrote:
->>>> Though the keyboard and other driver will continue to support the
->>>> legacy
->>>> "gpio-key,wakeup", "linux-keypad,wakeup" boolean property to enable the
->>>> wakeup source, "wakeup-source" is the new standard binding.
->>>>
->>>> This patch replaces all the legacy wakeup properties with the unified
->>>> "wakeup-source" property in order to avoid any futher copy-paste
->>>> duplication.
->>>>
->>>> Cc: Kukjin Kim <kgene@kernel.org>
->>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>
->>> Ping, do you prefer taking via your tree or should I send to armsoc
->>> directly ?
->>
->> Usually it depends on the dependencies... but:
->> 1. I just received this patch - 12/19.
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-monk.dts           |  6 +++---
+>  arch/arm/boot/dts/exynos3250-rinato.dts         |  6 +++---
+>  arch/arm/boot/dts/exynos4210-origen.dts         | 10 +++++-----
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts       |  2 +-
+>  arch/arm/boot/dts/exynos4210-trats.dts          |  2 +-
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |  4 ++--
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  2 +-
+>  arch/arm/boot/dts/exynos4412-odroidx.dts        |  2 +-
+>  arch/arm/boot/dts/exynos4412-origen.dts         |  2 +-
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts       |  2 +-
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |  4 ++--
+>  arch/arm/boot/dts/exynos5250-arndale.dts        | 12 ++++++------
+>  arch/arm/boot/dts/exynos5250-snow.dts           |  4 ++--
+>  arch/arm/boot/dts/exynos5250-spring.dts         |  4 ++--
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts   |  2 +-
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts      |  4 ++--
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts       |  4 ++--
+>  17 files changed, 36 insertions(+), 36 deletions(-)
 > 
-> Sorry for that. The initial idea was to show all the changes but merge
-> the binding and dependencies first, so didn't cc all.
-> 
->> 2. No cover letter, no other patches, no explanation about any
->> dependencies or other related changes. Nothing. Just one patch.
-> 
-> Yes this was initially posted as part of the series, but only
-> dependencies were merged for v4.4
-> 
->> 3. The patch mentions new standard binding. Was the new binding already
->> merged? Or is it part of these series? What about backward compatibility?
-> 
-> Not a brand new binding, but made existing one a standard so that we
-> don't continue to be creative and generate more bindings for the same
-> thing. Yes binding and dependent patches are already in mainline. And
-> yes backward compatibility is maintained as mentioned in the commit
-> message.
+> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+> index 540a0adf2be6..b77ea2163a0a 100644
+> --- a/arch/arm/boot/dts/exynos3250-monk.dts
+> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
+> @@ -43,7 +43,7 @@
+>  			linux,code = <KEY_POWER>;
+>  			label = "power key";
+>  			debounce-interval = <10>;
+> -			gpio-key,wakeup;
+> +			wakeup-source;
+>  		};
+>  	};
+>  
+> @@ -67,7 +67,7 @@
+>  			interrupt-parent = <&gpx1>;
+>  			interrupts = <5 0>;
+>  			reg = <0x25>;
+> -			wakeup;
+> +			wakeup-source;
+>  
+>  			muic: max77836-muic {
+>  				compatible = "maxim,max77836-muic";
+> @@ -184,7 +184,7 @@
+>  		interrupt-parent = <&gpx0>;
+>  		interrupts = <7 0>;
+>  		reg = <0x66>;
+> -		wakeup;
+> +		wakeup-source;
+>  
+>  		s2mps14_osc: clocks {
+>  			compatible = "samsung,s2mps14-clk";
+> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+> index 41a5fafb9aa9..7acd11d2d957 100644
+> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
+> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+> @@ -43,7 +43,7 @@
+>  			linux,code = <KEY_POWER>;
+>  			label = "power key";
+>  			debounce-interval = <10>;
+> -			gpio-key,wakeup;
+> +			wakeup-source;
+>  		};
+>  	};
+>  
+> @@ -58,7 +58,7 @@
+>  			interrupt-parent = <&gpx1>;
+>  			interrupts = <5 0>;
+>  			reg = <0x25>;
+> -			wakeup;
+> +			wakeup-source;
+>  
+>  			muic: max77836-muic {
+>  				compatible = "maxim,max77836-muic";
+> @@ -245,7 +245,7 @@
+>  		interrupt-parent = <&gpx0>;
+>  		interrupts = <7 0>;
+>  		reg = <0x66>;
+> -		wakeup;
+> +		wakeup-source;
 
-That explains everything, thanks. We'll take it through samsung-soc,
-just give me some time for review.
+I think here and in Monk board these four "wakeup" properties are bogus,
+not parsed by driver. Instead wakeup is always initialized to true.
 
-As for other patch - the s5pv210 - I did not get it directly but I think
-I can find it on list subscription archives.
+Anyway fixing this is not part of this patch but instead this should be
+fixed in separate commit. Here everything looks good:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
