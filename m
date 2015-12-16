@@ -1,51 +1,230 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v11 18/19] drm: bridge: analogix/dp: add panel
- prepare/unprepare in suspend/resume time
-Date: Wed, 16 Dec 2015 11:59:46 +0800
-Message-ID: <1450238386-3343-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v11 19/19] drm: bridge: analogix/dp: Fix the possible dead lock in bridge disable time
+Date: Wed, 16 Dec 2015 12:01:51 +0800
+Message-ID: <1450238511-3414-1-git-send-email-ykk@rock-chips.com>
 References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:44604 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753605AbbLPED7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Dec 2015 23:03:59 -0500
 In-Reply-To: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-VHVybiBvZmYgdGhlIHBhbmVsIHBvd2VyIGluIHN1c3BlbmQgdGltZSB3b3VsZCBoZWxwIHRvIHJl
-ZHVjZQpwb3dlciB3YXN0ZS4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNo
-aXBzLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjExOiBOb25lCkNoYW5nZXMgaW4gdjEwOiBOb25lCkNo
-YW5nZXMgaW4gdjk6IE5vbmUKQ2hhbmdlcyBpbiB2ODogTm9uZQpDaGFuZ2VzIGluIHY3OiBOb25l
-CkNoYW5nZXMgaW4gdjY6IE5vbmUKQ2hhbmdlcyBpbiB2NTogTm9uZQpDaGFuZ2VzIGluIHY0OiBO
-b25lCkNoYW5nZXMgaW4gdjM6IE5vbmUKQ2hhbmdlcyBpbiB2MjogTm9uZQoKIGRyaXZlcnMvZ3B1
-L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgMTMgKysrKysrKysrKysr
-KwogMSBmaWxlIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCmluZGV4IGQxODA1NGQuLmJj
-NGE5ZTAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9n
-aXhfZHBfY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9n
-aXhfZHBfY29yZS5jCkBAIC0xMzU3LDYgKzEzNTcsMTIgQEAgaW50IGFuYWxvZ2l4X2RwX3N1c3Bl
-bmQoc3RydWN0IGRldmljZSAqZGV2KQogCXN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwID0g
-ZGV2X2dldF9kcnZkYXRhKGRldik7CiAKIAljbGtfZGlzYWJsZV91bnByZXBhcmUoZHAtPmNsb2Nr
-KTsKKworCWlmIChkcC0+cGxhdF9kYXRhLT5wYW5lbCkgeworCQlpZiAoZHJtX3BhbmVsX3VucHJl
-cGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCkpCisJCQlEUk1fRVJST1IoImZhaWxlZCB0byB0dXJu
-b2ZmIHRoZSBwYW5lbFxuIik7CisJfQorCiAJcmV0dXJuIDA7CiB9CiBFWFBPUlRfU1lNQk9MX0dQ
-TChhbmFsb2dpeF9kcF9zdXNwZW5kKTsKQEAgLTEzNzIsNiArMTM3OCwxMyBAQCBpbnQgYW5hbG9n
-aXhfZHBfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKIAkJcmV0dXJuIHJldDsKIAl9CiAKKwlp
-ZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwpIHsKKwkJaWYgKGRybV9wYW5lbF9wcmVwYXJlKGRwLT5w
-bGF0X2RhdGEtPnBhbmVsKSkgeworCQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gc2V0dXAgdGhlIHBh
-bmVsXG4iKTsKKwkJCXJldHVybiAtRUJVU1k7CisJCX0KKwl9CisKIAlyZXR1cm4gMDsKIH0KIEVY
-UE9SVF9TWU1CT0xfR1BMKGFuYWxvZ2l4X2RwX3Jlc3VtZSk7Ci0tIAoxLjkuMQoKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+It may caused a dead lock if we flush the hpd work in bridge disable time.
+
+The normal flow would like:
+  IN --> DRM IOCTL
+        1. Acquire crtc_ww_class_mutex (DRM IOCTL)
+  IN --> analogix_dp_bridge
+        2. Acquire hpd work lock (Flush hpd work)
+        3. HPD work already in idle, no need to run the work function.
+  OUT <-- analogix_dp_bridge
+  OUT <-- DRM IOCTL
+
+The dead lock flow would like:
+  IN --> DRM IOCTL
+        1. Acquire crtc_ww_class_mutex (DRM IOCTL)
+  IN --> analogix_dp_bridge
+        2. Acquire hpd work lock (Flush hpd work)
+  IN --> analogix_dp_hotplug
+  IN --> drm_helper_hpd_irq_event
+        3. Acquire mode_config lock (This lock already have been acquired in previous step 1)
+** Dead Lock Now **
+
+It's wrong to flush the hpd work in bridge->disable time, I guess the
+original code just want to ensure the delay work must be finish before
+encoder disabled.
+
+The flush work in bridge disable time is try to ensure the HPD event
+won't be missed before display card disabled, actually we can take a
+fast respond way(interrupt thread) to update DRM HPD event to fix the
+delay update and possible dead lock.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+---
+Changes in v11: None
+Changes in v10: None
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 62 ++++++++++------------
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  3 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 26 +++++++++
+ 3 files changed, 55 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index bc4a9e0..c66c522 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -848,47 +848,40 @@ static void analogix_dp_enable_scramble(struct analogix_dp_device *dp,
+ 	}
+ }
+ 
+-static irqreturn_t analogix_dp_irq_handler(int irq, void *arg)
++static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
+ {
+ 	struct analogix_dp_device *dp = arg;
+-
++	irqreturn_t ret = IRQ_NONE;
+ 	enum dp_irq_type irq_type;
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
+-	switch (irq_type) {
+-	case DP_IRQ_TYPE_HP_CABLE_IN:
+-		dev_dbg(dp->dev, "Received irq - cable in\n");
+-		schedule_work(&dp->hotplug_work);
+-		analogix_dp_clear_hotplug_interrupts(dp);
+-		break;
+-	case DP_IRQ_TYPE_HP_CABLE_OUT:
+-		dev_dbg(dp->dev, "Received irq - cable out\n");
+-		analogix_dp_clear_hotplug_interrupts(dp);
+-		break;
+-	case DP_IRQ_TYPE_HP_CHANGE:
+-		/*
+-		 * We get these change notifications once in a while, but there
+-		 * is nothing we can do with them. Just ignore it for now and
+-		 * only handle cable changes.
+-		 */
+-		dev_dbg(dp->dev, "Received irq - hotplug change; ignoring.\n");
+-		analogix_dp_clear_hotplug_interrupts(dp);
+-		break;
+-	default:
+-		dev_err(dp->dev, "Received irq - unknown type!\n");
+-		break;
++	if (irq_type != DP_IRQ_TYPE_UNKNOWN) {
++		analogix_dp_mute_hpd_interrupt(dp);
++		ret = IRQ_WAKE_THREAD;
+ 	}
+-	return IRQ_HANDLED;
++
++	return ret;
+ }
+ 
+-static void analogix_dp_hotplug(struct work_struct *work)
++static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ {
+-	struct analogix_dp_device *dp;
++	struct analogix_dp_device *dp = arg;
++	enum dp_irq_type irq_type;
++
++	irq_type = analogix_dp_get_irq_type(dp);
++	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
++	    irq_type & DP_IRQ_TYPE_HP_CABLE_OUT) {
++		dev_dbg(dp->dev, "Detected cable status changed!\n");
++		if (dp->drm_dev)
++			drm_helper_hpd_irq_event(dp->drm_dev);
++	}
+ 
+-	dp = container_of(work, struct analogix_dp_device, hotplug_work);
++	if (irq_type != DP_IRQ_TYPE_UNKNOWN) {
++		analogix_dp_clear_hotplug_interrupts(dp);
++		analogix_dp_unmute_hpd_interrupt(dp);
++	}
+ 
+-	if (dp->drm_dev)
+-		drm_helper_hpd_irq_event(dp->drm_dev);
++	return IRQ_HANDLED;
+ }
+ 
+ static void analogix_dp_commit(struct analogix_dp_device *dp)
+@@ -1034,7 +1027,6 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	}
+ 
+ 	disable_irq(dp->irq);
+-	flush_work(&dp->hotplug_work);
+ 	phy_power_off(dp->phy);
+ 
+ 	if (dp->plat_data->power_off)
+@@ -1293,8 +1285,6 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+ 		return -ENODEV;
+ 	}
+ 
+-	INIT_WORK(&dp->hotplug_work, analogix_dp_hotplug);
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	phy_power_on(dp->phy);
+@@ -1308,8 +1298,10 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+ 
+ 	analogix_dp_init_dp(dp);
+ 
+-	ret = devm_request_irq(&pdev->dev, dp->irq, analogix_dp_irq_handler,
+-			       irq_flags, "analogix-dp", dp);
++	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
++					analogix_dp_hardirq,
++					analogix_dp_irq_thread,
++					irq_flags, "analogix-dp", dp);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request irq\n");
+ 		goto err_disable_pm_runtime;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+index 73b780e..641f79d 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -178,7 +178,6 @@ struct analogix_dp_device {
+ 
+ 	struct video_info	video_info;
+ 	struct link_train	link_train;
+-	struct work_struct	hotplug_work;
+ 	struct phy		*phy;
+ 	int			dpms_mode;
+ 	int			hpd_gpio;
+@@ -197,6 +196,8 @@ void analogix_dp_init_interrupt(struct analogix_dp_device *dp);
+ void analogix_dp_reset(struct analogix_dp_device *dp);
+ void analogix_dp_swreset(struct analogix_dp_device *dp);
+ void analogix_dp_config_interrupt(struct analogix_dp_device *dp);
++void analogix_dp_mute_hpd_interrupt(struct analogix_dp_device *dp);
++void analogix_dp_unmute_hpd_interrupt(struct analogix_dp_device *dp);
+ enum pll_status analogix_dp_get_pll_lock_status(struct analogix_dp_device *dp);
+ void analogix_dp_set_pll_power_down(struct analogix_dp_device *dp, bool enable);
+ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index dc376bd..00ac13c 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -185,6 +185,32 @@ void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA_MASK);
+ }
+ 
++void analogix_dp_mute_hpd_interrupt(struct analogix_dp_device *dp)
++{
++	u32 reg;
++
++	/* 0: mask, 1: unmask */
++	reg = readl(dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_4);
++	reg &= ~COMMON_INT_MASK_4;
++	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_4);
++
++	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA_MASK);
++	reg &= ~INT_STA_MASK;
++	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA_MASK);
++}
++
++void analogix_dp_unmute_hpd_interrupt(struct analogix_dp_device *dp)
++{
++	u32 reg;
++
++	/* 0: mask, 1: unmask */
++	reg = COMMON_INT_MASK_4;
++	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_4);
++
++	reg = INT_STA_MASK;
++	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA_MASK);
++}
++
+ enum pll_status analogix_dp_get_pll_lock_status(struct analogix_dp_device *dp)
+ {
+ 	u32 reg;
+-- 
+1.9.1
