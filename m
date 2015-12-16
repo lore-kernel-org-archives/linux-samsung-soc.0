@@ -1,150 +1,143 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v11 14/19] drm: bridge: analogix/dp: try force hpd after plug
- in lookup failed
-Date: Wed, 16 Dec 2015 11:51:24 +0800
-Message-ID: <1450237884-3081-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v11 15/19] drm: bridge: analogix/dp: move hpd detect to connector detect function
+Date: Wed, 16 Dec 2015 11:53:29 +0800
+Message-ID: <1450238009-3128-1-git-send-email-ykk@rock-chips.com>
 References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:54907 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754366AbbLPDzh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Dec 2015 22:55:37 -0500
 In-Reply-To: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-U29tZSBlZHAgc2NyZWVuIGRvIG5vdCBoYXZlIGhwZCBzaWduYWwsIHNvIHdlIGNhbid0IGp1c3Qg
-cmV0dXJuCmZhaWxlZCB3aGVuIGhwZCBwbHVnIGluIGRldGVjdCBmYWlsZWQuCgpUaGlzIGlzIGFu
-IGhhcmR3YXJlIHByb3BlcnR5LCBzbyB3ZSBuZWVkIGFkZCBhIGRldmljZXRyZWUgcHJvcGVydHkK
-ImFuYWxvZ2l4LG5lZWQtZm9yY2UtaHBkIiB0byBpbmRpY2F0ZSB0aGlzIHN1dGlhdGlvbi4KClNp
-Z25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KQWNrZWQtYnk6IFJv
-YiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+ClRlc3RlZC1ieTogSmF2aWVyIE1hcnRpbmV6IENh
-bmlsbGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPgotLS0KQ2hhbmdlcyBpbiB2MTE6Ci0gUmVu
-YW1lIHRoZSAiYW5hbG9naXgsbmVlZC1mb3JjZS1ocGQiIHRvIGNvbW1vbiAnZm9yY2UtaHBkJyAo
-Um9iKQotIEFkZCB0aGUgYWNrIGZyb20gUm9iIEhlcnJpbmcKCkNoYW5nZXMgaW4gdjEwOiBOb25l
-CkNoYW5nZXMgaW4gdjk6IE5vbmUKQ2hhbmdlcyBpbiB2ODogTm9uZQpDaGFuZ2VzIGluIHY3OiBO
-b25lCkNoYW5nZXMgaW4gdjY6IE5vbmUKQ2hhbmdlcyBpbiB2NTogTm9uZQpDaGFuZ2VzIGluIHY0
-OiBOb25lCkNoYW5nZXMgaW4gdjM6Ci0gQWRkICJhbmFsb2dpeCxuZWVkLWZvcmNlLWhwZCIgdG8g
-aW5kaWNhdGUgd2hldGhlciBkcml2ZXIgbmVlZCBmb2NlCiAgaHBkIHdoZW4gaHBkIGRldGVjdCBm
-YWlsZWQuCgpDaGFuZ2VzIGluIHYyOiBOb25lCgogLi4uL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdl
-L2FuYWxvZ2l4X2RwLnR4dCAgICAgICAgfCAgNCArKy0KIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4
-eW5vcy9leHlub3NfZHAudHh0ICAgICAgICAgIHwgIDEgKwogLi4uL2Rpc3BsYXkvcm9ja2NoaXAv
-YW5hbG9naXhfZHAtcm9ja2NoaXAudHh0ICAgICAgfCAgMSArCiBkcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyB8IDM1ICsrKysrKysrKysrKysrKysrKy0t
-LS0KIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIHwg
-IDIgKysKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMg
-IHwgIDkgKysrKysrCiA2IGZpbGVzIGNoYW5nZWQsIDQ2IGluc2VydGlvbnMoKyksIDYgZGVsZXRp
-b25zKC0pCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
-c3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9hbmFsb2dpeF9kcC50eHQKaW5kZXggNzY1OWE3YS4uNGYy
-YmE4YyAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3Bs
-YXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvZGlzcGxheS9icmlkZ2UvYW5hbG9naXhfZHAudHh0CkBAIC0yMiw2ICsyMiw5IEBA
-IFJlcXVpcmVkIHByb3BlcnRpZXMgZm9yIGRwLWNvbnRyb2xsZXI6CiAJCWZyb20gZ2VuZXJhbCBQ
-SFkgYmluZGluZzogU2hvdWxkIGJlICJkcCIuCiAKIE9wdGlvbmFsIHByb3BlcnRpZXMgZm9yIGRw
-LWNvbnRyb2xsZXI6CisJLWZvcmNlLWhwZDoKKwkJSW5kaWNhdGUgZHJpdmVyIG5lZWQgZm9yY2Ug
-aHBkIHdoZW4gaHBkIGRldGVjdCBmYWlsZWQsIHRoaXMKKwkJaXMgdXNlZCBmb3Igc29tZSBlRFAg
-c2NyZWVuIHdoaWNoIGRvbid0IGhhdmUgaHBkIHNpZ25hbC4KIAktaHBkLWdwaW9zOgogCQlIb3Rw
-bHVnIGRldGVjdCBHUElPLgogCQlJbmRpY2F0ZXMgd2hpY2ggR1BJTyBzaG91bGQgYmUgdXNlZCBm
-b3IgaG90cGx1ZyBkZXRlY3Rpb24KQEAgLTMxLDcgKzM0LDYgQEAgT3B0aW9uYWwgcHJvcGVydGll
-cyBmb3IgZHAtY29udHJvbGxlcjoKIAkJKiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dAogCQkqIERvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy92aWRlby9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKIAotCiBbMV06IERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS92aWRlby1pbnRlcmZhY2VzLnR4
-dAogLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RwLnR4dCBiL0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0Cmlu
-ZGV4IDk5MDUwODEuLjg4MDAxNjQgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0CisrKyBiL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHAudHh0CkBAIC00
-MSw2ICs0MSw3IEBAIEZvciB0aGUgYmVsb3cgcHJvcGVydGllcywgcGxlYXNlIHJlZmVyIHRvIEFu
-YWxvZ2l4IERQIGJpbmRpbmcgZG9jdW1lbnQ6CiAJLXBoeXMgKHJlcXVpcmVkKQogCS1waHktbmFt
-ZXMgKHJlcXVpcmVkKQogCS1ocGQtZ3Bpb3MgKG9wdGlvbmFsKQorCS1hbmFsb2dpeCxuZWVkLWZv
-cmNlLWhwZCAob3B0aW9uYWwpCiAJLXZpZGVvIGludGVyZmFjZXMgKG9wdGlvbmFsKQogCiBEZXBy
-ZWNhdGVkIHByb3BlcnRpZXMgZm9yIERpc3BsYXlQb3J0OgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9j
-a2NoaXAudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9j
-a2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAudHh0CmluZGV4IDA0ZDk5ZTMuLmU4MzJmZjkgMTAw
-NjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3JvY2tj
-aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKQEAg
-LTMyLDYgKzMyLDcgQEAgRm9yIHRoZSBiZWxvdyBwcm9wZXJ0aWVzLCBwbGVhc2UgcmVmZXIgdG8g
-QW5hbG9naXggRFAgYmluZGluZyBkb2N1bWVudDoKIC0gcGh5cyAocmVxdWlyZWQpCiAtIHBoeS1u
-YW1lcyAocmVxdWlyZWQpCiAtIGhwZC1ncGlvcyAob3B0aW9uYWwpCistIGZvcmNlLWhwZCAob3B0
-aW9uYWwpCiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAKIEV4YW1wbGU6CmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCmluZGV4IGY2MjQ4
-MTAuLjllYjE3Y2UgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgv
-YW5hbG9naXhfZHBfY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgv
-YW5hbG9naXhfZHBfY29yZS5jCkBAIC01OSwxNSArNTksMzggQEAgc3RhdGljIGludCBhbmFsb2dp
-eF9kcF9kZXRlY3RfaHBkKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQogewogCWludCB0
-aW1lb3V0X2xvb3AgPSAwOwogCi0Jd2hpbGUgKGFuYWxvZ2l4X2RwX2dldF9wbHVnX2luX3N0YXR1
-cyhkcCkgIT0gMCkgeworCXdoaWxlICh0aW1lb3V0X2xvb3AgPCBEUF9USU1FT1VUX0xPT1BfQ09V
-TlQpIHsKKwkJaWYgKGFuYWxvZ2l4X2RwX2dldF9wbHVnX2luX3N0YXR1cyhkcCkgPT0gMCkKKwkJ
-CXJldHVybiAwOworCiAJCXRpbWVvdXRfbG9vcCsrOwotCQlpZiAodGltZW91dF9sb29wID4gRFBf
-VElNRU9VVF9MT09QX0NPVU5UKSB7Ci0JCQlkZXZfZXJyKGRwLT5kZXYsICJmYWlsZWQgdG8gZ2V0
-IGhwZCBwbHVnIHN0YXR1c1xuIik7Ci0JCQlyZXR1cm4gLUVUSU1FRE9VVDsKLQkJfQogCQl1c2xl
-ZXBfcmFuZ2UoMTAsIDExKTsKIAl9CiAKKwkvKgorCSAqIFNvbWUgZWRwIHNjcmVlbiBkbyBub3Qg
-aGF2ZSBocGQgc2lnbmFsLCBzbyB3ZSBjYW4ndCBqdXN0CisJICogcmV0dXJuIGZhaWxlZCB3aGVu
-IGhwZCBwbHVnIGluIGRldGVjdCBmYWlsZWQsIERUIHByb3BlcnR5CisJICogIm5lZWQtZm9yY2Ut
-aHBkIiB3b3VsZCBpbmRpY2F0ZSB3aGV0aGVyIGRyaXZlciBuZWVkIHRoaXMuCisJICovCisJaWYg
-KCFkcC0+Zm9yY2VfaHBkKQorCQlyZXR1cm4gLUVUSU1FRE9VVDsKKworCS8qCisJICogVGhlIGVE
-UCBUUk0gaW5kaWNhdGUgdGhhdCBpZiBIUERfU1RBVFVTKFJPKSBpcyAwLCBBVVggQ0gKKwkgKiB3
-aWxsIG5vdCB3b3JrLCBzbyB3ZSBuZWVkIHRvIGdpdmUgYSBmb3JjZSBocGQgYWN0aW9uIHRvCisJ
-ICogc2V0IEhQRF9TVEFUVVMgbWFudWFsbHkuCisJICovCisJZGV2X2RiZyhkcC0+ZGV2LCAiZmFp
-bGVkIHRvIGdldCBocGQgcGx1ZyBzdGF0dXMsIHRyeSB0byBmb3JjZSBocGRcbiIpOworCisJYW5h
-bG9naXhfZHBfZm9yY2VfaHBkKGRwKTsKKworCWlmIChhbmFsb2dpeF9kcF9nZXRfcGx1Z19pbl9z
-dGF0dXMoZHApICE9IDApIHsKKwkJZGV2X2VycihkcC0+ZGV2LCAiZmFpbGVkIHRvIGdldCBocGQg
-cGx1ZyBpbiBzdGF0dXNcbiIpOworCQlyZXR1cm4gLUVJTlZBTDsKKwl9CisKKwlkZXZfZGJnKGRw
-LT5kZXYsICJzdWNjZXNzIHRvIGdldCBwbHVnIGluIHN0YXR1cyBhZnRlciBmb3JjZSBocGRcbiIp
-OworCiAJcmV0dXJuIDA7CiB9CiAKQEAgLTEyNDYsNiArMTI2OSw4IEBAIGludCBhbmFsb2dpeF9k
-cF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCiAJ
-aWYgKElTX0VSUihkcC0+cmVnX2Jhc2UpKQogCQlyZXR1cm4gUFRSX0VSUihkcC0+cmVnX2Jhc2Up
-OwogCisJZHAtPmZvcmNlX2hwZCA9IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYtPm9mX25vZGUs
-ICJmb3JjZS1ocGQiKTsKKwogCWRwLT5ocGRfZ3BpbyA9IG9mX2dldF9uYW1lZF9ncGlvKGRldi0+
-b2Zfbm9kZSwgImhwZC1ncGlvcyIsIDApOwogCWlmICghZ3Bpb19pc192YWxpZChkcC0+aHBkX2dw
-aW8pKQogCQlkcC0+aHBkX2dwaW8gPSBvZl9nZXRfbmFtZWRfZ3BpbyhkZXYtPm9mX25vZGUsCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2Nv
-cmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5o
-CmluZGV4IDQ1NTU1ZWMuLmJhYTA2ZTIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCkBAIC0xNjAsNiArMTYwLDcgQEAgc3RydWN0
-IGFuYWxvZ2l4X2RwX2RldmljZSB7CiAJc3RydWN0IHBoeQkJKnBoeTsKIAlpbnQJCQlkcG1zX21v
-ZGU7CiAJaW50CQkJaHBkX2dwaW87CisJYm9vbCAgICAgICAgICAgICAgICAgICAgZm9yY2VfaHBk
-OwogCiAJc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSAqcGxhdF9kYXRhOwogfTsKQEAgLTE4
-MCw2ICsxODEsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX3NldF9hbmFsb2dfcG93ZXJfZG93bihzdHJ1
-Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKIAkJCQkgICAgICAgYm9vbCBlbmFibGUpOwogdm9p
-ZCBhbmFsb2dpeF9kcF9pbml0X2FuYWxvZ19mdW5jKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2Ug
-KmRwKTsKIHZvaWQgYW5hbG9naXhfZHBfaW5pdF9ocGQoc3RydWN0IGFuYWxvZ2l4X2RwX2Rldmlj
-ZSAqZHApOwordm9pZCBhbmFsb2dpeF9kcF9mb3JjZV9ocGQoc3RydWN0IGFuYWxvZ2l4X2RwX2Rl
-dmljZSAqZHApOwogZW51bSBkcF9pcnFfdHlwZSBhbmFsb2dpeF9kcF9nZXRfaXJxX3R5cGUoc3Ry
-dWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwogdm9pZCBhbmFsb2dpeF9kcF9jbGVhcl9ob3Rw
-bHVnX2ludGVycnVwdHMoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwogdm9pZCBhbmFs
-b2dpeF9kcF9yZXNldF9hdXgoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKaW5kZXgg
-MjFhMzI4Ny4uYzdlMjk1OSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
-b2dpeC9hbmFsb2dpeF9kcF9yZWcuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
-Z2l4L2FuYWxvZ2l4X2RwX3JlZy5jCkBAIC0zNjUsNiArMzY1LDE1IEBAIHZvaWQgYW5hbG9naXhf
-ZHBfaW5pdF9ocGQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCiAJd3JpdGVsKHJlZywg
-ZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfU1lTX0NUTF8zKTsKIH0KIAordm9pZCBhbmFsb2dp
-eF9kcF9mb3JjZV9ocGQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCit7CisJdTMyIHJl
-ZzsKKworCXJlZyA9IHJlYWRsKGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1NZU19DVExfMyk7
-CisJcmVnID0gKEZfSFBEIHwgSFBEX0NUUkwpOworCXdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSAr
-IEFOQUxPR0lYX0RQX1NZU19DVExfMyk7Cit9CisKIGVudW0gZHBfaXJxX3R5cGUgYW5hbG9naXhf
-ZHBfZ2V0X2lycV90eXBlKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQogewogCXUzMiBy
-ZWc7Ci0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+This change just make a little clean to make code more like
+drm core expect, move hdp detect code from bridge->enable(),
+and place them into connector->detect().
+
+Note: Gustavo Padovan try to remove the controller and phy
+power on function in bind time at bellow commit:
+	drm/exynos: do not start enabling DP at bind() phase
+
+But for now the connector status don't hardcode to connected,
+need to operate dp phy in .detect function, so we need to revert
+parts if Gustavo Padovan's changes, add phy poweron
+function in bind time.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+Changes in v11:
+- Revert parts of Gustavo Padovan's changes in commit:
+	drm/exynos: do not start enabling DP at bind() phase
+  Add dp phy poweron function in bind time.
+- Move the panel prepare from get_modes time to bind time, and move
+  the panel unprepare from bridge->disable to unbind time. (Heiko)
+
+Changes in v10: None
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6: None
+Changes in v5: None
+Changes in v4:
+- Take Jingoo suggest, add commit messages.
+
+Changes in v3:
+- move dp hpd detect to connector detect function.
+
+Changes in v2: None
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 38 ++++++++++++----------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 9eb17ce..952c2c3 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -901,12 +901,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to disable the panel\n");
+ 	}
+ 
+-	ret = analogix_dp_detect_hpd(dp);
+-	if (ret) {
+-		/* Cable has been disconnected, we're done */
+-		return;
+-	}
+-
+ 	ret = analogix_dp_handle_edid(dp);
+ 	if (ret) {
+ 		dev_err(dp->dev, "unable to handle edid\n");
+@@ -941,6 +935,11 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 
+ enum drm_connector_status analogix_dp_detect(struct device *dev, bool force)
+ {
++	struct analogix_dp_device *dp = dev_get_drvdata(dev);
++
++	if (analogix_dp_detect_hpd(dp))
++		return connector_status_disconnected;
++
+ 	return connector_status_connected;
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_detect);
+@@ -1006,13 +1005,6 @@ static void analogix_dp_bridge_enable(struct drm_bridge *bridge)
+ 
+ 	pm_runtime_get_sync(dp->dev);
+ 
+-	if (dp->plat_data->panel) {
+-		if (drm_panel_prepare(dp->plat_data->panel)) {
+-			DRM_ERROR("failed to setup the panel\n");
+-			return;
+-		}
+-	}
+-
+ 	if (dp->plat_data->power_on)
+ 		dp->plat_data->power_on(dp->plat_data);
+ 
+@@ -1045,11 +1037,6 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
+ 
+-	if (dp->plat_data->panel) {
+-		if (drm_panel_unprepare(dp->plat_data->panel))
+-			DRM_ERROR("failed to turnoff the panel\n");
+-	}
+-
+ 	pm_runtime_put_sync(dp->dev);
+ 
+ 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
+@@ -1307,6 +1294,15 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+ 
+ 	pm_runtime_enable(dev);
+ 
++	phy_power_on(dp->phy);
++
++	if (dp->plat_data->panel) {
++		if (drm_panel_prepare(dp->plat_data->panel)) {
++			DRM_ERROR("failed to setup the panel\n");
++			return -EBUSY;
++		}
++	}
++
+ 	ret = devm_request_irq(&pdev->dev, dp->irq, analogix_dp_irq_handler,
+ 			       irq_flags, "analogix-dp", dp);
+ 	if (ret) {
+@@ -1340,6 +1336,12 @@ void analogix_dp_unbind(struct device *dev, struct device *master,
+ 	struct analogix_dp_device *dp = dev_get_drvdata(dev);
+ 
+ 	analogix_dp_bridge_disable(dp->bridge);
++
++	if (dp->plat_data->panel) {
++		if (drm_panel_unprepare(dp->plat_data->panel))
++			DRM_ERROR("failed to turnoff the panel\n");
++	}
++
+ 	pm_runtime_disable(dev);
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
+-- 
+1.9.1
