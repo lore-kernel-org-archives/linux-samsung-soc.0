@@ -1,96 +1,112 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 2/7] drm/exynos: make zpos property configurable
-Date: Wed, 16 Dec 2015 15:28:38 +0100
-Message-ID: <56717516.5000406@samsung.com>
-References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
- <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
- <20151216132836.GM30437@phenom.ffwll.local> <56716CFC.1090006@samsung.com>
- <20151216142158.GP30437@phenom.ffwll.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:13153 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934132AbbLPO2m (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Dec 2015 09:28:42 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NZG00F6SG7S44C0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Dec 2015 14:28:40 +0000 (GMT)
-In-reply-to: <20151216142158.GP30437@phenom.ffwll.local>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v3 0/7] Exynos: MFC driver: reserved memory cleanup and IOMMU
+ support
+Date: Wed, 16 Dec 2015 16:37:22 +0100
+Message-ID: <1450280249-24681-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
 Hello,
 
-On 2015-12-16 15:21, Daniel Vetter wrote:
-> On Wed, Dec 16, 2015 at 02:54:04PM +0100, Marek Szyprowski wrote:
->> On 2015-12-16 14:28, Daniel Vetter wrote:
->>> On Wed, Dec 16, 2015 at 01:21:43PM +0100, Marek Szyprowski wrote:
->>>> This patch adds all infrastructure to make zpos plane property
->>>> configurable from userspace.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Imo zpos should be a generic atomic property with well-defined semantics
->>> shared across drivers. So
->>> - storead (in decoded form) in drm_plane_state
->>> - common functions to register/attach zpos prop to a plane, with
->>>    full-blown kerneldoc explaining how it should work
->>> - generic kms igt to validate that interface
->>>
->>> One of the big things that always comes up when we talk about zpos is how
->>> equal zpos should be handled, and how exactly they should be sorted. I
->>> think for that we should have a drm function which computes a normalized
->>> zpos. Or the core check code should reject such nonsense.
->> IMHO it will be enough to state that the case of equal zpos is HW specific.
->> This might simplify some driver logic. For example, in case of Exynos Mixer,
->> equal priority (zpos) means that HW predefined order will be used, so there
->> is no need to normalize zpos values.
->>
->> If you want I can move zpos to drm core and add a function to normalize
->> zpos,
->> although for this particular driver normalization is not needed.
->>
->> It should be quite easy to convert other drivers to use the generic zpos
->> property. The only problem I see is how to handle omap driver, which use
->> 'zorder' property.
->>
->> What about some other typical properties related to blending:
->> - global plane alpha,
->> - colorkey,
->> - alpha mode (standard or pre-multiplied) for alpha-enabled modes,
->> - crtc background color.
->>
->> Do you also want to handle them as generic or driver-specific properties?
-> Should all be generic really. And it's also kinda ABI, so userspace
-> needed, and preferrably a proper/automated testcase. i915 has
-> infrastructure to use display pipeline CRCs to really measure it's all
-> correct even, and that's the standard I'd like to see for all KMS API
-> extensions like this.
+This patchset finally perform cleanup of custom code in s5p-mfc codec
+driver. The first part is removal of custom, driver specific code for
+intializing and handling of reserved memory. Instead, a generic code for
+reserved memory regions is used. Then, once it is done, the proper setup
+of DMA parameters (max segment size) is applied for all multimedia
+devices found on Exynos SoCs to let them properly handle shared buffers
+mapped into contiguous DMA address space. The last patch adds support
+for IOMMU to MFC driver. Some additional code is needed because of
+specific requirements of MFC device firmware (see patch 7 for more
+details). When no IOMMU is available, the code fallbacks to generic
+reserved memory regions.
 
-Could you tell a bit more about this pipeline CRCs? What is it?
+After applying this patchset, MFC device works correctly when IOMMU is
+either enabled or disabled.
 
-> Since if we don't do this we'll end up in a giant mess, and it will be
-> impossible to write a kms compositor that's generic and uses all this.
->
-> And since this stuff is supposed to be generic, fluffy/unspecified
-> semantics aren't good. Especially if your hw can just somehow deal with it
-> all.
->
->> I plan to add support for them to Exynos Mixer and I would like to avoid
->> doing this twice.
-> It's a lot more work than just adding a few members to drm_plane_state.
-
-I see. Could you elaborate a bit more on what you want to have in drm 
-core for
-handling all the mentioned features?
+Patches have been tested on top of linux-next from 20151207. I would
+prefer to merge patches 1-2 via Samsung tree and patches 3-7 via media
+tree (there are no compile-time dependencies between patches 1-2 and
+3-7). Patches have been tested on Odroid U3 (Exynos 4412 based) and
+Odroid XU3 (Exynos 5422 based) boards.
 
 Best regards
--- 
-Marek Szyprowski, PhD
+Marek Szyprowski
 Samsung R&D Institute Poland
+
+
+Changelog:
+v3:
+- fixed issues pointed by Laurent Pinchart:
+  - added documentation to memory-region-names property,
+  - changed devm_kzalloc to kzalloc in vb2_dma_contig_set_max_seg_size() to
+    avoid access to freed memory after reloading driver module
+- unified odroid mfc reserved memory configuration with other Exynos4 boards
+
+v2: http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97025
+- reworked of_reserved_mem_init* functions on request from Rob Herring,
+  added separate index and name based selection of reserved region
+- adapted for of_reserved_mem_init* related changes
+
+v1: https://www.mail-archive.com/linux-media@vger.kernel.org/msg94100.html
+- initial version of another approach for this problem, rewrote driver code
+  for new reserved memory bindings, which finally have been merged some
+  time ago
+
+v0: http://lists.infradead.org/pipermail/linux-arm-kernel/2013-August/189259.html
+- old patchset solving the same problem, abandoned due to other tasks
+  and long time of merging reserved memory bindings and support code for
+  it
+
+Patch summary:
+
+Marek Szyprowski (7):
+  ARM: Exynos: convert MFC device to generic reserved memory bindings
+  ARM: dts: exynos4412-odroid*: enable MFC device
+  of: reserved_mem: add support for named reserved mem nodes
+  media: vb2-dma-contig: add helper for setting dma max seg size
+  media: set proper max seg size for devices on Exynos SoCs
+  media: s5p-mfc: replace custom reserved memory init code with generic
+    one
+  media: s5p-mfc: add iommu support
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |  16 +--
+ .../bindings/reserved-memory/reserved-memory.txt   |   2 +
+ .../devicetree/bindings/resource-names.txt         |   1 +
+ arch/arm/boot/dts/exynos4210-origen.dts            |  22 ++-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |  22 ++-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  24 ++++
+ arch/arm/boot/dts/exynos4412-origen.dts            |  22 ++-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |  22 ++-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  22 ++-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |  22 ++-
+ arch/arm/boot/dts/exynos5250-spring.dts            |  22 ++-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  22 ++-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |  22 ++-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  22 ++-
+ arch/arm/mach-exynos/Makefile                      |   2 -
+ arch/arm/mach-exynos/exynos.c                      |  19 ---
+ arch/arm/mach-exynos/mfc.h                         |  16 ---
+ arch/arm/mach-exynos/s5p-dev-mfc.c                 |  94 -------------
+ drivers/media/platform/exynos-gsc/gsc-core.c       |   1 +
+ drivers/media/platform/exynos4-is/fimc-core.c      |   1 +
+ drivers/media/platform/exynos4-is/fimc-is.c        |   1 +
+ drivers/media/platform/exynos4-is/fimc-lite.c      |   1 +
+ drivers/media/platform/s5p-g2d/g2d.c               |   1 +
+ drivers/media/platform/s5p-jpeg/jpeg-core.c        |   1 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           | 153 ++++++++++++---------
+ drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h     |  79 +++++++++++
+ drivers/media/platform/s5p-tv/mixer_video.c        |   1 +
+ drivers/media/v4l2-core/videobuf2-dma-contig.c     |  14 ++
+ drivers/of/of_reserved_mem.c                       | 104 +++++++++++---
+ include/linux/of_reserved_mem.h                    |  31 ++++-
+ include/media/videobuf2-dma-contig.h               |   1 +
+ 31 files changed, 535 insertions(+), 248 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/mfc.h
+ delete mode 100644 arch/arm/mach-exynos/s5p-dev-mfc.c
+ create mode 100644 drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
+
+-- 
+1.9.2
