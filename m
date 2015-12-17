@@ -1,87 +1,124 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL 0/9] ARM: EXYNOS: Pull request for v4.5
-Date: Thu, 17 Dec 2015 11:04:18 +0900
-Message-ID: <56721822.7020608@samsung.com>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
- <56721326.30004@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v3 2/7] drm/exynos: make zpos property configurable
+Date: Thu, 17 Dec 2015 11:55:43 +0900
+Message-ID: <5672242F.4070801@samsung.com>
+References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
+ <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56721326.30004@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17.12.2015 10:43, Krzysztof Kozlowski wrote:
-> On 02.12.2015 10:39, Krzysztof Kozlowski wrote:
->> Hi Kukjin,
->>
->> A lot of stuff for v4.5 with 3 dependencies split into
->> separate tags. The need for dependency is explained both
->> in merge-commit and in description of a tag which is using
->> the dependency.
-> 
-> Hi everyone,
-> 
-> It's been like two weeks... we are after v4.4-rc5 and Christmas season
-> is coming... there are some dependencies here and even more stuff waits
-> out of queue for this pull request (moving SROM and PMU to drivers/soc,
-> cpufreq for Exynos542x).
-> 
-> What I want to say is that I am really not sure whether further waiting
-> is beneficial...
-> All these patches have been boiling in linux-next for some time (through
-> my tree).
-> 
-> 
-> Are there any comments about this pull request? Ordering of branches?
-> Weird looking tags? Bugs? etc.? Anything waits in your tree Kukjin?
-> 
-> 
-> Maybe this could be pulled directly by arm-soc folks?
-> 
-
-Actually in the same time I sent this mail I got an ack from Kukjin (his
-Business Trip to China extended further than planned), so:
-
-Arnd, Kevin and Olof,
-Could you pull this for v4.5 or share your comments?
-
-
-The number of tags is not that scary... just some dependencies split
-across 3 tags.
-
-
-Best regards,
-Krzysztof
-
-
-
-> 
->>
->> The order goes like (but of course dependencies
->> could be pulled all at once at beginning):
->> 1. tags/samsung-dt-syscon-restart-4.5
->> 2. tags/samsung-soc-4.5
->> 3. tags/samsung-clk-arm64-symbols-4.5
->> 4. tags/samsung-soc64-4.5
->> 5. tags/samsung-drivers-4.5
->> 6. tags/samsung-clk-exynos4-4.5
->> 7. tags/samsung-dt-4.5
->> 8. tags/samsung-dt64-4.5
->> 9. tags/samsung-defconfig-4.5
->>
->> I split dependencies to three tags so clock or other folks could
->> easily grab them if needed.
->>
->> Please share your comments or pull as early as possible as we have here
->> some more dependencies than usual.
->>
->>
->> Kind regards,
->> Krzysztof
->>
-> 
-> 
+K0NjOiBCb3JhbSBQYXJrLAoKSGkgTWFyZWssCgpPbiAxMi8xNi8yMDE1IDA5OjIxIFBNLCBNYXJl
+ayBTenlwcm93c2tpIHdyb3RlOgo+IFRoaXMgcGF0Y2ggYWRkcyBhbGwgaW5mcmFzdHJ1Y3R1cmUg
+dG8gbWFrZSB6cG9zIHBsYW5lIHByb3BlcnR5Cj4gY29uZmlndXJhYmxlIGZyb20gdXNlcnNwYWNl
+Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1z
+dW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5o
+ICAgfCAgNCArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMg
+fCA1MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tCj4gIDIgZmlsZXMgY2hhbmdlZCwg
+NDkgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2Rydi5oCj4gaW5kZXggNTg4YjY3NjNmOWM3Li5mMDgyN2RiZWJiN2QgMTAw
+NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gQEAgLTY0LDYgKzY0
+LDcgQEAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgewo+ICAJc3RydWN0IGV4eW5vc19k
+cm1fcmVjdCBzcmM7Cj4gIAl1bnNpZ25lZCBpbnQgaF9yYXRpbzsKPiAgCXVuc2lnbmVkIGludCB2
+X3JhdGlvOwo+ICsJdW5zaWduZWQgaW50IHpwb3M7Cj4gIH07Cj4gIAo+ICBzdGF0aWMgaW5saW5l
+IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICoKPiBAQCAtOTEsMTEgKzkyLDEyIEBAIHN0
+cnVjdCBleHlub3NfZHJtX3BsYW5lIHsKPiAgCj4gICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9D
+QVBfRE9VQkxFCSgxIDw8IDApCj4gICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfU0NBTEUJ
+KDEgPDwgMSkKPiArI2RlZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TCSgxIDw8IDIpCj4g
+IAo+ICAvKgo+ICAgKiBFeHlub3MgRFJNIHBsYW5lIGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlLgo+
+ICAgKgo+IC0gKiBAenBvczogei1wb3NpdGlvbiBvZiB0aGUgcGxhbmUuCj4gKyAqIEB6cG9zOiBp
+bml0aWFsIHotcG9zaXRpb24gb2YgdGhlIHBsYW5lLgo+ICAgKiBAdHlwZTogdHlwZSBvZiB0aGUg
+cGxhbmUgKHByaW1hcnksIGN1cnNvciBvciBvdmVybGF5KS4KPiAgICogQHBpeGVsX2Zvcm1hdHM6
+IHN1cHBvcnRlZCBwaXhlbCBmb3JtYXRzLgo+ICAgKiBAbnVtX3BpeGVsX2Zvcm1hdHM6IG51bWJl
+ciBvZiBlbGVtZW50cyBpbiAncGl4ZWxfZm9ybWF0cycuCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX3BsYW5lLmMKPiBpbmRleCBmZDZjYjRjZWUwMWEuLmEyYmRhYjgzNmI1MCAx
+MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwo+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gQEAgLTEy
+NCw2ICsxMjQsNyBAQCBzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGV4
+eW5vc19kcm1fcGxhbmVfc3RhdGUgKmV4eW5vc19zdGF0ZSkKPiAgCj4gIHN0YXRpYyB2b2lkIGV4
+eW5vc19kcm1fcGxhbmVfcmVzZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gIHsKPiArCXN0
+cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxh
+bmUpOwo+ICAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKmV4eW5vc19zdGF0ZTsKPiAg
+Cj4gIAlpZiAocGxhbmUtPnN0YXRlKSB7Cj4gQEAgLTEzNiw2ICsxMzcsNyBAQCBzdGF0aWMgdm9p
+ZCBleHlub3NfZHJtX3BsYW5lX3Jlc2V0KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQo+ICAKPiAg
+CWV4eW5vc19zdGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpleHlub3Nfc3RhdGUpLCBHRlBfS0VSTkVM
+KTsKPiAgCWlmIChleHlub3Nfc3RhdGUpIHsKPiArCQlleHlub3Nfc3RhdGUtPnpwb3MgPSBleHlu
+b3NfcGxhbmUtPmNvbmZpZy0+enBvczsKPiAgCQlwbGFuZS0+c3RhdGUgPSAmZXh5bm9zX3N0YXRl
+LT5iYXNlOwo+ICAJCXBsYW5lLT5zdGF0ZS0+cGxhbmUgPSBwbGFuZTsKPiAgCX0KPiBAQCAtMTUz
+LDYgKzE1NSw3IEBAIGV4eW5vc19kcm1fcGxhbmVfZHVwbGljYXRlX3N0YXRlKHN0cnVjdCBkcm1f
+cGxhbmUgKnBsYW5lKQo+ICAJCXJldHVybiBOVUxMOwo+ICAKPiAgCV9fZHJtX2F0b21pY19oZWxw
+ZXJfcGxhbmVfZHVwbGljYXRlX3N0YXRlKHBsYW5lLCAmY29weS0+YmFzZSk7Cj4gKwljb3B5LT56
+cG9zID0gZXh5bm9zX3N0YXRlLT56cG9zOwo+ICAJcmV0dXJuICZjb3B5LT5iYXNlOwo+ICB9Cj4g
+IAo+IEBAIC0xNjUsMTMgKzE2OCw1MyBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX3BsYW5lX2Rl
+c3Ryb3lfc3RhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIAlrZnJlZShvbGRfZXh5bm9z
+X3N0YXRlKTsKPiAgfQo+ICAKPiArc3RhdGljIGludCBleHlub3NfZHJtX3BsYW5lX2F0b21pY19z
+ZXRfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gKwkJCQkJCXN0cnVjdCBkcm1f
+cGxhbmVfc3RhdGUgKnN0YXRlLAo+ICsJCQkJCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpwcm9wZXJ0
+eSwKPiArCQkJCQkJdWludDY0X3QgdmFsKQo+ICt7Cj4gKwlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFu
+ZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKPiArCXN0cnVjdCBleHlu
+b3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3RhdGUgPQo+ICsJCQkJCXRvX2V4eW5vc19wbGFu
+ZV9zdGF0ZShzdGF0ZSk7Cj4gKwlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpkZXZfcHJpdiA9
+IHBsYW5lLT5kZXYtPmRldl9wcml2YXRlOwo+ICsJY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxh
+bmVfY29uZmlnICpjb25maWcgPSBleHlub3NfcGxhbmUtPmNvbmZpZzsKPiArCj4gKwlpZiAocHJv
+cGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVydHkgJiYKPiArCSAgICAoY29uZmln
+LT5jYXBhYmlsaXRpZXMgJiBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TKSkKPiArCQlleHlub3Nf
+c3RhdGUtPnpwb3MgPSB2YWw7Cj4gKwllbHNlCj4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gKwo+ICsJ
+cmV0dXJuIDA7Cj4gK30KPiArCj4gK3N0YXRpYyBpbnQgZXh5bm9zX2RybV9wbGFuZV9hdG9taWNf
+Z2V0X3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ICsJCQkJCSAgY29uc3Qgc3Ry
+dWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUsCj4gKwkJCQkJICBzdHJ1Y3QgZHJtX3Byb3BlcnR5
+ICpwcm9wZXJ0eSwKPiArCQkJCQkgIHVpbnQ2NF90ICp2YWwpCj4gK3sKPiArCWNvbnN0IHN0cnVj
+dCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3RhdGUgPQo+ICsJCWNvbnRhaW5lcl9v
+ZihzdGF0ZSwgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUsIGJhc2UpOwo+ICsJ
+c3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBwbGFuZS0+ZGV2LT5kZXZfcHJp
+dmF0ZTsKPiArCj4gKwlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVy
+dHkpCj4gKwkJKnZhbCA9IGV4eW5vc19zdGF0ZS0+enBvczsKPiArCWVsc2UKPiArCQlyZXR1cm4g
+LUVJTlZBTDsKPiArCj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiAgc3RhdGljIHN0cnVjdCBkcm1f
+cGxhbmVfZnVuY3MgZXh5bm9zX3BsYW5lX2Z1bmNzID0gewo+ICAJLnVwZGF0ZV9wbGFuZQk9IGRy
+bV9hdG9taWNfaGVscGVyX3VwZGF0ZV9wbGFuZSwKPiAgCS5kaXNhYmxlX3BsYW5lCT0gZHJtX2F0
+b21pY19oZWxwZXJfZGlzYWJsZV9wbGFuZSwKPiAgCS5kZXN0cm95CT0gZHJtX3BsYW5lX2NsZWFu
+dXAsCj4gKwkuc2V0X3Byb3BlcnR5CT0gZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfc2V0X3Byb3Bl
+cnR5LAo+ICAJLnJlc2V0CQk9IGV4eW5vc19kcm1fcGxhbmVfcmVzZXQsCj4gIAkuYXRvbWljX2R1
+cGxpY2F0ZV9zdGF0ZSA9IGV4eW5vc19kcm1fcGxhbmVfZHVwbGljYXRlX3N0YXRlLAo+ICAJLmF0
+b21pY19kZXN0cm95X3N0YXRlID0gZXh5bm9zX2RybV9wbGFuZV9kZXN0cm95X3N0YXRlLAo+ICsJ
+LmF0b21pY19zZXRfcHJvcGVydHkgPSBleHlub3NfZHJtX3BsYW5lX2F0b21pY19zZXRfcHJvcGVy
+dHksCj4gKwkuYXRvbWljX2dldF9wcm9wZXJ0eSA9IGV4eW5vc19kcm1fcGxhbmVfYXRvbWljX2dl
+dF9wcm9wZXJ0eSwKPiAgfTsKPiAgCj4gIHN0YXRpYyBpbnQKPiBAQCAtMjY3LDggKzMxMCw4IEBA
+IHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJt
+X3BsYW5lICpwbGFuZSwKPiAgCj4gIAlwcm9wID0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVy
+dHk7Cj4gIAlpZiAoIXByb3ApIHsKPiAtCQlwcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5n
+ZShkZXYsIERSTV9NT0RFX1BST1BfSU1NVVRBQkxFLAo+IC0JCQkJCQkgInpwb3MiLCAwLCBNQVhf
+UExBTkUgLSAxKTsKPiArCQlwcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShkZXYsIDAs
+ICJ6cG9zIiwKPiArCQkJCQkJIDAsIE1BWF9QTEFORSAtIDEpOwoKVXNlciBhcmUgdXNpbmcgenBv
+cyBwcm9wZXJ0eSBhcyBpbmRleCBub3csIGlmIHdlIG1ha2UgenBvcyBwcm9wZXJ0eQpjb25maWd1
+cmFibGUsIGkgdGhpbmsgd2UgbmVlZCBhIHByb3BlcnR5IGltbXV0YWJsZSBsaWtlIGluZGV4IG9y
+IGEKcHJvcGVydHkgbGlrZSB0eXBlIG9yIG5hbWUgdGhhdCBjYW4ga25vdyB0aGlzIHBsYW5lIGlz
+IHdoaWNoIHBsYW5lCihlLmcuIHZpZGVvIHBsYW5lIG9yIGdyYXBoaWMgcGxhbmUpLgoKQW5vdGhl
+ciB3YXksIHVzZXIgbWF5IGJlIHBvc3NpYmxlIHRvIGNoZWNrIHBsYW5lIGluZGV4IGFzIG9yZGVy
+IG9mCnBsYW5lIG9iamVjdCBpZC4KClRoYW5rcy4KCj4gIAkJaWYgKCFwcm9wKQo+ICAJCQlyZXR1
+cm47Cj4gIAo+IEBAIC0zMDIsOSArMzQ1LDcgQEAgaW50IGV4eW5vc19wbGFuZV9pbml0KHN0cnVj
+dCBkcm1fZGV2aWNlICpkZXYsCj4gIAlleHlub3NfcGxhbmUtPmluZGV4ID0gaW5kZXg7Cj4gIAll
+eHlub3NfcGxhbmUtPmNvbmZpZyA9IGNvbmZpZzsKPiAgCj4gLQlpZiAoY29uZmlnLT50eXBlID09
+IERSTV9QTEFORV9UWVBFX09WRVJMQVkpCj4gLQkJZXh5bm9zX3BsYW5lX2F0dGFjaF96cG9zX3By
+b3BlcnR5KCZleHlub3NfcGxhbmUtPmJhc2UsCj4gLQkJCQkJCSAgY29uZmlnLT56cG9zKTsKPiAr
+CWV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5iYXNlLCBj
+b25maWctPnpwb3MpOwo+ICAKPiAgCXJldHVybiAwOwo+ICB9Cj4gCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
