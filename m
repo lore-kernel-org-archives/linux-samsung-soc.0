@@ -1,444 +1,113 @@
-From: Chanho Park <parkch98@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Make CPU configuration more readable for exynos542x/5800
-Date: Fri, 18 Dec 2015 00:50:34 +0900
-Message-ID: <CAPTzV16mFMAA6z=QZTeRZPN5reGZJ=S3adR=f6_FRtgX_O4EJw@mail.gmail.com>
-References: <1449814657-25685-1-git-send-email-k.kozlowski@samsung.com>
-Reply-To: chanho61.park@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 5/7] drm/exynos: mixer: refactor layer setup
+Date: Thu, 17 Dec 2015 16:54:50 +0100
+Message-ID: <5672DACA.2040404@samsung.com>
+References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
+ <1450268508-15028-6-git-send-email-m.szyprowski@samsung.com>
+ <567237D7.4020204@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449814657-25685-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:20232 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932952AbbLQPyy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Dec 2015 10:54:54 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NZI0046BEVGZY00@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Dec 2015 15:54:52 +0000 (GMT)
+In-reply-to: <567237D7.4020204@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>
 
-On Fri, Dec 11, 2015 at 3:17 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> Exynos5420 and Exynos5800 boards boot from big core (A15) but
-> Exynos5420 boards choose otherwise: LITTLE core (A7) (on Exynos5422 this
-> is property of the board - configurable by pulling up/down gpg2-1).
-> To make user-visible CPU ordering more consistent the 'cpus' node was
-> overridden by exynos5422-cpus.dtsi.
->
-> However this is a little bit ugly and error-prone. Overriding the CPU
-> child nodes requires to basically reverse what was done initially in
-> exynos5420.dtsi.
->
-> Instead, split CPU configuration entirely to separate files which should
-> be included by board DTS.
->
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> ---
->
-> Tested on Exynos5422 based Odroid XU4. Please kindly test on Exynos5420
-> or Exynos5800 boards.
-> ---
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts |   1 +
->  arch/arm/boot/dts/exynos5420-cpus.dtsi        |  92 ++++++++++++++++++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts    |   1 +
->  arch/arm/boot/dts/exynos5420-smdk5420.dts     |   1 +
->  arch/arm/boot/dts/exynos5420.dtsi             |  72 +-------------
->  arch/arm/boot/dts/exynos5422-cpus.dtsi        | 130 ++++++++++++++------------
->  arch/arm/boot/dts/exynos5800-peach-pi.dts     |   1 +
->  7 files changed, 170 insertions(+), 128 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos5420-cpus.dtsi
->
-> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> index 4ecef6981d5c..365eec6f6687 100644
-> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> @@ -11,6 +11,7 @@
->
->  /dts-v1/;
->  #include "exynos5420.dtsi"
-> +#include "exynos5420-cpus.dtsi"
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/input/input.h>
-> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> new file mode 100644
-> index 000000000000..7aaf0313274f
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> @@ -0,0 +1,92 @@
-> +/*
-> + * SAMSUNG EXYNOS5420 SoC cpu device tree source
-> + *
-> + * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * This file provides desired ordering for Exynos5420 and Exynos5800
-> + * boards: CPU[0123] being the A15.
-> + *
-> + * The Exynos5420, 5422 and 5800 actually share the same CPU configuration
-> + * but particular boards choose different booting order.
-> + *
-> + * Exynos5420 and Exynos5800 always boot from Cortex-A15. On Exynos5422
-> + * booting cluster (big or LITTLE) is chosen by IROM code by reading
-> + * the gpg2-1 GPIO. By default all Exynos5422 based boards choose booting
-> + * from the LITTLE: Cortex-A7.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +/ {
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               cpu0: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x0>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
-> +
-> +               cpu1: cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x1>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
-> +
-> +               cpu2: cpu@2 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x2>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
-> +
-> +               cpu3: cpu@3 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x3>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
-> +
-> +               cpu4: cpu@100 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x100>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
-> +
-> +               cpu5: cpu@101 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x101>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
-> +
-> +               cpu6: cpu@102 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x102>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
-> +
-> +               cpu7: cpu@103 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x103>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
-> +       };
-> +};
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 35cfb07dc4bb..61a0c0df337a 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -15,6 +15,7 @@
->  #include <dt-bindings/clock/maxim,max77802.h>
->  #include <dt-bindings/regulator/maxim,max77802.h>
->  #include "exynos5420.dtsi"
-> +#include "exynos5420-cpus.dtsi"
->
->  / {
->         model = "Google Peach Pit Rev 6+";
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index ac35aefd320f..1935a0b671e9 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -11,6 +11,7 @@
->
->  /dts-v1/;
->  #include "exynos5420.dtsi"
-> +#include "exynos5420-cpus.dtsi"
->  #include <dt-bindings/gpio/gpio.h>
->
->  / {
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 48a0a55314f5..29b7cba93689 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -50,74 +50,10 @@
->                 usbdrdphy1 = &usbdrd_phy1;
->         };
->
-> -       cpus {
-> -               #address-cells = <1>;
-> -               #size-cells = <0>;
-> -
-> -               cpu0: cpu@0 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a15";
-> -                       reg = <0x0>;
-> -                       clock-frequency = <1800000000>;
-> -                       cci-control-port = <&cci_control1>;
-> -               };
-> -
-> -               cpu1: cpu@1 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a15";
-> -                       reg = <0x1>;
-> -                       clock-frequency = <1800000000>;
-> -                       cci-control-port = <&cci_control1>;
-> -               };
-> -
-> -               cpu2: cpu@2 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a15";
-> -                       reg = <0x2>;
-> -                       clock-frequency = <1800000000>;
-> -                       cci-control-port = <&cci_control1>;
-> -               };
-> -
-> -               cpu3: cpu@3 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a15";
-> -                       reg = <0x3>;
-> -                       clock-frequency = <1800000000>;
-> -                       cci-control-port = <&cci_control1>;
-> -               };
-> -
-> -               cpu4: cpu@100 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a7";
-> -                       reg = <0x100>;
-> -                       clock-frequency = <1000000000>;
-> -                       cci-control-port = <&cci_control0>;
-> -               };
-> -
-> -               cpu5: cpu@101 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a7";
-> -                       reg = <0x101>;
-> -                       clock-frequency = <1000000000>;
-> -                       cci-control-port = <&cci_control0>;
-> -               };
-> -
-> -               cpu6: cpu@102 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a7";
-> -                       reg = <0x102>;
-> -                       clock-frequency = <1000000000>;
-> -                       cci-control-port = <&cci_control0>;
-> -               };
-> -
-> -               cpu7: cpu@103 {
-> -                       device_type = "cpu";
-> -                       compatible = "arm,cortex-a7";
-> -                       reg = <0x103>;
-> -                       clock-frequency = <1000000000>;
-> -                       cci-control-port = <&cci_control0>;
-> -               };
-> -       };
-> +       /*
-> +        * The 'cpus' node is not present here but instead it is provided
-> +        * by exynos5420-cpus.dtsi or exynos5422-cpus.dtsi.
-> +        */
->
->         cci: cci@10d20000 {
->                 compatible = "arm,cci-400";
-> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> index b7f60c855459..33028ac76a33 100644
-> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> @@ -4,78 +4,88 @@
->   * Copyright (c) 2015 Samsung Electronics Co., Ltd.
->   *             http://www.samsung.com
->   *
-> - * The only difference between EXYNOS5422 and EXYNOS5800 is cpu ordering. The
-> - * EXYNOS5422 is booting from Cortex-A7 core while the EXYNOS5800 is booting
-> - * from Cortex-A15 core.
-> + * This file provides desired ordering for Exynos5422: CPU[0123] being the A7.
->   *
-> - * EXYNOS5422 based board files can include this file to provide cpu ordering
-> - * which could boot a cortex-a7 from cpu0.
-> + * The Exynos5420, 5422 and 5800 actually share the same CPU configuration
-> + * but particular boards choose different booting order.
-> + *
-> + * Exynos5420 and Exynos5800 always boot from Cortex-A15. On Exynos5422
-> + * booting cluster (big or LITTLE) is chosen by IROM code by reading
-> + * the gpg2-1 GPIO. By default all Exynos5422 based boards choose booting
-> + * from the LITTLE: Cortex-A7.
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 as
->   * published by the Free Software Foundation.
->   */
->
-> -&cpu0 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a7";
-> -       reg = <0x100>;
-> -       clock-frequency = <1000000000>;
-> -       cci-control-port = <&cci_control0>;
-> -};
-> +/ {
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
->
-> -&cpu1 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a7";
-> -       reg = <0x101>;
-> -       clock-frequency = <1000000000>;
-> -       cci-control-port = <&cci_control0>;
-> -};
-> +               cpu0: cpu@100 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x100>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
->
-> -&cpu2 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a7";
-> -       reg = <0x102>;
-> -       clock-frequency = <1000000000>;
-> -       cci-control-port = <&cci_control0>;
-> -};
-> +               cpu1: cpu@101 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x101>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
->
-> -&cpu3 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a7";
-> -       reg = <0x103>;
-> -       clock-frequency = <1000000000>;
-> -       cci-control-port = <&cci_control0>;
-> -};
-> +               cpu2: cpu@102 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x102>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
->
-> -&cpu4 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a15";
-> -       reg = <0x0>;
-> -       clock-frequency = <1800000000>;
-> -       cci-control-port = <&cci_control1>;
-> -};
-> +               cpu3: cpu@103 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0x103>;
-> +                       clock-frequency = <1000000000>;
-> +                       cci-control-port = <&cci_control0>;
-> +               };
->
-> -&cpu5 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a15";
-> -       reg = <0x1>;
-> -       clock-frequency = <1800000000>;
-> -       cci-control-port = <&cci_control1>;
-> -};
-> +               cpu4: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x0>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
->
-> -&cpu6 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a15";
-> -       reg = <0x2>;
-> -       clock-frequency = <1800000000>;
-> -       cci-control-port = <&cci_control1>;
-> -};
-> +               cpu5: cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x1>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
-> +
-> +               cpu6: cpu@2 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x2>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
->
-> -&cpu7 {
-> -       device_type = "cpu";
-> -       compatible = "arm,cortex-a15";
-> -       reg = <0x3>;
-> -       clock-frequency = <1800000000>;
-> -       cci-control-port = <&cci_control1>;
-> +               cpu7: cpu@3 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0x3>;
-> +                       clock-frequency = <1800000000>;
-> +                       cci-control-port = <&cci_control1>;
-> +               };
-> +       };
->  };
-> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> index 064176f201e7..279322b83351 100644
-> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> @@ -15,6 +15,7 @@
->  #include <dt-bindings/clock/maxim,max77802.h>
->  #include <dt-bindings/regulator/maxim,max77802.h>
->  #include "exynos5800.dtsi"
-> +#include "exynos5420-cpus.dtsi"
->
->  / {
->         model = "Google Peach Pi Rev 10+";
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi Joonyoung,
 
-Good clean-up.
-Reviewed-by: Chanho Park <parkch98@gmail.com>
+On 2015-12-17 05:19, Joonyoung Shim wrote:
+> Hi Marek,
+>
+> On 12/16/2015 09:21 PM, Marek Szyprowski wrote:
+>> Properly configure blending properties of given hardware layer based on
+>> the selected pixel format. Currently only per-pixel-based alpha is possible
+>> when respective pixel format has been selected. Configuration of global,
+>> per-plane alpha value, color key and background color will be added later.
+>>
+>> This patch is heavily inspired by earlier work done by Tobias Jakobi
+>> <tjakobi@math.uni-bielefeld.de>.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_mixer.c | 43 +++++++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/exynos/regs-mixer.h   |  1 +
+>>   2 files changed, 44 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index c572e271579e..ae7b122274ac 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -165,6 +165,16 @@ static const u8 filter_cr_horiz_tap4[] = {
+>>   	70,	59,	48,	37,	27,	19,	11,	5,
+>>   };
+>>   
+>> +static inline bool is_alpha_format(unsigned int pixel_format)
+>> +{
+>> +	switch (pixel_format) {
+>> +	case DRM_FORMAT_ARGB8888:
+>> +		return true;
+>> +	default:
+>> +		return false;
+>> +	}
+>> +}
+>> +
+>>   static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
+>>   {
+>>   	return readl(res->vp_regs + reg_id);
+>> @@ -294,6 +304,37 @@ static void vp_default_filter(struct mixer_resources *res)
+>>   		filter_cr_horiz_tap4, sizeof(filter_cr_horiz_tap4));
+>>   }
+>>   
+>> +static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
+>> +				bool alpha)
+>> +{
+>> +	struct mixer_resources *res = &ctx->mixer_res;
+>> +	u32 val;
+>> +
+>> +	val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
+>> +	if (alpha) {
+>> +		/* blending based on pixel alpha */
+>> +		val |= MXR_GRP_CFG_BLEND_PRE_MUL;
+>> +		val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
+>> +	}
+>> +	mixer_reg_writemask(res, MXR_GRAPHIC_CFG(win),
+>> +			    val, MXR_GRP_CFG_MISC_MASK);
+> I think the priority of plane and whether vp layer exists should be
+> considered for blending setting. When priority of graphic layer0 is
+> lowest and vp layer is not, this will blend background layer.
+> It was not permitted to blend background layer until current.
 
+Currently blending is hardcoded to following configuration:
+1. Order: [top] Grp1 > Grp0 > Video [bottom]
+2. Per-pixel alpha blending enabled unconditionally for Grp1 layer 
+(regardless
+    of the selected pixel format for Grp1 layer).
+3. Per-pixel alpha blending enabled for Grp0 layer when Video layer gets 
+enabled
+    (regardless of the selected pixel format for Grp0 layer).
+
+It is not very intuitive and it looks hardcoded for one particular use case.
+With the above patch application can configure blending for its needs.
+
+I really see no reason for special handling of the bottom layer (like
+disabling per-pixel alpha even if alpha-enabled format is selected). It is
+role of application to set proper pixel format (like XRGB8888 instead of
+ARGB8888) if the application is not interested in alpha blending. Per-pixel
+alpha blending is enabled only for formats which really support alpha.
+
+Best regards
 -- 
-Best Regards,
-Chanho Park
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
