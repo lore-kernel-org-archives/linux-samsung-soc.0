@@ -1,211 +1,444 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 2/7] drm/exynos: make zpos property configurable
-Date: Thu, 17 Dec 2015 14:05:39 +0100
-Message-ID: <5672B323.1000207@samsung.com>
-References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
- <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
- <5672242F.4070801@samsung.com>
+From: Chanho Park <parkch98@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Make CPU configuration more readable for exynos542x/5800
+Date: Fri, 18 Dec 2015 00:50:34 +0900
+Message-ID: <CAPTzV16mFMAA6z=QZTeRZPN5reGZJ=S3adR=f6_FRtgX_O4EJw@mail.gmail.com>
+References: <1449814657-25685-1-git-send-email-k.kozlowski@samsung.com>
+Reply-To: chanho61.park@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:59712 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754919AbbLQNFo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Dec 2015 08:05:44 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NZI00A1M71H6O90@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 17 Dec 2015 13:05:41 +0000 (GMT)
-In-reply-to: <5672242F.4070801@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1449814657-25685-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, =?UTF-8?B?67CV67O0656M?= <boram1288.park@samsung.com>
 
-Hello,
-
-On 2015-12-17 03:55, Joonyoung Shim wrote:
-> +Cc: Boram Park,
+On Fri, Dec 11, 2015 at 3:17 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> Exynos5420 and Exynos5800 boards boot from big core (A15) but
+> Exynos5420 boards choose otherwise: LITTLE core (A7) (on Exynos5422 this
+> is property of the board - configurable by pulling up/down gpg2-1).
+> To make user-visible CPU ordering more consistent the 'cpus' node was
+> overridden by exynos5422-cpus.dtsi.
 >
-> Hi Marek,
+> However this is a little bit ugly and error-prone. Overriding the CPU
+> child nodes requires to basically reverse what was done initially in
+> exynos5420.dtsi.
 >
-> On 12/16/2015 09:21 PM, Marek Szyprowski wrote:
->> This patch adds all infrastructure to make zpos plane property
->> configurable from userspace.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos_drm_drv.h   |  4 ++-
->>   drivers/gpu/drm/exynos/exynos_drm_plane.c | 51 ++++++++++++++++++++++++++++---
->>   2 files changed, 49 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> index 588b6763f9c7..f0827dbebb7d 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -64,6 +64,7 @@ struct exynos_drm_plane_state {
->>   	struct exynos_drm_rect src;
->>   	unsigned int h_ratio;
->>   	unsigned int v_ratio;
->> +	unsigned int zpos;
->>   };
->>   
->>   static inline struct exynos_drm_plane_state *
->> @@ -91,11 +92,12 @@ struct exynos_drm_plane {
->>   
->>   #define EXYNOS_DRM_PLANE_CAP_DOUBLE	(1 << 0)
->>   #define EXYNOS_DRM_PLANE_CAP_SCALE	(1 << 1)
->> +#define EXYNOS_DRM_PLANE_CAP_ZPOS	(1 << 2)
->>   
->>   /*
->>    * Exynos DRM plane configuration structure.
->>    *
->> - * @zpos: z-position of the plane.
->> + * @zpos: initial z-position of the plane.
->>    * @type: type of the plane (primary, cursor or overlay).
->>    * @pixel_formats: supported pixel formats.
->>    * @num_pixel_formats: number of elements in 'pixel_formats'.
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> index fd6cb4cee01a..a2bdab836b50 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> @@ -124,6 +124,7 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
->>   
->>   static void exynos_drm_plane_reset(struct drm_plane *plane)
->>   {
->> +	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
->>   	struct exynos_drm_plane_state *exynos_state;
->>   
->>   	if (plane->state) {
->> @@ -136,6 +137,7 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
->>   
->>   	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
->>   	if (exynos_state) {
->> +		exynos_state->zpos = exynos_plane->config->zpos;
->>   		plane->state = &exynos_state->base;
->>   		plane->state->plane = plane;
->>   	}
->> @@ -153,6 +155,7 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
->>   		return NULL;
->>   
->>   	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
->> +	copy->zpos = exynos_state->zpos;
->>   	return &copy->base;
->>   }
->>   
->> @@ -165,13 +168,53 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
->>   	kfree(old_exynos_state);
->>   }
->>   
->> +static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
->> +						struct drm_plane_state *state,
->> +						struct drm_property *property,
->> +						uint64_t val)
->> +{
->> +	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
->> +	struct exynos_drm_plane_state *exynos_state =
->> +					to_exynos_plane_state(state);
->> +	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
->> +	const struct exynos_drm_plane_config *config = exynos_plane->config;
->> +
->> +	if (property == dev_priv->plane_zpos_property &&
->> +	    (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
->> +		exynos_state->zpos = val;
->> +	else
->> +		return -EINVAL;
->> +
->> +	return 0;
->> +}
->> +
->> +static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
->> +					  const struct drm_plane_state *state,
->> +					  struct drm_property *property,
->> +					  uint64_t *val)
->> +{
->> +	const struct exynos_drm_plane_state *exynos_state =
->> +		container_of(state, const struct exynos_drm_plane_state, base);
->> +	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
->> +
->> +	if (property == dev_priv->plane_zpos_property)
->> +		*val = exynos_state->zpos;
->> +	else
->> +		return -EINVAL;
->> +
->> +	return 0;
->> +}
->> +
->>   static struct drm_plane_funcs exynos_plane_funcs = {
->>   	.update_plane	= drm_atomic_helper_update_plane,
->>   	.disable_plane	= drm_atomic_helper_disable_plane,
->>   	.destroy	= drm_plane_cleanup,
->> +	.set_property	= drm_atomic_helper_plane_set_property,
->>   	.reset		= exynos_drm_plane_reset,
->>   	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
->>   	.atomic_destroy_state = exynos_drm_plane_destroy_state,
->> +	.atomic_set_property = exynos_drm_plane_atomic_set_property,
->> +	.atomic_get_property = exynos_drm_plane_atomic_get_property,
->>   };
->>   
->>   static int
->> @@ -267,8 +310,8 @@ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
->>   
->>   	prop = dev_priv->plane_zpos_property;
->>   	if (!prop) {
->> -		prop = drm_property_create_range(dev, DRM_MODE_PROP_IMMUTABLE,
->> -						 "zpos", 0, MAX_PLANE - 1);
->> +		prop = drm_property_create_range(dev, 0, "zpos",
->> +						 0, MAX_PLANE - 1);
-> User are using zpos property as index now, if we make zpos property
-> configurable, i think we need a property immutable like index or a
-> property like type or name that can know this plane is which plane
-> (e.g. video plane or graphic plane).
-
-I don't get this. zpos property is attached only to OVERLAY planes, 
-PRIMARY and CURSOR don't have it, so userspace cannot rely on this 
-property. In my patch the initial zpos value is same as before, so if 
-application doesn't relies on zpos values, it will get the same values 
-as now. Application can also check the plane type by reading 'type' 
-property (PRIMARY, OVERLAY or CURSOR). However after my patch 
-application will get the possibility to rearrange plane order for the 
-given crtc by chaning zpos values. That's especially useful to configure 
-2 typical use cases: PRIMARY plane over OVERLAY plane (PRIMARY is used 
-as typical on-screen-display) or OVERLAY plane over PRIMARY (OVERLAY is 
-used as a window for displaying video data).
-
-> Another way, user may be possible to check plane index as order of
-> plane object id.
-
-Application can easily find all the planes, which belongs to given crtc 
-by checking 'possible crtcs' plane parameter, I see no additional need 
-for 'index' property in such case. Please note that the initial plane 
-configuration in case of atomic api will be always the same for all 
-application (determined by exynos_drm_plane_reset function) and it will 
-match the current setup.
-
+> Instead, split CPU configuration entirely to separate files which should
+> be included by board DTS.
 >
-> Thanks.
+> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >
->>   		if (!prop)
->>   			return;
->>   
->> @@ -302,9 +345,7 @@ int exynos_plane_init(struct drm_device *dev,
->>   	exynos_plane->index = index;
->>   	exynos_plane->config = config;
->>   
->> -	if (config->type == DRM_PLANE_TYPE_OVERLAY)
->> -		exynos_plane_attach_zpos_property(&exynos_plane->base,
->> -						  config->zpos);
->> +	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos);
->>   
->>   	return 0;
->>   }
->>
+> ---
 >
+> Tested on Exynos5422 based Odroid XU4. Please kindly test on Exynos5420
+> or Exynos5800 boards.
+> ---
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts |   1 +
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi        |  92 ++++++++++++++++++
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts    |   1 +
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts     |   1 +
+>  arch/arm/boot/dts/exynos5420.dtsi             |  72 +-------------
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi        | 130 ++++++++++++++------------
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts     |   1 +
+>  7 files changed, 170 insertions(+), 128 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos5420-cpus.dtsi
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> index 4ecef6981d5c..365eec6f6687 100644
+> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> @@ -11,6 +11,7 @@
+>
+>  /dts-v1/;
+>  #include "exynos5420.dtsi"
+> +#include "exynos5420-cpus.dtsi"
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/input/input.h>
+> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> new file mode 100644
+> index 000000000000..7aaf0313274f
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> @@ -0,0 +1,92 @@
+> +/*
+> + * SAMSUNG EXYNOS5420 SoC cpu device tree source
+> + *
+> + * Copyright (c) 2015 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * This file provides desired ordering for Exynos5420 and Exynos5800
+> + * boards: CPU[0123] being the A15.
+> + *
+> + * The Exynos5420, 5422 and 5800 actually share the same CPU configuration
+> + * but particular boards choose different booting order.
+> + *
+> + * Exynos5420 and Exynos5800 always boot from Cortex-A15. On Exynos5422
+> + * booting cluster (big or LITTLE) is chosen by IROM code by reading
+> + * the gpg2-1 GPIO. By default all Exynos5422 based boards choose booting
+> + * from the LITTLE: Cortex-A7.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +/ {
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               cpu0: cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x0>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+> +
+> +               cpu1: cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x1>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+> +
+> +               cpu2: cpu@2 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x2>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+> +
+> +               cpu3: cpu@3 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x3>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+> +
+> +               cpu4: cpu@100 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x100>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+> +
+> +               cpu5: cpu@101 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x101>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+> +
+> +               cpu6: cpu@102 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x102>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+> +
+> +               cpu7: cpu@103 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x103>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+> +       };
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index 35cfb07dc4bb..61a0c0df337a 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -15,6 +15,7 @@
+>  #include <dt-bindings/clock/maxim,max77802.h>
+>  #include <dt-bindings/regulator/maxim,max77802.h>
+>  #include "exynos5420.dtsi"
+> +#include "exynos5420-cpus.dtsi"
+>
+>  / {
+>         model = "Google Peach Pit Rev 6+";
+> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> index ac35aefd320f..1935a0b671e9 100644
+> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> @@ -11,6 +11,7 @@
+>
+>  /dts-v1/;
+>  #include "exynos5420.dtsi"
+> +#include "exynos5420-cpus.dtsi"
+>  #include <dt-bindings/gpio/gpio.h>
+>
+>  / {
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 48a0a55314f5..29b7cba93689 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -50,74 +50,10 @@
+>                 usbdrdphy1 = &usbdrd_phy1;
+>         };
+>
+> -       cpus {
+> -               #address-cells = <1>;
+> -               #size-cells = <0>;
+> -
+> -               cpu0: cpu@0 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a15";
+> -                       reg = <0x0>;
+> -                       clock-frequency = <1800000000>;
+> -                       cci-control-port = <&cci_control1>;
+> -               };
+> -
+> -               cpu1: cpu@1 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a15";
+> -                       reg = <0x1>;
+> -                       clock-frequency = <1800000000>;
+> -                       cci-control-port = <&cci_control1>;
+> -               };
+> -
+> -               cpu2: cpu@2 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a15";
+> -                       reg = <0x2>;
+> -                       clock-frequency = <1800000000>;
+> -                       cci-control-port = <&cci_control1>;
+> -               };
+> -
+> -               cpu3: cpu@3 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a15";
+> -                       reg = <0x3>;
+> -                       clock-frequency = <1800000000>;
+> -                       cci-control-port = <&cci_control1>;
+> -               };
+> -
+> -               cpu4: cpu@100 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a7";
+> -                       reg = <0x100>;
+> -                       clock-frequency = <1000000000>;
+> -                       cci-control-port = <&cci_control0>;
+> -               };
+> -
+> -               cpu5: cpu@101 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a7";
+> -                       reg = <0x101>;
+> -                       clock-frequency = <1000000000>;
+> -                       cci-control-port = <&cci_control0>;
+> -               };
+> -
+> -               cpu6: cpu@102 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a7";
+> -                       reg = <0x102>;
+> -                       clock-frequency = <1000000000>;
+> -                       cci-control-port = <&cci_control0>;
+> -               };
+> -
+> -               cpu7: cpu@103 {
+> -                       device_type = "cpu";
+> -                       compatible = "arm,cortex-a7";
+> -                       reg = <0x103>;
+> -                       clock-frequency = <1000000000>;
+> -                       cci-control-port = <&cci_control0>;
+> -               };
+> -       };
+> +       /*
+> +        * The 'cpus' node is not present here but instead it is provided
+> +        * by exynos5420-cpus.dtsi or exynos5422-cpus.dtsi.
+> +        */
+>
+>         cci: cci@10d20000 {
+>                 compatible = "arm,cci-400";
+> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> index b7f60c855459..33028ac76a33 100644
+> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> @@ -4,78 +4,88 @@
+>   * Copyright (c) 2015 Samsung Electronics Co., Ltd.
+>   *             http://www.samsung.com
+>   *
+> - * The only difference between EXYNOS5422 and EXYNOS5800 is cpu ordering. The
+> - * EXYNOS5422 is booting from Cortex-A7 core while the EXYNOS5800 is booting
+> - * from Cortex-A15 core.
+> + * This file provides desired ordering for Exynos5422: CPU[0123] being the A7.
+>   *
+> - * EXYNOS5422 based board files can include this file to provide cpu ordering
+> - * which could boot a cortex-a7 from cpu0.
+> + * The Exynos5420, 5422 and 5800 actually share the same CPU configuration
+> + * but particular boards choose different booting order.
+> + *
+> + * Exynos5420 and Exynos5800 always boot from Cortex-A15. On Exynos5422
+> + * booting cluster (big or LITTLE) is chosen by IROM code by reading
+> + * the gpg2-1 GPIO. By default all Exynos5422 based boards choose booting
+> + * from the LITTLE: Cortex-A7.
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 as
+>   * published by the Free Software Foundation.
+>   */
+>
+> -&cpu0 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a7";
+> -       reg = <0x100>;
+> -       clock-frequency = <1000000000>;
+> -       cci-control-port = <&cci_control0>;
+> -};
+> +/ {
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+>
+> -&cpu1 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a7";
+> -       reg = <0x101>;
+> -       clock-frequency = <1000000000>;
+> -       cci-control-port = <&cci_control0>;
+> -};
+> +               cpu0: cpu@100 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x100>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+>
+> -&cpu2 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a7";
+> -       reg = <0x102>;
+> -       clock-frequency = <1000000000>;
+> -       cci-control-port = <&cci_control0>;
+> -};
+> +               cpu1: cpu@101 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x101>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+>
+> -&cpu3 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a7";
+> -       reg = <0x103>;
+> -       clock-frequency = <1000000000>;
+> -       cci-control-port = <&cci_control0>;
+> -};
+> +               cpu2: cpu@102 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x102>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+>
+> -&cpu4 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a15";
+> -       reg = <0x0>;
+> -       clock-frequency = <1800000000>;
+> -       cci-control-port = <&cci_control1>;
+> -};
+> +               cpu3: cpu@103 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0x103>;
+> +                       clock-frequency = <1000000000>;
+> +                       cci-control-port = <&cci_control0>;
+> +               };
+>
+> -&cpu5 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a15";
+> -       reg = <0x1>;
+> -       clock-frequency = <1800000000>;
+> -       cci-control-port = <&cci_control1>;
+> -};
+> +               cpu4: cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x0>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+>
+> -&cpu6 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a15";
+> -       reg = <0x2>;
+> -       clock-frequency = <1800000000>;
+> -       cci-control-port = <&cci_control1>;
+> -};
+> +               cpu5: cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x1>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+> +
+> +               cpu6: cpu@2 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x2>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+>
+> -&cpu7 {
+> -       device_type = "cpu";
+> -       compatible = "arm,cortex-a15";
+> -       reg = <0x3>;
+> -       clock-frequency = <1800000000>;
+> -       cci-control-port = <&cci_control1>;
+> +               cpu7: cpu@3 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x3>;
+> +                       clock-frequency = <1800000000>;
+> +                       cci-control-port = <&cci_control1>;
+> +               };
+> +       };
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> index 064176f201e7..279322b83351 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -15,6 +15,7 @@
+>  #include <dt-bindings/clock/maxim,max77802.h>
+>  #include <dt-bindings/regulator/maxim,max77802.h>
+>  #include "exynos5800.dtsi"
+> +#include "exynos5420-cpus.dtsi"
+>
+>  / {
+>         model = "Google Peach Pi Rev 10+";
+> --
+> 1.9.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Best regards
+Good clean-up.
+Reviewed-by: Chanho Park <parkch98@gmail.com>
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best Regards,
+Chanho Park
