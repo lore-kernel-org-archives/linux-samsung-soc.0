@@ -1,96 +1,87 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] PM / OPP: Fix parsing of opp-microvolt and opp-microamp
- properties
-Date: Thu, 17 Dec 2015 07:31:33 +0530
-Message-ID: <20151217020133.GD3496@ubuntu>
-References: <18360458.m71vGHrTb9@amdc1976>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL 0/9] ARM: EXYNOS: Pull request for v4.5
+Date: Thu, 17 Dec 2015 11:04:18 +0900
+Message-ID: <56721822.7020608@samsung.com>
+References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
+ <56721326.30004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <18360458.m71vGHrTb9@amdc1976>
+In-reply-to: <56721326.30004@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, nm@ti.com, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, open list <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Shawn Guo <shawnguo@kernel.org>, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16-12-15, 16:41, Bartlomiej Zolnierkiewicz wrote:
-> Commit 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name>'
-> bindings") broke support for parsing standard opp-microvolt and
-> opp-microamp properties.  Fix it by setting 'name' string to
-> proper value for !dev_opp->prop_name cases.
+On 17.12.2015 10:43, Krzysztof Kozlowski wrote:
+> On 02.12.2015 10:39, Krzysztof Kozlowski wrote:
+>> Hi Kukjin,
+>>
+>> A lot of stuff for v4.5 with 3 dependencies split into
+>> separate tags. The need for dependency is explained both
+>> in merge-commit and in description of a tag which is using
+>> the dependency.
 > 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Fixes: 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name> 'bindings")
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> This fixes Exynos4x12 cpufreq-dt support regression present in
-> linux-pm/linux-next tree.  Rafael, please apply.  Thank you.
+> Hi everyone,
 > 
->  drivers/base/power/opp/core.c |   12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> It's been like two weeks... we are after v4.4-rc5 and Christmas season
+> is coming... there are some dependencies here and even more stuff waits
+> out of queue for this pull request (moving SROM and PMU to drivers/soc,
+> cpufreq for Exynos542x).
 > 
-> Index: b/drivers/base/power/opp/core.c
-> ===================================================================
-> --- a/drivers/base/power/opp/core.c	2015-12-16 16:10:13.509171420 +0100
-> +++ b/drivers/base/power/opp/core.c	2015-12-16 16:21:18.385183902 +0100
-> @@ -806,11 +806,11 @@ static int opp_parse_supplies(struct dev
->  	struct property *prop = NULL;
->  	char name[NAME_MAX];
->  
-> +	sprintf(name, "opp-microvolt-%s", dev_opp->prop_name);
-> +
->  	/* Search for "opp-microvolt-<name>" */
-> -	if (dev_opp->prop_name) {
-> -		sprintf(name, "opp-microvolt-%s", dev_opp->prop_name);
-> +	if (dev_opp->prop_name)
->  		prop = of_find_property(opp->np, name, NULL);
-> -	}
->  
->  	if (!prop) {
->  		/* Search for "opp-microvolt" */
-> @@ -848,10 +848,10 @@ static int opp_parse_supplies(struct dev
->  
->  	/* Search for "opp-microamp-<name>" */
->  	prop = NULL;
-> -	if (dev_opp->prop_name) {
-> -		sprintf(name, "opp-microamp-%s", dev_opp->prop_name);
-> +	sprintf(name, "opp-microamp-%s", dev_opp->prop_name);
-> +
-> +	if (dev_opp->prop_name)
->  		prop = of_find_property(opp->np, name, NULL);
-> -	}
->  
->  	if (!prop) {
->  		/* Search for "opp-microamp" */
+> What I want to say is that I am really not sure whether further waiting
+> is beneficial...
+> All these patches have been boiling in linux-next for some time (through
+> my tree).
+> 
+> 
+> Are there any comments about this pull request? Ordering of branches?
+> Weird looking tags? Bugs? etc.? Anything waits in your tree Kukjin?
+> 
+> 
+> Maybe this could be pulled directly by arm-soc folks?
+> 
 
-Sorry about this. And I am disliking the solution suggested by Stephen
-more and more now. Please resend this patch with following changes
-instead:
+Actually in the same time I sent this mail I got an ack from Kukjin (his
+Business Trip to China extended further than planned), so:
 
-diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
-index 6c6856e426f0..a96df5cda303 100644
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -816,7 +816,7 @@ static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev,
- 
-        if (!prop) {
-                /* Search for "opp-microvolt" */
--               name[13] = '\0';
-+               sprintf(name, "opp-microvolt");
-                prop = of_find_property(opp->np, name, NULL);
- 
-                /* Missing property isn't a problem, but an invalid entry is */
-@@ -857,7 +857,7 @@ static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev,
- 
-        if (!prop) {
-                /* Search for "opp-microamp" */
--               name[12] = '\0';
-+               sprintf(name, "opp-microamp");
-                prop = of_find_property(opp->np, name, NULL);
-        }
+Arnd, Kevin and Olof,
+Could you pull this for v4.5 or share your comments?
 
--- 
-viresh
+
+The number of tags is not that scary... just some dependencies split
+across 3 tags.
+
+
+Best regards,
+Krzysztof
+
+
+
+> 
+>>
+>> The order goes like (but of course dependencies
+>> could be pulled all at once at beginning):
+>> 1. tags/samsung-dt-syscon-restart-4.5
+>> 2. tags/samsung-soc-4.5
+>> 3. tags/samsung-clk-arm64-symbols-4.5
+>> 4. tags/samsung-soc64-4.5
+>> 5. tags/samsung-drivers-4.5
+>> 6. tags/samsung-clk-exynos4-4.5
+>> 7. tags/samsung-dt-4.5
+>> 8. tags/samsung-dt64-4.5
+>> 9. tags/samsung-defconfig-4.5
+>>
+>> I split dependencies to three tags so clock or other folks could
+>> easily grab them if needed.
+>>
+>> Please share your comments or pull as early as possible as we have here
+>> some more dependencies than usual.
+>>
+>>
+>> Kind regards,
+>> Krzysztof
+>>
+> 
+> 
