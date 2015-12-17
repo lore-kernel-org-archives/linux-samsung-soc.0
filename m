@@ -1,124 +1,140 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v3 2/7] drm/exynos: make zpos property configurable
-Date: Thu, 17 Dec 2015 11:55:43 +0900
-Message-ID: <5672242F.4070801@samsung.com>
+Subject: Re: [PATCH v3 5/7] drm/exynos: mixer: refactor layer setup
+Date: Thu, 17 Dec 2015 13:19:35 +0900
+Message-ID: <567237D7.4020204@samsung.com>
 References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
- <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
+ <1450268508-15028-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:54118 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173AbbLQETj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Dec 2015 23:19:39 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NZH01ON5IOP0280@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Dec 2015 13:19:37 +0900 (KST)
+In-reply-to: <1450268508-15028-6-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>
 
-K0NjOiBCb3JhbSBQYXJrLAoKSGkgTWFyZWssCgpPbiAxMi8xNi8yMDE1IDA5OjIxIFBNLCBNYXJl
-ayBTenlwcm93c2tpIHdyb3RlOgo+IFRoaXMgcGF0Y2ggYWRkcyBhbGwgaW5mcmFzdHJ1Y3R1cmUg
-dG8gbWFrZSB6cG9zIHBsYW5lIHByb3BlcnR5Cj4gY29uZmlndXJhYmxlIGZyb20gdXNlcnNwYWNl
-Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1z
-dW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5o
-ICAgfCAgNCArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMg
-fCA1MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tCj4gIDIgZmlsZXMgY2hhbmdlZCwg
-NDkgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5oCj4gaW5kZXggNTg4YjY3NjNmOWM3Li5mMDgyN2RiZWJiN2QgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gKysr
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gQEAgLTY0LDYgKzY0
-LDcgQEAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgewo+ICAJc3RydWN0IGV4eW5vc19k
-cm1fcmVjdCBzcmM7Cj4gIAl1bnNpZ25lZCBpbnQgaF9yYXRpbzsKPiAgCXVuc2lnbmVkIGludCB2
-X3JhdGlvOwo+ICsJdW5zaWduZWQgaW50IHpwb3M7Cj4gIH07Cj4gIAo+ICBzdGF0aWMgaW5saW5l
-IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICoKPiBAQCAtOTEsMTEgKzkyLDEyIEBAIHN0
-cnVjdCBleHlub3NfZHJtX3BsYW5lIHsKPiAgCj4gICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9D
-QVBfRE9VQkxFCSgxIDw8IDApCj4gICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfU0NBTEUJ
-KDEgPDwgMSkKPiArI2RlZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TCSgxIDw8IDIpCj4g
-IAo+ICAvKgo+ICAgKiBFeHlub3MgRFJNIHBsYW5lIGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlLgo+
-ICAgKgo+IC0gKiBAenBvczogei1wb3NpdGlvbiBvZiB0aGUgcGxhbmUuCj4gKyAqIEB6cG9zOiBp
-bml0aWFsIHotcG9zaXRpb24gb2YgdGhlIHBsYW5lLgo+ICAgKiBAdHlwZTogdHlwZSBvZiB0aGUg
-cGxhbmUgKHByaW1hcnksIGN1cnNvciBvciBvdmVybGF5KS4KPiAgICogQHBpeGVsX2Zvcm1hdHM6
-IHN1cHBvcnRlZCBwaXhlbCBmb3JtYXRzLgo+ICAgKiBAbnVtX3BpeGVsX2Zvcm1hdHM6IG51bWJl
-ciBvZiBlbGVtZW50cyBpbiAncGl4ZWxfZm9ybWF0cycuCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX3BsYW5lLmMKPiBpbmRleCBmZDZjYjRjZWUwMWEuLmEyYmRhYjgzNmI1MCAx
-MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwo+
-ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gQEAgLTEy
-NCw2ICsxMjQsNyBAQCBzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGV4
-eW5vc19kcm1fcGxhbmVfc3RhdGUgKmV4eW5vc19zdGF0ZSkKPiAgCj4gIHN0YXRpYyB2b2lkIGV4
-eW5vc19kcm1fcGxhbmVfcmVzZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gIHsKPiArCXN0
-cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxh
-bmUpOwo+ICAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKmV4eW5vc19zdGF0ZTsKPiAg
-Cj4gIAlpZiAocGxhbmUtPnN0YXRlKSB7Cj4gQEAgLTEzNiw2ICsxMzcsNyBAQCBzdGF0aWMgdm9p
-ZCBleHlub3NfZHJtX3BsYW5lX3Jlc2V0KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQo+ICAKPiAg
-CWV4eW5vc19zdGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpleHlub3Nfc3RhdGUpLCBHRlBfS0VSTkVM
-KTsKPiAgCWlmIChleHlub3Nfc3RhdGUpIHsKPiArCQlleHlub3Nfc3RhdGUtPnpwb3MgPSBleHlu
-b3NfcGxhbmUtPmNvbmZpZy0+enBvczsKPiAgCQlwbGFuZS0+c3RhdGUgPSAmZXh5bm9zX3N0YXRl
-LT5iYXNlOwo+ICAJCXBsYW5lLT5zdGF0ZS0+cGxhbmUgPSBwbGFuZTsKPiAgCX0KPiBAQCAtMTUz
-LDYgKzE1NSw3IEBAIGV4eW5vc19kcm1fcGxhbmVfZHVwbGljYXRlX3N0YXRlKHN0cnVjdCBkcm1f
-cGxhbmUgKnBsYW5lKQo+ICAJCXJldHVybiBOVUxMOwo+ICAKPiAgCV9fZHJtX2F0b21pY19oZWxw
-ZXJfcGxhbmVfZHVwbGljYXRlX3N0YXRlKHBsYW5lLCAmY29weS0+YmFzZSk7Cj4gKwljb3B5LT56
-cG9zID0gZXh5bm9zX3N0YXRlLT56cG9zOwo+ICAJcmV0dXJuICZjb3B5LT5iYXNlOwo+ICB9Cj4g
-IAo+IEBAIC0xNjUsMTMgKzE2OCw1MyBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX3BsYW5lX2Rl
-c3Ryb3lfc3RhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIAlrZnJlZShvbGRfZXh5bm9z
-X3N0YXRlKTsKPiAgfQo+ICAKPiArc3RhdGljIGludCBleHlub3NfZHJtX3BsYW5lX2F0b21pY19z
-ZXRfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gKwkJCQkJCXN0cnVjdCBkcm1f
-cGxhbmVfc3RhdGUgKnN0YXRlLAo+ICsJCQkJCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpwcm9wZXJ0
-eSwKPiArCQkJCQkJdWludDY0X3QgdmFsKQo+ICt7Cj4gKwlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFu
-ZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKPiArCXN0cnVjdCBleHlu
-b3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3RhdGUgPQo+ICsJCQkJCXRvX2V4eW5vc19wbGFu
-ZV9zdGF0ZShzdGF0ZSk7Cj4gKwlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpkZXZfcHJpdiA9
-IHBsYW5lLT5kZXYtPmRldl9wcml2YXRlOwo+ICsJY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxh
-bmVfY29uZmlnICpjb25maWcgPSBleHlub3NfcGxhbmUtPmNvbmZpZzsKPiArCj4gKwlpZiAocHJv
-cGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVydHkgJiYKPiArCSAgICAoY29uZmln
-LT5jYXBhYmlsaXRpZXMgJiBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TKSkKPiArCQlleHlub3Nf
-c3RhdGUtPnpwb3MgPSB2YWw7Cj4gKwllbHNlCj4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gKwo+ICsJ
-cmV0dXJuIDA7Cj4gK30KPiArCj4gK3N0YXRpYyBpbnQgZXh5bm9zX2RybV9wbGFuZV9hdG9taWNf
-Z2V0X3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ICsJCQkJCSAgY29uc3Qgc3Ry
-dWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUsCj4gKwkJCQkJICBzdHJ1Y3QgZHJtX3Byb3BlcnR5
-ICpwcm9wZXJ0eSwKPiArCQkJCQkgIHVpbnQ2NF90ICp2YWwpCj4gK3sKPiArCWNvbnN0IHN0cnVj
-dCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3RhdGUgPQo+ICsJCWNvbnRhaW5lcl9v
-ZihzdGF0ZSwgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUsIGJhc2UpOwo+ICsJ
-c3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBwbGFuZS0+ZGV2LT5kZXZfcHJp
-dmF0ZTsKPiArCj4gKwlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVy
-dHkpCj4gKwkJKnZhbCA9IGV4eW5vc19zdGF0ZS0+enBvczsKPiArCWVsc2UKPiArCQlyZXR1cm4g
-LUVJTlZBTDsKPiArCj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiAgc3RhdGljIHN0cnVjdCBkcm1f
-cGxhbmVfZnVuY3MgZXh5bm9zX3BsYW5lX2Z1bmNzID0gewo+ICAJLnVwZGF0ZV9wbGFuZQk9IGRy
-bV9hdG9taWNfaGVscGVyX3VwZGF0ZV9wbGFuZSwKPiAgCS5kaXNhYmxlX3BsYW5lCT0gZHJtX2F0
-b21pY19oZWxwZXJfZGlzYWJsZV9wbGFuZSwKPiAgCS5kZXN0cm95CT0gZHJtX3BsYW5lX2NsZWFu
-dXAsCj4gKwkuc2V0X3Byb3BlcnR5CT0gZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfc2V0X3Byb3Bl
-cnR5LAo+ICAJLnJlc2V0CQk9IGV4eW5vc19kcm1fcGxhbmVfcmVzZXQsCj4gIAkuYXRvbWljX2R1
-cGxpY2F0ZV9zdGF0ZSA9IGV4eW5vc19kcm1fcGxhbmVfZHVwbGljYXRlX3N0YXRlLAo+ICAJLmF0
-b21pY19kZXN0cm95X3N0YXRlID0gZXh5bm9zX2RybV9wbGFuZV9kZXN0cm95X3N0YXRlLAo+ICsJ
-LmF0b21pY19zZXRfcHJvcGVydHkgPSBleHlub3NfZHJtX3BsYW5lX2F0b21pY19zZXRfcHJvcGVy
-dHksCj4gKwkuYXRvbWljX2dldF9wcm9wZXJ0eSA9IGV4eW5vc19kcm1fcGxhbmVfYXRvbWljX2dl
-dF9wcm9wZXJ0eSwKPiAgfTsKPiAgCj4gIHN0YXRpYyBpbnQKPiBAQCAtMjY3LDggKzMxMCw4IEBA
-IHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwKPiAgCj4gIAlwcm9wID0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVy
-dHk7Cj4gIAlpZiAoIXByb3ApIHsKPiAtCQlwcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5n
-ZShkZXYsIERSTV9NT0RFX1BST1BfSU1NVVRBQkxFLAo+IC0JCQkJCQkgInpwb3MiLCAwLCBNQVhf
-UExBTkUgLSAxKTsKPiArCQlwcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShkZXYsIDAs
-ICJ6cG9zIiwKPiArCQkJCQkJIDAsIE1BWF9QTEFORSAtIDEpOwoKVXNlciBhcmUgdXNpbmcgenBv
-cyBwcm9wZXJ0eSBhcyBpbmRleCBub3csIGlmIHdlIG1ha2UgenBvcyBwcm9wZXJ0eQpjb25maWd1
-cmFibGUsIGkgdGhpbmsgd2UgbmVlZCBhIHByb3BlcnR5IGltbXV0YWJsZSBsaWtlIGluZGV4IG9y
-IGEKcHJvcGVydHkgbGlrZSB0eXBlIG9yIG5hbWUgdGhhdCBjYW4ga25vdyB0aGlzIHBsYW5lIGlz
-IHdoaWNoIHBsYW5lCihlLmcuIHZpZGVvIHBsYW5lIG9yIGdyYXBoaWMgcGxhbmUpLgoKQW5vdGhl
-ciB3YXksIHVzZXIgbWF5IGJlIHBvc3NpYmxlIHRvIGNoZWNrIHBsYW5lIGluZGV4IGFzIG9yZGVy
-IG9mCnBsYW5lIG9iamVjdCBpZC4KClRoYW5rcy4KCj4gIAkJaWYgKCFwcm9wKQo+ICAJCQlyZXR1
-cm47Cj4gIAo+IEBAIC0zMDIsOSArMzQ1LDcgQEAgaW50IGV4eW5vc19wbGFuZV9pbml0KHN0cnVj
-dCBkcm1fZGV2aWNlICpkZXYsCj4gIAlleHlub3NfcGxhbmUtPmluZGV4ID0gaW5kZXg7Cj4gIAll
-eHlub3NfcGxhbmUtPmNvbmZpZyA9IGNvbmZpZzsKPiAgCj4gLQlpZiAoY29uZmlnLT50eXBlID09
-IERSTV9QTEFORV9UWVBFX09WRVJMQVkpCj4gLQkJZXh5bm9zX3BsYW5lX2F0dGFjaF96cG9zX3By
-b3BlcnR5KCZleHlub3NfcGxhbmUtPmJhc2UsCj4gLQkJCQkJCSAgY29uZmlnLT56cG9zKTsKPiAr
-CWV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5iYXNlLCBj
-b25maWctPnpwb3MpOwo+ICAKPiAgCXJldHVybiAwOwo+ICB9Cj4gCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Marek,
+
+On 12/16/2015 09:21 PM, Marek Szyprowski wrote:
+> Properly configure blending properties of given hardware layer based on
+> the selected pixel format. Currently only per-pixel-based alpha is possible
+> when respective pixel format has been selected. Configuration of global,
+> per-plane alpha value, color key and background color will be added later.
+> 
+> This patch is heavily inspired by earlier work done by Tobias Jakobi
+> <tjakobi@math.uni-bielefeld.de>.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 43 +++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/exynos/regs-mixer.h   |  1 +
+>  2 files changed, 44 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index c572e271579e..ae7b122274ac 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -165,6 +165,16 @@ static const u8 filter_cr_horiz_tap4[] = {
+>  	70,	59,	48,	37,	27,	19,	11,	5,
+>  };
+>  
+> +static inline bool is_alpha_format(unsigned int pixel_format)
+> +{
+> +	switch (pixel_format) {
+> +	case DRM_FORMAT_ARGB8888:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+>  static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
+>  {
+>  	return readl(res->vp_regs + reg_id);
+> @@ -294,6 +304,37 @@ static void vp_default_filter(struct mixer_resources *res)
+>  		filter_cr_horiz_tap4, sizeof(filter_cr_horiz_tap4));
+>  }
+>  
+> +static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
+> +				bool alpha)
+> +{
+> +	struct mixer_resources *res = &ctx->mixer_res;
+> +	u32 val;
+> +
+> +	val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
+> +	if (alpha) {
+> +		/* blending based on pixel alpha */
+> +		val |= MXR_GRP_CFG_BLEND_PRE_MUL;
+> +		val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
+> +	}
+> +	mixer_reg_writemask(res, MXR_GRAPHIC_CFG(win),
+> +			    val, MXR_GRP_CFG_MISC_MASK);
+
+I think the priority of plane and whether vp layer exists should be
+considered for blending setting. When priority of graphic layer0 is 
+lowest and vp layer is not, this will blend background layer. 
+It was not permitted to blend background layer until current.
+
+Thanks.
+
+> +}
+> +
+> +static void mixer_cfg_vp_blend(struct mixer_context *ctx)
+> +{
+> +	struct mixer_resources *res = &ctx->mixer_res;
+> +	u32 val;
+> +
+> +	/*
+> +	 * No blending at the moment since the NV12/NV21 pixelformats don't
+> +	 * have an alpha channel. However the mixer supports a global alpha
+> +	 * value for a layer. Once this functionality is exposed, we can
+> +	 * support blending of the video layer through this.
+> +	 */
+> +	val = 0;
+> +	mixer_reg_write(res, MXR_VIDEO_CFG, val);
+> +}
+> +
+>  static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
+>  {
+>  	struct mixer_resources *res = &ctx->mixer_res;
+> @@ -519,6 +560,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+>  	mixer_cfg_scan(ctx, mode->vdisplay);
+>  	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+>  	mixer_cfg_layer(ctx, plane->index, state->zpos + 1, true);
+> +	mixer_cfg_vp_blend(ctx);
+>  	mixer_run(ctx);
+>  
+>  	mixer_vsync_set_update(ctx, true);
+> @@ -634,6 +676,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+>  	mixer_cfg_scan(ctx, mode->vdisplay);
+>  	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+>  	mixer_cfg_layer(ctx, win, state->zpos + 1, true);
+> +	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
+>  
+>  	/* layer update mandatory for mixer 16.0.33.0 */
+>  	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
+> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+> index dbdbc0af3358..7f22df5bf707 100644
+> --- a/drivers/gpu/drm/exynos/regs-mixer.h
+> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
+> @@ -113,6 +113,7 @@
+>  #define MXR_GRP_CFG_BLEND_PRE_MUL	(1 << 20)
+>  #define MXR_GRP_CFG_WIN_BLEND_EN	(1 << 17)
+>  #define MXR_GRP_CFG_PIXEL_BLEND_EN	(1 << 16)
+> +#define MXR_GRP_CFG_MISC_MASK		((3 << 16) | (3 << 20))
+>  #define MXR_GRP_CFG_FORMAT_VAL(x)	MXR_MASK_VAL(x, 11, 8)
+>  #define MXR_GRP_CFG_FORMAT_MASK		MXR_GRP_CFG_FORMAT_VAL(~0)
+>  #define MXR_GRP_CFG_ALPHA_VAL(x)	MXR_MASK_VAL(x, 7, 0)
+> 
