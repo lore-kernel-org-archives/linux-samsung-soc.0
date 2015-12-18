@@ -1,83 +1,52 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v7 0/6] samsung: pmu: split up SoC specific PMU data
-Date: Fri, 18 Dec 2015 13:49:42 +0530
-Message-ID: <5673C19E.9000907@samsung.com>
-References: <1450409536-30463-1-git-send-email-pankaj.dubey@samsung.com>
- <56738B39.10201@samsung.com>
+From: Pavel Fedin <p.fedin@samsung.com>
+Subject: RE: [PATCH v9 0/4] Exynos SROMc configuration and Ethernet support for
+ SMDK5410
+Date: Fri, 18 Dec 2015 12:16:22 +0300
+Message-ID: <019e01d13974$c432fb00$4c98f100$@samsung.com>
+References: <cover.1447659546.git.p.fedin@samsung.com>
+ <56724519.80108@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39230 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752426AbbLRITN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Dec 2015 03:19:13 -0500
-In-reply-to: <56738B39.10201@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <56724519.80108@samsung.com>
+Content-language: ru
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: 'Mark Rutland' <mark.rutland@arm.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Rob Herring' <robh+dt@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Kumar Gala' <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, amitdanielk@gmail.com, olof@lixom.net, khilman@linaro.org, arnd@arndb.de
 
-Hi Krzysztof,
+ Hello!
 
-On Friday 18 December 2015 09:57 AM, Krzysztof Kozlowski wrote:
-> On 18.12.2015 12:32, Pankaj Dubey wrote:
->> In this series I am splitting up SoC specific PMU configuration data into
->> mach-exynos folder itself, before moving all of them under
->> drivers/soc/samsung/. Also instead of making all changes in single patch it
->> has been broken into SoC specific patches to avoid large size of patch.
->> With this approach there will not be unwanted big churns just after
->> adding exynos-pmu under drivers/soc/samsung.
->>
->> All these patches are just refactoring to keep minimal changes while moving
->> exynos-pmu driver under drivers/soc/samsung/. Support for exynos7 PMU can
->> be added on top of it, in such a manner that for ARM64 build, ARM related
->> SoC's PMU will not get compiled and thus unnecessary increasing kernel image size.
->>
->> This series have been prepared on top of Krzysztof Kozlowski's 
->> next/stuff-late-not-split-per-branch branch, and it's just a rebase compared to
->> V6 posted and reviewed here [1]. 
->>
->> [1]: https://lkml.org/lkml/2015/11/17/15
->>
->> For testing entire patchset on Peach-Pi (Exynos5880) based chromebook for boot
->> and S2R functionality.
->>
->> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->>
->> For testing entire patchset on on Trats2 (Exynos4412, S2R, reboot, poweroff)
->> and Odroid XU3 (Exynos5422, reboot, poweroff).
->>
->> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
->> Changes since v6:
->>  - Rebasing on top of branch provided by Krzysztof, after resolving conflicts 
->>    caused due to Alim's patches for adoptation of generic syscon for poweroff, reboot.
->>  - Included Tested-by tags on individual patches as per applicability.
->>  - Dropped patches v6 [1/9], v6 [2/9] as these are already present in above mentioned branch.
->>  - Dropped patch v6 [8/9] as after Alim's patch this patch no more required.
->>
+> 4. This branch is not pushed to linux-next. I will sort it out if my
+> previous pull requests get in. I will be out of office for Christmas so
+> depending on the timing of {arm-soc,Christmas,Kukjin} this may or may
+> not go into v4.5 (yay...).
 > 
-> Patchset applied cleanly with:
-> 1. Removal of blank lines at end of two files (they appeared in v7).
-> 2. Removal of your tested-by. The author does not provide such tag
-> because it is assumed that he tested it before sending. However I left
-> the information about testing platform near your signed-off-by.
+> 5. If it does not get into v4.5, I will rebase it and proceed further
+> for v4.6.
 > 
+> If you have any questions, please let me know.
 
-Thanks for taking care of minor nitpicks. I will be more careful, next
-time.
+ Thank you very much. No, i don't have any questions, i'm glad that my work is picked up and not lost, i'm just keeping an eye on it
+until it goes to stable.
 
-> You can find the patches on the same branch:
-> https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/stuff-late-not-split-per-branch
-> 
-> I hope I will be able to push it out to arm-soc soon...
-> 
+ P.S. Not related to these sets directly, just to note... When i was writing the doc for SROMc bindings, i noticed that we have two
+directories for Exynos in Documentation/devicetree/bindings/arm:
+1. Documentation/devicetree/bindings/arm/exynos
+2. Documentation/devicetree/bindings/arm/Samsung
 
-Thanks,
-Pankaj Dubey
-> Best regards,
-> Krzysztof
-> 
-> 
+ In (1) we have only a single old file, shouldn't this be cleaned up and shouldn't this file be moved to (2)?
+
+Kind regards,
+Pavel Fedin
+Expert Engineer
+Samsung Electronics Research center Russia
