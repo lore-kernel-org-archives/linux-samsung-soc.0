@@ -1,117 +1,108 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v3 5/7] drm/exynos: mixer: refactor layer setup
-Date: Fri, 18 Dec 2015 09:30:10 +0900
-Message-ID: <56735392.4090408@samsung.com>
-References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
- <1450268508-15028-6-git-send-email-m.szyprowski@samsung.com>
- <567237D7.4020204@samsung.com> <5672DACA.2040404@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 01/20] PM / devfreq: exynos: Add generic exynos bus
+ frequency driver
+Date: Fri, 18 Dec 2015 09:34:14 +0900
+Message-ID: <56735486.8020609@samsung.com>
+References: <1450075104-13705-1-git-send-email-cw00.choi@samsung.com>
+ <1450075104-13705-2-git-send-email-cw00.choi@samsung.com>
+ <566F8BF2.20606@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:57451 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752424AbbLRAaQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Dec 2015 19:30:16 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NZJ010CD2QE6P20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Dec 2015 09:30:14 +0900 (KST)
-In-reply-to: <5672DACA.2040404@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <566F8BF2.20606@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tjakobi@math.uni-bielefeld.de, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, =?UTF-8?B?67CV67O0656M?= <boram1288.park@samsung.com>
 
-+Cc Boram Park,
+Hi,
 
-On 12/18/2015 12:54 AM, Marek Szyprowski wrote:
-> Hi Joonyoung,
-> 
-> On 2015-12-17 05:19, Joonyoung Shim wrote:
->> Hi Marek,
+On 2015=EB=85=84 12=EC=9B=94 15=EC=9D=BC 12:41, Krzysztof Kozlowski wro=
+te:
+> On 14.12.2015 15:38, Chanwoo Choi wrote:
+>> This patch adds the generic exynos bus frequency driver for AMBA AXI=
+ bus
+>> of sub-blocks in exynos SoC with DEVFREQ framework. The Samsung Exyn=
+os SoC
+>> have the common architecture for bus between DRAM and sub-blocks in =
+SoC.
+>> This driver can support the generic bus frequency driver for Exynos =
+SoCs.
 >>
->> On 12/16/2015 09:21 PM, Marek Szyprowski wrote:
->>> Properly configure blending properties of given hardware layer based on
->>> the selected pixel format. Currently only per-pixel-based alpha is possible
->>> when respective pixel format has been selected. Configuration of global,
->>> per-plane alpha value, color key and background color will be added later.
->>>
->>> This patch is heavily inspired by earlier work done by Tobias Jakobi
->>> <tjakobi@math.uni-bielefeld.de>.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>   drivers/gpu/drm/exynos/exynos_mixer.c | 43 +++++++++++++++++++++++++++++++++++
->>>   drivers/gpu/drm/exynos/regs-mixer.h   |  1 +
->>>   2 files changed, 44 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->>> index c572e271579e..ae7b122274ac 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>> @@ -165,6 +165,16 @@ static const u8 filter_cr_horiz_tap4[] = {
->>>       70,    59,    48,    37,    27,    19,    11,    5,
->>>   };
->>>   +static inline bool is_alpha_format(unsigned int pixel_format)
->>> +{
->>> +    switch (pixel_format) {
->>> +    case DRM_FORMAT_ARGB8888:
->>> +        return true;
->>> +    default:
->>> +        return false;
->>> +    }
->>> +}
->>> +
->>>   static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
->>>   {
->>>       return readl(res->vp_regs + reg_id);
->>> @@ -294,6 +304,37 @@ static void vp_default_filter(struct mixer_resources *res)
->>>           filter_cr_horiz_tap4, sizeof(filter_cr_horiz_tap4));
->>>   }
->>>   +static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
->>> +                bool alpha)
->>> +{
->>> +    struct mixer_resources *res = &ctx->mixer_res;
->>> +    u32 val;
->>> +
->>> +    val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
->>> +    if (alpha) {
->>> +        /* blending based on pixel alpha */
->>> +        val |= MXR_GRP_CFG_BLEND_PRE_MUL;
->>> +        val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
->>> +    }
->>> +    mixer_reg_writemask(res, MXR_GRAPHIC_CFG(win),
->>> +                val, MXR_GRP_CFG_MISC_MASK);
->> I think the priority of plane and whether vp layer exists should be
->> considered for blending setting. When priority of graphic layer0 is
->> lowest and vp layer is not, this will blend background layer.
->> It was not permitted to blend background layer until current.
-> 
-> Currently blending is hardcoded to following configuration:
-> 1. Order: [top] Grp1 > Grp0 > Video [bottom]
-> 2. Per-pixel alpha blending enabled unconditionally for Grp1 layer (regardless
->    of the selected pixel format for Grp1 layer).
-> 3. Per-pixel alpha blending enabled for Grp0 layer when Video layer gets enabled
->    (regardless of the selected pixel format for Grp0 layer).
-> 
-> It is not very intuitive and it looks hardcoded for one particular use case.
-> With the above patch application can configure blending for its needs.
-> 
+>> In devicetree, Each bus block has a bus clock, regulator, operation-=
+point
+>> and devfreq-event devices which measure the utilization of each bus =
+block.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> [linux.amoon: Tested on Odroid U3]
+>> Tested-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  drivers/devfreq/Kconfig             |  15 ++
+>>  drivers/devfreq/Makefile            |   1 +
+>>  drivers/devfreq/exynos/Makefile     |   1 +
+>>  drivers/devfreq/exynos/exynos-bus.c | 449 +++++++++++++++++++++++++=
++++++++++++
+>>  4 files changed, 466 insertions(+)
+>>  create mode 100644 drivers/devfreq/exynos/exynos-bus.c
+>>
+>> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+>> index 64281bb2f650..55ec774f794c 100644
+>> --- a/drivers/devfreq/Kconfig
+>> +++ b/drivers/devfreq/Kconfig
+>> @@ -66,6 +66,21 @@ config DEVFREQ_GOV_USERSPACE
+>> =20
+>>  comment "DEVFREQ Drivers"
+>> =20
+>> +config ARM_EXYNOS_BUS_DEVFREQ
+>> +	bool "ARM EXYNOS Generic Memory Bus DEVFREQ Driver"
+>> +	depends on ARCH_EXYNOS
+>> +	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+>> +	select DEVFREQ_EVENT_EXYNOS_PPMU
+>> +	select PM_DEVFREQ_EVENT
+>> +	select PM_OPP
+>> +	help
+>> +	  This adds the common DEVFREQ driver for Exynos Memory bus. Exyno=
+s
+>> +	  Memory bus has one more group of memory bus (e.g, MIF and INT bl=
+ock).
+>> +	  Each memory bus group could contain many memoby bus block. It re=
+ads
+>> +	  PPMU counters of memory controllers by using DEVFREQ-event devic=
+e
+>> +	  and adjusts the operating frequencies and voltages with OPP supp=
+ort.
+>> +	  This does not yet operate with optimal voltages.
+>> +
+>>  config ARM_EXYNOS4_BUS_DEVFREQ
+>>  	bool "ARM Exynos4210/4212/4412 Memory Bus DEVFREQ Driver"
+>>  	depends on (CPU_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412) &&=
+ !ARCH_MULTIPLATFORM
+>> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
+>> index 5134f9ee983d..375ebbb4fcfb 100644
+>> --- a/drivers/devfreq/Makefile
+>> +++ b/drivers/devfreq/Makefile
+>> @@ -6,6 +6,7 @@ obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)	+=3D governor_po=
+wersave.o
+>>  obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+=3D governor_userspace.o
+>> =20
+>>  # DEVFREQ Drivers
+>> +obj-$(CONFIG_ARCH_EXYNOS)		+=3D exynos/
+>=20
+> Why limiting it to ARCH_EXYNOS? Are there real dependencies on exynos
+> mach code? Or on ARM code?
 
-Sure, i'm not to oppose this patch.
+There is no dependency.
 
-> I really see no reason for special handling of the bottom layer (like
-> disabling per-pixel alpha even if alpha-enabled format is selected). It is
-> role of application to set proper pixel format (like XRGB8888 instead of
-> ARGB8888) if the application is not interested in alpha blending. Per-pixel
-> alpha blending is enabled only for formats which really support alpha.
-> 
+>=20
+> If not, then this probably should be obj-y to allow compile testing.
+> Particular objects would be selected by ARM_EXYNOS_BUS_DEVFREQ.
 
-You mean this is role of application definitely, then it's reasonable to
-me.
+OK. I'll alter it as obj-y.
 
-Thanks.
+Best Regards,
+Chanwoo Choi
+
+
+
