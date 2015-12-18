@@ -1,52 +1,25 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [PATCH v9 0/4] Exynos SROMc configuration and Ethernet support for
- SMDK5410
-Date: Fri, 18 Dec 2015 12:16:22 +0300
-Message-ID: <019e01d13974$c432fb00$4c98f100$@samsung.com>
-References: <cover.1447659546.git.p.fedin@samsung.com>
- <56724519.80108@samsung.com>
+From: Michael@mail.microamerica.com.pe,
+	"J.Tynan <f.digeronimo"@federconsumatori.abruzzo.it
+Subject: Review & Reply
+Date: Fri, 18 Dec 2015 17:18:54 +0700
+Message-ID: <20151218101948.48F5D8E86297__44797.7173062556$1450448566$gmane$org@mail.microamerica.com.pe>
+Reply-To: michaeljtynan8@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <56724519.80108@samsung.com>
-Content-language: ru
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Mark Rutland' <mark.rutland@arm.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Rob Herring' <robh+dt@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Kumar Gala' <galak@codeaurora.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.microamerica.com.pe ([200.37.170.69]:41181 "EHLO
+	mail.microamerica.com.pe" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754004AbbLROVk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Dec 2015 09:21:40 -0500
+Content-Description: Mail message body
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Recipients <f.digeronimo@federconsumatori.abruzzo.it>
 
- Hello!
-
-> 4. This branch is not pushed to linux-next. I will sort it out if my
-> previous pull requests get in. I will be out of office for Christmas so
-> depending on the timing of {arm-soc,Christmas,Kukjin} this may or may
-> not go into v4.5 (yay...).
-> 
-> 5. If it does not get into v4.5, I will rebase it and proceed further
-> for v4.6.
-> 
-> If you have any questions, please let me know.
-
- Thank you very much. No, i don't have any questions, i'm glad that my work is picked up and not lost, i'm just keeping an eye on it
-until it goes to stable.
-
- P.S. Not related to these sets directly, just to note... When i was writing the doc for SROMc bindings, i noticed that we have two
-directories for Exynos in Documentation/devicetree/bindings/arm:
-1. Documentation/devicetree/bindings/arm/exynos
-2. Documentation/devicetree/bindings/arm/Samsung
-
- In (1) we have only a single old file, shouldn't this be cleaned up and shouldn't this file be moved to (2)?
-
-Kind regards,
-Pavel Fedin
-Expert Engineer
-Samsung Electronics Research center Russia
+Greetings,
+My name is Mr.Michael J. Tynan, I am a banker with Bank Of America. It is true that we have not meet each other in person, but I strongly believe in trust and friendship in every business. I have a Lebanese deceased customer's abandoned fund, which I am his personal financial adviser before his accidental death, that being the main reason why I alone working in the bank here, know much about the existence of this fund and the secrets surrounding this money. But before I disclose the full details to you, I will like to know your interest and willingness to assist me. You can call me as soon you receive my message, so that i will send to you full details about the transaction.
+My best regards,
+Mr.Michael J. Tynan
+MOBILE: +1 347 269 3740
