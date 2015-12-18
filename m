@@ -1,314 +1,170 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v11 0/19] Add Analogix Core Display Port Driver
-Date: Fri, 18 Dec 2015 00:51:36 +0100
-Message-ID: <1767456.MuDjE2lUmn@diego>
-References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v3 2/7] drm/exynos: make zpos property configurable
+Date: Fri, 18 Dec 2015 09:22:05 +0900
+Message-ID: <567351AD.4000908@samsung.com>
+References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
+ <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
+ <5672242F.4070801@samsung.com> <5672B323.1000207@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:50960 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751885AbbLQXv4 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:33863 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752424AbbLRAWM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Dec 2015 18:51:56 -0500
-In-Reply-To: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
+	Thu, 17 Dec 2015 19:22:12 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NZJ00IB82CYS420@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Dec 2015 09:22:10 +0900 (KST)
+In-reply-to: <5672B323.1000207@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, =?UTF-8?B?67CV67O0656M?= <boram1288.park@samsung.com>
 
-Hi Yakir,
+On 12/17/2015 10:05 PM, Marek Szyprowski wrote:
+> Hello,
+> 
+> On 2015-12-17 03:55, Joonyoung Shim wrote:
+>> +Cc: Boram Park,
+>>
+>> Hi Marek,
+>>
+>> On 12/16/2015 09:21 PM, Marek Szyprowski wrote:
+>>> This patch adds all infrastructure to make zpos plane property
+>>> configurable from userspace.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>   drivers/gpu/drm/exynos/exynos_drm_drv.h   |  4 ++-
+>>>   drivers/gpu/drm/exynos/exynos_drm_plane.c | 51 ++++++++++++++++++++++++++++---
+>>>   2 files changed, 49 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> index 588b6763f9c7..f0827dbebb7d 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> @@ -64,6 +64,7 @@ struct exynos_drm_plane_state {
+>>>       struct exynos_drm_rect src;
+>>>       unsigned int h_ratio;
+>>>       unsigned int v_ratio;
+>>> +    unsigned int zpos;
+>>>   };
+>>>     static inline struct exynos_drm_plane_state *
+>>> @@ -91,11 +92,12 @@ struct exynos_drm_plane {
+>>>     #define EXYNOS_DRM_PLANE_CAP_DOUBLE    (1 << 0)
+>>>   #define EXYNOS_DRM_PLANE_CAP_SCALE    (1 << 1)
+>>> +#define EXYNOS_DRM_PLANE_CAP_ZPOS    (1 << 2)
+>>>     /*
+>>>    * Exynos DRM plane configuration structure.
+>>>    *
+>>> - * @zpos: z-position of the plane.
+>>> + * @zpos: initial z-position of the plane.
+>>>    * @type: type of the plane (primary, cursor or overlay).
+>>>    * @pixel_formats: supported pixel formats.
+>>>    * @num_pixel_formats: number of elements in 'pixel_formats'.
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>>> index fd6cb4cee01a..a2bdab836b50 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>>> @@ -124,6 +124,7 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
+>>>     static void exynos_drm_plane_reset(struct drm_plane *plane)
+>>>   {
+>>> +    struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+>>>       struct exynos_drm_plane_state *exynos_state;
+>>>         if (plane->state) {
+>>> @@ -136,6 +137,7 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
+>>>         exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
+>>>       if (exynos_state) {
+>>> +        exynos_state->zpos = exynos_plane->config->zpos;
+>>>           plane->state = &exynos_state->base;
+>>>           plane->state->plane = plane;
+>>>       }
+>>> @@ -153,6 +155,7 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
+>>>           return NULL;
+>>>         __drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
+>>> +    copy->zpos = exynos_state->zpos;
+>>>       return &copy->base;
+>>>   }
+>>>   @@ -165,13 +168,53 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
+>>>       kfree(old_exynos_state);
+>>>   }
+>>>   +static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
+>>> +                        struct drm_plane_state *state,
+>>> +                        struct drm_property *property,
+>>> +                        uint64_t val)
+>>> +{
+>>> +    struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+>>> +    struct exynos_drm_plane_state *exynos_state =
+>>> +                    to_exynos_plane_state(state);
+>>> +    struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+>>> +    const struct exynos_drm_plane_config *config = exynos_plane->config;
+>>> +
+>>> +    if (property == dev_priv->plane_zpos_property &&
+>>> +        (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
+>>> +        exynos_state->zpos = val;
+>>> +    else
+>>> +        return -EINVAL;
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
+>>> +                      const struct drm_plane_state *state,
+>>> +                      struct drm_property *property,
+>>> +                      uint64_t *val)
+>>> +{
+>>> +    const struct exynos_drm_plane_state *exynos_state =
+>>> +        container_of(state, const struct exynos_drm_plane_state, base);
+>>> +    struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+>>> +
+>>> +    if (property == dev_priv->plane_zpos_property)
+>>> +        *val = exynos_state->zpos;
+>>> +    else
+>>> +        return -EINVAL;
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>>   static struct drm_plane_funcs exynos_plane_funcs = {
+>>>       .update_plane    = drm_atomic_helper_update_plane,
+>>>       .disable_plane    = drm_atomic_helper_disable_plane,
+>>>       .destroy    = drm_plane_cleanup,
+>>> +    .set_property    = drm_atomic_helper_plane_set_property,
+>>>       .reset        = exynos_drm_plane_reset,
+>>>       .atomic_duplicate_state = exynos_drm_plane_duplicate_state,
+>>>       .atomic_destroy_state = exynos_drm_plane_destroy_state,
+>>> +    .atomic_set_property = exynos_drm_plane_atomic_set_property,
+>>> +    .atomic_get_property = exynos_drm_plane_atomic_get_property,
+>>>   };
+>>>     static int
+>>> @@ -267,8 +310,8 @@ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+>>>         prop = dev_priv->plane_zpos_property;
+>>>       if (!prop) {
+>>> -        prop = drm_property_create_range(dev, DRM_MODE_PROP_IMMUTABLE,
+>>> -                         "zpos", 0, MAX_PLANE - 1);
+>>> +        prop = drm_property_create_range(dev, 0, "zpos",
+>>> +                         0, MAX_PLANE - 1);
+>> User are using zpos property as index now, if we make zpos property
+>> configurable, i think we need a property immutable like index or a
+>> property like type or name that can know this plane is which plane
+>> (e.g. video plane or graphic plane).
+> 
+> I don't get this. zpos property is attached only to OVERLAY planes, PRIMARY and CURSOR don't have it, so userspace cannot rely on this property. In my patch the initial zpos value is same as before, so if application doesn't relies on zpos values, it will get the same values as now. Application can also check the plane type by reading 'type' property (PRIMARY, OVERLAY or CURSOR). However after my patch application will get the possibility to rearrange plane order for the given crtc by chaning zpos values. That's especially useful to configure 2 typical use cases: PRIMARY plane over OVERLAY plane (PRIMARY is used as typical on-screen-display) or OVERLAY plane over PRIMARY (OVERLAY is used as a window for displaying video data).
+> 
+>> Another way, user may be possible to check plane index as order of
+>> plane object id.
+> 
+> Application can easily find all the planes, which belongs to given crtc by checking 'possible crtcs' plane parameter, I see no additional need for 'index' property in such case. Please note that the initial plane configuration in case of atomic api will be always the same for all application (determined by exynos_drm_plane_reset function) and it will match the current setup.
+> 
 
-Am Mittwoch, 16. Dezember 2015, 11:20:18 schrieb Yakir Yang:
->    The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
-> share the same IP, so a lot of parts can be re-used. I split the common
-> code into bridge directory, then rk3288 and exynos only need to keep
-> some platform code. Cause I can't find the exact IP name of exynos dp
-> controller, so I decide to name dp core driver with "analogix" which I
-> find in rk3288 eDP TRM
+Thing i want to say is user needs to know which plane is for grahpic0,
+grahpic1 and video if they belong to mixer but it seems to be enough
+as the information that user decides to use which plane, possible crtcs,
+type property, pixel formats supported and zpos.
 
-I'm really sorry for not thinking of this earlier, but I think we'll be doing 
-the atomic modesetting conversion of the drm/kms driver first - see v3 series 
-from Mark Yao.
-
-Could you handle necessary changes to make it apply and work _after_ the 
-atomic modesetting conversion please?
-
-
-Thanks
-Heiko
-
-
-> But  there are still three light registers setting differents bewteen
-> exynos and rk3288.
-> 1. RK3288 have five special pll resigters which not indicata in exynos
->    dp controller.
-> 2. The address of DP_PHY_PD(dp phy power manager register) are different
->    between rk3288 and exynos.
-> 3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp debug
->    register).
-> 
-> This series have been well tested on Rockchip platform with eDP panel on
-> Jerry Chromebook and Display Port Monitor on RK3288 board. Also I have
-> tested on Samsung Snow and Peach Pit Chromebooks, and thanks to
-> Javier@Samsung help to retest the whole series on Samsung Exynos5800 Peach
-> Pi Chromebook, glad to say that things works rightlly.
-> 
-> Thanks,
-> - Yakir
-> 
-> 
-> Changes in v11:
-> - Uses tabs to fix the indentation issues in analogix_dp_core.h (Heiko)
-> - Correct the title of this rockchip dp phy document(Rob)
-> - Add the ack from Rob Herring
-> - Rename the "analogix,need-force-hpd" to common 'force-hpd' (Rob)
-> - Add the ack from Rob Herring
-> - Revert parts of Gustavo Padovan's changes in commit:
-> 	drm/exynos: do not start enabling DP at bind() phase
->   Add dp phy poweron function in bind time.
-> - Move the panel prepare from get_modes time to bind time, and move
->   the panel unprepare from bridge->disable to unbind time. (Heiko)
-> 
-> Changes in v10:
-> - Add the ack from Rob Herring
-> - Correct the ROCKCHIP_ANALOGIX_DP indentation in Kconfig to tabs here
-> (Heiko) - Add the ack from Rob Herring
-> - Fix the wrong macro value of GRF_EDP_REF_CLK_SEL_INTER_HIWORD_MASK
->     BIT(4) -> BIT(20)
-> - Remove the surplus "plat_data" check. (Heiko)
-> -       switch (dp->plat_data && dp->plat_data->dev_type) {
-> +       switch (dp->plat_data->dev_type) {
-> 
-> Changes in v9:
-> - Document more details for 'ports' property.
-> - Removed the unused the variable "res" in probe function. (Heiko)
-> - Removed the unused head file.
-> 
-> Changes in v8:
-> - Correct the right document path of display-timing.txt (Heiko)
-> - Correct the misspell of 'from' to 'frm'. (Heiko)
-> - Modify the commit subject name. (Heiko)
-> - Fix the mixed spacers on macro definitions. (Heiko)
-> - Remove the unnecessary empty line after clk_prepare_enable. (Heiko)
-> - Remove the specific address in the example node name. (Heiko)
-> 
-> Changes in v7:
-> - Back to use the of_property_read_bool() interfacs to provoid backward
->   compatibility of "hsync-active-high" "vsync-active-high" "interlaced"
->   to avoid -EOVERFLOW error (Krzysztof)
-> - Simply the commit message. (Kishon)
-> - Symmetrical enable/disbale the phy clock and power. (Kishon)
-> - Simplify the commit message. (Kishon)
-> 
-> Changes in v6:
-> - Fix the Kconfig recursive dependency (Javier)
-> - Fix Peach Pit hpd property name error:
-> -       hpd-gpio = <&gpx2 6 0>;
-> +       hpd-gpios = <&gpx2 6 0>;
-> 
-> Changes in v5:
-> - Correct the check condition of gpio_is_valid when driver try to get
->   the "hpd-gpios" DT propery. (Heiko)
-> - Move the platform attach callback in the front of core driver bridge
->   attch function. Cause once platform failed at attach, core driver should
->   still failed, so no need to init connector before platform attached
-> (Krzysztof) - Keep code style no changes with the previous exynos_dp_code.c
-> in this patch, and update commit message about the new export symbol
-> (Krzysztof) - Gather the device type patch (v4 11/16) into this one.
-> (Krzysztof) - leave out the connector registration to analogix platform
-> driver. (Thierry) - Resequence this patch after analogix_dp driver have
-> been split
->   from exynos_dp code, and rephrase reasonable commit message, and
->   remove some controversial style (Krzysztof)
->     -		analogix_dp_write_byte_to_dpcd(
->     - 				dp, DP_TEST_RESPONSE,
->     +		analogix_dp_write_byte_to_dpcd(dp,
->     +				DP_TEST_RESPONSE,
-> 				DP_TEST_EDID_CHECKSUM_WRITE);
-> - Switch video timing type to "u32", so driver could use
-> "of_property_read_u32" to get the backword timing values. Krzysztof suggest
-> me that driver could use the "of_property_read_bool" to get backword timing
-> values, but that interfacs would modify the original drm_display_mode
-> timing directly (whether those properties exists or not).
-> - Correct the misspell in commit message. (Krzysztof)
-> - Remove the empty line at the end of document, and correct the endpoint
->   numbers in the example DT node, and remove the regulator iomux setting
->   in driver code while using the pinctl in devicetree instead. (Heiko)
-> - Add device type declared, cause the previous "platform device type
->   support (v4 11/16)" already merge into (v5 02/14).
-> - Implement connector registration code. (Thierry)
-> - Split binding doc's from driver changes. (Rob)
-> - Add eDP hotplug pinctrl property. (Heiko)
-> - Remove "reg" DT property, cause driver could poweron/poweroff phy via
->   the exist "grf" syscon already. And rename the example DT node from
->   "edp_phy: phy@ff770274" to "edp_phy: edp-phy" directly. (Heiko)
-> - Add deivce_node at the front of driver, update phy_ops type from "static
->   struct" to "static const struct". And correct the input paramters of
->   devm_phy_create() interfaces. (Heiko)
-> - Split binding doc's from driver changes. (Rob)
-> - Update the rockchip,grf explain in document, and correct the clock
-> required elemets in document. (Rob & Heiko)
-> - Fix compiled error (Heiko)
-> - Using the connector display info message to configure eDP driver input
->   video mode, but hard code CRTC video output mode to RGBaaa.
-> 
-> Changes in v4:
-> - Update "analogix,hpd-gpios" to "hpd-gpios" DT propery. (Rob)
-> - Rename "analogix_dp-exynos.c" file name to "exynos_dp.c" (Jingoo)
-> - Create a separate folder for analogix code in bridge/ (Archit)
-> - Update commit message more readable. (Jingoo)
-> - Adjust the order from 05 to 04
-> - Provide backword compatibility with samsung. (Krzysztof)
-> - Split all DTS changes, and provide backward compatibility. Mark old
->   properties as deprecated but still support them. (Krzysztof)
-> - Update "analogix,hpd-gpio" to "hpd-gpios" prop name. (Rob)
-> - Deprecated some properties which could parsed from Edid/Mode/DPCD.
-> (Thierry) "analogix,color-space" & "analogix,color-depth"   &
->     "analogix,link-rate"   & "analogix,lane-count"    &
->     "analogix,ycbcr-coeff" & "analogix,dynamic-range" &
->     "vsync-active-high"    & "hsync-active-high"      & "interlaces"
-> - Separate all DTS changes to a separate patch. (Krzysztof)
-> - Remove some deprecated DT properties in rockchip dp document.
-> - Add commit message, and remove the redundant rockchip_dp_phy_init()
->   function, move those code to probe() method. And remove driver .owner
->   number. (Kishon)
-> - Seprate the link-rate and lane-count limit out with the device_type
->   flag. (Thierry)
-> - Take Jingoo suggest, add commit messages.
-> - Call drm_panel_prepare() in .get_modes function, ensure panel should
->   power on before driver try to read edid message.
-> 
-> Changes in v3:
-> - Move exynos's video_timing code to analogix_dp-exynos platform driver,
->   add get_modes method to struct analogix_dp_plat_data. (Thierry)
-> - Rename some "samsung*" dts propery to "analogix*". (Heiko)
-> - The link_rate and lane_count shouldn't config to the DT property value
->   directly, but we can take those as hardware limite. For example, RK3288
->   only support 4 physical lanes of 2.7/1.62 Gbps/lane, so DT property would
->   like "link-rate = 0x0a" "lane-count = 4". (Thierry)
-> - Dynamic parse video timing info from struct drm_display_mode and
->   struct drm_display_info. (Thierry)
-> - Add devicetree binding documents. (Heiko)
-> - Remove sync pol & colorimetry properies from the new analogix dp driver
->   devicetree binding. (Thierry)
-> - Update the exist exynos dtsi file with the latest DP DT properies.
-> - Leave "sclk_edp_24m" to rockchip dp phy driver which name to "24m",
->   and leave "sclk_edp" to analogix dp core driver which name to "dp",
->   and leave "pclk_edp" to rockchip dp platform driver which name to
->   "pclk". (Thierry & Heiko)
-> - Add devicetree binding document. (Heiko)
-> - Remove "rockchip,panel" DT property, take use of remote point to get panel
-> node. (Heiko)
-> - Add the new function point dp_platdata->get_modes() init.
-> - Suggest, add rockchip dp phy driver, collect the phy clocks and
->   power control. (Heiko)
-> - Add "analogix,need-force-hpd" to indicate whether driver need foce
->   hpd when hpd detect failed.
-> - move dp hpd detect to connector detect function.
-> - Add edid modes parse support
-> 
-> Changes in v2:
-> - Remove new copyright (Jingoo)
-> - Fix compiled failed due to analogix_dp_device misspell
-> - Improved commit message more readable, and avoid using some
->   uncommon style like bellow: (Joe Preches)
->     -  retval = exynos_dp_read_bytes_from_i2c(...
->   				  ...);
->     +  retval =
->     +  exynos_dp_read_bytes_from_i2c(......);
-> - Get panel node with remote-endpoint method, and create devicetree binding
->   for driver. (Heiko)
-> - Remove the clock enable/disbale with "sclk_edp" & "sclk_edp_24m",
->   leave those clock to rockchip dp phy driver.
-> - Fix compile failed dut to phy_pd_addr variable misspell error
-> 
-> Mark Yao (1):
->   drm: rockchip: vop: add bpc and color mode setting
-> 
-> Yakir Yang (18):
->   drm: bridge: analogix/dp: split exynos dp driver to bridge directory
->   drm: bridge: analogix/dp: fix some obvious code style
->   drm: bridge: analogix/dp: remove duplicate configuration of link rate
->     and link count
->   drm: bridge: analogix/dp: dynamic parse sync_pol & interlace &
->     dynamic_range
->   dt-bindings: add document for analogix display port driver
->   ARM: dts: exynos/dp: remove some properties that deprecated by
->     analogix_dp driver
->   drm: rockchip: dp: add rockchip platform dp driver
->   dt-bindings: add document for rockchip variant of analogix_dp
->   phy: Add driver for rockchip Display Port PHY
->   dt-bindings: add document for rockchip dp phy
->   drm: bridge: analogix/dp: add some rk3288 special registers setting
->   drm: bridge: analogix/dp: add max link rate and lane count limit for
->     RK3288
->   drm: bridge: analogix/dp: try force hpd after plug in lookup failed
->   drm: bridge: analogix/dp: move hpd detect to connector detect function
->   drm: bridge: analogix/dp: add edid modes parse in get_modes method
->   drm: bridge: analogix/dp: expand the look time for waiting AUX CH
->     reply
->   drm: bridge: analogix/dp: add panel prepare/unprepare in
->     suspend/resume time
->   drm: bridge: analogix/dp: Fix the possible dead lock in bridge disable
->     time
-> 
->  .../bindings/display/bridge/analogix_dp.txt        |   52 +
->  .../bindings/display/exynos/exynos_dp.txt          |   66 +-
->  .../display/rockchip/analogix_dp-rockchip.txt      |   92 ++
->  .../devicetree/bindings/phy/rockchip-dp-phy.txt    |   22 +
->  arch/arm/boot/dts/exynos5250-arndale.dts           |    2 -
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 -
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    4 +-
->  arch/arm/boot/dts/exynos5250-spring.dts            |    4 +-
->  arch/arm/boot/dts/exynos5420-peach-pit.dts         |    4 +-
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          |    2 -
->  arch/arm/boot/dts/exynos5800-peach-pi.dts          |    4 +-
->  drivers/gpu/drm/bridge/Kconfig                     |    2 +
->  drivers/gpu/drm/bridge/Makefile                    |    1 +
->  drivers/gpu/drm/bridge/analogix/Kconfig            |    3 +
->  drivers/gpu/drm/bridge/analogix/Makefile           |    1 +
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1387
-> ++++++++++++++++++ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 
-> 287 ++++
->  drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 1320 +++++++++++++++++
-> .../analogix/analogix_dp_reg.h}                    |  270 ++--
->  drivers/gpu/drm/exynos/Kconfig                     |    3 +-
->  drivers/gpu/drm/exynos/Makefile                    |    2 +-
->  drivers/gpu/drm/exynos/exynos_dp.c                 |  384 +++++
->  drivers/gpu/drm/exynos/exynos_dp_core.c            | 1515
-> -------------------- drivers/gpu/drm/exynos/exynos_dp_core.h            | 
-> 282 ----
->  drivers/gpu/drm/exynos/exynos_dp_reg.c             | 1263 ----------------
->  drivers/gpu/drm/rockchip/Kconfig                   |    9 +
->  drivers/gpu/drm/rockchip/Makefile                  |    1 +
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  457 ++++++
->  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |    2 +-
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |    2 +-
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |   32 +-
->  drivers/phy/Kconfig                                |    7 +
->  drivers/phy/Makefile                               |    1 +
->  drivers/phy/phy-rockchip-dp.c                      |  151 ++
->  include/drm/bridge/analogix_dp.h                   |   42 +
->  35 files changed, 4421 insertions(+), 3257 deletions(-)
->  create mode 100644
-> Documentation/devicetree/bindings/display/bridge/analogix_dp.txt create
-> mode 100644
-> Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-> create mode 100644
-> Documentation/devicetree/bindings/phy/rockchip-dp-phy.txt create mode
-> 100644 drivers/gpu/drm/bridge/analogix/Kconfig
->  create mode 100644 drivers/gpu/drm/bridge/analogix/Makefile
->  create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->  create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->  create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->  rename drivers/gpu/drm/{exynos/exynos_dp_reg.h =>
-> bridge/analogix/analogix_dp_reg.h} (62%) create mode 100644
-> drivers/gpu/drm/exynos/exynos_dp.c
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.c
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.h
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_reg.c
->  create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->  create mode 100644 drivers/phy/phy-rockchip-dp.c
->  create mode 100644 include/drm/bridge/analogix_dp.h
+Thanks.
