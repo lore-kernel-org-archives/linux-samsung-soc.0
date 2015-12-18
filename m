@@ -1,25 +1,57 @@
-From: Michael@mail.microamerica.com.pe,
-	"J.Tynan <f.digeronimo"@federconsumatori.abruzzo.it
-Subject: Review & Reply
-Date: Fri, 18 Dec 2015 17:18:54 +0700
-Message-ID: <20151218101948.48F5D8E86297__44797.7173062556$1450448566$gmane$org@mail.microamerica.com.pe>
-Reply-To: michaeljtynan8@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.microamerica.com.pe ([200.37.170.69]:41181 "EHLO
-	mail.microamerica.com.pe" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754004AbbLROVk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Dec 2015 09:21:40 -0500
-Content-Description: Mail message body
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 32/69] clocksource/drivers/exynos_mct: Fix Kconfig and add COMPILE_TEST option
+Date: Fri, 18 Dec 2015 15:17:45 +0100
+Message-ID: <1450448302-27429-32-git-send-email-daniel.lezcano@linaro.org>
+References: <5672CB9E.7090707@linaro.org>
+ <1450448302-27429-1-git-send-email-daniel.lezcano@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1450448302-27429-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mingo@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Recipients <f.digeronimo@federconsumatori.abruzzo.it>
 
-Greetings,
-My name is Mr.Michael J. Tynan, I am a banker with Bank Of America. It is true that we have not meet each other in person, but I strongly believe in trust and friendship in every business. I have a Lebanese deceased customer's abandoned fund, which I am his personal financial adviser before his accidental death, that being the main reason why I alone working in the bank here, know much about the existence of this fund and the secrets surrounding this money. But before I disclose the full details to you, I will like to know your interest and willingness to assist me. You can call me as soon you receive my message, so that i will send to you full details about the transaction.
-My best regards,
-Mr.Michael J. Tynan
-MOBILE: +1 347 269 3740
+Let the platform's Kconfig to select the clock instead of having a reverse
+dependency from the driver to the platform options.
+
+Add the COMPILE_TEST option for the compilation test coverage. Due to the
+non portable 'delay' code, this driver is only compilable on ARM.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig | 1 +
+ drivers/clocksource/Kconfig  | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 3a10f1a..ff10539 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -27,6 +27,7 @@ menuconfig ARCH_EXYNOS
+ 	select SRAM
+ 	select THERMAL
+ 	select MFD_SYSCON
++	select CLKSRC_EXYNOS_MCT
+ 	help
+ 	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+ 
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index e3ba5b4..2062783 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -231,8 +231,8 @@ config CLKSRC_METAG_GENERIC
+ 	  This option enables support for the Meta per-thread timers.
+ 
+ config CLKSRC_EXYNOS_MCT
+-	def_bool y if ARCH_EXYNOS
+-	depends on !ARM64
++	bool "Exynos multi core timer driver" if COMPILE_TEST
++	depends on ARM
+ 	help
+ 	  Support for Multi Core Timer controller on Exynos SoCs.
+ 
+-- 
+1.9.1
