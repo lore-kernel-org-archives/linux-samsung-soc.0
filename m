@@ -1,122 +1,54 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ARM: s3c: simplify s3c_irqwake_{e,}intallow definition
-Date: Fri, 18 Dec 2015 15:45:08 +0100
-Message-ID: <16503982.4JeEM7ZXq8@wuerfel>
+Subject: [PATCH] ARM: s3c64xx: fix pm-debug compilation
+Date: Fri, 18 Dec 2015 15:46:54 +0100
+Message-ID: <5515725.ojLSny3TOX@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:52863 "EHLO
+Received: from mout.kundenserver.de ([217.72.192.74]:56948 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753433AbbLROpt (ORCPT
+	with ESMTP id S1753433AbbLROrL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Dec 2015 09:45:49 -0500
+	Fri, 18 Dec 2015 09:47:11 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-For a long time, gcc has warned about odd configurations on s3c64xx:
+I got one randconfig build that failed to compile plat-samsung/pm-debug.c
+on s3c64xx:
 
-In file included from arch/arm/plat-samsung/pm.c:34:0:
-arch/arm/mach-s3c64xx/include/mach/pm-core.h:61:0: warning: "s3c_irqwake_eintallow" redefined
- #define s3c_irqwake_eintallow ((1 << 28) - 1)
-In file included from arch/arm/plat-samsung/pm.c:33:0:
-arch/arm/plat-samsung/include/plat/pm.h:49:0: note: this is the location of the previous definition
- #define s3c_irqwake_eintallow 0
+In file included from arch/arm/plat-samsung/pm-debug.c:27:0:
+arch/arm/mach-s3c64xx/include/mach/pm-core.h: In function 's3c_pm_debug_init_uart':
+arch/arm/mach-s3c64xx/include/mach/pm-core.h:25:25: error: 'S3C_VA_SYS' undeclared (first use in this function)
+  u32 tmp = __raw_readl(S3C_PCLK_GATE);
+arch/arm/mach-s3c64xx/include/mach/pm-core.h:25:25: note: each undeclared identifier is reported only once for each function it appears in
+arch/arm/mach-s3c64xx/include/mach/pm-core.h:39:2: error: implicit declaration of function 'udelay' [-Werror=implicit-function-declaration]
+  udelay(10);
 
-The definitions of s3c_irqwake_intallow and s3c_irqwake_eintallow are a bit consistent
-between the various platforms. Things have become easier now that it's only s3c24xx
-and s3c64xx that use them at all, so I've tried to rearrange the definitions to
-make it more obvious what is going on.
+I have not investigated why this does not show up much more often, I
+guess the headers are usually included from elsewhere, but adding
+explicit #include statements is an obvious fix.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-This fixes a very old and harmless warning, please apply to a cleanup branch
-if you agree.
+I suspect this has been broken for a long time, so no rush, but please
+apply this to a cleanup branch.
 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/pm-core.h b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
-index 69459dbbdcad..712333fec589 100644
---- a/arch/arm/mach-s3c24xx/include/mach/pm-core.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
-@@ -85,3 +85,17 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
- 
- static inline void s3c_pm_restored_gpios(void) { }
- static inline void samsung_pm_saved_gpios(void) { }
-+
-+/* state for IRQs over sleep */
-+
-+/* default is to allow for EINT0..EINT15, and IRQ_RTC as wakeup sources
-+ *
-+ * set bit to 1 in allow bitfield to enable the wakeup settings on it
-+*/
-+#ifdef CONFIG_PM_SLEEP
-+#define s3c_irqwake_intallow	(1L << 30 | 0xfL)
-+#define s3c_irqwake_eintallow	(0x0000fff0L)
-+#else
-+#define s3c_irqwake_eintallow 0
-+#define s3c_irqwake_intallow  0
-+#endif
-diff --git a/arch/arm/mach-s3c24xx/irq-pm.c b/arch/arm/mach-s3c24xx/irq-pm.c
-index b91341ef2b2e..417b7a20c2d1 100644
---- a/arch/arm/mach-s3c24xx/irq-pm.c
-+++ b/arch/arm/mach-s3c24xx/irq-pm.c
-@@ -25,19 +25,10 @@
- 
- #include <mach/regs-irq.h>
- #include <mach/regs-gpio.h>
-+#include <mach/pm-core.h>
- 
- #include <asm/irq.h>
- 
--/* state for IRQs over sleep */
--
--/* default is to allow for EINT0..EINT15, and IRQ_RTC as wakeup sources
-- *
-- * set bit to 1 in allow bitfield to enable the wakeup settings on it
--*/
--
--unsigned long s3c_irqwake_intallow	= 1L << 30 | 0xfL;
--unsigned long s3c_irqwake_eintallow	= 0x0000fff0L;
--
- int s3c_irq_wake(struct irq_data *data, unsigned int state)
- {
- 	unsigned long irqbit = 1 << data->hwirq;
 diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-index 549dadd5f487..4a285e97afff 100644
+index 5be8fe368e54..4a285e97afff 100644
 --- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
 +++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-@@ -59,9 +59,13 @@ static inline void s3c_pm_arch_show_resume_irqs(void)
+@@ -16,9 +16,11 @@
+ #define __MACH_S3C64XX_PM_CORE_H __FILE__
  
- /* make these defines, we currently do not have any need to change
-  * the IRQ wake controls depending on the CPU we are running on */
--
-+#ifdef CONFIG_PM_SLEEP
- #define s3c_irqwake_eintallow	((1 << 28) - 1)
- #define s3c_irqwake_intallow	(~0)
-+#else
-+#define s3c_irqwake_eintallow 0
-+#define s3c_irqwake_intallow  0
-+#endif
+ #include <linux/serial_s3c.h>
++#include <linux/delay.h>
  
- static inline void s3c_pm_arch_update_uart(void __iomem *regs,
- 					   struct pm_uart_save *save)
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index 7f415ce74591..9dd562ab0841 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -41,14 +41,6 @@ static inline int s3c64xx_pm_init(void)
- extern unsigned long s3c_irqwake_intmask;
- extern unsigned long s3c_irqwake_eintmask;
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-clock.h>
++#include <mach/map.h>
  
--/* IRQ masks for IRQs allowed to go to sleep (see irq.c) */
--extern unsigned long s3c_irqwake_intallow;
--#ifdef CONFIG_PM_SLEEP
--extern unsigned long s3c_irqwake_eintallow;
--#else
--#define s3c_irqwake_eintallow 0
--#endif
--
- /* per-cpu sleep functions */
- 
- extern void (*pm_cpu_prep)(void);
+ static inline void s3c_pm_debug_init_uart(void)
+ {
