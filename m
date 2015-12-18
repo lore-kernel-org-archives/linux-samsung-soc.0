@@ -1,170 +1,117 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v3 2/7] drm/exynos: make zpos property configurable
-Date: Fri, 18 Dec 2015 09:22:05 +0900
-Message-ID: <567351AD.4000908@samsung.com>
+Subject: Re: [PATCH v3 5/7] drm/exynos: mixer: refactor layer setup
+Date: Fri, 18 Dec 2015 09:30:10 +0900
+Message-ID: <56735392.4090408@samsung.com>
 References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
- <1450268508-15028-3-git-send-email-m.szyprowski@samsung.com>
- <5672242F.4070801@samsung.com> <5672B323.1000207@samsung.com>
+ <1450268508-15028-6-git-send-email-m.szyprowski@samsung.com>
+ <567237D7.4020204@samsung.com> <5672DACA.2040404@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33863 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752424AbbLRAWM (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:57451 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752424AbbLRAaQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Dec 2015 19:22:12 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+	Thu, 17 Dec 2015 19:30:16 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0NZJ00IB82CYS420@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Dec 2015 09:22:10 +0900 (KST)
-In-reply-to: <5672B323.1000207@samsung.com>
+ with ESMTP id <0NZJ010CD2QE6P20@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Dec 2015 09:30:14 +0900 (KST)
+In-reply-to: <5672DACA.2040404@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, =?UTF-8?B?67CV67O0656M?= <boram1288.park@samsung.com>
 
-On 12/17/2015 10:05 PM, Marek Szyprowski wrote:
-> Hello,
++Cc Boram Park,
+
+On 12/18/2015 12:54 AM, Marek Szyprowski wrote:
+> Hi Joonyoung,
 > 
-> On 2015-12-17 03:55, Joonyoung Shim wrote:
->> +Cc: Boram Park,
->>
+> On 2015-12-17 05:19, Joonyoung Shim wrote:
 >> Hi Marek,
 >>
 >> On 12/16/2015 09:21 PM, Marek Szyprowski wrote:
->>> This patch adds all infrastructure to make zpos plane property
->>> configurable from userspace.
+>>> Properly configure blending properties of given hardware layer based on
+>>> the selected pixel format. Currently only per-pixel-based alpha is possible
+>>> when respective pixel format has been selected. Configuration of global,
+>>> per-plane alpha value, color key and background color will be added later.
+>>>
+>>> This patch is heavily inspired by earlier work done by Tobias Jakobi
+>>> <tjakobi@math.uni-bielefeld.de>.
 >>>
 >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >>> ---
->>>   drivers/gpu/drm/exynos/exynos_drm_drv.h   |  4 ++-
->>>   drivers/gpu/drm/exynos/exynos_drm_plane.c | 51 ++++++++++++++++++++++++++++---
->>>   2 files changed, 49 insertions(+), 6 deletions(-)
+>>>   drivers/gpu/drm/exynos/exynos_mixer.c | 43 +++++++++++++++++++++++++++++++++++
+>>>   drivers/gpu/drm/exynos/regs-mixer.h   |  1 +
+>>>   2 files changed, 44 insertions(+)
 >>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>> index 588b6763f9c7..f0827dbebb7d 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->>> @@ -64,6 +64,7 @@ struct exynos_drm_plane_state {
->>>       struct exynos_drm_rect src;
->>>       unsigned int h_ratio;
->>>       unsigned int v_ratio;
->>> +    unsigned int zpos;
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>>> index c572e271579e..ae7b122274ac 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>>> @@ -165,6 +165,16 @@ static const u8 filter_cr_horiz_tap4[] = {
+>>>       70,    59,    48,    37,    27,    19,    11,    5,
 >>>   };
->>>     static inline struct exynos_drm_plane_state *
->>> @@ -91,11 +92,12 @@ struct exynos_drm_plane {
->>>     #define EXYNOS_DRM_PLANE_CAP_DOUBLE    (1 << 0)
->>>   #define EXYNOS_DRM_PLANE_CAP_SCALE    (1 << 1)
->>> +#define EXYNOS_DRM_PLANE_CAP_ZPOS    (1 << 2)
->>>     /*
->>>    * Exynos DRM plane configuration structure.
->>>    *
->>> - * @zpos: z-position of the plane.
->>> + * @zpos: initial z-position of the plane.
->>>    * @type: type of the plane (primary, cursor or overlay).
->>>    * @pixel_formats: supported pixel formats.
->>>    * @num_pixel_formats: number of elements in 'pixel_formats'.
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> index fd6cb4cee01a..a2bdab836b50 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> @@ -124,6 +124,7 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
->>>     static void exynos_drm_plane_reset(struct drm_plane *plane)
+>>>   +static inline bool is_alpha_format(unsigned int pixel_format)
+>>> +{
+>>> +    switch (pixel_format) {
+>>> +    case DRM_FORMAT_ARGB8888:
+>>> +        return true;
+>>> +    default:
+>>> +        return false;
+>>> +    }
+>>> +}
+>>> +
+>>>   static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
 >>>   {
->>> +    struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
->>>       struct exynos_drm_plane_state *exynos_state;
->>>         if (plane->state) {
->>> @@ -136,6 +137,7 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
->>>         exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
->>>       if (exynos_state) {
->>> +        exynos_state->zpos = exynos_plane->config->zpos;
->>>           plane->state = &exynos_state->base;
->>>           plane->state->plane = plane;
->>>       }
->>> @@ -153,6 +155,7 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
->>>           return NULL;
->>>         __drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
->>> +    copy->zpos = exynos_state->zpos;
->>>       return &copy->base;
+>>>       return readl(res->vp_regs + reg_id);
+>>> @@ -294,6 +304,37 @@ static void vp_default_filter(struct mixer_resources *res)
+>>>           filter_cr_horiz_tap4, sizeof(filter_cr_horiz_tap4));
 >>>   }
->>>   @@ -165,13 +168,53 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
->>>       kfree(old_exynos_state);
->>>   }
->>>   +static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
->>> +                        struct drm_plane_state *state,
->>> +                        struct drm_property *property,
->>> +                        uint64_t val)
+>>>   +static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
+>>> +                bool alpha)
 >>> +{
->>> +    struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
->>> +    struct exynos_drm_plane_state *exynos_state =
->>> +                    to_exynos_plane_state(state);
->>> +    struct exynos_drm_private *dev_priv = plane->dev->dev_private;
->>> +    const struct exynos_drm_plane_config *config = exynos_plane->config;
+>>> +    struct mixer_resources *res = &ctx->mixer_res;
+>>> +    u32 val;
 >>> +
->>> +    if (property == dev_priv->plane_zpos_property &&
->>> +        (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
->>> +        exynos_state->zpos = val;
->>> +    else
->>> +        return -EINVAL;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
->>> +                      const struct drm_plane_state *state,
->>> +                      struct drm_property *property,
->>> +                      uint64_t *val)
->>> +{
->>> +    const struct exynos_drm_plane_state *exynos_state =
->>> +        container_of(state, const struct exynos_drm_plane_state, base);
->>> +    struct exynos_drm_private *dev_priv = plane->dev->dev_private;
->>> +
->>> +    if (property == dev_priv->plane_zpos_property)
->>> +        *val = exynos_state->zpos;
->>> +    else
->>> +        return -EINVAL;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>>   static struct drm_plane_funcs exynos_plane_funcs = {
->>>       .update_plane    = drm_atomic_helper_update_plane,
->>>       .disable_plane    = drm_atomic_helper_disable_plane,
->>>       .destroy    = drm_plane_cleanup,
->>> +    .set_property    = drm_atomic_helper_plane_set_property,
->>>       .reset        = exynos_drm_plane_reset,
->>>       .atomic_duplicate_state = exynos_drm_plane_duplicate_state,
->>>       .atomic_destroy_state = exynos_drm_plane_destroy_state,
->>> +    .atomic_set_property = exynos_drm_plane_atomic_set_property,
->>> +    .atomic_get_property = exynos_drm_plane_atomic_get_property,
->>>   };
->>>     static int
->>> @@ -267,8 +310,8 @@ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
->>>         prop = dev_priv->plane_zpos_property;
->>>       if (!prop) {
->>> -        prop = drm_property_create_range(dev, DRM_MODE_PROP_IMMUTABLE,
->>> -                         "zpos", 0, MAX_PLANE - 1);
->>> +        prop = drm_property_create_range(dev, 0, "zpos",
->>> +                         0, MAX_PLANE - 1);
->> User are using zpos property as index now, if we make zpos property
->> configurable, i think we need a property immutable like index or a
->> property like type or name that can know this plane is which plane
->> (e.g. video plane or graphic plane).
+>>> +    val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
+>>> +    if (alpha) {
+>>> +        /* blending based on pixel alpha */
+>>> +        val |= MXR_GRP_CFG_BLEND_PRE_MUL;
+>>> +        val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
+>>> +    }
+>>> +    mixer_reg_writemask(res, MXR_GRAPHIC_CFG(win),
+>>> +                val, MXR_GRP_CFG_MISC_MASK);
+>> I think the priority of plane and whether vp layer exists should be
+>> considered for blending setting. When priority of graphic layer0 is
+>> lowest and vp layer is not, this will blend background layer.
+>> It was not permitted to blend background layer until current.
 > 
-> I don't get this. zpos property is attached only to OVERLAY planes, PRIMARY and CURSOR don't have it, so userspace cannot rely on this property. In my patch the initial zpos value is same as before, so if application doesn't relies on zpos values, it will get the same values as now. Application can also check the plane type by reading 'type' property (PRIMARY, OVERLAY or CURSOR). However after my patch application will get the possibility to rearrange plane order for the given crtc by chaning zpos values. That's especially useful to configure 2 typical use cases: PRIMARY plane over OVERLAY plane (PRIMARY is used as typical on-screen-display) or OVERLAY plane over PRIMARY (OVERLAY is used as a window for displaying video data).
+> Currently blending is hardcoded to following configuration:
+> 1. Order: [top] Grp1 > Grp0 > Video [bottom]
+> 2. Per-pixel alpha blending enabled unconditionally for Grp1 layer (regardless
+>    of the selected pixel format for Grp1 layer).
+> 3. Per-pixel alpha blending enabled for Grp0 layer when Video layer gets enabled
+>    (regardless of the selected pixel format for Grp0 layer).
 > 
->> Another way, user may be possible to check plane index as order of
->> plane object id.
-> 
-> Application can easily find all the planes, which belongs to given crtc by checking 'possible crtcs' plane parameter, I see no additional need for 'index' property in such case. Please note that the initial plane configuration in case of atomic api will be always the same for all application (determined by exynos_drm_plane_reset function) and it will match the current setup.
+> It is not very intuitive and it looks hardcoded for one particular use case.
+> With the above patch application can configure blending for its needs.
 > 
 
-Thing i want to say is user needs to know which plane is for grahpic0,
-grahpic1 and video if they belong to mixer but it seems to be enough
-as the information that user decides to use which plane, possible crtcs,
-type property, pixel formats supported and zpos.
+Sure, i'm not to oppose this patch.
+
+> I really see no reason for special handling of the bottom layer (like
+> disabling per-pixel alpha even if alpha-enabled format is selected). It is
+> role of application to set proper pixel format (like XRGB8888 instead of
+> ARGB8888) if the application is not interested in alpha blending. Per-pixel
+> alpha blending is enabled only for formats which really support alpha.
+> 
+
+You mean this is role of application definitely, then it's reasonable to
+me.
 
 Thanks.
