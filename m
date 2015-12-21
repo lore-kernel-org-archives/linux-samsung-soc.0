@@ -1,34 +1,76 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] [media] gsc-m2m: Use an unsigned data type for a variable
-Date: Sat, 19 Dec 2015 23:42:22 +0300
-Message-ID: <20151219204222.GU5284@mwanda>
-References: <5675765F.9020002@users.sourceforge.net>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/2] [media] media-device: split media initialization and
+ registration
+Date: Mon, 21 Dec 2015 11:37:34 -0300
+Message-ID: <56780EAE.7090909@osg.samsung.com>
+References: <1441890195-11650-1-git-send-email-javier@osg.samsung.com>
+ <1441890195-11650-3-git-send-email-javier@osg.samsung.com>
+ <55F1BA5C.50508@linux.intel.com> <20151215091342.2f825d91@recife.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5675765F.9020002@users.sourceforge.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:59778 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751071AbbLUOhp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Dec 2015 09:37:45 -0500
+In-Reply-To: <20151215091342.2f825d91@recife.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Luis de Bethencourt <luis@debethencourt.com>, linux-sh@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Matthias Schwarzott <zzam@gentoo.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tommi Rantala <tt.rantala@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michal Simek <michal.simek@xilinx.com>, Olli Salonen <olli.salonen@iki.fi>, linux-arm-kernel@lists.infradead.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, Antti Palosaari <crope@iki.fi>, Shuah Khan <shuahkh@osg.samsung.com>, =?UTF-8?Q?Rafael_Louren=c3=a7o_de_Lima_Chehab?=
 
-On Sat, Dec 19, 2015 at 04:23:11PM +0100, SF Markus Elfring wrote:
-> diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> index d82e717..f2c091c 100644
-> --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> @@ -701,7 +701,7 @@ static unsigned int gsc_m2m_poll(struct file *file,
->  {
->  	struct gsc_ctx *ctx = fh_to_ctx(file->private_data);
->  	struct gsc_dev *gsc = ctx->gsc_dev;
-> -	int ret;
-> +	unsigned int ret;
->  
->  	if (mutex_lock_interruptible(&gsc->lock))
->  		return -ERESTARTSYS;
+Hello Mauro,
 
-I'm suspect returning -ERESTARTSYS is a bug.
+On 12/15/2015 08:13 AM, Mauro Carvalho Chehab wrote:
 
-regards,
-dan carpenter
+[snip]
+
+>>>  
+>>>  /**
+>>> - * media_device_register - register a media device
+>>> + * media_device_init() - initialize a media device
+>>>   * @mdev:	The media device
+>>>   *
+>>>   * The caller is responsible for initializing the media device before
+>>> @@ -534,12 +534,11 @@ static void media_device_release(struct media_devnode *mdev)
+>>>   *
+>>>   * - dev must point to the parent device
+>>>   * - model must be filled with the device model name
+>>> + *
+>>> + * returns zero on success or a negative error code.
+>>>   */
+>>> -int __must_check __media_device_register(struct media_device *mdev,
+>>> -					 struct module *owner)
+>>> +int __must_check media_device_init(struct media_device *mdev)
+>>
+>> I think I suggested making media_device_init() return void as the only
+>> remaining source of errors would be driver bugs.
+>>
+>> I'd simply replace the WARN_ON() below with BUG().
+> 
+> That sounds like bad idea to me, and it is against the current
+> Kernel policy of using BUG() only when there's no other way, e. g. on
+> event so severe that the Kernel has no other thing to do except to
+> stop running.
+>
+
+I agree with you, that was exactly my point and what I told Sakari [0] but
+he had a strong opinion about it and I didn't mind too much so I decided at
+the end to just change it to a BUG_ON() so I could get his ack for this set.
+ 
+> For sure, this is not the case here. Also, all drivers have already
+> a logic that checks if the device init happened. So, they should already
+> be doing the right thing.
+>
+> Regards,
+> Mauro
+
+[0]: https://lkml.org/lkml/2015/9/10/483
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
