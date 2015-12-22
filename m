@@ -1,185 +1,162 @@
-From: "Jingoo Han" <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v11 06/19] ARM: dts: exynos/dp: remove some properties that deprecated by analogix_dp driver
-Date: Tue, 22 Dec 2015 21:13:59 +0900
-Message-ID: <000801d13cb2$43079270$c916b750$@com>
-References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com> <1450236876-1951-1-git-send-email-ykk@rock-chips.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [PATCH v11 09/19] phy: Add driver for rockchip Display Port PHY
+Date: Tue, 22 Dec 2015 21:20:39 +0900
+Message-ID: <000901d13cb3$341b6c40$9c5244c0$@com>
+References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
+ <1450237257-2208-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1450236876-1951-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1450237257-2208-1-git-send-email-ykk@rock-chips.com>
 Content-Language: ko
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Yakir Yang' <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, 'Inki Dae' <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Mark Yao' <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, 'Heiko Stuebner' <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: 'Thierry Reding' <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, 'Krzysztof Kozlowski' <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Rob Herring' <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Russell King' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, 'Gustavo Padovan' <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, 'Kishon Vijay Abraham I' <kishon-l0cyMroinI0@public.gmane.org>, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, 'Andy Yan' <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Jingoo Han' <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: 'Yakir Yang' <ykk@rock-chips.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, 'Jingoo Han' <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, javier@osg.samsung.com, 'Rob Herring' <robh+dt@kernel.org>, 'Andy Yan' <andy.yan@rock-chips.com>, 'Thierry Reding' <treding@nvidia.com>, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, December 16, 2015 12:35 PM, Yakir Yang wrote:
-> 
-> After exynos_dp have been split the common IP code into analogix_dp driver,
-> the analogix_dp driver have deprecated some Samsung platform properties which
-> could be dynamically parsed from EDID/MODE/DPCD message, so this is an update
-> for Exynos DTS file for dp-controller.
-> 
-> Beside the backward compatibility is fully preserved, so there are no
-> bisectability break that make this change in a separate patch.
-> 
-> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-
-Reviewed-by: Jingoo Han < jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org >
-
-Best regards,
-Jingoo Han
-
-> ---
-> Changes in v11: None
-> Changes in v10: None
-> Changes in v9: None
-> Changes in v8: None
-> Changes in v7: None
-> Changes in v6:
-> - Fix Peach Pit hpd property name error:
-> -       hpd-gpio = <&gpx2 6 0>;
-> +       hpd-gpios = <&gpx2 6 0>;
-> 
-> Changes in v5:
-> - Correct the misspell in commit message. (Krzysztof)
-> 
-> Changes in v4:
-> - Separate all DTS changes to a separate patch. (Krzysztof)
-> 
-> Changes in v3: None
-> Changes in v2: None
-> 
->  arch/arm/boot/dts/exynos5250-arndale.dts      | 2 --
->  arch/arm/boot/dts/exynos5250-smdk5250.dts     | 2 --
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 +---
->  arch/arm/boot/dts/exynos5250-spring.dts       | 4 +---
->  arch/arm/boot/dts/exynos5420-peach-pit.dts    | 4 +---
->  arch/arm/boot/dts/exynos5420-smdk5420.dts     | 2 --
->  arch/arm/boot/dts/exynos5800-peach-pi.dts     | 4 +---
->  7 files changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index c000532..b1790cf 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -124,8 +124,6 @@
->  &dp {
->  	status = "okay";
->  	samsung,color-space = <0>;
-> -	samsung,dynamic-range = <0>;
-> -	samsung,ycbcr-coeff = <0>;
->  	samsung,color-depth = <1>;
->  	samsung,link-rate = <0x0a>;
->  	samsung,lane-count = <4>;
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 0f5dcd4..f30c2db 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -80,8 +80,6 @@
-> 
->  &dp {
->  	samsung,color-space = <0>;
-> -	samsung,dynamic-range = <0>;
-> -	samsung,ycbcr-coeff = <0>;
->  	samsung,color-depth = <1>;
->  	samsung,link-rate = <0x0a>;
->  	samsung,lane-count = <4>;
-> diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-
-> common.dtsi
-> index 5cb33ba..b96624b 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-> @@ -236,12 +236,10 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&dp_hpd>;
->  	samsung,color-space = <0>;
-> -	samsung,dynamic-range = <0>;
-> -	samsung,ycbcr-coeff = <0>;
->  	samsung,color-depth = <1>;
->  	samsung,link-rate = <0x0a>;
->  	samsung,lane-count = <2>;
-> -	samsung,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
-> +	hpd-gpios = <&gpx0 7 GPIO_ACTIVE_HIGH>;
-> 
->  	ports {
->  		port@0 {
-> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-> index c1edd6d..91881d7 100644
-> --- a/arch/arm/boot/dts/exynos5250-spring.dts
-> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
-> @@ -74,12 +74,10 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&dp_hpd_gpio>;
->  	samsung,color-space = <0>;
-> -	samsung,dynamic-range = <0>;
-> -	samsung,ycbcr-coeff = <0>;
->  	samsung,color-depth = <1>;
->  	samsung,link-rate = <0x0a>;
->  	samsung,lane-count = <1>;
-> -	samsung,hpd-gpio = <&gpc3 0 GPIO_ACTIVE_HIGH>;
-> +	hpd-gpios = <&gpc3 0 GPIO_ACTIVE_HIGH>;
->  };
-> 
->  &ehci {
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 35cfb07..2f37c87 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -148,12 +148,10 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&dp_hpd_gpio>;
->  	samsung,color-space = <0>;
-> -	samsung,dynamic-range = <0>;
-> -	samsung,ycbcr-coeff = <0>;
->  	samsung,color-depth = <1>;
->  	samsung,link-rate = <0x06>;
->  	samsung,lane-count = <2>;
-> -	samsung,hpd-gpio = <&gpx2 6 GPIO_ACTIVE_HIGH>;
-> +	hpd-gpios = <&gpx2 6 GPIO_ACTIVE_HIGH>;
-> 
->  	ports {
->  		port@0 {
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index ac35aef..f67344f 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -93,8 +93,6 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&dp_hpd>;
->  	samsung,color-space = <0>;
-> -	samsung,dynamic-range = <0>;
-> -	samsung,ycbcr-coeff = <0>;
->  	samsung,color-depth = <1>;
->  	samsung,link-rate = <0x0a>;
->  	samsung,lane-count = <4>;
-> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> index 7b018e4..363c95f 100644
-> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> @@ -142,12 +142,10 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&dp_hpd_gpio>;
->  	samsung,color-space = <0>;
-> -	samsung,dynamic-range = <0>;
-> -	samsung,ycbcr-coeff = <0>;
->  	samsung,color-depth = <1>;
->  	samsung,link-rate = <0x0a>;
->  	samsung,lane-count = <2>;
-> -	samsung,hpd-gpio = <&gpx2 6 GPIO_ACTIVE_HIGH>;
-> +	hpd-gpios = <&gpx2 6 GPIO_ACTIVE_HIGH>;
->  	panel = <&panel>;
->  };
-> 
-> --
-> 1.9.1
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gV2VkbmVzZGF5LCBEZWNlbWJlciAxNiwgMjAxNSAxMjo0MSBQTSwgWWFraXIgWWFuZyB3cm90
+ZToKPiAKPiBBZGQgcGh5IGRyaXZlciBmb3IgdGhlIFJvY2tjaGlwIERpc3BsYXlQb3J0IFBIWSBt
+b2R1bGUuIFRoaXMKPiBpcyByZXF1aXJlZCB0byBnZXQgRGlzcGxheVBvcnQgd29ya2luZyBpbiBS
+b2NrY2hpcCBTb0NzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNo
+aXBzLmNvbT4KPiBSZXZpZXdlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4K
+PiAtLS0KPiBDaGFuZ2VzIGluIHYxMTogTm9uZQo+IENoYW5nZXMgaW4gdjEwOgo+IC0gRml4IHRo
+ZSB3cm9uZyBtYWNybyB2YWx1ZSBvZiBHUkZfRURQX1JFRl9DTEtfU0VMX0lOVEVSX0hJV09SRF9N
+QVNLCj4gICAgIEJJVCg0KSAtPiBCSVQoMjApCj4gCj4gQ2hhbmdlcyBpbiB2OToKPiAtIFJlbW92
+ZWQgdGhlIHVudXNlZCB0aGUgdmFyaWFibGUgInJlcyIgaW4gcHJvYmUgZnVuY3Rpb24uIChIZWlr
+bykKPiAtIFJlbW92ZWQgdGhlIHVudXNlZCBoZWFkIGZpbGUuCj4gCj4gQ2hhbmdlcyBpbiB2ODoK
+PiAtIEZpeCB0aGUgbWl4ZWQgc3BhY2VycyBvbiBtYWNybyBkZWZpbml0aW9ucy4gKEhlaWtvKQo+
+IC0gUmVtb3ZlIHRoZSB1bm5lY2Vzc2FyeSBlbXB0eSBsaW5lIGFmdGVyIGNsa19wcmVwYXJlX2Vu
+YWJsZS4gKEhlaWtvKQo+IAo+IENoYW5nZXMgaW4gdjc6Cj4gLSBTaW1wbHkgdGhlIGNvbW1pdCBt
+ZXNzYWdlLiAoS2lzaG9uKQo+IC0gU3ltbWV0cmljYWwgZW5hYmxlL2Rpc2JhbGUgdGhlIHBoeSBj
+bG9jayBhbmQgcG93ZXIuIChLaXNob24pCj4gCj4gQ2hhbmdlcyBpbiB2NjogTm9uZQo+IENoYW5n
+ZXMgaW4gdjU6Cj4gLSBSZW1vdmUgInJlZyIgRFQgcHJvcGVydHksIGNhdXNlIGRyaXZlciBjb3Vs
+ZCBwb3dlcm9uL3Bvd2Vyb2ZmIHBoeSB2aWEKPiAgIHRoZSBleGlzdCAiZ3JmIiBzeXNjb24gYWxy
+ZWFkeS4gQW5kIHJlbmFtZSB0aGUgZXhhbXBsZSBEVCBub2RlIGZyb20KPiAgICJlZHBfcGh5OiBw
+aHlAZmY3NzAyNzQiIHRvICJlZHBfcGh5OiBlZHAtcGh5IiBkaXJlY3RseS4gKEhlaWtvKQo+IC0g
+QWRkIGRlaXZjZV9ub2RlIGF0IHRoZSBmcm9udCBvZiBkcml2ZXIsIHVwZGF0ZSBwaHlfb3BzIHR5
+cGUgZnJvbSAic3RhdGljCj4gICBzdHJ1Y3QiIHRvICJzdGF0aWMgY29uc3Qgc3RydWN0Ii4gQW5k
+IGNvcnJlY3QgdGhlIGlucHV0IHBhcmFtdGVycyBvZgo+ICAgZGV2bV9waHlfY3JlYXRlKCkgaW50
+ZXJmYWNlcy4gKEhlaWtvKQo+IAo+IENoYW5nZXMgaW4gdjQ6Cj4gLSBBZGQgY29tbWl0IG1lc3Nh
+Z2UsIGFuZCByZW1vdmUgdGhlIHJlZHVuZGFudCByb2NrY2hpcF9kcF9waHlfaW5pdCgpCj4gICBm
+dW5jdGlvbiwgbW92ZSB0aG9zZSBjb2RlIHRvIHByb2JlKCkgbWV0aG9kLiBBbmQgcmVtb3ZlIGRy
+aXZlciAub3duZXIKPiAgIG51bWJlci4gKEtpc2hvbikKPiAKPiBDaGFuZ2VzIGluIHYzOgo+IC0g
+U3VnZ2VzdCwgYWRkIHJvY2tjaGlwIGRwIHBoeSBkcml2ZXIsIGNvbGxlY3QgdGhlIHBoeSBjbG9j
+a3MgYW5kCj4gICBwb3dlciBjb250cm9sLiAoSGVpa28pCj4gCj4gQ2hhbmdlcyBpbiB2MjogTm9u
+ZQo+IAo+ICBkcml2ZXJzL3BoeS9LY29uZmlnICAgICAgICAgICB8ICAgNyArKwo+ICBkcml2ZXJz
+L3BoeS9NYWtlZmlsZSAgICAgICAgICB8ICAgMSArCj4gIGRyaXZlcnMvcGh5L3BoeS1yb2NrY2hp
+cC1kcC5jIHwgMTUxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+
+ICAzIGZpbGVzIGNoYW5nZWQsIDE1OSBpbnNlcnRpb25zKCspCj4gIGNyZWF0ZSBtb2RlIDEwMDY0
+NCBkcml2ZXJzL3BoeS9waHktcm9ja2NoaXAtZHAuYwo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L3BoeS9LY29uZmlnIGIvZHJpdmVycy9waHkvS2NvbmZpZwo+IGluZGV4IDdlYjU4NTlkLi43MzU1
+ODE5IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvcGh5L0tjb25maWcKPiArKysgYi9kcml2ZXJzL3Bo
+eS9LY29uZmlnCj4gQEAgLTMxOSw2ICszMTksMTMgQEAgY29uZmlnIFBIWV9ST0NLQ0hJUF9VU0IK
+PiAgCWhlbHAKPiAgCSAgRW5hYmxlIHRoaXMgdG8gc3VwcG9ydCB0aGUgUm9ja2NoaXAgVVNCIDIu
+MCBQSFkuCj4gCj4gK2NvbmZpZyBQSFlfUk9DS0NISVBfRFAKPiArCXRyaXN0YXRlICJSb2NrY2hp
+cCBEaXNwbGF5IFBvcnQgUEhZIERyaXZlciIKPiArCWRlcGVuZHMgb24gQVJDSF9ST0NLQ0hJUCAm
+JiBPRgo+ICsJc2VsZWN0IEdFTkVSSUNfUEhZCj4gKwloZWxwCj4gKwkgIEVuYWJsZSB0aGlzIHRv
+IHN1cHBvcnQgdGhlIFJvY2tjaGlwIERpc3BsYXkgUG9ydCBQSFkuCj4gKwo+ICBjb25maWcgUEhZ
+X1NUX1NQRUFSMTMxMF9NSVBIWQo+ICAJdHJpc3RhdGUgIlNUIFNQRUFSMTMxMC1NSVBIWSBkcml2
+ZXIiCj4gIAlzZWxlY3QgR0VORVJJQ19QSFkKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waHkvTWFr
+ZWZpbGUgYi9kcml2ZXJzL3BoeS9NYWtlZmlsZQo+IGluZGV4IDA3NWRiMWEuLmIxNzAwY2QgMTAw
+NjQ0Cj4gLS0tIGEvZHJpdmVycy9waHkvTWFrZWZpbGUKPiArKysgYi9kcml2ZXJzL3BoeS9NYWtl
+ZmlsZQo+IEBAIC0zNSw2ICszNSw3IEBAIHBoeS1leHlub3MtdXNiMi0kKENPTkZJR19QSFlfUzVQ
+VjIxMF9VU0IyKQkrPSBwaHktczVwdjIxMC11c2IyLm8KPiAgb2JqLSQoQ09ORklHX1BIWV9FWFlO
+T1M1X1VTQkRSRCkJKz0gcGh5LWV4eW5vczUtdXNiZHJkLm8KPiAgb2JqLSQoQ09ORklHX1BIWV9R
+Q09NX0FQUTgwNjRfU0FUQSkJKz0gcGh5LXFjb20tYXBxODA2NC1zYXRhLm8KPiAgb2JqLSQoQ09O
+RklHX1BIWV9ST0NLQ0hJUF9VU0IpICs9IHBoeS1yb2NrY2hpcC11c2Iubwo+ICtvYmotJChDT05G
+SUdfUEhZX1JPQ0tDSElQX0RQKQkJKz0gcGh5LXJvY2tjaGlwLWRwLm8KPiAgb2JqLSQoQ09ORklH
+X1BIWV9RQ09NX0lQUTgwNlhfU0FUQSkJKz0gcGh5LXFjb20taXBxODA2eC1zYXRhLm8KPiAgb2Jq
+LSQoQ09ORklHX1BIWV9TVF9TUEVBUjEzMTBfTUlQSFkpCSs9IHBoeS1zcGVhcjEzMTAtbWlwaHku
+bwo+ICBvYmotJChDT05GSUdfUEhZX1NUX1NQRUFSMTM0MF9NSVBIWSkJKz0gcGh5LXNwZWFyMTM0
+MC1taXBoeS5vCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGh5L3BoeS1yb2NrY2hpcC1kcC5jIGIv
+ZHJpdmVycy9waHkvcGh5LXJvY2tjaGlwLWRwLmMKPiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGlu
+ZGV4IDAwMDAwMDAuLjNjYjNiZjgKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvZHJpdmVycy9waHkv
+cGh5LXJvY2tjaGlwLWRwLmMKPiBAQCAtMCwwICsxLDE1MSBAQAo+ICsvKgo+ICsgKiBSb2NrY2hp
+cCBEUCBQSFkgZHJpdmVyCj4gKyAqCj4gKyAqIENvcHlyaWdodCAoQykgMjAxNSBGdVpob3UgUm9j
+a2NoaXAgQ28uLCBMdGQuCj4gKyAqIEF1dGhvcjogWWFraXIgWWFuZyA8eWtrQEByb2NrLWNoaXBz
+LmNvbT4KPiArICoKPiArICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4g
+cmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkKPiArICogaXQgdW5kZXIgdGhlIHRlcm1zIG9m
+IHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQgYnkKPiArICogdGhl
+IEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbjsgZWl0aGVyIHZlcnNpb24gMiBvZiB0aGUgTGljZW5z
+ZS4KPiArICovCj4gKwo+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+Cj4gKyNpbmNsdWRlIDxs
+aW51eC9vZi5oPgo+ICsjaW5jbHVkZSA8bGludXgvY2xrLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9w
+aHkvcGh5Lmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9yZWdtYXAuaD4KPiArI2luY2x1ZGUgPGxpbnV4
+L21mZC9zeXNjb24uaD4KPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgoKUGxl
+YXNlIG9yZGVyIHRoZXNlIGhlYWRlcnMgYWxwaGFiZXRpY2FsbHkuCkl0IHdpbGwgZW5oYW5jZSB0
+aGUgcmVhZGFiaWxpdHkuCgpCZXN0IHJlZ2FyZHMsCkppbmdvbyBIYW4KCj4gKwo+ICsjZGVmaW5l
+IEdSRl9TT0NfQ09OMTIgICAgICAgICAgICAgICAgICAgICAgICAgICAweDAyNzQKPiArCj4gKyNk
+ZWZpbmUgR1JGX0VEUF9SRUZfQ0xLX1NFTF9JTlRFUl9ISVdPUkRfTUFTSyAgIEJJVCgyMCkKPiAr
+I2RlZmluZSBHUkZfRURQX1JFRl9DTEtfU0VMX0lOVEVSICAgICAgICAgICAgICAgQklUKDQpCj4g
+Kwo+ICsjZGVmaW5lIEdSRl9FRFBfUEhZX1NJRERRX0hJV09SRF9NQVNLICAgICAgICAgICBCSVQo
+MjEpCj4gKyNkZWZpbmUgR1JGX0VEUF9QSFlfU0lERFFfT04gICAgICAgICAgICAgICAgICAgIDAK
+PiArI2RlZmluZSBHUkZfRURQX1BIWV9TSUREUV9PRkYgICAgICAgICAgICAgICAgICAgQklUKDUp
+Cj4gKwo+ICtzdHJ1Y3Qgcm9ja2NoaXBfZHBfcGh5IHsKPiArCXN0cnVjdCBkZXZpY2UgICpkZXY7
+Cj4gKwlzdHJ1Y3QgcmVnbWFwICAqZ3JmOwo+ICsJc3RydWN0IGNsayAgICAgKnBoeV8yNG07Cj4g
+K307Cj4gKwo+ICtzdGF0aWMgaW50IHJvY2tjaGlwX3NldF9waHlfc3RhdGUoc3RydWN0IHBoeSAq
+cGh5LCBib29sIGVuYWJsZSkKPiArewo+ICsJc3RydWN0IHJvY2tjaGlwX2RwX3BoeSAqZHAgPSBw
+aHlfZ2V0X2RydmRhdGEocGh5KTsKPiArCWludCByZXQ7Cj4gKwo+ICsJaWYgKGVuYWJsZSkgewo+
+ICsJCXJldCA9IHJlZ21hcF93cml0ZShkcC0+Z3JmLCBHUkZfU09DX0NPTjEyLAo+ICsJCQkJICAg
+R1JGX0VEUF9QSFlfU0lERFFfSElXT1JEX01BU0sgfAo+ICsJCQkJICAgR1JGX0VEUF9QSFlfU0lE
+RFFfT04pOwo+ICsJCWlmIChyZXQgPCAwKSB7Cj4gKwkJCWRldl9lcnIoZHAtPmRldiwgIkNhbid0
+IGVuYWJsZSBQSFkgcG93ZXIgJWRcbiIsIHJldCk7Cj4gKwkJCXJldHVybiByZXQ7Cj4gKwkJfQo+
+ICsKPiArCQlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUoZHAtPnBoeV8yNG0pOwo+ICsJfSBlbHNl
+IHsKPiArCQljbGtfZGlzYWJsZV91bnByZXBhcmUoZHAtPnBoeV8yNG0pOwo+ICsKPiArCQlyZXQg
+PSByZWdtYXBfd3JpdGUoZHAtPmdyZiwgR1JGX1NPQ19DT04xMiwKPiArCQkJCSAgIEdSRl9FRFBf
+UEhZX1NJRERRX0hJV09SRF9NQVNLIHwKPiArCQkJCSAgIEdSRl9FRFBfUEhZX1NJRERRX09GRik7
+Cj4gKwl9Cj4gKwo+ICsJcmV0dXJuIHJldDsKPiArfQo+ICsKPiArc3RhdGljIGludCByb2NrY2hp
+cF9kcF9waHlfcG93ZXJfb24oc3RydWN0IHBoeSAqcGh5KQo+ICt7Cj4gKwlyZXR1cm4gcm9ja2No
+aXBfc2V0X3BoeV9zdGF0ZShwaHksIHRydWUpOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW50IHJvY2tj
+aGlwX2RwX3BoeV9wb3dlcl9vZmYoc3RydWN0IHBoeSAqcGh5KQo+ICt7Cj4gKwlyZXR1cm4gcm9j
+a2NoaXBfc2V0X3BoeV9zdGF0ZShwaHksIGZhbHNlKTsKPiArfQo+ICsKPiArc3RhdGljIGNvbnN0
+IHN0cnVjdCBwaHlfb3BzIHJvY2tjaGlwX2RwX3BoeV9vcHMgPSB7Cj4gKwkucG93ZXJfb24JPSBy
+b2NrY2hpcF9kcF9waHlfcG93ZXJfb24sCj4gKwkucG93ZXJfb2ZmCT0gcm9ja2NoaXBfZHBfcGh5
+X3Bvd2VyX29mZiwKPiArCS5vd25lcgkJPSBUSElTX01PRFVMRSwKPiArfTsKPiArCj4gK3N0YXRp
+YyBpbnQgcm9ja2NoaXBfZHBfcGh5X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+Cj4gK3sKPiArCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7Cj4gKwlzdHJ1Y3QgZGV2
+aWNlX25vZGUgKm5wID0gZGV2LT5vZl9ub2RlOwo+ICsJc3RydWN0IHBoeV9wcm92aWRlciAqcGh5
+X3Byb3ZpZGVyOwo+ICsJc3RydWN0IHJvY2tjaGlwX2RwX3BoeSAqZHA7Cj4gKwlzdHJ1Y3QgcGh5
+ICpwaHk7Cj4gKwlpbnQgcmV0Owo+ICsKPiArCWlmICghbnApCj4gKwkJcmV0dXJuIC1FTk9ERVY7
+Cj4gKwo+ICsJZHAgPSBkZXZtX2t6YWxsb2MoZGV2LCBzaXplb2YoKmRwKSwgR0ZQX0tFUk5FTCk7
+Cj4gKwlpZiAoSVNfRVJSKGRwKSkKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gKwlkcC0+ZGV2
+ID0gZGV2Owo+ICsKPiArCWRwLT5waHlfMjRtID0gZGV2bV9jbGtfZ2V0KGRldiwgIjI0bSIpOwo+
+ICsJaWYgKElTX0VSUihkcC0+cGh5XzI0bSkpIHsKPiArCQlkZXZfZXJyKGRldiwgImNhbm5vdCBn
+ZXQgY2xvY2sgMjRtXG4iKTsKPiArCQlyZXR1cm4gUFRSX0VSUihkcC0+cGh5XzI0bSk7Cj4gKwl9
+Cj4gKwo+ICsJcmV0ID0gY2xrX3NldF9yYXRlKGRwLT5waHlfMjRtLCAyNDAwMDAwMCk7Cj4gKwlp
+ZiAocmV0IDwgMCkgewo+ICsJCWRldl9lcnIoZHAtPmRldiwgImNhbm5vdCBzZXQgY2xvY2sgcGh5
+XzI0bSAlZFxuIiwgcmV0KTsKPiArCQlyZXR1cm4gcmV0Owo+ICsJfQo+ICsKPiArCWRwLT5ncmYg
+PSBzeXNjb25fcmVnbWFwX2xvb2t1cF9ieV9waGFuZGxlKG5wLCAicm9ja2NoaXAsZ3JmIik7Cj4g
+KwlpZiAoSVNfRVJSKGRwLT5ncmYpKSB7Cj4gKwkJZGV2X2VycihkZXYsICJyazMyODgtZHAgbmVl
+ZHMgcm9ja2NoaXAsZ3JmIHByb3BlcnR5XG4iKTsKPiArCQlyZXR1cm4gUFRSX0VSUihkcC0+Z3Jm
+KTsKPiArCX0KPiArCj4gKwlyZXQgPSByZWdtYXBfd3JpdGUoZHAtPmdyZiwgR1JGX1NPQ19DT04x
+MiwgR1JGX0VEUF9SRUZfQ0xLX1NFTF9JTlRFUiB8Cj4gKwkJCSAgIEdSRl9FRFBfUkVGX0NMS19T
+RUxfSU5URVJfSElXT1JEX01BU0spOwo+ICsJaWYgKHJldCAhPSAwKSB7Cj4gKwkJZGV2X2Vycihk
+cC0+ZGV2LCAiQ291bGQgbm90IGNvbmZpZyBHUkYgZWRwIHJlZiBjbGs6ICVkXG4iLCByZXQpOwo+
+ICsJCXJldHVybiByZXQ7Cj4gKwl9Cj4gKwo+ICsJcGh5ID0gZGV2bV9waHlfY3JlYXRlKGRldiwg
+bnAsICZyb2NrY2hpcF9kcF9waHlfb3BzKTsKPiArCWlmIChJU19FUlIocGh5KSkgewo+ICsJCWRl
+dl9lcnIoZGV2LCAiZmFpbGVkIHRvIGNyZWF0ZSBwaHlcbiIpOwo+ICsJCXJldHVybiBQVFJfRVJS
+KHBoeSk7Cj4gKwl9Cj4gKwlwaHlfc2V0X2RydmRhdGEocGh5LCBkcCk7Cj4gKwo+ICsJcGh5X3By
+b3ZpZGVyID0gZGV2bV9vZl9waHlfcHJvdmlkZXJfcmVnaXN0ZXIoZGV2LCBvZl9waHlfc2ltcGxl
+X3hsYXRlKTsKPiArCj4gKwlyZXR1cm4gUFRSX0VSUl9PUl9aRVJPKHBoeV9wcm92aWRlcik7Cj4g
+K30KPiArCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHJvY2tjaGlwX2RwX3Bo
+eV9kdF9pZHNbXSA9IHsKPiArCXsgLmNvbXBhdGlibGUgPSAicm9ja2NoaXAscmszMjg4LWRwLXBo
+eSIgfSwKPiArCXt9Cj4gK307Cj4gKwo+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCByb2NrY2hp
+cF9kcF9waHlfZHRfaWRzKTsKPiArCj4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHJv
+Y2tjaGlwX2RwX3BoeV9kcml2ZXIgPSB7Cj4gKwkucHJvYmUJCT0gcm9ja2NoaXBfZHBfcGh5X3By
+b2JlLAo+ICsJLmRyaXZlcgkJPSB7Cj4gKwkJLm5hbWUJPSAicm9ja2NoaXAtZHAtcGh5IiwKPiAr
+CQkub2ZfbWF0Y2hfdGFibGUgPSByb2NrY2hpcF9kcF9waHlfZHRfaWRzLAo+ICsJfSwKPiArfTsK
+PiArCj4gK21vZHVsZV9wbGF0Zm9ybV9kcml2ZXIocm9ja2NoaXBfZHBfcGh5X2RyaXZlcik7Cj4g
+Kwo+ICtNT0RVTEVfQVVUSE9SKCJZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Iik7Cj4g
+K01PRFVMRV9ERVNDUklQVElPTigiUm9ja2NoaXAgRFAgUEhZIGRyaXZlciIpOwo+ICtNT0RVTEVf
+TElDRU5TRSgiR1BMIHYyIik7Cj4gLS0KPiAxLjkuMQo+IAoKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
