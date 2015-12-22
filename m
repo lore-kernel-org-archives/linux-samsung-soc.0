@@ -1,45 +1,34 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 5/9] ARM: EXYNOS: Drivers for v4.5
-Date: Mon, 21 Dec 2015 20:50:42 -0800
-Message-ID: <20151222045042.GF30172@localhost>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
- <1449020386-20250-6-git-send-email-k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.5
+Date: Tue, 22 Dec 2015 20:10:03 +0100
+Message-ID: <5679A00B.2040806@samsung.com>
+References: <5671A456.9030203@samsung.com>
+ <20151222183816.GC6596@quark.deferred.io>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1449020386-20250-6-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@linaro.org>, linux.walleij@linaro.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20151222183816.GC6596@quark.deferred.io>
+Sender: linux-clk-owner@vger.kernel.org
+To: Mike Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 02, 2015 at 10:39:42AM +0900, Krzysztof Kozlowski wrote:
-> Hi Kukjin,
-> 
-> Pinctrl for v4.5.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-> 
->   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.5
-> 
-> for you to fetch changes up to 023e06dfa6882f500b9c86fd61f0b1913aa07f36:
-> 
->   pinctrl: exynos: add exynos5410 SoC specific data (2015-11-16 10:54:43 +0900)
+Hello Mike,
 
-Hi,
+On 22/12/15 19:38, Mike Turquette wrote:
+> Pulled.
+> 
+> Was it necessary to base on -rc5? That required me to update my tree
+> from -rc1.
+> 
+> This is not difficult, but it is a bit annoying when it is not strictly
+> necessary just to take one PR.
 
-This should either go in through the pinctrl tree, or have an acked/reviewed-by
-one of the pinctrl maintainers.
+Sorry about that, originally I've put some of those patches in
+a branch for 4.4 fixes PR and then reused it for this one,
+forgetting to change the base to the one used in clk tree.
 
-
-
--Olof
+-- 
+Regards,
+Sylwester
