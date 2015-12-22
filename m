@@ -1,54 +1,58 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] [media] media-device: handle errors at
- media_device_init()
-Date: Mon, 21 Dec 2015 11:42:21 -0300
-Message-ID: <56780FCD.9060007@osg.samsung.com>
-References: <e4902f65ceabce2f315e63ba75d4482a4985b351.1450182151.git.mchehab@osg.samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] Add support for monitoring gpio switches
+Date: Tue, 22 Dec 2015 10:25:06 +0100
+Message-ID: <CACRpkdZWXnR0tUbr9KeX3KPEe11pUYC5ZcBkX8jvUx3fREwHgQ@mail.gmail.com>
+References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk>
+	<1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk>
+	<CACRpkdb=it+U+3-0mvZ9Pf1cnYT_r1KkFiS=C4YDkqrjoRm+kQ@mail.gmail.com>
+	<567138E2.80505@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:59797 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751182AbbLUOmc (ORCPT
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:34244 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481AbbLVJZI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Dec 2015 09:42:32 -0500
-In-Reply-To: <e4902f65ceabce2f315e63ba75d4482a4985b351.1450182151.git.mchehab@osg.samsung.com>
+	Tue, 22 Dec 2015 04:25:08 -0500
+Received: by mail-ob0-f173.google.com with SMTP id iw8so140320871obc.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2015 01:25:06 -0800 (PST)
+In-Reply-To: <567138E2.80505@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Antti Palosaari <crope@iki.fi>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?Q?Rafael_Louren=c3=a7o_de_Lima_Chehab?= <chehabrafael@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Olli Salonen <olli.salonen@iki.fi>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Tommi Rantala <tt.rantala@gmail.com>, Matthias Schwarzott <zzam@gentoo.org>, Luis de Bethencourt <luis@debethencourt.com>, linux-arm-kernel@lists
+To: Martyn Welch <martyn.welch@collabora.co.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Mauro,
+On Wed, Dec 16, 2015 at 11:11 AM, Martyn Welch
+<martyn.welch@collabora.co.uk> wrote:
 
-On 12/15/2015 09:22 AM, Mauro Carvalho Chehab wrote:
-> Changeset 43ac4401dca9 ("[media] media-device: split media
-> initialization and registration") broke media device register
-> into two separate functions, but introduced a BUG_ON() and
-> made media_device_init() void. It also introduced several
-> warnings.
-> 
-> Instead of adding BUG_ON(), let's revert to WARN_ON() and fix
-> the init code in a way that, if something goes wrong during
-> device init, driver probe will fail without causing the Kernel
-> to BUG.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-> ---
+>> Patches like that has however already been suggested, and I have NACKed
+>> them because the GPIO sysfs ABI is insane, and that is why I am
+>> refactoring
+>> the world to create a proper chardev ABI for GPIO instead. See:
+>> http://marc.info/?l=linux-gpio&m=144550276512673&w=2
+>
+> I can certainly understand the rationale for the changes that you are
+> proposing, though do worry that it does make it a bit tougher to use from
+> scripting languages.
 
-I agree with your patch, in fact the first version of the media
-split patch did exactly this and later media_device_init() was
-converted to void and the BUG_ON() introduced to address some
-feedback I got during the patches review.
+The idea is to provide commandline tools in the kernel tools/gpio subdir
+to satisfy the needs of scripting. "lsgpio" today is just one example,
+nothing stops us from having a tool called just "gpio-sak"
+(GPIO swiss army knife) that will be tailored for scripting.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> I see that the question of how to provide functionality
+> equivalent to the above was raised and no answer was forthcoming. Is there a
+> plan for supporting the identification of a GPIO line serving a specific
+> purpose?
 
-On an OMAP3 IGEPv2:
+Yes by name.
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> What is the status of the mentioned patch series?
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+They stubled into a few dozen architecture issues in the GPIO
+subsystem so I am busy refactoring the whole know universe :D
+
+But I still intend to persue the series.
+
+Yours,
+Linus Walleij
