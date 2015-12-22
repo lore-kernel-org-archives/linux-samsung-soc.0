@@ -1,64 +1,73 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable fan, sensors and audio
- for Odroid XU3
-Date: Tue, 22 Dec 2015 11:50:07 -0800
-Message-ID: <20151222195007.GF30172@localhost>
-References: <1449449994-10110-1-git-send-email-k.kozlowski@samsung.com>
- <3286190.bAhobgE2la@wuerfel>
- <566553A4.6080106@samsung.com>
- <1670608.3mJKnXpbtb@wuerfel>
- <CAJKOXPdLG7bcaMOtuc-XwG7f7mrhMS1W0psXOtb+Uhm1YW-M_A@mail.gmail.com>
+From: Mike Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
+ block clocks
+Date: Tue, 22 Dec 2015 12:45:47 -0800
+Message-ID: <20151222204547.GB9177@quark.deferred.io>
+References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
+ <5667B2F3.9040807@samsung.com>
+ <5667FEF3.4080703@samsung.com>
+ <56682E44.6020303@samsung.com>
+ <56719E2C.2030103@samsung.com>
+ <567208C4.4090806@samsung.com>
+ <20151222184412.GD6596@quark.deferred.io>
+ <5679A6D5.5010604@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPdLG7bcaMOtuc-XwG7f7mrhMS1W0psXOtb+Uhm1YW-M_A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, arm@kernel.org
+In-Reply-To: <5679A6D5.5010604@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, k.kozlowski.k@gmail.com, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 17, 2015 at 08:50:24PM +0900, Krzysztof Kozlowski wrote:
-> 2015-12-07 18:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> > On Monday 07 December 2015 18:38:44 Krzysztof Kozlowski wrote:
-> >> On 07.12.2015 18:14, Arnd Bergmann wrote:
-> >> > On Monday 07 December 2015 09:59:54 Krzysztof Kozlowski wrote:
-> >> >> For Odroid XU3-family enable the:
-> >> >>  - PWM fan (to control the CPU fan using thermal subsystem),
-> >> >>  - TI INA231 sensors (provide power measurements of big.LITTLE cores,
-> >> >>    DRAM and GPU),
-> >> >>  - Samsung sound (for Odroid XU3 and Snow as well).
-> >> >>
-> >> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >> >>
-> >> >
-> >> > Looks good. Do you have a samsung/defconfig branch already that you
-> >> > can put this into, or should be pick it up into arm-soc directly?
-> >> >
-> >> > My preference is the former, but it would be a bit silly if that
-> >> > is the only samsung defconfig change we need.
-> >>
-> >> I had a couple of defconfig patches in my queue but I sent them last
-> >> week to Kukjin in pull request. He didn't pull it yet. Maybe he could
-> >> apply this patch after pulling?
-> >>
-> >> Anyway we can wait for a few days to sort it out. If I don't have
-> >> another defconfig patches then I will remind myself with applying it to
-> >> arm-soc.
-> >>
-> >
-> > Ok, sounds good.
+On 12/22, Sylwester Nawrocki wrote:
+> Mike,
 > 
-> +Cc arm@kernel.org,
+> On 22/12/15 19:44, Mike Turquette wrote:
+> > This is superseded by the pull request found in Message-ID:
+> > <5671A456.9030203@samsung.com>, correct?
 > 
-> I don't have any other defconfig changes in my queue, except of course
-> stuff which I sent in pull request. I mean the request sent initially
-> to Kukjin but now redirected with his ack to you guys.
+> The two pull requests are based on same branch, first 2 commits are
+> tagged with for-4.5-clk-exynos5420 tag and the whole branch is tagged
+> as clk-samsung-4.5. I assumed it's fine to use just the below tag for
+> arm-soc.
+
+OK, I'll interpret that as a "yes".
+
+Thanks,
+Mike
+
 > 
-> If you don't mind, please apply this patch directly (with Javier's reviewed-by).
-
-Happy to apply, but can you please resend it to us (in patch format is fine)
-since I just get this email from the thread in the arm@ folder...
-
-
--Olof
+> >>> > > The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
+> >>> > > 
+> >>> > >   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
+> >>> > > 
+> >>> > > are available in the git repository at:
+> >>> > > 
+> >>> > >   git://linuxtv.org/snawrocki/samsung.git tags/for-4.5-clk-exynos5420
+> >>> > > 
+> >>> > > for you to fetch changes up to bee4f87f01dc30fcf9e05eb55b833f89fd9bb4f4:
+> >>> > > 
+> >>> > >   clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock (2015-12-16 16:35:26 +0100)
+> >>> > > 
+> >>> > > ----------------------------------------------------------------
+> >>> > > Samsung exynos5420 SoC clk subsystem support updates:
+> >>> > > instantiation of the cpu clocks and addition of the GSCL
+> >>> > > IP parent clocks to the list of available consumer clocks.
+> >>> > > 
+> >>> > > ----------------------------------------------------------------
+> >>> > > Marek Szyprowski (1):
+> >>> > >       clk: samsung: exynos542x: add missing parent GSCL block clocks
+> >>> > > 
+> >>> > > Thomas Abraham (1):
+> >>> > >       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
+> >>> > > 
+> >>> > >  drivers/clk/samsung/clk-exynos5420.c   |   66 +++++++++++++++++++++++++++++---
+> >>> > >  include/dt-bindings/clock/exynos5420.h |    4 ++
+> >>> > >  2 files changed, 64 insertions(+), 6 deletions(-)
+> 
+> --
+> Regards,
+> Sylwester
+> 
