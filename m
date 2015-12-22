@@ -1,77 +1,109 @@
 From: Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] clk/samsung updates for v4.5
-Date: Tue, 22 Dec 2015 10:38:16 -0800
-Message-ID: <20151222183816.GC6596@quark.deferred.io>
-References: <5671A456.9030203@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
+ block clocks
+Date: Tue, 22 Dec 2015 10:44:12 -0800
+Message-ID: <20151222184412.GD6596@quark.deferred.io>
+References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
+ <5667B2F3.9040807@samsung.com>
+ <5667FEF3.4080703@samsung.com>
+ <56682E44.6020303@samsung.com>
+ <56719E2C.2030103@samsung.com>
+ <567208C4.4090806@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:35600 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752318AbbLVSoO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Dec 2015 13:44:14 -0500
+Received: by mail-pa0-f45.google.com with SMTP id jx14so93295521pad.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2015 10:44:14 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <5671A456.9030203@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <567208C4.4090806@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, k.kozlowski.k@gmail.com, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 
-Sylwester,
+On 12/17, Krzysztof Kozlowski wrote:
+> On 17.12.2015 02:23, Sylwester Nawrocki wrote:
+> > Krzysztof,
+> > 
+> > On 09/12/15 14:36, Krzysztof Kozlowski wrote:
+> >> W dniu 09.12.2015 o 19:14, Sylwester Nawrocki pisze:
+> >>>> Adding Stephen and linux-clk at Cc.
+> >>>>
+> >>>> On 09/12/15 05:49, Krzysztof Kozlowski wrote:
+> >>>>>> On 08.12.2015 22:46, Marek Szyprowski wrote:
+> >>>>>>>>>> This patch adds clocks, which are required for preserving parent clock
+> >>>>>>>>>> configuration on GSCL power domain on/off.
+> >>>>>>>>>>
+> >>>>>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>>>>>>>>> ---
+> >>>>>>>>>>  drivers/clk/samsung/clk-exynos5420.c   | 8 ++++----
+> >>>>>>>>>>  include/dt-bindings/clock/exynos5420.h | 2 ++
+> >>>>>>>>>>  2 files changed, 6 insertions(+), 4 deletions(-)
+> >>>>>>
+> >>>>>> I suppose that, with ack from clock folks, this can go through samsung-soc?
+> >>>>
+> >>>> I guess it makes more sense that making a stable branch with just
+> >>>> this patch to be pulled into arm-soc and clk tree. I'm fine with
+> >>>> applying this patch through arm-soc, but I think we also need
+> >>>> Mike's or Stephen ack for this.
+> >>>>
+> >>>> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >>
+> >> I am fine with the branch approach (actually in such cases I make them
+> >> anyway just in case).
+> >>
+> >> As you suggested I'll wait for Mike's or Stepen's acks.
+> > 
+> > I've put the $subject patch and the other exynos5420 patch which 
+> > was a dependency for dts patches (both touching include/dt-bindings/
+> > clock/exynos5420.h) onto a stable branch. Below are details if 
+> > you need to pull.
 
-On 12/16, Sylwester Nawrocki wrote:
-> 
-> The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
-> 
->   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.5
+This is superseded by the pull request found in Message-ID:
+<5671A456.9030203@samsung.com>, correct?
 
-Pulled.
-
-Was it necessary to base on -rc5? That required me to update my tree
-from -rc1.
-
-This is not difficult, but it is a bit annoying when it is not strictly
-necessary just to take one PR.
-
-Regards,
+Thanks,
 Mike
 
 > 
-> for you to fetch changes up to c5e949c1c24d67ae2813afdf02408a9b0c6fe55c:
+> Great! Thanks Sylwester.
+> BR,
+> Krzysztof
 > 
->   clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent (2015-12-16 16:36:04 +0100)
 > 
-> ----------------------------------------------------------------
-> drivers/clk/samsung updates (mostly bug fixes):
->  - instantiation of the cpu clocks and addition of the GSCL
->    IP parent clocks to the list of available consumer clocks
->    for exynos542x SoCs;
->  - MFC IP parent clock fix for exynos542x;
->  - fix of locking bug in samsung/clk-cpu.c which caused
->    system crashes with cpufreq enabled;
->  - minor cleanup for s3c2410.
+> > 
+> > 
+> > The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
+> > 
+> >   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://linuxtv.org/snawrocki/samsung.git tags/for-4.5-clk-exynos5420
+> > 
+> > for you to fetch changes up to bee4f87f01dc30fcf9e05eb55b833f89fd9bb4f4:
+> > 
+> >   clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock (2015-12-16 16:35:26 +0100)
+> > 
+> > ----------------------------------------------------------------
+> > Samsung exynos5420 SoC clk subsystem support updates:
+> > instantiation of the cpu clocks and addition of the GSCL
+> > IP parent clocks to the list of available consumer clocks.
+> > 
+> > ----------------------------------------------------------------
+> > Marek Szyprowski (1):
+> >       clk: samsung: exynos542x: add missing parent GSCL block clocks
+> > 
+> > Thomas Abraham (1):
+> >       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
+> > 
+> >  drivers/clk/samsung/clk-exynos5420.c   |   66 +++++++++++++++++++++++++++++---
+> >  include/dt-bindings/clock/exynos5420.h |    4 ++
+> >  2 files changed, 64 insertions(+), 6 deletions(-)
+> > 
 > 
-> ----------------------------------------------------------------
-> Bartlomiej Zolnierkiewicz (1):
->       clk: samsung: exynos542x/5800: fix cpu clock configuration data
-> 
-> Marek Szyprowski (3):
->       clk: samsung: exynos542x: add missing parent GSCL block clocks
->       clk: samsung: exynos542x: fix MFC clock hierarchy parent
->       clk: exynos: use irqsave version of spin_lock to avoid deadlock with irqs
-> 
-> Prasanna Karthik (1):
->       clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent
-> 
-> Thomas Abraham (1):
->       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
-> 
->  drivers/clk/samsung/clk-cpu.c          |   10 ++--
->  drivers/clk/samsung/clk-exynos5420.c   |   98 +++++++++++++++++++++++++++++---
->  drivers/clk/samsung/clk-s3c2410-dclk.c |    3 +-
->  include/dt-bindings/clock/exynos5420.h |    4 ++
->  4 files changed, 102 insertions(+), 13 deletions(-)
-> 
-> -- 
-> Thanks,
-> Sylwester
