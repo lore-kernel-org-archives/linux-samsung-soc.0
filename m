@@ -1,56 +1,55 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [GIT PULL 5/9] ARM: EXYNOS: Drivers for v4.5
-Date: Wed, 23 Dec 2015 19:54:23 +0900
-Message-ID: <CA+Ln22Fk5UOgWzgOeEVb9sgPni028LMVDjgFhy3xQvnz4rwh_Q@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL 6/9] ARM: EXYNOS: clk: Another clock dependency, ARMv7,
+ for v4.5
+Date: Wed, 23 Dec 2015 19:55:11 +0900
+Message-ID: <567A7D8F.3010209@samsung.com>
 References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-	<1449020386-20250-6-git-send-email-k.kozlowski@samsung.com>
-	<20151222045042.GF30172@localhost>
-	<567A7C9F.3020907@samsung.com>
+ <1449020386-20250-7-git-send-email-k.kozlowski@samsung.com>
+ <20151222045135.GG30172@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <567A7C9F.3020907@samsung.com>
+In-Reply-To: <20151222045135.GG30172@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>, devicetree <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux.walleij@linaro.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-2015-12-23 19:51 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> W dniu 22.12.2015 o 13:50, Olof Johansson pisze:
->> On Wed, Dec 02, 2015 at 10:39:42AM +0900, Krzysztof Kozlowski wrote:
->>> Hi Kukjin,
->>>
->>> Pinctrl for v4.5.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>>
->>> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
->>>
->>>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
->>>
->>> are available in the git repository at:
->>>
->>>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.5
->>>
->>> for you to fetch changes up to 023e06dfa6882f500b9c86fd61f0b1913aa07f36:
->>>
->>>   pinctrl: exynos: add exynos5410 SoC specific data (2015-11-16 10:54:43 +0900)
+W dniu 22.12.2015 o 13:51, Olof Johansson pisze:
+> On Wed, Dec 02, 2015 at 10:39:43AM +0900, Krzysztof Kozlowski wrote:
+>> Hi Kukjin,
 >>
->> Hi,
+>> This is also clock dependency. I put it in separate tag in case clock
+>> folks want to pull it also.
 >>
->> This should either go in through the pinctrl tree, or have an acked/reviewed-by
->> one of the pinctrl maintainers.
->
-> It was acked by Tomasz Figa - Samsung Pin Controller maintainer:
-> https://patchwork.ozlabs.org/patch/450340/
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+>>
+>>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-exynos4-4.5
+>>
+>> for you to fetch changes up to 94af7a3c310f5877dc6f756179b92f24f89a9b08:
+>>
+>>   clk: samsung: exynos4: Add SSS gate clock (2015-11-18 22:02:02 +0900)
+> 
+> Again, this should probably go through the clk maintainer (or have an ack).
+> It's just two one-line changes though, so if they're slow to respond we can
+> take it as a fallback. Resend if that's the case.
+> 
 
-Actually, is there any reason to send this through ARM SoC? Looks like
-this pull request contains only pinctrl changes which could normally
-go through pinctrl tree. Maybe Linus W. could simply pull it?
+Wait, I am missing something. This contains only one patch which has the
+Stephen's Boyd ack:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/379230.html
+(this is in commit message already)
+
+What kind of ack do you expect here? Ack for pull-request?
 
 Best regards,
-Tomasz
+Krzysztof
