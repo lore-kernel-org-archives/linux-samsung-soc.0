@@ -1,198 +1,96 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v12 13/18] drm: bridge: analogix/dp: try force hpd after plug in lookup failed
-Date: Wed, 23 Dec 2015 20:44:46 +0800
-Message-ID: <1450874686-19458-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v12 14/18] drm: bridge: analogix/dp: move hpd detect to
+ connector detect function
+Date: Wed, 23 Dec 2015 20:46:51 +0800
+Message-ID: <1450874811-19508-1-git-send-email-ykk@rock-chips.com>
 References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:53356 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932869AbbLWMqy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Dec 2015 07:46:54 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Some edp screen do not have hpd signal, so we can't just return
-failed when hpd plug in detect failed.
-
-This is an hardware property, so we need add a devicetree property
-"analogix,need-force-hpd" to indicate this sutiation.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
-Changes in v12: None
-Changes in v11:
-- Rename the "analogix,need-force-hpd" to common 'force-hpd' (Rob)
-- Add the ack from Rob Herring
-
-Changes in v10: None
-Changes in v9: None
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3:
-- Add "analogix,need-force-hpd" to indicate whether driver need foce
-  hpd when hpd detect failed.
-
-Changes in v2: None
-
- .../bindings/display/bridge/analogix_dp.txt        |  4 ++-
- .../bindings/display/exynos/exynos_dp.txt          |  1 +
- .../display/rockchip/analogix_dp-rockchip.txt      |  1 +
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 35 ++++++++++++++++++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  2 ++
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  9 ++++++
- 6 files changed, 46 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-index 7659a7a..4f2ba8c 100644
---- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-@@ -22,6 +22,9 @@ Required properties for dp-controller:
- 		from general PHY binding: Should be "dp".
- 
- Optional properties for dp-controller:
-+	-force-hpd:
-+		Indicate driver need force hpd when hpd detect failed, this
-+		is used for some eDP screen which don't have hpd signal.
- 	-hpd-gpios:
- 		Hotplug detect GPIO.
- 		Indicates which GPIO should be used for hotplug detection
-@@ -31,7 +34,6 @@ Optional properties for dp-controller:
- 		* Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
- 		* Documentation/devicetree/bindings/video/analogix_dp-rockchip.txt
- 
--
- [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
- -------------------------------------------------------------------------------
- 
-diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-index 9905081..8800164 100644
---- a/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/display/exynos/exynos_dp.txt
-@@ -41,6 +41,7 @@ For the below properties, please refer to Analogix DP binding document:
- 	-phys (required)
- 	-phy-names (required)
- 	-hpd-gpios (optional)
-+	-analogix,need-force-hpd (optional)
- 	-video interfaces (optional)
- 
- Deprecated properties for DisplayPort:
-diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-index 04d99e3..e832ff9 100644
---- a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-+++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-@@ -32,6 +32,7 @@ For the below properties, please refer to Analogix DP binding document:
- - phys (required)
- - phy-names (required)
- - hpd-gpios (optional)
-+- force-hpd (optional)
- -------------------------------------------------------------------------------
- 
- Example:
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 7c5f1f7..0be1ac8 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -62,15 +62,38 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
- {
- 	int timeout_loop = 0;
- 
--	while (analogix_dp_get_plug_in_status(dp) != 0) {
-+	while (timeout_loop < DP_TIMEOUT_LOOP_COUNT) {
-+		if (analogix_dp_get_plug_in_status(dp) == 0)
-+			return 0;
-+
- 		timeout_loop++;
--		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
--			dev_err(dp->dev, "failed to get hpd plug status\n");
--			return -ETIMEDOUT;
--		}
- 		usleep_range(10, 11);
- 	}
- 
-+	/*
-+	 * Some edp screen do not have hpd signal, so we can't just
-+	 * return failed when hpd plug in detect failed, DT property
-+	 * "need-force-hpd" would indicate whether driver need this.
-+	 */
-+	if (!dp->force_hpd)
-+		return -ETIMEDOUT;
-+
-+	/*
-+	 * The eDP TRM indicate that if HPD_STATUS(RO) is 0, AUX CH
-+	 * will not work, so we need to give a force hpd action to
-+	 * set HPD_STATUS manually.
-+	 */
-+	dev_dbg(dp->dev, "failed to get hpd plug status, try to force hpd\n");
-+
-+	analogix_dp_force_hpd(dp);
-+
-+	if (analogix_dp_get_plug_in_status(dp) != 0) {
-+		dev_err(dp->dev, "failed to get hpd plug in status\n");
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(dp->dev, "success to get plug in status after force hpd\n");
-+
- 	return 0;
- }
- 
-@@ -1291,6 +1314,8 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 	if (IS_ERR(dp->reg_base))
- 		return PTR_ERR(dp->reg_base);
- 
-+	dp->force_hpd = of_property_read_bool(dev->of_node, "force-hpd");
-+
- 	dp->hpd_gpio = of_get_named_gpio(dev->of_node, "hpd-gpios", 0);
- 	if (!gpio_is_valid(dp->hpd_gpio))
- 		dp->hpd_gpio = of_get_named_gpio(dev->of_node,
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 6cc53d4..a8cba64 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -154,6 +154,7 @@ struct analogix_dp_device {
- 	struct phy		*phy;
- 	int			dpms_mode;
- 	int			hpd_gpio;
-+	bool                    force_hpd;
- 
- 	struct analogix_dp_plat_data *plat_data;
- };
-@@ -174,6 +175,7 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 				       bool enable);
- void analogix_dp_init_analog_func(struct analogix_dp_device *dp);
- void analogix_dp_init_hpd(struct analogix_dp_device *dp);
-+void analogix_dp_force_hpd(struct analogix_dp_device *dp);
- enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp);
- void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp);
- void analogix_dp_reset_aux(struct analogix_dp_device *dp);
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 1e24b37..cba3ffd 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -365,6 +365,15 @@ void analogix_dp_init_hpd(struct analogix_dp_device *dp)
- 	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
- }
- 
-+void analogix_dp_force_hpd(struct analogix_dp_device *dp)
-+{
-+	u32 reg;
-+
-+	reg = readl(dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
-+	reg = (F_HPD | HPD_CTRL);
-+	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
-+}
-+
- enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp)
- {
- 	u32 reg;
--- 
-1.9.1
+VGhpcyBjaGFuZ2UganVzdCBtYWtlIGEgbGl0dGxlIGNsZWFuIHRvIG1ha2UgY29kZSBtb3JlIGxp
+a2UKZHJtIGNvcmUgZXhwZWN0LCBtb3ZlIGhkcCBkZXRlY3QgY29kZSBmcm9tIGJyaWRnZS0+ZW5h
+YmxlKCksCmFuZCBwbGFjZSB0aGVtIGludG8gY29ubmVjdG9yLT5kZXRlY3QoKS4KCk5vdGU6IEd1
+c3Rhdm8gUGFkb3ZhbiB0cnkgdG8gcmVtb3ZlIHRoZSBjb250cm9sbGVyIGFuZCBwaHkKcG93ZXIg
+b24gZnVuY3Rpb24gaW4gYmluZCB0aW1lIGF0IGJlbGxvdyBjb21taXQ6Cglkcm0vZXh5bm9zOiBk
+byBub3Qgc3RhcnQgZW5hYmxpbmcgRFAgYXQgYmluZCgpIHBoYXNlCgpCdXQgZm9yIG5vdyB0aGUg
+Y29ubmVjdG9yIHN0YXR1cyBkb24ndCBoYXJkY29kZSB0byBjb25uZWN0ZWQsCm5lZWQgdG8gb3Bl
+cmF0ZSBkcCBwaHkgaW4gLmRldGVjdCBmdW5jdGlvbiwgc28gd2UgbmVlZCB0byByZXZlcnQKcGFy
+dHMgaWYgR3VzdGF2byBQYWRvdmFuJ3MgY2hhbmdlcywgYWRkIHBoeSBwb3dlcm9uCmZ1bmN0aW9u
+IGluIGJpbmQgdGltZS4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBz
+LmNvbT4KVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBvc2cuc2Ft
+c3VuZy5jb20+Ci0tLQpDaGFuZ2VzIGluIHYxMjogTm9uZQpDaGFuZ2VzIGluIHYxMToKLSBSZXZl
+cnQgcGFydHMgb2YgR3VzdGF2byBQYWRvdmFuJ3MgY2hhbmdlcyBpbiBjb21taXQ6Cglkcm0vZXh5
+bm9zOiBkbyBub3Qgc3RhcnQgZW5hYmxpbmcgRFAgYXQgYmluZCgpIHBoYXNlCiAgQWRkIGRwIHBo
+eSBwb3dlcm9uIGZ1bmN0aW9uIGluIGJpbmQgdGltZS4KLSBNb3ZlIHRoZSBwYW5lbCBwcmVwYXJl
+IGZyb20gZ2V0X21vZGVzIHRpbWUgdG8gYmluZCB0aW1lLCBhbmQgbW92ZQogIHRoZSBwYW5lbCB1
+bnByZXBhcmUgZnJvbSBicmlkZ2UtPmRpc2FibGUgdG8gdW5iaW5kIHRpbWUuIChIZWlrbykKCkNo
+YW5nZXMgaW4gdjEwOiBOb25lCkNoYW5nZXMgaW4gdjk6IE5vbmUKQ2hhbmdlcyBpbiB2ODogTm9u
+ZQpDaGFuZ2VzIGluIHY3OiBOb25lCkNoYW5nZXMgaW4gdjY6IE5vbmUKQ2hhbmdlcyBpbiB2NTog
+Tm9uZQpDaGFuZ2VzIGluIHY0OgotIFRha2UgSmluZ29vIHN1Z2dlc3QsIGFkZCBjb21taXQgbWVz
+c2FnZXMuCgpDaGFuZ2VzIGluIHYzOgotIG1vdmUgZHAgaHBkIGRldGVjdCB0byBjb25uZWN0b3Ig
+ZGV0ZWN0IGZ1bmN0aW9uLgoKQ2hhbmdlcyBpbiB2MjogTm9uZQoKIGRyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgMzggKysrKysrKysrKysrLS0tLS0t
+LS0tLQogMSBmaWxlIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQoK
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBf
+Y29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3Jl
+LmMKaW5kZXggMGJlMWFjOC4uMWZmMmQ4ZWUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCkBAIC05MDQsMTIgKzkwNCw2IEBAIHN0
+YXRpYyB2b2lkIGFuYWxvZ2l4X2RwX2NvbW1pdChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpk
+cCkKIAkJCURSTV9FUlJPUigiZmFpbGVkIHRvIGRpc2FibGUgdGhlIHBhbmVsXG4iKTsKIAl9CiAK
+LQlyZXQgPSBhbmFsb2dpeF9kcF9kZXRlY3RfaHBkKGRwKTsKLQlpZiAocmV0KSB7Ci0JCS8qIENh
+YmxlIGhhcyBiZWVuIGRpc2Nvbm5lY3RlZCwgd2UncmUgZG9uZSAqLwotCQlyZXR1cm47Ci0JfQot
+CiAJcmV0ID0gYW5hbG9naXhfZHBfaGFuZGxlX2VkaWQoZHApOwogCWlmIChyZXQpIHsKIAkJZGV2
+X2VycihkcC0+ZGV2LCAidW5hYmxlIHRvIGhhbmRsZSBlZGlkXG4iKTsKQEAgLTk3Miw2ICs5NjYs
+MTEgQEAgc3RhdGljIHN0cnVjdCBkcm1fY29ubmVjdG9yX2hlbHBlcl9mdW5jcyBhbmFsb2dpeF9k
+cF9jb25uZWN0b3JfaGVscGVyX2Z1bmNzID0gewogZW51bSBkcm1fY29ubmVjdG9yX3N0YXR1cwog
+YW5hbG9naXhfZHBfZGV0ZWN0KHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsIGJvb2wg
+Zm9yY2UpCiB7CisJc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAgPSB0b19kcChjb25uZWN0
+b3IpOworCisJaWYgKGFuYWxvZ2l4X2RwX2RldGVjdF9ocGQoZHApKQorCQlyZXR1cm4gY29ubmVj
+dG9yX3N0YXR1c19kaXNjb25uZWN0ZWQ7CisKIAlyZXR1cm4gY29ubmVjdG9yX3N0YXR1c19jb25u
+ZWN0ZWQ7CiB9CiAKQEAgLTEwNTEsMTMgKzEwNTAsNiBAQCBzdGF0aWMgdm9pZCBhbmFsb2dpeF9k
+cF9icmlkZ2VfZW5hYmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiAKIAlwbV9ydW50aW1l
+X2dldF9zeW5jKGRwLT5kZXYpOwogCi0JaWYgKGRwLT5wbGF0X2RhdGEtPnBhbmVsKSB7Ci0JCWlm
+IChkcm1fcGFuZWxfcHJlcGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCkpIHsKLQkJCURSTV9FUlJP
+UigiZmFpbGVkIHRvIHNldHVwIHRoZSBwYW5lbFxuIik7Ci0JCQlyZXR1cm47Ci0JCX0KLQl9Ci0K
+IAlpZiAoZHAtPnBsYXRfZGF0YS0+cG93ZXJfb24pCiAJCWRwLT5wbGF0X2RhdGEtPnBvd2VyX29u
+KGRwLT5wbGF0X2RhdGEpOwogCkBAIC0xMDkwLDExICsxMDgyLDYgQEAgc3RhdGljIHZvaWQgYW5h
+bG9naXhfZHBfYnJpZGdlX2Rpc2FibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKIAlpZiAo
+ZHAtPnBsYXRfZGF0YS0+cG93ZXJfb2ZmKQogCQlkcC0+cGxhdF9kYXRhLT5wb3dlcl9vZmYoZHAt
+PnBsYXRfZGF0YSk7CiAKLQlpZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwpIHsKLQkJaWYgKGRybV9w
+YW5lbF91bnByZXBhcmUoZHAtPnBsYXRfZGF0YS0+cGFuZWwpKQotCQkJRFJNX0VSUk9SKCJmYWls
+ZWQgdG8gdHVybm9mZiB0aGUgcGFuZWxcbiIpOwotCX0KLQogCXBtX3J1bnRpbWVfcHV0X3N5bmMo
+ZHAtPmRldik7CiAKIAlkcC0+ZHBtc19tb2RlID0gRFJNX01PREVfRFBNU19PRkY7CkBAIC0xMzUy
+LDYgKzEzMzksMTUgQEAgaW50IGFuYWxvZ2l4X2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBz
+dHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKIAogCXBtX3J1bnRpbWVfZW5hYmxlKGRldik7CiAK
+KwlwaHlfcG93ZXJfb24oZHAtPnBoeSk7CisKKwlpZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwpIHsK
+KwkJaWYgKGRybV9wYW5lbF9wcmVwYXJlKGRwLT5wbGF0X2RhdGEtPnBhbmVsKSkgeworCQkJRFJN
+X0VSUk9SKCJmYWlsZWQgdG8gc2V0dXAgdGhlIHBhbmVsXG4iKTsKKwkJCXJldHVybiAtRUJVU1k7
+CisJCX0KKwl9CisKIAlyZXQgPSBkZXZtX3JlcXVlc3RfaXJxKCZwZGV2LT5kZXYsIGRwLT5pcnEs
+IGFuYWxvZ2l4X2RwX2lycV9oYW5kbGVyLAogCQkJICAgICAgIGlycV9mbGFncywgImFuYWxvZ2l4
+LWRwIiwgZHApOwogCWlmIChyZXQpIHsKQEAgLTEzODUsNiArMTM4MSwxMiBAQCB2b2lkIGFuYWxv
+Z2l4X2RwX3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwK
+IAlzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwog
+CiAJYW5hbG9naXhfZHBfYnJpZGdlX2Rpc2FibGUoZHAtPmJyaWRnZSk7CisKKwlpZiAoZHAtPnBs
+YXRfZGF0YS0+cGFuZWwpIHsKKwkJaWYgKGRybV9wYW5lbF91bnByZXBhcmUoZHAtPnBsYXRfZGF0
+YS0+cGFuZWwpKQorCQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gdHVybm9mZiB0aGUgcGFuZWxcbiIp
+OworCX0KKwogCXBtX3J1bnRpbWVfZGlzYWJsZShkZXYpOwogfQogRVhQT1JUX1NZTUJPTF9HUEwo
+YW5hbG9naXhfZHBfdW5iaW5kKTsKLS0gCjEuOS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
