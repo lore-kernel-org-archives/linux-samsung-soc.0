@@ -1,223 +1,84 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v12 11/18] drm: bridge: analogix/dp: add some rk3288 special registers setting
-Date: Wed, 23 Dec 2015 20:40:34 +0800
-Message-ID: <1450874434-19361-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v12 12/18] drm: bridge: analogix/dp: add max link rate and
+ lane count limit for RK3288
+Date: Wed, 23 Dec 2015 20:42:42 +0800
+Message-ID: <1450874562-19409-1-git-send-email-ykk@rock-chips.com>
 References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, Mark Yao <mark.yao@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RK3288 need some special registers setting, we can separate
-them out by the dev_type of plat_data.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v12: None
-Changes in v11: None
-Changes in v10: None
-Changes in v9: None
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2:
-- Fix compile failed dut to phy_pd_addr variable misspell error
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 76 ++++++++++++++---------
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h | 12 ++++
- 2 files changed, 60 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 3858df5..1e24b37 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -15,6 +15,8 @@
- #include <linux/delay.h>
- #include <linux/gpio.h>
- 
-+#include <drm/bridge/analogix_dp.h>
-+
- #include "analogix_dp_core.h"
- #include "analogix_dp_reg.h"
- 
-@@ -72,6 +74,14 @@ void analogix_dp_init_analog_param(struct analogix_dp_device *dp)
- 	reg = SEL_24M | TX_DVDD_BIT_1_0625V;
- 	writel(reg, dp->reg_base + ANALOGIX_DP_ANALOG_CTL_2);
- 
-+	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP)) {
-+		writel(REF_CLK_24M, dp->reg_base + ANALOGIX_DP_PLL_REG_1);
-+		writel(0x95, dp->reg_base + ANALOGIX_DP_PLL_REG_2);
-+		writel(0x40, dp->reg_base + ANALOGIX_DP_PLL_REG_3);
-+		writel(0x58, dp->reg_base + ANALOGIX_DP_PLL_REG_4);
-+		writel(0x22, dp->reg_base + ANALOGIX_DP_PLL_REG_5);
-+	}
-+
- 	reg = DRIVE_DVDD_BIT_1_0625V | VCO_BIT_600_MICRO;
- 	writel(reg, dp->reg_base + ANALOGIX_DP_ANALOG_CTL_3);
- 
-@@ -206,81 +216,85 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 				       bool enable)
- {
- 	u32 reg;
-+	u32 phy_pd_addr = ANALOGIX_DP_PHY_PD;
-+
-+	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
-+		phy_pd_addr = ANALOGIX_DP_PD;
- 
- 	switch (block) {
- 	case AUX_BLOCK:
- 		if (enable) {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg |= AUX_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg &= ~AUX_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
- 	case CH0_BLOCK:
- 		if (enable) {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg |= CH0_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg &= ~CH0_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
- 	case CH1_BLOCK:
- 		if (enable) {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg |= CH1_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg &= ~CH1_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
- 	case CH2_BLOCK:
- 		if (enable) {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg |= CH2_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg &= ~CH2_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
- 	case CH3_BLOCK:
- 		if (enable) {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg |= CH3_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg &= ~CH3_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
- 	case ANALOG_TOTAL:
- 		if (enable) {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg |= DP_PHY_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
--			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			reg = readl(dp->reg_base + phy_pd_addr);
- 			reg &= ~DP_PHY_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
- 	case POWER_ALL:
- 		if (enable) {
- 			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
- 				CH1_PD | CH0_PD;
--			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
--			writel(0x00, dp->reg_base + ANALOGIX_DP_PHY_PD);
-+			writel(0x00, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
- 	default:
-@@ -399,8 +413,14 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
- 	analogix_dp_reset_aux(dp);
- 
- 	/* Disable AUX transaction H/W retry */
--	reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) | AUX_HW_RETRY_COUNT_SEL(0) |
--	      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-+	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
-+		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
-+		      AUX_HW_RETRY_COUNT_SEL(3) |
-+		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-+	else
-+		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
-+		      AUX_HW_RETRY_COUNT_SEL(0) |
-+		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
- 	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
- 
- 	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-index 738db4c..337912b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-@@ -22,6 +22,14 @@
- #define ANALOGIX_DP_VIDEO_CTL_8			0x3C
- #define ANALOGIX_DP_VIDEO_CTL_10		0x44
- 
-+#define ANALOGIX_DP_PLL_REG_1			0xfc
-+#define ANALOGIX_DP_PLL_REG_2			0x9e4
-+#define ANALOGIX_DP_PLL_REG_3			0x9e8
-+#define ANALOGIX_DP_PLL_REG_4			0x9ec
-+#define ANALOGIX_DP_PLL_REG_5			0xa00
-+
-+#define ANALOGIX_DP_PD				0x12c
-+
- #define ANALOGIX_DP_LANE_MAP			0x35C
- 
- #define ANALOGIX_DP_ANALOG_CTL_1		0x370
-@@ -154,6 +162,10 @@
- #define VSYNC_POLARITY_CFG			(0x1 << 1)
- #define HSYNC_POLARITY_CFG			(0x1 << 0)
- 
-+/* ANALOGIX_DP_PLL_REG_1 */
-+#define REF_CLK_24M				(0x1 << 1)
-+#define REF_CLK_27M				(0x0 << 1)
-+
- /* ANALOGIX_DP_LANE_MAP */
- #define LANE3_MAP_LOGIC_LANE_0			(0x0 << 6)
- #define LANE3_MAP_LOGIC_LANE_1			(0x1 << 6)
--- 
-1.9.1
+VGhlcmUgYXJlIHNvbWUgSVAgbGltaXQgb24gcmszMjg4IHRoYXQgb25seSBzdXBwb3J0IDQgcGh5
+c2ljYWwgbGFuZXMKb2YgMi43LzEuNiBHYnBzL2xhbmUsIHNvIHNlcHJhdGUgdGhlbSBvdXQgYnkg
+ZGV2aWNlX3R5cGUgZmxhZy4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNo
+aXBzLmNvbT4KVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBvc2cu
+c2Ftc3VuZy5jb20+Ci0tLQpDaGFuZ2VzIGluIHYxMjogTm9uZQpDaGFuZ2VzIGluIHYxMTogTm9u
+ZQpDaGFuZ2VzIGluIHYxMDoKLSBSZW1vdmUgdGhlIHN1cnBsdXMgInBsYXRfZGF0YSIgY2hlY2su
+IChIZWlrbykKLSAgICAgICBzd2l0Y2ggKGRwLT5wbGF0X2RhdGEgJiYgZHAtPnBsYXRfZGF0YS0+
+ZGV2X3R5cGUpIHsKKyAgICAgICBzd2l0Y2ggKGRwLT5wbGF0X2RhdGEtPmRldl90eXBlKSB7CgpD
+aGFuZ2VzIGluIHY5OiBOb25lCkNoYW5nZXMgaW4gdjg6IE5vbmUKQ2hhbmdlcyBpbiB2NzogTm9u
+ZQpDaGFuZ2VzIGluIHY2OiBOb25lCkNoYW5nZXMgaW4gdjU6IE5vbmUKQ2hhbmdlcyBpbiB2NDoK
+LSBTZXByYXRlIHRoZSBsaW5rLXJhdGUgYW5kIGxhbmUtY291bnQgbGltaXQgb3V0IHdpdGggdGhl
+IGRldmljZV90eXBlCiAgZmxhZy4gKFRoaWVycnkpCgpDaGFuZ2VzIGluIHYzOiBOb25lCkNoYW5n
+ZXMgaW4gdjI6IE5vbmUKCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4
+X2RwX2NvcmUuYyB8IDMzICsrKysrKysrKysrKysrLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIHwgIDQgKy0tCiAyIGZpbGVzIGNoYW5n
+ZWQsIDIzIGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIGIvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKaW5kZXggMjc3NTJkZi4u
+N2M1ZjFmNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFs
+b2dpeF9kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFs
+b2dpeF9kcF9jb3JlLmMKQEAgLTg5Myw4ICs4OTMsOCBAQCBzdGF0aWMgdm9pZCBhbmFsb2dpeF9k
+cF9jb21taXQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCiAJCXJldHVybjsKIAl9CiAK
+LQlyZXQgPSBhbmFsb2dpeF9kcF9zZXRfbGlua190cmFpbihkcCwgZHAtPnZpZGVvX2luZm8ubGFu
+ZV9jb3VudCwKLQkJCQkJIGRwLT52aWRlb19pbmZvLmxpbmtfcmF0ZSk7CisJcmV0ID0gYW5hbG9n
+aXhfZHBfc2V0X2xpbmtfdHJhaW4oZHAsIGRwLT52aWRlb19pbmZvLm1heF9sYW5lX2NvdW50LAor
+CQkJCQkgZHAtPnZpZGVvX2luZm8ubWF4X2xpbmtfcmF0ZSk7CiAJaWYgKHJldCkgewogCQlkZXZf
+ZXJyKGRwLT5kZXYsICJ1bmFibGUgdG8gZG8gbGluayB0cmFpblxuIik7CiAJCXJldHVybjsKQEAg
+LTEyMDMsMTYgKzEyMDMsMjUgQEAgc3RhdGljIGludCBhbmFsb2dpeF9kcF9kdF9wYXJzZV9wZGF0
+YShzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKmRw
+X25vZGUgPSBkcC0+ZGV2LT5vZl9ub2RlOwogCXN0cnVjdCB2aWRlb19pbmZvICp2aWRlb19pbmZv
+ID0gJmRwLT52aWRlb19pbmZvOwogCi0JaWYgKG9mX3Byb3BlcnR5X3JlYWRfdTMyKGRwX25vZGUs
+ICJzYW1zdW5nLGxpbmstcmF0ZSIsCi0JCQkJICZ2aWRlb19pbmZvLT5saW5rX3JhdGUpKSB7Ci0J
+CWRldl9lcnIoZHAtPmRldiwgImZhaWxlZCB0byBnZXQgbGluay1yYXRlXG4iKTsKLQkJcmV0dXJu
+IC1FSU5WQUw7Ci0JfQotCi0JaWYgKG9mX3Byb3BlcnR5X3JlYWRfdTMyKGRwX25vZGUsICJzYW1z
+dW5nLGxhbmUtY291bnQiLAotCQkJCSAmdmlkZW9faW5mby0+bGFuZV9jb3VudCkpIHsKLQkJZGV2
+X2VycihkcC0+ZGV2LCAiZmFpbGVkIHRvIGdldCBsYW5lLWNvdW50XG4iKTsKLQkJcmV0dXJuIC1F
+SU5WQUw7CisJc3dpdGNoIChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSkgeworCWNhc2UgUkszMjg4
+X0RQOgorCQkvKgorCQkgKiBMaWtlIFJrMzI4OCBEaXNwbGF5UG9ydCBUUk0gaW5kaWNhdGUgdGhh
+dCAiTWFpbiBsaW5rCisJCSAqIGNvbnRhaW5pbmcgNCBwaHlzaWNhbCBsYW5lcyBvZiAyLjcvMS42
+MiBHYnBzL2xhbmUiLgorCQkgKi8KKwkJdmlkZW9faW5mby0+bWF4X2xpbmtfcmF0ZSA9IDB4MEE7
+CisJCXZpZGVvX2luZm8tPm1heF9sYW5lX2NvdW50ID0gMHgwNDsKKwkJYnJlYWs7CisJY2FzZSBF
+WFlOT1NfRFA6CisJCS8qCisJCSAqIE5PVEU6IHRob3NlIHByb3BlcnR5IHBhcnNlaW5nIGNvZGUg
+aXMgdXNlZCBmb3IKKwkJICogcHJvdmlkaW5nIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkgZm9yIHNh
+bXN1bmcgcGxhdGZvcm0uCisJCSAqLworCQlvZl9wcm9wZXJ0eV9yZWFkX3UzMihkcF9ub2RlLCAi
+c2Ftc3VuZyxsaW5rLXJhdGUiLAorCQkJCSAgICAgJnZpZGVvX2luZm8tPm1heF9saW5rX3JhdGUp
+OworCQlvZl9wcm9wZXJ0eV9yZWFkX3UzMihkcF9ub2RlLCAic2Ftc3VuZyxsYW5lLWNvdW50IiwK
+KwkJCQkgICAgICZ2aWRlb19pbmZvLT5tYXhfbGFuZV9jb3VudCk7CisJCWJyZWFrOwogCX0KIAog
+CXJldHVybiAwOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9h
+bmFsb2dpeF9kcF9jb3JlLmggYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
+Z2l4X2RwX2NvcmUuaAppbmRleCBkNDg4ZGQ2Li42Y2M1M2Q0IDEwMDY0NAotLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaAorKysgYi9kcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaApAQCAtMTIzLDggKzEy
+Myw4IEBAIHN0cnVjdCB2aWRlb19pbmZvIHsKIAllbnVtIGNvbG9yX2NvZWZmaWNpZW50IHljYmNy
+X2NvZWZmOwogCWVudW0gY29sb3JfZGVwdGggY29sb3JfZGVwdGg7CiAKLQlpbnQgbGlua19yYXRl
+OwotCWVudW0gbGlua19sYW5lX2NvdW50X3R5cGUgbGFuZV9jb3VudDsKKwlpbnQgbWF4X2xpbmtf
+cmF0ZTsKKwllbnVtIGxpbmtfbGFuZV9jb3VudF90eXBlIG1heF9sYW5lX2NvdW50OwogfTsKIAog
+c3RydWN0IGxpbmtfdHJhaW4gewotLSAKMS45LjEKCgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
