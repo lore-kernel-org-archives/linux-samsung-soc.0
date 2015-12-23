@@ -1,64 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH] ARM: multi_v7_defconfig: Enable fan, sensors and audio for Odroid XU3
-Date: Wed, 23 Dec 2015 19:37:17 +0900
-Message-ID: <1450867037-19705-1-git-send-email-k.kozlowski.k@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL 3/9] ARM64: EXYNOS: clk: Clock dependency for ARM64 for
+ v4.5
+Date: Wed, 23 Dec 2015 19:44:32 +0900
+Message-ID: <567A7B10.3030501@samsung.com>
+References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
+ <1449020386-20250-4-git-send-email-k.kozlowski@samsung.com>
+ <20151222044636.GD30172@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:36186 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754750AbbLWKhm (ORCPT
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:36174 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753987AbbLWKog (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Dec 2015 05:37:42 -0500
+	Wed, 23 Dec 2015 05:44:36 -0500
+In-Reply-To: <20151222044636.GD30172@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+W dniu 22.12.2015 o 13:46, Olof Johansson pisze:
+> On Wed, Dec 02, 2015 at 10:39:40AM +0900, Krzysztof Kozlowski wrote:
+>> Hi Kukjin,
+>>
+>> Dependency for soc64 changes.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+>>
+>>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-arm64-symbols-4.5
+>>
+>> for you to fetch changes up to 8c2a90ed18a74e8b9cdbba679403faa44d6024fc:
+>>
+>>   clk: samsung: Don't build ARMv8 clock drivers on ARMv7 (2015-11-22 19:25:29 +0900)
+> 
+> Hi,
+> 
+> Looks like this lacks ack from any of the clock maintainers.
 
-For Odroid XU3-family enable the:
- - PWM fan (to control the CPU fan using thermal subsystem),
- - TI INA231 sensors (provide power measurements of big.LITTLE cores,
-   DRAM and GPU),
- - Samsung sound (for Odroid XU3 and Snow as well).
+It got the ack from Sylwester and Tomasz - Samsung clock maintainers. If
+it is not sufficient... then let's wait with it for v4.6. I am on
+holidays now so I cannot really do anything meaningful with it.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
----
+> 
+> Given that EXYNOS_ARM64_COMMON_CLK is not yet introduced, this will cause
+> a breakage in bisectability on some of these platforms as well.
 
-Resending with Javier's tag.
----
- arch/arm/configs/multi_v7_defconfig | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+The patch introduces EXYNOS_ARM64_COMMON_CLK which will be enabled by
+default on our platforms. What kind of breakage do you have in mind?
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f6a2557b55df..419f9413402c 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -390,7 +390,8 @@ CONFIG_POWER_RESET_RMOBILE=y
- CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_LM95245=y
- CONFIG_SENSORS_NTC_THERMISTOR=m
--CONFIG_THERMAL=y
-+CONFIG_SENSORS_PWM_FAN=m
-+CONFIG_SENSORS_INA2XX=m
- CONFIG_CPU_THERMAL=y
- CONFIG_ROCKCHIP_THERMAL=y
- CONFIG_RCAR_THERMAL=y
-@@ -521,10 +522,13 @@ CONFIG_SND_HDA_INPUT_BEEP=y
- CONFIG_SND_HDA_PATCH_LOADER=y
- CONFIG_SND_HDA_CODEC_REALTEK=m
- CONFIG_SND_HDA_CODEC_HDMI=m
--CONFIG_SND_USB_AUDIO=y
-+CONFIG_SND_USB_AUDIO=m
- CONFIG_SND_SOC=m
- CONFIG_SND_ATMEL_SOC=m
- CONFIG_SND_ATMEL_SOC_WM8904=m
-+CONFIG_SND_SOC_SAMSUNG=m
-+CONFIG_SND_SOC_SNOW=m
-+CONFIG_SND_SOC_ODROIDX2=m
- CONFIG_SND_SOC_SH4_FSI=m
- CONFIG_SND_SOC_RCAR=m
- CONFIG_SND_SOC_RSRC_CARD=m
--- 
-2.1.4
+Best regards,
+Krzysztof
