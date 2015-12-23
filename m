@@ -1,66 +1,45 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL 5/9] ARM: EXYNOS: Drivers for v4.5
-Date: Wed, 23 Dec 2015 19:58:48 +0900
-Message-ID: <567A7E68.2050504@samsung.com>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
- <1449020386-20250-6-git-send-email-k.kozlowski@samsung.com>
- <20151222045042.GF30172@localhost> <567A7C9F.3020907@samsung.com>
- <CA+Ln22Fk5UOgWzgOeEVb9sgPni028LMVDjgFhy3xQvnz4rwh_Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+Ln22Fk5UOgWzgOeEVb9sgPni028LMVDjgFhy3xQvnz4rwh_Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: k.kozlowski.k@gmail.com, Olof Johansson <olof@lixom.net>, devicetree <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v5 1/5] drivers: nvdimm: ensure no negative value gets returned
+ on positive match
+Date: Wed, 23 Dec 2015 11:59:24 +0100
+Message-ID: <1450868368-5650-2-git-send-email-m.szyprowski@samsung.com>
+References: <1450868368-5650-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28186 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754581AbbLWLAr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Dec 2015 06:00:47 -0500
+In-reply-to: <1450868368-5650-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-W dniu 23.12.2015 o 19:54, Tomasz Figa pisze:
-> Hi,
-> 
-> 2015-12-23 19:51 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> W dniu 22.12.2015 o 13:50, Olof Johansson pisze:
->>> On Wed, Dec 02, 2015 at 10:39:42AM +0900, Krzysztof Kozlowski wrote:
->>>> Hi Kukjin,
->>>>
->>>> Pinctrl for v4.5.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>>>
->>>> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
->>>>
->>>>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
->>>>
->>>> are available in the git repository at:
->>>>
->>>>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.5
->>>>
->>>> for you to fetch changes up to 023e06dfa6882f500b9c86fd61f0b1913aa07f36:
->>>>
->>>>   pinctrl: exynos: add exynos5410 SoC specific data (2015-11-16 10:54:43 +0900)
->>>
->>> Hi,
->>>
->>> This should either go in through the pinctrl tree, or have an acked/reviewed-by
->>> one of the pinctrl maintainers.
->>
->> It was acked by Tomasz Figa - Samsung Pin Controller maintainer:
->> https://patchwork.ozlabs.org/patch/450340/
-> 
-> Actually, is there any reason to send this through ARM SoC? Looks like
-> this pull request contains only pinctrl changes which could normally
-> go through pinctrl tree. Maybe Linus W. could simply pull it?
+From: Dan Williams <dan.j.williams@intel.com>
 
-Of course, I would be happy with it.
+This patch ensures that existing bus match callbacks don't return
+negative values (which might be interpreted as potential errors in the
+future) in case of positive match.
 
-But apparently I am the only one who continuously tracks all of these
-patches for Exynos (also for subsystems different than arch/arm/mach*).
-Yeah, I could ping everyone for every patch (not mine patch I mean)...
-but it is easier just to grab it after acking and send it. I really
-don't care about the method, just apply the damned patch ;)
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/nvdimm/bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+index 7e2c43f..2b2181c 100644
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -62,7 +62,7 @@ static int nvdimm_bus_match(struct device *dev, struct device_driver *drv)
+ {
+ 	struct nd_device_driver *nd_drv = to_nd_device_driver(drv);
+ 
+-	return test_bit(to_nd_device_type(dev), &nd_drv->type);
++	return !!test_bit(to_nd_device_type(dev), &nd_drv->type);
+ }
+ 
+ static struct module *to_bus_provider(struct device *dev)
+-- 
+1.9.2
