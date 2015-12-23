@@ -1,132 +1,131 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v11 06/19] ARM: dts: exynos/dp: remove some properties
- that deprecated by analogix_dp driver
-Date: Wed, 23 Dec 2015 08:47:12 +0800
-Message-ID: <5679EF10.7070807@rock-chips.com>
+Subject: Re: [PATCH v11 03/19] drm: bridge: analogix/dp: remove duplicate
+ configuration of link rate and link count
+Date: Wed, 23 Dec 2015 08:49:34 +0800
+Message-ID: <5679EF9E.30703@rock-chips.com>
 References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com>
- <1450236876-1951-1-git-send-email-ykk@rock-chips.com>
- <000801d13cb2$43079270$c916b750$@com>
+ <1450236502-1713-1-git-send-email-ykk@rock-chips.com>
+ <000701d13cb1$a3d5f0c0$eb81d240$@com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <000801d13cb2$43079270$c916b750$@com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jingoo Han <jingoohan1@gmail.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, javier@osg.samsung.com, 'Rob Herring' <robh+dt@kernel.org>, 'Andy Yan' <andy.yan@rock-chips.com>, 'Thierry Reding' <treding@nvidia.com>, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.131]:55877 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753886AbbLWAtl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Dec 2015 19:49:41 -0500
+In-Reply-To: <000701d13cb1$a3d5f0c0$eb81d240$@com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jingoohan1@gmail.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>
+Cc: 'Thierry Reding' <treding@nvidia.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Russell King' <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, 'Kishon Vijay Abraham I' <kishon@ti.com>, javier@osg.samsung.com, 'Andy Yan' <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-Ck9uIDEyLzIyLzIwMTUgMDg6MTMgUE0sIEppbmdvbyBIYW4gd3JvdGU6Cj4gT24gV2VkbmVzZGF5
-LCBEZWNlbWJlciAxNiwgMjAxNSAxMjozNSBQTSwgWWFraXIgWWFuZyB3cm90ZToKPj4gQWZ0ZXIg
-ZXh5bm9zX2RwIGhhdmUgYmVlbiBzcGxpdCB0aGUgY29tbW9uIElQIGNvZGUgaW50byBhbmFsb2dp
-eF9kcCBkcml2ZXIsCj4+IHRoZSBhbmFsb2dpeF9kcCBkcml2ZXIgaGF2ZSBkZXByZWNhdGVkIHNv
-bWUgU2Ftc3VuZyBwbGF0Zm9ybSBwcm9wZXJ0aWVzIHdoaWNoCj4+IGNvdWxkIGJlIGR5bmFtaWNh
-bGx5IHBhcnNlZCBmcm9tIEVESUQvTU9ERS9EUENEIG1lc3NhZ2UsIHNvIHRoaXMgaXMgYW4gdXBk
-YXRlCj4+IGZvciBFeHlub3MgRFRTIGZpbGUgZm9yIGRwLWNvbnRyb2xsZXIuCj4+Cj4+IEJlc2lk
-ZSB0aGUgYmFja3dhcmQgY29tcGF0aWJpbGl0eSBpcyBmdWxseSBwcmVzZXJ2ZWQsIHNvIHRoZXJl
-IGFyZSBubwo+PiBiaXNlY3RhYmlsaXR5IGJyZWFrIHRoYXQgbWFrZSB0aGlzIGNoYW5nZSBpbiBh
-IHNlcGFyYXRlIHBhdGNoLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBZYWtpciBZYW5nIDx5a2tAcm9j
-ay1jaGlwcy5jb20+Cj4+IFJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxv
-d3NraUBzYW1zdW5nLmNvbT4KPj4gVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMg
-PGphdmllckBvc2cuc2Ftc3VuZy5jb20+Cj4gUmV2aWV3ZWQtYnk6IEppbmdvbyBIYW4gPCBqaW5n
-b29oYW4xQGdtYWlsLmNvbSA+CgpUaGFua3MsCi0gWWFraXIKCj4gQmVzdCByZWdhcmRzLAo+IEpp
-bmdvbyBIYW4KPgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2MTE6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2
-MTA6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2OTogTm9uZQo+PiBDaGFuZ2VzIGluIHY4OiBOb25lCj4+
-IENoYW5nZXMgaW4gdjc6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2NjoKPj4gLSBGaXggUGVhY2ggUGl0
-IGhwZCBwcm9wZXJ0eSBuYW1lIGVycm9yOgo+PiAtICAgICAgIGhwZC1ncGlvID0gPCZncHgyIDYg
-MD47Cj4+ICsgICAgICAgaHBkLWdwaW9zID0gPCZncHgyIDYgMD47Cj4+Cj4+IENoYW5nZXMgaW4g
-djU6Cj4+IC0gQ29ycmVjdCB0aGUgbWlzc3BlbGwgaW4gY29tbWl0IG1lc3NhZ2UuIChLcnp5c3p0
-b2YpCj4+Cj4+IENoYW5nZXMgaW4gdjQ6Cj4+IC0gU2VwYXJhdGUgYWxsIERUUyBjaGFuZ2VzIHRv
-IGEgc2VwYXJhdGUgcGF0Y2guIChLcnp5c3p0b2YpCj4+Cj4+IENoYW5nZXMgaW4gdjM6IE5vbmUK
-Pj4gQ2hhbmdlcyBpbiB2MjogTm9uZQo+Pgo+PiAgIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUy
-NTAtYXJuZGFsZS5kdHMgICAgICB8IDIgLS0KPj4gICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1
-MjUwLXNtZGs1MjUwLmR0cyAgICAgfCAyIC0tCj4+ICAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
-NTI1MC1zbm93LWNvbW1vbi5kdHNpIHwgNCArLS0tCj4+ICAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTI1MC1zcHJpbmcuZHRzICAgICAgIHwgNCArLS0tCj4+ICAgYXJjaC9hcm0vYm9vdC9kdHMv
-ZXh5bm9zNTQyMC1wZWFjaC1waXQuZHRzICAgIHwgNCArLS0tCj4+ICAgYXJjaC9hcm0vYm9vdC9k
-dHMvZXh5bm9zNTQyMC1zbWRrNTQyMC5kdHMgICAgIHwgMiAtLQo+PiAgIGFyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczU4MDAtcGVhY2gtcGkuZHRzICAgICB8IDQgKy0tLQo+PiAgIDcgZmlsZXMgY2hh
-bmdlZCwgNCBpbnNlcnRpb25zKCspLCAxOCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBh
-L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5kdHMgYi9hcmNoL2FybS9ib290
-L2R0cy9leHlub3M1MjUwLWFybmRhbGUuZHRzCj4+IGluZGV4IGMwMDA1MzIuLmIxNzkwY2YgMTAw
-NjQ0Cj4+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5kdHMKPj4g
-KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1hcm5kYWxlLmR0cwo+PiBAQCAtMTI0
-LDggKzEyNCw2IEBACj4+ICAgJmRwIHsKPj4gICAJc3RhdHVzID0gIm9rYXkiOwo+PiAgIAlzYW1z
-dW5nLGNvbG9yLXNwYWNlID0gPDA+Owo+PiAtCXNhbXN1bmcsZHluYW1pYy1yYW5nZSA9IDwwPjsK
-Pj4gLQlzYW1zdW5nLHljYmNyLWNvZWZmID0gPDA+Owo+PiAgIAlzYW1zdW5nLGNvbG9yLWRlcHRo
-ID0gPDE+Owo+PiAgIAlzYW1zdW5nLGxpbmstcmF0ZSA9IDwweDBhPjsKPj4gICAJc2Ftc3VuZyxs
-YW5lLWNvdW50ID0gPDQ+Owo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
-NTI1MC1zbWRrNTI1MC5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNtZGs1MjUw
-LmR0cwo+PiBpbmRleCAwZjVkY2Q0Li5mMzBjMmRiIDEwMDY0NAo+PiAtLS0gYS9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M1MjUwLXNtZGs1MjUwLmR0cwo+PiArKysgYi9hcmNoL2FybS9ib290L2R0
-cy9leHlub3M1MjUwLXNtZGs1MjUwLmR0cwo+PiBAQCAtODAsOCArODAsNiBAQAo+Pgo+PiAgICZk
-cCB7Cj4+ICAgCXNhbXN1bmcsY29sb3Itc3BhY2UgPSA8MD47Cj4+IC0Jc2Ftc3VuZyxkeW5hbWlj
-LXJhbmdlID0gPDA+Owo+PiAtCXNhbXN1bmcseWNiY3ItY29lZmYgPSA8MD47Cj4+ICAgCXNhbXN1
-bmcsY29sb3ItZGVwdGggPSA8MT47Cj4+ICAgCXNhbXN1bmcsbGluay1yYXRlID0gPDB4MGE+Owo+
-PiAgIAlzYW1zdW5nLGxhbmUtY291bnQgPSA8ND47Cj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M1MjUwLXNub3ctY29tbW9uLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9l
-eHlub3M1MjUwLXNub3ctCj4+IGNvbW1vbi5kdHNpCj4+IGluZGV4IDVjYjMzYmEuLmI5NjYyNGIg
-MTAwNjQ0Cj4+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc25vdy1jb21tb24u
-ZHRzaQo+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNub3ctY29tbW9uLmR0
-c2kKPj4gQEAgLTIzNiwxMiArMjM2LDEwIEBACj4+ICAgCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVs
-dCI7Cj4+ICAgCXBpbmN0cmwtMCA9IDwmZHBfaHBkPjsKPj4gICAJc2Ftc3VuZyxjb2xvci1zcGFj
-ZSA9IDwwPjsKPj4gLQlzYW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Cj4+IC0Jc2Ftc3VuZyx5
-Y2Jjci1jb2VmZiA9IDwwPjsKPj4gICAJc2Ftc3VuZyxjb2xvci1kZXB0aCA9IDwxPjsKPj4gICAJ
-c2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwYT47Cj4+ICAgCXNhbXN1bmcsbGFuZS1jb3VudCA9IDwy
-PjsKPj4gLQlzYW1zdW5nLGhwZC1ncGlvID0gPCZncHgwIDcgR1BJT19BQ1RJVkVfSElHSD47Cj4+
-ICsJaHBkLWdwaW9zID0gPCZncHgwIDcgR1BJT19BQ1RJVkVfSElHSD47Cj4+Cj4+ICAgCXBvcnRz
-IHsKPj4gICAJCXBvcnRAMCB7Cj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlu
-b3M1MjUwLXNwcmluZy5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmluZy5k
-dHMKPj4gaW5kZXggYzFlZGQ2ZC4uOTE4ODFkNyAxMDA2NDQKPj4gLS0tIGEvYXJjaC9hcm0vYm9v
-dC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzCj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczUyNTAtc3ByaW5nLmR0cwo+PiBAQCAtNzQsMTIgKzc0LDEwIEBACj4+ICAgCXBpbmN0cmwt
-bmFtZXMgPSAiZGVmYXVsdCI7Cj4+ICAgCXBpbmN0cmwtMCA9IDwmZHBfaHBkX2dwaW8+Owo+PiAg
-IAlzYW1zdW5nLGNvbG9yLXNwYWNlID0gPDA+Owo+PiAtCXNhbXN1bmcsZHluYW1pYy1yYW5nZSA9
-IDwwPjsKPj4gLQlzYW1zdW5nLHljYmNyLWNvZWZmID0gPDA+Owo+PiAgIAlzYW1zdW5nLGNvbG9y
-LWRlcHRoID0gPDE+Owo+PiAgIAlzYW1zdW5nLGxpbmstcmF0ZSA9IDwweDBhPjsKPj4gICAJc2Ft
-c3VuZyxsYW5lLWNvdW50ID0gPDE+Owo+PiAtCXNhbXN1bmcsaHBkLWdwaW8gPSA8JmdwYzMgMCBH
-UElPX0FDVElWRV9ISUdIPjsKPj4gKwlocGQtZ3Bpb3MgPSA8JmdwYzMgMCBHUElPX0FDVElWRV9I
-SUdIPjsKPj4gICB9Owo+Pgo+PiAgICZlaGNpIHsKPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jv
-b3QvZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
-czU0MjAtcGVhY2gtcGl0LmR0cwo+PiBpbmRleCAzNWNmYjA3Li4yZjM3Yzg3IDEwMDY0NAo+PiAt
-LS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLXBlYWNoLXBpdC5kdHMKPj4gKysrIGIv
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC1wZWFjaC1waXQuZHRzCj4+IEBAIC0xNDgsMTIg
-KzE0OCwxMCBAQAo+PiAgIAlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwo+PiAgIAlwaW5jdHJs
-LTAgPSA8JmRwX2hwZF9ncGlvPjsKPj4gICAJc2Ftc3VuZyxjb2xvci1zcGFjZSA9IDwwPjsKPj4g
-LQlzYW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Cj4+IC0Jc2Ftc3VuZyx5Y2Jjci1jb2VmZiA9
-IDwwPjsKPj4gICAJc2Ftc3VuZyxjb2xvci1kZXB0aCA9IDwxPjsKPj4gICAJc2Ftc3VuZyxsaW5r
-LXJhdGUgPSA8MHgwNj47Cj4+ICAgCXNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKPj4gLQlzYW1z
-dW5nLGhwZC1ncGlvID0gPCZncHgyIDYgR1BJT19BQ1RJVkVfSElHSD47Cj4+ICsJaHBkLWdwaW9z
-ID0gPCZncHgyIDYgR1BJT19BQ1RJVkVfSElHSD47Cj4+Cj4+ICAgCXBvcnRzIHsKPj4gICAJCXBv
-cnRAMCB7Cj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLXNtZGs1
-NDIwLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtc21kazU0MjAuZHRzCj4+IGlu
-ZGV4IGFjMzVhZWYuLmY2NzM0NGYgMTAwNjQ0Cj4+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczU0MjAtc21kazU0MjAuZHRzCj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0
-MjAtc21kazU0MjAuZHRzCj4+IEBAIC05Myw4ICs5Myw2IEBACj4+ICAgCXBpbmN0cmwtbmFtZXMg
-PSAiZGVmYXVsdCI7Cj4+ICAgCXBpbmN0cmwtMCA9IDwmZHBfaHBkPjsKPj4gICAJc2Ftc3VuZyxj
-b2xvci1zcGFjZSA9IDwwPjsKPj4gLQlzYW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Cj4+IC0J
-c2Ftc3VuZyx5Y2Jjci1jb2VmZiA9IDwwPjsKPj4gICAJc2Ftc3VuZyxjb2xvci1kZXB0aCA9IDwx
-PjsKPj4gICAJc2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwYT47Cj4+ICAgCXNhbXN1bmcsbGFuZS1j
-b3VudCA9IDw0PjsKPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAt
-cGVhY2gtcGkuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMK
-Pj4gaW5kZXggN2IwMThlNC4uMzYzYzk1ZiAxMDA2NDQKPj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9k
-dHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMKPj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTgwMC1wZWFjaC1waS5kdHMKPj4gQEAgLTE0MiwxMiArMTQyLDEwIEBACj4+ICAgCXBpbmN0
-cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4+ICAgCXBpbmN0cmwtMCA9IDwmZHBfaHBkX2dwaW8+Owo+
-PiAgIAlzYW1zdW5nLGNvbG9yLXNwYWNlID0gPDA+Owo+PiAtCXNhbXN1bmcsZHluYW1pYy1yYW5n
-ZSA9IDwwPjsKPj4gLQlzYW1zdW5nLHljYmNyLWNvZWZmID0gPDA+Owo+PiAgIAlzYW1zdW5nLGNv
-bG9yLWRlcHRoID0gPDE+Owo+PiAgIAlzYW1zdW5nLGxpbmstcmF0ZSA9IDwweDBhPjsKPj4gICAJ
-c2Ftc3VuZyxsYW5lLWNvdW50ID0gPDI+Owo+PiAtCXNhbXN1bmcsaHBkLWdwaW8gPSA8JmdweDIg
-NiBHUElPX0FDVElWRV9ISUdIPjsKPj4gKwlocGQtZ3Bpb3MgPSA8JmdweDIgNiBHUElPX0FDVElW
-RV9ISUdIPjsKPj4gICAJcGFuZWwgPSA8JnBhbmVsPjsKPj4gICB9Owo+Pgo+PiAtLQo+PiAxLjku
-MQo+Cj4KPgo+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Jingoo,
+
+Thanks for your respond.
+
+On 12/22/2015 08:09 PM, Jingoo Han wrote:
+> On Wednesday, December 16, 2015 12:28 PM, Yakir Yang wrote:
+>> link_rate and lane_count already configured in analogix_dp_set_link_train(),
+>> so we don't need to config those repeatly after training finished, just
+>> remove them out.
+>>
+>> Beside Display Port 1.2 already support 5.4Gbps link rate, the maximum sets
+>> would change from {1.62Gbps, 2.7Gbps} to {1.62Gbps, 2.7Gbps, 5.4Gbps}.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> ---
+>> Changes in v11: None
+>> Changes in v10: None
+>> Changes in v9: None
+>> Changes in v8: None
+>> Changes in v7: None
+>> Changes in v6: None
+>> Changes in v5: None
+>> Changes in v4:
+>> - Update commit message more readable. (Jingoo)
+>> - Adjust the order from 05 to 04
+>>
+>> Changes in v3:
+>> - The link_rate and lane_count shouldn't config to the DT property value
+>>    directly, but we can take those as hardware limite. For example, RK3288
+>>    only support 4 physical lanes of 2.7/1.62 Gbps/lane, so DT property would
+>>    like "link-rate = 0x0a" "lane-count = 4". (Thierry)
+>>
+>> Changes in v2: None
+>>
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++++----
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 5 +++--
+>>   2 files changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index 4a05c2b..6f899cd 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -624,6 +624,8 @@ static void analogix_dp_get_max_rx_bandwidth(struct analogix_dp_device *dp,
+>>   	/*
+>>   	 * For DP rev.1.1, Maximum link rate of Main Link lanes
+>>   	 * 0x06 = 1.62 Gbps, 0x0a = 2.7 Gbps
+>> +	 * For DP rev.1.2, Maximum link rate of Main Link lanes
+>> +	 * 0x06 = 1.62 Gbps, 0x0a = 2.7 Gbps, 0x14 = 5.4Gbps
+>>   	 */
+>>   	analogix_dp_read_byte_from_dpcd(dp, DP_MAX_LINK_RATE, &data);
+>>   	*bandwidth = data;
+>> @@ -657,7 +659,8 @@ static void analogix_dp_init_training(struct analogix_dp_device *dp,
+>>   	analogix_dp_get_max_rx_lane_count(dp, &dp->link_train.lane_count);
+>>
+>>   	if ((dp->link_train.link_rate != LINK_RATE_1_62GBPS) &&
+>> -	    (dp->link_train.link_rate != LINK_RATE_2_70GBPS)) {
+>> +	    (dp->link_train.link_rate != LINK_RATE_2_70GBPS) &&
+>> +	    (dp->link_train.link_rate != LINK_RATE_5_40GBPS)) {
+>>   		dev_err(dp->dev, "Rx Max Link Rate is abnormal :%x !\n",
+>>   			dp->link_train.link_rate);
+>>   		dp->link_train.link_rate = LINK_RATE_1_62GBPS;
+>> @@ -898,9 +901,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+>>   	analogix_dp_enable_rx_to_enhanced_mode(dp, 1);
+>>   	analogix_dp_enable_enhanced_mode(dp, 1);
+>>
+>> -	analogix_dp_set_lane_count(dp, dp->video_info->lane_count);
+>> -	analogix_dp_set_link_bandwidth(dp, dp->video_info->link_rate);
+>> -
+>>   	analogix_dp_init_video(dp);
+>>   	ret = analogix_dp_config_video(dp);
+>>   	if (ret)
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> index 8e84208..57aa4b0d 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> @@ -21,8 +21,9 @@
+>>   #define MAX_EQ_LOOP			5
+>>
+>>   enum link_rate_type {
+>> -	LINK_RATE_1_62GBPS = 0x06,
+>> -	LINK_RATE_2_70GBPS = 0x0a
+>> +	LINK_RATE_1_62GBPS = DP_LINK_BW_1_62,
+>> +	LINK_RATE_2_70GBPS = DP_LINK_BW_2_7,
+>> +	LINK_RATE_5_40GBPS = DP_LINK_BW_5_4,
+> Then, how about removing 'enum link_rate_type'?
+> If DP_LINK_BW_* are used, LINK_RATE_* are not necessary.
+
+Sure, good catch.
+
+Thanks,
+- Yakir
+
+> Best regards,
+> Jingoo Han
+>
+>
+>>   };
+>>
+>>   enum link_lane_count_type {
+>> --
+>> 1.9.1
+>
+>
+>
+>
