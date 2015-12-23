@@ -1,59 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: s2m,s5m: constify regulator_ops structures
-Date: Wed, 23 Dec 2015 11:37:55 +0000
-Message-ID: <20151223113755.GP16023@sirena.org.uk>
-References: <1450537080-17387-1-git-send-email-Julia.Lawall@lip6.fr>
- <20151223000043.GE16023@sirena.org.uk>
- <alpine.DEB.2.02.1512230819490.2081@localhost6.localdomain6>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v9 0/4] Exynos SROMc configuration and Ethernet support
+ for SMDK5410
+Date: Wed, 23 Dec 2015 21:15:53 +0900
+Message-ID: <567A9079.9030400@samsung.com>
+References: <cover.1447659546.git.p.fedin@samsung.com>
+ <56724519.80108@samsung.com> <019e01d13974$c432fb00$4c98f100$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tZCmRiovzb4sxAVa"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47276 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751080AbbLWLiD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Dec 2015 06:38:03 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1512230819490.2081@localhost6.localdomain6>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <019e01d13974$c432fb00$4c98f100$@samsung.com>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pavel Fedin <p.fedin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, 'Mark Rutland' <mark.rutland-5wv7dgnIgG8@public.gmane.org>, 'Pawel Moll' <pawel.moll-5wv7dgnIgG8@public.gmane.org>, 'Ian Campbell' <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, 'Rob Herring' <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Kukjin Kim' <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Kumar Gala' <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
+W dniu 18.12.2015 o 18:16, Pavel Fedin pisze:
+>  Hello!
+> 
+>> 4. This branch is not pushed to linux-next. I will sort it out if my
+>> previous pull requests get in. I will be out of office for Christmas so
+>> depending on the timing of {arm-soc,Christmas,Kukjin} this may or may
+>> not go into v4.5 (yay...).
+>>
+>> 5. If it does not get into v4.5, I will rebase it and proceed further
+>> for v4.6.
+>>
+>> If you have any questions, please let me know.
+> 
+>  Thank you very much. No, i don't have any questions, i'm glad that my work is picked up and not lost, i'm just keeping an eye on it
+> until it goes to stable.
+> 
+>  P.S. Not related to these sets directly, just to note... When i was writing the doc for SROMc bindings, i noticed that we have two
+> directories for Exynos in Documentation/devicetree/bindings/arm:
+> 1. Documentation/devicetree/bindings/arm/exynos
+> 2. Documentation/devicetree/bindings/arm/Samsung
+> 
+>  In (1) we have only a single old file, shouldn't this be cleaned up and shouldn't this file be moved to (2)?
 
---tZCmRiovzb4sxAVa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for hind but I already cleaned it up:
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=068812ed108acbfe070b893faba9845fe2ea3fd9
 
-On Wed, Dec 23, 2015 at 08:20:43AM +0100, Julia Lawall wrote:
-> On Wed, 23 Dec 2015, Mark Brown wrote:
+Best regards,
+Krzysztof
 
-> > On Sat, Dec 19, 2015 at 03:58:00PM +0100, Julia Lawall wrote:
-> > > The regulator_ops structures are never modified, so declare them as const.
-
-> > > Done with the help of Coccinelle.
-
-> > This doesn't apply against current code, please check and resend.
-
-> It works fine for me on today's linux-next (80c75a0f1d).  What goes wrong?
-
-It just doesn't apply against my tree.  Presumably there's a change
-somewhere else in -next (probably the MFD tree).
-
---tZCmRiovzb4sxAVa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWeoeSAAoJECTWi3JdVIfQuOUH/0O+2OIz+OZ+m8BNcOepVoPi
-buFL50f5mG0EZOOp3eMoAAcpQ3K8IvNGPSHjicPlwUTKdqKA7js8ZrZYSz3En8zY
-oyk2dY8bGQRpgN24KQUbKdZJmRdqxpaepbMzVCB15HLWQmPfwbRCpTyOaF7Q37nc
-7NS4aMD2K+uU9zIpwqrQhL3ciOjho8HdDWZh72rK6inIiaLRo8OO5rO00Epi3yOD
-e813AWUvH5b9PIYJyZz/VWDYl48h6sFOVFU+a1e4zmM6FoKji3xkQj9zKyKq6+zL
-Yg2rlMrigRZAjpgOexg7gtvUXocKo4WGaDGEKgCb9pFG3JJh+pDvcqxxqpQbzT8=
-=qTEo
------END PGP SIGNATURE-----
-
---tZCmRiovzb4sxAVa--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
