@@ -1,33 +1,64 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH] regulator: s2m,s5m: constify regulator_ops structures
-Date: Wed, 23 Dec 2015 08:20:43 +0100 (CET)
-Message-ID: <alpine.DEB.2.02.1512230819490.2081@localhost6.localdomain6>
-References: <1450537080-17387-1-git-send-email-Julia.Lawall@lip6.fr> <20151223000043.GE16023@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH] ARM: multi_v7_defconfig: Enable fan, sensors and audio for Odroid XU3
+Date: Wed, 23 Dec 2015 19:37:17 +0900
+Message-ID: <1450867037-19705-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:40087 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933281AbbLWHUq (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:36186 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754750AbbLWKhm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Dec 2015 02:20:46 -0500
-In-Reply-To: <20151223000043.GE16023@sirena.org.uk>
+	Wed, 23 Dec 2015 05:37:42 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+For Odroid XU3-family enable the:
+ - PWM fan (to control the CPU fan using thermal subsystem),
+ - TI INA231 sensors (provide power measurements of big.LITTLE cores,
+   DRAM and GPU),
+ - Samsung sound (for Odroid XU3 and Snow as well).
 
-On Wed, 23 Dec 2015, Mark Brown wrote:
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-> On Sat, Dec 19, 2015 at 03:58:00PM +0100, Julia Lawall wrote:
-> > The regulator_ops structures are never modified, so declare them as const.
-> > 
-> > Done with the help of Coccinelle.
-> 
-> This doesn't apply against current code, please check and resend.
+---
 
-It works fine for me on today's linux-next (80c75a0f1d).  What goes wrong?
+Resending with Javier's tag.
+---
+ arch/arm/configs/multi_v7_defconfig | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-julia
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index f6a2557b55df..419f9413402c 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -390,7 +390,8 @@ CONFIG_POWER_RESET_RMOBILE=y
+ CONFIG_SENSORS_LM90=y
+ CONFIG_SENSORS_LM95245=y
+ CONFIG_SENSORS_NTC_THERMISTOR=m
+-CONFIG_THERMAL=y
++CONFIG_SENSORS_PWM_FAN=m
++CONFIG_SENSORS_INA2XX=m
+ CONFIG_CPU_THERMAL=y
+ CONFIG_ROCKCHIP_THERMAL=y
+ CONFIG_RCAR_THERMAL=y
+@@ -521,10 +522,13 @@ CONFIG_SND_HDA_INPUT_BEEP=y
+ CONFIG_SND_HDA_PATCH_LOADER=y
+ CONFIG_SND_HDA_CODEC_REALTEK=m
+ CONFIG_SND_HDA_CODEC_HDMI=m
+-CONFIG_SND_USB_AUDIO=y
++CONFIG_SND_USB_AUDIO=m
+ CONFIG_SND_SOC=m
+ CONFIG_SND_ATMEL_SOC=m
+ CONFIG_SND_ATMEL_SOC_WM8904=m
++CONFIG_SND_SOC_SAMSUNG=m
++CONFIG_SND_SOC_SNOW=m
++CONFIG_SND_SOC_ODROIDX2=m
+ CONFIG_SND_SOC_SH4_FSI=m
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_RSRC_CARD=m
+-- 
+2.1.4
