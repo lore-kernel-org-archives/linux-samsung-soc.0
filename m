@@ -1,74 +1,61 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL 7/9] ARM: EXYNOS: dts: DeviceTree for v4.5
-Date: Wed, 23 Dec 2015 20:04:43 +0900
-Message-ID: <567A7FCB.1040304@samsung.com>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
- <1449020386-20250-8-git-send-email-k.kozlowski@samsung.com>
- <20151222045221.GH30172@localhost>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v5 2/5] ARM: sa1111: ensure no negative value gets
+ returned on positive match
+Date: Wed, 23 Dec 2015 11:05:00 +0000
+Message-ID: <20151223110500.GQ8644@n2100.arm.linux.org.uk>
+References: <1450868368-5650-1-git-send-email-m.szyprowski@samsung.com>
+ <1450868368-5650-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:33970 "EHLO
-	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752257AbbLWLEr (ORCPT
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:45131 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751315AbbLWLFQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Dec 2015 06:04:47 -0500
-In-Reply-To: <20151222045221.GH30172@localhost>
+	Wed, 23 Dec 2015 06:05:16 -0500
+Content-Disposition: inline
+In-Reply-To: <1450868368-5650-3-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Tomasz Figa <tomasz.figa@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-W dniu 22.12.2015 o 13:52, Olof Johansson pisze:
-> On Wed, Dec 02, 2015 at 10:39:44AM +0900, Krzysztof Kozlowski wrote:
->> Hi Kukjin,
->>
->> A lot of stuff here, mostly cleanups. Description in tag.
->>
->> Best regards,
->> Krzysztof
->>
->>
->> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
->>
->>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
->>
->> are available in the git repository at:
->>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.5
->>
->> for you to fetch changes up to 2cf107f1033e0343d45b59d06f16487c8362702f:
->>
->>   ARM: dts: Unify G2D device node with other devices on exynos4 (2015-11-30 17:00:43 +0900)
->>
->> ----------------------------------------------------------------
->> Samsung DeviceTree updates and improvements for 4.5:
->> 1. Pinctrl for Exynos5410.
->> 2. eMMC/SDIO minor fixes usage of bindings on Snow and Peach
->>    Chromebooks.
->> 3. Remove FIMD from Odroid XU3-family because on XU3 it cannot be used
->>    yet and on XU3-Lite and XU4 it is not supported.
->> 4. Remove deprecated since June 2013 samsung,exynos5-hdmi.
->> 5. Add support for Pseudo Random Generator on Exynos4 (Trats2 for now).
->>    This depends on new SSS clock.
->> 6. Add rotator nodes for Exynos4 and Exynos5.
->> 7. Switch DWC3_1 on Odroid XU3 and XU3-Lite to peripheral mode because
->>    now it cannot be used as OTG.
->> 8. Cleanup the G2D usage on Exynos4 and add it to a proper domain
->>    in case of Exynos4210.
->> 9. Put MDMA1 in proper domain on Exynos4210 as well.
->> 10. Minor cleanups.
+On Wed, Dec 23, 2015 at 11:59:25AM +0100, Marek Szyprowski wrote:
+> This patch ensures that existing bus match callbacks don't return
+> negative values (which might be interpreted as potential errors in the
+> future) in case of positive match.
+
+This actually can't return a negative number - only valid devid bits
+are 0 to 9 inclusive, and this isn't going to ever change.  So the
+patch isn't strictly necessary, but is good from the point of view
+of ensuring consistency.  Hence:
+
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+
+> ---
+>  arch/arm/common/sa1111.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Given the request to get acks for the pinctrl changes, can you respin this
-> branch without those pieces so we can merge in the rest of it?
+> diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+> index 3d22494..fb0a0a4 100644
+> --- a/arch/arm/common/sa1111.c
+> +++ b/arch/arm/common/sa1111.c
+> @@ -1290,7 +1290,7 @@ static int sa1111_match(struct device *_dev, struct device_driver *_drv)
+>  	struct sa1111_dev *dev = SA1111_DEV(_dev);
+>  	struct sa1111_driver *drv = SA1111_DRV(_drv);
+>  
+> -	return dev->devid & drv->devid;
+> +	return !!(dev->devid & drv->devid);
+>  }
+>  
+>  static int sa1111_bus_suspend(struct device *dev, pm_message_t state)
+> -- 
+> 1.9.2
 > 
-The pinctrl changes here are only DTS changes. I reviewed the pinctrl
-DTSI. Why do you want an additional ack for them?
 
-However this contains the previous clock dependency (the SSS clock acked
-by Stephen Boyd). I responded about this already so let's don't
-duplicate the discussion.
-
-Best regards,
-Krzysztof
+-- 
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
