@@ -1,41 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL 5/9] ARM: EXYNOS: Drivers for v4.5
-Date: Thu, 24 Dec 2015 09:56:01 +0100
-Message-ID: <CACRpkdYGjY-Wo8PPp6UhXcAqAJ-Jh5Q9sa_-e+XnzCqqi6RgPg@mail.gmail.com>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
-	<1449020386-20250-6-git-send-email-k.kozlowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: crtc: do not wait for the scanout completion
+Date: Thu, 24 Dec 2015 18:09:58 +0900
+Message-ID: <1450948198-14641-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:35436 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751507AbbLXI4D (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Dec 2015 03:56:03 -0500
-Received: by mail-ob0-f173.google.com with SMTP id 18so182331524obc.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Dec 2015 00:56:02 -0800 (PST)
-In-Reply-To: <1449020386-20250-6-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@linaro.org>
 
-On Wed, Dec 2, 2015 at 2:39 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-
-> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
->
->   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.5
->
-> for you to fetch changes up to 023e06dfa6882f500b9c86fd61f0b1913aa07f36:
->
->   pinctrl: exynos: add exynos5410 SoC specific data (2015-11-16 10:54:43 +0900)
-
-OK I pulled this into the pinctrl tree, cheers!
-
-Yours,
-Linus Walleij
+VGhpcyBwYXRjaCByZW1vdmVzIGV4eW5vc19kcm1fY3J0Y19jb21wbGV0ZV9zY2Fub3V0IGZ1bmN0
+aW9uIGNhbGwKd2hpY2ggbWFrZXMgc3VyZSBmb3Igb3ZlcmxheSBkYXRhIHRvIGJlIHVwZGF0ZWQg
+dG8gcmVhbCBoYXJkd2FyZQp3aGVuIGRybSBkcml2ZXIgaXMgcmVsZWFzZWQuCgpXaXRoIGF0b21p
+YyBtb2Rlc2V0IHN1cHBvcnQsIGl0IGRvZXNuJ3QgbmVlZCB0aGUgZnVuY3Rpb24gYW55bW9yZQpi
+ZWNhdXNlIGF0b21pYyBtb2Rlc2V0IGludGVyZmFjZSBtYWtlcyBzdXJlIHRoYXQuCgpTaWduZWQt
+b2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDIzIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oIHwgIDEgLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICB8ICAzIC0tLQogMyBmaWxlcyBjaGFu
+Z2VkLCAyNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
+dGMuYwppbmRleCA5ZDMwYTBmLi44MWNmZmY1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMKQEAgLTIxMiwyOSArMjEyLDYgQEAgdm9pZCBleHlub3NfZHJtX2NydGNf
+ZmluaXNoX3VwZGF0ZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YywKIAlzcGlu
+X3VubG9ja19pcnFyZXN0b3JlKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKIH0KIAot
+dm9pZCBleHlub3NfZHJtX2NydGNfY29tcGxldGVfc2Nhbm91dChzdHJ1Y3QgZHJtX2ZyYW1lYnVm
+ZmVyICpmYikKLXsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YzsKLQlzdHJ1
+Y3QgZHJtX2RldmljZSAqZGV2ID0gZmItPmRldjsKLQlzdHJ1Y3QgZHJtX2NydGMgKmNydGM7Ci0K
+LQkvKgotCSAqIG1ha2Ugc3VyZSB0aGF0IG92ZXJsYXkgZGF0YSBhcmUgdXBkYXRlZCB0byByZWFs
+IGhhcmR3YXJlCi0JICogZm9yIGFsbCBlbmNvZGVycy4KLQkgKi8KLQlsaXN0X2Zvcl9lYWNoX2Vu
+dHJ5KGNydGMsICZkZXYtPm1vZGVfY29uZmlnLmNydGNfbGlzdCwgaGVhZCkgewotCQlleHlub3Nf
+Y3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwotCi0JCS8qCi0JCSAqIHdhaXQgZm9yIHZibGFu
+ayBpbnRlcnJ1cHQKLQkJICogLSB0aGlzIG1ha2VzIHN1cmUgdGhhdCBvdmVybGF5IGRhdGEgYXJl
+IHVwZGF0ZWQgdG8KLQkJICoJcmVhbCBoYXJkd2FyZS4KLQkJICovCi0JCWlmIChleHlub3NfY3J0
+Yy0+b3BzLT53YWl0X2Zvcl92YmxhbmspCi0JCQlleHlub3NfY3J0Yy0+b3BzLT53YWl0X2Zvcl92
+YmxhbmsoZXh5bm9zX2NydGMpOwotCX0KLX0KLQogaW50IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlw
+ZV9mcm9tX3R5cGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCiAJCQkJICAgICAgIGVudW0g
+ZXh5bm9zX2RybV9vdXRwdXRfdHlwZSBvdXRfdHlwZSkKIHsKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fY3J0Yy5oCmluZGV4IGY5ZjM2NWIuLjZhNTgxYTggMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmgKKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaApAQCAtMjgsNyArMjgsNiBAQCB2b2lkIGV4eW5v
+c19kcm1fY3J0Y19kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25l
+ZCBpbnQgcGlwZSk7CiB2b2lkIGV4eW5vc19kcm1fY3J0Y193YWl0X3BlbmRpbmdfdXBkYXRlKHN0
+cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjKTsKIHZvaWQgZXh5bm9zX2RybV9jcnRj
+X2ZpbmlzaF91cGRhdGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMsCiAJCQkJ
+ICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSk7Ci12b2lkIGV4eW5vc19k
+cm1fY3J0Y19jb21wbGV0ZV9zY2Fub3V0KHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiKTsKIAog
+LyogVGhpcyBmdW5jdGlvbiBnZXRzIHBpcGUgdmFsdWUgdG8gY3J0YyBkZXZpY2UgbWF0Y2hlZCB3
+aXRoIG91dF90eXBlLiAqLwogaW50IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlwZV9mcm9tX3R5cGUo
+c3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9mYi5jCmluZGV4IGY2YmRiMGQuLmRiNzdkODMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9mYi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9mYi5jCkBAIC03MSw5ICs3MSw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fZmJf
+ZGVzdHJveShzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikKIAlzdHJ1Y3QgZXh5bm9zX2RybV9m
+YiAqZXh5bm9zX2ZiID0gdG9fZXh5bm9zX2ZiKGZiKTsKIAl1bnNpZ25lZCBpbnQgaTsKIAotCS8q
+IG1ha2Ugc3VyZSB0aGF0IG92ZXJsYXkgZGF0YSBhcmUgdXBkYXRlZCBiZWZvcmUgcmVsZXNpbmcg
+ZmIuICovCi0JZXh5bm9zX2RybV9jcnRjX2NvbXBsZXRlX3NjYW5vdXQoZmIpOwotCiAJZHJtX2Zy
+YW1lYnVmZmVyX2NsZWFudXAoZmIpOwogCiAJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoZXh5
+bm9zX2ZiLT5leHlub3NfZ2VtKTsgaSsrKSB7Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
