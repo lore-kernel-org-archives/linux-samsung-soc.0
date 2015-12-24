@@ -1,140 +1,99 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH v11 17/19] drm: bridge: analogix/dp: expand the look time for waiting AUX CH reply
-Date: Thu, 24 Dec 2015 00:15:06 +0900
-Message-ID: <000101d13d94$ba41bea0$2ec53be0$@com>
-References: <1450236018-1118-1-git-send-email-ykk@rock-chips.com> <1450238257-3274-1-git-send-email-ykk@rock-chips.com> <000a01d13cb4$0f81f510$2e85df30$@com> <567A21EC.4010003@rock-chips.com> <567A3882.3020808@rock-chips.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v12 16/18] drm: bridge: analogix/dp: expand the wait time
+ for looking AUX CH reply flag
+Date: Thu, 24 Dec 2015 09:23:05 +0800
+Message-ID: <567B48F9.6010902@rock-chips.com>
+References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
+ <1450875064-19627-1-git-send-email-ykk@rock-chips.com>
+ <000001d13d94$120e0d60$362a2820$@com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:33806 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752727AbbLWPPN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Dec 2015 10:15:13 -0500
-In-Reply-To: <567A3882.3020808@rock-chips.com>
-Content-Language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <000001d13d94$120e0d60$362a2820$@com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jingoo Han <jingoohan1@gmail.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, javier@osg.samsung.com, 'Rob Herring' <robh+dt@kernel.org>, 'Andy Yan' <andy.yan@rock-chips.com>, 'Thierry Reding' <treding@nvidia.com>, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Yakir Yang' <ykk@rock-chips.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, javier@osg.samsung.com, 'Rob Herring' <robh+dt@kernel.org>, 'Andy Yan' <andy.yan@rock-chips.com>, 'Thierry Reding' <treding@nvidia.com>, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jingoohan1@gmail.com>
 
-On Wednesday, December 23, 2015 3:01 PM, Yakir Yang wrote:
-> 
-> Hi Jingoo,
-> 
-> On 12/23/2015 12:24 PM, Yakir Yang wrote:
-> > Hi Jingoo,
-> >
-> > On 12/22/2015 08:26 PM, Jingoo Han wrote:
-> >> On Wednesday, December 16, 2015 12:58 PM, Yakir Yang wrote:
-> >>> After test on rockchiop platform, i found sometims driver would failed
-> >>> at reading EDID message. After debugging more, i found that it's okay
-> >>> to read_a byte from i2c, but it would failed at AUX transcation if we
-> >>> try to ready multi-bytes from i2c.
-> >>>
-> >>> Driver just can't received the AUX CH reply command, even no AUX error
-> >>> code. I may guess that the AUX wait time is not enough, so I try to
-> >>> expand the AUX wait time, and i do see this could fix the EDID read
-> >>> failed at rockchip platform.
-> >>>
-> >>> And I thought that expand the wait time won't hurt Exynos platform too
-> >>> much, cause Exynos didn't have this problem, then driver would received
-> >>> the reply command very soon, so no more additional wait time would
-> >>> bring
-> >>> to Exynos platform.
-> >>>
-> >>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> >>> ---
-> >>> Changes in v11: None
-> >>> Changes in v10: None
-> >>> Changes in v9: None
-> >>> Changes in v8: None
-> >>> Changes in v7: None
-> >>> Changes in v6: None
-> >>> Changes in v5: None
-> >>> Changes in v4: None
-> >>> Changes in v3: None
-> >>> Changes in v2: None
-> >>>
-> >>>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 2 +-
-> >>>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >>> index c7e2959..dc376bd 100644
-> >>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >>> @@ -482,7 +482,7 @@ int analogix_dp_start_aux_transaction(struct
-> >>> analogix_dp_device *dp)
-> >>>       reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
-> >>>       while (!(reg & RPLY_RECEIV)) {
-> >>>           timeout_loop++;
-> >>> -        if (DP_TIMEOUT_LOOP_COUNT < timeout_loop) {
-> >>> +        if (DP_TIMEOUT_LOOP_COUNT * 10 < timeout_loop) {
-> >> No, I hate this coding.
-> >> analogix_dp_reg.c is the common code that can be shared by various SoCs.
-> >> Please, find another way.
-> >
-> > Okay, I have double checked that i do have this problem in my side.
-> > Hmmm.....
-> > I thought it's okay for you if I expand the "DP_TIMEOUT_LOOP_COUNT"
-> > directly,
-> > it won't hurt Exynos platform too much, cause Exynos didn't have this
-> > problem,
-> > then driver would received,the reply command very soon, so no more
-> > additional
-> > wait time would bring to Exynos platform.
-> >
-> 
-> Oh, sorry, little mistaken, I mean, is it okay for you to expand the
-> "DP_TIMEOUT_LOOP_COUNT" directly ?
-
-NO.
-
-Don't change DP_TIMEOUT_LOOP_COUNT.
-Just, change wait time by adding new DT property.
-
-> 
-> - Yakir
-> 
-> 
-> > And actually the datasheet haven't described the spec of aux reply
-> > delay time.
-
-Right.
-However, the problem is specific for Rockchip platform.
-It is the hardware bug of Rockchip platform.
-Your delay time is too long to apply to other SoCs platform.
-
-Best regards,
-Jingoo Han
-
-> >
-> > Thanks,
-> > - Yakir
-> >
-> >> Best regards,
-> >> Jingoo Han
-> >>
-> >>
-> >>>               dev_err(dp->dev, "AUX CH command reply failed!\n");
-> >>>               return -ETIMEDOUT;
-> >>>           }
-> >>> --
-> >>> 1.9.1
-> >>
-> >>
-> >>
-> >>
-> >
-> >
-> >
-> > _______________________________________________
-> > Linux-rockchip mailing list
-> > Linux-rockchip@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> >
-> >
-> >
+SGkgSmluZ29vLAoKT2theSwgZmluZSwgSSB3b3VsZCBkcm9wIHRoaXMgcGF0Y2gsIHVudGlsIEkg
+Zm91bmQgdGhlIHRoZSByb290IGNhdXNlLgoKLSBZYWtpcgoKT24gMTIvMjMvMjAxNSAxMToxMCBQ
+TSwgSmluZ29vIEhhbiB3cm90ZToKPiBPbiBXZWRuZXNkYXksIERlY2VtYmVyIDIzLCAyMDE1IDk6
+NTEgUE0sIFlha2lyIFlhbmcgd3JvdGU6Cj4+IE9uIFJvY2tjaGlwIHBsYXRmb3JtLCBzb21ldGlt
+ZXMgZHJpdmVyIHdvdWxkIGZhaWxlZCBhdCByZWFkaW5nIEVESUQKPj4gbWVzc2FnZSwgYW5kIGl0
+J3MgY2F1c2VkIGJ5IHRoZSBBVVggcmVwbHkgZmxhZyB3b3VsZG4ndCByZWNlaXZlZCB1bmRlcgo+
+PiB0aGUgMTAwKjEwdXMgd2FpdCB0aW1lLgo+IFRoZSBwcm9ibGVtIGlzIHNwZWNpZmljIGZvciBS
+b2NrY2hpcCBwbGF0Zm9ybS4KPiBBbHNvLCAxIG1zIGlzIGxvbmcgdGltZS4KPiBUaGUgYmVzdCB3
+YXkgaXMgdGhhdCB5b3VyIGhhcmR3YXJlIGVuZ2luZWVycyBmaW5kIHRoZSByb290IGNhdXNlLgo+
+IEkgY2Fubm90IHVuZGVyc3RhbmQgd2h5IHlvdXIgZW5naW5lZXJzIGNhbm5vdCBmaW5kIHRoZSBy
+b290IGNhdXNlLiA6LSgKPgo+PiBCdXQgYWZ0ZXIgZXhwYW5kIHRoZSB3YWl0IHRpbWUgYSBsaXR0
+bGUsIHRoZSBBVVggcmVwbHkgZmxhZyB3b3VsZCBiZQo+PiBzZXQsIHNvIG1heWJlIHRoZSB3YWl0
+IHRpbWUgaXMgYSBsaXR0bGUgY3JpdGljYWwuIEJlc2lkZXMgdGhlIGFuYWxvZ2l4Cj4+IGRwIGJv
+b2sgaGF2ZW4ndCByZW1pbmRlZCB0aGUgc3RhbmRhcmQgd2FpdCBmb3IgbG9va2luZyBBVVggcmVw
+bHkgZmxhZywKPj4gc28gSSB0aG91Z2h0IGl0J3Mgb2theSB0byBleHBhbmQgdGhlIHdhaXQgdGlt
+ZS4KPj4KPj4gQW5kIHRoZSBleHRlcm5hbCB3YWl0IHRpbWUgd29uJ3QgaHVydCBFeHlub3MgRFAg
+dG9vIG11Y2gsIGNhdXNlIHRoZXkKPj4gd291bGRuJ3QgbWVldCB0aGlzIHByb2JsZW0sIHRoZW4g
+ZHJpdmVyIHdvdWxkIHJlY2VpdmVkIHRoZSByZXBseSBjb21tYW5kCj4+IHZlcnkgc29vbiwgc28g
+bm8gbW9yZSBhZGRpdGlvbmFsIHdhaXQgdGltZSB3b3VsZCBicmluZyB0byBFeHlub3MgcGxhdGZv
+cm0uCj4gVGhlbiwgd2hlbiBsb29wIHRpbWUgaGFwcGVucyBvbiBFeHlub3MgcGxhdGZvcm0sIGl0
+IHdpbGwgdGFrZSBsb25nIHRpbWUKPiB0byByZXR1cm4gZXJyb3IuCj4KPj4gU2lnbmVkLW9mZi1i
+eTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2
+MTI6Cj4+IC0gVXNpbmcgYW5vdGhlciB3YXkgdG8gZXhwYW5kIHRoZSBBVVggcmVwbHkgd2FpdCB0
+aW1lIChKaW5nb28pCj4+Cj4+IENoYW5nZXMgaW4gdjExOiBOb25lCj4+IENoYW5nZXMgaW4gdjEw
+OiBOb25lCj4+IENoYW5nZXMgaW4gdjk6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2ODogTm9uZQo+PiBD
+aGFuZ2VzIGluIHY3OiBOb25lCj4+IENoYW5nZXMgaW4gdjY6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2
+NTogTm9uZQo+PiBDaGFuZ2VzIGluIHY0OiBOb25lCj4+IENoYW5nZXMgaW4gdjM6IE5vbmUKPj4g
+Q2hhbmdlcyBpbiB2MjogTm9uZQo+Pgo+PiAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
+aXgvYW5hbG9naXhfZHBfcmVnLmMgfCAxMCArKysrLS0tLS0tCj4+ICAgMSBmaWxlIGNoYW5nZWQs
+IDQgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gYi9kcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4+IGluZGV4IGNiYTNm
+ZmQuLjg2ODdlZWEgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
+aXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
+b2dpeC9hbmFsb2dpeF9kcF9yZWcuYwo+PiBAQCAtNDcxLDcgKzQ3MSw3IEBAIGludCBhbmFsb2dp
+eF9kcF9zdGFydF9hdXhfdHJhbnNhY3Rpb24oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAp
+Cj4+ICAgewo+PiAgIAlpbnQgcmVnOwo+PiAgIAlpbnQgcmV0dmFsID0gMDsKPj4gLQlpbnQgdGlt
+ZW91dF9sb29wID0gMDsKPj4gKwl1bnNpZ25lZCBsb25nIHRpbWVvdXQ7Cj4+Cj4+ICAgCS8qIEVu
+YWJsZSBBVVggQ0ggb3BlcmF0aW9uICovCj4+ICAgCXJlZyA9IHJlYWRsKGRwLT5yZWdfYmFzZSAr
+IEFOQUxPR0lYX0RQX0FVWF9DSF9DVExfMik7Cj4+IEBAIC00NzksMTQgKzQ3OSwxMiBAQCBpbnQg
+YW5hbG9naXhfZHBfc3RhcnRfYXV4X3RyYW5zYWN0aW9uKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZp
+Y2UgKmRwKQo+PiAgIAl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9BVVhf
+Q0hfQ1RMXzIpOwo+Pgo+PiAgIAkvKiBJcyBBVVggQ0ggY29tbWFuZCByZXBseSByZWNlaXZlZD8g
+Ki8KPj4gLQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9JTlRfU1RBKTsK
+Pj4gLQl3aGlsZSAoIShyZWcgJiBSUExZX1JFQ0VJVikpIHsKPj4gLQkJdGltZW91dF9sb29wKys7
+Cj4+IC0JCWlmIChEUF9USU1FT1VUX0xPT1BfQ09VTlQgPCB0aW1lb3V0X2xvb3ApIHsKPj4gKwl0
+aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3RvX2ppZmZpZXMoNSk7Cj4+ICsJd2hpbGUgKChyZWFk
+bChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9JTlRfU1RBKSAmIFJQTFlfUkVDRUlWKSA9PSAw
+KSB7Cj4+ICsJCWlmICh0aW1lX2FmdGVyKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4+ICAgCQkJZGV2
+X2VycihkcC0+ZGV2LCAiQVVYIENIIGNvbW1hbmQgcmVwbHkgZmFpbGVkIVxuIik7Cj4+ICAgCQkJ
+cmV0dXJuIC1FVElNRURPVVQ7Cj4+ICAgCQl9Cj4+IC0JCXJlZyA9IHJlYWRsKGRwLT5yZWdfYmFz
+ZSArIEFOQUxPR0lYX0RQX0lOVF9TVEEpOwo+IFNvcnJ5LCBJIGRvbid0IGxpa2UgeW91ciBwYXRj
+aC4KPgo+IFRoZSBwcm9ibGVtIGhhcHBlbnMgYmVjYXVzZSBvZiBSb2NrY2hpcCBwbGF0Zm9ybS4K
+PiBTbywgeW91IG5lZWQgdG8gYWRkIHdvcmthcm91bmQgZm9yIG9ubHkgUm9ja2NoaXAgcGxhdGZv
+cm0uCj4KPiBKdXN0IGFkZCBuZXcgRFQgcHJvcGVydHkgYW5kIG5ldyB2YXJpYWJsZSBmb3IgdGhl
+IHZhbHVlIGZvciB3YWl0IHRpbWUuCj4gV2hlbiwgdGhlIHByb2JlIGlzIGNhbGxlZCwgbmV3IHdh
+aXQgdGltZSB2YWx1ZSBpcyByZWFkIGZyb20gUm9ja2NoaXAgRFQgZmlsZS4KPiBUaGVuLCB0aGUg
+bmV3IHdhaXQgdGltZSB2YWx1ZSBjYW4gYmUgd3JpdHRlbiB0byB0aGUgbmV3IHZhcmlhYmxlLgo+
+Cj4gICAgICBuZXcgRFQgcHJvcGVydHk6IHdhaXQtdGltZS1hdXgKPiAgICAgIG5ldyB2YXJpYWJs
+ZTogd2FpdF90aW1lX2F1eAo+Cj4KPiBJZiAoICkgLy8gTmV3IERUCj4gICAgICB3YWl0X3RpbWVf
+YXV4ID0gTmV3IERUOwo+IGVsc2UKPiAgICAgIHdhaXRfdGltZV9hdXggPSAxMDsKPgo+Cj4+ICAg
+CQl1c2xlZXBfcmFuZ2UoMTAsIDExKTsKPiBJZiB0aGVyZSBpcyBOTyAgbmV3IHdhaXQgdGltZSB2
+YWx1ZSBmcm9tIERUIGZpbGUsIHRoZSBkZWZhdWx0IHZhbHVlICcxMCcgaXMKPiB1c2VkIGZvciBz
+bGVlcC4KPgo+IEJ1dCwgaWYgdGhlcmUgaXMgbmV3IHdhaXQgdGltZSB2YWx1ZSBmcm9tIERUIGZp
+bGUsIG5ldyB3YWl0IHRpbWUgdmFsdWUKPiBjYW4gYmUgdXNlZCBmb3Igc2xlZXAuCj4KPiAgICAg
+ICAgICAgICAgICAgICB1c2xlZXBfcmFuZ2UoZHAtPndhaXRfdGltZV9hdXgsIGRwLT53YWl0X3Rp
+bWVfYXV4ICsgMSk7Cj4KPiBXaGF0IEkgd2FudCB0byBzYXkgaXMgdGhhdCB0aGVyZSBzaG91bGQg
+YmUgTk8gZWZmZWN0IG9uIEV4eW5vcyBwbGF0Zm9ybSwKPiBiZWNhdXNlIG9mIHRoZSBoYXJkd2Fy
+ZSBidWcgb2YgUm9ja2NoaXAgcGxhdGZvcm0uCj4KPiBCZXN0IHJlZ2FyZHMsCj4gSmluZ29vIEhh
+bgo+Cj4+ICAgCX0KPj4KPj4gLS0KPj4gMS45LjEKPgo+Cj4KPgoKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
