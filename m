@@ -1,99 +1,490 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v12 16/18] drm: bridge: analogix/dp: expand the wait time
- for looking AUX CH reply flag
-Date: Thu, 24 Dec 2015 09:23:05 +0800
-Message-ID: <567B48F9.6010902@rock-chips.com>
-References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
- <1450875064-19627-1-git-send-email-ykk@rock-chips.com>
- <000001d13d94$120e0d60$362a2820$@com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 1/3] dt-bindings: regulator/clock/mfd: Reorganize
+ S2MPS-family bindings
+Date: Wed, 23 Dec 2015 23:20:35 -0800
+Message-ID: <CAEG3pNBan53mFu8kN6Kr_AdHsYmmz-AA1-YiaTXYhJi-bsvTxw@mail.gmail.com>
+References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com> <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <000001d13d94$120e0d60$362a2820$@com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jingoo Han <jingoohan1@gmail.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, javier@osg.samsung.com, 'Rob Herring' <robh+dt@kernel.org>, 'Andy Yan' <andy.yan@rock-chips.com>, 'Thierry Reding' <treding@nvidia.com>, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:35948 "EHLO
+	mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754387AbbLXHVH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Dec 2015 02:21:07 -0500
+Received: by mail-qk0-f178.google.com with SMTP id t125so168157906qkh.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Dec 2015 23:21:06 -0800 (PST)
+In-Reply-To: <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-clk <linux-clk@vger.kernel.org>
 
-SGkgSmluZ29vLAoKT2theSwgZmluZSwgSSB3b3VsZCBkcm9wIHRoaXMgcGF0Y2gsIHVudGlsIEkg
-Zm91bmQgdGhlIHRoZSByb290IGNhdXNlLgoKLSBZYWtpcgoKT24gMTIvMjMvMjAxNSAxMToxMCBQ
-TSwgSmluZ29vIEhhbiB3cm90ZToKPiBPbiBXZWRuZXNkYXksIERlY2VtYmVyIDIzLCAyMDE1IDk6
-NTEgUE0sIFlha2lyIFlhbmcgd3JvdGU6Cj4+IE9uIFJvY2tjaGlwIHBsYXRmb3JtLCBzb21ldGlt
-ZXMgZHJpdmVyIHdvdWxkIGZhaWxlZCBhdCByZWFkaW5nIEVESUQKPj4gbWVzc2FnZSwgYW5kIGl0
-J3MgY2F1c2VkIGJ5IHRoZSBBVVggcmVwbHkgZmxhZyB3b3VsZG4ndCByZWNlaXZlZCB1bmRlcgo+
-PiB0aGUgMTAwKjEwdXMgd2FpdCB0aW1lLgo+IFRoZSBwcm9ibGVtIGlzIHNwZWNpZmljIGZvciBS
-b2NrY2hpcCBwbGF0Zm9ybS4KPiBBbHNvLCAxIG1zIGlzIGxvbmcgdGltZS4KPiBUaGUgYmVzdCB3
-YXkgaXMgdGhhdCB5b3VyIGhhcmR3YXJlIGVuZ2luZWVycyBmaW5kIHRoZSByb290IGNhdXNlLgo+
-IEkgY2Fubm90IHVuZGVyc3RhbmQgd2h5IHlvdXIgZW5naW5lZXJzIGNhbm5vdCBmaW5kIHRoZSBy
-b290IGNhdXNlLiA6LSgKPgo+PiBCdXQgYWZ0ZXIgZXhwYW5kIHRoZSB3YWl0IHRpbWUgYSBsaXR0
-bGUsIHRoZSBBVVggcmVwbHkgZmxhZyB3b3VsZCBiZQo+PiBzZXQsIHNvIG1heWJlIHRoZSB3YWl0
-IHRpbWUgaXMgYSBsaXR0bGUgY3JpdGljYWwuIEJlc2lkZXMgdGhlIGFuYWxvZ2l4Cj4+IGRwIGJv
-b2sgaGF2ZW4ndCByZW1pbmRlZCB0aGUgc3RhbmRhcmQgd2FpdCBmb3IgbG9va2luZyBBVVggcmVw
-bHkgZmxhZywKPj4gc28gSSB0aG91Z2h0IGl0J3Mgb2theSB0byBleHBhbmQgdGhlIHdhaXQgdGlt
-ZS4KPj4KPj4gQW5kIHRoZSBleHRlcm5hbCB3YWl0IHRpbWUgd29uJ3QgaHVydCBFeHlub3MgRFAg
-dG9vIG11Y2gsIGNhdXNlIHRoZXkKPj4gd291bGRuJ3QgbWVldCB0aGlzIHByb2JsZW0sIHRoZW4g
-ZHJpdmVyIHdvdWxkIHJlY2VpdmVkIHRoZSByZXBseSBjb21tYW5kCj4+IHZlcnkgc29vbiwgc28g
-bm8gbW9yZSBhZGRpdGlvbmFsIHdhaXQgdGltZSB3b3VsZCBicmluZyB0byBFeHlub3MgcGxhdGZv
-cm0uCj4gVGhlbiwgd2hlbiBsb29wIHRpbWUgaGFwcGVucyBvbiBFeHlub3MgcGxhdGZvcm0sIGl0
-IHdpbGwgdGFrZSBsb25nIHRpbWUKPiB0byByZXR1cm4gZXJyb3IuCj4KPj4gU2lnbmVkLW9mZi1i
-eTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2
-MTI6Cj4+IC0gVXNpbmcgYW5vdGhlciB3YXkgdG8gZXhwYW5kIHRoZSBBVVggcmVwbHkgd2FpdCB0
-aW1lIChKaW5nb28pCj4+Cj4+IENoYW5nZXMgaW4gdjExOiBOb25lCj4+IENoYW5nZXMgaW4gdjEw
-OiBOb25lCj4+IENoYW5nZXMgaW4gdjk6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2ODogTm9uZQo+PiBD
-aGFuZ2VzIGluIHY3OiBOb25lCj4+IENoYW5nZXMgaW4gdjY6IE5vbmUKPj4gQ2hhbmdlcyBpbiB2
-NTogTm9uZQo+PiBDaGFuZ2VzIGluIHY0OiBOb25lCj4+IENoYW5nZXMgaW4gdjM6IE5vbmUKPj4g
-Q2hhbmdlcyBpbiB2MjogTm9uZQo+Pgo+PiAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
-aXgvYW5hbG9naXhfZHBfcmVnLmMgfCAxMCArKysrLS0tLS0tCj4+ICAgMSBmaWxlIGNoYW5nZWQs
-IDQgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gYi9kcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4+IGluZGV4IGNiYTNm
-ZmQuLjg2ODdlZWEgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
-aXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
-b2dpeC9hbmFsb2dpeF9kcF9yZWcuYwo+PiBAQCAtNDcxLDcgKzQ3MSw3IEBAIGludCBhbmFsb2dp
-eF9kcF9zdGFydF9hdXhfdHJhbnNhY3Rpb24oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAp
-Cj4+ICAgewo+PiAgIAlpbnQgcmVnOwo+PiAgIAlpbnQgcmV0dmFsID0gMDsKPj4gLQlpbnQgdGlt
-ZW91dF9sb29wID0gMDsKPj4gKwl1bnNpZ25lZCBsb25nIHRpbWVvdXQ7Cj4+Cj4+ICAgCS8qIEVu
-YWJsZSBBVVggQ0ggb3BlcmF0aW9uICovCj4+ICAgCXJlZyA9IHJlYWRsKGRwLT5yZWdfYmFzZSAr
-IEFOQUxPR0lYX0RQX0FVWF9DSF9DVExfMik7Cj4+IEBAIC00NzksMTQgKzQ3OSwxMiBAQCBpbnQg
-YW5hbG9naXhfZHBfc3RhcnRfYXV4X3RyYW5zYWN0aW9uKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZp
-Y2UgKmRwKQo+PiAgIAl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9BVVhf
-Q0hfQ1RMXzIpOwo+Pgo+PiAgIAkvKiBJcyBBVVggQ0ggY29tbWFuZCByZXBseSByZWNlaXZlZD8g
-Ki8KPj4gLQlyZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9JTlRfU1RBKTsK
-Pj4gLQl3aGlsZSAoIShyZWcgJiBSUExZX1JFQ0VJVikpIHsKPj4gLQkJdGltZW91dF9sb29wKys7
-Cj4+IC0JCWlmIChEUF9USU1FT1VUX0xPT1BfQ09VTlQgPCB0aW1lb3V0X2xvb3ApIHsKPj4gKwl0
-aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3RvX2ppZmZpZXMoNSk7Cj4+ICsJd2hpbGUgKChyZWFk
-bChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9JTlRfU1RBKSAmIFJQTFlfUkVDRUlWKSA9PSAw
-KSB7Cj4+ICsJCWlmICh0aW1lX2FmdGVyKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4+ICAgCQkJZGV2
-X2VycihkcC0+ZGV2LCAiQVVYIENIIGNvbW1hbmQgcmVwbHkgZmFpbGVkIVxuIik7Cj4+ICAgCQkJ
-cmV0dXJuIC1FVElNRURPVVQ7Cj4+ICAgCQl9Cj4+IC0JCXJlZyA9IHJlYWRsKGRwLT5yZWdfYmFz
-ZSArIEFOQUxPR0lYX0RQX0lOVF9TVEEpOwo+IFNvcnJ5LCBJIGRvbid0IGxpa2UgeW91ciBwYXRj
-aC4KPgo+IFRoZSBwcm9ibGVtIGhhcHBlbnMgYmVjYXVzZSBvZiBSb2NrY2hpcCBwbGF0Zm9ybS4K
-PiBTbywgeW91IG5lZWQgdG8gYWRkIHdvcmthcm91bmQgZm9yIG9ubHkgUm9ja2NoaXAgcGxhdGZv
-cm0uCj4KPiBKdXN0IGFkZCBuZXcgRFQgcHJvcGVydHkgYW5kIG5ldyB2YXJpYWJsZSBmb3IgdGhl
-IHZhbHVlIGZvciB3YWl0IHRpbWUuCj4gV2hlbiwgdGhlIHByb2JlIGlzIGNhbGxlZCwgbmV3IHdh
-aXQgdGltZSB2YWx1ZSBpcyByZWFkIGZyb20gUm9ja2NoaXAgRFQgZmlsZS4KPiBUaGVuLCB0aGUg
-bmV3IHdhaXQgdGltZSB2YWx1ZSBjYW4gYmUgd3JpdHRlbiB0byB0aGUgbmV3IHZhcmlhYmxlLgo+
-Cj4gICAgICBuZXcgRFQgcHJvcGVydHk6IHdhaXQtdGltZS1hdXgKPiAgICAgIG5ldyB2YXJpYWJs
-ZTogd2FpdF90aW1lX2F1eAo+Cj4KPiBJZiAoICkgLy8gTmV3IERUCj4gICAgICB3YWl0X3RpbWVf
-YXV4ID0gTmV3IERUOwo+IGVsc2UKPiAgICAgIHdhaXRfdGltZV9hdXggPSAxMDsKPgo+Cj4+ICAg
-CQl1c2xlZXBfcmFuZ2UoMTAsIDExKTsKPiBJZiB0aGVyZSBpcyBOTyAgbmV3IHdhaXQgdGltZSB2
-YWx1ZSBmcm9tIERUIGZpbGUsIHRoZSBkZWZhdWx0IHZhbHVlICcxMCcgaXMKPiB1c2VkIGZvciBz
-bGVlcC4KPgo+IEJ1dCwgaWYgdGhlcmUgaXMgbmV3IHdhaXQgdGltZSB2YWx1ZSBmcm9tIERUIGZp
-bGUsIG5ldyB3YWl0IHRpbWUgdmFsdWUKPiBjYW4gYmUgdXNlZCBmb3Igc2xlZXAuCj4KPiAgICAg
-ICAgICAgICAgICAgICB1c2xlZXBfcmFuZ2UoZHAtPndhaXRfdGltZV9hdXgsIGRwLT53YWl0X3Rp
-bWVfYXV4ICsgMSk7Cj4KPiBXaGF0IEkgd2FudCB0byBzYXkgaXMgdGhhdCB0aGVyZSBzaG91bGQg
-YmUgTk8gZWZmZWN0IG9uIEV4eW5vcyBwbGF0Zm9ybSwKPiBiZWNhdXNlIG9mIHRoZSBoYXJkd2Fy
-ZSBidWcgb2YgUm9ja2NoaXAgcGxhdGZvcm0uCj4KPiBCZXN0IHJlZ2FyZHMsCj4gSmluZ29vIEhh
-bgo+Cj4+ICAgCX0KPj4KPj4gLS0KPj4gMS45LjEKPgo+Cj4KPgoKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thu, Dec 3, 2015 at 5:10 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> Bindings for Samsung S2M and S5M family PMICs are in mess. They are
+> spread over different files and subdirectories in a non-consistent way.
+> The devices and respective drivers for them share a lot in common so
+> everything could be organized in a more readable way.
+>
+> Reorganize the S2MPS11/13/14/15 Device Tree bindings to match the
+> drivers for this family of devices:
+>  - move mfd/s2mps11.txt to mfd/samsung,sec-core.txt for the main MFD
+>    driver (common for entire family),
+>  - split clock block to clock/samsung,s2mps11.txt,
+>  - split regulator block to regulator/samsung,s2mps11.txt.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+> ---
+>  .../devicetree/bindings/clock/samsung,s2mps11.txt  |  49 +++++++
+>  Documentation/devicetree/bindings/mfd/s2mps11.txt  | 153 ---------------------
+>  .../devicetree/bindings/mfd/samsung,sec-core.txt   |  84 +++++++++++
+>  .../bindings/regulator/samsung,s2mps11.txt         | 102 ++++++++++++++
+>  MAINTAINERS                                        |   4 +-
+>  5 files changed, 238 insertions(+), 154 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/s2mps11.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+>  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt b/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+> new file mode 100644
+> index 000000000000..2726c1d58a79
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+> @@ -0,0 +1,49 @@
+> +Binding for Samsung S2M and S5M family clock generator block
+> +============================================================
+> +
+> +This is a part of device tree bindings for S2M and S5M family multi-function
+> +devices.
+> +More information can be found in bindings/mfd/sec-core.txt file.
+> +
+> +The S2MPS11/13/15 and S5M8767 provide three(AP/CP/BT) buffered 32.768 kHz
+> +outputs. The S2MPS14 provides two (AP/BT) buffered 32.768 KHz outputs.
+> +
+> +To register these as clocks with common clock framework instantiate under
+> +main device node a sub-node named "clocks".
+> +
+> +It uses the common clock binding documented in:
+> + - Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +
+> +Required properties of the "clocks" sub-node:
+> + - #clock-cells: should be 1.
+> + - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
+> +               "samsung,s2mps14-clk", "samsung,s5m8767-clk"
+> +   The S2MPS15 uses the same compatible as S2MPS13, as both provides similar
+> +   clocks.
+> +
+> +
+> +Each clock is assigned an identifier and client nodes use this identifier
+> +to specify the clock which they consume.
+> +    Clock               ID           Devices
+> +    ----------------------------------------------------------
+> +    32KhzAP            0            S2MPS11/13/14/15, S5M8767
+> +    32KhzCP            1            S2MPS11/13/15, S5M8767
+> +    32KhzBT            2            S2MPS11/13/14/15, S5M8767
+> +
+> +Include dt-bindings/clock/samsung,s2mps11.h file to use preprocessor defines
+> +in device tree sources.
+> +
+> +
+> +Example:
+> +
+> +       s2mps11_pmic@66 {
+> +               compatible = "samsung,s2mps11-pmic";
+> +               reg = <0x66>;
+> +
+> +               s2m_osc: clocks {
+> +                       compatible = "samsung,s2mps11-clk";
+> +                       #clock-cells = <1>;
+> +                       clock-output-names = "xx", "yy", "zz";
+> +               };
+> +       };
+> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> deleted file mode 100644
+> index 09b94c97faac..000000000000
+> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> +++ /dev/null
+> @@ -1,153 +0,0 @@
+> -
+> -* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
+> -
+> -The Samsung S2MPS11 is a multi-function device which includes voltage and
+> -current regulators, RTC, charger controller and other sub-blocks. It is
+> -interfaced to the host controller using an I2C interface. Each sub-block is
+> -addressed by the host system using different I2C slave addresses.
+> -
+> -Required properties:
+> -- compatible: Should be one of the following
+> -       - "samsung,s2mps11-pmic"
+> -       - "samsung,s2mps13-pmic"
+> -       - "samsung,s2mps14-pmic"
+> -       - "samsung,s2mps15-pmic"
+> -       - "samsung,s2mpu02-pmic".
+> -- reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+> -
+> -Optional properties:
+> -- interrupt-parent: Specifies the phandle of the interrupt controller to which
+> -  the interrupts from s2mps11 are delivered to.
+> -- interrupts: Interrupt specifiers for interrupt sources.
+> -- samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
+> -  down. When the system is suspended it will always go down thus triggerring
+> -  unwanted buck warm reset (setting buck voltages to default values).
+> -- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
+> -  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
+> -  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
+> -  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
+> -
+> -Optional nodes:
+> -- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+> -  KHz outputs, so to register these as clocks with common clock framework
+> -  instantiate a sub-node named "clocks". It uses the common clock binding
+> -  documented in :
+> -  [Documentation/devicetree/bindings/clock/clock-bindings.txt]
+> -  The s2mps14 provides two (AP/BT) buffered 32.768 KHz outputs.
+> -  - #clock-cells: should be 1.
+> -
+> -  - The following is the list of clocks generated by the controller. Each clock
+> -    is assigned an identifier and client nodes use this identifier to specify
+> -    the clock which they consume.
+> -    Clock               ID           Devices
+> -    ----------------------------------------------------------
+> -    32KhzAP            0            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
+> -    32KhzCP            1            S2MPS11, S2MPS13, S2MPS15, S5M8767
+> -    32KhzBT            2            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
+> -
+> -  - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
+> -               "samsung,s2mps14-clk", "samsung,s5m8767-clk"
+> -    The s2msp15 uses the same compatible as s2mps13, as both provides similar clocks.
+> -
+> -- regulators: The regulators of s2mps11 that have to be instantiated should be
+> -included in a sub-node named 'regulators'. Regulator nodes included in this
+> -sub-node should be of the format as listed below.
+> -
+> -       regulator_name {
+> -               [standard regulator constraints....];
+> -       };
+> -
+> - regulator-ramp-delay for BUCKs = [6250/12500/25000(default)/50000] uV/us
+> -
+> - BUCK[2/3/4/6] supports disabling ramp delay on hardware, so explicitly
+> - regulator-ramp-delay = <0> can be used for them to disable ramp delay.
+> - In the absence of the regulator-ramp-delay property, the default ramp
+> - delay will be used.
+> -
+> -NOTE: Some BUCKs share the ramp rate setting i.e. same ramp value will be set
+> -for a particular group of BUCKs. So provide same regulator-ramp-delay<value>.
+> -Grouping of BUCKs sharing ramp rate setting is as follow : BUCK[1, 6],
+> -BUCK[3, 4], and BUCK[7, 8, 10]
+> -
+> -On S2MPS14 the LDO10, LDO11 and LDO12 can be configured to external control
+> -over GPIO. To turn this feature on this property must be added to the regulator
+> -sub-node:
+> -       - samsung,ext-control-gpios: GPIO specifier for one GPIO
+> -               controlling this regulator (enable/disable);
+> -Example:
+> -       LDO12 {
+> -               regulator-name = "V_EMMC_2.8V";
+> -               regulator-min-microvolt = <2800000>;
+> -               regulator-max-microvolt = <2800000>;
+> -               samsung,ext-control-gpios = <&gpk0 2 0>;
+> -       };
+> -
+> -
+> -The regulator constraints inside the regulator nodes use the standard regulator
+> -bindings which are documented elsewhere.
+> -
+> -The following are the names of the regulators that the s2mps11 pmic block
+> -supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
+> -as per the datasheet of s2mps11.
+> -
+> -       - LDOn
+> -                 - valid values for n are:
+> -                       - S2MPS11: 1 to 38
+> -                       - S2MPS13: 1 to 40
+> -                       - S2MPS14: 1 to 25
+> -                       - S2MPS15: 1 to 27
+> -                       - S2MPU02: 1 to 28
+> -                 - Example: LDO1, LDO2, LDO28
+> -       - BUCKn
+> -                 - valid values for n are:
+> -                       - S2MPS11: 1 to 10
+> -                       - S2MPS13: 1 to 10
+> -                       - S2MPS14: 1 to 5
+> -                       - S2MPS15: 1 to 10
+> -                       - S2MPU02: 1 to 7
+> -                 - Example: BUCK1, BUCK2, BUCK9
+> -
+> -Example:
+> -
+> -       s2mps11_pmic@66 {
+> -               compatible = "samsung,s2mps11-pmic";
+> -               reg = <0x66>;
+> -
+> -               s2m_osc: clocks {
+> -                       compatible = "samsung,s2mps11-clk";
+> -                       #clock-cells = <1>;
+> -                       clock-output-names = "xx", "yy", "zz";
+> -               };
+> -
+> -               regulators {
+> -                       ldo1_reg: LDO1 {
+> -                               regulator-name = "VDD_ABB_3.3V";
+> -                               regulator-min-microvolt = <3300000>;
+> -                               regulator-max-microvolt = <3300000>;
+> -                       };
+> -
+> -                       ldo2_reg: LDO2 {
+> -                               regulator-name = "VDD_ALIVE_1.1V";
+> -                               regulator-min-microvolt = <1100000>;
+> -                               regulator-max-microvolt = <1100000>;
+> -                               regulator-always-on;
+> -                       };
+> -
+> -                       buck1_reg: BUCK1 {
+> -                               regulator-name = "vdd_mif";
+> -                               regulator-min-microvolt = <950000>;
+> -                               regulator-max-microvolt = <1350000>;
+> -                               regulator-always-on;
+> -                               regulator-boot-on;
+> -                       };
+> -
+> -                       buck2_reg: BUCK2 {
+> -                               regulator-name = "vdd_arm";
+> -                               regulator-min-microvolt = <950000>;
+> -                               regulator-max-microvolt = <1350000>;
+> -                               regulator-always-on;
+> -                               regulator-boot-on;
+> -                               regulator-ramp-delay = <50000>;
+> -                       };
+> -               };
+> -       };
+> diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> new file mode 100644
+> index 000000000000..ef0166d0f643
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> @@ -0,0 +1,84 @@
+> +Binding for Samsung S2M and S5M family multi-function device
+> +============================================================
+> +
+> +This is a part of device tree bindings for S2M and S5M family multi-function
+> +devices.
+> +
+> +The Samsung S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
+> +of multi-function devices which include voltage and current regulators, RTC,
+> +charger controller, clock outputs and other sub-blocks. It is interfaced
+> +to the host controller using an I2C interface. Each sub-block is usually
+> +addressed by the host system using different I2C slave addresses.
+> +
+> +
+> +This document describes bindings for main device node. Optional sub-blocks
+> +must be a sub-nodes to it. Bindings for them can be found in:
+> + - bindings/regulator/samsung,s2mps11.txt
+> + - bindings/clock/samsung,s2mps11.txt
+> +
+> +
+> +Required properties:
+> + - compatible: Should be one of the following
+> +       - "samsung,s2mps11-pmic",
+> +       - "samsung,s2mps13-pmic",
+> +       - "samsung,s2mps14-pmic",
+> +       - "samsung,s2mps15-pmic",
+> +       - "samsung,s2mpu02-pmic".
+> + - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+> +
+> +Optional properties:
+> + - interrupt-parent: Specifies the phandle of the interrupt controller to which
+> +   the interrupts from s2mps11 are delivered to.
+> + - interrupts: Interrupt specifiers for interrupt sources.
+> + - samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
+> +   down. When the system is suspended it will always go down thus triggerring
+> +   unwanted buck warm reset (setting buck voltages to default values).
+> + - samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
+> +   connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
+> +   register to turn off the power. Usually the ACOKB is pulled up to VBATT so
+> +   when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
+> +
+> +Example:
+> +
+> +       s2mps11_pmic@66 {
+> +               compatible = "samsung,s2mps11-pmic";
+> +               reg = <0x66>;
+> +
+> +               s2m_osc: clocks {
+> +                       compatible = "samsung,s2mps11-clk";
+> +                       #clock-cells = <1>;
+> +                       clock-output-names = "xx", "yy", "zz";
+> +               };
+> +
+> +               regulators {
+> +                       ldo1_reg: LDO1 {
+> +                               regulator-name = "VDD_ABB_3.3V";
+> +                               regulator-min-microvolt = <3300000>;
+> +                               regulator-max-microvolt = <3300000>;
+> +                       };
+> +
+> +                       ldo2_reg: LDO2 {
+> +                               regulator-name = "VDD_ALIVE_1.1V";
+> +                               regulator-min-microvolt = <1100000>;
+> +                               regulator-max-microvolt = <1100000>;
+> +                               regulator-always-on;
+> +                       };
+> +
+> +                       buck1_reg: BUCK1 {
+> +                               regulator-name = "vdd_mif";
+> +                               regulator-min-microvolt = <950000>;
+> +                               regulator-max-microvolt = <1350000>;
+> +                               regulator-always-on;
+> +                               regulator-boot-on;
+> +                       };
+> +
+> +                       buck2_reg: BUCK2 {
+> +                               regulator-name = "vdd_arm";
+> +                               regulator-min-microvolt = <950000>;
+> +                               regulator-max-microvolt = <1350000>;
+> +                               regulator-always-on;
+> +                               regulator-boot-on;
+> +                               regulator-ramp-delay = <50000>;
+> +                       };
+> +               };
+> +       };
+> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt b/Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
+> new file mode 100644
+> index 000000000000..27a48bf1b185
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
+> @@ -0,0 +1,102 @@
+> +Binding for Samsung S2M family regulator block
+> +==============================================
+> +
+> +This is a part of device tree bindings for S2M family multi-function devices.
+> +More information can be found in bindings/mfd/sec-core.txt file.
+> +
+> +The S2MPS11/13/14/15 and S2MPU02 devices provide buck and LDO regulators.
+> +
+> +To register these with regulator framework instantiate under main device node
+> +a sub-node named "regulators" with more sub-nodes for each regulator using the
+> +common regulator binding documented in:
+> + - Documentation/devicetree/bindings/regulator/regulator.txt
+> +
+> +
+> +Names of regulators supported by different devices:
+> +       - LDOn
+> +                 - valid values for n are:
+> +                       - S2MPS11: 1 to 38
+> +                       - S2MPS13: 1 to 40
+> +                       - S2MPS14: 1 to 25
+> +                       - S2MPS15: 1 to 27
+> +                       - S2MPU02: 1 to 28
+> +                 - Example: LDO1, LDO2, LDO28
+> +       - BUCKn
+> +                 - valid values for n are:
+> +                       - S2MPS11: 1 to 10
+> +                       - S2MPS13: 1 to 10
+> +                       - S2MPS14: 1 to 5
+> +                       - S2MPS15: 1 to 10
+> +                       - S2MPU02: 1 to 7
+> +                 - Example: BUCK1, BUCK2, BUCK9
+> +Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
+> +as per the datasheet of device.
+> +
+> +
+> +Optional properties of the nodes under "regulators" sub-node:
+> + - regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500,
+> +   25000 (default) or 50000.
+> +
+> +   Additionally S2MPS11 supports disabling ramp delay for BUCK{2,3,4,6}
+> +   by setting it to <0>.
+> +
+> +   Note: On S2MPS11 some bucks share the ramp rate setting i.e. same ramp value
+> +   will be set for a particular group of bucks so provide the same
+> +   regulator-ramp-delay value for them.
+> +   Groups sharing ramp rate:
+> +    - buck{1,6},
+> +    - buck{3,4},
+> +    - buck{7,8,10}.
+> +
+> + - samsung,ext-control-gpios: On S2MPS14 the LDO10, LDO11 and LDO12 can be
+> +   configured to external control over GPIO. To turn this feature on this
+> +   property must be added to the regulator sub-node:
+> +    - samsung,ext-control-gpios: GPIO specifier for one GPIO
+> +                                 controlling this regulator (enable/disable)
+> +  Example:
+> +       LDO12 {
+> +               regulator-name = "V_EMMC_2.8V";
+> +               regulator-min-microvolt = <2800000>;
+> +               regulator-max-microvolt = <2800000>;
+> +               samsung,ext-control-gpios = <&gpk0 2 0>;
+> +       };
+> +
+> +
+> +Example:
+> +
+> +       s2mps11_pmic@66 {
+> +               compatible = "samsung,s2mps11-pmic";
+> +               reg = <0x66>;
+> +
+> +               regulators {
+> +                       ldo1_reg: LDO1 {
+> +                               regulator-name = "VDD_ABB_3.3V";
+> +                               regulator-min-microvolt = <3300000>;
+> +                               regulator-max-microvolt = <3300000>;
+> +                       };
+> +
+> +                       ldo2_reg: LDO2 {
+> +                               regulator-name = "VDD_ALIVE_1.1V";
+> +                               regulator-min-microvolt = <1100000>;
+> +                               regulator-max-microvolt = <1100000>;
+> +                               regulator-always-on;
+> +                       };
+> +
+> +                       buck1_reg: BUCK1 {
+> +                               regulator-name = "vdd_mif";
+> +                               regulator-min-microvolt = <950000>;
+> +                               regulator-max-microvolt = <1350000>;
+> +                               regulator-always-on;
+> +                               regulator-boot-on;
+> +                       };
+> +
+> +                       buck2_reg: BUCK2 {
+> +                               regulator-name = "vdd_arm";
+> +                               regulator-min-microvolt = <950000>;
+> +                               regulator-max-microvolt = <1350000>;
+> +                               regulator-always-on;
+> +                               regulator-boot-on;
+> +                               regulator-ramp-delay = <50000>;
+> +                       };
+> +               };
+> +       };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f3de00113ae8..137284e37250 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9234,7 +9234,9 @@ F:        drivers/clk/clk-s2mps11.c
+>  F:     drivers/rtc/rtc-s5m.c
+>  F:     include/linux/mfd/samsung/
+>  F:     Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+> -F:     Documentation/devicetree/bindings/mfd/s2mp*.txt
+> +F:     Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> +F:     Documentation/devicetree/bindings/regulator/samsung,s2m*.txt
+> +F:     Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+>
+>  SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+>  M:     Kyungmin Park <kyungmin.park@samsung.com>
+> --
+> 1.9.1
+>
+
+
+
+-- 
+Michael Turquette
+CEO
+BayLibre - At the Heart of Embedded Linux
+http://baylibre.com/
