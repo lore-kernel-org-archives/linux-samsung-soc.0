@@ -1,147 +1,114 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH v12 16/18] drm: bridge: analogix/dp: expand the wait time for looking AUX CH reply flag
-Date: Fri, 25 Dec 2015 22:01:44 +0900
-Message-ID: <000001d13f14$6e7210c0$4b563240$@com>
-References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com> <1450875064-19627-1-git-send-email-ykk@rock-chips.com> <000001d13d94$120e0d60$362a2820$@com> <567B48F9.6010902@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:35220 "EHLO
-	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752573AbbLYNB4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Dec 2015 08:01:56 -0500
-In-Reply-To: <567B48F9.6010902@rock-chips.com>
-Content-Language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Toshi Kani <toshi.kani@hpe.com>
+Subject: [PATCH v2 00/16] Enhance iomem search interfaces and support EINJ to NVDIMM
+Date: Fri, 25 Dec 2015 15:09:04 -0700
+Message-ID: <1451081344-15145-1-git-send-email-toshi.kani@hpe.com>
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org, bp@alien8.de
+Cc: torvalds@linux-foundation.org, rafael.j.wysocki@intel.com, dan.j.williams@intel.com, x86@kernel.org, linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org, konrad.wilk@oracle.com, xen-devel@lists.xenproject.org, dyoung@redhat.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, vishal.l.verma@intel.com, tony.luck@intel.com, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-nvdimm@lists.01.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Yakir Yang' <ykk@rock-chips.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>
-Cc: 'Thierry Reding' <treding@nvidia.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Russell King' <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, 'Kishon Vijay Abraham I' <kishon@ti.com>, javier@osg.samsung.com, 'Andy Yan' <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jingoohan1@gmail.com>
 
-On Thursday, December 24, 2015 10:23 AM, Yakir Yang wrote:
-> 
-> Hi Jingoo,
-> 
-> Okay, fine, I would drop this patch, until I found the the root cause.
+This patch-set enhances the iomem table and its search interfacs, and
+then changes EINJ to support NVDIMM.
 
-OK, I see.
+ - Patches 1-2 add a new System RAM type, IORESOURCE_SYSTEM_RAM, and
+   make the iomem search interfaces work with resource flags with
+   modifier bits set.  IORESOURCE_SYSTEM_RAM has IORESOURCE_MEM bit set
+   for backward compatibility.
 
-Best regards,
-Jingoo Han
+ - Patch 3 adds a new field, I/O resource descriptor, in struct resource.
+   Drivers can assign their unique descritor to a range when they
+   support the iomem search interfaces.
 
-> 
-> - Yakir
-> 
-> On 12/23/2015 11:10 PM, Jingoo Han wrote:
-> > On Wednesday, December 23, 2015 9:51 PM, Yakir Yang wrote:
-> >> On Rockchip platform, sometimes driver would failed at reading EDID
-> >> message, and it's caused by the AUX reply flag wouldn't received under
-> >> the 100*10us wait time.
-> > The problem is specific for Rockchip platform.
-> > Also, 1 ms is long time.
-> > The best way is that your hardware engineers find the root cause.
-> > I cannot understand why your engineers cannot find the root cause. :-(
-> >
-> >> But after expand the wait time a little, the AUX reply flag would be
-> >> set, so maybe the wait time is a little critical. Besides the analogix
-> >> dp book haven't reminded the standard wait for looking AUX reply flag,
-> >> so I thought it's okay to expand the wait time.
-> >>
-> >> And the external wait time won't hurt Exynos DP too much, cause they
-> >> wouldn't meet this problem, then driver would received the reply command
-> >> very soon, so no more additional wait time would bring to Exynos platform.
-> > Then, when loop time happens on Exynos platform, it will take long time
-> > to return error.
-> >
-> >> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> >> ---
-> >> Changes in v12:
-> >> - Using another way to expand the AUX reply wait time (Jingoo)
-> >>
-> >> Changes in v11: None
-> >> Changes in v10: None
-> >> Changes in v9: None
-> >> Changes in v8: None
-> >> Changes in v7: None
-> >> Changes in v6: None
-> >> Changes in v5: None
-> >> Changes in v4: None
-> >> Changes in v3: None
-> >> Changes in v2: None
-> >>
-> >>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 10 ++++------
-> >>   1 file changed, 4 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >> b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >> index cba3ffd..8687eea 100644
-> >> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> >> @@ -471,7 +471,7 @@ int analogix_dp_start_aux_transaction(struct analogix_dp_device *dp)
-> >>   {
-> >>   	int reg;
-> >>   	int retval = 0;
-> >> -	int timeout_loop = 0;
-> >> +	unsigned long timeout;
-> >>
-> >>   	/* Enable AUX CH operation */
-> >>   	reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_2);
-> >> @@ -479,14 +479,12 @@ int analogix_dp_start_aux_transaction(struct analogix_dp_device *dp)
-> >>   	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_2);
-> >>
-> >>   	/* Is AUX CH command reply received? */
-> >> -	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
-> >> -	while (!(reg & RPLY_RECEIV)) {
-> >> -		timeout_loop++;
-> >> -		if (DP_TIMEOUT_LOOP_COUNT < timeout_loop) {
-> >> +	timeout = jiffies + msecs_to_jiffies(5);
-> >> +	while ((readl(dp->reg_base + ANALOGIX_DP_INT_STA) & RPLY_RECEIV) == 0) {
-> >> +		if (time_after(jiffies, timeout)) {
-> >>   			dev_err(dp->dev, "AUX CH command reply failed!\n");
-> >>   			return -ETIMEDOUT;
-> >>   		}
-> >> -		reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
-> > Sorry, I don't like your patch.
-> >
-> > The problem happens because of Rockchip platform.
-> > So, you need to add workaround for only Rockchip platform.
-> >
-> > Just add new DT property and new variable for the value for wait time.
-> > When, the probe is called, new wait time value is read from Rockchip DT file.
-> > Then, the new wait time value can be written to the new variable.
-> >
-> >      new DT property: wait-time-aux
-> >      new variable: wait_time_aux
-> >
-> >
-> > If ( ) // New DT
-> >      wait_time_aux = New DT;
-> > else
-> >      wait_time_aux = 10;
-> >
-> >
-> >>   		usleep_range(10, 11);
-> > If there is NO  new wait time value from DT file, the default value '10' is
-> > used for sleep.
-> >
-> > But, if there is new wait time value from DT file, new wait time value
-> > can be used for sleep.
-> >
-> >                   usleep_range(dp->wait_time_aux, dp->wait_time_aux + 1);
-> >
-> > What I want to say is that there should be NO effect on Exynos platform,
-> > because of the hardware bug of Rockchip platform.
-> >
-> > Best regards,
-> > Jingoo Han
-> >
-> >>   	}
-> >>
-> >> --
-> >> 1.9.1
-> >
-> >
-> >
-> >
+ - Patches 4-9 changes initializations of resource entries.  They set
+   the System RAM type to System RAM ranges, set I/O resource descriptors
+   to the regions targeted by the iomem search interfaces, and change
+   to call kzalloc() where kmalloc() is used to allocate struct resource
+   ranges.
+
+ - Patches 10-14 extend the iomem interfaces to check System RAM ranges
+   with the System RAM type and the I/O resource descriptor.
+
+ - Patch 15 adds a check to checkpatch.pl to warn on new use of
+   walk_iomem_res().
+
+ - Patch 16 changes the EINJ driver to allow injecting a memory error
+   to NVDIMM.
+
+---
+v2:
+ - Add 'desc' to struct resource, and add a new iomem interface to
+   search with the desc. (Borislav Petkov)
+ - Add a check to checkpatch.pl to warn on new use of walk_iomem_res().
+   (Borislav Petkov)
+
+v1:
+ - Searching for System RAM in the resource table should not require
+   strcmp(). (Borislav Petkov)
+ - Add a new System RAM type as a modifier to IORESOURCE_MEM.
+   (Linus Torvalds)
+ - NVDIMM check needs to be able to distinguish legacy and NFIT pmem
+   ranges. (Dan Williams)
+
+---
+Toshi Kani (16):
+ 01/16 resource: Add System RAM resource type
+ 02/16 resource: make resource flags handled properly
+ 03/16 resource: Add I/O resource descriptor
+ 04/16 x86/e820: Set System RAM type and descriptor
+ 05/16 ia64: Set System RAM type and descriptor
+ 06/16 arch: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 07/16 kexec: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 08/16 xen, mm: Set IORESOURCE_SYSTEM_RAM to System RAM
+ 09/16 drivers: Initialize resource entry to zero
+ 10/16 resource: Change walk_system_ram to use System RAM type
+ 11/16 arm/samsung: Change s3c_pm_run_res() to use System RAM type
+ 12/16 memremap: Change region_intersects() to take @flags and @desc
+ 13/16 resource: Add walk_iomem_res_desc()
+ 14/16 x86,nvdimm,kexec: Use walk_iomem_res_desc() for iomem search
+ 15/16 checkpatch: Add warning on deprecated walk_iomem_res
+ 16/16 ACPI/EINJ: Allow memory error injection to NVDIMM
+
+---
+ arch/arm/kernel/setup.c            |   6 +-
+ arch/arm/plat-samsung/pm-check.c   |   4 +-
+ arch/arm64/kernel/setup.c          |   6 +-
+ arch/avr32/kernel/setup.c          |   6 +-
+ arch/ia64/kernel/efi.c             |  13 ++++-
+ arch/ia64/kernel/setup.c           |   6 +-
+ arch/m32r/kernel/setup.c           |   4 +-
+ arch/mips/kernel/setup.c           |  10 ++--
+ arch/parisc/mm/init.c              |   6 +-
+ arch/powerpc/mm/mem.c              |   2 +-
+ arch/s390/kernel/setup.c           |   8 +--
+ arch/score/kernel/setup.c          |   2 +-
+ arch/sh/kernel/setup.c             |   8 +--
+ arch/sparc/mm/init_64.c            |   8 +--
+ arch/tile/kernel/setup.c           |  11 +++-
+ arch/unicore32/kernel/setup.c      |   6 +-
+ arch/x86/kernel/crash.c            |   4 +-
+ arch/x86/kernel/e820.c             |  38 ++++++++++++-
+ arch/x86/kernel/pmem.c             |   4 +-
+ arch/x86/kernel/setup.c            |   6 +-
+ drivers/acpi/acpi_platform.c       |   2 +-
+ drivers/acpi/apei/einj.c           |  15 +++--
+ drivers/nvdimm/e820.c              |   2 +-
+ drivers/parisc/eisa_enumerator.c   |   4 +-
+ drivers/rapidio/rio.c              |   8 +--
+ drivers/sh/superhyway/superhyway.c |   2 +-
+ drivers/xen/balloon.c              |   2 +-
+ include/linux/ioport.h             |  33 +++++++++++
+ include/linux/mm.h                 |   3 +-
+ kernel/kexec_core.c                |   8 ++-
+ kernel/kexec_file.c                |   8 +--
+ kernel/memremap.c                  |  13 +++--
+ kernel/resource.c                  | 110 +++++++++++++++++++++++++++----------
+ mm/memory_hotplug.c                |   2 +-
+ scripts/checkpatch.pl              |   6 ++
+ 35 files changed, 265 insertions(+), 111 deletions(-)
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
