@@ -1,46 +1,36 @@
-From: Toshi Kani <toshi.kani@hpe.com>
-Subject: [PATCH v2 11/16] arm/samsung: Change s3c_pm_run_res() to use System RAM type
-Date: Fri, 25 Dec 2015 15:09:20 -0700
-Message-ID: <1451081365-15190-11-git-send-email-toshi.kani@hpe.com>
-References: <1451081365-15190-1-git-send-email-toshi.kani@hpe.com>
+From: Unknown <unknown@unknown.invalid>
+Subject: Congratulations!
+Date: Sun, 27 Dec 2015 18:40:29 +0700
+Message-ID: <20151227114033.5EEE17583D6@mail.genomeib.com>
+Reply-To: amnesty@box.az
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from g4t3425.houston.hp.com ([15.201.208.53]:60144 "EHLO
-	g4t3425.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754432AbbLYWK1 (ORCPT
+Received: from 118-163-28-247.HINET-IP.hinet.net ([118.163.28.247]:9838 "EHLO
+	spam.genomeib.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750997AbbL0Llc convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Dec 2015 17:10:27 -0500
-In-Reply-To: <1451081365-15190-1-git-send-email-toshi.kani@hpe.com>
+	Sun, 27 Dec 2015 06:41:32 -0500
+Received: from mail.genomeib.com ([192.168.1.11])
+	by spam.genomeib.com with ESMTP id tBRBj0sj076077
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Dec 2015 19:45:01 +0800 (GMT-8)
+Received: from [192.168.1.2] (unknown [103.240.242.211])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mail.genomeib.com (Postfix) with ESMTP id 5EEE17583D6
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Dec 2015 19:40:33 +0800 (CST)
+Content-Description: Mail message body
+From: "Mrs. Susan" <>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: akpm@linux-foundation.org, bp@alien8.de
-Cc: linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>
+To: linux-samsung-soc@vger.kernel.org
 
-Change s3c_pm_run_res() to check with IORESOURCE_SYSTEM_RAM,
-instead of strcmp() with "System RAM", to walk through
-System RAM ranges in the iomem table.
+Congratulations! 
+You Won  1.5 Million Pounds on our Amnesty Int 
+online promo. File in the following for your claims
 
-No functional change is made to the interface.
+Names: Sex: Country: Tel: 
 
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
----
- arch/arm/plat-samsung/pm-check.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/plat-samsung/pm-check.c b/arch/arm/plat-samsung/pm-check.c
-index 04aff2c..70f2f69 100644
---- a/arch/arm/plat-samsung/pm-check.c
-+++ b/arch/arm/plat-samsung/pm-check.c
-@@ -53,8 +53,8 @@ static void s3c_pm_run_res(struct resource *ptr, run_fn_t fn, u32 *arg)
- 		if (ptr->child != NULL)
- 			s3c_pm_run_res(ptr->child, fn, arg);
- 
--		if ((ptr->flags & IORESOURCE_MEM) &&
--		    strcmp(ptr->name, "System RAM") == 0) {
-+		if ((ptr->flags & IORESOURCE_SYSTEM_RAM)
-+				== IORESOURCE_SYSTEM_RAM) {
- 			S3C_PMDBG("Found system RAM at %08lx..%08lx\n",
- 				  (unsigned long)ptr->start,
- 				  (unsigned long)ptr->end);
+Best Regards, 
+Mrs. Susan Jones
