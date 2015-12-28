@@ -1,52 +1,78 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: s3c: simplify s3c_irqwake_{e,}intallow definition
-Date: Mon, 28 Dec 2015 12:13:03 +0100
-Message-ID: <9962016.2akClDTaVy@wuerfel>
-References: <16503982.4JeEM7ZXq8@wuerfel> <56808A41.2050105@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: [PATCH] [media] call media_device_init() before registering the V4L2 device
+Date: Mon, 28 Dec 2015 09:32:46 -0200
+Message-ID: <75cff54a4808086de9d043b2a15a590372c6ab60.1451302363.git.mchehab@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:55274 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751004AbbL1LNn (ORCPT
+Received: from bombadil.infradead.org ([198.137.202.9]:60059 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751431AbbL1LdZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Dec 2015 06:13:43 -0500
-In-Reply-To: <56808A41.2050105@samsung.com>
+	Mon, 28 Dec 2015 06:33:25 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: media-workshop@linuxtv.org
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Monday 28 December 2015 10:02:57 Krzysztof Kozlowski wrote:
-> On 18.12.2015 23:45, Arnd Bergmann wrote:
-> > For a long time, gcc has warned about odd configurations on s3c64xx:
-> > 
-> > In file included from arch/arm/plat-samsung/pm.c:34:0:
-> > arch/arm/mach-s3c64xx/include/mach/pm-core.h:61:0: warning: "s3c_irqwake_eintallow" redefined
-> >  #define s3c_irqwake_eintallow ((1 << 28) - 1)
-> > In file included from arch/arm/plat-samsung/pm.c:33:0:
-> > arch/arm/plat-samsung/include/plat/pm.h:49:0: note: this is the location of the previous definition
-> >  #define s3c_irqwake_eintallow 0
-> > 
-> > The definitions of s3c_irqwake_intallow and s3c_irqwake_eintallow are a bit consistent
-> > between the various platforms. Things have become easier now that it's only s3c24xx
-> > and s3c64xx that use them at all, so I've tried to rearrange the definitions to
-> > make it more obvious what is going on.
-> > 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> > This fixes a very old and harmless warning, please apply to a cleanup branch
-> > if you agree.
-> > 
-> 
-> Looks correct and makes sense. Hoping you compiled it on all machs:
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Currently, v4l2_device_register() doesn't use the media_device
+struct. So, calling media_device_init() could be called either
+before or after v4l2_device_register().
 
-I built many thousand kernels with this patch, but also had other patches applied
-at the same time, notably the s3c64xx multiplatform series, so I can make a reasonable
-assumption that I'm not introducing regressions, unless it relies on something else
-I have queued up and not yet sent.
+Yet, it is a good practice to initialize everything before calling
+the register functions. Also, the other drivers call
+media_device_init() before registering the V4L2 device.
 
-	Arnd
+So, move the call for media_device_init() to happen earlier on
+exynos4-is and s3c-camif.
+
+This is just a cleanup patch.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+---
+ drivers/media/platform/exynos4-is/media-dev.c | 4 ++--
+ drivers/media/platform/s3c-camif/camif-core.c | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 27663dd45294..e96d246043ad 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -1347,14 +1347,14 @@ static int fimc_md_probe(struct platform_device *pdev)
+ 	fmd->use_isp = fimc_md_is_isp_available(dev->of_node);
+ 	fmd->user_subdev_api = true;
+ 
++	media_device_init(&fmd->media_dev);
++
+ 	ret = v4l2_device_register(dev, &fmd->v4l2_dev);
+ 	if (ret < 0) {
+ 		v4l2_err(v4l2_dev, "Failed to register v4l2_device: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	media_device_init(&fmd->media_dev);
+-
+ 	ret = fimc_md_get_clocks(fmd);
+ 	if (ret)
+ 		goto err_md;
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index ea02b7ef2119..0b44b9accf50 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -324,12 +324,12 @@ static int camif_media_dev_init(struct camif_dev *camif)
+ 	strlcpy(v4l2_dev->name, "s3c-camif", sizeof(v4l2_dev->name));
+ 	v4l2_dev->mdev = md;
+ 
+-	ret = v4l2_device_register(camif->dev, v4l2_dev);
+-	if (ret < 0)
+-		return ret;
+-
+ 	media_device_init(md);
+ 
++	ret = v4l2_device_register(camif->dev, v4l2_dev);
++	if (ret < 0)
++		return ret;
++
+ 	return ret;
+ }
+ 
+-- 
+2.5.0
