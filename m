@@ -1,54 +1,156 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 1/7] drm/exynos: rename zpos to index
-Date: Mon, 28 Dec 2015 13:34:40 +0100
-Message-ID: <56812C60.2070209@samsung.com>
-References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
- <1450268508-15028-2-git-send-email-m.szyprowski@samsung.com>
- <567BA9B1.5020607@samsung.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH 2/2] [media] media-device: split media initialization
+ and registration
+Date: Mon, 28 Dec 2015 10:52:48 -0200
+Message-ID: <20151228105248.4d59a15c@recife.lan>
+References: <1441890195-11650-1-git-send-email-javier@osg.samsung.com>
+	<1441890195-11650-3-git-send-email-javier@osg.samsung.com>
+	<55F1BA5C.50508@linux.intel.com>
+	<20151215091342.2f825d91@recife.lan>
+	<20151228011452.GA26561@valkosipuli.retiisi.org.uk>
+	<20151228082633.1786af24@recife.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:18390 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751719AbbL1Meo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Dec 2015 07:34:44 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O0200HN6IXTCC70@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 28 Dec 2015 12:34:41 +0000 (GMT)
-In-reply-to: <567BA9B1.5020607@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20151228082633.1786af24@recife.lan>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>, Javier Martinez Canillas <javier@osg.samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org, Luis de Bethencourt <luis@debethencourt.com>, linux-sh@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Matthias Schwarzott <zzam@gentoo.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tommi Rantala <tt.rantala@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michal Simek <michal.simek@xilinx.com>, Olli Salonen <olli.salonen@iki.fi>, linux-arm-kernel@lists.infradead.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, Antti Palosaari <crope@iki.fi>, Shuah Khan <shuahkh@osg.samsung.com>, Rafael =?UTF-8?B?TG91cmVuw6dv?= de Lima Chehab <chehabrafa>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>
 
-Hello,
+Em Mon, 28 Dec 2015 08:26:33 -0200
+Mauro Carvalho Chehab <mchehab@osg.samsung.com> escreveu:
 
-On 2015-12-24 09:15, Inki Dae wrote:
-> Seems this patch could be more cleaned up.
->
-> Each ctx object of each crtc driver has its own plane config object which includes already zpos value.
-> So I think we wouldn't need to keep zpos of the plane config and index of the plane object.
-> How about removing index from exynos plane structure and using zpos of exynos plane config structure instead?
->
-> Below patch can be applied on top of your patch,
+> Em Mon, 28 Dec 2015 03:14:53 +0200
+> Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+> 
+> > Hi Mauro,
+> > 
+> > On Tue, Dec 15, 2015 at 09:13:42AM -0200, Mauro Carvalho Chehab wrote:
+> > > Em Thu, 10 Sep 2015 20:14:04 +0300
+> > > Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
+> > > 
+> > > > Hi Javier,
+> > > > 
+> > > > Thanks for the set! A few comments below.
+> > > > 
+> > > > Javier Martinez Canillas wrote:
+> > > > > The media device node is registered and so made visible to user-space
+> > > > > before entities are registered and links created which means that the
+> > > > > media graph obtained by user-space could be only partially enumerated
+> > > > > if that happens too early before all the graph has been created.
+> > > > > 
+> > > > > To avoid this race condition, split the media init and registration
+> > > > > in separate functions and only register the media device node when
+> > > > > all the pending subdevices have been registered, either explicitly
+> > > > > by the driver or asynchronously using v4l2_async_register_subdev().
+> > > > > 
+> > > > > Also, add a media_entity_cleanup() function that will destroy the
+> > > > > graph_mutex that is initialized in media_entity_init().
+> > > > > 
+> > > > > Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > > > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> > > > > 
+> > > > > ---
+> > > > > 
+> > > > >  drivers/media/common/siano/smsdvb-main.c      |  1 +
+> > > > >  drivers/media/media-device.c                  | 38 +++++++++++++++++++++++----
+> > > > >  drivers/media/platform/exynos4-is/media-dev.c | 12 ++++++---
+> > > > >  drivers/media/platform/omap3isp/isp.c         | 11 +++++---
+> > > > >  drivers/media/platform/s3c-camif/camif-core.c | 13 ++++++---
+> > > > >  drivers/media/platform/vsp1/vsp1_drv.c        | 19 ++++++++++----
+> > > > >  drivers/media/platform/xilinx/xilinx-vipp.c   | 11 +++++---
+> > > > >  drivers/media/usb/au0828/au0828-core.c        | 26 +++++++++++++-----
+> > > > >  drivers/media/usb/cx231xx/cx231xx-cards.c     | 22 +++++++++++-----
+> > > > >  drivers/media/usb/dvb-usb-v2/dvb_usb_core.c   | 11 +++++---
+> > > > >  drivers/media/usb/dvb-usb/dvb-usb-dvb.c       | 13 ++++++---
+> > > > >  drivers/media/usb/siano/smsusb.c              | 14 ++++++++--
+> > > > >  drivers/media/usb/uvc/uvc_driver.c            |  9 +++++--
+> > > > >  include/media/media-device.h                  |  2 ++
+> > > > >  14 files changed, 156 insertions(+), 46 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/media/common/siano/smsdvb-main.c b/drivers/media/common/siano/smsdvb-main.c
+> > > > > index ab345490a43a..8a1ea2192439 100644
+> > > > > --- a/drivers/media/common/siano/smsdvb-main.c
+> > > > > +++ b/drivers/media/common/siano/smsdvb-main.c
+> > > > > @@ -617,6 +617,7 @@ static void smsdvb_media_device_unregister(struct smsdvb_client_t *client)
+> > > > >  	if (!coredev->media_dev)
+> > > > >  		return;
+> > > > >  	media_device_unregister(coredev->media_dev);
+> > > > > +	media_device_cleanup(coredev->media_dev);
+> > > > >  	kfree(coredev->media_dev);
+> > > > >  	coredev->media_dev = NULL;
+> > > > >  #endif
+> > > > > diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+> > > > > index 745defb34b33..a8beb0b445a6 100644
+> > > > > --- a/drivers/media/media-device.c
+> > > > > +++ b/drivers/media/media-device.c
+> > > > > @@ -526,7 +526,7 @@ static void media_device_release(struct media_devnode *mdev)
+> > > > >  }
+> > > > >  
+> > > > >  /**
+> > > > > - * media_device_register - register a media device
+> > > > > + * media_device_init() - initialize a media device
+> > > > >   * @mdev:	The media device
+> > > > >   *
+> > > > >   * The caller is responsible for initializing the media device before
+> > > > > @@ -534,12 +534,11 @@ static void media_device_release(struct media_devnode *mdev)
+> > > > >   *
+> > > > >   * - dev must point to the parent device
+> > > > >   * - model must be filled with the device model name
+> > > > > + *
+> > > > > + * returns zero on success or a negative error code.
+> > > > >   */
+> > > > > -int __must_check __media_device_register(struct media_device *mdev,
+> > > > > -					 struct module *owner)
+> > > > > +int __must_check media_device_init(struct media_device *mdev)
+> > > > 
+> > > > I think I suggested making media_device_init() return void as the only
+> > > > remaining source of errors would be driver bugs.
+> > > > 
+> > > > I'd simply replace the WARN_ON() below with BUG().
+> > > 
+> > > That sounds like bad idea to me, and it is against the current
+> > > Kernel policy of using BUG() only when there's no other way, e. g. on
+> > > event so severe that the Kernel has no other thing to do except to
+> > > stop running.
+> > > 
+> > > For sure, this is not the case here. Also, all drivers have already
+> > > a logic that checks if the device init happened. So, they should already
+> > > be doing the right thing.
+> > 
+> > My point is that it's simply counter-productive to require the caller to
+> > perform error handling in cases such as the only possible source of the
+> > error being a NULL argument passed to the callee.
+> > 
+> > To give you some examples, device_register(), device_add() nor mutex_lock()
+> > perform such checks. Some functions in V4L2 do, but I understand that's
+> > sometimes for historical reasons where NULL arguments were allowed. Or that
+> > there are other possible sources for errors in non-trivial functions and the
+> > rest of the checks are done on the side.
+> > 
+> > If you don't like BUG_ON(), just drop it. It's as simple as that.
+> 
+> Ah, I see your point. Yeah, dropping WARN_ON makes sense. I'll address
+> it.
 
-If you want I can move 'index' entry to config object, but the initial 
-zpos value
-should also be there. Please note that index is not always equal to the 
-initial zpos
-and having initial zpos configurable is also needed. There were already 
-concerns if
-mixer's dedicated video plane should be below or above the primary gfx 
-plane in the
-default configuration.
+Ok, I dropped BUG_ON() from Javier's patch. I also fold with the 3
+build fixups if !CONFIG_MEDIA_CONTROLLER, as requested by Laurent, plus
+one fixup from me (that I sent today to the ML), removing two uneeded
+vars and fixing one call for the DVB frontend that were passing the
+wrong struct.
 
- > (...)
+The final patch is at:
+	https://git.linuxtv.org/mchehab/experimental.git/commit/?h=media-controller-rc6&id=337a643d4ac04c4c6681c9ae2b37d700c9a3fa5f
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+There two new warnings after Javier's patch related to check if
+the device was properly registered, and if the memory allocation for
+the media_device has succeded. 
+
+As such checks were actually unrelated to Javier's changes, I added
+them on a separate patch:
+	https://git.linuxtv.org/mchehab/experimental.git/commit/?h=media-controller-rc6&id=180a506ef4021a68c061e19c11046978a42934f7
+
+Regards,
+Mauro
