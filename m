@@ -1,78 +1,54 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH] [media] call media_device_init() before registering the V4L2 device
-Date: Mon, 28 Dec 2015 09:32:46 -0200
-Message-ID: <75cff54a4808086de9d043b2a15a590372c6ab60.1451302363.git.mchehab@osg.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 1/7] drm/exynos: rename zpos to index
+Date: Mon, 28 Dec 2015 13:34:40 +0100
+Message-ID: <56812C60.2070209@samsung.com>
+References: <1450268508-15028-1-git-send-email-m.szyprowski@samsung.com>
+ <1450268508-15028-2-git-send-email-m.szyprowski@samsung.com>
+ <567BA9B1.5020607@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:60059 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751431AbbL1LdZ (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:18390 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751719AbbL1Meo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Dec 2015 06:33:25 -0500
+	Mon, 28 Dec 2015 07:34:44 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O0200HN6IXTCC70@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Dec 2015 12:34:41 +0000 (GMT)
+In-reply-to: <567BA9B1.5020607@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: media-workshop@linuxtv.org
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>
 
-Currently, v4l2_device_register() doesn't use the media_device
-struct. So, calling media_device_init() could be called either
-before or after v4l2_device_register().
+Hello,
 
-Yet, it is a good practice to initialize everything before calling
-the register functions. Also, the other drivers call
-media_device_init() before registering the V4L2 device.
+On 2015-12-24 09:15, Inki Dae wrote:
+> Seems this patch could be more cleaned up.
+>
+> Each ctx object of each crtc driver has its own plane config object which includes already zpos value.
+> So I think we wouldn't need to keep zpos of the plane config and index of the plane object.
+> How about removing index from exynos plane structure and using zpos of exynos plane config structure instead?
+>
+> Below patch can be applied on top of your patch,
 
-So, move the call for media_device_init() to happen earlier on
-exynos4-is and s3c-camif.
+If you want I can move 'index' entry to config object, but the initial 
+zpos value
+should also be there. Please note that index is not always equal to the 
+initial zpos
+and having initial zpos configurable is also needed. There were already 
+concerns if
+mixer's dedicated video plane should be below or above the primary gfx 
+plane in the
+default configuration.
 
-This is just a cleanup patch.
+ > (...)
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
----
- drivers/media/platform/exynos4-is/media-dev.c | 4 ++--
- drivers/media/platform/s3c-camif/camif-core.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 27663dd45294..e96d246043ad 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1347,14 +1347,14 @@ static int fimc_md_probe(struct platform_device *pdev)
- 	fmd->use_isp = fimc_md_is_isp_available(dev->of_node);
- 	fmd->user_subdev_api = true;
- 
-+	media_device_init(&fmd->media_dev);
-+
- 	ret = v4l2_device_register(dev, &fmd->v4l2_dev);
- 	if (ret < 0) {
- 		v4l2_err(v4l2_dev, "Failed to register v4l2_device: %d\n", ret);
- 		return ret;
- 	}
- 
--	media_device_init(&fmd->media_dev);
--
- 	ret = fimc_md_get_clocks(fmd);
- 	if (ret)
- 		goto err_md;
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index ea02b7ef2119..0b44b9accf50 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -324,12 +324,12 @@ static int camif_media_dev_init(struct camif_dev *camif)
- 	strlcpy(v4l2_dev->name, "s3c-camif", sizeof(v4l2_dev->name));
- 	v4l2_dev->mdev = md;
- 
--	ret = v4l2_device_register(camif->dev, v4l2_dev);
--	if (ret < 0)
--		return ret;
--
- 	media_device_init(md);
- 
-+	ret = v4l2_device_register(camif->dev, v4l2_dev);
-+	if (ret < 0)
-+		return ret;
-+
- 	return ret;
- }
- 
+Best regards
 -- 
-2.5.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
