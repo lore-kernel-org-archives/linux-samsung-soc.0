@@ -1,35 +1,41 @@
-From: "Jeff Skoll" <verna.viajar@icdd.uni-kassel.de>
-Subject: Charity Donation
-Date: Mon, 28 Dec 2015 14:12:12 -0500
-Message-ID: <auto-000005234363@mailadmin.uni-kassel.de>
-Reply-To: jeff.skoll@skollcharity.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/3] mfd: use to_i2c_client
+Date: Tue, 29 Dec 2015 08:56:39 +0900
+Message-ID: <5681CC37.1050402@samsung.com>
+References: <0837727b57d573988a47f3ecb22918e9771e8dbe.1451314502.git.geliangtang@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx3.its.uni-kassel.de ([141.51.12.64]:59864 "EHLO
-	mx3.its.uni-kassel.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752690AbbL1UKP convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:48698 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752798AbbL1X4o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Dec 2015 15:10:15 -0500
-Content-Description: Mail message body
+	Mon, 28 Dec 2015 18:56:44 -0500
+In-reply-to: <0837727b57d573988a47f3ecb22918e9771e8dbe.1451314502.git.geliangtang@163.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Me <verna.viajar@icdd.uni-kassel.de>
+To: Geliang Tang <geliangtang@163.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
-My name is Jeffrey Skoll, a philanthropist and the founder of one of th=
-e largest private foundations in the world. I believe strongly in =E2=80=
-=98giving while living.=E2=80=99 I had one idea that never changed in m=
-y mind =E2=80=94 that you should use your wealth to help people and I h=
-ave decided to secretly give USD2.498 Million to a randomly selected in=
-dividual. On receipt of this email, you should count yourself as the in=
-dividual. Kindly get back to me at your earliest convenience, so I know=
- your email address is valid.
+On 29.12.2015 00:00, Geliang Tang wrote:
+> Use to_i2c_client() instead of open-coding it.
+> 
+> Signed-off-by: Geliang Tang <geliangtang@163.com>
+> ---
+>  drivers/mfd/88pm80x.c       | 4 ++--
+>  drivers/mfd/88pm860x-core.c | 4 ++--
+>  drivers/mfd/max14577.c      | 4 ++--
+>  drivers/mfd/max77686.c      | 4 ++--
+>  drivers/mfd/max77693.c      | 4 ++--
+>  drivers/mfd/max77843.c      | 4 ++--
+>  drivers/mfd/max8925-i2c.c   | 4 ++--
+>  drivers/mfd/max8997.c       | 8 ++++----
+>  drivers/mfd/max8998.c       | 8 ++++----
+>  drivers/mfd/sec-core.c      | 4 ++--
+>  10 files changed, 24 insertions(+), 24 deletions(-)
 
-Visit the web page to know more about me: http://www.theglobeandmail.co=
-m/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/a=
-rticle4209888/ or you can read an article of me on Wikipedia.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Regards,
-Jeffrey Skoll.
+Best regards,
+Krzysztof
