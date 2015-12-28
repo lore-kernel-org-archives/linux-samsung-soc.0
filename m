@@ -1,50 +1,52 @@
-From: Geliang Tang <geliangtang@163.com>
-Subject: [PATCH 10/10] ARM: plat-samsung: use to_platform_device()
-Date: Sun, 27 Dec 2015 21:17:36 +0800
-Message-ID: <ad91078d5cbe93341709b249a83ae81c00eaa3d4.1451221174.git.geliangtang@163.com>
-References: <a554e6af3a3528c2206c94dab62b7800f96caa4b.1451221174.git.geliangtang@163.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: s3c: simplify s3c_irqwake_{e,}intallow definition
+Date: Mon, 28 Dec 2015 10:02:57 +0900
+Message-ID: <56808A41.2050105@samsung.com>
+References: <16503982.4JeEM7ZXq8@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from m50-133.163.com ([123.125.50.133]:60604 "EHLO m50-133.163.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752426AbbL0NTp (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:33833 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751208AbbL1BDF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Dec 2015 08:19:45 -0500
-In-Reply-To: <a554e6af3a3528c2206c94dab62b7800f96caa4b.1451221174.git.geliangtang@163.com>
+	Sun, 27 Dec 2015 20:03:05 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O01002MBMX19P00@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Dec 2015 01:03:01 +0000 (GMT)
+In-reply-to: <16503982.4JeEM7ZXq8@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: Geliang Tang <geliangtang@163.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Use to_platform_device() instead of open-coding it.
+On 18.12.2015 23:45, Arnd Bergmann wrote:
+> For a long time, gcc has warned about odd configurations on s3c64xx:
+> 
+> In file included from arch/arm/plat-samsung/pm.c:34:0:
+> arch/arm/mach-s3c64xx/include/mach/pm-core.h:61:0: warning: "s3c_irqwake_eintallow" redefined
+>  #define s3c_irqwake_eintallow ((1 << 28) - 1)
+> In file included from arch/arm/plat-samsung/pm.c:33:0:
+> arch/arm/plat-samsung/include/plat/pm.h:49:0: note: this is the location of the previous definition
+>  #define s3c_irqwake_eintallow 0
+> 
+> The definitions of s3c_irqwake_intallow and s3c_irqwake_eintallow are a bit consistent
+> between the various platforms. Things have become easier now that it's only s3c24xx
+> and s3c64xx that use them at all, so I've tried to rearrange the definitions to
+> make it more obvious what is going on.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> This fixes a very old and harmless warning, please apply to a cleanup branch
+> if you agree.
+> 
 
-Signed-off-by: Geliang Tang <geliangtang@163.com>
----
- arch/arm/plat-samsung/adc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Looks correct and makes sense. Hoping you compiled it on all machs:
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index efa6e85..daf3db9 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -422,8 +422,7 @@ static int s3c_adc_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int s3c_adc_suspend(struct device *dev)
- {
--	struct platform_device *pdev = container_of(dev,
--			struct platform_device, dev);
-+	struct platform_device *pdev = to_platform_device(dev);
- 	struct adc_device *adc = platform_get_drvdata(pdev);
- 	unsigned long flags;
- 	u32 con;
-@@ -444,8 +443,7 @@ static int s3c_adc_suspend(struct device *dev)
- 
- static int s3c_adc_resume(struct device *dev)
- {
--	struct platform_device *pdev = container_of(dev,
--			struct platform_device, dev);
-+	struct platform_device *pdev = to_platform_device(dev);
- 	struct adc_device *adc = platform_get_drvdata(pdev);
- 	enum s3c_cpu_type cpu = platform_get_device_id(pdev)->driver_data;
- 	int ret;
--- 
-2.5.0
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
