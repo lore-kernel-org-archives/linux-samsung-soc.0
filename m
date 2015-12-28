@@ -1,156 +1,289 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH 2/2] [media] media-device: split media initialization
- and registration
-Date: Mon, 28 Dec 2015 10:52:48 -0200
-Message-ID: <20151228105248.4d59a15c@recife.lan>
-References: <1441890195-11650-1-git-send-email-javier@osg.samsung.com>
-	<1441890195-11650-3-git-send-email-javier@osg.samsung.com>
-	<55F1BA5C.50508@linux.intel.com>
-	<20151215091342.2f825d91@recife.lan>
-	<20151228011452.GA26561@valkosipuli.retiisi.org.uk>
-	<20151228082633.1786af24@recife.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20151228082633.1786af24@recife.lan>
-Sender: linux-sh-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>, Javier Martinez Canillas <javier@osg.samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org, Luis de Bethencourt <luis@debethencourt.com>, linux-sh@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-samsung-soc@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Matthias Schwarzott <zzam@gentoo.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tommi Rantala <tt.rantala@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michal Simek <michal.simek@xilinx.com>, Olli Salonen <olli.salonen@iki.fi>, linux-arm-kernel@lists.infradead.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, Antti Palosaari <crope@iki.fi>, Shuah Khan <shuahkh@osg.samsung.com>, Rafael =?UTF-8?B?TG91cmVuw6dv?= de Lima Chehab <chehabrafa>
+From: Geliang Tang <geliangtang@163.com>
+Subject: [PATCH 1/3] mfd: use to_i2c_client
+Date: Mon, 28 Dec 2015 23:00:14 +0800
+Message-ID: <0837727b57d573988a47f3ecb22918e9771e8dbe.1451314502.git.geliangtang@163.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from m50-133.163.com ([123.125.50.133]:49258 "EHLO m50-133.163.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750803AbbL1PSB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Dec 2015 10:18:01 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: Geliang Tang <geliangtang@163.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Em Mon, 28 Dec 2015 08:26:33 -0200
-Mauro Carvalho Chehab <mchehab@osg.samsung.com> escreveu:
+Use to_i2c_client() instead of open-coding it.
 
-> Em Mon, 28 Dec 2015 03:14:53 +0200
-> Sakari Ailus <sakari.ailus@iki.fi> escreveu:
-> 
-> > Hi Mauro,
-> > 
-> > On Tue, Dec 15, 2015 at 09:13:42AM -0200, Mauro Carvalho Chehab wrote:
-> > > Em Thu, 10 Sep 2015 20:14:04 +0300
-> > > Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
-> > > 
-> > > > Hi Javier,
-> > > > 
-> > > > Thanks for the set! A few comments below.
-> > > > 
-> > > > Javier Martinez Canillas wrote:
-> > > > > The media device node is registered and so made visible to user-space
-> > > > > before entities are registered and links created which means that the
-> > > > > media graph obtained by user-space could be only partially enumerated
-> > > > > if that happens too early before all the graph has been created.
-> > > > > 
-> > > > > To avoid this race condition, split the media init and registration
-> > > > > in separate functions and only register the media device node when
-> > > > > all the pending subdevices have been registered, either explicitly
-> > > > > by the driver or asynchronously using v4l2_async_register_subdev().
-> > > > > 
-> > > > > Also, add a media_entity_cleanup() function that will destroy the
-> > > > > graph_mutex that is initialized in media_entity_init().
-> > > > > 
-> > > > > Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > >  drivers/media/common/siano/smsdvb-main.c      |  1 +
-> > > > >  drivers/media/media-device.c                  | 38 +++++++++++++++++++++++----
-> > > > >  drivers/media/platform/exynos4-is/media-dev.c | 12 ++++++---
-> > > > >  drivers/media/platform/omap3isp/isp.c         | 11 +++++---
-> > > > >  drivers/media/platform/s3c-camif/camif-core.c | 13 ++++++---
-> > > > >  drivers/media/platform/vsp1/vsp1_drv.c        | 19 ++++++++++----
-> > > > >  drivers/media/platform/xilinx/xilinx-vipp.c   | 11 +++++---
-> > > > >  drivers/media/usb/au0828/au0828-core.c        | 26 +++++++++++++-----
-> > > > >  drivers/media/usb/cx231xx/cx231xx-cards.c     | 22 +++++++++++-----
-> > > > >  drivers/media/usb/dvb-usb-v2/dvb_usb_core.c   | 11 +++++---
-> > > > >  drivers/media/usb/dvb-usb/dvb-usb-dvb.c       | 13 ++++++---
-> > > > >  drivers/media/usb/siano/smsusb.c              | 14 ++++++++--
-> > > > >  drivers/media/usb/uvc/uvc_driver.c            |  9 +++++--
-> > > > >  include/media/media-device.h                  |  2 ++
-> > > > >  14 files changed, 156 insertions(+), 46 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/media/common/siano/smsdvb-main.c b/drivers/media/common/siano/smsdvb-main.c
-> > > > > index ab345490a43a..8a1ea2192439 100644
-> > > > > --- a/drivers/media/common/siano/smsdvb-main.c
-> > > > > +++ b/drivers/media/common/siano/smsdvb-main.c
-> > > > > @@ -617,6 +617,7 @@ static void smsdvb_media_device_unregister(struct smsdvb_client_t *client)
-> > > > >  	if (!coredev->media_dev)
-> > > > >  		return;
-> > > > >  	media_device_unregister(coredev->media_dev);
-> > > > > +	media_device_cleanup(coredev->media_dev);
-> > > > >  	kfree(coredev->media_dev);
-> > > > >  	coredev->media_dev = NULL;
-> > > > >  #endif
-> > > > > diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-> > > > > index 745defb34b33..a8beb0b445a6 100644
-> > > > > --- a/drivers/media/media-device.c
-> > > > > +++ b/drivers/media/media-device.c
-> > > > > @@ -526,7 +526,7 @@ static void media_device_release(struct media_devnode *mdev)
-> > > > >  }
-> > > > >  
-> > > > >  /**
-> > > > > - * media_device_register - register a media device
-> > > > > + * media_device_init() - initialize a media device
-> > > > >   * @mdev:	The media device
-> > > > >   *
-> > > > >   * The caller is responsible for initializing the media device before
-> > > > > @@ -534,12 +534,11 @@ static void media_device_release(struct media_devnode *mdev)
-> > > > >   *
-> > > > >   * - dev must point to the parent device
-> > > > >   * - model must be filled with the device model name
-> > > > > + *
-> > > > > + * returns zero on success or a negative error code.
-> > > > >   */
-> > > > > -int __must_check __media_device_register(struct media_device *mdev,
-> > > > > -					 struct module *owner)
-> > > > > +int __must_check media_device_init(struct media_device *mdev)
-> > > > 
-> > > > I think I suggested making media_device_init() return void as the only
-> > > > remaining source of errors would be driver bugs.
-> > > > 
-> > > > I'd simply replace the WARN_ON() below with BUG().
-> > > 
-> > > That sounds like bad idea to me, and it is against the current
-> > > Kernel policy of using BUG() only when there's no other way, e. g. on
-> > > event so severe that the Kernel has no other thing to do except to
-> > > stop running.
-> > > 
-> > > For sure, this is not the case here. Also, all drivers have already
-> > > a logic that checks if the device init happened. So, they should already
-> > > be doing the right thing.
-> > 
-> > My point is that it's simply counter-productive to require the caller to
-> > perform error handling in cases such as the only possible source of the
-> > error being a NULL argument passed to the callee.
-> > 
-> > To give you some examples, device_register(), device_add() nor mutex_lock()
-> > perform such checks. Some functions in V4L2 do, but I understand that's
-> > sometimes for historical reasons where NULL arguments were allowed. Or that
-> > there are other possible sources for errors in non-trivial functions and the
-> > rest of the checks are done on the side.
-> > 
-> > If you don't like BUG_ON(), just drop it. It's as simple as that.
-> 
-> Ah, I see your point. Yeah, dropping WARN_ON makes sense. I'll address
-> it.
+Signed-off-by: Geliang Tang <geliangtang@163.com>
+---
+ drivers/mfd/88pm80x.c       | 4 ++--
+ drivers/mfd/88pm860x-core.c | 4 ++--
+ drivers/mfd/max14577.c      | 4 ++--
+ drivers/mfd/max77686.c      | 4 ++--
+ drivers/mfd/max77693.c      | 4 ++--
+ drivers/mfd/max77843.c      | 4 ++--
+ drivers/mfd/max8925-i2c.c   | 4 ++--
+ drivers/mfd/max8997.c       | 8 ++++----
+ drivers/mfd/max8998.c       | 8 ++++----
+ drivers/mfd/sec-core.c      | 4 ++--
+ 10 files changed, 24 insertions(+), 24 deletions(-)
 
-Ok, I dropped BUG_ON() from Javier's patch. I also fold with the 3
-build fixups if !CONFIG_MEDIA_CONTROLLER, as requested by Laurent, plus
-one fixup from me (that I sent today to the ML), removing two uneeded
-vars and fixing one call for the DVB frontend that were passing the
-wrong struct.
-
-The final patch is at:
-	https://git.linuxtv.org/mchehab/experimental.git/commit/?h=media-controller-rc6&id=337a643d4ac04c4c6681c9ae2b37d700c9a3fa5f
-
-There two new warnings after Javier's patch related to check if
-the device was properly registered, and if the memory allocation for
-the media_device has succeded. 
-
-As such checks were actually unrelated to Javier's changes, I added
-them on a separate patch:
-	https://git.linuxtv.org/mchehab/experimental.git/commit/?h=media-controller-rc6&id=180a506ef4021a68c061e19c11046978a42934f7
-
-Regards,
-Mauro
+diff --git a/drivers/mfd/88pm80x.c b/drivers/mfd/88pm80x.c
+index 63445ea..3f24ecb 100644
+--- a/drivers/mfd/88pm80x.c
++++ b/drivers/mfd/88pm80x.c
+@@ -135,7 +135,7 @@ EXPORT_SYMBOL_GPL(pm80x_deinit);
+ #ifdef CONFIG_PM_SLEEP
+ static int pm80x_suspend(struct device *dev)
+ {
+-	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *client = to_i2c_client(dev);
+ 	struct pm80x_chip *chip = i2c_get_clientdata(client);
+ 
+ 	if (chip && chip->wu_flag)
+@@ -147,7 +147,7 @@ static int pm80x_suspend(struct device *dev)
+ 
+ static int pm80x_resume(struct device *dev)
+ {
+-	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *client = to_i2c_client(dev);
+ 	struct pm80x_chip *chip = i2c_get_clientdata(client);
+ 
+ 	if (chip && chip->wu_flag)
+diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
+index 3269a99..e497cee 100644
+--- a/drivers/mfd/88pm860x-core.c
++++ b/drivers/mfd/88pm860x-core.c
+@@ -1218,7 +1218,7 @@ static int pm860x_remove(struct i2c_client *client)
+ #ifdef CONFIG_PM_SLEEP
+ static int pm860x_suspend(struct device *dev)
+ {
+-	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *client = to_i2c_client(dev);
+ 	struct pm860x_chip *chip = i2c_get_clientdata(client);
+ 
+ 	if (device_may_wakeup(dev) && chip->wakeup_flag)
+@@ -1228,7 +1228,7 @@ static int pm860x_suspend(struct device *dev)
+ 
+ static int pm860x_resume(struct device *dev)
+ {
+-	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *client = to_i2c_client(dev);
+ 	struct pm860x_chip *chip = i2c_get_clientdata(client);
+ 
+ 	if (device_may_wakeup(dev) && chip->wakeup_flag)
+diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
+index 56e216d..2280b3f 100644
+--- a/drivers/mfd/max14577.c
++++ b/drivers/mfd/max14577.c
+@@ -495,7 +495,7 @@ MODULE_DEVICE_TABLE(i2c, max14577_i2c_id);
+ #ifdef CONFIG_PM_SLEEP
+ static int max14577_suspend(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max14577 *max14577 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+@@ -516,7 +516,7 @@ static int max14577_suspend(struct device *dev)
+ 
+ static int max14577_resume(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max14577 *max14577 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+index d19be64..d959ebb 100644
+--- a/drivers/mfd/max77686.c
++++ b/drivers/mfd/max77686.c
+@@ -352,7 +352,7 @@ MODULE_DEVICE_TABLE(i2c, max77686_i2c_id);
+ #ifdef CONFIG_PM_SLEEP
+ static int max77686_suspend(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max77686_dev *max77686 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+@@ -374,7 +374,7 @@ static int max77686_suspend(struct device *dev)
+ 
+ static int max77686_resume(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max77686_dev *max77686 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
+index 007f729..b83b7a7 100644
+--- a/drivers/mfd/max77693.c
++++ b/drivers/mfd/max77693.c
+@@ -334,7 +334,7 @@ MODULE_DEVICE_TABLE(i2c, max77693_i2c_id);
+ 
+ static int max77693_suspend(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max77693_dev *max77693 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev)) {
+@@ -347,7 +347,7 @@ static int max77693_suspend(struct device *dev)
+ 
+ static int max77693_resume(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max77693_dev *max77693 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev)) {
+diff --git a/drivers/mfd/max77843.c b/drivers/mfd/max77843.c
+index 586098f..7cfc95b 100644
+--- a/drivers/mfd/max77843.c
++++ b/drivers/mfd/max77843.c
+@@ -197,7 +197,7 @@ MODULE_DEVICE_TABLE(i2c, max77843_id);
+ 
+ static int __maybe_unused max77843_suspend(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max77693_dev *max77843 = i2c_get_clientdata(i2c);
+ 
+ 	disable_irq(max77843->irq);
+@@ -209,7 +209,7 @@ static int __maybe_unused max77843_suspend(struct device *dev)
+ 
+ static int __maybe_unused max77843_resume(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max77693_dev *max77843 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+diff --git a/drivers/mfd/max8925-i2c.c b/drivers/mfd/max8925-i2c.c
+index b0fe810..70443b1 100644
+--- a/drivers/mfd/max8925-i2c.c
++++ b/drivers/mfd/max8925-i2c.c
+@@ -215,7 +215,7 @@ static int max8925_remove(struct i2c_client *client)
+ #ifdef CONFIG_PM_SLEEP
+ static int max8925_suspend(struct device *dev)
+ {
+-	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *client = to_i2c_client(dev);
+ 	struct max8925_chip *chip = i2c_get_clientdata(client);
+ 
+ 	if (device_may_wakeup(dev) && chip->wakeup_flag)
+@@ -225,7 +225,7 @@ static int max8925_suspend(struct device *dev)
+ 
+ static int max8925_resume(struct device *dev)
+ {
+-	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *client = to_i2c_client(dev);
+ 	struct max8925_chip *chip = i2c_get_clientdata(client);
+ 
+ 	if (device_may_wakeup(dev) && chip->wakeup_flag)
+diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+index 156ed6f..f316348 100644
+--- a/drivers/mfd/max8997.c
++++ b/drivers/mfd/max8997.c
+@@ -437,7 +437,7 @@ static u8 max8997_dumpaddr_haptic[] = {
+ 
+ static int max8997_freeze(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
+ 	int i;
+ 
+@@ -459,7 +459,7 @@ static int max8997_freeze(struct device *dev)
+ 
+ static int max8997_restore(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
+ 	int i;
+ 
+@@ -481,7 +481,7 @@ static int max8997_restore(struct device *dev)
+ 
+ static int max8997_suspend(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+@@ -491,7 +491,7 @@ static int max8997_suspend(struct device *dev)
+ 
+ static int max8997_resume(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max8997_dev *max8997 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+diff --git a/drivers/mfd/max8998.c b/drivers/mfd/max8998.c
+index a7afe3b..ab28b29 100644
+--- a/drivers/mfd/max8998.c
++++ b/drivers/mfd/max8998.c
+@@ -274,7 +274,7 @@ MODULE_DEVICE_TABLE(i2c, max8998_i2c_id);
+ 
+ static int max8998_suspend(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max8998_dev *max8998 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+@@ -284,7 +284,7 @@ static int max8998_suspend(struct device *dev)
+ 
+ static int max8998_resume(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct max8998_dev *max8998 = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+@@ -344,7 +344,7 @@ static struct max8998_reg_dump max8998_dump[] = {
+ /* Save registers before hibernation */
+ static int max8998_freeze(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(max8998_dump); i++)
+@@ -357,7 +357,7 @@ static int max8998_freeze(struct device *dev)
+ /* Restore registers after hibernation */
+ static int max8998_restore(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(max8998_dump); i++)
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index c9802ba..400e1d7 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -536,7 +536,7 @@ static void sec_pmic_shutdown(struct i2c_client *i2c)
+ #ifdef CONFIG_PM_SLEEP
+ static int sec_pmic_suspend(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+@@ -557,7 +557,7 @@ static int sec_pmic_suspend(struct device *dev)
+ 
+ static int sec_pmic_resume(struct device *dev)
+ {
+-	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
++	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
+ 
+ 	if (device_may_wakeup(dev))
+-- 
+2.5.0
