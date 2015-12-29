@@ -1,113 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: EXYNOS: dts: DeviceTree for v4.5, 2nd try
-Date: Tue, 29 Dec 2015 15:03:17 +0900
-Message-ID: <1451368997-16809-1-git-send-email-k.kozlowski@samsung.com>
-References: <20151222045221.GH30172@localhost>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20151222045221.GH30172@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arm@kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] spi: s3c64xx: Remove unused platform_device_id entries
+Date: Tue, 29 Dec 2015 18:34:40 +0100
+Message-ID: <1451410480-13935-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:44659 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753200AbbL2RhI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Dec 2015 12:37:08 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi,
+s5pv210 and exynos4 are now DT only platforms hence these
+entries can now be safely removed from the match table.
 
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
-This is an updated pull request, without the Exynos5410 DTS pinctrl
-changes.
-
-I am still not sure why they have to be acked separately but I do not
-want to hold on the changes because of this. However if the pinctrl
-commit is okay, then please pull tag 'tags/samsung-dt-4.5' instead.
-
-
-This contains the dependency: SSS clock for Exynos4, acked by Stephen
-Boyd (tag: 'samsung-clk-exynos4-4.5').
-
-
-Best regards,
-Krzysztof
-
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.5-2
-
-for you to fetch changes up to bf0dda345b0ee1af287f043857fc34ecfa206293:
-
-  ARM: dts: Unify G2D device node with other devices on exynos4 (2015-12-29 09:07:44 +0900)
-
-----------------------------------------------------------------
-Samsung DeviceTree updates and improvements for 4.5
-1. eMMC/SDIO minor fixes usage of bindings on Snow and Peach
-   Chromebooks.
-2. Remove FIMD from Odroid XU3-family because on XU3 it cannot be used
-   yet and on XU3-Lite and XU4 it is not supported.
-3. Remove deprecated since June 2013 samsung,exynos5-hdmi.
-4. Add support for Pseudo Random Generator on Exynos4 (Trats2 for now).
-   This depends on new SSS clock.
-5. Add rotator nodes for Exynos4 and Exynos5.
-6. Switch DWC3_1 on Odroid XU3 and XU3-Lite to peripheral mode because
-   now it cannot be used as OTG.
-7. Cleanup the G2D usage on Exynos4 and add it to a proper domain
-   in case of Exynos4210.
-8. Put MDMA1 in proper domain on Exynos4210 as well.
-9. Minor cleanups.
-
-----------------------------------------------------------------
-Andrzej Hajda (1):
-      dt-bindings: remove deprecated compatible string from exynos-hdmi
-
-Javier Martinez Canillas (7):
-      ARM: dts: Mark SDIO as non-removable in exynos5800-peach-pi
-      ARM: dts: Mark SDIO as non-removable in exynos5420-peach-pit
-      ARM: dts: Mark SDIO as non-removable in exynos5250-snow-common
-      ARM: dts: Remove broken-cd from eMMC node in exynos5800-peach-pi
-      ARM: dts: Remove broken-cd from eMMC node in exynos5420-peach-pi
-      ARM: dts: Mark eMMC as non-removable in exynos5250-snow-common
-      ARM: dts: Remove unneeded GPIO include in exynos4412-odroidu3
-
-Krzysztof Kozlowski (4):
-      clk: samsung: exynos4: Add SSS gate clock
-      Merge tag 'samsung-clk-exynos4-4.5' into next/dt
-      ARM: dts: Add PRNG module for exynos4
-      ARM: dts: Enable PRNG module on exynos4412-trats2
-
-Marek Szyprowski (10):
-      ARM: dts: Remove fimd node from exynos5422-odroidxu3-common
-      ARM: dts: Add rotator nodes on exynos4
-      ARM: dts: Fix power domain for sysmmu-rotator device on exynos4
-      ARM: dts: Add rotator node on exynos5250
-      ARM: dts: Add rotator node on exynos5420
-      ARM: dts: Use peripheral mode for dwc3_1 on exynos5422-odroidxu3
-      ARM: dts: exynos4210-universal_c210: Disable DMA for UARTs
-      ARM: dts: MDMA1 device belongs to LCD0 power domain on exynos4210
-      ARM: dts: Add power domain to G2D device on exynos4210
-      ARM: dts: Unify G2D device node with other devices on exynos4
-
- .../bindings/display/exynos/exynos_hdmi.txt           |  7 +++----
- arch/arm/boot/dts/exynos4.dtsi                        | 18 +++++++++++++++++-
- arch/arm/boot/dts/exynos4210-origen.dts               |  4 ----
- arch/arm/boot/dts/exynos4210-smdkv310.dts             |  4 ----
- arch/arm/boot/dts/exynos4210-universal_c210.dts       |  8 ++++++++
- arch/arm/boot/dts/exynos4210.dtsi                     | 14 +++++++++++++-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi       |  4 ----
- arch/arm/boot/dts/exynos4412-odroidu3.dts             |  1 -
- arch/arm/boot/dts/exynos4412-origen.dts               |  4 ----
- arch/arm/boot/dts/exynos4412-smdk4412.dts             |  4 ----
- arch/arm/boot/dts/exynos4412-trats2.dts               |  4 ++++
- arch/arm/boot/dts/exynos4x12.dtsi                     |  5 ++++-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi         |  6 ++----
- arch/arm/boot/dts/exynos5250.dtsi                     |  9 +++++++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts            |  5 +----
- arch/arm/boot/dts/exynos5420.dtsi                     | 19 +++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi    |  5 -----
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts       |  2 +-
- arch/arm/boot/dts/exynos5422-odroidxu3.dts            |  2 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts             |  5 +----
- drivers/clk/samsung/clk-exynos4.c                     |  1 +
- include/dt-bindings/clock/exynos4.h                   |  1 +
- 22 files changed, 85 insertions(+), 47 deletions(-)
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 8e86e7f..ec697fe 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1370,12 +1370,6 @@ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
+ 	}, {
+ 		.name		= "s3c6410-spi",
+ 		.driver_data	= (kernel_ulong_t)&s3c6410_spi_port_config,
+-	}, {
+-		.name		= "s5pv210-spi",
+-		.driver_data	= (kernel_ulong_t)&s5pv210_spi_port_config,
+-	}, {
+-		.name		= "exynos4210-spi",
+-		.driver_data	= (kernel_ulong_t)&exynos4_spi_port_config,
+ 	},
+ 	{ },
+ };
+-- 
+1.7.9.5
