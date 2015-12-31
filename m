@@ -1,65 +1,41 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: s3c64xx: fix pm-debug compilation
-Date: Thu, 31 Dec 2015 17:27:34 +0100
-Message-ID: <2791852.KVKFoWj0aZ@wuerfel>
-References: <5515725.ojLSny3TOX@wuerfel> <56809642.2060100@samsung.com>
+Subject: Re: [GIT PULL] ARM: EXYNOS: dts: DeviceTree for v4.5, 2nd try
+Date: Thu, 31 Dec 2015 17:33 +0100
+Message-ID: <4826405.S0bHR9ucyK@wuerfel>
+References: <20151222045221.GH30172@localhost> <1451368997-16809-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.74]:55060 "EHLO
+Received: from mout.kundenserver.de ([217.72.192.73]:53478 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751021AbbLaQ2R (ORCPT
+	with ESMTP id S1754282AbbLaQdn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Dec 2015 11:28:17 -0500
-In-Reply-To: <56809642.2060100@samsung.com>
+	Thu, 31 Dec 2015 11:33:43 -0500
+In-Reply-To: <1451368997-16809-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-On Monday 28 December 2015 10:54:10 Krzysztof Kozlowski wrote:
-> On 18.12.2015 23:46, Arnd Bergmann wrote:
-> > I got one randconfig build that failed to compile plat-samsung/pm-debug.c
-> > on s3c64xx:
-> > 
-> > In file included from arch/arm/plat-samsung/pm-debug.c:27:0:
-> > arch/arm/mach-s3c64xx/include/mach/pm-core.h: In function 's3c_pm_debug_init_uart':
-> > arch/arm/mach-s3c64xx/include/mach/pm-core.h:25:25: error: 'S3C_VA_SYS' undeclared (first use in this function)
-> >   u32 tmp = __raw_readl(S3C_PCLK_GATE);
-> > arch/arm/mach-s3c64xx/include/mach/pm-core.h:25:25: note: each undeclared identifier is reported only once for each function it appears in
-> > arch/arm/mach-s3c64xx/include/mach/pm-core.h:39:2: error: implicit declaration of function 'udelay' [-Werror=implicit-function-declaration]
-> >   udelay(10);
-> > 
-> > I have not investigated why this does not show up much more often, I
-> > guess the headers are usually included from elsewhere, but adding
-> > explicit #include statements is an obvious fix.
-> > 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> > I suspect this has been broken for a long time, so no rush, but please
-> > apply this to a cleanup branch.
-> > 
+On Tuesday 29 December 2015 15:03:17 Krzysztof Kozlowski wrote:
+> Samsung DeviceTree updates and improvements for 4.5
+> 1. eMMC/SDIO minor fixes usage of bindings on Snow and Peach
+>    Chromebooks.
+> 2. Remove FIMD from Odroid XU3-family because on XU3 it cannot be used
+>    yet and on XU3-Lite and XU4 it is not supported.
+> 3. Remove deprecated since June 2013 samsung,exynos5-hdmi.
+> 4. Add support for Pseudo Random Generator on Exynos4 (Trats2 for now).
+>    This depends on new SSS clock.
+> 5. Add rotator nodes for Exynos4 and Exynos5.
+> 6. Switch DWC3_1 on Odroid XU3 and XU3-Lite to peripheral mode because
+>    now it cannot be used as OTG.
+> 7. Cleanup the G2D usage on Exynos4 and add it to a proper domain
+>    in case of Exynos4210.
+> 8. Put MDMA1 in proper domain on Exynos4210 as well.
+> 9. Minor cleanups.
 > 
-> The dependencies for plat-samsung/SAMSUNG_PM_* symbols are little bit
-> mixed up:
-> 1. pm-common.o depends on PM_SLEEP,
-> 2. pm.o and pm-debug.o depend on PM and sometimes they use stuff from
-> pm-common.
-> 
-> It is possible to create a config with PM_SLEEP=n and PM=y so this is
-> confusing (pm-common won't be linked).
 
-Ok, thanks for taking a deeper look into this.
-
-> I think this still compiles fine because of various #ifdefs but it would
-> be nice to clean it up.
->
-> Anyway your patch looks correct:
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-I've applied both patches on top of next/multiplatform now, to avoid
-conflicts with other changes in that branch.
+Pulled into next/dt, thanks!
 
 	Arnd
