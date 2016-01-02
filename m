@@ -1,41 +1,152 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] ARM: EXYNOS: dts: DeviceTree for v4.5, 2nd try
-Date: Thu, 31 Dec 2015 17:33 +0100
-Message-ID: <4826405.S0bHR9ucyK@wuerfel>
-References: <20151222045221.GH30172@localhost> <1451368997-16809-1-git-send-email-k.kozlowski@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: Odroid U3 mutex deadlock.
+Date: Sat, 2 Jan 2016 10:44:32 +0530
+Message-ID: <CANAwSgTrz8=9r9jkKQY_ZN3fsvBs9QpeTxLG1Ac_8SfAULoyHw@mail.gmail.com>
+References: <CANAwSgSE4UE5jn4Rp0LfVhDcSP=ynDsbCaUSHmM31_MF849bSw@mail.gmail.com>
+ <566E0319.6040100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.73]:53478 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754282AbbLaQdn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Dec 2015 11:33:43 -0500
-In-Reply-To: <1451368997-16809-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <566E0319.6040100@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-On Tuesday 29 December 2015 15:03:17 Krzysztof Kozlowski wrote:
-> Samsung DeviceTree updates and improvements for 4.5
-> 1. eMMC/SDIO minor fixes usage of bindings on Snow and Peach
->    Chromebooks.
-> 2. Remove FIMD from Odroid XU3-family because on XU3 it cannot be used
->    yet and on XU3-Lite and XU4 it is not supported.
-> 3. Remove deprecated since June 2013 samsung,exynos5-hdmi.
-> 4. Add support for Pseudo Random Generator on Exynos4 (Trats2 for now).
->    This depends on new SSS clock.
-> 5. Add rotator nodes for Exynos4 and Exynos5.
-> 6. Switch DWC3_1 on Odroid XU3 and XU3-Lite to peripheral mode because
->    now it cannot be used as OTG.
-> 7. Cleanup the G2D usage on Exynos4 and add it to a proper domain
->    in case of Exynos4210.
-> 8. Put MDMA1 in proper domain on Exynos4210 as well.
-> 9. Minor cleanups.
-> 
+Hi Krzysztof
 
-Pulled into next/dt, thanks!
+On 14 December 2015 at 05:15, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 12.12.2015 13:32, Anand Moon wrote:
+>> Hi Krzysztof,
+>>
+>> I am just observing this deadlock om my Odroid U3.
+>
+> This is not a deadlock yet, just a report from lockdep. Could be a real
+> issue, could be false positive, maybe some locks miss nesting annotations.
+>
+> Typical information for bug report would be useful, like the exact
+> version (it is mentioned in lockdep report but is it really correct?)
+> and reproducibility. And of course git-bisect would be nice to have, see:
+> Documentation/BUG-HUNTING
+>
+> Best regards,
+> Krzysztof
+>
+>
+Thanks for your inputs. I narrowed down to this commit.
+----------------------------------------------------------------------------------
+commit ec459c0c77faca53cf161830cb264e51bb1abba6
+Author: Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Wed Feb 4 23:44:15 2015 +0900
 
-	Arnd
+    ARM: dts: add dependency between TV and LCD0 power domains for exynos4
+
+    TV Mixer needs both TV and LCD0 domains enabled to be fully operational.
+    This dependency is modelled by making TV power domains a sub-domain of
+    LCD0 power domain.
+
+    Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+    Signed-off-by: Kukjin Kim <kgene@kernel.org>
+-------------------------------------------------------------------------------------
+After reverting this I am not observing below lockdep warning report.
+But after reverting this patch I observer another bug.
+
+Best regards.
+-Anand Moon
+
+>> ------------------------------------------------------------------------------------------------------------------
+>>
+>> [    2.937531] =============================================
+>> [    2.938733] [ INFO: possible recursive locking detected ]
+>> [    2.944117] 4.4.0-rc4-xu3s #32 Not tainted
+>> [    2.948195] ---------------------------------------------
+>> [    2.953577] swapper/0/1 is trying to acquire lock:
+>> [    2.958351]  (&genpd->lock){+.+...}, at: [<c0361550>]
+>> __genpd_poweron+0x64/0x108
+>> [    2.965727]
+>> [    2.965727] but task is already holding lock:
+>> [    2.971543]  (&genpd->lock){+.+...}, at: [<c0361af8>]
+>> genpd_dev_pm_attach+0x168/0x1b8
+>> [    2.979355]
+>> [    2.979355] other info that might help us debug this:
+>> [    2.985865]  Possible unsafe locking scenario:
+>> [    2.985865]
+>> [    2.991768]        CPU0
+>> [    2.994198]        ----
+>> [    2.996628]   lock(&genpd->lock);
+>> [    2.999926]   lock(&genpd->lock);
+>> [    3.003225]
+>> [    3.003225]  *** DEADLOCK ***
+>> [    3.003225]
+>> [    3.009128]  May be due to missing lock nesting notation
+>> [    3.009128]
+>> [    3.015900] 3 locks held by swapper/0/1:
+>> [    3.019804]  #0:  (&dev->mutex){......}, at: [<c0350910>]
+>> __driver_attach+0x48/0x98
+>> [    3.027442]  #1:  (&dev->mutex){......}, at: [<c0350920>]
+>> __driver_attach+0x58/0x98
+>> [    3.035081]  #2:  (&genpd->lock){+.+...}, at: [<c0361af8>]
+>> genpd_dev_pm_attach+0x168/0x1b8
+>> [    3.043326]
+>> [    3.043326] stack backtrace:
+>> [    3.047671] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
+>> [    3.054351] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> [    3.060444] [<c0016c98>] (unwind_backtrace) from [<c00139c4>]
+>> (show_stack+0x10/0x14)
+>> [    3.068163] [<c00139c4>] (show_stack) from [<c0270df0>]
+>> (dump_stack+0x84/0xc4)
+>> [    3.075367] [<c0270df0>] (dump_stack) from [<c00780b8>]
+>> (__lock_acquire+0x1f88/0x215c)
+>> [    3.083262] [<c00780b8>] (__lock_acquire) from [<c007886c>]
+>> (lock_acquire+0xa4/0xd0)
+>> [    3.090990] [<c007886c>] (lock_acquire) from [<c0641f2c>]
+>> (mutex_lock_nested+0x70/0x4d4)
+>> [    3.099061] [<c0641f2c>] (mutex_lock_nested) from [<c0361550>]
+>> (__genpd_poweron+0x64/0x108)
+>> [    3.107393] [<c0361550>] (__genpd_poweron) from [<c0361b00>]
+>> (genpd_dev_pm_attach+0x170/0x1b8)
+>> [    3.115986] [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>]
+>> (platform_drv_probe+0x2c/0xac)
+>> [    3.124667] [<c03520a8>] (platform_drv_probe) from [<c03507d4>]
+>> (driver_probe_device+0x208/0x2fc)
+>> [    3.133519] [<c03507d4>] (driver_probe_device) from [<c035095c>]
+>> (__driver_attach+0x94/0x98)
+>> [    3.141939] [<c035095c>] (__driver_attach) from [<c034ec14>]
+>> (bus_for_each_dev+0x68/0x9c)
+>> [    3.150097] [<c034ec14>] (bus_for_each_dev) from [<c034fec8>]
+>> (bus_add_driver+0x1a0/0x218)
+>> [    3.158344] [<c034fec8>] (bus_add_driver) from [<c035115c>]
+>> (driver_register+0x78/0xf8)
+>> [    3.166330] [<c035115c>] (driver_register) from [<c0338488>]
+>> (exynos_drm_register_drivers+0x28/0x74)
+>> [    3.175441] [<c0338488>] (exynos_drm_register_drivers) from
+>> [<c0338594>] (exynos_drm_init+0x6c/0xc4)
+>> [    3.184556] [<c0338594>] (exynos_drm_init) from [<c00097f4>]
+>> (do_one_initcall+0x90/0x1dc)
+>> [    3.192718] [<c00097f4>] (do_one_initcall) from [<c0895e08>]
+>> (kernel_init_freeable+0x158/0x1f8)
+>> [    3.201396] [<c0895e08>] (kernel_init_freeable) from [<c063ecac>]
+>> (kernel_init+0x8/0xe8)
+>> [    3.209469] [<c063ecac>] (kernel_init) from [<c000f7d0>]
+>> (ret_from_fork+0x14/0x24)
+>> [    3.217932] exynos-hdmi 12d00000.hdmi: GPIO lookup for consumer hpd
+>> [    3.223293] exynos-hdmi 12d00000.hdmi: using device tree for GPIO lookup
+>> [    3.229980] of_get_named_gpiod_flags: can't parse 'hpd-gpios'
+>> property of node '/hdmi@12D00000[0]'
+>> [    3.238945] of_get_named_gpiod_flags: parsed 'hpd-gpio' property of
+>> node '/hdmi@12D00000[0]' - status (0)
+>> [    3.253430] exynos-drm exynos-drm: bound 12c10000.mixer (ops
+>> mixer_component_ops)
+>> [    3.256216] exynos-drm exynos-drm: bound 12d00000.hdmi (ops
+>> hdmi_component_ops)
+>> [    3.263245] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+>> [    3.269812] [drm] No driver support for vblank timestamp query.
+>> [    3.323251] exynos-drm exynos-drm: fb0:  frame buffer device
+>> [    3.341464] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+>>
+>> -----------------------------------------------------------------------------------------------------------------------
+>> -Anand Moon
+>>
+>>
+>
