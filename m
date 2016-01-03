@@ -1,35 +1,35 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2] PM / OPP: Fix parsing of opp-microvolt and opp-microamp properties
-Date: Sun, 03 Jan 2016 01:58:54 +0100
-Message-ID: <6184082.s696CKn4PL@vostro.rjw.lan>
-References: <1471955.ORlHo2b56O@amdc1976> <20151218015135.GD28277@ubuntu>
+From: "Jeff Skoll" <s_w9gc9x@uni-kassel.de>
+Subject: Charity Donation
+Date: Sun, 03 Jan 2016 04:37:42 -0500
+Message-ID: <auto-000000706571@mailadmin.uni-kassel.de>
+Reply-To: jeff.skoll@skollcharity.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20151218015135.GD28277@ubuntu>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, nm@ti.com, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, open list <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Shawn Guo <shawnguo@kernel.org>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx4.its.uni-kassel.de ([141.51.12.63]:49104 "EHLO
+	mx4.its.uni-kassel.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751393AbcACJjW convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 3 Jan 2016 04:39:22 -0500
+Content-Description: Mail message body
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Me <s_w9gc9x@uni-kassel.de>
 
-On Friday, December 18, 2015 07:21:35 AM Viresh Kumar wrote:
-> On 17-12-15, 19:04, Bartlomiej Zolnierkiewicz wrote:
-> > Commit 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name>'
-> > bindings") broke support for parsing standard opp-microvolt and
-> > opp-microamp properties.  Fix it by setting 'name' string to
-> > proper value for !prop cases.
-> > 
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Fixes: 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name> 'bindings")
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> > v2:
-> > - rework the changes as requested by Viresh
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Hi,
+My name is Jeffrey Skoll, a philanthropist and the founder of one of th=
+e largest private foundations in the world. I believe strongly in =E2=80=
+=98giving while living.=E2=80=99 I had one idea that never changed in m=
+y mind =E2=80=94 that you should use your wealth to help people and I h=
+ave decided to secretly give USD2.498 Million to a randomly selected in=
+dividual. On receipt of this email, you should count yourself as the in=
+dividual. Kindly get back to me at your earliest convenience, so I know=
+ your email address is valid.
 
-Applied, thanks!
+Visit the web page to know more about me: http://www.theglobeandmail.co=
+m/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/a=
+rticle4209888/ or you can read an article of me on Wikipedia.
 
+Regards,
+Jeffrey Skoll.
