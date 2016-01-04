@@ -1,59 +1,188 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v5 3/5] driver core: handle -EPROBE_DEFER from
- bus_type.match()
-Date: Mon, 4 Jan 2016 16:31:00 +0000
-Message-ID: <20160104163100.GK19062@n2100.arm.linux.org.uk>
-References: <1450868368-5650-1-git-send-email-m.szyprowski@samsung.com>
- <1450868368-5650-4-git-send-email-m.szyprowski@samsung.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH v2 1/3] rtc: s5m: Cleanup by removing useless 'rtc'
+ prefix from fields
+Date: Mon, 4 Jan 2016 18:08:41 +0100
+Message-ID: <20160104170841.GD32724@piout.net>
+References: <1451450847-928-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:39948 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751374AbcADQbS (ORCPT
+Received: from down.free-electrons.com ([37.187.137.238]:44566 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751688AbcADRIo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jan 2016 11:31:18 -0500
+	Mon, 4 Jan 2016 12:08:44 -0500
 Content-Disposition: inline
-In-Reply-To: <1450868368-5650-4-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1451450847-928-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Alim Akhtar <alim.akhtar@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
 
-On Wed, Dec 23, 2015 at 11:59:26AM +0100, Marek Szyprowski wrote:
-> From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Hi,
+
+On 30/12/2015 at 13:47:25 +0900, Krzysztof Kozlowski wrote :
+> Remove the 'rtc' prefix from some of the fields in struct
+> s5m_rtc_reg_config because it is obvious - this is a RTC driver. No
+> functional changes.
 > 
-> Allow implementations of the match() callback in struct bus_type to
-> return errors and if it's -EPROBE_DEFER then queue the device for
-> deferred probing.
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > 
-> This is useful to buses such as AMBA in which devices are registered
-> before their matching information can be retrieved from the HW
-> (typically because a clock driver hasn't probed yet).
+
+I was going to apply those patches but they don't apply cleanly on
+rtc-next. Did I miss something?
+
+> ---
 > 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> [changed if-else code structure, adjusted documentation to match the code,
-> extended comments]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-This patch _really_ needs an ack from Greg before I can merge it.
-
-DRIVER CORE, KOBJECTS, DEBUGFS, KERNFS AND SYSFS
-M:      Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-T:      git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.gitS:      Supported
-F:      Documentation/kobject.txt
-F:      drivers/base/
-
-alternatively, the whole series should be taken by Greg, with my ack
-for the amba and ARM bits.
-
-Given that Greg is unlikely to respond this close to the merge window
-(he's not responded to my messages about the amba-pl011 driver having
-been messed up by the wrong patch set being taken...) I think this has
-basically missed the 4.5 merge window.  Sorry.
+> Changes since v1:
+> 1. None.
+> ---
+>  drivers/rtc/rtc-s5m.c | 40 +++++++++++++++++++---------------------
+>  1 file changed, 19 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+> index 0d68a85dd429..85649861a6b0 100644
+> --- a/drivers/rtc/rtc-s5m.c
+> +++ b/drivers/rtc/rtc-s5m.c
+> @@ -55,9 +55,9 @@ struct s5m_rtc_reg_config {
+>  	 * will enable update of time or alarm register. Then it will be
+>  	 * auto-cleared after successful update.
+>  	 */
+> -	unsigned int rtc_udr_update;
+> -	/* Mask for UDR field in 'rtc_udr_update' register */
+> -	unsigned int rtc_udr_mask;
+> +	unsigned int udr_update;
+> +	/* Mask for UDR field in 'udr_update' register */
+> +	unsigned int udr_mask;
+>  };
+>  
+>  /* Register map for S5M8763 and S5M8767 */
+> @@ -67,8 +67,8 @@ static const struct s5m_rtc_reg_config s5m_rtc_regs = {
+>  	.ctrl			= S5M_ALARM1_CONF,
+>  	.alarm0			= S5M_ALARM0_SEC,
+>  	.alarm1			= S5M_ALARM1_SEC,
+> -	.rtc_udr_update		= S5M_RTC_UDR_CON,
+> -	.rtc_udr_mask		= S5M_RTC_UDR_MASK,
+> +	.udr_update		= S5M_RTC_UDR_CON,
+> +	.udr_mask		= S5M_RTC_UDR_MASK,
+>  };
+>  
+>  /*
+> @@ -81,8 +81,8 @@ static const struct s5m_rtc_reg_config s2mps_rtc_regs = {
+>  	.ctrl			= S2MPS_RTC_CTRL,
+>  	.alarm0			= S2MPS_ALARM0_SEC,
+>  	.alarm1			= S2MPS_ALARM1_SEC,
+> -	.rtc_udr_update		= S2MPS_RTC_UDR_CON,
+> -	.rtc_udr_mask		= S2MPS_RTC_WUDR_MASK,
+> +	.udr_update		= S2MPS_RTC_UDR_CON,
+> +	.udr_mask		= S2MPS_RTC_WUDR_MASK,
+>  };
+>  
+>  struct s5m_rtc_info {
+> @@ -166,9 +166,8 @@ static inline int s5m8767_wait_for_udr_update(struct s5m_rtc_info *info)
+>  	unsigned int data;
+>  
+>  	do {
+> -		ret = regmap_read(info->regmap, info->regs->rtc_udr_update,
+> -				&data);
+> -	} while (--retry && (data & info->regs->rtc_udr_mask) && !ret);
+> +		ret = regmap_read(info->regmap, info->regs->udr_update, &data);
+> +	} while (--retry && (data & info->regs->udr_mask) && !ret);
+>  
+>  	if (!retry)
+>  		dev_err(info->dev, "waiting for UDR update, reached max number of retries\n");
+> @@ -214,7 +213,7 @@ static inline int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
+>  	int ret;
+>  	unsigned int data;
+>  
+> -	ret = regmap_read(info->regmap, info->regs->rtc_udr_update, &data);
+> +	ret = regmap_read(info->regmap, info->regs->udr_update, &data);
+>  	if (ret < 0) {
+>  		dev_err(info->dev, "failed to read update reg(%d)\n", ret);
+>  		return ret;
+> @@ -223,21 +222,20 @@ static inline int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
+>  	switch (info->device_type) {
+>  	case S5M8763X:
+>  	case S5M8767X:
+> -		data |= info->regs->rtc_udr_mask | S5M_RTC_TIME_EN_MASK;
+> +		data |= info->regs->udr_mask | S5M_RTC_TIME_EN_MASK;
+>  	case S2MPS15X:
+>  		/* As per UM, for write time register, set WUDR bit to high */
+>  		data |= S2MPS15_RTC_WUDR_MASK;
+>  		break;
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> -		data |= info->regs->rtc_udr_mask;
+> +		data |= info->regs->udr_mask;
+>  		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+>  
+> -
+> -	ret = regmap_write(info->regmap, info->regs->rtc_udr_update, data);
+> +	ret = regmap_write(info->regmap, info->regs->udr_update, data);
+>  	if (ret < 0) {
+>  		dev_err(info->dev, "failed to write update reg(%d)\n", ret);
+>  		return ret;
+> @@ -253,14 +251,14 @@ static inline int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  	int ret;
+>  	unsigned int data;
+>  
+> -	ret = regmap_read(info->regmap, info->regs->rtc_udr_update, &data);
+> +	ret = regmap_read(info->regmap, info->regs->udr_update, &data);
+>  	if (ret < 0) {
+>  		dev_err(info->dev, "%s: fail to read update reg(%d)\n",
+>  			__func__, ret);
+>  		return ret;
+>  	}
+>  
+> -	data |= info->regs->rtc_udr_mask;
+> +	data |= info->regs->udr_mask;
+>  	switch (info->device_type) {
+>  	case S5M8763X:
+>  	case S5M8767X:
+> @@ -268,7 +266,7 @@ static inline int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  		break;
+>  	case S2MPS15X:
+>  		/* As per UM, for write alarm, set A_UDR(bit[4]) to high
+> -		 * rtc_udr_mask above sets bit[4]
+> +		 * udr_mask above sets bit[4]
+>  		 */
+>  		break;
+>  	case S2MPS14X:
+> @@ -281,7 +279,7 @@ static inline int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  		return -EINVAL;
+>  	}
+>  
+> -	ret = regmap_write(info->regmap, info->regs->rtc_udr_update, data);
+> +	ret = regmap_write(info->regmap, info->regs->udr_update, data);
+>  	if (ret < 0) {
+>  		dev_err(info->dev, "%s: fail to write update reg(%d)\n",
+>  			__func__, ret);
+> @@ -292,7 +290,7 @@ static inline int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  
+>  	/* On S2MPS13 the AUDR is not auto-cleared */
+>  	if (info->device_type == S2MPS13X)
+> -		regmap_update_bits(info->regmap, info->regs->rtc_udr_update,
+> +		regmap_update_bits(info->regmap, info->regs->udr_update,
+>  				   S2MPS13_RTC_AUDR_MASK, 0);
+>  
+>  	return ret;
+> @@ -339,7 +337,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  	if (info->device_type == S2MPS15X || info->device_type == S2MPS14X ||
+>  			info->device_type == S2MPS13X) {
+>  		ret = regmap_update_bits(info->regmap,
+> -				info->regs->rtc_udr_update,
+> +				info->regs->udr_update,
+>  				S2MPS_RTC_RUDR_MASK, S2MPS_RTC_RUDR_MASK);
+>  		if (ret) {
+>  			dev_err(dev,
+> -- 
+> 1.9.1
+> 
 
 -- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
