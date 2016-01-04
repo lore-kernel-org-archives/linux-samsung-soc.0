@@ -1,148 +1,48 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] power: genpd: fix lockdep issue for all subdomains
-Date: Mon, 04 Jan 2016 11:39:42 +0100
-Message-ID: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:25136 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752030AbcADKjv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jan 2016 05:39:51 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix kernel panic issue at drm releasing
+Date: Mon, 04 Jan 2016 20:57:46 +0900
+Message-ID: <568A5E3A.8090601@samsung.com>
+References: <1450948214-14688-1-git-send-email-inki.dae@samsung.com>
+ <CAPj87rMUrt55rBSXiFAsJ=vKUjohDmZPeC2CTMbTNAbVkCgYBg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPj87rMUrt55rBSXiFAsJ=vKUjohDmZPeC2CTMbTNAbVkCgYBg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-During genpd_poweron, genpd->lock is acquired recursively for each
-parent (master) domain, which are separate obejcts. This confuses
-lockdep, which considers every operation on genpd->lock as being done on
-the same lock class. This leads to the following false positive warning:
-
-=============================================
-[ INFO: possible recursive locking detected ]
-4.4.0-rc4-xu3s #32 Not tainted
----------------------------------------------
-swapper/0/1 is trying to acquire lock:
- (&genpd->lock){+.+...}, at: [<c0361550>] __genpd_poweron+0x64/0x108
-
-but task is already holding lock:
- (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&genpd->lock);
-  lock(&genpd->lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by swapper/0/1:
- #0:  (&dev->mutex){......}, at: [<c0350910>] __driver_attach+0x48/0x98
- #1:  (&dev->mutex){......}, at: [<c0350920>] __driver_attach+0x58/0x98
- #2:  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
-
-stack backtrace:
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[<c0016c98>] (unwind_backtrace) from [<c00139c4>] (show_stack+0x10/0x14)
-[<c00139c4>] (show_stack) from [<c0270df0>] (dump_stack+0x84/0xc4)
-[<c0270df0>] (dump_stack) from [<c00780b8>] (__lock_acquire+0x1f88/0x215c)
-[<c00780b8>] (__lock_acquire) from [<c007886c>] (lock_acquire+0xa4/0xd0)
-[<c007886c>] (lock_acquire) from [<c0641f2c>] (mutex_lock_nested+0x70/0x4d4)
-[<c0641f2c>] (mutex_lock_nested) from [<c0361550>] (__genpd_poweron+0x64/0x108)
-[<c0361550>] (__genpd_poweron) from [<c0361b00>] (genpd_dev_pm_attach+0x170/0x1b8)
-[<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>] (platform_drv_probe+0x2c/0xac)
-[<c03520a8>] (platform_drv_probe) from [<c03507d4>] (driver_probe_device+0x208/0x2fc)
-[<c03507d4>] (driver_probe_device) from [<c035095c>] (__driver_attach+0x94/0x98)
-[<c035095c>] (__driver_attach) from [<c034ec14>] (bus_for_each_dev+0x68/0x9c)
-[<c034ec14>] (bus_for_each_dev) from [<c034fec8>] (bus_add_driver+0x1a0/0x218)
-[<c034fec8>] (bus_add_driver) from [<c035115c>] (driver_register+0x78/0xf8)
-[<c035115c>] (driver_register) from [<c0338488>] (exynos_drm_register_drivers+0x28/0x74)
-[<c0338488>] (exynos_drm_register_drivers) from [<c0338594>] (exynos_drm_init+0x6c/0xc4)
-[<c0338594>] (exynos_drm_init) from [<c00097f4>] (do_one_initcall+0x90/0x1dc)
-[<c00097f4>] (do_one_initcall) from [<c0895e08>] (kernel_init_freeable+0x158/0x1f8)
-[<c0895e08>] (kernel_init_freeable) from [<c063ecac>] (kernel_init+0x8/0xe8)
-[<c063ecac>] (kernel_init) from [<c000f7d0>] (ret_from_fork+0x14/0x24)
-
-This patch replaces mutex_lock with mutex_lock_nested() and uses
-recursion depth to annotate each genpd->lock operation with separate
-lockdep subclass.
-
-Reported-by: Anand Moon <linux.amoon@gmail.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/base/power/domain.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index b803790..e02ddf6 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -170,16 +170,15 @@ static void genpd_queue_power_off_work(struct generic_pm_domain *genpd)
- 	queue_work(pm_wq, &genpd->power_off_work);
- }
- 
--static int genpd_poweron(struct generic_pm_domain *genpd);
--
- /**
-  * __genpd_poweron - Restore power to a given PM domain and its masters.
-  * @genpd: PM domain to power up.
-+ * @depth: nesting count for lockdep.
-  *
-  * Restore power to @genpd and all of its masters so that it is possible to
-  * resume a device belonging to it.
-  */
--static int __genpd_poweron(struct generic_pm_domain *genpd)
-+static int __genpd_poweron(struct generic_pm_domain *genpd, unsigned int depth)
- {
- 	struct gpd_link *link;
- 	int ret = 0;
-@@ -194,11 +193,16 @@ static int __genpd_poweron(struct generic_pm_domain *genpd)
- 	 * with it.
- 	 */
- 	list_for_each_entry(link, &genpd->slave_links, slave_node) {
--		genpd_sd_counter_inc(link->master);
-+		struct generic_pm_domain *master = link->master;
-+
-+		genpd_sd_counter_inc(master);
-+
-+		mutex_lock_nested(&master->lock, depth + 1);
-+		ret = __genpd_poweron(master, depth + 1);
-+		mutex_unlock(&master->lock);
- 
--		ret = genpd_poweron(link->master);
- 		if (ret) {
--			genpd_sd_counter_dec(link->master);
-+			genpd_sd_counter_dec(master);
- 			goto err;
- 		}
- 	}
-@@ -230,11 +234,12 @@ static int genpd_poweron(struct generic_pm_domain *genpd)
- 	int ret;
- 
- 	mutex_lock(&genpd->lock);
--	ret = __genpd_poweron(genpd);
-+	ret = __genpd_poweron(genpd, 0);
- 	mutex_unlock(&genpd->lock);
- 	return ret;
- }
- 
-+
- static int genpd_save_dev(struct generic_pm_domain *genpd, struct device *dev)
- {
- 	return GENPD_DEV_CALLBACK(genpd, int, save_state, dev);
-@@ -482,7 +487,7 @@ static int pm_genpd_runtime_resume(struct device *dev)
- 	}
- 
- 	mutex_lock(&genpd->lock);
--	ret = __genpd_poweron(genpd);
-+	ret = __genpd_poweron(genpd, 0);
- 	mutex_unlock(&genpd->lock);
- 
- 	if (ret)
--- 
-1.9.2
+SGkgRGFuaWVsLAoKMjAxNeuFhCAxMuyblCAyNOydvCAyMjozMuyXkCBEYW5pZWwgU3RvbmUg7J20
+KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDI0IERlY2VtYmVyIDIwMTUgYXQgMDk6
+MTAsIElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+ICt2b2lkIGV4eW5v
+c19kcm1fY3J0Y19jYW5jZWxfcGFnZV9mbGlwKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPj4gK3sK
+Pj4gKyAgICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5v
+c19jcnRjKGNydGMpOwo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4+ICsKPj4gKyAg
+ICAgICBzcGluX2xvY2tfaXJxc2F2ZSgmY3J0Yy0+ZGV2LT5ldmVudF9sb2NrLCBmbGFncyk7Cj4+
+ICsgICAgICAgZXh5bm9zX2NydGMtPmV2ZW50ID0gTlVMTDsKPj4gKyAgICAgICBzcGluX3VubG9j
+a19pcnFyZXN0b3JlKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPj4gK30KPiAKPiBU
+aGlzIHdpbGwgbGVhayB0aGUgZXZlbnQgYW5kIGV2ZW50IHNwYWNlOyB5b3Ugc2hvdWxkIGNhbGwK
+PiBldmVudC0+YmFzZS5kZXN0cm95KCkgaGVyZS4gV2l0aCB0aGF0IGZpeGVkOgoKUmlnaHQuIHdl
+IGRvbid0IHVzZSBleHlub3Mgc3BlY2lmaWMgcGFnZSBmbGlwIGZ1bmN0aW9uIGFueW1vcmUgd2hp
+Y2ggbWFuYWdlZCB0aGUgZXZlbnQgYXMgYSBsaXN0IHNvIHRoYXQgdGhlIGV2ZW50IG9iamVjdHMg
+Y2FuIGJlIGZyZWVkIGJ5IHBvc3RjbG9zZSBjYWxsYmFjay4KQW55d2F5LCB3b3VsZCBpdCBiZSBi
+ZXR0ZXIgZm9yIGV2ZW50LT5iYXNlLmRlc3RvcnkoKSB0byBiZSBjYWxsZWQgYmV0d2VlbiBzcGlu
+IGxvY2svdW5sb2NrPyAKClRoYW5rcywKSW5raSBEYWUKCj4gUmV2aWV3ZWQtYnk6IERhbmllbCBT
+dG9uZSA8ZGFuaWVsc0Bjb2xsYWJvcmEuY29tPgo+IAo+IENoZWVycywKPiBEYW5pZWwKPiAtLQo+
+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmli
+ZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
+b21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
+Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAo+IApfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
