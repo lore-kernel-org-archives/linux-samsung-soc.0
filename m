@@ -1,35 +1,77 @@
-From: "Jeff Skoll" <s_w9gc9x@uni-kassel.de>
-Subject: Charity Donation
-Date: Sun, 03 Jan 2016 04:37:42 -0500
-Message-ID: <auto-000000706571@mailadmin.uni-kassel.de>
-Reply-To: jeff.skoll@skollcharity.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: Odroid U3 mutex deadlock.
+Date: Mon, 04 Jan 2016 11:38:29 +0100
+Message-ID: <568A4BA5.3090203@samsung.com>
+References: <CANAwSgSE4UE5jn4Rp0LfVhDcSP=ynDsbCaUSHmM31_MF849bSw@mail.gmail.com>
+ <566E0319.6040100@samsung.com>
+ <CANAwSgTrz8=9r9jkKQY_ZN3fsvBs9QpeTxLG1Ac_8SfAULoyHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx4.its.uni-kassel.de ([141.51.12.63]:49104 "EHLO
-	mx4.its.uni-kassel.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751393AbcACJjW convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:63633 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752841AbcADKif (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Jan 2016 04:39:22 -0500
-Content-Description: Mail message body
+	Mon, 4 Jan 2016 05:38:35 -0500
+In-reply-to: <CANAwSgTrz8=9r9jkKQY_ZN3fsvBs9QpeTxLG1Ac_8SfAULoyHw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Me <s_w9gc9x@uni-kassel.de>
+To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Hi,
-My name is Jeffrey Skoll, a philanthropist and the founder of one of th=
-e largest private foundations in the world. I believe strongly in =E2=80=
-=98giving while living.=E2=80=99 I had one idea that never changed in m=
-y mind =E2=80=94 that you should use your wealth to help people and I h=
-ave decided to secretly give USD2.498 Million to a randomly selected in=
-dividual. On receipt of this email, you should count yourself as the in=
-dividual. Kindly get back to me at your earliest convenience, so I know=
- your email address is valid.
+Hi Anand,
 
-Visit the web page to know more about me: http://www.theglobeandmail.co=
-m/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/a=
-rticle4209888/ or you can read an article of me on Wikipedia.
+On 2016-01-02 06:14, Anand Moon wrote:
+> Hi Krzysztof
+>
+> On 14 December 2015 at 05:15, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On 12.12.2015 13:32, Anand Moon wrote:
+>>> Hi Krzysztof,
+>>>
+>>> I am just observing this deadlock om my Odroid U3.
+>> This is not a deadlock yet, just a report from lockdep. Could be a real
+>> issue, could be false positive, maybe some locks miss nesting annotations.
+>>
+>> Typical information for bug report would be useful, like the exact
+>> version (it is mentioned in lockdep report but is it really correct?)
+>> and reproducibility. And of course git-bisect would be nice to have, see:
+>> Documentation/BUG-HUNTING
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+> Thanks for your inputs. I narrowed down to this commit.
+> ----------------------------------------------------------------------------------
+> commit ec459c0c77faca53cf161830cb264e51bb1abba6
+> Author: Marek Szyprowski <m.szyprowski@samsung.com>
+> Date:   Wed Feb 4 23:44:15 2015 +0900
+>
+>      ARM: dts: add dependency between TV and LCD0 power domains for exynos4
+>
+>      TV Mixer needs both TV and LCD0 domains enabled to be fully operational.
+>      This dependency is modelled by making TV power domains a sub-domain of
+>      LCD0 power domain.
+>
+>      Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>      Signed-off-by: Kukjin Kim <kgene@kernel.org>
+> -------------------------------------------------------------------------------------
+> After reverting this I am not observing below lockdep warning report.
+> But after reverting this patch I observer another bug.
 
-Regards,
-Jeffrey Skoll.
+The mentioned lockdep warning is a false positive. Such warning is 
+reported for
+every subdomain present in a system. As you noticed that removing dependency
+between power domains also removes this warning, but it will introduce real
+problems with power on/off sequences of graphics devices.
+
+I will send a patch for genpd core fixing the deplock warning. Thanks for
+reporting the issue and pointing a good place to start digging in the 
+source :)
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
