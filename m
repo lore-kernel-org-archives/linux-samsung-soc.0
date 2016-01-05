@@ -1,58 +1,85 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH] drm/exynos: fix kernel panic issue at drm releasing
-Date: Tue, 05 Jan 2016 19:55:52 +0900
-Message-ID: <568BA138.3050504@samsung.com>
+Date: Tue, 5 Jan 2016 12:08:11 +0100
+Message-ID: <20160105110811.GB8076@phenom.ffwll.local>
 References: <1450948214-14688-1-git-send-email-inki.dae@samsung.com>
  <CAPj87rMUrt55rBSXiFAsJ=vKUjohDmZPeC2CTMbTNAbVkCgYBg@mail.gmail.com>
  <568A5E3A.8090601@samsung.com>
  <CAPj87rOjMnCRsThp3vjOpik4nYcJdV_M1eEJxTOAUVHA700YCg@mail.gmail.com>
+ <568BA138.3050504@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPj87rOjMnCRsThp3vjOpik4nYcJdV_M1eEJxTOAUVHA700YCg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35516 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752095AbcAELIO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Jan 2016 06:08:14 -0500
+Received: by mail-wm0-f47.google.com with SMTP id f206so18532988wmf.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Jan 2016 03:08:13 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <568BA138.3050504@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Daniel Stone <daniel@fooishbar.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-SGkgRGFuaWVsLAoKMjAxNuuFhCAwMeyblCAwNeydvCAwNToyNOyXkCBEYW5pZWwgU3RvbmUg7J20
-KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDQgSmFudWFyeSAyMDE2IGF0IDEyOjU3
-LCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiAyMDE164WEIDEy7JuU
-IDI07J28IDIyOjMy7JeQIERhbmllbCBTdG9uZSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4gT24gMjQg
-RGVjZW1iZXIgMjAxNSBhdCAwOToxMCwgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPiB3
-cm90ZToKPj4+PiArdm9pZCBleHlub3NfZHJtX2NydGNfY2FuY2VsX3BhZ2VfZmxpcChzdHJ1Y3Qg
-ZHJtX2NydGMgKmNydGMpCj4+Pj4gK3sKPj4+PiArICAgICAgIHN0cnVjdCBleHlub3NfZHJtX2Ny
-dGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4+Pj4gKyAgICAgICB1bnNp
-Z25lZCBsb25nIGZsYWdzOwo+Pj4+ICsKPj4+PiArICAgICAgIHNwaW5fbG9ja19pcnFzYXZlKCZj
-cnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPj4+PiArICAgICAgIGV4eW5vc19jcnRjLT5l
-dmVudCA9IE5VTEw7Cj4+Pj4gKyAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjcnRjLT5k
-ZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPj4+PiArfQo+Pj4KPj4+IFRoaXMgd2lsbCBsZWFrIHRo
-ZSBldmVudCBhbmQgZXZlbnQgc3BhY2U7IHlvdSBzaG91bGQgY2FsbAo+Pj4gZXZlbnQtPmJhc2Uu
-ZGVzdHJveSgpIGhlcmUuIFdpdGggdGhhdCBmaXhlZDoKPj4KPj4gUmlnaHQuIHdlIGRvbid0IHVz
-ZSBleHlub3Mgc3BlY2lmaWMgcGFnZSBmbGlwIGZ1bmN0aW9uIGFueW1vcmUgd2hpY2ggbWFuYWdl
-ZCB0aGUgZXZlbnQgYXMgYSBsaXN0IHNvIHRoYXQgdGhlIGV2ZW50IG9iamVjdHMgY2FuIGJlIGZy
-ZWVkIGJ5IHBvc3RjbG9zZSBjYWxsYmFjay4KPj4gQW55d2F5LCB3b3VsZCBpdCBiZSBiZXR0ZXIg
-Zm9yIGV2ZW50LT5iYXNlLmRlc3RvcnkoKSB0byBiZSBjYWxsZWQgYmV0d2VlbiBzcGluIGxvY2sv
-dW5sb2NrPwo+IAo+IFlvdSBtdXN0IGluY3JlbWVudCBldmVudC0+YmFzZS5maWxlX3ByaXYtPmV2
-ZW50X3NwYWNlIChzZWUKPiBkcm1fYXRvbWljLmM6ZGVzdHJveV92YmxhbmtfZXZlbnQpLCBhcyB3
-ZWxsIGFzIGNhbGxpbmcKClJlYXNvbmFibGUgdG8gbWUuIFNlZW1zIG90aGVyIERSTSBkcml2ZXJz
-IGRvbid0IGluY3JlbWVudCBldmVudF9zcGFjZS4KCj4gZXZlbnQtPmJhc2UuZGVzdHJveSAoc2Vl
-IGRybV9mb3BzLmM6ZHJtX3JlYWQpIHVuZGVybmVhdGggZXZlbnRfbG9jaywKPiB5ZXMuCgpJbiBh
-ZGRpdGlvbiwgb25seSBldmVudCBvYmplY3RzIGJlbG9uZ2luZyB0byB0aGUgcmVxdWVzdCBwcm9j
-ZXNzIHNob3VsZCBiZSBkZXN0cm95ZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IENoZWVycywK
-PiBEYW5pZWwKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBs
-aW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1l
-c3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8g
-YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAo+IApfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Tue, Jan 05, 2016 at 07:55:52PM +0900, Inki Dae wrote:
+> Hi Daniel,
+>=20
+> 2016=EB=85=84 01=EC=9B=94 05=EC=9D=BC 05:24=EC=97=90 Daniel Stone =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> > Hi Inki,
+> >=20
+> > On 4 January 2016 at 12:57, Inki Dae <inki.dae@samsung.com> wrote:
+> >> 2015=EB=85=84 12=EC=9B=94 24=EC=9D=BC 22:32=EC=97=90 Daniel Stone =
+=EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> >>> On 24 December 2015 at 09:10, Inki Dae <inki.dae@samsung.com> wro=
+te:
+> >>>> +void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc)
+> >>>> +{
+> >>>> +       struct exynos_drm_crtc *exynos_crtc =3D to_exynos_crtc(c=
+rtc);
+> >>>> +       unsigned long flags;
+> >>>> +
+> >>>> +       spin_lock_irqsave(&crtc->dev->event_lock, flags);
+> >>>> +       exynos_crtc->event =3D NULL;
+> >>>> +       spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+> >>>> +}
+> >>>
+> >>> This will leak the event and event space; you should call
+> >>> event->base.destroy() here. With that fixed:
+> >>
+> >> Right. we don't use exynos specific page flip function anymore whi=
+ch managed the event as a list so that the event objects can be freed b=
+y postclose callback.
+> >> Anyway, would it be better for event->base.destory() to be called =
+between spin lock/unlock?
+> >=20
+> > You must increment event->base.file_priv->event_space (see
+> > drm_atomic.c:destroy_vblank_event), as well as calling
+>=20
+> Reasonable to me. Seems other DRM drivers don't increment event_space=
+=2E
+>=20
+> > event->base.destroy (see drm_fops.c:drm_read) underneath event_lock=
+,
+> > yes.
+>=20
+> In addition, only event objects belonging to the request process shou=
+ld be destroyed.
+
+Just random comment out of the far left field, but robclark had a bunch=
+ of
+patches to clean up all that event alloc/cleanup code a bit and extract=
+ it
+into core functions. Might be good to ping him on irc to figure out whe=
+re
+that series is and whether you could take it over.
+
+Cheers, Daniel
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
