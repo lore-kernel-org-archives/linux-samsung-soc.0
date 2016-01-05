@@ -1,44 +1,163 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v2 1/3] rtc: s5m: Cleanup by removing useless 'rtc'
- prefix from fields
-Date: Tue, 5 Jan 2016 01:07:28 +0100
-Message-ID: <20160105000728.GF32724@piout.net>
-References: <1451450847-928-1-git-send-email-k.kozlowski@samsung.com>
- <20160104170841.GD32724@piout.net>
- <568B0601.5020808@samsung.com>
- <568B0897.4020403@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] power: genpd: fix lockdep issue for all subdomains
+Date: Tue, 5 Jan 2016 08:14:54 +0530
+Message-ID: <CANAwSgR3V9u6aDRxzxFLpdg76V3zWMEfiv_xi-XE5RMANqD2Qg@mail.gmail.com>
+References: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:53395 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753332AbcAEAHb (ORCPT
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:35342 "EHLO
+	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753842AbcAECpP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jan 2016 19:07:31 -0500
-Content-Disposition: inline
-In-Reply-To: <568B0897.4020403@samsung.com>
+	Mon, 4 Jan 2016 21:45:15 -0500
+In-Reply-To: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Alim Akhtar <alim.akhtar@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 05/01/2016 at 09:04:39 +0900, Krzysztof Kozlowski wrote :
-> > 
-> > Probably that's my fault because I rebased it on linux-next. I will
-> > rebase the patches on rtc-next and resend.
-> 
-> Ah, no need for rebasing. I forgot about dependency - the support for
-> S2MPS15 was added recently through Lee Jones' tree. Fortunately Lee put
-> S2MPS15 patches in a separate branch and tag: "ib-mfd-regulator-rtc-4.5"
-> 
-> This means that to apply the patches this is needed first:
-> https://git.kernel.org/cgit/linux/kernel/git/lee/mfd.git/log/?h=ib-mfd-regulator-rtc-4.5
-> 
+Hi Marek,
 
-Ah, true, that's what I forgot, thanks.
+On 4 January 2016 at 16:09, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> During genpd_poweron, genpd->lock is acquired recursively for each
+> parent (master) domain, which are separate obejcts. This confuses
+> lockdep, which considers every operation on genpd->lock as being done on
+> the same lock class. This leads to the following false positive warning:
+>
+> =============================================
+> [ INFO: possible recursive locking detected ]
+> 4.4.0-rc4-xu3s #32 Not tainted
+> ---------------------------------------------
+> swapper/0/1 is trying to acquire lock:
+>  (&genpd->lock){+.+...}, at: [<c0361550>] __genpd_poweron+0x64/0x108
+>
+> but task is already holding lock:
+>  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
+>
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+>
+>        CPU0
+>        ----
+>   lock(&genpd->lock);
+>   lock(&genpd->lock);
+>
+>  *** DEADLOCK ***
+>
+>  May be due to missing lock nesting notation
+>
+> 3 locks held by swapper/0/1:
+>  #0:  (&dev->mutex){......}, at: [<c0350910>] __driver_attach+0x48/0x98
+>  #1:  (&dev->mutex){......}, at: [<c0350920>] __driver_attach+0x58/0x98
+>  #2:  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
+>
+> stack backtrace:
+> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
+> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [<c0016c98>] (unwind_backtrace) from [<c00139c4>] (show_stack+0x10/0x14)
+> [<c00139c4>] (show_stack) from [<c0270df0>] (dump_stack+0x84/0xc4)
+> [<c0270df0>] (dump_stack) from [<c00780b8>] (__lock_acquire+0x1f88/0x215c)
+> [<c00780b8>] (__lock_acquire) from [<c007886c>] (lock_acquire+0xa4/0xd0)
+> [<c007886c>] (lock_acquire) from [<c0641f2c>] (mutex_lock_nested+0x70/0x4d4)
+> [<c0641f2c>] (mutex_lock_nested) from [<c0361550>] (__genpd_poweron+0x64/0x108)
+> [<c0361550>] (__genpd_poweron) from [<c0361b00>] (genpd_dev_pm_attach+0x170/0x1b8)
+> [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>] (platform_drv_probe+0x2c/0xac)
+> [<c03520a8>] (platform_drv_probe) from [<c03507d4>] (driver_probe_device+0x208/0x2fc)
+> [<c03507d4>] (driver_probe_device) from [<c035095c>] (__driver_attach+0x94/0x98)
+> [<c035095c>] (__driver_attach) from [<c034ec14>] (bus_for_each_dev+0x68/0x9c)
+> [<c034ec14>] (bus_for_each_dev) from [<c034fec8>] (bus_add_driver+0x1a0/0x218)
+> [<c034fec8>] (bus_add_driver) from [<c035115c>] (driver_register+0x78/0xf8)
+> [<c035115c>] (driver_register) from [<c0338488>] (exynos_drm_register_drivers+0x28/0x74)
+> [<c0338488>] (exynos_drm_register_drivers) from [<c0338594>] (exynos_drm_init+0x6c/0xc4)
+> [<c0338594>] (exynos_drm_init) from [<c00097f4>] (do_one_initcall+0x90/0x1dc)
+> [<c00097f4>] (do_one_initcall) from [<c0895e08>] (kernel_init_freeable+0x158/0x1f8)
+> [<c0895e08>] (kernel_init_freeable) from [<c063ecac>] (kernel_init+0x8/0xe8)
+> [<c063ecac>] (kernel_init) from [<c000f7d0>] (ret_from_fork+0x14/0x24)
+>
+> This patch replaces mutex_lock with mutex_lock_nested() and uses
+> recursion depth to annotate each genpd->lock operation with separate
+> lockdep subclass.
+>
+> Reported-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/base/power/domain.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index b803790..e02ddf6 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -170,16 +170,15 @@ static void genpd_queue_power_off_work(struct generic_pm_domain *genpd)
+>         queue_work(pm_wq, &genpd->power_off_work);
+>  }
+>
+> -static int genpd_poweron(struct generic_pm_domain *genpd);
+> -
+>  /**
+>   * __genpd_poweron - Restore power to a given PM domain and its masters.
+>   * @genpd: PM domain to power up.
+> + * @depth: nesting count for lockdep.
+>   *
+>   * Restore power to @genpd and all of its masters so that it is possible to
+>   * resume a device belonging to it.
+>   */
+> -static int __genpd_poweron(struct generic_pm_domain *genpd)
+> +static int __genpd_poweron(struct generic_pm_domain *genpd, unsigned int depth)
+>  {
+>         struct gpd_link *link;
+>         int ret = 0;
+> @@ -194,11 +193,16 @@ static int __genpd_poweron(struct generic_pm_domain *genpd)
+>          * with it.
+>          */
+>         list_for_each_entry(link, &genpd->slave_links, slave_node) {
+> -               genpd_sd_counter_inc(link->master);
+> +               struct generic_pm_domain *master = link->master;
+> +
+> +               genpd_sd_counter_inc(master);
+> +
+> +               mutex_lock_nested(&master->lock, depth + 1);
+> +               ret = __genpd_poweron(master, depth + 1);
+> +               mutex_unlock(&master->lock);
+>
+> -               ret = genpd_poweron(link->master);
+>                 if (ret) {
+> -                       genpd_sd_counter_dec(link->master);
+> +                       genpd_sd_counter_dec(master);
+>                         goto err;
+>                 }
+>         }
+> @@ -230,11 +234,12 @@ static int genpd_poweron(struct generic_pm_domain *genpd)
+>         int ret;
+>
+>         mutex_lock(&genpd->lock);
+> -       ret = __genpd_poweron(genpd);
+> +       ret = __genpd_poweron(genpd, 0);
+>         mutex_unlock(&genpd->lock);
+>         return ret;
+>  }
+>
+> +
+>  static int genpd_save_dev(struct generic_pm_domain *genpd, struct device *dev)
+>  {
+>         return GENPD_DEV_CALLBACK(genpd, int, save_state, dev);
+> @@ -482,7 +487,7 @@ static int pm_genpd_runtime_resume(struct device *dev)
+>         }
+>
+>         mutex_lock(&genpd->lock);
+> -       ret = __genpd_poweron(genpd);
+> +       ret = __genpd_poweron(genpd, 0);
+>         mutex_unlock(&genpd->lock);
+>
+>         if (ret)
+> --
+> 1.9.2
+>
 
+Thanks for fixing this false warning.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+
+Best Regards.
+-Anand Moon
