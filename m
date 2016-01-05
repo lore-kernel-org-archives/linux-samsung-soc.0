@@ -1,163 +1,106 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH] power: genpd: fix lockdep issue for all subdomains
-Date: Tue, 5 Jan 2016 08:14:54 +0530
-Message-ID: <CANAwSgR3V9u6aDRxzxFLpdg76V3zWMEfiv_xi-XE5RMANqD2Qg@mail.gmail.com>
-References: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH v2] drm/exynos: fix kernel panic issue at drm releasing
+Date: Tue, 05 Jan 2016 19:50:31 +0900
+Message-ID: <1451991031-3961-1-git-send-email-inki.dae@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:35342 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753842AbcAECpP (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56740 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751415AbcAEKuf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jan 2016 21:45:15 -0500
-In-Reply-To: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
+	Tue, 5 Jan 2016 05:50:35 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O0H018RW7G8J850@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Jan 2016 19:50:32 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-Hi Marek,
+This patch fixes a kernel panic issue which happened
+when drm driver is closed while modetest.
 
-On 4 January 2016 at 16:09, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> During genpd_poweron, genpd->lock is acquired recursively for each
-> parent (master) domain, which are separate obejcts. This confuses
-> lockdep, which considers every operation on genpd->lock as being done on
-> the same lock class. This leads to the following false positive warning:
->
-> =============================================
-> [ INFO: possible recursive locking detected ]
-> 4.4.0-rc4-xu3s #32 Not tainted
-> ---------------------------------------------
-> swapper/0/1 is trying to acquire lock:
->  (&genpd->lock){+.+...}, at: [<c0361550>] __genpd_poweron+0x64/0x108
->
-> but task is already holding lock:
->  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
->
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->
->        CPU0
->        ----
->   lock(&genpd->lock);
->   lock(&genpd->lock);
->
->  *** DEADLOCK ***
->
->  May be due to missing lock nesting notation
->
-> 3 locks held by swapper/0/1:
->  #0:  (&dev->mutex){......}, at: [<c0350910>] __driver_attach+0x48/0x98
->  #1:  (&dev->mutex){......}, at: [<c0350920>] __driver_attach+0x58/0x98
->  #2:  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
->
-> stack backtrace:
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [<c0016c98>] (unwind_backtrace) from [<c00139c4>] (show_stack+0x10/0x14)
-> [<c00139c4>] (show_stack) from [<c0270df0>] (dump_stack+0x84/0xc4)
-> [<c0270df0>] (dump_stack) from [<c00780b8>] (__lock_acquire+0x1f88/0x215c)
-> [<c00780b8>] (__lock_acquire) from [<c007886c>] (lock_acquire+0xa4/0xd0)
-> [<c007886c>] (lock_acquire) from [<c0641f2c>] (mutex_lock_nested+0x70/0x4d4)
-> [<c0641f2c>] (mutex_lock_nested) from [<c0361550>] (__genpd_poweron+0x64/0x108)
-> [<c0361550>] (__genpd_poweron) from [<c0361b00>] (genpd_dev_pm_attach+0x170/0x1b8)
-> [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>] (platform_drv_probe+0x2c/0xac)
-> [<c03520a8>] (platform_drv_probe) from [<c03507d4>] (driver_probe_device+0x208/0x2fc)
-> [<c03507d4>] (driver_probe_device) from [<c035095c>] (__driver_attach+0x94/0x98)
-> [<c035095c>] (__driver_attach) from [<c034ec14>] (bus_for_each_dev+0x68/0x9c)
-> [<c034ec14>] (bus_for_each_dev) from [<c034fec8>] (bus_add_driver+0x1a0/0x218)
-> [<c034fec8>] (bus_add_driver) from [<c035115c>] (driver_register+0x78/0xf8)
-> [<c035115c>] (driver_register) from [<c0338488>] (exynos_drm_register_drivers+0x28/0x74)
-> [<c0338488>] (exynos_drm_register_drivers) from [<c0338594>] (exynos_drm_init+0x6c/0xc4)
-> [<c0338594>] (exynos_drm_init) from [<c00097f4>] (do_one_initcall+0x90/0x1dc)
-> [<c00097f4>] (do_one_initcall) from [<c0895e08>] (kernel_init_freeable+0x158/0x1f8)
-> [<c0895e08>] (kernel_init_freeable) from [<c063ecac>] (kernel_init+0x8/0xe8)
-> [<c063ecac>] (kernel_init) from [<c000f7d0>] (ret_from_fork+0x14/0x24)
->
-> This patch replaces mutex_lock with mutex_lock_nested() and uses
-> recursion depth to annotate each genpd->lock operation with separate
-> lockdep subclass.
->
-> Reported-by: Anand Moon <linux.amoon@gmail.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/base/power/domain.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index b803790..e02ddf6 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -170,16 +170,15 @@ static void genpd_queue_power_off_work(struct generic_pm_domain *genpd)
->         queue_work(pm_wq, &genpd->power_off_work);
->  }
->
-> -static int genpd_poweron(struct generic_pm_domain *genpd);
-> -
->  /**
->   * __genpd_poweron - Restore power to a given PM domain and its masters.
->   * @genpd: PM domain to power up.
-> + * @depth: nesting count for lockdep.
->   *
->   * Restore power to @genpd and all of its masters so that it is possible to
->   * resume a device belonging to it.
->   */
-> -static int __genpd_poweron(struct generic_pm_domain *genpd)
-> +static int __genpd_poweron(struct generic_pm_domain *genpd, unsigned int depth)
->  {
->         struct gpd_link *link;
->         int ret = 0;
-> @@ -194,11 +193,16 @@ static int __genpd_poweron(struct generic_pm_domain *genpd)
->          * with it.
->          */
->         list_for_each_entry(link, &genpd->slave_links, slave_node) {
-> -               genpd_sd_counter_inc(link->master);
-> +               struct generic_pm_domain *master = link->master;
-> +
-> +               genpd_sd_counter_inc(master);
-> +
-> +               mutex_lock_nested(&master->lock, depth + 1);
-> +               ret = __genpd_poweron(master, depth + 1);
-> +               mutex_unlock(&master->lock);
->
-> -               ret = genpd_poweron(link->master);
->                 if (ret) {
-> -                       genpd_sd_counter_dec(link->master);
-> +                       genpd_sd_counter_dec(master);
->                         goto err;
->                 }
->         }
-> @@ -230,11 +234,12 @@ static int genpd_poweron(struct generic_pm_domain *genpd)
->         int ret;
->
->         mutex_lock(&genpd->lock);
-> -       ret = __genpd_poweron(genpd);
-> +       ret = __genpd_poweron(genpd, 0);
->         mutex_unlock(&genpd->lock);
->         return ret;
->  }
->
-> +
->  static int genpd_save_dev(struct generic_pm_domain *genpd, struct device *dev)
->  {
->         return GENPD_DEV_CALLBACK(genpd, int, save_state, dev);
-> @@ -482,7 +487,7 @@ static int pm_genpd_runtime_resume(struct device *dev)
->         }
->
->         mutex_lock(&genpd->lock);
-> -       ret = __genpd_poweron(genpd);
-> +       ret = __genpd_poweron(genpd, 0);
->         mutex_unlock(&genpd->lock);
->
->         if (ret)
-> --
-> 1.9.2
->
+This issue could be reproduced easily by launching modetest
+with page flip repeatedly.
 
-Thanks for fixing this false warning.
+The reason is that invalid drm_file object could be accessed by
+send_vblank_event function when finishing page flip if the drm_file
+object was removed by drm_release and there was a pended page
+flip event which was already committed to hardware.
 
-Tested-by: Anand Moon <linux.amoon@gmail.com>
+So this patch makes the pended page flip event to be cancelled by
+preclose callback which is called at front of drm_release function.
 
-Best Regards.
--Anand Moon
+Changelog v2:
+- free vblank event objects belonging to the request process,
+  increment event space and decrease pending_update when cancelling
+  the event
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Reviewed-by: Daniel Stone <daniels@collabora.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 18 ++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h |  4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.c  |  5 +++++
+ 3 files changed, 27 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index f3589a3..a3c2c71 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -238,3 +238,21 @@ void exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
+ 	if (exynos_crtc->ops->te_handler)
+ 		exynos_crtc->ops->te_handler(exynos_crtc);
+ }
++
++void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc,
++					struct drm_file *file)
++{
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
++	struct drm_pending_vblank_event *e;
++	unsigned long flags;
++
++	spin_lock_irqsave(&crtc->dev->event_lock, flags);
++	e = exynos_crtc->event;
++	if (e && e->base.file_priv == file) {
++		exynos_crtc->event = NULL;
++		e->base.destroy(&e->base);
++		file->event_space += sizeof(e->event);
++		atomic_dec(&exynos_crtc->pending_update);
++	}
++	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
++}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 6a581a8..cfdcf3e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -40,4 +40,8 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+  */
+ void exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
+ 
++/* This function cancels a page flip request. */
++void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc,
++					struct drm_file *file);
++
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 2c6019d..b9a9fd6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -369,7 +369,12 @@ err_file_priv_free:
+ static void exynos_drm_preclose(struct drm_device *dev,
+ 					struct drm_file *file)
+ {
++	struct drm_crtc *crtc;
++
+ 	exynos_drm_subdrv_close(dev, file);
++
++	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
++		exynos_drm_crtc_cancel_page_flip(crtc, file);
+ }
+ 
+ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+-- 
+1.9.1
