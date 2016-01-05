@@ -1,106 +1,58 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2] drm/exynos: fix kernel panic issue at drm releasing
-Date: Tue, 05 Jan 2016 19:50:31 +0900
-Message-ID: <1451991031-3961-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56740 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751415AbcAEKuf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jan 2016 05:50:35 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0O0H018RW7G8J850@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Jan 2016 19:50:32 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH] drm/exynos: fix kernel panic issue at drm releasing
+Date: Tue, 05 Jan 2016 19:55:52 +0900
+Message-ID: <568BA138.3050504@samsung.com>
+References: <1450948214-14688-1-git-send-email-inki.dae@samsung.com>
+ <CAPj87rMUrt55rBSXiFAsJ=vKUjohDmZPeC2CTMbTNAbVkCgYBg@mail.gmail.com>
+ <568A5E3A.8090601@samsung.com>
+ <CAPj87rOjMnCRsThp3vjOpik4nYcJdV_M1eEJxTOAUVHA700YCg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPj87rOjMnCRsThp3vjOpik4nYcJdV_M1eEJxTOAUVHA700YCg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-This patch fixes a kernel panic issue which happened
-when drm driver is closed while modetest.
-
-This issue could be reproduced easily by launching modetest
-with page flip repeatedly.
-
-The reason is that invalid drm_file object could be accessed by
-send_vblank_event function when finishing page flip if the drm_file
-object was removed by drm_release and there was a pended page
-flip event which was already committed to hardware.
-
-So this patch makes the pended page flip event to be cancelled by
-preclose callback which is called at front of drm_release function.
-
-Changelog v2:
-- free vblank event objects belonging to the request process,
-  increment event space and decrease pending_update when cancelling
-  the event
-
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Reviewed-by: Daniel Stone <daniels@collabora.com>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 18 ++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_crtc.h |  4 ++++
- drivers/gpu/drm/exynos/exynos_drm_drv.c  |  5 +++++
- 3 files changed, 27 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index f3589a3..a3c2c71 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -238,3 +238,21 @@ void exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
- 	if (exynos_crtc->ops->te_handler)
- 		exynos_crtc->ops->te_handler(exynos_crtc);
- }
-+
-+void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc,
-+					struct drm_file *file)
-+{
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-+	struct drm_pending_vblank_event *e;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&crtc->dev->event_lock, flags);
-+	e = exynos_crtc->event;
-+	if (e && e->base.file_priv == file) {
-+		exynos_crtc->event = NULL;
-+		e->base.destroy(&e->base);
-+		file->event_space += sizeof(e->event);
-+		atomic_dec(&exynos_crtc->pending_update);
-+	}
-+	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
-+}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-index 6a581a8..cfdcf3e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-@@ -40,4 +40,8 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
-  */
- void exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
- 
-+/* This function cancels a page flip request. */
-+void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc,
-+					struct drm_file *file);
-+
- #endif
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 2c6019d..b9a9fd6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -369,7 +369,12 @@ err_file_priv_free:
- static void exynos_drm_preclose(struct drm_device *dev,
- 					struct drm_file *file)
- {
-+	struct drm_crtc *crtc;
-+
- 	exynos_drm_subdrv_close(dev, file);
-+
-+	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
-+		exynos_drm_crtc_cancel_page_flip(crtc, file);
- }
- 
- static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
--- 
-1.9.1
+SGkgRGFuaWVsLAoKMjAxNuuFhCAwMeyblCAwNeydvCAwNToyNOyXkCBEYW5pZWwgU3RvbmUg7J20
+KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDQgSmFudWFyeSAyMDE2IGF0IDEyOjU3
+LCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiAyMDE164WEIDEy7JuU
+IDI07J28IDIyOjMy7JeQIERhbmllbCBTdG9uZSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4gT24gMjQg
+RGVjZW1iZXIgMjAxNSBhdCAwOToxMCwgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPiB3
+cm90ZToKPj4+PiArdm9pZCBleHlub3NfZHJtX2NydGNfY2FuY2VsX3BhZ2VfZmxpcChzdHJ1Y3Qg
+ZHJtX2NydGMgKmNydGMpCj4+Pj4gK3sKPj4+PiArICAgICAgIHN0cnVjdCBleHlub3NfZHJtX2Ny
+dGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4+Pj4gKyAgICAgICB1bnNp
+Z25lZCBsb25nIGZsYWdzOwo+Pj4+ICsKPj4+PiArICAgICAgIHNwaW5fbG9ja19pcnFzYXZlKCZj
+cnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPj4+PiArICAgICAgIGV4eW5vc19jcnRjLT5l
+dmVudCA9IE5VTEw7Cj4+Pj4gKyAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjcnRjLT5k
+ZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPj4+PiArfQo+Pj4KPj4+IFRoaXMgd2lsbCBsZWFrIHRo
+ZSBldmVudCBhbmQgZXZlbnQgc3BhY2U7IHlvdSBzaG91bGQgY2FsbAo+Pj4gZXZlbnQtPmJhc2Uu
+ZGVzdHJveSgpIGhlcmUuIFdpdGggdGhhdCBmaXhlZDoKPj4KPj4gUmlnaHQuIHdlIGRvbid0IHVz
+ZSBleHlub3Mgc3BlY2lmaWMgcGFnZSBmbGlwIGZ1bmN0aW9uIGFueW1vcmUgd2hpY2ggbWFuYWdl
+ZCB0aGUgZXZlbnQgYXMgYSBsaXN0IHNvIHRoYXQgdGhlIGV2ZW50IG9iamVjdHMgY2FuIGJlIGZy
+ZWVkIGJ5IHBvc3RjbG9zZSBjYWxsYmFjay4KPj4gQW55d2F5LCB3b3VsZCBpdCBiZSBiZXR0ZXIg
+Zm9yIGV2ZW50LT5iYXNlLmRlc3RvcnkoKSB0byBiZSBjYWxsZWQgYmV0d2VlbiBzcGluIGxvY2sv
+dW5sb2NrPwo+IAo+IFlvdSBtdXN0IGluY3JlbWVudCBldmVudC0+YmFzZS5maWxlX3ByaXYtPmV2
+ZW50X3NwYWNlIChzZWUKPiBkcm1fYXRvbWljLmM6ZGVzdHJveV92YmxhbmtfZXZlbnQpLCBhcyB3
+ZWxsIGFzIGNhbGxpbmcKClJlYXNvbmFibGUgdG8gbWUuIFNlZW1zIG90aGVyIERSTSBkcml2ZXJz
+IGRvbid0IGluY3JlbWVudCBldmVudF9zcGFjZS4KCj4gZXZlbnQtPmJhc2UuZGVzdHJveSAoc2Vl
+IGRybV9mb3BzLmM6ZHJtX3JlYWQpIHVuZGVybmVhdGggZXZlbnRfbG9jaywKPiB5ZXMuCgpJbiBh
+ZGRpdGlvbiwgb25seSBldmVudCBvYmplY3RzIGJlbG9uZ2luZyB0byB0aGUgcmVxdWVzdCBwcm9j
+ZXNzIHNob3VsZCBiZSBkZXN0cm95ZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IENoZWVycywK
+PiBEYW5pZWwKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBs
+aW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1l
+c3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8g
+YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAo+IApfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
