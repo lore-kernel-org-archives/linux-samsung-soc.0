@@ -1,71 +1,170 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/4] drm/exynos: introduce generic zpos property
-Date: Tue, 05 Jan 2016 13:52:49 +0100
-Message-ID: <1451998373-13708-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54941 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751472AbcAEMxI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jan 2016 07:53:08 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O0H00IP0D4H4J40@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Jan 2016 12:53:05 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 4/4] drm/exynos: use generic code for managing zpos plane
+ property
+Date: Tue, 05 Jan 2016 13:52:53 +0100
+Message-ID: <1451998373-13708-5-git-send-email-m.szyprowski@samsung.com>
+References: <1451998373-13708-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1451998373-13708-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello all,
-
-This patch series is a continuation of rework of blending support in
-Exynos DRM driver. Some background can be found here:
-http://www.spinics.net/lists/dri-devel/msg96969.html
-
-Daniel Vetter suggested that zpos property should be made generic, with
-well-defined semantics. This patchset is my proposal for such generic
-zpos property:
-- added zpos properties to drm core and plane state structures,
-- added helpers for normalizing zpos properties of given set of planes,
-- well defined semantics: planes are sorted by zpos values and then plane
-  id value if zpos equals.
-
-Patches 2/4 and 3/4 are fixes for Exynos DRM driver, which are required
-to properly implement generic zpos handling. However they can be also
-merged regardless of the rest of the patches (if there is a need for
-further discussion on the generic zpos property feature).
-
-Patches are based on top of latest exynos-drm-next branch.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  drm: add generic zpos property
-  drm/exynos: crtc: rework atomic_{begin,flush}
-  drm/exynos: mixer: properly update all planes on the same vblank event
-  drm/exynos: use generic code for managing zpos plane property
-
- Documentation/DocBook/gpu.tmpl                | 14 +++++-
- drivers/gpu/drm/drm_atomic.c                  |  4 ++
- drivers/gpu/drm/drm_atomic_helper.c           | 52 ++++++++++++++++++++
- drivers/gpu/drm/drm_crtc.c                    | 13 +++++
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 14 +++---
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 14 +++---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 20 ++------
- drivers/gpu/drm/exynos/exynos_drm_drv.h       | 11 ++---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 14 +++---
- drivers/gpu/drm/exynos/exynos_drm_plane.c     | 68 +++++++--------------------
- drivers/gpu/drm/exynos/exynos_mixer.c         | 53 ++++++++++++++++-----
- include/drm/drm_atomic_helper.h               |  2 +
- include/drm/drm_crtc.h                        | 13 +++++
- 13 files changed, 187 insertions(+), 105 deletions(-)
-
--- 
-1.9.2
+VGhpcyBwYXRjaCByZXBsYWNlcyB6cG9zIHByb3BlcnR5IGhhbmRsaW5nIGN1c3RvbSBjb2RlIGlu
+IEV4eW5vcyBEUk0KZHJpdmVyIHdpdGggY2FsbHMgdG8gZ2VuZXJpYyBEUk0gY29kZS4KClNpZ25l
+ZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICAxIC0KIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgNjggKysrKysrKystLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAg
+ICAgfCAxOSArKysrKysrLS0KIDMgZmlsZXMgY2hhbmdlZCwgMzQgaW5zZXJ0aW9ucygrKSwgNTQg
+ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCmluZGV4
+IDE3YjVkZWQ3MmZmMS4uMjQ0YWU2YzQ0ODJjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2Rydi5oCkBAIC0yMTcsNyArMjE3LDYgQEAgc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0
+ZSB7CiAJICogdGhpcyBhcnJheSBpcyB1c2VkIHRvIGJlIGF3YXJlIG9mIHdoaWNoIGNydGMgZGlk
+IGl0IHJlcXVlc3QgdmJsYW5rLgogCSAqLwogCXN0cnVjdCBkcm1fY3J0YyAqY3J0Y1tNQVhfQ1JU
+Q107Ci0Jc3RydWN0IGRybV9wcm9wZXJ0eSAqcGxhbmVfenBvc19wcm9wZXJ0eTsKIAogCXVuc2ln
+bmVkIGxvbmcgZGFfc3RhcnQ7CiAJdW5zaWduZWQgbG9uZyBkYV9zcGFjZV9zaXplOwpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBkODYyMjcyMzZmNTUuLjRh
+ZmE1ZGZkYTllMCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X3BsYW5lLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMK
+QEAgLTEzNyw5ICsxMzcsOSBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX3BsYW5lX3Jlc2V0KHN0
+cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQogCiAJZXh5bm9zX3N0YXRlID0ga3phbGxvYyhzaXplb2Yo
+KmV4eW5vc19zdGF0ZSksIEdGUF9LRVJORUwpOwogCWlmIChleHlub3Nfc3RhdGUpIHsKLQkJZXh5
+bm9zX3N0YXRlLT56cG9zID0gZXh5bm9zX3BsYW5lLT5jb25maWctPnpwb3M7CiAJCXBsYW5lLT5z
+dGF0ZSA9ICZleHlub3Nfc3RhdGUtPmJhc2U7CiAJCXBsYW5lLT5zdGF0ZS0+cGxhbmUgPSBwbGFu
+ZTsKKwkJcGxhbmUtPnN0YXRlLT56cG9zID0gZXh5bm9zX3BsYW5lLT5jb25maWctPnpwb3M7CiAJ
+fQogfQogCkBAIC0xNTUsNyArMTU1LDYgQEAgZXh5bm9zX2RybV9wbGFuZV9kdXBsaWNhdGVfc3Rh
+dGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCiAJCXJldHVybiBOVUxMOwogCiAJX19kcm1fYXRv
+bWljX2hlbHBlcl9wbGFuZV9kdXBsaWNhdGVfc3RhdGUocGxhbmUsICZjb3B5LT5iYXNlKTsKLQlj
+b3B5LT56cG9zID0gZXh5bm9zX3N0YXRlLT56cG9zOwogCXJldHVybiAmY29weS0+YmFzZTsKIH0K
+IApAQCAtMTY4LDQzICsxNjcsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX3BsYW5lX2Rlc3Ry
+b3lfc3RhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJa2ZyZWUob2xkX2V4eW5vc19zdGF0
+ZSk7CiB9CiAKLXN0YXRpYyBpbnQgZXh5bm9zX2RybV9wbGFuZV9hdG9taWNfc2V0X3Byb3BlcnR5
+KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAotCQkJCQkJc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAq
+c3RhdGUsCi0JCQkJCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpwcm9wZXJ0eSwKLQkJCQkJCXVpbnQ2
+NF90IHZhbCkKLXsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9f
+ZXh5bm9zX3BsYW5lKHBsYW5lKTsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZV9zdGF0ZSAqZXh5
+bm9zX3N0YXRlID0KLQkJCQkJdG9fZXh5bm9zX3BsYW5lX3N0YXRlKHN0YXRlKTsKLQlzdHJ1Y3Qg
+ZXh5bm9zX2RybV9wcml2YXRlICpkZXZfcHJpdiA9IHBsYW5lLT5kZXYtPmRldl9wcml2YXRlOwot
+CWNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX2NvbmZpZyAqY29uZmlnID0gZXh5bm9zX3Bs
+YW5lLT5jb25maWc7Ci0KLQlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJv
+cGVydHkgJiYKLQkgICAgKGNvbmZpZy0+Y2FwYWJpbGl0aWVzICYgRVhZTk9TX0RSTV9QTEFORV9D
+QVBfWlBPUykpCi0JCWV4eW5vc19zdGF0ZS0+enBvcyA9IHZhbDsKLQllbHNlCi0JCXJldHVybiAt
+RUlOVkFMOwotCi0JcmV0dXJuIDA7Ci19Ci0KLXN0YXRpYyBpbnQgZXh5bm9zX2RybV9wbGFuZV9h
+dG9taWNfZ2V0X3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAotCQkJCQkgIGNvbnN0
+IHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRlLAotCQkJCQkgIHN0cnVjdCBkcm1fcHJvcGVy
+dHkgKnByb3BlcnR5LAotCQkJCQkgIHVpbnQ2NF90ICp2YWwpCi17Ci0JY29uc3Qgc3RydWN0IGV4
+eW5vc19kcm1fcGxhbmVfc3RhdGUgKmV4eW5vc19zdGF0ZSA9Ci0JCWNvbnRhaW5lcl9vZihzdGF0
+ZSwgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUsIGJhc2UpOwotCXN0cnVjdCBl
+eHlub3NfZHJtX3ByaXZhdGUgKmRldl9wcml2ID0gcGxhbmUtPmRldi0+ZGV2X3ByaXZhdGU7Ci0K
+LQlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVydHkpCi0JCSp2YWwg
+PSBleHlub3Nfc3RhdGUtPnpwb3M7Ci0JZWxzZQotCQlyZXR1cm4gLUVJTlZBTDsKLQotCXJldHVy
+biAwOwotfQotCiBzdGF0aWMgc3RydWN0IGRybV9wbGFuZV9mdW5jcyBleHlub3NfcGxhbmVfZnVu
+Y3MgPSB7CiAJLnVwZGF0ZV9wbGFuZQk9IGRybV9hdG9taWNfaGVscGVyX3VwZGF0ZV9wbGFuZSwK
+IAkuZGlzYWJsZV9wbGFuZQk9IGRybV9hdG9taWNfaGVscGVyX2Rpc2FibGVfcGxhbmUsCkBAIC0y
+MTMsOCArMTc1LDYgQEAgc3RhdGljIHN0cnVjdCBkcm1fcGxhbmVfZnVuY3MgZXh5bm9zX3BsYW5l
+X2Z1bmNzID0gewogCS5yZXNldAkJPSBleHlub3NfZHJtX3BsYW5lX3Jlc2V0LAogCS5hdG9taWNf
+ZHVwbGljYXRlX3N0YXRlID0gZXh5bm9zX2RybV9wbGFuZV9kdXBsaWNhdGVfc3RhdGUsCiAJLmF0
+b21pY19kZXN0cm95X3N0YXRlID0gZXh5bm9zX2RybV9wbGFuZV9kZXN0cm95X3N0YXRlLAotCS5h
+dG9taWNfc2V0X3Byb3BlcnR5ID0gZXh5bm9zX2RybV9wbGFuZV9hdG9taWNfc2V0X3Byb3BlcnR5
+LAotCS5hdG9taWNfZ2V0X3Byb3BlcnR5ID0gZXh5bm9zX2RybV9wbGFuZV9hdG9taWNfZ2V0X3By
+b3BlcnR5LAogfTsKIAogc3RhdGljIGludApAQCAtMzAyLDIwICsyNjIsMjcgQEAgc3RhdGljIGNv
+bnN0IHN0cnVjdCBkcm1fcGxhbmVfaGVscGVyX2Z1bmNzIHBsYW5lX2hlbHBlcl9mdW5jcyA9IHsK
+IH07CiAKIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1
+Y3QgZHJtX3BsYW5lICpwbGFuZSwKLQkJCQkJICAgICAgdW5zaWduZWQgaW50IHpwb3MpCisJCQkJ
+CSAgICAgIHVuc2lnbmVkIGludCB6cG9zLCBib29sIGltbXV0YWJsZSkKIHsKIAlzdHJ1Y3QgZHJt
+X2RldmljZSAqZGV2ID0gcGxhbmUtPmRldjsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpk
+ZXZfcHJpdiA9IGRldi0+ZGV2X3ByaXZhdGU7CiAJc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcDsK
+IAotCXByb3AgPSBkZXZfcHJpdi0+cGxhbmVfenBvc19wcm9wZXJ0eTsKLQlpZiAoIXByb3ApIHsK
+LQkJcHJvcCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UoZGV2LCAwLCAienBvcyIsCi0JCQkJ
+CQkgMCwgTUFYX1BMQU5FIC0gMSk7Ci0JCWlmICghcHJvcCkKKwlpZiAoaW1tdXRhYmxlKSB7CisJ
+CWlmICghZGV2LT5tb2RlX2NvbmZpZy56cG9zX2ltbXV0YWJsZV9wcm9wZXJ0eSkKKwkJCWRldi0+
+bW9kZV9jb25maWcuenBvc19pbW11dGFibGVfcHJvcGVydHkgPQorCQkJCWRybV9wbGFuZV9jcmVh
+dGVfenBvc19pbW11dGFibGVfcHJvcGVydHkoZGV2KTsKKwkJaWYgKCFkZXYtPm1vZGVfY29uZmln
+Lnpwb3NfaW1tdXRhYmxlX3Byb3BlcnR5KQorCQkJcmV0dXJuOworCisJCXByb3AgPSBkZXYtPm1v
+ZGVfY29uZmlnLnpwb3NfaW1tdXRhYmxlX3Byb3BlcnR5OworCX0gZWxzZSB7CisJCWlmICghZGV2
+LT5tb2RlX2NvbmZpZy56cG9zX3Byb3BlcnR5KQorCQkJZGV2LT5tb2RlX2NvbmZpZy56cG9zX3By
+b3BlcnR5ID0KKwkJCQkJZHJtX3BsYW5lX2NyZWF0ZV96cG9zX3Byb3BlcnR5KGRldik7CisJCWlm
+ICghZGV2LT5tb2RlX2NvbmZpZy56cG9zX3Byb3BlcnR5KQogCQkJcmV0dXJuOwogCi0JCWRldl9w
+cml2LT5wbGFuZV96cG9zX3Byb3BlcnR5ID0gcHJvcDsKKwkJcHJvcCA9IGRldi0+bW9kZV9jb25m
+aWcuenBvc19wcm9wZXJ0eTsKIAl9CiAKIAlkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxh
+bmUtPmJhc2UsIHByb3AsIHpwb3MpOwpAQCAtMzQ0LDcgKzMxMSw4IEBAIGludCBleHlub3NfcGxh
+bmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCWV4eW5vc19wbGFuZS0+aW5kZXggPSBp
+bmRleDsKIAlleHlub3NfcGxhbmUtPmNvbmZpZyA9IGNvbmZpZzsKIAotCWV4eW5vc19wbGFuZV9h
+dHRhY2hfenBvc19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5iYXNlLCBjb25maWctPnpwb3MpOwor
+CWV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eSgmZXh5bm9zX3BsYW5lLT5iYXNlLCBj
+b25maWctPnpwb3MsCisJCQkgICAhKGNvbmZpZy0+Y2FwYWJpbGl0aWVzICYgRVhZTk9TX0RSTV9Q
+TEFORV9DQVBfWlBPUykpOwogCiAJcmV0dXJuIDA7CiB9CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfbWl4ZXIuYwppbmRleCBiNWZiYzFjYmYwMjQuLjZhYjY4ZWNhMDAwNCAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC0zNCw2ICszNCw3IEBACiAjaW5jbHVkZSA8bGlu
+dXgvY29tcG9uZW50Lmg+CiAKICNpbmNsdWRlIDxkcm0vZXh5bm9zX2RybS5oPgorI2luY2x1ZGUg
+PGRybS9kcm1fYXRvbWljX2hlbHBlci5oPgogCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIK
+ICNpbmNsdWRlICJleHlub3NfZHJtX2NydGMuaCIKQEAgLTk1LDYgKzk2LDggQEAgc3RydWN0IG1p
+eGVyX2NvbnRleHQgewogCXN0cnVjdCBkcm1fZGV2aWNlCSpkcm1fZGV2OwogCXN0cnVjdCBleHlu
+b3NfZHJtX2NydGMJKmNydGM7CiAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUJcGxhbmVzW01JWEVS
+X1dJTl9OUl07CisJc3RydWN0IGRybV9wbGFuZQkqenBvc19wbGFuZXNbTUlYRVJfV0lOX05SXTsK
+KwlpbnQJCQludW1fcGxhbmVzOwogCWludAkJCXBpcGU7CiAJdW5zaWduZWQgbG9uZwkJZmxhZ3M7
+CiAJYm9vbAkJCWludGVybGFjZTsKQEAgLTQ3OCw2ICs0ODEsNyBAQCBzdGF0aWMgdm9pZCB2cF92
+aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAlzdHJ1Y3QgZHJtX2Rpc3Bs
+YXlfbW9kZSAqbW9kZSA9ICZzdGF0ZS0+YmFzZS5jcnRjLT5zdGF0ZS0+YWRqdXN0ZWRfbW9kZTsK
+IAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJc3RydWN0
+IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBzdGF0ZS0+YmFzZS5mYjsKKwl1bnNpZ25lZCBpbnQgcHJp
+b3JpdHkgPSBzdGF0ZS0+YmFzZS5ub3JtYWxpemVkX3pwb3MgKyAxOwogCXVuc2lnbmVkIGxvbmcg
+ZmxhZ3M7CiAJZG1hX2FkZHJfdCBsdW1hX2FkZHJbMl0sIGNocm9tYV9hZGRyWzJdOwogCWJvb2wg
+dGlsZWRfbW9kZSA9IGZhbHNlOwpAQCAtNTYyLDcgKzU2Niw3IEBAIHN0YXRpYyB2b2lkIHZwX3Zp
+ZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAogCiAJbWl4ZXJfY2ZnX3NjYW4o
+Y3R4LCBtb2RlLT52ZGlzcGxheSk7CiAJbWl4ZXJfY2ZnX3JnYl9mbXQoY3R4LCBtb2RlLT52ZGlz
+cGxheSk7Ci0JbWl4ZXJfY2ZnX2xheWVyKGN0eCwgcGxhbmUtPmluZGV4LCBzdGF0ZS0+enBvcyAr
+IDEsIHRydWUpOworCW1peGVyX2NmZ19sYXllcihjdHgsIHBsYW5lLT5pbmRleCwgcHJpb3JpdHks
+IHRydWUpOwogCW1peGVyX2NmZ192cF9ibGVuZChjdHgpOwogCW1peGVyX3J1bihjdHgpOwogCkBA
+IC01ODcsNiArNTkxLDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBt
+aXhlcl9jb250ZXh0ICpjdHgsCiAJc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmc3Rh
+dGUtPmJhc2UuY3J0Yy0+c3RhdGUtPmFkanVzdGVkX21vZGU7CiAJc3RydWN0IG1peGVyX3Jlc291
+cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwogCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZi
+ID0gc3RhdGUtPmJhc2UuZmI7CisJdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uu
+bm9ybWFsaXplZF96cG9zICsgMTsKIAl1bnNpZ25lZCBsb25nIGZsYWdzOwogCXVuc2lnbmVkIGlu
+dCB3aW4gPSBwbGFuZS0+aW5kZXg7CiAJdW5zaWduZWQgaW50IHhfcmF0aW8gPSAwLCB5X3JhdGlv
+ID0gMDsKQEAgLTY3OCw3ICs2ODMsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9idWZmZXIo
+c3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAogCW1peGVyX2NmZ19zY2FuKGN0eCwgbW9kZS0+
+dmRpc3BsYXkpOwogCW1peGVyX2NmZ19yZ2JfZm10KGN0eCwgbW9kZS0+dmRpc3BsYXkpOwotCW1p
+eGVyX2NmZ19sYXllcihjdHgsIHdpbiwgc3RhdGUtPnpwb3MgKyAxLCB0cnVlKTsKKwltaXhlcl9j
+ZmdfbGF5ZXIoY3R4LCB3aW4sIHByaW9yaXR5LCB0cnVlKTsKIAltaXhlcl9jZmdfZ2Z4X2JsZW5k
+KGN0eCwgd2luLCBpc19hbHBoYV9mb3JtYXQoZmItPnBpeGVsX2Zvcm1hdCkpOwogCiAJLyogbGF5
+ZXIgdXBkYXRlIG1hbmRhdG9yeSBmb3IgbWl4ZXIgMTYuMC4zMy4wICovCkBAIC05ODEsNiArOTg2
+LDEyIEBAIHN0YXRpYyB2b2lkIG1peGVyX2F0b21pY19iZWdpbihzdHJ1Y3QgZXh5bm9zX2RybV9j
+cnRjICpjcnRjKQogCWlmICghdGVzdF9iaXQoTVhSX0JJVF9QT1dFUkVELCAmbWl4ZXJfY3R4LT5m
+bGFncykpCiAJCXJldHVybjsKIAorCS8qCisJICogTm9ybWFsaXppbmcgdXAgdG8gMyBwbGFuZXMg
+aXMgY2hlYXAsIG5vIG5lZWQgZm9yIGNoZWNraW5nCisJICogaWYgenBvcyBoYXMgYmVlbiByZWFs
+bHkgY2hhbmdlZC4KKwkgKi8KKwlkcm1fYXRvbWljX2hlbHBlcl9ub3JtYWxpemVfenBvcyhtaXhl
+cl9jdHgtPnpwb3NfcGxhbmVzLAorCQkJCQkgbWl4ZXJfY3R4LT5udW1fcGxhbmVzKTsKIAltaXhl
+cl92c3luY19zZXRfdXBkYXRlKG1peGVyX2N0eCwgZmFsc2UpOwogfQogCkBAIC0xMjAzLDEzICsx
+MjE0LDE1IEBAIHN0YXRpYyBpbnQgbWl4ZXJfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVj
+dCBkZXZpY2UgKm1hbmFnZXIsIHZvaWQgKmRhdGEpCiAKIAlmb3IgKGkgPSAwOyBpIDwgTUlYRVJf
+V0lOX05SOyBpKyspIHsKIAkJaWYgKGkgPT0gVlBfREVGQVVMVF9XSU4gJiYgIWN0eC0+dnBfZW5h
+YmxlZCkKLQkJCWNvbnRpbnVlOworCQkJYnJlYWs7CiAKIAkJcmV0ID0gZXh5bm9zX3BsYW5lX2lu
+aXQoZHJtX2RldiwgJmN0eC0+cGxhbmVzW2ldLCBpLAogCQkJCQkxIDw8IGN0eC0+cGlwZSwgJnBs
+YW5lX2NvbmZpZ3NbaV0pOwogCQlpZiAocmV0KQogCQkJcmV0dXJuIHJldDsKKwkJY3R4LT56cG9z
+X3BsYW5lc1tpXSA9ICZjdHgtPnBsYW5lc1tpXS5iYXNlOwogCX0KKwljdHgtPm51bV9wbGFuZXMg
+PSBpOwogCiAJZXh5bm9zX3BsYW5lID0gJmN0eC0+cGxhbmVzW0RFRkFVTFRfV0lOXTsKIAljdHgt
+PmNydGMgPSBleHlub3NfZHJtX2NydGNfY3JlYXRlKGRybV9kZXYsICZleHlub3NfcGxhbmUtPmJh
+c2UsCi0tIAoxLjkuMgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
