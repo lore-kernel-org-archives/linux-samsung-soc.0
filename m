@@ -1,70 +1,76 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 6/9] ARM: EXYNOS: clk: Another clock dependency,
- ARMv7, for v4.5
-Date: Thu, 7 Jan 2016 06:06:49 +0100
-Message-ID: <20160107050649.GB26875@localhost>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
- <1449020386-20250-7-git-send-email-k.kozlowski@samsung.com>
- <20151222045135.GG30172@localhost>
- <567A7D8F.3010209@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: exynos_defconfig: Enable NEON, accelerated
+ crypto and cpufreq stats
+Date: Thu, 7 Jan 2016 22:40:22 +0530
+Message-ID: <CANAwSgTJ1Gx8zHKp3F=VAwfLh-n1fs1Yd+hdc-o76tPY6L2h0g@mail.gmail.com>
+References: <1452132905-8587-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f177.google.com ([209.85.217.177]:34539 "EHLO
-	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753134AbcAGO5Y (ORCPT
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:37819 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752709AbcAGRKn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Jan 2016 09:57:24 -0500
-Received: by mail-lb0-f177.google.com with SMTP id pv2so224656340lbb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Jan 2016 06:57:23 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <567A7D8F.3010209@samsung.com>
+	Thu, 7 Jan 2016 12:10:43 -0500
+In-Reply-To: <1452132905-8587-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Wed, Dec 23, 2015 at 07:55:11PM +0900, Krzysztof Kozlowski wrote:
-> W dniu 22.12.2015 o 13:51, Olof Johansson pisze:
-> > On Wed, Dec 02, 2015 at 10:39:43AM +0900, Krzysztof Kozlowski wrote:
-> >> Hi Kukjin,
-> >>
-> >> This is also clock dependency. I put it in separate tag in case clock
-> >> folks want to pull it also.
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >>
-> >>
-> >> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-> >>
-> >>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-exynos4-4.5
-> >>
-> >> for you to fetch changes up to 94af7a3c310f5877dc6f756179b92f24f89a9b08:
-> >>
-> >>   clk: samsung: exynos4: Add SSS gate clock (2015-11-18 22:02:02 +0900)
-> > 
-> > Again, this should probably go through the clk maintainer (or have an ack).
-> > It's just two one-line changes though, so if they're slow to respond we can
-> > take it as a fallback. Resend if that's the case.
-> > 
-> 
-> Wait, I am missing something. This contains only one patch which has the
-> Stephen's Boyd ack:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/379230.html
-> (this is in commit message already)
-> 
-> What kind of ack do you expect here? Ack for pull-request?
+Hi Krzysztof,
 
-Yeah, looks good. I likely mixed up branch contents when I replied to this one.
+On 7 January 2016 at 07:45, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> Enable the kernel NEON mode and asm/NEON accelerated crypto algorithms
+> which should bring performance benefits on Exynos SoCs. Enable these as
+> modules because they are optional, not essential anyhow for platform
+> booting nor related directly to Exynos Soc. All accelerated algorithms
+> pass booting self-tests on Odroid XU4 (Exynos5422) and Trats2 (Exynos4412).
+>
+> Additionally enable cpufreq statistics as they are useful for debugging.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  arch/arm/configs/exynos_defconfig | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 24dcd2bb1215..0aee1e035be9 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -26,12 +26,14 @@ CONFIG_ARM_APPENDED_DTB=y
+>  CONFIG_ARM_ATAG_DTB_COMPAT=y
+>  CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
+>  CONFIG_CPU_FREQ=y
+> +CONFIG_CPU_FREQ_STAT_DETAILS=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPUFREQ_DT=y
+>  CONFIG_CPU_IDLE=y
+>  CONFIG_ARM_EXYNOS_CPUIDLE=y
+>  CONFIG_VFP=y
+>  CONFIG_NEON=y
+> +CONFIG_KERNEL_MODE_NEON=y
+>  CONFIG_NET=y
+>  CONFIG_PACKET=y
+>  CONFIG_UNIX=y
+> @@ -238,7 +240,11 @@ CONFIG_DEBUG_RT_MUTEXES=y
+>  CONFIG_DEBUG_SPINLOCK=y
+>  CONFIG_DEBUG_MUTEXES=y
+>  CONFIG_DEBUG_USER=y
+> -CONFIG_CRYPTO_SHA256=y
+> +CONFIG_ARM_CRYPTO=y
+> +CONFIG_CRYPTO_SHA1_ARM_NEON=m
+> +CONFIG_CRYPTO_SHA256_ARM=m
+> +CONFIG_CRYPTO_SHA512_ARM=m
+> +CONFIG_CRYPTO_AES_ARM_BS=m
+>  CONFIG_CRC_CCITT=y
+>  CONFIG_FONTS=y
+>  CONFIG_FONT_7x14=y
+> --
+> 1.9.1
+>
 
-I'll merge it into drivers. Still, for patches that only touches clock
-subsystem, the default of merging through those subsystem maintainers is
-preferred. Complications, of course, are when there's dependencies.
+Reviewed-by: Anand Moon <linux.amoon@gmail.com>
 
-
--Olof
+Best Regards,
+-Anand Moon
