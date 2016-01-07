@@ -1,54 +1,55 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: exynos_defconfig: Enable s5p-secss driver
-Date: Thu, 7 Jan 2016 22:42:24 +0530
-Message-ID: <CANAwSgSDuwQdgsfa6nHc5WwW-ZiRbifPHeNAvS5LNxWiQ0oNiQ@mail.gmail.com>
-References: <1452132905-8587-1-git-send-email-k.kozlowski@samsung.com> <1452132905-8587-2-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1452132905-8587-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/8] [media] Check v4l2_of_parse_endpoint() ret val in all drivers
+Date: Thu,  7 Jan 2016 15:27:14 -0300
+Message-ID: <1452191248-15847-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:45246 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751220AbcAGS1x (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 7 Jan 2016 13:27:53 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Nikhil Devshatwar <nikhil.nd@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, "Prabhakar\"" <prabhakar.csengg@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Hi Krzysztof,
+Hello,
 
-On 7 January 2016 at 07:45, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> The Exynos SoC provides a Security SubSystem block for accelerating some
-> cryptographic operations. Enable the driver for it - s5p-secss to
-> utilize the hardware acceleration.
->
-> Currently the s5p-secss driver supports AES in CBC and ECB modes.
-> However on Odroid XU4 (Exynos5422) and Trats2 (Exynos4412) boards this
-> change introduces one booting error:
->
->         alg: skcipher: encryption failed on chunk test 1 for ecb-aes-s5p: ret=22
->
-> The cbc-aes-s5p properly registers itself and passes self-tests.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 0aee1e035be9..c47c7e069873 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -240,6 +240,7 @@ CONFIG_DEBUG_RT_MUTEXES=y
->  CONFIG_DEBUG_SPINLOCK=y
->  CONFIG_DEBUG_MUTEXES=y
->  CONFIG_DEBUG_USER=y
-> +CONFIG_CRYPTO_DEV_S5P=y
->  CONFIG_ARM_CRYPTO=y
->  CONFIG_CRYPTO_SHA1_ARM_NEON=m
->  CONFIG_CRYPTO_SHA256_ARM=m
-> --
-> 1.9.1
->
+When discussing a patch [0] with Laurent Pinchart for another series I
+mentioned to him that most callers of v4l2_of_parse_endpoint() weren't
+checking the return value. This is likely due the function kernel-doc
+stating incorrectly that the return value is always 0 but can return a
+negative error code on failure.
 
-Reviewed-by: Anand Moon <linux.amoon@gmail.com>
+This trivial patch series fixes the function kernel-doc and add proper
+error checking in all the drivers that are currently not doing so.
 
-Best Regards,
--Anand Moon
+[0]: https://lkml.org/lkml/2016/1/6/307
+
+Best regards,
+Javier
+
+
+Javier Martinez Canillas (8):
+  [media] v4l: of: Correct v4l2_of_parse_endpoint() kernel-doc
+  [media] adv7604: Check v4l2_of_parse_endpoint() return value
+  [media] s5c73m3: Check v4l2_of_parse_endpoint() return value
+  [media] s5k5baf: Check v4l2_of_parse_endpoint() return value
+  [media] tvp514x: Check v4l2_of_parse_endpoint() return value
+  [media] tvp7002: Check v4l2_of_parse_endpoint() return value
+  [media] exynos4-is: Check v4l2_of_parse_endpoint() return value
+  [media] omap3isp: Check v4l2_of_parse_endpoint() return value
+
+ drivers/media/i2c/adv7604.c                   |  7 ++++++-
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c      |  4 +++-
+ drivers/media/i2c/s5k5baf.c                   |  5 ++++-
+ drivers/media/i2c/tvp514x.c                   |  4 +++-
+ drivers/media/i2c/tvp7002.c                   |  4 +++-
+ drivers/media/platform/exynos4-is/media-dev.c |  8 +++++++-
+ drivers/media/platform/exynos4-is/mipi-csis.c | 10 +++++++---
+ drivers/media/platform/omap3isp/isp.c         |  5 ++++-
+ drivers/media/v4l2-core/v4l2-of.c             |  2 +-
+ 9 files changed, 38 insertions(+), 11 deletions(-)
+
+-- 
+2.4.3
