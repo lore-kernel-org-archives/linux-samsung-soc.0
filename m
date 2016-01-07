@@ -1,43 +1,67 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable fan, sensors and audio
- for Odroid XU3
-Date: Thu, 7 Jan 2016 06:16:14 +0100
-Message-ID: <20160107051614.GE26875@localhost>
-References: <1450867037-19705-1-git-send-email-k.kozlowski.k@gmail.com>
+Subject: Re: [GIT PULL 3/9] ARM64: EXYNOS: clk: Clock dependency for ARM64
+ for v4.5
+Date: Thu, 7 Jan 2016 06:03:07 +0100
+Message-ID: <20160107050307.GA26875@localhost>
+References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
+ <1449020386-20250-4-git-send-email-k.kozlowski@samsung.com>
+ <20151222044636.GD30172@localhost>
+ <567A7B10.3030501@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:35711 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753297AbcAGO5b (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Jan 2016 09:57:31 -0500
-Received: by mail-lb0-f171.google.com with SMTP id bc4so208392045lbc.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Jan 2016 06:57:31 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1450867037-19705-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <567A7B10.3030501@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Wed, Dec 23, 2015 at 07:37:17PM +0900, Krzysztof Kozlowski wrote:
-> From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> For Odroid XU3-family enable the:
->  - PWM fan (to control the CPU fan using thermal subsystem),
->  - TI INA231 sensors (provide power measurements of big.LITTLE cores,
->    DRAM and GPU),
->  - Samsung sound (for Odroid XU3 and Snow as well).
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
-> Resending with Javier's tag.
+Hi,
 
-Thanks, applied but had to resolve conflicts.
+Sorry for the slow reply, holidays and vacation and all that.
+
+On Wed, Dec 23, 2015 at 07:44:32PM +0900, Krzysztof Kozlowski wrote:
+> W dniu 22.12.2015 o 13:46, Olof Johansson pisze:
+> > On Wed, Dec 02, 2015 at 10:39:40AM +0900, Krzysztof Kozlowski wrote:
+> >> Hi Kukjin,
+> >>
+> >> Dependency for soc64 changes.
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >>
+> >>
+> >> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+> >>
+> >>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+> >>
+> >> are available in the git repository at:
+> >>
+> >>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-arm64-symbols-4.5
+> >>
+> >> for you to fetch changes up to 8c2a90ed18a74e8b9cdbba679403faa44d6024fc:
+> >>
+> >>   clk: samsung: Don't build ARMv8 clock drivers on ARMv7 (2015-11-22 19:25:29 +0900)
+> > 
+> > Hi,
+> > 
+> > Looks like this lacks ack from any of the clock maintainers.
+> 
+> It got the ack from Sylwester and Tomasz - Samsung clock maintainers. If
+> it is not sufficient... then let's wait with it for v4.6. I am on
+> holidays now so I cannot really do anything meaningful with it.
+
+Ok -- even though we have per-driver maintainers, we still look for acks from
+the overall subsystem maintainers on these drivers. 
+
+> > Given that EXYNOS_ARM64_COMMON_CLK is not yet introduced, this will cause
+> > a breakage in bisectability on some of these platforms as well.
+> 
+> The patch introduces EXYNOS_ARM64_COMMON_CLK which will be enabled by
+> default on our platforms. What kind of breakage do you have in mind?
+
+Ah, I probably missed that.
 
 
 -Olof
