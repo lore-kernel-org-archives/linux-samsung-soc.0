@@ -1,84 +1,109 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 7/8] [media] exynos4-is: Check v4l2_of_parse_endpoint() return value
-Date: Thu,  7 Jan 2016 15:27:21 -0300
-Message-ID: <1452191248-15847-8-git-send-email-javier@osg.samsung.com>
-References: <1452191248-15847-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1452191248-15847-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH v3] drm/exynos: fix kernel panic issue at drm releasing
+Date: Fri, 08 Jan 2016 17:46:00 +0900
+Message-ID: <1452242760-20298-2-git-send-email-inki.dae@samsung.com>
+References: <1452242760-20298-1-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:56474 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754221AbcAHIqG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 Jan 2016 03:46:06 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O0M029UBLORM000@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 Jan 2016 17:46:03 +0900 (KST)
+In-reply-to: <1452242760-20298-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-The v4l2_of_parse_endpoint() function can fail so check the return value.
+This patch fixes a kernel panic issue which happened
+when drm driver is closed while modetest.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+This issue could be reproduced easily by launching modetest
+with page flip repeatedly.
+
+The reason is that invalid drm_file object could be accessed by
+send_vblank_event function when finishing page flip if the drm_file
+object was removed by drm_release and there was a pended page
+flip event which was already committed to hardware.
+
+So this patch makes the pended page flip event to be cancelled by
+preclose callback which is called at front of drm_release function.
+
+Changelog v2:
+- free vblank event objects belonging to the request process,
+  increment event space and decrease pending_update when cancelling
+  the event
+
+Changelog v3:
+- initialize only device specific things. Each page flip event object
+  is created by DRM core so DRM core should release the object including
+  incrementing event space.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Reviewed-by: Daniel Stone <daniels@collabora.com>
 ---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 15 +++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h |  3 +++
+ drivers/gpu/drm/exynos/exynos_drm_drv.c  |  5 +++++
+ 3 files changed, 23 insertions(+)
 
- drivers/media/platform/exynos4-is/media-dev.c |  8 +++++++-
- drivers/media/platform/exynos4-is/mipi-csis.c | 10 +++++++---
- 2 files changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index f3b2dd30ec77..662d4a5c584e 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -332,13 +332,19 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	struct fimc_source_info *pd = &fmd->sensor[index].pdata;
- 	struct device_node *rem, *ep, *np;
- 	struct v4l2_of_endpoint endpoint;
-+	int ret;
- 
- 	/* Assume here a port node can have only one endpoint node. */
- 	ep = of_get_next_child(port, NULL);
- 	if (!ep)
- 		return 0;
- 
--	v4l2_of_parse_endpoint(ep, &endpoint);
-+	ret = v4l2_of_parse_endpoint(ep, &endpoint);
-+	if (ret) {
-+		of_node_put(ep);
-+		return ret;
-+	}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index cd94981..8b503a0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -226,3 +226,18 @@ void exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
+ 	if (exynos_crtc->ops->te_handler)
+ 		exynos_crtc->ops->te_handler(exynos_crtc);
+ }
 +
- 	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS)
- 		return -EINVAL;
++void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc)
++{
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
++	struct drm_pending_vblank_event *e;
++	unsigned long flags;
++
++	spin_lock_irqsave(&crtc->dev->event_lock, flags);
++	e = exynos_crtc->event;
++	if (e) {
++		exynos_crtc->event = NULL;
++		atomic_dec(&exynos_crtc->pending_update);
++	}
++	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
++}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 6a581a8..b4def6e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -40,4 +40,7 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+  */
+ void exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
  
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index ac5e50e595be..bd5c46c3d4b7 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -736,6 +736,7 @@ static int s5pcsis_parse_dt(struct platform_device *pdev,
++/* This function cancels a page flip request. */
++void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc);
++
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 9756797a..57c0e7d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -330,7 +330,12 @@ err_file_priv_free:
+ static void exynos_drm_preclose(struct drm_device *dev,
+ 					struct drm_file *file)
  {
- 	struct device_node *node = pdev->dev.of_node;
- 	struct v4l2_of_endpoint endpoint;
-+	int ret;
- 
- 	if (of_property_read_u32(node, "clock-frequency",
- 				 &state->clk_frequency))
-@@ -751,7 +752,9 @@ static int s5pcsis_parse_dt(struct platform_device *pdev,
- 		return -EINVAL;
- 	}
- 	/* Get port node and validate MIPI-CSI channel id. */
--	v4l2_of_parse_endpoint(node, &endpoint);
-+	ret = v4l2_of_parse_endpoint(node, &endpoint);
-+	if (ret)
-+		goto err;
- 
- 	state->index = endpoint.base.port - FIMC_INPUT_MIPI_CSI2_0;
- 	if (state->index >= CSIS_MAX_ENTITIES)
-@@ -764,9 +767,10 @@ static int s5pcsis_parse_dt(struct platform_device *pdev,
- 					"samsung,csis-wclk");
- 
- 	state->num_lanes = endpoint.bus.mipi_csi2.num_data_lanes;
--	of_node_put(node);
- 
--	return 0;
-+err:
-+	of_node_put(node);
-+	return ret;
++	struct drm_crtc *crtc;
++
+ 	exynos_drm_subdrv_close(dev, file);
++
++	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
++		exynos_drm_crtc_cancel_page_flip(crtc);
  }
  
- static int s5pcsis_pm_resume(struct device *dev, bool runtime);
+ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
 -- 
-2.4.3
+1.9.1
