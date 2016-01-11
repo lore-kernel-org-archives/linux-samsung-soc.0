@@ -1,40 +1,58 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH v3] drm/exynos: fix kernel panic issue at drm releasing
-Date: Mon, 11 Jan 2016 19:00:04 +0000
-Message-ID: <CAPj87rPkwRBKM8mUt2zS-Mr7bZNMqD1PGy01-BUES_84sJqCUw@mail.gmail.com>
-References: <1452242760-20298-1-git-send-email-inki.dae@samsung.com>
-	<1452242760-20298-2-git-send-email-inki.dae@samsung.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH v2 1/3] rtc: s5m: Cleanup by removing useless 'rtc'
+ prefix from fields
+Date: Mon, 11 Jan 2016 20:25:11 +0100
+Message-ID: <20160111192511.GC3367@piout.net>
+References: <1451450847-928-1-git-send-email-k.kozlowski@samsung.com>
+ <20160104170841.GD32724@piout.net>
+ <568B0601.5020808@samsung.com>
+ <568B0897.4020403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36487 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933424AbcAKTAG (ORCPT
+Received: from down.free-electrons.com ([37.187.137.238]:50351 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932180AbcAKTZO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jan 2016 14:00:06 -0500
-Received: by mail-wm0-f42.google.com with SMTP id l65so223643173wmf.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jan 2016 11:00:05 -0800 (PST)
-In-Reply-To: <1452242760-20298-2-git-send-email-inki.dae@samsung.com>
+	Mon, 11 Jan 2016 14:25:14 -0500
+Content-Disposition: inline
+In-Reply-To: <568B0897.4020403@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Alim Akhtar <alim.akhtar@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
 
-Hi Inki,
+On 05/01/2016 at 09:04:39 +0900, Krzysztof Kozlowski wrote :
+> On 05.01.2016 08:53, Krzysztof Kozlowski wrote:
+> > On 05.01.2016 02:08, Alexandre Belloni wrote:
+> >> Hi,
+> >>
+> >> On 30/12/2015 at 13:47:25 +0900, Krzysztof Kozlowski wrote :
+> >>> Remove the 'rtc' prefix from some of the fields in struct
+> >>> s5m_rtc_reg_config because it is obvious - this is a RTC driver. No
+> >>> functional changes.
+> >>>
+> >>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >>>
+> >>
+> >> I was going to apply those patches but they don't apply cleanly on
+> >> rtc-next. Did I miss something?
+> >>
+> > 
+> > Probably that's my fault because I rebased it on linux-next. I will
+> > rebase the patches on rtc-next and resend.
+> 
+> Ah, no need for rebasing. I forgot about dependency - the support for
+> S2MPS15 was added recently through Lee Jones' tree. Fortunately Lee put
+> S2MPS15 patches in a separate branch and tag: "ib-mfd-regulator-rtc-4.5"
+> 
+> This means that to apply the patches this is needed first:
+> https://git.kernel.org/cgit/linux/kernel/git/lee/mfd.git/log/?h=ib-mfd-regulator-rtc-4.5
+> 
 
-On 8 January 2016 at 08:46, Inki Dae <inki.dae@samsung.com> wrote:
-> Changelog v3:
-> - initialize only device specific things. Each page flip event object
->   is created by DRM core so DRM core should release the object including
->   incrementing event space.
+All applied now, thanks
 
-I'm a bit confused here; we no longer call event->base.destroy(),
-because you say that the DRM core should release it. But how does the
-DRM core know to release the event? From the core point of view, the
-event disappears into the driver, and it is no longer tracked.
-
-As Daniel says though, later versions handle all this in the core in a
-much more clean way, so we can remove these from the drivers then.
-
-Cheers,
-Daniel
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
