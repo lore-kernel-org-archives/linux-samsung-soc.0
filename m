@@ -1,49 +1,51 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 0/8] [media] Check v4l2_of_parse_endpoint() ret val in all
- drivers
-Date: Mon, 11 Jan 2016 13:49:38 -0300
-Message-ID: <5693DD22.9020805@osg.samsung.com>
-References: <1452191248-15847-1-git-send-email-javier@osg.samsung.com>
- <20160109230330.GG576@valkosipuli.retiisi.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160109230330.GG576@valkosipuli.retiisi.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-kernel@vger.kernel.org, Nikhil Devshatwar <nikhil.nd@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, "Prabhakar\"" <prabhakar.csengg@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH -next] arm: Select GPIO_GENERIC_PLATFORM for CRAGG_6410
+Date: Mon, 11 Jan 2016 09:00:49 -0800
+Message-ID: <1452531649-14940-1-git-send-email-linux@roeck-us.net>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:46940 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932421AbcAKRAx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Jan 2016 12:00:53 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>
 
-Hello Sakari,
+Since commit 0f4630f3720e ("gpio: generic: factor into gpio_chip struct"),
+all users of struct bgpio_pdata depend on GPIO_GENERIC.
 
-On 01/09/2016 08:03 PM, Sakari Ailus wrote:
-> Hi Javier,
-> 
-> On Thu, Jan 07, 2016 at 03:27:14PM -0300, Javier Martinez Canillas wrote:
->> Hello,
->>
->> When discussing a patch [0] with Laurent Pinchart for another series I
->> mentioned to him that most callers of v4l2_of_parse_endpoint() weren't
->> checking the return value. This is likely due the function kernel-doc
->> stating incorrectly that the return value is always 0 but can return a
->> negative error code on failure.
->>
->> This trivial patch series fixes the function kernel-doc and add proper
->> error checking in all the drivers that are currently not doing so.
-> 
-> After fixing patches 5 and 6,
-> 
+This results in the following build error.
 
-Done, posted a v2 fixing the issues you pointed out.
+arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:
+	excess elements in struct initializer
+arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:
+	(near initialization for '(anonymous)')
+arch/arm/mach-s3c64xx/mach-crag6410.c:271:2: error:
+	invalid use of undefined type 'struct bgpio_pdata'
 
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
+Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+I don't know if this is the correct way to fix this problem.
+If not, please consider this to be a bug report.
 
-Thanks a lot for your feedback and review!
+ arch/arm/mach-s3c64xx/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 7c0c420c3016..98d2aa9393f1 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -310,6 +310,7 @@ config MACH_WLF_CRAGG_6410
+ 	depends on I2C=y
+ 	select CPU_S3C6410
+ 	select LEDS_GPIO_REGISTER
++	select GPIO_GENERIC_PLATFORM
+ 	select S3C64XX_DEV_SPI0
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_I2C1
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.1.4
