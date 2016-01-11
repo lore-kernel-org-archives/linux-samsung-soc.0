@@ -1,16 +1,16 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 2/3] dt-bindings: regulator/mfd: Reorganize S5M8767
+Subject: Re: [PATCH 3/3] dt-bindings: regulator/mfd: Reorganize S2MPA01
  bindings
-Date: Mon, 11 Jan 2016 07:51:17 +0000
-Message-ID: <20160111075117.GM3331@x1>
+Date: Mon, 11 Jan 2016 07:51:34 +0000
+Message-ID: <20160111075134.GN3331@x1>
 References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
- <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
+ <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org
@@ -18,280 +18,196 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Fri, 04 Dec 2015, Krzysztof Kozlowski wrote:
 
-> The regulator/s5m8767-regulator.txt duplicates some of the informatio=
-n
-> about bindings with old mfd/s2mps11.txt. Now common part exists entir=
-ely
-> in mfd/samsung,sec-core.txt so:
->  - add company prefix to file name (regulator/samsung,s5m8767.txt),
+> The mfd/s2mpa01.txt duplicates some of the information about bindings
+> with old mfd/s2mps11.txt. Now common part exists entirely in
+> mfd/samsung,sec-core.txt so:
+>  - add company prefix to file name (regulator/samsung,s2mpa01.txt),
 >  - remove duplicated information,
 >  - reorganize the contents to match style of
 >    regulator/samsung,s2mps11.txt.
 >=20
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  .../devicetree/bindings/mfd/samsung,sec-core.txt   |   4 +-
->  .../bindings/regulator/s5m8767-regulator.txt       | 163 -----------=
+>  Documentation/devicetree/bindings/mfd/s2mpa01.txt  | 90 ------------=
 ----------
->  .../bindings/regulator/samsung,s5m8767.txt         | 145 +++++++++++=
+>  .../devicetree/bindings/mfd/samsung,sec-core.txt   |  4 +-
+>  .../bindings/regulator/samsung,s2mpa01.txt         | 79 ++++++++++++=
 +++++++
->  MAINTAINERS                                        |   2 +-
->  4 files changed, 149 insertions(+), 165 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/regulator/s5m87=
-67-regulator.txt
+>  3 files changed, 82 insertions(+), 91 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/s2mpa01.txt
 >  create mode 100644 Documentation/devicetree/bindings/regulator/samsu=
-ng,s5m8767.txt
+ng,s2mpa01.txt
 
 Applied, thanks.
 
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.t=
-xt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> index ef0166d0f643..4aeb95c82304 100644
-> --- a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> @@ -14,6 +14,7 @@ addressed by the host system using different I2C sl=
-ave addresses.
->  This document describes bindings for main device node. Optional sub-=
-blocks
->  must be a sub-nodes to it. Bindings for them can be found in:
->   - bindings/regulator/samsung,s2mps11.txt
-> + - bindings/regulator/samsung,s5m8767.txt
->   - bindings/clock/samsung,s2mps11.txt
-> =20
-> =20
-> @@ -23,7 +24,8 @@ Required properties:
->  	- "samsung,s2mps13-pmic",
->  	- "samsung,s2mps14-pmic",
->  	- "samsung,s2mps15-pmic",
-> -	- "samsung,s2mpu02-pmic".
-> +	- "samsung,s2mpu02-pmic",
-> +	- "samsung,s5m8767-pmic".
->   - reg: Specifies the I2C slave address of the pmic block. It should=
- be 0x66.
-> =20
->  Optional properties:
-> diff --git a/Documentation/devicetree/bindings/regulator/s5m8767-regu=
-lator.txt b/Documentation/devicetree/bindings/regulator/s5m8767-regulat=
-or.txt
+> diff --git a/Documentation/devicetree/bindings/mfd/s2mpa01.txt b/Docu=
+mentation/devicetree/bindings/mfd/s2mpa01.txt
 > deleted file mode 100644
-> index 20191315e444..000000000000
-> --- a/Documentation/devicetree/bindings/regulator/s5m8767-regulator.t=
-xt
+> index c13d3d8c3947..000000000000
+> --- a/Documentation/devicetree/bindings/mfd/s2mpa01.txt
 > +++ /dev/null
-> @@ -1,163 +0,0 @@
-> -* Samsung S5M8767 Voltage and Current Regulator
+> @@ -1,90 +0,0 @@
 > -
-> -The Samsung S5M8767 is a multi-function device which includes voltag=
-e and
-> -current regulators, rtc, charger controller and other sub-blocks. It=
- is
-> -interfaced to the host controller using a i2c interface. Each sub-bl=
-ock is
-> -addressed by the host system using different i2c slave address. This=
- document
-> -describes the bindings for 'pmic' sub-block of s5m8767.
+> -* Samsung S2MPA01 Voltage and Current Regulator
+> -
+> -The Samsung S2MPA01 is a multi-function device which includes high
+> -efficiency buck converters including Dual-Phase buck converter, vari=
+ous LDOs,
+> -and an RTC. It is interfaced to the host controller using an I2C int=
+erface.
+> -Each sub-block is addressed by the host system using different I2C s=
+lave
+> -addresses.
 > -
 > -Required properties:
-> -- compatible: Should be "samsung,s5m8767-pmic".
-> -- reg: Specifies the i2c slave address of the pmic block. It should =
+> -- compatible: Should be "samsung,s2mpa01-pmic".
+> -- reg: Specifies the I2C slave address of the PMIC block. It should =
 be 0x66.
-> -
-> -- s5m8767,pmic-buck2-dvs-voltage: A set of 8 voltage values in micro=
--volt (uV)
-> -  units for buck2 when changing voltage using gpio dvs. Refer to [1]=
- below
-> -  for additional information.
-> -
-> -- s5m8767,pmic-buck3-dvs-voltage: A set of 8 voltage values in micro=
--volt (uV)
-> -  units for buck3 when changing voltage using gpio dvs. Refer to [1]=
- below
-> -  for additional information.
-> -
-> -- s5m8767,pmic-buck4-dvs-voltage: A set of 8 voltage values in micro=
--volt (uV)
-> -  units for buck4 when changing voltage using gpio dvs. Refer to [1]=
- below
-> -  for additional information.
-> -
-> -- s5m8767,pmic-buck-ds-gpios: GPIO specifiers for three host gpio's =
-used
-> -  for selecting GPIO DVS lines. It is one-to-one mapped to dvs gpio =
-lines.
-> -
-> -[1] If none of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
-> -    property is specified, the 's5m8767,pmic-buck[2/3/4]-dvs-voltage=
-'
-> -    property should specify atleast one voltage level (which would b=
-e a
-> -    safe operating voltage).
-> -
-> -    If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' option=
-al
-> -    property is specified, then all the eight voltage values for the
-> -    's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
 > -
 > -Optional properties:
 > -- interrupt-parent: Specifies the phandle of the interrupt controlle=
 r to which
-> -  the interrupts from s5m8767 are delivered to.
-> -- interrupts: Interrupt specifiers for two interrupt sources.
-> -  - First interrupt specifier is for 'irq1' interrupt.
-> -  - Second interrupt specifier is for 'alert' interrupt.
-> -- s5m8767,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gpi=
-o dvs.
-> -- s5m8767,pmic-buck3-uses-gpio-dvs: 'buck3' can be controlled by gpi=
-o dvs.
-> -- s5m8767,pmic-buck4-uses-gpio-dvs: 'buck4' can be controlled by gpi=
-o dvs.
+> -  the interrupts from s2mpa01 are delivered to.
+> -- interrupts: An interrupt specifier for the sole interrupt generate=
+d by the
+> -  device.
 > -
-> -Additional properties required if either of the optional properties =
-are used:
+> -Optional nodes:
+> -- regulators: The regulators of s2mpa01 that have to be instantiated=
+ should be
+> -  included in a sub-node named 'regulators'. Regulator nodes and con=
+straints
+> -  included in this sub-node use the standard regulator bindings whic=
+h are
+> -  documented elsewhere.
 > -
-> -- s5m8767,pmic-buck234-default-dvs-idx: Default voltage setting sele=
-cted from
-> -  the possible 8 options selectable by the dvs gpios. The value of t=
-his
-> -  property should be between 0 and 7. If not specified or if out of =
-range, the
-> -  default value of this property is set to 0.
+> -Properties for BUCK regulator nodes:
+> -- regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
+> -  (default), 25000, or 50000. May be 0 for disabling the ramp delay =
+on
+> -  BUCK{1,2,3,4}.
 > -
-> -- s5m8767,pmic-buck-dvs-gpios: GPIO specifiers for three host gpio's=
- used
-> -  for dvs. The format of the gpio specifier depends in the gpio cont=
-roller.
+> - In the absence of the regulator-ramp-delay property, the default ra=
+mp
+> - delay will be used.
 > -
-> -Regulators: The regulators of s5m8767 that have to be instantiated s=
-hould be
-> -included in a sub-node named 'regulators'. Regulator nodes included =
-in this
-> -sub-node should be of the format as listed below.
+> -  NOTE: Some BUCKs share the ramp rate setting i.e. same ramp value =
+will be set
+> -  for a particular group of BUCKs. So provide same regulator-ramp-de=
+lay=3D<value>.
 > -
-> -	regulator_name {
-> -		ldo1_reg: LDO1 {
-> -			regulator-name =3D "VDD_ALIVE_1.0V";
-> -			regulator-min-microvolt =3D <1100000>;
-> -			regulator-max-microvolt =3D <1100000>;
-> -			regulator-always-on;
-> -			regulator-boot-on;
-> -			op_mode =3D <1>; /* Normal Mode */
-> -		};
-> -	};
-> -The above regulator entries are defined in regulator bindings docume=
-ntation
-> -except these properties:
-> -	- op_mode: describes the different operating modes of the LDO's wit=
-h
-> -		power mode change in SOC. The different possible values are,
-> -		0 - always off mode
-> -		1 - on in normal mode
-> -		2 - low power mode
-> -		3 - suspend mode
-> -	- s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
-> -		GPIO controlling this regulator (enable/disable); This is
-> -		valid only for buck9.
+> -  The following BUCKs share ramp settings:
+> -  * 1 and 6
+> -  * 2 and 4
+> -  * 8, 9, and 10
 > -
-> -The following are the names of the regulators that the s5m8767 pmic =
+> -The following are the names of the regulators that the s2mpa01 PMIC =
 block
 > -supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK=
  number
-> -as per the datasheet of s5m8767.
+> -as per the datasheet of s2mpa01.
 > -
 > -	- LDOn
-> -		  - valid values for n are 1 to 28
-> -		  - Example: LDO1, LDO2, LDO28
+> -		  - valid values for n are 1 to 26
+> -		  - Example: LDO1, LD02, LDO26
 > -	- BUCKn
-> -		  - valid values for n are 1 to 9.
+> -		  - valid values for n are 1 to 10.
 > -		  - Example: BUCK1, BUCK2, BUCK9
-> -
-> -The bindings inside the regulator nodes use the standard regulator b=
-indings
-> -which are documented elsewhere.
 > -
 > -Example:
 > -
-> -	s5m8767_pmic@66 {
-> -		compatible =3D "samsung,s5m8767-pmic";
+> -	s2mpa01_pmic@66 {
+> -		compatible =3D "samsung,s2mpa01-pmic";
 > -		reg =3D <0x66>;
-> -
-> -		s5m8767,pmic-buck2-uses-gpio-dvs;
-> -		s5m8767,pmic-buck3-uses-gpio-dvs;
-> -		s5m8767,pmic-buck4-uses-gpio-dvs;
-> -
-> -		s5m8767,pmic-buck-default-dvs-idx =3D <0>;
-> -
-> -		s5m8767,pmic-buck-dvs-gpios =3D <&gpx0 0 0>, /* DVS1 */
-> -						 <&gpx0 1 0>, /* DVS2 */
-> -						 <&gpx0 2 0>; /* DVS3 */
-> -
-> -		s5m8767,pmic-buck-ds-gpios =3D <&gpx2 3 0>, /* SET1 */
-> -						<&gpx2 4 0>, /* SET2 */
-> -						<&gpx2 5 0>; /* SET3 */
-> -
-> -		s5m8767,pmic-buck2-dvs-voltage =3D <1350000>, <1300000>,
-> -						 <1250000>, <1200000>,
-> -						 <1150000>, <1100000>,
-> -						 <1000000>, <950000>;
-> -
-> -		s5m8767,pmic-buck3-dvs-voltage =3D <1100000>, <1100000>,
-> -						 <1100000>, <1100000>,
-> -						 <1000000>, <1000000>,
-> -						 <1000000>, <1000000>;
-> -
-> -		s5m8767,pmic-buck4-dvs-voltage =3D <1200000>, <1200000>,
-> -						 <1200000>, <1200000>,
-> -						 <1200000>, <1200000>,
-> -						 <1200000>, <1200000>;
 > -
 > -		regulators {
 > -			ldo1_reg: LDO1 {
-> -				regulator-name =3D "VDD_ABB_3.3V";
-> -				regulator-min-microvolt =3D <3300000>;
-> -				regulator-max-microvolt =3D <3300000>;
-> -				op_mode =3D <1>; /* Normal Mode */
+> -				regulator-name =3D "VDD_ALIVE";
+> -				regulator-min-microvolt =3D <1000000>;
+> -				regulator-max-microvolt =3D <1000000>;
 > -			};
 > -
 > -			ldo2_reg: LDO2 {
-> -				regulator-name =3D "VDD_ALIVE_1.1V";
-> -				regulator-min-microvolt =3D <1100000>;
-> -				regulator-max-microvolt =3D <1100000>;
+> -				regulator-name =3D "VDDQ_MMC2";
+> -				regulator-min-microvolt =3D <2800000>;
+> -				regulator-max-microvolt =3D <2800000>;
 > -				regulator-always-on;
 > -			};
 > -
 > -			buck1_reg: BUCK1 {
-> -				regulator-name =3D "VDD_MIF_1.2V";
+> -				regulator-name =3D "vdd_mif";
 > -				regulator-min-microvolt =3D <950000>;
 > -				regulator-max-microvolt =3D <1350000>;
 > -				regulator-always-on;
 > -				regulator-boot-on;
 > -			};
 > -
-> -			vemmc_reg: BUCK9 {
-> -				regulator-name =3D "VMEM_VDD_2.8V";
-> -				regulator-min-microvolt =3D <2800000>;
-> -				regulator-max-microvolt =3D <2800000>;
-> -				op_mode =3D <3>; /* Standby Mode */
-> -				s5m8767,pmic-ext-control-gpios =3D <&gpk0 2 0>;
+> -			buck2_reg: BUCK2 {
+> -				regulator-name =3D "vdd_arm";
+> -				regulator-min-microvolt =3D <950000>;
+> -				regulator-max-microvolt =3D <1350000>;
+> -				regulator-always-on;
+> -				regulator-boot-on;
+> -				regulator-ramp-delay =3D <50000>;
 > -			};
 > -		};
 > -	};
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8=
-767.txt b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.t=
+> diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.t=
+xt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> index 4aeb95c82304..cdd079bfc287 100644
+> --- a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> +++ b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> @@ -4,7 +4,7 @@ Binding for Samsung S2M and S5M family multi-function=
+ device
+>  This is a part of device tree bindings for S2M and S5M family multi-=
+function
+>  devices.
+> =20
+> -The Samsung S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
+> +The Samsung S2MPA01, S2MPS11/13/14/15, S2MPU02 and S5M8767 is a fami=
+ly
+>  of multi-function devices which include voltage and current regulato=
+rs, RTC,
+>  charger controller, clock outputs and other sub-blocks. It is interf=
+aced
+>  to the host controller using an I2C interface. Each sub-block is usu=
+ally
+> @@ -13,6 +13,7 @@ addressed by the host system using different I2C sl=
+ave addresses.
+> =20
+>  This document describes bindings for main device node. Optional sub-=
+blocks
+>  must be a sub-nodes to it. Bindings for them can be found in:
+> + - bindings/regulator/samsung,s2mpa01.txt
+>   - bindings/regulator/samsung,s2mps11.txt
+>   - bindings/regulator/samsung,s5m8767.txt
+>   - bindings/clock/samsung,s2mps11.txt
+> @@ -20,6 +21,7 @@ must be a sub-nodes to it. Bindings for them can be=
+ found in:
+> =20
+>  Required properties:
+>   - compatible: Should be one of the following
+> +	- "samsung,s2mpa01-pmic",
+>  	- "samsung,s2mps11-pmic",
+>  	- "samsung,s2mps13-pmic",
+>  	- "samsung,s2mps14-pmic",
+> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mp=
+a01.txt b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.t=
 xt
 > new file mode 100644
-> index 000000000000..093edda0c8df
+> index 000000000000..bae3c7f838cf
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-> @@ -0,0 +1,145 @@
-> +Binding for Samsung S5M8767 regulator block
+> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
+> @@ -0,0 +1,79 @@
+> +Binding for Samsung S2MPA01 regulator block
 > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > +
-> +This is a part of device tree bindings for S5M family multi-function=
+> +This is a part of device tree bindings for S2M family multi-function=
  devices.
 > +More information can be found in bindings/mfd/sec-core.txt file.
 > +
-> +The S5M8767 device provide buck and LDO regulators.
+> +The S2MPA01 device provide buck and LDO regulators.
 > +
 > +To register these with regulator framework instantiate under main de=
 vice node
@@ -301,177 +217,74 @@ vice node
 > + - Documentation/devicetree/bindings/regulator/regulator.txt
 > +
 > +
-> +Required properties of the main device node (the parent!):
-> + - s5m8767,pmic-buck2-dvs-voltage: A set of 8 voltage values in micr=
-o-volt (uV)
-> +   units for buck2 when changing voltage using gpio dvs. Refer to [1=
-] below
-> +   for additional information.
-> +
-> + - s5m8767,pmic-buck3-dvs-voltage: A set of 8 voltage values in micr=
-o-volt (uV)
-> +   units for buck3 when changing voltage using gpio dvs. Refer to [1=
-] below
-> +   for additional information.
-> +
-> + - s5m8767,pmic-buck4-dvs-voltage: A set of 8 voltage values in micr=
-o-volt (uV)
-> +   units for buck4 when changing voltage using gpio dvs. Refer to [1=
-] below
-> +   for additional information.
-> +
-> + - s5m8767,pmic-buck-ds-gpios: GPIO specifiers for three host gpio's=
- used
-> +   for selecting GPIO DVS lines. It is one-to-one mapped to dvs gpio=
- lines.
-> +
-> + [1] If none of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optiona=
-l
-> +     property is specified, the 's5m8767,pmic-buck[2/3/4]-dvs-voltag=
-e'
-> +     property should specify atleast one voltage level (which would =
-be a
-> +     safe operating voltage).
-> +
-> +     If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optio=
-nal
-> +     property is specified, then all the eight voltage values for th=
-e
-> +     's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
-> +
-> +Optional properties of the main device node (the parent!):
-> + - s5m8767,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gp=
-io dvs.
-> + - s5m8767,pmic-buck3-uses-gpio-dvs: 'buck3' can be controlled by gp=
-io dvs.
-> + - s5m8767,pmic-buck4-uses-gpio-dvs: 'buck4' can be controlled by gp=
-io dvs.
-> +
-> +Additional properties required if either of the optional properties =
-are used:
-> +
-> + - s5m8767,pmic-buck234-default-dvs-idx: Default voltage setting sel=
-ected from
-> +   the possible 8 options selectable by the dvs gpios. The value of =
-this
-> +   property should be between 0 and 7. If not specified or if out of=
- range, the
-> +   default value of this property is set to 0.
-> +
-> + - s5m8767,pmic-buck-dvs-gpios: GPIO specifiers for three host gpio'=
-s used
-> +   for dvs. The format of the gpio specifier depends in the gpio con=
-troller.
-> +
-> +
-> +Names of regulators supported by S5M8767 device:
+> +Names of regulators supported by S2MPA01 device:
 > +	- LDOn
-> +		  - valid values for n are 1 to 28
-> +		  - Example: LDO1, LDO2, LDO28
+> +		  - valid values for n are 1 to 26
+> +		  - Example: LDO1, LD02, LDO26
 > +	- BUCKn
-> +		  - valid values for n are 1 to 9.
+> +		  - valid values for n are 1 to 10.
 > +		  - Example: BUCK1, BUCK2, BUCK9
 > +Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
 > +as per the datasheet of device.
 > +
 > +
-> +Optional properties of the nodes under "regulators" sub-node:
-> + - op_mode: describes the different operating modes of the LDO's wit=
-h
-> +            power mode change in SOC. The different possible values =
-are,
-> +             0 - always off mode
-> +             1 - on in normal mode
-> +             2 - low power mode
-> +             3 - suspend mode
-> + - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
-> +                                   GPIO controlling this regulator
-> +                                   (enable/disable); This is valid o=
-nly
-> +                                   for buck9.
+> +Optional properties of buck regulator nodes under "regulators" sub-n=
+ode:
+> + - regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
+> +   (default), 25000, or 50000. May be 0 for disabling the ramp delay=
+ on
+> +   BUCK{1,2,3,4}.
+> +
+> +   In the absence of the regulator-ramp-delay property, the default =
+ramp
+> +   delay will be used.
+> +
+> +   Note: Some bucks share the ramp rate setting i.e. same ramp value
+> +   will be set for a particular group of bucks so provide the same
+> +   regulator-ramp-delay value for them.
+> +   Groups sharing ramp rate:
+> +    - buck{1,6},
+> +    - buck{2,4},
+> +    - buck{8,9,10}.
 > +
 > +Example:
 > +
-> +	s5m8767_pmic@66 {
-> +		compatible =3D "samsung,s5m8767-pmic";
+> +	s2mpa01_pmic@66 {
+> +		compatible =3D "samsung,s2mpa01-pmic";
 > +		reg =3D <0x66>;
-> +
-> +		s5m8767,pmic-buck2-uses-gpio-dvs;
-> +		s5m8767,pmic-buck3-uses-gpio-dvs;
-> +		s5m8767,pmic-buck4-uses-gpio-dvs;
-> +
-> +		s5m8767,pmic-buck-default-dvs-idx =3D <0>;
-> +
-> +		s5m8767,pmic-buck-dvs-gpios =3D <&gpx0 0 0>, /* DVS1 */
-> +						 <&gpx0 1 0>, /* DVS2 */
-> +						 <&gpx0 2 0>; /* DVS3 */
-> +
-> +		s5m8767,pmic-buck-ds-gpios =3D <&gpx2 3 0>, /* SET1 */
-> +						<&gpx2 4 0>, /* SET2 */
-> +						<&gpx2 5 0>; /* SET3 */
-> +
-> +		s5m8767,pmic-buck2-dvs-voltage =3D <1350000>, <1300000>,
-> +						 <1250000>, <1200000>,
-> +						 <1150000>, <1100000>,
-> +						 <1000000>, <950000>;
-> +
-> +		s5m8767,pmic-buck3-dvs-voltage =3D <1100000>, <1100000>,
-> +						 <1100000>, <1100000>,
-> +						 <1000000>, <1000000>,
-> +						 <1000000>, <1000000>;
-> +
-> +		s5m8767,pmic-buck4-dvs-voltage =3D <1200000>, <1200000>,
-> +						 <1200000>, <1200000>,
-> +						 <1200000>, <1200000>,
-> +						 <1200000>, <1200000>;
 > +
 > +		regulators {
 > +			ldo1_reg: LDO1 {
-> +				regulator-name =3D "VDD_ABB_3.3V";
-> +				regulator-min-microvolt =3D <3300000>;
-> +				regulator-max-microvolt =3D <3300000>;
-> +				op_mode =3D <1>; /* Normal Mode */
+> +				regulator-name =3D "VDD_ALIVE";
+> +				regulator-min-microvolt =3D <1000000>;
+> +				regulator-max-microvolt =3D <1000000>;
 > +			};
 > +
 > +			ldo2_reg: LDO2 {
-> +				regulator-name =3D "VDD_ALIVE_1.1V";
-> +				regulator-min-microvolt =3D <1100000>;
-> +				regulator-max-microvolt =3D <1100000>;
+> +				regulator-name =3D "VDDQ_MMC2";
+> +				regulator-min-microvolt =3D <2800000>;
+> +				regulator-max-microvolt =3D <2800000>;
 > +				regulator-always-on;
 > +			};
 > +
 > +			buck1_reg: BUCK1 {
-> +				regulator-name =3D "VDD_MIF_1.2V";
+> +				regulator-name =3D "vdd_mif";
 > +				regulator-min-microvolt =3D <950000>;
 > +				regulator-max-microvolt =3D <1350000>;
 > +				regulator-always-on;
 > +				regulator-boot-on;
 > +			};
 > +
-> +			vemmc_reg: BUCK9 {
-> +				regulator-name =3D "VMEM_VDD_2.8V";
-> +				regulator-min-microvolt =3D <2800000>;
-> +				regulator-max-microvolt =3D <2800000>;
-> +				op_mode =3D <3>; /* Standby Mode */
-> +				s5m8767,pmic-ext-control-gpios =3D <&gpk0 2 0>;
+> +			buck2_reg: BUCK2 {
+> +				regulator-name =3D "vdd_arm";
+> +				regulator-min-microvolt =3D <950000>;
+> +				regulator-max-microvolt =3D <1350000>;
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-ramp-delay =3D <50000>;
 > +			};
 > +		};
 > +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 137284e37250..7e1db5746ee4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9233,9 +9233,9 @@ F:	drivers/regulator/s5m*.c
->  F:	drivers/clk/clk-s2mps11.c
->  F:	drivers/rtc/rtc-s5m.c
->  F:	include/linux/mfd/samsung/
-> -F:	Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
->  F:	Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
->  F:	Documentation/devicetree/bindings/regulator/samsung,s2m*.txt
-> +F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.txt
->  F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
-> =20
->  SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
 
 --=20
 Lee Jones
