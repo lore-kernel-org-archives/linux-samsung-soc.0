@@ -1,51 +1,64 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] ARM: exynos_defconfig: Enable s5p-secss driver
-Date: Mon, 11 Jan 2016 13:04:35 -0300
-Message-ID: <5693D293.2050101@osg.samsung.com>
-References: <1452132905-8587-1-git-send-email-k.kozlowski@samsung.com>
- <1452132905-8587-2-git-send-email-k.kozlowski@samsung.com>
- <568FD733.8030601@osg.samsung.com>
- <CAJKOXPdie=mAPFxdnn_Ue+kNVTKQ1bFJigti35JMz7hmkYJ9cw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdie=mAPFxdnn_Ue+kNVTKQ1bFJigti35JMz7hmkYJ9cw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, tjakobi@math.uni-bielefeld.de
+Subject: [PATCH v2 0/8] [media] Check v4l2_of_parse_endpoint() ret val in all drivers
+Date: Mon, 11 Jan 2016 13:47:08 -0300
+Message-ID: <1452530844-30609-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:55299 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1761058AbcAKQrs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Jan 2016 11:47:48 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Nikhil Devshatwar <nikhil.nd@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, "Prabhakar\"" <prabhakar.csengg@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Hello Krzysztof,
+Hello,
 
-On 01/08/2016 11:46 PM, Krzysztof Kozlowski wrote:
+When discussing a patch [0] with Laurent Pinchart for another series I
+mentioned to him that most callers of v4l2_of_parse_endpoint() weren't
+checking the return value. This is likely due the function kernel-doc
+stating incorrectly that the return value is always 0 but can return a
+negative error code on failure.
 
-[snip]
+This trivial patch series fixes the function kernel-doc and add proper
+error checking in all the drivers that are currently not doing so.
 
->>> --- a/arch/arm/configs/exynos_defconfig
->>> +++ b/arch/arm/configs/exynos_defconfig
->>> @@ -240,6 +240,7 @@ CONFIG_DEBUG_RT_MUTEXES=y
->>>  CONFIG_DEBUG_SPINLOCK=y
->>>  CONFIG_DEBUG_MUTEXES=y
->>>  CONFIG_DEBUG_USER=y
->>> +CONFIG_CRYPTO_DEV_S5P=y
->>
->> I noticed that this is not enabled in multi_v7_defconfig.
->> Are you planing to do it as well?
-> 
-> Thanks for feedback and review. I noticed that as well but I am not
-> convinced because one of two of supported algorithms fails the
-> tests... which makes 50% of driver non-working. :) Maybe it is
-> harmless - just pollutes the dmesg... Maybe after fixing it.
->
+This is the second version of the series that fixes some minot issues
+pointed out by Sakari Ailus. The v1 of the series can be found in [1].
 
-Agreed that can be done after fixing the driver.
- 
-> Best regards,
-> Krzysztof
+[0]: https://lkml.org/lkml/2016/1/6/307
+[1]: https://lkml.org/lkml/2016/1/7/508
 
 Best regards,
+Javier
+
+Changes in v2:
+- Assign pdata to NULL in case v4l2_of_parse_endpoint() fails before kzalloc.
+  Suggested by Sakari Ailus.
+- Assign pdata to NULL in case v4l2_of_parse_endpoint() fails before kzalloc.
+  Suggested by Sakari Ailus.
+
+Javier Martinez Canillas (8):
+  [media] v4l: of: Correct v4l2_of_parse_endpoint() kernel-doc
+  [media] adv7604: Check v4l2_of_parse_endpoint() return value
+  [media] s5c73m3: Check v4l2_of_parse_endpoint() return value
+  [media] s5k5baf: Check v4l2_of_parse_endpoint() return value
+  [media] tvp514x: Check v4l2_of_parse_endpoint() return value
+  [media] tvp7002: Check v4l2_of_parse_endpoint() return value
+  [media] exynos4-is: Check v4l2_of_parse_endpoint() return value
+  [media] omap3isp: Check v4l2_of_parse_endpoint() return value
+
+ drivers/media/i2c/adv7604.c                   |  7 ++++++-
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c      |  4 +++-
+ drivers/media/i2c/s5k5baf.c                   |  5 ++++-
+ drivers/media/i2c/tvp514x.c                   |  6 ++++--
+ drivers/media/i2c/tvp7002.c                   |  6 ++++--
+ drivers/media/platform/exynos4-is/media-dev.c |  8 +++++++-
+ drivers/media/platform/exynos4-is/mipi-csis.c | 10 +++++++---
+ drivers/media/platform/omap3isp/isp.c         |  5 ++++-
+ drivers/media/v4l2-core/v4l2-of.c             |  2 +-
+ 9 files changed, 40 insertions(+), 13 deletions(-)
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.4.3
