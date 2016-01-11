@@ -1,287 +1,250 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 3/3] rtc: s5m: Make register configuration per S2MPS
- device to remove exceptions
-Date: Mon, 11 Jan 2016 09:42:36 +0000
-Message-ID: <20160111094236.GO14104@x1>
-References: <1451450847-928-1-git-send-email-k.kozlowski@samsung.com>
- <1451450847-928-3-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 2/3] drm/exynos: use generic code for managing zpos plane
+ property
+Date: Mon, 11 Jan 2016 12:03:04 +0100
+Message-ID: <1452510185-22801-3-git-send-email-m.szyprowski@samsung.com>
+References: <1452510185-22801-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:34481 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751116AbcAKJml (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:60547 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932477AbcAKLDq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jan 2016 04:42:41 -0500
-Received: by mail-wm0-f53.google.com with SMTP id u188so206604086wmu.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jan 2016 01:42:40 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1451450847-928-3-git-send-email-k.kozlowski@samsung.com>
+	Mon, 11 Jan 2016 06:03:46 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O0S004NHC266KA0@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 11 Jan 2016 11:03:42 +0000 (GMT)
+In-reply-to: <1452510185-22801-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Alim Akhtar <alim.akhtar@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
 
-On Wed, 30 Dec 2015, Krzysztof Kozlowski wrote:
+This patch replaces zpos property handling custom code in Exynos DRM
+driver with calls to generic DRM code.
 
-> Before updating time and alarm the driver must set appropriate mask i=
-n
-> UDR register. For that purpose the driver uses common register
-> configuration and a lot of exceptions per device in the code. The
-> exceptions are not obvious, for example except the change in the logi=
-c
-> sometimes the fields are swapped (WUDR and AUDR between S2MPS14 and
-> S2MPS15). This leads to quite complicated code.
->=20
-> Try to make it more obvious by:
-> 1. Documenting the UDR masks for devices and operations.
-> 2. Adding fields in register configuration structure for each operati=
-on
->    (read time, write time and alarm).
-> 3. Splitting the configuration per S2MPS13, S2MPS14 and S2MPS15 thus
->    removing exceptions for them.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->=20
-> ---
->=20
-> Tested on S2MPS11 (Odroid XU4) and S2MPS13. Testing on S2MPS15 would =
-be
-> appreciated!
->=20
-> Changes since v1:
-> 1. Fix value used in S2MPS15_RTC_AUDR_MASK, pointed by Yadwinder Sing=
-h
->    Brar.
-> ---
->  drivers/rtc/rtc-s5m.c           | 110 +++++++++++++++++++++++++++---=
-----------
->  include/linux/mfd/samsung/rtc.h |   2 +
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 -
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 66 +++++++------------------------
+ drivers/gpu/drm/exynos/exynos_mixer.c     | 19 +++++++--
+ 3 files changed, 30 insertions(+), 56 deletions(-)
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
->  2 files changed, 77 insertions(+), 35 deletions(-)
->=20
-> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> index 559db8f72117..7407d7394bb4 100644
-> --- a/drivers/rtc/rtc-s5m.c
-> +++ b/drivers/rtc/rtc-s5m.c
-> @@ -38,7 +38,22 @@
->   */
->  #define UDR_READ_RETRY_CNT	5
-> =20
-> -/* Registers used by the driver which are different between chipsets=
-=2E */
-> +/*
-> + * Registers used by the driver which are different between chipsets=
-=2E
-> + *
-> + * Operations like read time and write alarm/time require updating
-> + * specific fields in UDR register. These fields usually are auto-cl=
-eared
-> + * (with some exceptions).
-> + *
-> + * Table of operations per device:
-> + *
-> + * Device     | Write time | Read time | Write alarm
-> + * =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> + * S5M8767    | UDR + TIME |           | UDR
-> + * S2MPS11/14 | WUDR       | RUDR      | WUDR + RUDR
-> + * S2MPS13    | WUDR       | RUDR      | WUDR + AUDR
-> + * S2MPS15    | WUDR       | RUDR      | AUDR
-> + */
->  struct s5m_rtc_reg_config {
->  	/* Number of registers used for setting time/alarm0/alarm1 */
->  	unsigned int regs_count;
-> @@ -58,8 +73,13 @@ struct s5m_rtc_reg_config {
->  	unsigned int udr_update;
->  	/* Auto-cleared mask in UDR field for writing time and alarm */
->  	unsigned int autoclear_udr_mask;
-> -	/* Mask for UDR field in 'udr_update' register */
-> -	unsigned int udr_mask;
-> +	/*
-> +	 * Masks in UDR field for time and alarm operations.
-> +	 * The read time mask can be 0. Rest should not.
-> +	 */
-> +	unsigned int read_time_udr_mask;
-> +	unsigned int write_time_udr_mask;
-> +	unsigned int write_alarm_udr_mask;
->  };
-> =20
->  /* Register map for S5M8763 and S5M8767 */
-> @@ -71,14 +91,44 @@ static const struct s5m_rtc_reg_config s5m_rtc_re=
-gs =3D {
->  	.alarm1			=3D S5M_ALARM1_SEC,
->  	.udr_update		=3D S5M_RTC_UDR_CON,
->  	.autoclear_udr_mask	=3D S5M_RTC_UDR_MASK,
-> -	.udr_mask		=3D S5M_RTC_UDR_MASK,
-> +	.read_time_udr_mask	=3D 0, /* Not needed */
-> +	.write_time_udr_mask	=3D S5M_RTC_UDR_MASK | S5M_RTC_TIME_EN_MASK,
-> +	.write_alarm_udr_mask	=3D S5M_RTC_UDR_MASK,
-> +};
-> +
-> +/* Register map for S2MPS13 */
-> +static const struct s5m_rtc_reg_config s2mps13_rtc_regs =3D {
-> +	.regs_count		=3D 7,
-> +	.time			=3D S2MPS_RTC_SEC,
-> +	.ctrl			=3D S2MPS_RTC_CTRL,
-> +	.alarm0			=3D S2MPS_ALARM0_SEC,
-> +	.alarm1			=3D S2MPS_ALARM1_SEC,
-> +	.udr_update		=3D S2MPS_RTC_UDR_CON,
-> +	.autoclear_udr_mask	=3D S2MPS_RTC_WUDR_MASK,
-> +	.read_time_udr_mask	=3D S2MPS_RTC_RUDR_MASK,
-> +	.write_time_udr_mask	=3D S2MPS_RTC_WUDR_MASK,
-> +	.write_alarm_udr_mask	=3D S2MPS_RTC_WUDR_MASK | S2MPS13_RTC_AUDR_MA=
-SK,
-> +};
-> +
-> +/* Register map for S2MPS11/14 */
-> +static const struct s5m_rtc_reg_config s2mps14_rtc_regs =3D {
-> +	.regs_count		=3D 7,
-> +	.time			=3D S2MPS_RTC_SEC,
-> +	.ctrl			=3D S2MPS_RTC_CTRL,
-> +	.alarm0			=3D S2MPS_ALARM0_SEC,
-> +	.alarm1			=3D S2MPS_ALARM1_SEC,
-> +	.udr_update		=3D S2MPS_RTC_UDR_CON,
-> +	.autoclear_udr_mask	=3D S2MPS_RTC_WUDR_MASK,
-> +	.read_time_udr_mask	=3D S2MPS_RTC_RUDR_MASK,
-> +	.write_time_udr_mask	=3D S2MPS_RTC_WUDR_MASK,
-> +	.write_alarm_udr_mask	=3D S2MPS_RTC_WUDR_MASK | S2MPS_RTC_RUDR_MASK=
-,
->  };
-> =20
->  /*
-> - * Register map for S2MPS14.
-> - * It may be also suitable for S2MPS11 but this was not tested.
-> + * Register map for S2MPS15 - in comparison to S2MPS14 the WUDR and =
-AUDR bits
-> + * are swapped.
->   */
-> -static const struct s5m_rtc_reg_config s2mps_rtc_regs =3D {
-> +static const struct s5m_rtc_reg_config s2mps15_rtc_regs =3D {
->  	.regs_count		=3D 7,
->  	.time			=3D S2MPS_RTC_SEC,
->  	.ctrl			=3D S2MPS_RTC_CTRL,
-> @@ -86,7 +136,9 @@ static const struct s5m_rtc_reg_config s2mps_rtc_r=
-egs =3D {
->  	.alarm1			=3D S2MPS_ALARM1_SEC,
->  	.udr_update		=3D S2MPS_RTC_UDR_CON,
->  	.autoclear_udr_mask	=3D S2MPS_RTC_WUDR_MASK,
-> -	.udr_mask		=3D S2MPS_RTC_WUDR_MASK,
-> +	.read_time_udr_mask	=3D S2MPS_RTC_RUDR_MASK,
-> +	.write_time_udr_mask	=3D S2MPS15_RTC_WUDR_MASK,
-> +	.write_alarm_udr_mask	=3D S2MPS15_RTC_AUDR_MASK,
->  };
-> =20
->  struct s5m_rtc_info {
-> @@ -223,21 +275,7 @@ static inline int s5m8767_rtc_set_time_reg(struc=
-t s5m_rtc_info *info)
->  		return ret;
->  	}
-> =20
-> -	switch (info->device_type) {
-> -	case S5M8763X:
-> -	case S5M8767X:
-> -		data |=3D info->regs->udr_mask | S5M_RTC_TIME_EN_MASK;
-> -	case S2MPS15X:
-> -		/* As per UM, for write time register, set WUDR bit to high */
-> -		data |=3D S2MPS15_RTC_WUDR_MASK;
-> -		break;
-> -	case S2MPS14X:
-> -	case S2MPS13X:
-> -		data |=3D info->regs->udr_mask;
-> -		break;
-> -	default:
-> -		return -EINVAL;
-> -	}
-> +	data |=3D info->regs->write_time_udr_mask;
-> =20
->  	ret =3D regmap_write(info->regmap, info->regs->udr_update, data);
->  	if (ret < 0) {
-> @@ -262,22 +300,16 @@ static inline int s5m8767_rtc_set_alarm_reg(str=
-uct s5m_rtc_info *info)
->  		return ret;
->  	}
-> =20
-> -	data |=3D info->regs->udr_mask;
-> +	data |=3D info->regs->write_alarm_udr_mask;
->  	switch (info->device_type) {
->  	case S5M8763X:
->  	case S5M8767X:
->  		data &=3D ~S5M_RTC_TIME_EN_MASK;
->  		break;
->  	case S2MPS15X:
-> -		/* As per UM, for write alarm, set A_UDR(bit[4]) to high
-> -		 * udr_mask above sets bit[4]
-> -		 */
-> -		break;
->  	case S2MPS14X:
-> -		data |=3D S2MPS_RTC_RUDR_MASK;
-> -		break;
->  	case S2MPS13X:
-> -		data |=3D S2MPS13_RTC_AUDR_MASK;
-> +		/* No exceptions needed */
->  		break;
->  	default:
->  		return -EINVAL;
-> @@ -338,11 +370,11 @@ static int s5m_rtc_read_time(struct device *dev=
-, struct rtc_time *tm)
->  	u8 data[info->regs->regs_count];
->  	int ret;
-> =20
-> -	if (info->device_type =3D=3D S2MPS15X || info->device_type =3D=3D S=
-2MPS14X ||
-> -			info->device_type =3D=3D S2MPS13X) {
-> +	if (info->regs->read_time_udr_mask) {
->  		ret =3D regmap_update_bits(info->regmap,
->  				info->regs->udr_update,
-> -				S2MPS_RTC_RUDR_MASK, S2MPS_RTC_RUDR_MASK);
-> +				info->regs->read_time_udr_mask,
-> +				info->regs->read_time_udr_mask);
->  		if (ret) {
->  			dev_err(dev,
->  				"Failed to prepare registers for time reading: %d\n",
-> @@ -709,10 +741,18 @@ static int s5m_rtc_probe(struct platform_device=
- *pdev)
-> =20
->  	switch (platform_get_device_id(pdev)->driver_data) {
->  	case S2MPS15X:
-> +		regmap_cfg =3D &s2mps14_rtc_regmap_config;
-> +		info->regs =3D &s2mps15_rtc_regs;
-> +		alarm_irq =3D S2MPS14_IRQ_RTCA0;
-> +		break;
->  	case S2MPS14X:
-> +		regmap_cfg =3D &s2mps14_rtc_regmap_config;
-> +		info->regs =3D &s2mps14_rtc_regs;
-> +		alarm_irq =3D S2MPS14_IRQ_RTCA0;
-> +		break;
->  	case S2MPS13X:
->  		regmap_cfg =3D &s2mps14_rtc_regmap_config;
-> -		info->regs =3D &s2mps_rtc_regs;
-> +		info->regs =3D &s2mps13_rtc_regs;
->  		alarm_irq =3D S2MPS14_IRQ_RTCA0;
->  		break;
->  	case S5M8763X:
-> diff --git a/include/linux/mfd/samsung/rtc.h b/include/linux/mfd/sams=
-ung/rtc.h
-> index a65e4655d470..48c3c5be7eb1 100644
-> --- a/include/linux/mfd/samsung/rtc.h
-> +++ b/include/linux/mfd/samsung/rtc.h
-> @@ -105,6 +105,8 @@ enum s2mps_rtc_reg {
->  #define S5M_RTC_UDR_MASK	(1 << S5M_RTC_UDR_SHIFT)
->  #define S2MPS_RTC_WUDR_SHIFT	4
->  #define S2MPS_RTC_WUDR_MASK	(1 << S2MPS_RTC_WUDR_SHIFT)
-> +#define S2MPS15_RTC_AUDR_SHIFT	4
-> +#define S2MPS15_RTC_AUDR_MASK	(1 << S2MPS15_RTC_AUDR_SHIFT)
->  #define S2MPS13_RTC_AUDR_SHIFT	1
->  #define S2MPS13_RTC_AUDR_MASK	(1 << S2MPS13_RTC_AUDR_SHIFT)
->  #define S2MPS15_RTC_WUDR_SHIFT	1
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 17b5ded72ff1..244ae6c4482c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -217,7 +217,6 @@ struct exynos_drm_private {
+ 	 * this array is used to be aware of which crtc did it request vblank.
+ 	 */
+ 	struct drm_crtc *crtc[MAX_CRTC];
+-	struct drm_property *plane_zpos_property;
+ 
+ 	unsigned long da_start;
+ 	unsigned long da_space_size;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index d86227236f55..ba46bc3de796 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -137,9 +137,9 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
+ 
+ 	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
+ 	if (exynos_state) {
+-		exynos_state->zpos = exynos_plane->config->zpos;
+ 		plane->state = &exynos_state->base;
+ 		plane->state->plane = plane;
++		plane->state->zpos = exynos_plane->config->zpos;
+ 	}
+ }
+ 
+@@ -155,7 +155,6 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
+ 		return NULL;
+ 
+ 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
+-	copy->zpos = exynos_state->zpos;
+ 	return &copy->base;
+ }
+ 
+@@ -168,43 +167,6 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
+ 	kfree(old_exynos_state);
+ }
+ 
+-static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
+-						struct drm_plane_state *state,
+-						struct drm_property *property,
+-						uint64_t val)
+-{
+-	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	struct exynos_drm_plane_state *exynos_state =
+-					to_exynos_plane_state(state);
+-	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+-	const struct exynos_drm_plane_config *config = exynos_plane->config;
+-
+-	if (property == dev_priv->plane_zpos_property &&
+-	    (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
+-		exynos_state->zpos = val;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
+-					  const struct drm_plane_state *state,
+-					  struct drm_property *property,
+-					  uint64_t *val)
+-{
+-	const struct exynos_drm_plane_state *exynos_state =
+-		container_of(state, const struct exynos_drm_plane_state, base);
+-	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+-
+-	if (property == dev_priv->plane_zpos_property)
+-		*val = exynos_state->zpos;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= drm_atomic_helper_update_plane,
+ 	.disable_plane	= drm_atomic_helper_disable_plane,
+@@ -213,8 +175,6 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.reset		= exynos_drm_plane_reset,
+ 	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
+ 	.atomic_destroy_state = exynos_drm_plane_destroy_state,
+-	.atomic_set_property = exynos_drm_plane_atomic_set_property,
+-	.atomic_get_property = exynos_drm_plane_atomic_get_property,
+ };
+ 
+ static int
+@@ -302,20 +262,21 @@ static const struct drm_plane_helper_funcs plane_helper_funcs = {
+ };
+ 
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+-					      unsigned int zpos)
++					      unsigned int zpos, bool immutable)
+ {
+ 	struct drm_device *dev = plane->dev;
+-	struct exynos_drm_private *dev_priv = dev->dev_private;
+ 	struct drm_property *prop;
+ 
+-	prop = dev_priv->plane_zpos_property;
+-	if (!prop) {
+-		prop = drm_property_create_range(dev, 0, "zpos",
+-						 0, MAX_PLANE - 1);
+-		if (!prop)
+-			return;
+-
+-		dev_priv->plane_zpos_property = prop;
++	if (immutable) {
++		if (!dev->mode_config.zpos_immutable_property)
++			if (!drm_mode_create_zpos_immutable_property(dev))
++				return;
++		prop = dev->mode_config.zpos_immutable_property;
++	} else {
++		if (!dev->mode_config.zpos_property)
++			if (!drm_mode_create_zpos_property(dev))
++				return;
++		prop = dev->mode_config.zpos_property;
+ 	}
+ 
+ 	drm_object_attach_property(&plane->base, prop, zpos);
+@@ -344,7 +305,8 @@ int exynos_plane_init(struct drm_device *dev,
+ 	exynos_plane->index = index;
+ 	exynos_plane->config = config;
+ 
+-	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos);
++	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos,
++			   !(config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS));
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index b5fbc1cbf024..6ab68eca0004 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -34,6 +34,7 @@
+ #include <linux/component.h>
+ 
+ #include <drm/exynos_drm.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+@@ -95,6 +96,8 @@ struct mixer_context {
+ 	struct drm_device	*drm_dev;
+ 	struct exynos_drm_crtc	*crtc;
+ 	struct exynos_drm_plane	planes[MIXER_WIN_NR];
++	struct drm_plane	*zpos_planes[MIXER_WIN_NR];
++	int			num_planes;
+ 	int			pipe;
+ 	unsigned long		flags;
+ 	bool			interlace;
+@@ -478,6 +481,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 	struct drm_framebuffer *fb = state->base.fb;
++	unsigned int priority = state->base.normalized_zpos + 1;
+ 	unsigned long flags;
+ 	dma_addr_t luma_addr[2], chroma_addr[2];
+ 	bool tiled_mode = false;
+@@ -562,7 +566,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+-	mixer_cfg_layer(ctx, plane->index, state->zpos + 1, true);
++	mixer_cfg_layer(ctx, plane->index, priority, true);
+ 	mixer_cfg_vp_blend(ctx);
+ 	mixer_run(ctx);
+ 
+@@ -587,6 +591,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 	struct drm_framebuffer *fb = state->base.fb;
++	unsigned int priority = state->base.normalized_zpos + 1;
+ 	unsigned long flags;
+ 	unsigned int win = plane->index;
+ 	unsigned int x_ratio = 0, y_ratio = 0;
+@@ -678,7 +683,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+-	mixer_cfg_layer(ctx, win, state->zpos + 1, true);
++	mixer_cfg_layer(ctx, win, priority, true);
+ 	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
+ 
+ 	/* layer update mandatory for mixer 16.0.33.0 */
+@@ -981,6 +986,12 @@ static void mixer_atomic_begin(struct exynos_drm_crtc *crtc)
+ 	if (!test_bit(MXR_BIT_POWERED, &mixer_ctx->flags))
+ 		return;
+ 
++	/*
++	 * Normalizing up to 3 planes is cheap, no need for checking
++	 * if zpos has been really changed.
++	 */
++	drm_atomic_helper_normalize_zpos(mixer_ctx->zpos_planes,
++					 mixer_ctx->num_planes);
+ 	mixer_vsync_set_update(mixer_ctx, false);
+ }
+ 
+@@ -1203,13 +1214,15 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+ 
+ 	for (i = 0; i < MIXER_WIN_NR; i++) {
+ 		if (i == VP_DEFAULT_WIN && !ctx->vp_enabled)
+-			continue;
++			break;
+ 
+ 		ret = exynos_plane_init(drm_dev, &ctx->planes[i], i,
+ 					1 << ctx->pipe, &plane_configs[i]);
+ 		if (ret)
+ 			return ret;
++		ctx->zpos_planes[i] = &ctx->planes[i].base;
+ 	}
++	ctx->num_planes = i;
+ 
+ 	exynos_plane = &ctx->planes[DEFAULT_WIN];
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+-- 
+1.9.2
