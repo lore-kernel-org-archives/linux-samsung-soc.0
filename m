@@ -1,257 +1,68 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 2/3] drm/exynos: use generic code for managing zpos
- plane property
-Date: Tue, 12 Jan 2016 10:34:27 +0100
-Message-ID: <5694C8A3.9000906@samsung.com>
-References: <1452510185-22801-1-git-send-email-m.szyprowski@samsung.com>
- <1452510185-22801-3-git-send-email-m.szyprowski@samsung.com>
- <20160111151307.GZ8076@phenom.ffwll.local>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v3] drm/exynos: fix kernel panic issue at drm releasing
+Date: Tue, 12 Jan 2016 09:55:48 +0000
+Message-ID: <CAPj87rN1sjGZgZFkUVt_2AydQytQbXzvfMzeJ6sfDPsSN4+baA@mail.gmail.com>
+References: <1452242760-20298-1-git-send-email-inki.dae@samsung.com>
+	<1452242760-20298-2-git-send-email-inki.dae@samsung.com>
+	<CAPj87rPkwRBKM8mUt2zS-Mr7bZNMqD1PGy01-BUES_84sJqCUw@mail.gmail.com>
+	<56949C5E.1000902@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43977 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934673AbcALJeb (ORCPT
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:38191 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932987AbcALJzt convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jan 2016 04:34:31 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O0U000RO2LGBU60@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 12 Jan 2016 09:34:28 +0000 (GMT)
-In-reply-to: <20160111151307.GZ8076@phenom.ffwll.local>
+	Tue, 12 Jan 2016 04:55:49 -0500
+Received: by mail-wm0-f41.google.com with SMTP id b14so310743901wmb.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jan 2016 01:55:48 -0800 (PST)
+In-Reply-To: <56949C5E.1000902@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
+To: Inki Dae <inki.dae@samsung.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hello,
+Hi Inki,
 
-On 2016-01-11 16:13, Daniel Vetter wrote:
-> On Mon, Jan 11, 2016 at 12:03:04PM +0100, Marek Szyprowski wrote:
->> This patch replaces zpos property handling custom code in Exynos DRM
->> driver with calls to generic DRM code.
+On 12 January 2016 at 06:25, Inki Dae <inki.dae@samsung.com> wrote:
+> 2016=EB=85=84 01=EC=9B=94 12=EC=9D=BC 04:00=EC=97=90 Daniel Stone =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>> On 8 January 2016 at 08:46, Inki Dae <inki.dae@samsung.com> wrote:
+>>> Changelog v3:
+>>> - initialize only device specific things. Each page flip event obje=
+ct
+>>>   is created by DRM core so DRM core should release the object incl=
+uding
+>>>   incrementing event space.
 >>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 -
->>   drivers/gpu/drm/exynos/exynos_drm_plane.c | 66 +++++++------------------------
->>   drivers/gpu/drm/exynos/exynos_mixer.c     | 19 +++++++--
->>   3 files changed, 30 insertions(+), 56 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> index 17b5ded72ff1..244ae6c4482c 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -217,7 +217,6 @@ struct exynos_drm_private {
->>   	 * this array is used to be aware of which crtc did it request vblank.
->>   	 */
->>   	struct drm_crtc *crtc[MAX_CRTC];
->> -	struct drm_property *plane_zpos_property;
->>   
->>   	unsigned long da_start;
->>   	unsigned long da_space_size;
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> index d86227236f55..ba46bc3de796 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> @@ -137,9 +137,9 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
->>   
->>   	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
->>   	if (exynos_state) {
->> -		exynos_state->zpos = exynos_plane->config->zpos;
->>   		plane->state = &exynos_state->base;
->>   		plane->state->plane = plane;
->> +		plane->state->zpos = exynos_plane->config->zpos;
->>   	}
->>   }
->>   
->> @@ -155,7 +155,6 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
->>   		return NULL;
->>   
->>   	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
->> -	copy->zpos = exynos_state->zpos;
->>   	return &copy->base;
->>   }
->>   
->> @@ -168,43 +167,6 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
->>   	kfree(old_exynos_state);
->>   }
->>   
->> -static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
->> -						struct drm_plane_state *state,
->> -						struct drm_property *property,
->> -						uint64_t val)
->> -{
->> -	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
->> -	struct exynos_drm_plane_state *exynos_state =
->> -					to_exynos_plane_state(state);
->> -	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
->> -	const struct exynos_drm_plane_config *config = exynos_plane->config;
->> -
->> -	if (property == dev_priv->plane_zpos_property &&
->> -	    (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
->> -		exynos_state->zpos = val;
->> -	else
->> -		return -EINVAL;
->> -
->> -	return 0;
->> -}
->> -
->> -static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
->> -					  const struct drm_plane_state *state,
->> -					  struct drm_property *property,
->> -					  uint64_t *val)
->> -{
->> -	const struct exynos_drm_plane_state *exynos_state =
->> -		container_of(state, const struct exynos_drm_plane_state, base);
->> -	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
->> -
->> -	if (property == dev_priv->plane_zpos_property)
->> -		*val = exynos_state->zpos;
->> -	else
->> -		return -EINVAL;
->> -
->> -	return 0;
->> -}
->> -
->>   static struct drm_plane_funcs exynos_plane_funcs = {
->>   	.update_plane	= drm_atomic_helper_update_plane,
->>   	.disable_plane	= drm_atomic_helper_disable_plane,
->> @@ -213,8 +175,6 @@ static struct drm_plane_funcs exynos_plane_funcs = {
->>   	.reset		= exynos_drm_plane_reset,
->>   	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
->>   	.atomic_destroy_state = exynos_drm_plane_destroy_state,
->> -	.atomic_set_property = exynos_drm_plane_atomic_set_property,
->> -	.atomic_get_property = exynos_drm_plane_atomic_get_property,
->>   };
->>   
->>   static int
->> @@ -302,20 +262,21 @@ static const struct drm_plane_helper_funcs plane_helper_funcs = {
->>   };
->>   
->>   static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
->> -					      unsigned int zpos)
->> +					      unsigned int zpos, bool immutable)
->>   {
->>   	struct drm_device *dev = plane->dev;
->> -	struct exynos_drm_private *dev_priv = dev->dev_private;
->>   	struct drm_property *prop;
->>   
->> -	prop = dev_priv->plane_zpos_property;
->> -	if (!prop) {
->> -		prop = drm_property_create_range(dev, 0, "zpos",
->> -						 0, MAX_PLANE - 1);
->> -		if (!prop)
->> -			return;
->> -
->> -		dev_priv->plane_zpos_property = prop;
->> +	if (immutable) {
->> +		if (!dev->mode_config.zpos_immutable_property)
->> +			if (!drm_mode_create_zpos_immutable_property(dev))
->> +				return;
->> +		prop = dev->mode_config.zpos_immutable_property;
->> +	} else {
->> +		if (!dev->mode_config.zpos_property)
->> +			if (!drm_mode_create_zpos_property(dev))
->> +				return;
->> +		prop = dev->mode_config.zpos_property;
->>   	}
->>   
->>   	drm_object_attach_property(&plane->base, prop, zpos);
->> @@ -344,7 +305,8 @@ int exynos_plane_init(struct drm_device *dev,
->>   	exynos_plane->index = index;
->>   	exynos_plane->config = config;
->>   
->> -	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos);
->> +	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos,
->> +			   !(config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS));
->>   
->>   	return 0;
->>   }
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->> index b5fbc1cbf024..6ab68eca0004 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -34,6 +34,7 @@
->>   #include <linux/component.h>
->>   
->>   #include <drm/exynos_drm.h>
->> +#include <drm/drm_atomic_helper.h>
->>   
->>   #include "exynos_drm_drv.h"
->>   #include "exynos_drm_crtc.h"
->> @@ -95,6 +96,8 @@ struct mixer_context {
->>   	struct drm_device	*drm_dev;
->>   	struct exynos_drm_crtc	*crtc;
->>   	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->> +	struct drm_plane	*zpos_planes[MIXER_WIN_NR];
->> +	int			num_planes;
->>   	int			pipe;
->>   	unsigned long		flags;
->>   	bool			interlace;
->> @@ -478,6 +481,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
->>   	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
->>   	struct mixer_resources *res = &ctx->mixer_res;
->>   	struct drm_framebuffer *fb = state->base.fb;
->> +	unsigned int priority = state->base.normalized_zpos + 1;
->>   	unsigned long flags;
->>   	dma_addr_t luma_addr[2], chroma_addr[2];
->>   	bool tiled_mode = false;
->> @@ -562,7 +566,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
->>   
->>   	mixer_cfg_scan(ctx, mode->vdisplay);
->>   	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
->> -	mixer_cfg_layer(ctx, plane->index, state->zpos + 1, true);
->> +	mixer_cfg_layer(ctx, plane->index, priority, true);
->>   	mixer_cfg_vp_blend(ctx);
->>   	mixer_run(ctx);
->>   
->> @@ -587,6 +591,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
->>   	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
->>   	struct mixer_resources *res = &ctx->mixer_res;
->>   	struct drm_framebuffer *fb = state->base.fb;
->> +	unsigned int priority = state->base.normalized_zpos + 1;
->>   	unsigned long flags;
->>   	unsigned int win = plane->index;
->>   	unsigned int x_ratio = 0, y_ratio = 0;
->> @@ -678,7 +683,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
->>   
->>   	mixer_cfg_scan(ctx, mode->vdisplay);
->>   	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
->> -	mixer_cfg_layer(ctx, win, state->zpos + 1, true);
->> +	mixer_cfg_layer(ctx, win, priority, true);
->>   	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
->>   
->>   	/* layer update mandatory for mixer 16.0.33.0 */
->> @@ -981,6 +986,12 @@ static void mixer_atomic_begin(struct exynos_drm_crtc *crtc)
->>   	if (!test_bit(MXR_BIT_POWERED, &mixer_ctx->flags))
->>   		return;
->>   
->> +	/*
->> +	 * Normalizing up to 3 planes is cheap, no need for checking
->> +	 * if zpos has been really changed.
->> +	 */
->> +	drm_atomic_helper_normalize_zpos(mixer_ctx->zpos_planes,
->> +					 mixer_ctx->num_planes);
-> Hm, this is a bit a cumbersome interface for drivers and will make
-> converting over to the normalized zpos more work. Can't we handle this in
-> the atomic helpers directly? I'm thinking of the following flow:
+>> I'm a bit confused here; we no longer call event->base.destroy(),
+>> because you say that the DRM core should release it. But how does th=
+e
+>> DRM core know to release the event? From the core point of view, the
+>> event disappears into the driver, and it is no longer tracked.
 >
-> - if new_plane_state->zpos != old_plane_state->zpos then set new_crtc_state->zpos_changed
-> - if new_crtc_state->plane_mask != old_crtc_state->plane_mask ||
->    new_crtc_state->zpos_changed then recompute normilized zpos.
+> DRM core would need something to track the events. I think basically,=
+ someone who created one object should also destroy the object.
+
+You're right, but this doesn't exist until Daniel Vetter's rather
+larger patchset which is still pending merge.
+
+>> As Daniel says though, later versions handle all this in the core in=
+ a
+>> much more clean way, so we can remove these from the drivers then.
 >
-> Imo that would fit well in drm_atomic_helper_check_planes().
->
-> With that bit of additional logic drivers can just use normlized_zpos and
-> don't need to care about anything really.
+> So I think it's not reasonable for specific driver to destroy the obj=
+ect created by core although there is a memory leak. However, the memor=
+y leak would be more critical than temporary codes.
+> Ok, I will merge this patch with more comments which will say the obj=
+ect will be destroyed by core part later.
 
-Okay, I will try to implement this logic.
+Also, by stealing the event out of crtc_state->event and moving it to
+exynos_crtc->event, you can argue that we have quite explictly removed
+the responsibility from the core. ;)
 
+Thanks for handling this!
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Cheers,
+Daniel
