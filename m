@@ -1,110 +1,50 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH -next] arm: Select GPIO_GENERIC_PLATFORM for CRAGG_6410
-Date: Mon, 11 Jan 2016 17:24:46 -0800
-Message-ID: <569455DE.1010905@roeck-us.net>
-References: <1452531649-14940-1-git-send-email-linux@roeck-us.net>
- <56944E49.3040707@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3] drm/exynos: fix kernel panic issue at drm releasing
+Date: Tue, 12 Jan 2016 15:25:34 +0900
+Message-ID: <56949C5E.1000902@samsung.com>
+References: <1452242760-20298-1-git-send-email-inki.dae@samsung.com>
+ <1452242760-20298-2-git-send-email-inki.dae@samsung.com>
+ <CAPj87rPkwRBKM8mUt2zS-Mr7bZNMqD1PGy01-BUES_84sJqCUw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:41697 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758990AbcALBYt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jan 2016 20:24:49 -0500
-In-Reply-To: <56944E49.3040707@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPj87rPkwRBKM8mUt2zS-Mr7bZNMqD1PGy01-BUES_84sJqCUw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On 01/11/2016 04:52 PM, Krzysztof Kozlowski wrote:
-> On 12.01.2016 02:00, Guenter Roeck wrote:
->> Since commit 0f4630f3720e ("gpio: generic: factor into gpio_chip struct"),
->> all users of struct bgpio_pdata depend on GPIO_GENERIC.
->>
->> This results in the following build error.
->>
->> arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:
->> 	excess elements in struct initializer
->> arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:
->> 	(near initialization for '(anonymous)')
->> arch/arm/mach-s3c64xx/mach-crag6410.c:271:2: error:
->> 	invalid use of undefined type 'struct bgpio_pdata'
->>
->> Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->> I don't know if this is the correct way to fix this problem.
->> If not, please consider this to be a bug report.
->>
->>   arch/arm/mach-s3c64xx/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->
-> Thanks for the report! I think that:
->
-> 1. Other boards using the bgpio_pdata might be also affected:
-> mach-clps711x/board-autcpu12.c
-> mach-clps711x/board-p720t.c
-> mach-imx/mach-mx21ads.c
->
-> 2. The boards does not directly depend on the GPIO_GENERIC.
-> If GPIO_GENERIC is not selected then it still might create
-> a basic-mmio-gpio device. The device of course won't be in
-> such case supported by any driver.
->
->
-> Instead to solve the error the structure should be
-> always visible so:
->
->
-> -- >8 --
-> From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Date: Tue, 12 Jan 2016 09:46:06 +0900
-> Subject: [PATCH] gpio: generic: Fix build error of missing bgpio_pdata
->   declaration
->
-> Commit 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
-> introduced struct bgpio_pdata along with users but made the declaration
-> hidden by CONFIG_GPIO_GENERIC.
->
-> This results in the following build error:
->
-> arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning: 	excess elements in struct initializer
-> arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:	(near initialization for '(anonymous)')
-> arch/arm/mach-s3c64xx/mach-crag6410.c:271:2: error:	invalid use of undefined type 'struct bgpio_pdata'
->
-> Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->   include/linux/gpio/driver.h | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index e2d05fd0e6e3..7b9054366e7a 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -220,14 +220,13 @@ static inline void *gpiochip_get_data(struct gpio_chip *chip)
->
->   struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
->
-> -#if IS_ENABLED(CONFIG_GPIO_GENERIC)
-> -
->   struct bgpio_pdata {
->   	const char *label;
->   	int base;
->   	int ngpio;
->   };
->
-> +#if IS_ENABLED(CONFIG_GPIO_GENERIC)
->   int bgpio_init(struct gpio_chip *gc, struct device *dev,
->   	       unsigned long sz, void __iomem *dat, void __iomem *set,
->   	       void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
->
+SGkgRGFuaWVsLAoKMjAxNuuFhCAwMeyblCAxMuydvCAwNDowMOyXkCBEYW5pZWwgU3RvbmUg7J20
+KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDggSmFudWFyeSAyMDE2IGF0IDA4OjQ2
+LCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiBDaGFuZ2Vsb2cgdjM6
+Cj4+IC0gaW5pdGlhbGl6ZSBvbmx5IGRldmljZSBzcGVjaWZpYyB0aGluZ3MuIEVhY2ggcGFnZSBm
+bGlwIGV2ZW50IG9iamVjdAo+PiAgIGlzIGNyZWF0ZWQgYnkgRFJNIGNvcmUgc28gRFJNIGNvcmUg
+c2hvdWxkIHJlbGVhc2UgdGhlIG9iamVjdCBpbmNsdWRpbmcKPj4gICBpbmNyZW1lbnRpbmcgZXZl
+bnQgc3BhY2UuCj4gCj4gSSdtIGEgYml0IGNvbmZ1c2VkIGhlcmU7IHdlIG5vIGxvbmdlciBjYWxs
+IGV2ZW50LT5iYXNlLmRlc3Ryb3koKSwKPiBiZWNhdXNlIHlvdSBzYXkgdGhhdCB0aGUgRFJNIGNv
+cmUgc2hvdWxkIHJlbGVhc2UgaXQuIEJ1dCBob3cgZG9lcyB0aGUKPiBEUk0gY29yZSBrbm93IHRv
+IHJlbGVhc2UgdGhlIGV2ZW50PyBGcm9tIHRoZSBjb3JlIHBvaW50IG9mIHZpZXcsIHRoZQo+IGV2
+ZW50IGRpc2FwcGVhcnMgaW50byB0aGUgZHJpdmVyLCBhbmQgaXQgaXMgbm8gbG9uZ2VyIHRyYWNr
+ZWQuCgpEUk0gY29yZSB3b3VsZCBuZWVkIHNvbWV0aGluZyB0byB0cmFjayB0aGUgZXZlbnRzLiBJ
+IHRoaW5rIGJhc2ljYWxseSwgc29tZW9uZSB3aG8gY3JlYXRlZCBvbmUgb2JqZWN0IHNob3VsZCBh
+bHNvIGRlc3Ryb3kgdGhlIG9iamVjdC4KCj4gCj4gQXMgRGFuaWVsIHNheXMgdGhvdWdoLCBsYXRl
+ciB2ZXJzaW9ucyBoYW5kbGUgYWxsIHRoaXMgaW4gdGhlIGNvcmUgaW4gYQo+IG11Y2ggbW9yZSBj
+bGVhbiB3YXksIHNvIHdlIGNhbiByZW1vdmUgdGhlc2UgZnJvbSB0aGUgZHJpdmVycyB0aGVuLgoK
+U28gSSB0aGluayBpdCdzIG5vdCByZWFzb25hYmxlIGZvciBzcGVjaWZpYyBkcml2ZXIgdG8gZGVz
+dHJveSB0aGUgb2JqZWN0IGNyZWF0ZWQgYnkgY29yZSBhbHRob3VnaCB0aGVyZSBpcyBhIG1lbW9y
+eSBsZWFrLiBIb3dldmVyLCB0aGUgbWVtb3J5IGxlYWsgd291bGQgYmUgbW9yZSBjcml0aWNhbCB0
+aGFuIHRlbXBvcmFyeSBjb2Rlcy4KT2ssIEkgd2lsbCBtZXJnZSB0aGlzIHBhdGNoIHdpdGggbW9y
+ZSBjb21tZW50cyB3aGljaCB3aWxsIHNheSB0aGUgb2JqZWN0IHdpbGwgYmUgZGVzdHJveWVkIGJ5
+IGNvcmUgcGFydCBsYXRlci4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gQ2hlZXJzLAo+IERhbmll
+bAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
