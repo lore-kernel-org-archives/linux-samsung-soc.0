@@ -1,58 +1,106 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v2 1/3] rtc: s5m: Cleanup by removing useless 'rtc'
- prefix from fields
-Date: Mon, 11 Jan 2016 20:25:11 +0100
-Message-ID: <20160111192511.GC3367@piout.net>
-References: <1451450847-928-1-git-send-email-k.kozlowski@samsung.com>
- <20160104170841.GD32724@piout.net>
- <568B0601.5020808@samsung.com>
- <568B0897.4020403@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH -next] arm: Select GPIO_GENERIC_PLATFORM for CRAGG_6410
+Date: Tue, 12 Jan 2016 09:52:25 +0900
+Message-ID: <56944E49.3040707@samsung.com>
+References: <1452531649-14940-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:50351 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932180AbcAKTZO (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:30068 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933457AbcALAwa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jan 2016 14:25:14 -0500
-Content-Disposition: inline
-In-Reply-To: <568B0897.4020403@samsung.com>
+	Mon, 11 Jan 2016 19:52:30 -0500
+In-reply-to: <1452531649-14940-1-git-send-email-linux@roeck-us.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Alim Akhtar <alim.akhtar@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On 05/01/2016 at 09:04:39 +0900, Krzysztof Kozlowski wrote :
-> On 05.01.2016 08:53, Krzysztof Kozlowski wrote:
-> > On 05.01.2016 02:08, Alexandre Belloni wrote:
-> >> Hi,
-> >>
-> >> On 30/12/2015 at 13:47:25 +0900, Krzysztof Kozlowski wrote :
-> >>> Remove the 'rtc' prefix from some of the fields in struct
-> >>> s5m_rtc_reg_config because it is obvious - this is a RTC driver. No
-> >>> functional changes.
-> >>>
-> >>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >>>
-> >>
-> >> I was going to apply those patches but they don't apply cleanly on
-> >> rtc-next. Did I miss something?
-> >>
-> > 
-> > Probably that's my fault because I rebased it on linux-next. I will
-> > rebase the patches on rtc-next and resend.
+On 12.01.2016 02:00, Guenter Roeck wrote:
+> Since commit 0f4630f3720e ("gpio: generic: factor into gpio_chip struct"),
+> all users of struct bgpio_pdata depend on GPIO_GENERIC.
 > 
-> Ah, no need for rebasing. I forgot about dependency - the support for
-> S2MPS15 was added recently through Lee Jones' tree. Fortunately Lee put
-> S2MPS15 patches in a separate branch and tag: "ib-mfd-regulator-rtc-4.5"
+> This results in the following build error.
 > 
-> This means that to apply the patches this is needed first:
-> https://git.kernel.org/cgit/linux/kernel/git/lee/mfd.git/log/?h=ib-mfd-regulator-rtc-4.5
+> arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:
+> 	excess elements in struct initializer
+> arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:
+> 	(near initialization for '(anonymous)')
+> arch/arm/mach-s3c64xx/mach-crag6410.c:271:2: error:
+> 	invalid use of undefined type 'struct bgpio_pdata'
+> 
+> Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> I don't know if this is the correct way to fix this problem.
+> If not, please consider this to be a bug report.
+> 
+>  arch/arm/mach-s3c64xx/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-All applied now, thanks
+Thanks for the report! I think that:
 
+1. Other boards using the bgpio_pdata might be also affected:
+mach-clps711x/board-autcpu12.c
+mach-clps711x/board-p720t.c
+mach-imx/mach-mx21ads.c
+
+2. The boards does not directly depend on the GPIO_GENERIC.
+If GPIO_GENERIC is not selected then it still might create
+a basic-mmio-gpio device. The device of course won't be in
+such case supported by any driver.
+
+
+Instead to solve the error the structure should be
+always visible so:
+
+
+-- >8 --
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Date: Tue, 12 Jan 2016 09:46:06 +0900
+Subject: [PATCH] gpio: generic: Fix build error of missing bgpio_pdata
+ declaration
+
+Commit 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
+introduced struct bgpio_pdata along with users but made the declaration
+hidden by CONFIG_GPIO_GENERIC.
+
+This results in the following build error:
+
+arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning: 	excess elements in struct initializer
+arch/arm/mach-s3c64xx/mach-crag6410.c:270:3: warning:	(near initialization for '(anonymous)')
+arch/arm/mach-s3c64xx/mach-crag6410.c:271:2: error:	invalid use of undefined type 'struct bgpio_pdata'
+
+Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ include/linux/gpio/driver.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index e2d05fd0e6e3..7b9054366e7a 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -220,14 +220,13 @@ static inline void *gpiochip_get_data(struct gpio_chip *chip)
+ 
+ struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
+ 
+-#if IS_ENABLED(CONFIG_GPIO_GENERIC)
+-
+ struct bgpio_pdata {
+ 	const char *label;
+ 	int base;
+ 	int ngpio;
+ };
+ 
++#if IS_ENABLED(CONFIG_GPIO_GENERIC)
+ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ 	       unsigned long sz, void __iomem *dat, void __iomem *set,
+ 	       void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.9.1
