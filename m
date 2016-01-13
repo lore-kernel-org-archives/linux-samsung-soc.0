@@ -1,53 +1,61 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler
- as IRQF_NO_THREAD
-Date: Wed, 13 Jan 2016 14:39:04 +0100
-Message-ID: <20160113133904.GD29964@linutronix.de>
-References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
- <20160106221827.GD16231@localhost>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 0/7] drm/exynos/hdmi: add Exynos5433 support
+Date: Wed, 13 Jan 2016 15:01:49 +0100
+Message-ID: <569658CD.3090406@samsung.com>
+References: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160106221827.GD16231@localhost>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:30057 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759679AbcAMOCS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Jan 2016 09:02:18 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O0W00BBU9NSWQB0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Jan 2016 14:02:16 +0000 (GMT)
+In-reply-to: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-* Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
+Hi Inki,
 
->Hi Bjorn,
+Ping.
 
->> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
->> index 8c36880..0415192 100644
->> --- a/drivers/pci/host/pci-dra7xx.c
->> +++ b/drivers/pci/host/pci-dra7xx.c
->> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
->>  		return -EINVAL;
->>  	}
->>  
->> +	/*
->> +	 * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
->> +	 * On -RT and if kernel is booting with "threadirqs" cmd line parameter
->> +	 * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
->> +	 * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
->> +	 * which, in turn, will be resolved to handle_simple_irq() call.
->> +	 * The handle_simple_irq() expected to be called with IRQ disabled, as
->> +	 * result kernle will display warning:
->> +	 * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
->> +	 */
+Regards
+Andrzej
 
-could you _please_ remove this coment? This kind of comment (if at all)
-should be part of the commit message (which is the case more or less).
-
->>  	ret = devm_request_irq(&pdev->dev, pp->irq,
->> -			       dra7xx_pcie_msi_irq_handler, IRQF_SHARED,
->> +			       dra7xx_pcie_msi_irq_handler,
->> +			       IRQF_SHARED | IRQF_NO_THREAD,
->>  			       "dra7-pcie-msi",	pp);
->>  	if (ret) {
->>  		dev_err(&pdev->dev, "failed to request irq\n");
->> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-
-Sebastian
+On 11/02/2015 02:16 PM, Andrzej Hajda wrote:
+> Hi Inki, Krzysztof,
+> 
+> This patchset adds support for Exynos 5433 HDMI.
+> There are also few preparation/cleanup patches.
+> All patches except one touch only exynos-drm.
+> Sixth patch adds binding properties for Exynos5433 HDMI,
+> Krzysztof could you look at it.
+> 
+> The patchset is based on exynos-drm-next.
+> 
+> Regards
+> Andrzej
+> 
+> 
+> Andrzej Hajda (7):
+>   drm/exynos/hdmi: clock code re-factoring
+>   drm/exynos/hdmi: constify global variables
+>   drm/exynos/hdmi: use array specifier for HDMI-PHY configurations
+>   drm/exynos/hdmi: code cleanup
+>   drm/exynos/hdmi: stop programming registers with default values
+>   dt-bindings: exynos_hdmi: add bindings for Exynos5433 variant
+>   drm/exynos/hdmi: add Exynos5433 support
+> 
+>  .../devicetree/bindings/video/exynos_hdmi.txt      |  27 +-
+>  drivers/gpu/drm/exynos/exynos_hdmi.c               | 454 +++++++++++++++------
+>  drivers/gpu/drm/exynos/regs-hdmi.h                 |   9 +-
+>  3 files changed, 352 insertions(+), 138 deletions(-)
+> 
