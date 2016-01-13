@@ -1,51 +1,67 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v12 0/18] Add Analogix Core Display Port Driver
-Date: Wed, 13 Jan 2016 15:59:51 +0100
-Message-ID: <2322926.s1viZ6tSS3@phil>
-References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
+From: Vasco Steinmetz <linux@kyberraum.net>
+Subject: Slow performance of Odroid XU4 - cpufreq-dt patch needed?
+Date: Wed, 13 Jan 2016 17:16:33 +0100
+Message-ID: <56967861.10305@kyberraum.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from nexus.metro.kyberraum.net ([195.47.195.230]:39745 "EHLO
+	mx1.kyberraum.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752725AbcAMQpq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Jan 2016 11:45:46 -0500
+Received: from pd9f791c7.dip0.t-ipconnect.de ([217.247.145.199] helo=[192.168.0.21])
+	by mx1.kyberraum.net with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
+	(Exim 4.85)
+	(envelope-from <vasco@kyberraum.net>)
+	id 1aJO67-00078s-Qy
+	for linux-samsung-soc@vger.kernel.org; Wed, 13 Jan 2016 17:16:36 +0100
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-SGkgWWFraXIsCgpBbSBNaXR0d29jaCwgMjMuIERlemVtYmVyIDIwMTUsIDIwOjI1OjM4IHNjaHJp
-ZWIgWWFraXIgWWFuZzoKPiAgICBUaGUgU2Ftc3VuZyBFeHlub3MgZURQIGNvbnRyb2xsZXIgYW5k
-IFJvY2tjaGlwIFJLMzI4OCBlRFAgY29udHJvbGxlcgo+IHNoYXJlIHRoZSBzYW1lIElQLCBzbyBh
-IGxvdCBvZiBwYXJ0cyBjYW4gYmUgcmUtdXNlZC4gSSBzcGxpdCB0aGUgY29tbW9uCj4gY29kZSBp
-bnRvIGJyaWRnZSBkaXJlY3RvcnksIHRoZW4gcmszMjg4IGFuZCBleHlub3Mgb25seSBuZWVkIHRv
-IGtlZXAKPiBzb21lIHBsYXRmb3JtIGNvZGUuIENhdXNlIEkgY2FuJ3QgZmluZCB0aGUgZXhhY3Qg
-SVAgbmFtZSBvZiBleHlub3MgZHAKPiBjb250cm9sbGVyLCBzbyBJIGRlY2lkZSB0byBuYW1lIGRw
-IGNvcmUgZHJpdmVyIHdpdGggImFuYWxvZ2l4IiB3aGljaCBJCj4gZmluZCBpbiByazMyODggZURQ
-IFRSTQoKY291bGQgeW91IHJlYmFzZSB5b3VyIHBhdGNoZXMgb24gdG9wIG9mIERhdmUncyBkcm0t
-bmV4dCBicmFuY2ggWzBdIHBsZWFzZT8KVGhlIGV4eW5vcyBwYXJ0IGdvdCBzb21lIGNvbnN0IGF0
-dHJpYnV0ZXMgZm9yIHRoZSAqX2Z1bmNfb3BzIHN0cnVjdHMgYW5kIApkcm1fZW5jb2Rlcl9pbml0
-IGdvdCBhbiBhZGRpdGlvbmFsIHBhcmFtZXRlci4KSSdtIHN0aWxsIGhvcGluZyB0aGF0IHdlIGNh
-biBnZXQgdGhpcyBmaW5hbGx5IGNvbW1pdHRlZCBvbmNlIDQuNS1yYzEgaXMgCnJlbGVhc2VkIGlu
-IDEuNSB3ZWVrcyA6LSkgLgoKSSBkaWQgdHJ5IHRvIG1lcmdlIHRoaW5ncyB0b2dldGhlciBbMV0s
-IHRoZSBzeXN0ZW0gYXQgbGVhc3QgY29tZXMgdXAgYW5kIApkZXRlY3RzIHRoZSBwYW5lbCAoRURJ
-RCBpcyByZWFkIGNvcnJlY3RseSBhbmQgaXQgdHVybnMgdGhlIGJhY2tsaWdodCBvbikgYnV0IApJ
-IGRvbid0IHNlZSBhbnkgb3V0cHV0IG9uIHRoZSBkaXNwbGF5IC0gaGRtaSB3b3JrcyBmaW5lIHRo
-b3VnaCBhbmQgWDExIGlzIApjbGFpbWluZyBldmVyeXRoaW5nIHRvIGJlIGZpbmUgaW4gYm90aCBj
-YXNlcy4KClNvIEkgZG9uJ3Qga25vdyB5ZXQgaWYgSSBtYWRlIGEgbWlzdGFrZSB3aGVuIHB1dHRp
-bmcgdGhpcyB0b2dldGhlciBvciB0aGVyZSAKaXMgYW4gaXNzdWUgb24gdGhlIGRyaXZlci1zaWRl
-LgoKClRoYW5rcwpIZWlrbwoKClswXSBodHRwOi8vY2dpdC5mcmVlZGVza3RvcC5vcmcvfmFpcmxp
-ZWQvbGludXgvbG9nLz9oPWRybS1uZXh0ClsxXSBodHRwczovL2dpdGh1Yi5jb20vbW1pbmQvbGlu
-dXgtcm9ja2NoaXAvdHJlZS90bXAvYW5hbG9naXhkcF92MTItdmV5cm9uCkkgbGVmdCBvdXQgcGF0
-Y2gxNiwgcGVyIHlvdXIgdGFsayB3aXRoIEppbmdvbyBhbmQgbWUgbm90IHNlZWluZyBhbnkgQVVY
-IENIIAplcnJvcnMgd2l0aG91dCBpdC4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+Hello,
+
+I'm trying to get an Odroid XU4 to run a more recent (e.g. 4.4+) kernel
+than the last semiofficial 4.2 port from hardkernel (which doesn't boot
+here at all).
+
+Currently (thanks to a lot of patches from you guys) the board boots
+happily with a kernel build from linux-next.
+
+Nonetheless the CPU performance is rather poor, though all 8 cores are
+enabled (no b/l switcher).
+
+It seems to me the Cortex A15s are running in their slowest performance
+mode (that is: lowest clock).
+I don't know a way to read the core clocks, as no cpufreq driver is working.
+Tried that also with exynos_defconfig, but with the same effect.
+
+
+My question therefore is:
+
+Is Bartlomiej's cpufreq-dt patchset for exynos54xx (last update was
+mid-December) necessary to obtain the full performance on the 5422?
+
+Unfortunately I can't get that patchset to work with the linux-next from
+within the last two weeks.
+If there's an update I would volunteer to test it thoroughly (by
+compiling Gentoo on it ;) on the XU4.
+
+
+Another point:
+
+The XU4's SD card controller supports UHS mode (tested by booting the
+original ubuntu with an ancient 3.x kernel on the emmc flash and reading
+from a UHS SD card), the current linux mainline kernel (4.4+) apparently
+doesn't either detect or enable UHS mode. The maximum SD speed is around
+20MB/s instead of the 90MB/s the card supports and was shown with the
+test above.
+
+Is there patch available (maybe some missing dt clock or flag to enable
+UHS)?
+
+
+Kind regards,
+Vasco
