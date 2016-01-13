@@ -1,61 +1,51 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/7] drm/exynos/hdmi: add Exynos5433 support
-Date: Wed, 13 Jan 2016 15:01:49 +0100
-Message-ID: <569658CD.3090406@samsung.com>
-References: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v12 0/18] Add Analogix Core Display Port Driver
+Date: Wed, 13 Jan 2016 15:59:51 +0100
+Message-ID: <2322926.s1viZ6tSS3@phil>
+References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:30057 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759679AbcAMOCS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jan 2016 09:02:18 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O0W00BBU9NSWQB0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Jan 2016 14:02:16 +0000 (GMT)
-In-reply-to: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Inki,
-
-Ping.
-
-Regards
-Andrzej
-
-On 11/02/2015 02:16 PM, Andrzej Hajda wrote:
-> Hi Inki, Krzysztof,
-> 
-> This patchset adds support for Exynos 5433 HDMI.
-> There are also few preparation/cleanup patches.
-> All patches except one touch only exynos-drm.
-> Sixth patch adds binding properties for Exynos5433 HDMI,
-> Krzysztof could you look at it.
-> 
-> The patchset is based on exynos-drm-next.
-> 
-> Regards
-> Andrzej
-> 
-> 
-> Andrzej Hajda (7):
->   drm/exynos/hdmi: clock code re-factoring
->   drm/exynos/hdmi: constify global variables
->   drm/exynos/hdmi: use array specifier for HDMI-PHY configurations
->   drm/exynos/hdmi: code cleanup
->   drm/exynos/hdmi: stop programming registers with default values
->   dt-bindings: exynos_hdmi: add bindings for Exynos5433 variant
->   drm/exynos/hdmi: add Exynos5433 support
-> 
->  .../devicetree/bindings/video/exynos_hdmi.txt      |  27 +-
->  drivers/gpu/drm/exynos/exynos_hdmi.c               | 454 +++++++++++++++------
->  drivers/gpu/drm/exynos/regs-hdmi.h                 |   9 +-
->  3 files changed, 352 insertions(+), 138 deletions(-)
-> 
+SGkgWWFraXIsCgpBbSBNaXR0d29jaCwgMjMuIERlemVtYmVyIDIwMTUsIDIwOjI1OjM4IHNjaHJp
+ZWIgWWFraXIgWWFuZzoKPiAgICBUaGUgU2Ftc3VuZyBFeHlub3MgZURQIGNvbnRyb2xsZXIgYW5k
+IFJvY2tjaGlwIFJLMzI4OCBlRFAgY29udHJvbGxlcgo+IHNoYXJlIHRoZSBzYW1lIElQLCBzbyBh
+IGxvdCBvZiBwYXJ0cyBjYW4gYmUgcmUtdXNlZC4gSSBzcGxpdCB0aGUgY29tbW9uCj4gY29kZSBp
+bnRvIGJyaWRnZSBkaXJlY3RvcnksIHRoZW4gcmszMjg4IGFuZCBleHlub3Mgb25seSBuZWVkIHRv
+IGtlZXAKPiBzb21lIHBsYXRmb3JtIGNvZGUuIENhdXNlIEkgY2FuJ3QgZmluZCB0aGUgZXhhY3Qg
+SVAgbmFtZSBvZiBleHlub3MgZHAKPiBjb250cm9sbGVyLCBzbyBJIGRlY2lkZSB0byBuYW1lIGRw
+IGNvcmUgZHJpdmVyIHdpdGggImFuYWxvZ2l4IiB3aGljaCBJCj4gZmluZCBpbiByazMyODggZURQ
+IFRSTQoKY291bGQgeW91IHJlYmFzZSB5b3VyIHBhdGNoZXMgb24gdG9wIG9mIERhdmUncyBkcm0t
+bmV4dCBicmFuY2ggWzBdIHBsZWFzZT8KVGhlIGV4eW5vcyBwYXJ0IGdvdCBzb21lIGNvbnN0IGF0
+dHJpYnV0ZXMgZm9yIHRoZSAqX2Z1bmNfb3BzIHN0cnVjdHMgYW5kIApkcm1fZW5jb2Rlcl9pbml0
+IGdvdCBhbiBhZGRpdGlvbmFsIHBhcmFtZXRlci4KSSdtIHN0aWxsIGhvcGluZyB0aGF0IHdlIGNh
+biBnZXQgdGhpcyBmaW5hbGx5IGNvbW1pdHRlZCBvbmNlIDQuNS1yYzEgaXMgCnJlbGVhc2VkIGlu
+IDEuNSB3ZWVrcyA6LSkgLgoKSSBkaWQgdHJ5IHRvIG1lcmdlIHRoaW5ncyB0b2dldGhlciBbMV0s
+IHRoZSBzeXN0ZW0gYXQgbGVhc3QgY29tZXMgdXAgYW5kIApkZXRlY3RzIHRoZSBwYW5lbCAoRURJ
+RCBpcyByZWFkIGNvcnJlY3RseSBhbmQgaXQgdHVybnMgdGhlIGJhY2tsaWdodCBvbikgYnV0IApJ
+IGRvbid0IHNlZSBhbnkgb3V0cHV0IG9uIHRoZSBkaXNwbGF5IC0gaGRtaSB3b3JrcyBmaW5lIHRo
+b3VnaCBhbmQgWDExIGlzIApjbGFpbWluZyBldmVyeXRoaW5nIHRvIGJlIGZpbmUgaW4gYm90aCBj
+YXNlcy4KClNvIEkgZG9uJ3Qga25vdyB5ZXQgaWYgSSBtYWRlIGEgbWlzdGFrZSB3aGVuIHB1dHRp
+bmcgdGhpcyB0b2dldGhlciBvciB0aGVyZSAKaXMgYW4gaXNzdWUgb24gdGhlIGRyaXZlci1zaWRl
+LgoKClRoYW5rcwpIZWlrbwoKClswXSBodHRwOi8vY2dpdC5mcmVlZGVza3RvcC5vcmcvfmFpcmxp
+ZWQvbGludXgvbG9nLz9oPWRybS1uZXh0ClsxXSBodHRwczovL2dpdGh1Yi5jb20vbW1pbmQvbGlu
+dXgtcm9ja2NoaXAvdHJlZS90bXAvYW5hbG9naXhkcF92MTItdmV5cm9uCkkgbGVmdCBvdXQgcGF0
+Y2gxNiwgcGVyIHlvdXIgdGFsayB3aXRoIEppbmdvbyBhbmQgbWUgbm90IHNlZWluZyBhbnkgQVVY
+IENIIAplcnJvcnMgd2l0aG91dCBpdC4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
