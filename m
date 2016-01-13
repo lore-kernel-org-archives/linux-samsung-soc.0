@@ -1,67 +1,59 @@
-From: Vasco Steinmetz <linux@kyberraum.net>
-Subject: Slow performance of Odroid XU4 - cpufreq-dt patch needed?
-Date: Wed, 13 Jan 2016 17:16:33 +0100
-Message-ID: <56967861.10305@kyberraum.net>
+From: Ben Gamari <ben@smart-cactus.org>
+Subject: Re: Slow performance of Odroid XU4 - cpufreq-dt patch needed?
+Date: Wed, 13 Jan 2016 18:16:11 +0100
+Message-ID: <87h9ih5rj8.fsf@smart-cactus.org>
+References: <56967861.10305@kyberraum.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from nexus.metro.kyberraum.net ([195.47.195.230]:39745 "EHLO
-	mx1.kyberraum.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752725AbcAMQpq (ORCPT
+Received: from mail.smart-cactus.org ([54.187.36.80]:52571 "EHLO
+	mail.smart-cactus.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755409AbcAMRZ4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jan 2016 11:45:46 -0500
-Received: from pd9f791c7.dip0.t-ipconnect.de ([217.247.145.199] helo=[192.168.0.21])
-	by mx1.kyberraum.net with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
-	(Exim 4.85)
-	(envelope-from <vasco@kyberraum.net>)
-	id 1aJO67-00078s-Qy
-	for linux-samsung-soc@vger.kernel.org; Wed, 13 Jan 2016 17:16:36 +0100
+	Wed, 13 Jan 2016 12:25:56 -0500
+In-Reply-To: <56967861.10305@kyberraum.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Vasco Steinmetz <linux@kyberraum.net>, linux-samsung-soc@vger.kernel.org
 
-Hello,
+--=-=-=
+Content-Type: text/plain
 
-I'm trying to get an Odroid XU4 to run a more recent (e.g. 4.4+) kernel
-than the last semiofficial 4.2 port from hardkernel (which doesn't boot
-here at all).
+Vasco Steinmetz <linux@kyberraum.net> writes:
 
-Currently (thanks to a lot of patches from you guys) the board boots
-happily with a kernel build from linux-next.
+> Hello,
+>
+> I'm trying to get an Odroid XU4 to run a more recent (e.g. 4.4+) kernel
+> than the last semiofficial 4.2 port from hardkernel (which doesn't boot
+> here at all).
+>
+I also struggled to get my XU4 to perform to expectations with recent kernels.
+Indeed it seems that the board boots to 800 MHz or so without cpufreq.
+Recently I've been using this branch [1] (based on Bartlomiej's
+cpufreq-v5 patchset) and this [2] configuration with reasonably good
+results.
 
-Nonetheless the CPU performance is rather poor, though all 8 cores are
-enabled (no b/l switcher).
+Cheers,
 
-It seems to me the Cortex A15s are running in their slowest performance
-mode (that is: lowest clock).
-I don't know a way to read the core clocks, as no cpufreq driver is working.
-Tried that also with exynos_defconfig, but with the same effect.
-
-
-My question therefore is:
-
-Is Bartlomiej's cpufreq-dt patchset for exynos54xx (last update was
-mid-December) necessary to obtain the full performance on the 5422?
-
-Unfortunately I can't get that patchset to work with the linux-next from
-within the last two weeks.
-If there's an update I would volunteer to test it thoroughly (by
-compiling Gentoo on it ;) on the XU4.
+- Ben
 
 
-Another point:
+[1] https://github.com/bgamari/linux/tree/odroid-xu3-cpufreq-v5
+[2] http://home.smart-cactus.org/~ben/linux-xu4.config
 
-The XU4's SD card controller supports UHS mode (tested by booting the
-original ubuntu with an ancient 3.x kernel on the emmc flash and reading
-from a UHS SD card), the current linux mainline kernel (4.4+) apparently
-doesn't either detect or enable UHS mode. The maximum SD speed is around
-20MB/s instead of the 90MB/s the card supports and was shown with the
-test above.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Is there patch available (maybe some missing dt clock or flag to enable
-UHS)?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-
-Kind regards,
-Vasco
+iQEcBAEBAgAGBQJWloZbAAoJEHPt6ejPuu8B13EIAJpM/2YRRvAM/oLEv5ZZgKWr
+mo5TZo3xNbBnIGg8Grz5Bha9pFKniO9B+Z0tsWDUrWsK9imLqUtUZmVlxNKT9xqP
+glHdWKlijaBy0N+umwnKY2jFdC3ay6sTKzoEcgt9GowHF5Gp01H74jGBGfnVWil2
+Wo0g3UnTCZAypJdduVr57/4ymjDHUCEKFacaaTdbyAtYgPYo40MYY5kbb6910XRw
+okQpFYAfx/v6Gz5ZsVaC0TchE2qoDDq+/RAVdkBlBNPp02IngZbHmQA8sd5xtU/p
+yK1LnqFj4KRZLAk8IBy1FJBF+aBn21C2oxHkCAs763ZAK7GLAjvgm7Ru6hAeiZs=
+=vNbU
+-----END PGP SIGNATURE-----
+--=-=-=--
