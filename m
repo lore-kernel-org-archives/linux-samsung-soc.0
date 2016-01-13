@@ -1,59 +1,64 @@
-From: Ben Gamari <ben@smart-cactus.org>
-Subject: Re: Slow performance of Odroid XU4 - cpufreq-dt patch needed?
-Date: Wed, 13 Jan 2016 18:16:11 +0100
-Message-ID: <87h9ih5rj8.fsf@smart-cactus.org>
-References: <56967861.10305@kyberraum.net>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler
+ as IRQF_NO_THREAD
+Date: Wed, 13 Jan 2016 11:50:16 -0600
+Message-ID: <20160113175016.GB28453@localhost>
+References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
+ <20160106221827.GD16231@localhost>
+ <20160113133904.GD29964@linutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.smart-cactus.org ([54.187.36.80]:52571 "EHLO
-	mail.smart-cactus.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755409AbcAMRZ4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jan 2016 12:25:56 -0500
-In-Reply-To: <56967861.10305@kyberraum.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160113133904.GD29964@linutronix.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasco Steinmetz <linux@kyberraum.net>, linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Wed, Jan 13, 2016 at 02:39:04PM +0100, Sebastian Andrzej Siewior wrote:
+> * Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
+> 
+> >Hi Bjorn,
+> 
+> >> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
+> >> index 8c36880..0415192 100644
+> >> --- a/drivers/pci/host/pci-dra7xx.c
+> >> +++ b/drivers/pci/host/pci-dra7xx.c
+> >> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
+> >>  		return -EINVAL;
+> >>  	}
+> >>  
+> >> +	/*
+> >> +	 * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
+> >> +	 * On -RT and if kernel is booting with "threadirqs" cmd line parameter
+> >> +	 * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
+> >> +	 * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
+> >> +	 * which, in turn, will be resolved to handle_simple_irq() call.
+> >> +	 * The handle_simple_irq() expected to be called with IRQ disabled, as
+> >> +	 * result kernle will display warning:
+> >> +	 * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
+> >> +	 */
+> 
+> could you _please_ remove this coment? This kind of comment (if at all)
+> should be part of the commit message (which is the case more or less).
 
-Vasco Steinmetz <linux@kyberraum.net> writes:
+IIRC, Grygorii specifically wanted to keep this comment in dra7xx, but
+I do agree that this level of detail is more appropriate for a changelog.
 
-> Hello,
->
-> I'm trying to get an Odroid XU4 to run a more recent (e.g. 4.4+) kernel
-> than the last semiofficial 4.2 port from hardkernel (which doesn't boot
-> here at all).
->
-I also struggled to get my XU4 to perform to expectations with recent kernels.
-Indeed it seems that the board boots to 800 MHz or so without cpufreq.
-Recently I've been using this branch [1] (based on Bartlomiej's
-cpufreq-v5 patchset) and this [2] configuration with reasonably good
-results.
+If Grygorii and Kishon don't object, I can update the patch to remove it.
 
-Cheers,
-
-- Ben
-
-
-[1] https://github.com/bgamari/linux/tree/odroid-xu3-cpufreq-v5
-[2] http://home.smart-cactus.org/~ben/linux-xu4.config
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJWloZbAAoJEHPt6ejPuu8B13EIAJpM/2YRRvAM/oLEv5ZZgKWr
-mo5TZo3xNbBnIGg8Grz5Bha9pFKniO9B+Z0tsWDUrWsK9imLqUtUZmVlxNKT9xqP
-glHdWKlijaBy0N+umwnKY2jFdC3ay6sTKzoEcgt9GowHF5Gp01H74jGBGfnVWil2
-Wo0g3UnTCZAypJdduVr57/4ymjDHUCEKFacaaTdbyAtYgPYo40MYY5kbb6910XRw
-okQpFYAfx/v6Gz5ZsVaC0TchE2qoDDq+/RAVdkBlBNPp02IngZbHmQA8sd5xtU/p
-yK1LnqFj4KRZLAk8IBy1FJBF+aBn21C2oxHkCAs763ZAK7GLAjvgm7Ru6hAeiZs=
-=vNbU
------END PGP SIGNATURE-----
---=-=-=--
+> >>  	ret = devm_request_irq(&pdev->dev, pp->irq,
+> >> -			       dra7xx_pcie_msi_irq_handler, IRQF_SHARED,
+> >> +			       dra7xx_pcie_msi_irq_handler,
+> >> +			       IRQF_SHARED | IRQF_NO_THREAD,
+> >>  			       "dra7-pcie-msi",	pp);
+> >>  	if (ret) {
+> >>  		dev_err(&pdev->dev, "failed to request irq\n");
+> >> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+> 
+> Sebastian
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
