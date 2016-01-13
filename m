@@ -1,1001 +1,251 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH v3 1/3] drm: add generic zpos property
-Date: Wed, 13 Jan 2016 10:10:25 +0100
-Message-ID: <CA+M3ks5+BoMZDtbcDU6JYxnLKc0_DFAuKyD=jx0+wi+Seg3Ebw@mail.gmail.com>
-References: <1452605960-21194-1-git-send-email-m.szyprowski@samsung.com>
- <1452605960-21194-2-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: Various warnings and oops on Odroid U3
+Date: Wed, 13 Jan 2016 12:08:02 +0100
+Message-ID: <56963012.4000900@samsung.com>
+References: <CAE-5t2sRB21s=PoYw5fcngPn1L8LtLct1oShwvo+OcXB+YwsLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0659255928=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1452605960-21194-2-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37907 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755324AbcAMLIF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Jan 2016 06:08:05 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O0W0099G1LFU270@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Jan 2016 11:08:03 +0000 (GMT)
+In-reply-to: <CAE-5t2sRB21s=PoYw5fcngPn1L8LtLct1oShwvo+OcXB+YwsLw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Pietrowski <thopiekar@gmail.com>, linux-samsung-soc@vger.kernel.org
 
---===============0659255928==
-Content-Type: multipart/alternative; boundary=001a114026506ac4d80529338a70
+Dear Thomas,
 
---001a114026506ac4d80529338a70
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-I have been able to test it on sti driver.
-
-Thanks to have done the effort to make zpos generic.
-
-You can add my tested-by on this patch.
-
-Benjamin
-
-2016-01-12 14:39 GMT+01:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-
-> This patch adds support for generic plane's zpos property property with
-> well-defined semantics:
-> - added zpos properties to drm core and plane state structures
-> - added helpers for normalizing zpos properties of given set of planes
-> - well defined semantics: planes are sorted by zpos values and then plane
->   id value if zpos equals
+On 2016-01-10 18:12, Thomas Pietrowski wrote:
+> Hello everyone,
 >
-> Normalized zpos values are calculated automatically when generic
-> muttable zpos property has been initialized. Drivers can simply use
-> plane_state->normalized_zpos in their atomic_check and/or plane_update
-> callbacks without any additional calls to DRM core.
+> as I'm trying to build a kernel with support on different boards, I
+> found different problems. I'm writing here to samsung-soc first,
+> because I'm not sure whether it is just a Odroid-U3 or Samsung SoC
+> related problem.
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  Documentation/DocBook/gpu.tmpl      |  14 ++++-
->  drivers/gpu/drm/drm_atomic.c        |   4 ++
->  drivers/gpu/drm/drm_atomic_helper.c | 116
-> ++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/drm_crtc.c          |  53 ++++++++++++++++
->  include/drm/drm_crtc.h              |  14 +++++
->  5 files changed, 199 insertions(+), 2 deletions(-)
+> So first there is .config.working.old:
+> This .config is working very well and has (as far as I remember) no
+> other boards except Samsung SoC's enabled.
 >
-> diff --git a/Documentation/DocBook/gpu.tmpl
-> b/Documentation/DocBook/gpu.tmpl
-> index 6c6e81a9eaf4..f6b7236141b6 100644
-> --- a/Documentation/DocBook/gpu.tmpl
-> +++ b/Documentation/DocBook/gpu.tmpl
-> @@ -2004,7 +2004,7 @@ void intel_crt_init(struct drm_device *dev)
->         <td valign=3D"top" >Description/Restrictions</td>
->         </tr>
->         <tr>
-> -       <td rowspan=3D"37" valign=3D"top" >DRM</td>
-> +       <td rowspan=3D"38" valign=3D"top" >DRM</td>
->         <td valign=3D"top" >Generic</td>
->         <td valign=3D"top" >=E2=80=9Crotation=E2=80=9D</td>
->         <td valign=3D"top" >BITMASK</td>
-> @@ -2256,7 +2256,7 @@ void intel_crt_init(struct drm_device *dev)
->         <td valign=3D"top" >property to suggest an Y offset for a
-> connector</td>
->         </tr>
->         <tr>
-> -       <td rowspan=3D"3" valign=3D"top" >Optional</td>
-> +       <td rowspan=3D"4" valign=3D"top" >Optional</td>
->         <td valign=3D"top" >=E2=80=9Cscaling mode=E2=80=9D</td>
->         <td valign=3D"top" >ENUM</td>
->         <td valign=3D"top" >{ "None", "Full", "Center", "Full aspect" }</=
-td>
-> @@ -2280,6 +2280,16 @@ void intel_crt_init(struct drm_device *dev)
->         <td valign=3D"top" >TBD</td>
->         </tr>
->         <tr>
-> +       <td valign=3D"top" > "zpos" </td>
-> +       <td valign=3D"top" >RANGE</td>
-> +       <td valign=3D"top" >Min=3D0, Max=3D255</td>
-> +       <td valign=3D"top" >Plane</td>
-> +       <td valign=3D"top" >Plane's 'z' position during blending (0 for
-> background, 255 for frontmost).
-> +               If two planes assigned to same CRTC have equal zpos
-> values, the plane with higher plane
-> +               id is treated as closer to front. Can be IMMUTABLE if
-> driver doesn't support changing
-> +               planes' order.</td>
-> +       </tr>
-> +       <tr>
->         <td rowspan=3D"20" valign=3D"top" >i915</td>
->         <td rowspan=3D"2" valign=3D"top" >Generic</td>
->         <td valign=3D"top" >"Broadcast RGB"</td>
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 6a21e5c378c1..97bb069cb6a3 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -614,6 +614,8 @@ int drm_atomic_plane_set_property(struct drm_plane
-> *plane,
->                 state->src_h =3D val;
->         } else if (property =3D=3D config->rotation_property) {
->                 state->rotation =3D val;
-> +       } else if (property =3D=3D config->zpos_property) {
-> +               state->zpos =3D val;
->         } else if (plane->funcs->atomic_set_property) {
->                 return plane->funcs->atomic_set_property(plane, state,
->                                 property, val);
-> @@ -670,6 +672,8 @@ drm_atomic_plane_get_property(struct drm_plane *plane=
-,
->                 *val =3D state->src_h;
->         } else if (property =3D=3D config->rotation_property) {
->                 *val =3D state->rotation;
-> +       } else if (property =3D=3D config->zpos_property) {
-> +               *val =3D state->zpos;
->         } else if (plane->funcs->atomic_get_property) {
->                 return plane->funcs->atomic_get_property(plane, state,
-> property, val);
->         } else {
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
-> b/drivers/gpu/drm/drm_atomic_helper.c
-> index d0d4b2ff7c21..257946fac94b 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -31,6 +31,7 @@
->  #include <drm/drm_crtc_helper.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <linux/fence.h>
-> +#include <linux/sort.h>
+> Then I noticed when using .config.warn.skbuff the warning in dmesg.
+> I'm not sure (100%) whether it appeared before, but I appeared while
+> transferring a lot of small data.
 >
->  /**
->   * DOC: overview
-> @@ -507,6 +508,117 @@ drm_atomic_helper_check_modeset(struct drm_device
-> *dev,
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_check_modeset);
->
-> +static int drm_atomic_state_zpos_cmp(const void *a, const void *b)
-> +{
-> +       const struct drm_plane_state *sa =3D *(struct drm_plane_state **)=
-a;
-> +       const struct drm_plane_state *sb =3D *(struct drm_plane_state **)=
-b;
-> +       int zpos_a =3D (sa->zpos << 16) + sa->plane->base.id;
-> +       int zpos_b =3D (sb->zpos << 16) + sb->plane->base.id;
-> +
-> +       return zpos_a - zpos_b;
-> +}
-> +
-> +/**
-> + * drm_atomic_helper_crtc_normalize_zpos - calculate normalized zpos
-> values
-> + * @crtc: crtc with planes, which have to be considered for normalizatio=
-n
-> + * @crtc_state: new atomic state to apply
-> + *
-> + * This function checks new states of all planes assigned to given crtc
-> and
-> + * calculates normalized zpos value for them. Planes are compared first
-> by their
-> + * zpos values, then by plane id (if zpos equals). Plane with lowest zpo=
-s
-> value
-> + * is at the bottom. The plane_state->normalized_zpos is then filled wit=
-h
-> uniqe
-> + * values from 0 to number of active planes in crtc minus one.
-> + *
-> + * RETURNS
-> + * Zero for success or -errno
-> + */
-> +int drm_atomic_helper_crtc_normalize_zpos(struct drm_crtc *crtc,
-> +                                             struct drm_crtc_state
-> *crtc_state)
-> +{
-> +       struct drm_atomic_state *state =3D crtc_state->state;
-> +       struct drm_device *dev =3D crtc->dev;
-> +       int total_planes =3D dev->mode_config.num_total_plane;
-> +       struct drm_plane_state **states;
-> +       struct drm_plane *plane;
-> +       int i, n =3D 0;
-> +       int ret =3D 0;
-> +
-> +       DRM_DEBUG_ATOMIC("[CRTC:%d:%s] calculating normalized zpos
-> values\n",
-> +                        crtc->base.id, crtc->name);
-> +
-> +       states =3D kmalloc(total_planes * sizeof(*states), GFP_KERNEL);
-> +       if (!states)
-> +               return -ENOMEM;
-> +
-> +       /*
-> +        * Normalization process might create new states for planes which
-> +        * normalized_zpos has to be recalculated.
-> +        */
-> +       drm_for_each_plane_mask(plane, dev, crtc_state->plane_mask) {
-> +               struct drm_plane_state *plane_state =3D
-> +                       drm_atomic_get_plane_state(state, plane);
-> +               if (IS_ERR(plane_state)) {
-> +                       ret =3D PTR_ERR(plane_state);
-> +                       goto fail;
-> +               }
-> +               states[n++] =3D plane_state;
-> +               DRM_DEBUG_ATOMIC("[PLANE:%d:%s] processing zpos value
-> %d\n",
-> +                                plane->base.id, plane->name,
-> plane_state->zpos);
-> +       }
-> +
-> +       sort(states, n, sizeof(*states), drm_atomic_state_zpos_cmp, NULL)=
-;
-> +
-> +       for (i =3D 0; i < n; i++) {
-> +               plane =3D states[i]->plane;
-> +               states[i]->normalized_zpos =3D i;
-> +               DRM_DEBUG_ATOMIC("[PLANE:%d:%s] normalized zpos value
-> %d\n",
-> +                                plane->base.id, plane->name, i);
-> +       }
-> +fail:
-> +       kfree(states);
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(drm_atomic_helper_crtc_normalize_zpos);
-> +
-> +static int drm_atomic_helper_normalize_zpos(struct drm_device *dev,
-> +                                           struct drm_atomic_state *stat=
-e)
-> +{
-> +       struct drm_crtc *crtc;
-> +       struct drm_crtc_state *crtc_state;
-> +       struct drm_plane *plane;
-> +       struct drm_plane_state *plane_state;
-> +       int i, ret =3D 0;
-> +
-> +       /*
-> +        * If zpos_property is not initialized, then it makes no sense
-> +        * to calculate normalized zpos values.
-> +        */
-> +       if (!dev->mode_config.zpos_property)
-> +               return 0;
-> +
-> +       for_each_plane_in_state(state, plane, plane_state, i) {
-> +               crtc =3D plane_state->crtc;
-> +               if (!crtc)
-> +                       continue;
-> +               if (plane->state->zpos !=3D plane_state->zpos) {
-> +                       crtc_state =3D
-> +                               drm_atomic_get_existing_crtc_state(state,
-> crtc);
-> +                       crtc_state->zpos_changed =3D true;
-> +               }
-> +       }
-> +
-> +       for_each_crtc_in_state(state, crtc, crtc_state, i) {
-> +               if (crtc_state->plane_mask !=3D crtc->state->plane_mask |=
-|
-> +                   crtc_state->zpos_changed) {
-> +                       ret =3D drm_atomic_helper_crtc_normalize_zpos(crt=
-c,
-> +
->  crtc_state);
-> +                       if (ret)
-> +                               return ret;
-> +               }
-> +       }
-> +       return 0;
-> +}
-> +
->  /**
->   * drm_atomic_helper_check_planes - validate state object for planes
-> changes
->   * @dev: DRM device
-> @@ -532,6 +644,10 @@ drm_atomic_helper_check_planes(struct drm_device *de=
-v,
->         struct drm_plane_state *plane_state;
->         int i, ret =3D 0;
->
-> +       ret =3D drm_atomic_helper_normalize_zpos(dev, state);
-> +       if (ret)
-> +               return ret;
-> +
->         for_each_plane_in_state(state, plane, plane_state, i) {
->                 const struct drm_plane_helper_funcs *funcs;
->
-> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-> index 62fa95fa5471..54a21e7c1ca5 100644
-> --- a/drivers/gpu/drm/drm_crtc.c
-> +++ b/drivers/gpu/drm/drm_crtc.c
-> @@ -5880,6 +5880,59 @@ struct drm_property
-> *drm_mode_create_rotation_property(struct drm_device *dev,
->  EXPORT_SYMBOL(drm_mode_create_rotation_property);
->
->  /**
-> + * drm_mode_create_zpos_property - create muttable zpos property
-> + * @dev: DRM device
-> + *
-> + * This function initializes generic muttable zpos property and enables
-> support
-> + * for it in drm core. Drivers can then attach this property to planes t=
-o
-> enable
-> + * support for configurable planes arrangement during blending operation=
-.
-> + * Drivers can also use drm_atomic_helper_normalize_zpos() function to
-> calculate
-> + * drm_plane_state->normalized_zpos values.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int drm_mode_create_zpos_property(struct drm_device *dev)
-> +{
-> +       struct drm_property *prop;
-> +
-> +       prop =3D drm_property_create_range(dev, 0, "zpos", 0, 255);
-> +       if (!prop)
-> +               return -ENOMEM;
-> +
-> +       dev->mode_config.zpos_property =3D prop;
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(drm_mode_create_zpos_property);
-> +
-> +/**
-> + * drm_plane_create_zpos_property - create immuttable zpos property
-> + * @dev: DRM device
-> + *
-> + * This function initializes generic immuttable zpos property and enable=
-s
-> + * support for it in drm core. Using this property driver lets userspace
-> + * to get the arrangement of the planes for blending operation and
-> notifies
-> + * it that the hardware (or driver) doesn't support changing of the
-> planes'
-> + * order.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int drm_mode_create_zpos_immutable_property(struct drm_device *dev)
-> +{
-> +       struct drm_property *prop;
-> +
-> +       prop =3D drm_property_create_range(dev, DRM_MODE_PROP_IMMUTABLE,
-> "zpos",
-> +                                        0, 255);
-> +       if (!prop)
-> +               return -ENOMEM;
-> +
-> +       dev->mode_config.zpos_immutable_property =3D prop;
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(drm_mode_create_zpos_immutable_property);
-> +
-> +/**
->   * DOC: Tile group
->   *
->   * Tile groups are used to represent tiled monitors with a unique
-> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> index 3b040b355472..0607ad2ce918 100644
-> --- a/include/drm/drm_crtc.h
-> +++ b/include/drm/drm_crtc.h
-> @@ -305,6 +305,7 @@ struct drm_plane_helper_funcs;
->   * @mode_changed: crtc_state->mode or crtc_state->enable has been change=
-d
->   * @active_changed: crtc_state->active has been toggled.
->   * @connectors_changed: connectors to this crtc have been updated
-> + * @zpos_changed: zpos values of planes on this crtc have been updated
->   * @plane_mask: bitmask of (1 << drm_plane_index(plane)) of attached
-> planes
->   * @last_vblank_count: for helpers and drivers to capture the vblank of
-> the
->   *     update to ensure framebuffer cleanup isn't done too early
-> @@ -331,6 +332,7 @@ struct drm_crtc_state {
->         bool mode_changed : 1;
->         bool active_changed : 1;
->         bool connectors_changed : 1;
-> +       bool zpos_changed : 1;
->
->         /* attached planes bitmask:
->          * WARNING: transitional helpers do not maintain plane_mask so
-> @@ -1243,6 +1245,9 @@ struct drm_connector {
->   *     plane (in 16.16)
->   * @src_w: width of visible portion of plane (in 16.16)
->   * @src_h: height of visible portion of plane (in 16.16)
-> + * @zpos: priority of the given plane on crtc (optional)
-> + * @normalized_zpos: normalized value of zpos: uniqe, range from 0 to
-> + *     (number of planes - 1) for given crtc
->   * @state: backpointer to global drm_atomic_state
->   */
->  struct drm_plane_state {
-> @@ -1263,6 +1268,10 @@ struct drm_plane_state {
->         /* Plane rotation */
->         unsigned int rotation;
->
-> +       /* Plane zpos */
-> +       unsigned int zpos;
-> +       unsigned int normalized_zpos;
-> +
->         struct drm_atomic_state *state;
->  };
->
-> @@ -2083,6 +2092,8 @@ struct drm_mode_config {
->         struct drm_property *tile_property;
->         struct drm_property *plane_type_property;
->         struct drm_property *rotation_property;
-> +       struct drm_property *zpos_property;
-> +       struct drm_property *zpos_immutable_property;
->         struct drm_property *prop_src_x;
->         struct drm_property *prop_src_y;
->         struct drm_property *prop_src_w;
-> @@ -2484,6 +2495,9 @@ extern struct drm_property
-> *drm_mode_create_rotation_property(struct drm_device
->  extern unsigned int drm_rotation_simplify(unsigned int rotation,
->                                           unsigned int
-> supported_rotations);
->
-> +extern int drm_mode_create_zpos_property(struct drm_device *dev);
-> +extern int drm_mode_create_zpos_immutable_property(struct drm_device
-> *dev);
-> +
->  /* Helpers */
->
->  static inline struct drm_plane *drm_plane_find(struct drm_device *dev,
-> --
-> 1.9.2
->
->
+> Additonally I also got another warning when enabled more boards
+> (resulting in .config.warn.ftrace).
 
+I confirm this warning. Please report it to ARM kernel mailing list. It is
+not really related to Samsung Exynos SoC support.
 
---=20
-
-Benjamin Gaignard
-
-Graphic Working Group
-
-Linaro.org <http://www.linaro.org/> *=E2=94=82 *Open source software for AR=
-M SoCs
-
-Follow *Linaro: *Facebook <http://www.facebook.com/pages/Linaro> | Twitter
-<http://twitter.com/#!/linaroorg> | Blog
-<http://www.linaro.org/linaro-blog/>
-
---001a114026506ac4d80529338a70
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">I have been able to test it on sti driver.<div><br></div><=
-div>Thanks to have done the effort to make zpos generic.</div><div><br><div=
->You can add my tested-by on this patch.</div></div><div><br></div><div>Ben=
-jamin</div></div><div class=3D"gmail_extra"><br><div class=3D"gmail_quote">=
-2016-01-12 14:39 GMT+01:00 Marek Szyprowski <span dir=3D"ltr">&lt;<a href=
-=3D"mailto:m.szyprowski@samsung.com" target=3D"_blank">m.szyprowski@samsung=
-.com</a>&gt;</span>:<br><blockquote class=3D"gmail_quote" style=3D"margin:0=
- 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">This patch adds supp=
-ort for generic plane&#39;s zpos property property with<br>
-well-defined semantics:<br>
-- added zpos properties to drm core and plane state structures<br>
-- added helpers for normalizing zpos properties of given set of planes<br>
-- well defined semantics: planes are sorted by zpos values and then plane<b=
-r>
-=C2=A0 id value if zpos equals<br>
-<br>
-Normalized zpos values are calculated automatically when generic<br>
-muttable zpos property has been initialized. Drivers can simply use<br>
-plane_state-&gt;normalized_zpos in their atomic_check and/or plane_update<b=
-r>
-callbacks without any additional calls to DRM core.<br>
-<br>
-Signed-off-by: Marek Szyprowski &lt;<a href=3D"mailto:m.szyprowski@samsung.=
-com">m.szyprowski@samsung.com</a>&gt;<br>
----<br>
-=C2=A0Documentation/DocBook/gpu.tmpl=C2=A0 =C2=A0 =C2=A0 |=C2=A0 14 ++++-<b=
-r>
-=C2=A0drivers/gpu/drm/drm_atomic.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 =C2=
-=A04 ++<br>
-=C2=A0drivers/gpu/drm/drm_atomic_helper.c | 116 +++++++++++++++++++++++++++=
-+++++++++<br>
-=C2=A0drivers/gpu/drm/drm_crtc.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 =
-53 ++++++++++++++++<br>
-=C2=A0include/drm/drm_crtc.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 |=C2=A0 14 +++++<br>
-=C2=A05 files changed, 199 insertions(+), 2 deletions(-)<br>
-<br>
-diff --git a/Documentation/DocBook/gpu.tmpl b/Documentation/DocBook/gpu.tmp=
-l<br>
-index 6c6e81a9eaf4..f6b7236141b6 100644<br>
---- a/Documentation/DocBook/gpu.tmpl<br>
-+++ b/Documentation/DocBook/gpu.tmpl<br>
-@@ -2004,7 +2004,7 @@ void intel_crt_init(struct drm_device *dev)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;Description=
-/Restrictions&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;/tr&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;tr&gt;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td rowspan=3D&quot;37&quot; valign=3D&quot;=
-top&quot; &gt;DRM&lt;/td&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td rowspan=3D&quot;38&quot; valign=3D&quot;=
-top&quot; &gt;DRM&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;Generic&lt;=
-/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;=E2=80=9Cro=
-tation=E2=80=9D&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;BITMASK&lt;=
-/td&gt;<br>
-@@ -2256,7 +2256,7 @@ void intel_crt_init(struct drm_device *dev)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;property to=
- suggest an Y offset for a connector&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;/tr&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;tr&gt;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td rowspan=3D&quot;3&quot; valign=3D&quot;t=
-op&quot; &gt;Optional&lt;/td&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td rowspan=3D&quot;4&quot; valign=3D&quot;t=
-op&quot; &gt;Optional&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;=E2=80=9Csc=
-aling mode=E2=80=9D&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;ENUM&lt;/td=
-&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;{ &quot;Non=
-e&quot;, &quot;Full&quot;, &quot;Center&quot;, &quot;Full aspect&quot; }&lt=
-;/td&gt;<br>
-@@ -2280,6 +2280,16 @@ void intel_crt_init(struct drm_device *dev)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;TBD&lt;/td&=
-gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;/tr&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;tr&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td valign=3D&quot;top&quot; &gt; &quot;zpos=
-&quot; &lt;/td&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td valign=3D&quot;top&quot; &gt;RANGE&lt;/t=
-d&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td valign=3D&quot;top&quot; &gt;Min=3D0, Ma=
-x=3D255&lt;/td&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td valign=3D&quot;top&quot; &gt;Plane&lt;/t=
-d&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;td valign=3D&quot;top&quot; &gt;Plane&#39;s=
- &#39;z&#39; position during blending (0 for background, 255 for frontmost)=
-.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0If two planes assig=
-ned to same CRTC have equal zpos values, the plane with higher plane<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0id is treated as cl=
-oser to front. Can be IMMUTABLE if driver doesn&#39;t support changing<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0planes&#39; order.&=
-lt;/td&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;/tr&gt;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0&lt;tr&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td rowspan=3D&quot;20&quot; valign=3D&quot;=
-top&quot; &gt;i915&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td rowspan=3D&quot;2&quot; valign=3D&quot;t=
-op&quot; &gt;Generic&lt;/td&gt;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &lt;td valign=3D&quot;top&quot; &gt;&quot;Broad=
-cast RGB&quot;&lt;/td&gt;<br>
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c<br=
+> After enabling all boards by different vendors in the menu at xconfig.
+> I started enabling other targets at "System Type", where you can find
+> Rockchip for example. Enabling Rockchip* or Xilinx* was no problem,
+> but then I enabled "WonderMedia WM8850 (ARCH_WM8850)", see
+> .config.broken.no_ttySAC1_mmcblk0p1.first, and during boot an oops
+> appears. The same symptom appears when enabling "Annapurna Labs Alpine
+> platform (ARCH_ALPINE)", where autofs4 oops's
+> (.config.broken.no_ttySAC1_mmcblk0p1.autofs4.tty).
 >
-index 6a21e5c378c1..97bb069cb6a3 100644<br>
---- a/drivers/gpu/drm/drm_atomic.c<br>
-+++ b/drivers/gpu/drm/drm_atomic.c<br>
-@@ -614,6 +614,8 @@ int drm_atomic_plane_set_property(struct drm_plane *pla=
-ne,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 state-&gt;src_h =3D=
- val;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 } else if (property =3D=3D config-&gt;rotation_=
-property) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 state-&gt;rotation =
-=3D val;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0} else if (property =3D=3D config-&gt;zpos_prop=
-erty) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0state-&gt;zpos =3D =
-val;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 } else if (plane-&gt;funcs-&gt;atomic_set_prope=
-rty) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return plane-&gt;fu=
-ncs-&gt;atomic_set_property(plane, state,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 property, val);<br>
-@@ -670,6 +672,8 @@ drm_atomic_plane_get_property(struct drm_plane *plane,<=
-br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *val =3D state-&gt;=
-src_h;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 } else if (property =3D=3D config-&gt;rotation_=
-property) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *val =3D state-&gt;=
-rotation;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0} else if (property =3D=3D config-&gt;zpos_prop=
-erty) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*val =3D state-&gt;=
-zpos;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 } else if (plane-&gt;funcs-&gt;atomic_get_prope=
-rty) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return plane-&gt;fu=
-ncs-&gt;atomic_get_property(plane, state, property, val);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 } else {<br>
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atom=
-ic_helper.c<br>
-index d0d4b2ff7c21..257946fac94b 100644<br>
---- a/drivers/gpu/drm/drm_atomic_helper.c<br>
-+++ b/drivers/gpu/drm/drm_atomic_helper.c<br>
-@@ -31,6 +31,7 @@<br>
-=C2=A0#include &lt;drm/drm_crtc_helper.h&gt;<br>
-=C2=A0#include &lt;drm/drm_atomic_helper.h&gt;<br>
-=C2=A0#include &lt;linux/fence.h&gt;<br>
-+#include &lt;linux/sort.h&gt;<br>
-<br>
-=C2=A0/**<br>
-=C2=A0 * DOC: overview<br>
-@@ -507,6 +508,117 @@ drm_atomic_helper_check_modeset(struct drm_device *de=
-v,<br>
-=C2=A0}<br>
-=C2=A0EXPORT_SYMBOL(drm_atomic_helper_check_modeset);<br>
-<br>
-+static int drm_atomic_state_zpos_cmp(const void *a, const void *b)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0const struct drm_plane_state *sa =3D *(struct d=
-rm_plane_state **)a;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0const struct drm_plane_state *sb =3D *(struct d=
-rm_plane_state **)b;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0int zpos_a =3D (sa-&gt;zpos &lt;&lt; 16) + sa-&=
-gt;plane-&gt;<a href=3D"http://base.id" rel=3D"noreferrer" target=3D"_blank=
-">base.id</a>;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0int zpos_b =3D (sb-&gt;zpos &lt;&lt; 16) + sb-&=
-gt;plane-&gt;<a href=3D"http://base.id" rel=3D"noreferrer" target=3D"_blank=
-">base.id</a>;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return zpos_a - zpos_b;<br>
-+}<br>
-+<br>
-+/**<br>
-+ * drm_atomic_helper_crtc_normalize_zpos - calculate normalized zpos value=
-s<br>
-+ * @crtc: crtc with planes, which have to be considered for normalization<=
-br>
-+ * @crtc_state: new atomic state to apply<br>
-+ *<br>
-+ * This function checks new states of all planes assigned to given crtc an=
-d<br>
-+ * calculates normalized zpos value for them. Planes are compared first by=
- their<br>
-+ * zpos values, then by plane id (if zpos equals). Plane with lowest zpos =
-value<br>
-+ * is at the bottom. The plane_state-&gt;normalized_zpos is then filled wi=
-th uniqe<br>
-+ * values from 0 to number of active planes in crtc minus one.<br>
-+ *<br>
-+ * RETURNS<br>
-+ * Zero for success or -errno<br>
-+ */<br>
-+int drm_atomic_helper_crtc_normalize_zpos(struct drm_crtc *crtc,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0struct drm_crtc_state *crtc_state)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_atomic_state *state =3D crtc_state-&=
-gt;state;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_device *dev =3D crtc-&gt;dev;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0int total_planes =3D dev-&gt;mode_config.num_to=
-tal_plane;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_plane_state **states;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_plane *plane;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0int i, n =3D 0;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0int ret =3D 0;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_DEBUG_ATOMIC(&quot;[CRTC:%d:%s] calculating=
- normalized zpos values\n&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 crtc-&gt;<a href=3D"http://base.id" rel=3D"noreferrer" target=3D=
-"_blank">base.id</a>, crtc-&gt;name);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0states =3D kmalloc(total_planes * sizeof(*state=
-s), GFP_KERNEL);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (!states)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0/*<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Normalization process might create new state=
-s for planes which<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 * normalized_zpos has to be recalculated.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0drm_for_each_plane_mask(plane, dev, crtc_state-=
-&gt;plane_mask) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_plane_st=
-ate *plane_state =3D<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0drm_atomic_get_plane_state(state, plane);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (IS_ERR(plane_st=
-ate)) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0ret =3D PTR_ERR(plane_state);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0goto fail;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0states[n++] =3D pla=
-ne_state;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_DEBUG_ATOMIC(&q=
-uot;[PLANE:%d:%s] processing zpos value %d\n&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 plane-&gt;<a href=3D"http://base.id"=
- rel=3D"noreferrer" target=3D"_blank">base.id</a>, plane-&gt;name, plane_st=
-ate-&gt;zpos);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0sort(states, n, sizeof(*states), drm_atomic_sta=
-te_zpos_cmp, NULL);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0for (i =3D 0; i &lt; n; i++) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0plane =3D states[i]=
--&gt;plane;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0states[i]-&gt;norma=
-lized_zpos =3D i;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0DRM_DEBUG_ATOMIC(&q=
-uot;[PLANE:%d:%s] normalized zpos value %d\n&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 plane-&gt;<a href=3D"http://base.id"=
- rel=3D"noreferrer" target=3D"_blank">base.id</a>, plane-&gt;name, i);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+fail:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0kfree(states);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
-+}<br>
-+EXPORT_SYMBOL(drm_atomic_helper_crtc_normalize_zpos);<br>
-+<br>
-+static int drm_atomic_helper_normalize_zpos(struct drm_device *dev,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0struct drm_atomic_state *state)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_crtc *crtc;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_crtc_state *crtc_state;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_plane *plane;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_plane_state *plane_state;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0int i, ret =3D 0;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0/*<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 * If zpos_property is not initialized, then it=
- makes no sense<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 * to calculate normalized zpos values.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (!dev-&gt;mode_config.zpos_property)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0for_each_plane_in_state(state, plane, plane_sta=
-te, i) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0crtc =3D plane_stat=
-e-&gt;crtc;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!crtc)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0continue;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (plane-&gt;state=
--&gt;zpos !=3D plane_state-&gt;zpos) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0crtc_state =3D<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0drm_atomic_get_existing_crtc_state(st=
-ate, crtc);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0crtc_state-&gt;zpos_changed =3D true;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0for_each_crtc_in_state(state, crtc, crtc_state,=
- i) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (crtc_state-&gt;=
-plane_mask !=3D crtc-&gt;state-&gt;plane_mask ||<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0crtc_=
-state-&gt;zpos_changed) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0ret =3D drm_atomic_helper_crtc_normalize_zpos(crtc,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0crtc_state);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0if (ret)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
-+}<br>
-+<br>
-=C2=A0/**<br>
-=C2=A0 * drm_atomic_helper_check_planes - validate state object for planes =
-changes<br>
-=C2=A0 * @dev: DRM device<br>
-@@ -532,6 +644,10 @@ drm_atomic_helper_check_planes(struct drm_device *dev,=
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_plane_state *plane_state;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 int i, ret =3D 0;<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D drm_atomic_helper_normalize_zpos(dev, s=
-tate);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 for_each_plane_in_state(state, plane, plane_sta=
-te, i) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 const struct drm_pl=
-ane_helper_funcs *funcs;<br>
-<br>
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c<br>
-index 62fa95fa5471..54a21e7c1ca5 100644<br>
---- a/drivers/gpu/drm/drm_crtc.c<br>
-+++ b/drivers/gpu/drm/drm_crtc.c<br>
-@@ -5880,6 +5880,59 @@ struct drm_property *drm_mode_create_rotation_proper=
-ty(struct drm_device *dev,<br>
-=C2=A0EXPORT_SYMBOL(drm_mode_create_rotation_property);<br>
-<br>
-=C2=A0/**<br>
-+ * drm_mode_create_zpos_property - create muttable zpos property<br>
-+ * @dev: DRM device<br>
-+ *<br>
-+ * This function initializes generic muttable zpos property and enables su=
-pport<br>
-+ * for it in drm core. Drivers can then attach this property to planes to =
-enable<br>
-+ * support for configurable planes arrangement during blending operation.<=
-br>
-+ * Drivers can also use drm_atomic_helper_normalize_zpos() function to cal=
-culate<br>
-+ * drm_plane_state-&gt;normalized_zpos values.<br>
-+ *<br>
-+ * Returns:<br>
-+ * Zero on success, negative errno on failure.<br>
-+ */<br>
-+int drm_mode_create_zpos_property(struct drm_device *dev)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_property *prop;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0prop =3D drm_property_create_range(dev, 0, &quo=
-t;zpos&quot;, 0, 255);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (!prop)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0dev-&gt;mode_config.zpos_property =3D prop;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
-+}<br>
-+EXPORT_SYMBOL(drm_mode_create_zpos_property);<br>
-+<br>
-+/**<br>
-+ * drm_plane_create_zpos_property - create immuttable zpos property<br>
-+ * @dev: DRM device<br>
-+ *<br>
-+ * This function initializes generic immuttable zpos property and enables<=
-br>
-+ * support for it in drm core. Using this property driver lets userspace<b=
-r>
-+ * to get the arrangement of the planes for blending operation and notifie=
-s<br>
-+ * it that the hardware (or driver) doesn&#39;t support changing of the pl=
-anes&#39;<br>
-+ * order.<br>
-+ *<br>
-+ * Returns:<br>
-+ * Zero on success, negative errno on failure.<br>
-+ */<br>
-+int drm_mode_create_zpos_immutable_property(struct drm_device *dev)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_property *prop;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0prop =3D drm_property_create_range(dev, DRM_MOD=
-E_PROP_IMMUTABLE, &quot;zpos&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 0, 255);=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (!prop)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0dev-&gt;mode_config.zpos_immutable_property =3D=
- prop;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
-+}<br>
-+EXPORT_SYMBOL(drm_mode_create_zpos_immutable_property);<br>
-+<br>
-+/**<br>
-=C2=A0 * DOC: Tile group<br>
-=C2=A0 *<br>
-=C2=A0 * Tile groups are used to represent tiled monitors with a unique<br>
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h<br>
-index 3b040b355472..0607ad2ce918 100644<br>
---- a/include/drm/drm_crtc.h<br>
-+++ b/include/drm/drm_crtc.h<br>
-@@ -305,6 +305,7 @@ struct drm_plane_helper_funcs;<br>
-=C2=A0 * @mode_changed: crtc_state-&gt;mode or crtc_state-&gt;enable has be=
-en changed<br>
-=C2=A0 * @active_changed: crtc_state-&gt;active has been toggled.<br>
-=C2=A0 * @connectors_changed: connectors to this crtc have been updated<br>
-+ * @zpos_changed: zpos values of planes on this crtc have been updated<br>
-=C2=A0 * @plane_mask: bitmask of (1 &lt;&lt; drm_plane_index(plane)) of att=
-ached planes<br>
-=C2=A0 * @last_vblank_count: for helpers and drivers to capture the vblank =
-of the<br>
-=C2=A0 *=C2=A0 =C2=A0 =C2=A0update to ensure framebuffer cleanup isn&#39;t =
-done too early<br>
-@@ -331,6 +332,7 @@ struct drm_crtc_state {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 bool mode_changed : 1;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 bool active_changed : 1;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 bool connectors_changed : 1;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0bool zpos_changed : 1;<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* attached planes bitmask:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* WARNING: transitional helpers do not ma=
-intain plane_mask so<br>
-@@ -1243,6 +1245,9 @@ struct drm_connector {<br>
-=C2=A0 *=C2=A0 =C2=A0 =C2=A0plane (in 16.16)<br>
-=C2=A0 * @src_w: width of visible portion of plane (in 16.16)<br>
-=C2=A0 * @src_h: height of visible portion of plane (in 16.16)<br>
-+ * @zpos: priority of the given plane on crtc (optional)<br>
-+ * @normalized_zpos: normalized value of zpos: uniqe, range from 0 to<br>
-+ *=C2=A0 =C2=A0 =C2=A0(number of planes - 1) for given crtc<br>
-=C2=A0 * @state: backpointer to global drm_atomic_state<br>
-=C2=A0 */<br>
-=C2=A0struct drm_plane_state {<br>
-@@ -1263,6 +1268,10 @@ struct drm_plane_state {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Plane rotation */<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 unsigned int rotation;<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0/* Plane zpos */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned int zpos;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned int normalized_zpos;<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_atomic_state *state;<br>
-=C2=A0};<br>
-<br>
-@@ -2083,6 +2092,8 @@ struct drm_mode_config {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_property *tile_property;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_property *plane_type_property;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_property *rotation_property;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_property *zpos_property;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_property *zpos_immutable_property;<b=
-r>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_property *prop_src_x;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_property *prop_src_y;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct drm_property *prop_src_w;<br>
-@@ -2484,6 +2495,9 @@ extern struct drm_property *drm_mode_create_rotation_=
-property(struct drm_device<br>
-=C2=A0extern unsigned int drm_rotation_simplify(unsigned int rotation,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 u=
-nsigned int supported_rotations);<br>
-<br>
-+extern int drm_mode_create_zpos_property(struct drm_device *dev);<br>
-+extern int drm_mode_create_zpos_immutable_property(struct drm_device *dev)=
-;<br>
-+<br>
-=C2=A0/* Helpers */<br>
-<br>
-=C2=A0static inline struct drm_plane *drm_plane_find(struct drm_device *dev=
-,<br>
-<span class=3D"HOEnZb"><font color=3D"#888888">--<br>
-1.9.2<br>
-<br>
-</font></span></blockquote></div><br><br clear=3D"all"><div><br></div>-- <b=
-r><div class=3D"gmail_signature"><span style=3D"border-collapse:collapse;fo=
-nt-family:arial,sans-serif;font-size:13px"><p style=3D"margin-top:0px;margi=
-n-right:0px;margin-bottom:0px;margin-left:0px">Benjamin Gaignard=C2=A0</p><=
-p style=3D"margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0p=
-x">Graphic Working Group</p><p style=3D"margin-top:0px;margin-right:0px;mar=
-gin-bottom:0px;margin-left:0px"><span lang=3D"EN-US" style=3D"font-size:10p=
-t;color:rgb(0,176,80)"><span style=3D"color:rgb(0,68,252)"><a href=3D"http:=
-//www.linaro.org/" style=3D"color:rgb(0,0,204)" target=3D"_blank">Linaro.or=
-g</a></span><b>=C2=A0</b></span><b><span lang=3D"EN-US" style=3D"font-size:=
-10pt">=E2=94=82=C2=A0</span></b><span lang=3D"EN-US" style=3D"font-size:10p=
-t">Open source software for ARM SoCs</span></p><p style=3D"margin-top:0px;m=
-argin-right:0px;margin-bottom:0px;margin-left:0px"><u></u></p><p style=3D"m=
-argin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px"><span lan=
-g=3D"EN-US" style=3D"font-size:10pt">Follow=C2=A0<b>Linaro:=C2=A0</b></span=
-><span style=3D"font-size:10pt;color:rgb(0,68,252)"><a href=3D"http://www.f=
-acebook.com/pages/Linaro" style=3D"color:rgb(0,0,204)" target=3D"_blank"><s=
-pan style=3D"color:blue">Facebook</span></a></span><span style=3D"font-size=
-:10pt">=C2=A0|=C2=A0<span style=3D"color:rgb(0,68,252)"><a href=3D"http://t=
-witter.com/#!/linaroorg" style=3D"color:rgb(0,0,204)" target=3D"_blank"><sp=
-an style=3D"color:blue">Twitter</span></a></span>=C2=A0|=C2=A0<span style=
-=3D"color:rgb(0,68,252)"><a href=3D"http://www.linaro.org/linaro-blog/" sty=
-le=3D"color:rgb(0,0,204)" target=3D"_blank"><span style=3D"color:blue">Blog=
-</span></a></span></span></p></span></div>
-</div>
+> Can someone at least confirm these problems?
+> Are they related to our platform? If not you can redirect this mail to
+> a more general mailing-list of course :)
 
---001a114026506ac4d80529338a70--
+Those problems also don't look like related to Exynos platform. I suspect
+that enabling those platforms adds support for a driver, which is not
+multi-platform friendly and it messes in the system when no hardware
+has been detected. I've checked .config.broken.no_ttySAC1_mmcblk0p1.first
+config and I also got a panic message (although a bit different):
 
---===============0659255928==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+[    2.702200] Freeing unused kernel memory: 1084K (c0c03000 - c0d12000)
+[    2.733048] Internal error: Oops - undefined instruction: 0 [#1] 
+PREEMPT SMP THUMB2
+[    2.739301] Modules linked in:
+[    2.742339] CPU: 3 PID: 29 Comm: kworker/u8:1 Tainted: G W       
+4.4.0-testing #10983
+[    2.750757] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    2.756844] Workqueue: deferwq deferred_probe_work_func
+[    2.762039] task: ee688600 ti: ee69e000 task.ti: ee69e000
+[    2.767425] PC is at mvebu_soc_device+0x2e/0x9c
+[    2.771937] LR is at __device_attach_driver+0x1f/0x4c
+[    2.776970] pc : [<c0c0c0c2>]    lr : [<c05831a3>] psr: a0000053
+[    2.776970] sp : ee69fe70  ip : c058318d  fp : c0e12e34
+[    2.788426] r10: 00000001  r9 : 00000000  r8 : c0d15588
+[    2.793637] r7 : c0583185  r6 : edc1a210  r5 : ee69feac  r4 : c0c908dc
+[    2.800146] r3 : c0c0c0c0  r2 : 00000000  r1 : c0c908dc  r0 : edc1a210
+[    2.806657] Flags: NzCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM 
+Segment none
+[    2.813862] Control: 50c5387d  Table: 4020404a  DAC: 00000051
+[    2.819592] Process kworker/u8:1 (pid: 29, stack limit = 0xee69e220)
+[    2.825927] Stack: (0xee69fe70 to 0xee6a0000)
+[    2.830265] fe60:                                     c0c908dc 
+00000000 ee69feac c05818cf
+[    2.838427] fe80: 40000053 ee4b8c70 edc1ecb8 dc8ba600 edc1a210 
+c0d15588 edc1a210 edc1a244
+[    2.846589] fea0: 00000001 c0582d05 ee556000 edc1a210 00000001 
+dc8ba600 edc1a210 c0dc9978
+[    2.854746] fec0: edc1a210 c0dc9b70 ed946e00 c05824ff 00000000 
+edc1a210 c0dc9978 c0dc9990
+[    2.862902] fee0: c0e1a328 c0582863 c0582831 c0dc99ac ee59b100 
+ee43b814 ee43b800 c02549a1
+[    2.871061] ff00: ee69ff10 ee43b848 ee43b800 ee43b800 ee59b118 
+ee43b814 ee69e000 ee43b848
+[    2.879221] ff20: c0e12a82 ee43b800 ee59b100 c0254cd3 c07b2581 
+c0d15100 ee43b964 00000000
+[    2.887379] ff40: 00000000 00000000 ee5ca0c0 ee59b100 c0254bd9 
+00000000 00000000 00000000
+[    2.895539] ff60: 00000000 c0258d27 00000000 c0c0c0c0 ee59b100 
+00000000 00000000 ee69ff7c
+[    2.903698] ff80: ee69ff7c 00000000 00000000 ee69ff8c ee69ff8c 
+dc8ba600 ee69ffa0 ee5ca0c0
+[    2.911857] ffa0: c0258c79 00000000 00000000 c02100f5 00000000 
+00000000 00000000 00000000
+[    2.920016] ffc0: 00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[    2.928176] ffe0: 00000000 00000000 00000000 00000000 00000013 
+00000000 c0c0c0c0 c0c0c0c0
+[    2.936344] [<c05831a3>] (__device_attach_driver) from [<c05818cf>] 
+(bus_for_each_drv+0x4f/0x7c)
+[    2.945103] [<c05818cf>] (bus_for_each_drv) from [<c0582d05>] 
+(__device_attach+0x81/0xe8)
+[    2.953261] [<c0582d05>] (__device_attach) from [<c05824ff>] 
+(bus_probe_device+0x5b/0x60)
+[    2.961421] [<c05824ff>] (bus_probe_device) from [<c0582863>] 
+(deferred_probe_work_func+0x33/0xa4)
+[    2.970367] [<c0582863>] (deferred_probe_work_func) from [<c02549a1>] 
+(process_one_work+0xe1/0x318)
+[    2.979391] [<c02549a1>] (process_one_work) from [<c0254cd3>] 
+(worker_thread+0xfb/0x388)
+[    2.987463] [<c0254cd3>] (worker_thread) from [<c0258d27>] 
+(kthread+0xaf/0xc4)
+[    2.994669] [<c0258d27>] (kthread) from [<c02100f5>] 
+(ret_from_fork+0x11/0x1c)
+[    3.001870] Code: def0e7fd def0e7fd def0e7fd def0e7fd (def0e7fd)
+[    3.007946] ---[ end trace f24b6c88ae00fa9c ]---
+[    3.012651] Unable to handle kernel paging request at virtual address 
+ffffffec
+[    3.019747] pgd = c0204000
+[    3.022437] [ffffffec] *pgd=6fffd861, *pte=00000000, *ppte=00000000
+[    3.028690] Internal error: Oops: 37 [#2] PREEMPT SMP THUMB2
+[    3.034329] Modules linked in:
+[    3.037370] CPU: 3 PID: 29 Comm: kworker/u8:1 Tainted: G      D 
+W       4.4.0-testing #10983
+[    3.045786] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    3.051869] task: ee688600 ti: ee69e000 task.ti: ee69e000
+[    3.057247] PC is at kthread_data+0xa/0x10
+[    3.061327] LR is at wq_worker_sleeping+0xf/0x9c
+[    3.065926] pc : [<c025923a>]    lr : [<c025556b>] psr: 000000f3
+[    3.065926] sp : ee69fc10  ip : c0259237  fp : 00000003
+[    3.077381] r10: ee688904  r9 : c0d160e0  r8 : c0d102c0
+[    3.082590] r7 : ee69fc30  r6 : 00000000  r5 : eedbc2c0  r4 : 00000003
+[    3.089099] r3 : 00000000  r2 : 00000000  r1 : 00000003  r0 : ee688600
+[    3.095611] Flags: nzcv  IRQs off  FIQs off  Mode SVC_32  ISA Thumb  
+Segment none
+[    3.103075] Control: 50c5387d  Table: 4020404a  DAC: 00000051
+[    3.108803] Process kworker/u8:1 (pid: 29, stack limit = 0xee69e220)
+[    3.115140] Stack: (0xee69fc10 to 0xee6a0000)
+[    3.119482] fc00:                                     00000020 
+ee688600 eedbc2c0 c07b2133
+[    3.127642] fc20: edd5dc80 c024559b c0d160e0 ee69e000 00009b33 
+c07b257b 00000001 ee69e000
+[    3.135801] fc40: ee69f9dc ee69fc74 ee69fc60 ee68887c 00000000 
+c0c0c0c6 ee528000 c07b257b
+[    3.143960] fc60: 0420806c ee688600 ee69fc74 c02455f1 ee69fde0 
+ee69fc74 ee69fc74 dc8ba600
+[    3.152120] fc80: c0e27404 c0e27404 c0d1b00c c0d15588 ee69fde0 
+200000d3 0000000b c0c0c0c6
+[    3.160278] fca0: 00000001 c0213e03 ee69e220 0000000b c0e100c8 
+c0d1b00c 00000000 ee69e000
+[    3.168438] fcc0: 00000000 00000008 00000000 64000400 65306665 
+20646637 30666564 64663765
+[    3.176597] fce0: 66656420 66376530 65642064 37653066 28206466 
+30666564 64663765 00002029
+[    3.184756] fd00: c07b5193 dc8ba600 ee69fd18 00000000 00030001 
+00000004 ee69fde0 c0d15588
+[    3.192915] fd20: c0c0c0c2 00000001 c0e12e34 c020a171 00000006 
+00000000 c0d1606c 00000004
+[    3.201075] fd40: 00000000 00030001 c0c0c0c2 00000001 c0339ab3 
+eeda2300 edf16648 c02692b5
+[    3.209234] fd60: eeda2300 edf16648 00079bb9 00079bb9 00000000 
+c02692b5 000000b3 00000000
+[    3.217393] fd80: a269731b 00000000 ee69fd98 00000000 eedbc300 
+00000000 ee69fdc0 c0277157
+[    3.225552] fda0: 00000000 ee688648 eedbc300 c0267a97 ee688648 
+c0267a97 eeda2300 dc8ba600
+[    3.233711] fdc0: c0c0c0c4 c0c0c0c4 a0000053 ffffffff ee69fe14 
+c0d15588 00000000 c07b5835
+[    3.241870] fde0: edc1a210 c0c908dc 00000000 c0c0c0c0 c0c908dc 
+ee69feac edc1a210 c0583185
+[    3.250030] fe00: c0d15588 00000000 00000001 c0e12e34 c058318d 
+ee69fe70 c05831a3 c0c0c0c2
+[    3.258189] fe20: a0000053 ffffffff 00000051 00000001 c07b4ded 
+00000000 ee69fe48 00000000
+[    3.266348] fe40: 00000000 c0262189 edc1ecb8 ee69fe84 edc1ec38 
+c07b4ded edc1ecc4 c07b1245
+[    3.274507] fe60: 00000070 c0d4608c 00000000 c05818cf c0c908dc 
+00000000 ee69feac c05818cf
+[    3.282667] fe80: 40000053 ee4b8c70 edc1ecb8 dc8ba600 edc1a210 
+c0d15588 edc1a210 edc1a244
+[    3.290826] fea0: 00000001 c0582d05 ee556000 edc1a210 00000001 
+dc8ba600 edc1a210 c0dc9978
+[    3.298985] fec0: edc1a210 c0dc9b70 ed946e00 c05824ff 00000000 
+edc1a210 c0dc9978 c0dc9990
+[    3.307144] fee0: c0e1a328 c0582863 c0582831 c0dc99ac ee59b100 
+ee43b814 ee43b800 c02549a1
+[    3.315303] ff00: ee69ff10 ee43b848 ee43b800 ee43b800 ee59b118 
+ee43b814 ee69e000 ee43b848
+[    3.323463] ff20: c0e12a82 ee43b800 ee59b100 c0254cd3 c07b2581 
+c0d15100 ee43b964 00000000
+[    3.331622] ff40: 00000000 00000000 ee5ca0c0 ee59b100 c0254bd9 
+00000000 00000000 00000000
+[    3.339781] ff60: 00000000 c0258d27 00000000 c0c0c0c0 ee59b100 
+00000000 00000000 ee69ff7c
+[    3.347940] ff80: ee69ff7c 00000001 00010001 ee69ff8c ee69ff8c 
+dc8ba600 ee69ffa0 ee5ca0c0
+[    3.356099] ffa0: c0258c79 00000000 00000000 c02100f5 00000000 
+00000000 00000000 00000000
+[    3.364258] ffc0: 00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[    3.372418] ffe0: 00000000 00000000 00000000 00000000 00000013 
+00000000 c0c0c0c0 c0c0c0c0
+[    3.380581] [<c025923a>] (kthread_data) from [<c025556b>] 
+(wq_worker_sleeping+0xf/0x9c)
+[    3.388569] [<c025556b>] (wq_worker_sleeping) from [<c07b2133>] 
+(__schedule+0x28b/0x568)
+[    3.396638] [<c07b2133>] (__schedule) from [<c07b257b>] 
+(schedule+0x37/0x70)
+[    3.403669] [<c07b257b>] (schedule) from [<c02455f1>] 
+(do_exit+0x601/0x868)
+[    3.410612] [<c02455f1>] (do_exit) from [<c0213e03>] (die+0x383/0x3a0)
+[    3.417121] [<c0213e03>] (die) from [<c020a171>] 
+(do_undefinstr+0x15d/0x188)
+[    3.424153] [<c020a171>] (do_undefinstr) from [<c07b5835>] 
+(__und_svc_finish+0x1/0x4c)
+[    3.432047] Exception stack(0xee69fde0 to 0xee69fe28)
+[    3.437084] fde0: edc1a210 c0c908dc 00000000 c0c0c0c0 c0c908dc 
+ee69feac edc1a210 c0583185
+[    3.445243] fe00: c0d15588 00000000 00000001 c0e12e34 c058318d 
+ee69fe70 c05831a3 c0c0c0c2
+[    3.453400] fe20: a0000053 ffffffff
+[    3.456878] [<c07b5835>] (__und_svc_finish) from [<c0c0c0c2>] 
+(mvebu_soc_device+0x2e/0x9c)
+[    3.465121] Code: f7bd fd2d f8d0 32d4 (f853) 0c14
+[    3.469893] ---[ end trace f24b6c88ae00fa9d ]---
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+If you have some time, you may check which exactly driver or kconfig option
+causes the problem by enabling them one by one. Right now I have no time to
+debug this issue further. It definitely looks like a bug introduced by
+non-Exynos platform.
 
---===============0659255928==--
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
