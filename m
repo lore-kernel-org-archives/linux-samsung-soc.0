@@ -1,67 +1,83 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler as
- IRQF_NO_THREAD
-Date: Wed, 13 Jan 2016 20:48:03 +0200
-Message-ID: <56969BE3.6000804@ti.com>
-References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
- <20160106221827.GD16231@localhost> <20160113133904.GD29964@linutronix.de>
- <20160113175016.GB28453@localhost>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/7] drm/exynos/hdmi: add Exynos5433 support
+Date: Thu, 14 Jan 2016 13:54:12 +0900
+Message-ID: <569729F4.4010406@samsung.com>
+References: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
+ <569658CD.3090406@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160113175016.GB28453@localhost>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bjorn Helgaas <helgaas@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-sh@vger.kernel.org, tony@atomide.com, linux-pci@vger.kernel.org, nsekhar@ti.com, Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Stephen Warren <swarren@wwwdotorg.org>, Simon Horman <horms@verge.net.au>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Richard Zhu <Richard.Zhu@freescale.com>, linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:52050 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751194AbcANEyP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Jan 2016 23:54:15 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O0X01EKIEYCC7B0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jan 2016 13:54:13 +0900 (KST)
+In-reply-to: <569658CD.3090406@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 
-On 01/13/2016 07:50 PM, Bjorn Helgaas wrote:
-> On Wed, Jan 13, 2016 at 02:39:04PM +0100, Sebastian Andrzej Siewior wrote:
->> * Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
+Hi Andrzej,
+
+Really sorry for missing this.
+I will merge them soon.
+
+Thanks,
+Inki Dae
+
+2016=EB=85=84 01=EC=9B=94 13=EC=9D=BC 23:01=EC=97=90 Andrzej Hajda =EC=9D=
+=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> Hi Inki,
+>=20
+> Ping.
+>=20
+> Regards
+> Andrzej
+>=20
+> On 11/02/2015 02:16 PM, Andrzej Hajda wrote:
+>> Hi Inki, Krzysztof,
 >>
->>> Hi Bjorn,
+>> This patchset adds support for Exynos 5433 HDMI.
+>> There are also few preparation/cleanup patches.
+>> All patches except one touch only exynos-drm.
+>> Sixth patch adds binding properties for Exynos5433 HDMI,
+>> Krzysztof could you look at it.
 >>
->>>> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
->>>> index 8c36880..0415192 100644
->>>> --- a/drivers/pci/host/pci-dra7xx.c
->>>> +++ b/drivers/pci/host/pci-dra7xx.c
->>>> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
->>>>   		return -EINVAL;
->>>>   	}
->>>>
->>>> +	/*
->>>> +	 * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
->>>> +	 * On -RT and if kernel is booting with "threadirqs" cmd line parameter
->>>> +	 * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
->>>> +	 * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
->>>> +	 * which, in turn, will be resolved to handle_simple_irq() call.
->>>> +	 * The handle_simple_irq() expected to be called with IRQ disabled, as
->>>> +	 * result kernle will display warning:
->>>> +	 * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
->>>> +	 */
+>> The patchset is based on exynos-drm-next.
 >>
->> could you _please_ remove this coment? This kind of comment (if at all)
->> should be part of the commit message (which is the case more or less).
->
-> IIRC, Grygorii specifically wanted to keep this comment in dra7xx, but
-
-True.
-
-> I do agree that this level of detail is more appropriate for a changelog.
->
-> If Grygorii and Kishon don't object, I can update the patch to remove it.
-
-But no objections from my side. Thanks a lot.
-
--- 
-regards,
--grygorii
+>> Regards
+>> Andrzej
+>>
+>>
+>> Andrzej Hajda (7):
+>>   drm/exynos/hdmi: clock code re-factoring
+>>   drm/exynos/hdmi: constify global variables
+>>   drm/exynos/hdmi: use array specifier for HDMI-PHY configurations
+>>   drm/exynos/hdmi: code cleanup
+>>   drm/exynos/hdmi: stop programming registers with default values
+>>   dt-bindings: exynos_hdmi: add bindings for Exynos5433 variant
+>>   drm/exynos/hdmi: add Exynos5433 support
+>>
+>>  .../devicetree/bindings/video/exynos_hdmi.txt      |  27 +-
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c               | 454 ++++++++++=
++++++------
+>>  drivers/gpu/drm/exynos/regs-hdmi.h                 |   9 +-
+>>  3 files changed, 352 insertions(+), 138 deletions(-)
+>>
+>=20
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
