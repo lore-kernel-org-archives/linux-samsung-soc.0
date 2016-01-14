@@ -1,64 +1,64 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler as
- IRQF_NO_THREAD
-Date: Thu, 14 Jan 2016 11:49:24 +0530
-Message-ID: <56973DEC.2000108@ti.com>
-References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
- <20160106221827.GD16231@localhost> <20160113133904.GD29964@linutronix.de>
- <20160113175016.GB28453@localhost> <56969BE3.6000804@ti.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/7] drm/exynos/hdmi: add Exynos5433 support
+Date: Thu, 14 Jan 2016 15:25:08 +0900
+Message-ID: <56973F44.8020807@samsung.com>
+References: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
+ <569658CD.3090406@samsung.com> <569729F4.4010406@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56969BE3.6000804@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Bjorn Helgaas <helgaas@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <569729F4.4010406@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Thursday 14 January 2016 12:18 AM, Grygorii Strashko wrote:
-> On 01/13/2016 07:50 PM, Bjorn Helgaas wrote:
->> On Wed, Jan 13, 2016 at 02:39:04PM +0100, Sebastian Andrzej Siewior wrote:
->>> * Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
->>>
->>>> Hi Bjorn,
->>>
->>>>> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
->>>>> index 8c36880..0415192 100644
->>>>> --- a/drivers/pci/host/pci-dra7xx.c
->>>>> +++ b/drivers/pci/host/pci-dra7xx.c
->>>>> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct
->>>>> dra7xx_pcie *dra7xx,
->>>>>           return -EINVAL;
->>>>>       }
->>>>>
->>>>> +    /*
->>>>> +     * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
->>>>> +     * On -RT and if kernel is booting with "threadirqs" cmd line parameter
->>>>> +     * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
->>>>> +     * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
->>>>> +     * which, in turn, will be resolved to handle_simple_irq() call.
->>>>> +     * The handle_simple_irq() expected to be called with IRQ disabled, as
->>>>> +     * result kernle will display warning:
->>>>> +     * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
->>>>> +     */
->>>
->>> could you _please_ remove this coment? This kind of comment (if at all)
->>> should be part of the commit message (which is the case more or less).
->>
->> IIRC, Grygorii specifically wanted to keep this comment in dra7xx, but
-> 
-> True.
-> 
->> I do agree that this level of detail is more appropriate for a changelog.
->>
->> If Grygorii and Kishon don't object, I can update the patch to remove it.
-> 
-> But no objections from my side. Thanks a lot.
-
-I don't have any objections.
-
-Thanks
-Kishon
+SGkgQW5kcnplaiwKClRoaXMgcGF0Y2ggc2VyaWVzIGluY3VycmVkIG1lcmdlIGNvbmZsaWN0cyBh
+dCBzZXZlcmlhbCBwYXRjaGVzIHNvIEkgaGFkIHRvIG1lcmdlIHRoZW0gbWFudWFsbHkuCkl0IGxv
+b2tzIGdvb2QgdG8gbWUgYnV0IGl0IHNlZW1zIHRvIG5lZWQgbW9yZSB0ZXN0cyBzbyBJIG1lcmdl
+ZCB0aGVtIHRvIGV4eW5vcy1kcm0tbmV4dC10b2RvLgpBZnRlciB0aGF0LCBJIHdpbGwgbW92ZSB0
+aGVtIHRvIGV4eW5vcy1kcm0tbmV4dC4gU29ycnkgZm9yIGxhdGUgcmVpdmV3IGFnYWluLgoKVGhh
+bmtzLApJbmtpIERhZSAKCjIwMTbrhYQgMDHsm5QgMTTsnbwgMTM6NTTsl5AgSW5raSBEYWUg7J20
+KOqwgCkg7JO0IOq4gDoKPiBIaSBBbmRyemVqLAo+IAo+IFJlYWxseSBzb3JyeSBmb3IgbWlzc2lu
+ZyB0aGlzLgo+IEkgd2lsbCBtZXJnZSB0aGVtIHNvb24uCj4gCj4gVGhhbmtzLAo+IElua2kgRGFl
+Cj4gCj4gMjAxNuuFhCAwMeyblCAxM+ydvCAyMzowMeyXkCBBbmRyemVqIEhhamRhIOydtCjqsIAp
+IOyTtCDquIA6Cj4+IEhpIElua2ksCj4+Cj4+IFBpbmcuCj4+Cj4+IFJlZ2FyZHMKPj4gQW5kcnpl
+ago+Pgo+PiBPbiAxMS8wMi8yMDE1IDAyOjE2IFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4g
+SGkgSW5raSwgS3J6eXN6dG9mLAo+Pj4KPj4+IFRoaXMgcGF0Y2hzZXQgYWRkcyBzdXBwb3J0IGZv
+ciBFeHlub3MgNTQzMyBIRE1JLgo+Pj4gVGhlcmUgYXJlIGFsc28gZmV3IHByZXBhcmF0aW9uL2Ns
+ZWFudXAgcGF0Y2hlcy4KPj4+IEFsbCBwYXRjaGVzIGV4Y2VwdCBvbmUgdG91Y2ggb25seSBleHlu
+b3MtZHJtLgo+Pj4gU2l4dGggcGF0Y2ggYWRkcyBiaW5kaW5nIHByb3BlcnRpZXMgZm9yIEV4eW5v
+czU0MzMgSERNSSwKPj4+IEtyenlzenRvZiBjb3VsZCB5b3UgbG9vayBhdCBpdC4KPj4+Cj4+PiBU
+aGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gZXh5bm9zLWRybS1uZXh0Lgo+Pj4KPj4+IFJlZ2FyZHMK
+Pj4+IEFuZHJ6ZWoKPj4+Cj4+Pgo+Pj4gQW5kcnplaiBIYWpkYSAoNyk6Cj4+PiAgIGRybS9leHlu
+b3MvaGRtaTogY2xvY2sgY29kZSByZS1mYWN0b3JpbmcKPj4+ICAgZHJtL2V4eW5vcy9oZG1pOiBj
+b25zdGlmeSBnbG9iYWwgdmFyaWFibGVzCj4+PiAgIGRybS9leHlub3MvaGRtaTogdXNlIGFycmF5
+IHNwZWNpZmllciBmb3IgSERNSS1QSFkgY29uZmlndXJhdGlvbnMKPj4+ICAgZHJtL2V4eW5vcy9o
+ZG1pOiBjb2RlIGNsZWFudXAKPj4+ICAgZHJtL2V4eW5vcy9oZG1pOiBzdG9wIHByb2dyYW1taW5n
+IHJlZ2lzdGVycyB3aXRoIGRlZmF1bHQgdmFsdWVzCj4+PiAgIGR0LWJpbmRpbmdzOiBleHlub3Nf
+aGRtaTogYWRkIGJpbmRpbmdzIGZvciBFeHlub3M1NDMzIHZhcmlhbnQKPj4+ICAgZHJtL2V4eW5v
+cy9oZG1pOiBhZGQgRXh5bm9zNTQzMyBzdXBwb3J0Cj4+Pgo+Pj4gIC4uLi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL3ZpZGVvL2V4eW5vc19oZG1pLnR4dCAgICAgIHwgIDI3ICstCj4+PiAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICAgICAgICAgICAgICAgfCA0NTQgKysrKysrKysr
+KysrKysrLS0tLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLWhkbWkuaCAgICAg
+ICAgICAgICAgICAgfCAgIDkgKy0KPj4+ICAzIGZpbGVzIGNoYW5nZWQsIDM1MiBpbnNlcnRpb25z
+KCspLCAxMzggZGVsZXRpb25zKC0pCj4+Pgo+Pgo+Pgo+PiAtLQo+PiBUbyB1bnN1YnNjcmliZSBm
+cm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1z
+b2MiIGluCj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwu
+b3JnCj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
+b3Jkb21vLWluZm8uaHRtbAo+Pgo+Pgo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxp
+c3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRo
+ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBt
+YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
+dG1sCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
