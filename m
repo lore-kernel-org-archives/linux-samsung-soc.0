@@ -1,64 +1,31 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-Date: Thu, 14 Jan 2016 19:49:38 +0900
-Message-ID: <56977D42.2050904@samsung.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
- <56977A3B.8020104@samsung.com>
+From: Vasco Steinmetz <vasco@kyberraum.net>
+Subject: Re: Slow performance of Odroid XU4 - cpufreq-dt patch needed?
+Date: Thu, 14 Jan 2016 18:17:14 +0100
+Message-ID: <5697D81A.2000108@kyberraum.net>
+References: <56967861.10305@kyberraum.net> <87h9ih5rj8.fsf@smart-cactus.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <56977A3B.8020104@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hyungwon Hwang <human.hwang@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from nexus.metro.kyberraum.net ([195.47.195.230]:42476 "EHLO
+	mx1.kyberraum.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751049AbcANRRX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Jan 2016 12:17:23 -0500
+In-Reply-To: <87h9ih5rj8.fsf@smart-cactus.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org
 
-KyBSb2IgSGVycmluZwoKMjAxNuuFhCAwMeyblCAxNOydvCAxOTozNuyXkCBBbmRyemVqIEhhamRh
-IOydtCjqsIApIOyTtCDquIA6Cj4gSGkgSW5raSwKPiAKPiBJdCBzZWVtcyB0aGlzIHBhdGNoIGFu
-ZCAwNC8xMCBkaWQgbm90IGdldCBwaWNrZWQgdXAgeWV0Lgo+IENvdWxkIHlvdSBtZXJnZSBpdD8K
-ClllcywgSSBjYW4uIEhvd2V2ZXIsIDA0LzEwIGlzIHJlcXVpcmVkIGZvciBhY2tlZC1ieSBmcm9t
-IGR0IG9yIFNvQyBtYWludGFpbmVyLgpLcnp5c3p0b2YgYW5kIFJvYiwgY291bGQgeW91IGdpdmUg
-bWUgYWNrZWQtYnk/CgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4g
-Cj4gT24gMTAvMjYvMjAxNSAxMjo1OSBQTSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4gREVDT04t
-VFYoRGlzcGxheSBhbmQgRW5oYW5jZW1lbnQgQ29udHJvbGxlciBmb3IgVFYpIGlzIGEgdmFyaWF0
-aW9uCj4+IG9mIERFQ09OIElQLiBJdHMgbWFpbiBwdXJwb3NlIGlzIHRvIHByb2R1Y2UgdmlkZW8g
-c3RyZWFtIGZvciBIRE1JIElQLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxh
-LmhhamRhQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gSGkgS3J6eXN6dG9mLAo+Pgo+PiBJIGhhdmUg
-ZGVjaWRlZCB0byBza2lwIGNsZWFudXAgcGFydCBhcyBpdCB3b3VsZCByZXF1aXJlIG1vcmUgd29y
-aywKPj4gbm90IHJlbGF0ZWQgdG8gdGhpcyBwYXRjaHNldC4KPj4KPj4gUmVnYXJkcwo+PiBBbmRy
-emVqCj4+Cj4+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9z
-NTQzMy1kZWNvbi50eHQgfCAzICsrLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
-KSwgMSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vczU0MzMtZGVjb24udHh0IGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vczU0MzMtZGVjb24udHh0Cj4+IGluZGV4IDNk
-ZmY3OGIuLmM5ZmQ3YjMgMTAwNjQ0Cj4+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy92aWRlby9leHlub3M1NDMzLWRlY29uLnR4dAo+PiArKysgYi9Eb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9zNTQzMy1kZWNvbi50eHQKPj4gQEAgLTUs
-NyArNSw4IEBAIEV4eW5vcyBzZXJpZXMgb2YgU29DcyB3aGljaCB0cmFuc2ZlcnMgdGhlIGltYWdl
-IGRhdGEgZnJvbSBhIHZpZGVvIG1lbW9yeQo+PiAgYnVmZmVyIHRvIGFuIGV4dGVybmFsIExDRCBp
-bnRlcmZhY2UuCj4+ICAKPj4gIFJlcXVpcmVkIHByb3BlcnRpZXM6Cj4+IC0tIGNvbXBhdGlibGU6
-IHZhbHVlIHNob3VsZCBiZSAic2Ftc3VuZyxleHlub3M1NDMzLWRlY29uIjsKPj4gKy0gY29tcGF0
-aWJsZTogdmFsdWUgc2hvdWxkIGJlIG9uZSBvZjoKPj4gKwkic2Ftc3VuZyxleHlub3M1NDMzLWRl
-Y29uIiwgInNhbXN1bmcsZXh5bm9zNTQzMy1kZWNvbi10diI7Cj4+ICAtIHJlZzogcGh5c2ljYWwg
-YmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIERFQ09OIHJlZ2lzdGVycyBzZXQuCj4+ICAt
-IGludGVycnVwdHM6IHNob3VsZCBjb250YWluIGEgbGlzdCBvZiBhbGwgREVDT04gSVAgYmxvY2sg
-aW50ZXJydXB0cyBpbiB0aGUKPj4gIAkgICAgICBvcmRlcjogVlNZTkMsIExDRF9TWVNURU0uIFRo
-ZSBpbnRlcnJ1cHQgc3BlY2lmaWVyIGZvcm1hdAo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJv
-bSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29j
-IiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
-Cj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1sCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+Ben Gamari schrieb:
+
+> I also struggled to get my XU4 to perform to expectations with recent kernels.
+> Indeed it seems that the board boots to 800 MHz or so without cpufreq.
+> Recently I've been using this branch [1] (based on Bartlomiej's
+> cpufreq-v5 patchset) and this [2] configuration with reasonably good
+> results.
+
+Thanks!
+
+Cheers,
+Vasco
