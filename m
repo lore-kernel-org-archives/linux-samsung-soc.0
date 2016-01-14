@@ -1,72 +1,136 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH 0/7] drm/exynos/hdmi: add Exynos5433 support
-Date: Thu, 14 Jan 2016 08:01:17 +0100
-Message-ID: <569747BD.7090203@samsung.com>
+Date: Thu, 14 Jan 2016 16:10:03 +0900
+Message-ID: <569749CB.9010700@samsung.com>
 References: <1446470205-15606-1-git-send-email-a.hajda@samsung.com>
  <569658CD.3090406@samsung.com> <569729F4.4010406@samsung.com>
- <56973F44.8020807@samsung.com>
+ <56973F44.8020807@samsung.com> <569747BD.7090203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <56973F44.8020807@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57739 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922AbcANHKH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Jan 2016 02:10:07 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O0X0015FL8RL8C0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jan 2016 16:10:03 +0900 (KST)
+In-reply-to: <569747BD.7090203@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 
-T24gMDEvMTQvMjAxNiAwNzoyNSBBTSwgSW5raSBEYWUgd3JvdGU6Cj4gSGkgQW5kcnplaiwKPgo+
-IFRoaXMgcGF0Y2ggc2VyaWVzIGluY3VycmVkIG1lcmdlIGNvbmZsaWN0cyBhdCBzZXZlcmlhbCBw
-YXRjaGVzIHNvIEkgaGFkIHRvIG1lcmdlIHRoZW0gbWFudWFsbHkuCj4gSXQgbG9va3MgZ29vZCB0
-byBtZSBidXQgaXQgc2VlbXMgdG8gbmVlZCBtb3JlIHRlc3RzIHNvIEkgbWVyZ2VkIHRoZW0gdG8g
-ZXh5bm9zLWRybS1uZXh0LXRvZG8uCj4gQWZ0ZXIgdGhhdCwgSSB3aWxsIG1vdmUgdGhlbSB0byBl
-eHlub3MtZHJtLW5leHQuIFNvcnJ5IGZvciBsYXRlIHJlaXZldyBhZ2Fpbi4KCkkgZ3Vlc3MgaXQg
-aXMgYmVjYXVzZSBleHlub3MtZHJtLW5leHQgZG9lcyBub3QgY29udGFpbnMgcGF0Y2gKJ2R0LWJp
-bmRpbmdzOiByZW1vdmUgZGVwcmVjYXRlZCBjb21wYXRpYmxlIHN0cmluZyBmcm9tIGV4eW5vcy1o
-ZG1pJy4KSXQgaXMgYWxyZWFkeSBpbiBuZXh0LCBpdCBlbnRlcmVkIHZpYSBzYW1zdW5nLWR0IHRy
-ZWUuCldpdGggdGhpcyBwYXRjaCB0aGlzIHBhdGNoc2V0IGFwcGxpZXMgY2xlYW5seSB0byBleHlu
-b3MtZHJtLW5leHQuCgpSZWdhcmRzCkFuZHJ6ZWoKCj4KPiBUaGFua3MsCj4gSW5raSBEYWUgCj4K
-PiAyMDE264WEIDAx7JuUIDE07J28IDEzOjU07JeQIElua2kgRGFlIOydtCjqsIApIOyTtCDquIA6
-Cj4+IEhpIEFuZHJ6ZWosCj4+Cj4+IFJlYWxseSBzb3JyeSBmb3IgbWlzc2luZyB0aGlzLgo+PiBJ
-IHdpbGwgbWVyZ2UgdGhlbSBzb29uLgo+Pgo+PiBUaGFua3MsCj4+IElua2kgRGFlCj4+Cj4+IDIw
-MTbrhYQgMDHsm5QgMTPsnbwgMjM6MDHsl5AgQW5kcnplaiBIYWpkYSDsnbQo6rCAKSDsk7Qg6riA
-Ogo+Pj4gSGkgSW5raSwKPj4+Cj4+PiBQaW5nLgo+Pj4KPj4+IFJlZ2FyZHMKPj4+IEFuZHJ6ZWoK
-Pj4+Cj4+PiBPbiAxMS8wMi8yMDE1IDAyOjE2IFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4+
-IEhpIElua2ksIEtyenlzenRvZiwKPj4+Pgo+Pj4+IFRoaXMgcGF0Y2hzZXQgYWRkcyBzdXBwb3J0
-IGZvciBFeHlub3MgNTQzMyBIRE1JLgo+Pj4+IFRoZXJlIGFyZSBhbHNvIGZldyBwcmVwYXJhdGlv
-bi9jbGVhbnVwIHBhdGNoZXMuCj4+Pj4gQWxsIHBhdGNoZXMgZXhjZXB0IG9uZSB0b3VjaCBvbmx5
-IGV4eW5vcy1kcm0uCj4+Pj4gU2l4dGggcGF0Y2ggYWRkcyBiaW5kaW5nIHByb3BlcnRpZXMgZm9y
-IEV4eW5vczU0MzMgSERNSSwKPj4+PiBLcnp5c3p0b2YgY291bGQgeW91IGxvb2sgYXQgaXQuCj4+
-Pj4KPj4+PiBUaGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gZXh5bm9zLWRybS1uZXh0Lgo+Pj4+Cj4+
-Pj4gUmVnYXJkcwo+Pj4+IEFuZHJ6ZWoKPj4+Pgo+Pj4+Cj4+Pj4gQW5kcnplaiBIYWpkYSAoNyk6
-Cj4+Pj4gICBkcm0vZXh5bm9zL2hkbWk6IGNsb2NrIGNvZGUgcmUtZmFjdG9yaW5nCj4+Pj4gICBk
-cm0vZXh5bm9zL2hkbWk6IGNvbnN0aWZ5IGdsb2JhbCB2YXJpYWJsZXMKPj4+PiAgIGRybS9leHlu
-b3MvaGRtaTogdXNlIGFycmF5IHNwZWNpZmllciBmb3IgSERNSS1QSFkgY29uZmlndXJhdGlvbnMK
-Pj4+PiAgIGRybS9leHlub3MvaGRtaTogY29kZSBjbGVhbnVwCj4+Pj4gICBkcm0vZXh5bm9zL2hk
-bWk6IHN0b3AgcHJvZ3JhbW1pbmcgcmVnaXN0ZXJzIHdpdGggZGVmYXVsdCB2YWx1ZXMKPj4+PiAg
-IGR0LWJpbmRpbmdzOiBleHlub3NfaGRtaTogYWRkIGJpbmRpbmdzIGZvciBFeHlub3M1NDMzIHZh
-cmlhbnQKPj4+PiAgIGRybS9leHlub3MvaGRtaTogYWRkIEV4eW5vczU0MzMgc3VwcG9ydAo+Pj4+
-Cj4+Pj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vc19oZG1pLnR4dCAgICAg
-IHwgIDI3ICstCj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAg
-ICAgICAgICAgIHwgNDU0ICsrKysrKysrKysrKysrKy0tLS0tLQo+Pj4+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL3JlZ3MtaGRtaS5oICAgICAgICAgICAgICAgICB8ICAgOSArLQo+Pj4+ICAzIGZp
-bGVzIGNoYW5nZWQsIDM1MiBpbnNlcnRpb25zKCspLCAxMzggZGVsZXRpb25zKC0pCj4+Pj4KPj4+
-Cj4+PiAtLQo+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
-InVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4gdGhlIGJvZHkgb2YgYSBtZXNz
-YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+IE1vcmUgbWFqb3Jkb21vIGluZm8g
-YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Pj4KPj4+Cj4+
-IC0tCj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1
-YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
-IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0
-cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4+Cj4+CgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+
+2016=EB=85=84 01=EC=9B=94 14=EC=9D=BC 16:01=EC=97=90 Andrzej Hajda =EC=9D=
+=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> On 01/14/2016 07:25 AM, Inki Dae wrote:
+>> Hi Andrzej,
+>>
+>> This patch series incurred merge conflicts at severial patches so I =
+had to merge them manually.
+>> It looks good to me but it seems to need more tests so I merged them=
+ to exynos-drm-next-todo.
+>> After that, I will move them to exynos-drm-next. Sorry for late reiv=
+ew again.
+>=20
+> I guess it is because exynos-drm-next does not contains patch
+> 'dt-bindings: remove deprecated compatible string from exynos-hdmi'.
+> It is already in next, it entered via samsung-dt tree.
+> With this patch this patchset applies cleanly to exynos-drm-next.
+
+Including dt-bindings patch, other patches also incurred merge conflict=
+s.
+I think your patch set are conflicted with the configurable plane suppo=
+rt already merged.
+
+Thanks,
+Inki Dae
+
+>=20
+> Regards
+> Andrzej
+>=20
+>>
+>> Thanks,
+>> Inki Dae=20
+>>
+>> 2016=EB=85=84 01=EC=9B=94 14=EC=9D=BC 13:54=EC=97=90 Inki Dae =EC=9D=
+=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>>> Hi Andrzej,
+>>>
+>>> Really sorry for missing this.
+>>> I will merge them soon.
+>>>
+>>> Thanks,
+>>> Inki Dae
+>>>
+>>> 2016=EB=85=84 01=EC=9B=94 13=EC=9D=BC 23:01=EC=97=90 Andrzej Hajda =
+=EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>>>> Hi Inki,
+>>>>
+>>>> Ping.
+>>>>
+>>>> Regards
+>>>> Andrzej
+>>>>
+>>>> On 11/02/2015 02:16 PM, Andrzej Hajda wrote:
+>>>>> Hi Inki, Krzysztof,
+>>>>>
+>>>>> This patchset adds support for Exynos 5433 HDMI.
+>>>>> There are also few preparation/cleanup patches.
+>>>>> All patches except one touch only exynos-drm.
+>>>>> Sixth patch adds binding properties for Exynos5433 HDMI,
+>>>>> Krzysztof could you look at it.
+>>>>>
+>>>>> The patchset is based on exynos-drm-next.
+>>>>>
+>>>>> Regards
+>>>>> Andrzej
+>>>>>
+>>>>>
+>>>>> Andrzej Hajda (7):
+>>>>>   drm/exynos/hdmi: clock code re-factoring
+>>>>>   drm/exynos/hdmi: constify global variables
+>>>>>   drm/exynos/hdmi: use array specifier for HDMI-PHY configuration=
+s
+>>>>>   drm/exynos/hdmi: code cleanup
+>>>>>   drm/exynos/hdmi: stop programming registers with default values
+>>>>>   dt-bindings: exynos_hdmi: add bindings for Exynos5433 variant
+>>>>>   drm/exynos/hdmi: add Exynos5433 support
+>>>>>
+>>>>>  .../devicetree/bindings/video/exynos_hdmi.txt      |  27 +-
+>>>>>  drivers/gpu/drm/exynos/exynos_hdmi.c               | 454 +++++++=
+++++++++------
+>>>>>  drivers/gpu/drm/exynos/regs-hdmi.h                 |   9 +-
+>>>>>  3 files changed, 352 insertions(+), 138 deletions(-)
+>>>>>
+>>>>
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-sa=
+msung-soc" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>
+>>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-sam=
+sung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
