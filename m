@@ -1,318 +1,214 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH v3 1/3] drm: add generic zpos property
-Date: Fri, 15 Jan 2016 10:09:14 +0100
-Message-ID: <5698B73A.3000300@samsung.com>
+Date: Fri, 15 Jan 2016 11:12:25 +0100
+Message-ID: <20160115101225.GG19130@phenom.ffwll.local>
 References: <1452605960-21194-1-git-send-email-m.szyprowski@samsung.com>
  <1452605960-21194-2-git-send-email-m.szyprowski@samsung.com>
  <20160114104623.GR23290@intel.com>
+ <5698B73A.3000300@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20160114104623.GR23290@intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, fabien.dessenne@st.com, vincent.abriou@st.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36602 "EHLO
+	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757344AbcAOKMZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 Jan 2016 05:12:25 -0500
+Received: by mail-wm0-f67.google.com with SMTP id l65so2027943wmf.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Jan 2016 02:12:25 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <5698B73A.3000300@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
 
-SGVsbG8sCgpPbiAyMDE2LTAxLTE0IDExOjQ2LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gT24g
-VHVlLCBKYW4gMTIsIDIwMTYgYXQgMDI6Mzk6MThQTSArMDEwMCwgTWFyZWsgU3p5cHJvd3NraSB3
-cm90ZToKPj4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIGdlbmVyaWMgcGxhbmUncyB6cG9z
-IHByb3BlcnR5IHByb3BlcnR5IHdpdGgKPj4gd2VsbC1kZWZpbmVkIHNlbWFudGljczoKPj4gLSBh
-ZGRlZCB6cG9zIHByb3BlcnRpZXMgdG8gZHJtIGNvcmUgYW5kIHBsYW5lIHN0YXRlIHN0cnVjdHVy
-ZXMKPj4gLSBhZGRlZCBoZWxwZXJzIGZvciBub3JtYWxpemluZyB6cG9zIHByb3BlcnRpZXMgb2Yg
-Z2l2ZW4gc2V0IG9mIHBsYW5lcwo+PiAtIHdlbGwgZGVmaW5lZCBzZW1hbnRpY3M6IHBsYW5lcyBh
-cmUgc29ydGVkIGJ5IHpwb3MgdmFsdWVzIGFuZCB0aGVuIHBsYW5lCj4+ICAgIGlkIHZhbHVlIGlm
-IHpwb3MgZXF1YWxzCj4+Cj4+IE5vcm1hbGl6ZWQgenBvcyB2YWx1ZXMgYXJlIGNhbGN1bGF0ZWQg
-YXV0b21hdGljYWxseSB3aGVuIGdlbmVyaWMKPj4gbXV0dGFibGUgenBvcyBwcm9wZXJ0eSBoYXMg
-YmVlbiBpbml0aWFsaXplZC4gRHJpdmVycyBjYW4gc2ltcGx5IHVzZQo+PiBwbGFuZV9zdGF0ZS0+
-bm9ybWFsaXplZF96cG9zIGluIHRoZWlyIGF0b21pY19jaGVjayBhbmQvb3IgcGxhbmVfdXBkYXRl
-Cj4+IGNhbGxiYWNrcyB3aXRob3V0IGFueSBhZGRpdGlvbmFsIGNhbGxzIHRvIERSTSBjb3JlLgo+
-Pgo+PiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3Vu
-Zy5jb20+Cj4+IC0tLQo+PiAgIERvY3VtZW50YXRpb24vRG9jQm9vay9ncHUudG1wbCAgICAgIHwg
-IDE0ICsrKystCj4+ICAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYyAgICAgICAgfCAgIDQg
-KysKPj4gICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyB8IDExNiArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPj4gICBkcml2ZXJzL2dwdS9kcm0vZHJtX2Ny
-dGMuYyAgICAgICAgICB8ICA1MyArKysrKysrKysrKysrKysrCj4+ICAgaW5jbHVkZS9kcm0vZHJt
-X2NydGMuaCAgICAgICAgICAgICAgfCAgMTQgKysrKysKPj4gICA1IGZpbGVzIGNoYW5nZWQsIDE5
-OSBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsIGIvRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBs
-Cj4+IGluZGV4IDZjNmU4MWE5ZWFmNC4uZjZiNzIzNjE0MWI2IDEwMDY0NAo+PiAtLS0gYS9Eb2N1
-bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwKPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9Eb2NCb29r
-L2dwdS50bXBsCj4+IEBAIC0yMDA0LDcgKzIwMDQsNyBAQCB2b2lkIGludGVsX2NydF9pbml0KHN0
-cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4+ICAgCTx0ZCB2YWxpZ249InRvcCIgPkRlc2NyaXB0aW9u
-L1Jlc3RyaWN0aW9uczwvdGQ+Cj4+ICAgCTwvdHI+Cj4+ICAgCTx0cj4KPj4gLQk8dGQgcm93c3Bh
-bj0iMzciIHZhbGlnbj0idG9wIiA+RFJNPC90ZD4KPj4gKwk8dGQgcm93c3Bhbj0iMzgiIHZhbGln
-bj0idG9wIiA+RFJNPC90ZD4KPj4gICAJPHRkIHZhbGlnbj0idG9wIiA+R2VuZXJpYzwvdGQ+Cj4+
-ICAgCTx0ZCB2YWxpZ249InRvcCIgPuKAnHJvdGF0aW9u4oCdPC90ZD4KPj4gICAJPHRkIHZhbGln
-bj0idG9wIiA+QklUTUFTSzwvdGQ+Cj4+IEBAIC0yMjU2LDcgKzIyNTYsNyBAQCB2b2lkIGludGVs
-X2NydF9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4+ICAgCTx0ZCB2YWxpZ249InRvcCIg
-PnByb3BlcnR5IHRvIHN1Z2dlc3QgYW4gWSBvZmZzZXQgZm9yIGEgY29ubmVjdG9yPC90ZD4KPj4g
-ICAJPC90cj4KPj4gICAJPHRyPgo+PiAtCTx0ZCByb3dzcGFuPSIzIiB2YWxpZ249InRvcCIgPk9w
-dGlvbmFsPC90ZD4KPj4gKwk8dGQgcm93c3Bhbj0iNCIgdmFsaWduPSJ0b3AiID5PcHRpb25hbDwv
-dGQ+Cj4+ICAgCTx0ZCB2YWxpZ249InRvcCIgPuKAnHNjYWxpbmcgbW9kZeKAnTwvdGQ+Cj4+ICAg
-CTx0ZCB2YWxpZ249InRvcCIgPkVOVU08L3RkPgo+PiAgIAk8dGQgdmFsaWduPSJ0b3AiID57ICJO
-b25lIiwgIkZ1bGwiLCAiQ2VudGVyIiwgIkZ1bGwgYXNwZWN0IiB9PC90ZD4KPj4gQEAgLTIyODAs
-NiArMjI4MCwxNiBAQCB2b2lkIGludGVsX2NydF9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYp
-Cj4+ICAgCTx0ZCB2YWxpZ249InRvcCIgPlRCRDwvdGQ+Cj4+ICAgCTwvdHI+Cj4+ICAgCTx0cj4K
-Pj4gKwk8dGQgdmFsaWduPSJ0b3AiID4gInpwb3MiIDwvdGQ+Cj4+ICsJPHRkIHZhbGlnbj0idG9w
-IiA+UkFOR0U8L3RkPgo+PiArCTx0ZCB2YWxpZ249InRvcCIgPk1pbj0wLCBNYXg9MjU1PC90ZD4K
-Pj4gKwk8dGQgdmFsaWduPSJ0b3AiID5QbGFuZTwvdGQ+Cj4+ICsJPHRkIHZhbGlnbj0idG9wIiA+
-UGxhbmUncyAneicgcG9zaXRpb24gZHVyaW5nIGJsZW5kaW5nICgwIGZvciBiYWNrZ3JvdW5kLCAy
-NTUgZm9yIGZyb250bW9zdCkuCj4+ICsJCUlmIHR3byBwbGFuZXMgYXNzaWduZWQgdG8gc2FtZSBD
-UlRDIGhhdmUgZXF1YWwgenBvcyB2YWx1ZXMsIHRoZSBwbGFuZSB3aXRoIGhpZ2hlciBwbGFuZQo+
-PiArCQlpZCBpcyB0cmVhdGVkIGFzIGNsb3NlciB0byBmcm9udC4gQ2FuIGJlIElNTVVUQUJMRSBp
-ZiBkcml2ZXIgZG9lc24ndCBzdXBwb3J0IGNoYW5naW5nCj4+ICsJCXBsYW5lcycgb3JkZXIuPC90
-ZD4KPiBJIGRvbid0IHRoaW5rIHRoaXMgaXMgZ29pbmcgdG8gd29yayB2ZXJ5IHdlbGwuIE1peGlu
-ZyB0aGUgc2FtZSByYW5nZQo+IG9mIDAtMjU1IGZvciBhbGwgcGxhbmVzLCB3aXRoIHBvdGVudGlh
-bGx5IHNvbWUgb2YgdGhlbSBiZWluZwo+IElNTVVUQUJMRSBmb3Igc3VyZSB3b24ndCBlbmQgd2Vs
-bCwgb3IgYXQgbGVhc3Qgd29uJ3QgYWxsb3cgdXNlcnNwYWNlIHRvCj4gc2VlIGlmIHRoZXJlIGFy
-ZSBhbnkgY29uc3RyYWludHMgYmV0d2VlbiB0aGUgenBvcyBvZiB0aGUgcGxhbmVzLgo+Cj4gU28g
-SSB0aGluayB3aGF0IHdlIHNob3VsZCBkbyBpcyBsZXQgdGhlIGRyaXZlciBzcGVjaWZ5IHRoZSB2
-YWxpZCByYW5nZSwKPiBhbmQgZ2V0IHJpZCBvZiB0aGUgb2JqIGlkIGJhc2VkIGNvbmZsaWN0IHJl
-c29sdXRpb24gaW4gZmF2b3Igb2YganVzdAo+IHJlamVjdGluZyBjb25mbGljdHMgb3V0cmlnaHQu
-IEluIGNhc2VzIHdoZXJlIHlvdSBjYW4ndCBtb3ZlIHRoZSBwbGFuZXMKPiBiZXR3ZWVuIGNydGNz
-LCB0aGUgZHJpdmVyIG91Z2h0IHRvIHNwZWNpZnkgdGhlIHJhbmdlIGJhc2VkIG9uIHRoZQo+IG51
-bWJlciBvZiBwbGFuZXMgcHJlc2VudCBvbiB0aGUgY3J0Yy4gSWYgcGxhbmVzIGNhbiBiZSBtb3Zl
-ZCBiZXR3ZWVucwo+IGNydGNzIHRoZSByYW5nZSBvYnZpb3VzbHkgbmVlZHMgdG8gYmUgbGFyZ2Vy
-IHRvIGFjY29tb2RhdGUgYWxsIHRoZQo+IHBvc3NpYmxlIHBsYW5lcyBvbiB0aGUgY3J0Yy4KPgo+
-IEVnLiBvbiBJbnRlbCBWTFYvQ0hWIHdlIGNvdWxkIGhhdmUgdGhlIGZvbGxvd2luZyBzZXR1cDoK
-PiBwcmltYXJ5ICB6cG9zIDAtMgo+IHNwcml0ZSAwIHpwb3MgMC0yCj4gc3ByaXRlIDEgenBvcyAw
-LTIKPiBjdXJzb3IgICB6cG9zIDMKPgo+IFRoYXQgbWFrZXMgaXQgdmVyeSBjbGVhciB0aGUgY3Vy
-c28gaXMgYWx3YXlzIG9uIHRvcCwgYW5kIHRoZSBvdGhlcgo+IHBsYW5lcyBjYW4gYmUgcmVhcnJh
-bmdlZCBtb3JlIG9yIGxlc3MgZnJlZWx5LiBUaGVzZSBwbGFuZXMgY2FuJ3QgYmUKPiBtb3ZlZCBi
-ZXR3ZWVuIGNydGNzLCBzbyBlYWNoIHRoZXJlJ3MgYW4gaWRlbnRpY2FsIHNldCBvZiBwbGFuZXMg
-Zm9yCj4gZWFjaCBjcnRjLgo+Cj4gT24gb2xkIEludGVsIGh3IChnZW4yLzMpIHdlIGNvdWxkIGhh
-dmUgc29tZXRoaW5nIGxpa2U6Cj4gcGxhbmUgQSB6cG9zIDAtMwo+IHBsYW5lIEIgenBvcyAwLTMK
-PiBwbGFuZSBDIHpwb3MgMC0zCj4gb3ZlcmxheSB6cG9zIDAtMwo+IGN1cnNvciBCIHpwb3MgNAo+
-IGN1cnNvciBBIHpwb3MgNQo+Cj4gTW9zdCBvZiB0aGVzZSBwbGFuZXMgY2FuIGJlIG1vdmVkIGJl
-dHdlZW4gY3J0Y3MsIGFuZCBJSVJDIHRoZXJlCj4gYXJlIHByb2JhYmx5IG1vcmUgY29uc3RyYWlu
-dHMgb24gZXhhY3RseSBob3cgdGhleSBjYW4gYmUgc3RhY2tlZCwgYnV0Cj4gdGhpcyBpcyBhdCBs
-ZWFzdCBmYWlybHkgY2xvc2UgdG8gdGhlIHRydXRoLiBBZ2FpbiB0aGUgY3Vyc29ycyBhcmUgYWx3
-YXlzCj4gb24gdG9wLCBhbmQgaW4gdGhpcyBjYXNlIHRoZSBvcmRlciBiZXR3ZWVuIHRoZSB0d28g
-Y3Vyc29yIHBsYW5lcyBpcyBhbHNvCj4gZml4ZWQuCgpJIHdhc24ndCBhd2FyZSBvZiBhIGhhcmR3
-YXJlLCB3aGljaCBoYXMgbGltaXRlZCBjb25maWd1cmF0aW9uIG9mIHpwb3Mgb25seQp0byBzb21l
-IHBsYW5lcy4gSSB0aG91Z2h0IG9ubHkgYWJvdXQgMiBjYXNlczogZWl0aGVyIGNvbXBsZXRlbHkg
-Y29uZmlndXJhYmxlCnBsYW5lcyBhcnJhbmdlbWVudCwgb3IgcGxhbmVzIGZpeGVkIHRvIHNvbWUg
-aHcgZGVwZW5kZW50IG9yZGVyLiBJIHNlZSBubwpwcm9ibGVtIHRvIGxldCBkcml2ZXJzIHRvIGRl
-ZmluZSB0aGVpciBvd24gbGltaXRzIGZvciBtdXRhYmxlIHpwb3MgcHJvcGVydHkuCgpOb3cgdGhl
-IHF1ZXN0aW9uIGlzIHdlYXRoZXIgd2Ugc2hvdWxkIGFsbG93IHRvIHNldCB0aGUgbm9uLXplcm8g
-bWluaW1hbCAKdmFsdWUKZm9yIG11dGFibGUgenBvcz8gSSBjYW4gaW1hZ2luZSB0aGF0IHRoZXJl
-IG1pZ2h0IGJlIGEgaGFyZHdhcmUsIHdoaWNoIGhhcwpmaXhlZCBiYWNrZ3JvdW5kIHBsYW5lIGFu
-ZCBhIGZldyBjb25maWd1cmFibGUgb3ZlcmxheSBwbGFuZXMuIEkgYXNzdW1lIHRoYXQKaW4gc3Vj
-aCBjYXNlLCB0aGUgY2FsY3VsYXRlZCBub3JtYWxpemVkX3pwb3Mgc2hvdWxkIHN0aWxsIHN0YXJ0
-IGZyb20gemVyby4KCj4gSSBkaWQgb3JpZ2luYWxseSBoYXZlIHRoZSBzYW1lIG9iaiBpZCBiYXNl
-ZCBzb3J0aW5nIGlkZWEgKGFuZCBldmVuCj4gcG9zdGVkIHNvbWUga2luZCBvZiBhIHBhdGNoIGZv
-ciBpdCBJSVJDKSBidXQgdGhhdCB3YXMgYmVmb3JlIGF0b21pYwo+IGV4aXN0ZWQsIHNvIHRoZXJl
-IHdhcyBhIHJlYWwgbmVlZCB0byBhbGxvdyByZW9yZGVyaW5nIHRoZSBwbGFuZXMgd2l0aAo+IGp1
-c3QgYSBzaW5nbGUgc2V0cGxhbmUgaW9jdGwgY2FsbC4gV2l0aCBhdG9taWMgSSBkb24ndCBzZWUg
-YW55IHJlYWwKPiBiZW5lZml0IGZyb20gaXQgdGhlIG9iaiBpZCBiYXNlZCBzb3J0aW5nLCBhbmQg
-YXMgSSd2ZSBub3RlZCB0aGVyZSBhcmUKPiBkZWZpbml0ZWx5IGRvd25zaWRlcyB0byBpdC4KCldo
-YXQgYXJlIHRoZSBkb3duc2lkZXMgb2YgdXNpbmcgb2JqIGlkIGFzIGFkZGl0aW9uYWwgc29ydGlu
-ZyBjcml0ZXJpYT8gSXQKc29sdmVzIGFsbCB0aGUgYW1iaWd1aXRpZXMgYW5kIHNpbXBsaWZpZXMg
-Y2hlY2tzICh0aGVyZSBpcyBubyBuZWVkIHRvIGNoZWNrCmlmIHRoZXJlIGFyZSAyIHBsYW5lcyBv
-ZiB0aGUgc2FtZSB6cG9zIHZhbHVlKS4KCj4+ICsJPC90cj4KPj4gKwk8dHI+Cj4+ICAgCTx0ZCBy
-b3dzcGFuPSIyMCIgdmFsaWduPSJ0b3AiID5pOTE1PC90ZD4KPj4gICAJPHRkIHJvd3NwYW49IjIi
-IHZhbGlnbj0idG9wIiA+R2VuZXJpYzwvdGQ+Cj4+ICAgCTx0ZCB2YWxpZ249InRvcCIgPiJCcm9h
-ZGNhc3QgUkdCIjwvdGQ+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21p
-Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYwo+PiBpbmRleCA2YTIxZTVjMzc4YzEu
-Ljk3YmIwNjljYjZhMyAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMu
-Ywo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jCj4+IEBAIC02MTQsNiArNjE0
-LDggQEAgaW50IGRybV9hdG9taWNfcGxhbmVfc2V0X3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUg
-KnBsYW5lLAo+PiAgIAkJc3RhdGUtPnNyY19oID0gdmFsOwo+PiAgIAl9IGVsc2UgaWYgKHByb3Bl
-cnR5ID09IGNvbmZpZy0+cm90YXRpb25fcHJvcGVydHkpIHsKPiAgICAJCXN0YXRlLT5yb3RhdGlv
-biA9IHZhbDsKPj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5ID09IGNvbmZpZy0+enBvc19wcm9wZXJ0
-eSkgewo+PiArCQlzdGF0ZS0+enBvcyA9IHZhbDsKPj4gICAJfSBlbHNlIGlmIChwbGFuZS0+ZnVu
-Y3MtPmF0b21pY19zZXRfcHJvcGVydHkpIHsKPj4gICAJCXJldHVybiBwbGFuZS0+ZnVuY3MtPmF0
-b21pY19zZXRfcHJvcGVydHkocGxhbmUsIHN0YXRlLAo+PiAgIAkJCQlwcm9wZXJ0eSwgdmFsKTsK
-Pj4gQEAgLTY3MCw2ICs2NzIsOCBAQCBkcm1fYXRvbWljX3BsYW5lX2dldF9wcm9wZXJ0eShzdHJ1
-Y3QgZHJtX3BsYW5lICpwbGFuZSwKPj4gICAJCSp2YWwgPSBzdGF0ZS0+c3JjX2g7Cj4+ICAgCX0g
-ZWxzZSBpZiAocHJvcGVydHkgPT0gY29uZmlnLT5yb3RhdGlvbl9wcm9wZXJ0eSkgewo+PiAgIAkJ
-KnZhbCA9IHN0YXRlLT5yb3RhdGlvbjsKPj4gKwl9IGVsc2UgaWYgKHByb3BlcnR5ID09IGNvbmZp
-Zy0+enBvc19wcm9wZXJ0eSkgewo+PiArCQkqdmFsID0gc3RhdGUtPnpwb3M7Cj4+ICAgCX0gZWxz
-ZSBpZiAocGxhbmUtPmZ1bmNzLT5hdG9taWNfZ2V0X3Byb3BlcnR5KSB7Cj4+ICAgCQlyZXR1cm4g
-cGxhbmUtPmZ1bmNzLT5hdG9taWNfZ2V0X3Byb3BlcnR5KHBsYW5lLCBzdGF0ZSwgcHJvcGVydHks
-IHZhbCk7Cj4+ICAgCX0gZWxzZSB7Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJt
-X2F0b21pY19oZWxwZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCj4+
-IGluZGV4IGQwZDRiMmZmN2MyMS4uMjU3OTQ2ZmFjOTRiIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJt
-X2F0b21pY19oZWxwZXIuYwo+PiBAQCAtMzEsNiArMzEsNyBAQAo+PiAgICNpbmNsdWRlIDxkcm0v
-ZHJtX2NydGNfaGVscGVyLmg+Cj4+ICAgI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5o
-Pgo+PiAgICNpbmNsdWRlIDxsaW51eC9mZW5jZS5oPgo+PiArI2luY2x1ZGUgPGxpbnV4L3NvcnQu
-aD4KPj4gICAKPj4gICAvKioKPj4gICAgKiBET0M6IG92ZXJ2aWV3Cj4+IEBAIC01MDcsNiArNTA4
-LDExNyBAQCBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19tb2Rlc2V0KHN0cnVjdCBkcm1fZGV2aWNl
-ICpkZXYsCj4+ICAgfQo+PiAgIEVYUE9SVF9TWU1CT0woZHJtX2F0b21pY19oZWxwZXJfY2hlY2tf
-bW9kZXNldCk7Cj4+ICAgCj4+ICtzdGF0aWMgaW50IGRybV9hdG9taWNfc3RhdGVfenBvc19jbXAo
-Y29uc3Qgdm9pZCAqYSwgY29uc3Qgdm9pZCAqYikKPj4gK3sKPj4gKwljb25zdCBzdHJ1Y3QgZHJt
-X3BsYW5lX3N0YXRlICpzYSA9ICooc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqKilhOwo+PiArCWNv
-bnN0IHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnNiID0gKihzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRl
-ICoqKWI7Cj4+ICsJaW50IHpwb3NfYSA9IChzYS0+enBvcyA8PCAxNikgKyBzYS0+cGxhbmUtPmJh
-c2UuaWQ7Cj4+ICsJaW50IHpwb3NfYiA9IChzYi0+enBvcyA8PCAxNikgKyBzYi0+cGxhbmUtPmJh
-c2UuaWQ7Cj4+ICsKPj4gKwlyZXR1cm4genBvc19hIC0genBvc19iOwo+PiArfQo+PiArCj4+ICsv
-KioKPj4gKyAqIGRybV9hdG9taWNfaGVscGVyX2NydGNfbm9ybWFsaXplX3pwb3MgLSBjYWxjdWxh
-dGUgbm9ybWFsaXplZCB6cG9zIHZhbHVlcwo+PiArICogQGNydGM6IGNydGMgd2l0aCBwbGFuZXMs
-IHdoaWNoIGhhdmUgdG8gYmUgY29uc2lkZXJlZCBmb3Igbm9ybWFsaXphdGlvbgo+PiArICogQGNy
-dGNfc3RhdGU6IG5ldyBhdG9taWMgc3RhdGUgdG8gYXBwbHkKPj4gKyAqCj4+ICsgKiBUaGlzIGZ1
-bmN0aW9uIGNoZWNrcyBuZXcgc3RhdGVzIG9mIGFsbCBwbGFuZXMgYXNzaWduZWQgdG8gZ2l2ZW4g
-Y3J0YyBhbmQKPj4gKyAqIGNhbGN1bGF0ZXMgbm9ybWFsaXplZCB6cG9zIHZhbHVlIGZvciB0aGVt
-LiBQbGFuZXMgYXJlIGNvbXBhcmVkIGZpcnN0IGJ5IHRoZWlyCj4+ICsgKiB6cG9zIHZhbHVlcywg
-dGhlbiBieSBwbGFuZSBpZCAoaWYgenBvcyBlcXVhbHMpLiBQbGFuZSB3aXRoIGxvd2VzdCB6cG9z
-IHZhbHVlCj4+ICsgKiBpcyBhdCB0aGUgYm90dG9tLiBUaGUgcGxhbmVfc3RhdGUtPm5vcm1hbGl6
-ZWRfenBvcyBpcyB0aGVuIGZpbGxlZCB3aXRoIHVuaXFlCj4+ICsgKiB2YWx1ZXMgZnJvbSAwIHRv
-IG51bWJlciBvZiBhY3RpdmUgcGxhbmVzIGluIGNydGMgbWludXMgb25lLgo+PiArICoKPj4gKyAq
-IFJFVFVSTlMKPj4gKyAqIFplcm8gZm9yIHN1Y2Nlc3Mgb3IgLWVycm5vCj4+ICsgKi8KPj4gK2lu
-dCBkcm1fYXRvbWljX2hlbHBlcl9jcnRjX25vcm1hbGl6ZV96cG9zKHN0cnVjdCBkcm1fY3J0YyAq
-Y3J0YywKPj4gKwkJCQkJICAgICAgc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlKQo+
-PiArewo+PiArCXN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSA9IGNydGNfc3RhdGUtPnN0
-YXRlOwo+PiArCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjcnRjLT5kZXY7Cj4+ICsJaW50IHRv
-dGFsX3BsYW5lcyA9IGRldi0+bW9kZV9jb25maWcubnVtX3RvdGFsX3BsYW5lOwo+PiArCXN0cnVj
-dCBkcm1fcGxhbmVfc3RhdGUgKipzdGF0ZXM7Cj4+ICsJc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7
-Cj4+ICsJaW50IGksIG4gPSAwOwo+PiArCWludCByZXQgPSAwOwo+PiArCj4+ICsJRFJNX0RFQlVH
-X0FUT01JQygiW0NSVEM6JWQ6JXNdIGNhbGN1bGF0aW5nIG5vcm1hbGl6ZWQgenBvcyB2YWx1ZXNc
-biIsCj4+ICsJCQkgY3J0Yy0+YmFzZS5pZCwgY3J0Yy0+bmFtZSk7Cj4+ICsKPj4gKwlzdGF0ZXMg
-PSBrbWFsbG9jKHRvdGFsX3BsYW5lcyAqIHNpemVvZigqc3RhdGVzKSwgR0ZQX0tFUk5FTCk7Cj4+
-ICsJaWYgKCFzdGF0ZXMpCj4+ICsJCXJldHVybiAtRU5PTUVNOwo+PiArCj4+ICsJLyoKPj4gKwkg
-KiBOb3JtYWxpemF0aW9uIHByb2Nlc3MgbWlnaHQgY3JlYXRlIG5ldyBzdGF0ZXMgZm9yIHBsYW5l
-cyB3aGljaAo+PiArCSAqIG5vcm1hbGl6ZWRfenBvcyBoYXMgdG8gYmUgcmVjYWxjdWxhdGVkLgo+
-PiArCSAqLwo+PiArCWRybV9mb3JfZWFjaF9wbGFuZV9tYXNrKHBsYW5lLCBkZXYsIGNydGNfc3Rh
-dGUtPnBsYW5lX21hc2spIHsKPj4gKwkJc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqcGxhbmVfc3Rh
-dGUgPQo+PiArCQkJZHJtX2F0b21pY19nZXRfcGxhbmVfc3RhdGUoc3RhdGUsIHBsYW5lKTsKPj4g
-KwkJaWYgKElTX0VSUihwbGFuZV9zdGF0ZSkpIHsKPj4gKwkJCXJldCA9IFBUUl9FUlIocGxhbmVf
-c3RhdGUpOwo+PiArCQkJZ290byBmYWlsOwo+PiArCQl9Cj4+ICsJCXN0YXRlc1tuKytdID0gcGxh
-bmVfc3RhdGU7Cj4+ICsJCURSTV9ERUJVR19BVE9NSUMoIltQTEFORTolZDolc10gcHJvY2Vzc2lu
-ZyB6cG9zIHZhbHVlICVkXG4iLAo+PiArCQkJCSBwbGFuZS0+YmFzZS5pZCwgcGxhbmUtPm5hbWUs
-IHBsYW5lX3N0YXRlLT56cG9zKTsKPj4gKwl9Cj4+ICsKPj4gKwlzb3J0KHN0YXRlcywgbiwgc2l6
-ZW9mKCpzdGF0ZXMpLCBkcm1fYXRvbWljX3N0YXRlX3pwb3NfY21wLCBOVUxMKTsKPj4gKwo+PiAr
-CWZvciAoaSA9IDA7IGkgPCBuOyBpKyspIHsKPj4gKwkJcGxhbmUgPSBzdGF0ZXNbaV0tPnBsYW5l
-Owo+PiArCQlzdGF0ZXNbaV0tPm5vcm1hbGl6ZWRfenBvcyA9IGk7Cj4+ICsJCURSTV9ERUJVR19B
-VE9NSUMoIltQTEFORTolZDolc10gbm9ybWFsaXplZCB6cG9zIHZhbHVlICVkXG4iLAo+PiArCQkJ
-CSBwbGFuZS0+YmFzZS5pZCwgcGxhbmUtPm5hbWUsIGkpOwo+PiArCX0KPj4gK2ZhaWw6Cj4+ICsJ
-a2ZyZWUoc3RhdGVzKTsKPj4gKwlyZXR1cm4gcmV0Owo+PiArfQo+PiArRVhQT1JUX1NZTUJPTChk
-cm1fYXRvbWljX2hlbHBlcl9jcnRjX25vcm1hbGl6ZV96cG9zKTsKPj4gKwo+PiArc3RhdGljIGlu
-dCBkcm1fYXRvbWljX2hlbHBlcl9ub3JtYWxpemVfenBvcyhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
-LAo+PiArCQkJCQkgICAgc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlKQo+PiArewo+PiAr
-CXN0cnVjdCBkcm1fY3J0YyAqY3J0YzsKPj4gKwlzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKmNydGNf
-c3RhdGU7Cj4+ICsJc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Cj4+ICsJc3RydWN0IGRybV9wbGFu
-ZV9zdGF0ZSAqcGxhbmVfc3RhdGU7Cj4+ICsJaW50IGksIHJldCA9IDA7Cj4+ICsKPj4gKwkvKgo+
-PiArCSAqIElmIHpwb3NfcHJvcGVydHkgaXMgbm90IGluaXRpYWxpemVkLCB0aGVuIGl0IG1ha2Vz
-IG5vIHNlbnNlCj4+ICsJICogdG8gY2FsY3VsYXRlIG5vcm1hbGl6ZWQgenBvcyB2YWx1ZXMuCj4+
-ICsJICovCj4+ICsJaWYgKCFkZXYtPm1vZGVfY29uZmlnLnpwb3NfcHJvcGVydHkpCj4+ICsJCXJl
-dHVybiAwOwo+PiArCj4+ICsJZm9yX2VhY2hfcGxhbmVfaW5fc3RhdGUoc3RhdGUsIHBsYW5lLCBw
-bGFuZV9zdGF0ZSwgaSkgewo+PiArCQljcnRjID0gcGxhbmVfc3RhdGUtPmNydGM7Cj4+ICsJCWlm
-ICghY3J0YykKPj4gKwkJCWNvbnRpbnVlOwo+PiArCQlpZiAocGxhbmUtPnN0YXRlLT56cG9zICE9
-IHBsYW5lX3N0YXRlLT56cG9zKSB7Cj4+ICsJCQljcnRjX3N0YXRlID0KPj4gKwkJCQlkcm1fYXRv
-bWljX2dldF9leGlzdGluZ19jcnRjX3N0YXRlKHN0YXRlLCBjcnRjKTsKPj4gKwkJCWNydGNfc3Rh
-dGUtPnpwb3NfY2hhbmdlZCA9IHRydWU7Cj4+ICsJCX0KPj4gKwl9Cj4+ICsKPj4gKwlmb3JfZWFj
-aF9jcnRjX2luX3N0YXRlKHN0YXRlLCBjcnRjLCBjcnRjX3N0YXRlLCBpKSB7Cj4+ICsJCWlmIChj
-cnRjX3N0YXRlLT5wbGFuZV9tYXNrICE9IGNydGMtPnN0YXRlLT5wbGFuZV9tYXNrIHx8Cj4+ICsJ
-CSAgICBjcnRjX3N0YXRlLT56cG9zX2NoYW5nZWQpIHsKPj4gKwkJCXJldCA9IGRybV9hdG9taWNf
-aGVscGVyX2NydGNfbm9ybWFsaXplX3pwb3MoY3J0YywKPj4gKwkJCQkJCQkJICAgIGNydGNfc3Rh
-dGUpOwo+PiArCQkJaWYgKHJldCkKPj4gKwkJCQlyZXR1cm4gcmV0Owo+PiArCQl9Cj4+ICsJfQo+
-PiArCXJldHVybiAwOwo+PiArfQo+PiArCj4+ICAgLyoqCj4+ICAgICogZHJtX2F0b21pY19oZWxw
-ZXJfY2hlY2tfcGxhbmVzIC0gdmFsaWRhdGUgc3RhdGUgb2JqZWN0IGZvciBwbGFuZXMgY2hhbmdl
-cwo+PiAgICAqIEBkZXY6IERSTSBkZXZpY2UKPj4gQEAgLTUzMiw2ICs2NDQsMTAgQEAgZHJtX2F0
-b21pY19oZWxwZXJfY2hlY2tfcGxhbmVzKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4+ICAgCXN0
-cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnBsYW5lX3N0YXRlOwo+PiAgIAlpbnQgaSwgcmV0ID0gMDsK
-Pj4gICAKPj4gKwlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9ub3JtYWxpemVfenBvcyhkZXYsIHN0
-YXRlKTsKPj4gKwlpZiAocmV0KQo+PiArCQlyZXR1cm4gcmV0Owo+PiArCj4+ICAgCWZvcl9lYWNo
-X3BsYW5lX2luX3N0YXRlKHN0YXRlLCBwbGFuZSwgcGxhbmVfc3RhdGUsIGkpIHsKPj4gICAJCWNv
-bnN0IHN0cnVjdCBkcm1fcGxhbmVfaGVscGVyX2Z1bmNzICpmdW5jczsKPj4gICAKPj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9j
-cnRjLmMKPj4gaW5kZXggNjJmYTk1ZmE1NDcxLi41NGEyMWU3YzFjYTUgMTAwNjQ0Cj4+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Yy5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1f
-Y3J0Yy5jCj4+IEBAIC01ODgwLDYgKzU4ODAsNTkgQEAgc3RydWN0IGRybV9wcm9wZXJ0eSAqZHJt
-X21vZGVfY3JlYXRlX3JvdGF0aW9uX3Byb3BlcnR5KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4+
-ICAgRVhQT1JUX1NZTUJPTChkcm1fbW9kZV9jcmVhdGVfcm90YXRpb25fcHJvcGVydHkpOwo+PiAg
-IAo+PiAgIC8qKgo+PiArICogZHJtX21vZGVfY3JlYXRlX3pwb3NfcHJvcGVydHkgLSBjcmVhdGUg
-bXV0dGFibGUgenBvcyBwcm9wZXJ0eQo+PiArICogQGRldjogRFJNIGRldmljZQo+PiArICoKPj4g
-KyAqIFRoaXMgZnVuY3Rpb24gaW5pdGlhbGl6ZXMgZ2VuZXJpYyBtdXR0YWJsZSB6cG9zIHByb3Bl
-cnR5IGFuZCBlbmFibGVzIHN1cHBvcnQKPj4gKyAqIGZvciBpdCBpbiBkcm0gY29yZS4gRHJpdmVy
-cyBjYW4gdGhlbiBhdHRhY2ggdGhpcyBwcm9wZXJ0eSB0byBwbGFuZXMgdG8gZW5hYmxlCj4+ICsg
-KiBzdXBwb3J0IGZvciBjb25maWd1cmFibGUgcGxhbmVzIGFycmFuZ2VtZW50IGR1cmluZyBibGVu
-ZGluZyBvcGVyYXRpb24uCj4+ICsgKiBEcml2ZXJzIGNhbiBhbHNvIHVzZSBkcm1fYXRvbWljX2hl
-bHBlcl9ub3JtYWxpemVfenBvcygpIGZ1bmN0aW9uIHRvIGNhbGN1bGF0ZQo+PiArICogZHJtX3Bs
-YW5lX3N0YXRlLT5ub3JtYWxpemVkX3pwb3MgdmFsdWVzLgo+PiArICoKPj4gKyAqIFJldHVybnM6
-Cj4+ICsgKiBaZXJvIG9uIHN1Y2Nlc3MsIG5lZ2F0aXZlIGVycm5vIG9uIGZhaWx1cmUuCj4+ICsg
-Ki8KPj4gK2ludCBkcm1fbW9kZV9jcmVhdGVfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZGV2KQo+PiArewo+PiArCXN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3A7Cj4+ICsKPj4gKwlw
-cm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShkZXYsIDAsICJ6cG9zIiwgMCwgMjU1KTsK
-Pj4gKwlpZiAoIXByb3ApCj4+ICsJCXJldHVybiAtRU5PTUVNOwo+PiArCj4+ICsJZGV2LT5tb2Rl
-X2NvbmZpZy56cG9zX3Byb3BlcnR5ID0gcHJvcDsKPj4gKwlyZXR1cm4gMDsKPj4gK30KPj4gK0VY
-UE9SVF9TWU1CT0woZHJtX21vZGVfY3JlYXRlX3pwb3NfcHJvcGVydHkpOwo+PiArCj4+ICsvKioK
-Pj4gKyAqIGRybV9wbGFuZV9jcmVhdGVfenBvc19wcm9wZXJ0eSAtIGNyZWF0ZSBpbW11dHRhYmxl
-IHpwb3MgcHJvcGVydHkKPj4gKyAqIEBkZXY6IERSTSBkZXZpY2UKPj4gKyAqCj4+ICsgKiBUaGlz
-IGZ1bmN0aW9uIGluaXRpYWxpemVzIGdlbmVyaWMgaW1tdXR0YWJsZSB6cG9zIHByb3BlcnR5IGFu
-ZCBlbmFibGVzCj4+ICsgKiBzdXBwb3J0IGZvciBpdCBpbiBkcm0gY29yZS4gVXNpbmcgdGhpcyBw
-cm9wZXJ0eSBkcml2ZXIgbGV0cyB1c2Vyc3BhY2UKPj4gKyAqIHRvIGdldCB0aGUgYXJyYW5nZW1l
-bnQgb2YgdGhlIHBsYW5lcyBmb3IgYmxlbmRpbmcgb3BlcmF0aW9uIGFuZCBub3RpZmllcwo+PiAr
-ICogaXQgdGhhdCB0aGUgaGFyZHdhcmUgKG9yIGRyaXZlcikgZG9lc24ndCBzdXBwb3J0IGNoYW5n
-aW5nIG9mIHRoZSBwbGFuZXMnCj4+ICsgKiBvcmRlci4KPj4gKyAqCj4+ICsgKiBSZXR1cm5zOgo+
-PiArICogWmVybyBvbiBzdWNjZXNzLCBuZWdhdGl2ZSBlcnJubyBvbiBmYWlsdXJlLgo+PiArICov
-Cj4+ICtpbnQgZHJtX21vZGVfY3JlYXRlX3pwb3NfaW1tdXRhYmxlX3Byb3BlcnR5KHN0cnVjdCBk
-cm1fZGV2aWNlICpkZXYpCj4+ICt7Cj4+ICsJc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcDsKPj4g
-Kwo+PiArCXByb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRlX3JhbmdlKGRldiwgRFJNX01PREVfUFJP
-UF9JTU1VVEFCTEUsICJ6cG9zIiwKPj4gKwkJCQkJIDAsIDI1NSk7Cj4+ICsJaWYgKCFwcm9wKQo+
-PiArCQlyZXR1cm4gLUVOT01FTTsKPj4gKwo+PiArCWRldi0+bW9kZV9jb25maWcuenBvc19pbW11
-dGFibGVfcHJvcGVydHkgPSBwcm9wOwo+PiArCXJldHVybiAwOwo+PiArfQo+PiArRVhQT1JUX1NZ
-TUJPTChkcm1fbW9kZV9jcmVhdGVfenBvc19pbW11dGFibGVfcHJvcGVydHkpOwo+PiArCj4+ICsv
-KioKPj4gICAgKiBET0M6IFRpbGUgZ3JvdXAKPj4gICAgKgo+PiAgICAqIFRpbGUgZ3JvdXBzIGFy
-ZSB1c2VkIHRvIHJlcHJlc2VudCB0aWxlZCBtb25pdG9ycyB3aXRoIGEgdW5pcXVlCj4+IGRpZmYg
-LS1naXQgYS9pbmNsdWRlL2RybS9kcm1fY3J0Yy5oIGIvaW5jbHVkZS9kcm0vZHJtX2NydGMuaAo+
-PiBpbmRleCAzYjA0MGIzNTU0NzIuLjA2MDdhZDJjZTkxOCAxMDA2NDQKPj4gLS0tIGEvaW5jbHVk
-ZS9kcm0vZHJtX2NydGMuaAo+PiArKysgYi9pbmNsdWRlL2RybS9kcm1fY3J0Yy5oCj4+IEBAIC0z
-MDUsNiArMzA1LDcgQEAgc3RydWN0IGRybV9wbGFuZV9oZWxwZXJfZnVuY3M7Cj4+ICAgICogQG1v
-ZGVfY2hhbmdlZDogY3J0Y19zdGF0ZS0+bW9kZSBvciBjcnRjX3N0YXRlLT5lbmFibGUgaGFzIGJl
-ZW4gY2hhbmdlZAo+PiAgICAqIEBhY3RpdmVfY2hhbmdlZDogY3J0Y19zdGF0ZS0+YWN0aXZlIGhh
-cyBiZWVuIHRvZ2dsZWQuCj4+ICAgICogQGNvbm5lY3RvcnNfY2hhbmdlZDogY29ubmVjdG9ycyB0
-byB0aGlzIGNydGMgaGF2ZSBiZWVuIHVwZGF0ZWQKPj4gKyAqIEB6cG9zX2NoYW5nZWQ6IHpwb3Mg
-dmFsdWVzIG9mIHBsYW5lcyBvbiB0aGlzIGNydGMgaGF2ZSBiZWVuIHVwZGF0ZWQKPj4gICAgKiBA
-cGxhbmVfbWFzazogYml0bWFzayBvZiAoMSA8PCBkcm1fcGxhbmVfaW5kZXgocGxhbmUpKSBvZiBh
-dHRhY2hlZCBwbGFuZXMKPj4gICAgKiBAbGFzdF92YmxhbmtfY291bnQ6IGZvciBoZWxwZXJzIGFu
-ZCBkcml2ZXJzIHRvIGNhcHR1cmUgdGhlIHZibGFuayBvZiB0aGUKPj4gICAgKiAJdXBkYXRlIHRv
-IGVuc3VyZSBmcmFtZWJ1ZmZlciBjbGVhbnVwIGlzbid0IGRvbmUgdG9vIGVhcmx5Cj4+IEBAIC0z
-MzEsNiArMzMyLDcgQEAgc3RydWN0IGRybV9jcnRjX3N0YXRlIHsKPj4gICAJYm9vbCBtb2RlX2No
-YW5nZWQgOiAxOwo+PiAgIAlib29sIGFjdGl2ZV9jaGFuZ2VkIDogMTsKPj4gICAJYm9vbCBjb25u
-ZWN0b3JzX2NoYW5nZWQgOiAxOwo+PiArCWJvb2wgenBvc19jaGFuZ2VkIDogMTsKPj4gICAKPj4g
-ICAJLyogYXR0YWNoZWQgcGxhbmVzIGJpdG1hc2s6Cj4+ICAgCSAqIFdBUk5JTkc6IHRyYW5zaXRp
-b25hbCBoZWxwZXJzIGRvIG5vdCBtYWludGFpbiBwbGFuZV9tYXNrIHNvCj4+IEBAIC0xMjQzLDYg
-KzEyNDUsOSBAQCBzdHJ1Y3QgZHJtX2Nvbm5lY3RvciB7Cj4+ICAgICoJcGxhbmUgKGluIDE2LjE2
-KQo+PiAgICAqIEBzcmNfdzogd2lkdGggb2YgdmlzaWJsZSBwb3J0aW9uIG9mIHBsYW5lIChpbiAx
-Ni4xNikKPj4gICAgKiBAc3JjX2g6IGhlaWdodCBvZiB2aXNpYmxlIHBvcnRpb24gb2YgcGxhbmUg
-KGluIDE2LjE2KQo+PiArICogQHpwb3M6IHByaW9yaXR5IG9mIHRoZSBnaXZlbiBwbGFuZSBvbiBj
-cnRjIChvcHRpb25hbCkKPj4gKyAqIEBub3JtYWxpemVkX3pwb3M6IG5vcm1hbGl6ZWQgdmFsdWUg
-b2YgenBvczogdW5pcWUsIHJhbmdlIGZyb20gMCB0bwo+PiArICoJKG51bWJlciBvZiBwbGFuZXMg
-LSAxKSBmb3IgZ2l2ZW4gY3J0Ywo+PiAgICAqIEBzdGF0ZTogYmFja3BvaW50ZXIgdG8gZ2xvYmFs
-IGRybV9hdG9taWNfc3RhdGUKPj4gICAgKi8KPj4gICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlIHsK
-Pj4gQEAgLTEyNjMsNiArMTI2OCwxMCBAQCBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlIHsKPj4gICAJ
-LyogUGxhbmUgcm90YXRpb24gKi8KPj4gICAJdW5zaWduZWQgaW50IHJvdGF0aW9uOwo+PiAgIAo+
-PiArCS8qIFBsYW5lIHpwb3MgKi8KPj4gKwl1bnNpZ25lZCBpbnQgenBvczsKPj4gKwl1bnNpZ25l
-ZCBpbnQgbm9ybWFsaXplZF96cG9zOwo+PiArCj4+ICAgCXN0cnVjdCBkcm1fYXRvbWljX3N0YXRl
-ICpzdGF0ZTsKPj4gICB9Owo+PiAgIAo+PiBAQCAtMjA4Myw2ICsyMDkyLDggQEAgc3RydWN0IGRy
-bV9tb2RlX2NvbmZpZyB7Cj4+ICAgCXN0cnVjdCBkcm1fcHJvcGVydHkgKnRpbGVfcHJvcGVydHk7
-Cj4+ICAgCXN0cnVjdCBkcm1fcHJvcGVydHkgKnBsYW5lX3R5cGVfcHJvcGVydHk7Cj4+ICAgCXN0
-cnVjdCBkcm1fcHJvcGVydHkgKnJvdGF0aW9uX3Byb3BlcnR5Owo+PiArCXN0cnVjdCBkcm1fcHJv
-cGVydHkgKnpwb3NfcHJvcGVydHk7Cj4+ICsJc3RydWN0IGRybV9wcm9wZXJ0eSAqenBvc19pbW11
-dGFibGVfcHJvcGVydHk7Cj4+ICAgCXN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3Bfc3JjX3g7Cj4+
-ICAgCXN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3Bfc3JjX3k7Cj4+ICAgCXN0cnVjdCBkcm1fcHJv
-cGVydHkgKnByb3Bfc3JjX3c7Cj4+IEBAIC0yNDg0LDYgKzI0OTUsOSBAQCBleHRlcm4gc3RydWN0
-IGRybV9wcm9wZXJ0eSAqZHJtX21vZGVfY3JlYXRlX3JvdGF0aW9uX3Byb3BlcnR5KHN0cnVjdCBk
-cm1fZGV2aWNlCj4+ICAgZXh0ZXJuIHVuc2lnbmVkIGludCBkcm1fcm90YXRpb25fc2ltcGxpZnko
-dW5zaWduZWQgaW50IHJvdGF0aW9uLAo+PiAgIAkJCQkJICB1bnNpZ25lZCBpbnQgc3VwcG9ydGVk
-X3JvdGF0aW9ucyk7Cj4+ICAgCj4+ICtleHRlcm4gaW50IGRybV9tb2RlX2NyZWF0ZV96cG9zX3By
-b3BlcnR5KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwo+PiArZXh0ZXJuIGludCBkcm1fbW9kZV9j
-cmVhdGVfenBvc19pbW11dGFibGVfcHJvcGVydHkoc3RydWN0IGRybV9kZXZpY2UgKmRldik7Cj4+
-ICsKPj4gICAvKiBIZWxwZXJzICovCj4+ICAgCj4+ICAgc3RhdGljIGlubGluZSBzdHJ1Y3QgZHJt
-X3BsYW5lICpkcm1fcGxhbmVfZmluZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+PiAtLSAKPj4g
-MS45LjIKCkJlc3QgcmVnYXJkcwotLSAKTWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcgUiZE
-IEluc3RpdHV0ZSBQb2xhbmQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+On Fri, Jan 15, 2016 at 10:09:14AM +0100, Marek Szyprowski wrote:
+> Hello,
+>=20
+> On 2016-01-14 11:46, Ville Syrj=C3=A4l=C3=A4 wrote:
+> >On Tue, Jan 12, 2016 at 02:39:18PM +0100, Marek Szyprowski wrote:
+> >>This patch adds support for generic plane's zpos property property =
+with
+> >>well-defined semantics:
+> >>- added zpos properties to drm core and plane state structures
+> >>- added helpers for normalizing zpos properties of given set of pla=
+nes
+> >>- well defined semantics: planes are sorted by zpos values and then=
+ plane
+> >>   id value if zpos equals
+> >>
+> >>Normalized zpos values are calculated automatically when generic
+> >>muttable zpos property has been initialized. Drivers can simply use
+> >>plane_state->normalized_zpos in their atomic_check and/or plane_upd=
+ate
+> >>callbacks without any additional calls to DRM core.
+> >>
+> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>---
+> >>  Documentation/DocBook/gpu.tmpl      |  14 ++++-
+> >>  drivers/gpu/drm/drm_atomic.c        |   4 ++
+> >>  drivers/gpu/drm/drm_atomic_helper.c | 116 +++++++++++++++++++++++=
++++++++++++++
+> >>  drivers/gpu/drm/drm_crtc.c          |  53 ++++++++++++++++
+> >>  include/drm/drm_crtc.h              |  14 +++++
+> >>  5 files changed, 199 insertions(+), 2 deletions(-)
+> >>
+> >>diff --git a/Documentation/DocBook/gpu.tmpl b/Documentation/DocBook=
+/gpu.tmpl
+> >>index 6c6e81a9eaf4..f6b7236141b6 100644
+> >>--- a/Documentation/DocBook/gpu.tmpl
+> >>+++ b/Documentation/DocBook/gpu.tmpl
+> >>@@ -2004,7 +2004,7 @@ void intel_crt_init(struct drm_device *dev)
+> >>  	<td valign=3D"top" >Description/Restrictions</td>
+> >>  	</tr>
+> >>  	<tr>
+> >>-	<td rowspan=3D"37" valign=3D"top" >DRM</td>
+> >>+	<td rowspan=3D"38" valign=3D"top" >DRM</td>
+> >>  	<td valign=3D"top" >Generic</td>
+> >>  	<td valign=3D"top" >=E2=80=9Crotation=E2=80=9D</td>
+> >>  	<td valign=3D"top" >BITMASK</td>
+> >>@@ -2256,7 +2256,7 @@ void intel_crt_init(struct drm_device *dev)
+> >>  	<td valign=3D"top" >property to suggest an Y offset for a connec=
+tor</td>
+> >>  	</tr>
+> >>  	<tr>
+> >>-	<td rowspan=3D"3" valign=3D"top" >Optional</td>
+> >>+	<td rowspan=3D"4" valign=3D"top" >Optional</td>
+> >>  	<td valign=3D"top" >=E2=80=9Cscaling mode=E2=80=9D</td>
+> >>  	<td valign=3D"top" >ENUM</td>
+> >>  	<td valign=3D"top" >{ "None", "Full", "Center", "Full aspect" }<=
+/td>
+> >>@@ -2280,6 +2280,16 @@ void intel_crt_init(struct drm_device *dev)
+> >>  	<td valign=3D"top" >TBD</td>
+> >>  	</tr>
+> >>  	<tr>
+> >>+	<td valign=3D"top" > "zpos" </td>
+> >>+	<td valign=3D"top" >RANGE</td>
+> >>+	<td valign=3D"top" >Min=3D0, Max=3D255</td>
+> >>+	<td valign=3D"top" >Plane</td>
+> >>+	<td valign=3D"top" >Plane's 'z' position during blending (0 for b=
+ackground, 255 for frontmost).
+> >>+		If two planes assigned to same CRTC have equal zpos values, the =
+plane with higher plane
+> >>+		id is treated as closer to front. Can be IMMUTABLE if driver doe=
+sn't support changing
+> >>+		planes' order.</td>
+> >I don't think this is going to work very well. Mixing the same range
+> >of 0-255 for all planes, with potentially some of them being
+> >IMMUTABLE for sure won't end well, or at least won't allow userspace=
+ to
+> >see if there are any constraints between the zpos of the planes.
+> >
+> >So I think what we should do is let the driver specify the valid ran=
+ge,
+> >and get rid of the obj id based conflict resolution in favor of just
+> >rejecting conflicts outright. In cases where you can't move the plan=
+es
+> >between crtcs, the driver ought to specify the range based on the
+> >number of planes present on the crtc. If planes can be moved between=
+s
+> >crtcs the range obviously needs to be larger to accomodate all the
+> >possible planes on the crtc.
+> >
+> >Eg. on Intel VLV/CHV we could have the following setup:
+> >primary  zpos 0-2
+> >sprite 0 zpos 0-2
+> >sprite 1 zpos 0-2
+> >cursor   zpos 3
+> >
+> >That makes it very clear the curso is always on top, and the other
+> >planes can be rearranged more or less freely. These planes can't be
+> >moved between crtcs, so each there's an identical set of planes for
+> >each crtc.
+> >
+> >On old Intel hw (gen2/3) we could have something like:
+> >plane A zpos 0-3
+> >plane B zpos 0-3
+> >plane C zpos 0-3
+> >overlay zpos 0-3
+> >cursor B zpos 4
+> >cursor A zpos 5
+> >
+> >Most of these planes can be moved between crtcs, and IIRC there
+> >are probably more constraints on exactly how they can be stacked, bu=
+t
+> >this is at least fairly close to the truth. Again the cursors are al=
+ways
+> >on top, and in this case the order between the two cursor planes is =
+also
+> >fixed.
+>=20
+> I wasn't aware of a hardware, which has limited configuration of zpos=
+ only
+> to some planes. I thought only about 2 cases: either completely confi=
+gurable
+> planes arrangement, or planes fixed to some hw dependent order. I see=
+ no
+> problem to let drivers to define their own limits for mutable zpos pr=
+operty.
+>=20
+> Now the question is weather we should allow to set the non-zero minim=
+al
+> value
+> for mutable zpos? I can imagine that there might be a hardware, which=
+ has
+> fixed background plane and a few configurable overlay planes. I assum=
+e that
+> in such case, the calculated normalized_zpos should still start from =
+zero.
+
+The usual approach is to switch the property from a global one in
+dev->mode_config.*_prop to a per-object one in e.g. plane->zpos_prop. W=
+e
+can still register the name, but have different limits/types. That way =
+you
+could register a global mutable zpos with the range 0-3 and an immutabl=
+e
+zpos with values 4 or 5 for cursors. The generic decoding would still b=
+e
+fairly simple.
+
+	} else if (property =3D=3D plane->zpos_property) {
+		state->zpos =3D val;
+	} else if (property =3D=3D config->zpos_property) {
+		state->zpos =3D val;
+
+Plus some checking that no one attached both the global and obj-local
+property of the same name to the same object.
+
+Since this is a fairly simple add-on change and current drivers that
+support zpos don't need it I think it makes total sense to do this as a
+follow-up when we need it.
+
+But might be good to document this somewhere (either commit message or
+kerneldoc for zpos).
+
+> >I did originally have the same obj id based sorting idea (and even
+> >posted some kind of a patch for it IIRC) but that was before atomic
+> >existed, so there was a real need to allow reordering the planes wit=
+h
+> >just a single setplane ioctl call. With atomic I don't see any real
+> >benefit from it the obj id based sorting, and as I've noted there ar=
+e
+> >definitely downsides to it.
+>=20
+> What are the downsides of using obj id as additional sorting criteria=
+? It
+> solves all the ambiguities and simplifies checks (there is no need to=
+ check
+> if there are 2 planes of the same zpos value).
+
+I think the sorting also has an upside that it avoids having to change =
+all
+the drivers, or adding some kind of flag. Drivers which don't support z=
+pos
+just get a sorted normlized zpos. If we don't do that we'd have to put
+some unique default zpos in, which is going to make things messy.
+
+Cheers, Daniel
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
