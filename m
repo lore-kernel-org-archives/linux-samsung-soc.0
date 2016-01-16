@@ -1,69 +1,27 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler
- as IRQF_NO_THREAD
-Date: Fri, 15 Jan 2016 12:31:30 -0600
-Message-ID: <20160115183130.GB5296@localhost>
-References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
- <20160106221827.GD16231@localhost>
- <20160113133904.GD29964@linutronix.de>
- <20160113175016.GB28453@localhost>
- <56969BE3.6000804@ti.com>
- <56973DEC.2000108@ti.com>
+From: Ms Donna Kwok <info@vet.bg.ac.rs>
+Subject: Greetings
+Date: Sat, 16 Jan 2016 23:28:44 +0100
+Message-ID: <7e7d78c0f75dda49b4dc830484f72bd8__22234.0756598443$1452984161$gmane$org@vet.bg.ac.rs>
+Reply-To: Ms.DonnaKwok1@qq.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56973DEC.2000108@ti.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailserver.vet.bg.ac.rs ([147.91.250.8]:47288 "EHLO
+	mailserver.vet.bg.ac.rs" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752842AbcAPWlc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 16 Jan 2016 17:41:32 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 14, 2016 at 11:49:24AM +0530, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Thursday 14 January 2016 12:18 AM, Grygorii Strashko wrote:
-> > On 01/13/2016 07:50 PM, Bjorn Helgaas wrote:
-> >> On Wed, Jan 13, 2016 at 02:39:04PM +0100, Sebastian Andrzej Siewior wrote:
-> >>> * Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
-> >>>
-> >>>> Hi Bjorn,
-> >>>
-> >>>>> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
-> >>>>> index 8c36880..0415192 100644
-> >>>>> --- a/drivers/pci/host/pci-dra7xx.c
-> >>>>> +++ b/drivers/pci/host/pci-dra7xx.c
-> >>>>> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct
-> >>>>> dra7xx_pcie *dra7xx,
-> >>>>>           return -EINVAL;
-> >>>>>       }
-> >>>>>
-> >>>>> +    /*
-> >>>>> +     * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
-> >>>>> +     * On -RT and if kernel is booting with "threadirqs" cmd line parameter
-> >>>>> +     * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
-> >>>>> +     * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
-> >>>>> +     * which, in turn, will be resolved to handle_simple_irq() call.
-> >>>>> +     * The handle_simple_irq() expected to be called with IRQ disabled, as
-> >>>>> +     * result kernle will display warning:
-> >>>>> +     * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
-> >>>>> +     */
-> >>>
-> >>> could you _please_ remove this coment? This kind of comment (if at all)
-> >>> should be part of the commit message (which is the case more or less).
-> >>
-> >> IIRC, Grygorii specifically wanted to keep this comment in dra7xx, but
-> > 
-> > True.
-> > 
-> >> I do agree that this level of detail is more appropriate for a changelog.
-> >>
-> >> If Grygorii and Kishon don't object, I can update the patch to remove it.
-> > 
-> > But no objections from my side. Thanks a lot.
-> 
-> I don't have any objections.
+I am Ms Donna Kwok, HSBC Hong Kong, head of corporate sustainability 
+Asia pacific region. A sum of USD$21,300,000.00 Million was deposited by 
+our Late customer who died without declaring any next of kin before his 
+death in 2006.My suggestion to you is to stand as the next of kin to 
+Fadel Ahmed.We shall share in the ratio of 50% for me, 50% for you.if 
+interested please email: Ms.DonnaKwok1@qq.com
 
-OK, I dropped it, thanks guys!
-
-Bjorn
+Thanks,
+Donna Kwok.
