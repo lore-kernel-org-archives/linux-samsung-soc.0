@@ -1,117 +1,97 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv2] pwm: avoid holding mutex in interrupt context
-Date: Sun, 17 Jan 2016 21:01:57 +0000
-Message-ID: <1453064517-12315-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
+ bindings for DECON-TV
+Date: Mon, 18 Jan 2016 08:45:33 +0900
+Message-ID: <569C279D.1020705@samsung.com>
+References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+ <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+ <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <56977D42.2050904@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Rob Herring <robh+dt@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The introduction of the mutex in commit d1cd21427747 ("pwm: Set enable
-state properly on failed call to enable") effectively makes all PWM drivers
-potentially sleeping. That in turn makes the .can_sleep field obsolete
-since all drivers can now sleep.
+On 14.01.2016 19:49, Inki Dae wrote:
+> + Rob Herring
+>=20
+> 2016=EB=85=84 01=EC=9B=94 14=EC=9D=BC 19:36=EC=97=90 Andrzej Hajda =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>> Hi Inki,
+>>
+>> It seems this patch and 04/10 did not get picked up yet.
+>> Could you merge it?
+>=20
+> Yes, I can. However, 04/10 is required for acked-by from dt or SoC ma=
+intainer.
+> Krzysztof and Rob, could you give me acked-by?
+>=20
+> Thanks,
+> Inki Dae
 
-Changes fix the below bug by using spinlocks instead of mutex
+My ack is really not required, because this is a binding for a specific
+driver from video subsystem. It does not fall into the arm/mach-exynos
+nor the dts/*exynos*.
 
-[   22.300239] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-[   22.307212] in_atomic(): 1, irqs_disabled(): 0, pid: 2257, name: sh
-[   22.313454] Preemption disabled at:[<  (null)>]   (null)
-[   23.655232] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-[   23.662174] in_atomic(): 1, irqs_disabled(): 0, pid: 2404, name: upowerd
-[   23.668932] Preemption disabled at:[<  (null)>]   (null)
-[   25.010207] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-[   25.017125] in_atomic(): 1, irqs_disabled(): 0, pid: 2262, name: indicator-keybo
-[   25.024491] Preemption disabled at:[<  (null)>]   (null)
-[   26.355237] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-[   26.362141] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
-[   26.368728] Preemption disabled at:[<  (null)>]   (null)
-[   27.680220] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-[   27.687119] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
-[   27.693698] Preemption disabled at:[<  (null)>]   (null)
-[   29.005199] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-[   29.012124] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
+Anyway I reviewed the patch on 28th of October and Rob acked it on 13th
+of November.
 
-[thierry.reding@gmail.com: Fixed the commit message]
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Changes logs: droped my prevoius approch.
----
- drivers/pwm/core.c  | 10 +++++-----
- include/linux/pwm.h |  4 ++--
- 2 files changed, 7 insertions(+), 7 deletions(-)
+Best regards,
+Krzysztof
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index d24ca5f..58e7091 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -269,7 +269,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
- 		pwm->pwm = chip->base + i;
- 		pwm->hwpwm = i;
- 		pwm->polarity = polarity;
--		mutex_init(&pwm->lock);
-+		spin_lock_init(&pwm->lock);
- 
- 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
- 	}
-@@ -474,7 +474,7 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
- 	if (!pwm->chip->ops->set_polarity)
- 		return -ENOSYS;
- 
--	mutex_lock(&pwm->lock);
-+	spin_lock_irq(&pwm->lock);
- 
- 	if (pwm_is_enabled(pwm)) {
- 		err = -EBUSY;
-@@ -488,7 +488,7 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
- 	pwm->polarity = polarity;
- 
- unlock:
--	mutex_unlock(&pwm->lock);
-+	spin_unlock_irq(&pwm->lock);
- 	return err;
- }
- EXPORT_SYMBOL_GPL(pwm_set_polarity);
-@@ -506,7 +506,7 @@ int pwm_enable(struct pwm_device *pwm)
- 	if (!pwm)
- 		return -EINVAL;
- 
--	mutex_lock(&pwm->lock);
-+	spin_lock_irq(&pwm->lock);
- 
- 	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
- 		err = pwm->chip->ops->enable(pwm->chip, pwm);
-@@ -514,7 +514,7 @@ int pwm_enable(struct pwm_device *pwm)
- 			clear_bit(PWMF_ENABLED, &pwm->flags);
- 	}
- 
--	mutex_unlock(&pwm->lock);
-+	spin_unlock_irq(&pwm->lock);
- 
- 	return err;
- }
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index cfc3ed4..86ad4c2 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -2,7 +2,7 @@
- #define __LINUX_PWM_H
- 
- #include <linux/err.h>
--#include <linux/mutex.h>
-+#include <linux/spinlock.h>
- #include <linux/of.h>
- 
- struct pwm_device;
-@@ -100,7 +100,7 @@ struct pwm_device {
- 	unsigned int pwm;
- 	struct pwm_chip *chip;
- 	void *chip_data;
--	struct mutex lock;
-+	spinlock_t lock;
- 
- 	unsigned int period;
- 	unsigned int duty_cycle;
--- 
-2.1.4
+
+>>
+>> Regards
+>> Andrzej
+>>
+>> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
+>>> DECON-TV(Display and Enhancement Controller for TV) is a variation
+>>> of DECON IP. Its main purpose is to produce video stream for HDMI I=
+P.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>>> Hi Krzysztof,
+>>>
+>>> I have decided to skip cleanup part as it would require more work,
+>>> not related to this patchset.
+>>>
+>>> Regards
+>>> Andrzej
+>>>
+>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 +=
++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-dec=
+on.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> index 3dff78b..c9fd7b3 100644
+>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image dat=
+a from a video memory
+>>>  buffer to an external LCD interface.
+>>> =20
+>>>  Required properties:
+>>> -- compatible: value should be "samsung,exynos5433-decon";
+>>> +- compatible: value should be one of:
+>>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+>>>  - reg: physical base address and length of the DECON registers set=
+=2E
+>>>  - interrupts: should contain a list of all DECON IP block interrup=
+ts in the
+>>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>=20
+
