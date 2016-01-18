@@ -1,110 +1,95 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] pwm: avoid holding mutex in interrupt context
-Date: Mon, 18 Jan 2016 13:28:36 +0900
-Message-ID: <569C69F4.7000906@samsung.com>
-References: <1453064517-12315-1-git-send-email-linux.amoon@gmail.com>
- <569C2AE8.6070100@samsung.com>
- <CANAwSgT3rXRBVFUQmogkPQwRY93CO0FRFwx_NGjWTHrD5LGbVg@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v4 0/3] drm/exynos: introduce generic zpos property
+Date: Mon, 18 Jan 2016 08:48:28 +0100
+Message-ID: <1453103311-14415-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-reply-to: <CANAwSgT3rXRBVFUQmogkPQwRY93CO0FRFwx_NGjWTHrD5LGbVg@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pwm@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29436 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753768AbcARHsz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Jan 2016 02:48:55 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O1500K3Z1PHDK60@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jan 2016 07:48:53 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
 
-On 18.01.2016 13:23, Anand Moon wrote:
-> Hi Krzysztof,
-> 
-> On 18 January 2016 at 05:29, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> On 18.01.2016 06:01, Anand Moon wrote:
->>> The introduction of the mutex in commit d1cd21427747 ("pwm: Set enable
->>> state properly on failed call to enable") effectively makes all PWM drivers
->>> potentially sleeping. That in turn makes the .can_sleep field obsolete
->>> since all drivers can now sleep.
->>>
->>> Changes fix the below bug by using spinlocks instead of mutex
->>>
->>> [   22.300239] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
->>> [   22.307212] in_atomic(): 1, irqs_disabled(): 0, pid: 2257, name: sh
->>> [   22.313454] Preemption disabled at:[<  (null)>]   (null)
->>> [   23.655232] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
->>> [   23.662174] in_atomic(): 1, irqs_disabled(): 0, pid: 2404, name: upowerd
->>> [   23.668932] Preemption disabled at:[<  (null)>]   (null)
->>> [   25.010207] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
->>> [   25.017125] in_atomic(): 1, irqs_disabled(): 0, pid: 2262, name: indicator-keybo
->>> [   25.024491] Preemption disabled at:[<  (null)>]   (null)
->>> [   26.355237] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
->>> [   26.362141] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
->>> [   26.368728] Preemption disabled at:[<  (null)>]   (null)
->>> [   27.680220] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
->>> [   27.687119] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
->>> [   27.693698] Preemption disabled at:[<  (null)>]   (null)
->>> [   29.005199] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
->>> [   29.012124] in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/0
->>>
->>> [thierry.reding@gmail.com: Fixed the commit message]
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>> ---
->>> Changes logs: droped my prevoius approch.
->>> ---
->>>  drivers/pwm/core.c  | 10 +++++-----
->>>  include/linux/pwm.h |  4 ++--
->>>  2 files changed, 7 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
->>> index d24ca5f..58e7091 100644
->>> --- a/drivers/pwm/core.c
->>> +++ b/drivers/pwm/core.c
->>> @@ -269,7 +269,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
->>>               pwm->pwm = chip->base + i;
->>>               pwm->hwpwm = i;
->>>               pwm->polarity = polarity;
->>> -             mutex_init(&pwm->lock);
->>> +             spin_lock_init(&pwm->lock);
->>>
->>>               radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
->>>       }
->>> @@ -474,7 +474,7 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
->>>       if (!pwm->chip->ops->set_polarity)
->>>               return -ENOSYS;
->>>
->>> -     mutex_lock(&pwm->lock);
->>> +     spin_lock_irq(&pwm->lock);
->>
->> Anand,
->>
->> Thank you for the effort put into digging into this issue. Unfortunately
->> this approach is bad. You cannot fix one issue without looking at the
->> big picture of the given subsystem. This patch does exactly this - fixes
->> your warning but probably introduces bugs all over the place.
->>
->> Although the set_polarity callback (called under the lock) is not
->> described as sleeping-allowed but some implementations do it in a
->> sleeping way. This is really easy to find, e.g.:
->> pwm_omap_dmtimer_set_polarity.
->>
->> This means: no.
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> Already within function pwm_samsung_set_invert is protected by
-> spin_lock_irqsave(&samsung_pwm_lock, flags);
-> 
-> So no need to introduce another lock to control pwm_samsung_set_polarity.
-> 
-> Best Regards.
-> -Anand Moon
+Hello all,
 
-I don't have any clue what is your point here. I don't get what
-pwm_samsung_set_polarity has to do with main pwm core...
+This patch series is a continuation of rework of blending support in
+Exynos DRM driver. Some background can be found here:
+http://www.spinics.net/lists/dri-devel/msg96969.html
 
-Sorry, you need to be more specific.
+Daniel Vetter suggested that zpos property should be made generic, with
+well-defined semantics. This patchset is my proposal for such generic
+zpos property:
+- added zpos properties to drm core and plane state structures,
+- added helpers for normalizing zpos properties of given set of planes,
+- well defined semantics: planes are sorted by zpos values and then pla=
+ne
+  id value if zpos equals.
 
-Best regards,
-Krzysztof
+Patches are based on top of latest exynos-drm-next branch.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Changelog:
+
+v4:
+- made min/max values of zpos property driver dependent (request of
+  Ville Syrj=C3=A4l=C3=A4)
+- adjusted some comments
+
+v3: http://www.spinics.net/lists/dri-devel/msg98207.html
+- on request of Daniel Vetter, moved all normalization process to DRM
+  core, drivers can simply use plane_state->normalized_zpos in their
+  atomic_check/update callbacks with no additional changes needed
+- updated documentation
+
+v2: http://www.spinics.net/lists/dri-devel/msg98093.html
+- dropped 2 fixes for Exynos DRM, which got merged in meantime
+- added more comments and kernel docs for core functions as suggested
+  by Daniel Vetter
+- reworked initialization of zpos properties (moved assiging property
+  class to common code), now the code in the driver is even simpler
+- while reworking of intialization of zpos property code, did the same
+  change to generic rotation property
+
+v1: http://www.spinics.net/lists/dri-devel/msg97709.html
+- initial version
+
+Patch summary:
+
+
+Marek Szyprowski (3):
+  drm: add generic zpos property
+  drm/exynos: use generic code for managing zpos plane property
+  drm: simplify initialization of rotation property
+
+ Documentation/DocBook/gpu.tmpl                  |  14 ++-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |  10 +-
+ drivers/gpu/drm/drm_atomic.c                    |   4 +
+ drivers/gpu/drm/drm_atomic_helper.c             | 118 ++++++++++++++++=
+++++++++
+ drivers/gpu/drm/drm_crtc.c                      |  96 ++++++++++++++++=
++--
+ drivers/gpu/drm/exynos/exynos_drm_drv.h         |   2 -
+ drivers/gpu/drm/exynos/exynos_drm_plane.c       |  68 ++++----------
+ drivers/gpu/drm/exynos/exynos_mixer.c           |   6 +-
+ drivers/gpu/drm/i915/intel_display.c            |   6 +-
+ drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c       |   3 +-
+ drivers/gpu/drm/omapdrm/omap_drv.c              |   3 +-
+ include/drm/drm_crtc.h                          |  21 ++++-
+ 12 files changed, 271 insertions(+), 80 deletions(-)
+
+--=20
+1.9.2
