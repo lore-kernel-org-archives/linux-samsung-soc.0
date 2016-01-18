@@ -1,174 +1,147 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 3/3] drm: simplify initialization of rotation property
-Date: Mon, 18 Jan 2016 08:48:31 +0100
-Message-ID: <1453103311-14415-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v4 2/3] drm/exynos: use generic code for managing zpos plane
+ property
+Date: Mon, 18 Jan 2016 08:48:30 +0100
+Message-ID: <1453103311-14415-3-git-send-email-m.szyprowski@samsung.com>
 References: <1453103311-14415-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:29436 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753808AbcARHs4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jan 2016 02:48:56 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O1500M221PJ6260@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 18 Jan 2016 07:48:55 +0000 (GMT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1453103311-14415-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, fabien.dessenne@st.com, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, vincent.abriou@st.com, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch simplifies initialization of generic rotation property and
-aligns the code to match recently introduced function for intializing
-generic zpos property. It also adds missing documentation.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 10 ++++-----
- drivers/gpu/drm/drm_crtc.c                      | 29 ++++++++++++++++++++-----
- drivers/gpu/drm/i915/intel_display.c            |  6 ++---
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c       |  3 +--
- drivers/gpu/drm/omapdrm/omap_drv.c              |  3 +--
- include/drm/drm_crtc.h                          |  4 ++--
- 6 files changed, 33 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-index 1ffe9c329c46..4f9606cdf0f2 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -967,12 +967,10 @@ atmel_hlcdc_plane_create_properties(struct drm_device *dev)
- 	if (!props->alpha)
- 		return ERR_PTR(-ENOMEM);
- 
--	dev->mode_config.rotation_property =
--			drm_mode_create_rotation_property(dev,
--							  BIT(DRM_ROTATE_0) |
--							  BIT(DRM_ROTATE_90) |
--							  BIT(DRM_ROTATE_180) |
--							  BIT(DRM_ROTATE_270));
-+	drm_mode_create_rotation_property(dev, BIT(DRM_ROTATE_0) |
-+					       BIT(DRM_ROTATE_90) |
-+					       BIT(DRM_ROTATE_180) |
-+					       BIT(DRM_ROTATE_270));
- 	if (!dev->mode_config.rotation_property)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index c6f7238cdab3..3e2ba57de16b 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -5861,10 +5861,23 @@ void drm_mode_config_cleanup(struct drm_device *dev)
- }
- EXPORT_SYMBOL(drm_mode_config_cleanup);
- 
--struct drm_property *drm_mode_create_rotation_property(struct drm_device *dev,
--						       unsigned int supported_rotations)
-+/**
-+ * drm_mode_create_rotation_property - create generic rotation property
-+ * @dev: DRM device
-+ * @supported_rotations: bitmask of supported rotation modes
-+ *
-+ * This function initializes generic rotation property and enables support
-+ * for it in drm core. Drivers can then attach this property to planes to enable
-+ * support for different rotation modes.
-+ *
-+ * Returns:
-+ * Zero on success, negative errno on failure.
-+ */
-+int drm_mode_create_rotation_property(struct drm_device *dev,
-+				      unsigned int supported_rotations)
- {
--	static const struct drm_prop_enum_list props[] = {
-+	struct drm_property *prop;
-+	static const struct drm_prop_enum_list values[] = {
- 		{ DRM_ROTATE_0,   "rotate-0" },
- 		{ DRM_ROTATE_90,  "rotate-90" },
- 		{ DRM_ROTATE_180, "rotate-180" },
-@@ -5873,9 +5886,13 @@ struct drm_property *drm_mode_create_rotation_property(struct drm_device *dev,
- 		{ DRM_REFLECT_Y,  "reflect-y" },
- 	};
- 
--	return drm_property_create_bitmask(dev, 0, "rotation",
--					   props, ARRAY_SIZE(props),
--					   supported_rotations);
-+	prop = drm_property_create_bitmask(dev, 0, "rotation", values,
-+				ARRAY_SIZE(values), supported_rotations);
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	dev->mode_config.rotation_property = prop;
-+	return 0;
- }
- EXPORT_SYMBOL(drm_mode_create_rotation_property);
- 
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 02f6ccb848a9..5b7ba46491a0 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -14042,8 +14042,7 @@ void intel_create_rotation_property(struct drm_device *dev, struct intel_plane *
- 		if (INTEL_INFO(dev)->gen >= 9)
- 			flags |= BIT(DRM_ROTATE_90) | BIT(DRM_ROTATE_270);
- 
--		dev->mode_config.rotation_property =
--			drm_mode_create_rotation_property(dev, flags);
-+		drm_mode_create_rotation_property(dev, flags);
- 	}
- 	if (dev->mode_config.rotation_property)
- 		drm_object_attach_property(&plane->base.base,
-@@ -14179,8 +14178,7 @@ static struct drm_plane *intel_cursor_plane_create(struct drm_device *dev,
- 
- 	if (INTEL_INFO(dev)->gen >= 4) {
- 		if (!dev->mode_config.rotation_property)
--			dev->mode_config.rotation_property =
--				drm_mode_create_rotation_property(dev,
-+			drm_mode_create_rotation_property(dev,
- 							BIT(DRM_ROTATE_0) |
- 							BIT(DRM_ROTATE_180));
- 		if (dev->mode_config.rotation_property)
-diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-index 432c09836b0e..8defeec0d453 100644
---- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-@@ -76,8 +76,7 @@ static void mdp5_plane_install_rotation_property(struct drm_device *dev,
- 		return;
- 
- 	if (!dev->mode_config.rotation_property)
--		dev->mode_config.rotation_property =
--			drm_mode_create_rotation_property(dev,
-+		drm_mode_create_rotation_property(dev,
- 			BIT(DRM_REFLECT_X) | BIT(DRM_REFLECT_Y));
- 
- 	if (dev->mode_config.rotation_property)
-diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-index dfafdb602ad2..c6ce2b31f1c5 100644
---- a/drivers/gpu/drm/omapdrm/omap_drv.c
-+++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-@@ -304,8 +304,7 @@ static int omap_modeset_init_properties(struct drm_device *dev)
- 	struct omap_drm_private *priv = dev->dev_private;
- 
- 	if (priv->has_dmm) {
--		dev->mode_config.rotation_property =
--			drm_mode_create_rotation_property(dev,
-+		drm_mode_create_rotation_property(dev,
- 				BIT(DRM_ROTATE_0) | BIT(DRM_ROTATE_90) |
- 				BIT(DRM_ROTATE_180) | BIT(DRM_ROTATE_270) |
- 				BIT(DRM_REFLECT_X) | BIT(DRM_REFLECT_Y));
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index f53cdda1167b..1cd22f38b50d 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -2490,8 +2490,8 @@ extern int drm_format_plane_cpp(uint32_t format, int plane);
- extern int drm_format_horz_chroma_subsampling(uint32_t format);
- extern int drm_format_vert_chroma_subsampling(uint32_t format);
- extern const char *drm_get_format_name(uint32_t format);
--extern struct drm_property *drm_mode_create_rotation_property(struct drm_device *dev,
--							      unsigned int supported_rotations);
-+extern int drm_mode_create_rotation_property(struct drm_device *dev,
-+					     unsigned int supported_rotations);
- extern unsigned int drm_rotation_simplify(unsigned int rotation,
- 					  unsigned int supported_rotations);
- 
--- 
-1.9.2
+VGhpcyBwYXRjaCByZXBsYWNlcyB6cG9zIHByb3BlcnR5IGhhbmRsaW5nIGN1c3RvbSBjb2RlIGlu
+IEV4eW5vcyBEUk0KZHJpdmVyIHdpdGggY2FsbHMgdG8gZ2VuZXJpYyBEUk0gY29kZS4KClNpZ25l
+ZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICAyIC0KIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgNjggKysrKysrKystLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAg
+ICAgfCAgNiArKy0KIDMgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgNTYgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ry
+di5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCmluZGV4IDE3YjVk
+ZWQ3MmZmMS4uODE2NTM3ODg2ZTRlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5oCkBAIC02NCw3ICs2NCw2IEBAIHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlIHsK
+IAlzdHJ1Y3QgZXh5bm9zX2RybV9yZWN0IHNyYzsKIAl1bnNpZ25lZCBpbnQgaF9yYXRpbzsKIAl1
+bnNpZ25lZCBpbnQgdl9yYXRpbzsKLQl1bnNpZ25lZCBpbnQgenBvczsKIH07CiAKIHN0YXRpYyBp
+bmxpbmUgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKgpAQCAtMjE3LDcgKzIxNiw2IEBA
+IHN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgewogCSAqIHRoaXMgYXJyYXkgaXMgdXNlZCB0byBi
+ZSBhd2FyZSBvZiB3aGljaCBjcnRjIGRpZCBpdCByZXF1ZXN0IHZibGFuay4KIAkgKi8KIAlzdHJ1
+Y3QgZHJtX2NydGMgKmNydGNbTUFYX0NSVENdOwotCXN0cnVjdCBkcm1fcHJvcGVydHkgKnBsYW5l
+X3pwb3NfcHJvcGVydHk7CiAKIAl1bnNpZ25lZCBsb25nIGRhX3N0YXJ0OwogCXVuc2lnbmVkIGxv
+bmcgZGFfc3BhY2Vfc2l6ZTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5l
+LmMKaW5kZXggZDg2MjI3MjM2ZjU1Li4zYTQ4NjkzOTE2OGUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCkBAIC0xMzcsOSArMTM3LDkgQEAgc3RhdGljIHZvaWQg
+ZXh5bm9zX2RybV9wbGFuZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSkKIAogCWV4eW5v
+c19zdGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpleHlub3Nfc3RhdGUpLCBHRlBfS0VSTkVMKTsKIAlp
+ZiAoZXh5bm9zX3N0YXRlKSB7Ci0JCWV4eW5vc19zdGF0ZS0+enBvcyA9IGV4eW5vc19wbGFuZS0+
+Y29uZmlnLT56cG9zOwogCQlwbGFuZS0+c3RhdGUgPSAmZXh5bm9zX3N0YXRlLT5iYXNlOwogCQlw
+bGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7CisJCXBsYW5lLT5zdGF0ZS0+enBvcyA9IGV4eW5v
+c19wbGFuZS0+Y29uZmlnLT56cG9zOwogCX0KIH0KIApAQCAtMTU1LDcgKzE1NSw2IEBAIGV4eW5v
+c19kcm1fcGxhbmVfZHVwbGljYXRlX3N0YXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQogCQly
+ZXR1cm4gTlVMTDsKIAogCV9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfZHVwbGljYXRlX3N0YXRl
+KHBsYW5lLCAmY29weS0+YmFzZSk7Ci0JY29weS0+enBvcyA9IGV4eW5vc19zdGF0ZS0+enBvczsK
+IAlyZXR1cm4gJmNvcHktPmJhc2U7CiB9CiAKQEAgLTE2OCw0MyArMTY3LDYgQEAgc3RhdGljIHZv
+aWQgZXh5bm9zX2RybV9wbGFuZV9kZXN0cm95X3N0YXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
+LAogCWtmcmVlKG9sZF9leHlub3Nfc3RhdGUpOwogfQogCi1zdGF0aWMgaW50IGV4eW5vc19kcm1f
+cGxhbmVfYXRvbWljX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKLQkJCQkJ
+CXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRlLAotCQkJCQkJc3RydWN0IGRybV9wcm9wZXJ0
+eSAqcHJvcGVydHksCi0JCQkJCQl1aW50NjRfdCB2YWwpCi17Ci0Jc3RydWN0IGV4eW5vc19kcm1f
+cGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7Ci0Jc3RydWN0IGV4
+eW5vc19kcm1fcGxhbmVfc3RhdGUgKmV4eW5vc19zdGF0ZSA9Ci0JCQkJCXRvX2V4eW5vc19wbGFu
+ZV9zdGF0ZShzdGF0ZSk7Ci0Jc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBw
+bGFuZS0+ZGV2LT5kZXZfcHJpdmF0ZTsKLQljb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZV9j
+b25maWcgKmNvbmZpZyA9IGV4eW5vc19wbGFuZS0+Y29uZmlnOwotCi0JaWYgKHByb3BlcnR5ID09
+IGRldl9wcml2LT5wbGFuZV96cG9zX3Byb3BlcnR5ICYmCi0JICAgIChjb25maWctPmNhcGFiaWxp
+dGllcyAmIEVYWU5PU19EUk1fUExBTkVfQ0FQX1pQT1MpKQotCQlleHlub3Nfc3RhdGUtPnpwb3Mg
+PSB2YWw7Ci0JZWxzZQotCQlyZXR1cm4gLUVJTlZBTDsKLQotCXJldHVybiAwOwotfQotCi1zdGF0
+aWMgaW50IGV4eW5vc19kcm1fcGxhbmVfYXRvbWljX2dldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3Bs
+YW5lICpwbGFuZSwKLQkJCQkJICBjb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSwK
+LQkJCQkJICBzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpwcm9wZXJ0eSwKLQkJCQkJICB1aW50NjRfdCAq
+dmFsKQotewotCWNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3Rh
+dGUgPQotCQljb250YWluZXJfb2Yoc3RhdGUsIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5l
+X3N0YXRlLCBiYXNlKTsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpkZXZfcHJpdiA9IHBs
+YW5lLT5kZXYtPmRldl9wcml2YXRlOwotCi0JaWYgKHByb3BlcnR5ID09IGRldl9wcml2LT5wbGFu
+ZV96cG9zX3Byb3BlcnR5KQotCQkqdmFsID0gZXh5bm9zX3N0YXRlLT56cG9zOwotCWVsc2UKLQkJ
+cmV0dXJuIC1FSU5WQUw7Ci0KLQlyZXR1cm4gMDsKLX0KLQogc3RhdGljIHN0cnVjdCBkcm1fcGxh
+bmVfZnVuY3MgZXh5bm9zX3BsYW5lX2Z1bmNzID0gewogCS51cGRhdGVfcGxhbmUJPSBkcm1fYXRv
+bWljX2hlbHBlcl91cGRhdGVfcGxhbmUsCiAJLmRpc2FibGVfcGxhbmUJPSBkcm1fYXRvbWljX2hl
+bHBlcl9kaXNhYmxlX3BsYW5lLApAQCAtMjEzLDggKzE3NSw2IEBAIHN0YXRpYyBzdHJ1Y3QgZHJt
+X3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKIAkucmVzZXQJCT0gZXh5bm9zX2Ry
+bV9wbGFuZV9yZXNldCwKIAkuYXRvbWljX2R1cGxpY2F0ZV9zdGF0ZSA9IGV4eW5vc19kcm1fcGxh
+bmVfZHVwbGljYXRlX3N0YXRlLAogCS5hdG9taWNfZGVzdHJveV9zdGF0ZSA9IGV4eW5vc19kcm1f
+cGxhbmVfZGVzdHJveV9zdGF0ZSwKLQkuYXRvbWljX3NldF9wcm9wZXJ0eSA9IGV4eW5vc19kcm1f
+cGxhbmVfYXRvbWljX3NldF9wcm9wZXJ0eSwKLQkuYXRvbWljX2dldF9wcm9wZXJ0eSA9IGV4eW5v
+c19kcm1fcGxhbmVfYXRvbWljX2dldF9wcm9wZXJ0eSwKIH07CiAKIHN0YXRpYyBpbnQKQEAgLTMw
+MiwyMCArMjYyLDIzIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX2hlbHBlcl9mdW5j
+cyBwbGFuZV9oZWxwZXJfZnVuY3MgPSB7CiB9OwogCiBzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVf
+YXR0YWNoX3pwb3NfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCi0JCQkJCSAgICAg
+IHVuc2lnbmVkIGludCB6cG9zKQorCQkJCQkgICAgICB1bnNpZ25lZCBpbnQgenBvcywgYm9vbCBp
+bW11dGFibGUpCiB7CiAJc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IHBsYW5lLT5kZXY7Ci0Jc3Ry
+dWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBkZXYtPmRldl9wcml2YXRlOwogCXN0
+cnVjdCBkcm1fcHJvcGVydHkgKnByb3A7CiAKLQlwcm9wID0gZGV2X3ByaXYtPnBsYW5lX3pwb3Nf
+cHJvcGVydHk7Ci0JaWYgKCFwcm9wKSB7Ci0JCXByb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRlX3Jh
+bmdlKGRldiwgMCwgInpwb3MiLAotCQkJCQkJIDAsIE1BWF9QTEFORSAtIDEpOwotCQlpZiAoIXBy
+b3ApCi0JCQlyZXR1cm47Ci0KLQkJZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVydHkgPSBwcm9w
+OworCWlmIChpbW11dGFibGUpIHsKKwkJaWYgKCFkZXYtPm1vZGVfY29uZmlnLnpwb3NfaW1tdXRh
+YmxlX3Byb3BlcnR5KQorCQkJaWYgKGRybV9tb2RlX2NyZWF0ZV96cG9zX2ltbXV0YWJsZV9wcm9w
+ZXJ0eShkZXYsIDAsCisJCQkJCQkJCU1BWF9QTEFORSAtIDEpKQorCQkJCXJldHVybjsKKwkJcHJv
+cCA9IGRldi0+bW9kZV9jb25maWcuenBvc19pbW11dGFibGVfcHJvcGVydHk7CisJfSBlbHNlIHsK
+KwkJaWYgKCFkZXYtPm1vZGVfY29uZmlnLnpwb3NfcHJvcGVydHkpCisJCQlpZiAoZHJtX21vZGVf
+Y3JlYXRlX3pwb3NfcHJvcGVydHkoZGV2LCAwLAorCQkJCQkJCSAgTUFYX1BMQU5FIC0gMSkpCisJ
+CQkJcmV0dXJuOworCQlwcm9wID0gZGV2LT5tb2RlX2NvbmZpZy56cG9zX3Byb3BlcnR5OwogCX0K
+IAogCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwgcHJvcCwgenBvcyk7
+CkBAIC0zNDQsNyArMzA3LDggQEAgaW50IGV4eW5vc19wbGFuZV9pbml0KHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsCiAJZXh5bm9zX3BsYW5lLT5pbmRleCA9IGluZGV4OwogCWV4eW5vc19wbGFuZS0+
+Y29uZmlnID0gY29uZmlnOwogCi0JZXh5bm9zX3BsYW5lX2F0dGFjaF96cG9zX3Byb3BlcnR5KCZl
+eHlub3NfcGxhbmUtPmJhc2UsIGNvbmZpZy0+enBvcyk7CisJZXh5bm9zX3BsYW5lX2F0dGFjaF96
+cG9zX3Byb3BlcnR5KCZleHlub3NfcGxhbmUtPmJhc2UsIGNvbmZpZy0+enBvcywKKwkJCSAgICEo
+Y29uZmlnLT5jYXBhYmlsaXRpZXMgJiBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TKSk7CiAKIAly
+ZXR1cm4gMDsKIH0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IGI1ZmJj
+MWNiZjAyNC4uZDAwYzIwMTc3M2M5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVy
+LmMKQEAgLTQ3OCw2ICs0NzgsNyBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0
+IG1peGVyX2NvbnRleHQgKmN0eCwKIAlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSA9ICZz
+dGF0ZS0+YmFzZS5jcnRjLT5zdGF0ZS0+YWRqdXN0ZWRfbW9kZTsKIAlzdHJ1Y3QgbWl4ZXJfcmVz
+b3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAq
+ZmIgPSBzdGF0ZS0+YmFzZS5mYjsKKwl1bnNpZ25lZCBpbnQgcHJpb3JpdHkgPSBzdGF0ZS0+YmFz
+ZS5ub3JtYWxpemVkX3pwb3MgKyAxOwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CiAJZG1hX2FkZHJf
+dCBsdW1hX2FkZHJbMl0sIGNocm9tYV9hZGRyWzJdOwogCWJvb2wgdGlsZWRfbW9kZSA9IGZhbHNl
+OwpAQCAtNTYyLDcgKzU2Myw3IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3Qg
+bWl4ZXJfY29udGV4dCAqY3R4LAogCiAJbWl4ZXJfY2ZnX3NjYW4oY3R4LCBtb2RlLT52ZGlzcGxh
+eSk7CiAJbWl4ZXJfY2ZnX3JnYl9mbXQoY3R4LCBtb2RlLT52ZGlzcGxheSk7Ci0JbWl4ZXJfY2Zn
+X2xheWVyKGN0eCwgcGxhbmUtPmluZGV4LCBzdGF0ZS0+enBvcyArIDEsIHRydWUpOworCW1peGVy
+X2NmZ19sYXllcihjdHgsIHBsYW5lLT5pbmRleCwgcHJpb3JpdHksIHRydWUpOwogCW1peGVyX2Nm
+Z192cF9ibGVuZChjdHgpOwogCW1peGVyX3J1bihjdHgpOwogCkBAIC01ODcsNiArNTg4LDcgQEAg
+c3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgs
+CiAJc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmc3RhdGUtPmJhc2UuY3J0Yy0+c3Rh
+dGUtPmFkanVzdGVkX21vZGU7CiAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+
+bWl4ZXJfcmVzOwogCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gc3RhdGUtPmJhc2UuZmI7
+CisJdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsg
+MTsKIAl1bnNpZ25lZCBsb25nIGZsYWdzOwogCXVuc2lnbmVkIGludCB3aW4gPSBwbGFuZS0+aW5k
+ZXg7CiAJdW5zaWduZWQgaW50IHhfcmF0aW8gPSAwLCB5X3JhdGlvID0gMDsKQEAgLTY3OCw3ICs2
+ODAsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRl
+eHQgKmN0eCwKIAogCW1peGVyX2NmZ19zY2FuKGN0eCwgbW9kZS0+dmRpc3BsYXkpOwogCW1peGVy
+X2NmZ19yZ2JfZm10KGN0eCwgbW9kZS0+dmRpc3BsYXkpOwotCW1peGVyX2NmZ19sYXllcihjdHgs
+IHdpbiwgc3RhdGUtPnpwb3MgKyAxLCB0cnVlKTsKKwltaXhlcl9jZmdfbGF5ZXIoY3R4LCB3aW4s
+IHByaW9yaXR5LCB0cnVlKTsKIAltaXhlcl9jZmdfZ2Z4X2JsZW5kKGN0eCwgd2luLCBpc19hbHBo
+YV9mb3JtYXQoZmItPnBpeGVsX2Zvcm1hdCkpOwogCiAJLyogbGF5ZXIgdXBkYXRlIG1hbmRhdG9y
+eSBmb3IgbWl4ZXIgMTYuMC4zMy4wICovCi0tIAoxLjkuMgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
