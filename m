@@ -1,147 +1,438 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 2/3] drm/exynos: use generic code for managing zpos plane
- property
-Date: Mon, 18 Jan 2016 08:48:30 +0100
-Message-ID: <1453103311-14415-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v4 1/3] drm: add generic zpos property
+Date: Mon, 18 Jan 2016 08:48:29 +0100
+Message-ID: <1453103311-14415-2-git-send-email-m.szyprowski@samsung.com>
 References: <1453103311-14415-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:15651 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753778AbcARHs4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Jan 2016 02:48:56 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O1500I5U1PHM160@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jan 2016 07:48:53 +0000 (GMT)
 In-reply-to: <1453103311-14415-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, fabien.dessenne@st.com, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, vincent.abriou@st.com, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
 
-VGhpcyBwYXRjaCByZXBsYWNlcyB6cG9zIHByb3BlcnR5IGhhbmRsaW5nIGN1c3RvbSBjb2RlIGlu
-IEV4eW5vcyBEUk0KZHJpdmVyIHdpdGggY2FsbHMgdG8gZ2VuZXJpYyBEUk0gY29kZS4KClNpZ25l
-ZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0t
-CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICAyIC0KIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgNjggKysrKysrKystLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAg
-ICAgfCAgNiArKy0KIDMgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgNTYgZGVsZXRp
-b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ry
-di5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCmluZGV4IDE3YjVk
-ZWQ3MmZmMS4uODE2NTM3ODg2ZTRlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5oCkBAIC02NCw3ICs2NCw2IEBAIHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlIHsK
-IAlzdHJ1Y3QgZXh5bm9zX2RybV9yZWN0IHNyYzsKIAl1bnNpZ25lZCBpbnQgaF9yYXRpbzsKIAl1
-bnNpZ25lZCBpbnQgdl9yYXRpbzsKLQl1bnNpZ25lZCBpbnQgenBvczsKIH07CiAKIHN0YXRpYyBp
-bmxpbmUgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKgpAQCAtMjE3LDcgKzIxNiw2IEBA
-IHN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgewogCSAqIHRoaXMgYXJyYXkgaXMgdXNlZCB0byBi
-ZSBhd2FyZSBvZiB3aGljaCBjcnRjIGRpZCBpdCByZXF1ZXN0IHZibGFuay4KIAkgKi8KIAlzdHJ1
-Y3QgZHJtX2NydGMgKmNydGNbTUFYX0NSVENdOwotCXN0cnVjdCBkcm1fcHJvcGVydHkgKnBsYW5l
-X3pwb3NfcHJvcGVydHk7CiAKIAl1bnNpZ25lZCBsb25nIGRhX3N0YXJ0OwogCXVuc2lnbmVkIGxv
-bmcgZGFfc3BhY2Vfc2l6ZTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5l
-LmMKaW5kZXggZDg2MjI3MjM2ZjU1Li4zYTQ4NjkzOTE2OGUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCkBAIC0xMzcsOSArMTM3LDkgQEAgc3RhdGljIHZvaWQg
-ZXh5bm9zX2RybV9wbGFuZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSkKIAogCWV4eW5v
-c19zdGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpleHlub3Nfc3RhdGUpLCBHRlBfS0VSTkVMKTsKIAlp
-ZiAoZXh5bm9zX3N0YXRlKSB7Ci0JCWV4eW5vc19zdGF0ZS0+enBvcyA9IGV4eW5vc19wbGFuZS0+
-Y29uZmlnLT56cG9zOwogCQlwbGFuZS0+c3RhdGUgPSAmZXh5bm9zX3N0YXRlLT5iYXNlOwogCQlw
-bGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7CisJCXBsYW5lLT5zdGF0ZS0+enBvcyA9IGV4eW5v
-c19wbGFuZS0+Y29uZmlnLT56cG9zOwogCX0KIH0KIApAQCAtMTU1LDcgKzE1NSw2IEBAIGV4eW5v
-c19kcm1fcGxhbmVfZHVwbGljYXRlX3N0YXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQogCQly
-ZXR1cm4gTlVMTDsKIAogCV9fZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfZHVwbGljYXRlX3N0YXRl
-KHBsYW5lLCAmY29weS0+YmFzZSk7Ci0JY29weS0+enBvcyA9IGV4eW5vc19zdGF0ZS0+enBvczsK
-IAlyZXR1cm4gJmNvcHktPmJhc2U7CiB9CiAKQEAgLTE2OCw0MyArMTY3LDYgQEAgc3RhdGljIHZv
-aWQgZXh5bm9zX2RybV9wbGFuZV9kZXN0cm95X3N0YXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
-LAogCWtmcmVlKG9sZF9leHlub3Nfc3RhdGUpOwogfQogCi1zdGF0aWMgaW50IGV4eW5vc19kcm1f
-cGxhbmVfYXRvbWljX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKLQkJCQkJ
-CXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRlLAotCQkJCQkJc3RydWN0IGRybV9wcm9wZXJ0
-eSAqcHJvcGVydHksCi0JCQkJCQl1aW50NjRfdCB2YWwpCi17Ci0Jc3RydWN0IGV4eW5vc19kcm1f
-cGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7Ci0Jc3RydWN0IGV4
-eW5vc19kcm1fcGxhbmVfc3RhdGUgKmV4eW5vc19zdGF0ZSA9Ci0JCQkJCXRvX2V4eW5vc19wbGFu
-ZV9zdGF0ZShzdGF0ZSk7Ci0Jc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBw
-bGFuZS0+ZGV2LT5kZXZfcHJpdmF0ZTsKLQljb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZV9j
-b25maWcgKmNvbmZpZyA9IGV4eW5vc19wbGFuZS0+Y29uZmlnOwotCi0JaWYgKHByb3BlcnR5ID09
-IGRldl9wcml2LT5wbGFuZV96cG9zX3Byb3BlcnR5ICYmCi0JICAgIChjb25maWctPmNhcGFiaWxp
-dGllcyAmIEVYWU5PU19EUk1fUExBTkVfQ0FQX1pQT1MpKQotCQlleHlub3Nfc3RhdGUtPnpwb3Mg
-PSB2YWw7Ci0JZWxzZQotCQlyZXR1cm4gLUVJTlZBTDsKLQotCXJldHVybiAwOwotfQotCi1zdGF0
-aWMgaW50IGV4eW5vc19kcm1fcGxhbmVfYXRvbWljX2dldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3Bs
-YW5lICpwbGFuZSwKLQkJCQkJICBjb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSwK
-LQkJCQkJICBzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpwcm9wZXJ0eSwKLQkJCQkJICB1aW50NjRfdCAq
-dmFsKQotewotCWNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpleHlub3Nfc3Rh
-dGUgPQotCQljb250YWluZXJfb2Yoc3RhdGUsIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX3BsYW5l
-X3N0YXRlLCBiYXNlKTsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpkZXZfcHJpdiA9IHBs
-YW5lLT5kZXYtPmRldl9wcml2YXRlOwotCi0JaWYgKHByb3BlcnR5ID09IGRldl9wcml2LT5wbGFu
-ZV96cG9zX3Byb3BlcnR5KQotCQkqdmFsID0gZXh5bm9zX3N0YXRlLT56cG9zOwotCWVsc2UKLQkJ
-cmV0dXJuIC1FSU5WQUw7Ci0KLQlyZXR1cm4gMDsKLX0KLQogc3RhdGljIHN0cnVjdCBkcm1fcGxh
-bmVfZnVuY3MgZXh5bm9zX3BsYW5lX2Z1bmNzID0gewogCS51cGRhdGVfcGxhbmUJPSBkcm1fYXRv
-bWljX2hlbHBlcl91cGRhdGVfcGxhbmUsCiAJLmRpc2FibGVfcGxhbmUJPSBkcm1fYXRvbWljX2hl
-bHBlcl9kaXNhYmxlX3BsYW5lLApAQCAtMjEzLDggKzE3NSw2IEBAIHN0YXRpYyBzdHJ1Y3QgZHJt
-X3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKIAkucmVzZXQJCT0gZXh5bm9zX2Ry
-bV9wbGFuZV9yZXNldCwKIAkuYXRvbWljX2R1cGxpY2F0ZV9zdGF0ZSA9IGV4eW5vc19kcm1fcGxh
-bmVfZHVwbGljYXRlX3N0YXRlLAogCS5hdG9taWNfZGVzdHJveV9zdGF0ZSA9IGV4eW5vc19kcm1f
-cGxhbmVfZGVzdHJveV9zdGF0ZSwKLQkuYXRvbWljX3NldF9wcm9wZXJ0eSA9IGV4eW5vc19kcm1f
-cGxhbmVfYXRvbWljX3NldF9wcm9wZXJ0eSwKLQkuYXRvbWljX2dldF9wcm9wZXJ0eSA9IGV4eW5v
-c19kcm1fcGxhbmVfYXRvbWljX2dldF9wcm9wZXJ0eSwKIH07CiAKIHN0YXRpYyBpbnQKQEAgLTMw
-MiwyMCArMjYyLDIzIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX2hlbHBlcl9mdW5j
-cyBwbGFuZV9oZWxwZXJfZnVuY3MgPSB7CiB9OwogCiBzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVf
-YXR0YWNoX3pwb3NfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCi0JCQkJCSAgICAg
-IHVuc2lnbmVkIGludCB6cG9zKQorCQkJCQkgICAgICB1bnNpZ25lZCBpbnQgenBvcywgYm9vbCBp
-bW11dGFibGUpCiB7CiAJc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IHBsYW5lLT5kZXY7Ci0Jc3Ry
-dWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBkZXYtPmRldl9wcml2YXRlOwogCXN0
-cnVjdCBkcm1fcHJvcGVydHkgKnByb3A7CiAKLQlwcm9wID0gZGV2X3ByaXYtPnBsYW5lX3pwb3Nf
-cHJvcGVydHk7Ci0JaWYgKCFwcm9wKSB7Ci0JCXByb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRlX3Jh
-bmdlKGRldiwgMCwgInpwb3MiLAotCQkJCQkJIDAsIE1BWF9QTEFORSAtIDEpOwotCQlpZiAoIXBy
-b3ApCi0JCQlyZXR1cm47Ci0KLQkJZGV2X3ByaXYtPnBsYW5lX3pwb3NfcHJvcGVydHkgPSBwcm9w
-OworCWlmIChpbW11dGFibGUpIHsKKwkJaWYgKCFkZXYtPm1vZGVfY29uZmlnLnpwb3NfaW1tdXRh
-YmxlX3Byb3BlcnR5KQorCQkJaWYgKGRybV9tb2RlX2NyZWF0ZV96cG9zX2ltbXV0YWJsZV9wcm9w
-ZXJ0eShkZXYsIDAsCisJCQkJCQkJCU1BWF9QTEFORSAtIDEpKQorCQkJCXJldHVybjsKKwkJcHJv
-cCA9IGRldi0+bW9kZV9jb25maWcuenBvc19pbW11dGFibGVfcHJvcGVydHk7CisJfSBlbHNlIHsK
-KwkJaWYgKCFkZXYtPm1vZGVfY29uZmlnLnpwb3NfcHJvcGVydHkpCisJCQlpZiAoZHJtX21vZGVf
-Y3JlYXRlX3pwb3NfcHJvcGVydHkoZGV2LCAwLAorCQkJCQkJCSAgTUFYX1BMQU5FIC0gMSkpCisJ
-CQkJcmV0dXJuOworCQlwcm9wID0gZGV2LT5tb2RlX2NvbmZpZy56cG9zX3Byb3BlcnR5OwogCX0K
-IAogCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwgcHJvcCwgenBvcyk7
-CkBAIC0zNDQsNyArMzA3LDggQEAgaW50IGV4eW5vc19wbGFuZV9pbml0KHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYsCiAJZXh5bm9zX3BsYW5lLT5pbmRleCA9IGluZGV4OwogCWV4eW5vc19wbGFuZS0+
-Y29uZmlnID0gY29uZmlnOwogCi0JZXh5bm9zX3BsYW5lX2F0dGFjaF96cG9zX3Byb3BlcnR5KCZl
-eHlub3NfcGxhbmUtPmJhc2UsIGNvbmZpZy0+enBvcyk7CisJZXh5bm9zX3BsYW5lX2F0dGFjaF96
-cG9zX3Byb3BlcnR5KCZleHlub3NfcGxhbmUtPmJhc2UsIGNvbmZpZy0+enBvcywKKwkJCSAgICEo
-Y29uZmlnLT5jYXBhYmlsaXRpZXMgJiBFWFlOT1NfRFJNX1BMQU5FX0NBUF9aUE9TKSk7CiAKIAly
-ZXR1cm4gMDsKIH0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
-eGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IGI1ZmJj
-MWNiZjAyNC4uZDAwYzIwMTc3M2M5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVy
-LmMKQEAgLTQ3OCw2ICs0NzgsNyBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0
-IG1peGVyX2NvbnRleHQgKmN0eCwKIAlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSA9ICZz
-dGF0ZS0+YmFzZS5jcnRjLT5zdGF0ZS0+YWRqdXN0ZWRfbW9kZTsKIAlzdHJ1Y3QgbWl4ZXJfcmVz
-b3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAq
-ZmIgPSBzdGF0ZS0+YmFzZS5mYjsKKwl1bnNpZ25lZCBpbnQgcHJpb3JpdHkgPSBzdGF0ZS0+YmFz
-ZS5ub3JtYWxpemVkX3pwb3MgKyAxOwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CiAJZG1hX2FkZHJf
-dCBsdW1hX2FkZHJbMl0sIGNocm9tYV9hZGRyWzJdOwogCWJvb2wgdGlsZWRfbW9kZSA9IGZhbHNl
-OwpAQCAtNTYyLDcgKzU2Myw3IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3Qg
-bWl4ZXJfY29udGV4dCAqY3R4LAogCiAJbWl4ZXJfY2ZnX3NjYW4oY3R4LCBtb2RlLT52ZGlzcGxh
-eSk7CiAJbWl4ZXJfY2ZnX3JnYl9mbXQoY3R4LCBtb2RlLT52ZGlzcGxheSk7Ci0JbWl4ZXJfY2Zn
-X2xheWVyKGN0eCwgcGxhbmUtPmluZGV4LCBzdGF0ZS0+enBvcyArIDEsIHRydWUpOworCW1peGVy
-X2NmZ19sYXllcihjdHgsIHBsYW5lLT5pbmRleCwgcHJpb3JpdHksIHRydWUpOwogCW1peGVyX2Nm
-Z192cF9ibGVuZChjdHgpOwogCW1peGVyX3J1bihjdHgpOwogCkBAIC01ODcsNiArNTg4LDcgQEAg
-c3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgs
-CiAJc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmc3RhdGUtPmJhc2UuY3J0Yy0+c3Rh
-dGUtPmFkanVzdGVkX21vZGU7CiAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+
-bWl4ZXJfcmVzOwogCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gc3RhdGUtPmJhc2UuZmI7
-CisJdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsg
-MTsKIAl1bnNpZ25lZCBsb25nIGZsYWdzOwogCXVuc2lnbmVkIGludCB3aW4gPSBwbGFuZS0+aW5k
-ZXg7CiAJdW5zaWduZWQgaW50IHhfcmF0aW8gPSAwLCB5X3JhdGlvID0gMDsKQEAgLTY3OCw3ICs2
-ODAsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRl
-eHQgKmN0eCwKIAogCW1peGVyX2NmZ19zY2FuKGN0eCwgbW9kZS0+dmRpc3BsYXkpOwogCW1peGVy
-X2NmZ19yZ2JfZm10KGN0eCwgbW9kZS0+dmRpc3BsYXkpOwotCW1peGVyX2NmZ19sYXllcihjdHgs
-IHdpbiwgc3RhdGUtPnpwb3MgKyAxLCB0cnVlKTsKKwltaXhlcl9jZmdfbGF5ZXIoY3R4LCB3aW4s
-IHByaW9yaXR5LCB0cnVlKTsKIAltaXhlcl9jZmdfZ2Z4X2JsZW5kKGN0eCwgd2luLCBpc19hbHBo
-YV9mb3JtYXQoZmItPnBpeGVsX2Zvcm1hdCkpOwogCiAJLyogbGF5ZXIgdXBkYXRlIG1hbmRhdG9y
-eSBmb3IgbWl4ZXIgMTYuMC4zMy4wICovCi0tIAoxLjkuMgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+This patch adds support for generic plane's zpos property property with
+well-defined semantics:
+- added zpos properties to drm core and plane state structures
+- added helpers for normalizing zpos properties of given set of planes
+- well defined semantics: planes are sorted by zpos values and then pla=
+ne
+  id value if zpos equals
+
+Normalized zpos values are calculated automatically when generic
+muttable zpos property has been initialized. Drivers can simply use
+plane_state->normalized_zpos in their atomic_check and/or plane_update
+callbacks without any additional calls to DRM core.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+---
+ Documentation/DocBook/gpu.tmpl      |  14 ++++-
+ drivers/gpu/drm/drm_atomic.c        |   4 ++
+ drivers/gpu/drm/drm_atomic_helper.c | 118 ++++++++++++++++++++++++++++=
+++++++++
+ drivers/gpu/drm/drm_crtc.c          |  67 ++++++++++++++++++++
+ include/drm/drm_crtc.h              |  17 ++++++
+ 5 files changed, 218 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/DocBook/gpu.tmpl b/Documentation/DocBook/gpu=
+=2Etmpl
+index 6c6e81a9eaf4..183de4a5f4db 100644
+--- a/Documentation/DocBook/gpu.tmpl
++++ b/Documentation/DocBook/gpu.tmpl
+@@ -2004,7 +2004,7 @@ void intel_crt_init(struct drm_device *dev)
+ 	<td valign=3D"top" >Description/Restrictions</td>
+ 	</tr>
+ 	<tr>
+-	<td rowspan=3D"37" valign=3D"top" >DRM</td>
++	<td rowspan=3D"38" valign=3D"top" >DRM</td>
+ 	<td valign=3D"top" >Generic</td>
+ 	<td valign=3D"top" >=E2=80=9Crotation=E2=80=9D</td>
+ 	<td valign=3D"top" >BITMASK</td>
+@@ -2256,7 +2256,7 @@ void intel_crt_init(struct drm_device *dev)
+ 	<td valign=3D"top" >property to suggest an Y offset for a connector</=
+td>
+ 	</tr>
+ 	<tr>
+-	<td rowspan=3D"3" valign=3D"top" >Optional</td>
++	<td rowspan=3D"4" valign=3D"top" >Optional</td>
+ 	<td valign=3D"top" >=E2=80=9Cscaling mode=E2=80=9D</td>
+ 	<td valign=3D"top" >ENUM</td>
+ 	<td valign=3D"top" >{ "None", "Full", "Center", "Full aspect" }</td>
+@@ -2280,6 +2280,16 @@ void intel_crt_init(struct drm_device *dev)
+ 	<td valign=3D"top" >TBD</td>
+ 	</tr>
+ 	<tr>
++	<td valign=3D"top" > "zpos" </td>
++	<td valign=3D"top" >RANGE</td>
++	<td valign=3D"top" >Min=3D0, Max=3D driver dependent</td>
++	<td valign=3D"top" >Plane</td>
++	<td valign=3D"top" >Plane's 'z' position during blending operation (0=
+ for background, highest for frontmost).
++		If two planes assigned to same CRTC have equal zpos values, the plan=
+e with higher plane
++		id is treated as closer to front. Can be IMMUTABLE if driver doesn't=
+ support changing
++		planes' order. Exact value range is driver dependent.</td>
++	</tr>
++	<tr>
+ 	<td rowspan=3D"20" valign=3D"top" >i915</td>
+ 	<td rowspan=3D"2" valign=3D"top" >Generic</td>
+ 	<td valign=3D"top" >"Broadcast RGB"</td>
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.=
+c
+index 6a21e5c378c1..97bb069cb6a3 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -614,6 +614,8 @@ int drm_atomic_plane_set_property(struct drm_plane =
+*plane,
+ 		state->src_h =3D val;
+ 	} else if (property =3D=3D config->rotation_property) {
+ 		state->rotation =3D val;
++	} else if (property =3D=3D config->zpos_property) {
++		state->zpos =3D val;
+ 	} else if (plane->funcs->atomic_set_property) {
+ 		return plane->funcs->atomic_set_property(plane, state,
+ 				property, val);
+@@ -670,6 +672,8 @@ drm_atomic_plane_get_property(struct drm_plane *pla=
+ne,
+ 		*val =3D state->src_h;
+ 	} else if (property =3D=3D config->rotation_property) {
+ 		*val =3D state->rotation;
++	} else if (property =3D=3D config->zpos_property) {
++		*val =3D state->zpos;
+ 	} else if (plane->funcs->atomic_get_property) {
+ 		return plane->funcs->atomic_get_property(plane, state, property, val=
+);
+ 	} else {
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_=
+atomic_helper.c
+index d0d4b2ff7c21..be84b3785de2 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -31,6 +31,7 @@
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <linux/fence.h>
++#include <linux/sort.h>
+=20
+ /**
+  * DOC: overview
+@@ -507,6 +508,119 @@ drm_atomic_helper_check_modeset(struct drm_device=
+ *dev,
+ }
+ EXPORT_SYMBOL(drm_atomic_helper_check_modeset);
+=20
++static int drm_atomic_state_zpos_cmp(const void *a, const void *b)
++{
++	const struct drm_plane_state *sa =3D *(struct drm_plane_state **)a;
++	const struct drm_plane_state *sb =3D *(struct drm_plane_state **)b;
++	int zpos_a =3D (sa->zpos << 16) + sa->plane->base.id;
++	int zpos_b =3D (sb->zpos << 16) + sb->plane->base.id;
++
++	return zpos_a - zpos_b;
++}
++
++/**
++ * drm_atomic_helper_crtc_normalize_zpos - calculate normalized zpos v=
+alues
++ * @crtc: crtc with planes, which have to be considered for normalizat=
+ion
++ * @crtc_state: new atomic state to apply
++ *
++ * This function checks new states of all planes assigned to given crt=
+c and
++ * calculates normalized zpos value for them. Planes are compared firs=
+t by their
++ * zpos values, then by plane id (if zpos equals). Plane with lowest z=
+pos value
++ * is at the bottom. The plane_state->normalized_zpos is then filled w=
+ith uniqe
++ * values from 0 to number of active planes in crtc minus one.
++ *
++ * RETURNS
++ * Zero for success or -errno
++ */
++int drm_atomic_helper_crtc_normalize_zpos(struct drm_crtc *crtc,
++					      struct drm_crtc_state *crtc_state)
++{
++	struct drm_atomic_state *state =3D crtc_state->state;
++	struct drm_device *dev =3D crtc->dev;
++	int total_planes =3D dev->mode_config.num_total_plane;
++	struct drm_plane_state **states;
++	struct drm_plane *plane;
++	int i, n =3D 0;
++	int ret =3D 0;
++
++	DRM_DEBUG_ATOMIC("[CRTC:%d:%s] calculating normalized zpos values\n",
++			 crtc->base.id, crtc->name);
++
++	states =3D kmalloc(total_planes * sizeof(*states), GFP_KERNEL);
++	if (!states)
++		return -ENOMEM;
++
++	/*
++	 * Normalization process might create new states for planes which
++	 * normalized_zpos has to be recalculated.
++	 */
++	drm_for_each_plane_mask(plane, dev, crtc_state->plane_mask) {
++		struct drm_plane_state *plane_state =3D
++			drm_atomic_get_plane_state(state, plane);
++		if (IS_ERR(plane_state)) {
++			ret =3D PTR_ERR(plane_state);
++			goto fail;
++		}
++		states[n++] =3D plane_state;
++		DRM_DEBUG_ATOMIC("[PLANE:%d:%s] processing zpos value %d\n",
++				 plane->base.id, plane->name, plane_state->zpos);
++	}
++
++	sort(states, n, sizeof(*states), drm_atomic_state_zpos_cmp, NULL);
++
++	for (i =3D 0; i < n; i++) {
++		plane =3D states[i]->plane;
++		states[i]->normalized_zpos =3D i;
++		DRM_DEBUG_ATOMIC("[PLANE:%d:%s] normalized zpos value %d\n",
++				 plane->base.id, plane->name, i);
++	}
++	crtc_state->zpos_changed =3D true;
++
++fail:
++	kfree(states);
++	return ret;
++}
++EXPORT_SYMBOL(drm_atomic_helper_crtc_normalize_zpos);
++
++static int drm_atomic_helper_normalize_zpos(struct drm_device *dev,
++					    struct drm_atomic_state *state)
++{
++	struct drm_crtc *crtc;
++	struct drm_crtc_state *crtc_state;
++	struct drm_plane *plane;
++	struct drm_plane_state *plane_state;
++	int i, ret =3D 0;
++
++	/*
++	 * If zpos_property is not initialized, then it makes no sense
++	 * to calculate normalized zpos values.
++	 */
++	if (!dev->mode_config.zpos_property)
++		return 0;
++
++	for_each_plane_in_state(state, plane, plane_state, i) {
++		crtc =3D plane_state->crtc;
++		if (!crtc)
++			continue;
++		if (plane->state->zpos !=3D plane_state->zpos) {
++			crtc_state =3D
++				drm_atomic_get_existing_crtc_state(state, crtc);
++			crtc_state->zpos_changed =3D true;
++		}
++	}
++
++	for_each_crtc_in_state(state, crtc, crtc_state, i) {
++		if (crtc_state->plane_mask !=3D crtc->state->plane_mask ||
++		    crtc_state->zpos_changed) {
++			ret =3D drm_atomic_helper_crtc_normalize_zpos(crtc,
++								    crtc_state);
++			if (ret)
++				return ret;
++		}
++	}
++	return 0;
++}
++
+ /**
+  * drm_atomic_helper_check_planes - validate state object for planes c=
+hanges
+  * @dev: DRM device
+@@ -532,6 +646,10 @@ drm_atomic_helper_check_planes(struct drm_device *=
+dev,
+ 	struct drm_plane_state *plane_state;
+ 	int i, ret =3D 0;
+=20
++	ret =3D drm_atomic_helper_normalize_zpos(dev, state);
++	if (ret)
++		return ret;
++
+ 	for_each_plane_in_state(state, plane, plane_state, i) {
+ 		const struct drm_plane_helper_funcs *funcs;
+=20
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 62fa95fa5471..c6f7238cdab3 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -5880,6 +5880,73 @@ struct drm_property *drm_mode_create_rotation_pr=
+operty(struct drm_device *dev,
+ EXPORT_SYMBOL(drm_mode_create_rotation_property);
+=20
+ /**
++ * drm_mode_create_zpos_property - create muttable zpos property
++ * @dev: DRM device
++ * @min: minimal possible value of zpos property
++ * @max: maximal possible value of zpos property
++ *
++ * This function initializes generic muttable zpos property and enable=
+s support
++ * for it in drm core. Drivers can then attach this property to planes=
+ to enable
++ * support for configurable planes arrangement during blending operati=
+on.
++ * Once muttable zpos property has been enabled, the DRM core will aut=
+omatically
++ * calculate drm_plane_state->normalized_zpos values. Usually min shou=
+ld be set
++ * to 0 and max to maximal number of planes for given crtc - 1.
++ *
++ * If zpos of some planes cannot be changed (like fixed backgroud or
++ * cursor/topmost planes), driver should adjust min/max values and ass=
+ign those
++ * planes immutable zpos property with lower or higher values (for mor=
+e
++ * information, see drm_mode_create_zpos_immutable_property() function=
+). In such
++ * case driver should also assign proper initial zpos values for all p=
+lanes in
++ * its plane_reset() callback, so the planes will be always sorted pro=
+perly.
++ *
++ * Returns:
++ * Zero on success, negative errno on failure.
++ */
++int drm_mode_create_zpos_property(struct drm_device *dev, unsigned int=
+ min,
++				  unsigned int max)
++{
++	struct drm_property *prop;
++
++	prop =3D drm_property_create_range(dev, 0, "zpos", min, max);
++	if (!prop)
++		return -ENOMEM;
++
++	dev->mode_config.zpos_property =3D prop;
++	return 0;
++}
++EXPORT_SYMBOL(drm_mode_create_zpos_property);
++
++/**
++ * drm_mode_create_zpos_immutable_property - create immuttable zpos pr=
+operty
++ * @dev: DRM device
++ * @min: minimal possible value of zpos property
++ * @max: maximal possible value of zpos property
++ *
++ * This function initializes generic immuttable zpos property and enab=
+les
++ * support for it in drm core. Using this property driver lets userspa=
+ce
++ * to get the arrangement of the planes for blending operation and not=
+ifies
++ * it that the hardware (or driver) doesn't support changing of the pl=
+anes'
++ * order.
++ *
++ * Returns:
++ * Zero on success, negative errno on failure.
++ */
++int drm_mode_create_zpos_immutable_property(struct drm_device *dev,
++					    unsigned int min, unsigned int max)
++{
++	struct drm_property *prop;
++
++	prop =3D drm_property_create_range(dev, DRM_MODE_PROP_IMMUTABLE, "zpo=
+s",
++					 min, max);
++	if (!prop)
++		return -ENOMEM;
++
++	dev->mode_config.zpos_immutable_property =3D prop;
++	return 0;
++}
++EXPORT_SYMBOL(drm_mode_create_zpos_immutable_property);
++
++/**
+  * DOC: Tile group
+  *
+  * Tile groups are used to represent tiled monitors with a unique
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index 3b040b355472..f53cdda1167b 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -305,6 +305,7 @@ struct drm_plane_helper_funcs;
+  * @mode_changed: crtc_state->mode or crtc_state->enable has been chan=
+ged
+  * @active_changed: crtc_state->active has been toggled.
+  * @connectors_changed: connectors to this crtc have been updated
++ * @zpos_changed: zpos values of planes on this crtc have been updated
+  * @plane_mask: bitmask of (1 << drm_plane_index(plane)) of attached p=
+lanes
+  * @last_vblank_count: for helpers and drivers to capture the vblank o=
+f the
+  * 	update to ensure framebuffer cleanup isn't done too early
+@@ -331,6 +332,7 @@ struct drm_crtc_state {
+ 	bool mode_changed : 1;
+ 	bool active_changed : 1;
+ 	bool connectors_changed : 1;
++	bool zpos_changed : 1;
+=20
+ 	/* attached planes bitmask:
+ 	 * WARNING: transitional helpers do not maintain plane_mask so
+@@ -1243,6 +1245,9 @@ struct drm_connector {
+  *	plane (in 16.16)
+  * @src_w: width of visible portion of plane (in 16.16)
+  * @src_h: height of visible portion of plane (in 16.16)
++ * @zpos: priority of the given plane on crtc (optional)
++ * @normalized_zpos: normalized value of zpos: uniqe, range from 0 to
++ *	(number of planes - 1) for given crtc
+  * @state: backpointer to global drm_atomic_state
+  */
+ struct drm_plane_state {
+@@ -1263,6 +1268,10 @@ struct drm_plane_state {
+ 	/* Plane rotation */
+ 	unsigned int rotation;
+=20
++	/* Plane zpos */
++	unsigned int zpos;
++	unsigned int normalized_zpos;
++
+ 	struct drm_atomic_state *state;
+ };
+=20
+@@ -2083,6 +2092,8 @@ struct drm_mode_config {
+ 	struct drm_property *tile_property;
+ 	struct drm_property *plane_type_property;
+ 	struct drm_property *rotation_property;
++	struct drm_property *zpos_property;
++	struct drm_property *zpos_immutable_property;
+ 	struct drm_property *prop_src_x;
+ 	struct drm_property *prop_src_y;
+ 	struct drm_property *prop_src_w;
+@@ -2484,6 +2495,12 @@ extern struct drm_property *drm_mode_create_rota=
+tion_property(struct drm_device
+ extern unsigned int drm_rotation_simplify(unsigned int rotation,
+ 					  unsigned int supported_rotations);
+=20
++extern int drm_mode_create_zpos_property(struct drm_device *dev,
++					 unsigned int min, unsigned int max);
++extern int drm_mode_create_zpos_immutable_property(struct drm_device *=
+dev,
++						   unsigned int min,
++						   unsigned int max);
++
+ /* Helpers */
+=20
+ static inline struct drm_plane *drm_plane_find(struct drm_device *dev,
+--=20
+1.9.2
