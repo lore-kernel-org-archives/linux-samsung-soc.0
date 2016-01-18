@@ -1,100 +1,123 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH 1/2] clk: s2mps11: remove redundant variable
-Date: Mon, 18 Jan 2016 17:25:24 +0900
-Message-ID: <1453105525-31506-2-git-send-email-andi.shyti@samsung.com>
-References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
+ bindings for DECON-TV
+Date: Mon, 18 Jan 2016 18:54:44 +0900
+Message-ID: <569CB664.3090806@samsung.com>
+References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+ <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+ <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
+ <569C279D.1020705@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57577 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754427AbcARJyv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Jan 2016 04:54:51 -0500
+In-reply-to: <569C279D.1020705@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Rob Herring <robh+dt@kernel.org>
 
-In the probe function the s2mps11_clk pointer is used only to
-iterate through the s2mps11_clks. The naming itself brings
-confusion and the readability is not improved.
 
-Remove it, save some memory and headaches due to name similarity.
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
- drivers/clk/clk-s2mps11.c | 36 +++++++++++++++++-------------------
- 1 file changed, 17 insertions(+), 19 deletions(-)
+2016=EB=85=84 01=EC=9B=94 18=EC=9D=BC 08:45=EC=97=90 Krzysztof Kozlowsk=
+i =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> On 14.01.2016 19:49, Inki Dae wrote:
+>> + Rob Herring
+>>
+>> 2016=EB=85=84 01=EC=9B=94 14=EC=9D=BC 19:36=EC=97=90 Andrzej Hajda =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>>> Hi Inki,
+>>>
+>>> It seems this patch and 04/10 did not get picked up yet.
+>>> Could you merge it?
+>>
+>> Yes, I can. However, 04/10 is required for acked-by from dt or SoC m=
+aintainer.
+>> Krzysztof and Rob, could you give me acked-by?
+>>
+>> Thanks,
+>> Inki Dae
+>=20
+> My ack is really not required, because this is a binding for a specif=
+ic
+> driver from video subsystem. It does not fall into the arm/mach-exyno=
+s
+> nor the dts/*exynos*.
+>=20
+> Anyway I reviewed the patch on 28th of October and Rob acked it on 13=
+th
+> of November.
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index d266299..ccb12f1 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -28,7 +28,7 @@
- #include <linux/mfd/samsung/s5m8767.h>
- #include <linux/mfd/samsung/core.h>
- 
--#define s2mps11_name(a) (a->hw.init->name)
-+#define s2mps11_name(a) (a.hw.init->name)
- 
- static struct clk **clk_table;
- static struct clk_onecell_data clk_data;
-@@ -177,18 +177,16 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
- static int s2mps11_clk_probe(struct platform_device *pdev)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
-+	struct s2mps11_clk *s2mps11_clks;
- 	unsigned int s2mps11_reg;
- 	struct clk_init_data *clks_init;
- 	int i, ret = 0;
- 
- 	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
--				sizeof(*s2mps11_clk), GFP_KERNEL);
-+				sizeof(*s2mps11_clks), GFP_KERNEL);
- 	if (!s2mps11_clks)
- 		return -ENOMEM;
- 
--	s2mps11_clk = s2mps11_clks;
--
- 	clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
- 				sizeof(struct clk *), GFP_KERNEL);
- 	if (!clk_table)
-@@ -221,26 +219,26 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(s2mps11_clks->clk_np))
- 		return PTR_ERR(s2mps11_clks->clk_np);
- 
--	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
-+	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
- 		if (!clks_init[i].name)
- 			continue; /* Skip clocks not present in some devices */
--		s2mps11_clk->iodev = iodev;
--		s2mps11_clk->hw.init = &clks_init[i];
--		s2mps11_clk->mask = 1 << i;
--		s2mps11_clk->reg = s2mps11_reg;
--
--		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
--							&s2mps11_clk->hw);
--		if (IS_ERR(s2mps11_clk->clk)) {
-+		s2mps11_clks[i].iodev = iodev;
-+		s2mps11_clks[i].hw.init = &clks_init[i];
-+		s2mps11_clks[i].mask = 1 << i;
-+		s2mps11_clks[i].reg = s2mps11_reg;
-+
-+		s2mps11_clks[i].clk = devm_clk_register(&pdev->dev,
-+							&s2mps11_clks[i].hw);
-+		if (IS_ERR(s2mps11_clks[i].clk)) {
- 			dev_err(&pdev->dev, "Fail to register : %s\n",
--						s2mps11_name(s2mps11_clk));
--			ret = PTR_ERR(s2mps11_clk->clk);
-+						s2mps11_name(s2mps11_clks[i]));
-+			ret = PTR_ERR(s2mps11_clks[i].clk);
- 			goto err_reg;
- 		}
- 
--		s2mps11_clk->lookup = clkdev_create(s2mps11_clk->clk,
--					s2mps11_name(s2mps11_clk), NULL);
--		if (!s2mps11_clk->lookup) {
-+		s2mps11_clks[i].lookup = clkdev_create(s2mps11_clks[i].clk,
-+					s2mps11_name(s2mps11_clks[i]), NULL);
-+		if (!s2mps11_clks[i].lookup) {
- 			ret = -ENOMEM;
- 			goto err_reg;
- 		}
--- 
-2.6.4
+I meant 04/10 not 09/10 patch. :)
+
+Thanks,
+Inki Dae
+
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+>>>
+>>> Regards
+>>> Andrzej
+>>>
+>>> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
+>>>> DECON-TV(Display and Enhancement Controller for TV) is a variation
+>>>> of DECON IP. Its main purpose is to produce video stream for HDMI =
+IP.
+>>>>
+>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>>> ---
+>>>> Hi Krzysztof,
+>>>>
+>>>> I have decided to skip cleanup part as it would require more work,
+>>>> not related to this patchset.
+>>>>
+>>>> Regards
+>>>> Andrzej
+>>>>
+>>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 =
+++-
+>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-de=
+con.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>> index 3dff78b..c9fd7b3 100644
+>>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image da=
+ta from a video memory
+>>>>  buffer to an external LCD interface.
+>>>> =20
+>>>>  Required properties:
+>>>> -- compatible: value should be "samsung,exynos5433-decon";
+>>>> +- compatible: value should be one of:
+>>>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+>>>>  - reg: physical base address and length of the DECON registers se=
+t.
+>>>>  - interrupts: should contain a list of all DECON IP block interru=
+pts in the
+>>>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-sam=
+sung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
