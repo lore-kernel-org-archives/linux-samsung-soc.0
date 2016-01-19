@@ -1,150 +1,92 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-Date: Tue, 19 Jan 2016 15:34:23 +0900
-Message-ID: <569DD8EF.90703@samsung.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
- <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
- <569C279D.1020705@samsung.com> <569CB664.3090806@samsung.com>
- <569CBA70.8000107@samsung.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH 2/2] clk: s2mps11: allocate only one structure for clock init
+Date: Tue, 19 Jan 2016 00:00:52 -0800
+Message-ID: <CAKew6eWRev=U_4LeptMGjhz1-zNG1djiZJx4NLf0LoLQMNHQTg@mail.gmail.com>
+References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
+	<1453105525-31506-3-git-send-email-andi.shyti@samsung.com>
+	<CAKew6eX4WZa4595ZUhiX+Ndc_WCzBNJBh5ejzxaJVkCnAskCYw@mail.gmail.com>
+	<20160119024316.GA3793@samsunx.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <569CBA70.8000107@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34881 "EHLO
+	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757321AbcASIAx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Jan 2016 03:00:53 -0500
+In-Reply-To: <20160119024316.GA3793@samsunx.samsung>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-
-
-2016=EB=85=84 01=EC=9B=94 18=EC=9D=BC 19:12=EC=97=90 Andrzej Hajda =EC=9D=
-=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> Hi Inki,
->=20
-> On 01/18/2016 10:54 AM, Inki Dae wrote:
+On Mon, Jan 18, 2016 at 6:43 PM, Andi Shyti <andi.shyti@samsung.com> wrote:
+> Hi Yadwinder,
+>
+>>     The driver allocates three structures for three different clock
+>>     types. They are quite similar and in the clock init data they
+>>     differ only by the name. Only one of these structure is used,
+>>     while the others lie unused in the memory.
 >>
->> 2016=EB=85=84 01=EC=9B=94 18=EC=9D=BC 08:45=EC=97=90 Krzysztof Kozlo=
-wski =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->>> On 14.01.2016 19:49, Inki Dae wrote:
->>>> + Rob Herring
->>>>
->>>> 2016=EB=85=84 01=EC=9B=94 14=EC=9D=BC 19:36=EC=97=90 Andrzej Hajda=
- =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->>>>> Hi Inki,
->>>>>
->>>>> It seems this patch and 04/10 did not get picked up yet.
->>>>> Could you merge it?
->>>> Yes, I can. However, 04/10 is required for acked-by from dt or SoC=
- maintainer.
->>>> Krzysztof and Rob, could you give me acked-by?
->>>>
->>>> Thanks,
->>>> Inki Dae
->>> My ack is really not required, because this is a binding for a spec=
-ific
->>> driver from video subsystem. It does not fall into the arm/mach-exy=
-nos
->>> nor the dts/*exynos*.
->>>
->>> Anyway I reviewed the patch on 28th of October and Rob acked it on =
-13th
->>> of November.
->> I meant 04/10 not 09/10 patch. :)
->=20
-> There is document in kernel with clear explanation about the subject:
-> Documentation/devicetree/bindings/submitting-patches.txt.
-> See especially paragraph II.2 [1].
->=20
-> [1]: Documentation/devicetree/bindings/submitting-patches.txt#L50
-
-Got it. The document says,
-"For driver (not subsystem) bindings: If you are comfortable with the
- binding, and it hasn't received an Acked-by from the devicetree
- maintainers after a few weeks, go ahead and take it."
-
-Thanks,
-Inki Dae
-
->=20
-> Regards
-> Andrzej
->=20
 >>
->> Thanks,
->> Inki Dae
+>> If you are worried about memory, they can be made __initdata by
+>> creating a copy during probe.
+>
+> mmmhhh... allocating in boot time as much as we want and then copy
+> what we need? It doesn't look that pretty to me.
+>
+
+I think its not a new practice and I don't see any issue with it.
+
+>>     The clock's name, though, is not such a meaningful information
 >>
->>> Best regards,
->>> Krzysztof
->>>
->>>
->>>>> Regards
->>>>> Andrzej
->>>>>
->>>>> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
->>>>>> DECON-TV(Display and Enhancement Controller for TV) is a variati=
-on
->>>>>> of DECON IP. Its main purpose is to produce video stream for HDM=
-I IP.
->>>>>>
->>>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>>>>> ---
->>>>>> Hi Krzysztof,
->>>>>>
->>>>>> I have decided to skip cleanup part as it would require more wor=
-k,
->>>>>> not related to this patchset.
->>>>>>
->>>>>> Regards
->>>>>> Andrzej
->>>>>>
->>>>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | =
-3 ++-
->>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-=
-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.tx=
-t
->>>>>> index 3dff78b..c9fd7b3 100644
->>>>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.t=
-xt
->>>>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.t=
-xt
->>>>>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image =
-data from a video memory
->>>>>>  buffer to an external LCD interface.
->>>>>> =20
->>>>>>  Required properties:
->>>>>> -- compatible: value should be "samsung,exynos5433-decon";
->>>>>> +- compatible: value should be one of:
->>>>>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
->>>>>>  - reg: physical base address and length of the DECON registers =
-set.
->>>>>>  - interrupts: should contain a list of all DECON IP block inter=
-rupts in the
->>>>>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-s=
-amsung-soc" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.htm=
-l
->>>>>
->>>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-sam=
-sung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->=20
+>>
+>> I think it can be meaningful in debugging.
+>
+> Can you explain what's the use of the naming other than
+> debugging?
+>
+
+Isn't debugging important enough ?  :)
+
+I had misunderstood your below statement.
+Looking at code, it seems its still using different names for different clocks.
+
+>>     and by assigning the same name to the initial data we can avoid
+>>     over allocation. The common name chosen will be s2mps11,
+>>     coherently with the device driver name, instead of the clock
+>>     device.
+>>
+>>     Therefore, remove the structures associated to s2mps13 and
+>>     s2mps14 and use only the one referred to s2mps11 for all kind of
+>>     clocks.
+>>
+>>
+>> IMHO, with all these modifications, it will leave driver with some extra
+>> checks and reduced readability, perhaps will make it complex to add
+>> support for similar clocks but with different clk_ops, if next version or
+>>  any similar mfd chip comes up in future.
+>
+> In that case, when the new chip will come, we would need to
+> figure out something,
+
+Different structures were introduced to handle such cases and keep
+driver simple and clean by keeping keep no. of if() checks as limited
+as possible.
+
+> but for sure I don't see it as a good idea
+> to leave allocated unused structures.
+>
+
+Even a single unused structure isn't a good idea, in case where this driver
+doesn't get probed. :)
+
+Regards,
+Yadwinder
+
+> Thanks,
+> Andi
 > --
-> To unsubscribe from this list: send the line "unsubscribe devicetree"=
- in
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
->=20
