@@ -1,119 +1,505 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v12.1 06/17] ARM: dts: exynos/dp: remove some properties that
- deprecated by analogix_dp driver
-Date: Tue, 19 Jan 2016 18:02:48 +0800
-Message-ID: <1453197768-13253-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v12.1 07/17] drm: rockchip: dp: add rockchip platform dp driver
+Date: Tue, 19 Jan 2016 18:04:53 +0800
+Message-ID: <1453197893-13413-1-git-send-email-ykk@rock-chips.com>
 References: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:36227 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932778AbcASKHB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Jan 2016 05:07:01 -0500
 In-Reply-To: <1450873538-18304-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-rockchip@lists.infradead.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>
+Cc: Russell King <linux@arm.linux.org.uk>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
 
-QWZ0ZXIgZXh5bm9zX2RwIGhhdmUgYmVlbiBzcGxpdCB0aGUgY29tbW9uIElQIGNvZGUgaW50byBh
-bmFsb2dpeF9kcCBkcml2ZXIsCnRoZSBhbmFsb2dpeF9kcCBkcml2ZXIgaGF2ZSBkZXByZWNhdGVk
-IHNvbWUgU2Ftc3VuZyBwbGF0Zm9ybSBwcm9wZXJ0aWVzIHdoaWNoCmNvdWxkIGJlIGR5bmFtaWNh
-bGx5IHBhcnNlZCBmcm9tIEVESUQvTU9ERS9EUENEIG1lc3NhZ2UsIHNvIHRoaXMgaXMgYW4gdXBk
-YXRlCmZvciBFeHlub3MgRFRTIGZpbGUgZm9yIGRwLWNvbnRyb2xsZXIuCgpCZXNpZGUgdGhlIGJh
-Y2t3YXJkIGNvbXBhdGliaWxpdHkgaXMgZnVsbHkgcHJlc2VydmVkLCBzbyB0aGVyZSBhcmUgbm8K
-YmlzZWN0YWJpbGl0eSBicmVhayB0aGF0IG1ha2UgdGhpcyBjaGFuZ2UgaW4gYSBzZXBhcmF0ZSBw
-YXRjaC4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KUmV2
-aWV3ZWQtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgpU
-ZXN0ZWQtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNv
-bT4KLS0tClRoZXJlIGlzIG5vIG5ldyBjaGFuZ2VzIGluIHYxMi4xLCBidXQganVzdCByZWJhc2Ug
-dGhlIHdob2xlIHBhdGNoZXMgb24KdG9wIG9mIERhdmUncyBkcm0tbmV4dCBicmFuY2ggWzBdIChI
-ZWlrbykKCkNoYW5nZXMgaW4gdjEyLjE6IE5vbmUKQ2hhbmdlcyBpbiB2MTI6IE5vbmUKQ2hhbmdl
-cyBpbiB2MTE6IE5vbmUKQ2hhbmdlcyBpbiB2MTA6IE5vbmUKQ2hhbmdlcyBpbiB2OTogTm9uZQpD
-aGFuZ2VzIGluIHY4OiBOb25lCkNoYW5nZXMgaW4gdjc6IE5vbmUKQ2hhbmdlcyBpbiB2NjoKLSBG
-aXggUGVhY2ggUGl0IGhwZCBwcm9wZXJ0eSBuYW1lIGVycm9yOgotICAgICAgIGhwZC1ncGlvID0g
-PCZncHgyIDYgMD47CisgICAgICAgaHBkLWdwaW9zID0gPCZncHgyIDYgMD47CgpDaGFuZ2VzIGlu
-IHY1OgotIENvcnJlY3QgdGhlIG1pc3NwZWxsIGluIGNvbW1pdCBtZXNzYWdlLiAoS3J6eXN6dG9m
-KQoKQ2hhbmdlcyBpbiB2NDoKLSBTZXBhcmF0ZSBhbGwgRFRTIGNoYW5nZXMgdG8gYSBzZXBhcmF0
-ZSBwYXRjaC4gKEtyenlzenRvZikKCkNoYW5nZXMgaW4gdjM6IE5vbmUKQ2hhbmdlcyBpbiB2Mjog
-Tm9uZQoKIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5kdHMgICAgICB8IDIg
-LS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc21kazUyNTAuZHRzICAgICB8IDIgLS0K
-IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc25vdy1jb21tb24uZHRzaSB8IDQgKy0tLQog
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzICAgICAgIHwgNCArLS0tCiBh
-cmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLXBlYWNoLXBpdC5kdHMgICAgfCA0ICstLS0KIGFy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtc21kazU0MjAuZHRzICAgICB8IDIgLS0KIGFyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAtcGVhY2gtcGkuZHRzICAgICB8IDIgLS0KIDcgZmlsZXMg
-Y2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAxNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9h
-cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLWFybmRhbGUuZHRzIGIvYXJjaC9hcm0vYm9vdC9k
-dHMvZXh5bm9zNTI1MC1hcm5kYWxlLmR0cwppbmRleCBjMDAwNTMyLi5iMTc5MGNmIDEwMDY0NAot
-LS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLWFybmRhbGUuZHRzCisrKyBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtYXJuZGFsZS5kdHMKQEAgLTEyNCw4ICsxMjQsNiBAQAog
-JmRwIHsKIAlzdGF0dXMgPSAib2theSI7CiAJc2Ftc3VuZyxjb2xvci1zcGFjZSA9IDwwPjsKLQlz
-YW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Ci0Jc2Ftc3VuZyx5Y2Jjci1jb2VmZiA9IDwwPjsK
-IAlzYW1zdW5nLGNvbG9yLWRlcHRoID0gPDE+OwogCXNhbXN1bmcsbGluay1yYXRlID0gPDB4MGE+
-OwogCXNhbXN1bmcsbGFuZS1jb3VudCA9IDw0PjsKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczUyNTAtc21kazUyNTAuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1
-MC1zbWRrNTI1MC5kdHMKaW5kZXggMGY1ZGNkNC4uZjMwYzJkYiAxMDA2NDQKLS0tIGEvYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbWRrNTI1MC5kdHMKKysrIGIvYXJjaC9hcm0vYm9vdC9k
-dHMvZXh5bm9zNTI1MC1zbWRrNTI1MC5kdHMKQEAgLTgwLDggKzgwLDYgQEAKIAogJmRwIHsKIAlz
-YW1zdW5nLGNvbG9yLXNwYWNlID0gPDA+OwotCXNhbXN1bmcsZHluYW1pYy1yYW5nZSA9IDwwPjsK
-LQlzYW1zdW5nLHljYmNyLWNvZWZmID0gPDA+OwogCXNhbXN1bmcsY29sb3ItZGVwdGggPSA8MT47
-CiAJc2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwYT47CiAJc2Ftc3VuZyxsYW5lLWNvdW50ID0gPDQ+
-OwpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbm93LWNvbW1vbi5k
-dHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbm93LWNvbW1vbi5kdHNpCmluZGV4
-IDBhN2Y0MDguLmVlOTQxMTAgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUy
-NTAtc25vdy1jb21tb24uZHRzaQorKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNu
-b3ctY29tbW9uLmR0c2kKQEAgLTIzNiwxMiArMjM2LDEwIEBACiAJcGluY3RybC1uYW1lcyA9ICJk
-ZWZhdWx0IjsKIAlwaW5jdHJsLTAgPSA8JmRwX2hwZD47CiAJc2Ftc3VuZyxjb2xvci1zcGFjZSA9
-IDwwPjsKLQlzYW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Ci0Jc2Ftc3VuZyx5Y2Jjci1jb2Vm
-ZiA9IDwwPjsKIAlzYW1zdW5nLGNvbG9yLWRlcHRoID0gPDE+OwogCXNhbXN1bmcsbGluay1yYXRl
-ID0gPDB4MGE+OwogCXNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKLQlzYW1zdW5nLGhwZC1ncGlv
-ID0gPCZncHgwIDcgR1BJT19BQ1RJVkVfSElHSD47CisJaHBkLWdwaW9zID0gPCZncHgwIDcgR1BJ
-T19BQ1RJVkVfSElHSD47CiAKIAlwb3J0cyB7CiAJCXBvcnRAMCB7CmRpZmYgLS1naXQgYS9hcmNo
-L2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmluZy5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9l
-eHlub3M1MjUwLXNwcmluZy5kdHMKaW5kZXggYzFlZGQ2ZC4uOTE4ODFkNyAxMDA2NDQKLS0tIGEv
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzCisrKyBiL2FyY2gvYXJtL2Jv
-b3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cwpAQCAtNzQsMTIgKzc0LDEwIEBACiAJcGluY3Ry
-bC1uYW1lcyA9ICJkZWZhdWx0IjsKIAlwaW5jdHJsLTAgPSA8JmRwX2hwZF9ncGlvPjsKIAlzYW1z
-dW5nLGNvbG9yLXNwYWNlID0gPDA+OwotCXNhbXN1bmcsZHluYW1pYy1yYW5nZSA9IDwwPjsKLQlz
-YW1zdW5nLHljYmNyLWNvZWZmID0gPDA+OwogCXNhbXN1bmcsY29sb3ItZGVwdGggPSA8MT47CiAJ
-c2Ftc3VuZyxsaW5rLXJhdGUgPSA8MHgwYT47CiAJc2Ftc3VuZyxsYW5lLWNvdW50ID0gPDE+Owot
-CXNhbXN1bmcsaHBkLWdwaW8gPSA8JmdwYzMgMCBHUElPX0FDVElWRV9ISUdIPjsKKwlocGQtZ3Bp
-b3MgPSA8JmdwYzMgMCBHUElPX0FDVElWRV9ISUdIPjsKIH07CiAKICZlaGNpIHsKZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0cyBiL2FyY2gvYXJt
-L2Jvb3QvZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0cwppbmRleCA3MmJhNmYwLi44YmFmNDBh
-IDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLXBlYWNoLXBpdC5kdHMK
-KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC1wZWFjaC1waXQuZHRzCkBAIC0xNDgs
-MTIgKzE0OCwxMCBAQAogCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CiAJcGluY3RybC0wID0g
-PCZkcF9ocGRfZ3Bpbz47CiAJc2Ftc3VuZyxjb2xvci1zcGFjZSA9IDwwPjsKLQlzYW1zdW5nLGR5
-bmFtaWMtcmFuZ2UgPSA8MD47Ci0Jc2Ftc3VuZyx5Y2Jjci1jb2VmZiA9IDwwPjsKIAlzYW1zdW5n
-LGNvbG9yLWRlcHRoID0gPDE+OwogCXNhbXN1bmcsbGluay1yYXRlID0gPDB4MDY+OwogCXNhbXN1
-bmcsbGFuZS1jb3VudCA9IDwyPjsKLQlzYW1zdW5nLGhwZC1ncGlvID0gPCZncHgyIDYgR1BJT19B
-Q1RJVkVfSElHSD47CisJaHBkLWdwaW9zID0gPCZncHgyIDYgR1BJT19BQ1RJVkVfSElHSD47CiAK
-IAlwb3J0cyB7CiAJCXBvcnRAMCB7CmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlu
-b3M1NDIwLXNtZGs1NDIwLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtc21kazU0
-MjAuZHRzCmluZGV4IGFjMzVhZWYuLmY2NzM0NGYgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczU0MjAtc21kazU0MjAuZHRzCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
-czU0MjAtc21kazU0MjAuZHRzCkBAIC05Myw4ICs5Myw2IEBACiAJcGluY3RybC1uYW1lcyA9ICJk
-ZWZhdWx0IjsKIAlwaW5jdHJsLTAgPSA8JmRwX2hwZD47CiAJc2Ftc3VuZyxjb2xvci1zcGFjZSA9
-IDwwPjsKLQlzYW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8MD47Ci0Jc2Ftc3VuZyx5Y2Jjci1jb2Vm
-ZiA9IDwwPjsKIAlzYW1zdW5nLGNvbG9yLWRlcHRoID0gPDE+OwogCXNhbXN1bmcsbGluay1yYXRl
-ID0gPDB4MGE+OwogCXNhbXN1bmcsbGFuZS1jb3VudCA9IDw0PjsKZGlmZiAtLWdpdCBhL2FyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAtcGVhY2gtcGkuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMv
-ZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMKaW5kZXggMWNjMmU5NS4uZmMyMzJiZSAxMDA2NDQKLS0t
-IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMKKysrIGIvYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMKQEAgLTE0OCw4ICsxNDgsNiBAQAog
-CXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CiAJcGluY3RybC0wID0gPCZkcF9ocGRfZ3Bpbz47
-CiAJc2Ftc3VuZyxjb2xvci1zcGFjZSA9IDwwPjsKLQlzYW1zdW5nLGR5bmFtaWMtcmFuZ2UgPSA8
-MD47Ci0Jc2Ftc3VuZyx5Y2Jjci1jb2VmZiA9IDwwPjsKIAlzYW1zdW5nLGNvbG9yLWRlcHRoID0g
-PDE+OwogCXNhbXN1bmcsbGluay1yYXRlID0gPDB4MGE+OwogCXNhbXN1bmcsbGFuZS1jb3VudCA9
-IDwyPjsKLS0gCjEuOS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Rockchip have three clocks for dp controller, we leave pclk_edp
+to analogix_dp driver control, and keep the sclk_edp_24m and
+sclk_edp in platform driver.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+Rebase the whole patches on top of Dave's drm-next branch [0] (Heiko)
+
+Changes in v12.1:
+- Use .enable instead of preprare/commit in encoder_helper_funcs (Heiko)
+
+Changes in v12: None
+Changes in v11: None
+Changes in v10:
+- Correct the ROCKCHIP_ANALOGIX_DP indentation in Kconfig to tabs here (Heiko)
+
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
+Changes in v6: None
+Changes in v5:
+- Remove the empty line at the end of document, and correct the endpoint
+  numbers in the example DT node, and remove the regulator iomux setting
+  in driver code while using the pinctl in devicetree instead. (Heiko)
+- Add device type declared, cause the previous "platform device type
+  support (v4 11/16)" already merge into (v5 02/14).
+- Implement connector registration code. (Thierry)
+
+Changes in v4:
+- Remove some deprecated DT properties in rockchip dp document.
+
+Changes in v3:
+- Leave "sclk_edp_24m" to rockchip dp phy driver which name to "24m",
+  and leave "sclk_edp" to analogix dp core driver which name to "dp",
+  and leave "pclk_edp" to rockchip dp platform driver which name to
+  "pclk". (Thierry & Heiko)
+- Add devicetree binding document. (Heiko)
+- Remove "rockchip,panel" DT property, take use of remote point to get panel
+  node. (Heiko)
+- Add the new function point dp_platdata->get_modes() init.
+
+Changes in v2:
+- Get panel node with remote-endpoint method, and create devicetree binding
+  for driver. (Heiko)
+- Remove the clock enable/disbale with "sclk_edp" & "sclk_edp_24m",
+  leave those clock to rockchip dp phy driver.
+
+ drivers/gpu/drm/rockchip/Kconfig                |   9 +
+ drivers/gpu/drm/rockchip/Makefile               |   1 +
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 384 ++++++++++++++++++++++++
+ include/drm/bridge/analogix_dp.h                |   1 +
+ 4 files changed, 395 insertions(+)
+ create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+
+diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+index 8573985..9fe4e32 100644
+--- a/drivers/gpu/drm/rockchip/Kconfig
++++ b/drivers/gpu/drm/rockchip/Kconfig
+@@ -35,3 +35,12 @@ config ROCKCHIP_DW_MIPI_DSI
+ 	 for the Synopsys DesignWare HDMI driver. If you want to
+ 	 enable MIPI DSI on RK3288 based SoC, you should selet this
+ 	 option.
++
++config ROCKCHIP_ANALOGIX_DP
++	tristate "Rockchip specific extensions for Analogix DP driver"
++	depends on DRM_ROCKCHIP
++	select DRM_ANALOGIX_DP
++	help
++	  This selects support for Rockchip SoC specific extensions
++	  for the Analogix Core DP driver. If you want to enable DP
++	  on RK3288 based SoC, you should selet this option.
+diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
+index d1dc0f7..40d4c94 100644
+--- a/drivers/gpu/drm/rockchip/Makefile
++++ b/drivers/gpu/drm/rockchip/Makefile
+@@ -7,6 +7,7 @@ rockchipdrm-y := rockchip_drm_drv.o rockchip_drm_fb.o rockchip_drm_fbdev.o \
+ 
+ obj-$(CONFIG_ROCKCHIP_DW_HDMI) += dw_hdmi-rockchip.o
+ obj-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) += dw-mipi-dsi.o
++obj-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
+ 
+ obj-$(CONFIG_DRM_ROCKCHIP) += rockchipdrm.o rockchip_drm_vop.o \
+ 				rockchip_vop_reg.o
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+new file mode 100644
+index 0000000..acedc98
+--- /dev/null
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -0,0 +1,384 @@
++/*
++ * Rockchip SoC DP (Display Port) interface driver.
++ *
++ * Copyright (C) Fuzhou Rockchip Electronics Co., Ltd.
++ * Author: Andy Yan <andy.yan@rock-chips.com>
++ *         Yakir Yang <ykk@rock-chips.com>
++ *         Jeff Chen <jeff.chen@rock-chips.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2 of the License, or (at your
++ * option) any later version.
++ */
++
++#include <linux/component.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of_graph.h>
++#include <linux/regmap.h>
++#include <linux/reset.h>
++#include <linux/clk.h>
++
++#include <drm/drmP.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_dp_helper.h>
++#include <drm/drm_of.h>
++#include <drm/drm_panel.h>
++
++#include <video/of_videomode.h>
++#include <video/videomode.h>
++
++#include <drm/bridge/analogix_dp.h>
++
++#include "rockchip_drm_drv.h"
++#include "rockchip_drm_vop.h"
++
++#define to_dp(nm)	container_of(nm, struct rockchip_dp_device, nm)
++
++/* dp grf register offset */
++#define GRF_SOC_CON6                            0x025c
++#define GRF_EDP_LCD_SEL_MASK                    BIT(5)
++#define GRF_EDP_SEL_VOP_LIT                     BIT(5)
++#define GRF_EDP_SEL_VOP_BIG                     0
++
++struct rockchip_dp_device {
++	struct drm_device        *drm_dev;
++	struct device            *dev;
++	struct drm_encoder       encoder;
++	struct drm_display_mode  mode;
++
++	struct clk               *pclk;
++	struct regmap            *grf;
++	struct reset_control     *rst;
++
++	struct analogix_dp_plat_data plat_data;
++};
++
++static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
++{
++	reset_control_assert(dp->rst);
++	usleep_range(10, 20);
++	reset_control_deassert(dp->rst);
++
++	return 0;
++}
++
++static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
++{
++	struct rockchip_dp_device *dp = to_dp(plat_data);
++	int ret;
++
++	ret = clk_prepare_enable(dp->pclk);
++	if (ret < 0) {
++		dev_err(dp->dev, "failed to enable pclk %d\n", ret);
++		return ret;
++	}
++
++	ret = rockchip_dp_pre_init(dp);
++	if (ret < 0) {
++		dev_err(dp->dev, "failed to dp pre init %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
++{
++	struct rockchip_dp_device *dp = to_dp(plat_data);
++
++	clk_disable_unprepare(dp->pclk);
++
++	return 0;
++}
++
++static bool
++rockchip_dp_drm_encoder_mode_fixup(struct drm_encoder *encoder,
++				   const struct drm_display_mode *mode,
++				   struct drm_display_mode *adjusted_mode)
++{
++	/* do nothing */
++	return true;
++}
++
++static void rockchip_dp_drm_encoder_mode_set(struct drm_encoder *encoder,
++					     struct drm_display_mode *mode,
++					     struct drm_display_mode *adjusted)
++{
++	/* do nothing */
++}
++
++static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder)
++{
++	struct rockchip_dp_device *dp = to_dp(encoder);
++	int ret;
++	u32 val;
++
++	/*
++	 * FIXME(Yakir): driver should configure the CRTC output video
++	 * mode with the display information which indicated the monitor
++	 * support colorimetry.
++	 *
++	 * But don't know why the CRTC driver seems could only output the
++	 * RGBaaa rightly. For example, if connect the "innolux,n116bge"
++	 * eDP screen, EDID would indicated that screen only accepted the
++	 * 6bpc mode. But if I configure CRTC to RGB666 output, then eDP
++	 * screen would show a blue picture (RGB888 show a green picture).
++	 * But if I configure CTRC to RGBaaa, and eDP driver still keep
++	 * RGB666 input video mode, then screen would works prefect.
++	 */
++	ret = rockchip_drm_crtc_mode_config(encoder->crtc,
++					    DRM_MODE_CONNECTOR_eDP,
++					    ROCKCHIP_OUT_MODE_AAAA);
++	if (ret < 0) {
++		dev_err(dp->dev, "Could not set crtc mode config (%d)\n", ret);
++		return;
++	}
++
++	ret = rockchip_drm_encoder_get_mux_id(dp->dev->of_node, encoder);
++	if (ret < 0)
++		return;
++
++	if (ret)
++		val = GRF_EDP_SEL_VOP_LIT | (GRF_EDP_LCD_SEL_MASK << 16);
++	else
++		val = GRF_EDP_SEL_VOP_BIG | (GRF_EDP_LCD_SEL_MASK << 16);
++
++	dev_dbg(dp->dev, "vop %s output to dp\n", (ret) ? "LIT" : "BIG");
++
++	ret = regmap_write(dp->grf, GRF_SOC_CON6, val);
++	if (ret != 0) {
++		dev_err(dp->dev, "Could not write to GRF: %d\n", ret);
++		return;
++	}
++}
++
++static void rockchip_dp_drm_encoder_nop(struct drm_encoder *encoder)
++{
++	/* do nothing */
++}
++
++static struct drm_encoder_helper_funcs rockchip_dp_encoder_helper_funcs = {
++	.mode_fixup = rockchip_dp_drm_encoder_mode_fixup,
++	.mode_set = rockchip_dp_drm_encoder_mode_set,
++	.enable = rockchip_dp_drm_encoder_enable,
++	.disable = rockchip_dp_drm_encoder_nop,
++};
++
++static void rockchip_dp_drm_encoder_destroy(struct drm_encoder *encoder)
++{
++	drm_encoder_cleanup(encoder);
++}
++
++static struct drm_encoder_funcs rockchip_dp_encoder_funcs = {
++	.destroy = rockchip_dp_drm_encoder_destroy,
++};
++
++static int rockchip_dp_init(struct rockchip_dp_device *dp)
++{
++	struct device *dev = dp->dev;
++	struct device_node *np = dev->of_node;
++	int ret;
++
++	dp->grf = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
++	if (IS_ERR(dp->grf)) {
++		dev_err(dev, "failed to get rockchip,grf property\n");
++		return PTR_ERR(dp->grf);
++	}
++
++	dp->pclk = devm_clk_get(dev, "pclk");
++	if (IS_ERR(dp->pclk)) {
++		dev_err(dev, "failed to get pclk property\n");
++		return PTR_ERR(dp->pclk);
++	}
++
++	dp->rst = devm_reset_control_get(dev, "dp");
++	if (IS_ERR(dp->rst)) {
++		dev_err(dev, "failed to get dp reset control\n");
++		return PTR_ERR(dp->rst);
++	}
++
++	ret = clk_prepare_enable(dp->pclk);
++	if (ret < 0) {
++		dev_err(dp->dev, "failed to enable pclk %d\n", ret);
++		return ret;
++	}
++
++	ret = rockchip_dp_pre_init(dp);
++	if (ret < 0) {
++		dev_err(dp->dev, "failed to pre init %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int rockchip_dp_drm_create_encoder(struct rockchip_dp_device *dp)
++{
++	struct drm_encoder *encoder = &dp->encoder;
++	struct drm_device *drm_dev = dp->drm_dev;
++	struct device *dev = dp->dev;
++	int ret;
++
++	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm_dev,
++							     dev->of_node);
++	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
++
++	ret = drm_encoder_init(drm_dev, encoder, &rockchip_dp_encoder_funcs,
++			       DRM_MODE_ENCODER_TMDS);
++	if (ret) {
++		DRM_ERROR("failed to initialize encoder with drm\n");
++		return ret;
++	}
++
++	drm_encoder_helper_add(encoder, &rockchip_dp_encoder_helper_funcs);
++
++	return 0;
++}
++
++static int rockchip_dp_bind(struct device *dev, struct device *master,
++			    void *data)
++{
++	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
++	struct drm_device *drm_dev = data;
++	int ret;
++
++	/*
++	 * Just like the probe function said, we don't need the
++	 * device drvrate anymore, we should leave the charge to
++	 * analogix dp driver, set the device drvdata to NULL.
++	 */
++	dev_set_drvdata(dev, NULL);
++
++	ret = rockchip_dp_init(dp);
++	if (ret < 0)
++		return ret;
++
++	dp->drm_dev = drm_dev;
++
++	ret = rockchip_dp_drm_create_encoder(dp);
++	if (ret) {
++		DRM_ERROR("failed to create drm encoder\n");
++		return ret;
++	}
++
++	dp->plat_data.encoder = &dp->encoder;
++
++	dp->plat_data.dev_type = RK3288_DP;
++	dp->plat_data.power_on = rockchip_dp_poweron;
++	dp->plat_data.power_off = rockchip_dp_powerdown;
++
++	return analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
++}
++
++static void rockchip_dp_unbind(struct device *dev, struct device *master,
++			       void *data)
++{
++	return analogix_dp_unbind(dev, master, data);
++}
++
++static const struct component_ops rockchip_dp_component_ops = {
++	.bind = rockchip_dp_bind,
++	.unbind = rockchip_dp_unbind,
++};
++
++static int rockchip_dp_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *panel_node, *port, *endpoint;
++	struct rockchip_dp_device *dp;
++	struct drm_panel *panel;
++
++	port = of_graph_get_port_by_id(dev->of_node, 1);
++	if (!port) {
++		dev_err(dev, "can't find output port\n");
++		return -EINVAL;
++	}
++
++	endpoint = of_get_child_by_name(port, "endpoint");
++	of_node_put(port);
++	if (!endpoint) {
++		dev_err(dev, "no output endpoint found\n");
++		return -EINVAL;
++	}
++
++	panel_node = of_graph_get_remote_port_parent(endpoint);
++	of_node_put(endpoint);
++	if (!panel_node) {
++		dev_err(dev, "no output node found\n");
++		return -EINVAL;
++	}
++
++	panel = of_drm_find_panel(panel_node);
++	if (!panel) {
++		DRM_ERROR("failed to find panel\n");
++		of_node_put(panel_node);
++		return -EPROBE_DEFER;
++	}
++
++	of_node_put(panel_node);
++
++	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
++	if (!dp)
++		return -ENOMEM;
++
++	dp->dev = dev;
++
++	dp->plat_data.panel = panel;
++
++	/*
++	 * We just use the drvdata until driver run into component
++	 * add function, and then we would set drvdata to null, so
++	 * that analogix dp driver could take charge of the drvdata.
++	 */
++	platform_set_drvdata(pdev, dp);
++
++	return component_add(dev, &rockchip_dp_component_ops);
++}
++
++static int rockchip_dp_remove(struct platform_device *pdev)
++{
++	component_del(&pdev->dev, &rockchip_dp_component_ops);
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int rockchip_dp_suspend(struct device *dev)
++{
++	return analogix_dp_suspend(dev);
++}
++
++static int rockchip_dp_resume(struct device *dev)
++{
++	return analogix_dp_resume(dev);
++}
++#endif
++
++static const struct dev_pm_ops rockchip_dp_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(rockchip_dp_suspend, rockchip_dp_resume)
++};
++
++static const struct of_device_id rockchip_dp_dt_ids[] = {
++	{.compatible = "rockchip,rk3288-dp",},
++	{}
++};
++MODULE_DEVICE_TABLE(of, rockchip_dp_dt_ids);
++
++static struct platform_driver rockchip_dp_driver = {
++	.probe = rockchip_dp_probe,
++	.remove = rockchip_dp_remove,
++	.driver = {
++		   .name = "rockchip-dp",
++		   .owner = THIS_MODULE,
++		   .pm = &rockchip_dp_pm_ops,
++		   .of_match_table = of_match_ptr(rockchip_dp_dt_ids),
++	},
++};
++
++module_platform_driver(rockchip_dp_driver);
++
++MODULE_AUTHOR("Yakir Yang <ykk@rock-chips.com>");
++MODULE_AUTHOR("Jeff chen <jeff.chen@rock-chips.com>");
++MODULE_DESCRIPTION("Rockchip Specific Analogix-DP Driver Extension");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+index d1188db..25afb31 100644
+--- a/include/drm/bridge/analogix_dp.h
++++ b/include/drm/bridge/analogix_dp.h
+@@ -15,6 +15,7 @@
+ 
+ enum analogix_dp_devtype {
+ 	EXYNOS_DP,
++	RK3288_DP,
+ };
+ 
+ struct analogix_dp_plat_data {
+-- 
+1.9.1
