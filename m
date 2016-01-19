@@ -1,174 +1,130 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] power: genpd: fix lockdep issue for all subdomains
-Date: Tue, 19 Jan 2016 16:25:35 +0100
-Message-ID: <CAPDyKFqQDV9v0WB78QTkv=1_9APBo-J9F7LPBDfDOSNGYbVbOw@mail.gmail.com>
-References: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv2] pwm: avoid holding mutex in interrupt context
+Date: Wed, 20 Jan 2016 08:29:58 +0900
+Message-ID: <569EC6F6.1020505@samsung.com>
+References: <1453064517-12315-1-git-send-email-linux.amoon@gmail.com>
+ <569C2AE8.6070100@samsung.com>
+ <CANAwSgT3rXRBVFUQmogkPQwRY93CO0FRFwx_NGjWTHrD5LGbVg@mail.gmail.com>
+ <569C69F4.7000906@samsung.com>
+ <CANAwSgSMRL2Us6kCHih5c-s6bFdQfEg=xAcdC2v67PjZAHNOTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-reply-to: <CANAwSgSMRL2Us6kCHih5c-s6bFdQfEg=xAcdC2v67PjZAHNOTg@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pwm@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-+linux-pm, Daniel Kurtz, Nicolas Boichat
+On 20.01.2016 00:04, Anand Moon wrote:
+> Hi Krzysztof,
+> 
+> On 18 January 2016 at 09:58, Krzysztof Kozlowski
+>>> Already within function pwm_samsung_set_invert is protected by
+>>> spin_lock_irqsave(&samsung_pwm_lock, flags);
+>>>
+>>> So no need to introduce another lock to control pwm_samsung_set_polarity.
+>>>
+>>> Best Regards.
+>>> -Anand Moon
+>>
+>> I don't have any clue what is your point here. I don't get what
+>> pwm_samsung_set_polarity has to do with main pwm core...
+>>
+>> Sorry, you need to be more specific.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+> 
+> Below is the mapping of calls from pwm driver.
+> I have tried to map the functionality and I am trying to understand
+> the flow of the driver.
+> 
+> Also looking in document
+> 
+> https://www.kernel.org/doc/Documentation/pwm.txt
+> 
+> pwm-samsung driver controls the LEDS, fans...etc
+> 
+> Form the dts modes pwmleds
+> 
+>         pwmleds {
+>                 compatible = "pwm-leds";
+> 
+>                 blueled {
+>                         label = "blue:heartbeat";
+>                         pwms = <&pwm 2 2000000 0>;
+>                         pwm-names = "pwm2";
+>                         max_brightness = <255>;
+>                         linux,default-trigger = "heartbeat";
+>                 };
+>         };
+> 
+> Following is the map out from the device tree.
+> 
+> pwms = <&pwm 2 2000000 0>;
+> 
+> &pwm       ->  pwm: pwm@12dd0000 --->samsung,exynos4210-pwm
+> 2              ->  period
+> 2000000    ->  duty_cycle
+> 0              ->  polarity
 
-On 4 January 2016 at 11:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> During genpd_poweron, genpd->lock is acquired recursively for each
-> parent (master) domain, which are separate obejcts. This confuses
-> lockdep, which considers every operation on genpd->lock as being done on
-> the same lock class. This leads to the following false positive warning:
->
-> =============================================
-> [ INFO: possible recursive locking detected ]
-> 4.4.0-rc4-xu3s #32 Not tainted
-> ---------------------------------------------
-> swapper/0/1 is trying to acquire lock:
->  (&genpd->lock){+.+...}, at: [<c0361550>] __genpd_poweron+0x64/0x108
->
-> but task is already holding lock:
->  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
->
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->
->        CPU0
->        ----
->   lock(&genpd->lock);
->   lock(&genpd->lock);
->
->  *** DEADLOCK ***
->
->  May be due to missing lock nesting notation
->
-> 3 locks held by swapper/0/1:
->  #0:  (&dev->mutex){......}, at: [<c0350910>] __driver_attach+0x48/0x98
->  #1:  (&dev->mutex){......}, at: [<c0350920>] __driver_attach+0x58/0x98
->  #2:  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
->
-> stack backtrace:
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [<c0016c98>] (unwind_backtrace) from [<c00139c4>] (show_stack+0x10/0x14)
-> [<c00139c4>] (show_stack) from [<c0270df0>] (dump_stack+0x84/0xc4)
-> [<c0270df0>] (dump_stack) from [<c00780b8>] (__lock_acquire+0x1f88/0x215c)
-> [<c00780b8>] (__lock_acquire) from [<c007886c>] (lock_acquire+0xa4/0xd0)
-> [<c007886c>] (lock_acquire) from [<c0641f2c>] (mutex_lock_nested+0x70/0x4d4)
-> [<c0641f2c>] (mutex_lock_nested) from [<c0361550>] (__genpd_poweron+0x64/0x108)
-> [<c0361550>] (__genpd_poweron) from [<c0361b00>] (genpd_dev_pm_attach+0x170/0x1b8)
-> [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>] (platform_drv_probe+0x2c/0xac)
-> [<c03520a8>] (platform_drv_probe) from [<c03507d4>] (driver_probe_device+0x208/0x2fc)
-> [<c03507d4>] (driver_probe_device) from [<c035095c>] (__driver_attach+0x94/0x98)
-> [<c035095c>] (__driver_attach) from [<c034ec14>] (bus_for_each_dev+0x68/0x9c)
-> [<c034ec14>] (bus_for_each_dev) from [<c034fec8>] (bus_add_driver+0x1a0/0x218)
-> [<c034fec8>] (bus_add_driver) from [<c035115c>] (driver_register+0x78/0xf8)
-> [<c035115c>] (driver_register) from [<c0338488>] (exynos_drm_register_drivers+0x28/0x74)
-> [<c0338488>] (exynos_drm_register_drivers) from [<c0338594>] (exynos_drm_init+0x6c/0xc4)
-> [<c0338594>] (exynos_drm_init) from [<c00097f4>] (do_one_initcall+0x90/0x1dc)
-> [<c00097f4>] (do_one_initcall) from [<c0895e08>] (kernel_init_freeable+0x158/0x1f8)
-> [<c0895e08>] (kernel_init_freeable) from [<c063ecac>] (kernel_init+0x8/0xe8)
-> [<c063ecac>] (kernel_init) from [<c000f7d0>] (ret_from_fork+0x14/0x24)
->
-> This patch replaces mutex_lock with mutex_lock_nested() and uses
-> recursion depth to annotate each genpd->lock operation with separate
-> lockdep subclass.
->
-> Reported-by: Anand Moon <linux.amoon@gmail.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+I do not see any relations between DTS and the problem.
 
-Thanks for looking into this!
+> 
+> And here is the mapping of the call of function
+> Note: This function call are as per my understanding of the flow in
+> the driver. I might be wrong.
+> 
+> pwm_samsung_set_polarity(struct pwm_chip *chip, struct pwm_device
+> *pwm, enum pwm_polarity polarity)
+> \
+>  pwm_samsung_set_invert(our_chip, pwm->hwpwm, invert);
+>  \
+>   pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
 
-Daniel Kurtz, did also run into this issue [1] and reported it a while ago.
-There where some discussions and Daniel also posted a patch trying to
-solve the issue [2]. That approach didn't work out, and unfortunate I
-haven't yet been able to look closer into the issue. Sorry about that!
+No, pwm_samsung_set_invert does not call pwm_set_polarity(). This would
+result in a circular call - back to pwm_samsung_set_polarity().
 
-> ---
->  drivers/base/power/domain.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index b803790..e02ddf6 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -170,16 +170,15 @@ static void genpd_queue_power_off_work(struct generic_pm_domain *genpd)
->         queue_work(pm_wq, &genpd->power_off_work);
->  }
->
-> -static int genpd_poweron(struct generic_pm_domain *genpd);
-> -
->  /**
->   * __genpd_poweron - Restore power to a given PM domain and its masters.
->   * @genpd: PM domain to power up.
-> + * @depth: nesting count for lockdep.
->   *
->   * Restore power to @genpd and all of its masters so that it is possible to
->   * resume a device belonging to it.
->   */
-> -static int __genpd_poweron(struct generic_pm_domain *genpd)
-> +static int __genpd_poweron(struct generic_pm_domain *genpd, unsigned int depth)
->  {
->         struct gpd_link *link;
->         int ret = 0;
-> @@ -194,11 +193,16 @@ static int __genpd_poweron(struct generic_pm_domain *genpd)
->          * with it.
->          */
->         list_for_each_entry(link, &genpd->slave_links, slave_node) {
-> -               genpd_sd_counter_inc(link->master);
-> +               struct generic_pm_domain *master = link->master;
-> +
-> +               genpd_sd_counter_inc(master);
-> +
-> +               mutex_lock_nested(&master->lock, depth + 1);
+>   \
+>    pwm->chip->ops->set_polarity(pwm->chip, pwm, polarity);
+>     \
+>      pwm_enable(struct pwm_device *pwm) or pwm_disable(struct pwm_device *pwm)
+> 
+> pwm_enable or pwm_disable will be triggered on change in pwm->flags by
+> the pwm core.
+> before pwm_set_polarity is called form the Samsung driver it hold with
+> following locks
+> 
+> Here is the locking
+> 
+> pwm_samsung_set_polarity(struct pwm_chip *chip, struct pwm_device
+> *pwm, enum pwm_polarity polarity)
+>  \
+>   pwm_samsung_set_invert(struct samsung_pwm_chip *chip, unsigned int
+> channel, bool invert)
+>     \
+>      spin_lock_irqsave(&samsung_pwm_lock, flags);
+>       \
+>        pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
+>        \
+>         mutex_lock(&pwm->lock)
+> 
+>           pwm_enable(struct pwm_device *pwm) or pwm_disable(struct
+> pwm_device *pwm)
+>           \
+>            mutex_lock(&pwm->lock);
+> 
+> Problem I see that we are holding the lock in interrupt context.
+> I don't know how the this triggers this bug.
+> 
+> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
 
-Nested locks isn't a solution to a problem, but instead this tricks
-lockdep about what goes on. Right?
+So leave it. If your flow of calls was correct, you would spot the
+problem. But actually it does not matter - I think the flow is not correct.
 
-I am wondering whether there's another option available which better
-can instruct lockdep to not treat this as an error.
-
-> +               ret = __genpd_poweron(master, depth + 1);
-> +               mutex_unlock(&master->lock);
->
-> -               ret = genpd_poweron(link->master);
->                 if (ret) {
-> -                       genpd_sd_counter_dec(link->master);
-> +                       genpd_sd_counter_dec(master);
->                         goto err;
->                 }
->         }
-> @@ -230,11 +234,12 @@ static int genpd_poweron(struct generic_pm_domain *genpd)
->         int ret;
->
->         mutex_lock(&genpd->lock);
-> -       ret = __genpd_poweron(genpd);
-> +       ret = __genpd_poweron(genpd, 0);
->         mutex_unlock(&genpd->lock);
->         return ret;
->  }
->
-> +
->  static int genpd_save_dev(struct generic_pm_domain *genpd, struct device *dev)
->  {
->         return GENPD_DEV_CALLBACK(genpd, int, save_state, dev);
-> @@ -482,7 +487,7 @@ static int pm_genpd_runtime_resume(struct device *dev)
->         }
->
->         mutex_lock(&genpd->lock);
-> -       ret = __genpd_poweron(genpd);
-> +       ret = __genpd_poweron(genpd, 0);
->         mutex_unlock(&genpd->lock);
->
->         if (ret)
-> --
-> 1.9.2
->
-
-Kind regards
-Uffe
-
-[1]
-http://www.spinics.net/lists/arm-kernel/msg471025.html
-[2]
-http://www.spinics.net/lists/stable/msg113650.html
+Best regards,
+Krzysztof
