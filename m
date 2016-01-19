@@ -1,130 +1,180 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] pwm: avoid holding mutex in interrupt context
-Date: Wed, 20 Jan 2016 08:29:58 +0900
-Message-ID: <569EC6F6.1020505@samsung.com>
-References: <1453064517-12315-1-git-send-email-linux.amoon@gmail.com>
- <569C2AE8.6070100@samsung.com>
- <CANAwSgT3rXRBVFUQmogkPQwRY93CO0FRFwx_NGjWTHrD5LGbVg@mail.gmail.com>
- <569C69F4.7000906@samsung.com>
- <CANAwSgSMRL2Us6kCHih5c-s6bFdQfEg=xAcdC2v67PjZAHNOTg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: s2mps11: allocate only one structure for clock
+ init
+Date: Wed, 20 Jan 2016 08:35:28 +0900
+Message-ID: <569EC840.1030702@samsung.com>
+References: <1453193552-4761-1-git-send-email-andi.shyti@samsung.com>
+ <1453193552-4761-2-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-reply-to: <CANAwSgSMRL2Us6kCHih5c-s6bFdQfEg=xAcdC2v67PjZAHNOTg@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pwm@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1453193552-4761-2-git-send-email-andi.shyti@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 20.01.2016 00:04, Anand Moon wrote:
-> Hi Krzysztof,
+On 19.01.2016 17:52, Andi Shyti wrote:
+> The driver allocates three structures for three different clock
+> types. They are quite similar and in the clock init data they
+> differ only by the name. Only one of these structures is used,
+> while the others lie unused in the memory.
 > 
-> On 18 January 2016 at 09:58, Krzysztof Kozlowski
->>> Already within function pwm_samsung_set_invert is protected by
->>> spin_lock_irqsave(&samsung_pwm_lock, flags);
->>>
->>> So no need to introduce another lock to control pwm_samsung_set_polarity.
->>>
->>> Best Regards.
->>> -Anand Moon
->>
->> I don't have any clue what is your point here. I don't get what
->> pwm_samsung_set_polarity has to do with main pwm core...
->>
->> Sorry, you need to be more specific.
->>
->> Best regards,
->> Krzysztof
->>
->>
+> The clock's name, though, is not such a meaningful information
+> and by assigning the same name to the initial data we can avoid
+> over allocation. The common name chosen will be s2mps11,
+> coherently with the device driver name, instead of the clock
+> device.
 > 
-> Below is the mapping of calls from pwm driver.
-> I have tried to map the functionality and I am trying to understand
-> the flow of the driver.
+> Therefore, remove the structures associated to s2mps13 and
+> s2mps14 and use only the one referred to s2mps11 for all kind of
+> clocks.
 > 
-> Also looking in document
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/clk-s2mps11.c | 56 ++++++-----------------------------------------
+>  1 file changed, 7 insertions(+), 49 deletions(-)
 > 
-> https://www.kernel.org/doc/Documentation/pwm.txt
-> 
-> pwm-samsung driver controls the LEDS, fans...etc
-> 
-> Form the dts modes pwmleds
-> 
->         pwmleds {
->                 compatible = "pwm-leds";
-> 
->                 blueled {
->                         label = "blue:heartbeat";
->                         pwms = <&pwm 2 2000000 0>;
->                         pwm-names = "pwm2";
->                         max_brightness = <255>;
->                         linux,default-trigger = "heartbeat";
->                 };
->         };
-> 
-> Following is the map out from the device tree.
-> 
-> pwms = <&pwm 2 2000000 0>;
-> 
-> &pwm       ->  pwm: pwm@12dd0000 --->samsung,exynos4210-pwm
-> 2              ->  period
-> 2000000    ->  duty_cycle
-> 0              ->  polarity
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index d266299..22d4df2 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -99,6 +99,7 @@ static struct clk_ops s2mps11_clk_ops = {
+>  	.recalc_rate	= s2mps11_clk_recalc_rate,
+>  };
+>  
+> +/* This s2mps11_clks_init tructure is common to s2mps11, s2mps13 and s2mps14 */
+>  static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>  	[S2MPS11_CLK_AP] = {
+>  		.name = "s2mps11_ap",
+> @@ -117,43 +118,11 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>  	},
+>  };
+>  
+> -static struct clk_init_data s2mps13_clks_init[S2MPS11_CLKS_NUM] = {
+> -	[S2MPS11_CLK_AP] = {
+> -		.name = "s2mps13_ap",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -	[S2MPS11_CLK_CP] = {
+> -		.name = "s2mps13_cp",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -	[S2MPS11_CLK_BT] = {
+> -		.name = "s2mps13_bt",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -};
+> -
+> -static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+> -	[S2MPS11_CLK_AP] = {
+> -		.name = "s2mps14_ap",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -	[S2MPS11_CLK_BT] = {
+> -		.name = "s2mps14_bt",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -};
+> -
+>  static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+>  		struct clk_init_data *clks_init)
+>  {
+>  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>  	struct device_node *clk_np;
+> -	int i;
+>  
+>  	if (!iodev->dev->of_node)
+>  		return ERR_PTR(-EINVAL);
+> @@ -164,13 +133,6 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> -	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+> -		if (!clks_init[i].name)
+> -			continue; /* Skip clocks not present in some devices */
+> -		of_property_read_string_index(clk_np, "clock-output-names", i,
+> -				&clks_init[i].name);
+> -	}
+> -
 
-I do not see any relations between DTS and the problem.
-
-> 
-> And here is the mapping of the call of function
-> Note: This function call are as per my understanding of the flow in
-> the driver. I might be wrong.
-> 
-> pwm_samsung_set_polarity(struct pwm_chip *chip, struct pwm_device
-> *pwm, enum pwm_polarity polarity)
-> \
->  pwm_samsung_set_invert(our_chip, pwm->hwpwm, invert);
->  \
->   pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
-
-No, pwm_samsung_set_invert does not call pwm_set_polarity(). This would
-result in a circular call - back to pwm_samsung_set_polarity().
-
->   \
->    pwm->chip->ops->set_polarity(pwm->chip, pwm, polarity);
->     \
->      pwm_enable(struct pwm_device *pwm) or pwm_disable(struct pwm_device *pwm)
-> 
-> pwm_enable or pwm_disable will be triggered on change in pwm->flags by
-> the pwm core.
-> before pwm_set_polarity is called form the Samsung driver it hold with
-> following locks
-> 
-> Here is the locking
-> 
-> pwm_samsung_set_polarity(struct pwm_chip *chip, struct pwm_device
-> *pwm, enum pwm_polarity polarity)
->  \
->   pwm_samsung_set_invert(struct samsung_pwm_chip *chip, unsigned int
-> channel, bool invert)
->     \
->      spin_lock_irqsave(&samsung_pwm_lock, flags);
->       \
->        pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
->        \
->         mutex_lock(&pwm->lock)
-> 
->           pwm_enable(struct pwm_device *pwm) or pwm_disable(struct
-> pwm_device *pwm)
->           \
->            mutex_lock(&pwm->lock);
-> 
-> Problem I see that we are holding the lock in interrupt context.
-> I don't know how the this triggers this bug.
-> 
-> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-
-So leave it. If your flow of calls was correct, you would spot the
-problem. But actually it does not matter - I think the flow is not correct.
+The commit description does not mention anything about removal of
+"clock-output-names". Why you are removing this?
 
 Best regards,
 Krzysztof
+
+>  	return clk_np;
+>  }
+>  
+> @@ -179,8 +141,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>  	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
+>  	unsigned int s2mps11_reg;
+> -	struct clk_init_data *clks_init;
+>  	int i, ret = 0;
+> +	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
+>  
+>  	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+>  				sizeof(*s2mps11_clk), GFP_KERNEL);
+> @@ -194,22 +156,18 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  	if (!clk_table)
+>  		return -ENOMEM;
+>  
+> -	switch(platform_get_device_id(pdev)->driver_data) {
+> +	switch (hwid) {
+>  	case S2MPS11X:
+>  		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+> -		clks_init = s2mps11_clks_init;
+>  		break;
+>  	case S2MPS13X:
+>  		s2mps11_reg = S2MPS13_REG_RTCCTRL;
+> -		clks_init = s2mps13_clks_init;
+>  		break;
+>  	case S2MPS14X:
+>  		s2mps11_reg = S2MPS14_REG_RTCCTRL;
+> -		clks_init = s2mps14_clks_init;
+>  		break;
+>  	case S5M8767X:
+>  		s2mps11_reg = S5M8767_REG_CTRL1;
+> -		clks_init = s2mps11_clks_init;
+>  		break;
+>  	default:
+>  		dev_err(&pdev->dev, "Invalid device type\n");
+> @@ -217,15 +175,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/* Store clocks of_node in first element of s2mps11_clks array */
+> -	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
+> +	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, s2mps11_clks_init);
+>  	if (IS_ERR(s2mps11_clks->clk_np))
+>  		return PTR_ERR(s2mps11_clks->clk_np);
+>  
+>  	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
+> -		if (!clks_init[i].name)
+> +		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+>  			continue; /* Skip clocks not present in some devices */
+>  		s2mps11_clk->iodev = iodev;
+> -		s2mps11_clk->hw.init = &clks_init[i];
+> +		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
+>  		s2mps11_clk->mask = 1 << i;
+>  		s2mps11_clk->reg = s2mps11_reg;
+>  
+> @@ -248,7 +206,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  
+>  	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+>  		/* Skip clocks not present on S2MPS14 */
+> -		if (!clks_init[i].name)
+> +		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+>  			continue;
+>  		clk_table[i] = s2mps11_clks[i].clk;
+>  	}
+> 
+
