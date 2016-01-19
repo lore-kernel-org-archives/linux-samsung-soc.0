@@ -1,54 +1,162 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Add PSCI function IDs for cpu-{on,off} on
- exynos7
-Date: Tue, 19 Jan 2016 10:32:25 +0000
-Message-ID: <20160119103224.GA25024@leverpostej>
-References: <1453198884-28723-1-git-send-email-alim.akhtar@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] power: genpd: fix lockdep issue for all subdomains
+Date: Tue, 19 Jan 2016 11:51:17 +0100
+Message-ID: <569E1525.5050407@samsung.com>
+References: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1453198884-28723-1-git-send-email-alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29945 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932680AbcASKvV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Jan 2016 05:51:21 -0500
+In-reply-to: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Tue, Jan 19, 2016 at 03:51:24PM +0530, Alim Akhtar wrote:
-> This patch adds cpu-{on,off} function IDs as per PSCI specification,
-> with this we can boot multiple CPUs and can use cpu hotplug on
-> exynos7 platform.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Hello,
+
+On 2016-01-04 11:39, Marek Szyprowski wrote:
+> During genpd_poweron, genpd->lock is acquired recursively for each
+> parent (master) domain, which are separate obejcts. This confuses
+> lockdep, which considers every operation on genpd->lock as being done on
+> the same lock class. This leads to the following false positive warning:
+>
+> =============================================
+> [ INFO: possible recursive locking detected ]
+> 4.4.0-rc4-xu3s #32 Not tainted
+> ---------------------------------------------
+> swapper/0/1 is trying to acquire lock:
+>   (&genpd->lock){+.+...}, at: [<c0361550>] __genpd_poweron+0x64/0x108
+>
+> but task is already holding lock:
+>   (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
+>
+> other info that might help us debug this:
+>   Possible unsafe locking scenario:
+>
+>         CPU0
+>         ----
+>    lock(&genpd->lock);
+>    lock(&genpd->lock);
+>
+>   *** DEADLOCK ***
+>
+>   May be due to missing lock nesting notation
+>
+> 3 locks held by swapper/0/1:
+>   #0:  (&dev->mutex){......}, at: [<c0350910>] __driver_attach+0x48/0x98
+>   #1:  (&dev->mutex){......}, at: [<c0350920>] __driver_attach+0x58/0x98
+>   #2:  (&genpd->lock){+.+...}, at: [<c0361af8>] genpd_dev_pm_attach+0x168/0x1b8
+>
+> stack backtrace:
+> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
+> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [<c0016c98>] (unwind_backtrace) from [<c00139c4>] (show_stack+0x10/0x14)
+> [<c00139c4>] (show_stack) from [<c0270df0>] (dump_stack+0x84/0xc4)
+> [<c0270df0>] (dump_stack) from [<c00780b8>] (__lock_acquire+0x1f88/0x215c)
+> [<c00780b8>] (__lock_acquire) from [<c007886c>] (lock_acquire+0xa4/0xd0)
+> [<c007886c>] (lock_acquire) from [<c0641f2c>] (mutex_lock_nested+0x70/0x4d4)
+> [<c0641f2c>] (mutex_lock_nested) from [<c0361550>] (__genpd_poweron+0x64/0x108)
+> [<c0361550>] (__genpd_poweron) from [<c0361b00>] (genpd_dev_pm_attach+0x170/0x1b8)
+> [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>] (platform_drv_probe+0x2c/0xac)
+> [<c03520a8>] (platform_drv_probe) from [<c03507d4>] (driver_probe_device+0x208/0x2fc)
+> [<c03507d4>] (driver_probe_device) from [<c035095c>] (__driver_attach+0x94/0x98)
+> [<c035095c>] (__driver_attach) from [<c034ec14>] (bus_for_each_dev+0x68/0x9c)
+> [<c034ec14>] (bus_for_each_dev) from [<c034fec8>] (bus_add_driver+0x1a0/0x218)
+> [<c034fec8>] (bus_add_driver) from [<c035115c>] (driver_register+0x78/0xf8)
+> [<c035115c>] (driver_register) from [<c0338488>] (exynos_drm_register_drivers+0x28/0x74)
+> [<c0338488>] (exynos_drm_register_drivers) from [<c0338594>] (exynos_drm_init+0x6c/0xc4)
+> [<c0338594>] (exynos_drm_init) from [<c00097f4>] (do_one_initcall+0x90/0x1dc)
+> [<c00097f4>] (do_one_initcall) from [<c0895e08>] (kernel_init_freeable+0x158/0x1f8)
+> [<c0895e08>] (kernel_init_freeable) from [<c063ecac>] (kernel_init+0x8/0xe8)
+> [<c063ecac>] (kernel_init) from [<c000f7d0>] (ret_from_fork+0x14/0x24)
+>
+> This patch replaces mutex_lock with mutex_lock_nested() and uses
+> recursion depth to annotate each genpd->lock operation with separate
+> lockdep subclass.
+>
+> Reported-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Ulf: could you comment on this patch?
+
 > ---
->  arch/arm64/boot/dts/exynos/exynos7.dtsi |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index f9c5a549c2c0..1a2bb3b453e5 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -65,6 +65,8 @@
->  	psci {
->  		compatible = "arm,psci-0.2";
->  		method = "smc";
-> +		cpu_on = <0xC4000003>;
-> +		cpu_off = <0x84000002>;
->  	};
+>   drivers/base/power/domain.c | 21 +++++++++++++--------
+>   1 file changed, 13 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index b803790..e02ddf6 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -170,16 +170,15 @@ static void genpd_queue_power_off_work(struct generic_pm_domain *genpd)
+>   	queue_work(pm_wq, &genpd->power_off_work);
+>   }
+>   
+> -static int genpd_poweron(struct generic_pm_domain *genpd);
+> -
+>   /**
+>    * __genpd_poweron - Restore power to a given PM domain and its masters.
+>    * @genpd: PM domain to power up.
+> + * @depth: nesting count for lockdep.
+>    *
+>    * Restore power to @genpd and all of its masters so that it is possible to
+>    * resume a device belonging to it.
+>    */
+> -static int __genpd_poweron(struct generic_pm_domain *genpd)
+> +static int __genpd_poweron(struct generic_pm_domain *genpd, unsigned int depth)
+>   {
+>   	struct gpd_link *link;
+>   	int ret = 0;
+> @@ -194,11 +193,16 @@ static int __genpd_poweron(struct generic_pm_domain *genpd)
+>   	 * with it.
+>   	 */
+>   	list_for_each_entry(link, &genpd->slave_links, slave_node) {
+> -		genpd_sd_counter_inc(link->master);
+> +		struct generic_pm_domain *master = link->master;
+> +
+> +		genpd_sd_counter_inc(master);
+> +
+> +		mutex_lock_nested(&master->lock, depth + 1);
+> +		ret = __genpd_poweron(master, depth + 1);
+> +		mutex_unlock(&master->lock);
+>   
+> -		ret = genpd_poweron(link->master);
+>   		if (ret) {
+> -			genpd_sd_counter_dec(link->master);
+> +			genpd_sd_counter_dec(master);
+>   			goto err;
+>   		}
+>   	}
+> @@ -230,11 +234,12 @@ static int genpd_poweron(struct generic_pm_domain *genpd)
+>   	int ret;
+>   
+>   	mutex_lock(&genpd->lock);
+> -	ret = __genpd_poweron(genpd);
+> +	ret = __genpd_poweron(genpd, 0);
+>   	mutex_unlock(&genpd->lock);
+>   	return ret;
+>   }
+>   
+> +
+>   static int genpd_save_dev(struct generic_pm_domain *genpd, struct device *dev)
+>   {
+>   	return GENPD_DEV_CALLBACK(genpd, int, save_state, dev);
+> @@ -482,7 +487,7 @@ static int pm_genpd_runtime_resume(struct device *dev)
+>   	}
+>   
+>   	mutex_lock(&genpd->lock);
+> -	ret = __genpd_poweron(genpd);
+> +	ret = __genpd_poweron(genpd, 0);
+>   	mutex_unlock(&genpd->lock);
+>   
+>   	if (ret)
 
-There is no need for this patch.
-
-The "arm,psci-0.2" compatible string implicitly tells the kernel that
-the full set of mandatory PSCI 0.2 functions are present, with the IDs
-mandated by PSCI 0.2. That includes CPU_ON and CPU_OFF amongst others.
-
-The only reason to provide IDs is to function on kernels without PSCI
-0.2 support. Given the compatible string hasn't been updated for that,
-this is insufficient for that case.
-
-Thanks,
-Mark.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
