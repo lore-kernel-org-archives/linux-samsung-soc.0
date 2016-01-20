@@ -1,108 +1,64 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v3 4/4] clk: s2mps11: remove redundant code
-Date: Wed, 20 Jan 2016 19:14:24 +0900
-Message-ID: <1453284864-8082-5-git-send-email-andi.shyti@samsung.com>
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34644 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934350AbcATKOh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2016 05:14:37 -0500
-In-reply-to: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] drm: exynos: make PM functions as __maybe_unused
+Date: Wed, 20 Jan 2016 11:33:37 +0100
+Message-ID: <12427702.1DA55iFFLW@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-The definition of s2mps11_name is meant to resolve the name of a
-given clock. Remove it because the clocks have the same name we
-can get it directly from the s2mps11_clks_init structure.
+The newly added runtime-pm support for exynos-drm encloses the
+pm functions in an #ifdef, but not the functions that are called
+from them and nowhere else, which produces warnings:
 
-While in the probe function the s2mps11_clks is used only to
-iterate through the s2mps11_clks. The naming itself brings
-confusion and the readability does not improve much.
+drm/exynos/exynos_drm_dsi.c:733:13: warning: 'exynos_dsi_disable_clock' defined but not used [-Wunused-function]
+ static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
+             ^
+drm/exynos/exynos_drm_dsi.c:1291:13: warning: 'exynos_dsi_disable_irq' defined but not used [-Wunused-function]
+ static void exynos_dsi_disable_irq(struct exynos_dsi *dsi)
+             ^
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+This removes the #ifdef and instead marks the functions as
+__maybe_unused, so gcc can silently discard them and all called
+functions when CONFIG_PM is disabled.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: ba6e47795d83 ("drm/exynos: dsi: add runtime pm support")
 ---
- drivers/clk/clk-s2mps11.c | 36 ++++++++++++++++--------------------
- 1 file changed, 16 insertions(+), 20 deletions(-)
+This is a regression against 4.4, found on ARM randconfig testing
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index fac0e20..371150a 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -28,8 +28,6 @@
- #include <linux/mfd/samsung/s5m8767.h>
- #include <linux/mfd/samsung/core.h>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index d84a498ef099..e977a81af2e6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1906,8 +1906,7 @@ static int exynos_dsi_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
--#define s2mps11_name(a) (a->hw.init->name)
--
- enum {
- 	S2MPS11_CLK_AP = 0,
- 	S2MPS11_CLK_CP,
-@@ -141,19 +139,17 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
- static int s2mps11_clk_probe(struct platform_device *pdev)
+-#ifdef CONFIG_PM
+-static int exynos_dsi_suspend(struct device *dev)
++static int __maybe_unused exynos_dsi_suspend(struct device *dev)
  {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
-+	struct s2mps11_clk *s2mps11_clks;
- 	struct clk_onecell_data *clk_data;
- 	unsigned int s2mps11_reg;
- 	int i, ret = 0;
- 	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
+ 	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+@@ -1938,7 +1937,7 @@ static int exynos_dsi_suspend(struct device *dev)
+ 	return 0;
+ }
  
- 	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
--				sizeof(*s2mps11_clk), GFP_KERNEL);
-+				sizeof(*s2mps11_clks), GFP_KERNEL);
- 	if (!s2mps11_clks)
- 		return -ENOMEM;
+-static int exynos_dsi_resume(struct device *dev)
++static int __maybe_unused exynos_dsi_resume(struct device *dev)
+ {
+ 	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+@@ -1972,7 +1971,6 @@ err_clk:
  
--	s2mps11_clk = s2mps11_clks;
--
- 	clk_data = devm_kzalloc(&pdev->dev, sizeof(*clk_data), GFP_KERNEL);
- 	if (!clk_data)
- 		return -ENOMEM;
-@@ -186,26 +182,26 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(s2mps11_clks->clk_np))
- 		return PTR_ERR(s2mps11_clks->clk_np);
+ 	return ret;
+ }
+-#endif
  
--	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
-+	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
- 		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
- 			continue; /* Skip clocks not present in some devices */
--		s2mps11_clk->iodev = iodev;
--		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
--		s2mps11_clk->mask = 1 << i;
--		s2mps11_clk->reg = s2mps11_reg;
--
--		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
--							&s2mps11_clk->hw);
--		if (IS_ERR(s2mps11_clk->clk)) {
-+		s2mps11_clks[i].iodev = iodev;
-+		s2mps11_clks[i].hw.init = &s2mps11_clks_init[i];
-+		s2mps11_clks[i].mask = 1 << i;
-+		s2mps11_clks[i].reg = s2mps11_reg;
-+
-+		s2mps11_clks[i].clk = devm_clk_register(&pdev->dev,
-+							&s2mps11_clks[i].hw);
-+		if (IS_ERR(s2mps11_clks[i].clk)) {
- 			dev_err(&pdev->dev, "Fail to register : %s\n",
--						s2mps11_name(s2mps11_clk));
--			ret = PTR_ERR(s2mps11_clk->clk);
-+						s2mps11_clks_init[i].name);
-+			ret = PTR_ERR(s2mps11_clks[i].clk);
- 			goto err_reg;
- 		}
- 
--		s2mps11_clk->lookup = clkdev_create(s2mps11_clk->clk,
--					s2mps11_name(s2mps11_clk), NULL);
--		if (!s2mps11_clk->lookup) {
-+		s2mps11_clks[i].lookup = clkdev_create(s2mps11_clks[i].clk,
-+					s2mps11_clks_init[i].name, NULL);
-+		if (!s2mps11_clks[i].lookup) {
- 			ret = -ENOMEM;
- 			goto err_reg;
- 		}
--- 
-2.7.0.rc3
+ static const struct dev_pm_ops exynos_dsi_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume, NULL)
