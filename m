@@ -1,116 +1,109 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] power: genpd: fix lockdep issue for all subdomains
-Date: Wed, 20 Jan 2016 09:41:22 +0100
-Message-ID: <CAPDyKFpcckcRqHGR-J-nb9+O3yTjU4k4KyLqNwKT2M4RvTgq7w@mail.gmail.com>
-References: <1451903982-1598-1-git-send-email-m.szyprowski@samsung.com>
-	<CAPDyKFqQDV9v0WB78QTkv=1_9APBo-J9F7LPBDfDOSNGYbVbOw@mail.gmail.com>
-	<569F2BED.3060504@samsung.com>
+From: Sriram V <vshrirama@gmail.com>
+Subject: Re: domain off
+Date: Wed, 20 Jan 2016 15:22:01 +0530
+Message-ID: <CAH9_wRPnvosp4sq3fBHGhd7G=V69s7qQdg3mUF_d08aWS4H_ng@mail.gmail.com>
+References: <CAH9_wRPDMiCMNZJHkkK21oF8dySUfa5AUpGnp-nh6V77As6CPA@mail.gmail.com>
+	<CAJKOXPe51YO3t1fhUdD1OsmXXcW3MoTwapvY4Y0q8QwaKrxzRg@mail.gmail.com>
+	<CAH9_wRN13+PKLsTL3kSonLUpzHo7zbQJZ658C4+fRZRxe=HeTw@mail.gmail.com>
+	<CAJKOXPeCyEYtUGf2skAbudOjGiSVn8Hyzk76B5aW8VJT7apoqA@mail.gmail.com>
+	<CAH9_wRO28-4jMHwfVpwnDFbut6m=2gv_zVd3EnLguZj9EJYebA@mail.gmail.com>
+	<569311BB.5040206@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <569F2BED.3060504@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, Nicolas Boichat <drinkcat@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f178.google.com ([209.85.160.178]:35948 "EHLO
+	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933615AbcATJwC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 Jan 2016 04:52:02 -0500
+Received: by mail-yk0-f178.google.com with SMTP id v14so3491640ykd.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jan 2016 01:52:01 -0800 (PST)
+In-Reply-To: <569311BB.5040206@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-[...]
+Hi Krzyszof,
 
->>> During genpd_poweron, genpd->lock is acquired recursively for each
->>> parent (master) domain, which are separate obejcts. This confuses
->>> lockdep, which considers every operation on genpd->lock as being done on
->>> the same lock class. This leads to the following false positive warning:
->>>
->>> =============================================
->>> [ INFO: possible recursive locking detected ]
->>> 4.4.0-rc4-xu3s #32 Not tainted
->>> ---------------------------------------------
->>> swapper/0/1 is trying to acquire lock:
->>>   (&genpd->lock){+.+...}, at: [<c0361550>] __genpd_poweron+0x64/0x108
->>>
->>> but task is already holding lock:
->>>   (&genpd->lock){+.+...}, at: [<c0361af8>]
->>> genpd_dev_pm_attach+0x168/0x1b8
->>>
->>> other info that might help us debug this:
->>>   Possible unsafe locking scenario:
->>>
->>>         CPU0
->>>         ----
->>>    lock(&genpd->lock);
->>>    lock(&genpd->lock);
->>>
->>>   *** DEADLOCK ***
->>>
->>>   May be due to missing lock nesting notation
->>>
->>> 3 locks held by swapper/0/1:
->>>   #0:  (&dev->mutex){......}, at: [<c0350910>] __driver_attach+0x48/0x98
->>>   #1:  (&dev->mutex){......}, at: [<c0350920>] __driver_attach+0x58/0x98
->>>   #2:  (&genpd->lock){+.+...}, at: [<c0361af8>]
->>> genpd_dev_pm_attach+0x168/0x1b8
->>>
->>> stack backtrace:
->>> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-xu3s #32
->>> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->>> [<c0016c98>] (unwind_backtrace) from [<c00139c4>] (show_stack+0x10/0x14)
->>> [<c00139c4>] (show_stack) from [<c0270df0>] (dump_stack+0x84/0xc4)
->>> [<c0270df0>] (dump_stack) from [<c00780b8>]
->>> (__lock_acquire+0x1f88/0x215c)
->>> [<c00780b8>] (__lock_acquire) from [<c007886c>] (lock_acquire+0xa4/0xd0)
->>> [<c007886c>] (lock_acquire) from [<c0641f2c>]
->>> (mutex_lock_nested+0x70/0x4d4)
->>> [<c0641f2c>] (mutex_lock_nested) from [<c0361550>]
->>> (__genpd_poweron+0x64/0x108)
->>> [<c0361550>] (__genpd_poweron) from [<c0361b00>]
->>> (genpd_dev_pm_attach+0x170/0x1b8)
->>> [<c0361b00>] (genpd_dev_pm_attach) from [<c03520a8>]
->>> (platform_drv_probe+0x2c/0xac)
->>> [<c03520a8>] (platform_drv_probe) from [<c03507d4>]
->>> (driver_probe_device+0x208/0x2fc)
->>> [<c03507d4>] (driver_probe_device) from [<c035095c>]
->>> (__driver_attach+0x94/0x98)
->>> [<c035095c>] (__driver_attach) from [<c034ec14>]
->>> (bus_for_each_dev+0x68/0x9c)
->>> [<c034ec14>] (bus_for_each_dev) from [<c034fec8>]
->>> (bus_add_driver+0x1a0/0x218)
->>> [<c034fec8>] (bus_add_driver) from [<c035115c>]
->>> (driver_register+0x78/0xf8)
->>> [<c035115c>] (driver_register) from [<c0338488>]
->>> (exynos_drm_register_drivers+0x28/0x74)
->>> [<c0338488>] (exynos_drm_register_drivers) from [<c0338594>]
->>> (exynos_drm_init+0x6c/0xc4)
->>> [<c0338594>] (exynos_drm_init) from [<c00097f4>]
->>> (do_one_initcall+0x90/0x1dc)
->>> [<c00097f4>] (do_one_initcall) from [<c0895e08>]
->>> (kernel_init_freeable+0x158/0x1f8)
->>> [<c0895e08>] (kernel_init_freeable) from [<c063ecac>]
->>> (kernel_init+0x8/0xe8)
->>> [<c063ecac>] (kernel_init) from [<c000f7d0>] (ret_from_fork+0x14/0x24)
->>>
->>> This patch replaces mutex_lock with mutex_lock_nested() and uses
->>> recursion depth to annotate each genpd->lock operation with separate
->>> lockdep subclass.
->>>
->>> Reported-by: Anand Moon <linux.amoon@gmail.com>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+
+On Mon, Jan 11, 2016 at 7:51 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 11.01.2016 10:48, Sriram V wrote:
+>> Hi Krzystof,
 >>
-
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-You didn't send this to linux-pm so probably you should resend it, so
-Rafael can pick it up.
-
-[...]
-
+>>
+>>
+>> On Mon, Jan 11, 2016 at 4:57 AM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> 2016-01-10 22:49 GMT+09:00 Sriram V <vshrirama@gmail.com>:
+>>>> Hi Krzysztof,
+>>>>
+>>>> I see that in pm_genpd_sumarry, the domains are off. However, i still
+>>>> see the clocks are on.
+>>>> For example; isp and cam is turned off in pm_genpd_summary, however
+>>>> cam clocks are still on.
+>>>>
+>>>> Should'nt the clocks be turned off first and then the domain.
+>>>
+>>> No, the clocks in clock hierarchy are usually not disabled as a part
+>>> of domain power off. However respective drivers attached to a power
+>>> domain, when entering runtime suspend, should disable these clocks.
+>>>
+>>
+>> That is true, runtime suspend framework should disable the clocks.
+>> Hence, my question is if the clocks are active, Will disabling the
+>> domain take effect? Because when i print the status - they show that
+>> the domain is OFF.
 >
-> The only difference between mutex_lock_nested and mutex_lock is the way
-> it is interpreted by deplock. The additional argument is deplock subclass
-> of the lock. The name of this function is imho a bit misleading.
+> Yes, the domain will be disabled.
+>
+>>
+>> On my system, what i see is camera clocks are active, But the domain
+>> is OFF. Hence, i am not sure if camera subsystem is consuming power or
+>> not since clocks are on.
+>>
+>>>From my understanding, the domain status should not indicate OFF if
+>> any clocks are still on.
+>
+> Clocks and power domains in Linux are (mostly) independent subsystems so
+> the domain will be disabled even though some clocks are active. Some
+> clocks may be even missing in Linux (not defined) - it doesn't matter...
+>
+> It doesn't matter except in all the cases when this is a bug. :) The
+> clocks should be disabled and some muxes reparented to oscclk. One of
+> the cases we had was hang on reading clk_summary when power domain is off.
+>
 
-:-) Of course you are absolutely right. Thanks!
+Thanks for your pointers.
 
-[...]
+When i boot the kernel, I see that the following domains are currently
+on. I see that the following domains are currently on, Linux does not
+know about these domains and they are permanently on.
 
-Kind regards
-Uffe
+pd-fsys, pd-psgen, pd-peric, pd-wcore
+
+Is there a way of finding out if these can be shut off. i dont think
+if clocks for the IP's serviced by these domains and the domain itself
+is correctly tied-in in runtime-pm. As these domains are always on.
+
+Also, what kernel are you using?
+
+Is there a way of finding out if these can be shut off. i dont think
+if clocks for the IP's serviced by these domains
+and the domain itself is correctly tied-in in runtime-pm.
+
+Also, what kernel are you using?
+
+
+
+> Best regards,
+> Krzysztof
+>
+
+
+
+-- 
+Regards,
+Sriram
