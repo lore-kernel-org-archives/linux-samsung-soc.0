@@ -1,49 +1,110 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v3 0/4] s2mps11 clock driver refactoring
-Date: Wed, 20 Jan 2016 19:14:20 +0900
-Message-ID: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: domain off
+Date: Wed, 20 Jan 2016 19:12:16 +0900
+Message-ID: <569F5D80.4040103@samsung.com>
+References: <CAH9_wRPDMiCMNZJHkkK21oF8dySUfa5AUpGnp-nh6V77As6CPA@mail.gmail.com>
+ <CAJKOXPe51YO3t1fhUdD1OsmXXcW3MoTwapvY4Y0q8QwaKrxzRg@mail.gmail.com>
+ <CAH9_wRN13+PKLsTL3kSonLUpzHo7zbQJZ658C4+fRZRxe=HeTw@mail.gmail.com>
+ <CAJKOXPeCyEYtUGf2skAbudOjGiSVn8Hyzk76B5aW8VJT7apoqA@mail.gmail.com>
+ <CAH9_wRO28-4jMHwfVpwnDFbut6m=2gv_zVd3EnLguZj9EJYebA@mail.gmail.com>
+ <569311BB.5040206@samsung.com>
+ <CAH9_wRPnvosp4sq3fBHGhd7G=V69s7qQdg3mUF_d08aWS4H_ng@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:16386 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933714AbcATKMR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 Jan 2016 05:12:17 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O1800EVBXOELQ60@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jan 2016 10:12:14 +0000 (GMT)
+In-reply-to: <CAH9_wRPnvosp4sq3fBHGhd7G=V69s7qQdg3mUF_d08aWS4H_ng@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sriram V <vshrirama@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 20.01.2016 18:52, Sriram V wrote:
+> Hi Krzyszof,
+> 
+> 
+> 
+> On Mon, Jan 11, 2016 at 7:51 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On 11.01.2016 10:48, Sriram V wrote:
+>>> Hi Krzystof,
+>>>
+>>>
+>>>
+>>> On Mon, Jan 11, 2016 at 4:57 AM, Krzysztof Kozlowski
+>>> <k.kozlowski@samsung.com> wrote:
+>>>> 2016-01-10 22:49 GMT+09:00 Sriram V <vshrirama@gmail.com>:
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> I see that in pm_genpd_sumarry, the domains are off. However, i still
+>>>>> see the clocks are on.
+>>>>> For example; isp and cam is turned off in pm_genpd_summary, however
+>>>>> cam clocks are still on.
+>>>>>
+>>>>> Should'nt the clocks be turned off first and then the domain.
+>>>>
+>>>> No, the clocks in clock hierarchy are usually not disabled as a part
+>>>> of domain power off. However respective drivers attached to a power
+>>>> domain, when entering runtime suspend, should disable these clocks.
+>>>>
+>>>
+>>> That is true, runtime suspend framework should disable the clocks.
+>>> Hence, my question is if the clocks are active, Will disabling the
+>>> domain take effect? Because when i print the status - they show that
+>>> the domain is OFF.
+>>
+>> Yes, the domain will be disabled.
+>>
+>>>
+>>> On my system, what i see is camera clocks are active, But the domain
+>>> is OFF. Hence, i am not sure if camera subsystem is consuming power or
+>>> not since clocks are on.
+>>>
+>>> >From my understanding, the domain status should not indicate OFF if
+>>> any clocks are still on.
+>>
+>> Clocks and power domains in Linux are (mostly) independent subsystems so
+>> the domain will be disabled even though some clocks are active. Some
+>> clocks may be even missing in Linux (not defined) - it doesn't matter...
+>>
+>> It doesn't matter except in all the cases when this is a bug. :) The
+>> clocks should be disabled and some muxes reparented to oscclk. One of
+>> the cases we had was hang on reading clk_summary when power domain is off.
+>>
+> 
+> Thanks for your pointers.
+> 
+> When i boot the kernel, I see that the following domains are currently
+> on. I see that the following domains are currently on, Linux does not
+> know about these domains and they are permanently on.
+> 
+> pd-fsys, pd-psgen, pd-peric, pd-wcore
+> 
+> Is there a way of finding out if these can be shut off. i dont think
+> if clocks for the IP's serviced by these domains and the domain itself
+> is correctly tied-in in runtime-pm. As these domains are always on.
 
-This patchset contains some code refactoring on the s2mps11 clock
-device driver. The main goal is to remove some dead code and
-improve its readability.
+The datasheet/reference manual in the "Local power control" describes
+conditions whether they could be disabled or not. It also documents what
+is required to power off them.
 
-At any iteration the patchset is getting a patch more, so that
-this time there are four patches :)
+> 
+> Also, what kernel are you using?
 
-Thanks to Krzysztof for his review, the changset is coming from
-his suggestions:
+Usually mainline and linux-next.
 
-V1 -> V2
- - the order of the patches has changed
- - the second patch has been added and it merges a for loop
-   inside
-   a previous one
- - the 3rd patch (which in the first version was the 1st)
-   contains some more redundant variables removal.
+In some of the projects I use different ones, e.g. these on tizen.org
+(https://review.tizen.org/git/?p=platform/kernel/linux-exynos.git;a=summary).
 
-V2 -> V3
- - The "merge two for loops in one" has been moved as first patch
- - removed the global variable clk_data
-
-The patches have been applied on next-20160120 and tested on
-Odroid Xu4.
-
-Andi Shyti (4):
-  clk: s2mps11: merge two for loops in one
-  clk: s2mps11: allocate only one structure for clock init
-  clk: s2mps11: remove redundant static variables declaration
-  clk: s2mps11: remove redundant code
-
- drivers/clk/clk-s2mps11.c | 108 +++++++++++++---------------------------------
- 1 file changed, 31 insertions(+), 77 deletions(-)
-
--- 
-2.7.0.rc3
-
+Best regards,
+Krzysztof
