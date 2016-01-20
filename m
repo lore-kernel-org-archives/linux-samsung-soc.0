@@ -1,80 +1,224 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 0/8] rtc: max77686: Extend driver and add max77802 support
-Date: Wed, 20 Jan 2016 14:14:40 -0300
-Message-ID: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH 4/8] rtc: max77686: Add an indirection level to access RTC registers
+Date: Wed, 20 Jan 2016 14:14:44 -0300
+Message-ID: <1453310088-29985-5-git-send-email-javier@osg.samsung.com>
+References: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:56000 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:56032 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934158AbcATRPf (ORCPT
+	id S964891AbcATRPu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2016 12:15:35 -0500
+	Wed, 20 Jan 2016 12:15:50 -0500
+In-Reply-To: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hello,
+The max77686 driver is generic enough that can be used for other
+Maxim RTC IP blocks but these might not have the same registers
+layout so instead of accessing the registers directly, add a map
+to translate offsets to the real registers addresses for each IP.
 
-On a recent disussion [0] with Krzysztof Kozlowski and Laxman Dewangan,
-we came to the conclusion that the max77686 and max77802 RTC are almost
-the same with only a few differences so there shouldn't be two separate
-drivers and is better to extend max77686 driver and delete rtc-max77802.
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
 
-By making the driver more generic, other RTC IP blocks from Maxim PMICs
-could be supported as well like the max77620.
+ drivers/rtc/rtc-max77686.c | 75 +++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 65 insertions(+), 10 deletions(-)
 
-Patches #1 is just a trivial cleanup.
-
-Patch #2 allows to support RTCs that need a shorter delay when updating
-the RTC.
-
-Patch #3 adds a driver data structure to avoid hard-coding parameters
-specific to a certain RTC such as the needed delay and RTC register mask.
-
-Patch #4 changes the driver to use a mapping table instead of using the
-max77686 registers offsets directly to allow supporting RTC with other
-registers addresses and layout.
-
-Patch #5 Adds support for max77802 to max77686 RTC driver and patch #6
-removes the old driver since is not needed anymore.
-
-Finally patch #7 and patch #8 removes the Kconfig symbol from defconfigs.
-
-I've tested this patch-set on an Exynos5800 Peach Pi Chromebook that has
-a max77802 PMIC and the RTC was working correctly but I don't have a
-machine with max77686 so I will really appreaciate if someone can test
-that no regressions were introduced.
-
-One thing that I'm not sure is how to handle bisectability, in patch #5
-there will be two drivers that matches "rtc-max77802". So I don't know
-if I should use a different platform_device_id name and change in the
-same patch that max77802 is removed or if this is not a big deal so the
-patches could stay as is.
-
-I believe all patches should go through the RTC tree with proper acks or
-wait until the RTC patches land to pick the defconfig changes.
-
-[0]: http://www.spinics.net/lists/devicetree/msg110348.html
-
-
-Javier Martinez Canillas (8):
-  rtc: max77686: Use ARRAY_SIZE() instead of current array length
-  rtc: max77686: Use usleep_range() instead of msleep()
-  rtc: max77686: Use a driver data struct instead hard-coded values
-  rtc: max77686: Add an indirection level to access RTC registers
-  rtc: max77686: Add max77802 support
-  rtc: Remove Maxim 77802 driver
-  ARM: exynos_defconfig: Remove MAX77802 RTC Kconfig symbol
-  ARM: multi_v7_defconfig: Remove MAX77802 RTC Kconfig symbol
-
- arch/arm/configs/exynos_defconfig   |   1 -
- arch/arm/configs/multi_v7_defconfig |   1 -
- drivers/rtc/Kconfig                 |  10 -
- drivers/rtc/Makefile                |   1 -
- drivers/rtc/rtc-max77686.c          | 276 +++++++++++++++-----
- drivers/rtc/rtc-max77802.c          | 502 ------------------------------------
- 6 files changed, 213 insertions(+), 578 deletions(-)
- delete mode 100644 drivers/rtc/rtc-max77802.c
-
+diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+index 441d163dcbeb..7316e41820c7 100644
+--- a/drivers/rtc/rtc-max77686.c
++++ b/drivers/rtc/rtc-max77686.c
+@@ -41,6 +41,8 @@
+ #define ALARM_ENABLE_SHIFT		7
+ #define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
+ 
++#define REG_RTC_NONE			0xdeadbeef
++
+ enum {
+ 	RTC_SEC = 0,
+ 	RTC_MIN,
+@@ -55,6 +57,7 @@ enum {
+ struct rtc_driver_data {
+ 	unsigned long		delay;
+ 	int			mask;
++	const unsigned int	*map;
+ };
+ 
+ struct max77686_rtc_info {
+@@ -77,9 +80,53 @@ enum MAX77686_RTC_OP {
+ 	MAX77686_RTC_READ,
+ };
+ 
++/* These are not registers but just offsets that are mapped to addresses */
++enum rtc_reg {
++	REG_RTC_CONTROLM = 0,
++	REG_RTC_CONTROL,
++	REG_RTC_UPDATE0,
++	REG_RTC_UPDATE1,
++	REG_WTSR_SMPL_CNTL,
++	REG_RTC_SEC,
++	REG_RTC_MIN,
++	REG_RTC_HOUR,
++	REG_RTC_WEEKDAY,
++	REG_RTC_MONTH,
++	REG_RTC_YEAR,
++	REG_RTC_DATE,
++	REG_ALARM1_SEC,
++	REG_ALARM1_MIN,
++	REG_ALARM1_HOUR,
++	REG_ALARM1_WEEKDAY,
++	REG_ALARM1_MONTH,
++	REG_ALARM1_YEAR,
++	REG_ALARM1_DATE,
++	REG_ALARM2_SEC,
++	REG_ALARM2_MIN,
++	REG_ALARM2_HOUR,
++	REG_ALARM2_WEEKDAY,
++	REG_ALARM2_MONTH,
++	REG_ALARM2_YEAR,
++	REG_ALARM2_DATE,
++	REG_RTC_END,
++};
++
++static const unsigned int max77686_map[REG_RTC_END] = {
++	MAX77686_RTC_CONTROLM, MAX77686_RTC_CONTROL, MAX77686_RTC_UPDATE0,
++	REG_RTC_NONE, MAX77686_WTSR_SMPL_CNTL, MAX77686_RTC_SEC,
++	MAX77686_RTC_MIN, MAX77686_RTC_HOUR, MAX77686_RTC_WEEKDAY,
++	MAX77686_RTC_MONTH, MAX77686_RTC_YEAR, MAX77686_RTC_DATE,
++	MAX77686_ALARM1_SEC, MAX77686_ALARM1_MIN, MAX77686_ALARM1_HOUR,
++	MAX77686_ALARM1_WEEKDAY, MAX77686_ALARM1_MONTH, MAX77686_ALARM1_YEAR,
++	MAX77686_ALARM1_DATE, MAX77686_ALARM2_SEC, MAX77686_ALARM2_MIN,
++	MAX77686_ALARM2_HOUR, MAX77686_ALARM2_WEEKDAY, MAX77686_ALARM2_MONTH,
++	MAX77686_ALARM2_YEAR, MAX77686_ALARM2_DATE,
++};
++
+ static const struct rtc_driver_data max77686_drv_data = {
+ 	.delay = 1600,
+ 	.mask  = 0x7f,
++	.map   = max77686_map,
+ };
+ 
+ static void max77686_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
+@@ -137,7 +184,8 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
+ 		data = 1 << RTC_RBUDR_SHIFT;
+ 
+ 	ret = regmap_update_bits(info->max77686->rtc_regmap,
+-				 MAX77686_RTC_UPDATE0, data, data);
++				 info->drv_data->map[REG_RTC_UPDATE0],
++				 data, data);
+ 	if (ret < 0)
+ 		dev_err(info->dev, "%s: fail to write update reg(ret=%d, data=0x%x)\n",
+ 				__func__, ret, data);
+@@ -162,7 +210,8 @@ static int max77686_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 		goto out;
+ 
+ 	ret = regmap_bulk_read(info->max77686->rtc_regmap,
+-				MAX77686_RTC_SEC, data, RTC_NR_TIME);
++			       info->drv_data->map[REG_RTC_SEC],
++			       data, RTC_NR_TIME);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to read time reg(%d)\n", __func__,	ret);
+ 		goto out;
+@@ -190,7 +239,8 @@ static int max77686_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	mutex_lock(&info->lock);
+ 
+ 	ret = regmap_bulk_write(info->max77686->rtc_regmap,
+-				 MAX77686_RTC_SEC, data, RTC_NR_TIME);
++				info->drv_data->map[REG_RTC_SEC],
++				data, RTC_NR_TIME);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write time reg(%d)\n", __func__,
+ 				ret);
+@@ -209,6 +259,7 @@ static int max77686_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	struct max77686_rtc_info *info = dev_get_drvdata(dev);
+ 	u8 data[RTC_NR_TIME];
+ 	unsigned int val;
++	const unsigned int *map = info->drv_data->map;
+ 	int i, ret;
+ 
+ 	mutex_lock(&info->lock);
+@@ -218,7 +269,7 @@ static int max77686_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		goto out;
+ 
+ 	ret = regmap_bulk_read(info->max77686->rtc_regmap,
+-				 MAX77686_ALARM1_SEC, data, RTC_NR_TIME);
++			       map[REG_ALARM1_SEC], data, RTC_NR_TIME);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s:%d fail to read alarm reg(%d)\n",
+ 				__func__, __LINE__, ret);
+@@ -256,6 +307,7 @@ static int max77686_rtc_stop_alarm(struct max77686_rtc_info *info)
+ 	u8 data[RTC_NR_TIME];
+ 	int ret, i;
+ 	struct rtc_time tm;
++	const unsigned int *map = info->drv_data->map;
+ 
+ 	if (!mutex_is_locked(&info->lock))
+ 		dev_warn(info->dev, "%s: should have mutex locked\n", __func__);
+@@ -265,7 +317,7 @@ static int max77686_rtc_stop_alarm(struct max77686_rtc_info *info)
+ 		goto out;
+ 
+ 	ret = regmap_bulk_read(info->max77686->rtc_regmap,
+-				 MAX77686_ALARM1_SEC, data, RTC_NR_TIME);
++			       map[REG_ALARM1_SEC], data, RTC_NR_TIME);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to read alarm reg(%d)\n",
+ 				__func__, ret);
+@@ -278,7 +330,7 @@ static int max77686_rtc_stop_alarm(struct max77686_rtc_info *info)
+ 		data[i] &= ~ALARM_ENABLE_MASK;
+ 
+ 	ret = regmap_bulk_write(info->max77686->rtc_regmap,
+-				 MAX77686_ALARM1_SEC, data, RTC_NR_TIME);
++				map[REG_ALARM1_SEC], data, RTC_NR_TIME);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write alarm reg(%d)\n",
+ 				__func__, ret);
+@@ -295,6 +347,7 @@ static int max77686_rtc_start_alarm(struct max77686_rtc_info *info)
+ 	u8 data[RTC_NR_TIME];
+ 	int ret;
+ 	struct rtc_time tm;
++	const unsigned int *map = info->drv_data->map;
+ 
+ 	if (!mutex_is_locked(&info->lock))
+ 		dev_warn(info->dev, "%s: should have mutex locked\n", __func__);
+@@ -304,7 +357,7 @@ static int max77686_rtc_start_alarm(struct max77686_rtc_info *info)
+ 		goto out;
+ 
+ 	ret = regmap_bulk_read(info->max77686->rtc_regmap,
+-				 MAX77686_ALARM1_SEC, data, RTC_NR_TIME);
++			       map[REG_ALARM1_SEC], data, RTC_NR_TIME);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to read alarm reg(%d)\n",
+ 				__func__, ret);
+@@ -325,7 +378,7 @@ static int max77686_rtc_start_alarm(struct max77686_rtc_info *info)
+ 		data[RTC_DATE] |= (1 << ALARM_ENABLE_SHIFT);
+ 
+ 	ret = regmap_bulk_write(info->max77686->rtc_regmap,
+-				 MAX77686_ALARM1_SEC, data, RTC_NR_TIME);
++				map[REG_ALARM1_SEC], data, RTC_NR_TIME);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write alarm reg(%d)\n",
+ 				__func__, ret);
+@@ -354,7 +407,8 @@ static int max77686_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		goto out;
+ 
+ 	ret = regmap_bulk_write(info->max77686->rtc_regmap,
+-				 MAX77686_ALARM1_SEC, data, RTC_NR_TIME);
++				info->drv_data->map[REG_ALARM1_SEC],
++				data, RTC_NR_TIME);
+ 
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write alarm reg(%d)\n",
+@@ -420,7 +474,8 @@ static int max77686_rtc_init_reg(struct max77686_rtc_info *info)
+ 	info->rtc_24hr_mode = 1;
+ 
+ 	ret = regmap_bulk_write(info->max77686->rtc_regmap,
+-				MAX77686_RTC_CONTROLM, data, ARRAY_SIZE(data));
++				info->drv_data->map[REG_RTC_CONTROLM],
++				data, ARRAY_SIZE(data));
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write controlm reg(%d)\n",
+ 				__func__, ret);
 -- 
 2.5.0
