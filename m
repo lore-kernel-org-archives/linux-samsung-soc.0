@@ -1,45 +1,57 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/8] rtc: max77686: Use usleep_range() instead of msleep()
-Date: Thu, 21 Jan 2016 09:37:25 +0900
-Message-ID: <56A02845.3010008@samsung.com>
+Subject: Re: [PATCH 0/8] rtc: max77686: Extend driver and add max77802 support
+Date: Thu, 21 Jan 2016 09:48:20 +0900
+Message-ID: <56A02AD4.40107@samsung.com>
 References: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
- <1453310088-29985-3-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38331 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871AbcAUAh0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2016 19:37:26 -0500
-In-reply-to: <1453310088-29985-3-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 21.01.2016 02:14, Javier Martinez Canillas wrote:
-> Documentation/timers/timers-howto.txt suggest to use usleep_range()
-> instead of msleep() for small msec (1ms - 20ms) since msleep() will
-> often sleep for 20ms for any value in that range.
+> Hello,
 > 
-> This is fine in this case since 16ms is the _minimum_ delay required
-> by max77686 for an RTC update but by using usleep_range() instead of
-> msleep(), the driver can support other RTC IP blocks with a shorter
-> minium delay (i.e: in the range of usecs insted of msecs).
-
-s/minium/minimum/
-s/insted/instead/
-
+> On a recent disussion [0] with Krzysztof Kozlowski and Laxman Dewangan,
+> we came to the conclusion that the max77686 and max77802 RTC are almost
+> the same with only a few differences so there shouldn't be two separate
+> drivers and is better to extend max77686 driver and delete rtc-max77802.
 > 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
+> By making the driver more generic, other RTC IP blocks from Maxim PMICs
+> could be supported as well like the max77620.
 > 
->  drivers/rtc/rtc-max77686.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> Patches #1 is just a trivial cleanup.
+> 
+> Patch #2 allows to support RTCs that need a shorter delay when updating
+> the RTC.
+> 
+> Patch #3 adds a driver data structure to avoid hard-coding parameters
+> specific to a certain RTC such as the needed delay and RTC register mask.
+> 
+> Patch #4 changes the driver to use a mapping table instead of using the
+> max77686 registers offsets directly to allow supporting RTC with other
+> registers addresses and layout.
+> 
+> Patch #5 Adds support for max77802 to max77686 RTC driver and patch #6
+> removes the old driver since is not needed anymore.
+> 
+> Finally patch #7 and patch #8 removes the Kconfig symbol from defconfigs.
+> 
+> I've tested this patch-set on an Exynos5800 Peach Pi Chromebook that has
+> a max77802 PMIC and the RTC was working correctly but I don't have a
+> machine with max77686 so I will really appreaciate if someone can test
+> that no regressions were introduced.
+> 
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Thanks for the submission. I like the approach. I'll start reviewing the
+code and testing it... or maybe I'll wait with testing for v2 because I
+already sent some comments. :)
+
+Anyway I will provide later tested-by on max77686.
 
 Best regards,
 Krzysztof
