@@ -1,32 +1,36 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/8] rtc: max77686: Extend driver and add max77802 support
-Date: Thu, 21 Jan 2016 09:34:25 +0900
-Message-ID: <56A02791.9010409@samsung.com>
+Subject: Re: [PATCH 1/8] rtc: max77686: Use ARRAY_SIZE() instead of current
+ array length
+Date: Thu, 21 Jan 2016 09:35:10 +0900
+Message-ID: <56A027BE.4080600@samsung.com>
 References: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
- <20160121003047.GF3367@piout.net>
+ <1453310088-29985-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160121003047.GF3367@piout.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46279 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752101AbcAUAfL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 Jan 2016 19:35:11 -0500
+In-reply-to: <1453310088-29985-2-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org
 
-On 21.01.2016 09:30, Alexandre Belloni wrote:
->> I believe all patches should go through the RTC tree with proper acks or
->> wait until the RTC patches land to pick the defconfig changes.
->>
+On 21.01.2016 02:14, Javier Martinez Canillas wrote:
+> It is better to use the ARRAY_SIZE() macro instead of the array length
+> to avoid bugs if the array is later changed and the length not updated.
 > 
-> I think Olof would prefer the last patches to go through arm-soc.
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+>  drivers/rtc/rtc-max77686.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-That would be preferred but merging them before the 5/8 would cause a
-loss of functionality on these defconfigs making it non-bisectable
-approach. I think it would be good to preserve bisectability in that
-matter so either:
-1. a tag from RTC on top of which these patches would be applied in arm-soc,
-2. take them to RTC tree with our acks.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
