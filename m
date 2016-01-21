@@ -1,57 +1,213 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/8] rtc: max77686: Extend driver and add max77802 support
-Date: Thu, 21 Jan 2016 09:48:20 +0900
-Message-ID: <56A02AD4.40107@samsung.com>
+Subject: Re: [PATCH 3/8] rtc: max77686: Use a driver data struct instead
+ hard-coded values
+Date: Thu, 21 Jan 2016 09:45:25 +0900
+Message-ID: <56A02A25.9050905@samsung.com>
 References: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
+ <1453310088-29985-4-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
+In-reply-to: <1453310088-29985-4-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 21.01.2016 02:14, Javier Martinez Canillas wrote:
-> Hello,
+> The driver has some hard-coded values such as the minimum delay needed
+> before a RTC update or the mask used for the sec/min/hour/etc registers.
 > 
-> On a recent disussion [0] with Krzysztof Kozlowski and Laxman Dewangan,
-> we came to the conclusion that the max77686 and max77802 RTC are almost
-> the same with only a few differences so there shouldn't be two separate
-> drivers and is better to extend max77686 driver and delete rtc-max77802.
+> Use a data structure that contains these values and pass as driver data
+> using the platform device ID table for each device.
 > 
-> By making the driver more generic, other RTC IP blocks from Maxim PMICs
-> could be supported as well like the max77620.
+> This allows to make the driver's ops callbacks more generic so other RTC
+> that are similar but don't have the same values can also be supported.
 > 
-> Patches #1 is just a trivial cleanup.
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
 > 
-> Patch #2 allows to support RTCs that need a shorter delay when updating
-> the RTC.
+>  drivers/rtc/rtc-max77686.c | 47 +++++++++++++++++++++++++++++-----------------
+>  1 file changed, 30 insertions(+), 17 deletions(-)
 > 
-> Patch #3 adds a driver data structure to avoid hard-coding parameters
-> specific to a certain RTC such as the needed delay and RTC register mask.
-> 
-> Patch #4 changes the driver to use a mapping table instead of using the
-> max77686 registers offsets directly to allow supporting RTC with other
-> registers addresses and layout.
-> 
-> Patch #5 Adds support for max77802 to max77686 RTC driver and patch #6
-> removes the old driver since is not needed anymore.
-> 
-> Finally patch #7 and patch #8 removes the Kconfig symbol from defconfigs.
-> 
-> I've tested this patch-set on an Exynos5800 Peach Pi Chromebook that has
-> a max77802 PMIC and the RTC was working correctly but I don't have a
-> machine with max77686 so I will really appreaciate if someone can test
-> that no regressions were introduced.
-> 
+> diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+> index ae4d61e7ce4b..441d163dcbeb 100644
+> --- a/drivers/rtc/rtc-max77686.c
+> +++ b/drivers/rtc/rtc-max77686.c
+> @@ -41,8 +41,6 @@
+>  #define ALARM_ENABLE_SHIFT		7
+>  #define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
+>  
+> -#define MAX77686_RTC_UPDATE_DELAY	16000
+> -
+>  enum {
+>  	RTC_SEC = 0,
+>  	RTC_MIN,
+> @@ -54,6 +52,11 @@ enum {
+>  	RTC_NR_TIME
+>  };
+>  
+> +struct rtc_driver_data {
 
-Thanks for the submission. I like the approach. I'll start reviewing the
-code and testing it... or maybe I'll wait with testing for v2 because I
-already sent some comments. :)
+1. This is only local structure so maybe: max77686_rtc_driver_data?
 
-Anyway I will provide later tested-by on max77686.
+2. Can you put here a comment explaining the purpose of this delay
+(quite generic name) and used units?
+
+> +	unsigned long		delay;
+
+A comment here - what 'mask'? Generic name so explanation would be welcomed.
+
+> +	int			mask;
+
+I think this should be u8 to avoid early promotions to int. It is used
+directly with other u8 values. At the end effect of operation is
+promoted to int anyway but using only u8 for operations looks more
+consistent to me.
+
+> +};
+> +
+>  struct max77686_rtc_info {
+>  	struct device		*dev;
+>  	struct max77686_dev	*max77686;
+> @@ -63,6 +66,8 @@ struct max77686_rtc_info {
+>  
+>  	struct regmap		*regmap;
+>  
+> +	struct rtc_driver_data	*drv_data;
+
+That may be pointer to const data. Actually not "may be" but
+even "should be" because you allocate later really a const data and you
+are discarding const-ness with cast.
+
+> +
+>  	int virq;
+>  	int rtc_24hr_mode;
+>  };
+> @@ -72,12 +77,19 @@ enum MAX77686_RTC_OP {
+>  	MAX77686_RTC_READ,
+>  };
+>  
+> +static const struct rtc_driver_data max77686_drv_data = {
+> +	.delay = 1600,
+> +	.mask  = 0x7f,
+> +};
+> +
+>  static void max77686_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
+> -				   int rtc_24hr_mode)
+> +				    struct max77686_rtc_info *info)
+>  {
+> -	tm->tm_sec = data[RTC_SEC] & 0x7f;
+> -	tm->tm_min = data[RTC_MIN] & 0x7f;
+> -	if (rtc_24hr_mode)
+> +	int mask = info->drv_data->mask;
+> +
+> +	tm->tm_sec = data[RTC_SEC] & mask;
+> +	tm->tm_min = data[RTC_MIN] & mask;
+> +	if (info->rtc_24hr_mode)
+>  		tm->tm_hour = data[RTC_HOUR] & 0x1f;
+>  	else {
+>  		tm->tm_hour = data[RTC_HOUR] & 0x0f;
+> @@ -86,10 +98,10 @@ static void max77686_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
+>  	}
+>  
+>  	/* Only a single bit is set in data[], so fls() would be equivalent */
+> -	tm->tm_wday = ffs(data[RTC_WEEKDAY] & 0x7f) - 1;
+> +	tm->tm_wday = ffs(data[RTC_WEEKDAY] & mask) - 1;
+>  	tm->tm_mday = data[RTC_DATE] & 0x1f;
+>  	tm->tm_mon = (data[RTC_MONTH] & 0x0f) - 1;
+> -	tm->tm_year = (data[RTC_YEAR] & 0x7f) + 100;
+> +	tm->tm_year = (data[RTC_YEAR] & mask) + 100;
+>  	tm->tm_yday = 0;
+>  	tm->tm_isdst = 0;
+>  }
+> @@ -117,6 +129,7 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
+>  {
+>  	int ret;
+>  	unsigned int data;
+> +	unsigned long delay = info->drv_data->delay;
+>  
+>  	if (op == MAX77686_RTC_WRITE)
+>  		data = 1 << RTC_UDR_SHIFT;
+> @@ -129,9 +142,8 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
+>  		dev_err(info->dev, "%s: fail to write update reg(ret=%d, data=0x%x)\n",
+>  				__func__, ret, data);
+>  	else {
+> -		/* Minimum 16ms delay required before RTC update. */
+> -		usleep_range(MAX77686_RTC_UPDATE_DELAY,
+> -			     MAX77686_RTC_UPDATE_DELAY * 2);
+> +		/* Minimum delay required before RTC update. */
+> +		usleep_range(delay, delay * 2);
+>  	}
+>  
+>  	return ret;
+> @@ -156,7 +168,7 @@ static int max77686_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, tm, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, tm, info);
+>  
+>  	ret = rtc_valid_tm(tm);
+>  
+> @@ -213,7 +225,7 @@ static int max77686_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, &alrm->time, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, &alrm->time, info);
+>  
+>  	alrm->enabled = 0;
+>  	for (i = 0; i < RTC_NR_TIME; i++) {
+> @@ -260,7 +272,7 @@ static int max77686_rtc_stop_alarm(struct max77686_rtc_info *info)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, &tm, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, &tm, info);
+>  
+>  	for (i = 0; i < RTC_NR_TIME; i++)
+>  		data[i] &= ~ALARM_ENABLE_MASK;
+> @@ -299,7 +311,7 @@ static int max77686_rtc_start_alarm(struct max77686_rtc_info *info)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, &tm, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, &tm, info);
+>  
+>  	data[RTC_SEC] |= (1 << ALARM_ENABLE_SHIFT);
+>  	data[RTC_MIN] |= (1 << ALARM_ENABLE_SHIFT);
+> @@ -307,7 +319,7 @@ static int max77686_rtc_start_alarm(struct max77686_rtc_info *info)
+>  	data[RTC_WEEKDAY] &= ~ALARM_ENABLE_MASK;
+>  	if (data[RTC_MONTH] & 0xf)
+>  		data[RTC_MONTH] |= (1 << ALARM_ENABLE_SHIFT);
+> -	if (data[RTC_YEAR] & 0x7f)
+> +	if (data[RTC_YEAR] & info->drv_data->mask)
+>  		data[RTC_YEAR] |= (1 << ALARM_ENABLE_SHIFT);
+>  	if (data[RTC_DATE] & 0x1f)
+>  		data[RTC_DATE] |= (1 << ALARM_ENABLE_SHIFT);
+> @@ -436,6 +448,7 @@ static int max77686_rtc_probe(struct platform_device *pdev)
+>  	info->dev = &pdev->dev;
+>  	info->max77686 = max77686;
+>  	info->rtc = max77686->rtc;
+> +	info->drv_data = (struct rtc_driver_data *)pdev->id_entry->driver_data;
+
+That cast dropping constness is bad.
 
 Best regards,
 Krzysztof
+
+>  
+>  	platform_set_drvdata(pdev, info);
+>  
+> @@ -510,7 +523,7 @@ static SIMPLE_DEV_PM_OPS(max77686_rtc_pm_ops,
+>  			 max77686_rtc_suspend, max77686_rtc_resume);
+>  
+>  static const struct platform_device_id rtc_id[] = {
+> -	{ "max77686-rtc", 0 },
+> +	{ "max77686-rtc", .driver_data = (kernel_ulong_t)&max77686_drv_data, },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(platform, rtc_id);
+> 
