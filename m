@@ -1,45 +1,39 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 10/10] ARM: multi_v7_defconfig: Remove MAX77802 RTC Kconfig symbol
-Date: Thu, 21 Jan 2016 17:23:33 -0300
-Message-ID: <1453407813-14646-11-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH v2 09/10] ARM: exynos_defconfig: Remove MAX77802 RTC Kconfig symbol
+Date: Thu, 21 Jan 2016 17:23:32 -0300
+Message-ID: <1453407813-14646-10-git-send-email-javier@osg.samsung.com>
 References: <1453407813-14646-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:34573 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753419AbcAUUYY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jan 2016 15:24:24 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1453407813-14646-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 The driver has been removed so the Kconfig symbol is not valid anymore.
 
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-
 ---
 
 Changes in v2:
-- Add Krzysztof Kozlowski's Reviewed-by tag to patch #10.
+- Add Krzysztof Kozlowski's Reviewed-by tag to patch #9.
 
- arch/arm/configs/multi_v7_defconfig | 1 -
+ arch/arm/configs/exynos_defconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 314f6be2dca2..bdb42c09332c 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -664,7 +664,6 @@ CONFIG_RTC_DRV_MAX8907=y
- CONFIG_RTC_DRV_MAX8997=m
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 24dcd2bb1215..cdbe6dbc6e75 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -193,7 +193,6 @@ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_MAX8997=y
  CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_RK808=m
--CONFIG_RTC_DRV_MAX77802=m
- CONFIG_RTC_DRV_RS5C372=m
- CONFIG_RTC_DRV_PALMAS=y
- CONFIG_RTC_DRV_ST_LPC=y
+-CONFIG_RTC_DRV_MAX77802=y
+ CONFIG_RTC_DRV_S5M=y
+ CONFIG_RTC_DRV_S3C=y
+ CONFIG_DMADEVICES=y
 -- 
 2.5.0
