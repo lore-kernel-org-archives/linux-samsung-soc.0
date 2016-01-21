@@ -1,77 +1,39 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 0/8] rtc: max77686: Extend driver and add max77802 support
-Date: Thu, 21 Jan 2016 12:15:47 -0300
-Message-ID: <56A0F623.8000004@osg.samsung.com>
-References: <1453310088-29985-1-git-send-email-javier@osg.samsung.com>
- <56A02AD4.40107@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] ARM: s3c64xx: Select GPIO_GENERIC_PLATFORM for Cragganmore
+Date: Thu, 21 Jan 2016 18:25:18 +0000
+Message-ID: <1453400718-26720-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:33067 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755545AbcAUPPx (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38849 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759637AbcAUSZi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jan 2016 10:15:53 -0500
-In-Reply-To: <56A02AD4.40107@samsung.com>
+	Thu, 21 Jan 2016 13:25:38 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsnmicro.com, Mark Brown <broonie@kernel.org>
 
-Hello Krzysztof,
+The Cragganmore machine driver provides platform data for the generic GPIO
+platform driver which uses structures only defined if the driver is
+enabled. Since there is little reason to use the platform without the GPIOs
+add a select to avoid build failures.
 
-On 01/20/2016 09:48 PM, Krzysztof Kozlowski wrote:
-> On 21.01.2016 02:14, Javier Martinez Canillas wrote:
->> Hello,
->>
->> On a recent disussion [0] with Krzysztof Kozlowski and Laxman Dewangan,
->> we came to the conclusion that the max77686 and max77802 RTC are almost
->> the same with only a few differences so there shouldn't be two separate
->> drivers and is better to extend max77686 driver and delete rtc-max77802.
->>
->> By making the driver more generic, other RTC IP blocks from Maxim PMICs
->> could be supported as well like the max77620.
->>
->> Patches #1 is just a trivial cleanup.
->>
->> Patch #2 allows to support RTCs that need a shorter delay when updating
->> the RTC.
->>
->> Patch #3 adds a driver data structure to avoid hard-coding parameters
->> specific to a certain RTC such as the needed delay and RTC register mask.
->>
->> Patch #4 changes the driver to use a mapping table instead of using the
->> max77686 registers offsets directly to allow supporting RTC with other
->> registers addresses and layout.
->>
->> Patch #5 Adds support for max77802 to max77686 RTC driver and patch #6
->> removes the old driver since is not needed anymore.
->>
->> Finally patch #7 and patch #8 removes the Kconfig symbol from defconfigs.
->>
->> I've tested this patch-set on an Exynos5800 Peach Pi Chromebook that has
->> a max77802 PMIC and the RTC was working correctly but I don't have a
->> machine with max77686 so I will really appreaciate if someone can test
->> that no regressions were introduced.
->>
->
-> Thanks for the submission. I like the approach. I'll start reviewing the
-> code and testing it... or maybe I'll wait with testing for v2 because I
-> already sent some comments. :)
->
-> Anyway I will provide later tested-by on max77686.
->
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/arm/mach-s3c64xx/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks a lot for your detailed review. I'll post v2 shortly so you can
-just test that.
-  
-> Best regards,
-> Krzysztof
->
-
-Best regards,
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 7c0c420c3016..98d2aa9393f1 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -310,6 +310,7 @@ config MACH_WLF_CRAGG_6410
+ 	depends on I2C=y
+ 	select CPU_S3C6410
+ 	select LEDS_GPIO_REGISTER
++	select GPIO_GENERIC_PLATFORM
+ 	select S3C64XX_DEV_SPI0
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_I2C1
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.7.0.rc3
