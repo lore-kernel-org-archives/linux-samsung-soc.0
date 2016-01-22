@@ -1,67 +1,61 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 03/10] rtc: max77686: Use usleep_range() instead of
- msleep()
-Date: Fri, 22 Jan 2016 09:05:49 -0300
-Message-ID: <56A21B1D.8030303@osg.samsung.com>
+Subject: Re: [PATCH v2 10/10] ARM: multi_v7_defconfig: Remove MAX77802 RTC
+ Kconfig symbol
+Date: Fri, 22 Jan 2016 09:09:28 -0300
+Message-ID: <56A21BF8.8000901@osg.samsung.com>
 References: <1453407813-14646-1-git-send-email-javier@osg.samsung.com>
- <1453407813-14646-4-git-send-email-javier@osg.samsung.com>
- <56A1F935.2040904@nvidia.com>
+ <1453407813-14646-11-git-send-email-javier@osg.samsung.com>
+ <56A1FD25.7020008@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:37700 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753394AbcAVMF6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jan 2016 07:05:58 -0500
-In-Reply-To: <56A1F935.2040904@nvidia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56A1FD25.7020008@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Laxman,
 
-On 01/22/2016 06:41 AM, Laxman Dewangan wrote:
+On 01/22/2016 06:57 AM, Laxman Dewangan wrote:
 >
 > On Friday 22 January 2016 01:53 AM, Javier Martinez Canillas wrote:
->>       RTC_SEC = 0,
->> @@ -130,7 +130,8 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
->>                   __func__, ret, data);
->>       else {
->>           /* Minimum 16ms delay required before RTC update. */
->> -        msleep(MAX77686_RTC_UPDATE_DELAY);
->> +        usleep_range(MAX77686_RTC_UPDATE_DELAY,
->> +                 MAX77686_RTC_UPDATE_DELAY * 2);
->>       }
+>> The driver has been removed so the Kconfig symbol is not valid anymore.
 >>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Add Krzysztof Kozlowski's Reviewed-by tag to patch #10.
+>>
+>>   arch/arm/configs/multi_v7_defconfig | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+>> index 314f6be2dca2..bdb42c09332c 100644
+>> --- a/arch/arm/configs/multi_v7_defconfig
+>> +++ b/arch/arm/configs/multi_v7_defconfig
+>> @@ -664,7 +664,6 @@ CONFIG_RTC_DRV_MAX8907=y
+>>   CONFIG_RTC_DRV_MAX8997=m
+>>   CONFIG_RTC_DRV_MAX77686=y
+>>   CONFIG_RTC_DRV_RK808=m
+>> -CONFIG_RTC_DRV_MAX77802=m
 >
-> Instead of making usleep_range(16000, 32000), can we make small range as
-> usleep_range(16000, 17000)?
+> Do you need to make
+>
+> CONFIG_RTC_DRV_MAX77686=m
 >
 
-Yes, I also didn't know how to make the delay smaller. If I do for example
+Yes we should, the RTC_DRV_MAX778686 Kconfig symbol was enabled in multi_v7
+before the "build as much as possible as a module" policy was asked so got
+enabled built-in. The RTC_DRV_MAX77802 was introduced later so it was asked
+to be built as a module instead.
 
-usleep_range(delay, delay + 10000), then the 10000 delta would be too big
-for max77802 (50 times the minimum required 200 delay).
-
-So I used delay * 2 for two reasons:
-
-1) That way is generic enough and can work for any delay
-
-2) My understanding is that most of times the delay should be precise and
-    is not that bad if sometimes the delay is the worst case (2 * X) since
-    after all the delay is the minimum required.
-
-I also see that usleep_range(X, X * 2) is a used pattern across the kernel.
-
-> I am using as usleep_range(16000, 16000) always.
-
-According to Documentation/timers/timers-howto.txt, that's not a good
-idea since usleep_range() is implemented using high-resolution timers
-so by not using a range, the kernel won't be able to merge the wakeup
-with other wakeups which leads to much more interrupts being triggered.
+I think we could do that as a separate patch though, once this series land.
 
 Best regards,
 -- 
