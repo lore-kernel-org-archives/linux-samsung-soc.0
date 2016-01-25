@@ -1,57 +1,93 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND v2 1/2] clk: samsung: Don't build ARMv8 clock drivers on
- ARMv7
-Date: Mon, 25 Jan 2016 18:10:31 +0900
-Message-ID: <56A5E687.3060209@samsung.com>
-References: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
- <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
- <4282078.QlIpNj3Oa6@wuerfel>
+From: Sriram V <vshrirama@gmail.com>
+Subject: Re: domain off
+Date: Mon, 25 Jan 2016 15:24:18 +0530
+Message-ID: <CAH9_wRPQoD4JT=VHPYjJE=V_7jjQyyfciUo-3k13s_wU=a_Qmg@mail.gmail.com>
+References: <CAH9_wRPDMiCMNZJHkkK21oF8dySUfa5AUpGnp-nh6V77As6CPA@mail.gmail.com>
+	<CAJKOXPe51YO3t1fhUdD1OsmXXcW3MoTwapvY4Y0q8QwaKrxzRg@mail.gmail.com>
+	<CAH9_wRN13+PKLsTL3kSonLUpzHo7zbQJZ658C4+fRZRxe=HeTw@mail.gmail.com>
+	<CAJKOXPeCyEYtUGf2skAbudOjGiSVn8Hyzk76B5aW8VJT7apoqA@mail.gmail.com>
+	<CAH9_wRO28-4jMHwfVpwnDFbut6m=2gv_zVd3EnLguZj9EJYebA@mail.gmail.com>
+	<569311BB.5040206@samsung.com>
+	<CAH9_wRPnvosp4sq3fBHGhd7G=V69s7qQdg3mUF_d08aWS4H_ng@mail.gmail.com>
+	<569F5D80.4040103@samsung.com>
+	<CAH9_wRNxxifRBh6p77e3Pqh4QpbSmYrg6g+WOR2AjAX9EHG6ZA@mail.gmail.com>
+	<CAJKOXPdWA67DjrymJZY9cnTRuzaUFmLWyC+iBA9wHBVmiD_mBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <4282078.QlIpNj3Oa6@wuerfel>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f170.google.com ([209.85.160.170]:33685 "EHLO
+	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756156AbcAYJyT convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Jan 2016 04:54:19 -0500
+Received: by mail-yk0-f170.google.com with SMTP id k129so155739345yke.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2016 01:54:18 -0800 (PST)
+In-Reply-To: <CAJKOXPdWA67DjrymJZY9cnTRuzaUFmLWyC+iBA9wHBVmiD_mBQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-On 25.01.2016 17:59, Arnd Bergmann wrote:
-> On Monday 25 January 2016 09:50:20 Krzysztof Kozlowski wrote:
+Hi Krzystof,
+
+Thanks for the clarifications.
+
+On Wed, Jan 20, 2016 at 7:00 PM, Krzysztof Koz=C5=82owski
+<k.kozlowski.k@gmail.com> wrote:
+> 2016-01-20 19:35 GMT+09:00 Sriram V <vshrirama@gmail.com>:
+>> Hi Krzysztof,
 >>
->> +# ARM64 SoCs (e.g. Exynos5433, Exynos7):
->> +config EXYNOS_ARM64_COMMON_CLK
->> +       def_bool ARCH_EXYNOS
->> +       depends on ARM64 || COMPILE_TEST
->> +       select COMMON_CLK_SAMSUNG
 >>
-> 
-> So you always enable it on ARM64 when ARCH_EXYNOS is enabled, but
-> enable it silently on ARM32 when COMPILE_TEST is set?
+>> Are you saying that only power domains under "Local Power Control" c=
+an
+>> be attached to runtime PM and can be turned off?
+>>
+>> In that case, i dont see other domains such as peris, psgen, wcore i=
+n
+>> there, Hence these need to be always on?
+>>
+>> is my understanding correct?
+>
+> I don't know what kind of documentation you have. Judging by the
+> question above I think that you are asking me about interpretation of
+> datasheet... Really, your question is very strange... My Exynos5422
+> datasheet is quite specific on this topic.
+> Anyway you should ask for that to the vendor of the SoC - Samsung LSI=
+=2E
+> It looks like you are looking for a support which should be given not
+> here, but by the vendor (because they sold you the SoC along with the
+> code).
+> Just to make it clear: I am not related anyhow to the Samsung LSI. I
+> am speaking only for myself.
+>
+> As for the domains, you cannot independently control (under runtime
+> PM) all of the domains. Only some of them. Datasheet explicitly
+> describes what can be controlled. Other stuff is being turned off whe=
+n
+> entering deeper sleep modes (like AFTR, SLEEP) - you can look for thi=
+s
+> in cpuidle or suspend related code (open-source or vendor's).
 
-Hmm... indeed it would better to make it toggle-able when COMPILE_TEST.
 
-> That sounds wrong. How about
-> 
-> config EXYNOS_ARM64_COMMON_CLK
-> 	bool "EXYNOS 64-bit clock support" if COMPILE_TEST
-> 	default ARM64 && ARCH_EXYNOS
-> 	depends on (ARM64 && ARCH_EXYNOS) || COMPILE_TEST
-> 	select COMMON_CLK_SAMSUNG
+I could not find in the suspend code where it turns off all the domains=
+ on 5422
+in the vendor and linux-next kernel. Am i missing something?
 
-Although this looks more complicated but it does the trick. Thanks for
-the hint. Only one (not related directly to this change) issue - with
-COMPILE_TEST the "EXYNOS 64-bit clock support" option goes above the
-common clock framework (up to drivers section) because it is not part of
-the Clocks menu. I'll fix it in v3.
+Or are you referring to some code?
 
-Best regards,
-Krzysztof
+
+Thanks and Regards,
+Sriram
+
+
+
+>
+> Best regards,
+> Krzysztof
+
+
+
+--=20
+Regards,
+Sriram
