@@ -1,35 +1,78 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: s3c64xx: use "depends on" instead of "if" after prompt
-Date: Mon, 25 Jan 2016 21:13:11 +0900
-Message-ID: <CAJKOXPeyNtBVusQZUKRoBniyWTLMZiAB69KLYkAGxLmy6tfhCg@mail.gmail.com>
-References: <1453722089-23101-1-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] fbdev: s6e8ax0: avoid unused function warnings
+Date: Mon, 25 Jan 2016 16:04:03 +0100
+Message-ID: <1453734300-1958304-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:35183 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755781AbcAYMNL (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.134]:52223 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756446AbcAYPIW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2016 07:13:11 -0500
-In-Reply-To: <1453722089-23101-1-git-send-email-yamada.masahiro@socionext.com>
+	Mon, 25 Jan 2016 10:08:22 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2016-01-25 20:41 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> This platform recently moved to multi-platform, so missed the global
-> fixup by commit e32465429490 ("ARM: use "depends on" for SoC configs
-> instead of "if" after prompt").  Fix it now.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  arch/arm/mach-s3c64xx/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+The s6e8ax0 suspend/resume functions are hidden inside of an #ifdef
+when CONFIG_PM is set to avoid unused function warnings, but they
+call some other functions that nothing else calls, and we get warnings
+about those:
 
-Thanks for the patch. In case it goes through Kukjin's tree:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+drivers/video/fbdev/exynos/s6e8ax0.c:449:13: error: 's6e8ax0_sleep_in' defined but not used [-Werror=unused-function]
+drivers/video/fbdev/exynos/s6e8ax0.c:485:13: error: 's6e8ax0_display_off' defined but not used [-Werror=unused-function]
 
-Best regards,
-Krzysztof
+This marks the PM functions as __maybe_unused so the compiler can
+silently drop them when they are not referenced.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/video/fbdev/exynos/s6e8ax0.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/video/fbdev/exynos/s6e8ax0.c b/drivers/video/fbdev/exynos/s6e8ax0.c
+index 95873f26e39c..de2f3e793786 100644
+--- a/drivers/video/fbdev/exynos/s6e8ax0.c
++++ b/drivers/video/fbdev/exynos/s6e8ax0.c
+@@ -829,8 +829,7 @@ static int s6e8ax0_probe(struct mipi_dsim_lcd_device *dsim_dev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM
+-static int s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
++static int __maybe_unused s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
+ {
+ 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
+ 
+@@ -843,7 +842,7 @@ static int s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
+ 	return 0;
+ }
+ 
+-static int s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
++static int __maybe_unused s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
+ {
+ 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
+ 
+@@ -855,10 +854,6 @@ static int s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
+ 
+ 	return 0;
+ }
+-#else
+-#define s6e8ax0_suspend		NULL
+-#define s6e8ax0_resume		NULL
+-#endif
+ 
+ static struct mipi_dsim_lcd_driver s6e8ax0_dsim_ddi_driver = {
+ 	.name = "s6e8ax0",
+@@ -867,8 +862,8 @@ static struct mipi_dsim_lcd_driver s6e8ax0_dsim_ddi_driver = {
+ 	.power_on = s6e8ax0_power_on,
+ 	.set_sequence = s6e8ax0_set_sequence,
+ 	.probe = s6e8ax0_probe,
+-	.suspend = s6e8ax0_suspend,
+-	.resume = s6e8ax0_resume,
++	.suspend = IS_ENABLED(CONFIG_PM) ? s6e8ax0_suspend : NULL,
++	.resume = IS_ENABLED(CONFIG_PM) ? s6e8ax0_resume : NULL,
+ };
+ 
+ static int s6e8ax0_init(void)
+-- 
+2.7.0
