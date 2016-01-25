@@ -1,29 +1,82 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v3 00/17] Enhance iomem search interfaces and support
- EINJ to NVDIMM
-Date: Mon, 25 Jan 2016 22:49:56 +0100
-Message-ID: <20160125214956.GD4322@pd.tnic>
-References: <1452020068-26492-1-git-send-email-toshi.kani@hpe.com>
- <20160125191804.GE14030@pd.tnic>
- <1453757661.834.99.camel@hpe.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix building without CONFIG_PM_SLEEP
+Date: Tue, 26 Jan 2016 08:40:41 +0900
+Message-ID: <CAJKOXPdF_MYmysaQg=W7_6WzpCA=5auO6zLbvNYmCRqg+2L05Q@mail.gmail.com>
+References: <9569056.LBRz4v8fSj@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1453757661.834.99.camel@hpe.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Toshi Kani <toshi.kani@hpe.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, rafael.j.wysocki@intel.com, dan.j.williams@intel.com, dyoung@redhat.com, x86@kernel.org, linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org, kexec@lists.infradead.org, xen-devel@lists.xenproject.org, linux-samsung-soc@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-nvdimm@lists.01.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:35744 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932388AbcAYXkl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Jan 2016 18:40:41 -0500
+In-Reply-To: <9569056.LBRz4v8fSj@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 25, 2016 at 02:34:21PM -0700, Toshi Kani wrote:
-> I verified the patches and tested the kernel in the tree. All look
-> good.
+2015-11-18 0:08 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> The runtime PM operations use the suspend/resume functions
+> even when CONFIG_PM_SLEEP is not set, but this now fails
+> for the exynos DRM driver:
+>
+> exynos_mixer.c:1289:61: error: 'exynos_mixer_resume' undeclared here (not in a function)
+>   SET_RUNTIME_PM_OPS(exynos_mixer_suspend, exynos_mixer_resume, NULL)
+>
+> This removes the #ifdef and instead marks the functions as
+> __maybe_unused, which does the right thing in all cases and
+> also looks nicer.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes:   ("drm/exynos: add pm_runtime to Mixer")
 
-Thanks!
+Dear Inki,
 
--- 
-Regards/Gruss,
-    Boris.
+Ping? On 4.5-rc1 this is still broken. Can you apply this for fixes
+for current rc-cycle?
 
-ECO tip #101: Trim your mails when you reply.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
+
+
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 7498c6e76a53..fcaf71df77c1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1230,8 +1230,7 @@ static int mixer_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>
+> -#ifdef CONFIG_PM_SLEEP
+> -static int exynos_mixer_suspend(struct device *dev)
+> +static int __maybe_unused exynos_mixer_suspend(struct device *dev)
+>  {
+>         struct mixer_context *ctx = dev_get_drvdata(dev);
+>         struct mixer_resources *res = &ctx->mixer_res;
+> @@ -1247,7 +1246,7 @@ static int exynos_mixer_suspend(struct device *dev)
+>         return 0;
+>  }
+>
+> -static int exynos_mixer_resume(struct device *dev)
+> +static int __maybe_unused exynos_mixer_resume(struct device *dev)
+>  {
+>         struct mixer_context *ctx = dev_get_drvdata(dev);
+>         struct mixer_resources *res = &ctx->mixer_res;
+> @@ -1283,7 +1282,6 @@ static int exynos_mixer_resume(struct device *dev)
+>
+>         return 0;
+>  }
+> -#endif
+>
+>  static const struct dev_pm_ops exynos_mixer_pm_ops = {
+>         SET_RUNTIME_PM_OPS(exynos_mixer_suspend, exynos_mixer_resume, NULL)
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
