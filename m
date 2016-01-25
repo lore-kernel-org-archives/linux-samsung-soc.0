@@ -1,78 +1,89 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] fbdev: s6e8ax0: avoid unused function warnings
-Date: Mon, 25 Jan 2016 16:04:03 +0100
-Message-ID: <1453734300-1958304-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:52223 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756446AbcAYPIW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2016 10:08:22 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Subject: [PATCH] media: platform: exynos4-is: media-dev: Add missing
+ of_node_put
+Date: Mon, 25 Jan 2016 20:51:37 +0530
+Message-ID: <20160125152136.GA19484@amitoj-Inspiron-3542>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-media-owner@vger.kernel.org
+To: kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@osg.samsung.com, kgene@kernel.org, k.kozlowski@samsung.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: julia.lawall@lip6.fr
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The s6e8ax0 suspend/resume functions are hidden inside of an #ifdef
-when CONFIG_PM is set to avoid unused function warnings, but they
-call some other functions that nothing else calls, and we get warnings
-about those:
+for_each_available_child_of_node and for_each_child_of_node perform an
+of_node_get on each iteration, so to break out of the loop an of_node_put is
+required.
 
-drivers/video/fbdev/exynos/s6e8ax0.c:449:13: error: 's6e8ax0_sleep_in' defined but not used [-Werror=unused-function]
-drivers/video/fbdev/exynos/s6e8ax0.c:485:13: error: 's6e8ax0_display_off' defined but not used [-Werror=unused-function]
+Found using Coccinelle. The simplified version of the semantic patch
+that is used for this is as follows:
 
-This marks the PM functions as __maybe_unused so the compiler can
-silently drop them when they are not referenced.
+// <smpl>
+@@
+local idexpression n;
+expression e,r;
+@@
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+ for_each_available_child_of_node(r,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+// </smpl>
+
+Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 ---
- drivers/video/fbdev/exynos/s6e8ax0.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/media/platform/exynos4-is/media-dev.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/video/fbdev/exynos/s6e8ax0.c b/drivers/video/fbdev/exynos/s6e8ax0.c
-index 95873f26e39c..de2f3e793786 100644
---- a/drivers/video/fbdev/exynos/s6e8ax0.c
-+++ b/drivers/video/fbdev/exynos/s6e8ax0.c
-@@ -829,8 +829,7 @@ static int s6e8ax0_probe(struct mipi_dsim_lcd_device *dsim_dev)
- 	return 0;
- }
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 4f5586a..09f6e54 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -430,8 +430,10 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+ 			continue;
  
--#ifdef CONFIG_PM
--static int s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
-+static int __maybe_unused s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
- {
- 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
+ 		ret = fimc_md_parse_port_node(fmd, port, index);
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(node);
+ 			goto rpm_put;
++		}
+ 		index++;
+ 	}
  
-@@ -843,7 +842,7 @@ static int s6e8ax0_suspend(struct mipi_dsim_lcd_device *dsim_dev)
- 	return 0;
- }
+@@ -442,8 +444,10 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
  
--static int s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
-+static int __maybe_unused s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
- {
- 	struct s6e8ax0 *lcd = dev_get_drvdata(&dsim_dev->dev);
+ 	for_each_child_of_node(ports, node) {
+ 		ret = fimc_md_parse_port_node(fmd, node, index);
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(node);
+ 			break;
++		}
+ 		index++;
+ 	}
+ rpm_put:
+@@ -651,8 +655,10 @@ static int fimc_md_register_platform_entities(struct fimc_md *fmd,
+ 			ret = fimc_md_register_platform_entity(fmd, pdev,
+ 							plat_entity);
+ 		put_device(&pdev->dev);
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(node);
+ 			break;
++		}
+ 	}
  
-@@ -855,10 +854,6 @@ static int s6e8ax0_resume(struct mipi_dsim_lcd_device *dsim_dev)
- 
- 	return 0;
- }
--#else
--#define s6e8ax0_suspend		NULL
--#define s6e8ax0_resume		NULL
--#endif
- 
- static struct mipi_dsim_lcd_driver s6e8ax0_dsim_ddi_driver = {
- 	.name = "s6e8ax0",
-@@ -867,8 +862,8 @@ static struct mipi_dsim_lcd_driver s6e8ax0_dsim_ddi_driver = {
- 	.power_on = s6e8ax0_power_on,
- 	.set_sequence = s6e8ax0_set_sequence,
- 	.probe = s6e8ax0_probe,
--	.suspend = s6e8ax0_suspend,
--	.resume = s6e8ax0_resume,
-+	.suspend = IS_ENABLED(CONFIG_PM) ? s6e8ax0_suspend : NULL,
-+	.resume = IS_ENABLED(CONFIG_PM) ? s6e8ax0_resume : NULL,
- };
- 
- static int s6e8ax0_init(void)
+ 	return ret;
 -- 
-2.7.0
+1.9.1
