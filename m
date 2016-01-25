@@ -1,41 +1,46 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 10/10] ARM: plat-samsung: use to_platform_device()
-Date: Mon, 25 Jan 2016 16:09:08 +0900
-Message-ID: <56A5CA14.5010509@samsung.com>
-References: <a554e6af3a3528c2206c94dab62b7800f96caa4b.1451221174.git.geliangtang@163.com>
- <ad91078d5cbe93341709b249a83ae81c00eaa3d4.1451221174.git.geliangtang@163.com>
- <568097E4.8010708@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RESEND v2 1/2] clk: samsung: Don't build ARMv8 clock drivers on
+ ARMv7
+Date: Mon, 25 Jan 2016 09:59:51 +0100
+Message-ID: <4282078.QlIpNj3Oa6@wuerfel>
+References: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
+ <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:24449 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751458AbcAYHJO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2016 02:09:14 -0500
-In-reply-to: <568097E4.8010708@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Geliang Tang <geliangtang@163.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 28.12.2015 11:01, Krzysztof Kozlowski wrote:
-> On 27.12.2015 22:17, Geliang Tang wrote:
->> Use to_platform_device() instead of open-coding it.
->>
->> Signed-off-by: Geliang Tang <geliangtang@163.com>
->> ---
->>  arch/arm/plat-samsung/adc.c | 6 ++----
->>  1 file changed, 2 insertions(+), 4 deletions(-)
+On Monday 25 January 2016 09:50:20 Krzysztof Kozlowski wrote:
 > 
-> Thanks!
+> +# ARM64 SoCs (e.g. Exynos5433, Exynos7):
+> +config EXYNOS_ARM64_COMMON_CLK
+> +       def_bool ARCH_EXYNOS
+> +       depends on ARM64 || COMPILE_TEST
+> +       select COMMON_CLK_SAMSUNG
 > 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Applied, thanks,
-https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/soc
+So you always enable it on ARM64 when ARCH_EXYNOS is enabled, but
+enable it silently on ARM32 when COMPILE_TEST is set?
 
+That sounds wrong. How about
 
-Best regards,
-Krzysztof
+config EXYNOS_ARM64_COMMON_CLK
+	bool "EXYNOS 64-bit clock support" if COMPILE_TEST
+	default ARM64 && ARCH_EXYNOS
+	depends on (ARM64 && ARCH_EXYNOS) || COMPILE_TEST
+	select COMMON_CLK_SAMSUNG
+
+	Arnd
