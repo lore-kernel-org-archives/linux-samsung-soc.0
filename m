@@ -1,93 +1,64 @@
-From: Sriram V <vshrirama@gmail.com>
-Subject: Re: domain off
-Date: Mon, 25 Jan 2016 15:24:18 +0530
-Message-ID: <CAH9_wRPQoD4JT=VHPYjJE=V_7jjQyyfciUo-3k13s_wU=a_Qmg@mail.gmail.com>
-References: <CAH9_wRPDMiCMNZJHkkK21oF8dySUfa5AUpGnp-nh6V77As6CPA@mail.gmail.com>
-	<CAJKOXPe51YO3t1fhUdD1OsmXXcW3MoTwapvY4Y0q8QwaKrxzRg@mail.gmail.com>
-	<CAH9_wRN13+PKLsTL3kSonLUpzHo7zbQJZ658C4+fRZRxe=HeTw@mail.gmail.com>
-	<CAJKOXPeCyEYtUGf2skAbudOjGiSVn8Hyzk76B5aW8VJT7apoqA@mail.gmail.com>
-	<CAH9_wRO28-4jMHwfVpwnDFbut6m=2gv_zVd3EnLguZj9EJYebA@mail.gmail.com>
-	<569311BB.5040206@samsung.com>
-	<CAH9_wRPnvosp4sq3fBHGhd7G=V69s7qQdg3mUF_d08aWS4H_ng@mail.gmail.com>
-	<569F5D80.4040103@samsung.com>
-	<CAH9_wRNxxifRBh6p77e3Pqh4QpbSmYrg6g+WOR2AjAX9EHG6ZA@mail.gmail.com>
-	<CAJKOXPdWA67DjrymJZY9cnTRuzaUFmLWyC+iBA9wHBVmiD_mBQ@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v2 03/10] rtc: max77686: Use usleep_range() instead of
+ msleep()
+Date: Mon, 25 Jan 2016 16:47:37 +0530
+Message-ID: <56A60451.1080309@nvidia.com>
+References: <1453407813-14646-1-git-send-email-javier@osg.samsung.com> <1453407813-14646-4-git-send-email-javier@osg.samsung.com> <56A1F935.2040904@nvidia.com> <56A21B1D.8030303@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f170.google.com ([209.85.160.170]:33685 "EHLO
-	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756156AbcAYJyT convert rfc822-to-8bit (ORCPT
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3649 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755952AbcAYL2c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2016 04:54:19 -0500
-Received: by mail-yk0-f170.google.com with SMTP id k129so155739345yke.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2016 01:54:18 -0800 (PST)
-In-Reply-To: <CAJKOXPdWA67DjrymJZY9cnTRuzaUFmLWyC+iBA9wHBVmiD_mBQ@mail.gmail.com>
+	Mon, 25 Jan 2016 06:28:32 -0500
+In-Reply-To: <56A21B1D.8030303@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hi Krzystof,
 
-Thanks for the clarifications.
-
-On Wed, Jan 20, 2016 at 7:00 PM, Krzysztof Koz=C5=82owski
-<k.kozlowski.k@gmail.com> wrote:
-> 2016-01-20 19:35 GMT+09:00 Sriram V <vshrirama@gmail.com>:
->> Hi Krzysztof,
->>
->>
->> Are you saying that only power domains under "Local Power Control" c=
-an
->> be attached to runtime PM and can be turned off?
->>
->> In that case, i dont see other domains such as peris, psgen, wcore i=
-n
->> there, Hence these need to be always on?
->>
->> is my understanding correct?
+On Friday 22 January 2016 05:35 PM, Javier Martinez Canillas wrote:
+> Hello Laxman,
 >
-> I don't know what kind of documentation you have. Judging by the
-> question above I think that you are asking me about interpretation of
-> datasheet... Really, your question is very strange... My Exynos5422
-> datasheet is quite specific on this topic.
-> Anyway you should ask for that to the vendor of the SoC - Samsung LSI=
-=2E
-> It looks like you are looking for a support which should be given not
-> here, but by the vendor (because they sold you the SoC along with the
-> code).
-> Just to make it clear: I am not related anyhow to the Samsung LSI. I
-> am speaking only for myself.
+> On 01/22/2016 06:41 AM, Laxman Dewangan wrote:
+>>
+>> On Friday 22 January 2016 01:53 AM, Javier Martinez Canillas wrote:
+>>>       RTC_SEC = 0,
+>>> @@ -130,7 +130,8 @@ static int max77686_rtc_update(struct 
+>>> max77686_rtc_info *info,
+>>>                   __func__, ret, data);
+>>>       else {
+>>>           /* Minimum 16ms delay required before RTC update. */
+>>> -        msleep(MAX77686_RTC_UPDATE_DELAY);
+>>> +        usleep_range(MAX77686_RTC_UPDATE_DELAY,
+>>> +                 MAX77686_RTC_UPDATE_DELAY * 2);
+>>>       }
+>>>
+>>
+>> Instead of making usleep_range(16000, 32000), can we make small range as
+>> usleep_range(16000, 17000)?
+>>
 >
-> As for the domains, you cannot independently control (under runtime
-> PM) all of the domains. Only some of them. Datasheet explicitly
-> describes what can be controlled. Other stuff is being turned off whe=
-n
-> entering deeper sleep modes (like AFTR, SLEEP) - you can look for thi=
-s
-> in cpuidle or suspend related code (open-source or vendor's).
-
-
-I could not find in the suspend code where it turns off all the domains=
- on 5422
-in the vendor and linux-next kernel. Am i missing something?
-
-Or are you referring to some code?
-
-
-Thanks and Regards,
-Sriram
-
-
-
+> Yes, I also didn't know how to make the delay smaller. If I do for 
+> example
 >
-> Best regards,
-> Krzysztof
+> usleep_range(delay, delay + 10000), then the 10000 delta would be too big
+> for max77802 (50 times the minimum required 200 delay).
+>
+> So I used delay * 2 for two reasons:
+>
+> 1) That way is generic enough and can work for any delay
+>
+> 2) My understanding is that most of times the delay should be precise and
+>    is not that bad if sometimes the delay is the worst case (2 * X) since
+>    after all the delay is the minimum required.
+>
+> I also see that usleep_range(X, X * 2) is a used pattern across the 
+> kernel.
 
+OK, fine to me here.
 
-
---=20
-Regards,
-Sriram
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
