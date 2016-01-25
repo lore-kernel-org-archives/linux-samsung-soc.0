@@ -1,80 +1,81 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RESEND v2 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Mon, 25 Jan 2016 09:50:20 +0900
-Message-ID: <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
-References: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v9 0/4] Exynos SROMc configuration and Ethernet support for
+ SMDK5410
+Date: Mon, 25 Jan 2016 11:14:36 +0900
+Message-ID: <56A5850C.4020005@samsung.com>
+References: <cover.1447659546.git.p.fedin@samsung.com>
+ <56724519.80108@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:36406 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754632AbcAYCOq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 24 Jan 2016 21:14:46 -0500
+In-reply-to: <56724519.80108@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pavel Fedin <p.fedin@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-so it is built also on ARMv7. This does not bring any kind of benefit.
-There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-multi_v7 for ARMv7).
+On 17.12.2015 14:16, Krzysztof Kozlowski wrote:
+> On 16.11.2015 16:43, Pavel Fedin wrote:
+>> This patch extends Exynos SROM controller driver with ability to configure
+>> controller outputs and enables SMSC9115 Ethernet chip on SMDK5410 board,
+>> which is connected via SROMc bank #3.
+>>
+>> With this patchset, support for the whole existing SMDK range can be added.
+>> Actually, only bank number is different.
+>>
+>> This patchset also depends on Exynos 5410 pinctrl support, introduced by
+>> patches 0003 and 0004 from this set:
+>> [PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/330862.html
+>>
+>> Pinctrl support is necessary in order to correctly configure
+>> multifunctional pins of the Exynos chip.
+>>
+> 
+> Let me share the plan/status:
+> 1. Currently Kukjin Kim is out of office (he told me he will be back on
+> Christmas).
+> 2. I asked arm-soc people to pull my previous pull requests.
+> 
+> 3. I applied this patchset to my branch:
+> next/stuff-late-not-split-per-branch
+> https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/stuff-late-not-split-per-branch
+> 
+> 4. This branch is not pushed to linux-next. I will sort it out if my
+> previous pull requests get in. I will be out of office for Christmas so
+> depending on the timing of {arm-soc,Christmas,Kukjin} this may or may
+> not go into v4.5 (yay...).
+> 
+> 5. If it does not get into v4.5, I will rebase it and proceed further
+> for v4.6.
+> 
+> If you have any questions, please let me know.
 
-Instead build clock drivers only for respective SoC's architecture.
+Hi Kukjin, Pankaj, Pavel,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+I rebased these 3 patchsets (move SROM to drivers, add bank support,
+mnove PMU to drivers) on v4.5-rc1 and re-organized the work on usual
+arm-soc branches.
 
----
+Hmmm, maybe not such "usual" because of the dependencies (DTS changes
+are needed before removal of code from mach-exynos) this looks a little
+bit different. Anyway I put it on a separate branch and tag:
+1. samsung-drivers-soc-srom-pmu-4.6
+2. samsung-dt-srom-4.6
 
-Changes since v1:
-1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
-   discussion): EXYNOS_ARM64_COMMON_CLK.
-2. Minor cleanups after Tomasz's comments.
-3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
-   were given for v1 but assuming that change from 1. is not major
-   enough to require re-tagging).
----
- drivers/clk/samsung/Kconfig  | 6 ++++++
- drivers/clk/samsung/Makefile | 4 ++--
- 2 files changed, 8 insertions(+), 2 deletions(-)
+https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 84196ecdaa12..3a2c032965e6 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
- 	bool
- 	select COMMON_CLK
- 
-+# ARM SoCs:
- config S3C2410_COMMON_CLK
- 	bool
- 	select COMMON_CLK_SAMSUNG
-@@ -24,3 +25,8 @@ config S3C2443_COMMON_CLK
- 	bool
- 	select COMMON_CLK_SAMSUNG
- 
-+# ARM64 SoCs (e.g. Exynos5433, Exynos7):
-+config EXYNOS_ARM64_COMMON_CLK
-+	def_bool ARCH_EXYNOS
-+	depends on ARM64 || COMPILE_TEST
-+	select COMMON_CLK_SAMSUNG
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 5f6833ea355d..fc367d4b2902 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
- obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
- obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
--obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
-+obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
- obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
--obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
-+obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
- obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
- obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
- obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
--- 
-1.9.1
+Everything is also in for-next. The point is that you don't have to do
+anything as for now. I'll handle it for v4.6 (hopefully).
+
+Tests on Trats2 passed fine. Now each commit is being tested on mine
+Odroid XU3 (http://www.krzk.eu).
+
+Best regards,
+Krzysztof
