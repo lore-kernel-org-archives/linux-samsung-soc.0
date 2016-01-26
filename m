@@ -1,73 +1,88 @@
 From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH] drm/exynos: fix building without CONFIG_PM_SLEEP
-Date: Tue, 26 Jan 2016 13:55:14 +0900
-Message-ID: <56A6FC32.9000801@samsung.com>
+Date: Tue, 26 Jan 2016 15:21:41 +0900
+Message-ID: <56A71075.7070606@samsung.com>
 References: <9569056.LBRz4v8fSj@wuerfel>
- <CAJKOXPdF_MYmysaQg=W7_6WzpCA=5auO6zLbvNYmCRqg+2L05Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAJKOXPdF_MYmysaQg=W7_6WzpCA=5auO6zLbvNYmCRqg+2L05Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:58005 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752838AbcAZGVn convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Jan 2016 01:21:43 -0500
+In-reply-to: <9569056.LBRz4v8fSj@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-CgoyMDE264WEIDAx7JuUIDI27J28IDA4OjQw7JeQIEtyenlzenRvZiBLb3psb3dza2kg7J20KOqw
-gCkg7JO0IOq4gDoKPiAyMDE1LTExLTE4IDA6MDggR01UKzA5OjAwIEFybmQgQmVyZ21hbm4gPGFy
-bmRAYXJuZGIuZGU+Ogo+PiBUaGUgcnVudGltZSBQTSBvcGVyYXRpb25zIHVzZSB0aGUgc3VzcGVu
-ZC9yZXN1bWUgZnVuY3Rpb25zCj4+IGV2ZW4gd2hlbiBDT05GSUdfUE1fU0xFRVAgaXMgbm90IHNl
-dCwgYnV0IHRoaXMgbm93IGZhaWxzCj4+IGZvciB0aGUgZXh5bm9zIERSTSBkcml2ZXI6Cj4+Cj4+
-IGV4eW5vc19taXhlci5jOjEyODk6NjE6IGVycm9yOiAnZXh5bm9zX21peGVyX3Jlc3VtZScgdW5k
-ZWNsYXJlZCBoZXJlIChub3QgaW4gYSBmdW5jdGlvbikKPj4gICBTRVRfUlVOVElNRV9QTV9PUFMo
-ZXh5bm9zX21peGVyX3N1c3BlbmQsIGV4eW5vc19taXhlcl9yZXN1bWUsIE5VTEwpCj4+Cj4+IFRo
-aXMgcmVtb3ZlcyB0aGUgI2lmZGVmIGFuZCBpbnN0ZWFkIG1hcmtzIHRoZSBmdW5jdGlvbnMgYXMK
-Pj4gX19tYXliZV91bnVzZWQsIHdoaWNoIGRvZXMgdGhlIHJpZ2h0IHRoaW5nIGluIGFsbCBjYXNl
-cyBhbmQKPj4gYWxzbyBsb29rcyBuaWNlci4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJn
-bWFubiA8YXJuZEBhcm5kYi5kZT4KPj4gRml4ZXM6ICAgKCJkcm0vZXh5bm9zOiBhZGQgcG1fcnVu
-dGltZSB0byBNaXhlciIpCj4gCj4gRGVhciBJbmtpLAo+IAo+IFBpbmc/IE9uIDQuNS1yYzEgdGhp
-cyBpcyBzdGlsbCBicm9rZW4uIENhbiB5b3UgYXBwbHkgdGhpcyBmb3IgZml4ZXMKPiBmb3IgY3Vy
-cmVudCByYy1jeWNsZT8KCkdvdCBpdC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmV2aWV3ZWQt
-Ynk6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+IAo+IEJl
-c3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAKPiAKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19taXhlci5jCj4+IGluZGV4IDc0OThjNmU3NmE1My4uZmNhZjcxZGY3N2MxIDEwMDY0NAo+
-PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gQEAgLTEyMzAsOCArMTIzMCw3
-IEBAIHN0YXRpYyBpbnQgbWl4ZXJfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
-Cj4+ICAgICAgICAgcmV0dXJuIDA7Cj4+ICB9Cj4+Cj4+IC0jaWZkZWYgQ09ORklHX1BNX1NMRUVQ
-Cj4+IC1zdGF0aWMgaW50IGV4eW5vc19taXhlcl9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikK
-Pj4gK3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgZXh5bm9zX21peGVyX3N1c3BlbmQoc3RydWN0
-IGRldmljZSAqZGV2KQo+PiAgewo+PiAgICAgICAgIHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgg
-PSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPj4gICAgICAgICBzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2Vz
-ICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+IEBAIC0xMjQ3LDcgKzEyNDYsNyBAQCBzdGF0aWMg
-aW50IGV4eW5vc19taXhlcl9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPj4gICAgICAgICBy
-ZXR1cm4gMDsKPj4gIH0KPj4KPj4gLXN0YXRpYyBpbnQgZXh5bm9zX21peGVyX3Jlc3VtZShzdHJ1
-Y3QgZGV2aWNlICpkZXYpCj4+ICtzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGV4eW5vc19taXhl
-cl9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQo+PiAgewo+PiAgICAgICAgIHN0cnVjdCBtaXhl
-cl9jb250ZXh0ICpjdHggPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPj4gICAgICAgICBzdHJ1Y3Qg
-bWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+IEBAIC0xMjgzLDcgKzEy
-ODIsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19taXhlcl9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2
-KQo+Pgo+PiAgICAgICAgIHJldHVybiAwOwo+PiAgfQo+PiAtI2VuZGlmCj4+Cj4+ICBzdGF0aWMg
-Y29uc3Qgc3RydWN0IGRldl9wbV9vcHMgZXh5bm9zX21peGVyX3BtX29wcyA9IHsKPj4gICAgICAg
-ICBTRVRfUlVOVElNRV9QTV9PUFMoZXh5bm9zX21peGVyX3N1c3BlbmQsIGV4eW5vc19taXhlcl9y
-ZXN1bWUsIE5VTEwpCj4+Cj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
-ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4gdGhlIGJv
-ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4gTW9yZSBtYWpv
-cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
-Cj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5z
-dWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
-IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
-Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKPiAKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Arnd,
+
+Sorry for late.
+
+2015=EB=85=84 11=EC=9B=94 18=EC=9D=BC 00:08=EC=97=90 Arnd Bergmann =EC=9D=
+=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> The runtime PM operations use the suspend/resume functions
+> even when CONFIG_PM_SLEEP is not set, but this now fails
+> for the exynos DRM driver:
+>=20
+> exynos_mixer.c:1289:61: error: 'exynos_mixer_resume' undeclared here =
+(not in a function)
+>   SET_RUNTIME_PM_OPS(exynos_mixer_suspend, exynos_mixer_resume, NULL)
+>=20
+> This removes the #ifdef and instead marks the functions as
+> __maybe_unused, which does the right thing in all cases and
+> also looks nicer.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 	 ("drm/exynos: add pm_runtime to Mixer")
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
+exynos/exynos_mixer.c
+> index 7498c6e76a53..fcaf71df77c1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1230,8 +1230,7 @@ static int mixer_remove(struct platform_device =
+*pdev)
+>  	return 0;
+>  }
+> =20
+> -#ifdef CONFIG_PM_SLEEP
+
+How about just changing it to CONFIG_PM for consistency of other kms dr=
+ivers?
+Actually, I had modified it to PM since original auther, Gustavo Padova=
+n, posted runtime pm support.
+However, it seems missing this one.
+
+Thanks,
+Inki Dae
+
+> -static int exynos_mixer_suspend(struct device *dev)
+> +static int __maybe_unused exynos_mixer_suspend(struct device *dev)
+>  {
+>  	struct mixer_context *ctx =3D dev_get_drvdata(dev);
+>  	struct mixer_resources *res =3D &ctx->mixer_res;
+> @@ -1247,7 +1246,7 @@ static int exynos_mixer_suspend(struct device *=
+dev)
+>  	return 0;
+>  }
+> =20
+> -static int exynos_mixer_resume(struct device *dev)
+> +static int __maybe_unused exynos_mixer_resume(struct device *dev)
+>  {
+>  	struct mixer_context *ctx =3D dev_get_drvdata(dev);
+>  	struct mixer_resources *res =3D &ctx->mixer_res;
+> @@ -1283,7 +1282,6 @@ static int exynos_mixer_resume(struct device *d=
+ev)
+> =20
+>  	return 0;
+>  }
+> -#endif
+> =20
+>  static const struct dev_pm_ops exynos_mixer_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(exynos_mixer_suspend, exynos_mixer_resume, NULL)
+>=20
+>=20
