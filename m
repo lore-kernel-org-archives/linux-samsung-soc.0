@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v3 09/10] ARM: exynos_defconfig: Remove MAX77802 RTC Kconfig symbol
-Date: Tue, 26 Jan 2016 16:20:19 -0300
-Message-ID: <1453836020-29579-10-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH v3 07/10] rtc: max77686: Use dev_warn() instead of pr_warn()
+Date: Tue, 26 Jan 2016 16:20:17 -0300
+Message-ID: <1453836020-29579-8-git-send-email-javier@osg.samsung.com>
 References: <1453836020-29579-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1453836020-29579-1-git-send-email-javier@osg.samsung.com>
@@ -10,31 +10,49 @@ To: linux-kernel@vger.kernel.org
 Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The driver has been removed so the Kconfig symbol is not valid anymore.
+It is better to use dev_*() log functions instead of pr_*() to print
+information about the device in the kernel log in a standardized way.
 
+This also allows to remove the local pr_fmt() defined macro.
+
+Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
 
 ---
 
-Changes in v3: None
-Changes in v2:
-- Add Krzysztof Kozlowski's Reviewed-by tag to patch #9.
+Changes in v3:
+- Add Laxman Dewangan's Acked-by tag to patch #7.
 
- arch/arm/configs/exynos_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+Changes in v2: None
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 24dcd2bb1215..cdbe6dbc6e75 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -193,7 +193,6 @@ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_MAX8997=y
- CONFIG_RTC_DRV_MAX77686=y
--CONFIG_RTC_DRV_MAX77802=y
- CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_S3C=y
- CONFIG_DMADEVICES=y
+ drivers/rtc/rtc-max77686.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+index 09fc73016d3a..da47b1d85793 100644
+--- a/drivers/rtc/rtc-max77686.c
++++ b/drivers/rtc/rtc-max77686.c
+@@ -12,8 +12,6 @@
+  *
+  */
+ 
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-
+ #include <linux/slab.h>
+ #include <linux/rtc.h>
+ #include <linux/delay.h>
+@@ -245,8 +243,9 @@ static int max77686_rtc_tm_to_data(struct rtc_time *tm, u8 *data,
+ 		data[RTC_YEAR] = tm->tm_year > 100 ? (tm->tm_year - 100) : 0;
+ 
+ 		if (tm->tm_year < 100) {
+-			pr_warn("RTC can't handle year %d. Assume it's 2000.\n",
+-				1900 + tm->tm_year);
++			dev_warn(info->dev,
++				 "RTC can't handle year %d. Assume it's 2000\n",
++				 1900 + tm->tm_year);
+ 			return -EINVAL;
+ 		}
+ 	} else {
 -- 
 2.5.0
