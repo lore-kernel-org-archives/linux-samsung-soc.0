@@ -1,102 +1,70 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH] media: platform: exynos4-is: media-dev: Add missing
- of_node_put
-Date: Tue, 26 Jan 2016 08:12:15 +0100 (CET)
-Message-ID: <alpine.DEB.2.02.1601260809340.2004@localhost6.localdomain6>
-References: <20160125152136.GA19484@amitoj-Inspiron-3542> <56A6BCC3.8040407@samsung.com> <alpine.DEB.2.02.1601260723290.2004@localhost6.localdomain6> <56A7185F.7020207@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:30312 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752280AbcAZHMT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2016 02:12:19 -0500
-In-Reply-To: <56A7185F.7020207@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v3 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Date: Tue, 26 Jan 2016 17:05:01 +0900
+Message-ID: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@osg.samsung.com, kgene@kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+
+Hi,
+
+Third attempt to remove ARCH_EXYNOS7 symbol.
+
+Patches cannot be cherry-picked. I was thinking about merging this
+through arm-soc tree after getting needed acks (clk, arm-soc?).
 
 
+Changes since v2:
+=================
+1. Follow Arnd's advice about not enabling silently the newly added
+   EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+   also a trigger for some changes in placement of Samsung clocks
+   Kconfig entries...
+2. ... which lead to introducing patch 1.
 
-On Tue, 26 Jan 2016, Krzysztof Kozlowski wrote:
 
-> On 26.01.2016 15:24, Julia Lawall wrote:
-> > 
-> > 
-> > On Tue, 26 Jan 2016, Krzysztof Kozlowski wrote:
-> > 
-> >> On 26.01.2016 00:21, Amitoj Kaur Chawla wrote:
-> >>> for_each_available_child_of_node and for_each_child_of_node perform an
-> >>> of_node_get on each iteration, so to break out of the loop an of_node_put is
-> >>> required.
-> >>>
-> >>> Found using Coccinelle. The simplified version of the semantic patch
-> >>> that is used for this is as follows:
-> >>>
-> >>> // <smpl>
-> >>> @@
-> >>> local idexpression n;
-> >>> expression e,r;
-> >>> @@
-> >>>
-> >>>  for_each_available_child_of_node(r,n) {
-> >>>    ...
-> >>> (
-> >>>    of_node_put(n);
-> >>> |
-> >>>    e = n
-> >>> |
-> >>> +  of_node_put(n);
-> >>> ?  break;
-> >>> )
-> >>>    ...
-> >>>  }
-> >>> ... when != n
-> >>> // </smpl>
-> >>
-> >> Patch iselft looks correct but why are you pasting coccinelle script
-> >> into the message?
-> >>
-> >> The script is already present in Linux kernel:
-> >> scripts/coccinelle/iterators/device_node_continue.cocci
-> > 
-> > I don't think so.  The continue one takes care of the case where there is 
-> > an extraneous of_node_put before a continue, not a missing one before a 
-> > break.  But OK to drop it if it doesn't seem useful.
-> > 
-> > julia
-> 
-> You are right - this is not covered by that cocci patch... but I think
-> is covered by scripts/coccinelle/iterators/fen.cocci, isn't it?
+Logic:
+======
+Now the clock selection algorithm works like:
+1. For Exynos ARMv7 and ARMv8 the platforms select COMMON_CLK
+   and COMMON_CLK_SAMSUNG.
+2. As before: clock drivers for Exynos ARMv7 will be selected by
+   respective SOC/ARCH_EXYNOS_XXX symbol.
+3. For Exynos ARMv8 the clock drivers will be enabled by default
+   by EXYNOS_ARM64_COMMON_CLK symbol.
 
-Not quite.  That is for of_node_puts after normal loop completion (not 
-sure that this problem comes up any more, but at one point there were a 
-number of them). There are indeed a lot of ways in which the management of 
-reference counts can go wrong...
+Rationale:
+==========
+We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+fall under generic ARCH_EXYNOS. In the same time there is no sense
+in building clocks for these ARMv8 SoCs on ARMv7 builds. In future
+this will also influence PMU [1] driver.
 
-Anyway, the rule that Amitoj used seems to be pretty reliable, so I'll try 
-to get it into the kernel source tree some day soon.
 
-julia
+Best regards,
+Krzysztof
 
-> 
-> BR,
-> Krzysztof
-> 
-> > 
-> >> This just extends the commit message without any meaningful data so with
-> >> removal of coccinelle script above:
-> >> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >>
-> >>>
-> >>> Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-> >>> ---
-> >>>  drivers/media/platform/exynos4-is/media-dev.c | 12 +++++++++---
-> >>>  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> 
+[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg48090.html
+
+
+Krzysztof Kozlowski (3):
+  clk: samsung: Enable COMPILE_TEST for Samsung clocks
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+
+ arch/arm/Kconfig                    |  1 +
+ arch/arm/mach-exynos/Kconfig        |  1 +
+ arch/arm/mach-s3c24xx/Kconfig       |  8 ++++++++
+ arch/arm/mach-s5pv210/Kconfig       |  1 +
+ arch/arm64/Kconfig.platforms        | 12 +++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ drivers/clk/Kconfig                 |  2 +-
+ drivers/clk/samsung/Kconfig         | 14 +++++++++-----
+ drivers/clk/samsung/Makefile        |  4 ++--
+ 10 files changed, 28 insertions(+), 19 deletions(-)
+
+-- 
+1.9.1
+
