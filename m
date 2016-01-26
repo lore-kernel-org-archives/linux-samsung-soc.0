@@ -1,96 +1,81 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 3/3] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-Date: Tue, 26 Jan 2016 17:05:04 +0900
-Message-ID: <1453795504-12302-4-git-send-email-k.kozlowski@samsung.com>
-References: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH] media: platform: exynos4-is: media-dev: Add missing
+ of_node_put
+Date: Tue, 26 Jan 2016 07:12:42 -0200
+Message-ID: <20160126071242.4a127d3f@recife.lan>
+References: <20160125152136.GA19484@amitoj-Inspiron-3542>
+	<56A6BCC3.8040407@samsung.com>
+	<alpine.DEB.2.02.1601260723290.2004@localhost6.localdomain6>
+	<56A7185F.7020207@samsung.com>
+	<alpine.DEB.2.02.1601260809340.2004@localhost6.localdomain6>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <alpine.DEB.2.02.1601260809340.2004@localhost6.localdomain6>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The ARMv8 Exynos family SoCs in Linux kernel are currently:
- - Exynos5433 (controlled by ARCH_EXYNOS),
- - Exynos7 (controlled by ARCH_EXYNOS7).
+Em Tue, 26 Jan 2016 08:12:15 +0100
+Julia Lawall <julia.lawall@lip6.fr> escreveu:
 
-It duplicates Kconfig symbols unnecessarily, so consolidate them into
-one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-symbol.
+> On Tue, 26 Jan 2016, Krzysztof Kozlowski wrote:
+> 
+> > On 26.01.2016 15:24, Julia Lawall wrote:  
+> > > 
+> > > 
+> > > On Tue, 26 Jan 2016, Krzysztof Kozlowski wrote:
+> > >   
+> > >> On 26.01.2016 00:21, Amitoj Kaur Chawla wrote:  
+> > >>> for_each_available_child_of_node and for_each_child_of_node perform an
+> > >>> of_node_get on each iteration, so to break out of the loop an of_node_put is
+> > >>> required.
+> > >>>
+> > >>> Found using Coccinelle. The simplified version of the semantic patch
+> > >>> that is used for this is as follows:
+> > >>>
+> > >>> // <smpl>
+> > >>> @@
+> > >>> local idexpression n;
+> > >>> expression e,r;
+> > >>> @@
+> > >>>
+> > >>>  for_each_available_child_of_node(r,n) {
+> > >>>    ...
+> > >>> (
+> > >>>    of_node_put(n);
+> > >>> |
+> > >>>    e = n
+> > >>> |
+> > >>> +  of_node_put(n);
+> > >>> ?  break;
+> > >>> )
+> > >>>    ...
+> > >>>  }
+> > >>> ... when != n
+> > >>> // </smpl>  
+> > >>
+> > >> Patch iselft looks correct but why are you pasting coccinelle script
+> > >> into the message?
+> > >>
+> > >> The script is already present in Linux kernel:
+> > >> scripts/coccinelle/iterators/device_node_continue.cocci  
+> > > 
+> > > I don't think so.  The continue one takes care of the case where there is 
+> > > an extraneous of_node_put before a continue, not a missing one before a 
+> > > break.  But OK to drop it if it doesn't seem useful.
+> > > 
+> > > julia  
+> > 
+> > You are right - this is not covered by that cocci patch... but I think
+> > is covered by scripts/coccinelle/iterators/fen.cocci, isn't it?  
+> 
+> Not quite. 
 
-The commit should not bring any visible functional change.
+If the script is not part of the Kernel, please keep the script in the
+patch, as it could be useful in some future.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-
----
-
-Changes since v2:
-1. None
-
-Changes since v1:
-1. Minor cleanups after Tomasz's comments.
-2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
----
- arch/arm64/Kconfig.platforms        | 11 ++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- 3 files changed, 4 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 953f4ec0a0d9..594df2add5c1 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -13,22 +13,15 @@ config ARCH_BERLIN
- 	  This enables support for Marvell Berlin SoC Family
- 
- config ARCH_EXYNOS
--	bool
--	help
--	  This enables support for Samsung Exynos SoC family
--
--config ARCH_EXYNOS7
--	bool "ARMv8 based Samsung Exynos7"
--	select ARCH_EXYNOS
-+	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK
- 	select COMMON_CLK_SAMSUNG
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
--
- 	help
--	  This enables support for Samsung Exynos7 SoC family
-+	  This enables support for ARMv8 based Samsung Exynos SoC family.
- 
- config ARCH_LAYERSCAPE
- 	bool "ARMv8 based Freescale Layerscape SoC family"
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 20310e5b6d6f..50c9b9383cfa 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
-+dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
- 
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index bdd7aa358d2a..a396fa7c69a5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
- # CONFIG_IOSCHED_DEADLINE is not set
- CONFIG_ARCH_BCM_IPROC=y
- CONFIG_ARCH_BERLIN=y
--CONFIG_ARCH_EXYNOS7=y
-+CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_LAYERSCAPE=y
- CONFIG_ARCH_HISI=y
- CONFIG_ARCH_MEDIATEK=y
--- 
-1.9.1
+Regards,
+Mauro
