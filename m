@@ -1,23 +1,20 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT 1/2] [media] exynos4-is: Add missing endpoint of_node_put on
+Subject: [RFT 2/2] [media] exynos4-is: Add missing port parent of_node_put on
  error paths
-Date: Tue, 26 Jan 2016 09:41:45 +0900
-Message-ID: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36683 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751275AbcAZAl6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2016 19:41:58 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Date: Tue, 26 Jan 2016 09:41:46 +0900
+Message-ID: <1453768906-28979-2-git-send-email-k.kozlowski@samsung.com>
+References: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-In fimc_md_parse_port_node() endpoint node is get with of_get_next_child()
-but it is not put on error path.
+In fimc_md_parse_port_node() remote port parent node is get with
+of_graph_get_remote_port_parent() but it is not put on error path.
 
-Fixes: 56fa1a6a6a7d ("[media] s5p-fimc: Change the driver directory name to exynos4-is")
+Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 ---
@@ -28,20 +25,20 @@ Not tested on hardware, only built+static checkers.
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index f3b2dd30ec77..de0977479327 100644
+index de0977479327..d2e564878e06 100644
 --- a/drivers/media/platform/exynos4-is/media-dev.c
 +++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -339,8 +339,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 		return 0;
+@@ -385,8 +385,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+ 	else
+ 		pd->fimc_bus_type = pd->sensor_bus_type;
  
- 	v4l2_of_parse_endpoint(ep, &endpoint);
--	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS)
-+	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS) {
-+		of_node_put(ep);
+-	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
++	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
++		of_node_put(rem);
  		return -EINVAL;
 +	}
  
- 	pd->mux_id = (endpoint.base.port - 1) & 0x1;
- 
+ 	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
+ 	fmd->sensor[index].asd.match.of.node = rem;
 -- 
 1.9.1
