@@ -1,31 +1,36 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] drm/exynos: fix building without CONFIG_PM_SLEEP
-Date: Tue, 26 Jan 2016 13:56:22 +0100
-Message-ID: <2340022.8FaqkycQpP@wuerfel>
-References: <9569056.LBRz4v8fSj@wuerfel> <56A71075.7070606@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ARM: s3c64xx: Select GPIO_GENERIC_PLATFORM for
+ Cragganmore
+Date: Tue, 26 Jan 2016 15:10:14 +0000
+Message-ID: <20160126151014.GL1490@localhost.localdomain>
+References: <1453400718-26720-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:57903 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964860AbcAZM5A (ORCPT
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:37655 "EHLO
+	mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932442AbcAZPLK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2016 07:57:00 -0500
-In-Reply-To: <56A71075.7070606@samsung.com>
+	Tue, 26 Jan 2016 10:11:10 -0500
+Content-Disposition: inline
+In-Reply-To: <1453400718-26720-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsnmicro.com
 
-On Tuesday 26 January 2016 15:21:41 Inki Dae wrote:
-> > -#ifdef CONFIG_PM_SLEEP
+On Thu, Jan 21, 2016 at 06:25:18PM +0000, Mark Brown wrote:
+> The Cragganmore machine driver provides platform data for the generic GPIO
+> platform driver which uses structures only defined if the driver is
+> enabled. Since there is little reason to use the platform without the GPIOs
+> add a select to avoid build failures.
 > 
-> How about just changing it to CONFIG_PM for consistency of other kms drivers?
-> Actually, I had modified it to PM since original auther, Gustavo Padovan, posted runtime pm support.
-> However, it seems missing this one.
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
 
-Everybody gets the #ifdef's wrong, so the __maybe_unused approach is
-being used increasingly all over the kernel.
+All looks good to me and doesn't cause any issues on my Speyside.
 
-	Arnd
+Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+
+Thanks,
+Charles
