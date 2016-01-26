@@ -1,44 +1,42 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT 2/2] [media] exynos4-is: Add missing port parent of_node_put on
- error paths
-Date: Tue, 26 Jan 2016 09:41:46 +0900
-Message-ID: <1453768906-28979-2-git-send-email-k.kozlowski@samsung.com>
-References: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] fbdev: s6e8ax0: avoid unused function warnings
+Date: Tue, 26 Jan 2016 09:46:26 +0900
+Message-ID: <56A6C1E2.7060804@samsung.com>
+References: <1453734300-1958304-1-git-send-email-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36709 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755882AbcAZAqa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Jan 2016 19:46:30 -0500
+In-reply-to: <1453734300-1958304-1-git-send-email-arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Kukjin Kim <kgene@kernel.org>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In fimc_md_parse_port_node() remote port parent node is get with
-of_graph_get_remote_port_parent() but it is not put on error path.
+On 26.01.2016 00:04, Arnd Bergmann wrote:
+> The s6e8ax0 suspend/resume functions are hidden inside of an #ifdef
+> when CONFIG_PM is set to avoid unused function warnings, but they
+> call some other functions that nothing else calls, and we get warnings
+> about those:
+> 
+> drivers/video/fbdev/exynos/s6e8ax0.c:449:13: error: 's6e8ax0_sleep_in' defined but not used [-Werror=unused-function]
+> drivers/video/fbdev/exynos/s6e8ax0.c:485:13: error: 's6e8ax0_display_off' defined but not used [-Werror=unused-function]
+> 
+> This marks the PM functions as __maybe_unused so the compiler can
+> silently drop them when they are not referenced.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/video/fbdev/exynos/s6e8ax0.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+> 
 
-Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
----
-
-Not tested on hardware, only built+static checkers.
----
- drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index de0977479327..d2e564878e06 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -385,8 +385,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	else
- 		pd->fimc_bus_type = pd->sensor_bus_type;
- 
--	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
-+	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
-+		of_node_put(rem);
- 		return -EINVAL;
-+	}
- 
- 	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
- 	fmd->sensor[index].asd.match.of.node = rem;
--- 
-1.9.1
+Best regards,
+Krzysztof
