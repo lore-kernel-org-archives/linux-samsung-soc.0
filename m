@@ -1,81 +1,31 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH] media: platform: exynos4-is: media-dev: Add missing
- of_node_put
-Date: Tue, 26 Jan 2016 07:12:42 -0200
-Message-ID: <20160126071242.4a127d3f@recife.lan>
-References: <20160125152136.GA19484@amitoj-Inspiron-3542>
-	<56A6BCC3.8040407@samsung.com>
-	<alpine.DEB.2.02.1601260723290.2004@localhost6.localdomain6>
-	<56A7185F.7020207@samsung.com>
-	<alpine.DEB.2.02.1601260809340.2004@localhost6.localdomain6>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] drm/exynos: fix building without CONFIG_PM_SLEEP
+Date: Tue, 26 Jan 2016 13:56:22 +0100
+Message-ID: <2340022.8FaqkycQpP@wuerfel>
+References: <9569056.LBRz4v8fSj@wuerfel> <56A71075.7070606@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.02.1601260809340.2004@localhost6.localdomain6>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:57903 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964860AbcAZM5A (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Jan 2016 07:57:00 -0500
+In-Reply-To: <56A71075.7070606@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Em Tue, 26 Jan 2016 08:12:15 +0100
-Julia Lawall <julia.lawall@lip6.fr> escreveu:
-
-> On Tue, 26 Jan 2016, Krzysztof Kozlowski wrote:
+On Tuesday 26 January 2016 15:21:41 Inki Dae wrote:
+> > -#ifdef CONFIG_PM_SLEEP
 > 
-> > On 26.01.2016 15:24, Julia Lawall wrote:  
-> > > 
-> > > 
-> > > On Tue, 26 Jan 2016, Krzysztof Kozlowski wrote:
-> > >   
-> > >> On 26.01.2016 00:21, Amitoj Kaur Chawla wrote:  
-> > >>> for_each_available_child_of_node and for_each_child_of_node perform an
-> > >>> of_node_get on each iteration, so to break out of the loop an of_node_put is
-> > >>> required.
-> > >>>
-> > >>> Found using Coccinelle. The simplified version of the semantic patch
-> > >>> that is used for this is as follows:
-> > >>>
-> > >>> // <smpl>
-> > >>> @@
-> > >>> local idexpression n;
-> > >>> expression e,r;
-> > >>> @@
-> > >>>
-> > >>>  for_each_available_child_of_node(r,n) {
-> > >>>    ...
-> > >>> (
-> > >>>    of_node_put(n);
-> > >>> |
-> > >>>    e = n
-> > >>> |
-> > >>> +  of_node_put(n);
-> > >>> ?  break;
-> > >>> )
-> > >>>    ...
-> > >>>  }
-> > >>> ... when != n
-> > >>> // </smpl>  
-> > >>
-> > >> Patch iselft looks correct but why are you pasting coccinelle script
-> > >> into the message?
-> > >>
-> > >> The script is already present in Linux kernel:
-> > >> scripts/coccinelle/iterators/device_node_continue.cocci  
-> > > 
-> > > I don't think so.  The continue one takes care of the case where there is 
-> > > an extraneous of_node_put before a continue, not a missing one before a 
-> > > break.  But OK to drop it if it doesn't seem useful.
-> > > 
-> > > julia  
-> > 
-> > You are right - this is not covered by that cocci patch... but I think
-> > is covered by scripts/coccinelle/iterators/fen.cocci, isn't it?  
-> 
-> Not quite. 
+> How about just changing it to CONFIG_PM for consistency of other kms drivers?
+> Actually, I had modified it to PM since original auther, Gustavo Padovan, posted runtime pm support.
+> However, it seems missing this one.
 
-If the script is not part of the Kernel, please keep the script in the
-patch, as it could be useful in some future.
+Everybody gets the #ifdef's wrong, so the __maybe_unused approach is
+being used increasingly all over the kernel.
 
-Regards,
-Mauro
+	Arnd
