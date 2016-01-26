@@ -1,41 +1,73 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] ASoC: s3c24xx: use const snd_soc_component_driver
- pointer
-Date: Tue, 26 Jan 2016 13:09:01 +0900
-Message-ID: <56A6F15D.3040504@samsung.com>
-References: <1453741678-1988125-1-git-send-email-arnd@arndb.de>
- <1453741678-1988125-2-git-send-email-arnd@arndb.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix building without CONFIG_PM_SLEEP
+Date: Tue, 26 Jan 2016 13:55:14 +0900
+Message-ID: <56A6FC32.9000801@samsung.com>
+References: <9569056.LBRz4v8fSj@wuerfel>
+ <CAJKOXPdF_MYmysaQg=W7_6WzpCA=5auO6zLbvNYmCRqg+2L05Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1453741678-1988125-2-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAJKOXPdF_MYmysaQg=W7_6WzpCA=5auO6zLbvNYmCRqg+2L05Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 26.01.2016 02:07, Arnd Bergmann wrote:
-> An older patch to convert the API in the s3c i2s driver
-> ended up passing a const pointer into a function that takes
-> a non-const pointer, so we now get a warning:
-> 
-> sound/soc/samsung/s3c2412-i2s.c: In function 's3c2412_iis_dev_probe':
-> sound/soc/samsung/s3c2412-i2s.c:172:9: error: passing argument 3 of 's3c_i2sv2_register_component' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-> 
-> However, the s3c_i2sv2_register_component() function again
-> passes the pointer into another function taking a const, so
-> we just need to change its prototype.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: eca3b01d0885 ("ASoC: switch over to use snd_soc_register_component() on s3c i2s")
-> ---
->  sound/soc/samsung/s3c-i2s-v2.c | 2 +-
->  sound/soc/samsung/s3c-i2s-v2.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+CgoyMDE264WEIDAx7JuUIDI27J28IDA4OjQw7JeQIEtyenlzenRvZiBLb3psb3dza2kg7J20KOqw
+gCkg7JO0IOq4gDoKPiAyMDE1LTExLTE4IDA6MDggR01UKzA5OjAwIEFybmQgQmVyZ21hbm4gPGFy
+bmRAYXJuZGIuZGU+Ogo+PiBUaGUgcnVudGltZSBQTSBvcGVyYXRpb25zIHVzZSB0aGUgc3VzcGVu
+ZC9yZXN1bWUgZnVuY3Rpb25zCj4+IGV2ZW4gd2hlbiBDT05GSUdfUE1fU0xFRVAgaXMgbm90IHNl
+dCwgYnV0IHRoaXMgbm93IGZhaWxzCj4+IGZvciB0aGUgZXh5bm9zIERSTSBkcml2ZXI6Cj4+Cj4+
+IGV4eW5vc19taXhlci5jOjEyODk6NjE6IGVycm9yOiAnZXh5bm9zX21peGVyX3Jlc3VtZScgdW5k
+ZWNsYXJlZCBoZXJlIChub3QgaW4gYSBmdW5jdGlvbikKPj4gICBTRVRfUlVOVElNRV9QTV9PUFMo
+ZXh5bm9zX21peGVyX3N1c3BlbmQsIGV4eW5vc19taXhlcl9yZXN1bWUsIE5VTEwpCj4+Cj4+IFRo
+aXMgcmVtb3ZlcyB0aGUgI2lmZGVmIGFuZCBpbnN0ZWFkIG1hcmtzIHRoZSBmdW5jdGlvbnMgYXMK
+Pj4gX19tYXliZV91bnVzZWQsIHdoaWNoIGRvZXMgdGhlIHJpZ2h0IHRoaW5nIGluIGFsbCBjYXNl
+cyBhbmQKPj4gYWxzbyBsb29rcyBuaWNlci4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJn
+bWFubiA8YXJuZEBhcm5kYi5kZT4KPj4gRml4ZXM6ICAgKCJkcm0vZXh5bm9zOiBhZGQgcG1fcnVu
+dGltZSB0byBNaXhlciIpCj4gCj4gRGVhciBJbmtpLAo+IAo+IFBpbmc/IE9uIDQuNS1yYzEgdGhp
+cyBpcyBzdGlsbCBicm9rZW4uIENhbiB5b3UgYXBwbHkgdGhpcyBmb3IgZml4ZXMKPiBmb3IgY3Vy
+cmVudCByYy1jeWNsZT8KCkdvdCBpdC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmV2aWV3ZWQt
+Ynk6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+IAo+IEJl
+c3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAKPiAKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19taXhlci5jCj4+IGluZGV4IDc0OThjNmU3NmE1My4uZmNhZjcxZGY3N2MxIDEwMDY0NAo+
+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+ICsrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gQEAgLTEyMzAsOCArMTIzMCw3
+IEBAIHN0YXRpYyBpbnQgbWl4ZXJfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+Cj4+ICAgICAgICAgcmV0dXJuIDA7Cj4+ICB9Cj4+Cj4+IC0jaWZkZWYgQ09ORklHX1BNX1NMRUVQ
+Cj4+IC1zdGF0aWMgaW50IGV4eW5vc19taXhlcl9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikK
+Pj4gK3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgZXh5bm9zX21peGVyX3N1c3BlbmQoc3RydWN0
+IGRldmljZSAqZGV2KQo+PiAgewo+PiAgICAgICAgIHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgg
+PSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPj4gICAgICAgICBzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2Vz
+ICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+IEBAIC0xMjQ3LDcgKzEyNDYsNyBAQCBzdGF0aWMg
+aW50IGV4eW5vc19taXhlcl9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPj4gICAgICAgICBy
+ZXR1cm4gMDsKPj4gIH0KPj4KPj4gLXN0YXRpYyBpbnQgZXh5bm9zX21peGVyX3Jlc3VtZShzdHJ1
+Y3QgZGV2aWNlICpkZXYpCj4+ICtzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGV4eW5vc19taXhl
+cl9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQo+PiAgewo+PiAgICAgICAgIHN0cnVjdCBtaXhl
+cl9jb250ZXh0ICpjdHggPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKPj4gICAgICAgICBzdHJ1Y3Qg
+bWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+IEBAIC0xMjgzLDcgKzEy
+ODIsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19taXhlcl9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2
+KQo+Pgo+PiAgICAgICAgIHJldHVybiAwOwo+PiAgfQo+PiAtI2VuZGlmCj4+Cj4+ICBzdGF0aWMg
+Y29uc3Qgc3RydWN0IGRldl9wbV9vcHMgZXh5bm9zX21peGVyX3BtX29wcyA9IHsKPj4gICAgICAg
+ICBTRVRfUlVOVElNRV9QTV9PUFMoZXh5bm9zX21peGVyX3N1c3BlbmQsIGV4eW5vc19taXhlcl9y
+ZXN1bWUsIE5VTEwpCj4+Cj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
+ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4gdGhlIGJv
+ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4gTW9yZSBtYWpv
+cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+Cj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5z
+dWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
+IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
+Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKPiAKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
