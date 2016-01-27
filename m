@@ -1,96 +1,75 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on
- ARMv7
-Date: Thu, 28 Jan 2016 10:23:07 +0900
-Message-ID: <56A96D7B.7080505@samsung.com>
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
- <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
+From: "Laison Computech Inc" <danny@lamicro.com>
+Subject: NEW ARRIVALS, CISCO,CPU's,Memory, LAPTOP AND AVAYA
+Date: Wed, 27 Jan 2016 12:42:07 +0700
+Message-ID: <201601270544.AQX06505__46363.9829577461$1453951407$gmane$org@razorgate1.infokom.net>
+Reply-To: <LaisonComputer@computer4u.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+Content-Type: text/plain;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from razorgate1.infokom.net ([202.147.192.101]:12525 "EHLO
+	razorgate1.infokom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965587AbcA1DXO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Jan 2016 22:23:14 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2016=EB=85=84 01=EC=9B=94 28=EC=9D=BC 09:35, Krzysztof Kozlowski wro=
-te:
-> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXY=
-NOS
-> so it is built also on ARMv7. This does not bring any kind of benefit=
-=2E
-> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-> multi_v7 for ARMv7).
->=20
-> Instead build clock drivers only for respective SoC's architecture.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->=20
-> ---
->=20
-> Changes since v3:
-> 1. Rebase on next-20160127.
->=20
-> Changes since v2:
-> 1. Follow Arnd's advice making EXYNOS_ARM64_COMMON_CLK user-visible w=
-hen
->    COMPILE_TEST is enabled.
-> 2. Dropped accumulated tags because the logic is now different.
->=20
-> Changes since v1:
-> 1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
->    discussion): EXYNOS_ARM64_COMMON_CLK.
-> 2. Minor cleanups after Tomasz's comments.
-> 3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
->    were given for v1 but assuming that change from 1. is not major
->    enough to require re-tagging).
-> ---
->  drivers/clk/samsung/Kconfig  | 5 +++++
->  drivers/clk/samsung/Makefile | 4 ++--
->  2 files changed, 7 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfi=
-g
-> index dd6093a33f84..5fd982d9f4d9 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -23,3 +23,8 @@ config S3C2443_COMMON_CLK
->  	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
->  	select COMMON_CLK_SAMSUNG
-> =20
-> +# ARM64 SoCs (e.g. Exynos5433, Exynos7):
-> +config EXYNOS_ARM64_COMMON_CLK
-> +	bool "Samsung Exynos ARMv8-family clock controller support" if COMP=
-ILE_TEST
-> +	default ARM64 && COMMON_CLK_SAMSUNG
-> +	depends on (ARM64 && COMMON_CLK_SAMSUNG) || COMPILE_TEST
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makef=
-ile
-> index 5f6833ea355d..fc367d4b2902 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+=3D clk-exynos5250.=
-o
->  obj-$(CONFIG_SOC_EXYNOS5260)	+=3D clk-exynos5260.o
->  obj-$(CONFIG_SOC_EXYNOS5410)	+=3D clk-exynos5410.o
->  obj-$(CONFIG_SOC_EXYNOS5420)	+=3D clk-exynos5420.o
-> -obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos5433.o
-> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos5433.o
->  obj-$(CONFIG_SOC_EXYNOS5440)	+=3D clk-exynos5440.o
->  obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos-audss.o
->  obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos-clkout.o
-> -obj-$(CONFIG_ARCH_EXYNOS7)	+=3D clk-exynos7.o
-> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7.o
->  obj-$(CONFIG_S3C2410_COMMON_CLK)+=3D clk-s3c2410.o
->  obj-$(CONFIG_S3C2410_COMMON_DCLK)+=3D clk-s3c2410-dclk.o
->  obj-$(CONFIG_S3C2412_COMMON_CLK)+=3D clk-s3c2412.o
->=20
+Dear Sir/Madam,
 
-Looks good to me.=20
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Clean tested working pulls CPUs and QTYs in stock.
 
-Best Regards,
-Chanwoo Choi
+115  X   X5650
+65  X   E5410
+75  X   X5660
+145  X   E5530
+100  X   E5645
+40  X   X5680
+75  X   X5690
 
+Brand new sealed  IP phones and QTYs in stock.
+
+55 x CP-7937G
+77 x CP-7942G
+54 x CP-7945G
+75 x CP-7962G
+......
+45 x Avaya 9630
+65 x Avaya 9641
+55 x Avaya 9640
+
+All NIB.
+
+Here is our current stock list.
+
+ SSD drives and 750 gig 2.5" sata drives
+
+We also have
+250 x i5 dell
+133 x HP
+360 x Lenevo
+all grade A
+
+Here is the qty in stock for laptops
+ 
+150 x E6500 Dell Latitude E6500 Core 2 Duo 2.80GHz T9600 4GB 160GB DVD+/-RW Win 7
+ 60 x E6510 Dell Ltitude E6510. 15.6" Intel Core i5- M520 @ 2.40GHz. 4GB. 320GB DVD+/-RW Win 7
+30 X 8530P HP EliteBook 8530p 15.4" Laptop 2.53GHz Core 2 Duo T9400, 4GB RAM, 160GB HDD, Win
+100 x  8740W  HP EliteBook 8740w 17" 2.4Ghz Core i5 6GB 250GB Win 7 Pr
+45 x 8760W HP EliteBook 8760W 17.3" 2nd Gen Intel Core i7 2.70GHz 8GB 320GB Windows 7 Pro
+50 x DELL 6520Dell latitude e6520 15.6" i5-2520M 2.5Ghz, 8GB Ram, 500GB HD Win 7 @ $115
+120 x DELL 6420 Laptop Dell Latitude E6420 14" Intel Core i5 2.4Ghz 4GB RAM 250GB HDD DVD Win 7
+150 x T410 Lenovo ThinkPad Laptop T410s 14.1" 2.40GHz Core i5 4GB RAM 160GB Win 7
+180 x 8440P HP EliteBook 8440p 14" M520 Core i5 2.4GHz 4GB 250GB Win 7
+
+
+Let me know if you're interested. We are very open to offers and willing to work with you to make sure that we have a deal.
+
+Thank You
+Barbara Johnson
+Laison Computech Inc
+210 N Scoring Ave,
+Rialto California, 92376
+Tel: +1-657-232-7047
+Fax: +1-347-214-047
