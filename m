@@ -1,138 +1,492 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 3/5] drm: simplify initialization of rotation property
-Date: Wed, 27 Jan 2016 15:44:41 +0100
-Message-ID: <1453905883-6807-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v5 4/5] drm: add generic blending related properties
+Date: Wed, 27 Jan 2016 15:44:42 +0100
+Message-ID: <1453905883-6807-5-git-send-email-m.szyprowski@samsung.com>
 References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:30032 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932725AbcA0OpB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Jan 2016 09:45:01 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O1M00ADF8YWB810@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Jan 2016 14:44:57 +0000 (GMT)
 In-reply-to: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, fabien.dessenne@st.com, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, vincent.abriou@st.com, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
 
-VGhpcyBwYXRjaCBzaW1wbGlmaWVzIGluaXRpYWxpemF0aW9uIG9mIGdlbmVyaWMgcm90YXRpb24g
-cHJvcGVydHkgYW5kCmFsaWducyB0aGUgY29kZSB0byBtYXRjaCByZWNlbnRseSBpbnRyb2R1Y2Vk
-IGZ1bmN0aW9uIGZvciBpbnRpYWxpemluZwpnZW5lcmljIHpwb3MgcHJvcGVydHkuIEl0IGFsc28g
-YWRkcyBtaXNzaW5nIGRvY3VtZW50YXRpb24uCgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93
-c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2F0bWVs
-LWhsY2RjL2F0bWVsX2hsY2RjX3BsYW5lLmMgfCAxMCArKysrLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9kcm1fY3J0Yy5jICAgICAgICAgICAgICAgICAgICAgIHwgMjkgKysrKysrKysrKysrKysrKysr
-KystLS0tLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jICAgICAgICAgICAg
-fCAgNiArKy0tLQogZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmMgICAg
-ICAgfCAgMyArLS0KIGRyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfZHJ2LmMgICAgICAgICAg
-ICAgIHwgIDMgKy0tCiBpbmNsdWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAgICAgICAgICAgICAg
-ICAgICB8ICA0ICsrLS0KIDYgZmlsZXMgY2hhbmdlZCwgMzMgaW5zZXJ0aW9ucygrKSwgMjIgZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVs
-X2hsY2RjX3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNf
-cGxhbmUuYwppbmRleCAxZmZlOWMzMjljNDYuLjRmOTYwNmNkZjBmMiAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX3BsYW5lLmMKKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX3BsYW5lLmMKQEAgLTk2NywxMiArOTY3
-LDEwIEBAIGF0bWVsX2hsY2RjX3BsYW5lX2NyZWF0ZV9wcm9wZXJ0aWVzKHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYpCiAJaWYgKCFwcm9wcy0+YWxwaGEpCiAJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0p
-OwogCi0JZGV2LT5tb2RlX2NvbmZpZy5yb3RhdGlvbl9wcm9wZXJ0eSA9Ci0JCQlkcm1fbW9kZV9j
-cmVhdGVfcm90YXRpb25fcHJvcGVydHkoZGV2LAotCQkJCQkJCSAgQklUKERSTV9ST1RBVEVfMCkg
-fAotCQkJCQkJCSAgQklUKERSTV9ST1RBVEVfOTApIHwKLQkJCQkJCQkgIEJJVChEUk1fUk9UQVRF
-XzE4MCkgfAotCQkJCQkJCSAgQklUKERSTV9ST1RBVEVfMjcwKSk7CisJZHJtX21vZGVfY3JlYXRl
-X3JvdGF0aW9uX3Byb3BlcnR5KGRldiwgQklUKERSTV9ST1RBVEVfMCkgfAorCQkJCQkgICAgICAg
-QklUKERSTV9ST1RBVEVfOTApIHwKKwkJCQkJICAgICAgIEJJVChEUk1fUk9UQVRFXzE4MCkgfAor
-CQkJCQkgICAgICAgQklUKERSTV9ST1RBVEVfMjcwKSk7CiAJaWYgKCFkZXYtPm1vZGVfY29uZmln
-LnJvdGF0aW9uX3Byb3BlcnR5KQogCQlyZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsKIApkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2Ny
-dGMuYwppbmRleCBkNDBiYWIyOTc0N2UuLjgyMmFkNjkyODE0NCAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjLmMKQEAg
-LTU4NzUsMTAgKzU4NzUsMjMgQEAgdm9pZCBkcm1fbW9kZV9jb25maWdfY2xlYW51cChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2KQogfQogRVhQT1JUX1NZTUJPTChkcm1fbW9kZV9jb25maWdfY2xlYW51
-cCk7CiAKLXN0cnVjdCBkcm1fcHJvcGVydHkgKmRybV9tb2RlX2NyZWF0ZV9yb3RhdGlvbl9wcm9w
-ZXJ0eShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAotCQkJCQkJICAgICAgIHVuc2lnbmVkIGludCBz
-dXBwb3J0ZWRfcm90YXRpb25zKQorLyoqCisgKiBkcm1fbW9kZV9jcmVhdGVfcm90YXRpb25fcHJv
-cGVydHkgLSBjcmVhdGUgZ2VuZXJpYyByb3RhdGlvbiBwcm9wZXJ0eQorICogQGRldjogRFJNIGRl
-dmljZQorICogQHN1cHBvcnRlZF9yb3RhdGlvbnM6IGJpdG1hc2sgb2Ygc3VwcG9ydGVkIHJvdGF0
-aW9uIG1vZGVzCisgKgorICogVGhpcyBmdW5jdGlvbiBpbml0aWFsaXplcyBnZW5lcmljIHJvdGF0
-aW9uIHByb3BlcnR5IGFuZCBlbmFibGVzIHN1cHBvcnQKKyAqIGZvciBpdCBpbiBkcm0gY29yZS4g
-RHJpdmVycyBjYW4gdGhlbiBhdHRhY2ggdGhpcyBwcm9wZXJ0eSB0byBwbGFuZXMgdG8gZW5hYmxl
-CisgKiBzdXBwb3J0IGZvciBkaWZmZXJlbnQgcm90YXRpb24gbW9kZXMuCisgKgorICogUmV0dXJu
-czoKKyAqIFplcm8gb24gc3VjY2VzcywgbmVnYXRpdmUgZXJybm8gb24gZmFpbHVyZS4KKyAqLwor
-aW50IGRybV9tb2RlX2NyZWF0ZV9yb3RhdGlvbl9wcm9wZXJ0eShzdHJ1Y3QgZHJtX2RldmljZSAq
-ZGV2LAorCQkJCSAgICAgIHVuc2lnbmVkIGludCBzdXBwb3J0ZWRfcm90YXRpb25zKQogewotCXN0
-YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3Byb3BfZW51bV9saXN0IHByb3BzW10gPSB7CisJc3RydWN0
-IGRybV9wcm9wZXJ0eSAqcHJvcDsKKwlzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9wcm9wX2VudW1f
-bGlzdCB2YWx1ZXNbXSA9IHsKIAkJeyBEUk1fUk9UQVRFXzAsICAgInJvdGF0ZS0wIiB9LAogCQl7
-IERSTV9ST1RBVEVfOTAsICAicm90YXRlLTkwIiB9LAogCQl7IERSTV9ST1RBVEVfMTgwLCAicm90
-YXRlLTE4MCIgfSwKQEAgLTU4ODcsOSArNTkwMCwxMyBAQCBzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpk
-cm1fbW9kZV9jcmVhdGVfcm90YXRpb25fcHJvcGVydHkoc3RydWN0IGRybV9kZXZpY2UgKmRldiwK
-IAkJeyBEUk1fUkVGTEVDVF9ZLCAgInJlZmxlY3QteSIgfSwKIAl9OwogCi0JcmV0dXJuIGRybV9w
-cm9wZXJ0eV9jcmVhdGVfYml0bWFzayhkZXYsIDAsICJyb3RhdGlvbiIsCi0JCQkJCSAgIHByb3Bz
-LCBBUlJBWV9TSVpFKHByb3BzKSwKLQkJCQkJICAgc3VwcG9ydGVkX3JvdGF0aW9ucyk7CisJcHJv
-cCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfYml0bWFzayhkZXYsIDAsICJyb3RhdGlvbiIsIHZhbHVl
-cywKKwkJCQlBUlJBWV9TSVpFKHZhbHVlcyksIHN1cHBvcnRlZF9yb3RhdGlvbnMpOworCWlmICgh
-cHJvcCkKKwkJcmV0dXJuIC1FTk9NRU07CisKKwlkZXYtPm1vZGVfY29uZmlnLnJvdGF0aW9uX3By
-b3BlcnR5ID0gcHJvcDsKKwlyZXR1cm4gMDsKIH0KIEVYUE9SVF9TWU1CT0woZHJtX21vZGVfY3Jl
-YXRlX3JvdGF0aW9uX3Byb3BlcnR5KTsKIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2k5
-MTUvaW50ZWxfZGlzcGxheS5jIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5j
-CmluZGV4IDJmMDA4MjhjY2M2ZS4uMWJjZTg3NTBjMzA4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vaTkxNS9pbnRlbF9kaXNwbGF5LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50
-ZWxfZGlzcGxheS5jCkBAIC0xNDA0Niw4ICsxNDA0Niw3IEBAIHZvaWQgaW50ZWxfY3JlYXRlX3Jv
-dGF0aW9uX3Byb3BlcnR5KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBpbnRlbF9wbGFu
-ZSAqCiAJCWlmIChJTlRFTF9JTkZPKGRldiktPmdlbiA+PSA5KQogCQkJZmxhZ3MgfD0gQklUKERS
-TV9ST1RBVEVfOTApIHwgQklUKERSTV9ST1RBVEVfMjcwKTsKIAotCQlkZXYtPm1vZGVfY29uZmln
-LnJvdGF0aW9uX3Byb3BlcnR5ID0KLQkJCWRybV9tb2RlX2NyZWF0ZV9yb3RhdGlvbl9wcm9wZXJ0
-eShkZXYsIGZsYWdzKTsKKwkJZHJtX21vZGVfY3JlYXRlX3JvdGF0aW9uX3Byb3BlcnR5KGRldiwg
-ZmxhZ3MpOwogCX0KIAlpZiAoZGV2LT5tb2RlX2NvbmZpZy5yb3RhdGlvbl9wcm9wZXJ0eSkKIAkJ
-ZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5iYXNlLmJhc2UsCkBAIC0xNDE4Myw4
-ICsxNDE4Miw3IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX3BsYW5lICppbnRlbF9jdXJzb3JfcGxhbmVf
-Y3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAKIAlpZiAoSU5URUxfSU5GTyhkZXYpLT5n
-ZW4gPj0gNCkgewogCQlpZiAoIWRldi0+bW9kZV9jb25maWcucm90YXRpb25fcHJvcGVydHkpCi0J
-CQlkZXYtPm1vZGVfY29uZmlnLnJvdGF0aW9uX3Byb3BlcnR5ID0KLQkJCQlkcm1fbW9kZV9jcmVh
-dGVfcm90YXRpb25fcHJvcGVydHkoZGV2LAorCQkJZHJtX21vZGVfY3JlYXRlX3JvdGF0aW9uX3By
-b3BlcnR5KGRldiwKIAkJCQkJCQlCSVQoRFJNX1JPVEFURV8wKSB8CiAJCQkJCQkJQklUKERSTV9S
-T1RBVEVfMTgwKSk7CiAJCWlmIChkZXYtPm1vZGVfY29uZmlnLnJvdGF0aW9uX3Byb3BlcnR5KQpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYwppbmRleCA0MzJjMDk4MzZi
-MGUuLjhkZWZlZWMwZDQ1MyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRw
-NS9tZHA1X3BsYW5lLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3Bs
-YW5lLmMKQEAgLTc2LDggKzc2LDcgQEAgc3RhdGljIHZvaWQgbWRwNV9wbGFuZV9pbnN0YWxsX3Jv
-dGF0aW9uX3Byb3BlcnR5KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJCXJldHVybjsKIAogCWlm
-ICghZGV2LT5tb2RlX2NvbmZpZy5yb3RhdGlvbl9wcm9wZXJ0eSkKLQkJZGV2LT5tb2RlX2NvbmZp
-Zy5yb3RhdGlvbl9wcm9wZXJ0eSA9Ci0JCQlkcm1fbW9kZV9jcmVhdGVfcm90YXRpb25fcHJvcGVy
-dHkoZGV2LAorCQlkcm1fbW9kZV9jcmVhdGVfcm90YXRpb25fcHJvcGVydHkoZGV2LAogCQkJQklU
-KERSTV9SRUZMRUNUX1gpIHwgQklUKERSTV9SRUZMRUNUX1kpKTsKIAogCWlmIChkZXYtPm1vZGVf
-Y29uZmlnLnJvdGF0aW9uX3Byb3BlcnR5KQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL29t
-YXBkcm0vb21hcF9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfZHJ2LmMKaW5k
-ZXggZGZhZmRiNjAyYWQyLi5jNmNlMmIzMWYxYzUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9vbWFwZHJtL29tYXBfZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9k
-cnYuYwpAQCAtMzA0LDggKzMwNCw3IEBAIHN0YXRpYyBpbnQgb21hcF9tb2Rlc2V0X2luaXRfcHJv
-cGVydGllcyhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQogCXN0cnVjdCBvbWFwX2RybV9wcml2YXRl
-ICpwcml2ID0gZGV2LT5kZXZfcHJpdmF0ZTsKIAogCWlmIChwcml2LT5oYXNfZG1tKSB7Ci0JCWRl
-di0+bW9kZV9jb25maWcucm90YXRpb25fcHJvcGVydHkgPQotCQkJZHJtX21vZGVfY3JlYXRlX3Jv
-dGF0aW9uX3Byb3BlcnR5KGRldiwKKwkJZHJtX21vZGVfY3JlYXRlX3JvdGF0aW9uX3Byb3BlcnR5
-KGRldiwKIAkJCQlCSVQoRFJNX1JPVEFURV8wKSB8IEJJVChEUk1fUk9UQVRFXzkwKSB8CiAJCQkJ
-QklUKERSTV9ST1RBVEVfMTgwKSB8IEJJVChEUk1fUk9UQVRFXzI3MCkgfAogCQkJCUJJVChEUk1f
-UkVGTEVDVF9YKSB8IEJJVChEUk1fUkVGTEVDVF9ZKSk7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2Ry
-bS9kcm1fY3J0Yy5oIGIvaW5jbHVkZS9kcm0vZHJtX2NydGMuaAppbmRleCA0ZjMyYTM1OGQ2MzEu
-LjcwMmY0ZjI4ZjU4MCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2NydGMuaAorKysgYi9p
-bmNsdWRlL2RybS9kcm1fY3J0Yy5oCkBAIC0yNDk0LDggKzI0OTQsOCBAQCBleHRlcm4gaW50IGRy
-bV9mb3JtYXRfcGxhbmVfY3BwKHVpbnQzMl90IGZvcm1hdCwgaW50IHBsYW5lKTsKIGV4dGVybiBp
-bnQgZHJtX2Zvcm1hdF9ob3J6X2Nocm9tYV9zdWJzYW1wbGluZyh1aW50MzJfdCBmb3JtYXQpOwog
-ZXh0ZXJuIGludCBkcm1fZm9ybWF0X3ZlcnRfY2hyb21hX3N1YnNhbXBsaW5nKHVpbnQzMl90IGZv
-cm1hdCk7CiBleHRlcm4gY29uc3QgY2hhciAqZHJtX2dldF9mb3JtYXRfbmFtZSh1aW50MzJfdCBm
-b3JtYXQpOwotZXh0ZXJuIHN0cnVjdCBkcm1fcHJvcGVydHkgKmRybV9tb2RlX2NyZWF0ZV9yb3Rh
-dGlvbl9wcm9wZXJ0eShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAotCQkJCQkJCSAgICAgIHVuc2ln
-bmVkIGludCBzdXBwb3J0ZWRfcm90YXRpb25zKTsKK2V4dGVybiBpbnQgZHJtX21vZGVfY3JlYXRl
-X3JvdGF0aW9uX3Byb3BlcnR5KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCisJCQkJCSAgICAgdW5z
-aWduZWQgaW50IHN1cHBvcnRlZF9yb3RhdGlvbnMpOwogZXh0ZXJuIHVuc2lnbmVkIGludCBkcm1f
-cm90YXRpb25fc2ltcGxpZnkodW5zaWduZWQgaW50IHJvdGF0aW9uLAogCQkJCQkgIHVuc2lnbmVk
-IGludCBzdXBwb3J0ZWRfcm90YXRpb25zKTsKIAotLSAKMS45LjIKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+This patch adds code and documentation for the following blending
+related properties: 'alpha', 'blending' and 'alpha_premult'.
+
+'alpha' property defines plane's transparency used for some blending
+modes.
+
+'alpha_premult' property defines if RGB pixel data in the framebuffer
+contains values pre-multiplied by its alpha value or full range RGB
+values (0-255), which needs to be multiplied by pixel alpha value for
+blending operation.
+
+'blending' property selects blending mode - by selecting one of the
+predefined values, user can select a pair of factors, which will be
+used in the generic blending equation. For more information, see
+the kerneldoc for the added code.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ Documentation/DocBook/gpu.tmpl |  47 +++++++++++++++++-
+ drivers/gpu/drm/drm_atomic.c   |  12 +++++
+ drivers/gpu/drm/drm_blend.c    | 110 +++++++++++++++++++++++++++++++++=
+++++++++
+ include/drm/drm_crtc.h         |  15 ++++++
+ include/uapi/drm/drm_mode.h    | 101 +++++++++++++++++++++++++++++++++=
+++++
+ 5 files changed, 283 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/DocBook/gpu.tmpl b/Documentation/DocBook/gpu=
+=2Etmpl
+index ae7d913adf60..e5197368e68f 100644
+--- a/Documentation/DocBook/gpu.tmpl
++++ b/Documentation/DocBook/gpu.tmpl
+@@ -1110,6 +1110,22 @@ int max_width, max_height;</synopsis>
+     </sect2>
+   </sect1>
+=20
++  <!-- Internals: plane blending -->
++
++  <sect1 id=3D"drm-plane-blending">
++    <title>Plane blending</title>
++
++    <sect2>
++      <title>Plane Blending Overview</title>
++!Pinclude/uapi/drm/drm_mode.h Generic plane blending operation
++    </sect2>
++    <sect2>
++      <title>Blending Function Reference</title>
++!Iinclude/uapi/drm/drm_mode.h
++!Edrivers/gpu/drm/drm_blend.c
++    </sect2>
++  </sect1>
++
+   <!-- Internals: kms initialization and cleanup -->
+=20
+   <sect1 id=3D"drm-kms-init">
+@@ -1816,7 +1832,7 @@ void intel_crt_init(struct drm_device *dev)
+ 	<td valign=3D"top" >Description/Restrictions</td>
+ 	</tr>
+ 	<tr>
+-	<td rowspan=3D"38" valign=3D"top" >DRM</td>
++	<td rowspan=3D"41" valign=3D"top" >DRM</td>
+ 	<td valign=3D"top" >Generic</td>
+ 	<td valign=3D"top" >=E2=80=9Crotation=E2=80=9D</td>
+ 	<td valign=3D"top" >BITMASK</td>
+@@ -2068,7 +2084,7 @@ void intel_crt_init(struct drm_device *dev)
+ 	<td valign=3D"top" >property to suggest an Y offset for a connector</=
+td>
+ 	</tr>
+ 	<tr>
+-	<td rowspan=3D"4" valign=3D"top" >Optional</td>
++	<td rowspan=3D"7" valign=3D"top" >Optional</td>
+ 	<td valign=3D"top" >=E2=80=9Cscaling mode=E2=80=9D</td>
+ 	<td valign=3D"top" >ENUM</td>
+ 	<td valign=3D"top" >{ "None", "Full", "Center", "Full aspect" }</td>
+@@ -2102,6 +2118,33 @@ void intel_crt_init(struct drm_device *dev)
+ 		planes' order. Exact value range is driver dependent.</td>
+ 	</tr>
+ 	<tr>
++	<td valign=3D"top" > "alpha" </td>
++	<td valign=3D"top" >RANGE</td>
++	<td valign=3D"top" >Min=3D0, Max=3D driver dependent</td>
++	<td valign=3D"top" >Plane</td>
++	<td valign=3D"top" >Plane's alpha value (transparency) for blending o=
+peration. Used in some blending modes. </td>
++	</tr>
++	<tr>
++	<td valign=3D"top" > "alpha_premult" </td>
++	<td valign=3D"top" >BOOL</td>
++	<td valign=3D"top" >Min=3D0, Max=3D1</td>
++	<td valign=3D"top" >Plane</td>
++	<td valign=3D"top" >Indicates the range of the RGB data of the frameb=
+uffer attached to the given plane.
++		When enabled, RGB values fits the range from 0 to pixel's alpha valu=
+e. When disabled, RGB
++		values are from 0 to 255 range and during blending operations they w=
+ill be multiplied by
++		the pixel's alpha value first before computing result of blending eq=
+uations. Value of this
++		property is used in some blending modes and only when user attaches =
+framebuffer with pixel
++		format, which contains non-binary alpha channel.</td>
++	</tr>
++	<tr>
++	<td valign=3D"top" > "blending" </td>
++	<td valign=3D"top" >ENUM</td>
++	<td valign=3D"top" >{ "disabled", "pixel-alpha", "const-alpha" "pixel=
+-const-alpha" }</td>
++	<td valign=3D"top" >Plane</td>
++	<td valign=3D"top" >Selects algorithm used in plane blending operatio=
+n. For more information, see
++		DRM_BLEND_* symbolic constant documentation. </td>
++	</tr>
++	<tr>
+ 	<td rowspan=3D"20" valign=3D"top" >i915</td>
+ 	<td rowspan=3D"2" valign=3D"top" >Generic</td>
+ 	<td valign=3D"top" >"Broadcast RGB"</td>
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.=
+c
+index a19201efb7d1..a85da144fd95 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -632,6 +632,12 @@ int drm_atomic_plane_set_property(struct drm_plane=
+ *plane,
+ 		state->rotation =3D val;
+ 	} else if (property =3D=3D config->zpos_property) {
+ 		state->zpos =3D val;
++	} else if (property =3D=3D config->alpha_property) {
++		state->alpha =3D val;
++	} else if (property =3D=3D config->alpha_premult_property) {
++		state->alpha_premult =3D val;
++	} else if (property =3D=3D config->blending_property) {
++		state->blending =3D val;
+ 	} else if (plane->funcs->atomic_set_property) {
+ 		return plane->funcs->atomic_set_property(plane, state,
+ 				property, val);
+@@ -690,6 +696,12 @@ drm_atomic_plane_get_property(struct drm_plane *pl=
+ane,
+ 		*val =3D state->rotation;
+ 	} else if (property =3D=3D config->zpos_property) {
+ 		*val =3D state->zpos;
++	} else if (property =3D=3D config->alpha_property) {
++		*val =3D state->alpha;
++	} else if (property =3D=3D config->alpha_premult_property) {
++		*val =3D state->alpha_premult;
++	} else if (property =3D=3D config->blending_property) {
++		*val =3D state->blending;
+ 	} else if (plane->funcs->atomic_get_property) {
+ 		return plane->funcs->atomic_get_property(plane, state, property, val=
+);
+ 	} else {
+diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+index cdcb647c8ed9..eb7996a848df 100644
+--- a/drivers/gpu/drm/drm_blend.c
++++ b/drivers/gpu/drm/drm_blend.c
+@@ -99,6 +99,116 @@ int drm_mode_create_zpos_immutable_property(struct =
+drm_device *dev,
+ }
+ EXPORT_SYMBOL(drm_mode_create_zpos_immutable_property);
+=20
++/**
++ * drm_mode_create_blending_property - create generic blending propert=
+y
++ * @dev: DRM device
++ * @supported_blendings: array of supported blending modes
++ * @supported_blendings_count: size of @supported_blendings array
++ *
++ * This function initializes generic blending property to selected sub=
+set
++ * of supported blending modes. Drivers can then attach this property =
+to
++ * planes to let userspace to configure different blending modes. For =
+more
++ * information on blending modes, see DRM_BLEND_* defines.
++ *
++ * Returns:
++ * Zero on success, negative errno on failure.
++ */
++int drm_mode_create_blending_property(struct drm_device *dev,
++				      unsigned int *supported_blendings,
++				      unsigned int supported_blendings_count)
++{
++	struct drm_property *prop;
++	static const struct drm_prop_enum_list all_values[] =3D {
++		{ DRM_BLEND_DISABLED,		"disabled" },
++		{ DRM_BLEND_PIXEL_ALPHA,	"pixel-alpha" },
++		{ DRM_BLEND_CONST_ALPHA,	"const-alpha" },
++		{ DRM_BLEND_PIXEL_CONST_ALPHA,	"pixel-const-alpha" },
++	};
++	struct drm_prop_enum_list *values;
++	int i, j;
++
++	values =3D kmalloc(supported_blendings_count * sizeof(*values),
++			 GFP_KERNEL);
++	if (!values)
++		return -ENOMEM;
++
++	for (i =3D 0; i < supported_blendings_count; i++) {
++		for (j =3D 0; j < ARRAY_SIZE(all_values); j++) {
++			if (all_values[j].type =3D=3D supported_blendings[i]) {
++				values[i].type =3D supported_blendings[i];
++				values[i].name =3D all_values[j].name;
++				break;
++			}
++		}
++	}
++
++	prop =3D drm_property_create_enum(dev, 0, "blending", values,
++					supported_blendings_count);
++	kfree(values);
++
++	if (!prop)
++		return -ENOMEM;
++
++	dev->mode_config.blending_property =3D prop;
++	return 0;
++}
++EXPORT_SYMBOL(drm_mode_create_blending_property);
++
++/**
++ * drm_mode_create_alpha_property - create plane alpha property
++ * @dev: DRM device
++ * @max: maximal possible value of alpha property
++ *
++ * This function initializes generic plane's alpha property. It's valu=
+e is used
++ * for blending operations, depending on selected blending mode. For m=
+ore
++ * information, see DRM_BLEND_* modes and its documentation. Maximum a=
+lpha value
++ * is determined by the driver.
++ *
++ * Returns:
++ * Zero on success, negative errno on failure.
++ */
++int drm_mode_create_alpha_property(struct drm_device *dev, unsigned in=
+t max)
++{
++	struct drm_property *prop;
++
++	prop =3D drm_property_create_range(dev, 0, "alpha", 0, max);
++	if (!prop)
++		return -ENOMEM;
++
++	dev->mode_config.alpha_property =3D prop;
++	return 0;
++}
++EXPORT_SYMBOL(drm_mode_create_alpha_property);
++
++/**
++ * drm_mode_create_alpha_premult_property - create muttable zpos prope=
+rty
++ * @dev: DRM device
++ *
++ * This function initializes generic plane's alpha pre-multiplication =
+property.
++ * This property indicates the range of the RGB data of the framebuffe=
+r attached
++ * to the given plane. When enabled, RGB values fits the range from 0 =
+to pixel's
++ * alpha value. When disabled, RGB values are from 0 to 255 range and =
+during
++ * blending operations they will be multiplied by the pixel's alpha va=
+lue first
++ * before computing result of blending equations. Value of this proper=
+ty is used
++ * only when user attaches framebuffer with pixel format, which contai=
+ns
++ * non-binary alpha channel (for example: DRM_FORMAT_ARGB8888).
++ *
++ * Returns:
++ * Zero on success, negative errno on failure.
++ */
++int drm_mode_create_alpha_premult_property(struct drm_device *dev)
++{
++	struct drm_property *prop;
++
++	prop =3D drm_property_create_bool(dev, 0, "alpha_premult");
++	if (!prop)
++		return -ENOMEM;
++
++	dev->mode_config.alpha_premult_property =3D prop;
++	return 0;
++}
++EXPORT_SYMBOL(drm_mode_create_alpha_premult_property);
++
+ static int drm_atomic_state_zpos_cmp(const void *a, const void *b)
+ {
+ 	const struct drm_plane_state *sa =3D *(struct drm_plane_state **)a;
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index 702f4f28f580..47ae79483a19 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -1276,6 +1276,11 @@ struct drm_plane_state {
+ 	unsigned int zpos;
+ 	unsigned int normalized_zpos;
+=20
++	/* Plane blending */
++	unsigned int blending;
++	unsigned int alpha;
++	bool alpha_premult;
++
+ 	struct drm_atomic_state *state;
+ };
+=20
+@@ -2098,6 +2103,9 @@ struct drm_mode_config {
+ 	struct drm_property *rotation_property;
+ 	struct drm_property *zpos_property;
+ 	struct drm_property *zpos_immutable_property;
++	struct drm_property *blending_property;
++	struct drm_property *alpha_property;
++	struct drm_property *alpha_premult_property;
+ 	struct drm_property *prop_src_x;
+ 	struct drm_property *prop_src_y;
+ 	struct drm_property *prop_src_w;
+@@ -2505,6 +2513,13 @@ extern int drm_mode_create_zpos_immutable_proper=
+ty(struct drm_device *dev,
+ 						   unsigned int min,
+ 						   unsigned int max);
+=20
++extern int drm_mode_create_blending_property(struct drm_device *dev,
++				      unsigned int *supported_blendings,
++				      unsigned int supported_blendings_count);
++extern int drm_mode_create_alpha_property(struct drm_device *dev,
++					  unsigned int max);
++extern int drm_mode_create_alpha_premult_property(struct drm_device *d=
+ev);
++
+ /* Helpers */
+=20
+ static inline struct drm_plane *drm_plane_find(struct drm_device *dev,
+diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+index 50adb46204c2..6da7076a3856 100644
+--- a/include/uapi/drm/drm_mode.h
++++ b/include/uapi/drm/drm_mode.h
+@@ -596,4 +596,105 @@ struct drm_mode_destroy_blob {
+ 	__u32 blob_id;
+ };
+=20
++/**
++ * DOC: Generic plane blending operation
++ *
++ * Planes attached to one CRTC are blended by the hardware to produce =
+the final
++ * result on the display. The order of planes during blending operatio=
+n is
++ * determined by 'zpos' property. When order of plane for blending ope=
+ration is
++ * determined, then framebuffers of all planes are placed on the displ=
+ay area
++ * according to the configured position and target size.
++ *
++ * Then one of the selected blending procedure is applied to each pixe=
+l on the
++ * display area to compute the final result of the blending. The blend=
+ing
++ * procedure is similar to the well known glBlendFunc() API.
++ *
++ * The generic equation for blending is:
++ * outputRGB =3D sF * sRGB + dF * dRGB
++ *
++ * @sRGB: are RGB values of blended plane
++ *
++ * @dRGB: are RGB values of plane's background (result of previous ble=
+nding or
++ * 	RGB pixel values of deeper planes).
++ *
++ * @sF and @dF: are one of DRM_FACTOR_* symbolic constants.
++ *
++ * Blending mode then defined as DRM_BLEND(sF, dF), which selects resp=
+ective
++ * factors for the above equation. For more information, see drm_blend=
+_mode
++ * enum.
++ */
++
++/**
++ * enum drm_blend_factor - factors for defining plane blending formula
++ * @DRM_FACTOR_ZERO: constant zero
++ * @DRM_FACTOR_ONE: constant one
++ * @DRM_FACTOR_SRC_ALPHA: pixel alpha value
++ * @DRM_FACTOR_ONE_MINUS_SRC_ALPHA: 1 - DRM_FACTOR_SRC_ALPHA
++ * @DRM_FACTOR_CONST_ALPHA: constant alpha (plane's property)
++ * @DRM_FACTOR_ONE_MINUS_CONST_ALPHA: 1 - DRM_FACTOR_CONST_ALPHA
++ * @DRM_FACTOR_SRC_CONST_ALPHA: pixel alpha value multiplied by plane'=
+s
++ *				constant alpha
++ * @DRM_FACTOR_ONE_MINUS_SRC_CONST_ALPHA: 1 - DRM_FACTOR_SRC_CONST_ALP=
+HA
++ *
++ * Values of this enum are used to define plane blending formula. Two =
+factors
++ * have to be selected - one for source plane and one for destination
++ * (background).
++ */
++enum drm_blend_factor {
++	DRM_FACTOR_ZERO,
++	DRM_FACTOR_ONE,
++	DRM_FACTOR_SRC_ALPHA,
++	DRM_FACTOR_ONE_MINUS_SRC_ALPHA,
++	DRM_FACTOR_CONST_ALPHA,
++	DRM_FACTOR_ONE_MINUS_CONST_ALPHA,
++	DRM_FACTOR_SRC_CONST_ALPHA,
++	DRM_FACTOR_ONE_MINUS_SRC_CONST_ALPHA,
++};
++
++#define DRM_BLEND(s, d) ((d << 16) | (s))
++
++/**
++ * enum drm_blend_mode - predefined blending modes
++ * @DRM_BLEND_S_ONE_D_ZERO: no transparency; per-pixel and plane's alp=
+ha is
++ *	ignored regardless of the selected pixel format.
++ * @DRM_BLEND_S_SRC_ALPHA_D_ONE_MINUS_SRC_ALPHA: blending with per-pix=
+el alpha;
++ *	plane's alpha is ignored, aplies only when pixel format defines alp=
+ha
++ *	channel, otherwise same as @DRM_BLEND_DISABLED and
++ *	@DRM_BLEND_S_ONE_D_ZERO.
++ * @DRM_BLEND_S_CONST_ALPHA_D_ONE_MINUS_CONST_ALPHA: blending with con=
+stant
++ *	alpha; per-pixel alpha is ignored regardless of the selected pixel
++ *	format.
++ * @DRM_BLEND_S_SRC_CONST_ALPHA_D_ONE_MINUS_SRC_CONST_ALPHA: blending =
+with both
++ *	per-pixel and plane's alpha; aplies only when pixel format defines =
+alpha
++ *	channel, otherwise same as @DRM_BLEND_CONST_ALPHA and
++ *	@DRM_BLEND_S_CONST_ALPHA_D_ONE_MINUS_CONST_ALPHA
++ * @DRM_BLEND_DISABLED: same as @DRM_BLEND_S_ONE_D_ZERO
++ * @DRM_BLEND_PIXEL_ALPHA: same as @DRM_BLEND_S_SRC_ALPHA_D_ONE_MINUS_=
+SRC_ALPHA,
++ * @DRM_BLEND_CONST_ALPHA: same as
++ *	@DRM_BLEND_S_CONST_ALPHA_D_ONE_MINUS_CONST_ALPHA,
++ * @DRM_BLEND_PIXEL_CONST_ALPHA: same as
++ *	@DRM_BLEND_S_SRC_CONST_ALPHA_D_ONE_MINUS_SRC_CONST_ALPHA,
++ *
++ * Values of this enum can be set to 'blend' plane's property. The act=
+ual
++ * value of each blending mode consists of two drm_blend_factor values
++ * encoded on lower 16 bits for source plane and higher 16 bits for de=
+stiantion
++ * (background).
++ */
++enum drm_blend_mode {
++	DRM_BLEND_S_ONE_D_ZERO =3D DRM_BLEND(DRM_FACTOR_ONE, DRM_FACTOR_ZERO)=
+,
++	DRM_BLEND_S_SRC_ALPHA_D_ONE_MINUS_SRC_ALPHA =3D
++		DRM_BLEND(DRM_FACTOR_SRC_ALPHA,
++			  DRM_FACTOR_ONE_MINUS_SRC_ALPHA),
++	DRM_BLEND_S_CONST_ALPHA_D_ONE_MINUS_CONST_ALPHA =3D
++		DRM_BLEND(DRM_FACTOR_CONST_ALPHA,
++			  DRM_FACTOR_ONE_MINUS_CONST_ALPHA),
++	DRM_BLEND_S_SRC_CONST_ALPHA_D_ONE_MINUS_SRC_CONST_ALPHA =3D
++		DRM_BLEND(DRM_FACTOR_SRC_CONST_ALPHA,
++			  DRM_FACTOR_ONE_MINUS_SRC_CONST_ALPHA),
++	DRM_BLEND_DISABLED =3D DRM_BLEND_S_ONE_D_ZERO,
++	DRM_BLEND_PIXEL_ALPHA =3D DRM_BLEND_S_SRC_ALPHA_D_ONE_MINUS_SRC_ALPHA=
+,
++	DRM_BLEND_CONST_ALPHA =3D DRM_BLEND_S_CONST_ALPHA_D_ONE_MINUS_CONST_A=
+LPHA,
++	DRM_BLEND_PIXEL_CONST_ALPHA =3D DRM_BLEND_S_SRC_CONST_ALPHA_D_ONE_MIN=
+US_SRC_CONST_ALPHA,
++};
++
+ #endif
+--=20
+1.9.2
