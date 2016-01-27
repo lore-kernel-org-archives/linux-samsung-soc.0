@@ -1,59 +1,67 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v3 06/10] rtc: max77686: Add max77802 support
-Date: Tue, 26 Jan 2016 23:24:20 -0300
-Message-ID: <CABxcv==M4X7gS7ojtF4qWoakss43wLPLxFM5_CVzGTpPN2BAuQ@mail.gmail.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH v3 07/10] rtc: max77686: Use dev_warn() instead of pr_warn()
+Date: Wed, 27 Jan 2016 11:35:54 +0900
+Message-ID: <20160127023554.GI14296@samsunx.samsung>
 References: <1453836020-29579-1-git-send-email-javier@osg.samsung.com>
-	<1453836020-29579-7-git-send-email-javier@osg.samsung.com>
-	<56A82475.1040602@samsung.com>
+ <1453836020-29579-8-git-send-email-javier@osg.samsung.com>
+ <20160127012230.GE14296@samsunx.samsung> <56A82331.5050403@osg.samsung.com>
+ <56A825F0.9000108@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56A82475.1040602@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:50212 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751646AbcA0Cf4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Jan 2016 21:35:56 -0500
+Content-disposition: inline
+In-reply-to: <56A825F0.9000108@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+> > On 01/26/2016 10:22 PM, Andi Shyti wrote:
+> >> Hi Javier,
+> >>
+> >>>           if (tm->tm_year < 100) {
+> >>> -            pr_warn("RTC can't handle year %d. Assume it's 2000.\n",
+> >>> -                1900 + tm->tm_year);
+> >>> +            dev_warn(info->dev,
+> >>> +                 "RTC can't handle year %d. Assume it's 2000\n",
+> >>> +                 1900 + tm->tm_year);
+> >>>               return -EINVAL;
+> >>
+> >> Because we are returning an error value, why not use dev_err()?
+> >>
+> > 
+> > You are absolutely right. Since the driver was using pr_warn(), I used
+> > dev_warn() but dev_err() would had been correct.
+> 
+> Wait. The message says that "2000 will be assumed" which is not an
+> error. The message indicates that driver will proceed, thus the warning.
+> 
+> However the driver won't proceed because the max77686_rtc_set_time()
+> will abort. This came from max8997 which has the same issue.
+> 
+> This means that either message should be changed (dev_err() without the
+> "assume" verb) or the function should not abort and set the year to
+> 2000+something (then dev_warn()... look at rtc-ds3234.c and rtc-mcp795.c).
+> 
+> The easiest would be to choose #1 - no changes in the logic.
 
-On Tue, Jan 26, 2016 at 10:59 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 27.01.2016 04:20, Javier Martinez Canillas wrote:
+Nevertheless, the function fails, and those who call
+max77686_rtc_tm_to_data() fail as well, so, we are printing
+warning, but behaving as error.
 
-[snip]
+Either we print error and return error, or we print warning, we
+set:
 
->>       data[RTC_MONTH] = tm->tm_mon + 1;
->> -     data[RTC_YEAR] = tm->tm_year > 100 ? (tm->tm_year - 100) : 0;
->>
->> -     if (tm->tm_year < 100) {
->> -             pr_warn("RTC cannot handle the year %d.  Assume it's 2000.\n",
->> -                     1900 + tm->tm_year);
->> -             return -EINVAL;
->> +     if (!info->drv_data->alarm_enable_reg) {
->
-> I don't like all these inverted checks. They are error-prone. This is
-> why I propose different name. However since you want to stick to this
-> name of this property, then easier to read would be:
->
-> if (info->drv_data->alarm_enable_reg) {
->         data[RTC_YEAR] = tm->tm_year;
-> } else {
->         max77686-stuff...
-> }
-> Can you reverse it here and in other places?
->
+tm->tm_year = 100; /* don't know if I got the logic right */
 
-Fair enough, I'll reverse the logic so is more natural and also do an
-early return as Andi suggested.
+and return 0
 
-> The patch beside that is okay and works fine:
->
-> Tested on Trats2 (max77686):
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> BR,
-> Krzysztof
->
+Right?
 
-Best regards,
-Javier
+Thanks,
+Andi
