@@ -1,27 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [PATCH v2] pinctrl: samsung: Fixes samsung_gpio_direction_in/output
  releated with spinlock
-Date: Wed, 27 Jan 2016 13:36:04 +0100
-Message-ID: <CACRpkdaTesQL+ginJdjg0LYD=re7-ot=VLnX_=th-0gSqcQx0Q@mail.gmail.com>
+Date: Wed, 27 Jan 2016 22:51:51 +0900
+Message-ID: <CA+Ln22GZ9SRD7qo-mcmh68ssmJDh6OxoYM831ATMPgJ3hNj7Ww@mail.gmail.com>
 References: <1453615352-9748-1-git-send-email-ym0914@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:32939 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754197AbcA0MgF (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33360 "EHLO
+	mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932385AbcA0Nvw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jan 2016 07:36:05 -0500
-Received: by mail-oi0-f41.google.com with SMTP id r14so4337775oie.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jan 2016 04:36:04 -0800 (PST)
+	Wed, 27 Jan 2016 08:51:52 -0500
+Received: by mail-qk0-f196.google.com with SMTP id q184so294751qkb.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jan 2016 05:51:52 -0800 (PST)
 In-Reply-To: <1453615352-9748-1-git-send-email-ym0914@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Youngmin Nam <ym0914@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Sun, Jan 24, 2016 at 7:02 AM, Youngmin Nam <ym0914@gmail.com> wrote:
+Hi Youngmin,
 
+2016-01-24 15:02 GMT+09:00 Youngmin Nam <ym0914@gmail.com>:
 > Previously, samsung_gpio_drection_in/output function were not covered with
 > one spinlock.
 >
@@ -50,9 +51,16 @@ On Sun, Jan 24, 2016 at 7:02 AM, Youngmin Nam <ym0914@gmail.com> wrote:
 > gpio set callback(samsung_gpio_set) with spinlock using this function.
 >
 > Signed-off-by: Youngmin Nam <ym0914@gmail.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 48 ++++++++++++++++++++++---------
+>  1 file changed, 35 insertions(+), 13 deletions(-)
+>
 
-This patch does not apply to v4.5-rc1. Please rebase this
-and resend. (With Thomas ACK if it's valid.)
+Thanks for addressing my comments.
 
-Yours,
-Linus Walleij
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+However please rebase as Linus suggested.
+
+Best regards,
+Tomasz
