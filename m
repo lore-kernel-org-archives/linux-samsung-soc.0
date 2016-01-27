@@ -1,85 +1,119 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v3 07/10] rtc: max77686: Use dev_warn() instead of pr_warn()
-Date: Tue, 26 Jan 2016 23:50:38 -0300
-Message-ID: <CABxcv=nO-c=2c181hYoLOfrxeqnggXVsxGCGFmSDzMpatT1mWQ@mail.gmail.com>
-References: <1453836020-29579-1-git-send-email-javier@osg.samsung.com>
-	<1453836020-29579-8-git-send-email-javier@osg.samsung.com>
-	<20160127012230.GE14296@samsunx.samsung>
-	<56A82331.5050403@osg.samsung.com>
-	<56A825F0.9000108@samsung.com>
-	<20160127024628.GC25597@piout.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v4 00/10] rtc: max77686: Extend driver and add max77802 support
+Date: Wed, 27 Jan 2016 00:36:36 -0300
+Message-ID: <1453865806-4661-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f195.google.com ([209.85.160.195]:34078 "EHLO
-	mail-yk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751670AbcA0Cuj (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:54369 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751877AbcA0DhE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2016 21:50:39 -0500
-Received: by mail-yk0-f195.google.com with SMTP id v14so16115245ykd.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jan 2016 18:50:39 -0800 (PST)
-In-Reply-To: <20160127024628.GC25597@piout.net>
+	Tue, 26 Jan 2016 22:37:04 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-Hello Alexandre,
+Hello,
 
-On Tue, Jan 26, 2016 at 11:46 PM, Alexandre Belloni
-<alexandre.belloni@free-electrons.com> wrote:
-> Hi,
->
-> On 27/01/2016 at 11:05:36 +0900, Krzysztof Kozlowski wrote :
->> On 27.01.2016 10:53, Javier Martinez Canillas wrote:
->> > Hello Andi,
->> >
->> > Thanks a lot for your feedback and review.
->> >
->> > On 01/26/2016 10:22 PM, Andi Shyti wrote:
->> >> Hi Javier,
->> >>
->> >>>           if (tm->tm_year < 100) {
->> >>> -            pr_warn("RTC can't handle year %d. Assume it's 2000.\n",
->> >>> -                1900 + tm->tm_year);
->> >>> +            dev_warn(info->dev,
->> >>> +                 "RTC can't handle year %d. Assume it's 2000\n",
->> >>> +                 1900 + tm->tm_year);
->> >>>               return -EINVAL;
->> >>
->> >> Because we are returning an error value, why not use dev_err()?
->> >>
->> >
->> > You are absolutely right. Since the driver was using pr_warn(), I used
->> > dev_warn() but dev_err() would had been correct.
->>
->> Wait. The message says that "2000 will be assumed" which is not an
->> error. The message indicates that driver will proceed, thus the warning.
->>
->> However the driver won't proceed because the max77686_rtc_set_time()
->> will abort. This came from max8997 which has the same issue.
->>
->> This means that either message should be changed (dev_err() without the
->> "assume" verb) or the function should not abort and set the year to
->> 2000+something (then dev_warn()... look at rtc-ds3234.c and rtc-mcp795.c).
->>
->> The easiest would be to choose #1 - no changes in the logic.
->>
->
-> My stance on that is to never set a date that differs from the requested
-> date. Else, userspace has no way of knowing whether this is an erroneous
-> date or the real date when reading back.
->
-> I think I had a look and the driver is already doing the right thing but
-> the message is wrong.
->
+On a recent disussion [0] with Krzysztof Kozlowski and Laxman Dewangan,
+we came to the conclusion that the max77686 and max77802 RTC are almost
+the same with only a few differences so there shouldn't be two separate
+drivers and is better to extend max77686 driver and delete rtc-max77802.
 
-That's correct.
+By making the driver more generic, other RTC IP blocks from Maxim PMICs
+could be supported as well like the max77620.
 
-> --
-> Alexandre Belloni, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+This is a v4 of a series that do this, that address issues pointed out
+in the latest version. The v1, v2 and v3 can be found at [1], [2], [3].
 
-Best regards,
-Javier
+I've tested this patch-set on an Exynos5800 Peach Pi Chromebook that has
+a max77802 PMIC and the RTC was working correctly. Krzysztof Kozlowski
+tested v3 on an max77686 but this version only has cosmetic changes so
+it should not cause any functionality changes.
+
+[0]: http://www.spinics.net/lists/devicetree/msg110348.html
+[1]: https://lwn.net/Articles/672568/
+[2]: https://lkml.org/lkml/2016/1/25/767
+[3]: https://lkml.org/lkml/2016/1/26/787
+
+Changes in v4:
+- Add Andi Shyti's Reviewed-by to patch #1.
+- Add Andi Shyti's Reviewed-by to patch #2.
+- Add Andi Shyti's Reviewed-by to patch #3.
+- Add Andi Shyti's Reviewed-by to patch #4.
+- Add Krzysztof Kozlowski's Reviewed-by and Tested-by tags to patch #4.
+- Add Krzysztof Kozlowski's Reviewed-by and Tested-by tags to patch #5.
+- Add Krzysztof Kozlowski's Tested-by tag to patch #6.
+- Add Andi Shyti's Reviewed-by tag to patch #6.
+- Reverse alarm enable reg check logic. Suggeted by Krzysztof Kozlowski.
+- Return early to avoid an else statement. Suggested by Andi Shyti.
+- Use dev_err() instead of dev_warn() and change message.
+  Suggested by Krzysztof Kozlowski and Andi Shyti.
+- Change subject line and commit message of patch #7.
+- Removed Laxman Dewangan's Acked-by tag since the patch changed.
+- Add Krzysztof Kozlowski's Tested-by tag to patch #8.
+- Add Andi Shyti's Reviewed-by tag to patch #8.
+
+Changes in v3:
+- Add Krzysztof Kozlowski's Reviewed-by and Tested-by to patch #1.
+- Add Laxman Dewangan's Acked-by tag to patch #1.
+- Add Krzysztof Kozlowski's Tested-by tag to patch #2.
+- Add Laxman Dewangan's Acked-by tag to patch #2.
+- Use ARRAY_SIZE() in all places. Suggested by Laxman Dewangan.
+- Add Krzysztof Kozlowski's Tested-by tag to patch #3.
+- Add Laxman Dewangan's Acked-by tag to patch #3.
+- Fix max77686 delay. Suggested by Krzysztof Kozlowski.
+- Assign mask to u8 instead of int. Suggested by Krzysztof Kozlowski.
+- Add Laxman Dewangan's Acked-by tag to patch #4.
+- Add Laxman Dewangan's Acked-by tag to patch #5.
+- Add Laxman Dewangan's Acked-by tag to patch #6.
+- Add Laxman Dewangan's Acked-by tag to patch #7.
+- Add Laxman Dewangan's Acked-by tag to patch #8.
+
+Changes in v2:
+- Add Krzysztof Kozlowski's Reviewed-by tag to patch #2.
+- Add Krzysztof Kozlowski's Reviewed-by tag to patch #3.
+- Fix typo error in changelog. Suggested by Krzysztof Kozlowski.
+- Add a max77686 prefix to rtc_driver_data. Suggested by Krzysztof Kozlowski.
+- Comment about the .delay and .mask fields. Suggested by Krzysztof Kozlowski.
+- Change .mask type to u8. Suggested by Krzysztof Kozlowski.
+- Make .drv_data field const. Suggested by Krzysztof Kozlowski.
+- Don't cast to drop const on .drv_data asign. Suggested by Krzysztof Kozlowski.
+- Use platform_get_device_id() macro. Suggested by Krzysztof Kozlowski.
+- Rename rtc_reg to max77686_rtc_reg_offset. Suggested by Krzysztof Kozlowski.
+- Comment what's mapped by max77686_map. Suggested by Krzysztof Kozlowski.
+- Use max77686_map array indexes in init. Suggested by Krzysztof Kozlowski.
+- Remove REG_RTC_UPDATE1 since is not used by neither max77686 nor max77802.
+- Add a MAX77802 prefix to ALARM_ENABLE_VALUE. Suggested by Krzysztof Kozlowski.
+- Rename .rtcae to .alarm_enable_reg and .rtcrm to .separate_i2c_addr.
+  Suggested by Krzysztof Kozlowski.
+- Don't use func and LINE in error messages. Suggested by Krzysztof Kozlowski.
+- Remove REG_RTC_AE2 since is not used by neither max77686 nor max77802.
+- Check if REG_RTC_AE1 has a valid address before accessing it.
+- Add Krzysztof Kozlowski's Reviewed-by tag to patch #8.
+- Add Krzysztof Kozlowski's Reviewed-by tag to patch #9.
+- Add Krzysztof Kozlowski's Reviewed-by tag to patch #10.
+
+Javier Martinez Canillas (10):
+  rtc: max77686: Fix max77686_rtc_read_alarm() return value
+  rtc: max77686: Use ARRAY_SIZE() instead of current array length
+  rtc: max77686: Use usleep_range() instead of msleep()
+  rtc: max77686: Use a driver data struct instead hard-coded values
+  rtc: max77686: Add an indirection level to access RTC registers
+  rtc: max77686: Add max77802 support
+  rtc: max77686: Fix unsupported year message
+  rtc: Remove Maxim 77802 driver
+  ARM: exynos_defconfig: Remove MAX77802 RTC Kconfig symbol
+  ARM: multi_v7_defconfig: Remove MAX77802 RTC Kconfig symbol
+
+ arch/arm/configs/exynos_defconfig   |   1 -
+ arch/arm/configs/multi_v7_defconfig |   1 -
+ drivers/rtc/Kconfig                 |  10 -
+ drivers/rtc/Makefile                |   1 -
+ drivers/rtc/rtc-max77686.c          | 325 ++++++++++++++++++-----
+ drivers/rtc/rtc-max77802.c          | 502 ------------------------------------
+ 6 files changed, 264 insertions(+), 576 deletions(-)
+ delete mode 100644 drivers/rtc/rtc-max77802.c
+
+-- 
+2.5.0
