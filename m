@@ -1,21 +1,19 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 1/5] drm: add generic zpos property
-Date: Wed, 27 Jan 2016 15:44:39 +0100
-Message-ID: <1453905883-6807-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v5 2/5] drm/exynos: use generic code for managing zpos plane
+ property
+Date: Wed, 27 Jan 2016 15:44:40 +0100
+Message-ID: <1453905883-6807-3-git-send-email-m.szyprowski@samsung.com>
 References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51140 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932725AbcA0Oo5 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:30032 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932957AbcA0Oo6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jan 2016 09:44:57 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Wed, 27 Jan 2016 09:44:58 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O1M00I9D8YUEM10@mailout1.w1.samsung.com> for
+ with ESMTP id <0O1M00BA18YV9810@mailout4.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Wed, 27 Jan 2016 14:44:55 +0000 (GMT)
 In-reply-to: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -23,496 +21,193 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
 
-This patch adds support for generic plane's zpos property property with
-well-defined semantics:
-- added zpos properties to drm core and plane state structures
-- added helpers for normalizing zpos properties of given set of planes
-- well defined semantics: planes are sorted by zpos values and then pla=
-ne
-  id value if zpos equals
-
-Normalized zpos values are calculated automatically when generic
-muttable zpos property has been initialized. Drivers can simply use
-plane_state->normalized_zpos in their atomic_check and/or plane_update
-callbacks without any additional calls to DRM core.
+This patch replaces zpos property handling custom code in Exynos DRM
+driver with calls to generic DRM code.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 ---
- Documentation/DocBook/gpu.tmpl      |  14 ++-
- drivers/gpu/drm/Makefile            |   2 +-
- drivers/gpu/drm/drm_atomic.c        |   4 +
- drivers/gpu/drm/drm_atomic_helper.c |   6 +
- drivers/gpu/drm/drm_blend.c         | 227 ++++++++++++++++++++++++++++=
-++++++++
- drivers/gpu/drm/drm_crtc_internal.h |   3 +
- include/drm/drm_crtc.h              |  17 +++
- 7 files changed, 270 insertions(+), 3 deletions(-)
- create mode 100644 drivers/gpu/drm/drm_blend.c
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  2 -
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 68 ++++++++-----------------------
+ drivers/gpu/drm/exynos/exynos_mixer.c     |  6 ++-
+ 3 files changed, 20 insertions(+), 56 deletions(-)
 
-diff --git a/Documentation/DocBook/gpu.tmpl b/Documentation/DocBook/gpu=
-=2Etmpl
-index a8669330b456..ae7d913adf60 100644
---- a/Documentation/DocBook/gpu.tmpl
-+++ b/Documentation/DocBook/gpu.tmpl
-@@ -1816,7 +1816,7 @@ void intel_crt_init(struct drm_device *dev)
- 	<td valign=3D"top" >Description/Restrictions</td>
- 	</tr>
- 	<tr>
--	<td rowspan=3D"37" valign=3D"top" >DRM</td>
-+	<td rowspan=3D"38" valign=3D"top" >DRM</td>
- 	<td valign=3D"top" >Generic</td>
- 	<td valign=3D"top" >=E2=80=9Crotation=E2=80=9D</td>
- 	<td valign=3D"top" >BITMASK</td>
-@@ -2068,7 +2068,7 @@ void intel_crt_init(struct drm_device *dev)
- 	<td valign=3D"top" >property to suggest an Y offset for a connector</=
-td>
- 	</tr>
- 	<tr>
--	<td rowspan=3D"3" valign=3D"top" >Optional</td>
-+	<td rowspan=3D"4" valign=3D"top" >Optional</td>
- 	<td valign=3D"top" >=E2=80=9Cscaling mode=E2=80=9D</td>
- 	<td valign=3D"top" >ENUM</td>
- 	<td valign=3D"top" >{ "None", "Full", "Center", "Full aspect" }</td>
-@@ -2092,6 +2092,16 @@ void intel_crt_init(struct drm_device *dev)
- 	<td valign=3D"top" >TBD</td>
- 	</tr>
- 	<tr>
-+	<td valign=3D"top" > "zpos" </td>
-+	<td valign=3D"top" >RANGE</td>
-+	<td valign=3D"top" >Min=3D0, Max=3D driver dependent</td>
-+	<td valign=3D"top" >Plane</td>
-+	<td valign=3D"top" >Plane's 'z' position during blending operation (0=
- for background, highest for frontmost).
-+		If two planes assigned to same CRTC have equal zpos values, the plan=
-e with higher plane
-+		id is treated as closer to front. Can be IMMUTABLE if driver doesn't=
- support changing
-+		planes' order. Exact value range is driver dependent.</td>
-+	</tr>
-+	<tr>
- 	<td rowspan=3D"20" valign=3D"top" >i915</td>
- 	<td rowspan=3D"2" valign=3D"top" >Generic</td>
- 	<td valign=3D"top" >"Broadcast RGB"</td>
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 61766dec6a8d..eeefaba1c092 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for the drm device driver.  This driver provides support fo=
-r the
- # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
-=20
--drm-y       :=3D	drm_auth.o drm_bufs.o drm_cache.o \
-+drm-y       :=3D	drm_auth.o drm_bufs.o drm_blend.o drm_cache.o \
- 		drm_context.o drm_dma.o \
- 		drm_fops.o drm_gem.o drm_ioctl.o drm_irq.o \
- 		drm_lock.o drm_memory.o drm_drv.o drm_vm.o \
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.=
-c
-index 3f74193885f1..a19201efb7d1 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -630,6 +630,8 @@ int drm_atomic_plane_set_property(struct drm_plane =
-*plane,
- 		state->src_h =3D val;
- 	} else if (property =3D=3D config->rotation_property) {
- 		state->rotation =3D val;
-+	} else if (property =3D=3D config->zpos_property) {
-+		state->zpos =3D val;
- 	} else if (plane->funcs->atomic_set_property) {
- 		return plane->funcs->atomic_set_property(plane, state,
- 				property, val);
-@@ -686,6 +688,8 @@ drm_atomic_plane_get_property(struct drm_plane *pla=
-ne,
- 		*val =3D state->src_h;
- 	} else if (property =3D=3D config->rotation_property) {
- 		*val =3D state->rotation;
-+	} else if (property =3D=3D config->zpos_property) {
-+		*val =3D state->zpos;
- 	} else if (plane->funcs->atomic_get_property) {
- 		return plane->funcs->atomic_get_property(plane, state, property, val=
-);
- 	} else {
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_=
-atomic_helper.c
-index 53db2d9120be..9fbfb672b317 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -32,6 +32,8 @@
- #include <drm/drm_atomic_helper.h>
- #include <linux/fence.h>
-=20
-+#include "drm_crtc_internal.h"
-+
- /**
-  * DOC: overview
-  *
-@@ -530,6 +532,10 @@ drm_atomic_helper_check_planes(struct drm_device *=
-dev,
- 	struct drm_plane_state *plane_state;
- 	int i, ret =3D 0;
-=20
-+	ret =3D drm_atomic_helper_normalize_zpos(dev, state);
-+	if (ret)
-+		return ret;
-+
- 	for_each_plane_in_state(state, plane, plane_state, i) {
- 		const struct drm_plane_helper_funcs *funcs;
-=20
-diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
-new file mode 100644
-index 000000000000..cdcb647c8ed9
---- /dev/null
-+++ b/drivers/gpu/drm/drm_blend.c
-@@ -0,0 +1,227 @@
-+/*
-+ * Copyright (C) 2016 Samsung Electronics Co.Ltd
-+ * Authors:
-+ *	Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * DRM core plane blending related functions
-+ *
-+ * Permission to use, copy, modify, distribute, and sell this software=
- and its
-+ * documentation for any purpose is hereby granted without fee, provid=
-ed that
-+ * the above copyright notice appear in all copies and that both that =
-copyright
-+ * notice and this permission notice appear in supporting documentatio=
-n, and
-+ * that the name of the copyright holders not be used in advertising o=
-r
-+ * publicity pertaining to distribution of the software without specif=
-ic,
-+ * written prior permission.  The copyright holders make no representa=
-tions
-+ * about the suitability of this software for any purpose.  It is prov=
-ided "as
-+ * is" without express or implied warranty.
-+ *
-+ * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS S=
-OFTWARE,
-+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN=
- NO
-+ * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRE=
-CT OR
-+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS=
- OF USE,
-+ * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OT=
-HER
-+ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PE=
-RFORMANCE
-+ * OF THIS SOFTWARE.
-+ */
-+#include <linux/slab.h>
-+#include <linux/sort.h>
-+#include <linux/export.h>
-+#include <drm/drmP.h>
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_atomic.h>
-+
-+#include "drm_internal.h"
-+
-+/**
-+ * drm_mode_create_zpos_property - create muttable zpos property
-+ * @dev: DRM device
-+ * @min: minimal possible value of zpos property
-+ * @max: maximal possible value of zpos property
-+ *
-+ * This function initializes generic muttable zpos property and enable=
-s support
-+ * for it in drm core. Drivers can then attach this property to planes=
- to enable
-+ * support for configurable planes arrangement during blending operati=
-on.
-+ * Once muttable zpos property has been enabled, the DRM core will aut=
-omatically
-+ * calculate drm_plane_state->normalized_zpos values. Usually min shou=
-ld be set
-+ * to 0 and max to maximal number of planes for given crtc - 1.
-+ *
-+ * If zpos of some planes cannot be changed (like fixed backgroud or
-+ * cursor/topmost planes), driver should adjust min/max values and ass=
-ign those
-+ * planes immutable zpos property with lower or higher values (for mor=
-e
-+ * information, see drm_mode_create_zpos_immutable_property() function=
-). In such
-+ * case driver should also assign proper initial zpos values for all p=
-lanes in
-+ * its plane_reset() callback, so the planes will be always sorted pro=
-perly.
-+ *
-+ * Returns:
-+ * Zero on success, negative errno on failure.
-+ */
-+int drm_mode_create_zpos_property(struct drm_device *dev, unsigned int=
- min,
-+				  unsigned int max)
-+{
-+	struct drm_property *prop;
-+
-+	prop =3D drm_property_create_range(dev, 0, "zpos", min, max);
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	dev->mode_config.zpos_property =3D prop;
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_mode_create_zpos_property);
-+
-+/**
-+ * drm_mode_create_zpos_immutable_property - create immuttable zpos pr=
-operty
-+ * @dev: DRM device
-+ * @min: minimal possible value of zpos property
-+ * @max: maximal possible value of zpos property
-+ *
-+ * This function initializes generic immuttable zpos property and enab=
-les
-+ * support for it in drm core. Using this property driver lets userspa=
-ce
-+ * to get the arrangement of the planes for blending operation and not=
-ifies
-+ * it that the hardware (or driver) doesn't support changing of the pl=
-anes'
-+ * order.
-+ *
-+ * Returns:
-+ * Zero on success, negative errno on failure.
-+ */
-+int drm_mode_create_zpos_immutable_property(struct drm_device *dev,
-+					    unsigned int min, unsigned int max)
-+{
-+	struct drm_property *prop;
-+
-+	prop =3D drm_property_create_range(dev, DRM_MODE_PROP_IMMUTABLE, "zpo=
-s",
-+					 min, max);
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	dev->mode_config.zpos_immutable_property =3D prop;
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_mode_create_zpos_immutable_property);
-+
-+static int drm_atomic_state_zpos_cmp(const void *a, const void *b)
-+{
-+	const struct drm_plane_state *sa =3D *(struct drm_plane_state **)a;
-+	const struct drm_plane_state *sb =3D *(struct drm_plane_state **)b;
-+	int zpos_a =3D (sa->zpos << 16) + sa->plane->base.id;
-+	int zpos_b =3D (sb->zpos << 16) + sb->plane->base.id;
-+
-+	return zpos_a - zpos_b;
-+}
-+
-+/**
-+ * drm_atomic_helper_crtc_normalize_zpos - calculate normalized zpos v=
-alues
-+ * @crtc: crtc with planes, which have to be considered for normalizat=
-ion
-+ * @crtc_state: new atomic state to apply
-+ *
-+ * This function checks new states of all planes assigned to given crt=
-c and
-+ * calculates normalized zpos value for them. Planes are compared firs=
-t by their
-+ * zpos values, then by plane id (if zpos equals). Plane with lowest z=
-pos value
-+ * is at the bottom. The plane_state->normalized_zpos is then filled w=
-ith uniqe
-+ * values from 0 to number of active planes in crtc minus one.
-+ *
-+ * RETURNS
-+ * Zero for success or -errno
-+ */
-+int drm_atomic_helper_crtc_normalize_zpos(struct drm_crtc *crtc,
-+					  struct drm_crtc_state *crtc_state)
-+{
-+	struct drm_atomic_state *state =3D crtc_state->state;
-+	struct drm_device *dev =3D crtc->dev;
-+	int total_planes =3D dev->mode_config.num_total_plane;
-+	struct drm_plane_state **states;
-+	struct drm_plane *plane;
-+	int i, n =3D 0;
-+	int ret =3D 0;
-+
-+	DRM_DEBUG_ATOMIC("[CRTC:%d:%s] calculating normalized zpos values\n",
-+			 crtc->base.id, crtc->name);
-+
-+	states =3D kmalloc(total_planes * sizeof(*states), GFP_KERNEL);
-+	if (!states)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Normalization process might create new states for planes which
-+	 * normalized_zpos has to be recalculated.
-+	 */
-+	drm_for_each_plane_mask(plane, dev, crtc_state->plane_mask) {
-+		struct drm_plane_state *plane_state =3D
-+			drm_atomic_get_plane_state(state, plane);
-+		if (IS_ERR(plane_state)) {
-+			ret =3D PTR_ERR(plane_state);
-+			goto fail;
-+		}
-+		states[n++] =3D plane_state;
-+		DRM_DEBUG_ATOMIC("[PLANE:%d:%s] processing zpos value %d\n",
-+				 plane->base.id, plane->name, plane_state->zpos);
-+	}
-+
-+	sort(states, n, sizeof(*states), drm_atomic_state_zpos_cmp, NULL);
-+
-+	for (i =3D 0; i < n; i++) {
-+		plane =3D states[i]->plane;
-+		states[i]->normalized_zpos =3D i;
-+		DRM_DEBUG_ATOMIC("[PLANE:%d:%s] normalized zpos value %d\n",
-+				 plane->base.id, plane->name, i);
-+	}
-+	crtc_state->zpos_changed =3D true;
-+
-+fail:
-+	kfree(states);
-+	return ret;
-+}
-+EXPORT_SYMBOL(drm_atomic_helper_crtc_normalize_zpos);
-+
-+/**
-+ * drm_atomic_helper_normalize_zpos - calculate normalized zpos values=
- for all
-+ *				      crtcs
-+ * @dev: DRM device
-+ * @state: atomic state of DRM device
-+ *
-+ * This function calculates normalized zpos value for all modified pla=
-nes in
-+ * the provided atomic state of DRM device. For more information, see
-+ * drm_atomic_helper_crtc_normalize_zpos() function.
-+ *
-+ * RETURNS
-+ * Zero for success or -errno
-+ */
-+int drm_atomic_helper_normalize_zpos(struct drm_device *dev,
-+				     struct drm_atomic_state *state)
-+{
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_plane *plane;
-+	struct drm_plane_state *plane_state;
-+	int i, ret =3D 0;
-+
-+	/*
-+	 * If zpos_property is not initialized, then it makes no sense
-+	 * to calculate normalized zpos values.
-+	 */
-+	if (!dev->mode_config.zpos_property)
-+		return 0;
-+
-+	for_each_plane_in_state(state, plane, plane_state, i) {
-+		crtc =3D plane_state->crtc;
-+		if (!crtc)
-+			continue;
-+		if (plane->state->zpos !=3D plane_state->zpos) {
-+			crtc_state =3D
-+				drm_atomic_get_existing_crtc_state(state, crtc);
-+			crtc_state->zpos_changed =3D true;
-+		}
-+	}
-+
-+	for_each_crtc_in_state(state, crtc, crtc_state, i) {
-+		if (crtc_state->plane_mask !=3D crtc->state->plane_mask ||
-+		    crtc_state->zpos_changed) {
-+			ret =3D drm_atomic_helper_crtc_normalize_zpos(crtc,
-+								    crtc_state);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_atomic_helper_normalize_zpos);
-diff --git a/drivers/gpu/drm/drm_crtc_internal.h b/drivers/gpu/drm/drm_=
-crtc_internal.h
-index 247dc8b62564..c87cd956b74b 100644
---- a/drivers/gpu/drm/drm_crtc_internal.h
-+++ b/drivers/gpu/drm/drm_crtc_internal.h
-@@ -42,3 +42,6 @@ int drm_atomic_get_property(struct drm_mode_object *o=
-bj,
- int drm_mode_atomic_ioctl(struct drm_device *dev,
- 			  void *data, struct drm_file *file_priv);
-=20
-+/* drm_blend.c */
-+int drm_atomic_helper_normalize_zpos(struct drm_device *dev,
-+				     struct drm_atomic_state *state);
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index c65a212db77e..4f32a358d631 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -305,6 +305,7 @@ struct drm_plane_helper_funcs;
-  * @mode_changed: crtc_state->mode or crtc_state->enable has been chan=
-ged
-  * @active_changed: crtc_state->active has been toggled.
-  * @connectors_changed: connectors to this crtc have been updated
-+ * @zpos_changed: zpos values of planes on this crtc have been updated
-  * @plane_mask: bitmask of (1 << drm_plane_index(plane)) of attached p=
-lanes
-  * @connector_mask: bitmask of (1 << drm_connector_index(connector)) o=
-f attached connectors
-  * @last_vblank_count: for helpers and drivers to capture the vblank o=
-f the
-@@ -332,6 +333,7 @@ struct drm_crtc_state {
- 	bool mode_changed : 1;
- 	bool active_changed : 1;
- 	bool connectors_changed : 1;
-+	bool zpos_changed : 1;
-=20
- 	/* attached planes bitmask:
- 	 * WARNING: transitional helpers do not maintain plane_mask so
-@@ -1247,6 +1249,9 @@ struct drm_connector {
-  *	plane (in 16.16)
-  * @src_w: width of visible portion of plane (in 16.16)
-  * @src_h: height of visible portion of plane (in 16.16)
-+ * @zpos: priority of the given plane on crtc (optional)
-+ * @normalized_zpos: normalized value of zpos: uniqe, range from 0 to
-+ *	(number of planes - 1) for given crtc
-  * @state: backpointer to global drm_atomic_state
-  */
- struct drm_plane_state {
-@@ -1267,6 +1272,10 @@ struct drm_plane_state {
- 	/* Plane rotation */
- 	unsigned int rotation;
-=20
-+	/* Plane zpos */
-+	unsigned int zpos;
-+	unsigned int normalized_zpos;
-+
- 	struct drm_atomic_state *state;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 17b5ded72ff1..816537886e4e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -64,7 +64,6 @@ struct exynos_drm_plane_state {
+ 	struct exynos_drm_rect src;
+ 	unsigned int h_ratio;
+ 	unsigned int v_ratio;
+-	unsigned int zpos;
  };
-=20
-@@ -2087,6 +2096,8 @@ struct drm_mode_config {
- 	struct drm_property *tile_property;
- 	struct drm_property *plane_type_property;
- 	struct drm_property *rotation_property;
-+	struct drm_property *zpos_property;
-+	struct drm_property *zpos_immutable_property;
- 	struct drm_property *prop_src_x;
- 	struct drm_property *prop_src_y;
- 	struct drm_property *prop_src_w;
-@@ -2488,6 +2499,12 @@ extern struct drm_property *drm_mode_create_rota=
-tion_property(struct drm_device
- extern unsigned int drm_rotation_simplify(unsigned int rotation,
- 					  unsigned int supported_rotations);
-=20
-+extern int drm_mode_create_zpos_property(struct drm_device *dev,
-+					 unsigned int min, unsigned int max);
-+extern int drm_mode_create_zpos_immutable_property(struct drm_device *=
-dev,
-+						   unsigned int min,
-+						   unsigned int max);
-+
- /* Helpers */
-=20
- static inline struct drm_plane *drm_plane_find(struct drm_device *dev,
---=20
+ 
+ static inline struct exynos_drm_plane_state *
+@@ -217,7 +216,6 @@ struct exynos_drm_private {
+ 	 * this array is used to be aware of which crtc did it request vblank.
+ 	 */
+ 	struct drm_crtc *crtc[MAX_CRTC];
+-	struct drm_property *plane_zpos_property;
+ 
+ 	unsigned long da_start;
+ 	unsigned long da_space_size;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index d86227236f55..3a486939168e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -137,9 +137,9 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
+ 
+ 	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
+ 	if (exynos_state) {
+-		exynos_state->zpos = exynos_plane->config->zpos;
+ 		plane->state = &exynos_state->base;
+ 		plane->state->plane = plane;
++		plane->state->zpos = exynos_plane->config->zpos;
+ 	}
+ }
+ 
+@@ -155,7 +155,6 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
+ 		return NULL;
+ 
+ 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
+-	copy->zpos = exynos_state->zpos;
+ 	return &copy->base;
+ }
+ 
+@@ -168,43 +167,6 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
+ 	kfree(old_exynos_state);
+ }
+ 
+-static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
+-						struct drm_plane_state *state,
+-						struct drm_property *property,
+-						uint64_t val)
+-{
+-	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	struct exynos_drm_plane_state *exynos_state =
+-					to_exynos_plane_state(state);
+-	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+-	const struct exynos_drm_plane_config *config = exynos_plane->config;
+-
+-	if (property == dev_priv->plane_zpos_property &&
+-	    (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
+-		exynos_state->zpos = val;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
+-					  const struct drm_plane_state *state,
+-					  struct drm_property *property,
+-					  uint64_t *val)
+-{
+-	const struct exynos_drm_plane_state *exynos_state =
+-		container_of(state, const struct exynos_drm_plane_state, base);
+-	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+-
+-	if (property == dev_priv->plane_zpos_property)
+-		*val = exynos_state->zpos;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= drm_atomic_helper_update_plane,
+ 	.disable_plane	= drm_atomic_helper_disable_plane,
+@@ -213,8 +175,6 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.reset		= exynos_drm_plane_reset,
+ 	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
+ 	.atomic_destroy_state = exynos_drm_plane_destroy_state,
+-	.atomic_set_property = exynos_drm_plane_atomic_set_property,
+-	.atomic_get_property = exynos_drm_plane_atomic_get_property,
+ };
+ 
+ static int
+@@ -302,20 +262,23 @@ static const struct drm_plane_helper_funcs plane_helper_funcs = {
+ };
+ 
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+-					      unsigned int zpos)
++					      unsigned int zpos, bool immutable)
+ {
+ 	struct drm_device *dev = plane->dev;
+-	struct exynos_drm_private *dev_priv = dev->dev_private;
+ 	struct drm_property *prop;
+ 
+-	prop = dev_priv->plane_zpos_property;
+-	if (!prop) {
+-		prop = drm_property_create_range(dev, 0, "zpos",
+-						 0, MAX_PLANE - 1);
+-		if (!prop)
+-			return;
+-
+-		dev_priv->plane_zpos_property = prop;
++	if (immutable) {
++		if (!dev->mode_config.zpos_immutable_property)
++			if (drm_mode_create_zpos_immutable_property(dev, 0,
++								MAX_PLANE - 1))
++				return;
++		prop = dev->mode_config.zpos_immutable_property;
++	} else {
++		if (!dev->mode_config.zpos_property)
++			if (drm_mode_create_zpos_property(dev, 0,
++							  MAX_PLANE - 1))
++				return;
++		prop = dev->mode_config.zpos_property;
+ 	}
+ 
+ 	drm_object_attach_property(&plane->base, prop, zpos);
+@@ -344,7 +307,8 @@ int exynos_plane_init(struct drm_device *dev,
+ 	exynos_plane->index = index;
+ 	exynos_plane->config = config;
+ 
+-	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos);
++	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos,
++			   !(config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS));
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index b5fbc1cbf024..d00c201773c9 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -478,6 +478,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 	struct drm_framebuffer *fb = state->base.fb;
++	unsigned int priority = state->base.normalized_zpos + 1;
+ 	unsigned long flags;
+ 	dma_addr_t luma_addr[2], chroma_addr[2];
+ 	bool tiled_mode = false;
+@@ -562,7 +563,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+-	mixer_cfg_layer(ctx, plane->index, state->zpos + 1, true);
++	mixer_cfg_layer(ctx, plane->index, priority, true);
+ 	mixer_cfg_vp_blend(ctx);
+ 	mixer_run(ctx);
+ 
+@@ -587,6 +588,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 	struct drm_framebuffer *fb = state->base.fb;
++	unsigned int priority = state->base.normalized_zpos + 1;
+ 	unsigned long flags;
+ 	unsigned int win = plane->index;
+ 	unsigned int x_ratio = 0, y_ratio = 0;
+@@ -678,7 +680,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+-	mixer_cfg_layer(ctx, win, state->zpos + 1, true);
++	mixer_cfg_layer(ctx, win, priority, true);
+ 	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
+ 
+ 	/* layer update mandatory for mixer 16.0.33.0 */
+-- 
 1.9.2
