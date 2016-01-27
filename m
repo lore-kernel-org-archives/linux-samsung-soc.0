@@ -1,63 +1,64 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: [PATCH 11/17] arm/samsung: Change s3c_pm_run_res() to use System RAM
- type
-Date: Tue, 26 Jan 2016 21:57:27 +0100
-Message-ID: <1453841853-11383-12-git-send-email-bp@alien8.de>
-References: <1453841853-11383-1-git-send-email-bp@alien8.de>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH v3 01/10] rtc: max77686: Fix max77686_rtc_read_alarm()
+ return value
+Date: Wed, 27 Jan 2016 10:19:57 +0900
+Message-ID: <20160127011957.GA14296@samsunx.samsung>
+References: <1453836020-29579-1-git-send-email-javier@osg.samsung.com>
+ <1453836020-29579-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1453841853-11383-1-git-send-email-bp@alien8.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, Kukjin Kim <kgene@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:48422 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751008AbcA0BUA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Jan 2016 20:20:00 -0500
+Content-disposition: inline
+In-reply-to: <1453836020-29579-2-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org
 
-From: Toshi Kani <toshi.kani@hpe.com>
+> The function is always returning zero even in case of failures since
+> the ret value was not propagated to the callers. Fix the error path.
+> 
+> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Change s3c_pm_run_res() to check with IORESOURCE_SYSTEM_RAM, instead of
-strcmp() with "System RAM", to walk through System RAM ranges in the
-iomem table.
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
-No functional change is made to the interface.
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mm <linux-mm@kvack.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Link: http://lkml.kernel.org/r/1452020081-26534-11-git-send-email-toshi.kani@hpe.com
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/arm/plat-samsung/pm-check.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/plat-samsung/pm-check.c b/arch/arm/plat-samsung/pm-check.c
-index 04aff2c31b46..70f2f699bed3 100644
---- a/arch/arm/plat-samsung/pm-check.c
-+++ b/arch/arm/plat-samsung/pm-check.c
-@@ -53,8 +53,8 @@ static void s3c_pm_run_res(struct resource *ptr, run_fn_t fn, u32 *arg)
- 		if (ptr->child != NULL)
- 			s3c_pm_run_res(ptr->child, fn, arg);
- 
--		if ((ptr->flags & IORESOURCE_MEM) &&
--		    strcmp(ptr->name, "System RAM") == 0) {
-+		if ((ptr->flags & IORESOURCE_SYSTEM_RAM)
-+				== IORESOURCE_SYSTEM_RAM) {
- 			S3C_PMDBG("Found system RAM at %08lx..%08lx\n",
- 				  (unsigned long)ptr->start,
- 				  (unsigned long)ptr->end);
--- 
-2.3.5
+> ---
+> 
+> Changes in v3:
+> - Add Krzysztof Kozlowski's Reviewed-by and Tested-by to patch #1.
+> - Add Laxman Dewangan's Acked-by tag to patch #1.
+> 
+> Changes in v2: None
+> 
+>  drivers/rtc/rtc-max77686.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+> index 7184a0eda793..6653c3d11b66 100644
+> --- a/drivers/rtc/rtc-max77686.c
+> +++ b/drivers/rtc/rtc-max77686.c
+> @@ -235,7 +235,7 @@ static int max77686_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  
+>  out:
+>  	mutex_unlock(&info->lock);
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int max77686_rtc_stop_alarm(struct max77686_rtc_info *info)
+> -- 
+> 2.5.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
