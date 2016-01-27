@@ -1,72 +1,222 @@
 From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH v3 03/10] rtc: max77686: Use usleep_range() instead of
- msleep()
-Date: Wed, 27 Jan 2016 10:21:05 +0900
-Message-ID: <20160127012105.GC14296@samsunx.samsung>
+Subject: Re: [PATCH v3 04/10] rtc: max77686: Use a driver data struct instead
+ hard-coded values
+Date: Wed, 27 Jan 2016 10:21:26 +0900
+Message-ID: <20160127012125.GD14296@samsunx.samsung>
 References: <1453836020-29579-1-git-send-email-javier@osg.samsung.com>
- <1453836020-29579-4-git-send-email-javier@osg.samsung.com>
+ <1453836020-29579-5-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:57919 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752010AbcA0BV2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Jan 2016 20:21:28 -0500
 Content-disposition: inline
-In-reply-to: <1453836020-29579-4-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-reply-to: <1453836020-29579-5-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>
 Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 26, 2016 at 04:20:13PM -0300, Javier Martinez Canillas wrote:
-> Documentation/timers/timers-howto.txt suggest to use usleep_range()
-> instead of msleep() for small msec (1ms - 20ms) since msleep() will
-> often sleep for 20ms for any value in that range.
+On Tue, Jan 26, 2016 at 04:20:14PM -0300, Javier Martinez Canillas wrote:
+> The driver has some hard-coded values such as the minimum delay needed
+> before a RTC update or the mask used for the sec/min/hour/etc registers.
 > 
-> This is fine in this case since 16ms is the _minimum_ delay required
-> by max77686 for an RTC update but by using usleep_range() instead of
-> msleep(), the driver can support other RTC IP blocks with a shorter
-> minimum delay (i.e: in the range of usecs instead of msecs).
+> Use a data structure that contains these values and pass as driver data
+> using the platform device ID table for each device.
+> 
+> This allows to make the driver's ops callbacks more generic so other RTC
+> that are similar but don't have the same values can also be supported.
 > 
 > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
 
 Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
 > ---
 > 
 > Changes in v3:
-> - Add Krzysztof Kozlowski's Tested-by tag to patch #3.
-> - Add Laxman Dewangan's Acked-by tag to patch #3.
+> - Fix max77686 delay. Suggested by Krzysztof Kozlowski.
+> - Assign mask to u8 instead of int. Suggested by Krzysztof Kozlowski.
+> - Add Laxman Dewangan's Acked-by tag to patch #4.
 > 
 > Changes in v2:
-> - Add Krzysztof Kozlowski's Reviewed-by tag to patch #3.
-> - Fix typo error in changelog. Suggested by Krzysztof Kozlowski.
+> - Add a max77686 prefix to rtc_driver_data. Suggested by Krzysztof Kozlowski.
+> - Comment about the .delay and .mask fields. Suggested by Krzysztof Kozlowski.
+> - Change .mask type to u8. Suggested by Krzysztof Kozlowski.
+> - Make .drv_data field const. Suggested by Krzysztof Kozlowski.
+> - Don't cast to drop const on .drv_data asign. Suggested by Krzysztof Kozlowski.
+> - Use platform_get_device_id() macro. Suggested by Krzysztof Kozlowski.
 > 
->  drivers/rtc/rtc-max77686.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/rtc/rtc-max77686.c | 51 ++++++++++++++++++++++++++++++----------------
+>  1 file changed, 34 insertions(+), 17 deletions(-)
 > 
 > diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-> index d84a50c9f7f7..025a17a95da3 100644
+> index 025a17a95da3..8c4ca35029c3 100644
 > --- a/drivers/rtc/rtc-max77686.c
 > +++ b/drivers/rtc/rtc-max77686.c
-> @@ -41,7 +41,7 @@
+> @@ -41,8 +41,6 @@
 >  #define ALARM_ENABLE_SHIFT		7
 >  #define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
 >  
-> -#define MAX77686_RTC_UPDATE_DELAY	16
-> +#define MAX77686_RTC_UPDATE_DELAY	16000
->  
+> -#define MAX77686_RTC_UPDATE_DELAY	16000
+> -
 >  enum {
 >  	RTC_SEC = 0,
-> @@ -130,7 +130,8 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
+>  	RTC_MIN,
+> @@ -54,6 +52,13 @@ enum {
+>  	RTC_NR_TIME
+>  };
+>  
+> +struct max77686_rtc_driver_data {
+> +	/* Minimum usecs needed for a RTC update */
+> +	unsigned long		delay;
+> +	/* Mask used to read RTC registers value */
+> +	u8			mask;
+> +};
+> +
+>  struct max77686_rtc_info {
+>  	struct device		*dev;
+>  	struct max77686_dev	*max77686;
+> @@ -63,6 +68,8 @@ struct max77686_rtc_info {
+>  
+>  	struct regmap		*regmap;
+>  
+> +	const struct max77686_rtc_driver_data *drv_data;
+> +
+>  	int virq;
+>  	int rtc_24hr_mode;
+>  };
+> @@ -72,12 +79,19 @@ enum MAX77686_RTC_OP {
+>  	MAX77686_RTC_READ,
+>  };
+>  
+> +static const struct max77686_rtc_driver_data max77686_drv_data = {
+> +	.delay = 16000,
+> +	.mask  = 0x7f,
+> +};
+> +
+>  static void max77686_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
+> -				   int rtc_24hr_mode)
+> +				    struct max77686_rtc_info *info)
+>  {
+> -	tm->tm_sec = data[RTC_SEC] & 0x7f;
+> -	tm->tm_min = data[RTC_MIN] & 0x7f;
+> -	if (rtc_24hr_mode)
+> +	u8 mask = info->drv_data->mask;
+> +
+> +	tm->tm_sec = data[RTC_SEC] & mask;
+> +	tm->tm_min = data[RTC_MIN] & mask;
+> +	if (info->rtc_24hr_mode)
+>  		tm->tm_hour = data[RTC_HOUR] & 0x1f;
+>  	else {
+>  		tm->tm_hour = data[RTC_HOUR] & 0x0f;
+> @@ -86,10 +100,10 @@ static void max77686_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
+>  	}
+>  
+>  	/* Only a single bit is set in data[], so fls() would be equivalent */
+> -	tm->tm_wday = ffs(data[RTC_WEEKDAY] & 0x7f) - 1;
+> +	tm->tm_wday = ffs(data[RTC_WEEKDAY] & mask) - 1;
+>  	tm->tm_mday = data[RTC_DATE] & 0x1f;
+>  	tm->tm_mon = (data[RTC_MONTH] & 0x0f) - 1;
+> -	tm->tm_year = (data[RTC_YEAR] & 0x7f) + 100;
+> +	tm->tm_year = (data[RTC_YEAR] & mask) + 100;
+>  	tm->tm_yday = 0;
+>  	tm->tm_isdst = 0;
+>  }
+> @@ -117,6 +131,7 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
+>  {
+>  	int ret;
+>  	unsigned int data;
+> +	unsigned long delay = info->drv_data->delay;
+>  
+>  	if (op == MAX77686_RTC_WRITE)
+>  		data = 1 << RTC_UDR_SHIFT;
+> @@ -129,9 +144,8 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
+>  		dev_err(info->dev, "%s: fail to write update reg(ret=%d, data=0x%x)\n",
 >  				__func__, ret, data);
 >  	else {
->  		/* Minimum 16ms delay required before RTC update. */
-> -		msleep(MAX77686_RTC_UPDATE_DELAY);
-> +		usleep_range(MAX77686_RTC_UPDATE_DELAY,
-> +			     MAX77686_RTC_UPDATE_DELAY * 2);
+> -		/* Minimum 16ms delay required before RTC update. */
+> -		usleep_range(MAX77686_RTC_UPDATE_DELAY,
+> -			     MAX77686_RTC_UPDATE_DELAY * 2);
+> +		/* Minimum delay required before RTC update. */
+> +		usleep_range(delay, delay * 2);
 >  	}
 >  
 >  	return ret;
+> @@ -156,7 +170,7 @@ static int max77686_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, tm, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, tm, info);
+>  
+>  	ret = rtc_valid_tm(tm);
+>  
+> @@ -213,7 +227,7 @@ static int max77686_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, &alrm->time, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, &alrm->time, info);
+>  
+>  	alrm->enabled = 0;
+>  	for (i = 0; i < ARRAY_SIZE(data); i++) {
+> @@ -260,7 +274,7 @@ static int max77686_rtc_stop_alarm(struct max77686_rtc_info *info)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, &tm, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, &tm, info);
+>  
+>  	for (i = 0; i < ARRAY_SIZE(data); i++)
+>  		data[i] &= ~ALARM_ENABLE_MASK;
+> @@ -299,7 +313,7 @@ static int max77686_rtc_start_alarm(struct max77686_rtc_info *info)
+>  		goto out;
+>  	}
+>  
+> -	max77686_rtc_data_to_tm(data, &tm, info->rtc_24hr_mode);
+> +	max77686_rtc_data_to_tm(data, &tm, info);
+>  
+>  	data[RTC_SEC] |= (1 << ALARM_ENABLE_SHIFT);
+>  	data[RTC_MIN] |= (1 << ALARM_ENABLE_SHIFT);
+> @@ -307,7 +321,7 @@ static int max77686_rtc_start_alarm(struct max77686_rtc_info *info)
+>  	data[RTC_WEEKDAY] &= ~ALARM_ENABLE_MASK;
+>  	if (data[RTC_MONTH] & 0xf)
+>  		data[RTC_MONTH] |= (1 << ALARM_ENABLE_SHIFT);
+> -	if (data[RTC_YEAR] & 0x7f)
+> +	if (data[RTC_YEAR] & info->drv_data->mask)
+>  		data[RTC_YEAR] |= (1 << ALARM_ENABLE_SHIFT);
+>  	if (data[RTC_DATE] & 0x1f)
+>  		data[RTC_DATE] |= (1 << ALARM_ENABLE_SHIFT);
+> @@ -423,6 +437,7 @@ static int max77686_rtc_probe(struct platform_device *pdev)
+>  {
+>  	struct max77686_dev *max77686 = dev_get_drvdata(pdev->dev.parent);
+>  	struct max77686_rtc_info *info;
+> +	const struct platform_device_id *id = platform_get_device_id(pdev);
+>  	int ret;
+>  
+>  	dev_info(&pdev->dev, "%s\n", __func__);
+> @@ -436,6 +451,8 @@ static int max77686_rtc_probe(struct platform_device *pdev)
+>  	info->dev = &pdev->dev;
+>  	info->max77686 = max77686;
+>  	info->rtc = max77686->rtc;
+> +	info->drv_data = (const struct max77686_rtc_driver_data *)
+> +		id->driver_data;
+>  
+>  	platform_set_drvdata(pdev, info);
+>  
+> @@ -510,7 +527,7 @@ static SIMPLE_DEV_PM_OPS(max77686_rtc_pm_ops,
+>  			 max77686_rtc_suspend, max77686_rtc_resume);
+>  
+>  static const struct platform_device_id rtc_id[] = {
+> -	{ "max77686-rtc", 0 },
+> +	{ "max77686-rtc", .driver_data = (kernel_ulong_t)&max77686_drv_data, },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(platform, rtc_id);
 > -- 
 > 2.5.0
 > 
