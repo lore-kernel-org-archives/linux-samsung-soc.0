@@ -1,84 +1,58 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
-Date: Wed, 27 Jan 2016 18:10:48 +0900
-Message-ID: <56A88998.5040602@samsung.com>
-References: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: samsung: Fixes samsung_gpio_direction_in/output
+ releated with spinlock
+Date: Wed, 27 Jan 2016 13:36:04 +0100
+Message-ID: <CACRpkdaTesQL+ginJdjg0LYD=re7-ot=VLnX_=th-0gSqcQx0Q@mail.gmail.com>
+References: <1453615352-9748-1-git-send-email-ym0914@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:32939 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754197AbcA0MgF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Jan 2016 07:36:05 -0500
+Received: by mail-oi0-f41.google.com with SMTP id r14so4337775oie.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jan 2016 04:36:04 -0800 (PST)
+In-Reply-To: <1453615352-9748-1-git-send-email-ym0914@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Youngmin Nam <ym0914@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 26.01.2016 17:05, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Third attempt to remove ARCH_EXYNOS7 symbol.
-> 
-> Patches cannot be cherry-picked. I was thinking about merging this
-> through arm-soc tree after getting needed acks (clk, arm-soc?).
+On Sun, Jan 24, 2016 at 7:02 AM, Youngmin Nam <ym0914@gmail.com> wrote:
 
-The patchset was rebased on quite old linux-next. Rebasing on current
-code makes only one difference - the s3c64xx gained multiplatform support.
+> Previously, samsung_gpio_drection_in/output function were not covered with
+> one spinlock.
+>
+> For example, samsung_gpio_direction_output function consists of two functions.
+> 1. samsung_gpio_set
+> 2. samsung_gpio_set_direction
+>
+> When 2 CPUs try to control the same gpio pin heavily,
+> (situation like i2c control with gpio emulation)
+> This situation can cause below problem.
+>
+> CPU 0                                   | CPU1
+>                                         |
+> samsung_gpio_direction_output           |
+>    samsung_gpio_set(pin A as 1)         | samsung_gpio_direction_output
+>                                         |    samsung_gpio_set(pin A as 0)
+>    samsung_gpio_set_direction           |
+>                                         |    samsung_gpio_set_direction
+>
+> The initial value of pin A will be set as 0 while we wanted to set pin A as 1.
+>
+> This patch modifies samsung_gpio_direction_in/output function
+> to be done in one spinlock to fix race condition.
+>
+> Additionally, the new samsung_gpio_set_value was added to implement
+> gpio set callback(samsung_gpio_set) with spinlock using this function.
+>
+> Signed-off-by: Youngmin Nam <ym0914@gmail.com>
 
-I don't want to spam the lists so, I'll respin everything tomorrow after
-proper rebasing.
+This patch does not apply to v4.5-rc1. Please rebase this
+and resend. (With Thomas ACK if it's valid.)
 
-Best regards,
-Krzysztof
-
-
-> 
-> Changes since v2:
-> =================
-> 1. Follow Arnd's advice about not enabling silently the newly added
->    EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
->    also a trigger for some changes in placement of Samsung clocks
->    Kconfig entries...
-> 2. ... which lead to introducing patch 1.
-> 
-> 
-> Logic:
-> ======
-> Now the clock selection algorithm works like:
-> 1. For Exynos ARMv7 and ARMv8 the platforms select COMMON_CLK
->    and COMMON_CLK_SAMSUNG.
-> 2. As before: clock drivers for Exynos ARMv7 will be selected by
->    respective SOC/ARCH_EXYNOS_XXX symbol.
-> 3. For Exynos ARMv8 the clock drivers will be enabled by default
->    by EXYNOS_ARM64_COMMON_CLK symbol.
-> 
-> Rationale:
-> ==========
-> We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
-> fall under generic ARCH_EXYNOS. In the same time there is no sense
-> in building clocks for these ARMv8 SoCs on ARMv7 builds. In future
-> this will also influence PMU [1] driver.
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> [1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg48090.html
-> 
-> 
-> Krzysztof Kozlowski (3):
->   clk: samsung: Enable COMPILE_TEST for Samsung clocks
->   clk: samsung: Don't build ARMv8 clock drivers on ARMv7
->   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
-> 
->  arch/arm/Kconfig                    |  1 +
->  arch/arm/mach-exynos/Kconfig        |  1 +
->  arch/arm/mach-s3c24xx/Kconfig       |  8 ++++++++
->  arch/arm/mach-s5pv210/Kconfig       |  1 +
->  arch/arm64/Kconfig.platforms        | 12 +++---------
->  arch/arm64/boot/dts/exynos/Makefile |  2 +-
->  arch/arm64/configs/defconfig        |  2 +-
->  drivers/clk/Kconfig                 |  2 +-
->  drivers/clk/samsung/Kconfig         | 14 +++++++++-----
->  drivers/clk/samsung/Makefile        |  4 ++--
->  10 files changed, 28 insertions(+), 19 deletions(-)
-> 
-
+Yours,
+Linus Walleij
