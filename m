@@ -1,56 +1,67 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v4 01/10] rtc: max77686: Fix max77686_rtc_read_alarm() return value
-Date: Wed, 27 Jan 2016 00:36:37 -0300
-Message-ID: <1453865806-4661-2-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH v4 03/10] rtc: max77686: Use usleep_range() instead of msleep()
+Date: Wed, 27 Jan 2016 00:36:39 -0300
+Message-ID: <1453865806-4661-4-git-send-email-javier@osg.samsung.com>
 References: <1453865806-4661-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:54381 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751877AbcA0DhH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2016 22:37:07 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1453865806-4661-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The function is always returning zero even in case of failures since
-the ret value was not propagated to the callers. Fix the error path.
+Documentation/timers/timers-howto.txt suggest to use usleep_range()
+instead of msleep() for small msec (1ms - 20ms) since msleep() will
+often sleep for 20ms for any value in that range.
 
-Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This is fine in this case since 16ms is the _minimum_ delay required
+by max77686 for an RTC update but by using usleep_range() instead of
+msleep(), the driver can support other RTC IP blocks with a shorter
+minimum delay (i.e: in the range of usecs instead of msecs).
+
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
 Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
 ---
 
 Changes in v4:
-- Add Andi Shyti's Reviewed-by to patch #1.
+- Add Andi Shyti's Reviewed-by to patch #3.
 
 Changes in v3:
-- Add Krzysztof Kozlowski's Reviewed-by and Tested-by to patch #1.
-- Add Laxman Dewangan's Acked-by tag to patch #1.
+- Add Krzysztof Kozlowski's Tested-by tag to patch #3.
+- Add Laxman Dewangan's Acked-by tag to patch #3.
 
-Changes in v2: None
+Changes in v2:
+- Add Krzysztof Kozlowski's Reviewed-by tag to patch #3.
+- Fix typo error in changelog. Suggested by Krzysztof Kozlowski.
 
- drivers/rtc/rtc-max77686.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-max77686.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-index 7184a0eda793..6653c3d11b66 100644
+index d84a50c9f7f7..025a17a95da3 100644
 --- a/drivers/rtc/rtc-max77686.c
 +++ b/drivers/rtc/rtc-max77686.c
-@@ -235,7 +235,7 @@ static int max77686_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+@@ -41,7 +41,7 @@
+ #define ALARM_ENABLE_SHIFT		7
+ #define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
  
- out:
- 	mutex_unlock(&info->lock);
--	return 0;
-+	return ret;
- }
+-#define MAX77686_RTC_UPDATE_DELAY	16
++#define MAX77686_RTC_UPDATE_DELAY	16000
  
- static int max77686_rtc_stop_alarm(struct max77686_rtc_info *info)
+ enum {
+ 	RTC_SEC = 0,
+@@ -130,7 +130,8 @@ static int max77686_rtc_update(struct max77686_rtc_info *info,
+ 				__func__, ret, data);
+ 	else {
+ 		/* Minimum 16ms delay required before RTC update. */
+-		msleep(MAX77686_RTC_UPDATE_DELAY);
++		usleep_range(MAX77686_RTC_UPDATE_DELAY,
++			     MAX77686_RTC_UPDATE_DELAY * 2);
+ 	}
+ 
+ 	return ret;
 -- 
 2.5.0
