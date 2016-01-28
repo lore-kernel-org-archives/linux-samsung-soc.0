@@ -1,132 +1,47 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 12/19] ARM: dts: exynos: replace legacy *,wakeup property
- with wakeup-source
-Date: Thu, 28 Jan 2016 17:11:06 +0900
-Message-ID: <56A9CD1A.8010800@samsung.com>
-References: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
- <1445422216-29375-13-git-send-email-sudeep.holla@arm.com>
- <5671F88F.7050802@samsung.com>
+Subject: Re: [PATCH v6 0/7] cpufreq: add generic cpufreq driver support for
+ Exynos542x/5800 platforms
+Date: Thu, 28 Jan 2016 19:48:37 +0900
+Message-ID: <56A9F205.1060302@samsung.com>
+References: <1450200801-24539-1-git-send-email-b.zolnierkie@samsung.com>
+ <20151216021446.GC3111@ubuntu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:51673 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933871AbcA1ILK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jan 2016 03:11:10 -0500
-In-reply-to: <5671F88F.7050802@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20151216021446.GC3111@ubuntu>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Ben Gamari <ben@smart-cactus.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On 17.12.2015 08:49, Krzysztof Kozlowski wrote:
-> On 21.10.2015 19:10, Sudeep Holla wrote:
->> Though the keyboard and other driver will continue to support the legacy
->> "gpio-key,wakeup", "linux-keypad,wakeup" boolean property to enable the
->> wakeup source, "wakeup-source" is the new standard binding.
+On 16.12.2015 11:14, Viresh Kumar wrote:
+> On 15-12-15, 18:33, Bartlomiej Zolnierkiewicz wrote:
+>> Hi,
 >>
->> This patch replaces all the legacy wakeup properties with the unified
->> "wakeup-source" property in order to avoid any futher copy-paste
->> duplication.
+>> This patch series adds generic cpufreq-dt driver support for
+>> Exynos542x/5800 (using the new CPU clock type which allows it).
 >>
->> Cc: Kukjin Kim <kgene@kernel.org>
->> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Cc: linux-samsung-soc@vger.kernel.org
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> ---
->>  arch/arm/boot/dts/exynos3250-monk.dts           |  6 +++---
->>  arch/arm/boot/dts/exynos3250-rinato.dts         |  6 +++---
->>  arch/arm/boot/dts/exynos4210-origen.dts         | 10 +++++-----
->>  arch/arm/boot/dts/exynos4210-smdkv310.dts       |  2 +-
->>  arch/arm/boot/dts/exynos4210-trats.dts          |  2 +-
->>  arch/arm/boot/dts/exynos4210-universal_c210.dts |  4 ++--
->>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  2 +-
->>  arch/arm/boot/dts/exynos4412-odroidx.dts        |  2 +-
->>  arch/arm/boot/dts/exynos4412-origen.dts         |  2 +-
->>  arch/arm/boot/dts/exynos4412-smdk4412.dts       |  2 +-
->>  arch/arm/boot/dts/exynos4412-trats2.dts         |  4 ++--
->>  arch/arm/boot/dts/exynos5250-arndale.dts        | 12 ++++++------
->>  arch/arm/boot/dts/exynos5250-snow.dts           |  4 ++--
->>  arch/arm/boot/dts/exynos5250-spring.dts         |  4 ++--
->>  arch/arm/boot/dts/exynos5420-arndale-octa.dts   |  2 +-
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts      |  4 ++--
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts       |  4 ++--
->>  17 files changed, 36 insertions(+), 36 deletions(-)
+>> It has been tested on Exynos5422 based ODROID-XU3 Lite board.
 >>
->> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
->> index 540a0adf2be6..b77ea2163a0a 100644
->> --- a/arch/arm/boot/dts/exynos3250-monk.dts
->> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
->> @@ -43,7 +43,7 @@
->>  			linux,code = <KEY_POWER>;
->>  			label = "power key";
->>  			debounce-interval = <10>;
->> -			gpio-key,wakeup;
->> +			wakeup-source;
->>  		};
->>  	};
->>  
->> @@ -67,7 +67,7 @@
->>  			interrupt-parent = <&gpx1>;
->>  			interrupts = <5 0>;
->>  			reg = <0x25>;
->> -			wakeup;
->> +			wakeup-source;
->>  
->>  			muic: max77836-muic {
->>  				compatible = "maxim,max77836-muic";
->> @@ -184,7 +184,7 @@
->>  		interrupt-parent = <&gpx0>;
->>  		interrupts = <7 0>;
->>  		reg = <0x66>;
->> -		wakeup;
->> +		wakeup-source;
->>  
->>  		s2mps14_osc: clocks {
->>  			compatible = "samsung,s2mps14-clk";
->> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
->> index 41a5fafb9aa9..7acd11d2d957 100644
->> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
->> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
->> @@ -43,7 +43,7 @@
->>  			linux,code = <KEY_POWER>;
->>  			label = "power key";
->>  			debounce-interval = <10>;
->> -			gpio-key,wakeup;
->> +			wakeup-source;
->>  		};
->>  	};
->>  
->> @@ -58,7 +58,7 @@
->>  			interrupt-parent = <&gpx1>;
->>  			interrupts = <5 0>;
->>  			reg = <0x25>;
->> -			wakeup;
->> +			wakeup-source;
->>  
->>  			muic: max77836-muic {
->>  				compatible = "maxim,max77836-muic";
->> @@ -245,7 +245,7 @@
->>  		interrupt-parent = <&gpx0>;
->>  		interrupts = <7 0>;
->>  		reg = <0x66>;
->> -		wakeup;
->> +		wakeup-source;
+>> Depends on:
+>> - next-20151211 branch of linux-next kernel tree
+>> - "[PATCH] ARM: dts: Make CPU configuration more readable for
+>>   exynos542x/5800" patch (https://lkml.org/lkml/2015/12/11/107)
+>>
+>> Changes since v5:
+>> - rebased over next-20151211 branch (something is broken in
+>>   newer branches, namely next-2015121[45])
+>> - rebased on top of "ARM: dts: Make CPU configuration more
+>>   readable for exynos542x/5800" patch
+>> - renamed cpu0_opp_table to cluster_a15_opp_table and
+>>   cpu1_opp_table to cluster_a7_opp_table
+>> - added Reviewed-by from Krzysztof
 > 
-> I think here and in Monk board these four "wakeup" properties are bogus,
-> not parsed by driver. Instead wakeup is always initialized to true.
-> 
-> Anyway fixing this is not part of this patch but instead this should be
-> fixed in separate commit. Here everything looks good:
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-This patch does not apply. Can you rebase it on linux-next or my next/dt
-branch (git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git)?
-
-I applied the 16/19 (s5pv210).
+Applied entire patchset to my krzk repo.
 
 Best regards,
 Krzysztof
+
