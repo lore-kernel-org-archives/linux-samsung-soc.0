@@ -1,102 +1,73 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 5/5] drm/exynos: add support for blending properties
-Date: Wed, 27 Jan 2016 15:44:43 +0100
-Message-ID: <1453905883-6807-6-git-send-email-m.szyprowski@samsung.com>
-References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, fabien.dessenne@st.com, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, vincent.abriou@st.com, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v4 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Date: Thu, 28 Jan 2016 09:35:21 +0900
+Message-ID: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIGJsZW5kaW5nIHJlbGF0ZWQgcHJvcGVydGllcyB0
-byBFeHlub3MgRFJNCmNvcmUgYW5kIEV4eW5vcyBNaXhlciBDUlRDIGRldmljZS4KClNpZ25lZC1v
-ZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICA1ICsrKwogZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCA2MCArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDY1IGluc2VydGlvbnMoKykKCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggODE2NTM3ODg2ZTRlLi5iMzNk
-NjliOGJiMzggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTky
-LDYgKzkyLDkgQEAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgewogI2RlZmluZSBFWFlOT1NfRFJN
-X1BMQU5FX0NBUF9ET1VCTEUJKDEgPDwgMCkKICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBf
-U0NBTEUJKDEgPDwgMSkKICNkZWZpbmUgRVhZTk9TX0RSTV9QTEFORV9DQVBfWlBPUwkoMSA8PCAy
-KQorI2RlZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9QTEFORV9BTFBIQQkoMSA8PCAzKQorI2Rl
-ZmluZSBFWFlOT1NfRFJNX1BMQU5FX0NBUF9QUkVNVUxUX0FMUEhBCSgxIDw8IDQpCisjZGVmaW5l
-IEVYWU5PU19EUk1fUExBTkVfQ0FQX0JMRU5ESU5HCSgxIDw8IDUpCiAKIC8qCiAgKiBFeHlub3Mg
-RFJNIHBsYW5lIGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlLgpAQCAtMTAwLDYgKzEwMyw3IEBAIHN0
-cnVjdCBleHlub3NfZHJtX3BsYW5lIHsKICAqIEB0eXBlOiB0eXBlIG9mIHRoZSBwbGFuZSAocHJp
-bWFyeSwgY3Vyc29yIG9yIG92ZXJsYXkpLgogICogQHBpeGVsX2Zvcm1hdHM6IHN1cHBvcnRlZCBw
-aXhlbCBmb3JtYXRzLgogICogQG51bV9waXhlbF9mb3JtYXRzOiBudW1iZXIgb2YgZWxlbWVudHMg
-aW4gJ3BpeGVsX2Zvcm1hdHMnLgorICogQGJsZW5kaW5nX21vZGU6IGRlZmF1bHQgYmxlbmRpbmcg
-bW9kZS4KICAqIEBjYXBhYmlsaXRpZXM6IHN1cHBvcnRlZCBmZWF0dXJlcyAoc2VlIEVYWU5PU19E
-Uk1fUExBTkVfQ0FQXyopCiAgKi8KIApAQCAtMTA4LDYgKzExMiw3IEBAIHN0cnVjdCBleHlub3Nf
-ZHJtX3BsYW5lX2NvbmZpZyB7CiAJZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlOwogCWNvbnN0IHVp
-bnQzMl90ICpwaXhlbF9mb3JtYXRzOwogCXVuc2lnbmVkIGludCBudW1fcGl4ZWxfZm9ybWF0czsK
-Kwl1bnNpZ25lZCBpbnQgYmxlbmRpbmdfbW9kZTsKIAl1bnNpZ25lZCBpbnQgY2FwYWJpbGl0aWVz
-OwogfTsKIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Bs
-YW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCAz
-YTQ4NjkzOTE2OGUuLjI4NTAyYWFjMTM1ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX3BsYW5lLmMKQEAgLTE0MCw2ICsxNDAsOSBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJt
-X3BsYW5lX3Jlc2V0KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQogCQlwbGFuZS0+c3RhdGUgPSAm
-ZXh5bm9zX3N0YXRlLT5iYXNlOwogCQlwbGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7CiAJCXBs
-YW5lLT5zdGF0ZS0+enBvcyA9IGV4eW5vc19wbGFuZS0+Y29uZmlnLT56cG9zOworCQlwbGFuZS0+
-c3RhdGUtPmFscGhhID0gMjU1OworCQlwbGFuZS0+c3RhdGUtPmFscGhhX3ByZW11bHQgPSAxOwor
-CQlwbGFuZS0+c3RhdGUtPmJsZW5kaW5nID0gZXh5bm9zX3BsYW5lLT5jb25maWctPmJsZW5kaW5n
-X21vZGU7CiAJfQogfQogCkBAIC0yODQsNiArMjg3LDUzIEBAIHN0YXRpYyB2b2lkIGV4eW5vc19w
-bGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKIAlkcm1f
-b2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPmJhc2UsIHByb3AsIHpwb3MpOwogfQogCitz
-dGF0aWMgdm9pZCBleHlub3NfcGxhbmVfYXR0YWNoX2FscGhhX3Byb3BlcnR5KHN0cnVjdCBkcm1f
-cGxhbmUgKnBsYW5lKQoreworCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBwbGFuZS0+ZGV2Owor
-CisJaWYgKCFkZXYtPm1vZGVfY29uZmlnLmFscGhhX3Byb3BlcnR5KQorCQlpZiAoZHJtX21vZGVf
-Y3JlYXRlX2FscGhhX3Byb3BlcnR5KGRldiwgMjU1KSkKKwkJCXJldHVybjsKKworCWRybV9vYmpl
-Y3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwKKwkJCQkgICBkZXYtPm1vZGVfY29uZmln
-LmFscGhhX3Byb3BlcnR5LCAyNTUpOworfQorCitzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfYXR0
-YWNoX2FscGhhX3ByZW11bHRfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCit7CisJ
-c3RydWN0IGRybV9kZXZpY2UgKmRldiA9IHBsYW5lLT5kZXY7CisKKwlpZiAoIWRldi0+bW9kZV9j
-b25maWcuYWxwaGFfcHJlbXVsdF9wcm9wZXJ0eSkKKwkJaWYgKGRybV9tb2RlX2NyZWF0ZV9hbHBo
-YV9wcmVtdWx0X3Byb3BlcnR5KGRldikpIHsKKwkJCXByaW50aygiZmFpbGVkIHRvIGNyZWF0ZSBh
-bHBoYSBwcmVtdWx0IHByb3BlcnR5XG4iKTsKKwkJCXJldHVybjsKKwkJfQorCisJZHJtX29iamVj
-dF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5iYXNlLAorCQkJCSAgIGRldi0+bW9kZV9jb25maWcu
-YWxwaGFfcHJlbXVsdF9wcm9wZXJ0eSwgMSk7Cit9CisKK3N0YXRpYyB2b2lkIGV4eW5vc19wbGFu
-ZV9hdHRhY2hfYmxlbmRpbmdfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCisJCQkJ
-CQkgIHVuc2lnbmVkIGludCBibGVuZGluZ19tb2RlKQoreworCXN0cnVjdCBkcm1fZGV2aWNlICpk
-ZXYgPSBwbGFuZS0+ZGV2OworCXN0YXRpYyB1bnNpZ25lZCBpbnQgYmxlbmRpbmdfbW9kZXNbXSA9
-IHsKKwkJRFJNX0JMRU5EX0RJU0FCTEVELAorCQlEUk1fQkxFTkRfUElYRUxfQUxQSEEsCisJCURS
-TV9CTEVORF9DT05TVF9BTFBIQSwKKwkJRFJNX0JMRU5EX1BJWEVMX0NPTlNUX0FMUEhBLAorCX07
-CisKKwlpZiAoIWRldi0+bW9kZV9jb25maWcuYmxlbmRpbmdfcHJvcGVydHkpCisJCWlmIChkcm1f
-bW9kZV9jcmVhdGVfYmxlbmRpbmdfcHJvcGVydHkoZGV2LCBibGVuZGluZ19tb2RlcywKKwkJCQkJ
-CUFSUkFZX1NJWkUoYmxlbmRpbmdfbW9kZXMpKSkKKwkJCXJldHVybjsKKworCWRybV9vYmplY3Rf
-YXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+YmFzZSwKKwkJCQkgICBkZXYtPm1vZGVfY29uZmlnLmJs
-ZW5kaW5nX3Byb3BlcnR5LAorCQkJCSAgIGJsZW5kaW5nX21vZGUpOworfQorCiBpbnQgZXh5bm9z
-X3BsYW5lX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAkJICAgICAgc3RydWN0IGV4eW5v
-c19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSwKIAkJICAgICAgdW5zaWduZWQgaW50IGluZGV4LCB1
-bnNpZ25lZCBsb25nIHBvc3NpYmxlX2NydGNzLApAQCAtMzEwLDUgKzM2MCwxNSBAQCBpbnQgZXh5
-bm9zX3BsYW5lX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAlleHlub3NfcGxhbmVfYXR0
-YWNoX3pwb3NfcHJvcGVydHkoJmV4eW5vc19wbGFuZS0+YmFzZSwgY29uZmlnLT56cG9zLAogCQkJ
-ICAgIShjb25maWctPmNhcGFiaWxpdGllcyAmIEVYWU5PU19EUk1fUExBTkVfQ0FQX1pQT1MpKTsK
-IAorCWlmIChjb25maWctPmNhcGFiaWxpdGllcyAmIEVYWU5PU19EUk1fUExBTkVfQ0FQX1BMQU5F
-X0FMUEhBKQorCQlleHlub3NfcGxhbmVfYXR0YWNoX2FscGhhX3Byb3BlcnR5KCZleHlub3NfcGxh
-bmUtPmJhc2UpOworCisJaWYgKGNvbmZpZy0+Y2FwYWJpbGl0aWVzICYgRVhZTk9TX0RSTV9QTEFO
-RV9DQVBfUFJFTVVMVF9BTFBIQSkKKwkJZXh5bm9zX3BsYW5lX2F0dGFjaF9hbHBoYV9wcmVtdWx0
-X3Byb3BlcnR5KCZleHlub3NfcGxhbmUtPmJhc2UpOworCisJaWYgKGNvbmZpZy0+Y2FwYWJpbGl0
-aWVzICYgRVhZTk9TX0RSTV9QTEFORV9DQVBfQkxFTkRJTkcpCisJCWV4eW5vc19wbGFuZV9hdHRh
-Y2hfYmxlbmRpbmdfcHJvcGVydHkoJmV4eW5vc19wbGFuZS0+YmFzZSwKKwkJCQkJCSAgICAgIGNv
-bmZpZy0+YmxlbmRpbmdfbW9kZSk7CisKIAlyZXR1cm4gMDsKIH0KLS0gCjEuOS4yCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+Patchset attempts to remove the ARCH_EXYNOS7 symbol.
+
+All patches depend on previous ones so no cherry-picked.
+I was thinking about merging this through arm-soc tree after getting
+needed acks (clk, arm-soc?).
+
+
+Changes since v3:
+=================
+1. Rebase on next-20160127 (s3c64xx became multiplatform).
+
+Changes since v2:
+=================
+1. Follow Arnd's advice about not enabling silently the newly added
+   EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+   also a trigger for some changes in placement of Samsung clocks
+   Kconfig entries...
+2. ... which lead to introducing patch 1.
+
+
+Logic:
+======
+Now the clock selection algorithm works like:
+1. For Exynos ARMv7 and ARMv8 the platforms select COMMON_CLK
+   and COMMON_CLK_SAMSUNG.
+2. As before: clock drivers for Exynos ARMv7 will be selected by
+   respective SOC/ARCH_EXYNOS_XXX symbol.
+3. For Exynos ARMv8 the clock drivers will be enabled by default
+   by EXYNOS_ARM64_COMMON_CLK symbol.
+
+Rationale:
+==========
+We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+fall under generic ARCH_EXYNOS. In the same time there is no sense
+in building clocks for these ARMv8 SoCs on ARMv7 builds.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (3):
+  clk: samsung: Enable COMPILE_TEST for Samsung clocks
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+
+ arch/arm/mach-exynos/Kconfig        |  1 +
+ arch/arm/mach-s3c24xx/Kconfig       |  8 ++++++++
+ arch/arm/mach-s3c64xx/Kconfig       |  1 +
+ arch/arm/mach-s5pv210/Kconfig       |  1 +
+ arch/arm64/Kconfig.platforms        | 12 +++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ drivers/clk/Kconfig                 |  2 +-
+ drivers/clk/samsung/Kconfig         | 14 +++++++++-----
+ drivers/clk/samsung/Makefile        |  4 ++--
+ 10 files changed, 28 insertions(+), 19 deletions(-)
+
+-- 
+1.9.1
+
