@@ -1,218 +1,139 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 1/3] clk: samsung: Enable COMPILE_TEST for Samsung clocks
-Date: Thu, 28 Jan 2016 09:35:22 +0900
-Message-ID: <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH v4 00/10] rtc: max77686: Extend driver and add max77802
+ support
+Date: Thu, 28 Jan 2016 10:14:07 +0900
+Message-ID: <20160128011407.GC20739@samsunx.samsung>
+References: <1453865806-4661-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:42522 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965366AbcA1BON (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Jan 2016 20:14:13 -0500
+Content-disposition: inline
+In-reply-to: <1453865806-4661-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, rtc-linux@googlegroups.com, Chanwoo Choi <cw00.choi@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-Enable the COMPILE_TEST to get build coverage of some of Samsung clock
-controller drivers. Still some of them will be built only if
-appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
+Hi Javier,
 
-Anyway in case of COMPILE_TEST the Samsung clocks would show up in main
-drivers section because they are not inside the "Common Clock Framework"
-menu item. Move them under the "Common Clock Framework".
+In case I forgot any, for the whole patchset,
 
-This changes the logic of selecting Samsung clocks from specific
-architectures. Now the COMMON_CLK should be selected before selecting
-specific clock (like S3C2410_COMMON_CLK or COMMON_CLK_SAMSUNG).
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Andi
 
----
-
-Changes since v3:
-1. Rebase on next-20160127 (s3c64xx became multiplatform)
-
-Changes since v2:
-1. New patch.
----
- arch/arm/mach-exynos/Kconfig  | 1 +
- arch/arm/mach-s3c24xx/Kconfig | 8 ++++++++
- arch/arm/mach-s3c64xx/Kconfig | 1 +
- arch/arm/mach-s5pv210/Kconfig | 1 +
- arch/arm64/Kconfig.platforms  | 1 +
- drivers/clk/Kconfig           | 2 +-
- drivers/clk/samsung/Kconfig   | 9 ++++-----
- 7 files changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index aeadd2aa12cf..b166ffc28f5c 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -15,6 +15,7 @@ menuconfig ARCH_EXYNOS
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_AMBA
- 	select ARM_GIC
-+	select COMMON_CLK
- 	select COMMON_CLK_SAMSUNG
- 	select EXYNOS_THERMAL
- 	select EXYNOS_PMU
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index ef68ecb27396..5f02f1fa970d 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -28,6 +28,7 @@ config CPU_S3C2410
- 	bool "SAMSUNG S3C2410"
- 	default y
- 	select CPU_ARM920T
-+	select COMMON_CLK
- 	select S3C2410_COMMON_CLK
- 	select ARM_S3C2410_CPUFREQ if ARM_S3C24XX_CPUFREQ
- 	select S3C2410_PM if PM
-@@ -54,6 +55,7 @@ config CPU_S3C2416
- config CPU_S3C2440
- 	bool "SAMSUNG S3C2440"
- 	select CPU_ARM920T
-+	select COMMON_CLK
- 	select S3C2410_COMMON_CLK
- 	select S3C2410_PM if PM_SLEEP
- 	help
-@@ -62,6 +64,7 @@ config CPU_S3C2440
- config CPU_S3C2442
- 	bool "SAMSUNG S3C2442"
- 	select CPU_ARM920T
-+	select COMMON_CLK
- 	select S3C2410_COMMON_CLK
- 	select S3C2410_PM if PM_SLEEP
- 	help
-@@ -196,6 +199,7 @@ config ARCH_BAST
- 	bool "Simtec Electronics BAST (EB2410ITX)"
- 	select ISA
- 	select MACH_BAST_IDE
-+	select COMMON_CLK
- 	select S3C2410_COMMON_DCLK
- 	select S3C2410_IOTIMING if ARM_S3C2410_CPUFREQ
- 	select S3C24XX_SIMTEC_NOR
-@@ -273,6 +277,7 @@ config MACH_TCT_HAMMER
- config MACH_VR1000
- 	bool "Thorcom VR1000"
- 	select MACH_BAST_IDE
-+	select COMMON_CLK
- 	select S3C2410_COMMON_DCLK
- 	select S3C24XX_SIMTEC_NOR
- 	select S3C24XX_SIMTEC_PM if PM
-@@ -443,6 +448,7 @@ comment "S3C2440 Boards"
- config MACH_ANUBIS
- 	bool "Simtec Electronics ANUBIS"
- 	select HAVE_PATA_PLATFORM
-+	select COMMON_CLK
- 	select S3C2410_COMMON_DCLK
- 	select S3C2440_XTAL_12000000
- 	select S3C24XX_SIMTEC_PM if PM
-@@ -482,6 +488,7 @@ config MACH_NEXCODER_2440
- 
- config MACH_OSIRIS
- 	bool "Simtec IM2440D20 (OSIRIS) module"
-+	select COMMON_CLK
- 	select S3C2410_COMMON_DCLK
- 	select S3C2410_IOTIMING if ARM_S3C2440_CPUFREQ
- 	select S3C2440_XTAL_12000000
-@@ -553,6 +560,7 @@ config MACH_RX1950
- 	bool "HP iPAQ rx1950"
- 	select I2C
- 	select PM_H1940 if PM
-+	select COMMON_CLK
- 	select S3C2410_COMMON_DCLK
- 	select S3C2410_IOTIMING if ARM_S3C2440_CPUFREQ
- 	select S3C2440_XTAL_16934400
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index e5c1888fc67b..a898d813b2bb 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -9,6 +9,7 @@ menuconfig ARCH_S3C64XX
- 	select ARM_AMBA
- 	select ARM_VIC
- 	select CLKSRC_SAMSUNG_PWM
-+	select COMMON_CLK
- 	select COMMON_CLK_SAMSUNG
- 	select GPIO_SAMSUNG if ATAGS
- 	select HAVE_S3C2410_I2C if I2C
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 13bc9820ff22..5f19f1423f75 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -14,6 +14,7 @@ config ARCH_S5PV210
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_VIC
- 	select CLKSRC_SAMSUNG_PWM
-+	select COMMON_CLK
- 	select COMMON_CLK_SAMSUNG
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 8a0952275291..83ac9316a432 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -21,6 +21,7 @@ config ARCH_EXYNOS
- config ARCH_EXYNOS7
- 	bool "ARMv8 based Samsung Exynos7"
- 	select ARCH_EXYNOS
-+	select COMMON_CLK
- 	select COMMON_CLK_SAMSUNG
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e019e005..5ab9480989e6 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -202,11 +202,11 @@ config COMMON_CLK_CDCE706
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- 
- endmenu
- 
- source "drivers/clk/mvebu/Kconfig"
- 
--source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 84196ecdaa12..dd6093a33f84 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -1,9 +1,8 @@
- config COMMON_CLK_SAMSUNG
--	bool
--	select COMMON_CLK
-+	bool "Samsung Exynos clock controller support" if COMPILE_TEST
- 
- config S3C2410_COMMON_CLK
--	bool
-+	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 	help
- 	  Build the s3c2410 clock driver based on the common clock framework.
-@@ -17,10 +16,10 @@ config S3C2410_COMMON_DCLK
- 	  framework.
- 
- config S3C2412_COMMON_CLK
--	bool
-+	bool "Samsung S3C2412 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 
- config S3C2443_COMMON_CLK
--	bool
-+	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 
--- 
-1.9.1
+On Wed, Jan 27, 2016 at 12:36:36AM -0300, Javier Martinez Canillas wrote:
+> Hello,
+> 
+> On a recent disussion [0] with Krzysztof Kozlowski and Laxman Dewangan,
+> we came to the conclusion that the max77686 and max77802 RTC are almost
+> the same with only a few differences so there shouldn't be two separate
+> drivers and is better to extend max77686 driver and delete rtc-max77802.
+> 
+> By making the driver more generic, other RTC IP blocks from Maxim PMICs
+> could be supported as well like the max77620.
+> 
+> This is a v4 of a series that do this, that address issues pointed out
+> in the latest version. The v1, v2 and v3 can be found at [1], [2], [3].
+> 
+> I've tested this patch-set on an Exynos5800 Peach Pi Chromebook that has
+> a max77802 PMIC and the RTC was working correctly. Krzysztof Kozlowski
+> tested v3 on an max77686 but this version only has cosmetic changes so
+> it should not cause any functionality changes.
+> 
+> [0]: http://www.spinics.net/lists/devicetree/msg110348.html
+> [1]: https://lwn.net/Articles/672568/
+> [2]: https://lkml.org/lkml/2016/1/25/767
+> [3]: https://lkml.org/lkml/2016/1/26/787
+> 
+> Changes in v4:
+> - Add Andi Shyti's Reviewed-by to patch #1.
+> - Add Andi Shyti's Reviewed-by to patch #2.
+> - Add Andi Shyti's Reviewed-by to patch #3.
+> - Add Andi Shyti's Reviewed-by to patch #4.
+> - Add Krzysztof Kozlowski's Reviewed-by and Tested-by tags to patch #4.
+> - Add Krzysztof Kozlowski's Reviewed-by and Tested-by tags to patch #5.
+> - Add Krzysztof Kozlowski's Tested-by tag to patch #6.
+> - Add Andi Shyti's Reviewed-by tag to patch #6.
+> - Reverse alarm enable reg check logic. Suggeted by Krzysztof Kozlowski.
+> - Return early to avoid an else statement. Suggested by Andi Shyti.
+> - Use dev_err() instead of dev_warn() and change message.
+>   Suggested by Krzysztof Kozlowski and Andi Shyti.
+> - Change subject line and commit message of patch #7.
+> - Removed Laxman Dewangan's Acked-by tag since the patch changed.
+> - Add Krzysztof Kozlowski's Tested-by tag to patch #8.
+> - Add Andi Shyti's Reviewed-by tag to patch #8.
+> 
+> Changes in v3:
+> - Add Krzysztof Kozlowski's Reviewed-by and Tested-by to patch #1.
+> - Add Laxman Dewangan's Acked-by tag to patch #1.
+> - Add Krzysztof Kozlowski's Tested-by tag to patch #2.
+> - Add Laxman Dewangan's Acked-by tag to patch #2.
+> - Use ARRAY_SIZE() in all places. Suggested by Laxman Dewangan.
+> - Add Krzysztof Kozlowski's Tested-by tag to patch #3.
+> - Add Laxman Dewangan's Acked-by tag to patch #3.
+> - Fix max77686 delay. Suggested by Krzysztof Kozlowski.
+> - Assign mask to u8 instead of int. Suggested by Krzysztof Kozlowski.
+> - Add Laxman Dewangan's Acked-by tag to patch #4.
+> - Add Laxman Dewangan's Acked-by tag to patch #5.
+> - Add Laxman Dewangan's Acked-by tag to patch #6.
+> - Add Laxman Dewangan's Acked-by tag to patch #7.
+> - Add Laxman Dewangan's Acked-by tag to patch #8.
+> 
+> Changes in v2:
+> - Add Krzysztof Kozlowski's Reviewed-by tag to patch #2.
+> - Add Krzysztof Kozlowski's Reviewed-by tag to patch #3.
+> - Fix typo error in changelog. Suggested by Krzysztof Kozlowski.
+> - Add a max77686 prefix to rtc_driver_data. Suggested by Krzysztof Kozlowski.
+> - Comment about the .delay and .mask fields. Suggested by Krzysztof Kozlowski.
+> - Change .mask type to u8. Suggested by Krzysztof Kozlowski.
+> - Make .drv_data field const. Suggested by Krzysztof Kozlowski.
+> - Don't cast to drop const on .drv_data asign. Suggested by Krzysztof Kozlowski.
+> - Use platform_get_device_id() macro. Suggested by Krzysztof Kozlowski.
+> - Rename rtc_reg to max77686_rtc_reg_offset. Suggested by Krzysztof Kozlowski.
+> - Comment what's mapped by max77686_map. Suggested by Krzysztof Kozlowski.
+> - Use max77686_map array indexes in init. Suggested by Krzysztof Kozlowski.
+> - Remove REG_RTC_UPDATE1 since is not used by neither max77686 nor max77802.
+> - Add a MAX77802 prefix to ALARM_ENABLE_VALUE. Suggested by Krzysztof Kozlowski.
+> - Rename .rtcae to .alarm_enable_reg and .rtcrm to .separate_i2c_addr.
+>   Suggested by Krzysztof Kozlowski.
+> - Don't use func and LINE in error messages. Suggested by Krzysztof Kozlowski.
+> - Remove REG_RTC_AE2 since is not used by neither max77686 nor max77802.
+> - Check if REG_RTC_AE1 has a valid address before accessing it.
+> - Add Krzysztof Kozlowski's Reviewed-by tag to patch #8.
+> - Add Krzysztof Kozlowski's Reviewed-by tag to patch #9.
+> - Add Krzysztof Kozlowski's Reviewed-by tag to patch #10.
+> 
+> Javier Martinez Canillas (10):
+>   rtc: max77686: Fix max77686_rtc_read_alarm() return value
+>   rtc: max77686: Use ARRAY_SIZE() instead of current array length
+>   rtc: max77686: Use usleep_range() instead of msleep()
+>   rtc: max77686: Use a driver data struct instead hard-coded values
+>   rtc: max77686: Add an indirection level to access RTC registers
+>   rtc: max77686: Add max77802 support
+>   rtc: max77686: Fix unsupported year message
+>   rtc: Remove Maxim 77802 driver
+>   ARM: exynos_defconfig: Remove MAX77802 RTC Kconfig symbol
+>   ARM: multi_v7_defconfig: Remove MAX77802 RTC Kconfig symbol
+> 
+>  arch/arm/configs/exynos_defconfig   |   1 -
+>  arch/arm/configs/multi_v7_defconfig |   1 -
+>  drivers/rtc/Kconfig                 |  10 -
+>  drivers/rtc/Makefile                |   1 -
+>  drivers/rtc/rtc-max77686.c          | 325 ++++++++++++++++++-----
+>  drivers/rtc/rtc-max77802.c          | 502 ------------------------------------
+>  6 files changed, 264 insertions(+), 576 deletions(-)
+>  delete mode 100644 drivers/rtc/rtc-max77802.c
+> 
+> -- 
+> 2.5.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
