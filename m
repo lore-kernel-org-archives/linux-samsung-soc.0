@@ -1,111 +1,38 @@
-From: Michal Suchanek <hramrach@gmail.com>
-Subject: Exynos Snow board display regression
-Date: Fri, 29 Jan 2016 18:07:14 +0100
-Message-ID: <CAOMqctT2dAQERos8bhrtVirF7ma4onq+UUS2ks-86LJ_mVDU6g@mail.gmail.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: Exynos Snow board display regression
+Date: Fri, 29 Jan 2016 14:18:23 -0300
+Message-ID: <56AB9EDF.2050401@osg.samsung.com>
+References: <CAOMqctT2dAQERos8bhrtVirF7ma4onq+UUS2ks-86LJ_mVDU6g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:32937 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756430AbcA2RH4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jan 2016 12:07:56 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOMqctT2dAQERos8bhrtVirF7ma4onq+UUS2ks-86LJ_mVDU6g@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Michal Suchanek <hramrach@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hello,
-
-after  commit a9fa852886fd5a7ccec3b7e9eff75f85072f009c
-
-display no longer works on the Snow board. The built-in panel is no
-longer probed.
-
-The commit *supposedly* provides for backwards compatibility and at
-first glance only new options for probing the panel are added.
-
-However, reverting the commit on top of 4.5-rc1 gives working display
-again so there is probably some subtle non-obvious catch in the logic.
-
-Any ideas what might go wrong here?
-
-Thanks
-
-Michal
-
-Author: Inki Dae <inki.dae@samsung.com>
-Date:   Thu Nov 26 21:34:18 2015 +0900
-
-    drm/exynos: dp: add of_graph dt binding support for panel
-
-    This patch adds of_graph dt binding support for panel device
-    and also keeps the backward compatibility.
-
-    i.e.,
-    The dts file for Exynos5800 based peach pi board
-    has a panel property so we need to keep the backward compatibility.
-
-    Changelog v3:
-    - bind only one of two nodes outbound - panel or bridge.
-
-    Changelog v2:
-    - return -EINVAL if getting a port node failed.
-
-    Signed-off-by: Inki Dae <inki.dae@samsung.com>
-    Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c
-b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 94f02a0..60260a0 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -1392,7 +1392,7 @@ static const struct component_ops exynos_dp_ops = {
- static int exynos_dp_probe(struct platform_device *pdev)
- {
-        struct device *dev = &pdev->dev;
--       struct device_node *panel_node, *bridge_node, *endpoint;
-+       struct device_node *panel_node = NULL, *bridge_node, *endpoint = NULL;
-        struct exynos_dp_device *dp;
-        int ret;
-
-@@ -1403,14 +1403,32 @@ static int exynos_dp_probe(struct platform_device *pdev)
-
-        platform_set_drvdata(pdev, dp);
-
-+       /* This is for the backward compatibility. */
-        panel_node = of_parse_phandle(dev->of_node, "panel", 0);
-        if (panel_node) {
-                dp->panel = of_drm_find_panel(panel_node);
-                of_node_put(panel_node);
-                if (!dp->panel)
-                        return -EPROBE_DEFER;
-+       } else {
-+               endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-+               if (endpoint) {
-+                       panel_node = of_graph_get_remote_port_parent(endpoint);
-+                       if (panel_node) {
-+                               dp->panel = of_drm_find_panel(panel_node);
-+                               of_node_put(panel_node);
-+                               if (!dp->panel)
-+                                       return -EPROBE_DEFER;
-+                       } else {
-+                               DRM_ERROR("no port node for panel device.\n");
-+                               return -EINVAL;
-+                       }
-+               }
-        }
-
-+       if (endpoint)
-+               goto out;
-+
-        endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-        if (endpoint) {
-                bridge_node = of_graph_get_remote_port_parent(endpoint);
-@@ -1423,6 +1441,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
-                        return -EPROBE_DEFER;
-        }
-
-+out:
-        pm_runtime_enable(dev);
-
-        ret = component_add(&pdev->dev, &exynos_dp_ops);
+SGVsbG8gTWljaGFsLAoKT24gMDEvMjkvMjAxNiAwMjowNyBQTSwgTWljaGFsIFN1Y2hhbmVrIHdy
+b3RlOgo+IEhlbGxvLAo+Cj4gYWZ0ZXIgIGNvbW1pdCBhOWZhODUyODg2ZmQ1YTdjY2VjM2I3ZTll
+ZmY3NWY4NTA3MmYwMDljCj4KPiBkaXNwbGF5IG5vIGxvbmdlciB3b3JrcyBvbiB0aGUgU25vdyBi
+b2FyZC4gVGhlIGJ1aWx0LWluIHBhbmVsIGlzIG5vCj4gbG9uZ2VyIHByb2JlZC4KPgo+IFRoZSBj
+b21taXQgKnN1cHBvc2VkbHkqIHByb3ZpZGVzIGZvciBiYWNrd2FyZHMgY29tcGF0aWJpbGl0eSBh
+bmQgYXQKPiBmaXJzdCBnbGFuY2Ugb25seSBuZXcgb3B0aW9ucyBmb3IgcHJvYmluZyB0aGUgcGFu
+ZWwgYXJlIGFkZGVkLgo+Cj4gSG93ZXZlciwgcmV2ZXJ0aW5nIHRoZSBjb21taXQgb24gdG9wIG9m
+IDQuNS1yYzEgZ2l2ZXMgd29ya2luZyBkaXNwbGF5Cj4gYWdhaW4gc28gdGhlcmUgaXMgcHJvYmFi
+bHkgc29tZSBzdWJ0bGUgbm9uLW9idmlvdXMgY2F0Y2ggaW4gdGhlIGxvZ2ljLgo+Cj4gQW55IGlk
+ZWFzIHdoYXQgbWlnaHQgZ28gd3JvbmcgaGVyZT8KPgoKWWVzLCBJIG5vdGljZWQgdGhlIHNhbWUg
+YW5kIHBvc3RlZCBhIGZpeCBzb21lIGhvdXJzIGFnbzoKCmh0dHBzOi8vbGttbC5vcmcvbGttbC8y
+MDE2LzEvMjkvMzU1CiAgCj4gVGhhbmtzCj4KPiBNaWNoYWwKPgoKQmVzdCByZWdhcmRzLAotLSAK
+SmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzCk9wZW4gU291cmNlIEdyb3VwClNhbXN1bmcgUmVzZWFy
+Y2ggQW1lcmljYQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
