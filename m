@@ -1,39 +1,39 @@
-From: Michal Suchanek <hramrach@gmail.com>
-Subject: Re: Exynos Snow board display regression
-Date: Fri, 29 Jan 2016 18:58:40 +0100
-Message-ID: <CAOMqctRZC4T=wnN3qzZSOk-TP_uyFZNh7mqpfe71j=rOBUFn-A@mail.gmail.com>
-References: <CAOMqctT2dAQERos8bhrtVirF7ma4onq+UUS2ks-86LJ_mVDU6g@mail.gmail.com>
- <56AB9EDF.2050401@osg.samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v4 1/3] clk: samsung: Enable COMPILE_TEST for Samsung
+ clocks
+Date: Fri, 29 Jan 2016 12:43:21 -0800
+Message-ID: <20160129204321.GS12841@codeaurora.org>
+References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+ <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56AB9EDF.2050401@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 29 January 2016 at 18:18, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> Hello Michal,
->
-> On 01/29/2016 02:07 PM, Michal Suchanek wrote:
->>
->> Hello,
->>
->> after  commit a9fa852886fd5a7ccec3b7e9eff75f85072f009c
->>
->> display no longer works on the Snow board. The built-in panel is no
->> longer probed.
->>
-> Yes, I noticed the same and posted a fix some hours ago:
->
-> https://lkml.org/lkml/2016/1/29/355
->
-Tested-by: Michal Suchanek <hramrach@gmail.com>
+On 01/28, Krzysztof Kozlowski wrote:
+> Enable the COMPILE_TEST to get build coverage of some of Samsung clock
+> controller drivers. Still some of them will be built only if
+> appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
+> 
+> Anyway in case of COMPILE_TEST the Samsung clocks would show up in main
+> drivers section because they are not inside the "Common Clock Framework"
+> menu item. Move them under the "Common Clock Framework".
+> 
+> This changes the logic of selecting Samsung clocks from specific
+> architectures. Now the COMMON_CLK should be selected before selecting
+> specific clock (like S3C2410_COMMON_CLK or COMMON_CLK_SAMSUNG).
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
 
-on that patch.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Thanks
-
-Michal
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
