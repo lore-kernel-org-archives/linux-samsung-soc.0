@@ -1,83 +1,42 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] drm/exynos: dp: Fix panel and bridge lookup logic
-Date: Fri, 29 Jan 2016 12:09:31 -0300
-Message-ID: <1454080171-23769-1-git-send-email-javier@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] regulator: max77802: Fix DT binding document reference
+Date: Fri, 29 Jan 2016 13:09:00 -0300
+Message-ID: <1454083741-25626-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:34661 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751165AbcA2QJR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 Jan 2016 11:09:17 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Q29tbWl0IGE5ZmE4NTI4ODZmZCAoImRybS9leHlub3M6IGRwOiBhZGQgb2ZfZ3JhcGggZHQgYmlu
-ZGluZyBzdXBwb3J0CmZvciBwYW5lbCIpIG1hZGUgdGhlIEV4eW5vcyBEUCBEVCBiaW5kaW5nIG1v
-cmUgY29uc2lzdGVudCBzaW5jZSB0aGUgT0YKZ3JhcGggY291bGQgYmUgdXNlZCB0byBsb29rdXAg
-ZWl0aGVyIGEgcGFuZWwgb3IgYSBicmlkZ2UgZGV2aWNlIG5vZGUuCgpCZWZvcmUgdGhhdCBjb21t
-aXQsIGEgcGFuZWwgd291bGQgYmUgbG9va2VkIHVwIHVzaW5nIGEgcGhhbmRsZSBhbmQgYQpicmlk
-Z2UgdXNpbmcgdGhlIE9GIGdyYXBoIHdoaWNoIG1hZGUgdGhlIERUIGJpbmRpbmcgbm90IGNvbnNp
-c3RlbnQuCgpCdXQgdGhlIHBhdGNoIGJyb2tlIHRoZSBsYXRlciBjYXNlIHNpbmNlIG5vdCBmaW5k
-aW5nIGEgcGFuZWwgZGV2IG5vZGUKd291bGQgY2F1c2UgdGhlIGRyaXZlcidzIHRvIGRvIGEgcHJv
-YmUgZGVmZXJyYWwgaW5zdGVhZCBvZiBhdHRlbXB0aW5nCnRvIGxvb2t1cCBhIGJyaWRnZSBkZXZp
-Y2Ugbm9kZSBhc3NvY2lhdGVkIHdpdGggdGhlIHJlbW90ZSBlbmRwb2ludC4KClNvIGluc3RlYWQg
-b2YgcmV0dXJuaW5nIGEgLUVQUk9CRV9ERUZFUiBpZiBhIHBhbmVsIGlzIG5vdCBmb3VuZCwgY2hl
-Y2sKaWYgdGhlcmUncyBhIGJyaWRnZSBhbmQgb25seSBkbyBhIHByb2JlIGRlZmVycmFsIGlmIGJv
-dGggYXJlbid0IGZvdW5kLgoKRml4ZXM6IGE5ZmE4NTI4ODZmZCAoImRybS9leHlub3M6IGRwOiBh
-ZGQgb2ZfZ3JhcGggZHQgYmluZGluZyBzdXBwb3J0IGZvciBwYW5lbCIpClNpZ25lZC1vZmYtYnk6
-IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KCi0tLQoK
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyB8IDU1ICsrKysrKysrKysr
-KysrKy0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyks
-IDMwIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwpp
-bmRleCBiNzljMzE2YzJhZDIuLjY3MzE2NGIzMzFjOCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RwX2NvcmUuYwpAQCAtMTM5Miw3ICsxMzkyLDcgQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBjb21wb25lbnRfb3BzIGV4eW5vc19kcF9vcHMgPSB7CiBzdGF0aWMgaW50IGV4eW5vc19kcF9w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogewogCXN0cnVjdCBkZXZpY2UgKmRl
-diA9ICZwZGV2LT5kZXY7Ci0Jc3RydWN0IGRldmljZV9ub2RlICpwYW5lbF9ub2RlID0gTlVMTCwg
-KmJyaWRnZV9ub2RlLCAqZW5kcG9pbnQgPSBOVUxMOworCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAg
-PSBOVUxMLCAqZW5kcG9pbnQgPSBOVUxMOwogCXN0cnVjdCBleHlub3NfZHBfZGV2aWNlICpkcDsK
-IAlpbnQgcmV0OwogCkBAIC0xNDA0LDQxICsxNDA0LDM2IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Rw
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJcGxhdGZvcm1fc2V0X2RydmRh
-dGEocGRldiwgZHApOwogCiAJLyogVGhpcyBpcyBmb3IgdGhlIGJhY2t3YXJkIGNvbXBhdGliaWxp
-dHkuICovCi0JcGFuZWxfbm9kZSA9IG9mX3BhcnNlX3BoYW5kbGUoZGV2LT5vZl9ub2RlLCAicGFu
-ZWwiLCAwKTsKLQlpZiAocGFuZWxfbm9kZSkgewotCQlkcC0+cGFuZWwgPSBvZl9kcm1fZmluZF9w
-YW5lbChwYW5lbF9ub2RlKTsKLQkJb2Zfbm9kZV9wdXQocGFuZWxfbm9kZSk7CisJbnAgPSBvZl9w
-YXJzZV9waGFuZGxlKGRldi0+b2Zfbm9kZSwgInBhbmVsIiwgMCk7CisJaWYgKG5wKSB7CisJCWRw
-LT5wYW5lbCA9IG9mX2RybV9maW5kX3BhbmVsKG5wKTsKKwkJb2Zfbm9kZV9wdXQobnApOwogCQlp
-ZiAoIWRwLT5wYW5lbCkKIAkJCXJldHVybiAtRVBST0JFX0RFRkVSOwotCX0gZWxzZSB7Ci0JCWVu
-ZHBvaW50ID0gb2ZfZ3JhcGhfZ2V0X25leHRfZW5kcG9pbnQoZGV2LT5vZl9ub2RlLCBOVUxMKTsK
-LQkJaWYgKGVuZHBvaW50KSB7Ci0JCQlwYW5lbF9ub2RlID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9w
-b3J0X3BhcmVudChlbmRwb2ludCk7Ci0JCQlpZiAocGFuZWxfbm9kZSkgewotCQkJCWRwLT5wYW5l
-bCA9IG9mX2RybV9maW5kX3BhbmVsKHBhbmVsX25vZGUpOwotCQkJCW9mX25vZGVfcHV0KHBhbmVs
-X25vZGUpOwotCQkJCWlmICghZHAtPnBhbmVsKQotCQkJCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsK
-LQkJCX0gZWxzZSB7Ci0JCQkJRFJNX0VSUk9SKCJubyBwb3J0IG5vZGUgZm9yIHBhbmVsIGRldmlj
-ZS5cbiIpOwotCQkJCXJldHVybiAtRUlOVkFMOwotCQkJfQotCQl9Ci0JfQotCi0JaWYgKGVuZHBv
-aW50KQogCQlnb3RvIG91dDsKKwl9CiAKIAllbmRwb2ludCA9IG9mX2dyYXBoX2dldF9uZXh0X2Vu
-ZHBvaW50KGRldi0+b2Zfbm9kZSwgTlVMTCk7CiAJaWYgKGVuZHBvaW50KSB7Ci0JCWJyaWRnZV9u
-b2RlID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVudChlbmRwb2ludCk7Ci0JCWlmIChi
-cmlkZ2Vfbm9kZSkgewotCQkJZHAtPnB0bl9icmlkZ2UgPSBvZl9kcm1fZmluZF9icmlkZ2UoYnJp
-ZGdlX25vZGUpOwotCQkJb2Zfbm9kZV9wdXQoYnJpZGdlX25vZGUpOwotCQkJaWYgKCFkcC0+cHRu
-X2JyaWRnZSkKLQkJCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsKLQkJfSBlbHNlCi0JCQlyZXR1cm4g
-LUVQUk9CRV9ERUZFUjsKKwkJbnAgPSBvZl9ncmFwaF9nZXRfcmVtb3RlX3BvcnRfcGFyZW50KGVu
-ZHBvaW50KTsKKwkJaWYgKG5wKSB7CisJCQkvKiBUaGUgcmVtb3RlIHBvcnQgY2FuIGJlIGVpdGhl
-ciBhIHBhbmVsIG9yIGEgYnJpZGdlICovCisJCQlkcC0+cGFuZWwgPSBvZl9kcm1fZmluZF9wYW5l
-bChucCk7CisJCQlpZiAoIWRwLT5wYW5lbCkgeworCQkJCWRwLT5wdG5fYnJpZGdlID0gb2ZfZHJt
-X2ZpbmRfYnJpZGdlKG5wKTsKKwkJCQlpZiAoIWRwLT5wdG5fYnJpZGdlKSB7CisJCQkJCW9mX25v
-ZGVfcHV0KG5wKTsKKwkJCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7CisJCQkJfQorCQkJfQorCQkJ
-b2Zfbm9kZV9wdXQobnApOworCQl9IGVsc2UgeworCQkJRFJNX0VSUk9SKCJubyByZW1vdGUgZW5k
-cG9pbnQgZGV2aWNlIG5vZGUgZm91bmQuXG4iKTsKKwkJCXJldHVybiAtRUlOVkFMOworCQl9CisJ
-fSBlbHNlIHsKKwkJRFJNX0VSUk9SKCJubyBwb3J0IGVuZHBvaW50IHN1Ym5vZGUgZm91bmQuXG4i
-KTsKKwkJcmV0dXJuIC1FSU5WQUw7CiAJfQogCiBvdXQ6Ci0tIAoyLjUuMAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The DT binding doc references the max77802 clocks header file which makes
+no sense since of course it doesn't contain data related to the regulators.
+
+It's a copy and paste error, so add a reference to the correct header file.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+ Documentation/devicetree/bindings/regulator/max77802.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/regulator/max77802.txt b/Documentation/devicetree/bindings/regulator/max77802.txt
+index 09d796ed48be..879e98d3b9aa 100644
+--- a/Documentation/devicetree/bindings/regulator/max77802.txt
++++ b/Documentation/devicetree/bindings/regulator/max77802.txt
+@@ -60,7 +60,7 @@ The possible values for "regulator-initial-mode" and "regulator-mode" are:
+ 	1: Normal regulator voltage output mode.
+ 	3: Low Power which reduces the quiescent current down to only 1uA
+ 
+-The list of valid modes are defined in the dt-bindings/clock/maxim,max77802.h
++The valid modes list is defined in the dt-bindings/regulator/maxim,max77802.h
+ header and can be included by device tree source files.
+ 
+ The standard "regulator-mode" property can only be used for regulators that
+-- 
+2.5.0
