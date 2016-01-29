@@ -1,32 +1,27 @@
 From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v4 1/3] clk: samsung: Enable COMPILE_TEST for Samsung
- clocks
-Date: Fri, 29 Jan 2016 12:43:21 -0800
-Message-ID: <20160129204321.GS12841@codeaurora.org>
+Subject: Re: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on
+ ARMv7
+Date: Fri, 29 Jan 2016 12:43:32 -0800
+Message-ID: <20160129204332.GT12841@codeaurora.org>
 References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
- <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+ <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 01/28, Krzysztof Kozlowski wrote:
-> Enable the COMPILE_TEST to get build coverage of some of Samsung clock
-> controller drivers. Still some of them will be built only if
-> appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
+> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+> so it is built also on ARMv7. This does not bring any kind of benefit.
+> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> multi_v7 for ARMv7).
 > 
-> Anyway in case of COMPILE_TEST the Samsung clocks would show up in main
-> drivers section because they are not inside the "Common Clock Framework"
-> menu item. Move them under the "Common Clock Framework".
-> 
-> This changes the logic of selecting Samsung clocks from specific
-> architectures. Now the COMMON_CLK should be selected before selecting
-> specific clock (like S3C2410_COMMON_CLK or COMMON_CLK_SAMSUNG).
+> Instead build clock drivers only for respective SoC's architecture.
 > 
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > 
