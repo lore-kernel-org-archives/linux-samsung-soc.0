@@ -1,42 +1,111 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] regulator: max77802: Fix DT binding document reference
-Date: Fri, 29 Jan 2016 13:09:00 -0300
-Message-ID: <1454083741-25626-1-git-send-email-javier@osg.samsung.com>
+From: Michal Suchanek <hramrach@gmail.com>
+Subject: Exynos Snow board display regression
+Date: Fri, 29 Jan 2016 18:07:14 +0100
+Message-ID: <CAOMqctT2dAQERos8bhrtVirF7ma4onq+UUS2ks-86LJ_mVDU6g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:34661 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751165AbcA2QJR (ORCPT
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:32937 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756430AbcA2RH4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jan 2016 11:09:17 -0500
+	Fri, 29 Jan 2016 12:07:56 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-The DT binding doc references the max77802 clocks header file which makes
-no sense since of course it doesn't contain data related to the regulators.
+Hello,
 
-It's a copy and paste error, so add a reference to the correct header file.
+after  commit a9fa852886fd5a7ccec3b7e9eff75f85072f009c
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+display no longer works on the Snow board. The built-in panel is no
+longer probed.
 
----
+The commit *supposedly* provides for backwards compatibility and at
+first glance only new options for probing the panel are added.
 
- Documentation/devicetree/bindings/regulator/max77802.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+However, reverting the commit on top of 4.5-rc1 gives working display
+again so there is probably some subtle non-obvious catch in the logic.
 
-diff --git a/Documentation/devicetree/bindings/regulator/max77802.txt b/Documentation/devicetree/bindings/regulator/max77802.txt
-index 09d796ed48be..879e98d3b9aa 100644
---- a/Documentation/devicetree/bindings/regulator/max77802.txt
-+++ b/Documentation/devicetree/bindings/regulator/max77802.txt
-@@ -60,7 +60,7 @@ The possible values for "regulator-initial-mode" and "regulator-mode" are:
- 	1: Normal regulator voltage output mode.
- 	3: Low Power which reduces the quiescent current down to only 1uA
- 
--The list of valid modes are defined in the dt-bindings/clock/maxim,max77802.h
-+The valid modes list is defined in the dt-bindings/regulator/maxim,max77802.h
- header and can be included by device tree source files.
- 
- The standard "regulator-mode" property can only be used for regulators that
--- 
-2.5.0
+Any ideas what might go wrong here?
+
+Thanks
+
+Michal
+
+Author: Inki Dae <inki.dae@samsung.com>
+Date:   Thu Nov 26 21:34:18 2015 +0900
+
+    drm/exynos: dp: add of_graph dt binding support for panel
+
+    This patch adds of_graph dt binding support for panel device
+    and also keeps the backward compatibility.
+
+    i.e.,
+    The dts file for Exynos5800 based peach pi board
+    has a panel property so we need to keep the backward compatibility.
+
+    Changelog v3:
+    - bind only one of two nodes outbound - panel or bridge.
+
+    Changelog v2:
+    - return -EINVAL if getting a port node failed.
+
+    Signed-off-by: Inki Dae <inki.dae@samsung.com>
+    Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c
+b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 94f02a0..60260a0 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -1392,7 +1392,7 @@ static const struct component_ops exynos_dp_ops = {
+ static int exynos_dp_probe(struct platform_device *pdev)
+ {
+        struct device *dev = &pdev->dev;
+-       struct device_node *panel_node, *bridge_node, *endpoint;
++       struct device_node *panel_node = NULL, *bridge_node, *endpoint = NULL;
+        struct exynos_dp_device *dp;
+        int ret;
+
+@@ -1403,14 +1403,32 @@ static int exynos_dp_probe(struct platform_device *pdev)
+
+        platform_set_drvdata(pdev, dp);
+
++       /* This is for the backward compatibility. */
+        panel_node = of_parse_phandle(dev->of_node, "panel", 0);
+        if (panel_node) {
+                dp->panel = of_drm_find_panel(panel_node);
+                of_node_put(panel_node);
+                if (!dp->panel)
+                        return -EPROBE_DEFER;
++       } else {
++               endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
++               if (endpoint) {
++                       panel_node = of_graph_get_remote_port_parent(endpoint);
++                       if (panel_node) {
++                               dp->panel = of_drm_find_panel(panel_node);
++                               of_node_put(panel_node);
++                               if (!dp->panel)
++                                       return -EPROBE_DEFER;
++                       } else {
++                               DRM_ERROR("no port node for panel device.\n");
++                               return -EINVAL;
++                       }
++               }
+        }
+
++       if (endpoint)
++               goto out;
++
+        endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
+        if (endpoint) {
+                bridge_node = of_graph_get_remote_port_parent(endpoint);
+@@ -1423,6 +1441,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
+                        return -EPROBE_DEFER;
+        }
+
++out:
+        pm_runtime_enable(dev);
+
+        ret = component_add(&pdev->dev, &exynos_dp_ops);
