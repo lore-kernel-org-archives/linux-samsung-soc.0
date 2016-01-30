@@ -1,40 +1,43 @@
-From: "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>
-Subject: =?utf-8?Q?=D0=9A=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D1=81=D0?=
-	=?utf-8?Q?=BA=D0=B8=D0=B5_=D0=B1=D0=B0=D0=B7=D1=8B!!!_=D0?=
-	=?utf-8?Q?=A2=D0=B5=D0=BB=5CViber=5CWhatsapp=3A+791393935?=
-	=?utf-8?Q?06_Skype=3Aprodawez389_Email=3Agmartinova29=40g?=
-	=?utf-8?Q?mail=2Ecom_=D0=A3=D0=B7=D0=BD=D0=B0=D0=B9=D1=82?=
-	=?utf-8?Q?=D0=B5_=D0=BF=D0=BE=D0=B4=D1=80=D0=BE=D0=B1=D0?=
-	=?utf-8?Q?=BD=D0=B5=D0=B5!!!?=
-Date: Fri, 29 Jan 2016 22:59:35 +0600
-Message-ID: <C8323BA3C5113EFD21246DD2269B2FF8@vger.kernel.org>
-Reply-To: "linux-samsung-soc@vger.kernel.org" <mamontova260@gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v3 2/4] clk: s2mps11: allocate only one structure for
+ clock init
+Date: Fri, 29 Jan 2016 16:34:04 -0800
+Message-ID: <20160130003404.GI12841@codeaurora.org>
+References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
+ <1453284864-8082-3-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from vw-bulli.de ([78.46.44.49]:54081 "EHLO vw-bulli.de"
-	rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756697AbcA2Uo7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jan 2016 15:44:59 -0500
-Received: from 78.46.44.49 (localhost [127.0.0.1])
-	by vw-bulli.de (Postfix) with SMTP id B9BA624D6C33
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Jan 2016 17:59:36 +0100 (CET)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1453284864-8082-3-git-send-email-andi.shyti@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-=D0=A1=D0=BE=D0=B1=D0=B5=D1=80=D0=B5=D0=BC =D0=B4=D0=BB=D1=8F =D0=92=D0=
-=B0=D1=81 =D0=BF=D0=BE =D0=B8=D0=BD=D1=82=D0=B5=D1=80=D0=BD=D0=B5=D1=82=
- =D0=B1=D0=B0=D0=B7=D1=83 =D0=B4=D0=B0=D0=BD=D0=BD=D1=8B=D1=85 =D0=BF=D0=
-=BE=D1=82=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D1=85 =D0=
-=BA=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D0=BE=D0=B2 =D0=B4=D0=BB=D1=8F =D0=92=
-=D0=B0=D1=88=D0=B5=D0=B3=D0=BE =D0=91=D0=B8=D0=B7=D0=BD=D0=B5=D1=81=D0=B0=
-!!! =D0=9C=D0=BD=D0=BE=D0=B3=D0=BE! =D0=91=D1=8B=D1=81=D1=82=D1=80=D0=BE=
-! =D0=9D=D0=B5 =D0=B4=D0=BE=D1=80=D0=BE=D0=B3=D0=BE! =D0=A3=D0=B7=D0=BD=
-=D0=B0=D0=B9=D1=82=D0=B5 =D0=BE=D0=B1 =D1=8D=D1=82=D0=BE=D0=BC =D0=BF=D0=
-=BE=D0=B4=D1=80=D0=BE=D0=B1=D0=BD=D0=B5=D0=B5 =D0=BF=D0=BE =D0=A2=D0=B5=
-=D0=BB\Viber\Whatsapp:+79139393506 Skype:prodawez389 Email:nonen22pp@gm=
-ail.com =20
+On 01/20, Andi Shyti wrote:
+> The driver allocates three structures, s2mpsxx_clk_init, for
+> three different clock types (s2mps11, s2mps13 and s2mps14). They
+> are quite similar but they differ only by the name. Only one of
+> these structures is used, while the others lie unused in the
+> memory.
+> 
+> The clock's name, though, is not such a meaningful information
+> and by assigning the same name to the initial data we can avoid
+> over allocation. The common name chosen will be s2mps11,
+> coherently with the device driver name, instead of the clock
+> device.
+> 
+> Therefore, remove the structures associated to s2mps13 and
+> s2mps14 and use only the one referred to s2mps11 for all kind of
+> clocks.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
