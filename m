@@ -1,15 +1,15 @@
 From: Chanho Park <parkch98@gmail.com>
-Subject: [PATCH] drm/exynos: add mic_bypass option for exynos542x fimd
-Date: Sat, 30 Jan 2016 22:58:51 +0900
-Message-ID: <1454162331-23555-1-git-send-email-parkch98@gmail.com>
+Subject: [PATCH] drm/exynos: support exynos5422 mipi-dsi
+Date: Sat, 30 Jan 2016 23:11:50 +0900
+Message-ID: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:34187 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756820AbcA3N7a (ORCPT
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:36532 "EHLO
+	mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754213AbcA3OMB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 Jan 2016 08:59:30 -0500
-Received: by mail-pa0-f52.google.com with SMTP id uo6so57608956pac.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Jan 2016 05:59:29 -0800 (PST)
+	Sat, 30 Jan 2016 09:12:01 -0500
+Received: by mail-pf0-f169.google.com with SMTP id n128so57467069pfn.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Jan 2016 06:12:00 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: inki.dae@samsung.com
@@ -17,86 +17,88 @@ Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Chanho P
 
 From: Chanho Park <chanho61.park@samsung.com>
 
-This patch adds a mic_bypass option to bypass the mic
-from display out path. The mic(Mobile image compressor) compresses
-RGB data from fimd and send the compressed data to the mipi dsi.
-The bypass option can be founded from system register and the bit
-of the option is 11.
+This patch supports mipi dsi for exynos5422. The dsi register
+offsets of the exynos5422 are similar with exynos5433. However,
+the values of the registers are quite different from the
+exynos5433. For example, the exynos5422 uses sw reset like
+previous chips.
 
 Cc: Inki Dae <inki.dae@samsung.com>
 Cc: Joonyoung Shim <jy0922.shim@samsung.com>
 Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
 Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 ---
- .../devicetree/bindings/display/exynos/samsung-fimd.txt    |  2 ++
- drivers/gpu/drm/exynos/exynos_drm_fimd.c                   | 14 ++++++++++++++
- 2 files changed, 16 insertions(+)
+ .../bindings/display/exynos/exynos_dsim.txt        |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 31 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
-index 27c3ce0..7f90c4a 100644
---- a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
-+++ b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
-@@ -45,6 +45,8 @@ Optional Properties:
- 		Can be used in case timings cannot be provided otherwise
- 		or to override timings provided by the panel.
- - samsung,sysreg: handle to syscon used to control the system registers
-+- samsung,mic-bypass: bypass mic(mobile image compressor) from display path.
-+		      This option is only available since exynos5420.
- - i80-if-timings: timing configuration for lcd i80 interface support.
-   - cs-setup: clock cycles for the active period of address signal is enabled
-               until chip select is enabled.
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 70194d0..4fb2952 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -94,6 +94,7 @@ struct fimd_driver_data {
- 	unsigned int lcdblk_offset;
- 	unsigned int lcdblk_vt_shift;
- 	unsigned int lcdblk_bypass_shift;
-+	unsigned int lcdblk_mic_bypass_shift;
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+index 0e6f0c0..22756b3 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+@@ -6,6 +6,7 @@ Required properties:
+ 		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
+ 		"samsung,exynos4415-mipi-dsi" /* for Exynos4415 SoC */
+ 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
++		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
+ 		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
+   - reg: physical base address and length of the registers set for the device
+   - interrupts: should contain DSI interrupt
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index d84a498..3eff6bf 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -408,6 +408,24 @@ static unsigned int reg_values[] = {
+ 	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0b),
+ };
  
- 	unsigned int has_shadowcon:1;
- 	unsigned int has_clksel:1;
-@@ -140,6 +141,7 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
- 	.lcdblk_offset = 0x214,
- 	.lcdblk_vt_shift = 24,
- 	.lcdblk_bypass_shift = 15,
-+	.lcdblk_mic_bypass_shift = 11,
- 	.has_shadowcon = 1,
- 	.has_vidoutcon = 1,
- 	.has_vtsel = 1,
-@@ -162,6 +164,7 @@ struct fimd_context {
- 	u32				i80ifcon;
- 	bool				i80_if;
- 	bool				suspended;
-+	bool				mic_bypass;
- 	int				pipe;
- 	wait_queue_head_t		wait_vsync_queue;
- 	atomic_t			wait_vsync_event;
-@@ -461,6 +464,14 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
- 		return;
- 	}
- 
-+	if (ctx->mic_bypass && ctx->sysreg && regmap_update_bits(ctx->sysreg,
-+				driver_data->lcdblk_offset,
-+				0x1 << driver_data->lcdblk_mic_bypass_shift,
-+				0x1 << driver_data->lcdblk_mic_bypass_shift)) {
-+		DRM_ERROR("Failed to update sysreg for bypass mic.\n");
-+		return;
-+	}
++static unsigned int exynos5422_reg_values[] = {
++	[RESET_TYPE] = DSIM_SWRST,
++	[PLL_TIMER] = 500,
++	[STOP_STATE_CNT] = 0xf,
++	[PHYCTRL_ULPS_EXIT] = DSIM_PHYCTRL_ULPS_EXIT(0xaf),
++	[PHYCTRL_VREG_LP] = 0,
++	[PHYCTRL_SLEW_UP] = 0,
++	[PHYTIMING_LPX] = DSIM_PHYTIMING_LPX(0x08),
++	[PHYTIMING_HS_EXIT] = DSIM_PHYTIMING_HS_EXIT(0x0d),
++	[PHYTIMING_CLK_PREPARE] = DSIM_PHYTIMING1_CLK_PREPARE(0x09),
++	[PHYTIMING_CLK_ZERO] = DSIM_PHYTIMING1_CLK_ZERO(0x30),
++	[PHYTIMING_CLK_POST] = DSIM_PHYTIMING1_CLK_POST(0x0e),
++	[PHYTIMING_CLK_TRAIL] = DSIM_PHYTIMING1_CLK_TRAIL(0x0a),
++	[PHYTIMING_HS_PREPARE] = DSIM_PHYTIMING2_HS_PREPARE(0x0c),
++	[PHYTIMING_HS_ZERO] = DSIM_PHYTIMING2_HS_ZERO(0x11),
++	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0d),
++};
 +
- 	/* setup horizontal and vertical display size. */
- 	val = VIDTCON2_LINEVAL(mode->vdisplay - 1) |
- 	       VIDTCON2_HOZVAL(mode->hdisplay - 1) |
-@@ -1014,6 +1025,9 @@ static int fimd_probe(struct platform_device *pdev)
- 	if (of_property_read_bool(dev->of_node, "samsung,invert-vclk"))
- 		ctx->vidcon1 |= VIDCON1_INV_VCLK;
+ static unsigned int exynos5433_reg_values[] = {
+ 	[RESET_TYPE] = DSIM_FUNCRST,
+ 	[PLL_TIMER] = 22200,
+@@ -482,6 +500,17 @@ static struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
+ 	.reg_values = exynos5433_reg_values,
+ };
  
-+	if (of_property_read_bool(dev->of_node, "samsung,mic-bypass"))
-+		ctx->mic_bypass = true;
++static struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
++	.reg_ofs = exynos5433_reg_ofs,
++	.plltmr_reg = 0xa0,
++	.has_clklane_stop = 1,
++	.num_clks = 2,
++	.max_freq = 1500,
++	.wait_for_reset = 1,
++	.num_bits_resol = 12,
++	.reg_values = exynos5422_reg_values,
++};
 +
- 	i80_if_timings = of_get_child_by_name(dev->of_node, "i80-if-timings");
- 	if (i80_if_timings) {
- 		u32 val;
+ static struct of_device_id exynos_dsi_of_match[] = {
+ 	{ .compatible = "samsung,exynos3250-mipi-dsi",
+ 	  .data = &exynos3_dsi_driver_data },
+@@ -491,6 +520,8 @@ static struct of_device_id exynos_dsi_of_match[] = {
+ 	  .data = &exynos4415_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos5410-mipi-dsi",
+ 	  .data = &exynos5_dsi_driver_data },
++	{ .compatible = "samsung,exynos5422-mipi-dsi",
++	  .data = &exynos5422_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos5433-mipi-dsi",
+ 	  .data = &exynos5433_dsi_driver_data },
+ 	{ }
 -- 
 2.5.0
