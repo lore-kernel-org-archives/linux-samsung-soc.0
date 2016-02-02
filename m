@@ -1,60 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] drivers: soc: samsung: Enable COMPILE_TEST
-Date: Tue, 02 Feb 2016 16:06:17 +0900
-Message-ID: <1454396777-20034-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:47408 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752455AbcBBHGf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Feb 2016 02:06:35 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Nicholas Krause <xerofoify@gmail.com>
+Subject: [PATCH RESEND RFC] mach:-s3c64xx:Output trace information with
+ WARN_ON if calls for setting up gpio board configuration fail in
+ s3c64xx_i2s_cfg_gpio
+Date: Tue,  2 Feb 2016 09:56:32 -0500
+Message-ID: <1454424992-14619-1-git-send-email-xerofoify@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene@kernel.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
 
-Get some build coverage of Exynos SROM controller and PMU drivers. The
-PMU driver depends on asm/cputype.h so its compilation is limited to ARM
-architectures.
+This fixes the function s3c64xx_i2c_cfg_gpio to log output to the
+kernel log buff with WARN_ON if any of the calls to either
+s3c_gpio_cfgpin_range or s3c_gpio_cfgpin fail as we cannot exit
+from s3c64xx_i2s_cfg_gpio if any of these calls fail due to
+other intended function work being required to complete. Further more
+if a failure occurs allow the other users/devolopers of this driver
+to properly check the kernel log buffers for a kernel trace for
+when these calls failing to execute successfully arise.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
+Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
 ---
-The SROM driver was compile-tested on x86, x86_64, ppc64, arm, arm64 and
-mips. The PMU driver on arm and arm64.
----
- drivers/soc/samsung/Kconfig | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+v3:Fix more wording issues and uncaught build failure with
+previous build test
+v2:Fix Patch Wording as it was clearly confusing and incorrect
+ arch/arm/mach-s3c64xx/dev-audio.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 895f16934b75..e5c11ac88a38 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -1,17 +1,17 @@
- #
- # SAMSUNG SoC drivers
- #
--menu "Samsung SOC driver support"
-+menuconfig SOC_SAMSUNG
-+	bool "Samsung SoC driver support" if COMPILE_TEST
+diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+index ff780a8..796ac75 100644
+--- a/arch/arm/mach-s3c64xx/dev-audio.c
++++ b/arch/arm/mach-s3c64xx/dev-audio.c
+@@ -36,10 +36,10 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+ 		base = S3C64XX_GPE(0);
+ 		break;
+ 	case 2:
+-		s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
+-		s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
+-		s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
+-		s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
++		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5)));
++		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5)));
++		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5)));
++		WARN_ON(s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5)));
+ 		return 0;
+ 	default:
+ 		printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
+@@ -47,7 +47,7 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
--config SOC_SAMSUNG
--	bool
-+if SOC_SAMSUNG
+-	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
++	WARN_ON(s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3)));
  
- config EXYNOS_SROM
--	bool
--	depends on ARM && ARCH_EXYNOS
-+	bool "Exynos SROM controller driver" if COMPILE_TEST
-+	depends on (ARM && ARCH_EXYNOS) || COMPILE_TEST
- 
- config EXYNOS_PMU
--	bool
--	depends on ARM && ARCH_EXYNOS
-+	bool "Exynos PMU controller driver" if COMPILE_TEST
-+	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
- 
--endmenu
-+endif
+ 	return 0;
+ }
 -- 
-1.9.1
+2.1.4
