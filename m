@@ -1,55 +1,47 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 06/10] drm/exynos: mic: make all functions static
-Date: Wed, 03 Feb 2016 13:42:50 +0100
-Message-ID: <1454503374-16382-7-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 07/10] drm/exynos: dsi: restore support for drm bridge
+Date: Wed, 03 Feb 2016 13:42:51 +0100
+Message-ID: <1454503374-16382-8-git-send-email-m.szyprowski@samsung.com>
 References: <1454503374-16382-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:54372 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933662AbcBCMnQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Feb 2016 07:43:16 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O1Z004F2202IX90@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 03 Feb 2016 12:43:14 +0000 (GMT)
 In-reply-to: <1454503374-16382-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-VGhlcmUgaXMgbm8gcG9pbnQgZXhwb3NpbmcgYWxsIGludGVybmFsIGZ1bmN0aW9ucyB0byBnbG9i
-YWwga2VybmVsIG5hbWUKc3BhY2UsIHNvIG1ha2UgYWxsIGludGVybmFscyBmdW5jdGlvbnMgc3Rh
-dGljLgoKU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1
-bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYyB8IDEw
-ICsrKysrLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25z
-KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCmluZGV4IDg5OTA2MWEu
-Ljk4NjlkNzAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9t
-aWMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMKQEAgLTMw
-Nyw5ICszMDcsOSBAQCBleGl0OgogCXJldHVybiByZXQ7CiB9CiAKLXZvaWQgbWljX2Rpc2FibGUo
-c3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkgeyB9CitzdGF0aWMgdm9pZCBtaWNfZGlzYWJsZShz
-dHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKSB7IH0KIAotdm9pZCBtaWNfcG9zdF9kaXNhYmxlKHN0
-cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCitzdGF0aWMgdm9pZCBtaWNfcG9zdF9kaXNhYmxlKHN0
-cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiB7CiAJc3RydWN0IGV4eW5vc19taWMgKm1pYyA9IGJy
-aWRnZS0+ZHJpdmVyX3ByaXZhdGU7CiAJaW50IGk7CkBAIC0zMjksNyArMzI5LDcgQEAgYWxyZWFk
-eV9kaXNhYmxlZDoKIAltdXRleF91bmxvY2soJm1pY19tdXRleCk7CiB9CiAKLXZvaWQgbWljX3By
-ZV9lbmFibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKK3N0YXRpYyB2b2lkIG1pY19wcmVf
-ZW5hYmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiB7CiAJc3RydWN0IGV4eW5vc19taWMg
-Km1pYyA9IGJyaWRnZS0+ZHJpdmVyX3ByaXZhdGU7CiAJaW50IHJldCwgaTsKQEAgLTM3Miw3ICsz
-NzIsNyBAQCBhbHJlYWR5X2VuYWJsZWQ6CiAJbXV0ZXhfdW5sb2NrKCZtaWNfbXV0ZXgpOwogfQog
-Ci12b2lkIG1pY19lbmFibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkgeyB9CitzdGF0aWMg
-dm9pZCBtaWNfZW5hYmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpIHsgfQogCiBzdGF0aWMg
-Y29uc3Qgc3RydWN0IGRybV9icmlkZ2VfZnVuY3MgbWljX2JyaWRnZV9mdW5jcyA9IHsKIAkuZGlz
-YWJsZSA9IG1pY19kaXNhYmxlLApAQCAtNDIxLDcgKzQyMSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgY29tcG9uZW50X29wcyBleHlub3NfbWljX2NvbXBvbmVudF9vcHMgPSB7CiAJLnVuYmluZAk9
-IGV4eW5vc19taWNfdW5iaW5kLAogfTsKIAotaW50IGV4eW5vc19taWNfcHJvYmUoc3RydWN0IHBs
-YXRmb3JtX2RldmljZSAqcGRldikKK3N0YXRpYyBpbnQgZXh5bm9zX21pY19wcm9iZShzdHJ1Y3Qg
-cGxhdGZvcm1fZGV2aWNlICpwZGV2KQogewogCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5k
-ZXY7CiAJc3RydWN0IGV4eW5vc19taWMgKm1pYzsKLS0gCjEuOS4yCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch fixes issue introduced by commit
+cf67cc9a29ac19c98bc4fa0e6d14b0c1f592d322 ("drm/exynos: remove struct
+exynos_drm_display"), which removed assigning of drm bridge to drm
+encoder. Lack of it caused that no bridge callbacks were called on
+encoder enable/disable actions.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index d84a498..5941650 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1782,6 +1782,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ 
+ 	bridge = of_drm_find_bridge(dsi->bridge_node);
+ 	if (bridge) {
++		encoder->bridge = bridge;
+ 		drm_bridge_attach(drm_dev, bridge);
+ 	}
+ 
+-- 
+1.9.2
