@@ -1,88 +1,53 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH RESEND RFC] mach:-s3c64xx:Output trace information with
- WARN_ON if calls for setting up gpio board configuration fail in
- s3c64xx_i2s_cfg_gpio
-Date: Wed, 03 Feb 2016 10:33:33 +0900
-Message-ID: <56B158ED.8090109@samsung.com>
-References: <1454424992-14619-1-git-send-email-xerofoify@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 00/10] Exynos DRM: various fixes for 64bit and Exynos5433
+Date: Wed, 03 Feb 2016 13:42:44 +0100
+Message-ID: <1454503374-16382-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42827 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754992AbcBCBdn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Feb 2016 20:33:43 -0500
-In-reply-to: <1454424992-14619-1-git-send-email-xerofoify@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>, kgene@kernel.org
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02.02.2016 23:56, Nicholas Krause wrote:
-> This fixes the function s3c64xx_i2c_cfg_gpio to log output to the
-> kernel log buff with WARN_ON if any of the calls to either
-> s3c_gpio_cfgpin_range or s3c_gpio_cfgpin fail as we cannot exit
-> from s3c64xx_i2s_cfg_gpio if any of these calls fail due to
-> other intended function work being required to complete. Further more
-> if a failure occurs allow the other users/devolopers of this driver
-> to properly check the kernel log buffers for a kernel trace for
-> when these calls failing to execute successfully arise.
-
-Quite complicated sentences, very difficult to understand. The commit
-message should describe the logic behind the change (e.g. answer to
-why?) and user-visible impact in a brief and understandable way.
-
-Commit subject does not match subsystem and it is over complicated on
-its own. It is also too long. Your editor should point this already (70
-chars at most).
-
-Anyway I don't feel the patch is needed and description fails to
-convince me. Knowing your history, you did not encounter any errors here
-but instead you are just spreading random "fixes" which compile or not...
-
-Since this was not tested:
-If it ain't broken, don't fix it.
-
-Best regards,
-Krzysztof
-
-> 
-> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
-> ---
-> v3:Fix more wording issues and uncaught build failure with
-> previous build test
-> v2:Fix Patch Wording as it was clearly confusing and incorrect
->  arch/arm/mach-s3c64xx/dev-audio.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-> index ff780a8..796ac75 100644
-> --- a/arch/arm/mach-s3c64xx/dev-audio.c
-> +++ b/arch/arm/mach-s3c64xx/dev-audio.c
-> @@ -36,10 +36,10 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
->  		base = S3C64XX_GPE(0);
->  		break;
->  	case 2:
-> -		s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
-> -		s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
-> -		s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
-> -		s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5));
-> +		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5)));
-> +		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5)));
-> +		WARN_ON(s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5)));
-> +		WARN_ON(s3c_gpio_cfgpin_range(S3C64XX_GPH(6), 4, S3C_GPIO_SFN(5)));
->  		return 0;
->  	default:
->  		printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
-> @@ -47,7 +47,7 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
-> +	WARN_ON(s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3)));
->  
->  	return 0;
->  }
-> 
+SGVsbG8gYWxsLAoKVGhpcyBwYXRjaCBzZXJpZXMgaXMgYSBzZXQgb2YgdmFyaW91cyBmaXhlcyB0
+byBnZXQgRXh5bm9zIERSTSB3b3JraW5nIG9uCkV4eW5vcyA1NDMzIFNvQ3MgYW5kIDY0Yml0IEFS
+TTY0IGFyY2hpdGVjdHVyZS4KClBhdGNoZXMgYXJlIGJhc2VkIG9uIHRvcCBvZiB2NC41LXJjMiBy
+ZWxlYXNlLgoKQmVzdCByZWdhcmRzCk1hcmVrIFN6eXByb3dza2kKU2Ftc3VuZyBSJkQgSW5zdGl0
+dXRlIFBvbGFuZAoKClBhdGNoIHN1bW1hcnk6CgpKb29ueW91bmcgU2hpbSAoMSk6CiAgZHJtL2V4
+eW5vczogZGVwZW5kIG9uIEFSQ0hfRVhZTk9TIGZvciBEUk1fRVhZTk9TCgpNYXJlayBTenlwcm93
+c2tpICg5KToKICBkcm0vZXh5bm9zOiBpcHA6IGZpeCBpbmNvcnJlY3QgZm9ybWF0IHNwZWNpZmll
+cnMgaW4gZGVidWcgbWVzc2FnZXMKICBkcm0vZXh5bm9zOiBmaXggdHlwZXMgZm9yIGNvbXBpbGF0
+aW9uIG9uIDY0Yml0IGFyY2hpdGVjdHVyZXMKICBkcm0vZXh5bm9zOiBtaWM6IHVzZSBkZXZtX2Ns
+ayBpbnRlcmZhY2UKICBkcm0vZXh5bm9zOiBtaWM6IGNvbnZlcnQgdG8gY29tcG9uZW50IGZyYW1l
+d29yawogIGRybS9leHlub3M6IG1pYzogbWFrZSBhbGwgZnVuY3Rpb25zIHN0YXRpYwogIGRybS9l
+eHlub3M6IGRzaTogcmVzdG9yZSBzdXBwb3J0IGZvciBkcm0gYnJpZGdlCiAgZHJtL2V4eW5vczog
+aW5pdGlhbGl6ZSBETUEgb3BzIGZvciB2aXJ0dWFsIEV4eW5vcyBEUk0gZGV2aWNlCiAgZHJtL2V4
+eW5vczogZXh5bm9zNTQzM19kZWNvbjogZml4IHdyb25nIHN0YXRlIGFzc2lnbm1lbnQgaW4KICAg
+IGRlY29uX2VuYWJsZQogIGRybS9leHlub3M6IGV4eW5vczU0MzNfZGVjb246IGZpeCB3cm9uZyBz
+dGF0ZSBpbiBkZWNvbl92YmxhbmtfZW5hYmxlCgogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29u
+ZmlnICAgICAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+NTQzM19kcm1fZGVjb24uYyB8ICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHJ2LmMgICAgICAgfCAgMSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHNpLmMgICAgICAgfCAgMSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
+Yy5jICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5j
+ICAgICAgIHwgIDUgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyAg
+ICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMgICAg
+ICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jICAgICAg
+IHwgMzIgKysrKysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWlj
+LmMgICAgICAgfCA3MiArKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgfCAgOCArLS0KIDEyIGZpbGVzIGNoYW5nZWQs
+IDc0IGluc2VydGlvbnMoKyksIDU5IGRlbGV0aW9ucygtKQoKLS0gCjEuOS4yCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
