@@ -1,58 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH 02/10] drm/exynos: ipp: fix incorrect format specifiers in
  debug messages
-Date: Thu, 04 Feb 2016 11:17:32 +0900
-Message-ID: <56B2B4BC.1040708@samsung.com>
+Date: Thu, 04 Feb 2016 11:34:16 +0900
+Message-ID: <56B2B8A8.3090409@samsung.com>
 References: <1454503374-16382-1-git-send-email-m.szyprowski@samsung.com>
  <1454503374-16382-3-git-send-email-m.szyprowski@samsung.com>
+ <56B2B4BC.1040708@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:58876 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755275AbcBDCRe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Feb 2016 21:17:34 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2000L9E3P7JZ60@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Feb 2016 02:17:31 +0000 (GMT)
-In-reply-to: <1454503374-16382-3-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <56B2B4BC.1040708@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 03.02.2016 21:42, Marek Szyprowski wrote:
-> Drivers should use %p for printing pointers instead of hardcoding them
-> as hexadecimal integers. This patch fixes compilation warnings on 64bit
-> architectures.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c     | 32 ++++++++++++++---------------
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  2 +-
->  4 files changed, 19 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> index c747824..8a4f4a0 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -1723,7 +1723,7 @@ static int fimc_probe(struct platform_device *pdev)
->  		goto err_put_clk;
->  	}
->  
-> -	DRM_DEBUG_KMS("id[%d]ippdrv[0x%x]\n", ctx->id, (int)ippdrv);
-> +	DRM_DEBUG_KMS("id[%d]ippdrv[%p]\n", ctx->id, ippdrv);
-
-I don't oppose the patch itself but I have different concern. First -
-probably you meant %pK because this is a writeable structure with
-function pointers.
-Second - why the ippdrv has to be printed? Is it useful for debugging?
-
-Best regards,
-Krzysztof
+CgoyMDE264WEIDAy7JuUIDA07J28IDExOjE37JeQIEtyenlzenRvZiBLb3psb3dza2kg7J20KOqw
+gCkg7JO0IOq4gDoKPiBPbiAwMy4wMi4yMDE2IDIxOjQyLCBNYXJlayBTenlwcm93c2tpIHdyb3Rl
+Ogo+PiBEcml2ZXJzIHNob3VsZCB1c2UgJXAgZm9yIHByaW50aW5nIHBvaW50ZXJzIGluc3RlYWQg
+b2YgaGFyZGNvZGluZyB0aGVtCj4+IGFzIGhleGFkZWNpbWFsIGludGVnZXJzLiBUaGlzIHBhdGNo
+IGZpeGVzIGNvbXBpbGF0aW9uIHdhcm5pbmdzIG9uIDY0Yml0Cj4+IGFyY2hpdGVjdHVyZXMuCj4+
+Cj4+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5n
+LmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5j
+ICAgIHwgIDIgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYyAg
+ICAgfCAgMiArLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jICAg
+ICB8IDMyICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fcm90YXRvci5jIHwgIDIgKy0KPj4gIDQgZmlsZXMgY2hhbmdlZCwg
+MTkgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZpbWMuYwo+PiBpbmRleCBjNzQ3ODI0Li44YTRmNGEwIDEwMDY0NAo+
+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jCj4+ICsrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPj4gQEAgLTE3MjMsNyAr
+MTcyMyw3IEBAIHN0YXRpYyBpbnQgZmltY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQo+PiAgCQlnb3RvIGVycl9wdXRfY2xrOwo+PiAgCX0KPj4gIAo+PiAtCURSTV9ERUJVR19L
+TVMoImlkWyVkXWlwcGRydlsweCV4XVxuIiwgY3R4LT5pZCwgKGludClpcHBkcnYpOwo+PiArCURS
+TV9ERUJVR19LTVMoImlkWyVkXWlwcGRydlslcF1cbiIsIGN0eC0+aWQsIGlwcGRydik7Cj4gCj4g
+SSBkb24ndCBvcHBvc2UgdGhlIHBhdGNoIGl0c2VsZiBidXQgSSBoYXZlIGRpZmZlcmVudCBjb25j
+ZXJuLiBGaXJzdCAtCj4gcHJvYmFibHkgeW91IG1lYW50ICVwSyBiZWNhdXNlIHRoaXMgaXMgYSB3
+cml0ZWFibGUgc3RydWN0dXJlIHdpdGgKPiBmdW5jdGlvbiBwb2ludGVycy4KPiBTZWNvbmQgLSB3
+aHkgdGhlIGlwcGRydiBoYXMgdG8gYmUgcHJpbnRlZD8gSXMgaXQgdXNlZnVsIGZvciBkZWJ1Z2dp
+bmc/CgpNYXJlayBmaXhlZCBqdXN0IGNvbXBpbGF0aW9uIHdhcm5pbmdzIG9uIEFSTTY0IHNvIHll
+cyBpdCB3b3VsZG4ndCBuZWVkIHRvIHByaW50IG91dCBpcHBkcnYgYWRkcmVzcyBidXQgYXMgb3Ro
+ZXIgY2xlYW51cCBwYXRjaC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gQmVzdCByZWdhcmRzLAo+
+IEtyenlzenRvZgo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQg
+dGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBib2R5IG9m
+IGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8g
+aW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gCj4g
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
