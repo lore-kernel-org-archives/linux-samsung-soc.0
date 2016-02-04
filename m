@@ -1,12 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 47/51] mtd: nand: vf610: switch to mtd_ooblayout_ops
-Date: Thu,  4 Feb 2016 11:07:10 +0100
-Message-ID: <1454580434-32078-48-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 44/51] mtd: nand: sh_flctl: switch to mtd_ooblayout_ops
+Date: Thu,  4 Feb 2016 11:07:07 +0100
+Message-ID: <1454580434-32078-45-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBI6GZS2QKGQENRJM3UA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBF6GZS2QKGQEQOJ2J4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -24,66 +24,117 @@ ECC/OOB layout to MTD users.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/nand/vf610_nfc.c | 34 ++++------------------------------
- 1 file changed, 4 insertions(+), 30 deletions(-)
+ drivers/mtd/nand/sh_flctl.c | 87 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 67 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/mtd/nand/vf610_nfc.c b/drivers/mtd/nand/vf610_nfc.c
-index 293feb1..da34de1 100644
---- a/drivers/mtd/nand/vf610_nfc.c
-+++ b/drivers/mtd/nand/vf610_nfc.c
-@@ -175,34 +175,6 @@ static inline struct vf610_nfc *mtd_to_nfc(struct mtd_info *mtd)
- 	return container_of(mtd_to_nand(mtd), struct vf610_nfc, chip);
- }
+diff --git a/drivers/mtd/nand/sh_flctl.c b/drivers/mtd/nand/sh_flctl.c
+index 4814402..be4d331 100644
+--- a/drivers/mtd/nand/sh_flctl.c
++++ b/drivers/mtd/nand/sh_flctl.c
+@@ -43,26 +43,73 @@
+ #include <linux/mtd/partitions.h>
+ #include <linux/mtd/sh_flctl.h>
  
--static struct nand_ecclayout vf610_nfc_ecc45 = {
--	.eccbytes = 45,
--	.eccpos = {19, 20, 21, 22, 23,
--		   24, 25, 26, 27, 28, 29, 30, 31,
--		   32, 33, 34, 35, 36, 37, 38, 39,
--		   40, 41, 42, 43, 44, 45, 46, 47,
--		   48, 49, 50, 51, 52, 53, 54, 55,
--		   56, 57, 58, 59, 60, 61, 62, 63},
+-static struct nand_ecclayout flctl_4secc_oob_16 = {
+-	.eccbytes = 10,
+-	.eccpos = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
 -	.oobfree = {
--		{.offset = 2,
--		 .length = 17} }
--};
--
--static struct nand_ecclayout vf610_nfc_ecc60 = {
--	.eccbytes = 60,
--	.eccpos = { 4,  5,  6,  7,  8,  9, 10, 11,
--		   12, 13, 14, 15, 16, 17, 18, 19,
--		   20, 21, 22, 23, 24, 25, 26, 27,
--		   28, 29, 30, 31, 32, 33, 34, 35,
--		   36, 37, 38, 39, 40, 41, 42, 43,
--		   44, 45, 46, 47, 48, 49, 50, 51,
--		   52, 53, 54, 55, 56, 57, 58, 59,
--		   60, 61, 62, 63 },
--	.oobfree = {
--		{.offset = 2,
--		 .length = 2} }
--};
--
- static inline u32 vf610_nfc_read(struct vf610_nfc *nfc, uint reg)
- {
- 	return readl(nfc->regs + reg);
-@@ -781,14 +753,16 @@ static int vf610_nfc_probe(struct platform_device *pdev)
- 		if (mtd->oobsize > 64)
- 			mtd->oobsize = 64;
+-		{.offset = 12,
+-		. length = 4} },
++static int flctl_4secc_ooblayout_sp_ecc(struct mtd_info *mtd, int section,
++					struct mtd_oob_region *oobregion)
++{
++	struct nand_chip *chip = mtd_to_nand(mtd);
++
++	if (section)
++		return -ERANGE;
++
++	oobregion->offset = 0;
++	oobregion->length = chip->ecc.bytes;
++
++	return 0;
++}
++
++static int flctl_4secc_ooblayout_sp_free(struct mtd_info *mtd, int section,
++					 struct mtd_oob_region *oobregion)
++{
++	if (section)
++		return -ERANGE;
++
++	oobregion->offset = 12;
++	oobregion->length = 4;
++
++	return 0;
++}
++
++const struct mtd_ooblayout_ops flctl_4secc_oob_smallpage_ops = {
++	.ecc = flctl_4secc_ooblayout_sp_ecc,
++	.free = flctl_4secc_ooblayout_sp_free,
+ };
  
-+		/*
-+		 * mtd->ecclayout is not specified here because we're using the
-+		 * default large page ECC layout defined in NAND core.
-+		 */
- 		if (chip->ecc.strength == 32) {
- 			nfc->ecc_mode = ECC_60_BYTE;
- 			chip->ecc.bytes = 60;
--			chip->ecc.layout = &vf610_nfc_ecc60;
- 		} else if (chip->ecc.strength == 24) {
- 			nfc->ecc_mode = ECC_45_BYTE;
- 			chip->ecc.bytes = 45;
--			chip->ecc.layout = &vf610_nfc_ecc45;
+-static struct nand_ecclayout flctl_4secc_oob_64 = {
+-	.eccbytes = 4 * 10,
+-	.eccpos = {
+-		 6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
+-		22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+-		38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+-		54, 55, 56, 57, 58, 59, 60, 61, 62, 63 },
+-	.oobfree = {
+-		{.offset =  2, .length = 4},
+-		{.offset = 16, .length = 6},
+-		{.offset = 32, .length = 6},
+-		{.offset = 48, .length = 6} },
++static int flctl_4secc_ooblayout_lp_ecc(struct mtd_info *mtd, int section,
++					struct mtd_oob_region *oobregion)
++{
++	struct nand_chip *chip = mtd_to_nand(mtd);
++
++	if (section >= chip->ecc.steps)
++		return -ERANGE;
++
++	oobregion->offset = (section * 16) + 6;
++	oobregion->length = chip->ecc.bytes;
++
++	return 0;
++}
++
++static int flctl_4secc_ooblayout_lp_free(struct mtd_info *mtd, int section,
++					 struct mtd_oob_region *oobregion)
++{
++	struct nand_chip *chip = mtd_to_nand(mtd);
++
++	if (section >= chip->ecc.steps)
++		return -ERANGE;
++
++	oobregion->offset = section * 16;
++	oobregion->length = 6;
++
++	if (!section) {
++		oobregion->offset += 2;
++		oobregion->length -= 2;
++	}
++
++	return 0;
++}
++
++const struct mtd_ooblayout_ops flctl_4secc_oob_largepage_ops = {
++	.ecc = flctl_4secc_ooblayout_lp_ecc,
++	.free = flctl_4secc_ooblayout_lp_free,
+ };
+ 
+ static uint8_t scan_ff_pattern[] = { 0xff, 0xff };
+@@ -987,10 +1034,10 @@ static int flctl_chip_init_tail(struct mtd_info *mtd)
+ 
+ 	if (flctl->hwecc) {
+ 		if (mtd->writesize == 512) {
+-			chip->ecc.layout = &flctl_4secc_oob_16;
++			mtd_set_ooblayout(mtd, &flctl_4secc_oob_smallpage_ops);
+ 			chip->badblock_pattern = &flctl_4secc_smallpage;
  		} else {
- 			dev_err(nfc->dev, "Unsupported ECC strength\n");
- 			err = -ENXIO;
+-			chip->ecc.layout = &flctl_4secc_oob_64;
++			mtd_set_ooblayout(mtd, &flctl_4secc_oob_largepage_ops);
+ 			chip->badblock_pattern = &flctl_4secc_largepage;
+ 		}
+ 
 -- 
 2.1.4
