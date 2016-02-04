@@ -1,13 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 06/51] mtd: use mtd_ooblayout_xxx() helpers
- where appropriate
-Date: Thu,  4 Feb 2016 11:06:29 +0100
-Message-ID: <1454580434-32078-7-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 15/51] mtd: use mtd_set_ecclayout() where appropriate
+Date: Thu,  4 Feb 2016 11:06:38 +0100
+Message-ID: <1454580434-32078-16-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBW6FZS2QKGQEGIR4ROQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBYOFZS2QKGQEHZFFRIY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -20,159 +19,40 @@ To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norri
 Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The mtd_ooblayout_xxx() helper functions have been added to avoid direct
-accesses to the ecclayout field, and thus ease for future reworks.
-Use these helpers in all places where the oobfree[] and eccpos[] arrays
-where directly accessed.
+Use the mtd_set_ecclayout() helper instead of directly assigning the
+mtd->ecclayout field.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/mtdchar.c | 107 +++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 88 insertions(+), 19 deletions(-)
+ drivers/mtd/mtdconcat.c | 2 +-
+ drivers/mtd/mtdpart.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-index 6d19835..cd64ab7 100644
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -472,28 +472,101 @@ static int mtdchar_readoob(struct file *file, struct mtd_info *mtd,
-  * nand_ecclayout flexibly (i.e. the struct may change size in new
-  * releases without requiring major rewrites).
-  */
--static int shrink_ecclayout(const struct nand_ecclayout *from,
--		struct nand_ecclayout_user *to)
-+static int shrink_ecclayout(struct mtd_info *mtd,
-+			    struct nand_ecclayout_user *to)
- {
--	int i;
-+	struct mtd_oob_region oobregion;
-+	int i, section = 0, ret;
+diff --git a/drivers/mtd/mtdconcat.c b/drivers/mtd/mtdconcat.c
+index 239a8c8..481565e 100644
+--- a/drivers/mtd/mtdconcat.c
++++ b/drivers/mtd/mtdconcat.c
+@@ -777,7 +777,7 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
  
--	if (!from || !to)
-+	if (!mtd || !to)
- 		return -EINVAL;
- 
- 	memset(to, 0, sizeof(*to));
- 
--	to->eccbytes = min((int)from->eccbytes, MTD_MAX_ECCPOS_ENTRIES);
--	for (i = 0; i < to->eccbytes; i++)
--		to->eccpos[i] = from->eccpos[i];
-+	to->eccbytes = 0;
-+	for (i = 0; i < MTD_MAX_ECCPOS_ENTRIES;) {
-+		u32 eccpos;
-+
-+		ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-+		if (ret < 0) {
-+			if (ret != -ERANGE)
-+				return ret;
-+
-+			break;
-+		}
-+
-+		eccpos = oobregion.offset;
-+		for (; i < MTD_MAX_ECCPOS_ENTRIES &&
-+		       eccpos < oobregion.offset + oobregion.length; i++) {
-+			to->eccpos[i] = eccpos++;
-+			to->eccbytes++;
-+		}
-+	}
- 
- 	for (i = 0; i < MTD_MAX_OOBFREE_ENTRIES; i++) {
--		if (from->oobfree[i].length == 0 &&
--				from->oobfree[i].offset == 0)
-+		ret = mtd_ooblayout_free(mtd, i, &oobregion);
-+		if (ret < 0) {
-+			if (ret != -ERANGE)
-+				return ret;
-+
-+			break;
-+		}
-+
-+		to->oobfree[i].offset = oobregion.offset;
-+		to->oobfree[i].length = oobregion.length;
-+		to->oobavail += to->oobfree[i].length;
-+	}
-+
-+	return 0;
-+}
-+
-+static int get_oobinfo(struct mtd_info *mtd, struct nand_oobinfo *to)
-+{
-+	struct mtd_oob_region oobregion;
-+	int i, section = 0, ret;
-+
-+	if (!mtd || !to)
-+		return -EINVAL;
-+
-+	memset(to, 0, sizeof(*to));
-+
-+	to->eccbytes = 0;
-+	for (i = 0; i < ARRAY_SIZE(to->eccpos);) {
-+		u32 eccpos;
-+
-+		ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-+		if (ret < 0) {
-+			if (ret != -ERANGE)
-+				return ret;
-+
- 			break;
--		to->oobavail += from->oobfree[i].length;
--		to->oobfree[i] = from->oobfree[i];
-+		}
-+
-+		if (oobregion.length + i > ARRAY_SIZE(to->eccpos))
-+			return -EINVAL;
-+
-+		eccpos = oobregion.offset;
-+		for (; eccpos < oobregion.offset + oobregion.length; i++) {
-+			to->eccpos[i] = eccpos++;
-+			to->eccbytes++;
-+		}
  	}
  
-+	for (i = 0; i < 8; i++) {
-+		ret = mtd_ooblayout_free(mtd, i, &oobregion);
-+		if (ret < 0) {
-+			if (ret != -ERANGE)
-+				return ret;
-+
-+			break;
-+		}
-+
-+		to->oobfree[i][0] = oobregion.offset;
-+		to->oobfree[i][1] = oobregion.length;
-+	}
-+
-+	to->useecc = MTD_NANDECC_AUTOPLACE;
-+
- 	return 0;
- }
+-	concat->mtd.ecclayout = subdev[0]->ecclayout;
++	mtd_set_ecclayout(&concat->mtd, subdev[0]->ecclayout);
  
-@@ -817,14 +890,10 @@ static int mtdchar_ioctl(struct file *file, u_int cmd, u_long arg)
+ 	concat->num_subdev = num_devs;
+ 	concat->mtd.name = name;
+diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+index 08de4b2..f53d9d7 100644
+--- a/drivers/mtd/mtdpart.c
++++ b/drivers/mtd/mtdpart.c
+@@ -533,7 +533,7 @@ static struct mtd_part *allocate_partition(struct mtd_info *master,
+ 			part->name);
+ 	}
  
- 		if (!mtd->ecclayout)
- 			return -EOPNOTSUPP;
--		if (mtd->ecclayout->eccbytes > ARRAY_SIZE(oi.eccpos))
--			return -EINVAL;
- 
--		oi.useecc = MTD_NANDECC_AUTOPLACE;
--		memcpy(&oi.eccpos, mtd->ecclayout->eccpos, sizeof(oi.eccpos));
--		memcpy(&oi.oobfree, mtd->ecclayout->oobfree,
--		       sizeof(oi.oobfree));
--		oi.eccbytes = mtd->ecclayout->eccbytes;
-+		ret = get_oobinfo(mtd, &oi);
-+		if (ret)
-+			return ret;
- 
- 		if (copy_to_user(argp, &oi, sizeof(struct nand_oobinfo)))
- 			return -EFAULT;
-@@ -920,7 +989,7 @@ static int mtdchar_ioctl(struct file *file, u_int cmd, u_long arg)
- 		if (!usrlay)
- 			return -ENOMEM;
- 
--		shrink_ecclayout(mtd->ecclayout, usrlay);
-+		shrink_ecclayout(mtd, usrlay);
- 
- 		if (copy_to_user(argp, usrlay, sizeof(*usrlay)))
- 			ret = -EFAULT;
+-	slave->mtd.ecclayout = master->ecclayout;
++	mtd_set_ecclayout(&slave->mtd, master->ecclayout);
+ 	slave->mtd.ecc_step_size = master->ecc_step_size;
+ 	slave->mtd.ecc_strength = master->ecc_strength;
+ 	slave->mtd.bitflip_threshold = master->bitflip_threshold;
 -- 
 2.1.4
