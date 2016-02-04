@@ -1,12 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 49/51] staging: mt29f_spinand: switch to mtd_ooblayout_ops
-Date: Thu,  4 Feb 2016 11:07:12 +0100
-Message-ID: <1454580434-32078-50-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 46/51] mtd: nand: sunxi: switch to mtd_ooblayout_ops
+Date: Thu,  4 Feb 2016 11:07:09 +0100
+Message-ID: <1454580434-32078-47-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBLOGZS2QKGQECVAGUZQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBI6GZS2QKGQENRJM3UA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -19,86 +19,211 @@ To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norri
 Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace the nand_ecclayout definition by the equivalent mtd_ooblayout_ops
-definition.
+Implementing the mtd_ooblayout_ops interface is the new way of exposing
+ECC/OOB layout to MTD users.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/staging/mt29f_spinand/mt29f_spinand.c | 48 +++++++++++++++++----------
- 1 file changed, 30 insertions(+), 18 deletions(-)
+ drivers/mtd/nand/sunxi_nand.c | 114 +++++++++++++++++++-----------------------
+ 1 file changed, 52 insertions(+), 62 deletions(-)
 
-diff --git a/drivers/staging/mt29f_spinand/mt29f_spinand.c b/drivers/staging/mt29f_spinand/mt29f_spinand.c
-index 6728376..04b711759 100644
---- a/drivers/staging/mt29f_spinand/mt29f_spinand.c
-+++ b/drivers/staging/mt29f_spinand/mt29f_spinand.c
-@@ -42,23 +42,33 @@ static inline struct spinand_state *mtd_to_state(struct mtd_info *mtd)
- static int enable_hw_ecc;
- static int enable_read_hw_ecc;
+diff --git a/drivers/mtd/nand/sunxi_nand.c b/drivers/mtd/nand/sunxi_nand.c
+index b5ea6b3..a32a894 100644
+--- a/drivers/mtd/nand/sunxi_nand.c
++++ b/drivers/mtd/nand/sunxi_nand.c
+@@ -212,12 +212,9 @@ struct sunxi_nand_chip_sel {
+  * sunxi HW ECC infos: stores information related to HW ECC support
+  *
+  * @mode:	the sunxi ECC mode field deduced from ECC requirements
+- * @layout:	the OOB layout depending on the ECC requirements and the
+- *		selected ECC mode
+  */
+ struct sunxi_nand_hw_ecc {
+ 	int mode;
+-	struct nand_ecclayout layout;
+ };
  
--static struct nand_ecclayout spinand_oob_64 = {
--	.eccbytes = 24,
--	.eccpos = {
--		1, 2, 3, 4, 5, 6,
--		17, 18, 19, 20, 21, 22,
--		33, 34, 35, 36, 37, 38,
--		49, 50, 51, 52, 53, 54, },
--	.oobfree = {
--		{.offset = 8,
--			.length = 8},
--		{.offset = 24,
--			.length = 8},
--		{.offset = 40,
--			.length = 8},
--		{.offset = 56,
--			.length = 8},
--	}
-+static int spinand_ooblayout_64_ecc(struct mtd_info *mtd, int section,
+ /*
+@@ -1257,6 +1254,57 @@ static int sunxi_nand_chip_init_timings(struct sunxi_nand_chip *chip,
+ 	return sunxi_nand_chip_set_timings(chip, timings);
+ }
+ 
++static int sunxi_nand_ooblayout_ecc(struct mtd_info *mtd, int section,
 +				    struct mtd_oob_region *oobregion)
 +{
-+	if (section > 3)
++	struct nand_chip *nand = mtd_to_nand(mtd);
++	struct nand_ecc_ctrl *ecc = &nand->ecc;
++
++	if (section >= ecc->steps)
 +		return -ERANGE;
 +
-+	oobregion->offset = (section * 16) + 1;
-+	oobregion->length = 6;
++	oobregion->offset = section * (ecc->bytes + 4) + 4;
++	oobregion->length = ecc->bytes;
 +
 +	return 0;
 +}
 +
-+static int spinand_ooblayout_64_free(struct mtd_info *mtd, int section,
++static int sunxi_nand_ooblayout_free(struct mtd_info *mtd, int section,
 +				     struct mtd_oob_region *oobregion)
 +{
-+	if (section > 3)
++	struct nand_chip *nand = mtd_to_nand(mtd);
++	struct nand_ecc_ctrl *ecc = &nand->ecc;
++
++	if (section > ecc->steps)
 +		return -ERANGE;
 +
-+	oobregion->offset = (section * 16) + 8;
-+	oobregion->length = 8;
++	/*
++	 * The first 2 bytes are used for BB markers, hence we
++	 * only have 2 bytes available in the first user data
++	 * section.
++	 */
++	if (!section && ecc->mode == NAND_ECC_HW) {
++		oobregion->offset = 2;
++		oobregion->length = 2;
++
++		return 0;
++	}
++
++	oobregion->offset = section * (ecc->bytes + 4);
++
++	if (section < ecc->steps)
++		oobregion->length = 4;
++	else
++		oobregion->offset = mtd->oobsize - oobregion->offset;
 +
 +	return 0;
 +}
 +
-+const struct mtd_ooblayout_ops spinand_oob_64_ops = {
-+	.ecc = spinand_ooblayout_64_ecc,
-+	.free = spinand_ooblayout_64_free,
- };
- #endif
++const struct mtd_ooblayout_ops sunxi_nand_ooblayout_ops = {
++	.ecc = sunxi_nand_ooblayout_ecc,
++	.free = sunxi_nand_ooblayout_free,
++};
++
+ static int sunxi_nand_hw_common_ecc_ctrl_init(struct mtd_info *mtd,
+ 					      struct nand_ecc_ctrl *ecc,
+ 					      struct device_node *np)
+@@ -1266,7 +1314,6 @@ static int sunxi_nand_hw_common_ecc_ctrl_init(struct mtd_info *mtd,
+ 	struct sunxi_nand_chip *sunxi_nand = to_sunxi_nand(nand);
+ 	struct sunxi_nfc *nfc = to_sunxi_nfc(sunxi_nand->nand.controller);
+ 	struct sunxi_nand_hw_ecc *data;
+-	struct nand_ecclayout *layout;
+ 	int nsectors;
+ 	int ret;
+ 	int i;
+@@ -1295,7 +1342,6 @@ static int sunxi_nand_hw_common_ecc_ctrl_init(struct mtd_info *mtd,
+ 	/* HW ECC always work with even numbers of ECC bytes */
+ 	ecc->bytes = ALIGN(ecc->bytes, 2);
  
-@@ -883,7 +893,6 @@ static int spinand_probe(struct spi_device *spi_nand)
+-	layout = &data->layout;
+ 	nsectors = mtd->writesize / ecc->size;
  
- 	chip->ecc.strength = 1;
- 	chip->ecc.total	= chip->ecc.steps * chip->ecc.bytes;
--	chip->ecc.layout = &spinand_oob_64;
- 	chip->ecc.read_page = spinand_read_page_hwecc;
- 	chip->ecc.write_page = spinand_write_page_hwecc;
- #else
-@@ -908,6 +917,9 @@ static int spinand_probe(struct spi_device *spi_nand)
+ 	if (mtd->oobsize < ((ecc->bytes + 4) * nsectors)) {
+@@ -1303,9 +1349,7 @@ static int sunxi_nand_hw_common_ecc_ctrl_init(struct mtd_info *mtd,
+ 		goto err;
+ 	}
  
- 	mtd->dev.parent = &spi_nand->dev;
- 	mtd->oobsize = 64;
-+#ifdef CONFIG_MTD_SPINAND_ONDIEECC
-+	mtd_set_ooblayout(mtd, &spinand_oob_64_ops);
-+#endif
+-	layout->eccbytes = (ecc->bytes * nsectors);
+-
+-	ecc->layout = layout;
++	mtd_set_ooblayout(mtd, &sunxi_nand_ooblayout_ops);
+ 	ecc->priv = data;
  
- 	if (nand_scan(mtd, 1))
- 		return -ENXIO;
+ 	return 0;
+@@ -1325,9 +1369,6 @@ static int sunxi_nand_hw_ecc_ctrl_init(struct mtd_info *mtd,
+ 				       struct nand_ecc_ctrl *ecc,
+ 				       struct device_node *np)
+ {
+-	struct nand_ecclayout *layout;
+-	int nsectors;
+-	int i, j;
+ 	int ret;
+ 
+ 	ret = sunxi_nand_hw_common_ecc_ctrl_init(mtd, ecc, np);
+@@ -1336,40 +1377,6 @@ static int sunxi_nand_hw_ecc_ctrl_init(struct mtd_info *mtd,
+ 
+ 	ecc->read_page = sunxi_nfc_hw_ecc_read_page;
+ 	ecc->write_page = sunxi_nfc_hw_ecc_write_page;
+-	layout = ecc->layout;
+-	nsectors = mtd->writesize / ecc->size;
+-
+-	for (i = 0; i < nsectors; i++) {
+-		if (i) {
+-			layout->oobfree[i].offset =
+-				layout->oobfree[i - 1].offset +
+-				layout->oobfree[i - 1].length +
+-				ecc->bytes;
+-			layout->oobfree[i].length = 4;
+-		} else {
+-			/*
+-			 * The first 2 bytes are used for BB markers, hence we
+-			 * only have 2 bytes available in the first user data
+-			 * section.
+-			 */
+-			layout->oobfree[i].length = 2;
+-			layout->oobfree[i].offset = 2;
+-		}
+-
+-		for (j = 0; j < ecc->bytes; j++)
+-			layout->eccpos[(ecc->bytes * i) + j] =
+-					layout->oobfree[i].offset +
+-					layout->oobfree[i].length + j;
+-	}
+-
+-	if (mtd->oobsize > (ecc->bytes + 4) * nsectors) {
+-		layout->oobfree[nsectors].offset =
+-				layout->oobfree[nsectors - 1].offset +
+-				layout->oobfree[nsectors - 1].length +
+-				ecc->bytes;
+-		layout->oobfree[nsectors].length = mtd->oobsize -
+-				((ecc->bytes + 4) * nsectors);
+-	}
+ 
+ 	return 0;
+ }
+@@ -1378,9 +1385,6 @@ static int sunxi_nand_hw_syndrome_ecc_ctrl_init(struct mtd_info *mtd,
+ 						struct nand_ecc_ctrl *ecc,
+ 						struct device_node *np)
+ {
+-	struct nand_ecclayout *layout;
+-	int nsectors;
+-	int i;
+ 	int ret;
+ 
+ 	ret = sunxi_nand_hw_common_ecc_ctrl_init(mtd, ecc, np);
+@@ -1391,15 +1395,6 @@ static int sunxi_nand_hw_syndrome_ecc_ctrl_init(struct mtd_info *mtd,
+ 	ecc->read_page = sunxi_nfc_hw_syndrome_ecc_read_page;
+ 	ecc->write_page = sunxi_nfc_hw_syndrome_ecc_write_page;
+ 
+-	layout = ecc->layout;
+-	nsectors = mtd->writesize / ecc->size;
+-
+-	for (i = 0; i < (ecc->bytes * nsectors); i++)
+-		layout->eccpos[i] = i;
+-
+-	layout->oobfree[0].length = mtd->oobsize - i;
+-	layout->oobfree[0].offset = i;
+-
+ 	return 0;
+ }
+ 
+@@ -1411,7 +1406,6 @@ static void sunxi_nand_ecc_cleanup(struct nand_ecc_ctrl *ecc)
+ 		sunxi_nand_hw_common_ecc_ctrl_cleanup(ecc);
+ 		break;
+ 	case NAND_ECC_NONE:
+-		kfree(ecc->layout);
+ 	default:
+ 		break;
+ 	}
+@@ -1445,10 +1439,6 @@ static int sunxi_nand_ecc_init(struct mtd_info *mtd, struct nand_ecc_ctrl *ecc,
+ 			return ret;
+ 		break;
+ 	case NAND_ECC_NONE:
+-		ecc->layout = kzalloc(sizeof(*ecc->layout), GFP_KERNEL);
+-		if (!ecc->layout)
+-			return -ENOMEM;
+-		ecc->layout->oobfree[0].length = mtd->oobsize;
+ 	case NAND_ECC_SOFT:
+ 		break;
+ 	default:
 -- 
 2.1.4
