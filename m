@@ -1,12 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 44/51] mtd: nand: sh_flctl: switch to mtd_ooblayout_ops
-Date: Thu,  4 Feb 2016 11:07:07 +0100
-Message-ID: <1454580434-32078-45-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 50/51] mtd: nand: kill the ecc->layout field
+Date: Thu,  4 Feb 2016 11:07:13 +0100
+Message-ID: <1454580434-32078-51-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBF6GZS2QKGQEQOJ2J4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBLOGZS2QKGQECVAGUZQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -19,122 +19,81 @@ To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norri
 Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Implementing the mtd_ooblayout_ops interface is the new way of exposing
-ECC/OOB layout to MTD users.
+Now that all NAND drivers have switch to mtd_ooblayout_ops, we can kill
+the ecc->layout field.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/nand/sh_flctl.c | 87 ++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 67 insertions(+), 20 deletions(-)
+ drivers/mtd/nand/nand_base.c | 8 --------
+ drivers/mtd/nand/nand_bch.c  | 9 ---------
+ include/linux/mtd/nand.h     | 2 --
+ 3 files changed, 19 deletions(-)
 
-diff --git a/drivers/mtd/nand/sh_flctl.c b/drivers/mtd/nand/sh_flctl.c
-index 4814402..be4d331 100644
---- a/drivers/mtd/nand/sh_flctl.c
-+++ b/drivers/mtd/nand/sh_flctl.c
-@@ -43,26 +43,73 @@
- #include <linux/mtd/partitions.h>
- #include <linux/mtd/sh_flctl.h>
+diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+index e4dc62b..9f6b7609 100644
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -4161,13 +4161,6 @@ int nand_scan_tail(struct mtd_info *mtd)
+ 	chip->oob_poi = chip->buffers->databuf + mtd->writesize;
  
--static struct nand_ecclayout flctl_4secc_oob_16 = {
--	.eccbytes = 10,
--	.eccpos = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
--	.oobfree = {
--		{.offset = 12,
--		. length = 4} },
-+static int flctl_4secc_ooblayout_sp_ecc(struct mtd_info *mtd, int section,
-+					struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
-+	if (section)
-+		return -ERANGE;
-+
-+	oobregion->offset = 0;
-+	oobregion->length = chip->ecc.bytes;
-+
-+	return 0;
-+}
-+
-+static int flctl_4secc_ooblayout_sp_free(struct mtd_info *mtd, int section,
-+					 struct mtd_oob_region *oobregion)
-+{
-+	if (section)
-+		return -ERANGE;
-+
-+	oobregion->offset = 12;
-+	oobregion->length = 4;
-+
-+	return 0;
-+}
-+
-+const struct mtd_ooblayout_ops flctl_4secc_oob_smallpage_ops = {
-+	.ecc = flctl_4secc_ooblayout_sp_ecc,
-+	.free = flctl_4secc_ooblayout_sp_free,
- };
+ 	/*
+-	 * Set the provided ECC layout. If ecc->layout is NULL, the MTD core
+-	 * will just leave mtd->ooblayout to NULL, if it's not NULL, it will
+-	 * set ->ooblayout to the default ecclayout wrapper.
+-	 */
+-	mtd_set_ecclayout(mtd, ecc->layout);
+-
+-	/*
+ 	 * If no default placement scheme is given, select an appropriate one.
+ 	 */
+ 	if (!mtd->ooblayout && (ecc->mode != NAND_ECC_SOFT_BCH)) {
+@@ -4412,7 +4405,6 @@ int nand_scan_tail(struct mtd_info *mtd)
+ 	mtd->writebufsize = mtd->writesize;
  
--static struct nand_ecclayout flctl_4secc_oob_64 = {
--	.eccbytes = 4 * 10,
--	.eccpos = {
--		 6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
--		22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
--		38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
--		54, 55, 56, 57, 58, 59, 60, 61, 62, 63 },
--	.oobfree = {
--		{.offset =  2, .length = 4},
--		{.offset = 16, .length = 6},
--		{.offset = 32, .length = 6},
--		{.offset = 48, .length = 6} },
-+static int flctl_4secc_ooblayout_lp_ecc(struct mtd_info *mtd, int section,
-+					struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
-+	if (section >= chip->ecc.steps)
-+		return -ERANGE;
-+
-+	oobregion->offset = (section * 16) + 6;
-+	oobregion->length = chip->ecc.bytes;
-+
-+	return 0;
-+}
-+
-+static int flctl_4secc_ooblayout_lp_free(struct mtd_info *mtd, int section,
-+					 struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
-+	if (section >= chip->ecc.steps)
-+		return -ERANGE;
-+
-+	oobregion->offset = section * 16;
-+	oobregion->length = 6;
-+
-+	if (!section) {
-+		oobregion->offset += 2;
-+		oobregion->length -= 2;
-+	}
-+
-+	return 0;
-+}
-+
-+const struct mtd_ooblayout_ops flctl_4secc_oob_largepage_ops = {
-+	.ecc = flctl_4secc_ooblayout_lp_ecc,
-+	.free = flctl_4secc_ooblayout_lp_free,
- };
+ 	/* propagate ecc info to mtd_info */
+-	mtd_set_ecclayout(mtd, ecc->layout);
+ 	mtd->ecc_strength = ecc->strength;
+ 	mtd->ecc_step_size = ecc->size;
+ 	/*
+diff --git a/drivers/mtd/nand/nand_bch.c b/drivers/mtd/nand/nand_bch.c
+index e29e75f..ca9b2a4 100644
+--- a/drivers/mtd/nand/nand_bch.c
++++ b/drivers/mtd/nand/nand_bch.c
+@@ -158,15 +158,6 @@ struct nand_bch_control *nand_bch_init(struct mtd_info *mtd)
  
- static uint8_t scan_ff_pattern[] = { 0xff, 0xff };
-@@ -987,10 +1034,10 @@ static int flctl_chip_init_tail(struct mtd_info *mtd)
+ 	eccsteps = mtd->writesize/eccsize;
  
- 	if (flctl->hwecc) {
- 		if (mtd->writesize == 512) {
--			chip->ecc.layout = &flctl_4secc_oob_16;
-+			mtd_set_ooblayout(mtd, &flctl_4secc_oob_smallpage_ops);
- 			chip->badblock_pattern = &flctl_4secc_smallpage;
- 		} else {
--			chip->ecc.layout = &flctl_4secc_oob_64;
-+			mtd_set_ooblayout(mtd, &flctl_4secc_oob_largepage_ops);
- 			chip->badblock_pattern = &flctl_4secc_largepage;
- 		}
+-	/*
+-	 * Rely on the default ecclayout to ooblayout wrapper provided by MTD
+-	 * core if ecc.layout is not NULL.
+-	 * FIXME: this should be removed when all callers have moved to the
+-	 * mtd_ooblayout_ops approach.
+-	 */
+-	if (nand->ecc.layout)
+-		mtd_set_ecclayout(mtd, nand->ecc.layout);
+-
+ 	/* if no ecc placement scheme was provided, build one */
+ 	if (!mtd->ooblayout) {
  
+diff --git a/include/linux/mtd/nand.h b/include/linux/mtd/nand.h
+index 82a005a..fdcc2b8 100644
+--- a/include/linux/mtd/nand.h
++++ b/include/linux/mtd/nand.h
+@@ -466,7 +466,6 @@ struct nand_hw_control {
+  * @prepad:	padding information for syndrome based ECC generators
+  * @postpad:	padding information for syndrome based ECC generators
+  * @options:	ECC specific options (see NAND_ECC_XXX flags defined above)
+- * @layout:	ECC layout control struct pointer
+  * @priv:	pointer to private ECC control data
+  * @hwctl:	function to control hardware ECC generator. Must only
+  *		be provided if an hardware ECC is available
+@@ -516,7 +515,6 @@ struct nand_ecc_ctrl {
+ 	int prepad;
+ 	int postpad;
+ 	unsigned int options;
+-	struct nand_ecclayout	*layout;
+ 	void *priv;
+ 	void (*hwctl)(struct mtd_info *mtd, int mode);
+ 	int (*calculate)(struct mtd_info *mtd, const uint8_t *dat,
 -- 
 2.1.4
