@@ -1,87 +1,164 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 02/10] drm/exynos: ipp: fix incorrect format specifiers in
- debug messages
-Date: Thu, 04 Feb 2016 11:45:37 +0900
-Message-ID: <56B2BB51.5030504@samsung.com>
-References: <1454503374-16382-1-git-send-email-m.szyprowski@samsung.com>
- <1454503374-16382-3-git-send-email-m.szyprowski@samsung.com>
- <56B2B4BC.1040708@samsung.com> <56B2B8A8.3090409@samsung.com>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH v2 00/51] mtd: rework ECC layout definition
+Date: Thu,  4 Feb 2016 11:06:23 +0100
+Message-ID: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
+Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:31144 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755683AbcBDCpi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Feb 2016 21:45:38 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O20006HZ5004Z60@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Feb 2016 02:45:36 +0000 (GMT)
-In-reply-to: <56B2B8A8.3090409@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBVGFZS2QKGQEUIICLXI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 04.02.2016 11:34, Inki Dae wrote:
->=20
->=20
-> 2016=EB=85=84 02=EC=9B=94 04=EC=9D=BC 11:17=EC=97=90 Krzysztof Kozlow=
-ski =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->> On 03.02.2016 21:42, Marek Szyprowski wrote:
->>> Drivers should use %p for printing pointers instead of hardcoding t=
-hem
->>> as hexadecimal integers. This patch fixes compilation warnings on 6=
-4bit
->>> architectures.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  2 +-
->>>  drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  2 +-
->>>  drivers/gpu/drm/exynos/exynos_drm_ipp.c     | 32 ++++++++++++++---=
-------------
->>>  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  2 +-
->>>  4 files changed, 19 insertions(+), 19 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu=
-/drm/exynos/exynos_drm_fimc.c
->>> index c747824..8a4f4a0 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
->>> @@ -1723,7 +1723,7 @@ static int fimc_probe(struct platform_device =
-*pdev)
->>>  		goto err_put_clk;
->>>  	}
->>> =20
->>> -	DRM_DEBUG_KMS("id[%d]ippdrv[0x%x]\n", ctx->id, (int)ippdrv);
->>> +	DRM_DEBUG_KMS("id[%d]ippdrv[%p]\n", ctx->id, ippdrv);
->>
->> I don't oppose the patch itself but I have different concern. First =
--
->> probably you meant %pK because this is a writeable structure with
->> function pointers.
->> Second - why the ippdrv has to be printed? Is it useful for debuggin=
-g?
->=20
-> Marek fixed just compilation warnings on ARM64 so yes it wouldn't nee=
-d to print out ippdrv address but as other cleanup patch.
+Hello,
 
-Another patch?
+This patchset aims at getting rid of the nand_ecclayout limitations.
+struct nand_ecclayout is defining fixed eccpos and oobfree arrays which
+can only be increased by modifying the MTD_MAX_ECCPOS_ENTRIES_LARGE and
+MTD_MAX_OOBFREE_ENTRIES_LARGE macros.
+This approach forces us to modify the macro values each time we add a
+new NAND chip with a bigger OOB area, and increasing these arrays also
+penalize all platforms, even those who only support small NAND devices
+(with small OOB area).
 
-There is no point in a flow like this:
-1. Make a patch which changes %x to %p.
-2. Make a second patch right after the first one which changes %p to %p=
-K.
-3. Optionally make a third patch removing %pK entirely.
+The idea to overcome this limitation, is to define the ECC/OOB layout
+by the mean of two functions: ->ecc() and ->free(), which will
+basically return the same information has those stored in the
+nand_ecclayout struct.
 
-There are two issues here (and in other places like in patch 3/10) -
-64bit compilation warnings and security related issues. Properly fixing
-security related issues would fix in the same time the compilation
-warnings...
+Another advantage of this solution is that ECC layouts are usually
+following a repetitive pattern (i.e. leave X bytes free and put Y bytes
+of ECC per ECC chunk), which allows one to implement the ->ecc()
+and ->free() functions with a simple logic that can be applied
+to any size of OOB.
 
-Best regards,
-Krzysztof
+Patches 1 to 4 are just cleanups or trivial fixes that can be taken
+independently.
+
+Also note that the last two commits are removing the nand_ecclayout
+definition, thus preventing any new driver to use this structure.
+Of course, this step can be delayed if some of the previous patches
+are not accepted.
+
+Best Regards,
+
+Boris
+
+Changes since v1:
+- unified the way of defining ECC and free bytes
+- fixed a few bugs in some ->ecc()/->free() implementations
+- added new helpers to ease ECC and free bytes manipulation
+- separated driver changes in different commits to ease review
+- dropped already applied patches
+
+Boris Brezillon (51):
+  mtd: kill the ecclayout->oobavail field
+  mtd: create an mtd_oobavail() helper and make use of it
+  mtd: mtdswap: remove useless if (!mtd->ecclayout) test
+  mtd: nand: simplify nand_bch_init() usage
+  mtd: add mtd_ooblayout_xxx() helper functions
+  mtd: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: nand: core: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: nand: atmel: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: nand: fsl_ifc: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: nand: gpmi: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: nand: lpc32xx: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: nand: omap2: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: onenand: use mtd_ooblayout_xxx() helpers where appropriate
+  mtd: add mtd_set_ecclayout() helper function
+  mtd: use mtd_set_ecclayout() where appropriate
+  mtd: nand: use mtd_set_ecclayout() where appropriate
+  mtd: onenand: use mtd_set_ecclayout() where appropriate
+  mtd: docg3: use mtd_set_ecclayout() where appropriate
+  mtd: create an mtd_ooblayout_ops struct to ease ECC layout definition
+  mtd: docg3: switch to mtd_ooblayout_ops
+  mtd: nand: implement the default mtd_ooblayout_ops
+  mtd: nand: bch: switch to mtd_ooblayout_ops
+  mtd: nand: sharpsl: switch to mtd_ooblayout_ops
+  mtd: nand: jz4740: switch to mtd_ooblayout_ops
+  mtd: nand: atmel: switch to mtd_ooblayout_ops
+  mtd: nand: bf5xx: switch to mtd_ooblayout_ops
+  mtd: nand: brcm: switch to mtd_ooblayout_ops
+  mtd: nand: cafe: switch to mtd_ooblayout_ops
+  mtd: nand: davinci: switch to mtd_ooblayout_ops
+  mtd: nand: denali: switch to mtd_ooblayout_ops
+  mtd: nand: diskonchip: switch to mtd_ooblayout_ops
+  mtd: nand: docg4: switch to mtd_ooblayout_ops
+  mtd: nand: fsl_elbc: switch to mtd_ooblayout_ops
+  mtd: nand: fsl_ifc: switch to mtd_ooblayout_ops
+  mtd: nand: fsmc: switch to mtd_ooblayout_ops
+  mtd: nand: gpmi: switch to mtd_ooblayout_ops
+  mtd: nand: hisi504: switch to mtd_ooblayout_ops
+  mtd: nand: jz4780: switch to mtd_ooblayout_ops
+  mtd: nand: lpc32xx: switch to mtd_ooblayout_ops
+  mtd: nand: mxc: switch to mtd_ooblayout_ops
+  mtd: nand: omap2: switch to mtd_ooblayout_ops
+  mtd: nand: pxa3xx: switch to mtd_ooblayout_ops
+  mtd: nand: s3c2410: switch to mtd_ooblayout_ops
+  mtd: nand: sh_flctl: switch to mtd_ooblayout_ops
+  mtd: nand: sm_common: switch to mtd_ooblayout_ops
+  mtd: nand: sunxi: switch to mtd_ooblayout_ops
+  mtd: nand: vf610: switch to mtd_ooblayout_ops
+  mtd: onenand: switch to mtd_ooblayout_ops
+  staging: mt29f_spinand: switch to mtd_ooblayout_ops
+  mtd: nand: kill the ecc->layout field
+  mtd: kill the nand_ecclayout struct
+
+ arch/arm/mach-pxa/spitz.c                       |  55 +++-
+ arch/mips/include/asm/mach-jz4740/jz4740_nand.h |   2 +-
+ arch/mips/jz4740/board-qi_lb60.c                |  87 +++---
+ drivers/mtd/devices/docg3.c                     |  43 ++-
+ drivers/mtd/mtdchar.c                           | 123 ++++++--
+ drivers/mtd/mtdconcat.c                         |   2 +-
+ drivers/mtd/mtdcore.c                           | 358 ++++++++++++++++++++++++
+ drivers/mtd/mtdpart.c                           |  28 +-
+ drivers/mtd/mtdswap.c                           |  24 +-
+ drivers/mtd/nand/atmel_nand.c                   | 120 ++++----
+ drivers/mtd/nand/bf5xx_nand.c                   |  51 ++--
+ drivers/mtd/nand/brcmnand/brcmnand.c            | 262 ++++++++++-------
+ drivers/mtd/nand/cafe_nand.c                    |  45 ++-
+ drivers/mtd/nand/davinci_nand.c                 | 118 +++-----
+ drivers/mtd/nand/denali.c                       |  51 +++-
+ drivers/mtd/nand/diskonchip.c                   |  38 ++-
+ drivers/mtd/nand/docg4.c                        |  34 ++-
+ drivers/mtd/nand/fsl_elbc_nand.c                |  83 +++---
+ drivers/mtd/nand/fsl_ifc_nand.c                 | 246 +++++-----------
+ drivers/mtd/nand/fsmc_nand.c                    | 300 ++++++--------------
+ drivers/mtd/nand/gpmi-nand/gpmi-nand.c          |  61 ++--
+ drivers/mtd/nand/hisi504_nand.c                 |  28 +-
+ drivers/mtd/nand/jz4740_nand.c                  |   2 +-
+ drivers/mtd/nand/jz4780_nand.c                  |  19 +-
+ drivers/mtd/nand/lpc32xx_mlc.c                  |  50 ++--
+ drivers/mtd/nand/lpc32xx_slc.c                  |  58 +++-
+ drivers/mtd/nand/mxc_nand.c                     | 212 +++++++-------
+ drivers/mtd/nand/nand_base.c                    | 334 +++++++++++-----------
+ drivers/mtd/nand/nand_bch.c                     |  46 ++-
+ drivers/mtd/nand/omap2.c                        | 241 +++++++++-------
+ drivers/mtd/nand/pxa3xx_nand.c                  | 104 ++++---
+ drivers/mtd/nand/s3c2410.c                      |  32 ++-
+ drivers/mtd/nand/sh_flctl.c                     |  87 ++++--
+ drivers/mtd/nand/sharpsl.c                      |   2 +-
+ drivers/mtd/nand/sm_common.c                    |  93 ++++--
+ drivers/mtd/nand/sunxi_nand.c                   | 114 ++++----
+ drivers/mtd/nand/vf610_nfc.c                    |  34 +--
+ drivers/mtd/onenand/onenand_base.c              | 254 ++++++++---------
+ drivers/mtd/tests/oobtest.c                     |  49 ++--
+ drivers/staging/mt29f_spinand/mt29f_spinand.c   |  49 ++--
+ fs/jffs2/wbuf.c                                 |   6 +-
+ include/linux/mtd/mtd.h                         |  69 ++++-
+ include/linux/mtd/nand.h                        |   5 +-
+ include/linux/mtd/nand_bch.h                    |   8 +-
+ include/linux/mtd/onenand.h                     |   2 -
+ include/linux/mtd/sharpsl.h                     |   2 +-
+ include/uapi/mtd/mtd-abi.h                      |   2 +-
+ 47 files changed, 2349 insertions(+), 1684 deletions(-)
+
+-- 
+2.1.4
