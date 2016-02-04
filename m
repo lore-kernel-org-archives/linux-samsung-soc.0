@@ -1,7 +1,7 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 30/51] mtd: nand: denali: switch to mtd_ooblayout_ops
-Date: Thu,  4 Feb 2016 11:06:53 +0100
-Message-ID: <1454580434-32078-31-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 28/51] mtd: nand: cafe: switch to mtd_ooblayout_ops
+Date: Thu,  4 Feb 2016 11:06:51 +0100
+Message-ID: <1454580434-32078-29-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
@@ -24,91 +24,82 @@ ECC/OOB layout to MTD users.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/nand/denali.c | 51 +++++++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 15 deletions(-)
+ drivers/mtd/nand/cafe_nand.c | 45 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 33 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mtd/nand/denali.c b/drivers/mtd/nand/denali.c
-index 30bf5f6..b832375 100644
---- a/drivers/mtd/nand/denali.c
-+++ b/drivers/mtd/nand/denali.c
-@@ -1374,13 +1374,42 @@ static void denali_hw_init(struct denali_nand_info *denali)
-  * correction
-  */
- #define ECC_8BITS	14
--static struct nand_ecclayout nand_8bit_oob = {
+diff --git a/drivers/mtd/nand/cafe_nand.c b/drivers/mtd/nand/cafe_nand.c
+index aa1a616..0935b7c 100644
+--- a/drivers/mtd/nand/cafe_nand.c
++++ b/drivers/mtd/nand/cafe_nand.c
+@@ -459,10 +459,38 @@ static int cafe_nand_read_page(struct mtd_info *mtd, struct nand_chip *chip,
+ 	return max_bitflips;
+ }
+ 
+-static struct nand_ecclayout cafe_oobinfo_2048 = {
 -	.eccbytes = 14,
--};
--
- #define ECC_15BITS	26
--static struct nand_ecclayout nand_15bit_oob = {
--	.eccbytes = 26,
-+
-+static int denali_ooblayout_ecc(struct mtd_info *mtd, int section,
-+				struct mtd_oob_region *oobregion)
+-	.eccpos = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
+-	.oobfree = {{14, 50}}
++static int cafe_ooblayout_ecc(struct mtd_info *mtd, int section,
++			      struct mtd_oob_region *oobregion)
 +{
-+	struct denali_nand_info *denali = mtd_to_denali(mtd);
 +	struct nand_chip *chip = mtd_to_nand(mtd);
 +
 +	if (section)
 +		return -ERANGE;
 +
-+	oobregion->offset = denali->bbtskipbytes;
-+	oobregion->length = chip->ecc.bytes * chip->ecc.steps;
++	oobregion->offset = 0;
++	oobregion->length = chip->ecc.steps * chip->ecc.bytes;
 +
 +	return 0;
 +}
 +
-+static int denali_ooblayout_free(struct mtd_info *mtd, int section,
-+				 struct mtd_oob_region *oobregion)
++static int cafe_ooblayout_free(struct mtd_info *mtd, int section,
++			       struct mtd_oob_region *oobregion)
 +{
-+	struct denali_nand_info *denali = mtd_to_denali(mtd);
 +	struct nand_chip *chip = mtd_to_nand(mtd);
-+	int eccbytes = chip->ecc.bytes * chip->ecc.steps;
++	int eccbytes = chip->ecc.steps * chip->ecc.bytes;
 +
 +	if (section)
 +		return -ERANGE;
 +
-+	oobregion->offset = eccbytes + denali->bbtskipbytes;
-+	oobregion->length = mtd->oobsize - oobregion->offset;
++	oobregion->offset = eccbytes;
++	oobregion->length = mtd->oobsize - eccbytes;
 +
 +	return 0;
 +}
 +
-+static const struct mtd_ooblayout_ops denali_ooblayout_ops = {
-+	.ecc = denali_ooblayout_ecc,
-+	.free = denali_ooblayout_free,
++static const struct mtd_ooblayout_ops cafe_ooblayout_ops = {
++	.ecc = cafe_ooblayout_ecc,
++	.free = cafe_ooblayout_free,
  };
  
- static uint8_t bbt_pattern[] = {'B', 'b', 't', '0' };
-@@ -1561,7 +1590,6 @@ int denali_init(struct denali_nand_info *denali)
- 			ECC_SECTOR_SIZE)))) {
- 		/* if MLC OOB size is large enough, use 15bit ECC*/
- 		denali->nand.ecc.strength = 15;
--		denali->nand.ecc.layout = &nand_15bit_oob;
- 		denali->nand.ecc.bytes = ECC_15BITS;
- 		iowrite32(15, denali->flash_reg + ECC_CORRECTION);
- 	} else if (mtd->oobsize < (denali->bbtskipbytes +
-@@ -1571,20 +1599,13 @@ int denali_init(struct denali_nand_info *denali)
- 		goto failed_req_irq;
+ /* Ick. The BBT code really ought to be able to work this bit out
+@@ -494,12 +522,6 @@ static struct nand_bbt_descr cafe_bbt_mirror_descr_2048 = {
+ 	.pattern = cafe_mirror_pattern_2048
+ };
+ 
+-static struct nand_ecclayout cafe_oobinfo_512 = {
+-	.eccbytes = 14,
+-	.eccpos = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
+-	.oobfree = {{14, 2}}
+-};
+-
+ static struct nand_bbt_descr cafe_bbt_main_descr_512 = {
+ 	.options = NAND_BBT_LASTBLOCK | NAND_BBT_CREATE | NAND_BBT_WRITE
+ 		| NAND_BBT_2BIT | NAND_BBT_VERSION,
+@@ -743,12 +765,11 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 		cafe->ctl2 |= 1<<29; /* 2KiB page size */
+ 
+ 	/* Set up ECC according to the type of chip we found */
++	mtd_set_ooblayout(mtd, &cafe_ooblayout_ops);
+ 	if (mtd->writesize == 2048) {
+-		cafe->nand.ecc.layout = &cafe_oobinfo_2048;
+ 		cafe->nand.bbt_td = &cafe_bbt_main_descr_2048;
+ 		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_2048;
+ 	} else if (mtd->writesize == 512) {
+-		cafe->nand.ecc.layout = &cafe_oobinfo_512;
+ 		cafe->nand.bbt_td = &cafe_bbt_main_descr_512;
+ 		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_512;
  	} else {
- 		denali->nand.ecc.strength = 8;
--		denali->nand.ecc.layout = &nand_8bit_oob;
- 		denali->nand.ecc.bytes = ECC_8BITS;
- 		iowrite32(8, denali->flash_reg + ECC_CORRECTION);
- 	}
- 
-+	mtd_set_ooblayout(mtd, &denali_ooblayout_ops);
- 	denali->nand.ecc.bytes *= denali->devnum;
- 	denali->nand.ecc.strength *= denali->devnum;
--	denali->nand.ecc.layout->eccbytes *=
--		mtd->writesize / ECC_SECTOR_SIZE;
--	denali->nand.ecc.layout->oobfree[0].offset =
--		denali->bbtskipbytes + denali->nand.ecc.layout->eccbytes;
--	denali->nand.ecc.layout->oobfree[0].length =
--		mtd->oobsize - denali->nand.ecc.layout->eccbytes -
--		denali->bbtskipbytes;
- 
- 	/*
- 	 * Let driver know the total blocks number and how many blocks
 -- 
 2.1.4
