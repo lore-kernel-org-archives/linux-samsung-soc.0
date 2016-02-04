@@ -1,12 +1,13 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 14/51] mtd: add mtd_set_ecclayout() helper function
-Date: Thu,  4 Feb 2016 11:06:37 +0100
-Message-ID: <1454580434-32078-15-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 11/51] mtd: nand: lpc32xx: use
+ mtd_ooblayout_xxx() helpers where appropriate
+Date: Thu,  4 Feb 2016 11:06:34 +0100
+Message-ID: <1454580434-32078-12-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBYOFZS2QKGQEHZFFRIY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBXGFZS2QKGQEAUYCT6Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -19,31 +20,64 @@ To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norri
 Cc: Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add an mtd_set_ecclayout() helper function to avoid direct accesses to the
-mtd->ecclayout field. This will ease future reworks of ECC layout
-definition.
+The mtd_ooblayout_xxx() helper functions have been added to avoid direct
+accesses to the ecclayout field, and thus ease for future reworks.
+Use these helpers in all places where the oobfree[] and eccpos[] arrays
+where directly accessed.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- include/linux/mtd/mtd.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mtd/nand/lpc32xx_slc.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-index b141f26..6250dd8 100644
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@ -286,6 +286,12 @@ int mtd_ooblayout_set_databytes(struct mtd_info *mtd, const u8 *databuf,
- int mtd_ooblayout_count_freebytes(struct mtd_info *mtd);
- int mtd_ooblayout_count_eccbytes(struct mtd_info *mtd);
- 
-+static inline void mtd_set_ecclayout(struct mtd_info *mtd,
-+				     struct nand_ecclayout *ecclayout)
-+{
-+	mtd->ecclayout = ecclayout;
-+}
-+
- static inline void mtd_set_of_node(struct mtd_info *mtd,
- 				   struct device_node *np)
+diff --git a/drivers/mtd/nand/lpc32xx_slc.c b/drivers/mtd/nand/lpc32xx_slc.c
+index 3b8f373..10cf8e62 100644
+--- a/drivers/mtd/nand/lpc32xx_slc.c
++++ b/drivers/mtd/nand/lpc32xx_slc.c
+@@ -604,7 +604,8 @@ static int lpc32xx_nand_read_page_syndrome(struct mtd_info *mtd,
+ 					   int oob_required, int page)
  {
+ 	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
+-	int stat, i, status;
++	struct mtd_oob_region oobregion = { };
++	int stat, i, status, error;
+ 	uint8_t *oobecc, tmpecc[LPC32XX_ECC_SAVE_SIZE];
+ 
+ 	/* Issue read command */
+@@ -620,7 +621,11 @@ static int lpc32xx_nand_read_page_syndrome(struct mtd_info *mtd,
+ 	lpc32xx_slc_ecc_copy(tmpecc, (uint32_t *) host->ecc_buf, chip->ecc.steps);
+ 
+ 	/* Pointer to ECC data retrieved from NAND spare area */
+-	oobecc = chip->oob_poi + chip->ecc.layout->eccpos[0];
++	error = mtd_ooblayout_ecc(mtd, 0, &oobregion);
++	if (error)
++		return error;
++
++	oobecc = chip->oob_poi + oobregion.offset;
+ 
+ 	for (i = 0; i < chip->ecc.steps; i++) {
+ 		stat = chip->ecc.correct(mtd, buf, oobecc,
+@@ -666,7 +671,8 @@ static int lpc32xx_nand_write_page_syndrome(struct mtd_info *mtd,
+ 					    int oob_required, int page)
+ {
+ 	struct lpc32xx_nand_host *host = nand_get_controller_data(chip);
+-	uint8_t *pb = chip->oob_poi + chip->ecc.layout->eccpos[0];
++	struct mtd_oob_region oobregion = { };
++	uint8_t *pb;
+ 	int error;
+ 
+ 	/* Write data, calculate ECC on outbound data */
+@@ -678,6 +684,11 @@ static int lpc32xx_nand_write_page_syndrome(struct mtd_info *mtd,
+ 	 * The calculated ECC needs some manual work done to it before
+ 	 * committing it to NAND. Process the calculated ECC and place
+ 	 * the resultant values directly into the OOB buffer. */
++	error = mtd_ooblayout_ecc(mtd, 0, &oobregion);
++	if (error)
++		return error;
++
++	pb = chip->oob_poi + oobregion.offset;
+ 	lpc32xx_slc_ecc_copy(pb, (uint32_t *)host->ecc_buf, chip->ecc.steps);
+ 
+ 	/* Write ECC data to device */
 -- 
 2.1.4
