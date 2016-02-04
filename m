@@ -1,12 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 37/51] mtd: nand: hisi504: switch to mtd_ooblayout_ops
-Date: Thu,  4 Feb 2016 11:07:00 +0100
-Message-ID: <1454580434-32078-38-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 45/51] mtd: nand: sm_common: switch to mtd_ooblayout_ops
+Date: Thu,  4 Feb 2016 11:07:08 +0100
+Message-ID: <1454580434-32078-46-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBBOGZS2QKGQEMVJA53Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBF6GZS2QKGQEQOJ2J4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -24,53 +24,130 @@ ECC/OOB layout to MTD users.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/nand/hisi504_nand.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+ drivers/mtd/nand/sm_common.c | 93 ++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 77 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/mtd/nand/hisi504_nand.c b/drivers/mtd/nand/hisi504_nand.c
-index 96502b6..a2a8eb0 100644
---- a/drivers/mtd/nand/hisi504_nand.c
-+++ b/drivers/mtd/nand/hisi504_nand.c
-@@ -631,8 +631,29 @@ static void hisi_nfc_host_init(struct hinfc_host *host)
- 	hinfc_write(host, HINFC504_INTEN_DMA, HINFC504_INTEN);
- }
+diff --git a/drivers/mtd/nand/sm_common.c b/drivers/mtd/nand/sm_common.c
+index c514740..355ca12 100644
+--- a/drivers/mtd/nand/sm_common.c
++++ b/drivers/mtd/nand/sm_common.c
+@@ -12,14 +12,47 @@
+ #include <linux/sizes.h>
+ #include "sm_common.h"
  
--static struct nand_ecclayout nand_ecc_2K_16bits = {
--	.oobfree = { {2, 6} },
-+static int hisi_ooblayout_ecc(struct mtd_info *mtd, int section,
-+			      struct mtd_oob_region *oobregion)
+-static struct nand_ecclayout nand_oob_sm = {
+-	.eccbytes = 6,
+-	.eccpos = {8, 9, 10, 13, 14, 15},
+-	.oobfree = {
+-		{.offset = 0 , .length = 4}, /* reserved */
+-		{.offset = 6 , .length = 2}, /* LBA1 */
+-		{.offset = 11, .length = 2}  /* LBA2 */
++static int oob_sm_ooblayout_ecc(struct mtd_info *mtd, int section,
++				struct mtd_oob_region *oobregion)
 +{
-+	/* FIXME: add real eccpos definition. */
-+	return -ENOTSUPP;
-+}
-+
-+static int hisi_ooblayout_free(struct mtd_info *mtd, int section,
-+			       struct mtd_oob_region *oobregion)
-+{
-+	/* FIXME: add full oobfree definition. */
-+	if (section)
++	if (section > 1)
 +		return -ERANGE;
 +
-+	oobregion->offset = 2;
-+	oobregion->length = 6;
++	oobregion->length = 3;
++	oobregion->offset = ((section + 1) * 8) - 3;
 +
 +	return 0;
 +}
 +
-+static const struct mtd_ooblayout_ops hisi_ooblayout_ops = {
-+	.ecc = hisi_ooblayout_ecc,
-+	.free = hisi_ooblayout_free,
++static int oob_sm_ooblayout_free(struct mtd_info *mtd, int section,
++				 struct mtd_oob_region *oobregion)
++{
++	switch (section) {
++	case 0:
++		/* reserved */
++		oobregion->offset = 0;
++		oobregion->length = 4;
++		break;
++	case 1:
++		/* LBA1 */
++		oobregion->offset = 6;
++		oobregion->length = 2;
++		break;
++	case 2:
++		/* LBA2 */
++		oobregion->offset = 11;
++		oobregion->length = 2;
++		break;
++	default:
++		return -ERANGE;
+ 	}
++
++	return 0;
++}
++
++const struct mtd_ooblayout_ops oob_sm_ops = {
++	.ecc = oob_sm_ooblayout_ecc,
++	.free = oob_sm_ooblayout_free,
  };
  
- static int hisi_nfc_ecc_probe(struct hinfc_host *host)
-@@ -668,7 +689,7 @@ static int hisi_nfc_ecc_probe(struct hinfc_host *host)
- 	case 16:
- 		ecc_bits = 6;
- 		if (mtd->writesize == 2048)
--			chip->ecc.layout = &nand_ecc_2K_16bits;
-+			mtd_set_ooblayout(mtd, &hisi_ooblayout_ops);
+ /* NOTE: This layout is is not compatabable with SmartMedia, */
+@@ -28,15 +61,43 @@ static struct nand_ecclayout nand_oob_sm = {
+ /* If you use smftl, it will bypass this and work correctly */
+ /* If you not, then you break SmartMedia compliance anyway */
  
- 		/* TODO: add more page size support */
- 		break;
+-static struct nand_ecclayout nand_oob_sm_small = {
+-	.eccbytes = 3,
+-	.eccpos = {0, 1, 2},
+-	.oobfree = {
+-		{.offset = 3 , .length = 2}, /* reserved */
+-		{.offset = 6 , .length = 2}, /* LBA1 */
++static int oob_sm_small_ooblayout_ecc(struct mtd_info *mtd, int section,
++				      struct mtd_oob_region *oobregion)
++{
++	if (section)
++		return -ERANGE;
++
++	oobregion->length = 3;
++	oobregion->offset = 0;
++
++	return 0;
++}
++
++static int oob_sm_small_ooblayout_free(struct mtd_info *mtd, int section,
++				       struct mtd_oob_region *oobregion)
++{
++	switch (section) {
++	case 0:
++		/* reserved */
++		oobregion->offset = 3;
++		oobregion->length = 2;
++		break;
++	case 1:
++		/* LBA1 */
++		oobregion->offset = 6;
++		oobregion->length = 2;
++		break;
++	default:
++		return -ERANGE;
+ 	}
+-};
+ 
++	return 0;
++}
++
++const struct mtd_ooblayout_ops oob_sm_small_ops = {
++	.ecc = oob_sm_small_ooblayout_ecc,
++	.free = oob_sm_small_ooblayout_free,
++};
+ 
+ static int sm_block_markbad(struct mtd_info *mtd, loff_t ofs)
+ {
+@@ -121,9 +182,9 @@ int sm_register_device(struct mtd_info *mtd, int smartmedia)
+ 
+ 	/* ECC layout */
+ 	if (mtd->writesize == SM_SECTOR_SIZE)
+-		chip->ecc.layout = &nand_oob_sm;
++		mtd_set_ooblayout(mtd, &oob_sm_ops);
+ 	else if (mtd->writesize == SM_SMALL_PAGE)
+-		chip->ecc.layout = &nand_oob_sm_small;
++		mtd_set_ooblayout(mtd, &oob_sm_small_ops);
+ 	else
+ 		return -ENODEV;
+ 
 -- 
 2.1.4
