@@ -1,12 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 28/51] mtd: nand: cafe: switch to mtd_ooblayout_ops
-Date: Thu,  4 Feb 2016 11:06:51 +0100
-Message-ID: <1454580434-32078-29-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 43/51] mtd: nand: s3c2410: switch to mtd_ooblayout_ops
+Date: Thu,  4 Feb 2016 11:07:06 +0100
+Message-ID: <1454580434-32078-44-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBB76FZS2QKGQELF23OVQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBEOGZS2QKGQEXD5C3RA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -24,82 +24,59 @@ ECC/OOB layout to MTD users.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/nand/cafe_nand.c | 45 ++++++++++++++++++++++++++++++++------------
- 1 file changed, 33 insertions(+), 12 deletions(-)
+ drivers/mtd/nand/s3c2410.c | 32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/nand/cafe_nand.c b/drivers/mtd/nand/cafe_nand.c
-index aa1a616..0935b7c 100644
---- a/drivers/mtd/nand/cafe_nand.c
-+++ b/drivers/mtd/nand/cafe_nand.c
-@@ -459,10 +459,38 @@ static int cafe_nand_read_page(struct mtd_info *mtd, struct nand_chip *chip,
- 	return max_bitflips;
- }
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index 9c9397b..efa339b 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -84,11 +84,33 @@
  
--static struct nand_ecclayout cafe_oobinfo_2048 = {
--	.eccbytes = 14,
--	.eccpos = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
--	.oobfree = {{14, 50}}
-+static int cafe_ooblayout_ecc(struct mtd_info *mtd, int section,
-+			      struct mtd_oob_region *oobregion)
+ /* new oob placement block for use with hardware ecc generation
+  */
++static int s3c2410_ooblayout_ecc(struct mtd_info *mtd, int section,
++				 struct mtd_oov_region *oobregion)
 +{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
 +	if (section)
 +		return -ERANGE;
 +
 +	oobregion->offset = 0;
-+	oobregion->length = chip->ecc.steps * chip->ecc.bytes;
++	oobregion->length = 3;
 +
 +	return 0;
 +}
 +
-+static int cafe_ooblayout_free(struct mtd_info *mtd, int section,
-+			       struct mtd_oob_region *oobregion)
++static int s3c2410_ooblayout_free(struct mtd_info *mtd, int section,
++				  struct mtd_oov_region *oobregion)
 +{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+	int eccbytes = chip->ecc.steps * chip->ecc.bytes;
-+
 +	if (section)
 +		return -ERANGE;
 +
-+	oobregion->offset = eccbytes;
-+	oobregion->length = mtd->oobsize - eccbytes;
++	oobregion->offset = 8;
++	oobregion->length = 8;
 +
 +	return 0;
 +}
-+
-+static const struct mtd_ooblayout_ops cafe_ooblayout_ops = {
-+	.ecc = cafe_ooblayout_ecc,
-+	.free = cafe_ooblayout_free,
+ 
+-static struct nand_ecclayout nand_hw_eccoob = {
+-	.eccbytes = 3,
+-	.eccpos = {0, 1, 2},
+-	.oobfree = {{8, 8}}
++const struct mtd_ooblayout_ops s3c2410_ooblayout_ops = {
++	.eccpos = s3c2410_eccpos,
++	.oobfree = s3c2410_oobfree,
  };
  
- /* Ick. The BBT code really ought to be able to work this bit out
-@@ -494,12 +522,6 @@ static struct nand_bbt_descr cafe_bbt_mirror_descr_2048 = {
- 	.pattern = cafe_mirror_pattern_2048
- };
- 
--static struct nand_ecclayout cafe_oobinfo_512 = {
--	.eccbytes = 14,
--	.eccpos = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
--	.oobfree = {{14, 2}}
--};
--
- static struct nand_bbt_descr cafe_bbt_main_descr_512 = {
- 	.options = NAND_BBT_LASTBLOCK | NAND_BBT_CREATE | NAND_BBT_WRITE
- 		| NAND_BBT_2BIT | NAND_BBT_VERSION,
-@@ -743,12 +765,11 @@ static int cafe_nand_probe(struct pci_dev *pdev,
- 		cafe->ctl2 |= 1<<29; /* 2KiB page size */
- 
- 	/* Set up ECC according to the type of chip we found */
-+	mtd_set_ooblayout(mtd, &cafe_ooblayout_ops);
- 	if (mtd->writesize == 2048) {
--		cafe->nand.ecc.layout = &cafe_oobinfo_2048;
- 		cafe->nand.bbt_td = &cafe_bbt_main_descr_2048;
- 		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_2048;
- 	} else if (mtd->writesize == 512) {
--		cafe->nand.ecc.layout = &cafe_oobinfo_512;
- 		cafe->nand.bbt_td = &cafe_bbt_main_descr_512;
- 		cafe->nand.bbt_md = &cafe_bbt_mirror_descr_512;
+ /* controller and mtd information */
+@@ -919,7 +941,7 @@ static void s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
  	} else {
+ 		chip->ecc.size	    = 512;
+ 		chip->ecc.bytes	    = 3;
+-		chip->ecc.layout    = &nand_hw_eccoob;
++		mtd_set_ooblayout(nand_to_mtd(chip), &s3c2410_ooblayout_ops);
+ 	}
+ }
+ 
 -- 
 2.1.4
