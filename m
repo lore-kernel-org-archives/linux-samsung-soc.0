@@ -1,12 +1,12 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 38/51] mtd: nand: jz4780: switch to mtd_ooblayout_ops
-Date: Thu,  4 Feb 2016 11:07:01 +0100
-Message-ID: <1454580434-32078-39-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 31/51] mtd: nand: diskonchip: switch to mtd_ooblayout_ops
+Date: Thu,  4 Feb 2016 11:06:54 +0100
+Message-ID: <1454580434-32078-32-git-send-email-boris.brezillon@free-electrons.com>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBB6GZS2QKGQEOGQ2STY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBAOGZS2QKGQEMQ2GWPQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -24,59 +24,71 @@ ECC/OOB layout to MTD users.
 
 Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/mtd/nand/jz4780_nand.c | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ drivers/mtd/nand/diskonchip.c | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/nand/jz4780_nand.c b/drivers/mtd/nand/jz4780_nand.c
-index e1c016c..b86a579 100644
---- a/drivers/mtd/nand/jz4780_nand.c
-+++ b/drivers/mtd/nand/jz4780_nand.c
-@@ -56,8 +56,6 @@ struct jz4780_nand_chip {
- 	struct nand_chip chip;
- 	struct list_head chip_list;
+diff --git a/drivers/mtd/nand/diskonchip.c b/drivers/mtd/nand/diskonchip.c
+index f170f3c..9fb63b4 100644
+--- a/drivers/mtd/nand/diskonchip.c
++++ b/drivers/mtd/nand/diskonchip.c
+@@ -960,10 +960,38 @@ static int doc200x_correct_data(struct mtd_info *mtd, u_char *dat,
+  * safer.  The only problem with it is that any code that parses oobfree must
+  * be able to handle out-of-order segments.
+  */
+-static struct nand_ecclayout doc200x_oobinfo = {
+-	.eccbytes = 6,
+-	.eccpos = {0, 1, 2, 3, 4, 5},
+-	.oobfree = {{8, 8}, {6, 2}}
++static int doc200x_ooblayout_ecc(struct mtd_info *mtd, int section,
++				 struct mtd_oob_region *oobregion)
++{
++	if (section)
++		return -ERANGE;
++
++	oobregion->offset = 0;
++	oobregion->length = 6;
++
++	return 0;
++}
++
++static int doc200x_ooblayout_free(struct mtd_info *mtd, int section,
++				  struct mtd_oob_region *oobregion)
++{
++	if (section > 1)
++		return -ERANGE;
++
++	if (!section) {
++		oobregion->offset = 8;
++		oobregion->length = 8;
++	} else {
++		oobregion->offset = 6;
++		oobregion->length = 2;
++	}
++
++	return 0;
++}
++
++static const struct mtd_ooblayout_ops doc200x_ooblayout_ops = {
++	.ecc = doc200x_ooblayout_ecc,
++	.free = doc200x_ooblayout_free,
+ };
  
--	struct nand_ecclayout ecclayout;
--
- 	struct gpio_desc *busy_gpio;
- 	struct gpio_desc *wp_gpio;
- 	unsigned int reading: 1;
-@@ -165,8 +163,7 @@ static int jz4780_nand_init_ecc(struct jz4780_nand_chip *nand, struct device *de
- 	struct nand_chip *chip = &nand->chip;
- 	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct jz4780_nand_controller *nfc = to_jz4780_nand_controller(chip->controller);
--	struct nand_ecclayout *layout = &nand->ecclayout;
--	u32 start, i;
-+	int eccbytes;
+ /* Find the (I)NFTL Media Header, and optionally also the mirror media header.
+@@ -1537,6 +1565,7 @@ static int __init doc_probe(unsigned long physadr)
+ 	nand->bbt_md		= nand->bbt_td + 1;
  
- 	chip->ecc.bytes = fls((1 + 8) * chip->ecc.size)	*
- 				(chip->ecc.strength / 8);
-@@ -201,23 +198,17 @@ static int jz4780_nand_init_ecc(struct jz4780_nand_chip *nand, struct device *de
- 		return 0;
+ 	mtd->owner		= THIS_MODULE;
++	mtd_set_ooblayout(mtd, &doc200x_ooblayout_ops);
  
- 	/* Generate ECC layout. ECC codes are right aligned in the OOB area. */
--	layout->eccbytes = mtd->writesize / chip->ecc.size * chip->ecc.bytes;
-+	eccbytes = mtd->writesize / chip->ecc.size * chip->ecc.bytes;
+ 	nand_set_controller_data(nand, doc);
+ 	nand->select_chip	= doc200x_select_chip;
+@@ -1548,7 +1577,6 @@ static int __init doc_probe(unsigned long physadr)
+ 	nand->ecc.calculate	= doc200x_calculate_ecc;
+ 	nand->ecc.correct	= doc200x_correct_data;
  
--	if (layout->eccbytes > mtd->oobsize - 2) {
-+	if (eccbytes > mtd->oobsize - 2) {
- 		dev_err(dev,
- 			"invalid ECC config: required %d ECC bytes, but only %d are available",
--			layout->eccbytes, mtd->oobsize - 2);
-+			eccbytes, mtd->oobsize - 2);
- 		return -EINVAL;
- 	}
- 
--	start = mtd->oobsize - layout->eccbytes;
--	for (i = 0; i < layout->eccbytes; i++)
--		layout->eccpos[i] = start + i;
--
--	layout->oobfree[0].offset = 2;
--	layout->oobfree[0].length = mtd->oobsize - layout->eccbytes - 2;
-+	mtd->ooblayout = &nand_ooblayout_lp_ops;
- 
--	chip->ecc.layout = layout;
- 	return 0;
- }
- 
+-	nand->ecc.layout	= &doc200x_oobinfo;
+ 	nand->ecc.mode		= NAND_ECC_HW_SYNDROME;
+ 	nand->ecc.size		= 512;
+ 	nand->ecc.bytes		= 6;
 -- 
 2.1.4
