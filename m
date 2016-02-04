@@ -1,238 +1,126 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 51/51] mtd: kill the nand_ecclayout struct
-Date: Thu,  4 Feb 2016 11:07:14 +0100
-Message-ID: <1454580434-32078-52-git-send-email-boris.brezillon@free-electrons.com>
-References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Josh Wu <josh.wu@atmel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Stefan Agner <stefan@agner.ch>, Kyungmin Park <kyungmin.park@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, punnaiah choudary kalluri <punnaia@xilinx.com>, Priit Laes <plaes@plaes.org>, Boris Brezillon <boris.brezillon@free-electrons.com>
+From: Sriram V <vshrirama@gmail.com>
+Subject: Re: domain off
+Date: Thu, 4 Feb 2016 17:51:46 +0530
+Message-ID: <CAH9_wRMqcDKkoEKUjcNwsN4xcWOx9wjFEqK+eyyBS-Xw8n6xZQ@mail.gmail.com>
+References: <CAH9_wRPDMiCMNZJHkkK21oF8dySUfa5AUpGnp-nh6V77As6CPA@mail.gmail.com>
+	<CAJKOXPe51YO3t1fhUdD1OsmXXcW3MoTwapvY4Y0q8QwaKrxzRg@mail.gmail.com>
+	<CAH9_wRN13+PKLsTL3kSonLUpzHo7zbQJZ658C4+fRZRxe=HeTw@mail.gmail.com>
+	<CAJKOXPeCyEYtUGf2skAbudOjGiSVn8Hyzk76B5aW8VJT7apoqA@mail.gmail.com>
+	<CAH9_wRO28-4jMHwfVpwnDFbut6m=2gv_zVd3EnLguZj9EJYebA@mail.gmail.com>
+	<569311BB.5040206@samsung.com>
+	<CAH9_wRPnvosp4sq3fBHGhd7G=V69s7qQdg3mUF_d08aWS4H_ng@mail.gmail.com>
+	<569F5D80.4040103@samsung.com>
+	<CAH9_wRNxxifRBh6p77e3Pqh4QpbSmYrg6g+WOR2AjAX9EHG6ZA@mail.gmail.com>
+	<CAJKOXPdWA67DjrymJZY9cnTRuzaUFmLWyC+iBA9wHBVmiD_mBQ@mail.gmail.com>
+	<CAH9_wRPQoD4JT=VHPYjJE=V_7jjQyyfciUo-3k13s_wU=a_Qmg@mail.gmail.com>
+	<CAJKOXPe52cxk4XCDt0HU2iv-Z_VJGB1TXuKd6uG-p-3mQW-v3w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f177.google.com ([209.85.161.177]:33694 "EHLO
+	mail-yw0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751105AbcBDM2I convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Feb 2016 07:28:08 -0500
+Received: by mail-yw0-f177.google.com with SMTP id z185so25646322ywf.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Feb 2016 04:28:07 -0800 (PST)
+In-Reply-To: <CAJKOXPe52cxk4XCDt0HU2iv-Z_VJGB1TXuKd6uG-p-3mQW-v3w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Now that all MTD drivers have moved to the mtd_ooblayout_ops model we can
-safely remove the struct nand_ecclayout definition, and all the remaining
-places where it was still used.
+Hi Krzystof,
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/mtd/mtdchar.c      |  12 ++---
- drivers/mtd/mtdcore.c      | 120 ---------------------------------------------
- include/linux/mtd/mtd.h    |  20 --------
- include/uapi/mtd/mtd-abi.h |   2 +-
- 4 files changed, 7 insertions(+), 147 deletions(-)
+Thanks, right now we are seeing that the board hangs whenever the
+those domains are list of domains
+are modified by the cpuidle framework.
 
-diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-index 3fad2c7..2a47a3f 100644
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -465,12 +465,12 @@ static int mtdchar_readoob(struct file *file, struct mtd_info *mtd,
- }
- 
- /*
-- * Copies (and truncates, if necessary) data from the larger struct,
-- * nand_ecclayout, to the smaller, deprecated layout struct,
-- * nand_ecclayout_user. This is necessary only to support the deprecated
-- * API ioctl ECCGETLAYOUT while allowing all new functionality to use
-- * nand_ecclayout flexibly (i.e. the struct may change size in new
-- * releases without requiring major rewrites).
-+ * Copies (and truncates, if necessary) OOB layout information to the
-+ * deprecated layout struct, nand_ecclayout_user. This is necessary only to
-+ * support the deprecated API ioctl ECCGETLAYOUT while allowing all new
-+ * functionality to use mtd_ooblayout_ops flexibly (i.e. mtd_ooblayout_ops
-+ * can describe any kind of OOB layout with almost zero overhead from a
-+ * memory usage point of view).
-  */
- static int shrink_ecclayout(struct mtd_info *mtd,
- 			    struct nand_ecclayout_user *to)
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index dccd132..9c520a9 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -1355,126 +1355,6 @@ int mtd_ooblayout_count_eccbytes(struct mtd_info *mtd)
- }
- EXPORT_SYMBOL_GPL(mtd_ooblayout_count_eccbytes);
- 
--/**
-- * mtd_ecclayout_ecc - Default ooblayout_ecc iterator implementation
-- * @mtd: MTD device structure
-- * @section: ECC section. Depending on the layout you may have all the ECC
-- *	     bytes stored in a single contiguous section, or one section
-- *	     per ECC chunk (and sometime several sections for a single ECC
-- *	     ECC chunk)
-- * @oobecc: OOB region struct filled with the appropriate ECC position
-- *	    information
-- *
-- * This function is just a wrapper around the mtd->ecclayout field and is
-- * here to ease the transition to the mtd_ooblayout_ops approach.
-- * All it does is convert the layout->eccpos information into proper oob
-- * region definitions.
-- *
-- * Returns zero on success, a negative error code otherwise.
-- */
--static int mtd_ecclayout_ecc(struct mtd_info *mtd, int section,
--			     struct mtd_oob_region *oobecc)
--{
--	int eccbyte = 0, cursection = 0, length = 0, eccpos = 0;
--
--	if (!mtd->ecclayout)
--		return -ENOTSUPP;
--
--	if (mtd->ecclayout->eccbytes < 1)
--		return -ERANGE;
--
--	/*
--	 * This logic allows us to reuse the ->ecclayout information and
--	 * expose them as ECC regions (as done for the OOB free regions).
--	 *
--	 * TODO: this should be dropped as soon as we get rid of the
--	 * ->ecclayout field.
--	 */
--	for (eccbyte = 0; eccbyte < mtd->ecclayout->eccbytes; eccbyte++) {
--		eccpos = mtd->ecclayout->eccpos[eccbyte];
--
--		if (eccbyte < mtd->ecclayout->eccbytes - 1) {
--			int neccpos = mtd->ecclayout->eccpos[eccbyte + 1];
--
--			if (eccpos + 1 == neccpos) {
--				length++;
--				continue;
--			}
--		}
--
--		if (section == cursection)
--			break;
--
--		length = 0;
--		cursection++;
--	}
--
--	if (cursection != section)
--		return -ERANGE;
--
--	oobecc->length = length + 1;
--	oobecc->offset = eccpos - length;
--
--	return 0;
--}
--
--/**
-- * mtd_ecclayout_ecc - Default ooblayout_free iterator implementation
-- * @mtd: MTD device structure
-- * @section: Free section. Depending on the layout you may have all the free
-- *	     bytes stored in a single contiguous section, or one section
-- *	     per ECC chunk (and sometime several sections for a single ECC
-- *	     ECC chunk)
-- * @oobfree: OOB region struct filled with the appropriate free position
-- *	     information
-- *
-- * This function is just a wrapper around the mtd->ecclayout field and is
-- * here to ease the transition to the mtd_ooblayout_ops approach.
-- * All it does is convert the layout->oobfree information into proper oob
-- * region definitions.
-- *
-- * Returns zero on success, a negative error code otherwise.
-- */
--static int mtd_ecclayout_free(struct mtd_info *mtd, int section,
--			      struct mtd_oob_region *oobfree)
--{
--	struct nand_ecclayout *layout = mtd->ecclayout;
--
--	if (!layout)
--		return -ENOTSUPP;
--
--	if (section >= MTD_MAX_OOBFREE_ENTRIES_LARGE ||
--	    !layout->oobfree[section].length)
--		return -ERANGE;
--
--	oobfree->offset = layout->oobfree[section].offset;
--	oobfree->length = layout->oobfree[section].length;
--
--	return 0;
--}
--
--static const struct mtd_ooblayout_ops mtd_ecclayout_wrapper_ops = {
--	.ecc = mtd_ecclayout_ecc,
--	.free = mtd_ecclayout_free,
--};
--
--/**
-- * mtd_set_ecclayout - Attach an ecclayout to an MTD device
-- * @mtd: MTD device structure
-- * @ecclayout: The ecclayout to attach to the device
-- *
-- * Returns zero on success, a negative error code otherwise.
-- */
--void mtd_set_ecclayout(struct mtd_info *mtd, struct nand_ecclayout *ecclayout)
--{
--	if (!mtd || !ecclayout)
--		return;
--
--	mtd->ecclayout = ecclayout;
--	mtd_set_ooblayout(mtd, &mtd_ecclayout_wrapper_ops);
--}
--EXPORT_SYMBOL_GPL(mtd_set_ecclayout);
--
- /*
-  * Method to access the protection register area, present in some flash
-  * devices. The user data is one time programmable but the factory data is read
-diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-index a38fe9a..df8c116 100644
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@ -96,21 +96,6 @@ struct mtd_oob_ops {
- 
- #define MTD_MAX_OOBFREE_ENTRIES_LARGE	32
- #define MTD_MAX_ECCPOS_ENTRIES_LARGE	640
--/*
-- * Internal ECC layout control structure. For historical reasons, there is a
-- * similar, smaller struct nand_ecclayout_user (in mtd-abi.h) that is retained
-- * for export to user-space via the ECCGETLAYOUT ioctl.
-- * nand_ecclayout should be expandable in the future simply by the above macros.
-- *
-- * This structure is now deprecated, you should use struct nand_ecclayout_ops
-- * to describe your OOB layout.
-- */
--struct nand_ecclayout {
--	__u32 eccbytes;
--	__u32 eccpos[MTD_MAX_ECCPOS_ENTRIES_LARGE];
--	struct nand_oobfree oobfree[MTD_MAX_OOBFREE_ENTRIES_LARGE];
--};
--
- /**
-  * struct mtd_oob_region - oob region definition
-  * @offset: region offset
-@@ -200,9 +185,6 @@ struct mtd_info {
- 	const char *name;
- 	int index;
- 
--	/* [Deprecated] ECC layout structure pointer - read only! */
--	struct nand_ecclayout *ecclayout;
--
- 	/* OOB layout description */
- 	const struct mtd_ooblayout_ops *ooblayout;
- 
-@@ -308,8 +290,6 @@ int mtd_ooblayout_set_databytes(struct mtd_info *mtd, const u8 *databuf,
- int mtd_ooblayout_count_freebytes(struct mtd_info *mtd);
- int mtd_ooblayout_count_eccbytes(struct mtd_info *mtd);
- 
--void mtd_set_ecclayout(struct mtd_info *mtd, struct nand_ecclayout *ecclayout);
--
- static inline void mtd_set_ooblayout(struct mtd_info *mtd,
- 				     const struct mtd_ooblayout_ops *ooblayout)
- {
-diff --git a/include/uapi/mtd/mtd-abi.h b/include/uapi/mtd/mtd-abi.h
-index 763bb69..0ec1da2 100644
---- a/include/uapi/mtd/mtd-abi.h
-+++ b/include/uapi/mtd/mtd-abi.h
-@@ -228,7 +228,7 @@ struct nand_oobfree {
-  * complete set of ECC information. The ioctl truncates the larger internal
-  * structure to retain binary compatibility with the static declaration of the
-  * ioctl. Note that the "MTD_MAX_..._ENTRIES" macros represent the max size of
-- * the user struct, not the MAX size of the internal struct nand_ecclayout.
-+ * the user struct, not the MAX size of the internal OOB layout representation.
-  */
- struct nand_ecclayout_user {
- 	__u32 eccbytes;
--- 
-2.1.4
+Also, I have a related question, devfreq also updates the clocks as
+well depending on bus load conditions
+
+If a particular domains are OFF. Wont the devfreq update produce a
+crash. However, this does not happen.
+I do see lots of dout_aclk print which modifies the freq of clocks of
+different modules But that does not produce a crash.
+
+Am i missing something here?
+
+
+Any idea why is this?
+
+
+
+On Mon, Jan 25, 2016 at 5:10 PM, Krzysztof Koz=C5=82owski
+<k.kozlowski.k@gmail.com> wrote:
+> 2016-01-25 18:54 GMT+09:00 Sriram V <vshrirama@gmail.com>:
+>> Hi Krzystof,
+>>
+>> Thanks for the clarifications.
+>>
+>> On Wed, Jan 20, 2016 at 7:00 PM, Krzysztof Koz=C5=82owski
+>> <k.kozlowski.k@gmail.com> wrote:
+>>> 2016-01-20 19:35 GMT+09:00 Sriram V <vshrirama@gmail.com>:
+>>>> Hi Krzysztof,
+>>>>
+>>>>
+>>>> Are you saying that only power domains under "Local Power Control"=
+ can
+>>>> be attached to runtime PM and can be turned off?
+>>>>
+>>>> In that case, i dont see other domains such as peris, psgen, wcore=
+ in
+>>>> there, Hence these need to be always on?
+>>>>
+>>>> is my understanding correct?
+>>>
+>>> I don't know what kind of documentation you have. Judging by the
+>>> question above I think that you are asking me about interpretation =
+of
+>>> datasheet... Really, your question is very strange... My Exynos5422
+>>> datasheet is quite specific on this topic.
+>>> Anyway you should ask for that to the vendor of the SoC - Samsung L=
+SI.
+>>> It looks like you are looking for a support which should be given n=
+ot
+>>> here, but by the vendor (because they sold you the SoC along with t=
+he
+>>> code).
+>>> Just to make it clear: I am not related anyhow to the Samsung LSI. =
+I
+>>> am speaking only for myself.
+>>>
+>>> As for the domains, you cannot independently control (under runtime
+>>> PM) all of the domains. Only some of them. Datasheet explicitly
+>>> describes what can be controlled. Other stuff is being turned off w=
+hen
+>>> entering deeper sleep modes (like AFTR, SLEEP) - you can look for t=
+his
+>>> in cpuidle or suspend related code (open-source or vendor's).
+>>
+>>
+>> I could not find in the suspend code where it turns off all the doma=
+ins on 5422
+>> in the vendor and linux-next kernel. Am i missing something?
+>>
+>> Or are you referring to some code?
+>
+> Here:
+> http://lxr.free-electrons.com/source/arch/arm/mach-exynos/pmu.c#L443
+> The exynos5420_pmu_config contains values for PMU registers applied
+> when entering AFTR/LPA (cpuidle) or SLEEP (suspend to RAM) modes.
+> Around line #534 the configuration for power domain starts:
+> http://lxr.free-electrons.com/source/arch/arm/mach-exynos/pmu.c#L534
+>
+> The array should configure all power domains to certain state (off or=
+ on).
+>
+> Best regards,
+> Krzysztof
+
+
+
+--=20
+Regards,
+Sriram
