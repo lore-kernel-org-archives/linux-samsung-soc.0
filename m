@@ -1,14 +1,14 @@
 From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 Subject: Re: [PATCH v2 05/51] mtd: add mtd_ooblayout_xxx()
  helper functions
-Date: Fri, 5 Feb 2016 08:35:18 +0100
-Message-ID: <20160205083518.7b54e9a7@bbrezillon>
+Date: Fri, 5 Feb 2016 10:27:10 +0100
+Message-ID: <20160205102710.39fa4244@bbrezillon>
 References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
 	<1454580434-32078-6-git-send-email-boris.brezillon@free-electrons.com>
 Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBONB2G2QKGQE4E2ZNII-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCIPJ6FA2QLBB4OV2G2QKGQEEB4VB7A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 In-Reply-To: <1454580434-32078-6-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
@@ -40,45 +40,84 @@ Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.o
 > index 3096251..14e46ca 100644
 > --- a/drivers/mtd/mtdcore.c
 > +++ b/drivers/mtd/mtdcore.c
-
-[...]
-
-> +
+> @@ -997,6 +997,407 @@ int mtd_read_oob(struct mtd_info *mtd, loff_t from, struct mtd_oob_ops *ops)
+>  }
+>  EXPORT_SYMBOL_GPL(mtd_read_oob);
+>  
 > +/**
-> + * mtd_ooblayout_count_bytes - count the number of bytes in a OOB category
-> + * @mtd: mtd info structure
-> + * @iter: category iterator
+> + * mtd_ooblayout_ecc - Get the OOB region definition of a specific ECC section
+> + * @mtd: MTD device structure
+> + * @section: ECC section. Depending on the layout you may have all the ECC
+> + *	     bytes stored in a single contiguous section, or one section
+> + *	     per ECC chunk (and sometime several sections for a single ECC
+> + *	     ECC chunk)
+> + * @oobecc: OOB region struct filled with the appropriate ECC position
+> + *	    information
 > + *
-> + * Count the number of bytes in a given category.
+> + * This functions return ECC section information in the OOB area. I you want
+> + * to get all the ECC bytes information, then you should call
+> + * mtd_ooblayout_ecc(mtd, section++, oobecc) until it returns -ERANGE.
 > + *
-> + * Returns a positive value on success, a negative error code otherwise.
+> + * Returns zero on success, a negative error code otherwise.
 > + */
-> +static int mtd_ooblayout_count_bytes(struct mtd_info *mtd,
-> +				int (*iter)(struct mtd_info *,
-> +					    int section,
-> +					    struct mtd_oob_region *oobregion))
+> +int mtd_ooblayout_ecc(struct mtd_info *mtd, int section,
+> +		      struct mtd_oob_region *oobecc)
 > +{
-> +	struct mtd_oob_region oobregion = { };
-> +	int section = 0, ret, nbytes = 0;
+> +	int eccbyte = 0, cursection = 0, length = 0, eccpos = 0;
 > +
-> +	while (1) {
-> +		ret = iter(mtd, section, &oobregion);
-
-				^ section++
-
-Oops, will fix that in next version.
-
-> +		if (ret) {
-> +			if (ret == -ERANGE)
-> +				ret = nbytes;
-> +			break;
+> +	memset(oobecc, 0, sizeof(*oobecc));
+> +
+> +	if (!mtd || section < 0)
+> +		return -EINVAL;
+> +
+> +	if (!mtd->ecclayout)
+> +		return -ENOTSUPP;
+> +
+> +	if (mtd->ecclayout->eccbytes < 1)
+> +		return -ERANGE;
+> +
+> +	/*
+> +	 * This logic allows us to reuse the ->ecclayout information and
+> +	 * expose them as ECC regions (as done for the OOB free regions).
+> +	 *
+> +	 * TODO: this should be dropped as soon as we get rid of the
+> +	 * ->ecclayout field.
+> +	 */
+> +	for (eccbyte = 0; eccbyte < mtd->ecclayout->eccbytes; eccbyte++) {
+> +		eccpos = mtd->ecclayout->eccpos[eccbyte];
+> +
+> +		if (eccbyte < mtd->ecclayout->eccbytes - 1) {
+> +			int neccpos = mtd->ecclayout->eccpos[eccbyte + 1];
+> +
+> +			if (eccpos + 1 == neccpos) {
+> +				length++;
+> +				continue;
+> +			}
 > +		}
 > +
-> +		nbytes += oobregion.length;
+> +		if (section == cursection)
+> +			break;
+> +
+> +		length = 0;
+> +		cursection++;
 > +	}
 > +
-> +	return ret;
+> +	if (cursection != section)
+
+Should be
+	if (cursection != section ||
+	    eccbyte >= mtd->ecclayout->eccbytes)
+
+Will fix that too.
+
+> +		return -ERANGE;
+> +
+> +	oobecc->length = length + 1;
+> +	oobecc->offset = eccpos - length;
+> +
+> +	return 0;
 > +}
+> +EXPORT_SYMBOL_GPL(mtd_ooblayout_ecc);
 
 
 -- 
