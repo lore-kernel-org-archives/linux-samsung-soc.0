@@ -1,71 +1,62 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [rtc-linux] Re: [PATCH v4 00/10] rtc: max77686: Extend driver and
- add max77802 support
-Date: Fri, 05 Feb 2016 09:18:21 +0900
-Message-ID: <56B3EA4D.4010801@samsung.com>
-References: <1453865806-4661-1-git-send-email-javier@osg.samsung.com>
- <20160131120525.GM20165@piout.net> <56ADF9D4.2050208@samsung.com>
- <20160204225655.GE4782@piout.net>
+From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: domain off
+Date: Fri, 5 Feb 2016 10:13:32 +0900
+Message-ID: <CAJKOXPeamBUZf7OrHfZe2qp1EbhU6+WL7GBwY5WvGZ_U+1N0Ag@mail.gmail.com>
+References: <CAH9_wRPDMiCMNZJHkkK21oF8dySUfa5AUpGnp-nh6V77As6CPA@mail.gmail.com>
+	<CAJKOXPe51YO3t1fhUdD1OsmXXcW3MoTwapvY4Y0q8QwaKrxzRg@mail.gmail.com>
+	<CAH9_wRN13+PKLsTL3kSonLUpzHo7zbQJZ658C4+fRZRxe=HeTw@mail.gmail.com>
+	<CAJKOXPeCyEYtUGf2skAbudOjGiSVn8Hyzk76B5aW8VJT7apoqA@mail.gmail.com>
+	<CAH9_wRO28-4jMHwfVpwnDFbut6m=2gv_zVd3EnLguZj9EJYebA@mail.gmail.com>
+	<569311BB.5040206@samsung.com>
+	<CAH9_wRPnvosp4sq3fBHGhd7G=V69s7qQdg3mUF_d08aWS4H_ng@mail.gmail.com>
+	<569F5D80.4040103@samsung.com>
+	<CAH9_wRNxxifRBh6p77e3Pqh4QpbSmYrg6g+WOR2AjAX9EHG6ZA@mail.gmail.com>
+	<CAJKOXPdWA67DjrymJZY9cnTRuzaUFmLWyC+iBA9wHBVmiD_mBQ@mail.gmail.com>
+	<CAH9_wRPQoD4JT=VHPYjJE=V_7jjQyyfciUo-3k13s_wU=a_Qmg@mail.gmail.com>
+	<CAJKOXPe52cxk4XCDt0HU2iv-Z_VJGB1TXuKd6uG-p-3mQW-v3w@mail.gmail.com>
+	<CAH9_wRMqcDKkoEKUjcNwsN4xcWOx9wjFEqK+eyyBS-Xw8n6xZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:19127 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933526AbcBEAS3 (ORCPT
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:34800 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751373AbcBEBNd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Feb 2016 19:18:29 -0500
-In-reply-to: <20160204225655.GE4782@piout.net>
+	Thu, 4 Feb 2016 20:13:33 -0500
+Received: by mail-oi0-f46.google.com with SMTP id w5so32273532oie.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Feb 2016 17:13:32 -0800 (PST)
+In-Reply-To: <CAH9_wRMqcDKkoEKUjcNwsN4xcWOx9wjFEqK+eyyBS-Xw8n6xZQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: rtc-linux@googlegroups.com, Javier Martinez Canillas <javier@osg.samsung.com>, k.kozlowski.k@gmail.com, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: Sriram V <vshrirama@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-On 05.02.2016 07:56, Alexandre Belloni wrote:
-> On 31/01/2016 at 21:11:00 +0900, Krzysztof Kozlowski wrote :
->> W dniu 31.01.2016 o 21:05, Alexandre Belloni pisze:
->>> Hi,
->>>
->>> On 27/01/2016 at 00:36:36 -0300, Javier Martinez Canillas wrote :
->>>> Hello,
->>>>
->>>> On a recent disussion [0] with Krzysztof Kozlowski and Laxman Dewangan,
->>>> we came to the conclusion that the max77686 and max77802 RTC are almost
->>>> the same with only a few differences so there shouldn't be two separate
->>>> drivers and is better to extend max77686 driver and delete rtc-max77802.
->>>>
->>>> By making the driver more generic, other RTC IP blocks from Maxim PMICs
->>>> could be supported as well like the max77620.
->>>>
->>>> This is a v4 of a series that do this, that address issues pointed out
->>>> in the latest version. The v1, v2 and v3 can be found at [1], [2], [3].
->>>>
->>>> I've tested this patch-set on an Exynos5800 Peach Pi Chromebook that has
->>>> a max77802 PMIC and the RTC was working correctly. Krzysztof Kozlowski
->>>> tested v3 on an max77686 but this version only has cosmetic changes so
->>>> it should not cause any functionality changes.
->>>>
->>>> [0]: http://www.spinics.net/lists/devicetree/msg110348.html
->>>> [1]: https://lwn.net/Articles/672568/
->>>> [2]: https://lkml.org/lkml/2016/1/25/767
->>>> [3]: https://lkml.org/lkml/2016/1/26/787
->>>>
->>>
->>> I've applied patches 1 to 8 and I'll discussed with Arnd and Olof about
->>> what I should do with the defconfig changes.
->>
->> To avoid conflicts they could go through samsung-soc tree. I could pick
->> them if you provide me a tag with rest of patchset (dependencies).
->>
->> Would that be okay for you?
->>
-> 
-> Let's do that, I've prepared a tag, rtc-max77686-4.6 with all the
-> max77686 material collected until now.  If I need to rebase rtc-next,
-> I'll rebase on top of that.
+2016-02-04 21:21 GMT+09:00 Sriram V <vshrirama@gmail.com>:
+>
+> Hi Krzystof,
+>
+> Thanks, right now we are seeing that the board hangs whenever the
+> those domains are list of domains
+> are modified by the cpuidle framework.
+>
+> Also, I have a related question, devfreq also updates the clocks as
+> well depending on bus load conditions
+>
+> If a particular domains are OFF. Wont the devfreq update produce a
+> crash. However, this does not happen.
+> I do see lots of dout_aclk print which modifies the freq of clocks of
+> different modules But that does not produce a crash.
+>
+> Am i missing something here?
 
-Thanks, I pulled the tag, applied patches #9 and #10 and pushed out to
-the for-next.
+This is not related to cpuidle. For Exynos usually the cpuidle enters
+system sleep modes, so entire system is sleeping and devfreq does not
+work in that moment.
+
+However when power domains are off because of runtime PM, changing
+clocks may be completely ok. Many clocks are not part of the power
+domain itself. In the same time devfreq usually changes top level
+clocks which is also quite safe.
 
 Best regards,
 Krzysztof
