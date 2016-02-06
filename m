@@ -1,43 +1,33 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] ARM: drop unused Makefile.boot of Multiplatform SoCs
-Date: Fri, 5 Feb 2016 18:58:08 +0100
-Message-ID: <56B4E2B0.8060808@xilinx.com>
-References: <1454693808-13081-1-git-send-email-yamada.masahiro@socionext.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2 18/51] mtd: docg3: use mtd_set_ecclayout() where appropriate
+Date: Sat, 06 Feb 2016 22:55:05 +0100
+Message-ID: <8737t54i86.fsf@belgarion.home>
+References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1454580434-32078-19-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454693808-13081-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, arm@kernel.org
-Cc: Gregory Clement <gregory.clement@free-electrons.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Barry Song <baohua@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Krzysztof Halasa <khalasa@piap.pl>, Viresh Kumar <vireshk@kernel.org>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, spear-devel@list.st.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:53892 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752633AbcBFVzQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 6 Feb 2016 16:55:16 -0500
+In-Reply-To: <1454580434-32078-19-git-send-email-boris.brezillon@free-electrons.com>
+	(Boris Brezillon's message of "Thu, 4 Feb 2016 11:06:41 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Josh Wu <josh.wu@atmel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Stefan Agner <stefan@agner.ch>, Kyungmin Park <kyungmin.park@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, punnaiah choudary kalluri <punnaia@xilinx.com>, Priit Laes <plaes@plaes.org>
 
-On 5.2.2016 18:36, Masahiro Yamada wrote:
-> The variable "MACHINE" is empty if CONFIG_ARCH_MULTIPLATFORM=y,
-> so these Makefile.boot files are never included.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  arch/arm/mach-cns3xxx/Makefile.boot    | 3 ---
->  arch/arm/mach-exynos/Makefile.boot     | 2 --
->  arch/arm/mach-integrator/Makefile.boot | 4 ----
->  arch/arm/mach-keystone/Makefile.boot   | 1 -
->  arch/arm/mach-mmp/Makefile.boot        | 1 -
->  arch/arm/mach-mv78xx0/Makefile.boot    | 3 ---
->  arch/arm/mach-nspire/Makefile.boot     | 0
->  arch/arm/mach-omap2/Makefile.boot      | 3 ---
->  arch/arm/mach-orion5x/Makefile.boot    | 3 ---
->  arch/arm/mach-prima2/Makefile.boot     | 3 ---
->  arch/arm/mach-realview/Makefile.boot   | 9 ---------
->  arch/arm/mach-s3c64xx/Makefile.boot    | 2 --
->  arch/arm/mach-spear/Makefile.boot      | 3 ---
->  arch/arm/mach-u300/Makefile.boot       | 4 ----
->  arch/arm/mach-ux500/Makefile.boot      | 3 ---
->  arch/arm/mach-zynq/Makefile.boot       | 3 ---
+Boris Brezillon <boris.brezillon@free-electrons.com> writes:
 
-Acked-by: Michal Simek <michal.simek@xilinx.com> (for Zynq)
+> Use the mtd_set_ecclayout() helper instead of directly assigning the
+> mtd->ecclayout field.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Thanks,
-Michal
+Cheers.
+
+--
+Robert
