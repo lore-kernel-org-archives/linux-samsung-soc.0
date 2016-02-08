@@ -1,55 +1,56 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
 Subject: Re: [PATCH] drm/exynos: dp: Fix panel and bridge lookup logic
-Date: Mon, 08 Feb 2016 13:38:11 +0100
-Message-ID: <56B88C33.8060808@samsung.com>
+Date: Mon, 8 Feb 2016 09:44:32 -0300
+Message-ID: <56B88DB0.3040806@osg.samsung.com>
 References: <1454080171-23769-1-git-send-email-javier@osg.samsung.com>
- <56B88418.7090106@osg.samsung.com>
+ <56B88418.7090106@osg.samsung.com> <56B88C33.8060808@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47047 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751976AbcBHMiQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Feb 2016 07:38:16 -0500
-In-reply-to: <56B88418.7090106@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <56B88C33.8060808@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Hi Javier,
-
-On 2016-02-08 13:03, Javier Martinez Canillas wrote:
-> Hello Inki,
->
-> On 01/29/2016 12:09 PM, Javier Martinez Canillas wrote:
->> Commit a9fa852886fd ("drm/exynos: dp: add of_graph dt binding support
->> for panel") made the Exynos DP DT binding more consistent since the OF
->> graph could be used to lookup either a panel or a bridge device node.
->>
->> Before that commit, a panel would be looked up using a phandle and a
->> bridge using the OF graph which made the DT binding not consistent.
->>
->> But the patch broke the later case since not finding a panel dev node
->> would cause the driver's to do a probe deferral instead of attempting
->> to lookup a bridge device node associated with the remote endpoint.
->>
->> So instead of returning a -EPROBE_DEFER if a panel is not found, check
->> if there's a bridge and only do a probe deferral if both aren't found.
->>
->> Fixes: a9fa852886fd ("drm/exynos: dp: add of_graph dt binding support 
->> for panel")
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->
-> Any comments about this patch? It is needed to have display working on
-> machines with a bridge chip again so it should be pushed to -rc ASAP.
-
-Please check v4.5-rc3, this patch is already merged there.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGVsbG8gTWFyZWssCgpPbiAwMi8wOC8yMDE2IDA5OjM4IEFNLCBNYXJlayBTenlwcm93c2tpIHdy
+b3RlOgo+IEhpIEphdmllciwKPgo+IE9uIDIwMTYtMDItMDggMTM6MDMsIEphdmllciBNYXJ0aW5l
+eiBDYW5pbGxhcyB3cm90ZToKPj4gSGVsbG8gSW5raSwKPj4KPj4gT24gMDEvMjkvMjAxNiAxMjow
+OSBQTSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgo+Pj4gQ29tbWl0IGE5ZmE4NTI4
+ODZmZCAoImRybS9leHlub3M6IGRwOiBhZGQgb2ZfZ3JhcGggZHQgYmluZGluZyBzdXBwb3J0Cj4+
+PiBmb3IgcGFuZWwiKSBtYWRlIHRoZSBFeHlub3MgRFAgRFQgYmluZGluZyBtb3JlIGNvbnNpc3Rl
+bnQgc2luY2UgdGhlIE9GCj4+PiBncmFwaCBjb3VsZCBiZSB1c2VkIHRvIGxvb2t1cCBlaXRoZXIg
+YSBwYW5lbCBvciBhIGJyaWRnZSBkZXZpY2Ugbm9kZS4KPj4+Cj4+PiBCZWZvcmUgdGhhdCBjb21t
+aXQsIGEgcGFuZWwgd291bGQgYmUgbG9va2VkIHVwIHVzaW5nIGEgcGhhbmRsZSBhbmQgYQo+Pj4g
+YnJpZGdlIHVzaW5nIHRoZSBPRiBncmFwaCB3aGljaCBtYWRlIHRoZSBEVCBiaW5kaW5nIG5vdCBj
+b25zaXN0ZW50Lgo+Pj4KPj4+IEJ1dCB0aGUgcGF0Y2ggYnJva2UgdGhlIGxhdGVyIGNhc2Ugc2lu
+Y2Ugbm90IGZpbmRpbmcgYSBwYW5lbCBkZXYgbm9kZQo+Pj4gd291bGQgY2F1c2UgdGhlIGRyaXZl
+cidzIHRvIGRvIGEgcHJvYmUgZGVmZXJyYWwgaW5zdGVhZCBvZiBhdHRlbXB0aW5nCj4+PiB0byBs
+b29rdXAgYSBicmlkZ2UgZGV2aWNlIG5vZGUgYXNzb2NpYXRlZCB3aXRoIHRoZSByZW1vdGUgZW5k
+cG9pbnQuCj4+Pgo+Pj4gU28gaW5zdGVhZCBvZiByZXR1cm5pbmcgYSAtRVBST0JFX0RFRkVSIGlm
+IGEgcGFuZWwgaXMgbm90IGZvdW5kLCBjaGVjawo+Pj4gaWYgdGhlcmUncyBhIGJyaWRnZSBhbmQg
+b25seSBkbyBhIHByb2JlIGRlZmVycmFsIGlmIGJvdGggYXJlbid0IGZvdW5kLgo+Pj4KPj4+IEZp
+eGVzOiBhOWZhODUyODg2ZmQgKCJkcm0vZXh5bm9zOiBkcDogYWRkIG9mX2dyYXBoIGR0IGJpbmRp
+bmcgc3VwcG9ydCBmb3IgcGFuZWwiKQo+Pj4gU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6
+IENhbmlsbGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPgo+Pj4KPj4KPj4gQW55IGNvbW1lbnRz
+IGFib3V0IHRoaXMgcGF0Y2g/IEl0IGlzIG5lZWRlZCB0byBoYXZlIGRpc3BsYXkgd29ya2luZyBv
+bgo+PiBtYWNoaW5lcyB3aXRoIGEgYnJpZGdlIGNoaXAgYWdhaW4gc28gaXQgc2hvdWxkIGJlIHB1
+c2hlZCB0byAtcmMgQVNBUC4KPgo+IFBsZWFzZSBjaGVjayB2NC41LXJjMywgdGhpcyBwYXRjaCBp
+cyBhbHJlYWR5IG1lcmdlZCB0aGVyZS4KPgoKTXkgYmFkLCBJIHdhcyBsb29raW5nIGF0IHY0LjUt
+cmMyIGFuZCBJbmtpIHVzZWQgdG8gYW5zd2VyIHRvIHBhdGNoZXMKd2hlbiBoZSBwaWNrcyB0aGVt
+IHNvIEkgdGhvdWdodCBoZSBkaWRuJ3QgaGF2ZSB0aW1lIHRvIGxvb2sgYXQgaXQgeWV0LgoKQW55
+d2F5cywgdGhhbmtzIGEgbG90IGZvciBwb2ludGluZyBpdCBvdXQuCiAgCj4gQmVzdCByZWdhcmRz
+CgpCZXN0IHJlZ2FyZHMsCi0tIApKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMKT3BlbiBTb3VyY2Ug
+R3JvdXAKU2Ftc3VuZyBSZXNlYXJjaCBBbWVyaWNhCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
