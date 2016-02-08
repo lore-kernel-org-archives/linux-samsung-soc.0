@@ -1,76 +1,39 @@
-From: Youngmin Nam <ym0914@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: samsung: Fixes
- samsung_gpio_direction_in/output releated with spinlock
-Date: Mon, 8 Feb 2016 13:02:57 +0900
-Message-ID: <56B81371.4030007@gmail.com>
-References: <1453615352-9748-1-git-send-email-ym0914@gmail.com>
- <CACRpkdaTesQL+ginJdjg0LYD=re7-ot=VLnX_=th-0gSqcQx0Q@mail.gmail.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 00/10] Exynos DRM: various fixes for 64bit and Exynos5433
+Date: Mon, 8 Feb 2016 11:14:46 +0000
+Message-ID: <CACvgo515c0qooM2Qjks9TYaRisprEV8OB82J1p5GE9f0mn43sQ@mail.gmail.com>
+References: <1454503374-16382-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f68.google.com ([209.85.220.68]:32943 "EHLO
-	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752900AbcBHEDE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 7 Feb 2016 23:03:04 -0500
-Received: by mail-pa0-f68.google.com with SMTP id y7so386632paa.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Feb 2016 20:03:03 -0800 (PST)
-In-Reply-To: <CACRpkdaTesQL+ginJdjg0LYD=re7-ot=VLnX_=th-0gSqcQx0Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1454503374-16382-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Thanks Linus and Tomasz.
-
-Sorry for late. I will rebase on v4.5-rc3 and resend.
-
-Thanks.
-
-On 2016=EB=85=84 01=EC=9B=94 27=EC=9D=BC 21:36, Linus Walleij wrote:
-> On Sun, Jan 24, 2016 at 7:02 AM, Youngmin Nam <ym0914@gmail.com> wrot=
-e:
->=20
->> Previously, samsung_gpio_drection_in/output function were not covere=
-d with
->> one spinlock.
->>
->> For example, samsung_gpio_direction_output function consists of two =
-functions.
->> 1. samsung_gpio_set
->> 2. samsung_gpio_set_direction
->>
->> When 2 CPUs try to control the same gpio pin heavily,
->> (situation like i2c control with gpio emulation)
->> This situation can cause below problem.
->>
->> CPU 0                                   | CPU1
->>                                         |
->> samsung_gpio_direction_output           |
->>    samsung_gpio_set(pin A as 1)         | samsung_gpio_direction_out=
-put
->>                                         |    samsung_gpio_set(pin A =
-as 0)
->>    samsung_gpio_set_direction           |
->>                                         |    samsung_gpio_set_direct=
-ion
->>
->> The initial value of pin A will be set as 0 while we wanted to set p=
-in A as 1.
->>
->> This patch modifies samsung_gpio_direction_in/output function
->> to be done in one spinlock to fix race condition.
->>
->> Additionally, the new samsung_gpio_set_value was added to implement
->> gpio set callback(samsung_gpio_set) with spinlock using this functio=
-n.
->>
->> Signed-off-by: Youngmin Nam <ym0914@gmail.com>
->=20
-> This patch does not apply to v4.5-rc1. Please rebase this
-> and resend. (With Thomas ACK if it's valid.)
->=20
-> Yours,
-> Linus Walleij
->=20
+SGkgTWFyZWssCgpPbiAzIEZlYnJ1YXJ5IDIwMTYgYXQgMTI6NDIsIE1hcmVrIFN6eXByb3dza2kg
+PG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4gSGVsbG8gYWxsLAo+Cj4gVGhpcyBw
+YXRjaCBzZXJpZXMgaXMgYSBzZXQgb2YgdmFyaW91cyBmaXhlcyB0byBnZXQgRXh5bm9zIERSTSB3
+b3JraW5nIG9uCj4gRXh5bm9zIDU0MzMgU29DcyBhbmQgNjRiaXQgQVJNNjQgYXJjaGl0ZWN0dXJl
+Lgo+CkFzIHlvdSBtZW50aW9uZWQgIjY0Yml0IEV4eW5vcyIgZGV2aWNlcywgSSdtIHdvbmRlcmlu
+ZyBpZiB5b3UnbGwgaGF2ZQpzb21lIGlucHV0IG9uIHRoZSBjdXJyZW50IGV4eW5vcyBkcm0gQUJJ
+IGFzIG1lbnRpb25lZCBoZXJlIFsxXS4gSS5lLgppdCBmZWVscyBicm9rZW4gd2hlbiB1c2luZyAz
+MmJpdCB1c2Vyc3BhY2Ugb24gNjQgYml0IGtlcm5lbCBkdWUgdG8gdGhlCnVzZSBvZiB1bnNpZ25l
+ZCBpbnQgYW5kIGFsaWtlIHR5cGVzLiBTaG91bGQgd2UgcmVwbGFjZSB0aGVtIChmaXgKdGhpbmdz
+KSB3aXRoIGV4cGxpY2l0bHkgc2l6ZWQgb25lcyAtIF91MzIvNjQuCgpEb2VzIHRoYXQgc291bmQg
+cmVhc29uYWJsZSwgaXMgYW55b25lIGZyb20gdGhlIEV4eW5vcyB0ZWFtIGludGVyZXN0ZWQKaW4g
+c29ydGluZyBpdCBvdXQgPwoKUmVnYXJkcywKRW1pbAoKWzFdIGh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE2LUphbnVhcnkvMDk5NTQ3Lmh0bWwKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
