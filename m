@@ -1,47 +1,55 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [PATCH] drm/exynos: dp: Fix panel and bridge lookup logic
-Date: Mon, 8 Feb 2016 09:03:36 -0300
-Message-ID: <56B88418.7090106@osg.samsung.com>
+Date: Mon, 08 Feb 2016 13:38:11 +0100
+Message-ID: <56B88C33.8060808@samsung.com>
 References: <1454080171-23769-1-git-send-email-javier@osg.samsung.com>
+ <56B88418.7090106@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1454080171-23769-1-git-send-email-javier@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47047 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751976AbcBHMiQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Feb 2016 07:38:16 -0500
+In-reply-to: <56B88418.7090106@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-SGVsbG8gSW5raSwKCk9uIDAxLzI5LzIwMTYgMTI6MDkgUE0sIEphdmllciBNYXJ0aW5leiBDYW5p
-bGxhcyB3cm90ZToKPiBDb21taXQgYTlmYTg1Mjg4NmZkICgiZHJtL2V4eW5vczogZHA6IGFkZCBv
-Zl9ncmFwaCBkdCBiaW5kaW5nIHN1cHBvcnQKPiBmb3IgcGFuZWwiKSBtYWRlIHRoZSBFeHlub3Mg
-RFAgRFQgYmluZGluZyBtb3JlIGNvbnNpc3RlbnQgc2luY2UgdGhlIE9GCj4gZ3JhcGggY291bGQg
-YmUgdXNlZCB0byBsb29rdXAgZWl0aGVyIGEgcGFuZWwgb3IgYSBicmlkZ2UgZGV2aWNlIG5vZGUu
-Cj4KPiBCZWZvcmUgdGhhdCBjb21taXQsIGEgcGFuZWwgd291bGQgYmUgbG9va2VkIHVwIHVzaW5n
-IGEgcGhhbmRsZSBhbmQgYQo+IGJyaWRnZSB1c2luZyB0aGUgT0YgZ3JhcGggd2hpY2ggbWFkZSB0
-aGUgRFQgYmluZGluZyBub3QgY29uc2lzdGVudC4KPgo+IEJ1dCB0aGUgcGF0Y2ggYnJva2UgdGhl
-IGxhdGVyIGNhc2Ugc2luY2Ugbm90IGZpbmRpbmcgYSBwYW5lbCBkZXYgbm9kZQo+IHdvdWxkIGNh
-dXNlIHRoZSBkcml2ZXIncyB0byBkbyBhIHByb2JlIGRlZmVycmFsIGluc3RlYWQgb2YgYXR0ZW1w
-dGluZwo+IHRvIGxvb2t1cCBhIGJyaWRnZSBkZXZpY2Ugbm9kZSBhc3NvY2lhdGVkIHdpdGggdGhl
-IHJlbW90ZSBlbmRwb2ludC4KPgo+IFNvIGluc3RlYWQgb2YgcmV0dXJuaW5nIGEgLUVQUk9CRV9E
-RUZFUiBpZiBhIHBhbmVsIGlzIG5vdCBmb3VuZCwgY2hlY2sKPiBpZiB0aGVyZSdzIGEgYnJpZGdl
-IGFuZCBvbmx5IGRvIGEgcHJvYmUgZGVmZXJyYWwgaWYgYm90aCBhcmVuJ3QgZm91bmQuCj4KPiBG
-aXhlczogYTlmYTg1Mjg4NmZkICgiZHJtL2V4eW5vczogZHA6IGFkZCBvZl9ncmFwaCBkdCBiaW5k
-aW5nIHN1cHBvcnQgZm9yIHBhbmVsIikKPiBTaWduZWQtb2ZmLWJ5OiBKYXZpZXIgTWFydGluZXog
-Q2FuaWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+Cj4KCkFueSBjb21tZW50cyBhYm91dCB0
-aGlzIHBhdGNoPyBJdCBpcyBuZWVkZWQgdG8gaGF2ZSBkaXNwbGF5IHdvcmtpbmcgb24KbWFjaGlu
-ZXMgd2l0aCBhIGJyaWRnZSBjaGlwIGFnYWluIHNvIGl0IHNob3VsZCBiZSBwdXNoZWQgdG8gLXJj
-IEFTQVAuCgpCZXN0IHJlZ2FyZHMsCi0tIApKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMKT3BlbiBT
-b3VyY2UgR3JvdXAKU2Ftc3VuZyBSZXNlYXJjaCBBbWVyaWNhCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Javier,
+
+On 2016-02-08 13:03, Javier Martinez Canillas wrote:
+> Hello Inki,
+>
+> On 01/29/2016 12:09 PM, Javier Martinez Canillas wrote:
+>> Commit a9fa852886fd ("drm/exynos: dp: add of_graph dt binding support
+>> for panel") made the Exynos DP DT binding more consistent since the OF
+>> graph could be used to lookup either a panel or a bridge device node.
+>>
+>> Before that commit, a panel would be looked up using a phandle and a
+>> bridge using the OF graph which made the DT binding not consistent.
+>>
+>> But the patch broke the later case since not finding a panel dev node
+>> would cause the driver's to do a probe deferral instead of attempting
+>> to lookup a bridge device node associated with the remote endpoint.
+>>
+>> So instead of returning a -EPROBE_DEFER if a panel is not found, check
+>> if there's a bridge and only do a probe deferral if both aren't found.
+>>
+>> Fixes: a9fa852886fd ("drm/exynos: dp: add of_graph dt binding support 
+>> for panel")
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>
+> Any comments about this patch? It is needed to have display working on
+> machines with a bridge chip again so it should be pushed to -rc ASAP.
+
+Please check v4.5-rc3, this patch is already merged there.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
