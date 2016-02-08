@@ -1,33 +1,76 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v2 20/51] mtd: docg3: switch to mtd_ooblayout_ops
-Date: Sat, 06 Feb 2016 22:57:39 +0100
-Message-ID: <87y4ax33jg.fsf@belgarion.home>
-References: <1454580434-32078-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1454580434-32078-21-git-send-email-boris.brezillon@free-electrons.com>
+From: Youngmin Nam <ym0914@gmail.com>
+Subject: Re: [PATCH v2] pinctrl: samsung: Fixes
+ samsung_gpio_direction_in/output releated with spinlock
+Date: Mon, 8 Feb 2016 13:02:57 +0900
+Message-ID: <56B81371.4030007@gmail.com>
+References: <1453615352-9748-1-git-send-email-ym0914@gmail.com>
+ <CACRpkdaTesQL+ginJdjg0LYD=re7-ot=VLnX_=th-0gSqcQx0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:51417 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752286AbcBFV5n (ORCPT
+Received: from mail-pa0-f68.google.com ([209.85.220.68]:32943 "EHLO
+	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752900AbcBHEDE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 6 Feb 2016 16:57:43 -0500
-In-Reply-To: <1454580434-32078-21-git-send-email-boris.brezillon@free-electrons.com>
-	(Boris Brezillon's message of "Thu, 4 Feb 2016 11:06:43 +0100")
+	Sun, 7 Feb 2016 23:03:04 -0500
+Received: by mail-pa0-f68.google.com with SMTP id y7so386632paa.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Feb 2016 20:03:03 -0800 (PST)
+In-Reply-To: <CACRpkdaTesQL+ginJdjg0LYD=re7-ot=VLnX_=th-0gSqcQx0Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Josh Wu <josh.wu@atmel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Stefan Agner <stefan@agner.ch>, Kyungmin Park <kyungmin.park@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, punnaiah choudary kalluri <punnaia@xilinx.com>, Priit Laes <plaes@plaes.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Boris Brezillon <boris.brezillon@free-electrons.com> writes:
+Thanks Linus and Tomasz.
 
-> Replace the nand_ecclayout definition by the equivalent mtd_ooblayout_ops
-> definition.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Sorry for late. I will rebase on v4.5-rc3 and resend.
 
-Cheers.
+Thanks.
 
---
-Robert
+On 2016=EB=85=84 01=EC=9B=94 27=EC=9D=BC 21:36, Linus Walleij wrote:
+> On Sun, Jan 24, 2016 at 7:02 AM, Youngmin Nam <ym0914@gmail.com> wrot=
+e:
+>=20
+>> Previously, samsung_gpio_drection_in/output function were not covere=
+d with
+>> one spinlock.
+>>
+>> For example, samsung_gpio_direction_output function consists of two =
+functions.
+>> 1. samsung_gpio_set
+>> 2. samsung_gpio_set_direction
+>>
+>> When 2 CPUs try to control the same gpio pin heavily,
+>> (situation like i2c control with gpio emulation)
+>> This situation can cause below problem.
+>>
+>> CPU 0                                   | CPU1
+>>                                         |
+>> samsung_gpio_direction_output           |
+>>    samsung_gpio_set(pin A as 1)         | samsung_gpio_direction_out=
+put
+>>                                         |    samsung_gpio_set(pin A =
+as 0)
+>>    samsung_gpio_set_direction           |
+>>                                         |    samsung_gpio_set_direct=
+ion
+>>
+>> The initial value of pin A will be set as 0 while we wanted to set p=
+in A as 1.
+>>
+>> This patch modifies samsung_gpio_direction_in/output function
+>> to be done in one spinlock to fix race condition.
+>>
+>> Additionally, the new samsung_gpio_set_value was added to implement
+>> gpio set callback(samsung_gpio_set) with spinlock using this functio=
+n.
+>>
+>> Signed-off-by: Youngmin Nam <ym0914@gmail.com>
+>=20
+> This patch does not apply to v4.5-rc1. Please rebase this
+> and resend. (With Thomas ACK if it's valid.)
+>=20
+> Yours,
+> Linus Walleij
+>=20
