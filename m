@@ -1,56 +1,164 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] drm/exynos: dp: Fix panel and bridge lookup logic
-Date: Mon, 8 Feb 2016 09:44:32 -0300
-Message-ID: <56B88DB0.3040806@osg.samsung.com>
-References: <1454080171-23769-1-git-send-email-javier@osg.samsung.com>
- <56B88418.7090106@osg.samsung.com> <56B88C33.8060808@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <56B88C33.8060808@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+From: Youngmin Nam <ym0914@gmail.com>
+Subject: [PATCH v3] pinctrl: samsung: Fixes samsung_gpio_direction_in/output releated with spinlock
+Date: Mon,  8 Feb 2016 23:54:19 +0900
+Message-ID: <1454943259-5486-1-git-send-email-ym0914@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33122 "EHLO
+	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753603AbcBHOyZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Feb 2016 09:54:25 -0500
+Received: by mail-pf0-f195.google.com with SMTP id c10so8346380pfc.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Feb 2016 06:54:25 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: tomasz.figa@gmail.com, linus.walleij@linaro.org
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, thomas.ab@samsung.com, linux-samsung-soc@vger.kernel.org, Youngmin Nam <ym0914@gmail.com>
 
-SGVsbG8gTWFyZWssCgpPbiAwMi8wOC8yMDE2IDA5OjM4IEFNLCBNYXJlayBTenlwcm93c2tpIHdy
-b3RlOgo+IEhpIEphdmllciwKPgo+IE9uIDIwMTYtMDItMDggMTM6MDMsIEphdmllciBNYXJ0aW5l
-eiBDYW5pbGxhcyB3cm90ZToKPj4gSGVsbG8gSW5raSwKPj4KPj4gT24gMDEvMjkvMjAxNiAxMjow
-OSBQTSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgo+Pj4gQ29tbWl0IGE5ZmE4NTI4
-ODZmZCAoImRybS9leHlub3M6IGRwOiBhZGQgb2ZfZ3JhcGggZHQgYmluZGluZyBzdXBwb3J0Cj4+
-PiBmb3IgcGFuZWwiKSBtYWRlIHRoZSBFeHlub3MgRFAgRFQgYmluZGluZyBtb3JlIGNvbnNpc3Rl
-bnQgc2luY2UgdGhlIE9GCj4+PiBncmFwaCBjb3VsZCBiZSB1c2VkIHRvIGxvb2t1cCBlaXRoZXIg
-YSBwYW5lbCBvciBhIGJyaWRnZSBkZXZpY2Ugbm9kZS4KPj4+Cj4+PiBCZWZvcmUgdGhhdCBjb21t
-aXQsIGEgcGFuZWwgd291bGQgYmUgbG9va2VkIHVwIHVzaW5nIGEgcGhhbmRsZSBhbmQgYQo+Pj4g
-YnJpZGdlIHVzaW5nIHRoZSBPRiBncmFwaCB3aGljaCBtYWRlIHRoZSBEVCBiaW5kaW5nIG5vdCBj
-b25zaXN0ZW50Lgo+Pj4KPj4+IEJ1dCB0aGUgcGF0Y2ggYnJva2UgdGhlIGxhdGVyIGNhc2Ugc2lu
-Y2Ugbm90IGZpbmRpbmcgYSBwYW5lbCBkZXYgbm9kZQo+Pj4gd291bGQgY2F1c2UgdGhlIGRyaXZl
-cidzIHRvIGRvIGEgcHJvYmUgZGVmZXJyYWwgaW5zdGVhZCBvZiBhdHRlbXB0aW5nCj4+PiB0byBs
-b29rdXAgYSBicmlkZ2UgZGV2aWNlIG5vZGUgYXNzb2NpYXRlZCB3aXRoIHRoZSByZW1vdGUgZW5k
-cG9pbnQuCj4+Pgo+Pj4gU28gaW5zdGVhZCBvZiByZXR1cm5pbmcgYSAtRVBST0JFX0RFRkVSIGlm
-IGEgcGFuZWwgaXMgbm90IGZvdW5kLCBjaGVjawo+Pj4gaWYgdGhlcmUncyBhIGJyaWRnZSBhbmQg
-b25seSBkbyBhIHByb2JlIGRlZmVycmFsIGlmIGJvdGggYXJlbid0IGZvdW5kLgo+Pj4KPj4+IEZp
-eGVzOiBhOWZhODUyODg2ZmQgKCJkcm0vZXh5bm9zOiBkcDogYWRkIG9mX2dyYXBoIGR0IGJpbmRp
-bmcgc3VwcG9ydCBmb3IgcGFuZWwiKQo+Pj4gU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6
-IENhbmlsbGFzIDxqYXZpZXJAb3NnLnNhbXN1bmcuY29tPgo+Pj4KPj4KPj4gQW55IGNvbW1lbnRz
-IGFib3V0IHRoaXMgcGF0Y2g/IEl0IGlzIG5lZWRlZCB0byBoYXZlIGRpc3BsYXkgd29ya2luZyBv
-bgo+PiBtYWNoaW5lcyB3aXRoIGEgYnJpZGdlIGNoaXAgYWdhaW4gc28gaXQgc2hvdWxkIGJlIHB1
-c2hlZCB0byAtcmMgQVNBUC4KPgo+IFBsZWFzZSBjaGVjayB2NC41LXJjMywgdGhpcyBwYXRjaCBp
-cyBhbHJlYWR5IG1lcmdlZCB0aGVyZS4KPgoKTXkgYmFkLCBJIHdhcyBsb29raW5nIGF0IHY0LjUt
-cmMyIGFuZCBJbmtpIHVzZWQgdG8gYW5zd2VyIHRvIHBhdGNoZXMKd2hlbiBoZSBwaWNrcyB0aGVt
-IHNvIEkgdGhvdWdodCBoZSBkaWRuJ3QgaGF2ZSB0aW1lIHRvIGxvb2sgYXQgaXQgeWV0LgoKQW55
-d2F5cywgdGhhbmtzIGEgbG90IGZvciBwb2ludGluZyBpdCBvdXQuCiAgCj4gQmVzdCByZWdhcmRz
-CgpCZXN0IHJlZ2FyZHMsCi0tIApKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMKT3BlbiBTb3VyY2Ug
-R3JvdXAKU2Ftc3VuZyBSZXNlYXJjaCBBbWVyaWNhCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Previously, samsung_gpio_drection_in/output function were not covered with
+one spinlock.
+
+For example, samsung_gpio_direction_output function consists of two functions.
+1. samsung_gpio_set
+2. samsung_gpio_set_direction
+
+When 2 CPUs try to control the same gpio pin heavily,
+(situation like i2c control with gpio emulation)
+This situation can cause below problem.
+
+CPU 0                                   | CPU1
+                                        |
+samsung_gpio_direction_output           |
+   samsung_gpio_set(pin A as 1)         | samsung_gpio_direction_output
+                                        |    samsung_gpio_set(pin A as 0)
+   samsung_gpio_set_direction           |
+                                        |    samsung_gpio_set_direction
+
+The initial value of pin A will be set as 0 while we wanted to set pin A as 1.
+
+This patch modifies samsung_gpio_direction_in/output function
+to be done in one spinlock to fix race condition.
+
+Additionally, the new samsung_gpio_set_value was added to implement
+gpio set callback(samsung_gpio_set) with spinlock using this function.
+
+Signed-off-by: Youngmin Nam <ym0914@gmail.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 48 ++++++++++++++++++++++---------
+ 1 file changed, 35 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index f67b1e9..38142c2 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -514,25 +514,35 @@ static const struct pinconf_ops samsung_pinconf_ops = {
+ 	.pin_config_group_set	= samsung_pinconf_group_set,
+ };
+ 
+-/* gpiolib gpio_set callback function */
+-static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
++/*
++ * The samsung_gpio_set_vlaue() should be called with "bank->slock" held
++ * to avoid race condition.
++ */
++static void samsung_gpio_set_value(struct gpio_chip *gc,
++					  unsigned offset, int value)
+ {
+ 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
+ 	const struct samsung_pin_bank_type *type = bank->type;
+-	unsigned long flags;
+ 	void __iomem *reg;
+ 	u32 data;
+ 
+ 	reg = bank->drvdata->virt_base + bank->pctl_offset;
+ 
+-	spin_lock_irqsave(&bank->slock, flags);
+-
+ 	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
+ 	data &= ~(1 << offset);
+ 	if (value)
+ 		data |= 1 << offset;
+ 	writel(data, reg + type->reg_offset[PINCFG_TYPE_DAT]);
++}
+ 
++/* gpiolib gpio_set callback function */
++static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
++{
++	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
++	unsigned long flags;
++
++	spin_lock_irqsave(&bank->slock, flags);
++	samsung_gpio_set_value(gc, offset, value);
+ 	spin_unlock_irqrestore(&bank->slock, flags);
+ }
+ 
+@@ -553,6 +563,8 @@ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
+ }
+ 
+ /*
++ * The samsung_gpio_set_direction() should be called with "bank->slock" held
++ * to avoid race condition.
+  * The calls to gpio_direction_output() and gpio_direction_input()
+  * leads to this function call.
+  */
+@@ -564,7 +576,6 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
+ 	struct samsung_pinctrl_drv_data *drvdata;
+ 	void __iomem *reg;
+ 	u32 data, mask, shift;
+-	unsigned long flags;
+ 
+ 	bank = gpiochip_get_data(gc);
+ 	type = bank->type;
+@@ -581,31 +592,42 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
+ 		reg += 4;
+ 	}
+ 
+-	spin_lock_irqsave(&bank->slock, flags);
+-
+ 	data = readl(reg);
+ 	data &= ~(mask << shift);
+ 	if (!input)
+ 		data |= FUNC_OUTPUT << shift;
+ 	writel(data, reg);
+ 
+-	spin_unlock_irqrestore(&bank->slock, flags);
+-
+ 	return 0;
+ }
+ 
+ /* gpiolib gpio_direction_input callback function. */
+ static int samsung_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+ {
+-	return samsung_gpio_set_direction(gc, offset, true);
++	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&bank->slock, flags);
++	ret = samsung_gpio_set_direction(gc, offset, true);
++	spin_unlock_irqrestore(&bank->slock, flags);
++	return ret;
+ }
+ 
+ /* gpiolib gpio_direction_output callback function. */
+ static int samsung_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
+ 							int value)
+ {
+-	samsung_gpio_set(gc, offset, value);
+-	return samsung_gpio_set_direction(gc, offset, false);
++	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&bank->slock, flags);
++	samsung_gpio_set_value(gc, offset, value);
++	ret = samsung_gpio_set_direction(gc, offset, false);
++	spin_unlock_irqrestore(&bank->slock, flags);
++
++	return ret;
+ }
+ 
+ /*
+-- 
+2.7.1
