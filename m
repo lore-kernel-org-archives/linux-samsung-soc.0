@@ -1,44 +1,203 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] rtc: s3c: Document required clocks in the DT binding
-Date: Tue,  9 Feb 2016 14:23:52 -0300
-Message-ID: <1455038632-14545-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] ARM: dts: Move syscon reboot/poweroff to common dtsi for Exynos
+Date: Tue,  9 Feb 2016 15:30:05 -0300
+Message-ID: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:40373 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756331AbcBISa0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Feb 2016 13:30:26 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-The S3C Real Time Clock driver requires the clock and source clock to
-be defined in the device node but that requirement is not documented.
+All Exynos SoCs have the same syscon reboot and poweroff device nodes so
+there is no need to duplicate the same on each SoC dtsi and can be moved
+to a common dtsi that can be included by all the SoCs dtsi files.
 
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 ---
+Hello,
 
- Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+The patch was tested on an Exynos5800 Peach Pi Chromebook and an
+Exynos5422 Odroid XU4 board. Reboot and poweroff worked for both.
 
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-index ac2fcd6ff4b8..1068ffce9f91 100644
---- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-@@ -14,6 +14,10 @@ Required properties:
-   interrupt number is the rtc alarm interrupt and second interrupt number
-   is the rtc tick interrupt. The number of cells representing a interrupt
-   depends on the parent interrupt controller.
-+- clocks: Must contain a list of phandle and clock specifier for the rtc
-+          and source clocks.
-+- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
-+               same order as the clocks property.
+But testing on Exynos3 and Exynos4 will be highly appreciated.
+
+Best regards,
+Javier
+
+ arch/arm/boot/dts/exynos-syscon-restart.dtsi | 23 +++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi            | 15 +--------------
+ arch/arm/boot/dts/exynos4.dtsi               | 15 +--------------
+ arch/arm/boot/dts/exynos5.dtsi               | 15 +--------------
+ arch/arm/boot/dts/exynos5410.dtsi            | 15 +--------------
+ 5 files changed, 27 insertions(+), 56 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos-syscon-restart.dtsi
+
+diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+new file mode 100644
+index 000000000000..2b8acf554881
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+@@ -0,0 +1,23 @@
++/*
++ * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++/ {
++	poweroff: syscon-poweroff {
++		compatible = "syscon-poweroff";
++		regmap = <&pmu_system_controller>;
++		offset = <0x330C>; /* PS_HOLD_CONTROL */
++		mask = <0x5200>; /* reset value */
++	};
++
++	reboot: syscon-reboot {
++		compatible = "syscon-reboot";
++		regmap = <&pmu_system_controller>;
++		offset = <0x0400>; /* SWRESET */
++		mask = <0x1>;
++	};
++};
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 18e3deffbf48..d9c221517935 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -19,6 +19,7 @@
  
- Example:
+ #include "skeleton.dtsi"
+ #include "exynos4-cpu-thermal.dtsi"
++#include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos3250.h>
  
-@@ -21,4 +25,6 @@ Example:
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x10070000 0x100>;
- 		interrupts = <44 0 45 0>;
-+		clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
-+		clock-names = "rtc", "rtc_src";
+ / {
+@@ -152,20 +153,6 @@
+ 			interrupt-parent = <&gic>;
+ 		};
+ 
+-		poweroff: syscon-poweroff {
+-			compatible = "syscon-poweroff";
+-			regmap = <&pmu_system_controller>;
+-			offset = <0x330C>; /* PS_HOLD_CONTROL */
+-			mask = <0x5200>; /* Reset value */
+-		};
+-
+-		reboot: syscon-reboot {
+-			compatible = "syscon-reboot";
+-			regmap = <&pmu_system_controller>;
+-			offset = <0x0400>; /* SWRESET */
+-			mask = <0x1>;
+-		};
+-
+ 		mipi_phy: video-phy@10020710 {
+ 			compatible = "samsung,s5pv210-mipi-video-phy";
+ 			#phy-cells = <1>;
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index ca621a92319e..e6f6939ccdfa 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -21,6 +21,7 @@
+ 
+ #include <dt-bindings/clock/exynos4.h>
+ #include <dt-bindings/clock/exynos-audss-clk.h>
++#include "exynos-syscon-restart.dtsi"
+ #include "skeleton.dtsi"
+ 
+ / {
+@@ -163,20 +164,6 @@
+ 		interrupt-parent = <&gic>;
  	};
+ 
+-	poweroff: syscon-poweroff {
+-		compatible = "syscon-poweroff";
+-		regmap = <&pmu_system_controller>;
+-		offset = <0x330C>; /* PS_HOLD_CONTROL */
+-		mask = <0x5200>; /* reset value */
+-	};
+-
+-	reboot: syscon-reboot {
+-		compatible = "syscon-reboot";
+-		regmap = <&pmu_system_controller>;
+-		offset = <0x0400>; /* SWRESET */
+-		mask = <0x1>;
+-	};
+-
+ 	dsi_0: dsi@11C80000 {
+ 		compatible = "samsung,exynos4210-mipi-dsi";
+ 		reg = <0x11C80000 0x10000>;
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index b61d1f637510..92313cac035e 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include "skeleton.dtsi"
++#include "exynos-syscon-restart.dtsi"
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -93,20 +94,6 @@
+ 		status = "disabled";
+ 	};
+ 
+-	poweroff: syscon-poweroff {
+-		compatible = "syscon-poweroff";
+-		regmap = <&pmu_system_controller>;
+-		offset = <0x330C>; /* PS_HOLD_CONTROL */
+-		mask = <0x5200>; /* reset value */
+-	};
+-
+-	reboot: syscon-reboot {
+-		compatible = "syscon-reboot";
+-		regmap = <&pmu_system_controller>;
+-		offset = <0x0400>; /* SWRESET */
+-		mask = <0x1>;
+-	};
+-
+ 	fimd: fimd@14400000 {
+ 		compatible = "samsung,exynos5250-fimd";
+ 		interrupt-parent = <&combiner>;
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index f3490f567344..fa558674ac76 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include "skeleton.dtsi"
++#include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos5410.h>
+ 
+ / {
+@@ -117,20 +118,6 @@
+ 			reg = <0x10040000 0x5000>;
+ 		};
+ 
+-		poweroff: syscon-poweroff {
+-			compatible = "syscon-poweroff";
+-			regmap = <&pmu_system_controller>;
+-			offset = <0x330C>; /* PS_HOLD_CONTROL */
+-			mask = <0x5200>; /* reset value */
+-		};
+-
+-		reboot: syscon-reboot {
+-			compatible = "syscon-reboot";
+-			regmap = <&pmu_system_controller>;
+-			offset = <0x0400>; /* SWRESET */
+-			mask = <0x1>;
+-		};
+-
+ 		mct: mct@101C0000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x101C0000 0xB00>;
 -- 
 2.5.0
