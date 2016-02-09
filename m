@@ -1,64 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: Get fifosize via device tree
-Date: Tue, 9 Feb 2016 16:10:36 +0000
-Message-ID: <20160209161036.GI13270@sirena.org.uk>
-References: <1455031585-11113-1-git-send-email-ym0914@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Li7ckgedzMh1NgdW"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42467 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757362AbcBIQKq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Feb 2016 11:10:46 -0500
-Content-Disposition: inline
-In-Reply-To: <1455031585-11113-1-git-send-email-ym0914@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] rtc: s3c: Document required clocks in the DT binding
+Date: Tue,  9 Feb 2016 14:23:52 -0300
+Message-ID: <1455038632-14545-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Youngmin Nam <ym0914@gmail.com>
-Cc: kgene@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
+The S3C Real Time Clock driver requires the clock and source clock to
+be defined in the device node but that requirement is not documented.
 
---Li7ckgedzMh1NgdW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Wed, Feb 10, 2016 at 12:26:25AM +0900, Youngmin Nam wrote:
+---
 
-> SPI driver on some SoCs only differ in the fifosize of each
-> SPI channel. It is useless to duplicate the s3c64xx_spi_port_config struc=
-ture
-> or create a compatible name for such a change.
+ Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I disagree that it is useless to do this, it means that if we realize
-later that there is some other difference between the implementations
-then we have the information in the DT to handle this without needing=20
-to update the ABI.
-
-> +Optional SoC Specific properties:
-> +
-> +- samsung,spi-fifosize: The fifo size supported by the SPI channel
-> +
-> +
-
-In units of...?  FIFO sizes do get quoted in both words and bytes so it
-seems good to be clear.
-
---Li7ckgedzMh1NgdW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWug97AAoJECTWi3JdVIfQ6BEH/ArILUtDqECGIVGHk5KH0RR8
-jXv4Gqa6SErTZduDYxZn6XI5ZCWG29C3WbO/QQekHc7sOdEt9dnYV+lYlKkTL6oE
-rfuReYPlL8VGpJRR1wr0FFNfHnXR9xfg/WYY6GAWBbpBZAKNRKA2DZkNPPsM6phh
-DwOrLtfSRQXbAi9fmrCXxS7j9mMgnv6Xj/C29x/b05NV6b4p+0MXjdrA45/4glGS
-ndUtmBAe1/qEaQuJy8Uceq7PSPPhFiUksS+PnF6LMt5PG2lt+3Rm9E36RxHEhKru
-06qMlGwTnOewEfOkc70zJ/3g/7r8G+24Ei8CSjqnm8aoBAlvedjYfgS6upKtySA=
-=JVKH
------END PGP SIGNATURE-----
-
---Li7ckgedzMh1NgdW--
+diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+index ac2fcd6ff4b8..1068ffce9f91 100644
+--- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
++++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+@@ -14,6 +14,10 @@ Required properties:
+   interrupt number is the rtc alarm interrupt and second interrupt number
+   is the rtc tick interrupt. The number of cells representing a interrupt
+   depends on the parent interrupt controller.
++- clocks: Must contain a list of phandle and clock specifier for the rtc
++          and source clocks.
++- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
++               same order as the clocks property.
+ 
+ Example:
+ 
+@@ -21,4 +25,6 @@ Example:
+ 		compatible = "samsung,s3c6410-rtc";
+ 		reg = <0x10070000 0x100>;
+ 		interrupts = <44 0 45 0>;
++		clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
++		clock-names = "rtc", "rtc_src";
+ 	};
+-- 
+2.5.0
