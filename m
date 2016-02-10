@@ -1,8 +1,8 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 RESEND 1/5] drivers: nvdimm: ensure no negative value gets
- returned on positive match
-Date: Wed, 10 Feb 2016 11:47:26 +0100
-Message-ID: <1455101250-11327-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v5 RESEND 3/5] driver core: handle -EPROBE_DEFER from
+ bus_type.match()
+Date: Wed, 10 Feb 2016 11:47:28 +0100
+Message-ID: <1455101250-11327-4-git-send-email-m.szyprowski@samsung.com>
 References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
@@ -11,30 +11,119 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lin
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
-This patch ensures that existing bus match callbacks don't return
-negative values (which might be interpreted as potential errors in the
-future) in case of positive match.
+Allow implementations of the match() callback in struct bus_type to
+return errors and if it's -EPROBE_DEFER then queue the device for
+deferred probing.
 
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+This is useful to buses such as AMBA in which devices are registered
+before their matching information can be retrieved from the HW
+(typically because a clock driver hasn't probed yet).
+
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+[changed if-else code structure, adjusted documentation to match the code,
+extended comments]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/nvdimm/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/driver-model/porting.txt |  6 ++++--
+ drivers/base/dd.c                      | 24 ++++++++++++++++++++++--
+ include/linux/device.h                 |  7 +++++--
+ 3 files changed, 31 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index 7e2c43f..2b2181c 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -62,7 +62,7 @@ static int nvdimm_bus_match(struct device *dev, struct device_driver *drv)
+diff --git a/Documentation/driver-model/porting.txt b/Documentation/driver-model/porting.txt
+index 92d86f7..453053f 100644
+--- a/Documentation/driver-model/porting.txt
++++ b/Documentation/driver-model/porting.txt
+@@ -340,8 +340,10 @@ comparison:
+ 
+   int (*match)(struct device * dev, struct device_driver * drv);
+ 
+-match should return '1' if the driver supports the device, and '0'
+-otherwise. 
++match should return positive value if the driver supports the device,
++and zero otherwise. It may also return error code (for example
++-EPROBE_DEFER) if determining that given driver supports the device is
++not possible.
+ 
+ When a device is registered, the bus's list of drivers is iterated
+ over. bus->match() is called for each one until a match is found. 
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 7399be7..7c3f1f1 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -544,6 +544,7 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
+ 	struct device_attach_data *data = _data;
+ 	struct device *dev = data->dev;
+ 	bool async_allowed;
++	int ret;
+ 
+ 	/*
+ 	 * Check if device has already been claimed. This may
+@@ -554,8 +555,17 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
+ 	if (dev->driver)
+ 		return -EBUSY;
+ 
+-	if (!driver_match_device(drv, dev))
++	ret = driver_match_device(drv, dev);
++	if (ret == 0) {
++		/* no match */
+ 		return 0;
++	} else if (ret == -EPROBE_DEFER) {
++		dev_dbg(dev, "Device match requests probe deferral\n");
++		driver_deferred_probe_add(dev);
++	} else if (ret < 0) {
++		dev_dbg(dev, "Bus failed to match device: %d", ret);
++		return ret;
++	} /* ret > 0 means positive match */
+ 
+ 	async_allowed = driver_allows_async_probing(drv);
+ 
+@@ -675,6 +685,7 @@ void device_initial_probe(struct device *dev)
+ static int __driver_attach(struct device *dev, void *data)
  {
- 	struct nd_device_driver *nd_drv = to_nd_device_driver(drv);
+ 	struct device_driver *drv = data;
++	int ret;
  
--	return test_bit(to_nd_device_type(dev), &nd_drv->type);
-+	return !!test_bit(to_nd_device_type(dev), &nd_drv->type);
- }
+ 	/*
+ 	 * Lock device and try to bind to it. We drop the error
+@@ -686,8 +697,17 @@ static int __driver_attach(struct device *dev, void *data)
+ 	 * is an error.
+ 	 */
  
- static struct module *to_bus_provider(struct device *dev)
+-	if (!driver_match_device(drv, dev))
++	ret = driver_match_device(drv, dev);
++	if (ret == 0) {
++		/* no match */
+ 		return 0;
++	} else if (ret == -EPROBE_DEFER) {
++		dev_dbg(dev, "Device match requests probe deferral\n");
++		driver_deferred_probe_add(dev);
++	} else if (ret < 0) {
++		dev_dbg(dev, "Bus failed to match device: %d", ret);
++		return ret;
++	} /* ret > 0 means positive match */
+ 
+ 	if (dev->parent)	/* Needed for USB */
+ 		device_lock(dev->parent);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index f627ba2..75a2cde 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -70,8 +70,11 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
+  * @dev_groups:	Default attributes of the devices on the bus.
+  * @drv_groups: Default attributes of the device drivers on the bus.
+  * @match:	Called, perhaps multiple times, whenever a new device or driver
+- *		is added for this bus. It should return a nonzero value if the
+- *		given device can be handled by the given driver.
++ *		is added for this bus. It should return a positive value if the
++ *		given device can be handled by the given driver and zero
++ *		otherwise. It may also return error code if determining that
++ *		the driver supports the device is not possible. In case of
++ *		-EPROBE_DEFER it will queue the device for deferred probing.
+  * @uevent:	Called when a device is added, removed, or a few other things
+  *		that generate uevents to add the environment variables.
+  * @probe:	Called when a new device or driver add to this bus, and callback
 -- 
 1.9.2
