@@ -1,238 +1,35 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 RESEND 4/5] ARM: amba: Move reading of periphid to
- amba_match()
-Date: Wed, 10 Feb 2016 11:47:29 +0100
-Message-ID: <1455101250-11327-5-git-send-email-m.szyprowski@samsung.com>
-References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH] drm/exynos: support exynos5422 mipi-dsi
+Date: Wed, 10 Feb 2016 12:34:43 +0000
+Message-ID: <CACvgo51WTYAYon4e4+hT7_vaeSDDR41pA0QmnjZ1FM3QR8vvOg@mail.gmail.com>
+References: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:36615 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750801AbcBJMeo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Feb 2016 07:34:44 -0500
+Received: by mail-wm0-f52.google.com with SMTP id p63so26359328wmp.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Feb 2016 04:34:43 -0800 (PST)
+In-Reply-To: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanho Park <parkch98@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>
 
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Hi Chanho Park
 
-Reading the periphid when the Primecell device is registered means that
-the apb pclk must be available by then or the device won't be registered
-at all.
+On 30 January 2016 at 14:11, Chanho Park <parkch98@gmail.com> wrote:
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 
-By reading the periphid in amba_match() we can return -EPROBE_DEFER if
-the apb pclk isn't there yet and the device will be retried later.
+>  static struct of_device_id exynos_dsi_of_match[] = {
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-[minor code adjustments, removed forward declaration, added missing
-comment]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/amba/bus.c | 146 +++++++++++++++++++++++++++--------------------------
- 1 file changed, 75 insertions(+), 71 deletions(-)
+If you feel extra gracious you can constify the array and all of it's
+entries, for good measure.
+Likely in another patch of course :-)
 
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index f009936..643127f 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -24,6 +24,71 @@
- 
- #define to_amba_driver(d)	container_of(d, struct amba_driver, drv)
- 
-+static int amba_get_enable_pclk(struct amba_device *pcdev)
-+{
-+	int ret;
-+
-+	pcdev->pclk = clk_get(&pcdev->dev, "apb_pclk");
-+	if (IS_ERR(pcdev->pclk))
-+		return PTR_ERR(pcdev->pclk);
-+
-+	ret = clk_prepare_enable(pcdev->pclk);
-+	if (ret)
-+		clk_put(pcdev->pclk);
-+
-+	return ret;
-+}
-+
-+static void amba_put_disable_pclk(struct amba_device *pcdev)
-+{
-+	clk_disable_unprepare(pcdev->pclk);
-+	clk_put(pcdev->pclk);
-+}
-+
-+static int amba_read_periphid(struct amba_device *dev)
-+{
-+	u32 size;
-+	void __iomem *tmp;
-+	int i, ret = 0;
-+
-+	/*
-+	 * Dynamically calculate the size of the resource
-+	 * and use this for iomap
-+	 */
-+	size = resource_size(&dev->res);
-+	tmp = ioremap(dev->res.start, size);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	ret = amba_get_enable_pclk(dev);
-+	if (ret == 0) {
-+		u32 pid, cid;
-+
-+		/*
-+		 * Read pid and cid based on size of resource
-+		 * they are located at end of region
-+		 */
-+		for (pid = 0, i = 0; i < 4; i++)
-+			pid |= (readl(tmp + size - 0x20 + 4 * i) & 255) <<
-+				(i * 8);
-+		for (cid = 0, i = 0; i < 4; i++)
-+			cid |= (readl(tmp + size - 0x10 + 4 * i) & 255) <<
-+				(i * 8);
-+
-+		amba_put_disable_pclk(dev);
-+
-+		if (cid == AMBA_CID || cid == CORESIGHT_CID)
-+			dev->periphid = pid;
-+
-+		if (!dev->periphid)
-+			ret = -ENODEV;
-+	}
-+
-+	iounmap(tmp);
-+
-+	return ret;
-+}
-+
- static const struct amba_id *
- amba_lookup(const struct amba_id *table, struct amba_device *dev)
- {
-@@ -43,11 +108,19 @@ static int amba_match(struct device *dev, struct device_driver *drv)
- {
- 	struct amba_device *pcdev = to_amba_device(dev);
- 	struct amba_driver *pcdrv = to_amba_driver(drv);
-+	int ret;
- 
- 	/* When driver_override is set, only bind to the matching driver */
- 	if (pcdev->driver_override)
- 		return !strcmp(pcdev->driver_override, drv->name);
- 
-+	/* Do plug-n-play if no hard-coded primecell ID has been provided */
-+	if (!pcdev->periphid) {
-+		ret = amba_read_periphid(pcdev);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return amba_lookup(pcdrv->id_table, pcdev) != NULL;
- }
- 
-@@ -204,27 +277,6 @@ static int __init amba_init(void)
- 
- postcore_initcall(amba_init);
- 
--static int amba_get_enable_pclk(struct amba_device *pcdev)
--{
--	int ret;
--
--	pcdev->pclk = clk_get(&pcdev->dev, "apb_pclk");
--	if (IS_ERR(pcdev->pclk))
--		return PTR_ERR(pcdev->pclk);
--
--	ret = clk_prepare_enable(pcdev->pclk);
--	if (ret)
--		clk_put(pcdev->pclk);
--
--	return ret;
--}
--
--static void amba_put_disable_pclk(struct amba_device *pcdev)
--{
--	clk_disable_unprepare(pcdev->pclk);
--	clk_put(pcdev->pclk);
--}
--
- /*
-  * These are the device model conversion veneers; they convert the
-  * device model structures to our more specific structures.
-@@ -341,15 +393,12 @@ static void amba_device_release(struct device *dev)
-  *	@dev: AMBA device allocated by amba_device_alloc
-  *	@parent: resource parent for this devices resources
-  *
-- *	Claim the resource, and read the device cell ID if not already
-- *	initialized.  Register the AMBA device with the Linux device
-+ *	Claim the resource, and register the AMBA device with the Linux device
-  *	manager.
-  */
- int amba_device_add(struct amba_device *dev, struct resource *parent)
- {
--	u32 size;
--	void __iomem *tmp;
--	int i, ret;
-+	int ret;
- 
- 	WARN_ON(dev->irq[0] == (unsigned int)-1);
- 	WARN_ON(dev->irq[1] == (unsigned int)-1);
-@@ -358,51 +407,6 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
- 	if (ret)
- 		goto err_out;
- 
--	/* Hard-coded primecell ID instead of plug-n-play */
--	if (dev->periphid != 0)
--		goto skip_probe;
--
--	/*
--	 * Dynamically calculate the size of the resource
--	 * and use this for iomap
--	 */
--	size = resource_size(&dev->res);
--	tmp = ioremap(dev->res.start, size);
--	if (!tmp) {
--		ret = -ENOMEM;
--		goto err_release;
--	}
--
--	ret = amba_get_enable_pclk(dev);
--	if (ret == 0) {
--		u32 pid, cid;
--
--		/*
--		 * Read pid and cid based on size of resource
--		 * they are located at end of region
--		 */
--		for (pid = 0, i = 0; i < 4; i++)
--			pid |= (readl(tmp + size - 0x20 + 4 * i) & 255) <<
--				(i * 8);
--		for (cid = 0, i = 0; i < 4; i++)
--			cid |= (readl(tmp + size - 0x10 + 4 * i) & 255) <<
--				(i * 8);
--
--		amba_put_disable_pclk(dev);
--
--		if (cid == AMBA_CID || cid == CORESIGHT_CID)
--			dev->periphid = pid;
--
--		if (!dev->periphid)
--			ret = -ENODEV;
--	}
--
--	iounmap(tmp);
--
--	if (ret)
--		goto err_release;
--
-- skip_probe:
- 	ret = device_add(&dev->dev);
- 	if (ret)
- 		goto err_release;
--- 
-1.9.2
+Regards,
+Emil
