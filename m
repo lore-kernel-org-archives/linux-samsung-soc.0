@@ -1,225 +1,94 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: lockdep: INFO: possible irq lock inversion dependency detected on
- Odroid U3
-Date: Wed, 10 Feb 2016 12:57:50 +0530
-Message-ID: <CANAwSgRgFMNWGhTe7xsHqkQQ1JS0XW6pO8LT8c6rZm=3cEBcbg@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: support exynos5422 mipi-dsi
+Date: Wed, 10 Feb 2016 10:03:58 +0100
+Message-ID: <56BAFCFE.5090307@samsung.com>
+References: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:36947 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750988AbcBJH2L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Feb 2016 02:28:11 -0500
-Received: by mail-wm0-f48.google.com with SMTP id g62so14165070wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Feb 2016 23:28:10 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Chanho Park <parkch98@gmail.com>, inki.dae@samsung.com
+Cc: Chanho Park <chanho61.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Hi all,
-
-I am observing following lockdep info.
-
-[  139.806823] =========================================================
-[  139.811934] [ INFO: possible irq lock inversion dependency detected ]
-[  139.818362] 4.5.0-rc3-u3s #11 Tainted: G        W
-[  139.823566] ---------------------------------------------------------
-[  139.829990] swapper/0/0 just changed the state of lock:
-[  139.835197]  (&(&substream->self_group.lock)->rlock){..-...}, at:
-[<c04e03cc>] _snd_pcm_stream_lock_irqsave+0x34/0x40
-[  139.845788] but this lock took another, SOFTIRQ-unsafe lock in the past:
-[  139.852468]  (&(&pri_dai->spinlock)->rlock){+.+...}
-
-and interrupts could create inverse lock ordering between them.
-
-[  139.863319]
-[  139.863319] other info that might help us debug this:
-[  139.869830]  Possible interrupt unsafe locking scenario:
-[  139.869830]
-[  139.876599]        CPU0                    CPU1
-[  139.881113]        ----                    ----
-[  139.885626]   lock(&(&pri_dai->spinlock)->rlock);
-[  139.890314]                                local_irq_disable();
-[  139.896216]
-lock(&(&substream->self_group.lock)->rlock);
-[  139.904201]
-lock(&(&pri_dai->spinlock)->rlock);
-[  139.911405]   <Interrupt>
-[  139.914009]     lock(&(&substream->self_group.lock)->rlock);
-[  139.919652]
-[  139.919652]  *** DEADLOCK ***
-[  139.919652]
-[  139.925558] 1 lock held by swapper/0/0:
-[  139.929374]  #0:  (snd_pcm_link_rwlock){...-..}, at: [<c04e0330>]
-snd_pcm_stream_lock+0x20/0x50
-[  139.938054]
-[  139.938054] the shortest dependencies between 2nd lock and 1st lock:
-[  139.945893]  -> (&(&pri_dai->spinlock)->rlock){+.+...} ops: 37 {
-[  139.951856]     HARDIRQ-ON-W at:
-[  139.955067]                       [<c066b89c>] _raw_spin_lock+0x3c/0x74
-[  139.961663]                       [<c0500558>] i2s_set_sysclk+0x40/0x464
-[  139.968347]                       [<c0500e0c>]
-samsung_i2s_dai_probe+0x238/0x2b0
-[  139.975725]                       [<c04ed5f8>] soc_probe_dai.part.2+0x30/0x6c
-[  139.982842]                       [<c04ee1b8>]
-snd_soc_register_card+0x854/0xe64
-[  139.990220]                       [<c04f9b0c>]
-devm_snd_soc_register_card+0x38/0x70
-[  139.997859]                       [<c04ff0f8>]
-asoc_simple_card_probe+0x224/0x460
-[  140.005323]                       [<c036da6c>] platform_drv_probe+0x4c/0xb0
-[  140.012267]                       [<c036c2ac>]
-driver_probe_device+0x20c/0x2b8
-[  140.019472]                       [<c036a644>] bus_for_each_drv+0x60/0x94
-[  140.026242]                       [<c036bfc0>] __device_attach+0xb4/0x118
-[  140.033013]                       [<c036b464>] bus_probe_device+0x88/0x90
-[  140.039783]                       [<c036b900>]
-deferred_probe_work_func+0x6c/0x9c
-[  140.047248]                       [<c0043408>] process_one_work+0x1a8/0x514
-[  140.054192]                       [<c00437ac>] worker_thread+0x38/0x574
-[  140.060789]                       [<c0049c0c>] kthread+0xf4/0x10c
-[  140.066865]                       [<c000f890>] ret_from_fork+0x14/0x24
-[  140.073376]     SOFTIRQ-ON-W at:
-[  140.076587]                       [<c066b89c>] _raw_spin_lock+0x3c/0x74
-[  140.083183]                       [<c0500558>] i2s_set_sysclk+0x40/0x464
-[  140.089867]                       [<c0500e0c>]
-samsung_i2s_dai_probe+0x238/0x2b0
-[  140.097245]                       [<c04ed5f8>] soc_probe_dai.part.2+0x30/0x6c
-[  140.104362]                       [<c04ee1b8>]
-snd_soc_register_card+0x854/0xe64
-[  140.111740]                       [<c04f9b0c>]
-devm_snd_soc_register_card+0x38/0x70
-[  140.119379]                       [<c04ff0f8>]
-asoc_simple_card_probe+0x224/0x460
-[  140.126843]                       [<c036da6c>] platform_drv_probe+0x4c/0xb0
-[  140.133787]                       [<c036c2ac>]
-driver_probe_device+0x20c/0x2b8
-[  140.140992]                       [<c036a644>] bus_for_each_drv+0x60/0x94
-[  140.147762]                       [<c036bfc0>] __device_attach+0xb4/0x118
-[  140.154533]                       [<c036b464>] bus_probe_device+0x88/0x90
-[  140.161303]                       [<c036b900>]
-deferred_probe_work_func+0x6c/0x9c
-[  140.168768]                       [<c0043408>] process_one_work+0x1a8/0x514
-[  140.175712]                       [<c00437ac>] worker_thread+0x38/0x574
-[  140.182309]                       [<c0049c0c>] kthread+0xf4/0x10c
-[  140.188385]                       [<c000f890>] ret_from_fork+0x14/0x24
-[  140.194896]     INITIAL USE at:
-[  140.198020]                      [<c066bb14>]
-_raw_spin_lock_irqsave+0x48/0x84
-[  140.205224]                      [<c04c2d44>] clk_divider_set_rate+0x40/0xc0
-[  140.212255]                      [<c04c1320>] clk_change_rate+0x17c/0x210
-[  140.219025]                      [<c04c12b8>] clk_change_rate+0x114/0x210
-[  140.225796]   }
-[  140.227532]   ... key      at: [<c13e2f04>] __key.37532+0x0/0x8
-[  140.233435]   ... acquired at:
-[  140.236472]    [<c04ffb18>] i2s_trigger+0x40/0x62c
-[  140.241246]    [<c04f4d14>] soc_pcm_trigger+0xd0/0x11c
-[  140.246367]    [<c04dfe58>] snd_pcm_action_single+0x38/0x80
-[  140.251922]    [<c04e1dac>] snd_pcm_common_ioctl1+0x3bc/0xe20
-[  140.257651]    [<c04e29b4>] snd_pcm_playback_ioctl1+0x1a4/0x69c
-[  140.263553]    [<c01343f8>] do_vfs_ioctl+0xa0/0x9d4
-[  140.268414]    [<c0134d60>] SyS_ioctl+0x34/0x5c
-[  140.272927]    [<c000f800>] ret_fast_syscall+0x0/0x1c
-[  140.277962]
-[  140.279438] -> (&(&substream->self_group.lock)->rlock){..-...} ops: 153 {
-[  140.286209]    IN-SOFTIRQ-W at:
-[  140.289333]                     [<c066b89c>] _raw_spin_lock+0x3c/0x74
-[  140.295757]                     [<c04e03cc>]
-_snd_pcm_stream_lock_irqsave+0x34/0x40
-[  140.303395]                     [<c04e6f44>] snd_pcm_period_elapsed+0x1c/0xa0
-[  140.310512]                     [<c02de5b0>] pl330_tasklet+0x198/0x518
-[  140.317022]                     [<c002e424>] tasklet_action+0xac/0x164
-[  140.323532]                     [<c002e6ac>] __do_softirq+0x168/0x2c0
-[  140.329955]                     [<c002eba8>] irq_exit+0xec/0x128
-[  140.335945]                     [<c0087314>] __handle_domain_irq+0x80/0xec
-[  140.342802]                     [<c0009514>] gic_handle_irq+0x54/0x94
-[  140.349225]                     [<c00144f8>] __irq_svc+0x58/0x98
-[  140.355214]                     [<c00102f8>] arch_cpu_idle+0x24/0x3c
-[  140.361551]                     [<c00102f8>] arch_cpu_idle+0x24/0x3c
-[  140.367887]                     [<c006d5d4>] cpu_startup_entry+0x1f4/0x280
-[  140.374744]                     [<c08c8ccc>] start_kernel+0x3ec/0x3f8
-[  140.381169]    INITIAL USE at:
-[  140.384205]                    [<c066b89c>] _raw_spin_lock+0x3c/0x74
-[  140.390542]                    [<c04e0850>] snd_pcm_sync_ptr+0xf8/0x1e0
-[  140.397139]                    [<c04e1e68>] snd_pcm_common_ioctl1+0x478/0xe20
-[  140.404256]                    [<c04e3078>]
-snd_pcm_capture_ioctl1+0x1a4/0x688
-[  140.411461]                    [<c01343f8>] do_vfs_ioctl+0xa0/0x9d4
-[  140.417710]                    [<c0134d60>] SyS_ioctl+0x34/0x5c
-[  140.423613]                    [<c000f800>] ret_fast_syscall+0x0/0x1c
-[  140.430036]  }
-[  140.431685]  ... key      at: [<c13e2be8>] __key.29136+0x0/0x8
-[  140.437501]  ... acquired at:
-[  140.440452]    [<c0079630>] __lock_acquire+0x774/0x1ee0
-[  140.445659]    [<c007b390>] lock_acquire+0xa8/0xd0
-[  140.450433]    [<c066b89c>] _raw_spin_lock+0x3c/0x74
-[  140.455381]    [<c04e03cc>] _snd_pcm_stream_lock_irqsave+0x34/0x40
-[  140.461544]    [<c04e6f44>] snd_pcm_period_elapsed+0x1c/0xa0
-[  140.467186]    [<c02de5b0>] pl330_tasklet+0x198/0x518
-[  140.472220]    [<c002e424>] tasklet_action+0xac/0x164
-[  140.477255]    [<c002e6ac>] __do_softirq+0x168/0x2c0
-[  140.482202]    [<c002eba8>] irq_exit+0xec/0x128
-[  140.486716]    [<c0087314>] __handle_domain_irq+0x80/0xec
-[  140.492097]    [<c0009514>] gic_handle_irq+0x54/0x94
-[  140.497044]    [<c00144f8>] __irq_svc+0x58/0x98
-[  140.501559]    [<c00102f8>] arch_cpu_idle+0x24/0x3c
-[  140.506420]    [<c00102f8>] arch_cpu_idle+0x24/0x3c
-[  140.511280]    [<c006d5d4>] cpu_startup_entry+0x1f4/0x280
-[  140.516662]    [<c08c8ccc>] start_kernel+0x3ec/0x3f8
-[  140.521609]
-[  140.523086]
-[  140.523086] stack backtrace:
-[  140.527435] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
-4.5.0-rc3-u3s #11
-[  140.535240] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[  140.541339] [<c0016d6c>] (unwind_backtrace) from [<c00139f8>]
-(show_stack+0x10/0x14)
-[  140.549063] [<c00139f8>] (show_stack) from [<c0283884>]
-(dump_stack+0x98/0xc4)
-[  140.556263] [<c0283884>] (dump_stack) from [<c0075458>]
-(print_irq_inversion_bug+0x1d4/0x21c)
-[  140.564766] [<c0075458>] (print_irq_inversion_bug) from
-[<c0075550>] (check_usage_forwards+0xb0/0x10c)
-[  140.574051] [<c0075550>] (check_usage_forwards) from [<c00764f8>]
-(mark_lock+0x370/0x81c)
-[  140.582211] [<c00764f8>] (mark_lock) from [<c0079630>]
-(__lock_acquire+0x774/0x1ee0)
-[  140.589936] [<c0079630>] (__lock_acquire) from [<c007b390>]
-(lock_acquire+0xa8/0xd0)
-[  140.597665] [<c007b390>] (lock_acquire) from [<c066b89c>]
-(_raw_spin_lock+0x3c/0x74)
-[  140.605389] [<c066b89c>] (_raw_spin_lock) from [<c04e03cc>]
-(_snd_pcm_stream_lock_irqsave+0x34/0x40)
-[  140.614503] [<c04e03cc>] (_snd_pcm_stream_lock_irqsave) from
-[<c04e6f44>] (snd_pcm_period_elapsed+0x1c/0xa0)
-[  140.624313] [<c04e6f44>] (snd_pcm_period_elapsed) from [<c02de5b0>]
-(pl330_tasklet+0x198/0x518)
-[  140.632993] [<c02de5b0>] (pl330_tasklet) from [<c002e424>]
-(tasklet_action+0xac/0x164)
-[  140.640890] [<c002e424>] (tasklet_action) from [<c002e6ac>]
-(__do_softirq+0x168/0x2c0)
-[  140.648787] [<c002e6ac>] (__do_softirq) from [<c002eba8>]
-(irq_exit+0xec/0x128)
-[  140.656080] [<c002eba8>] (irq_exit) from [<c0087314>]
-(__handle_domain_irq+0x80/0xec)
-[  140.663889] [<c0087314>] (__handle_domain_irq) from [<c0009514>]
-(gic_handle_irq+0x54/0x94)
-[  140.672219] [<c0009514>] (gic_handle_irq) from [<c00144f8>]
-(__irq_svc+0x58/0x98)
-[  140.679677] Exception stack(0xc0aa5f50 to 0xc0aa5f98)
-[  140.684716] 5f40:                                     00000000
-2e0b1000 00000000 c0aaa540
-[  140.692879] 5f60: c0aa4000 c0aa655c 00000000 00000000 c0aa5fa8
-c093d49c c0aa65bc c0aa65c4
-[  140.701035] 5f80: 00000000 c0aa5fa0 c0076b38 c00102f8 20030053 ffffffff
-[  140.707637] [<c00144f8>] (__irq_svc) from [<c00102f8>]
-(arch_cpu_idle+0x24/0x3c)
-[  140.715014] [<c00102f8>] (arch_cpu_idle) from [<c006d5d4>]
-(cpu_startup_entry+0x1f4/0x280)
-[  140.723265] [<c006d5d4>] (cpu_startup_entry) from [<c08c8ccc>]
-(start_kernel+0x3ec/0x3f8)
-
-Best Regards
--Anand Moon
+T24gMDEvMzAvMjAxNiAwMzoxMSBQTSwgQ2hhbmhvIFBhcmsgd3JvdGU6Cj4gRnJvbTogQ2hhbmhv
+IFBhcmsgPGNoYW5obzYxLnBhcmtAc2Ftc3VuZy5jb20+Cj4gCj4gVGhpcyBwYXRjaCBzdXBwb3J0
+cyBtaXBpIGRzaSBmb3IgZXh5bm9zNTQyMi4gVGhlIGRzaSByZWdpc3Rlcgo+IG9mZnNldHMgb2Yg
+dGhlIGV4eW5vczU0MjIgYXJlIHNpbWlsYXIgd2l0aCBleHlub3M1NDMzLiBIb3dldmVyLAo+IHRo
+ZSB2YWx1ZXMgb2YgdGhlIHJlZ2lzdGVycyBhcmUgcXVpdGUgZGlmZmVyZW50IGZyb20gdGhlCj4g
+ZXh5bm9zNTQzMy4gRm9yIGV4YW1wbGUsIHRoZSBleHlub3M1NDIyIHVzZXMgc3cgcmVzZXQgbGlr
+ZQo+IHByZXZpb3VzIGNoaXBzLgo+IAo+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5j
+b20+Cj4gQ2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiBDYzog
+U2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBD
+aGFuaG8gUGFyayA8Y2hhbmhvNjEucGFya0BzYW1zdW5nLmNvbT4KClJldmlld2VkLWJ5OiBBbmRy
+emVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgotLQpSZWdhcmRzCkFuZHJ6ZWoKCj4gLS0t
+Cj4gIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHNpbS50eHQgICAgICAgIHwg
+IDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgICAg
+ICB8IDMxICsrKysrKysrKysrKysrKysrKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCAzMiBpbnNl
+cnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHNpbS50eHQgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RzaW0udHh0Cj4gaW5kZXggMGU2
+ZjBjMC4uMjI3NTZiMyAxMDA2NDQKPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RzaW0udHh0Cj4gKysrIGIvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19kc2ltLnR4dAo+IEBA
+IC02LDYgKzYsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+ICAJCSJzYW1zdW5nLGV4eW5vczQy
+MTAtbWlwaS1kc2kiIC8qIGZvciBFeHlub3M0IFNvQ3MgKi8KPiAgCQkic2Ftc3VuZyxleHlub3M0
+NDE1LW1pcGktZHNpIiAvKiBmb3IgRXh5bm9zNDQxNSBTb0MgKi8KPiAgCQkic2Ftc3VuZyxleHlu
+b3M1NDEwLW1pcGktZHNpIiAvKiBmb3IgRXh5bm9zNTQxMC81NDIwLzU0NDAgU29DcyAqLwo+ICsJ
+CSJzYW1zdW5nLGV4eW5vczU0MjItbWlwaS1kc2kiIC8qIGZvciBFeHlub3M1NDIyLzU4MDAgU29D
+cyAqLwo+ICAJCSJzYW1zdW5nLGV4eW5vczU0MzMtbWlwaS1kc2kiIC8qIGZvciBFeHlub3M1NDMz
+IFNvQ3MgKi8KPiAgICAtIHJlZzogcGh5c2ljYWwgYmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2Yg
+dGhlIHJlZ2lzdGVycyBzZXQgZm9yIHRoZSBkZXZpY2UKPiAgICAtIGludGVycnVwdHM6IHNob3Vs
+ZCBjb250YWluIERTSSBpbnRlcnJ1cHQKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2RzaS5jCj4gaW5kZXggZDg0YTQ5OC4uM2VmZjZiZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHNpLmMKPiBAQCAtNDA4LDYgKzQwOCwyNCBAQCBzdGF0aWMgdW5zaWdu
+ZWQgaW50IHJlZ192YWx1ZXNbXSA9IHsKPiAgCVtQSFlUSU1JTkdfSFNfVFJBSUxdID0gRFNJTV9Q
+SFlUSU1JTkcyX0hTX1RSQUlMKDB4MGIpLAo+ICB9Owo+ICAKPiArc3RhdGljIHVuc2lnbmVkIGlu
+dCBleHlub3M1NDIyX3JlZ192YWx1ZXNbXSA9IHsKPiArCVtSRVNFVF9UWVBFXSA9IERTSU1fU1dS
+U1QsCj4gKwlbUExMX1RJTUVSXSA9IDUwMCwKPiArCVtTVE9QX1NUQVRFX0NOVF0gPSAweGYsCj4g
+KwlbUEhZQ1RSTF9VTFBTX0VYSVRdID0gRFNJTV9QSFlDVFJMX1VMUFNfRVhJVCgweGFmKSwKPiAr
+CVtQSFlDVFJMX1ZSRUdfTFBdID0gMCwKPiArCVtQSFlDVFJMX1NMRVdfVVBdID0gMCwKPiArCVtQ
+SFlUSU1JTkdfTFBYXSA9IERTSU1fUEhZVElNSU5HX0xQWCgweDA4KSwKPiArCVtQSFlUSU1JTkdf
+SFNfRVhJVF0gPSBEU0lNX1BIWVRJTUlOR19IU19FWElUKDB4MGQpLAo+ICsJW1BIWVRJTUlOR19D
+TEtfUFJFUEFSRV0gPSBEU0lNX1BIWVRJTUlORzFfQ0xLX1BSRVBBUkUoMHgwOSksCj4gKwlbUEhZ
+VElNSU5HX0NMS19aRVJPXSA9IERTSU1fUEhZVElNSU5HMV9DTEtfWkVSTygweDMwKSwKPiArCVtQ
+SFlUSU1JTkdfQ0xLX1BPU1RdID0gRFNJTV9QSFlUSU1JTkcxX0NMS19QT1NUKDB4MGUpLAo+ICsJ
+W1BIWVRJTUlOR19DTEtfVFJBSUxdID0gRFNJTV9QSFlUSU1JTkcxX0NMS19UUkFJTCgweDBhKSwK
+PiArCVtQSFlUSU1JTkdfSFNfUFJFUEFSRV0gPSBEU0lNX1BIWVRJTUlORzJfSFNfUFJFUEFSRSgw
+eDBjKSwKPiArCVtQSFlUSU1JTkdfSFNfWkVST10gPSBEU0lNX1BIWVRJTUlORzJfSFNfWkVSTygw
+eDExKSwKPiArCVtQSFlUSU1JTkdfSFNfVFJBSUxdID0gRFNJTV9QSFlUSU1JTkcyX0hTX1RSQUlM
+KDB4MGQpLAo+ICt9Owo+ICsKPiAgc3RhdGljIHVuc2lnbmVkIGludCBleHlub3M1NDMzX3JlZ192
+YWx1ZXNbXSA9IHsKPiAgCVtSRVNFVF9UWVBFXSA9IERTSU1fRlVOQ1JTVCwKPiAgCVtQTExfVElN
+RVJdID0gMjIyMDAsCj4gQEAgLTQ4Miw2ICs1MDAsMTcgQEAgc3RhdGljIHN0cnVjdCBleHlub3Nf
+ZHNpX2RyaXZlcl9kYXRhIGV4eW5vczU0MzNfZHNpX2RyaXZlcl9kYXRhID0gewo+ICAJLnJlZ192
+YWx1ZXMgPSBleHlub3M1NDMzX3JlZ192YWx1ZXMsCj4gIH07Cj4gIAo+ICtzdGF0aWMgc3RydWN0
+IGV4eW5vc19kc2lfZHJpdmVyX2RhdGEgZXh5bm9zNTQyMl9kc2lfZHJpdmVyX2RhdGEgPSB7Cj4g
+KwkucmVnX29mcyA9IGV4eW5vczU0MzNfcmVnX29mcywKPiArCS5wbGx0bXJfcmVnID0gMHhhMCwK
+PiArCS5oYXNfY2xrbGFuZV9zdG9wID0gMSwKPiArCS5udW1fY2xrcyA9IDIsCj4gKwkubWF4X2Zy
+ZXEgPSAxNTAwLAo+ICsJLndhaXRfZm9yX3Jlc2V0ID0gMSwKPiArCS5udW1fYml0c19yZXNvbCA9
+IDEyLAo+ICsJLnJlZ192YWx1ZXMgPSBleHlub3M1NDIyX3JlZ192YWx1ZXMsCj4gK307Cj4gKwo+
+ICBzdGF0aWMgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfZHNpX29mX21hdGNoW10gPSB7Cj4g
+IAl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zMzI1MC1taXBpLWRzaSIsCj4gIAkgIC5k
+YXRhID0gJmV4eW5vczNfZHNpX2RyaXZlcl9kYXRhIH0sCj4gQEAgLTQ5MSw2ICs1MjAsOCBAQCBz
+dGF0aWMgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfZHNpX29mX21hdGNoW10gPSB7Cj4gIAkg
+IC5kYXRhID0gJmV4eW5vczQ0MTVfZHNpX2RyaXZlcl9kYXRhIH0sCj4gIAl7IC5jb21wYXRpYmxl
+ID0gInNhbXN1bmcsZXh5bm9zNTQxMC1taXBpLWRzaSIsCj4gIAkgIC5kYXRhID0gJmV4eW5vczVf
+ZHNpX2RyaXZlcl9kYXRhIH0sCj4gKwl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTQy
+Mi1taXBpLWRzaSIsCj4gKwkgIC5kYXRhID0gJmV4eW5vczU0MjJfZHNpX2RyaXZlcl9kYXRhIH0s
+Cj4gIAl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTQzMy1taXBpLWRzaSIsCj4gIAkg
+IC5kYXRhID0gJmV4eW5vczU0MzNfZHNpX2RyaXZlcl9kYXRhIH0sCj4gIAl7IH0KPiAKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
