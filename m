@@ -1,94 +1,40 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: support exynos5422 mipi-dsi
-Date: Wed, 10 Feb 2016 10:03:58 +0100
-Message-ID: <56BAFCFE.5090307@samsung.com>
-References: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Chanho Park <parkch98@gmail.com>, inki.dae@samsung.com
-Cc: Chanho Park <chanho61.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v5 RESEND 1/5] drivers: nvdimm: ensure no negative value gets
+ returned on positive match
+Date: Wed, 10 Feb 2016 11:47:26 +0100
+Message-ID: <1455101250-11327-2-git-send-email-m.szyprowski@samsung.com>
+References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDEvMzAvMjAxNiAwMzoxMSBQTSwgQ2hhbmhvIFBhcmsgd3JvdGU6Cj4gRnJvbTogQ2hhbmhv
-IFBhcmsgPGNoYW5obzYxLnBhcmtAc2Ftc3VuZy5jb20+Cj4gCj4gVGhpcyBwYXRjaCBzdXBwb3J0
-cyBtaXBpIGRzaSBmb3IgZXh5bm9zNTQyMi4gVGhlIGRzaSByZWdpc3Rlcgo+IG9mZnNldHMgb2Yg
-dGhlIGV4eW5vczU0MjIgYXJlIHNpbWlsYXIgd2l0aCBleHlub3M1NDMzLiBIb3dldmVyLAo+IHRo
-ZSB2YWx1ZXMgb2YgdGhlIHJlZ2lzdGVycyBhcmUgcXVpdGUgZGlmZmVyZW50IGZyb20gdGhlCj4g
-ZXh5bm9zNTQzMy4gRm9yIGV4YW1wbGUsIHRoZSBleHlub3M1NDIyIHVzZXMgc3cgcmVzZXQgbGlr
-ZQo+IHByZXZpb3VzIGNoaXBzLgo+IAo+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5j
-b20+Cj4gQ2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiBDYzog
-U2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBD
-aGFuaG8gUGFyayA8Y2hhbmhvNjEucGFya0BzYW1zdW5nLmNvbT4KClJldmlld2VkLWJ5OiBBbmRy
-emVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgotLQpSZWdhcmRzCkFuZHJ6ZWoKCj4gLS0t
-Cj4gIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHNpbS50eHQgICAgICAgIHwg
-IDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgICAg
-ICB8IDMxICsrKysrKysrKysrKysrKysrKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCAzMiBpbnNl
-cnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfZHNpbS50eHQgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RzaW0udHh0Cj4gaW5kZXggMGU2
-ZjBjMC4uMjI3NTZiMyAxMDA2NDQKPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvZGlzcGxheS9leHlub3MvZXh5bm9zX2RzaW0udHh0Cj4gKysrIGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXh5bm9zL2V4eW5vc19kc2ltLnR4dAo+IEBA
-IC02LDYgKzYsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+ICAJCSJzYW1zdW5nLGV4eW5vczQy
-MTAtbWlwaS1kc2kiIC8qIGZvciBFeHlub3M0IFNvQ3MgKi8KPiAgCQkic2Ftc3VuZyxleHlub3M0
-NDE1LW1pcGktZHNpIiAvKiBmb3IgRXh5bm9zNDQxNSBTb0MgKi8KPiAgCQkic2Ftc3VuZyxleHlu
-b3M1NDEwLW1pcGktZHNpIiAvKiBmb3IgRXh5bm9zNTQxMC81NDIwLzU0NDAgU29DcyAqLwo+ICsJ
-CSJzYW1zdW5nLGV4eW5vczU0MjItbWlwaS1kc2kiIC8qIGZvciBFeHlub3M1NDIyLzU4MDAgU29D
-cyAqLwo+ICAJCSJzYW1zdW5nLGV4eW5vczU0MzMtbWlwaS1kc2kiIC8qIGZvciBFeHlub3M1NDMz
-IFNvQ3MgKi8KPiAgICAtIHJlZzogcGh5c2ljYWwgYmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2Yg
-dGhlIHJlZ2lzdGVycyBzZXQgZm9yIHRoZSBkZXZpY2UKPiAgICAtIGludGVycnVwdHM6IHNob3Vs
-ZCBjb250YWluIERTSSBpbnRlcnJ1cHQKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2RzaS5jCj4gaW5kZXggZDg0YTQ5OC4uM2VmZjZiZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHNpLmMKPiBAQCAtNDA4LDYgKzQwOCwyNCBAQCBzdGF0aWMgdW5zaWdu
-ZWQgaW50IHJlZ192YWx1ZXNbXSA9IHsKPiAgCVtQSFlUSU1JTkdfSFNfVFJBSUxdID0gRFNJTV9Q
-SFlUSU1JTkcyX0hTX1RSQUlMKDB4MGIpLAo+ICB9Owo+ICAKPiArc3RhdGljIHVuc2lnbmVkIGlu
-dCBleHlub3M1NDIyX3JlZ192YWx1ZXNbXSA9IHsKPiArCVtSRVNFVF9UWVBFXSA9IERTSU1fU1dS
-U1QsCj4gKwlbUExMX1RJTUVSXSA9IDUwMCwKPiArCVtTVE9QX1NUQVRFX0NOVF0gPSAweGYsCj4g
-KwlbUEhZQ1RSTF9VTFBTX0VYSVRdID0gRFNJTV9QSFlDVFJMX1VMUFNfRVhJVCgweGFmKSwKPiAr
-CVtQSFlDVFJMX1ZSRUdfTFBdID0gMCwKPiArCVtQSFlDVFJMX1NMRVdfVVBdID0gMCwKPiArCVtQ
-SFlUSU1JTkdfTFBYXSA9IERTSU1fUEhZVElNSU5HX0xQWCgweDA4KSwKPiArCVtQSFlUSU1JTkdf
-SFNfRVhJVF0gPSBEU0lNX1BIWVRJTUlOR19IU19FWElUKDB4MGQpLAo+ICsJW1BIWVRJTUlOR19D
-TEtfUFJFUEFSRV0gPSBEU0lNX1BIWVRJTUlORzFfQ0xLX1BSRVBBUkUoMHgwOSksCj4gKwlbUEhZ
-VElNSU5HX0NMS19aRVJPXSA9IERTSU1fUEhZVElNSU5HMV9DTEtfWkVSTygweDMwKSwKPiArCVtQ
-SFlUSU1JTkdfQ0xLX1BPU1RdID0gRFNJTV9QSFlUSU1JTkcxX0NMS19QT1NUKDB4MGUpLAo+ICsJ
-W1BIWVRJTUlOR19DTEtfVFJBSUxdID0gRFNJTV9QSFlUSU1JTkcxX0NMS19UUkFJTCgweDBhKSwK
-PiArCVtQSFlUSU1JTkdfSFNfUFJFUEFSRV0gPSBEU0lNX1BIWVRJTUlORzJfSFNfUFJFUEFSRSgw
-eDBjKSwKPiArCVtQSFlUSU1JTkdfSFNfWkVST10gPSBEU0lNX1BIWVRJTUlORzJfSFNfWkVSTygw
-eDExKSwKPiArCVtQSFlUSU1JTkdfSFNfVFJBSUxdID0gRFNJTV9QSFlUSU1JTkcyX0hTX1RSQUlM
-KDB4MGQpLAo+ICt9Owo+ICsKPiAgc3RhdGljIHVuc2lnbmVkIGludCBleHlub3M1NDMzX3JlZ192
-YWx1ZXNbXSA9IHsKPiAgCVtSRVNFVF9UWVBFXSA9IERTSU1fRlVOQ1JTVCwKPiAgCVtQTExfVElN
-RVJdID0gMjIyMDAsCj4gQEAgLTQ4Miw2ICs1MDAsMTcgQEAgc3RhdGljIHN0cnVjdCBleHlub3Nf
-ZHNpX2RyaXZlcl9kYXRhIGV4eW5vczU0MzNfZHNpX2RyaXZlcl9kYXRhID0gewo+ICAJLnJlZ192
-YWx1ZXMgPSBleHlub3M1NDMzX3JlZ192YWx1ZXMsCj4gIH07Cj4gIAo+ICtzdGF0aWMgc3RydWN0
-IGV4eW5vc19kc2lfZHJpdmVyX2RhdGEgZXh5bm9zNTQyMl9kc2lfZHJpdmVyX2RhdGEgPSB7Cj4g
-KwkucmVnX29mcyA9IGV4eW5vczU0MzNfcmVnX29mcywKPiArCS5wbGx0bXJfcmVnID0gMHhhMCwK
-PiArCS5oYXNfY2xrbGFuZV9zdG9wID0gMSwKPiArCS5udW1fY2xrcyA9IDIsCj4gKwkubWF4X2Zy
-ZXEgPSAxNTAwLAo+ICsJLndhaXRfZm9yX3Jlc2V0ID0gMSwKPiArCS5udW1fYml0c19yZXNvbCA9
-IDEyLAo+ICsJLnJlZ192YWx1ZXMgPSBleHlub3M1NDIyX3JlZ192YWx1ZXMsCj4gK307Cj4gKwo+
-ICBzdGF0aWMgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfZHNpX29mX21hdGNoW10gPSB7Cj4g
-IAl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zMzI1MC1taXBpLWRzaSIsCj4gIAkgIC5k
-YXRhID0gJmV4eW5vczNfZHNpX2RyaXZlcl9kYXRhIH0sCj4gQEAgLTQ5MSw2ICs1MjAsOCBAQCBz
-dGF0aWMgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfZHNpX29mX21hdGNoW10gPSB7Cj4gIAkg
-IC5kYXRhID0gJmV4eW5vczQ0MTVfZHNpX2RyaXZlcl9kYXRhIH0sCj4gIAl7IC5jb21wYXRpYmxl
-ID0gInNhbXN1bmcsZXh5bm9zNTQxMC1taXBpLWRzaSIsCj4gIAkgIC5kYXRhID0gJmV4eW5vczVf
-ZHNpX2RyaXZlcl9kYXRhIH0sCj4gKwl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTQy
-Mi1taXBpLWRzaSIsCj4gKwkgIC5kYXRhID0gJmV4eW5vczU0MjJfZHNpX2RyaXZlcl9kYXRhIH0s
-Cj4gIAl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTQzMy1taXBpLWRzaSIsCj4gIAkg
-IC5kYXRhID0gJmV4eW5vczU0MzNfZHNpX2RyaXZlcl9kYXRhIH0sCj4gIAl7IH0KPiAKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+From: Dan Williams <dan.j.williams@intel.com>
+
+This patch ensures that existing bus match callbacks don't return
+negative values (which might be interpreted as potential errors in the
+future) in case of positive match.
+
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/nvdimm/bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+index 7e2c43f..2b2181c 100644
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -62,7 +62,7 @@ static int nvdimm_bus_match(struct device *dev, struct device_driver *drv)
+ {
+ 	struct nd_device_driver *nd_drv = to_nd_device_driver(drv);
+ 
+-	return test_bit(to_nd_device_type(dev), &nd_drv->type);
++	return !!test_bit(to_nd_device_type(dev), &nd_drv->type);
+ }
+ 
+ static struct module *to_bus_provider(struct device *dev)
+-- 
+1.9.2
