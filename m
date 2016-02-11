@@ -1,86 +1,45 @@
 From: Chanho Park <parkch98@gmail.com>
-Subject: [PATCHv2] drm/exynos: add mic_bypass option for exynos542x fimd
-Date: Thu, 11 Feb 2016 23:04:44 +0900
-Message-ID: <1455199484-4039-1-git-send-email-parkch98@gmail.com>
+Subject: Re: [PATCH] drm/exynos: support exynos5422 mipi-dsi
+Date: Thu, 11 Feb 2016 23:10:04 +0900
+Message-ID: <CAPTzV14s80eRe+pPmPToJcmV902aKk41bvNT04+vQkLkKSCRUg@mail.gmail.com>
+References: <1454163110-20103-1-git-send-email-parkch98@gmail.com>
+	<CACvgo51WTYAYon4e4+hT7_vaeSDDR41pA0QmnjZ1FM3QR8vvOg@mail.gmail.com>
+Reply-To: chanho61.park@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com
-Cc: Chanho Park <chanho61.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f44.google.com ([209.85.213.44]:36237 "EHLO
+	mail-vk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751255AbcBKOKF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Feb 2016 09:10:05 -0500
+Received: by mail-vk0-f44.google.com with SMTP id c3so37028193vkb.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Feb 2016 06:10:05 -0800 (PST)
+In-Reply-To: <CACvgo51WTYAYon4e4+hT7_vaeSDDR41pA0QmnjZ1FM3QR8vvOg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>
 
-RnJvbTogQ2hhbmhvIFBhcmsgPGNoYW5obzYxLnBhcmtAc2Ftc3VuZy5jb20+CgpUaGlzIHBhdGNo
-IGFkZHMgYSBtaWNfYnlwYXNzIG9wdGlvbiB0byBieXBhc3MgdGhlIG1pYwpmcm9tIGRpc3BsYXkg
-b3V0IHBhdGguIFRoZSBtaWMoTW9iaWxlIGltYWdlIGNvbXByZXNzb3IpIGNvbXByZXNzZXMKUkdC
-IGRhdGEgZnJvbSBmaW1kIGFuZCBzZW5kIHRoZSBjb21wcmVzc2VkIGRhdGEgdG8gdGhlIG1pcGkg
-ZHNpLgpUaGUgYnlwYXNzIG9wdGlvbiBjYW4gYmUgZm91bmRlZCBmcm9tIHN5c3RlbSByZWdpc3Rl
-ciBhbmQgdGhlIGJpdApvZiB0aGUgb3B0aW9uIGlzIDExLgoKQ2M6IElua2kgRGFlIDxpbmtpLmRh
-ZUBzYW1zdW5nLmNvbT4KQ2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNv
-bT4KQ2M6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYt
-Ynk6IENoYW5obyBQYXJrIDxjaGFuaG82MS5wYXJrQHNhbXN1bmcuY29tPgotLS0KQ2hhbmdlIGZy
-b20gdjE6Ci0gdGhlIG9wdGlvbiBpcyBvbmx5IHZhbGlkIGlmIGxjZGJsa19taWNfYnlwYXNzX3No
-aWZ0IGlzCiAgYXNzaWduZWQKCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5v
-cy9zYW1zdW5nLWZpbWQudHh0ICAgfCAgMiArKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2ZpbWQuYyAgICAgICAgICAgICAgICAgIHwgMTUgKysrKysrKysrKysrKysrCiAyIGZp
-bGVzIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9leHlub3Mvc2Ftc3VuZy1maW1kLnR4dCBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9zYW1zdW5nLWZp
-bWQudHh0CmluZGV4IDI3YzNjZTAuLjdmOTBjNGEgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9zYW1zdW5nLWZpbWQudHh0CisrKyBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9zYW1zdW5n
-LWZpbWQudHh0CkBAIC00NSw2ICs0NSw4IEBAIE9wdGlvbmFsIFByb3BlcnRpZXM6CiAJCUNhbiBi
-ZSB1c2VkIGluIGNhc2UgdGltaW5ncyBjYW5ub3QgYmUgcHJvdmlkZWQgb3RoZXJ3aXNlCiAJCW9y
-IHRvIG92ZXJyaWRlIHRpbWluZ3MgcHJvdmlkZWQgYnkgdGhlIHBhbmVsLgogLSBzYW1zdW5nLHN5
-c3JlZzogaGFuZGxlIHRvIHN5c2NvbiB1c2VkIHRvIGNvbnRyb2wgdGhlIHN5c3RlbSByZWdpc3Rl
-cnMKKy0gc2Ftc3VuZyxtaWMtYnlwYXNzOiBieXBhc3MgbWljKG1vYmlsZSBpbWFnZSBjb21wcmVz
-c29yKSBmcm9tIGRpc3BsYXkgcGF0aC4KKwkJICAgICAgVGhpcyBvcHRpb24gaXMgb25seSBhdmFp
-bGFibGUgc2luY2UgZXh5bm9zNTQyMC4KIC0gaTgwLWlmLXRpbWluZ3M6IHRpbWluZyBjb25maWd1
-cmF0aW9uIGZvciBsY2QgaTgwIGludGVyZmFjZSBzdXBwb3J0LgogICAtIGNzLXNldHVwOiBjbG9j
-ayBjeWNsZXMgZm9yIHRoZSBhY3RpdmUgcGVyaW9kIG9mIGFkZHJlc3Mgc2lnbmFsIGlzIGVuYWJs
-ZWQKICAgICAgICAgICAgICAgdW50aWwgY2hpcCBzZWxlY3QgaXMgZW5hYmxlZC4KZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4IDcwMTk0ZDAuLjEwNzZiNTEgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpAQCAtOTQsNiArOTQsNyBA
-QCBzdHJ1Y3QgZmltZF9kcml2ZXJfZGF0YSB7CiAJdW5zaWduZWQgaW50IGxjZGJsa19vZmZzZXQ7
-CiAJdW5zaWduZWQgaW50IGxjZGJsa192dF9zaGlmdDsKIAl1bnNpZ25lZCBpbnQgbGNkYmxrX2J5
-cGFzc19zaGlmdDsKKwl1bnNpZ25lZCBpbnQgbGNkYmxrX21pY19ieXBhc3Nfc2hpZnQ7CiAKIAl1
-bnNpZ25lZCBpbnQgaGFzX3NoYWRvd2NvbjoxOwogCXVuc2lnbmVkIGludCBoYXNfY2xrc2VsOjE7
-CkBAIC0xNDAsNiArMTQxLDcgQEAgc3RhdGljIHN0cnVjdCBmaW1kX2RyaXZlcl9kYXRhIGV4eW5v
-czVfZmltZF9kcml2ZXJfZGF0YSA9IHsKIAkubGNkYmxrX29mZnNldCA9IDB4MjE0LAogCS5sY2Ri
-bGtfdnRfc2hpZnQgPSAyNCwKIAkubGNkYmxrX2J5cGFzc19zaGlmdCA9IDE1LAorCS5sY2RibGtf
-bWljX2J5cGFzc19zaGlmdCA9IDExLAogCS5oYXNfc2hhZG93Y29uID0gMSwKIAkuaGFzX3ZpZG91
-dGNvbiA9IDEsCiAJLmhhc192dHNlbCA9IDEsCkBAIC0xNjIsNiArMTY0LDcgQEAgc3RydWN0IGZp
-bWRfY29udGV4dCB7CiAJdTMyCQkJCWk4MGlmY29uOwogCWJvb2wJCQkJaTgwX2lmOwogCWJvb2wJ
-CQkJc3VzcGVuZGVkOworCWJvb2wJCQkJbWljX2J5cGFzczsKIAlpbnQJCQkJcGlwZTsKIAl3YWl0
-X3F1ZXVlX2hlYWRfdAkJd2FpdF92c3luY19xdWV1ZTsKIAlhdG9taWNfdAkJCXdhaXRfdnN5bmNf
-ZXZlbnQ7CkBAIC00NjEsNiArNDY0LDE0IEBAIHN0YXRpYyB2b2lkIGZpbWRfY29tbWl0KHN0cnVj
-dCBleHlub3NfZHJtX2NydGMgKmNydGMpCiAJCXJldHVybjsKIAl9CiAKKwlpZiAoY3R4LT5taWNf
-YnlwYXNzICYmIGN0eC0+c3lzcmVnICYmIHJlZ21hcF91cGRhdGVfYml0cyhjdHgtPnN5c3JlZywK
-KwkJCQlkcml2ZXJfZGF0YS0+bGNkYmxrX29mZnNldCwKKwkJCQkweDEgPDwgZHJpdmVyX2RhdGEt
-PmxjZGJsa19taWNfYnlwYXNzX3NoaWZ0LAorCQkJCTB4MSA8PCBkcml2ZXJfZGF0YS0+bGNkYmxr
-X21pY19ieXBhc3Nfc2hpZnQpKSB7CisJCURSTV9FUlJPUigiRmFpbGVkIHRvIHVwZGF0ZSBzeXNy
-ZWcgZm9yIGJ5cGFzcyBtaWMuXG4iKTsKKwkJcmV0dXJuOworCX0KKwogCS8qIHNldHVwIGhvcml6
-b250YWwgYW5kIHZlcnRpY2FsIGRpc3BsYXkgc2l6ZS4gKi8KIAl2YWwgPSBWSURUQ09OMl9MSU5F
-VkFMKG1vZGUtPnZkaXNwbGF5IC0gMSkgfAogCSAgICAgICBWSURUQ09OMl9IT1pWQUwobW9kZS0+
-aGRpc3BsYXkgLSAxKSB8CkBAIC0xMDE0LDYgKzEwMjUsMTAgQEAgc3RhdGljIGludCBmaW1kX3By
-b2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJaWYgKG9mX3Byb3BlcnR5X3JlYWRf
-Ym9vbChkZXYtPm9mX25vZGUsICJzYW1zdW5nLGludmVydC12Y2xrIikpCiAJCWN0eC0+dmlkY29u
-MSB8PSBWSURDT04xX0lOVl9WQ0xLOwogCisJaWYgKG9mX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYt
-Pm9mX25vZGUsICJzYW1zdW5nLG1pYy1ieXBhc3MiKSAmJgorCSAgICBjdHgtPmRyaXZlcl9kYXRh
-LT5sY2RibGtfbWljX2J5cGFzc19zaGlmdCkKKwkJY3R4LT5taWNfYnlwYXNzID0gdHJ1ZTsKKwog
-CWk4MF9pZl90aW1pbmdzID0gb2ZfZ2V0X2NoaWxkX2J5X25hbWUoZGV2LT5vZl9ub2RlLCAiaTgw
-LWlmLXRpbWluZ3MiKTsKIAlpZiAoaTgwX2lmX3RpbWluZ3MpIHsKIAkJdTMyIHZhbDsKLS0gCjIu
-NS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Emil,
+
+On Wed, Feb 10, 2016 at 9:34 PM, Emil Velikov <emil.l.velikov@gmail.com> wrote:
+> Hi Chanho Park
+>
+> On 30 January 2016 at 14:11, Chanho Park <parkch98@gmail.com> wrote:
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>
+>>  static struct of_device_id exynos_dsi_of_match[] = {
+>
+> If you feel extra gracious you can constify the array and all of it's
+> entries, for good measure.
+> Likely in another patch of course :-)
+
+Andrzej already made the patch[1] as pointed out from you.
+
+[1]: http://www.spinics.net/lists/dri-devel/msg100246.html
+
+-- 
+Best Regards,
+Chanho Park
