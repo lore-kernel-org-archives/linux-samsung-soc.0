@@ -1,46 +1,54 @@
-From: Chanho Park <parkch98@gmail.com>
-Subject: [PATCH] drm/exynos: use DIV_ROUND_CLOSEST to find the closest div
-Date: Thu, 11 Feb 2016 23:11:20 +0900
-Message-ID: <1455199880-4426-1-git-send-email-parkch98@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: exynos: clarify KEYBOARD_SAMSUNG selection
+Date: Thu, 11 Feb 2016 16:30:56 +0100
+Message-ID: <1455204662-1017820-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f173.google.com ([209.85.192.173]:34612 "EHLO
-	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751123AbcBKOLe (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.130]:64778 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbcBKPbq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Feb 2016 09:11:34 -0500
-Received: by mail-pf0-f173.google.com with SMTP id x65so30092572pfb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Feb 2016 06:11:34 -0800 (PST)
+	Thu, 11 Feb 2016 10:31:46 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Chanho Park <chanho61.park@samsung.com>
+The samsung-keypad driver is implicitly selected by ARCH_EXYNOS4 (why?),
+but this fails if CONFIG_INPUT is a loadable module:
 
-This patch uses DIV_ROUND_CLOSEST instead of DIV_ROUND_UP
-The DIV_ROUND_CLOSEST can be used to find the closest integer
-value when we divide some integers.
+drivers/input/built-in.o: In function `samsung_keypad_remove':
+drivers/input/keyboard/samsung-keypad.c:461: undefined reference to `input_unregister_device'
+drivers/input/built-in.o: In function `samsung_keypad_irq':
+drivers/input/keyboard/samsung-keypad.c:137: undefined reference to `input_event'
+drivers/input/built-in.o: In function `samsung_keypad_irq':
+include/linux/input.h:389: undefined reference to `input_event'
+drivers/input/built-in.o: In function `samsung_keypad_probe':
+drivers/input/keyboard/samsung-keypad.c:358: undefined reference to `devm_input_allocate_device'
+drivers/input/built-in.o:(.debug_addr+0x34): undefined reference to `input_set_capability'
 
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+This changes the 'select' statement so we don't do it if CONFIG_INPUT=m.
+The problem does not happen on mainline kernels, as we don't normally
+build built-in input drivers when CONFIG_INPUT=m, but I am experimenting
+with a patch to change this, and the samsung keypad driver showed up
+as one example that was silently broken before.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
+ arch/arm/mach-exynos/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 4fb2952..da97f93 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -383,7 +383,7 @@ static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
- 	}
- 
- 	/* Find the clock divider value that gets us closest to ideal_clk */
--	clkdiv = DIV_ROUND_UP(clk_get_rate(ctx->lcd_clk), ideal_clk);
-+	clkdiv = DIV_ROUND_CLOSEST(clk_get_rate(ctx->lcd_clk), ideal_clk);
- 
- 	return (clkdiv < 0x100) ? clkdiv : 0xff;
- }
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 8434a0f6334c..b63e64581c24 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -59,7 +59,7 @@ config ARCH_EXYNOS4
+ 	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
+ 	select CPU_EXYNOS4210
+ 	select GIC_NON_BANKED
+-	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
++	select KEYBOARD_SAMSUNG if INPUT=y && INPUT_KEYBOARD
+ 	select MIGHT_HAVE_CACHE_L2X0
+ 	help
+ 	  Samsung EXYNOS4 (Cortex-A9) SoC based systems
 -- 
-2.5.0
+2.7.0
