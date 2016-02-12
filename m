@@ -1,54 +1,46 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ARM: exynos: clarify KEYBOARD_SAMSUNG selection
-Date: Thu, 11 Feb 2016 16:30:56 +0100
-Message-ID: <1455204662-1017820-1-git-send-email-arnd@arndb.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v5 RESEND 3/5] driver core: handle -EPROBE_DEFER from
+ bus_type.match()
+Date: Thu, 11 Feb 2016 19:19:07 -0800
+Message-ID: <20160212031907.GD10157@kroah.com>
+References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
+ <1455101250-11327-4-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:64778 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770AbcBKPbq (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38937 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750963AbcBLDTH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Feb 2016 10:31:46 -0500
+	Thu, 11 Feb 2016 22:19:07 -0500
+Content-Disposition: inline
+In-Reply-To: <1455101250-11327-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-The samsung-keypad driver is implicitly selected by ARCH_EXYNOS4 (why?),
-but this fails if CONFIG_INPUT is a loadable module:
+On Wed, Feb 10, 2016 at 11:47:28AM +0100, Marek Szyprowski wrote:
+> From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> 
+> Allow implementations of the match() callback in struct bus_type to
+> return errors and if it's -EPROBE_DEFER then queue the device for
+> deferred probing.
+> 
+> This is useful to buses such as AMBA in which devices are registered
+> before their matching information can be retrieved from the HW
+> (typically because a clock driver hasn't probed yet).
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> [changed if-else code structure, adjusted documentation to match the code,
+> extended comments]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  Documentation/driver-model/porting.txt |  6 ++++--
+>  drivers/base/dd.c                      | 24 ++++++++++++++++++++++--
+>  include/linux/device.h                 |  7 +++++--
+>  3 files changed, 31 insertions(+), 6 deletions(-)
 
-drivers/input/built-in.o: In function `samsung_keypad_remove':
-drivers/input/keyboard/samsung-keypad.c:461: undefined reference to `input_unregister_device'
-drivers/input/built-in.o: In function `samsung_keypad_irq':
-drivers/input/keyboard/samsung-keypad.c:137: undefined reference to `input_event'
-drivers/input/built-in.o: In function `samsung_keypad_irq':
-include/linux/input.h:389: undefined reference to `input_event'
-drivers/input/built-in.o: In function `samsung_keypad_probe':
-drivers/input/keyboard/samsung-keypad.c:358: undefined reference to `devm_input_allocate_device'
-drivers/input/built-in.o:(.debug_addr+0x34): undefined reference to `input_set_capability'
 
-This changes the 'select' statement so we don't do it if CONFIG_INPUT=m.
-The problem does not happen on mainline kernels, as we don't normally
-build built-in input drivers when CONFIG_INPUT=m, but I am experimenting
-with a patch to change this, and the samsung keypad driver showed up
-as one example that was silently broken before.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-exynos/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 8434a0f6334c..b63e64581c24 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -59,7 +59,7 @@ config ARCH_EXYNOS4
- 	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
- 	select CPU_EXYNOS4210
- 	select GIC_NON_BANKED
--	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
-+	select KEYBOARD_SAMSUNG if INPUT=y && INPUT_KEYBOARD
- 	select MIGHT_HAVE_CACHE_L2X0
- 	help
- 	  Samsung EXYNOS4 (Cortex-A9) SoC based systems
--- 
-2.7.0
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
