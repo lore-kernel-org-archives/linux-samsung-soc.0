@@ -1,46 +1,77 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v5 RESEND 3/5] driver core: handle -EPROBE_DEFER from
- bus_type.match()
-Date: Thu, 11 Feb 2016 19:19:07 -0800
-Message-ID: <20160212031907.GD10157@kroah.com>
-References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
- <1455101250-11327-4-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] regulator: Rename files for max77686 and max77802 drivers
+Date: Fri, 12 Feb 2016 01:14:23 -0300
+Message-ID: <1455250463-5955-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38937 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750963AbcBLDTH (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:48019 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751372AbcBLEPI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Feb 2016 22:19:07 -0500
-Content-Disposition: inline
-In-Reply-To: <1455101250-11327-4-git-send-email-m.szyprowski@samsung.com>
+	Thu, 11 Feb 2016 23:15:08 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Wed, Feb 10, 2016 at 11:47:28AM +0100, Marek Szyprowski wrote:
-> From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> 
-> Allow implementations of the match() callback in struct bus_type to
-> return errors and if it's -EPROBE_DEFER then queue the device for
-> deferred probing.
-> 
-> This is useful to buses such as AMBA in which devices are registered
-> before their matching information can be retrieved from the HW
-> (typically because a clock driver hasn't probed yet).
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> [changed if-else code structure, adjusted documentation to match the code,
-> extended comments]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  Documentation/driver-model/porting.txt |  6 ++++--
->  drivers/base/dd.c                      | 24 ++++++++++++++++++++++--
->  include/linux/device.h                 |  7 +++++--
->  3 files changed, 31 insertions(+), 6 deletions(-)
+The max77686 and max77802 regulator drivers are for sub-devices of a MFD
+driver for some PMIC blocks. But the same object file name (max77686.o)
+was used for both the common MFD driver and the max77686 regulator one.
 
+This confuses kbuild if both drivers are built as module causing the MFD
+driver to not be copied when installing the modules.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Also, max77{686,802} are a quite generic name for MFD subdevices drivers
+so it is better to rename them to max77{686,802}-regulator like it's the
+case for most regulator drivers.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+ MAINTAINERS                                            | 2 +-
+ drivers/regulator/Makefile                             | 4 ++--
+ drivers/regulator/{max77686.c => max77686-regulator.c} | 0
+ drivers/regulator/{max77802.c => max77802-regulator.c} | 0
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+ rename drivers/regulator/{max77686.c => max77686-regulator.c} (100%)
+ rename drivers/regulator/{max77802.c => max77802-regulator.c} (100%)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 97b99f24ea53..863eb59e101b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6904,7 +6904,7 @@ MAXIM MAX77802 MULTIFUNCTION PMIC DEVICE DRIVERS
+ M:	Javier Martinez Canillas <javier@osg.samsung.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+-F:	drivers/*/*max77802.c
++F:	drivers/*/*max77802*.c
+ F:	Documentation/devicetree/bindings/*/*max77802.txt
+ F:	include/dt-bindings/*/*max77802.h
+ 
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 348cfd727350..bd6ae0ccd2e9 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -55,9 +55,9 @@ obj-$(CONFIG_REGULATOR_MAX8952) += max8952.o
+ obj-$(CONFIG_REGULATOR_MAX8973) += max8973-regulator.o
+ obj-$(CONFIG_REGULATOR_MAX8997) += max8997.o
+ obj-$(CONFIG_REGULATOR_MAX8998) += max8998.o
+-obj-$(CONFIG_REGULATOR_MAX77686) += max77686.o
++obj-$(CONFIG_REGULATOR_MAX77686) += max77686-regulator.o
+ obj-$(CONFIG_REGULATOR_MAX77693) += max77693.o
+-obj-$(CONFIG_REGULATOR_MAX77802) += max77802.o
++obj-$(CONFIG_REGULATOR_MAX77802) += max77802-regulator.o
+ obj-$(CONFIG_REGULATOR_MC13783) += mc13783-regulator.o
+ obj-$(CONFIG_REGULATOR_MC13892) += mc13892-regulator.o
+ obj-$(CONFIG_REGULATOR_MC13XXX_CORE) +=  mc13xxx-regulator-core.o
+diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686-regulator.c
+similarity index 100%
+rename from drivers/regulator/max77686.c
+rename to drivers/regulator/max77686-regulator.c
+diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802-regulator.c
+similarity index 100%
+rename from drivers/regulator/max77802.c
+rename to drivers/regulator/max77802-regulator.c
+-- 
+2.5.0
