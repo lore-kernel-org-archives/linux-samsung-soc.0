@@ -1,77 +1,34 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 3/4] drm/exynos: remove platform data structures and
- include/drm/exynos_drm.h
-Date: Fri, 12 Feb 2016 13:13:58 +0100
-Message-ID: <1455279239-13609-4-git-send-email-a.hajda@samsung.com>
-References: <1455279239-13609-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1455279239-13609-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Chanho Park <parkch98@gmail.com>
+Subject: [PATCH 0/2] Support exynos5420-fimd
+Date: Fri, 12 Feb 2016 22:31:38 +0900
+Message-ID: <1455283900-6913-1-git-send-email-chanho61.park@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:34979 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752583AbcBLNct (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Feb 2016 08:32:49 -0500
+Received: by mail-pa0-f65.google.com with SMTP id fl4so3822997pad.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Feb 2016 05:32:48 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Chanho Park <chanho61.park@samsung.com>
 
-UGxhdGZvcm0gZGF0YSBzdHJ1Y3R1cmVzIGFyZSBub3QgdXNlZCBmb3IgbG9uZyB0aW1lIHNvIHRo
-ZSB3aG9sZSBoZWFkZXIKZmlsZSBjYW4gYmUgc2FmZWx5IHJlbW92ZWQuCgpTaWduZWQtb2ZmLWJ5
-OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgotLS0KIGluY2x1ZGUvZHJtL2V4
-eW5vc19kcm0uaCB8IDg2IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDg2IGRlbGV0aW9ucygtKQogZGVsZXRlIG1vZGUgMTAw
-NjQ0IGluY2x1ZGUvZHJtL2V4eW5vc19kcm0uaAoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2V4
-eW5vc19kcm0uaCBiL2luY2x1ZGUvZHJtL2V4eW5vc19kcm0uaApkZWxldGVkIGZpbGUgbW9kZSAx
-MDA2NDQKaW5kZXggZTlmYjJiZC4uMDAwMDAwMAotLS0gYS9pbmNsdWRlL2RybS9leHlub3NfZHJt
-LmgKKysrIC9kZXYvbnVsbApAQCAtMSw4NiArMCwwIEBACi0vKiBleHlub3NfZHJtLmgKLSAqCi0g
-KiBDb3B5cmlnaHQgKGMpIDIwMTEgU2Ftc3VuZyBFbGVjdHJvbmljcyBDby4sIEx0ZC4KLSAqIEF1
-dGhvcnM6Ci0gKglJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ci0gKglKb29ueW91bmcg
-U2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+Ci0gKglTZXVuZy1Xb28gS2ltIDxzdzAzMTIu
-a2ltQHNhbXN1bmcuY29tPgotICoKLSAqIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5
-b3UgY2FuIHJlZGlzdHJpYnV0ZSAgaXQgYW5kL29yIG1vZGlmeSBpdAotICogdW5kZXIgIHRoZSB0
-ZXJtcyBvZiAgdGhlIEdOVSBHZW5lcmFsICBQdWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQgYnkg
-dGhlCi0gKiBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb247ICBlaXRoZXIgdmVyc2lvbiAyIG9mIHRo
-ZSAgTGljZW5zZSwgb3IgKGF0IHlvdXIKLSAqIG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uCi0g
-Ki8KLSNpZm5kZWYgX0VYWU5PU19EUk1fSF8KLSNkZWZpbmUgX0VYWU5PU19EUk1fSF8KLQotI2lu
-Y2x1ZGUgPHVhcGkvZHJtL2V4eW5vc19kcm0uaD4KLSNpbmNsdWRlIDx2aWRlby92aWRlb21vZGUu
-aD4KLQotLyoqCi0gKiBQbGF0Zm9ybSBTcGVjaWZpYyBTdHJ1Y3R1cmUgZm9yIERSTSBiYXNlZCBG
-SU1ELgotICoKLSAqIEBkZWZhdWx0X3dpbjogZGVmYXVsdCB3aW5kb3cgbGF5ZXIgbnVtYmVyIHRv
-IGJlIHVzZWQgZm9yIFVJLgotICogQGJwcDogZGVmYXVsdCBiaXQgcGVyIHBpeGVsLgotICovCi1z
-dHJ1Y3QgZXh5bm9zX2RybV9maW1kX3BkYXRhIHsKLQl1MzIJCQkJdmlkY29uMDsKLQl1MzIJCQkJ
-dmlkY29uMTsKLQl1bnNpZ25lZCBpbnQJCQlkZWZhdWx0X3dpbjsKLQl1bnNpZ25lZCBpbnQJCQli
-cHA7Ci19OwotCi0vKioKLSAqIFBsYXRmb3JtIFNwZWNpZmljIFN0cnVjdHVyZSBmb3IgRFJNIGJh
-c2VkIEhETUkuCi0gKgotICogQGhkbWlfZGV2OiBkZXZpY2UgcG9pbnQgdG8gc3BlY2lmaWMgaGRt
-aSBkcml2ZXIuCi0gKiBAbWl4ZXJfZGV2OiBkZXZpY2UgcG9pbnQgdG8gc3BlY2lmaWMgbWl4ZXIg
-ZHJpdmVyLgotICoKLSAqIHRoaXMgc3RydWN0dXJlIGlzIHVzZWQgZm9yIGNvbW1vbiBoZG1pIGRy
-aXZlciBhbmQgZWFjaCBkZXZpY2Ugb2JqZWN0Ci0gKiB3b3VsZCBiZSB1c2VkIHRvIGFjY2VzcyBz
-cGVjaWZpYyBkZXZpY2UgZHJpdmVyKGhkbWkgb3IgbWl4ZXIgZHJpdmVyKQotICovCi1zdHJ1Y3Qg
-ZXh5bm9zX2RybV9jb21tb25faGRtaV9wZCB7Ci0Jc3RydWN0IGRldmljZSAqaGRtaV9kZXY7Ci0J
-c3RydWN0IGRldmljZSAqbWl4ZXJfZGV2OwotfTsKLQotLyoqCi0gKiBQbGF0Zm9ybSBTcGVjaWZp
-YyBTdHJ1Y3R1cmUgZm9yIERSTSBiYXNlZCBIRE1JIGNvcmUuCi0gKgotICogQGlzX3YxMzogc2V0
-IGlmIGhkbWkgdmVyc2lvbiAxMyBpcy4KLSAqIEBjZmdfaHBkOiBmdW5jdGlvbiBwb2ludGVyIHRv
-IGNvbmZpZ3VyZSBoZG1pIGhvdHBsdWcgZGV0ZWN0aW9uIHBpbgotICogQGdldF9ocGQ6IGZ1bmN0
-aW9uIHBvaW50ZXIgdG8gZ2V0IHZhbHVlIG9mIGhkbWkgaG90cGx1ZyBkZXRlY3Rpb24gcGluCi0g
-Ki8KLXN0cnVjdCBleHlub3NfZHJtX2hkbWlfcGRhdGEgewotCWJvb2wgaXNfdjEzOwotCXZvaWQg
-KCpjZmdfaHBkKShib29sIGV4dGVybmFsKTsKLQlpbnQgKCpnZXRfaHBkKSh2b2lkKTsKLX07Ci0K
-LS8qKgotICogUGxhdGZvcm0gU3BlY2lmaWMgU3RydWN0dXJlIGZvciBEUk0gYmFzZWQgSVBQLgot
-ICoKLSAqIEBpbnZfcGNsazogaWYgc2V0IDEuIGludmVydCBwaXhlbCBjbG9jawotICogQGludl92
-c3luYzogaWYgc2V0IDEuIGludmVydCB2c3luYyBzaWduYWwgZm9yIHdiCi0gKiBAaW52X2hyZWY6
-IGlmIHNldCAxLiBpbnZlcnQgaHJlZiBzaWduYWwKLSAqIEBpbnZfaHN5bmM6IGlmIHNldCAxLiBp
-bnZlcnQgaHN5bmMgc2lnbmFsIGZvciB3YgotICovCi1zdHJ1Y3QgZXh5bm9zX2RybV9pcHBfcG9s
-IHsKLQl1bnNpZ25lZCBpbnQgaW52X3BjbGs7Ci0JdW5zaWduZWQgaW50IGludl92c3luYzsKLQl1
-bnNpZ25lZCBpbnQgaW52X2hyZWY7Ci0JdW5zaWduZWQgaW50IGludl9oc3luYzsKLX07Ci0KLS8q
-KgotICogUGxhdGZvcm0gU3BlY2lmaWMgU3RydWN0dXJlIGZvciBEUk0gYmFzZWQgRklNQy4KLSAq
-Ci0gKiBAcG9sOiBjdXJyZW50IGhhcmR3YXJlIGJsb2NrIHBvbGFyaXR5IHNldHRpbmdzLgotICog
-QGNsa19yYXRlOiBjdXJyZW50IGhhcmR3YXJlIGNsb2NrIHJhdGUuCi0gKi8KLXN0cnVjdCBleHlu
-b3NfZHJtX2ZpbWNfcGRhdGEgewotCXN0cnVjdCBleHlub3NfZHJtX2lwcF9wb2wgcG9sOwotCWlu
-dCBjbGtfcmF0ZTsKLX07Ci0KLSNlbmRpZgkvKiBfRVhZTk9TX0RSTV9IXyAqLwotLSAKMS45LjEK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patchset introduces exynos5420-fimd compatible to support
+a mic-bypass option from display path. Since exynos5420, the
+option has been introduced and controlled by system register.
+The option is only available for exynos5420/exynos5422 and 5800,
+we need to add the new exynos5420-fimd compatible.
+
+Chanho Park (2):
+  drm/exynos: add exynos5420 support for fimd
+  ARM: dts: add exynos5420-fimd compatible
+
+ .../bindings/display/exynos/samsung-fimd.txt       |  3 ++-
+ arch/arm/boot/dts/exynos5420.dtsi                  |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           | 31 +++++++++++++++++++++-
+ 3 files changed, 33 insertions(+), 2 deletions(-)
+
+-- 
+2.5.0
