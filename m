@@ -1,129 +1,57 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Move syscon reboot/poweroff to common dtsi for
- Exynos
-Date: Sun, 14 Feb 2016 15:44:53 +0900
-Message-ID: <56C02265.40103@samsung.com>
-References: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] regulator: Rename files for max77686 and max77802 drivers
+Date: Sun, 14 Feb 2016 15:53:19 +0900
+Message-ID: <56C0245F.1080209@samsung.com>
+References: <1455250463-5955-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-2
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <1455250463-5955-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: k.kozlowski.k@gmail.com, Andi Shyti <andi.shyti@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 10.02.2016 o 03:30, Javier Martinez Canillas pisze:
-> All Exynos SoCs have the same syscon reboot and poweroff device nodes so
-> there is no need to duplicate the same on each SoC dtsi and can be moved
-> to a common dtsi that can be included by all the SoCs dtsi files.
+W dniu 12.02.2016 o 13:14, Javier Martinez Canillas pisze:
+> The max77686 and max77802 regulator drivers are for sub-devices of a MFD
+> driver for some PMIC blocks. But the same object file name (max77686.o)
+> was used for both the common MFD driver and the max77686 regulator one.
+> 
+> This confuses kbuild if both drivers are built as module causing the MFD
+> driver to not be copied when installing the modules.
+> 
+> Also, max77{686,802} are a quite generic name for MFD subdevices drivers
+> so it is better to rename them to max77{686,802}-regulator like it's the
+> case for most regulator drivers.
 > 
 > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
 > ---
-> Hello,
 > 
-> The patch was tested on an Exynos5800 Peach Pi Chromebook and an
-> Exynos5422 Odroid XU4 board. Reboot and poweroff worked for both.
+>  MAINTAINERS                                            | 2 +-
+>  drivers/regulator/Makefile                             | 4 ++--
+>  drivers/regulator/{max77686.c => max77686-regulator.c} | 0
+>  drivers/regulator/{max77802.c => max77802-regulator.c} | 0
+>  4 files changed, 3 insertions(+), 3 deletions(-)
+>  rename drivers/regulator/{max77686.c => max77686-regulator.c} (100%)
+>  rename drivers/regulator/{max77802.c => max77802-regulator.c} (100%)
 > 
-> But testing on Exynos3 and Exynos4 will be highly appreciated.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 97b99f24ea53..863eb59e101b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6904,7 +6904,7 @@ MAXIM MAX77802 MULTIFUNCTION PMIC DEVICE DRIVERS
+>  M:	Javier Martinez Canillas <javier@osg.samsung.com>
+>  L:	linux-kernel@vger.kernel.org
+>  S:	Supported
+> -F:	drivers/*/*max77802.c
+> +F:	drivers/*/*max77802*.c
+>  F:	Documentation/devicetree/bindings/*/*max77802.txt
+>  F:	include/dt-bindings/*/*max77802.h
 
-Would you be so kind and add my suggested-by (since it comes from
-https://wiki.tizen.org/wiki/Exynos_Mainline_Kernel_TODO :) )
-
-I'll test it on Exynos4 at work and then apply... but few comments below:
-
-> 
-> Best regards,
-> Javier
-> 
->  arch/arm/boot/dts/exynos-syscon-restart.dtsi | 23 +++++++++++++++++++++++
->  arch/arm/boot/dts/exynos3250.dtsi            | 15 +--------------
->  arch/arm/boot/dts/exynos4.dtsi               | 15 +--------------
->  arch/arm/boot/dts/exynos5.dtsi               | 15 +--------------
->  arch/arm/boot/dts/exynos5410.dtsi            | 15 +--------------
->  5 files changed, 27 insertions(+), 56 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos-syscon-restart.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-> new file mode 100644
-> index 000000000000..2b8acf554881
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
-> @@ -0,0 +1,23 @@
-> +/*
-> + * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +/ {
-
-In some of the DTSI this was under "soc" node, not at top-level.
-Unfortunately we do not have consistency here - some DTSI have "soc",
-some not. Anyway I think we should move to "soc" version.
-
-> +	poweroff: syscon-poweroff {
-> +		compatible = "syscon-poweroff";
-> +		regmap = <&pmu_system_controller>;
-> +		offset = <0x330C>; /* PS_HOLD_CONTROL */
-> +		mask = <0x5200>; /* reset value */
-> +	};
-> +
-> +	reboot: syscon-reboot {
-> +		compatible = "syscon-reboot";
-> +		regmap = <&pmu_system_controller>;
-> +		offset = <0x0400>; /* SWRESET */
-> +		mask = <0x1>;
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 18e3deffbf48..d9c221517935 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -19,6 +19,7 @@
->  
->  #include "skeleton.dtsi"
->  #include "exynos4-cpu-thermal.dtsi"
-> +#include "exynos-syscon-restart.dtsi"
->  #include <dt-bindings/clock/exynos3250.h>
->  
->  / {
-> @@ -152,20 +153,6 @@
->  			interrupt-parent = <&gic>;
->  		};
->  
-> -		poweroff: syscon-poweroff {
-> -			compatible = "syscon-poweroff";
-> -			regmap = <&pmu_system_controller>;
-> -			offset = <0x330C>; /* PS_HOLD_CONTROL */
-> -			mask = <0x5200>; /* Reset value */
-> -		};
-> -
-> -		reboot: syscon-reboot {
-> -			compatible = "syscon-reboot";
-> -			regmap = <&pmu_system_controller>;
-> -			offset = <0x0400>; /* SWRESET */
-> -			mask = <0x1>;
-> -		};
-> -
->  		mipi_phy: video-phy@10020710 {
->  			compatible = "samsung,s5pv210-mipi-video-phy";
->  			#phy-cells = <1>;
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index ca621a92319e..e6f6939ccdfa 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -21,6 +21,7 @@
->  
->  #include <dt-bindings/clock/exynos4.h>
->  #include <dt-bindings/clock/exynos-audss-clk.h>
-> +#include "exynos-syscon-restart.dtsi"
-
-Just to keep it consistent and logic - include after skeleton.
+Looks fine, but can you also update the max77686 entry with extended
+wildcard?
 
 Best regards,
 Krzysztof
