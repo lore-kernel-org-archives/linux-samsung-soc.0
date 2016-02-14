@@ -1,61 +1,64 @@
-From: Youngmin Nam <ym0914-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c64xx: Get fifosize via device tree
-Date: Sun, 14 Feb 2016 15:28:30 +0900
-Message-ID: <56C01E8E.6090107@gmail.com>
-References: <1455031585-11113-1-git-send-email-ym0914@gmail.com>
- <20160209161036.GI13270@sirena.org.uk>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [rtc-linux] [PATCH] rtc: s3c: Document required clocks in the DT
+ binding
+Date: Sun, 14 Feb 2016 15:34:05 +0900
+Message-ID: <56C01FDD.9050204@samsung.com>
+References: <1455038632-14545-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160209161036.GI13270-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1455038632-14545-1-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Mark.
-Thank you for your review.
-Please ignore previous mail that I sent to you.
-I sent this mail without CC-ing. I resend including CC list.
+W dniu 10.02.2016 o 02:23, Javier Martinez Canillas pisze:
+> The S3C Real Time Clock driver requires the clock and source clock to
+> be defined in the device node but that requirement is not documented.
 
-On 2016=EB=85=84 02=EC=9B=94 10=EC=9D=BC 01:10, Mark Brown wrote:
-> On Wed, Feb 10, 2016 at 12:26:25AM +0900, Youngmin Nam wrote:
->=20
->> SPI driver on some SoCs only differ in the fifosize of each
->> SPI channel. It is useless to duplicate the s3c64xx_spi_port_config =
-structure
->> or create a compatible name for such a change.
->=20
-> I disagree that it is useless to do this, it means that if we realize
-> later that there is some other difference between the implementations
-> then we have the information in the DT to handle this without needing=
-=20
-> to update the ABI.
->=20
++Cc: Alessandro Zummo
 
-To clarify, let me check that I understood.
-Do you mean we can fix fifosize of each SPI channel with DT handling
-if there is difference on this fifosize with driver code?
+No, not entirely. The samsung,s3c6410-rtc needs rtc and rtc_src clocks
+but rest of compatible devices need only rtc clock.
 
-If I understand your words correctly, let me modify commit messages.=20
+Best regards,
+Krzysztof
 
->> +Optional SoC Specific properties:
->> +
->> +- samsung,spi-fifosize: The fifo size supported by the SPI channel
->> +
->> +
->=20
-> In units of...?  FIFO sizes do get quoted in both words and bytes so =
-it
-> seems good to be clear.
->=20
+> 
+> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> 
+> ---
+> 
+>  Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> index ac2fcd6ff4b8..1068ffce9f91 100644
+> --- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> @@ -14,6 +14,10 @@ Required properties:
+>    interrupt number is the rtc alarm interrupt and second interrupt number
+>    is the rtc tick interrupt. The number of cells representing a interrupt
+>    depends on the parent interrupt controller.
+> +- clocks: Must contain a list of phandle and clock specifier for the rtc
+> +          and source clocks.
+> +- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
+> +               same order as the clocks property.
+>  
+>  Example:
+>  
+> @@ -21,4 +25,6 @@ Example:
+>  		compatible = "samsung,s3c6410-rtc";
+>  		reg = <0x10070000 0x100>;
+>  		interrupts = <44 0 45 0>;
+> +		clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
+> +		clock-names = "rtc", "rtc_src";
+>  	};
+> 
 
-"samsung,spi-fifosize =3D <64>" means 64 bytes of fifosize.
-Let me add the units as bytes.
-
-Thank you.=20
 --
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
