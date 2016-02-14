@@ -1,64 +1,61 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [next] Odroid XU3 easily over-heats
-Date: Sun, 14 Feb 2016 15:06:27 +0900
-Message-ID: <56C01963.3080106@gmail.com>
+From: Youngmin Nam <ym0914-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] spi: s3c64xx: Get fifosize via device tree
+Date: Sun, 14 Feb 2016 15:28:30 +0900
+Message-ID: <56C01E8E.6090107@gmail.com>
+References: <1455031585-11113-1-git-send-email-ym0914@gmail.com>
+ <20160209161036.GI13270@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:36626 "EHLO
-	mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751082AbcBNGGd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Feb 2016 01:06:33 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160209161036.GI13270-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi all,
+Hello Mark.
+Thank you for your review.
+Please ignore previous mail that I sent to you.
+I sent this mail without CC-ing. I resend including CC list.
 
-With recent addition of cpufreq-dt support to Exynos5422
-it is very easy to over-heat the Odroid XU3 leading to critical shutdown:
-[  132.622032] thermal thermal_zone3: critical temperature reached(121 C),shutting down
+On 2016=EB=85=84 02=EC=9B=94 10=EC=9D=BC 01:10, Mark Brown wrote:
+> On Wed, Feb 10, 2016 at 12:26:25AM +0900, Youngmin Nam wrote:
+>=20
+>> SPI driver on some SoCs only differ in the fifosize of each
+>> SPI channel. It is useless to duplicate the s3c64xx_spi_port_config =
+structure
+>> or create a compatible name for such a change.
+>=20
+> I disagree that it is useless to do this, it means that if we realize
+> later that there is some other difference between the implementations
+> then we have the information in the DT to handle this without needing=
+=20
+> to update the ABI.
+>=20
 
+To clarify, let me check that I understood.
+Do you mean we can fix fifosize of each SPI channel with DT handling
+if there is difference on this fifosize with driver code?
 
-Reproduction:
-0. next-20160212 (with recent fix for OPP from Viresh)
-1. multi_v7 (on exynos defconfig there is no cpufreq for Exynos5422)
-2. Run following test script:
-https://github.com/krzk/tools/blob/master/tests/odroid-xu3-cpu-mmc-stress.sh
+If I understand your words correctly, let me modify commit messages.=20
 
-(the script essentially does only "cat /dev/mmcblk0p2 | gzip -c > /dev/null" for each CPU)
+>> +Optional SoC Specific properties:
+>> +
+>> +- samsung,spi-fifosize: The fifo size supported by the SPI channel
+>> +
+>> +
+>=20
+> In units of...?  FIFO sizes do get quoted in both words and bytes so =
+it
+> seems good to be clear.
+>=20
 
-Observe, just before shutdown:
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq:1300000
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq:200000
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_transition_latency:154000
-/sys/devices/system/cpu/cpu0/cpufreq/related_cpus:0 1 2 3
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies:200000 300000 400000 500000 600000 700000 800000 900000 1000000 1100000 1200000 1300000 
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors:ondemand performance 
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1300000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver:cpufreq-dt
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor:ondemand
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq:1300000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq:200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed:<unsupported>
+"samsung,spi-fifosize =3D <64>" means 64 bytes of fifosize.
+Let me add the units as bytes.
 
-/sys/class/thermal/thermal_zone0/temp:90000
-/sys/class/thermal/thermal_zone1/temp:98000
-/sys/class/thermal/thermal_zone2/temp:113000
-/sys/class/thermal/thermal_zone3/temp:119000
-/sys/class/thermal/thermal_zone4/temp:81000
-
-/sys/class/thermal/cooling_device0/cur_state:3
-/sys/class/thermal/cooling_device0/max_state:3
-/sys/class/thermal/cooling_device0/type:pwm-fan
-
-Fan is working but shutdown is immediate.
-
-What about cpufreq as cooling device? Probably that part
-is missing now, right?
-
-Best regards,
-Krzysztof
+Thank you.=20
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
