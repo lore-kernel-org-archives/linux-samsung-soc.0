@@ -1,100 +1,115 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <deathsimple@vodafone.de>
-Subject: Re: [PATCH v2 00/17] drm encoders cleanup: nuke optional dummy
- encoder mode_fixup function.
-Date: Mon, 15 Feb 2016 15:19:07 +0100
-Message-ID: <56C1DE5B.4010909@vodafone.de>
+From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Subject: Re: [PATCH v2 09/17] drm/gma500: removed optional dummy encoder
+ mode_fixup function.
+Date: Mon, 15 Feb 2016 15:24:01 +0100
+Message-ID: <CAMeQTsZ=JP36ry8u_WAWgjz4sa4SPSpQmq3n+dACq0JhHonVSw@mail.gmail.com>
 References: <cover.1455540137.git.palminha@synopsys.com>
+	<b704458dc68a73cfb5507933c1df0c2a79e186eb.1455540137.git.palminha@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <cover.1455540137.git.palminha@synopsys.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>, dri-devel@lists.freedesktop.org
-Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, jingoohan1@gmail.com, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, benjamin.gaignard@linaro.org, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36088 "EHLO
+	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751714AbcBOOYD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Feb 2016 09:24:03 -0500
+Received: by mail-lf0-f67.google.com with SMTP id h198so7384140lfh.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Feb 2016 06:24:01 -0800 (PST)
+In-Reply-To: <b704458dc68a73cfb5507933c1df0c2a79e186eb.1455540137.git.palminha@synopsys.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, p.zabel@pengutronix.de, mark.yao@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com, kraxel@redhat.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, virtualization@lists.linux-foundation.org
 
-QW0gMTUuMDIuMjAxNiB1bSAxMzo1NyBzY2hyaWViIENhcmxvcyBQYWxtaW5oYToKPiBtb2RlX2Zp
-eHVwIGZ1bmN0aW9uIGZvciBlbmNvZGVyIGRyaXZlcnMgYmVjYW1lIG9wdGlvbmFsIHdpdGggcGF0
-Y2gKPiBodHRwOi8vcGF0Y2h3b3JrLmZyZWVkZXNrdG9wLm9yZy9wYXRjaC9tc2dpZC8xNDU1MTA2
-NTIyLTMyMzA3LTEtZ2l0LXNlbmQtZW1haWwtcGFsbWluaGFAc3lub3BzeXMuY29tCj4KPiBUaGlz
-IHBhdGNoIHNldCBudWtlcyBhbGwgdGhlIGR1bW15IG1vZGVfZml4dXAgaW1wbGVtZW50YXRpb25z
-Lgo+Cj4gKG1hZGUgb24gdG9wIG9mIERhbmllbCB0b3BpYy9kcm0tbWlzYyBicmFuY2gpCj4KPiBD
-aGFuZ2VzIHYxLT52MjogaW5jb3Jwb3JhdGVkIERhbmllbCBjb21tZW50cwo+ICogYWRkZWQgc2ln
-bmVkLW9mZi1ieSBsaW5lIHRvIGFsbCBwYXRjaGVzCj4gKiB0aHJlYWRpbmcgZW5hYmxlZCBkdWUg
-dG8gZS1tYWlsIHNlcnZlciBjb25zdHJhaW50cwo+ICogY29tbW9uIGJsdXJiIGxpbmVzIHRvIGFs
-bCBwYXRjaGVzCj4gKiBhZGQgcmV2aWV3ZWQgYnkgQWxleCwgdG8gcGF0Y2hlcyA0IGFuZCAxNAoK
-WW91IGNhbiBhZGQgYSBSZXZpZXdlZC1ieTogQ2hyaXN0aWFuIEvDtm5pZyA8Y2hyaXN0aWFuLmtv
-ZW5pZ0BhbWQuY29tPiB0byAKcGF0Y2ggNCBhbmQgMTQgYXMgd2VsbC4KCk5pY2UgY2xlYW51cC4g
-VGhhbmtzLApDaHJpc3RpYW4uCgo+Cj4gQ2FybG9zIFBhbG1pbmhhICgxNyk6Cj4gICAgZHJtL3Zp
-cnRpbzogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24u
-Cj4gICAgZHJtL3VkbDogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAg
-ZnVuY3Rpb24uCj4gICAgZHJtL2V4eW5vczogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVy
-IG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL2FtZGdwdTogcmVtb3ZlZCBvcHRpb25hbCBk
-dW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL2FzdDogcmVtb3ZlZCBv
-cHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL2JvY2hz
-OiByZW1vdmVkIG9wdGlvbmFsIGR1bW15IGVuY29kZXIgbW9kZV9maXh1cCBmdW5jdGlvbi4KPiAg
-ICBkcm0vY2lycnVzOiByZW1vdmVkIG9wdGlvbmFsIGR1bW15IGVuY29kZXIgbW9kZV9maXh1cCBm
-dW5jdGlvbi4KPiAgICBkcm0vZXh5bm9zOiByZW1vdmVkIG9wdGlvbmFsIGR1bW15IGVuY29kZXIg
-bW9kZV9maXh1cCBmdW5jdGlvbi4KPiAgICBkcm0vZ21hNTAwOiByZW1vdmVkIG9wdGlvbmFsIGR1
-bW15IGVuY29kZXIgbW9kZV9maXh1cCBmdW5jdGlvbi4KPiAgICBkcm0vaW14OiByZW1vdmVkIG9w
-dGlvbmFsIGR1bW15IGVuY29kZXIgbW9kZV9maXh1cCBmdW5jdGlvbi4KPiAgICBkcm0vbXNtL21k
-cDogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4g
-ICAgZHJtL21nYWcyMDA6IHJlbW92ZWQgb3B0aW9uYWwgZHVtbXkgZW5jb2RlciBtb2RlX2ZpeHVw
-IGZ1bmN0aW9uLgo+ICAgIGRybS9xeGw6IHJlbW92ZWQgb3B0aW9uYWwgZHVtbXkgZW5jb2RlciBt
-b2RlX2ZpeHVwIGZ1bmN0aW9uLgo+ICAgIGRybS9yYWRlb246IHJlbW92ZWQgb3B0aW9uYWwgZHVt
-bXkgZW5jb2RlciBtb2RlX2ZpeHVwIGZ1bmN0aW9uLgo+ICAgIGRybS9yb2NrY2hpcDogcmVtb3Zl
-ZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL3N0
-aTogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4g
-ICAgZHJtL3RpbGNkYzogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAg
-ZnVuY3Rpb24uCj4KPiAgIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92MTBfMC5jICAg
-ICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2Vf
-djExXzAuYyAgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2FtZC9h
-bWRncHUvZGNlX3Y4XzAuYyAgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1
-L2RybS9hc3QvYXN0X21vZGUuYyAgICAgICAgICAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBk
-cml2ZXJzL2dwdS9kcm0vYm9jaHMvYm9jaHNfa21zLmMgICAgICAgICAgICAgICAgfCAgOCAtLS0t
-LS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2NpcnJ1cy9jaXJydXNfbW9kZS5jICAgICAgICAgICAg
-IHwgIDkgLS0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3Jl
-LmMgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2RwaS5jICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgICAgfCAgOCAtLS0tLS0tLQo+
-ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9jZHZfaW50ZWxfY3J0LmMgICAgICAgICAgIHwgIDEg
-LQo+ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9jZHZfaW50ZWxfaGRtaS5jICAgICAgICAgIHwg
-IDEgLQo+ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9nbWFfZGlzcGxheS5jICAgICAgICAgICAg
-IHwgIDcgLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9nbWFfZGlzcGxheS5oICAg
-ICAgICAgICAgIHwgIDMgLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZ21hNTAwL29ha3RyYWlsX2hk
-bWkuYyAgICAgICAgICAgfCAgMSAtCj4gICBkcml2ZXJzL2dwdS9kcm0vaW14L2R3X2hkbWktaW14
-LmMgICAgICAgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2lteC9p
-bXgtbGRiLmMgICAgICAgICAgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1
-L2RybS9pbXgvaW14LXR2ZS5jICAgICAgICAgICAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBk
-cml2ZXJzL2dwdS9kcm0vaW14L3BhcmFsbGVsLWRpc3BsYXkuYyAgICAgICAgICAgfCAgOCAtLS0t
-LS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdhZzIwMF9tb2RlLmMgICAgICAgICAg
-IHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDQvbWRwNF9kc2lf
-ZW5jb2Rlci5jICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA0
-L21kcDRfZHR2X2VuY29kZXIuYyAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL21z
-bS9tZHAvbWRwNC9tZHA0X2xjZGNfZW5jb2Rlci5jIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMv
-Z3B1L2RybS9tc20vbWRwL21kcDUvbWRwNV9jbWRfZW5jb2Rlci5jICB8ICA5IC0tLS0tLS0tLQo+
-ICAgZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X2VuY29kZXIuYyAgICAgIHwgIDgg
-LS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9xeGwvcXhsX2Rpc3BsYXkuYyAgICAgICAgICAg
-ICAgICB8ICA5IC0tLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9hdG9tYmlvc19l
-bmNvZGVycy5jICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
-cC9kdy1taXBpLWRzaS5jICAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9k
-cm0vc3RpL3N0aV90dm91dC5jICAgICAgICAgICAgICAgICAgfCAxMCAtLS0tLS0tLS0tCj4gICBk
-cml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19wYW5lbC5jICAgICAgICAgICAgfCAgOSAtLS0t
-LS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3RmcDQxMC5jICAgICAgICAg
-ICB8ICA5IC0tLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL3VkbC91ZGxfZW5jb2Rlci5jICAg
-ICAgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmly
-dGdwdV9kaXNwbGF5LmMgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICAzMyBmaWxlcyBjaGFuZ2Vk
-LCAyNDQgZGVsZXRpb25zKC0pCj4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+On Mon, Feb 15, 2016 at 2:00 PM, Carlos Palminha
+<CARLOS.PALMINHA@synopsys.com> wrote:
+> mode_fixup function for encoder drivers became optional with patch
+> http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
+>
+> This patch set nukes all the dummy mode_fixup implementations.
+>
+> (made on top of Daniel topic/drm-misc branch)
+>
+> Signed-off-by: Carlos Palminha <palminha@synopsys.com>
+
+Reviewed-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+
+> ---
+>  drivers/gpu/drm/gma500/cdv_intel_crt.c  | 1 -
+>  drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 1 -
+>  drivers/gpu/drm/gma500/gma_display.c    | 7 -------
+>  drivers/gpu/drm/gma500/gma_display.h    | 3 ---
+>  drivers/gpu/drm/gma500/oaktrail_hdmi.c  | 1 -
+>  5 files changed, 13 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/gma500/cdv_intel_crt.c b/drivers/gpu/drm/gma500/cdv_intel_crt.c
+> index d0717a8..b837e7a 100644
+> --- a/drivers/gpu/drm/gma500/cdv_intel_crt.c
+> +++ b/drivers/gpu/drm/gma500/cdv_intel_crt.c
+> @@ -217,7 +217,6 @@ static int cdv_intel_crt_set_property(struct drm_connector *connector,
+>
+>  static const struct drm_encoder_helper_funcs cdv_intel_crt_helper_funcs = {
+>         .dpms = cdv_intel_crt_dpms,
+> -       .mode_fixup = gma_encoder_mode_fixup,
+>         .prepare = gma_encoder_prepare,
+>         .commit = gma_encoder_commit,
+>         .mode_set = cdv_intel_crt_mode_set,
+> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+> index ddf2d77..28f9d90 100644
+> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+> @@ -255,7 +255,6 @@ static void cdv_hdmi_destroy(struct drm_connector *connector)
+>
+>  static const struct drm_encoder_helper_funcs cdv_hdmi_helper_funcs = {
+>         .dpms = cdv_hdmi_dpms,
+> -       .mode_fixup = gma_encoder_mode_fixup,
+>         .prepare = gma_encoder_prepare,
+>         .mode_set = cdv_hdmi_mode_set,
+>         .commit = gma_encoder_commit,
+> diff --git a/drivers/gpu/drm/gma500/gma_display.c b/drivers/gpu/drm/gma500/gma_display.c
+> index ff17af4..9270821 100644
+> --- a/drivers/gpu/drm/gma500/gma_display.c
+> +++ b/drivers/gpu/drm/gma500/gma_display.c
+> @@ -478,13 +478,6 @@ int gma_crtc_cursor_move(struct drm_crtc *crtc, int x, int y)
+>         return 0;
+>  }
+>
+> -bool gma_encoder_mode_fixup(struct drm_encoder *encoder,
+> -                           const struct drm_display_mode *mode,
+> -                           struct drm_display_mode *adjusted_mode)
+> -{
+> -       return true;
+> -}
+> -
+>  bool gma_crtc_mode_fixup(struct drm_crtc *crtc,
+>                          const struct drm_display_mode *mode,
+>                          struct drm_display_mode *adjusted_mode)
+> diff --git a/drivers/gpu/drm/gma500/gma_display.h b/drivers/gpu/drm/gma500/gma_display.h
+> index ed569d8..78b9f98 100644
+> --- a/drivers/gpu/drm/gma500/gma_display.h
+> +++ b/drivers/gpu/drm/gma500/gma_display.h
+> @@ -90,9 +90,6 @@ extern void gma_crtc_restore(struct drm_crtc *crtc);
+>  extern void gma_encoder_prepare(struct drm_encoder *encoder);
+>  extern void gma_encoder_commit(struct drm_encoder *encoder);
+>  extern void gma_encoder_destroy(struct drm_encoder *encoder);
+> -extern bool gma_encoder_mode_fixup(struct drm_encoder *encoder,
+> -                                  const struct drm_display_mode *mode,
+> -                                  struct drm_display_mode *adjusted_mode);
+>
+>  /* Common clock related functions */
+>  extern const struct gma_limit_t *gma_limit(struct drm_crtc *crtc, int refclk);
+> diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi.c b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
+> index 2d18499..8b2eb32 100644
+> --- a/drivers/gpu/drm/gma500/oaktrail_hdmi.c
+> +++ b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
+> @@ -601,7 +601,6 @@ static void oaktrail_hdmi_destroy(struct drm_connector *connector)
+>
+>  static const struct drm_encoder_helper_funcs oaktrail_hdmi_helper_funcs = {
+>         .dpms = oaktrail_hdmi_dpms,
+> -       .mode_fixup = gma_encoder_mode_fixup,
+>         .prepare = gma_encoder_prepare,
+>         .mode_set = oaktrail_hdmi_mode_set,
+>         .commit = gma_encoder_commit,
+> --
+> 2.5.0
+>
