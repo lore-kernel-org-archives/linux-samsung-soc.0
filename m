@@ -1,54 +1,85 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] regulator: Rename files for max77686 and max77802 drivers
-Date: Mon, 15 Feb 2016 11:44:24 -0300
-Message-ID: <56C1E448.4080306@osg.samsung.com>
-References: <1455250463-5955-1-git-send-email-javier@osg.samsung.com>
- <56C0245F.1080209@samsung.com>
+From: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
+Subject: Re: [PATCH v2 03/17] drm/exynos: removed optional dummy encoder
+	mode_fixup function.
+Date: Mon, 15 Feb 2016 15:18:34 +0000
+Message-ID: <56C1EC4A.1000803@synopsys.com>
+References: <cover.1455540137.git.palminha@synopsys.com>
+	<3768b670931572de51fca1102efa18d20dd770ee.1455540137.git.palminha@synopsys.com>
+	<CAMeQTsZLdMOnk7-isneoUyFBbQdiRUsGH6+EhD8W1LNB=80LVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48401 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753298AbcBOOoa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 09:44:30 -0500
-In-Reply-To: <56C0245F.1080209@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <CAMeQTsZLdMOnk7-isneoUyFBbQdiRUsGH6+EhD8W1LNB=80LVQ@mail.gmail.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, benjamin.gaignard@linaro.org, David Airlie <airlied@linux.ie>, jingoohan1@gmail.com, dri-devel <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, p.zabel@pengutronix.de, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, Andi Shyti <andi.shyti@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>
 
-Hello Krzysztof,
+Hi Patrik,
 
-On 02/14/2016 03:53 AM, Krzysztof Kozlowski wrote:
+No particular reason... i was grepping along the development and probably didn't noticed that exynos was not completely nuked... :)
 
-[snip]
+Regards,
+C.Palminha
 
->> +++ b/MAINTAINERS
->> @@ -6904,7 +6904,7 @@ MAXIM MAX77802 MULTIFUNCTION PMIC DEVICE DRIVERS
->>   M:	Javier Martinez Canillas <javier@osg.samsung.com>
->>   L:	linux-kernel@vger.kernel.org
->>   S:	Supported
->> -F:	drivers/*/*max77802.c
->> +F:	drivers/*/*max77802*.c
->>   F:	Documentation/devicetree/bindings/*/*max77802.txt
->>   F:	include/dt-bindings/*/*max77802.h
->
-> Looks fine, but can you also update the max77686 entry with extended
-> wildcard?
->
-
-This has already been picked by Mark so I posted an incremental patch:
-
-https://patchwork.kernel.org/patch/8315731/
-  
-> Best regards,
-> Krzysztof
->
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+On 15-02-2016 13:49, Patrik Jakobsson wrote:
+> Hi Carlos
+> 
+> Any particular reason why this patch isn't squashed with patch 8/17?
+> 
+> Thanks
+> Patrik
+> 
+> 
+> On Mon, Feb 15, 2016 at 1:58 PM, Carlos Palminha
+> <CARLOS.PALMINHA@synopsys.com> wrote:
+>> mode_fixup function for encoder drivers became optional with patch
+>> http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
+>>
+>> This patch set nukes all the dummy mode_fixup implementations.
+>>
+>> (made on top of Daniel topic/drm-misc branch)
+>>
+>> Signed-off-by: Carlos Palminha <palminha@synopsys.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 --------
+>>  1 file changed, 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> index e977a81..736115c 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> @@ -1597,13 +1597,6 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+>>         return 0;
+>>  }
+>>
+>> -static bool exynos_dsi_mode_fixup(struct drm_encoder *encoder,
+>> -                                 const struct drm_display_mode *mode,
+>> -                                 struct drm_display_mode *adjusted_mode)
+>> -{
+>> -       return true;
+>> -}
+>> -
+>>  static void exynos_dsi_mode_set(struct drm_encoder *encoder,
+>>                                 struct drm_display_mode *mode,
+>>                                 struct drm_display_mode *adjusted_mode)
+>> @@ -1623,7 +1616,6 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
+>>  }
+>>
+>>  static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
+>> -       .mode_fixup = exynos_dsi_mode_fixup,
+>>         .mode_set = exynos_dsi_mode_set,
+>>         .enable = exynos_dsi_enable,
+>>         .disable = exynos_dsi_disable,
+>> --
+>> 2.5.0
+>>
