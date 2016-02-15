@@ -1,7 +1,7 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v14 10/17] dt-bindings: add document for rockchip variant of analogix_dp
-Date: Mon, 15 Feb 2016 19:10:48 +0800
-Message-ID: <1455534648-1921-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v14 11/17] drm: bridge: analogix/dp: add some rk3288 special registers setting
+Date: Mon, 15 Feb 2016 19:10:54 +0800
+Message-ID: <1455534654-1966-1-git-send-email-ykk@rock-chips.com>
 References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
@@ -10,136 +10,216 @@ To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyo
 Cc: Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, javier@osg.samsung.com, Andy Yan <andy.yan@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Rockchip DP driver is a helper driver of analogix_dp coder driver,
-so most of the DT property should be descriped in analogix_dp document.
+RK3288 need some special registers setting, we can separate
+them out by the dev_type of plat_data.
 
 Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 ---
 Changes in v14: None
 Changes in v13: None
 Changes in v12: None
 Changes in v11: None
-Changes in v10:
-- Add the ack from Rob Herring
-
-Changes in v9:
-- Document more details for 'ports' property.
-
-Changes in v8:
-- Modify the commit subject name. (Heiko)
-
+Changes in v10: None
+Changes in v9: None
+Changes in v8: None
 Changes in v7: None
 Changes in v6: None
-Changes in v5:
-- Split binding doc's from driver changes. (Rob)
-- Add eDP hotplug pinctrl property. (Heiko)
-
+Changes in v5: None
 Changes in v4: None
 Changes in v3: None
-Changes in v2: None
+Changes in v2:
+- Fix compile failed dut to phy_pd_addr variable misspell error
 
- .../display/rockchip/analogix_dp-rockchip.txt      | 91 ++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 76 ++++++++++++++---------
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h | 12 ++++
+ 2 files changed, 60 insertions(+), 28 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-new file mode 100644
-index 0000000..04d99e3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-@@ -0,0 +1,91 @@
-+Rockchip RK3288 specific extensions to the Analogix Display Port
-+================================
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 3858df5..1e24b37 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -15,6 +15,8 @@
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
+ 
++#include <drm/bridge/analogix_dp.h>
 +
-+Required properties:
-+- compatible: "rockchip,rk3288-edp";
+ #include "analogix_dp_core.h"
+ #include "analogix_dp_reg.h"
+ 
+@@ -72,6 +74,14 @@ void analogix_dp_init_analog_param(struct analogix_dp_device *dp)
+ 	reg = SEL_24M | TX_DVDD_BIT_1_0625V;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_ANALOG_CTL_2);
+ 
++	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP)) {
++		writel(REF_CLK_24M, dp->reg_base + ANALOGIX_DP_PLL_REG_1);
++		writel(0x95, dp->reg_base + ANALOGIX_DP_PLL_REG_2);
++		writel(0x40, dp->reg_base + ANALOGIX_DP_PLL_REG_3);
++		writel(0x58, dp->reg_base + ANALOGIX_DP_PLL_REG_4);
++		writel(0x22, dp->reg_base + ANALOGIX_DP_PLL_REG_5);
++	}
 +
-+- reg: physical base address of the controller and length
+ 	reg = DRIVE_DVDD_BIT_1_0625V | VCO_BIT_600_MICRO;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_ANALOG_CTL_3);
+ 
+@@ -206,81 +216,85 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 				       bool enable)
+ {
+ 	u32 reg;
++	u32 phy_pd_addr = ANALOGIX_DP_PHY_PD;
 +
-+- clocks: from common clock binding: handle to dp clock.
-+	  of memory mapped region.
++	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
++		phy_pd_addr = ANALOGIX_DP_PD;
+ 
+ 	switch (block) {
+ 	case AUX_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= AUX_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~AUX_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH0_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH0_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH0_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH1_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH1_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH1_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH2_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH2_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH2_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case CH3_BLOCK:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= CH3_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~CH3_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case ANALOG_TOTAL:
+ 		if (enable) {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg |= DP_PHY_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			reg = readl(dp->reg_base + ANALOGIX_DP_PHY_PD);
++			reg = readl(dp->reg_base + phy_pd_addr);
+ 			reg &= ~DP_PHY_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	case POWER_ALL:
+ 		if (enable) {
+ 			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
+ 				CH1_PD | CH0_PD;
+-			writel(reg, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(reg, dp->reg_base + phy_pd_addr);
+ 		} else {
+-			writel(0x00, dp->reg_base + ANALOGIX_DP_PHY_PD);
++			writel(0x00, dp->reg_base + phy_pd_addr);
+ 		}
+ 		break;
+ 	default:
+@@ -399,8 +413,14 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
+ 	analogix_dp_reset_aux(dp);
+ 
+ 	/* Disable AUX transaction H/W retry */
+-	reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) | AUX_HW_RETRY_COUNT_SEL(0) |
+-	      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
++		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
++		      AUX_HW_RETRY_COUNT_SEL(3) |
++		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++	else
++		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
++		      AUX_HW_RETRY_COUNT_SEL(0) |
++		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
+ 
+ 	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 738db4c..337912b 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -22,6 +22,14 @@
+ #define ANALOGIX_DP_VIDEO_CTL_8			0x3C
+ #define ANALOGIX_DP_VIDEO_CTL_10		0x44
+ 
++#define ANALOGIX_DP_PLL_REG_1			0xfc
++#define ANALOGIX_DP_PLL_REG_2			0x9e4
++#define ANALOGIX_DP_PLL_REG_3			0x9e8
++#define ANALOGIX_DP_PLL_REG_4			0x9ec
++#define ANALOGIX_DP_PLL_REG_5			0xa00
 +
-+- clock-names: from common clock binding:
-+	       Required elements: "dp" "pclk"
++#define ANALOGIX_DP_PD				0x12c
 +
-+- resets: Must contain an entry for each entry in reset-names.
-+	  See ../reset/reset.txt for details.
+ #define ANALOGIX_DP_LANE_MAP			0x35C
+ 
+ #define ANALOGIX_DP_ANALOG_CTL_1		0x370
+@@ -154,6 +162,10 @@
+ #define VSYNC_POLARITY_CFG			(0x1 << 1)
+ #define HSYNC_POLARITY_CFG			(0x1 << 0)
+ 
++/* ANALOGIX_DP_PLL_REG_1 */
++#define REF_CLK_24M				(0x1 << 1)
++#define REF_CLK_27M				(0x0 << 1)
 +
-+- pinctrl-names: Names corresponding to the chip hotplug pinctrl states.
-+- pinctrl-0: pin-control mode. should be <&edp_hpd>
-+
-+- reset-names: Must include the name "dp"
-+
-+- rockchip,grf: this soc should set GRF regs, so need get grf here.
-+
-+- ports: there are 2 port nodes with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt.
-+    Port 0: contained 2 endpoints, connecting to the output of vop.
-+    Port 1: contained 1 endpoint, connecting to the input of panel.
-+
-+For the below properties, please refer to Analogix DP binding document:
-+ * Documentation/devicetree/bindings/drm/bridge/analogix_dp.txt
-+- phys (required)
-+- phy-names (required)
-+- hpd-gpios (optional)
-+-------------------------------------------------------------------------------
-+
-+Example:
-+	dp-controller: dp@ff970000 {
-+		compatible = "rockchip,rk3288-dp";
-+		reg = <0xff970000 0x4000>;
-+		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
-+		clock-names = "dp", "pclk";
-+		phys = <&dp_phy>;
-+		phy-names = "dp";
-+
-+		rockchip,grf = <&grf>;
-+		resets = <&cru 111>;
-+		reset-names = "dp";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&edp_hpd>;
-+
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			edp_in: port@0 {
-+				reg = <0>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				edp_in_vopb: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&vopb_out_edp>;
-+				};
-+				edp_in_vopl: endpoint@1 {
-+					reg = <1>;
-+					remote-endpoint = <&vopl_out_edp>;
-+				};
-+			};
-+
-+			edp_out: port@1 {
-+				reg = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				edp_out_panel: endpoint {
-+					reg = <0>;
-+					remote-endpoint = <&panel_in_edp>
-+				};
-+			};
-+		};
-+	};
-+
-+	pinctrl {
-+		edp {
-+			edp_hpd: edp-hpd {
-+				rockchip,pins = <7 11 RK_FUNC_2 &pcfg_pull_none>;
-+			};
-+		};
-+	};
+ /* ANALOGIX_DP_LANE_MAP */
+ #define LANE3_MAP_LOGIC_LANE_0			(0x0 << 6)
+ #define LANE3_MAP_LOGIC_LANE_1			(0x1 << 6)
 -- 
 1.9.1
