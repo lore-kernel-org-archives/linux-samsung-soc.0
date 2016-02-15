@@ -1,61 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4] pinctrl: samsung: Fixes samsung_gpio_direction_in/output
- releated with spinlock
-Date: Mon, 15 Feb 2016 20:48:08 +0100
-Message-ID: <CACRpkdYQY4KTHwcVMJY+uYB=pV2b2JWKDnZADZ1Z+UU=GkbrRQ@mail.gmail.com>
-References: <1454946568-23604-1-git-send-email-ym0914@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Move syscon reboot/poweroff to common dtsi for
+ Exynos
+Date: Tue, 16 Feb 2016 08:04:34 +0900
+Message-ID: <56C25982.4020301@samsung.com>
+References: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
+ <56C02265.40103@samsung.com> <56C1D4D1.2050108@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:34857 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751227AbcBOTsI (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46457 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753355AbcBOXEk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 14:48:08 -0500
-Received: by mail-ob0-f176.google.com with SMTP id xk3so225875460obc.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Feb 2016 11:48:08 -0800 (PST)
-In-Reply-To: <1454946568-23604-1-git-send-email-ym0914@gmail.com>
+	Mon, 15 Feb 2016 18:04:40 -0500
+In-reply-to: <56C1D4D1.2050108@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Youngmin Nam <ym0914@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On Mon, Feb 8, 2016 at 4:49 PM, Youngmin Nam <ym0914@gmail.com> wrote:
+On 15.02.2016 22:38, Javier Martinez Canillas wrote:
+>>
+>> In some of the DTSI this was under "soc" node, not at top-level.
+>> Unfortunately we do not have consistency here - some DTSI have "soc",
+> 
+> Yes, I noticed this but as you said not all DTSI have a soc node
+> and that's why I made it top level in the DTSI.
+> 
+>> some not. Anyway I think we should move to "soc" version.
+>>
+> 
+> Not sure I'm following, did you mean to do it as a follow up or
+> to add a soc node for the missing DTSI as a part of this series?
 
-> Previously, samsung_gpio_drection_in/output function were not covered with
-> one spinlock.
->
-> For example, samsung_gpio_direction_output function consists of two functions.
-> 1. samsung_gpio_set
-> 2. samsung_gpio_set_direction
->
-> When 2 CPUs try to control the same gpio pin heavily,
-> (situation like i2c control with gpio emulation)
-> This situation can cause below problem.
->
-> CPU 0                                   | CPU1
->                                         |
-> samsung_gpio_direction_output           |
->    samsung_gpio_set(pin A as 1)         | samsung_gpio_direction_output
->                                         |    samsung_gpio_set(pin A as 0)
->    samsung_gpio_set_direction           |
->                                         |    samsung_gpio_set_direction
->
-> The initial value of pin A will be set as 0 while we wanted to set pin A as 1.
->
-> This patch modifies samsung_gpio_direction_in/output function
-> to be done in one spinlock to fix race condition.
->
-> Additionally, the new samsung_gpio_set_value was added to implement
-> gpio set callback(samsung_gpio_set) with spinlock using this function.
->
-> Signed-off-by: Youngmin Nam <ym0914@gmail.com>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+I meant to send a v2 with this under "soc" node even though on some DTS
+we do not have the "soc". Optional follow up would be to make DTS
+consistent and move nodes under "soc"... but that would be also a lot of
+churn.
 
-This v4 applied.
-
-I renamed the commit "fix SMP race condition" which is what it's all
-about AFAICT.
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
