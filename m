@@ -1,80 +1,56 @@
-From: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
-Subject: Re: [PATCH 01/17] drm/virtio: removed optional dummy encoder
- mode_fixup function.
-Date: Mon, 15 Feb 2016 12:29:00 +0000
-Message-ID: <56C1C48C.1050006@synopsys.com>
-References: <daniel.vetter@ffwll.ch,>
- <1455285069-2819-1-git-send-email-palminha@synopsys.com>
- <1455285069-2819-2-git-send-email-palminha@synopsys.com>
- <20160214182508.GF11240@phenom.ffwll.local>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [rtc-linux] [PATCH] rtc: s3c: Document required clocks in the DT
+ binding
+Date: Mon, 15 Feb 2016 09:49:34 -0300
+Message-ID: <56C1C95E.7030002@osg.samsung.com>
+References: <1455038632-14545-1-git-send-email-javier@osg.samsung.com>
+ <56C01FDD.9050204@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay.synopsys.com ([198.182.47.9]:49588 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752918AbcBOM3L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 07:29:11 -0500
-In-Reply-To: <20160214182508.GF11240@phenom.ffwll.local>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56C01FDD.9050204-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, benjamin.gaignard@linaro.org, jingoohan1@gmail.com, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org
 
-Daniel, thanks for the feedback.
-v2 patch will follow-up. :)
+Hello Krzysztof,
 
-On 14-02-2016 18:25, Daniel Vetter wrote:
-> On Fri, Feb 12, 2016 at 01:50:53PM +0000, Carlos Palminha wrote:
+Thanks a lot for your feedback.
+
+On 02/14/2016 03:34 AM, Krzysztof Kozlowski wrote:
+> W dniu 10.02.2016 o 02:23, Javier Martinez Canillas pisze:
+>> The S3C Real Time Clock driver requires the clock and source clock to
+>> be defined in the device node but that requirement is not documented.
 >
-> Sob-line from you is missing on all patches, I can't merge them. Also
-> please copypaste a default blurb to all patches that this is only recently
-> no longer needed. And dunno what happened to your patch series, the
-> threading is somehow broken. In case your mail server doesn't accept a big
-> patch series you can first format .patch files using git format-patch with
-> threading enabled (should be the default) and then send them out in
-> chunks.
+> +Cc: Alessandro Zummo
 >
-> When resending please also add the r-b tag from Alex for amdgpu/radoen.
+
+I didn't add Alessandro to cc deliberately since Alexandre is the one
+maintaining the RTC subsystem lately and before that, the RTC patches
+were picked by Andrew Morton since Alessandro didn't even answer the
+emails.
+  
+> No, not entirely. The samsung,s3c6410-rtc needs rtc and rtc_src clocks
+> but rest of compatible devices need only rtc clock.
 >
-> Thanks, Daniel
+
+Right, sorry for missing that. I noticed that this patch has already
+been picked by Rob Herring (I thought it would be picked by Alexandre
+though) so I will post a follow up patch explaining that rtc_src is
+only for the s3c6410-rtc compatible.
+
+> Best regards,
+> Krzysztof
 >
->> ---
->>   drivers/gpu/drm/virtio/virtgpu_display.c | 8 --------
->>   1 file changed, 8 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
->> index a165f03..429aa31 100644
->> --- a/drivers/gpu/drm/virtio/virtgpu_display.c
->> +++ b/drivers/gpu/drm/virtio/virtgpu_display.c
->> @@ -282,13 +282,6 @@ static const struct drm_crtc_helper_funcs virtio_gpu_crtc_helper_funcs = {
->>   	.atomic_check  = virtio_gpu_crtc_atomic_check,
->>   };
->>
->> -static bool virtio_gpu_enc_mode_fixup(struct drm_encoder *encoder,
->> -				      const struct drm_display_mode *mode,
->> -				      struct drm_display_mode *adjusted_mode)
->> -{
->> -	return true;
->> -}
->> -
->>   static void virtio_gpu_enc_mode_set(struct drm_encoder *encoder,
->>   				    struct drm_display_mode *mode,
->>   				    struct drm_display_mode *adjusted_mode)
->> @@ -362,7 +355,6 @@ virtio_gpu_best_encoder(struct drm_connector *connector)
->>   }
->>
->>   static const struct drm_encoder_helper_funcs virtio_gpu_enc_helper_funcs = {
->> -	.mode_fixup = virtio_gpu_enc_mode_fixup,
->>   	.mode_set   = virtio_gpu_enc_mode_set,
->>   	.enable     = virtio_gpu_enc_enable,
->>   	.disable    = virtio_gpu_enc_disable,
->> --
->> 2.5.0
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
