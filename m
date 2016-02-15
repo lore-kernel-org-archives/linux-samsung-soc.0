@@ -1,59 +1,100 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2] rtc: s3c: Document in binding that only s3c6410 needs a src clk
-Date: Mon, 15 Feb 2016 11:11:06 -0300
-Message-ID: <1455545466-25709-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <deathsimple@vodafone.de>
+Subject: Re: [PATCH v2 00/17] drm encoders cleanup: nuke optional dummy
+ encoder mode_fixup function.
+Date: Mon, 15 Feb 2016 15:19:07 +0100
+Message-ID: <56C1DE5B.4010909@vodafone.de>
+References: <cover.1455540137.git.palminha@synopsys.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <cover.1455540137.git.palminha@synopsys.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>, dri-devel@lists.freedesktop.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, jingoohan1@gmail.com, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, benjamin.gaignard@linaro.org, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The S3C binding doc says that the RTC and RTC source clocks are required
-but the S3C driver supports different HW IP and only the s3c6410 needs a
-source clock.
-
-Fix the binding explaining that the source clock is only needed for the
-s3c6410-rtc compatible controller.
-
-Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-
----
-Hello,
-
-This patch depends on a previous one that was picked by Rob Herring so
-this one has to go through his tree again and not through the RTC tree
-to avoid conflicts.
-
-Best regards,
-Javier
-
-Changes in v2:
-- Remove the mention to a commit sha-1 that's not in mainline (Alexandre).
-- Fix typo in commit message (Alexandre).
-- Add Alexandre's Acked-by tag.
-
- Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-index 1068ffce9f91..fdde63a5419c 100644
---- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-@@ -15,9 +15,10 @@ Required properties:
-   is the rtc tick interrupt. The number of cells representing a interrupt
-   depends on the parent interrupt controller.
- - clocks: Must contain a list of phandle and clock specifier for the rtc
--          and source clocks.
--- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
--               same order as the clocks property.
-+          clock and in the case of a s3c6410 compatible controller, also
-+          a source clock.
-+- clock-names: Must contain "rtc" and for a s3c6410 compatible controller,
-+               a "rtc_src" sorted in the same order as the clocks property.
- 
- Example:
- 
--- 
-2.5.0
+QW0gMTUuMDIuMjAxNiB1bSAxMzo1NyBzY2hyaWViIENhcmxvcyBQYWxtaW5oYToKPiBtb2RlX2Zp
+eHVwIGZ1bmN0aW9uIGZvciBlbmNvZGVyIGRyaXZlcnMgYmVjYW1lIG9wdGlvbmFsIHdpdGggcGF0
+Y2gKPiBodHRwOi8vcGF0Y2h3b3JrLmZyZWVkZXNrdG9wLm9yZy9wYXRjaC9tc2dpZC8xNDU1MTA2
+NTIyLTMyMzA3LTEtZ2l0LXNlbmQtZW1haWwtcGFsbWluaGFAc3lub3BzeXMuY29tCj4KPiBUaGlz
+IHBhdGNoIHNldCBudWtlcyBhbGwgdGhlIGR1bW15IG1vZGVfZml4dXAgaW1wbGVtZW50YXRpb25z
+Lgo+Cj4gKG1hZGUgb24gdG9wIG9mIERhbmllbCB0b3BpYy9kcm0tbWlzYyBicmFuY2gpCj4KPiBD
+aGFuZ2VzIHYxLT52MjogaW5jb3Jwb3JhdGVkIERhbmllbCBjb21tZW50cwo+ICogYWRkZWQgc2ln
+bmVkLW9mZi1ieSBsaW5lIHRvIGFsbCBwYXRjaGVzCj4gKiB0aHJlYWRpbmcgZW5hYmxlZCBkdWUg
+dG8gZS1tYWlsIHNlcnZlciBjb25zdHJhaW50cwo+ICogY29tbW9uIGJsdXJiIGxpbmVzIHRvIGFs
+bCBwYXRjaGVzCj4gKiBhZGQgcmV2aWV3ZWQgYnkgQWxleCwgdG8gcGF0Y2hlcyA0IGFuZCAxNAoK
+WW91IGNhbiBhZGQgYSBSZXZpZXdlZC1ieTogQ2hyaXN0aWFuIEvDtm5pZyA8Y2hyaXN0aWFuLmtv
+ZW5pZ0BhbWQuY29tPiB0byAKcGF0Y2ggNCBhbmQgMTQgYXMgd2VsbC4KCk5pY2UgY2xlYW51cC4g
+VGhhbmtzLApDaHJpc3RpYW4uCgo+Cj4gQ2FybG9zIFBhbG1pbmhhICgxNyk6Cj4gICAgZHJtL3Zp
+cnRpbzogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24u
+Cj4gICAgZHJtL3VkbDogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAg
+ZnVuY3Rpb24uCj4gICAgZHJtL2V4eW5vczogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVy
+IG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL2FtZGdwdTogcmVtb3ZlZCBvcHRpb25hbCBk
+dW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL2FzdDogcmVtb3ZlZCBv
+cHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL2JvY2hz
+OiByZW1vdmVkIG9wdGlvbmFsIGR1bW15IGVuY29kZXIgbW9kZV9maXh1cCBmdW5jdGlvbi4KPiAg
+ICBkcm0vY2lycnVzOiByZW1vdmVkIG9wdGlvbmFsIGR1bW15IGVuY29kZXIgbW9kZV9maXh1cCBm
+dW5jdGlvbi4KPiAgICBkcm0vZXh5bm9zOiByZW1vdmVkIG9wdGlvbmFsIGR1bW15IGVuY29kZXIg
+bW9kZV9maXh1cCBmdW5jdGlvbi4KPiAgICBkcm0vZ21hNTAwOiByZW1vdmVkIG9wdGlvbmFsIGR1
+bW15IGVuY29kZXIgbW9kZV9maXh1cCBmdW5jdGlvbi4KPiAgICBkcm0vaW14OiByZW1vdmVkIG9w
+dGlvbmFsIGR1bW15IGVuY29kZXIgbW9kZV9maXh1cCBmdW5jdGlvbi4KPiAgICBkcm0vbXNtL21k
+cDogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4g
+ICAgZHJtL21nYWcyMDA6IHJlbW92ZWQgb3B0aW9uYWwgZHVtbXkgZW5jb2RlciBtb2RlX2ZpeHVw
+IGZ1bmN0aW9uLgo+ICAgIGRybS9xeGw6IHJlbW92ZWQgb3B0aW9uYWwgZHVtbXkgZW5jb2RlciBt
+b2RlX2ZpeHVwIGZ1bmN0aW9uLgo+ICAgIGRybS9yYWRlb246IHJlbW92ZWQgb3B0aW9uYWwgZHVt
+bXkgZW5jb2RlciBtb2RlX2ZpeHVwIGZ1bmN0aW9uLgo+ICAgIGRybS9yb2NrY2hpcDogcmVtb3Zl
+ZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4gICAgZHJtL3N0
+aTogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAgZnVuY3Rpb24uCj4g
+ICAgZHJtL3RpbGNkYzogcmVtb3ZlZCBvcHRpb25hbCBkdW1teSBlbmNvZGVyIG1vZGVfZml4dXAg
+ZnVuY3Rpb24uCj4KPiAgIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2RjZV92MTBfMC5jICAg
+ICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9kY2Vf
+djExXzAuYyAgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2FtZC9h
+bWRncHUvZGNlX3Y4XzAuYyAgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1
+L2RybS9hc3QvYXN0X21vZGUuYyAgICAgICAgICAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBk
+cml2ZXJzL2dwdS9kcm0vYm9jaHMvYm9jaHNfa21zLmMgICAgICAgICAgICAgICAgfCAgOCAtLS0t
+LS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2NpcnJ1cy9jaXJydXNfbW9kZS5jICAgICAgICAgICAg
+IHwgIDkgLS0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3Jl
+LmMgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2RwaS5jICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgICAgfCAgOCAtLS0tLS0tLQo+
+ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9jZHZfaW50ZWxfY3J0LmMgICAgICAgICAgIHwgIDEg
+LQo+ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9jZHZfaW50ZWxfaGRtaS5jICAgICAgICAgIHwg
+IDEgLQo+ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9nbWFfZGlzcGxheS5jICAgICAgICAgICAg
+IHwgIDcgLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2dtYTUwMC9nbWFfZGlzcGxheS5oICAg
+ICAgICAgICAgIHwgIDMgLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vZ21hNTAwL29ha3RyYWlsX2hk
+bWkuYyAgICAgICAgICAgfCAgMSAtCj4gICBkcml2ZXJzL2dwdS9kcm0vaW14L2R3X2hkbWktaW14
+LmMgICAgICAgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2lteC9p
+bXgtbGRiLmMgICAgICAgICAgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1
+L2RybS9pbXgvaW14LXR2ZS5jICAgICAgICAgICAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBk
+cml2ZXJzL2dwdS9kcm0vaW14L3BhcmFsbGVsLWRpc3BsYXkuYyAgICAgICAgICAgfCAgOCAtLS0t
+LS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL21nYWcyMDAvbWdhZzIwMF9tb2RlLmMgICAgICAgICAg
+IHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDQvbWRwNF9kc2lf
+ZW5jb2Rlci5jICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA0
+L21kcDRfZHR2X2VuY29kZXIuYyAgfCAgOCAtLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL21z
+bS9tZHAvbWRwNC9tZHA0X2xjZGNfZW5jb2Rlci5jIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMv
+Z3B1L2RybS9tc20vbWRwL21kcDUvbWRwNV9jbWRfZW5jb2Rlci5jICB8ICA5IC0tLS0tLS0tLQo+
+ICAgZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X2VuY29kZXIuYyAgICAgIHwgIDgg
+LS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9xeGwvcXhsX2Rpc3BsYXkuYyAgICAgICAgICAg
+ICAgICB8ICA5IC0tLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9hdG9tYmlvc19l
+bmNvZGVycy5jICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
+cC9kdy1taXBpLWRzaS5jICAgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICBkcml2ZXJzL2dwdS9k
+cm0vc3RpL3N0aV90dm91dC5jICAgICAgICAgICAgICAgICAgfCAxMCAtLS0tLS0tLS0tCj4gICBk
+cml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19wYW5lbC5jICAgICAgICAgICAgfCAgOSAtLS0t
+LS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3RmcDQxMC5jICAgICAgICAg
+ICB8ICA5IC0tLS0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL3VkbC91ZGxfZW5jb2Rlci5jICAg
+ICAgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmly
+dGdwdV9kaXNwbGF5LmMgICAgICAgICB8ICA4IC0tLS0tLS0tCj4gICAzMyBmaWxlcyBjaGFuZ2Vk
+LCAyNDQgZGVsZXRpb25zKC0pCj4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
