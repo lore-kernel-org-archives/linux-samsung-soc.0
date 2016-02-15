@@ -1,59 +1,160 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] rtc: s3c: Document in binding that only s3c6410 needs a src clk
-Date: Mon, 15 Feb 2016 10:16:42 -0300
-Message-ID: <1455542202-13977-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: dts: Move syscon reboot/poweroff to common dtsi for
+ Exynos
+Date: Mon, 15 Feb 2016 10:38:25 -0300
+Message-ID: <56C1D4D1.2050108@osg.samsung.com>
+References: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
+ <56C02265.40103@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48374 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:48379 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751393AbcBONRh (ORCPT
+	id S1751298AbcBONic (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 08:17:37 -0500
+	Mon, 15 Feb 2016 08:38:32 -0500
+In-Reply-To: <56C02265.40103@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Commit 43f3408261a2 ("rtc: s3c: Document required clocks in the DT
-binding") added to the S3C binding doc the required clocks needed
-by the Real Time Clock but the S3C driver supports different HW IP
-and only the s3c6410 needs a source clock.
+Hello Krzysztof,
 
-Fix the DT binding explaning that the second clock is only needed
-by this IP block and not for the others.
+On 02/14/2016 03:44 AM, Krzysztof Kozlowski wrote:
+> W dniu 10.02.2016 o 03:30, Javier Martinez Canillas pisze:
+>> All Exynos SoCs have the same syscon reboot and poweroff device nodes so
+>> there is no need to duplicate the same on each SoC dtsi and can be moved
+>> to a common dtsi that can be included by all the SoCs dtsi files.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> ---
+>> Hello,
+>>
+>> The patch was tested on an Exynos5800 Peach Pi Chromebook and an
+>> Exynos5422 Odroid XU4 board. Reboot and poweroff worked for both.
+>>
+>> But testing on Exynos3 and Exynos4 will be highly appreciated.
+>
+> Would you be so kind and add my suggested-by (since it comes from
+> https://wiki.tizen.org/wiki/Exynos_Mainline_Kernel_TODO :) )
+>
 
-Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Fixes: 43f3408261a2 ("rtc: s3c: Document required clocks in the DT binding")
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Right, sorry for missing that.
+  
+> I'll test it on Exynos4 at work and then apply... but few comments below:
+>
+>>
+>> Best regards,
+>> Javier
+>>
+>>   arch/arm/boot/dts/exynos-syscon-restart.dtsi | 23 +++++++++++++++++++++++
+>>   arch/arm/boot/dts/exynos3250.dtsi            | 15 +--------------
+>>   arch/arm/boot/dts/exynos4.dtsi               | 15 +--------------
+>>   arch/arm/boot/dts/exynos5.dtsi               | 15 +--------------
+>>   arch/arm/boot/dts/exynos5410.dtsi            | 15 +--------------
+>>   5 files changed, 27 insertions(+), 56 deletions(-)
+>>   create mode 100644 arch/arm/boot/dts/exynos-syscon-restart.dtsi
+>>
+>> diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+>> new file mode 100644
+>> index 000000000000..2b8acf554881
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
+>> @@ -0,0 +1,23 @@
+>> +/*
+>> + * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +/ {
+>
+> In some of the DTSI this was under "soc" node, not at top-level.
+> Unfortunately we do not have consistency here - some DTSI have "soc",
 
----
-Hello,
+Yes, I noticed this but as you said not all DTSI have a soc node
+and that's why I made it top level in the DTSI.
 
-The mentioned commit was picked by Rob Herring so this one has to go
-through his tree again and not through the RTC tree to avoid conflicts.
+> some not. Anyway I think we should move to "soc" version.
+>
+
+Not sure I'm following, did you mean to do it as a follow up or
+to add a soc node for the missing DTSI as a part of this series?
+
+>> +	poweroff: syscon-poweroff {
+>> +		compatible = "syscon-poweroff";
+>> +		regmap = <&pmu_system_controller>;
+>> +		offset = <0x330C>; /* PS_HOLD_CONTROL */
+>> +		mask = <0x5200>; /* reset value */
+>> +	};
+>> +
+>> +	reboot: syscon-reboot {
+>> +		compatible = "syscon-reboot";
+>> +		regmap = <&pmu_system_controller>;
+>> +		offset = <0x0400>; /* SWRESET */
+>> +		mask = <0x1>;
+>> +	};
+>> +};
+>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+>> index 18e3deffbf48..d9c221517935 100644
+>> --- a/arch/arm/boot/dts/exynos3250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+>> @@ -19,6 +19,7 @@
+>>
+>>   #include "skeleton.dtsi"
+>>   #include "exynos4-cpu-thermal.dtsi"
+>> +#include "exynos-syscon-restart.dtsi"
+>>   #include <dt-bindings/clock/exynos3250.h>
+>>
+>>   / {
+>> @@ -152,20 +153,6 @@
+>>   			interrupt-parent = <&gic>;
+>>   		};
+>>
+>> -		poweroff: syscon-poweroff {
+>> -			compatible = "syscon-poweroff";
+>> -			regmap = <&pmu_system_controller>;
+>> -			offset = <0x330C>; /* PS_HOLD_CONTROL */
+>> -			mask = <0x5200>; /* Reset value */
+>> -		};
+>> -
+>> -		reboot: syscon-reboot {
+>> -			compatible = "syscon-reboot";
+>> -			regmap = <&pmu_system_controller>;
+>> -			offset = <0x0400>; /* SWRESET */
+>> -			mask = <0x1>;
+>> -		};
+>> -
+>>   		mipi_phy: video-phy@10020710 {
+>>   			compatible = "samsung,s5pv210-mipi-video-phy";
+>>   			#phy-cells = <1>;
+>> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+>> index ca621a92319e..e6f6939ccdfa 100644
+>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>> @@ -21,6 +21,7 @@
+>>
+>>   #include <dt-bindings/clock/exynos4.h>
+>>   #include <dt-bindings/clock/exynos-audss-clk.h>
+>> +#include "exynos-syscon-restart.dtsi"
+>
+> Just to keep it consistent and logic - include after skeleton.
+>
+
+Ok, for include I usually try to keep alphabetically sorted but
+I'll move it after skeleton if you prefer to keep it consistent.
+  
+> Best regards,
+> Krzysztof
+>
 
 Best regards,
-Javier
-
- Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-index 1068ffce9f91..fdde63a5419c 100644
---- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-@@ -15,9 +15,10 @@ Required properties:
-   is the rtc tick interrupt. The number of cells representing a interrupt
-   depends on the parent interrupt controller.
- - clocks: Must contain a list of phandle and clock specifier for the rtc
--          and source clocks.
--- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
--               same order as the clocks property.
-+          clock and in the case of a s3c6410 compatible controller, also
-+          a source clock.
-+- clock-names: Must contain "rtc" and for a s3c6410 compatible controller,
-+               a "rtc_src" sorted in the same order as the clocks property.
- 
- Example:
- 
 -- 
-2.5.0
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
