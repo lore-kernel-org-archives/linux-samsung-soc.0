@@ -1,88 +1,59 @@
-From: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
-Subject: [PATCH v2 17/17] drm/tilcdc: removed optional dummy encoder mode_fixup function.
-Date: Mon, 15 Feb 2016 13:01:35 +0000
-Message-ID: <4d838f580cf81068a4df2500a096d66f06f3ad37.1455540137.git.palminha@synopsys.com>
-References: <cover.1455540137.git.palminha@synopsys.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] rtc: s3c: Document in binding that only s3c6410 needs a src clk
+Date: Mon, 15 Feb 2016 10:16:42 -0300
+Message-ID: <1455542202-13977-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:50213 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753068AbcBONCB (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:48374 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751393AbcBONRh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 08:02:01 -0500
-In-Reply-To: <cover.1455540137.git.palminha@synopsys.com>
+	Mon, 15 Feb 2016 08:17:37 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: CARLOS.PALMINHA@synopsys.com, airlied@linux.ie, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, patrik.r.jakobsson@gmail.com, p.zabel@pengutronix.de, mark.yao@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com, kraxel@redhat.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, virtualization@lists.linux-foundation.org
+To: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-mode_fixup function for encoder drivers became optional with patch
-http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
+Commit 43f3408261a2 ("rtc: s3c: Document required clocks in the DT
+binding") added to the S3C binding doc the required clocks needed
+by the Real Time Clock but the S3C driver supports different HW IP
+and only the s3c6410 needs a source clock.
 
-This patch set nukes all the dummy mode_fixup implementations.
+Fix the DT binding explaning that the second clock is only needed
+by this IP block and not for the others.
 
-(made on top of Daniel topic/drm-misc branch)
+Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Fixes: 43f3408261a2 ("rtc: s3c: Document required clocks in the DT binding")
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Signed-off-by: Carlos Palminha <palminha@synopsys.com>
 ---
- drivers/gpu/drm/tilcdc/tilcdc_panel.c  | 9 ---------
- drivers/gpu/drm/tilcdc/tilcdc_tfp410.c | 9 ---------
- 2 files changed, 18 deletions(-)
+Hello,
 
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-index 4dda6e2..8dcf02a 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-@@ -70,14 +70,6 @@ static void panel_encoder_dpms(struct drm_encoder *encoder, int mode)
- 					 mode == DRM_MODE_DPMS_ON ? 1 : 0);
- }
+The mentioned commit was picked by Rob Herring so this one has to go
+through his tree again and not through the RTC tree to avoid conflicts.
+
+Best regards,
+Javier
+
+ Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+index 1068ffce9f91..fdde63a5419c 100644
+--- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
++++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+@@ -15,9 +15,10 @@ Required properties:
+   is the rtc tick interrupt. The number of cells representing a interrupt
+   depends on the parent interrupt controller.
+ - clocks: Must contain a list of phandle and clock specifier for the rtc
+-          and source clocks.
+-- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
+-               same order as the clocks property.
++          clock and in the case of a s3c6410 compatible controller, also
++          a source clock.
++- clock-names: Must contain "rtc" and for a s3c6410 compatible controller,
++               a "rtc_src" sorted in the same order as the clocks property.
  
--static bool panel_encoder_mode_fixup(struct drm_encoder *encoder,
--		const struct drm_display_mode *mode,
--		struct drm_display_mode *adjusted_mode)
--{
--	/* nothing needed */
--	return true;
--}
--
- static void panel_encoder_prepare(struct drm_encoder *encoder)
- {
- 	struct panel_encoder *panel_encoder = to_panel_encoder(encoder);
-@@ -103,7 +95,6 @@ static const struct drm_encoder_funcs panel_encoder_funcs = {
+ Example:
  
- static const struct drm_encoder_helper_funcs panel_encoder_helper_funcs = {
- 		.dpms           = panel_encoder_dpms,
--		.mode_fixup     = panel_encoder_mode_fixup,
- 		.prepare        = panel_encoder_prepare,
- 		.commit         = panel_encoder_commit,
- 		.mode_set       = panel_encoder_mode_set,
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-index 5052a8a..1c23017 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-@@ -80,14 +80,6 @@ static void tfp410_encoder_dpms(struct drm_encoder *encoder, int mode)
- 	tfp410_encoder->dpms = mode;
- }
- 
--static bool tfp410_encoder_mode_fixup(struct drm_encoder *encoder,
--		const struct drm_display_mode *mode,
--		struct drm_display_mode *adjusted_mode)
--{
--	/* nothing needed */
--	return true;
--}
--
- static void tfp410_encoder_prepare(struct drm_encoder *encoder)
- {
- 	tfp410_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
-@@ -112,7 +104,6 @@ static const struct drm_encoder_funcs tfp410_encoder_funcs = {
- 
- static const struct drm_encoder_helper_funcs tfp410_encoder_helper_funcs = {
- 		.dpms           = tfp410_encoder_dpms,
--		.mode_fixup     = tfp410_encoder_mode_fixup,
- 		.prepare        = tfp410_encoder_prepare,
- 		.commit         = tfp410_encoder_commit,
- 		.mode_set       = tfp410_encoder_mode_set,
 -- 
 2.5.0
