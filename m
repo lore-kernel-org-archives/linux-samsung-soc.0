@@ -1,40 +1,77 @@
 From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [rtc-linux] [PATCH] rtc: s3c: Document required clocks in the DT
- binding
-Date: Mon, 15 Feb 2016 14:41:10 +0100
-Message-ID: <20160215134110.GA15219@piout.net>
-References: <1455038632-14545-1-git-send-email-javier@osg.samsung.com>
- <56C01FDD.9050204@samsung.com>
- <56C1C95E.7030002@osg.samsung.com>
+Subject: Re: [PATCH] rtc: s3c: Document in binding that only s3c6410 needs a
+ src clk
+Date: Mon, 15 Feb 2016 14:45:35 +0100
+Message-ID: <20160215134535.GB15219@piout.net>
+References: <1455542202-13977-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:57974 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:58147 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751298AbcBONlN (ORCPT
+	with ESMTP id S1751090AbcBONph (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 08:41:13 -0500
+	Mon, 15 Feb 2016 08:45:37 -0500
 Content-Disposition: inline
-In-Reply-To: <56C1C95E.7030002@osg.samsung.com>
+In-Reply-To: <1455542202-13977-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org
 
-On 15/02/2016 at 09:49:34 -0300, Javier Martinez Canillas wrote :
-> >No, not entirely. The samsung,s3c6410-rtc needs rtc and rtc_src clocks
-> >but rest of compatible devices need only rtc clock.
-> >
+On 15/02/2016 at 10:16:42 -0300, Javier Martinez Canillas wrote :
+> Commit 43f3408261a2 ("rtc: s3c: Document required clocks in the DT
+
+I'm pretty sure you shouldn't refer to a commit that is in linux-next.
+
+> binding") added to the S3C binding doc the required clocks needed
+> by the Real Time Clock but the S3C driver supports different HW IP
+> and only the s3c6410 needs a source clock.
 > 
-> Right, sorry for missing that. I noticed that this patch has already
-> been picked by Rob Herring (I thought it would be picked by Alexandre
-> though) so I will post a follow up patch explaining that rtc_src is
-> only for the s3c6410-rtc compatible.
+> Fix the DT binding explaning that the second clock is only needed
+          explaining ^
+> by this IP block and not for the others.
+> 
+> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Fixes: 43f3408261a2 ("rtc: s3c: Document required clocks in the DT binding")
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
 
-Yeah, I was going to take it, thanks for pointing out the Rob already
-has it in his tree.
+Anyway, I'm fine with it, feel free to add my ack.
 
+> ---
+> Hello,
+> 
+> The mentioned commit was picked by Rob Herring so this one has to go
+> through his tree again and not through the RTC tree to avoid conflicts.
+> 
+> Best regards,
+> Javier
+> 
+>  Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> index 1068ffce9f91..fdde63a5419c 100644
+> --- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> @@ -15,9 +15,10 @@ Required properties:
+>    is the rtc tick interrupt. The number of cells representing a interrupt
+>    depends on the parent interrupt controller.
+>  - clocks: Must contain a list of phandle and clock specifier for the rtc
+> -          and source clocks.
+> -- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
+> -               same order as the clocks property.
+> +          clock and in the case of a s3c6410 compatible controller, also
+> +          a source clock.
+> +- clock-names: Must contain "rtc" and for a s3c6410 compatible controller,
+> +               a "rtc_src" sorted in the same order as the clocks property.
+>  
+>  Example:
+>  
+> -- 
+> 2.5.0
+> 
 
 -- 
 Alexandre Belloni, Free Electrons
