@@ -1,115 +1,86 @@
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Subject: Re: [PATCH v2 09/17] drm/gma500: removed optional dummy encoder
- mode_fixup function.
-Date: Mon, 15 Feb 2016 15:24:01 +0100
-Message-ID: <CAMeQTsZ=JP36ry8u_WAWgjz4sa4SPSpQmq3n+dACq0JhHonVSw@mail.gmail.com>
-References: <cover.1455540137.git.palminha@synopsys.com>
-	<b704458dc68a73cfb5507933c1df0c2a79e186eb.1455540137.git.palminha@synopsys.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36088 "EHLO
-	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751714AbcBOOYD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 09:24:03 -0500
-Received: by mail-lf0-f67.google.com with SMTP id h198so7384140lfh.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Feb 2016 06:24:01 -0800 (PST)
-In-Reply-To: <b704458dc68a73cfb5507933c1df0c2a79e186eb.1455540137.git.palminha@synopsys.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/7] fix IS_ERR_VALUE usage
+Date: Mon, 15 Feb 2016 15:35:18 +0100
+Message-ID: <1455546925-22119-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-mips-bounce@linux-mips.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: linux-kernel@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, coreteam@netfilter.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, p.zabel@pengutronix.de, mark.yao@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com, kraxel@redhat.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, virtualization@lists.linux-foundation.org
 
-On Mon, Feb 15, 2016 at 2:00 PM, Carlos Palminha
-<CARLOS.PALMINHA@synopsys.com> wrote:
-> mode_fixup function for encoder drivers became optional with patch
-> http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
->
-> This patch set nukes all the dummy mode_fixup implementations.
->
-> (made on top of Daniel topic/drm-misc branch)
->
-> Signed-off-by: Carlos Palminha <palminha@synopsys.com>
+Hi,
 
-Reviewed-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+This small set of independent patches tries to fix incorrect
+IS_ERR_VALUE macro usage. It fixes most usages leading to errors
+as described in [1]. It also follows conclusion from the discussion
+[1][2] - IS_ERR_VALUE should be used only with unsigned long type,
+signed types should use comparison 'ret < 0'.
 
-> ---
->  drivers/gpu/drm/gma500/cdv_intel_crt.c  | 1 -
->  drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 1 -
->  drivers/gpu/drm/gma500/gma_display.c    | 7 -------
->  drivers/gpu/drm/gma500/gma_display.h    | 3 ---
->  drivers/gpu/drm/gma500/oaktrail_hdmi.c  | 1 -
->  5 files changed, 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/gma500/cdv_intel_crt.c b/drivers/gpu/drm/gma500/cdv_intel_crt.c
-> index d0717a8..b837e7a 100644
-> --- a/drivers/gpu/drm/gma500/cdv_intel_crt.c
-> +++ b/drivers/gpu/drm/gma500/cdv_intel_crt.c
-> @@ -217,7 +217,6 @@ static int cdv_intel_crt_set_property(struct drm_connector *connector,
->
->  static const struct drm_encoder_helper_funcs cdv_intel_crt_helper_funcs = {
->         .dpms = cdv_intel_crt_dpms,
-> -       .mode_fixup = gma_encoder_mode_fixup,
->         .prepare = gma_encoder_prepare,
->         .commit = gma_encoder_commit,
->         .mode_set = cdv_intel_crt_mode_set,
-> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-> index ddf2d77..28f9d90 100644
-> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-> @@ -255,7 +255,6 @@ static void cdv_hdmi_destroy(struct drm_connector *connector)
->
->  static const struct drm_encoder_helper_funcs cdv_hdmi_helper_funcs = {
->         .dpms = cdv_hdmi_dpms,
-> -       .mode_fixup = gma_encoder_mode_fixup,
->         .prepare = gma_encoder_prepare,
->         .mode_set = cdv_hdmi_mode_set,
->         .commit = gma_encoder_commit,
-> diff --git a/drivers/gpu/drm/gma500/gma_display.c b/drivers/gpu/drm/gma500/gma_display.c
-> index ff17af4..9270821 100644
-> --- a/drivers/gpu/drm/gma500/gma_display.c
-> +++ b/drivers/gpu/drm/gma500/gma_display.c
-> @@ -478,13 +478,6 @@ int gma_crtc_cursor_move(struct drm_crtc *crtc, int x, int y)
->         return 0;
->  }
->
-> -bool gma_encoder_mode_fixup(struct drm_encoder *encoder,
-> -                           const struct drm_display_mode *mode,
-> -                           struct drm_display_mode *adjusted_mode)
-> -{
-> -       return true;
-> -}
-> -
->  bool gma_crtc_mode_fixup(struct drm_crtc *crtc,
->                          const struct drm_display_mode *mode,
->                          struct drm_display_mode *adjusted_mode)
-> diff --git a/drivers/gpu/drm/gma500/gma_display.h b/drivers/gpu/drm/gma500/gma_display.h
-> index ed569d8..78b9f98 100644
-> --- a/drivers/gpu/drm/gma500/gma_display.h
-> +++ b/drivers/gpu/drm/gma500/gma_display.h
-> @@ -90,9 +90,6 @@ extern void gma_crtc_restore(struct drm_crtc *crtc);
->  extern void gma_encoder_prepare(struct drm_encoder *encoder);
->  extern void gma_encoder_commit(struct drm_encoder *encoder);
->  extern void gma_encoder_destroy(struct drm_encoder *encoder);
-> -extern bool gma_encoder_mode_fixup(struct drm_encoder *encoder,
-> -                                  const struct drm_display_mode *mode,
-> -                                  struct drm_display_mode *adjusted_mode);
->
->  /* Common clock related functions */
->  extern const struct gma_limit_t *gma_limit(struct drm_crtc *crtc, int refclk);
-> diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi.c b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-> index 2d18499..8b2eb32 100644
-> --- a/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-> +++ b/drivers/gpu/drm/gma500/oaktrail_hdmi.c
-> @@ -601,7 +601,6 @@ static void oaktrail_hdmi_destroy(struct drm_connector *connector)
->
->  static const struct drm_encoder_helper_funcs oaktrail_hdmi_helper_funcs = {
->         .dpms = oaktrail_hdmi_dpms,
-> -       .mode_fixup = gma_encoder_mode_fixup,
->         .prepare = gma_encoder_prepare,
->         .mode_set = oaktrail_hdmi_mode_set,
->         .commit = gma_encoder_commit,
-> --
-> 2.5.0
->
+The patchset does not fix errors present in net/ethernet/freescale
+and soc/fsq/qe drivers - these drivers mixes different types:
+dma_addr_t, u32, unsigned long, fixing it properly seems to me more
+challenging, maybe maintainers or brave volunteers can look it.
+
+The list of missing fixes:
+drivers/net/ethernet/freescale/fs_enet/mac-scc.c:149:36-37: WARNING: incorrect argument type in IS_ERR_VALUE(fep -> ring_mem_addr)
+drivers/net/ethernet/freescale/ucc_geth.c:2237:48-49: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> tx_bd_ring_offset [ j ])
+drivers/net/ethernet/freescale/ucc_geth.c:2314:48-49: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> rx_bd_ring_offset [ j ])
+drivers/net/ethernet/freescale/ucc_geth.c:2524:44-45: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> tx_glbl_pram_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2544:45-46: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> thread_dat_tx_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2571:46-47: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> send_q_mem_reg_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2612:42-43: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> scheduler_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2659:54-55: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> tx_fw_statistics_pram_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2696:44-45: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> rx_glbl_pram_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2715:45-46: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> thread_dat_rx_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2736:54-55: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> rx_fw_statistics_pram_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2756:53-54: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> rx_irq_coalescing_tbl_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2822:44-45: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> rx_bd_qs_tbl_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:2908:47-48: WARNING: incorrect argument type in IS_ERR_VALUE(ugeth -> exf_glbl_param_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:292:36-37: WARNING: incorrect argument type in IS_ERR_VALUE(init_enet_offset)
+drivers/net/ethernet/freescale/ucc_geth.c:3042:39-40: WARNING: incorrect argument type in IS_ERR_VALUE(init_enet_pram_offset)
+drivers/soc/fsl/qe/ucc_fast.c:271:60-61: WARNING: incorrect argument type in IS_ERR_VALUE(uccf -> ucc_fast_tx_virtual_fifo_base_offset)
+drivers/soc/fsl/qe/ucc_fast.c:284:60-61: WARNING: incorrect argument type in IS_ERR_VALUE(uccf -> ucc_fast_rx_virtual_fifo_base_offset)
+drivers/soc/fsl/qe/ucc_slow.c:186:38-39: WARNING: incorrect argument type in IS_ERR_VALUE(uccs -> us_pram_offset)
+drivers/soc/fsl/qe/ucc_slow.c:213:38-39: WARNING: incorrect argument type in IS_ERR_VALUE(uccs -> rx_base_offset)
+drivers/soc/fsl/qe/ucc_slow.c:224:38-39: WARNING: incorrect argument type in IS_ERR_VALUE(uccs -> tx_base_offset)
+drivers/net/ethernet/freescale/fs_enet/mac-fcc.c:110:35-36: WARNING: unknown argument type in IS_ERR_VALUE(fpi -> dpram_offset)
+
+[1]: http://permalink.gmane.org/gmane.linux.kernel/2120927
+[2]: http://permalink.gmane.org/gmane.linux.kernel/2150581
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (7):
+  netfilter: fix IS_ERR_VALUE usage
+  MIPS: module: fix incorrect IS_ERR_VALUE macro usages
+  drivers: char: mem: fix IS_ERROR_VALUE usage
+  atmel-isi: fix IS_ERR_VALUE usage
+  serial: clps711x: fix IS_ERR_VALUE usage
+  fbdev: exynos: fix IS_ERR_VALUE usage
+  usb: gadget: fsl_qe_udc: fix IS_ERR_VALUE usage
+
+ arch/mips/kernel/module-rela.c                |  2 +-
+ arch/mips/kernel/module.c                     |  2 +-
+ drivers/char/mem.c                            |  2 +-
+ drivers/media/platform/soc_camera/atmel-isi.c |  4 ++--
+ drivers/tty/serial/clps711x.c                 | 14 ++++++++------
+ drivers/usb/gadget/udc/fsl_qe_udc.c           |  2 +-
+ drivers/video/fbdev/exynos/exynos_mipi_dsi.c  |  6 +++---
+ include/linux/netfilter/x_tables.h            |  6 +++---
+ net/ipv4/netfilter/arp_tables.c               | 11 +++++++----
+ net/ipv4/netfilter/ip_tables.c                | 12 ++++++++----
+ net/ipv6/netfilter/ip6_tables.c               | 13 +++++++++----
+ 11 files changed, 44 insertions(+), 30 deletions(-)
+
+-- 
+1.9.1
