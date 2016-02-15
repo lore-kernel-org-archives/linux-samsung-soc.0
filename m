@@ -1,79 +1,74 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH] rtc: s3c: Document in binding that only s3c6410 needs a
- src clk
-Date: Mon, 15 Feb 2016 14:45:35 +0100
-Message-ID: <20160215134535.GB15219@piout.net>
-References: <1455542202-13977-1-git-send-email-javier@osg.samsung.com>
+From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Subject: Re: [PATCH v2 03/17] drm/exynos: removed optional dummy encoder
+ mode_fixup function.
+Date: Mon, 15 Feb 2016 14:49:09 +0100
+Message-ID: <CAMeQTsZLdMOnk7-isneoUyFBbQdiRUsGH6+EhD8W1LNB=80LVQ@mail.gmail.com>
+References: <cover.1455540137.git.palminha@synopsys.com>
+	<3768b670931572de51fca1102efa18d20dd770ee.1455540137.git.palminha@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:58147 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751090AbcBONph (ORCPT
+Received: from mail-lb0-f195.google.com ([209.85.217.195]:35886 "EHLO
+	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751159AbcBONtL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 08:45:37 -0500
-Content-Disposition: inline
-In-Reply-To: <1455542202-13977-1-git-send-email-javier@osg.samsung.com>
+	Mon, 15 Feb 2016 08:49:11 -0500
+Received: by mail-lb0-f195.google.com with SMTP id zr1so6351943lbb.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Feb 2016 05:49:11 -0800 (PST)
+In-Reply-To: <3768b670931572de51fca1102efa18d20dd770ee.1455540137.git.palminha@synopsys.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org
+To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, p.zabel@pengutronix.de, mark.yao@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com, kraxel@redhat.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, virtualization@lists.linux-foundation.org
 
-On 15/02/2016 at 10:16:42 -0300, Javier Martinez Canillas wrote :
-> Commit 43f3408261a2 ("rtc: s3c: Document required clocks in the DT
+Hi Carlos
 
-I'm pretty sure you shouldn't refer to a commit that is in linux-next.
+Any particular reason why this patch isn't squashed with patch 8/17?
 
-> binding") added to the S3C binding doc the required clocks needed
-> by the Real Time Clock but the S3C driver supports different HW IP
-> and only the s3c6410 needs a source clock.
-> 
-> Fix the DT binding explaning that the second clock is only needed
-          explaining ^
-> by this IP block and not for the others.
-> 
-> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Fixes: 43f3408261a2 ("rtc: s3c: Document required clocks in the DT binding")
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
+Thanks
+Patrik
 
-Anyway, I'm fine with it, feel free to add my ack.
 
+On Mon, Feb 15, 2016 at 1:58 PM, Carlos Palminha
+<CARLOS.PALMINHA@synopsys.com> wrote:
+> mode_fixup function for encoder drivers became optional with patch
+> http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
+>
+> This patch set nukes all the dummy mode_fixup implementations.
+>
+> (made on top of Daniel topic/drm-misc branch)
+>
+> Signed-off-by: Carlos Palminha <palminha@synopsys.com>
 > ---
-> Hello,
-> 
-> The mentioned commit was picked by Rob Herring so this one has to go
-> through his tree again and not through the RTC tree to avoid conflicts.
-> 
-> Best regards,
-> Javier
-> 
->  Documentation/devicetree/bindings/rtc/s3c-rtc.txt | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> index 1068ffce9f91..fdde63a5419c 100644
-> --- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> @@ -15,9 +15,10 @@ Required properties:
->    is the rtc tick interrupt. The number of cells representing a interrupt
->    depends on the parent interrupt controller.
->  - clocks: Must contain a list of phandle and clock specifier for the rtc
-> -          and source clocks.
-> -- clock-names: Must contain "rtc" and "rtc_src" entries sorted in the
-> -               same order as the clocks property.
-> +          clock and in the case of a s3c6410 compatible controller, also
-> +          a source clock.
-> +- clock-names: Must contain "rtc" and for a s3c6410 compatible controller,
-> +               a "rtc_src" sorted in the same order as the clocks property.
->  
->  Example:
->  
-> -- 
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 --------
+>  1 file changed, 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index e977a81..736115c 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -1597,13 +1597,6 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+>         return 0;
+>  }
+>
+> -static bool exynos_dsi_mode_fixup(struct drm_encoder *encoder,
+> -                                 const struct drm_display_mode *mode,
+> -                                 struct drm_display_mode *adjusted_mode)
+> -{
+> -       return true;
+> -}
+> -
+>  static void exynos_dsi_mode_set(struct drm_encoder *encoder,
+>                                 struct drm_display_mode *mode,
+>                                 struct drm_display_mode *adjusted_mode)
+> @@ -1623,7 +1616,6 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
+>  }
+>
+>  static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
+> -       .mode_fixup = exynos_dsi_mode_fixup,
+>         .mode_set = exynos_dsi_mode_set,
+>         .enable = exynos_dsi_enable,
+>         .disable = exynos_dsi_disable,
+> --
 > 2.5.0
-> 
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+>
