@@ -1,47 +1,54 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 6/7] fbdev: exynos: fix IS_ERR_VALUE usage
-Date: Mon, 15 Feb 2016 15:35:24 +0100
-Message-ID: <1455546925-22119-7-git-send-email-a.hajda@samsung.com>
-References: <1455546925-22119-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1455546925-22119-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] regulator: Rename files for max77686 and max77802 drivers
+Date: Mon, 15 Feb 2016 11:44:24 -0300
+Message-ID: <56C1E448.4080306@osg.samsung.com>
+References: <1455250463-5955-1-git-send-email-javier@osg.samsung.com>
+ <56C0245F.1080209@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:48401 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753298AbcBOOoa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Feb 2016 09:44:30 -0500
+In-Reply-To: <56C0245F.1080209@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: k.kozlowski.k@gmail.com, Andi Shyti <andi.shyti@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>
 
-IS_ERR_VALUE macro should be used only with unsigned long type.
-For signed types comparison 'ret < 0' should be used.
+Hello Krzysztof,
 
-The patch follows conclusion from discussion on LKML [1][2].
+On 02/14/2016 03:53 AM, Krzysztof Kozlowski wrote:
 
-[1]: http://permalink.gmane.org/gmane.linux.kernel/2120927
-[2]: http://permalink.gmane.org/gmane.linux.kernel/2150581
+[snip]
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/video/fbdev/exynos/exynos_mipi_dsi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>> +++ b/MAINTAINERS
+>> @@ -6904,7 +6904,7 @@ MAXIM MAX77802 MULTIFUNCTION PMIC DEVICE DRIVERS
+>>   M:	Javier Martinez Canillas <javier@osg.samsung.com>
+>>   L:	linux-kernel@vger.kernel.org
+>>   S:	Supported
+>> -F:	drivers/*/*max77802.c
+>> +F:	drivers/*/*max77802*.c
+>>   F:	Documentation/devicetree/bindings/*/*max77802.txt
+>>   F:	include/dt-bindings/*/*max77802.h
+>
+> Looks fine, but can you also update the max77686 entry with extended
+> wildcard?
+>
 
-diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-index b527fe4..951b592 100644
---- a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-+++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-@@ -402,12 +402,12 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
- 		goto error;
- 	}
- 
--	dsim->irq = platform_get_irq(pdev, 0);
--	if (IS_ERR_VALUE(dsim->irq)) {
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to request dsim irq resource\n");
--		ret = -EINVAL;
- 		goto error;
- 	}
-+	dsim->irq = ret;
- 
- 	init_completion(&dsim_wr_comp);
- 	init_completion(&dsim_rd_comp);
+This has already been picked by Mark so I posted an incremental patch:
+
+https://patchwork.kernel.org/patch/8315731/
+  
+> Best regards,
+> Krzysztof
+>
+
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
