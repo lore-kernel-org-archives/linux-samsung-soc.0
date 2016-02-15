@@ -1,67 +1,67 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH 0/4] mfd: max77686: Allow the driver to be built as a module
-Date: Mon, 15 Feb 2016 16:04:25 +0900
-Message-ID: <20160215070425.GD10719@samsunx.samsung>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/4] mfd: max77686: Use module_i2c_driver() instead of
+ subsys initcall
+Date: Mon, 15 Feb 2016 08:21:02 +0000
+Message-ID: <20160215082102.GB3455@x1>
 References: <1455251419-8919-1-git-send-email-javier@osg.samsung.com>
+ <1455251419-8919-3-git-send-email-javier@osg.samsung.com>
+ <56C1762E.9040208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58110 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751996AbcBOHE1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 02:04:27 -0500
-Content-disposition: inline
-In-reply-to: <1455251419-8919-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56C1762E.9040208@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>
 
-I like all the four patches
+On Mon, 15 Feb 2016, Krzysztof Kozlowski wrote:
 
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+> On 12.02.2016 13:30, Javier Martinez Canillas wrote:
+> > The driver's init and exit function don't do anything besides addin=
+g and
+> > deleting the I2C driver so the module_i2c_driver() macro could be u=
+sed.
+> >=20
+> > Currently is not being used because the driver is initialized at su=
+bsys
+> > initcall level, claiming that this is done to allow consumers devic=
+es to
+> > use the resources provided by this driver. But dependencies should =
+be in
+> > the DT and consumers drivers should not rely in the registration or=
+der.
+> >=20
+> > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> > ---
+> >=20
+> >  drivers/mfd/max77686.c | 13 +------------
+> >  1 file changed, 1 insertion(+), 12 deletions(-)
+> >=20
+>=20
+> In the past not all dependencies supported deferred probing so such
+> ordering was required.
+>=20
+> I don't like the "dependencies should be in DT" reason for the change=
+=2E..
+> because it is kind of wishful thinking. Yeah, the dependencies should=
+ be
+> in DT, but are they?
+>=20
+> Instead *please check it* and write:
+> "Dependencies are in DT so manual ordering of init calls is not
+> necessary any more".
+>=20
+> My fast tests of this patch shown that it works good... but some more
+> thorough tests should be done.
 
-Thanks,
-Andi
+See to all of this, collect the Acks you've received and re-submit
+please.
 
-On Fri, Feb 12, 2016 at 01:30:15AM -0300, Javier Martinez Canillas wrote:
-> Hello,
-> 
-> The Maxim77802 PMIC driver uses a boolean Kconfig symbol but there isn't
-> really a reason to require the driver to be built-in.
-> 
-> It is true that since the PMIC provides clocks and regulators that could
-> be critical on a system, most integrators are not going to build it as a
-> module but it could be useful for multi-platform or distribution kernels
-> that support different systems by building as much as possible as module.
-> 
-> Besides this series, a patch for the max77686 regulator driver is needed
-> or the MFD max77686 driver module won't be installed by kbuild. I didn't
-> include the patch in this series to avoid cross-subsystems churn for the
-> maintainers and also because I don't consider that a regression since it
-> was not possible to build the driver as a module before anyways.
-> 
-> Also, all the defconfigs in mainline that enable the MFD max77686 driver
-> Kconfig symbol are using =y of course so it shouldn't be an issue to get
-> this set merged, before the max77686 regulator patch already posted [0].
-> 
-> [0]: https://patchwork.kernel.org/patch/8287431/
-> 
-> Best regards,
-> Javier
-> 
-> 
-> Javier Martinez Canillas (4):
->   mfd: max77686: Add max77802 to I2C device ID table
->   mfd: max77686: Use module_i2c_driver() instead of subsys initcall
->   mfd: max77686: Allow driver to be built as a module
->   mfd: max77686: Export OF module alias information
-> 
->  drivers/mfd/Kconfig    |  4 ++--
->  drivers/mfd/max77686.c | 15 +++------------
->  2 files changed, 5 insertions(+), 14 deletions(-)
-> 
-> -- 
-> 2.5.0
-> 
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
