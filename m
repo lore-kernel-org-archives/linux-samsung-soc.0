@@ -1,26 +1,21 @@
 From: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
-Subject: [PATCH v2 03/17] drm/exynos: removed optional dummy encoder
-	mode_fixup function.
-Date: Mon, 15 Feb 2016 12:58:20 +0000
-Message-ID: <3768b670931572de51fca1102efa18d20dd770ee.1455540137.git.palminha@synopsys.com>
+Subject: [PATCH v2 05/17] drm/ast: removed optional dummy encoder mode_fixup function.
+Date: Mon, 15 Feb 2016 12:59:00 +0000
+Message-ID: <12e1e900724c890166b88b0f4d67baba387482af.1455540137.git.palminha@synopsys.com>
 References: <cover.1455540137.git.palminha@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtprelay.synopsys.com ([198.182.47.9]:50044 "EHLO
+	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751114AbcBOM7I (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Feb 2016 07:59:08 -0500
 In-Reply-To: <cover.1455540137.git.palminha@synopsys.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: dri-devel@lists.freedesktop.org
-Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, benjamin.gaignard@linaro.org, airlied@linux.ie, jingoohan1@gmail.com, CARLOS.PALMINHA@synopsys.com, patrik.r.jakobsson@gmail.com, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, p.zabel@pengutronix.de, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: CARLOS.PALMINHA@synopsys.com, airlied@linux.ie, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, patrik.r.jakobsson@gmail.com, p.zabel@pengutronix.de, mark.yao@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com, kraxel@redhat.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, virtualization@lists.linux-foundation.org
 
 mode_fixup function for encoder drivers became optional with patch
 http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
@@ -31,34 +26,34 @@ This patch set nukes all the dummy mode_fixup implementations.
 
 Signed-off-by: Carlos Palminha <palminha@synopsys.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 --------
+ drivers/gpu/drm/ast/ast_mode.c | 8 --------
  1 file changed, 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index e977a81..736115c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1597,13 +1597,6 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
- 	return 0;
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 0123458..f221e2d 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -710,13 +710,6 @@ static void ast_encoder_dpms(struct drm_encoder *encoder, int mode)
+ 
  }
  
--static bool exynos_dsi_mode_fixup(struct drm_encoder *encoder,
--				  const struct drm_display_mode *mode,
--				  struct drm_display_mode *adjusted_mode)
+-static bool ast_mode_fixup(struct drm_encoder *encoder,
+-			   const struct drm_display_mode *mode,
+-			   struct drm_display_mode *adjusted_mode)
 -{
 -	return true;
 -}
 -
- static void exynos_dsi_mode_set(struct drm_encoder *encoder,
- 				struct drm_display_mode *mode,
- 				struct drm_display_mode *adjusted_mode)
-@@ -1623,7 +1616,6 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
- }
+ static void ast_encoder_mode_set(struct drm_encoder *encoder,
+ 			       struct drm_display_mode *mode,
+ 			       struct drm_display_mode *adjusted_mode)
+@@ -736,7 +729,6 @@ static void ast_encoder_commit(struct drm_encoder *encoder)
  
- static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
--	.mode_fixup = exynos_dsi_mode_fixup,
- 	.mode_set = exynos_dsi_mode_set,
- 	.enable = exynos_dsi_enable,
- 	.disable = exynos_dsi_disable,
+ static const struct drm_encoder_helper_funcs ast_enc_helper_funcs = {
+ 	.dpms = ast_encoder_dpms,
+-	.mode_fixup = ast_mode_fixup,
+ 	.prepare = ast_encoder_prepare,
+ 	.commit = ast_encoder_commit,
+ 	.mode_set = ast_encoder_mode_set,
 -- 
 2.5.0
