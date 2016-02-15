@@ -1,74 +1,60 @@
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Subject: Re: [PATCH v2 03/17] drm/exynos: removed optional dummy encoder
- mode_fixup function.
-Date: Mon, 15 Feb 2016 14:49:09 +0100
-Message-ID: <CAMeQTsZLdMOnk7-isneoUyFBbQdiRUsGH6+EhD8W1LNB=80LVQ@mail.gmail.com>
-References: <cover.1455540137.git.palminha@synopsys.com>
-	<3768b670931572de51fca1102efa18d20dd770ee.1455540137.git.palminha@synopsys.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] rtc: s3c: Document in binding that only s3c6410 needs a
+ src clk
+Date: Mon, 15 Feb 2016 10:58:34 -0300
+Message-ID: <56C1D98A.8040408@osg.samsung.com>
+References: <1455542202-13977-1-git-send-email-javier@osg.samsung.com>
+ <20160215134535.GB15219@piout.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f195.google.com ([209.85.217.195]:35886 "EHLO
-	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159AbcBONtL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 08:49:11 -0500
-Received: by mail-lb0-f195.google.com with SMTP id zr1so6351943lbb.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Feb 2016 05:49:11 -0800 (PST)
-In-Reply-To: <3768b670931572de51fca1102efa18d20dd770ee.1455540137.git.palminha@synopsys.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160215134535.GB15219@piout.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, p.zabel@pengutronix.de, mark.yao@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com, kraxel@redhat.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, virtualization@lists.linux-foundation.org
 
-Hi Carlos
+Hello Alexandre,
 
-Any particular reason why this patch isn't squashed with patch 8/17?
+On 02/15/2016 10:45 AM, Alexandre Belloni wrote:
+> On 15/02/2016 at 10:16:42 -0300, Javier Martinez Canillas wrote :
+>> Commit 43f3408261a2 ("rtc: s3c: Document required clocks in the DT
+>
+> I'm pretty sure you shouldn't refer to a commit that is in linux-next.
+>
 
-Thanks
-Patrik
+The commit comes from Rob's dt/linus branch that uses Linux 4.5-rc3 as
+a base. I'm not a git expert but I thought that if the branch is not
+rebased and used for the pull request then the resulting commit in
+mainline would end with the same sha-1.
 
+But I can remove the mention to the commit and "Fixes:" tag since the
+commit is not yet in mainline, that should be more safe indeed.
+  
+>> binding") added to the S3C binding doc the required clocks needed
+>> by the Real Time Clock but the S3C driver supports different HW IP
+>> and only the s3c6410 needs a source clock.
+>>
+>> Fix the DT binding explaning that the second clock is only needed
+>            explaining ^
 
-On Mon, Feb 15, 2016 at 1:58 PM, Carlos Palminha
-<CARLOS.PALMINHA@synopsys.com> wrote:
-> mode_fixup function for encoder drivers became optional with patch
-> http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
+Ok, I'll fix that typo.
+
+>> by this IP block and not for the others.
+>>
+>> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Fixes: 43f3408261a2 ("rtc: s3c: Document required clocks in the DT binding")
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
 >
-> This patch set nukes all the dummy mode_fixup implementations.
+> Anyway, I'm fine with it, feel free to add my ack.
 >
-> (made on top of Daniel topic/drm-misc branch)
->
-> Signed-off-by: Carlos Palminha <palminha@synopsys.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 --------
->  1 file changed, 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index e977a81..736115c 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1597,13 +1597,6 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
->         return 0;
->  }
->
-> -static bool exynos_dsi_mode_fixup(struct drm_encoder *encoder,
-> -                                 const struct drm_display_mode *mode,
-> -                                 struct drm_display_mode *adjusted_mode)
-> -{
-> -       return true;
-> -}
-> -
->  static void exynos_dsi_mode_set(struct drm_encoder *encoder,
->                                 struct drm_display_mode *mode,
->                                 struct drm_display_mode *adjusted_mode)
-> @@ -1623,7 +1616,6 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
->  }
->
->  static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
-> -       .mode_fixup = exynos_dsi_mode_fixup,
->         .mode_set = exynos_dsi_mode_set,
->         .enable = exynos_dsi_enable,
->         .disable = exynos_dsi_disable,
-> --
-> 2.5.0
->
+
+Thanks, I'll add it in v2.
+  
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
