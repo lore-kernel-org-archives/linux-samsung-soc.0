@@ -1,21 +1,26 @@
 From: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
-Subject: [PATCH v2 05/17] drm/ast: removed optional dummy encoder mode_fixup function.
-Date: Mon, 15 Feb 2016 12:59:00 +0000
-Message-ID: <12e1e900724c890166b88b0f4d67baba387482af.1455540137.git.palminha@synopsys.com>
+Subject: [PATCH v2 07/17] drm/cirrus: removed optional dummy encoder
+	mode_fixup function.
+Date: Mon, 15 Feb 2016 12:59:23 +0000
+Message-ID: <a53767402bd4a69c3d2a546b7f4d4d122134b545.1455540137.git.palminha@synopsys.com>
 References: <cover.1455540137.git.palminha@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay.synopsys.com ([198.182.47.9]:50044 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751114AbcBOM7I (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 07:59:08 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
 In-Reply-To: <cover.1455540137.git.palminha@synopsys.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
 To: dri-devel@lists.freedesktop.org
-Cc: CARLOS.PALMINHA@synopsys.com, airlied@linux.ie, jingoohan1@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, patrik.r.jakobsson@gmail.com, p.zabel@pengutronix.de, mark.yao@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com, kraxel@redhat.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, virtualization@lists.linux-foundation.org
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, benjamin.gaignard@linaro.org, airlied@linux.ie, jingoohan1@gmail.com, CARLOS.PALMINHA@synopsys.com, patrik.r.jakobsson@gmail.com, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, p.zabel@pengutronix.de, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 mode_fixup function for encoder drivers became optional with patch
 http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
@@ -26,34 +31,35 @@ This patch set nukes all the dummy mode_fixup implementations.
 
 Signed-off-by: Carlos Palminha <palminha@synopsys.com>
 ---
- drivers/gpu/drm/ast/ast_mode.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/gpu/drm/cirrus/cirrus_mode.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index 0123458..f221e2d 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -710,13 +710,6 @@ static void ast_encoder_dpms(struct drm_encoder *encoder, int mode)
- 
+diff --git a/drivers/gpu/drm/cirrus/cirrus_mode.c b/drivers/gpu/drm/cirrus/cirrus_mode.c
+index 4a02854..432ce94 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_mode.c
++++ b/drivers/gpu/drm/cirrus/cirrus_mode.c
+@@ -430,14 +430,6 @@ void cirrus_crtc_fb_gamma_get(struct drm_crtc *crtc, u16 *red, u16 *green,
+ 	*blue = cirrus_crtc->lut_b[regno];
  }
  
--static bool ast_mode_fixup(struct drm_encoder *encoder,
--			   const struct drm_display_mode *mode,
--			   struct drm_display_mode *adjusted_mode)
+-
+-static bool cirrus_encoder_mode_fixup(struct drm_encoder *encoder,
+-				      const struct drm_display_mode *mode,
+-				      struct drm_display_mode *adjusted_mode)
 -{
 -	return true;
 -}
 -
- static void ast_encoder_mode_set(struct drm_encoder *encoder,
- 			       struct drm_display_mode *mode,
- 			       struct drm_display_mode *adjusted_mode)
-@@ -736,7 +729,6 @@ static void ast_encoder_commit(struct drm_encoder *encoder)
+ static void cirrus_encoder_mode_set(struct drm_encoder *encoder,
+ 				struct drm_display_mode *mode,
+ 				struct drm_display_mode *adjusted_mode)
+@@ -466,7 +458,6 @@ static void cirrus_encoder_destroy(struct drm_encoder *encoder)
  
- static const struct drm_encoder_helper_funcs ast_enc_helper_funcs = {
- 	.dpms = ast_encoder_dpms,
--	.mode_fixup = ast_mode_fixup,
- 	.prepare = ast_encoder_prepare,
- 	.commit = ast_encoder_commit,
- 	.mode_set = ast_encoder_mode_set,
+ static const struct drm_encoder_helper_funcs cirrus_encoder_helper_funcs = {
+ 	.dpms = cirrus_encoder_dpms,
+-	.mode_fixup = cirrus_encoder_mode_fixup,
+ 	.mode_set = cirrus_encoder_mode_set,
+ 	.prepare = cirrus_encoder_prepare,
+ 	.commit = cirrus_encoder_commit,
 -- 
 2.5.0
