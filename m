@@ -1,53 +1,41 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: add exynos5420-fimd compatible
-Date: Mon, 15 Feb 2016 12:59:20 +0900
-Message-ID: <56C14D18.1040508@samsung.com>
-References: <1455283900-6913-1-git-send-email-chanho61.park@samsung.com>
- <1455283900-6913-3-git-send-email-chanho61.park@samsung.com>
- <56C12287.8050900@samsung.com>
+Subject: Re: [PATCH 1/4] mfd: max77686: Add max77802 to I2C device ID table
+Date: Mon, 15 Feb 2016 14:21:43 +0900
+Message-ID: <56C16067.9020707@samsung.com>
+References: <1455251419-8919-1-git-send-email-javier@osg.samsung.com>
+ <1455251419-8919-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:47871 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751711AbcBOD71 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54937 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751874AbcBOFVt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Feb 2016 22:59:27 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2K00HUDLR06R10@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 15 Feb 2016 03:59:24 +0000 (GMT)
-In-reply-to: <56C12287.8050900@samsung.com>
+	Mon, 15 Feb 2016 00:21:49 -0500
+In-reply-to: <1455251419-8919-2-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <parkch98@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Chanho Park <chanho61.park@samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>
 
-On 15.02.2016 09:57, Krzysztof Kozlowski wrote:
-> On 12.02.2016 22:31, Chanho Park wrote:
->> This patch changes the compatible of exynos5420 fimd
->> to "exynos5420-fimd". To support mic bypass from display
->> path, the new compatible is introduced for exynos5420.
->>
->> Cc: Inki Dae <inki.dae@samsung.com>
->> Cc: Kukjin Kim <kgene@kernel.org>
->> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5420.dtsi | 1 +
->>  1 file changed, 1 insertion(+)
->>
+On 12.02.2016 13:30, Javier Martinez Canillas wrote:
+> The max77686 MFD driver supports both the Maxim 77686 and Maxim 77802
+> PMICs but only the OF device table contains entries for both devices.
 > 
-> Looks okay to me and also looks independent from patch #1. I will apply
-> it for late v4.6 if patch #1 got accepted by Inki.
+> The max77802 entry is missing in the I2C device ID table which isn't
+> a problem currently since the driver only supports DT but it will be
+> needed if the driver is changed to be built as a module since the I2C
+> core always reports a I2C modalias uevent so auto-load will not work.
 > 
-> Anyway, for reference:
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+>  drivers/mfd/max77686.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Stupid me, of course it cannot go independently through my tree. Please
-feel free to take it through drm-exynos with my reviewed-by tag.
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
