@@ -1,160 +1,42 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: Move syscon reboot/poweroff to common dtsi for
- Exynos
-Date: Mon, 15 Feb 2016 10:38:25 -0300
-Message-ID: <56C1D4D1.2050108@osg.samsung.com>
-References: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
- <56C02265.40103@samsung.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [rtc-linux] [PATCH] rtc: s3c: Document required clocks in the DT
+ binding
+Date: Mon, 15 Feb 2016 14:41:10 +0100
+Message-ID: <20160215134110.GA15219@piout.net>
+References: <1455038632-14545-1-git-send-email-javier@osg.samsung.com>
+ <56C01FDD.9050204@samsung.com>
+ <56C1C95E.7030002@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48379 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751298AbcBONic (ORCPT
+Received: from down.free-electrons.com ([37.187.137.238]:57974 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751298AbcBONlN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 08:38:32 -0500
-In-Reply-To: <56C02265.40103@samsung.com>
+	Mon, 15 Feb 2016 08:41:13 -0500
+Content-Disposition: inline
+In-Reply-To: <56C1C95E.7030002@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>
 
-Hello Krzysztof,
+On 15/02/2016 at 09:49:34 -0300, Javier Martinez Canillas wrote :
+> >No, not entirely. The samsung,s3c6410-rtc needs rtc and rtc_src clocks
+> >but rest of compatible devices need only rtc clock.
+> >
+> 
+> Right, sorry for missing that. I noticed that this patch has already
+> been picked by Rob Herring (I thought it would be picked by Alexandre
+> though) so I will post a follow up patch explaining that rtc_src is
+> only for the s3c6410-rtc compatible.
+> 
 
-On 02/14/2016 03:44 AM, Krzysztof Kozlowski wrote:
-> W dniu 10.02.2016 o 03:30, Javier Martinez Canillas pisze:
->> All Exynos SoCs have the same syscon reboot and poweroff device nodes so
->> there is no need to duplicate the same on each SoC dtsi and can be moved
->> to a common dtsi that can be included by all the SoCs dtsi files.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> ---
->> Hello,
->>
->> The patch was tested on an Exynos5800 Peach Pi Chromebook and an
->> Exynos5422 Odroid XU4 board. Reboot and poweroff worked for both.
->>
->> But testing on Exynos3 and Exynos4 will be highly appreciated.
->
-> Would you be so kind and add my suggested-by (since it comes from
-> https://wiki.tizen.org/wiki/Exynos_Mainline_Kernel_TODO :) )
->
+Yeah, I was going to take it, thanks for pointing out the Rob already
+has it in his tree.
 
-Right, sorry for missing that.
-  
-> I'll test it on Exynos4 at work and then apply... but few comments below:
->
->>
->> Best regards,
->> Javier
->>
->>   arch/arm/boot/dts/exynos-syscon-restart.dtsi | 23 +++++++++++++++++++++++
->>   arch/arm/boot/dts/exynos3250.dtsi            | 15 +--------------
->>   arch/arm/boot/dts/exynos4.dtsi               | 15 +--------------
->>   arch/arm/boot/dts/exynos5.dtsi               | 15 +--------------
->>   arch/arm/boot/dts/exynos5410.dtsi            | 15 +--------------
->>   5 files changed, 27 insertions(+), 56 deletions(-)
->>   create mode 100644 arch/arm/boot/dts/exynos-syscon-restart.dtsi
->>
->> diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
->> new file mode 100644
->> index 000000000000..2b8acf554881
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
->> @@ -0,0 +1,23 @@
->> +/*
->> + * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +/ {
->
-> In some of the DTSI this was under "soc" node, not at top-level.
-> Unfortunately we do not have consistency here - some DTSI have "soc",
 
-Yes, I noticed this but as you said not all DTSI have a soc node
-and that's why I made it top level in the DTSI.
-
-> some not. Anyway I think we should move to "soc" version.
->
-
-Not sure I'm following, did you mean to do it as a follow up or
-to add a soc node for the missing DTSI as a part of this series?
-
->> +	poweroff: syscon-poweroff {
->> +		compatible = "syscon-poweroff";
->> +		regmap = <&pmu_system_controller>;
->> +		offset = <0x330C>; /* PS_HOLD_CONTROL */
->> +		mask = <0x5200>; /* reset value */
->> +	};
->> +
->> +	reboot: syscon-reboot {
->> +		compatible = "syscon-reboot";
->> +		regmap = <&pmu_system_controller>;
->> +		offset = <0x0400>; /* SWRESET */
->> +		mask = <0x1>;
->> +	};
->> +};
->> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->> index 18e3deffbf48..d9c221517935 100644
->> --- a/arch/arm/boot/dts/exynos3250.dtsi
->> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->> @@ -19,6 +19,7 @@
->>
->>   #include "skeleton.dtsi"
->>   #include "exynos4-cpu-thermal.dtsi"
->> +#include "exynos-syscon-restart.dtsi"
->>   #include <dt-bindings/clock/exynos3250.h>
->>
->>   / {
->> @@ -152,20 +153,6 @@
->>   			interrupt-parent = <&gic>;
->>   		};
->>
->> -		poweroff: syscon-poweroff {
->> -			compatible = "syscon-poweroff";
->> -			regmap = <&pmu_system_controller>;
->> -			offset = <0x330C>; /* PS_HOLD_CONTROL */
->> -			mask = <0x5200>; /* Reset value */
->> -		};
->> -
->> -		reboot: syscon-reboot {
->> -			compatible = "syscon-reboot";
->> -			regmap = <&pmu_system_controller>;
->> -			offset = <0x0400>; /* SWRESET */
->> -			mask = <0x1>;
->> -		};
->> -
->>   		mipi_phy: video-phy@10020710 {
->>   			compatible = "samsung,s5pv210-mipi-video-phy";
->>   			#phy-cells = <1>;
->> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
->> index ca621a92319e..e6f6939ccdfa 100644
->> --- a/arch/arm/boot/dts/exynos4.dtsi
->> +++ b/arch/arm/boot/dts/exynos4.dtsi
->> @@ -21,6 +21,7 @@
->>
->>   #include <dt-bindings/clock/exynos4.h>
->>   #include <dt-bindings/clock/exynos-audss-clk.h>
->> +#include "exynos-syscon-restart.dtsi"
->
-> Just to keep it consistent and logic - include after skeleton.
->
-
-Ok, for include I usually try to keep alphabetically sorted but
-I'll move it after skeleton if you prefer to keep it consistent.
-  
-> Best regards,
-> Krzysztof
->
-
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
