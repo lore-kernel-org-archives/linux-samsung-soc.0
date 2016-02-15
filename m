@@ -1,41 +1,33 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/4] mfd: max77686: Add max77802 to I2C device ID table
-Date: Mon, 15 Feb 2016 14:21:43 +0900
-Message-ID: <56C16067.9020707@samsung.com>
-References: <1455251419-8919-1-git-send-email-javier@osg.samsung.com>
- <1455251419-8919-2-git-send-email-javier@osg.samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [next] Odroid XU3 easily over-heats
+Date: Mon, 15 Feb 2016 10:58:43 +0530
+Message-ID: <20160215052843.GA6334@vireshk-i7>
+References: <56C01963.3080106@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54937 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751874AbcBOFVt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Feb 2016 00:21:49 -0500
-In-reply-to: <1455251419-8919-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56C01963.3080106@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>
 
-On 12.02.2016 13:30, Javier Martinez Canillas wrote:
-> The max77686 MFD driver supports both the Maxim 77686 and Maxim 77802
-> PMICs but only the OF device table contains entries for both devices.
+On 14-02-16, 15:06, Krzysztof Kozlowski wrote:
+> Hi all,
 > 
-> The max77802 entry is missing in the I2C device ID table which isn't
-> a problem currently since the driver only supports DT but it will be
-> needed if the driver is changed to be built as a module since the I2C
-> core always reports a I2C modalias uevent so auto-load will not work.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
-> 
->  drivers/mfd/max77686.c | 1 +
->  1 file changed, 1 insertion(+)
+> With recent addition of cpufreq-dt support to Exynos5422
+> it is very easy to over-heat the Odroid XU3 leading to critical shutdown:
 
+How were OPPs passed earlier? I failed to see them in kernel somehow.
+You must have been using opp-v1 earlier, right?
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+You used boost-freqs then? You used cpufreq as a cooling device then?
 
-Best regards,
-Krzysztof
+> What about cpufreq as cooling device? Probably that part
+> is missing now, right?
+
+Maybe, how was that earlier though ?
+
+-- 
+viresh
