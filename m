@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 7/7] ARM: EXYNOS: Defconfig changes for v4.6
-Date: Mon, 15 Feb 2016 09:34:06 +0900
-Message-ID: <1455496446-23779-8-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 6/7] ARM: dts: Exynos stuff for v4.6
+Date: Mon, 15 Feb 2016 09:34:05 +0900
+Message-ID: <1455496446-23779-7-git-send-email-k.kozlowski@samsung.com>
 References: <1455496446-23779-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1455496446-23779-1-git-send-email-k.kozlowski@samsung.com>
@@ -12,8 +12,8 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Arnd, Kevin and Olof,
 
-Defconfig changes, pulling also a tag from RTC tree (merge
-of max77802 into max77686 RTC driver).
+Rest of DTS changes for v4.6. This also pulls early DT changes (related
+to SROM controller) because rest of patches depend on it.
 
 Kind regards,
 Krzysztof
@@ -25,47 +25,86 @@ The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.6
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.6
 
-for you to fetch changes up to 5d51f1dde207f2d5d43158da75c6608f7bfcec03:
+for you to fetch changes up to 36a0282a41493400428d7df8c99701fb4ee344c2:
 
-  ARM: multi_v7_defconfig: Remove MAX77802 RTC Kconfig symbol (2016-02-05 09:11:32 +0900)
-
-----------------------------------------------------------------
-Defconfig (exynos and multi_v7) changes for Exynos based boards for v4.6:
-1. exynos defconfig:
-   a. Enable NEON and accelerated crypto,
-   b. Enable s5p-secss driver (Security SubSystem block for accelerating
-      some cryptographic operations),
-2. exynos and multi_v7: Remove MAX77802 RTC Kconfig because the driver
-   was combined into existing rtc-max77686 driver. This depends on changes
-   from RTC tree.
+  ARM: dts: Replace legacy *,wakeup property with wakeup-source for exynos boards (2016-01-29 09:09:49 +0900)
 
 ----------------------------------------------------------------
-Javier Martinez Canillas (10):
-      rtc: max77686: Fix max77686_rtc_read_alarm() return value
-      rtc: max77686: Use ARRAY_SIZE() instead of current array length
-      rtc: max77686: Use usleep_range() instead of msleep()
-      rtc: max77686: Use a driver data struct instead hard-coded values
-      rtc: max77686: Add an indirection level to access RTC registers
-      rtc: max77686: Add max77802 support
-      rtc: max77686: Fix unsupported year message
-      rtc: Remove Maxim 77802 driver
-      ARM: exynos_defconfig: Remove MAX77802 RTC Kconfig symbol
-      ARM: multi_v7_defconfig: Remove MAX77802 RTC Kconfig symbol
+Samsung DeviceTree updates and improvements for v4.6:
+1. Add SROM controller device nodes.
+2. Add Ethernet chip as child of SROM controller on SMDK5410.
+3. Allow simultaneous usage exynos-rng and s5p-sss drivers on Exynos5.
+4. Cleanup CPU configuration on Exynos542x/5800.
+5. Add necessary nodes for cpufreq-dt driver on Exynos542x/5800 (OPPs,
+   regulator supplies) which allows frequency and voltage scalling
+   of this SoC.
+6. Minor cleanups.
 
-Krzysztof Kozlowski (5):
-      ARM: exynos_defconfig: Enable NEON, accelerated crypto and cpufreq stats
-      ARM: exynos_defconfig: Enable s5p-secss driver
-      rtc: max77686: Properly handle regmap_irq_get_virq() error code
-      rtc: max77686: Cleanup and reduce dmesg output
-      Merge tag 'rtc-max77686-4.6' of git://git.kernel.org/.../abelloni/linux into next/defconfig
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (2):
+      ARM: dts: Add cluster regulator supply properties for exynos542x/5800
+      ARM: dts: Extend existing CPU OPP for exynos5800
 
- arch/arm/configs/exynos_defconfig   |  10 +-
- arch/arm/configs/multi_v7_defconfig |   1 -
- drivers/rtc/Kconfig                 |  10 -
- drivers/rtc/Makefile                |   1 -
- drivers/rtc/rtc-max77686.c          | 362 ++++++++++++++++++++------
- drivers/rtc/rtc-max77802.c          | 502 ------------------------------------
- 6 files changed, 285 insertions(+), 601 deletions(-)
- delete mode 100644 drivers/rtc/rtc-max77802.c
+Hakjoo Kim (1):
+      ARM: dts: Add pinctrl support to exynos5410
+
+Krzysztof Kozlowski (3):
+      Merge tag 'samsung-dt-srom-4.6' into next/dt
+      ARM: dts: Allow simultaneous usage exynos-rng and s5p-sss drivers on exynos5
+      ARM: dts: Make CPU configuration more readable on exynos542x/5800
+
+Marek Szyprowski (1):
+      ARM: dts: Add GSCL block parent clock management to pm domain on exynos542x
+
+Pankaj Dubey (2):
+      ARM: dts: Add SROM device node for exynos4
+      ARM: dts: Add SROM device node for exynos5
+
+Pavel Fedin (2):
+      ARM: dts: Add SROM to exynos5410
+      ARM: dts: Add Ethernet chip to exynos5410-smdk5410
+
+Sudeep Holla (2):
+      ARM: dts: Replace legacy *,wakeup property with wakeup-source on s5pv210
+      ARM: dts: Replace legacy *,wakeup property with wakeup-source for exynos boards
+
+Thomas Abraham (1):
+      ARM: dts: Add CPU OPP properties for exynos542x/5800
+
+ arch/arm/boot/dts/exynos3250-monk.dts              |   6 +-
+ arch/arm/boot/dts/exynos3250-rinato.dts            |   6 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |   5 +
+ arch/arm/boot/dts/exynos4210-origen.dts            |  10 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |   2 +-
+ arch/arm/boot/dts/exynos4210-trats.dts             |   2 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |   4 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   2 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |   2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts            |   2 +-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |   2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |   4 +-
+ arch/arm/boot/dts/exynos5.dtsi                     |   5 +
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  12 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |   4 +-
+ arch/arm/boot/dts/exynos5250-spring.dts            |   4 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          | 406 +++++++++++++++++++++
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |  41 +++
+ arch/arm/boot/dts/exynos5410.dtsi                  |  47 +++
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  11 +-
+ arch/arm/boot/dts/exynos5420-cpus.dtsi             | 102 ++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |  13 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   9 +
+ arch/arm/boot/dts/exynos5420.dtsi                  | 170 +++++----
+ arch/arm/boot/dts/exynos5422-cpus.dtsi             | 140 ++++---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   8 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  13 +-
+ arch/arm/boot/dts/exynos5800.dtsi                  | 108 ++++++
+ arch/arm/boot/dts/s5pv210-aquila.dts               |   4 +-
+ arch/arm/boot/dts/s5pv210-goni.dts                 |   4 +-
+ arch/arm/boot/dts/s5pv210-smdkv210.dts             |   2 +-
+ 32 files changed, 989 insertions(+), 163 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5420-cpus.dtsi
