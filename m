@@ -1,75 +1,143 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] regulator: s5m8767: fix get_register() error handling
-Date: Tue, 16 Feb 2016 15:53:11 +0100
-Message-ID: <1455634402-1997203-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:62629 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932273AbcBPOx7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 09:53:59 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 04/11] iommu: exynos: simplify master clock operations
+Date: Tue, 16 Feb 2016 15:56:57 +0100
+Message-ID: <1455634624-18130-5-git-send-email-m.szyprowski@samsung.com>
+References: <1455634624-18130-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1455634624-18130-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-The s5m8767_pmic_probe() function calls s5m8767_get_register() to
-read data without checking the return code, which produces a compile-time
-warning when that data is accessed:
+All clock API function can be called on NULL clock, so simplify code avoid
+checking of master clock presence.
 
-drivers/regulator/s5m8767.c: In function 's5m8767_pmic_probe':
-drivers/regulator/s5m8767.c:924:7: error: 'enable_reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-drivers/regulator/s5m8767.c:944:30: error: 'enable_val' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-
-This changes the s5m8767_get_register() function to return a -EINVAL
-not just for an invalid register number but also for an invalid
-regulator number, as both would result in returning uninitialized
-data. The s5m8767_pmic_probe() function is then changed accordingly
-to fail on a read error, as all the other callers of s5m8767_get_register()
-already do.
-
-In practice this probably cannot happen, as we don't call
-s5m8767_get_register() with invalid arguments, but the gcc
-warning seems valid in principle, in terms writing safe
-error checking.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 9c4c60554acf ("regulator: s5m8767: Convert to use regulator_[enable|disable|is_enabled]_regmap")
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/regulator/s5m8767.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/iommu/exynos-iommu.c | 32 ++++++++++++--------------------
+ 1 file changed, 12 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 58f5d3b8e981..27343e1c43ef 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -202,9 +202,10 @@ static int s5m8767_get_register(struct s5m8767_info *s5m8767, int reg_id,
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 8c8a7f7..bf6b826 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -333,8 +333,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+ 
+ 	spin_lock(&data->lock);
+ 
+-	if (!IS_ERR(data->clk_master))
+-		clk_enable(data->clk_master);
++	clk_enable(data->clk_master);
+ 
+ 	itype = (enum exynos_sysmmu_inttype)
+ 		__ffs(__raw_readl(data->sfrbase + REG_INT_STATUS));
+@@ -366,8 +365,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+ 
+ 	sysmmu_unblock(data->sfrbase);
+ 
+-	if (!IS_ERR(data->clk_master))
+-		clk_disable(data->clk_master);
++	clk_disable(data->clk_master);
+ 
+ 	spin_unlock(&data->lock);
+ 
+@@ -376,15 +374,13 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+ 
+ static void __sysmmu_disable_nocount(struct sysmmu_drvdata *data)
+ {
+-	if (!IS_ERR(data->clk_master))
+-		clk_enable(data->clk_master);
++	clk_enable(data->clk_master);
+ 
+ 	__raw_writel(CTRL_DISABLE, data->sfrbase + REG_MMU_CTRL);
+ 	__raw_writel(0, data->sfrbase + REG_MMU_CFG);
+ 
+ 	clk_disable(data->clk);
+-	if (!IS_ERR(data->clk_master))
+-		clk_disable(data->clk_master);
++	clk_disable(data->clk_master);
+ }
+ 
+ static bool __sysmmu_disable(struct sysmmu_drvdata *data)
+@@ -437,8 +433,7 @@ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
+ 
+ static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
+ {
+-	if (!IS_ERR(data->clk_master))
+-		clk_enable(data->clk_master);
++	clk_enable(data->clk_master);
+ 	clk_enable(data->clk);
+ 
+ 	__raw_writel(CTRL_BLOCK, data->sfrbase + REG_MMU_CTRL);
+@@ -449,8 +444,7 @@ static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
+ 
+ 	__raw_writel(CTRL_ENABLE, data->sfrbase + REG_MMU_CTRL);
+ 
+-	if (!IS_ERR(data->clk_master))
+-		clk_disable(data->clk_master);
++	clk_disable(data->clk_master);
+ }
+ 
+ static int __sysmmu_enable(struct sysmmu_drvdata *data, phys_addr_t pgtable,
+@@ -493,16 +487,14 @@ static void sysmmu_tlb_invalidate_flpdcache(struct sysmmu_drvdata *data,
+ {
+ 	unsigned long flags;
+ 
+-	if (!IS_ERR(data->clk_master))
+-		clk_enable(data->clk_master);
++	clk_enable(data->clk_master);
+ 
+ 	spin_lock_irqsave(&data->lock, flags);
+ 	if (is_sysmmu_active(data))
+ 		__sysmmu_tlb_invalidate_flpdcache(data, iova);
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ 
+-	if (!IS_ERR(data->clk_master))
+-		clk_disable(data->clk_master);
++	clk_disable(data->clk_master);
+ }
+ 
+ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+@@ -514,8 +506,7 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+ 	if (is_sysmmu_active(data)) {
+ 		unsigned int num_inv = 1;
+ 
+-		if (!IS_ERR(data->clk_master))
+-			clk_enable(data->clk_master);
++		clk_enable(data->clk_master);
+ 
+ 		/*
+ 		 * L2TLB invalidation required
+@@ -535,8 +526,7 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+ 				data->sfrbase, iova, num_inv);
+ 			sysmmu_unblock(data->sfrbase);
  		}
+-		if (!IS_ERR(data->clk_master))
+-			clk_disable(data->clk_master);
++		clk_disable(data->clk_master);
+ 	} else {
+ 		dev_dbg(data->master,
+ 			"disabled. Skipping TLB invalidation @ %#x\n", iova);
+@@ -593,6 +583,8 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
+ 			dev_err(dev, "Failed to prepare master's clk\n");
+ 			return ret;
+ 		}
++	} else {
++		data->clk_master = NULL;
  	}
  
--	if (i < s5m8767->num_regulators)
--		*enable_ctrl =
--		s5m8767_opmode_reg[reg_id][mode] << S5M8767_ENCTRL_SHIFT;
-+	if (i >= s5m8767->num_regulators)
-+		return -EINVAL;
-+
-+	*enable_ctrl = s5m8767_opmode_reg[reg_id][mode] << S5M8767_ENCTRL_SHIFT;
- 
- 	return 0;
- }
-@@ -937,8 +938,12 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
- 			else
- 				regulators[id].vsel_mask = 0xff;
- 
--			s5m8767_get_register(s5m8767, id, &enable_reg,
-+			ret = s5m8767_get_register(s5m8767, id, &enable_reg,
- 					     &enable_val);
-+			if (ret) {
-+				dev_err(s5m8767->dev, "error reading registers\n");
-+				return ret;
-+			}
- 			regulators[id].enable_reg = enable_reg;
- 			regulators[id].enable_mask = S5M8767_ENCTRL_MASK;
- 			regulators[id].enable_val = enable_val;
+ 	data->sysmmu = dev;
 -- 
-2.7.0
+1.9.2
