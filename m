@@ -1,161 +1,83 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/4] mfd: max77686: Use module_i2c_driver() instead of
- subsys initcall
-Date: Tue, 16 Feb 2016 17:45:44 -0300
-Message-ID: <56C38A78.2090601@osg.samsung.com>
-References: <1455251419-8919-1-git-send-email-javier@osg.samsung.com>
- <1455251419-8919-3-git-send-email-javier@osg.samsung.com>
- <56C1762E.9040208@samsung.com> <56C1ED07.6090008@osg.samsung.com>
- <56C25D55.5040208@samsung.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v5 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Date: Tue, 16 Feb 2016 14:31:58 -0800
+Message-ID: <20160216223158.2278.48998@quark.deferred.io>
+References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48592 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752520AbcBPUpu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 15:45:50 -0500
-In-Reply-To: <56C25D55.5040208@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>Krzysztof Kozlowski <k.kozlowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello Krzysztof,
+Quoting Krzysztof Kozlowski (2016-02-15 22:20:29)
+> Hi,
+> 
+> Patchset attempts to remove the ARCH_EXYNOS7 symbol.
+> 
+> I rebased this on top of James':
+>  - clk: Move vendor's Kconfig into CCF menu section
+>    http://www.spinics.net/lists/devicetree/msg111953.html
+> 
+> The third patch depends on previous ones so one way of merging this
+> would be to prepare a tag from clk tree with first two patches
+> and the dependency. The last third patch would go through arm-soc.
 
-On 02/15/2016 08:20 PM, Krzysztof Kozlowski wrote:
-> On 16.02.2016 00:21, Javier Martinez Canillas wrote:
->> Hello Krzysztof,
->>
->> On 02/15/2016 03:54 AM, Krzysztof Kozlowski wrote:
->>> On 12.02.2016 13:30, Javier Martinez Canillas wrote:
->>>> The driver's init and exit function don't do anything besides adding and
->>>> deleting the I2C driver so the module_i2c_driver() macro could be used.
->>>>
->>>> Currently is not being used because the driver is initialized at subsys
->>>> initcall level, claiming that this is done to allow consumers devices to
->>>> use the resources provided by this driver. But dependencies should be in
->>>> the DT and consumers drivers should not rely in the registration order.
->>>>
->>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>> ---
->>>>
->>>>    drivers/mfd/max77686.c | 13 +------------
->>>>    1 file changed, 1 insertion(+), 12 deletions(-)
->>>>
->>>
->>> In the past not all dependencies supported deferred probing so such
->>> ordering was required.
->>>
->>> I don't like the "dependencies should be in DT" reason for the change...
->>> because it is kind of wishful thinking. Yeah, the dependencies should be
->>> in DT, but are they?
->>>
->>> Instead *please check it* and write:
->>> "Dependencies are in DT so manual ordering of init calls is not
->>> necessary any more".
->>>
->>
->> For the max77802 I know that's the case since the only two DTS in mainline
->> that use it are the Peach Pit and Pi and I'm very familiar with those two.
->>
->> But I wonder how can I check that this is the case for the max77686. Most
->> DTS in mainline have nodes that use some clocks and regulators provided by
->> the PMIC, only arch/arm/boot/dts/exynos5250-smdk5250.dts doesn't have one
->> of the regulators as input supply or clock consumer defined.
->
-> +Cc Marek Szyprowski, who may know a lot more about dependencies between
-> these.
->
-> I wouldn't care for drivers not taking references to regulators/clocks.
-> Most of necessary regulators and clocks are turned on by bootloader or
-> by default values in PMIC. This means that later probing of PMIC
-> shouldn't influence drivers which are not using it.
->
-> The remaining problem was unsupported deferred probing by some of the
-> drivers using regulators/clocks (drivers being consumers of regulators
-> or clocks). AFAIR one of example was USB OTG.
->
-> By "please check" in this case I mean - look if every regulator/clock
-> consumer using stuff exposed by PMIC, supports properly deferred probing.
->
+I've done this locally and things look good. I'm just waiting for Acks
+to patch #2 and I'll merge patches #1 and #2 and provide a stable tag
+named clk-samsung-kconfig, based on v4.5-rc1.
 
-Got it, I checked and all but one consumer driver that use resources
-provided by the max77686 defer probe when this is not found AFAICT.
+These patches were not based on -rc1, but the fixups were trivial so I'm
+fine with them.
 
-Clocks:
+Regards,
+Mike
 
-drivers/mmc/core/pwrseq_simple.c
-drivers/rtc/rtc-s3c.c
-
-Regulators:
-
-drivers/cpufreq/cpufreq-dt.c
-drivers/gpu/drm/exynos/exynos_drm_dsi.c
-drivers/gpu/drm/exynos/exynos_hdmi.c
-drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
-drivers/iio/adc/exynos_adc.c
-drivers/input/misc/max77693-haptic.c
-drivers/input/touchscreen/mms114.c
-drivers/media/i2c/s5c73m3/s5c73m3-core.c
-drivers/media/i2c/s5k6a3.c
-drivers/media/platform/exynos4-is/mipi-csis.c
-drivers/mfd/wm8994-core.c
-drivers/mmc/host/dw_mmc.c
-drivers/mmc/host/sdhci.c
-drivers/usb/dwc2/platform.c
-
-The only driver that does not defer probe when an input supply
-isn't found is drivers/thermal/samsung/exynos_tmu.c (vtmu-supply).
-
-So that should be handled before this series are merged.
-
->> For the clock, I guess the RTC is just broken since it's using the s3c6410
->> controller that requires a source clock and this is not defined.
->>
->> Now the question is if it doesn't really need the regulators or is that
->> the DTS isn't correctly defined and some drivers were relying on the MFD
->> and regulator drivers to be registered at subsys initcall level?
->
-> I suspect the consumers are not defined in DTS. However I wouldn't care
-> about such issue. If there is no consumer, then probe order shouldn't
-> matter...
->
-
-Ok.
-  
->>
->>> My fast tests of this patch shown that it works good... but some more
->>> thorough tests should be done.
->>>
->>
->> What do you suggest? The drivers now support deferred probing but as said,
->> I don't know how I can be sure that drivers aren't missing input supplies
->> and relying in regulators being registered early and marked as always-on.
->
-> So test it... You are posting a small improvement without any important
-
-Yes, problem is that I don't have access to boards with a max77686,
-and that's why I asked for help to test the series on those :)
-
-> benefit but in the same time it might broke existing platforms. Perfect
-> is the enemy of the good (or if it ain't broken, don't touch it), so
-> please be sure that max77686 still works. :)
-
-Agreed, I never said that adding regressions was justified. I just wanted
-to get rid of the initcall levels ordering hack but of course only after
-the patches have been tested and found to not cause regressions.
-
-But feel free to nack the series if you consider this to be too risky.
-
->
+> 
+> Changes since v4:
+> =================
+> 1. Rebased on "clk: Move vendor's Kconfig into CCF menu section"
+>    existing in clock tree.
+> 2. Re-work patch 2/3 (see specific changelog).
+> 
+> Changes since v3:
+> =================
+> 1. Rebase on next-20160127 (s3c64xx became multiplatform).
+> 
+> Changes since v2:
+> =================
+> 1. Follow Arnd's advice about not enabling silently the newly added
+>    EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+>    also a trigger for some changes in placement of Samsung clocks
+>    Kconfig entries...
+> 2. ... which lead to introducing patch 1.
+> 
+> 
+> Rationale:
+> ==========
+> We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+> fall under generic ARCH_EXYNOS. In the same time there is no sense
+> in building clocks for these ARMv8 SoCs on ARMv7 builds.
+> 
+> 
 > Best regards,
 > Krzysztof
->
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> 
+> Krzysztof Kozlowski (3):
+>   clk: samsung: Enable COMPILE_TEST for Samsung clocks
+>   clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+>   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+> 
+>  arch/arm64/Kconfig.platforms        | 11 ++---------
+>  arch/arm64/boot/dts/exynos/Makefile |  2 +-
+>  arch/arm64/configs/defconfig        |  2 +-
+>  drivers/clk/samsung/Kconfig         | 18 +++++++++++++-----
+>  drivers/clk/samsung/Makefile        |  4 ++--
+>  5 files changed, 19 insertions(+), 18 deletions(-)
+> 
+> -- 
+> 2.5.0
+> 
