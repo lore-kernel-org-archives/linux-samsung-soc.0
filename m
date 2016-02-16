@@ -1,109 +1,75 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 00/17] drm encoders cleanup: nuke optional dummy
- encoder mode_fixup function.
-Date: Tue, 16 Feb 2016 15:38:21 +0100
-Message-ID: <20160216143821.GG32705@phenom.ffwll.local>
-References: <cover.1455540137.git.palminha@synopsys.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] regulator: s5m8767: fix get_register() error handling
+Date: Tue, 16 Feb 2016 15:53:11 +0100
+Message-ID: <1455634402-1997203-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:33573 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932498AbcBPOh4 (ORCPT
+Received: from mout.kundenserver.de ([217.72.192.75]:62629 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932273AbcBPOx7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 09:37:56 -0500
-Received: by mail-wm0-f48.google.com with SMTP id g62so194524393wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Feb 2016 06:37:55 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <cover.1455540137.git.palminha@synopsys.com>
+	Tue, 16 Feb 2016 09:53:59 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
-Cc: dri-devel@lists.freedesktop.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, benjamin.gaignard@linaro.org, jingoohan1@gmail.com, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 15, 2016 at 12:57:04PM +0000, Carlos Palminha wrote:
-> mode_fixup function for encoder drivers became optional with patch
-> http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
-> 
-> This patch set nukes all the dummy mode_fixup implementations.
-> 
-> (made on top of Daniel topic/drm-misc branch)
-> 
-> Changes v1->v2: incorporated Daniel comments
-> * added signed-off-by line to all patches
-> * threading enabled due to e-mail server constraints
-> * common blurb lines to all patches
-> * add reviewed by Alex, to patches 4 and 14
+The s5m8767_pmic_probe() function calls s5m8767_get_register() to
+read data without checking the return code, which produces a compile-time
+warning when that data is accessed:
 
-I've thrown them all into a topic branch for soaking, and plan to merge
-into drm-misc in the next few days.
+drivers/regulator/s5m8767.c: In function 's5m8767_pmic_probe':
+drivers/regulator/s5m8767.c:924:7: error: 'enable_reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+drivers/regulator/s5m8767.c:944:30: error: 'enable_val' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Thanks, Daniel
+This changes the s5m8767_get_register() function to return a -EINVAL
+not just for an invalid register number but also for an invalid
+regulator number, as both would result in returning uninitialized
+data. The s5m8767_pmic_probe() function is then changed accordingly
+to fail on a read error, as all the other callers of s5m8767_get_register()
+already do.
 
-> 
-> Carlos Palminha (17):
->   drm/virtio: removed optional dummy encoder mode_fixup function.
->   drm/udl: removed optional dummy encoder mode_fixup function.
->   drm/exynos: removed optional dummy encoder mode_fixup function.
->   drm/amdgpu: removed optional dummy encoder mode_fixup function.
->   drm/ast: removed optional dummy encoder mode_fixup function.
->   drm/bochs: removed optional dummy encoder mode_fixup function.
->   drm/cirrus: removed optional dummy encoder mode_fixup function.
->   drm/exynos: removed optional dummy encoder mode_fixup function.
->   drm/gma500: removed optional dummy encoder mode_fixup function.
->   drm/imx: removed optional dummy encoder mode_fixup function.
->   drm/msm/mdp: removed optional dummy encoder mode_fixup function.
->   drm/mgag200: removed optional dummy encoder mode_fixup function.
->   drm/qxl: removed optional dummy encoder mode_fixup function.
->   drm/radeon: removed optional dummy encoder mode_fixup function.
->   drm/rockchip: removed optional dummy encoder mode_fixup function.
->   drm/sti: removed optional dummy encoder mode_fixup function.
->   drm/tilcdc: removed optional dummy encoder mode_fixup function.
-> 
->  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c           |  8 --------
->  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c           |  8 --------
->  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c            |  8 --------
->  drivers/gpu/drm/ast/ast_mode.c                   |  8 --------
->  drivers/gpu/drm/bochs/bochs_kms.c                |  8 --------
->  drivers/gpu/drm/cirrus/cirrus_mode.c             |  9 ---------
->  drivers/gpu/drm/exynos/exynos_dp_core.c          |  8 --------
->  drivers/gpu/drm/exynos/exynos_drm_dpi.c          |  8 --------
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c          |  8 --------
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c         |  8 --------
->  drivers/gpu/drm/gma500/cdv_intel_crt.c           |  1 -
->  drivers/gpu/drm/gma500/cdv_intel_hdmi.c          |  1 -
->  drivers/gpu/drm/gma500/gma_display.c             |  7 -------
->  drivers/gpu/drm/gma500/gma_display.h             |  3 ---
->  drivers/gpu/drm/gma500/oaktrail_hdmi.c           |  1 -
->  drivers/gpu/drm/imx/dw_hdmi-imx.c                |  8 --------
->  drivers/gpu/drm/imx/imx-ldb.c                    |  8 --------
->  drivers/gpu/drm/imx/imx-tve.c                    |  8 --------
->  drivers/gpu/drm/imx/parallel-display.c           |  8 --------
->  drivers/gpu/drm/mgag200/mgag200_mode.c           |  8 --------
->  drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c  |  8 --------
->  drivers/gpu/drm/msm/mdp/mdp4/mdp4_dtv_encoder.c  |  8 --------
->  drivers/gpu/drm/msm/mdp/mdp4/mdp4_lcdc_encoder.c |  8 --------
->  drivers/gpu/drm/msm/mdp/mdp5/mdp5_cmd_encoder.c  |  9 ---------
->  drivers/gpu/drm/msm/mdp/mdp5/mdp5_encoder.c      |  8 --------
->  drivers/gpu/drm/qxl/qxl_display.c                |  9 ---------
->  drivers/gpu/drm/radeon/atombios_encoders.c       |  8 --------
->  drivers/gpu/drm/rockchip/dw-mipi-dsi.c           |  8 --------
->  drivers/gpu/drm/sti/sti_tvout.c                  | 10 ----------
->  drivers/gpu/drm/tilcdc/tilcdc_panel.c            |  9 ---------
->  drivers/gpu/drm/tilcdc/tilcdc_tfp410.c           |  9 ---------
->  drivers/gpu/drm/udl/udl_encoder.c                |  8 --------
->  drivers/gpu/drm/virtio/virtgpu_display.c         |  8 --------
->  33 files changed, 244 deletions(-)
-> 
-> -- 
-> 2.5.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+In practice this probably cannot happen, as we don't call
+s5m8767_get_register() with invalid arguments, but the gcc
+warning seems valid in principle, in terms writing safe
+error checking.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 9c4c60554acf ("regulator: s5m8767: Convert to use regulator_[enable|disable|is_enabled]_regmap")
+---
+ drivers/regulator/s5m8767.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 58f5d3b8e981..27343e1c43ef 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -202,9 +202,10 @@ static int s5m8767_get_register(struct s5m8767_info *s5m8767, int reg_id,
+ 		}
+ 	}
+ 
+-	if (i < s5m8767->num_regulators)
+-		*enable_ctrl =
+-		s5m8767_opmode_reg[reg_id][mode] << S5M8767_ENCTRL_SHIFT;
++	if (i >= s5m8767->num_regulators)
++		return -EINVAL;
++
++	*enable_ctrl = s5m8767_opmode_reg[reg_id][mode] << S5M8767_ENCTRL_SHIFT;
+ 
+ 	return 0;
+ }
+@@ -937,8 +938,12 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 			else
+ 				regulators[id].vsel_mask = 0xff;
+ 
+-			s5m8767_get_register(s5m8767, id, &enable_reg,
++			ret = s5m8767_get_register(s5m8767, id, &enable_reg,
+ 					     &enable_val);
++			if (ret) {
++				dev_err(s5m8767->dev, "error reading registers\n");
++				return ret;
++			}
+ 			regulators[id].enable_reg = enable_reg;
+ 			regulators[id].enable_mask = S5M8767_ENCTRL_MASK;
+ 			regulators[id].enable_val = enable_val;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.0
