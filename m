@@ -1,66 +1,65 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] rtc: s5m: De-inline large functions to save space
-Date: Tue, 16 Feb 2016 11:04:42 +0900
-Message-ID: <1455588282-7251-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v5 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Date: Tue, 16 Feb 2016 15:20:29 +0900
+Message-ID: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
-Cc: Denys Vlasenko <vda.linux@googlemail.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Few functions were marked inline even though they were relatively large
-and sometimes used in multiple places. De-inline them to let the
-compiler decide whether optimization makes sense. This fixes inline_hunt
-report:
-drivers/rtc/rtc-s5m.c: Deinline s5m8767_rtc_set_alarm_reg, save 704 bytes
-drivers/rtc/rtc-s5m.c: Deinline s5m8767_wait_for_udr_update, save 192 bytes
+Hi,
 
-Reported-by: Denys Vlasenko <vda.linux@googlemail.com>
-Cc: Denys Vlasenko <vda.linux@googlemail.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/rtc/rtc-s5m.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Patchset attempts to remove the ARCH_EXYNOS7 symbol.
 
-diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index 7407d7394bb4..0477678d968f 100644
---- a/drivers/rtc/rtc-s5m.c
-+++ b/drivers/rtc/rtc-s5m.c
-@@ -216,7 +216,7 @@ static int s5m8767_tm_to_data(struct rtc_time *tm, u8 *data)
-  * Read RTC_UDR_CON register and wait till UDR field is cleared.
-  * This indicates that time/alarm update ended.
-  */
--static inline int s5m8767_wait_for_udr_update(struct s5m_rtc_info *info)
-+static int s5m8767_wait_for_udr_update(struct s5m_rtc_info *info)
- {
- 	int ret, retry = UDR_READ_RETRY_CNT;
- 	unsigned int data;
-@@ -231,7 +231,7 @@ static inline int s5m8767_wait_for_udr_update(struct s5m_rtc_info *info)
- 	return ret;
- }
- 
--static inline int s5m_check_peding_alarm_interrupt(struct s5m_rtc_info *info,
-+static int s5m_check_peding_alarm_interrupt(struct s5m_rtc_info *info,
- 		struct rtc_wkalrm *alarm)
- {
- 	int ret;
-@@ -264,7 +264,7 @@ static inline int s5m_check_peding_alarm_interrupt(struct s5m_rtc_info *info,
- 	return 0;
- }
- 
--static inline int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
-+static int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
- {
- 	int ret;
- 	unsigned int data;
-@@ -288,7 +288,7 @@ static inline int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
- 	return ret;
- }
- 
--static inline int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
-+static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
- {
- 	int ret;
- 	unsigned int data;
+I rebased this on top of James':
+ - clk: Move vendor's Kconfig into CCF menu section
+   http://www.spinics.net/lists/devicetree/msg111953.html
+
+The third patch depends on previous ones so one way of merging this
+would be to prepare a tag from clk tree with first two patches
+and the dependency. The last third patch would go through arm-soc.
+
+Changes since v4:
+=================
+1. Rebased on "clk: Move vendor's Kconfig into CCF menu section"
+   existing in clock tree.
+2. Re-work patch 2/3 (see specific changelog).
+
+Changes since v3:
+=================
+1. Rebase on next-20160127 (s3c64xx became multiplatform).
+
+Changes since v2:
+=================
+1. Follow Arnd's advice about not enabling silently the newly added
+   EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+   also a trigger for some changes in placement of Samsung clocks
+   Kconfig entries...
+2. ... which lead to introducing patch 1.
+
+
+Rationale:
+==========
+We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+fall under generic ARCH_EXYNOS. In the same time there is no sense
+in building clocks for these ARMv8 SoCs on ARMv7 builds.
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (3):
+  clk: samsung: Enable COMPILE_TEST for Samsung clocks
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ drivers/clk/samsung/Kconfig         | 18 +++++++++++++-----
+ drivers/clk/samsung/Makefile        |  4 ++--
+ 5 files changed, 19 insertions(+), 18 deletions(-)
+
 -- 
 2.5.0
