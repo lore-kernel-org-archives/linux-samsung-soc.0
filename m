@@ -1,95 +1,56 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 6/7] fbdev: exynos: fix IS_ERR_VALUE usage
-Date: Tue, 16 Feb 2016 15:36:12 +0200
-Message-ID: <56C325CC.60808@ti.com>
-References: <1455546925-22119-1-git-send-email-a.hajda@samsung.com>
- <1455546925-22119-7-git-send-email-a.hajda@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: dts: Move syscon reboot/poweroff to common dtsi for
+ Exynos
+Date: Tue, 16 Feb 2016 10:58:20 -0300
+Message-ID: <56C32AFC.6030905@osg.samsung.com>
+References: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
+ <56C02265.40103@samsung.com> <56C1D4D1.2050108@osg.samsung.com>
+ <56C25982.4020301@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec"
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:46226 "EHLO bear.ext.ti.com"
+Received: from lists.s-osg.org ([54.187.51.154]:48506 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932301AbcBPNgW (ORCPT
+	id S932411AbcBPN6e (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 08:36:22 -0500
-In-Reply-To: <1455546925-22119-7-git-send-email-a.hajda@samsung.com>
+	Tue, 16 Feb 2016 08:58:34 -0500
+In-Reply-To: <56C25982.4020301@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
---LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hello Krzysztof,
 
+On 02/15/2016 08:04 PM, Krzysztof Kozlowski wrote:
+> On 15.02.2016 22:38, Javier Martinez Canillas wrote:
+>>>
+>>> In some of the DTSI this was under "soc" node, not at top-level.
+>>> Unfortunately we do not have consistency here - some DTSI have "soc",
+>>
+>> Yes, I noticed this but as you said not all DTSI have a soc node
+>> and that's why I made it top level in the DTSI.
+>>
+>>> some not. Anyway I think we should move to "soc" version.
+>>>
+>>
+>> Not sure I'm following, did you mean to do it as a follow up or
+>> to add a soc node for the missing DTSI as a part of this series?
+>
+> I meant to send a v2 with this under "soc" node even though on some DTS
+> we do not have the "soc". Optional follow up would be to make DTS
+> consistent and move nodes under "soc"... but that would be also a lot of
+> churn.
+>
 
+Thanks for the clarification. I'll post a v2 then moving under a soc node.
+  
+> Best regards,
+> Krzysztof
 
-On 15/02/16 16:35, Andrzej Hajda wrote:
-> IS_ERR_VALUE macro should be used only with unsigned long type.
-> For signed types comparison 'ret < 0' should be used.
->=20
-> The patch follows conclusion from discussion on LKML [1][2].
->=20
-> [1]: http://permalink.gmane.org/gmane.linux.kernel/2120927
-> [2]: http://permalink.gmane.org/gmane.linux.kernel/2150581
->=20
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/video/fbdev/exynos/exynos_mipi_dsi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c b/drivers/vid=
-eo/fbdev/exynos/exynos_mipi_dsi.c
-> index b527fe4..951b592 100644
-> --- a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-> +++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-> @@ -402,12 +402,12 @@ static int exynos_mipi_dsi_probe(struct platform_=
-device *pdev)
->  		goto error;
->  	}
-> =20
-> -	dsim->irq =3D platform_get_irq(pdev, 0);
-> -	if (IS_ERR_VALUE(dsim->irq)) {
-> +	ret =3D platform_get_irq(pdev, 0);
-> +	if (ret < 0) {
->  		dev_err(&pdev->dev, "failed to request dsim irq resource\n");
-> -		ret =3D -EINVAL;
->  		goto error;
->  	}
-> +	dsim->irq =3D ret;
-> =20
->  	init_completion(&dsim_wr_comp);
->  	init_completion(&dsim_rd_comp);
->=20
-
-Thanks, queued for 4.6.
-
- Tomi
-
-
---LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJWwyXMAAoJEPo9qoy8lh71dJsP/i4pMtBpWtY1AyNrZjJ/zVcH
-t22ClJkJ/4DTKiZPvKisGMEpF48hfxgWPzUkktypyqOY7rX6hag928rv2/VLqULb
-WC3DXdvsdZ8R+jq7GmHd6bY7fx7qU9w51CkOcvsCKHCjo3qrHqaXfi15FPeKrNVZ
-+47PqlPlccr03PQP6x4b0/d7wk0cUX4j2ANnxxQ+DhaTBQ3dGC7wF2X6v9rFl2XV
-1BJR8yoOjXSNp0Znk5U5pjUhJnFRZ/JmoJVjniwD39FZRg9/st8KzPZ4EB7wmFJ5
-GpX2iQFYwePvtImV8LSuXjEtt7j5oIcPKnT//9U+D9B2l7/gx6XGdnurnb8nQ5ie
-+4Wgt/FavzSjWeZ//q31FfvKdi3VVs2QSZqb0CQSQ6QR0cAWoNZiMGyk5csWks/O
-sco0eeENYTGG/JXHVtDk4K2LYdYfguS+rAtEG/TahaCn840t5Ob66lEO0avVZB9T
-HTkWNrIHvbd2uPJkVNwWS9Rb2Q9G9fpqc250S6jtnIS0SWeODcJt/iIXyW2v+SG9
-GDGY+KboA9Jyy7at/BfkXEINIMHiowQfF6HoyQmT6wePDpbif4vznnOedF9vYFGD
-DqioeRXsPyXRgQGuVfYm1L+Dkxgux/0WwGoTTtbGOwWPf3gAD8rBq1oS29nhnY8g
-rzH7Y3MEDfci8m8wH/GU
-=Mcyz
------END PGP SIGNATURE-----
-
---LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec--
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
