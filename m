@@ -1,49 +1,93 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 11/11] iommu: exynos: add Maintainers entry for Exynos SYSMMU
- driver
-Date: Tue, 16 Feb 2016 15:57:04 +0100
-Message-ID: <1455634624-18130-12-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 02/11] iommu: exynos: add support for IOMMU_DOMAIN_DMA domain
+ type
+Date: Tue, 16 Feb 2016 15:56:55 +0100
+Message-ID: <1455634624-18130-3-git-send-email-m.szyprowski@samsung.com>
 References: <1455634624-18130-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:58256 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932216AbcBPO5r (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:25233 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755273AbcBPO5m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 09:57:47 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
+	Tue, 16 Feb 2016 09:57:42 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2N0051RAW8HJ30@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 16 Feb 2016 14:57:44 +0000 (GMT)
+ with ESMTP id <0O2N00J54AW4DD30@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Feb 2016 14:57:40 +0000 (GMT)
 In-reply-to: <1455634624-18130-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Add Marek Szyprowski as maintainer for Exynos IOMMU driver.
+This patch adds support for DMA domain type. Such domain have DMA cookie
+prepared and can be used by generic DMA-IOMMU glue layer.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/iommu/exynos-iommu.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7bd927e..1e9c4df 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4336,6 +4336,12 @@ L:	dri-devel@lists.freedesktop.org
- S:	Maintained
- F:	drivers/gpu/drm/exynos/exynos_dp*
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 4fc0790..595e0da 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -25,9 +25,9 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
++#include <linux/dma-iommu.h>
  
-+EXYNOS SYSMMU (IOMMU) driver
-+M:	Marek Szyprowski <m.szyprowski@samsung.com>
-+L:	iommu@lists.linux-foundation.org
-+S:	Maintained
-+F:	drivers/iommu/exynos-iommu.c
+ #include <asm/cacheflush.h>
+-#include <asm/dma-iommu.h>
+ #include <asm/pgtable.h>
+ 
+ typedef u32 sysmmu_iova_t;
+@@ -662,16 +662,21 @@ static struct iommu_domain *exynos_iommu_domain_alloc(unsigned type)
+ 	struct exynos_iommu_domain *domain;
+ 	int i;
+ 
+-	if (type != IOMMU_DOMAIN_UNMANAGED)
+-		return NULL;
+ 
+ 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+ 	if (!domain)
+ 		return NULL;
+ 
++	if (type == IOMMU_DOMAIN_DMA) {
++		if (iommu_get_dma_cookie(&domain->domain) != 0)
++			goto err_pgtable;
++	} else if (type != IOMMU_DOMAIN_UNMANAGED) {
++		goto err_pgtable;
++	}
 +
- EXYNOS MIPI DISPLAY DRIVERS
- M:	Inki Dae <inki.dae@samsung.com>
- M:	Donghwa Lee <dh09.lee@samsung.com>
+ 	domain->pgtable = (sysmmu_pte_t *)__get_free_pages(GFP_KERNEL, 2);
+ 	if (!domain->pgtable)
+-		goto err_pgtable;
++		goto err_dma_cookie;
+ 
+ 	domain->lv2entcnt = (short *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 1);
+ 	if (!domain->lv2entcnt)
+@@ -703,6 +708,9 @@ static struct iommu_domain *exynos_iommu_domain_alloc(unsigned type)
+ 
+ err_counter:
+ 	free_pages((unsigned long)domain->pgtable, 2);
++err_dma_cookie:
++	if (type == IOMMU_DOMAIN_DMA)
++		iommu_put_dma_cookie(&domain->domain);
+ err_pgtable:
+ 	kfree(domain);
+ 	return NULL;
+@@ -727,6 +735,9 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
+ 
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+ 
++	if (iommu_domain->type == IOMMU_DOMAIN_DMA)
++		iommu_put_dma_cookie(iommu_domain);
++
+ 	for (i = 0; i < NUM_LV1ENTRIES; i++)
+ 		if (lv1ent_page(domain->pgtable + i))
+ 			kmem_cache_free(lv2table_kmem_cache,
 -- 
 1.9.2
