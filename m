@@ -1,70 +1,49 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 07/11] iommu: exynos: refactor init config code
-Date: Tue, 16 Feb 2016 15:57:00 +0100
-Message-ID: <1455634624-18130-8-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 11/11] iommu: exynos: add Maintainers entry for Exynos SYSMMU
+ driver
+Date: Tue, 16 Feb 2016 15:57:04 +0100
+Message-ID: <1455634624-18130-12-git-send-email-m.szyprowski@samsung.com>
 References: <1455634624-18130-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22655 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932221AbcBPO5s (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:58256 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932216AbcBPO5r (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 09:57:48 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Tue, 16 Feb 2016 09:57:47 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2N00GD1AW6NT30@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 16 Feb 2016 14:57:42 +0000 (GMT)
+ with ESMTP id <0O2N0051RAW8HJ30@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Feb 2016 14:57:44 +0000 (GMT)
 In-reply-to: <1455634624-18130-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch rewrites sysmmu_init_config function to make it easier to read
-and understand.
+Add Marek Szyprowski as maintainer for Exynos IOMMU driver.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/iommu/exynos-iommu.c | 25 +++++++++----------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 3a577a4..15787a1 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -383,24 +383,17 @@ static bool __sysmmu_disable(struct sysmmu_drvdata *data)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7bd927e..1e9c4df 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4336,6 +4336,12 @@ L:	dri-devel@lists.freedesktop.org
+ S:	Maintained
+ F:	drivers/gpu/drm/exynos/exynos_dp*
  
- static void __sysmmu_init_config(struct sysmmu_drvdata *data)
- {
--	unsigned int cfg = CFG_LRU | CFG_QOS(15);
--	unsigned int ver;
--
--	ver = MMU_RAW_VER(__raw_readl(data->sfrbase + REG_MMU_VERSION));
--	if (MMU_MAJ_VER(ver) == 3) {
--		if (MMU_MIN_VER(ver) >= 2) {
--			cfg |= CFG_FLPDCACHE;
--			if (MMU_MIN_VER(ver) == 3) {
--				cfg |= CFG_ACGEN;
--				cfg &= ~CFG_LRU;
--			} else {
--				cfg |= CFG_SYSSEL;
--			}
--		}
--	}
-+	unsigned int cfg;
++EXYNOS SYSMMU (IOMMU) driver
++M:	Marek Szyprowski <m.szyprowski@samsung.com>
++L:	iommu@lists.linux-foundation.org
++S:	Maintained
++F:	drivers/iommu/exynos-iommu.c
 +
-+	data->version = MMU_RAW_VER(__raw_readl(data->sfrbase + REG_MMU_VERSION));
-+	if (data->version <= MAKE_MMU_VER(3, 1))
-+		cfg = CFG_LRU | CFG_QOS(15);
-+	else if (data->version <= MAKE_MMU_VER(3, 2))
-+		cfg = CFG_LRU | CFG_QOS(15) | CFG_FLPDCACHE | CFG_SYSSEL;
-+	else
-+		cfg = CFG_QOS(15) | CFG_FLPDCACHE | CFG_ACGEN;
- 
- 	__raw_writel(cfg, data->sfrbase + REG_MMU_CFG);
--	data->version = ver;
- }
- 
- static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
+ EXYNOS MIPI DISPLAY DRIVERS
+ M:	Inki Dae <inki.dae@samsung.com>
+ M:	Donghwa Lee <dh09.lee@samsung.com>
 -- 
 1.9.2
