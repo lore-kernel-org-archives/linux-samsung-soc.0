@@ -1,56 +1,92 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: Move syscon reboot/poweroff to common dtsi for
- Exynos
-Date: Tue, 16 Feb 2016 10:58:20 -0300
-Message-ID: <56C32AFC.6030905@osg.samsung.com>
-References: <1455042606-10075-1-git-send-email-javier@osg.samsung.com>
- <56C02265.40103@samsung.com> <56C1D4D1.2050108@osg.samsung.com>
- <56C25982.4020301@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 03/17] drm/exynos: removed optional dummy encoder
+	mode_fixup function.
+Date: Tue, 16 Feb 2016 15:31:28 +0100
+Message-ID: <20160216143128.GE32705@phenom.ffwll.local>
+References: <cover.1455540137.git.palminha@synopsys.com>
+	<3768b670931572de51fca1102efa18d20dd770ee.1455540137.git.palminha@synopsys.com>
+	<CAMeQTsZLdMOnk7-isneoUyFBbQdiRUsGH6+EhD8W1LNB=80LVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48506 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932411AbcBPN6e (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 08:58:34 -0500
-In-Reply-To: <56C25982.4020301@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <CAMeQTsZLdMOnk7-isneoUyFBbQdiRUsGH6+EhD8W1LNB=80LVQ@mail.gmail.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, jingoohan1@gmail.com, Carlos Palminha <CARLOS.PALMINHA@synopsys.com>, dri-devel <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, benjamin.gaignard@linaro.org, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Hello Krzysztof,
+On Mon, Feb 15, 2016 at 02:49:09PM +0100, Patrik Jakobsson wrote:
+> Hi Carlos
+> 
+> Any particular reason why this patch isn't squashed with patch 8/17?
 
-On 02/15/2016 08:04 PM, Krzysztof Kozlowski wrote:
-> On 15.02.2016 22:38, Javier Martinez Canillas wrote:
->>>
->>> In some of the DTSI this was under "soc" node, not at top-level.
->>> Unfortunately we do not have consistency here - some DTSI have "soc",
->>
->> Yes, I noticed this but as you said not all DTSI have a soc node
->> and that's why I made it top level in the DTSI.
->>
->>> some not. Anyway I think we should move to "soc" version.
->>>
->>
->> Not sure I'm following, did you mean to do it as a follow up or
->> to add a soc node for the missing DTSI as a part of this series?
->
-> I meant to send a v2 with this under "soc" node even though on some DTS
-> we do not have the "soc". Optional follow up would be to make DTS
-> consistent and move nodes under "soc"... but that would be also a lot of
-> churn.
->
+I've squashed them while applying.
+-Daniel
 
-Thanks for the clarification. I'll post a v2 then moving under a soc node.
-  
-> Best regards,
-> Krzysztof
+> 
+> Thanks
+> Patrik
+> 
+> 
+> On Mon, Feb 15, 2016 at 1:58 PM, Carlos Palminha
+> <CARLOS.PALMINHA@synopsys.com> wrote:
+> > mode_fixup function for encoder drivers became optional with patch
+> > http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
+> >
+> > This patch set nukes all the dummy mode_fixup implementations.
+> >
+> > (made on top of Daniel topic/drm-misc branch)
+> >
+> > Signed-off-by: Carlos Palminha <palminha@synopsys.com>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 8 --------
+> >  1 file changed, 8 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > index e977a81..736115c 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > @@ -1597,13 +1597,6 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+> >         return 0;
+> >  }
+> >
+> > -static bool exynos_dsi_mode_fixup(struct drm_encoder *encoder,
+> > -                                 const struct drm_display_mode *mode,
+> > -                                 struct drm_display_mode *adjusted_mode)
+> > -{
+> > -       return true;
+> > -}
+> > -
+> >  static void exynos_dsi_mode_set(struct drm_encoder *encoder,
+> >                                 struct drm_display_mode *mode,
+> >                                 struct drm_display_mode *adjusted_mode)
+> > @@ -1623,7 +1616,6 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
+> >  }
+> >
+> >  static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
+> > -       .mode_fixup = exynos_dsi_mode_fixup,
+> >         .mode_set = exynos_dsi_mode_set,
+> >         .enable = exynos_dsi_enable,
+> >         .disable = exynos_dsi_disable,
+> > --
+> > 2.5.0
+> >
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
