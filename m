@@ -1,41 +1,109 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] rtc: s5m: De-inline large functions to save space
-Date: Tue, 16 Feb 2016 11:34:00 -0300
-Message-ID: <56C33358.7040807@osg.samsung.com>
-References: <1455588282-7251-1-git-send-email-k.kozlowski@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 00/17] drm encoders cleanup: nuke optional dummy
+ encoder mode_fixup function.
+Date: Tue, 16 Feb 2016 15:38:21 +0100
+Message-ID: <20160216143821.GG32705@phenom.ffwll.local>
+References: <cover.1455540137.git.palminha@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48512 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932530AbcBPOeL (ORCPT
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:33573 "EHLO
+	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932498AbcBPOh4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Feb 2016 09:34:11 -0500
-In-Reply-To: <1455588282-7251-1-git-send-email-k.kozlowski@samsung.com>
+	Tue, 16 Feb 2016 09:37:56 -0500
+Received: by mail-wm0-f48.google.com with SMTP id g62so194524393wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Feb 2016 06:37:55 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <cover.1455540137.git.palminha@synopsys.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
-Cc: Denys Vlasenko <vda.linux@googlemail.com>
+To: Carlos Palminha <CARLOS.PALMINHA@synopsys.com>
+Cc: dri-devel@lists.freedesktop.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, benjamin.gaignard@linaro.org, jingoohan1@gmail.com, virtualization@lists.linux-foundation.org, linux-rockchip@lists.infradead.org, kgene@kernel.org, vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org
 
-Hello Krzysztof,
+On Mon, Feb 15, 2016 at 12:57:04PM +0000, Carlos Palminha wrote:
+> mode_fixup function for encoder drivers became optional with patch
+> http://patchwork.freedesktop.org/patch/msgid/1455106522-32307-1-git-send-email-palminha@synopsys.com
+> 
+> This patch set nukes all the dummy mode_fixup implementations.
+> 
+> (made on top of Daniel topic/drm-misc branch)
+> 
+> Changes v1->v2: incorporated Daniel comments
+> * added signed-off-by line to all patches
+> * threading enabled due to e-mail server constraints
+> * common blurb lines to all patches
+> * add reviewed by Alex, to patches 4 and 14
 
-On 02/15/2016 11:04 PM, Krzysztof Kozlowski wrote:
-> Few functions were marked inline even though they were relatively large
-> and sometimes used in multiple places. De-inline them to let the
-> compiler decide whether optimization makes sense. This fixes inline_hunt
-> report:
-> drivers/rtc/rtc-s5m.c: Deinline s5m8767_rtc_set_alarm_reg, save 704 bytes
-> drivers/rtc/rtc-s5m.c: Deinline s5m8767_wait_for_udr_update, save 192 bytes
->
-> Reported-by: Denys Vlasenko <vda.linux@googlemail.com>
-> Cc: Denys Vlasenko <vda.linux@googlemail.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I've thrown them all into a topic branch for soaking, and plan to merge
+into drm-misc in the next few days.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Thanks, Daniel
 
-Best regards,
+> 
+> Carlos Palminha (17):
+>   drm/virtio: removed optional dummy encoder mode_fixup function.
+>   drm/udl: removed optional dummy encoder mode_fixup function.
+>   drm/exynos: removed optional dummy encoder mode_fixup function.
+>   drm/amdgpu: removed optional dummy encoder mode_fixup function.
+>   drm/ast: removed optional dummy encoder mode_fixup function.
+>   drm/bochs: removed optional dummy encoder mode_fixup function.
+>   drm/cirrus: removed optional dummy encoder mode_fixup function.
+>   drm/exynos: removed optional dummy encoder mode_fixup function.
+>   drm/gma500: removed optional dummy encoder mode_fixup function.
+>   drm/imx: removed optional dummy encoder mode_fixup function.
+>   drm/msm/mdp: removed optional dummy encoder mode_fixup function.
+>   drm/mgag200: removed optional dummy encoder mode_fixup function.
+>   drm/qxl: removed optional dummy encoder mode_fixup function.
+>   drm/radeon: removed optional dummy encoder mode_fixup function.
+>   drm/rockchip: removed optional dummy encoder mode_fixup function.
+>   drm/sti: removed optional dummy encoder mode_fixup function.
+>   drm/tilcdc: removed optional dummy encoder mode_fixup function.
+> 
+>  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c           |  8 --------
+>  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c           |  8 --------
+>  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c            |  8 --------
+>  drivers/gpu/drm/ast/ast_mode.c                   |  8 --------
+>  drivers/gpu/drm/bochs/bochs_kms.c                |  8 --------
+>  drivers/gpu/drm/cirrus/cirrus_mode.c             |  9 ---------
+>  drivers/gpu/drm/exynos/exynos_dp_core.c          |  8 --------
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c          |  8 --------
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c          |  8 --------
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c         |  8 --------
+>  drivers/gpu/drm/gma500/cdv_intel_crt.c           |  1 -
+>  drivers/gpu/drm/gma500/cdv_intel_hdmi.c          |  1 -
+>  drivers/gpu/drm/gma500/gma_display.c             |  7 -------
+>  drivers/gpu/drm/gma500/gma_display.h             |  3 ---
+>  drivers/gpu/drm/gma500/oaktrail_hdmi.c           |  1 -
+>  drivers/gpu/drm/imx/dw_hdmi-imx.c                |  8 --------
+>  drivers/gpu/drm/imx/imx-ldb.c                    |  8 --------
+>  drivers/gpu/drm/imx/imx-tve.c                    |  8 --------
+>  drivers/gpu/drm/imx/parallel-display.c           |  8 --------
+>  drivers/gpu/drm/mgag200/mgag200_mode.c           |  8 --------
+>  drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c  |  8 --------
+>  drivers/gpu/drm/msm/mdp/mdp4/mdp4_dtv_encoder.c  |  8 --------
+>  drivers/gpu/drm/msm/mdp/mdp4/mdp4_lcdc_encoder.c |  8 --------
+>  drivers/gpu/drm/msm/mdp/mdp5/mdp5_cmd_encoder.c  |  9 ---------
+>  drivers/gpu/drm/msm/mdp/mdp5/mdp5_encoder.c      |  8 --------
+>  drivers/gpu/drm/qxl/qxl_display.c                |  9 ---------
+>  drivers/gpu/drm/radeon/atombios_encoders.c       |  8 --------
+>  drivers/gpu/drm/rockchip/dw-mipi-dsi.c           |  8 --------
+>  drivers/gpu/drm/sti/sti_tvout.c                  | 10 ----------
+>  drivers/gpu/drm/tilcdc/tilcdc_panel.c            |  9 ---------
+>  drivers/gpu/drm/tilcdc/tilcdc_tfp410.c           |  9 ---------
+>  drivers/gpu/drm/udl/udl_encoder.c                |  8 --------
+>  drivers/gpu/drm/virtio/virtgpu_display.c         |  8 --------
+>  33 files changed, 244 deletions(-)
+> 
+> -- 
+> 2.5.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
