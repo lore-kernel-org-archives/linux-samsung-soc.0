@@ -1,67 +1,95 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v5 1/3] clk: samsung: Enable COMPILE_TEST for Samsung clocks
-Date: Tue, 16 Feb 2016 15:20:30 +0900
-Message-ID: <1455603632-11158-2-git-send-email-k.kozlowski@samsung.com>
-References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH 6/7] fbdev: exynos: fix IS_ERR_VALUE usage
+Date: Tue, 16 Feb 2016 15:36:12 +0200
+Message-ID: <56C325CC.60808@ti.com>
+References: <1455546925-22119-1-git-send-email-a.hajda@samsung.com>
+ <1455546925-22119-7-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:46226 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932301AbcBPNgW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Feb 2016 08:36:22 -0500
+In-Reply-To: <1455546925-22119-7-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Enable the COMPILE_TEST to get build coverage of some of Samsung clock
-controller drivers. Still some of them will be built only if
-appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
+--LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
----
 
-Changes since v4:
-1. Rebase on current clk tree which already contains patch moving
-   Samsung clock drivers into the COMMON_CLK section.
-   (b9e65ebc654, "clk: Move vendor's Kconfig into CCF menu section")
+On 15/02/16 16:35, Andrzej Hajda wrote:
+> IS_ERR_VALUE macro should be used only with unsigned long type.
+> For signed types comparison 'ret < 0' should be used.
+>=20
+> The patch follows conclusion from discussion on LKML [1][2].
+>=20
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2120927
+> [2]: http://permalink.gmane.org/gmane.linux.kernel/2150581
+>=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/video/fbdev/exynos/exynos_mipi_dsi.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c b/drivers/vid=
+eo/fbdev/exynos/exynos_mipi_dsi.c
+> index b527fe4..951b592 100644
+> --- a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
+> +++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
+> @@ -402,12 +402,12 @@ static int exynos_mipi_dsi_probe(struct platform_=
+device *pdev)
+>  		goto error;
+>  	}
+> =20
+> -	dsim->irq =3D platform_get_irq(pdev, 0);
+> -	if (IS_ERR_VALUE(dsim->irq)) {
+> +	ret =3D platform_get_irq(pdev, 0);
+> +	if (ret < 0) {
+>  		dev_err(&pdev->dev, "failed to request dsim irq resource\n");
+> -		ret =3D -EINVAL;
+>  		goto error;
+>  	}
+> +	dsim->irq =3D ret;
+> =20
+>  	init_completion(&dsim_wr_comp);
+>  	init_completion(&dsim_rd_comp);
+>=20
 
-Changes since v3:
-1. Rebase on next-20160127 (s3c64xx became multiplatform)
+Thanks, queued for 4.6.
 
-Changes since v2:
-1. New patch.
----
- drivers/clk/samsung/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Tomi
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index b3fe5cb01afe..dd6093a33f84 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -1,8 +1,8 @@
- config COMMON_CLK_SAMSUNG
--	bool
-+	bool "Samsung Exynos clock controller support" if COMPILE_TEST
- 
- config S3C2410_COMMON_CLK
--	bool
-+	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 	help
- 	  Build the s3c2410 clock driver based on the common clock framework.
-@@ -16,10 +16,10 @@ config S3C2410_COMMON_DCLK
- 	  framework.
- 
- config S3C2412_COMMON_CLK
--	bool
-+	bool "Samsung S3C2412 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 
- config S3C2443_COMMON_CLK
--	bool
-+	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 
--- 
-2.5.0
+
+--LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJWwyXMAAoJEPo9qoy8lh71dJsP/i4pMtBpWtY1AyNrZjJ/zVcH
+t22ClJkJ/4DTKiZPvKisGMEpF48hfxgWPzUkktypyqOY7rX6hag928rv2/VLqULb
+WC3DXdvsdZ8R+jq7GmHd6bY7fx7qU9w51CkOcvsCKHCjo3qrHqaXfi15FPeKrNVZ
++47PqlPlccr03PQP6x4b0/d7wk0cUX4j2ANnxxQ+DhaTBQ3dGC7wF2X6v9rFl2XV
+1BJR8yoOjXSNp0Znk5U5pjUhJnFRZ/JmoJVjniwD39FZRg9/st8KzPZ4EB7wmFJ5
+GpX2iQFYwePvtImV8LSuXjEtt7j5oIcPKnT//9U+D9B2l7/gx6XGdnurnb8nQ5ie
++4Wgt/FavzSjWeZ//q31FfvKdi3VVs2QSZqb0CQSQ6QR0cAWoNZiMGyk5csWks/O
+sco0eeENYTGG/JXHVtDk4K2LYdYfguS+rAtEG/TahaCn840t5Ob66lEO0avVZB9T
+HTkWNrIHvbd2uPJkVNwWS9Rb2Q9G9fpqc250S6jtnIS0SWeODcJt/iIXyW2v+SG9
+GDGY+KboA9Jyy7at/BfkXEINIMHiowQfF6HoyQmT6wePDpbif4vznnOedF9vYFGD
+DqioeRXsPyXRgQGuVfYm1L+Dkxgux/0WwGoTTtbGOwWPf3gAD8rBq1oS29nhnY8g
+rzH7Y3MEDfci8m8wH/GU
+=Mcyz
+-----END PGP SIGNATURE-----
+
+--LSM5hSrLrrvuQTACgqBJgEcX3uxEmu9Ec--
