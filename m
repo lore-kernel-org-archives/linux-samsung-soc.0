@@ -1,46 +1,49 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v5 RESEND 4/5] ARM: amba: Move reading of periphid to
- amba_match()
-Date: Wed, 17 Feb 2016 20:08:28 +0000
-Message-ID: <20160217200828.GH19428@n2100.arm.linux.org.uk>
-References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
- <1455101250-11327-5-git-send-email-m.szyprowski@samsung.com>
- <20160215175250.GJ10826@n2100.arm.linux.org.uk>
- <56C426C4.7040907@samsung.com>
+From: "Keller, Jacob E" <jacob.e.keller@intel.com>
+Subject: RE: [RFT] regulator: s2mps11: Simplify expression used in
+ BUILD_BUG_ON for some of preprocessors
+Date: Wed, 17 Feb 2016 20:37:26 +0000
+Message-ID: <02874ECE860811409154E81DA85FBB58579A1F19@ORSMSX115.amr.corp.intel.com>
+References: <1455696653-27023-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:58933 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423320AbcBQUIm (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:63508 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965137AbcBQUhj convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Feb 2016 15:08:42 -0500
-Content-Disposition: inline
-In-Reply-To: <56C426C4.7040907@samsung.com>
+	Wed, 17 Feb 2016 15:37:39 -0500
+In-Reply-To: <1455696653-27023-1-git-send-email-k.kozlowski@samsung.com>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
 
-On Wed, Feb 17, 2016 at 08:52:36AM +0100, Marek Szyprowski wrote:
-> Then the only solution right now I see is to get back to v1:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/388199.html
-> which at least handles correctly device registration when power domain
-> driver is available.
+Hi,
 
-... and which has the ability to break platforms if the PM domain is
-not already available.
+> -----Original Message-----
+> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+> owner@vger.kernel.org] On Behalf Of Krzysztof Kozlowski
+> Sent: Wednesday, February 17, 2016 12:11 AM
+> To: Sangbeom Kim <sbkim73@samsung.com>; Krzysztof Kozlowski
+> <k.kozlowski@samsung.com>; Liam Girdwood <lgirdwood@gmail.com>;
+> Mark Brown <broonie@kernel.org>; linux-kernel@vger.kernel.org; linux-
+> samsung-soc@vger.kernel.org
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Subject: [RFT] regulator: s2mps11: Simplify expression used in
+> BUILD_BUG_ON for some of preprocessors
+> 
+> Apparently some preprocessors have problems with interpreting
+> BUILD_BUG_ON such as:
+> 	var = ARRAY_SIZE(s2mps15_regulators);
+> 	BUILD_BUG_ON(S2MPS_REGULATOR_MAX < var);
+> so let make it more obvious for them.
+> 
 
-What's wrong with the patch in the link above _combined_ with a patch
-which addresses the concern I have with that patch: build a list of
-the failed-to-register devices, and retry them later - maybe from a
-late_initcall(), or a similar mechanism?
+Doesn't have much to do with the preprocessor, but rather exactly how the compiler optimizes the variable. Some kernel configurations also impact this, and it heavily depends on whether the compiler actually optimizes away the variable. BUILD_BUG_ON may work a lot of the time, depending heavily on the compiler.
 
-My view is the risk to existing systems is _too_ high to apply either
-this patch, or the patch you link to above, and I refuse to play the
-"lets apply it and see if we break anything" lottery with this.
+BUILD_BUG_ON only works for constant expressions, so it is safer to put the value in directly, because using a variable will only work if the compiler optimizes the use of a variable away entirely. In this case it is somewhat surprising that it doesn't, but would depend on what compiler version and what kernel build rules you were using. For example allmodconfig ends up selecting everything yes if it's not a module for kernel build options and results in some BUILD_BUG_ON failures because of that)
 
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Thanks,
+Jake
