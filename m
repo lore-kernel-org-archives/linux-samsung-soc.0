@@ -1,62 +1,75 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v5 RESEND 4/5] ARM: amba: Move reading of periphid to
- amba_match()
-Date: Wed, 17 Feb 2016 08:52:36 +0100
-Message-ID: <56C426C4.7040907@samsung.com>
-References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
- <1455101250-11327-5-git-send-email-m.szyprowski@samsung.com>
- <20160215175250.GJ10826@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFT] regulator: s2mps11: Simplify expression used in BUILD_BUG_ON for
+ some of preprocessors
+Date: Wed, 17 Feb 2016 17:10:53 +0900
+Message-ID: <1455696653-27023-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:40237 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41379 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756607AbcBQHws (ORCPT
+	with ESMTP id S932574AbcBQILS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Feb 2016 02:52:48 -0500
-In-reply-to: <20160215175250.GJ10826@n2100.arm.linux.org.uk>
+	Wed, 17 Feb 2016 03:11:18 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
 
-Hello,
+Apparently some preprocessors have problems with interpreting
+BUILD_BUG_ON such as:
+	var = ARRAY_SIZE(s2mps15_regulators);
+	BUILD_BUG_ON(S2MPS_REGULATOR_MAX < var);
+so let make it more obvious for them.
 
-On 2016-02-15 18:52, Russell King - ARM Linux wrote:
-> On Wed, Feb 10, 2016 at 11:47:29AM +0100, Marek Szyprowski wrote:
->> From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->>
->> Reading the periphid when the Primecell device is registered means that
->> the apb pclk must be available by then or the device won't be registered
->> at all.
->>
->> By reading the periphid in amba_match() we can return -EPROBE_DEFER if
->> the apb pclk isn't there yet and the device will be retried later.
-> I've just realised, we can't do this.  We need to read the peripheral
-> ID at registration time, because that's published to userspace via
-> (a) a sysfs attribute, and (b) as part of the uevent, which will be
-> used by udev to locate the driver module.
->
-> So, this will have the side effect of breaking systems which have
-> AMBA primecell devices configured as modules.
->
-> Sorry, I can't apply this.  We can't regress existing platforms for
-> the sake of introducing new platforms to this code.
+Additionally add missing BUILD_BUG_ON check for S2MPS15 device (the
+check ensures that internal arrays are big enough to hold data for all
+of regulators on all devices).
 
-Then the only solution right now I see is to get back to v1:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/388199.html
-which at least handles correctly device registration when power domain 
-driver
-is available. You pointed that the patch cannot be applied, because failure
-of dev_pm_domain_attach() will be fatal for device registration. Right now
-lack of such call is fatal for the whole system, so there is really not a
-big difference. Please also note that amba_get_enable_pclk() calls 
-clk_get(),
-which also might return -EPROBE_DEFER, which already breaks device
-registration the same way.
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Best regards
+---
+
+See results when UBSAN is enabled:
+http://arm-soc.lixom.net/buildlogs/arm-soc/v4.5-rc4-39-g0d7baf0/buildall.arm.exynos_defconfig.log.failed
+---
+ drivers/regulator/s2mps11.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 3242ffc0cb25..df553fb40d82 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -1090,26 +1090,27 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	case S2MPS11X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps11_regulators);
+ 		regulators = s2mps11_regulators;
+-		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps11_regulators));
+ 		break;
+ 	case S2MPS13X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps13_regulators);
+ 		regulators = s2mps13_regulators;
+-		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps13_regulators));
+ 		break;
+ 	case S2MPS14X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps14_regulators);
+ 		regulators = s2mps14_regulators;
+-		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps14_regulators));
+ 		break;
+ 	case S2MPS15X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps15_regulators);
+ 		regulators = s2mps15_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps15_regulators));
+ 		break;
+ 	case S2MPU02:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mpu02_regulators);
+ 		regulators = s2mpu02_regulators;
+-		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mpu02_regulators));
+ 		break;
+ 	default:
+ 		dev_err(&pdev->dev, "Invalid device type: %u\n",
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.5.0
