@@ -1,83 +1,47 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v5 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
-Date: Tue, 16 Feb 2016 14:31:58 -0800
-Message-ID: <20160216223158.2278.48998@quark.deferred.io>
-References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] regulator: s5m8767: fix get_register() error handling
+Date: Wed, 17 Feb 2016 09:00:36 +0900
+Message-ID: <56C3B824.9010808@samsung.com>
+References: <1455634402-1997203-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>Krzysztof Kozlowski <k.kozlowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1455634402-1997203-1-git-send-email-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2016-02-15 22:20:29)
-> Hi,
+On 16.02.2016 23:53, Arnd Bergmann wrote:
+> The s5m8767_pmic_probe() function calls s5m8767_get_register() to
+> read data without checking the return code, which produces a compile-time
+> warning when that data is accessed:
 > 
-> Patchset attempts to remove the ARCH_EXYNOS7 symbol.
+> drivers/regulator/s5m8767.c: In function 's5m8767_pmic_probe':
+> drivers/regulator/s5m8767.c:924:7: error: 'enable_reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> drivers/regulator/s5m8767.c:944:30: error: 'enable_val' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 > 
-> I rebased this on top of James':
->  - clk: Move vendor's Kconfig into CCF menu section
->    http://www.spinics.net/lists/devicetree/msg111953.html
+> This changes the s5m8767_get_register() function to return a -EINVAL
+> not just for an invalid register number but also for an invalid
+> regulator number, as both would result in returning uninitialized
+> data. The s5m8767_pmic_probe() function is then changed accordingly
+> to fail on a read error, as all the other callers of s5m8767_get_register()
+> already do.
 > 
-> The third patch depends on previous ones so one way of merging this
-> would be to prepare a tag from clk tree with first two patches
-> and the dependency. The last third patch would go through arm-soc.
+> In practice this probably cannot happen, as we don't call
+> s5m8767_get_register() with invalid arguments, but the gcc
+> warning seems valid in principle, in terms writing safe
+> error checking.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 9c4c60554acf ("regulator: s5m8767: Convert to use regulator_[enable|disable|is_enabled]_regmap")
+> ---
+>  drivers/regulator/s5m8767.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
 
-I've done this locally and things look good. I'm just waiting for Acks
-to patch #2 and I'll merge patches #1 and #2 and provide a stable tag
-named clk-samsung-kconfig, based on v4.5-rc1.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-These patches were not based on -rc1, but the fixups were trivial so I'm
-fine with them.
-
-Regards,
-Mike
-
-> 
-> Changes since v4:
-> =================
-> 1. Rebased on "clk: Move vendor's Kconfig into CCF menu section"
->    existing in clock tree.
-> 2. Re-work patch 2/3 (see specific changelog).
-> 
-> Changes since v3:
-> =================
-> 1. Rebase on next-20160127 (s3c64xx became multiplatform).
-> 
-> Changes since v2:
-> =================
-> 1. Follow Arnd's advice about not enabling silently the newly added
->    EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
->    also a trigger for some changes in placement of Samsung clocks
->    Kconfig entries...
-> 2. ... which lead to introducing patch 1.
-> 
-> 
-> Rationale:
-> ==========
-> We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
-> fall under generic ARCH_EXYNOS. In the same time there is no sense
-> in building clocks for these ARMv8 SoCs on ARMv7 builds.
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (3):
->   clk: samsung: Enable COMPILE_TEST for Samsung clocks
->   clk: samsung: Don't build ARMv8 clock drivers on ARMv7
->   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
-> 
->  arch/arm64/Kconfig.platforms        | 11 ++---------
->  arch/arm64/boot/dts/exynos/Makefile |  2 +-
->  arch/arm64/configs/defconfig        |  2 +-
->  drivers/clk/samsung/Kconfig         | 18 +++++++++++++-----
->  drivers/clk/samsung/Makefile        |  4 ++--
->  5 files changed, 19 insertions(+), 18 deletions(-)
-> 
-> -- 
-> 2.5.0
-> 
+Best regards,
+Krzysztof
