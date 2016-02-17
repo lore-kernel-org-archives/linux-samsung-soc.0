@@ -1,29 +1,31 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v5 2/3] clk: samsung: Don't build ARMv8 clock drivers on
- ARMv7
-Date: Wed, 17 Feb 2016 11:03:36 +0100
-Message-ID: <56C44578.5010009@samsung.com>
-References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
- <1455603632-11158-3-git-send-email-k.kozlowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/7] fix IS_ERR_VALUE usage
+Date: Wed, 17 Feb 2016 11:48:38 +0100
+Message-ID: <7443859.JK6ybmGO1A@wuerfel>
+References: <1455546925-22119-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1455603632-11158-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <1455546925-22119-1-git-send-email-a.hajda@samsung.com>
+Sender: netdev-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, coreteam@netfilter.org, netfilter-devel@vger.kernel.org, linux-serial@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16/02/16 07:20, Krzysztof Kozlowski wrote:
-> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-> so it is built also on ARMv7. This does not bring any kind of benefit.
-> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-> multi_v7 for ARMv7).
+On Monday 15 February 2016 15:35:18 Andrzej Hajda wrote:
 > 
-> Instead build clock drivers only for respective SoC's architecture.
+> Andrzej Hajda (7):
+>   netfilter: fix IS_ERR_VALUE usage
+>   MIPS: module: fix incorrect IS_ERR_VALUE macro usages
+>   drivers: char: mem: fix IS_ERROR_VALUE usage
+>   atmel-isi: fix IS_ERR_VALUE usage
+>   serial: clps711x: fix IS_ERR_VALUE usage
+>   fbdev: exynos: fix IS_ERR_VALUE usage
+>   usb: gadget: fsl_qe_udc: fix IS_ERR_VALUE usage
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Can you Cc me the next time on all of the patches? I only got
+three of them this time.
 
+	Arnd
