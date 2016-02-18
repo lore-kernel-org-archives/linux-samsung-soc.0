@@ -1,53 +1,56 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH] serial: samsung: fix the inconsistency in spinlock
-Date: Thu, 18 Feb 2016 09:48:25 -0800
-Message-ID: <56C603E9.9050307@hurleysoftware.com>
-References: <1455817202-3005-1-git-send-email-linux.amoon@gmail.com>
+From: Punit Agrawal <punit.agrawal@arm.com>
+Subject: Re: [PATCH v2 1/3] ARM: dts: Add cooling levels for CPUs on exynos5420
+Date: Thu, 18 Feb 2016 17:58:09 +0000
+Message-ID: <87h9h599zi.fsf@e105922-lin.cambridge.arm.com>
+References: <1455772383-20598-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1455817202-3005-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:55616 "EHLO
+	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1423526AbcBRR7C (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Feb 2016 12:59:02 -0500
+In-Reply-To: <1455772383-20598-1-git-send-email-k.kozlowski@samsung.com>
+	(Krzysztof Kozlowski's message of "Thu, 18 Feb 2016 14:13:01 +0900")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>
 
-Hi Anand,
+Hi Krzysztof,
 
-On 02/18/2016 09:40 AM, Anand Moon wrote:
-> From: Anand Moon <linux.amoon@gmail.com>
-> 
-> changes fix the correct order of the spin_lock_irqrestore/save.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
+
+> On Exynos5420 we support 8 cpufreq steps (600-1300 MHz) for LITTLE and
+> 12 steps for big core (700-1800 MHz). Add respective cooling cells.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
 > ---
->  drivers/tty/serial/samsung.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> index d72cd73..96fe14d 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -759,9 +759,9 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
->  	}
->  
->  	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS) {
-> -		spin_unlock(&port->lock);
-> +		spin_unlock_irqrestore(&port->lock, flags);
->  		uart_write_wakeup(port);
-> -		spin_lock(&port->lock);
-> +		spin_lock_irqsave(&port->lock, flags);
+>
+> Changes since v1:
+> 1. Add cooling properties to all CPUs (suggested by Viresh).
+> ---
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> index 261d25173f61..5c052d7ff554 100644
+> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> @@ -33,6 +33,9 @@
+>  			clock-frequency = <1800000000>;
+>  			cci-control-port = <&cci_control1>;
+>  			operating-points-v2 = <&cluster_a15_opp_table>;
+> +			cooling-min-level = <0>;
+> +			cooling-max-level = <11>;
 
-This driver shouldn't be dropping the spin lock at for write wakeup.
-If this is causing lock-ups in a line discipline, the line discipline
-needs fixed.
+Although the above two properties are defined they aren't parsed in the
+kernel.
 
-Regards,
-Peter Hurley
+Setting min / max extents for cooling devices via cooling maps does work
+though.
 
 
->  	}
->  
->  	if (uart_circ_empty(xmit))
-> 
+[...]
