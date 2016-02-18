@@ -1,48 +1,59 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] regulator: s2mps11: Simplify expression used in BUILD_BUG_ON
-Date: Thu, 18 Feb 2016 10:06:28 +0100
-Message-ID: <2870104.0q2mccK2EB@wuerfel>
-References: <1455755707-16844-1-git-send-email-k.kozlowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RFC 3/3] ARM: dts: Don't overheat the Odroid XU3-Lite on high load
+Date: Thu, 18 Feb 2016 10:59:19 +0100
+Message-ID: <56C595F7.1080406@samsung.com>
+References: <1455692128-28504-1-git-send-email-k.kozlowski@samsung.com>
+ <1455692128-28504-4-git-send-email-k.kozlowski@samsung.com>
+ <CANAwSgQHiJGSYB7Qhq066Mqfskwrr_3SDQGXH-WN=Wt3SEF-QA@mail.gmail.com>
+ <56C522A9.8070800@samsung.com> <20160218023622.GA2610@vireshk-i7>
+ <56C54B9B.7030105@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:62862 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1425595AbcBRJGs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Feb 2016 04:06:48 -0500
-In-Reply-To: <1455755707-16844-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <56C54B9B.7030105@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jacob.e.keller@intel.com
 
-On Thursday 18 February 2016 09:35:07 Krzysztof Kozlowski wrote:
-> Following BUILD_BUG_ON using a variable fails for some of the compilers
-> and optimization levels (reported for gcc 4.9):
->         var = ARRAY_SIZE(s2mps15_regulators);
->         BUILD_BUG_ON(S2MPS_REGULATOR_MAX < var);
-> Fix this by using ARRAY_SIZE directly.
-> 
-> Additionally add missing BUILD_BUG_ON check for S2MPS15 device (the
-> check ensures that internal arrays are big enough to hold data for all
-> of regulators on all devices).
-> 
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hello,
 
-I've verified that this is the exact patch I have successfully tested
-on locally and in Olof's autobuilder which reported the problem.
+On 2016-02-18 05:42, Krzysztof Kozlowski wrote:
+> On 18.02.2016 11:36, Viresh Kumar wrote:
+>>> BTW, I found the issue. The order of trip points in DT:
+>>> thermal_zone0/trip_point_0_hyst:5000
+>>> thermal_zone0/trip_point_0_temp:50000
+>>> thermal_zone0/trip_point_0_type:active
+>>> thermal_zone0/trip_point_1_hyst:5000
+>>> thermal_zone0/trip_point_1_temp:60000
+>>> thermal_zone0/trip_point_1_type:active
+>>> thermal_zone0/trip_point_2_hyst:5000
+>>> thermal_zone0/trip_point_2_temp:70000
+>>> thermal_zone0/trip_point_2_type:active
+>>> thermal_zone0/trip_point_3_hyst:0
+>>> thermal_zone0/trip_point_3_temp:120000	<---- this should be last one!
+>>> thermal_zone0/trip_point_3_type:critical
+>>> thermal_zone0/trip_point_4_hyst:5000
+>>> thermal_zone0/trip_point_4_temp:90000
+>>> thermal_zone0/trip_point_4_type:passive
+>>> thermal_zone0/trip_point_5_hyst:5000
+>>> thermal_zone0/trip_point_5_temp:110000
+>>> thermal_zone0/trip_point_5_type:passive
+>>>
+>>> After fixing the order in DT, the cpu cooler starts working.
+>> Ahh, nice.
+> Damn, not entirely. I almost fried my Odroid (it survived 130 degrees of
+> C)... The TMU supports only 4 trip points, so when I added two new trip
+> points and reordered them... the last two (including critical) was not
+> receiving interrupts.
+>
+> Polling mode is needed. I'll sent some patches soon...
 
->         case S2MPS15X:
->                 s2mps11->rdev_num = ARRAY_SIZE(s2mps15_regulators);
->                 regulators = s2mps15_regulators;
-> +               BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps15_regulators));
->                 break;
-> 
+Instead of polling the driver should simply use some dynamic window for
+the nearest temperature ranges and reconfigure it when interrupt of occurs.
 
-My version did not add this line, but it seems correct.
-
-Tested-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
