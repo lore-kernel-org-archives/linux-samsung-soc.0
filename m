@@ -1,45 +1,71 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/3] thermal: exynos: Use devm_regulator_get_optional() for vtmu
-Date: Thu, 18 Feb 2016 15:19:10 -0300
-Message-ID: <1455819551-4666-3-git-send-email-javier@osg.samsung.com>
-References: <1455819551-4666-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1455819551-4666-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] serial: samsung: fix the inconsistency in spinlock
+Date: Fri, 19 Feb 2016 00:44:53 +0530
+Message-ID: <CANAwSgQuo_V_6J4C6MgdiDFeTTGaTPzoONSUKXwcanCpCWtZSg@mail.gmail.com>
+References: <1455817202-3005-1-git-send-email-linux.amoon@gmail.com> <56C603E9.9050307@hurleysoftware.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:38486 "EHLO
+	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1945995AbcBRTPO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Feb 2016 14:15:14 -0500
+In-Reply-To: <56C603E9.9050307@hurleysoftware.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Peter Hurley <peter@hurleysoftware.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-The Exynos TMU DT binding says that the vtmu-supply is optional but the
-driver uses devm_regulator_get() that creates a dummy regulator if it's
-not defined in the DT. For example the following message is in the log:
+Hi Peter,
 
-10060000.tmu supply vtmu not found, using dummy regulator
+On 18 February 2016 at 23:18, Peter Hurley <peter@hurleysoftware.com> wrote:
+> Hi Anand,
+>
+> On 02/18/2016 09:40 AM, Anand Moon wrote:
+>> From: Anand Moon <linux.amoon@gmail.com>
+>>
+>> changes fix the correct order of the spin_lock_irqrestore/save.
+>>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  drivers/tty/serial/samsung.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+>> index d72cd73..96fe14d 100644
+>> --- a/drivers/tty/serial/samsung.c
+>> +++ b/drivers/tty/serial/samsung.c
+>> @@ -759,9 +759,9 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+>>       }
+>>
+>>       if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS) {
+>> -             spin_unlock(&port->lock);
+>> +             spin_unlock_irqrestore(&port->lock, flags);
+>>               uart_write_wakeup(port);
+>> -             spin_lock(&port->lock);
+>> +             spin_lock_irqsave(&port->lock, flags);
+>
+> This driver shouldn't be dropping the spin lock at for write wakeup.
+> If this is causing lock-ups in a line discipline, the line discipline
+> needs fixed.
+>
 
-Use the optional version of regulator_get() that doesn't create a dummy
-regulator and instead returns a -ENODEV errno code. Since it's expected
-that a regulator may not be defined and the driver will inform about it:
+Thanks for pointing out.
+Their is no lock up, just the inconstancy of the spin_lock.
+Then I will resend this patch dropping the spin_unlock/spin_lock
+around uart_write_wakeup.
+Is that ok with you.
 
-exynos-tmu 10060000.tmu: Regulator node (vtmu) not found
+> Regards,
+> Peter Hurley
+>
+>
+>>       }
+>>
+>>       if (uart_circ_empty(xmit))
+>>
+>
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
-
- drivers/thermal/samsung/exynos_tmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 6c6f59ba7423..f4f36bba7be9 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1310,7 +1310,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 	 * TODO: Add regulator as an SOC feature, so that regulator enable
- 	 * is a compulsory call.
- 	 */
--	data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
-+	data->regulator = devm_regulator_get_optional(&pdev->dev, "vtmu");
- 	if (!IS_ERR(data->regulator)) {
- 		ret = regulator_enable(data->regulator);
- 		if (ret) {
--- 
-2.5.0
+Best Regards
+-Anand Moon
