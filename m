@@ -1,32 +1,42 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH] regulator: s2mps11: Use local variable for number of
- regulators
-Date: Thu, 18 Feb 2016 15:15:03 +0900
-Message-ID: <20160218061503.GA26957@samsunx.samsung>
-References: <1455775023-16396-1-git-send-email-k.kozlowski@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 1/3] ARM: dts: Add cooling levels for CPUs on exynos5420
+Date: Thu, 18 Feb 2016 11:51:13 +0530
+Message-ID: <20160218062113.GS2610@vireshk-i7>
+References: <1455772383-20598-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39820 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1424396AbcBRGPF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Feb 2016 01:15:05 -0500
-Content-disposition: inline
-In-reply-to: <1455775023-16396-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1455772383-20598-1-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Thanks,
-
-> Remove the s2mps11_info.rdev_num because it is not used outside of
-> probe.
+On 18-02-16, 14:13, Krzysztof Kozlowski wrote:
+> On Exynos5420 we support 8 cpufreq steps (600-1300 MHz) for LITTLE and
+> 12 steps for big core (700-1800 MHz). Add respective cooling cells.
 > 
-> Suggested-by: Andi Shyti <andi.shyti@samsung.com>
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Add cooling properties to all CPUs (suggested by Viresh).
+> ---
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Andi
+-- 
+viresh
