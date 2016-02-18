@@ -1,59 +1,64 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC 3/3] ARM: dts: Don't overheat the Odroid XU3-Lite on high load
-Date: Thu, 18 Feb 2016 10:59:19 +0100
-Message-ID: <56C595F7.1080406@samsung.com>
-References: <1455692128-28504-1-git-send-email-k.kozlowski@samsung.com>
- <1455692128-28504-4-git-send-email-k.kozlowski@samsung.com>
- <CANAwSgQHiJGSYB7Qhq066Mqfskwrr_3SDQGXH-WN=Wt3SEF-QA@mail.gmail.com>
- <56C522A9.8070800@samsung.com> <20160218023622.GA2610@vireshk-i7>
- <56C54B9B.7030105@samsung.com>
+Subject: [PATCH 0/2] Exynos DRM: resolve problems with DMA and virtual
+ exynos-drm device
+Date: Thu, 18 Feb 2016 14:34:15 +0100
+Message-ID: <1455802457-4550-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56C54B9B.7030105@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On 2016-02-18 05:42, Krzysztof Kozlowski wrote:
-> On 18.02.2016 11:36, Viresh Kumar wrote:
->>> BTW, I found the issue. The order of trip points in DT:
->>> thermal_zone0/trip_point_0_hyst:5000
->>> thermal_zone0/trip_point_0_temp:50000
->>> thermal_zone0/trip_point_0_type:active
->>> thermal_zone0/trip_point_1_hyst:5000
->>> thermal_zone0/trip_point_1_temp:60000
->>> thermal_zone0/trip_point_1_type:active
->>> thermal_zone0/trip_point_2_hyst:5000
->>> thermal_zone0/trip_point_2_temp:70000
->>> thermal_zone0/trip_point_2_type:active
->>> thermal_zone0/trip_point_3_hyst:0
->>> thermal_zone0/trip_point_3_temp:120000	<---- this should be last one!
->>> thermal_zone0/trip_point_3_type:critical
->>> thermal_zone0/trip_point_4_hyst:5000
->>> thermal_zone0/trip_point_4_temp:90000
->>> thermal_zone0/trip_point_4_type:passive
->>> thermal_zone0/trip_point_5_hyst:5000
->>> thermal_zone0/trip_point_5_temp:110000
->>> thermal_zone0/trip_point_5_type:passive
->>>
->>> After fixing the order in DT, the cpu cooler starts working.
->> Ahh, nice.
-> Damn, not entirely. I almost fried my Odroid (it survived 130 degrees of
-> C)... The TMU supports only 4 trip points, so when I added two new trip
-> points and reordered them... the last two (including critical) was not
-> receiving interrupts.
->
-> Polling mode is needed. I'll sent some patches soon...
-
-Instead of polling the driver should simply use some dynamic window for
-the nearest temperature ranges and reconfigure it when interrupt of occurs.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGVsbG8sCgpUaGlzIHBhdGNoc2V0IHJlc29sdmVzIHRoZSBpc3N1ZXMgd2l0aCB1c2luZyAnZXh5
+bm9zLWRybScgdmlydHVhbCBkZXZpY2UKZm9yIGFsbG9jYXRpbmcgRE1BIGJ1ZmZlcnMgYW5kIHBl
+cmZvcm1pbmcgdmFyaW91cyBETUEtbWFwcGluZyBvcGVyYXRpb25zCmluc2lkZSBFeHlub3MgRFJN
+IGRyaXZlci4KCidleHlub3MtZHJtJyBpcyBhIHB1cmUgdmlydHVhbCBkZXZpY2UgYW5kIHNvbWUg
+YXJjaGl0ZWN0dXJlcyAobGlrZQpBUk02NCkgZG9lc24ndCBjb25maWd1cmUgRE1BLW1hcHBpbmcg
+b3BlcmF0aW9ucyBmb3Igc3VjaCBkZXZpY2VzLiBBbHNvCm9uIEFSTSBhcmNoaXRlY3R1cmUgc29t
+ZSBoYWNrcyB3ZXJlIG5lZWRlZCB0byBzZXR1cCBJT01NVS1iYXNlZApETUEtbWFwcGluZyBvcHMg
+Zm9yIHRoaXMgdmlydHVhbCBkZXZpY2UgdG8gdXNlIGNvbW1vbiBJTy9ETUEgYWRkcmVzcwpzcGFj
+ZSBmb3IgYWxsIGRldmljZXMsIHdoaWNoIGFyZSBhIHBhcnQgb2YgRXh5bm9zIERSTSBzdWJzeXN0
+ZW0uCgpJbnN0ZWFkIG9mIGNvbmZpZ3VyaW5nIERNQS1tYXBwaW5nIG9wcyBmb3IgdmlydHVhbCBk
+ZXZpY2UgKGxpa2UgSQppbml0aWFsbHkgcHJvcG9zZWQgaW4gdGhpcyBwYXRjaDoKaHR0cDovL3d3
+dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5nLXNvYy9tc2c1MDY5OS5odG1sICksCmRp
+ZmZlcmVudCBkZXZpY2UgaXMgaXMgdXNlZCBieSBFeHlub3MgR0VNIGNvZGUgZm9yIERNQS1tYXBw
+aW5nIG9wZXJhdGlvbnMuCkluIHRoaXMgYXBwcm9hY2gsIHRoZSByZWFsIGRldmljZSBvZiBvbmUg
+b2YgdGhlIENSVEMgZGV2aWNlcyBpcyB1c2VkIGZvcgphbGwgRE1BLW1hcHBpbmcgb3BlcmF0aW9u
+cy4gVGhpcyB3YXkgYWxsIGhhY2tzIHJlbGF0ZWQgdG8gY29uZmlndXJpbmcKRE1BLW1hcHBpbmcg
+b3BzIGZvciB2aXJ0dWFsIGRldmljZSBhcmUgYXZvaWRlZC4gVGhpcyBhcHByb2FjaCBhbHNvIHdv
+cmtzCmZpbmUgaW4gY2FzZSBvZiBFeHlub3MgRFJNIGRyaXZlciBidWlsdCBhcyBtb2R1bGUuIFBh
+dGNoIG5vIDIgaW1wbGVtZW50cwp0aGlzIGFwcHJvYWNoLgoKUGF0Y2ggbm8gMSBpcyBhIHNpbXBs
+ZSByZWZhY3RvcmluZyBvZiBkcml2ZXIgYW5kIGRldmljZSByZWdpc3RlcmF0aW9uCnByb2NlZHVy
+ZS4gSXQgZ3JvdXBzIGFsbCBwb2ludGVycyB0byB0aGUgc3ViZHJpdmVycyBpbiBvbmUgYXJyYXkg
+d2l0aAphZGRpdGlvbmFsIGZsYWdzLCBpbnN0ZWFkIG9mIGhhdmluZyB0aGVtIGluIDMgc2VwYXJh
+dGUgYXJyYXlzICh3aXRoCnBvc3NpYmxlIGR1cGxpY2F0aW9uKS4gSW1wbGVtZW50aW5nIHRoZSBt
+YWluIGZlYXR1cmUgb2YgdGhpcyBwYXRjaHNldAp3aXRob3V0IHRoaXMgcmVmYWN0b3Jpbmcgd291
+bGQgcmVzdWx0IGluIG9uZSBtb3JlIGFycmF5IHdpdGggZHVwbGljYXRlZAplbnRyaWVzIGZvciBh
+bGwgQ1JUQyBkcml2ZXJzLgoKUGF0Y2hlcyBhcmUgYmFzZWQgb24gdGhlIGN1cnJlY3QgZXh5bm9z
+LWRybS1uZXh0IGJyYW5jaC4KCkJlc3QgcmVnYXJkcwpNYXJlayBTenlwcm93c2tpClNhbXN1bmcg
+UiZEIEluc3RpdHV0ZSBQb2xhbmQKCgpQYXRjaCBzdW1tYXJ5OgoKTWFyZWsgU3p5cHJvd3NraSAo
+Mik6CiAgZHJtL2V4eW5vczogcmVmYWN0b3IgZHJpdmVyIGFuZCBkZXZpY2UgcmVnaXN0cmF0aW9u
+IGNvZGUKICBkcm0vZXh5bm9zOiB1c2UgcmVhbCBkZXZpY2UgZm9yIERNQS1tYXBwaW5nIG9wZXJh
+dGlvbnMKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgICB8IDI2NSAr
+KysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kcnYuaCAgIHwgICA5ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmJkZXYuYyB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cy
+ZC5jICAgfCAgIDYgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyAg
+IHwgIDE0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faW9tbXUuYyB8ICAz
+NyArLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmggfCAgIDUg
+Ky0KIDcgZmlsZXMgY2hhbmdlZCwgMTY5IGluc2VydGlvbnMoKyksIDE2OSBkZWxldGlvbnMoLSkK
+Ci0tIAoxLjkuMgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
