@@ -1,64 +1,361 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/2] Exynos DRM: resolve problems with DMA and virtual
- exynos-drm device
-Date: Thu, 18 Feb 2016 14:34:15 +0100
-Message-ID: <1455802457-4550-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 1/2] drm/exynos: refactor driver and device registration code
+Date: Thu, 18 Feb 2016 14:34:16 +0100
+Message-ID: <1455802457-4550-2-git-send-email-m.szyprowski@samsung.com>
+References: <1455802457-4550-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57998 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1425429AbcBRNee (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Feb 2016 08:34:34 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O2Q00KKDWDKG490@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 18 Feb 2016 13:34:32 +0000 (GMT)
+In-reply-to: <1455802457-4550-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-SGVsbG8sCgpUaGlzIHBhdGNoc2V0IHJlc29sdmVzIHRoZSBpc3N1ZXMgd2l0aCB1c2luZyAnZXh5
-bm9zLWRybScgdmlydHVhbCBkZXZpY2UKZm9yIGFsbG9jYXRpbmcgRE1BIGJ1ZmZlcnMgYW5kIHBl
-cmZvcm1pbmcgdmFyaW91cyBETUEtbWFwcGluZyBvcGVyYXRpb25zCmluc2lkZSBFeHlub3MgRFJN
-IGRyaXZlci4KCidleHlub3MtZHJtJyBpcyBhIHB1cmUgdmlydHVhbCBkZXZpY2UgYW5kIHNvbWUg
-YXJjaGl0ZWN0dXJlcyAobGlrZQpBUk02NCkgZG9lc24ndCBjb25maWd1cmUgRE1BLW1hcHBpbmcg
-b3BlcmF0aW9ucyBmb3Igc3VjaCBkZXZpY2VzLiBBbHNvCm9uIEFSTSBhcmNoaXRlY3R1cmUgc29t
-ZSBoYWNrcyB3ZXJlIG5lZWRlZCB0byBzZXR1cCBJT01NVS1iYXNlZApETUEtbWFwcGluZyBvcHMg
-Zm9yIHRoaXMgdmlydHVhbCBkZXZpY2UgdG8gdXNlIGNvbW1vbiBJTy9ETUEgYWRkcmVzcwpzcGFj
-ZSBmb3IgYWxsIGRldmljZXMsIHdoaWNoIGFyZSBhIHBhcnQgb2YgRXh5bm9zIERSTSBzdWJzeXN0
-ZW0uCgpJbnN0ZWFkIG9mIGNvbmZpZ3VyaW5nIERNQS1tYXBwaW5nIG9wcyBmb3IgdmlydHVhbCBk
-ZXZpY2UgKGxpa2UgSQppbml0aWFsbHkgcHJvcG9zZWQgaW4gdGhpcyBwYXRjaDoKaHR0cDovL3d3
-dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5nLXNvYy9tc2c1MDY5OS5odG1sICksCmRp
-ZmZlcmVudCBkZXZpY2UgaXMgaXMgdXNlZCBieSBFeHlub3MgR0VNIGNvZGUgZm9yIERNQS1tYXBw
-aW5nIG9wZXJhdGlvbnMuCkluIHRoaXMgYXBwcm9hY2gsIHRoZSByZWFsIGRldmljZSBvZiBvbmUg
-b2YgdGhlIENSVEMgZGV2aWNlcyBpcyB1c2VkIGZvcgphbGwgRE1BLW1hcHBpbmcgb3BlcmF0aW9u
-cy4gVGhpcyB3YXkgYWxsIGhhY2tzIHJlbGF0ZWQgdG8gY29uZmlndXJpbmcKRE1BLW1hcHBpbmcg
-b3BzIGZvciB2aXJ0dWFsIGRldmljZSBhcmUgYXZvaWRlZC4gVGhpcyBhcHByb2FjaCBhbHNvIHdv
-cmtzCmZpbmUgaW4gY2FzZSBvZiBFeHlub3MgRFJNIGRyaXZlciBidWlsdCBhcyBtb2R1bGUuIFBh
-dGNoIG5vIDIgaW1wbGVtZW50cwp0aGlzIGFwcHJvYWNoLgoKUGF0Y2ggbm8gMSBpcyBhIHNpbXBs
-ZSByZWZhY3RvcmluZyBvZiBkcml2ZXIgYW5kIGRldmljZSByZWdpc3RlcmF0aW9uCnByb2NlZHVy
-ZS4gSXQgZ3JvdXBzIGFsbCBwb2ludGVycyB0byB0aGUgc3ViZHJpdmVycyBpbiBvbmUgYXJyYXkg
-d2l0aAphZGRpdGlvbmFsIGZsYWdzLCBpbnN0ZWFkIG9mIGhhdmluZyB0aGVtIGluIDMgc2VwYXJh
-dGUgYXJyYXlzICh3aXRoCnBvc3NpYmxlIGR1cGxpY2F0aW9uKS4gSW1wbGVtZW50aW5nIHRoZSBt
-YWluIGZlYXR1cmUgb2YgdGhpcyBwYXRjaHNldAp3aXRob3V0IHRoaXMgcmVmYWN0b3Jpbmcgd291
-bGQgcmVzdWx0IGluIG9uZSBtb3JlIGFycmF5IHdpdGggZHVwbGljYXRlZAplbnRyaWVzIGZvciBh
-bGwgQ1JUQyBkcml2ZXJzLgoKUGF0Y2hlcyBhcmUgYmFzZWQgb24gdGhlIGN1cnJlY3QgZXh5bm9z
-LWRybS1uZXh0IGJyYW5jaC4KCkJlc3QgcmVnYXJkcwpNYXJlayBTenlwcm93c2tpClNhbXN1bmcg
-UiZEIEluc3RpdHV0ZSBQb2xhbmQKCgpQYXRjaCBzdW1tYXJ5OgoKTWFyZWsgU3p5cHJvd3NraSAo
-Mik6CiAgZHJtL2V4eW5vczogcmVmYWN0b3IgZHJpdmVyIGFuZCBkZXZpY2UgcmVnaXN0cmF0aW9u
-IGNvZGUKICBkcm0vZXh5bm9zOiB1c2UgcmVhbCBkZXZpY2UgZm9yIERNQS1tYXBwaW5nIG9wZXJh
-dGlvbnMKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgICB8IDI2NSAr
-KysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kcnYuaCAgIHwgICA5ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmJkZXYuYyB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cy
-ZC5jICAgfCAgIDYgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyAg
-IHwgIDE0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faW9tbXUuYyB8ICAz
-NyArLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmggfCAgIDUg
-Ky0KIDcgZmlsZXMgY2hhbmdlZCwgMTY5IGluc2VydGlvbnMoKyksIDE2OSBkZWxldGlvbnMoLSkK
-Ci0tIAoxLjkuMgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+This patch refactors driver and device registration by moving all drivers
+to the common array. This way additional flags can be added later for
+new features. #ifdef-based code has been replaced by IS_ENABLED() macro
+usage.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 233 +++++++++++++++-----------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h |   1 -
+ 2 files changed, 107 insertions(+), 127 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 68f0f36f6e7e..5ab8f1240d7b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -495,69 +495,64 @@ static const struct dev_pm_ops exynos_drm_pm_ops = {
+ /* forward declaration */
+ static struct platform_driver exynos_drm_platform_driver;
+ 
++struct exynos_drm_driver_info {
++	struct platform_driver *driver;
++	unsigned int flags;
++};
++
++#define DRM_COMPONENT_DRIVER	BIT(0)	/* supports component framework */
++#define DRM_VIRTUAL_DEVICE	BIT(1)	/* create virtual platform device */
++
++#define DRV_PTR(drv, cond) (IS_ENABLED(cond) ? &drv : NULL)
++
+ /*
+  * Connector drivers should not be placed before associated crtc drivers,
+  * because connector requires pipe number of its crtc during initialization.
+  */
+-static struct platform_driver *const exynos_drm_kms_drivers[] = {
+-#ifdef CONFIG_DRM_EXYNOS_FIMD
+-	&fimd_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS5433_DECON
+-	&exynos5433_decon_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS7_DECON
+-	&decon_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_MIC
+-	&mic_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_DP
+-	&dp_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_DSI
+-	&dsi_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_MIXER
+-	&mixer_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_HDMI
+-	&hdmi_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_VIDI
+-	&vidi_driver,
+-#endif
+-};
+-
+-static struct platform_driver *const exynos_drm_non_kms_drivers[] = {
+-#ifdef CONFIG_DRM_EXYNOS_G2D
+-	&g2d_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_FIMC
+-	&fimc_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_ROTATOR
+-	&rotator_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_GSC
+-	&gsc_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-	&ipp_driver,
+-#endif
+-	&exynos_drm_platform_driver,
+-};
+-
+-static struct platform_driver *const exynos_drm_drv_with_simple_dev[] = {
+-#ifdef CONFIG_DRM_EXYNOS_VIDI
+-	&vidi_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-	&ipp_driver,
+-#endif
+-	&exynos_drm_platform_driver,
++static struct exynos_drm_driver_info exynos_drm_drivers[] = {
++	{
++		DRV_PTR(fimd_driver, CONFIG_DRM_EXYNOS_FIMD),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(exynos5433_decon_driver, CONFIG_DRM_EXYNOS5433_DECON),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(decon_driver, CONFIG_DRM_EXYNOS7_DECON),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(mixer_driver, CONFIG_DRM_EXYNOS_MIXER),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(mic_driver, CONFIG_DRM_EXYNOS_MIC),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(dp_driver, CONFIG_DRM_EXYNOS_DP),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(dsi_driver, CONFIG_DRM_EXYNOS_DSI),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(hdmi_driver, CONFIG_DRM_EXYNOS_HDMI),
++		DRM_COMPONENT_DRIVER
++	}, {
++		DRV_PTR(vidi_driver, CONFIG_DRM_EXYNOS_VIDI),
++		DRM_COMPONENT_DRIVER | DRM_VIRTUAL_DEVICE
++	}, {
++		DRV_PTR(g2d_driver, CONFIG_DRM_EXYNOS_G2D),
++	}, {
++		DRV_PTR(fimc_driver, CONFIG_DRM_EXYNOS_FIMC),
++	}, {
++		DRV_PTR(rotator_driver, CONFIG_DRM_EXYNOS_ROTATOR),
++	}, {
++		DRV_PTR(gsc_driver, CONFIG_DRM_EXYNOS_GSC),
++	}, {
++		DRV_PTR(ipp_driver, CONFIG_DRM_EXYNOS_IPP),
++		DRM_VIRTUAL_DEVICE
++	}, {
++		&exynos_drm_platform_driver,
++		DRM_VIRTUAL_DEVICE
++	}
+ };
+-#define PDEV_COUNT ARRAY_SIZE(exynos_drm_drv_with_simple_dev)
+ 
+ static int compare_dev(struct device *dev, void *data)
+ {
+@@ -569,11 +564,15 @@ static struct component_match *exynos_drm_match_add(struct device *dev)
+ 	struct component_match *match = NULL;
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(exynos_drm_kms_drivers); ++i) {
+-		struct device_driver *drv = &exynos_drm_kms_drivers[i]->driver;
++	for (i = 0; i < ARRAY_SIZE(exynos_drm_drivers); ++i) {
++		struct exynos_drm_driver_info *info = &exynos_drm_drivers[i];
+ 		struct device *p = NULL, *d;
+ 
+-		while ((d = bus_find_device(&platform_bus_type, p, drv,
++		if (!info->driver || !(info->flags & DRM_COMPONENT_DRIVER))
++			continue;
++
++		while ((d = bus_find_device(&platform_bus_type, p,
++					    &info->driver->driver,
+ 					    (void *)platform_bus_type.match))) {
+ 			put_device(p);
+ 			component_match_add(dev, &match, compare_dev, d);
+@@ -630,91 +629,81 @@ static struct platform_driver exynos_drm_platform_driver = {
+ 	},
+ };
+ 
+-static struct platform_device *exynos_drm_pdevs[PDEV_COUNT];
+-
+ static void exynos_drm_unregister_devices(void)
+ {
+-	int i = PDEV_COUNT;
++	int i;
++
++	for (i = ARRAY_SIZE(exynos_drm_drivers) - 1; i >= 0; --i) {
++		struct exynos_drm_driver_info *info = &exynos_drm_drivers[i];
++		struct device *dev;
+ 
+-	while (--i >= 0) {
+-		platform_device_unregister(exynos_drm_pdevs[i]);
+-		exynos_drm_pdevs[i] = NULL;
++		if (!info->driver || !(info->flags & DRM_VIRTUAL_DEVICE))
++			continue;
++
++		while ((dev = bus_find_device(&platform_bus_type, NULL,
++					    &info->driver->driver,
++					    (void *)platform_bus_type.match))) {
++			put_device(dev);
++			platform_device_unregister(to_platform_device(dev));
++		}
+ 	}
+ }
+ 
+ static int exynos_drm_register_devices(void)
+ {
++	struct platform_device *pdev;
+ 	int i;
+ 
+-	for (i = 0; i < PDEV_COUNT; ++i) {
+-		struct platform_driver *d = exynos_drm_drv_with_simple_dev[i];
+-		struct platform_device *pdev =
+-			platform_device_register_simple(d->driver.name, -1,
+-							NULL, 0);
++	for (i = 0; i < ARRAY_SIZE(exynos_drm_drivers); ++i) {
++		struct exynos_drm_driver_info *info = &exynos_drm_drivers[i];
+ 
+-		if (!IS_ERR(pdev)) {
+-			exynos_drm_pdevs[i] = pdev;
++		if (!info->driver || !(info->flags & DRM_VIRTUAL_DEVICE))
+ 			continue;
+-		}
+-		while (--i >= 0) {
+-			platform_device_unregister(exynos_drm_pdevs[i]);
+-			exynos_drm_pdevs[i] = NULL;
+-		}
+ 
+-		return PTR_ERR(pdev);
++		pdev = platform_device_register_simple(
++					info->driver->driver.name, -1, NULL, 0);
++		if (IS_ERR(pdev))
++			goto fail;
+ 	}
+ 
+ 	return 0;
++fail:
++	exynos_drm_unregister_devices();
++	return PTR_ERR(pdev);
+ }
+ 
+-static void exynos_drm_unregister_drivers(struct platform_driver * const *drv,
+-					  int count)
++static void exynos_drm_unregister_drivers(void)
+ {
+-	while (--count >= 0)
+-		platform_driver_unregister(drv[count]);
+-}
++	int i;
+ 
+-static int exynos_drm_register_drivers(struct platform_driver * const *drv,
+-				       int count)
+-{
+-	int i, ret;
++	for (i = ARRAY_SIZE(exynos_drm_drivers) - 1; i >= 0; --i) {
++		struct exynos_drm_driver_info *info = &exynos_drm_drivers[i];
+ 
+-	for (i = 0; i < count; ++i) {
+-		ret = platform_driver_register(drv[i]);
+-		if (!ret)
++		if (!info->driver)
+ 			continue;
+ 
+-		while (--i >= 0)
+-			platform_driver_unregister(drv[i]);
+-
+-		return ret;
++		platform_driver_unregister(info->driver);
+ 	}
+-
+-	return 0;
+ }
+ 
+-static inline int exynos_drm_register_kms_drivers(void)
++static int exynos_drm_register_drivers(void)
+ {
+-	return exynos_drm_register_drivers(exynos_drm_kms_drivers,
+-					ARRAY_SIZE(exynos_drm_kms_drivers));
+-}
++	int i, ret;
+ 
+-static inline int exynos_drm_register_non_kms_drivers(void)
+-{
+-	return exynos_drm_register_drivers(exynos_drm_non_kms_drivers,
+-					ARRAY_SIZE(exynos_drm_non_kms_drivers));
+-}
++	for (i = 0; i < ARRAY_SIZE(exynos_drm_drivers); ++i) {
++		struct exynos_drm_driver_info *info = &exynos_drm_drivers[i];
+ 
+-static inline void exynos_drm_unregister_kms_drivers(void)
+-{
+-	exynos_drm_unregister_drivers(exynos_drm_kms_drivers,
+-					ARRAY_SIZE(exynos_drm_kms_drivers));
+-}
++		if (!info->driver)
++			continue;
+ 
+-static inline void exynos_drm_unregister_non_kms_drivers(void)
+-{
+-	exynos_drm_unregister_drivers(exynos_drm_non_kms_drivers,
+-					ARRAY_SIZE(exynos_drm_non_kms_drivers));
++		ret = platform_driver_register(info->driver);
++		if (ret)
++			goto fail;
++	}
++	return 0;
++fail:
++	exynos_drm_unregister_drivers();
++	return ret;
+ }
+ 
+ static int exynos_drm_init(void)
+@@ -725,19 +714,12 @@ static int exynos_drm_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = exynos_drm_register_kms_drivers();
++	ret = exynos_drm_register_drivers();
+ 	if (ret)
+ 		goto err_unregister_pdevs;
+ 
+-	ret = exynos_drm_register_non_kms_drivers();
+-	if (ret)
+-		goto err_unregister_kms_drivers;
+-
+ 	return 0;
+ 
+-err_unregister_kms_drivers:
+-	exynos_drm_unregister_kms_drivers();
+-
+ err_unregister_pdevs:
+ 	exynos_drm_unregister_devices();
+ 
+@@ -746,8 +728,7 @@ err_unregister_pdevs:
+ 
+ static void exynos_drm_exit(void)
+ {
+-	exynos_drm_unregister_non_kms_drivers();
+-	exynos_drm_unregister_kms_drivers();
++	exynos_drm_unregister_drivers();
+ 	exynos_drm_unregister_devices();
+ }
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 17b5ded72ff1..34a139b2fb8d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -297,7 +297,6 @@ extern struct platform_driver dp_driver;
+ extern struct platform_driver dsi_driver;
+ extern struct platform_driver mixer_driver;
+ extern struct platform_driver hdmi_driver;
+-extern struct platform_driver exynos_drm_common_hdmi_driver;
+ extern struct platform_driver vidi_driver;
+ extern struct platform_driver g2d_driver;
+ extern struct platform_driver fimc_driver;
+-- 
+1.9.2
