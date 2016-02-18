@@ -1,54 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] regulator: s2mps11: Simplify expression used in
- BUILD_BUG_ON
-Date: Thu, 18 Feb 2016 10:48:39 +0900
-Message-ID: <56C522F7.5040109@samsung.com>
-References: <1455755707-16844-1-git-send-email-k.kozlowski@samsung.com>
- <20160218013705.GI10719@samsunx.samsung> <56C520A7.40201@samsung.com>
- <20160218014610.GJ10719@samsunx.samsung>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [RFC 3/3] ARM: dts: Don't overheat the Odroid XU3-Lite on high
+ load
+Date: Thu, 18 Feb 2016 08:06:22 +0530
+Message-ID: <20160218023622.GA2610@vireshk-i7>
+References: <1455692128-28504-1-git-send-email-k.kozlowski@samsung.com>
+ <1455692128-28504-4-git-send-email-k.kozlowski@samsung.com>
+ <CANAwSgQHiJGSYB7Qhq066Mqfskwrr_3SDQGXH-WN=Wt3SEF-QA@mail.gmail.com>
+ <56C522A9.8070800@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160218014610.GJ10719@samsunx.samsung>
+Content-Disposition: inline
+In-Reply-To: <56C522A9.8070800@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jacob.e.keller@intel.com, Arnd Bergmann <arnd@arndb.de>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 18.02.2016 10:46, Andi Shyti wrote:
->>>> Following BUILD_BUG_ON using a variable fails for some of the compilers
->>>> and optimization levels (reported for gcc 4.9):
->>>> 	var = ARRAY_SIZE(s2mps15_regulators);
->>>> 	BUILD_BUG_ON(S2MPS_REGULATOR_MAX < var);
->>>> Fix this by using ARRAY_SIZE directly.
->>>>
->>>> Additionally add missing BUILD_BUG_ON check for S2MPS15 device (the
->>>> check ensures that internal arrays are big enough to hold data for all
->>>> of regulators on all devices).
->>>>
->>>> Reported-by: Arnd Bergmann <arnd@arndb.de>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>
->>>
->>> [...]
->>>
->>>>  	case S2MPS11X:
->>>>  		s2mps11->rdev_num = ARRAY_SIZE(s2mps11_regulators);
->>>
->>> Why don't we remove rdev_num at all? It's not used that much
->>> other than in the probe function.
->>
->> Remove from probe? It is used in probe and removal would make the code
->> more complicated than it should be.
+On 18-02-16, 10:47, Krzysztof Kozlowski wrote:
+> On 18.02.2016 04:53, Anand Moon wrote:
+> > I also got lot's of error.
+> > 
+> > root@odroidxu4l:~# cpu[ 3050.847663] cpu cpu4: Failed to find dev_opp: -19
+> > [ 3171.640836] cpu cpu4: device_opp_debug_create_link: Failed to create link
+> > [ 3171.646197] cpu cpu4: _add_list_dev: Failed to register opp debugfs (-12)
+> > [ 3171.653574] cpu cpu7: device_opp_debug_create_link: Failed to create link
+> > [ 3171.659752] cpu cpu7: _add_list_dev: Failed to register opp debugfs (-12)
+> > [ 3171.697011] cpu cpu5: cpufreq_init: failed to get clk: -2
+> > [ 3171.732505] cpu cpu6: cpufreq_init: failed to get clk: -2
+> > [ 3171.768160] cpu cpu7: cpufreq_init: failed to get clk: -2
+> > 
+> > Tested on Odroid-XU4
+> > 
+> > Reviewed-by: Anand Moon <linux.amoon@gmail.com>
+> > Tested-by: Anand Moon <linux.amoon@gmail.com>
+
+What was this Tested-by supposed to mean? You got errors out there ...
+
+> The patch is not sufficient. It does not work the way it should...
 > 
-> no, I mean remove it from s2mps11_info. Other than in the probe
-> this value is used only once in s2mps11_pmic_dt_parse() (which is
-> called by probe()).
+> BTW, I found the issue. The order of trip points in DT:
+> thermal_zone0/trip_point_0_hyst:5000
+> thermal_zone0/trip_point_0_temp:50000
+> thermal_zone0/trip_point_0_type:active
+> thermal_zone0/trip_point_1_hyst:5000
+> thermal_zone0/trip_point_1_temp:60000
+> thermal_zone0/trip_point_1_type:active
+> thermal_zone0/trip_point_2_hyst:5000
+> thermal_zone0/trip_point_2_temp:70000
+> thermal_zone0/trip_point_2_type:active
+> thermal_zone0/trip_point_3_hyst:0
+> thermal_zone0/trip_point_3_temp:120000	<---- this should be last one!
+> thermal_zone0/trip_point_3_type:critical
+> thermal_zone0/trip_point_4_hyst:5000
+> thermal_zone0/trip_point_4_temp:90000
+> thermal_zone0/trip_point_4_type:passive
+> thermal_zone0/trip_point_5_hyst:5000
+> thermal_zone0/trip_point_5_temp:110000
+> thermal_zone0/trip_point_5_type:passive
+> 
+> After fixing the order in DT, the cpu cooler starts working.
 
-Sure, it can be safely removed from s2mps11_info... but it won't affect
-this issue and this patch. Still the local variable would be used in
-probe leading to compiler optimization choices impacting BUILD_BUG_ON.
+Ahh, nice.
 
-BR,
-Krzysztof
+-- 
+viresh
