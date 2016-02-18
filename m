@@ -1,142 +1,46 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 13/13] iommu: exynos: support multiple attach_device calls
-Date: Thu, 18 Feb 2016 15:13:00 +0100
-Message-ID: <1455804780-9616-14-git-send-email-m.szyprowski@samsung.com>
-References: <1455804780-9616-1-git-send-email-m.szyprowski@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] rtc: s3c: Document in binding that only s3c6410 needs
+ a src clk
+Date: Thu, 18 Feb 2016 08:38:53 -0600
+Message-ID: <20160218143853.GF9654@rob-hp-laptop>
+References: <1455545466-25709-1-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58565 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1425499AbcBRONc (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:54259 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1946473AbcBROi5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Feb 2016 09:13:32 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O2Q00IN0Y6E8JA0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 18 Feb 2016 14:13:26 +0000 (GMT)
-In-reply-to: <1455804780-9616-1-git-send-email-m.szyprowski@samsung.com>
+	Thu, 18 Feb 2016 09:38:57 -0500
+Content-Disposition: inline
+In-Reply-To: <1455545466-25709-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org
 
-IOMMU core calls attach_device callback without detaching device from
-the previous domain. This patch adds support for such unballanced calls.
+On Mon, Feb 15, 2016 at 11:11:06AM -0300, Javier Martinez Canillas wrote:
+> The S3C binding doc says that the RTC and RTC source clocks are required
+> but the S3C driver supports different HW IP and only the s3c6410 needs a
+> source clock.
+> 
+> Fix the binding explaining that the source clock is only needed for the
+> s3c6410-rtc compatible controller.
+> 
+> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> 
+> ---
+> Hello,
+> 
+> This patch depends on a previous one that was picked by Rob Herring so
+> this one has to go through his tree again and not through the RTC tree
+> to avoid conflicts.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/iommu/exynos-iommu.c | 72 ++++++++++++++++++++++++--------------------
- 1 file changed, 40 insertions(+), 32 deletions(-)
+Ugg, sent pull request today. It should be in Linus' tree now.
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 9c8ce951158d..b0665042bf29 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -201,6 +201,7 @@ static const struct sysmmu_fault_info sysmmu_v5_faults[] = {
- */
- struct exynos_iommu_owner {
- 	struct list_head controllers;	/* list of sysmmu_drvdata.owner_node */
-+	struct iommu_domain *domain;	/* domain this device is attached */
- };
- 
- /*
-@@ -825,6 +826,41 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
- 	kfree(domain);
- }
- 
-+static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
-+				    struct device *dev)
-+{
-+	struct exynos_iommu_owner *owner = dev->archdata.iommu;
-+	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
-+	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
-+	struct sysmmu_drvdata *data, *next;
-+	unsigned long flags;
-+	bool found = false;
-+
-+	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
-+		return;
-+
-+	spin_lock_irqsave(&domain->lock, flags);
-+	list_for_each_entry_safe(data, next, &domain->clients, domain_node) {
-+		if (data->master == dev) {
-+			if (__sysmmu_disable(data)) {
-+				data->master = NULL;
-+				list_del_init(&data->domain_node);
-+			}
-+			pm_runtime_put(data->sysmmu);
-+			found = true;
-+		}
-+	}
-+	spin_unlock_irqrestore(&domain->lock, flags);
-+
-+	owner->domain = NULL;
-+
-+	if (found)
-+		dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n",
-+					__func__, &pagetable);
-+	else
-+		dev_err(dev, "%s: No IOMMU is attached\n", __func__);
-+}
-+
- static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
- 				   struct device *dev)
- {
-@@ -838,6 +874,9 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
- 	if (!has_sysmmu(dev))
- 		return -ENODEV;
- 
-+	if (owner->domain)
-+		exynos_iommu_detach_device(owner->domain, dev);
-+
- 	list_for_each_entry(data, &owner->controllers, owner_node) {
- 		pm_runtime_get_sync(data->sysmmu);
- 		ret = __sysmmu_enable(data, pagetable, domain);
-@@ -856,44 +895,13 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
- 		return ret;
- 	}
- 
-+	owner->domain = iommu_domain;
- 	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa %s\n",
- 		__func__, &pagetable, (ret == 0) ? "" : ", again");
- 
- 	return ret;
- }
- 
--static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
--				    struct device *dev)
--{
--	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
--	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
--	struct sysmmu_drvdata *data, *next;
--	unsigned long flags;
--	bool found = false;
--
--	if (!has_sysmmu(dev))
--		return;
--
--	spin_lock_irqsave(&domain->lock, flags);
--	list_for_each_entry_safe(data, next, &domain->clients, domain_node) {
--		if (data->master == dev) {
--			if (__sysmmu_disable(data)) {
--				data->master = NULL;
--				list_del_init(&data->domain_node);
--			}
--			pm_runtime_put(data->sysmmu);
--			found = true;
--		}
--	}
--	spin_unlock_irqrestore(&domain->lock, flags);
--
--	if (found)
--		dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n",
--					__func__, &pagetable);
--	else
--		dev_err(dev, "%s: No IOMMU is attached\n", __func__);
--}
--
- static sysmmu_pte_t *alloc_lv2entry(struct exynos_iommu_domain *domain,
- 		sysmmu_pte_t *sent, sysmmu_iova_t iova, short *pgcounter)
- {
--- 
-1.9.2
+This can go thru rtc tree if you prefer. Otherwise, I'll queue it up for 
+4.6.
+
+> 
