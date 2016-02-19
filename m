@@ -1,46 +1,65 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv2] serial: samsung: drop the spinlock around uart_write_wakeup
-Date: Fri, 19 Feb 2016 10:45:37 +0530
-Message-ID: <1455858937-2380-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:34480 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751130AbcBSFPw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Feb 2016 00:15:52 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] serial: samsung: fix the inconsistency in spinlock
+Date: Fri, 19 Feb 2016 15:09:59 +0900
+Message-ID: <CAJKOXPdE4LB=xfkZb_rnFGVjkh4D9XvrdUhqPAJwfh2mUr_tHQ@mail.gmail.com>
+References: <1455817202-3005-1-git-send-email-linux.amoon@gmail.com>
+	<56C603E9.9050307@hurleysoftware.com>
+	<CANAwSgQuo_V_6J4C6MgdiDFeTTGaTPzoONSUKXwcanCpCWtZSg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CANAwSgQuo_V_6J4C6MgdiDFeTTGaTPzoONSUKXwcanCpCWtZSg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Peter Hurley <peter@hurleysoftware.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Peter Hurley <peter@hurleysoftware.com>
-Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-From: Anand Moon <linux.amoon@gmail.com>
+2016-02-19 4:14 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+> Hi Peter,
+>
+> On 18 February 2016 at 23:18, Peter Hurley <peter@hurleysoftware.com> wrote:
+>> Hi Anand,
+>>
+>> On 02/18/2016 09:40 AM, Anand Moon wrote:
+>>> From: Anand Moon <linux.amoon@gmail.com>
+>>>
+>>> changes fix the correct order of the spin_lock_irqrestore/save.
+>>>
+>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>> ---
+>>>  drivers/tty/serial/samsung.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+>>> index d72cd73..96fe14d 100644
+>>> --- a/drivers/tty/serial/samsung.c
+>>> +++ b/drivers/tty/serial/samsung.c
+>>> @@ -759,9 +759,9 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+>>>       }
+>>>
+>>>       if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS) {
+>>> -             spin_unlock(&port->lock);
+>>> +             spin_unlock_irqrestore(&port->lock, flags);
+>>>               uart_write_wakeup(port);
+>>> -             spin_lock(&port->lock);
+>>> +             spin_lock_irqsave(&port->lock, flags);
+>>
+>> This driver shouldn't be dropping the spin lock at for write wakeup.
+>> If this is causing lock-ups in a line discipline, the line discipline
+>> needs fixed.
+>>
+>
+> Thanks for pointing out.
+> Their is no lock up, just the inconstancy of the spin_lock.
+> Then I will resend this patch dropping the spin_unlock/spin_lock
+> around uart_write_wakeup.
+> Is that ok with you.
 
-drop the spin_unlock/lock around uart_write_wakeup to protect
-write wakeup for uart port.
+Anand, before doing that, can you check Peter's second sentence? I
+mean the "If this is causing lock-ups in a line discipline, the line
+discipline needs fixed.".
+Don't drop the spin-locks "just because". I would be happy to see more
+detailed explanation in changelog.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-changes logs: drop the previous approch of spin_unlock_irqrestore/save
----
- drivers/tty/serial/samsung.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index d72cd73..0cb70a9 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -758,11 +758,8 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
- 		goto out;
- 	}
- 
--	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS) {
--		spin_unlock(&port->lock);
-+	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(port);
--		spin_lock(&port->lock);
--	}
- 
- 	if (uart_circ_empty(xmit))
- 		s3c24xx_serial_stop_tx(port);
--- 
-1.9.1
+Best regards,
+Krzysztof
