@@ -1,139 +1,50 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH] serial: samsung: fix the inconsistency in spinlock
-Date: Fri, 19 Feb 2016 14:04:23 +0530
-Message-ID: <CANAwSgQSmRnyW5BwMpttFsMzitAzVbK7ww=ySctLmG82K4Wi=A@mail.gmail.com>
-References: <1455817202-3005-1-git-send-email-linux.amoon@gmail.com>
- <56C603E9.9050307@hurleysoftware.com> <CANAwSgQuo_V_6J4C6MgdiDFeTTGaTPzoONSUKXwcanCpCWtZSg@mail.gmail.com>
- <CAJKOXPdE4LB=xfkZb_rnFGVjkh4D9XvrdUhqPAJwfh2mUr_tHQ@mail.gmail.com>
- <CANAwSgQ2GeLaWcW5zRWPcNZ1Pk-Yq-NY4z5yqo6DXyyMRC2y3g@mail.gmail.com>
- <56C6C7E3.4060200@samsung.com> <CANAwSgR0fcD0fd-41fkV3Lzh-aMJovsmKL6YMWfstRvTD55_fw@mail.gmail.com>
- <56C6D1E3.1060202@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH] ASoC: samsung: Use IRQ safe spin lock calls
+Date: Fri, 19 Feb 2016 11:59:03 +0100
+Message-ID: <56C6F577.5050007@samsung.com>
+References: <1455810433-10305-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:33321 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1946934AbcBSIeo (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:29475 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750734AbcBSLB6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Feb 2016 03:34:44 -0500
-In-Reply-To: <56C6D1E3.1060202@samsung.com>
+	Fri, 19 Feb 2016 06:01:58 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O2S004UBJZ7E920@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Feb 2016 11:01:55 +0000 (GMT)
+In-reply-to: <1455810433-10305-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Peter Hurley <peter@hurleysoftware.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, patches@opensource.wolfsonmicro.com, lgirdwood@gmail.com
 
-Hi Krzysztof,
+On 18/02/16 16:47, Charles Keepax wrote:
+> Lockdep warns of a potential lock inversion, i2s->lock is held numerous
+> times whilst we are under the substream lock (snd_pcm_stream_lock). If
+> we use the IRQ unsafe spin lock calls, you can also end up locking
+> snd_pcm_stream_lock whilst under i2s->lock (if an IRQ happens whilst we
+> are holding i2s->lock). This could result in deadlock.
+> 
+> [   18.147001]        CPU0                    CPU1
+> [   18.151509]        ----                    ----
+> [   18.156022]   lock(&(&pri_dai->spinlock)->rlock);
+> [   18.160701]                                local_irq_disable();
+> [   18.166622]                                lock(&(&substream->self_group.lock)->rlock);
+> [   18.174595]                                lock(&(&pri_dai->spinlock)->rlock);
+> [   18.181806]   <Interrupt>
+> [   18.184408]     lock(&(&substream->self_group.lock)->rlock);
+> [   18.190045]
+> [   18.190045]  *** DEADLOCK ***
+> 
+> This patch changes to using the irq safe spinlock calls, to avoid this
+> issue.
+> 
+> Fixes: ce8bcdbb61d9 ("ASoC: samsung: i2s: Protect more registers with a spinlock")
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-On 19 February 2016 at 13:57, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 19.02.2016 17:23, Anand Moon wrote:
->> Hi Krzysztof,
->>
->> On 19 February 2016 at 13:14, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> On 19.02.2016 15:51, Anand Moon wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On 19 February 2016 at 11:39, Krzysztof Kozlowski
->>>> <k.kozlowski@samsung.com> wrote:
->>>>> 2016-02-19 4:14 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>>>>> Hi Peter,
->>>>>>
->>>>>> On 18 February 2016 at 23:18, Peter Hurley <peter@hurleysoftware.com> wrote:
->>>>>>> Hi Anand,
->>>>>>>
->>>>>>> On 02/18/2016 09:40 AM, Anand Moon wrote:
->>>>>>>> From: Anand Moon <linux.amoon@gmail.com>
->>>>>>>>
->>>>>>>> changes fix the correct order of the spin_lock_irqrestore/save.
->>>>>>>>
->>>>>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>>>>>> ---
->>>>>>>>  drivers/tty/serial/samsung.c | 4 ++--
->>>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
->>>>>>>> index d72cd73..96fe14d 100644
->>>>>>>> --- a/drivers/tty/serial/samsung.c
->>>>>>>> +++ b/drivers/tty/serial/samsung.c
->>>>>>>> @@ -759,9 +759,9 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
->>>>>>>>       }
->>>>>>>>
->>>>>>>>       if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS) {
->>>>>>>> -             spin_unlock(&port->lock);
->>>>>>>> +             spin_unlock_irqrestore(&port->lock, flags);
->>>>>>>>               uart_write_wakeup(port);
->>>>>>>> -             spin_lock(&port->lock);
->>>>>>>> +             spin_lock_irqsave(&port->lock, flags);
->>>>>>>
->>>>>>> This driver shouldn't be dropping the spin lock at for write wakeup.
->>>>>>> If this is causing lock-ups in a line discipline, the line discipline
->>>>>>> needs fixed.
->>>>>>>
->>>>>>
->>>>>> Thanks for pointing out.
->>>>>> Their is no lock up, just the inconstancy of the spin_lock.
->>>>>> Then I will resend this patch dropping the spin_unlock/spin_lock
->>>>>> around uart_write_wakeup.
->>>>>> Is that ok with you.
->>>>>
->>>>> Anand, before doing that, can you check Peter's second sentence? I
->>>>> mean the "If this is causing lock-ups in a line discipline, the line
->>>>> discipline needs fixed.".
->>>>> Don't drop the spin-locks "just because". I would be happy to see more
->>>>> detailed explanation in changelog.
->>>>>
->>>>> Best regards,
->>>>> Krzysztof
->>>>
->>>> Yes I understood the meaning of the sentence. Already the
->>>> s3c24xx_serial_tx_chars function.
->>>> holds the lock port->lock for safe IRQ execution.
->>>
->>> I am sorry but I don't get your explanation. I mentioned Peter's
->>> thoughts about lockups after adding locking over uart_write(). However
->>> you are referring to s3c24xx_serial_tx_chars() holding the spin lock...
->>> I am missing the point...
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>
->> I should be sorry I could not explain you in technical terms.
->> Interrupt routine already hold the port->lock
->>
->> s3c24xx_serial_tx_chars
->>      \
->>      spin_lock_irqsave(&port->lock, flags);
->>      \...
->>     spin_unlock(&port->lock);
->>      uart_write_wakeup(port);
->>      spin_lock(&port->lock);
->>      \
->>      spin_unlock_irqrestore(&port->lock, flags);
->>
->
-> This is obvious.
->
->> In my next patch I have tried to remove the spin_unlock/spin_lock over
->> uart_write_wakeup(port);
->
-> Which may create lockups. Previously there was no port locking around
-> uart_write_wakeup. Now there will be. You are effectively adding locking
-> over uart_write_wakeup().
-> Again, we are back at the Peter's message - just check the damned lockups...
->
-> BR,
-> Krzysztof
->
-> BR
->
-
-Lets drop this patch. I have send new one earlier.
-https://lkml.org/lkml/2016/2/19/2
-
-If you have any comment on that.
-Sorry for the confusion.
-
-Best Regards.
--Anand Moon
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
