@@ -1,66 +1,139 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 2/3] ARM: EXYNOS: remove unused register offset definition
-Date: Mon, 22 Feb 2016 15:33:15 +0530
-Message-ID: <1456135396-17767-3-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH 3/3] ARM: EXYNOS: cleanup header files inclusion
+Date: Mon, 22 Feb 2016 15:33:16 +0530
+Message-ID: <1456135396-17767-4-git-send-email-pankaj.dubey@samsung.com>
 References: <1456135396-17767-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52940 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753881AbcBVKCH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:59188 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751825AbcBVKCJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Feb 2016 05:02:07 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+	Mon, 22 Feb 2016 05:02:09 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0O2Y02CO217IEG50@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Feb 2016 19:02:06 +0900 (KST)
+ with ESMTP id <0O2Y02NGA17JQ940@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Feb 2016 19:02:07 +0900 (KST)
 In-reply-to: <1456135396-17767-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, daniel.lezcano@linaro.org, thomas.ab@samsung.com, linux@arm.linux.org.uk, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-This patch cleans up map.h by removing unused register offset
-and changing EXYNOS4 to EXYNOS in header comment section.
+This includes trivial cleanup in exynos files such as
+    - remove unused header files inclusion from exynos.c, s5p-dev-mfc.c,
+      firmware.c, pm.c.
+    - move inclusion of of.h from common.h to pm.c where it is really
+      required
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/map.h | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/arm/mach-exynos/common.h      | 1 -
+ arch/arm/mach-exynos/exynos.c      | 5 -----
+ arch/arm/mach-exynos/firmware.c    | 2 --
+ arch/arm/mach-exynos/platsmp.c     | 1 -
+ arch/arm/mach-exynos/pm.c          | 4 +---
+ arch/arm/mach-exynos/s5p-dev-mfc.c | 1 -
+ 6 files changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 351e839..c48ba4f 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -2,7 +2,7 @@
-  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com/
-  *
-- * EXYNOS4 - Memory map definitions
-+ * EXYNOS - Memory map definitions
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -14,12 +14,6 @@
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index e349a03..5365bf1 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -12,7 +12,6 @@
+ #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
  
- #include <plat/map-base.h>
+-#include <linux/of.h>
+ #include <linux/platform_data/cpuidle-exynos.h>
  
--/*
-- * EXYNOS4 UART offset is 0x10000 but the older S5P SoCs are 0x400.
-- * So need to define it, and here is to avoid redefinition warning.
-- */
--#define S3C_UART_OFFSET			(0x10000)
+ #define EXYNOS3250_SOC_ID	0xE3472000
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 99947ad..54262a1 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -11,14 +11,10 @@
+ 
+ #include <linux/init.h>
+ #include <linux/io.h>
+-#include <linux/kernel.h>
+-#include <linux/serial_s3c.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of_platform.h>
+-#include <linux/platform_device.h>
+-#include <linux/pm_domain.h>
+ #include <linux/irqchip.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ 
+@@ -26,7 +22,6 @@
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+-#include <asm/memory.h>
+ 
+ #include <mach/map.h>
+ 
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 111cfbf..1bfd1b0 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -20,8 +20,6 @@
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/suspend.h>
+ 
+-#include <mach/map.h>
 -
- #include <plat/map-s5p.h>
+ #include "common.h"
+ #include "smc.h"
  
- #define EXYNOS_PA_CHIPID		0x10000000
-@@ -30,6 +24,5 @@
- #define EXYNOS4_PA_DMC1			0x10410000
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index da46c63..85c3be6 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -15,7 +15,6 @@
+ #include <linux/init.h>
+ #include <linux/errno.h>
+ #include <linux/delay.h>
+-#include <linux/device.h>
+ #include <linux/jiffies.h>
+ #include <linux/smp.h>
+ #include <linux/io.h>
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index b9b9186..c43b776 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -17,7 +17,7 @@
+ #include <linux/suspend.h>
+ #include <linux/cpu_pm.h>
+ #include <linux/io.h>
+-#include <linux/err.h>
++#include <linux/of.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ #include <linux/soc/samsung/exynos-pmu.h>
  
- #define EXYNOS4_PA_COREPERI		0x10500000
--#define EXYNOS4_PA_L2CC			0x10502000
+@@ -28,8 +28,6 @@
  
- #endif /* __ASM_ARCH_MAP_H */
+ #include <mach/map.h>
+ 
+-#include <plat/pm-common.h>
+-
+ #include "common.h"
+ 
+ static inline void __iomem *exynos_boot_vector_addr(void)
+diff --git a/arch/arm/mach-exynos/s5p-dev-mfc.c b/arch/arm/mach-exynos/s5p-dev-mfc.c
+index 0b04b6b..8ef1f3e 100644
+--- a/arch/arm/mach-exynos/s5p-dev-mfc.c
++++ b/arch/arm/mach-exynos/s5p-dev-mfc.c
+@@ -9,7 +9,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/memblock.h>
 -- 
 2.4.5
