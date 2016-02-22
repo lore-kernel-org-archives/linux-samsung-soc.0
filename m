@@ -1,26 +1,94 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] thermal: exynos: Document compatible for Exynos5433
- TMU
-Date: Sun, 21 Feb 2016 20:55:08 -0600
-Message-ID: <20160222025508.GR15973@rob-hp-laptop>
-References: <1455772460-20684-1-git-send-email-k.kozlowski@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv2] serial: samsung: drop the spinlock around uart_write_wakeup
+Date: Mon, 22 Feb 2016 09:01:12 +0530
+Message-ID: <CANAwSgR7hhf=Ww6n-tChKhj=drm9c7TbXXs5B2vF6MxUM=GC5w@mail.gmail.com>
+References: <1455858937-2380-1-git-send-email-linux.amoon@gmail.com>
+ <56C76D3D.3010009@hurleysoftware.com> <CAJKOXPfJDwcis0-FkAEKqz4ESAuEV0arDYr7hfa8vb_5_UVirg@mail.gmail.com>
+ <CANAwSgSVHPVWBwaO6b4QvUEopCFSKXrFbHkY837+gG62wpc-Jg@mail.gmail.com> <56CA5174.3050706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1455772460-20684-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:33343 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752929AbcBVDbd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 21 Feb 2016 22:31:33 -0500
+In-Reply-To: <56CA5174.3050706@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Peter Hurley <peter@hurleysoftware.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?Q?Robert_Ba=C5=82dyga?= <r.baldyga@samsung.com>
 
-On Thu, Feb 18, 2016 at 02:14:18PM +0900, Krzysztof Kozlowski wrote:
-> Commit 488c7455d74c ("thermal: exynos: Add the support for Exynos5433
-> TMU") added new compatible but forgot to update documentation.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/thermal/exynos-thermal.txt | 1 +
->  1 file changed, 1 insertion(+)
+Hi Krzysztof,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 22 February 2016 at 05:38, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 21.02.2016 11:59, Anand Moon wrote:
+>> Hi Krzysztof,
+>>
+>> On 21 February 2016 at 07:07, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> 2016-02-20 4:30 GMT+09:00 Peter Hurley <peter@hurleysoftware.com>:
+>>>> [ +cc Krzysztof Kozlowski ]
+>>>>
+>>>> On 02/18/2016 09:15 PM, Anand Moon wrote:
+>>>>> From: Anand Moon <linux.amoon@gmail.com>
+>>>>>
+>>>>> drop the spin_unlock/lock around uart_write_wakeup to protect
+>>>>> write wakeup for uart port.
+>>>>
+>>>> What Krzysztof was saying wrt v1 of this patch is that the
+>>>> changelog should provide as much information as possible to
+>>>> the maintainer(s) and driver author(s), and that you should
+>>>> test that outcome.
+>>>>
+>>>> Here's what I would have written for a commit message:
+>>>>
+>>>>
+>>>>   Remove deadlock workaround for line disciplines that invoke
+>>>>   the tty driver's write() method directly from their write_wakeup()
+>>>>   method. As documented for the write_wakeup() line discipline method
+>>>>   in tty_ldisc.h, line disciplines must not attempt i/o directly
+>>>>   from write_wakeup() as this will deadlock. Reviews of in-tree line
+>>>>   disciplines confirm all defer i/o.
+>>>>
+>>>>   NB: This workaround was added in commit c15c3747ee32
+>>>>   ("serial: samsung: fix potential soft lockup during uart write")
+>>>>   which notes both slip and bluetooth hci attempt i/o directly from
+>>>>   write_wakeup(). These issues were fixed in commits 661f7fda21b1
+>>>>   ("slip: Fix deadlock in write_wakeup") and da64c27d3c93
+>>>>   ("bluetooth: hci_ldisc: fix deadlock condition"), respectively.
+>>>
+>>> Thanks Peter for thorough analysis. It shouldn't be done by you but by
+>>> the patch submitter... and I have big worries that Anand did not
+>>> perform that analysis.
+>>>
+>>> Anand, could you at least test that this lockup does not happen
+>>> anymore? You will need board with Bluetooth for that (and not USB
+>>> Bluetooth...). If you cannot test it, maybe guys from Polish R&D could
+>>> help you (Cc-ed), because they were working on DMA for serial used in
+>>> Bluetooth.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>
+>> I have looked into the history of the changes,
+>> commit c15c3747ee32 (serial: samsung: fix potential soft lockup during
+>> uart write)
+>> was added long time ago, that's why have missed this.
+>>
+>> I don't have on-board Bluetooth enable boards with me,
+>> so if their is potential lockup you people observer
+>> do not consider this patch.
+>
+> Which means that you cannot test it... Find someone who can test it with
+> Bluetooth (or SLIP) and will provide you a Tested-by tag.
+>
+> Best regards,
+> Krzysztof
+>
+
+It will be better if some body can verify the change.
+
+Best Regards.
+-Anand Moon
