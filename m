@@ -1,77 +1,41 @@
-From: Punit Agrawal <punit.agrawal@arm.com>
-Subject: Re: [PATCH v2 1/3] ARM: dts: Add cooling levels for CPUs on exynos5420
-Date: Mon, 22 Feb 2016 11:21:37 +0000
-Message-ID: <871t857zy6.fsf@e105922-lin.cambridge.arm.com>
-References: <1455772383-20598-1-git-send-email-k.kozlowski@samsung.com>
-	<87h9h599zi.fsf@e105922-lin.cambridge.arm.com>
-	<56C69154.40608@samsung.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v5 2/3] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Date: Mon, 22 Feb 2016 10:26:56 -0800
+Message-ID: <20160222182656.2278.68402@quark.deferred.io>
+References: <1455603632-11158-1-git-send-email-k.kozlowski@samsung.com>
+ <1455603632-11158-3-git-send-email-k.kozlowski@samsung.com>
+ <56C44578.5010009@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <56C69154.40608@samsung.com> (Krzysztof Kozlowski's message of
-	"Fri, 19 Feb 2016 12:51:48 +0900")
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <56C44578.5010009@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-clk@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
+Quoting Sylwester Nawrocki (2016-02-17 02:03:36)
+> On 16/02/16 07:20, Krzysztof Kozlowski wrote:
+> > Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+> > so it is built also on ARMv7. This does not bring any kind of benefit.
+> > There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> > multi_v7 for ARMv7).
+> > 
+> > Instead build clock drivers only for respective SoC's architecture.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
 
-> On 19.02.2016 02:58, Punit Agrawal wrote:
->> Hi Krzysztof,
->> 
->> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
->> 
->>> On Exynos5420 we support 8 cpufreq steps (600-1300 MHz) for LITTLE and
->>> 12 steps for big core (700-1800 MHz). Add respective cooling cells.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>
->>> ---
->>>
->>> Changes since v1:
->>> 1. Add cooling properties to all CPUs (suggested by Viresh).
->>> ---
->>>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 24 ++++++++++++++++++++++++
->>>  1 file changed, 24 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
->>> index 261d25173f61..5c052d7ff554 100644
->>> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
->>> @@ -33,6 +33,9 @@
->>>  			clock-frequency = <1800000000>;
->>>  			cci-control-port = <&cci_control1>;
->>>  			operating-points-v2 = <&cluster_a15_opp_table>;
->>> +			cooling-min-level = <0>;
->>> +			cooling-max-level = <11>;
->> 
->> Although the above two properties are defined they aren't parsed in the
->> kernel.
->> 
->> Setting min / max extents for cooling devices via cooling maps does work
->> though.
->
-> It is described as optional property in
-> Documentation/devicetree/bindings/thermal/thermal.txt ... but indeed it
-> is totally ignored.
->
-> So what is the recommendation? Get rid of it from DTS and documentation
-> or leave it because it will be implemented someday?
+Thanks for the Ack.
 
-As long as you are not expecting any particular behaviour arising from
-that property today I think it should be fine to leave it in.
+I've rebased patches #1 and #2 against James's b9e65ebc654d and pushed
+the clk-samsung branch to the clk tree. I have deleted the
+clk-samsung-kconfig branch that was blowing up the kbuild robot.
+clk-samsung will not be rebased and can be used as a dependency for
+arm-soc. It has been merged into clk-next.
 
-Eduardo, do you agree?
-
->
-> Thanks for feedback!
->
-> Best regards,
-> Krzysztof
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards,
+Mike
