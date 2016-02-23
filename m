@@ -1,79 +1,81 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Move syscon reboot/poweroff to common dtsi
- for Exynos
-Date: Tue, 23 Feb 2016 09:18:25 +0900
-Message-ID: <56CBA551.4030205@samsung.com>
-References: <1455636348-14277-1-git-send-email-javier@osg.samsung.com>
- <56C3D745.7050904@samsung.com> <56C3D99C.3090403@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH] ARM: dts: add support for gpio buttons for exynos5422-odroidxu3
+Date: Tue, 23 Feb 2016 08:01:07 +0000
+Message-ID: <1456214467-3344-1-git-send-email-linux.amoon@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19469 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752159AbcBWASc (ORCPT
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:34139 "EHLO
+	mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756977AbcBWIBf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Feb 2016 19:18:32 -0500
-In-reply-to: <56C3D99C.3090403@osg.samsung.com>
+	Tue, 23 Feb 2016 03:01:35 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17.02.2016 11:23, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 02/16/2016 11:13 PM, Krzysztof Kozlowski wrote:
-> 
-> [snip]
-> 
->>> diff --git a/arch/arm/boot/dts/exynos-syscon-restart.dtsi
->>> b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
->>> new file mode 100644
->>> index 000000000000..09a2040054ed
->>> --- /dev/null
->>> +++ b/arch/arm/boot/dts/exynos-syscon-restart.dtsi
->>> @@ -0,0 +1,27 @@
->>> +/*
->>> + * Samsung's Exynos SoC syscon reboot/poweroff nodes common definition.
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + */
->>> +
->>> +/ {
->>> +    soc {
->>> +        compatible = "simple-bus";
->>
->> The exynos4 does not have soc node. I wonder whether we should provide
->> here also address and size:
->>                  #address-cells = <1>;
->>                  #size-cells = <1>;
->>         ranges;
->>
->> Without this it works fine but that does not look correct enough.
->>
->> A minor effect of this patch on Exynos4 is that syscon-poweroff/reboot
->> are now the only children of "soc" simple-bus (rest of platform devices
->> is not)... but this is not a problem.
->>
->> Works fine so only the question about cells/ranges remains. Any comments?
->>
-> 
-> I in fact had the #address-cells and #size-cells at the beginning but then
-> realized that both the syscon-poweroff and syscon-reboot nodes didn't have
-> a reg property so it felt strange to me to have those.
-> 
-> Also, I thought that maybe a SoC dtsi may need a different #address-cells
-> and #size-cells for the other child nodes so having those in this dtsi
-> could override the values in the SoC dtsi depending where is included.
-> 
-> So I thought it could do more harm than good but I've no strong opinion
-> and can add those if you prefer.
+Add support for gpio-based button on Odroid-XU3 boards
+for reboot/poweroff feature.
 
-No comments from other people so I guess there are no objections.
-Applied for late v4.6.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+changes rebase based on linux next-20160222.
 
-Best regards,
-Krzysztof
+Tested on Odroid-XU4
+
+dmesg output.
+[    3.286068] of_get_named_gpiod_flags: parsed 'gpios' property of node '/gpio_keys/power_key[0]' - status (0)
+[    3.286206] gpio-11 (power key): gpiod_set_debounce: missing set() or set_debounce() operations
+[    3.286600] input: gpio_keys as /devices/platform/gpio_keys/input/input0
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 1bd507b..db9770b 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -11,6 +11,7 @@
+ */
+ 
+ #include <dt-bindings/clock/samsung,s2mps11.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/sound/samsung-i2s.h>
+@@ -54,6 +55,22 @@
+ 		#cooling-cells = <2>;
+ 		cooling-levels = <0 130 170 230>;
+ 	};
++
++	gpio_keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpio_power_key>;
++
++		power_key {
++			interrupt-parent = <&gpx0>;
++			interrupts = <3 IRQ_TYPE_NONE>;
++			gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			label = "power key";
++			debounce-interval = <10>;
++			wakeup-source;
++		};
++	};
+ };
+ 
+ &clock_audss {
+@@ -362,6 +379,11 @@
+ };
+ 
+ &pinctrl_0 {
++	gpio_power_key: power_key {
++		samsung,pins = "gpx0-3";
++		samsung,pin-pud = <0>;
++	};
++
+ 	hdmi_hpd_irq: hdmi-hpd-irq {
+ 		samsung,pins = "gpx3-7";
+ 		samsung,pin-function = <0>;
+-- 
+2.1.4
