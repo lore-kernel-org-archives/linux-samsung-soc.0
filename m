@@ -1,81 +1,105 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH] ARM: dts: add support for gpio buttons for exynos5422-odroidxu3
-Date: Tue, 23 Feb 2016 08:01:07 +0000
-Message-ID: <1456214467-3344-1-git-send-email-linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: add support for gpio buttons for
+ exynos5422-odroidxu3
+Date: Tue, 23 Feb 2016 17:21:14 +0900
+Message-ID: <56CC167A.8040303@samsung.com>
+References: <1456214467-3344-1-git-send-email-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:34139 "EHLO
-	mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756977AbcBWIBf (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29137 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932551AbcBWIVV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Feb 2016 03:01:35 -0500
+	Tue, 23 Feb 2016 03:21:21 -0500
+In-reply-to: <1456214467-3344-1-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
+To: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add support for gpio-based button on Odroid-XU3 boards
-for reboot/poweroff feature.
+On 23.02.2016 17:01, Anand Moon wrote:
+> Add support for gpio-based button on Odroid-XU3 boards
+> for reboot/poweroff feature.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> changes rebase based on linux next-20160222.
+> 
+> Tested on Odroid-XU4
+> 
+> dmesg output.
+> [    3.286068] of_get_named_gpiod_flags: parsed 'gpios' property of node '/gpio_keys/power_key[0]' - status (0)
+> [    3.286206] gpio-11 (power key): gpiod_set_debounce: missing set() or set_debounce() operations
+> [    3.286600] input: gpio_keys as /devices/platform/gpio_keys/input/input0
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index 1bd507b..db9770b 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -11,6 +11,7 @@
+>  */
+>  
+>  #include <dt-bindings/clock/samsung,s2mps11.h>
+> +#include <dt-bindings/input/input.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/sound/samsung-i2s.h>
+> @@ -54,6 +55,22 @@
+>  		#cooling-cells = <2>;
+>  		cooling-levels = <0 130 170 230>;
+>  	};
+> +
+> +	gpio_keys {
+> +		compatible = "gpio-keys";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&gpio_power_key>;
+> +
+> +		power_key {
+> +			interrupt-parent = <&gpx0>;
+> +			interrupts = <3 IRQ_TYPE_NONE>;
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-changes rebase based on linux next-20160222.
+Hmmm.... why you specify the interrupts?
 
-Tested on Odroid-XU4
+> +			gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
+> +			linux,code = <KEY_POWER>;
+> +			label = "power key";
 
-dmesg output.
-[    3.286068] of_get_named_gpiod_flags: parsed 'gpios' property of node '/gpio_keys/power_key[0]' - status (0)
-[    3.286206] gpio-11 (power key): gpiod_set_debounce: missing set() or set_debounce() operations
-[    3.286600] input: gpio_keys as /devices/platform/gpio_keys/input/input0
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Just "power".
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 1bd507b..db9770b 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -11,6 +11,7 @@
- */
- 
- #include <dt-bindings/clock/samsung,s2mps11.h>
-+#include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/sound/samsung-i2s.h>
-@@ -54,6 +55,22 @@
- 		#cooling-cells = <2>;
- 		cooling-levels = <0 130 170 230>;
- 	};
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_power_key>;
-+
-+		power_key {
-+			interrupt-parent = <&gpx0>;
-+			interrupts = <3 IRQ_TYPE_NONE>;
-+			gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			label = "power key";
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+	};
- };
- 
- &clock_audss {
-@@ -362,6 +379,11 @@
- };
- 
- &pinctrl_0 {
-+	gpio_power_key: power_key {
-+		samsung,pins = "gpx0-3";
-+		samsung,pin-pud = <0>;
-+	};
-+
- 	hdmi_hpd_irq: hdmi-hpd-irq {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-function = <0>;
--- 
-2.1.4
+> +			debounce-interval = <10>;
+> +			wakeup-source;
+> +		};
+> +	};
+>  };
+>  
+>  &clock_audss {
+> @@ -362,6 +379,11 @@
+>  };
+>  
+>  &pinctrl_0 {
+> +	gpio_power_key: power_key {
+
+The naming is mixed... Everything is GPIO here so don't add such prefix.
+Underscores only in label, not in name of node.
+
+	power_key_irq: power-key-irq {
+
+> +		samsung,pins = "gpx0-3";
+> +		samsung,pin-pud = <0>;
+
+Don't you want to set specific pin function? And what about drive strength?
+
+Best regards,
+Krzysztof
+
+> +	};
+> +
+>  	hdmi_hpd_irq: hdmi-hpd-irq {
+>  		samsung,pins = "gpx3-7";
+>  		samsung,pin-function = <0>;
+> 
