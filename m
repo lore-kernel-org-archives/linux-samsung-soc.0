@@ -1,45 +1,84 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 6/6] clk: samsung: exynos5433: Fix wrong registers of
- PCLK_GSCL_SMMU clocks
-Date: Tue, 23 Feb 2016 13:14:32 +0100
-Message-ID: <1456229672-13445-7-git-send-email-s.nawrocki@samsung.com>
-References: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, jonghwa3.lee@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] ARM: dts: add support for gpio buttons for exynos5422-odroidxu3
+Date: Tue, 23 Feb 2016 19:46:31 +0530
+Message-ID: <CANAwSgR17csDub4fszP5+=M5qrG5FbHu=rmfny6-5e8x6bWBFg@mail.gmail.com>
+References: <1456214467-3344-1-git-send-email-linux.amoon@gmail.com>
+ <56CC167A.8040303@samsung.com> <56CC194F.6080905@samsung.com>
+ <CANAwSgTRu6pb9cdA50AzBSNLS+Y+sssyc_CX7FKuV=FDYWaOsA@mail.gmail.com> <CAJKOXPftm7P44Zxn9rHt1THJOX3Oxu-mg5GD7=T3se4iRe1DkA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPftm7P44Zxn9rHt1THJOX3Oxu-mg5GD7=T3se4iRe1DkA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+Hi Krzysztof,
 
-This fixes register assignment in the CLK_PCLK_SMMU_GSCL{1,2}
-clocks definition.
+On 23 February 2016 at 17:32, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> 2016-02-23 18:17 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> Hi Krzysztof,
+>>
+>> On 23 February 2016 at 14:03, Krzysztof Kozlowski
+>>>>>      };
+>>>>> +
+>>>>> +    gpio_keys {
+>>>>> +            compatible = "gpio-keys";
+>>>>> +            pinctrl-names = "default";
+>>>>> +            pinctrl-0 = <&gpio_power_key>;
+>>>>> +
+>>>>> +            power_key {
+>>>>> +                    interrupt-parent = <&gpx0>;
+>>>>> +                    interrupts = <3 IRQ_TYPE_NONE>;
+>>>>
+>>>> Hmmm.... why you specify the interrupts?
+>>>>
+>>>>> +                    gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
+>>>
+>>> Please, explain it to me. The SW2 key is connected to PWRON of PMIC.
+>>> However you are adding a GPIO key for external interrupt source 3
+>>> (XE.INT3)... which comes from PMIC's ONOB.
+>>>
+>>> It's interesting.... how does it work? The PMIC will generate ONOB
+>>> interrupt on PWRON low->high change (when PWRHOLD is high)?
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
+>> I have re-base my changes on HK dts.
+>> I could not find much details for the schematic diagram.
+>> I don't know much low level detains on this.
+>
+> If I understand this correctly: you just took some vendor code,
+> similar to existing code of Odroid U3, and without full understanding
+> of the code nor checking with public schematics, you sent it.
+>
+> Taking vendor stuff is okay but you need to think about it, use it as
+> an example and deliver proper solution based on that. Not copy-paste.
+>
+>> How dose this works: This changes will initial the shudown/reboot on Ubuntu.
+>> I have also tested this similar feature on Odroid U3.
+>
+> Great :), yes it works because ONOB interrupt from PMIC is generated
+> on key press. However this is not a strictly speaking key... I don't
+> really know what to do with this commit and your explanation
+> (Hardkernel has such code) is not sufficient to convince me.
+>
+> Best regards,
+> Krzysztof
 
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Nothing come easy to me, I had to do bit of work on this.
+Internally I might not know the detail of the board and features of
+the registers of the PMIC.
+I have to improvise some time for changes. I don't know who is the
+original author of the code.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 23dd651..707a814 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3411,11 +3411,11 @@ static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
- 
- 	/* ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1 */
- 	GATE(CLK_PCLK_SMMU_GSCL1, "pclk_smmu_gscl1", "mout_aclk_gscl_111_user",
--		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1, 0, 0, 0),
- 
- 	/* ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2 */
- 	GATE(CLK_PCLK_SMMU_GSCL2, "pclk_smmu_gscl2", "mout_aclk_gscl_111_user",
--		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2, 0, 0, 0),
- };
- 
- static struct samsung_cmu_info gscl_cmu_info __initdata = {
--- 
-1.9.1
+It's relay hard to convince you on the changes, as I continue to
+repeat the mistake.
+I will try to improve my commits a be specific to the changes in the future.
 
+Best Regards,
+-Anand Moon
