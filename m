@@ -1,29 +1,41 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] thermal: exynos: List vtmu-supply as optional
- property in DT binding
-Date: Tue, 23 Feb 2016 14:26:12 -0600
-Message-ID: <20160223202612.GA10733@rob-hp-laptop>
-References: <1455819551-4666-1-git-send-email-javier@osg.samsung.com>
- <1455819551-4666-2-git-send-email-javier@osg.samsung.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH] rtc: s5m: De-inline large functions to save space
+Date: Wed, 24 Feb 2016 00:15:43 +0100
+Message-ID: <20160223231543.GE10681@piout.net>
+References: <1455588282-7251-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:53999 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751555AbcBWXPq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Feb 2016 18:15:46 -0500
 Content-Disposition: inline
-In-Reply-To: <1455819551-4666-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Pawel Moll <pawel.moll@arm.com>, Zhang Rui <rui.zhang@intel.com>, Mark Rutland <mark.rutland@arm.com>, Eduardo Valentin <edubezval@gmail.com>
+In-Reply-To: <1455588282-7251-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Denys Vlasenko <vda.linux@googlemail.com>
 
-On Thu, Feb 18, 2016 at 03:19:09PM -0300, Javier Martinez Canillas wrote:
-> The Exynos Thermal Management Unit binding says that the vtmu-supply
-> is optional but is listed in the required properties section. Add an
-> optional properties section and move the regulator property there.
+On 16/02/2016 at 11:04:42 +0900, Krzysztof Kozlowski wrote :
+> Few functions were marked inline even though they were relatively large
+> and sometimes used in multiple places. De-inline them to let the
+> compiler decide whether optimization makes sense. This fixes inline_hunt
+> report:
+> drivers/rtc/rtc-s5m.c: Deinline s5m8767_rtc_set_alarm_reg, save 704 bytes
+> drivers/rtc/rtc-s5m.c: Deinline s5m8767_wait_for_udr_update, save 192 bytes
 > 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reported-by: Denys Vlasenko <vda.linux@googlemail.com>
+> Cc: Denys Vlasenko <vda.linux@googlemail.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
+>  drivers/rtc/rtc-s5m.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
->  Documentation/devicetree/bindings/thermal/exynos-thermal.txt | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+Applied, thanks.
 
-Acked-by: Rob Herring <robh@kernel.org>
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
