@@ -1,117 +1,120 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: add support for gpio buttons for
- exynos5422-odroidxu3
-Date: Wed, 24 Feb 2016 16:27:54 +0900
-Message-ID: <56CD5B7A.10908@samsung.com>
-References: <1456214467-3344-1-git-send-email-linux.amoon@gmail.com>
- <56CC167A.8040303@samsung.com> <56CC194F.6080905@samsung.com>
- <CANAwSgTRu6pb9cdA50AzBSNLS+Y+sssyc_CX7FKuV=FDYWaOsA@mail.gmail.com>
- <CAJKOXPftm7P44Zxn9rHt1THJOX3Oxu-mg5GD7=T3se4iRe1DkA@mail.gmail.com>
- <CANAwSgR17csDub4fszP5+=M5qrG5FbHu=rmfny6-5e8x6bWBFg@mail.gmail.com>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: EXYNOS: remove unused register offset definition
+Date: Wed, 24 Feb 2016 13:53:33 +0530
+Message-ID: <56CD6885.4060904@samsung.com>
+References: <1456135396-17767-1-git-send-email-pankaj.dubey@samsung.com>
+ <1456135396-17767-3-git-send-email-pankaj.dubey@samsung.com>
+ <56CBA1BC.4050003@samsung.com> <56CC2238.2040303@samsung.com>
+ <56CCEF84.6090502@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CANAwSgR17csDub4fszP5+=M5qrG5FbHu=rmfny6-5e8x6bWBFg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:34662 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758091AbcBXIWS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Feb 2016 03:22:18 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O3102L57LWW1A40@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Feb 2016 17:22:08 +0900 (KST)
+In-reply-to: <56CCEF84.6090502@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, b.zolnierkie@samsung.com, daniel.lezcano@linaro.org, thomas.ab@samsung.com, linux@arm.linux.org.uk
 
-On 23.02.2016 23:16, Anand Moon wrote:
-> Hi Krzysztof,
-> 
-> On 23 February 2016 at 17:32, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> 2016-02-23 18:17 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>> Hi Krzysztof,
+
+
+On Wednesday 24 February 2016 05:17 AM, Krzysztof Kozlowski wrote:
+> On 23.02.2016 18:11, pankaj.dubey wrote:
+>> Hi Krzysztof,
+>>
+>> On Tuesday 23 February 2016 05:33 AM, Krzysztof Kozlowski wrote:
+>>> On 22.02.2016 19:03, Pankaj Dubey wrote:
+>>>> This patch cleans up map.h by removing unused register offset
+>>>> and changing EXYNOS4 to EXYNOS in header comment section.
+>>>>
+>>>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>>>> ---
+>>>>  arch/arm/mach-exynos/include/mach/map.h | 9 +--------
+>>>>  1 file changed, 1 insertion(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+>>>> index 351e839..c48ba4f 100644
+>>>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>>>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>>>> @@ -2,7 +2,7 @@
+>>>>   * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+>>>>   *		http://www.samsung.com/
+>>>>   *
+>>>> - * EXYNOS4 - Memory map definitions
+>>>> + * EXYNOS - Memory map definitions
+>>>>   *
+>>>>   * This program is free software; you can redistribute it and/or modify
+>>>>   * it under the terms of the GNU General Public License version 2 as
+>>>> @@ -14,12 +14,6 @@
+>>>>  
+>>>>  #include <plat/map-base.h>
+>>>>  
+>>>> -/*
+>>>> - * EXYNOS4 UART offset is 0x10000 but the older S5P SoCs are 0x400.
+>>>> - * So need to define it, and here is to avoid redefinition warning.
+>>>> - */
+>>>> -#define S3C_UART_OFFSET			(0x10000)
+>>>> -
+>>>>  #include <plat/map-s5p.h>
 >>>
->>> On 23 February 2016 at 14:03, Krzysztof Kozlowski
->>>>>>      };
->>>>>> +
->>>>>> +    gpio_keys {
->>>>>> +            compatible = "gpio-keys";
->>>>>> +            pinctrl-names = "default";
->>>>>> +            pinctrl-0 = <&gpio_power_key>;
->>>>>> +
->>>>>> +            power_key {
->>>>>> +                    interrupt-parent = <&gpx0>;
->>>>>> +                    interrupts = <3 IRQ_TYPE_NONE>;
->>>>>
->>>>> Hmmm.... why you specify the interrupts?
->>>>>
->>>>>> +                    gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
->>>>
->>>> Please, explain it to me. The SW2 key is connected to PWRON of PMIC.
->>>> However you are adding a GPIO key for external interrupt source 3
->>>> (XE.INT3)... which comes from PMIC's ONOB.
->>>>
->>>> It's interesting.... how does it work? The PMIC will generate ONOB
->>>> interrupt on PWRON low->high change (when PWRHOLD is high)?
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
+>>> This does not look good. The S3C_UART_OFFSET is used in plat/map-s5p.h.
 >>>
->>> I have re-base my changes on HK dts.
->>> I could not find much details for the schematic diagram.
->>> I don't know much low level detains on this.
 >>
->> If I understand this correctly: you just took some vendor code,
->> similar to existing code of Odroid U3, and without full understanding
->> of the code nor checking with public schematics, you sent it.
->>
->> Taking vendor stuff is okay but you need to think about it, use it as
->> an example and deliver proper solution based on that. Not copy-paste.
->>
->>> How dose this works: This changes will initial the shudown/reboot on Ubuntu.
->>> I have also tested this similar feature on Odroid U3.
->>
->> Great :), yes it works because ONOB interrupt from PMIC is generated
->> on key press. However this is not a strictly speaking key... I don't
->> really know what to do with this commit and your explanation
->> (Hardkernel has such code) is not sufficient to convince me.
->>
->> Best regards,
->> Krzysztof
+>> Actually it's just defined there but not getting used anywhere. In fact
+>> we can remove it from there also.
 > 
-> Nothing come easy to me, I had to do bit of work on this.
-> Internally I might not know the detail of the board and features of
-> the registers of the PMIC.
-> I have to improvise some time for changes. I don't know who is the
-> original author of the code.
+> The point is that your patch introduce changes. Before S3C_UART_OFFSET
+> was defined to 0x10000, after (because of #ifndef) it will be 0x400.
+> Description of "unused" is not accurate. Unused stuff does not impact
+> anything.
 > 
-> It's relay hard to convince you on the changes, as I continue to
-> repeat the mistake.
-> I will try to improve my commits a be specific to the changes in the future.
+>> So I submitted another patch to
+>> cleanup such redundant register definitions from plat/map-s5p.h.
+> 
+> That would be good.
+> 
+>> Only platform using S3C_UART_OFFSET is s3c64xx and its using definition
+>> from map-s3c.h. I have compiled all related platform defconfigs and
+>> found no issues because of removal of S3C_UART_OFFSET from map-s5p.c and
+>> map.h.
+> 
+> The compilation is not a test. You compiled something like this:
+> -#define S3C_UART_OFFSET			(0x10000)
+>  #ifndef S3C_UART_OFFSET
+>  #define S3C_UART_OFFSET         (0x400)
+>  #endif
+> 
+> ... and found no errors. Of course there are no compilation errors! But
+> the value has changed!
+> 
 
-No worries. :)
+OK. I see, there are quite a few places these definitions are scattered
+even though not used (not used in the sense what ever values these
+macros are taking in code it's not used). Such as
+mach-exynos/include/map.h, plat-samsung/include/plat/{map-s3c.h,
+map-s5p.h} and mach-s3c24xx/include/mach/map.h. So I will remove all
+these in one go.
+Is this fine?
+Also I have one doubt in case I am touching files across various mach
+files and preparing a single patch what should be commit message
+heading? Is commit starting with "ARM: samsung" fine? or anything more
+appropriate you would suggest.
 
-Anand,
-
-Anyway I was thinking about this and discussed it even offline. This is
-a little bit funny design choice because:
-1. The generated interrupt (on line ONOB) is not coming from the
-physical key. It is coming from the PMIC, after receiving the change of
-PWRON level (which comes from the key).
-
-2. The behaviour and correlation between PWRON and ONOB is poorly
-described in datasheet. Only one place mentions it.
-
-3. The other funny idea we had, was to add a input driver for PMIC...
-but that IMHO won't solve anything. It won't even make this logically
-correct.
-
-4. What I don't like personally, that I had to discover all of it,
-instead of reading this in commit message coming from you. I would like
-to see the explanation of this design (ONOB, PWRON etc) in comment in
-DTS. Written with your own words, not mine (which would be a
-confirmation that you understood the code you wrote and sent).
-Why? Because you are adding a gpio-key for something which is not a key.
-Funny, isn't it? :)
-
-5. If anyone else has some ideas how to solve this (a key-PMIC mixture),
-please share!
-
-Best regards,
-Krzysztof
+Thanks,
+Pankaj Dubey
+> Best regards,
+> Krzysztof
+> 
+> 
+> 
