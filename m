@@ -1,42 +1,40 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [GIT PULL] clk/samsung updates
-Date: Thu, 25 Feb 2016 15:19:06 -0800
-Message-ID: <20160225231906.GI28849@codeaurora.org>
-References: <56CF1B60.5090300@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: s3c24xx: avoid warning for inb/outb
+Date: Fri, 26 Feb 2016 08:46:55 +0900
+Message-ID: <56CF926F.5040507@samsung.com>
+References: <1456437900-853667-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:53566 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752354AbcBYXTJ (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:25632 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752171AbcBYXrD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 18:19:09 -0500
-Content-Disposition: inline
-In-Reply-To: <56CF1B60.5090300@samsung.com>
+	Thu, 25 Feb 2016 18:47:03 -0500
+In-reply-to: <1456437900-853667-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/25, Sylwester Nawrocki wrote:
+On 26.02.2016 07:04, Arnd Bergmann wrote:
+> s3c24xx implements its own inb/outb macros, but the implementation
+> prints warnings when the port number argument is not a 32-bit scalar:
 > 
-> Hello Stephen, Mike,
+> drivers/scsi/pas16.c: In function 'NCR5380_pwrite':
+> arch/arm/mach-s3c24xx/include/mach/io.h:193:68: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>  #define __ioaddrc(port) ((__PORT_PCIO(port) ? PCIO_BASE + (port) : (void __iomem *)(port)))
 > 
-> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+> This slightly modifies the definition of the __ioaddrc macro to avoid
+> the warning.
 > 
->   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s3c24xx/include/mach/io.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.6
-> 
-> for you to fetch changes up to a6cb74cbc927af04af827ef590082f9717ffad51:
-> 
->   clk: samsung: exynos5433: Fix wrong registers of PCLK_GSCL_SMMU clocks
-> (2016-02-25 12:10:00 +0100)
 
-Thanks. Pulled.
+Thanks, applied.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Krzysztof
