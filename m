@@ -1,216 +1,59 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] arm64: dts: Add tmu node for exynos7
-Date: Thu, 25 Feb 2016 14:46:03 +0530
-Message-ID: <56CEC653.4010004@samsung.com>
-References: <1456370865-10086-1-git-send-email-pankaj.dubey@samsung.com>
- <56CE7DAC.4000803@samsung.com> <56CE7FF3.4030101@samsung.com>
- <20160225095803.719122ae@amdc2363>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 9/9] clockevents/drivers/exynos_mct: Implement ->set_state_oneshot_stopped()
+Date: Thu, 25 Feb 2016 14:37:17 +0100
+Message-ID: <1456407438-6131-9-git-send-email-daniel.lezcano@linaro.org>
+References: <56CF00F6.9010301@linaro.org>
+ <1456407438-6131-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:40996 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758808AbcBYJP0 (ORCPT
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:36434 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932982AbcBYNiF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 04:15:26 -0500
-In-reply-to: <20160225095803.719122ae@amdc2363>
+	Thu, 25 Feb 2016 08:38:05 -0500
+Received: by mail-wm0-f41.google.com with SMTP id g62so29021394wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Feb 2016 05:38:04 -0800 (PST)
+In-Reply-To: <1456407438-6131-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, "pankaj.dubey" <pankaj.dubey@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+To: tglx@linutronix.de
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:CLOCKSOURCE, CLOC..." <linux-kernel@vger.kernel.org>, "moderated list:ARM/SAMSUNG
+	EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
 
-Hi Lukasz,
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-On 02/25/2016 02:28 PM, Lukasz Majewski wrote:
-> Hi pankaj.dubey,
->
->> Hi Krzysztof,
->>
->> On Thursday 25 February 2016 09:36 AM, Krzysztof Kozlowski wrote:
->>> On 25.02.2016 12:27, Pankaj Dubey wrote:
->>>> From: Alim Akhtar <alim.akhtar@samsung.com>
->>>>
->>>> This patch adds tmu node, related temprature sensor and triping
->>>> point data for Atlas cpu core found on exynos7 SoC.
->>>>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>
->>> Yours Sob is missing.
->>>
->>> Cc-ed Lukasz Majewski.
->>>
->>
->> Due to some technical difficulty Alim posted via my account. He will
->> re-spin this patch via his account soon.
->
-> Looking forward to see your patches. :-)
->
-I have resend the patch..please review.
-Thanks for your time.
+set_state_oneshot_stopped() is called by the clkevt core, when the next
+event is required at an expiry time of 'KTIME_MAX'. This normally
+happens with NO_HZ_{IDLE|FULL} in both LOWRES/HIGHRES modes.
 
-> Best regards,
-> =C5=81ukasz Majewski
->
->>
->> Thanks,
->> Pankaj Dubey
->>> Lukasz,
->>> Your review or ack would be appreciated.
->>>
->>>
->>>> ---
->>>>   .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |   25
->>>> +++++++++ .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |
->>>> 55 ++++++++++++++++++++
->>>> arch/arm64/boot/dts/exynos/exynos7.dtsi            |   20 +++++++
->>>> 3 files changed, 100 insertions(+) create mode 100644
->>>> arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi create
->>>> mode 100644 arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
->>>>
->>>> diff --git
->>>> a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
->>>> b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi new file
->>>> mode 100644 index 0000000..1d6dcf2 --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
->>>> @@ -0,0 +1,25 @@
->>>> +/*
->>>> + * Device tree sources for Exynos7 TMU sensor configuration
->>>> + *
->>>> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
->>>> + *		http://www.samsung.com
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or
->>>> modify
->>>> + * it under the terms of the GNU General Public License version 2
->>>> as
->>>> + * published by the Free Software Foundation.
->>>> + *
->>>> + */
->>>> +
->>>> +#include <dt-bindings/thermal/thermal_exynos.h>
->>>> +
->>>> +#thermal-sensor-cells =3D <0>;
->>>> +samsung,tmu_gain =3D <9>;
->>>> +samsung,tmu_reference_voltage =3D <17>;
->>>> +samsung,tmu_noise_cancel_mode =3D <4>;
->>>> +samsung,tmu_efuse_value =3D <75>;
->>>> +samsung,tmu_min_efuse_value =3D <15>;
->>>> +samsung,tmu_max_efuse_value =3D <100>;
->>>> +samsung,tmu_first_point_trim =3D <25>;
->>>> +samsung,tmu_second_point_trim =3D <85>;
->>>> +samsung,tmu_default_temp_offset =3D <50>;
->>>> +samsung,tmu_cal_type =3D <TYPE_ONE_POINT_TRIMMING>;
->>>> diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
->>>> b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi new file
->>>> mode 100644 index 0000000..3970545
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
->>>> @@ -0,0 +1,55 @@
->>>> +/*
->>>> + * Device tree sources for default Exynos7 thermal zone definitio=
-n
->>>> + *
->>>> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
->>>> + *		http://www.samsung.com
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or
->>>> modify
->>>> + * it under the terms of the GNU General Public License version 2
->>>> as
->>>> + * published by the Free Software Foundation.
->>>> + *
->>>> + */
->>>> +
->>>> +trips {
->>>> +	cpu-alert-0 {
->>>> +		temperature =3D <75000>; /* millicelsius */
->>>> +		hysteresis =3D <10000>; /* millicelsius */
->>>> +		type =3D "passive";
->>>> +	};
->>>> +	cpu-alert-1 {
->>>> +		temperature =3D <80000>; /* millicelsius */
->>>> +		hysteresis =3D <10000>; /* millicelsius */
->>>> +		type =3D "passive";
->>>> +	};
->>>> +	cpu-alert-2 {
->>>> +		temperature =3D <85000>; /* millicelsius */
->>>> +		hysteresis =3D <10000>; /* millicelsius */
->>>> +		type =3D "passive";
->>>> +	};
->>>> +	cpu-alert-3 {
->>>> +		temperature =3D <90000>; /* millicelsius */
->>>> +		hysteresis =3D <10000>; /* millicelsius */
->>>> +		type =3D "passive";
->>>> +	};
->>>> +	cpu-alert-4 {
->>>> +		temperature =3D <95000>; /* millicelsius */
->>>> +		hysteresis =3D <10000>; /* millicelsius */
->>>> +		type =3D "passive";
->>>> +	};
->>>> +	cpu-alert-5 {
->>>> +		temperature =3D <100000>; /* millicelsius */
->>>> +		hysteresis =3D <10000>; /* millicelsius */
->>>> +		type =3D "passive";
->>>> +	};
->>>> +	cpu-alert-6 {
->>>> +		temperature =3D <110000>; /* millicelsius */
->>>> +		hysteresis =3D <10000>; /* millicelsius */
->>>> +		type =3D "passive";
->>>> +	};
->>>> +	/* HW Trip point */
->>>
->>> The comment looks unnecessary, all of these are HW trip points,
->>> right?
->>>
->>>> +	cpu-crit-0 {
->>>> +		temperature =3D <115000>; /* millicelsius */
->>>> +		hysteresis =3D <0>; /* millicelsius */
->>>> +		type =3D "critical";
->>>> +	};
->>>> +};
->>>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->>>> b/arch/arm64/boot/dts/exynos/exynos7.dtsi index c662f98..fc9d130
->>>> 100644 --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->>>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->>>> @@ -27,6 +27,7 @@
->>>>   		pinctrl6 =3D &pinctrl_fsys0;
->>>>   		pinctrl7 =3D &pinctrl_fsys1;
->>>>   		pinctrl8 =3D &pinctrl_bus1;
->>>> +		tmuctrl0 =3D &tmuctrl_0;
->>>
->>> Why the alias is needed?
->>>
->>>>   	};
->>>>
->>>>   	cpus {
->>>> @@ -538,6 +539,25 @@
->>>>   			clocks =3D <&clock_peric0 PCLK_PWM>;
->>>>   			clock-names =3D "timers";
->>>>   		};
->>>> +
->>>> +		tmuctrl_0: tmu@10060000 {
->>>> +			compatible =3D "samsung,exynos7-tmu";
->>>> +			reg =3D <0x10060000 0x200>;
->>>> +			interrupts =3D <0 108 0>;
->>>> +			clocks =3D <&clock_peris PCLK_TMU>,
->>>> +				 <&clock_peris SCLK_TMU>;
->>>> +			clock-names =3D "tmu_apbif", "tmu_sclk";
->>>> +			#include "exynos7-tmu-sensor-conf.dtsi"
->>>> +		};
->>>> +
->>>> +		thermal-zones {
->>>> +			atlas_thermal: atlas-thermal {
->>>
->>> The atlas is a Exynos7 specific codename. The name of node should
->>> be a general class of the device, so maybe:
->>> 	atlas_thermal: cluster0-thermal
->>> ?
->>>
->>> Best regards,
->>> Krzysztof
->>>
->
->
->
+This patch makes the clockevent device to stop on such an event, to
+avoid spurious interrupts, as explained by: commit 8fff52fd5093
+("clockevents: Introduce CLOCK_EVT_STATE_ONESHOT_STOPPED state").
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/exynos_mct.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index ff44082..be09bc0 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -313,6 +313,7 @@ static struct clock_event_device mct_comp_device = {
+ 	.set_state_periodic	= mct_set_state_periodic,
+ 	.set_state_shutdown	= mct_set_state_shutdown,
+ 	.set_state_oneshot	= mct_set_state_shutdown,
++	.set_state_oneshot_stopped = mct_set_state_shutdown,
+ 	.tick_resume		= mct_set_state_shutdown,
+ };
+ 
+@@ -452,6 +453,7 @@ static int exynos4_local_timer_setup(struct mct_clock_event_device *mevt)
+ 	evt->set_state_periodic = set_state_periodic;
+ 	evt->set_state_shutdown = set_state_shutdown;
+ 	evt->set_state_oneshot = set_state_shutdown;
++	evt->set_state_oneshot_stopped = set_state_shutdown;
+ 	evt->tick_resume = set_state_shutdown;
+ 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+ 	evt->rating = 450;
+-- 
+1.9.1
