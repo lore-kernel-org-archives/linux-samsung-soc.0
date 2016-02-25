@@ -1,178 +1,139 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Add tmu node for exynos7
-Date: Thu, 25 Feb 2016 13:06:04 +0900
-Message-ID: <56CE7DAC.4000803@samsung.com>
-References: <1456370865-10086-1-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1456370865-10086-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 1/2] ARM: EXYNOS: cleanup header files inclusion
+Date: Thu, 25 Feb 2016 09:39:59 +0530
+Message-ID: <1456373400-10633-2-git-send-email-pankaj.dubey@samsung.com>
+References: <1456373400-10633-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:57052 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758528AbcBYEIp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Feb 2016 23:08:45 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O3302CND4UJ5F20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 25 Feb 2016 13:08:43 +0900 (KST)
+In-reply-to: <1456373400-10633-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, daniel.lezcano@linaro.org, thomas.ab@samsung.com, linux@arm.linux.org.uk, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 25.02.2016 12:27, Pankaj Dubey wrote:
-> From: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> This patch adds tmu node, related temprature sensor and triping
-> point data for Atlas cpu core found on exynos7 SoC.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+This includes trivial cleanup in exynos files such as
+    - remove unused header files inclusion from exynos.c, s5p-dev-mfc.c,
+      firmware.c, pm.c.
+    - move inclusion of of.h from common.h to pm.c where it is really
+      required
 
-Yours Sob is missing.
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm/mach-exynos/common.h      | 1 -
+ arch/arm/mach-exynos/exynos.c      | 4 ----
+ arch/arm/mach-exynos/firmware.c    | 2 --
+ arch/arm/mach-exynos/platsmp.c     | 1 -
+ arch/arm/mach-exynos/pm.c          | 4 +---
+ arch/arm/mach-exynos/s5p-dev-mfc.c | 1 -
+ 6 files changed, 1 insertion(+), 12 deletions(-)
 
-Cc-ed Lukasz Majewski.
-
-Lukasz,
-Your review or ack would be appreciated.
-
-
-> ---
->  .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |   25 +++++++++
->  .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   55 ++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos7.dtsi            |   20 +++++++
->  3 files changed, 100 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
-> new file mode 100644
-> index 0000000..1d6dcf2
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
-> @@ -0,0 +1,25 @@
-> +/*
-> + * Device tree sources for Exynos7 TMU sensor configuration
-> + *
-> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <dt-bindings/thermal/thermal_exynos.h>
-> +
-> +#thermal-sensor-cells = <0>;
-> +samsung,tmu_gain = <9>;
-> +samsung,tmu_reference_voltage = <17>;
-> +samsung,tmu_noise_cancel_mode = <4>;
-> +samsung,tmu_efuse_value = <75>;
-> +samsung,tmu_min_efuse_value = <15>;
-> +samsung,tmu_max_efuse_value = <100>;
-> +samsung,tmu_first_point_trim = <25>;
-> +samsung,tmu_second_point_trim = <85>;
-> +samsung,tmu_default_temp_offset = <50>;
-> +samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
-> new file mode 100644
-> index 0000000..3970545
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
-> @@ -0,0 +1,55 @@
-> +/*
-> + * Device tree sources for default Exynos7 thermal zone definition
-> + *
-> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +trips {
-> +	cpu-alert-0 {
-> +		temperature = <75000>; /* millicelsius */
-> +		hysteresis = <10000>; /* millicelsius */
-> +		type = "passive";
-> +	};
-> +	cpu-alert-1 {
-> +		temperature = <80000>; /* millicelsius */
-> +		hysteresis = <10000>; /* millicelsius */
-> +		type = "passive";
-> +	};
-> +	cpu-alert-2 {
-> +		temperature = <85000>; /* millicelsius */
-> +		hysteresis = <10000>; /* millicelsius */
-> +		type = "passive";
-> +	};
-> +	cpu-alert-3 {
-> +		temperature = <90000>; /* millicelsius */
-> +		hysteresis = <10000>; /* millicelsius */
-> +		type = "passive";
-> +	};
-> +	cpu-alert-4 {
-> +		temperature = <95000>; /* millicelsius */
-> +		hysteresis = <10000>; /* millicelsius */
-> +		type = "passive";
-> +	};
-> +	cpu-alert-5 {
-> +		temperature = <100000>; /* millicelsius */
-> +		hysteresis = <10000>; /* millicelsius */
-> +		type = "passive";
-> +	};
-> +	cpu-alert-6 {
-> +		temperature = <110000>; /* millicelsius */
-> +		hysteresis = <10000>; /* millicelsius */
-> +		type = "passive";
-> +	};
-> +	/* HW Trip point */
-
-The comment looks unnecessary, all of these are HW trip points, right?
-
-> +	cpu-crit-0 {
-> +		temperature = <115000>; /* millicelsius */
-> +		hysteresis = <0>; /* millicelsius */
-> +		type = "critical";
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index c662f98..fc9d130 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -27,6 +27,7 @@
->  		pinctrl6 = &pinctrl_fsys0;
->  		pinctrl7 = &pinctrl_fsys1;
->  		pinctrl8 = &pinctrl_bus1;
-> +		tmuctrl0 = &tmuctrl_0;
-
-Why the alias is needed?
-
->  	};
->  
->  	cpus {
-> @@ -538,6 +539,25 @@
->  			clocks = <&clock_peric0 PCLK_PWM>;
->  			clock-names = "timers";
->  		};
-> +
-> +		tmuctrl_0: tmu@10060000 {
-> +			compatible = "samsung,exynos7-tmu";
-> +			reg = <0x10060000 0x200>;
-> +			interrupts = <0 108 0>;
-> +			clocks = <&clock_peris PCLK_TMU>,
-> +				 <&clock_peris SCLK_TMU>;
-> +			clock-names = "tmu_apbif", "tmu_sclk";
-> +			#include "exynos7-tmu-sensor-conf.dtsi"
-> +		};
-> +
-> +		thermal-zones {
-> +			atlas_thermal: atlas-thermal {
-
-The atlas is a Exynos7 specific codename. The name of node should be a
-general class of the device, so maybe:
-	atlas_thermal: cluster0-thermal
-?
-
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index e349a03..5365bf1 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -12,7 +12,6 @@
+ #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ 
+-#include <linux/of.h>
+ #include <linux/platform_data/cpuidle-exynos.h>
+ 
+ #define EXYNOS3250_SOC_ID	0xE3472000
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 99947ad..f977eea 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -11,14 +11,11 @@
+ 
+ #include <linux/init.h>
+ #include <linux/io.h>
+-#include <linux/kernel.h>
+-#include <linux/serial_s3c.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_domain.h>
+ #include <linux/irqchip.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ 
+@@ -26,7 +23,6 @@
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+-#include <asm/memory.h>
+ 
+ #include <mach/map.h>
+ 
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 111cfbf..1bfd1b0 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -20,8 +20,6 @@
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/suspend.h>
+ 
+-#include <mach/map.h>
+-
+ #include "common.h"
+ #include "smc.h"
+ 
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index da46c63..85c3be6 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -15,7 +15,6 @@
+ #include <linux/init.h>
+ #include <linux/errno.h>
+ #include <linux/delay.h>
+-#include <linux/device.h>
+ #include <linux/jiffies.h>
+ #include <linux/smp.h>
+ #include <linux/io.h>
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index b9b9186..c43b776 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -17,7 +17,7 @@
+ #include <linux/suspend.h>
+ #include <linux/cpu_pm.h>
+ #include <linux/io.h>
+-#include <linux/err.h>
++#include <linux/of.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ #include <linux/soc/samsung/exynos-pmu.h>
+ 
+@@ -28,8 +28,6 @@
+ 
+ #include <mach/map.h>
+ 
+-#include <plat/pm-common.h>
+-
+ #include "common.h"
+ 
+ static inline void __iomem *exynos_boot_vector_addr(void)
+diff --git a/arch/arm/mach-exynos/s5p-dev-mfc.c b/arch/arm/mach-exynos/s5p-dev-mfc.c
+index 0b04b6b..8ef1f3e 100644
+--- a/arch/arm/mach-exynos/s5p-dev-mfc.c
++++ b/arch/arm/mach-exynos/s5p-dev-mfc.c
+@@ -9,7 +9,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/memblock.h>
+-- 
+2.4.5
