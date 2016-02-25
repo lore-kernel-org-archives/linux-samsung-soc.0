@@ -1,59 +1,65 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 9/9] clockevents/drivers/exynos_mct: Implement ->set_state_oneshot_stopped()
-Date: Thu, 25 Feb 2016 14:37:17 +0100
-Message-ID: <1456407438-6131-9-git-send-email-daniel.lezcano@linaro.org>
-References: <56CF00F6.9010301@linaro.org>
- <1456407438-6131-1-git-send-email-daniel.lezcano@linaro.org>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v2 00/13] SYSMMU driver update and support for Exynos 5433
+Date: Thu, 25 Feb 2016 15:34:03 +0100
+Message-ID: <20160225143403.GC16675@8bytes.org>
+References: <1455804780-9616-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:36434 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932982AbcBYNiF (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:57129 "EHLO theia.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759993AbcBYOeH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 08:38:05 -0500
-Received: by mail-wm0-f41.google.com with SMTP id g62so29021394wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Feb 2016 05:38:04 -0800 (PST)
-In-Reply-To: <1456407438-6131-1-git-send-email-daniel.lezcano@linaro.org>
+	Thu, 25 Feb 2016 09:34:07 -0500
+Content-Disposition: inline
+In-Reply-To: <1455804780-9616-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tglx@linutronix.de
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:CLOCKSOURCE, CLOC..." <linux-kernel@vger.kernel.org>, "moderated list:ARM/SAMSUNG
-	EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+On Thu, Feb 18, 2016 at 03:12:47PM +0100, Marek Szyprowski wrote:
+> Marek Szyprowski (13):
+>   iommu: exynos: rework iommu group initialization
+>   iommu: exynos: add support for IOMMU_DOMAIN_DMA domain type
+>   iommu: exynos: remove ARM-specific cache flush interface
+>   iommu: exynos: simplify master clock operations
+>   iommu: exynos: refactor code (no direct register access)
+>   iommu: exynos: refactor fault handling code
+>   iommu: exynos: refactor init config code
+>   iommu: exynos: unify code for fldp cache invalidation
+>   iommu: exynos: add support for SYSMMU controller with bogus version
+>     reg
+>   iommu: exynos: update device tree documentation
+>   iommu: exynos: add support for v5 SYSMMU
+>   iommu: exynos: add Maintainers entry for Exynos SYSMMU driver
+>   iommu: exynos: support multiple attach_device calls
+> 
+>  .../devicetree/bindings/iommu/samsung,sysmmu.txt   |  22 +-
+>  MAINTAINERS                                        |   6 +
+>  drivers/iommu/Kconfig                              |   2 +-
+>  drivers/iommu/exynos-iommu.c                       | 598 ++++++++++++---------
+>  4 files changed, 372 insertions(+), 256 deletions(-)
 
-set_state_oneshot_stopped() is called by the clkevt core, when the next
-event is required at an expiry time of 'KTIME_MAX'. This normally
-happens with NO_HZ_{IDLE|FULL} in both LOWRES/HIGHRES modes.
+Applied all patches and changed the subjects to:
 
-This patch makes the clockevent device to stop on such an event, to
-avoid spurious interrupts, as explained by: commit 8fff52fd5093
-("clockevents: Introduce CLOCK_EVT_STATE_ONESHOT_STOPPED state").
+Marek Szyprowski (13):
+      iommu/exynos: Rework iommu group initialization
+      iommu/exynos: Add support for IOMMU_DOMAIN_DMA domain type
+      iommu/exynos: Remove ARM-specific cache flush interface
+      iommu/exynos: Simplify master clock operations
+      iommu/exynos: Refactor code (no direct register access)
+      iommu/exynos: Refactor fault handling code
+      iommu/exynos: Refactor init config code
+      iommu/exynos: Unify code for fldp cache invalidation
+      iommu/exynos: Add support for SYSMMU controller with bogus version reg
+      iommu/exynos: Update device tree documentation
+      iommu/exynos: Add support for v5 SYSMMU
+      iommu/exynos: Add Maintainers entry for Exynos SYSMMU driver
+      iommu/exynos: Support multiple attach_device calls
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/exynos_mct.c | 2 ++
- 1 file changed, 2 insertions(+)
+Please make sure you follow this sheme for future iommu patches too.
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index ff44082..be09bc0 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -313,6 +313,7 @@ static struct clock_event_device mct_comp_device = {
- 	.set_state_periodic	= mct_set_state_periodic,
- 	.set_state_shutdown	= mct_set_state_shutdown,
- 	.set_state_oneshot	= mct_set_state_shutdown,
-+	.set_state_oneshot_stopped = mct_set_state_shutdown,
- 	.tick_resume		= mct_set_state_shutdown,
- };
- 
-@@ -452,6 +453,7 @@ static int exynos4_local_timer_setup(struct mct_clock_event_device *mevt)
- 	evt->set_state_periodic = set_state_periodic;
- 	evt->set_state_shutdown = set_state_shutdown;
- 	evt->set_state_oneshot = set_state_shutdown;
-+	evt->set_state_oneshot_stopped = set_state_shutdown;
- 	evt->tick_resume = set_state_shutdown;
- 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
- 	evt->rating = 450;
--- 
-1.9.1
+Thanks,
+
+	Joerg
