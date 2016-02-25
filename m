@@ -1,102 +1,156 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3/7] drivers: soc: EXYNOS drivers for v4.6
-Date: Wed, 24 Feb 2016 17:35:25 -0800
-Message-ID: <CAOesGMig_djAEfBjmU8Vu4jO+hR3w6JDAR8pPT1ze0sNck_4-g@mail.gmail.com>
-References: <1455496446-23779-1-git-send-email-k.kozlowski@samsung.com>
-	<1455496446-23779-4-git-send-email-k.kozlowski@samsung.com>
-	<20160224222254.GT10126@localhost>
-	<56CE4E14.2050701@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f169.google.com ([209.85.160.169]:35525 "EHLO
-	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757581AbcBYBf1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Feb 2016 20:35:27 -0500
-Received: by mail-yk0-f169.google.com with SMTP id r207so16380311ykd.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Feb 2016 17:35:26 -0800 (PST)
-In-Reply-To: <56CE4E14.2050701@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH] arm64: dts: Add tmu node for exynos7
+Date: Thu, 25 Feb 2016 08:57:45 +0530
+Message-ID: <1456370865-10086-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Pavel Fedin <p.fedin@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Wed, Feb 24, 2016 at 4:43 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 25.02.2016 07:22, Olof Johansson wrote:
->> On Mon, Feb 15, 2016 at 09:34:02AM +0900, Krzysztof Kozlowski wrote:
->>> Hi Arnd, Kevin and Olof,
->>>
->>> This finally moves SROM controller and PMU code to separate
->>> driver under drivers/soc/samsung.
->>>
->>> Kind regards,
->>> Krzysztof
->>>
->>>
->>> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
->>>
->>>   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
->>>
->>> are available in the git repository at:
->>>
->>>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-soc-srom-pmu-4.6
->>>
->>> for you to fetch changes up to 74a6659e8bf193066ba6bf365de66baa897aebb1:
->>>
->>>   drivers: soc: Add support for Exynos PMU driver (2016-01-25 10:46:59 +0900)
->>>
->>> ----------------------------------------------------------------
->>> A set of changes adding new drivers under drivers/soc/samsung:
->>>
->>> 1. Split code for handling SROM registers out of arm/mach-exynos
->>>    in to separate SROM controller driver under drivers/soc/samsung.
->>>    The driver will save and restore SROM registers during Suspend
->>>    to RAM.
->>>
->>> 2. Add to this SROM controller driver support for bank configuration
->>>    used by child devices. This allows usage of SMSC9115 Ethernet chip
->>>    on SMDK5410 (Exynos5410) directly connected to SROM controller.
->>
->> Hi,
->>
->> OMAP has GPMC drivers under drivers/memory. I wonder if SROM should go there
->> too, since it's a quite similar bus.
->
-> I wish I get this feedback before, when we were discussing the SROM
-> patches. :/
+From: Alim Akhtar <alim.akhtar@samsung.com>
 
-Yeah, I apologize -- I usually don't have the bandwidth to follow all
-discussions, so I have to catch them when the pull requests come in.
+This patch adds tmu node, related temprature sensor and triping
+point data for Atlas cpu core found on exynos7 SoC.
 
-I usually look up the discussions, this time I didn't.
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |   25 +++++++++
+ .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   55 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   20 +++++++
+ 3 files changed, 100 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
 
-
->
-> Indeed this sounds reasonable. On some boards the omap-gpmc is used for
-> the same purpose: interfacing to smsc,lan9115 (like on SMDK5410).
->
->
->> Feel free to respin this without SROM now, so we can get the other pieces in
->> sooner and then revisit the SROM asyncronously. That'll remove the dependencies
->> on DT as well.
->
-> Okay, I'll rebase all drivers/soc branches and respin the pull request
-> so PMU driver and other stuff could go in.
->
-> BTW, just in case, although PMU stands for "Power Management Unit" I
-> don't think it should be placed under drivers/power because it is not a
-> avs/charger/battery/reset driver. Existing power-related drivers are
-> under driver/soc (bcm, dove, tegra).
->
-> Re-work of SROM drivers could be started on top of it.
-
-Sounds good, and yes -- those sound appropriate to have under
-drivers/soc at least at this time.
-
-(At some point in time we'll have to go through and cleanup
-drivers/soc, but we're letting it grow at the moment).
-
-
--Olof
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+new file mode 100644
+index 0000000..1d6dcf2
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+@@ -0,0 +1,25 @@
++/*
++ * Device tree sources for Exynos7 TMU sensor configuration
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <dt-bindings/thermal/thermal_exynos.h>
++
++#thermal-sensor-cells = <0>;
++samsung,tmu_gain = <9>;
++samsung,tmu_reference_voltage = <17>;
++samsung,tmu_noise_cancel_mode = <4>;
++samsung,tmu_efuse_value = <75>;
++samsung,tmu_min_efuse_value = <15>;
++samsung,tmu_max_efuse_value = <100>;
++samsung,tmu_first_point_trim = <25>;
++samsung,tmu_second_point_trim = <85>;
++samsung,tmu_default_temp_offset = <50>;
++samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+new file mode 100644
+index 0000000..3970545
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+@@ -0,0 +1,55 @@
++/*
++ * Device tree sources for default Exynos7 thermal zone definition
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++trips {
++	cpu-alert-0 {
++		temperature = <75000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-1 {
++		temperature = <80000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-2 {
++		temperature = <85000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-3 {
++		temperature = <90000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-4 {
++		temperature = <95000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-5 {
++		temperature = <100000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-6 {
++		temperature = <110000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	/* HW Trip point */
++	cpu-crit-0 {
++		temperature = <115000>; /* millicelsius */
++		hysteresis = <0>; /* millicelsius */
++		type = "critical";
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index c662f98..fc9d130 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -27,6 +27,7 @@
+ 		pinctrl6 = &pinctrl_fsys0;
+ 		pinctrl7 = &pinctrl_fsys1;
+ 		pinctrl8 = &pinctrl_bus1;
++		tmuctrl0 = &tmuctrl_0;
+ 	};
+ 
+ 	cpus {
+@@ -538,6 +539,25 @@
+ 			clocks = <&clock_peric0 PCLK_PWM>;
+ 			clock-names = "timers";
+ 		};
++
++		tmuctrl_0: tmu@10060000 {
++			compatible = "samsung,exynos7-tmu";
++			reg = <0x10060000 0x200>;
++			interrupts = <0 108 0>;
++			clocks = <&clock_peris PCLK_TMU>,
++				 <&clock_peris SCLK_TMU>;
++			clock-names = "tmu_apbif", "tmu_sclk";
++			#include "exynos7-tmu-sensor-conf.dtsi"
++		};
++
++		thermal-zones {
++			atlas_thermal: atlas-thermal {
++				polling-delay-passive = <0>; /* milliseconds */
++				polling-delay = <0>; /* milliseconds */
++				thermal-sensors = <&tmuctrl_0>;
++				#include "exynos7-trip-points.dtsi"
++			};
++		};
+ 	};
+ };
+ 
+-- 
+1.7.10.4
