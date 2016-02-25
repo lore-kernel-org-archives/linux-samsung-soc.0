@@ -1,66 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates
-Date: Thu, 25 Feb 2016 16:18:56 +0100
-Message-ID: <56CF1B60.5090300@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:13629 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759993AbcBYPTB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 10:19:01 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: s3c24xx: avoid warning for inb/outb
+Date: Thu, 25 Feb 2016 23:04:50 +0100
+Message-ID: <1456437900-853667-1-git-send-email-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
+s3c24xx implements its own inb/outb macros, but the implementation
+prints warnings when the port number argument is not a 32-bit scalar:
 
-Hello Stephen, Mike,
+drivers/scsi/pas16.c: In function 'NCR5380_pwrite':
+arch/arm/mach-s3c24xx/include/mach/io.h:193:68: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ #define __ioaddrc(port) ((__PORT_PCIO(port) ? PCIO_BASE + (port) : (void __iomem *)(port)))
 
-The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+This slightly modifies the definition of the __ioaddrc macro to avoid
+the warning.
 
-  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-s3c24xx/include/mach/io.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.6
-
-for you to fetch changes up to a6cb74cbc927af04af827ef590082f9717ffad51:
-
-  clk: samsung: exynos5433: Fix wrong registers of PCLK_GSCL_SMMU clocks
-(2016-02-25 12:10:00 +0100)
-
-----------------------------------------------------------------
-Mostly correction of errors in the exynos5433 SoC
-clocks definition, dropping read-only registers
-from the suspend/resume register save/restore list
-and exposition of two clocks required for the
-exynos5433 HDMI subsystem operation.
-
-----------------------------------------------------------------
-Andrzej Hajda (2):
-      clk/samsung: exynos5433: add definitions of HDMI-PHY output clocks
-      clk/samsung: exynos5433: add pclk_decon clock
-
-Jonghwa Lee (1):
-      clk: samsung: exynos5433: Fix wrong registers of PCLK_GSCL_SMMU clocks
-
-Marek Szyprowski (1):
-      clk: samsung: exynos5433: Fix definitions of SCLK ISP SENSOR0 clocks
-
-Sylwester Nawrocki (4):
-      clk: samsung: exynos5433: Fix typos in *_ISP_MPWM clock names
-      clk: samsung: exynos5433: Fix definitions of MUX_SEL_CAM04 clocks
-      clk: samsung: exynos5433: Drop RO registers from the save/restore lists
-      clk: samsung: exynos5433: Fix mout_aclk_cam1*_user clocks definition
-
- drivers/clk/samsung/clk-exynos5433.c   | 138
-+++++++------------------------------------
- include/dt-bindings/clock/exynos5433.h |   9 ++-
- 2 files changed, 28 insertions(+), 119 deletions(-)
-
---
-Thanks,
-Sylwester
+diff --git a/arch/arm/mach-s3c24xx/include/mach/io.h b/arch/arm/mach-s3c24xx/include/mach/io.h
+index 5dd1db4e2677..235c53647aa4 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/io.h
++++ b/arch/arm/mach-s3c24xx/include/mach/io.h
+@@ -190,7 +190,7 @@ DECLARE_IO(int,l,"")
+ 	result;								\
+ })
+ 
+-#define __ioaddrc(port)	((__PORT_PCIO(port) ? PCIO_BASE + (port) : (void __iomem *)(port)))
++#define __ioaddrc(port)	((__PORT_PCIO(port) ? PCIO_BASE + (port) : (void __iomem *)0 + (port)))
+ 
+ #define inb(p)		(__builtin_constant_p((p)) ? __inbc(p)	   : __inb(p))
+ #define inw(p)		(__builtin_constant_p((p)) ? __inwc(p)	   : __inw(p))
+-- 
+2.7.0
