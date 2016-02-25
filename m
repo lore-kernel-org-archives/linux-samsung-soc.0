@@ -1,321 +1,214 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [RESPIN 2/6] drivers: memory: Add support for exynos SROM driver
-Date: Thu, 25 Feb 2016 14:03:38 +0530
-Message-ID: <1456389222-12738-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH] arm64: dts: Add tmu node for exynos7
+Date: Thu, 25 Feb 2016 09:58:03 +0100
+Message-ID: <20160225095803.719122ae@amdc2363>
+References: <1456370865-10086-1-git-send-email-pankaj.dubey@samsung.com>
+ <56CE7DAC.4000803@samsung.com> <56CE7FF3.4030101@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:33763 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758668AbcBYI6L convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 25 Feb 2016 03:58:11 -0500
+In-reply-to: <56CE7FF3.4030101@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
 
-This patch adds Exynos SROM controller driver which will handle
-save restore of SROM registers during S2R.
+Hi pankaj.dubey,
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-[p.fedin@samsung.com: tested on SMDK5410]
-Tested-by: Pavel Fedin <p.fedin@samsung.com>
-Signed-off-by: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/memory/Kconfig               |   1 +
- drivers/memory/Makefile              |   1 +
- drivers/memory/samsung/Kconfig       |  12 +++
- drivers/memory/samsung/Makefile      |   1 +
- drivers/memory/samsung/exynos-srom.c | 175 +++++++++++++++++++++++++++++++++++
- drivers/memory/samsung/exynos-srom.h |  51 ++++++++++
- 6 files changed, 241 insertions(+)
- create mode 100644 drivers/memory/samsung/Kconfig
- create mode 100644 drivers/memory/samsung/Makefile
- create mode 100644 drivers/memory/samsung/exynos-srom.c
- create mode 100644 drivers/memory/samsung/exynos-srom.h
+> Hi Krzysztof,
+>=20
+> On Thursday 25 February 2016 09:36 AM, Krzysztof Kozlowski wrote:
+> > On 25.02.2016 12:27, Pankaj Dubey wrote:
+> >> From: Alim Akhtar <alim.akhtar@samsung.com>
+> >>
+> >> This patch adds tmu node, related temprature sensor and triping
+> >> point data for Atlas cpu core found on exynos7 SoC.
+> >>
+> >> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> >=20
+> > Yours Sob is missing.
+> >=20
+> > Cc-ed Lukasz Majewski.
+> >=20
+>=20
+> Due to some technical difficulty Alim posted via my account. He will
+> re-spin this patch via his account soon.
 
-diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-index 6f31546..bcb1982 100644
---- a/drivers/memory/Kconfig
-+++ b/drivers/memory/Kconfig
-@@ -114,6 +114,7 @@ config JZ4780_NEMC
- 	  the Ingenic JZ4780. This controller is used to handle external
- 	  memory devices such as NAND and SRAM.
- 
-+source "drivers/memory/samsung/Kconfig"
- source "drivers/memory/tegra/Kconfig"
- 
- endif
-diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
-index 1c46af5..d100e40 100644
---- a/drivers/memory/Makefile
-+++ b/drivers/memory/Makefile
-@@ -16,4 +16,5 @@ obj-$(CONFIG_MVEBU_DEVBUS)	+= mvebu-devbus.o
- obj-$(CONFIG_TEGRA20_MC)	+= tegra20-mc.o
- obj-$(CONFIG_JZ4780_NEMC)	+= jz4780-nemc.o
- 
-+obj-$(CONFIG_SAMSUNG_MC)	+= samsung/
- obj-$(CONFIG_TEGRA_MC)		+= tegra/
-diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
-new file mode 100644
-index 0000000..c2cd45e
---- /dev/null
-+++ b/drivers/memory/samsung/Kconfig
-@@ -0,0 +1,12 @@
-+config SAMSUNG_MC
-+	bool "SAMSUNG Exynos Memory Controller support" if COMPILE_TEST
-+	default y
-+	depends on ARCH_EXYNOS
-+	help
-+	  This driver supports the Memory Controller (MC) hardwares found on
-+	  SAMSUNG Exynos SoCs.
-+
-+config EXYNOS_SROM
-+	bool
-+	depends on (ARM && ARCH_EXYNOS && PM) || ((ARM || ARM64) && COMPILE_TEST)
-+
-diff --git a/drivers/memory/samsung/Makefile b/drivers/memory/samsung/Makefile
-new file mode 100644
-index 0000000..9c554d5
---- /dev/null
-+++ b/drivers/memory/samsung/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_EXYNOS_SROM)	+= exynos-srom.o
-diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-new file mode 100644
-index 0000000..57a232d
---- /dev/null
-+++ b/drivers/memory/samsung/exynos-srom.c
-@@ -0,0 +1,175 @@
-+/*
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+ *	      http://www.samsung.com/
-+ *
-+ * EXYNOS - SROM Controller support
-+ * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "exynos-srom.h"
-+
-+static const unsigned long exynos_srom_offsets[] = {
-+	/* SROM side */
-+	EXYNOS_SROM_BW,
-+	EXYNOS_SROM_BC0,
-+	EXYNOS_SROM_BC1,
-+	EXYNOS_SROM_BC2,
-+	EXYNOS_SROM_BC3,
-+};
-+
-+/**
-+ * struct exynos_srom_reg_dump: register dump of SROM Controller registers.
-+ * @offset: srom register offset from the controller base address.
-+ * @value: the value of register under the offset.
-+ */
-+struct exynos_srom_reg_dump {
-+	u32     offset;
-+	u32     value;
-+};
-+
-+/**
-+ * struct exynos_srom: platform data for exynos srom controller driver.
-+ * @dev: platform device pointer
-+ * @reg_base: srom base address
-+ * @reg_offset: exynos_srom_reg_dump pointer to hold offset and its value.
-+ */
-+struct exynos_srom {
-+	struct device *dev;
-+	void __iomem *reg_base;
-+	struct exynos_srom_reg_dump *reg_offset;
-+};
-+
-+static struct exynos_srom_reg_dump *exynos_srom_alloc_reg_dump(
-+		const unsigned long *rdump,
-+		unsigned long nr_rdump)
-+{
-+	struct exynos_srom_reg_dump *rd;
-+	unsigned int i;
-+
-+	rd = kcalloc(nr_rdump, sizeof(*rd), GFP_KERNEL);
-+	if (!rd)
-+		return NULL;
-+
-+	for (i = 0; i < nr_rdump; ++i)
-+		rd[i].offset = rdump[i];
-+
-+	return rd;
-+}
-+
-+static int exynos_srom_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np;
-+	struct exynos_srom *srom;
-+	struct device *dev = &pdev->dev;
-+
-+	np = dev->of_node;
-+	if (!np) {
-+		dev_err(&pdev->dev, "could not find device info\n");
-+		return -EINVAL;
-+	}
-+
-+	srom = devm_kzalloc(&pdev->dev,
-+			sizeof(struct exynos_srom), GFP_KERNEL);
-+	if (!srom)
-+		return -ENOMEM;
-+
-+	srom->dev = dev;
-+	srom->reg_base = of_iomap(np, 0);
-+	if (!srom->reg_base) {
-+		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	platform_set_drvdata(pdev, srom);
-+
-+	srom->reg_offset = exynos_srom_alloc_reg_dump(exynos_srom_offsets,
-+			sizeof(exynos_srom_offsets));
-+	if (!srom->reg_offset) {
-+		iounmap(srom->reg_base);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static int exynos_srom_remove(struct platform_device *pdev)
-+{
-+	struct exynos_srom *srom = platform_get_drvdata(pdev);
-+
-+	kfree(srom->reg_offset);
-+	iounmap(srom->reg_base);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static void exynos_srom_save(void __iomem *base,
-+				    struct exynos_srom_reg_dump *rd,
-+				    unsigned int num_regs)
-+{
-+	for (; num_regs > 0; --num_regs, ++rd)
-+		rd->value = readl(base + rd->offset);
-+}
-+
-+static void exynos_srom_restore(void __iomem *base,
-+				      const struct exynos_srom_reg_dump *rd,
-+				      unsigned int num_regs)
-+{
-+	for (; num_regs > 0; --num_regs, ++rd)
-+		writel(rd->value, base + rd->offset);
-+}
-+
-+static int exynos_srom_suspend(struct device *dev)
-+{
-+	struct exynos_srom *srom = dev_get_drvdata(dev);
-+
-+	exynos_srom_save(srom->reg_base, srom->reg_offset,
-+				ARRAY_SIZE(exynos_srom_offsets));
-+	return 0;
-+}
-+
-+static int exynos_srom_resume(struct device *dev)
-+{
-+	struct exynos_srom *srom = dev_get_drvdata(dev);
-+
-+	exynos_srom_restore(srom->reg_base, srom->reg_offset,
-+				ARRAY_SIZE(exynos_srom_offsets));
-+	return 0;
-+}
-+#endif
-+
-+static const struct of_device_id of_exynos_srom_ids[] = {
-+	{
-+		.compatible	= "samsung,exynos-srom",
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_exynos_srom_ids);
-+
-+static SIMPLE_DEV_PM_OPS(exynos_srom_pm_ops, exynos_srom_suspend, exynos_srom_resume);
-+
-+static struct platform_driver exynos_srom_driver = {
-+	.probe = exynos_srom_probe,
-+	.remove = exynos_srom_remove,
-+	.driver = {
-+		.name = "exynos-srom",
-+		.of_match_table = of_exynos_srom_ids,
-+		.pm = &exynos_srom_pm_ops,
-+	},
-+};
-+module_platform_driver(exynos_srom_driver);
-+
-+MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey@samsung.com>");
-+MODULE_DESCRIPTION("Exynos SROM Controller Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/memory/samsung/exynos-srom.h b/drivers/memory/samsung/exynos-srom.h
-new file mode 100644
-index 0000000..34660c6
---- /dev/null
-+++ b/drivers/memory/samsung/exynos-srom.h
-@@ -0,0 +1,51 @@
-+/*
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Exynos SROMC register definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __EXYNOS_SROM_H
-+#define __EXYNOS_SROM_H __FILE__
-+
-+#define EXYNOS_SROMREG(x)		(x)
-+
-+#define EXYNOS_SROM_BW		EXYNOS_SROMREG(0x0)
-+#define EXYNOS_SROM_BC0		EXYNOS_SROMREG(0x4)
-+#define EXYNOS_SROM_BC1		EXYNOS_SROMREG(0x8)
-+#define EXYNOS_SROM_BC2		EXYNOS_SROMREG(0xc)
-+#define EXYNOS_SROM_BC3		EXYNOS_SROMREG(0x10)
-+#define EXYNOS_SROM_BC4		EXYNOS_SROMREG(0x14)
-+#define EXYNOS_SROM_BC5		EXYNOS_SROMREG(0x18)
-+
-+/* one register BW holds 4 x 4-bit packed settings for NCS0 - NCS3 */
-+
-+#define EXYNOS_SROM_BW__DATAWIDTH__SHIFT	0
-+#define EXYNOS_SROM_BW__ADDRMODE__SHIFT		1
-+#define EXYNOS_SROM_BW__WAITENABLE__SHIFT	2
-+#define EXYNOS_SROM_BW__BYTEENABLE__SHIFT	3
-+
-+#define EXYNOS_SROM_BW__CS_MASK			0xf
-+
-+#define EXYNOS_SROM_BW__NCS0__SHIFT		0
-+#define EXYNOS_SROM_BW__NCS1__SHIFT		4
-+#define EXYNOS_SROM_BW__NCS2__SHIFT		8
-+#define EXYNOS_SROM_BW__NCS3__SHIFT		12
-+#define EXYNOS_SROM_BW__NCS4__SHIFT		16
-+#define EXYNOS_SROM_BW__NCS5__SHIFT		20
-+
-+/* applies to same to BCS0 - BCS3 */
-+
-+#define EXYNOS_SROM_BCX__PMC__SHIFT		0
-+#define EXYNOS_SROM_BCX__TACP__SHIFT		4
-+#define EXYNOS_SROM_BCX__TCAH__SHIFT		8
-+#define EXYNOS_SROM_BCX__TCOH__SHIFT		12
-+#define EXYNOS_SROM_BCX__TACC__SHIFT		16
-+#define EXYNOS_SROM_BCX__TCOS__SHIFT		24
-+#define EXYNOS_SROM_BCX__TACS__SHIFT		28
-+
-+#endif /* __EXYNOS_SROM_H */
--- 
-2.4.5
+Looking forward to see your patches. :-)
+
+Best regards,
+=C5=81ukasz Majewski
+
+>=20
+> Thanks,
+> Pankaj Dubey
+> > Lukasz,
+> > Your review or ack would be appreciated.
+> >=20
+> >=20
+> >> ---
+> >>  .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |   25
+> >> +++++++++ .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |
+> >> 55 ++++++++++++++++++++
+> >> arch/arm64/boot/dts/exynos/exynos7.dtsi            |   20 +++++++
+> >> 3 files changed, 100 insertions(+) create mode 100644
+> >> arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi create
+> >> mode 100644 arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+> >>
+> >> diff --git
+> >> a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+> >> b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi new file
+> >> mode 100644 index 0000000..1d6dcf2 --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+> >> @@ -0,0 +1,25 @@
+> >> +/*
+> >> + * Device tree sources for Exynos7 TMU sensor configuration
+> >> + *
+> >> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+> >> + *		http://www.samsung.com
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or
+> >> modify
+> >> + * it under the terms of the GNU General Public License version 2
+> >> as
+> >> + * published by the Free Software Foundation.
+> >> + *
+> >> + */
+> >> +
+> >> +#include <dt-bindings/thermal/thermal_exynos.h>
+> >> +
+> >> +#thermal-sensor-cells =3D <0>;
+> >> +samsung,tmu_gain =3D <9>;
+> >> +samsung,tmu_reference_voltage =3D <17>;
+> >> +samsung,tmu_noise_cancel_mode =3D <4>;
+> >> +samsung,tmu_efuse_value =3D <75>;
+> >> +samsung,tmu_min_efuse_value =3D <15>;
+> >> +samsung,tmu_max_efuse_value =3D <100>;
+> >> +samsung,tmu_first_point_trim =3D <25>;
+> >> +samsung,tmu_second_point_trim =3D <85>;
+> >> +samsung,tmu_default_temp_offset =3D <50>;
+> >> +samsung,tmu_cal_type =3D <TYPE_ONE_POINT_TRIMMING>;
+> >> diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+> >> b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi new file
+> >> mode 100644 index 0000000..3970545
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+> >> @@ -0,0 +1,55 @@
+> >> +/*
+> >> + * Device tree sources for default Exynos7 thermal zone definitio=
+n
+> >> + *
+> >> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+> >> + *		http://www.samsung.com
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or
+> >> modify
+> >> + * it under the terms of the GNU General Public License version 2
+> >> as
+> >> + * published by the Free Software Foundation.
+> >> + *
+> >> + */
+> >> +
+> >> +trips {
+> >> +	cpu-alert-0 {
+> >> +		temperature =3D <75000>; /* millicelsius */
+> >> +		hysteresis =3D <10000>; /* millicelsius */
+> >> +		type =3D "passive";
+> >> +	};
+> >> +	cpu-alert-1 {
+> >> +		temperature =3D <80000>; /* millicelsius */
+> >> +		hysteresis =3D <10000>; /* millicelsius */
+> >> +		type =3D "passive";
+> >> +	};
+> >> +	cpu-alert-2 {
+> >> +		temperature =3D <85000>; /* millicelsius */
+> >> +		hysteresis =3D <10000>; /* millicelsius */
+> >> +		type =3D "passive";
+> >> +	};
+> >> +	cpu-alert-3 {
+> >> +		temperature =3D <90000>; /* millicelsius */
+> >> +		hysteresis =3D <10000>; /* millicelsius */
+> >> +		type =3D "passive";
+> >> +	};
+> >> +	cpu-alert-4 {
+> >> +		temperature =3D <95000>; /* millicelsius */
+> >> +		hysteresis =3D <10000>; /* millicelsius */
+> >> +		type =3D "passive";
+> >> +	};
+> >> +	cpu-alert-5 {
+> >> +		temperature =3D <100000>; /* millicelsius */
+> >> +		hysteresis =3D <10000>; /* millicelsius */
+> >> +		type =3D "passive";
+> >> +	};
+> >> +	cpu-alert-6 {
+> >> +		temperature =3D <110000>; /* millicelsius */
+> >> +		hysteresis =3D <10000>; /* millicelsius */
+> >> +		type =3D "passive";
+> >> +	};
+> >> +	/* HW Trip point */
+> >=20
+> > The comment looks unnecessary, all of these are HW trip points,
+> > right?
+> >=20
+> >> +	cpu-crit-0 {
+> >> +		temperature =3D <115000>; /* millicelsius */
+> >> +		hysteresis =3D <0>; /* millicelsius */
+> >> +		type =3D "critical";
+> >> +	};
+> >> +};
+> >> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> >> b/arch/arm64/boot/dts/exynos/exynos7.dtsi index c662f98..fc9d130
+> >> 100644 --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> >> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> >> @@ -27,6 +27,7 @@
+> >>  		pinctrl6 =3D &pinctrl_fsys0;
+> >>  		pinctrl7 =3D &pinctrl_fsys1;
+> >>  		pinctrl8 =3D &pinctrl_bus1;
+> >> +		tmuctrl0 =3D &tmuctrl_0;
+> >=20
+> > Why the alias is needed?
+> >=20
+> >>  	};
+> >> =20
+> >>  	cpus {
+> >> @@ -538,6 +539,25 @@
+> >>  			clocks =3D <&clock_peric0 PCLK_PWM>;
+> >>  			clock-names =3D "timers";
+> >>  		};
+> >> +
+> >> +		tmuctrl_0: tmu@10060000 {
+> >> +			compatible =3D "samsung,exynos7-tmu";
+> >> +			reg =3D <0x10060000 0x200>;
+> >> +			interrupts =3D <0 108 0>;
+> >> +			clocks =3D <&clock_peris PCLK_TMU>,
+> >> +				 <&clock_peris SCLK_TMU>;
+> >> +			clock-names =3D "tmu_apbif", "tmu_sclk";
+> >> +			#include "exynos7-tmu-sensor-conf.dtsi"
+> >> +		};
+> >> +
+> >> +		thermal-zones {
+> >> +			atlas_thermal: atlas-thermal {
+> >=20
+> > The atlas is a Exynos7 specific codename. The name of node should
+> > be a general class of the device, so maybe:
+> > 	atlas_thermal: cluster0-thermal
+> > ?
+> >=20
+> > Best regards,
+> > Krzysztof
+> >=20
+
+
+
+--=20
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
