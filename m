@@ -1,62 +1,70 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 6/7] ARM: dts: Exynos stuff for v4.6
-Date: Wed, 24 Feb 2016 14:31:54 -0800
-Message-ID: <20160224223154.GX10126@localhost>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL 2/7] ARM: dts: Exynos DT dependency for v4.6
+Date: Thu, 25 Feb 2016 09:13:31 +0900
+Message-ID: <56CE472B.5020201@samsung.com>
 References: <1455496446-23779-1-git-send-email-k.kozlowski@samsung.com>
- <1455496446-23779-7-git-send-email-k.kozlowski@samsung.com>
+ <1455496446-23779-3-git-send-email-k.kozlowski@samsung.com>
+ <20160224222319.GU10126@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1455496446-23779-7-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pavel Fedin <p.fedin@samsung.com>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:34322 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751802AbcBYANl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Feb 2016 19:13:41 -0500
+In-reply-to: <20160224222319.GU10126@localhost>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Pavel Fedin <p.fedin@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Mon, Feb 15, 2016 at 09:34:05AM +0900, Krzysztof Kozlowski wrote:
-> Hi Arnd, Kevin and Olof,
+On 25.02.2016 07:23, Olof Johansson wrote:
+> On Mon, Feb 15, 2016 at 09:34:01AM +0900, Krzysztof Kozlowski wrote:
+>> Hi Arnd, Kevin and Olof,
+>>
+>> Early DT changes for v4.6, needed before removal of SROM support
+>> from mach-exynos.
+>>
+>> Kind regards,
+>> Krzysztof
+>>
+>>
+>> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+>>
+>>   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-srom-4.6
+>>
+>> for you to fetch changes up to d2deef6c61e65d1e0cee40c1d74fa99007da8c84:
+>>
+>>   ARM: dts: Add SROM to exynos5410 (2016-01-25 10:32:07 +0900)
+>>
+>> ----------------------------------------------------------------
+>> Device Tree changes for v4.6 adding the nodes for Exynos SROM controller
+>> driver. The driver saves and restores SROM registers during suspend to RAM.
+>> DT changes should go in before removal of SROM support from mach-exynos.
+>>
+>> ----------------------------------------------------------------
+>> Pankaj Dubey (2):
+>>       ARM: dts: Add SROM device node for exynos4
+>>       ARM: dts: Add SROM device node for exynos5
+>>
+>> Pavel Fedin (1):
+>>       ARM: dts: Add SROM to exynos5410
 > 
-> Rest of DTS changes for v4.6. This also pulls early DT changes (related
-> to SROM controller) because rest of patches depend on it.
+> Hi,
 > 
-> Kind regards,
-> Krzysztof
+> Please use the format:
 > 
+> ARM: dts: exynos: ...
 > 
-> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
-> 
->   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.6
-> 
-> for you to fetch changes up to 36a0282a41493400428d7df8c99701fb4ee344c2:
-> 
->   ARM: dts: Replace legacy *,wakeup property with wakeup-source for exynos boards (2016-01-29 09:09:49 +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung DeviceTree updates and improvements for v4.6:
-> 1. Add SROM controller device nodes.
-> 2. Add Ethernet chip as child of SROM controller on SMDK5410.
-> 3. Allow simultaneous usage exynos-rng and s5p-sss drivers on Exynos5.
-> 4. Cleanup CPU configuration on Exynos542x/5800.
-> 5. Add necessary nodes for cpufreq-dt driver on Exynos542x/5800 (OPPs,
->    regulator supplies) which allows frequency and voltage scalling
->    of this SoC.
-> 6. Minor cleanups.
+> in the future.
 
-Merged, thanks. See feedback on the other dt branch regarding subjects.
+Sure! I was using it before... but switched to Kukjin's format.
 
-
--Olof
+Thanks for merging,
+Krzysztof
