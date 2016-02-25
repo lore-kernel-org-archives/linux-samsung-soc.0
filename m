@@ -1,65 +1,66 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v2 00/13] SYSMMU driver update and support for Exynos 5433
-Date: Thu, 25 Feb 2016 15:34:03 +0100
-Message-ID: <20160225143403.GC16675@8bytes.org>
-References: <1455804780-9616-1-git-send-email-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates
+Date: Thu, 25 Feb 2016 16:18:56 +0100
+Message-ID: <56CF1B60.5090300@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:57129 "EHLO theia.8bytes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759993AbcBYOeH (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:13629 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759993AbcBYPTB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 09:34:07 -0500
-Content-Disposition: inline
-In-Reply-To: <1455804780-9616-1-git-send-email-m.szyprowski@samsung.com>
+	Thu, 25 Feb 2016 10:19:01 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Thu, Feb 18, 2016 at 03:12:47PM +0100, Marek Szyprowski wrote:
-> Marek Szyprowski (13):
->   iommu: exynos: rework iommu group initialization
->   iommu: exynos: add support for IOMMU_DOMAIN_DMA domain type
->   iommu: exynos: remove ARM-specific cache flush interface
->   iommu: exynos: simplify master clock operations
->   iommu: exynos: refactor code (no direct register access)
->   iommu: exynos: refactor fault handling code
->   iommu: exynos: refactor init config code
->   iommu: exynos: unify code for fldp cache invalidation
->   iommu: exynos: add support for SYSMMU controller with bogus version
->     reg
->   iommu: exynos: update device tree documentation
->   iommu: exynos: add support for v5 SYSMMU
->   iommu: exynos: add Maintainers entry for Exynos SYSMMU driver
->   iommu: exynos: support multiple attach_device calls
-> 
->  .../devicetree/bindings/iommu/samsung,sysmmu.txt   |  22 +-
->  MAINTAINERS                                        |   6 +
->  drivers/iommu/Kconfig                              |   2 +-
->  drivers/iommu/exynos-iommu.c                       | 598 ++++++++++++---------
->  4 files changed, 372 insertions(+), 256 deletions(-)
 
-Applied all patches and changed the subjects to:
+Hello Stephen, Mike,
 
-Marek Szyprowski (13):
-      iommu/exynos: Rework iommu group initialization
-      iommu/exynos: Add support for IOMMU_DOMAIN_DMA domain type
-      iommu/exynos: Remove ARM-specific cache flush interface
-      iommu/exynos: Simplify master clock operations
-      iommu/exynos: Refactor code (no direct register access)
-      iommu/exynos: Refactor fault handling code
-      iommu/exynos: Refactor init config code
-      iommu/exynos: Unify code for fldp cache invalidation
-      iommu/exynos: Add support for SYSMMU controller with bogus version reg
-      iommu/exynos: Update device tree documentation
-      iommu/exynos: Add support for v5 SYSMMU
-      iommu/exynos: Add Maintainers entry for Exynos SYSMMU driver
-      iommu/exynos: Support multiple attach_device calls
+The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
 
-Please make sure you follow this sheme for future iommu patches too.
+  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
 
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.6
+
+for you to fetch changes up to a6cb74cbc927af04af827ef590082f9717ffad51:
+
+  clk: samsung: exynos5433: Fix wrong registers of PCLK_GSCL_SMMU clocks
+(2016-02-25 12:10:00 +0100)
+
+----------------------------------------------------------------
+Mostly correction of errors in the exynos5433 SoC
+clocks definition, dropping read-only registers
+from the suspend/resume register save/restore list
+and exposition of two clocks required for the
+exynos5433 HDMI subsystem operation.
+
+----------------------------------------------------------------
+Andrzej Hajda (2):
+      clk/samsung: exynos5433: add definitions of HDMI-PHY output clocks
+      clk/samsung: exynos5433: add pclk_decon clock
+
+Jonghwa Lee (1):
+      clk: samsung: exynos5433: Fix wrong registers of PCLK_GSCL_SMMU clocks
+
+Marek Szyprowski (1):
+      clk: samsung: exynos5433: Fix definitions of SCLK ISP SENSOR0 clocks
+
+Sylwester Nawrocki (4):
+      clk: samsung: exynos5433: Fix typos in *_ISP_MPWM clock names
+      clk: samsung: exynos5433: Fix definitions of MUX_SEL_CAM04 clocks
+      clk: samsung: exynos5433: Drop RO registers from the save/restore lists
+      clk: samsung: exynos5433: Fix mout_aclk_cam1*_user clocks definition
+
+ drivers/clk/samsung/clk-exynos5433.c   | 138
++++++++------------------------------------
+ include/dt-bindings/clock/exynos5433.h |   9 ++-
+ 2 files changed, 28 insertions(+), 119 deletions(-)
+
+--
 Thanks,
-
-	Joerg
+Sylwester
