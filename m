@@ -1,77 +1,191 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v3 00/52] mtd: rework ECC layout definition
-Date: Fri, 26 Feb 2016 03:16:00 +0100
-Message-ID: <20160226031600.15ad27ba@bbrezillon>
-References: <1456448280-27788-1-git-send-email-boris.brezillon@free-electrons.com>
-	<d968b867f4d7f603581a0ff83e07c15c@agner.ch>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] arm64: dts: Add tmu node for exynos7
+Date: Fri, 26 Feb 2016 09:35:01 +0530
+Message-ID: <56CFCEED.5080709@samsung.com>
+References: <1456370865-10086-1-git-send-email-pankaj.dubey@samsung.com>
+ <56CE7DAC.4000803@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:39645 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932139AbcBZCtj (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:44152 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750789AbcBZEEV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 21:49:39 -0500
-In-Reply-To: <d968b867f4d7f603581a0ff83e07c15c@agner.ch>
+	Thu, 25 Feb 2016 23:04:21 -0500
+In-reply-to: <56CE7DAC.4000803@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Kyungmin Park <kyungmin.park@samsung.co>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
 
-On Thu, 25 Feb 2016 17:27:23 -0800
-Stefan Agner <stefan@agner.ch> wrote:
+Hi Krzysztof,
 
-> Hi Boris,
-> 
-> On 2016-02-25 16:57, Boris Brezillon wrote:
-> > Hello,
-> > 
-> > This patchset aims at getting rid of the nand_ecclayout limitations.
-> > struct nand_ecclayout is defining fixed eccpos and oobfree arrays which
-> > can only be increased by modifying the MTD_MAX_ECCPOS_ENTRIES_LARGE and
-> > MTD_MAX_OOBFREE_ENTRIES_LARGE macros.
-> > This approach forces us to modify the macro values each time we add a
-> > new NAND chip with a bigger OOB area, and increasing these arrays also
-> > penalize all platforms, even those who only support small NAND devices
-> > (with small OOB area).
-> > 
-> > The idea to overcome this limitation, is to define the ECC/OOB layout
-> > by the mean of two functions: ->ecc() and ->free(), which will
-> > basically return the same information has those stored in the
-> > nand_ecclayout struct.
-> > 
-> > Another advantage of this solution is that ECC layouts are usually
-> > following a repetitive pattern (i.e. leave X bytes free and put Y bytes
-> > of ECC per ECC chunk), which allows one to implement the ->ecc()
-> > and ->free() functions with a simple logic that can be applied
-> > to any size of OOB.
-> > 
-> > Patches 1 to 4 are just cleanups or trivial fixes that can be taken
-> > independently.
-> > 
-> > Also note that the last two commits are removing the nand_ecclayout
-> > definition, thus preventing any new driver to use this structure.
-> > Of course, this step can be delayed if some of the previous patches
-> > are not accepted.
-> 
-> Is the patch set somewhere available to pull from?
+On 02/25/2016 09:36 AM, Krzysztof Kozlowski wrote:
+> On 25.02.2016 12:27, Pankaj Dubey wrote:
+>> From: Alim Akhtar <alim.akhtar@samsung.com>
+>>
+>> This patch adds tmu node, related temprature sensor and triping
+>> point data for Atlas cpu core found on exynos7 SoC.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>
+> Yours Sob is missing.
+>
+> Cc-ed Lukasz Majewski.
+>
+Thanks
+> Lukasz,
+> Your review or ack would be appreciated.
+>
+>
+>> ---
+>>   .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |   25 +++++++++
+>>   .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   55 ++++++++++++++++++++
+>>   arch/arm64/boot/dts/exynos/exynos7.dtsi            |   20 +++++++
+>>   3 files changed, 100 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+>> new file mode 100644
+>> index 0000000..1d6dcf2
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+>> @@ -0,0 +1,25 @@
+>> +/*
+>> + * Device tree sources for Exynos7 TMU sensor configuration
+>> + *
+>> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+>> + *		http://www.samsung.com
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + */
+>> +
+>> +#include <dt-bindings/thermal/thermal_exynos.h>
+>> +
+>> +#thermal-sensor-cells = <0>;
+>> +samsung,tmu_gain = <9>;
+>> +samsung,tmu_reference_voltage = <17>;
+>> +samsung,tmu_noise_cancel_mode = <4>;
+>> +samsung,tmu_efuse_value = <75>;
+>> +samsung,tmu_min_efuse_value = <15>;
+>> +samsung,tmu_max_efuse_value = <100>;
+>> +samsung,tmu_first_point_trim = <25>;
+>> +samsung,tmu_second_point_trim = <85>;
+>> +samsung,tmu_default_temp_offset = <50>;
+>> +samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+>> new file mode 100644
+>> index 0000000..3970545
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+>> @@ -0,0 +1,55 @@
+>> +/*
+>> + * Device tree sources for default Exynos7 thermal zone definition
+>> + *
+>> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+>> + *		http://www.samsung.com
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + */
+>> +
+>> +trips {
+>> +	cpu-alert-0 {
+>> +		temperature = <75000>; /* millicelsius */
+>> +		hysteresis = <10000>; /* millicelsius */
+>> +		type = "passive";
+>> +	};
+>> +	cpu-alert-1 {
+>> +		temperature = <80000>; /* millicelsius */
+>> +		hysteresis = <10000>; /* millicelsius */
+>> +		type = "passive";
+>> +	};
+>> +	cpu-alert-2 {
+>> +		temperature = <85000>; /* millicelsius */
+>> +		hysteresis = <10000>; /* millicelsius */
+>> +		type = "passive";
+>> +	};
+>> +	cpu-alert-3 {
+>> +		temperature = <90000>; /* millicelsius */
+>> +		hysteresis = <10000>; /* millicelsius */
+>> +		type = "passive";
+>> +	};
+>> +	cpu-alert-4 {
+>> +		temperature = <95000>; /* millicelsius */
+>> +		hysteresis = <10000>; /* millicelsius */
+>> +		type = "passive";
+>> +	};
+>> +	cpu-alert-5 {
+>> +		temperature = <100000>; /* millicelsius */
+>> +		hysteresis = <10000>; /* millicelsius */
+>> +		type = "passive";
+>> +	};
+>> +	cpu-alert-6 {
+>> +		temperature = <110000>; /* millicelsius */
+>> +		hysteresis = <10000>; /* millicelsius */
+>> +		type = "passive";
+>> +	};
+>> +	/* HW Trip point */
+>
+> The comment looks unnecessary, all of these are HW trip points, right?
+>
+Ok will remove, on this SoC, only THRES_LEVEL_RISE7 support THERM_TRIP, 
+rest are used for thermal throttling via a cooling device like cpu-freq.
+>> +	cpu-crit-0 {
+>> +		temperature = <115000>; /* millicelsius */
+>> +		hysteresis = <0>; /* millicelsius */
+>> +		type = "critical";
+>> +	};
+>> +};
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> index c662f98..fc9d130 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> @@ -27,6 +27,7 @@
+>>   		pinctrl6 = &pinctrl_fsys0;
+>>   		pinctrl7 = &pinctrl_fsys1;
+>>   		pinctrl8 = &pinctrl_bus1;
+>> +		tmuctrl0 = &tmuctrl_0;
+>
+> Why the alias is needed?
+>
+This is kept to add mutli-instance support of tmu, later ISP and G3D 
+will get added.
+>>   	};
+>>
+>>   	cpus {
+>> @@ -538,6 +539,25 @@
+>>   			clocks = <&clock_peric0 PCLK_PWM>;
+>>   			clock-names = "timers";
+>>   		};
+>> +
+>> +		tmuctrl_0: tmu@10060000 {
+>> +			compatible = "samsung,exynos7-tmu";
+>> +			reg = <0x10060000 0x200>;
+>> +			interrupts = <0 108 0>;
+>> +			clocks = <&clock_peris PCLK_TMU>,
+>> +				 <&clock_peris SCLK_TMU>;
+>> +			clock-names = "tmu_apbif", "tmu_sclk";
+>> +			#include "exynos7-tmu-sensor-conf.dtsi"
+>> +		};
+>> +
+>> +		thermal-zones {
+>> +			atlas_thermal: atlas-thermal {
+>
+> The atlas is a Exynos7 specific codename. The name of node should be a
+> general class of the device, so maybe:
+> 	atlas_thermal: cluster0-thermal
+> ?
+>
+sounds good to me..will add.
 
-Yes, it's here [1].
-
-> 
-> Do I see things right that patch 21/52 contains the crucial function
-> nand_ooblayout_ecc_lp which calculate the ECC position? (for those who
-> do not provide mtd_ooblayout_ops anyway...)
-
-You're correct. This implementation is here for NAND controller drivers
-relying on the linux default ECC layout (the one used when soft ECC is
-selected, or when not layout is specified). This layout is just putting
-all ECC bytes at the end of the OOB area.
-
-[1]https://github.com/bbrezillon/linux-0day/tree/nand/ecclayout
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> Best regards,
+> Krzysztof
+>
