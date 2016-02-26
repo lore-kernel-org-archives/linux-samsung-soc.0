@@ -1,35 +1,161 @@
-From: Pavel Fedin <p.fedin@samsung.com>
-Subject: RE: [RESPIN 0/6] Add support for Exynos SROM Controller driver.
-Date: Fri, 26 Feb 2016 11:33:53 +0300
-Message-ID: <00c701d17070$6de3d1b0$49ab7510$@samsung.com>
-References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
- <56D0040C.8020204@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v2] arm64: dts: Add tmu node for exynos7
+Date: Fri, 26 Feb 2016 14:36:30 +0530
+Message-ID: <1456477590-4530-1-git-send-email-alim.akhtar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:56483 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752160AbcBZId7 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56337 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750699AbcBZJF5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Feb 2016 03:33:59 -0500
-In-reply-to: <56D0040C.8020204@samsung.com>
-Content-language: ru
+	Fri, 26 Feb 2016 04:05:57 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, olof@lixom.net
+To: linux-arm-kernel@lists.infradead.org
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, l.majewski@samsung.com
 
- Hello!
+This patch adds tmu node, related temprature sensor and triping
+point data for Atlas cpu core found on exynos7 SoC.
 
-> I applied (with fixes mentioned in my comments) everything and pushed
-> here so everyone could play with it:
-> https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=for-v4.6/drivers-soc-
-> exynos-srom-2
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+Changes since v1:
+* Addressed krzysztof's review comments.
 
- I see the last patch (adding Ethernet chip to DT) is missing. Is it intentional, so that it goes later?
+ .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |   25 +++++++++
+ .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   54 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   20 ++++++++
+ 3 files changed, 99 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
 
-Kind regards,
-Pavel Fedin
-Senior Engineer
-Samsung Electronics Research center Russia
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+new file mode 100644
+index 0000000..1d6dcf2
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+@@ -0,0 +1,25 @@
++/*
++ * Device tree sources for Exynos7 TMU sensor configuration
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <dt-bindings/thermal/thermal_exynos.h>
++
++#thermal-sensor-cells = <0>;
++samsung,tmu_gain = <9>;
++samsung,tmu_reference_voltage = <17>;
++samsung,tmu_noise_cancel_mode = <4>;
++samsung,tmu_efuse_value = <75>;
++samsung,tmu_min_efuse_value = <15>;
++samsung,tmu_max_efuse_value = <100>;
++samsung,tmu_first_point_trim = <25>;
++samsung,tmu_second_point_trim = <85>;
++samsung,tmu_default_temp_offset = <50>;
++samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+new file mode 100644
+index 0000000..0623583
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+@@ -0,0 +1,54 @@
++/*
++ * Device tree sources for default Exynos7 thermal zone definition
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++trips {
++	cpu-alert-0 {
++		temperature = <75000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-1 {
++		temperature = <80000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-2 {
++		temperature = <85000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-3 {
++		temperature = <90000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-4 {
++		temperature = <95000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-5 {
++		temperature = <100000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-alert-6 {
++		temperature = <110000>; /* millicelsius */
++		hysteresis = <10000>; /* millicelsius */
++		type = "passive";
++	};
++	cpu-crit-0 {
++		temperature = <115000>; /* millicelsius */
++		hysteresis = <0>; /* millicelsius */
++		type = "critical";
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index c662f98..19de742 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -27,6 +27,7 @@
+ 		pinctrl6 = &pinctrl_fsys0;
+ 		pinctrl7 = &pinctrl_fsys1;
+ 		pinctrl8 = &pinctrl_bus1;
++		tmuctrl0 = &tmuctrl_0;
+ 	};
+ 
+ 	cpus {
+@@ -538,6 +539,25 @@
+ 			clocks = <&clock_peric0 PCLK_PWM>;
+ 			clock-names = "timers";
+ 		};
++
++		tmuctrl_0: tmu@10060000 {
++			compatible = "samsung,exynos7-tmu";
++			reg = <0x10060000 0x200>;
++			interrupts = <0 108 0>;
++			clocks = <&clock_peris PCLK_TMU>,
++				 <&clock_peris SCLK_TMU>;
++			clock-names = "tmu_apbif", "tmu_sclk";
++			#include "exynos7-tmu-sensor-conf.dtsi"
++		};
++
++		thermal-zones {
++			atlas_thermal: cluster0-thermal {
++				polling-delay-passive = <0>; /* milliseconds */
++				polling-delay = <0>; /* milliseconds */
++				thermal-sensors = <&tmuctrl_0>;
++				#include "exynos7-trip-points.dtsi"
++			};
++		};
+ 	};
+ };
+ 
+-- 
+1.7.10.4
