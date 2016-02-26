@@ -1,37 +1,63 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 2/2] ARM64: EXYNOS: mach/soc changes for v4.6, 2nd
-Date: Fri, 26 Feb 2016 09:05:03 +0900
-Message-ID: <1456445103-23314-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL 2/2] ARM64: EXYNOS: mach/soc changes for v4.6, 2nd
+Date: Fri, 26 Feb 2016 09:09:38 +0900
+Message-ID: <56CF97C2.5000305@samsung.com>
 References: <1456445103-23314-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1456445103-23314-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+ <1456445103-23314-2-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:25949 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752770AbcBZAJ6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 25 Feb 2016 19:09:58 -0500
+In-reply-to: <1456445103-23314-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
 
-Hi Arnd, Kevin and Olof,
+On 26.02.2016 09:05, Krzysztof Kozlowski wrote:
+> Hi Arnd, Kevin and Olof,
+> 
+> 
+> Pull request for v4.6 with ARM64 mach/soc changes.
+> 
+> This depends on change in clk tree (removal of ARCH_EXYNOS7) which is
+> pulled here.
+> 
+> 
+> Kind regards,
+> Krzysztof
+> 
+> 
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> 
+> 
+> 
+> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+> 
+>   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.6-2
+> 
+> for you to fetch changes up to c87b3e970c70d5e27f9eb9acd09c6b5b9d589860:
+> 
+>   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS (2016-02-23 08:49:46 +0900)
+
+And for easier grepping through history, below is the pull request
+for Exynos-specific change (no clk commits):
 
 
-Pull request for v4.6 with ARM64 mach/soc changes.
+The following changes since commit 85997a7cba7bc1578eb554e88f82023d85fb499a:
 
-This depends on change in clk tree (removal of ARCH_EXYNOS7) which is
-pulled here.
-
-
-Kind regards,
-Krzysztof
-
-
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-
-
-
-The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
-
-  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7 (2016-02-22 10:20:24 -0800)
 
 are available in the git repository at:
 
@@ -48,80 +74,11 @@ Samsung Exynos ARM64 improvements for v4.6:
    This depends on clk tree: removal of last presence of ARCH_EXYNOS7.
 
 ----------------------------------------------------------------
-Andi Shyti (4):
-      clk: s2mps11: merge two for loops in one
-      clk: s2mps11: allocate only one structure for clock init
-      clk: s2mps11: remove redundant static variables declaration
-      clk: s2mps11: remove redundant code
-
-Axel Lin (1):
-      clk: scpi: Fix checking return value of platform_device_register_simple()
-
-Geliang Tang (1):
-      clk: move the common clock's to_clk_*(_hw) macros to clk-provider.h
-
-Heiko Stuebner (1):
-      clk-divider: make sure read-only dividers do not write to their register
-
-James Liao (2):
-      clk: mediatek: Fix memory leak on clock init fail
-      clk: Move vendor's Kconfig into CCF menu section
-
-Krzysztof Kozlowski (4):
-      clk: samsung: Enable COMPILE_TEST for Samsung clocks
-      clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Krzysztof Kozlowski (2):
       Merge branch 'clk-samsung' of git://git.kernel.org/.../clk/linux into next/soc64
       arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
 
-Loc Ho (2):
-      Documentation: Update APM X-Gene clock binding for v2 hardware
-      clk: xgene: Add SoC and PMD PLL clocks with v2 hardware
-
-Marc Gonzalez (1):
-      clk: tango4: rename ARCH_TANGOX to ARCH_TANGO
-
-Stephen Boyd (2):
-      clk: mvebu: Mark ioremapped memory as __iomem
-      clk: xgene: Remove return from void function
-
- Documentation/devicetree/bindings/clock/xgene.txt |   2 +
- arch/arm/mach-s3c24xx/Kconfig                     |   1 +
- arch/arm64/Kconfig.platforms                      |  11 +--
- arch/arm64/boot/dts/exynos/Makefile               |   2 +-
- arch/arm64/configs/defconfig                      |   2 +-
- drivers/clk/Kconfig                               |   8 +-
- drivers/clk/Makefile                              |   2 +-
- drivers/clk/clk-composite.c                       |   2 -
- drivers/clk/clk-divider.c                         |  13 ++-
- drivers/clk/clk-fixed-factor.c                    |   2 -
- drivers/clk/clk-fixed-rate.c                      |   2 -
- drivers/clk/clk-fractional-divider.c              |   2 -
- drivers/clk/clk-gate.c                            |   2 -
- drivers/clk/clk-gpio.c                            |   2 -
- drivers/clk/clk-multiplier.c                      |   2 -
- drivers/clk/clk-mux.c                             |   2 -
- drivers/clk/clk-s2mps11.c                         | 108 +++++++---------------
- drivers/clk/clk-scpi.c                            |   2 +-
- drivers/clk/clk-xgene.c                           | 105 +++++++++++++--------
- drivers/clk/imx/clk-busy.c                        |   4 +-
- drivers/clk/imx/clk-fixup-div.c                   |   5 +-
- drivers/clk/imx/clk-fixup-mux.c                   |   2 -
- drivers/clk/imx/clk-gate-exclusive.c              |   2 +-
- drivers/clk/mediatek/clk-gate.c                   |   8 +-
- drivers/clk/mediatek/clk-gate.h                   |   2 +-
- drivers/clk/mediatek/clk-mtk.c                    |   6 +-
- drivers/clk/mvebu/common.c                        |   2 -
- drivers/clk/mvebu/dove-divider.c                  |   2 +-
- drivers/clk/mvebu/kirkwood.c                      |   2 -
- drivers/clk/mxs/clk-div.c                         |   2 +-
- drivers/clk/nxp/clk-lpc18xx-ccu.c                 |   4 +-
- drivers/clk/rockchip/clk.c                        |   4 +-
- drivers/clk/samsung/Kconfig                       |  19 ++--
- drivers/clk/samsung/Makefile                      |   4 +-
- drivers/clk/st/clkgen-mux.c                       |   9 +-
- drivers/clk/ti/composite.c                        |   2 -
- drivers/clk/ti/divider.c                          |   2 -
- drivers/clk/ti/gate.c                             |   2 -
- drivers/clk/ti/mux.c                              |   2 -
- include/linux/clk-provider.h                      |  19 ++++
- 40 files changed, 178 insertions(+), 198 deletions(-)
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
