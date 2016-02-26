@@ -1,191 +1,99 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] arm64: dts: Add tmu node for exynos7
-Date: Fri, 26 Feb 2016 09:35:01 +0530
-Message-ID: <56CFCEED.5080709@samsung.com>
-References: <1456370865-10086-1-git-send-email-pankaj.dubey@samsung.com>
- <56CE7DAC.4000803@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RESPIN 2/6] drivers: memory: Add support for exynos SROM driver
+Date: Fri, 26 Feb 2016 16:25:36 +0900
+Message-ID: <56CFFDF0.9040107@samsung.com>
+References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
+ <1456389222-12738-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44152 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789AbcBZEEV (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52856 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753841AbcBZHZo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 23:04:21 -0500
-In-reply-to: <56CE7DAC.4000803@samsung.com>
+	Fri, 26 Feb 2016 02:25:44 -0500
+In-reply-to: <1456389222-12738-3-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, Kukjin Kim <kgene@kernel.org>
 
-Hi Krzysztof,
+On 25.02.2016 17:33, Pankaj Dubey wrote:
+> This patch adds Exynos SROM controller driver which will handle
+> save restore of SROM registers during S2R.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> [p.fedin@samsung.com: tested on SMDK5410]
+> Tested-by: Pavel Fedin <p.fedin@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/memory/Kconfig               |   1 +
+>  drivers/memory/Makefile              |   1 +
+>  drivers/memory/samsung/Kconfig       |  12 +++
+>  drivers/memory/samsung/Makefile      |   1 +
+>  drivers/memory/samsung/exynos-srom.c | 175 +++++++++++++++++++++++++++++++++++
+>  drivers/memory/samsung/exynos-srom.h |  51 ++++++++++
+>  6 files changed, 241 insertions(+)
+>  create mode 100644 drivers/memory/samsung/Kconfig
+>  create mode 100644 drivers/memory/samsung/Makefile
+>  create mode 100644 drivers/memory/samsung/exynos-srom.c
+>  create mode 100644 drivers/memory/samsung/exynos-srom.h
+> 
+> diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
+> index 6f31546..bcb1982 100644
+> --- a/drivers/memory/Kconfig
+> +++ b/drivers/memory/Kconfig
+> @@ -114,6 +114,7 @@ config JZ4780_NEMC
+>  	  the Ingenic JZ4780. This controller is used to handle external
+>  	  memory devices such as NAND and SRAM.
+>  
+> +source "drivers/memory/samsung/Kconfig"
+>  source "drivers/memory/tegra/Kconfig"
+>  
+>  endif
+> diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
+> index 1c46af5..d100e40 100644
+> --- a/drivers/memory/Makefile
+> +++ b/drivers/memory/Makefile
+> @@ -16,4 +16,5 @@ obj-$(CONFIG_MVEBU_DEVBUS)	+= mvebu-devbus.o
+>  obj-$(CONFIG_TEGRA20_MC)	+= tegra20-mc.o
+>  obj-$(CONFIG_JZ4780_NEMC)	+= jz4780-nemc.o
+>  
+> +obj-$(CONFIG_SAMSUNG_MC)	+= samsung/
+>  obj-$(CONFIG_TEGRA_MC)		+= tegra/
+> diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
+> new file mode 100644
+> index 0000000..c2cd45e
+> --- /dev/null
+> +++ b/drivers/memory/samsung/Kconfig
+> @@ -0,0 +1,12 @@
+> +config SAMSUNG_MC
+> +	bool "SAMSUNG Exynos Memory Controller support" if COMPILE_TEST
+> +	default y
+> +	depends on ARCH_EXYNOS
+> +	help
+> +	  This driver supports the Memory Controller (MC) hardwares found on
+> +	  SAMSUNG Exynos SoCs.
+> +
 
-On 02/25/2016 09:36 AM, Krzysztof Kozlowski wrote:
-> On 25.02.2016 12:27, Pankaj Dubey wrote:
->> From: Alim Akhtar <alim.akhtar@samsung.com>
->>
->> This patch adds tmu node, related temprature sensor and triping
->> point data for Atlas cpu core found on exynos7 SoC.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->
-> Yours Sob is missing.
->
-> Cc-ed Lukasz Majewski.
->
-Thanks
-> Lukasz,
-> Your review or ack would be appreciated.
->
->
->> ---
->>   .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi   |   25 +++++++++
->>   .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   55 ++++++++++++++++++++
->>   arch/arm64/boot/dts/exynos/exynos7.dtsi            |   20 +++++++
->>   3 files changed, 100 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
->>   create mode 100644 arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
->> new file mode 100644
->> index 0000000..1d6dcf2
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
->> @@ -0,0 +1,25 @@
->> +/*
->> + * Device tree sources for Exynos7 TMU sensor configuration
->> + *
->> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + */
->> +
->> +#include <dt-bindings/thermal/thermal_exynos.h>
->> +
->> +#thermal-sensor-cells = <0>;
->> +samsung,tmu_gain = <9>;
->> +samsung,tmu_reference_voltage = <17>;
->> +samsung,tmu_noise_cancel_mode = <4>;
->> +samsung,tmu_efuse_value = <75>;
->> +samsung,tmu_min_efuse_value = <15>;
->> +samsung,tmu_max_efuse_value = <100>;
->> +samsung,tmu_first_point_trim = <25>;
->> +samsung,tmu_second_point_trim = <85>;
->> +samsung,tmu_default_temp_offset = <50>;
->> +samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
->> new file mode 100644
->> index 0000000..3970545
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
->> @@ -0,0 +1,55 @@
->> +/*
->> + * Device tree sources for default Exynos7 thermal zone definition
->> + *
->> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + */
->> +
->> +trips {
->> +	cpu-alert-0 {
->> +		temperature = <75000>; /* millicelsius */
->> +		hysteresis = <10000>; /* millicelsius */
->> +		type = "passive";
->> +	};
->> +	cpu-alert-1 {
->> +		temperature = <80000>; /* millicelsius */
->> +		hysteresis = <10000>; /* millicelsius */
->> +		type = "passive";
->> +	};
->> +	cpu-alert-2 {
->> +		temperature = <85000>; /* millicelsius */
->> +		hysteresis = <10000>; /* millicelsius */
->> +		type = "passive";
->> +	};
->> +	cpu-alert-3 {
->> +		temperature = <90000>; /* millicelsius */
->> +		hysteresis = <10000>; /* millicelsius */
->> +		type = "passive";
->> +	};
->> +	cpu-alert-4 {
->> +		temperature = <95000>; /* millicelsius */
->> +		hysteresis = <10000>; /* millicelsius */
->> +		type = "passive";
->> +	};
->> +	cpu-alert-5 {
->> +		temperature = <100000>; /* millicelsius */
->> +		hysteresis = <10000>; /* millicelsius */
->> +		type = "passive";
->> +	};
->> +	cpu-alert-6 {
->> +		temperature = <110000>; /* millicelsius */
->> +		hysteresis = <10000>; /* millicelsius */
->> +		type = "passive";
->> +	};
->> +	/* HW Trip point */
->
-> The comment looks unnecessary, all of these are HW trip points, right?
->
-Ok will remove, on this SoC, only THRES_LEVEL_RISE7 support THERM_TRIP, 
-rest are used for thermal throttling via a cooling device like cpu-freq.
->> +	cpu-crit-0 {
->> +		temperature = <115000>; /* millicelsius */
->> +		hysteresis = <0>; /* millicelsius */
->> +		type = "critical";
->> +	};
->> +};
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> index c662f98..fc9d130 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> @@ -27,6 +27,7 @@
->>   		pinctrl6 = &pinctrl_fsys0;
->>   		pinctrl7 = &pinctrl_fsys1;
->>   		pinctrl8 = &pinctrl_bus1;
->> +		tmuctrl0 = &tmuctrl_0;
->
-> Why the alias is needed?
->
-This is kept to add mutli-instance support of tmu, later ISP and G3D 
-will get added.
->>   	};
->>
->>   	cpus {
->> @@ -538,6 +539,25 @@
->>   			clocks = <&clock_peric0 PCLK_PWM>;
->>   			clock-names = "timers";
->>   		};
->> +
->> +		tmuctrl_0: tmu@10060000 {
->> +			compatible = "samsung,exynos7-tmu";
->> +			reg = <0x10060000 0x200>;
->> +			interrupts = <0 108 0>;
->> +			clocks = <&clock_peris PCLK_TMU>,
->> +				 <&clock_peris SCLK_TMU>;
->> +			clock-names = "tmu_apbif", "tmu_sclk";
->> +			#include "exynos7-tmu-sensor-conf.dtsi"
->> +		};
->> +
->> +		thermal-zones {
->> +			atlas_thermal: atlas-thermal {
->
-> The atlas is a Exynos7 specific codename. The name of node should be a
-> general class of the device, so maybe:
-> 	atlas_thermal: cluster0-thermal
-> ?
->
-sounds good to me..will add.
+if SAMSUNG_MC
 
-> Best regards,
-> Krzysztof
->
+> +config EXYNOS_SROM
+> +	bool
+> +	depends on (ARM && ARCH_EXYNOS && PM) || ((ARM || ARM64) && COMPILE_TEST)
+
+(ARM && ARCH_EXYNOS && PM) || COMPILE_TEST
+
+You don't need to limit compile testing to ARM/ARM64.
+
+Rest is good.
+
+If there are no comments from other people, then I can fix this while
+applying. If there will be a comment or re-spin, then please apply my
+comments.
+
+Best regards,
+Krzysztof
