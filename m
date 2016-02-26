@@ -1,99 +1,67 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESPIN 2/6] drivers: memory: Add support for exynos SROM driver
-Date: Fri, 26 Feb 2016 16:25:36 +0900
-Message-ID: <56CFFDF0.9040107@samsung.com>
+Subject: Re: [RESPIN 4/6] ARM: EXYNOS: Remove SROM related register settings
+ from mach-exynos
+Date: Fri, 26 Feb 2016 16:28:11 +0900
+Message-ID: <56CFFE8B.80002@samsung.com>
 References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
- <1456389222-12738-3-git-send-email-pankaj.dubey@samsung.com>
+ <1456389222-12738-5-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52856 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753841AbcBZHZo (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:50810 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753506AbcBZH2T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Feb 2016 02:25:44 -0500
-In-reply-to: <1456389222-12738-3-git-send-email-pankaj.dubey@samsung.com>
+	Fri, 26 Feb 2016 02:28:19 -0500
+In-reply-to: <1456389222-12738-5-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, Kukjin Kim <kgene@kernel.org>
 
 On 25.02.2016 17:33, Pankaj Dubey wrote:
-> This patch adds Exynos SROM controller driver which will handle
-> save restore of SROM registers during S2R.
+> As now we have dedicated driver for SROM controller, it will take care
+> of saving register banks during S2R so we can safely remove these
+> settings from mach-exynos.
 > 
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> [p.fedin@samsung.com: tested on SMDK5410]
-> Tested-by: Pavel Fedin <p.fedin@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene@kernel.org>
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  drivers/memory/Kconfig               |   1 +
->  drivers/memory/Makefile              |   1 +
->  drivers/memory/samsung/Kconfig       |  12 +++
->  drivers/memory/samsung/Makefile      |   1 +
->  drivers/memory/samsung/exynos-srom.c | 175 +++++++++++++++++++++++++++++++++++
->  drivers/memory/samsung/exynos-srom.h |  51 ++++++++++
->  6 files changed, 241 insertions(+)
->  create mode 100644 drivers/memory/samsung/Kconfig
->  create mode 100644 drivers/memory/samsung/Makefile
->  create mode 100644 drivers/memory/samsung/exynos-srom.c
->  create mode 100644 drivers/memory/samsung/exynos-srom.h
+>  arch/arm/mach-exynos/Kconfig                 |  2 ++
+>  arch/arm/mach-exynos/exynos.c                | 17 ---------
+>  arch/arm/mach-exynos/include/mach/map.h      |  3 --
+>  arch/arm/mach-exynos/regs-srom.h             | 53 ----------------------------
+>  arch/arm/mach-exynos/suspend.c               | 20 ++---------
+>  arch/arm/plat-samsung/include/plat/map-s5p.h |  1 -
+>  6 files changed, 4 insertions(+), 92 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/regs-srom.h
 > 
-> diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-> index 6f31546..bcb1982 100644
-> --- a/drivers/memory/Kconfig
-> +++ b/drivers/memory/Kconfig
-> @@ -114,6 +114,7 @@ config JZ4780_NEMC
->  	  the Ingenic JZ4780. This controller is used to handle external
->  	  memory devices such as NAND and SRAM.
->  
-> +source "drivers/memory/samsung/Kconfig"
->  source "drivers/memory/tegra/Kconfig"
->  
->  endif
-> diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
-> index 1c46af5..d100e40 100644
-> --- a/drivers/memory/Makefile
-> +++ b/drivers/memory/Makefile
-> @@ -16,4 +16,5 @@ obj-$(CONFIG_MVEBU_DEVBUS)	+= mvebu-devbus.o
->  obj-$(CONFIG_TEGRA20_MC)	+= tegra20-mc.o
->  obj-$(CONFIG_JZ4780_NEMC)	+= jz4780-nemc.o
->  
-> +obj-$(CONFIG_SAMSUNG_MC)	+= samsung/
->  obj-$(CONFIG_TEGRA_MC)		+= tegra/
-> diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
-> new file mode 100644
-> index 0000000..c2cd45e
-> --- /dev/null
-> +++ b/drivers/memory/samsung/Kconfig
-> @@ -0,0 +1,12 @@
-> +config SAMSUNG_MC
-> +	bool "SAMSUNG Exynos Memory Controller support" if COMPILE_TEST
-> +	default y
-> +	depends on ARCH_EXYNOS
-> +	help
-> +	  This driver supports the Memory Controller (MC) hardwares found on
-> +	  SAMSUNG Exynos SoCs.
-> +
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index c4989c2..8da01d1 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -18,6 +18,7 @@ menuconfig ARCH_EXYNOS
+>  	select COMMON_CLK_SAMSUNG
+>  	select EXYNOS_THERMAL
+>  	select EXYNOS_PMU
+> +	select EXYNOS_SROM if PM
+>  	select HAVE_ARM_SCU if SMP
+>  	select HAVE_S3C2410_I2C if I2C
+>  	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+> @@ -30,6 +31,7 @@ menuconfig ARCH_EXYNOS
+>  	select SRAM
+>  	select THERMAL
+>  	select MFD_SYSCON
+> +	select MEMORY
 
-if SAMSUNG_MC
+select SAMSUNG_MC because otherwise the directory won't be build
+(memory/Kconfig).
 
-> +config EXYNOS_SROM
-> +	bool
-> +	depends on (ARM && ARCH_EXYNOS && PM) || ((ARM || ARM64) && COMPILE_TEST)
+Rest looks good. No need to respin (I can fix this when applying),
+unless other people will have some comments.
 
-(ARM && ARCH_EXYNOS && PM) || COMPILE_TEST
-
-You don't need to limit compile testing to ARM/ARM64.
-
-Rest is good.
-
-If there are no comments from other people, then I can fix this while
-applying. If there will be a comment or re-spin, then please apply my
-comments.
-
-Best regards,
+BR,
 Krzysztof
