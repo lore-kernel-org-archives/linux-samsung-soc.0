@@ -1,39 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESPIN 0/6] Add support for Exynos SROM Controller driver.
-Date: Fri, 26 Feb 2016 19:55:50 +0900
-Message-ID: <CAJKOXPdZ-5WYYvqiNTMUnP6WsxAK4gqsi4o5SMJF+_SJa1qbag@mail.gmail.com>
-References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
-	<56D0040C.8020204@samsung.com>
-	<00c701d17070$6de3d1b0$49ab7510$@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] drm: exynos: mark pm functions __maybe_unused
+Date: Fri, 26 Feb 2016 12:55:56 +0100
+Message-ID: <1456487773-3963404-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:34667 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753787AbcBZKzv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Feb 2016 05:55:51 -0500
-In-Reply-To: <00c701d17070$6de3d1b0$49ab7510$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Fedin <p.fedin@samsung.com>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, thomas.ab@samsung.com, olof@lixom.net
 
-2016-02-26 17:33 GMT+09:00 Pavel Fedin <p.fedin@samsung.com>:
->  Hello!
->
->> I applied (with fixes mentioned in my comments) everything and pushed
->> here so everyone could play with it:
->> https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=for-v4.6/drivers-soc-
->> exynos-srom-2
->
->  I see the last patch (adding Ethernet chip to DT) is missing. Is it intentional, so that it goes later?
->
-
-It was already merged into arm-soc:
-https://git.kernel.org/cgit/linux/kernel/git/arm/arm-soc.git/commit/?h=next/dt&id=a090435727f6ccf0c5e77793ca48681122e5b950
-
-All DT changes (SROM, PMU) were accepted by arm-soc maintainers.
-
-Best regards,
-Krzysztof
+VGhlIGV4eW5vcyBkcm0gZHJpdmVyIGltcGxlbWVudHMgcG93ZXIgbWFuYWdlbWVudCBmdW5jdGlv
+bnMgdGhhdAphcmUgaGlkZGVuIGluc2lkZSBvZiAjaWZkZWYsIGJ1dCB3aGVuIHRoZXkgYXJlIGFs
+bCBkaXNhYmxlZCwKd2UgZ2V0IGEgd2FybmluZyBhYm91dCBhbm90aGVyIHVudXNlZCBmdW5jdGlv
+biB0aGF0IGlzIG5vdApjYWxsZWQgZnJvbSBlbHNld2hlcmU6Cgpkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZ3NjLmM6MTIxOToxMjogZXJyb3I6ICdnc2NfY2xrX2N0cmwnIGRlZmlu
+ZWQgYnV0IG5vdCB1c2VkIFstV2Vycm9yPXVudXNlZC1mdW5jdGlvbl0KClRoaXMgcmVtb3ZlcyB0
+aGUgI2lmZGVmIGFuZCBpbnN0ZWFkIHVzZXMgYSBfX21heWJlX3VudXNlZCBhbm5vdGF0aW9uCnRo
+YXQgYXZvaWRzIHRoZSBwcm9ibGVtIGJlY2F1c2Ugbm93IGdjYyBjYW4gc2VlIGhvdyB0aGUgZnVu
+Y3Rpb24gaXMKKG5vdCkgdXNlZCBhbmQgc2lsZW50bHkgZHJvcCBpdC4KClNpZ25lZC1vZmYtYnk6
+IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2dzYy5jIHwgMTIgKysrKy0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNCBp
+bnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9nc2MuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9nc2MuYwppbmRleCA1ZDIwZGE4Zjk1N2UuLmIwYTc3Mzc5MGY4NSAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jCisrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYwpAQCAtMTc2MCw4ICsxNzYwLDcgQEAgc3RhdGlj
+IGludCBnc2NfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJcmV0dXJuIDA7
+CiB9CiAKLSNpZmRlZiBDT05GSUdfUE1fU0xFRVAKLXN0YXRpYyBpbnQgZ3NjX3N1c3BlbmQoc3Ry
+dWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21heWJlX3VudXNlZCBnc2Nfc3VzcGVuZChz
+dHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJc3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3Nj
+X2NvbnRleHQoZGV2KTsKIApAQCAtMTc3Myw3ICsxNzcyLDcgQEAgc3RhdGljIGludCBnc2Nfc3Vz
+cGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJcmV0dXJuIGdzY19jbGtfY3RybChjdHgsIGZhbHNl
+KTsKIH0KIAotc3RhdGljIGludCBnc2NfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKK3N0YXRp
+YyBpbnQgX19tYXliZV91bnVzZWQgZ3NjX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJ
+c3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsKIApAQCAtMTc4
+NCwxMCArMTc4Myw4IEBAIHN0YXRpYyBpbnQgZ3NjX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYp
+CiAKIAlyZXR1cm4gMDsKIH0KLSNlbmRpZgogCi0jaWZkZWYgQ09ORklHX1BNCi1zdGF0aWMgaW50
+IGdzY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21h
+eWJlX3VudXNlZCBnc2NfcnVudGltZV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKIHsKIAlz
+dHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChkZXYpOwogCkBAIC0xNzk2
+LDcgKzE3OTMsNyBAQCBzdGF0aWMgaW50IGdzY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmlj
+ZSAqZGV2KQogCXJldHVybiAgZ3NjX2Nsa19jdHJsKGN0eCwgZmFsc2UpOwogfQogCi1zdGF0aWMg
+aW50IGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCitzdGF0aWMgaW50IF9f
+bWF5YmVfdW51c2VkIGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJ
+c3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsKIApAQCAtMTgw
+NCw3ICsxODAxLDYgQEAgc3RhdGljIGludCBnc2NfcnVudGltZV9yZXN1bWUoc3RydWN0IGRldmlj
+ZSAqZGV2KQogCiAJcmV0dXJuICBnc2NfY2xrX2N0cmwoY3R4LCB0cnVlKTsKIH0KLSNlbmRpZgog
+CiBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgZ3NjX3BtX29wcyA9IHsKIAlTRVRfU1lT
+VEVNX1NMRUVQX1BNX09QUyhnc2Nfc3VzcGVuZCwgZ3NjX3Jlc3VtZSkKLS0gCjIuNy4wCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
