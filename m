@@ -1,63 +1,109 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] drm: exynos: mark pm functions __maybe_unused
-Date: Fri, 26 Feb 2016 12:55:56 +0100
-Message-ID: <1456487773-3963404-1-git-send-email-arnd@arndb.de>
+Subject: [PATCH v2] video: exynos: fix modular build
+Date: Fri, 26 Feb 2016 13:38:08 +0100
+Message-ID: <1456490307-823812-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Donghwa Lee <dh09.lee@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIGV4eW5vcyBkcm0gZHJpdmVyIGltcGxlbWVudHMgcG93ZXIgbWFuYWdlbWVudCBmdW5jdGlv
-bnMgdGhhdAphcmUgaGlkZGVuIGluc2lkZSBvZiAjaWZkZWYsIGJ1dCB3aGVuIHRoZXkgYXJlIGFs
-bCBkaXNhYmxlZCwKd2UgZ2V0IGEgd2FybmluZyBhYm91dCBhbm90aGVyIHVudXNlZCBmdW5jdGlv
-biB0aGF0IGlzIG5vdApjYWxsZWQgZnJvbSBlbHNld2hlcmU6Cgpkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZ3NjLmM6MTIxOToxMjogZXJyb3I6ICdnc2NfY2xrX2N0cmwnIGRlZmlu
-ZWQgYnV0IG5vdCB1c2VkIFstV2Vycm9yPXVudXNlZC1mdW5jdGlvbl0KClRoaXMgcmVtb3ZlcyB0
-aGUgI2lmZGVmIGFuZCBpbnN0ZWFkIHVzZXMgYSBfX21heWJlX3VudXNlZCBhbm5vdGF0aW9uCnRo
-YXQgYXZvaWRzIHRoZSBwcm9ibGVtIGJlY2F1c2Ugbm93IGdjYyBjYW4gc2VlIGhvdyB0aGUgZnVu
-Y3Rpb24gaXMKKG5vdCkgdXNlZCBhbmQgc2lsZW50bHkgZHJvcCBpdC4KClNpZ25lZC1vZmYtYnk6
-IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2dzYy5jIHwgMTIgKysrKy0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNCBp
-bnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9nc2MuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9nc2MuYwppbmRleCA1ZDIwZGE4Zjk1N2UuLmIwYTc3Mzc5MGY4NSAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYwpAQCAtMTc2MCw4ICsxNzYwLDcgQEAgc3RhdGlj
-IGludCBnc2NfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJcmV0dXJuIDA7
-CiB9CiAKLSNpZmRlZiBDT05GSUdfUE1fU0xFRVAKLXN0YXRpYyBpbnQgZ3NjX3N1c3BlbmQoc3Ry
-dWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21heWJlX3VudXNlZCBnc2Nfc3VzcGVuZChz
-dHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJc3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3Nj
-X2NvbnRleHQoZGV2KTsKIApAQCAtMTc3Myw3ICsxNzcyLDcgQEAgc3RhdGljIGludCBnc2Nfc3Vz
-cGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJcmV0dXJuIGdzY19jbGtfY3RybChjdHgsIGZhbHNl
-KTsKIH0KIAotc3RhdGljIGludCBnc2NfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKK3N0YXRp
-YyBpbnQgX19tYXliZV91bnVzZWQgZ3NjX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJ
-c3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsKIApAQCAtMTc4
-NCwxMCArMTc4Myw4IEBAIHN0YXRpYyBpbnQgZ3NjX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYp
-CiAKIAlyZXR1cm4gMDsKIH0KLSNlbmRpZgogCi0jaWZkZWYgQ09ORklHX1BNCi1zdGF0aWMgaW50
-IGdzY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21h
-eWJlX3VudXNlZCBnc2NfcnVudGltZV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKIHsKIAlz
-dHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChkZXYpOwogCkBAIC0xNzk2
-LDcgKzE3OTMsNyBAQCBzdGF0aWMgaW50IGdzY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmlj
-ZSAqZGV2KQogCXJldHVybiAgZ3NjX2Nsa19jdHJsKGN0eCwgZmFsc2UpOwogfQogCi1zdGF0aWMg
-aW50IGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCitzdGF0aWMgaW50IF9f
-bWF5YmVfdW51c2VkIGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJ
-c3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsKIApAQCAtMTgw
-NCw3ICsxODAxLDYgQEAgc3RhdGljIGludCBnc2NfcnVudGltZV9yZXN1bWUoc3RydWN0IGRldmlj
-ZSAqZGV2KQogCiAJcmV0dXJuICBnc2NfY2xrX2N0cmwoY3R4LCB0cnVlKTsKIH0KLSNlbmRpZgog
-CiBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgZ3NjX3BtX29wcyA9IHsKIAlTRVRfU1lT
-VEVNX1NMRUVQX1BNX09QUyhnc2Nfc3VzcGVuZCwgZ3NjX3Jlc3VtZSkKLS0gCjIuNy4wCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The s6e8ax0 driver has a dependency on BACKLIGHT_CLASS_DEVICE,
+which can be configured as a loadable module, so we have to
+make the driver a tristate symbol as well, to avoid this error:
+
+drivers/built-in.o: In function `s6e8ax0_probe':
+:(.text+0x23a48): undefined reference to `devm_backlight_device_register'
+
+This also means we get another error from a missing export, which
+this fixes as well:
+
+ERROR: "exynos_mipi_dsi_register_lcd_driver" [drivers/video/fbdev/exynos/s6e8ax0.ko] undefined!
+
+The drivers are all written to be loadable modules already,
+except the Kconfig options for that are missing, which makes
+the patch really easy.
+
+Finally, the EXYNOS_VIDEO option is turned into tristate as well
+for good measure, as all framebuffer drivers should be configurable
+as modules, though this change is not strictly necessary.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/video/fbdev/exynos/Kconfig           | 6 +++---
+ drivers/video/fbdev/exynos/Makefile          | 6 ++++--
+ drivers/video/fbdev/exynos/exynos_mipi_dsi.c | 1 +
+ 3 files changed, 8 insertions(+), 5 deletions(-)
+
+v2: improved changelog after feedback from Paul Bolle
+
+diff --git a/drivers/video/fbdev/exynos/Kconfig b/drivers/video/fbdev/exynos/Kconfig
+index 1f16b4678c71..d916bef94f25 100644
+--- a/drivers/video/fbdev/exynos/Kconfig
++++ b/drivers/video/fbdev/exynos/Kconfig
+@@ -3,7 +3,7 @@
+ #
+ 
+ menuconfig EXYNOS_VIDEO
+-	bool "Exynos Video driver support"
++	tristate "Exynos Video driver support"
+ 	depends on ARCH_S5PV210 || ARCH_EXYNOS
+ 	help
+ 	  This enables support for EXYNOS Video device.
+@@ -15,13 +15,13 @@ if EXYNOS_VIDEO
+ #
+ 
+ config EXYNOS_MIPI_DSI
+-	bool "EXYNOS MIPI DSI driver support."
++	tristate "EXYNOS MIPI DSI driver support."
+ 	select GENERIC_PHY
+ 	help
+ 	  This enables support for MIPI-DSI device.
+ 
+ config EXYNOS_LCD_S6E8AX0
+-	bool "S6E8AX0 MIPI AMOLED LCD Driver"
++	tristate "S6E8AX0 MIPI AMOLED LCD Driver"
+ 	depends on EXYNOS_MIPI_DSI && BACKLIGHT_CLASS_DEVICE
+ 	depends on (LCD_CLASS_DEVICE = y)
+ 	default n
+diff --git a/drivers/video/fbdev/exynos/Makefile b/drivers/video/fbdev/exynos/Makefile
+index b5b1bd228abb..02d8dc522fea 100644
+--- a/drivers/video/fbdev/exynos/Makefile
++++ b/drivers/video/fbdev/exynos/Makefile
+@@ -2,6 +2,8 @@
+ # Makefile for the exynos video drivers.
+ #
+ 
+-obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
+-				     	exynos_mipi_dsi_lowlevel.o
++obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos-mipi-dsi-mod.o
++
++exynos-mipi-dsi-mod-objs		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
++					   exynos_mipi_dsi_lowlevel.o
+ obj-$(CONFIG_EXYNOS_LCD_S6E8AX0)	+= s6e8ax0.o
+diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
+index 951b592794e3..92e4af3caaf8 100644
+--- a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
++++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
+@@ -263,6 +263,7 @@ int exynos_mipi_dsi_register_lcd_driver(struct mipi_dsim_lcd_driver *lcd_drv)
+ 	return 0;
+ 
+ }
++EXPORT_SYMBOL_GPL(exynos_mipi_dsi_register_lcd_driver);
+ 
+ static struct mipi_dsim_ddi *exynos_mipi_dsi_bind_lcd_ddi(
+ 						struct mipi_dsim_device *dsim,
+-- 
+2.7.0
