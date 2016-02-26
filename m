@@ -1,34 +1,31 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 1/2] ARM: EXYNOS: mach/soc changes for v4.6, 2nd
-Date: Fri, 26 Feb 2016 09:05:02 +0900
-Message-ID: <1456445103-23314-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:44507 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752176AbcBZAF1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Feb 2016 19:05:27 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL 2/2] ARM64: EXYNOS: mach/soc changes for v4.6, 2nd
+Date: Fri, 26 Feb 2016 09:05:03 +0900
+Message-ID: <1456445103-23314-2-git-send-email-k.kozlowski@samsung.com>
+References: <1456445103-23314-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1456445103-23314-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Arnd, Kevin and Olof,
 
 
-Second pull request for v4.6 with mach/soc changes. This does
-not contain any external dependencies.
+Pull request for v4.6 with ARM64 mach/soc changes.
 
-It includes movement of PMU code to separate driver (drivers/soc) but
-it does not have commits doing the same for the SROM controller driver
-(that part I will send separately).
+This depends on change in clk tree (removal of ARCH_EXYNOS7) which is
+pulled here.
 
 
 Kind regards,
 Krzysztof
 
 
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
 
 
 
@@ -38,90 +35,93 @@ The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.6-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.6-2
 
-for you to fetch changes up to 15925cfcf83361b4eb8c7ffb51ad29b5f1e32a23:
+for you to fetch changes up to c87b3e970c70d5e27f9eb9acd09c6b5b9d589860:
 
-  ARM: s3c24xx: Avoid warning for inb/outb (2016-02-26 08:44:52 +0900)
-
-----------------------------------------------------------------
-Samsung Exynos (and older platforms) improvements for v4.6:
-1. Split out Exynos PMU driver implementation from arm/mach-exynos
-   to the drivers/soc/samsung which will allow re-use of it on ARM64.
-2. Use generic DT cpufreq driver on Exynos542x/5800.
-3. Minor cleanups.
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS (2016-02-23 08:49:46 +0900)
 
 ----------------------------------------------------------------
-Arnd Bergmann (1):
-      ARM: s3c24xx: Avoid warning for inb/outb
+Samsung Exynos ARM64 improvements for v4.6:
+1. Remove separate ARCH_EXYNOS7 symbol and consolidate it into
+   one ARCH_EXYNOS.
+   This depends on clk tree: removal of last presence of ARCH_EXYNOS7.
 
-Bartlomiej Zolnierkiewicz (2):
-      ARM: EXYNOS: Use generic cpufreq driver for Exynos5420
-      ARM: EXYNOS: Use generic cpufreq driver for Exynos5422/5800
+----------------------------------------------------------------
+Andi Shyti (4):
+      clk: s2mps11: merge two for loops in one
+      clk: s2mps11: allocate only one structure for clock init
+      clk: s2mps11: remove redundant static variables declaration
+      clk: s2mps11: remove redundant code
+
+Axel Lin (1):
+      clk: scpi: Fix checking return value of platform_device_register_simple()
 
 Geliang Tang (1):
-      ARM: plat-samsung: use to_platform_device()
+      clk: move the common clock's to_clk_*(_hw) macros to clk-provider.h
 
-Krzysztof Kozlowski (1):
-      drivers: soc: samsung: Enable COMPILE_TEST
+Heiko Stuebner (1):
+      clk-divider: make sure read-only dividers do not write to their register
 
-Masahiro Yamada (1):
-      ARM: s3c64xx: use "depends on" instead of "if" after prompt
+James Liao (2):
+      clk: mediatek: Fix memory leak on clock init fail
+      clk: Move vendor's Kconfig into CCF menu section
 
-Pankaj Dubey (12):
-      ARM: EXYNOS: Remove unused static mapping of CMU for exynos5
-      ARM: EXYNOS: Code cleanup in map.h
-      ARM: EXYNOS: Correct header comment in Kconfig file
-      ARM: EXYNOS: Move pmu specific headers under "linux/soc/samsung"
-      ARM: EXYNOS: Split up exynos3250 SoC specific PMU data
-      ARM: EXYNOS: Split up exynos4 SoC specific PMU data
-      ARM: EXYNOS: Split up exynos5250 SoC specific PMU data
-      ARM: EXYNOS: Split up exynos5420 SoC specific PMU data
-      drivers: soc: Add support for Exynos PMU driver
-      MAINTAINERS: Add maintainers entry for drivers/soc/samsung
-      ARM: EXYNOS: Cleanup header files inclusion
-      ARM: SAMSUNG: Remove unused register offset definition
+Krzysztof Kozlowski (4):
+      clk: samsung: Enable COMPILE_TEST for Samsung clocks
+      clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+      Merge branch 'clk-samsung' of git://git.kernel.org/.../clk/linux into next/soc64
+      arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
 
- MAINTAINERS                                        |   1 +
- arch/arm/mach-exynos/Kconfig                       |   4 +-
- arch/arm/mach-exynos/Makefile                      |   2 +-
- arch/arm/mach-exynos/common.h                      |   1 -
- arch/arm/mach-exynos/exynos.c                      |  17 +-
- arch/arm/mach-exynos/firmware.c                    |   2 -
- arch/arm/mach-exynos/include/mach/map.h            |  14 +-
- arch/arm/mach-exynos/mcpm-exynos.c                 |   2 +-
- arch/arm/mach-exynos/platsmp.c                     |   3 +-
- arch/arm/mach-exynos/pm.c                          |   8 +-
- arch/arm/mach-exynos/pmu.c                         | 967 ---------------------
- arch/arm/mach-exynos/s5p-dev-mfc.c                 |   1 -
- arch/arm/mach-exynos/suspend.c                     |   4 +-
- arch/arm/mach-s3c24xx/include/mach/io.h            |   2 +-
- arch/arm/mach-s3c24xx/include/mach/map.h           |  11 -
- arch/arm/mach-s3c64xx/Kconfig                      |   3 +-
- arch/arm/plat-samsung/adc.c                        |   6 +-
- arch/arm/plat-samsung/include/plat/map-s3c.h       |   4 -
- arch/arm/plat-samsung/include/plat/map-s5p.h       |   5 -
- drivers/soc/Kconfig                                |   1 +
- drivers/soc/Makefile                               |   1 +
- drivers/soc/samsung/Kconfig                        |  13 +
- drivers/soc/samsung/Makefile                       |   2 +
- drivers/soc/samsung/exynos-pmu.c                   | 141 +++
- drivers/soc/samsung/exynos-pmu.h                   |  44 +
- drivers/soc/samsung/exynos3250-pmu.c               | 175 ++++
- drivers/soc/samsung/exynos4-pmu.c                  | 222 +++++
- drivers/soc/samsung/exynos5250-pmu.c               | 195 +++++
- drivers/soc/samsung/exynos5420-pmu.c               | 280 ++++++
- .../linux/soc/samsung}/exynos-pmu.h                |   6 +-
- .../linux/soc/samsung/exynos-regs-pmu.h            |   6 +-
- 31 files changed, 1103 insertions(+), 1040 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/pmu.c
- create mode 100644 drivers/soc/samsung/Kconfig
- create mode 100644 drivers/soc/samsung/Makefile
- create mode 100644 drivers/soc/samsung/exynos-pmu.c
- create mode 100644 drivers/soc/samsung/exynos-pmu.h
- create mode 100644 drivers/soc/samsung/exynos3250-pmu.c
- create mode 100644 drivers/soc/samsung/exynos4-pmu.c
- create mode 100644 drivers/soc/samsung/exynos5250-pmu.c
- create mode 100644 drivers/soc/samsung/exynos5420-pmu.c
- rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (81%)
- rename arch/arm/mach-exynos/regs-pmu.h => include/linux/soc/samsung/exynos-regs-pmu.h (99%)
+Loc Ho (2):
+      Documentation: Update APM X-Gene clock binding for v2 hardware
+      clk: xgene: Add SoC and PMD PLL clocks with v2 hardware
+
+Marc Gonzalez (1):
+      clk: tango4: rename ARCH_TANGOX to ARCH_TANGO
+
+Stephen Boyd (2):
+      clk: mvebu: Mark ioremapped memory as __iomem
+      clk: xgene: Remove return from void function
+
+ Documentation/devicetree/bindings/clock/xgene.txt |   2 +
+ arch/arm/mach-s3c24xx/Kconfig                     |   1 +
+ arch/arm64/Kconfig.platforms                      |  11 +--
+ arch/arm64/boot/dts/exynos/Makefile               |   2 +-
+ arch/arm64/configs/defconfig                      |   2 +-
+ drivers/clk/Kconfig                               |   8 +-
+ drivers/clk/Makefile                              |   2 +-
+ drivers/clk/clk-composite.c                       |   2 -
+ drivers/clk/clk-divider.c                         |  13 ++-
+ drivers/clk/clk-fixed-factor.c                    |   2 -
+ drivers/clk/clk-fixed-rate.c                      |   2 -
+ drivers/clk/clk-fractional-divider.c              |   2 -
+ drivers/clk/clk-gate.c                            |   2 -
+ drivers/clk/clk-gpio.c                            |   2 -
+ drivers/clk/clk-multiplier.c                      |   2 -
+ drivers/clk/clk-mux.c                             |   2 -
+ drivers/clk/clk-s2mps11.c                         | 108 +++++++---------------
+ drivers/clk/clk-scpi.c                            |   2 +-
+ drivers/clk/clk-xgene.c                           | 105 +++++++++++++--------
+ drivers/clk/imx/clk-busy.c                        |   4 +-
+ drivers/clk/imx/clk-fixup-div.c                   |   5 +-
+ drivers/clk/imx/clk-fixup-mux.c                   |   2 -
+ drivers/clk/imx/clk-gate-exclusive.c              |   2 +-
+ drivers/clk/mediatek/clk-gate.c                   |   8 +-
+ drivers/clk/mediatek/clk-gate.h                   |   2 +-
+ drivers/clk/mediatek/clk-mtk.c                    |   6 +-
+ drivers/clk/mvebu/common.c                        |   2 -
+ drivers/clk/mvebu/dove-divider.c                  |   2 +-
+ drivers/clk/mvebu/kirkwood.c                      |   2 -
+ drivers/clk/mxs/clk-div.c                         |   2 +-
+ drivers/clk/nxp/clk-lpc18xx-ccu.c                 |   4 +-
+ drivers/clk/rockchip/clk.c                        |   4 +-
+ drivers/clk/samsung/Kconfig                       |  19 ++--
+ drivers/clk/samsung/Makefile                      |   4 +-
+ drivers/clk/st/clkgen-mux.c                       |   9 +-
+ drivers/clk/ti/composite.c                        |   2 -
+ drivers/clk/ti/divider.c                          |   2 -
+ drivers/clk/ti/gate.c                             |   2 -
+ drivers/clk/ti/mux.c                              |   2 -
+ include/linux/clk-provider.h                      |  19 ++++
+ 40 files changed, 178 insertions(+), 198 deletions(-)
