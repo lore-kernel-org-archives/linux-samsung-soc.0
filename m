@@ -1,197 +1,200 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v5 3/5] drm: simplify initialization of rotation property
-Date: Mon, 29 Feb 2016 16:09:31 +0100
-Message-ID: <20160229150931.GB32705@phenom.ffwll.local>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v5 1/5] drm: add generic zpos property
+Date: Mon, 29 Feb 2016 17:12:19 +0200
+Message-ID: <20160229151219.GW15993@intel.com>
 References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
- <1453905883-6807-4-git-send-email-m.szyprowski@samsung.com>
- <20160229150640.GA32705@phenom.ffwll.local>
+ <1453905883-6807-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:36732 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871AbcB2PIw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Feb 2016 10:08:52 -0500
-Received: by mail-wm0-f47.google.com with SMTP id n186so53883216wmn.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Feb 2016 07:08:51 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20160229150640.GA32705@phenom.ffwll.local>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1453905883-6807-2-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com, fabien.dessenne@st.com
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, fabien.dessenne@st.com, vincent.abriou@st.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 29, 2016 at 04:06:40PM +0100, Daniel Vetter wrote:
-> On Wed, Jan 27, 2016 at 03:44:41PM +0100, Marek Szyprowski wrote:
-> > This patch simplifies initialization of generic rotation property and
-> > aligns the code to match recently introduced function for intializing
-> > generic zpos property. It also adds missing documentation.
-> > 
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> I merged patches 3-5 to drm-misc, thanks. For the blending mode I'd like
-> to gather a few more acks from people who have been proposing ideas in the
-> past (would speed up if you cc them next time around).
-
-Blergh, I meant patches 1-3 are merged ofc ;-)
-> 
-> Thanks, Daniel
-> > ---
-> >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 10 ++++-----
-> >  drivers/gpu/drm/drm_crtc.c                      | 29 ++++++++++++++++++++-----
-> >  drivers/gpu/drm/i915/intel_display.c            |  6 ++---
-> >  drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c       |  3 +--
-> >  drivers/gpu/drm/omapdrm/omap_drv.c              |  3 +--
-> >  include/drm/drm_crtc.h                          |  4 ++--
-> >  6 files changed, 33 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> > index 1ffe9c329c46..4f9606cdf0f2 100644
-> > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> > @@ -967,12 +967,10 @@ atmel_hlcdc_plane_create_properties(struct drm_device *dev)
-> >  	if (!props->alpha)
-> >  		return ERR_PTR(-ENOMEM);
-> >  
-> > -	dev->mode_config.rotation_property =
-> > -			drm_mode_create_rotation_property(dev,
-> > -							  BIT(DRM_ROTATE_0) |
-> > -							  BIT(DRM_ROTATE_90) |
-> > -							  BIT(DRM_ROTATE_180) |
-> > -							  BIT(DRM_ROTATE_270));
-> > +	drm_mode_create_rotation_property(dev, BIT(DRM_ROTATE_0) |
-> > +					       BIT(DRM_ROTATE_90) |
-> > +					       BIT(DRM_ROTATE_180) |
-> > +					       BIT(DRM_ROTATE_270));
-> >  	if (!dev->mode_config.rotation_property)
-> >  		return ERR_PTR(-ENOMEM);
-> >  
-> > diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-> > index d40bab29747e..822ad6928144 100644
-> > --- a/drivers/gpu/drm/drm_crtc.c
-> > +++ b/drivers/gpu/drm/drm_crtc.c
-> > @@ -5875,10 +5875,23 @@ void drm_mode_config_cleanup(struct drm_device *dev)
-> >  }
-> >  EXPORT_SYMBOL(drm_mode_config_cleanup);
-> >  
-> > -struct drm_property *drm_mode_create_rotation_property(struct drm_device *dev,
-> > -						       unsigned int supported_rotations)
-> > +/**
-> > + * drm_mode_create_rotation_property - create generic rotation property
-> > + * @dev: DRM device
-> > + * @supported_rotations: bitmask of supported rotation modes
-> > + *
-> > + * This function initializes generic rotation property and enables support
-> > + * for it in drm core. Drivers can then attach this property to planes to enable
-> > + * support for different rotation modes.
-> > + *
-> > + * Returns:
-> > + * Zero on success, negative errno on failure.
-> > + */
-> > +int drm_mode_create_rotation_property(struct drm_device *dev,
-> > +				      unsigned int supported_rotations)
-> >  {
-> > -	static const struct drm_prop_enum_list props[] = {
-> > +	struct drm_property *prop;
-> > +	static const struct drm_prop_enum_list values[] = {
-> >  		{ DRM_ROTATE_0,   "rotate-0" },
-> >  		{ DRM_ROTATE_90,  "rotate-90" },
-> >  		{ DRM_ROTATE_180, "rotate-180" },
-> > @@ -5887,9 +5900,13 @@ struct drm_property *drm_mode_create_rotation_property(struct drm_device *dev,
-> >  		{ DRM_REFLECT_Y,  "reflect-y" },
-> >  	};
-> >  
-> > -	return drm_property_create_bitmask(dev, 0, "rotation",
-> > -					   props, ARRAY_SIZE(props),
-> > -					   supported_rotations);
-> > +	prop = drm_property_create_bitmask(dev, 0, "rotation", values,
-> > +				ARRAY_SIZE(values), supported_rotations);
-> > +	if (!prop)
-> > +		return -ENOMEM;
-> > +
-> > +	dev->mode_config.rotation_property = prop;
-> > +	return 0;
-> >  }
-> >  EXPORT_SYMBOL(drm_mode_create_rotation_property);
-> >  
-> > diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> > index 2f00828ccc6e..1bce8750c308 100644
-> > --- a/drivers/gpu/drm/i915/intel_display.c
-> > +++ b/drivers/gpu/drm/i915/intel_display.c
-> > @@ -14046,8 +14046,7 @@ void intel_create_rotation_property(struct drm_device *dev, struct intel_plane *
-> >  		if (INTEL_INFO(dev)->gen >= 9)
-> >  			flags |= BIT(DRM_ROTATE_90) | BIT(DRM_ROTATE_270);
-> >  
-> > -		dev->mode_config.rotation_property =
-> > -			drm_mode_create_rotation_property(dev, flags);
-> > +		drm_mode_create_rotation_property(dev, flags);
-> >  	}
-> >  	if (dev->mode_config.rotation_property)
-> >  		drm_object_attach_property(&plane->base.base,
-> > @@ -14183,8 +14182,7 @@ static struct drm_plane *intel_cursor_plane_create(struct drm_device *dev,
-> >  
-> >  	if (INTEL_INFO(dev)->gen >= 4) {
-> >  		if (!dev->mode_config.rotation_property)
-> > -			dev->mode_config.rotation_property =
-> > -				drm_mode_create_rotation_property(dev,
-> > +			drm_mode_create_rotation_property(dev,
-> >  							BIT(DRM_ROTATE_0) |
-> >  							BIT(DRM_ROTATE_180));
-> >  		if (dev->mode_config.rotation_property)
-> > diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-> > index 432c09836b0e..8defeec0d453 100644
-> > --- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-> > +++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-> > @@ -76,8 +76,7 @@ static void mdp5_plane_install_rotation_property(struct drm_device *dev,
-> >  		return;
-> >  
-> >  	if (!dev->mode_config.rotation_property)
-> > -		dev->mode_config.rotation_property =
-> > -			drm_mode_create_rotation_property(dev,
-> > +		drm_mode_create_rotation_property(dev,
-> >  			BIT(DRM_REFLECT_X) | BIT(DRM_REFLECT_Y));
-> >  
-> >  	if (dev->mode_config.rotation_property)
-> > diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-> > index dfafdb602ad2..c6ce2b31f1c5 100644
-> > --- a/drivers/gpu/drm/omapdrm/omap_drv.c
-> > +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-> > @@ -304,8 +304,7 @@ static int omap_modeset_init_properties(struct drm_device *dev)
-> >  	struct omap_drm_private *priv = dev->dev_private;
-> >  
-> >  	if (priv->has_dmm) {
-> > -		dev->mode_config.rotation_property =
-> > -			drm_mode_create_rotation_property(dev,
-> > +		drm_mode_create_rotation_property(dev,
-> >  				BIT(DRM_ROTATE_0) | BIT(DRM_ROTATE_90) |
-> >  				BIT(DRM_ROTATE_180) | BIT(DRM_ROTATE_270) |
-> >  				BIT(DRM_REFLECT_X) | BIT(DRM_REFLECT_Y));
-> > diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> > index 4f32a358d631..702f4f28f580 100644
-> > --- a/include/drm/drm_crtc.h
-> > +++ b/include/drm/drm_crtc.h
-> > @@ -2494,8 +2494,8 @@ extern int drm_format_plane_cpp(uint32_t format, int plane);
-> >  extern int drm_format_horz_chroma_subsampling(uint32_t format);
-> >  extern int drm_format_vert_chroma_subsampling(uint32_t format);
-> >  extern const char *drm_get_format_name(uint32_t format);
-> > -extern struct drm_property *drm_mode_create_rotation_property(struct drm_device *dev,
-> > -							      unsigned int supported_rotations);
-> > +extern int drm_mode_create_rotation_property(struct drm_device *dev,
-> > +					     unsigned int supported_rotations);
-> >  extern unsigned int drm_rotation_simplify(unsigned int rotation,
-> >  					  unsigned int supported_rotations);
-> >  
-> > -- 
-> > 1.9.2
-> > 
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+T24gV2VkLCBKYW4gMjcsIDIwMTYgYXQgMDM6NDQ6MzlQTSArMDEwMCwgTWFyZWsgU3p5cHJvd3Nr
+aSB3cm90ZToKPiBUaGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgZ2VuZXJpYyBwbGFuZSdzIHpw
+b3MgcHJvcGVydHkgcHJvcGVydHkgd2l0aAo+IHdlbGwtZGVmaW5lZCBzZW1hbnRpY3M6Cj4gLSBh
+ZGRlZCB6cG9zIHByb3BlcnRpZXMgdG8gZHJtIGNvcmUgYW5kIHBsYW5lIHN0YXRlIHN0cnVjdHVy
+ZXMKPiAtIGFkZGVkIGhlbHBlcnMgZm9yIG5vcm1hbGl6aW5nIHpwb3MgcHJvcGVydGllcyBvZiBn
+aXZlbiBzZXQgb2YgcGxhbmVzCj4gLSB3ZWxsIGRlZmluZWQgc2VtYW50aWNzOiBwbGFuZXMgYXJl
+IHNvcnRlZCBieSB6cG9zIHZhbHVlcyBhbmQgdGhlbiBwbGFuZQo+ICAgaWQgdmFsdWUgaWYgenBv
+cyBlcXVhbHMKPiAKPiBOb3JtYWxpemVkIHpwb3MgdmFsdWVzIGFyZSBjYWxjdWxhdGVkIGF1dG9t
+YXRpY2FsbHkgd2hlbiBnZW5lcmljCj4gbXV0dGFibGUgenBvcyBwcm9wZXJ0eSBoYXMgYmVlbiBp
+bml0aWFsaXplZC4gRHJpdmVycyBjYW4gc2ltcGx5IHVzZQo+IHBsYW5lX3N0YXRlLT5ub3JtYWxp
+emVkX3pwb3MgaW4gdGhlaXIgYXRvbWljX2NoZWNrIGFuZC9vciBwbGFuZV91cGRhdGUKPiBjYWxs
+YmFja3Mgd2l0aG91dCBhbnkgYWRkaXRpb25hbCBjYWxscyB0byBEUk0gY29yZS4KPiAKPiBTaWdu
+ZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4g
+VGVzdGVkLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9y
+Zz4KPiAtLS0KPiAgRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsICAgICAgfCAgMTQgKyst
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAgIHwgICAyICstCj4gIGRyaXZl
+cnMvZ3B1L2RybS9kcm1fYXRvbWljLmMgICAgICAgIHwgICA0ICsKPiAgZHJpdmVycy9ncHUvZHJt
+L2RybV9hdG9taWNfaGVscGVyLmMgfCAgIDYgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5k
+LmMgICAgICAgICB8IDIyNyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAg
+ZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjX2ludGVybmFsLmggfCAgIDMgKwo+ICBpbmNsdWRlL2Ry
+bS9kcm1fY3J0Yy5oICAgICAgICAgICAgICB8ICAxNyArKysKPiAgNyBmaWxlcyBjaGFuZ2VkLCAy
+NzAgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
+aXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQuYwo+IAo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
+L0RvY0Jvb2svZ3B1LnRtcGwgYi9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwKPiBpbmRl
+eCBhODY2OTMzMGI0NTYuLmFlN2Q5MTNhZGY2MCAxMDA2NDQKPiAtLS0gYS9Eb2N1bWVudGF0aW9u
+L0RvY0Jvb2svZ3B1LnRtcGwKPiArKysgYi9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwK
+PiBAQCAtMTgxNiw3ICsxODE2LDcgQEAgdm9pZCBpbnRlbF9jcnRfaW5pdChzdHJ1Y3QgZHJtX2Rl
+dmljZSAqZGV2KQo+ICAJPHRkIHZhbGlnbj0idG9wIiA+RGVzY3JpcHRpb24vUmVzdHJpY3Rpb25z
+PC90ZD4KPiAgCTwvdHI+Cj4gIAk8dHI+Cj4gLQk8dGQgcm93c3Bhbj0iMzciIHZhbGlnbj0idG9w
+IiA+RFJNPC90ZD4KPiArCTx0ZCByb3dzcGFuPSIzOCIgdmFsaWduPSJ0b3AiID5EUk08L3RkPgo+
+ICAJPHRkIHZhbGlnbj0idG9wIiA+R2VuZXJpYzwvdGQ+Cj4gIAk8dGQgdmFsaWduPSJ0b3AiID7i
+gJxyb3RhdGlvbuKAnTwvdGQ+Cj4gIAk8dGQgdmFsaWduPSJ0b3AiID5CSVRNQVNLPC90ZD4KPiBA
+QCAtMjA2OCw3ICsyMDY4LDcgQEAgdm9pZCBpbnRlbF9jcnRfaW5pdChzdHJ1Y3QgZHJtX2Rldmlj
+ZSAqZGV2KQo+ICAJPHRkIHZhbGlnbj0idG9wIiA+cHJvcGVydHkgdG8gc3VnZ2VzdCBhbiBZIG9m
+ZnNldCBmb3IgYSBjb25uZWN0b3I8L3RkPgo+ICAJPC90cj4KPiAgCTx0cj4KPiAtCTx0ZCByb3dz
+cGFuPSIzIiB2YWxpZ249InRvcCIgPk9wdGlvbmFsPC90ZD4KPiArCTx0ZCByb3dzcGFuPSI0IiB2
+YWxpZ249InRvcCIgPk9wdGlvbmFsPC90ZD4KPiAgCTx0ZCB2YWxpZ249InRvcCIgPuKAnHNjYWxp
+bmcgbW9kZeKAnTwvdGQ+Cj4gIAk8dGQgdmFsaWduPSJ0b3AiID5FTlVNPC90ZD4KPiAgCTx0ZCB2
+YWxpZ249InRvcCIgPnsgIk5vbmUiLCAiRnVsbCIsICJDZW50ZXIiLCAiRnVsbCBhc3BlY3QiIH08
+L3RkPgo+IEBAIC0yMDkyLDYgKzIwOTIsMTYgQEAgdm9pZCBpbnRlbF9jcnRfaW5pdChzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZGV2KQo+ICAJPHRkIHZhbGlnbj0idG9wIiA+VEJEPC90ZD4KPiAgCTwvdHI+
+Cj4gIAk8dHI+Cj4gKwk8dGQgdmFsaWduPSJ0b3AiID4gInpwb3MiIDwvdGQ+Cj4gKwk8dGQgdmFs
+aWduPSJ0b3AiID5SQU5HRTwvdGQ+Cj4gKwk8dGQgdmFsaWduPSJ0b3AiID5NaW49MCwgTWF4PSBk
+cml2ZXIgZGVwZW5kZW50PC90ZD4KPiArCTx0ZCB2YWxpZ249InRvcCIgPlBsYW5lPC90ZD4KPiAr
+CTx0ZCB2YWxpZ249InRvcCIgPlBsYW5lJ3MgJ3onIHBvc2l0aW9uIGR1cmluZyBibGVuZGluZyBv
+cGVyYXRpb24gKDAgZm9yIGJhY2tncm91bmQsIGhpZ2hlc3QgZm9yIGZyb250bW9zdCkuCj4gKwkJ
+SWYgdHdvIHBsYW5lcyBhc3NpZ25lZCB0byBzYW1lIENSVEMgaGF2ZSBlcXVhbCB6cG9zIHZhbHVl
+cywgdGhlIHBsYW5lIHdpdGggaGlnaGVyIHBsYW5lCj4gKwkJaWQgaXMgdHJlYXRlZCBhcyBjbG9z
+ZXIgdG8gZnJvbnQuIENhbiBiZSBJTU1VVEFCTEUgaWYgZHJpdmVyIGRvZXNuJ3Qgc3VwcG9ydCBj
+aGFuZ2luZwo+ICsJCXBsYW5lcycgb3JkZXIuIEV4YWN0IHZhbHVlIHJhbmdlIGlzIGRyaXZlciBk
+ZXBlbmRlbnQuPC90ZD4KPiArCTwvdHI+Cj4gKwk8dHI+Cj4gIAk8dGQgcm93c3Bhbj0iMjAiIHZh
+bGlnbj0idG9wIiA+aTkxNTwvdGQ+Cj4gIAk8dGQgcm93c3Bhbj0iMiIgdmFsaWduPSJ0b3AiID5H
+ZW5lcmljPC90ZD4KPiAgCTx0ZCB2YWxpZ249InRvcCIgPiJCcm9hZGNhc3QgUkdCIjwvdGQ+Cj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZSBiL2RyaXZlcnMvZ3B1L2RybS9N
+YWtlZmlsZQo+IGluZGV4IDYxNzY2ZGVjNmE4ZC4uZWVlZmFiYTFjMDkyIDEwMDY0NAo+IC0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9NYWtlZmls
+ZQo+IEBAIC0yLDcgKzIsNyBAQAo+ICAjIE1ha2VmaWxlIGZvciB0aGUgZHJtIGRldmljZSBkcml2
+ZXIuICBUaGlzIGRyaXZlciBwcm92aWRlcyBzdXBwb3J0IGZvciB0aGUKPiAgIyBEaXJlY3QgUmVu
+ZGVyaW5nIEluZnJhc3RydWN0dXJlIChEUkkpIGluIFhGcmVlODYgNC4xLjAgYW5kIGhpZ2hlci4K
+PiAgCj4gLWRybS15ICAgICAgIDo9CWRybV9hdXRoLm8gZHJtX2J1ZnMubyBkcm1fY2FjaGUubyBc
+Cj4gK2RybS15ICAgICAgIDo9CWRybV9hdXRoLm8gZHJtX2J1ZnMubyBkcm1fYmxlbmQubyBkcm1f
+Y2FjaGUubyBcCj4gIAkJZHJtX2NvbnRleHQubyBkcm1fZG1hLm8gXAo+ICAJCWRybV9mb3BzLm8g
+ZHJtX2dlbS5vIGRybV9pb2N0bC5vIGRybV9pcnEubyBcCj4gIAkJZHJtX2xvY2subyBkcm1fbWVt
+b3J5Lm8gZHJtX2Rydi5vIGRybV92bS5vIFwKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L2RybV9hdG9taWMuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljLmMKPiBpbmRleCAzZjc0
+MTkzODg1ZjEuLmExOTIwMWVmYjdkMSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJt
+X2F0b21pYy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYwo+IEBAIC02MzAs
+NiArNjMwLDggQEAgaW50IGRybV9hdG9taWNfcGxhbmVfc2V0X3Byb3BlcnR5KHN0cnVjdCBkcm1f
+cGxhbmUgKnBsYW5lLAo+ICAJCXN0YXRlLT5zcmNfaCA9IHZhbDsKPiAgCX0gZWxzZSBpZiAocHJv
+cGVydHkgPT0gY29uZmlnLT5yb3RhdGlvbl9wcm9wZXJ0eSkgewo+ICAJCXN0YXRlLT5yb3RhdGlv
+biA9IHZhbDsKPiArCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gY29uZmlnLT56cG9zX3Byb3BlcnR5
+KSB7Cj4gKwkJc3RhdGUtPnpwb3MgPSB2YWw7Cj4gIAl9IGVsc2UgaWYgKHBsYW5lLT5mdW5jcy0+
+YXRvbWljX3NldF9wcm9wZXJ0eSkgewo+ICAJCXJldHVybiBwbGFuZS0+ZnVuY3MtPmF0b21pY19z
+ZXRfcHJvcGVydHkocGxhbmUsIHN0YXRlLAo+ICAJCQkJcHJvcGVydHksIHZhbCk7Cj4gQEAgLTY4
+Niw2ICs2ODgsOCBAQCBkcm1fYXRvbWljX3BsYW5lX2dldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3Bs
+YW5lICpwbGFuZSwKPiAgCQkqdmFsID0gc3RhdGUtPnNyY19oOwo+ICAJfSBlbHNlIGlmIChwcm9w
+ZXJ0eSA9PSBjb25maWctPnJvdGF0aW9uX3Byb3BlcnR5KSB7Cj4gIAkJKnZhbCA9IHN0YXRlLT5y
+b3RhdGlvbjsKPiArCX0gZWxzZSBpZiAocHJvcGVydHkgPT0gY29uZmlnLT56cG9zX3Byb3BlcnR5
+KSB7Cj4gKwkJKnZhbCA9IHN0YXRlLT56cG9zOwo+ICAJfSBlbHNlIGlmIChwbGFuZS0+ZnVuY3Mt
+PmF0b21pY19nZXRfcHJvcGVydHkpIHsKPiAgCQlyZXR1cm4gcGxhbmUtPmZ1bmNzLT5hdG9taWNf
+Z2V0X3Byb3BlcnR5KHBsYW5lLCBzdGF0ZSwgcHJvcGVydHksIHZhbCk7Cj4gIAl9IGVsc2Ugewo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCj4gaW5kZXggNTNkYjJkOTEyMGJlLi45ZmJm
+YjY3MmIzMTcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVy
+LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYwo+IEBAIC0zMiw2
+ICszMiw4IEBACj4gICNpbmNsdWRlIDxkcm0vZHJtX2F0b21pY19oZWxwZXIuaD4KPiAgI2luY2x1
+ZGUgPGxpbnV4L2ZlbmNlLmg+Cj4gIAo+ICsjaW5jbHVkZSAiZHJtX2NydGNfaW50ZXJuYWwuaCIK
+PiArCj4gIC8qKgo+ICAgKiBET0M6IG92ZXJ2aWV3Cj4gICAqCj4gQEAgLTUzMCw2ICs1MzIsMTAg
+QEAgZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfcGxhbmVzKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYs
+Cj4gIAlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpwbGFuZV9zdGF0ZTsKPiAgCWludCBpLCByZXQg
+PSAwOwo+ICAKPiArCXJldCA9IGRybV9hdG9taWNfaGVscGVyX25vcm1hbGl6ZV96cG9zKGRldiwg
+c3RhdGUpOwo+ICsJaWYgKHJldCkKPiArCQlyZXR1cm4gcmV0Owo+ICsKPiAgCWZvcl9lYWNoX3Bs
+YW5lX2luX3N0YXRlKHN0YXRlLCBwbGFuZSwgcGxhbmVfc3RhdGUsIGkpIHsKPiAgCQljb25zdCBz
+dHJ1Y3QgZHJtX3BsYW5lX2hlbHBlcl9mdW5jcyAqZnVuY3M7Cj4gIAo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMK
+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAwMDAwMC4uY2RjYjY0N2M4ZWQ5
+Cj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQuYwo+IEBA
+IC0wLDAgKzEsMjI3IEBACj4gKy8qCj4gKyAqIENvcHlyaWdodCAoQykgMjAxNiBTYW1zdW5nIEVs
+ZWN0cm9uaWNzIENvLkx0ZAo+ICsgKiBBdXRob3JzOgo+ICsgKglNYXJlayBTenlwcm93c2tpIDxt
+LnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4gKyAqCj4gKyAqIERSTSBjb3JlIHBsYW5lIGJsZW5k
+aW5nIHJlbGF0ZWQgZnVuY3Rpb25zCj4gKyAqCj4gKyAqIFBlcm1pc3Npb24gdG8gdXNlLCBjb3B5
+LCBtb2RpZnksIGRpc3RyaWJ1dGUsIGFuZCBzZWxsIHRoaXMgc29mdHdhcmUgYW5kIGl0cwo+ICsg
+KiBkb2N1bWVudGF0aW9uIGZvciBhbnkgcHVycG9zZSBpcyBoZXJlYnkgZ3JhbnRlZCB3aXRob3V0
+IGZlZSwgcHJvdmlkZWQgdGhhdAo+ICsgKiB0aGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBhcHBl
+YXIgaW4gYWxsIGNvcGllcyBhbmQgdGhhdCBib3RoIHRoYXQgY29weXJpZ2h0Cj4gKyAqIG5vdGlj
+ZSBhbmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSBhcHBlYXIgaW4gc3VwcG9ydGluZyBkb2N1bWVu
+dGF0aW9uLCBhbmQKPiArICogdGhhdCB0aGUgbmFtZSBvZiB0aGUgY29weXJpZ2h0IGhvbGRlcnMg
+bm90IGJlIHVzZWQgaW4gYWR2ZXJ0aXNpbmcgb3IKPiArICogcHVibGljaXR5IHBlcnRhaW5pbmcg
+dG8gZGlzdHJpYnV0aW9uIG9mIHRoZSBzb2Z0d2FyZSB3aXRob3V0IHNwZWNpZmljLAo+ICsgKiB3
+cml0dGVuIHByaW9yIHBlcm1pc3Npb24uICBUaGUgY29weXJpZ2h0IGhvbGRlcnMgbWFrZSBubyBy
+ZXByZXNlbnRhdGlvbnMKPiArICogYWJvdXQgdGhlIHN1aXRhYmlsaXR5IG9mIHRoaXMgc29mdHdh
+cmUgZm9yIGFueSBwdXJwb3NlLiAgSXQgaXMgcHJvdmlkZWQgImFzCj4gKyAqIGlzIiB3aXRob3V0
+IGV4cHJlc3Mgb3IgaW1wbGllZCB3YXJyYW50eS4KPiArICoKPiArICogVEhFIENPUFlSSUdIVCBI
+T0xERVJTIERJU0NMQUlNIEFMTCBXQVJSQU5USUVTIFdJVEggUkVHQVJEIFRPIFRISVMgU09GVFdB
+UkUsCj4gKyAqIElOQ0xVRElORyBBTEwgSU1QTElFRCBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJ
+TElUWSBBTkQgRklUTkVTUywgSU4gTk8KPiArICogRVZFTlQgU0hBTEwgVEhFIENPUFlSSUdIVCBI
+T0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIFNQRUNJQUwsIElORElSRUNUIE9SCj4gKyAqIENPTlNF
+UVVFTlRJQUwgREFNQUdFUyBPUiBBTlkgREFNQUdFUyBXSEFUU09FVkVSIFJFU1VMVElORyBGUk9N
+IExPU1MgT0YgVVNFLAo+ICsgKiBEQVRBIE9SIFBST0ZJVFMsIFdIRVRIRVIgSU4gQU4gQUNUSU9O
+IE9GIENPTlRSQUNULCBORUdMSUdFTkNFIE9SIE9USEVSCj4gKyAqIFRPUlRJT1VTIEFDVElPTiwg
+QVJJU0lORyBPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBVU0UgT1IgUEVSRk9STUFO
+Q0UKPiArICogT0YgVEhJUyBTT0ZUV0FSRS4KPiArICovCj4gKyNpbmNsdWRlIDxsaW51eC9zbGFi
+Lmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9zb3J0Lmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9leHBvcnQu
+aD4KPiArI2luY2x1ZGUgPGRybS9kcm1QLmg+Cj4gKyNpbmNsdWRlIDxkcm0vZHJtX2NydGMuaD4K
+PiArI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljLmg+Cj4gKwo+ICsjaW5jbHVkZSAiZHJtX2ludGVy
+bmFsLmgiCj4gKwo+ICsvKioKPiArICogZHJtX21vZGVfY3JlYXRlX3pwb3NfcHJvcGVydHkgLSBj
+cmVhdGUgbXV0dGFibGUgenBvcyBwcm9wZXJ0eQo+ICsgKiBAZGV2OiBEUk0gZGV2aWNlCj4gKyAq
+IEBtaW46IG1pbmltYWwgcG9zc2libGUgdmFsdWUgb2YgenBvcyBwcm9wZXJ0eQo+ICsgKiBAbWF4
+OiBtYXhpbWFsIHBvc3NpYmxlIHZhbHVlIG9mIHpwb3MgcHJvcGVydHkKPiArICoKPiArICogVGhp
+cyBmdW5jdGlvbiBpbml0aWFsaXplcyBnZW5lcmljIG11dHRhYmxlIHpwb3MgcHJvcGVydHkgYW5k
+IGVuYWJsZXMgc3VwcG9ydAo+ICsgKiBmb3IgaXQgaW4gZHJtIGNvcmUuIERyaXZlcnMgY2FuIHRo
+ZW4gYXR0YWNoIHRoaXMgcHJvcGVydHkgdG8gcGxhbmVzIHRvIGVuYWJsZQo+ICsgKiBzdXBwb3J0
+IGZvciBjb25maWd1cmFibGUgcGxhbmVzIGFycmFuZ2VtZW50IGR1cmluZyBibGVuZGluZyBvcGVy
+YXRpb24uCj4gKyAqIE9uY2UgbXV0dGFibGUgenBvcyBwcm9wZXJ0eSBoYXMgYmVlbiBlbmFibGVk
+LCB0aGUgRFJNIGNvcmUgd2lsbCBhdXRvbWF0aWNhbGx5Cj4gKyAqIGNhbGN1bGF0ZSBkcm1fcGxh
+bmVfc3RhdGUtPm5vcm1hbGl6ZWRfenBvcyB2YWx1ZXMuIFVzdWFsbHkgbWluIHNob3VsZCBiZSBz
+ZXQKPiArICogdG8gMCBhbmQgbWF4IHRvIG1heGltYWwgbnVtYmVyIG9mIHBsYW5lcyBmb3IgZ2l2
+ZW4gY3J0YyAtIDEuCj4gKyAqCj4gKyAqIElmIHpwb3Mgb2Ygc29tZSBwbGFuZXMgY2Fubm90IGJl
+IGNoYW5nZWQgKGxpa2UgZml4ZWQgYmFja2dyb3VkIG9yCj4gKyAqIGN1cnNvci90b3Btb3N0IHBs
+YW5lcyksIGRyaXZlciBzaG91bGQgYWRqdXN0IG1pbi9tYXggdmFsdWVzIGFuZCBhc3NpZ24gdGhv
+c2UKPiArICogcGxhbmVzIGltbXV0YWJsZSB6cG9zIHByb3BlcnR5IHdpdGggbG93ZXIgb3IgaGln
+aGVyIHZhbHVlcyAoZm9yIG1vcmUKPiArICogaW5mb3JtYXRpb24sIHNlZSBkcm1fbW9kZV9jcmVh
+dGVfenBvc19pbW11dGFibGVfcHJvcGVydHkoKSBmdW5jdGlvbikuIEluIHN1Y2gKPiArICogY2Fz
+ZSBkcml2ZXIgc2hvdWxkIGFsc28gYXNzaWduIHByb3BlciBpbml0aWFsIHpwb3MgdmFsdWVzIGZv
+ciBhbGwgcGxhbmVzIGluCj4gKyAqIGl0cyBwbGFuZV9yZXNldCgpIGNhbGxiYWNrLCBzbyB0aGUg
+cGxhbmVzIHdpbGwgYmUgYWx3YXlzIHNvcnRlZCBwcm9wZXJseS4KPiArICoKPiArICogUmV0dXJu
+czoKPiArICogWmVybyBvbiBzdWNjZXNzLCBuZWdhdGl2ZSBlcnJubyBvbiBmYWlsdXJlLgo+ICsg
+Ki8KPiAraW50IGRybV9tb2RlX2NyZWF0ZV96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fZGV2aWNl
+ICpkZXYsIHVuc2lnbmVkIGludCBtaW4sCj4gKwkJCQkgIHVuc2lnbmVkIGludCBtYXgpCj4gK3sK
+PiArCXN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3A7Cj4gKwo+ICsJcHJvcCA9IGRybV9wcm9wZXJ0
+eV9jcmVhdGVfcmFuZ2UoZGV2LCAwLCAienBvcyIsIG1pbiwgbWF4KTsKPiArCWlmICghcHJvcCkK
+PiArCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gKwlkZXYtPm1vZGVfY29uZmlnLnpwb3NfcHJvcGVy
+dHkgPSBwcm9wOwo+ICsJcmV0dXJuIDA7Cj4gK30KPiArRVhQT1JUX1NZTUJPTChkcm1fbW9kZV9j
+cmVhdGVfenBvc19wcm9wZXJ0eSk7Cj4gKwo+ICsvKioKPiArICogZHJtX21vZGVfY3JlYXRlX3pw
+b3NfaW1tdXRhYmxlX3Byb3BlcnR5IC0gY3JlYXRlIGltbXV0dGFibGUgenBvcyBwcm9wZXJ0eQo+
+ICsgKiBAZGV2OiBEUk0gZGV2aWNlCj4gKyAqIEBtaW46IG1pbmltYWwgcG9zc2libGUgdmFsdWUg
+b2YgenBvcyBwcm9wZXJ0eQo+ICsgKiBAbWF4OiBtYXhpbWFsIHBvc3NpYmxlIHZhbHVlIG9mIHpw
+b3MgcHJvcGVydHkKPiArICoKPiArICogVGhpcyBmdW5jdGlvbiBpbml0aWFsaXplcyBnZW5lcmlj
+IGltbXV0dGFibGUgenBvcyBwcm9wZXJ0eSBhbmQgZW5hYmxlcwo+ICsgKiBzdXBwb3J0IGZvciBp
+dCBpbiBkcm0gY29yZS4gVXNpbmcgdGhpcyBwcm9wZXJ0eSBkcml2ZXIgbGV0cyB1c2Vyc3BhY2UK
+PiArICogdG8gZ2V0IHRoZSBhcnJhbmdlbWVudCBvZiB0aGUgcGxhbmVzIGZvciBibGVuZGluZyBv
+cGVyYXRpb24gYW5kIG5vdGlmaWVzCj4gKyAqIGl0IHRoYXQgdGhlIGhhcmR3YXJlIChvciBkcml2
+ZXIpIGRvZXNuJ3Qgc3VwcG9ydCBjaGFuZ2luZyBvZiB0aGUgcGxhbmVzJwo+ICsgKiBvcmRlci4K
+PiArICoKPiArICogUmV0dXJuczoKPiArICogWmVybyBvbiBzdWNjZXNzLCBuZWdhdGl2ZSBlcnJu
+byBvbiBmYWlsdXJlLgo+ICsgKi8KPiAraW50IGRybV9tb2RlX2NyZWF0ZV96cG9zX2ltbXV0YWJs
+ZV9wcm9wZXJ0eShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+ICsJCQkJCSAgICB1bnNpZ25lZCBp
+bnQgbWluLCB1bnNpZ25lZCBpbnQgbWF4KQo+ICt7Cj4gKwlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpw
+cm9wOwo+ICsKPiArCXByb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRlX3JhbmdlKGRldiwgRFJNX01P
+REVfUFJPUF9JTU1VVEFCTEUsICJ6cG9zIiwKPiArCQkJCQkgbWluLCBtYXgpOwo+ICsJaWYgKCFw
+cm9wKQo+ICsJCXJldHVybiAtRU5PTUVNOwo+ICsKPiArCWRldi0+bW9kZV9jb25maWcuenBvc19p
+bW11dGFibGVfcHJvcGVydHkgPSBwcm9wOwoKSSB3YW50IHBlci1wbGFuZSBtaW4vbWF4IHJhbmdl
+cywgc28gcHV0dGluZyB0aGlzIGhlcmUgaXMgbm8gZ29vZC4KCgotLSAKVmlsbGUgU3lyasOkbMOk
+CkludGVsIE9UQwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
