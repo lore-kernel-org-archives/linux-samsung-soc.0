@@ -1,163 +1,157 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH v2] video: exynos: fix modular build
-Date: Mon, 29 Feb 2016 18:55:39 +0200
-Message-ID: <56D4780B.2070406@ti.com>
-References: <1456490307-823812-1-git-send-email-arnd@arndb.de>
- <56D46DFD.6090706@ti.com> <6291541.7IMAnfX0g2@wuerfel>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 8/8] drivers/pinctrl: clean up samsung modular vs. non-modular distinctions
+Date: Mon, 29 Feb 2016 15:48:44 -0500
+Message-ID: <1456778924-20730-9-git-send-email-paul.gortmaker@windriver.com>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="MA4GIcc7Jmt9IeIvJEQSJ4JrcdTPXUepr"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:40062 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751058AbcB2Q4U (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Feb 2016 11:56:20 -0500
-In-Reply-To: <6291541.7IMAnfX0g2@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
 
---MA4GIcc7Jmt9IeIvJEQSJ4JrcdTPXUepr
-Content-Type: multipart/mixed; boundary="rCePVtLQ8HwS7T1JunCAhQuVsxGL6Fe8M"
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org,
- Donghwa Lee <dh09.lee@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org,
- Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, linux-fbdev@vger.kernel.org,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Message-ID: <56D4780B.2070406@ti.com>
-Subject: Re: [PATCH v2] video: exynos: fix modular build
-References: <1456490307-823812-1-git-send-email-arnd@arndb.de>
- <56D46DFD.6090706@ti.com> <6291541.7IMAnfX0g2@wuerfel>
-In-Reply-To: <6291541.7IMAnfX0g2@wuerfel>
+Fixups here tend to be more all over the map vs. some of the other
+repeated/systematic ones we've seen elsewhere.
 
---rCePVtLQ8HwS7T1JunCAhQuVsxGL6Fe8M
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+We remove module.h from code that isn't doing anything modular at
+all;  if they have __init sections, then replace it with init.h
 
-On 29/02/16 18:39, Arnd Bergmann wrote:
-> On Monday 29 February 2016 18:12:45 Tomi Valkeinen wrote:
->> Hi,
->>
->> On 26/02/16 14:38, Arnd Bergmann wrote:
->>> The s6e8ax0 driver has a dependency on BACKLIGHT_CLASS_DEVICE,
->>> which can be configured as a loadable module, so we have to
->>> make the driver a tristate symbol as well, to avoid this error:
->>>
->>> drivers/built-in.o: In function `s6e8ax0_probe':
->>> :(.text+0x23a48): undefined reference to `devm_backlight_device_regis=
-ter'
->>
->> If a 'bool' Kconfig option depends on BACKLIGHT_CLASS_DEVICE, shouldn'=
-t
->> the Kconfig dependency take care of having BACKLIGHT_CLASS_DEVICE as
->> built-in?
->=20
-> No, that's not how Kconfig interprets it. There are many bool option
-> that depend on tristate options but can be enabled if the dependency
-> is built-in.
->=20
-> Take this one for example:
->=20
-> config FIRMWARE_EDID
->        bool "Enable firmware EDID"
->        depends on FB
->=20
-> We clearly want to be able to turn this on even for FB=3Dm.
+A couple drivers have module_exit() code that is essentially orphaned,
+and so we remove that.
 
-Right.
+There are no module_init replacements, so we have no concerns wrt.
+initcall ordering changes as per some of the other cleanups.
 
->>> This also means we get another error from a missing export, which
->>> this fixes as well:
->>>
->>> ERROR: "exynos_mipi_dsi_register_lcd_driver" [drivers/video/fbdev/exy=
-nos/s6e8ax0.ko] undefined!
->>>
->>> The drivers are all written to be loadable modules already,
->>> except the Kconfig options for that are missing, which makes
->>> the patch really easy.
->>
->> Looks and sound fine, except doesn't this tell that the drivers have
->> never been tested as modules? Did you or someone else actually test th=
-ese?
->=20
-> No, this is not runtime tested. Generally there is very little that
-> can go wrong here though.
->=20
-> An alternative would be to change the dependency to
->=20
-> 	depends on BACKLIGHT_CLASS_DEVICE=3Dy
->=20
-> which doesn't allow the driver to be turned on for the =3Dm case.
-> However, no other framebuffer driver does this.
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
-No, I think it's clearly better to make them tristate. I think all
-drivers should be buildable as modules. It just makes me a bit
-uncomfortable to enable code that has never been ran.
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
 
->>> diff --git a/drivers/video/fbdev/exynos/Makefile b/drivers/video/fbde=
-v/exynos/Makefile
->>> index b5b1bd228abb..02d8dc522fea 100644
->>> --- a/drivers/video/fbdev/exynos/Makefile
->>> +++ b/drivers/video/fbdev/exynos/Makefile
->>> @@ -2,6 +2,8 @@
->>>  # Makefile for the exynos video drivers.
->>>  #
->>> =20
->>> -obj-$(CONFIG_EXYNOS_MIPI_DSI)		+=3D exynos_mipi_dsi.o exynos_mipi_ds=
-i_common.o \
->>> -				     	exynos_mipi_dsi_lowlevel.o
->>> +obj-$(CONFIG_EXYNOS_MIPI_DSI)		+=3D exynos-mipi-dsi-mod.o
->>> +
->>> +exynos-mipi-dsi-mod-objs		+=3D exynos_mipi_dsi.o exynos_mipi_dsi_com=
-mon.o \
->>> +					   exynos_mipi_dsi_lowlevel.o
->>
->> Hmm, why is this makefile change needed?
->=20
-> The original Makefile would link each file into a separate module, but =
-that
-> cannot work, because they reference symbols from each other that are no=
-t
-> exported to other modules.
->=20
-> With my change, all the files get linked into a single module.
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c     |  1 -
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 +++------------
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c    |  2 +-
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  2 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c    | 12 +-----------
+ 5 files changed, 6 insertions(+), 26 deletions(-)
 
-Yes, of course.
-
-Thanks, I'll queue this up for 4.6.
-
- Tomi
-
-
---rCePVtLQ8HwS7T1JunCAhQuVsxGL6Fe8M--
-
---MA4GIcc7Jmt9IeIvJEQSJ4JrcdTPXUepr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJW1HgLAAoJEPo9qoy8lh71WBsQAJKrvmYgqKKC8obILSxEIbCv
-CsJb8kFoYreRMYd6U9kAk8Wqsv45c696vNErrvu0rvUn9mDy0lbOszYZILjeWxz/
-WAdkZDFxDIp3yc/4bSj5GNTeSYqjTXXC5bnwddDx+ALHK5/ubmRg0jyRRAFeVKn+
-YB9bVJQI+uGZO7P+buB5b8WfRjV3RAdLL3Rfd0N7A58drycSQRi/u2lauQSSxMk2
-e/A9pIG/BePcFESvWKHRmrQkKOvOidiTmPhJXr5A80Q9LrK5m9tpMVRMpXKZLVm8
-rtuDId6x2XUa8oRdVwVxjvR4dunOjeeCMnWx3IIFwjoGkm2eJEEjUZnLXRnDpNRL
-Wgm1kYtCxH6p8uYINQzu1iMZQJG14o7wCSe5LoCPhJ3ms8GnlD+ajFp7B7SN9v1K
-Hx4t5w+mgGP5lCN/3PFF/B2UDsTZP8QOkBA954XAuXTfs7MB5KrRK3MU3p9zE+pU
-YlmO+UOoaJRUBst7pEPX+7YqO1dicLpqpzAmC0nDx94eZUzSFzyEeRuR1JBJW4W0
-yTnOd3vjSvpRLo1rzFAW0dvBh6hgoNOaSpUUx5Ql0IdHjKB7o6wzHel/xwMD2tLw
-Q4yjeoTlkk5m5FVCIMlcXtc0bDp6FLtBiSnjt/T2GHJsrqlUC33TxBlyHKMqFSZl
-QXFUrrEo2hvi/tAbj+Oe
-=DBVl
------END PGP SIGNATURE-----
-
---MA4GIcc7Jmt9IeIvJEQSJ4JrcdTPXUepr--
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 051b5bf701a8..428094e797bd 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -18,7 +18,6 @@
+  * external gpio and wakeup interrupt support.
+  */
+ 
+-#include <linux/module.h>
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqdomain.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index 00ab63abf1d9..50cb7d3bb098 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -1,6 +1,8 @@
+ /*
+  * pin-controller/pin-mux/pin-config/gpio-driver for Samsung's EXYNOS5440 SoC.
+  *
++ * Author: Thomas Abraham <thomas.ab@samsung.com>
++ *
+  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+@@ -10,7 +12,7 @@
+  * (at your option) any later version.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+@@ -990,7 +992,6 @@ static const struct of_device_id exynos5440_pinctrl_dt_match[] = {
+ 	{ .compatible = "samsung,exynos5440-pinctrl" },
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, exynos5440_pinctrl_dt_match);
+ 
+ static struct platform_driver exynos5440_pinctrl_driver = {
+ 	.probe		= exynos5440_pinctrl_probe,
+@@ -1005,13 +1006,3 @@ static int __init exynos5440_pinctrl_drv_register(void)
+ 	return platform_driver_register(&exynos5440_pinctrl_driver);
+ }
+ postcore_initcall(exynos5440_pinctrl_drv_register);
+-
+-static void __exit exynos5440_pinctrl_drv_unregister(void)
+-{
+-	platform_driver_unregister(&exynos5440_pinctrl_driver);
+-}
+-module_exit(exynos5440_pinctrl_drv_unregister);
+-
+-MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com>");
+-MODULE_DESCRIPTION("Samsung EXYNOS5440 SoC pinctrl driver");
+-MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+index 3d92f827da7a..edf27264b603 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -13,7 +13,7 @@
+  * external gpio and wakeup interrupt support.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqdomain.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+index 43407ab248f5..5eda18297a4e 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+@@ -15,7 +15,7 @@
+  * external gpio and wakeup interrupt support.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqdomain.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 5cc97f85db02..b698bfe1814f 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -20,7 +20,7 @@
+  * and wakeup interrupts can be hooked to.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+@@ -1289,13 +1289,3 @@ static int __init samsung_pinctrl_drv_register(void)
+ 	return platform_driver_register(&samsung_pinctrl_driver);
+ }
+ postcore_initcall(samsung_pinctrl_drv_register);
+-
+-static void __exit samsung_pinctrl_drv_unregister(void)
+-{
+-	platform_driver_unregister(&samsung_pinctrl_driver);
+-}
+-module_exit(samsung_pinctrl_drv_unregister);
+-
+-MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com>");
+-MODULE_DESCRIPTION("Samsung pinctrl driver");
+-MODULE_LICENSE("GPL v2");
+-- 
+2.6.1
