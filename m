@@ -1,102 +1,353 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 0/8] drivers/pinctrl: remove truly orphaned module code
-Date: Mon, 29 Feb 2016 15:48:36 -0500
-Message-ID: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Subject: [PATCH] ARM: dts: add "simple-bus" to "arm, amba-bus" compatible nodes
+Date: Tue,  1 Mar 2016 12:57:00 +0900
+Message-ID: <1456804620-8750-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Beniamino Galvani <b.galvani@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Carlo Caione <carlo@endlessm.com>, Chen-Yu Tsai <wens@csie.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Hans de Goede <hdegoede@redhat.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Patrice Chotard <patrice.chotard@st.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-arm-kernel@lists.infradead.orgl
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dinh Nguyen <dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This series of commits is a part of a larger project to ensure
-people don't reference modular support functions in non-modular
-code.  Overall there was roughly 5k lines of dead code in the
-kernel due to this.  So far we've fixed several areas, like tty,
-x86, net, ... and we continue to work on other areas.
+The "arm,amba-bus" string in the of_default_bus_match_table is
+ambiguous.  This prepares for killing it off in a long run.
 
-There are several reasons to not use module support for code that
-can never be built as a module, but the big ones are:
-
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding to CPP overhead.
- (4) it gets copied/replicated into other code and spreads like weeds.
-
-This group represents roughly 1/2 of the pinctrl commits I've got under
-testing locally.  The commonality within this group is that there should
-be zero runtime changes with this series, because none of the drivers
-here deployed a ".remove" field which in turn would cause me to add the
-".suppress_bind_attrs = true," to the driver struct.  Similarly there is
-no change in the initcall ordering either.
-
-So hopefully with that in mind it eases review.
-
-I'm happy to have this go in via the maintainer's tree and reduce the
-(large) number of patches I'm carrying locally.
+Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
 ---
 
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
-Cc: Beniamino Galvani <b.galvani@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Carlo Caione <carlo@endlessm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
+ arch/arm/boot/dts/axm55xx.dtsi             | 2 +-
+ arch/arm/boot/dts/exynos3250.dtsi          | 2 +-
+ arch/arm/boot/dts/exynos4.dtsi             | 2 +-
+ arch/arm/boot/dts/exynos4415.dtsi          | 2 +-
+ arch/arm/boot/dts/exynos5250.dtsi          | 2 +-
+ arch/arm/boot/dts/exynos5420.dtsi          | 2 +-
+ arch/arm/boot/dts/exynos5440.dtsi          | 2 +-
+ arch/arm/boot/dts/hi3620.dtsi              | 2 +-
+ arch/arm/boot/dts/hip01.dtsi               | 2 +-
+ arch/arm/boot/dts/hisi-x5hd2.dtsi          | 2 +-
+ arch/arm/boot/dts/qcom-apq8064.dtsi        | 2 +-
+ arch/arm/boot/dts/qcom-msm8660.dtsi        | 2 +-
+ arch/arm/boot/dts/qcom-msm8960.dtsi        | 2 +-
+ arch/arm/boot/dts/rk3036.dtsi              | 2 +-
+ arch/arm/boot/dts/rk3228.dtsi              | 2 +-
+ arch/arm/boot/dts/rk3288.dtsi              | 2 +-
+ arch/arm/boot/dts/rk3xxx.dtsi              | 2 +-
+ arch/arm/boot/dts/s5pv210.dtsi             | 2 +-
+ arch/arm/boot/dts/socfpga.dtsi             | 2 +-
+ arch/arm/boot/dts/socfpga_arria10.dtsi     | 2 +-
+ arch/arm/boot/dts/ste-nomadik-stn8815.dtsi | 2 +-
+ arch/arm/boot/dts/ste-u300.dts             | 2 +-
+ arch/arm/boot/dts/versatile-ab.dts         | 2 +-
+ 23 files changed, 23 insertions(+), 23 deletions(-)
 
-
-Paul Gortmaker (8):
-  drivers/pinctrl: sunxi/pinctrl-sunxi.c does not need module.h
-  drivers/pinctrl: make mediatek/pinctrl-mt6397 driver explicitly non-modular
-  drivers/pinctrl: make meson/pinctrl-meson.c explicitly non-modular
-  drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
-  drivers/pinctrl: make stm32/pinctrl-stm32f429.c explicitly non-modular
-  drivers/pinctrl: make sunxi/pinctrl-sun[4-9]* explicitly non-modular
-  drivers/pinctrl: make sunxi/pinctrl-sun9i-a80-r.c explicitly non-modular
-  drivers/pinctrl: clean up samsung modular vs. non-modular distinctions
-
- drivers/pinctrl/mediatek/pinctrl-mt6397.c    | 10 ++--------
- drivers/pinctrl/meson/pinctrl-meson.c        |  8 +-------
- drivers/pinctrl/samsung/pinctrl-exynos.c     |  1 -
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 +++------------
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 12 +-----------
- drivers/pinctrl/sh-pfc/core.c                | 18 ++++--------------
- drivers/pinctrl/stm32/pinctrl-stm32f429.c    |  9 +--------
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun5i-a10s.c   |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun5i-a13.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c  | 10 ++--------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31s.c   |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c  | 11 ++---------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c    | 10 ++--------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c  |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sunxi.c        |  2 +-
- 22 files changed, 39 insertions(+), 152 deletions(-)
-
+diff --git a/arch/arm/boot/dts/axm55xx.dtsi b/arch/arm/boot/dts/axm55xx.dtsi
+index ea288f0..8da4582 100644
+--- a/arch/arm/boot/dts/axm55xx.dtsi
++++ b/arch/arm/boot/dts/axm55xx.dtsi
+@@ -107,7 +107,7 @@
+ 		};
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
+ 			ranges;
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 18e3def..0ad4fa7 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -381,7 +381,7 @@
+ 		};
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 045785c..d53fd78 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -661,7 +661,7 @@
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		interrupt-parent = <&gic>;
+ 		ranges;
+ 
+diff --git a/arch/arm/boot/dts/exynos4415.dtsi b/arch/arm/boot/dts/exynos4415.dtsi
+index ad76484..35d2f99 100644
+--- a/arch/arm/boot/dts/exynos4415.dtsi
++++ b/arch/arm/boot/dts/exynos4415.dtsi
+@@ -380,7 +380,7 @@
+ 		};
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			interrupt-parent = <&gic>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 33e2d5f..bcaed08 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -674,7 +674,7 @@
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		interrupt-parent = <&gic>;
+ 		ranges;
+ 
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 48a0a55..838bde3 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -327,7 +327,7 @@
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		interrupt-parent = <&gic>;
+ 		ranges;
+ 
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index f18b51f..5fe5639 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -200,7 +200,7 @@
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		interrupt-parent = <&gic>;
+ 		ranges;
+ 	};
+diff --git a/arch/arm/boot/dts/hi3620.dtsi b/arch/arm/boot/dts/hi3620.dtsi
+index 6cbb62e..7b67ffe 100644
+--- a/arch/arm/boot/dts/hi3620.dtsi
++++ b/arch/arm/boot/dts/hi3620.dtsi
+@@ -68,7 +68,7 @@
+ 
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		interrupt-parent = <&gic>;
+ 		ranges = <0 0xfc000000 0x2000000>;
+ 
+diff --git a/arch/arm/boot/dts/hip01.dtsi b/arch/arm/boot/dts/hip01.dtsi
+index 33130f8..0835627 100644
+--- a/arch/arm/boot/dts/hip01.dtsi
++++ b/arch/arm/boot/dts/hip01.dtsi
+@@ -43,7 +43,7 @@
+ 		amba {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			ranges;
+ 
+ 			uart0: uart@10001000 {
+diff --git a/arch/arm/boot/dts/hisi-x5hd2.dtsi b/arch/arm/boot/dts/hisi-x5hd2.dtsi
+index c52722b..f3a79b7 100644
+--- a/arch/arm/boot/dts/hisi-x5hd2.dtsi
++++ b/arch/arm/boot/dts/hisi-x5hd2.dtsi
+@@ -34,7 +34,7 @@
+ 		amba {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			ranges;
+ 
+ 			timer0: timer@00002000 {
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index ed521e8..ca93486 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -721,7 +721,7 @@
+ 		};
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
+index e5f7f33..e05773c 100644
+--- a/arch/arm/boot/dts/qcom-msm8660.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
+@@ -167,7 +167,7 @@
+ 		};
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm/boot/dts/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom-msm8960.dtsi
+index 51a40d8..7e7e891 100644
+--- a/arch/arm/boot/dts/qcom-msm8960.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8960.dtsi
+@@ -251,7 +251,7 @@
+ 		};
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
+index b9567c1..c15fdf4 100644
+--- a/arch/arm/boot/dts/rk3036.dtsi
++++ b/arch/arm/boot/dts/rk3036.dtsi
+@@ -94,7 +94,7 @@
+ 	};
+ 
+ 	amba {
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+diff --git a/arch/arm/boot/dts/rk3228.dtsi b/arch/arm/boot/dts/rk3228.dtsi
+index 119ff12..8b4e443 100644
+--- a/arch/arm/boot/dts/rk3228.dtsi
++++ b/arch/arm/boot/dts/rk3228.dtsi
+@@ -96,7 +96,7 @@
+ 	};
+ 
+ 	amba {
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 8ac49f3..af111fa 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -134,7 +134,7 @@
+ 	};
+ 
+ 	amba {
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+diff --git a/arch/arm/boot/dts/rk3xxx.dtsi b/arch/arm/boot/dts/rk3xxx.dtsi
+index 99eeea7..c969e84 100644
+--- a/arch/arm/boot/dts/rk3xxx.dtsi
++++ b/arch/arm/boot/dts/rk3xxx.dtsi
+@@ -67,7 +67,7 @@
+ 	};
+ 
+ 	amba {
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
+index 8344a0e..e945c343 100644
+--- a/arch/arm/boot/dts/s5pv210.dtsi
++++ b/arch/arm/boot/dts/s5pv210.dtsi
+@@ -130,7 +130,7 @@
+ 		amba {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			ranges;
+ 
+ 			pdma0: dma@e0900000 {
+diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+index 3ed4abd..cadc637 100644
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -69,7 +69,7 @@
+ 		ranges;
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
+index cce9e50..06a8e86 100644
+--- a/arch/arm/boot/dts/socfpga_arria10.dtsi
++++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
+@@ -63,7 +63,7 @@
+ 		ranges;
+ 
+ 		amba {
+-			compatible = "arm,amba-bus";
++			compatible = "arm,amba-bus", "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi b/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
+index 27a333e..74732e4 100644
+--- a/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
++++ b/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
+@@ -721,7 +721,7 @@
+ 	};
+ 
+ 	amba {
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+diff --git a/arch/arm/boot/dts/ste-u300.dts b/arch/arm/boot/dts/ste-u300.dts
+index 9c73ac2..763a607 100644
+--- a/arch/arm/boot/dts/ste-u300.dts
++++ b/arch/arm/boot/dts/ste-u300.dts
+@@ -384,7 +384,7 @@
+ 	};
+ 
+ 	amba {
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+diff --git a/arch/arm/boot/dts/versatile-ab.dts b/arch/arm/boot/dts/versatile-ab.dts
+index 6fd7efb..01156cf 100644
+--- a/arch/arm/boot/dts/versatile-ab.dts
++++ b/arch/arm/boot/dts/versatile-ab.dts
+@@ -148,7 +148,7 @@
+ 	};
+ 
+ 	amba {
+-		compatible = "arm,amba-bus";
++		compatible = "arm,amba-bus", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
 -- 
-2.6.1
+1.9.1
