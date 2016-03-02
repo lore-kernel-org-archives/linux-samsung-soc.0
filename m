@@ -1,74 +1,56 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v5 RESEND 4/5] ARM: amba: Move reading of periphid to amba_match()
-Date: Wed, 2 Mar 2016 11:16:41 +0100
-Message-ID: <CAPDyKFph8O+P9F124R859+OqY7B0YXCm=oOGxviyOo6tkNPQzQ@mail.gmail.com>
-References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
-	<1455101250-11327-5-git-send-email-m.szyprowski@samsung.com>
-	<20160215175250.GJ10826@n2100.arm.linux.org.uk>
-	<56C426C4.7040907@samsung.com>
-	<20160217200828.GH19428@n2100.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [patch] iommu/exynos: checking for IS_ERR() instead of NULL
+Date: Wed, 02 Mar 2016 13:47:35 +0100
+Message-ID: <56D6E0E7.9080204@samsung.com>
+References: <20160302101047.GH5533@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:35962 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750745AbcCBKQn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Mar 2016 05:16:43 -0500
-Received: by mail-wm0-f52.google.com with SMTP id n186so77685503wmn.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Mar 2016 02:16:42 -0800 (PST)
-In-Reply-To: <20160217200828.GH19428@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <20160302101047.GH5533@mwanda>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 17 February 2016 at 21:08, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Wed, Feb 17, 2016 at 08:52:36AM +0100, Marek Szyprowski wrote:
->> Then the only solution right now I see is to get back to v1:
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/388199.html
->> which at least handles correctly device registration when power domain
->> driver is available.
+Hello,
+
+On 2016-03-02 11:10, Dan Carpenter wrote:
+> of_platform_device_create() returns NULL on error, it never returns
+> error pointers.
 >
-> ... and which has the ability to break platforms if the PM domain is
-> not already available.
+> Fixes: 8ed55c812fa8 ('iommu/exynos: Init from dt-specific callback instead of initcall')
+> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+
+Acked-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index b066504..cb57bda 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -1347,8 +1347,8 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
+>   		exynos_iommu_init();
+>   
+>   	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
+> -	if (IS_ERR(pdev))
+> -		return PTR_ERR(pdev);
+> +	if (!pdev)
+> +		return -ENOMEM;
+>   
+>   	/*
+>   	 * use the first registered sysmmu device for performing
 >
-> What's wrong with the patch in the link above _combined_ with a patch
-> which addresses the concern I have with that patch: build a list of
-> the failed-to-register devices, and retry them later - maybe from a
-> late_initcall(), or a similar mechanism?
-
-This will improve the robustness of the device registration process,
-but I wonder if it's really worth the efforts of complicating the amba
-device registration code.
-
-The problem I see with such approach, is to know *when* shall we retry
-to register the devices.
-
-We will rely on the PM domain driver to be probed, as to have the
-corresponding OF genpd provider registered, else the device
-registration will continue to fail.
-Now, I don't think there are PM domain drivers as removable modules
-(yet), but in such cases a late_initcall won't help much.
-
 >
-> My view is the risk to existing systems is _too_ high to apply either
-> this patch, or the patch you link to above, and I refuse to play the
-> "lets apply it and see if we break anything" lottery with this.
 
-I agree!
-
-Although I think with some adjustments, perhaps we can move forward with v1?
-
-The adjustments I think is needed:
-Instead of propagating the error code from dev_pm_domain_attach(),
-let's print a debug message and continue the device registration.
-In that way, we shouldn't introduce regressions for cases where the OF
-genpd provider hasn't yet been registered, but the issue Marek is
-trying to solve for Exynos should be fixed.
-
-What do you think?
-
-Kind regards
-Uffe
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
