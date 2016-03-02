@@ -1,33 +1,40 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] ARM64: EXYNOS: defconfig for 4.6
-Date: Wed, 02 Mar 2016 23:16:33 +0100
-Message-ID: <22810452.N8NmEBjiMM@wuerfel>
-References: <1456825042-23733-1-git-send-email-k.kozlowski@samsung.com>
- <1456825042-23733-2-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 07/14] hw_random: exynos: use __maybe_unused to hide pm
+ functions
+Date: Thu, 03 Mar 2016 08:43:54 +0900
+Message-ID: <56D77ABA.1040505@samsung.com>
+References: <1456934350-1389172-1-git-send-email-arnd@arndb.de>
+ <1456934350-1389172-8-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1456825042-23733-2-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1456934350-1389172-8-git-send-email-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Daniel Thompson <daniel.thompson@linaro.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 01 March 2016 18:37:21 Krzysztof Kozlowski wrote:
-> ARM64 defconfig changes for Exynos based boards for v4.6:
-> 1. We want thermal for Exynos7 TMU unit to monitor the temperature.
-> 2. Enable the drivers for PMIC used on Exynos7-based Espresso board.
+On 03.03.2016 00:58, Arnd Bergmann wrote:
+> The exynos random driver uses #ifdef to check for CONFIG_PM, but
+> then uses SIMPLE_DEV_PM_OPS, which leaves the references out when
+> CONFIG_PM_SLEEP is not defined, so we get a warning with
+> PM=y && PM_SLEEP=n:
+> 
+> drivers/char/hw_random/exynos-rng.c:166:12: error: 'exynos_rng_suspend' defined but not used [-Werror=unused-function]
+> drivers/char/hw_random/exynos-rng.c:171:12: error: 'exynos_rng_resume' defined but not used [-Werror=unused-function]
+> 
+> This removes the incorrect #ifdef and instead uses a __maybe_unused
+> annotation to let the compiler know it can silently drop
+> the function definition.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/char/hw_random/exynos-rng.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
 > 
 
-Pulled into next/arm64, thanks!
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-	Arnd
+Best regards,
+Krzysztof
