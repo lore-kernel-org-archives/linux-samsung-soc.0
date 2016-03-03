@@ -1,15 +1,15 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 06/15] pinctrl: rockchip: Add missing MFD_SYSCON dependency on
+Subject: [RFC 14/15] usb: xhci: mtk: Add missing MFD_SYSCON dependency on
  HAS_IOMEM
-Date: Thu, 03 Mar 2016 17:03:32 +0900
-Message-ID: <1456992221-26712-7-git-send-email-k.kozlowski__38211.9055641398$1456992326$gmane$org@samsung.com>
+Date: Thu, 03 Mar 2016 17:03:40 +0900
+Message-ID: <1456992221-26712-15-git-send-email-k.kozlowski@samsung.com>
 References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58116 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932338AbcCCIE7 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58066 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757074AbcCCIGK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2016 03:04:59 -0500
+	Thu, 3 Mar 2016 03:06:10 -0500
 In-reply-to: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,20 +21,20 @@ direct dependencies.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/pinctrl/Kconfig | 1 +
+ drivers/usb/host/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index fb8200b8e8ec..dc7ab58d4d74 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -131,6 +131,7 @@ config PINCTRL_MESON
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 8c20ebbc049c..f759a778d606 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -45,6 +45,7 @@ config USB_XHCI_PLATFORM
  
- config PINCTRL_ROCKCHIP
- 	bool
+ config USB_XHCI_MTK
+ 	tristate "xHCI support for Mediatek MT65xx"
 +	depends on HAS_IOMEM	# For MFD_SYSCON
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GENERIC_IRQ_CHIP
+ 	select MFD_SYSCON
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 	---help---
 -- 
 2.5.0
