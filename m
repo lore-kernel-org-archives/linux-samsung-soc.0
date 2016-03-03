@@ -1,15 +1,14 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 07/15] pinctrl: mvebu: Add missing MFD_SYSCON dependency on
- HAS_IOMEM
-Date: Thu, 03 Mar 2016 17:03:33 +0900
-Message-ID: <1456992221-26712-8-git-send-email-k.kozlowski__31090.2007310235$1456992736$gmane$org@samsung.com>
+Subject: [RFC 05/15] phy: hi6220: Add missing MFD_SYSCON dependency on HAS_IOMEM
+Date: Thu, 03 Mar 2016 17:03:31 +0900
+Message-ID: <1456992221-26712-6-git-send-email-k.kozlowski__30897.5498578095$1456992831$gmane$org@samsung.com>
 References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55510 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756957AbcCCIFJ (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:35989 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932296AbcCCIEw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2016 03:05:09 -0500
+	Thu, 3 Mar 2016 03:04:52 -0500
 In-reply-to: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,20 +20,20 @@ direct dependencies.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/pinctrl/mvebu/Kconfig | 1 +
+ drivers/phy/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/mvebu/Kconfig b/drivers/pinctrl/mvebu/Kconfig
-index 170602407c0d..13685923729c 100644
---- a/drivers/pinctrl/mvebu/Kconfig
-+++ b/drivers/pinctrl/mvebu/Kconfig
-@@ -7,6 +7,7 @@ config PINCTRL_MVEBU
- 
- config PINCTRL_DOVE
- 	bool
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 0124d17bd9fe..cfdb3551a675 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -225,6 +225,7 @@ config PHY_MT65XX_USB3
+ config PHY_HI6220_USB
+ 	tristate "hi6220 USB PHY support"
+ 	depends on (ARCH_HISI && ARM64) || COMPILE_TEST
 +	depends on HAS_IOMEM	# For MFD_SYSCON
- 	select PINCTRL_MVEBU
+ 	select GENERIC_PHY
  	select MFD_SYSCON
- 
+ 	help
 -- 
 2.5.0
