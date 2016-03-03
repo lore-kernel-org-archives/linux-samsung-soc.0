@@ -1,14 +1,15 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 04/15] irqchip: st: Add missing MFD_SYSCON dependency on HAS_IOMEM
-Date: Thu, 03 Mar 2016 17:03:30 +0900
-Message-ID: <1456992221-26712-5-git-send-email-k.kozlowski__40641.079322859$1456992897$gmane$org@samsung.com>
+Subject: [RFC 02/15] dmaengine: nxp: Add missing MFD_SYSCON dependency on
+ HAS_IOMEM
+Date: Thu, 03 Mar 2016 17:03:28 +0900
+Message-ID: <1456992221-26712-3-git-send-email-k.kozlowski__4696.70438110388$1456992932$gmane$org@samsung.com>
 References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58085 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932241AbcCCIEm (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57876 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932104AbcCCIEZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2016 03:04:42 -0500
+	Thu, 3 Mar 2016 03:04:25 -0500
 In-reply-to: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -20,20 +21,20 @@ direct dependencies.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/irqchip/Kconfig | 1 +
+ drivers/dma/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 00bbec6eca0b..10775b099daa 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -157,6 +157,7 @@ config RENESAS_IRQC
- config ST_IRQCHIP
- 	bool
- 	select REGMAP
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index c77f214c9466..7fbf96bff280 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -290,6 +290,7 @@ config LPC18XX_DMAMUX
+ 	bool "NXP LPC18xx/43xx DMA MUX for PL080"
+ 	depends on ARCH_LPC18XX || COMPILE_TEST
+ 	depends on OF && AMBA_PL08X
 +	depends on HAS_IOMEM	# For MFD_SYSCON
  	select MFD_SYSCON
  	help
- 	  Enables SysCfg Controlled IRQs on STi based platforms.
+ 	  Enable support for DMA on NXP LPC18xx/43xx platforms
 -- 
 2.5.0
