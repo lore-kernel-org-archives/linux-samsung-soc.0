@@ -1,53 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] ARM: EXYNOS: SROM driver for v4.6, 2nd try
-Date: Thu, 03 Mar 2016 14:11:32 +0100
-Message-ID: <2210448.V5gsMerLz6@wuerfel>
-References: <1456825042-23733-1-git-send-email-k.kozlowski@samsung.com> <1456825042-23733-3-git-send-email-k.kozlowski@samsung.com> <56D77FA6.5070500@samsung.com>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: add "simple-bus" to "arm, amba-bus" compatible nodes
+Date: Thu, 3 Mar 2016 14:23:29 -0600
+Message-ID: <CAL_JsqLBNo2YuJGqBo1DaYgzV7=WuX-0BPutoW3f3U1k0wX3_w@mail.gmail.com>
+References: <1456804620-8750-1-git-send-email-yamada.masahiro@socionext.com>
+ <20160301114610.GB30602@leverpostej> <CAK7LNAQzkg5F8wUeF+p30jf9CrpNxi7UTNfqXQgybP2XbEKJag@mail.gmail.com>
+ <1456999975.2856.18.camel@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:56484 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751082AbcCCNMJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2016 08:12:09 -0500
-In-Reply-To: <56D77FA6.5070500@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456999975.2856.18.camel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Jon Medhurst (Tixy)" <tixy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Dinh Nguyen <dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglin
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday 03 March 2016 09:04:54 Krzysztof Kozlowski wrote:
-> On 01.03.2016 18:37, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > 
-> > After Olof comments, second pull request with movement of SROM code
-> > to separate driver - under drivers/memory/samsung (more are planned for
-> > that directory).
-> > 
-> > This depends on (included here):
-> > 1. tag samsung-dt-srom-4.6: SROM-DT changes, merged already to arm-soc,
-> > 2. tag samsung-soc-4.6-2: next/soc changes, sent few days ago, not merged yet.
-> > 
-> > This may conflict in the future (in linux-next or Linus) around
-> > drivers/memory/Kconfig with iommu tree. Just add all the changes.
-> > 
-> > 
-> > The diff at the end contains both samsung-soc-4.6-2 and this stuff.
-> > To make finding changes easier, below you will find difference between
-> > this tag and samsung-soc-4.6-2:
-> 
-> I see you did not pull this yet so can you wait a little bit? Rob
-> Herring posted some comments on bindings so this might be revisited...
-> 
-> This is an unlucky patchset...
+On Thu, Mar 3, 2016 at 4:12 AM, Jon Medhurst (Tixy) <tixy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Thu, 2016-03-03 at 12:07 +0900, Masahiro Yamada wrote:
+> [...]
+>> This patch is derived from Rob Herring' comment
+>> "BTW, we should also kill off "amba-bus" which is an ambiguous term"
+>> in the following thread:
+>> http://lkml.iu.edu/hypermail/linux/kernel/1601.0/01822.html
+>>
+>>
+>> So, the plan would be like this:
+>>
+>> [1] Make device trees not depend on "arm,amba-bus"   (this commit)
+>> [2] New device trees should no longer use "arm,amba-bus" alone.
+>> [3] Go though some releases until we do not care about the backward
+>> compatibility
+>
+> Why would we stop caring about backwards compatibility? If I was a user
+> of any of the platforms in question and updated my kernel, I wouldn't
+> expect to have to debug why it was broken, then install a new dtb to fix
+> it - which may be a tricky thing to do, depending on the firmware used
+> to boot Linux.
 
-It was a bit late last night, and I didn't want to check that the
-dependencies were correct. I also saw that you had discussed these
-contents with Olof before, but didn't follow the thread there, so
-I was hoping that Olof could get back to it and check that his
-concerns are all addressed before picking it up.
+If no one notices, then there is no ABI. Things break all the time
+when nobody cares. It will be more than a few releases for sure. We
+may never get to step 3, but we should do step 1 so people stop
+copy-n-pasting this in step 2.
 
-	Arnd
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
