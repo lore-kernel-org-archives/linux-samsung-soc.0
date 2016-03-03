@@ -1,74 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC PATCH] watchdog: s3c2410_wdt: Add max and min timeout values
-Date: Thu, 03 Mar 2016 11:30:55 +0900
-Message-ID: <56D7A1DF.9030805@samsung.com>
-References: <1456850717-3670-1-git-send-email-javier@osg.samsung.com>
- <56D62979.5040009@samsung.com> <56D7233B.50907@osg.samsung.com>
- <56D7838D.4060602@samsung.com> <56D79E1D.3030302@osg.samsung.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] ARM: dts: add "simple-bus" to "arm,amba-bus" compatible nodes
+Date: Thu, 3 Mar 2016 12:07:32 +0900
+Message-ID: <CAK7LNAQzkg5F8wUeF+p30jf9CrpNxi7UTNfqXQgybP2XbEKJag@mail.gmail.com>
+References: <1456804620-8750-1-git-send-email-yamada.masahiro@socionext.com>
+	<20160301114610.GB30602@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <56D79E1D.3030302-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20160301114610.GB30602@leverpostej>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
+Cc: arm@kernel.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Dinh Nguyen <dinguyen@opensource.altera.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, David Brown <david.brown@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Wei Xu <xuwei5@hisilicon.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-soc@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03.03.2016 11:14, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 03/02/2016 09:21 PM, Krzysztof Kozlowski wrote:
->> On 03.03.2016 02:30, Javier Martinez Canillas wrote:
-> 
-> [snip]
-> 
->>>>>
->>>>> +    wdt->wdt_device.min_timeout = 1;
->>>>> +    wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt->clock);
->>>>
->>>> Can the frequency of clock change? E.g. with devfreq? No problem if it
->>>> goes lower but if it gets higher than initial, then the problem will
->>>> appear again.
->>>>
-> 
-> I think both cases are problematic since low scaling will meant that the
-> watchdog will support a bigger timeout than what was set as maximum (this
-> will be a regression) and going up will mean that the maximum timeout is
-> bigger than what the watchdog supports (the same issue without this patch).
+Hi Mark,
 
-Yes, both cases are bad.
 
->> The problem will be more severe if the watchdog got configured on 50 MHz
->> and then devfreq bumps the clock to 100 MHz...
->>
-> 
-> So, what do you propose? We could for example set a maximum timeout on
-> probe
-> as $SUBJECT do and also update the maximum timeout again on the
-> .set_timeout
-> callback in case the clock rate changed. 
+2016-03-01 20:46 GMT+09:00 Mark Rutland <mark.rutland@arm.com>:
+> On Tue, Mar 01, 2016 at 12:57:00PM +0900, Masahiro Yamada wrote:
+>> The "arm,amba-bus" string in the of_default_bus_match_table is
+>> ambiguous.  This prepares for killing it off in a long run.
+>
+> I don't follow the purpose of this patch.
+>
+> There's no way we can remove kernel-side support for "arm,amba-bus", as
+> there are DTBs that rely on it.
+>
+> If we're going to merge "arm,amba-bus" in the kernel with "simple-bus",
+> such that there is no distinction between the two, then that doesn't
+> require any DTBs to be updated.
+>
+> The only reason I would see for changing dts files would be a subsequent
+> clean-up for consistency, but at that point "arm,amba-bus" could be
+> dropped entirely.
+>
+> So this patch makes no sense to me.
+>
+> Thanks,
+> Mark.
+>
 
-Or print warning and don't care... :)
+This patch is derived from Rob Herring' comment
+"BTW, we should also kill off "amba-bus" which is an ambiguous term"
+in the following thread:
+http://lkml.iu.edu/hypermail/linux/kernel/1601.0/01822.html
 
-> I think that is kind of hacky
-> but I
-> can't think of another way to guard about the frequency being changed.
 
-First of all your patch does not introduce any kind of regression on its
-own. Since we are at the topic of watchdog I am just looking for doing
-this properly. We can merge the patches now and fix stuff later.
+So, the plan would be like this:
 
-Second, I think there won't be any issues with current mainline code
-(and devfreq). I don't care about out of tree code.
+[1] Make device trees not depend on "arm,amba-bus"   (this commit)
+[2] New device trees should no longer use "arm,amba-bus" alone.
+[3] Go though some releases until we do not care about the backward
+compatibility
+[4] Drop "arm,amba-bus" from of_default_bus_match_table
 
-Third, it would be good to confirm that watchdog clock really changes
-frequency with devfreq...
 
-BR,
-KRzysztof
+No?
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+Best Regards
+Masahiro Yamada
