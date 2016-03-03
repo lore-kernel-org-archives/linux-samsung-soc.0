@@ -1,63 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC PATCH] watchdog: s3c2410_wdt: Add max and min timeout values
-Date: Thu, 3 Mar 2016 21:26:26 +0900
-Message-ID: <CAJKOXPe2GAkMGgZJR3FCRONMgb3AcrySczuzm_BehekrMnEbrw@mail.gmail.com>
-References: <1456850717-3670-1-git-send-email-javier@osg.samsung.com>
-	<56D62979.5040009@samsung.com>
-	<56D7233B.50907@osg.samsung.com>
-	<56D7838D.4060602@samsung.com>
-	<56D79E1D.3030302@osg.samsung.com>
-	<56D7C2A5.1050304@roeck-us.net>
-	<56D82643.1090105@osg.samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [RFC 08/15] rtc: at91sam9: Add missing MFD_SYSCON dependency on HAS_IOMEM
+Date: Thu, 3 Mar 2016 13:27:59 +0100
+Message-ID: <CAMuHMdXUdz0=n2+Aa74f1LtwiwfV9=gkPBiJKC_DMyr1_jBe7Q@mail.gmail.com>
+References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
+	<1456992221-26712-9-git-send-email-k.kozlowski@samsung.com>
+	<2233190.1BxevBAvDE@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56D82643.1090105-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <2233190.1BxevBAvDE@wuerfel>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Brown <david.brown@linaro.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lee Jones <lee.jones@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, driverdevel <devel@driverdev.osuosl.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andy Gross <andy.gross@linaro.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, RTCLINUX <rtc-linux@googlegroups.com>, Mauro
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-03-03 20:55 GMT+09:00 Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>:
-> Hello Guenter,
->
->
-> On 03/03/2016 01:50 AM, Guenter Roeck wrote:
->> A watchdog driver using a non-static clock must register a clock change
->> notifier
->> to handle the clock rate change and update its settings accordingly.
->>
->> I would also argue that the maximum timeout should be set to the minimum
->> possible value (probably associated with the highest possible frequency).
->> All other cases might end up causing trouble if a clock frequency
->> chance results in an enforced timeout change, since there is currently
->> no mechanism to inform user space about such a change.
->>
->> Example: maximum possible timeout changes from 1 minute to 30 seconds.
->> The timeout was set to 1 minute, and has to be reduced to 30 seconds.
->> Very likely result is that the watchdog will reset the system because
->> user space still believes that the timeout is 60 seconds and doesn't
->> ping the watchdog often enough to prevent it.
+On Thu, Mar 3, 2016 at 11:55 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thursday 03 March 2016 17:03:34 Krzysztof Kozlowski wrote:
+>> index 0da40e2e4280..5c530b6b125d 100644
+>> --- a/drivers/rtc/Kconfig
+>> +++ b/drivers/rtc/Kconfig
+>> @@ -1302,6 +1302,7 @@ config RTC_DRV_AT91RM9200
+>>  config RTC_DRV_AT91SAM9
+>>         tristate "AT91SAM9 RTT as RTC"
+>>         depends on ARCH_AT91 || COMPILE_TEST
+>> +       depends on HAS_IOMEM    # For MFD_SYSCON
+>>         select MFD_SYSCON
+>>         help
+>>           Some AT91SAM9 SoCs provide an RTT (Real Time Timer) block which
 >>
 >
-> Agreed.
+> This is technically correct, but the entire RTC menu is hidden
+> inside of 'depends on !UML && !S390', so we won't ever get there
+> on any configuration that does not use HAS_IOMEM.
 >
-> In any case this discussion is not related to this patch since currently
-> in mainline the watchdog source clock is fixed and does not change.
->
-> So, $SUBJECT solves the issue of not having the fixed .{min,max}_timeout
-> defined to allow the watchdog_timeout_invalid() function to check values
-> set by WDIOC_SETTIMEOUT and avoid calling the .set_timeout callback.
->
-> If later someone tries to scale a parent clock used by many drivers, then
-> the submitter should make sure that no regressions are added by the patch.
+> If we did, all other RTC drivers would also fail.
 
-Sounds good. For this patch then:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+So UML has no RTC. Should/can it use RTC_DRV_GENERIC?
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
