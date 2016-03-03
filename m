@@ -1,49 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] thermal: Fix build error of missing
- devm_ioremap_resource on UM
-Date: Thu, 3 Mar 2016 10:01:11 +0100
-Message-ID: <CAMuHMdUW00DRhFFU9y9Di_jkh+wF=d+Rm3rwC9-guw5eS-+iXw@mail.gmail.com>
-References: <1456994677-3024-1-git-send-email-k.kozlowski@samsung.com>
+From: "Jon Medhurst (Tixy)" <tixy@linaro.org>
+Subject: Re: [PATCH] ARM: dts: add "simple-bus" to "arm, amba-bus"
+ compatible nodes
+Date: Thu, 03 Mar 2016 10:12:55 +0000
+Message-ID: <1456999975.2856.18.camel@linaro.org>
+References: <1456804620-8750-1-git-send-email-yamada.masahiro@socionext.com>
+	 <20160301114610.GB30602@leverpostej>
+	 <CAK7LNAQzkg5F8wUeF+p30jf9CrpNxi7UTNfqXQgybP2XbEKJag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35339 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756336AbcCCJBM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2016 04:01:12 -0500
-In-Reply-To: <1456994677-3024-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK7LNAQzkg5F8wUeF+p30jf9CrpNxi7UTNfqXQgybP2XbEKJag@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Heiko Stuebner <heiko@sntech.de>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wei Xu <xuwei5@hisilicon.com>, David Brown <david.brown@linaro.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Dinh Nguyen <dinguyen@opensource.altera.com>, linux-soc@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Krzysztof,
+On Thu, 2016-03-03 at 12:07 +0900, Masahiro Yamada wrote:
+[...]
+> This patch is derived from Rob Herring' comment
+> "BTW, we should also kill off "amba-bus" which is an ambiguous term"
+> in the following thread:
+> http://lkml.iu.edu/hypermail/linux/kernel/1601.0/01822.html
+> 
+> 
+> So, the plan would be like this:
+> 
+> [1] Make device trees not depend on "arm,amba-bus"   (this commit)
+> [2] New device trees should no longer use "arm,amba-bus" alone.
+> [3] Go though some releases until we do not care about the backward
+> compatibility
 
-On Thu, Mar 3, 2016 at 9:44 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -177,7 +177,7 @@ config THERMAL_EMULATION
->
->  config HISI_THERMAL
->         tristate "Hisilicon thermal driver"
-> -       depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST
-> +       depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST && HAS_IOMEM
+Why would we stop caring about backwards compatibility? If I was a user
+of any of the platforms in question and updated my kernel, I wouldn't
+expect to have to debug why it was broken, then install a new dtb to fix
+it - which may be a tricky thing to do, depending on the firmware used
+to boot Linux.
 
-I think these are easier to read and maintain if you split hard and soft
-dependencies, e.g.
+> [4] Drop "arm,amba-bus" from of_default_bus_match_table
 
-        depends on HAS_IOMEM
-        depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Tixy
