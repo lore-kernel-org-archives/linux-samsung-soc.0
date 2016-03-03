@@ -1,43 +1,46 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC 14/15] usb: xhci: mtk: Add missing MFD_SYSCON dependency on
- HAS_IOMEM
-Date: Thu, 03 Mar 2016 12:01:21 +0100
-Message-ID: <2531852.vizHtxotvy@wuerfel>
-References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
- <1456992221-26712-15-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] thermal: Fix build error of missing
+ devm_ioremap_resource on UM
+Date: Thu, 3 Mar 2016 20:49:53 +0900
+Message-ID: <CAJKOXPcHmP6imMMUK8KjxAj=PNLGJSQeuhLA8RBwMUkpzP6qTw@mail.gmail.com>
+References: <1456994677-3024-1-git-send-email-k.kozlowski@samsung.com>
+	<CAMuHMdUW00DRhFFU9y9Di_jkh+wF=d+Rm3rwC9-guw5eS-+iXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1456992221-26712-15-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, David Brown <david.brown@linaro.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lee Jones <lee.jones@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andy Gross <andy.gross@linaro.org>, linux-media@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, rtc-linux@googlegroups.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdUW00DRhFFU9y9Di_jkh+wF=d+Rm3rwC9-guw5eS-+iXw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday 03 March 2016 17:03:40 Krzysztof Kozlowski wrote:
-> index 8c20ebbc049c..f759a778d606 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -45,6 +45,7 @@ config USB_XHCI_PLATFORM
->  
->  config USB_XHCI_MTK
->         tristate "xHCI support for Mediatek MT65xx"
-> +       depends on HAS_IOMEM    # For MFD_SYSCON
->         select MFD_SYSCON
->         depends on ARCH_MEDIATEK || COMPILE_TEST
->         ---help---
-> 
+2016-03-03 18:01 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+>
+> Hi Krzysztof,
+>
+> On Thu, Mar 3, 2016 at 9:44 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+> > --- a/drivers/thermal/Kconfig
+> > +++ b/drivers/thermal/Kconfig
+> > @@ -177,7 +177,7 @@ config THERMAL_EMULATION
+> >
+> >  config HISI_THERMAL
+> >         tristate "Hisilicon thermal driver"
+> > -       depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST
+> > +       depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST && HAS_IOMEM
+>
+> I think these are easier to read and maintain if you split hard and soft
+> dependencies, e.g.
+>
+>         depends on HAS_IOMEM
+>         depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST
 
-This already has the dependency, as it depends on XHCD_PLATFORM
-which depends on HAS_IOMEM.
+Indeed this looks more readable but the HAS_IOMEM becomes a missing
+dependency only for COMPILE_TEST. Usually it is included in the
+architecture.
 
-	Arnd
+None of the approaches look perfect to me...
+
+Thanks for feedback!
+Best regards,
+Krzysztof
