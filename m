@@ -1,15 +1,15 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 03/15] hwspinlock: qcom: Add missing MFD_SYSCON dependency on
+Subject: [RFC 06/15] pinctrl: rockchip: Add missing MFD_SYSCON dependency on
  HAS_IOMEM
-Date: Thu, 03 Mar 2016 17:03:29 +0900
-Message-ID: <1456992221-26712-4-git-send-email-k.kozlowski@samsung.com>
+Date: Thu, 03 Mar 2016 17:03:32 +0900
+Message-ID: <1456992221-26712-7-git-send-email-k.kozlowski__38211.9055641398$1456992326$gmane$org@samsung.com>
 References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58052 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58116 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932195AbcCCIEd (ORCPT
+	with ESMTP id S932338AbcCCIE7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2016 03:04:33 -0500
+	Thu, 3 Mar 2016 03:04:59 -0500
 In-reply-to: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,20 +21,20 @@ direct dependencies.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/hwspinlock/Kconfig | 1 +
+ drivers/pinctrl/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-index 73a401662853..5ab2d51dc147 100644
---- a/drivers/hwspinlock/Kconfig
-+++ b/drivers/hwspinlock/Kconfig
-@@ -21,6 +21,7 @@ config HWSPINLOCK_OMAP
- config HWSPINLOCK_QCOM
- 	tristate "Qualcomm Hardware Spinlock device"
- 	depends on ARCH_QCOM
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index fb8200b8e8ec..dc7ab58d4d74 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -131,6 +131,7 @@ config PINCTRL_MESON
+ 
+ config PINCTRL_ROCKCHIP
+ 	bool
 +	depends on HAS_IOMEM	# For MFD_SYSCON
- 	select HWSPINLOCK
- 	select MFD_SYSCON
- 	help
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+ 	select GENERIC_IRQ_CHIP
 -- 
 2.5.0
