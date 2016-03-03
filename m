@@ -1,43 +1,157 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL] ARM: EXYNOS: SROM driver for v4.6, 2nd try
-Date: Thu, 03 Mar 2016 09:04:54 +0900
-Message-ID: <56D77FA6.5070500@samsung.com>
-References: <1456825042-23733-1-git-send-email-k.kozlowski@samsung.com>
- <1456825042-23733-3-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC PATCH] watchdog: s3c2410_wdt: Add max and min timeout values
+Date: Thu, 03 Mar 2016 09:21:33 +0900
+Message-ID: <56D7838D.4060602@samsung.com>
+References: <1456850717-3670-1-git-send-email-javier@osg.samsung.com>
+ <56D62979.5040009@samsung.com> <56D7233B.50907@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1456825042-23733-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <56D7233B.50907-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01.03.2016 18:37, Krzysztof Kozlowski wrote:
-> Hi,
+On 03.03.2016 02:30, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
+> On 03/01/2016 08:44 PM, Krzysztof Kozlowski wrote:
+>> On 02.03.2016 01:45, Javier Martinez Canillas wrote:
+>>> The watchdog maximum timeout value is determined by the number of bits
+>>> for the interval timer counter, its source clock frequency, the number
+>>> of bits of the prescaler and maximum divider value.
+>>>
+>>> This can be calculated with the following equation:
+>>>
+>>> max_timeout = counter / (freq / (max_prescale + 1) / max_divider)
+>>>
+>>> Setting a maximum timeout value will allow the watchdog core to refuse
+>>> user-space calls to the WDIOC_SETTIMEOUT ioctl that sets not supported
+>>> timeout values.
+>>>
+>>> For example, systemd tries to set a timeout of 10 minutes on reboot to
+>>> ensure that the machine will be rebooted even if a reboot failed. This
+>>> leads to the following error message on an Exynos5422 Odroid XU4 board:
+>>>
+>>> [  147.986045] s3c2410-wdt 101d0000.watchdog: timeout 600 too big
+>>>
+>>> Reported-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+>>>
+>>> ---
+>>> Hello,
+>>>
+>>> I'm sending this as an RFC because I don't have access to user manuals
+>>> for all the Exynos SoCs that this driver supports. But at least in all
+>>> the ones I have here, the maximum prescaler and divider values are the
+>>> same and also all have a 16-bit interval timer counter.
+>>>
+>>> So this patch assumes that all IP blocks supported by this driver are
+>>> the same on that regard, if that's not the case then we can move these
+>>> values on a per IP block basis using struct of_device_id .data field.
+>>
+>> It looks correct at least for Exynos4210 and newer.
+>>
 > 
-> After Olof comments, second pull request with movement of SROM code
-> to separate driver - under drivers/memory/samsung (more are planned for
-> that directory).
+> Great, thanks a lot for the confirmation.
 > 
-> This depends on (included here):
-> 1. tag samsung-dt-srom-4.6: SROM-DT changes, merged already to arm-soc,
-> 2. tag samsung-soc-4.6-2: next/soc changes, sent few days ago, not merged yet.
+>>>
+>>> Best regards,
+>>> Javier
+>>>
+>>>   drivers/watchdog/s3c2410_wdt.c | 16 ++++++++++++++++
+>>>   1 file changed, 16 insertions(+)
+>>>
+>>> diff --git a/drivers/watchdog/s3c2410_wdt.c
+>>> b/drivers/watchdog/s3c2410_wdt.c
+>>> index 0093450441fe..f289c9fc353a 100644
+>>> --- a/drivers/watchdog/s3c2410_wdt.c
+>>> +++ b/drivers/watchdog/s3c2410_wdt.c
+>>> @@ -47,6 +47,8 @@
+>>>   #define S3C2410_WTDAT        0x04
+>>>   #define S3C2410_WTCNT        0x08
+>>>
+>>> +#define S3C2410_WTCNT_MAXCNT    0xffff
+>>> +
+>>>   #define S3C2410_WTCON_RSTEN    (1 << 0)
+>>>   #define S3C2410_WTCON_INTEN    (1 << 2)
+>>>   #define S3C2410_WTCON_ENABLE    (1 << 5)
+>>> @@ -56,8 +58,11 @@
+>>>   #define S3C2410_WTCON_DIV64    (2 << 3)
+>>>   #define S3C2410_WTCON_DIV128    (3 << 3)
+>>>
+>>> +#define S3C2410_WTCON_MAXDIV    0x80
+>>> +
+>>>   #define S3C2410_WTCON_PRESCALE(x)    ((x) << 8)
+>>>   #define S3C2410_WTCON_PRESCALE_MASK    (0xff << 8)
+>>> +#define S3C2410_WTCON_PRESCALE_MAX    0xff
+>>>
+>>>   #define CONFIG_S3C2410_WATCHDOG_ATBOOT        (0)
+>>>   #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME    (15)
+>>> @@ -198,6 +203,14 @@ do {                            \
+>>>
+>>>   /* functions */
+>>>
+>>> +static inline unsigned int s3c2410wdt_max_timeout(struct clk *clock)
+>>> +{
+>>> +    unsigned long freq = clk_get_rate(clock);
+>>> +
+>>> +    return S3C2410_WTCNT_MAXCNT / (freq /
+>>> (S3C2410_WTCON_PRESCALE_MAX + 1)
+>>> +                       / S3C2410_WTCON_MAXDIV);
+>>> +}
+>>> +
+>>>   static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block
+>>> *nb)
+>>>   {
+>>>       return container_of(nb, struct s3c2410_wdt, freq_transition);
+>>> @@ -567,6 +580,9 @@ static int s3c2410wdt_probe(struct
+>>> platform_device *pdev)
+>>>           return ret;
+>>>       }
+>>>
+>>> +    wdt->wdt_device.min_timeout = 1;
+>>> +    wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt->clock);
+>>
+>> Can the frequency of clock change? E.g. with devfreq? No problem if it
+>> goes lower but if it gets higher than initial, then the problem will
+>> appear again.
+>>
 > 
-> This may conflict in the future (in linux-next or Linus) around
-> drivers/memory/Kconfig with iommu tree. Just add all the changes.
+> That's a very good question. As Guenter said we will be in deep troubles
+> if that ever happens since the driver doesn't take that into account.
 > 
+> The .set_timeout handler just sets the counter according to the current
+> frequency and that's never updated, unless a new timeout is set of course.
 > 
-> The diff at the end contains both samsung-soc-4.6-2 and this stuff.
-> To make finding changes easier, below you will find difference between
-> this tag and samsung-soc-4.6-2:
+> So in other words, I just made the same assumptions that the driver is
+> currently doing.
 
-I see you did not pull this yet so can you wait a little bit? Rob
-Herring posted some comments on bindings so this might be revisited...
+Not entirely. Change of clock frequency will affect currently set
+timeout. But the next timeout will be using new frequency.
 
-This is an unlucky patchset...
+However you are setting the maximum timeout once. It will never change.
+
+> At least the Exynos SoCs manual don't mention frequency
+> scaling for the watchdog timer source clock and AFAICT none of the CLK_WDT
+> parents scale their frequencies but I don't know if that's true for all
+> the machines using this driver (i.e: out-of-tree boards).
+
+I looked at Exynos4 family because the devfreq was tested there. The WDT
+clock goes from ACLK100 (or ACLK66 on different socs).
+
+1. Existing devfreq for Exynos4 does not change ACLK100 frequency.
+2. New patches from Chanwoo (Cc) add scaling of ACLK100 also to 50 MHz:
+http://lkml.iu.edu/hypermail/linux/kernel/1512.1/04828.html
+
+The problem will be more severe if the watchdog got configured on 50 MHz
+and then devfreq bumps the clock to 100 MHz...
 
 Best regards,
 Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
