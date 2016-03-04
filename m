@@ -1,81 +1,33 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCHv12 05/17] HID: add HDMI CEC specific keycodes
-Date: Fri, 4 Mar 2016 11:58:27 -0800
-Message-ID: <20160304195827.GE17145@dtor-ws>
-References: <1455108711-29850-1-git-send-email-hverkuil@xs4all.nl>
- <1455108711-29850-6-git-send-email-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1455108711-29850-6-git-send-email-hverkuil@xs4all.nl>
-Sender: linux-input-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/2] [media] exynos4-is: Trivial fixes for DT port/endpoint parse logic
+Date: Fri,  4 Mar 2016 17:20:11 -0300
+Message-ID: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 10, 2016 at 01:51:39PM +0100, Hans Verkuil wrote:
-> From: Kamil Debski <kamil@wypas.org>
-> 
-> Add HDMI CEC specific keycodes to the keycodes definition.
-> 
-> Signed-off-by: Kamil Debski <kamil@wypas.org>
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  include/uapi/linux/input-event-codes.h | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-> index 87cf351..2662500 100644
-> --- a/include/uapi/linux/input-event-codes.h
-> +++ b/include/uapi/linux/input-event-codes.h
-> @@ -611,6 +611,34 @@
->  #define KEY_KBDINPUTASSIST_ACCEPT		0x264
->  #define KEY_KBDINPUTASSIST_CANCEL		0x265
->  
-> +#define KEY_RIGHT_UP			0x266
-> +#define KEY_RIGHT_DOWN			0x267
-> +#define KEY_LEFT_UP			0x268
-> +#define KEY_LEFT_DOWN			0x269
+Hello,
 
-Can you please add some comments to these and how they are different
-form normal KEY_UP/KEY_DOWN or KEY_DPAD* or BTN_A/B/X/Y.
+This series have two trivial fixes for issues that I noticed while
+reading as a reference the driver's functions that parse the graph
+port and endpoints nodes.
 
-> +#define KEY_ROOT_MENU			0x26a /* Show Device's Root Menu */
-> +#define KEY_MEDIA_TOP_MENU		0x26b /* Show Top Menu of the Media (e.g. DVD) */
-> +#define KEY_NUMERIC_11			0x26c
-> +#define KEY_NUMERIC_12			0x26d
-> +/*
-> + * Toggle Audio Description: refers to an audio service that helps blind and
-> + * visually impaired consumers understand the action in a program. Note: in
-> + * some countries this is referred to as "Video Description".
-> + */
-> +#define KEY_AUDIO_DESC			0x26e
-> +#define KEY_3D_MODE			0x26f
-> +#define KEY_NEXT_FAVORITE		0x270
-> +#define KEY_STOP_RECORD			0x271
-> +#define KEY_PAUSE_RECORD		0x272
-> +#define KEY_VOD				0x273 /* Video on Demand */
-> +#define KEY_UNMUTE			0x274
-> +#define KEY_FASTREVERSE			0x275
-> +#define KEY_SLOWREVERSE			0x276
+It was only compile tested because I don't have access to a Exynos4
+hardware to test the DT parsing, but the patches are very simple.
 
-KEY_FRAMEBACK maybe?
+Best regards,
+Javier
 
-> +/*
-> + * Control a data application associated with the currently viewed channel,
-> + * e.g. teletext or data broadcast application (MHEG, MHP, HbbTV, etc.)
-> + */
-> +#define KEY_DATA			0x275
-> +
->  #define BTN_TRIGGER_HAPPY		0x2c0
->  #define BTN_TRIGGER_HAPPY1		0x2c0
->  #define BTN_TRIGGER_HAPPY2		0x2c1
-> -- 
-> 2.7.0
-> 
 
-Thanks.
+Javier Martinez Canillas (2):
+  [media] exynos4-is: Put node before s5pcsis_parse_dt() return error
+  [media] exynos4-is: FIMC port parse should fail if there's no endpoint
+
+ drivers/media/platform/exynos4-is/media-dev.c | 2 +-
+ drivers/media/platform/exynos4-is/mipi-csis.c | 6 ++++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
 -- 
-Dmitry
+2.5.0
