@@ -1,43 +1,81 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] media: platform: Add missing MFD_SYSCON dependency on
- HAS_IOMEM
-Date: Fri, 04 Mar 2016 12:02:28 +0100
-Message-ID: <56D96B44.5090307@samsung.com>
-References: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCHv12 05/17] HID: add HDMI CEC specific keycodes
+Date: Fri, 4 Mar 2016 11:58:27 -0800
+Message-ID: <20160304195827.GE17145@dtor-ws>
+References: <1455108711-29850-1-git-send-email-hverkuil@xs4all.nl>
+ <1455108711-29850-6-git-send-email-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1455108711-29850-6-git-send-email-hverkuil@xs4all.nl>
+Sender: linux-input-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/04/2016 02:02 AM, Krzysztof Kozlowski wrote:
-> The MFD_SYSCON depends on HAS_IOMEM so when selecting 
-> it avoid unmet direct dependencies.
+On Wed, Feb 10, 2016 at 01:51:39PM +0100, Hans Verkuil wrote:
+> From: Kamil Debski <kamil@wypas.org>
+> 
+> Add HDMI CEC specific keycodes to the keycodes definition.
+> 
+> Signed-off-by: Kamil Debski <kamil@wypas.org>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  include/uapi/linux/input-event-codes.h | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> index 87cf351..2662500 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -611,6 +611,34 @@
+>  #define KEY_KBDINPUTASSIST_ACCEPT		0x264
+>  #define KEY_KBDINPUTASSIST_CANCEL		0x265
+>  
+> +#define KEY_RIGHT_UP			0x266
+> +#define KEY_RIGHT_DOWN			0x267
+> +#define KEY_LEFT_UP			0x268
+> +#define KEY_LEFT_DOWN			0x269
 
-> diff --git a/drivers/media/platform/exynos4-is/Kconfig 
-> b/drivers/media/platform/exynos4-is/Kconfig
-> index 57d42c6172c5..c4317b99d257 100644
-> --- a/drivers/media/platform/exynos4-is/Kconfig
-> +++ b/drivers/media/platform/exynos4-is/Kconfig
-> @@ -17,6 +17,7 @@ config VIDEO_S5P_FIMC
->  	tristate "S5P/EXYNOS4 FIMC/CAMIF camera interface driver"
->  	depends on I2C
->  	depends on HAS_DMA
-> +	depends on HAS_IOMEM	# For MFD_SYSCON
->  	select VIDEOBUF2_DMA_CONTIG
->  	select V4L2_MEM2MEM_DEV
->  	select MFD_SYSCON
+Can you please add some comments to these and how they are different
+form normal KEY_UP/KEY_DOWN or KEY_DPAD* or BTN_A/B/X/Y.
 
-While we are already at it, shouldn't "depends on HAS_IOMEM"
-be instead added at the top level entry in this Kconfig file,
-i.e. "config VIDEO_SAMSUNG_EXYNOS4_IS" ? For things like
-devm_ioremap_resource() depending on HAS_IOMEM and used in all
-the sub-drivers, enabled by VIDEO_SAMSUNG_EXYNOS4_IS?
+> +#define KEY_ROOT_MENU			0x26a /* Show Device's Root Menu */
+> +#define KEY_MEDIA_TOP_MENU		0x26b /* Show Top Menu of the Media (e.g. DVD) */
+> +#define KEY_NUMERIC_11			0x26c
+> +#define KEY_NUMERIC_12			0x26d
+> +/*
+> + * Toggle Audio Description: refers to an audio service that helps blind and
+> + * visually impaired consumers understand the action in a program. Note: in
+> + * some countries this is referred to as "Video Description".
+> + */
+> +#define KEY_AUDIO_DESC			0x26e
+> +#define KEY_3D_MODE			0x26f
+> +#define KEY_NEXT_FAVORITE		0x270
+> +#define KEY_STOP_RECORD			0x271
+> +#define KEY_PAUSE_RECORD		0x272
+> +#define KEY_VOD				0x273 /* Video on Demand */
+> +#define KEY_UNMUTE			0x274
+> +#define KEY_FASTREVERSE			0x275
+> +#define KEY_SLOWREVERSE			0x276
+
+KEY_FRAMEBACK maybe?
+
+> +/*
+> + * Control a data application associated with the currently viewed channel,
+> + * e.g. teletext or data broadcast application (MHEG, MHP, HbbTV, etc.)
+> + */
+> +#define KEY_DATA			0x275
+> +
+>  #define BTN_TRIGGER_HAPPY		0x2c0
+>  #define BTN_TRIGGER_HAPPY1		0x2c0
+>  #define BTN_TRIGGER_HAPPY2		0x2c1
+> -- 
+> 2.7.0
+> 
+
+Thanks.
 
 -- 
-Thanks,
-Sylwester
+Dmitry
