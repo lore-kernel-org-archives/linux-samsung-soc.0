@@ -1,30 +1,39 @@
-From: Holger Schurig <holgerschurig@gmail.com>
-Subject: Re: [PATCH v2] media: platform: Add missing MFD_SYSCON dependency on HAS_IOMEM
-Date: Fri, 04 Mar 2016 08:03:01 +0100
-Message-ID: <87y49yd8t6.fsf@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] media: platform: Add missing MFD_SYSCON dependency on
+ HAS_IOMEM
+Date: Fri, 04 Mar 2016 16:05:49 +0900
+Message-ID: <56D933CD.4070704@samsung.com>
 References: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
+ <87y49yd8t6.fsf@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33387 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751114AbcCDHDG (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44546 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751164AbcCDHF6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Mar 2016 02:03:06 -0500
-In-Reply-To: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
-	(Krzysztof Kozlowski's message of "Fri, 04 Mar 2016 10:02:24 +0900")
+	Fri, 4 Mar 2016 02:05:58 -0500
+In-reply-to: <87y49yd8t6.fsf@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Holger Schurig <holgerschurig@gmail.com>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
+On 04.03.2016 16:03, Holger Schurig wrote:
+> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
+> 
+>> +	depends on HAS_IOMEM	# For MFD_SYSCON
+>                             ^^^^^^^^^^^^^^^^
+> 
+> I think this comment is not necessary, it's also highly unusual. On
+> other words: other patches like this don't add such comments.
+> 
+> You can always use "git blame" to find out why some line has changed the
+> way it changed ...
 
-> +	depends on HAS_IOMEM	# For MFD_SYSCON
-                            ^^^^^^^^^^^^^^^^
+No problem, I can remove it. I thought it might be useful since this
+dependency is not for the driver but for selected item.
 
-I think this comment is not necessary, it's also highly unusual. On
-other words: other patches like this don't add such comments.
-
-You can always use "git blame" to find out why some line has changed the
-way it changed ...
+Best regards,
+Krzysztof
