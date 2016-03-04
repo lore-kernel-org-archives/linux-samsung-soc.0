@@ -1,125 +1,77 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3] thermal: Fix build error of missing devm_ioremap_resource
- on UM
-Date: Fri, 04 Mar 2016 10:03:59 +0900
-Message-ID: <1457053439-12598-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:36816 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932118AbcCDBEM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2016 20:04:12 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [RFC PATCH] watchdog: s3c2410_wdt: Add max and min timeout values
+Date: Thu, 3 Mar 2016 21:32:03 -0800
+Message-ID: <56D91DD3.9010604@roeck-us.net>
+References: <1456850717-3670-1-git-send-email-javier@osg.samsung.com>
+ <56D62979.5040009@samsung.com> <56D7233B.50907@osg.samsung.com>
+ <56D7838D.4060602@samsung.com> <56D79E1D.3030302@osg.samsung.com>
+ <56D7C2A5.1050304@roeck-us.net> <56D82643.1090105@osg.samsung.com>
+ <CAJKOXPe2GAkMGgZJR3FCRONMgb3AcrySczuzm_BehekrMnEbrw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJKOXPe2GAkMGgZJR3FCRONMgb3AcrySczuzm_BehekrMnEbrw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The devres.o gets linked if HAS_IOMEM is present so on ARCH=um
-allyesconfig (COMPILE_TEST) failed on many files with:
+On 03/03/2016 04:26 AM, Krzysztof Kozlowski wrote:
+> 2016-03-03 20:55 GMT+09:00 Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>:
+>> Hello Guenter,
+>>
+>>
+>> On 03/03/2016 01:50 AM, Guenter Roeck wrote:
+>>> A watchdog driver using a non-static clock must register a clock change
+>>> notifier
+>>> to handle the clock rate change and update its settings accordingly.
+>>>
+>>> I would also argue that the maximum timeout should be set to the minimum
+>>> possible value (probably associated with the highest possible frequency).
+>>> All other cases might end up causing trouble if a clock frequency
+>>> chance results in an enforced timeout change, since there is currently
+>>> no mechanism to inform user space about such a change.
+>>>
+>>> Example: maximum possible timeout changes from 1 minute to 30 seconds.
+>>> The timeout was set to 1 minute, and has to be reduced to 30 seconds.
+>>> Very likely result is that the watchdog will reset the system because
+>>> user space still believes that the timeout is 60 seconds and doesn't
+>>> ping the watchdog often enough to prevent it.
+>>>
+>>
+>> Agreed.
+>>
+>> In any case this discussion is not related to this patch since currently
+>> in mainline the watchdog source clock is fixed and does not change.
+>>
+>> So, $SUBJECT solves the issue of not having the fixed .{min,max}_timeout
+>> defined to allow the watchdog_timeout_invalid() function to check values
+>> set by WDIOC_SETTIMEOUT and avoid calling the .set_timeout callback.
+>>
+>> If later someone tries to scale a parent clock used by many drivers, then
+>> the submitter should make sure that no regressions are added by the patch.
+>
+> Sounds good. For this patch then:
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-drivers/built-in.o: In function `kirkwood_thermal_probe':
-kirkwood_thermal.c:(.text+0x390a25): undefined reference to `devm_ioremap_resource'
-drivers/built-in.o: In function `exynos_tmu_probe':
-exynos_tmu.c:(.text+0x39246b): undefined reference to `devm_ioremap'
+Agreed.
 
-The users of devm_ioremap_resource() which are compile-testable should
-depend on HAS_IOMEM.
+Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Thanks,
+Guenter
 
----
+>
+> Best regards,
+> Krzysztof
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
-Changes since v2:
-1. Follow Geert's advice of putting HAS_IOMEM as separate dependency.
-
-Changes since v1:
-1. Fix linking error also on TI.
-2. Use different approach for HAS_IOMEM dependency. IT is needed only
-   for COMPILE_TEST so use && to show that.
----
- drivers/thermal/Kconfig         | 8 ++++++++
- drivers/thermal/samsung/Kconfig | 1 +
- 2 files changed, 9 insertions(+)
-
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 5e7c97a3f1d8..bc591248144a 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -178,6 +178,7 @@ config THERMAL_EMULATION
- config HISI_THERMAL
- 	tristate "Hisilicon thermal driver"
- 	depends on (ARCH_HISI && CPU_THERMAL && OF) || COMPILE_TEST
-+	depends on HAS_IOMEM
- 	help
- 	  Enable this to plug hisilicon's thermal sensor driver into the Linux
- 	  thermal framework. cpufreq is used as the cooling device to throttle
-@@ -197,6 +198,7 @@ config IMX_THERMAL
- config SPEAR_THERMAL
- 	tristate "SPEAr thermal sensor driver"
- 	depends on PLAT_SPEAR || COMPILE_TEST
-+	depends on HAS_IOMEM
- 	depends on OF
- 	help
- 	  Enable this to plug the SPEAr thermal sensor driver into the Linux
-@@ -206,6 +208,7 @@ config ROCKCHIP_THERMAL
- 	tristate "Rockchip thermal driver"
- 	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	depends on RESET_CONTROLLER
-+	depends on HAS_IOMEM
- 	help
- 	  Rockchip thermal driver provides support for Temperature sensor
- 	  ADC (TS-ADC) found on Rockchip SoCs. It supports one critical
-@@ -223,6 +226,7 @@ config RCAR_THERMAL
- config KIRKWOOD_THERMAL
- 	tristate "Temperature sensor on Marvell Kirkwood SoCs"
- 	depends on MACH_KIRKWOOD || COMPILE_TEST
-+	depends on HAS_IOMEM
- 	depends on OF
- 	help
- 	  Support for the Kirkwood thermal sensor driver into the Linux thermal
-@@ -231,6 +235,7 @@ config KIRKWOOD_THERMAL
- config DOVE_THERMAL
- 	tristate "Temperature sensor on Marvell Dove SoCs"
- 	depends on ARCH_DOVE || MACH_DOVE || COMPILE_TEST
-+	depends on HAS_IOMEM
- 	depends on OF
- 	help
- 	  Support for the Dove thermal sensor driver in the Linux thermal
-@@ -249,6 +254,7 @@ config DB8500_THERMAL
- config ARMADA_THERMAL
- 	tristate "Armada 370/XP thermal management"
- 	depends on ARCH_MVEBU || COMPILE_TEST
-+	depends on HAS_IOMEM
- 	depends on OF
- 	help
- 	  Enable this option if you want to have support for thermal management
-@@ -368,6 +374,7 @@ config INTEL_PCH_THERMAL
- config MTK_THERMAL
- 	tristate "Temperature sensor driver for mediatek SoCs"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	depends on HAS_IOMEM
- 	default y
- 	help
- 	  Enable this option if you want to have support for thermal management
-@@ -375,6 +382,7 @@ config MTK_THERMAL
- 
- menu "Texas Instruments thermal drivers"
- depends on ARCH_HAS_BANDGAP || COMPILE_TEST
-+depends on HAS_IOMEM
- source "drivers/thermal/ti-soc-thermal/Kconfig"
- endmenu
- 
-diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
-index e0da3865e060..222e644169f0 100644
---- a/drivers/thermal/samsung/Kconfig
-+++ b/drivers/thermal/samsung/Kconfig
-@@ -1,6 +1,7 @@
- config EXYNOS_THERMAL
- 	tristate "Exynos thermal management unit driver"
- 	depends on THERMAL_OF
-+	depends on HAS_IOMEM
- 	help
- 	  If you say yes here you get support for the TMU (Thermal Management
- 	  Unit) driver for SAMSUNG EXYNOS series of SoCs. This driver initialises
--- 
-2.5.0
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
