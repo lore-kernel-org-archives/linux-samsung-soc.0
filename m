@@ -1,39 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [PATCH v2] media: platform: Add missing MFD_SYSCON dependency on
  HAS_IOMEM
-Date: Fri, 04 Mar 2016 16:05:49 +0900
-Message-ID: <56D933CD.4070704@samsung.com>
+Date: Fri, 04 Mar 2016 12:02:28 +0100
+Message-ID: <56D96B44.5090307@samsung.com>
 References: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
- <87y49yd8t6.fsf@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44546 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751164AbcCDHF6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Mar 2016 02:05:58 -0500
-In-reply-to: <87y49yd8t6.fsf@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Holger Schurig <holgerschurig@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-On 04.03.2016 16:03, Holger Schurig wrote:
-> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
-> 
->> +	depends on HAS_IOMEM	# For MFD_SYSCON
->                             ^^^^^^^^^^^^^^^^
-> 
-> I think this comment is not necessary, it's also highly unusual. On
-> other words: other patches like this don't add such comments.
-> 
-> You can always use "git blame" to find out why some line has changed the
-> way it changed ...
+On 03/04/2016 02:02 AM, Krzysztof Kozlowski wrote:
+> The MFD_SYSCON depends on HAS_IOMEM so when selecting 
+> it avoid unmet direct dependencies.
 
-No problem, I can remove it. I thought it might be useful since this
-dependency is not for the driver but for selected item.
+> diff --git a/drivers/media/platform/exynos4-is/Kconfig 
+> b/drivers/media/platform/exynos4-is/Kconfig
+> index 57d42c6172c5..c4317b99d257 100644
+> --- a/drivers/media/platform/exynos4-is/Kconfig
+> +++ b/drivers/media/platform/exynos4-is/Kconfig
+> @@ -17,6 +17,7 @@ config VIDEO_S5P_FIMC
+>  	tristate "S5P/EXYNOS4 FIMC/CAMIF camera interface driver"
+>  	depends on I2C
+>  	depends on HAS_DMA
+> +	depends on HAS_IOMEM	# For MFD_SYSCON
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	select V4L2_MEM2MEM_DEV
+>  	select MFD_SYSCON
 
-Best regards,
-Krzysztof
+While we are already at it, shouldn't "depends on HAS_IOMEM"
+be instead added at the top level entry in this Kconfig file,
+i.e. "config VIDEO_SAMSUNG_EXYNOS4_IS" ? For things like
+devm_ioremap_resource() depending on HAS_IOMEM and used in all
+the sub-drivers, enabled by VIDEO_SAMSUNG_EXYNOS4_IS?
+
+-- 
+Thanks,
+Sylwester
