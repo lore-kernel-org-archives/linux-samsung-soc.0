@@ -1,70 +1,51 @@
-From: Youngmin Nam <ym0914@gmail.com>
-Subject: [PATCH] serial: samsung: optimize UART rx fifo access routine
-Date: Sat,  5 Mar 2016 19:36:32 +0900
-Message-ID: <1457174192-20956-1-git-send-email-ym0914@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCHv12 05/17] HID: add HDMI CEC specific keycodes
+Date: Sat, 5 Mar 2016 09:50:39 -0800
+Message-ID: <20160305175039.GA23722@dtor-ws>
+References: <1455108711-29850-1-git-send-email-hverkuil@xs4all.nl>
+ <1455108711-29850-6-git-send-email-hverkuil@xs4all.nl>
+ <20160304195827.GE17145@dtor-ws>
+ <56DA9C68.2080702@xs4all.nl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f178.google.com ([209.85.192.178]:33262 "EHLO
-	mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755993AbcCEKhO (ORCPT
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:33782 "EHLO
+	mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750709AbcCERup (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Mar 2016 05:37:14 -0500
+	Sat, 5 Mar 2016 12:50:45 -0500
+Content-Disposition: inline
+In-Reply-To: <56DA9C68.2080702@xs4all.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gregkh@linuxfoundation.org, k.kozlowski@samsung.com
-Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Youngmin Nam <ym0914@gmail.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
 
-This patch optimizes UART rx fifo access routine by reading UART SFR
-when necessary. At first, the "fifocnt" variable will be initialized
-as Rx FIFO count. So we don't need to access UFSTAT(FIFO status) register
-every time to check FIFO count because we know that count with "fifocnt".
-After all data were read out from Rx FIFO, the "fifocnt" will be set as 0.
-Lastly, UFSTAT will be accessed again to check whether the data remains
-by any chance.
+On Sat, Mar 05, 2016 at 09:44:24AM +0100, Hans Verkuil wrote:
+> Hi Dmitry,
+> 
+> On 03/04/2016 08:58 PM, Dmitry Torokhov wrote:
+> > On Wed, Feb 10, 2016 at 01:51:39PM +0100, Hans Verkuil wrote:
+> >> +#define KEY_AUDIO_DESC			0x26e
+> >> +#define KEY_3D_MODE			0x26f
+> >> +#define KEY_NEXT_FAVORITE		0x270
+> >> +#define KEY_STOP_RECORD			0x271
+> >> +#define KEY_PAUSE_RECORD		0x272
+> >> +#define KEY_VOD				0x273 /* Video on Demand */
+> >> +#define KEY_UNMUTE			0x274
+> >> +#define KEY_FASTREVERSE			0x275
+> >> +#define KEY_SLOWREVERSE			0x276
+> > 
+> > KEY_FRAMEBACK maybe?
+> 
+> FRAMEBACK suggests to me that it goes back a single frame and then pauses
+> at that frame. Whereas SLOWREVERSE is continual slow reverse playback.
+> 
+> So I would prefer to keep it, unless you think otherwise.
 
-Signed-off-by: Youngmin Nam <ym0914@gmail.com>
-Reviewed-by: Jung-Ick Guack <ji.guack@samsung.com>
----
- drivers/tty/serial/samsung.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+OK, fair enough.
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index d72cd73..1fd09c0 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -601,14 +601,21 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
- {
- 	struct uart_port *port = &ourport->port;
- 	unsigned int ufcon, ch, flag, ufstat, uerstat;
-+	unsigned int fifocnt = 0;
- 	int max_count = port->fifosize;
- 
- 	while (max_count-- > 0) {
--		ufcon = rd_regl(port, S3C2410_UFCON);
--		ufstat = rd_regl(port, S3C2410_UFSTAT);
--
--		if (s3c24xx_serial_rx_fifocnt(ourport, ufstat) == 0)
--			break;
-+		/*
-+		 * Receive all characters known to be in FIFO
-+		 * before reading FIFO level again
-+		 */
-+		if (fifocnt == 0) {
-+			ufstat = rd_regl(port, S3C2410_UFSTAT);
-+			fifocnt = s3c24xx_serial_rx_fifocnt(ourport, ufstat);
-+			if (fifocnt == 0)
-+				break;
-+		}
-+		fifocnt--;
- 
- 		uerstat = rd_regl(port, S3C2410_UERSTAT);
- 		ch = rd_regb(port, S3C2410_URXH);
-@@ -623,6 +630,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
- 				}
- 			} else {
- 				if (txe) {
-+					ufcon = rd_regl(port, S3C2410_UFCON);
- 					ufcon |= S3C2410_UFCON_RESETRX;
- 					wr_regl(port, S3C2410_UFCON, ufcon);
- 					rx_enabled(port) = 1;
+Thanks.
+
 -- 
-2.7.1
+Dmitry
