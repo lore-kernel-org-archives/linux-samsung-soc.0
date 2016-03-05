@@ -1,88 +1,128 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [RESPIN 1/6] dt-bindings: EXYNOS: Add exynos-srom device tree
- binding
-Date: Sat, 05 Mar 2016 11:48:39 +0530
-Message-ID: <56DA7A3F.4060105@samsung.com>
-References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
- <1456389222-12738-2-git-send-email-pankaj.dubey@samsung.com>
- <20160302175319.GA11155@rob-hp-laptop>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv12 05/17] HID: add HDMI CEC specific keycodes
+Date: Sat, 5 Mar 2016 09:44:24 +0100
+Message-ID: <56DA9C68.2080702@xs4all.nl>
+References: <1455108711-29850-1-git-send-email-hverkuil@xs4all.nl>
+ <1455108711-29850-6-git-send-email-hverkuil@xs4all.nl>
+ <20160304195827.GE17145@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56508 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750981AbcCEGRM (ORCPT
+Received: from lb3-smtp-cloud6.xs4all.net ([194.109.24.31]:51467 "EHLO
+	lb3-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752494AbcCEIoe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Mar 2016 01:17:12 -0500
-In-reply-to: <20160302175319.GA11155@rob-hp-laptop>
+	Sat, 5 Mar 2016 03:44:34 -0500
+In-Reply-To: <20160304195827.GE17145@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
 
-Hi
+Hi Dmitry,
 
-On Wednesday 02 March 2016 11:23 PM, Rob Herring wrote:
-> On Thu, Feb 25, 2016 at 02:03:37PM +0530, Pankaj Dubey wrote:
->> This patch adds exynos-srom binding information for SROM Controller
->> driver on Exynos SoCs.
+On 03/04/2016 08:58 PM, Dmitry Torokhov wrote:
+> On Wed, Feb 10, 2016 at 01:51:39PM +0100, Hans Verkuil wrote:
+>> From: Kamil Debski <kamil@wypas.org>
 >>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: Mark Rutland <mark.rutland@arm.com>
->> CC: Ian Campbell <ijc+devicetree@hellion.org.uk>
->> CC: devicetree@vger.kernel.org
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Signed-off-by: Kukjin Kim <kgene@kernel.org>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Add HDMI CEC specific keycodes to the keycodes definition.
+>>
+>> Signed-off-by: Kamil Debski <kamil@wypas.org>
+>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 >> ---
->>  .../devicetree/bindings/memory-controllers/exynos-srom.txt   | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+>>  include/uapi/linux/input-event-codes.h | 28 ++++++++++++++++++++++++++++
+>>  1 file changed, 28 insertions(+)
 >>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
->> new file mode 100644
->> index 0000000..33886d5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
->> @@ -0,0 +1,12 @@
->> +SAMSUNG Exynos SoCs SROM Controller driver.
+>> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+>> index 87cf351..2662500 100644
+>> --- a/include/uapi/linux/input-event-codes.h
+>> +++ b/include/uapi/linux/input-event-codes.h
+>> @@ -611,6 +611,34 @@
+>>  #define KEY_KBDINPUTASSIST_ACCEPT		0x264
+>>  #define KEY_KBDINPUTASSIST_CANCEL		0x265
+>>  
+>> +#define KEY_RIGHT_UP			0x266
+>> +#define KEY_RIGHT_DOWN			0x267
+>> +#define KEY_LEFT_UP			0x268
+>> +#define KEY_LEFT_DOWN			0x269
+> 
+> Can you please add some comments to these and how they are different
+> form normal KEY_UP/KEY_DOWN or KEY_DPAD* or BTN_A/B/X/Y.
+
+These go in the diagonal direction (which is how they are different.)
+
+I'll add a comment.
+
+> 
+>> +#define KEY_ROOT_MENU			0x26a /* Show Device's Root Menu */
+>> +#define KEY_MEDIA_TOP_MENU		0x26b /* Show Top Menu of the Media (e.g. DVD) */
+>> +#define KEY_NUMERIC_11			0x26c
+>> +#define KEY_NUMERIC_12			0x26d
+>> +/*
+>> + * Toggle Audio Description: refers to an audio service that helps blind and
+>> + * visually impaired consumers understand the action in a program. Note: in
+>> + * some countries this is referred to as "Video Description".
+>> + */
+>> +#define KEY_AUDIO_DESC			0x26e
+>> +#define KEY_3D_MODE			0x26f
+>> +#define KEY_NEXT_FAVORITE		0x270
+>> +#define KEY_STOP_RECORD			0x271
+>> +#define KEY_PAUSE_RECORD		0x272
+>> +#define KEY_VOD				0x273 /* Video on Demand */
+>> +#define KEY_UNMUTE			0x274
+>> +#define KEY_FASTREVERSE			0x275
+>> +#define KEY_SLOWREVERSE			0x276
+> 
+> KEY_FRAMEBACK maybe?
+
+FRAMEBACK suggests to me that it goes back a single frame and then pauses
+at that frame. Whereas SLOWREVERSE is continual slow reverse playback.
+
+So I would prefer to keep it, unless you think otherwise.
+
+BTW, the CEC spec actually has three variants for each of the slow/fast forward/reverse
+commands: min/medium/max speed.
+
+As you can see in the rc-cec.c patch (06/17) I'm mapping all three to a single key code:
+
+        { 0x6005, KEY_FASTFORWARD },
+        { 0x6006, KEY_FASTFORWARD },
+        { 0x6007, KEY_FASTFORWARD },
+        { 0x6015, KEY_SLOW },
+        { 0x6016, KEY_SLOW },
+        { 0x6017, KEY_SLOW },
+        { 0x6009, KEY_FASTREVERSE },
+        { 0x600a, KEY_FASTREVERSE },
+        { 0x600b, KEY_FASTREVERSE },
+        { 0x6019, KEY_SLOWREVERSE },
+        { 0x601a, KEY_SLOWREVERSE },
+        { 0x601b, KEY_SLOWREVERSE },
+
+But in theory I might have to add e.g. KEY_FASTREVERSE_MIN/MAX in the future and
+ditto for the other three speed keys. I don't want to do that now, though, as I
+think that is overkill. But I might have to revisit this once I have a better idea
+of what I can expect from CEC devices.
+
+Thank you for the review, I'm planning to post a v13 soon.
+
+Regards,
+
+	Hans
+
+> 
+>> +/*
+>> + * Control a data application associated with the currently viewed channel,
+>> + * e.g. teletext or data broadcast application (MHEG, MHP, HbbTV, etc.)
+>> + */
+>> +#define KEY_DATA			0x275
 >> +
->> +Required properties:
->> +- compatible : Should contain "samsung,exynos-srom".
+>>  #define BTN_TRIGGER_HAPPY		0x2c0
+>>  #define BTN_TRIGGER_HAPPY1		0x2c0
+>>  #define BTN_TRIGGER_HAPPY2		0x2c1
+>> -- 
+>> 2.7.0
+>>
 > 
-> There should be SoC specific compatible strings in addition to this.
-> 
-
-I do not understood need of additional SoC specific compatible here. As
-of now all SoCs having SROM can work with exynos specific common
-compatible. Do you see any issues if we do not have SoC specific
-compatible here.
-
->> +
->> +- reg: offset and length of the register set
->> +
->> +Example:
->> +	sromc@12570000 {
-> 
-> This should be memory-controller@...
-> 
->> +		compatible = "samsung,exynos-srom";
->> +		reg = <0x12570000 0x10>;
-> 
-> The next patch changes the size to 0x14?
-> 
-> BTW, you could just combine both patches. I guess you didn't to maintain 
-> authorship?
-> 
-
-OK. Will squash both of these patches, unless Pavel do not have any
-objections to this.
-
-Thanks,
-Pankaj Dubey
-
-> Rob
-> 
+> Thanks.
 > 
