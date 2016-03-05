@@ -1,46 +1,33 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] media: platform: Add missing MFD_SYSCON dependency on HAS_IOMEM
-Date: Sat, 5 Mar 2016 13:28:06 +0900
-Message-ID: <CAJKOXPf4RvRqSYy2bzZeA9TFqYZTs_E08TKcbtPn8gwH+bfpVw@mail.gmail.com>
-References: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
-	<56D96B44.5090307@samsung.com>
+Subject: Re: [PATCH 0/2] [media] exynos4-is: Trivial fixes for DT
+ port/endpoint parse logic
+Date: Sat, 5 Mar 2016 13:35:19 +0900
+Message-ID: <CAJKOXPfOpqU2fGsNNaB6n_iuq2r-8z3TCSsqkncPbvkK2344Tg@mail.gmail.com>
+References: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <56D96B44.5090307@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-03-04 20:02 GMT+09:00 Sylwester Nawrocki <s.nawrocki@samsung.com>:
-> On 03/04/2016 02:02 AM, Krzysztof Kozlowski wrote:
->> The MFD_SYSCON depends on HAS_IOMEM so when selecting
->> it avoid unmet direct dependencies.
+2016-03-05 5:20 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+> Hello,
 >
->> diff --git a/drivers/media/platform/exynos4-is/Kconfig
->> b/drivers/media/platform/exynos4-is/Kconfig
->> index 57d42c6172c5..c4317b99d257 100644
->> --- a/drivers/media/platform/exynos4-is/Kconfig
->> +++ b/drivers/media/platform/exynos4-is/Kconfig
->> @@ -17,6 +17,7 @@ config VIDEO_S5P_FIMC
->>       tristate "S5P/EXYNOS4 FIMC/CAMIF camera interface driver"
->>       depends on I2C
->>       depends on HAS_DMA
->> +     depends on HAS_IOMEM    # For MFD_SYSCON
->>       select VIDEOBUF2_DMA_CONTIG
->>       select V4L2_MEM2MEM_DEV
->>       select MFD_SYSCON
+> This series have two trivial fixes for issues that I noticed while
+> reading as a reference the driver's functions that parse the graph
+> port and endpoints nodes.
 >
-> While we are already at it, shouldn't "depends on HAS_IOMEM"
-> be instead added at the top level entry in this Kconfig file,
-> i.e. "config VIDEO_SAMSUNG_EXYNOS4_IS" ? For things like
-> devm_ioremap_resource() depending on HAS_IOMEM and used in all
-> the sub-drivers, enabled by VIDEO_SAMSUNG_EXYNOS4_IS?
+> It was only compile tested because I don't have access to a Exynos4
+> hardware to test the DT parsing, but the patches are very simple.
 
-Indeed that would make sense... but now after some more looking at it,
-even this patch is not needed. All these drivers are children of
-MEDIA_SUPPORT which already depends on HAS_IOMEM.
+Not directly related, but similar: my previous two patches for missing
+of_node_put [0] are unfortunately still waiting. Although I have
+Exynos4 boards, but I don't have infrastructure/scripts to test it.
 
 Best regards,
 Krzysztof
+
+[0] https://patchwork.linuxtv.org/patch/32707/
