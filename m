@@ -1,64 +1,46 @@
-From: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 16/52] mtd: nand: use mtd_set_ecclayout()
- where appropriate
-Date: Fri, 4 Mar 2016 18:26:21 -0800
-Message-ID: <20160305022621.GN55664@google.com>
-References: <1456448280-27788-1-git-send-email-boris.brezillon@free-electrons.com>
- <1456448280-27788-17-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] media: platform: Add missing MFD_SYSCON dependency on HAS_IOMEM
+Date: Sat, 5 Mar 2016 13:28:06 +0900
+Message-ID: <CAJKOXPf4RvRqSYy2bzZeA9TFqYZTs_E08TKcbtPn8gwH+bfpVw@mail.gmail.com>
+References: <1457053344-28992-1-git-send-email-k.kozlowski@samsung.com>
+	<56D96B44.5090307@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCZ6PSPVXMNBBUEH5G3AKGQEPFCMDXA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1456448280-27788-17-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Wenyou Yang <wenyou.yang-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <56D96B44.5090307@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 26, 2016 at 01:57:24AM +0100, Boris Brezillon wrote:
-> Use the mtd_set_ecclayout() helper instead of directly assigning the
-> mtd->ecclayout field.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
->  drivers/mtd/nand/nand_base.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
-> index 17504f2..5093a3c 100644
-> --- a/drivers/mtd/nand/nand_base.c
-> +++ b/drivers/mtd/nand/nand_base.c
-> @@ -4288,7 +4288,7 @@ int nand_scan_tail(struct mtd_info *mtd)
->  		ecc->write_oob_raw = ecc->write_oob;
->  
->  	/* propagate ecc info to mtd_info */
-> -	mtd->ecclayout = ecc->layout;
-> +	mtd_set_ecclayout(mtd, ecc->layout);
+2016-03-04 20:02 GMT+09:00 Sylwester Nawrocki <s.nawrocki@samsung.com>:
+> On 03/04/2016 02:02 AM, Krzysztof Kozlowski wrote:
+>> The MFD_SYSCON depends on HAS_IOMEM so when selecting
+>> it avoid unmet direct dependencies.
+>
+>> diff --git a/drivers/media/platform/exynos4-is/Kconfig
+>> b/drivers/media/platform/exynos4-is/Kconfig
+>> index 57d42c6172c5..c4317b99d257 100644
+>> --- a/drivers/media/platform/exynos4-is/Kconfig
+>> +++ b/drivers/media/platform/exynos4-is/Kconfig
+>> @@ -17,6 +17,7 @@ config VIDEO_S5P_FIMC
+>>       tristate "S5P/EXYNOS4 FIMC/CAMIF camera interface driver"
+>>       depends on I2C
+>>       depends on HAS_DMA
+>> +     depends on HAS_IOMEM    # For MFD_SYSCON
+>>       select VIDEOBUF2_DMA_CONTIG
+>>       select V4L2_MEM2MEM_DEV
+>>       select MFD_SYSCON
+>
+> While we are already at it, shouldn't "depends on HAS_IOMEM"
+> be instead added at the top level entry in this Kconfig file,
+> i.e. "config VIDEO_SAMSUNG_EXYNOS4_IS" ? For things like
+> devm_ioremap_resource() depending on HAS_IOMEM and used in all
+> the sub-drivers, enabled by VIDEO_SAMSUNG_EXYNOS4_IS?
 
-I'm having trouble applying this one. For the life of me, I can't figure
-out where you got this context from. This block only appears much later
-in nand_scan_tail()...
+Indeed that would make sense... but now after some more looking at it,
+even this patch is not needed. All these drivers are children of
+MEDIA_SUPPORT which already depends on HAS_IOMEM.
 
-Do you think you could post a git tree with your intended changes? I may
-just try to pull something in like that instead.
-
-BTW, I'm not sure the OMAP refactorings are going to come in time, but I
-was planning to pull those directly from the TI folks (i.e., they won't
-be rebased on l2-mtd.git), since there's some intermingling of platform
-changes there. I think I can fix the conflicts fine, but FYI.
-
-Brian
-
->  	mtd->ecc_strength = ecc->strength;
->  	mtd->ecc_step_size = ecc->size;
->  
-> -- 
-> 2.1.4
-> 
+Best regards,
+Krzysztof
