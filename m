@@ -1,120 +1,88 @@
 From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [RESPIN 5/6] dt-bindings: EXYNOS: Describe SROMc configuration
-Date: Sat, 05 Mar 2016 10:17:41 +0530
-Message-ID: <56DA64ED.2030908@samsung.com>
+Subject: Re: [RESPIN 1/6] dt-bindings: EXYNOS: Add exynos-srom device tree
+ binding
+Date: Sat, 05 Mar 2016 11:48:39 +0530
+Message-ID: <56DA7A3F.4060105@samsung.com>
 References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
- <1456389222-12738-6-git-send-email-pankaj.dubey@samsung.com>
- <20160302175713.GB11155@rob-hp-laptop>
+ <1456389222-12738-2-git-send-email-pankaj.dubey@samsung.com>
+ <20160302175319.GA11155@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160302175713.GB11155@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, devicetree@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:56508 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750981AbcCEGRM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 5 Mar 2016 01:17:12 -0500
+In-reply-to: <20160302175319.GA11155@rob-hp-laptop>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, k.kozlowski@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-Hi,
+Hi
 
-On Wednesday 02 March 2016 11:27 PM, Rob Herring wrote:
-> On Thu, Feb 25, 2016 at 02:03:41PM +0530, Pankaj Dubey wrote:
->> From: Pavel Fedin <p.fedin@samsung.com>
+On Wednesday 02 March 2016 11:23 PM, Rob Herring wrote:
+> On Thu, Feb 25, 2016 at 02:03:37PM +0530, Pankaj Dubey wrote:
+>> This patch adds exynos-srom binding information for SROM Controller
+>> driver on Exynos SoCs.
 >>
->> Add documentation for new subnode properties, allowing bank configuration.
->> Based on u-boot implementation, but heavily reworked.
->>
->> Also, fix size of SROMc mapping in the example.
-> 
-> Fix it in the previous patch.
-
-OK.
-
-> 
+>> CC: Rob Herring <robh+dt@kernel.org>
+>> CC: Mark Rutland <mark.rutland@arm.com>
+>> CC: Ian Campbell <ijc+devicetree@hellion.org.uk>
 >> CC: devicetree@vger.kernel.org
->> Signed-off-by: Pavel Fedin <p.fedin@samsung.com>
 >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 >> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Acked-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Kukjin Kim <kgene@kernel.org>
 >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >> ---
->>  .../bindings/memory-controllers/exynos-srom.txt    | 73 +++++++++++++++++++++-
->>  1 file changed, 71 insertions(+), 2 deletions(-)
+>>  .../devicetree/bindings/memory-controllers/exynos-srom.txt   | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
 >>
 >> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
->> index 33886d5..e5c18df 100644
->> --- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+>> new file mode 100644
+>> index 0000000..33886d5
+>> --- /dev/null
 >> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
->> @@ -5,8 +5,77 @@ Required properties:
->>  
->>  - reg: offset and length of the register set
->>  
->> -Example:
->> +Optional properties:
->> +The SROM controller can be used to attach external peripherals. In this case
->> +extra properties, describing the bus behind it, should be specified as below:
->> +
->> +- #address-cells: Must be set to 2 to allow device address translation.
->> +		  Address is specified as (bank#, offset).
->> +
->> +- #size-cells: Must be set to 1 to allow device size passing
->> +
->> +- ranges: Must be set up to reflect the memory layout with four integer values
->> +	  per bank:
->> +		<bank-number> 0 <parent address of bank> <size>
->> +
->> +Sub-nodes:
->> +The actual device nodes should be added as subnodes to the SROMc node. These
->> +subnodes, except regular device specification, should contain the following
-> 
-> s/except/in addition to/
-> 
-
-OK. Will update this description as suggested.
-
->> +properties, describing configuration of the relevant SROM bank:
+>> @@ -0,0 +1,12 @@
+>> +SAMSUNG Exynos SoCs SROM Controller driver.
 >> +
 >> +Required properties:
->> +- reg: bank number, base address (relative to start of the bank) and size of
->> +       the memory mapped for the device. Note that base address will be
->> +       typically 0 as this is the start of the bank.
->> +
->> +- samsung,srom-timing : array of 6 integers, specifying bank timings in the
->> +                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
->> +                        Each value is specified in cycles and has the following
->> +                        meaning and valid range:
->> +                        Tacp : Page mode access cycle at Page mode (0 - 15)
->> +                        Tcah : Address holding time after CSn (0 - 15)
->> +                        Tcoh : Chip selection hold on OEn (0 - 15)
->> +                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
->> +                        Tcos : Chip selection set-up before OEn (0 - 15)
->> +                        Tacs : Address set-up before CSn (0 - 15)
->> +
->> +Optional properties:
->> +- reg-io-width : data width in bytes (1 or 2). If omitted, default of 1 is used.
->> +
->> +- samsung,srom-page-mode : page mode configuration for the bank:
->> +			   0 - normal (one data)
->> +			   1 - four data
->> +			   If omitted, default of 0 is used.
+>> +- compatible : Should contain "samsung,exynos-srom".
 > 
-> Make this a bool instead.
+> There should be SoC specific compatible strings in addition to this.
 > 
 
-I do not have strong objections to change this, but I can see doing so
-will increase two or three lines in driver, as such this property is not
-being used as bool in driver.
+I do not understood need of additional SoC specific compatible here. As
+of now all SoCs having SROM can work with exynos specific common
+compatible. Do you see any issues if we do not have SoC specific
+compatible here.
 
+>> +
+>> +- reg: offset and length of the register set
+>> +
+>> +Example:
+>> +	sromc@12570000 {
+> 
+> This should be memory-controller@...
+> 
+>> +		compatible = "samsung,exynos-srom";
+>> +		reg = <0x12570000 0x10>;
+> 
+> The next patch changes the size to 0x14?
+> 
+> BTW, you could just combine both patches. I guess you didn't to maintain 
+> authorship?
+> 
 
-Sorry to say this but I do not understand why these comments are coming
-now? Whereas you had given your "Acked-by" to the same patch when it was
-posted previously by Pavel and we were keeping this driver under
-"drivers/soc/samsung". Is it just because we are moving to
-"drivers/memory" and it needs to be consistent with other memory
-controller drivers?
+OK. Will squash both of these patches, unless Pavel do not have any
+objections to this.
 
 Thanks,
 Pankaj Dubey
+
 > Rob
 > 
 > 
