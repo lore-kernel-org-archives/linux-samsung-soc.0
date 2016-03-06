@@ -1,119 +1,95 @@
-From: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [RFC PATCH] watchdog: s3c2410_wdt: Add max and min timeout values
-Date: Sun, 6 Mar 2016 10:04:47 +0100
-Message-ID: <20160306090447.GA1161@spo001.leaseweb.nl>
-References: <1456850717-3670-1-git-send-email-javier@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1456850717-3670-1-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/2] crypto: s5p-sss - Minor coding cleanups
+Date: Sun,  6 Mar 2016 19:17:15 +0900
+Message-ID: <1457259436-32560-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:56258 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751162AbcCFKR2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 6 Mar 2016 05:17:28 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 
-Hi Javier,
+Remove unneeded inclusion of delay.h and get rid of indentation from
+labels.
 
-> The watchdog maximum timeout value is determined by the number of bits
-> for the interval timer counter, its source clock frequency, the number
-> of bits of the prescaler and maximum divider value.
-> 
-> This can be calculated with the following equation:
-> 
-> max_timeout = counter / (freq / (max_prescale + 1) / max_divider)
-> 
-> Setting a maximum timeout value will allow the watchdog core to refuse
-> user-space calls to the WDIOC_SETTIMEOUT ioctl that sets not supported
-> timeout values.
-> 
-> For example, systemd tries to set a timeout of 10 minutes on reboot to
-> ensure that the machine will be rebooted even if a reboot failed. This
-> leads to the following error message on an Exynos5422 Odroid XU4 board:
-> 
-> [  147.986045] s3c2410-wdt 101d0000.watchdog: timeout 600 too big
-> 
-> Reported-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-> 
-> ---
-> Hello,
-> 
-> I'm sending this as an RFC because I don't have access to user manuals
-> for all the Exynos SoCs that this driver supports. But at least in all
-> the ones I have here, the maximum prescaler and divider values are the
-> same and also all have a 16-bit interval timer counter.
-> 
-> So this patch assumes that all IP blocks supported by this driver are
-> the same on that regard, if that's not the case then we can move these
-> values on a per IP block basis using struct of_device_id .data field.
-> 
-> Best regards,
-> Javier
-> 
->  drivers/watchdog/s3c2410_wdt.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 0093450441fe..f289c9fc353a 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -47,6 +47,8 @@
->  #define S3C2410_WTDAT		0x04
->  #define S3C2410_WTCNT		0x08
->  
-> +#define S3C2410_WTCNT_MAXCNT	0xffff
-> +
->  #define S3C2410_WTCON_RSTEN	(1 << 0)
->  #define S3C2410_WTCON_INTEN	(1 << 2)
->  #define S3C2410_WTCON_ENABLE	(1 << 5)
-> @@ -56,8 +58,11 @@
->  #define S3C2410_WTCON_DIV64	(2 << 3)
->  #define S3C2410_WTCON_DIV128	(3 << 3)
->  
-> +#define S3C2410_WTCON_MAXDIV	0x80
-> +
->  #define S3C2410_WTCON_PRESCALE(x)	((x) << 8)
->  #define S3C2410_WTCON_PRESCALE_MASK	(0xff << 8)
-> +#define S3C2410_WTCON_PRESCALE_MAX	0xff
->  
->  #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
->  #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
-> @@ -198,6 +203,14 @@ do {							\
->  
->  /* functions */
->  
-> +static inline unsigned int s3c2410wdt_max_timeout(struct clk *clock)
-> +{
-> +	unsigned long freq = clk_get_rate(clock);
-> +
-> +	return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
-> +				       / S3C2410_WTCON_MAXDIV);
-> +}
-> +
->  static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
->  {
->  	return container_of(nb, struct s3c2410_wdt, freq_transition);
-> @@ -567,6 +580,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	wdt->wdt_device.min_timeout = 1;
-> +	wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt->clock);
-> +
->  	ret = s3c2410wdt_cpufreq_register(wdt);
->  	if (ret < 0) {
->  		dev_err(dev, "failed to register cpufreq\n");
-> -- 
-> 2.5.0
-> 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/crypto/s5p-sss.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-This patch has been added to linux-watchdog-next.
-
-Kind regards,
-Wim.
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 5f161a9777e3..60f835455a41 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -11,7 +11,6 @@
+  *
+  */
+ 
+-#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -284,7 +283,7 @@ static int s5p_set_outdata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ 	dev->sg_dst = sg;
+ 	err = 0;
+ 
+- exit:
++exit:
+ 	return err;
+ }
+ 
+@@ -310,7 +309,7 @@ static int s5p_set_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ 	dev->sg_src = sg;
+ 	err = 0;
+ 
+- exit:
++exit:
+ 	return err;
+ }
+ 
+@@ -452,10 +451,10 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+ 
+ 	return;
+ 
+- outdata_error:
++outdata_error:
+ 	s5p_unset_indata(dev);
+ 
+- indata_error:
++indata_error:
+ 	s5p_aes_complete(dev, err);
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ }
+@@ -506,7 +505,7 @@ static int s5p_aes_handle_req(struct s5p_aes_dev *dev,
+ 
+ 	tasklet_schedule(&dev->tasklet);
+ 
+- exit:
++exit:
+ 	return err;
+ }
+ 
+@@ -705,7 +704,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+- err_algs:
++err_algs:
+ 	dev_err(dev, "can't register '%s': %d\n", algs[i].cra_name, err);
+ 
+ 	for (j = 0; j < i; j++)
+@@ -713,7 +712,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 
+ 	tasklet_kill(&pdata->tasklet);
+ 
+- err_irq:
++err_irq:
+ 	clk_disable_unprepare(pdata->clk);
+ 
+ 	s5p_dev = NULL;
+-- 
+2.1.4
