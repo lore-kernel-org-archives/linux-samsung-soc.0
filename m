@@ -1,73 +1,103 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 0/2] [media] exynos4-is: Trivial fixes for DT
- port/endpoint parse logic
-Date: Mon, 7 Mar 2016 11:30:30 -0300
-Message-ID: <56DD9086.7070903@osg.samsung.com>
-References: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
- <CAJKOXPfOpqU2fGsNNaB6n_iuq2r-8z3TCSsqkncPbvkK2344Tg@mail.gmail.com>
- <56DD48C1.8010004@samsung.com>
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: Re: [PATCH v4 48/52] mtd: nand: vf610: switch to mtd_ooblayout_ops
+Date: Mon, 07 Mar 2016 10:04:36 -0800
+Message-ID: <73e28b049f14566167c1b6cd3c329099@agner.ch>
+References: <1457344062-11633-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1457344062-11633-49-git-send-email-boris.brezillon@free-electrons.com>
+Reply-To: stefan-XLVq0VzYD2Y@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:36727 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752891AbcCGOaj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Mar 2016 09:30:39 -0500
-In-Reply-To: <56DD48C1.8010004@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCEJHTXX7MFBBX4G663AKGQENRPECUA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1457344062-11633-49-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Wenyou Yang <wenyou.yang-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>G
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Hello Sylwester,
+On 2016-03-07 01:47, Boris Brezillon wrote:
+> Implementing the mtd_ooblayout_ops interface is the new way of exposing
+> ECC/OOB layout to MTD users.
 
-On 03/07/2016 06:24 AM, Sylwester Nawrocki wrote:
-> Hi Javier, Krzysztof,
+Hi Boris,
+
+Tested this revision, works out of the box now!
+
+Thanks!
+
+Tested-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Acked-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+
+--
+Stefan
+
 > 
-> On 03/05/2016 05:35 AM, Krzysztof Kozlowski wrote:
->> 2016-03-05 5:20 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
->>>> Hello,
->>>>
->>>> This series have two trivial fixes for issues that I noticed while
->>>> reading as a reference the driver's functions that parse the graph
->>>> port and endpoints nodes.
->>>>
->>>> It was only compile tested because I don't have access to a Exynos4
->>>> hardware to test the DT parsing, but the patches are very simple.
->>
->> Not directly related, but similar: my previous two patches for missing
->> of_node_put [0] are unfortunately still waiting. Although I have
->> Exynos4 boards, but I don't have infrastructure/scripts to test it.
->>
->> Best regards,
->> Krzysztof
->>
-
-I've reviewed Krzysztof and looks good to me.
-
->> [0] https://patchwork.linuxtv.org/patch/32707/
+> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> ---
+>  drivers/mtd/nand/vf610_nfc.c | 34 ++++------------------------------
+>  1 file changed, 4 insertions(+), 30 deletions(-)
 > 
-> Thanks for the patches, I've delegated them to myself and I'm going to
-> review/apply them this week.
->
-
-Thanks, I just noticed another similar issue in the driver now and is
-that fimc_is_parse_sensor_config() uses the same struct device_node *
-for looking up the I2C sensor, port and endpoint and thus not doing a
-of_node_put() for all the nodes on the error path.
-
-I think the right fix is to have a separate struct device_node * for
-each so their reference counter cand be incremented and decremented.
-
-> --
-> Regards,
-> Sylwester
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> diff --git a/drivers/mtd/nand/vf610_nfc.c b/drivers/mtd/nand/vf610_nfc.c
+> index 293feb1..da34de1 100644
+> --- a/drivers/mtd/nand/vf610_nfc.c
+> +++ b/drivers/mtd/nand/vf610_nfc.c
+> @@ -175,34 +175,6 @@ static inline struct vf610_nfc *mtd_to_nfc(struct
+> mtd_info *mtd)
+>  	return container_of(mtd_to_nand(mtd), struct vf610_nfc, chip);
+>  }
+>  
+> -static struct nand_ecclayout vf610_nfc_ecc45 = {
+> -	.eccbytes = 45,
+> -	.eccpos = {19, 20, 21, 22, 23,
+> -		   24, 25, 26, 27, 28, 29, 30, 31,
+> -		   32, 33, 34, 35, 36, 37, 38, 39,
+> -		   40, 41, 42, 43, 44, 45, 46, 47,
+> -		   48, 49, 50, 51, 52, 53, 54, 55,
+> -		   56, 57, 58, 59, 60, 61, 62, 63},
+> -	.oobfree = {
+> -		{.offset = 2,
+> -		 .length = 17} }
+> -};
+> -
+> -static struct nand_ecclayout vf610_nfc_ecc60 = {
+> -	.eccbytes = 60,
+> -	.eccpos = { 4,  5,  6,  7,  8,  9, 10, 11,
+> -		   12, 13, 14, 15, 16, 17, 18, 19,
+> -		   20, 21, 22, 23, 24, 25, 26, 27,
+> -		   28, 29, 30, 31, 32, 33, 34, 35,
+> -		   36, 37, 38, 39, 40, 41, 42, 43,
+> -		   44, 45, 46, 47, 48, 49, 50, 51,
+> -		   52, 53, 54, 55, 56, 57, 58, 59,
+> -		   60, 61, 62, 63 },
+> -	.oobfree = {
+> -		{.offset = 2,
+> -		 .length = 2} }
+> -};
+> -
+>  static inline u32 vf610_nfc_read(struct vf610_nfc *nfc, uint reg)
+>  {
+>  	return readl(nfc->regs + reg);
+> @@ -781,14 +753,16 @@ static int vf610_nfc_probe(struct platform_device *pdev)
+>  		if (mtd->oobsize > 64)
+>  			mtd->oobsize = 64;
+>  
+> +		/*
+> +		 * mtd->ecclayout is not specified here because we're using the
+> +		 * default large page ECC layout defined in NAND core.
+> +		 */
+>  		if (chip->ecc.strength == 32) {
+>  			nfc->ecc_mode = ECC_60_BYTE;
+>  			chip->ecc.bytes = 60;
+> -			chip->ecc.layout = &vf610_nfc_ecc60;
+>  		} else if (chip->ecc.strength == 24) {
+>  			nfc->ecc_mode = ECC_45_BYTE;
+>  			chip->ecc.bytes = 45;
+> -			chip->ecc.layout = &vf610_nfc_ecc45;
+>  		} else {
+>  			dev_err(nfc->dev, "Unsupported ECC strength\n");
+>  			err = -ENXIO;
