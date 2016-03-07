@@ -1,51 +1,127 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] phy: exynos5-usbdrd: Remove "static" from local variable
-Date: Sun, 06 Mar 2016 18:33:43 +0800
-Message-ID: <1457260423.25403.1.camel@ingics.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [PATCH 1/2] crypto: s5p-sss - Minor coding cleanups
+Date: Mon, 7 Mar 2016 03:01:53 +0200
+Message-ID: <56DCD301.4030401@mleia.com>
+References: <1457259436-32560-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:34166 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751203AbcCFKds (ORCPT
+Received: from mleia.com ([178.79.152.223]:42104 "EHLO mail.mleia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751221AbcCGBCE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 6 Mar 2016 05:33:48 -0500
-Received: by mail-pa0-f49.google.com with SMTP id fy10so61081218pac.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Mar 2016 02:33:48 -0800 (PST)
+	Sun, 6 Mar 2016 20:02:04 -0500
+In-Reply-To: <1457259436-32560-1-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Jaewon Kim <jaewon02.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Patrice Chotard <patrice.chotard@st.com>, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-The 'reg' local variable does not need to be static.
+Hi Krzysztof,
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/phy/phy-exynos5-usbdrd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 06.03.2016 12:17, Krzysztof Kozlowski wrote:
+> Remove unneeded inclusion of delay.h and get rid of indentation from
+> labels.
 
-diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-index 20696f5..07ed608 100644
---- a/drivers/phy/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/phy-exynos5-usbdrd.c
-@@ -249,7 +249,7 @@ static void exynos5_usbdrd_phy_isol(struct phy_usb_instance *inst,
- static unsigned int
- exynos5_usbdrd_pipe3_set_refclk(struct phy_usb_instance *inst)
- {
--	static u32 reg;
-+	u32 reg;
- 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
- 
- 	/* restore any previous reference clock settings */
-@@ -295,7 +295,7 @@ exynos5_usbdrd_pipe3_set_refclk(struct phy_usb_instance *inst)
- static unsigned int
- exynos5_usbdrd_utmi_set_refclk(struct phy_usb_instance *inst)
- {
--	static u32 reg;
-+	u32 reg;
- 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
- 
- 	/* restore any previous reference clock settings */
--- 
-2.1.4
+just in case are you aware of this discussion regarding goto labels
+http://lkml.iu.edu/hypermail/linux/kernel/0706.0/0809.html ?
+
+Practically there is no big need (neither it is a clean-up IMHO)
+to change column 1 indentation of goto labels, however I do agree that
+^[a-z0-9_]\+:$ style of goto labels is 10 times more commonly used,
+and that means it's a good time to update my ~/.emacs config.
+
+Someone may want to fix the style of another 5000+ goto labels one day,
+though it is better to have an officially agreed policy beforehand.
+
+Anyway I do not strictly object against the change, see one my comment
+below and feel free to add my
+
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/crypto/s5p-sss.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+> index 5f161a9777e3..60f835455a41 100644
+> --- a/drivers/crypto/s5p-sss.c
+> +++ b/drivers/crypto/s5p-sss.c
+> @@ -11,7 +11,6 @@
+>   *
+>   */
+>  
+> -#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+
+Since you are here, can you sort headers out, please?
+
+And I'm pretty sure some more inclusions can be safely removed
+from the list.
+
+> @@ -284,7 +283,7 @@ static int s5p_set_outdata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+>  	dev->sg_dst = sg;
+>  	err = 0;
+>  
+> - exit:
+> +exit:
+>  	return err;
+>  }
+>  
+> @@ -310,7 +309,7 @@ static int s5p_set_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+>  	dev->sg_src = sg;
+>  	err = 0;
+>  
+> - exit:
+> +exit:
+>  	return err;
+>  }
+>  
+> @@ -452,10 +451,10 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+>  
+>  	return;
+>  
+> - outdata_error:
+> +outdata_error:
+>  	s5p_unset_indata(dev);
+>  
+> - indata_error:
+> +indata_error:
+>  	s5p_aes_complete(dev, err);
+>  	spin_unlock_irqrestore(&dev->lock, flags);
+>  }
+> @@ -506,7 +505,7 @@ static int s5p_aes_handle_req(struct s5p_aes_dev *dev,
+>  
+>  	tasklet_schedule(&dev->tasklet);
+>  
+> - exit:
+> +exit:
+>  	return err;
+>  }
+>  
+> @@ -705,7 +704,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  
+>  	return 0;
+>  
+> - err_algs:
+> +err_algs:
+>  	dev_err(dev, "can't register '%s': %d\n", algs[i].cra_name, err);
+>  
+>  	for (j = 0; j < i; j++)
+> @@ -713,7 +712,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  
+>  	tasklet_kill(&pdata->tasklet);
+>  
+> - err_irq:
+> +err_irq:
+>  	clk_disable_unprepare(pdata->clk);
+>  
+>  	s5p_dev = NULL;
+> 
+
+--
+With best wishes,
+Vladimir
