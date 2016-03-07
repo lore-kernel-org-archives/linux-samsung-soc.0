@@ -1,59 +1,70 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [RFT 2/2] [media] exynos4-is: Add missing port parent of_node_put
- on error paths
-Date: Mon, 7 Mar 2016 11:17:44 -0300
-Message-ID: <56DD8D88.9020500@osg.samsung.com>
-References: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
- <1453768906-28979-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 0/2] [media] exynos4-is: Trivial fixes for DT
+ port/endpoint parse logic
+Date: Mon, 7 Mar 2016 11:30:30 -0300
+Message-ID: <56DD9086.7070903@osg.samsung.com>
+References: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
+ <CAJKOXPfOpqU2fGsNNaB6n_iuq2r-8z3TCSsqkncPbvkK2344Tg@mail.gmail.com>
+ <56DD48C1.8010004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:36721 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:36727 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752704AbcCGORx (ORCPT
+	id S1752891AbcCGOaj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Mar 2016 09:17:53 -0500
-In-Reply-To: <1453768906-28979-2-git-send-email-k.kozlowski@samsung.com>
+	Mon, 7 Mar 2016 09:30:39 -0500
+In-Reply-To: <56DD48C1.8010004@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Hello Krzysztof,
+Hello Sylwester,
 
-On 01/25/2016 09:41 PM, Krzysztof Kozlowski wrote:
-> In fimc_md_parse_port_node() remote port parent node is get with
-> of_graph_get_remote_port_parent() but it is not put on error path.
+On 03/07/2016 06:24 AM, Sylwester Nawrocki wrote:
+> Hi Javier, Krzysztof,
 > 
-> Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for asynchronous subdevices registration")
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
-> 
-> Not tested on hardware, only built+static checkers.
-> ---
->  drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index de0977479327..d2e564878e06 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -385,8 +385,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
->  	else
->  		pd->fimc_bus_type = pd->sensor_bus_type;
->  
-> -	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
-> +	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
-> +		of_node_put(rem);
->  		return -EINVAL;
-> +	}
->  
->  	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
->  	fmd->sensor[index].asd.match.of.node = rem;
-> 
+> On 03/05/2016 05:35 AM, Krzysztof Kozlowski wrote:
+>> 2016-03-05 5:20 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+>>>> Hello,
+>>>>
+>>>> This series have two trivial fixes for issues that I noticed while
+>>>> reading as a reference the driver's functions that parse the graph
+>>>> port and endpoints nodes.
+>>>>
+>>>> It was only compile tested because I don't have access to a Exynos4
+>>>> hardware to test the DT parsing, but the patches are very simple.
+>>
+>> Not directly related, but similar: my previous two patches for missing
+>> of_node_put [0] are unfortunately still waiting. Although I have
+>> Exynos4 boards, but I don't have infrastructure/scripts to test it.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+I've reviewed Krzysztof and looks good to me.
+
+>> [0] https://patchwork.linuxtv.org/patch/32707/
+> 
+> Thanks for the patches, I've delegated them to myself and I'm going to
+> review/apply them this week.
+>
+
+Thanks, I just noticed another similar issue in the driver now and is
+that fimc_is_parse_sensor_config() uses the same struct device_node *
+for looking up the I2C sensor, port and endpoint and thus not doing a
+of_node_put() for all the nodes on the error path.
+
+I think the right fix is to have a separate struct device_node * for
+each so their reference counter cand be incremented and decremented.
+
+> --
+> Regards,
+> Sylwester
+> 
 
 Best regards,
 -- 
