@@ -1,65 +1,74 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] crypto: s5p-sss - Handle unaligned buffers
-Date: Mon, 07 Mar 2016 12:59:46 +0900
-Message-ID: <56DCFCB2.2090409@samsung.com>
+Subject: Re: [PATCH 1/2] crypto: s5p-sss - Minor coding cleanups
+Date: Mon, 07 Mar 2016 13:05:49 +0900
+Message-ID: <56DCFE1D.7000106@samsung.com>
 References: <1457259436-32560-1-git-send-email-krzk@kernel.org>
- <1457259436-32560-2-git-send-email-krzk@kernel.org>
- <56DCD938.7090100@mleia.com>
+ <56DCD301.4030401@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56DCD938.7090100@mleia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-reply-to: <56DCD301.4030401@mleia.com>
+Sender: linux-crypto-owner@vger.kernel.org
 To: Vladimir Zapolskiy <vz@mleia.com>, Krzysztof Kozlowski <krzk@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07.03.2016 10:28, Vladimir Zapolskiy wrote:
+On 07.03.2016 10:01, Vladimir Zapolskiy wrote:
 > Hi Krzysztof,
 > 
 > On 06.03.2016 12:17, Krzysztof Kozlowski wrote:
->> During crypto selftests on Odroid XU3 (Exynos5422) some of the
->> algorithms failed because of passing AES-block unaligned source and
->> destination buffers:
+>> Remove unneeded inclusion of delay.h and get rid of indentation from
+>> labels.
 > 
-> excuse my ignorance what are the crypto selftests you reference? Are they
-> run-time self tests run by crypto manager on algorithm registration?
-
-Yes, these tests. Disabled by CRYPTO_MANAGER_DISABLE_TESTS.
-
+> just in case are you aware of this discussion regarding goto labels
+> http://lkml.iu.edu/hypermail/linux/kernel/0706.0/0809.html ?
 > 
->> alg: skcipher: encryption failed on chunk test 1 for ecb-aes-s5p: ret=22
->>
->> Handle such case by copying the buffers to a new aligned and contiguous
->> space.
+> Practically there is no big need (neither it is a clean-up IMHO)
+> to change column 1 indentation of goto labels, however I do agree that
+> ^[a-z0-9_]\+:$ style of goto labels is 10 times more commonly used,
+> and that means it's a good time to update my ~/.emacs config.
 > 
-> I'm not quite convinced that a particular crypto accelerator driver
-> is the right place for this change, at least I don't see in the change
-> anything S5P-SSS specific, but it might be good to add the change.
-
-The driver sets a .cra_alignmask but docs are saying that re-alignment
-by crypto API might not happen. And in fact for selftets the data was
-coming sometimes not-aligned.
-
-On the other hand the CRYPTO_TEST was providing aligned data.
-
+> Someone may want to fix the style of another 5000+ goto labels one day,
+> though it is better to have an officially agreed policy beforehand.
 > 
-> Briefly looking at other drivers similarly atmel-* and omap-* have
-> slow path fallbacks, ./rockchip/rk3288_crypto_ablkcipher.c fails like
-> s5p-sss etc.
-
-Yes, I was kind of inspired by the omap solution.
-
-> Anyway since it is a valid improvement, please feel free to add my
+> Anyway I do not strictly object against the change, see one my comment
+> below and feel free to add my
 > 
 > Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 
-Thanks!
+Actually I was not aware of that discussion, thanks for pointing this
+out. Mostly I encountered the style without indentation but of course
+that does not mean it is the only one.
 
-Krzysztof
 > 
 >> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 >> ---
->>  drivers/crypto/s5p-sss.c | 149 +++++++++++++++++++++++++++++++++++++++++++----
->>  1 file changed, 137 insertions(+), 12 deletions(-)
+>>  drivers/crypto/s5p-sss.c | 15 +++++++--------
+>>  1 file changed, 7 insertions(+), 8 deletions(-)
 >>
+>> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+>> index 5f161a9777e3..60f835455a41 100644
+>> --- a/drivers/crypto/s5p-sss.c
+>> +++ b/drivers/crypto/s5p-sss.c
+>> @@ -11,7 +11,6 @@
+>>   *
+>>   */
+>>  
+>> -#include <linux/delay.h>
+>>  #include <linux/err.h>
+>>  #include <linux/module.h>
+>>  #include <linux/init.h>
+> 
+> Since you are here, can you sort headers out, please?
+
+You mean sort by name (or by christmas tree)? I can... I am not sure
+about benefits of such patch (which should be the motivation for change).
+
+
+> And I'm pretty sure some more inclusions can be safely removed
+> from the list.
+
+I checked them while removing delay - all of them seem to be used.
+
+Best regards,
+Krzysztof
