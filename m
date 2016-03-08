@@ -1,361 +1,80 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: [PATCH v2] ARM: dts: add "simple-bus" where "arm,
- amba-bus" is used alone
-Date: Tue,  8 Mar 2016 14:46:17 +0900
-Message-ID: <1457415977-3401-1-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] ARM: dts: add "simple-bus" to "arm, amba-bus" compatible nodes
+Date: Tue, 8 Mar 2016 14:54:54 +0900
+Message-ID: <CAK7LNASi381k5H3usDj1oLr=uzn7VTMS1jquSVaVEjd5JxWt_g@mail.gmail.com>
+References: <1456804620-8750-1-git-send-email-yamada.masahiro@socionext.com>
+	<20160301114610.GB30602@leverpostej>
+	<CAK7LNAQzkg5F8wUeF+p30jf9CrpNxi7UTNfqXQgybP2XbEKJag@mail.gmail.com>
+	<1456999975.2856.18.camel@linaro.org>
+	<CAL_JsqLBNo2YuJGqBo1DaYgzV7=WuX-0BPutoW3f3U1k0wX3_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dinh Nguyen <dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from conssluserg003.nifty.com ([202.248.44.41]:49984 "EHLO
+	conssluserg003-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751534AbcCHFzA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Mar 2016 00:55:00 -0500
+In-Reply-To: <CAL_JsqLBNo2YuJGqBo1DaYgzV7=WuX-0BPutoW3f3U1k0wX3_w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: "Jon Medhurst (Tixy)" <tixy@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Heiko Stuebner <heiko@sntech.de>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wei Xu <xuwei5@hisilicon.com>, "arm@kernel.org" <arm@kernel.org>, David Brown <david.brown@linaro.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Dinh Nguyen <dinguyen@opensource.altera.com>, linux-soc@vger.kernel.org, linux-arm-k
 
-The compatible string "simple-bus" is well defined in ePAPR, while
-I see no documentation for the "arm,amba-bus" in ePAPR or under
-Documentation/devicetree/.
+Hi Rob, Mark, Jon,
 
-DT is also used by other projects than Linux kernel.  It is not a
-good idea to rely on such an unofficial binding.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
----
+Setting aside the future plan, anyway we should avoid
+relying on an undocumented compatible string.
+(and we should avoid its spread as Rob pointed out.)
 
-Changes in v2:
-  - Rephrase the git-log
+I rephrase the git-log  (no update in the code-diff).
 
- arch/arm/boot/dts/axm55xx.dtsi             | 2 +-
- arch/arm/boot/dts/exynos3250.dtsi          | 2 +-
- arch/arm/boot/dts/exynos4.dtsi             | 2 +-
- arch/arm/boot/dts/exynos4415.dtsi          | 2 +-
- arch/arm/boot/dts/exynos5250.dtsi          | 2 +-
- arch/arm/boot/dts/exynos5420.dtsi          | 2 +-
- arch/arm/boot/dts/exynos5440.dtsi          | 2 +-
- arch/arm/boot/dts/hi3620.dtsi              | 2 +-
- arch/arm/boot/dts/hip01.dtsi               | 2 +-
- arch/arm/boot/dts/hisi-x5hd2.dtsi          | 2 +-
- arch/arm/boot/dts/qcom-apq8064.dtsi        | 2 +-
- arch/arm/boot/dts/qcom-msm8660.dtsi        | 2 +-
- arch/arm/boot/dts/qcom-msm8960.dtsi        | 2 +-
- arch/arm/boot/dts/rk3036.dtsi              | 2 +-
- arch/arm/boot/dts/rk3228.dtsi              | 2 +-
- arch/arm/boot/dts/rk3288.dtsi              | 2 +-
- arch/arm/boot/dts/rk3xxx.dtsi              | 2 +-
- arch/arm/boot/dts/s5pv210.dtsi             | 2 +-
- arch/arm/boot/dts/socfpga.dtsi             | 2 +-
- arch/arm/boot/dts/socfpga_arria10.dtsi     | 2 +-
- arch/arm/boot/dts/ste-nomadik-stn8815.dtsi | 2 +-
- arch/arm/boot/dts/ste-u300.dts             | 2 +-
- arch/arm/boot/dts/versatile-ab.dts         | 2 +-
- 23 files changed, 23 insertions(+), 23 deletions(-)
+Could you check v2, please?
+https://patchwork.kernel.org/patch/8529701/
 
-diff --git a/arch/arm/boot/dts/axm55xx.dtsi b/arch/arm/boot/dts/axm55xx.dtsi
-index ea288f0..8da4582 100644
---- a/arch/arm/boot/dts/axm55xx.dtsi
-+++ b/arch/arm/boot/dts/axm55xx.dtsi
-@@ -107,7 +107,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 18e3def..0ad4fa7 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -381,7 +381,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 045785c..d53fd78 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -661,7 +661,7 @@
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		interrupt-parent = <&gic>;
- 		ranges;
- 
-diff --git a/arch/arm/boot/dts/exynos4415.dtsi b/arch/arm/boot/dts/exynos4415.dtsi
-index ad76484..35d2f99 100644
---- a/arch/arm/boot/dts/exynos4415.dtsi
-+++ b/arch/arm/boot/dts/exynos4415.dtsi
-@@ -380,7 +380,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			interrupt-parent = <&gic>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 33e2d5f..bcaed08 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -674,7 +674,7 @@
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		interrupt-parent = <&gic>;
- 		ranges;
- 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 48a0a55..838bde3 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -327,7 +327,7 @@
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		interrupt-parent = <&gic>;
- 		ranges;
- 
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index f18b51f..5fe5639 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -200,7 +200,7 @@
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		interrupt-parent = <&gic>;
- 		ranges;
- 	};
-diff --git a/arch/arm/boot/dts/hi3620.dtsi b/arch/arm/boot/dts/hi3620.dtsi
-index 6cbb62e..7b67ffe 100644
---- a/arch/arm/boot/dts/hi3620.dtsi
-+++ b/arch/arm/boot/dts/hi3620.dtsi
-@@ -68,7 +68,7 @@
- 
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		interrupt-parent = <&gic>;
- 		ranges = <0 0xfc000000 0x2000000>;
- 
-diff --git a/arch/arm/boot/dts/hip01.dtsi b/arch/arm/boot/dts/hip01.dtsi
-index 33130f8..0835627 100644
---- a/arch/arm/boot/dts/hip01.dtsi
-+++ b/arch/arm/boot/dts/hip01.dtsi
-@@ -43,7 +43,7 @@
- 		amba {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			ranges;
- 
- 			uart0: uart@10001000 {
-diff --git a/arch/arm/boot/dts/hisi-x5hd2.dtsi b/arch/arm/boot/dts/hisi-x5hd2.dtsi
-index c52722b..f3a79b7 100644
---- a/arch/arm/boot/dts/hisi-x5hd2.dtsi
-+++ b/arch/arm/boot/dts/hisi-x5hd2.dtsi
-@@ -34,7 +34,7 @@
- 		amba {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			ranges;
- 
- 			timer0: timer@00002000 {
-diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-index ed521e8..ca93486 100644
---- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-@@ -721,7 +721,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
-index e5f7f33..e05773c 100644
---- a/arch/arm/boot/dts/qcom-msm8660.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
-@@ -167,7 +167,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-diff --git a/arch/arm/boot/dts/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom-msm8960.dtsi
-index 51a40d8..7e7e891 100644
---- a/arch/arm/boot/dts/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8960.dtsi
-@@ -251,7 +251,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
-index b9567c1..c15fdf4 100644
---- a/arch/arm/boot/dts/rk3036.dtsi
-+++ b/arch/arm/boot/dts/rk3036.dtsi
-@@ -94,7 +94,7 @@
- 	};
- 
- 	amba {
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-diff --git a/arch/arm/boot/dts/rk3228.dtsi b/arch/arm/boot/dts/rk3228.dtsi
-index 119ff12..8b4e443 100644
---- a/arch/arm/boot/dts/rk3228.dtsi
-+++ b/arch/arm/boot/dts/rk3228.dtsi
-@@ -96,7 +96,7 @@
- 	};
- 
- 	amba {
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 8ac49f3..af111fa 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -134,7 +134,7 @@
- 	};
- 
- 	amba {
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-diff --git a/arch/arm/boot/dts/rk3xxx.dtsi b/arch/arm/boot/dts/rk3xxx.dtsi
-index 99eeea7..c969e84 100644
---- a/arch/arm/boot/dts/rk3xxx.dtsi
-+++ b/arch/arm/boot/dts/rk3xxx.dtsi
-@@ -67,7 +67,7 @@
- 	};
- 
- 	amba {
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 8344a0e..e945c343 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -130,7 +130,7 @@
- 		amba {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			ranges;
- 
- 			pdma0: dma@e0900000 {
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index 3ed4abd..cadc637 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -69,7 +69,7 @@
- 		ranges;
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
-index cce9e50..06a8e86 100644
---- a/arch/arm/boot/dts/socfpga_arria10.dtsi
-+++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
-@@ -63,7 +63,7 @@
- 		ranges;
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "arm,amba-bus", "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-diff --git a/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi b/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
-index 27a333e..74732e4 100644
---- a/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
-+++ b/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
-@@ -721,7 +721,7 @@
- 	};
- 
- 	amba {
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-diff --git a/arch/arm/boot/dts/ste-u300.dts b/arch/arm/boot/dts/ste-u300.dts
-index 9c73ac2..763a607 100644
---- a/arch/arm/boot/dts/ste-u300.dts
-+++ b/arch/arm/boot/dts/ste-u300.dts
-@@ -384,7 +384,7 @@
- 	};
- 
- 	amba {
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-diff --git a/arch/arm/boot/dts/versatile-ab.dts b/arch/arm/boot/dts/versatile-ab.dts
-index 6fd7efb..01156cf 100644
---- a/arch/arm/boot/dts/versatile-ab.dts
-+++ b/arch/arm/boot/dts/versatile-ab.dts
-@@ -148,7 +148,7 @@
- 	};
- 
- 	amba {
--		compatible = "arm,amba-bus";
-+		compatible = "arm,amba-bus", "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
+Better?
+
+
+
+
+
+2016-03-04 5:23 GMT+09:00 Rob Herring <robh+dt@kernel.org>:
+> On Thu, Mar 3, 2016 at 4:12 AM, Jon Medhurst (Tixy) <tixy@linaro.org> wrote:
+>> On Thu, 2016-03-03 at 12:07 +0900, Masahiro Yamada wrote:
+>> [...]
+>>> This patch is derived from Rob Herring' comment
+>>> "BTW, we should also kill off "amba-bus" which is an ambiguous term"
+>>> in the following thread:
+>>> http://lkml.iu.edu/hypermail/linux/kernel/1601.0/01822.html
+>>>
+>>>
+>>> So, the plan would be like this:
+>>>
+>>> [1] Make device trees not depend on "arm,amba-bus"   (this commit)
+>>> [2] New device trees should no longer use "arm,amba-bus" alone.
+>>> [3] Go though some releases until we do not care about the backward
+>>> compatibility
+>>
+>> Why would we stop caring about backwards compatibility? If I was a user
+>> of any of the platforms in question and updated my kernel, I wouldn't
+>> expect to have to debug why it was broken, then install a new dtb to fix
+>> it - which may be a tricky thing to do, depending on the firmware used
+>> to boot Linux.
+>
+> If no one notices, then there is no ABI. Things break all the time
+> when nobody cares. It will be more than a few releases for sure. We
+> may never get to step 3, but we should do step 1 so people stop
+> copy-n-pasting this in step 2.
+>
+> Rob
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
