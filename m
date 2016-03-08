@@ -1,103 +1,62 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [PATCH v4 48/52] mtd: nand: vf610: switch to mtd_ooblayout_ops
-Date: Mon, 07 Mar 2016 10:04:36 -0800
-Message-ID: <73e28b049f14566167c1b6cd3c329099@agner.ch>
-References: <1457344062-11633-1-git-send-email-boris.brezillon@free-electrons.com>
- <1457344062-11633-49-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: stefan-XLVq0VzYD2Y@public.gmane.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 3/4] mfd: max77686: Allow driver to be built as a module
+Date: Tue, 8 Mar 2016 11:11:44 +0700
+Message-ID: <20160308041144.GB13692@x1>
+References: <1455251419-8919-1-git-send-email-javier@osg.samsung.com>
+ <1455251419-8919-4-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCEJHTXX7MFBBX4G663AKGQENRPECUA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1457344062-11633-49-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Wenyou Yang <wenyou.yang-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>G
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f170.google.com ([209.85.192.170]:36356 "EHLO
+	mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753330AbcCHELz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Mar 2016 23:11:55 -0500
+Received: by mail-pf0-f170.google.com with SMTP id 63so3495068pfe.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2016 20:11:54 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1455251419-8919-4-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>
 
-On 2016-03-07 01:47, Boris Brezillon wrote:
-> Implementing the mtd_ooblayout_ops interface is the new way of exposing
-> ECC/OOB layout to MTD users.
+On Fri, 12 Feb 2016, Javier Martinez Canillas wrote:
 
-Hi Boris,
-
-Tested this revision, works out of the box now!
-
-Thanks!
-
-Tested-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Acked-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-
---
-Stefan
-
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> The driver's Kconfig symbol is a boolean but nothing prevents the dri=
+ver
+> to be built as a module instead of built-in. It is true that most sys=
+tem
+> integrators will choose the latter but the config should not restrict=
+ it.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > ---
->  drivers/mtd/nand/vf610_nfc.c | 34 ++++------------------------------
->  1 file changed, 4 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/vf610_nfc.c b/drivers/mtd/nand/vf610_nfc.c
-> index 293feb1..da34de1 100644
-> --- a/drivers/mtd/nand/vf610_nfc.c
-> +++ b/drivers/mtd/nand/vf610_nfc.c
-> @@ -175,34 +175,6 @@ static inline struct vf610_nfc *mtd_to_nfc(struct
-> mtd_info *mtd)
->  	return container_of(mtd_to_nand(mtd), struct vf610_nfc, chip);
->  }
->  
-> -static struct nand_ecclayout vf610_nfc_ecc45 = {
-> -	.eccbytes = 45,
-> -	.eccpos = {19, 20, 21, 22, 23,
-> -		   24, 25, 26, 27, 28, 29, 30, 31,
-> -		   32, 33, 34, 35, 36, 37, 38, 39,
-> -		   40, 41, 42, 43, 44, 45, 46, 47,
-> -		   48, 49, 50, 51, 52, 53, 54, 55,
-> -		   56, 57, 58, 59, 60, 61, 62, 63},
-> -	.oobfree = {
-> -		{.offset = 2,
-> -		 .length = 17} }
-> -};
-> -
-> -static struct nand_ecclayout vf610_nfc_ecc60 = {
-> -	.eccbytes = 60,
-> -	.eccpos = { 4,  5,  6,  7,  8,  9, 10, 11,
-> -		   12, 13, 14, 15, 16, 17, 18, 19,
-> -		   20, 21, 22, 23, 24, 25, 26, 27,
-> -		   28, 29, 30, 31, 32, 33, 34, 35,
-> -		   36, 37, 38, 39, 40, 41, 42, 43,
-> -		   44, 45, 46, 47, 48, 49, 50, 51,
-> -		   52, 53, 54, 55, 56, 57, 58, 59,
-> -		   60, 61, 62, 63 },
-> -	.oobfree = {
-> -		{.offset = 2,
-> -		 .length = 2} }
-> -};
-> -
->  static inline u32 vf610_nfc_read(struct vf610_nfc *nfc, uint reg)
->  {
->  	return readl(nfc->regs + reg);
-> @@ -781,14 +753,16 @@ static int vf610_nfc_probe(struct platform_device *pdev)
->  		if (mtd->oobsize > 64)
->  			mtd->oobsize = 64;
->  
-> +		/*
-> +		 * mtd->ecclayout is not specified here because we're using the
-> +		 * default large page ECC layout defined in NAND core.
-> +		 */
->  		if (chip->ecc.strength == 32) {
->  			nfc->ecc_mode = ECC_60_BYTE;
->  			chip->ecc.bytes = 60;
-> -			chip->ecc.layout = &vf610_nfc_ecc60;
->  		} else if (chip->ecc.strength == 24) {
->  			nfc->ecc_mode = ECC_45_BYTE;
->  			chip->ecc.bytes = 45;
-> -			chip->ecc.layout = &vf610_nfc_ecc45;
->  		} else {
->  			dev_err(nfc->dev, "Unsupported ECC strength\n");
->  			err = -ENXIO;
+>=20
+>  drivers/mfd/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Applied, thanks.
+
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6c4ebd9f4cb6..005ace26230e 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -493,8 +493,8 @@ config MFD_MAX14577
+>  	  of the device.
+> =20
+>  config MFD_MAX77686
+> -	bool "Maxim Semiconductor MAX77686/802 PMIC Support"
+> -	depends on I2C=3Dy
+> +	tristate "Maxim Semiconductor MAX77686/802 PMIC Support"
+> +	depends on I2C
+>  	depends on OF
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
