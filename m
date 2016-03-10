@@ -1,103 +1,103 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 11/13] thermal: convert exynos to use
- devm_thermal_zone_of_sensor_register
-Date: Thu, 10 Mar 2016 09:16:36 +0900
-Message-ID: <56E0BCE4.6020309@samsung.com>
-References: <1457559336-17652-1-git-send-email-edubezval@gmail.com>
- <1457559336-17652-12-git-send-email-edubezval@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 1/3] crypto: s5p-sss - Minor coding cleanups
+Date: Thu, 10 Mar 2016 10:31:45 +0900
+Message-ID: <1457573507-1687-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:9163 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754237AbcCJAQp (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:47962 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753586AbcCJBcK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Mar 2016 19:16:45 -0500
-In-reply-to: <1457559336-17652-12-git-send-email-edubezval@gmail.com>
+	Wed, 9 Mar 2016 20:32:10 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Rui Zhang <rui.zhang@intel.com>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, lm-sensors@lm-sensors.org, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Vladimir Zapolskiy <vz@mleia.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 
-On 10.03.2016 06:35, Eduardo Valentin wrote:
-> This changes the driver to use the devm_ version
-> of thermal_zone_of_sensor_register and cleans
-> up the  local points and unregister calls.
-> 
-> Cc: Lukasz Majewski <l.majewski@samsung.com>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index fa61eff..256039e 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1363,8 +1363,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  	 * data->tzd must be registered before calling exynos_tmu_initialize(),
->  	 * requesting irq and calling exynos_tmu_control().
->  	 */
-> -	data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
-> -						    &exynos_sensor_ops);
-> +	data->tzd = devm_thermal_zone_of_sensor_register(&pdev->dev, 0, data,
-> +							 &exynos_sensor_ops);
->  	if (IS_ERR(data->tzd)) {
->  		ret = PTR_ERR(data->tzd);
->  		dev_err(&pdev->dev, "Failed to register sensor: %d\n", ret);
-> @@ -1374,21 +1374,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  	ret = exynos_tmu_initialize(pdev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to initialize TMU\n");
-> -		goto err_thermal;
-> +		goto err_sclk;
->  	}
->  
->  	ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
->  		IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
-> -		goto err_thermal;
-> +		goto err_sclk;
->  	}
->  
->  	exynos_tmu_control(pdev, true);
->  	return 0;
->  
-> -err_thermal:
-> -	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
->  err_sclk:
->  	clk_disable_unprepare(data->sclk);
->  err_clk:
-> @@ -1406,9 +1404,7 @@ err_sensor:
->  static int exynos_tmu_remove(struct platform_device *pdev)
->  {
->  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> -	struct thermal_zone_device *tzd = data->tzd;
->  
-> -	thermal_zone_of_sensor_unregister(&pdev->dev, tzd);
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-Before, the sensor was removed from zone (ops like get_temp NULL-ified
-etc), then we stopped TMU, disabled clocks, disabled regulator and
-finally freed IRQ (through devm-like interface).
+Remove unneeded inclusion of delay.h and get rid of indentation from
+labels.
 
-Now this will be different - first stop of TMU, disable clocks, disable,
-regulator, remove sensor from zone (through devm) and finally free IRQ.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 
-Are you sure that changing order is okay?
+---
 
-Best regards,
-Krzysztof
+Changes since v1:
+1. Add Vladimir's acked-by.
+---
+ drivers/crypto/s5p-sss.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
->  	exynos_tmu_control(pdev, false);
->  
->  	clk_disable_unprepare(data->sclk);
-> 
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 5f161a9777e3..60f835455a41 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -11,7 +11,6 @@
+  *
+  */
+ 
+-#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -284,7 +283,7 @@ static int s5p_set_outdata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ 	dev->sg_dst = sg;
+ 	err = 0;
+ 
+- exit:
++exit:
+ 	return err;
+ }
+ 
+@@ -310,7 +309,7 @@ static int s5p_set_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ 	dev->sg_src = sg;
+ 	err = 0;
+ 
+- exit:
++exit:
+ 	return err;
+ }
+ 
+@@ -452,10 +451,10 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+ 
+ 	return;
+ 
+- outdata_error:
++outdata_error:
+ 	s5p_unset_indata(dev);
+ 
+- indata_error:
++indata_error:
+ 	s5p_aes_complete(dev, err);
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ }
+@@ -506,7 +505,7 @@ static int s5p_aes_handle_req(struct s5p_aes_dev *dev,
+ 
+ 	tasklet_schedule(&dev->tasklet);
+ 
+- exit:
++exit:
+ 	return err;
+ }
+ 
+@@ -705,7 +704,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+- err_algs:
++err_algs:
+ 	dev_err(dev, "can't register '%s': %d\n", algs[i].cra_name, err);
+ 
+ 	for (j = 0; j < i; j++)
+@@ -713,7 +712,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 
+ 	tasklet_kill(&pdata->tasklet);
+ 
+- err_irq:
++err_irq:
+ 	clk_disable_unprepare(pdata->clk);
+ 
+ 	s5p_dev = NULL;
+-- 
+2.5.0
