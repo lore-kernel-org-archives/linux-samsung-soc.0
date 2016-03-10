@@ -1,260 +1,100 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/3] crypto: s5p-sss - Handle unaligned buffers
-Date: Thu, 10 Mar 2016 10:31:46 +0900
-Message-ID: <1457573507-1687-2-git-send-email-k.kozlowski@samsung.com>
-References: <1457573507-1687-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1457573507-1687-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Vladimir Zapolskiy <vz@mleia.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 11/13] thermal: convert exynos to use
+ devm_thermal_zone_of_sensor_register
+Date: Thu, 10 Mar 2016 10:16:13 +0100
+Message-ID: <20160310101613.2d00b5e2@amdc2363>
+References: <1457559336-17652-1-git-send-email-edubezval@gmail.com>
+ <1457559336-17652-12-git-send-email-edubezval@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1457559336-17652-12-git-send-email-edubezval@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Rui Zhang <rui.zhang@intel.com>, Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, lm-sensors@lm-sensors.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Hi Eduardo,
 
-During crypto selftests on Odroid XU3 (Exynos5422) some of the
-algorithms failed because of passing AES-block unaligned source and
-destination buffers:
+> This changes the driver to use the devm_ version
+> of thermal_zone_of_sensor_register and cleans
+> up the  local points and unregister calls.
+> 
+> Cc: Lukasz Majewski <l.majewski@samsung.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+> b/drivers/thermal/samsung/exynos_tmu.c index fa61eff..256039e 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -1363,8 +1363,8 @@ static int exynos_tmu_probe(struct
+> platform_device *pdev)
+>  	 * data->tzd must be registered before calling
+> exynos_tmu_initialize(),
+>  	 * requesting irq and calling exynos_tmu_control().
+>  	 */
+> -	data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0,
+> data,
+> -
+> &exynos_sensor_ops);
+> +	data->tzd = devm_thermal_zone_of_sensor_register(&pdev->dev,
+> 0, data,
+> +
+> &exynos_sensor_ops); if (IS_ERR(data->tzd)) {
+>  		ret = PTR_ERR(data->tzd);
+>  		dev_err(&pdev->dev, "Failed to register sensor:
+> %d\n", ret); @@ -1374,21 +1374,19 @@ static int
+> exynos_tmu_probe(struct platform_device *pdev) ret =
+> exynos_tmu_initialize(pdev); if (ret) {
+>  		dev_err(&pdev->dev, "Failed to initialize TMU\n");
+> -		goto err_thermal;
+> +		goto err_sclk;
+>  	}
+>  
+>  	ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
+>  		IRQF_TRIGGER_RISING | IRQF_SHARED,
+> dev_name(&pdev->dev), data); if (ret) {
+>  		dev_err(&pdev->dev, "Failed to request irq: %d\n",
+> data->irq);
+> -		goto err_thermal;
+> +		goto err_sclk;
+>  	}
+>  
+>  	exynos_tmu_control(pdev, true);
+>  	return 0;
+>  
+> -err_thermal:
+> -	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
+>  err_sclk:
+>  	clk_disable_unprepare(data->sclk);
+>  err_clk:
+> @@ -1406,9 +1404,7 @@ err_sensor:
+>  static int exynos_tmu_remove(struct platform_device *pdev)
+>  {
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> -	struct thermal_zone_device *tzd = data->tzd;
+>  
+> -	thermal_zone_of_sensor_unregister(&pdev->dev, tzd);
+>  	exynos_tmu_control(pdev, false);
+>  
+>  	clk_disable_unprepare(data->sclk);
 
-alg: skcipher: encryption failed on chunk test 1 for ecb-aes-s5p: ret=22
+Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
 
-Handle such case by copying the buffers to a new aligned and contiguous
-space.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-
----
-
-Changes since v1:
-1. Add Vladimir's acked-by.
----
- drivers/crypto/s5p-sss.c | 149 +++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 137 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 60f835455a41..bac1f4593f98 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -28,6 +28,7 @@
- #include <crypto/algapi.h>
- #include <crypto/aes.h>
- #include <crypto/ctr.h>
-+#include <crypto/scatterwalk.h>
- 
- #define _SBF(s, v)                      ((v) << (s))
- #define _BIT(b)                         _SBF(b, 1)
-@@ -185,6 +186,10 @@ struct s5p_aes_dev {
- 	struct scatterlist         *sg_src;
- 	struct scatterlist         *sg_dst;
- 
-+	/* In case of unaligned access: */
-+	struct scatterlist         *sg_src_cpy;
-+	struct scatterlist         *sg_dst_cpy;
-+
- 	struct tasklet_struct       tasklet;
- 	struct crypto_queue         queue;
- 	bool                        busy;
-@@ -244,8 +249,45 @@ static void s5p_set_dma_outdata(struct s5p_aes_dev *dev, struct scatterlist *sg)
- 	SSS_WRITE(dev, FCBTDMAL, sg_dma_len(sg));
- }
- 
-+static void s5p_free_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist **sg)
-+{
-+	int len;
-+
-+	if (!*sg)
-+		return;
-+
-+	len = ALIGN(dev->req->nbytes, AES_BLOCK_SIZE);
-+	free_pages((unsigned long)sg_virt(*sg), get_order(len));
-+
-+	kfree(*sg);
-+	*sg = NULL;
-+}
-+
-+static void s5p_sg_copy_buf(void *buf, struct scatterlist *sg,
-+			    unsigned int nbytes, int out)
-+{
-+	struct scatter_walk walk;
-+
-+	if (!nbytes)
-+		return;
-+
-+	scatterwalk_start(&walk, sg);
-+	scatterwalk_copychunks(buf, &walk, nbytes, out);
-+	scatterwalk_done(&walk, out, 0);
-+}
-+
- static void s5p_aes_complete(struct s5p_aes_dev *dev, int err)
- {
-+	if (dev->sg_dst_cpy) {
-+		dev_dbg(dev->dev,
-+			"Copying %d bytes of output data back to original place\n",
-+			dev->req->nbytes);
-+		s5p_sg_copy_buf(sg_virt(dev->sg_dst_cpy), dev->req->dst,
-+				dev->req->nbytes, 1);
-+	}
-+	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
-+	s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
-+
- 	/* holding a lock outside */
- 	dev->req->base.complete(&dev->req->base, err);
- 	dev->busy = false;
-@@ -261,14 +303,36 @@ static void s5p_unset_indata(struct s5p_aes_dev *dev)
- 	dma_unmap_sg(dev->dev, dev->sg_src, 1, DMA_TO_DEVICE);
- }
- 
-+static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
-+			    struct scatterlist **dst)
-+{
-+	void *pages;
-+	int len;
-+
-+	*dst = kmalloc(sizeof(**dst), GFP_ATOMIC);
-+	if (!*dst)
-+		return -ENOMEM;
-+
-+	len = ALIGN(dev->req->nbytes, AES_BLOCK_SIZE);
-+	pages = (void *)__get_free_pages(GFP_ATOMIC, get_order(len));
-+	if (!pages) {
-+		kfree(*dst);
-+		*dst = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	s5p_sg_copy_buf(pages, src, dev->req->nbytes, 0);
-+
-+	sg_init_table(*dst, 1);
-+	sg_set_buf(*dst, pages, len);
-+
-+	return 0;
-+}
-+
- static int s5p_set_outdata(struct s5p_aes_dev *dev, struct scatterlist *sg)
- {
- 	int err;
- 
--	if (!IS_ALIGNED(sg_dma_len(sg), AES_BLOCK_SIZE)) {
--		err = -EINVAL;
--		goto exit;
--	}
- 	if (!sg_dma_len(sg)) {
- 		err = -EINVAL;
- 		goto exit;
-@@ -291,10 +355,6 @@ static int s5p_set_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
- {
- 	int err;
- 
--	if (!IS_ALIGNED(sg_dma_len(sg), AES_BLOCK_SIZE)) {
--		err = -EINVAL;
--		goto exit;
--	}
- 	if (!sg_dma_len(sg)) {
- 		err = -EINVAL;
- 		goto exit;
-@@ -394,6 +454,70 @@ static void s5p_set_aes(struct s5p_aes_dev *dev,
- 	memcpy_toio(keystart, key, keylen);
- }
- 
-+static bool s5p_is_sg_aligned(struct scatterlist *sg)
-+{
-+	do {
-+		if (!IS_ALIGNED(sg_dma_len(sg), AES_BLOCK_SIZE))
-+			return false;
-+	} while (!sg_is_last(sg));
-+
-+	return true;
-+}
-+
-+static int s5p_set_indata_start(struct s5p_aes_dev *dev,
-+				struct ablkcipher_request *req)
-+{
-+	struct scatterlist *sg;
-+	int err;
-+
-+	dev->sg_src_cpy = NULL;
-+	sg = req->src;
-+	if (!s5p_is_sg_aligned(sg)) {
-+		dev_dbg(dev->dev,
-+			"At least one unaligned source scatter list, making a copy\n");
-+		err = s5p_make_sg_cpy(dev, sg, &dev->sg_src_cpy);
-+		if (err)
-+			return err;
-+
-+		sg = dev->sg_src_cpy;
-+	}
-+
-+	err = s5p_set_indata(dev, sg);
-+	if (err) {
-+		s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
-+				struct ablkcipher_request *req)
-+{
-+	struct scatterlist *sg;
-+	int err;
-+
-+	dev->sg_dst_cpy = NULL;
-+	sg = req->dst;
-+	if (!s5p_is_sg_aligned(sg)) {
-+		dev_dbg(dev->dev,
-+			"At least one unaligned dest scatter list, making a copy\n");
-+		err = s5p_make_sg_cpy(dev, sg, &dev->sg_dst_cpy);
-+		if (err)
-+			return err;
-+
-+		sg = dev->sg_dst_cpy;
-+	}
-+
-+	err = s5p_set_outdata(dev, sg);
-+	if (err) {
-+		s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
- static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- {
- 	struct ablkcipher_request  *req = dev->req;
-@@ -430,19 +554,19 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- 		  SSS_FCINTENCLR_BTDMAINTENCLR | SSS_FCINTENCLR_BRDMAINTENCLR);
- 	SSS_WRITE(dev, FCFIFOCTRL, 0x00);
- 
--	err = s5p_set_indata(dev, req->src);
-+	err = s5p_set_indata_start(dev, req);
- 	if (err)
- 		goto indata_error;
- 
--	err = s5p_set_outdata(dev, req->dst);
-+	err = s5p_set_outdata_start(dev, req);
- 	if (err)
- 		goto outdata_error;
- 
- 	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
- 	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
- 
--	s5p_set_dma_indata(dev,  req->src);
--	s5p_set_dma_outdata(dev, req->dst);
-+	s5p_set_dma_indata(dev,  dev->sg_src);
-+	s5p_set_dma_outdata(dev, dev->sg_dst);
- 
- 	SSS_WRITE(dev, FCINTENSET,
- 		  SSS_FCINTENSET_BTDMAINTENSET | SSS_FCINTENSET_BRDMAINTENSET);
-@@ -452,6 +576,7 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- 	return;
- 
- outdata_error:
-+	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
- 	s5p_unset_indata(dev);
- 
- indata_error:
 -- 
-2.5.0
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
