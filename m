@@ -1,50 +1,47 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 5/5] hwrng: exynos - Disable runtime PM on driver unbind
-Date: Fri, 11 Mar 2016 16:49:22 +0900
-Message-ID: <1457682562-21219-5-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 2/5] hwrng: exynos - Runtime suspend device after init
+Date: Fri, 11 Mar 2016 16:49:19 +0900
+Message-ID: <1457682562-21219-2-git-send-email-k.kozlowski@samsung.com>
 References: <1457682562-21219-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:10453 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934287AbcCKHtl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Mar 2016 02:49:41 -0500
 In-reply-to: <1457682562-21219-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Driver enabled runtime PM but did not revert this on removal. Re-binding
-of a device triggered warning:
-	exynos-rng 10830400.rng: Unbalanced pm_runtime_enable!
+The driver uses pm_runtime_put_noidle() after initialization so the
+device might remain in active state if the core does not read from it
+(the read callback contains regular runtime put). The put_noidle() was
+chosen probably to avoid unneeded suspend and resume cycle after the
+initialization.
 
-Fixes: b329669ea0b5 ("hwrng: exynos - Add support for Exynos random number generator")
+However for this purpose autosuspend is enabled so it is safe to runtime
+put just after the initialization.
+
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/char/hw_random/exynos-rng.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/char/hw_random/exynos-rng.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/char/hw_random/exynos-rng.c b/drivers/char/hw_random/exynos-rng.c
-index 68c349bf66a0..cba1ff538c46 100644
+index ada081232528..d1fd21e99368 100644
 --- a/drivers/char/hw_random/exynos-rng.c
 +++ b/drivers/char/hw_random/exynos-rng.c
-@@ -154,6 +154,13 @@ static int exynos_rng_probe(struct platform_device *pdev)
+@@ -77,7 +77,8 @@ static int exynos_init(struct hwrng *rng)
+ 
+ 	pm_runtime_get_sync(exynos_rng->dev);
+ 	ret = exynos_rng_configure(exynos_rng);
+-	pm_runtime_put_noidle(exynos_rng->dev);
++	pm_runtime_mark_last_busy(exynos_rng->dev);
++	pm_runtime_put_autosuspend(exynos_rng->dev);
+ 
  	return ret;
  }
- 
-+static int exynos_rng_remove(struct platform_device *pdev)
-+{
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
- static int __maybe_unused exynos_rng_runtime_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -211,6 +218,7 @@ static struct platform_driver exynos_rng_driver = {
- 		.of_match_table = exynos_rng_dt_match,
- 	},
- 	.probe		= exynos_rng_probe,
-+	.remove		= exynos_rng_remove,
- };
- 
- module_platform_driver(exynos_rng_driver);
 -- 
 2.5.0
