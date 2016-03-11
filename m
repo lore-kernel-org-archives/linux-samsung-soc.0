@@ -1,47 +1,103 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/5] hwrng: exynos - Runtime suspend device after init
-Date: Fri, 11 Mar 2016 16:49:19 +0900
-Message-ID: <1457682562-21219-2-git-send-email-k.kozlowski@samsung.com>
-References: <1457682562-21219-1-git-send-email-k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFT 1/2] [media] exynos4-is: Add missing endpoint of_node_put on
+ error paths
+Date: Fri, 11 Mar 2016 13:30:53 +0100
+Message-ID: <56E2BA7D.9050500@samsung.com>
+References: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:10453 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934287AbcCKHtl (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:24824 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751975AbcCKMbD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Mar 2016 02:49:41 -0500
-In-reply-to: <1457682562-21219-1-git-send-email-k.kozlowski@samsung.com>
+	Fri, 11 Mar 2016 07:31:03 -0500
+In-reply-to: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-The driver uses pm_runtime_put_noidle() after initialization so the
-device might remain in active state if the core does not read from it
-(the read callback contains regular runtime put). The put_noidle() was
-chosen probably to avoid unneeded suspend and resume cycle after the
-initialization.
+On 01/26/2016 01:41 AM, Krzysztof Kozlowski wrote:
+> In fimc_md_parse_port_node() endpoint node is get with of_get_next_child()
+> but it is not put on error path.
 
-However for this purpose autosuspend is enabled so it is safe to runtime
-put just after the initialization.
+"is get" doesn't sound right to me, how about rephrasing this to:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/char/hw_random/exynos-rng.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+"In fimc_md_parse_port_node() reference count of the endpoint node
+"is incremented by of_get_next_child() but it is not decremented
+ on error path."
 
-diff --git a/drivers/char/hw_random/exynos-rng.c b/drivers/char/hw_random/exynos-rng.c
-index ada081232528..d1fd21e99368 100644
---- a/drivers/char/hw_random/exynos-rng.c
-+++ b/drivers/char/hw_random/exynos-rng.c
-@@ -77,7 +77,8 @@ static int exynos_init(struct hwrng *rng)
- 
- 	pm_runtime_get_sync(exynos_rng->dev);
- 	ret = exynos_rng_configure(exynos_rng);
--	pm_runtime_put_noidle(exynos_rng->dev);
-+	pm_runtime_mark_last_busy(exynos_rng->dev);
-+	pm_runtime_put_autosuspend(exynos_rng->dev);
- 
- 	return ret;
- }
+> Fixes: 56fa1a6a6a7d ("[media] s5p-fimc: Change the driver directory name to exynos4-is")
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+> Not tested on hardware, only built+static checkers.
+> ---
+>  drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/media-dev.c 
+> b/drivers/media/platform/exynos4-is/media-dev.c
+> index f3b2dd30ec77..de0977479327 100644
+> --- a/drivers/media/platform/exynos4-is/media-dev.c
+> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+> @@ -339,8 +339,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+>  		return 0;
+>  
+>  	v4l2_of_parse_endpoint(ep, &endpoint);
+> -	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS)
+> +	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS) {
+> +		of_node_put(ep);
+>  		return -EINVAL;
+> +	}
+
+Thanks for the patch, it looks correct but it doesn't apply cleanly
+due to patches already in media master branch [1]. Could you refresh
+this patch and resend?
+Also I don't quite like multiple calls to of_node_put(), how about
+doing something like this instead:
+
+---------------------------8<----------------------------------
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c
+b/drivers/media/platform/exynos4-is/media-dev.c
+index feb521f..663d32e 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -397,18 +397,19 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+                return 0;
+
+        ret = v4l2_of_parse_endpoint(ep, &endpoint);
+-       if (ret) {
+-               of_node_put(ep);
+-               return ret;
++       if (!ret) {
++               if (WARN_ON(endpoint.base.port == 0) ||
++                           index >= FIMC_MAX_SENSORS) {
++                       ret = -EINVAL;
++               } else {
++                       pd->mux_id = (endpoint.base.port - 1) & 0x1;
++                       rem = of_graph_get_remote_port_parent(ep);
++               }
+        }
+-
+-       if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS)
+-               return -EINVAL;
+-
+-       pd->mux_id = (endpoint.base.port - 1) & 0x1;
+-
+-       rem = of_graph_get_remote_port_parent(ep);
+        of_node_put(ep);
++       if (ret < 0)
++               return ret;
++
+        if (rem == NULL) {
+                v4l2_info(&fmd->v4l2_dev, "Remote device at %s not found\n",
+                                                        ep->full_name);
+---------------------------8<----------------------------------
+
 -- 
-2.5.0
+Thanks,
+Sylwester
+
+[1] git://linuxtv.org/media_tree.git
