@@ -1,52 +1,76 @@
 From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 0/2] [media] exynos4-is: Trivial fixes for DT
- port/endpoint parse logic
-Date: Fri, 11 Mar 2016 11:39:08 -0300
-Message-ID: <CABxcv==Y=G8R3kgHj_eidyzYRBq16LNc0ACGSPBHwB5SgMJARg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] [media] exynos4-is: FIMC port parse should fail if
+ there's no endpoint
+Date: Fri, 11 Mar 2016 11:55:58 -0300
+Message-ID: <CABxcv=nteCTgaN9t33vOovXoHarMXf_knxjTUfV+G36iQs8AGQ@mail.gmail.com>
 References: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
-	<CAJKOXPfOpqU2fGsNNaB6n_iuq2r-8z3TCSsqkncPbvkK2344Tg@mail.gmail.com>
-	<56DD48C1.8010004@samsung.com>
-	<56DD9086.7070903@osg.samsung.com>
-	<56E2C36C.6030709@samsung.com>
+	<1457122813-12791-3-git-send-email-javier@osg.samsung.com>
+	<56E2C206.6020103@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:36159 "EHLO
-	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752976AbcCKOjK (ORCPT
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:33480 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752918AbcCKOz7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Mar 2016 09:39:10 -0500
-Received: by mail-io0-f181.google.com with SMTP id z76so147735637iof.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Mar 2016 06:39:09 -0800 (PST)
-In-Reply-To: <56E2C36C.6030709@samsung.com>
+	Fri, 11 Mar 2016 09:55:59 -0500
+Received: by mail-ig0-f179.google.com with SMTP id ig19so13530591igb.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Mar 2016 06:55:59 -0800 (PST)
+In-Reply-To: <56E2C206.6020103@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 
 Hello Sylwester,
 
-On Fri, Mar 11, 2016 at 10:09 AM, Sylwester Nawrocki
+On Fri, Mar 11, 2016 at 10:03 AM, Sylwester Nawrocki
 <s.nawrocki@samsung.com> wrote:
-> On 03/07/2016 03:30 PM, Javier Martinez Canillas wrote:
->> Thanks, I just noticed another similar issue in the driver now and is
->> that fimc_is_parse_sensor_config() uses the same struct device_node *
->> for looking up the I2C sensor, port and endpoint and thus not doing a
->> of_node_put() for all the nodes on the error path.
+> On 03/04/2016 09:20 PM, Javier Martinez Canillas wrote:
+>> The fimc_md_parse_port_node() function return 0 if an endpoint node is
+>> not found but according to Documentation/devicetree/bindings/graph.txt,
+>> a port must always have at least one enpoint.
 >>
->> I think the right fix is to have a separate struct device_node * for
->> each so their reference counter can be incremented and decremented.
+>> So return an -EINVAL errno code to the caller instead, so it knows that
+>> the port node parse failed due an invalid Device Tree description.
 >
-> Yes, the node reference count is indeed not handled very well there,
-> feel free to submit a patch to fix that bug.
+> I don't think it is forbidden to have a port node in device tree
+> containing no endpoint nodes. Empty port node means only that,
+> for example, a subsystem has a port/bus for connecting external
+> devices but nothing is actually connected to it.
 >
 
-Ok, I'll post a patch to fix that once all the in-flight patches land
-to avoid merge conflicts.
+That's not what I understood by reading both
+Documentation/devicetree/bindings/media/video-interfaces.txt and
+Documentation/devicetree/bindings/graph.txt but maybe these are not
+that clear about it or I just failed to parse the english.
+
+> In case of Exynos CSIS it might not be so useful to have an empty
+> port node specified in some top level *.dtsi file and only
+> the endpoints specified in a board specific dts file. Nevertheless,
+> I wouldn't be saying in general a port node must always have some
+> endpoint node defined.
+>
+
+Ok, but if that is valid then I believe that at the very least
+Documentation/devicetree/bindings/media/samsung-fimc.txt should
+explicitly mention which (sub)nodes are optional and which are
+required so the DT parsing logic could follow what's documented there.
+
+> I could apply this patch as it doesn't do any harm considering
+> existing dts files in the kernel tree (arch/arm/boot/dts/
+> exynos4412-trats2.dts), but the commit description would need to
+> be changed.
+>
+
+I don't mind if you want to change the commit message but if those
+nodes are really optional then a follow-up should be to update the DT
+binding docs to make that clear IMHO.
 
 > --
-> Regards,
+> Thanks,
 > Sylwester
+> --
 
 Best regards,
 Javier
