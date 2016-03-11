@@ -1,76 +1,52 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 2/2] [media] exynos4-is: FIMC port parse should fail if
- there's no endpoint
-Date: Fri, 11 Mar 2016 11:55:58 -0300
-Message-ID: <CABxcv=nteCTgaN9t33vOovXoHarMXf_knxjTUfV+G36iQs8AGQ@mail.gmail.com>
-References: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
-	<1457122813-12791-3-git-send-email-javier@osg.samsung.com>
-	<56E2C206.6020103@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 05/10] exynos4-is: Replace "hweight32(mask) == 1" with
+ "is_power_of_2(mask)"
+Date: Fri, 11 Mar 2016 17:28:21 +0100
+Message-ID: <56E2F225.3040109@samsung.com>
+References: <1449398669-14507-1-git-send-email-zhaoxiu.zeng@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f179.google.com ([209.85.213.179]:33480 "EHLO
-	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752918AbcCKOz7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Mar 2016 09:55:59 -0500
-Received: by mail-ig0-f179.google.com with SMTP id ig19so13530591igb.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Mar 2016 06:55:59 -0800 (PST)
-In-Reply-To: <56E2C206.6020103@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1449398669-14507-1-git-send-email-zhaoxiu.zeng@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
+Cc: kyungmin.park@samsung.com, mchehab@osg.samsung.com, kgene@kernel.org, k.kozlowski@samsung.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 
-Hello Sylwester,
+On 12/06/2015 11:44 AM, Zhaoxiu Zeng wrote:
+> From: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
 
-On Fri, Mar 11, 2016 at 10:03 AM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 03/04/2016 09:20 PM, Javier Martinez Canillas wrote:
->> The fimc_md_parse_port_node() function return 0 if an endpoint node is
->> not found but according to Documentation/devicetree/bindings/graph.txt,
->> a port must always have at least one enpoint.
->>
->> So return an -EINVAL errno code to the caller instead, so it knows that
->> the port node parse failed due an invalid Device Tree description.
->
-> I don't think it is forbidden to have a port node in device tree
-> containing no endpoint nodes. Empty port node means only that,
-> for example, a subsystem has a port/bus for connecting external
-> devices but nothing is actually connected to it.
->
+The patch looks OK, but could you also provide a proper commit
+message?
 
-That's not what I understood by reading both
-Documentation/devicetree/bindings/media/video-interfaces.txt and
-Documentation/devicetree/bindings/graph.txt but maybe these are not
-that clear about it or I just failed to parse the english.
+> Signed-off-by: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
+> ---
+>  drivers/media/platform/exynos4-is/fimc-is-regs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+> index cfe4406..ec75a24 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+> @@ -11,6 +11,7 @@
+>   * published by the Free Software Foundation.
+>   */
+>  #include <linux/delay.h>
+> +#include <linux/log2.h>
+>  
+>  #include "fimc-is.h"
+>  #include "fimc-is-command.h"
+> @@ -107,7 +108,7 @@ int fimc_is_hw_get_params(struct fimc_is *is, unsigned int num_args)
+>  
+>  void fimc_is_hw_set_isp_buf_mask(struct fimc_is *is, unsigned int mask)
+>  {
+> -	if (hweight32(mask) == 1) {
+> +	if (is_power_of_2(mask)) {
+>  		dev_err(&is->pdev->dev, "%s(): not enough buffers (mask %#x)\n",
+>  							__func__, mask);
+>  		return;
 
-> In case of Exynos CSIS it might not be so useful to have an empty
-> port node specified in some top level *.dtsi file and only
-> the endpoints specified in a board specific dts file. Nevertheless,
-> I wouldn't be saying in general a port node must always have some
-> endpoint node defined.
->
-
-Ok, but if that is valid then I believe that at the very least
-Documentation/devicetree/bindings/media/samsung-fimc.txt should
-explicitly mention which (sub)nodes are optional and which are
-required so the DT parsing logic could follow what's documented there.
-
-> I could apply this patch as it doesn't do any harm considering
-> existing dts files in the kernel tree (arch/arm/boot/dts/
-> exynos4412-trats2.dts), but the commit description would need to
-> be changed.
->
-
-I don't mind if you want to change the commit message but if those
-nodes are really optional then a follow-up should be to update the DT
-binding docs to make that clear IMHO.
-
-> --
-> Thanks,
-> Sylwester
-> --
-
-Best regards,
-Javier
+-- 
+Thanks,
+Sylwester
