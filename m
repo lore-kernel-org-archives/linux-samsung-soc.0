@@ -1,60 +1,44 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFT 2/2] [media] exynos4-is: Add missing port parent of_node_put
- on error paths
-Date: Fri, 11 Mar 2016 13:37:51 +0100
-Message-ID: <56E2BC1F.1090805@samsung.com>
-References: <1453768906-28979-1-git-send-email-k.kozlowski@samsung.com>
- <1453768906-28979-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] [media] exynos4-is: FIMC port parse should fail if
+ there's no endpoint
+Date: Fri, 11 Mar 2016 14:03:02 +0100
+Message-ID: <56E2C206.6020103@samsung.com>
+References: <1457122813-12791-1-git-send-email-javier@osg.samsung.com>
+ <1457122813-12791-3-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:24396 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752299AbcCKMiA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Mar 2016 07:38:00 -0500
-In-reply-to: <1453768906-28979-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1457122813-12791-3-git-send-email-javier@osg.samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 01/26/2016 01:41 AM, Krzysztof Kozlowski wrote:
-> In fimc_md_parse_port_node() remote port parent node is get with
-> of_graph_get_remote_port_parent() but it is not put on error path.
+On 03/04/2016 09:20 PM, Javier Martinez Canillas wrote:
+> The fimc_md_parse_port_node() function return 0 if an endpoint node is
+> not found but according to Documentation/devicetree/bindings/graph.txt,
+> a port must always have at least one enpoint.
 > 
-> Fixes: fa91f1056f17 ("[media] exynos4-is: Add support for 
-> asynchronous subdevices registration")
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> So return an -EINVAL errno code to the caller instead, so it knows that
+> the port node parse failed due an invalid Device Tree description.
 
-Thanks, patch applied with s/is get/is acquired/.
+I don't think it is forbidden to have a port node in device tree
+containing no endpoint nodes. Empty port node means only that,
+for example, a subsystem has a port/bus for connecting external
+devices but nothing is actually connected to it.
 
-> ---
-> 
-> Not tested on hardware, only built+static checkers.
-> ---
->  drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c 
-> b/drivers/media/platform/exynos4-is/media-dev.c
-> index de0977479327..d2e564878e06 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -385,8 +385,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
->  	else
->  		pd->fimc_bus_type = pd->sensor_bus_type;
->  
-> -	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
-> +	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
-> +		of_node_put(rem);
->  		return -EINVAL;
-> +	}
->  
->  	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
->  	fmd->sensor[index].asd.match.of.node = rem;
+In case of Exynos CSIS it might not be so useful to have an empty
+port node specified in some top level *.dtsi file and only
+the endpoints specified in a board specific dts file. Nevertheless,
+I wouldn't be saying in general a port node must always have some
+endpoint node defined.
+
+I could apply this patch as it doesn't do any harm considering
+existing dts files in the kernel tree (arch/arm/boot/dts/
+exynos4412-trats2.dts), but the commit description would need to
+be changed.
 
 -- 
-Regards,
+Thanks,
 Sylwester
