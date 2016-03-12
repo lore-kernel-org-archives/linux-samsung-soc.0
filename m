@@ -1,52 +1,43 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 05/10] exynos4-is: Replace "hweight32(mask) == 1" with
- "is_power_of_2(mask)"
-Date: Fri, 11 Mar 2016 17:28:21 +0100
-Message-ID: <56E2F225.3040109@samsung.com>
-References: <1449398669-14507-1-git-send-email-zhaoxiu.zeng@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/5] hwrng: exynos - Hide PM functions with __maybe_unused
+Date: Sat, 12 Mar 2016 13:55:20 +0900
+Message-ID: <CAJKOXPd00gaPwAmXL7+_nX16QD-K9zoHcf0Y3oGx6UEh0USXOQ@mail.gmail.com>
+References: <1457682562-21219-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1449398669-14507-1-git-send-email-zhaoxiu.zeng@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
-Cc: kyungmin.park@samsung.com, mchehab@osg.samsung.com, kgene@kernel.org, k.kozlowski@samsung.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f195.google.com ([209.85.214.195]:35304 "EHLO
+	mail-ob0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750926AbcCLEzV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Mar 2016 23:55:21 -0500
+In-Reply-To: <1457682562-21219-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On 12/06/2015 11:44 AM, Zhaoxiu Zeng wrote:
-> From: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
-
-The patch looks OK, but could you also provide a proper commit
-message?
-
-> Signed-off-by: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
+2016-03-11 16:49 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com=
+>:
+> Replace ifdef with __maybe_unused to silence compiler warning on when
+> SUSPEND=3Dn and PM=3Dy:
+>
+> drivers/char/hw_random/exynos-rng.c:166:12: warning: =E2=80=98exynos_=
+rng_suspend=E2=80=99 defined but not used [-Wunused-function]
+>  static int exynos_rng_suspend(struct device *dev)
+>             ^
+> drivers/char/hw_random/exynos-rng.c:171:12: warning: =E2=80=98exynos_=
+rng_resume=E2=80=99 defined but not used [-Wunused-function]
+>  static int exynos_rng_resume(struct device *dev)
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  drivers/media/platform/exynos4-is/fimc-is-regs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
-> index cfe4406..ec75a24 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
-> @@ -11,6 +11,7 @@
->   * published by the Free Software Foundation.
->   */
->  #include <linux/delay.h>
-> +#include <linux/log2.h>
->  
->  #include "fimc-is.h"
->  #include "fimc-is-command.h"
-> @@ -107,7 +108,7 @@ int fimc_is_hw_get_params(struct fimc_is *is, unsigned int num_args)
->  
->  void fimc_is_hw_set_isp_buf_mask(struct fimc_is *is, unsigned int mask)
->  {
-> -	if (hweight32(mask) == 1) {
-> +	if (is_power_of_2(mask)) {
->  		dev_err(&is->pdev->dev, "%s(): not enough buffers (mask %#x)\n",
->  							__func__, mask);
->  		return;
+>  drivers/char/hw_random/exynos-rng.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+>
 
--- 
-Thanks,
-Sylwester
+Patch can be dropped, Arnd sent the same some days before.
+
+Best regards,
+Krzysztof
