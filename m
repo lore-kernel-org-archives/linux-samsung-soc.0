@@ -1,67 +1,77 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] ARM: EXYNOS: SROM driver for v4.6, 2nd try
-Date: Sat, 12 Mar 2016 17:16:04 -0800
-Message-ID: <20160313011604.GL17502@localhost>
-References: <1456825042-23733-1-git-send-email-k.kozlowski@samsung.com>
- <1456825042-23733-3-git-send-email-k.kozlowski@samsung.com>
- <56D77FA6.5070500@samsung.com>
- <2210448.V5gsMerLz6@wuerfel>
+Subject: Re: [GIT PULL 2/2] ARM64: EXYNOS: mach/soc changes for v4.6, 2nd
+Date: Sat, 12 Mar 2016 17:14:45 -0800
+Message-ID: <20160313011445.GK17502@localhost>
+References: <1456445103-23314-1-git-send-email-k.kozlowski@samsung.com>
+ <1456445103-23314-2-git-send-email-k.kozlowski@samsung.com>
+ <56CF97C2.5000305@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:36194 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753919AbcCMCIL (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:34101 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753914AbcCMCIJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Mar 2016 21:08:11 -0500
-Received: by mail-pa0-f54.google.com with SMTP id tt10so129928183pab.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Mar 2016 18:08:10 -0800 (PST)
+	Sat, 12 Mar 2016 21:08:09 -0500
+Received: by mail-pa0-f50.google.com with SMTP id fe3so113320271pab.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Mar 2016 18:08:09 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <2210448.V5gsMerLz6@wuerfel>
+In-Reply-To: <56CF97C2.5000305@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
 
-On Thu, Mar 03, 2016 at 02:11:32PM +0100, Arnd Bergmann wrote:
-> On Thursday 03 March 2016 09:04:54 Krzysztof Kozlowski wrote:
-> > On 01.03.2016 18:37, Krzysztof Kozlowski wrote:
-> > > Hi,
-> > > 
-> > > 
-> > > After Olof comments, second pull request with movement of SROM code
-> > > to separate driver - under drivers/memory/samsung (more are planned for
-> > > that directory).
-> > > 
-> > > This depends on (included here):
-> > > 1. tag samsung-dt-srom-4.6: SROM-DT changes, merged already to arm-soc,
-> > > 2. tag samsung-soc-4.6-2: next/soc changes, sent few days ago, not merged yet.
-> > > 
-> > > This may conflict in the future (in linux-next or Linus) around
-> > > drivers/memory/Kconfig with iommu tree. Just add all the changes.
-> > > 
-> > > 
-> > > The diff at the end contains both samsung-soc-4.6-2 and this stuff.
-> > > To make finding changes easier, below you will find difference between
-> > > this tag and samsung-soc-4.6-2:
+On Fri, Feb 26, 2016 at 09:09:38AM +0900, Krzysztof Kozlowski wrote:
+> On 26.02.2016 09:05, Krzysztof Kozlowski wrote:
+> > Hi Arnd, Kevin and Olof,
 > > 
-> > I see you did not pull this yet so can you wait a little bit? Rob
-> > Herring posted some comments on bindings so this might be revisited...
 > > 
-> > This is an unlucky patchset...
+> > Pull request for v4.6 with ARM64 mach/soc changes.
+> > 
+> > This depends on change in clk tree (removal of ARCH_EXYNOS7) which is
+> > pulled here.
+> > 
+> > 
+> > Kind regards,
+> > Krzysztof
+> > 
+> > 
+> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > 
+> > 
+> > 
+> > The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+> > 
+> >   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.6-2
+> > 
+> > for you to fetch changes up to c87b3e970c70d5e27f9eb9acd09c6b5b9d589860:
+> > 
+> >   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS (2016-02-23 08:49:46 +0900)
 > 
-> It was a bit late last night, and I didn't want to check that the
-> dependencies were correct. I also saw that you had discussed these
-> contents with Olof before, but didn't follow the thread there, so
-> I was hoping that Olof could get back to it and check that his
-> concerns are all addressed before picking it up.
+> And for easier grepping through history, below is the pull request
+> for Exynos-specific change (no clk commits):
+> 
+> 
+> The following changes since commit 85997a7cba7bc1578eb554e88f82023d85fb499a:
+> 
+>   clk: samsung: Don't build ARMv8 clock drivers on ARMv7 (2016-02-22 10:20:24 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.6-2
+> 
+> for you to fetch changes up to c87b3e970c70d5e27f9eb9acd09c6b5b9d589860:
+> 
+>   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS (2016-02-23 08:49:46 +0900)
 
-Hi,
-
-I've merged the other SoC branches now (that were respun without this SROM
-contents). I think it's safe given the feedback from Rob to wait with this
-driver for the next cycle. That way the dependencies are gone too since they
-will have been merged.
+Excellent, thanks! Merged into next/arm64.
 
 
 -Olof
