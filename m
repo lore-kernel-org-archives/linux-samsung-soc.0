@@ -1,77 +1,39 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/2] ARM64: EXYNOS: mach/soc changes for v4.6, 2nd
-Date: Sat, 12 Mar 2016 17:14:45 -0800
-Message-ID: <20160313011445.GK17502@localhost>
-References: <1456445103-23314-1-git-send-email-k.kozlowski@samsung.com>
- <1456445103-23314-2-git-send-email-k.kozlowski@samsung.com>
- <56CF97C2.5000305@samsung.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v3] ARM, ARM64: dts: drop "arm, amba-bus" in favor of
+ "simple-bus"
+Date: Sat, 12 Mar 2016 17:40:53 -0800
+Message-ID: <20160313014053.GF5883@localhost>
+References: <1457497605-10079-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:34101 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753914AbcCMCIJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Mar 2016 21:08:09 -0500
-Received: by mail-pa0-f50.google.com with SMTP id fe3so113320271pab.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Mar 2016 18:08:09 -0800 (PST)
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <56CF97C2.5000305@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1457497605-10079-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
 
-On Fri, Feb 26, 2016 at 09:09:38AM +0900, Krzysztof Kozlowski wrote:
-> On 26.02.2016 09:05, Krzysztof Kozlowski wrote:
-> > Hi Arnd, Kevin and Olof,
-> > 
-> > 
-> > Pull request for v4.6 with ARM64 mach/soc changes.
-> > 
-> > This depends on change in clk tree (removal of ARCH_EXYNOS7) which is
-> > pulled here.
-> > 
-> > 
-> > Kind regards,
-> > Krzysztof
-> > 
-> > 
-> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > 
-> > 
-> > 
-> > The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
-> > 
-> >   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.6-2
-> > 
-> > for you to fetch changes up to c87b3e970c70d5e27f9eb9acd09c6b5b9d589860:
-> > 
-> >   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS (2016-02-23 08:49:46 +0900)
+On Wed, Mar 09, 2016 at 01:26:45PM +0900, Masahiro Yamada wrote:
+> The compatible string "simple-bus" is well defined in ePAPR, while
+> I see no documentation for the "arm,amba-bus" arnywhere in ePAPR or
+> Documentation/devicetree/.
 > 
-> And for easier grepping through history, below is the pull request
-> for Exynos-specific change (no clk commits):
+> DT is also used by other projects than Linux kernel.  It is not a
+> good idea to rely on such an unofficial binding.
 > 
+> This commit
+>   - replaces "arm,amba-bus" with "simple-bus"
+>   - drops "arm,amba-bus" where it is used along with "simple-bus"
 > 
-> The following changes since commit 85997a7cba7bc1578eb554e88f82023d85fb499a:
-> 
->   clk: samsung: Don't build ARMv8 clock drivers on ARMv7 (2016-02-22 10:20:24 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.6-2
-> 
-> for you to fetch changes up to c87b3e970c70d5e27f9eb9acd09c6b5b9d589860:
-> 
->   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS (2016-02-23 08:49:46 +0900)
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> ---
 
-Excellent, thanks! Merged into next/arm64.
+Thanks, applied.
 
 
 -Olof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
