@@ -1,114 +1,79 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 01/10] clk: samsung: exynos3250: Add UART2 clock
-Date: Mon, 14 Mar 2016 11:04:06 +0900
-Message-ID: <1457921056-21257-2-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH 06/10] ARM: dts: exynos3250-artik5: Add MSHC0 dt node for
+ eMMC device
+Date: Mon, 14 Mar 2016 11:10:49 +0900
+Message-ID: <56E61DA9.1030105@samsung.com>
 References: <1457921056-21257-1-git-send-email-cw00.choi@samsung.com>
+ <1457921056-21257-8-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34872 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754174AbcCNCE1 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:39604 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932172AbcCNCKw convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 13 Mar 2016 22:04:27 -0400
-In-reply-to: <1457921056-21257-1-git-send-email-cw00.choi@samsung.com>
+	Sun, 13 Mar 2016 22:10:52 -0400
+In-reply-to: <1457921056-21257-8-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Dear all,
 
-This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
+It is my mistake. Please ignore only this patch.
+This patch is duplicate with patch[1].
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos3250.c   | 6 ++++++
- include/dt-bindings/clock/exynos3250.h | 6 +++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+[1] [PATCH 06/10] ARM: dts: Add MSHC0 dt node for eMMC device for exyno=
+s3250-artik5 module
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index fdd41b17a24f..bc60e399d1bc 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -306,6 +306,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
- 
- 	/* SRC_PERIL0 */
-+	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
- 	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
- 	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
- 
-@@ -390,6 +391,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
- 	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
- 
- 	/* DIV_PERIL0 */
-+	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
- 	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
- 	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
- 
-@@ -552,6 +554,9 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
- 		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
- 		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
-+
-+	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
-+		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
- 		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
-@@ -649,6 +654,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
- 	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
- 	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
- 	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
-+	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
- 	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
- 	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
- };
-diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
-index 63d01c15d2b3..ddb874130d86 100644
---- a/include/dt-bindings/clock/exynos3250.h
-+++ b/include/dt-bindings/clock/exynos3250.h
-@@ -79,6 +79,7 @@
- #define CLK_MOUT_CORE			58
- #define CLK_MOUT_APLL			59
- #define CLK_MOUT_ACLK_266_SUB		60
-+#define CLK_MOUT_UART2			61
- 
- /* Dividers */
- #define CLK_DIV_GPL			64
-@@ -127,6 +128,7 @@
- #define CLK_DIV_CORE			107
- #define CLK_DIV_HPM			108
- #define CLK_DIV_COPY			109
-+#define CLK_DIV_UART2			110
- 
- /* Gates */
- #define CLK_ASYNC_G3D			128
-@@ -223,6 +225,7 @@
- #define CLK_BLOCK_MFC			219
- #define CLK_BLOCK_CAM			220
- #define CLK_SMIES			221
-+#define CLK_UART2			222
- 
- /* Special clocks */
- #define CLK_SCLK_JPEG			224
-@@ -249,12 +252,13 @@
- #define CLK_SCLK_SPI0			245
- #define CLK_SCLK_UART1			246
- #define CLK_SCLK_UART0			247
-+#define CLK_SCLK_UART2			248
- 
- /*
-  * Total number of clocks of main CMU.
-  * NOTE: Must be equal to last clock ID increased by one.
-  */
--#define CLK_NR_CLKS			248
-+#define CLK_NR_CLKS			249
- 
- /*
-  * CMU DMC
--- 
-1.9.1
+Best Regards,
+Chanwoo Choi
+
+On 2016=EB=85=84 03=EC=9B=94 14=EC=9D=BC 11:04, Chanwoo Choi wrote:
+> From: Jaehoon Chung <jh80.chung@samsung.com>
+>=20
+> This patch adds MSHC (Mobile Storage Host Controller) dt node for Exy=
+nos3250
+> SoC. MSHC is an interface between the system and the eMMC device.
+>=20
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-artik5.dtsi | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot=
+/dts/exynos3250-artik5.dtsi
+> index 97d0087efb9f..75b291c10cdc 100644
+> --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+> @@ -277,6 +277,25 @@
+>  	};
+>  };
+> =20
+> +&mshc_0 {
+> +	num-slots =3D <1>;
+> +	broken-cd;
+> +	non-removable;
+> +	cap-mmc-highspeed;
+> +	desc-num =3D <4>;
+> +	card-detect-delay =3D <200>;
+> +	vmmc-supply =3D <&ldo11_reg>;
+> +	clock-frequency =3D <100000000>;
+> +	clock-freq-min-max =3D <400000 100000000>;
+> +	samsung,dw-mshc-ciu-div =3D <1>;
+> +	samsung,dw-mshc-sdr-timing =3D <0 1>;
+> +	samsung,dw-mshc-ddr-timing =3D <1 2>;
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+> +	bus-width =3D <8>;
+> +	status =3D "okay";
+> +};
+> +
+>  &xusbxti {
+>  	clock-frequency =3D <24000000>;
+>  };
+>=20
