@@ -1,8 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 06/10] ARM: dts: Add MSHC0 dt node for eMMC device for
- exynos3250-artik5 module
-Date: Mon, 14 Mar 2016 11:04:11 +0900
-Message-ID: <1457921056-21257-7-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 10/10] ARM: dts: Add PPMU node for exynos3250-artik5 module
+Date: Mon, 14 Mar 2016 11:04:16 +0900
+Message-ID: <1457921056-21257-12-git-send-email-cw00.choi@samsung.com>
 References: <1457921056-21257-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1457921056-21257-1-git-send-email-cw00.choi@samsung.com>
@@ -11,47 +10,61 @@ To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.fi
 Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Jaehoon Chung <jh80.chung@samsung.com>
+This patch adds PPMU (Platform Performance Monitoring Unit) Device Tree node
+for Exynos3250 based ARTIK5 module. The PPMU node is used to get the
+utilization of DMC0/DMC1/LEFTBUS/RIGHTBUS Block.
 
-This patch adds MSHC (Mobile Storage Host Controller) dt node for Exynos3250
-SoC. MSHC is an interface between the system and the eMMC device.
-
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-artik5.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/exynos3250-artik5.dtsi | 36 ++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 97d0087efb9f..75b291c10cdc 100644
+index 673883fda480..995356708b7d 100644
 --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
 +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -277,6 +277,25 @@
- 	};
+@@ -321,6 +321,42 @@
+ 	status = "okay";
  };
  
-+&mshc_0 {
-+	num-slots = <1>;
-+	broken-cd;
-+	non-removable;
-+	cap-mmc-highspeed;
-+	desc-num = <4>;
-+	card-detect-delay = <200>;
-+	vmmc-supply = <&ldo11_reg>;
-+	clock-frequency = <100000000>;
-+	clock-freq-min-max = <400000 100000000>;
-+	samsung,dw-mshc-ciu-div = <1>;
-+	samsung,dw-mshc-sdr-timing = <0 1>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+	bus-width = <8>;
++&ppmu_dmc0 {
 +	status = "okay";
++	events {
++		ppmu_dmc0_3: ppmu-event3-dmc0 {
++			event-name = "ppmu-event3-dmc0";
++		};
++	};
 +};
 +
- &xusbxti {
- 	clock-frequency = <24000000>;
++&ppmu_dmc1 {
++	status = "okay";
++	events {
++		ppmu_dmc1_3: ppmu-event3-dmc1 {
++			event-name = "ppmu-event3-dmc1";
++		};
++	};
++};
++
++&ppmu_leftbus {
++	status = "okay";
++	events {
++		ppmu_leftbus_3: ppmu-event3-leftbus {
++			event-name = "ppmu-event3-leftbus";
++		};
++	};
++};
++
++&ppmu_rightbus {
++	status = "okay";
++	events {
++		ppmu_rightbus_3: ppmu-event3-rightbus {
++			event-name = "ppmu-event3-rightbus";
++		};
++	};
++};
++
+ &tmu {
+ 	status = "okay";
  };
 -- 
 1.9.1
