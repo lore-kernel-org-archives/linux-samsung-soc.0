@@ -1,71 +1,57 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 07/10] ARM: dts: Add thermal zone and cpufreq node for
- exynos3250-artik5 module
-Date: Mon, 14 Mar 2016 11:04:13 +0900
-Message-ID: <1457921056-21257-9-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 06/10] ARM: dts: exynos3250-artik5: Add MSHC0 dt node for eMMC
+ device
+Date: Mon, 14 Mar 2016 11:04:12 +0900
+Message-ID: <1457921056-21257-8-git-send-email-cw00.choi@samsung.com>
 References: <1457921056-21257-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:58147 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933201AbcCNCEb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 13 Mar 2016 22:04:31 -0400
 In-reply-to: <1457921056-21257-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, pankaj.dubey@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, andi.shyti@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-This patch enables the CPU frequency scaling for exynos3250-artik5 module
-and adds the thernal zones with cpu cooling device to prevent the overheat
-temperature.
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
+This patch adds MSHC (Mobile Storage Host Controller) dt node for Exynos3250
+SoC. MSHC is an interface between the system and the eMMC device.
+
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-artik5.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/arm/boot/dts/exynos3250-artik5.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 75b291c10cdc..877e4827df83 100644
+index 97d0087efb9f..75b291c10cdc 100644
 --- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
 +++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -31,6 +31,25 @@
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x0205F000 0x1000>;
+@@ -277,6 +277,25 @@
  	};
-+
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			cooling-maps {
-+				map0 {
-+					/* Corresponds to 500MHz */
-+					cooling-device = <&cpu0 5 5>;
-+				};
-+				map1 {
-+					/* Corresponds to 200MHz */
-+					cooling-device = <&cpu0 8 8>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
  };
  
- &i2c_0 {
-@@ -296,6 +315,10 @@
- 	status = "okay";
- };
- 
-+&tmu {
++&mshc_0 {
++	num-slots = <1>;
++	broken-cd;
++	non-removable;
++	cap-mmc-highspeed;
++	desc-num = <4>;
++	card-detect-delay = <200>;
++	vmmc-supply = <&ldo11_reg>;
++	clock-frequency = <100000000>;
++	clock-freq-min-max = <400000 100000000>;
++	samsung,dw-mshc-ciu-div = <1>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++	bus-width = <8>;
 +	status = "okay";
 +};
 +
