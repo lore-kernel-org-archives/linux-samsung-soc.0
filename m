@@ -1,53 +1,68 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] drm/exynos: fix error handling in exynos_drm_subdrv_open
-Date: Mon, 14 Mar 2016 15:22:25 +0100
-Message-ID: <1457965368-3271060-1-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] rtc: s3c: Don't print an error on probe deferral
+Date: Mon, 14 Mar 2016 16:05:08 -0300
+Message-ID: <1457982308-29848-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:53795 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751379AbcCNTFa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Mar 2016 15:05:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Z2NjLTYgd2FybnMgYWJvdXQgYSBwb2ludGxlc3MgbG9vcCBpbiBleHlub3NfZHJtX3N1YmRydl9v
-cGVuOgoKZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYzogSW4gZnVuY3Rp
-b24gJ2V4eW5vc19kcm1fc3ViZHJ2X29wZW4nOgpkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY29yZS5jOjEwNDoxOTk6IGVycm9yOiBzZWxmLWNvbXBhcmlzb24gYWx3YXlzIGV2YWx1
-YXRlcyB0byBmYWxzZSBbLVdlcnJvcj10YXV0b2xvZ2ljYWwtY29tcGFyZV0KICBsaXN0X2Zvcl9l
-YWNoX2VudHJ5X3JldmVyc2Uoc3ViZHJ2LCAmc3ViZHJ2LT5saXN0LCBsaXN0KSB7CgpIZXJlLCB0
-aGUgbGlzdF9mb3JfZWFjaF9lbnRyeV9yZXZlcnNlIGltbWVkaWF0ZWx5IHRlcm1pbmF0ZXMgYmVj
-YXVzZQp0aGUgc3ViZHJ2IHBvaW50ZXIgaXMgY29tcGFyZWQgdG8gaXRzZWxmIGFzIHRoZSBsb29w
-IGVuZCBjb25kaXRpb24uCgpJZiB3ZSB3ZXJlIHRvIHRha2UgdGhlIGN1cnJlbnQgc3ViZHJ2IHBv
-aW50ZXIgYXMgdGhlIHN0YXJ0IG9mIHRoZQpsaXN0IChhcyB3ZSB3b3VsZCBkbyBpZiBsaXN0X2Zv
-cl9lYWNoX2VudHJ5X3JldmVyc2UoKSB3YXMgbm90IGEgbWFjcm8pLAp3ZSB3b3VsZCBpdGVyYXRl
-IGJhY2t3YXJkcyBvdmVyIHRoZSAmZXh5bm9zX2RybV9zdWJkcnZfbGlzdCBhbmNob3IsCndoaWNo
-IHdvdWxkIGJlIGV2ZW4gd29yc2UuCgpJbnN0ZWFkLCB3ZSBuZWVkIHRvIHVzZSBsaXN0X2Zvcl9l
-YWNoX2VudHJ5X2NvbnRpbnVlX3JldmVyc2UoKQp0byBnbyBiYWNrIG92ZXIgZWFjaCBzdWJkcnYg
-dGhhdCB3YXMgc3VjY2Vzc2Z1bGx5IG9wZW5lZCB1bnRpbAp0aGUgZmlyc3QgZW50cnkuCgpTaWdu
-ZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgpGaXhlczogOTA4NGY3Yjhh
-NTc3ICgiZHJtL2V4eW5vczogYWRkIHN1YmRydiBvcGVuL2Nsb3NlIGZ1bmN0aW9ucyIpCi0tLQog
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYyB8IDIgKy0KIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fY29yZS5jCmluZGV4IDdmNTViYTY3NzFjNi4uMDExMjExZTQxNjdkIDEw
-MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY29yZS5jCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMKQEAgLTEwMSw3ICsxMDEs
-NyBAQCBpbnQgZXh5bm9zX2RybV9zdWJkcnZfb3BlbihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBz
-dHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCiAJcmV0dXJuIDA7CiAKIGVycjoKLQlsaXN0X2Zvcl9lYWNo
-X2VudHJ5X3JldmVyc2Uoc3ViZHJ2LCAmc3ViZHJ2LT5saXN0LCBsaXN0KSB7CisJbGlzdF9mb3Jf
-ZWFjaF9lbnRyeV9jb250aW51ZV9yZXZlcnNlKHN1YmRydiwgJmV4eW5vc19kcm1fc3ViZHJ2X2xp
-c3QsIGxpc3QpIHsKIAkJaWYgKHN1YmRydi0+Y2xvc2UpCiAJCQlzdWJkcnYtPmNsb3NlKGRldiwg
-c3ViZHJ2LT5kZXYsIGZpbGUpOwogCX0KLS0gCjIuNy4wCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The clock and source clock looked up by the driver may not be available
+just because the clock controller driver was not probed yet so printing
+an error in this case is not correct and only adds confusion to users.
+
+However, knowing that a driver's probe was deferred may be useful so it
+can be printed as debug information.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+ drivers/rtc/rtc-s3c.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index ffb860d18701..789ac8715038 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -501,18 +501,27 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 
+ 	info->rtc_clk = devm_clk_get(&pdev->dev, "rtc");
+ 	if (IS_ERR(info->rtc_clk)) {
+-		dev_err(&pdev->dev, "failed to find rtc clock\n");
+-		return PTR_ERR(info->rtc_clk);
++		ret = PTR_ERR(info->rtc_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "failed to find rtc clock\n");
++		else
++			dev_dbg(&pdev->dev, "probe deferred due rtc clock\n");
++		return ret;
+ 	}
+ 	clk_prepare_enable(info->rtc_clk);
+ 
+ 	if (info->data->needs_src_clk) {
+ 		info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
+ 		if (IS_ERR(info->rtc_src_clk)) {
+-			dev_err(&pdev->dev,
+-				"failed to find rtc source clock\n");
++			ret = PTR_ERR(info->rtc_src_clk);
++			if (ret != -EPROBE_DEFER)
++				dev_err(&pdev->dev,
++					"failed to find rtc source clock\n");
++			else
++				dev_dbg(&pdev->dev,
++					"probe deferred due rtc source clock\n");
+ 			clk_disable_unprepare(info->rtc_clk);
+-			return PTR_ERR(info->rtc_src_clk);
++			return ret;
+ 		}
+ 		clk_prepare_enable(info->rtc_src_clk);
+ 	}
+-- 
+2.5.0
