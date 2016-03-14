@@ -1,57 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 4/4] hwrng: exynos - Disable runtime PM on driver unbind
-Date: Mon, 14 Mar 2016 09:07:15 +0900
-Message-ID: <1457914035-26856-4-git-send-email-k.kozlowski@samsung.com>
-References: <1457914035-26856-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1457914035-26856-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alan Stern <stern@rowland.harvard.edu>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] serial: samsung: Reorder the sequence of clock control when
+ call s3c24xx_serial_set_termios()
+Date: Mon, 14 Mar 2016 09:41:05 +0900
+Message-ID: <1457916065-27418-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:57791 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933071AbcCNAlK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 13 Mar 2016 20:41:10 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-Driver enabled runtime PM but did not revert this on removal. Re-binding
-of a device triggered warning:
-	exynos-rng 10830400.rng: Unbalanced pm_runtime_enable!
+This patch fixes the broken serial log when changing the clock source
+of uart device. Before disabling the original clock source, this patch
+enables the new clock source to protect the clock off state for a split second.
 
-Fixes: b329669ea0b5 ("hwrng: exynos - Add support for Exynos random number generator")
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
+ drivers/tty/serial/samsung.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes since v1:
-1. Call also pm_runtime_dont_use_autosuspend() to revert everything set
-   during probe.
----
- drivers/char/hw_random/exynos-rng.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/char/hw_random/exynos-rng.c b/drivers/char/hw_random/exynos-rng.c
-index 71b45b153cf2..ed78f25e4ec6 100644
---- a/drivers/char/hw_random/exynos-rng.c
-+++ b/drivers/char/hw_random/exynos-rng.c
-@@ -156,6 +156,14 @@ static int exynos_rng_probe(struct platform_device *pdev)
- 	return ret;
- }
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index d72cd736bdc6..80d59dbfebba 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1265,13 +1265,13 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	if (ourport->baudclk != clk) {
+ 		s3c24xx_serial_setsource(port, clk_sel);
  
-+static int exynos_rng_remove(struct platform_device *pdev)
-+{
-+	pm_runtime_dont_use_autosuspend(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
++		clk_prepare_enable(clk);
 +
-+	return 0;
-+}
-+
- static int __maybe_unused exynos_rng_runtime_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -213,6 +221,7 @@ static struct platform_driver exynos_rng_driver = {
- 		.of_match_table = exynos_rng_dt_match,
- 	},
- 	.probe		= exynos_rng_probe,
-+	.remove		= exynos_rng_remove,
- };
+ 		if (!IS_ERR(ourport->baudclk)) {
+ 			clk_disable_unprepare(ourport->baudclk);
+ 			ourport->baudclk = ERR_PTR(-EINVAL);
+ 		}
  
- module_platform_driver(exynos_rng_driver);
+-		clk_prepare_enable(clk);
+-
+ 		ourport->baudclk = clk;
+ 		ourport->baudclk_rate = clk ? clk_get_rate(clk) : 0;
+ 	}
 -- 
-2.5.0
+1.9.1
