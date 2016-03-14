@@ -1,38 +1,29 @@
 From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v2] rtc: s3c: Don't print an error on probe deferral
-Date: Mon, 14 Mar 2016 13:30:53 -0700
-Message-ID: <1457987453.11972.133.camel@perches.com>
-References: <1457987157-1177-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] rtc: s3c: Don't print an error on probe deferral
+Date: Mon, 14 Mar 2016 13:33:08 -0700
+Message-ID: <1457987588.11972.135.camel@perches.com>
+References: <1457982308-29848-1-git-send-email-javier@osg.samsung.com>
+	 <1457982675.11972.119.camel@perches.com> <56E7119B.9060900@osg.samsung.com>
+	 <1457984317.11972.123.camel@perches.com> <56E71825.5070104@osg.samsung.com>
+	 <20160314201958.GB28277@piout.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:56642 "EHLO
+Received: from smtprelay0164.hostedemail.com ([216.40.44.164]:48624 "EHLO
 	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753263AbcCNUa5 (ORCPT
+	by vger.kernel.org with ESMTP id S1753263AbcCNUdM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2016 16:30:57 -0400
-In-Reply-To: <1457987157-1177-1-git-send-email-javier@osg.samsung.com>
+	Mon, 14 Mar 2016 16:33:12 -0400
+In-Reply-To: <20160314201958.GB28277@piout.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com
 
-On Mon, 2016-03-14 at 17:25 -0300, Javier Martinez Canillas wrote:
-> The clock and source clock looked up by the driver may not be available
-> just because the clock controller driver was not probed yet so printing
-> an error in this case is not correct and only adds confusion to users.
-> 
-> However, knowing that a driver's probe was deferred may be useful so it
-> can be printed as debug information.
+On Mon, 2016-03-14 at 21:19 +0100, Alexandre Belloni wrote:
+> checkpatch will not complain for messages but it will definitively
+> complain if they are not properly aligned:)
 
-Hello again Javier:
-> +			dev_dbg(&pdev->dev, "probe deferred due missing rtc clk\n");
-
-Again, intelligible English would not use "due"
-but would use "due to" or "because of".
-
-> +				dev_dbg(&pdev->dev,
-> +					"probe deferred due missing rtc src clk\n");
-
-here too.
+checkpatch wouldn't actually complain unless the --strict option
+was used or these files were in drivers/net or drivers/staging.
