@@ -1,108 +1,115 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3] rtc: s3c: Don't print an error on probe deferral
-Date: Mon, 14 Mar 2016 22:59:11 -0300
-Message-ID: <56E76C6F.5020803@osg.samsung.com>
-References: <1458005918-7893-1-git-send-email-javier@osg.samsung.com>
- <56E76A57.7070104@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 2/7] clk: samsung: exynos3250: Add MMC2 clock
+Date: Tue, 15 Mar 2016 11:08:10 +0900
+Message-ID: <1458007695-3627-3-git-send-email-cw00.choi@samsung.com>
+References: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:53890 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750912AbcCOB7Z (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:57527 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752198AbcCOCIU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2016 21:59:25 -0400
-In-Reply-To: <56E76A57.7070104@samsung.com>
+	Mon, 14 Mar 2016 22:08:20 -0400
+In-reply-to: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Joe Perches <joe@perches.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
+To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello Krzysztof,
+This patch add the MMC2 clocks (mux, divider, gate) of Exynos3250 SoC.
 
-On 03/14/2016 10:50 PM, Krzysztof Kozlowski wrote:
-> On 15.03.2016 10:38, Javier Martinez Canillas wrote:
->> The clock and source clock looked up by the driver may not be available
->> just because the clock controller driver was not probed yet so printing
->> an error in this case is not correct and only adds confusion to users.
->>
->> However, knowing that a driver's probe was deferred may be useful so it
->> can be printed as a debug information.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> ---
->>
->> Changes in v3:
->> - Change debug messages again as suggested by Joe Perches.
->>
->> Changes in v2:
->> - Improve debug messages as suggested by Joe Perches.
->>
->>  drivers/rtc/rtc-s3c.c | 19 ++++++++++++++-----
->>  1 file changed, 14 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
->> index ffb860d18701..d01ad7e8078e 100644
->> --- a/drivers/rtc/rtc-s3c.c
->> +++ b/drivers/rtc/rtc-s3c.c
->> @@ -501,18 +501,27 @@ static int s3c_rtc_probe(struct platform_device *pdev)
->>  
->>  	info->rtc_clk = devm_clk_get(&pdev->dev, "rtc");
->>  	if (IS_ERR(info->rtc_clk)) {
->> -		dev_err(&pdev->dev, "failed to find rtc clock\n");
->> -		return PTR_ERR(info->rtc_clk);
->> +		ret = PTR_ERR(info->rtc_clk);
->> +		if (ret != -EPROBE_DEFER)
->> +			dev_err(&pdev->dev, "failed to find rtc clock\n");
->> +		else
->> +			dev_dbg(&pdev->dev, "probe deferred due to missing rtc clk\n");
->> +		return ret;
->>  	}
->>  	clk_prepare_enable(info->rtc_clk);
->>  
->>  	if (info->data->needs_src_clk) {
->>  		info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
->>  		if (IS_ERR(info->rtc_src_clk)) {
->> -			dev_err(&pdev->dev,
->> -				"failed to find rtc source clock\n");
->> +			ret = PTR_ERR(info->rtc_src_clk);
->> +			if (ret != -EPROBE_DEFER)
->> +				dev_err(&pdev->dev,
->> +					"failed to find rtc source clock\n");
->> +			else
->> +				dev_dbg(&pdev->dev,
->> +					"probe deferred due to missing rtc src clk\n");
->>  			clk_disable_unprepare(info->rtc_clk);
->> -			return PTR_ERR(info->rtc_src_clk);
->> +			return ret;
->>  		}
->>  		clk_prepare_enable(info->rtc_src_clk);
->>  	}
->>
-> 
-> The error path starts looking complicated. This has now 4 indentation
-> levels...
-> 
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c   | 9 +++++++++
+ include/dt-bindings/clock/exynos3250.h | 7 ++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-Yeah, I don't think we can get rid of the 4 indentation levels since
-the function already has 3 and a check for the errno code is needed.
-
-> I agree for removal of error in case of probe deferral because it might
-> be misleading but I don't see much benefit of a debug message.
->
-
-But yes, we can at least get rid of the else statement. I don't have a
-strong opinion about the debug information, I left it to avoid someone
-to tell me that I was removing a useful log.
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index bc60e399d1bc..16575ee874cb 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -302,6 +302,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
  
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
+ 	/* SRC_FSYS */
+ 	MUX(CLK_MOUT_TSADC, "mout_tsadc", group_sclk_p, SRC_FSYS, 28, 4),
++	MUX(CLK_MOUT_MMC2, "mout_mmc2", group_sclk_p, SRC_FSYS, 8, 4),
+ 	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 4),
+ 	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
+ 
+@@ -390,6 +391,11 @@ static struct samsung_div_clock div_clks[] __initdata = {
+ 		CLK_SET_RATE_PARENT, 0),
+ 	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+ 
++	/* DIV_FSYS2 */
++	DIV_F(CLK_DIV_MMC2_PRE, "div_mmc2_pre", "div_mmc2", DIV_FSYS2, 8, 8,
++		CLK_SET_RATE_PARENT, 0),
++	DIV(CLK_DIV_MMC2, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
++
+ 	/* DIV_PERIL0 */
+ 	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
+ 	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+@@ -540,6 +546,8 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 		GATE_SCLK_FSYS, 9, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_EBI, "sclk_ebi", "div_ebi",
+ 		GATE_SCLK_FSYS, 6, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "div_mmc2_pre",
++		GATE_SCLK_FSYS, 2, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_MMC1, "sclk_mmc1", "div_mmc1_pre",
+ 		GATE_SCLK_FSYS, 1, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc0_pre",
+@@ -635,6 +643,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 	GATE(CLK_USBOTG, "usbotg", "div_aclk_200", GATE_IP_FSYS, 13, 0, 0),
+ 	GATE(CLK_USBHOST, "usbhost", "div_aclk_200", GATE_IP_FSYS, 12, 0, 0),
+ 	GATE(CLK_SROMC, "sromc", "div_aclk_200", GATE_IP_FSYS, 11, 0, 0),
++	GATE(CLK_SDMMC2, "sdmmc2", "div_aclk_200", GATE_IP_FSYS, 7, 0, 0),
+ 	GATE(CLK_SDMMC1, "sdmmc1", "div_aclk_200", GATE_IP_FSYS, 6, 0, 0),
+ 	GATE(CLK_SDMMC0, "sdmmc0", "div_aclk_200", GATE_IP_FSYS, 5, 0, 0),
+ 	GATE(CLK_PDMA1, "pdma1", "div_aclk_200", GATE_IP_FSYS, 1, 0, 0),
+diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+index ddb874130d86..c796ff02ceeb 100644
+--- a/include/dt-bindings/clock/exynos3250.h
++++ b/include/dt-bindings/clock/exynos3250.h
+@@ -80,6 +80,7 @@
+ #define CLK_MOUT_APLL			59
+ #define CLK_MOUT_ACLK_266_SUB		60
+ #define CLK_MOUT_UART2			61
++#define CLK_MOUT_MMC2			62
+ 
+ /* Dividers */
+ #define CLK_DIV_GPL			64
+@@ -129,6 +130,8 @@
+ #define CLK_DIV_HPM			108
+ #define CLK_DIV_COPY			109
+ #define CLK_DIV_UART2			110
++#define CLK_DIV_MMC2_PRE		111
++#define CLK_DIV_MMC2			112
+ 
+ /* Gates */
+ #define CLK_ASYNC_G3D			128
+@@ -226,6 +229,7 @@
+ #define CLK_BLOCK_CAM			220
+ #define CLK_SMIES			221
+ #define CLK_UART2			222
++#define CLK_SDMMC2			223
+ 
+ /* Special clocks */
+ #define CLK_SCLK_JPEG			224
+@@ -253,12 +257,13 @@
+ #define CLK_SCLK_UART1			246
+ #define CLK_SCLK_UART0			247
+ #define CLK_SCLK_UART2			248
++#define CLK_SCLK_MMC2			249
+ 
+ /*
+  * Total number of clocks of main CMU.
+  * NOTE: Must be equal to last clock ID increased by one.
+  */
+-#define CLK_NR_CLKS			249
++#define CLK_NR_CLKS			250
+ 
+ /*
+  * CMU DMC
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
