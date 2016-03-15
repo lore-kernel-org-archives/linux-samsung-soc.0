@@ -1,92 +1,68 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos: build fbdev code conditionally
-Date: Tue, 15 Mar 2016 12:43:21 +0100
-Message-ID: <1458042201-12388-1-git-send-email-a.hajda@samsung.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 8/8] drivers/pinctrl: clean up samsung modular vs.
+ non-modular distinctions
+Date: Tue, 15 Mar 2016 09:20:40 -0400
+Message-ID: <20160315132039.GE23251@windriver.com>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+ <1456778924-20730-9-git-send-email-paul.gortmaker@windriver.com>
+ <CACRpkdYN_qRUa_hscDma_jRAF=2K7_qaGM+f5DNr-NyA3g_NHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:37347 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965244AbcCONWJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Mar 2016 09:22:09 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYN_qRUa_hscDma_jRAF=2K7_qaGM+f5DNr-NyA3g_NHg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-RmJkZXYgY29kZSBzaG91bGQgYmUgY29tcGlsZWQgb25seSBpZiBDT05GSUdfRFJNX0ZCREVWX0VN
-VUxBVElPTiBvcHRpb24KaXMgZW5hYmxlZC4gVGhlIHBhdGNoIGZpeGVzIGV4eW5vcy1kcm0gY29k
-ZSB0cnlpbmcgdG8gbWFuaXB1bGF0ZQpmYmRldiBkYXRhIHdoaWNoIGlzIG5vdCBpbml0aWFsaXpl
-ZCBpbiBjYXNlIENPTkZJR19EUk1fRkJERVZfRU1VTEFUSU9OCmlzIGRpc2FibGVkLgoKU2lnbmVk
-LW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL01ha2VmaWxlICAgICAgICAgICB8ICA2ICsrKy0tLQogZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICAgfCAxMSAtLS0tLS0tLS0tLQogZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgfCAxMSArKysrKysrKysrKwogZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmggfCAyMyArKysrKysrKysrKysr
-KysrKysrKysrLQogNCBmaWxlcyBjaGFuZ2VkLCAzNiBpbnNlcnRpb25zKCspLCAxNSBkZWxldGlv
-bnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL01ha2VmaWxlIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZQppbmRleCA5NjhiMzFjLi4yM2QyZjk1IDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL01ha2VmaWxlCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvTWFrZWZpbGUKQEAgLTIsMTAgKzIsMTAgQEAKICMgTWFrZWZpbGUgZm9yIHRo
-ZSBkcm0gZGV2aWNlIGRyaXZlci4gIFRoaXMgZHJpdmVyIHByb3ZpZGVzIHN1cHBvcnQgZm9yIHRo
-ZQogIyBEaXJlY3QgUmVuZGVyaW5nIEluZnJhc3RydWN0dXJlIChEUkkpIGluIFhGcmVlODYgNC4x
-LjAgYW5kIGhpZ2hlci4KIAotZXh5bm9zZHJtLXkgOj0gZXh5bm9zX2RybV9kcnYubyBleHlub3Nf
-ZHJtX2NydGMubyBleHlub3NfZHJtX2ZiZGV2Lm8gXAotCQlleHlub3NfZHJtX2ZiLm8gZXh5bm9z
-X2RybV9nZW0ubyBleHlub3NfZHJtX2NvcmUubyBcCi0JCWV4eW5vc19kcm1fcGxhbmUubworZXh5
-bm9zZHJtLXkgOj0gZXh5bm9zX2RybV9kcnYubyBleHlub3NfZHJtX2NydGMubyBleHlub3NfZHJt
-X2ZiLm8gXAorCQlleHlub3NfZHJtX2dlbS5vIGV4eW5vc19kcm1fY29yZS5vIGV4eW5vc19kcm1f
-cGxhbmUubwogCitleHlub3Nkcm0tJChDT05GSUdfRFJNX0ZCREVWX0VNVUxBVElPTikgKz0gZXh5
-bm9zX2RybV9mYmRldi5vCiBleHlub3Nkcm0tJChDT05GSUdfRFJNX0VYWU5PU19JT01NVSkgKz0g
-ZXh5bm9zX2RybV9pb21tdS5vCiBleHlub3Nkcm0tJChDT05GSUdfRFJNX0VYWU5PU19GSU1EKQkr
-PSBleHlub3NfZHJtX2ZpbWQubwogZXh5bm9zZHJtLSQoQ09ORklHX0RSTV9FWFlOT1M1NDMzX0RF
-Q09OKQkrPSBleHlub3M1NDMzX2RybV9kZWNvbi5vCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9mYi5jCmluZGV4IGQ2MTQxOTQuLjgxY2M1NTMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9mYi5jCkBAIC0xOTksMTcgKzE5OSw2IEBAIGRtYV9hZGRyX3QgZXh5bm9zX2Ry
-bV9mYl9kbWFfYWRkcihzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiwgaW50IGluZGV4KQogCXJl
-dHVybiBleHlub3NfZmItPmRtYV9hZGRyW2luZGV4XTsKIH0KIAotc3RhdGljIHZvaWQgZXh5bm9z
-X2RybV9vdXRwdXRfcG9sbF9jaGFuZ2VkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCi17Ci0Jc3Ry
-dWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdmF0ZSA9IGRldi0+ZGV2X3ByaXZhdGU7Ci0Jc3Ry
-dWN0IGRybV9mYl9oZWxwZXIgKmZiX2hlbHBlciA9IHByaXZhdGUtPmZiX2hlbHBlcjsKLQotCWlm
-IChmYl9oZWxwZXIpCi0JCWRybV9mYl9oZWxwZXJfaG90cGx1Z19ldmVudChmYl9oZWxwZXIpOwot
-CWVsc2UKLQkJZXh5bm9zX2RybV9mYmRldl9pbml0KGRldik7Ci19Ci0KIHN0YXRpYyBjb25zdCBz
-dHJ1Y3QgZHJtX21vZGVfY29uZmlnX2Z1bmNzIGV4eW5vc19kcm1fbW9kZV9jb25maWdfZnVuY3Mg
-PSB7CiAJLmZiX2NyZWF0ZSA9IGV4eW5vc191c2VyX2ZiX2NyZWF0ZSwKIAkub3V0cHV0X3BvbGxf
-Y2hhbmdlZCA9IGV4eW5vc19kcm1fb3V0cHV0X3BvbGxfY2hhbmdlZCwKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMKaW5kZXggNGFlODYwYy4uNzJkN2MwYiAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMKQEAgLTMxNywzICszMTcsMTQg
-QEAgdm9pZCBleHlub3NfZHJtX2ZiZGV2X3Jlc3RvcmVfbW9kZShzdHJ1Y3QgZHJtX2RldmljZSAq
-ZGV2KQogCiAJZHJtX2ZiX2hlbHBlcl9yZXN0b3JlX2ZiZGV2X21vZGVfdW5sb2NrZWQocHJpdmF0
-ZS0+ZmJfaGVscGVyKTsKIH0KKwordm9pZCBleHlub3NfZHJtX291dHB1dF9wb2xsX2NoYW5nZWQo
-c3RydWN0IGRybV9kZXZpY2UgKmRldikKK3sKKwlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpw
-cml2YXRlID0gZGV2LT5kZXZfcHJpdmF0ZTsKKwlzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqZmJfaGVs
-cGVyID0gcHJpdmF0ZS0+ZmJfaGVscGVyOworCisJaWYgKGZiX2hlbHBlcikKKwkJZHJtX2ZiX2hl
-bHBlcl9ob3RwbHVnX2V2ZW50KGZiX2hlbHBlcik7CisJZWxzZQorCQlleHlub3NfZHJtX2ZiZGV2
-X2luaXQoZGV2KTsKK30KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9mYmRldi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmgK
-aW5kZXggZTE2ZDdmMC4uMzMwZWVmOCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZiZGV2LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZiZGV2LmgKQEAgLTE1LDkgKzE1LDMwIEBACiAjaWZuZGVmIF9FWFlOT1NfRFJNX0ZCREVW
-X0hfCiAjZGVmaW5lIF9FWFlOT1NfRFJNX0ZCREVWX0hfCiAKKyNpZmRlZiBDT05GSUdfRFJNX0ZC
-REVWX0VNVUxBVElPTgorCiBpbnQgZXh5bm9zX2RybV9mYmRldl9pbml0KHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYpOwotaW50IGV4eW5vc19kcm1fZmJkZXZfcmVpbml0KHN0cnVjdCBkcm1fZGV2aWNl
-ICpkZXYpOwogdm9pZCBleHlub3NfZHJtX2ZiZGV2X2Zpbmkoc3RydWN0IGRybV9kZXZpY2UgKmRl
-dik7CiB2b2lkIGV4eW5vc19kcm1fZmJkZXZfcmVzdG9yZV9tb2RlKHN0cnVjdCBkcm1fZGV2aWNl
-ICpkZXYpOwordm9pZCBleHlub3NfZHJtX291dHB1dF9wb2xsX2NoYW5nZWQoc3RydWN0IGRybV9k
-ZXZpY2UgKmRldik7CisKKyNlbHNlCisKK3N0YXRpYyBpbmxpbmUgaW50IGV4eW5vc19kcm1fZmJk
-ZXZfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQoreworCXJldHVybiAwOworfQorCitzdGF0
-aWMgaW5saW5lIHZvaWQgZXh5bm9zX2RybV9mYmRldl9maW5pKHN0cnVjdCBkcm1fZGV2aWNlICpk
-ZXYpCit7Cit9CisKK3N0YXRpYyBpbmxpbmUgdm9pZCBleHlub3NfZHJtX2ZiZGV2X3Jlc3RvcmVf
-bW9kZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQoreworfQorCisjZGVmaW5lIGV4eW5vc19kcm1f
-b3V0cHV0X3BvbGxfY2hhbmdlZCAoTlVMTCkKKworI2VuZGlmCiAKICNlbmRpZgotLSAKMS45LjEK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+[Re: [PATCH 8/8] drivers/pinctrl: clean up samsung modular vs. non-modular distinctions] On 15/03/2016 (Tue 09:50) Linus Walleij wrote:
+
+> On Mon, Feb 29, 2016 at 9:48 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> 
+> > Fixups here tend to be more all over the map vs. some of the other
+> > repeated/systematic ones we've seen elsewhere.
+> >
+> > We remove module.h from code that isn't doing anything modular at
+> > all;  if they have __init sections, then replace it with init.h
+> >
+> > A couple drivers have module_exit() code that is essentially orphaned,
+> > and so we remove that.
+> >
+> > There are no module_init replacements, so we have no concerns wrt.
+> > initcall ordering changes as per some of the other cleanups.
+> >
+> > Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> >
+> > We also delete the MODULE_LICENSE tag etc. since all that information
+> > was (or is now) contained at the top of the file in the comments.
+> >
+> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> > Cc: Thomas Abraham <thomas.ab@samsung.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Cc: linux-gpio@vger.kernel.org
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> 
+> This didn't make it in for v4.6 because noone provided ACKs.
+> 
+> Please resend the outstanding (rebased) demodularization patches
+> after v4.6-rc1 and I will merge them no matter if I get ACKs or not,
+> I will not wait for ACKs any longer than that.
+
+Sounds good, will do that in ~2 wks.
+
+Thanks,
+Paul.
+--
+
+> 
+> Yours,
+> Linus Walleij
