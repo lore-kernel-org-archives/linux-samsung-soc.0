@@ -1,8 +1,7 @@
 From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 7/7] ARM: dts: Add initial gpio setting of MMC2 device for
- exynos3250-monk
-Date: Tue, 15 Mar 2016 11:08:15 +0900
-Message-ID: <1458007695-3627-8-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v2 4/7] ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+Date: Tue, 15 Mar 2016 11:08:12 +0900
+Message-ID: <1458007695-3627-5-git-send-email-cw00.choi@samsung.com>
 References: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1458007695-3627-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -11,38 +10,95 @@ To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yR
 Cc: jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds initial pin configuration of MMC2 device on exynos3250-monk
-board because the MMC2 gpio pin (gpk2[0-6]) are NC (not connected) state.
+This patch adds the MSHC2 (Mobile Storage Host Controller) Device Tree node for
+Exynos3250 SoC.
 
-Suggested-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos3250-monk.dts | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 35 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 13 ++++++++++++
+ 2 files changed, 48 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 443a35085846..dab965f35352 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -558,7 +558,17 @@
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index 54c587f27265..40ea7de44933 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -490,6 +490,41 @@
+ 		samsung,pin-drv = <3>;
+ 	};
  
- &pinctrl_1 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sleep1>;
-+	pinctrl-0 = <&initial1 &sleep1>;
-+
-+	initial1: initial-state {
-+		PIN_IN(gpk2-0, DOWN, LV1);
-+		PIN_IN(gpk2-1, DOWN, LV1);
-+		PIN_IN(gpk2-2, DOWN, LV1);
-+		PIN_IN(gpk2-3, DOWN, LV1);
-+		PIN_IN(gpk2-4, DOWN, LV1);
-+		PIN_IN(gpk2-5, DOWN, LV1);
-+		PIN_IN(gpk2-6, DOWN, LV1);
++	sd2_clk: sd2-clk {
++		samsung,pins = "gpk2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
 +	};
++
++	sd2_cmd: sd2-cmd {
++		samsung,pins = "gpk2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cd: sd2-cd {
++		samsung,pins = "gpk2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus1: sd2-bus-width1 {
++		samsung,pins = "gpk2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus4: sd2-bus-width4 {
++		samsung,pins = "gpk2-4", "gpk2-5", "gpk2-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
+ 	cam_port_b_io: cam-port-b-io {
+ 		samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
+ 				"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 076677384d20..2fead5730879 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -30,6 +30,7 @@
+ 		pinctrl1 = &pinctrl_1;
+ 		mshc0 = &mshc_0;
+ 		mshc1 = &mshc_1;
++		mshc2 = &mshc_2;
+ 		spi0 = &spi_0;
+ 		spi1 = &spi_1;
+ 		i2c0 = &i2c_0;
+@@ -371,6 +372,18 @@
+ 			status = "disabled";
+ 		};
  
- 	sleep1: sleep-state {
- 		PIN_SLP(gpe0-0, PREV, NONE);
++		mshc_2: mshc@12530000 {
++			compatible = "samsung,exynos5250-dw-mshc";
++			reg = <0x12530000 0x1000>;
++			interrupts = <0 144 0>;
++			clocks = <&cmu CLK_SDMMC2>, <&cmu CLK_SCLK_MMC2>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x80>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		exynos_usbphy: exynos-usbphy@125B0000 {
+ 			compatible = "samsung,exynos3250-usb2-phy";
+ 			reg = <0x125B0000 0x100>;
 -- 
 1.9.1
 
