@@ -1,75 +1,59 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 0/7] ARM: dts: Add new Exynos3250-based ARTIK5 module dtsi
- file
-Date: Tue, 15 Mar 2016 11:08:08 +0900
-Message-ID: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v2 6/7] ARM: dts: Add MSHC2 dt node for SD card for
+ exynos3250-artik5-eval board
+Date: Tue, 15 Mar 2016 11:08:14 +0900
+Message-ID: <1458007695-3627-7-git-send-email-cw00.choi@samsung.com>
+References: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58620 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751997AbcCOCIU (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:44407 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933566AbcCOCIY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2016 22:08:20 -0400
+	Mon, 14 Mar 2016 22:08:24 -0400
+In-reply-to: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
 Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-This patchset add the support for Device Tree source for Samsung ARTIK5 module[1]
-based on Exynos3250 SoC and development board[2]. The ARTIK5 module includes
-the follwoing devices:
-- Application Processor (Samsung Exynos3250)
-- WiFi/BT Combo chip
-- PMIC (Samsung S2MPS14)
-- eMMC (4GB)
-- DRAM LPDDR3 (512MB)
-- Connectors pin (60 Pins x 3 set)
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
-Also, this patchset add the ARTIK5 development board[2] dts file which includes
-the ARTIK5 module[1] and have the devices such as sound codec, sd card port,
-ethernet port, uart port and so on.
+This patch adds MSHC (Mobile Storage Host Controller) dt node for
+Exynos3250 SoC. MSHC is an interface between the system and the SD card
 
-[1] https://www.artik.io/hardware/artik-5
-[2] http://www.digikey.com/product-detail/en/SIP-KITNXB001/1510-1316-ND/5825102
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-artik5-eval.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Changes from v1:
-(https://lkml.org/lkml/2016/3/13/215)
-- Change the board name from 'artik5-devel' to 'artik5-eval'
-- Merge the patch6/7/8 to patch5
-- Add the new board information to samsung-boards.txt[1]
-  [1] Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-- Fix minor coding style issue and remove 'wakeup' property
-- Remove 'broken-cd' and 'desc-num' property from mshc_0 node
-- Handle the LDO11/LDO12 by using XMMC0CDn pin (GPK0-2 gpio) for MMC device
-  and fix the ldo number of 'vmmc-supply' property.
-- Add the 'vqmmc-supply' property for MSHC2
-- Drop the patch10 for PPMU node
-- Add the new patch to initialize the MMC2 gpio pin on monk board
-
-Chanwoo Choi (4):
-  clk: samsung: exynos3250: Add MMC2 clock
-  ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
-  ARM: dts: Add exynos3250-artik5 dtsi file for ARTIK5 module
-  ARM: dts: Add initial gpio setting of MMC2 device for exynos3250-monk
-
-Jaehoon Chung (1):
-  ARM: dts: Add MSHC2 dt node for SD card for exynos3250-artik5-eval board
-
-Pankaj Dubey (2):
-  clk: samsung: exynos3250: Add UART2 clock
-  ARM: dts: Add UART2 dt node for Exynos3250 SoC
-
- .../bindings/arm/samsung/samsung-boards.txt        |   2 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  43 +++
- arch/arm/boot/dts/exynos3250-artik5.dtsi           | 334 +++++++++++++++++++++
- arch/arm/boot/dts/exynos3250-monk.dts              |  12 +-
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi          |  42 +++
- arch/arm/boot/dts/exynos3250.dtsi                  |  25 ++
- drivers/clk/samsung/clk-exynos3250.c               |  15 +
- include/dt-bindings/clock/exynos3250.h             |  11 +-
- 9 files changed, 483 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos3250-artik5-eval.dts
- create mode 100644 arch/arm/boot/dts/exynos3250-artik5.dtsi
-
+diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+index b476154590a5..be4d6aa379f3 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
++++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+@@ -21,6 +21,23 @@
+ 			"samsung,exynos3250", "samsung,exynos3";
+ };
+ 
++&mshc_2 {
++	num-slots = <1>;
++	cap-sd-highspeed;
++	disable-wp;
++	vqmmc-supply = <&ldo3_reg>;
++	card-detect-delay = <200>;
++	clock-frequency = <100000000>;
++	clock-freq-min-max = <400000 100000000>;
++	samsung,dw-mshc-ciu-div = <1>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_cmd &sd2_clk &sd2_cd &sd2_bus1 &sd2_bus4>;
++	bus-width = <4>;
++	status = "okay";
++};
++
+ &serial_2 {
+ 	status = "okay";
+ };
 -- 
 1.9.1
