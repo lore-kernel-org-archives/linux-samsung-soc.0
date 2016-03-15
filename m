@@ -1,55 +1,85 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 7/7] ARM: dts: Add initial gpio setting of MMC2 device
- for exynos3250-monk
-Date: Tue, 15 Mar 2016 13:25:57 +0900
-Message-ID: <56E78ED5.9060604@samsung.com>
-References: <201603151221.FDX9rQCr%fengguang.wu@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH v3 0/8] ARM: dts: Add new Exynos3250-based ARTIK5 module dtsi
+ file
+Date: Tue, 15 Mar 2016 16:38:02 +0900
+Message-ID: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52617 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:49974 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750829AbcCOE0B convert rfc822-to-8bit (ORCPT
+	with ESMTP id S932156AbcCOHiO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Mar 2016 00:26:01 -0400
-In-reply-to: <201603151221.FDX9rQCr%fengguang.wu@intel.com>
+	Tue, 15 Mar 2016 03:38:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hi,
+This patchset add the support for Device Tree source for Samsung ARTIK5 module[1]
+based on Exynos3250 SoC and development board[2]. The ARTIK5 module includes
+the follwoing devices:
+- Application Processor (Samsung Exynos3250)
+- WiFi/BT Combo chip
+- PMIC (Samsung S2MPS14)
+- eMMC (4GB)
+- DRAM LPDDR3 (512MB)
+- Connectors pin (60 Pins x 3 set)
 
-On 2016=EB=85=84 03=EC=9B=94 15=EC=9D=BC 13:18, kbuild test robot wrote=
-:
-> Hi Chanwoo,
->=20
-> [auto build test ERROR on v4.5-rc7]
-> [also build test ERROR on next-20160314]
-> [if your patch is applied to the wrong git tree, please drop us a not=
-e to help improving the system]
->=20
-> url:    https://github.com/0day-ci/linux/commits/Chanwoo-Choi/ARM-dts=
--Add-new-Exynos3250-based-ARTIK5-module-dtsi-file/20160315-101326
-> config: arm-exynos_defconfig (attached as .config)
-> reproduce:
->         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tes=
-ts.git/plain/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=3Darm=20
->=20
-> All errors (new ones prefixed by >>):
->=20
->>> Error: arch/arm/boot/dts/exynos3250-monk.dts:564.9-10 syntax error
->    FATAL ERROR: Unable to parse input tree
+Also, this patchset add the ARTIK5 development board[2] dts file which includes
+the ARTIK5 module[1] and have the devices such as sound codec, sd card port,
+ethernet port, uart port and so on.
 
->    FATAL ERROR: Unable to parse input tree
+[1] https://www.artik.io/hardware/artik-5
+[2] http://www.digikey.com/product-detail/en/SIP-KITNXB001/1510-1316-ND/5825102
 
-This patch depend on patch[1]. I send the separate patch-set.
-To build this patch, patch[1] should be applied. It is my mistake.
-[1] https://lkml.org/lkml/2016/3/14/245
+Changes from v2:
+(https://lkml.org/lkml/2016/3/14/910)
+- Add reviewed tag by Krzysztof Kozlowski for all patches
+- Include the separate patch1[3] in patchset because patch5 depend on patch1[3]
+  [3] https://lkml.org/lkml/2016/3/14/245
+- Fix the order issue in exynos3250-artik5.dtsi
+- Use lowercase for hex address in exynos3250-artik5.dtsi
 
-Best Regards,
-Chanwoo Choi
+Changes from v1:
+(https://lkml.org/lkml/2016/3/13/215)
+- Change the board name from 'artik5-devel' to 'artik5-eval'
+- Merge the patch6/7/8 to patch5
+- Add the new board information to samsung-boards.txt[1]
+  [1] Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+- Fix minor coding style issue and remove 'wakeup' property
+- Remove 'broken-cd' and 'desc-num' property from mshc_0 node
+- Handle the LDO11/LDO12 by using XMMC0CDn pin (GPK0-2 gpio) for MMC device
+  and fix the ldo number of 'vmmc-supply' property.
+- Add the 'vqmmc-supply' property for MSHC2
+- Drop the patch10 for PPMU node
+- Add the new patch to initialize the MMC2 gpio pin on monk board
+
+Chanwoo Choi (5):
+  ARM: dts: Add initial pin configuration for exynos3250-rinato
+  clk: samsung: exynos3250: Add MMC2 clock
+  ARM: dts: Add initial gpio setting of MMC2 device for exynos3250-monk
+  ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+  ARM: dts: Add exynos3250-artik5 dtsi file for ARTIK5 module
+
+Jaehoon Chung (1):
+  ARM: dts: Add MSHC2 dt node for SD card for exynos3250-artik5-eval board
+
+Pankaj Dubey (2):
+  clk: samsung: exynos3250: Add UART2 clock
+  ARM: dts: Add UART2 dt node for Exynos3250 SoC
+
+ .../bindings/arm/samsung/samsung-boards.txt        |   2 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  43 +++
+ arch/arm/boot/dts/exynos3250-artik5.dtsi           | 334 +++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250-monk.dts              |  12 +-
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi          |  80 +++++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  71 ++++-
+ arch/arm/boot/dts/exynos3250.dtsi                  |  25 ++
+ drivers/clk/samsung/clk-exynos3250.c               |  15 +
+ include/dt-bindings/clock/exynos3250.h             |  11 +-
+ 10 files changed, 590 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos3250-artik5-eval.dts
+ create mode 100644 arch/arm/boot/dts/exynos3250-artik5.dtsi
+
+-- 
+1.9.1
