@@ -1,108 +1,60 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 6/8] ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
-Date: Tue, 15 Mar 2016 16:38:08 +0900
-Message-ID: <1458027490-13787-7-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v3 8/8] ARM: dts: Add MSHC2 dt node for SD card for
+ exynos3250-artik5-eval board
+Date: Tue, 15 Mar 2016 16:38:10 +0900
+Message-ID: <1458027490-13787-9-git-send-email-cw00.choi@samsung.com>
 References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1458027490-13787-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:53154 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934304AbcCOHiq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Mar 2016 03:38:46 -0400
+In-reply-to: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-This patch adds the MSHC2 (Mobile Storage Host Controller) Device Tree node for
-Exynos3250 SoC.
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+This patch adds MSHC (Mobile Storage Host Controller) dt node for
+Exynos3250 SoC. MSHC is an interface between the system and the SD card
+
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 35 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos3250.dtsi         | 13 ++++++++++++
- 2 files changed, 48 insertions(+)
+ arch/arm/boot/dts/exynos3250-artik5-eval.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index 54c587f27265..40ea7de44933 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -490,6 +490,41 @@
- 		samsung,pin-drv = <3>;
- 	};
+diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+index b476154590a5..be4d6aa379f3 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
++++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+@@ -21,6 +21,23 @@
+ 			"samsung,exynos3250", "samsung,exynos3";
+ };
  
-+	sd2_clk: sd2-clk {
-+		samsung,pins = "gpk2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
++&mshc_2 {
++	num-slots = <1>;
++	cap-sd-highspeed;
++	disable-wp;
++	vqmmc-supply = <&ldo3_reg>;
++	card-detect-delay = <200>;
++	clock-frequency = <100000000>;
++	clock-freq-min-max = <400000 100000000>;
++	samsung,dw-mshc-ciu-div = <1>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_cmd &sd2_clk &sd2_cd &sd2_bus1 &sd2_bus4>;
++	bus-width = <4>;
++	status = "okay";
++};
 +
-+	sd2_cmd: sd2-cmd {
-+		samsung,pins = "gpk2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_cd: sd2-cd {
-+		samsung,pins = "gpk2-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus1: sd2-bus-width1 {
-+		samsung,pins = "gpk2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus4: sd2-bus-width4 {
-+		samsung,pins = "gpk2-4", "gpk2-5", "gpk2-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
- 	cam_port_b_io: cam-port-b-io {
- 		samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
- 				"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 076677384d20..2fead5730879 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -30,6 +30,7 @@
- 		pinctrl1 = &pinctrl_1;
- 		mshc0 = &mshc_0;
- 		mshc1 = &mshc_1;
-+		mshc2 = &mshc_2;
- 		spi0 = &spi_0;
- 		spi1 = &spi_1;
- 		i2c0 = &i2c_0;
-@@ -371,6 +372,18 @@
- 			status = "disabled";
- 		};
- 
-+		mshc_2: mshc@12530000 {
-+			compatible = "samsung,exynos5250-dw-mshc";
-+			reg = <0x12530000 0x1000>;
-+			interrupts = <0 144 0>;
-+			clocks = <&cmu CLK_SDMMC2>, <&cmu CLK_SCLK_MMC2>;
-+			clock-names = "biu", "ciu";
-+			fifo-depth = <0x80>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		exynos_usbphy: exynos-usbphy@125B0000 {
- 			compatible = "samsung,exynos3250-usb2-phy";
- 			reg = <0x125B0000 0x100>;
+ &serial_2 {
+ 	status = "okay";
+ };
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
