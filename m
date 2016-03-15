@@ -1,110 +1,108 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 3/8] clk: samsung: exynos3250: Add MMC2 clock
-Date: Tue, 15 Mar 2016 16:38:05 +0900
-Message-ID: <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 6/8] ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+Date: Tue, 15 Mar 2016 16:38:08 +0900
+Message-ID: <1458027490-13787-7-git-send-email-cw00.choi@samsung.com>
 References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1458027490-13787-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add the MMC2 clocks (mux, divider, gate) of Exynos3250 SoC.
+This patch adds the MSHC2 (Mobile Storage Host Controller) Device Tree node for
+Exynos3250 SoC.
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/clk/samsung/clk-exynos3250.c   | 9 +++++++++
- include/dt-bindings/clock/exynos3250.h | 7 ++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 35 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 13 ++++++++++++
+ 2 files changed, 48 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index bc60e399d1bc..16575ee874cb 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -302,6 +302,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index 54c587f27265..40ea7de44933 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -490,6 +490,41 @@
+ 		samsung,pin-drv = <3>;
+ 	};
  
- 	/* SRC_FSYS */
- 	MUX(CLK_MOUT_TSADC, "mout_tsadc", group_sclk_p, SRC_FSYS, 28, 4),
-+	MUX(CLK_MOUT_MMC2, "mout_mmc2", group_sclk_p, SRC_FSYS, 8, 4),
- 	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 4),
- 	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
- 
-@@ -390,6 +391,11 @@ static struct samsung_div_clock div_clks[] __initdata = {
- 		CLK_SET_RATE_PARENT, 0),
- 	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
- 
-+	/* DIV_FSYS2 */
-+	DIV_F(CLK_DIV_MMC2_PRE, "div_mmc2_pre", "div_mmc2", DIV_FSYS2, 8, 8,
-+		CLK_SET_RATE_PARENT, 0),
-+	DIV(CLK_DIV_MMC2, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
++	sd2_clk: sd2-clk {
++		samsung,pins = "gpk2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
 +
- 	/* DIV_PERIL0 */
- 	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
- 	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
-@@ -540,6 +546,8 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
- 		GATE_SCLK_FSYS, 9, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_EBI, "sclk_ebi", "div_ebi",
- 		GATE_SCLK_FSYS, 6, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "div_mmc2_pre",
-+		GATE_SCLK_FSYS, 2, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_MMC1, "sclk_mmc1", "div_mmc1_pre",
- 		GATE_SCLK_FSYS, 1, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc0_pre",
-@@ -635,6 +643,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
- 	GATE(CLK_USBOTG, "usbotg", "div_aclk_200", GATE_IP_FSYS, 13, 0, 0),
- 	GATE(CLK_USBHOST, "usbhost", "div_aclk_200", GATE_IP_FSYS, 12, 0, 0),
- 	GATE(CLK_SROMC, "sromc", "div_aclk_200", GATE_IP_FSYS, 11, 0, 0),
-+	GATE(CLK_SDMMC2, "sdmmc2", "div_aclk_200", GATE_IP_FSYS, 7, 0, 0),
- 	GATE(CLK_SDMMC1, "sdmmc1", "div_aclk_200", GATE_IP_FSYS, 6, 0, 0),
- 	GATE(CLK_SDMMC0, "sdmmc0", "div_aclk_200", GATE_IP_FSYS, 5, 0, 0),
- 	GATE(CLK_PDMA1, "pdma1", "div_aclk_200", GATE_IP_FSYS, 1, 0, 0),
-diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
-index ddb874130d86..c796ff02ceeb 100644
---- a/include/dt-bindings/clock/exynos3250.h
-+++ b/include/dt-bindings/clock/exynos3250.h
-@@ -80,6 +80,7 @@
- #define CLK_MOUT_APLL			59
- #define CLK_MOUT_ACLK_266_SUB		60
- #define CLK_MOUT_UART2			61
-+#define CLK_MOUT_MMC2			62
++	sd2_cmd: sd2-cmd {
++		samsung,pins = "gpk2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cd: sd2-cd {
++		samsung,pins = "gpk2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus1: sd2-bus-width1 {
++		samsung,pins = "gpk2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus4: sd2-bus-width4 {
++		samsung,pins = "gpk2-4", "gpk2-5", "gpk2-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
+ 	cam_port_b_io: cam-port-b-io {
+ 		samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
+ 				"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 076677384d20..2fead5730879 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -30,6 +30,7 @@
+ 		pinctrl1 = &pinctrl_1;
+ 		mshc0 = &mshc_0;
+ 		mshc1 = &mshc_1;
++		mshc2 = &mshc_2;
+ 		spi0 = &spi_0;
+ 		spi1 = &spi_1;
+ 		i2c0 = &i2c_0;
+@@ -371,6 +372,18 @@
+ 			status = "disabled";
+ 		};
  
- /* Dividers */
- #define CLK_DIV_GPL			64
-@@ -129,6 +130,8 @@
- #define CLK_DIV_HPM			108
- #define CLK_DIV_COPY			109
- #define CLK_DIV_UART2			110
-+#define CLK_DIV_MMC2_PRE		111
-+#define CLK_DIV_MMC2			112
- 
- /* Gates */
- #define CLK_ASYNC_G3D			128
-@@ -226,6 +229,7 @@
- #define CLK_BLOCK_CAM			220
- #define CLK_SMIES			221
- #define CLK_UART2			222
-+#define CLK_SDMMC2			223
- 
- /* Special clocks */
- #define CLK_SCLK_JPEG			224
-@@ -253,12 +257,13 @@
- #define CLK_SCLK_UART1			246
- #define CLK_SCLK_UART0			247
- #define CLK_SCLK_UART2			248
-+#define CLK_SCLK_MMC2			249
- 
- /*
-  * Total number of clocks of main CMU.
-  * NOTE: Must be equal to last clock ID increased by one.
-  */
--#define CLK_NR_CLKS			249
-+#define CLK_NR_CLKS			250
- 
- /*
-  * CMU DMC
++		mshc_2: mshc@12530000 {
++			compatible = "samsung,exynos5250-dw-mshc";
++			reg = <0x12530000 0x1000>;
++			interrupts = <0 144 0>;
++			clocks = <&cmu CLK_SDMMC2>, <&cmu CLK_SCLK_MMC2>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x80>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		exynos_usbphy: exynos-usbphy@125B0000 {
+ 			compatible = "samsung,exynos3250-usb2-phy";
+ 			reg = <0x125B0000 0x100>;
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
