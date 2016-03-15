@@ -1,60 +1,86 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 0/7] ARM: dts: Add new Exynos3250-based ARTIK5 module
- dtsi file
-Date: Tue, 15 Mar 2016 11:44:20 +0900
-Message-ID: <56E77704.2090804@samsung.com>
-References: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
- <56E774DE.4030200@samsung.com> <56E775F6.5060004@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v3] rtc: s3c: Don't print an error on probe deferral
+Date: Mon, 14 Mar 2016 23:58:50 -0300
+Message-ID: <56E77A6A.2090604@osg.samsung.com>
+References: <1458005918-7893-1-git-send-email-javier@osg.samsung.com>
+ <56E76A57.7070104@samsung.com> <56E76C6F.5020803@osg.samsung.com>
+ <56E772F2.2030507@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:45790 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932070AbcCOCof (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:53897 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932369AbcCOC65 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2016 22:44:35 -0400
-In-reply-to: <56E775F6.5060004@samsung.com>
+	Mon, 14 Mar 2016 22:58:57 -0400
+In-Reply-To: <56E772F2.2030507@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Joe Perches <joe@perches.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
 
-On 15.03.2016 11:39, Chanwoo Choi wrote:
-> On 2016=EB=85=84 03=EC=9B=94 15=EC=9D=BC 11:35, Krzysztof Kozlowski w=
-rote:
->> On 15.03.2016 11:08, Chanwoo Choi wrote:
->>> This patchset add the support for Device Tree source for Samsung AR=
-TIK5 module[1]
->>> based on Exynos3250 SoC and development board[2]. The ARTIK5 module=
- includes
->>> the follwoing devices:
->>> - Application Processor (Samsung Exynos3250)
->>> - WiFi/BT Combo chip
->>> - PMIC (Samsung S2MPS14)
->>> - eMMC (4GB)
->>> - DRAM LPDDR3 (512MB)
->>> - Connectors pin (60 Pins x 3 set)
+Hello Krzysztof,
+
+On 03/14/2016 11:26 PM, Krzysztof Kozlowski wrote:
+> On 15.03.2016 10:59, Javier Martinez Canillas wrote:
+>>>>  
+>>>>  	if (info->data->needs_src_clk) {
+>>>>  		info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
+>>>>  		if (IS_ERR(info->rtc_src_clk)) {
+>>>> -			dev_err(&pdev->dev,
+>>>> -				"failed to find rtc source clock\n");
+>>>> +			ret = PTR_ERR(info->rtc_src_clk);
+>>>> +			if (ret != -EPROBE_DEFER)
+>>>> +				dev_err(&pdev->dev,
+>>>> +					"failed to find rtc source clock\n");
+>>>> +			else
+>>>> +				dev_dbg(&pdev->dev,
+>>>> +					"probe deferred due to missing rtc src clk\n");
+>>>>  			clk_disable_unprepare(info->rtc_clk);
+>>>> -			return PTR_ERR(info->rtc_src_clk);
+>>>> +			return ret;
+>>>>  		}
+>>>>  		clk_prepare_enable(info->rtc_src_clk);
+>>>>  	}
+>>>>
 >>>
->>> Also, this patchset add the ARTIK5 development board[2] dts file wh=
-ich includes
->>> the ARTIK5 module[1] and have the devices such as sound codec, sd c=
-ard port,
->>> ethernet port, uart port and so on.
+>>> The error path starts looking complicated. This has now 4 indentation
+>>> levels...
 >>>
->>> [1] https://www.artik.io/hardware/artik-5
->>> [2] http://www.digikey.com/product-detail/en/SIP-KITNXB001/1510-131=
-6-ND/5825102
 >>
->> I guess the rest of patches depend on new clocks, right?
->=20
-> Yes. The new clocks(uart2, mmc2) are used for artik5 module.
-> - uart2 is used for serial log for debug
-> - mmc2 is for external sd card
+>> Yeah, I don't think we can get rid of the 4 indentation levels since
+>> the function already has 3 and a check for the errno code is needed.
+> 
+> Probably handling of the clocks in the driver could be simplified a
+> little bit (the if(needs_src_clk) appears in few places)... but this is
+> out of scope for this patch.
+>
 
-Okay, so an ack from clock folks or a tag to pull would be nice.
+Agreed, I meant without introducing an unrelated change.
+ 
+>>
+>>> I agree for removal of error in case of probe deferral because it might
+>>> be misleading but I don't see much benefit of a debug message.
+>>>
+>>
+>> But yes, we can at least get rid of the else statement. I don't have a
+>> strong opinion about the debug information, I left it to avoid someone
+>> to tell me that I was removing a useful log.
+> 
+> Although dev_dbg doesn't harm... but isn't driver core printing debug
+> message already?
+>
 
-Unfortunately merge window started so probably everything will wait...
+I don't think it does or at least I didn't find it when looking
+at the devm_clk_get() call chain.
+ 
+> BR,
+> Krzysztof
+> 
 
-BR,
-Krzysztof
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
