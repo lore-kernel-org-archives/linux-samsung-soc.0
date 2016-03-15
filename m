@@ -1,109 +1,52 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 1/7] clk: samsung: exynos3250: Add UART2 clock
-Date: Tue, 15 Mar 2016 11:08:09 +0900
-Message-ID: <1458007695-3627-2-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 7/7] ARM: dts: Add initial gpio setting of MMC2 device for
+ exynos3250-monk
+Date: Tue, 15 Mar 2016 11:08:15 +0900
+Message-ID: <1458007695-3627-8-git-send-email-cw00.choi@samsung.com>
 References: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1458007695-3627-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1458007695-3627-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
+This patch adds initial pin configuration of MMC2 device on exynos3250-monk
+board because the MMC2 gpio pin (gpk2[0-6]) are NC (not connected) state.
 
-This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
-
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Suggested-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/clk/samsung/clk-exynos3250.c   | 6 ++++++
- include/dt-bindings/clock/exynos3250.h | 6 +++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos3250-monk.dts | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index fdd41b17a24f..bc60e399d1bc 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -306,6 +306,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index 443a35085846..dab965f35352 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -558,7 +558,17 @@
  
- 	/* SRC_PERIL0 */
-+	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
- 	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
- 	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
- 
-@@ -390,6 +391,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
- 	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
- 
- 	/* DIV_PERIL0 */
-+	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
- 	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
- 	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
- 
-@@ -552,6 +554,9 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
- 		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
- 		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
+ &pinctrl_1 {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sleep1>;
++	pinctrl-0 = <&initial1 &sleep1>;
 +
-+	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
-+		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
- 		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
-@@ -649,6 +654,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
- 	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
- 	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
- 	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
-+	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
- 	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
- 	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
- };
-diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
-index 63d01c15d2b3..ddb874130d86 100644
---- a/include/dt-bindings/clock/exynos3250.h
-+++ b/include/dt-bindings/clock/exynos3250.h
-@@ -79,6 +79,7 @@
- #define CLK_MOUT_CORE			58
- #define CLK_MOUT_APLL			59
- #define CLK_MOUT_ACLK_266_SUB		60
-+#define CLK_MOUT_UART2			61
++	initial1: initial-state {
++		PIN_IN(gpk2-0, DOWN, LV1);
++		PIN_IN(gpk2-1, DOWN, LV1);
++		PIN_IN(gpk2-2, DOWN, LV1);
++		PIN_IN(gpk2-3, DOWN, LV1);
++		PIN_IN(gpk2-4, DOWN, LV1);
++		PIN_IN(gpk2-5, DOWN, LV1);
++		PIN_IN(gpk2-6, DOWN, LV1);
++	};
  
- /* Dividers */
- #define CLK_DIV_GPL			64
-@@ -127,6 +128,7 @@
- #define CLK_DIV_CORE			107
- #define CLK_DIV_HPM			108
- #define CLK_DIV_COPY			109
-+#define CLK_DIV_UART2			110
- 
- /* Gates */
- #define CLK_ASYNC_G3D			128
-@@ -223,6 +225,7 @@
- #define CLK_BLOCK_MFC			219
- #define CLK_BLOCK_CAM			220
- #define CLK_SMIES			221
-+#define CLK_UART2			222
- 
- /* Special clocks */
- #define CLK_SCLK_JPEG			224
-@@ -249,12 +252,13 @@
- #define CLK_SCLK_SPI0			245
- #define CLK_SCLK_UART1			246
- #define CLK_SCLK_UART0			247
-+#define CLK_SCLK_UART2			248
- 
- /*
-  * Total number of clocks of main CMU.
-  * NOTE: Must be equal to last clock ID increased by one.
-  */
--#define CLK_NR_CLKS			248
-+#define CLK_NR_CLKS			249
- 
- /*
-  * CMU DMC
+ 	sleep1: sleep-state {
+ 		PIN_SLP(gpe0-0, PREV, NONE);
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
