@@ -1,106 +1,88 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 09/10] ARM: dts: Add MSHC2 dt node for SD card for
- exynos3250-artik5-devel board
-Date: Tue, 15 Mar 2016 10:46:49 +0900
-Message-ID: <56E76989.6000008@samsung.com>
-References: <1457921056-21257-1-git-send-email-cw00.choi@samsung.com>
- <1457921056-21257-11-git-send-email-cw00.choi@samsung.com>
- <56E676EE.8060500@samsung.com> <56E67AE0.9060306@samsung.com>
- <56E687E6.3070305@samsung.com> <56E690EA.50205@samsung.com>
- <56E7567B.40301@samsung.com> <56E75DC1.7000807@samsung.com>
- <56E7692A.1020407@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3] rtc: s3c: Don't print an error on probe deferral
+Date: Tue, 15 Mar 2016 10:50:15 +0900
+Message-ID: <56E76A57.7070104@samsung.com>
+References: <1458005918-7893-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56630 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933209AbcCOBqv (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:9858 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932768AbcCOBuX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2016 21:46:51 -0400
-In-reply-to: <56E7692A.1020407@samsung.com>
+	Mon, 14 Mar 2016 21:50:23 -0400
+In-reply-to: <1458005918-7893-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Joe Perches <joe@perches.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
 
-On 2016=EB=85=84 03=EC=9B=94 15=EC=9D=BC 10:45, Chanwoo Choi wrote:
-> On 2016=EB=85=84 03=EC=9B=94 15=EC=9D=BC 09:56, Jaehoon Chung wrote:
->> On 03/15/2016 09:25 AM, Krzysztof Kozlowski wrote:
->>> On 14.03.2016 19:22, Chanwoo Choi wrote:
->>>> On 2016=EB=85=84 03=EC=9B=94 14=EC=9D=BC 18:44, Krzysztof Kozlowsk=
-i wrote:
->>>>> On 14.03.2016 17:48, Chanwoo Choi wrote:
->>>>>> On 2016=EB=85=84 03=EC=9B=94 14=EC=9D=BC 17:31, Krzysztof Kozlow=
-ski wrote:
->>>>>>> On 14.03.2016 11:04, Chanwoo Choi wrote:
->>>>>>>> From: Jaehoon Chung <jh80.chung@samsung.com>
->>>>>>>>
->>>>>>>> This patch adds MSHC (Mobile Storage Host Controller) dt node =
-for
->>>>>>>> Exynos3250 SoC. MSHC is an interface between the system and th=
-e SD card
->>>>>>>>
->>>>>>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->>>>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>>>>> ---
->>>>>>>>  arch/arm/boot/dts/exynos3250-artik5-devel.dts | 16 ++++++++++=
-++++++
->>>>>>>>  1 file changed, 16 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm/boot/dts/exynos3250-artik5-devel.dts b/a=
-rch/arm/boot/dts/exynos3250-artik5-devel.dts
->>>>>>>> index d17c28969118..a371baf8536d 100644
->>>>>>>> --- a/arch/arm/boot/dts/exynos3250-artik5-devel.dts
->>>>>>>> +++ b/arch/arm/boot/dts/exynos3250-artik5-devel.dts
->>>>>>>> @@ -21,6 +21,22 @@
->>>>>>>>  			"samsung,exynos3250", "samsung,exynos3";
->>>>>>>>  };
->>>>>>>> =20
->>>>>>>> +&mshc_2 {
->>>>>>>> +	num-slots =3D <1>;
->>>>>>>> +	cap-sd-highspeed;
->>>>>>>> +	disable-wp;
->>>>>>>> +	card-detect-delay =3D <200>;
->>>>>>>> +	clock-frequency =3D <100000000>;
->>>>>>>> +	clock-freq-min-max =3D <400000 100000000>;
->>>>>>>> +	samsung,dw-mshc-ciu-div =3D <1>;
->>>>>>>> +	samsung,dw-mshc-sdr-timing =3D <0 1>;
->>>>>>>> +	samsung,dw-mshc-ddr-timing =3D <1 2>;
->>>>>>>> +	pinctrl-names =3D "default";
->>>>>>>> +	pinctrl-0 =3D <&sd2_cmd &sd2_clk &sd2_cd &sd2_bus1 &sd2_bus4=
->;
->>>>>>>> +	bus-width =3D <4>;
->>>>>>>> +	status =3D "okay";
->>>>>>>
->>>>>>> vqmmc-supply =3D ldo3?
->>>>>>
->>>>>> ldo3 is always on state because ldo3 is used for various IP in e=
-xynos3250.
->>>>>> I think that we had better to remain always on state for ldo3.
->>>>>
->>>>> Yes, I wasn't thinking about toggling ldo3 but about taking the
->>>>> regulator here to model the dependencies between components.
->>>>
->>>> Okay. I'll add it as following:
->>>>
->>>> 	vmmc-supply =3D <&ldo18_reg>;
->>>> 	vqmmc-supply =3D <&ldo3>;
->>>
->>> ldo18 is not used by mshc2. At least my schematics show that LDO3 g=
-oes
->>> to DVDD_MMC2 (on different board revision that would be ldo18 inste=
-ad of
->>> ldo3, but not both).
->=20
-> ARTIK5 schema document VLDO18 and VLDO3 are connected to DVDD_MMC2_AP=
-=2E
-> But, I'm not sure what is meaning. So, I'll drop the 'vmmc-supply'
+On 15.03.2016 10:38, Javier Martinez Canillas wrote:
+> The clock and source clock looked up by the driver may not be available
+> just because the clock controller driver was not probed yet so printing
+> an error in this case is not correct and only adds confusion to users.
+> 
+> However, knowing that a driver's probe was deferred may be useful so it
+> can be printed as a debug information.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+> Changes in v3:
+> - Change debug messages again as suggested by Joe Perches.
+> 
+> Changes in v2:
+> - Improve debug messages as suggested by Joe Perches.
+> 
+>  drivers/rtc/rtc-s3c.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index ffb860d18701..d01ad7e8078e 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -501,18 +501,27 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+>  
+>  	info->rtc_clk = devm_clk_get(&pdev->dev, "rtc");
+>  	if (IS_ERR(info->rtc_clk)) {
+> -		dev_err(&pdev->dev, "failed to find rtc clock\n");
+> -		return PTR_ERR(info->rtc_clk);
+> +		ret = PTR_ERR(info->rtc_clk);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "failed to find rtc clock\n");
+> +		else
+> +			dev_dbg(&pdev->dev, "probe deferred due to missing rtc clk\n");
+> +		return ret;
+>  	}
+>  	clk_prepare_enable(info->rtc_clk);
+>  
+>  	if (info->data->needs_src_clk) {
+>  		info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
+>  		if (IS_ERR(info->rtc_src_clk)) {
+> -			dev_err(&pdev->dev,
+> -				"failed to find rtc source clock\n");
+> +			ret = PTR_ERR(info->rtc_src_clk);
+> +			if (ret != -EPROBE_DEFER)
+> +				dev_err(&pdev->dev,
+> +					"failed to find rtc source clock\n");
+> +			else
+> +				dev_dbg(&pdev->dev,
+> +					"probe deferred due to missing rtc src clk\n");
+>  			clk_disable_unprepare(info->rtc_clk);
+> -			return PTR_ERR(info->rtc_src_clk);
+> +			return ret;
+>  		}
+>  		clk_prepare_enable(info->rtc_src_clk);
+>  	}
+> 
 
-VLDO18 is not connected to DVDD_MMC2_AP. It is NC state.
-Sorry for confusion.
+The error path starts looking complicated. This has now 4 indentation
+levels...
 
-Best Regards,
-Chanwoo Choi
+I agree for removal of error in case of probe deferral because it might
+be misleading but I don't see much benefit of a debug message.
 
-[snip]
+Best regards,
+Krzysztof
