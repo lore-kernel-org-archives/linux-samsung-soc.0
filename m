@@ -1,85 +1,81 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 0/8] ARM: dts: Add new Exynos3250-based ARTIK5 module dtsi
- file
-Date: Tue, 15 Mar 2016 16:38:02 +0900
-Message-ID: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v3 4/8] ARM: dts: Add UART2 dt node for Exynos3250 SoC
+Date: Tue, 15 Mar 2016 16:38:06 +0900
+Message-ID: <1458027490-13787-5-git-send-email-cw00.choi@samsung.com>
+References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49974 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:42550 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932156AbcCOHiO (ORCPT
+	with ESMTP id S934266AbcCOHiS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Mar 2016 03:38:14 -0400
+	Tue, 15 Mar 2016 03:38:18 -0400
+In-reply-to: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
 Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-This patchset add the support for Device Tree source for Samsung ARTIK5 module[1]
-based on Exynos3250 SoC and development board[2]. The ARTIK5 module includes
-the follwoing devices:
-- Application Processor (Samsung Exynos3250)
-- WiFi/BT Combo chip
-- PMIC (Samsung S2MPS14)
-- eMMC (4GB)
-- DRAM LPDDR3 (512MB)
-- Connectors pin (60 Pins x 3 set)
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Also, this patchset add the ARTIK5 development board[2] dts file which includes
-the ARTIK5 module[1] and have the devices such as sound codec, sd card port,
-ethernet port, uart port and so on.
+This patch add the uart2 devicetree node for Exynos3250 SoC.
 
-[1] https://www.artik.io/hardware/artik-5
-[2] http://www.digikey.com/product-detail/en/SIP-KITNXB001/1510-1316-ND/5825102
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  7 +++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 12 ++++++++++++
+ 2 files changed, 19 insertions(+)
 
-Changes from v2:
-(https://lkml.org/lkml/2016/3/14/910)
-- Add reviewed tag by Krzysztof Kozlowski for all patches
-- Include the separate patch1[3] in patchset because patch5 depend on patch1[3]
-  [3] https://lkml.org/lkml/2016/3/14/245
-- Fix the order issue in exynos3250-artik5.dtsi
-- Use lowercase for hex address in exynos3250-artik5.dtsi
-
-Changes from v1:
-(https://lkml.org/lkml/2016/3/13/215)
-- Change the board name from 'artik5-devel' to 'artik5-eval'
-- Merge the patch6/7/8 to patch5
-- Add the new board information to samsung-boards.txt[1]
-  [1] Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-- Fix minor coding style issue and remove 'wakeup' property
-- Remove 'broken-cd' and 'desc-num' property from mshc_0 node
-- Handle the LDO11/LDO12 by using XMMC0CDn pin (GPK0-2 gpio) for MMC device
-  and fix the ldo number of 'vmmc-supply' property.
-- Add the 'vqmmc-supply' property for MSHC2
-- Drop the patch10 for PPMU node
-- Add the new patch to initialize the MMC2 gpio pin on monk board
-
-Chanwoo Choi (5):
-  ARM: dts: Add initial pin configuration for exynos3250-rinato
-  clk: samsung: exynos3250: Add MMC2 clock
-  ARM: dts: Add initial gpio setting of MMC2 device for exynos3250-monk
-  ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
-  ARM: dts: Add exynos3250-artik5 dtsi file for ARTIK5 module
-
-Jaehoon Chung (1):
-  ARM: dts: Add MSHC2 dt node for SD card for exynos3250-artik5-eval board
-
-Pankaj Dubey (2):
-  clk: samsung: exynos3250: Add UART2 clock
-  ARM: dts: Add UART2 dt node for Exynos3250 SoC
-
- .../bindings/arm/samsung/samsung-boards.txt        |   2 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  43 +++
- arch/arm/boot/dts/exynos3250-artik5.dtsi           | 334 +++++++++++++++++++++
- arch/arm/boot/dts/exynos3250-monk.dts              |  12 +-
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi          |  80 +++++
- arch/arm/boot/dts/exynos3250-rinato.dts            |  71 ++++-
- arch/arm/boot/dts/exynos3250.dtsi                  |  25 ++
- drivers/clk/samsung/clk-exynos3250.c               |  15 +
- include/dt-bindings/clock/exynos3250.h             |  11 +-
- 10 files changed, 590 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos3250-artik5-eval.dts
- create mode 100644 arch/arm/boot/dts/exynos3250-artik5.dtsi
-
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index ecf79386e891..54c587f27265 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -158,6 +158,13 @@
+ 		samsung,pin-drv = <0>;
+ 	};
+ 
++	uart2_data: uart2-data {
++		samsung,pins = "gpa1-0", "gpa1-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
+ 	i2c3_bus: i2c3-bus {
+ 		samsung,pins = "gpa1-2", "gpa1-3";
+ 		samsung,pin-function = <3>;
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 18e3deffbf48..076677384d20 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -42,6 +42,7 @@
+ 		i2c7 = &i2c_7;
+ 		serial0 = &serial_0;
+ 		serial1 = &serial_1;
++		serial2 = &serial_2;
+ 	};
+ 
+ 	cpus {
+@@ -465,6 +466,17 @@
+ 			status = "disabled";
+ 		};
+ 
++		serial_2: serial@13820000 {
++			compatible = "samsung,exynos4210-uart";
++			reg = <0x13820000 0x100>;
++			interrupts = <0 111 0>;
++			clocks = <&cmu CLK_UART2>, <&cmu CLK_SCLK_UART2>;
++			clock-names = "uart", "clk_uart_baud0";
++			pinctrl-names = "default";
++			pinctrl-0 = <&uart2_data>;
++			status = "disabled";
++		};
++
+ 		i2c_0: i2c@13860000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 1.9.1
