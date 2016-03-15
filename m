@@ -1,176 +1,114 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 1/8] ARM: dts: Add initial pin configuration for
- exynos3250-rinato
-Date: Tue, 15 Mar 2016 16:38:03 +0900
-Message-ID: <1458027490-13787-2-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v3 2/8] clk: samsung: exynos3250: Add UART2 clock
+Date: Tue, 15 Mar 2016 16:38:04 +0900
+Message-ID: <1458027490-13787-3-git-send-email-cw00.choi@samsung.com>
 References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39129 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934241AbcCOHiQ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:53154 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934279AbcCOHiV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Mar 2016 03:38:16 -0400
+	Tue, 15 Mar 2016 03:38:21 -0400
 In-reply-to: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-This patch adds initial pin configuration using pinctrl subsystem
-to reduce leakage power-consumption of gpio pins in normal state.
-All pins included in this patch are NC (not connected) pin.
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
+
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 38 +++++++++++++++++
- arch/arm/boot/dts/exynos3250-rinato.dts   | 71 ++++++++++++++++++++++++++++++-
- 2 files changed, 107 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos3250.c   | 6 ++++++
+ include/dt-bindings/clock/exynos3250.h | 6 +++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index 5ab81c39e2c9..ecf79386e891 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -16,11 +16,49 @@
- #define PIN_PULL_DOWN		1
- #define PIN_PULL_UP		3
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index fdd41b17a24f..bc60e399d1bc 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -306,6 +306,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+ 	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
  
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		2
-+#define PIN_DRV_LV3		1
-+#define PIN_DRV_LV4		3
-+
- #define PIN_PDN_OUT0		0
- #define PIN_PDN_OUT1		1
- #define PIN_PDN_INPUT		2
- #define PIN_PDN_PREV		3
+ 	/* SRC_PERIL0 */
++	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
+ 	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
+ 	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
  
-+#define PIN_IN(_pin, _pull, _drv)			\
-+	_pin {						\
-+		samsung,pins = #_pin;			\
-+		samsung,pin-function = <0>;		\
-+		samsung,pin-pud = <PIN_PULL_ ##_pull>;	\
-+		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
-+	}
-+
-+#define PIN_OUT(_pin, _drv)				\
-+	_pin {						\
-+		samsung,pins = #_pin;			\
-+		samsung,pin-function = <1>;		\
-+		samsung,pin-pud = <0>;			\
-+		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
-+	}
-+
-+#define PIN_OUT_SET(_pin, _val, _drv)			\
-+	_pin {						\
-+		samsung,pins = #_pin;			\
-+		samsung,pin-function = <1>;		\
-+		samsung,pin-pud = <0>;			\
-+		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
-+		samsung,pin-val = <_val>;		\
-+	}
-+
-+#define PIN_CFG(_pin, _sel, _pull, _drv)		\
-+	_pin {						\
-+		samsung,pins = #_pin;			\
-+		samsung,pin-function = <_sel>;		\
-+		samsung,pin-pud = <PIN_PULL_ ##_pull>;	\
-+		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
-+	}
-+
- #define PIN_SLP(_pin, _mode, _pull)				\
- 	_pin {							\
- 		samsung,pins = #_pin;				\
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 3e64d5dcdd60..a01e61b20385 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -681,7 +681,21 @@
+@@ -390,6 +391,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
+ 	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
  
- &pinctrl_0 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sleep0>;
-+	pinctrl-0 = <&initial0 &sleep0>;
-+
-+	initial0: initial-state {
-+		PIN_IN(gpa1-4, DOWN, LV1);
-+		PIN_IN(gpa1-5, DOWN, LV1);
-+
-+		PIN_IN(gpc0-0, DOWN, LV1);
-+		PIN_IN(gpc0-1, DOWN, LV1);
-+		PIN_IN(gpc0-2, DOWN, LV1);
-+		PIN_IN(gpc0-3, DOWN, LV1);
-+		PIN_IN(gpc0-4, DOWN, LV1);
-+
-+		PIN_IN(gpd0-0, DOWN, LV1);
-+		PIN_IN(gpd0-1, DOWN, LV1);
-+	};
+ 	/* DIV_PERIL0 */
++	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
+ 	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+ 	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
  
- 	sleep0: sleep-state {
- 		PIN_SLP(gpa0-0, INPUT, DOWN);
-@@ -735,7 +749,60 @@
+@@ -552,6 +554,9 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
+ 		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
++
++	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
++		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
+ 		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+@@ -649,6 +654,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
+ 	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
+ 	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
++	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
+ 	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
+ 	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
+ };
+diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+index 63d01c15d2b3..ddb874130d86 100644
+--- a/include/dt-bindings/clock/exynos3250.h
++++ b/include/dt-bindings/clock/exynos3250.h
+@@ -79,6 +79,7 @@
+ #define CLK_MOUT_CORE			58
+ #define CLK_MOUT_APLL			59
+ #define CLK_MOUT_ACLK_266_SUB		60
++#define CLK_MOUT_UART2			61
  
- &pinctrl_1 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sleep1>;
-+	pinctrl-0 = <&initial1 &sleep1>;
-+
-+	initial1: initial-state {
-+		PIN_IN(gpe0-6, DOWN, LV1);
-+		PIN_IN(gpe0-7, DOWN, LV1);
-+
-+		PIN_IN(gpe1-0, DOWN, LV1);
-+		PIN_IN(gpe1-3, DOWN, LV1);
-+		PIN_IN(gpe1-4, DOWN, LV1);
-+		PIN_IN(gpe1-5, DOWN, LV1);
-+		PIN_IN(gpe1-6, DOWN, LV1);
-+
-+		PIN_IN(gpk2-0, DOWN, LV1);
-+		PIN_IN(gpk2-1, DOWN, LV1);
-+		PIN_IN(gpk2-2, DOWN, LV1);
-+		PIN_IN(gpk2-3, DOWN, LV1);
-+		PIN_IN(gpk2-4, DOWN, LV1);
-+		PIN_IN(gpk2-5, DOWN, LV1);
-+		PIN_IN(gpk2-6, DOWN, LV1);
-+
-+		PIN_IN(gpm0-0, DOWN, LV1);
-+		PIN_IN(gpm0-1, DOWN, LV1);
-+		PIN_IN(gpm0-2, DOWN, LV1);
-+		PIN_IN(gpm0-3, DOWN, LV1);
-+		PIN_IN(gpm0-4, DOWN, LV1);
-+		PIN_IN(gpm0-5, DOWN, LV1);
-+		PIN_IN(gpm0-6, DOWN, LV1);
-+		PIN_IN(gpm0-7, DOWN, LV1);
-+
-+		PIN_IN(gpm1-0, DOWN, LV1);
-+		PIN_IN(gpm1-1, DOWN, LV1);
-+		PIN_IN(gpm1-2, DOWN, LV1);
-+		PIN_IN(gpm1-3, DOWN, LV1);
-+		PIN_IN(gpm1-4, DOWN, LV1);
-+		PIN_IN(gpm1-5, DOWN, LV1);
-+		PIN_IN(gpm1-6, DOWN, LV1);
-+
-+		PIN_IN(gpm2-0, DOWN, LV1);
-+		PIN_IN(gpm2-1, DOWN, LV1);
-+
-+		PIN_IN(gpm3-0, DOWN, LV1);
-+		PIN_IN(gpm3-1, DOWN, LV1);
-+		PIN_IN(gpm3-2, DOWN, LV1);
-+		PIN_IN(gpm3-3, DOWN, LV1);
-+		PIN_IN(gpm3-4, DOWN, LV1);
-+
-+		PIN_IN(gpm4-1, DOWN, LV1);
-+		PIN_IN(gpm4-2, DOWN, LV1);
-+		PIN_IN(gpm4-3, DOWN, LV1);
-+		PIN_IN(gpm4-4, DOWN, LV1);
-+		PIN_IN(gpm4-5, DOWN, LV1);
-+		PIN_IN(gpm4-6, DOWN, LV1);
-+		PIN_IN(gpm4-7, DOWN, LV1);
-+	};
+ /* Dividers */
+ #define CLK_DIV_GPL			64
+@@ -127,6 +128,7 @@
+ #define CLK_DIV_CORE			107
+ #define CLK_DIV_HPM			108
+ #define CLK_DIV_COPY			109
++#define CLK_DIV_UART2			110
  
- 	sleep1: sleep-state {
- 		PIN_SLP(gpe0-0, PREV, NONE);
+ /* Gates */
+ #define CLK_ASYNC_G3D			128
+@@ -223,6 +225,7 @@
+ #define CLK_BLOCK_MFC			219
+ #define CLK_BLOCK_CAM			220
+ #define CLK_SMIES			221
++#define CLK_UART2			222
+ 
+ /* Special clocks */
+ #define CLK_SCLK_JPEG			224
+@@ -249,12 +252,13 @@
+ #define CLK_SCLK_SPI0			245
+ #define CLK_SCLK_UART1			246
+ #define CLK_SCLK_UART0			247
++#define CLK_SCLK_UART2			248
+ 
+ /*
+  * Total number of clocks of main CMU.
+  * NOTE: Must be equal to last clock ID increased by one.
+  */
+-#define CLK_NR_CLKS			248
++#define CLK_NR_CLKS			249
+ 
+ /*
+  * CMU DMC
 -- 
 1.9.1
