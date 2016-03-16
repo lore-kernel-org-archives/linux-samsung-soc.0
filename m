@@ -1,45 +1,40 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: samsung: Add two new maintainers
-Date: Wed, 16 Mar 2016 22:17:14 +0900
-Message-ID: <CA+Ln22EaU+GB8f_Ab9P6Atehm4X7tzFy+dLd5FjSyF4Ck7NRUw@mail.gmail.com>
-References: <1458086521-11220-1-git-send-email-k.kozlowski@samsung.com>
-	<CACRpkdYckkZ1q_rfMDp8TOoEm5AnAmccpa+gm9d28wJbCLBkaQ@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 5/5] [media] media-device: make media_device_cleanup() static
+Date: Wed, 16 Mar 2016 11:03:38 -0300
+Message-ID: <CABxcv=mvtXBs9qu6+HDbiB4pmMAM9cf=3mPTtLp0XWftRrGM1g@mail.gmail.com>
+References: <dba4d41bdfa6bb8dc51cb0f692102919b2b7c8b4.1458129823.git.mchehab@osg.samsung.com>
+	<864cdbedcdde600b09d77bfecb1b828e16e41ac0.1458129823.git.mchehab@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYckkZ1q_rfMDp8TOoEm5AnAmccpa+gm9d28wJbCLBkaQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <864cdbedcdde600b09d77bfecb1b828e16e41ac0.1458129823.git.mchehab@osg.samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Shuah Khan <shuahkh@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Antti Palosaari <crope@iki.fi>, Javier Martinez Canillas <javier@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Hans Verkuil <hans.verkuil@cisco.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Junghak Sung <jh1009.sung@samsung.com>, Geunyoung Kim <nenggun.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Rafae
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-03-16 22:09 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Mar 16, 2016 at 1:02 AM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
+Hello Mauro,
+
+The patch looks mostly good to me, I just have a question below:
+
+On Wed, Mar 16, 2016 at 9:04 AM, Mauro Carvalho Chehab
+<mchehab@osg.samsung.com> wrote:
+
+[snip]
+
 >
->> Extend the list of maintainers for Samsung pinctrl driver with Sylwester
->> and Krzysztof.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Kukjin Kim <kgene@kernel.org>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->> Tomasz Figa still has the time for this driver (and, as the most recent
->> author, he really knows what is inside!) but sometimes a faster
->> response could be reached from Samsung folks.
->
-> More maintainers are always good.
-> I just want an ACK of trust from Tomasz.
+> -void media_device_cleanup(struct media_device *mdev)
+> +static void media_device_cleanup(struct media_device *mdev)
+>  {
+>         ida_destroy(&mdev->entity_internal_idx);
+>         mdev->entity_internal_idx_max = 0;
+>         media_entity_graph_walk_cleanup(&mdev->pm_count_walk);
+> -       mutex_destroy(&mdev->graph_mutex);
 
-Sorry for slacking off, I've been a bit desynchronized lately. :(
+Any reason why this is removed? mutex_init() is still called in
+media_device_init() so I believe the destroy should be kept here.
 
-Sure, let's do it. Actually I was convinced that we already added
-Sylwester to the list at the time I was leaving Samsung.
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
-Tomasz
+Javier
