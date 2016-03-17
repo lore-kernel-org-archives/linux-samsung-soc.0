@@ -1,48 +1,38 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] drm/exynos: fimd: fix broken dp_clock control
-Date: Thu, 17 Mar 2016 16:19:28 +0900
-Message-ID: <56EA5A80.9060903@samsung.com>
-References: <1458197592-5050-1-git-send-email-m.szyprowski@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch 1/2] drm/exynos: mic: fix an error code
+Date: Thu, 17 Mar 2016 13:32:15 +0300
+Message-ID: <20160317103214.GA3100@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:56070 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753153AbcCQHTg (ORCPT
+Received: from aserp1040.oracle.com ([141.146.126.69]:35625 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752731AbcCQKci (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Mar 2016 03:19:36 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O4600MFD9OLND90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 17 Mar 2016 07:19:33 +0000 (GMT)
-In-reply-to: <1458197592-5050-1-git-send-email-m.szyprowski@samsung.com>
+	Thu, 17 Mar 2016 06:32:38 -0400
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Chanho Park <chanho61.park@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 17.03.2016 15:53, Marek Szyprowski wrote:
-> Commit 1feafd3afd294b03dbbedb8e8f94e0c4db526f10 ("drm/exynos: add
+We accidentally return success instead of a negative error code here.
 
-The commit exists only in next so the SHA might be useless in case of
-rebase of drm-exynos tree.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is the common problem introduced by do nothing gotos.  The other
+issue with do nothing gotos is that they are annoying and don't actually
+prevent people from putting a direct return in the middle of functions.
 
-> exynos5420 support for fimd") add support for Exynos 5420 SoC, but it
-> broke enabling display clock feature because of incorrect condition
-> check. This patch fixes it, so display is working again on platforms
-> requiring display clock control (i.e. Exynos5250-based SNOW platform).
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-
-
-Best regards,
-
-Krzysztof
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index 9869d70..890c9b1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -457,6 +457,7 @@ static int exynos_mic_probe(struct platform_device *pdev)
+ 							"samsung,disp-syscon");
+ 	if (IS_ERR(mic->sysreg)) {
+ 		DRM_ERROR("mic: Failed to get system register.\n");
++		ret = PTR_ERR(mic->sysreg);
+ 		goto err;
+ 	}
+ 
