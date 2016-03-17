@@ -1,75 +1,44 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 5/5] [media] media-device: make media_device_cleanup() static
-Date: Wed, 16 Mar 2016 11:38:23 -0300
-Message-ID: <CABxcv=mafN8JcF2sucHCt1gtysdDuviymy5sCdEb1hCRAMb1Gw@mail.gmail.com>
-References: <dba4d41bdfa6bb8dc51cb0f692102919b2b7c8b4.1458129823.git.mchehab@osg.samsung.com>
-	<864cdbedcdde600b09d77bfecb1b828e16e41ac0.1458129823.git.mchehab@osg.samsung.com>
-	<CABxcv=mvtXBs9qu6+HDbiB4pmMAM9cf=3mPTtLp0XWftRrGM1g@mail.gmail.com>
-	<20160316113625.23f1bf82@recife.lan>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: fimd: fix broken dp_clock control
+Date: Thu, 17 Mar 2016 07:53:12 +0100
+Message-ID: <1458197592-5050-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20160316113625.23f1bf82@recife.lan>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Shuah Khan <shuahkh@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Antti Palosaari <crope@iki.fi>, Javier Martinez Canillas <javier@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Hans Verkuil <hans.verkuil@cisco.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Junghak Sung <jh1009.sung@samsung.com>, Geunyoung Kim <nenggun.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Rafae
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Chanho Park <chanho61.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Mauro,
-
-On Wed, Mar 16, 2016 at 11:36 AM, Mauro Carvalho Chehab
-<mchehab@osg.samsung.com> wrote:
-> Em Wed, 16 Mar 2016 11:03:38 -0300
-> Javier Martinez Canillas <javier@dowhile0.org> escreveu:
->
->> Hello Mauro,
->>
->> The patch looks mostly good to me, I just have a question below:
->>
->> On Wed, Mar 16, 2016 at 9:04 AM, Mauro Carvalho Chehab
->> <mchehab@osg.samsung.com> wrote:
->>
->> [snip]
->>
->> >
->> > -void media_device_cleanup(struct media_device *mdev)
->> > +static void media_device_cleanup(struct media_device *mdev)
->> >  {
->> >         ida_destroy(&mdev->entity_internal_idx);
->> >         mdev->entity_internal_idx_max = 0;
->> >         media_entity_graph_walk_cleanup(&mdev->pm_count_walk);
->> > -       mutex_destroy(&mdev->graph_mutex);
->>
->> Any reason why this is removed? mutex_init() is still called in
->> media_device_init() so I believe the destroy should be kept here.
->
-> This code is now called only at do_media_device_unregister, with
-> is protected by the mutex. If we keep the mutex_destroy there,
-> the mutex will be destroyed in lock state, causing an error if
-> mutex debug is enabled.
->
-> Btw, the standard implementation for the mutex is:
->         include/linux/mutex.h:static inline void mutex_destroy(struct mutex *lock) {}
->
-> Only when mutex debug is enabled, it becomes something else:
->         include/linux/mutex-debug.h:extern void mutex_destroy(struct mutex *lock);
->
-> With produces a warning if the mutex_destroy() is called with the
-> mutex is hold. This can never happen with the current implementation, as
-> the logic is:
->         mutex_lock(&mdev->graph_mutex);
->         kref_put(&mdev->kref, do_media_device_unregister);
->         mutex_unlock(&mdev->graph_mutex);
->
-> We could eventually move the mutex lock to
-> do_media_device_unregister() and then add there the mutex_destroy()
->
-
-I see, thanks a lot for your explanation.
-
-> Regards,
-> Mauro
->
-
-Best regards,
-Javier
+Q29tbWl0IDFmZWFmZDNhZmQyOTRiMDNkYmJlZGI4ZThmOTRlMGM0ZGI1MjZmMTAgKCJkcm0vZXh5
+bm9zOiBhZGQKZXh5bm9zNTQyMCBzdXBwb3J0IGZvciBmaW1kIikgYWRkIHN1cHBvcnQgZm9yIEV4
+eW5vcyA1NDIwIFNvQywgYnV0IGl0CmJyb2tlIGVuYWJsaW5nIGRpc3BsYXkgY2xvY2sgZmVhdHVy
+ZSBiZWNhdXNlIG9mIGluY29ycmVjdCBjb25kaXRpb24KY2hlY2suIFRoaXMgcGF0Y2ggZml4ZXMg
+aXQsIHNvIGRpc3BsYXkgaXMgd29ya2luZyBhZ2FpbiBvbiBwbGF0Zm9ybXMKcmVxdWlyaW5nIGRp
+c3BsYXkgY2xvY2sgY29udHJvbCAoaS5lLiBFeHlub3M1MjUwLWJhc2VkIFNOT1cgcGxhdGZvcm0p
+LgoKU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcu
+Y29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAyICst
+CiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCAwYTQ0NTExLi5jNjVmZTc5IDEw
+MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTg4OSw3ICs4ODks
+NyBAQCBzdGF0aWMgdm9pZCBmaW1kX2RwX2Nsb2NrX2VuYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9j
+cnRjICpjcnRjLCBib29sIGVuYWJsZSkKIAkgKiBjbG9jay4gT24gdGhlc2UgU29DcyB0aGUgYm9v
+dGxvYWRlciBtYXkgZW5hYmxlIGl0IGJ1dCBhbnkKIAkgKiBwb3dlciBkb21haW4gb2ZmL29uIHdp
+bGwgcmVzZXQgaXQgdG8gZGlzYWJsZSBzdGF0ZS4KIAkgKi8KLQlpZiAoY3R4LT5kcml2ZXJfZGF0
+YSAhPSAmZXh5bm9zNV9maW1kX2RyaXZlcl9kYXRhIHx8CisJaWYgKGN0eC0+ZHJpdmVyX2RhdGEg
+IT0gJmV4eW5vczVfZmltZF9kcml2ZXJfZGF0YSAmJgogCSAgICBjdHgtPmRyaXZlcl9kYXRhICE9
+ICZleHlub3M1NDIwX2ZpbWRfZHJpdmVyX2RhdGEpCiAJCXJldHVybjsKIAotLSAKMS45LjIKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
