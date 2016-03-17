@@ -1,17 +1,17 @@
 From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v14 04/17] drm: bridge: analogix/dp: fix some obvious code style
-Date: Thu, 17 Mar 2016 22:48:49 +0100
-Message-ID: <5288069.sdD3NZfROG@diego>
+Subject: [PATCH v14.1 04/17] drm: bridge: analogix/dp: fix some obvious code style
+Date: Thu, 17 Mar 2016 22:50 +0100
+Message-ID: <3743656.5lb5B2Ugqa@diego>
 References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com> <1455534599-1636-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:56031 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:56074 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933586AbcCQVtK (ORCPT
+	id S1031395AbcCQVuU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Mar 2016 17:49:10 -0400
+	Thu, 17 Mar 2016 17:50:20 -0400
 In-Reply-To: <1455534599-1636-1-git-send-email-ykk@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
