@@ -1,38 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch 1/2] drm/exynos: mic: fix an error code
-Date: Thu, 17 Mar 2016 13:32:15 +0300
-Message-ID: <20160317103214.GA3100@mwanda>
+Subject: [patch 2/2] drm/exynos: mic: remove some dead code
+Date: Thu, 17 Mar 2016 13:39:12 +0300
+Message-ID: <20160317103912.GB3100@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:35625 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752731AbcCQKci (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Mar 2016 06:32:38 -0400
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-We accidentally return success instead of a negative error code here.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This is the common problem introduced by do nothing gotos.  The other
-issue with do nothing gotos is that they are annoying and don't actually
-prevent people from putting a direct return in the middle of functions.
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index 9869d70..890c9b1 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -457,6 +457,7 @@ static int exynos_mic_probe(struct platform_device *pdev)
- 							"samsung,disp-syscon");
- 	if (IS_ERR(mic->sysreg)) {
- 		DRM_ERROR("mic: Failed to get system register.\n");
-+		ret = PTR_ERR(mic->sysreg);
- 		goto err;
- 	}
- 
+V2Uga25vdyAicmV0IiBpcyB6ZXJvIGFuZCB0aGUgdGVzdCBtYWtlcyBzdGF0aWMgY2hlY2tlcnMg
+Y29tcGxhaW4gc28KbGV0J3MgZGVsZXRlIHRoaXMgcHJpbnRrLgoKU2lnbmVkLW9mZi1ieTogRGFu
+IENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPgoKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9taWMuYwppbmRleCA4OTBjOWIxLi4xMmRiMzUzIDEwMDY0NAotLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMKKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCkBAIC0xMzAsOCArMTMwLDYgQEAgc3RhdGljIHZv
+aWQgbWljX3NldF9wYXRoKHN0cnVjdCBleHlub3NfbWljICptaWMsIGJvb2wgZW5hYmxlKQogCQl2
+YWwgJj0gfihNSUMwX1JHQl9NVVggfCBNSUMwX0k4MF9NVVggfCBNSUMwX09OX01VWCk7CiAKIAly
+ZWdtYXBfd3JpdGUobWljLT5zeXNyZWcsIERTRF9DRkdfTVVYLCB2YWwpOwotCWlmIChyZXQpCi0J
+CURSTV9FUlJPUigibWljOiBGYWlsZWQgdG8gcmVhZCBzeXN0ZW0gcmVnaXN0ZXJcbiIpOwogfQog
+CiBzdGF0aWMgaW50IG1pY19zd19yZXNldChzdHJ1Y3QgZXh5bm9zX21pYyAqbWljKQpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
