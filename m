@@ -1,52 +1,47 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v14 0/17] Add Analogix Core Display Port Driver
-Date: Fri, 18 Mar 2016 15:53:14 -0700
-Message-ID: <CAD=FV=XXESzA6n6MNEGH1Kbh7CeL8xWX8CifFLVf91+0JyFcJQ@mail.gmail.com>
-References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
-	<56EBA305.8030202@gmail.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH v3] rtc: s3c: Don't print an error on probe deferral
+Date: Sat, 19 Mar 2016 00:08:19 +0100
+Message-ID: <20160318230819.GF2828@piout.net>
+References: <1458005918-7893-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56EBA305.8030202@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, David Airlie <airlied@linux.ie>
-Cc: Yakir Yang <ykk@rock-chips.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, emil.l.velikov@gmail.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:59373 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751134AbcCRXIV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Mar 2016 19:08:21 -0400
+Content-Disposition: inline
+In-Reply-To: <1458005918-7893-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com
 
-Hi,
+On 14/03/2016 at 22:38:38 -0300, Javier Martinez Canillas wrote :
+> The clock and source clock looked up by the driver may not be available
+> just because the clock controller driver was not probed yet so printing
+> an error in this case is not correct and only adds confusion to users.
+> 
+> However, knowing that a driver's probe was deferred may be useful so it
+> can be printed as a debug information.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+> Changes in v3:
+> - Change debug messages again as suggested by Joe Perches.
+> 
+> Changes in v2:
+> - Improve debug messages as suggested by Joe Perches.
+> 
+>  drivers/rtc/rtc-s3c.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
+> 
+Applied, thanks.
 
-On Thu, Mar 17, 2016 at 11:41 PM, Caesar Wang <caesar.upstream@gmail.com> wrote:
-> Hi all,
->
-> I pick this series up and test on C101PA chromebook, after Heiko update the
-> 3 patches.
->
-> [v14.1,09/17] drm: rockchip: dp: add rockchip platform dp driver
-> [v14.1,04/17] drm: bridge: analogix/dp: fix some obvious code style
-> [v14.1,01/17] drm: bridge: analogix/dp: split exynos dp driver to bridge
-> directory
->
-> C101PA chromebook:
-> http://www.amazon.co.uk/10-1-Inch-Chromebook-Rockchip-Integrated-Graphics/dp/B0107N7WT6/ref=lp_758129031_1_4?s=computers&ie=UTF8&qid=1458282912&sr=1-4
->
-> So, verified for the rockchip eDp contrller on my github.
-> https://github.com/Caesar-github/rockchip/tree/veyron/next-stable-chromeos
-
-I did similar to Caesar but I tested on veyron-jerry instead of
-veyron-mickey.  Like Caesar, I picked these together Heiko's v14.1
-patches to resolve merge conflicts.  I also picked into a slightly
-different tree (mine was a 4.4-based tree with backports, including
-Heiko's latest eDP device tree patches).
-
-Tough I haven't reviewed the code and am not a graphics expert, I'd
-very much love to see this landed, presumably right after the merge
-window closes.  Yakir's first patch
-<https://patchwork.kernel.org/patch/6959211/> is nearly 1 year old and
-it really seems like if there were any major objections left they'd
-have been stated by now.  v14 appears to be about 1 month old with no
-major comments.
-
-Tested-by: Douglas Anderson <dianders@chromium.org>
-
-
--Doug
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
