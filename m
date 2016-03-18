@@ -1,58 +1,52 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 7/8] ARM: dts: Add exynos3250-artik5 dtsi file for
- ARTIK5 module
-Date: Fri, 18 Mar 2016 16:01:27 -0500
-Message-ID: <20160318210127.GA21185@rob-hp-laptop>
-References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
- <1458027490-13787-8-git-send-email-cw00.choi@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v14 0/17] Add Analogix Core Display Port Driver
+Date: Fri, 18 Mar 2016 15:53:14 -0700
+Message-ID: <CAD=FV=XXESzA6n6MNEGH1Kbh7CeL8xWX8CifFLVf91+0JyFcJQ@mail.gmail.com>
+References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
+	<56EBA305.8030202@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56614 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751200AbcCRVBd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Mar 2016 17:01:33 -0400
-Content-Disposition: inline
-In-Reply-To: <1458027490-13787-8-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56EBA305.8030202@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, David Airlie <airlied@linux.ie>
+Cc: Yakir Yang <ykk@rock-chips.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, emil.l.velikov@gmail.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On Tue, Mar 15, 2016 at 04:38:09PM +0900, Chanwoo Choi wrote:
-> This patch adds the support for Device Tree source for Samsung ARTIK5 module[1]
-> based on Exynos3250 SoC. The ARTIK5 module includes the follwoing devices:
+Hi,
 
-s/follwoing/following/
+On Thu, Mar 17, 2016 at 11:41 PM, Caesar Wang <caesar.upstream@gmail.com> wrote:
+> Hi all,
+>
+> I pick this series up and test on C101PA chromebook, after Heiko update the
+> 3 patches.
+>
+> [v14.1,09/17] drm: rockchip: dp: add rockchip platform dp driver
+> [v14.1,04/17] drm: bridge: analogix/dp: fix some obvious code style
+> [v14.1,01/17] drm: bridge: analogix/dp: split exynos dp driver to bridge
+> directory
+>
+> C101PA chromebook:
+> http://www.amazon.co.uk/10-1-Inch-Chromebook-Rockchip-Integrated-Graphics/dp/B0107N7WT6/ref=lp_758129031_1_4?s=computers&ie=UTF8&qid=1458282912&sr=1-4
+>
+> So, verified for the rockchip eDp contrller on my github.
+> https://github.com/Caesar-github/rockchip/tree/veyron/next-stable-chromeos
 
-> - Application Processor (Samsung Exynos3250)
-> - WiFi/BT Combo chip (Broadcom4354)
-> - PMIC (Samsung S2MPS14)
-> - eMMC (4GB)
-> - DRAM LPDDR3 (512MB)
-> - Connectors pin (60 Pins x 3 set)
-> 
-> Also, this patch adds the ARTIK5 evaluation board[2] dts file which includes
-> the ARTIK5 module[1] and have the devices such as sound codec, sd card port,
-> ethernet port, uart port and so on.
-> 
-> [1] https://www.artik.io/hardware/artik-5
-> [2] http://www.digikey.com/product-search/en?FV=ffecca14
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  .../bindings/arm/samsung/samsung-boards.txt        |   2 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  26 ++
->  arch/arm/boot/dts/exynos3250-artik5.dtsi           | 334 +++++++++++++++++++++
->  4 files changed, 363 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos3250-artik5-eval.dts
->  create mode 100644 arch/arm/boot/dts/exynos3250-artik5.dtsi
+I did similar to Caesar but I tested on veyron-jerry instead of
+veyron-mickey.  Like Caesar, I picked these together Heiko's v14.1
+patches to resolve merge conflicts.  I also picked into a slightly
+different tree (mine was a 4.4-based tree with backports, including
+Heiko's latest eDP device tree patches).
 
-Otherwise,
+Tough I haven't reviewed the code and am not a graphics expert, I'd
+very much love to see this landed, presumably right after the merge
+window closes.  Yakir's first patch
+<https://patchwork.kernel.org/patch/6959211/> is nearly 1 year old and
+it really seems like if there were any major objections left they'd
+have been stated by now.  v14 appears to be about 1 month old with no
+major comments.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
+
+
+-Doug
