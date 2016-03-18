@@ -1,64 +1,37 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3] rtc: s3c: Don't print an error on probe deferral
-Date: Fri, 18 Mar 2016 10:44:12 -0300
-Message-ID: <56EC062C.8060702@osg.samsung.com>
-References: <1458005918-7893-1-git-send-email-javier@osg.samsung.com>
- <56E76A57.7070104@samsung.com> <56E76C6F.5020803@osg.samsung.com>
- <56E772F2.2030507@samsung.com> <56E77A6A.2090604@osg.samsung.com>
- <56EBED45.6070000@osg.samsung.com> <20160318120717.GD2531@piout.net>
- <20160318130312.GE2531@piout.net>
+Subject: Re: [PATCH] [media] media: rename media unregister function
+Date: Fri, 18 Mar 2016 10:48:13 -0300
+Message-ID: <56EC071D.5060400@osg.samsung.com>
+References: <2ffc02c944068b2c8655727238d1542f8328385d.1458306276.git.mchehab@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:54468 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:54483 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753267AbcCRNoV (ORCPT
+	id S1754589AbcCRNsh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Mar 2016 09:44:21 -0400
-In-Reply-To: <20160318130312.GE2531@piout.net>
+	Fri, 18 Mar 2016 09:48:37 -0400
+In-Reply-To: <2ffc02c944068b2c8655727238d1542f8328385d.1458306276.git.mchehab@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hans.verkuil@cisco.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Junghak Sung <jh1009.sung@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Geunyoung Kim <nenggun.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Shuah
 
-Hello Alexandre,
+Hello Mauro,
 
-On 03/18/2016 10:03 AM, Alexandre Belloni wrote:
-> On 18/03/2016 at 13:07:17 +0100, Alexandre Belloni wrote :
->> On 18/03/2016 at 08:57:57 -0300, Javier Martinez Canillas wrote :
->>>>>> But yes, we can at least get rid of the else statement. I don't have a
->>>>>> strong opinion about the debug information, I left it to avoid someone
->>>>>> to tell me that I was removing a useful log.
->>>>>
->>>>> Although dev_dbg doesn't harm... but isn't driver core printing debug
->>>>> message already?
->>>>>
->>>>
->>>> I don't think it does or at least I didn't find it when looking
->>>> at the devm_clk_get() call chain.
->>>>  
->>>>> BR,
->>>>> Krzysztof
->>>>>
->>>
->>> Just to make sure that I understood correctly, there's no action I
->>> should take in order for this patch to be picked right? IOW, the
->>> current version is OK?
->>>
->>
->> I was kind of waiting an answer on the question whether the core already
->> prints a message when probe dereferral happens because in that case,
->> there is no need for a debug message and we can indeed simplify the
->> whole block.
-> 
-> Ok, I've found the recent commit 13fcffbbdec4e4863a9a9c7792b821cd6d363a8f
-> 
-> I'll take the patch as is.
-> 
-> 
+On 03/18/2016 10:05 AM, Mauro Carvalho Chehab wrote:
+> Now that media_device_unregister() also does a cleanup, rename it
+> to media_device_unregister_cleanup().
+>
 
-Great, thanks!
+I believe there should be a Suggested-by Sakari Ailus tag here.
+ 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+
+The patch looks good and I agree that makes things more clear.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
