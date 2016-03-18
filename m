@@ -1,58 +1,58 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH] [media] media: rename media unregister function
-Date: Fri, 18 Mar 2016 16:20:19 +0200
-Message-ID: <56EC0EA3.6010108@linux.intel.com>
-References: <2ffc02c944068b2c8655727238d1542f8328385d.1458306276.git.mchehab@osg.samsung.com>
- <56EC0A55.3010803@osg.samsung.com> <56EC0CC4.1070309@osg.samsung.com>
- <56EC0DF9.4050601@osg.samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 7/8] ARM: dts: Add exynos3250-artik5 dtsi file for
+ ARTIK5 module
+Date: Fri, 18 Mar 2016 16:01:27 -0500
+Message-ID: <20160318210127.GA21185@rob-hp-laptop>
+References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
+ <1458027490-13787-8-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <56EC0DF9.4050601@osg.samsung.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, alsa-devel@alsa-project.org, =?UTF-8?Q?Rafael_Louren=c3=a7o_de_Lima_Chehab?= <chehabrafael@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Matthias Schwarzott <zzam@gentoo.org>, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, Patrick Boettcher <patrick.boettcher@posteo.de>, Michal Simek <michal.simek@xilinx.com>, Antti Palosaari <crope@iki.fi>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, Luis de Bethencourt <luis@debethencourt.com>, Junghak Sung <jh1009.sung@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@infradead.org>, Inki Dae <inki.dae@samsung.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Geunyoung Kim <nenggun.kim@samsung.com>, Jaroslav Kysela <perex@perex.cz>, =?UTF-8?Q?S=c3=b6ren_Bri
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:56614 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751200AbcCRVBd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Mar 2016 17:01:33 -0400
+Content-Disposition: inline
+In-Reply-To: <1458027490-13787-8-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Shuah Khan wrote:
-> On 03/18/2016 08:12 AM, Javier Martinez Canillas wrote:
->> Hello Shuah,
->>
->> On 03/18/2016 11:01 AM, Shuah Khan wrote:
->>> On 03/18/2016 07:05 AM, Mauro Carvalho Chehab wrote:
->>>> Now that media_device_unregister() also does a cleanup, rename it
->>>> to media_device_unregister_cleanup().
->>>>
->>>> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
->>>
->>> I think adding cleanup is redundant. media_device_unregister()
->>> would imply that there has to be some cleanup releasing resources.
->>> I wouldn't make this change.
->>>
->>
->> Problem is that there is a media_device_init() and media_device_register(),
->> so having both unregister and cleanup in this function will make very clear
->> that a single function is the counter part of the previous two operations.
->>  
+On Tue, Mar 15, 2016 at 04:38:09PM +0900, Chanwoo Choi wrote:
+> This patch adds the support for Device Tree source for Samsung ARTIK5 module[1]
+> based on Exynos3250 SoC. The ARTIK5 module includes the follwoing devices:
+
+s/follwoing/following/
+
+> - Application Processor (Samsung Exynos3250)
+> - WiFi/BT Combo chip (Broadcom4354)
+> - PMIC (Samsung S2MPS14)
+> - eMMC (4GB)
+> - DRAM LPDDR3 (512MB)
+> - Connectors pin (60 Pins x 3 set)
 > 
-> Yes. I realized that this change is motivated by the fact that there is
-> the media_device_init() and we had the counterpart media_device_cleanup()
-> as an exported function. I still think there is no need to make the change
-> to add _cleanup() at the end of media_device_unregister(). It can be handled
-> in API documentation that it does both.
+> Also, this patch adds the ARTIK5 evaluation board[2] dts file which includes
+> the ARTIK5 module[1] and have the devices such as sound codec, sd card port,
+> ethernet port, uart port and so on.
+> 
+> [1] https://www.artik.io/hardware/artik-5
+> [2] http://www.digikey.com/product-search/en?FV=ffecca14
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  .../bindings/arm/samsung/samsung-boards.txt        |   2 +
+>  arch/arm/boot/dts/Makefile                         |   1 +
+>  arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  26 ++
+>  arch/arm/boot/dts/exynos3250-artik5.dtsi           | 334 +++++++++++++++++++++
+>  4 files changed, 363 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/exynos3250-artik5-eval.dts
+>  create mode 100644 arch/arm/boot/dts/exynos3250-artik5.dtsi
 
-I think that's a bad idea. People will only read the documentation when
-something doesn't work. In this case it's easy to miss that.
+Otherwise,
 
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Acked-by: Rob Herring <robh@kernel.org>
