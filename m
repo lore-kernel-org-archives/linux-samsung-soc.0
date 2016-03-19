@@ -1,68 +1,43 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH] [media] media: rename media unregister function
-Date: Fri, 18 Mar 2016 21:49:27 -0300
-Message-ID: <20160318214927.507f715a@recife.lan>
-References: <2ffc02c944068b2c8655727238d1542f8328385d.1458306276.git.mchehab@osg.samsung.com>
-	<56EC0A55.3010803@osg.samsung.com>
-	<56EC0CC4.1070309@osg.samsung.com>
-	<56EC0DF9.4050601@osg.samsung.com>
-	<56EC0EA3.6010108@linux.intel.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv13 01/17] dts: exynos4*: add HDMI CEC pin definition to
+ pinctrl
+Date: Sat, 19 Mar 2016 11:50:40 +0900
+Message-ID: <20160319025040.GA7289@kozik-lap>
+References: <1458310036-19252-1-git-send-email-hans.verkuil@cisco.com>
+ <1458310036-19252-2-git-send-email-hans.verkuil@cisco.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:54763 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750748AbcCSAtl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Mar 2016 20:49:41 -0400
-In-Reply-To: <56EC0EA3.6010108@linux.intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1458310036-19252-2-git-send-email-hans.verkuil@cisco.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, dri-devel@lists.freedesktop.org, lars@opdenkamp.eu, krzk@kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Hans Verkuil <hans.verkuil@cisco.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Junghak Sung <jh1009.sung@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrew Morton <akpm@linux-f>
 
-Em Fri, 18 Mar 2016 16:20:19 +0200
-Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
-
-> Shuah Khan wrote:
-> > On 03/18/2016 08:12 AM, Javier Martinez Canillas wrote:  
-> >> Hello Shuah,
-> >>
-> >> On 03/18/2016 11:01 AM, Shuah Khan wrote:  
-> >>> On 03/18/2016 07:05 AM, Mauro Carvalho Chehab wrote:  
-> >>>> Now that media_device_unregister() also does a cleanup, rename it
-> >>>> to media_device_unregister_cleanup().
-> >>>>
-> >>>> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>  
-> >>>
-> >>> I think adding cleanup is redundant. media_device_unregister()
-> >>> would imply that there has to be some cleanup releasing resources.
-> >>> I wouldn't make this change.
-> >>>  
-> >>
-> >> Problem is that there is a media_device_init() and media_device_register(),
-> >> so having both unregister and cleanup in this function will make very clear
-> >> that a single function is the counter part of the previous two operations.
-> >>    
-> > 
-> > Yes. I realized that this change is motivated by the fact that there is
-> > the media_device_init() and we had the counterpart media_device_cleanup()
-> > as an exported function. I still think there is no need to make the change
-> > to add _cleanup() at the end of media_device_unregister(). It can be handled
-> > in API documentation that it does both.  
-> 
-> I think that's a bad idea. People will only read the documentation when
-> something doesn't work. In this case it's easy to miss that.
-
-After thinking about that, I guess the best is to use kref only
-if the media_device_*devres functions are used. With this, we don't
-need to touch at media_device_cleanup().
-
-Just the patch to the ML:
-	https://patchwork.linuxtv.org/patch/33533/
-
-It was tested with HVR-950Q.
-
-Regards,
-Mauro
+T24gRnJpLCBNYXIgMTgsIDIwMTYgYXQgMDM6MDc6MDBQTSArMDEwMCwgSGFucyBWZXJrdWlsIHdy
+b3RlOgo+IEZyb206IEthbWlsIERlYnNraSA8a2FtaWxAd3lwYXMub3JnPgo+IAo+IEFkZCBwaW5j
+dHJsIG5vZGVzIGZvciB0aGUgSERNSSBDRUMgZGV2aWNlIHRvIHRoZSBFeHlub3M0MjEwIGFuZAo+
+IEV4eW5vczR4MTIgU29Dcy4gVGhlc2UgYXJlIHJlcXVpcmVkIGJ5IHRoZSBIRE1JIENFQyBkZXZp
+Y2UuCj4gCj4gU2lnbmVkLW9mZi1ieTogS2FtaWwgRGVic2tpIDxrYW1pbEB3eXBhcy5vcmc+Cj4g
+U2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgo+IEFj
+a2VkLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KPiAt
+LS0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC1waW5jdHJsLmR0c2kgfCA3ICsrKysr
+KysKPiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNHgxMi1waW5jdHJsLmR0c2kgfCA3ICsrKysr
+KysKPiAgMiBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspCgpIaSBIYW5zLAoKSSBzZWUg
+eW91IGhhdmUgYmVlbiBjYXJyeWluZyB0aGVzZSB0aHJlZSBwYXRjaGVzIGZvciBhIGxvbmcgdGlt
+ZS4KSW5pdGlhbGx5IEkgdGhvdWdodCB0aGF0IHRoZXJlIGFyZSBzb21lIGRlcGVuZGVuY2llcy4u
+LiBidXQgbWF5YmUgdGhlcmUKYXJlIG5vdD8KCkNhbiBJIHRha2UgdGhlc2UgRXh5bm9zIERUUyBw
+YXRjaGVzIHRvIHNhbXN1bmctc29jPwoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
