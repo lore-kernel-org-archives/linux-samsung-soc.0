@@ -1,92 +1,73 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: Who is going to merge it [Was: Re: [PATCH v14 0/17] Add Analogix Core Display Port Driver]
-Date: Tue, 22 Mar 2016 23:52:47 +0100
-Message-ID: <8949624.HmxDpZAlt2@diego>
-References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com> <1919945.Y1tg0YzXlm@diego> <56F1CAEB.3080701@samsung.com>
+From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: Who is going to merge it [Was: Re: [PATCH v14 0/17] Add Analogix
+ Core Display Port Driver]
+Date: Wed, 23 Mar 2016 08:09:33 +0900
+Message-ID: <56F1D0AD.8030905@samsung.com>
+References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
+ <1919945.Y1tg0YzXlm@diego> <56F1CAEB.3080701@samsung.com>
+ <8949624.HmxDpZAlt2@diego>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:54795 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752551AbcCVWxC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Mar 2016 18:53:02 -0400
-In-Reply-To: <56F1CAEB.3080701@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-reply-to: <8949624.HmxDpZAlt2@diego>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: David Airlie <airlied@linux.ie>, Mark Yao <mark.yao@rock-chips.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Doug Anderson <dianders@chromium.org>, Jingoo Han <jingoohan1@gmail.com>, Yakir Yang <ykk@rock-chips.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, emil.l.velikov@gmail.com
 
-Am Mittwoch, 23. M=C3=A4rz 2016, 07:44:59 schrieb Inki Dae:
-> + Ajay kumar with Samsung email
->=20
-> Hi,
->=20
-> 2016=EB=85=84 03=EC=9B=94 23=EC=9D=BC 07:12=EC=97=90 Heiko St=C3=BCbn=
-er =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> > Hi,
-> >=20
-> > Am Dienstag, 22. M=C3=A4rz 2016, 16:19:37 schrieb Javier Martinez C=
-anillas:
-> >> On 03/18/2016 07:53 PM, Doug Anderson wrote:
-> >>> On Thu, Mar 17, 2016 at 11:41 PM, Caesar Wang
-> >>> <caesar.upstream@gmail.com>
-> >=20
-> > wrote:
-> >> Same here, this is the second time I tested this series (first tim=
-e was
-> >> v6 on October 25 [2]) and I think that has been out there for too =
-long.
-> >>=20
-> >>> Tested-by: Douglas Anderson <dianders@chromium.org>
-> >>=20
-> >> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> >=20
-> > So we have 3 tests (Doug, Caesar and me) for the Rockchip side as w=
-ell as
-> > Javier for the Exynos side based on the most recent drm state.
-> >=20
-> > As said by a lot of people it would be cool to get this merged soon=
- -
-> > hopefully directly after -rc1. The only remaining question is throu=
-gh
-> > which
-> > tree it should go.
-> >=20
-> > I guess there are two basic options:
-> > - Inki takes the series - we could see the Rockchip-Ack being impli=
-ed but
-> > maybe Mark can provide an explicit one
-> > - Mark takes the series with an Ack from Inki for the shared parts
-> >=20
-> > Inki, Mark do you have a preference?
->=20
-> The problem would be that there is no drm bridge maintainer. I think =
-the
-> most suitable person as the maintainer would be Ajay Kumar who is an =
-author
-> of drm bridge framework. Of course, I could take them and have pull-r=
-equest
-> again. But it seems a little late. Dave had already pull-request.
-
-I really meant that for 4.7, not for the current merge window. I just w=
-ant to=20
-make sure it goes into a maintainer tree shortly after v4.6-rc1, before=
-=20
-something else changes the exynos-dp again :-) .
-
-
-> To Ajay,
-> How about adding you as a drm bridge maintainer? DRM SoC driver maint=
-ainers
-> would need a person who can manage the drm bridge relevant pathes.
-
-The previous example (dw_hdmi generalization between imx and rockchip) =
-did=20
-just go through the imx tree. So either the Samsung or Rockchip drm-tre=
-es=20
-might be enough?
-
-
-Heiko
+CgoyMDE264WEIDAz7JuUIDIz7J28IDA3OjUy7JeQIEhlaWtvIFN0w7xibmVyIOydtCjqsIApIOyT
+tCDquIA6Cj4gQW0gTWl0dHdvY2gsIDIzLiBNw6RyeiAyMDE2LCAwNzo0NDo1OSBzY2hyaWViIElu
+a2kgRGFlOgo+PiArIEFqYXkga3VtYXIgd2l0aCBTYW1zdW5nIGVtYWlsCj4+Cj4+IEhpLAo+Pgo+
+PiAyMDE264WEIDAz7JuUIDIz7J28IDA3OjEy7JeQIEhlaWtvIFN0w7xibmVyIOydtCjqsIApIOyT
+tCDquIA6Cj4+PiBIaSwKPj4+Cj4+PiBBbSBEaWVuc3RhZywgMjIuIE3DpHJ6IDIwMTYsIDE2OjE5
+OjM3IHNjaHJpZWIgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzOgo+Pj4+IE9uIDAzLzE4LzIwMTYg
+MDc6NTMgUE0sIERvdWcgQW5kZXJzb24gd3JvdGU6Cj4+Pj4+IE9uIFRodSwgTWFyIDE3LCAyMDE2
+IGF0IDExOjQxIFBNLCBDYWVzYXIgV2FuZwo+Pj4+PiA8Y2Flc2FyLnVwc3RyZWFtQGdtYWlsLmNv
+bT4KPj4+Cj4+PiB3cm90ZToKPj4+PiBTYW1lIGhlcmUsIHRoaXMgaXMgdGhlIHNlY29uZCB0aW1l
+IEkgdGVzdGVkIHRoaXMgc2VyaWVzIChmaXJzdCB0aW1lIHdhcwo+Pj4+IHY2IG9uIE9jdG9iZXIg
+MjUgWzJdKSBhbmQgSSB0aGluayB0aGF0IGhhcyBiZWVuIG91dCB0aGVyZSBmb3IgdG9vIGxvbmcu
+Cj4+Pj4KPj4+Pj4gVGVzdGVkLWJ5OiBEb3VnbGFzIEFuZGVyc29uIDxkaWFuZGVyc0BjaHJvbWl1
+bS5vcmc+Cj4+Pj4KPj4+PiBUZXN0ZWQtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2
+aWVyQG9zZy5zYW1zdW5nLmNvbT4KPj4+Cj4+PiBTbyB3ZSBoYXZlIDMgdGVzdHMgKERvdWcsIENh
+ZXNhciBhbmQgbWUpIGZvciB0aGUgUm9ja2NoaXAgc2lkZSBhcyB3ZWxsIGFzCj4+PiBKYXZpZXIg
+Zm9yIHRoZSBFeHlub3Mgc2lkZSBiYXNlZCBvbiB0aGUgbW9zdCByZWNlbnQgZHJtIHN0YXRlLgo+
+Pj4KPj4+IEFzIHNhaWQgYnkgYSBsb3Qgb2YgcGVvcGxlIGl0IHdvdWxkIGJlIGNvb2wgdG8gZ2V0
+IHRoaXMgbWVyZ2VkIHNvb24gLQo+Pj4gaG9wZWZ1bGx5IGRpcmVjdGx5IGFmdGVyIC1yYzEuIFRo
+ZSBvbmx5IHJlbWFpbmluZyBxdWVzdGlvbiBpcyB0aHJvdWdoCj4+PiB3aGljaAo+Pj4gdHJlZSBp
+dCBzaG91bGQgZ28uCj4+Pgo+Pj4gSSBndWVzcyB0aGVyZSBhcmUgdHdvIGJhc2ljIG9wdGlvbnM6
+Cj4+PiAtIElua2kgdGFrZXMgdGhlIHNlcmllcyAtIHdlIGNvdWxkIHNlZSB0aGUgUm9ja2NoaXAt
+QWNrIGJlaW5nIGltcGxpZWQgYnV0Cj4+PiBtYXliZSBNYXJrIGNhbiBwcm92aWRlIGFuIGV4cGxp
+Y2l0IG9uZQo+Pj4gLSBNYXJrIHRha2VzIHRoZSBzZXJpZXMgd2l0aCBhbiBBY2sgZnJvbSBJbmtp
+IGZvciB0aGUgc2hhcmVkIHBhcnRzCj4+Pgo+Pj4gSW5raSwgTWFyayBkbyB5b3UgaGF2ZSBhIHBy
+ZWZlcmVuY2U/Cj4+Cj4+IFRoZSBwcm9ibGVtIHdvdWxkIGJlIHRoYXQgdGhlcmUgaXMgbm8gZHJt
+IGJyaWRnZSBtYWludGFpbmVyLiBJIHRoaW5rIHRoZQo+PiBtb3N0IHN1aXRhYmxlIHBlcnNvbiBh
+cyB0aGUgbWFpbnRhaW5lciB3b3VsZCBiZSBBamF5IEt1bWFyIHdobyBpcyBhbiBhdXRob3IKPj4g
+b2YgZHJtIGJyaWRnZSBmcmFtZXdvcmsuIE9mIGNvdXJzZSwgSSBjb3VsZCB0YWtlIHRoZW0gYW5k
+IGhhdmUgcHVsbC1yZXF1ZXN0Cj4+IGFnYWluLiBCdXQgaXQgc2VlbXMgYSBsaXR0bGUgbGF0ZS4g
+RGF2ZSBoYWQgYWxyZWFkeSBwdWxsLXJlcXVlc3QuCj4gCj4gSSByZWFsbHkgbWVhbnQgdGhhdCBm
+b3IgNC43LCBub3QgZm9yIHRoZSBjdXJyZW50IG1lcmdlIHdpbmRvdy4gSSBqdXN0IHdhbnQgdG8g
+Cj4gbWFrZSBzdXJlIGl0IGdvZXMgaW50byBhIG1haW50YWluZXIgdHJlZSBzaG9ydGx5IGFmdGVy
+IHY0LjYtcmMxLCBiZWZvcmUgCj4gc29tZXRoaW5nIGVsc2UgY2hhbmdlcyB0aGUgZXh5bm9zLWRw
+IGFnYWluIDotKS4KPiAKPiAKPj4gVG8gQWpheSwKPj4gSG93IGFib3V0IGFkZGluZyB5b3UgYXMg
+YSBkcm0gYnJpZGdlIG1haW50YWluZXI/IERSTSBTb0MgZHJpdmVyIG1haW50YWluZXJzCj4+IHdv
+dWxkIG5lZWQgYSBwZXJzb24gd2hvIGNhbiBtYW5hZ2UgdGhlIGRybSBicmlkZ2UgcmVsZXZhbnQg
+cGF0aGVzLgo+IAo+IFRoZSBwcmV2aW91cyBleGFtcGxlIChkd19oZG1pIGdlbmVyYWxpemF0aW9u
+IGJldHdlZW4gaW14IGFuZCByb2NrY2hpcCkgZGlkIAo+IGp1c3QgZ28gdGhyb3VnaCB0aGUgaW14
+IHRyZWUuIFNvIGVpdGhlciB0aGUgU2Ftc3VuZyBvciBSb2NrY2hpcCBkcm0tdHJlZXMgCj4gbWln
+aHQgYmUgZW5vdWdoPwoKSW4gdGhpcyBjYXNlLCBzb21lb25lIGVsc2UgbWF5IHNlbmQgYW4gZW1h
+aWwgYWdhaW4gbGlrZSB5b3UgIndobyBpcyBnb2luZyB0byBtZXJnZT8iClRoYXQgd291bGQgYmUg
+d2h5IHdlIG5lZWQgYSBtYWludGFpbmVyLgoKZHJtIHBhbmVsIGlzIGFscmVhZHkgbWFuYWdlZCB3
+ZWxsIGJ5IFRoaWVycnkgUmVkaW5nIHdpdGhvdXQgc3VjaCBjb25mdXNpb24uIAoKVGhhbmtzLApJ
+bmtpIERhZQoKPiAKPiAKPiBIZWlrbwo+IAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KTGludXgtcm9ja2NoaXAgbWFpbGluZyBsaXN0CkxpbnV4LXJv
+Y2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9saW51eC1yb2NrY2hpcAo=
