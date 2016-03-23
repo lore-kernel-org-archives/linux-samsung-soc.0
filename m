@@ -1,88 +1,82 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 5/7] drm/exynos/decon5433: fix DECON standalone update
-Date: Wed, 23 Mar 2016 14:15:16 +0100
-Message-ID: <1458738918-32054-6-git-send-email-a.hajda@samsung.com>
-References: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 1/6] drm/exynos: add helper to get crtc from pipe
+Date: Wed, 23 Mar 2016 14:25:57 +0100
+Message-ID: <1458739562-32327-2-git-send-email-a.hajda@samsung.com>
+References: <1458739562-32327-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37550 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38220 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755559AbcCWNP5 (ORCPT
+	with ESMTP id S1754859AbcCWN0R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Mar 2016 09:15:57 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+	Wed, 23 Mar 2016 09:26:17 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
  by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O4H00FSSU5XTS90@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Mar 2016 13:15:33 +0000 (GMT)
-In-reply-to: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
+ with ESMTP id <0O4H00G2WUNQ2NA0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Mar 2016 13:26:14 +0000 (GMT)
+In-reply-to: <1458739562-32327-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS
 	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-DECON should be updated after un-protecting windows and after changing
-output parameters, otherwise image is not displayed in case of HDMI path.
+The helper abstracts out conversion from pipeline
+to crtc. Currently it is used in two places, but
+there will be more uses in next patches.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 10 ++++------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  8 ++++++++
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index ab9154e..7fec656 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -191,6 +191,8 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index e36579c..50dd33d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -157,9 +157,8 @@ err_crtc:
  
- 	/* enable output and display signal */
- 	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID | VIDCON0_ENVID_F, ~0);
+ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, unsigned int pipe)
+ {
+-	struct exynos_drm_private *private = dev->dev_private;
+-	struct exynos_drm_crtc *exynos_crtc =
+-		to_exynos_crtc(private->crtc[pipe]);
++	struct exynos_drm_crtc *exynos_crtc = exynos_drm_crtc_from_pipe(dev,
++									pipe);
+ 
+ 	if (exynos_crtc->ops->enable_vblank)
+ 		return exynos_crtc->ops->enable_vblank(exynos_crtc);
+@@ -169,9 +168,8 @@ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, unsigned int pipe)
+ 
+ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, unsigned int pipe)
+ {
+-	struct exynos_drm_private *private = dev->dev_private;
+-	struct exynos_drm_crtc *exynos_crtc =
+-		to_exynos_crtc(private->crtc[pipe]);
++	struct exynos_drm_crtc *exynos_crtc = exynos_drm_crtc_from_pipe(dev,
++									pipe);
+ 
+ 	if (exynos_crtc->ops->disable_vblank)
+ 		exynos_crtc->ops->disable_vblank(exynos_crtc);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 3f170ce..fcea940 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -232,6 +232,14 @@ struct exynos_drm_private {
+ 	wait_queue_head_t	wait;
+ };
+ 
++static inline struct exynos_drm_crtc *
++exynos_drm_crtc_from_pipe(struct drm_device *dev, int pipe)
++{
++	struct exynos_drm_private *private = dev->dev_private;
 +
-+	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- }
- 
- static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
-@@ -316,9 +318,6 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 
- 	/* window enable */
- 	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, ~0);
--
--	/* standalone update */
--	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- }
- 
- static void decon_disable_plane(struct exynos_drm_crtc *crtc,
-@@ -336,9 +335,6 @@ static void decon_disable_plane(struct exynos_drm_crtc *crtc,
- 	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
- 
- 	decon_shadow_protect_win(ctx, win, false);
--
--	/* standalone update */
--	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- }
- 
- static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
-@@ -352,6 +348,9 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
- 	for (i = ctx->first_win; i < WINDOWS_NR; i++)
- 		decon_shadow_protect_win(ctx, i, false);
- 
-+	/* standalone update */
-+	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
++	return to_exynos_crtc(private->crtc[pipe]);
++}
 +
- 	if (ctx->out_type == IFTYPE_I80)
- 		set_bit(BIT_WIN_UPDATED, &ctx->flags);
- }
-@@ -463,8 +462,10 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
- 		decon_shadow_protect_win(ctx, win, true);
- 		decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
- 		decon_shadow_protect_win(ctx, win, false);
--		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- 	}
-+
-+	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
-+
- 	/* TODO: wait for possible vsync */
- 	msleep(50);
- 
+ static inline struct device *to_dma_dev(struct drm_device *dev)
+ {
+ 	struct exynos_drm_private *priv = dev->dev_private;
 -- 
 1.9.1
