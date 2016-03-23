@@ -1,19 +1,19 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/6] drm/exynos: add helper to get crtc from pipe
-Date: Wed, 23 Mar 2016 14:25:57 +0100
-Message-ID: <1458739562-32327-2-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 3/6] drm/exynos/hdmi: expose HDMI-PHY clock as pipeline clock
+Date: Wed, 23 Mar 2016 14:25:59 +0100
+Message-ID: <1458739562-32327-4-git-send-email-a.hajda@samsung.com>
 References: <1458739562-32327-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38220 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754859AbcCWN0R (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:56478 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754652AbcCWN0T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Mar 2016 09:26:17 -0400
+	Wed, 23 Mar 2016 09:26:19 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O4H00G2WUNQ2NA0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Mar 2016 13:26:14 +0000 (GMT)
+ with ESMTP id <0O4H00238UNRCGA0@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Mar 2016 13:26:15 +0000 (GMT)
 In-reply-to: <1458739562-32327-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,62 +21,139 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS
 	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-The helper abstracts out conversion from pipeline
-to crtc. Currently it is used in two places, but
-there will be more uses in next patches.
+HDMI-PHY clock should be accessible from other components in the pipeline.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 10 ++++------
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  8 ++++++++
- 2 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 67 ++++++++++++++++++++++++++----------
+ 1 file changed, 48 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index e36579c..50dd33d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -157,9 +157,8 @@ err_crtc:
- 
- int exynos_drm_crtc_enable_vblank(struct drm_device *dev, unsigned int pipe)
- {
--	struct exynos_drm_private *private = dev->dev_private;
--	struct exynos_drm_crtc *exynos_crtc =
--		to_exynos_crtc(private->crtc[pipe]);
-+	struct exynos_drm_crtc *exynos_crtc = exynos_drm_crtc_from_pipe(dev,
-+									pipe);
- 
- 	if (exynos_crtc->ops->enable_vblank)
- 		return exynos_crtc->ops->enable_vblank(exynos_crtc);
-@@ -169,9 +168,8 @@ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, unsigned int pipe)
- 
- void exynos_drm_crtc_disable_vblank(struct drm_device *dev, unsigned int pipe)
- {
--	struct exynos_drm_private *private = dev->dev_private;
--	struct exynos_drm_crtc *exynos_crtc =
--		to_exynos_crtc(private->crtc[pipe]);
-+	struct exynos_drm_crtc *exynos_crtc = exynos_drm_crtc_from_pipe(dev,
-+									pipe);
- 
- 	if (exynos_crtc->ops->disable_vblank)
- 		exynos_crtc->ops->disable_vblank(exynos_crtc);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 3f170ce..fcea940 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -232,6 +232,14 @@ struct exynos_drm_private {
- 	wait_queue_head_t	wait;
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 49a5902..0d1c2f0 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -146,6 +146,7 @@ struct hdmi_context {
+ 	struct clk			**clk_muxes;
+ 	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
+ 	struct regulator		*reg_hdmi_en;
++	struct exynos_drm_clk		phy_clk;
  };
  
-+static inline struct exynos_drm_crtc *
-+exynos_drm_crtc_from_pipe(struct drm_device *dev, int pipe)
+ static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
+@@ -1448,7 +1449,6 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+ 
+ static void hdmi_conf_apply(struct hdmi_context *hdata)
+ {
+-	hdmiphy_conf_apply(hdata);
+ 	hdmi_start(hdata, false);
+ 	hdmi_conf_init(hdata);
+ 	hdmi_audio_init(hdata);
+@@ -1481,10 +1481,8 @@ static void hdmi_set_refclk(struct hdmi_context *hdata, bool on)
+ 			   SYSREG_HDMI_REFCLK_INT_CLK, on ? ~0 : 0);
+ }
+ 
+-static void hdmi_enable(struct drm_encoder *encoder)
++static void hdmiphy_enable(struct hdmi_context *hdata)
+ {
+-	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+-
+ 	if (hdata->powered)
+ 		return;
+ 
+@@ -1500,11 +1498,40 @@ static void hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0, HDMI_PHY_POWER_OFF_EN);
+ 
+-	hdmi_conf_apply(hdata);
++	hdmiphy_conf_apply(hdata);
+ 
+ 	hdata->powered = true;
+ }
+ 
++static void hdmiphy_disable(struct hdmi_context *hdata)
 +{
-+	struct exynos_drm_private *private = dev->dev_private;
++	if (!hdata->powered)
++		return;
 +
-+	return to_exynos_crtc(private->crtc[pipe]);
++	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
++
++	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0, HDMI_PHY_POWER_OFF_EN);
++
++	hdmi_set_refclk(hdata, false);
++
++	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
++			PMU_HDMI_PHY_ENABLE_BIT, 0);
++
++	regulator_bulk_disable(ARRAY_SIZE(supply), hdata->regul_bulk);
++
++	pm_runtime_put_sync(hdata->dev);
++
++	hdata->powered = false;
 +}
 +
- static inline struct device *to_dma_dev(struct drm_device *dev)
++static void hdmi_enable(struct drm_encoder *encoder)
++{
++	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
++
++	hdmiphy_enable(hdata);
++	hdmi_conf_apply(hdata);
++}
++
+ static void hdmi_disable(struct drm_encoder *encoder)
  {
- 	struct exynos_drm_private *priv = dev->dev_private;
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+@@ -1528,22 +1555,9 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 	if (funcs && funcs->disable)
+ 		(*funcs->disable)(crtc);
+ 
+-	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
+-
+ 	cancel_delayed_work(&hdata->hotplug_work);
+ 
+-	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0, HDMI_PHY_POWER_OFF_EN);
+-
+-	hdmi_set_refclk(hdata, false);
+-
+-	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+-			PMU_HDMI_PHY_ENABLE_BIT, 0);
+-
+-	regulator_bulk_disable(ARRAY_SIZE(supply), hdata->regul_bulk);
+-
+-	pm_runtime_put_sync(hdata->dev);
+-
+-	hdata->powered = false;
++	hdmiphy_disable(hdata);
+ }
+ 
+ static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+@@ -1627,6 +1641,17 @@ static int hdmi_clk_init(struct hdmi_context *hdata)
+ 	return hdmi_clks_get(hdata, &drv_data->clk_muxes, hdata->clk_muxes);
+ }
+ 
++static void hdmiphy_clk_enable(struct exynos_drm_clk *clk, bool enable)
++{
++	struct hdmi_context *hdata = container_of(clk, struct hdmi_context,
++						  phy_clk);
++
++	if (enable)
++		hdmiphy_enable(hdata);
++	else
++		hdmiphy_disable(hdata);
++}
++
+ static int hdmi_resources_init(struct hdmi_context *hdata)
+ {
+ 	struct device *dev = hdata->dev;
+@@ -1710,6 +1735,10 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+ 	if (pipe < 0)
+ 		return pipe;
+ 
++	hdata->phy_clk.enable = hdmiphy_clk_enable;
++
++	exynos_drm_crtc_from_pipe(drm_dev, pipe)->pipe_clk = &hdata->phy_clk;
++
+ 	encoder->possible_crtcs = 1 << pipe;
+ 
+ 	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
 -- 
 1.9.1
