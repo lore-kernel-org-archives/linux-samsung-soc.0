@@ -1,42 +1,50 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 3/7] drm/exynos/hdmi: add core reset code
-Date: Wed, 23 Mar 2016 14:15:14 +0100
-Message-ID: <1458738918-32054-4-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 7/7] drm/exynos/decon5433: do not protect window in plane
+ disable
+Date: Wed, 23 Mar 2016 14:15:18 +0100
+Message-ID: <1458738918-32054-8-git-send-email-a.hajda@samsung.com>
 References: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:55709 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755145AbcCWNPh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Mar 2016 09:15:37 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O4H002T4U5YCG90@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Mar 2016 13:15:35 +0000 (GMT)
 In-reply-to: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS
+	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-VG8gZW5zdXJlIEhETUktUEhZIHJlcHJvZ3JhbW1pbmcgd2lsbCBub3QgYWZmZWN0CkhETUkgdGhl
-IGxhdHRlciBzaG91bGQgYmUgcmVzZXQuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxh
-LmhhamRhQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
-bWkuYyB8IDQgKysrKwogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRleCAxNjk1MWYzLi42ZmFhMTA0IDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCkBAIC0xNjYyLDYgKzE2NjIsMTAgQEAgc3RhdGljIHZv
-aWQgaGRtaV9tb2RlX2FwcGx5KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQogCiBzdGF0aWMg
-dm9pZCBoZG1pcGh5X2NvbmZfcmVzZXQoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCiB7CisJ
-aGRtaV9yZWdfd3JpdGVtYXNrKGhkYXRhLCBIRE1JX0NPUkVfUlNUT1VULCAwLCAxKTsKKwl1c2xl
-ZXBfcmFuZ2UoMTAwMDAsIDEyMDAwKTsKKwloZG1pX3JlZ193cml0ZW1hc2soaGRhdGEsIEhETUlf
-Q09SRV9SU1RPVVQsIH4wLCAxKTsKKwl1c2xlZXBfcmFuZ2UoMTAwMDAsIDEyMDAwKTsKIAloZG1p
-X3JlZ193cml0ZW1hc2soaGRhdGEsIEhETUlfUEhZX1JTVE9VVCwgfjAsIEhETUlfUEhZX1NXX1JT
-VE9VVCk7CiAJdXNsZWVwX3JhbmdlKDEwMDAwLCAxMjAwMCk7CiAJaGRtaV9yZWdfd3JpdGVtYXNr
-KGhkYXRhLCBIRE1JX1BIWV9SU1RPVVQsIDAsIEhETUlfUEhZX1NXX1JTVE9VVCk7Ci0tIAoxLjku
-MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+decon_atomic_begin and decon_atomic_flush protects all windows already.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 120efd8..c8c921c 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -329,12 +329,7 @@ static void decon_disable_plane(struct exynos_drm_crtc *crtc,
+ 	if (test_bit(BIT_SUSPENDED, &ctx->flags))
+ 		return;
+ 
+-	decon_shadow_protect_win(ctx, win, true);
+-
+-	/* window disable */
+ 	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
+-
+-	decon_shadow_protect_win(ctx, win, false);
+ }
+ 
+ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
+-- 
+1.9.1
