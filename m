@@ -1,42 +1,57 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/7] drm/exynos: HDMI and DECON fixes and enhancements
-Date: Wed, 23 Mar 2016 14:15:11 +0100
-Message-ID: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 2/7] drm/exynos/hdmi: add PHY power off signal handling
+Date: Wed, 23 Mar 2016 14:15:13 +0100
+Message-ID: <1458738918-32054-3-git-send-email-a.hajda@samsung.com>
+References: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:57238 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755442AbcCWNPf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Mar 2016 09:15:35 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O4H00JV6U5WJB90@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Mar 2016 13:15:32 +0000 (GMT)
+In-reply-to: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS
+	ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-SGkgSW5raSwKClRoaXMgc2V0IG9mIHBhdGNoZXMgcHJvdmlkZXMgc2V0IG9mIGRpZmZlcmVudCBm
-aXhlcyBhbmQgZW5oYW5jZW1lbnRzCmZvciBERUNPTiAtPiBIRE1JIHBhdGguIEl0IGlzIGJhc2Vk
-IG9uOgotIG15IEhETUkgcGF0Y2hlcyB3aGljaCBhcmUgbm90IHlldCBtZXJnZWRbMV0sIGNvdWxk
-IHlvdSBsb29rIGF0IHRoZW0KICBieSB0aGUgd2F5LCB0aGV5IHdlcmUgcG9zdGVkIGFib3V0IDUg
-bW9udGhzIGFnbyA6KQotIElPTU1VIHBhdGNoZXMgYnkgTWFyZWsgKGZvciBzb21lIG15c3Rlcmlv
-dXMgcmVhc29uIEhETUkgcGF0aCBvbiA1NDMzCiAgd29ya3Mgb25seSB3aXRoIElPTU1VIGVuYWJs
-ZWQpLAotIGxhdGVzdCBleHlub3MtZHJtLW5leHQgcGF0Y2hlcy4KClsxXTogaHR0cDovL3Blcm1h
-bGluay5nbWFuZS5vcmcvZ21hbmUuY29tcC52aWRlby5kcmkuZGV2ZWwvMTQwMTA5CgpSZWdhcmRz
-CkFuZHJ6ZWoKCgpBbmRyemVqIEhhamRhICg3KToKICBkcm0vZXh5bm9zL2hkbWk6IGZpeCBQSFkg
-Y29uZmlndXJhdGlvbiBzZXF1ZW5jZQogIGRybS9leHlub3MvaGRtaTogYWRkIFBIWSBwb3dlciBv
-ZmYgc2lnbmFsIGhhbmRsaW5nCiAgZHJtL2V4eW5vcy9oZG1pOiBhZGQgY29yZSByZXNldCBjb2Rl
-CiAgZHJtL2V4eW5vcy9oZG1pOiByZW1vdmUgcmVnaXN0cnkgZHVtcAogIGRybS9leHlub3MvZGVj
-b241NDMzOiBmaXggREVDT04gc3RhbmRhbG9uZSB1cGRhdGUKICBkcm0vZXh5bm9zL2RlY29uNTQz
-MzogcmVzZXQgZGVjb24gb24gc3RhcnQKICBkcm0vZXh5bm9zL2RlY29uNTQzMzogZG8gbm90IHBy
-b3RlY3Qgd2luZG93IGluIHBsYW5lIGRpc2FibGUKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgMjIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2hkbWkuYyAgICAgICAgICB8IDI5MyArKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMiBm
-aWxlcyBjaGFuZ2VkLCAyOSBpbnNlcnRpb25zKCspLCAyODYgZGVsZXRpb25zKC0pCgotLSAKMS45
-LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+HDMI-PHY power off bit defaults to 0 in older HDMI versions.
+In case of Exynos5433 it defaults to 1. To make code
+consistent across all versions this bit is always unset/set in
+power on/off sequences.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 5c7dbfc..16951f3 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1757,6 +1757,8 @@ static void hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	hdmi_set_refclk(hdata, true);
+ 
++	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0, HDMI_PHY_POWER_OFF_EN);
++
+ 	hdmi_conf_apply(hdata);
+ 
+ 	hdata->powered = true;
+@@ -1789,6 +1791,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 
+ 	cancel_delayed_work(&hdata->hotplug_work);
+ 
++	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0, HDMI_PHY_POWER_OFF_EN);
++
+ 	hdmi_set_refclk(hdata, false);
+ 
+ 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+-- 
+1.9.1
