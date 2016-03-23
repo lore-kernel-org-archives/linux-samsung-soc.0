@@ -1,258 +1,178 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/3] phy: exynos-mipi-video: Add support for Exynos 5420 and
- 5433 SoCs
-Date: Wed, 23 Mar 2016 12:09:18 +0100
-Message-ID: <1458731358-773-4-git-send-email-m.szyprowski@samsung.com>
-References: <1458731358-773-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48308 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755061AbcCWLJm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Mar 2016 07:09:42 -0400
-In-reply-to: <1458731358-773-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 4/7] drm/exynos/hdmi: remove registry dump
+Date: Wed, 23 Mar 2016 14:15:15 +0100
+Message-ID: <1458738918-32054-5-git-send-email-a.hajda@samsung.com>
+References: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch adds support for MIPI DPHYs found in Exynos5420-compatible
-(5420, 5422 and 5800) and Exynos5433 SoCs. Those SoCs differs from
-earlier by different offset of MIPI DPHY registers in PMU controllers
-(Exynos 5420-compatible case) or by moving MIPI DPHY reset registers to
-separate system register controllers (Exynos 5433 case). In both case
-also additional 5th PHY (MIPI CSIS 2) has been added.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- .../devicetree/bindings/phy/samsung-phy.txt        |  18 ++-
- drivers/phy/phy-exynos-mipi-video.c                | 129 ++++++++++++++++++++-
- include/linux/mfd/syscon/exynos5-pmu.h             |   3 +
- 3 files changed, 147 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 0289d3b..9872ba8 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -2,9 +2,20 @@ Samsung S5P/EXYNOS SoC series MIPI CSIS/DSIM DPHY
- -------------------------------------------------
- 
- Required properties:
--- compatible : should be "samsung,s5pv210-mipi-video-phy";
-+- compatible : should be one of the listed compatibles:
-+	- "samsung,s5pv210-mipi-video-phy"
-+	- "samsung,exynos5420-mipi-video-phy"
-+	- "samsung,exynos5433-mipi-video-phy"
- - #phy-cells : from the generic phy bindings, must be 1;
--- syscon - phandle to the PMU system controller;
-+
-+In case of s5pv210 and exynos5420 compatible PHYs:
-+- syscon - phandle to the PMU system controller
-+
-+In case of exynos5433 compatible PHY:
-+ - samsung,pmu-syscon - phandle to the PMU system controller
-+ - samsung,disp-sysreg - phandle to the DISP system registers controller
-+ - samsung,cam0-sysreg - phandle to the CAM0 system registers controller
-+ - samsung,cam1-sysreg - phandle to the CAM1 system registers controller
- 
- For "samsung,s5pv210-mipi-video-phy" compatible PHYs the second cell in
- the PHY specifier identifies the PHY and its meaning is as follows:
-@@ -12,6 +23,9 @@ the PHY specifier identifies the PHY and its meaning is as follows:
-   1 - MIPI DSIM 0,
-   2 - MIPI CSIS 1,
-   3 - MIPI DSIM 1.
-+"samsung,exynos5420-mipi-video-phy" and "samsung,exynos5433-mipi-video-phy"
-+supports additional fifth PHY:
-+  4 - MIPI CSIS 2.
- 
- Samsung EXYNOS SoC series Display Port PHY
- -------------------------------------------------
-diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
-index 7ba0936..3e6656c 100644
---- a/drivers/phy/phy-exynos-mipi-video.c
-+++ b/drivers/phy/phy-exynos-mipi-video.c
-@@ -1,7 +1,7 @@
- /*
-  * Samsung S5P/EXYNOS SoC series MIPI CSIS/DSIM DPHY driver
-  *
-- * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ * Copyright (C) 2013,2016 Samsung Electronics Co., Ltd.
-  * Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-@@ -13,6 +13,7 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/mfd/syscon/exynos4-pmu.h>
-+#include <linux/mfd/syscon/exynos5-pmu.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -28,11 +29,15 @@ enum exynos_mipi_phy_id {
- 	EXYNOS_MIPI_PHY_ID_DSIM0,
- 	EXYNOS_MIPI_PHY_ID_CSIS1,
- 	EXYNOS_MIPI_PHY_ID_DSIM1,
-+	EXYNOS_MIPI_PHY_ID_CSIS2,
- 	EXYNOS_MIPI_PHYS_NUM
- };
- 
- enum exynos_mipi_phy_regmap_id {
- 	EXYNOS_MIPI_REGMAP_PMU,
-+	EXYNOS_MIPI_REGMAP_DISP,
-+	EXYNOS_MIPI_REGMAP_CAM0,
-+	EXYNOS_MIPI_REGMAP_CAM1,
- 	EXYNOS_MIPI_REGMAPS_NUM
- };
- 
-@@ -97,6 +102,122 @@ static const struct mipi_phy_device_desc s5pv210_mipi_phy = {
- 	},
- };
- 
-+static const struct mipi_phy_device_desc exynos5420_mipi_phy = {
-+	.num_regmaps = 1,
-+	.regmap_names = {"syscon"},
-+	.num_phys = 5,
-+	.phys = {
-+		{
-+			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5420_MIPI_PHY0_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = EXYNOS5_MIPI_PHY_S_RESETN,
-+			.resetn_reg = EXYNOS5420_MIPI_PHY0_CONTROL,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5420_MIPI_PHY0_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = EXYNOS5_MIPI_PHY_M_RESETN,
-+			.resetn_reg = EXYNOS5420_MIPI_PHY0_CONTROL,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM1,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5420_MIPI_PHY1_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = EXYNOS5_MIPI_PHY_S_RESETN,
-+			.resetn_reg = EXYNOS5420_MIPI_PHY1_CONTROL,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_DSIM1 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS1,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5420_MIPI_PHY1_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = EXYNOS5_MIPI_PHY_M_RESETN,
-+			.resetn_reg = EXYNOS5420_MIPI_PHY1_CONTROL,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_CSIS2 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5420_MIPI_PHY2_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = EXYNOS5_MIPI_PHY_S_RESETN,
-+			.resetn_reg = EXYNOS5420_MIPI_PHY2_CONTROL,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
-+		},
-+	},
-+};
-+
-+#define EXYNOS5433_SYSREG_DISP_MIPI_PHY		0x100C
-+#define EXYNOS5433_SYSREG_CAM0_MIPI_DPHY_CON	0x1014
-+#define EXYNOS5433_SYSREG_CAM1_MIPI_DPHY_CON	0x1020
-+
-+static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
-+	.num_regmaps = 4,
-+	.regmap_names = {
-+		"samsung,pmu-syscon",
-+		"samsung,disp-sysreg",
-+		"samsung,cam0-sysreg",
-+		"samsung,cam1-sysreg"
-+	},
-+	.num_phys = 5,
-+	.phys = {
-+		{
-+			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5433_MIPI_PHY0_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = BIT(0),
-+			.resetn_reg = EXYNOS5433_SYSREG_CAM0_MIPI_DPHY_CON,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5433_MIPI_PHY0_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = BIT(0),
-+			.resetn_reg = EXYNOS5433_SYSREG_DISP_MIPI_PHY,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_DISP,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5433_MIPI_PHY1_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = BIT(1),
-+			.resetn_reg = EXYNOS5433_SYSREG_CAM0_MIPI_DPHY_CON,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_CAM0,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_DSIM1 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5433_MIPI_PHY1_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = BIT(1),
-+			.resetn_reg = EXYNOS5433_SYSREG_DISP_MIPI_PHY,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_DISP,
-+		}, {
-+			/* EXYNOS_MIPI_PHY_ID_CSIS2 */
-+			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
-+			.enable_val = EXYNOS5_PHY_ENABLE,
-+			.enable_reg = EXYNOS5433_MIPI_PHY2_CONTROL,
-+			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-+			.resetn_val = BIT(0),
-+			.resetn_reg = EXYNOS5433_SYSREG_CAM1_MIPI_DPHY_CON,
-+			.resetn_map = EXYNOS_MIPI_REGMAP_CAM1,
-+		},
-+	},
-+};
- 
- struct exynos_mipi_video_phy {
- 	struct regmap *regmaps[EXYNOS_MIPI_REGMAPS_NUM];
-@@ -242,6 +363,12 @@ static const struct of_device_id exynos_mipi_video_phy_of_match[] = {
- 	{
- 		.compatible = "samsung,s5pv210-mipi-video-phy",
- 		.data = &s5pv210_mipi_phy,
-+	}, {
-+		.compatible = "samsung,exynos5420-mipi-video-phy",
-+		.data = &exynos5420_mipi_phy,
-+	}, {
-+		.compatible = "samsung,exynos5433-mipi-video-phy",
-+		.data = &exynos5433_mipi_phy,
- 	},
- 	{ /* sentinel */ },
- };
-diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
-index 9352adc..76f30f9 100644
---- a/include/linux/mfd/syscon/exynos5-pmu.h
-+++ b/include/linux/mfd/syscon/exynos5-pmu.h
-@@ -38,6 +38,9 @@
- 
- /* Exynos5433 specific register definitions */
- #define EXYNOS5433_USBHOST30_PHY_CONTROL	(0x728)
-+#define EXYNOS5433_MIPI_PHY0_CONTROL		(0x710)
-+#define EXYNOS5433_MIPI_PHY1_CONTROL		(0x714)
-+#define EXYNOS5433_MIPI_PHY2_CONTROL		(0x718)
- 
- #define EXYNOS5_PHY_ENABLE			BIT(0)
- 
--- 
-1.9.2
+SERNSSByZWdpc3RyeSBkdW1wIHVubmVjZXNzYXJ5IHNwb2lscyBjb25zb2xlIGFuZCBpcyBub3Qg
+dmVyeSBoZWxwZnVsLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1z
+dW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgfCAyNjMg
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyNjMg
+ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+aGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCmluZGV4IDZmYWEx
+MDQuLjQ5YTU5MDIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
+bWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAgLTcxNiwy
+NjggKzcxNiw2IEBAIHN0YXRpYyBpbnQgaGRtaXBoeV9yZWdfd3JpdGVfYnVmKHN0cnVjdCBoZG1p
+X2NvbnRleHQgKmhkYXRhLAogCX0KIH0KIAotc3RhdGljIHZvaWQgaGRtaV92MTNfcmVnc19kdW1w
+KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBjaGFyICpwcmVmaXgpCi17Ci0jZGVmaW5lIERV
+TVBSRUcocmVnX2lkKSBcCi0JRFJNX0RFQlVHX0tNUygiJXM6IiAjcmVnX2lkICIgPSAlMDh4XG4i
+LCBwcmVmaXgsIFwKLQlyZWFkbChoZGF0YS0+cmVncyArIHJlZ19pZCkpCi0JRFJNX0RFQlVHX0tN
+UygiJXM6IC0tLS0gQ09OVFJPTCBSRUdJU1RFUlMgLS0tLVxuIiwgcHJlZml4KTsKLQlEVU1QUkVH
+KEhETUlfSU5UQ19GTEFHKTsKLQlEVU1QUkVHKEhETUlfSU5UQ19DT04pOwotCURVTVBSRUcoSERN
+SV9IUERfU1RBVFVTKTsKLQlEVU1QUkVHKEhETUlfVjEzX1BIWV9SU1RPVVQpOwotCURVTVBSRUco
+SERNSV9WMTNfUEhZX1ZQTEwpOwotCURVTVBSRUcoSERNSV9WMTNfUEhZX0NNVSk7Ci0JRFVNUFJF
+RyhIRE1JX1YxM19DT1JFX1JTVE9VVCk7Ci0KLQlEUk1fREVCVUdfS01TKCIlczogLS0tLSBDT1JF
+IFJFR0lTVEVSUyAtLS0tXG4iLCBwcmVmaXgpOwotCURVTVBSRUcoSERNSV9DT05fMCk7Ci0JRFVN
+UFJFRyhIRE1JX0NPTl8xKTsKLQlEVU1QUkVHKEhETUlfQ09OXzIpOwotCURVTVBSRUcoSERNSV9T
+WVNfU1RBVFVTKTsKLQlEVU1QUkVHKEhETUlfVjEzX1BIWV9TVEFUVVMpOwotCURVTVBSRUcoSERN
+SV9TVEFUVVNfRU4pOwotCURVTVBSRUcoSERNSV9IUEQpOwotCURVTVBSRUcoSERNSV9NT0RFX1NF
+TCk7Ci0JRFVNUFJFRyhIRE1JX1YxM19IUERfR0VOKTsKLQlEVU1QUkVHKEhETUlfVjEzX0RDX0NP
+TlRST0wpOwotCURVTVBSRUcoSERNSV9WMTNfVklERU9fUEFUVEVSTl9HRU4pOwotCi0JRFJNX0RF
+QlVHX0tNUygiJXM6IC0tLS0gQ09SRSBTWU5DIFJFR0lTVEVSUyAtLS0tXG4iLCBwcmVmaXgpOwot
+CURVTVBSRUcoSERNSV9IX0JMQU5LXzApOwotCURVTVBSRUcoSERNSV9IX0JMQU5LXzEpOwotCURV
+TVBSRUcoSERNSV9WMTNfVl9CTEFOS18wKTsKLQlEVU1QUkVHKEhETUlfVjEzX1ZfQkxBTktfMSk7
+Ci0JRFVNUFJFRyhIRE1JX1YxM19WX0JMQU5LXzIpOwotCURVTVBSRUcoSERNSV9WMTNfSF9WX0xJ
+TkVfMCk7Ci0JRFVNUFJFRyhIRE1JX1YxM19IX1ZfTElORV8xKTsKLQlEVU1QUkVHKEhETUlfVjEz
+X0hfVl9MSU5FXzIpOwotCURVTVBSRUcoSERNSV9WU1lOQ19QT0wpOwotCURVTVBSRUcoSERNSV9J
+TlRfUFJPX01PREUpOwotCURVTVBSRUcoSERNSV9WMTNfVl9CTEFOS19GXzApOwotCURVTVBSRUco
+SERNSV9WMTNfVl9CTEFOS19GXzEpOwotCURVTVBSRUcoSERNSV9WMTNfVl9CTEFOS19GXzIpOwot
+CURVTVBSRUcoSERNSV9WMTNfSF9TWU5DX0dFTl8wKTsKLQlEVU1QUkVHKEhETUlfVjEzX0hfU1lO
+Q19HRU5fMSk7Ci0JRFVNUFJFRyhIRE1JX1YxM19IX1NZTkNfR0VOXzIpOwotCURVTVBSRUcoSERN
+SV9WMTNfVl9TWU5DX0dFTl8xXzApOwotCURVTVBSRUcoSERNSV9WMTNfVl9TWU5DX0dFTl8xXzEp
+OwotCURVTVBSRUcoSERNSV9WMTNfVl9TWU5DX0dFTl8xXzIpOwotCURVTVBSRUcoSERNSV9WMTNf
+Vl9TWU5DX0dFTl8yXzApOwotCURVTVBSRUcoSERNSV9WMTNfVl9TWU5DX0dFTl8yXzEpOwotCURV
+TVBSRUcoSERNSV9WMTNfVl9TWU5DX0dFTl8yXzIpOwotCURVTVBSRUcoSERNSV9WMTNfVl9TWU5D
+X0dFTl8zXzApOwotCURVTVBSRUcoSERNSV9WMTNfVl9TWU5DX0dFTl8zXzEpOwotCURVTVBSRUco
+SERNSV9WMTNfVl9TWU5DX0dFTl8zXzIpOwotCi0JRFJNX0RFQlVHX0tNUygiJXM6IC0tLS0gVEcg
+UkVHSVNURVJTIC0tLS1cbiIsIHByZWZpeCk7Ci0JRFVNUFJFRyhIRE1JX1RHX0NNRCk7Ci0JRFVN
+UFJFRyhIRE1JX1RHX0hfRlNaX0wpOwotCURVTVBSRUcoSERNSV9UR19IX0ZTWl9IKTsKLQlEVU1Q
+UkVHKEhETUlfVEdfSEFDVF9TVF9MKTsKLQlEVU1QUkVHKEhETUlfVEdfSEFDVF9TVF9IKTsKLQlE
+VU1QUkVHKEhETUlfVEdfSEFDVF9TWl9MKTsKLQlEVU1QUkVHKEhETUlfVEdfSEFDVF9TWl9IKTsK
+LQlEVU1QUkVHKEhETUlfVEdfVl9GU1pfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX1ZfRlNaX0gpOwot
+CURVTVBSRUcoSERNSV9UR19WU1lOQ19MKTsKLQlEVU1QUkVHKEhETUlfVEdfVlNZTkNfSCk7Ci0J
+RFVNUFJFRyhIRE1JX1RHX1ZTWU5DMl9MKTsKLQlEVU1QUkVHKEhETUlfVEdfVlNZTkMyX0gpOwot
+CURVTVBSRUcoSERNSV9UR19WQUNUX1NUX0wpOwotCURVTVBSRUcoSERNSV9UR19WQUNUX1NUX0gp
+OwotCURVTVBSRUcoSERNSV9UR19WQUNUX1NaX0wpOwotCURVTVBSRUcoSERNSV9UR19WQUNUX1Na
+X0gpOwotCURVTVBSRUcoSERNSV9UR19GSUVMRF9DSEdfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX0ZJ
+RUxEX0NIR19IKTsKLQlEVU1QUkVHKEhETUlfVEdfVkFDVF9TVDJfTCk7Ci0JRFVNUFJFRyhIRE1J
+X1RHX1ZBQ1RfU1QyX0gpOwotCURVTVBSRUcoSERNSV9UR19WU1lOQ19UT1BfSERNSV9MKTsKLQlE
+VU1QUkVHKEhETUlfVEdfVlNZTkNfVE9QX0hETUlfSCk7Ci0JRFVNUFJFRyhIRE1JX1RHX1ZTWU5D
+X0JPVF9IRE1JX0wpOwotCURVTVBSRUcoSERNSV9UR19WU1lOQ19CT1RfSERNSV9IKTsKLQlEVU1Q
+UkVHKEhETUlfVEdfRklFTERfVE9QX0hETUlfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX0ZJRUxEX1RP
+UF9IRE1JX0gpOwotCURVTVBSRUcoSERNSV9UR19GSUVMRF9CT1RfSERNSV9MKTsKLQlEVU1QUkVH
+KEhETUlfVEdfRklFTERfQk9UX0hETUlfSCk7Ci0jdW5kZWYgRFVNUFJFRwotfQotCi1zdGF0aWMg
+dm9pZCBoZG1pX3YxNF9yZWdzX2R1bXAoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEsIGNoYXIg
+KnByZWZpeCkKLXsKLQlpbnQgaTsKLQotI2RlZmluZSBEVU1QUkVHKHJlZ19pZCkgXAotCURSTV9E
+RUJVR19LTVMoIiVzOiIgI3JlZ19pZCAiID0gJTA4eFxuIiwgcHJlZml4LCBcCi0JcmVhZGwoaGRh
+dGEtPnJlZ3MgKyByZWdfaWQpKQotCi0JRFJNX0RFQlVHX0tNUygiJXM6IC0tLS0gQ09OVFJPTCBS
+RUdJU1RFUlMgLS0tLVxuIiwgcHJlZml4KTsKLQlEVU1QUkVHKEhETUlfSU5UQ19DT04pOwotCURV
+TVBSRUcoSERNSV9JTlRDX0ZMQUcpOwotCURVTVBSRUcoSERNSV9IUERfU1RBVFVTKTsKLQlEVU1Q
+UkVHKEhETUlfSU5UQ19DT05fMSk7Ci0JRFVNUFJFRyhIRE1JX0lOVENfRkxBR18xKTsKLQlEVU1Q
+UkVHKEhETUlfUEhZX1NUQVRVU18wKTsKLQlEVU1QUkVHKEhETUlfUEhZX1NUQVRVU19QTEwpOwot
+CURVTVBSRUcoSERNSV9QSFlfQ09OXzApOwotCURVTVBSRUcoSERNSV9WMTRfUEhZX1JTVE9VVCk7
+Ci0JRFVNUFJFRyhIRE1JX1BIWV9WUExMKTsKLQlEVU1QUkVHKEhETUlfUEhZX0NNVSk7Ci0JRFVN
+UFJFRyhIRE1JX0NPUkVfUlNUT1VUKTsKLQotCURSTV9ERUJVR19LTVMoIiVzOiAtLS0tIENPUkUg
+UkVHSVNURVJTIC0tLS1cbiIsIHByZWZpeCk7Ci0JRFVNUFJFRyhIRE1JX0NPTl8wKTsKLQlEVU1Q
+UkVHKEhETUlfQ09OXzEpOwotCURVTVBSRUcoSERNSV9DT05fMik7Ci0JRFVNUFJFRyhIRE1JX1NZ
+U19TVEFUVVMpOwotCURVTVBSRUcoSERNSV9QSFlfU1RBVFVTXzApOwotCURVTVBSRUcoSERNSV9T
+VEFUVVNfRU4pOwotCURVTVBSRUcoSERNSV9IUEQpOwotCURVTVBSRUcoSERNSV9NT0RFX1NFTCk7
+Ci0JRFVNUFJFRyhIRE1JX0VOQ19FTik7Ci0JRFVNUFJFRyhIRE1JX0RDX0NPTlRST0wpOwotCURV
+TVBSRUcoSERNSV9WSURFT19QQVRURVJOX0dFTik7Ci0KLQlEUk1fREVCVUdfS01TKCIlczogLS0t
+LSBDT1JFIFNZTkMgUkVHSVNURVJTIC0tLS1cbiIsIHByZWZpeCk7Ci0JRFVNUFJFRyhIRE1JX0hf
+QkxBTktfMCk7Ci0JRFVNUFJFRyhIRE1JX0hfQkxBTktfMSk7Ci0JRFVNUFJFRyhIRE1JX1YyX0JM
+QU5LXzApOwotCURVTVBSRUcoSERNSV9WMl9CTEFOS18xKTsKLQlEVU1QUkVHKEhETUlfVjFfQkxB
+TktfMCk7Ci0JRFVNUFJFRyhIRE1JX1YxX0JMQU5LXzEpOwotCURVTVBSRUcoSERNSV9WX0xJTkVf
+MCk7Ci0JRFVNUFJFRyhIRE1JX1ZfTElORV8xKTsKLQlEVU1QUkVHKEhETUlfSF9MSU5FXzApOwot
+CURVTVBSRUcoSERNSV9IX0xJTkVfMSk7Ci0JRFVNUFJFRyhIRE1JX0hTWU5DX1BPTCk7Ci0KLQlE
+VU1QUkVHKEhETUlfVlNZTkNfUE9MKTsKLQlEVU1QUkVHKEhETUlfSU5UX1BST19NT0RFKTsKLQlE
+VU1QUkVHKEhETUlfVl9CTEFOS19GMF8wKTsKLQlEVU1QUkVHKEhETUlfVl9CTEFOS19GMF8xKTsK
+LQlEVU1QUkVHKEhETUlfVl9CTEFOS19GMV8wKTsKLQlEVU1QUkVHKEhETUlfVl9CTEFOS19GMV8x
+KTsKLQotCURVTVBSRUcoSERNSV9IX1NZTkNfU1RBUlRfMCk7Ci0JRFVNUFJFRyhIRE1JX0hfU1lO
+Q19TVEFSVF8xKTsKLQlEVU1QUkVHKEhETUlfSF9TWU5DX0VORF8wKTsKLQlEVU1QUkVHKEhETUlf
+SF9TWU5DX0VORF8xKTsKLQotCURVTVBSRUcoSERNSV9WX1NZTkNfTElORV9CRUZfMl8wKTsKLQlE
+VU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQkVGXzJfMSk7Ci0JRFVNUFJFRyhIRE1JX1ZfU1lOQ19M
+SU5FX0JFRl8xXzApOwotCURVTVBSRUcoSERNSV9WX1NZTkNfTElORV9CRUZfMV8xKTsKLQotCURV
+TVBSRUcoSERNSV9WX1NZTkNfTElORV9BRlRfMl8wKTsKLQlEVU1QUkVHKEhETUlfVl9TWU5DX0xJ
+TkVfQUZUXzJfMSk7Ci0JRFVNUFJFRyhIRE1JX1ZfU1lOQ19MSU5FX0FGVF8xXzApOwotCURVTVBS
+RUcoSERNSV9WX1NZTkNfTElORV9BRlRfMV8xKTsKLQotCURVTVBSRUcoSERNSV9WX1NZTkNfTElO
+RV9BRlRfUFhMXzJfMCk7Ci0JRFVNUFJFRyhIRE1JX1ZfU1lOQ19MSU5FX0FGVF9QWExfMl8xKTsK
+LQlEVU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF8xXzApOwotCURVTVBSRUcoSERNSV9W
+X1NZTkNfTElORV9BRlRfUFhMXzFfMSk7Ci0KLQlEVU1QUkVHKEhETUlfVl9CTEFOS19GMl8wKTsK
+LQlEVU1QUkVHKEhETUlfVl9CTEFOS19GMl8xKTsKLQlEVU1QUkVHKEhETUlfVl9CTEFOS19GM18w
+KTsKLQlEVU1QUkVHKEhETUlfVl9CTEFOS19GM18xKTsKLQlEVU1QUkVHKEhETUlfVl9CTEFOS19G
+NF8wKTsKLQlEVU1QUkVHKEhETUlfVl9CTEFOS19GNF8xKTsKLQlEVU1QUkVHKEhETUlfVl9CTEFO
+S19GNV8wKTsKLQlEVU1QUkVHKEhETUlfVl9CTEFOS19GNV8xKTsKLQotCURVTVBSRUcoSERNSV9W
+X1NZTkNfTElORV9BRlRfM18wKTsKLQlEVU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQUZUXzNfMSk7
+Ci0JRFVNUFJFRyhIRE1JX1ZfU1lOQ19MSU5FX0FGVF80XzApOwotCURVTVBSRUcoSERNSV9WX1NZ
+TkNfTElORV9BRlRfNF8xKTsKLQlEVU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQUZUXzVfMCk7Ci0J
+RFVNUFJFRyhIRE1JX1ZfU1lOQ19MSU5FX0FGVF81XzEpOwotCURVTVBSRUcoSERNSV9WX1NZTkNf
+TElORV9BRlRfNl8wKTsKLQlEVU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQUZUXzZfMSk7Ci0KLQlE
+VU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF8zXzApOwotCURVTVBSRUcoSERNSV9WX1NZ
+TkNfTElORV9BRlRfUFhMXzNfMSk7Ci0JRFVNUFJFRyhIRE1JX1ZfU1lOQ19MSU5FX0FGVF9QWExf
+NF8wKTsKLQlEVU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF80XzEpOwotCURVTVBSRUco
+SERNSV9WX1NZTkNfTElORV9BRlRfUFhMXzVfMCk7Ci0JRFVNUFJFRyhIRE1JX1ZfU1lOQ19MSU5F
+X0FGVF9QWExfNV8xKTsKLQlEVU1QUkVHKEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF82XzApOwot
+CURVTVBSRUcoSERNSV9WX1NZTkNfTElORV9BRlRfUFhMXzZfMSk7Ci0KLQlEVU1QUkVHKEhETUlf
+VkFDVF9TUEFDRV8xXzApOwotCURVTVBSRUcoSERNSV9WQUNUX1NQQUNFXzFfMSk7Ci0JRFVNUFJF
+RyhIRE1JX1ZBQ1RfU1BBQ0VfMl8wKTsKLQlEVU1QUkVHKEhETUlfVkFDVF9TUEFDRV8yXzEpOwot
+CURVTVBSRUcoSERNSV9WQUNUX1NQQUNFXzNfMCk7Ci0JRFVNUFJFRyhIRE1JX1ZBQ1RfU1BBQ0Vf
+M18xKTsKLQlEVU1QUkVHKEhETUlfVkFDVF9TUEFDRV80XzApOwotCURVTVBSRUcoSERNSV9WQUNU
+X1NQQUNFXzRfMSk7Ci0JRFVNUFJFRyhIRE1JX1ZBQ1RfU1BBQ0VfNV8wKTsKLQlEVU1QUkVHKEhE
+TUlfVkFDVF9TUEFDRV81XzEpOwotCURVTVBSRUcoSERNSV9WQUNUX1NQQUNFXzZfMCk7Ci0JRFVN
+UFJFRyhIRE1JX1ZBQ1RfU1BBQ0VfNl8xKTsKLQotCURSTV9ERUJVR19LTVMoIiVzOiAtLS0tIFRH
+IFJFR0lTVEVSUyAtLS0tXG4iLCBwcmVmaXgpOwotCURVTVBSRUcoSERNSV9UR19DTUQpOwotCURV
+TVBSRUcoSERNSV9UR19IX0ZTWl9MKTsKLQlEVU1QUkVHKEhETUlfVEdfSF9GU1pfSCk7Ci0JRFVN
+UFJFRyhIRE1JX1RHX0hBQ1RfU1RfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX0hBQ1RfU1RfSCk7Ci0J
+RFVNUFJFRyhIRE1JX1RHX0hBQ1RfU1pfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX0hBQ1RfU1pfSCk7
+Ci0JRFVNUFJFRyhIRE1JX1RHX1ZfRlNaX0wpOwotCURVTVBSRUcoSERNSV9UR19WX0ZTWl9IKTsK
+LQlEVU1QUkVHKEhETUlfVEdfVlNZTkNfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX1ZTWU5DX0gpOwot
+CURVTVBSRUcoSERNSV9UR19WU1lOQzJfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX1ZTWU5DMl9IKTsK
+LQlEVU1QUkVHKEhETUlfVEdfVkFDVF9TVF9MKTsKLQlEVU1QUkVHKEhETUlfVEdfVkFDVF9TVF9I
+KTsKLQlEVU1QUkVHKEhETUlfVEdfVkFDVF9TWl9MKTsKLQlEVU1QUkVHKEhETUlfVEdfVkFDVF9T
+Wl9IKTsKLQlEVU1QUkVHKEhETUlfVEdfRklFTERfQ0hHX0wpOwotCURVTVBSRUcoSERNSV9UR19G
+SUVMRF9DSEdfSCk7Ci0JRFVNUFJFRyhIRE1JX1RHX1ZBQ1RfU1QyX0wpOwotCURVTVBSRUcoSERN
+SV9UR19WQUNUX1NUMl9IKTsKLQlEVU1QUkVHKEhETUlfVEdfVkFDVF9TVDNfTCk7Ci0JRFVNUFJF
+RyhIRE1JX1RHX1ZBQ1RfU1QzX0gpOwotCURVTVBSRUcoSERNSV9UR19WQUNUX1NUNF9MKTsKLQlE
+VU1QUkVHKEhETUlfVEdfVkFDVF9TVDRfSCk7Ci0JRFVNUFJFRyhIRE1JX1RHX1ZTWU5DX1RPUF9I
+RE1JX0wpOwotCURVTVBSRUcoSERNSV9UR19WU1lOQ19UT1BfSERNSV9IKTsKLQlEVU1QUkVHKEhE
+TUlfVEdfVlNZTkNfQk9UX0hETUlfTCk7Ci0JRFVNUFJFRyhIRE1JX1RHX1ZTWU5DX0JPVF9IRE1J
+X0gpOwotCURVTVBSRUcoSERNSV9UR19GSUVMRF9UT1BfSERNSV9MKTsKLQlEVU1QUkVHKEhETUlf
+VEdfRklFTERfVE9QX0hETUlfSCk7Ci0JRFVNUFJFRyhIRE1JX1RHX0ZJRUxEX0JPVF9IRE1JX0wp
+OwotCURVTVBSRUcoSERNSV9UR19GSUVMRF9CT1RfSERNSV9IKTsKLQlEVU1QUkVHKEhETUlfVEdf
+M0QpOwotCi0JRFJNX0RFQlVHX0tNUygiJXM6IC0tLS0gUEFDS0VUIFJFR0lTVEVSUyAtLS0tXG4i
+LCBwcmVmaXgpOwotCURVTVBSRUcoSERNSV9BVklfQ09OKTsKLQlEVU1QUkVHKEhETUlfQVZJX0hF
+QURFUjApOwotCURVTVBSRUcoSERNSV9BVklfSEVBREVSMSk7Ci0JRFVNUFJFRyhIRE1JX0FWSV9I
+RUFERVIyKTsKLQlEVU1QUkVHKEhETUlfQVZJX0NIRUNLX1NVTSk7Ci0JRFVNUFJFRyhIRE1JX1ZT
+SV9DT04pOwotCURVTVBSRUcoSERNSV9WU0lfSEVBREVSMCk7Ci0JRFVNUFJFRyhIRE1JX1ZTSV9I
+RUFERVIxKTsKLQlEVU1QUkVHKEhETUlfVlNJX0hFQURFUjIpOwotCWZvciAoaSA9IDA7IGkgPCA3
+OyArK2kpCi0JCURVTVBSRUcoSERNSV9WU0lfREFUQShpKSk7Ci0KLSN1bmRlZiBEVU1QUkVHCi19
+Ci0KLXN0YXRpYyB2b2lkIGhkbWlfcmVnc19kdW1wKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRh
+LCBjaGFyICpwcmVmaXgpCi17Ci0JaWYgKGhkYXRhLT5kcnZfZGF0YS0+dHlwZSA9PSBIRE1JX1RZ
+UEUxMykKLQkJaGRtaV92MTNfcmVnc19kdW1wKGhkYXRhLCBwcmVmaXgpOwotCWVsc2UKLQkJaGRt
+aV92MTRfcmVnc19kdW1wKGhkYXRhLCBwcmVmaXgpOwotfQotCiBzdGF0aWMgaW50IGhkbWlfY2xr
+X2VuYWJsZV9nYXRlcyhzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIHsKIAlpbnQgaSwgcmV0
+OwpAQCAtMTcxNiw3ICsxNDU0LDYgQEAgc3RhdGljIHZvaWQgaGRtaV9jb25mX2FwcGx5KHN0cnVj
+dCBoZG1pX2NvbnRleHQgKmhkYXRhKQogCWhkbWlfYXVkaW9faW5pdChoZGF0YSk7CiAJaGRtaV9t
+b2RlX2FwcGx5KGhkYXRhKTsKIAloZG1pX2F1ZGlvX2NvbnRyb2woaGRhdGEsIHRydWUpOwotCWhk
+bWlfcmVnc19kdW1wKGhkYXRhLCAic3RhcnQiKTsKIH0KIAogc3RhdGljIHZvaWQgaGRtaV9tb2Rl
+X3NldChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsCi0tIAoxLjkuMQoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
