@@ -1,67 +1,85 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: Re: [PATCH] ARM: dts: exynos: Fix invalid maximum voltage for buck9
- supplying SD card
-Date: Thu, 24 Mar 2016 15:10:29 +0100
-Message-ID: <56F3F555.5040704@fivetechno.de>
-References: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH v5 00/21] PM / devferq: Add generic exynos bus frequency
+ driver and new passive governor
+Date: Thu, 24 Mar 2016 23:17:20 +0900
+Message-ID: <CAGTfZH34ojHu3bnGSZpbVamZOJ08vnTjzxM-R3r1V8U19eHyDQ@mail.gmail.com>
+References: <1458793530-31897-1-git-send-email-cw00.choi@samsung.com>
+	<56F36D65.6030504@samsung.com>
+	<56F3EE8E.3020308@fivetechno.de>
+	<56F3F11E.9090200@math.uni-bielefeld.de>
+Reply-To: cw00.choi@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:51612 "EHLO
-	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755633AbcCXOKj (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36172 "EHLO
+	mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750818AbcCXORW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2016 10:10:39 -0400
-In-Reply-To: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
+	Thu, 24 Mar 2016 10:17:22 -0400
+In-Reply-To: <56F3F11E.9090200@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Markus Reichl <m.reichl@fivetechno.de>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
 
-Hi Krzysztof,
+Hi Tobias,
 
-with this patch on Odroid XU4 I get the following dmesg|grep vdd_2.8v_ldo:
+On Thu, Mar 24, 2016 at 10:52 PM, Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+> Hello everybody,
+>
+>
+> Markus Reichl wrote:
+>> Hi Chanwoo,
+>>
+>> Am 24.03.2016 um 05:30 schrieb Chanwoo Choi:
+>>> Dear Anand and Tobias,
+>>>
+>>> To Anand,
+>>> First of all, thanks to your test on previous patchset.
+>>> I removed the your tested-by tag from this version
+>>> because I modified the devfreq core using DEVFREQ_TRANSITION_NOTIFIER notifier.
+>>> I think that this patch-set need to test with this patchset.
+>>> If you possible, could you please test this patch-set? Thanks in advance.
+>>>
+>>> To Tobias,
+>>> I fixed the following issues reported by you. Thanks your test and report.
+>>> - RCU locking issue
+>>> - debugfs error during kernel booting
+>>>
+>>> Best Regards,
+>>> Chanwoo Choi
+>>
+>> This set works fine on odroid U3 but gives the following with dmesg |grep devfreq:
+>>
+>> [    2.066890] devfreq bus_dmc: Couldn't update frequency transition information.
+>> [    2.190238] devfreq bus_leftbus: Couldn't update frequency transition information.
+> I have yet to test this new iteration of the patchset, but this message
+> looks familiar. I already encountered it with the older version applied
+> to vanilla-4.5.y.
+>
+> The messages happen when devfreq_update_status() (in
+> drivers/devfreq/devfreq.c) encounters a uninitialized (zero)
+> previous_freq. I have currently fixed this in my local tree by just
+> skipping (goto out) devfreq_update_status() in that case.
 
-[    1.739943] vdd_2.8v_ldo: override max_uV, 3755000 -> 3750000
-[    1.740905] vdd_2.8v_ldo: 3000 <--> 3750 mV at 5000 mV 
+I agree. Your comment is correct.
 
-Regards,
---
-Markus Reichl
-Am 24.03.2016 um 09:12 schrieb Krzysztof Kozlowski:
-> The buck9 regulator of S2MPS11 PMIC had incorrect maximum voltage -
-> lower by 5 mV than specified by datasheet. This buck9 provides power to
-> other regulators, including LDO13 and LDO19 which supply the MMC2 (SD
-> card).
-> 
-> When constraints were applied, the depending regulators were not
-> providing enough power, leading to SD card detection errors:
-> 	mmc1: card never left busy state
-> 	mmc1: error -110 whilst initialising SD card
-> 
-> Fixes: 86a2d2ac5e5d ("ARM: dts: Add dts file for Odroid XU3 board")
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
-> 
-> The issue can be reproduced on next-20160324 with
-> bae4fdc88d7f7dda1 (regulator: core: Ensure we are at least in bounds for our constraints).
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 1bd507bfa750..82b2ba632cf6 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -299,7 +299,7 @@
->  			buck9_reg: BUCK9 {
->  				regulator-name = "vdd_2.8v_ldo";
->  				regulator-min-microvolt = <3000000>;
-> -				regulator-max-microvolt = <3750000>;
-> +				regulator-max-microvolt = <3755000>;
->  				regulator-always-on;
->  				regulator-boot-on;
->  			};
-> 
+>
+> Maybe it would be more elegant to set previous_freq to something sane on
+> probe. IIRC then it is set from initial_freq on probe, but the exynos
+> code doesn't set this one.
+
+The devfreq have already this issue before sending my patches.
+So, I think that you better to send your fixup patch.
+
+Maybe, the exynos-bus.c read the current frequency in the probe function
+and then devfreq core should set the devfreq->previous_freq field.
+
+>
+> Maybe this info is helpful?
+
+Your info is very helpful. Thanks.
+
+Best Regards,
+Chanwoo Choi
