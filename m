@@ -1,241 +1,308 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: Warnings for invalid VDD (sdhci-s3c)
-Date: Thu, 24 Mar 2016 15:27:33 +0100
-Message-ID: <20160324142733.GI12245@odux.rfo.atmel.com>
-References: <CAJKOXPcGDnPm-Ykh6wHqV1YxfTaov5E8iVqBoBn4OJc7BnhgEQ@mail.gmail.com>
- <20160324155840.50474b98@xhacker>
- <56F3A0B7.4050509@samsung.com>
- <20160324162449.29c9cf78@xhacker>
- <56F3A88F.50603@samsung.com>
- <56F3E77D.7030201@intel.com>
- <56F3E9EB.3090207@intel.com>
- <20160324214556.6122bab4@xhacker>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: Re: [PATCH v5 00/21] PM / devferq: Add generic exynos bus frequency
+ driver and new passive governor
+Date: Thu, 24 Mar 2016 15:37:27 +0100
+Message-ID: <56F3FBA7.9070702@fivetechno.de>
+References: <1458793530-31897-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:37966 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753590AbcCXO2F (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:46720 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751767AbcCXOhn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2016 10:28:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20160324214556.6122bab4@xhacker>
+	Thu, 24 Mar 2016 10:37:43 -0400
+In-Reply-To: <1458793530-31897-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, ludovic.desroches@atmel.com, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, kgene@kernel.org
+Cc: rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Thu, Mar 24, 2016 at 09:45:56PM +0800, Jisheng Zhang wrote:
-> On Thu, 24 Mar 2016 15:21:47 +0200
-> Adrian Hunter <adrian.hunter@intel.com> wrote:
+Hi Chanwoo,
+
+Am 24.03.2016 um 05:25 schrieb Chanwoo Choi:
+> Dear all,
 > 
-> > On 24/03/16 15:11, Adrian Hunter wrote:
-> > > On 24/03/16 10:42, Krzysztof Kozlowski wrote:  
-> > >> On 24.03.2016 17:24, Jisheng Zhang wrote:  
-> > >>> Hi,
-> > >>>
-> > >>> On Thu, 24 Mar 2016 17:09:27 +0900 Jaehoon Chung wrote:
-> > >>>  
-> > >>>> Hi,
-> > >>>>
-> > >>>> On 03/24/2016 04:58 PM, Jisheng Zhang wrote:  
-> > >>>>> Hi,
-> > >>>>>
-> > >>>>> On Thu, 24 Mar 2016 16:28:56 +0900 Krzysztof Kozlowski wrote:
-> > >>>>>     
-> > >>>>>> Hi,
-> > >>>>>>
-> > >>>>>> After 918f4cbd4340 ("mmc: sdhci: restore behavior when setting VDD via
-> > >>>>>> external regulator") On Trats2 board I see warnings for invalid VDD
-> > >>>>>> value (2.8V):
-> > >>>>>>
-> > >>>>>> [    3.119656] ------------[ cut here ]------------
-> > >>>>>> [    3.119666] WARNING: CPU: 3 PID: 90 at
-> > >>>>>> ../drivers/mmc/host/sdhci.c:1234 sdhci_do_set_ios+0x4cc/0x5e0
-> > >>>>>> [    3.119669] mmc0: Invalid vdd 0x10    
-> > >>>>>
-> > >>>>> Per my understanding, the wrong vdd indicates a wrong ocr, what's the voltage of
-> > >>>>> this host's vmmc regulator?    
-> > >>>>
-> > >>>> As i know, it's fixed-voltage with gpio on trats2. It's 2.8V.
-> > >>>> I didn't check this entirely..need to check ocr value.
-> > >>>>  
-> > >>>
-> > >>> I may know the reason. the vmmc is 2.8v, then mmc_regulator_get_supply() convert
-> > >>> the value to a ocr as 0x10. The key here is that the 2.8v is invalid in SDHCI
-> > >>> case and isn't accepted by current sdhci driver.  
-> > >>
-> > >> Yeah, I already wrote that. It is the part of the warning and my email.
-> > >> Our regulator is fixed at 2.8 which is 0x10. :)
-> > >>  
-> > >>> I dunno the elegant solution to handle this case, let's wait for sdhci maintainers
-> > >>> idea.  
-> > >>
-> > >> Hmm...  
-> > > 
-> > > I haven't tested it, but what about this:  
-> > 
-> > And now with checkpatch complaints fixed:
-> > 
-> > From: Adrian Hunter <adrian.hunter@intel.com>
-> > Date: Thu, 24 Mar 2016 14:29:24 +0200
-> > Subject: [PATCH V2] mmc: sdhci: Fix regression setting power on Trats2 board
-> > 
-> > Several commits relating to setting power have been introducing
-> > problems by putting driver-specific rules into generic SDHCI code.
-> > 
-> > Fix by adding a 'set_power' callback and restoring the default
-> > behaviour prior to commit 918f4cbd4340 ("mmc: sdhci: restore
-> > behavior when setting VDD via external regulator").  The desired
-> > behaviour of that commit is gotten by having sdhci-pxav3 provide
-> > its own set_power callback.
-> > 
-> > Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Fixes: 918f4cbd4340 ("mmc: sdhci: restore behavior when setting VDD...)
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> This patchset uses the DEVFREQ_TRANSITION_NOTIFIER notifier to connecth
+> devfreq device using ondemand governor and devfreq device using passive
+> governor. Also I fix the some issue reported by 'Tobias Jakobi' and add the
+> detailed issue information. But, this patchset don't modify the anything of
+> Device Tree patches (patch12 ~ patch21) which already got the reviewed-by
+> from Exynos Soc Maintainer.
 > 
-> Reviewed-by: Jisheng Zhang <jszhang@marvell.com>
-> Tested-by: Jisheng Zhang <jszhang@marvell.com>
-> 
-> The only problem is atmel's sdhc host also need similar own .set_power
-> Ludovic knows details.
+> I tested it on exynos3250-rinato and exynos4412-odroidu3 board.
 
-It doesn't introduce regression on my side since I have removed
-regulators from my device tree. If I introduce then back, I'll need my
-own set_power callback.
+On exynos4412-odroidu3 board:
 
-I am not in favour of this patch only because I have the feeling that
-sdhci_set_power_reg() is not conform to the specification.
+Tested-by: Markus Reichl <m.reichl@fivetechno.de>
 
-Tested-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+Regards,
+--
+Markus Reichl
 
 > 
-> Thanks,
-> Jisheng
+> [Description]
+> This patch-set includes the two features as following. The generic exynos bus
+> frequency driver is able to support almost Exynos SoCs for bus frequency
+> scaling. And the new passive governor is able to make the dependency on
+> between devices for frequency/voltage scaling. I had posted the patch-set[1]
+> with the similiar concept. This is is revised version for exynos bus frequency.
+> - Generic exynos bus frequency driver
+> - New passive governor of DEVFREQ framework
+> [1] https://lkml.org/lkml/2015/1/7/872
+> : [PATCHv3 0/8] devfreq: Add generic exynos memory-bus frequency driver
 > 
-> > Cc: stable@vger.kernel.org # v4.5+
-> > ---
-> >  drivers/mmc/host/sdhci-pxav3.c | 17 +++++++++++++++++
-> >  drivers/mmc/host/sdhci.c       | 38 ++++++++++++++++++++++++++++++--------
-> >  drivers/mmc/host/sdhci.h       |  4 ++++
-> >  3 files changed, 51 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-> > index f5edf9d3a18a..673d1e8446a5 100644
-> > --- a/drivers/mmc/host/sdhci-pxav3.c
-> > +++ b/drivers/mmc/host/sdhci-pxav3.c
-> > @@ -307,8 +307,25 @@ static void pxav3_set_uhs_signaling(struct sdhci_host *host, unsigned int uhs)
-> >  		__func__, uhs, ctrl_2);
-> >  }
-> >  
-> > +static void pxav3_set_power(struct sdhci_host *host, unsigned char mode,
-> > +			    unsigned short vdd)
-> > +{
-> > +	struct mmc_host *mmc = host->mmc;
-> > +	u8 pwr = host->pwr;
-> > +
-> > +	sdhci_set_power(host, mode, vdd);
-> > +
-> > +	if (host->pwr == pwr)
-> > +		return;
-> > +
-> > +	spin_unlock_irq(&host->lock);
-> > +	mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
-> > +	spin_lock_irq(&host->lock);
-> > +}
-> > +
-> >  static const struct sdhci_ops pxav3_sdhci_ops = {
-> >  	.set_clock = sdhci_set_clock,
-> > +	.set_power = pxav3_set_power,
-> >  	.platform_send_init_74_clocks = pxav3_gen_init_74_clocks,
-> >  	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
-> >  	.set_bus_width = sdhci_set_bus_width,
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index add9fdfd1d8f..282257222121 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -1269,10 +1269,24 @@ clock_set:
-> >  }
-> >  EXPORT_SYMBOL_GPL(sdhci_set_clock);
-> >  
-> > -static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
-> > -			    unsigned short vdd)
-> > +static void sdhci_set_power_reg(struct sdhci_host *host, unsigned char mode,
-> > +				unsigned short vdd)
-> >  {
-> >  	struct mmc_host *mmc = host->mmc;
-> > +
-> > +	spin_unlock_irq(&host->lock);
-> > +	mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
-> > +	spin_lock_irq(&host->lock);
-> > +
-> > +	if (mode != MMC_POWER_OFF)
-> > +		sdhci_writeb(host, SDHCI_POWER_ON, SDHCI_POWER_CONTROL);
-> > +	else
-> > +		sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-> > +}
-> > +
-> > +void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
-> > +		     unsigned short vdd)
-> > +{
-> >  	u8 pwr = 0;
-> >  
-> >  	if (mode != MMC_POWER_OFF) {
-> > @@ -1335,12 +1349,20 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
-> >  		if (host->quirks & SDHCI_QUIRK_DELAY_AFTER_POWER)
-> >  			mdelay(10);
-> >  	}
-> > +}
-> > +EXPORT_SYMBOL_GPL(sdhci_set_power);
-> >  
-> > -	if (!IS_ERR(mmc->supply.vmmc)) {
-> > -		spin_unlock_irq(&host->lock);
-> > -		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
-> > -		spin_lock_irq(&host->lock);
-> > -	}
-> > +static void __sdhci_set_power(struct sdhci_host *host, unsigned char mode,
-> > +			      unsigned short vdd)
-> > +{
-> > +	struct mmc_host *mmc = host->mmc;
-> > +
-> > +	if (host->ops->set_power)
-> > +		host->ops->set_power(host, mode, vdd);
-> > +	else if (!IS_ERR(mmc->supply.vmmc))
-> > +		sdhci_set_power_reg(host, mode, vdd);
-> > +	else
-> > +		sdhci_set_power(host, mode, vdd);
-> >  }
-> >  
-> >  /*****************************************************************************\
-> > @@ -1490,7 +1512,7 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
-> >  		}
-> >  	}
-> >  
-> > -	sdhci_set_power(host, ios->power_mode, ios->vdd);
-> > +	__sdhci_set_power(host, ios->power_mode, ios->vdd);
-> >  
-> >  	if (host->ops->platform_send_init_74_clocks)
-> >  		host->ops->platform_send_init_74_clocks(host, ios->power_mode);
-> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> > index 0115e9907bf8..033d72b5bbd5 100644
-> > --- a/drivers/mmc/host/sdhci.h
-> > +++ b/drivers/mmc/host/sdhci.h
-> > @@ -529,6 +529,8 @@ struct sdhci_ops {
-> >  #endif
-> >  
-> >  	void	(*set_clock)(struct sdhci_host *host, unsigned int clock);
-> > +	void	(*set_power)(struct sdhci_host *host, unsigned char mode,
-> > +			     unsigned short vdd);
-> >  
-> >  	int		(*enable_dma)(struct sdhci_host *host);
-> >  	unsigned int	(*get_max_clock)(struct sdhci_host *host);
-> > @@ -660,6 +662,8 @@ static inline bool sdhci_sdio_irq_enabled(struct sdhci_host *host)
-> >  }
-> >  
-> >  void sdhci_set_clock(struct sdhci_host *host, unsigned int clock);
-> > +void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
-> > +		     unsigned short vdd);
-> >  void sdhci_set_bus_width(struct sdhci_host *host, int width);
-> >  void sdhci_reset(struct sdhci_host *host, u8 mask);
-> >  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+> Changes from v4:
+> (https://lkml.org/lkml/2015/12/14/43)
+> - Add new DEVFREQ_TRANSITION_NOTIFIER notifier. The passive
+>   devfreq device recevie the changed frequency of parent
+>   devfreq device through DEVFREQ_TRANSITION_NOTIFIER.
+> - Add governor type to identify thme using the defined constant
+> - Modify the passive governor using the DEVFREQ_TRANSITION_NOTIFIER notifier.
+> - Fix the RCU locking probrlm (Reported-by: Tobias Jakobi)
+> - Fix the debugfs error during the kernel booting (Reported-by: Tobias Jakobi)
+> 
+> Changes from v3:
+> (https://lkml.org/lkml/2015/12/11/75)
+> - Add the reviewed-by tag from Krzysztof Kozlowski (patch2/3/13/14/15/16/17)
+> - Fix typo of the description on patch14
+> - Modify the subject and description of patch17
+> - Reorder the 'bus_xxx' device tree node alphabetically in 
+>   both exynos3250-rinato/monk.dts and exynos4412-trats/odroidu3
+> 
+> Changes from v2:
+> (https://lkml.org/lkml/2015/12/8/869)
+> - Fix typo on documentation
+> - Modify the more appropriate sentence on patch description
+> - Add the detailed description about both parent and passive bus device
+> - Modify the DMC frequency for Exynos4x12 DMC bus (200MHz -> 267MHz)
+> - Modify the voltage of 200MHz was included in Exynos3250 DMC bus (800mV -> 825mV)
+> - Rename OPP nodes as 'opp@<opp-hz>'
+> - Delete the duplicate 'opp-microvolt' property of passive devfreq device
+> - Reorder the 'bus_xxx' device tree node alphabetically in exynos3250-rinato/monk.dts
+> - Reorder the 'bus_xxx' device tree node alphabetically in exynos4412-trats/odroidu3
+> - Add new exynos4412-ppmu-common.dtsi to remove the duplicate PPMU dt node
+>   on rinato/monk/trats2/odroid-u3 board
+> - Add the log message if bus device is registered to devfreq framework successfully
+> - Add the reviewed-by tag from Krzysztof Kozlowski
+> - Add the tested-by tag from Anand Moon on Odroid U3
+> - Add 'SAMSUNG BUS FREQUENCY DRIVER' entry to MAINTAINERS
+> 
+> Changes from v1:
+> (https://lkml.org/lkml/2015/11/26/260)
+> - Check whether the instance of regulator is NULL or not
+>   when executing regulator_disable() because of only parent
+>   devfreq device has the regulator instance. After fixing it,
+>   the wake-up from suspend state is well working. (patch1)
+> - Fix bug which checks 'bus-clk' instead of 'bus->regulator'
+>   after calling devm_clk_get() (on patch1)
+> - Update the documentation to remove the description about
+>   DEVFREQ-EVENT subsystem (on patch2)
+> - Add the full name of DMC (Dynamic Memory Controller) (on patch2)
+> - Modify the detailed correlation of buses for Exynos3250
+>   on documentation (patch2)
+> - Add the MFC bus node for Exynos3250 (on patch11, patch12)
+> - Fix the duplicate frequency of bus_display on Exynos4x12.dtsi
+> - Add the PPMU node for exynos4412-odroidu3
+> - Add the support of bus frequency for exynos4412-odroidu3
+> 
+> Detailed descirption for patch-set:
+> 1. Add generic exynos bus frequency driver
+> : This patch-set adds the generic exynos bus frequency driver for AXI bus
+> of sub-blocks in exynos SoC. The Samsung Exynos SoC have the common
+> architecture for bus between DRAM and sub-blocks in SoC.
+> 
+>  There are the different buses according to Exynos SoC because Exynos SoC
+> has the differnt sub-blocks and bus speed. In spite of this difference
+> among Exynos SoCs, this driver is able to support almost Exynos SoC by adding
+> unique data of each bus in the devicetree file.
+> 
+>  In devicetree, each bus node has a bus clock, regulator, operation-point
+> and devfreq-event devices which measure the utilization of each bus block.
+> 
+> For example,
+> - The bus of DMC block in exynos3250.dtsi are listed below:
+> 
+> 	bus_dmc: bus_dmc {
+> 		compatible = "samsung,exynos-bus";
+> 		clocks = <&cmu_dmc CLK_DIV_DMC>;
+> 		clock-names = "bus";
+> 		operating-points-v2 = <&bus_dmc_opp_table>;
+> 		status = "disabled";
+> 	};
+> 
+> 	bus_dmc_opp_table: opp_table1 {
+> 		compatible = "operating-points-v2";
+> 		opp-shared;
+> 
+> 		opp@50000000 {
+> 			opp-hz = /bits/ 64 <50000000>;
+> 			opp-microvolt = <800000>;
+> 		};
+> 		opp@100000000 {
+> 			opp-hz = /bits/ 64 <100000000>;
+> 			opp-microvolt = <800000>;
+> 		};
+> 		opp@134000000 {
+> 			opp-hz = /bits/ 64 <134000000>;
+> 			opp-microvolt = <800000>;
+> 		};
+> 		opp@200000000 {
+> 			opp-hz = /bits/ 64 <200000000>;
+> 			opp-microvolt = <825000>;
+> 		};
+> 		opp@400000000 {
+> 			opp-hz = /bits/ 64 <400000000>;
+> 			opp-microvolt = <875000>;
+> 		};
+> 	};
+> 
+> - Usage case to handle the frequency and voltage of bus on runtime
+>   in exynos3250-rinato.dts are listed below:
+> 
+> 	&bus_dmc {
+> 		devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+> 		vdd-supply = <&buck1_reg>;	/* VDD_MIF */
+> 		status = "okay";
+> 	};
+> 
+> 2. Add new passive governor of DEVFREQ framework (patch5-patch7)
+> : This patch-set add the new passive governor for DEVFREQ framework.
+> The existing governors (ondemand, performance and so on) are used for DVFS
+> (Dynamic Voltage and Frequency Scaling) drivers. The existing governors
+> are independently used for specific device driver which don't give the
+> influence to other device drviers and also don't receive the effect from
+> other device drivers.
+> 
+>  The passive governor depends on operation of parent driver with existing
+> governors(ondemand, performance and so on) extremely and is not able to
+> decide the new frequency by oneself. According to the decided new frequency
+> of parent driver with governor, the passive governor uses it to decide
+> the appropriate frequency for own device driver. The passive governor
+> must need the following information from device tree:
+> 
+> For exameple,
+>  There are one more bus device drivers in Exynos3250 which need to
+> change their source clock according to their utilization on runtime.
+> But, they share the same power line (e.g., regulator). So, LEFTBUS bus
+> driver is operated as parent with ondemand governor and then the rest
+> device driver with passive governor.
+> 
+>  The buses of Internal block in exynos3250.dtsi are listed below:
+> When LEFTBUS bus driver (parent) changes the bus frequency with
+> ondemand governor on runtime, the rest bus devices which sharing
+> the same power line (VDD_INT) will change the each bus frequency
+> according to the decision of LEFTBUS bus driver (parent).
+> 
+> - INT (Internal) block
+> 	: VDD_INT |--- LEFTBUS
+> 		  |--- PERIL
+> 		  |--- MFC
+> 		  |--- G3D
+> 		  |--- RIGHTBUS
+> 		  |--- FSYS
+> 		  |--- LCD0
+> 		  |--- PERIR
+> 		  |--- ISP
+> 		  |--- CAM
+> 
+> - The buss of INT block in exynos3250.dtsi are listed below:
+> 	bus_leftbus: bus_leftbus {
+> 		compatible = "samsung,exynos-bus";
+> 		clocks = <&cmu CLK_DIV_GDL>;
+> 		clock-names = "bus";
+> 		operating-points-v2 = <&bus_leftbus_opp_table>;
+> 		status = "disabled";
+> 	};
+> 
+> 	bus_rightbus: bus_rightbus {
+> 		compatible = "samsung,exynos-bus";
+> 		clocks = <&cmu CLK_DIV_GDR>;
+> 		clock-names = "bus";
+> 		operating-points-v2 = <&bus_leftbus_opp_table>;
+> 		status = "disabled";
+> 	};
+> 
+> 	(Omit the rest bus dt node)
+> 
+> - Usage case to handle the frequency and voltage of bus on runtime
+>   in exynos3250-rinato.dts are listed below:
+> 	/* Parent bus device of VDD_INT */
+> 	&bus_leftbus {
+> 		devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+> 		vdd-supply = <&buck3_reg>;
+> 		status = "okay";
+> 	};
+> 
+> 	/* Passive bus device depend on LEFTBUS bus. */
+> 	&bus_rightbus {
+> 		devfreq = <&bus_leftbus>; /* 'devfreq' property indicates
+> 					     the phandle of parent device. */
+> 		status = "okay";
+> 	};
+> 
+> 	(Omit the rest bus dt node)
+> 
+> Chanwoo Choi (21):
+>   PM / devfreq: exynos: Add generic exynos bus frequency driver
+>   PM / devfreq: exynos: Add documentation for generic exynos bus frequency driver
+>   PM / devfreq: Add devfreq_get_devfreq_by_phandle()
+>   PM / devfreq: Add new DEVFREQ_TRANSITION_NOTIFIER notifier
+>   PM / devfreq: Add governer type with unique number
+>   PM / devfreq: Add new passive governor
+>   PM / devfreq: exynos: Add support of bus frequency of sub-blocks using passive governor
+>   PM / devfreq: exynos: Update documentation for bus devices using passive governor
+>   PM / devfreq: exynos: Add the detailed correlation between sub-blocks and power line
+>   PM / devfreq: exynos: Remove unused exynos4/5 busfreq driver
+>   MAINTAINERS: Add samsung bus frequency driver entry
+>   ARM: dts: Add DMC bus node for Exynos3250
+>   ARM: dts: Add DMC bus frequency for exynos3250-rinato/monk
+>   ARM: dts: Add bus nodes using VDD_INT for Exynos3250
+>   ARM: dts: Add bus nodes using VDD_MIF for Exynos4x12
+>   ARM: dts: Add bus nodes using VDD_INT for Exynos4x12
+>   ARM: dts: Add bus nodes using VDD_MIF for Exynos4210
+>   ARM: dts: Add exynos4412-ppmu-common dtsi to delete duplicate PPMU nodes
+>   ARM: dts: Add support of bus frequency using VDD_INT for exynos3250-rinato
+>   ARM: dts: Expand the voltage range of buck1/3 regulator for exynos4412-odroidu3
+>   ARM: dts: Add support of bus frequency for exynos4412-trats/odroidu3
+> 
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     |  390 ++++++++
+>  MAINTAINERS                                        |    9 +
+>  arch/arm/boot/dts/exynos3250-monk.dts              |   47 +-
+>  arch/arm/boot/dts/exynos3250-rinato.dts            |   88 +-
+>  arch/arm/boot/dts/exynos3250.dtsi                  |  181 ++++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |  159 +++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   56 +-
+>  arch/arm/boot/dts/exynos4412-ppmu-common.dtsi      |   50 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |   88 +-
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |  174 ++++
+>  drivers/devfreq/Kconfig                            |   35 +-
+>  drivers/devfreq/Makefile                           |    4 +-
+>  drivers/devfreq/devfreq.c                          |  224 ++++-
+>  drivers/devfreq/exynos-bus.c                       |  561 +++++++++++
+>  drivers/devfreq/exynos/Makefile                    |    3 -
+>  drivers/devfreq/exynos/exynos4_bus.c               | 1055 --------------------
+>  drivers/devfreq/exynos/exynos4_bus.h               |  110 --
+>  drivers/devfreq/exynos/exynos5_bus.c               |  431 --------
+>  drivers/devfreq/exynos/exynos_ppmu.c               |  119 ---
+>  drivers/devfreq/exynos/exynos_ppmu.h               |   86 --
+>  drivers/devfreq/governor.h                         |   21 +
+>  drivers/devfreq/governor_passive.c                 |  192 ++++
+>  drivers/devfreq/governor_performance.c             |    1 +
+>  drivers/devfreq/governor_powersave.c               |    1 +
+>  drivers/devfreq/governor_simpleondemand.c          |    1 +
+>  drivers/devfreq/governor_userspace.c               |    1 +
+>  include/linux/devfreq.h                            |   70 ++
+>  27 files changed, 2209 insertions(+), 1948 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+>  create mode 100644 arch/arm/boot/dts/exynos4412-ppmu-common.dtsi
+>  create mode 100644 drivers/devfreq/exynos-bus.c
+>  delete mode 100644 drivers/devfreq/exynos/Makefile
+>  delete mode 100644 drivers/devfreq/exynos/exynos4_bus.c
+>  delete mode 100644 drivers/devfreq/exynos/exynos4_bus.h
+>  delete mode 100644 drivers/devfreq/exynos/exynos5_bus.c
+>  delete mode 100644 drivers/devfreq/exynos/exynos_ppmu.c
+>  delete mode 100644 drivers/devfreq/exynos/exynos_ppmu.h
+>  create mode 100644 drivers/devfreq/governor_passive.c
 > 
