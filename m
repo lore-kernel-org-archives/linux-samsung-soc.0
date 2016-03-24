@@ -1,41 +1,33 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/3] phy: exynos-mipi-video: Rewrite handling of phy
- registers
-Date: Thu, 24 Mar 2016 12:48:38 +0100
-Message-ID: <56F3D416.3070701@samsung.com>
+Subject: Re: [PATCH 3/3] phy: exynos-mipi-video: Add support for Exynos 5420
+ and 5433 SoCs
+Date: Thu, 24 Mar 2016 13:05:50 +0100
+Message-ID: <56F3D81E.4000506@samsung.com>
 References: <1458731358-773-1-git-send-email-m.szyprowski@samsung.com>
- <1458731358-773-3-git-send-email-m.szyprowski@samsung.com>
+ <1458731358-773-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:42762 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:43845 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750926AbcCXLso (ORCPT
+	with ESMTP id S1755924AbcCXMGF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2016 07:48:44 -0400
-In-reply-to: <1458731358-773-3-git-send-email-m.szyprowski@samsung.com>
+	Thu, 24 Mar 2016 08:06:05 -0400
+In-reply-to: <1458731358-773-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
 On 03/23/2016 12:09 PM, Marek Szyprowski wrote:
-> Controlling Exynos MIPI DPHY is done by handling 2 registers: one for
-> phy reset and one for enabling it. This patch moves definitions of those
-> 2 registers to speparate exynos_mipi_phy_desc structure, which can be
-> defined separately for each PHY for each supported hardware variant.
-> This code rewrite is needed to add support for newer Exynos SoCs, which
-> have MIPI PHY related registers at different offsets or even different
-> register regions.
+> This patch adds support for MIPI DPHYs found in Exynos5420-compatible
+> (5420, 5422 and 5800) and Exynos5433 SoCs. Those SoCs differs from
+> earlier by different offset of MIPI DPHY registers in PMU controllers
+> (Exynos 5420-compatible case) or by moving MIPI DPHY reset registers to
+> separate system register controllers (Exynos 5433 case). In both case
+> also additional 5th PHY (MIPI CSIS 2) has been added.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-I've tested this patch series on Trats2 and an exynos5433 based
-board and it seems to be all working well.
-
 Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
--- 
-Thanks,
-Sylwester
