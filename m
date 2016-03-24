@@ -1,85 +1,90 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 3/3] cpufreq: exynos: Use generic platdev driver
-Date: Thu, 24 Mar 2016 12:10:30 +0530
-Message-ID: <6cb29053bce7026dd9429326236a67c45e901c7b.1458801338.git.viresh.kumar@linaro.org>
-References: <cover.1458801338.git.viresh.kumar@linaro.org>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <cover.1458801338.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1458801338.git.viresh.kumar@linaro.org>
-References: <cover.1458801338.git.viresh.kumar@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Rafael Wysocki <rjw@rjwysocki.net>, arnd.bergmann@linaro.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, xf@rock-chips.com, heiko@sntech.de, mmcclint@codeaurora.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] regulator: core: Ensure we are at least in bounds for
+ our constraints
+Date: Thu, 24 Mar 2016 16:18:25 +0900
+Message-ID: <CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
+References: <1458587912-32665-1-git-send-email-broonie@kernel.org>
+	<1458587912-32665-2-git-send-email-broonie@kernel.org>
+	<56F0624C.8010004@gmail.com>
+	<CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The cpufreq-dt-platdev driver supports creation of cpufreq-dt platform
-device now, reuse that and remove similar code from platform code.
+On Thu, Mar 24, 2016 at 3:11 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On Tue, Mar 22, 2016 at 6:06 AM, Ivaylo Dimitrov
+> <ivo.g.dimitrov.75@gmail.com> wrote:
+>> Hi,
+>>
+>> On 21.03.2016 21:18, Mark Brown wrote:
+>>>
+>>> Currently we only attempt to set the voltage during constraints
+>>> application if an exact voltage is specified.  Extend this so that if
+>>> the currently set voltage for the regualtor is outside the bounds set in
+>>
+>>
+>> regulator
+>>
+>>> constraints we will move the voltage to the nearest constraint, raising
+>>> to the minimum or lowering to the maximum as needed.  This ensures that
+>>> drivers can probe without the hardware being driven out of spec.
+>>>
+>>> Reported-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+>>> Signed-off-by: Mark Brown <broonie@kernel.org>
+>>> ---
+>>>
+>>> Untested so far, will give it a spin later/tomorrow.
+>>>
+>>>   drivers/regulator/core.c | 32 +++++++++++++++++++++++++-------
+>>>   1 file changed, 25 insertions(+), 7 deletions(-)
+>>>
+>>
+>> Patch 1 does not apply cleanly on 4.5-rc5, so I applied it by hand, however,
+>> you may add:
+>>
+>> Tested-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+>
+>
+> Cc: Ulf, mmc
+>
+> I bisected today's next MMC/SD card failure to this patch. Plugging a
+> SD card on Odroid XU3/XU4 (Exynos5422) causes:
+> [   11.759954] mmc1: card never left busy state
+> [   11.762795] mmc1: error -110 whilst initialising SD card
+>
+> Full log (for booting from SD but it happens also when plugging the
+> card to the board booted from eMMC):
+> http://www.krzk.eu/builders/boot-odroid-xu3-multi_v7/builds/538/steps/Boot%20odroid/logs/serial
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/mach-exynos/exynos.c        | 25 -------------------------
- drivers/cpufreq/cpufreq-dt-platdev.c |  5 +++++
- 2 files changed, 5 insertions(+), 25 deletions(-)
++Cc: linux-samsung-soc, Javier and Marek.
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 1c47aee31e9c..757c6012989c 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -224,29 +224,6 @@ static void __init exynos_init_irq(void)
- 	exynos_map_pmu();
- }
- 
--static const struct of_device_id exynos_cpufreq_matches[] = {
--	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
--	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
--	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
--	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
--	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
--	{ /* sentinel */ }
--};
--
--static void __init exynos_cpufreq_init(void)
--{
--	struct device_node *root = of_find_node_by_path("/");
--	const struct of_device_id *match;
--
--	match = of_match_node(exynos_cpufreq_matches, root);
--	if (!match) {
--		platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
--		return;
--	}
--
--	platform_device_register_simple(match->data, -1, NULL, 0);
--}
--
- static void __init exynos_dt_machine_init(void)
- {
- 	/*
-@@ -269,8 +246,6 @@ static void __init exynos_dt_machine_init(void)
- 	    of_machine_is_compatible("samsung,exynos5250"))
- 		platform_device_register(&exynos_cpuidle);
- 
--	exynos_cpufreq_init();
--
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
- }
- 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 18b81724ca0b..d7e62528ce06 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -20,6 +20,11 @@ struct cpufreq_dt_compat {
- };
- 
- static struct cpufreq_dt_compat compat[] = {
-+	{ "samsung,exynos3250",		NULL,		0 },
-+	{ "samsung,exynos4210",		NULL,		0 },
-+	{ "samsung,exynos4212",		NULL,		0 },
-+	{ "samsung,exynos4412",		NULL,		0 },
-+	{ "samsung,exynos5250",		NULL,		0 },
- };
- 
- static int __init cpufreq_dt_platdev_init(void)
--- 
-2.7.1.410.g6faf27b
+Although bisect complained about this patch but I am not convinced
+that it is the cause. Before the patch the constraints were not
+applied. To none of the regulators. With the patch the constraints are
+applied to bucks... which are not directly used by SD card.
 
+Instead some of the bucks are apparently supplying other LDOs. I
+suspect buck9 which is mentioned as a supply for VDD 2.8V (2.8V
+happens to be also the voltage of regulators going to SD card).
+With the patch following constraints are applied:
+                 target_min, target max, current
+setting BUCK1 to 1100000 1100000 1100000
+setting BUCK2 to 1000000 1000000 1000000
+setting BUCK3 to 1000000 1000000 1000000
+setting BUCK4 to 1000000 1000000 1000000
+setting BUCK5 to 1200000 1200000 1200000
+setting BUCK6 to 1025000 1025000 1025000
+setting BUCK7 to 900000 900000 900000
+setting BUCK8 to 1225000 1225000 1225000
+setting BUCK9 to 3750000 3750000 5000000
+
+Why the heck current_uV is 5V? I'll try to figure this out...
+
+Best regards,
+Krzysztof
