@@ -1,53 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Fix invalid maximum voltage for buck9
- supplying SD card
-Date: Thu, 24 Mar 2016 11:02:40 +0000
-Message-ID: <20160324110240.GU2566@sirena.org.uk>
-References: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
- <20160324095332.GS2566@sirena.org.uk>
- <CAJKOXPc03ksVFKAHo_Znw41wdzRmzJpFYfAEw2q3EfrQxevghg@mail.gmail.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: Who is going to merge it [Was: Re: [PATCH v14 0/17] Add Analogix
+ Core Display Port Driver]
+Date: Thu, 24 Mar 2016 11:10:21 +0000 (UTC)
+Message-ID: <5A08F152.40705@rock-chips.com>
+References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>	<1919945.Y1tg0YzXlm@diego>	<56F1CAEB.3080701@samsung.com>	<8949624.HmxDpZAlt2@diego>	<56F1D0AD.8030905@samsung.com>	<20160322233906.GP19428@n2100.arm.linux.org.uk>	<56F1DB27.4040001@samsung.com>	<20160323000835.GQ19428@n2100.arm.linux.org.uk> <CAPM=9tz9_rbGJFuv-+YN=Sicfng++tHTDLrOX5Ohtwft+VnwtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+EMqLL+3vmTi4N6E"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33746 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755204AbcCXLCw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2016 07:02:52 -0400
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPc03ksVFKAHo_Znw41wdzRmzJpFYfAEw2q3EfrQxevghg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Date: Sun, 12 Nov 2017 20:11:46 -0500
+In-Reply-To: <CAPM=9tz9_rbGJFuv-+YN=Sicfng++tHTDLrOX5Ohtwft+VnwtA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>Emil Velikov <e>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
 
 
---+EMqLL+3vmTi4N6E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 03/22/2016 08:41 PM, Dave Airlie wrote:
+>>> So although it's small framework or just subdirectory, we would need
+>>> someone who can manage the framework to avoid further confusion if
+>>> necessary.
+>> So maybe it just doesn't need a maintainer, and maybe those the owner
+>> of the bridge driver should be responsible for choosing the tree which
+>> it's merged through along with updates.  That's how dw-hdmi has been
+>> managed on the whole.
+>>
+>> It also means that the bridge driver maintainer is able to test changes
+>> to the bridge driver, rather than having some over-arching bridge
+>> subdirectory maintainer who doesn't have a clue whether the changes
+>> work on the hardware.
+>>
+>> IMHO, having bridge driver authors/maintainers look after their own
+>> code has many advantages.
+> The author just send me a pull request with acks from a git tree
+> that hopefully both people agreed and tested from. No need to
+> send this via another maintainer layer.
+>
+> Dave.
+>
 
-On Thu, Mar 24, 2016 at 07:25:35PM +0900, Krzysztof Kozlowski wrote:
+Wow, thanks all ! such cool news  :-D  I'll prepare my pull request soon
 
-> I'll look at it after weekend. For now I applied my patch to the
-> for-next, so the next should be fixed.
 
-Oh, and please send this to Linus - the regulator change is fixing a
-problem some other boards noticed.
+- Yakir
 
---+EMqLL+3vmTi4N6E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJW88lPAAoJECTWi3JdVIfQo5YH/jqaxGNXXdpAhEUPoQonAuhf
-V41C/dB3jaayLAv6l3t+9jsUYjFEPfRXkZyl6UQiuVfvR/HL4RrrTJidCaV5IdRU
-x/Qp6iU+PSJVWvnCvjVK/gpuTOoizOpQuqBYzW2cUw/Kn8n6StWsi3dMmqZIfcMj
-DUFusbKmLgD927oDTFx2gDv/FMsRnLQRLHQcyJlic5ajSRid5A30mKIEvKaAOvtU
-dF5CeD2cxcYm7dxkbqgqq/OWr6/ZCC/HGWiDsi6fFZMGQpm6/up1hxLLkzbEPCak
-H6roemh2j26YiEKDK+X+uU7WYlEE7SMQY7Ehi8hnQzpXBu59wi0tVfYMX+k7Oas=
-=Bmkr
------END PGP SIGNATURE-----
-
---+EMqLL+3vmTi4N6E--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
