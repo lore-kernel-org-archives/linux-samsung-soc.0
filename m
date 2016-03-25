@@ -1,132 +1,65 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 3/8] clk: samsung: exynos3250: Add MMC2 clock
-Date: Fri, 25 Mar 2016 08:39:40 +0900
-Message-ID: <56F47ABC.7060006@samsung.com>
-References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
- <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH] serial: samsung: Reorder the sequence of clock control
+ when call s3c24xx_serial_set_termios()
+Date: Fri, 25 Mar 2016 09:10:16 +0900
+Message-ID: <56F481E8.1000602@samsung.com>
+References: <1457916065-27418-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:34608 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750797AbcCYAKV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Mar 2016 20:10:21 -0400
+In-reply-to: <1457916065-27418-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Robert Baldyga (SRPOL)" <r.baldyga@samsung.com>
 
-Ping.
+Hi Robert,
 
-Hi Sylwester,
+I send following patch to fix the broken serial log of Exynos SoC.
+As I knew, you also knew this issue.
+If possible, could you review or test this patch?
 
-Could you review this patch?
-
-Regards,
+Best Regards,
 Chanwoo Choi
 
-On 2016=EB=85=84 03=EC=9B=94 15=EC=9D=BC 16:38, Chanwoo Choi wrote:
-> This patch add the MMC2 clocks (mux, divider, gate) of Exynos3250 SoC=
-=2E
+On 2016=EB=85=84 03=EC=9B=94 14=EC=9D=BC 09:41, Chanwoo Choi wrote:
+> This patch fixes the broken serial log when changing the clock source
+> of uart device. Before disabling the original clock source, this patc=
+h
+> enables the new clock source to protect the clock off state for a spl=
+it second.
 >=20
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
 > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos3250.c   | 9 +++++++++
->  include/dt-bindings/clock/exynos3250.h | 7 ++++++-
->  2 files changed, 15 insertions(+), 1 deletion(-)
+>  drivers/tty/serial/samsung.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsu=
-ng/clk-exynos3250.c
-> index bc60e399d1bc..16575ee874cb 100644
-> --- a/drivers/clk/samsung/clk-exynos3250.c
-> +++ b/drivers/clk/samsung/clk-exynos3250.c
-> @@ -302,6 +302,7 @@ static struct samsung_mux_clock mux_clks[] __init=
-data =3D {
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsun=
+g.c
+> index d72cd736bdc6..80d59dbfebba 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1265,13 +1265,13 @@ static void s3c24xx_serial_set_termios(struct=
+ uart_port *port,
+>  	if (ourport->baudclk !=3D clk) {
+>  		s3c24xx_serial_setsource(port, clk_sel);
 > =20
->  	/* SRC_FSYS */
->  	MUX(CLK_MOUT_TSADC, "mout_tsadc", group_sclk_p, SRC_FSYS, 28, 4),
-> +	MUX(CLK_MOUT_MMC2, "mout_mmc2", group_sclk_p, SRC_FSYS, 8, 4),
->  	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 4),
->  	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
-> =20
-> @@ -390,6 +391,11 @@ static struct samsung_div_clock div_clks[] __ini=
-tdata =3D {
->  		CLK_SET_RATE_PARENT, 0),
->  	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
-> =20
-> +	/* DIV_FSYS2 */
-> +	DIV_F(CLK_DIV_MMC2_PRE, "div_mmc2_pre", "div_mmc2", DIV_FSYS2, 8, 8=
-,
-> +		CLK_SET_RATE_PARENT, 0),
-> +	DIV(CLK_DIV_MMC2, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
+> +		clk_prepare_enable(clk);
 > +
->  	/* DIV_PERIL0 */
->  	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
->  	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
-> @@ -540,6 +546,8 @@ static struct samsung_gate_clock gate_clks[] __in=
-itdata =3D {
->  		GATE_SCLK_FSYS, 9, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_EBI, "sclk_ebi", "div_ebi",
->  		GATE_SCLK_FSYS, 6, CLK_SET_RATE_PARENT, 0),
-> +	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "div_mmc2_pre",
-> +		GATE_SCLK_FSYS, 2, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_MMC1, "sclk_mmc1", "div_mmc1_pre",
->  		GATE_SCLK_FSYS, 1, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc0_pre",
-> @@ -635,6 +643,7 @@ static struct samsung_gate_clock gate_clks[] __in=
-itdata =3D {
->  	GATE(CLK_USBOTG, "usbotg", "div_aclk_200", GATE_IP_FSYS, 13, 0, 0),
->  	GATE(CLK_USBHOST, "usbhost", "div_aclk_200", GATE_IP_FSYS, 12, 0, 0=
-),
->  	GATE(CLK_SROMC, "sromc", "div_aclk_200", GATE_IP_FSYS, 11, 0, 0),
-> +	GATE(CLK_SDMMC2, "sdmmc2", "div_aclk_200", GATE_IP_FSYS, 7, 0, 0),
->  	GATE(CLK_SDMMC1, "sdmmc1", "div_aclk_200", GATE_IP_FSYS, 6, 0, 0),
->  	GATE(CLK_SDMMC0, "sdmmc0", "div_aclk_200", GATE_IP_FSYS, 5, 0, 0),
->  	GATE(CLK_PDMA1, "pdma1", "div_aclk_200", GATE_IP_FSYS, 1, 0, 0),
-> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bind=
-ings/clock/exynos3250.h
-> index ddb874130d86..c796ff02ceeb 100644
-> --- a/include/dt-bindings/clock/exynos3250.h
-> +++ b/include/dt-bindings/clock/exynos3250.h
-> @@ -80,6 +80,7 @@
->  #define CLK_MOUT_APLL			59
->  #define CLK_MOUT_ACLK_266_SUB		60
->  #define CLK_MOUT_UART2			61
-> +#define CLK_MOUT_MMC2			62
+>  		if (!IS_ERR(ourport->baudclk)) {
+>  			clk_disable_unprepare(ourport->baudclk);
+>  			ourport->baudclk =3D ERR_PTR(-EINVAL);
+>  		}
 > =20
->  /* Dividers */
->  #define CLK_DIV_GPL			64
-> @@ -129,6 +130,8 @@
->  #define CLK_DIV_HPM			108
->  #define CLK_DIV_COPY			109
->  #define CLK_DIV_UART2			110
-> +#define CLK_DIV_MMC2_PRE		111
-> +#define CLK_DIV_MMC2			112
-> =20
->  /* Gates */
->  #define CLK_ASYNC_G3D			128
-> @@ -226,6 +229,7 @@
->  #define CLK_BLOCK_CAM			220
->  #define CLK_SMIES			221
->  #define CLK_UART2			222
-> +#define CLK_SDMMC2			223
-> =20
->  /* Special clocks */
->  #define CLK_SCLK_JPEG			224
-> @@ -253,12 +257,13 @@
->  #define CLK_SCLK_UART1			246
->  #define CLK_SCLK_UART0			247
->  #define CLK_SCLK_UART2			248
-> +#define CLK_SCLK_MMC2			249
-> =20
->  /*
->   * Total number of clocks of main CMU.
->   * NOTE: Must be equal to last clock ID increased by one.
->   */
-> -#define CLK_NR_CLKS			249
-> +#define CLK_NR_CLKS			250
-> =20
->  /*
->   * CMU DMC
+> -		clk_prepare_enable(clk);
+> -
+>  		ourport->baudclk =3D clk;
+>  		ourport->baudclk_rate =3D clk ? clk_get_rate(clk) : 0;
+>  	}
 >=20
