@@ -1,65 +1,74 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] serial: samsung: Reorder the sequence of clock control
- when call s3c24xx_serial_set_termios()
-Date: Fri, 25 Mar 2016 09:10:16 +0900
-Message-ID: <56F481E8.1000602@samsung.com>
-References: <1457916065-27418-1-git-send-email-cw00.choi@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable Samsung media platform
+ drivers as modules
+Date: Fri, 25 Mar 2016 00:15:31 -0300
+Message-ID: <56F4AD53.2020307@osg.samsung.com>
+References: <1458779208-6144-1-git-send-email-javier@osg.samsung.com>
+ <56F33C46.8060501@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34608 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750797AbcCYAKV (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:57044 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751966AbcCYDPi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2016 20:10:21 -0400
-In-reply-to: <1457916065-27418-1-git-send-email-cw00.choi@samsung.com>
+	Thu, 24 Mar 2016 23:15:38 -0400
+In-Reply-To: <56F33C46.8060501@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Robert Baldyga (SRPOL)" <r.baldyga@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>
 
-Hi Robert,
+Hello Krzysztof,
 
-I send following patch to fix the broken serial log of Exynos SoC.
-As I knew, you also knew this issue.
-If possible, could you review or test this patch?
+On 03/23/2016 10:00 PM, Krzysztof Kozlowski wrote:
+> On 24.03.2016 09:26, Javier Martinez Canillas wrote:
+>> There are a bunch of media platform drivers under drivers/media/platform/
+>> that are for Samsung SoCs but are not being built with exynos_defconfig.
+>>
+>> This patch enables them as a module to improve build coverage for these
+>> drivers and also to allow people use them with proper hardware if modules
+>> are installed. The S5P MFC driver wasn't enabled since it fails to probe.
+>>
+>> Only the boolean Kconfig symbols are enabled as built-in, since drivers
+>> are not critical and also to keep the kernel binary image size as small
+>> as possible.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Remove S5P G2D and GSC symbols since overlaps with Exynos DRM functionality.
+>>   Suggested by Tobias Jakobi
+>>
+>>  arch/arm/configs/exynos_defconfig | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+> 
+> Looks good.
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
 
-Best Regards,
-Chanwoo Choi
+Thanks for the review.
+ 
+> 
+> How about doing the same for multi_v7?
+>
 
-On 2016=EB=85=84 03=EC=9B=94 14=EC=9D=BC 09:41, Chanwoo Choi wrote:
-> This patch fixes the broken serial log when changing the clock source
-> of uart device. Before disabling the original clock source, this patc=
-h
-> enables the new clock source to protect the clock off state for a spl=
-it second.
->=20
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/tty/serial/samsung.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsun=
-g.c
-> index d72cd736bdc6..80d59dbfebba 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -1265,13 +1265,13 @@ static void s3c24xx_serial_set_termios(struct=
- uart_port *port,
->  	if (ourport->baudclk !=3D clk) {
->  		s3c24xx_serial_setsource(port, clk_sel);
-> =20
-> +		clk_prepare_enable(clk);
-> +
->  		if (!IS_ERR(ourport->baudclk)) {
->  			clk_disable_unprepare(ourport->baudclk);
->  			ourport->baudclk =3D ERR_PTR(-EINVAL);
->  		}
-> =20
-> -		clk_prepare_enable(clk);
-> -
->  		ourport->baudclk =3D clk;
->  		ourport->baudclk_rate =3D clk ? clk_get_rate(clk) : 0;
->  	}
->=20
+I didn't consider multi_v7 because media drivers aren't necessary for booting
+the boards and so it could increase build times for not real benefits in most
+machines. But I can enable it in multi_v7 as a follow-up if you think that it
+makes sense there too.
+ 
+> 
+> Best regards,
+> 
+> Krzysztof
+> 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
