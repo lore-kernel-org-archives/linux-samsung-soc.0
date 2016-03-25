@@ -1,78 +1,77 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
+From: Markus Reichl <reichl@t-online.de>
 Subject: Re: [PATCH] ARM: dts: exynos: Fix invalid maximum voltage for buck9
  supplying SD card
-Date: Fri, 25 Mar 2016 02:45:20 -0300
-Message-ID: <56F4D070.4020403@osg.samsung.com>
+Date: Fri, 25 Mar 2016 08:07:40 +0100
+Message-ID: <3355646.rVxAcJbDaQ@dell2.five-lan.de>
 References: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
+ <56F4D070.4020403@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:57091 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751382AbcCYFpd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Mar 2016 01:45:33 -0400
-In-Reply-To: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <56F4D070.4020403@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
 
-Hello Krzysztof,
-
-On 03/24/2016 05:12 AM, Krzysztof Kozlowski wrote:
-> The buck9 regulator of S2MPS11 PMIC had incorrect maximum voltage -
-> lower by 5 mV than specified by datasheet. This buck9 provides power to
-> other regulators, including LDO13 and LDO19 which supply the MMC2 (SD
-> card).
-> 
-> When constraints were applied, the depending regulators were not
-> providing enough power, leading to SD card detection errors:
-> 	mmc1: card never left busy state
-> 	mmc1: error -110 whilst initialising SD card
-> 
-> Fixes: 86a2d2ac5e5d ("ARM: dts: Add dts file for Odroid XU3 board")
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
-> 
-> The issue can be reproduced on next-20160324 with
-> bae4fdc88d7f7dda1 (regulator: core: Ensure we are at least in bounds for our constraints).
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 1bd507bfa750..82b2ba632cf6 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -299,7 +299,7 @@
->  			buck9_reg: BUCK9 {
->  				regulator-name = "vdd_2.8v_ldo";
->  				regulator-min-microvolt = <3000000>;
-> -				regulator-max-microvolt = <3750000>;
-> +				regulator-max-microvolt = <3755000>;
->  				regulator-always-on;
->  				regulator-boot-on;
->  			};
-> 
-
-I tested next-20160324 + $SUBJECT on an Odroid XU4 (with exynos_defconfig)
-and while it's true that the patch makes the SD card error to go away, I see
-that the s2mps11 regulator driver fails to probe due an -EINVAL being return
-by machine_constraints_voltage() -> _regulator_do_set_voltage():
-
-[    1.710300] vdd_2.8v_ldo: failed to apply 3755000-3755000uV constraint(-22)
-[    1.716387] s2mps11-pmic s2mps11-regulator: regulator init failed for 46
-[    1.734878] s2mps11-pmic: probe of s2mps11-regulator failed with error -22
-
-I wonder how neither Markus nor you saw this issue when testing so maybe I'm
-doing something wrong? Since AFAICT it's only working because the driver fails
-to probe so the same effect can be achieved disabling CONFIG_REGULATOR_S2MPS11.
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+SGkgSmF2aWVyLAoKQW0gRnJlaXRhZywgMjUuIE3DpHJ6IDIwMTYsIDAyOjQ1OjIwIHNjaHJpZWIg
+SmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzOgo+IEhlbGxvIEtyenlzenRvZiwKPiAKPiBPbiAwMy8y
+NC8yMDE2IDA1OjEyIEFNLCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+ID4gVGhlIGJ1Y2s5
+IHJlZ3VsYXRvciBvZiBTMk1QUzExIFBNSUMgaGFkIGluY29ycmVjdCBtYXhpbXVtIHZvbHRhZ2Ug
+LQo+ID4gbG93ZXIgYnkgNSBtViB0aGFuIHNwZWNpZmllZCBieSBkYXRhc2hlZXQuIFRoaXMgYnVj
+azkgcHJvdmlkZXMgcG93ZXIgdG8KPiA+IG90aGVyIHJlZ3VsYXRvcnMsIGluY2x1ZGluZyBMRE8x
+MyBhbmQgTERPMTkgd2hpY2ggc3VwcGx5IHRoZSBNTUMyIChTRAo+ID4gY2FyZCkuCj4gPiAKPiA+
+IFdoZW4gY29uc3RyYWludHMgd2VyZSBhcHBsaWVkLCB0aGUgZGVwZW5kaW5nIHJlZ3VsYXRvcnMg
+d2VyZSBub3QKPiA+IHByb3ZpZGluZyBlbm91Z2ggcG93ZXIsIGxlYWRpbmcgdG8gU0QgY2FyZCBk
+ZXRlY3Rpb24gZXJyb3JzOgo+ID4gCW1tYzE6IGNhcmQgbmV2ZXIgbGVmdCBidXN5IHN0YXRlCj4g
+PiAJbW1jMTogZXJyb3IgLTExMCB3aGlsc3QgaW5pdGlhbGlzaW5nIFNEIGNhcmQKPiA+IAo+ID4g
+Rml4ZXM6IDg2YTJkMmFjNWU1ZCAoIkFSTTogZHRzOiBBZGQgZHRzIGZpbGUgZm9yIE9kcm9pZCBY
+VTMgYm9hcmQiKQo+ID4gU2lnbmVkLW9mZi1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3ps
+b3dza2lAc2Ftc3VuZy5jb20+Cj4gPiAKPiA+IC0tLQo+ID4gCj4gPiBUaGUgaXNzdWUgY2FuIGJl
+IHJlcHJvZHVjZWQgb24gbmV4dC0yMDE2MDMyNCB3aXRoCj4gPiBiYWU0ZmRjODhkN2Y3ZGRhMSAo
+cmVndWxhdG9yOiBjb3JlOiBFbnN1cmUgd2UgYXJlIGF0IGxlYXN0IGluIGJvdW5kcyBmb3Igb3Vy
+IGNvbnN0cmFpbnRzKS4KPiA+IC0tLQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjIt
+b2Ryb2lkeHUzLWNvbW1vbi5kdHNpIHwgMiArLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
+dGlvbigrKSwgMSBkZWxldGlvbigtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zNTQyMi1vZHJvaWR4dTMtY29tbW9uLmR0c2kgYi9hcmNoL2FybS9ib290L2R0
+cy9leHlub3M1NDIyLW9kcm9pZHh1My1jb21tb24uZHRzaQo+ID4gaW5kZXggMWJkNTA3YmZhNzUw
+Li44MmIyYmE2MzJjZjYgMTAwNjQ0Cj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1
+NDIyLW9kcm9pZHh1My1jb21tb24uZHRzaQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
+bm9zNTQyMi1vZHJvaWR4dTMtY29tbW9uLmR0c2kKPiA+IEBAIC0yOTksNyArMjk5LDcgQEAKPiA+
+ICAJCQlidWNrOV9yZWc6IEJVQ0s5IHsKPiA+ICAJCQkJcmVndWxhdG9yLW5hbWUgPSAidmRkXzIu
+OHZfbGRvIjsKPiA+ICAJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MzAwMDAwMD47Cj4g
+PiAtCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDM3NTAwMDA+Owo+ID4gKwkJCQlyZWd1
+bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzNzU1MDAwPjsKPiA+ICAJCQkJcmVndWxhdG9yLWFsd2F5
+cy1vbjsKPiA+ICAJCQkJcmVndWxhdG9yLWJvb3Qtb247Cj4gPiAgCQkJfTsKPiA+IAo+IAo+IEkg
+dGVzdGVkIG5leHQtMjAxNjAzMjQgKyAkU1VCSkVDVCBvbiBhbiBPZHJvaWQgWFU0ICh3aXRoIGV4
+eW5vc19kZWZjb25maWcpCj4gYW5kIHdoaWxlIGl0J3MgdHJ1ZSB0aGF0IHRoZSBwYXRjaCBtYWtl
+cyB0aGUgU0QgY2FyZCBlcnJvciB0byBnbyBhd2F5LCBJIHNlZQo+IHRoYXQgdGhlIHMybXBzMTEg
+cmVndWxhdG9yIGRyaXZlciBmYWlscyB0byBwcm9iZSBkdWUgYW4gLUVJTlZBTCBiZWluZyByZXR1
+cm4KPiBieSBtYWNoaW5lX2NvbnN0cmFpbnRzX3ZvbHRhZ2UoKSAtPiBfcmVndWxhdG9yX2RvX3Nl
+dF92b2x0YWdlKCk6Cj4gCj4gWyAgICAxLjcxMDMwMF0gdmRkXzIuOHZfbGRvOiBmYWlsZWQgdG8g
+YXBwbHkgMzc1NTAwMC0zNzU1MDAwdVYgY29uc3RyYWludCgtMjIpCj4gWyAgICAxLjcxNjM4N10g
+czJtcHMxMS1wbWljIHMybXBzMTEtcmVndWxhdG9yOiByZWd1bGF0b3IgaW5pdCBmYWlsZWQgZm9y
+IDQ2Cj4gWyAgICAxLjczNDg3OF0gczJtcHMxMS1wbWljOiBwcm9iZSBvZiBzMm1wczExLXJlZ3Vs
+YXRvciBmYWlsZWQgd2l0aCBlcnJvciAtMjIKPiAKPiBJIHdvbmRlciBob3cgbmVpdGhlciBNYXJr
+dXMgbm9yIHlvdSBzYXcgdGhpcyBpc3N1ZSB3aGVuIHRlc3Rpbmcgc28gbWF5YmUgSSdtCj4gZG9p
+bmcgc29tZXRoaW5nIHdyb25nPyBTaW5jZSBBRkFJQ1QgaXQncyBvbmx5IHdvcmtpbmcgYmVjYXVz
+ZSB0aGUgZHJpdmVyIGZhaWxzCj4gdG8gcHJvYmUgc28gdGhlIHNhbWUgZWZmZWN0IGNhbiBiZSBh
+Y2hpZXZlZCBkaXNhYmxpbmcgQ09ORklHX1JFR1VMQVRPUl9TMk1QUzExLgo+IAo+IEJlc3QgcmVn
+YXJkcywKPiAKTXkgZmlyc3QgdGVzdCB5ZXN0ZXJkYXkgd2FzIHdpdGggbmV4dC0yMDE2MDMyNCAr
+ICRTVUJKRUNULCB0b28sIGFuZCBJIGVuY291bnRlcmVkIHRoZSBzYW1lCmVycm9yIG9mIHRoZSBy
+ZWd1bGF0b3Igc3lzdGVtIGFzIHlvdS4KQXMgd2l0aCBuZXh0LTIwMTYwMzI0IEkgY291bGQgbm90
+IGdldCB0aGUgZXRoZXJuZXQgY2hpcCBydW5uaW5nICh3aXRoIG9yIHdpdGhvdXQgJFNVQkpFQ1Qp
+IEkgc3dpdGNoZWQgYmFjayB0bwpuZXh0LTIwMTYwMzIzICsgJFNVQkpFQ1QgYW5kIHBvc3RlZCB0
+aGUgcmVzdWx0IGFib3ZlLgoKUmVnYXJkcywKLS0KTWFya3VzIAoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxp
+c3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZy
+YWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
