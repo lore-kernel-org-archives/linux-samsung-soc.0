@@ -1,38 +1,64 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 3/8] clk: samsung: exynos3250: Add MMC2 clock
-Date: Fri, 25 Mar 2016 10:50:30 +0100
-Message-ID: <56F509E6.7080807@samsung.com>
-References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
- <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
- <56F47ABC.7060006@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <56F47ABC.7060006@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, tomasz.figa@gmail.com, jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCHv14 01/18] dts: exynos4*: add HDMI CEC pin definition to pinctrl
+Date: Fri, 25 Mar 2016 14:09:59 +0100
+Message-ID: <1458911416-47981-2-git-send-email-hverkuil@xs4all.nl>
+References: <1458911416-47981-1-git-send-email-hverkuil@xs4all.nl>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1458911416-47981-1-git-send-email-hverkuil@xs4all.nl>
+Sender: linux-input-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
+From: Kamil Debski <kamil@wypas.org>
 
-On 03/25/2016 12:39 AM, Chanwoo Choi wrote:
-> diff --git a/include/dt-bindings/clock/exynos3250.h 
-> b/include/dt-bindings/clock/exynos3250.h
->> index ddb874130d86..c796ff02ceeb 100644
->> --- a/include/dt-bindings/clock/exynos3250.h
->> +++ b/include/dt-bindings/clock/exynos3250.h
-...
->> -#define CLK_NR_CLKS			249
->> +#define CLK_NR_CLKS			250
+Add pinctrl nodes for the HDMI CEC device to the Exynos4210 and
+Exynos4x12 SoCs. These are required by the HDMI CEC device.
 
-What do you think about putting all the changes to include/dt-bindings/
-clock/exynos3250.h into a separate patch? Now in patch 3/8 there
-is being changed again what was added in patch 2/8. However, my main
-point is to have a minimum required in a common topic branch for the clk
-and the arm-soc trees, so there is no need for arm-soc to pull all
-the drives/clk changes.
-It might not be that sensible in case of just those 2 patches in your
-series, nevertheless it would be good to keep that in mind for future
-submissions.
+Signed-off-by: Kamil Debski <kamil@wypas.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi | 7 +++++++
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 7 +++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+index a7c2128..9331c62 100644
+--- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+@@ -820,6 +820,13 @@
+ 			samsung,pin-pud = <1>;
+ 			samsung,pin-drv = <0>;
+ 		};
++
++		hdmi_cec: hdmi-cec {
++			samsung,pins = "gpx3-6";
++			samsung,pin-function = <3>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
+ 	};
+ 
+ 	pinctrl@03860000 {
+diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+index bac25c6..856b292 100644
+--- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+@@ -885,6 +885,13 @@
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
++
++		hdmi_cec: hdmi-cec {
++			samsung,pins = "gpx3-6";
++			samsung,pin-function = <3>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
+ 	};
+ 
+ 	pinctrl_2: pinctrl@03860000 {
+-- 
+2.7.0
+
