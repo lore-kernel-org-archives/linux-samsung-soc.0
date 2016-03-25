@@ -1,71 +1,75 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable Samsung media platform
- drivers as modules
-Date: Fri, 25 Mar 2016 00:15:31 -0300
-Message-ID: <56F4AD53.2020307@osg.samsung.com>
-References: <1458779208-6144-1-git-send-email-javier@osg.samsung.com>
- <56F33C46.8060501@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Fix invalid maximum voltage for buck9
+ supplying SD card
+Date: Fri, 25 Mar 2016 02:45:20 -0300
+Message-ID: <56F4D070.4020403@osg.samsung.com>
+References: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:57044 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:57091 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751966AbcCYDPi (ORCPT
+	id S1751382AbcCYFpd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2016 23:15:38 -0400
-In-Reply-To: <56F33C46.8060501@samsung.com>
+	Fri, 25 Mar 2016 01:45:33 -0400
+In-Reply-To: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
 
 Hello Krzysztof,
 
-On 03/23/2016 10:00 PM, Krzysztof Kozlowski wrote:
-> On 24.03.2016 09:26, Javier Martinez Canillas wrote:
->> There are a bunch of media platform drivers under drivers/media/platform/
->> that are for Samsung SoCs but are not being built with exynos_defconfig.
->>
->> This patch enables them as a module to improve build coverage for these
->> drivers and also to allow people use them with proper hardware if modules
->> are installed. The S5P MFC driver wasn't enabled since it fails to probe.
->>
->> Only the boolean Kconfig symbols are enabled as built-in, since drivers
->> are not critical and also to keep the kernel binary image size as small
->> as possible.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> ---
->>
->> Changes in v2:
->> - Remove S5P G2D and GSC symbols since overlaps with Exynos DRM functionality.
->>   Suggested by Tobias Jakobi
->>
->>  arch/arm/configs/exynos_defconfig | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
+On 03/24/2016 05:12 AM, Krzysztof Kozlowski wrote:
+> The buck9 regulator of S2MPS11 PMIC had incorrect maximum voltage -
+> lower by 5 mV than specified by datasheet. This buck9 provides power to
+> other regulators, including LDO13 and LDO19 which supply the MMC2 (SD
+> card).
 > 
-> Looks good.
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
+> When constraints were applied, the depending regulators were not
+> providing enough power, leading to SD card detection errors:
+> 	mmc1: card never left busy state
+> 	mmc1: error -110 whilst initialising SD card
+> 
+> Fixes: 86a2d2ac5e5d ("ARM: dts: Add dts file for Odroid XU3 board")
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> 
+> The issue can be reproduced on next-20160324 with
+> bae4fdc88d7f7dda1 (regulator: core: Ensure we are at least in bounds for our constraints).
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index 1bd507bfa750..82b2ba632cf6 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -299,7 +299,7 @@
+>  			buck9_reg: BUCK9 {
+>  				regulator-name = "vdd_2.8v_ldo";
+>  				regulator-min-microvolt = <3000000>;
+> -				regulator-max-microvolt = <3750000>;
+> +				regulator-max-microvolt = <3755000>;
+>  				regulator-always-on;
+>  				regulator-boot-on;
+>  			};
+> 
 
-Thanks for the review.
- 
-> 
-> How about doing the same for multi_v7?
->
+I tested next-20160324 + $SUBJECT on an Odroid XU4 (with exynos_defconfig)
+and while it's true that the patch makes the SD card error to go away, I see
+that the s2mps11 regulator driver fails to probe due an -EINVAL being return
+by machine_constraints_voltage() -> _regulator_do_set_voltage():
 
-I didn't consider multi_v7 because media drivers aren't necessary for booting
-the boards and so it could increase build times for not real benefits in most
-machines. But I can enable it in multi_v7 as a follow-up if you think that it
-makes sense there too.
- 
-> 
-> Best regards,
-> 
-> Krzysztof
-> 
+[    1.710300] vdd_2.8v_ldo: failed to apply 3755000-3755000uV constraint(-22)
+[    1.716387] s2mps11-pmic s2mps11-regulator: regulator init failed for 46
+[    1.734878] s2mps11-pmic: probe of s2mps11-regulator failed with error -22
+
+I wonder how neither Markus nor you saw this issue when testing so maybe I'm
+doing something wrong? Since AFAICT it's only working because the driver fails
+to probe so the same effect can be achieved disabling CONFIG_REGULATOR_S2MPS11.
 
 Best regards,
 -- 
