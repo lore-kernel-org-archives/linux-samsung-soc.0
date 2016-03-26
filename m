@@ -1,46 +1,97 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [patch 2/2] drm/exynos: mic: remove some dead code
-Date: Fri, 25 Mar 2016 23:09:15 +0300
-Message-ID: <20160325200915.GG30221@mwanda>
-References: <20160317103912.GB3100@mwanda>
- <56F4FC08.6090009@samsung.com>
+From: Bjorn Andersson <bjorn@kryo.se>
+Subject: Re: [PATCH 2/2] regulator: core: Ensure we are at least in bounds for
+ our constraints
+Date: Sat, 26 Mar 2016 16:50:41 -0700
+Message-ID: <CAJAp7OgGQ3qm-_QhydvN0n6QeNoHFdso4zOk41qvVJhKNeRn8Q@mail.gmail.com>
+References: <1458587912-32665-1-git-send-email-broonie@kernel.org>
+	<1458587912-32665-2-git-send-email-broonie@kernel.org>
+	<56F0624C.8010004@gmail.com>
+	<CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
+	<CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <56F4FC08.6090009@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>
+Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBNYXIgMjUsIDIwMTYgYXQgMDU6NTE6MjBQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
-Cj4gSGkgRGFuLAo+IAo+IDIwMTbrhYQgMDPsm5QgMTfsnbwgMTk6Mznsl5AgRGFuIENhcnBlbnRl
-ciDsnbQo6rCAKSDsk7Qg6riAOgo+ID4gV2Uga25vdyAicmV0IiBpcyB6ZXJvIGFuZCB0aGUgdGVz
-dCBtYWtlcyBzdGF0aWMgY2hlY2tlcnMgY29tcGxhaW4gc28KPiA+IGxldCdzIGRlbGV0ZSB0aGlz
-IHByaW50ay4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBl
-bnRlckBvcmFjbGUuY29tPgo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX21pYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X21pYy5jCj4gPiBpbmRleCA4OTBjOWIxLi4xMmRiMzUzIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCj4gPiArKysgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMKPiA+IEBAIC0xMzAsOCArMTMwLDYgQEAgc3RhdGlj
-IHZvaWQgbWljX3NldF9wYXRoKHN0cnVjdCBleHlub3NfbWljICptaWMsIGJvb2wgZW5hYmxlKQo+
-ID4gIAkJdmFsICY9IH4oTUlDMF9SR0JfTVVYIHwgTUlDMF9JODBfTVVYIHwgTUlDMF9PTl9NVVgp
-Owo+ID4gIAo+ID4gIAlyZWdtYXBfd3JpdGUobWljLT5zeXNyZWcsIERTRF9DRkdfTVVYLCB2YWwp
-Owo+ID4gLQlpZiAocmV0KQo+ID4gLQkJRFJNX0VSUk9SKCJtaWM6IEZhaWxlZCB0byByZWFkIHN5
-c3RlbSByZWdpc3RlclxuIik7Cj4gCj4gSSB0aGluayB3ZSBtaXNzZWQgdG8ga2VlcCByZXR1cm4g
-dmFsdWUgZnJvbSByZWdtYXBfd3JpdGUgZnVuY3Rpb24sCj4gCXJldCA9IHJlZ21hcF93cml0ZSht
-aWMtPnN5c3JlZywgLi4uLik7Cj4gCWlmIChyZXQpCj4gCQkuLi4KClllYWguICBZb3UncmUgcmln
-aHQuCgpyZWdhcmRzLApkYW4gY2FycGVudGVyCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+On Thu, Mar 24, 2016 at 12:18 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On Thu, Mar 24, 2016 at 3:11 PM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On Tue, Mar 22, 2016 at 6:06 AM, Ivaylo Dimitrov
+>> <ivo.g.dimitrov.75@gmail.com> wrote:
+>>> Hi,
+>>>
+>>> On 21.03.2016 21:18, Mark Brown wrote:
+>>>>
+>>>> Currently we only attempt to set the voltage during constraints
+>>>> application if an exact voltage is specified.  Extend this so that if
+>>>> the currently set voltage for the regualtor is outside the bounds set in
+>>>
+>>>
+>>> regulator
+>>>
+>>>> constraints we will move the voltage to the nearest constraint, raising
+>>>> to the minimum or lowering to the maximum as needed.  This ensures that
+>>>> drivers can probe without the hardware being driven out of spec.
+>>>>
+>>>> Reported-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+>>>> Signed-off-by: Mark Brown <broonie@kernel.org>
+>>>> ---
+>>>>
+>>>> Untested so far, will give it a spin later/tomorrow.
+>>>>
+>>>>   drivers/regulator/core.c | 32 +++++++++++++++++++++++++-------
+>>>>   1 file changed, 25 insertions(+), 7 deletions(-)
+>>>>
+>>>
+>>> Patch 1 does not apply cleanly on 4.5-rc5, so I applied it by hand, however,
+>>> you may add:
+>>>
+>>> Tested-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+>>
+>>
+>> Cc: Ulf, mmc
+>>
+>> I bisected today's next MMC/SD card failure to this patch. Plugging a
+>> SD card on Odroid XU3/XU4 (Exynos5422) causes:
+>> [   11.759954] mmc1: card never left busy state
+>> [   11.762795] mmc1: error -110 whilst initialising SD card
+>>
+
+Mark,
+
+I'm facing the same issue on my Qualcomm based boards; my eMMCs fails
+to talk to me because I'm not powering them.
+
+The problem in my case comes from the vmmc regulator having min_uV ==
+max_uV and patch 1 in this series changes the logic of
+of_get_regulation_constraints() to no longer set apply_uV. I.e. we end
+up never calling set_voltage(), ever.
+
+When the mmc framework calls regulator_set_load() to change voltage
+REGULATOR_CHANGE_VOLTAGE is not set (because min == max) so we will
+never call set_voltage().
+
+Before patch 1 apply_uV was set and we did set up the voltage earlier,
+so regulator_get_voltage() will return a valid voltage and
+regulator_set_voltage() will succeed for the valid voltages (if the
+range spans the current setting).
+
+
+Reinstating the following snippet in of_get_regulation_constraints()
+sort this out:
+if (constraints->min_uV && constraints->max_uV)
+                                       constraints->apply_uV = true;
+
+
+I did look at an alternative of having regulator_set_voltage() pass
+and call set_voltage() if the requested voltage matches the
+constraints, but this does indeed seem to mess things up. So checking
+in with you before continuing on that hack.
+
+Regards,
+Bjorn
