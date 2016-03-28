@@ -1,101 +1,30 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: Warnings for invalid VDD (sdhci-s3c)
-Date: Mon, 28 Mar 2016 15:07:08 +0900
-Message-ID: <56F8CA0C.2080908@samsung.com>
-References: <CAJKOXPcGDnPm-Ykh6wHqV1YxfTaov5E8iVqBoBn4OJc7BnhgEQ@mail.gmail.com>
- <20160324155840.50474b98@xhacker> <56F3A0B7.4050509@samsung.com>
- <20160324162449.29c9cf78@xhacker> <56F3A88F.50603@samsung.com>
- <56F3E77D.7030201@intel.com> <56F3E9EB.3090207@intel.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v6 05/21] PM / devfreq: Add governer type with unique number
+Date: Mon, 28 Mar 2016 15:46:37 +0900
+Message-ID: <56F8D34D.8040408@samsung.com>
+References: <386437144.28901459134748866.JavaMail.weblogic@epmlwas02a>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <56F3E9EB.3090207@intel.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Jisheng Zhang <jszhang@marvell.com>, Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, ludovic.desroches@atmel.com, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:37825 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753311AbcC1Gqk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Mar 2016 02:46:40 -0400
+In-reply-to: <386437144.28901459134748866.JavaMail.weblogic@epmlwas02a>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: myungjoo.ham@samsung.com, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, =?UTF-8?B?7YGs7Ims7Iuc7Yag7ZSE?= <k.kozlowski@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux.amoon@gmail.com" <linux.amoon@gmail.com>, "m.reichl@fivetechno.de" <m.reichl@fivetechno.de>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 24.03.2016 22:21, Adrian Hunter wrote:
-> On 24/03/16 15:11, Adrian Hunter wrote:
->> On 24/03/16 10:42, Krzysztof Kozlowski wrote:
->>> On 24.03.2016 17:24, Jisheng Zhang wrote:
->>>> Hi,
->>>>
->>>> On Thu, 24 Mar 2016 17:09:27 +0900 Jaehoon Chung wrote:
->>>>
->>>>> Hi,
->>>>>
->>>>> On 03/24/2016 04:58 PM, Jisheng Zhang wrote:
->>>>>> Hi,
->>>>>>
->>>>>> On Thu, 24 Mar 2016 16:28:56 +0900 Krzysztof Kozlowski wrote:
->>>>>>   
->>>>>>> Hi,
->>>>>>>
->>>>>>> After 918f4cbd4340 ("mmc: sdhci: restore behavior when setting VDD via
->>>>>>> external regulator") On Trats2 board I see warnings for invalid VDD
->>>>>>> value (2.8V):
->>>>>>>
->>>>>>> [    3.119656] ------------[ cut here ]------------
->>>>>>> [    3.119666] WARNING: CPU: 3 PID: 90 at
->>>>>>> ../drivers/mmc/host/sdhci.c:1234 sdhci_do_set_ios+0x4cc/0x5e0
->>>>>>> [    3.119669] mmc0: Invalid vdd 0x10  
->>>>>>
->>>>>> Per my understanding, the wrong vdd indicates a wrong ocr, what's the voltage of
->>>>>> this host's vmmc regulator?  
->>>>>
->>>>> As i know, it's fixed-voltage with gpio on trats2. It's 2.8V.
->>>>> I didn't check this entirely..need to check ocr value.
->>>>>
->>>>
->>>> I may know the reason. the vmmc is 2.8v, then mmc_regulator_get_supply() convert
->>>> the value to a ocr as 0x10. The key here is that the 2.8v is invalid in SDHCI
->>>> case and isn't accepted by current sdhci driver.
->>>
->>> Yeah, I already wrote that. It is the part of the warning and my email.
->>> Our regulator is fixed at 2.8 which is 0x10. :)
->>>
->>>> I dunno the elegant solution to handle this case, let's wait for sdhci maintainers
->>>> idea.
->>>
->>> Hmm...
->>
->> I haven't tested it, but what about this:
-> 
-> And now with checkpatch complaints fixed:
-> 
-> From: Adrian Hunter <adrian.hunter@intel.com>
-> Date: Thu, 24 Mar 2016 14:29:24 +0200
-> Subject: [PATCH V2] mmc: sdhci: Fix regression setting power on Trats2 board
-> 
-> Several commits relating to setting power have been introducing
-> problems by putting driver-specific rules into generic SDHCI code.
-> 
-> Fix by adding a 'set_power' callback and restoring the default
-> behaviour prior to commit 918f4cbd4340 ("mmc: sdhci: restore
-> behavior when setting VDD via external regulator").  The desired
+On 2016=EB=85=84 03=EC=9B=94 28=EC=9D=BC 12:12, MyungJoo Ham wrote:
+>> This patch just adds the governor type to identify them
+>> by using the defined constant.
+>=20
+> We do not need this one.
 
-s/behavior/behaviour/
+Ok. I'll drop this patch on next patchset(v7).
 
-> behaviour of that commit is gotten by having sdhci-pxav3 provide
-> its own set_power callback.
-> 
-> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Fixes: 918f4cbd4340 ("mmc: sdhci: restore behavior when setting VDD...)
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: stable@vger.kernel.org # v4.5+
-> ---
->  drivers/mmc/host/sdhci-pxav3.c | 17 +++++++++++++++++
->  drivers/mmc/host/sdhci.c       | 38 ++++++++++++++++++++++++++++++--------
->  drivers/mmc/host/sdhci.h       |  4 ++++
->  3 files changed, 51 insertions(+), 8 deletions(-)
->
-
-Works for me (sdhci-s3c, Exynos4412 on Trats2 board):
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-
-Best regards,
-Krzysztof
-
+Best Regards,
+Chanwoo Choi
