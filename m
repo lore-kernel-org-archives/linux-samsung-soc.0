@@ -1,136 +1,81 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] regulator: s2mps11: Fix invalid minimal selector for buck9
- supplying SD card
-Date: Mon, 28 Mar 2016 12:32:56 +0900
-Message-ID: <56F8A5E8.5010908@samsung.com>
-References: <1459126489-18311-1-git-send-email-k.kozlowski@samsung.com>
- <56F8900D.3080203@osg.samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v6 04/21] PM / devfreq: Add new DEVFREQ_TRANSITION_NOTIFIER
+ notifier
+Date: Mon, 28 Mar 2016 12:35:21 +0900
+Message-ID: <56F8A679.5010009@samsung.com>
+References: <190611333.27621459133690582.JavaMail.weblogic@epmlwas02a>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <56F8900D.3080203@osg.samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-mmc@vger.kernel.org, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:33696 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751367AbcC1DfZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 27 Mar 2016 23:35:25 -0400
+In-reply-to: <190611333.27621459133690582.JavaMail.weblogic@epmlwas02a>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: myungjoo.ham@samsung.com, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, =?UTF-8?B?7YGs7Ims7Iuc7Yag7ZSE?= <k.kozlowski@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux.amoon@gmail.com" <linux.amoon@gmail.com>, "m.reichl@fivetechno.de" <m.reichl@fivetechno.de>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 28.03.2016 10:59, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 03/27/2016 08:54 PM, Krzysztof Kozlowski wrote:
->> The buck9 regulator of S2MPS11 PMIC lacked minimal selector for linear
->> mapping. The mapping starts from 0x40 (3 V).
+On 2016=EB=85=84 03=EC=9B=94 28=EC=9D=BC 11:54, MyungJoo Ham wrote:
+>>  =20
+>>  This patch adds the new DEVFREQ_TRANSITION_NOTIFIER notifier to sen=
+d
+>> the notification when the frequency of device is changed.
+>> This notifier has two state as following:
+>> - DEVFREQ_PRECHANGE  : Notify it before chaning the frequency of dev=
+ice
+>> - DEVFREQ_POSTCHANGE : Notify it after changed the frequency of devi=
+ce
 >>
-> 
-> This patch is a real fix since the the SD error goes away and the regulator
-> driver probes correctly now.
->  
->> This buck9 provides power to other regulators, including LDO13 and LDO19
->> which supply the MMC2 (SD card).
+>> And this patch adds the resourced-managed function to release the re=
+source
+>> automatically when error happen.
 >>
-> 
-> I think it's worth mentioning that this is the case for the Exynos5422 Odroid
-> XU{3,4} boards. I mean, the regulators can be used for anything but are those
-> boards that use LDO19 as the SD card supply.
-
-Yes, indeed. I forgot to add that details.
-
-> 
-> In fact, I wonder if the subject line shouldn't be changed to something like:
-> 
-> "regulator: s2mps11: Fix invalid min selector and voltages num for buck9"
-> 
-> since the real problem is that the .linear_min_sel and .n_voltages are wrong.
-> The fact that the SD was failing on Odroids is just a consequence of that
-> (although I agree that this information should be part of the commit message).
-
-Okay, seems more accurate.
-
-> 
->> Bootloader initializes the regulator with value of 0xff (5 V) which is
->> outside of supported voltage range. When (during boot) constraints to
->> buck9 were applied, the driver wrote value counting from 0x00, not 0x40.
->> Effectively driver set lower voltage than required leading to SD card
->> detection errors on Odroid XU3/XU4:
->> 	mmc1: card never left busy state
->> 	mmc1: error -110 whilst initialising SD card
->>
->> Fixes: cb74685ecb39 ("regulator: s2mps11: Add samsung s2mps11 regulator driver")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> [m.reichl and linux.amoon: Tested it on exynos4412-odroidu3 board]
+>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+>> Tested-by: Anand Moon <linux.amoon@gmail.com>
 >> ---
->>
->> The issue can be reproduced on next-20160324 with
->> bae4fdc88d7f7dda1 (regulator: core: Ensure we are at least in bounds
->> for our constraints).
->> ---
->>  drivers/regulator/s2mps11.c         | 19 ++++++++++++++++++-
->>  include/linux/mfd/samsung/s2mps11.h |  9 +++++++++
->>  2 files changed, 27 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
->> index d24e2c783dc5..caeefc38ac47 100644
->> --- a/drivers/regulator/s2mps11.c
->> +++ b/drivers/regulator/s2mps11.c
->> @@ -324,6 +324,23 @@ static struct regulator_ops s2mps11_buck_ops = {
->>  	.enable_mask	= S2MPS11_ENABLE_MASK			\
->>  }
->>  
->> +#define regulator_desc_s2mps11_buck9 {				\
->> +	.name		= "BUCK9",				\
->> +	.id		= S2MPS11_BUCK9,			\
->> +	.ops		= &s2mps11_buck_ops,			\
->> +	.type		= REGULATOR_VOLTAGE,			\
->> +	.owner		= THIS_MODULE,				\
->> +	.min_uV		= MIN_3000_MV,				\
->> +	.uV_step	= STEP_25_MV,				\
->> +	.linear_min_sel	= S2MPS11_BUCK9_MIN_VSEL,		\
-> 
-> I don't have a datasheet for this PMIC but I wonder if buck9 is the only
-> buck regulator whose minimal register value is != 0. If that's not the
-> case, it would be good to fix the descriptions for all other regulators.
-
-Some of them are broken, some not. :) Buck 1-4 and 6 also should have
-minimal selector. Also number of selectors and masks seems to be
-invalid. I already have a plan to fix this up but it is not an urgent
-task because the driver works so far.
-
-> 
->> +	.n_voltages	= S2MPS11_BUCK9_N_VOLTAGES,		\
->> +	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
->> +	.vsel_reg	= S2MPS11_REG_B9CTRL2,			\
->> +	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
->> +	.enable_reg	= S2MPS11_REG_B9CTRL1,			\
->> +	.enable_mask	= S2MPS11_ENABLE_MASK			\
->> +}
+>>  drivers/devfreq/devfreq.c | 163 +++++++++++++++++++++++++++++++++++=
+++++++++++-
+>>  include/linux/devfreq.h   |  58 ++++++++++++++++-
+>>  2 files changed, 219 insertions(+), 2 deletions(-)
+>=20
+> []
+>=20
+>> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+>> index aa0b8424ebc3..152ea342529c 100644
+>> --- a/include/linux/devfreq.h
+>> +++ b/include/linux/devfreq.h
+>> @@ -19,6 +19,13 @@
+>> =20
+>>  #define DEVFREQ_NAME_LEN 16
+>> =20
+>> +/* DEVFREQ notifier interface */
+>> +#define DEVFREQ_TRANSITION_NOTIFIER	(0)
 >> +
->>  static const struct regulator_desc s2mps11_regulators[] = {
->>  	regulator_desc_s2mps11_ldo(1, STEP_25_MV),
->>  	regulator_desc_s2mps11_ldo(2, STEP_50_MV),
->> @@ -371,7 +388,7 @@ static const struct regulator_desc s2mps11_regulators[] = {
->>  	regulator_desc_s2mps11_buck6_10(6, MIN_600_MV, STEP_6_25_MV),
->>  	regulator_desc_s2mps11_buck6_10(7, MIN_600_MV, STEP_6_25_MV),
->>  	regulator_desc_s2mps11_buck6_10(8, MIN_600_MV, STEP_6_25_MV),
->> -	regulator_desc_s2mps11_buck6_10(9, MIN_3000_MV, STEP_25_MV),
-> 
-> Maybe the regulator_desc_s2mps11_buck6_10() define should be renamed?
-> Since it's no longer true that can be used for buck6-10, so the name
-> is misleading now.
+>> +/* Transition notifiers of DEVFREQ_TRANSITION_NOTIFIER */
+>> +#define	DEVFREQ_PRECHANGE		(0)
+>> +#define DEVFREQ_POSTCHANGE		(1)
+>> +
+>>  struct devfreq;
+>> =20
+>>  /**
+>> @@ -177,6 +184,13 @@ struct devfreq {
+>>  	unsigned int *trans_table;
+>>  	unsigned long *time_in_state;
+>>  	unsigned long last_stat_updated;
+>> +
+>> +	struct srcu_notifier_head transition_notifier_list;
+>> +};
+>=20
+> Like other properties of struct devfreq, please add
+> descriptions above. Other than that, it looks good.
 
-Sure.
+OK. I was missing the description. I'll add it.
 
-> 
-> Patch looks good to me though and as I said it fixes the issue so:
-> 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Thanks!
-
-I'll update patch as you suggested and re-spin with tags.
-
-Best regards,
-Krzysztof
-
+Best Regards,
+Chanwoo Choi
