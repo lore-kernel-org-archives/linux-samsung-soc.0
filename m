@@ -1,42 +1,56 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
 Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable Samsung media platform
  drivers as modules
-Date: Mon, 28 Mar 2016 13:28:00 +0900
-Message-ID: <56F8B2D0.9010609@samsung.com>
+Date: Mon, 28 Mar 2016 01:14:01 -0400
+Message-ID: <56F8BD99.9050907@osg.samsung.com>
 References: <1458779208-6144-1-git-send-email-javier@osg.samsung.com>
  <56F33C46.8060501@samsung.com> <56F4AD53.2020307@osg.samsung.com>
+ <56F8B2D0.9010609@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:24170 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751631AbcC1E2I (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:58286 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752536AbcC1FOI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Mar 2016 00:28:08 -0400
-In-reply-to: <56F4AD53.2020307@osg.samsung.com>
+	Mon, 28 Mar 2016 01:14:08 -0400
+In-Reply-To: <56F8B2D0.9010609@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>
 
-On 25.03.2016 12:15, Javier Martinez Canillas wrote:
+Hello Krzysztof,
+
+On 03/28/2016 12:28 AM, Krzysztof Kozlowski wrote:
+> On 25.03.2016 12:15, Javier Martinez Canillas wrote:
+>>>
+>>> How about doing the same for multi_v7?
+>>>
 >>
->> How about doing the same for multi_v7?
->>
+>> I didn't consider multi_v7 because media drivers aren't necessary for booting
+>> the boards and so it could increase build times for not real benefits in most
+>> machines. But I can enable it in multi_v7 as a follow-up if you think that it
+>> makes sense there too.
 > 
-> I didn't consider multi_v7 because media drivers aren't necessary for booting
-> the boards and so it could increase build times for not real benefits in most
-> machines. But I can enable it in multi_v7 as a follow-up if you think that it
-> makes sense there too.
+> I consider use cases of multi_v7 the same as exynos (except the
+> difference in policy: use always modules). This means that if it makes
+> sense to enable some media drivers on exynos (for build coverage, boot
+> testing and real usage) then it makes sense to do the same for multi_v7.
+>
 
-I consider use cases of multi_v7 the same as exynos (except the
-difference in policy: use always modules). This means that if it makes
-sense to enable some media drivers on exynos (for build coverage, boot
-testing and real usage) then it makes sense to do the same for multi_v7.
-
-In ideal future we would move entirely from exynos-specific image to one
-common image for testing: the multi_v7. It would make things simpler.
+Ok, thanks a lot for your suggestion. I'll post a patch for multi_v7 then.
+ 
+> In ideal future we would move entirely from exynos-specific image to one
+> common image for testing: the multi_v7. It would make things simpler.
+> 
+> Best regards,
+> Krzysztof
+> 
 
 Best regards,
-Krzysztof
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
