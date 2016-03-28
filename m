@@ -1,117 +1,46 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] regulator: s2mps11: Fix invalid minimal selector for
- buck9 supplying SD card
-Date: Sun, 27 Mar 2016 21:59:41 -0400
-Message-ID: <56F8900D.3080203@osg.samsung.com>
-References: <1459126489-18311-1-git-send-email-k.kozlowski@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v6 01/21] PM / devfreq: exynos: Add generic exynos bus
+ frequency driver
+Date: Mon, 28 Mar 2016 02:41:05 +0000 (GMT)
+Message-ID: <687204698.26641459132858812.JavaMail.weblogic@epmlwas02a>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1459126489-18311-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-mmc@vger.kernel.org, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:44627 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753430AbcC1ClI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 27 Mar 2016 22:41:08 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O4Q01T8OA4H1B30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Mar 2016 11:41:05 +0900 (KST)
+MIME-version: 1.0
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, =?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?= <k.kozlowski@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux.amoon@gmail.com" <linux.amoon@gmail.com>, "m.reichl@fivetechno.de" <m.reichl@fivetechno.de>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>"devicetree@vger.kernel.org" <devicetree@>
 
-Hello Krzysztof,
-
-On 03/27/2016 08:54 PM, Krzysztof Kozlowski wrote:
-> The buck9 regulator of S2MPS11 PMIC lacked minimal selector for linear
-> mapping. The mapping starts from 0x40 (3 V).
->
-
-This patch is a real fix since the the SD error goes away and the regulator
-driver probes correctly now.
- 
-> This buck9 provides power to other regulators, including LDO13 and LDO19
-> which supply the MMC2 (SD card).
->
-
-I think it's worth mentioning that this is the case for the Exynos5422 Odroid
-XU{3,4} boards. I mean, the regulators can be used for anything but are those
-boards that use LDO19 as the SD card supply.
-
-In fact, I wonder if the subject line shouldn't be changed to something like:
-
-"regulator: s2mps11: Fix invalid min selector and voltages num for buck9"
-
-since the real problem is that the .linear_min_sel and .n_voltages are wrong.
-The fact that the SD was failing on Odroids is just a consequence of that
-(although I agree that this information should be part of the commit message).
-
-> Bootloader initializes the regulator with value of 0xff (5 V) which is
-> outside of supported voltage range. When (during boot) constraints to
-> buck9 were applied, the driver wrote value counting from 0x00, not 0x40.
-> Effectively driver set lower voltage than required leading to SD card
-> detection errors on Odroid XU3/XU4:
-> 	mmc1: card never left busy state
-> 	mmc1: error -110 whilst initialising SD card
-> 
-> Fixes: cb74685ecb39 ("regulator: s2mps11: Add samsung s2mps11 regulator driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
-> 
-> The issue can be reproduced on next-20160324 with
-> bae4fdc88d7f7dda1 (regulator: core: Ensure we are at least in bounds
-> for our constraints).
-> ---
->  drivers/regulator/s2mps11.c         | 19 ++++++++++++++++++-
->  include/linux/mfd/samsung/s2mps11.h |  9 +++++++++
->  2 files changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-> index d24e2c783dc5..caeefc38ac47 100644
-> --- a/drivers/regulator/s2mps11.c
-> +++ b/drivers/regulator/s2mps11.c
-> @@ -324,6 +324,23 @@ static struct regulator_ops s2mps11_buck_ops = {
->  	.enable_mask	= S2MPS11_ENABLE_MASK			\
->  }
->  
-> +#define regulator_desc_s2mps11_buck9 {				\
-> +	.name		= "BUCK9",				\
-> +	.id		= S2MPS11_BUCK9,			\
-> +	.ops		= &s2mps11_buck_ops,			\
-> +	.type		= REGULATOR_VOLTAGE,			\
-> +	.owner		= THIS_MODULE,				\
-> +	.min_uV		= MIN_3000_MV,				\
-> +	.uV_step	= STEP_25_MV,				\
-> +	.linear_min_sel	= S2MPS11_BUCK9_MIN_VSEL,		\
-
-I don't have a datasheet for this PMIC but I wonder if buck9 is the only
-buck regulator whose minimal register value is != 0. If that's not the
-case, it would be good to fix the descriptions for all other regulators.
-
-> +	.n_voltages	= S2MPS11_BUCK9_N_VOLTAGES,		\
-> +	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
-> +	.vsel_reg	= S2MPS11_REG_B9CTRL2,			\
-> +	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
-> +	.enable_reg	= S2MPS11_REG_B9CTRL1,			\
-> +	.enable_mask	= S2MPS11_ENABLE_MASK			\
-> +}
-> +
->  static const struct regulator_desc s2mps11_regulators[] = {
->  	regulator_desc_s2mps11_ldo(1, STEP_25_MV),
->  	regulator_desc_s2mps11_ldo(2, STEP_50_MV),
-> @@ -371,7 +388,7 @@ static const struct regulator_desc s2mps11_regulators[] = {
->  	regulator_desc_s2mps11_buck6_10(6, MIN_600_MV, STEP_6_25_MV),
->  	regulator_desc_s2mps11_buck6_10(7, MIN_600_MV, STEP_6_25_MV),
->  	regulator_desc_s2mps11_buck6_10(8, MIN_600_MV, STEP_6_25_MV),
-> -	regulator_desc_s2mps11_buck6_10(9, MIN_3000_MV, STEP_25_MV),
-
-Maybe the regulator_desc_s2mps11_buck6_10() define should be renamed?
-Since it's no longer true that can be used for buck6-10, so the name
-is misleading now.
-
-Patch looks good to me though and as I said it fixes the issue so:
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+PiAgIA0KPiAgVGhpcyBwYXRjaCBhZGRzIHRoZSBnZW5lcmljIGV4eW5vcyBidXMgZnJlcXVlbmN5
+IGRyaXZlciBmb3IgQU1CQSBBWEkgYnVzDQo+IG9mIHN1Yi1ibG9ja3MgaW4gZXh5bm9zIFNvQyB3
+aXRoIERFVkZSRVEgZnJhbWV3b3JrLiBUaGUgU2Ftc3VuZyBFeHlub3MgU29DDQo+IGhhdmUgdGhl
+IGNvbW1vbiBhcmNoaXRlY3R1cmUgZm9yIGJ1cyBiZXR3ZWVuIERSQU0gYW5kIHN1Yi1ibG9ja3Mg
+aW4gU29DLg0KPiBUaGlzIGRyaXZlciBjYW4gc3VwcG9ydCB0aGUgZ2VuZXJpYyBidXMgZnJlcXVl
+bmN5IGRyaXZlciBmb3IgRXh5bm9zIFNvQ3MuDQo+IA0KPiBJbiBkZXZpY2V0cmVlLCBFYWNoIGJ1
+cyBibG9jayBoYXMgYSBidXMgY2xvY2ssIHJlZ3VsYXRvciwgb3BlcmF0aW9uLXBvaW50DQo+IGFu
+ZCBkZXZmcmVxLWV2ZW50IGRldmljZXMgd2hpY2ggbWVhc3VyZSB0aGUgdXRpbGl6YXRpb24gb2Yg
+ZWFjaCBidXMgYmxvY2suDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDaGFud29vIENob2kgPGN3MDAu
+Y2hvaUBzYW1zdW5nLmNvbT4NCj4gW20ucmVpY2hsIGFuZCBsaW51eC5hbW9vbjogVGVzdGVkIGl0
+IG9uIGV4eW5vczQ0MTItb2Ryb2lkdTMgYm9hcmRdDQo+IFRlc3RlZC1ieTogTWFya3VzIFJlaWNo
+bCA8bS5yZWljaGxAZml2ZXRlY2huby5kZT4NCj4gVGVzdGVkLWJ5OiBBbmFuZCBNb29uIDxsaW51
+eC5hbW9vbkBnbWFpbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9kZXZmcmVxL0tjb25maWcgICAg
+ICB8ICAxNSArKw0KPiAgZHJpdmVycy9kZXZmcmVxL01ha2VmaWxlICAgICB8ICAgMSArDQo+ICBk
+cml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgNDQzICsrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgNDU5IGluc2VydGlvbnMo
+KykNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jDQo+
+IA0KDQpTaWduZWQtb2ZmLWJ5OiBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNv
+bT4NCg0K
