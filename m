@@ -1,68 +1,58 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable Samsung media platform
- drivers as modules
-Date: Mon, 28 Mar 2016 11:15:05 -0400
-Message-ID: <56F94A79.4020808@osg.samsung.com>
-References: <1458779208-6144-1-git-send-email-javier@osg.samsung.com>
- <56F33C46.8060501@samsung.com> <56F4AD53.2020307@osg.samsung.com>
- <56F8B2D0.9010609@samsung.com> <56F8BD99.9050907@osg.samsung.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] regulator: core: Ensure we are at least in bounds for
+ our constraints
+Date: Mon, 28 Mar 2016 09:16:15 -0700
+Message-ID: <CAOCOHw7Gwy1a0+UfteQJ3rs_sL1iip9EN-3GhTYW0BrHD5jhKg@mail.gmail.com>
+References: <1458587912-32665-1-git-send-email-broonie@kernel.org>
+	<1458587912-32665-2-git-send-email-broonie@kernel.org>
+	<56F0624C.8010004@gmail.com>
+	<CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
+	<CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
+	<CAJAp7OgGQ3qm-_QhydvN0n6QeNoHFdso4zOk41qvVJhKNeRn8Q@mail.gmail.com>
+	<20160327090859.GH5028@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:58475 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752665AbcC1PPN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Mar 2016 11:15:13 -0400
-In-Reply-To: <56F8BD99.9050907@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20160327090859.GH5028@sirena.org.uk>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Bjorn Andersson <bjorn@kryo.se>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>
 
-Hello Krzysztof,
+On Sun, Mar 27, 2016 at 2:08 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Sat, Mar 26, 2016 at 04:50:41PM -0700, Bjorn Andersson wrote:
+>
+>> Reinstating the following snippet in of_get_regulation_constraints()
+>> sort this out:
+>
+>> if (constraints->min_uV && constraints->max_uV)
+>>                                        constraints->apply_uV = true;
+>
+> The existing check in the patch should be an || not an ==, or possibly
+> we should just not bother looking for min_uV at all.  I just pushed out
+> a version of that, let's see how that goes.
+>
 
-On 03/28/2016 01:14 AM, Javier Martinez Canillas wrote:
-> 
-> On 03/28/2016 12:28 AM, Krzysztof Kozlowski wrote:
->> On 25.03.2016 12:15, Javier Martinez Canillas wrote:
->>>>
->>>> How about doing the same for multi_v7?
->>>>
->>>
->>> I didn't consider multi_v7 because media drivers aren't necessary for booting
->>> the boards and so it could increase build times for not real benefits in most
->>> machines. But I can enable it in multi_v7 as a follow-up if you think that it
->>> makes sense there too.
->>
->> I consider use cases of multi_v7 the same as exynos (except the
->> difference in policy: use always modules). This means that if it makes
->> sense to enable some media drivers on exynos (for build coverage, boot
->> testing and real usage) then it makes sense to do the same for multi_v7.
->>
-> 
-> Ok, thanks a lot for your suggestion. I'll post a patch for multi_v7 then.
->  
->> In ideal future we would move entirely from exynos-specific image to one
->> common image for testing: the multi_v7. It would make things simpler.
->>
->> Best regards,
->> Krzysztof
->>
-> 
+Either way is fine with me, as long as we either go ahead and apply a
+voltage setting now or allow a consumer to do so later (your posted
+patch does both).
 
-Tobias mentioned on IRC that the exynos4-is driver conflicts with the
-Exynos DRM driver since both exynos_drm_fimc and exynos-fimc-is use
-the FIMC block.
+>> I did look at an alternative of having regulator_set_voltage() pass
+>> and call set_voltage() if the requested voltage matches the
+>> constraints, but this does indeed seem to mess things up. So checking
+>> in with you before continuing on that hack.
+>
+> Yes, not everything is writeable.
 
-So I think we should just discard $SUBJECT and instead add a Kconfig
-check to not allow both drivers to be built as suggested by Tobias.
+Right, looking at your posted patch [1] we're changing this logic so
+that normal regulators defined with min == max will be allowed to
+set_voltage(). Thinking about it that makes sense and cleans the logic
+up, so I'm in favor of this.
 
-Like is the case for the other components (G2D, GSC, Mixer, etc).
+I know it's published, but fwiw you have my Acked-by on the posted patch.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+
+[1] https://git.kernel.org/cgit/linux/kernel/git/broonie/regulator.git/commit/?h=for-next&id=fa93fd4ecc9c58475abac6db93a797bff893bc16
+
+Regards,
+Bjorn
