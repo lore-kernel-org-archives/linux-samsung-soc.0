@@ -1,35 +1,101 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] regulator: s2mps11: Fix invalid minimal selector for buck9
- supplying SD card
-Date: Mon, 28 Mar 2016 14:37:49 +0900
-Message-ID: <56F8C32D.3090609@samsung.com>
-References: <1459126489-18311-1-git-send-email-k.kozlowski@samsung.com>
- <56F8900D.3080203@osg.samsung.com> <56F8A5E8.5010908@samsung.com>
- <CANAwSgRm1djUXUUua9mDM37qa7_jz_7X88igQtejupC5GoSQoQ@mail.gmail.com>
+Subject: Re: Warnings for invalid VDD (sdhci-s3c)
+Date: Mon, 28 Mar 2016 15:07:08 +0900
+Message-ID: <56F8CA0C.2080908@samsung.com>
+References: <CAJKOXPcGDnPm-Ykh6wHqV1YxfTaov5E8iVqBoBn4OJc7BnhgEQ@mail.gmail.com>
+ <20160324155840.50474b98@xhacker> <56F3A0B7.4050509@samsung.com>
+ <20160324162449.29c9cf78@xhacker> <56F3A88F.50603@samsung.com>
+ <56F3E77D.7030201@intel.com> <56F3E9EB.3090207@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:25671 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752140AbcC1Fh7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Mar 2016 01:37:59 -0400
-In-reply-to: <CANAwSgRm1djUXUUua9mDM37qa7_jz_7X88igQtejupC5GoSQoQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <56F3E9EB.3090207@intel.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Jisheng Zhang <jszhang@marvell.com>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, ludovic.desroches@atmel.com, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-mmc@vger.kernel.org, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, stable@vger.kernel.org
 
-On 28.03.2016 14:35, Anand Moon wrote:
-> Should their be a fix in the u-boot for HK for this issue ?
+On 24.03.2016 22:21, Adrian Hunter wrote:
+> On 24/03/16 15:11, Adrian Hunter wrote:
+>> On 24/03/16 10:42, Krzysztof Kozlowski wrote:
+>>> On 24.03.2016 17:24, Jisheng Zhang wrote:
+>>>> Hi,
+>>>>
+>>>> On Thu, 24 Mar 2016 17:09:27 +0900 Jaehoon Chung wrote:
+>>>>
+>>>>> Hi,
+>>>>>
+>>>>> On 03/24/2016 04:58 PM, Jisheng Zhang wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On Thu, 24 Mar 2016 16:28:56 +0900 Krzysztof Kozlowski wrote:
+>>>>>>   
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> After 918f4cbd4340 ("mmc: sdhci: restore behavior when setting VDD via
+>>>>>>> external regulator") On Trats2 board I see warnings for invalid VDD
+>>>>>>> value (2.8V):
+>>>>>>>
+>>>>>>> [    3.119656] ------------[ cut here ]------------
+>>>>>>> [    3.119666] WARNING: CPU: 3 PID: 90 at
+>>>>>>> ../drivers/mmc/host/sdhci.c:1234 sdhci_do_set_ios+0x4cc/0x5e0
+>>>>>>> [    3.119669] mmc0: Invalid vdd 0x10  
+>>>>>>
+>>>>>> Per my understanding, the wrong vdd indicates a wrong ocr, what's the voltage of
+>>>>>> this host's vmmc regulator?  
+>>>>>
+>>>>> As i know, it's fixed-voltage with gpio on trats2. It's 2.8V.
+>>>>> I didn't check this entirely..need to check ocr value.
+>>>>>
+>>>>
+>>>> I may know the reason. the vmmc is 2.8v, then mmc_regulator_get_supply() convert
+>>>> the value to a ocr as 0x10. The key here is that the 2.8v is invalid in SDHCI
+>>>> case and isn't accepted by current sdhci driver.
+>>>
+>>> Yeah, I already wrote that. It is the part of the warning and my email.
+>>> Our regulator is fixed at 2.8 which is 0x10. :)
+>>>
+>>>> I dunno the elegant solution to handle this case, let's wait for sdhci maintainers
+>>>> idea.
+>>>
+>>> Hmm...
+>>
+>> I haven't tested it, but what about this:
+> 
+> And now with checkpatch complaints fixed:
+> 
+> From: Adrian Hunter <adrian.hunter@intel.com>
+> Date: Thu, 24 Mar 2016 14:29:24 +0200
+> Subject: [PATCH V2] mmc: sdhci: Fix regression setting power on Trats2 board
+> 
+> Several commits relating to setting power have been introducing
+> problems by putting driver-specific rules into generic SDHCI code.
+> 
+> Fix by adding a 'set_power' callback and restoring the default
+> behaviour prior to commit 918f4cbd4340 ("mmc: sdhci: restore
+> behavior when setting VDD via external regulator").  The desired
 
-It depends whether U-Boot S2MPS11 driver has this bug or has not. I did
-not observe any issues with U-Boot at this matter.
+s/behavior/behaviour/
 
-> mmc card detection logic is pretty old in HK u-boot.
+> behaviour of that commit is gotten by having sdhci-pxav3 provide
+> its own set_power callback.
+> 
+> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Fixes: 918f4cbd4340 ("mmc: sdhci: restore behavior when setting VDD...)
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: stable@vger.kernel.org # v4.5+
+> ---
+>  drivers/mmc/host/sdhci-pxav3.c | 17 +++++++++++++++++
+>  drivers/mmc/host/sdhci.c       | 38 ++++++++++++++++++++++++++++++--------
+>  drivers/mmc/host/sdhci.h       |  4 ++++
+>  3 files changed, 51 insertions(+), 8 deletions(-)
+>
 
-This is not related to MMC card detection logic.
+Works for me (sdhci-s3c, Exynos4412 on Trats2 board):
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
 
 Best regards,
 Krzysztof
+
