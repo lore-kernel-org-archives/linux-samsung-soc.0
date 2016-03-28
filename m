@@ -1,80 +1,58 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Fix invalid maximum voltage for buck9
- supplying SD card
-Date: Mon, 28 Mar 2016 09:08:48 +0900
-Message-ID: <56F87610.2040304@samsung.com>
-References: <1458807125-13580-1-git-send-email-k.kozlowski@samsung.com>
- <56F4D070.4020403@osg.samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 3/8] clk: samsung: exynos3250: Add MMC2 clock
+Date: Mon, 28 Mar 2016 09:44:51 +0900
+Message-ID: <56F87E83.7060100@samsung.com>
+References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
+ <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
+ <56F47ABC.7060006@samsung.com> <56F509E6.7080807@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <56F4D070.4020403@osg.samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <56F509E6.7080807@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, tomasz.figa@gmail.com, jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 25.03.2016 14:45, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 03/24/2016 05:12 AM, Krzysztof Kozlowski wrote:
->> The buck9 regulator of S2MPS11 PMIC had incorrect maximum voltage -
->> lower by 5 mV than specified by datasheet. This buck9 provides power to
->> other regulators, including LDO13 and LDO19 which supply the MMC2 (SD
->> card).
->>
->> When constraints were applied, the depending regulators were not
->> providing enough power, leading to SD card detection errors:
->> 	mmc1: card never left busy state
->> 	mmc1: error -110 whilst initialising SD card
->>
->> Fixes: 86a2d2ac5e5d ("ARM: dts: Add dts file for Odroid XU3 board")
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
->> ---
->>
->> The issue can be reproduced on next-20160324 with
->> bae4fdc88d7f7dda1 (regulator: core: Ensure we are at least in bounds for our constraints).
->> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> index 1bd507bfa750..82b2ba632cf6 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> @@ -299,7 +299,7 @@
->>  			buck9_reg: BUCK9 {
->>  				regulator-name = "vdd_2.8v_ldo";
->>  				regulator-min-microvolt = <3000000>;
->> -				regulator-max-microvolt = <3750000>;
->> +				regulator-max-microvolt = <3755000>;
->>  				regulator-always-on;
->>  				regulator-boot-on;
->>  			};
->>
-> 
-> I tested next-20160324 + $SUBJECT on an Odroid XU4 (with exynos_defconfig)
-> and while it's true that the patch makes the SD card error to go away, I see
-> that the s2mps11 regulator driver fails to probe due an -EINVAL being return
-> by machine_constraints_voltage() -> _regulator_do_set_voltage():
-> 
-> [    1.710300] vdd_2.8v_ldo: failed to apply 3755000-3755000uV constraint(-22)
-> [    1.716387] s2mps11-pmic s2mps11-regulator: regulator init failed for 46
-> [    1.734878] s2mps11-pmic: probe of s2mps11-regulator failed with error -22
+Hi Sylwester,
 
-Oh, damn, so the fix was only because driver failed to probe (which I
-missed). This explains Friday's next failures. I'll drop it from next
-because it makes more harm than good...
+On 2016=EB=85=84 03=EC=9B=94 25=EC=9D=BC 18:50, Sylwester Nawrocki wrot=
+e:
+> Hi Chanwoo,
+>=20
+> On 03/25/2016 12:39 AM, Chanwoo Choi wrote:
+>> diff --git a/include/dt-bindings/clock/exynos3250.h=20
+>> b/include/dt-bindings/clock/exynos3250.h
+>>> index ddb874130d86..c796ff02ceeb 100644
+>>> --- a/include/dt-bindings/clock/exynos3250.h
+>>> +++ b/include/dt-bindings/clock/exynos3250.h
+> ...
+>>> -#define CLK_NR_CLKS			249
+>>> +#define CLK_NR_CLKS			250
+>=20
+> What do you think about putting all the changes to include/dt-binding=
+s/
+> clock/exynos3250.h into a separate patch? Now in patch 3/8 there
+> is being changed again what was added in patch 2/8. However, my main
+> point is to have a minimum required in a common topic branch for the =
+clk
+> and the arm-soc trees, so there is no need for arm-soc to pull all
+> the drives/clk changes.
+> It might not be that sensible in case of just those 2 patches in your
+> series, nevertheless it would be good to keep that in mind for future
+> submissions.
 
-BR,
-Krzysztof
+You mean that separate patch1 include only the new clock id about both =
+UART2 and MMC2
+and the patch2/patch3 just use the new clock id as following:
 
-> I wonder how neither Markus nor you saw this issue when testing so maybe I'm
-> doing something wrong? Since AFAICT it's only working because the driver fails
-> to probe so the same effect can be achieved disabling CONFIG_REGULATOR_S2MPS11.
-> 
-> Best regards,
-> 
+patch1 dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
+patch2 clk: samsung: exynos3250: Add UART2 clock
+patch3 clk: samsung: exynos3250: Add MMC2 clock
 
+As far as I understand it is that right?
+If it is ok, I'll modify it on v4 patchset as you comment.
+
+Best Regards,
+Chanwoo Choi
