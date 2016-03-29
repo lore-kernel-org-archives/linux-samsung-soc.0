@@ -1,42 +1,41 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 3/3] drm/exynos: Make DRM_EXYNOS_FIMC depend on VIDEO_S5P_FIMC=n
-Date: Mon, 28 Mar 2016 21:28:57 -0400
-Message-ID: <1459214937-18686-4-git-send-email-javier@osg.samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/3] drm/exynos: Kconfig dependency fixes
+Date: Tue, 29 Mar 2016 10:32:51 +0900
+Message-ID: <56F9DB43.6090309@samsung.com>
 References: <1459214937-18686-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1459214937-18686-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1459214937-18686-1-git-send-email-javier@osg.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos DRM driver components are only enabled if other drivers that make
-use of the same HW IP block are not enabled. That's the case for the G2D,
-GSC, Mixer and HDMI drivers.
-
-The FIMC is also shared by the DRM and a V4L2 driver, so the same has to
-be added as a dependency for the Exynos FIMC DRM driver.
-
-Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-
- drivers/gpu/drm/exynos/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 8c27037787fc..f9b92c3825ea 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -106,7 +106,7 @@ config DRM_EXYNOS_IPP
- 
- config DRM_EXYNOS_FIMC
- 	bool "FIMC"
--	depends on DRM_EXYNOS_IPP && MFD_SYSCON
-+	depends on DRM_EXYNOS_IPP && MFD_SYSCON && VIDEO_S5P_FIMC=n
- 	help
- 	  Choose this option if you want to use Exynos FIMC for DRM.
- 
--- 
-2.5.0
+SGkgSmF2aWVyLAoKVGhhbmtzIGZvciB5b3VyIHBhdGNoIHNldC4KCldpbGwgbWVyZ2UgdGhlbSBp
+ZiB0aGVyZSBpcyBubyBpc3N1ZS4KClRoYW5rcywKSW5raSBEYWUKCjIwMTbrhYQgMDPsm5QgMjns
+nbwgMTA6Mjjsl5AgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIOydtCjqsIApIOyTtCDquIA6Cj4g
+SGVsbG8gSW5raSwKPiAKPiBUaGlzIHBhdGNoIHNlcmllcyBjb250YWlucyBzb21lIGZpeGVzIGZv
+ciB0aGUgS2NvbmZpZyBzeW1ib2wgZGVwZW5kZW5jaWVzCj4gb2YgdGhlIEV4eW5vcyBEUk0gZHJp
+dmVyLiBUaGV5IG1ha2Ugc3VyZSB0aGF0IHRoZSBFeHlub3MgRFJNIGNvbXBvbmVudHMKPiBhbmQg
+dGhlIG1lZGlhIHBsYXRmb3JtIGRyaXZlcnMgdGhhdCBtYWtlcyB1c2Ugb2YgdGhlIHNhbWUgSFcg
+SVAgYmxvY2sgYXJlCj4gbm90IGVuYWJsZWQgYXQgdGhlIHNhbWUgdGltZS4KPiAKPiBCZXN0IHJl
+Z2FyZHMsCj4gSmF2aWVyCj4gCj4gCj4gSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzICgzKToKPiAg
+IGRybS9leHlub3M6IFVzZSBWSURFT19TQU1TVU5HX1M1UF9HMkQ9biBhcyBHMkQgS2NvbmZpZyBk
+ZXBlbmRlbmN5Cj4gICBkcm0vZXh5bm9zOiBVc2UgVklERU9fU0FNU1VOR19FWFlOT1NfR1NDPW4g
+YXMgR1NDIEtjb25maWcgZGVwZW5kZW5jeQo+ICAgZHJtL2V4eW5vczogTWFrZSBEUk1fRVhZTk9T
+X0ZJTUMgZGVwZW5kIG9uIFZJREVPX1M1UF9GSU1DPW4KPiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9LY29uZmlnIHwgNiArKystLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygr
+KSwgMyBkZWxldGlvbnMoLSkKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
