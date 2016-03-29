@@ -1,29 +1,27 @@
-From: Anand Moon <linux.amoon@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 Subject: Re: [PATCH V3] mmc: sdhci: Fix regression setting power on Trats2 board
-Date: Tue, 29 Mar 2016 15:55:31 +0530
-Message-ID: <CANAwSgS+H7gd7ev1d=F3=kqk0a8ZBeN=POt-uX2_2yUoDYgqOg@mail.gmail.com>
+Date: Tue, 29 Mar 2016 12:47:12 +0200
+Message-ID: <CAPDyKFqG1BHznSCHBrt7QMXNhiinVvO7=5gZJzLEeXG7EXKSOA@mail.gmail.com>
 References: <CAJKOXPcGDnPm-Ykh6wHqV1YxfTaov5E8iVqBoBn4OJc7BnhgEQ@mail.gmail.com>
- <20160324155840.50474b98@xhacker> <56F3A0B7.4050509@samsung.com>
- <20160324162449.29c9cf78@xhacker> <56F3A88F.50603@samsung.com>
- <56F3E77D.7030201@intel.com> <56F3E9EB.3090207@intel.com> <56F8CA0C.2080908@samsung.com>
- <56FA4D66.3030109@intel.com> <56FA4EC7.8090004@intel.com>
+	<20160324155840.50474b98@xhacker>
+	<56F3A0B7.4050509@samsung.com>
+	<20160324162449.29c9cf78@xhacker>
+	<56F3A88F.50603@samsung.com>
+	<56F3E77D.7030201@intel.com>
+	<56F3E9EB.3090207@intel.com>
+	<56F8CA0C.2080908@samsung.com>
+	<56FA4D66.3030109@intel.com>
+	<56FA4EC7.8090004@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35725 "EHLO
-	mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751039AbcC2KZw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Mar 2016 06:25:52 -0400
+Return-path: <linux-mmc-owner@vger.kernel.org>
 In-Reply-To: <56FA4EC7.8090004@intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
 To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jisheng Zhang <jszhang@marvell.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, ludovic.desroches@atmel.com, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, linux-mmc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jisheng Zhang <jszhang@marvell.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ludovic Desroches <ludovic.desroches@atmel.com>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-hi Adrian Hunter,
-
-On 29 March 2016 at 15:15, Adrian Hunter <adrian.hunter@intel.com> wrote:
+On 29 March 2016 at 11:45, Adrian Hunter <adrian.hunter@intel.com> wrote:
 > Several commits relating to setting power have been introducing
 > problems by putting driver-specific rules into generic SDHCI code.
 >
@@ -86,6 +84,12 @@ On 29 March 2016 at 15:15, Adrian Hunter <adrian.hunter@intel.com> wrote:
 > Tested-by: Ludovic Desroches <ludovic.desroches@atmel.com>
 > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 > Cc: stable@vger.kernel.org # v4.5+
+
+Thanks, applied for fixes!
+
+Kind regards
+Uffe
+
 > ---
 >
 >
@@ -238,15 +242,4 @@ On 29 March 2016 at 15:15, Adrian Hunter <adrian.hunter@intel.com> wrote:
 > --
 > 1.9.1
 >
-
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-
-Tested on Odroid U3
-
-Best Regards
--Anand Moon
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
