@@ -1,42 +1,100 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv14 03/18] dts: exynos4412-odroid*: enable the HDMI CEC device
-Date: Tue, 29 Mar 2016 15:28:39 +0900
-Message-ID: <CAJKOXPdpkE5OdNEAVTsbQrjpZZgwDgY2=g9ocM0rFaOU-N=pEw@mail.gmail.com>
-References: <1458911416-47981-1-git-send-email-hverkuil@xs4all.nl>
-	<1458911416-47981-4-git-send-email-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH V2 3/3] cpufreq: exynos: Use generic platdev driver
+Date: Tue, 29 Mar 2016 12:09:49 +0530
+Message-ID: <81a8da75a0e7783e2b47f9e04297f167e8134afe.1459233524.git.viresh.kumar@linaro.org>
+References: <cover.1459233524.git.viresh.kumar@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35499 "EHLO
-	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751041AbcC2G2k (ORCPT
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:36443 "EHLO
+	mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751700AbcC2GkH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Mar 2016 02:28:40 -0400
-In-Reply-To: <1458911416-47981-4-git-send-email-hverkuil@xs4all.nl>
+	Tue, 29 Mar 2016 02:40:07 -0400
+Received: by mail-pf0-f179.google.com with SMTP id u190so7213140pfb.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2016 23:40:07 -0700 (PDT)
+In-Reply-To: <cover.1459233524.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1459233524.git.viresh.kumar@linaro.org>
+References: <cover.1459233524.git.viresh.kumar@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Marek Szyprowski <m.szyprowski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+To: Rafael Wysocki <rjw@rjwysocki.net>, arnd.bergmann@linaro.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, xf@rock-chips.com, heiko@sntech.de, mmcclint@codeaurora.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 25, 2016 at 10:10 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> Add a dts node entry and enable the HDMI CEC device present in the Exynos4
-> family of SoCs.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
+The cpufreq-dt-platdev driver supports creation of cpufreq-dt platform
+device now, reuse that and remove similar code from platform code.
 
-Applied for v4.7 with a little bit different subject and the new node
-put in alphabetical order. Please don't include your original patch in
-your tree because any merging will probably end with having these
-nodes twice.
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c        | 29 -----------------------------
+ drivers/cpufreq/cpufreq-dt-platdev.c |  9 +++++++++
+ 2 files changed, 9 insertions(+), 29 deletions(-)
 
-https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/dt
-(but tell me if you need to base on this so I would prepare a tag)
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index bbf51a46f772..4d3b056fd786 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -213,33 +213,6 @@ static void __init exynos_init_irq(void)
+ 	exynos_map_pmu();
+ }
+ 
+-static const struct of_device_id exynos_cpufreq_matches[] = {
+-	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
+-	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+-	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
+-	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+-	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+-#ifndef CONFIG_BL_SWITCHER
+-	{ .compatible = "samsung,exynos5420", .data = "cpufreq-dt" },
+-	{ .compatible = "samsung,exynos5800", .data = "cpufreq-dt" },
+-#endif
+-	{ /* sentinel */ }
+-};
+-
+-static void __init exynos_cpufreq_init(void)
+-{
+-	struct device_node *root = of_find_node_by_path("/");
+-	const struct of_device_id *match;
+-
+-	match = of_match_node(exynos_cpufreq_matches, root);
+-	if (!match) {
+-		platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+-		return;
+-	}
+-
+-	platform_device_register_simple(match->data, -1, NULL, 0);
+-}
+-
+ static void __init exynos_dt_machine_init(void)
+ {
+ 	/*
+@@ -262,8 +235,6 @@ static void __init exynos_dt_machine_init(void)
+ 	    of_machine_is_compatible("samsung,exynos5250"))
+ 		platform_device_register(&exynos_cpuidle);
+ 
+-	exynos_cpufreq_init();
+-
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+ 
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 18b81724ca0b..c5a70b683c7c 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -20,6 +20,15 @@ struct cpufreq_dt_compat {
+ };
+ 
+ static struct cpufreq_dt_compat compat[] = {
++	{ "samsung,exynos3250",		NULL,		0 },
++	{ "samsung,exynos4210",		NULL,		0 },
++	{ "samsung,exynos4212",		NULL,		0 },
++	{ "samsung,exynos4412",		NULL,		0 },
++	{ "samsung,exynos5250",		NULL,		0 },
++#ifndef CONFIG_BL_SWITCHER
++	{ "samsung,exynos5420",		NULL,		0 },
++	{ "samsung,exynos5800",		NULL,		0 },
++#endif
+ };
+ 
+ static int __init cpufreq_dt_platdev_init(void)
+-- 
+2.7.1.410.g6faf27b
