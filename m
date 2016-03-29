@@ -1,56 +1,68 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCHv14 03/18] dts: exynos4412-odroid*: enable the HDMI CEC
- device
-Date: Tue, 29 Mar 2016 09:28:57 +0200
-Message-ID: <56FA2EB9.5040204@xs4all.nl>
-References: <1458911416-47981-1-git-send-email-hverkuil@xs4all.nl>
- <1458911416-47981-4-git-send-email-hverkuil@xs4all.nl>
- <CAJKOXPdpkE5OdNEAVTsbQrjpZZgwDgY2=g9ocM0rFaOU-N=pEw@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] serial: samsung: Reorder the sequence of clock control
+ when call s3c24xx_serial_set_termios()
+Date: Tue, 29 Mar 2016 09:49:52 +0200
+Message-ID: <56FA33A0.4040608@samsung.com>
+References: <1459122503-5202-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdpkE5OdNEAVTsbQrjpZZgwDgY2=g9ocM0rFaOU-N=pEw@mail.gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Marek Szyprowski <m.szyprowski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:31748 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753276AbcC2Ht6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Mar 2016 03:49:58 -0400
+In-reply-to: <1459122503-5202-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hello,
 
-On 03/29/2016 08:28 AM, Krzysztof Kozlowski wrote:
-> On Fri, Mar 25, 2016 at 10:10 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> From: Marek Szyprowski <m.szyprowski@samsung.com>
->>
->> Add a dts node entry and enable the HDMI CEC device present in the Exynos4
->> family of SoCs.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
->> ---
->>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ++++
->>  1 file changed, 4 insertions(+)
-> 
-> Applied for v4.7 with a little bit different subject and the new node
-> put in alphabetical order. Please don't include your original patch in
-> your tree because any merging will probably end with having these
-> nodes twice.
+On 2016-03-28 01:48, Chanwoo Choi wrote:
+> This patch fixes the broken serial log when changing the clock source
+> of uart device. Before disabling the original clock source, this patch
+> enables the new clock source to protect the clock off state for a split second.
+>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks for merging these three via your tree. I've dropped these three patches
-from my tree to avoid any merge issues.
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Regards,
+> ---
+> Changes from v1:
+> (https://lkml.org/lkml/2016/3/13/183)
+> - Enable the clock before changing the source by s3c24xx_serial_setsource()
+> - Rebase it on Linux v4.6-rc1
+>
+>   drivers/tty/serial/samsung.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index ac7f8df54406..99bb23161dd6 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1271,6 +1271,8 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+>   	/* check to see if we need  to change clock source */
+>   
+>   	if (ourport->baudclk != clk) {
+> +		clk_prepare_enable(clk);
+> +
+>   		s3c24xx_serial_setsource(port, clk_sel);
+>   
+>   		if (!IS_ERR(ourport->baudclk)) {
+> @@ -1278,8 +1280,6 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+>   			ourport->baudclk = ERR_PTR(-EINVAL);
+>   		}
+>   
+> -		clk_prepare_enable(clk);
+> -
+>   		ourport->baudclk = clk;
+>   		ourport->baudclk_rate = clk ? clk_get_rate(clk) : 0;
+>   	}
 
-	Hans
-
-> 
-> https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/dt
-> (but tell me if you need to base on this so I would prepare a tag)
-> 
-> Best regards,
-> Krzysztof
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
