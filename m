@@ -1,59 +1,39 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] cpufreq: exynos: Use generic platdev driver
-Date: Tue, 29 Mar 2016 13:39:46 +0900
-Message-ID: <56FA0712.6020802@samsung.com>
-References: <cover.1458801338.git.viresh.kumar@linaro.org>
- <6cb29053bce7026dd9429326236a67c45e901c7b.1458801338.git.viresh.kumar@linaro.org>
- <56FA0039.6030007@samsung.com> <20160329041827.GA25424@vireshk-i7>
- <20160329041923.GB25424@vireshk-i7>
+Subject: Re: [PATCHv14 01/18] dts: exynos4*: add HDMI CEC pin definition to pinctrl
+Date: Tue, 29 Mar 2016 15:26:33 +0900
+Message-ID: <CAJKOXPd=upXq5m2WitT37_XYi5+rciA9HVYWFoE4u_wPnWaWJQ@mail.gmail.com>
+References: <1458911416-47981-1-git-send-email-hverkuil@xs4all.nl>
+	<1458911416-47981-2-git-send-email-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20160329041923.GB25424@vireshk-i7>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rafael Wysocki <rjw@rjwysocki.net>, arnd.bergmann@linaro.org, Kukjin Kim <kgene@kernel.org>, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, xf@rock-chips.com, heiko@sntech.de, mmcclint@codeaurora.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f194.google.com ([209.85.214.194]:36605 "EHLO
+	mail-ob0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751041AbcC2G0e (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Mar 2016 02:26:34 -0400
+In-Reply-To: <1458911416-47981-2-git-send-email-hverkuil@xs4all.nl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
 
-On 29.03.2016 13:19, Viresh Kumar wrote:
-> On 29-03-16, 09:48, Viresh Kumar wrote:
->> On 29-03-16, 13:10, Krzysztof Kozlowski wrote:
->>> On 24.03.2016 15:40, Viresh Kumar wrote:
->>>> The cpufreq-dt-platdev driver supports creation of cpufreq-dt platform
->>>> device now, reuse that and remove similar code from platform code.
->>>>
->>>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->>>> ---
->>>>  arch/arm/mach-exynos/exynos.c        | 25 -------------------------
->>>>  drivers/cpufreq/cpufreq-dt-platdev.c |  5 +++++
->>>>  2 files changed, 5 insertions(+), 25 deletions(-)
->>>
->>> Looks fine to me... except that it is a little bit outdated. Please
->>> rebase on v4.6-rc1 because Bartlomiej added support for cpufreq @Exynos542x.
->>
->> Yeah, I know. I already have the updated version.
-> 
-> Here it is:
-> 
-> From: Viresh Kumar <viresh.kumar@linaro.org>
-> Date: Thu, 24 Mar 2016 12:04:10 +0530
-> Subject: [PATCH] cpufreq: exynos: Use generic platdev driver
-> 
-> The cpufreq-dt-platdev driver supports creation of cpufreq-dt platform
-> device now, reuse that and remove similar code from platform code.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+On Fri, Mar 25, 2016 at 10:09 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> From: Kamil Debski <kamil@wypas.org>
+>
+> Add pinctrl nodes for the HDMI CEC device to the Exynos4210 and
+> Exynos4x12 SoCs. These are required by the HDMI CEC device.
+>
+> Signed-off-by: Kamil Debski <kamil@wypas.org>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  arch/arm/mach-exynos/exynos.c        | 29 -----------------------------
->  drivers/cpufreq/cpufreq-dt-platdev.c |  9 +++++++++
->  2 files changed, 9 insertions(+), 29 deletions(-)
+>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi | 7 +++++++
+>  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 7 +++++++
+>  2 files changed, 14 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-
+Applied for v4.7 with a little bit different subject:
+https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/dt
+(but tell me if you need to base on this so I would prepare a tag)
 
 Best regards,
-
-Krzysztof
-
