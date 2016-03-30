@@ -1,45 +1,120 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 3/8] clk: samsung: exynos3250: Add MMC2 clock
-Date: Wed, 30 Mar 2016 11:37:30 +0200
-Message-ID: <56FB9E5A.1080507@samsung.com>
-References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
- <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
- <56F47ABC.7060006@samsung.com> <56F509E6.7080807@samsung.com>
- <56F87E83.7060100@samsung.com> <56F9DEE6.8020203@samsung.com>
+From: Haibo Chen <haibo.chen@nxp.com>
+Subject: RE: [PATCH 2/2] regulator: core: Ensure we are at least in bounds for
+ our constraints
+Date: Wed, 30 Mar 2016 09:07:21 +0000
+Message-ID: <HE1PR0401MB180138D15E4D2101330543DC90980@HE1PR0401MB1801.eurprd04.prod.outlook.com>
+References: <1458587912-32665-1-git-send-email-broonie@kernel.org>
+ <1458587912-32665-2-git-send-email-broonie@kernel.org>
+ <56F0624C.8010004@gmail.com>
+ <CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
+ <CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
+ <CAJAp7OgGQ3qm-_QhydvN0n6QeNoHFdso4zOk41qvVJhKNeRn8Q@mail.gmail.com>
+ <20160327090859.GH5028@sirena.org.uk>
+ <CAMuHMdXuy2TxACTcsgOpZvrJEeTSQbCgCUmS9PXfBhhZfgbBBA@mail.gmail.com>
+ <20160329145823.GK2350@sirena.org.uk>
+ <CAMuHMdXx_=LzH7w+9u=o3WZ-qVPqMA2LDCeanvdGs-ywXRCy_A@mail.gmail.com>
+ <20160329182725.GD2350@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:38606 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750978AbcC3Jhl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Mar 2016 05:37:41 -0400
-In-reply-to: <56F9DEE6.8020203@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20160329182725.GD2350@sirena.org.uk>
+Content-Language: en-US
+Sender: linux-mmc-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bjorn Andersson <bjorn@kryo.se>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: kgene@kernel.org, tomasz.figa@gmail.com, jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On 03/29/2016 03:48 AM, Krzysztof Kozlowski wrote:
-> On 28.03.2016 09:44, Chanwoo Choi wrote:
->> > You mean that separate patch1 include only the new clock id about both UART2 and MMC2
->> > and the patch2/patch3 just use the new clock id as following:
->> > 
->> > patch1 dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
->> > patch2 clk: samsung: exynos3250: Add UART2 clock
->> > patch3 clk: samsung: exynos3250: Add MMC2 clock
->> > 
->> > As far as I understand it is that right?
->> > If it is ok, I'll modify it on v4 patchset as you comment.
->
-> Hi Sylwester and Tomasz,
+Hi Brown,
+
+I also meet the similar issue on i.MX6 platforms.
+
+With your patch   ---> regulator: core: Ensure we are at least in bounds for our constraints
+When I insert an SD3.0 card, shows the following log:
+
+root@imx6qdlsolo:~# [   59.733941] sdhci-esdhc-imx 2190000.usdhc: could not set regulator OCR (-22)
+[   60.829911] sdhci-esdhc-imx 2190000.usdhc: could not set regulator OCR (-22)
+[   61.917951] sdhci-esdhc-imx 2190000.usdhc: could not set regulator OCR (-22)
+[   63.009498] sdhci-esdhc-imx 2190000.usdhc: could not set regulator OCR (-22)
+
+I did a quick debug, and find when I change the operator   &&  to  !=  , this issue gone.
+-       if (constraints->min_uV != constraints->max_uV) {
++       if (constraints->min_uV && constraints->max_uV) {
+
+
+In our sdhci.c, we call the function 
+regulator_set_voltage ---> regulator_set_voltage_unlocked(struct regulator *regulator, int min_uV, int max_uV)
+here, the parameter min_uV is 3300000, and the max_uV is 3400000
+
+currently with your patch (the upper operator is &&), when insert a SD3.0 card, 
+it will do the sanity check, and return -EINVAL
+
+but when I change the upper operator from && to !=, 
+before the sanity check, it will first get the current_uV, and then go to out.
+
+I'm not familiar with regulator common code. Hope the upper describe can help you debug this issue.
+
+The following attach our dts piece code.
+
+126 &usdhc1 {
+127         pinctrl-names = "default", "state_100mhz", "state_200mhz";
+128         pinctrl-0 = <&pinctrl_usdhc1>;
+129         pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
+130         pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
+131         cd-gpios = <&gpio1 19 GPIO_ACTIVE_LOW>;
+132         keep-power-in-suspend;
+133         wakeup-source;
+134         vmmc-supply = <&reg_sd1_vmmc>;
+135         status = "okay";
+136 };
+
+regulators {
+ 26                 compatible = "simple-bus";
+ 27                 #address-cells = <1>;
+ 28                 #size-cells = <0>;
+ 29
+ 30                 reg_sd1_vmmc: sd1_regulator {
+ 31                         compatible = "regulator-fixed";
+ 32                         regulator-name = "VSD_3V3";
+ 33                         regulator-min-microvolt = <3300000>;
+ 34                         regulator-max-microvolt = <3300000>;
+ 35                         gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+ 36                         enable-active-high;
+ 37                 };
+ 38         };
+
+Best Regards
+Haibo Chen
+
+
+
+> -----Original Message-----
+> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
+> owner@vger.kernel.org] On Behalf Of Mark Brown
+> Sent: Wednesday, March 30, 2016 2:27 AM
+> To: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Bjorn Andersson <bjorn@kryo.se>; Krzysztof Kozlowski
+> <k.kozlowski@samsung.com>; Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>;
+> Liam Girdwood <lgirdwood@gmail.com>; linux-kernel@vger.kernel.org; Ulf
+> Hansson <ulf.hansson@linaro.org>; linux-mmc <linux-mmc@vger.kernel.org>;
+> linux-samsung-soc <linux-samsung-soc@vger.kernel.org>; Javier Martinez
+> Canillas <javier@osg.samsung.com>; Marek Szyprowski
+> <m.szyprowski@samsung.com>; linux-renesas-soc@vger.kernel.org
+> Subject: Re: [PATCH 2/2] regulator: core: Ensure we are at least in bounds for
+> our constraints
 > 
-> Can you provide me a tag with these exynos3250 clock patches (after
-> posting v4)? Of course you can also ack/review them and then I'll handle it.
-
-OK, I will provide a stable branch as soon as there is v4 available.
-
--- 
-Regards,
-Sylwester
+> On Tue, Mar 29, 2016 at 08:05:34PM +0200, Geert Uytterhoeven wrote:
+> 
+> >         sh_mobile_sdhi ee100000.sd: Got WP GPIO ======> sh_mobile_sdhi
+> > ee100000.sd: could not set regulator OCR (-22)
+> >         gpio_rcar e6055400.gpio: sense irq = 6, type = 3
+> >         sh_mobile_sdhi ee100000.sd: mmc0 base at 0xee100000 clock rate
+> > 97 MHz
+> 
+> > The line marked with the arrow is introduced by the changed check, and
+> > looks to be the origin of the failure.
+> 
+> This isn't making any sense.  Why would a change in how we apply voltage
+> constraints on initial probe of the regulator have an impact here?  The changed
+> code shouldn't even be executing at the point where the SDHCI driver is trying
+> to use the regulator.  There's something else going on here.
