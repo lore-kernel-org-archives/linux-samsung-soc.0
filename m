@@ -1,48 +1,72 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V2 3/3] cpufreq: exynos: Use generic platdev driver
-Date: Wed, 30 Mar 2016 08:46:36 +0900
-Message-ID: <56FB13DC.2090902@samsung.com>
-References: <cover.1459233524.git.viresh.kumar@linaro.org>
- <81a8da75a0e7783e2b47f9e04297f167e8134afe.1459233524.git.viresh.kumar@linaro.org>
- <3810049.oQlCXiQ5bk@wuerfel>
- <CAKohpomQ9=YK79o0fqHqZ7xexHv5EMJSPx+4KrT0RxeMh+hwWg@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: dts: exynos: Add timer node for exynos5420
+Date: Wed, 30 Mar 2016 14:17:55 +0900
+Message-ID: <56FB6183.8030701@samsung.com>
+References: <cover.1459167385.git.bugs.a.b@free.fr>
+ <9c3c2a79cbaabd460131270e8a422bfa787b923a.1459167385.git.bugs.a.b@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAKohpomQ9=YK79o0fqHqZ7xexHv5EMJSPx+4KrT0RxeMh+hwWg@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rafael Wysocki <rjw@rjwysocki.net>, Arnd Bergmann <arnd.bergmann@linaro.org>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Feng Xiao <xf@rock-chips.com>, Matthew McClintock <mmcclint@codeaurora.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:37505 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751958AbcC3FSA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Mar 2016 01:18:00 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O4U00MED6PWZD60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Mar 2016 14:17:56 +0900 (KST)
+In-reply-to: <9c3c2a79cbaabd460131270e8a422bfa787b923a.1459167385.git.bugs.a.b@free.fr>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Adel Belhouane <bugs.a.b@free.fr>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On 30.03.2016 00:22, Viresh Kumar wrote:
-> On 29 March 2016 at 20:34, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Tuesday 29 March 2016 12:09:49 Viresh Kumar wrote:
->>> -static void __init exynos_cpufreq_init(void)
->>> -{
->>> -       struct device_node *root = of_find_node_by_path("/");
->>> -       const struct of_device_id *match;
->>> -
->>> -       match = of_match_node(exynos_cpufreq_matches, root);
->>> -       if (!match) {
->>> -               platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
->>> -               return;
->>> -       }
->>> -
->>> -       platform_device_register_simple(match->data, -1, NULL, 0);
->>> -}
->>
->> How is the "exynos-cpufreq" case handled now? Is that no longer used now?
->> I assume the patch is correct based on Krzysztof's review, but it might be
->> good to explain this better.
-> 
-> That's stale code, the driver got removed some time back.
+Hi Adel,
 
-Yeah, that's old driver, no longer existing. It makes sense to split the
-patch - first remove the stale exynos-cpufreq and then move cpufreq-dt.
-This would help avoid confusion when grepping through the history.
+On 2016=EB=85=84 03=EC=9B=94 28=EC=9D=BC 23:08, Adel Belhouane wrote:
+> This patch adds timer node for exynos542x/5800.
+> Generic Timer Architecture is needed by KVM.
+>=20
+> Signed-off-by: Adel Belhouane <bugs.a.b@free.fr>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/ex=
+ynos5420.dtsi
+> index 48a0a55314f5..4663006d15ab 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -1140,6 +1140,16 @@
+>  		power-domains =3D <&disp_pd>;
+>  		#iommu-cells =3D <0>;
+>  	};
+> +
+> +	timer {
+> +		compatible =3D "arm,cortex-a15-timer",
+> +			     "arm,armv7-timer";
+> +		interrupts =3D <1 13 0xf08>,
+> +			     <1 14 0xf08>,
+> +			     <1 11 0xf08>,
+> +			     <1 10 0xf08>;
+> +		clock-frequency =3D <24000000>;
+> +	};
+>  };
+> =20
+>  &dp {
+>=20
 
-Best regards,
-Krzysztof
+Did you test this arch_timer after deleting the MCT Device Tree node fr=
+om dts file?
 
+As I knew, the generic arch time uses same H/W with MCT device in Exyno=
+s SoC.
+So, If we remove the MCT device-tree node from dts, the arch timer is n=
+ot working.
+Just, I tested it on Exynos3250 SoC.
+
+Best Regards,
+Chanwoo Choi
