@@ -1,101 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 3/8] clk: samsung: exynos3250: Add MMC2 clock
-Date: Thu, 31 Mar 2016 13:04:59 +0200
-Message-ID: <56FD045B.5020805@samsung.com>
-References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
- <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
- <56F47ABC.7060006@samsung.com> <56F509E6.7080807@samsung.com>
- <56F87E83.7060100@samsung.com> <56F9DEE6.8020203@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v7 01/20] PM / devfreq: exynos: Add generic exynos bus
+ frequency driver
+Date: Thu, 31 Mar 2016 14:10:58 +0200
+Message-ID: <56FD13D2.1050300@samsung.com>
+References: <1459415165-32613-1-git-send-email-cw00.choi@samsung.com>
+ <1459415165-32613-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <56F9DEE6.8020203-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:44320 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750971AbcCaMLJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Mar 2016 08:11:09 -0400
+In-reply-to: <1459415165-32613-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, kgene@kernel.org, rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On 03/29/2016 03:48 AM, Krzysztof Kozlowski wrote:
-> On 28.03.2016 09:44, Chanwoo Choi wrote:
->> You mean that separate patch1 include only the new clock id 
->> about both UART2 and MMC2
->> and the patch2/patch3 just use the new clock id as following:
->>
->> patch1 dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
->> patch2 clk: samsung: exynos3250: Add UART2 clock
->> patch3 clk: samsung: exynos3250: Add MMC2 clock
->>
->> As far as I understand it is that right?
->> If it is ok, I'll modify it on v4 patchset as you comment.
-> 
-> Hi Sylwester and Tomasz,
-> 
-> Can you provide me a tag with these exynos3250 clock patches (after
-> posting v4)? Of course you can also ack/review them and then I'll 
-> handle it.
+On 03/31/2016 11:05 AM, Chanwoo Choi wrote:
 
-Here are tags with only the first (clock id definitions) and the all 
-three clk patches respectively:
+> +static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
+> +{
 
----------------------------------------8<--------------------------------
-The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+> +	new_opp = devfreq_recommended_opp(dev, freq, flags);
+> +	if (IS_ERR_OR_NULL(new_opp)) {
+> +		dev_err(dev, "failed to get recommed opp instance\n");
 
-  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+s/recommed/recommended/
 
-are available in the git repository at:
+> +		rcu_read_unlock();
+> +		return PTR_ERR(new_opp);
+> +	}
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.7-exynos3250-dt
+> +}
 
-for you to fetch changes up to fd00bbcddb59c4866e7c985e30f663b62cfc2588:
+> +static int exynos_bus_probe(struct platform_device *pdev)
+> +{
 
-  dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250 (2016-03-31 12:25:44 +0200)
+> +	bus->devfreq = devm_devfreq_add_device(dev, profile, "simple_ondemand",
+> +						ondemand_data);
+> +	if (IS_ERR_OR_NULL(bus->devfreq)) {
+> +		dev_err(dev, "failed to add devfreq device\n");
+> +		return  PTR_ERR(bus->devfreq);
+> +	}
 
-----------------------------------------------------------------
-Addition of the UART2 and MMC3 clock indices definition
-to the exynos3250 clock subsystem dt binding header file.
+> +}
 
-----------------------------------------------------------------
-Chanwoo Choi (1):
-      dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
+You should use IS_ERR() instead of IS_ERR_OR_NULL(), since functions
+of which the return value is being tested return only ERR_PTR() values.
+IS_ERR_OR_NULL() suggest NULL values are possible and then constructs
+like
+	if (IS_ERR_OR_NULL(result))
+		return PTR_ERR(result);
 
- include/dt-bindings/clock/exynos3250.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
---------------------------------------->8--------------------------------
+are not correct anyway.
 
-
----------------------------------------8<--------------------------------
-The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
-
-  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
-
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.7-exynos3250
-
-for you to fetch changes up to f6764714afdde1f0f511bb0e2d531593c3bec827:
-
-  clk: samsung: exynos3250: Add MMC2 clock (2016-03-31 12:25:54 +0200)
-
-----------------------------------------------------------------
-Addition of the Exynos3250 SoC's UART2 and MMC2 clocks.
-
-----------------------------------------------------------------
-Chanwoo Choi (2):
-      dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
-      clk: samsung: exynos3250: Add MMC2 clock
-
-Pankaj Dubey (1):
-      clk: samsung: exynos3250: Add UART2 clock
-
- drivers/clk/samsung/clk-exynos3250.c   | 15 +++++++++++++++
- include/dt-bindings/clock/exynos3250.h | 11 ++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
---------------------------------------->8--------------------------------
-
-Cheers,
+-- 
+Regards,
 Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
