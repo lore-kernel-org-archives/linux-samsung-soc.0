@@ -1,137 +1,81 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v5 36/46] input: misc: max77693: switch to
- the atomic API
-Date: Thu, 31 Mar 2016 20:57:18 +0200
-Message-ID: <20160331205718.057a6f38@bbrezillon>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-37-git-send-email-boris.brezillon@free-electrons.com>
-	<20160331174801.GC39098@dtor-ws>
-Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCHv14 05/18] HID: add HDMI CEC specific keycodes
+Date: Thu, 31 Mar 2016 13:00:24 -0700
+Message-ID: <20160331200024.GL39098@dtor-ws>
+References: <1458911416-47981-1-git-send-email-hverkuil@xs4all.nl>
+ <1458911416-47981-6-git-send-email-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBEPG6W3QKGQECBDIUNY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20160331174801.GC39098@dtor-ws>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones@lin>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1458911416-47981-6-git-send-email-hverkuil@xs4all.nl>
+Sender: linux-input-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 31 Mar 2016 10:48:01 -0700
-Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Fri, Mar 25, 2016 at 02:10:03PM +0100, Hans Verkuil wrote:
+> From: Kamil Debski <kamil@wypas.org>
+> 
+> Add HDMI CEC specific keycodes to the keycodes definition.
+> 
+> Signed-off-by: Kamil Debski <kamil@wypas.org>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-> Hi Boris,
-> 
-> On Wed, Mar 30, 2016 at 10:03:59PM +0200, Boris Brezillon wrote:
-> > pwm_config/enable/disable() have been deprecated and should be replaced
-> > by pwm_apply_state().
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > ---
-> >  drivers/input/misc/max77693-haptic.c | 23 +++++++++++++++++------
-> >  1 file changed, 17 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
-> > index cf6aac0..aef7dc4 100644
-> > --- a/drivers/input/misc/max77693-haptic.c
-> > +++ b/drivers/input/misc/max77693-haptic.c
-> > @@ -70,13 +70,16 @@ struct max77693_haptic {
-> >  
-> >  static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
-> >  {
-> > +	struct pwm_state pstate;
-> >  	struct pwm_args pargs = { };
-> > -	int delta;
-> >  	int error;
-> >  
-> >  	pwm_get_args(haptic->pwm_dev, &pargs);
-> > -	delta = (pargs.period + haptic->pwm_duty) / 2;
-> > -	error = pwm_config(haptic->pwm_dev, delta, pargs.period);
-> > +	pwm_get_state(haptic->pwm_dev, &pstate);
-> > +
-> > +	pstate.period = pargs.period;
-> > +	pstate.duty_cycle = (pargs.period + haptic->pwm_duty) / 2;
-> > +	error = pwm_apply_state(haptic->pwm_dev, &pstate);
-> 
-> This does not make sense with regard to the atomic API. If you look in
-> max77693_haptic_play_work(), right after calling
-> max77693_haptic_set_duty_cycle() we either try to enable or disable the
-> pwm. When switching to this new API we should combine both actions.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-True. I'll address that, unless Thierry is fine keeping the non-atomic
-API, in which case I'll just drop patches 32 to 46.
-
+> ---
+>  include/uapi/linux/input-event-codes.h | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 > 
-> >  	if (error) {
-> >  		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
-> >  		return error;
-> > @@ -161,12 +164,16 @@ static int max77693_haptic_lowsys(struct max77693_haptic *haptic, bool enable)
-> >  
-> >  static void max77693_haptic_enable(struct max77693_haptic *haptic)
-> >  {
-> > +	struct pwm_state pstate;
-> >  	int error;
-> >  
-> >  	if (haptic->enabled)
-> >  		return;
-> >  
-> > -	error = pwm_enable(haptic->pwm_dev);
-> > +	pwm_get_state(haptic->pwm_dev, &pstate);
-> > +	pstate.enabled = true;
-> > +
-> > +	error = pwm_apply_state(haptic->pwm_dev, &pstate);
-> 
-> As I mentioned I'd rather we did not deprecate pwm_enable() and
-> pwm_disable() (and maybe others), as it forces us to add unnecessary
-> boilerplate code to the drivers.
+> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> index 87cf351..02b7b3a 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -611,6 +611,36 @@
+>  #define KEY_KBDINPUTASSIST_ACCEPT		0x264
+>  #define KEY_KBDINPUTASSIST_CANCEL		0x265
 >  
-> >  	if (error) {
-> >  		dev_err(haptic->dev,
-> >  			"failed to enable haptic pwm device: %d\n", error);
-> > @@ -188,11 +195,13 @@ static void max77693_haptic_enable(struct max77693_haptic *haptic)
-> >  err_enable_config:
-> >  	max77693_haptic_lowsys(haptic, false);
-> >  err_enable_lowsys:
-> > -	pwm_disable(haptic->pwm_dev);
-> > +	pstate.enabled = false;
-> > +	pwm_apply_state(haptic->pwm_dev, &pstate);
-> >  }
-> >  
-> >  static void max77693_haptic_disable(struct max77693_haptic *haptic)
-> >  {
-> > +	struct pwm_state pstate;
-> >  	int error;
-> >  
-> >  	if (!haptic->enabled)
-> > @@ -206,7 +215,9 @@ static void max77693_haptic_disable(struct max77693_haptic *haptic)
-> >  	if (error)
-> >  		goto err_disable_lowsys;
-> >  
-> > -	pwm_disable(haptic->pwm_dev);
-> > +	pwm_get_state(haptic->pwm_dev, &pstate);
-> > +	pstate.enabled = false;
-> > +	pwm_apply_state(haptic->pwm_dev, &pstate);
+> +/* Diagonal movement keys */
+> +#define KEY_RIGHT_UP			0x266
+> +#define KEY_RIGHT_DOWN			0x267
+> +#define KEY_LEFT_UP			0x268
+> +#define KEY_LEFT_DOWN			0x269
+> +
+> +#define KEY_ROOT_MENU			0x26a /* Show Device's Root Menu */
+> +#define KEY_MEDIA_TOP_MENU		0x26b /* Show Top Menu of the Media (e.g. DVD) */
+> +#define KEY_NUMERIC_11			0x26c
+> +#define KEY_NUMERIC_12			0x26d
+> +/*
+> + * Toggle Audio Description: refers to an audio service that helps blind and
+> + * visually impaired consumers understand the action in a program. Note: in
+> + * some countries this is referred to as "Video Description".
+> + */
+> +#define KEY_AUDIO_DESC			0x26e
+> +#define KEY_3D_MODE			0x26f
+> +#define KEY_NEXT_FAVORITE		0x270
+> +#define KEY_STOP_RECORD			0x271
+> +#define KEY_PAUSE_RECORD		0x272
+> +#define KEY_VOD				0x273 /* Video on Demand */
+> +#define KEY_UNMUTE			0x274
+> +#define KEY_FASTREVERSE			0x275
+> +#define KEY_SLOWREVERSE			0x276
+> +/*
+> + * Control a data application associated with the currently viewed channel,
+> + * e.g. teletext or data broadcast application (MHEG, MHP, HbbTV, etc.)
+> + */
+> +#define KEY_DATA			0x275
+> +
+>  #define BTN_TRIGGER_HAPPY		0x2c0
+>  #define BTN_TRIGGER_HAPPY1		0x2c0
+>  #define BTN_TRIGGER_HAPPY2		0x2c1
+> -- 
+> 2.7.0
 > 
-> Same here.
-> 
-> >  	haptic->enabled = false;
-> >  
-> >  	return;
-> > -- 
-> > 2.5.0
-> > 
-> 
-> Thanks.
-> 
-
-
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Dmitry
