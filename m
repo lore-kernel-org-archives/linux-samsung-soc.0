@@ -1,76 +1,447 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 2/9] dt-bindings: Add the clock id of UART2 and MMC2 for
- Exynos3250
-Date: Thu, 31 Mar 2016 11:47:58 +0900
-Message-ID: <1459392485-11327-3-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v4 8/9] ARM: dts: Add exynos3250-artik5 dtsi file for ARTIK5
+ module
+Date: Thu, 31 Mar 2016 11:48:04 +0900
+Message-ID: <1459392485-11327-9-git-send-email-cw00.choi@samsung.com>
 References: <1459392485-11327-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1459392485-11327-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:43312 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755539AbcCaCsT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Mar 2016 22:48:19 -0400
+In-reply-to: <1459392485-11327-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-This patch adds the new clock id for both UART2 and MM2 device
-for Exynos3250 SoC.
+This patch adds the support for Device Tree source for Samsung ARTIK5 module[1]
+based on Exynos3250 SoC. The ARTIK5 module includes the following devices:
+- Application Processor (Samsung Exynos3250)
+- WiFi/BT Combo chip (Broadcom4354)
+- PMIC (Samsung S2MPS14)
+- eMMC (4GB)
+- DRAM LPDDR3 (512MB)
+- Connectors pin (60 Pins x 3 set)
 
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Also, this patch adds the ARTIK5 evaluation board[2] dts file which includes
+the ARTIK5 module[1] and have the devices such as sound codec, sd card port,
+ethernet port, uart port and so on.
+
+[1] https://www.artik.io/hardware/artik-5
+[2] http://www.digikey.com/product-search/en?FV=ffecca14
+
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- include/dt-bindings/clock/exynos3250.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ .../bindings/arm/samsung/samsung-boards.txt        |   2 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  26 ++
+ arch/arm/boot/dts/exynos3250-artik5.dtsi           | 334 +++++++++++++++++++++
+ 4 files changed, 363 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos3250-artik5-eval.dts
+ create mode 100644 arch/arm/boot/dts/exynos3250-artik5.dtsi
 
-diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
-index 63d01c15d2b3..c796ff02ceeb 100644
---- a/include/dt-bindings/clock/exynos3250.h
-+++ b/include/dt-bindings/clock/exynos3250.h
-@@ -79,6 +79,8 @@
- #define CLK_MOUT_CORE			58
- #define CLK_MOUT_APLL			59
- #define CLK_MOUT_ACLK_266_SUB		60
-+#define CLK_MOUT_UART2			61
-+#define CLK_MOUT_MMC2			62
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+index 12129c011c8f..f5deace2b380 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+@@ -2,6 +2,8 @@
  
- /* Dividers */
- #define CLK_DIV_GPL			64
-@@ -127,6 +129,9 @@
- #define CLK_DIV_CORE			107
- #define CLK_DIV_HPM			108
- #define CLK_DIV_COPY			109
-+#define CLK_DIV_UART2			110
-+#define CLK_DIV_MMC2_PRE		111
-+#define CLK_DIV_MMC2			112
- 
- /* Gates */
- #define CLK_ASYNC_G3D			128
-@@ -223,6 +228,8 @@
- #define CLK_BLOCK_MFC			219
- #define CLK_BLOCK_CAM			220
- #define CLK_SMIES			221
-+#define CLK_UART2			222
-+#define CLK_SDMMC2			223
- 
- /* Special clocks */
- #define CLK_SCLK_JPEG			224
-@@ -249,12 +256,14 @@
- #define CLK_SCLK_SPI0			245
- #define CLK_SCLK_UART1			246
- #define CLK_SCLK_UART0			247
-+#define CLK_SCLK_UART2			248
-+#define CLK_SCLK_MMC2			249
- 
- /*
-  * Total number of clocks of main CMU.
-  * NOTE: Must be equal to last clock ID increased by one.
-  */
--#define CLK_NR_CLKS			248
-+#define CLK_NR_CLKS			250
- 
- /*
-  * CMU DMC
+ Required root node properties:
+     - compatible = should be one or more of the following.
++	- "samsung,artik5"	- for Exynos3250-based Samsung ARTIK5 module.
++	- "samsung,artik5-eval" - for Exynos3250-based Samsung ARTIK5 eval board.
+ 	- "samsung,monk"	- for Exynos3250-based Samsung Simband board.
+ 	- "samsung,rinato"	- for Exynos3250-based Samsung Gear2 board.
+ 	- "samsung,smdkv310"	- for Exynos4210-based Samsung SMDKV310 eval board.
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 95c1923ce6fa..bf49774d4908 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -112,6 +112,7 @@ dtb-$(CONFIG_ARCH_DIGICOLOR) += \
+ dtb-$(CONFIG_ARCH_EFM32) += \
+ 	efm32gg-dk3750.dtb
+ dtb-$(CONFIG_ARCH_EXYNOS3) += \
++	exynos3250-artik5-eval.dtb \
+ 	exynos3250-monk.dtb \
+ 	exynos3250-rinato.dtb
+ dtb-$(CONFIG_ARCH_EXYNOS4) += \
+diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+new file mode 100644
+index 000000000000..b476154590a5
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+@@ -0,0 +1,26 @@
++/*
++ * Samsung's Exynos3250 based ARTIK5 evaluation board device tree source
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Device tree source file for Samsung's ARTIK5 evaluation board
++ * which is based on Samsung Exynos3250 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++/dts-v1/;
++#include "exynos3250-artik5.dtsi"
++
++/ {
++	model = "Samsung ARTIK5 evaluation board";
++	compatible = "samsung,artik5-eval", "samsung,artik5",
++			"samsung,exynos3250", "samsung,exynos3";
++};
++
++&serial_2 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+new file mode 100644
+index 000000000000..130e946f1414
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+@@ -0,0 +1,334 @@
++/*
++ * Samsung's Exynos3250 based ARTIK5 module device tree source
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Device tree source file for Samsung's ARTIK5 module which is based on
++ * Samsung Exynos3250 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "exynos3250.dtsi"
++#include <dt-bindings/clock/samsung,s2mps11.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++/ {
++	compatible = "samsung,artik5", "samsung,exynos3250", "samsung,exynos3";
++
++	chosen {
++		stdout-path = &serial_2;
++	};
++
++	memory {
++		reg = <0x40000000 0x1ff00000>;
++	};
++
++	firmware@0205f000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x0205f000 0x1000>;
++	};
++
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			cooling-maps {
++				map0 {
++					/* Corresponds to 500MHz */
++					cooling-device = <&cpu0 5 5>;
++				};
++				map1 {
++					/* Corresponds to 200MHz */
++					cooling-device = <&cpu0 8 8>;
++				};
++			};
++		};
++	};
++};
++
++&adc {
++	vdd-supply = <&ldo7_reg>;
++	assigned-clocks = <&cmu CLK_SCLK_TSADC>;
++	assigned-clock-rates = <6000000>;
++};
++
++&cpu0 {
++	cpu0-supply = <&buck2_reg>;
++};
++
++&i2c_0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-slave-addr = <0x10>;
++	samsung,i2c-max-bus-freq = <100000>;
++	status = "okay";
++
++	s2mps14_pmic@66 {
++		compatible = "samsung,s2mps14-pmic";
++		interrupt-parent = <&gpx3>;
++		interrupts = <5 IRQ_TYPE_NONE>;
++		reg = <0x66>;
++
++		s2mps14_osc: clocks {
++			compatible = "samsung,s2mps14-clk";
++			#clock-cells = <1>;
++			clock-output-names = "s2mps14_ap", "unused",
++				"s2mps14_bt";
++		};
++
++		regulators {
++			ldo1_reg: LDO1 {
++				/* VDD_ALIVE15x */
++				regulator-name = "VLDO1_1.0V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			ldo2_reg: LDO2 {
++				/* VDDQM176 ~ VDDQM185 */
++				regulator-name = "VLDO2_1.2V";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++			};
++
++			ldo3_reg: LDO3 {
++				/*
++				 * VDD1_E106 ~ VDD1_E111
++				 * DVDD_RTC_AP, DVDD_MMC2_AP
++				 */
++				regulator-name = "VLDO3_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			ldo4_reg: LDO4 {
++				/*  AVDD_PLL1120 ~ AVDD_PLL11201 */
++				regulator-name = "VLDO4_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			ldo5_reg: LDO5 {
++				/* VDDI_PLL_ISO141 ~ VDDI_PLL_ISO142 */
++				regulator-name = "VLDO5_1.0V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			ldo6_reg: LDO6 {
++				/* VDD_USB, VDD10_HSIC */
++				regulator-name = "VLDO6_1.0V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			ldo7_reg: LDO7 {
++				/*
++				 * VDD18P, AVDD18_TS, AVDD18_HSIC, AVDD_PLL2,
++				 * AVDD_ADC, AVDD_ABB_0, M4S_VDD18
++				 */
++				regulator-name = "VLDO7_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			ldo8_reg: LDO8 {
++				/* AVDD33_UOTG */
++				regulator-name = "VLDO8_3.0V";
++				regulator-min-microvolt = <3000000>;
++				regulator-max-microvolt = <3000000>;
++				regulator-always-on;
++			};
++
++			ldo9_reg: LDO9 {
++				/* VDDQ_E86 ~ VDDQ_E105*/
++				regulator-name = "VLDO9_1.2V";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++			};
++
++			ldo10_reg: LDO10 {
++				regulator-name = "VLDO10_1.0V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++			};
++
++			ldo11_reg: LDO11 {
++				/* VDD74 ~ VDD75 */
++				regulator-name = "VLDO11_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				samsung,ext-control-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
++			};
++
++			ldo12_reg: LDO12 {
++				/* VDD72 ~ VDD73 */
++				regulator-name = "VLDO12_2.8V";
++				regulator-min-microvolt = <2800000>;
++				regulator-max-microvolt = <2800000>;
++				samsung,ext-control-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
++			};
++
++			ldo13_reg: LDO13 {
++				regulator-name = "VLDO13_2.8V";
++				regulator-min-microvolt = <2800000>;
++				regulator-max-microvolt = <2800000>;
++			};
++
++			ldo14_reg: LDO14 {
++				regulator-name = "VLDO14_2.7V";
++				regulator-min-microvolt = <2700000>;
++				regulator-max-microvolt = <2700000>;
++			};
++
++			ldo15_reg: LDO15 {
++				regulator-name = "VLDO_3.3V";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++			};
++
++			ldo16_reg: LDO16 {
++				regulator-name = "VLDO16_3.3V";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++			};
++
++			ldo17_reg: LDO17 {
++				regulator-name = "VLDO17_3.0V";
++				regulator-min-microvolt = <3000000>;
++				regulator-max-microvolt = <3000000>;
++			};
++
++			ldo18_reg: LDO18 {
++				/* DVDD_MMC2_AP */
++				regulator-name = "VLDO18_2.8V";
++				regulator-min-microvolt = <2800000>;
++				regulator-max-microvolt = <2800000>;
++			};
++
++			ldo19_reg: LDO19 {
++				regulator-name = "VLDO19_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo20_reg: LDO20 {
++				regulator-name = "VLDO20_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo21_reg: LDO21 {
++				regulator-name = "VLDO21_1.25V";
++				regulator-min-microvolt = <1250000>;
++				regulator-max-microvolt = <1250000>;
++			};
++
++			ldo22_reg: LDO22 {
++				regulator-name = "VLDO22_1.2V";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++			};
++
++			ldo23_reg: LDO23 {
++				/* Xi2c3_SDA/SCL, Xi2c7_SDA/SCL, WLAN_SDIO */
++				regulator-name = "VLDO23_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo24_reg: LDO24 {
++				regulator-name = "VLDO24_3.0V";
++				regulator-min-microvolt = <3000000>;
++				regulator-max-microvolt = <3000000>;
++			};
++
++			ldo25_reg: LDO25 {
++				regulator-name = "VLDO25_3.0V";
++				regulator-min-microvolt = <3000000>;
++				regulator-max-microvolt = <3000000>;
++			};
++
++			buck1_reg: BUCK1 {
++				/* VDD_MIF */
++				regulator-name = "VBUCK1_1.0V";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			buck2_reg: BUCK2 {
++				/* VDD_CPU */
++				regulator-name = "VBUCK2_1.2V";
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++			};
++
++			buck3_reg: BUCK3 {
++				/* VDD_G3D */
++				regulator-name = "VBUCK3_1.0V";
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			buck4_reg: BUCK4 {
++				regulator-name = "VBUCK4_1.95V";
++				regulator-min-microvolt = <1950000>;
++				regulator-max-microvolt = <1950000>;
++				regulator-always-on;
++			};
++
++			buck5_reg: BUCK5 {
++				regulator-name = "VBUCK5_1.35V";
++				regulator-min-microvolt = <1350000>;
++				regulator-max-microvolt = <1350000>;
++				regulator-always-on;
++			};
++		};
++	};
++};
++
++&mshc_0 {
++	num-slots = <1>;
++	non-removable;
++	cap-mmc-highspeed;
++	card-detect-delay = <200>;
++	vmmc-supply = <&ldo12_reg>;
++	clock-frequency = <100000000>;
++	clock-freq-min-max = <400000 100000000>;
++	samsung,dw-mshc-ciu-div = <1>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++	bus-width = <8>;
++	status = "okay";
++};
++
++&rtc {
++	clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
++	clock-names = "rtc", "rtc_src";
++	status = "okay";
++};
++
++&tmu {
++	status = "okay";
++};
++
++&xusbxti {
++	clock-frequency = <24000000>;
++};
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
