@@ -1,81 +1,64 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 5/9] ARM: dts: Add UART2 dt node for Exynos3250 SoC
-Date: Thu, 31 Mar 2016 11:48:01 +0900
-Message-ID: <1459392485-11327-6-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v4 3/9] clk: samsung: exynos3250: Add UART2 clock
+Date: Thu, 31 Mar 2016 11:47:59 +0900
+Message-ID: <1459392485-11327-4-git-send-email-cw00.choi@samsung.com>
 References: <1459392485-11327-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1459392485-11327-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1459392485-11327-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-This patch add the uart2 devicetree node for Exynos3250 SoC.
+This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
 
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  7 +++++++
- arch/arm/boot/dts/exynos3250.dtsi         | 12 ++++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/clk/samsung/clk-exynos3250.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index ecf79386e891..54c587f27265 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -158,6 +158,13 @@
- 		samsung,pin-drv = <0>;
- 	};
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index fdd41b17a24f..bc60e399d1bc 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -306,6 +306,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+ 	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
  
-+	uart2_data: uart2-data {
-+		samsung,pins = "gpa1-0", "gpa1-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
+ 	/* SRC_PERIL0 */
++	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
+ 	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
+ 	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
+ 
+@@ -390,6 +391,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
+ 	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+ 
+ 	/* DIV_PERIL0 */
++	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
+ 	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+ 	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
+ 
+@@ -552,6 +554,9 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
+ 		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
 +
- 	i2c3_bus: i2c3-bus {
- 		samsung,pins = "gpa1-2", "gpa1-3";
- 		samsung,pin-function = <3>;
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 137f9015d4e8..030ce800f748 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -43,6 +43,7 @@
- 		i2c7 = &i2c_7;
- 		serial0 = &serial_0;
- 		serial1 = &serial_1;
-+		serial2 = &serial_2;
- 	};
- 
- 	cpus {
-@@ -452,6 +453,17 @@
- 			status = "disabled";
- 		};
- 
-+		serial_2: serial@13820000 {
-+			compatible = "samsung,exynos4210-uart";
-+			reg = <0x13820000 0x100>;
-+			interrupts = <0 111 0>;
-+			clocks = <&cmu CLK_UART2>, <&cmu CLK_SCLK_UART2>;
-+			clock-names = "uart", "clk_uart_baud0";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_data>;
-+			status = "disabled";
-+		};
-+
- 		i2c_0: i2c@13860000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
++	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
++		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
+ 		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+@@ -649,6 +654,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
+ 	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
+ 	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
++	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
+ 	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
+ 	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
+ };
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
