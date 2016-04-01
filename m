@@ -1,82 +1,49 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: [PATCH] ARM: dts: exynos-5422-odroid: Add eMMC and SD regulator
- supplies
-Date: Fri, 1 Apr 2016 15:42:28 +0200
-Message-ID: <56FE7AC4.4090508@fivetechno.de>
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: Re: [PATCH] ARM: dts: s3c: Fix DTC unit name warnings in S3C2416 and S3C6410
+Date: Fri, 1 Apr 2016 16:22:59 +0200
+Message-ID: <CAGhQ9VwJVz0riwx=DWY=giaL=Jo6R=HYZg4hm2FQ6X2_g5hi5Q@mail.gmail.com>
+References: <1459494710-16269-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:36988 "EHLO
-	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751442AbcDANmc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Apr 2016 09:42:32 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459494710-16269-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Add vmmc and vqmmc supplies from MF circuit sheets for eMMC and SD on
-odroid XU3 and XU4 to avoid warnings in dmesg output.
+On 1 April 2016 at 09:11, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> Fix following DTC warnings in S3C2416 and S3C6410 boards:
+>
+> Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/s3c2416-smdk2416.dts | 2 +-
+>  arch/arm/boot/dts/s3c6410-mini6410.dts | 2 +-
+>  arch/arm/boot/dts/s3c6410-smdk6410.dts | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/s3c2416-smdk2416.dts b/arch/arm/boot/dts/s3c2416-smdk2416.dts
+> index f257926c13b7..15f3d1c1bb80 100644
+> --- a/arch/arm/boot/dts/s3c2416-smdk2416.dts
+> +++ b/arch/arm/boot/dts/s3c2416-smdk2416.dts
+> @@ -15,7 +15,7 @@
+>         model = "SMDK2416";
+>         compatible = "samsung,s3c2416";
+>
+> -       memory {
+> +       memory@30000000 {
+>                 reg =  <0x30000000 0x4000000>;
+>         };
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+This change will cause duplicated memory node entries in the DT as
+noted by Vladimir Zapolskiy [1]. Same goes for all the other patch
+where you make this change.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 1bd507b..eec425a 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -121,7 +121,7 @@
-                        };
- 
-                        ldo3_reg: LDO3 {
--                               regulator-name = "vdd_ldo3";
-+                               regulator-name = "vddq_mmc0";
-                                regulator-min-microvolt = <1800000>;
-                                regulator-max-microvolt = <1800000>;
-                                regulator-always-on;
-@@ -184,7 +184,7 @@
-                        };
- 
-                        ldo13_reg: LDO13 {
--                               regulator-name = "vdd_ldo13";
-+                               regulator-name = "vddq_mmc2";
-                                regulator-min-microvolt = <2800000>;
-                                regulator-max-microvolt = <2800000>;
-                                regulator-always-on;
-@@ -211,6 +211,13 @@
-                                regulator-always-on;
-                        };
- 
-+                       ldo18_reg: LDO18 {
-+                               regulator-name = "vdd_emmc_1V8";
-+                               regulator-min-microvolt = <1800000>;
-+                               regulator-max-microvolt = <1800000>;
-+                               regulator-always-on;
-+                       };
-+
-                        ldo19_reg: LDO19 {
-                                regulator-name = "vdd_sd";
-                                regulator-min-microvolt = <2800000>;
-@@ -347,6 +354,8 @@
-        cap-mmc-highspeed;
-        mmc-hs200-1_8v;
-        mmc-hs400-1_8v;
-+       vmmc-supply = <&ldo18_reg>;
-+       vqmmc-supply = <&ldo3_reg>;
- };
- 
- &mmc_2 {
-@@ -359,6 +368,8 @@
-        pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-        bus-width = <4>;
-        cap-sd-highspeed;
-+       vmmc-supply = <&ldo19_reg>;
-+       vqmmc-supply = <&ldo13_reg>;
- };
- 
- &pinctrl_0 {
--- 
-2.1.4
+$ scripts/dtc/dtc -I dtb -O dts arch/arm/boot/dts/s3c2416-smdk2416.dtb
+| grep -A2 memory
+        memory {
+                device_type = "memory";
+                reg = <0x0 0x0>;
+        };
