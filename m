@@ -1,81 +1,85 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCHv14 05/18] HID: add HDMI CEC specific keycodes
-Date: Thu, 31 Mar 2016 13:00:24 -0700
-Message-ID: <20160331200024.GL39098@dtor-ws>
-References: <1458911416-47981-1-git-send-email-hverkuil@xs4all.nl>
- <1458911416-47981-6-git-send-email-hverkuil@xs4all.nl>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 3/8] clk: samsung: exynos3250: Add MMC2 clock
+Date: Fri, 01 Apr 2016 09:15:20 +0900
+Message-ID: <56FDBD98.30406@samsung.com>
+References: <1458027490-13787-1-git-send-email-cw00.choi@samsung.com>
+ <1458027490-13787-4-git-send-email-cw00.choi@samsung.com>
+ <56F47ABC.7060006@samsung.com> <56F509E6.7080807@samsung.com>
+ <56F87E83.7060100@samsung.com> <56F9DEE6.8020203@samsung.com>
+ <56FD045B.5020805@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1458911416-47981-6-git-send-email-hverkuil@xs4all.nl>
-Sender: linux-input-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42662 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752160AbcDAAPf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Mar 2016 20:15:35 -0400
+In-reply-to: <56FD045B.5020805@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, kgene@kernel.org, tomasz.figa@gmail.com, jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On Fri, Mar 25, 2016 at 02:10:03PM +0100, Hans Verkuil wrote:
-> From: Kamil Debski <kamil@wypas.org>
+On 31.03.2016 20:04, Sylwester Nawrocki wrote:
+> On 03/29/2016 03:48 AM, Krzysztof Kozlowski wrote:
+>> On 28.03.2016 09:44, Chanwoo Choi wrote:
+>>> You mean that separate patch1 include only the new clock id 
+>>> about both UART2 and MMC2
+>>> and the patch2/patch3 just use the new clock id as following:
+>>>
+>>> patch1 dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
+>>> patch2 clk: samsung: exynos3250: Add UART2 clock
+>>> patch3 clk: samsung: exynos3250: Add MMC2 clock
+>>>
+>>> As far as I understand it is that right?
+>>> If it is ok, I'll modify it on v4 patchset as you comment.
+>>
+>> Hi Sylwester and Tomasz,
+>>
+>> Can you provide me a tag with these exynos3250 clock patches (after
+>> posting v4)? Of course you can also ack/review them and then I'll 
+>> handle it.
 > 
-> Add HDMI CEC specific keycodes to the keycodes definition.
+> Here are tags with only the first (clock id definitions) and the all 
+> three clk patches respectively:
 > 
-> Signed-off-by: Kamil Debski <kamil@wypas.org>
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---------------------------------------8<--------------------------------
+> The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+> 
+>   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.7-exynos3250-dt
+> 
+> for you to fetch changes up to fd00bbcddb59c4866e7c985e30f663b62cfc2588:
+> 
+>   dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250 (2016-03-31 12:25:44 +0200)
+> 
+> ----------------------------------------------------------------
+> Addition of the UART2 and MMC3 clock indices definition
+> to the exynos3250 clock subsystem dt binding header file.
+> 
+> ----------------------------------------------------------------
+> Chanwoo Choi (1):
+>       dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
+> 
+>  include/dt-bindings/clock/exynos3250.h | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> --------------------------------------->8--------------------------------
+> 
+> 
+> ---------------------------------------8<--------------------------------
+> The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+> 
+>   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.7-exynos3250
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Thanks pulled.
 
-> ---
->  include/uapi/linux/input-event-codes.h | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-> index 87cf351..02b7b3a 100644
-> --- a/include/uapi/linux/input-event-codes.h
-> +++ b/include/uapi/linux/input-event-codes.h
-> @@ -611,6 +611,36 @@
->  #define KEY_KBDINPUTASSIST_ACCEPT		0x264
->  #define KEY_KBDINPUTASSIST_CANCEL		0x265
->  
-> +/* Diagonal movement keys */
-> +#define KEY_RIGHT_UP			0x266
-> +#define KEY_RIGHT_DOWN			0x267
-> +#define KEY_LEFT_UP			0x268
-> +#define KEY_LEFT_DOWN			0x269
-> +
-> +#define KEY_ROOT_MENU			0x26a /* Show Device's Root Menu */
-> +#define KEY_MEDIA_TOP_MENU		0x26b /* Show Top Menu of the Media (e.g. DVD) */
-> +#define KEY_NUMERIC_11			0x26c
-> +#define KEY_NUMERIC_12			0x26d
-> +/*
-> + * Toggle Audio Description: refers to an audio service that helps blind and
-> + * visually impaired consumers understand the action in a program. Note: in
-> + * some countries this is referred to as "Video Description".
-> + */
-> +#define KEY_AUDIO_DESC			0x26e
-> +#define KEY_3D_MODE			0x26f
-> +#define KEY_NEXT_FAVORITE		0x270
-> +#define KEY_STOP_RECORD			0x271
-> +#define KEY_PAUSE_RECORD		0x272
-> +#define KEY_VOD				0x273 /* Video on Demand */
-> +#define KEY_UNMUTE			0x274
-> +#define KEY_FASTREVERSE			0x275
-> +#define KEY_SLOWREVERSE			0x276
-> +/*
-> + * Control a data application associated with the currently viewed channel,
-> + * e.g. teletext or data broadcast application (MHEG, MHP, HbbTV, etc.)
-> + */
-> +#define KEY_DATA			0x275
-> +
->  #define BTN_TRIGGER_HAPPY		0x2c0
->  #define BTN_TRIGGER_HAPPY1		0x2c0
->  #define BTN_TRIGGER_HAPPY2		0x2c1
-> -- 
-> 2.7.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
-Dmitry
+Krzysztof
