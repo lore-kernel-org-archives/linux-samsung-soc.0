@@ -1,87 +1,65 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 0/9] ARM: dts: Add new Exynos3250-based ARTIK5 module
- dtsi file
-Date: Fri, 01 Apr 2016 09:29:57 +0900
-Message-ID: <56FDC105.7050709@samsung.com>
-References: <1459392485-11327-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:9868 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752422AbcDAAaI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Mar 2016 20:30:08 -0400
-In-reply-to: <1459392485-11327-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 01/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ cros-adc-thermistors
+Date: Fri, 01 Apr 2016 15:57:44 +0900
+Message-ID: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: jh80.chung@samsung.com, andi.shyti@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On 31.03.2016 11:47, Chanwoo Choi wrote:
-> This patchset add the support for Device Tree source for Samsung ARTIK5 module[1]
-> based on Exynos3250 SoC and development board[2]. The ARTIK5 module includes
-> the follwoing devices:
-> - Application Processor (Samsung Exynos3250)
-> - WiFi/BT Combo chip
-> - PMIC (Samsung S2MPS14)
-> - eMMC (4GB)
-> - DRAM LPDDR3 (512MB)
-> - Connectors pin (60 Pins x 3 set)
-> 
-> Also, this patchset add the ARTIK5 development board[2] dts file which includes
-> the ARTIK5 module[1] and have the devices such as sound codec, sd card port,
-> ethernet port, uart port and so on.
-> 
-> [1] https://www.artik.io/hardware/artik-5
-> [2] http://www.digikey.com/product-detail/en/SIP-KITNXB001/1510-1316-ND/5825102
-> 
-> Changes from v3:
-> (https://lkml.org/lkml/2016/3/15/71)
-> - Add acked-by tag from Rob Herring <robh@kernel.org> (patch8)
-> - Fix typo on patch descritpion (patch8)
-> - Make the separate patch for including the new clock id
->   for both MMC2 and UART2 device (patch2)
-> 
-> Changes from v2:
-> (https://lkml.org/lkml/2016/3/14/910)
-> - Add reviewed tag by Krzysztof Kozlowski for all patches
-> - Include the separate patch1[3] in patchset because patch5 depend on patch1[3]
->   [3] https://lkml.org/lkml/2016/3/14/245
-> - Fix the order issue in exynos3250-artik5.dtsi
-> - Use lowercase for hex address in exynos3250-artik5.dtsi
-> 
-> Changes from v1:
-> (https://lkml.org/lkml/2016/3/13/215)
-> - Change the board name from 'artik5-devel' to 'artik5-eval'
-> - Merge the patch6/7/8 to patch5
-> - Add the new board information to samsung-boards.txt[1]
->   [1] Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> - Fix minor coding style issue and remove 'wakeup' property
-> - Remove 'broken-cd' and 'desc-num' property from mshc_0 node
-> - Handle the LDO11/LDO12 by using XMMC0CDn pin (GPK0-2 gpio) for MMC device
->   and fix the ldo number of 'vmmc-supply' property.
-> - Add the 'vqmmc-supply' property for MSHC2
-> - Drop the patch10 for PPMU node
-> - Add the new patch to initialize the MMC2 gpio pin on monk board
-> 
-> Chanwoo Choi (6):
->   ARM: dts: Add initial pin configuration for exynos3250-rinato
->   dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
->   clk: samsung: exynos3250: Add MMC2 clock
->   ARM: dts: Add initial gpio setting of MMC2 device for exynos3250-monk
->   ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
->   ARM: dts: Add exynos3250-artik5 dtsi file for ARTIK5 module
-> 
-> Jaehoon Chung (1):
->   ARM: dts: Add MSHC2 dt node for SD card for exynos3250-artik5-eval board
-> 
-> Pankaj Dubey (2):
->   clk: samsung: exynos3250: Add UART2 clock
->   ARM: dts: Add UART2 dt node for Exynos3250 SoC
+Fix following DTC warnings in cros-adc-thermistors:
+Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@6 has a unit name, but no reg property
 
-Thanks, applied all non-clock patches after pulling tag from Sylwester.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/cros-adc-thermistors.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/cros-adc-thermistors.dtsi b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
+index acd4fe1833f2..87e676917603 100644
+--- a/arch/arm/boot/dts/cros-adc-thermistors.dtsi
++++ b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
+@@ -13,28 +13,28 @@
+ */
+ 
+ &adc {
+-	ncp15wb473@3 {
++	ncp15wb473_3 {
+ 		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;
+ 		pullup-ohm = <47000>;
+ 		pulldown-ohm = <0>;
+ 		io-channels = <&adc 3>;
+ 	};
+-	ncp15wb473@4 {
++	ncp15wb473_4 {
+ 		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;
+ 		pullup-ohm = <47000>;
+ 		pulldown-ohm = <0>;
+ 		io-channels = <&adc 4>;
+ 	};
+-	ncp15wb473@5 {
++	ncp15wb473_5 {
+ 		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;
+ 		pullup-ohm = <47000>;
+ 		pulldown-ohm = <0>;
+ 		io-channels = <&adc 5>;
+ 	};
+-	ncp15wb473@6 {
++	ncp15wb473_6 {
+ 		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;
+ 		pullup-ohm = <47000>;
+-- 
+2.5.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
