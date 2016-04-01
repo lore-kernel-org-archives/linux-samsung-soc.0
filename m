@@ -1,53 +1,34 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 04/11] ARM: dts: exynos: Fix DTC unit name warnings in
- Trats2 board
-Date: Fri, 01 Apr 2016 17:17:16 +0900
-Message-ID: <56FE2E8C.3060107@samsung.com>
-References: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
- <1459493874-2366-4-git-send-email-k.kozlowski@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH v5 35/46] hwmon: pwm-fan: switch to the atomic API
+Date: Fri, 01 Apr 2016 10:29:55 +0200
+Message-ID: <00e601d18bf0$acd69150$0683b3f0$@samsung.com>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-36-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1459493874-2366-4-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-reply-to: <1459368249-13241-36-git-send-email-boris.brezillon@free-electrons.com>
+Content-language: pl
+Sender: linux-pwm-owner@vger.kernel.org
+To: 'Boris Brezillon' <boris.brezillon@free-electrons.com>, 'Thierry Reding' <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: 'Mike Turquette' <mturquette@baylibre.com>, 'Stephen Boyd' <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, 'Mark Brown' <broonie@kernel.org>, 'Liam Girdwood' <lgirdwood@gmail.com>, lm-sensors@lm-sensors.org, 'Jean Delvare' <jdelvare@suse.com>, 'Guenter Roeck' <linux@roeck-us.net>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 'Bryan Wu' <cooloney@gmail.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Jacek Anaszewski' <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, 'Maxime Ripard' <maxime.ripard@free-electrons.com>, 'Chen-Yu Tsai' <wens@csie.org>, linux-sunxi@googlegroups.com, 'Joachim Eastwood' <manabian@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Heiko Stuebner' <heiko@sntech.de>, linux-rockchip@lists.infradead.org, 'Jingoo Han' <jingoohan1@gmail.com>, 'Lee Jones' <lee.jones@linaro.org>, linux-fbdev@
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01.04.2016 15:57, Krzysztof Kozlowski wrote:
-> Fix following DTC warnings in Trats2 board:
+Hi Boris,
+
+From: Boris Brezillon [mailto:boris.brezillon@free-electrons.com]
+Sent: Wednesday, March 30, 2016 10:04 PM
+Subject: [PATCH v5 35/46] hwmon: pwm-fan: switch to the atomic API
 > 
-> Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-> Warning (unit_address_vs_reg): Node /i2c-gpio-1/max77693@66/regulators/ESAFEOUT1@1 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /i2c-gpio-1/max77693@66/regulators/ESAFEOUT2@2 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /i2c-gpio-1/max77693@66/regulators/CHARGER@0 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /thermistor-ap@0 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /thermistor-battery@1 has a unit name, but no reg property
+> pwm_config/enable/disable() have been deprecated and should be replaced
+> by pwm_apply_state().
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4412-trats2.dts | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index 2bf363c3bf62..523627003738 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -29,7 +29,7 @@
->  		i2c12 = &i2c_max77693_fuel;
->  	};
->  
-> -	memory {
-> +	mmemory@40000000 {
->  		reg =  <0x40000000 0x40000000>;
->  	};
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Nope, beside obvious typo here, this is bad. This causes creation of
-duplicated memory nodes, one coming from skeleton and one from here.
+Acked-by: Kamil Debski <k.debski@samsung.com>
 
-Rob,
-How the 'memory' node warning should be fixed?
-
-
-Best regards,
-Krzysztof
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
