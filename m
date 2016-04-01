@@ -1,42 +1,40 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH 07/11] ARM: dts: exynos: Fix DTC unit name warnings in
- Exynos542x
-Date: Fri, 1 Apr 2016 13:25:34 -0400
-Message-ID: <56FEAF0E.10900@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 08/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ Peach Pit
+Date: Fri, 1 Apr 2016 13:27:24 -0400
+Message-ID: <56FEAF7C.9000502@osg.samsung.com>
 References: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
- <1459493874-2366-7-git-send-email-k.kozlowski@samsung.com>
+ <1459493874-2366-8-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1459493874-2366-7-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:60144 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751279AbcDAR1h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Apr 2016 13:27:37 -0400
+In-Reply-To: <1459493874-2366-8-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
 Hello Krzysztof,
 
 On 04/01/2016 02:57 AM, Krzysztof Kozlowski wrote:
-> Fix following DTC warnings in all Exynos542x/5800 boards:
+> Fix following DTC warnings in Exynos5420 Peach Pit:
 > 
-> Warning (unit_address_vs_reg): Node /video-phy@10040728 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /video-phy@10040714 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /usb@12000000 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /usb@12000000/dwc3 has a reg or ranges property, but no unit name
-> Warning (unit_address_vs_reg): Node /usb@12400000 has a unit name, but no reg property
-> Warning (unit_address_vs_reg): Node /usb@12400000/dwc3 has a reg or ranges property, but no unit name
+> Warning (unit_address_vs_reg): Node /dp-controller@145B0000/ports/port@0 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /i2c@12CD0000/lvds-bridge@48/ports/port@0 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /i2c@12CD0000/lvds-bridge@48/ports/port@1 has a unit name, but no reg property
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
