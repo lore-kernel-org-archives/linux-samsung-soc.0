@@ -1,60 +1,83 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 2/2] arm: mach-spear: Enable PHY_PLAT to meet dependency
-Date: Fri, 1 Apr 2016 17:12:26 +0530
-Message-ID: <20160401114226.GD2987@vireshk-i7>
-References: <1459510156-9147-1-git-send-email-gautam.vivek@samsung.com>
- <1459510156-9147-2-git-send-email-gautam.vivek@samsung.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCH v5 1/5] drm: add generic zpos property
+Date: Fri, 1 Apr 2016 14:48:02 +0200
+Message-ID: <CA+M3ks4cg3T_q9Ug1_Uc4yrZKsK97rK+QA0FijDUnUKCMkpcAg@mail.gmail.com>
+References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
+	<1453905883-6807-2-git-send-email-m.szyprowski@samsung.com>
+	<20160229151219.GW15993@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:33433 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757203AbcDALma (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:33715 "EHLO
+	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752102AbcDAMsF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Apr 2016 07:42:30 -0400
-Received: by mail-pa0-f52.google.com with SMTP id zm5so88986402pac.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Apr 2016 04:42:29 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1459510156-9147-2-git-send-email-gautam.vivek@samsung.com>
+	Fri, 1 Apr 2016 08:48:05 -0400
+Received: by mail-lf0-f46.google.com with SMTP id p188so53769052lfd.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Apr 2016 05:48:03 -0700 (PDT)
+In-Reply-To: <20160229151219.GW15993@intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: vireshk@kernel.org, shiraz.linux.kernel@gmail.com, kishon@ti.com, heiko@sntech.de, maxime.ripard@free-electrons.com, wens@csie.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, spear-devel@list.st.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, cpgs@samsung.com
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>
 
-On 01-04-16, 16:59, Vivek Gautam wrote:
-> mach-spear enables PHY_ST_SPEAR1310_MIPHY and
-> PHY_ST_SPEAR1340_MIPHY, which now fall under PHY_PLAT
-> config. So select CONFIG_PHY_PLAT as well to resolve
-> dependencies.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-> ---
->  arch/arm/mach-spear/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/mach-spear/Kconfig b/arch/arm/mach-spear/Kconfig
-> index ea9ea95..c0a62fd 100644
-> --- a/arch/arm/mach-spear/Kconfig
-> +++ b/arch/arm/mach-spear/Kconfig
-> @@ -29,6 +29,7 @@ if ARCH_SPEAR13XX
->  config MACH_SPEAR1310
->  	bool "SPEAr1310 Machine support with Device Tree"
->  	select PINCTRL_SPEAR1310
-> +	select PHY_PLAT
->  	select PHY_ST_SPEAR1310_MIPHY
->  	help
->  	  Supports ST SPEAr1310 machine configured via the device-tree
-> @@ -36,6 +37,7 @@ config MACH_SPEAR1310
->  config MACH_SPEAR1340
->  	bool "SPEAr1340 Machine support with Device Tree"
->  	select PINCTRL_SPEAR1340
-> +	select PHY_PLAT
->  	select PHY_ST_SPEAR1340_MIPHY
->  	help
->  	  Supports ST SPEAr1340 machine configured via the device-tree
+This patch adds support for generic plane's zpos property property with
+well-defined semantics:
+- added zpos properties to plane and plane state structures
+- added helpers for normalizing zpos properties of given set of planes
+- well defined semantics: planes are sorted by zpos values and then plane
+  id value if zpos equals
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Normalized zpos values are calculated automatically when generic
+muttable zpos property has been initialized. Drivers can simply use
+plane_state->normalized_zpos in their atomic_check and/or plane_update
+callbacks without any additional calls to DRM core.
 
--- 
-viresh
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Compare to Marek's original patch zpos property is now specific to each
+plane and no more to the core.
+Normalize function take care of the range of per plane defined range
+before set normalized_zpos.
+
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+---
+ Documentation/DocBook/gpu.tmpl      |  10 ++
+ drivers/gpu/drm/Makefile            |   2 +-
+ drivers/gpu/drm/drm_atomic_helper.c |   6 +
+ drivers/gpu/drm/drm_blend.c         | 283 ++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_crtc_internal.h |   3 +
+ include/drm/drm_crtc.h              |  25 ++++
+ 6 files changed, 328 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/drm_blend.c
+
+diff --git a/Documentation/DocBook/gpu.tmpl b/Documentation/DocBook/gpu.tmpl
+index 1692c4d..b7a5161 100644
+--- a/Documentation/DocBook/gpu.tmpl
++++ b/Documentation/DocBook/gpu.tmpl
+@@ -2147,6 +2147,16 @@ void intel_crt_init(struct drm_device *dev)
+  the underlying hardware).</td>
+  </tr>
+  <tr>
++ <td valign="top" > "zpos" </td>
++ <td valign="top" >RANGE</td>
++ <td valign="top" >Min= driver dependent, Max= driver dependent</td>
++ <td valign="top" >Plane</td>
++ <td valign="top" >Plane's 'z' position during blending operation (0
+for background, highest for frontmost).
++ If two planes assigned to same CRTC have equal zpos values, the
+plane with higher plane
++ id is treated as closer to front. Can be IMMUTABLE if driver doesn't
+support changing
++ planes' order. Exact value range is driver dependent.</td>
++ </tr>
++ <tr>
+  <td rowspan="20" valign="top" >i915</td>
+  <td rowspan="2" valign="top" >Generic</td>
+  <td valign="top" >"Broadcast RGB"</td>
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 6eb94fc..18dc563 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for the drm device driver.  This driver provides support for the
