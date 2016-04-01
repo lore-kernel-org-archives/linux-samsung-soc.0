@@ -1,7 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 03/11] ARM: dts: exynos: Fix DTC unit name warnings in Exynos4
-Date: Fri, 01 Apr 2016 15:57:46 +0900
-Message-ID: <1459493874-2366-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 07/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ Exynos542x
+Date: Fri, 01 Apr 2016 15:57:50 +0900
+Message-ID: <1459493874-2366-7-git-send-email-k.kozlowski@samsung.com>
 References: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
@@ -9,27 +10,75 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix following DTC warnings in all Exynos4 boards:
+Fix following DTC warnings in all Exynos542x/5800 boards:
 
-Warning (unit_address_vs_reg): Node /soc/video-phy@10020710 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /video-phy@10040728 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /video-phy@10040714 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /usb@12000000 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /usb@12000000/dwc3 has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /usb@12400000 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /usb@12400000/dwc3 has a reg or ranges property, but no unit name
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5420.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 000d506c027b..021f52d43ff7 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -82,7 +82,7 @@
- 		reg = <0x12570000 0x14>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 7b99cb58d82d..ef9fa31e916a 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -551,13 +551,13 @@
+ 		clock-names = "timers";
  	};
  
--	mipi_phy: video-phy@10020710 {
-+	mipi_phy: video-phy {
+-	dp_phy: video-phy@10040728 {
++	dp_phy: dp-video-phy {
+ 		compatible = "samsung,exynos5420-dp-video-phy";
+ 		samsung,pmu-syscon = <&pmu_system_controller>;
+ 		#phy-cells = <0>;
+ 	};
+ 
+-	mipi_phy: video-phy@10040714 {
++	mipi_phy: mipi-video-phy {
  		compatible = "samsung,s5pv210-mipi-video-phy";
- 		#phy-cells = <1>;
  		syscon = <&pmu_system_controller>;
+ 		#phy-cells = <1>;
+@@ -913,7 +913,7 @@
+ 		clock-names = "secss";
+ 	};
+ 
+-	usbdrd3_0: usb@12000000 {
++	usbdrd3_0: usb3_0 {
+ 		compatible = "samsung,exynos5250-dwusb3";
+ 		clocks = <&clock CLK_USBD300>;
+ 		clock-names = "usbdrd30";
+@@ -921,7 +921,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		usbdrd_dwc3_0: dwc3 {
++		usbdrd_dwc3_0: dwc3@12000000 {
+ 			compatible = "snps,dwc3";
+ 			reg = <0x12000000 0x10000>;
+ 			interrupts = <0 72 0>;
+@@ -939,7 +939,7 @@
+ 		#phy-cells = <1>;
+ 	};
+ 
+-	usbdrd3_1: usb@12400000 {
++	usbdrd3_1: usb3_1 {
+ 		compatible = "samsung,exynos5250-dwusb3";
+ 		clocks = <&clock CLK_USBD301>;
+ 		clock-names = "usbdrd30";
+@@ -947,7 +947,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		usbdrd_dwc3_1: dwc3 {
++		usbdrd_dwc3_1: dwc3@12400000 {
+ 			compatible = "snps,dwc3";
+ 			reg = <0x12400000 0x10000>;
+ 			interrupts = <0 73 0>;
 -- 
 2.5.0
