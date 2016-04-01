@@ -1,99 +1,72 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [PATCH v5 45/50] mtd: nand: vf610: switch to mtd_ooblayout_ops
-Date: Fri, 01 Apr 2016 09:38:04 -0700
-Message-ID: <93c11b0392cdbcd64c3760e8fe7f6549@agner.ch>
-References: <1459354505-32551-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459354505-32551-46-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: stefan-XLVq0VzYD2Y@public.gmane.org
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH 06/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ Exynos5250
+Date: Fri, 1 Apr 2016 13:21:45 -0400
+Message-ID: <56FEAE29.6010405@osg.samsung.com>
+References: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
+ <1459493874-2366-6-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCEJHTXX7MFBBK6J7K3QKGQEHOLZVZQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <1459354505-32551-46-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Wenyou Yang <wenyou.yang-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Kyungmi
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1459493874-2366-6-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2016-03-30 09:15, Boris Brezillon wrote:
-> Implementing the mtd_ooblayout_ops interface is the new way of exposing
-> ECC/OOB layout to MTD users.
+Hello Krzysztof,
 
-I think I sent this already in the last revision:
+Patch looks good to me, I have just one question below:
 
-Tested-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Acked-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-
---
-Stefan
-
+On 04/01/2016 02:57 AM, Krzysztof Kozlowski wrote:
+> Fix following DTC warnings in all Exynos5250 boards:
 > 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Warning (unit_address_vs_reg): Node /dp-controller@145B0000/display-timings/timing@0 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /usb@12000000 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /usb@12000000/dwc3 has a reg or ranges property, but no unit name
+> Warning (unit_address_vs_reg): Node /hdmi has a reg or ranges property, but no unit name
+> Warning (unit_address_vs_reg): Node /mixer has a reg or ranges property, but no unit name
+> Warning (unit_address_vs_reg): Node /video-phy@10040720 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /fixed-regulator@0 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /fixed-regulator@1 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /fixed-regulator@2 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /i2c@12C70000/trackpad has a reg or ranges property, but no unit name
+> Warning (unit_address_vs_reg): Node /i2c@12CD0000/lvds-bridge@20/ports/port@0 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /i2c@12CD0000/lvds-bridge@20/ports/port@1 has a unit name, but no reg property
+> Warning (unit_address_vs_reg): Node /i2c-arbitrator/i2c@0/embedded-controller has a reg or ranges property, but no unit name
+> Warning (unit_address_vs_reg): Node /i2c-arbitrator/i2c@0/power-regulator has a reg or ranges property, but no unit name
+> Warning (unit_address_vs_reg): Node /i2c@12CA0000/embedded-controller has a reg or ranges property, but no unit name
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  drivers/mtd/nand/vf610_nfc.c | 34 ++++------------------------------
->  1 file changed, 4 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/vf610_nfc.c b/drivers/mtd/nand/vf610_nfc.c
-> index 293feb1..da34de1 100644
-> --- a/drivers/mtd/nand/vf610_nfc.c
-> +++ b/drivers/mtd/nand/vf610_nfc.c
-> @@ -175,34 +175,6 @@ static inline struct vf610_nfc *mtd_to_nfc(struct
-> mtd_info *mtd)
->  	return container_of(mtd_to_nand(mtd), struct vf610_nfc, chip);
->  }
+
+[snip]
+
 >  
-> -static struct nand_ecclayout vf610_nfc_ecc45 = {
-> -	.eccbytes = 45,
-> -	.eccpos = {19, 20, 21, 22, 23,
-> -		   24, 25, 26, 27, 28, 29, 30, 31,
-> -		   32, 33, 34, 35, 36, 37, 38, 39,
-> -		   40, 41, 42, 43, 44, 45, 46, 47,
-> -		   48, 49, 50, 51, 52, 53, 54, 55,
-> -		   56, 57, 58, 59, 60, 61, 62, 63},
-> -	.oobfree = {
-> -		{.offset = 2,
-> -		 .length = 17} }
-> -};
-> -
-> -static struct nand_ecclayout vf610_nfc_ecc60 = {
-> -	.eccbytes = 60,
-> -	.eccpos = { 4,  5,  6,  7,  8,  9, 10, 11,
-> -		   12, 13, 14, 15, 16, 17, 18, 19,
-> -		   20, 21, 22, 23, 24, 25, 26, 27,
-> -		   28, 29, 30, 31, 32, 33, 34, 35,
-> -		   36, 37, 38, 39, 40, 41, 42, 43,
-> -		   44, 45, 46, 47, 48, 49, 50, 51,
-> -		   52, 53, 54, 55, 56, 57, 58, 59,
-> -		   60, 61, 62, 63 },
-> -	.oobfree = {
-> -		{.offset = 2,
-> -		 .length = 2} }
-> -};
-> -
->  static inline u32 vf610_nfc_read(struct vf610_nfc *nfc, uint reg)
->  {
->  	return readl(nfc->regs + reg);
-> @@ -781,14 +753,16 @@ static int vf610_nfc_probe(struct platform_device *pdev)
->  		if (mtd->oobsize > 64)
->  			mtd->oobsize = 64;
->  
-> +		/*
-> +		 * mtd->ecclayout is not specified here because we're using the
-> +		 * default large page ECC layout defined in NAND core.
-> +		 */
->  		if (chip->ecc.strength == 32) {
->  			nfc->ecc_mode = ECC_60_BYTE;
->  			chip->ecc.bytes = 60;
-> -			chip->ecc.layout = &vf610_nfc_ecc60;
->  		} else if (chip->ecc.strength == 24) {
->  			nfc->ecc_mode = ECC_45_BYTE;
->  			chip->ecc.bytes = 45;
-> -			chip->ecc.layout = &vf610_nfc_ecc45;
->  		} else {
->  			dev_err(nfc->dev, "Unsupported ECC strength\n");
->  			err = -ENXIO;
+> -	usb@12000000 {
+> +	usb_dwc3 {
+>  		compatible = "samsung,exynos5250-dwusb3";
+>  		clocks = <&clock CLK_USB3>;
+>  		clock-names = "usbdrd30";
+
+The ePAPR document says that "The name of a node should be somewhat generic,
+reflecting the function of the device and not its precise programming model"
+
+So I wonder if this shouldn't be instead:
+
+usb_dwc3: usb {
+
+Although it seems that not all DT bindings follow this convention so probably
+the name in your patch is correct.
+
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
