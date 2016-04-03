@@ -1,68 +1,70 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: s3c: Fix DTC unit name warnings in S3C2416 and
- S3C6410
-Date: Sun, 3 Apr 2016 12:53:02 +0900
-Message-ID: <20160403035302.GD4919@kozik-lap>
-References: <1459494710-16269-1-git-send-email-k.kozlowski@samsung.com>
- <CAGhQ9VwJVz0riwx=DWY=giaL=Jo6R=HYZg4hm2FQ6X2_g5hi5Q@mail.gmail.com>
+Subject: Re: [PATCH 06/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ Exynos5250
+Date: Sun, 3 Apr 2016 13:08:05 +0900
+Message-ID: <20160403040805.GC7507@kozik-lap>
+References: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
+ <1459493874-2366-6-git-send-email-k.kozlowski@samsung.com>
+ <56FEAE29.6010405@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:36120 "EHLO
-	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864AbcDCDxL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 Apr 2016 23:53:11 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <CAGhQ9VwJVz0riwx=DWY=giaL=Jo6R=HYZg4hm2FQ6X2_g5hi5Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <56FEAE29.6010405@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Apr 01, 2016 at 04:22:59PM +0200, Joachim Eastwood wrote:
-> On 1 April 2016 at 09:11, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> > Fix following DTC warnings in S3C2416 and S3C6410 boards:
-> >
-> > Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-> >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/s3c2416-smdk2416.dts | 2 +-
-> >  arch/arm/boot/dts/s3c6410-mini6410.dts | 2 +-
-> >  arch/arm/boot/dts/s3c6410-smdk6410.dts | 2 +-
-> >  3 files changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/s3c2416-smdk2416.dts b/arch/arm/boot/dts/s3c2416-smdk2416.dts
-> > index f257926c13b7..15f3d1c1bb80 100644
-> > --- a/arch/arm/boot/dts/s3c2416-smdk2416.dts
-> > +++ b/arch/arm/boot/dts/s3c2416-smdk2416.dts
-> > @@ -15,7 +15,7 @@
-> >         model = "SMDK2416";
-> >         compatible = "samsung,s3c2416";
-> >
-> > -       memory {
-> > +       memory@30000000 {
-> >                 reg =  <0x30000000 0x4000000>;
-> >         };
+Re-sending because my previous message was not address to all
+recipients. Sorry for the noise.
+
+
+On Fri, Apr 01, 2016 at 01:21:45PM -0400, Javier Martinez Canillas wrote:
+> >  
+> > -	usb@12000000 {
+> > +	usb_dwc3 {
+> >  		compatible = "samsung,exynos5250-dwusb3";
+> >  		clocks = <&clock CLK_USB3>;
+> >  		clock-names = "usbdrd30";
 > 
-> This change will cause duplicated memory node entries in the DT as
-> noted by Vladimir Zapolskiy [1]. Same goes for all the other patch
-> where you make this change.
+> The ePAPR document says that "The name of a node should be somewhat generic,
+> reflecting the function of the device and not its precise programming model"
 > 
-> $ scripts/dtc/dtc -I dtb -O dts arch/arm/boot/dts/s3c2416-smdk2416.dtb
-> | grep -A2 memory
->         memory {
->                 device_type = "memory";
->                 reg = <0x0 0x0>;
->         };
-> --
->         memory@30000000 {
->                 reg = <0x30000000 0x4000000>;
->         };
+> So I wonder if this shouldn't be instead:
+> 
+> usb_dwc3: usb {
 
-Yeah, I also spotted this later after running scripts/dtx_diff. I will
-leave the memory node untouched.
+There are already nodes with 'usb' name:
+	ehci: usb@12110000 {
+		compatible = "samsung,exynos4210-ehci";
+		...
+	}
+	ohci: usb@12120000 {
+		compatible = "samsung,exynos4210-ohci";
+	}
+Having nodes with the same name but some with address some not, should
+work (none should be overridden)... but looks a little bit weird.
 
-Thanks for feedback!
+Anyway I am fine with both.
+
+
+> Although it seems that not all DT bindings follow this convention so probably
+> the name in your patch is correct.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Thanks for review and comments. I already spotted the 'memory' node
+issue so I won't be replying to you with acknowledging comments. :)
+
+BR,
 Krzysztof
