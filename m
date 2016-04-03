@@ -1,70 +1,38 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 06/11] ARM: dts: exynos: Fix DTC unit name warnings in
- Exynos5250
-Date: Sun, 3 Apr 2016 13:08:05 +0900
-Message-ID: <20160403040805.GC7507@kozik-lap>
-References: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
- <1459493874-2366-6-git-send-email-k.kozlowski@samsung.com>
- <56FEAE29.6010405@osg.samsung.com>
+Subject: Re: [PATCH 1/2] phy: Group vendor specific phy drivers
+Date: Sun, 3 Apr 2016 15:05:27 +0900
+Message-ID: <20160403060527.GA5034@kozik-lap>
+References: <1459510156-9147-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:33054 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751873AbcDCGFf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 3 Apr 2016 02:05:35 -0400
 Content-Disposition: inline
-In-Reply-To: <56FEAE29.6010405@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1459510156-9147-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: vireshk@kernel.org, shiraz.linux.kernel@gmail.com, kishon@ti.com, heiko@sntech.de, maxime.ripard@free-electrons.com, wens@csie.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, spear-devel@list.st.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, cpgs@samsung.com
 
-Re-sending because my previous message was not address to all
-recipients. Sorry for the noise.
-
-
-On Fri, Apr 01, 2016 at 01:21:45PM -0400, Javier Martinez Canillas wrote:
-> >  
-> > -	usb@12000000 {
-> > +	usb_dwc3 {
-> >  		compatible = "samsung,exynos5250-dwusb3";
-> >  		clocks = <&clock CLK_USB3>;
-> >  		clock-names = "usbdrd30";
+On Fri, Apr 01, 2016 at 04:59:15PM +0530, Vivek Gautam wrote:
+> Adding vendor specific directories in phy to group
+> phy drivers under their respective vendor umbrella.
 > 
-> The ePAPR document says that "The name of a node should be somewhat generic,
-> reflecting the function of the device and not its precise programming model"
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
 > 
-> So I wonder if this shouldn't be instead:
+> With growing number of phy drivers, it makes sense to
+> group these drivers under their respective vendor/platform
+> umbrella directory.
 > 
-> usb_dwc3: usb {
+> Build-tested 'multi_v7_defconfig'.
 
-There are already nodes with 'usb' name:
-	ehci: usb@12110000 {
-		compatible = "samsung,exynos4210-ehci";
-		...
-	}
-	ohci: usb@12120000 {
-		compatible = "samsung,exynos4210-ohci";
-	}
-Having nodes with the same name but some with address some not, should
-work (none should be overridden)... but looks a little bit weird.
+Please update also the MAINTAINERS file. For many entires the path won't
+match anymore.
 
-Anyway I am fine with both.
-
-
-> Although it seems that not all DT bindings follow this convention so probably
-> the name in your patch is correct.
-> 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Thanks for review and comments. I already spotted the 'memory' node
-issue so I won't be replying to you with acknowledging comments. :)
-
-BR,
+Best regards,
 Krzysztof
