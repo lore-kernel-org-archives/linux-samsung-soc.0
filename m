@@ -1,48 +1,61 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH 11/11] ARM: dts: s5p: Fix DTC unit name warnings in
- S5Pv210 boards
-Date: Fri, 1 Apr 2016 13:50:34 -0400
-Message-ID: <56FEB4EA.6040805@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 06/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ Exynos5250
+Date: Sun, 3 Apr 2016 11:56:33 +0900
+Message-ID: <20160403025633.GA3789@kozik-lap>
 References: <1459493874-2366-1-git-send-email-k.kozlowski@samsung.com>
- <1459493874-2366-11-git-send-email-k.kozlowski@samsung.com>
+ <1459493874-2366-6-git-send-email-k.kozlowski@samsung.com>
+ <56FEAE29.6010405@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1459493874-2366-11-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:36203 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750819AbcDCDDb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 2 Apr 2016 23:03:31 -0400
+Content-Disposition: inline
+In-Reply-To: <56FEAE29.6010405@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hello Krzysztof,
-
-On 04/01/2016 02:57 AM, Krzysztof Kozlowski wrote:
-> Fix following DTC warnings in S5Pv210 boards:
+On Fri, Apr 01, 2016 at 01:21:45PM -0400, Javier Martinez Canillas wrote:
+> >  
+> > -	usb@12000000 {
+> > +	usb_dwc3 {
+> >  		compatible = "samsung,exynos5250-dwusb3";
+> >  		clocks = <&clock CLK_USB3>;
+> >  		clock-names = "usbdrd30";
 > 
-> Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-> Warning (unit_address_vs_reg): Node /soc/fimd@f8000000/display-timings/timing@0 has a unit name, but no reg property
+> The ePAPR document says that "The name of a node should be somewhat generic,
+> reflecting the function of the device and not its precise programming model"
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
+> So I wonder if this shouldn't be instead:
+> 
+> usb_dwc3: usb {
 
-[snip]
+There are already nodes with 'usb' name:
+	ehci: usb@12110000 {
+		compatible = "samsung,exynos4210-ehci";
+		...
+	}
+	ohci: usb@12120000 {
+		compatible = "samsung,exynos4210-ohci";
+	}
+Having nodes with the same name but some with address some not, should
+work (none should be overridden)... but looks a little bit weird.
 
->  
-> -	memory {
-> +	memory@20000000 {
+Anyway I am fine with both.
 
-Same comment than patch #4 with regards to the memory nodes.
 
-After removing those, feel free to add:
+> Although it seems that not all DT bindings follow this convention so probably
+> the name in your patch is correct.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Thanks for review and comments. I already spotted the 'memory' node
+issue so I won't be replying to you with acknowledging comments. :)
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+BR,
+Krzysztof
