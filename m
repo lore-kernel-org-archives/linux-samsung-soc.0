@@ -1,38 +1,65 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] phy: Group vendor specific phy drivers
-Date: Sun, 3 Apr 2016 15:05:27 +0900
-Message-ID: <20160403060527.GA5034@kozik-lap>
-References: <1459510156-9147-1-git-send-email-gautam.vivek@samsung.com>
+From: Adel Belhouane <bugs.a.b@free.fr>
+Subject: Re: [PATCH 0/1] ARM: dts: exynos: Add timer node for exynos5420
+Date: Sun, 3 Apr 2016 22:39:38 +0200
+Message-ID: <57017F8A.6030307@free.fr>
+References: <cover.1459167385.git.bugs.a.b@free.fr>
+ <56FA539F.1000208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:33054 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751873AbcDCGFf (ORCPT
+Received: from smtpfb2-g21.free.fr ([212.27.42.10]:59405 "EHLO
+	smtpfb2-g21.free.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751298AbcDCUjs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Apr 2016 02:05:35 -0400
-Content-Disposition: inline
-In-Reply-To: <1459510156-9147-1-git-send-email-gautam.vivek@samsung.com>
+	Sun, 3 Apr 2016 16:39:48 -0400
+Received: from smtp1-g21.free.fr (smtp1-g21.free.fr [212.27.42.1])
+	by smtpfb2-g21.free.fr (Postfix) with ESMTP id 4229ED1A774
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  3 Apr 2016 22:39:43 +0200 (CEST)
+In-Reply-To: <56FA539F.1000208@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: vireshk@kernel.org, shiraz.linux.kernel@gmail.com, kishon@ti.com, heiko@sntech.de, maxime.ripard@free-electrons.com, wens@csie.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, spear-devel@list.st.com, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, cpgs@samsung.com
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Apr 01, 2016 at 04:59:15PM +0530, Vivek Gautam wrote:
-> Adding vendor specific directories in phy to group
-> phy drivers under their respective vendor umbrella.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
-> 
-> With growing number of phy drivers, it makes sense to
-> group these drivers under their respective vendor/platform
-> umbrella directory.
-> 
-> Build-tested 'multi_v7_defconfig'.
+Le 29/03/2016 12:06, Krzysztof Kozlowski a =E9crit :
+> Please look at this thread:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/35980=
+6.html
+>=20
+> Unfortunately I do not have any more details about this.
 
-Please update also the MAINTAINERS file. For many entires the path won't
-match anymore.
+So I understand MCT and Arch Timer use the same hardware timer and
+there were issues when the MCT interface reset it at boot and during
+resume and the Arch Timer consumers didn't expect it. In this thread th=
+ere
+were links [1] to a patch to have the MCT not writing the timer anymore=
+,
+thus allowing the two interfaces to co-exist.
 
-Best regards,
-Krzysztof
+This patch was applied in commit 1d80415db64b. So no problem is to be
+expected when using both interfaces at the same time.
+
+I can see  exynos5250 got its Arch Timer definition for KVM:
+
+- From the description of commit 2b7da98870bc
+ARM: dts: Add architected timer nodes for exynos5250
+[...]
+This is required by KVM.
+
+So is there something else blocking adding this definition for 542x/580=
+0
+considering its effect is enabling KVM ?
+
+[1]
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-May/257350.h=
+tml
+=3D> https://chromium-review.googlesource.com/#/c/200298/
+=3D> https://chromium-review.googlesource.com/#/c/201143/
+for 3.8
+
+[2]
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-May/258622.h=
+tml
+
+best regards,
+Adel
