@@ -1,76 +1,68 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESPIN 1/6] dt-bindings: EXYNOS: Add exynos-srom device tree
- binding
-Date: Mon, 04 Apr 2016 12:35:07 +0900
-Message-ID: <5701E0EB.4020807@samsung.com>
-References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
- <1456389222-12738-2-git-send-email-pankaj.dubey@samsung.com>
- <20160302175319.GA11155@rob-hp-laptop> <56DA63A6.80703@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:24867 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751022AbcDDDfR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Apr 2016 23:35:17 -0400
-In-reply-to: <56DA63A6.80703@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] ARM: exynos_defconfig: Enable Trats2 audio codec,
+ touchscreen and sensors
+Date: Mon, 04 Apr 2016 16:43:50 +0900
+Message-ID: <1459755830-20390-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>, Rob Herring <robh@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-On 05.03.2016 13:42, pankaj.dubey wrote:
-> Hi,
-> 
-> On Wednesday 02 March 2016 11:23 PM, Rob Herring wrote:
->> On Thu, Feb 25, 2016 at 02:03:37PM +0530, Pankaj Dubey wrote:
->>> This patch adds exynos-srom binding information for SROM Controller
->>> driver on Exynos SoCs.
->>>
->>> CC: Rob Herring <robh+dt@kernel.org>
->>> CC: Mark Rutland <mark.rutland@arm.com>
->>> CC: Ian Campbell <ijc+devicetree@hellion.org.uk>
->>> CC: devicetree@vger.kernel.org
->>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> Signed-off-by: Kukjin Kim <kgene@kernel.org>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> ---
->>>  .../devicetree/bindings/memory-controllers/exynos-srom.txt   | 12 ++++++++++++
->>>  1 file changed, 12 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
->>> new file mode 100644
->>> index 0000000..33886d5
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
->>> @@ -0,0 +1,12 @@
->>> +SAMSUNG Exynos SoCs SROM Controller driver.
->>> +
->>> +Required properties:
->>> +- compatible : Should contain "samsung,exynos-srom".
->>
->> There should be SoC specific compatible strings in addition to this.
->>
-> 
-> I do not understood need to additional need to SoC specific compatible,
-> as of now all SoCs having SROM can work with exynos specific common
-> compatible. Will you see any issues in this?
+The Exynos4412-based Trats2 board has Asahi Kasei AK 3-Axis
+Magnetometer, CM36651 proximity/ambient light sensor, MMS114 touchscreen
+and Wolfson Microelectronics WM1811 CODEC. Enable them in defconfig to
+get some testing coverage and use its features.
 
-Dear Rob, Pankaj,
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I would like to proceed with this patchset. I guess your comment here
-was about to change the compatible from generic exynos-like to a model
-specific. How about this:
-- compatible : Should contain "samsung,exynos4210-srom".
-
-Is this okay?
-
-(the oldest chip mentioning SROM controller as separate block is Exynos4210)
-
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 6ffd7e76f3ce..d8f09e5558bf 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -74,6 +74,7 @@ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_CYAPA=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
++CONFIG_TOUCHSCREEN_MMS114=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MAX77693_HAPTIC=y
+ CONFIG_INPUT_MAX8997_HAPTIC=y
+@@ -93,6 +94,7 @@ CONFIG_SPI=y
+ CONFIG_SPI_GPIO=y
+ CONFIG_SPI_S3C64XX=y
+ CONFIG_DEBUG_GPIO=y
++CONFIG_GPIO_WM8994=y
+ CONFIG_POWER_SUPPLY=y
+ CONFIG_BATTERY_SBS=y
+ CONFIG_BATTERY_MAX17040=y
+@@ -134,6 +136,7 @@ CONFIG_REGULATOR_S2MPA01=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+ CONFIG_REGULATOR_TPS65090=y
++CONFIG_REGULATOR_WM8994=y
+ CONFIG_MEDIA_SUPPORT=m
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_USB_SUPPORT=y
+@@ -160,6 +163,8 @@ CONFIG_SOUND=y
+ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+ CONFIG_SND_SOC_SAMSUNG=y
++CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=y
++CONFIG_SND_SOC_SMDK_WM8994_PCM=y
+ CONFIG_SND_SOC_SNOW=y
+ CONFIG_SND_SOC_ODROIDX2=y
+ CONFIG_SND_SIMPLE_CARD=y
+@@ -210,6 +215,8 @@ CONFIG_EXTCON_MAX77693=y
+ CONFIG_EXTCON_MAX8997=y
+ CONFIG_IIO=y
+ CONFIG_EXYNOS_ADC=y
++CONFIG_CM36651=y
++CONFIG_AK8975=y
+ CONFIG_PWM=y
+ CONFIG_PWM_SAMSUNG=y
+ CONFIG_PHY_EXYNOS5250_SATA=y
+-- 
+2.5.0
