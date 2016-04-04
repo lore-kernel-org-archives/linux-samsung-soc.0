@@ -1,69 +1,76 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/1] ARM: dts: exynos: Add timer node for exynos5420
-Date: Mon, 04 Apr 2016 10:57:01 +0900
-Message-ID: <5701C9ED.2080303@samsung.com>
-References: <cover.1459167385.git.bugs.a.b@free.fr>
- <56FA539F.1000208@samsung.com> <57017F8A.6030307@free.fr>
+Subject: Re: [RESPIN 1/6] dt-bindings: EXYNOS: Add exynos-srom device tree
+ binding
+Date: Mon, 04 Apr 2016 12:35:07 +0900
+Message-ID: <5701E0EB.4020807@samsung.com>
+References: <1456389222-12738-1-git-send-email-pankaj.dubey@samsung.com>
+ <1456389222-12738-2-git-send-email-pankaj.dubey@samsung.com>
+ <20160302175319.GA11155@rob-hp-laptop> <56DA63A6.80703@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60857 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751018AbcDDB5J (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24867 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751022AbcDDDfR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Apr 2016 21:57:09 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O5300AO96R5Q670@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Apr 2016 02:57:05 +0100 (BST)
-In-reply-to: <57017F8A.6030307@free.fr>
+	Sun, 3 Apr 2016 23:35:17 -0400
+In-reply-to: <56DA63A6.80703@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Adel Belhouane <bugs.a.b@free.fr>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
+To: "pankaj.dubey" <pankaj.dubey@samsung.com>, Rob Herring <robh@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, thomas.ab@samsung.com, olof@lixom.net, p.fedin@samsung.com, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-On 04.04.2016 05:39, Adel Belhouane wrote:
-> Le 29/03/2016 12:06, Krzysztof Kozlowski a =E9crit :
->> Please look at this thread:
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/3598=
-06.html
+On 05.03.2016 13:42, pankaj.dubey wrote:
+> Hi,
+> 
+> On Wednesday 02 March 2016 11:23 PM, Rob Herring wrote:
+>> On Thu, Feb 25, 2016 at 02:03:37PM +0530, Pankaj Dubey wrote:
+>>> This patch adds exynos-srom binding information for SROM Controller
+>>> driver on Exynos SoCs.
+>>>
+>>> CC: Rob Herring <robh+dt@kernel.org>
+>>> CC: Mark Rutland <mark.rutland@arm.com>
+>>> CC: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>>> CC: devicetree@vger.kernel.org
+>>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> Signed-off-by: Kukjin Kim <kgene@kernel.org>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/memory-controllers/exynos-srom.txt   | 12 ++++++++++++
+>>>  1 file changed, 12 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+>>> new file mode 100644
+>>> index 0000000..33886d5
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+>>> @@ -0,0 +1,12 @@
+>>> +SAMSUNG Exynos SoCs SROM Controller driver.
+>>> +
+>>> +Required properties:
+>>> +- compatible : Should contain "samsung,exynos-srom".
 >>
->> Unfortunately I do not have any more details about this.
->=20
-> So I understand MCT and Arch Timer use the same hardware timer and
-> there were issues when the MCT interface reset it at boot and during
-> resume and the Arch Timer consumers didn't expect it. In this thread =
-there
-> were links [1] to a patch to have the MCT not writing the timer anymo=
-re,
-> thus allowing the two interfaces to co-exist.
->=20
-> This patch was applied in commit 1d80415db64b. So no problem is to be
-> expected when using both interfaces at the same time.
->=20
-> I can see  exynos5250 got its Arch Timer definition for KVM:
->=20
-> - From the description of commit 2b7da98870bc
-> ARM: dts: Add architected timer nodes for exynos5250
-> [...]
-> This is required by KVM.
->=20
-> So is there something else blocking adding this definition for 542x/5=
-800
-> considering its effect is enabling KVM ?
+>> There should be SoC specific compatible strings in addition to this.
+>>
+> 
+> I do not understood need to additional need to SoC specific compatible,
+> as of now all SoCs having SROM can work with exynos specific common
+> compatible. Will you see any issues in this?
 
-Yeah, this is blocking:
-> Doug Anderson:
-> According to Samsung, there are issues where using cp15 could
-> sometimes return the wrong value, especially if you happen to read it
-> while on an A7 instead of an A15.
+Dear Rob, Pankaj,
 
-> Kukjin Kim:
-> One more thing, if you change it for your own private platform, it's =
-> up
-> to you but if not, i.e., for mass product, please don't change it.
-> Because it's not guaranteed even you haven't seen its failure...
+I would like to proceed with this patchset. I guess your comment here
+was about to change the compatible from generic exynos-like to a model
+specific. How about this:
+- compatible : Should contain "samsung,exynos4210-srom".
+
+Is this okay?
+
+(the oldest chip mentioning SROM controller as separate block is Exynos4210)
+
 
 Best regards,
 Krzysztof
