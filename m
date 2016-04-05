@@ -1,37 +1,42 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [RESEND PATCH] mfd: max77686: Use module_i2c_driver() instead of
- subsys initcall
-Date: Tue, 05 Apr 2016 10:57:01 +0900
-Message-ID: <20160405015701.GA4228@samsunx.samsung>
-References: <1459809962-8883-1-git-send-email-javier@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] hwrng: exynos - Fix misspelled Samsung address
+Date: Tue, 05 Apr 2016 11:04:28 +0900
+Message-ID: <1459821868-26034-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:57393 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932600AbcDEB5K (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Apr 2016 21:57:10 -0400
-Content-disposition: inline
-In-reply-to: <1459809962-8883-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>
 
-Hi Javier,
+Correct smasung.com into samsung.com.
 
-> The driver's init and exit function don't do anything besides adding and
-> deleting the I2C driver so the module_i2c_driver() macro could be used.
-> 
-> Currently is not being used because the driver is initialized at subsys
-> initcall level, claiming that this is done to allow consumers devices to
-> use the resources provided by this driver. But dependencies are in DT so
-> manual ordering of init calls is not necessary any more.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/char/hw_random/exynos-rng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-
-Thanks,
-Andi
+diff --git a/drivers/char/hw_random/exynos-rng.c b/drivers/char/hw_random/exynos-rng.c
+index ada081232528..3443fdda44fa 100644
+--- a/drivers/char/hw_random/exynos-rng.c
++++ b/drivers/char/hw_random/exynos-rng.c
+@@ -2,7 +2,7 @@
+  * exynos-rng.c - Random Number Generator driver for the exynos
+  *
+  * Copyright (C) 2012 Samsung Electronics
+- * Jonghwa Lee <jonghwa3.lee@smasung.com>
++ * Jonghwa Lee <jonghwa3.lee@samsung.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+-- 
+2.5.0
