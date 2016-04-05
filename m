@@ -1,36 +1,24 @@
 From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v2 1/4] hwrng: exynos - Runtime suspend device after init
-Date: Tue, 5 Apr 2016 20:44:29 +0800
-Message-ID: <20160405124429.GC13048@gondor.apana.org.au>
-References: <1457914035-26856-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH] hwrng: exynos - Fix misspelled Samsung address
+Date: Tue, 5 Apr 2016 20:52:56 +0800
+Message-ID: <20160405125256.GR13048@gondor.apana.org.au>
+References: <1459821868-26034-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from helcar.hengli.com.au ([209.40.204.226]:43831 "EHLO
-	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754316AbcDEMoo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Apr 2016 08:44:44 -0400
+Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1457914035-26856-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1459821868-26034-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Matt Mackall <mpm@selenic.com>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+Cc: Matt Mackall <mpm@selenic.com>, Kukjin Kim <kgene@kernel.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 14, 2016 at 09:07:12AM +0900, Krzysztof Kozlowski wrote:
-> The driver uses pm_runtime_put_noidle() after initialization so the
-> device might remain in active state if the core does not read from it
-> (the read callback contains regular runtime put). The put_noidle() was
-> chosen probably to avoid unneeded suspend and resume cycle after the
-> initialization.
-> 
-> However for this purpose autosuspend is enabled so it is safe to runtime
-> put just after the initialization.
+On Tue, Apr 05, 2016 at 11:04:28AM +0900, Krzysztof Kozlowski wrote:
+> Correct smasung.com into samsung.com.
 > 
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-All applied.
+Applied.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
