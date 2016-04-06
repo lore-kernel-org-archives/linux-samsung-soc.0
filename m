@@ -1,94 +1,117 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 04/11] ARM: dts: exynos: Fix DTC unit name warnings in
- Trats2 board
-Date: Wed, 06 Apr 2016 11:00:43 +0900
-Message-ID: <1459908050-16430-4-git-send-email-k.kozlowski@samsung.com>
-References: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
+From: Alison Schofield <amsfield22@gmail.com>
+Subject: [PATCH 1/9] iio: adc: exynos_adc: use regmap to retrieve struct
+ device
+Date: Tue, 5 Apr 2016 22:15:55 -0700
+Message-ID: <2329d20396db00b60f4e7d2e783ea46b48eea9c1.1459918214.git.amsfield22@gmail.com>
+References: <cover.1459918214.git.amsfield22@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:36762 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761021AbcDFFP5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Apr 2016 01:15:57 -0400
+Content-Disposition: inline
+In-Reply-To: <cover.1459918214.git.amsfield22@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: jic23@kernel.org
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, kgene@kernel.org, k.kozlowski@samsung.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Fix following DTC warnings in Trats2 board:
+Driver includes struct regmap and struct device in its global data.
+Remove the struct device and use regmap API to retrieve device info.
 
-Warning (unit_address_vs_reg): Node /i2c-gpio-1/max77693@66/regulators/ESAFEOUT1@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /i2c-gpio-1/max77693@66/regulators/ESAFEOUT2@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /i2c-gpio-1/max77693@66/regulators/CHARGER@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /thermistor-ap@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /thermistor-battery@1 has a unit name, but no reg property
+Patch created using Coccinelle plus manual edits.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
+Signed-off-by: Alison Schofield <amsfield22@gmail.com>
 ---
+ drivers/iio/adc/exynos_adc.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Changes since v1:
-1. Don't add unit name to memory.
-2. Add Javier's tag.
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 2bf363c3bf62..27dbf1687754 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -146,13 +146,13 @@
- 			reg = <0x66>;
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index c15756d..0313e0f 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -130,7 +130,6 @@
  
- 			regulators {
--				esafeout1_reg: ESAFEOUT1@1 {
-+				esafeout1_reg: ESAFEOUT1 {
- 					regulator-name = "ESAFEOUT1";
- 				};
--				esafeout2_reg: ESAFEOUT2@2 {
-+				esafeout2_reg: ESAFEOUT2 {
- 					regulator-name = "ESAFEOUT2";
- 				};
--				charger_reg: CHARGER@0 {
-+				charger_reg: CHARGER {
- 					regulator-name = "CHARGER";
- 					regulator-min-microamp = <60000>;
- 					regulator-max-microamp = <2580000>;
-@@ -251,7 +251,7 @@
- 			"SPK", "SPKOUTRP";
- 	};
+ struct exynos_adc {
+ 	struct exynos_adc_data	*data;
+-	struct device		*dev;
+ 	struct input_dev	*input;
+ 	void __iomem		*regs;
+ 	struct regmap		*pmu_map;
+@@ -173,11 +172,12 @@ static void exynos_adc_unprepare_clk(struct exynos_adc *info)
  
--	thermistor-ap@0 {
-+	thermistor-ap {
- 		compatible = "ntc,ncp15wb473";
- 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
- 		pullup-ohm = <100000>;	 /* 100K */
-@@ -259,7 +259,7 @@
- 		io-channels = <&adc 1>;  /* AP temperature */
- 	};
+ static int exynos_adc_prepare_clk(struct exynos_adc *info)
+ {
++	struct device *dev = regmap_get_device(info->pmu_map);
+ 	int ret;
  
--	thermistor-battery@1 {
-+	thermistor-battery {
- 		compatible = "ntc,ncp15wb473";
- 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
- 		pullup-ohm = <100000>;	 /* 100K */
-@@ -1276,7 +1276,7 @@
- 	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
- 	status = "okay";
+ 	ret = clk_prepare(info->clk);
+ 	if (ret) {
+-		dev_err(info->dev, "failed preparing adc clock: %d\n", ret);
++		dev_err(dev, "failed preparing adc clock: %d\n", ret);
+ 		return ret;
+ 	}
  
--	s5c73m3_spi: s5c73m3 {
-+	s5c73m3_spi: s5c73m3@0 {
- 		compatible = "samsung,s5c73m3";
- 		spi-max-frequency = <50000000>;
- 		reg = <0>;
+@@ -185,7 +185,7 @@ static int exynos_adc_prepare_clk(struct exynos_adc *info)
+ 		ret = clk_prepare(info->sclk);
+ 		if (ret) {
+ 			clk_unprepare(info->clk);
+-			dev_err(info->dev,
++			dev_err(dev,
+ 				"failed preparing sclk_adc clock: %d\n", ret);
+ 			return ret;
+ 		}
+@@ -203,11 +203,12 @@ static void exynos_adc_disable_clk(struct exynos_adc *info)
+ 
+ static int exynos_adc_enable_clk(struct exynos_adc *info)
+ {
++	struct device *dev = regmap_get_device(info->pmu_map);
+ 	int ret;
+ 
+ 	ret = clk_enable(info->clk);
+ 	if (ret) {
+-		dev_err(info->dev, "failed enabling adc clock: %d\n", ret);
++		dev_err(dev, "failed enabling adc clock: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -215,7 +216,7 @@ static int exynos_adc_enable_clk(struct exynos_adc *info)
+ 		ret = clk_enable(info->sclk);
+ 		if (ret) {
+ 			clk_disable(info->clk);
+-			dev_err(info->dev,
++			dev_err(dev,
+ 				"failed enabling sclk_adc clock: %d\n", ret);
+ 			return ret;
+ 		}
+@@ -610,13 +611,14 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
+ {
+ 	struct exynos_adc *info = dev_id;
+-	struct iio_dev *dev = dev_get_drvdata(info->dev);
++	struct device *dev = regmap_get_device(info->pmu_map);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	u32 x, y;
+ 	bool pressed;
+ 	int ret;
+ 
+ 	while (info->input->users) {
+-		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
++		ret = exynos_read_s3c64xx_ts(indio_dev, &x, &y);
+ 		if (ret == -ETIMEDOUT)
+ 			break;
+ 
+@@ -800,8 +802,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 
+ 	info->tsirq = irq;
+ 
+-	info->dev = &pdev->dev;
+-
+ 	init_completion(&info->completion);
+ 
+ 	info->clk = devm_clk_get(&pdev->dev, "adc");
 -- 
-2.5.0
+2.1.4
