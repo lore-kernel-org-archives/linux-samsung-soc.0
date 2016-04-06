@@ -1,56 +1,31 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 1/2] regulator: s2mps11: Use module_platform_driver() instead subsys initcall
-Date: Wed,  6 Apr 2016 09:49:46 -0400
-Message-ID: <1459950587-8807-1-git-send-email-javier@osg.samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH 1/2] phy: Move ULPI phy header out of driver to includes path
+Date: Wed, 06 Apr 2016 19:37:44 +0530
+Message-ID: <1459951665-28708-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:34126 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751897AbcDFNuS (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:55776 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751038AbcDFOID (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Apr 2016 09:50:18 -0400
+	Wed, 6 Apr 2016 10:08:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+To: vireshk@kernel.org, shiraz.linux.kernel@gmail.com, kishon@ti.com, heiko@sntech.de, maxime.ripard@free-electrons.com, wens@csie.org, k.kozlowski@samsung.com
+Cc: linux@arm.linux.org.uk, gautam.vivek@samsung.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, cpgs@samsung.com
 
-The driver's init and exit function don't do anything besides registering
-and unregistering the platform driver, so the module_platform_driver()
-macro could just be used instead of having separate functions.
+Although ULPI phy is currently being used by tusb1210,
+there can be other consumers too in future. So move this
+to the includes path for phy.
 
-Currently the macro is not being used because the driver is initialized at
-subsys init call level but this isn't necessary since consumer devices are
-defined in the DT as dependencies so there's no need for init calls order.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
-This patch was tested on an Exynos5422 Odroid XU4 board.
+ {drivers => include/linux}/phy/ulpi_phy.h | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename {drivers => include/linux}/phy/ulpi_phy.h (100%)
 
- drivers/regulator/s2mps11.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 6dfa3502e1f1..64a262f10845 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1237,17 +1237,7 @@ static struct platform_driver s2mps11_pmic_driver = {
- 	.id_table = s2mps11_pmic_id,
- };
- 
--static int __init s2mps11_pmic_init(void)
--{
--	return platform_driver_register(&s2mps11_pmic_driver);
--}
--subsys_initcall(s2mps11_pmic_init);
--
--static void __exit s2mps11_pmic_exit(void)
--{
--	platform_driver_unregister(&s2mps11_pmic_driver);
--}
--module_exit(s2mps11_pmic_exit);
-+module_platform_driver(s2mps11_pmic_driver);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+diff --git a/drivers/phy/ulpi_phy.h b/include/linux/phy/ulpi_phy.h
+similarity index 100%
+rename from drivers/phy/ulpi_phy.h
+rename to include/linux/phy/ulpi_phy.h
 -- 
-2.5.0
+1.9.1
