@@ -1,30 +1,24 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 03/11] ARM: dts: exynos: Fix DTC unit name warnings in
- Exynos4
-Date: Wed, 06 Apr 2016 11:00:42 +0900
-Message-ID: <1459908050-16430-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 11/11] ARM: dts: s5p: Fix DTC unit name warnings in SMDKv210
+ board
+Date: Wed, 06 Apr 2016 11:00:50 +0900
+Message-ID: <1459908050-16430-11-git-send-email-k.kozlowski@samsung.com>
 References: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35952 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760224AbcDFCB7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Apr 2016 22:01:59 -0400
 In-reply-to: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix following DTC warnings in all Exynos4 boards:
+Fix following DTC warnings in SMDKv210 board:
 
-Warning (unit_address_vs_reg): Node /soc/video-phy@10020710 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /soc/fimd@f8000000/display-timings/timing@0 has a unit name, but no reg property
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
@@ -32,23 +26,24 @@ Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
 
 Changes since v1:
-1. Add Javier's tag.
+1. Don't add unit name to memory.
+2. Add Javier's tag.
 ---
- arch/arm/boot/dts/exynos4.dtsi | 2 +-
+ arch/arm/boot/dts/s5pv210-smdkv210.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 000d506c027b..021f52d43ff7 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -82,7 +82,7 @@
- 		reg = <0x12570000 0x14>;
- 	};
+diff --git a/arch/arm/boot/dts/s5pv210-smdkv210.dts b/arch/arm/boot/dts/s5pv210-smdkv210.dts
+index 54fcc3fc82e2..9eb6aff3e38f 100644
+--- a/arch/arm/boot/dts/s5pv210-smdkv210.dts
++++ b/arch/arm/boot/dts/s5pv210-smdkv210.dts
+@@ -197,7 +197,7 @@
+ 	display-timings {
+ 		native-mode = <&timing0>;
  
--	mipi_phy: video-phy@10020710 {
-+	mipi_phy: video-phy {
- 		compatible = "samsung,s5pv210-mipi-video-phy";
- 		#phy-cells = <1>;
- 		syscon = <&pmu_system_controller>;
+-		timing0: timing@0 {
++		timing0: timing {
+ 			/* 800x480@60Hz */
+ 			clock-frequency = <24373920>;
+ 			hactive = <800>;
 -- 
 2.5.0
