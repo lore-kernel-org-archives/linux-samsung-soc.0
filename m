@@ -1,67 +1,92 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 01/11] ARM: dts: exynos: Fix DTC unit name warnings in
- cros-adc-thermistors
-Date: Wed, 06 Apr 2016 11:00:40 +0900
-Message-ID: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 07/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ Exynos542x
+Date: Wed, 06 Apr 2016 11:00:46 +0900
+Message-ID: <1459908050-16430-7-git-send-email-k.kozlowski@samsung.com>
+References: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix following DTC warnings in cros-adc-thermistors:
+Fix following DTC warnings in all Exynos542x/5800 boards:
 
-Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@5 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /adc@12D10000/ncp15wb473@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /video-phy@10040728 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /video-phy@10040714 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /usb@12000000 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /usb@12000000/dwc3 has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /usb@12400000 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /usb@12400000/dwc3 has a reg or ranges property, but no unit name
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
 ---
- arch/arm/boot/dts/cros-adc-thermistors.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/cros-adc-thermistors.dtsi b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
-index acd4fe1833f2..ce7fca76b0d6 100644
---- a/arch/arm/boot/dts/cros-adc-thermistors.dtsi
-+++ b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
-@@ -13,28 +13,28 @@
- */
+Changes since v1:
+1. Add Javier's tag.
+2. Use dash instead of underscore for usb3 nodes.
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 7b99cb58d82d..385491aa539a 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -551,13 +551,13 @@
+ 		clock-names = "timers";
+ 	};
  
- &adc {
--	ncp15wb473@3 {
-+	thermistor3 {
- 		compatible = "murata,ncp15wb473";
- 		pullup-uv = <1800000>;
- 		pullup-ohm = <47000>;
- 		pulldown-ohm = <0>;
- 		io-channels = <&adc 3>;
+-	dp_phy: video-phy@10040728 {
++	dp_phy: dp-video-phy {
+ 		compatible = "samsung,exynos5420-dp-video-phy";
+ 		samsung,pmu-syscon = <&pmu_system_controller>;
+ 		#phy-cells = <0>;
  	};
--	ncp15wb473@4 {
-+	thermistor4 {
- 		compatible = "murata,ncp15wb473";
- 		pullup-uv = <1800000>;
- 		pullup-ohm = <47000>;
- 		pulldown-ohm = <0>;
- 		io-channels = <&adc 4>;
+ 
+-	mipi_phy: video-phy@10040714 {
++	mipi_phy: mipi-video-phy {
+ 		compatible = "samsung,s5pv210-mipi-video-phy";
+ 		syscon = <&pmu_system_controller>;
+ 		#phy-cells = <1>;
+@@ -913,7 +913,7 @@
+ 		clock-names = "secss";
  	};
--	ncp15wb473@5 {
-+	thermistor5 {
- 		compatible = "murata,ncp15wb473";
- 		pullup-uv = <1800000>;
- 		pullup-ohm = <47000>;
- 		pulldown-ohm = <0>;
- 		io-channels = <&adc 5>;
+ 
+-	usbdrd3_0: usb@12000000 {
++	usbdrd3_0: usb3-0 {
+ 		compatible = "samsung,exynos5250-dwusb3";
+ 		clocks = <&clock CLK_USBD300>;
+ 		clock-names = "usbdrd30";
+@@ -921,7 +921,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		usbdrd_dwc3_0: dwc3 {
++		usbdrd_dwc3_0: dwc3@12000000 {
+ 			compatible = "snps,dwc3";
+ 			reg = <0x12000000 0x10000>;
+ 			interrupts = <0 72 0>;
+@@ -939,7 +939,7 @@
+ 		#phy-cells = <1>;
  	};
--	ncp15wb473@6 {
-+	thermistor6 {
- 		compatible = "murata,ncp15wb473";
- 		pullup-uv = <1800000>;
- 		pullup-ohm = <47000>;
+ 
+-	usbdrd3_1: usb@12400000 {
++	usbdrd3_1: usb3-1 {
+ 		compatible = "samsung,exynos5250-dwusb3";
+ 		clocks = <&clock CLK_USBD301>;
+ 		clock-names = "usbdrd30";
+@@ -947,7 +947,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		usbdrd_dwc3_1: dwc3 {
++		usbdrd_dwc3_1: dwc3@12400000 {
+ 			compatible = "snps,dwc3";
+ 			reg = <0x12400000 0x10000>;
+ 			interrupts = <0 73 0>;
 -- 
 2.5.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
