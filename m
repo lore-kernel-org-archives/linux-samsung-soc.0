@@ -1,59 +1,43 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] ARM: multi_v7_defconfig: Switch max77693 to module
-Date: Tue, 5 Apr 2016 10:02:57 -0400
-Message-ID: <5703C591.5040100@osg.samsung.com>
-References: <1459756459-22061-1-git-send-email-k.kozlowski@samsung.com>
- <1459756459-22061-2-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:33591 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753681AbcDEODH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Apr 2016 10:03:07 -0400
-In-Reply-To: <1459756459-22061-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 02/11] ARM: dts: exynos: Fix DTC unit name warnings in
+ Exynos3250
+Date: Wed, 06 Apr 2016 11:00:41 +0900
+Message-ID: <1459908050-16430-2-git-send-email-k.kozlowski@samsung.com>
+References: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1459908050-16430-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>
 
-Hello Krzysztof,
+Fix following DTC warnings in Exynos3250 boards:
 
-On 04/04/2016 03:54 AM, Krzysztof Kozlowski wrote:
-> The driver can be built as a module, so use this possibility.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
-> 
-> This patch depends on previous one "mfd: max77693: Allow building as a
-> module". Please pick-up everything or provide a tag for me (so I could
-> pick up this one to samsung-soc tree).
-> ---
->  arch/arm/configs/multi_v7_defconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 4eb10f5ea493..d92f6bfbba0e 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -453,7 +453,7 @@ CONFIG_MFD_CROS_EC_SPI=m
->  CONFIG_MFD_DA9063=m
->  CONFIG_MFD_MAX14577=y
->  CONFIG_MFD_MAX77686=y
-> -CONFIG_MFD_MAX77693=y
-> +CONFIG_MFD_MAX77693=m
->  CONFIG_MFD_MAX8907=y
->  CONFIG_MFD_MAX8997=y
->  CONFIG_MFD_RK808=y
-> 
+Warning (unit_address_vs_reg): Node /soc/video-phy@10020710 has a unit name, but no reg property
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Best regards,
+---
+
+Changes since v1:
+1. Add Javier's tag.
+---
+ arch/arm/boot/dts/exynos3250.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 137f9015d4e8..5225e953d2ed 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -153,7 +153,7 @@
+ 			interrupt-parent = <&gic>;
+ 		};
+ 
+-		mipi_phy: video-phy@10020710 {
++		mipi_phy: video-phy {
+ 			compatible = "samsung,s5pv210-mipi-video-phy";
+ 			#phy-cells = <1>;
+ 			syscon = <&pmu_system_controller>;
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.5.0
