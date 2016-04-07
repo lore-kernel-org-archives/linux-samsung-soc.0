@@ -1,45 +1,71 @@
-From: zengzhaoxiu@163.com
-Subject: [PATCH] mtd: nand: s3c2410: fix bug in s3c2410_nand_correct_data()
-Date: Fri,  8 Apr 2016 00:48:17 +0800
-Message-ID: <1460047697-72830-1-git-send-email-zengzhaoxiu@163.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/2] regulator: s2mps11: Use module_platform_driver()
+ instead subsys initcall
+Date: Thu, 7 Apr 2016 14:16:29 -0400
+Message-ID: <5706A3FD.4030509@osg.samsung.com>
+References: <1459950587-8807-1-git-send-email-javier@osg.samsung.com>
+ <20160407123024.GA6765@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from m12-16.163.com ([220.181.12.16]:41726 "EHLO m12-16.163.com"
+Received: from lists.s-osg.org ([54.187.51.154]:34730 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756545AbcDGQu3 (ORCPT
+	id S1756860AbcDGSQh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Apr 2016 12:50:29 -0400
+	Thu, 7 Apr 2016 14:16:37 -0400
+In-Reply-To: <20160407123024.GA6765@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, k.kozlowski@samsung.com, boris.brezillon@free-electrons.com, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 
-From: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
+Hello Krzysztof,
 
-If there is only one bit difference in the ECC, the function should return 1.
-The result of "diff0 & ~(1<<fls(diff0))" is equal to diff0, so the function
-actually returns -1.
+On 04/07/2016 08:30 AM, Krzysztof Kozlowski wrote:
+> On Wed, Apr 06, 2016 at 09:49:46AM -0400, Javier Martinez Canillas wrote:
+>> The driver's init and exit function don't do anything besides registering
+>> and unregistering the platform driver, so the module_platform_driver()
+>> macro could just be used instead of having separate functions.
+>>
+>> Currently the macro is not being used because the driver is initialized at
+>> subsys init call level but this isn't necessary since consumer devices are
+>> defined in the DT as dependencies so there's no need for init calls order.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> ---
+>> This patch was tested on an Exynos5422 Odroid XU4 board.
+> 
+> This test might not be sufficient. XU4 is not a mobile device like many
+> other users of this driver (except Arndale Octa and Artiks all of other
+> users are mobiles/wearables).
+> 
+> For example XU4 does not have USB OTG (like other devices and like XU3).
+>
 
-Here, we can use the simple expression "(diff0 & (diff0 - 1)) == 0" to determine
-whether the diff0 has only one 1-bit.
----
- drivers/mtd/nand/s3c2410.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All the consumer device nodes for these regulators are defined in the
+exynos5422-odroidxu3-common.dtsi that is shared by all the Odroid XU*
+so I thought testing in the XU4 was as good as testing in the XU3
+(since the USB OTG doesn't use a regulator from this PMIC).
 
-diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-index 9c9397b..c9698cf 100644
---- a/drivers/mtd/nand/s3c2410.c
-+++ b/drivers/mtd/nand/s3c2410.c
-@@ -542,7 +542,7 @@ static int s3c2410_nand_correct_data(struct mtd_info *mtd, u_char *dat,
- 	diff0 |= (diff1 << 8);
- 	diff0 |= (diff2 << 16);
+I've also checked the DTS for all the boards that use regulators that
+are registered by this driver and all consumer drivers supports probe
+deferral so I think this change is safe.
+
+Also, the driver Kconfig symbol is tristate already so the driver can be
+built as module and the init func won't be executed at subsys init call.
  
--	if ((diff0 & ~(1<<fls(diff0))) == 0)
-+	if ((diff0 & (diff0 - 1)) == 0)
- 		return 1;
- 
- 	return -1;
+> Best regards,
+> Krzysztof
+> 
+>>
+>>  drivers/regulator/s2mps11.c | 12 +-----------
+>>  1 file changed, 1 insertion(+), 11 deletions(-)
+>>
+
+Best regards,
 -- 
-2.5.5
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
