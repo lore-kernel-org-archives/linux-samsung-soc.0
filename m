@@ -1,46 +1,67 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH] drm: bridge: analogix/dp: fix no drm hpd event when panel
- plug in
-Date: Thu,  7 Apr 2016 12:19:51 +0800
-Message-ID: <1460002791-31124-1-git-send-email-ykk@rock-chips.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/9] iio: adc: exynos_adc: use regmap to retrieve struct
+ device
+Date: Thu, 07 Apr 2016 07:33:37 +0200
+Message-ID: <5705F131.4090201@samsung.com>
+References: <cover.1459918214.git.amsfield22@gmail.com>
+ <2329d20396db00b60f4e7d2e783ea46b48eea9c1.1459918214.git.amsfield22@gmail.com>
+ <5704B4A4.1070704@samsung.com> <20160406203308.GA3462@d830.WORKGROUP>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>
-Cc: linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20160406203308.GA3462-WHVijhI79TDuUkLf1qLn2g@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alison Schofield <amsfield22-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIGVudW0gdmFsdWUgb2YgRFBfSVJRX1RZUEVfSFBfQ0FCTEVfSU4gaXMgemVybywgYnV0IGRy
-aXZlciBvbmx5CnNlbmQgZHJtIGhwIGV2ZW50IHdoZW4gdGhlIGlycV90eXBlIGFuZCB0aGUgZW51
-bSB2YWx1ZSBpcyB0cnVlLgoKaWYgKGlycV90eXBlICYgRFBfSVJRX1RZUEVfSFBfQ0FCTEVfSU4g
-fHwgLi4uKQoJZHJtX2hlbHBlcl9ocGRfaXJxX2V2ZW50KGRwLT5kcm1fZGV2KTsKClNvIHRoZXJl
-IHdvdWxkIG5vIGRybSBocGQgZXZlbnQgd2hlbiBjYWJsZSBwbHVnIGluLCB0byBmaXggdGhhdApq
-dXN0IG5lZWQgdG8gYXNzaWduIGFsbCBob3RwbHVnIGVudW0gd2l0aCBuby16ZXJvIHZhbHVlcy4K
-ClJlcG9ydGVkLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+ClNp
-Z25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaCB8IDggKysrKy0tLS0K
-IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgg
-Yi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaAppbmRl
-eCBmMDkyNzVkLi5iNDU2MzgwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaApAQCAtMTI3LDEwICsxMjcsMTAgQEAgZW51bSBhbmFs
-b2dfcG93ZXJfYmxvY2sgewogfTsKIAogZW51bSBkcF9pcnFfdHlwZSB7Ci0JRFBfSVJRX1RZUEVf
-SFBfQ0FCTEVfSU4sCi0JRFBfSVJRX1RZUEVfSFBfQ0FCTEVfT1VULAotCURQX0lSUV9UWVBFX0hQ
-X0NIQU5HRSwKLQlEUF9JUlFfVFlQRV9VTktOT1dOLAorCURQX0lSUV9UWVBFX0hQX0NBQkxFX0lO
-ICA9IEJJVCgwKSwKKwlEUF9JUlFfVFlQRV9IUF9DQUJMRV9PVVQgPSBCSVQoMSksCisJRFBfSVJR
-X1RZUEVfSFBfQ0hBTkdFICAgID0gQklUKDIpLAorCURQX0lSUV9UWVBFX1VOS05PV04gICAgICA9
-IEJJVCgzKSwKIH07CiAKIHN0cnVjdCB2aWRlb19pbmZvIHsKLS0gCjEuOS4xCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello,
+
+On 2016-04-06 22:33, Alison Schofield wrote:
+> On Wed, Apr 06, 2016 at 09:03:00AM +0200, Marek Szyprowski wrote:
+>> Hello,
+>>
+>> On 2016-04-06 07:15, Alison Schofield wrote:
+>>> Driver includes struct regmap and struct device in its global data.
+>>> Remove the struct device and use regmap API to retrieve device info.
+>>>
+>>> Patch created using Coccinelle plus manual edits.
+>>>
+>>> Signed-off-by: Alison Schofield <amsfield22-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> This patch changes the struct device which is used by the driver to report
+>> errors. The driver used correctly the struct device associated with its
+>> device tree node, while after the patch it will use device which is
+>> associated with PMU regmap, which is a different device. PMU regmap is there
+>> only to enable/disable the ADC block and it is not the regmap used to access
+>> registers of the ADC device.
+>>
+>> I would prefer to drop this patch.
+> Thanks Marek!  Please check my understanding.  Driver is not carrying
+> a duplicate struct device. The regmap in exynos_adc is *not* this
+> devices regmap. It belongs to the PMU, (power mgmt unit?)
+
+Exactly.
+
+> It seemed excessive to carry around a struct device just for the
+> dev_err messages, but, we need that struct to extract the correct
+> iio_dev struct. Without a regmap belonging to this actual device,
+> no efficiencies can be gained in exynos, and the patch will be
+> dropped from set v2.
+
+Thanks.
+
+> Now I need to be able to recognize such cases elsewhere. I'm going
+> back though other patches in this set looking for that, but I'm not
+> so sure I would recognize it.
+>
+> Jonathan & all, Any hints on the rule of regmap?
+
+You may check how the regmap is initialized. When it is retrieved by
+phandle from device tree, then you might be almost sure that it refers
+to the different device.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
