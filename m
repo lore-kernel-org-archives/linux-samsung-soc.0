@@ -1,42 +1,33 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Enable CPUFreq governors as modules
-Date: Fri,  8 Apr 2016 15:02:10 -0400
-Message-ID: <1460142130-31822-2-git-send-email-javier@osg.samsung.com>
-References: <1460142130-31822-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1460142130-31822-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
+From: AKINWUMI <urr@adminnfo3.website.tk>
+Subject: FROM: MR. OLIVER SENO!!
+Date: Fri, 8 Apr 2016 11:53:01 -0700
+Message-ID: <SN1PR17MB049598B2B3E78B78F4439CE5D0910__17882.7353091494$1460144330$gmane$org@SN1PR17MB0495.namprd17.prod.outlook.com>
+Reply-To: <officeosenol@yahoo.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bn1hn0252.outbound.protection.outlook.com ([157.56.110.252]:44672
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755131AbcDHTim convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 Apr 2016 15:38:42 -0400
+Content-Description: Mail message body
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Recipients <urr@adminnfo3.website.tk>
 
-Currently only the ondemand and performance CPUFreq policy governors are
-enabled in multi_v7 defconfig. But the other governors are also useful
-for some cases, enable them to allow users change the default if needed.
+Dear Sir.
 
-The options are enabled as module to keep the kernel image size minimal.
+I bring you greetings. My name is Mr.Oliver Seno Lim, I am a staff of Abbey National Plc. London and heading our regional office in West Africa. Our late customer named Engr.Ben W.westland, made a fixed deposit amount of US$7Million.He did not declare any next of kin in any of his paper work, I want you as a foreigner to stand as the beneficiary to transfer this funds out of my bank into your account, after the successful transfer, we shall share in the ratio of 30% for you, 70%for me. Should you be interested please send me your information:
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+1,Full names.
+2,current residential address.
+3,Tele/Fax numbers./your work.
+ 
+   
+All I need from you is your readiness, trustworthiness and edication. Please email me directly on my private email address: officeosenol@yahoo.com) so we can begin arrangements and I would give you more information on how we would handle this venture and once i hear from you i will give you information of the bank for the transferring funds on your name.
 
----
-
- arch/arm/configs/multi_v7_defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 4eb10f5ea493..a8afbd9d4ead 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -131,6 +131,10 @@ CONFIG_KEXEC=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_STAT_DETAILS=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-+CONFIG_CPU_FREQ_GOV_USERSPACE=m
-+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
-+CONFIG_CPU_FREQ_GOV_SCHEDUTIL=m
- CONFIG_QORIQ_CPUFREQ=y
- CONFIG_CPU_IDLE=y
- CONFIG_ARM_CPUIDLE=y
--- 
-2.5.0
+Regards,
+Mr.Oliver Seno Lim 
