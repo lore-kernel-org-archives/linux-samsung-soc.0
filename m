@@ -1,61 +1,329 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] regulator: s2mps11: Use module_platform_driver()
- instead subsys initcall
-Date: Fri, 8 Apr 2016 05:55:54 +0200
-Message-ID: <20160408035554.GB9532@kozik-lap>
-References: <1459950587-8807-1-git-send-email-javier@osg.samsung.com>
- <20160407123024.GA6765@kozik-lap>
- <5706A3FD.4030509@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:35927 "EHLO
-	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752274AbcDHDz7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Apr 2016 23:55:59 -0400
-Content-Disposition: inline
-In-Reply-To: <5706A3FD.4030509@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v8 07/20] PM / devfreq: exynos: Update documentation for bus
+ devices using passive governor
+Date: Fri, 08 Apr 2016 13:24:56 +0900
+Message-ID: <1460089509-16260-8-git-send-email-cw00.choi@samsung.com>
+References: <1460089509-16260-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1460089509-16260-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 
-On Thu, Apr 07, 2016 at 02:16:29PM -0400, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 04/07/2016 08:30 AM, Krzysztof Kozlowski wrote:
-> > On Wed, Apr 06, 2016 at 09:49:46AM -0400, Javier Martinez Canillas wrote:
-> >> The driver's init and exit function don't do anything besides registering
-> >> and unregistering the platform driver, so the module_platform_driver()
-> >> macro could just be used instead of having separate functions.
-> >>
-> >> Currently the macro is not being used because the driver is initialized at
-> >> subsys init call level but this isn't necessary since consumer devices are
-> >> defined in the DT as dependencies so there's no need for init calls order.
-> >>
-> >> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> >>
-> >> ---
-> >> This patch was tested on an Exynos5422 Odroid XU4 board.
-> > 
-> > This test might not be sufficient. XU4 is not a mobile device like many
-> > other users of this driver (except Arndale Octa and Artiks all of other
-> > users are mobiles/wearables).
-> > 
-> > For example XU4 does not have USB OTG (like other devices and like XU3).
-> >
-> 
-> All the consumer device nodes for these regulators are defined in the
-> exynos5422-odroidxu3-common.dtsi that is shared by all the Odroid XU*
-> so I thought testing in the XU4 was as good as testing in the XU3
-> (since the USB OTG doesn't use a regulator from this PMIC).
-> 
-> I've also checked the DTS for all the boards that use regulators that
-> are registered by this driver and all consumer drivers supports probe
-> deferral so I think this change is safe.
+This patch updates the documentation for passive bus devices and adds the
+detailed example of Exynos3250.
 
-Ah, seems fine then! Thanks for checking.
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ .../devicetree/bindings/devfreq/exynos-bus.txt     | 250 ++++++++++++++++++++-
+ 1 file changed, 247 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+index 78171b918e3f..03f13d38f1a1 100644
+--- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
++++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+@@ -8,22 +8,46 @@ of the bus in runtime. To monitor the usage of each bus in runtime,
+ the driver uses the PPMU (Platform Performance Monitoring Unit), which
+ is able to measure the current load of sub-blocks.
+ 
++The Exynos SoC includes the various sub-blocks which have the each AXI bus.
++The each AXI bus has the owned source clock but, has not the only owned
++power line. The power line might be shared among one more sub-blocks.
++So, we can divide into two type of device as the role of each sub-block.
++There are two type of bus devices as following:
++- parent bus device
++- passive bus device
++
++Basically, parent and passive bus device share the same power line.
++The parent bus device can only change the voltage of shared power line
++and the rest bus devices (passive bus device) depend on the decision of
++the parent bus device. If there are three blocks which share the VDD_xxx
++power line, Only one block should be parent device and then the rest blocks
++should depend on the parent device as passive device.
++
++	VDD_xxx |--- A block (parent)
++		|--- B block (passive)
++		|--- C block (passive)
++
+ There are a little different composition among Exynos SoC because each Exynos
+ SoC has different sub-blocks. Therefore, shch difference should be specified
+ in devicetree file instead of each device driver. In result, this driver
+ is able to support the bus frequency for all Exynos SoCs.
+ 
+-Required properties for bus device:
++Required properties for all bus devices:
+ - compatible: Should be "samsung,exynos-bus".
+ - clock-names : the name of clock used by the bus, "bus".
+ - clocks : phandles for clock specified in "clock-names" property.
+ - operating-points-v2: the OPP table including frequency/voltage information
+   to support DVFS (Dynamic Voltage/Frequency Scaling) feature.
++
++Required properties only for parent bus device:
+ - vdd-supply: the regulator to provide the buses with the voltage.
+ - devfreq-events: the devfreq-event device to monitor the current utilization
+   of buses.
+ 
+-Optional properties for bus device:
++Required properties only for passive bus device:
++- devfreq: the parent bus device.
++
++Optional properties only for parent bus device:
+ - exynos,saturation-ratio: the percentage value which is used to calibrate
+ 			the performance count against total cycle count.
+ - exynos,voltage-tolerance: the percentage value for bus voltage tolerance
+@@ -34,7 +58,20 @@ Example1:
+ 	power line (regulator). The MIF (Memory Interface) AXI bus is used to
+ 	transfer data between DRAM and CPU and uses the VDD_MIF regualtor.
+ 
+-	- power line(VDD_MIF) --> bus for DMC (Dynamic Memory Controller) block
++	- MIF (Memory Interface) block
++	: VDD_MIF |--- DMC (Dynamic Memory Controller)
++
++	- INT (Internal) block
++	: VDD_INT |--- LEFTBUS (parent device)
++		  |--- PERIL
++		  |--- MFC
++		  |--- G3D
++		  |--- RIGHTBUS
++		  |--- FSYS
++		  |--- LCD0
++		  |--- PERIR
++		  |--- ISP
++		  |--- CAM
+ 
+ 	- MIF bus's frequency/voltage table
+ 	-----------------------
+@@ -47,6 +84,24 @@ Example1:
+ 	|L5| 400000 |875000   |
+ 	-----------------------
+ 
++	- INT bus's frequency/voltage table
++	----------------------------------------------------------
++	|Block|LEFTBUS|RIGHTBUS|MCUISP |ISP    |PERIL  ||VDD_INT |
++	| name|       |LCD0    |       |       |       ||        |
++	|     |       |FSYS    |       |       |       ||        |
++	|     |       |MFC     |       |       |       ||        |
++	----------------------------------------------------------
++	|Mode |*parent|passive |passive|passive|passive||        |
++	----------------------------------------------------------
++	|Lv   |Frequency                               ||Voltage |
++	----------------------------------------------------------
++	|L1   |50000  |50000   |50000  |50000  |50000  ||900000  |
++	|L2   |80000  |80000   |80000  |80000  |80000  ||900000  |
++	|L3   |100000 |100000  |100000 |100000 |100000 ||1000000 |
++	|L4   |134000 |134000  |200000 |200000 |       ||1000000 |
++	|L5   |200000 |200000  |400000 |300000 |       ||1000000 |
++	----------------------------------------------------------
++
+ Example2 :
+ 	The bus of DMC (Dynamic Memory Controller) block in exynos3250.dtsi
+ 	is listed below:
+@@ -85,6 +140,154 @@ Example2 :
+ 		};
+ 	};
+ 
++	bus_leftbus: bus_leftbus {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_DIV_GDL>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_leftbus_opp_table>;
++		status = "disabled";
++	};
++
++	bus_rightbus: bus_rightbus {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_DIV_GDR>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_leftbus_opp_table>;
++		status = "disabled";
++	};
++
++	bus_lcd0: bus_lcd0 {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_DIV_ACLK_160>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_leftbus_opp_table>;
++		status = "disabled";
++	};
++
++	bus_fsys: bus_fsys {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_DIV_ACLK_200>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_leftbus_opp_table>;
++		status = "disabled";
++	};
++
++	bus_mcuisp: bus_mcuisp {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_DIV_ACLK_400_MCUISP>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_mcuisp_opp_table>;
++		status = "disabled";
++	};
++
++	bus_isp: bus_isp {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_DIV_ACLK_266>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_isp_opp_table>;
++		status = "disabled";
++	};
++
++	bus_peril: bus_peril {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_DIV_ACLK_100>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_peril_opp_table>;
++		status = "disabled";
++	};
++
++	bus_mfc: bus_mfc {
++		compatible = "samsung,exynos-bus";
++		clocks = <&cmu CLK_SCLK_MFC>;
++		clock-names = "bus";
++		operating-points-v2 = <&bus_leftbus_opp_table>;
++		status = "disabled";
++	};
++
++	bus_leftbus_opp_table: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@50000000 {
++			opp-hz = /bits/ 64 <50000000>;
++			opp-microvolt = <900000>;
++		};
++		opp@80000000 {
++			opp-hz = /bits/ 64 <80000000>;
++			opp-microvolt = <900000>;
++		};
++		opp@100000000 {
++			opp-hz = /bits/ 64 <100000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp@134000000 {
++			opp-hz = /bits/ 64 <134000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp@200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <1000000>;
++		};
++	};
++
++	bus_mcuisp_opp_table: opp_table2 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@50000000 {
++			opp-hz = /bits/ 64 <50000000>;
++		};
++		opp@80000000 {
++			opp-hz = /bits/ 64 <80000000>;
++		};
++		opp@100000000 {
++			opp-hz = /bits/ 64 <100000000>;
++		};
++		opp@200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++		};
++		opp@400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++		};
++	};
++
++	bus_isp_opp_table: opp_table3 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@50000000 {
++			opp-hz = /bits/ 64 <50000000>;
++		};
++		opp@80000000 {
++			opp-hz = /bits/ 64 <80000000>;
++		};
++		opp@100000000 {
++			opp-hz = /bits/ 64 <100000000>;
++		};
++		opp@200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++		};
++		opp@300000000 {
++			opp-hz = /bits/ 64 <300000000>;
++		};
++	};
++
++	bus_peril_opp_table: opp_table4 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@50000000 {
++			opp-hz = /bits/ 64 <50000000>;
++		};
++		opp@80000000 {
++			opp-hz = /bits/ 64 <80000000>;
++		};
++		opp@100000000 {
++			opp-hz = /bits/ 64 <100000000>;
++		};
++	};
++
++
+ 	Usage case to handle the frequency and voltage of bus on runtime
+ 	in exynos3250-rinato.dts is listed below:
+ 
+@@ -93,3 +296,44 @@ Example2 :
+ 		vdd-supply = <&buck1_reg>;	/* VDD_MIF */
+ 		status = "okay";
+ 	};
++
++	&bus_leftbus {
++		devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
++		vdd-supply = <&buck3_reg>;
++		status = "okay";
++	};
++
++	&bus_rightbus {
++		devfreq = <&bus_leftbus>;
++		status = "okay";
++	};
++
++	&bus_lcd0 {
++		devfreq = <&bus_leftbus>;
++		status = "okay";
++	};
++
++	&bus_fsys {
++		devfreq = <&bus_leftbus>;
++		status = "okay";
++	};
++
++	&bus_mcuisp {
++		devfreq = <&bus_leftbus>;
++		status = "okay";
++	};
++
++	&bus_isp {
++		devfreq = <&bus_leftbus>;
++		status = "okay";
++	};
++
++	&bus_peril {
++		devfreq = <&bus_leftbus>;
++		status = "okay";
++	};
++
++	&bus_mfc {
++		devfreq = <&bus_leftbus>;
++		status = "okay";
++	};
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
