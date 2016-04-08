@@ -1,117 +1,69 @@
-From: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
-Subject: Re: [PATCH] mtd: nand: s3c2410: fix bug in
- s3c2410_nand_correct_data()
-Date: Fri, 8 Apr 2016 13:37:22 +0800
-Message-ID: <57074392.2030601@gmail.com>
-References: <1460047697-72830-1-git-send-email-zengzhaoxiu@163.com>
- <20160408021817.274d4e59@bbrezillon> <57070E88.5020008@gmail.com>
- <20160408041802.5c47a4be@bbrezillon>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/2] mfd: max77693: Allow building as a module
+Date: Fri, 8 Apr 2016 08:17:21 +0100
+Message-ID: <20160408071721.GE3323@x1>
+References: <1459756459-22061-1-git-send-email-k.kozlowski@samsung.com>
+ <20160407132947.GB3323@x1>
+ <20160408035445.GA9532@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:33404 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbcDHFh3 (ORCPT
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:34371 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751957AbcDHHR0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Apr 2016 01:37:29 -0400
-In-Reply-To: <20160408041802.5c47a4be@bbrezillon>
+	Fri, 8 Apr 2016 03:17:26 -0400
+Received: by mail-wm0-f43.google.com with SMTP id l6so53006230wml.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Apr 2016 00:17:25 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20160408035445.GA9532@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: zengzhaoxiu@163.com, kgene@kernel.org, k.kozlowski@samsung.com, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-=E5=9C=A8 2016=E5=B9=B404=E6=9C=8808=E6=97=A5 10:18, Boris Brezillon =E5=
-=86=99=E9=81=93:
-> On Fri, 8 Apr 2016 09:51:04 +0800
-> Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com> wrote:
->
->>
->> =E5=9C=A8 2016=E5=B9=B404=E6=9C=8808=E6=97=A5 08:18, Boris Brezillon=
- =E5=86=99=E9=81=93:
->>> Hi Zeng,
->>>
->>> On Fri,  8 Apr 2016 00:48:17 +0800
->>> zengzhaoxiu@163.com wrote:
->>>
->>>> From: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
->>>>
->>>> If there is only one bit difference in the ECC, the function shoul=
-d return 1.
->>>> The result of "diff0 & ~(1<<fls(diff0))" is equal to diff0, so the=
- function
->>>> actually returns -1.
->>>>
->>>> Here, we can use the simple expression "(diff0 & (diff0 - 1)) =3D=3D=
- 0" to determine
->>>> whether the diff0 has only one 1-bit.
->>> Missing Signed-off-by here.
->>>
->>>> ---
->>>>    drivers/mtd/nand/s3c2410.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410=
-=2Ec
->>>> index 9c9397b..c9698cf 100644
->>>> --- a/drivers/mtd/nand/s3c2410.c
->>>> +++ b/drivers/mtd/nand/s3c2410.c
->>>> @@ -542,7 +542,7 @@ static int s3c2410_nand_correct_data(struct mt=
-d_info *mtd, u_char *dat,
->>>>    	diff0 |=3D (diff1 << 8);
->>>>    	diff0 |=3D (diff2 << 16);
->>>>   =20
->>>> -	if ((diff0 & ~(1<<fls(diff0))) =3D=3D 0)
->>>> +	if ((diff0 & (diff0 - 1)) =3D=3D 0)
->>> Or just
->>>
->>> 	if (hweight_long((unsigned long)diff0) =3D=3D 1)
->>>
->>> which is doing exactly what the comment says.
->>>
->>> BTW, I don't understand why the current code is wrong? To me, it se=
-ems
->>> it's correctly detecting the case where only a single bit is differ=
-ent.
->>> What are you trying to fix exactly?
->>>
->>> Best Regards,
->>>
->>> Boris
->>>
->> For example, assuming diff0 is 1, then fls(diff0) is equal to 1, the=
-n "~(1 << fls(diff0))" is equal to 0xfffffffd,
->> then the result of "(diff0 & ~(1 << fls(diff0)))" is 1 , not we expe=
-cted 0.
->>
->> __fls(diff0) and "(fls(diff0) - 1)" are all right, but fls(diff0) is=
- wrong.
->>
-> Indeed, I forgot that fls() was returning (position + 1). Anyway, I
-> still think using hweight clarifies what you really want to test.
->
+On Fri, 08 Apr 2016, Krzysztof Kozlowski wrote:
 
-"(n & (n - 1))" is used in is_power_of_2() in incluse/linux/log2.h,
-it's result is equal to "n & ~(1 << __ffs(n))".
+> On Thu, Apr 07, 2016 at 02:29:47PM +0100, Lee Jones wrote:
+> > On Mon, 04 Apr 2016, Krzysztof Kozlowski wrote:
+> >=20
+> > > The consumer of max77693 regulators on Trats2 board (samsung-usb2=
+-phy
+> > > driver) supports deferred probing so the max77693 main MFD driver=
+ can be
+> > > built now as a module. This gives more flexibility and removes ma=
+nual
+> > > ordering of init calls.
+> > >=20
+> > > Suggested-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> > > Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > > ---
+> > >  drivers/mfd/Kconfig    |  4 ++--
+> > >  drivers/mfd/max77693.c | 14 ++------------
+> > >  2 files changed, 4 insertions(+), 14 deletions(-)
+> >=20
+> > I assume this can be taken immediately and doesn't depend on anythi=
+ng
+> > external to the set?
+> >=20
+> > For my own reference:
+> >   Acked-by: Lee Jones <lee.jones@linaro.org>
+>=20
+> Hi,
+>=20
+> Yes, this can be taken as is. Only second patch (changing defconfig)
+> depends on this. I can take the second patch through samsung tree but
+> that would require a tag/branch with this... which looks like an
+> overkill. So maybe you would take both?
 
-"(diff & (diff - 1))" is simple and fast, although here is not performa=
-nce critical.
-To improve readability of this code, we should add a new function and u=
-se it.
+If I take the defconfig patch without a tag, there will almost
+certainly be merge conflicts.  Other solutions include; delaying the
+defconfig patch for one cycle or trying to get it in post -rc1.
 
-/*
-  *  Determine whether some value has more than one 1-bits
-  */
-
-static inline __attribute__((const))
-bool more_than_1_bit_set(unsigned long n)
-{
-     return (n & (n - 1)) !=3D 0;
-}
-
-OTOH, I found many determinations like "hweightN(n) > 1" distributed in=
- kernel,
-these determinations are slower than "(n & (n - 1)) !=3D 0" on most CPU=
-s.
-We can use this new function instead.
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
