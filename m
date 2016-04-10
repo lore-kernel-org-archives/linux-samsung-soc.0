@@ -1,38 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] mfd: max77693: Allow building as a module
-Date: Sun, 10 Apr 2016 10:46:50 +0200
-Message-ID: <20160410084650.GB9519@kozik-lap>
-References: <1459756459-22061-1-git-send-email-k.kozlowski@samsung.com>
- <20160407132947.GB3323@x1>
- <20160408035445.GA9532@kozik-lap>
- <20160408071721.GE3323@x1>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/9] iio: adc: exynos_adc: use regmap to retrieve struct
+ device
+Date: Sun, 10 Apr 2016 14:45:02 +0100
+Message-ID: <570A58DE.1090905@kernel.org>
+References: <cover.1459918214.git.amsfield22@gmail.com>
+ <2329d20396db00b60f4e7d2e783ea46b48eea9c1.1459918214.git.amsfield22@gmail.com>
+ <5704B4A4.1070704@samsung.com> <20160406203308.GA3462@d830.WORKGROUP>
+ <5705F131.4090201@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:35768 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810AbcDJIqz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Apr 2016 04:46:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20160408071721.GE3323@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5705F131.4090201-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alison Schofield <amsfield22-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Fri, Apr 08, 2016 at 08:17:21AM +0100, Lee Jones wrote:
-> > Yes, this can be taken as is. Only second patch (changing defconfig)
-> > depends on this. I can take the second patch through samsung tree but
-> > that would require a tag/branch with this... which looks like an
-> > overkill. So maybe you would take both?
+On 07/04/16 06:33, Marek Szyprowski wrote:
+> Hello,
 > 
-> If I take the defconfig patch without a tag, there will almost
-> certainly be merge conflicts.  Other solutions include; delaying the
-> defconfig patch for one cycle or trying to get it in post -rc1.
+> On 2016-04-06 22:33, Alison Schofield wrote:
+>> On Wed, Apr 06, 2016 at 09:03:00AM +0200, Marek Szyprowski wrote:
+>>> Hello,
+>>>
+>>> On 2016-04-06 07:15, Alison Schofield wrote:
+>>>> Driver includes struct regmap and struct device in its global data.
+>>>> Remove the struct device and use regmap API to retrieve device info.
+>>>>
+>>>> Patch created using Coccinelle plus manual edits.
+>>>>
+>>>> Signed-off-by: Alison Schofield <amsfield22-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> This patch changes the struct device which is used by the driver to report
+>>> errors. The driver used correctly the struct device associated with its
+>>> device tree node, while after the patch it will use device which is
+>>> associated with PMU regmap, which is a different device. PMU regmap is there
+>>> only to enable/disable the ADC block and it is not the regmap used to access
+>>> registers of the ADC device.
+>>>
+>>> I would prefer to drop this patch.
+>> Thanks Marek!  Please check my understanding.  Driver is not carrying
+>> a duplicate struct device. The regmap in exynos_adc is *not* this
+>> devices regmap. It belongs to the PMU, (power mgmt unit?)
+> 
+> Exactly.
+> 
+>> It seemed excessive to carry around a struct device just for the
+>> dev_err messages, but, we need that struct to extract the correct
+>> iio_dev struct. Without a regmap belonging to this actual device,
+>> no efficiencies can be gained in exynos, and the patch will be
+>> dropped from set v2.
+> 
+> Thanks.
+> 
+>> Now I need to be able to recognize such cases elsewhere. I'm going
+>> back though other patches in this set looking for that, but I'm not
+>> so sure I would recognize it.
+>>
+>> Jonathan & all, Any hints on the rule of regmap?
+> 
+> You may check how the regmap is initialized. When it is retrieved by
+> phandle from device tree, then you might be almost sure that it refers
+> to the different device.
+True enough.  Most simple devices that stand alone should be fine for
+this sort of cleanup as the regmap is typically initiated directly for them.
 
-Let's wait for next cycle then. Anyway Javier added module-capability
-to some other drivers as well so we can change all them at once.
-
-Best regards,
-Krzysztof
+Jonathan
+> 
+> Best regards
