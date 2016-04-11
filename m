@@ -1,370 +1,159 @@
-From: Alison Schofield <amsfield22@gmail.com>
-Subject: [PATCH v2 5/5] iio: gyro: bmg160: use regmap to retrieve struct device
-Date: Sun, 10 Apr 2016 12:08:14 -0700
-Message-ID: <63dd9227f9a7e56f7e03f8963e798e6d7d8bb70f.1460314070.git.amsfield22@gmail.com>
-References: <cover.1460314070.git.amsfield22@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1460314070.git.amsfield22@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jic23@kernel.org
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, kgene@kernel.org, k.kozlowski@samsung.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 0/7] PM / devfreq: Add NoCP devfreq-event and support
+ busfreq on exyno5422-odroidxu3
+Date: Mon, 11 Apr 2016 11:16:18 +0900
+Message-ID: <570B08F2.50302@samsung.com>
+References: <1460091646-28701-1-git-send-email-cw00.choi@samsung.com>
+ <CANAwSgQuWBRiRhjd-E-WaSdhe2njE262CEG8uVH83jJDGFJVKA@mail.gmail.com>
+ <CAGTfZH2gd5zhr4_JioSXTcpf8Fgu6r_Y9gPOJo-mYGTjAJsFyg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <CAGTfZH2gd5zhr4_JioSXTcpf8Fgu6r_Y9gPOJo-mYGTjAJsFyg@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Markus Reichl <m.reichl@fivetechno.de>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "inki.dae@samsung.com" <inki.dae@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@li>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Driver includes struct regmap and struct device in its global data.
-Remove the struct device and use regmap API to retrieve device info.
+Hi Anand,
 
-Patch created using Coccinelle plus manual edits.
+On 2016=EB=85=84 04=EC=9B=94 09=EC=9D=BC 03:24, Chanwoo Choi wrote:
+> Hi Anand,
+>=20
+> On Sat, Apr 9, 2016 at 3:11 AM, Anand Moon <linux.amoon@gmail.com> wr=
+ote:
+>> Hi Chanwoo,
+>>
 
-Signed-off-by: Alison Schofield <amsfield22@gmail.com>
----
- drivers/iio/gyro/bmg160_core.c | 86 +++++++++++++++++++++---------------------
- 1 file changed, 44 insertions(+), 42 deletions(-)
+[snip]
 
-diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
-index 2493bb1..b2b1071 100644
---- a/drivers/iio/gyro/bmg160_core.c
-+++ b/drivers/iio/gyro/bmg160_core.c
-@@ -95,7 +95,6 @@
- #define BMG160_AUTO_SUSPEND_DELAY_MS	2000
- 
- struct bmg160_data {
--	struct device *dev;
- 	struct regmap *regmap;
- 	struct iio_trigger *dready_trig;
- 	struct iio_trigger *motion_trig;
-@@ -137,11 +136,12 @@ static const struct {
- 
- static int bmg160_set_mode(struct bmg160_data *data, u8 mode)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 
- 	ret = regmap_write(data->regmap, BMG160_REG_PMU_LPW, mode);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error writing reg_pmu_lpw\n");
-+		dev_err(dev, "Error writing reg_pmu_lpw\n");
- 		return ret;
- 	}
- 
-@@ -162,6 +162,7 @@ static int bmg160_convert_freq_to_bit(int val)
- 
- static int bmg160_set_bw(struct bmg160_data *data, int val)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 	int bw_bits;
- 
-@@ -171,7 +172,7 @@ static int bmg160_set_bw(struct bmg160_data *data, int val)
- 
- 	ret = regmap_write(data->regmap, BMG160_REG_PMU_BW, bw_bits);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error writing reg_pmu_bw\n");
-+		dev_err(dev, "Error writing reg_pmu_bw\n");
- 		return ret;
- 	}
- 
-@@ -182,18 +183,19 @@ static int bmg160_set_bw(struct bmg160_data *data, int val)
- 
- static int bmg160_chip_init(struct bmg160_data *data)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 	unsigned int val;
- 
- 	ret = regmap_read(data->regmap, BMG160_REG_CHIP_ID, &val);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error reading reg_chip_id\n");
-+		dev_err(dev, "Error reading reg_chip_id\n");
- 		return ret;
- 	}
- 
--	dev_dbg(data->dev, "Chip Id %x\n", val);
-+	dev_dbg(dev, "Chip Id %x\n", val);
- 	if (val != BMG160_CHIP_ID_VAL) {
--		dev_err(data->dev, "invalid chip %x\n", val);
-+		dev_err(dev, "invalid chip %x\n", val);
- 		return -ENODEV;
- 	}
- 
-@@ -212,14 +214,14 @@ static int bmg160_chip_init(struct bmg160_data *data)
- 	/* Set Default Range */
- 	ret = regmap_write(data->regmap, BMG160_REG_RANGE, BMG160_RANGE_500DPS);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error writing reg_range\n");
-+		dev_err(dev, "Error writing reg_range\n");
- 		return ret;
- 	}
- 	data->dps_range = BMG160_RANGE_500DPS;
- 
- 	ret = regmap_read(data->regmap, BMG160_REG_SLOPE_THRES, &val);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error reading reg_slope_thres\n");
-+		dev_err(dev, "Error reading reg_slope_thres\n");
- 		return ret;
- 	}
- 	data->slope_thres = val;
-@@ -228,7 +230,7 @@ static int bmg160_chip_init(struct bmg160_data *data)
- 	ret = regmap_update_bits(data->regmap, BMG160_REG_INT_EN_1,
- 				 BMG160_INT1_BIT_OD, 0);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error updating bits in reg_int_en_1\n");
-+		dev_err(dev, "Error updating bits in reg_int_en_1\n");
- 		return ret;
- 	}
- 
-@@ -236,7 +238,7 @@ static int bmg160_chip_init(struct bmg160_data *data)
- 			   BMG160_INT_MODE_LATCH_INT |
- 			   BMG160_INT_MODE_LATCH_RESET);
- 	if (ret < 0) {
--		dev_err(data->dev,
-+		dev_err(dev,
- 			"Error writing reg_motion_intr\n");
- 		return ret;
- 	}
-@@ -247,20 +249,21 @@ static int bmg160_chip_init(struct bmg160_data *data)
- static int bmg160_set_power_state(struct bmg160_data *data, bool on)
- {
- #ifdef CONFIG_PM
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 
- 	if (on)
--		ret = pm_runtime_get_sync(data->dev);
-+		ret = pm_runtime_get_sync(dev);
- 	else {
--		pm_runtime_mark_last_busy(data->dev);
--		ret = pm_runtime_put_autosuspend(data->dev);
-+		pm_runtime_mark_last_busy(dev);
-+		ret = pm_runtime_put_autosuspend(dev);
- 	}
- 
- 	if (ret < 0) {
--		dev_err(data->dev,
--			"Failed: bmg160_set_power_state for %d\n", on);
-+		dev_err(dev, "Failed: bmg160_set_power_state for %d\n", on);
-+
- 		if (on)
--			pm_runtime_put_noidle(data->dev);
-+			pm_runtime_put_noidle(dev);
- 
- 		return ret;
- 	}
-@@ -272,6 +275,7 @@ static int bmg160_set_power_state(struct bmg160_data *data, bool on)
- static int bmg160_setup_any_motion_interrupt(struct bmg160_data *data,
- 					     bool status)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 
- 	/* Enable/Disable INT_MAP0 mapping */
-@@ -279,7 +283,7 @@ static int bmg160_setup_any_motion_interrupt(struct bmg160_data *data,
- 				 BMG160_INT_MAP_0_BIT_ANY,
- 				 (status ? BMG160_INT_MAP_0_BIT_ANY : 0));
- 	if (ret < 0) {
--		dev_err(data->dev, "Error updating bits reg_int_map0\n");
-+		dev_err(dev, "Error updating bits reg_int_map0\n");
- 		return ret;
- 	}
- 
-@@ -289,8 +293,7 @@ static int bmg160_setup_any_motion_interrupt(struct bmg160_data *data,
- 		ret = regmap_write(data->regmap, BMG160_REG_SLOPE_THRES,
- 				   data->slope_thres);
- 		if (ret < 0) {
--			dev_err(data->dev,
--				"Error writing reg_slope_thres\n");
-+			dev_err(dev, "Error writing reg_slope_thres\n");
- 			return ret;
- 		}
- 
-@@ -298,8 +301,7 @@ static int bmg160_setup_any_motion_interrupt(struct bmg160_data *data,
- 				   BMG160_INT_MOTION_X | BMG160_INT_MOTION_Y |
- 				   BMG160_INT_MOTION_Z);
- 		if (ret < 0) {
--			dev_err(data->dev,
--				"Error writing reg_motion_intr\n");
-+			dev_err(dev, "Error writing reg_motion_intr\n");
- 			return ret;
- 		}
- 
-@@ -314,8 +316,7 @@ static int bmg160_setup_any_motion_interrupt(struct bmg160_data *data,
- 					   BMG160_INT_MODE_LATCH_INT |
- 					   BMG160_INT_MODE_LATCH_RESET);
- 			if (ret < 0) {
--				dev_err(data->dev,
--					"Error writing reg_rst_latch\n");
-+				dev_err(dev, "Error writing reg_rst_latch\n");
- 				return ret;
- 			}
- 		}
-@@ -328,7 +329,7 @@ static int bmg160_setup_any_motion_interrupt(struct bmg160_data *data,
- 	}
- 
- 	if (ret < 0) {
--		dev_err(data->dev, "Error writing reg_int_en0\n");
-+		dev_err(dev, "Error writing reg_int_en0\n");
- 		return ret;
- 	}
- 
-@@ -338,6 +339,7 @@ static int bmg160_setup_any_motion_interrupt(struct bmg160_data *data,
- static int bmg160_setup_new_data_interrupt(struct bmg160_data *data,
- 					   bool status)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 
- 	/* Enable/Disable INT_MAP1 mapping */
-@@ -345,7 +347,7 @@ static int bmg160_setup_new_data_interrupt(struct bmg160_data *data,
- 				 BMG160_INT_MAP_1_BIT_NEW_DATA,
- 				 (status ? BMG160_INT_MAP_1_BIT_NEW_DATA : 0));
- 	if (ret < 0) {
--		dev_err(data->dev, "Error updating bits in reg_int_map1\n");
-+		dev_err(dev, "Error updating bits in reg_int_map1\n");
- 		return ret;
- 	}
- 
-@@ -354,9 +356,8 @@ static int bmg160_setup_new_data_interrupt(struct bmg160_data *data,
- 				   BMG160_INT_MODE_NON_LATCH_INT |
- 				   BMG160_INT_MODE_LATCH_RESET);
- 		if (ret < 0) {
--			dev_err(data->dev,
--				"Error writing reg_rst_latch\n");
--				return ret;
-+			dev_err(dev, "Error writing reg_rst_latch\n");
-+			return ret;
- 		}
- 
- 		ret = regmap_write(data->regmap, BMG160_REG_INT_EN_0,
-@@ -368,16 +369,15 @@ static int bmg160_setup_new_data_interrupt(struct bmg160_data *data,
- 				   BMG160_INT_MODE_LATCH_INT |
- 				   BMG160_INT_MODE_LATCH_RESET);
- 		if (ret < 0) {
--			dev_err(data->dev,
--				"Error writing reg_rst_latch\n");
--				return ret;
-+			dev_err(dev, "Error writing reg_rst_latch\n");
-+			return ret;
- 		}
- 
- 		ret = regmap_write(data->regmap, BMG160_REG_INT_EN_0, 0);
- 	}
- 
- 	if (ret < 0) {
--		dev_err(data->dev, "Error writing reg_int_en0\n");
-+		dev_err(dev, "Error writing reg_int_en0\n");
- 		return ret;
- 	}
- 
-@@ -400,6 +400,7 @@ static int bmg160_get_bw(struct bmg160_data *data, int *val)
- 
- static int bmg160_set_scale(struct bmg160_data *data, int val)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret, i;
- 
- 	for (i = 0; i < ARRAY_SIZE(bmg160_scale_table); ++i) {
-@@ -407,8 +408,7 @@ static int bmg160_set_scale(struct bmg160_data *data, int val)
- 			ret = regmap_write(data->regmap, BMG160_REG_RANGE,
- 					   bmg160_scale_table[i].dps_range);
- 			if (ret < 0) {
--				dev_err(data->dev,
--					"Error writing reg_range\n");
-+				dev_err(dev, "Error writing reg_range\n");
- 				return ret;
- 			}
- 			data->dps_range = bmg160_scale_table[i].dps_range;
-@@ -421,6 +421,7 @@ static int bmg160_set_scale(struct bmg160_data *data, int val)
- 
- static int bmg160_get_temp(struct bmg160_data *data, int *val)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 	unsigned int raw_val;
- 
-@@ -433,7 +434,7 @@ static int bmg160_get_temp(struct bmg160_data *data, int *val)
- 
- 	ret = regmap_read(data->regmap, BMG160_REG_TEMP, &raw_val);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error reading reg_temp\n");
-+		dev_err(dev, "Error reading reg_temp\n");
- 		bmg160_set_power_state(data, false);
- 		mutex_unlock(&data->mutex);
- 		return ret;
-@@ -450,6 +451,7 @@ static int bmg160_get_temp(struct bmg160_data *data, int *val)
- 
- static int bmg160_get_axis(struct bmg160_data *data, int axis, int *val)
- {
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 	unsigned int raw_val;
- 
-@@ -463,7 +465,7 @@ static int bmg160_get_axis(struct bmg160_data *data, int axis, int *val)
- 	ret = regmap_bulk_read(data->regmap, BMG160_AXIS_TO_REG(axis), &raw_val,
- 			       2);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error reading axis %d\n", axis);
-+		dev_err(dev, "Error reading axis %d\n", axis);
- 		bmg160_set_power_state(data, false);
- 		mutex_unlock(&data->mutex);
- 		return ret;
-@@ -793,6 +795,7 @@ static int bmg160_trig_try_reen(struct iio_trigger *trig)
- {
- 	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
- 	struct bmg160_data *data = iio_priv(indio_dev);
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 
- 	/* new data interrupts don't need ack */
-@@ -804,7 +807,7 @@ static int bmg160_trig_try_reen(struct iio_trigger *trig)
- 			   BMG160_INT_MODE_LATCH_INT |
- 			   BMG160_INT_MODE_LATCH_RESET);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error writing reg_rst_latch\n");
-+		dev_err(dev, "Error writing reg_rst_latch\n");
- 		return ret;
- 	}
- 
-@@ -864,13 +867,14 @@ static irqreturn_t bmg160_event_handler(int irq, void *private)
- {
- 	struct iio_dev *indio_dev = private;
- 	struct bmg160_data *data = iio_priv(indio_dev);
-+	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 	int dir;
- 	unsigned int val;
- 
- 	ret = regmap_read(data->regmap, BMG160_REG_INT_STATUS_2, &val);
- 	if (ret < 0) {
--		dev_err(data->dev, "Error reading reg_int_status2\n");
-+		dev_err(dev, "Error reading reg_int_status2\n");
- 		goto ack_intr_status;
- 	}
- 
-@@ -907,8 +911,7 @@ ack_intr_status:
- 				   BMG160_INT_MODE_LATCH_INT |
- 				   BMG160_INT_MODE_LATCH_RESET);
- 		if (ret < 0)
--			dev_err(data->dev,
--				"Error writing reg_rst_latch\n");
-+			dev_err(dev, "Error writing reg_rst_latch\n");
- 	}
- 
- 	return IRQ_HANDLED;
-@@ -976,7 +979,6 @@ int bmg160_core_probe(struct device *dev, struct regmap *regmap, int irq,
- 
- 	data = iio_priv(indio_dev);
- 	dev_set_drvdata(dev, indio_dev);
--	data->dev = dev;
- 	data->irq = irq;
- 	data->regmap = regmap;
- 
-@@ -1139,7 +1141,7 @@ static int bmg160_runtime_suspend(struct device *dev)
- 
- 	ret = bmg160_set_mode(data, BMG160_MODE_SUSPEND);
- 	if (ret < 0) {
--		dev_err(data->dev, "set mode failed\n");
-+		dev_err(dev, "set mode failed\n");
- 		return -EAGAIN;
- 	}
- 
--- 
-2.1.4
+>>>
+>>
+>> I am observing following deadlock. Both on Odroid U3 and Odroid XU4.
+>=20
+> Thanks for your test. I'll test it again and fix it.
+
+This possible recursive locking is fixed with following diff:
+
+Thanks for your report. I'll fix it on next patchset[1] (v9).
+[1] https://lkml.org/lkml/2016/4/8/14
+
+
+diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/gover=
+nor_passive.c
+index 28a9ae32d330..a4b0b02ee797 100644
+--- a/drivers/devfreq/governor_passive.c
++++ b/drivers/devfreq/governor_passive.c
+@@ -102,7 +102,7 @@ static int update_devfreq_passive(struct devfreq *d=
+evfreq, unsigned long freq)
+        if (!devfreq->governor)
+                return -EINVAL;
+=20
+-       mutex_lock(&devfreq->lock);
++       mutex_lock_nested(&devfreq->lock, SINGLE_DEPTH_NESTING);
+=20
+        ret =3D devfreq->governor->get_target_freq(devfreq, &freq);
+        if (ret < 0)
+
+Best Regards,
+Chanwoo Choi
+
+>=20
+>>
+>> [    7.718372] [ INFO: possible recursive locking detected ]
+>> [    7.723747] 4.6.0-rc2-xu4ml #4 Not tainted
+>> [    7.727817] ---------------------------------------------
+>> [    7.733190] kworker/u16:1/136 is trying to acquire lock:
+>> [    7.738476]  (&devfreq->lock){+.+.+.}, at: [<c05be41c>]
+>> update_devfreq_passive+0x2c/0x88
+>> [    7.746534]
+>> [    7.746534] but task is already holding lock:
+>> [    7.752339]  (&devfreq->lock){+.+.+.}, at: [<c05bd838>]
+>> devfreq_monitor+0x1c/0x78
+>> [    7.759791]
+>> [    7.759791] other info that might help us debug this:
+>> [    7.766291]  Possible unsafe locking scenario:
+>> [    7.766291]
+>> [    7.766307] usb 5-1: new high-speed USB device number 2 using xhc=
+i-hcd
+>> [    7.778682]        CPU0
+>> [    7.781107]        ----
+>> [    7.783533]   lock(&devfreq->lock);
+>> [    7.786999]   lock(&devfreq->lock);
+>> [    7.790467]
+>> [    7.790467]  *** DEADLOCK ***
+>> [    7.790467]
+>> [    7.796359]  May be due to missing lock nesting notation
+>> [    7.796359]
+>> [    7.803120] 4 locks held by kworker/u16:1/136:
+>> [    7.807537]  #0:  ("%s"("devfreq_wq")){.+.+..}, at: [<c013b41c>]
+>> process_one_work+0x13c/0x454
+>> [    7.816029]  #1:  ((&(&devfreq->work)->work)){+.+...}, at:
+>> [<c013b41c>] process_one_work+0x13c/0x454
+>> [    7.825128]  #2:  (&devfreq->lock){+.+.+.}, at: [<c05bd838>]
+>> devfreq_monitor+0x1c/0x78
+>> [    7.833013]  #3:  (&nh->srcu){......}, at: [<c014309c>]
+>> __srcu_notifier_call_chain+0x54/0xe0
+>> [    7.841419]
+>> [    7.841419] stack backtrace:
+>> [    7.845758] CPU: 1 PID: 136 Comm: kworker/u16:1 Not tainted
+>> 4.6.0-rc2-xu4ml #4
+>> [    7.852946] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> [    7.859017] Workqueue: devfreq_wq devfreq_monitor
+>> [    7.863717] [<c010eb48>] (unwind_backtrace) from [<c010b884>]
+>> (show_stack+0x10/0x14)
+>> [    7.871417] [<c010b884>] (show_stack) from [<c037715c>]
+>> (dump_stack+0xa4/0xd0)
+>> [    7.878613] [<c037715c>] (dump_stack) from [<c017112c>]
+>> (__lock_acquire+0x1ce8/0x207c)
+>> [    7.886492] [<c017112c>] (__lock_acquire) from [<c0172010>]
+>> (lock_acquire+0x90/0xd4)
+>> [    7.892726] usb 5-1: New USB device found, idVendor=3D0bda, idPro=
+duct=3D8153
+>> [    7.892737] usb 5-1: New USB device strings: Mfr=3D1, Product=3D2=
+, SerialNumber=3D6
+>> [    7.892745] usb 5-1: Product: USB 10/100/1000 LAN
+>> [    7.892753] usb 5-1: Manufacturer: Realtek
+>> [    7.892761] usb 5-1: SerialNumber: 000001000000
+>> [    7.921248] [<c0172010>] (lock_acquire) from [<c075d298>]
+>> (mutex_lock_nested+0x78/0x4ec)
+>> [    7.929301] [<c075d298>] (mutex_lock_nested) from [<c05be41c>]
+>> (update_devfreq_passive+0x2c/0x88)
+>> [    7.938138] [<c05be41c>] (update_devfreq_passive) from [<c05be4c0=
+>]
+>> (devfreq_passive_notifier_call+0x48/0x50)
+>> [    7.948016] [<c05be4c0>] (devfreq_passive_notifier_call) from
+>> [<c0142d84>] (notifier_call_chain+0x54/0xa4)
+>> [    7.957633] [<c0142d84>] (notifier_call_chain) from [<c01430e0>]
+>> (__srcu_notifier_call_chain+0x98/0xe0)
+>> [    7.966991] [<c01430e0>] (__srcu_notifier_call_chain) from
+>> [<c0143140>] (srcu_notifier_call_chain+0x18/0x20)
+>> [    7.976783] [<c0143140>] (srcu_notifier_call_chain) from
+>> [<c05bd774>] (update_devfreq+0xe4/0x18c)
+>> [    7.985622] [<c05bd774>] (update_devfreq) from [<c05bd840>]
+>> (devfreq_monitor+0x24/0x78)
+>> [    7.993595] [<c05bd840>] (devfreq_monitor) from [<c013b48c>]
+>> (process_one_work+0x1ac/0x454)
+>> [    8.001913] [<c013b48c>] (process_one_work) from [<c013b784>]
+>> (worker_thread+0x50/0x508)
+>> [    8.009976] [<c013b784>] (worker_thread) from [<c0141cf4>]
+>> (kthread+0xf8/0x110)
+>> [    8.017254] [<c0141cf4>] (kthread) from [<c0107750>]
+>> (ret_from_fork+0x14/0x24)
+>>
+>> Best Regards
+>> -Anand Moon
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
+
