@@ -1,31 +1,47 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/7] PM / devfreq: exynos: Add the detailed correlation
- for Exynos5422 bus
-Date: Mon, 11 Apr 2016 10:45:14 -0500
-Message-ID: <20160411154514.GA29936@rob-hp-laptop>
-References: <1460091646-28701-1-git-send-email-cw00.choi@samsung.com>
- <1460091646-28701-3-git-send-email-cw00.choi@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v9 00/20] PM / devferq: Add generic exynos bus frequency
+ driver and new passive governor
+Date: Mon, 11 Apr 2016 21:55:57 +0200
+Message-ID: <20160411195557.GA6426@kozik-lap>
+References: <1460347078-15175-1-git-send-email-cw00.choi@samsung.com>
+ <570B218E.5000908@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:36538 "EHLO
+	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751175AbcDKT4E (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Apr 2016 15:56:04 -0400
 Content-Disposition: inline
-In-Reply-To: <1460091646-28701-3-git-send-email-cw00.choi@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, rjw@rjwysocki.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+In-Reply-To: <570B218E.5000908@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, k.kozlowski@samsung.com, kgene@kernel.org, kyungmin.park@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Fri, Apr 08, 2016 at 02:00:41PM +0900, Chanwoo Choi wrote:
-> This patch adds the detailed corrleation between sub-blocks and power line
-> for Exynos5422.
+On Mon, Apr 11, 2016 at 01:01:18PM +0900, Chanwoo Choi wrote:
+> Dear Myungjoo and Krzysztof,
 > 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  .../devicetree/bindings/devfreq/exynos-bus.txt        | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> This patch-set already get the acked-by or signed-off-by tag
+> from Exynos SoC and DEVFREQ maintainer except for patch10.
+> 
+> If there is no comment, could you pick this patch-set?
 
-This belongs with your previous series. Probably, all of this should be 
-1 DT patch rather than piecemeal. Any division should be by h/w block, 
-not as a driver is using features.
+I cannot find any description of dependencies between the patches so I
+assume the obvious one: DTS patches do not depend on anything. This
+means that:
+1. driver/devfreq related changes (including dt-bindings documentation)
+   go to Myungjoo,
+2. I can pick DTS changes.
 
-Rob
+But first I would like to see the bindings documentation beeing applied
+by someone as a proof that there won't be more development in DTS in
+these series. There is no sense of picking DTS if after comments from
+Rob, you will rework them, right?
+
+Anyway I see Rob's questions. For these bindings I think you should get
+DT-guys ack first.
+
+Best regards,
+Krzysztof
