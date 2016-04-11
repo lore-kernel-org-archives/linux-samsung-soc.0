@@ -1,179 +1,56 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: Odroid XU4 deadlock
-Date: Mon, 11 Apr 2016 11:33:20 -0400
-Message-ID: <570BC3C0.3020007@osg.samsung.com>
-References: <CANAwSgS6thDjwt_Q03ddn+9QCaPxfMLsBYRYmfn103gRYmvRPg@mail.gmail.com>
- <5707C673.9010404@osg.samsung.com>
- <CANAwSgSF45Qb1rf5gNQ=Js4woiuGNRSTb253Fm=x1S1w5AOLMw@mail.gmail.com>
- <CAJKOXPcRDyTzYnbpkvmi9anb_cOHoayj72-CC9+eZ5uCuhJNhw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v8 02/20] PM / devfreq: exynos: Add documentation for
+ generic exynos bus frequency driver
+Date: Mon, 11 Apr 2016 10:40:13 -0500
+Message-ID: <20160411154012.GA24665@rob-hp-laptop>
+References: <1460089509-16260-1-git-send-email-cw00.choi@samsung.com>
+ <1460089509-16260-3-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcRDyTzYnbpkvmi9anb_cOHoayj72-CC9+eZ5uCuhJNhw@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1460089509-16260-3-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, kgene@kernel.org, rjw@rjwysocki.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On 04/09/2016 07:00 AM, Krzysztof Kozlowski wrote:
-> On Fri, Apr 8, 2016 at 5:36 PM, Anand Moon <linux.amoon@gmail.com> wrote:
->> hi Javier,
->>
->> On 8 April 2016 at 20:25, Javier Martinez Canillas
->> <javier@osg.samsung.com> wrote:
->>> Hello Anand,
->>>
->>> On 04/08/2016 09:51 AM, Anand Moon wrote:
->>>> Hi All,
->>>>
->>>> I am observing this deadlock or warning on my Odroid XU4.
->>>> I thinks the is related to clk from exynos5_i2c_xfer .... clk_prepare_enable
->>>> but I am not able to figure out which clk.
->>>>
->>>
->>> By reading your logs, it seems the problem is a possible ABBA deadlock since
->>> the S3C RTC driver grabs the prepare_lock and then the regmap->lock, and the
->>> CPUFreq driver leads to the locks being grabbed in the inverse order.
+On Fri, Apr 08, 2016 at 01:24:51PM +0900, Chanwoo Choi wrote:
+> This patch adds the documentation for generic exynos bus frequency
+> driver.
 > 
-> First of all this is not a deadlock. Yet. :) This is just lockdep
-
-Yes, that's why I said the problem seemed to be a possible deadlock :)
-
-> report of possible deadlock. This is deadlock:
-> http://www.krzk.eu/builders/boot-odroid-xu3-multi_v7/builds/13/steps/Boot%20odroid/logs/serial
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> ---
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 95 ++++++++++++++++++++++
+>  1 file changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/exynos-bus.txt
 > 
-> ...and I believe it is the same as the report from lockdep. Which
-> means that this report truly a predicted deadlock. There are minor
-> differences between deadlock on my board and report from Anand but
-> still the same devices are involved. In Anands report the involved
-> S2MPS11 regulator and S2MPS11 clock use the same regmap. In my case
-> one path comes from S5M RTC which uses different regmap than S2MPS11
-> clock. This is the difference which puzzles me.
-> 
+> diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> new file mode 100644
+> index 000000000000..78171b918e3f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+> @@ -0,0 +1,95 @@
+> +* Generic Exynos Bus frequency device
+> +
+> +The Samsung Exynos SoC has many buses for data transfer between DRAM
+> +and sub-blocks in SoC. Most Exynos SoCs share the common architecture
+> +for buses. Generally, each bus of Exynos SoC includes a source clock
+> +and a power line, which are able to change the clock frequency
+> +of the bus in runtime. To monitor the usage of each bus in runtime,
+> +the driver uses the PPMU (Platform Performance Monitoring Unit), which
+> +is able to measure the current load of sub-blocks.
+> +
+> +There are a little different composition among Exynos SoC because each Exynos
+> +SoC has different sub-blocks. Therefore, shch difference should be specified
+> +in devicetree file instead of each device driver. In result, this driver
+> +is able to support the bus frequency for all Exynos SoCs.
 
-Yeah, that is puzzling indeed...
+I still have issues with this whole series. The DT hierarchy represents 
+buses. You are describing buses here and control of them. I would expect 
+to see some hierarchy, but there is none. What this looks like is you 
+are adding nodes based on what fits the current driver.
 
-> Anyway this is known issue. In case of my board mentioned deadlock
-> happens only on multi_v7 on around 15% of boots. I noticed it around
-> v4.4 and it happens still.
-> 
->>>
->>>> [   11.640221] ======================================================
->>>> [   11.646343] [ INFO: possible circular locking dependency detected ]
->>>> [   11.652590] 4.6.0-rc2-xu4ml #35 Not tainted
->>>> [   11.656749] -------------------------------------------------------
->>>> [   11.662992] kworker/1:1/85 is trying to acquire lock:
->>>> [   11.668010]  (prepare_lock){+.+...}, at: [<c05bfed8>]
->>>> clk_prepare_lock+0x50/0xf8
->>>> [   11.675375]
->>>> [   11.675375] but task is already holding lock:
->>>> [   11.681185]  (sec_core:428:(regmap)->lock){+.+...}, at:
->>>> [<c0481aec>] regmap_read+0x2c/0x5c
->>>> [   11.689417]
->>>> [   11.689417] which lock already depends on the new lock.
->>>> [   11.689417]
->>>> [   11.697561]
->>>> [   11.697561] the existing dependency chain (in reverse order) is:
->>>> [   11.705008]
->>>> [   11.705008] -> #1 (sec_core:428:(regmap)->lock){+.+...}:
->>>> [   11.710467]        [<c0482d30>] regmap_update_bits_base+0x30/0x70
->>>> [   11.716545]        [<c05c617c>] s2mps11_clk_prepare+0x30/0x38
->>>> [   11.722262]        [<c05c01f0>] clk_core_prepare+0x98/0xbc
->>>> [   11.727711]        [<c05c12bc>] clk_prepare+0x1c/0x2c
->>>> [   11.732734]        [<c0556fe4>] s3c_rtc_probe+0x2d0/0x43c
->>>
->>> the S3C RTC driver tries to prepare the RTC source clock S2MPS11_CLK_AP
->>> and that leads to the prepare_lock to be held and then the regmap->lock
->>> since s2mps11_clk_prepare() calls regmap_update_bits().
->>>
->>>> [   11.738108]        [<c046b9fc>] platform_drv_probe+0x4c/0xb0
->>>> [   11.743749]        [<c046a1fc>] driver_probe_device+0x20c/0x2b8
->>>> [   11.749641]        [<c0468594>] bus_for_each_drv+0x60/0x94
->>>> [   11.755103]        [<c0469f10>] __device_attach+0xb4/0x118
->>>> [   11.760558]        [<c04693b4>] bus_probe_device+0x88/0x90
->>>> [   11.766020]        [<c0469850>] deferred_probe_work_func+0x6c/0x9c
->>>> [   11.772169]        [<c013b52c>] process_one_work+0x1a8/0x514
->>>> [   11.777806]        [<c013b8d0>] worker_thread+0x38/0x56c
->>>> [   11.783082]        [<c0141d14>] kthread+0xf4/0x10c
->>>> [   11.787847]        [<c0107950>] ret_from_fork+0x14/0x24
->>>> [   11.793050]
->>>> [   11.793050] -> #0 (prepare_lock){+.+...}:
->>>> [   11.797212]        [<c0768dd8>] mutex_lock_nested+0x78/0x4dc
->>>> [   11.802845]        [<c05bfed8>] clk_prepare_lock+0x50/0xf8
->>>> [   11.808304]        [<c05c19c4>] clk_unprepare+0x1c/0x2c
->>>> [   11.813499]        [<c055d720>] exynos5_i2c_xfer+0x1dc/0x304
->>>
->>> and here the locks are grabbed in the inverse order, since the regulator
->>> driver uses regmap read (grabbing the regmap->lock) and then a clock is
->>> prepared in exynos5_i2c_xfer.
->>>
->>>> [   11.819129]        [<c0559620>] __i2c_transfer+0x13c/0x278
->>>> [   11.824589]        [<c05597f0>] i2c_transfer+0x94/0xc4
->>>> [   11.829701]        [<c04868f0>] regmap_i2c_read+0x48/0x64
->>>> [   11.835074]        [<c0482048>] _regmap_raw_read+0xb4/0x114
->>>> [   11.840630]        [<c04820cc>] _regmap_bus_read+0x24/0x58
->>>> [   11.846084]        [<c0481a68>] _regmap_read+0x60/0xb8
->>>> [   11.851201]        [<c0481afc>] regmap_read+0x3c/0x5c
->>>> [   11.856224]        [<c03e2354>] regulator_get_voltage_sel_regmap+0x20/0x54
->>>> [   11.863109]        [<c03dc5d4>] _regulator_get_voltage+0x20/0xb8
->>>> [   11.863141]        [<c03df058>] _regulator_do_set_voltage+0x240/0x370
->>>> [   11.863173]        [<c03df254>] regulator_set_voltage_unlocked+0xcc/0x230
->>>> [   11.863205]        [<c03df3e0>] regulator_set_voltage+0x28/0x54
->>>> [   11.863234]        [<c0478a94>] _set_opp_voltage+0x30/0x98
->>>> [   11.863264]        [<c0479ba8>] dev_pm_opp_set_rate+0x1e0/0x540
->>>> [   11.863337]        [<c0580824>] __cpufreq_driver_target+0x168/0x290
->>>> [   11.863375]        [<c0583b48>] od_dbs_timer+0xdc/0x164
->>>> [   11.863407]        [<c0584114>] dbs_work_handler+0x30/0x58
->>>> [   11.863437]        [<c013b52c>] process_one_work+0x1a8/0x514
->>>> [   11.863465]        [<c013b8d0>] worker_thread+0x38/0x56c
->>>> [   11.863496]        [<c0141d14>] kthread+0xf4/0x10c
->>>> [   11.863528]        [<c0107950>] ret_from_fork+0x14/0x24
->>>> [   11.863538]
->>>> [   11.863538] other info that might help us debug this:
->>>> [   11.863538]
->>>> [   11.863548]  Possible unsafe locking scenario:
->>>> [   11.863548]
->>>> [   11.863557]        CPU0                    CPU1
->>>> [   11.863565]        ----                    ----
->>>> [   11.863589]   lock(sec_core:428:(regmap)->lock);
->>>> [   11.863612]                                lock(prepare_lock);
->>>> [   11.863634]                                lock(sec_core:428:(regmap)->lock);
->>>> [   11.863655]   lock(prepare_lock);
->>>> [   11.863664]
->>>> [   11.863664]  *** DEADLOCK ***
->>>> [   11.863664]
->>>
->>> I should take a look in deep to the regmap and clock subsystems to better
->>> understand the issue on how to solve it. But AFAICT the problem is that
->>> the prepare_lock is a global mutex and the same regmap is used for both
->>> the s2mps11 clocks and regulators, so the ABBA deadlock described below
->>> can happen.
-> 
-> Exactly. One of ideas I remember was to make clocks mutex more
-> granular but I did not see any patches doing that. Another interesting
-> point is (in my case) deadlock itself (not lockdep report) happens
-> only on multi_v7, not on exynos defconfig.
-> 
-
-I see that RTC_DRV_S5M is enabled as a module in multi_v7 but built-in
-in exynos_defconfig. Maybe that could cause the behavior difference?
-
-> BTW, Anand, if you report please provide more details for
-> reproduction: kernel config and reproduction steps.
->
-
-I see that Anand provided his defconfig, so I'll try to reproduce the
-lockdep report and look at the issue deeper this week.
- 
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Rob
