@@ -1,304 +1,75 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: Odroid XU4 deadlock
-Date: Mon, 11 Apr 2016 10:05:19 +0530
-Message-ID: <CANAwSgRnAastynN4eqDGtFj8SYWv9sz94a_jDZ=qZuout2QrqA@mail.gmail.com>
-References: <CANAwSgS6thDjwt_Q03ddn+9QCaPxfMLsBYRYmfn103gRYmvRPg@mail.gmail.com>
- <5707C673.9010404@osg.samsung.com> <CANAwSgSF45Qb1rf5gNQ=Js4woiuGNRSTb253Fm=x1S1w5AOLMw@mail.gmail.com>
- <CAJKOXPcRDyTzYnbpkvmi9anb_cOHoayj72-CC9+eZ5uCuhJNhw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=001a1141a43e9c799d05302e13c3
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcRDyTzYnbpkvmi9anb_cOHoayj72-CC9+eZ5uCuhJNhw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [RESPIN v2 0/6] Add support for Exynos SROM Controller driver
+Date: Mon, 11 Apr 2016 13:12:22 +0530
+Message-ID: <1460360548-32127-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:40157 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752801AbcDKHk7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Apr 2016 03:40:59 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, p.fedin@samsung.com, olof@lixom.net, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
---001a1141a43e9c799d05302e13c3
-Content-Type: text/plain; charset=UTF-8
+This is second attemp for making in this series. This is a collection of patches
+already reviewed and merged in maintainer's tree, but could not make it thorugh main linus tree,
+due to last moment suggestion of proper location of driver should be
+"drivers/memory" instead of "drivers/soc". I have rebased all the patches
+and moved into "drivers/memory/samsung". Second time due to some suggestions in binding document.
 
-Hi Krzysztof,
+As this is just a movement without changing actual driver code,
+I have not removed "Reviewed-By", "Tested-By" or "Acked-By".
 
-On 9 April 2016 at 16:30, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> On Fri, Apr 8, 2016 at 5:36 PM, Anand Moon <linux.amoon@gmail.com> wrote:
->> hi Javier,
->>
->> On 8 April 2016 at 20:25, Javier Martinez Canillas
->> <javier@osg.samsung.com> wrote:
->>> Hello Anand,
->>>
->>> On 04/08/2016 09:51 AM, Anand Moon wrote:
->>>> Hi All,
->>>>
->>>> I am observing this deadlock or warning on my Odroid XU4.
->>>> I thinks the is related to clk from exynos5_i2c_xfer .... clk_prepare_enable
->>>> but I am not able to figure out which clk.
->>>>
->>>
->>> By reading your logs, it seems the problem is a possible ABBA deadlock since
->>> the S3C RTC driver grabs the prepare_lock and then the regmap->lock, and the
->>> CPUFreq driver leads to the locks being grabbed in the inverse order.
->
-> First of all this is not a deadlock. Yet. :) This is just lockdep
-> report of possible deadlock. This is deadlock:
-> http://www.krzk.eu/builders/boot-odroid-xu3-multi_v7/builds/13/steps/Boot%20odroid/logs/serial
->
-> ...and I believe it is the same as the report from lockdep. Which
-> means that this report truly a predicted deadlock. There are minor
-> differences between deadlock on my board and report from Anand but
-> still the same devices are involved. In Anands report the involved
-> S2MPS11 regulator and S2MPS11 clock use the same regmap. In my case
-> one path comes from S5M RTC which uses different regmap than S2MPS11
-> clock. This is the difference which puzzles me.
->
-> Anyway this is known issue. In case of my board mentioned deadlock
-> happens only on multi_v7 on around 15% of boots. I noticed it around
-> v4.4 and it happens still.
->
->>>
->>>> [   11.640221] ======================================================
->>>> [   11.646343] [ INFO: possible circular locking dependency detected ]
->>>> [   11.652590] 4.6.0-rc2-xu4ml #35 Not tainted
->>>> [   11.656749] -------------------------------------------------------
->>>> [   11.662992] kworker/1:1/85 is trying to acquire lock:
->>>> [   11.668010]  (prepare_lock){+.+...}, at: [<c05bfed8>]
->>>> clk_prepare_lock+0x50/0xf8
->>>> [   11.675375]
->>>> [   11.675375] but task is already holding lock:
->>>> [   11.681185]  (sec_core:428:(regmap)->lock){+.+...}, at:
->>>> [<c0481aec>] regmap_read+0x2c/0x5c
->>>> [   11.689417]
->>>> [   11.689417] which lock already depends on the new lock.
->>>> [   11.689417]
->>>> [   11.697561]
->>>> [   11.697561] the existing dependency chain (in reverse order) is:
->>>> [   11.705008]
->>>> [   11.705008] -> #1 (sec_core:428:(regmap)->lock){+.+...}:
->>>> [   11.710467]        [<c0482d30>] regmap_update_bits_base+0x30/0x70
->>>> [   11.716545]        [<c05c617c>] s2mps11_clk_prepare+0x30/0x38
->>>> [   11.722262]        [<c05c01f0>] clk_core_prepare+0x98/0xbc
->>>> [   11.727711]        [<c05c12bc>] clk_prepare+0x1c/0x2c
->>>> [   11.732734]        [<c0556fe4>] s3c_rtc_probe+0x2d0/0x43c
->>>
->>> the S3C RTC driver tries to prepare the RTC source clock S2MPS11_CLK_AP
->>> and that leads to the prepare_lock to be held and then the regmap->lock
->>> since s2mps11_clk_prepare() calls regmap_update_bits().
->>>
->>>> [   11.738108]        [<c046b9fc>] platform_drv_probe+0x4c/0xb0
->>>> [   11.743749]        [<c046a1fc>] driver_probe_device+0x20c/0x2b8
->>>> [   11.749641]        [<c0468594>] bus_for_each_drv+0x60/0x94
->>>> [   11.755103]        [<c0469f10>] __device_attach+0xb4/0x118
->>>> [   11.760558]        [<c04693b4>] bus_probe_device+0x88/0x90
->>>> [   11.766020]        [<c0469850>] deferred_probe_work_func+0x6c/0x9c
->>>> [   11.772169]        [<c013b52c>] process_one_work+0x1a8/0x514
->>>> [   11.777806]        [<c013b8d0>] worker_thread+0x38/0x56c
->>>> [   11.783082]        [<c0141d14>] kthread+0xf4/0x10c
->>>> [   11.787847]        [<c0107950>] ret_from_fork+0x14/0x24
->>>> [   11.793050]
->>>> [   11.793050] -> #0 (prepare_lock){+.+...}:
->>>> [   11.797212]        [<c0768dd8>] mutex_lock_nested+0x78/0x4dc
->>>> [   11.802845]        [<c05bfed8>] clk_prepare_lock+0x50/0xf8
->>>> [   11.808304]        [<c05c19c4>] clk_unprepare+0x1c/0x2c
->>>> [   11.813499]        [<c055d720>] exynos5_i2c_xfer+0x1dc/0x304
->>>
->>> and here the locks are grabbed in the inverse order, since the regulator
->>> driver uses regmap read (grabbing the regmap->lock) and then a clock is
->>> prepared in exynos5_i2c_xfer.
->>>
->>>> [   11.819129]        [<c0559620>] __i2c_transfer+0x13c/0x278
->>>> [   11.824589]        [<c05597f0>] i2c_transfer+0x94/0xc4
->>>> [   11.829701]        [<c04868f0>] regmap_i2c_read+0x48/0x64
->>>> [   11.835074]        [<c0482048>] _regmap_raw_read+0xb4/0x114
->>>> [   11.840630]        [<c04820cc>] _regmap_bus_read+0x24/0x58
->>>> [   11.846084]        [<c0481a68>] _regmap_read+0x60/0xb8
->>>> [   11.851201]        [<c0481afc>] regmap_read+0x3c/0x5c
->>>> [   11.856224]        [<c03e2354>] regulator_get_voltage_sel_regmap+0x20/0x54
->>>> [   11.863109]        [<c03dc5d4>] _regulator_get_voltage+0x20/0xb8
->>>> [   11.863141]        [<c03df058>] _regulator_do_set_voltage+0x240/0x370
->>>> [   11.863173]        [<c03df254>] regulator_set_voltage_unlocked+0xcc/0x230
->>>> [   11.863205]        [<c03df3e0>] regulator_set_voltage+0x28/0x54
->>>> [   11.863234]        [<c0478a94>] _set_opp_voltage+0x30/0x98
->>>> [   11.863264]        [<c0479ba8>] dev_pm_opp_set_rate+0x1e0/0x540
->>>> [   11.863337]        [<c0580824>] __cpufreq_driver_target+0x168/0x290
->>>> [   11.863375]        [<c0583b48>] od_dbs_timer+0xdc/0x164
->>>> [   11.863407]        [<c0584114>] dbs_work_handler+0x30/0x58
->>>> [   11.863437]        [<c013b52c>] process_one_work+0x1a8/0x514
->>>> [   11.863465]        [<c013b8d0>] worker_thread+0x38/0x56c
->>>> [   11.863496]        [<c0141d14>] kthread+0xf4/0x10c
->>>> [   11.863528]        [<c0107950>] ret_from_fork+0x14/0x24
->>>> [   11.863538]
->>>> [   11.863538] other info that might help us debug this:
->>>> [   11.863538]
->>>> [   11.863548]  Possible unsafe locking scenario:
->>>> [   11.863548]
->>>> [   11.863557]        CPU0                    CPU1
->>>> [   11.863565]        ----                    ----
->>>> [   11.863589]   lock(sec_core:428:(regmap)->lock);
->>>> [   11.863612]                                lock(prepare_lock);
->>>> [   11.863634]                                lock(sec_core:428:(regmap)->lock);
->>>> [   11.863655]   lock(prepare_lock);
->>>> [   11.863664]
->>>> [   11.863664]  *** DEADLOCK ***
->>>> [   11.863664]
->>>
->>> I should take a look in deep to the regmap and clock subsystems to better
->>> understand the issue on how to solve it. But AFAICT the problem is that
->>> the prepare_lock is a global mutex and the same regmap is used for both
->>> the s2mps11 clocks and regulators, so the ABBA deadlock described below
->>> can happen.
->
-> Exactly. One of ideas I remember was to make clocks mutex more
-> granular but I did not see any patches doing that. Another interesting
-> point is (in my case) deadlock itself (not lockdep report) happens
-> only on multi_v7, not on exynos defconfig.
->
-> BTW, Anand, if you report please provide more details for
-> reproduction: kernel config and reproduction steps.
->
-> Best regards,
-> Krzysztof
+To make sure everything is fine, I have again tested it on Exynos5880 based
+Chromebook for normal boot, S2R functionality and its working fine.
 
-Please find the attached exynosd_defconfig.
+This series has been prepared on top of next-soc branch of Krzysztof's tree.
 
-I have tried to enable almost all the kernel hacking flags in this
-config just for testing.
-Please ignore the CONFIG_PM_DEVFREQ changes in this config file.
+Changes since RESPIN-v1:
+ - Addressed review comments in srom binding documentation mainly from Rob Herring.
+ - Modified compatibility from "samsung, exynos-srom" to "samsung, exynos4210-srom"
+ - Changed type of optional property "samsung,srom-page-mode" from int to bool
+ - Adjusted exynos-srom driver code for reflecting change in type of above property.
+ - Renamed exynos SROM dt node as "memory-controller" instead of "sromc".
 
-Best Regards
--Anand Moon
 
---001a1141a43e9c799d05302e13c3
-Content-Type: application/octet-stream; name=exynosd_defconfig
-Content-Disposition: attachment; filename=exynosd_defconfig
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_imvhb5ez0
+Pankaj Dubey (5):
+  dt-bindings: EXYNOS: Add exynos-srom device tree binding
+  memory: Add support for Exynos SROM driver
+  MAINTAINERS: Add maintainers entry for drivers/memory/samsung
+  ARM: EXYNOS: Remove SROM related register settings from mach-exynos
+  ARM: dts: change SROM node compatible from generic to model specific
 
-IyBDT05GSUdfTE9DQUxWRVJTSU9OX0FVVE8gaXMgbm90IHNldApDT05GSUdfU1lTVklQQz15CkNP
-TkZJR19GSEFORExFPXkKQ09ORklHX0lSUV9ET01BSU5fREVCVUc9eQpDT05GSUdfTk9fSFo9eQpD
-T05GSUdfSElHSF9SRVNfVElNRVJTPXkKQ09ORklHX0lSUV9USU1FX0FDQ09VTlRJTkc9eQpDT05G
-SUdfVEFTS1NUQVRTPXkKQ09ORklHX1RBU0tfREVMQVlfQUNDVD15CkNPTkZJR19UQVNLX1hBQ0NU
-PXkKQ09ORklHX1RBU0tfSU9fQUNDT1VOVElORz15CkNPTkZJR19SQ1VfRVhQRVJUPXkKQ09ORklH
-X1JDVV9GQVNUX05PX0haPXkKQ09ORklHX1JDVV9CT09TVD15CkNPTkZJR19DR1JPVVBTPXkKQ09O
-RklHX0JMS19ERVZfSU5JVFJEPXkKQ09ORklHX0VNQkVEREVEPXkKQ09ORklHX1BFUkZfRVZFTlRT
-PXkKQ09ORklHX01PRFVMRVM9eQpDT05GSUdfTU9EVUxFX1VOTE9BRD15CiMgQ09ORklHX0JMS19E
-RVZfQlNHIGlzIG5vdCBzZXQKQ09ORklHX1BBUlRJVElPTl9BRFZBTkNFRD15CkNPTkZJR19BUkNI
-X0VYWU5PUz15CkNPTkZJR19BUkNIX0VYWU5PUzM9eQpDT05GSUdfRVhZTk9TNTQyMF9NQ1BNPXkK
-Q09ORklHX1NNUD15CkNPTkZJR19CSUdfTElUVExFPXkKQ09ORklHX05SX0NQVVM9OApDT05GSUdf
-UFJFRU1QVD15CkNPTkZJR19BRUFCST15CkNPTkZJR19ISUdITUVNPXkKQ09ORklHX0NNQT15CkNP
-TkZJR19aQk9PVF9ST01fVEVYVD0weDAKQ09ORklHX1pCT09UX1JPTV9CU1M9MHgwCkNPTkZJR19B
-Uk1fQVBQRU5ERURfRFRCPXkKQ09ORklHX0FSTV9BVEFHX0RUQl9DT01QQVQ9eQpDT05GSUdfQ01E
-TElORT0icm9vdD0vZGV2L3JhbTAgcncgcmFtZGlzaz04MTkyIGluaXRyZD0weDQxMDAwMDAwLDhN
-IGNvbnNvbGU9dHR5U0FDMSwxMTUyMDAgaW5pdD0vbGludXhyYyBtZW09MjU2TSIKQ09ORklHX0NQ
-VV9GUkVRPXkKQ09ORklHX0NQVV9GUkVRX1NUQVRfREVUQUlMUz15CkNPTkZJR19DUFVfRlJFUV9E
-RUZBVUxUX0dPVl9PTkRFTUFORD15CkNPTkZJR19DUFVfRlJFUV9HT1ZfUE9XRVJTQVZFPW0KQ09O
-RklHX0NQVV9GUkVRX0dPVl9VU0VSU1BBQ0U9bQpDT05GSUdfQ1BVX0ZSRVFfR09WX0NPTlNFUlZB
-VElWRT1tCkNPTkZJR19DUFVGUkVRX0RUPXkKQ09ORklHX0NQVV9JRExFPXkKQ09ORklHX0FSTV9F
-WFlOT1NfQ1BVSURMRT15CkNPTkZJR19WRlA9eQpDT05GSUdfTkVPTj15CkNPTkZJR19LRVJORUxf
-TU9ERV9ORU9OPXkKQ09ORklHX05FVD15CkNPTkZJR19QQUNLRVQ9eQpDT05GSUdfVU5JWD15CkNP
-TkZJR19ORVRfS0VZPXkKQ09ORklHX0lORVQ9eQpDT05GSUdfSVBfUE5QPXkKQ09ORklHX0lQX1BO
-UF9ESENQPXkKQ09ORklHX0lQX1BOUF9CT09UUD15CkNPTkZJR19JUF9QTlBfUkFSUD15CkNPTkZJ
-R19CVD1tCkNPTkZJR19CVF9SRkNPTU09bQpDT05GSUdfQlRfUkZDT01NX1RUWT15CkNPTkZJR19C
-VF9CTkVQPW0KQ09ORklHX0JUX0JORVBfTUNfRklMVEVSPXkKQ09ORklHX0JUX0JORVBfUFJPVE9f
-RklMVEVSPXkKQ09ORklHX0JUX0hJRFA9bQojIENPTkZJR19CVF9ERUJVR0ZTIGlzIG5vdCBzZXQK
-Q09ORklHX0JUX0hDSUJUVVNCPW0KQ09ORklHX0JUX0hDSVVBUlQ9bQpDT05GSUdfQlRfSENJVUFS
-VF9CQ1NQPXkKQ09ORklHX0JUX0hDSVVBUlRfQVRIM0s9eQpDT05GSUdfQlRfSENJVUFSVF9MTD15
-CkNPTkZJR19CVF9IQ0lVQVJUXzNXSVJFPXkKQ09ORklHX0JUX0hDSUJDTTIwM1g9bQpDT05GSUdf
-QlRfSENJQlBBMTBYPW0KQ09ORklHX0JUX0hDSUJGVVNCPW0KQ09ORklHX0NGRzgwMjExPXkKQ09O
-RklHX1JGS0lMTF9SRUdVTEFUT1I9eQpDT05GSUdfREVWVE1QRlM9eQpDT05GSUdfREVWVE1QRlNf
-TU9VTlQ9eQpDT05GSUdfRE1BX0NNQT15CkNPTkZJR19DTUFfU0laRV9NQllURVM9NjQKQ09ORklH
-X0JMS19ERVZfTE9PUD15CkNPTkZJR19CTEtfREVWX0NSWVBUT0xPT1A9eQpDT05GSUdfQkxLX0RF
-Vl9SQU09eQpDT05GSUdfQkxLX0RFVl9SQU1fU0laRT04MTkyCkNPTkZJR19TQ1NJPXkKQ09ORklH
-X0JMS19ERVZfU0Q9eQpDT05GSUdfQ0hSX0RFVl9TRz15CkNPTkZJR19NRD15CkNPTkZJR19CTEtf
-REVWX0RNPXkKQ09ORklHX0RNX0NSWVBUPW0KQ09ORklHX05FVERFVklDRVM9eQpDT05GSUdfU01T
-QzkxMVg9eQpDT05GSUdfVVNCX1JUTDgxNTI9eQpDT05GSUdfVVNCX1VTQk5FVD15CkNPTkZJR19V
-U0JfTkVUX1NNU0M3NVhYPXkKQ09ORklHX1VTQl9ORVRfU01TQzk1WFg9eQpDT05GSUdfTVdJRklF
-WD1tCkNPTkZJR19NV0lGSUVYX1NESU89bQpDT05GSUdfSU5QVVRfRVZERVY9eQpDT05GSUdfS0VZ
-Qk9BUkRfR1BJTz15CkNPTkZJR19LRVlCT0FSRF9DUk9TX0VDPXkKIyBDT05GSUdfTU9VU0VfUFMy
-IGlzIG5vdCBzZXQKQ09ORklHX01PVVNFX0NZQVBBPXkKQ09ORklHX0lOUFVUX1RPVUNIU0NSRUVO
-PXkKQ09ORklHX1RPVUNIU0NSRUVOX0FUTUVMX01YVD15CkNPTkZJR19JTlBVVF9NSVNDPXkKQ09O
-RklHX0lOUFVUX01BWDc3NjkzX0hBUFRJQz15CkNPTkZJR19JTlBVVF9NQVg4OTk3X0hBUFRJQz15
-CkNPTkZJR19TRVJJQUxfODI1MD15CkNPTkZJR19TRVJJQUxfT0ZfUExBVEZPUk09eQpDT05GSUdf
-U0VSSUFMX1NBTVNVTkc9eQpDT05GSUdfU0VSSUFMX1NBTVNVTkdfQ09OU09MRT15CkNPTkZJR19I
-V19SQU5ET009eQpDT05GSUdfVENHX1RQTT15CkNPTkZJR19UQ0dfVElTX0kyQ19JTkZJTkVPTj15
-CkNPTkZJR19JMkNfQ0hBUkRFVj15CkNPTkZJR19JMkNfTVVYPXkKQ09ORklHX0kyQ19BUkJfR1BJ
-T19DSEFMTEVOR0U9eQpDT05GSUdfSTJDX0dQSU89eQpDT05GSUdfSTJDX0NST1NfRUNfVFVOTkVM
-PXkKQ09ORklHX1NQST15CkNPTkZJR19TUElfR1BJTz15CkNPTkZJR19TUElfUzNDNjRYWD15CkNP
-TkZJR19ERUJVR19HUElPPXkKQ09ORklHX0dQSU9fU1lTRlM9eQpDT05GSUdfUE9XRVJfU1VQUExZ
-PXkKQ09ORklHX0JBVFRFUllfU0JTPXkKQ09ORklHX0JBVFRFUllfTUFYMTcwNDA9eQpDT05GSUdf
-QkFUVEVSWV9NQVgxNzA0Mj15CkNPTkZJR19DSEFSR0VSX01BWDE0NTc3PXkKQ09ORklHX0NIQVJH
-RVJfTUFYNzc2OTM9eQpDT05GSUdfQ0hBUkdFUl9NQVg4OTk3PXkKQ09ORklHX0NIQVJHRVJfVFBT
-NjUwOTA9eQpDT05GSUdfU0VOU09SU19MTTkwPXkKQ09ORklHX1NFTlNPUlNfTlRDX1RIRVJNSVNU
-T1I9eQpDT05GSUdfU0VOU09SU19QV01fRkFOPXkKQ09ORklHX1NFTlNPUlNfSU5BMlhYPXkKQ09O
-RklHX0NQVV9USEVSTUFMPXkKQ09ORklHX1RIRVJNQUxfRU1VTEFUSU9OPXkKQ09ORklHX1dBVENI
-RE9HPXkKQ09ORklHX1MzQzI0MTBfV0FUQ0hET0c9eQpDT05GSUdfTUZEX0NST1NfRUM9eQpDT05G
-SUdfTUZEX0NST1NfRUNfSTJDPXkKQ09ORklHX01GRF9DUk9TX0VDX1NQST15CkNPTkZJR19NRkRf
-TUFYMTQ1Nzc9eQpDT05GSUdfTUZEX01BWDc3Njg2PXkKQ09ORklHX01GRF9NQVg3NzY5Mz15CkNP
-TkZJR19NRkRfTUFYODk5Nz15CkNPTkZJR19NRkRfTUFYODk5OD15CkNPTkZJR19NRkRfU0VDX0NP
-UkU9eQpDT05GSUdfTUZEX1RQUzY1MDkwPXkKQ09ORklHX1JFR1VMQVRPUj15CkNPTkZJR19SRUdV
-TEFUT1JfRklYRURfVk9MVEFHRT15CkNPTkZJR19SRUdVTEFUT1JfR1BJTz15CkNPTkZJR19SRUdV
-TEFUT1JfTUFYMTQ1Nzc9eQpDT05GSUdfUkVHVUxBVE9SX01BWDg5OTc9eQpDT05GSUdfUkVHVUxB
-VE9SX01BWDg5OTg9eQpDT05GSUdfUkVHVUxBVE9SX01BWDc3Njg2PXkKQ09ORklHX1JFR1VMQVRP
-Ul9NQVg3NzY5Mz15CkNPTkZJR19SRUdVTEFUT1JfTUFYNzc4MDI9eQpDT05GSUdfUkVHVUxBVE9S
-X1MyTVBBMDE9eQpDT05GSUdfUkVHVUxBVE9SX1MyTVBTMTE9eQpDT05GSUdfUkVHVUxBVE9SX1M1
-TTg3Njc9eQpDT05GSUdfUkVHVUxBVE9SX1RQUzY1MDkwPXkKQ09ORklHX01FRElBX1NVUFBPUlQ9
-bQpDT05GSUdfTUVESUFfQ0FNRVJBX1NVUFBPUlQ9eQpDT05GSUdfTUVESUFfVVNCX1NVUFBPUlQ9
-eQpDT05GSUdfVVNCX1ZJREVPX0NMQVNTPW0KQ09ORklHX0RSTT15CkNPTkZJR19EUk1fRVhZTk9T
-PXkKQ09ORklHX0RSTV9FWFlOT1NfRklNRD15CkNPTkZJR19EUk1fRVhZTk9TX01JWEVSPXkKQ09O
-RklHX0RSTV9FWFlOT1NfRFBJPXkKQ09ORklHX0RSTV9FWFlOT1NfRFNJPXkKQ09ORklHX0RSTV9F
-WFlOT1NfSERNST15CkNPTkZJR19EUk1fUEFORUxfU0lNUExFPXkKQ09ORklHX0RSTV9QQU5FTF9T
-QU1TVU5HX0xEOTA0MD15CkNPTkZJR19EUk1fUEFORUxfU0FNU1VOR19TNkU4QUEwPXkKQ09ORklH
-X0RSTV9OWFBfUFROMzQ2MD15CkNPTkZJR19EUk1fUEFSQURFX1BTODYyMj15CkNPTkZJR19FWFlO
-T1NfVklERU89eQpDT05GSUdfRVhZTk9TX01JUElfRFNJPXkKQ09ORklHX0xDRF9DTEFTU19ERVZJ
-Q0U9eQpDT05GSUdfTENEX1BMQVRGT1JNPXkKQ09ORklHX0JBQ0tMSUdIVF9QV009eQpDT05GSUdf
-TE9HTz15CkNPTkZJR19TT1VORD15CkNPTkZJR19TTkQ9eQpDT05GSUdfU05EX1NPQz15CkNPTkZJ
-R19TTkRfU09DX1NBTVNVTkc9eQpDT05GSUdfU05EX1NPQ19TTk9XPXkKQ09ORklHX1NORF9TT0Nf
-T0RST0lEWDI9eQpDT05GSUdfU05EX1NJTVBMRV9DQVJEPXkKQ09ORklHX1VTQj15CkNPTkZJR19V
-U0JfQU5OT1VOQ0VfTkVXX0RFVklDRVM9eQpDT05GSUdfVVNCX1hIQ0lfSENEPXkKQ09ORklHX1VT
-Ql9FSENJX0hDRD15CkNPTkZJR19VU0JfRUhDSV9FWFlOT1M9eQpDT05GSUdfVVNCX09IQ0lfSENE
-PXkKQ09ORklHX1VTQl9PSENJX0VYWU5PUz15CkNPTkZJR19VU0JfU1RPUkFHRT15CkNPTkZJR19V
-U0JfRFdDMz15CkNPTkZJR19VU0JfRFdDMj15CkNPTkZJR19VU0JfSFNJQ19VU0IzNTAzPXkKQ09O
-RklHX1VTQl9HQURHRVQ9eQpDT05GSUdfVVNCX0VUSD15CkNPTkZJR19NTUM9eQpDT05GSUdfTU1D
-X0JMT0NLX01JTk9SUz0xNgpDT05GSUdfTU1DX1NESENJPXkKQ09ORklHX01NQ19TREhDSV9TM0M9
-eQpDT05GSUdfTU1DX1NESENJX1MzQ19ETUE9eQpDT05GSUdfTU1DX0RXPXkKQ09ORklHX01NQ19E
-V19FWFlOT1M9eQpDT05GSUdfTkVXX0xFRFM9eQpDT05GSUdfTEVEU19DTEFTUz15CkNPTkZJR19M
-RURTX0NMQVNTX0ZMQVNIPXkKQ09ORklHX0xFRFNfR1BJTz15CkNPTkZJR19MRURTX1BXTT15CkNP
-TkZJR19MRURTX01BWDc3NjkzPXkKQ09ORklHX0xFRFNfTUFYODk5Nz15CkNPTkZJR19MRURTX1RS
-SUdHRVJTPXkKQ09ORklHX0xFRFNfVFJJR0dFUl9IRUFSVEJFQVQ9eQpDT05GSUdfUlRDX0NMQVNT
-PXkKQ09ORklHX1JUQ19EUlZfTUFYODk5Nz15CkNPTkZJR19SVENfRFJWX01BWDc3Njg2PXkKQ09O
-RklHX1JUQ19EUlZfUzVNPXkKQ09ORklHX1JUQ19EUlZfUzNDPXkKQ09ORklHX0RNQURFVklDRVM9
-eQpDT05GSUdfUEwzMzBfRE1BPXkKQ09ORklHX0NST1NfRUNfQ0hBUkRFVj15CkNPTkZJR19DT01N
-T05fQ0xLX01BWDc3Njg2PXkKQ09ORklHX0NPTU1PTl9DTEtfTUFYNzc4MDI9eQpDT05GSUdfQ09N
-TU9OX0NMS19TMk1QUzExPXkKQ09ORklHX0VYWU5PU19JT01NVT15CkNPTkZJR19FWFlOT1NfSU9N
-TVVfREVCVUc9eQpDT05GSUdfQVJNX1NNTVU9eQpDT05GSUdfUE1fREVWRlJFUT15CkNPTkZJR19E
-RVZGUkVRX0dPVl9QRVJGT1JNQU5DRT1tCkNPTkZJR19ERVZGUkVRX0dPVl9QT1dFUlNBVkU9bQpD
-T05GSUdfREVWRlJFUV9HT1ZfVVNFUlNQQUNFPW0KQ09ORklHX0FSTV9FWFlOT1NfQlVTX0RFVkZS
-RVE9eQpDT05GSUdfREVWRlJFUV9FVkVOVF9FWFlOT1NfTk9DUD15CkNPTkZJR19FWFRDT049eQpD
-T05GSUdfRVhUQ09OX0FEQ19KQUNLPXkKQ09ORklHX0VYVENPTl9HUElPPXkKQ09ORklHX0VYVENP
-Tl9NQVgxNDU3Nz15CkNPTkZJR19FWFRDT05fTUFYNzc2OTM9eQpDT05GSUdfRVhUQ09OX01BWDg5
-OTc9eQpDT05GSUdfSUlPPXkKQ09ORklHX0VYWU5PU19BREM9eQpDT05GSUdfUFdNPXkKQ09ORklH
-X1BXTV9TQU1TVU5HPXkKQ09ORklHX1BIWV9FWFlOT1M1MjUwX1NBVEE9eQpDT05GSUdfRVhUMl9G
-Uz15CkNPTkZJR19FWFQzX0ZTPXkKQ09ORklHX0FVVE9GUzRfRlM9eQpDT05GSUdfTVNET1NfRlM9
-eQpDT05GSUdfVkZBVF9GUz15CkNPTkZJR19UTVBGUz15CkNPTkZJR19UTVBGU19QT1NJWF9BQ0w9
-eQpDT05GSUdfQ1JBTUZTPXkKQ09ORklHX1JPTUZTX0ZTPXkKQ09ORklHX05GU19GUz15CkNPTkZJ
-R19ORlNfVjQ9eQpDT05GSUdfUk9PVF9ORlM9eQpDT05GSUdfTkxTX0NPREVQQUdFXzQzNz15CkNP
-TkZJR19OTFNfQVNDSUk9eQpDT05GSUdfTkxTX0lTTzg4NTlfMT15CkNPTkZJR19QUklOVEtfVElN
-RT15CkNPTkZJR19ERUJVR19JTkZPPXkKQ09ORklHX01BR0lDX1NZU1JRPXkKQ09ORklHX0RFQlVH
-X1BBR0VBTExPQz15CkNPTkZJR19ERUJVR19PQkpFQ1RTPXkKQ09ORklHX0RFQlVHX09CSkVDVFNf
-U0VMRlRFU1Q9eQpDT05GSUdfREVCVUdfT0JKRUNUU19GUkVFPXkKQ09ORklHX0RFQlVHX09CSkVD
-VFNfVElNRVJTPXkKQ09ORklHX0RFQlVHX09CSkVDVFNfV09SSz15CkNPTkZJR19ERUJVR19PQkpF
-Q1RTX1JDVV9IRUFEPXkKQ09ORklHX0RFQlVHX09CSkVDVFNfUEVSQ1BVX0NPVU5URVI9eQpDT05G
-SUdfREVCVUdfU0hJUlE9eQpDT05GSUdfTE9DS1VQX0RFVEVDVE9SPXkKQ09ORklHX1NDSEVEU1RB
-VFM9eQpDT05GSUdfU0NIRURfU1RBQ0tfRU5EX0NIRUNLPXkKQ09ORklHX1RJTUVSX1NUQVRTPXkK
-Q09ORklHX0RFQlVHX1JUX01VVEVYRVM9eQpDT05GSUdfREVCVUdfV1dfTVVURVhfU0xPV1BBVEg9
-eQpDT05GSUdfUFJPVkVfTE9DS0lORz15CkNPTkZJR19MT0NLX1NUQVQ9eQpDT05GSUdfREVCVUdf
-TE9DS0RFUD15CkNPTkZJR19ERUJVR19BVE9NSUNfU0xFRVA9eQpDT05GSUdfREVCVUdfTE9DS0lO
-R19BUElfU0VMRlRFU1RTPXkKQ09ORklHX0xPQ0tfVE9SVFVSRV9URVNUPW0KQ09ORklHX0RFQlVH
-X1BJX0xJU1Q9eQpDT05GSUdfREVCVUdfU0c9eQpDT05GSUdfREVCVUdfTk9USUZJRVJTPXkKQ09O
-RklHX0RFQlVHX0NSRURFTlRJQUxTPXkKQ09ORklHX1BST1ZFX1JDVV9SRVBFQVRFRExZPXkKQ09O
-RklHX1NQQVJTRV9SQ1VfUE9JTlRFUj15CkNPTkZJR19SQ1VfVE9SVFVSRV9URVNUPW0KQ09ORklH
-X1JDVV9UT1JUVVJFX1RFU1RfU0xPV19QUkVJTklUPXkKQ09ORklHX1JDVV9UUkFDRT15CkNPTkZJ
-R19ERUJVR19VU0VSPXkKQ09ORklHX0NSWVBUT19ERVZfUzVQPXkKQ09ORklHX0FSTV9DUllQVE89
-eQpDT05GSUdfQ1JZUFRPX1NIQTFfQVJNX05FT049bQpDT05GSUdfQ1JZUFRPX1NIQTI1Nl9BUk09
-bQpDT05GSUdfQ1JZUFRPX1NIQTUxMl9BUk09bQpDT05GSUdfQ1JZUFRPX0FFU19BUk1fQlM9bQpD
-T05GSUdfQ1JDX0NDSVRUPXkKQ09ORklHX0ZPTlRTPXkKQ09ORklHX0ZPTlRfN3gxND15Cg==
---001a1141a43e9c799d05302e13c3--
+Pavel Fedin (1):
+  memory: samsung: exynos-srom: Add support for bank configuration
+
+ .../bindings/memory-controllers/exynos-srom.txt    |  79 +++++++
+ MAINTAINERS                                        |   1 +
+ arch/arm/boot/dts/exynos4.dtsi                     |   4 +-
+ arch/arm/boot/dts/exynos5.dtsi                     |   4 +-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   2 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |   4 +-
+ arch/arm/mach-exynos/Kconfig                       |   3 +
+ arch/arm/mach-exynos/exynos.c                      |  17 --
+ arch/arm/mach-exynos/include/mach/map.h            |   3 -
+ arch/arm/mach-exynos/regs-srom.h                   |  53 -----
+ arch/arm/mach-exynos/suspend.c                     |  20 +-
+ arch/arm/plat-samsung/include/plat/map-s5p.h       |   1 -
+ drivers/memory/Kconfig                             |   1 +
+ drivers/memory/Makefile                            |   1 +
+ drivers/memory/samsung/Kconfig                     |  13 ++
+ drivers/memory/samsung/Makefile                    |   1 +
+ drivers/memory/samsung/exynos-srom.c               | 231 +++++++++++++++++++++
+ drivers/memory/samsung/exynos-srom.h               |  51 +++++
+ 18 files changed, 390 insertions(+), 99 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+ delete mode 100644 arch/arm/mach-exynos/regs-srom.h
+ create mode 100644 drivers/memory/samsung/Kconfig
+ create mode 100644 drivers/memory/samsung/Makefile
+ create mode 100644 drivers/memory/samsung/exynos-srom.c
+ create mode 100644 drivers/memory/samsung/exynos-srom.h
+
+-- 
+2.4.5
