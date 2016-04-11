@@ -1,328 +1,143 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [RESPIN v2 2/6] memory: Add support for Exynos SROM driver
-Date: Mon, 11 Apr 2016 13:12:24 +0530
-Message-ID: <1460360548-32127-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1460360548-32127-1-git-send-email-pankaj.dubey@samsung.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH] mtd: nand: s3c2410: fix bug in
+ s3c2410_nand_correct_data()
+Date: Mon, 11 Apr 2016 09:49:01 +0200
+Message-ID: <20160411094901.74e68f91@bbrezillon>
+References: <1460047697-72830-1-git-send-email-zengzhaoxiu@163.com>
+	<20160408021817.274d4e59@bbrezillon>
+	<57070E88.5020008@gmail.com>
+	<20160408041802.5c47a4be@bbrezillon>
+	<57074392.2030601@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57655 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752818AbcDKHlC (ORCPT
+Received: from down.free-electrons.com ([37.187.137.238]:53878 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750820AbcDKHtJ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Apr 2016 03:41:02 -0400
-In-reply-to: <1460360548-32127-1-git-send-email-pankaj.dubey@samsung.com>
+	Mon, 11 Apr 2016 03:49:09 -0400
+In-Reply-To: <57074392.2030601@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, p.fedin@samsung.com, olof@lixom.net, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>
+To: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
+Cc: zengzhaoxiu@163.com, kgene@kernel.org, k.kozlowski@samsung.com, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-This patch adds Exynos SROM controller driver which will handle
-save restore of SROM registers during S2R.
+Hi Zeng,
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-[p.fedin@samsung.com: tested on SMDK5410]
-Tested-by: Pavel Fedin <p.fedin@samsung.com>
-Signed-off-by: Kukjin Kim <kgene@kernel.org>
-[k.kozlowski: Minor COMPILE_TEST adjustments in Kconfig entries]
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/memory/Kconfig               |   1 +
- drivers/memory/Makefile              |   1 +
- drivers/memory/samsung/Kconfig       |  13 +++
- drivers/memory/samsung/Makefile      |   1 +
- drivers/memory/samsung/exynos-srom.c | 175 +++++++++++++++++++++++++++++++++++
- drivers/memory/samsung/exynos-srom.h |  51 ++++++++++
- 6 files changed, 242 insertions(+)
- create mode 100644 drivers/memory/samsung/Kconfig
- create mode 100644 drivers/memory/samsung/Makefile
- create mode 100644 drivers/memory/samsung/exynos-srom.c
- create mode 100644 drivers/memory/samsung/exynos-srom.h
+On Fri, 8 Apr 2016 13:37:22 +0800
+Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com> wrote:
 
-diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-index 51d5cd2..c61a284 100644
---- a/drivers/memory/Kconfig
-+++ b/drivers/memory/Kconfig
-@@ -122,6 +122,7 @@ config MTK_SMI
- 	  mainly help enable/disable iommu and control the power domain and
- 	  clocks for each local arbiter.
- 
-+source "drivers/memory/samsung/Kconfig"
- source "drivers/memory/tegra/Kconfig"
- 
- endif
-diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
-index 890bdf4..cb0b7a1 100644
---- a/drivers/memory/Makefile
-+++ b/drivers/memory/Makefile
-@@ -17,4 +17,5 @@ obj-$(CONFIG_TEGRA20_MC)	+= tegra20-mc.o
- obj-$(CONFIG_JZ4780_NEMC)	+= jz4780-nemc.o
- obj-$(CONFIG_MTK_SMI)		+= mtk-smi.o
- 
-+obj-$(CONFIG_SAMSUNG_MC)	+= samsung/
- obj-$(CONFIG_TEGRA_MC)		+= tegra/
-diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
-new file mode 100644
-index 0000000..64ab5dd
---- /dev/null
-+++ b/drivers/memory/samsung/Kconfig
-@@ -0,0 +1,13 @@
-+config SAMSUNG_MC
-+	bool "Samsung Exynos Memory Controller support" if COMPILE_TEST
-+	help
-+	  Support for the Memory Controller (MC) devices found on
-+	  Samsung Exynos SoCs.
-+
-+if SAMSUNG_MC
-+
-+config EXYNOS_SROM
-+	bool "Exynos SROM controller driver" if COMPILE_TEST
-+	depends on (ARM && ARCH_EXYNOS && PM) || (COMPILE_TEST && HAS_IOMEM)
-+
-+endif
-diff --git a/drivers/memory/samsung/Makefile b/drivers/memory/samsung/Makefile
-new file mode 100644
-index 0000000..9c554d5
---- /dev/null
-+++ b/drivers/memory/samsung/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_EXYNOS_SROM)	+= exynos-srom.o
-diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-new file mode 100644
-index 0000000..68e073c
---- /dev/null
-+++ b/drivers/memory/samsung/exynos-srom.c
-@@ -0,0 +1,175 @@
-+/*
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+ *	      http://www.samsung.com/
-+ *
-+ * EXYNOS - SROM Controller support
-+ * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "exynos-srom.h"
-+
-+static const unsigned long exynos_srom_offsets[] = {
-+	/* SROM side */
-+	EXYNOS_SROM_BW,
-+	EXYNOS_SROM_BC0,
-+	EXYNOS_SROM_BC1,
-+	EXYNOS_SROM_BC2,
-+	EXYNOS_SROM_BC3,
-+};
-+
-+/**
-+ * struct exynos_srom_reg_dump: register dump of SROM Controller registers.
-+ * @offset: srom register offset from the controller base address.
-+ * @value: the value of register under the offset.
-+ */
-+struct exynos_srom_reg_dump {
-+	u32     offset;
-+	u32     value;
-+};
-+
-+/**
-+ * struct exynos_srom: platform data for exynos srom controller driver.
-+ * @dev: platform device pointer
-+ * @reg_base: srom base address
-+ * @reg_offset: exynos_srom_reg_dump pointer to hold offset and its value.
-+ */
-+struct exynos_srom {
-+	struct device *dev;
-+	void __iomem *reg_base;
-+	struct exynos_srom_reg_dump *reg_offset;
-+};
-+
-+static struct exynos_srom_reg_dump *exynos_srom_alloc_reg_dump(
-+		const unsigned long *rdump,
-+		unsigned long nr_rdump)
-+{
-+	struct exynos_srom_reg_dump *rd;
-+	unsigned int i;
-+
-+	rd = kcalloc(nr_rdump, sizeof(*rd), GFP_KERNEL);
-+	if (!rd)
-+		return NULL;
-+
-+	for (i = 0; i < nr_rdump; ++i)
-+		rd[i].offset = rdump[i];
-+
-+	return rd;
-+}
-+
-+static int exynos_srom_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np;
-+	struct exynos_srom *srom;
-+	struct device *dev = &pdev->dev;
-+
-+	np = dev->of_node;
-+	if (!np) {
-+		dev_err(&pdev->dev, "could not find device info\n");
-+		return -EINVAL;
-+	}
-+
-+	srom = devm_kzalloc(&pdev->dev,
-+			sizeof(struct exynos_srom), GFP_KERNEL);
-+	if (!srom)
-+		return -ENOMEM;
-+
-+	srom->dev = dev;
-+	srom->reg_base = of_iomap(np, 0);
-+	if (!srom->reg_base) {
-+		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	platform_set_drvdata(pdev, srom);
-+
-+	srom->reg_offset = exynos_srom_alloc_reg_dump(exynos_srom_offsets,
-+			sizeof(exynos_srom_offsets));
-+	if (!srom->reg_offset) {
-+		iounmap(srom->reg_base);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static int exynos_srom_remove(struct platform_device *pdev)
-+{
-+	struct exynos_srom *srom = platform_get_drvdata(pdev);
-+
-+	kfree(srom->reg_offset);
-+	iounmap(srom->reg_base);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static void exynos_srom_save(void __iomem *base,
-+				    struct exynos_srom_reg_dump *rd,
-+				    unsigned int num_regs)
-+{
-+	for (; num_regs > 0; --num_regs, ++rd)
-+		rd->value = readl(base + rd->offset);
-+}
-+
-+static void exynos_srom_restore(void __iomem *base,
-+				      const struct exynos_srom_reg_dump *rd,
-+				      unsigned int num_regs)
-+{
-+	for (; num_regs > 0; --num_regs, ++rd)
-+		writel(rd->value, base + rd->offset);
-+}
-+
-+static int exynos_srom_suspend(struct device *dev)
-+{
-+	struct exynos_srom *srom = dev_get_drvdata(dev);
-+
-+	exynos_srom_save(srom->reg_base, srom->reg_offset,
-+				ARRAY_SIZE(exynos_srom_offsets));
-+	return 0;
-+}
-+
-+static int exynos_srom_resume(struct device *dev)
-+{
-+	struct exynos_srom *srom = dev_get_drvdata(dev);
-+
-+	exynos_srom_restore(srom->reg_base, srom->reg_offset,
-+				ARRAY_SIZE(exynos_srom_offsets));
-+	return 0;
-+}
-+#endif
-+
-+static const struct of_device_id of_exynos_srom_ids[] = {
-+	{
-+		.compatible	= "samsung,exynos4210-srom",
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_exynos_srom_ids);
-+
-+static SIMPLE_DEV_PM_OPS(exynos_srom_pm_ops, exynos_srom_suspend, exynos_srom_resume);
-+
-+static struct platform_driver exynos_srom_driver = {
-+	.probe = exynos_srom_probe,
-+	.remove = exynos_srom_remove,
-+	.driver = {
-+		.name = "exynos-srom",
-+		.of_match_table = of_exynos_srom_ids,
-+		.pm = &exynos_srom_pm_ops,
-+	},
-+};
-+module_platform_driver(exynos_srom_driver);
-+
-+MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey@samsung.com>");
-+MODULE_DESCRIPTION("Exynos SROM Controller Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/memory/samsung/exynos-srom.h b/drivers/memory/samsung/exynos-srom.h
-new file mode 100644
-index 0000000..34660c6
---- /dev/null
-+++ b/drivers/memory/samsung/exynos-srom.h
-@@ -0,0 +1,51 @@
-+/*
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Exynos SROMC register definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __EXYNOS_SROM_H
-+#define __EXYNOS_SROM_H __FILE__
-+
-+#define EXYNOS_SROMREG(x)		(x)
-+
-+#define EXYNOS_SROM_BW		EXYNOS_SROMREG(0x0)
-+#define EXYNOS_SROM_BC0		EXYNOS_SROMREG(0x4)
-+#define EXYNOS_SROM_BC1		EXYNOS_SROMREG(0x8)
-+#define EXYNOS_SROM_BC2		EXYNOS_SROMREG(0xc)
-+#define EXYNOS_SROM_BC3		EXYNOS_SROMREG(0x10)
-+#define EXYNOS_SROM_BC4		EXYNOS_SROMREG(0x14)
-+#define EXYNOS_SROM_BC5		EXYNOS_SROMREG(0x18)
-+
-+/* one register BW holds 4 x 4-bit packed settings for NCS0 - NCS3 */
-+
-+#define EXYNOS_SROM_BW__DATAWIDTH__SHIFT	0
-+#define EXYNOS_SROM_BW__ADDRMODE__SHIFT		1
-+#define EXYNOS_SROM_BW__WAITENABLE__SHIFT	2
-+#define EXYNOS_SROM_BW__BYTEENABLE__SHIFT	3
-+
-+#define EXYNOS_SROM_BW__CS_MASK			0xf
-+
-+#define EXYNOS_SROM_BW__NCS0__SHIFT		0
-+#define EXYNOS_SROM_BW__NCS1__SHIFT		4
-+#define EXYNOS_SROM_BW__NCS2__SHIFT		8
-+#define EXYNOS_SROM_BW__NCS3__SHIFT		12
-+#define EXYNOS_SROM_BW__NCS4__SHIFT		16
-+#define EXYNOS_SROM_BW__NCS5__SHIFT		20
-+
-+/* applies to same to BCS0 - BCS3 */
-+
-+#define EXYNOS_SROM_BCX__PMC__SHIFT		0
-+#define EXYNOS_SROM_BCX__TACP__SHIFT		4
-+#define EXYNOS_SROM_BCX__TCAH__SHIFT		8
-+#define EXYNOS_SROM_BCX__TCOH__SHIFT		12
-+#define EXYNOS_SROM_BCX__TACC__SHIFT		16
-+#define EXYNOS_SROM_BCX__TCOS__SHIFT		24
-+#define EXYNOS_SROM_BCX__TACS__SHIFT		28
-+
-+#endif /* __EXYNOS_SROM_H */
--- 
-2.4.5
+> =E5=9C=A8 2016=E5=B9=B404=E6=9C=8808=E6=97=A5 10:18, Boris Brezillon =
+=E5=86=99=E9=81=93:
+> > On Fri, 8 Apr 2016 09:51:04 +0800
+> > Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com> wrote:
+> >
+> >>
+> >> =E5=9C=A8 2016=E5=B9=B404=E6=9C=8808=E6=97=A5 08:18, Boris Brezill=
+on =E5=86=99=E9=81=93:
+> >>> Hi Zeng,
+> >>>
+> >>> On Fri,  8 Apr 2016 00:48:17 +0800
+> >>> zengzhaoxiu@163.com wrote:
+> >>>
+> >>>> From: Zeng Zhaoxiu <zhaoxiu.zeng@gmail.com>
+> >>>>
+> >>>> If there is only one bit difference in the ECC, the function sho=
+uld return 1.
+> >>>> The result of "diff0 & ~(1<<fls(diff0))" is equal to diff0, so t=
+he function
+> >>>> actually returns -1.
+> >>>>
+> >>>> Here, we can use the simple expression "(diff0 & (diff0 - 1)) =3D=
+=3D 0" to determine
+> >>>> whether the diff0 has only one 1-bit.
+> >>> Missing Signed-off-by here.
+> >>>
+> >>>> ---
+> >>>>    drivers/mtd/nand/s3c2410.c | 2 +-
+> >>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c24=
+10.c
+> >>>> index 9c9397b..c9698cf 100644
+> >>>> --- a/drivers/mtd/nand/s3c2410.c
+> >>>> +++ b/drivers/mtd/nand/s3c2410.c
+> >>>> @@ -542,7 +542,7 @@ static int s3c2410_nand_correct_data(struct =
+mtd_info *mtd, u_char *dat,
+> >>>>    	diff0 |=3D (diff1 << 8);
+> >>>>    	diff0 |=3D (diff2 << 16);
+> >>>>   =20
+> >>>> -	if ((diff0 & ~(1<<fls(diff0))) =3D=3D 0)
+> >>>> +	if ((diff0 & (diff0 - 1)) =3D=3D 0)
+> >>> Or just
+> >>>
+> >>> 	if (hweight_long((unsigned long)diff0) =3D=3D 1)
+> >>>
+> >>> which is doing exactly what the comment says.
+> >>>
+> >>> BTW, I don't understand why the current code is wrong? To me, it =
+seems
+> >>> it's correctly detecting the case where only a single bit is diff=
+erent.
+> >>> What are you trying to fix exactly?
+> >>>
+> >>> Best Regards,
+> >>>
+> >>> Boris
+> >>>
+> >> For example, assuming diff0 is 1, then fls(diff0) is equal to 1, t=
+hen "~(1 << fls(diff0))" is equal to 0xfffffffd,
+> >> then the result of "(diff0 & ~(1 << fls(diff0)))" is 1 , not we ex=
+pected 0.
+> >>
+> >> __fls(diff0) and "(fls(diff0) - 1)" are all right, but fls(diff0) =
+is wrong.
+> >>
+> > Indeed, I forgot that fls() was returning (position + 1). Anyway, I
+> > still think using hweight clarifies what you really want to test.
+> >
+>=20
+> "(n & (n - 1))" is used in is_power_of_2() in incluse/linux/log2.h,
+> it's result is equal to "n & ~(1 << __ffs(n))".
+>=20
+> "(diff & (diff - 1))" is simple and fast, although here is not perfor=
+mance critical.
+> To improve readability of this code, we should add a new function and=
+ use it.
+>=20
+> /*
+>   *  Determine whether some value has more than one 1-bits
+>   */
+>=20
+> static inline __attribute__((const))
+> bool more_than_1_bit_set(unsigned long n)
+> {
+>      return (n & (n - 1)) !=3D 0;
+> }
+>=20
+> OTOH, I found many determinations like "hweightN(n) > 1" distributed =
+in kernel,
+> these determinations are slower than "(n & (n - 1)) !=3D 0" on most C=
+PUs.
+
+Yes, probably, but it may be faster on a few CPUs :). Anyway, not sure
+you should bother optimizing this now, especially since this test is in
+the ECC correction path, and I doubt it makes any difference (detecting
+and correcting errors is what takes most of the time here).
+
+> We can use this new function instead.
+>=20
+
+In the end, I don't care that much which solution you'll choose, since
+it's driver specific code. Pick whatever implementation you prefer and
+resend the patch with your SoB.
+
+Thanks,
+
+Boris
+
+--=20
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
