@@ -1,93 +1,91 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/2] mfd: max77693: Allow building as a module
-Date: Mon, 11 Apr 2016 09:00:30 +0100
-Message-ID: <20160411080030.GB4592@x1>
-References: <1459756459-22061-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [RESEND PATCH] mfd: max77686: Use module_i2c_driver() instead of
+ subsys initcall
+Date: Mon, 11 Apr 2016 12:51:47 +0100
+Message-ID: <20160411115147.GU8094@x1>
+References: <1459809962-8883-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:33474 "EHLO
-	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752387AbcDKIAf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Apr 2016 04:00:35 -0400
-Received: by mail-wm0-f49.google.com with SMTP id f198so134107886wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Apr 2016 01:00:34 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1459756459-22061-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1459809962-8883-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Mon, 04 Apr 2016, Krzysztof Kozlowski wrote:
+On Mon, 04 Apr 2016, Javier Martinez Canillas wrote:
 
-> The consumer of max77693 regulators on Trats2 board (samsung-usb2-phy
-> driver) supports deferred probing so the max77693 main MFD driver can=
- be
-> built now as a module. This gives more flexibility and removes manual
-> ordering of init calls.
+> The driver's init and exit function don't do anything besides adding =
+and
+> deleting the I2C driver so the module_i2c_driver() macro could be use=
+d.
 >=20
-> Suggested-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Currently is not being used because the driver is initialized at subs=
+ys
+> initcall level, claiming that this is done to allow consumers devices=
+ to
+> use the resources provided by this driver. But dependencies are in DT=
+ so
+> manual ordering of init calls is not necessary any more.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>=20
 > ---
->  drivers/mfd/Kconfig    |  4 ++--
->  drivers/mfd/max77693.c | 14 ++------------
->  2 files changed, 4 insertions(+), 14 deletions(-)
+>=20
+> Changes in the resend:
+> - Change commit message to make clear that dependencies are in DT ins=
+tead
+>   giving the impression that it was wishful thinking (Krzysztof Kozlo=
+wski).
+>=20
+> Hello,
+>=20
+> This patch was first sent as a part of a bigger series to allow the
+> max77686 MFD driver to be built as a module [0]. The other patches
+> were already picked but $SUBJECT wasn't, probably because there was
+> a dependency with a patch on the exynos thermal driver [1].
+>=20
+> But the exynos thermal patches also landed in mainline so I think it
+> should be safe to merged $SUBJECT now.
+>=20
+> [0]: https://lkml.org/lkml/2016/2/11/857
+> [1]: https://lkml.org/lkml/2016/2/18/592
+>=20
+> Best regards,
+> Javier
+>=20
+>  drivers/mfd/max77686.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
 
 Applied, thanks.
 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index eea61e349e26..aa1e7c3f82ee 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -543,8 +543,8 @@ config MFD_MAX77686
->  	  of the device.
-> =20
->  config MFD_MAX77693
-> -	bool "Maxim Semiconductor MAX77693 PMIC Support"
-> -	depends on I2C=3Dy
-> +	tristate "Maxim Semiconductor MAX77693 PMIC Support"
-> +	depends on I2C
->  	select MFD_CORE
->  	select REGMAP_I2C
->  	select REGMAP_IRQ
-> diff --git a/drivers/mfd/max77693.c b/drivers/mfd/max77693.c
-> index b83b7a7da1ae..78e501feb96c 100644
-> --- a/drivers/mfd/max77693.c
-> +++ b/drivers/mfd/max77693.c
-> @@ -368,6 +368,7 @@ static const struct of_device_id max77693_dt_matc=
-h[] =3D {
->  	{ .compatible =3D "maxim,max77693" },
->  	{},
->  };
-> +MODULE_DEVICE_TABLE(of, max77693_dt_match);
->  #endif
-> =20
->  static struct i2c_driver max77693_i2c_driver =3D {
-> @@ -381,18 +382,7 @@ static struct i2c_driver max77693_i2c_driver =3D=
+> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+> index c1aff46e89d9..66cc9bebb7ba 100644
+> --- a/drivers/mfd/max77686.c
+> +++ b/drivers/mfd/max77686.c
+> @@ -321,18 +321,7 @@ static struct i2c_driver max77686_i2c_driver =3D=
  {
->  	.id_table =3D max77693_i2c_id,
+>  	.id_table =3D max77686_i2c_id,
 >  };
 > =20
-> -static int __init max77693_i2c_init(void)
+> -static int __init max77686_i2c_init(void)
 > -{
-> -	return i2c_add_driver(&max77693_i2c_driver);
+> -	return i2c_add_driver(&max77686_i2c_driver);
 > -}
 > -/* init early so consumer devices can complete system boot */
-> -subsys_initcall(max77693_i2c_init);
+> -subsys_initcall(max77686_i2c_init);
 > -
-> -static void __exit max77693_i2c_exit(void)
+> -static void __exit max77686_i2c_exit(void)
 > -{
-> -	i2c_del_driver(&max77693_i2c_driver);
+> -	i2c_del_driver(&max77686_i2c_driver);
 > -}
-> -module_exit(max77693_i2c_exit);
-> +module_i2c_driver(max77693_i2c_driver);
+> -module_exit(max77686_i2c_exit);
+> +module_i2c_driver(max77686_i2c_driver);
 > =20
->  MODULE_DESCRIPTION("MAXIM 77693 multi-function core driver");
->  MODULE_AUTHOR("SangYoung, Son <hello.son@samsung.com>");
+>  MODULE_DESCRIPTION("MAXIM 77686/802 multi-function core driver");
+>  MODULE_AUTHOR("Chiwoong Byun <woong.byun@samsung.com>");
 
 --=20
 Lee Jones
