@@ -1,121 +1,38 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 5/7] drm/exynos/decon5433: fix DECON standalone update
-Date: Tue, 12 Apr 2016 11:25:57 +0900
-Message-ID: <570C5CB5.8000409@samsung.com>
-References: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
- <1458738918-32054-6-git-send-email-a.hajda@samsung.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
+Date: Tue, 12 Apr 2016 05:42:03 +0100
+Message-ID: <20160412044203.GW3351@sirena.org.uk>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
+ <20160330212410.GX2350@sirena.org.uk>
+ <20160407235431.788dc24a@bbrezillon>
+Reply-To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46673 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755489AbcDLC0A (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Apr 2016 22:26:00 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0O5I012O91F9PM80@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 12 Apr 2016 11:25:57 +0900 (KST)
-In-reply-to: <1458738918-32054-6-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xsILJLaVOAbiPmXa"
+Return-path: <linux-sunxi+bncBDQ2L75W5QGBBZXZWG4AKGQE5T2WI6A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20160407235431.788dc24a@bbrezillon>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-Hi Andrzej,
+--xsILJLaVOAbiPmXa
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-2016=EB=85=84 03=EC=9B=94 23=EC=9D=BC 22:15=EC=97=90 Andrzej Hajda =EC=9D=
-=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> DECON should be updated after un-protecting windows and after changin=
-g
-> output parameters, otherwise image is not displayed in case of HDMI p=
-ath.
+On Thu, Apr 07, 2016 at 11:54:31PM +0200, Boris Brezillon wrote:
 
-I'm not sure why STANDALONE_UPDATE_F bit should be updated after un-pro=
-tecting windows and changing output parameters.
-The fields with _F prefix mean that these will be applied after vsync s=
-o we use protection window in case of all registers which affect displa=
-y output so that they can be updated together.
+> Is there any reason for calling set_machine_constraints() after
+> device_register() in regulator_register()?
 
-Wouldn't there be other thing which affects HDMI output?
-
-In addition, we would need another patch which updates TV relevant regi=
-sters only in case of DECON-TV. DECON_UPDATE is a register for DECON-TV=
-=2E
-
-Thanks,
-Inki Dae
-
->=20
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/=
-gpu/drm/exynos/exynos5433_drm_decon.c
-> index ab9154e..7fec656 100644
-> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> @@ -191,6 +191,8 @@ static void decon_commit(struct exynos_drm_crtc *=
-crtc)
-> =20
->  	/* enable output and display signal */
->  	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID | VIDCON0_ENVID_F,=
- ~0);
-> +
-> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->  }
-> =20
->  static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned=
- int win,
-> @@ -316,9 +318,6 @@ static void decon_update_plane(struct exynos_drm_=
-crtc *crtc,
-> =20
->  	/* window enable */
->  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, ~0);
-> -
-> -	/* standalone update */
-> -	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->  }
-> =20
->  static void decon_disable_plane(struct exynos_drm_crtc *crtc,
-> @@ -336,9 +335,6 @@ static void decon_disable_plane(struct exynos_drm=
-_crtc *crtc,
->  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
-> =20
->  	decon_shadow_protect_win(ctx, win, false);
-> -
-> -	/* standalone update */
-> -	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->  }
-> =20
->  static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
-> @@ -352,6 +348,9 @@ static void decon_atomic_flush(struct exynos_drm_=
-crtc *crtc)
->  	for (i =3D ctx->first_win; i < WINDOWS_NR; i++)
->  		decon_shadow_protect_win(ctx, i, false);
-> =20
-> +	/* standalone update */
-> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
-> +
->  	if (ctx->out_type =3D=3D IFTYPE_I80)
->  		set_bit(BIT_WIN_UPDATED, &ctx->flags);
->  }
-> @@ -463,8 +462,10 @@ static void decon_clear_channels(struct exynos_d=
-rm_crtc *crtc)
->  		decon_shadow_protect_win(ctx, win, true);
->  		decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
->  		decon_shadow_protect_win(ctx, win, false);
-> -		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->  	}
-> +
-> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
-> +
->  	/* TODO: wait for possible vsync */
->  	msleep(50);
-> =20
->=20
+I'm not sure there's a strong one, we don't really use the class device
+for anything, but without doing a full audit I couldn't guarantee that.
+--xsILJLaVOAbiPmXa--
