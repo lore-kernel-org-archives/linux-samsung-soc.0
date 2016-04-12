@@ -1,81 +1,75 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v5 RESEND 4/5] ARM: amba: Move reading of periphid to amba_match()
-Date: Tue, 12 Apr 2016 13:39:58 +0200
-Message-ID: <CAPDyKFpjTOhmG69x=EP=jje76C1ijjh0m_N8PrJ3yxqRq3HFiw@mail.gmail.com>
-References: <1455101250-11327-1-git-send-email-m.szyprowski@samsung.com>
-	<1455101250-11327-5-git-send-email-m.szyprowski@samsung.com>
-	<20160215175250.GJ10826@n2100.arm.linux.org.uk>
-	<56C426C4.7040907@samsung.com>
-	<20160217200828.GH19428@n2100.arm.linux.org.uk>
-	<CAPDyKFph8O+P9F124R859+OqY7B0YXCm=oOGxviyOo6tkNPQzQ@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 04/46] pwm: get rid of pwm->lock
+Date: Tue, 12 Apr 2016 13:46:00 +0200
+Message-ID: <20160412114600.GL18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-5-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412112246.GJ18882@ulmo.ba.sec>
+ <20160412133255.73cea027@bbrezillon>
+Reply-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:37361 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755999AbcDLLkA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Apr 2016 07:40:00 -0400
-Received: by mail-wm0-f41.google.com with SMTP id n3so24265463wmn.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2016 04:39:59 -0700 (PDT)
-In-Reply-To: <CAPDyKFph8O+P9F124R859+OqY7B0YXCm=oOGxviyOo6tkNPQzQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Mit9XoPEfICDqq/V"
+Return-path: <linux-sunxi+bncBDTKFPPJUEHRB657WO4AKGQETS3EHIY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20160412133255.73cea027@bbrezillon>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jo>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-- trimmed cc list
+--Mit9XoPEfICDqq/V
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-On 2 March 2016 at 11:16, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 17 February 2016 at 21:08, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
->> On Wed, Feb 17, 2016 at 08:52:36AM +0100, Marek Szyprowski wrote:
->>> Then the only solution right now I see is to get back to v1:
->>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/388199.html
->>> which at least handles correctly device registration when power domain
->>> driver is available.
->>
->> ... and which has the ability to break platforms if the PM domain is
->> not already available.
->>
->> What's wrong with the patch in the link above _combined_ with a patch
->> which addresses the concern I have with that patch: build a list of
->> the failed-to-register devices, and retry them later - maybe from a
->> late_initcall(), or a similar mechanism?
->
-> This will improve the robustness of the device registration process,
-> but I wonder if it's really worth the efforts of complicating the amba
-> device registration code.
->
-> The problem I see with such approach, is to know *when* shall we retry
-> to register the devices.
->
-> We will rely on the PM domain driver to be probed, as to have the
-> corresponding OF genpd provider registered, else the device
-> registration will continue to fail.
-> Now, I don't think there are PM domain drivers as removable modules
-> (yet), but in such cases a late_initcall won't help much.
->
->>
->> My view is the risk to existing systems is _too_ high to apply either
->> this patch, or the patch you link to above, and I refuse to play the
->> "lets apply it and see if we break anything" lottery with this.
->
-> I agree!
->
-> Although I think with some adjustments, perhaps we can move forward with v1?
->
-> The adjustments I think is needed:
-> Instead of propagating the error code from dev_pm_domain_attach(),
-> let's print a debug message and continue the device registration.
-> In that way, we shouldn't introduce regressions for cases where the OF
-> genpd provider hasn't yet been registered, but the issue Marek is
-> trying to solve for Exynos should be fixed.
->
-> What do you think?
->
+On Tue, Apr 12, 2016 at 01:32:55PM +0200, Boris Brezillon wrote:
+> Hi Thierry,
+> 
+> On Tue, 12 Apr 2016 13:22:46 +0200
+> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> 
+> > On Wed, Mar 30, 2016 at 10:03:27PM +0200, Boris Brezillon wrote:
+> > > PWM devices are not protected against concurrent accesses. The lock in
+> > > pwm_device might let PWM users think it is, but it's actually only
+> > > protecting the enabled state.
+> > > 
+> > > Removing this lock should be fine as long as all PWM users are aware that
+> > > accesses to the PWM device have to be serialized, which seems to be the
+> > > case for all of them except the sysfs interface.
+> > > Patch the sysfs code by adding a lock to the pwm_export struct and making
+> > > sure it's taken for all accesses to the exported PWM device.
+> > > 
+> > > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > > ---
+> > >  drivers/pwm/core.c  | 19 ++++--------------
+> > >  drivers/pwm/sysfs.c | 57 ++++++++++++++++++++++++++++++++++++++++++-----------
+> > >  include/linux/pwm.h |  2 --
+> > >  3 files changed, 50 insertions(+), 28 deletions(-)
+> > 
+> > This is a little overzealous. Only accesses that can cause races need to
+> > be protected by the lock. All of the *_show() callbacks don't modify the
+> > PWM device in any way, so there is no need to protect them against
+> > concurrent accesses.
+> 
+> This is probably true for this set of changes, but what will happen
+> when we'll switch to the atomic API? There's no guarantee that
+> pwm->state = *newstate is done atomically, and you may see a partially
+> updated state when calling pwm_get_state() while another thread is
+> calling pwm_apply_state().
 
-Ping. Any news on this? Would be nice if we could agree on a way forward.
+I'd argue that for sysfs it doesn't matter since the userspace API is
+non-atomic anyway. As such it doesn't really matter which part of the
+state you're getting because only one field from the query is exposed
+to userspace, hence the coherence of the state is irrelevant.
 
-Kind regards
-Uffe
+All other users should be taking care of the serialization themselves
+already.
+
+Thierry
+--Mit9XoPEfICDqq/V--
