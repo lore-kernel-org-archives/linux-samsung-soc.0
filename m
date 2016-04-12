@@ -1,163 +1,403 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 5/7] drm/exynos/decon5433: fix DECON standalone update
-Date: Tue, 12 Apr 2016 16:51:53 +0900
-Message-ID: <570CA919.10309@samsung.com>
-References: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
- <1458738918-32054-6-git-send-email-a.hajda@samsung.com>
- <570C5CB5.8000409@samsung.com> <570CA4CD.3040106@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/7] PM / devfreq: event: Add new Exynos NoC probe driver
+Date: Tue, 12 Apr 2016 10:07:18 +0200
+Message-ID: <570CACB6.40405@samsung.com>
+References: <1460091646-28701-1-git-send-email-cw00.choi@samsung.com>
+ <1460091646-28701-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53400 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932132AbcDLHv4 convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:50648 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932391AbcDLIJE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Apr 2016 03:51:56 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0O5I02OIFGIIXV50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 12 Apr 2016 16:51:54 +0900 (KST)
-In-reply-to: <570CA4CD.3040106@samsung.com>
+	Tue, 12 Apr 2016 04:09:04 -0400
+In-reply-to: <1460091646-28701-2-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
+On 04/08/2016 07:00 AM, Chanwoo Choi wrote:
+> This patch adds NoC (Network on Chip) Probe driver which provides
+> the primitive values to get the performance data. The packets that the Network
+> on Chip (NoC) probes detects are transported over the network infrastructure.
+> Exynos542x bus has multiple NoC probes to provide bandwidth information about
+> behavior of the SoC that you can use while analyzing system performance.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  .../bindings/devfreq/event/exynos-nocp.txt         |  86 +++++++
+>  drivers/devfreq/event/Kconfig                      |   8 +
+>  drivers/devfreq/event/Makefile                     |   2 +
+>  drivers/devfreq/event/exynos-nocp.c                | 247 +++++++++++++++++++++
+>  drivers/devfreq/event/exynos-nocp.h                |  78 +++++++
+>  5 files changed, 421 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt
+>  create mode 100644 drivers/devfreq/event/exynos-nocp.c
+>  create mode 100644 drivers/devfreq/event/exynos-nocp.h
+> 
+> diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt
+> new file mode 100644
+> index 000000000000..03b74fed034c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt
+> @@ -0,0 +1,86 @@
+> +
+> +* Samsung Exynos NoC (Network on Chip) Probe device
+> +
+> +The Samsung Exynos542x SoC has NoC (Network on Chip) Probe for NoC bus.
+> +NoC provides the primitive values to get the performance data. The packets
+> +that the Network on Chip (NoC) probes detects are transported over
+> +the network infrastructure to observer units. You can configure probes to
+> +capture packets with header or data on the data request response network,
+> +or as traffic debug or statistic collectors. Exynos542x bus has multiple
+> +NoC probes to provide bandwidth information about behavior of the SoC
+> +that you can use while analyzing system performance.
+> +
+> +Required properties:
+> +- compatible: Should be "samsung,exynos5420-nocp"
+> +- reg: physical base address of each NoC Probe and length of memory mapped region.
+> +
+> +Optional properties:
+> +- clock-names : the name of clock used by the NoC Probe, "nocp"
+> +- clocks : phandles for clock specified in "clock-names" property
+> +
+> +Example1 : NoC Probe nodes in exynos5420.dtsi are listed below.
+> +
+> +	nocp_mem0_0: nocp_mem0_0@10CA1000 {
+> +		compatible = "samsung,exynos5420-nocp";
+> +		reg = <0x10CA1000 0x200>;
+> +		status = "disabled";
+> +	};
+> +
+> +	nocp_mem0_1: nocp_mem0_1@10CA1400 {
+> +		compatible = "samsung,exynos5420-nocp";
+> +		reg = <0x10CA1400 0x200>;
+> +		status = "disabled";
+> +	};
+> +
+> +	nocp_mem0_2: nocp_mem0_2@10CA1800 {
+> +		compatible = "samsung,exynos5420-nocp";
+> +		reg = <0x10CA1800 0x200>;
+> +		status = "disabled";
+> +	};
+> +
+> +	nocp_mem0_3: nocp_mem0_0@10CA1C00 {
+> +		compatible = "samsung,exynos5420-nocp";
+> +		reg = <0x10CA1C00 0x200>;
+> +		status = "disabled";
+> +	};
+> +
+> +	nocp_g3d_0: nocp_g3d_0@11A51000 {
+> +		compatible = "samsung,exynos5420-nocp";
+> +		reg = <0x11A51000 0x200>;
+> +		status = "disabled";
+> +	};
+> +
+> +	nocp_g3d_1: nocp_g3d_1@11A51400 {
+> +		compatible = "samsung,exynos5420-nocp";
+> +		reg = <0x11A51400 0x200>;
+> +		status = "disabled";
+> +	};
+> +
+> +
+> +Example2 : Events of each NoC Probe node in exynos5422-odroidxu3-common.dtsi
+> +	are listed below.
+> +
+> +
+> +	&nocp_mem0_0 {
+> +		status = "okay";
+> +	};
+> +
+> +	&nocp_mem0_1 {
+> +		status = "okay";
+> +	};
+> +
+> +	&nocp_mem0_2 {
+> +		status = "okay";
+> +	};
+> +
+> +	&nocp_mem0_3 {
+> +		status = "okay";
+> +	};
+> +
+> +	&nocp_g3d_0 {
+> +		status = "okay";
+> +	};
+> +
+> +	&nocp_g3d_1 {
+> +		status = "okay";
+> +	};
 
+I think this split in documentation between DTSI and DTS is not needed
+for example. Just add one example without the status and it should be
+sufficient to get the idea.
 
-2016=EB=85=84 04=EC=9B=94 12=EC=9D=BC 16:33=EC=97=90 Andrzej Hajda =EC=9D=
-=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> On 04/12/2016 04:25 AM, Inki Dae wrote:
->> Hi Andrzej,
->>
->> 2016=EB=85=84 03=EC=9B=94 23=EC=9D=BC 22:15=EC=97=90 Andrzej Hajda =EC=
-=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->>> DECON should be updated after un-protecting windows and after chang=
-ing
->>> output parameters, otherwise image is not displayed in case of HDMI=
- path.
->> I'm not sure why STANDALONE_UPDATE_F bit should be updated after un-=
-protecting windows and changing output parameters.
->> The fields with _F prefix mean that these will be applied after vsyn=
-c so we use protection window in case of all registers which affect dis=
-play output so that they can be updated together.
->>
->> Wouldn't there be other thing which affects HDMI output?
->>
->> In addition, we would need another patch which updates TV relevant r=
-egisters only in case of DECON-TV. DECON_UPDATE is a register for DECON=
--TV.
->=20
-> DECON_UPDATE is present in both DECON and DECON-TV and in both cases
-> have the same field STANDALONE_UPDATE_F.
->=20
-> Documentation for 5433 says:
->> When you modify the shadow attributed registers, set
->> STANDALONE_UPDATE_F.
->>
-> So it should be set after setting registers with _F suffix,
-> but it has also _F suffix - contradiction. So I guess this _F suffix
-> should not be treated too strictly in this case. Moreover the suffix
-> has been removed in Exynos7420 - it is called just STANDALONE_UPDATE.
+> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+> index a11720affc31..1e8b4f469f38 100644
+> --- a/drivers/devfreq/event/Kconfig
+> +++ b/drivers/devfreq/event/Kconfig
+> @@ -13,6 +13,14 @@ menuconfig PM_DEVFREQ_EVENT
+>  
+>  if PM_DEVFREQ_EVENT
+>  
+> +config DEVFREQ_EVENT_EXYNOS_NOCP
+> +	bool "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
+> +	depends on ARCH_EXYNOS
+> +	select PM_OPP
+> +	help
+> +	  This add the devfreq-event driver for Exynos SoC. It provides NoC
+> +	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
+> +
+>  config DEVFREQ_EVENT_EXYNOS_PPMU
+>  	bool "EXYNOS PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
+>  	depends on ARCH_EXYNOS
+> diff --git a/drivers/devfreq/event/Makefile b/drivers/devfreq/event/Makefile
+> index be146ead79cf..3d6afd352253 100644
+> --- a/drivers/devfreq/event/Makefile
+> +++ b/drivers/devfreq/event/Makefile
+> @@ -1,2 +1,4 @@
+>  # Exynos DEVFREQ Event Drivers
+> +
+> +obj-$(CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP) += exynos-nocp.o
+>  obj-$(CONFIG_DEVFREQ_EVENT_EXYNOS_PPMU) += exynos-ppmu.o
+> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+> new file mode 100644
+> index 000000000000..b9468a6143f6
+> --- /dev/null
+> +++ b/drivers/devfreq/event/exynos-nocp.c
+> @@ -0,0 +1,247 @@
+> +/*
+> + * exynos-nocp.c - EXYNOS NoC (Network On Chip) Probe support
+> + *
+> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+> + * Author : Chanwoo Choi <cw00.choi@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/module.h>
+> +#include <linux/devfreq-event.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "exynos-nocp.h"
+> +
+> +struct exynos_nocp {
+> +	struct devfreq_event_dev *edev;
+> +	struct devfreq_event_desc desc;
+> +
+> +	struct device *dev;
+> +
+> +	struct regmap *regmap;
+> +	struct clk *clk;
+> +};
+> +
+> +/*
+> + * The devfreq-event ops structure for nocp probe.
+> + */
+> +static int exynos_nocp_set_event(struct devfreq_event_dev *edev)
+> +{
+> +	struct exynos_nocp *nocp = devfreq_event_get_drvdata(edev);
+> +
+> +	/* Disable NoC probe */
+> +	regmap_update_bits(nocp->regmap, NOCP_MAIN_CTL,
+> +				NOCP_MAIN_CTL_STATEN_MASK, 0);
+> +
+> +	/* Set a statistics dump period to 0 */
+> +	regmap_write(nocp->regmap, NOCP_STAT_PERIOD, 0x0);
+> +
+> +	/* Set the IntEvent fields of *_SRC */
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_0_SRC,
+> +				NOCP_CNT_SRC_INTEVENT_MASK,
+> +				NOCP_CNT_SRC_INTEVENT_BYTE_MASK);
+> +
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_1_SRC,
+> +				NOCP_CNT_SRC_INTEVENT_MASK,
+> +				NOCP_CNT_SRC_INTEVENT_CHAIN_MASK);
+> +
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_2_SRC,
+> +				NOCP_CNT_SRC_INTEVENT_MASK,
+> +				NOCP_CNT_SRC_INTEVENT_CYCLE_MASK);
+> +
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_3_SRC,
+> +				NOCP_CNT_SRC_INTEVENT_MASK,
+> +				NOCP_CNT_SRC_INTEVENT_CHAIN_MASK);
+> +
+> +
+> +	/* Set an alarm with a max/min value of 0 to generate StatALARM */
+> +	regmap_write(nocp->regmap, NOCP_STAT_ALARM_MIN, 0x0);
+> +	regmap_write(nocp->regmap, NOCP_STAT_ALARM_MAX, 0x0);
+> +
+> +	/* Set AlarmMode */
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_0_ALARM_MODE,
+> +				NOCP_CNT_ALARM_MODE_MASK,
+> +				NOCP_CNT_ALARM_MODE_MIN_MAX_MASK);
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_1_ALARM_MODE,
+> +				NOCP_CNT_ALARM_MODE_MASK,
+> +				NOCP_CNT_ALARM_MODE_MIN_MAX_MASK);
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_2_ALARM_MODE,
+> +				NOCP_CNT_ALARM_MODE_MASK,
+> +				NOCP_CNT_ALARM_MODE_MIN_MAX_MASK);
+> +	regmap_update_bits(nocp->regmap, NOCP_COUNTERS_3_ALARM_MODE,
+> +				NOCP_CNT_ALARM_MODE_MASK,
+> +				NOCP_CNT_ALARM_MODE_MIN_MAX_MASK);
+> +
+> +	/* Enable the measurements by setting AlarmEn and StatEn */
+> +	regmap_update_bits(nocp->regmap, NOCP_MAIN_CTL,
+> +			NOCP_MAIN_CTL_STATEN_MASK | NOCP_MAIN_CTL_ALARMEN_MASK,
+> +			NOCP_MAIN_CTL_STATEN_MASK | NOCP_MAIN_CTL_ALARMEN_MASK);
+> +
+> +	/* Set GlobalEN */
+> +	regmap_update_bits(nocp->regmap, NOCP_CFG_CTL,
+> +				NOCP_CFG_CTL_GLOBALEN_MASK,
+> +				NOCP_CFG_CTL_GLOBALEN_MASK);
+> +
+> +	/* Enable NoC probe */
+> +	regmap_update_bits(nocp->regmap, NOCP_MAIN_CTL,
+> +				NOCP_MAIN_CTL_STATEN_MASK,
+> +				NOCP_MAIN_CTL_STATEN_MASK);
 
-Indeed. I thought the register name has TV suffix so this register is f=
-or DECON-TV. However, without the register setting, DECON didn't work c=
-orrectly - display not updated.
+In all these regmap_update_bits() calls you are ignoring the return
+value. This does not look right.
 
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_nocp_get_event(struct devfreq_event_dev *edev,
+> +				struct devfreq_event_data *edata)
+> +{
+> +	struct exynos_nocp *nocp = devfreq_event_get_drvdata(edev);
+> +	unsigned int counter[4];
+> +
+> +	/* Read cycle count */
+> +	regmap_read(nocp->regmap, NOCP_COUNTERS_0_VAL, &counter[0]);
+> +	regmap_read(nocp->regmap, NOCP_COUNTERS_1_VAL, &counter[1]);
+> +	regmap_read(nocp->regmap, NOCP_COUNTERS_2_VAL, &counter[2]);
+> +	regmap_read(nocp->regmap, NOCP_COUNTERS_3_VAL, &counter[3]);
 
->=20
-> Anyway I am not sure what is exact purpose of this register and
-> the changes proposed in the patch are rather results of multiple test=
-s
-> with hardware - documentation is rather poor on this subject.
->=20
-> I am also not sure why DECON works without it but DECON-TV does not,
-> anyway I set it in both variants because documentation says so.
+Ditto. If read fails, the data in counter should not be trusted (not
+initialized) so the devfreq_event_get_event() should not use it. The
+simplest would be to return error on each failure.
 
-Ok, picked them up.
+> +
+> +	edata->load_count = ((counter[1] << 16) | counter[0]);
+> +	edata->total_count = ((counter[3] << 16) | counter[2]);
+> +
+> +	dev_dbg(&edev->dev, "%s (event: %ld/%ld)\n", edev->desc->name,
+> +					edata->load_count, edata->total_count);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct devfreq_event_ops exynos_nocp_ops = {
+> +	.set_event = exynos_nocp_set_event,
+> +	.get_event = exynos_nocp_get_event,
+> +};
+> +
+> +static const struct of_device_id exynos_nocp_id_match[] = {
+> +	{ .compatible = "samsung,exynos5420-nocp", },
+> +	{ /* sentinel */ },
+> +};
+> +
+> +static struct regmap_config exynos_nocp_regmap_config = {
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +	.max_register = NOCP_COUNTERS_3_VAL,
+> +};
+> +
+> +static int exynos_nocp_parse_dt(struct platform_device *pdev,
+> +				struct exynos_nocp *nocp)
+> +{
+> +	struct device *dev = nocp->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +	int ret = 0;
+> +
+> +	if (!np) {
+> +		dev_err(dev, "failed to find devicetree node\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	nocp->clk = devm_clk_get(dev, "nocp");
+> +	if (IS_ERR(nocp->clk))
+> +		nocp->clk = NULL;
+> +
+> +	/* Maps the memory mapped IO to control nocp register */
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (IS_ERR(res))
+> +		return PTR_ERR(res);
+> +
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +	exynos_nocp_regmap_config.max_register = resource_size(res) - 4;
+> +
+> +	nocp->regmap = devm_regmap_init_mmio(dev, base,
+> +					&exynos_nocp_regmap_config);
+> +	if (IS_ERR(nocp->regmap)) {
+> +		dev_err(dev, "failed to initialize regmap\n");
+> +		ret = PTR_ERR(nocp->regmap);
+> +		goto err;
+> +	}
+> +
+> +	return 0;
+> +
+> +err:
+> +	devm_iounmap(dev, base);
 
-Thanks,
-Inki Dae
+Why you need this? This is obtained by devm-like() interface so it
+should be released by the core.
+	
+> +
+> +	return ret;
+> +}
+> +
+> +static int exynos_nocp_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct exynos_nocp *nocp;
+> +	int ret;
+> +
+> +	nocp = devm_kzalloc(&pdev->dev, sizeof(*nocp), GFP_KERNEL);
+> +	if (!nocp)
+> +		return -ENOMEM;
+> +
+> +	nocp->dev = &pdev->dev;
+> +
+> +	/* Parse dt data to get resource */
+> +	ret = exynos_nocp_parse_dt(pdev, nocp);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev,
+> +			"failed to parse devicetree for resource\n");
+> +		return ret;
+> +	}
+> +
+> +	/* Add devfreq-event device to measure the bandwidth of NoC */
+> +	nocp->desc.ops = &exynos_nocp_ops;
+> +	nocp->desc.driver_data = nocp;
+> +	nocp->desc.name = np->name;
+> +	nocp->edev = devm_devfreq_event_add_edev(&pdev->dev, &nocp->desc);
+> +	if (IS_ERR(nocp->edev)) {
+> +		ret = PTR_ERR(nocp->edev);
+> +		dev_err(&pdev->dev,
+> +			"failed to add devfreq-event device\n");
+> +		goto err;
 
->=20
-> Regards
-> Andrzej
->=20
->>
->> Thanks,
->> Inki Dae
->>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 15 ++++++++-------
->>>  1 file changed, 8 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/driver=
-s/gpu/drm/exynos/exynos5433_drm_decon.c
->>> index ab9154e..7fec656 100644
->>> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->>> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->>> @@ -191,6 +191,8 @@ static void decon_commit(struct exynos_drm_crtc=
- *crtc)
->>> =20
->>>  	/* enable output and display signal */
->>>  	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID | VIDCON0_ENVID_=
-=46, ~0);
->>> +
->>> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->>>  }
->>> =20
->>>  static void decon_win_set_pixfmt(struct decon_context *ctx, unsign=
-ed int win,
->>> @@ -316,9 +318,6 @@ static void decon_update_plane(struct exynos_dr=
-m_crtc *crtc,
->>> =20
->>>  	/* window enable */
->>>  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, ~0);
->>> -
->>> -	/* standalone update */
->>> -	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->>>  }
->>> =20
->>>  static void decon_disable_plane(struct exynos_drm_crtc *crtc,
->>> @@ -336,9 +335,6 @@ static void decon_disable_plane(struct exynos_d=
-rm_crtc *crtc,
->>>  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
->>> =20
->>>  	decon_shadow_protect_win(ctx, win, false);
->>> -
->>> -	/* standalone update */
->>> -	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->>>  }
->>> =20
->>>  static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
->>> @@ -352,6 +348,9 @@ static void decon_atomic_flush(struct exynos_dr=
-m_crtc *crtc)
->>>  	for (i =3D ctx->first_win; i < WINDOWS_NR; i++)
->>>  		decon_shadow_protect_win(ctx, i, false);
->>> =20
->>> +	/* standalone update */
->>> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->>> +
->>>  	if (ctx->out_type =3D=3D IFTYPE_I80)
->>>  		set_bit(BIT_WIN_UPDATED, &ctx->flags);
->>>  }
->>> @@ -463,8 +462,10 @@ static void decon_clear_channels(struct exynos=
-_drm_crtc *crtc)
->>>  		decon_shadow_protect_win(ctx, win, true);
->>>  		decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
->>>  		decon_shadow_protect_win(ctx, win, false);
->>> -		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->>>  	}
->>> +
->>> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
->>> +
->>>  	/* TODO: wait for possible vsync */
->>>  	msleep(50);
->>> =20
->>>
->=20
->=20
+This looks not needed and does not improve readability to me. Just
+'return ret' always. At this point (before this if() statement) 'ret'
+equals to 0. Then you could remove the 'err' label and always 'return ret'.
+
+Best regards,
+Krzysztof
