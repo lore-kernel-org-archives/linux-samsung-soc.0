@@ -1,122 +1,121 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: clean up register definions for fimd and decon
-Date: Tue, 12 Apr 2016 09:59:11 +0900
-Message-ID: <1460422751-10159-1-git-send-email-inki.dae@samsung.com>
+Subject: Re: [PATCH 5/7] drm/exynos/decon5433: fix DECON standalone update
+Date: Tue, 12 Apr 2016 11:25:57 +0900
+Message-ID: <570C5CB5.8000409@samsung.com>
+References: <1458738918-32054-1-git-send-email-a.hajda@samsung.com>
+ <1458738918-32054-6-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59505 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755473AbcDLA7Q (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:46673 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755489AbcDLC0A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Apr 2016 20:59:16 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+	Mon, 11 Apr 2016 22:26:00 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0O5H01VFEXEPM9C0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 12 Apr 2016 09:59:13 +0900 (KST)
+ with ESMTP id <0O5I012O91F9PM80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 12 Apr 2016 11:25:57 +0900 (KST)
+In-reply-to: <1458738918-32054-6-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 
-This patch removes suffixes from I80 relevant register definitions,
-which are misleading.
+Hi Andrzej,
 
-This is based on top of below patch set,
-     http://www.spinics.net/lists/dri-devel/msg104057.html
+2016=EB=85=84 03=EC=9B=94 23=EC=9D=BC 22:15=EC=97=90 Andrzej Hajda =EC=9D=
+=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> DECON should be updated after un-protecting windows and after changin=
+g
+> output parameters, otherwise image is not displayed in case of HDMI p=
+ath.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 23 +++++++++++------------
- include/video/exynos5433_decon.h              |  6 +++---
- 3 files changed, 15 insertions(+), 16 deletions(-)
+I'm not sure why STANDALONE_UPDATE_F bit should be updated after un-pro=
+tecting windows and changing output parameters.
+The fields with _F prefix mean that these will be applied after vsync s=
+o we use protection window in case of all registers which affect displa=
+y output so that they can be updated together.
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 5922e99..8cfef0d 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -121,7 +121,7 @@ static void decon_setup_trigger(struct decon_context *ctx)
- 		? TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
- 		  TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN
- 		: TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
--		  TRIGCON_HWTRIGMASK_I80_RGB | TRIGCON_HWTRIGEN_I80_RGB;
-+		  TRIGCON_HWTRIGMASK | TRIGCON_HWTRIGEN;
- 	writel(val, ctx->addr + DECON_TRIGCON);
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index c4cd16a..9fa07a6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -68,15 +68,15 @@
- /* color key value register for hardware window 1 ~ 4. */
- #define WKEYCON1_BASE(x)		((WKEYCON1 + 0x140) + ((x - 1) * 8))
- 
--/* I80 / RGB trigger control register */
-+/* I80 trigger control register */
- #define TRIGCON				0x1A4
--#define TRGMODE_I80_RGB_ENABLE_I80	(1 << 0)
--#define SWTRGCMD_I80_RGB_ENABLE		(1 << 1)
-+#define TRGMODE_ENABLE			(1 << 0)
-+#define SWTRGCMD_ENABLE			(1 << 1)
- /* Exynos3250, 3472, 4415, 5260 5410, 5420 and 5422 only supported. */
--#define HWTRGEN_I80_RGB_ENABLE		(1 << 3)
--#define HWTRGMASK_I80_RGB_ENABLE	(1 << 4)
-+#define HWTRGEN_ENABLE			(1 << 3)
-+#define HWTRGMASK_ENABLE		(1 << 4)
- /* Exynos3250, 3472, 4415, 5260, 5420 and 5422 only supported. */
--#define HWTRIGEN_PER_RGB_ENABLE		(1 << 31)
-+#define HWTRIGEN_PER_ENABLE		(1 << 31)
- 
- /* display mode change control register except exynos4 */
- #define VIDOUT_CON			0x000
-@@ -425,16 +425,15 @@ static void fimd_setup_trigger(struct fimd_context *ctx)
- 	u32 trg_type = ctx->driver_data->trg_type;
- 	u32 val = readl(timing_base + TRIGCON);
- 
--	val &= ~(TRGMODE_I80_RGB_ENABLE_I80);
-+	val &= ~(TRGMODE_ENABLE);
- 
- 	if (trg_type == I80_HW_TRG) {
- 		if (ctx->driver_data->has_hw_trigger)
--			val |= HWTRGEN_I80_RGB_ENABLE |
--				HWTRGMASK_I80_RGB_ENABLE;
-+			val |= HWTRGEN_ENABLE | HWTRGMASK_ENABLE;
- 		if (ctx->driver_data->has_trigger_per_te)
--			val |= HWTRIGEN_PER_RGB_ENABLE;
-+			val |= HWTRIGEN_PER_ENABLE;
- 	} else {
--		val |= TRGMODE_I80_RGB_ENABLE_I80;
-+		val |= TRGMODE_ENABLE;
- 	}
- 
- 	writel(val, timing_base + TRIGCON);
-@@ -884,7 +883,7 @@ static void fimd_trigger(struct device *dev)
- 	atomic_set(&ctx->triggering, 1);
- 
- 	reg = readl(timing_base + TRIGCON);
--	reg |= (TRGMODE_I80_RGB_ENABLE_I80 | SWTRGCMD_I80_RGB_ENABLE);
-+	reg |= (TRGMODE_ENABLE | SWTRGCMD_ENABLE);
- 	writel(reg, timing_base + TRIGCON);
- 
- 	/*
-diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
-index c1c1ca1..0098a52 100644
---- a/include/video/exynos5433_decon.h
-+++ b/include/video/exynos5433_decon.h
-@@ -179,9 +179,9 @@
- #define TRIGCON_TRIGMODE_W1BUF		(1 << 10)
- #define TRIGCON_SWTRIGCMD_W0BUF		(1 << 6)
- #define TRIGCON_TRIGMODE_W0BUF		(1 << 5)
--#define TRIGCON_HWTRIGMASK_I80_RGB	(1 << 4)
--#define TRIGCON_HWTRIGEN_I80_RGB	(1 << 3)
--#define TRIGCON_HWTRIG_INV_I80_RGB	(1 << 2)
-+#define TRIGCON_HWTRIGMASK		(1 << 4)
-+#define TRIGCON_HWTRIGEN		(1 << 3)
-+#define TRIGCON_HWTRIG_INV		(1 << 2)
- #define TRIGCON_SWTRIGCMD		(1 << 1)
- #define TRIGCON_SWTRIGEN		(1 << 0)
- 
--- 
-1.9.1
+Wouldn't there be other thing which affects HDMI output?
+
+In addition, we would need another patch which updates TV relevant regi=
+sters only in case of DECON-TV. DECON_UPDATE is a register for DECON-TV=
+=2E
+
+Thanks,
+Inki Dae
+
+>=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/=
+gpu/drm/exynos/exynos5433_drm_decon.c
+> index ab9154e..7fec656 100644
+> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> @@ -191,6 +191,8 @@ static void decon_commit(struct exynos_drm_crtc *=
+crtc)
+> =20
+>  	/* enable output and display signal */
+>  	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID | VIDCON0_ENVID_F,=
+ ~0);
+> +
+> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+>  }
+> =20
+>  static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned=
+ int win,
+> @@ -316,9 +318,6 @@ static void decon_update_plane(struct exynos_drm_=
+crtc *crtc,
+> =20
+>  	/* window enable */
+>  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, ~0);
+> -
+> -	/* standalone update */
+> -	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+>  }
+> =20
+>  static void decon_disable_plane(struct exynos_drm_crtc *crtc,
+> @@ -336,9 +335,6 @@ static void decon_disable_plane(struct exynos_drm=
+_crtc *crtc,
+>  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
+> =20
+>  	decon_shadow_protect_win(ctx, win, false);
+> -
+> -	/* standalone update */
+> -	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+>  }
+> =20
+>  static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
+> @@ -352,6 +348,9 @@ static void decon_atomic_flush(struct exynos_drm_=
+crtc *crtc)
+>  	for (i =3D ctx->first_win; i < WINDOWS_NR; i++)
+>  		decon_shadow_protect_win(ctx, i, false);
+> =20
+> +	/* standalone update */
+> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+> +
+>  	if (ctx->out_type =3D=3D IFTYPE_I80)
+>  		set_bit(BIT_WIN_UPDATED, &ctx->flags);
+>  }
+> @@ -463,8 +462,10 @@ static void decon_clear_channels(struct exynos_d=
+rm_crtc *crtc)
+>  		decon_shadow_protect_win(ctx, win, true);
+>  		decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
+>  		decon_shadow_protect_win(ctx, win, false);
+> -		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+>  	}
+> +
+> +	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+> +
+>  	/* TODO: wait for possible vsync */
+>  	msleep(50);
+> =20
+>=20
