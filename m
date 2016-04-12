@@ -1,145 +1,147 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v6] drivers: amba: properly handle devices with power domains
-Date: Tue, 12 Apr 2016 16:09:53 +0200
-Message-ID: <1460470193-24928-1-git-send-email-m.szyprowski@samsung.com>
-References: <570D017E.7060105@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17677 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932855AbcDLOKL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Apr 2016 10:10:11 -0400
-In-reply-to: <570D017E.7060105@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v5 15/46] pwm: introduce the pwm_state
+	concept
+Date: Tue, 12 Apr 2016 16:13:01 +0200
+Message-ID: <20160412161301.30b0dc4f@bbrezillon>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-16-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412114904.GM18882@ulmo.ba.sec>
+ <20160412141718.5fe4cf24@bbrezillon>
+ <20160412122141.GP18882@ulmo.ba.sec>
+ <20160412144508.2ee181fe@bbrezillon>
+ <20160412131118.GQ18882@ulmo.ba.sec>
+ <20160412152644.45ff517a@bbrezillon>
+ <20160412140546.GS18882@ulmo.ba.sec>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20160412140546.GS18882@ulmo.ba.sec>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Milo Kim <milo.kim@ti.com>, Kamil Debski <k.debski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, Mike Turquette <mturquette@baylibre.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Jonathan Corbet <corbet@lwn.net>, Robert Jarzmik <robert.jarzmik@free.fr>, lm-sensors@lm-sensors.org, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-input@vger.kernel.org, Jean-Christophe
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-To read pid/cid registers, the probed device need to be properly turned on.
-When it is inside a power domain, the bus code should ensure that the
-given power domain is enabled before trying to access device's registers.
-However in some cases power domain (or clocks) might not be yet available.
-Returning EPROBE_DEFER is not a solution in such case, because callers
-don't handle this special error code. Instead such devices are added to the
-special list and their registration is retried in late_initcall, when
-hopefully all resources are available.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/amba/bus.c | 78 +++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 68 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index f0099360039e..f0b711bb0372 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -336,16 +336,7 @@ static void amba_device_release(struct device *dev)
- 	kfree(d);
- }
- 
--/**
-- *	amba_device_add - add a previously allocated AMBA device structure
-- *	@dev: AMBA device allocated by amba_device_alloc
-- *	@parent: resource parent for this devices resources
-- *
-- *	Claim the resource, and read the device cell ID if not already
-- *	initialized.  Register the AMBA device with the Linux device
-- *	manager.
-- */
--int amba_device_add(struct amba_device *dev, struct resource *parent)
-+static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
- {
- 	u32 size;
- 	void __iomem *tmp;
-@@ -373,6 +364,12 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
- 		goto err_release;
- 	}
- 
-+	ret = dev_pm_domain_attach(&dev->dev, true);
-+	if (ret == -EPROBE_DEFER) {
-+		iounmap(tmp);
-+		goto err_release;
-+	}
-+
- 	ret = amba_get_enable_pclk(dev);
- 	if (ret == 0) {
- 		u32 pid, cid;
-@@ -398,6 +395,7 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
- 	}
- 
- 	iounmap(tmp);
-+	dev_pm_domain_detach(&dev->dev, true);
- 
- 	if (ret)
- 		goto err_release;
-@@ -421,8 +419,68 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
-  err_out:
- 	return ret;
- }
-+
-+/*
-+ * Registration of AMBA device require reading its pid and cid registers.
-+ * To do this, the device must be turned on (if it is a part of power domain)
-+ * and have clocks enabled. However in some cases those resources might not be
-+ * yet available. Returning EPROBE_DEFER is not a solution in such case,
-+ * because callers don't handle this special error code. Instead such devices
-+ * are added to the special list and their registration is retried in
-+ * late_initcall, when hopefully all resources are available.
-+ */
-+struct deferred_device {
-+	struct amba_device *dev;
-+	struct resource *parent;
-+	struct list_head node;
-+};
-+
-+static LIST_HEAD(deferred_devices);
-+
-+/**
-+ *	amba_device_add - add a previously allocated AMBA device structure
-+ *	@dev: AMBA device allocated by amba_device_alloc
-+ *	@parent: resource parent for this devices resources
-+ *
-+ *	Claim the resource, and read the device cell ID if not already
-+ *	initialized.  Register the AMBA device with the Linux device
-+ *	manager.
-+ */
-+int amba_device_add(struct amba_device *dev, struct resource *parent)
-+{
-+	int ret = amba_device_try_add(dev, parent);
-+
-+	if (ret == -EPROBE_DEFER) {
-+		struct deferred_device *ddev;
-+
-+		ddev = kmalloc(sizeof(*ddev), GFP_KERNEL);
-+		ddev->dev = dev;
-+		ddev->parent = parent;
-+		list_add_tail(&ddev->node, &deferred_devices);
-+		ret = 0;
-+	}
-+	return ret;
-+}
- EXPORT_SYMBOL_GPL(amba_device_add);
- 
-+static int __init amba_deferred_device_init(void)
-+{
-+	struct deferred_device *ddev, *tmp;
-+
-+	list_for_each_entry_safe(ddev, tmp, &deferred_devices, node) {
-+		int ret = amba_device_try_add(ddev->dev, ddev->parent);
-+
-+		if (ret == -EPROBE_DEFER)
-+			continue;
-+
-+		list_del_init(&ddev->node);
-+		kfree(ddev);
-+	}
-+
-+	return 0;
-+}
-+late_initcall(amba_deferred_device_init);
-+
- static struct amba_device *
- amba_aphb_device_add(struct device *parent, const char *name,
- 		     resource_size_t base, size_t size, int irq1, int irq2,
--- 
-1.9.2
+T24gVHVlLCAxMiBBcHIgMjAxNiAxNjowNTo0NiArMDIwMApUaGllcnJ5IFJlZGluZyA8dGhpZXJy
+eS5yZWRpbmdAZ21haWwuY29tPiB3cm90ZToKCj4gT24gVHVlLCBBcHIgMTIsIDIwMTYgYXQgMDM6
+MjY6NDRQTSArMDIwMCwgQm9yaXMgQnJlemlsbG9uIHdyb3RlOgo+ID4gT24gVHVlLCAxMiBBcHIg
+MjAxNiAxNToxMToxOCArMDIwMAo+ID4gVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdt
+YWlsLmNvbT4gd3JvdGU6Cj4gPiAKPiA+ID4gT24gVHVlLCBBcHIgMTIsIDIwMTYgYXQgMDI6NDU6
+MDhQTSArMDIwMCwgQm9yaXMgQnJlemlsbG9uIHdyb3RlOgo+ID4gPiA+IE9uIFR1ZSwgMTIgQXBy
+IDIwMTYgMTQ6MjE6NDEgKzAyMDAKPiA+ID4gPiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRp
+bmdAZ21haWwuY29tPiB3cm90ZToKPiA+ID4gPiAKPiA+ID4gPiA+IE9uIFR1ZSwgQXByIDEyLCAy
+MDE2IGF0IDAyOjE3OjE4UE0gKzAyMDAsIEJvcmlzIEJyZXppbGxvbiB3cm90ZToKPiA+ID4gPiA+
+ID4gT24gVHVlLCAxMiBBcHIgMjAxNiAxMzo0OTowNCArMDIwMAo+ID4gPiA+ID4gPiBUaGllcnJ5
+IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPiB3cm90ZToKPiA+ID4gPiA+ID4gCj4g
+PiA+ID4gPiA+ID4gT24gV2VkLCBNYXIgMzAsIDIwMTYgYXQgMTA6MDM6MzhQTSArMDIwMCwgQm9y
+aXMgQnJlemlsbG9uIHdyb3RlOgo+ID4gPiA+ID4gPiA+ID4gVGhlIFBXTSBzdGF0ZSwgcmVwcmVz
+ZW50ZWQgYnkgaXRzIHBlcmlvZCwgZHV0eV9jeWNsZSBhbmQgcG9sYXJpdHksCj4gPiA+ID4gPiA+
+ID4gPiBpcyBjdXJyZW50bHkgZGlyZWN0bHkgc3RvcmVkIGluIHRoZSBQV00gZGV2aWNlLgo+ID4g
+PiA+ID4gPiA+ID4gRGVjbGFyZSBhIHB3bV9zdGF0ZSBzdHJ1Y3R1cmUgZW1iZWRkaW5nIHRob3Nl
+IGZpZWxkIHNvIHRoYXQgd2UgY2FuIGxhdGVyCj4gPiA+ID4gPiA+ID4gPiB1c2UgdGhpcyBzdHJ1
+Y3QgdG8gYXRvbWljYWxseSB1cGRhdGUgYWxsIHRoZSBQV00gcGFyYW1ldGVycyBhdCBvbmNlLgo+
+ID4gPiA+ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gPiBBbGwgcHdtX2dldF94eHgoKSBoZWxwZXJz
+IGFyZSBub3cgaW1wbGVtZW50ZWQgYXMgd3JhcHBlcnMgYXJvdW5kCj4gPiA+ID4gPiA+ID4gPiBw
+d21fZ2V0X3N0YXRlKCkuCj4gPiA+ID4gPiA+ID4gPiAKPiA+ID4gPiA+ID4gPiA+IFNpZ25lZC1v
+ZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNv
+bT4KPiA+ID4gPiA+ID4gPiA+IC0tLQo+ID4gPiA+ID4gPiA+ID4gIGRyaXZlcnMvcHdtL2NvcmUu
+YyAgfCAgOCArKysrLS0tLQo+ID4gPiA+ID4gPiA+ID4gIGluY2x1ZGUvbGludXgvcHdtLmggfCA1
+NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLQo+
+ID4gPiA+ID4gPiA+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNDYgaW5zZXJ0aW9ucygrKSwgMTYgZGVs
+ZXRpb25zKC0pCj4gPiA+ID4gPiA+ID4gPiAKPiA+ID4gPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL3B3bS9jb3JlLmMgYi9kcml2ZXJzL3B3bS9jb3JlLmMKPiA+ID4gPiA+ID4gPiA+IGlu
+ZGV4IDY0MzMwNTkuLmYzZjkxZTcgMTAwNjQ0Cj4gPiA+ID4gPiA+ID4gPiAtLS0gYS9kcml2ZXJz
+L3B3bS9jb3JlLmMKPiA+ID4gPiA+ID4gPiA+ICsrKyBiL2RyaXZlcnMvcHdtL2NvcmUuYwo+ID4g
+PiA+ID4gPiA+ID4gQEAgLTI2OCw3ICsyNjgsNyBAQCBpbnQgcHdtY2hpcF9hZGRfd2l0aF9wb2xh
+cml0eShzdHJ1Y3QgcHdtX2NoaXAgKmNoaXAsCj4gPiA+ID4gPiA+ID4gPiAgCQlwd20tPmNoaXAg
+PSBjaGlwOwo+ID4gPiA+ID4gPiA+ID4gIAkJcHdtLT5wd20gPSBjaGlwLT5iYXNlICsgaTsKPiA+
+ID4gPiA+ID4gPiA+ICAJCXB3bS0+aHdwd20gPSBpOwo+ID4gPiA+ID4gPiA+ID4gLQkJcHdtLT5w
+b2xhcml0eSA9IHBvbGFyaXR5Owo+ID4gPiA+ID4gPiA+ID4gKwkJcHdtLT5zdGF0ZS5wb2xhcml0
+eSA9IHBvbGFyaXR5Owo+ID4gPiA+ID4gPiA+IAo+ID4gPiA+ID4gPiA+IFdvdWxkIHRoaXMgbm90
+IG1vcmUgY29ycmVjdGx5IGJlIGFzc2lnbmVkIHRvIHB3bS0+YXJncy5wb2xhcml0eT8gQWZ0ZXIK
+PiA+ID4gPiA+ID4gPiBhbGwgdGhpcyBpcyBzZXR0aW5nIHVwIHRoZSAiaW5pdGlhbCIgc3RhdGUs
+IG11Y2ggbGlrZSBEVCBvciB0aGUgbG9va3VwCj4gPiA+ID4gPiA+ID4gdGFibGVzIHdvdWxkIGZv
+ciBkdXR5IGN5Y2xlIGFuZCBwZXJpb2QuCj4gPiA+ID4gPiA+IAo+ID4gPiA+ID4gPiBZZXMsIEkg
+d2Fzbid0IHN1cmUgYWJvdXQgdGhlIHB3bV9hZGRfd2l0aF9wb2xhcml0eSgpIG1lYW5pbmcuIFRv
+IG1lLAo+ID4gPiA+ID4gPiBhbGwgdGhlIHJlZmVyZW5jZSBpbmZvIHNob3VsZCBiZSBleHRyYWN0
+ZWQgZnJvbSBEVCwgUFdNIGxvb2t1cCB0YWJsZSBvcgo+ID4gPiA+ID4gPiBkcml2ZXIgc3BlY2lm
+aWMgLT5yZXF1ZXN0KCkgaW1wbGVtZW50YXRpb24sIGJ1dCBJIGNhbiBkZWZpbml0ZWx5Cj4gPiA+
+ID4gPiA+IGluaXRpYWxpemUgdGhlIGFyZ3MucG9sYXJpdHkgaGVyZSB0b28uCj4gPiA+ID4gPiA+
+IAo+ID4gPiA+ID4gPiBTaG91bGQgSSBrZWVwIHRoZSBwd20tPnN0YXRlLnBvbGFyaXR5IGFzc2ln
+bm1lbnQgKHRvIHNldCB0aGUgaW5pdGlhbAo+ID4gPiA+ID4gPiBwb2xhcml0eSB3aGVuIHRoZSBk
+cml2ZXIgZG9lcyBub3Qgc3VwcG9ydCBoYXJkd2FyZSByZWFkb3V0KT8KPiA+ID4gPiA+IAo+ID4g
+PiA+ID4gV291bGRuJ3QgdGhpcyB3b3JrIGF1dG9tYXRpY2FsbHkgYXMgcGFydCBvZiB0aGUgcHdt
+X2FwcGx5X2FyZ3MoKSBoZWxwZXIKPiA+ID4gPiA+IGlmIHdlIGV4dGVuZGVkIGl0IHdpdGggdGhp
+cyBzZXR0aW5nPwo+ID4gPiA+IAo+ID4gPiA+IFdlbGwsIGFzIHlvdSBleHBsYWluZWQgaW4geW91
+IGFuc3dlciB0byBwYXRjaCA1LCBwd21fYXBwbHlfYXJncygpCj4gPiA+ID4gc2hvdWxkIGJlIGNh
+bGxlZCBvbiBhIHBlci1yZXF1ZXN0IGJhc2lzIChlYWNoIHRpbWUgYSBQV00gZGV2aWNlIGlzCj4g
+PiA+ID4gcmVxdWVzdGVkKSwgd2hpbGUgdGhlIGluaXRpYWwgcG9sYXJpdHkgc2V0dGluZyBzaG91
+bGQgb25seSBiZSBhcHBsaWVkCj4gPiA+ID4gd2hlbiByZWdpc3RlcmluZyB0aGUgUFdNIGNoaXAg
+KGFuZCBpdHMgZGV2aWNlcykuIEFmdGVyIHRoYXQsIHRoZQo+ID4gPiA+IGZyYW1ld29yayB0YWtl
+cyBjYXJlIG9mIGtlZXBpbmcgdGhlIFBXTSBzdGF0ZSBpbiBzeW5jIHdpdGggdGhlIGhhcmR3YXJl
+Cj4gPiA+ID4gc3RhdGUuCj4gPiA+ID4gCj4gPiA+ID4gTGV0J3MgdGFrZSBhIHJlYWwgKHRob3Vn
+aCBhIGJpdCB1bnVzdWFsKSBleGFtcGxlLiBTYXkgeW91IGhhdmUgYSBzaW5nbGUKPiA+ID4gPiBQ
+V00gZGV2aWNlIHJlZmVyZW5jZWQgYnkgdHdvIGRpZmZlcmVudCB1c2Vycy4gT25seSBvbmUgdXNl
+ciBjYW4gYmUKPiA+ID4gPiBlbmFibGVkIGF0IGEgdGltZSwgYnV0IGVhY2ggb2YgdGhlbSBoYXMg
+aXRzIG93biByZWZlcmVuY2UgY29uZmlnCj4gPiA+ID4gKGRpZmZlcmVudCBwb2xhcml0eSwgZGlm
+ZmVyZW50IHBlcmlvZCkuCj4gPiA+ID4gCj4gPiA+ID4gVXNlcjEgY2FsbHMgcHdtX2dldCgpIGFu
+ZCBhcHBsaWVzIGl0cyBvd24gcG9sYXJpdHkgYW5kIHBlcmlvZC4gVGhlbgo+ID4gPiA+IHVzZXIx
+IGlzIHVucmVnaXN0ZXJlZCBhbmQgcmVsZWFzZSB0aGUgUFdNIGRldmljZSwgbGVhdmluZyB0aGUg
+cG9sYXJpdHkKPiA+ID4gPiBhbmQgcGVyaW9kIHVudG91Y2hlZC4KPiA+ID4gPiAKPiA+ID4gPiBV
+c2VyMiBpcyByZWdpc3RlcmVkIGFuZCByZXF1ZXN0IHRoZSBzYW1lIFBXTSBkZXZpY2UsIGJ1dCB1
+c2VyMiBpcwo+ID4gPiA+IHNtYXJ0ZXIgYW5kIHRyaWVzIHRvIGV4dHJhY3QgdGhlIGN1cnJlbnQg
+UFdNIHN0YXRlIGJlZm9yZSBhZGFwdGluZyB0aGUKPiA+ID4gPiBjb25maWcgYWNjb3JkaW5nIHRv
+IHB3bV9hcmdzLiBJZiB5b3UganVzdCByZXNldCBwd20tPnN0YXRlLnBvbGFyaXR5Cj4gPiA+ID4g
+ZWFjaCB0aW1lIHB3bV9hcHBseV9hcmdzKCkgaXMgY2FsbGVkIChhbmQgeW91IHN1Z2dlc3RlZCB0
+byBjYWxsIGl0IGFzCj4gPiA+ID4gcGFydCBvZiB0aGUgcmVxdWVzdCBwcm9jZWR1cmUpLCB0aGVu
+IHRoaXMgbWVhbnMgdGhlIFBXTSBzdGF0ZSBpcyBubwo+ID4gPiA+IGxvbmdlciBpbiBzeW5jIHdp
+dGggdGhlIGhhcmR3YXJlIHN0YXRlLgo+ID4gPiAKPiA+ID4gSW4gdGhhdCBjYXNlIG5laXRoZXIg
+d2lsbCBiZSB0aGUgcGVyaW9kIG9yIGR1dHkgY3ljbGUuIEVzc2VudGlhbGx5IHRoaXMKPiA+ID4g
+Z2V0cyB1cyBiYWNrIHRvIHNxdWFyZSBvbmUgd2hlcmUgd2UgbmVlZCB0byBkZWNpZGUgaG93IHRv
+IGhhbmRsZSBjdXJyZW50Cj4gPiA+IHN0YXRlIHZzLiBpbml0aWFsIGFyZ3VtZW50cy4KPiA+IAo+
+ID4gVGhhdCdzIG5vdCB0cnVlLiBOb3cgd2UgY2xlYXJseSBkaWZmZXJlbnRpYXRlIHRoZSByZWZl
+cmVuY2UgY29uZmlnCj4gPiAoY29udGVudCBvZiBwd21fYXJncyB3aGljaCBpcyBvbmx5IGEgc3Vi
+c2V0IG9mIHdoYXQgeW91J2xsIGZpbmQgaW4KPiA+IHB3bV9zdGF0ZSkgYW5kIHRoZSBQV00gc3Rh
+dGUgKHJlcHJlc2VudGVkIGJ5IHB3bV9zdGF0ZSkuCj4gPiAKPiA+IFdlIHNob3VsZCBiZSBzYWZl
+IGFzIGxvbmcgYXMgd2Uga2VlcCB0aG9zZSAyIGVsZW1lbnRzIGFzIDIgb3J0aG9nb25hbAo+ID4g
+Y29uY2VwdHM6Cj4gPiAtIHB3bV9hcmdzIGlzIHN1cHBvc2VkIHRvIGdpdmUgc29tZSBoaW50IHRv
+IHRoZSBQV00gdXNlciB0byBoZWxwIGhpbQo+ID4gICBjb25maWd1cmUgaXQncyBQV00gYXBwcm9w
+cmlhdGVseQo+ID4gLSBwd21fc3RhdGUgaXMgaGVyZSB0byByZWZsZWN0IHRoZSByZWFsIFBXTSBz
+dGF0ZSwgYW5kIGFwcGx5IG5ldwo+ID4gICBjb25maWdzCj4gPiAKPiA+ID4gCj4gPiA+IEJ1dCBJ
+IGRvbid0IHRoaW5rIHRoaXMgaXMgcmVhbGx5IGdvaW5nIHRvIGJlIGFuIGlzc3VlIGJlY2F1c2Ug
+dGhpcyBpcwo+ID4gPiBhbGwgbW9vdCB1bnRpbCB3ZSd2ZSBtb3ZlZCBvdmVyIHRvIHRoZSBhdG9t
+aWMgQVBJLCBhdCB3aGljaCBwb2ludCB0aGlzCj4gPiA+IGlzIGFsbCBnb2luZyB0byBnbyBhd2F5
+IGFueXdheS4KPiA+IAo+ID4gQXMgc3RhdGVkIGluIG15IGFuc3dlciB0byBwYXRjaCA1LCBJIHRo
+aW5rIEkgbWlzdW5kZXJzdG9vZCB5b3VyCj4gPiBzdWdnZXN0aW9uLiBwd21fYXBwbHlfYXJncygp
+IGlzIHN1cHBvc2VkIHRvIGFkanVzdCB0aGUgUFdNIGNvbmZpZyB0bwo+ID4gbWF0Y2ggdGhlIHBl
+cmlvZCBhbmQgcG9sYXJpdHkgc3BlY2lmaWVkIGluIHB3bV9hcmdzLCByaWdodD8KPiA+IAo+ID4g
+SWYgdGhhdCdzIHRoZSBjYXNlLCBteSBxdWVzdGlvbiBpcywgc2hvdWxkIHdlIHJlYWxseSBjYWxs
+IHRoaXMgZnVuY3Rpb24KPiA+IGVhY2ggdGltZSBhIG5ldyB1c2VyIHJlcXVlc3RzIGEgUFdNIGlu
+c3RlYWQgb2YgbGV0dGluZyB0aG9zZSB1c2VycyBjYWxsCj4gPiB0aGUgZnVuY3Rpb24gb24tZGVt
+YW5kIChub3QgYWxsIHVzZXJzIHdhbnQgdG8gYWRhcHQgdGhlIGN1cnJlbnQgUFdNCj4gPiBjb25m
+aWcgdG8gdGhlIHB3bV9hcmdzLCBzb21lIG1heSBqdXN0IHdhbnQgdG8gYXBwbHkgYSBjb21wbGV0
+ZWx5IG5ldwo+ID4gY29uZmlnKS4KPiAKPiBJIHRoaW5rIHdlJ3JlIHN0aWxsIHRhbGtpbmcgcGFz
+dCBlYWNoIG90aGVyLiBJIGRpZG4ndCBtZWFuIGZvciB0aGlzIHRvCj4gYmUgYSBwcm9wZXIgcGFy
+dCBvZiB0aGUgQVBJLiBMaWtlIHlvdSBzYWlkIHRoZSBzdHJ1Y3QgcHdtX2FyZ3MgZG9lc24ndAo+
+IGNvbnRhaW4gZW5vdWdoIGRhdGEgdG8gY29uc3RydWN0IGEgY29tcGxldGUgc3RhdGUgYW5kIGFw
+cGx5IGl0Lgo+IAo+IFdoYXQgSSB3YXMgc3VnZ2VzdGluZyBpcyB0byBmYWN0b3Igb3V0IHRoZSBp
+bmRpdmlkdWFsIGNhbGxzIHRvIHRoZQo+IHZhcmlvdXMgcHdtX3NldF8qKCkgZnVuY3Rpb25zIGlu
+dG8gYSBzaW5nbGUgY2FsbC4gU28gd2Ugd291bGRuJ3QgYmUKPiBjaGFuZ2luZyBzZW1hbnRpY3Ms
+IGp1c3QgcmVmYWN0b3JpbmcgdG8gbWFrZSBpdCBlYXNpZXIgdG8gZ2V0IHJpZCBvZgo+IGFnYWlu
+IGluIG9uZSBvZiB0aGUgc3Vic2VxdWVudCBwYXRjaGVzLgo+IAo+IFRoYXQgaXMsIHB3bV9hcHBs
+eV9hcmdzKCkgd291bGQgZ28gYXdheSBhZ2FpbiB3aXRoaW4gdGhpcyB2ZXJ5IHNlcmllcywKPiBh
+dCB0aGUgc2FtZSBwb2ludCB0aGF0IHlvdSdyZSBjdXJyZW50bHkgcmVtb3ZpbmcgdGhlIHB3bV9z
+ZXRfKigpIGNhbGxzLgoKT2theSwgZXZlbnR1YWxseSBnb3QgaXQgOikuCgotLSAKQm9yaXMgQnJl
+emlsbG9uLCBGcmVlIEVsZWN0cm9ucwpFbWJlZGRlZCBMaW51eCBhbmQgS2VybmVsIGVuZ2luZWVy
+aW5nCmh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20KX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vaW50ZWwtZ2Z4Cg==
