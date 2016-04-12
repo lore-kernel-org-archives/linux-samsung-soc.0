@@ -1,52 +1,222 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v5 30/46] regulator: pwm: retrieve correct voltage
-Date: Tue, 12 Apr 2016 12:31:45 +0200
-Message-ID: <20160412123145.092b2c1e@bbrezillon>
-References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459368249-13241-31-git-send-email-boris.brezillon@free-electrons.com>
-	<20160330212410.GX2350@sirena.org.uk>
-	<20160407235431.788dc24a@bbrezillon>
-	<20160412044203.GW3351@sirena.org.uk>
-	<20160412103722.0bfe1d4d@bbrezillon>
-	<20160412100938.GA14664@sirena.org.uk>
-Reply-To: boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 6/7] ARM: dts: Add bus nodes using VDD_INT for Exynos542x
+ SoC
+Date: Tue, 12 Apr 2016 12:53:35 +0200
+Message-ID: <570CD3AF.8040206@samsung.com>
+References: <1460091646-28701-1-git-send-email-cw00.choi@samsung.com>
+ <1460091646-28701-7-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCIPJ6FA2QLBBHM5WO4AKGQEUXJ77WQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20160412100938.GA14664-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>Lee Jones <l>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1460091646-28701-7-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 12 Apr 2016 11:09:38 +0100
-Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-
-> On Tue, Apr 12, 2016 at 10:37:22AM +0200, Boris Brezillon wrote:
-> > Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> > > On Thu, Apr 07, 2016 at 11:54:31PM +0200, Boris Brezillon wrote:
+On 04/08/2016 07:00 AM, Chanwoo Choi wrote:
+> This patch adds the AMBA bus nodes using VDD_INT for Exynos542x SoC.
+> Exynos542x has the following AMBA buses to translate data between
+> DRAM and sub-blocks.
 > 
-> > > I'm not sure there's a strong one, we don't really use the class device
-> > > for anything, but without doing a full audit I couldn't guarantee that.
+> Following list specifies the detailed correlation between sub-block and clock:
+> - CLK_DOUT_ACLK400_WCORE clock for WCORE's AXI
+> - CLK_DOUT_ACLK100_NOC for NoC (Network on Chip)'s AXI
+> - CLK_DOUT_PCLK200_FSYS for FSYS's APB
+> - CLK_DOUT_ACLK200_FSYS for FSYS's AXI
+> - CLK_DOUT_ACLK200_FSYS2 for FSYS2's AXI
+> - CLK_DOUT_ACLK333 for MFC's AXI
+> - CLK_DOUT_ACLK266 for GEN's AXI
+> - CLK_DOUT_ACLK66 for PERIC/PERIR's AXI
+> - CLK_DOUT_ACLK333_G2D for G2D's AXI
+> - CLK_DOUT_ACLK266_G2D for ACP's AXI
+> - CLK_DOUT_ACLK300_JPEG for JPEG's AXI
+> - CLK_DOUT_ACLK166 for JPEG's APB
+> - CLK_DOUT_ACLK300_DISP1 for FIMD's AXI
+> - CLK_DOUT_ACLK400_DISP1 for DISP1's AXI
+> - CLK_DOUT_ACLK300_GSCL for GSCL Scaler's AXI
+> - CLK_DOUT_ACLK400_MSCL for MSCL's AXI
 > 
-> > At first glance I don't see any problem (even the rdev_err/info/...()
-> > functions do not use dev_err/info/...()). The patch will be part of v6
-> > (unless you want me to send it independently).
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 371 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 371 insertions(+)
 > 
-> I'd rather it didn't get sucked into this series since it seems that
-> it's getting delayed indefinitely - I can apply it to the regulator tree
-> and create a tag that can be pulled into other trees as needed if things
-> do get applied.
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index d80f3b66f017..1340024fa882 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -1224,6 +1224,377 @@
+>  		power-domains = <&disp_pd>;
+>  		#iommu-cells = <0>;
+>  	};
+> +
+> +	bus_wcore: bus_wcore {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK400_WCORE>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_wcore_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_noc: bus_noc {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK100_NOC>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_noc_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_fsys_apb: bus_fsys_apb {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_PCLK200_FSYS>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_fsys_apb_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_fsys: bus_fsys {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK200_FSYS>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_fsys_apb_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_fsys2: bus_fsys2 {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK200_FSYS2>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_fsys2_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_mfc: bus_mfc {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK333>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_mfc_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_gen: bus_gen {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK266>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_gen_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_peri: bus_peri {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK66>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_peri_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_g2d: bus_g2d {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK333_G2D>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_g2d_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_g2d_acp: bus_g2d_acp {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK266_G2D>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_g2d_acp_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_jpeg: bus_jpeg {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK300_JPEG>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_jpeg_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_jpeg_apb: bus_jpeg_apb {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK166>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_jpeg_apb_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_disp1_fimd: bus_disp1_fimd {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK300_DISP1>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_disp1_fimd_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_disp1: bus_disp1 {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK400_DISP1>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_disp1_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_gscl_scaler: bus_gscl_scaler {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK300_GSCL>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_gscl_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_mscl: bus_mscl {
+> +		compatible = "samsung,exynos-bus";
+> +		clocks = <&clock CLK_DOUT_ACLK400_MSCL>;
+> +		clock-names = "bus";
+> +		operating-points-v2 = <&bus_mscl_opp_table>;
+> +		status = "disabled";
+> +	};
+> +
+> +	bus_wcore_opp_table: opp_table2 {
+> +		compatible = "operating-points-v2";
+> +
+> +		opp00 {
+> +			opp-hz = /bits/ 64 <84000000>;
+> +			opp-microvolt = <925000>;
+> +		};
+> +		opp01 {
+> +			opp-hz = /bits/ 64 <111000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp02 {
+> +			opp-hz = /bits/ 64 <222000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp03 {
+> +			opp-hz = /bits/ 64 <333000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp04 {
+> +			opp-hz = /bits/ 64 <400000000>;
+> +			opp-microvolt = <987500>;
+> +		};
+> +	};
+> +
+> +	bus_noc_opp_table: opp_table3 {
+> +		compatible = "operating-points-v2";
+> +
+> +		opp00 {
+> +			opp-hz = /bits/ 64 <66000000>;
 
-Done.
+67000000 so it won't be round down?
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Beside that looks good. I am assuming the same apply strategy - I can
+take the DTS changes the bindings got accepted.
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
