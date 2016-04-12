@@ -1,110 +1,154 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: exynos5800 based peach-pi boot is broken with v4.6-rc-1
-Date: Tue, 12 Apr 2016 09:52:54 -0400
-Message-ID: <570CFDB6.5090507@osg.samsung.com>
-References: <570CE2A1.904@samsung.com>
- <CAD=FV=VoxVU5YOGt72g7egotS7-2bVNWz80PM6y=1O+PzYdudA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 15/46] pwm: introduce the pwm_state concept
+Date: Tue, 12 Apr 2016 16:05:46 +0200
+Message-ID: <20160412140546.GS18882@ulmo.ba.sec>
+References: <1459368249-13241-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1459368249-13241-16-git-send-email-boris.brezillon@free-electrons.com>
+ <20160412114904.GM18882@ulmo.ba.sec>
+ <20160412141718.5fe4cf24@bbrezillon>
+ <20160412122141.GP18882@ulmo.ba.sec>
+ <20160412144508.2ee181fe@bbrezillon>
+ <20160412131118.GQ18882@ulmo.ba.sec>
+ <20160412152644.45ff517a@bbrezillon>
+Reply-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:45977 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753943AbcDLNxF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Apr 2016 09:53:05 -0400
-In-Reply-To: <CAD=FV=VoxVU5YOGt72g7egotS7-2bVNWz80PM6y=1O+PzYdudA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="b2ktwntdbf0dPnbx"
+Return-path: <linux-sunxi+bncBDTKFPPJUEHRBPUBWS4AKGQE5ZSCAKI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20160412152644.45ff517a@bbrezillon>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jo>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
 
-Hello Doug,
+--b2ktwntdbf0dPnbx
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-On 04/12/2016 09:39 AM, Doug Anderson wrote:
-> Alim,
+On Tue, Apr 12, 2016 at 03:26:44PM +0200, Boris Brezillon wrote:
+> On Tue, 12 Apr 2016 15:11:18 +0200
+> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 > 
-> On Tue, Apr 12, 2016 at 4:57 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->> Hi All,
->> I can't boot Peach-pi (exynos5800) with v4.6-rc-1, board hangs while booting
->> with below boot hang-task.
->> I have not git-bisected yet, will do that, but AFAIR it was booting fine
->> with v4.5.
->> Any idea?
->>
->> =======
->> [    3.682786]  mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12
->> [   36.001343] random: nonblocking pool is initialized
->> [  240.086291] INFO: task swapper/0:1 blocked for more than 120 seconds.
->> [  240.091271]       Not tainted 4.6.0-rc1 #1
->> [  240.095324] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables
->> this message.
->> [  240.103153] swapper/0       D c07247cc     0     1      0 0x00000000
->> [  240.109480] [<c07247cc>] (__schedule) from [<c0724ca0>]
->> (schedule+0x40/0xac)
->> [  240.116517] [<c0724ca0>] (schedule) from [<c0724f04>]
->> (schedule_preempt_disabled+0x14/0x20)
->> [  240.124846] [<c0724f04>] (schedule_preempt_disabled) from [<c0727704>]
->> (__mutex_lock_slowpath+0x1b4/0x418)
->> [  240.134474] [<c0727704>] (__mutex_lock_slowpath) from [<c0727974>]
->> (mutex_lock+0xc/0x24)
->> [  240.142544] [<c0727974>] (mutex_lock) from [<c05a1678>]
->> (cros_ec_cmd_xfer+0x18/0xe8)
->> [  240.150262] [<c05a1678>] (cros_ec_cmd_xfer) from [<c05a087c>]
->> (get_lightbar_version+0x34/0xb8)
->> [  240.158849] [<c05a087c>] (get_lightbar_version) from [<c05a092c>]
->> (cros_ec_lightbar_attrs_are_visible+0x2c/0x38)
->> [  240.169000] [<c05a092c>] (cros_ec_lightbar_attrs_are_visible) from
->> [<c024ca58>] (internal_create_group+0xb4/0x2d4)
->> [  240.179323] [<c024ca58>] (internal_create_group) from [<c024cda4>]
->> (sysfs_create_groups+0x48/0xc8)
->> [  240.188260] [<c024cda4>] (sysfs_create_groups) from [<c0431c6c>]
->> (device_add+0x258/0x528)
->> [  240.196413] [<c0431c6c>] (device_add) from [<c059fc90>]
->> (ec_device_probe+0x12c/0x14c)
->> [  240.204223] [<c059fc90>] (ec_device_probe) from [<c0435c90>]
->> (platform_drv_probe+0x50/0xa0)
->> [  240.212549] [<c0435c90>] (platform_drv_probe) from [<c04344b0>]
->> (driver_probe_device+0x200/0x2ac)
->> [  240.221397] [<c04344b0>] (driver_probe_device) from [<c0434600>]
->> (__driver_attach+0xa4/0xa8)
->> [  240.229811] [<c0434600>] (__driver_attach) from [<c0432b90>]
->> (bus_for_each_dev+0x54/0x88)
->> [  240.237966] [<c0432b90>] (bus_for_each_dev) from [<c0433b00>]
->> (bus_add_driver+0x174/0x1fc)
->> [  240.246206] [<c0433b00>] (bus_add_driver) from [<c0434e00>]
->> (driver_register+0x78/0xf4)
->> [  240.254188] [<c0434e00>] (driver_register) from [<c0b22dcc>]
->> (cros_ec_dev_init+0x88/0xd0)
->> [  240.262344] [<c0b22dcc>] (cros_ec_dev_init) from [<c0101774>]
->> (do_one_initcall+0x90/0x1d4)
->> [  240.270587] [<c0101774>] (do_one_initcall) from [<c0b00d98>]
->> (kernel_init_freeable+0x14c/0x1f4)
->> [  240.279259] [<c0b00d98>] (kernel_init_freeable) from [<c0723cb4>]
->> (kernel_init+0x8/0x114)
->> [  240.287416] [<c0723cb4>] (kernel_init) from [<c0107e38>]
->> (ret_from_fork+0x14/0x3c)
->> [  240.294961] INFO: task kworker/3:1:78 blocked for more than 120 seconds.
->> [  240.301637]       Not tainted 4.6.0-rc1 #1
+> > On Tue, Apr 12, 2016 at 02:45:08PM +0200, Boris Brezillon wrote:
+> > > On Tue, 12 Apr 2016 14:21:41 +0200
+> > > Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > > 
+> > > > On Tue, Apr 12, 2016 at 02:17:18PM +0200, Boris Brezillon wrote:
+> > > > > On Tue, 12 Apr 2016 13:49:04 +0200
+> > > > > Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > > > > 
+> > > > > > On Wed, Mar 30, 2016 at 10:03:38PM +0200, Boris Brezillon wrote:
+> > > > > > > The PWM state, represented by its period, duty_cycle and polarity,
+> > > > > > > is currently directly stored in the PWM device.
+> > > > > > > Declare a pwm_state structure embedding those field so that we can later
+> > > > > > > use this struct to atomically update all the PWM parameters at once.
+> > > > > > > 
+> > > > > > > All pwm_get_xxx() helpers are now implemented as wrappers around
+> > > > > > > pwm_get_state().
+> > > > > > > 
+> > > > > > > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > > > > > > ---
+> > > > > > >  drivers/pwm/core.c  |  8 ++++----
+> > > > > > >  include/linux/pwm.h | 54 +++++++++++++++++++++++++++++++++++++++++------------
+> > > > > > >  2 files changed, 46 insertions(+), 16 deletions(-)
+> > > > > > > 
+> > > > > > > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> > > > > > > index 6433059..f3f91e7 100644
+> > > > > > > --- a/drivers/pwm/core.c
+> > > > > > > +++ b/drivers/pwm/core.c
+> > > > > > > @@ -268,7 +268,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+> > > > > > >  		pwm->chip = chip;
+> > > > > > >  		pwm->pwm = chip->base + i;
+> > > > > > >  		pwm->hwpwm = i;
+> > > > > > > -		pwm->polarity = polarity;
+> > > > > > > +		pwm->state.polarity = polarity;
+> > > > > > 
+> > > > > > Would this not more correctly be assigned to pwm->args.polarity? After
+> > > > > > all this is setting up the "initial" state, much like DT or the lookup
+> > > > > > tables would for duty cycle and period.
+> > > > > 
+> > > > > Yes, I wasn't sure about the pwm_add_with_polarity() meaning. To me,
+> > > > > all the reference info should be extracted from DT, PWM lookup table or
+> > > > > driver specific ->request() implementation, but I can definitely
+> > > > > initialize the args.polarity here too.
+> > > > > 
+> > > > > Should I keep the pwm->state.polarity assignment (to set the initial
+> > > > > polarity when the driver does not support hardware readout)?
+> > > > 
+> > > > Wouldn't this work automatically as part of the pwm_apply_args() helper
+> > > > if we extended it with this setting?
+> > > 
+> > > Well, as you explained in you answer to patch 5, pwm_apply_args()
+> > > should be called on a per-request basis (each time a PWM device is
+> > > requested), while the initial polarity setting should only be applied
+> > > when registering the PWM chip (and its devices). After that, the
+> > > framework takes care of keeping the PWM state in sync with the hardware
+> > > state.
+> > > 
+> > > Let's take a real (though a bit unusual) example. Say you have a single
+> > > PWM device referenced by two different users. Only one user can be
+> > > enabled at a time, but each of them has its own reference config
+> > > (different polarity, different period).
+> > > 
+> > > User1 calls pwm_get() and applies its own polarity and period. Then
+> > > user1 is unregistered and release the PWM device, leaving the polarity
+> > > and period untouched.
+> > > 
+> > > User2 is registered and request the same PWM device, but user2 is
+> > > smarter and tries to extract the current PWM state before adapting the
+> > > config according to pwm_args. If you just reset pwm->state.polarity
+> > > each time pwm_apply_args() is called (and you suggested to call it as
+> > > part of the request procedure), then this means the PWM state is no
+> > > longer in sync with the hardware state.
+> > 
+> > In that case neither will be the period or duty cycle. Essentially this
+> > gets us back to square one where we need to decide how to handle current
+> > state vs. initial arguments.
 > 
-> I haven't dug, but it wouldn't surprise me if you found the same issue
-> Heiko did.  Can you see if
-> <https://patchwork.kernel.org/patch/8617941/> helps you?
->
-
-That's correct, I can confirm that I needed Heiko's fix to boot v4.6-rc1 on
-my Peach Pi a few weeks ago. I don't have my machine at hand now to test but
-that fix made it to -rc3 so I would suggest using that tag instead of -rc1.
- 
-> -Doug
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> That's not true. Now we clearly differentiate the reference config
+> (content of pwm_args which is only a subset of what you'll find in
+> pwm_state) and the PWM state (represented by pwm_state).
 > 
+> We should be safe as long as we keep those 2 elements as 2 orthogonal
+> concepts:
+> - pwm_args is supposed to give some hint to the PWM user to help him
+>   configure it's PWM appropriately
+> - pwm_state is here to reflect the real PWM state, and apply new
+>   configs
+> 
+> > 
+> > But I don't think this is really going to be an issue because this is
+> > all moot until we've moved over to the atomic API, at which point this
+> > is all going to go away anyway.
+> 
+> As stated in my answer to patch 5, I think I misunderstood your
+> suggestion. pwm_apply_args() is supposed to adjust the PWM config to
+> match the period and polarity specified in pwm_args, right?
+> 
+> If that's the case, my question is, should we really call this function
+> each time a new user requests a PWM instead of letting those users call
+> the function on-demand (not all users want to adapt the current PWM
+> config to the pwm_args, some may just want to apply a completely new
+> config).
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+I think we're still talking past each other. I didn't mean for this to
+be a proper part of the API. Like you said the struct pwm_args doesn't
+contain enough data to construct a complete state and apply it.
+
+What I was suggesting is to factor out the individual calls to the
+various pwm_set_*() functions into a single call. So we wouldn't be
+changing semantics, just refactoring to make it easier to get rid of
+again in one of the subsequent patches.
+
+That is, pwm_apply_args() would go away again within this very series,
+at the same point that you're currently removing the pwm_set_*() calls.
+
+Thierry
+--b2ktwntdbf0dPnbx--
