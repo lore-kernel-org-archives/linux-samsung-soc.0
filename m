@@ -1,35 +1,44 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v9 03/20] PM / devfreq: Add devfreq_get_devfreq_by_phandle()
-Date: Tue, 12 Apr 2016 09:24:13 +0200
-Message-ID: <570CA29D.9030308@samsung.com>
-References: <1460347078-15175-1-git-send-email-cw00.choi@samsung.com>
- <1460347078-15175-4-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1460347078-15175-4-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: zengzhaoxiu@163.com
+Subject: [PATCH] mtd: nand: s3c2410: fix bug in s3c2410_nand_correct_data()
+Date: Tue, 12 Apr 2016 15:30:35 +0800
+Message-ID: <1460446235-987-1-git-send-email-zengzhaoxiu@163.com>
+References: <20160411094901.74e68f91@bbrezillon>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from m50-134.163.com ([123.125.50.134]:33603 "EHLO m50-134.163.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755917AbcDLHc1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Apr 2016 03:32:27 -0400
+In-Reply-To: <20160411094901.74e68f91@bbrezillon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: boris.brezillon@free-electrons.com
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
 
-On 04/11/2016 05:57 AM, Chanwoo Choi wrote:
-> This patch adds the new devfreq_get_devfreq_by_phandle() OF helper function
-> which can find the instance of devfreq device by using phandle ("devfreq").
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> [m.reichl and linux.amoon: Tested it on exynos4412-odroidu3 board]
-> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  drivers/devfreq/devfreq.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/devfreq.h   |  9 +++++++++
->  2 files changed, 53 insertions(+)
-> 
+From: Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+If there is only one bit difference in the ECC, the function should return 1.
+The result of "diff0 & ~(1<<fls(diff0))" is equal to diff0, so the function
+actually returns -1.
 
-Best regards,
-Krzysztof
+Signed-off-by: Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
+---
+ drivers/mtd/nand/s3c2410.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index 9c9397b..86ffb73 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -542,7 +542,8 @@ static int s3c2410_nand_correct_data(struct mtd_info *mtd, u_char *dat,
+ 	diff0 |= (diff1 << 8);
+ 	diff0 |= (diff2 << 16);
+ 
+-	if ((diff0 & ~(1<<fls(diff0))) == 0)
++	/* equal to "(diff0 & ~(1 << __ffs(diff0)))" */
++	if ((diff0 & (diff0 - 1)) == 0)
+ 		return 1;
+ 
+ 	return -1;
+-- 
+2.5.0
