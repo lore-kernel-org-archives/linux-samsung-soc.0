@@ -1,66 +1,37 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2] arm64: dts: Add nodes for pdma0 and pdam1 for exynos7
-Date: Wed, 13 Apr 2016 10:12:03 +0530
-Message-ID: <1460522523-7429-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33035 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754515AbcDMElw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Apr 2016 00:41:52 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 5/7] clk: samsung: exynos542x: Add the clock id for ACLK
+Date: Wed, 13 Apr 2016 09:20:41 +0300
+Message-ID: <CA+Ln22EFdspBdHwWar65UZ-uFxq4c9+RPhNCJjgKp9idvDvM5A@mail.gmail.com>
+References: <1460091646-28701-1-git-send-email-cw00.choi@samsung.com>
+	<1460091646-28701-6-git-send-email-cw00.choi@samsung.com>
+	<570CDB16.2050001@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <570CDB16.2050001@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux.amoon@gmail.com, m.reichl@fivetechno.de, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, InKi Dae <inki.dae@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, thomas.ab@samsung.com
 
-This patch adds device tree nodes for pdma0 and pdma1 controllers
-found on exynos7 SoCs.
+2016-04-12 14:25 GMT+03:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> On 04/08/2016 07:00 AM, Chanwoo Choi wrote:
+>> This patch adds the clock id for ACLK clock which is source clock of AMBA AXI
+>> Bus. This clock should be handled in Bus frequency scaling driver.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5420.c | 85 +++++++++++++++++++++++-------------
+>>  1 file changed, 55 insertions(+), 30 deletions(-)
+>
+> The IDs itself look good but you are not adding only clock ID. You are
+> changing all of them from NULL-flags to CLK_SET_RATE_PARENT. This should
+> be explained in the commit message why you need it. Probably it should
+> be also in separate commit.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7.dtsi |   29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
++1. And CLK_SET_RATE_PARENT for a clock which has a mux as its parent
+is a bit suspicious, so I'd like to know the rationale for each single
+clock with CLK_SET_RATE_PARENT being added.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 93108f1..a1a3dba 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -95,6 +95,35 @@
- 				<0x11006000 0x2000>;
- 		};
- 
-+		amba {
-+			compatible = "simple-bus";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			pdma0: pdma@10E10000 {
-+				compatible = "arm,pl330", "arm,primecell";
-+				reg = <0x10E10000 0x1000>;
-+				interrupts = <0 225 0>;
-+				clocks = <&clock_fsys0 ACLK_PDMA0>;
-+				clock-names = "apb_pclk";
-+				#dma-cells = <1>;
-+				#dma-channels = <8>;
-+				#dma-requests = <32>;
-+			};
-+
-+			pdma1: pdma@10EB0000 {
-+				compatible = "arm,pl330", "arm,primecell";
-+				reg = <0x10EB0000 0x1000>;
-+				interrupts = <0 226 0>;
-+				clocks = <&clock_fsys0 ACLK_PDMA1>;
-+				clock-names = "apb_pclk";
-+				#dma-cells = <1>;
-+				#dma-channels = <8>;
-+				#dma-requests = <32>;
-+			};
-+		};
-+
- 		clock_topc: clock-controller@10570000 {
- 			compatible = "samsung,exynos7-clock-topc";
- 			reg = <0x10570000 0x10000>;
--- 
-1.7.10.4
+Best regards,
+Tomasz
