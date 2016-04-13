@@ -1,46 +1,159 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH] [media] exynos-gsc: remove an always false condition
-Date: Wed, 13 Apr 2016 16:32:36 -0300
-Message-ID: <26a7ed9c18193dc7a3dfba33e3c711822f4bdd29.1460575950.git.mchehab@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:44279 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751040AbcDMTdr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Apr 2016 15:33:47 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 7/7] ARM: dts: Add support of Bus frequency using VDD_INT
+ for exynos5422-odroidxu3
+Date: Thu, 14 Apr 2016 08:14:57 +0900
+Message-ID: <570ED2F1.1080006@samsung.com>
+References: <1460091646-28701-1-git-send-email-cw00.choi@samsung.com>
+ <1460091646-28701-8-git-send-email-cw00.choi@samsung.com>
+ <570CD4F7.6000700@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <570CD4F7.6000700@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-As reported by smatch:
-drivers/media/platform/exynos-gsc/gsc-core.c:1073 gsc_probe() warn: impossible condition '(gsc->id < 0) => (0-65535 < 0)'
-drivers/media/platform/exynos-gsc/gsc-core.c: In function 'gsc_probe':
-drivers/media/platform/exynos-gsc/gsc-core.c:1073:51: warning: comparison is always false due to limited range of data type [-Wtype-limits]
-  if (gsc->id >= drv_data->num_entities || gsc->id < 0) {
-                                                   ^
+On 2016=EB=85=84 04=EC=9B=94 12=EC=9D=BC 19:59, Krzysztof Kozlowski wro=
+te:
+> On 04/08/2016 07:00 AM, Chanwoo Choi wrote:
+>> This patch adds the bus device tree nodes for INT (Internal) block
+>> to enable the AMBA bus frequency scaling and add the NoC (Network on=
+ Chip)
+>> Probe Device Tree node to measure the bandwidht for AMBA AXI bus.
+>>
+>> The WCORE bus bus is parent device in INT block using VDD_INT.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 99 +++++++++++=
++++++++++++
+>>  1 file changed, 99 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/ar=
+ch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> index 1bd507bfa750..2a74abe6fc5d 100644
+>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> @@ -361,6 +361,22 @@
+>>  	cap-sd-highspeed;
+>>  };
+>> =20
+>> +&nocp_mem0_0 {
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&nocp_mem0_1 {
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&nocp_mem0_2 {
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&nocp_mem0_3 {
+>> +	status =3D "okay";
+>> +};
+>> +
+>>  &pinctrl_0 {
+>>  	hdmi_hpd_irq: hdmi-hpd-irq {
+>>  		samsung,pins =3D "gpx3-7";
+>> @@ -432,3 +448,86 @@
+>>  	vdd33-supply =3D <&ldo9_reg>;
+>>  	vdd10-supply =3D <&ldo11_reg>;
+>>  };
+>> +
+>> +&bus_wcore {
+>> +	devfreq-events =3D <&nocp_mem0_0>, <&nocp_mem0_1>,
+>> +			<&nocp_mem0_2>, <&nocp_mem0_3>;
+>> +	vdd-supply =3D <&buck3_reg>;
+>> +	exynos,saturation-ratio =3D <100>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_noc {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_fsys_apb {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_fsys {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_fsys2 {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_mfc {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_gen {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_peri {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_g2d {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_g2d_acp {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_jpeg {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_jpeg_apb {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_disp1_fimd {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_disp1 {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_gscl_scaler {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>> +
+>> +&bus_mscl {
+>> +	devfreq =3D <&bus_wcore>;
+>> +	status =3D "okay";
+>> +};
+>=20
+> Could you put the bus nodes in alphabetical order, both between them =
+and
+> in relation to others (so before &clock_audss)? Let's keep the file o=
+rdered.
 
-gsc->id is an u16, so it can never be a negative number. So,
-remove the always false condition.
+OK. I'll reorder them.
 
-Fixes: c1ac057173ba "[media] exynos-gsc: remove non-device-tree init code"
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
----
- drivers/media/platform/exynos-gsc/gsc-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 032a423fb892..c595723f5031 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1070,7 +1070,7 @@ static int gsc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	gsc->id = of_alias_get_id(pdev->dev.of_node, "gsc");
--	if (gsc->id >= drv_data->num_entities || gsc->id < 0) {
-+	if (gsc->id >= drv_data->num_entities) {
- 		dev_err(dev, "Invalid platform device id: %d\n", gsc->id);
- 		return -EINVAL;
- 	}
--- 
-2.5.5
+Best Regards,
+Chanwoo Choi
