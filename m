@@ -1,18 +1,30 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 2/5] ARM: dts: exynos: DT for v4.7
-Date: Wed, 13 Apr 2016 12:01:19 +0200
-Message-ID: <1460541682-32417-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 4/5] ARM: defconfig for v4.7
+Date: Wed, 13 Apr 2016 12:01:21 +0200
+Message-ID: <1460541682-32417-5-git-send-email-k.kozlowski@samsung.com>
 References: <1460541682-32417-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1460541682-32417-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-Device Tree changes, including the topic branch from 1/5.
+exynos and multi_v7 defconfig changes. In case of multi_v7 conflicts
+just add changes coming from here.
 
 Best regards,
 Krzysztof
@@ -24,92 +36,25 @@ The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.7
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.7
 
-for you to fetch changes up to 06e520c4f067e7284fded10656acca924123c58e:
+for you to fetch changes up to 0fe3ff4454c9ba2c9d6774ecafed799fe009d145:
 
-  ARM: dts: s5p: Fix DTC unit name warnings in SMDKv210 board (2016-04-13 11:14:52 +0200)
-
-----------------------------------------------------------------
-Samsung Device Tree updates and improvements for v4.7:
-1. Enable accelerated AES (Security SubSystem) on Exynos4412-based boards.
-2. Enable HDMI CEC on Exynos4412-based Odroid.
-3. Add regulator supplies for eMMC/SD on Odroid XU3/XU4.
-4. Fix DTC unit name warnings.
-5. Merge topic branch of new Artik5 board.
+  ARM: multi_v7_defconfig: Enable CPUFreq governors as modules (2016-04-12 16:19:14 +0200)
 
 ----------------------------------------------------------------
-Chanwoo Choi (6):
-      dt-bindings: Add the clock id of UART2 and MMC2 for Exynos3250
-      clk: samsung: exynos3250: Add MMC2 clock
-      ARM: dts: exynos: Add initial pin configuration for exynos3250-rinato
-      ARM: dts: exynos: Add initial gpio setting of MMC2 device for exynos3250-monk
-      ARM: dts: exynos: Add MSHC2 DT node for Exynos3250 SoC
-      ARM: dts: exynos: Add exynos3250-artik5 dtsi file for ARTIK5 module
+Defconfig (exynos and multi_v7) changes for Exynos based boards for v4.7:
+1. Enable additional drivers for Trats2 board (Exynos4412).
+2. Enable CPUFreq governors as modules.
 
-Jaehoon Chung (1):
-      ARM: dts: exynos: Add MSHC2 DT node for SD card for exynos3250-artik5-eval board
+----------------------------------------------------------------
+Javier Martinez Canillas (2):
+      ARM: exynos_defconfig: Enable CPUFreq governors as modules
+      ARM: multi_v7_defconfig: Enable CPUFreq governors as modules
 
-Kamil Debski (2):
-      ARM: dts: exynos: Add HDMI CEC pin definition to exynos4 pinctrl
-      ARM: dts: exynos: Add node for the HDMI CEC device to exynos4
+Krzysztof Kozlowski (1):
+      ARM: exynos_defconfig: Enable Trats2 audio codec, touchscreen and sensors
 
-Krzysztof Kozlowski (16):
-      ARM: dts: exynos: Add Security SubSystem node to Exynos4
-      ARM: dts: exynos: Enable SSS on Trats2
-      ARM: dts: exynos: Enable SSS on Odroid X/X2/U3 family
-      Merge tag 'clk-v4.7-exynos3250' of git://linuxtv.org/snawrocki/samsung into for-v4.7/dt-exynos3250-artik5
-      Merge tag 'samsung-dt-exynos3250-artik5-4.7' into next/dt
-      ARM: dts: exynos: Fix DTC unit name warnings in cros-adc-thermistors
-      ARM: dts: exynos: Fix DTC unit name warnings in Exynos3250
-      ARM: dts: exynos: Fix DTC unit name warnings in Exynos4
-      ARM: dts: exynos: Fix DTC unit name warnings in Trats2 board
-      ARM: dts: exynos: Fix DTC unit name warnings in Exynos4x12
-      ARM: dts: exynos: Fix DTC unit name warnings in Exynos5250
-      ARM: dts: exynos: Fix DTC unit name warnings in Exynos542x
-      ARM: dts: exynos: Fix DTC unit name warnings in Peach Pit
-      ARM: dts: exynos: Fix DTC unit name warnings in SMDK5420
-      ARM: dts: exynos: Fix DTC unit name warnings in Exynos5440
-      ARM: dts: s5p: Fix DTC unit name warnings in SMDKv210 board
-
-Marek Szyprowski (1):
-      ARM: dts: exynos: Enable the HDMI CEC device on Exynos4412 Odroid boards
-
-Markus Reichl (1):
-      ARM: dts: exynos: Add eMMC and SD regulator supplies to Odroid XU3/XU4
-
-Pankaj Dubey (2):
-      clk: samsung: exynos3250: Add UART2 clock
-      ARM: dts: exynos: Add UART2 DT node for Exynos3250 SoC
-
- .../bindings/arm/samsung/samsung-boards.txt        |   2 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/cros-adc-thermistors.dtsi        |   8 +-
- arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  43 +++
- arch/arm/boot/dts/exynos3250-artik5.dtsi           | 334 +++++++++++++++++++++
- arch/arm/boot/dts/exynos3250-monk.dts              |  12 +-
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi          |  80 +++++
- arch/arm/boot/dts/exynos3250-rinato.dts            |  71 ++++-
- arch/arm/boot/dts/exynos3250.dtsi                  |  27 +-
- arch/arm/boot/dts/exynos4.dtsi                     |  23 +-
- arch/arm/boot/dts/exynos4210-pinctrl.dtsi          |   7 +
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   8 +
- arch/arm/boot/dts/exynos4412-trats2.dts            |  16 +-
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          |   7 +
- arch/arm/boot/dts/exynos4x12.dtsi                  |   2 +-
- arch/arm/boot/dts/exynos5250-arndale.dts           |   2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |   8 +-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi      |  12 +-
- arch/arm/boot/dts/exynos5250-spring.dts            |   2 +-
- arch/arm/boot/dts/exynos5250.dtsi                  |  10 +-
- arch/arm/boot/dts/exynos5420-peach-pit.dts         |   6 +-
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   2 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |  12 +-
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  17 +-
- arch/arm/boot/dts/exynos5440.dtsi                  |   4 +-
- arch/arm/boot/dts/s5pv210-smdkv210.dts             |   2 +-
- drivers/clk/samsung/clk-exynos3250.c               |  15 +
- include/dt-bindings/clock/exynos3250.h             |  11 +-
- 28 files changed, 692 insertions(+), 52 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos3250-artik5-eval.dts
- create mode 100644 arch/arm/boot/dts/exynos3250-artik5.dtsi
+ arch/arm/configs/exynos_defconfig   | 11 +++++++++++
+ arch/arm/configs/multi_v7_defconfig |  4 ++++
+ 2 files changed, 15 insertions(+)
