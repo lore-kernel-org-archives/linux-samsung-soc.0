@@ -1,178 +1,104 @@
-From: Han Xu <han.xu-3arQi8VN3Tc@public.gmane.org>
-Subject: Re: [PATCH v5 34/50] mtd: nand: gpmi: switch to mtd_ooblayout_ops
-Date: Tue, 12 Apr 2016 22:41:17 +0000
-Message-ID: <DB5PR0401MB1845C0E3F0CD67BD2A32DD9497950@DB5PR0401MB1845.eurprd04.prod.outlook.com>
-References: <1459354505-32551-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1459354505-32551-35-git-send-email-boris.brezillon@free-electrons.com>
-	<DB5PR0401MB1845A6EE26FD2734CDBBE20F97950@DB5PR0401MB1845.eurprd04.prod.outlook.com>,<20160413003146.4deb6017@bbrezillon>
-Reply-To: han.xu-3arQi8VN3Tc@public.gmane.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: exynos5800 based peach-pi boot is broken with v4.6-rc-1
+Date: Wed, 13 Apr 2016 09:14:40 +0530
+Message-ID: <570DC0A8.4060905@samsung.com>
+References: <570CE2A1.904@samsung.com>
+ <CAD=FV=VoxVU5YOGt72g7egotS7-2bVNWz80PM6y=1O+PzYdudA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="_000_DB5PR0401MB1845C0E3F0CD67BD2A32DD9497950DB5PR0401MB1845_"
-Return-path: <linux-sunxi+bncBCBMF4HBYUEBBE7TWW4AKGQEUHXG7RY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20160413003146.4deb6017@bbrezillon>
-Content-Language: en-US
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Daniel
- Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert
- Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof
- Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Wenyou Yang <wenyou.yang-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Ezequiel Garcia <ezequ>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:46822 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757427AbcDMDo1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Apr 2016 23:44:27 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0O5J01RUHZPZLH30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Apr 2016 12:44:23 +0900 (KST)
+In-reply-to: <CAD=FV=VoxVU5YOGt72g7egotS7-2bVNWz80PM6y=1O+PzYdudA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Olof Johansson <olof@lixom.net>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
 
---_000_DB5PR0401MB1845C0E3F0CD67BD2A32DD9497950DB5PR0401MB1845_
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi Doug,
 
-
-
-
-________________________________
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Sent: Tuesday, April 12, 2016 4:31 PM
-To: Han Xu
-Cc: David Woodhouse; Brian Norris; linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; Richard W=
-einberger; Daniel Mack; Haojian Zhuang; Robert Jarzmik; Kukjin Kim; Krzyszt=
-of Kozlowski; linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-kernel-IAPFreCvJWMP3drIcvDWNA@public.gmane.org=
-radead.org; Ralf Baechle; linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org; Nicolas Ferre; Jean-Ch=
-ristophe Plagniol-Villard; Alexandre Belloni; Wenyou Yang; Josh Wu; Ezequie=
-l Garcia; Maxime Ripard; Chen-Yu Tsai; linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org; Stefan=
- Agner; Kyungmin Park; Greg Kroah-Hartman; devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org; linu=
-x-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; punnaiah choudary kalluri; Priit Laes; Kamal Dasu=
-; bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org; linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Harvey =
-Hunt; Archit Taneja; b45815-KZfg59tc24xl57MIdRCFDg@public.gmane.org; Huang Shijie
-Subject: Re: [PATCH v5 34/50] mtd: nand: gpmi: switch to mtd_ooblayout_ops
-
-On Tue, 12 Apr 2016 22:27:58 +0000
-Han Xu <han.xu-3arQi8VN3Tc@public.gmane.org> wrote:
-
+On 04/12/2016 07:09 PM, Doug Anderson wrote:
+> Alim,
 >
-> I am fine with all gpmi patch set and tested on i.MX6Q, just found anothe=
-r issue in gpmi driver.
-> The patch was sent, refer to https://patchwork.ozlabs.org/patch/609755/
-
-Oh, was it related to the changes introduced by this series?
-
-No, previous code used all page space so I couldn't test your change, I cha=
-nged the code to get
-correct free oob space.
-
+> On Tue, Apr 12, 2016 at 4:57 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>> Hi All,
+>> I can't boot Peach-pi (exynos5800) with v4.6-rc-1, board hangs while booting
+>> with below boot hang-task.
+>> I have not git-bisected yet, will do that, but AFAIR it was booting fine
+>> with v4.5.
+>> Any idea?
+>>
+>> =======
+>> [    3.682786]  mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12
+>> [   36.001343] random: nonblocking pool is initialized
+>> [  240.086291] INFO: task swapper/0:1 blocked for more than 120 seconds.
+>> [  240.091271]       Not tainted 4.6.0-rc1 #1
+>> [  240.095324] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables
+>> this message.
+>> [  240.103153] swapper/0       D c07247cc     0     1      0 0x00000000
+>> [  240.109480] [<c07247cc>] (__schedule) from [<c0724ca0>]
+>> (schedule+0x40/0xac)
+>> [  240.116517] [<c0724ca0>] (schedule) from [<c0724f04>]
+>> (schedule_preempt_disabled+0x14/0x20)
+>> [  240.124846] [<c0724f04>] (schedule_preempt_disabled) from [<c0727704>]
+>> (__mutex_lock_slowpath+0x1b4/0x418)
+>> [  240.134474] [<c0727704>] (__mutex_lock_slowpath) from [<c0727974>]
+>> (mutex_lock+0xc/0x24)
+>> [  240.142544] [<c0727974>] (mutex_lock) from [<c05a1678>]
+>> (cros_ec_cmd_xfer+0x18/0xe8)
+>> [  240.150262] [<c05a1678>] (cros_ec_cmd_xfer) from [<c05a087c>]
+>> (get_lightbar_version+0x34/0xb8)
+>> [  240.158849] [<c05a087c>] (get_lightbar_version) from [<c05a092c>]
+>> (cros_ec_lightbar_attrs_are_visible+0x2c/0x38)
+>> [  240.169000] [<c05a092c>] (cros_ec_lightbar_attrs_are_visible) from
+>> [<c024ca58>] (internal_create_group+0xb4/0x2d4)
+>> [  240.179323] [<c024ca58>] (internal_create_group) from [<c024cda4>]
+>> (sysfs_create_groups+0x48/0xc8)
+>> [  240.188260] [<c024cda4>] (sysfs_create_groups) from [<c0431c6c>]
+>> (device_add+0x258/0x528)
+>> [  240.196413] [<c0431c6c>] (device_add) from [<c059fc90>]
+>> (ec_device_probe+0x12c/0x14c)
+>> [  240.204223] [<c059fc90>] (ec_device_probe) from [<c0435c90>]
+>> (platform_drv_probe+0x50/0xa0)
+>> [  240.212549] [<c0435c90>] (platform_drv_probe) from [<c04344b0>]
+>> (driver_probe_device+0x200/0x2ac)
+>> [  240.221397] [<c04344b0>] (driver_probe_device) from [<c0434600>]
+>> (__driver_attach+0xa4/0xa8)
+>> [  240.229811] [<c0434600>] (__driver_attach) from [<c0432b90>]
+>> (bus_for_each_dev+0x54/0x88)
+>> [  240.237966] [<c0432b90>] (bus_for_each_dev) from [<c0433b00>]
+>> (bus_add_driver+0x174/0x1fc)
+>> [  240.246206] [<c0433b00>] (bus_add_driver) from [<c0434e00>]
+>> (driver_register+0x78/0xf4)
+>> [  240.254188] [<c0434e00>] (driver_register) from [<c0b22dcc>]
+>> (cros_ec_dev_init+0x88/0xd0)
+>> [  240.262344] [<c0b22dcc>] (cros_ec_dev_init) from [<c0101774>]
+>> (do_one_initcall+0x90/0x1d4)
+>> [  240.270587] [<c0101774>] (do_one_initcall) from [<c0b00d98>]
+>> (kernel_init_freeable+0x14c/0x1f4)
+>> [  240.279259] [<c0b00d98>] (kernel_init_freeable) from [<c0723cb4>]
+>> (kernel_init+0x8/0x114)
+>> [  240.287416] [<c0723cb4>] (kernel_init) from [<c0107e38>]
+>> (ret_from_fork+0x14/0x3c)
+>> [  240.294961] INFO: task kworker/3:1:78 blocked for more than 120 seconds.
+>> [  240.301637]       Not tainted 4.6.0-rc1 #1
+>
+> I haven't dug, but it wouldn't surprise me if you found the same issue
+> Heiko did.  Can you see if
+> <https://patchwork.kernel.org/patch/8617941/> helps you?
+>
+Thanks for the pointer, yes the above patch does solve the boot issue on 
+peach-pi.
+> -Doug
 >
 >
-> Acked-by: Han Xu <han.xu-3arQi8VN3Tc@public.gmane.org>
-> Tested-by: Han Xu <han.xu-3arQi8VN3Tc@public.gmane.org>
-> --
-> 2.5.0
->
-
-
-
---
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
-
---_000_DB5PR0401MB1845C0E3F0CD67BD2A32DD9497950DB5PR0401MB1845_
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"><!-- P {margin-top:0;margi=
-n-bottom:0;} --></style>
-</head>
-<body dir=3D"ltr">
-<div id=3D"divtagdefaultwrapper" style=3D"font-size:12pt;color:#000000;back=
-ground-color:#FFFFFF;font-family:Calibri,Arial,Helvetica,sans-serif;">
-<p><br>
-</p>
-<br>
-<br>
-<div style=3D"color: rgb(0, 0, 0);">
-<div>
-<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
-<div id=3D"x_divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" =
-color=3D"#000000" style=3D"font-size:11pt"><b>From:</b> Boris Brezillon &lt=
-;boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org&gt;<br>
-<b>Sent:</b> Tuesday, April 12, 2016 4:31 PM<br>
-<b>To:</b> Han Xu<br>
-<b>Cc:</b> David Woodhouse; Brian Norris; linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; Ri=
-chard Weinberger; Daniel Mack; Haojian Zhuang; Robert Jarzmik; Kukjin Kim; =
-Krzysztof Kozlowski; linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-kernel@li=
-sts.infradead.org; Ralf Baechle;
- linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org; Nicolas Ferre; Jean-Christophe Plagniol-Villard=
-; Alexandre Belloni; Wenyou Yang; Josh Wu; Ezequiel Garcia; Maxime Ripard; =
-Chen-Yu Tsai; linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org; Stefan Agner; Kyungmin Park; Gr=
-eg Kroah-Hartman; devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org;
- linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; punnaiah choudary kalluri; Priit Laes; Kamal=
- Dasu; bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org; linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Ha=
-rvey Hunt; Archit Taneja; b45815-KZfg59tc24xl57MIdRCFDg@public.gmane.org; Huang Shijie<br>
-<b>Subject:</b> Re: [PATCH v5 34/50] mtd: nand: gpmi: switch to mtd_ooblayo=
-ut_ops</font>
-<div>&nbsp;</div>
-</div>
-</div>
-<font size=3D"2"><span style=3D"font-size:10pt;">
-<div class=3D"PlainText">On Tue, 12 Apr 2016 22:27:58 &#43;0000<br>
-Han Xu &lt;han.xu-3arQi8VN3Tc@public.gmane.org&gt; wrote:<br>
-<br>
-&gt; <br>
-&gt; I am fine with all gpmi patch set and tested on i.MX6Q, just found ano=
-ther issue in gpmi driver.<br>
-&gt; The patch was sent, refer to <a href=3D"https://patchwork.ozlabs.org/p=
-atch/609755/" id=3D"LPlnk157403">
-https://patchwork.ozlabs.org/patch/609755/</a><br>
-<br>
-Oh, was it related to the changes introduced by this series?<br>
-<br>
-No, previous code used all page space so I couldn't test your change,&nbsp;=
-I changed the code to get</div>
-<div class=3D"PlainText">correct free oob&nbsp;space.</div>
-<div class=3D"PlainText"><br>
-&gt; <br>
-&gt; <br>
-&gt; Acked-by: Han Xu &lt;han.xu-3arQi8VN3Tc@public.gmane.org&gt;<br>
-&gt; Tested-by: Han Xu &lt;han.xu-3arQi8VN3Tc@public.gmane.org&gt;<br>
-&gt; --<br>
-&gt; 2.5.0<br>
-&gt; <br>
-<br>
-<br>
-<br>
--- <br>
-Boris Brezillon, Free Electrons<br>
-Embedded Linux and Kernel engineering<br>
-<a href=3D"http://free-electrons.com">http://free-electrons.com</a><br>
-</div>
-</span></font></div>
-</div>
-</body>
-</html>
-
-<p></p>
-
--- <br />
-You received this message because you are subscribed to the Google Groups &=
-quot;linux-sunxi&quot; group.<br />
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to <a href=3D"mailto:linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org">linux-s=
-unxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org</a>.<br />
-For more options, visit <a href=3D"https://groups.google.com/d/optout">http=
-s://groups.google.com/d/optout</a>.<br />
-
---_000_DB5PR0401MB1845C0E3F0CD67BD2A32DD9497950DB5PR0401MB1845_--
