@@ -1,31 +1,37 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
- FSYS0} blocks clock
-Date: Thu, 14 Apr 2016 09:50:56 +0200
-Message-ID: <570F4BE0.1010102@samsung.com>
-References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+Subject: [next] Failing Odroid XU3 boot due to missing MMC device
+Date: Thu, 14 Apr 2016 10:23:28 +0200
+Message-ID: <570F5380.7010103@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
-Cc: thomas.ab@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com, tomasz.figa@gmail.com
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/14/2016 06:42 AM, Alim Akhtar wrote:
-> This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
-> clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
-> blocks registers. Let these clocks to be enabled all the time.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+Hi,
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Anyone also observed recent failures of linux-next (20160413, 20160414)
+on booting from SD card? On my Odroid XU3 exynos and multi_v7 configs
+fail with:
+
+Apr 14 07:52:53 starting version 229
+Apr 14 07:52:53 :: running hook [udev]
+Apr 14 07:52:53 :: Triggering uevents...
+Apr 14 07:52:54 Waiting 10 seconds for device /dev/mmcblk0p1 ...
+Apr 14 07:53:05 ERROR: device '/dev/mmcblk0p1' not found. Skipping fsck.
+Apr 14 07:53:05 ERROR: Unable to find root device '/dev/mmcblk0p1'.
+Apr 14 07:53:05 You are being dropped to a recovery shell
+Apr 14 07:53:05     Type 'exit' to try and continue booting
+Apr 14 07:53:05 sh: can't access tty; job control turned off
+
+I didn't start bisecting yet... maybe this is known?
+
+Full logs:
+http://www.krzk.eu/builders/boot-odroid-xu3-exynos/builds/673/steps/Boot%20odroid/logs/serial
+
 
 Best regards,
 Krzysztof
-
