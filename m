@@ -1,49 +1,49 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Markus Reichl <m.reichl@fivetechno.de>
 Subject: Re: [next] Failing Odroid XU3 boot due to missing MMC device
-Date: Thu, 14 Apr 2016 09:45:30 +0100
-Message-ID: <20160414084530.GS19428@n2100.arm.linux.org.uk>
-References: <570F5380.7010103@samsung.com>
- <570F5550.5010708@fivetechno.de>
+Date: Thu, 14 Apr 2016 10:54:54 +0200
+Message-ID: <570F5ADE.1010500@fivetechno.de>
+References: <570F5380.7010103@samsung.com> <570F5550.5010708@fivetechno.de>
+ <20160414084530.GS19428@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:48124 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753402AbcDNIpo (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:35349 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753408AbcDNIzH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Apr 2016 04:45:44 -0400
-Content-Disposition: inline
-In-Reply-To: <570F5550.5010708@fivetechno.de>
+	Thu, 14 Apr 2016 04:55:07 -0400
+In-Reply-To: <20160414084530.GS19428@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Thu, Apr 14, 2016 at 10:31:12AM +0200, Markus Reichl wrote:
-> Hi Krzysztof,
+Am 14.04.2016 um 10:45 schrieb Russell King - ARM Linux:
+> On Thu, Apr 14, 2016 at 10:31:12AM +0200, Markus Reichl wrote:
+>> Hi Krzysztof,
+>>
+>> yes, observed this with linux-next from yesterday 13.
+>>
+>> I boot from eMMC.
+>> Device numbering of eMMC and SD are exchanged now.
+>>
+>> I solved the boot problem by changing the rootdev in U-Boot env
+>> from /dev/mmcblk0p2 to /dev/mmcblk1p2.
+>>
+>> Changed /etc/fdisk, too, to mount /dev/mmcblk1p1 to /boot.     
 > 
-> yes, observed this with linux-next from yesterday 13.
+> You really should mount by partition uuid - supplying something like:
 > 
-> I boot from eMMC.
-> Device numbering of eMMC and SD are exchanged now.
+> 	root=PARTUUID=f3ae567e-02
 > 
-> I solved the boot problem by changing the rootdev in U-Boot env
-> from /dev/mmcblk0p2 to /dev/mmcblk1p2.
+> on the kernel command line.  This makes the mounting of rootfs
+> independent of which device carries the filesystem.
 > 
-> Changed /etc/fdisk, too, to mount /dev/mmcblk1p1 to /boot.     
+> If you're not using an initramfs, the kernel prints the partuuid
+> values if it doesn't find the rootfs.  I don't know how to get the
+> partuuids without going through that process, sorry.
 
-You really should mount by partition uuid - supplying something like:
+lsblk --output PARTUUID
 
-	root=PARTUUID=f3ae567e-02
-
-on the kernel command line.  This makes the mounting of rootfs
-independent of which device carries the filesystem.
-
-If you're not using an initramfs, the kernel prints the partuuid
-values if it doesn't find the rootfs.  I don't know how to get the
-partuuids without going through that process, sorry.
-
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> 
