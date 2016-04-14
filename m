@@ -1,84 +1,68 @@
-From: Joachim  Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 02/24] pwm: use pwm_get/set_xxx() helpers
- where appropriate
-Date: Thu, 14 Apr 2016 21:24:47 +0200
-Message-ID: <CAGhQ9VyyWgcCZ3UoT7u8+YRdMouUuOO_7sE+-bM+JGSYhsNTrQ@mail.gmail.com>
-References: <1460661464-11216-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1460661464-11216-3-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v7 1/2] drivers: base: add support for registering
+ notifier about deferred probe
+Date: Thu, 14 Apr 2016 14:17:45 -0700
+Message-ID: <20160414211745.GA27692@kroah.com>
+References: <1460540160-18762-1-git-send-email-m.szyprowski@samsung.com>
+ <1460540160-18762-2-git-send-email-m.szyprowski@samsung.com>
+ <20160413141254.GB12749@kroah.com>
+ <570F4886.20203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCF2PQPV4MDRB764X64AKGQEITS743Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <1460661464-11216-3-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39645 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751938AbcDNVRr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Apr 2016 17:17:47 -0400
+Content-Disposition: inline
+In-Reply-To: <570F4886.20203@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 14 April 2016 at 21:17, Boris Brezillon
-<boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> Use pwm_get/set_xxx() helpers instead of directly accessing the pwm->xxx
-> field. Doing that will ease adaptation of the PWM framework to support
-> atomic update.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
-> Patch generated with the following coccinelle script:
->
-> --->8---
-> virtual patch
->
-> @@
-> struct pwm_device *p;
-> expression e;
-> @@
-> (
-> -(p)->polarity = e;
-> +pwm_set_polarity(p, e);
-> |
-> -(p)->polarity
-> +pwm_get_polarity(p)
-> |
-> -(p)->period = e;
-> +pwm_set_period(p, e);
-> |
-> -(p)->period
-> +pwm_get_period(p)
-> |
-> -(p)->duty_cycle = e;
-> +pwm_set_duty_cycle(p, e);
-> |
-> -(p)->duty_cycle
-> +pwm_get_duty_cycle(p)
-> )
-> --->8---
-> ---
->  drivers/pwm/pwm-crc.c          | 2 +-
->  drivers/pwm/pwm-lpc18xx-sct.c  | 2 +-
+On Thu, Apr 14, 2016 at 09:36:38AM +0200, Marek Szyprowski wrote:
+> Hello,
+> 
+> On 2016-04-13 16:12, Greg Kroah-Hartman wrote:
+> > On Wed, Apr 13, 2016 at 11:35:59AM +0200, Marek Szyprowski wrote:
+> > > This patch adds code which allow other subsystems get a notification
+> > > when deferred probe has been triggered. This way one can retry some
+> > > actions, which earlier failed with -EPROBE_DEFER error code.
+> > > 
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Why would some other subsystem want/care about this?  You aren't telling
+> > them what device was deferred, and you don't need to as the bus itself
+> > already knows this information as it did the deferring!
+> > 
+> > confused,
+> 
+> This notifier is just to let others that the deferred probe has happened and
+> it is a good time to retry operation, which earlier failed due to missing
+> resources (i.e. power domains, clocks). Such case is with registering AMBA
+> device (not the driver!). During AMBA device registration, bus code has to
+> read
+> some device's registers to get its device CID/PID. To do this, device's
+> clocks
+> and power domain has to be turned on. Those however might not be available
+> that time. With this notifier, AMBA bus code is able to retry device
+> registration, which earlier failed due to missing clocks or power domain.
 
-> diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-> index 9861fed..19dc64c 100644
-> --- a/drivers/pwm/pwm-lpc18xx-sct.c
-> +++ b/drivers/pwm/pwm-lpc18xx-sct.c
-> @@ -249,7 +249,7 @@ static int lpc18xx_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
->                            LPC18XX_PWM_EVSTATEMSK(lpc18xx_data->duty_event),
->                            LPC18XX_PWM_EVSTATEMSK_ALL);
->
-> -       if (pwm->polarity == PWM_POLARITY_NORMAL) {
-> +       if (pwm_get_polarity(pwm) == PWM_POLARITY_NORMAL) {
->                 set_event = lpc18xx_pwm->period_event;
->                 clear_event = lpc18xx_data->duty_event;
->                 res_action = LPC18XX_PWM_RES_SET;
+Ick, no, notifiers are horrid, all you are getting is that "someone"
+deferred, which makes no sense.
 
-For the lpc18xx-sct part:
-Acked-by: Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+You know, in your bus, when you deferr a driver probe.  So do the work
+then.  Don't rely on a random "signal" from a random device at a random
+point in time to potentially do some sort of work.  That's looney.
 
+> This CID/PID reading has to be done during device registration time because
+> of the already deployed userspace ABI. CID/PID values are reported to
+> userspace, which might rely on them to load proper driver modules.
 
-regards,
-Joachim Eastwood
+As Russell said, it is "must", not "might", and has been that way for
+over a decade, this isn't anything new.
+
+thanks,
+
+greg k-h
