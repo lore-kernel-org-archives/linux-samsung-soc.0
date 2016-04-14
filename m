@@ -1,57 +1,31 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 1/2] drivers: base: add support for registering notifier
- about deferred probe
-Date: Thu, 14 Apr 2016 09:36:38 +0200
-Message-ID: <570F4886.20203@samsung.com>
-References: <1460540160-18762-1-git-send-email-m.szyprowski@samsung.com>
- <1460540160-18762-2-git-send-email-m.szyprowski@samsung.com>
- <20160413141254.GB12749@kroah.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Don't gate CMU_{CCORE,
+ FSYS0} blocks clock
+Date: Thu, 14 Apr 2016 09:50:56 +0200
+Message-ID: <570F4BE0.1010102@samsung.com>
+References: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:28323 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751276AbcDNHgm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Apr 2016 03:36:42 -0400
-In-reply-to: <20160413141254.GB12749@kroah.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1460608972-13878-1-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
+Cc: thomas.ab@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello,
+On 04/14/2016 06:42 AM, Alim Akhtar wrote:
+> This patch adds CLK_IS_CRITICAL flag to ACLK_CCORE_133 and ACLK_FSYS0_200
+> clocks. These clocks are critical for accessing CMU_CCORE and CMU_FSYS0
+> blocks registers. Let these clocks to be enabled all the time.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-On 2016-04-13 16:12, Greg Kroah-Hartman wrote:
-> On Wed, Apr 13, 2016 at 11:35:59AM +0200, Marek Szyprowski wrote:
->> This patch adds code which allow other subsystems get a notification
->> when deferred probe has been triggered. This way one can retry some
->> actions, which earlier failed with -EPROBE_DEFER error code.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Why would some other subsystem want/care about this?  You aren't telling
-> them what device was deferred, and you don't need to as the bus itself
-> already knows this information as it did the deferring!
->
-> confused,
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This notifier is just to let others that the deferred probe has happened and
-it is a good time to retry operation, which earlier failed due to missing
-resources (i.e. power domains, clocks). Such case is with registering AMBA
-device (not the driver!). During AMBA device registration, bus code has 
-to read
-some device's registers to get its device CID/PID. To do this, device's 
-clocks
-and power domain has to be turned on. Those however might not be available
-that time. With this notifier, AMBA bus code is able to retry device
-registration, which earlier failed due to missing clocks or power domain.
+Best regards,
+Krzysztof
 
-This CID/PID reading has to be done during device registration time because
-of the already deployed userspace ABI. CID/PID values are reported to
-userspace, which might rely on them to load proper driver modules.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
