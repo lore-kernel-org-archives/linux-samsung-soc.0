@@ -1,49 +1,36 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [next] Failing Odroid XU3 boot due to missing MMC device
-Date: Thu, 14 Apr 2016 11:05:03 +0200
-Message-ID: <570F5D3F.1060900@samsung.com>
-References: <570F5380.7010103@samsung.com> <570F54B2.2070704@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] [media] exynos-gsc: remove an always false condition
+Date: Thu, 14 Apr 2016 11:05:17 +0200
+Message-ID: <570F5D4D.9040207@samsung.com>
+References: <26a7ed9c18193dc7a3dfba33e3c711822f4bdd29.1460575950.git.mchehab@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34099 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753427AbcDNJFH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Apr 2016 05:05:07 -0400
-In-reply-to: <570F54B2.2070704@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <26a7ed9c18193dc7a3dfba33e3c711822f4bdd29.1460575950.git.mchehab@osg.samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 04/14/2016 10:28 AM, Jaehoon Chung wrote:
-> Hi,
+On 04/13/2016 09:32 PM, Mauro Carvalho Chehab wrote:
+> As reported by smatch:
+> drivers/media/platform/exynos-gsc/gsc-core.c:1073 gsc_probe() warn: impossible condition '(gsc->id < 0) => (0-65535 < 0)'
+> drivers/media/platform/exynos-gsc/gsc-core.c: In function 'gsc_probe':
+> drivers/media/platform/exynos-gsc/gsc-core.c:1073:51: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+>   if (gsc->id >= drv_data->num_entities || gsc->id < 0) {
+>                                                    ^
 > 
-> On 04/14/2016 05:23 PM, Krzysztof Kozlowski wrote:
->> Hi,> 
->>
->> Anyone also observed recent failures of linux-next (20160413, 20160414)
->> on booting from SD card? On my Odroid XU3 exynos and multi_v7 configs
->> fail with:
->>
->> Apr 14 07:52:53 starting version 229
->> Apr 14 07:52:53 :: running hook [udev]
->> Apr 14 07:52:53 :: Triggering uevents...
->> Apr 14 07:52:54 Waiting 10 seconds for device /dev/mmcblk0p1 ...
->> Apr 14 07:53:05 ERROR: device '/dev/mmcblk0p1' not found. Skipping fsck.
->> Apr 14 07:53:05 ERROR: Unable to find root device '/dev/mmcblk0p1'.
->> Apr 14 07:53:05 You are being dropped to a recovery shell
->> Apr 14 07:53:05     Type 'exit' to try and continue booting
->> Apr 14 07:53:05 sh: can't access tty; job control turned off
->>
->> I didn't start bisecting yet... maybe this is known?
+> gsc->id is an u16, so it can never be a negative number. So,
+> remove the always false condition.
 > 
-> Refer to the below thread.
-> 
-> https://patchwork.kernel.org/patch/8769361/
+> Fixes: c1ac057173ba "[media] exynos-gsc: remove non-device-tree init code"
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 
-Thanks! That explains it.
+Thanks for fixing this.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-BR,
-Krzysztof
+-- 
+Regards,
+Sylwester
