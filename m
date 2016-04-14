@@ -1,60 +1,57 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 5/7] clk: samsung: exynos542x: Add the clock id for ACLK
-Date: Thu, 14 Apr 2016 15:28:17 +0900
-Message-ID: <570F3881.9000100@samsung.com>
-References: <1460091646-28701-1-git-send-email-cw00.choi@samsung.com>
- <1460091646-28701-6-git-send-email-cw00.choi@samsung.com>
- <570CDB16.2050001@samsung.com>
- <CA+Ln22EFdspBdHwWar65UZ-uFxq4c9+RPhNCJjgKp9idvDvM5A@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v7 1/2] drivers: base: add support for registering notifier
+ about deferred probe
+Date: Thu, 14 Apr 2016 09:36:38 +0200
+Message-ID: <570F4886.20203@samsung.com>
+References: <1460540160-18762-1-git-send-email-m.szyprowski@samsung.com>
+ <1460540160-18762-2-git-send-email-m.szyprowski@samsung.com>
+ <20160413141254.GB12749@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47866 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751384AbcDNG2V convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28323 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751276AbcDNHgm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Apr 2016 02:28:21 -0400
-In-reply-to: <CA+Ln22EFdspBdHwWar65UZ-uFxq4c9+RPhNCJjgKp9idvDvM5A@mail.gmail.com>
+	Thu, 14 Apr 2016 03:36:42 -0400
+In-reply-to: <20160413141254.GB12749@kroah.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux.amoon@gmail.com, m.reichl@fivetechno.de, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, InKi Dae <inki.dae@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Tomasz and Krzysztof,
+Hello,
 
-On 2016=EB=85=84 04=EC=9B=94 13=EC=9D=BC 15:20, Tomasz Figa wrote:
-> 2016-04-12 14:25 GMT+03:00 Krzysztof Kozlowski <k.kozlowski@samsung.c=
-om>:
->> On 04/08/2016 07:00 AM, Chanwoo Choi wrote:
->>> This patch adds the clock id for ACLK clock which is source clock o=
-f AMBA AXI
->>> Bus. This clock should be handled in Bus frequency scaling driver.
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> ---
->>>  drivers/clk/samsung/clk-exynos5420.c | 85 +++++++++++++++++++++++-=
-------------
->>>  1 file changed, 55 insertions(+), 30 deletions(-)
+On 2016-04-13 16:12, Greg Kroah-Hartman wrote:
+> On Wed, Apr 13, 2016 at 11:35:59AM +0200, Marek Szyprowski wrote:
+>> This patch adds code which allow other subsystems get a notification
+>> when deferred probe has been triggered. This way one can retry some
+>> actions, which earlier failed with -EPROBE_DEFER error code.
 >>
->> The IDs itself look good but you are not adding only clock ID. You a=
-re
->> changing all of them from NULL-flags to CLK_SET_RATE_PARENT. This sh=
-ould
->> be explained in the commit message why you need it. Probably it shou=
-ld
->> be also in separate commit.
->=20
-> +1. And CLK_SET_RATE_PARENT for a clock which has a mux as its parent
-> is a bit suspicious, so I'd like to know the rationale for each singl=
-e
-> clock with CLK_SET_RATE_PARENT being added.
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Why would some other subsystem want/care about this?  You aren't telling
+> them what device was deferred, and you don't need to as the bus itself
+> already knows this information as it did the deferring!
+>
+> confused,
 
-This patch don't need the CLK_SET_RATE_PARENT flag. As Tomasz's comment=
-,
-the mux of divider's parent don't need this flag. Sorry for confusion.
+This notifier is just to let others that the deferred probe has happened and
+it is a good time to retry operation, which earlier failed due to missing
+resources (i.e. power domains, clocks). Such case is with registering AMBA
+device (not the driver!). During AMBA device registration, bus code has 
+to read
+some device's registers to get its device CID/PID. To do this, device's 
+clocks
+and power domain has to be turned on. Those however might not be available
+that time. With this notifier, AMBA bus code is able to retry device
+registration, which earlier failed due to missing clocks or power domain.
 
-I'll drop the CLK_SET_RATE_PARENT flag.
+This CID/PID reading has to be done during device registration time because
+of the already deployed userspace ABI. CID/PID values are reported to
+userspace, which might rely on them to load proper driver modules.
 
-Best Regards,
-Chanwoo Choi
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
