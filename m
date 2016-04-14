@@ -1,36 +1,52 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] [media] exynos-gsc: remove an always false condition
-Date: Thu, 14 Apr 2016 11:05:17 +0200
-Message-ID: <570F5D4D.9040207@samsung.com>
-References: <26a7ed9c18193dc7a3dfba33e3c711822f4bdd29.1460575950.git.mchehab@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [next] Failing Odroid XU3 boot due to missing MMC device
+Date: Thu, 14 Apr 2016 11:07:54 +0200
+Message-ID: <570F5DEA.1060908@samsung.com>
+References: <570F5380.7010103@samsung.com> <570F5550.5010708@fivetechno.de>
+ <20160414084530.GS19428@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <26a7ed9c18193dc7a3dfba33e3c711822f4bdd29.1460575950.git.mchehab@osg.samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:10668 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753571AbcDNJH6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Apr 2016 05:07:58 -0400
+In-reply-to: <20160414084530.GS19428@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Markus Reichl <m.reichl@fivetechno.de>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 04/13/2016 09:32 PM, Mauro Carvalho Chehab wrote:
-> As reported by smatch:
-> drivers/media/platform/exynos-gsc/gsc-core.c:1073 gsc_probe() warn: impossible condition '(gsc->id < 0) => (0-65535 < 0)'
-> drivers/media/platform/exynos-gsc/gsc-core.c: In function 'gsc_probe':
-> drivers/media/platform/exynos-gsc/gsc-core.c:1073:51: warning: comparison is always false due to limited range of data type [-Wtype-limits]
->   if (gsc->id >= drv_data->num_entities || gsc->id < 0) {
->                                                    ^
+On 04/14/2016 10:45 AM, Russell King - ARM Linux wrote:
+> On Thu, Apr 14, 2016 at 10:31:12AM +0200, Markus Reichl wrote:
+>> Hi Krzysztof,
+>>
+>> yes, observed this with linux-next from yesterday 13.
+>>
+>> I boot from eMMC.
+>> Device numbering of eMMC and SD are exchanged now.
+>>
+>> I solved the boot problem by changing the rootdev in U-Boot env
+>> from /dev/mmcblk0p2 to /dev/mmcblk1p2.
+>>
+>> Changed /etc/fdisk, too, to mount /dev/mmcblk1p1 to /boot.     
 > 
-> gsc->id is an u16, so it can never be a negative number. So,
-> remove the always false condition.
+> You really should mount by partition uuid - supplying something like:
 > 
-> Fixes: c1ac057173ba "[media] exynos-gsc: remove non-device-tree init code"
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> 	root=PARTUUID=f3ae567e-02
+> 
+> on the kernel command line.  This makes the mounting of rootfs
+> independent of which device carries the filesystem.
+> 
+> If you're not using an initramfs, the kernel prints the partuuid
+> values if it doesn't find the rootfs.  I don't know how to get the
+> partuuids without going through that process, sorry.
 
-Thanks for fixing this.
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Markus, Russell,
 
--- 
-Regards,
-Sylwester
+Thanks, I'll switch to UUID.
+
+Best regards,
+Krzysztof
