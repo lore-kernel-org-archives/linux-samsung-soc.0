@@ -1,39 +1,80 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
 Subject: Re: [PATCH] i2c: exynos5: Fix possible ABBA deadlock by keeping I2C
  clock prepared
-Date: Sat, 16 Apr 2016 20:40:44 -0400
-Message-ID: <5712DB8C.70505@osg.samsung.com>
+Date: Sat, 16 Apr 2016 20:58:49 -0400
+Message-ID: <5712DFC9.8000402@osg.samsung.com>
 References: <1460757887-18128-1-git-send-email-javier@osg.samsung.com>
- <CANAwSgSgjpqhnXmfpVdOPDDN+=36n_sbR+hVJGouBoKMahYGwA@mail.gmail.com>
+ <20160416161147.GA2794@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <CANAwSgSgjpqhnXmfpVdOPDDN+=36n_sbR+hVJGouBoKMahYGwA@mail.gmail.com>
+In-Reply-To: <20160416161147.GA2794@kozik-lap>
 Sender: linux-i2c-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Paul Osmialowski <p.osmialowsk@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Anand,
+Hello Krzysztof,
 
-On 04/16/2016 08:15 AM, Anand Moon wrote:
+Thanks a lot for your feedback.
+
+On 04/16/2016 12:11 PM, Krzysztof Kozlowski wrote:
+> On Fri, Apr 15, 2016 at 06:04:47PM -0400, Javier Martinez Canillas wrote:
 
 [snip]
 
 >>
+>> Fix this by only preparing the clock on probe and {en,dis}able in the
+>> rest of the driver.
+>>
+>> This patch is similar to commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA
+>> deadlock by keeping clock prepared") that fixes the same bug in other
+>> driver for an I2C controller found in Samsung SoCs.
 > 
-> Thanks for fixing this bug. I also tried the same thing on clk, but
-> missed the return on failed.
-> 
-> Reviewed-by: Anand Moon <linux.amoon@gmail.com>
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
+> I wish this would be fixed by introducing more granular clock locks
+> (e.g. per controller) instead of implementing another workaround.
+> I think this driver shouldn't care about this deadlock... although I see
+> that this is the simplest solution for now.
 >
 
-Thanks a lot for your testing and review.
- 
-> Best Regards
-> -Anand Moon
+Agreed, but that would be a much intrusive core change affecting every single
+platform so I didn't feel brave enough to attempt it :)
+
+But regardless of the ABBA deadlock, there are reasons why the clk API is
+split into an {,un}prepare and {en,dis}able functions (e.g: non-atomic vs
+atomic) and it is a common pattern for drivers to prepare the clock(s) on
+setup (i.e: probe), unprepare on driver removal, and just {en,dis}able the
+clock(s) during runtime.
+
+So I believe this patch is good on its own and at least makes the driver more
+consistent with most I2C controller drivers that do the same w.r.t clocks. The
+fact that the deadlock is fixed by this change is just a nice side effect IMHO.
+
+[snip]
+
+>> @@ -810,6 +816,8 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
+>>  
+>>  	i2c_del_adapter(&i2c->adap);
+>>  
+>> +	clk_unprepare(i2c->clk);
+>> +
+>>  	return 0;
+>>  }
+> 
+> Please unprepare the clock when suspending. There is no point of having
+> it prepared in that level.
+>
+
+Yes, I in fact thought the same when writing the patch but was reluctant to
+change the prepared state in suspend because I don't have a way to test the
+S2R path in this board due broken firmware that prevents the cores to enter
+into deep sleep states (I believe is the same issue we faced with CPUidle).
+
+But I'll do the change that you suggested since I agree with you.
+
+> Best regards,
+> Krzysztof
 > 
 
 Best regards,
