@@ -1,128 +1,52 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 2/2] i2c: exynos5: Fix possible ABBA deadlock by keeping I2C clock prepared
-Date: Sat, 16 Apr 2016 21:14:53 -0400
-Message-ID: <1460855693-28225-2-git-send-email-javier@osg.samsung.com>
-References: <1460855693-28225-1-git-send-email-javier@osg.samsung.com>
+From: Woody Wu <narkewoody@gmail.com>
+Subject: Found a bug in samsung serial tty code
+Date: Sun, 17 Apr 2016 15:52:44 +0800
+Message-ID: <CAAsE_ud1FLGt=ufbYu9ppwKfbNVY4j4=Vb9=DMWGdmbpXrokaw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48808 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752295AbcDQBPZ (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:34915 "EHLO
+	mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107AbcDQHwp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Apr 2016 21:15:25 -0400
-In-Reply-To: <1460855693-28225-1-git-send-email-javier@osg.samsung.com>
+	Sun, 17 Apr 2016 03:52:45 -0400
+Received: by mail-vk0-f67.google.com with SMTP id e185so19161117vkb.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Apr 2016 00:52:45 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The exynos5 I2C controller driver always prepares and enables a clock
-before using it and then disables unprepares it when the clock is not
-used anymore.
+Hi,
 
-But this can cause a possible ABBA deadlock in some scenarios since a
-driver that uses regmap to access its I2C registers, will first grab
-the regmap lock and then the I2C xfer function will grab the prepare
-lock when preparing the I2C clock. But since the clock driver also
-uses regmap for I2C accesses, preparing a clock will first grab the
-prepare lock and then the regmap lock when using the regmap API.
+The function s3c24xx_serial_tx_empty() in tty/serial/samsung.c is wrong:
 
-An example of this happens on the Exynos5422 Odroid XU4 board where a
-s2mps11 PMIC is used and both the s2mps11 regulators and clk drivers
-share the same I2C regmap.
+static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
+{
+struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
+unsigned long ufstat = rd_regl(port, S3C2410_UFSTAT);
+unsigned long ufcon = rd_regl(port, S3C2410_UFCON);
 
-The possible deadlock is reported by the kernel lockdep:
+if (ufcon & S3C2410_UFCON_FIFOMODE) {
+if ((ufstat & info->tx_fifomask) != 0 ||
+   (ufstat & info->tx_fifofull))
+return 0;
 
-  Possible unsafe locking scenario:
+return 1;
+}
 
-        CPU0                    CPU1
-        ----                    ----
-   lock(sec_core:428:(regmap)->lock);
-                                lock(prepare_lock);
-                                lock(sec_core:428:(regmap)->lock);
-   lock(prepare_lock);
+return s3c24xx_serial_txempty_nofifo(port);
+}
 
-  *** DEADLOCK ***
+In FIFO mode, checking only ufcon is not enough to determine that the
+tx is really done, since there is still bits in shift register.  I
+found this is true at least in S3C2416 UARTs.  I have to remove the
+'return 1' above to fix the bug.   Can anyone give me a confirmation?
+Thanks!
 
-Fix it by leaving the code prepared on probe and use {en,dis}able in
-the I2C transfer function.
 
-This patch is similar to commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA
-deadlock by keeping clock prepared") that fixes the same bug in other
-driver for an I2C controller found in Samsung SoCs.
-
-Reported-by: Anand Moon <linux.amoon@gmail.com>
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Anand Moon <linux.amoon@gmail.com>
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-
----
-
-Changes in v2:
-- Add Anand Moon's Reviewed and Tested by tags.
-- Unprepare the clock on suspend. Suggested by Krzysztof Kozlowski.
-
- drivers/i2c/busses/i2c-exynos5.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index ebbcba3de20a..f54ece8fce78 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -671,7 +671,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
- 		return -EIO;
- 	}
- 
--	ret = clk_prepare_enable(i2c->clk);
-+	ret = clk_enable(i2c->clk);
- 	if (ret)
- 		return ret;
- 
-@@ -697,7 +697,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
- 	}
- 
-  out:
--	clk_disable_unprepare(i2c->clk);
-+	clk_disable(i2c->clk);
- 	return ret;
- }
- 
-@@ -803,6 +803,10 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, i2c);
- 
-+	clk_disable(i2c->clk);
-+
-+	return 0;
-+
-  err_clk:
- 	clk_disable_unprepare(i2c->clk);
- 	return ret;
-@@ -814,6 +818,8 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
- 
- 	i2c_del_adapter(&i2c->adap);
- 
-+	clk_unprepare(i2c->clk);
-+
- 	return 0;
- }
- 
-@@ -825,6 +831,8 @@ static int exynos5_i2c_suspend_noirq(struct device *dev)
- 
- 	i2c->suspended = 1;
- 
-+	clk_unprepare(i2c->clk);
-+
- 	return 0;
- }
- 
-@@ -845,7 +853,7 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
- 	}
- 
- 	exynos5_i2c_init(i2c);
--	clk_disable_unprepare(i2c->clk);
-+	clk_disable(i2c->clk);
- 	i2c->suspended = 0;
- 
- 	return 0;
 -- 
-2.5.5
+Life is the only flaw in an otherwise perfect nonexistence
+    -- Schopenhauer
+
+woody
+public key at http://subkeys.pgp.net:11371 (narkewoody@gmail.com)
