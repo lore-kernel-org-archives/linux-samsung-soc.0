@@ -1,65 +1,57 @@
-From: "Tirdea, Irina" <irina.tirdea@intel.com>
-Subject: RE: [PATCH v2 1/5] iio: accel: bmc150: use regmap to retrieve
- struct device
-Date: Mon, 18 Apr 2016 12:18:06 +0000
-Message-ID: <1F3AC3675D538145B1661F571FE1805F2F260D21@irsmsx105.ger.corp.intel.com>
-References: <cover.1460314070.git.amsfield22@gmail.com>
- <f3cae5dd803486a774248afad096032f3f0546a2.1460314070.git.amsfield22@gmail.com>
- <57129064.9050508@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RESPIN v2 0/6] Add support for Exynos SROM Controller driver
+Date: Mon, 18 Apr 2016 14:30:23 +0200
+Message-ID: <5714D35F.1070705@samsung.com>
+References: <1460360548-32127-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:31188 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751342AbcDRMSL convert rfc822-to-8bit (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:25910 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751075AbcDRMak (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2016 08:18:11 -0400
-In-Reply-To: <57129064.9050508@kernel.org>
-Content-Language: en-US
+	Mon, 18 Apr 2016 08:30:40 -0400
+In-reply-to: <1460360548-32127-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jonathan Cameron <jic23@kernel.org>, Alison Schofield <amsfield22@gmail.com>
-Cc: "knaack.h@gmx.de" <knaack.h@gmx.de>, "lars@metafoo.de" <lars@metafoo.de>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "kgene@kernel.org" <kgene@kernel.org>, "k.kozlowski@samsung.com" <k.kozlowski@samsung.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, p.fedin@samsung.com, olof@lixom.net, thomas.ab@samsung.com
 
-
-
-> -----Original Message-----
-> From: Jonathan Cameron [mailto:jic23@kernel.org]
-> Sent: 16 April, 2016 22:20
-> To: Alison Schofield
-> Cc: knaack.h@gmx.de; lars@metafoo.de; pmeerw@pmeerw.net; kgene@kernel.org; k.kozlowski@samsung.com; linux-
-> iio@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> Srinivas Pandruvada; Tirdea, Irina
-> Subject: Re: [PATCH v2 1/5] iio: accel: bmc150: use regmap to retrieve struct device
+On 04/11/2016 09:42 AM, Pankaj Dubey wrote:
+> This is second attemp for making in this series. This is a collection of patches
+> already reviewed and merged in maintainer's tree, but could not make it thorugh main linus tree,
+> due to last moment suggestion of proper location of driver should be
+> "drivers/memory" instead of "drivers/soc". I have rebased all the patches
+> and moved into "drivers/memory/samsung". Second time due to some suggestions in binding document.
 > 
-> On 10/04/16 20:05, Alison Schofield wrote:
-> > Driver includes struct regmap and struct device in its global data.
-> > Remove the struct device and use regmap API to retrieve device info.
-> >
-> > Patch created using Coccinelle plus manual edits.
-> >
-> > Signed-off-by: Alison Schofield <amsfield22@gmail.com>
-> I'm happy with this but please do make sure to cc the maintainer / author
-> of drivers if possible (often the email addresses are out of date!)
+> As this is just a movement without changing actual driver code,
+> I have not removed "Reviewed-By", "Tested-By" or "Acked-By".
 > 
-> Srinivas, this is one of yours.  Are you happy with this?
-> I've also cc'd Irina who has worked on this driver recently for any
-> comments.
+> To make sure everything is fine, I have again tested it on Exynos5880 based
+> Chromebook for normal boot, S2R functionality and its working fine.
 > 
-
-Looks good to me.
-Reviewed-by: Irina Tirdea <irina.tirdea@intel.com>
-
-Alison, I think bmc150_magn driver qualifies for this change as well
-after Daniel's patches got merged [1].
-
-Thanks,
-Irina
-
-[1] https://lkml.org/lkml/2016/4/15/407
-
-> If no one comments in the meantime I'll probably pick these up sometime
-> in the next week.
+> This series has been prepared on top of next-soc branch of Krzysztof's tree.
 > 
-> Jonathan
+> Changes since RESPIN-v1:
+>  - Addressed review comments in srom binding documentation mainly from Rob Herring.
+>  - Modified compatibility from "samsung, exynos-srom" to "samsung, exynos4210-srom"
+>  - Changed type of optional property "samsung,srom-page-mode" from int to bool
+>  - Adjusted exynos-srom driver code for reflecting change in type of above property.
+>  - Renamed exynos SROM dt node as "memory-controller" instead of "sromc".
+> 
+> 
+> Pankaj Dubey (5):
+>   dt-bindings: EXYNOS: Add exynos-srom device tree binding
+>   memory: Add support for Exynos SROM driver
+>   MAINTAINERS: Add maintainers entry for drivers/memory/samsung
+>   ARM: EXYNOS: Remove SROM related register settings from mach-exynos
+>   ARM: dts: change SROM node compatible from generic to model specific
+> 
+> Pavel Fedin (1):
+>   memory: samsung: exynos-srom: Add support for bank configuration
+
+Thanks applied. I plan to send it for v4.7 in second pull-request.
+
+Best regards,
+Krzysztof
