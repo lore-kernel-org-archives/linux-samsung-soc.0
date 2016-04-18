@@ -1,85 +1,76 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] i2c: exynos5: Fix possible ABBA deadlock by keeping I2C
- clock prepared
-Date: Mon, 18 Apr 2016 09:29:14 -0400
-Message-ID: <5714E12A.8090100@osg.samsung.com>
-References: <1460757887-18128-1-git-send-email-javier@osg.samsung.com>
- <571491AE.30908@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2] regulator: s2mps11: Set default ramp delay for S2MPS11 LDOs
+Date: Mon, 18 Apr 2016 15:33:10 +0200
+Message-ID: <1460986390-9674-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:59764 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751548AbcDRN3j (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:28841 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751560AbcDRNdl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2016 09:29:39 -0400
-In-Reply-To: <571491AE.30908@samsung.com>
+	Mon, 18 Apr 2016 09:33:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Marek,
+Driver did not provide default value for ramp delay for LDOs which lead
+to warning in dmesg, e.g. on Odroid XU4:
 
-On 04/18/2016 03:50 AM, Marek Szyprowski wrote:
-> Hello,
-> 
-> On 2016-04-16 00:04, Javier Martinez Canillas wrote:
->> The exynos5 I2C controller driver always prepares and enables a clock
->> before using it and then disables unprepares it when the clock is not
->> used anymore.
->>
->> But this can cause a possible ABBA deadlock in some scenarios since a
->> driver that uses regmap to access its I2C registers, will first grab
->> the regmap lock and then the I2C xfer function will grab the prepare
->> lock when preparing the I2C clock. But since the clock driver also
->> uses regmap for I2C accesses, preparing a clock will first grab the
->> prepare lock and then the regmap lock when using the regmap API.
->>
->> An example of this happens on the Exynos5422 Odroid XU board where a
->> s2mps11 PMIC is used and both the s2mps11 regulators and clk drivers
->> share the same I2C regmap.
->>
->> The possible deadlock is reported by the kernel lockdep:
->>
->>    Possible unsafe locking scenario:
->>
->>          CPU0                    CPU1
->>          ----                    ----
->>     lock(sec_core:428:(regmap)->lock);
->>                                  lock(prepare_lock);
->>                                  lock(sec_core:428:(regmap)->lock);
->>     lock(prepare_lock);
->>
->>    *** DEADLOCK ***
->>
->> Fix this by only preparing the clock on probe and {en,dis}able in the
->> rest of the driver.
->>
->> This patch is similar to commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA
->> deadlock by keeping clock prepared") that fixes the same bug in other
->> driver for an I2C controller found in Samsung SoCs.
-> 
-> I'm sorry, but this is not the right approach imho. It is just a workaround
-> applied to specific driver, it also duplicates incorrect clock usage
-> pattern (there is really no point keeping clock prepared all the time).
-> 
-> IMHO this ABBA deadlock should be really fixed in clocks core (probably
-> by removing global prepare mutex and replacing it with per clock
-> controller mutexes). Without a proper patch this issue will hit us again
-> with other i2c controllers or other drivers as well.
->
+[    1.486076] vdd_ldo9: ramp_delay not set
+[    1.506875] vddq_mmc2: ramp_delay not set
+[    1.523766] vdd_ldo15: ramp_delay not set
+[    1.544702] vdd_sd: ramp_delay not set
 
-Agreed, Krzysztof mentioned the same before. I'll take a look to the global
-mutex to see how I can make it more fine grained to prevent these deadlocks.
+The datasheet for all the S2MPS1x family is inconsistent here and does
+not specify unambiguously the value of ramp delay for LDO. It mentions
+30 mV/us in one timing diagram but then omits it completely in LDO
+regulator characteristics table (it is specified for bucks).
+
+However the vendor kernels for Galaxy S5 and Odroid XU3 use values of 12
+mV/us or 24 mV/us.
+
+Without the ramp delay value the consumers do not wait for voltage
+settle after changing it. Although the proper value of ramp delay for
+LDOs is unknown, it seems safer to use at least some value from
+reference kernel than to leave it unset.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+---
+
+Changes since v1:
+1. Instead of removing the implementation of .set_voltage_time_sel()
+   callback, use some value from reference kernel.
+---
+ drivers/regulator/s2mps11.c      | 1 +
+ include/linux/mfd/samsung/core.h | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 64a262f10845..02fb6b4ea820 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -267,6 +267,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.ops		= &s2mps11_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
++	.ramp_delay	= RAMP_DELAY_12_MVUS,		\
+ 	.min_uV		= MIN_800_MV,			\
+ 	.uV_step	= step,				\
+ 	.n_voltages	= S2MPS11_LDO_N_VOLTAGES,	\
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 6bc4bcd488ac..5a23dd4df432 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -30,6 +30,9 @@
+ #define MIN_600_MV		600000
+ #define MIN_500_MV		500000
  
->> Reported-by: Anand Moon <linux.amoon@gmail.com>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
-
-Best regards,
++/* Ramp delay in uV/us */
++#define RAMP_DELAY_12_MVUS	12000
++
+ /* Macros to represent steps for LDO/BUCK */
+ #define STEP_50_MV		50000
+ #define STEP_25_MV		25000
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
