@@ -1,57 +1,85 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESPIN v2 0/6] Add support for Exynos SROM Controller driver
-Date: Mon, 18 Apr 2016 14:30:23 +0200
-Message-ID: <5714D35F.1070705@samsung.com>
-References: <1460360548-32127-1-git-send-email-pankaj.dubey@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] i2c: exynos5: Fix possible ABBA deadlock by keeping I2C
+ clock prepared
+Date: Mon, 18 Apr 2016 09:29:14 -0400
+Message-ID: <5714E12A.8090100@osg.samsung.com>
+References: <1460757887-18128-1-git-send-email-javier@osg.samsung.com>
+ <571491AE.30908@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:25910 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075AbcDRMak (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:59764 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751548AbcDRN3j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2016 08:30:40 -0400
-In-reply-to: <1460360548-32127-1-git-send-email-pankaj.dubey@samsung.com>
+	Mon, 18 Apr 2016 09:29:39 -0400
+In-Reply-To: <571491AE.30908@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, p.fedin@samsung.com, olof@lixom.net, thomas.ab@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 04/11/2016 09:42 AM, Pankaj Dubey wrote:
-> This is second attemp for making in this series. This is a collection of patches
-> already reviewed and merged in maintainer's tree, but could not make it thorugh main linus tree,
-> due to last moment suggestion of proper location of driver should be
-> "drivers/memory" instead of "drivers/soc". I have rebased all the patches
-> and moved into "drivers/memory/samsung". Second time due to some suggestions in binding document.
-> 
-> As this is just a movement without changing actual driver code,
-> I have not removed "Reviewed-By", "Tested-By" or "Acked-By".
-> 
-> To make sure everything is fine, I have again tested it on Exynos5880 based
-> Chromebook for normal boot, S2R functionality and its working fine.
-> 
-> This series has been prepared on top of next-soc branch of Krzysztof's tree.
-> 
-> Changes since RESPIN-v1:
->  - Addressed review comments in srom binding documentation mainly from Rob Herring.
->  - Modified compatibility from "samsung, exynos-srom" to "samsung, exynos4210-srom"
->  - Changed type of optional property "samsung,srom-page-mode" from int to bool
->  - Adjusted exynos-srom driver code for reflecting change in type of above property.
->  - Renamed exynos SROM dt node as "memory-controller" instead of "sromc".
-> 
-> 
-> Pankaj Dubey (5):
->   dt-bindings: EXYNOS: Add exynos-srom device tree binding
->   memory: Add support for Exynos SROM driver
->   MAINTAINERS: Add maintainers entry for drivers/memory/samsung
->   ARM: EXYNOS: Remove SROM related register settings from mach-exynos
->   ARM: dts: change SROM node compatible from generic to model specific
-> 
-> Pavel Fedin (1):
->   memory: samsung: exynos-srom: Add support for bank configuration
+Hello Marek,
 
-Thanks applied. I plan to send it for v4.7 in second pull-request.
+On 04/18/2016 03:50 AM, Marek Szyprowski wrote:
+> Hello,
+> 
+> On 2016-04-16 00:04, Javier Martinez Canillas wrote:
+>> The exynos5 I2C controller driver always prepares and enables a clock
+>> before using it and then disables unprepares it when the clock is not
+>> used anymore.
+>>
+>> But this can cause a possible ABBA deadlock in some scenarios since a
+>> driver that uses regmap to access its I2C registers, will first grab
+>> the regmap lock and then the I2C xfer function will grab the prepare
+>> lock when preparing the I2C clock. But since the clock driver also
+>> uses regmap for I2C accesses, preparing a clock will first grab the
+>> prepare lock and then the regmap lock when using the regmap API.
+>>
+>> An example of this happens on the Exynos5422 Odroid XU board where a
+>> s2mps11 PMIC is used and both the s2mps11 regulators and clk drivers
+>> share the same I2C regmap.
+>>
+>> The possible deadlock is reported by the kernel lockdep:
+>>
+>>    Possible unsafe locking scenario:
+>>
+>>          CPU0                    CPU1
+>>          ----                    ----
+>>     lock(sec_core:428:(regmap)->lock);
+>>                                  lock(prepare_lock);
+>>                                  lock(sec_core:428:(regmap)->lock);
+>>     lock(prepare_lock);
+>>
+>>    *** DEADLOCK ***
+>>
+>> Fix this by only preparing the clock on probe and {en,dis}able in the
+>> rest of the driver.
+>>
+>> This patch is similar to commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA
+>> deadlock by keeping clock prepared") that fixes the same bug in other
+>> driver for an I2C controller found in Samsung SoCs.
+> 
+> I'm sorry, but this is not the right approach imho. It is just a workaround
+> applied to specific driver, it also duplicates incorrect clock usage
+> pattern (there is really no point keeping clock prepared all the time).
+> 
+> IMHO this ABBA deadlock should be really fixed in clocks core (probably
+> by removing global prepare mutex and replacing it with per clock
+> controller mutexes). Without a proper patch this issue will hit us again
+> with other i2c controllers or other drivers as well.
+>
+
+Agreed, Krzysztof mentioned the same before. I'll take a look to the global
+mutex to see how I can make it more fine grained to prevent these deadlocks.
+ 
+>> Reported-by: Anand Moon <linux.amoon@gmail.com>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
 
 Best regards,
-Krzysztof
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
