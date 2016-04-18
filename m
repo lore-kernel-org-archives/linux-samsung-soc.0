@@ -1,63 +1,65 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: s2mps11: Remove unused set_voltage_time_sel
-Date: Mon, 18 Apr 2016 12:00:01 +0100
-Message-ID: <20160418110001.GS3217@sirena.org.uk>
-References: <1460965378-5256-1-git-send-email-k.kozlowski@samsung.com>
- <20160418095713.GO3217@sirena.org.uk>
- <5714B8C4.5070207@samsung.com>
+From: "Tirdea, Irina" <irina.tirdea@intel.com>
+Subject: RE: [PATCH v2 1/5] iio: accel: bmc150: use regmap to retrieve
+ struct device
+Date: Mon, 18 Apr 2016 12:18:06 +0000
+Message-ID: <1F3AC3675D538145B1661F571FE1805F2F260D21@irsmsx105.ger.corp.intel.com>
+References: <cover.1460314070.git.amsfield22@gmail.com>
+ <f3cae5dd803486a774248afad096032f3f0546a2.1460314070.git.amsfield22@gmail.com>
+ <57129064.9050508@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HywJcj55HbA57jnN"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50990 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753553AbcDRLAL (ORCPT
+Received: from mga14.intel.com ([192.55.52.115]:31188 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751342AbcDRMSL convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2016 07:00:11 -0400
-Content-Disposition: inline
-In-Reply-To: <5714B8C4.5070207@samsung.com>
+	Mon, 18 Apr 2016 08:18:11 -0400
+In-Reply-To: <57129064.9050508@kernel.org>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Jonathan Cameron <jic23@kernel.org>, Alison Schofield <amsfield22@gmail.com>
+Cc: "knaack.h@gmx.de" <knaack.h@gmx.de>, "lars@metafoo.de" <lars@metafoo.de>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "kgene@kernel.org" <kgene@kernel.org>, "k.kozlowski@samsung.com" <k.kozlowski@samsung.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
 
---HywJcj55HbA57jnN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Apr 18, 2016 at 12:36:52PM +0200, Krzysztof Kozlowski wrote:
-> On 04/18/2016 11:57 AM, Mark Brown wrote:
+> -----Original Message-----
+> From: Jonathan Cameron [mailto:jic23@kernel.org]
+> Sent: 16 April, 2016 22:20
+> To: Alison Schofield
+> Cc: knaack.h@gmx.de; lars@metafoo.de; pmeerw@pmeerw.net; kgene@kernel.org; k.kozlowski@samsung.com; linux-
+> iio@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> Srinivas Pandruvada; Tirdea, Irina
+> Subject: Re: [PATCH v2 1/5] iio: accel: bmc150: use regmap to retrieve struct device
+> 
+> On 10/04/16 20:05, Alison Schofield wrote:
+> > Driver includes struct regmap and struct device in its global data.
+> > Remove the struct device and use regmap API to retrieve device info.
+> >
+> > Patch created using Coccinelle plus manual edits.
+> >
+> > Signed-off-by: Alison Schofield <amsfield22@gmail.com>
+> I'm happy with this but please do make sure to cc the maintainer / author
+> of drivers if possible (often the email addresses are out of date!)
+> 
+> Srinivas, this is one of yours.  Are you happy with this?
+> I've also cc'd Irina who has worked on this driver recently for any
+> comments.
+> 
 
-> > That's not the bug, the bug is that the driver is providing the
-> > operation without providing a non-zero value for it.  The device tree
-> > configuration is to override what the driver is doing.
+Looks good to me.
+Reviewed-by: Irina Tirdea <irina.tirdea@intel.com>
 
-> So your recommendation would be to set the ramp_delay value in
-> regulator_desc structure?
+Alison, I think bmc150_magn driver qualifies for this change as well
+after Daniel's patches got merged [1].
 
-Or at least fix the changelog to describe the problem more clearly.
+Thanks,
+Irina
 
-> The problem is that value of 30 mv/us in datasheet looks untrustworthy
-> (copied from other pages) and vendor kernel (which should be a
-> reference) uses 12 mv/us. Anyway setting any value greater than 0 seems
-> like better idea than just sticking to 0...
+[1] https://lkml.org/lkml/2016/4/15/407
 
-Yup.  Probably the more conservative value is going to be safer.
-
---HywJcj55HbA57jnN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXFL4wAAoJECTWi3JdVIfQ19UH/jwzcEev73SrFAxjvcs7P+ks
-7rap5iTP3R2Fe7cphfIjyG0JnJmXaVgVEqOgL+sdS2ldHZg6pCsz5boGkj76CVch
-MyUKalWkL+0tCEHWBVbo/5m93gun8b8pswYZ8MJQ8ZojV48QS3CdDmBXCKg2Yfg6
-jmoP7KkscpBGySCXOMTh3ej6Dje0wHzKoIKaGkSzfWXbmNkJAgoA8foxq+Scxdmm
-FOLFwp1F3LUI3h1fsqy+WYr/rlbf08pM3mDIIlJG8V59QydEShVR5rsLjjb1zwNm
-9izt/hSPjYrEF2duWsbWl8f/6nauXdTMFiwsrUYD2YoNeZNsEcxxqI+OhNSSeng=
-=iHT7
------END PGP SIGNATURE-----
-
---HywJcj55HbA57jnN--
+> If no one comments in the meantime I'll probably pick these up sometime
+> in the next week.
+> 
+> Jonathan
