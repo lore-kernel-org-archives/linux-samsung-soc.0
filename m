@@ -1,352 +1,582 @@
-From: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v5 39/50] mtd: nand: omap2: switch to mtd_ooblayout_ops
-Date: Mon, 18 Apr 2016 17:32:49 +0300
-Message-ID: <5714F011.5080409@ti.com>
-References: <1459354505-32551-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459354505-32551-40-git-send-email-boris.brezillon@free-electrons.com>
-Reply-To: rogerq-l0cyMroinI0@public.gmane.org
+From: Srinivas Pandruvada <srinivas.pandruvada-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] iio: accel: bmc150: use regmap to retrieve
+ struct device
+Date: Mon, 18 Apr 2016 07:59:38 -0700
+Message-ID: <1460991578.8946.10.camel@linux.intel.com>
+References: <cover.1460314070.git.amsfield22@gmail.com>
+	 <f3cae5dd803486a774248afad096032f3f0546a2.1460314070.git.amsfield22@gmail.com>
+	 <57129064.9050508@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD45J6OZZMOBBOPA2O4AKGQEFX24MOY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <1459354505-32551-40-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Harvey Hunt <harvey.hunt-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kamal Dasu <kdasu.kdev-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Huang Shijie <shijie.huang-5wv7dgnIgG8@public.gmane.org>, Jean-Christophe
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <57129064.9050508-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alison Schofield <amsfield22-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Irina Tirdea <irina.tirdea-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Boris,
+On Sat, 2016-04-16 at 20:20 +0100, Jonathan Cameron wrote:
+> On 10/04/16 20:05, Alison Schofield wrote:
+> >=20
+> > Driver includes struct regmap and struct device in its global data.
+> > Remove the struct device and use regmap API to retrieve device
+> > info.
+> >=20
+> > Patch created using Coccinelle plus manual edits.
+> >=20
+> > Signed-off-by: Alison Schofield <amsfield22-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 
-On 30/03/16 19:14, Boris Brezillon wrote:
-> Implementing the mtd_ooblayout_ops interface is the new way of exposing
-> ECC/OOB layout to MTD users.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
->  drivers/mtd/nand/omap2.c | 194 +++++++++++++++++++++++++++--------------------
->  1 file changed, 113 insertions(+), 81 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/omap2.c b/drivers/mtd/nand/omap2.c
-> index 4ebf16b..bca154a 100644
-> --- a/drivers/mtd/nand/omap2.c
-> +++ b/drivers/mtd/nand/omap2.c
-> @@ -169,8 +169,6 @@ struct omap_nand_info {
->  	u_char				*buf;
->  	int					buf_len;
->  	struct gpmc_nand_regs		reg;
-> -	/* generated at runtime depending on ECC algorithm and layout selected */
-> -	struct nand_ecclayout		oobinfo;
->  	/* fields specific for BCHx_HW ECC scheme */
->  	struct device			*elm_dev;
->  	struct device_node		*of_node;
-> @@ -1639,19 +1637,108 @@ static bool omap2_nand_ecc_check(struct omap_nand_info *info,
->  	return true;
->  }
->  
-> +static int omap_ooblayout_ecc(struct mtd_info *mtd, int section,
-> +			      struct mtd_oob_region *oobregion)
-> +{
-> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> +	int off = chip->options & NAND_BUSWIDTH_16 ?
-> +		  BADBLOCK_MARKER_LENGTH : 1;
-
-IMO "off = 1" is valid only for OMAP_ECC_HAM1_CODE_HW and 8-bit NAND.
-For all other layouts it is always set to BADBLOCK_MARKER_LENGTH.
-
-> +
-> +	if (section)
-> +		return -ERANGE;
-> +
-> +	oobregion->offset = off;
-> +	oobregion->length = chip->ecc.total;
-> +
-> +	return 0;
-> +}
-> +
-> +static int omap_ooblayout_free(struct mtd_info *mtd, int section,
-> +			       struct mtd_oob_region *oobregion)
-> +{
-> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> +	int off = chip->options & NAND_BUSWIDTH_16 ?
-> +		  BADBLOCK_MARKER_LENGTH : 1;
-
-ditto.
-
-> +
-> +	if (section)
-> +		return -ERANGE;
-> +
-> +	off += chip->ecc.total;
-> +	if (off >= mtd->oobsize)
-> +		return -ERANGE;
-> +
-> +	oobregion->offset = off;
-> +	oobregion->length = mtd->oobsize - off;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct mtd_ooblayout_ops omap_ooblayout_ops = {
-> +	.ecc = omap_ooblayout_ecc,
-> +	.free = omap_ooblayout_free,
-> +};
-> +
-> +static int omap_sw_ooblayout_ecc(struct mtd_info *mtd, int section,
-> +				 struct mtd_oob_region *oobregion)
-> +{
-> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> +	int off = chip->options & NAND_BUSWIDTH_16 ?
-> +		  BADBLOCK_MARKER_LENGTH : 1;
-> +
-> +	if (section >= chip->ecc.steps)
-> +		return -ERANGE;
-> +
-> +	/*
-> +	 * When SW correction is employed, one OMAP specific marker byte is
-> +	 * reserved after each ECC step.
-> +	 */
-> +	oobregion->offset = off + (section * (chip->ecc.bytes + 1));
-> +	oobregion->length = chip->ecc.bytes;
-> +
-> +	return 0;
-> +}
-> +
-> +static int omap_sw_ooblayout_free(struct mtd_info *mtd, int section,
-> +				  struct mtd_oob_region *oobregion)
-> +{
-> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> +	int off = chip->options & NAND_BUSWIDTH_16 ?
-> +		  BADBLOCK_MARKER_LENGTH : 1;
-> +
-> +	if (section)
-> +		return -ERANGE;
-> +
-> +	/*
-> +	 * When SW correction is employed, one OMAP specific marker byte is
-> +	 * reserved after each ECC step.
-> +	 */
-> +	off += ((chip->ecc.bytes + 1) * chip->ecc.steps);
-> +	if (off >= mtd->oobsize)
-> +		return -ERANGE;
-> +
-> +	oobregion->offset = off;
-> +	oobregion->length = mtd->oobsize - off;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct mtd_ooblayout_ops omap_sw_ooblayout_ops = {
-> +	.ecc = omap_sw_ooblayout_ecc,
-> +	.free = omap_sw_ooblayout_free,
-> +};
-> +
->  static int omap_nand_probe(struct platform_device *pdev)
->  {
->  	struct omap_nand_info		*info;
->  	struct omap_nand_platform_data	*pdata;
->  	struct mtd_info			*mtd;
->  	struct nand_chip		*nand_chip;
-> -	struct nand_ecclayout		*ecclayout;
->  	int				err;
-> -	int				i;
->  	dma_cap_mask_t			mask;
->  	unsigned			sig;
-> -	unsigned			oob_index;
->  	struct resource			*res;
-> +	int				min_oobbytes;
-> +	int				oobbytes_per_step;
->  
->  	pdata = dev_get_platdata(&pdev->dev);
->  	if (pdata == NULL) {
-> @@ -1810,7 +1897,7 @@ static int omap_nand_probe(struct platform_device *pdev)
->  
->  	/*
->  	 * Bail out earlier to let NAND_ECC_SOFT code create its own
-> -	 * ecclayout instead of using ours.
-> +	 * ooblayout instead of using ours.
->  	 */
->  	if (info->ecc_opt == OMAP_ECC_HAM1_CODE_SW) {
->  		nand_chip->ecc.mode = NAND_ECC_SOFT;
-> @@ -1818,8 +1905,6 @@ static int omap_nand_probe(struct platform_device *pdev)
->  	}
->  
->  	/* populate MTD interface based on ECC scheme */
-> -	ecclayout		= &info->oobinfo;
-> -	nand_chip->ecc.layout	= ecclayout;
->  	switch (info->ecc_opt) {
->  	case OMAP_ECC_HAM1_CODE_HW:
->  		pr_info("nand: using OMAP_ECC_HAM1_CODE_HW\n");
-> @@ -1830,19 +1915,8 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		nand_chip->ecc.calculate        = omap_calculate_ecc;
->  		nand_chip->ecc.hwctl            = omap_enable_hwecc;
->  		nand_chip->ecc.correct          = omap_correct_data;
-> -		/* define ECC layout */
-> -		ecclayout->eccbytes		= nand_chip->ecc.bytes *
-> -							(mtd->writesize /
-> -							nand_chip->ecc.size);
-> -		if (nand_chip->options & NAND_BUSWIDTH_16)
-> -			oob_index		= BADBLOCK_MARKER_LENGTH;
-> -		else
-> -			oob_index		= 1;
-> -		for (i = 0; i < ecclayout->eccbytes; i++, oob_index++)
-> -			ecclayout->eccpos[i]	= oob_index;
-> -		/* no reserved-marker in ecclayout for this ecc-scheme */
-> -		ecclayout->oobfree->offset	=
-> -				ecclayout->eccpos[ecclayout->eccbytes - 1] + 1;
-> +		mtd_set_ooblayout(mtd, &omap_ooblayout_ops);
-> +		oobbytes_per_step		= nand_chip->ecc.bytes;
->  		break;
->  
->  	case OMAP_ECC_BCH4_CODE_HW_DETECTION_SW:
-> @@ -1854,19 +1928,9 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		nand_chip->ecc.hwctl		= omap_enable_hwecc_bch;
->  		nand_chip->ecc.correct		= nand_bch_correct_data;
->  		nand_chip->ecc.calculate	= omap_calculate_ecc_bch;
-> -		/* define ECC layout */
-> -		ecclayout->eccbytes		= nand_chip->ecc.bytes *
-> -							(mtd->writesize /
-> -							nand_chip->ecc.size);
-> -		oob_index			= BADBLOCK_MARKER_LENGTH;
-> -		for (i = 0; i < ecclayout->eccbytes; i++, oob_index++) {
-> -			ecclayout->eccpos[i] = oob_index;
-> -			if (((i + 1) % nand_chip->ecc.bytes) == 0)
-> -				oob_index++;
-> -		}
-> -		/* include reserved-marker in ecclayout->oobfree calculation */
-> -		ecclayout->oobfree->offset	= 1 +
-> -				ecclayout->eccpos[ecclayout->eccbytes - 1] + 1;
-> +		mtd_set_ooblayout(mtd, &omap_sw_ooblayout_ops);
-> +		/* Reserve one byte for the OMAP marker */
-> +		oobbytes_per_step		= nand_chip->ecc.bytes + 1;
->  		/* software bch library is used for locating errors */
->  		nand_chip->ecc.priv		= nand_bch_init(mtd);
->  		if (!nand_chip->ecc.priv) {
-> @@ -1888,16 +1952,8 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		nand_chip->ecc.calculate	= omap_calculate_ecc_bch;
->  		nand_chip->ecc.read_page	= omap_read_page_bch;
->  		nand_chip->ecc.write_page	= omap_write_page_bch;
-> -		/* define ECC layout */
-> -		ecclayout->eccbytes		= nand_chip->ecc.bytes *
-> -							(mtd->writesize /
-> -							nand_chip->ecc.size);
-> -		oob_index			= BADBLOCK_MARKER_LENGTH;
-> -		for (i = 0; i < ecclayout->eccbytes; i++, oob_index++)
-> -			ecclayout->eccpos[i]	= oob_index;
-> -		/* reserved marker already included in ecclayout->eccbytes */
-> -		ecclayout->oobfree->offset	=
-> -				ecclayout->eccpos[ecclayout->eccbytes - 1] + 1;
-> +		mtd_set_ooblayout(mtd, &omap_ooblayout_ops);
-> +		oobbytes_per_step		= nand_chip->ecc.bytes;
->  
->  		err = elm_config(info->elm_dev, BCH4_ECC,
->  				 mtd->writesize / nand_chip->ecc.size,
-> @@ -1915,19 +1971,9 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		nand_chip->ecc.hwctl		= omap_enable_hwecc_bch;
->  		nand_chip->ecc.correct		= nand_bch_correct_data;
->  		nand_chip->ecc.calculate	= omap_calculate_ecc_bch;
-> -		/* define ECC layout */
-> -		ecclayout->eccbytes		= nand_chip->ecc.bytes *
-> -							(mtd->writesize /
-> -							nand_chip->ecc.size);
-> -		oob_index			= BADBLOCK_MARKER_LENGTH;
-> -		for (i = 0; i < ecclayout->eccbytes; i++, oob_index++) {
-> -			ecclayout->eccpos[i] = oob_index;
-> -			if (((i + 1) % nand_chip->ecc.bytes) == 0)
-> -				oob_index++;
-> -		}
-> -		/* include reserved-marker in ecclayout->oobfree calculation */
-> -		ecclayout->oobfree->offset	= 1 +
-> -				ecclayout->eccpos[ecclayout->eccbytes - 1] + 1;
-> +		mtd_set_ooblayout(mtd, &omap_sw_ooblayout_ops);
-> +		/* Reserve one byte for the OMAP marker */
-> +		oobbytes_per_step		= nand_chip->ecc.bytes + 1;
->  		/* software bch library is used for locating errors */
->  		nand_chip->ecc.priv		= nand_bch_init(mtd);
->  		if (!nand_chip->ecc.priv) {
-> @@ -1949,6 +1995,8 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		nand_chip->ecc.calculate	= omap_calculate_ecc_bch;
->  		nand_chip->ecc.read_page	= omap_read_page_bch;
->  		nand_chip->ecc.write_page	= omap_write_page_bch;
-> +		mtd_set_ooblayout(mtd, &omap_ooblayout_ops);
-> +		oobbytes_per_step		= nand_chip->ecc.bytes;
->  
->  		err = elm_config(info->elm_dev, BCH8_ECC,
->  				 mtd->writesize / nand_chip->ecc.size,
-> @@ -1956,16 +2004,6 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		if (err < 0)
->  			goto return_error;
->  
-> -		/* define ECC layout */
-> -		ecclayout->eccbytes		= nand_chip->ecc.bytes *
-> -							(mtd->writesize /
-> -							nand_chip->ecc.size);
-> -		oob_index			= BADBLOCK_MARKER_LENGTH;
-> -		for (i = 0; i < ecclayout->eccbytes; i++, oob_index++)
-> -			ecclayout->eccpos[i]	= oob_index;
-> -		/* reserved marker already included in ecclayout->eccbytes */
-> -		ecclayout->oobfree->offset	=
-> -				ecclayout->eccpos[ecclayout->eccbytes - 1] + 1;
->  		break;
->  
->  	case OMAP_ECC_BCH16_CODE_HW:
-> @@ -1979,6 +2017,8 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		nand_chip->ecc.calculate	= omap_calculate_ecc_bch;
->  		nand_chip->ecc.read_page	= omap_read_page_bch;
->  		nand_chip->ecc.write_page	= omap_write_page_bch;
-> +		mtd_set_ooblayout(mtd, &omap_ooblayout_ops);
-> +		oobbytes_per_step		= nand_chip->ecc.bytes;
->  
->  		err = elm_config(info->elm_dev, BCH16_ECC,
->  				 mtd->writesize / nand_chip->ecc.size,
-> @@ -1986,16 +2026,6 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		if (err < 0)
->  			goto return_error;
->  
-> -		/* define ECC layout */
-> -		ecclayout->eccbytes		= nand_chip->ecc.bytes *
-> -							(mtd->writesize /
-> -							nand_chip->ecc.size);
-> -		oob_index			= BADBLOCK_MARKER_LENGTH;
-> -		for (i = 0; i < ecclayout->eccbytes; i++, oob_index++)
-> -			ecclayout->eccpos[i]	= oob_index;
-> -		/* reserved marker already included in ecclayout->eccbytes */
-> -		ecclayout->oobfree->offset	=
-> -				ecclayout->eccpos[ecclayout->eccbytes - 1] + 1;
->  		break;
->  	default:
->  		dev_err(&info->pdev->dev, "invalid or unsupported ECC scheme\n");
-> @@ -2003,13 +2033,15 @@ static int omap_nand_probe(struct platform_device *pdev)
->  		goto return_error;
->  	}
->  
-> -	/* all OOB bytes from oobfree->offset till end off OOB are free */
-> -	ecclayout->oobfree->length = mtd->oobsize - ecclayout->oobfree->offset;
->  	/* check if NAND device's OOB is enough to store ECC signatures */
-> -	if (mtd->oobsize < (ecclayout->eccbytes + BADBLOCK_MARKER_LENGTH)) {
-> +	min_oobbytes = (oobbytes_per_step *
-> +			(mtd->writesize / nand_chip->ecc.size)) +
-> +		       (nand_chip->options & NAND_BUSWIDTH_16 ?
-> +			BADBLOCK_MARKER_LENGTH : 1);
-
-would it affect this as well?
-
-> +	if (mtd->oobsize < min_oobbytes) {
->  		dev_err(&info->pdev->dev,
->  			"not enough OOB bytes required = %d, available=%d\n",
-> -			ecclayout->eccbytes, mtd->oobsize);
-> +			min_oobbytes, mtd->oobsize);
->  		err = -EINVAL;
->  		goto return_error;
->  	}
-> 
-
-I will need to test this change with all possible configurations.
-The number of configurations on OMAP is a bit overwhelming :(.
-
-cheers,
--roger
+> I'm happy with this but please do make sure to cc the maintainer /
+> author
+> of drivers if possible (often the email addresses are out of date!)
+>=20
+> Srinivas, this is one of yours.=C2=A0=C2=A0Are you happy with this?
+> I've also cc'd Irina who has worked on this driver recently for any
+> comments.
+>=20
+> If no one comments in the meantime I'll probably pick these up
+> sometime
+> in the next week.
+>=20
+> Jonathan
+> >=20
+> > ---
+> > =C2=A0drivers/iio/accel/bmc150-accel-core.c | 99 ++++++++++++++++++=
++--
+> > --------------
+> > =C2=A01 file changed, 54 insertions(+), 45 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/accel/bmc150-accel-core.c
+> > b/drivers/iio/accel/bmc150-accel-core.c
+> > index f3d096f..ad5310b 100644
+> > --- a/drivers/iio/accel/bmc150-accel-core.c
+> > +++ b/drivers/iio/accel/bmc150-accel-core.c
+> > @@ -188,7 +188,6 @@ enum bmc150_accel_trigger_id {
+> > =C2=A0
+> > =C2=A0struct bmc150_accel_data {
+> > =C2=A0	struct regmap *regmap;
+> > -	struct device *dev;
+> > =C2=A0	int irq;
+> > =C2=A0	struct bmc150_accel_interrupt
+> > interrupts[BMC150_ACCEL_INTERRUPTS];
+> > =C2=A0	atomic_t active_intr;
+> > @@ -256,6 +255,7 @@ static int bmc150_accel_set_mode(struct
+> > bmc150_accel_data *data,
+> > =C2=A0				=C2=A0enum bmc150_power_modes mode,
+> > =C2=A0				=C2=A0int dur_us)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int i;
+> > =C2=A0	int ret;
+> > =C2=A0	u8 lpw_bits;
+> > @@ -279,11 +279,11 @@ static int bmc150_accel_set_mode(struct
+> > bmc150_accel_data *data,
+> > =C2=A0	lpw_bits =3D mode << BMC150_ACCEL_PMU_MODE_SHIFT;
+> > =C2=A0	lpw_bits |=3D (dur_val <<
+> > BMC150_ACCEL_PMU_BIT_SLEEP_DUR_SHIFT);
+> > =C2=A0
+> > -	dev_dbg(data->dev, "Set Mode bits %x\n", lpw_bits);
+> > +	dev_dbg(dev, "Set Mode bits %x\n", lpw_bits);
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_write(data->regmap, BMC150_ACCEL_REG_PMU_LPW,
+> > lpw_bits);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error writing reg_pmu_lpw\n");
+> > +		dev_err(dev, "Error writing reg_pmu_lpw\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -316,23 +316,24 @@ static int bmc150_accel_set_bw(struct
+> > bmc150_accel_data *data, int val,
+> > =C2=A0
+> > =C2=A0static int bmc150_accel_update_slope(struct bmc150_accel_data
+> > *data)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_write(data->regmap, BMC150_ACCEL_REG_INT_6,
+> > =C2=A0					data->slope_thres);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error writing reg_int_6\n");
+> > +		dev_err(dev, "Error writing reg_int_6\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_update_bits(data->regmap,
+> > BMC150_ACCEL_REG_INT_5,
+> > =C2=A0				=C2=A0BMC150_ACCEL_SLOPE_DUR_MASK,
+> > data->slope_dur);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error updating reg_int_5\n");
+> > +		dev_err(dev, "Error updating reg_int_5\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > -	dev_dbg(data->dev, "%s: %x %x\n", __func__, data-
+> > >slope_thres,
+> > +	dev_dbg(dev, "%s: %x %x\n", __func__, data->slope_thres,
+> > =C2=A0		data->slope_dur);
+> > =C2=A0
+> > =C2=A0	return ret;
+> > @@ -378,20 +379,21 @@ static int
+> > bmc150_accel_get_startup_times(struct bmc150_accel_data *data)
+> > =C2=A0
+> > =C2=A0static int bmc150_accel_set_power_state(struct bmc150_accel_d=
+ata
+> > *data, bool on)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	if (on) {
+> > -		ret =3D pm_runtime_get_sync(data->dev);
+> > +		ret =3D pm_runtime_get_sync(dev);
+> > =C2=A0	} else {
+> > -		pm_runtime_mark_last_busy(data->dev);
+> > -		ret =3D pm_runtime_put_autosuspend(data->dev);
+> > +		pm_runtime_mark_last_busy(dev);
+> > +		ret =3D pm_runtime_put_autosuspend(dev);
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev,
+> > +		dev_err(dev,
+> > =C2=A0			"Failed: bmc150_accel_set_power_state for
+> > %d\n", on);
+> > =C2=A0		if (on)
+> > -			pm_runtime_put_noidle(data->dev);
+> > +			pm_runtime_put_noidle(dev);
+> > =C2=A0
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > @@ -445,6 +447,7 @@ static void
+> > bmc150_accel_interrupts_setup(struct iio_dev *indio_dev,
+> > =C2=A0static int bmc150_accel_set_interrupt(struct bmc150_accel_dat=
+a
+> > *data, int i,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool state)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	struct bmc150_accel_interrupt *intr =3D &data-
+> > >interrupts[i];
+> > =C2=A0	const struct bmc150_accel_interrupt_info *info =3D intr-
+> > >info;
+> > =C2=A0	int ret;
+> > @@ -474,7 +477,7 @@ static int bmc150_accel_set_interrupt(struct
+> > bmc150_accel_data *data, int i,
+> > =C2=A0	ret =3D regmap_update_bits(data->regmap, info->map_reg,
+> > info->map_bitmask,
+> > =C2=A0				=C2=A0(state ? info->map_bitmask : 0));
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error updating
+> > reg_int_map\n");
+> > +		dev_err(dev, "Error updating reg_int_map\n");
+> > =C2=A0		goto out_fix_power_state;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -482,7 +485,7 @@ static int bmc150_accel_set_interrupt(struct
+> > bmc150_accel_data *data, int i,
+> > =C2=A0	ret =3D regmap_update_bits(data->regmap, info->en_reg, info-
+> > >en_bitmask,
+> > =C2=A0				=C2=A0(state ? info->en_bitmask : 0));
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error updating reg_int_en\n");
+> > +		dev_err(dev, "Error updating reg_int_en\n");
+> > =C2=A0		goto out_fix_power_state;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -500,6 +503,7 @@ out_fix_power_state:
+> > =C2=A0
+> > =C2=A0static int bmc150_accel_set_scale(struct bmc150_accel_data *d=
+ata,
+> > int val)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret, i;
+> > =C2=A0
+> > =C2=A0	for (i =3D 0; i < ARRAY_SIZE(data->chip_info->scale_table);
+> > ++i) {
+> > @@ -508,8 +512,7 @@ static int bmc150_accel_set_scale(struct
+> > bmc150_accel_data *data, int val)
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BMC150_ACCEL_REG_PMU_RANGE,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->chip_info-
+> > >scale_table[i].reg_range);
+> > =C2=A0			if (ret < 0) {
+> > -				dev_err(data->dev,
+> > -					"Error writing
+> > pmu_range\n");
+> > +				dev_err(dev, "Error writing
+> > pmu_range\n");
+> > =C2=A0				return ret;
+> > =C2=A0			}
+> > =C2=A0
+> > @@ -523,6 +526,7 @@ static int bmc150_accel_set_scale(struct
+> > bmc150_accel_data *data, int val)
+> > =C2=A0
+> > =C2=A0static int bmc150_accel_get_temp(struct bmc150_accel_data *da=
+ta,
+> > int *val)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret;
+> > =C2=A0	unsigned int value;
+> > =C2=A0
+> > @@ -530,7 +534,7 @@ static int bmc150_accel_get_temp(struct
+> > bmc150_accel_data *data, int *val)
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_read(data->regmap, BMC150_ACCEL_REG_TEMP,
+> > &value);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error reading reg_temp\n");
+> > +		dev_err(dev, "Error reading reg_temp\n");
+> > =C2=A0		mutex_unlock(&data->mutex);
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > @@ -545,6 +549,7 @@ static int bmc150_accel_get_axis(struct
+> > bmc150_accel_data *data,
+> > =C2=A0				=C2=A0struct iio_chan_spec const *chan,
+> > =C2=A0				=C2=A0int *val)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret;
+> > =C2=A0	int axis =3D chan->scan_index;
+> > =C2=A0	unsigned int raw_val;
+> > @@ -559,7 +564,7 @@ static int bmc150_accel_get_axis(struct
+> > bmc150_accel_data *data,
+> > =C2=A0	ret =3D regmap_bulk_read(data->regmap,
+> > BMC150_ACCEL_AXIS_TO_REG(axis),
+> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0&raw_val, 2);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error reading axis %d\n",
+> > axis);
+> > +		dev_err(dev, "Error reading axis %d\n", axis);
+> > =C2=A0		bmc150_accel_set_power_state(data, false);
+> > =C2=A0		mutex_unlock(&data->mutex);
+> > =C2=A0		return ret;
+> > @@ -831,6 +836,7 @@ static int bmc150_accel_set_watermark(struct
+> > iio_dev *indio_dev, unsigned val)
+> > =C2=A0static int bmc150_accel_fifo_transfer(struct bmc150_accel_dat=
+a
+> > *data,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0char *buffer, int sam=
+ples)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int sample_length =3D 3 * 2;
+> > =C2=A0	int ret;
+> > =C2=A0	int total_length =3D samples * sample_length;
+> > @@ -854,7 +860,8 @@ static int bmc150_accel_fifo_transfer(struct
+> > bmc150_accel_data *data,
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	if (ret)
+> > -		dev_err(data->dev, "Error transferring data from
+> > fifo in single steps of %zu\n",
+> > +		dev_err(dev,
+> > +			"Error transferring data from fifo in
+> > single steps of %zu\n",
+> > =C2=A0			step);
+> > =C2=A0
+> > =C2=A0	return ret;
+> > @@ -864,6 +871,7 @@ static int __bmc150_accel_fifo_flush(struct
+> > iio_dev *indio_dev,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned samples, bool irq)
+> > =C2=A0{
+> > =C2=A0	struct bmc150_accel_data *data =3D iio_priv(indio_dev);
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret, i;
+> > =C2=A0	u8 count;
+> > =C2=A0	u16 buffer[BMC150_ACCEL_FIFO_LENGTH * 3];
+> > @@ -873,7 +881,7 @@ static int __bmc150_accel_fifo_flush(struct
+> > iio_dev *indio_dev,
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_read(data->regmap,
+> > BMC150_ACCEL_REG_FIFO_STATUS, &val);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error reading
+> > reg_fifo_status\n");
+> > +		dev_err(dev, "Error reading reg_fifo_status\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -1135,6 +1143,7 @@ static int bmc150_accel_trig_try_reen(struct
+> > iio_trigger *trig)
+> > =C2=A0{
+> > =C2=A0	struct bmc150_accel_trigger *t =3D
+> > iio_trigger_get_drvdata(trig);
+> > =C2=A0	struct bmc150_accel_data *data =3D t->data;
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	/* new data interrupts don't need ack */
+> > @@ -1148,8 +1157,7 @@ static int bmc150_accel_trig_try_reen(struct
+> > iio_trigger *trig)
+> > =C2=A0			=C2=A0=C2=A0=C2=A0BMC150_ACCEL_INT_MODE_LATCH_RESET);
+> > =C2=A0	mutex_unlock(&data->mutex);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev,
+> > -			"Error writing reg_int_rst_latch\n");
+> > +		dev_err(dev, "Error writing reg_int_rst_latch\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -1200,13 +1208,14 @@ static const struct iio_trigger_ops
+> > bmc150_accel_trigger_ops =3D {
+> > =C2=A0static int bmc150_accel_handle_roc_event(struct iio_dev
+> > *indio_dev)
+> > =C2=A0{
+> > =C2=A0	struct bmc150_accel_data *data =3D iio_priv(indio_dev);
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int dir;
+> > =C2=A0	int ret;
+> > =C2=A0	unsigned int val;
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_read(data->regmap,
+> > BMC150_ACCEL_REG_INT_STATUS_2, &val);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error reading
+> > reg_int_status_2\n");
+> > +		dev_err(dev, "Error reading reg_int_status_2\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -1249,6 +1258,7 @@ static irqreturn_t
+> > bmc150_accel_irq_thread_handler(int irq, void *private)
+> > =C2=A0{
+> > =C2=A0	struct iio_dev *indio_dev =3D private;
+> > =C2=A0	struct bmc150_accel_data *data =3D iio_priv(indio_dev);
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	bool ack =3D false;
+> > =C2=A0	int ret;
+> > =C2=A0
+> > @@ -1272,7 +1282,7 @@ static irqreturn_t
+> > bmc150_accel_irq_thread_handler(int irq, void *private)
+> > =C2=A0				=C2=A0=C2=A0=C2=A0BMC150_ACCEL_INT_MODE_LATCH_INT
+> > |
+> > =C2=A0				=C2=A0=C2=A0=C2=A0BMC150_ACCEL_INT_MODE_LATCH_RES
+> > ET);
+> > =C2=A0		if (ret)
+> > -			dev_err(data->dev, "Error writing
+> > reg_int_rst_latch\n");
+> > +			dev_err(dev, "Error writing
+> > reg_int_rst_latch\n");
+> > =C2=A0
+> > =C2=A0		ret =3D IRQ_HANDLED;
+> > =C2=A0	} else {
+> > @@ -1343,13 +1353,14 @@ static void
+> > bmc150_accel_unregister_triggers(struct bmc150_accel_data *data,
+> > =C2=A0static int bmc150_accel_triggers_setup(struct iio_dev *indio_=
+dev,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct bmc150_a=
+ccel_data
+> > *data)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int i, ret;
+> > =C2=A0
+> > =C2=A0	for (i =3D 0; i < BMC150_ACCEL_TRIGGERS; i++) {
+> > =C2=A0		struct bmc150_accel_trigger *t =3D &data-
+> > >triggers[i];
+> > =C2=A0
+> > -		t->indio_trig =3D devm_iio_trigger_alloc(data->dev,
+> > -					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bmc150_accel_trigge
+> > rs[i].name,
+> > +		t->indio_trig =3D devm_iio_trigger_alloc(dev,
+> > +					bmc150_accel_triggers[i].n
+> > ame,
+> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0indio_dev-
+> > >name,
+> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0indio_dev-
+> > >id);
+> > =C2=A0		if (!t->indio_trig) {
+> > @@ -1357,7 +1368,7 @@ static int bmc150_accel_triggers_setup(struct
+> > iio_dev *indio_dev,
+> > =C2=A0			break;
+> > =C2=A0		}
+> > =C2=A0
+> > -		t->indio_trig->dev.parent =3D data->dev;
+> > +		t->indio_trig->dev.parent =3D dev;
+> > =C2=A0		t->indio_trig->ops =3D &bmc150_accel_trigger_ops;
+> > =C2=A0		t->intr =3D bmc150_accel_triggers[i].intr;
+> > =C2=A0		t->data =3D data;
+> > @@ -1381,12 +1392,13 @@ static int
+> > bmc150_accel_triggers_setup(struct iio_dev *indio_dev,
+> > =C2=A0
+> > =C2=A0static int bmc150_accel_fifo_set_mode(struct bmc150_accel_dat=
+a
+> > *data)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	u8 reg =3D BMC150_ACCEL_REG_FIFO_CONFIG1;
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_write(data->regmap, reg, data->fifo_mode);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Error writing
+> > reg_fifo_config1\n");
+> > +		dev_err(dev, "Error writing reg_fifo_config1\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -1396,7 +1408,7 @@ static int bmc150_accel_fifo_set_mode(struct
+> > bmc150_accel_data *data)
+> > =C2=A0	ret =3D regmap_write(data->regmap,
+> > BMC150_ACCEL_REG_FIFO_CONFIG0,
+> > =C2=A0			=C2=A0=C2=A0=C2=A0data->watermark);
+> > =C2=A0	if (ret < 0)
+> > -		dev_err(data->dev, "Error writing
+> > reg_fifo_config0\n");
+> > +		dev_err(dev, "Error writing reg_fifo_config0\n");
+> > =C2=A0
+> > =C2=A0	return ret;
+> > =C2=A0}
+> > @@ -1480,17 +1492,17 @@ static const struct iio_buffer_setup_ops
+> > bmc150_accel_buffer_ops =3D {
+> > =C2=A0
+> > =C2=A0static int bmc150_accel_chip_init(struct bmc150_accel_data *d=
+ata)
+> > =C2=A0{
+> > +	struct device *dev =3D regmap_get_device(data->regmap);
+> > =C2=A0	int ret, i;
+> > =C2=A0	unsigned int val;
+> > =C2=A0
+> > =C2=A0	ret =3D regmap_read(data->regmap, BMC150_ACCEL_REG_CHIP_ID,
+> > &val);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev,
+> > -			"Error: Reading chip id\n");
+> > +		dev_err(dev, "Error: Reading chip id\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > -	dev_dbg(data->dev, "Chip Id %x\n", val);
+> > +	dev_dbg(dev, "Chip Id %x\n", val);
+> > =C2=A0	for (i =3D 0; i < ARRAY_SIZE(bmc150_accel_chip_info_tbl);
+> > i++) {
+> > =C2=A0		if (bmc150_accel_chip_info_tbl[i].chip_id =3D=3D val)
+> > {
+> > =C2=A0			data->chip_info =3D
+> > &bmc150_accel_chip_info_tbl[i];
+> > @@ -1499,7 +1511,7 @@ static int bmc150_accel_chip_init(struct
+> > bmc150_accel_data *data)
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	if (!data->chip_info) {
+> > -		dev_err(data->dev, "Invalid chip %x\n", val);
+> > +		dev_err(dev, "Invalid chip %x\n", val);
+> > =C2=A0		return -ENODEV;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -1516,8 +1528,7 @@ static int bmc150_accel_chip_init(struct
+> > bmc150_accel_data *data)
+> > =C2=A0	ret =3D regmap_write(data->regmap,
+> > BMC150_ACCEL_REG_PMU_RANGE,
+> > =C2=A0			=C2=A0=C2=A0=C2=A0BMC150_ACCEL_DEF_RANGE_4G);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev,
+> > -					"Error writing
+> > reg_pmu_range\n");
+> > +		dev_err(dev, "Error writing reg_pmu_range\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -1535,8 +1546,7 @@ static int bmc150_accel_chip_init(struct
+> > bmc150_accel_data *data)
+> > =C2=A0			=C2=A0=C2=A0=C2=A0BMC150_ACCEL_INT_MODE_LATCH_INT |
+> > =C2=A0			=C2=A0=C2=A0=C2=A0BMC150_ACCEL_INT_MODE_LATCH_RESET);
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev,
+> > -			"Error writing reg_int_rst_latch\n");
+> > +		dev_err(dev, "Error writing reg_int_rst_latch\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > @@ -1556,7 +1566,6 @@ int bmc150_accel_core_probe(struct device
+> > *dev, struct regmap *regmap, int irq,
+> > =C2=A0
+> > =C2=A0	data =3D iio_priv(indio_dev);
+> > =C2=A0	dev_set_drvdata(dev, indio_dev);
+> > -	data->dev =3D dev;
+> > =C2=A0	data->irq =3D irq;
+> > =C2=A0
+> > =C2=A0	data->regmap =3D regmap;
+> > @@ -1580,13 +1589,13 @@ int bmc150_accel_core_probe(struct device
+> > *dev, struct regmap *regmap, int irq,
+> > =C2=A0					=C2=A0bmc150_accel_trigger_hand
+> > ler,
+> > =C2=A0					=C2=A0&bmc150_accel_buffer_ops)
+> > ;
+> > =C2=A0	if (ret < 0) {
+> > -		dev_err(data->dev, "Failed: iio triggered buffer
+> > setup\n");
+> > +		dev_err(dev, "Failed: iio triggered buffer
+> > setup\n");
+> > =C2=A0		return ret;
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	if (data->irq > 0) {
+> > =C2=A0		ret =3D devm_request_threaded_irq(
+> > -						data->dev, data-
+> > >irq,
+> > +						dev, data->irq,
+> > =C2=A0						bmc150_accel_irq_h
+> > andler,
+> > =C2=A0						bmc150_accel_irq_t
+> > hread_handler,
+> > =C2=A0						IRQF_TRIGGER_RISIN
+> > G,
+> > @@ -1604,7 +1613,7 @@ int bmc150_accel_core_probe(struct device
+> > *dev, struct regmap *regmap, int irq,
+> > =C2=A0		ret =3D regmap_write(data->regmap,
+> > BMC150_ACCEL_REG_INT_RST_LATCH,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0BMC150_ACCEL_INT_MODE_LATCH_RES
+> > ET);
+> > =C2=A0		if (ret < 0) {
+> > -			dev_err(data->dev, "Error writing
+> > reg_int_rst_latch\n");
+> > +			dev_err(dev, "Error writing
+> > reg_int_rst_latch\n");
+> > =C2=A0			goto err_buffer_cleanup;
+> > =C2=A0		}
+> > =C2=A0
+> > @@ -1653,9 +1662,9 @@ int bmc150_accel_core_remove(struct device
+> > *dev)
+> > =C2=A0
+> > =C2=A0	iio_device_unregister(indio_dev);
+> > =C2=A0
+> > -	pm_runtime_disable(data->dev);
+> > -	pm_runtime_set_suspended(data->dev);
+> > -	pm_runtime_put_noidle(data->dev);
+> > +	pm_runtime_disable(dev);
+> > +	pm_runtime_set_suspended(dev);
+> > +	pm_runtime_put_noidle(dev);
+> > =C2=A0
+> > =C2=A0	bmc150_accel_unregister_triggers(data,
+> > BMC150_ACCEL_TRIGGERS - 1);
+> > =C2=A0
+> > @@ -1704,7 +1713,7 @@ static int
+> > bmc150_accel_runtime_suspend(struct device *dev)
+> > =C2=A0	struct bmc150_accel_data *data =3D iio_priv(indio_dev);
+> > =C2=A0	int ret;
+> > =C2=A0
+> > -	dev_dbg(data->dev,=C2=A0=C2=A0__func__);
+> > +	dev_dbg(dev,=C2=A0=C2=A0__func__);
+> > =C2=A0	ret =3D bmc150_accel_set_mode(data,
+> > BMC150_ACCEL_SLEEP_MODE_SUSPEND, 0);
+> > =C2=A0	if (ret < 0)
+> > =C2=A0		return -EAGAIN;
+> > @@ -1719,7 +1728,7 @@ static int bmc150_accel_runtime_resume(struct
+> > device *dev)
+> > =C2=A0	int ret;
+> > =C2=A0	int sleep_val;
+> > =C2=A0
+> > -	dev_dbg(data->dev,=C2=A0=C2=A0__func__);
+> > +	dev_dbg(dev,=C2=A0=C2=A0__func__);
+> > =C2=A0
+> > =C2=A0	ret =3D bmc150_accel_set_mode(data,
+> > BMC150_ACCEL_SLEEP_MODE_NORMAL, 0);
+> > =C2=A0	if (ret < 0)
+> >=20
