@@ -1,142 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] i2c: exynos5: Fix possible ABBA deadlock by keeping I2C
- clock prepared
-Date: Mon, 18 Apr 2016 09:50:06 +0200
-Message-ID: <571491AE.30908@samsung.com>
-References: <1460757887-18128-1-git-send-email-javier@osg.samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 2/7] drm/exynos: dsi: use generic of_device_get_match_data
+ helper
+Date: Mon, 18 Apr 2016 17:48:34 +0900
+Message-ID: <57149F62.1000104@samsung.com>
+References: <1459516666-2004-1-git-send-email-m.szyprowski@samsung.com>
+ <1459516666-2004-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-reply-to: <1460757887-18128-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1459516666-2004-3-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On 2016-04-16 00:04, Javier Martinez Canillas wrote:
-> The exynos5 I2C controller driver always prepares and enables a clock
-> before using it and then disables unprepares it when the clock is not
-> used anymore.
->
-> But this can cause a possible ABBA deadlock in some scenarios since a
-> driver that uses regmap to access its I2C registers, will first grab
-> the regmap lock and then the I2C xfer function will grab the prepare
-> lock when preparing the I2C clock. But since the clock driver also
-> uses regmap for I2C accesses, preparing a clock will first grab the
-> prepare lock and then the regmap lock when using the regmap API.
->
-> An example of this happens on the Exynos5422 Odroid XU board where a
-> s2mps11 PMIC is used and both the s2mps11 regulators and clk drivers
-> share the same I2C regmap.
->
-> The possible deadlock is reported by the kernel lockdep:
->
->    Possible unsafe locking scenario:
->
->          CPU0                    CPU1
->          ----                    ----
->     lock(sec_core:428:(regmap)->lock);
->                                  lock(prepare_lock);
->                                  lock(sec_core:428:(regmap)->lock);
->     lock(prepare_lock);
->
->    *** DEADLOCK ***
->
-> Fix this by only preparing the clock on probe and {en,dis}able in the
-> rest of the driver.
->
-> This patch is similar to commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA
-> deadlock by keeping clock prepared") that fixes the same bug in other
-> driver for an I2C controller found in Samsung SoCs.
-
-I'm sorry, but this is not the right approach imho. It is just a workaround
-applied to specific driver, it also duplicates incorrect clock usage
-pattern (there is really no point keeping clock prepared all the time).
-
-IMHO this ABBA deadlock should be really fixed in clocks core (probably
-by removing global prepare mutex and replacing it with per clock
-controller mutexes). Without a proper patch this issue will hit us again
-with other i2c controllers or other drivers as well.
-
-> Reported-by: Anand Moon <linux.amoon@gmail.com>
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->
-> ---
->
->   drivers/i2c/busses/i2c-exynos5.c | 20 +++++++++++++++-----
->   1 file changed, 15 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> index b29c7500461a..602633747149 100644
-> --- a/drivers/i2c/busses/i2c-exynos5.c
-> +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -671,7 +671,9 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
->   		return -EIO;
->   	}
->   
-> -	clk_prepare_enable(i2c->clk);
-> +	ret = clk_enable(i2c->clk);
-> +	if (ret)
-> +		return ret;
->   
->   	for (i = 0; i < num; i++, msgs++) {
->   		stop = (i == num - 1);
-> @@ -695,7 +697,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
->   	}
->   
->    out:
-> -	clk_disable_unprepare(i2c->clk);
-> +	clk_disable(i2c->clk);
->   	return ret;
->   }
->   
-> @@ -799,6 +801,10 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
->   
->   	platform_set_drvdata(pdev, i2c);
->   
-> +	clk_disable(i2c->clk);
-> +
-> +	return 0;
-> +
->    err_clk:
->   	clk_disable_unprepare(i2c->clk);
->   	return ret;
-> @@ -810,6 +816,8 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
->   
->   	i2c_del_adapter(&i2c->adap);
->   
-> +	clk_unprepare(i2c->clk);
-> +
->   	return 0;
->   }
->   
-> @@ -830,16 +838,18 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
->   	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
->   	int ret = 0;
->   
-> -	clk_prepare_enable(i2c->clk);
-> +	ret = clk_enable(i2c->clk);
-> +	if (ret)
-> +		return ret;
->   
->   	ret = exynos5_hsi2c_clock_setup(i2c);
->   	if (ret) {
-> -		clk_disable_unprepare(i2c->clk);
-> +		clk_disable(i2c->clk);
->   		return ret;
->   	}
->   
->   	exynos5_i2c_init(i2c);
-> -	clk_disable_unprepare(i2c->clk);
-> +	clk_disable(i2c->clk);
->   	i2c->suspended = 0;
->   
->   	return 0;
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGkgTWFyZWssCgoyMDE264WEIDA07JuUIDAx7J28IDIyOjE37JeQIE1hcmVrIFN6eXByb3dza2kg
+7J20KOqwgCkg7JO0IOq4gDoKPiBTaW1wbGlmeSBjb2RlIGJ5IHJlcGxhY2luZyBjdXN0b20gY29k
+ZSBieSBnZW5lcmljIGhlbHBlci4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tp
+IDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kc2kuYyB8IDExICstLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAx
+IGluc2VydGlvbigrKSwgMTAgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9kc2kuYwo+IGluZGV4IDYzYzg0YTEwNmMwYi4uYjY1MThkZjI0MTFkIDEwMDY0
+NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+ICsrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+IEBAIC01MzIsMTUgKzUz
+Miw2IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGV4eW5vc19kc2lfb2ZfbWF0
+Y2hbXSA9IHsKPiAgCXsgfQo+ICB9Owo+ICAKPiAtc3RhdGljIGlubGluZSBzdHJ1Y3QgZXh5bm9z
+X2RzaV9kcml2ZXJfZGF0YSAqZXh5bm9zX2RzaV9nZXRfZHJpdmVyX2RhdGEoCj4gLQkJCQkJCXN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gLXsKPiAtCWNvbnN0IHN0cnVjdCBvZl9kZXZp
+Y2VfaWQgKm9mX2lkID0KPiAtCQkJb2ZfbWF0Y2hfZGV2aWNlKGV4eW5vc19kc2lfb2ZfbWF0Y2gs
+ICZwZGV2LT5kZXYpOwo+IC0KPiAtCXJldHVybiAoc3RydWN0IGV4eW5vc19kc2lfZHJpdmVyX2Rh
+dGEgKilvZl9pZC0+ZGF0YTsKPiAtfQo+IC0KPiAgc3RhdGljIHZvaWQgZXh5bm9zX2RzaV93YWl0
+X2Zvcl9yZXNldChzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+ICB7Cj4gIAlpZiAod2FpdF9mb3Jf
+Y29tcGxldGlvbl90aW1lb3V0KCZkc2ktPmNvbXBsZXRlZCwgbXNlY3NfdG9famlmZmllcygzMDAp
+KSkKPiBAQCAtMTgzMyw3ICsxODI0LDcgQEAgc3RhdGljIGludCBleHlub3NfZHNpX3Byb2JlKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAlkc2ktPmRzaV9ob3N0LmRldiA9IGRldjsK
+PiAgCj4gIAlkc2ktPmRldiA9IGRldjsKPiAtCWRzaS0+ZHJpdmVyX2RhdGEgPSBleHlub3NfZHNp
+X2dldF9kcml2ZXJfZGF0YShwZGV2KTsKPiArCWRzaS0+ZHJpdmVyX2RhdGEgPSBvZl9kZXZpY2Vf
+Z2V0X21hdGNoX2RhdGEoZGV2KTsKCmRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+c2kuYzogSW4gZnVuY3Rpb24gJ2V4eW5vc19kc2lfcHJvYmUnOgpkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHNpLmM6MTgyNzoxOTogd2FybmluZzogYXNzaWdubWVudCBkaXNjYXJk
+cyAnY29uc3QnIHF1YWxpZmllciBmcm9tIHBvaW50ZXIgdGFyZ2V0IHR5cGUKCkxvb2tzIHlvdSBt
+aXNzZWQgY29uc3QgcHJlZml4IGFuZCBmb3IgcGF0Y2ggMyBhbHNvIGJ1dCBJIGNhbiBmaXggdGhl
+bS4KClRoYW5rcywKSW5raSBEYWUKCj4gIAo+ICAJcmV0ID0gZXh5bm9zX2RzaV9wYXJzZV9kdChk
+c2kpOwo+ICAJaWYgKHJldCkKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
