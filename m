@@ -1,84 +1,142 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Remove unsupported s2mps11 regulator
- bindings from Exynos5420 boards
-Date: Mon, 18 Apr 2016 09:44:13 +0200
-Message-ID: <1460965453-5337-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:30096 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751649AbcDRHon (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2016 03:44:43 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] i2c: exynos5: Fix possible ABBA deadlock by keeping I2C
+ clock prepared
+Date: Mon, 18 Apr 2016 09:50:06 +0200
+Message-ID: <571491AE.30908@samsung.com>
+References: <1460757887-18128-1-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-reply-to: <1460757887-18128-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-The bindings like s2mps11,buck6-ramp-enable or s2mps11,buck2-ramp-delay
-where ignored. They were never parse by s2mps11 regulator driver. Also
-the values used in these bindings were equal to default reset values of
-S2MPS11 device. It is safe to remove them.
+Hello,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 7 -------
- arch/arm/boot/dts/exynos5420-smdk5420.dts          | 7 -------
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 7 -------
- 3 files changed, 21 deletions(-)
+On 2016-04-16 00:04, Javier Martinez Canillas wrote:
+> The exynos5 I2C controller driver always prepares and enables a clock
+> before using it and then disables unprepares it when the clock is not
+> used anymore.
+>
+> But this can cause a possible ABBA deadlock in some scenarios since a
+> driver that uses regmap to access its I2C registers, will first grab
+> the regmap lock and then the I2C xfer function will grab the prepare
+> lock when preparing the I2C clock. But since the clock driver also
+> uses regmap for I2C accesses, preparing a clock will first grab the
+> prepare lock and then the regmap lock when using the regmap API.
+>
+> An example of this happens on the Exynos5422 Odroid XU board where a
+> s2mps11 PMIC is used and both the s2mps11 regulators and clk drivers
+> share the same I2C regmap.
+>
+> The possible deadlock is reported by the kernel lockdep:
+>
+>    Possible unsafe locking scenario:
+>
+>          CPU0                    CPU1
+>          ----                    ----
+>     lock(sec_core:428:(regmap)->lock);
+>                                  lock(prepare_lock);
+>                                  lock(sec_core:428:(regmap)->lock);
+>     lock(prepare_lock);
+>
+>    *** DEADLOCK ***
+>
+> Fix this by only preparing the clock on probe and {en,dis}able in the
+> rest of the driver.
+>
+> This patch is similar to commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA
+> deadlock by keeping clock prepared") that fixes the same bug in other
+> driver for an I2C controller found in Samsung SoCs.
 
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index a103ce8c3985..60bc861d0f9d 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -75,13 +75,6 @@
- 	s2mps11_pmic@66 {
- 		compatible = "samsung,s2mps11-pmic";
- 		reg = <0x66>;
--		s2mps11,buck2-ramp-delay = <12>;
--		s2mps11,buck34-ramp-delay = <12>;
--		s2mps11,buck16-ramp-delay = <12>;
--		s2mps11,buck6-ramp-enable = <1>;
--		s2mps11,buck2-ramp-enable = <1>;
--		s2mps11,buck3-ramp-enable = <1>;
--		s2mps11,buck4-ramp-enable = <1>;
- 
- 		interrupt-parent = <&gpx3>;
- 		interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 49920b4330ed..2e748d19322f 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -140,13 +140,6 @@
- 	s2mps11_pmic@66 {
- 		compatible = "samsung,s2mps11-pmic";
- 		reg = <0x66>;
--		s2mps11,buck2-ramp-delay = <12>;
--		s2mps11,buck34-ramp-delay = <12>;
--		s2mps11,buck16-ramp-delay = <12>;
--		s2mps11,buck6-ramp-enable = <1>;
--		s2mps11,buck2-ramp-enable = <1>;
--		s2mps11,buck3-ramp-enable = <1>;
--		s2mps11,buck4-ramp-enable = <1>;
- 
- 		s2mps11_osc: clocks {
- 			#clock-cells = <1>;
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 0e71d4253205..20fa7612080d 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -92,13 +92,6 @@
- 	s2mps11_pmic@66 {
- 		compatible = "samsung,s2mps11-pmic";
- 		reg = <0x66>;
--		s2mps11,buck2-ramp-delay = <12>;
--		s2mps11,buck34-ramp-delay = <12>;
--		s2mps11,buck16-ramp-delay = <12>;
--		s2mps11,buck6-ramp-enable = <1>;
--		s2mps11,buck2-ramp-enable = <1>;
--		s2mps11,buck3-ramp-enable = <1>;
--		s2mps11,buck4-ramp-enable = <1>;
- 		samsung,s2mps11-acokb-ground;
- 
- 		interrupt-parent = <&gpx0>;
+I'm sorry, but this is not the right approach imho. It is just a workaround
+applied to specific driver, it also duplicates incorrect clock usage
+pattern (there is really no point keeping clock prepared all the time).
+
+IMHO this ABBA deadlock should be really fixed in clocks core (probably
+by removing global prepare mutex and replacing it with per clock
+controller mutexes). Without a proper patch this issue will hit us again
+with other i2c controllers or other drivers as well.
+
+> Reported-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>
+> ---
+>
+>   drivers/i2c/busses/i2c-exynos5.c | 20 +++++++++++++++-----
+>   1 file changed, 15 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index b29c7500461a..602633747149 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -671,7 +671,9 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+>   		return -EIO;
+>   	}
+>   
+> -	clk_prepare_enable(i2c->clk);
+> +	ret = clk_enable(i2c->clk);
+> +	if (ret)
+> +		return ret;
+>   
+>   	for (i = 0; i < num; i++, msgs++) {
+>   		stop = (i == num - 1);
+> @@ -695,7 +697,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+>   	}
+>   
+>    out:
+> -	clk_disable_unprepare(i2c->clk);
+> +	clk_disable(i2c->clk);
+>   	return ret;
+>   }
+>   
+> @@ -799,6 +801,10 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+>   
+>   	platform_set_drvdata(pdev, i2c);
+>   
+> +	clk_disable(i2c->clk);
+> +
+> +	return 0;
+> +
+>    err_clk:
+>   	clk_disable_unprepare(i2c->clk);
+>   	return ret;
+> @@ -810,6 +816,8 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
+>   
+>   	i2c_del_adapter(&i2c->adap);
+>   
+> +	clk_unprepare(i2c->clk);
+> +
+>   	return 0;
+>   }
+>   
+> @@ -830,16 +838,18 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
+>   	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
+>   	int ret = 0;
+>   
+> -	clk_prepare_enable(i2c->clk);
+> +	ret = clk_enable(i2c->clk);
+> +	if (ret)
+> +		return ret;
+>   
+>   	ret = exynos5_hsi2c_clock_setup(i2c);
+>   	if (ret) {
+> -		clk_disable_unprepare(i2c->clk);
+> +		clk_disable(i2c->clk);
+>   		return ret;
+>   	}
+>   
+>   	exynos5_i2c_init(i2c);
+> -	clk_disable_unprepare(i2c->clk);
+> +	clk_disable(i2c->clk);
+>   	i2c->suspended = 0;
+>   
+>   	return 0;
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
