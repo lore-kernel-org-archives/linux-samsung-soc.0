@@ -1,119 +1,105 @@
-From: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v5 39/50] mtd: nand: omap2: switch to mtd_ooblayout_ops
-Date: Tue, 19 Apr 2016 15:49:42 +0300
-Message-ID: <57162966.9080205@ti.com>
-References: <1459354505-32551-1-git-send-email-boris.brezillon@free-electrons.com>
- <1459354505-32551-40-git-send-email-boris.brezillon@free-electrons.com>
- <5714F011.5080409@ti.com> <20160418170518.363f732d@bbrezillon>
- <57160862.90603@ti.com> <20160419132206.5d909f7e@bbrezillon>
- <571624EF.9060707@ti.com> <20160419144152.30a4027d@bbrezillon>
-Reply-To: rogerq-l0cyMroinI0@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD45J6OZZMOBBBGT3C4AKGQEUPAR3QI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20160419144152.30a4027d@bbrezillon>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Harvey Hunt <harvey.hunt-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, punnaiah choudary kalluri <punnaia-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kamal Dasu <kdasu.kdev-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kerne
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 1/2] i2c: s3c2410: Print errno code in error logs
+Date: Tue, 19 Apr 2016 16:10:40 -0400
+Message-ID: <1461096641-19788-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 19/04/16 15:41, Boris Brezillon wrote:
-> On Tue, 19 Apr 2016 15:30:39 +0300
-> Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
-> 
->> On 19/04/16 14:22, Boris Brezillon wrote:
->>> Hi Roger,
->>>
->>> On Tue, 19 Apr 2016 13:28:50 +0300
->>> Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
->>>
->>>>> @@ -1921,6 +1927,9 @@ static int omap_nand_probe(struct platform_device *pdev)
->>>>>  		nand_chip->ecc.correct          = omap_correct_data;
->>>>>  		mtd_set_ooblayout(mtd, &omap_ooblayout_ops);
->>>>>  		oobbytes_per_step		= nand_chip->ecc.bytes;
->>>>> +
->>>>> +		if (nand_chip->options & NAND_BUSWIDTH_16)
->>>>> +			min_oobbytes		= 1;
->>>>
->>>> Shouldn't this have been
->>>> 		if (!(nand_chip->options & NAND_BUSWIDTH_16)
->>>> 			min_oobbytes		= 1;
->>>> ?
->>>
->>> Yep.
->>>
->>>>
->>>>>  		break;
->>>>>  
->>>>>  	case OMAP_ECC_BCH4_CODE_HW_DETECTION_SW:
->>>>> @@ -2038,10 +2047,8 @@ static int omap_nand_probe(struct platform_device *pdev)
->>>>>  	}
->>>>>  
->>>>>  	/* check if NAND device's OOB is enough to store ECC signatures */
->>>>> -	min_oobbytes = (oobbytes_per_step *
->>>>> -			(mtd->writesize / nand_chip->ecc.size)) +
->>>>> -		       (nand_chip->options & NAND_BUSWIDTH_16 ?
->>>>> -			BADBLOCK_MARKER_LENGTH : 1);
->>>>> +	min_oobbytes += (oobbytes_per_step *
->>>>> +			 (mtd->writesize / nand_chip->ecc.size));
->>>>>  	if (mtd->oobsize < min_oobbytes) {
->>>>>  		dev_err(&info->pdev->dev,
->>>>>  			"not enough OOB bytes required = %d, available=%d\n",
->>>>>
->>>>
->>>> After the above changes BCH with HW ECC worked fine but BCH with SW ECC still failed.
->>>> I had to fix it up with the below patch. This is mainly because chip->ecc.steps wasn't
->>>> yet initialized before calling nand_bch_init().
->>>>
->>>> After the below patch it worked fine with bch4 (hw & sw), bch8 (hw & sw) and ham1.
->>>> I couldn't yet verify bch16 though.
->>>
->>
->> I just verified that bch16 works as well.
->>
->>> Thanks for the fix, but I'd prefer fixing the bug for all soft BCH
->>> users.
->>>
->>> Could you try this patch?
->>
->> I tried your patch and it worked fine.
-> 
-> Thanks, I'll provide a reworked nand/next branch soon.
-> BTW, is there anything to fix in my merge commit (the commit merging
-> your GPMC/OMAP changes in nand/next)?
-> 
+The driver not always prints the error code in case of a failure but this
+information can be very useful for debugging. So let's print if available.
 
-I just replied in the other thread that the conflict resolution is fine.
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
->> You will still need the below change to omap2.c
->>
->> --
->> cheers,
->> -roger
->>
->> diff --git a/drivers/mtd/nand/omap2.c b/drivers/mtd/nand/omap2.c
->> index 0abfba6..33c8fde 100644
->> --- a/drivers/mtd/nand/omap2.c
->> +++ b/drivers/mtd/nand/omap2.c
->> @@ -1715,7 +1715,7 @@ static int omap_sw_ooblayout_free(struct mtd_info *mtd, int section,
->>  	struct nand_chip *chip = mtd_to_nand(mtd);
->>  	int off = BADBLOCK_MARKER_LENGTH;
->>  
->> -	if (section)
->> +	if (section >= chip->ecc.steps)
->>  		return -ERANGE;
-> 
-> Sorry but I don't get why we need that one. Don't we have a single
-> oobfree section starting at the end of the ECC sections?
-> 
-> 
-You are right. Nothing needs to be changed there then. Thanks :)
+---
 
-cheers,
--roger
+Hello,
+
+This patch and 2/2 were only build tested because I don't have access to
+a board using this IP block. I just noticed these issues when comparing
+the i2c-s3c2410 driver with i2c-exynos5 where I did some fixes recently.
+
+I think the patches are simple enough that is safe to pick them but of
+course testing will be highly appreciated.
+
+Best regards,
+Javier
+
+ drivers/i2c/busses/i2c-s3c2410.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 362a6de54833..4b873fe9a75b 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -944,7 +944,7 @@ static int s3c24xx_i2c_cpufreq_transition(struct notifier_block *nb,
+ 		i2c_unlock_adapter(&i2c->adap);
+ 
+ 		if (ret < 0)
+-			dev_err(i2c->dev, "cannot find frequency\n");
++			dev_err(i2c->dev, "cannot find frequency (%d)\n", ret);
+ 		else
+ 			dev_info(i2c->dev, "setting freq %d\n", got);
+ 	}
+@@ -995,7 +995,8 @@ static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
+ 
+ 		ret = gpio_request(gpio, "i2c-bus");
+ 		if (ret) {
+-			dev_err(i2c->dev, "gpio [%d] request failed\n", gpio);
++			dev_err(i2c->dev, "gpio [%d] request failed (%d)\n",
++				gpio, ret);
+ 			goto free_gpio;
+ 		}
+ 	}
+@@ -1199,7 +1200,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	ret = s3c24xx_i2c_init(i2c);
+ 	clk_disable(i2c->clk);
+ 	if (ret != 0) {
+-		dev_err(&pdev->dev, "I2C controller init failed\n");
++		dev_err(&pdev->dev, "I2C controller init failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 	/* find the IRQ for this unit (note, this relies on the init call to
+@@ -1209,7 +1210,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	if (!(i2c->quirks & QUIRK_POLL)) {
+ 		i2c->irq = ret = platform_get_irq(pdev, 0);
+ 		if (ret <= 0) {
+-			dev_err(&pdev->dev, "cannot find IRQ\n");
++			dev_err(&pdev->dev, "cannot find IRQ (%d)\n", ret);
+ 			clk_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+@@ -1218,7 +1219,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 				dev_name(&pdev->dev), i2c);
+ 
+ 		if (ret != 0) {
+-			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
++			dev_err(&pdev->dev, "cannot claim IRQ %d (%d)\n",
++				i2c->irq, ret);
+ 			clk_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+@@ -1226,7 +1228,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	ret = s3c24xx_i2c_register_cpufreq(i2c);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
++		dev_err(&pdev->dev, "failed to register cpufreq notifier (%d)\n",
++			ret);
+ 		clk_unprepare(i2c->clk);
+ 		return ret;
+ 	}
+@@ -1246,7 +1249,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	ret = i2c_add_numbered_adapter(&i2c->adap);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
++		dev_err(&pdev->dev, "failed to add bus to i2c core (%d)\n",
++			ret);
+ 		pm_runtime_disable(&pdev->dev);
+ 		s3c24xx_i2c_deregister_cpufreq(i2c);
+ 		clk_unprepare(i2c->clk);
+-- 
+2.5.5
