@@ -1,42 +1,51 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/2] i2c: s3c2410: Check clk_prepare_enable() return value
-Date: Tue, 19 Apr 2016 16:10:41 -0400
-Message-ID: <1461096641-19788-2-git-send-email-javier@osg.samsung.com>
-References: <1461096641-19788-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Remove unsupported s2mps11 regulator
+ bindings from Exynos5420 boards
+Date: Tue, 19 Apr 2016 16:13:00 -0400
+Message-ID: <5716914C.1030102@osg.samsung.com>
+References: <1460965453-5337-1-git-send-email-k.kozlowski@samsung.com>
+ <571510D5.3090406@osg.samsung.com> <5715C629.1030602@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461096641-19788-1-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <5715C629.1030602@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The clk_prepare_enable() function can fail so check the return
-value and propagate the error in case of a failure.
+Hello Krzysztof,
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+On 04/19/2016 01:46 AM, Krzysztof Kozlowski wrote:
+> On 04/18/2016 06:52 PM, Javier Martinez Canillas wrote:
 
----
+[snip]
 
- drivers/i2c/busses/i2c-s3c2410.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> On a related note, the s5m8767 regulator driver parses similar DT properties
+>> ("s5m8767,pmic-buck-ramp-delay", "s5m8767,pmic-buck2-ramp-enable", etc) that
+>> are not in Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt.
+>>
+>> So those should either be added to the binding doc or removed from the driver
+>> if are not correct (I don't have documentation for the s5m8767 PMIC but the
+>> DT properties are not use by any DTS in mainline using the s5m8767 PMIC).
+> 
+> That's the grey area. :) I mean that instead of making these implemented
+> bindings an interface, they should rather be converted to standard
+> regulator bindings. However the device is quite old, not used on newer
+> boards, so there is no interest in improving this. In the same time
+> removal of this code is not strictly necessary. Its existence does not hurt.
+>
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 4b873fe9a75b..cb40a3af46e7 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1196,7 +1196,12 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+Fair enough.
  
- 	/* initialise the i2c controller */
- 
--	clk_prepare_enable(i2c->clk);
-+	ret = clk_prepare_enable(i2c->clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "I2C clock enable failed (%d)\n", ret);
-+		return ret;
-+	}
-+
- 	ret = s3c24xx_i2c_init(i2c);
- 	clk_disable(i2c->clk);
- 	if (ret != 0) {
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
 -- 
-2.5.5
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
