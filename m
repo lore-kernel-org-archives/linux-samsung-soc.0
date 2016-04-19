@@ -1,73 +1,52 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
-Date: Tue, 19 Apr 2016 13:43:42 +0930
-Message-ID: <1461039222-26592-1-git-send-email-andrew@aj.id.au>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Remove unsupported s2mps11 regulator
+ bindings from Exynos5420 boards
+Date: Tue, 19 Apr 2016 07:46:17 +0200
+Message-ID: <5715C629.1030602@samsung.com>
+References: <1460965453-5337-1-git-send-email-k.kozlowski@samsung.com>
+ <571510D5.3090406@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <571510D5.3090406@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The range is registered into a linked list which can be referenced
-throughout the lifetime of the driver. Ensure the range's memory is useful
-for the same lifetime by adding it to the driver's private data structure.
+On 04/18/2016 06:52 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 04/18/2016 03:44 AM, Krzysztof Kozlowski wrote:
+>> The bindings like s2mps11,buck6-ramp-enable or s2mps11,buck2-ramp-delay
+>> where ignored. They were never parse by s2mps11 regulator driver. Also
+>> the values used in these bindings were equal to default reset values of
+>> S2MPS11 device. It is safe to remove them.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+> 
+> The patch looks good to me.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-The bug was introduced in the driver's initial commit, which was present in
-v3.10.
+Thanks.
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
-Cc: stable@vger.kernel.org
----
-This is my first contribution to the kernel, so hopefully I've followed all the
-relevant documentation. If not, please let me know and point me in the right
-direction!
+> 
+> On a related note, the s5m8767 regulator driver parses similar DT properties
+> ("s5m8767,pmic-buck-ramp-delay", "s5m8767,pmic-buck2-ramp-enable", etc) that
+> are not in Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt.
+> 
+> So those should either be added to the binding doc or removed from the driver
+> if are not correct (I don't have documentation for the s5m8767 PMIC but the
+> DT properties are not use by any DTS in mainline using the s5m8767 PMIC).
 
-I don't have the means to test the patch, but it compiles. Someone with
-appropriate hardware should probably give it a spin.
+That's the grey area. :) I mean that instead of making these implemented
+bindings an interface, they should rather be converted to standard
+regulator bindings. However the device is quite old, not used on newer
+boards, so there is no interest in improving this. In the same time
+removal of this code is not strictly necessary. Its existence does not hurt.
 
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index 00ab63abf1d9..d45028a75c0f 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -117,6 +117,7 @@ struct exynos5440_pinctrl_priv_data {
- 	unsigned int			nr_groups;
- 	const struct exynos5440_pmx_func	*pmx_functions;
- 	unsigned int			nr_functions;
-+	struct pinctrl_gpio_range	range;
- };
- 
- /**
-@@ -742,7 +743,6 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
- 	struct pinctrl_desc *ctrldesc;
- 	struct pinctrl_dev *pctl_dev;
- 	struct pinctrl_pin_desc *pindesc, *pdesc;
--	struct pinctrl_gpio_range grange;
- 	char *pin_names;
- 	int pin, ret;
- 
-@@ -794,12 +794,12 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
- 		return PTR_ERR(pctl_dev);
- 	}
- 
--	grange.name = "exynos5440-pctrl-gpio-range";
--	grange.id = 0;
--	grange.base = 0;
--	grange.npins = EXYNOS5440_MAX_PINS;
--	grange.gc = priv->gc;
--	pinctrl_add_gpio_range(pctl_dev, &grange);
-+	priv->range.name = "exynos5440-pctrl-gpio-range";
-+	priv->range.id = 0;
-+	priv->range.base = 0;
-+	priv->range.npins = EXYNOS5440_MAX_PINS;
-+	priv->range.gc = priv->gc;
-+	pinctrl_add_gpio_range(pctl_dev, &priv->range);
- 	return 0;
- }
- 
--- 
-2.5.0
-
+Best regards,
+Krzysztof
