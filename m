@@ -1,64 +1,136 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
-Date: Tue, 19 Apr 2016 16:24:02 +0900
-Message-ID: <CA+Ln22Fcdp=W1A7ZY5nNNkUqHWfTTepVBS+SzjdoeO2HDJGpuQ@mail.gmail.com>
-References: <1461039222-26592-1-git-send-email-andrew@aj.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1461039222-26592-1-git-send-email-andrew@aj.id.au>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] drm/exynos: dsi: use generic of_device_get_match_data helper
+Date: Tue, 19 Apr 2016 09:37:10 +0200
+Message-ID: <1461051430-10176-1-git-send-email-m.szyprowski@samsung.com>
+References: <57149F62.1000104@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:22376 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751325AbcDSHhZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Apr 2016 03:37:25 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O5V0000AEI88V10@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Apr 2016 08:37:20 +0100 (BST)
+In-reply-to: <57149F62.1000104@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Andrew,
+Simplify code by replacing custom code by generic helper and add missing
+const qualifier to driver data structures.
 
-2016-04-19 13:13 GMT+09:00 Andrew Jeffery <andrew@aj.id.au>:
-> The range is registered into a linked list which can be referenced
-> throughout the lifetime of the driver. Ensure the range's memory is useful
-> for the same lifetime by adding it to the driver's private data structure.
->
-> The bug was introduced in the driver's initial commit, which was present in
-> v3.10.
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
-> Cc: stable@vger.kernel.org
-> ---
-> This is my first contribution to the kernel, so hopefully I've followed all the
-> relevant documentation. If not, please let me know and point me in the right
-> direction!
->
-> I don't have the means to test the patch, but it compiles. Someone with
-> appropriate hardware should probably give it a spin.
->
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- added missing const qualifier to driver data structures
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
 
-Thanks for the patch. Good catch, I wonder how this even worked. Just
-one minor nitpick below.
-
-Unfortunately I don't have any platform based on this SoC to test, so
-I'll defer to Krzysztof or Sylwester to handle this.
-
-Given the nitpick is fixed:
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
->  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-> index 00ab63abf1d9..d45028a75c0f 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-> @@ -117,6 +117,7 @@ struct exynos5440_pinctrl_priv_data {
->         unsigned int                    nr_groups;
->         const struct exynos5440_pmx_func        *pmx_functions;
->         unsigned int                    nr_functions;
-> +       struct pinctrl_gpio_range       range;
-
-It would be nice to also describe this field in the kerneldoc comment
-above the struct.
-
-Best regards,
-Tomasz
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 63c84a106c0b..72c3565d22ee 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -280,7 +280,7 @@ struct exynos_dsi {
+ 	spinlock_t transfer_lock; /* protects transfer_list */
+ 	struct list_head transfer_list;
+ 
+-	struct exynos_dsi_driver_data *driver_data;
++	const struct exynos_dsi_driver_data *driver_data;
+ 	struct device_node *bridge_node;
+ };
+ 
+@@ -532,15 +532,6 @@ static const struct of_device_id exynos_dsi_of_match[] = {
+ 	{ }
+ };
+ 
+-static inline struct exynos_dsi_driver_data *exynos_dsi_get_driver_data(
+-						struct platform_device *pdev)
+-{
+-	const struct of_device_id *of_id =
+-			of_match_device(exynos_dsi_of_match, &pdev->dev);
+-
+-	return (struct exynos_dsi_driver_data *)of_id->data;
+-}
+-
+ static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
+ {
+ 	if (wait_for_completion_timeout(&dsi->completed, msecs_to_jiffies(300)))
+@@ -564,7 +555,7 @@ static void exynos_dsi_reset(struct exynos_dsi *dsi)
+ static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
+ 		unsigned long fin, unsigned long fout, u8 *p, u16 *m, u8 *s)
+ {
+-	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	unsigned long best_freq = 0;
+ 	u32 min_delta = 0xffffffff;
+ 	u8 p_min, p_max;
+@@ -618,7 +609,7 @@ static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
+ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+ 					unsigned long freq)
+ {
+-	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	unsigned long fin, fout;
+ 	int timeout;
+ 	u8 p, s;
+@@ -712,7 +703,7 @@ static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
+ 
+ static void exynos_dsi_set_phy_ctrl(struct exynos_dsi *dsi)
+ {
+-	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	const unsigned int *reg_values = driver_data->reg_values;
+ 	u32 reg;
+ 
+@@ -790,7 +781,7 @@ static void exynos_dsi_enable_lane(struct exynos_dsi *dsi, u32 lane)
+ 
+ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+ {
+-	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	int timeout;
+ 	u32 reg;
+ 	u32 lanes_mask;
+@@ -1334,7 +1325,7 @@ static void exynos_dsi_disable_irq(struct exynos_dsi *dsi)
+ 
+ static int exynos_dsi_init(struct exynos_dsi *dsi)
+ {
+-	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 
+ 	exynos_dsi_reset(dsi);
+ 	exynos_dsi_enable_irq(dsi);
+@@ -1833,7 +1824,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	dsi->dsi_host.dev = dev;
+ 
+ 	dsi->dev = dev;
+-	dsi->driver_data = exynos_dsi_get_driver_data(pdev);
++	dsi->driver_data = of_device_get_match_data(dev);
+ 
+ 	ret = exynos_dsi_parse_dt(dsi);
+ 	if (ret)
+@@ -1917,7 +1908,7 @@ static int __maybe_unused exynos_dsi_suspend(struct device *dev)
+ {
+ 	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+-	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	int ret, i;
+ 
+ 	usleep_range(10000, 20000);
+@@ -1948,7 +1939,7 @@ static int __maybe_unused exynos_dsi_resume(struct device *dev)
+ {
+ 	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+-	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	int ret, i;
+ 
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
+-- 
+1.9.2
