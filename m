@@ -1,64 +1,122 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
-Date: Wed, 20 Apr 2016 17:33:45 +0900
-Message-ID: <CA+Ln22GOBfOfZNJH_3eyPLmmkt3hWGcUG=w27YUb4H2CbFzgcg@mail.gmail.com>
-References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
-	<5717281A.70906@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/2] i2c: s3c2410: Print errno code in error logs
+Date: Wed, 20 Apr 2016 11:01:14 +0200
+Message-ID: <5717455A.1000007@samsung.com>
+References: <1461096641-19788-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <5717281A.70906@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrew Jeffery <andrew@aj.id.au>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-reply-to: <1461096641-19788-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-04-20 15:56 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> On 04/20/2016 03:54 AM, Andrew Jeffery wrote:
->> The range is registered into a linked list which can be referenced
->> throughout the lifetime of the driver. Ensure the range's memory is useful
->> for the same lifetime by adding it to the driver's private data structure.
->>
->> The bug was introduced in the driver's initial commit, which was present in
->> v3.10.
->>
->> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
->> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
->> Cc: stable@vger.kernel.org
->> ---
->> Since v1:
->>
->> * Add range member kerneldoc addressing Tomasz Figa's comment
->>
->> This is my first contribution to the kernel, so hopefully I've followed all the
->> relevant documentation. If not, please let me know and point me in the right
->> direction!
->>
->> I don't have the means to test the patch, but it compiles. Someone with
->> appropriate hardware should probably give it a spin. From the responses it
->> seems that few might have access, and given the nature of the bug it might be
->> the case that no-one has complained because no-one is affected - is it worth
->> maintaining going forward?
->>
->>  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 ++++++++-------
->>  1 file changed, 8 insertions(+), 7 deletions(-)
->
-> Thank you for your contribution. You already received positive feedback
-> on v1 of this patch: Tomasz acked it ("acked-by") and I reviewed it
-> ("reviewed-by"). These are called "tags".
->
-> When you resubmit patches (unless there is a significant change in the
-> patch) please always put accumulated tags after existing tags. Usually
-> after signed-off-by, in this case after Cc-stable, so this would look like:
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for
-> Samsung EXYNOS5440 SoC")
-> Cc: stable@vger.kernel.org
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 04/19/2016 10:10 PM, Javier Martinez Canillas wrote:
+> The driver not always prints the error code in case of a failure but this
+> information can be very useful for debugging. So let's print if available.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+> Hello,
+> 
+> This patch and 2/2 were only build tested because I don't have access to
+> a board using this IP block. I just noticed these issues when comparing
+> the i2c-s3c2410 driver with i2c-exynos5 where I did some fixes recently.
+> 
+> I think the patches are simple enough that is safe to pick them but of
+> course testing will be highly appreciated.
+> 
+> Best regards,
+> Javier
+> 
+>  drivers/i2c/busses/i2c-s3c2410.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index 362a6de54833..4b873fe9a75b 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -944,7 +944,7 @@ static int s3c24xx_i2c_cpufreq_transition(struct notifier_block *nb,
+>  		i2c_unlock_adapter(&i2c->adap);
+>  
+>  		if (ret < 0)
+> -			dev_err(i2c->dev, "cannot find frequency\n");
+> +			dev_err(i2c->dev, "cannot find frequency (%d)\n", ret);
+>  		else
+>  			dev_info(i2c->dev, "setting freq %d\n", got);
+>  	}
+> @@ -995,7 +995,8 @@ static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
+>  
+>  		ret = gpio_request(gpio, "i2c-bus");
+>  		if (ret) {
+> -			dev_err(i2c->dev, "gpio [%d] request failed\n", gpio);
+> +			dev_err(i2c->dev, "gpio [%d] request failed (%d)\n",
+> +				gpio, ret);
+>  			goto free_gpio;
+>  		}
+>  	}
 
-In any case, I think this is ready for applying with the tags above. Thanks.
+The changes above are okay. Below - do not make sense. Just think...
+What do you want to improve? The probe failure already prints errno!
+
+
+Just look at crafted example (error triggered manually):
+[    0.135443] s3c-i2c 13860000.i2c: I2C clock enable failed (-100)
+[    0.135484] s3c-i2c: probe of 13860000.i2c failed with error -100
 
 Best regards,
-Tomasz
+Krzysztof
+
+> @@ -1199,7 +1200,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  	ret = s3c24xx_i2c_init(i2c);
+>  	clk_disable(i2c->clk);
+>  	if (ret != 0) {
+> -		dev_err(&pdev->dev, "I2C controller init failed\n");
+> +		dev_err(&pdev->dev, "I2C controller init failed (%d)\n", ret);
+>  		return ret;
+>  	}
+>  	/* find the IRQ for this unit (note, this relies on the init call to
+> @@ -1209,7 +1210,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  	if (!(i2c->quirks & QUIRK_POLL)) {
+>  		i2c->irq = ret = platform_get_irq(pdev, 0);
+>  		if (ret <= 0) {
+> -			dev_err(&pdev->dev, "cannot find IRQ\n");
+> +			dev_err(&pdev->dev, "cannot find IRQ (%d)\n", ret);
+>  			clk_unprepare(i2c->clk);
+>  			return ret;
+>  		}
+> @@ -1218,7 +1219,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  				dev_name(&pdev->dev), i2c);
+>  
+>  		if (ret != 0) {
+> -			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+> +			dev_err(&pdev->dev, "cannot claim IRQ %d (%d)\n",
+> +				i2c->irq, ret);
+>  			clk_unprepare(i2c->clk);
+>  			return ret;
+>  		}
+> @@ -1226,7 +1228,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  
+>  	ret = s3c24xx_i2c_register_cpufreq(i2c);
+>  	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
+> +		dev_err(&pdev->dev, "failed to register cpufreq notifier (%d)\n",
+> +			ret);
+>  		clk_unprepare(i2c->clk);
+>  		return ret;
+>  	}
+> @@ -1246,7 +1249,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  
+>  	ret = i2c_add_numbered_adapter(&i2c->adap);
+>  	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
+> +		dev_err(&pdev->dev, "failed to add bus to i2c core (%d)\n",
+> +			ret);
+>  		pm_runtime_disable(&pdev->dev);
+>  		s3c24xx_i2c_deregister_cpufreq(i2c);
+>  		clk_unprepare(i2c->clk);
+> 
