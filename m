@@ -1,42 +1,51 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 3/3] i2c: s3c2410: Cleanup indentation and comment style
-Date: Wed, 20 Apr 2016 10:02:44 -0400
-Message-ID: <57178C04.6090109@osg.samsung.com>
-References: <1461144292-22141-1-git-send-email-k.kozlowski@samsung.com>
- <1461144292-22141-3-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 2/2] i2c: s3c2410: Check clk_prepare_enable() return value
+Date: Wed, 20 Apr 2016 10:37:56 -0400
+Message-ID: <1461163076-5959-2-git-send-email-javier@osg.samsung.com>
+References: <1461163076-5959-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:50737 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:50938 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751783AbcDTOCw (ORCPT
+	id S1752893AbcDTOiX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Apr 2016 10:02:52 -0400
-In-Reply-To: <1461144292-22141-3-git-send-email-k.kozlowski@samsung.com>
+	Wed, 20 Apr 2016 10:38:23 -0400
+In-Reply-To: <1461163076-5959-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello Krzysztof,
+The clk_prepare_enable() function can fail so check the return
+value and propagate the error in case of a failure.
 
-On 04/20/2016 05:24 AM, Krzysztof Kozlowski wrote:
-> Improve the readability by:
->  - fixing indentation,
->  - switching to proper block comments,
->  - removing spurious blank lines,
->  - checkpatch: void function return statements are not generally useful
->  - checkpatch: braces {} are not necessary for any arm of this statement
->  - checkpatch: missing a blank line after declarations
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
 
-Best regards,
+Changes in v2:
+- Don't print the errno code since that's already printed by the
+  core when probe fails. Suggested by Krzysztof Kozlowski.
+
+ drivers/i2c/busses/i2c-s3c2410.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 13f67df65c45..8a9ea0c1e41d 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1196,7 +1196,12 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	/* initialise the i2c controller */
+ 
+-	clk_prepare_enable(i2c->clk);
++	ret = clk_prepare_enable(i2c->clk);
++	if (ret) {
++		dev_err(&pdev->dev, "I2C clock enable failed\n");
++		return ret;
++	}
++
+ 	ret = s3c24xx_i2c_init(i2c);
+ 	clk_disable(i2c->clk);
+ 	if (ret != 0) {
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.5.5
