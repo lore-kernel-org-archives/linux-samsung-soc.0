@@ -1,52 +1,62 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/3] drm/exynos: Use VIDEO_SAMSUNG_EXYNOS_GSC=n as GSC
- Kconfig dependency
-Date: Thu, 21 Apr 2016 09:46:17 -0400
-Message-ID: <5718D9A9.4040309@osg.samsung.com>
-References: <1459214937-18686-1-git-send-email-javier@osg.samsung.com>
- <1459214937-18686-3-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable Samsung media platform
+ drivers as modules
+Date: Thu, 21 Apr 2016 10:39:48 -0400
+Message-ID: <5718E634.3010902@osg.samsung.com>
+References: <1458779208-6144-1-git-send-email-javier@osg.samsung.com>
+ <56F33C46.8060501@samsung.com> <56F4AD53.2020307@osg.samsung.com>
+ <56F8B2D0.9010609@samsung.com> <56F8BD99.9050907@osg.samsung.com>
+ <56F94A79.4020808@osg.samsung.com> <56F9D982.8030800@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:60698 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:60988 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752041AbcDUNqa (ORCPT
+	id S1751761AbcDUOj5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Apr 2016 09:46:30 -0400
-In-Reply-To: <1459214937-18686-3-git-send-email-javier@osg.samsung.com>
+	Thu, 21 Apr 2016 10:39:57 -0400
+In-Reply-To: <56F9D982.8030800@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hello Inki,
+[adding Seung-Woo Kim to cc]
 
-On 03/28/2016 09:28 PM, Javier Martinez Canillas wrote:
-> Commit aeefb36832e5 ("drm/exynos: gsc: add device tree support and remove
-> usage of static mappings") made the DRM_EXYNOS_GSC Kconfig symbol to only
-> be selectable if the exynos-gsc V4L2 driver isn't enabled, since both use
-> the same HW IP block.
+Hello Krzysztof,
+
+On 03/28/2016 09:25 PM, Krzysztof Kozlowski wrote:
+> On 29.03.2016 00:15, Javier Martinez Canillas wrote:
+>> Tobias mentioned on IRC that the exynos4-is driver conflicts with the
+>> Exynos DRM driver since both exynos_drm_fimc and exynos-fimc-is use
+>> the FIMC block.
+>>
+>> So I think we should just discard $SUBJECT and instead add a Kconfig
+>> check to not allow both drivers to be built as suggested by Tobias.
+>>
+
+I posted the Kconfig change [0] but Seung-Woo explained [1] to me that
+there are several instances of the FIMC and device nodes can use the
+samsung,{isp,lcd}-wb properties to choose which instance to use.
+
+>> Like is the case for the other components (G2D, GSC, Mixer, etc).
 > 
-> But added the dependency as depends on !VIDEO_SAMSUNG_EXYNOS_GSC which is
-> not correct since Kconfig expressions are not boolean but tristate. So it
-> will only evaluate to 'n' if VIDEO_SAMSUNG_EXYNOS_GSC=y but will evaluate
-> to 'm' if VIDEO_SAMSUNG_S5P_G2D=m.
+> Roger that.
+>
+
+So enabling both the V4L2 and DRM drivers is a valid configuration and
+$SUBJECT should be picked after all. Sorry for the confusion.
+
+I'll re-post the patch and also include changes for multi_v7_defconfig
+in the same series.
+
+> BR,
+> Krzysztof
 > 
-> This means that both the V4L2 and DRM drivers can be enabled if the former
-> is enabled as a module, which is not what we want.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
 
-I see that only patch 1/3 from this series was picked but according to the
-conversation with Seung-Woo [0] in the cover letter, the GSC v4l2 and drm
-drivers don't support to be simultaneous enabled like is the case for FIMC.
-
-So patch 3/3 is the only one of the series that should be dropped and this
-one picked as well.
-
-[0]: https://lkml.org/lkml/2016/3/29/7
+[0]: https://lkml.org/lkml/2016/3/28/494
+[1]: https://lkml.org/lkml/2016/3/29/7
 
 Best regards,
 -- 
