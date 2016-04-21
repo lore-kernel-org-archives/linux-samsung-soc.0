@@ -1,60 +1,48 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] drm/exynos/hdmi: Don't print error on deferral due to
- regulators
-Date: Thu, 21 Apr 2016 14:51:38 -0400
-Message-ID: <1461264698-9890-1-git-send-email-javier@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH] ARM: EXYNOS: set clock parents of registered clocks on power-on
+Date: Thu, 21 Apr 2016 23:24:57 +0300
+Message-ID: <1461270297-31390-1-git-send-email-vz@mleia.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mleia.com ([178.79.152.223]:56959 "EHLO mail.mleia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752034AbcDUUZB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Apr 2016 16:25:01 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-VGhlIHJlZ3VsYXRvcnMgbWF5IG5vdCBiZSBhdmFpbGFibGUganVzdCBiZWNhdXNlIHRoZWlyIGRy
-aXZlcidzIHByb2JlCmZ1bmN0aW9uIHdhcyBqdXN0IG5vdCBleGVjdXRlZCBhbmQgc28gdGhlIHJl
-Z3VsYXRvcnMgbm90IHJlZ2lzdGVyZWQuCgpTbywgaW4gdGhpcyBjYXNlIHRoZSBFeHlub3MgSERN
-SSBkcml2ZXIgc2hvdWxkIG5vdCBwcmludCBsb2dzIHNpbmNlCmEgLUVQUk9CRV9ERUZFUiBpcyBu
-b3QgcmVhbGx5IGFuIGVycm9yIGFuZCB0aGF0IHdpbGwganVzdCBwb2xsdXRlCnRoZSBrZXJuZWwg
-bG9nIGFuZCBjb25mdXNlIHVzZXJzLgoKVGhpcyBwYXRjaCBwcmV2ZW50cyB0aGUgZm9sbG93aW5n
-IG1pc2xlYWRpbmcgbWVzc2FnZXMgdG8gYmUgcHJpbnRlZDoKClsgICAgMS40NDM2MzhdIFtkcm06
-aGRtaV9wcm9iZV0gKkVSUk9SKiBmYWlsZWQgdG8gZ2V0IHJlZ3VsYXRvcnMKWyAgICAxLjQ0OTMy
-Nl0gW2RybTpoZG1pX3Byb2JlXSAqRVJST1IqIGhkbWlfcmVzb3VyY2VzX2luaXQgZmFpbGVkCgpS
-ZXBvcnRlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+
-ClNpZ25lZC1vZmYtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1z
-dW5nLmNvbT4KCi0tLQoKVGhlIHJlYWwgZml4IGZvciB0aGVzZSBraW5kIG9mIGlzc3VlcyBpcyB0
-byBjaGFuZ2UgdGhlIGRldmljZSBtb2RlbApjb3JlIHRvIHN1cHBvcnQgZGV2aWNlIGRlcGVuZGVu
-Y2llcyBzbyB0aGUgbnVtYmVyIG9mIHByb2JlIGRlZmVycmFsCnNob3VsZCBiZSBtaW5pbWFsIG9y
-IG5vbi1leGlzdGVudCwgaW5zdGVhZCBvZiBmaXhpbmcgb24gZWFjaCBkcml2ZXIuCgpCdXQgdGhl
-cmUgaGF2ZSBiZWVuIGRpZmZlcmVudCBhdHRlbXB0cyBbMCwxXSB0byBpbXBsZW1lbnQgdGhpcyBh
-bmQKdGhlcmUgZG9lc24ndCBzZWVtIHRoYXQgdGhpcyB3aWxsIGJlIHNvbHZlZCBpbiB0aGUgc2hv
-cnQgdGVybS4KClswXTogaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTQvNS8xMi80NTIKWzFdOiBo
-dHRwczovL2xrbWwub3JnL2xrbWwvMjAxNS81LzI1LzI1MQoKIGRyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2hkbWkuYyB8IDYgKysrKy0tCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25z
-KCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRl
-eCBlMTQ4ZDcyOGUyOGMuLmRjYWM3OGI4YWExNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfaGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2hkbWkuYwpAQCAtMTcyOCw3ICsxNzI4LDggQEAgc3RhdGljIGludCBoZG1pX3Jlc291cmNlc19p
-bml0KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQogCX0KIAlyZXQgPSBkZXZtX3JlZ3VsYXRv
-cl9idWxrX2dldChkZXYsIEFSUkFZX1NJWkUoc3VwcGx5KSwgaGRhdGEtPnJlZ3VsX2J1bGspOwog
-CWlmIChyZXQpIHsKLQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gZ2V0IHJlZ3VsYXRvcnNcbiIpOwor
-CQlpZiAocmV0ICE9IC1FUFJPQkVfREVGRVIpCisJCQlEUk1fRVJST1IoImZhaWxlZCB0byBnZXQg
-cmVndWxhdG9yc1xuIik7CiAJCXJldHVybiByZXQ7CiAJfQogCkBAIC0xODUyLDcgKzE4NTMsOCBA
-QCBzdGF0aWMgaW50IGhkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAog
-CXJldCA9IGhkbWlfcmVzb3VyY2VzX2luaXQoaGRhdGEpOwogCWlmIChyZXQpIHsKLQkJRFJNX0VS
-Uk9SKCJoZG1pX3Jlc291cmNlc19pbml0IGZhaWxlZFxuIik7CisJCWlmIChyZXQgIT0gLUVQUk9C
-RV9ERUZFUikKKwkJCURSTV9FUlJPUigiaGRtaV9yZXNvdXJjZXNfaW5pdCBmYWlsZWRcbiIpOwog
-CQlyZXR1cm4gcmV0OwogCX0KIAotLSAKMi41LjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+If any of the clocks from stored on power down list are not registered
+by chance, on power-on the for-loop of reassigning the clock parents
+back from "oscclk" exits and the remaining clocks don't have a chance
+to restore an original parent clock.
+
+Fixes: 29e5eea06bc1 ("ARM: EXYNOS: Get current parent clock for power domain on/off")
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+Hi Krzysztof,
+
+this is a functional and _untested_ change, but I hope it is okay,
+please review. Here "if (a) break; if (a) continue;" code is quite
+confusing.
+
+ arch/arm/mach-exynos/pm_domains.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 7c21760..6a9993e 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -90,9 +90,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 	if (power_on) {
+ 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+ 			if (IS_ERR(pd->clk[i]))
+-				break;
+-
+-			if (IS_ERR(pd->clk[i]))
+ 				continue; /* Skip on first power up */
+ 			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
+ 				pr_err("%s: error setting parent to clock%d\n",
+-- 
+2.1.4
