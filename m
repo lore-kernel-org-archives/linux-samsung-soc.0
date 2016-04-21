@@ -1,48 +1,101 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH] ARM: EXYNOS: set clock parents of registered clocks on power-on
-Date: Thu, 21 Apr 2016 23:24:57 +0300
-Message-ID: <1461270297-31390-1-git-send-email-vz@mleia.com>
+From: "Kim, Milo" <milo.kim@ti.com>
+Subject: Re: [PATCH 2/7] mfd: lp8788: Use devm_mfd_add_devices and
+ devm_regmap_add_irq_chip
+Date: Fri, 22 Apr 2016 08:15:38 +0900
+Message-ID: <57195F1A.7070506@ti.com>
+References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com>
+ <1461241558-26983-3-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:56959 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752034AbcDUUZB (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:38332 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751604AbcDUXPu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Apr 2016 16:25:01 -0400
+	Thu, 21 Apr 2016 19:15:50 -0400
+In-Reply-To: <1461241558-26983-3-git-send-email-ldewangan@nvidia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com
+Cc: lee.jones@linaro.org, cw00.choi@samsung.com, sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-If any of the clocks from stored on power down list are not registered
-by chance, on power-on the for-loop of reassigning the clock parents
-back from "oscclk" exits and the remaining clocks don't have a chance
-to restore an original parent clock.
+Hi Laxman,
 
-Fixes: 29e5eea06bc1 ("ARM: EXYNOS: Get current parent clock for power domain on/off")
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
-Hi Krzysztof,
+On 4/21/2016 9:25 PM, Laxman Dewangan wrote:
+> Use devm_mfd_add_devices() for adding MFD child devices and
+> devm_regmap_add_irq_chip() for IRQ chip registration.
 
-this is a functional and _untested_ change, but I hope it is okay,
-please review. Here "if (a) break; if (a) continue;" code is quite
-confusing.
+This patch doesn't include the code regarding devm_mfd_add_devices(). 
+Could you check it again? Or am I missing any previous patches?
 
- arch/arm/mach-exynos/pm_domains.c | 3 ---
- 1 file changed, 3 deletions(-)
+>
+> This reduces the error code path and .remove callback for removing
+> MFD child devices and deleting IRQ chip data.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Milo Kim <milo.kim@ti.com>
+> ---
+>   drivers/mfd/lp8788-irq.c | 12 +++---------
+>   drivers/mfd/lp8788.c     | 10 ----------
+>   2 files changed, 3 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/mfd/lp8788-irq.c b/drivers/mfd/lp8788-irq.c
+> index 792d51b..aacd39f 100644
+> --- a/drivers/mfd/lp8788-irq.c
+> +++ b/drivers/mfd/lp8788-irq.c
+> @@ -175,9 +175,9 @@ int lp8788_irq_init(struct lp8788 *lp, int irq)
+>   	lp->irqdm = irqd->domain;
+>   	mutex_init(&irqd->irq_lock);
+>
+> -	ret = request_threaded_irq(irq, NULL, lp8788_irq_handler,
+> -				IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> -				"lp8788-irq", irqd);
+> +	ret = devm_request_threaded_irq(lp->dev, irq, NULL, lp8788_irq_handler,
+> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> +					"lp8788-irq", irqd);
+>   	if (ret) {
+>   		dev_err(lp->dev, "failed to create a thread for IRQ_N\n");
+>   		return ret;
+> @@ -187,9 +187,3 @@ int lp8788_irq_init(struct lp8788 *lp, int irq)
+>
+>   	return 0;
+>   }
+> -
+> -void lp8788_irq_exit(struct lp8788 *lp)
+> -{
+> -	if (lp->irq)
+> -		free_irq(lp->irq, lp->irqdm);
+> -}
+> diff --git a/drivers/mfd/lp8788.c b/drivers/mfd/lp8788.c
+> index acf6165..37fea46 100644
+> --- a/drivers/mfd/lp8788.c
+> +++ b/drivers/mfd/lp8788.c
+> @@ -203,15 +203,6 @@ static int lp8788_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+>   			       ARRAY_SIZE(lp8788_devs), NULL, 0, NULL);
+>   }
+>
+> -static int lp8788_remove(struct i2c_client *cl)
+> -{
+> -	struct lp8788 *lp = i2c_get_clientdata(cl);
+> -
+> -	mfd_remove_devices(lp->dev);
+> -	lp8788_irq_exit(lp);
+> -	return 0;
+> -}
+> -
+>   static const struct i2c_device_id lp8788_ids[] = {
+>   	{"lp8788", 0},
+>   	{ }
+> @@ -223,7 +214,6 @@ static struct i2c_driver lp8788_driver = {
+>   		.name = "lp8788",
+>   	},
+>   	.probe = lp8788_probe,
+> -	.remove = lp8788_remove,
+>   	.id_table = lp8788_ids,
+>   };
+>
+>
 
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 7c21760..6a9993e 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -90,9 +90,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	if (power_on) {
- 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
- 			if (IS_ERR(pd->clk[i]))
--				break;
--
--			if (IS_ERR(pd->clk[i]))
- 				continue; /* Skip on first power up */
- 			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
- 				pr_err("%s: error setting parent to clock%d\n",
--- 
-2.1.4
+Best regards,
+Milo
