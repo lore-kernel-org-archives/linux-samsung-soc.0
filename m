@@ -1,65 +1,60 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable Samsung media platform
- drivers as modules
-Date: Thu, 21 Apr 2016 10:39:48 -0400
-Message-ID: <5718E634.3010902@osg.samsung.com>
-References: <1458779208-6144-1-git-send-email-javier@osg.samsung.com>
- <56F33C46.8060501@samsung.com> <56F4AD53.2020307@osg.samsung.com>
- <56F8B2D0.9010609@samsung.com> <56F8BD99.9050907@osg.samsung.com>
- <56F94A79.4020808@osg.samsung.com> <56F9D982.8030800@samsung.com>
+Subject: [PATCH] drm/exynos/hdmi: Don't print error on deferral due to
+ regulators
+Date: Thu, 21 Apr 2016 14:51:38 -0400
+Message-ID: <1461264698-9890-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:60988 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751761AbcDUOj5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Apr 2016 10:39:57 -0400
-In-Reply-To: <56F9D982.8030800@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-[adding Seung-Woo Kim to cc]
-
-Hello Krzysztof,
-
-On 03/28/2016 09:25 PM, Krzysztof Kozlowski wrote:
-> On 29.03.2016 00:15, Javier Martinez Canillas wrote:
->> Tobias mentioned on IRC that the exynos4-is driver conflicts with the
->> Exynos DRM driver since both exynos_drm_fimc and exynos-fimc-is use
->> the FIMC block.
->>
->> So I think we should just discard $SUBJECT and instead add a Kconfig
->> check to not allow both drivers to be built as suggested by Tobias.
->>
-
-I posted the Kconfig change [0] but Seung-Woo explained [1] to me that
-there are several instances of the FIMC and device nodes can use the
-samsung,{isp,lcd}-wb properties to choose which instance to use.
-
->> Like is the case for the other components (G2D, GSC, Mixer, etc).
-> 
-> Roger that.
->
-
-So enabling both the V4L2 and DRM drivers is a valid configuration and
-$SUBJECT should be picked after all. Sorry for the confusion.
-
-I'll re-post the patch and also include changes for multi_v7_defconfig
-in the same series.
-
-> BR,
-> Krzysztof
-> 
-
-[0]: https://lkml.org/lkml/2016/3/28/494
-[1]: https://lkml.org/lkml/2016/3/29/7
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+VGhlIHJlZ3VsYXRvcnMgbWF5IG5vdCBiZSBhdmFpbGFibGUganVzdCBiZWNhdXNlIHRoZWlyIGRy
+aXZlcidzIHByb2JlCmZ1bmN0aW9uIHdhcyBqdXN0IG5vdCBleGVjdXRlZCBhbmQgc28gdGhlIHJl
+Z3VsYXRvcnMgbm90IHJlZ2lzdGVyZWQuCgpTbywgaW4gdGhpcyBjYXNlIHRoZSBFeHlub3MgSERN
+SSBkcml2ZXIgc2hvdWxkIG5vdCBwcmludCBsb2dzIHNpbmNlCmEgLUVQUk9CRV9ERUZFUiBpcyBu
+b3QgcmVhbGx5IGFuIGVycm9yIGFuZCB0aGF0IHdpbGwganVzdCBwb2xsdXRlCnRoZSBrZXJuZWwg
+bG9nIGFuZCBjb25mdXNlIHVzZXJzLgoKVGhpcyBwYXRjaCBwcmV2ZW50cyB0aGUgZm9sbG93aW5n
+IG1pc2xlYWRpbmcgbWVzc2FnZXMgdG8gYmUgcHJpbnRlZDoKClsgICAgMS40NDM2MzhdIFtkcm06
+aGRtaV9wcm9iZV0gKkVSUk9SKiBmYWlsZWQgdG8gZ2V0IHJlZ3VsYXRvcnMKWyAgICAxLjQ0OTMy
+Nl0gW2RybTpoZG1pX3Byb2JlXSAqRVJST1IqIGhkbWlfcmVzb3VyY2VzX2luaXQgZmFpbGVkCgpS
+ZXBvcnRlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+
+ClNpZ25lZC1vZmYtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1z
+dW5nLmNvbT4KCi0tLQoKVGhlIHJlYWwgZml4IGZvciB0aGVzZSBraW5kIG9mIGlzc3VlcyBpcyB0
+byBjaGFuZ2UgdGhlIGRldmljZSBtb2RlbApjb3JlIHRvIHN1cHBvcnQgZGV2aWNlIGRlcGVuZGVu
+Y2llcyBzbyB0aGUgbnVtYmVyIG9mIHByb2JlIGRlZmVycmFsCnNob3VsZCBiZSBtaW5pbWFsIG9y
+IG5vbi1leGlzdGVudCwgaW5zdGVhZCBvZiBmaXhpbmcgb24gZWFjaCBkcml2ZXIuCgpCdXQgdGhl
+cmUgaGF2ZSBiZWVuIGRpZmZlcmVudCBhdHRlbXB0cyBbMCwxXSB0byBpbXBsZW1lbnQgdGhpcyBh
+bmQKdGhlcmUgZG9lc24ndCBzZWVtIHRoYXQgdGhpcyB3aWxsIGJlIHNvbHZlZCBpbiB0aGUgc2hv
+cnQgdGVybS4KClswXTogaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTQvNS8xMi80NTIKWzFdOiBo
+dHRwczovL2xrbWwub3JnL2xrbWwvMjAxNS81LzI1LzI1MQoKIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2hkbWkuYyB8IDYgKysrKy0tCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25z
+KCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRl
+eCBlMTQ4ZDcyOGUyOGMuLmRjYWM3OGI4YWExNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfaGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2hkbWkuYwpAQCAtMTcyOCw3ICsxNzI4LDggQEAgc3RhdGljIGludCBoZG1pX3Jlc291cmNlc19p
+bml0KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQogCX0KIAlyZXQgPSBkZXZtX3JlZ3VsYXRv
+cl9idWxrX2dldChkZXYsIEFSUkFZX1NJWkUoc3VwcGx5KSwgaGRhdGEtPnJlZ3VsX2J1bGspOwog
+CWlmIChyZXQpIHsKLQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gZ2V0IHJlZ3VsYXRvcnNcbiIpOwor
+CQlpZiAocmV0ICE9IC1FUFJPQkVfREVGRVIpCisJCQlEUk1fRVJST1IoImZhaWxlZCB0byBnZXQg
+cmVndWxhdG9yc1xuIik7CiAJCXJldHVybiByZXQ7CiAJfQogCkBAIC0xODUyLDcgKzE4NTMsOCBA
+QCBzdGF0aWMgaW50IGhkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAog
+CXJldCA9IGhkbWlfcmVzb3VyY2VzX2luaXQoaGRhdGEpOwogCWlmIChyZXQpIHsKLQkJRFJNX0VS
+Uk9SKCJoZG1pX3Jlc291cmNlc19pbml0IGZhaWxlZFxuIik7CisJCWlmIChyZXQgIT0gLUVQUk9C
+RV9ERUZFUikKKwkJCURSTV9FUlJPUigiaGRtaV9yZXNvdXJjZXNfaW5pdCBmYWlsZWRcbiIpOwog
+CQlyZXR1cm4gcmV0OwogCX0KIAotLSAKMi41LjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
