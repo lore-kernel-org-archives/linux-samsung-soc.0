@@ -1,40 +1,58 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 2/2] i2c: s3c2410: Check clk_prepare_enable() return
- value
-Date: Thu, 21 Apr 2016 09:19:39 +0200
-Message-ID: <57187F0B.3000002@samsung.com>
-References: <1461163076-5959-1-git-send-email-javier@osg.samsung.com>
- <1461163076-5959-2-git-send-email-javier@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-reply-to: <1461163076-5959-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v3] serial: samsung: Reorder the sequence of clock control when
+ call s3c24xx_serial_set_termios()
+Date: Thu, 21 Apr 2016 18:58:31 +0900
+Message-ID: <1461232711-4159-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:50297 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750989AbcDUJ6g (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Apr 2016 05:58:36 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, m.szyprowski@samsung.com, cw00.choi@samsung.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 04/20/2016 04:37 PM, Javier Martinez Canillas wrote:
-> The clk_prepare_enable() function can fail so check the return
-> value and propagate the error in case of a failure.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Don't print the errno code since that's already printed by the
->   core when probe fails. Suggested by Krzysztof Kozlowski.
-> 
->  drivers/i2c/busses/i2c-s3c2410.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+This patch fixes the broken serial log when changing the clock source
+of uart device. Before disabling the original clock source, this patch
+enables the new clock source to protect the clock off state for a split second.
 
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Changes from v2:
+- Add reviewd-by tag from Marek Szyprowski 
+- No changes about operation
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Changes from v1:
+- Enable the clock before changing the source by s3c24xx_serial_setsource()
+- Rebase it on Linux v4.6-rc1
 
-Tested on Trats2 (Exynos4412, samsung,s3c2440-i2c)
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+ drivers/tty/serial/samsung.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index ac7f8df54406..99bb23161dd6 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1271,6 +1271,8 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	/* check to see if we need  to change clock source */
+ 
+ 	if (ourport->baudclk != clk) {
++		clk_prepare_enable(clk);
++
+ 		s3c24xx_serial_setsource(port, clk_sel);
+ 
+ 		if (!IS_ERR(ourport->baudclk)) {
+@@ -1278,8 +1280,6 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 			ourport->baudclk = ERR_PTR(-EINVAL);
+ 		}
+ 
+-		clk_prepare_enable(clk);
+-
+ 		ourport->baudclk = clk;
+ 		ourport->baudclk_rate = clk ? clk_get_rate(clk) : 0;
+ 	}
+-- 
+1.9.1
