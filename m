@@ -1,101 +1,58 @@
-From: "Kim, Milo" <milo.kim@ti.com>
-Subject: Re: [PATCH 2/7] mfd: lp8788: Use devm_mfd_add_devices and
- devm_regmap_add_irq_chip
-Date: Fri, 22 Apr 2016 08:15:38 +0900
-Message-ID: <57195F1A.7070506@ti.com>
-References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com>
- <1461241558-26983-3-git-send-email-ldewangan@nvidia.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] drm/exynos/hdmi: Don't print error on deferral due to
+ regulators
+Date: Fri, 22 Apr 2016 07:28:14 +0200
+Message-ID: <5719B66E.9000703@samsung.com>
+References: <1461264698-9890-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:38332 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751604AbcDUXPu (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48604 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751470AbcDVF2T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Apr 2016 19:15:50 -0400
-In-Reply-To: <1461241558-26983-3-git-send-email-ldewangan@nvidia.com>
+	Fri, 22 Apr 2016 01:28:19 -0400
+In-reply-to: <1461264698-9890-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com
-Cc: lee.jones@linaro.org, cw00.choi@samsung.com, sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hi Laxman,
-
-On 4/21/2016 9:25 PM, Laxman Dewangan wrote:
-> Use devm_mfd_add_devices() for adding MFD child devices and
-> devm_regmap_add_irq_chip() for IRQ chip registration.
-
-This patch doesn't include the code regarding devm_mfd_add_devices(). 
-Could you check it again? Or am I missing any previous patches?
-
->
-> This reduces the error code path and .remove callback for removing
-> MFD child devices and deleting IRQ chip data.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Milo Kim <milo.kim@ti.com>
+On 04/21/2016 08:51 PM, Javier Martinez Canillas wrote:
+> The regulators may not be available just because their driver's probe
+> function was just not executed and so the regulators not registered.
+> 
+> So, in this case the Exynos HDMI driver should not print logs since
+> a -EPROBE_DEFER is not really an error and that will just pollute
+> the kernel log and confuse users.
+> 
+> This patch prevents the following misleading messages to be printed:
+> 
+> [    1.443638] [drm:hdmi_probe] *ERROR* failed to get regulators
+> [    1.449326] [drm:hdmi_probe] *ERROR* hdmi_resources_init failed
+> 
+> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
 > ---
->   drivers/mfd/lp8788-irq.c | 12 +++---------
->   drivers/mfd/lp8788.c     | 10 ----------
->   2 files changed, 3 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/mfd/lp8788-irq.c b/drivers/mfd/lp8788-irq.c
-> index 792d51b..aacd39f 100644
-> --- a/drivers/mfd/lp8788-irq.c
-> +++ b/drivers/mfd/lp8788-irq.c
-> @@ -175,9 +175,9 @@ int lp8788_irq_init(struct lp8788 *lp, int irq)
->   	lp->irqdm = irqd->domain;
->   	mutex_init(&irqd->irq_lock);
->
-> -	ret = request_threaded_irq(irq, NULL, lp8788_irq_handler,
-> -				IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> -				"lp8788-irq", irqd);
-> +	ret = devm_request_threaded_irq(lp->dev, irq, NULL, lp8788_irq_handler,
-> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> +					"lp8788-irq", irqd);
->   	if (ret) {
->   		dev_err(lp->dev, "failed to create a thread for IRQ_N\n");
->   		return ret;
-> @@ -187,9 +187,3 @@ int lp8788_irq_init(struct lp8788 *lp, int irq)
->
->   	return 0;
->   }
-> -
-> -void lp8788_irq_exit(struct lp8788 *lp)
-> -{
-> -	if (lp->irq)
-> -		free_irq(lp->irq, lp->irqdm);
-> -}
-> diff --git a/drivers/mfd/lp8788.c b/drivers/mfd/lp8788.c
-> index acf6165..37fea46 100644
-> --- a/drivers/mfd/lp8788.c
-> +++ b/drivers/mfd/lp8788.c
-> @@ -203,15 +203,6 @@ static int lp8788_probe(struct i2c_client *cl, const struct i2c_device_id *id)
->   			       ARRAY_SIZE(lp8788_devs), NULL, 0, NULL);
->   }
->
-> -static int lp8788_remove(struct i2c_client *cl)
-> -{
-> -	struct lp8788 *lp = i2c_get_clientdata(cl);
-> -
-> -	mfd_remove_devices(lp->dev);
-> -	lp8788_irq_exit(lp);
-> -	return 0;
-> -}
-> -
->   static const struct i2c_device_id lp8788_ids[] = {
->   	{"lp8788", 0},
->   	{ }
-> @@ -223,7 +214,6 @@ static struct i2c_driver lp8788_driver = {
->   		.name = "lp8788",
->   	},
->   	.probe = lp8788_probe,
-> -	.remove = lp8788_remove,
->   	.id_table = lp8788_ids,
->   };
->
->
+> 
+> The real fix for these kind of issues is to change the device model
+> core to support device dependencies so the number of probe deferral
+> should be minimal or non-existent, instead of fixing on each driver.
+> 
+> But there have been different attempts [0,1] to implement this and
+> there doesn't seem that this will be solved in the short term.
+> 
+> [0]: https://lkml.org/lkml/2014/5/12/452
+> [1]: https://lkml.org/lkml/2015/5/25/251
+> 
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+
+Since I like to look at 'dmesg -l err' then I find this useful:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
-Milo
+Krzysztof
