@@ -1,49 +1,35 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Properly skip unitialized parent clock in power
- domain on
-Date: Fri, 22 Apr 2016 09:39:18 +0200
-Message-ID: <1461310758-20615-1-git-send-email-k.kozlowski@samsung.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 2/7] mfd: lp8788: Use devm_mfd_add_devices and devm_regmap_add_irq_chip
+Date: Fri, 22 Apr 2016 14:20:36 +0530
+Message-ID: <5719E5DC.8040305@nvidia.com>
+References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com> <1461241558-26983-3-git-send-email-ldewangan@nvidia.com> <57195F1A.7070506@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:53643 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751465AbcDVHj2 (ORCPT
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12630 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753537AbcDVJCT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Apr 2016 03:39:28 -0400
+	Fri, 22 Apr 2016 05:02:19 -0400
+In-Reply-To: <57195F1A.7070506@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: "Kim, Milo" <milo.kim@ti.com>, k.kozlowski@samsung.com
+Cc: lee.jones@linaro.org, cw00.choi@samsung.com, sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-We want to skip reparenting a clock on turning on power domain, if we
-do not have the parent yet. The parent is obtained when turning the
-domain off. However due to a typo, the loop is continued on IS_ERR() of
-clock being reparented, not on the IS_ERR() of the parent.
 
-Theoretically this could lead to OOPS on first turn on of a power
-domain, if there was no turn off before. Practically that should never
-happen because all power domains are turned on by default (reset value,
-bootloader does not turn off them usually) so the first action will be
-always turn off.
+On Friday 22 April 2016 04:45 AM, Kim, Milo wrote:
+> Hi Laxman,
+>
+> On 4/21/2016 9:25 PM, Laxman Dewangan wrote:
+>> Use devm_mfd_add_devices() for adding MFD child devices and
+>> devm_regmap_add_irq_chip() for IRQ chip registration.
+>
+> This patch doesn't include the code regarding devm_mfd_add_devices(). 
+> Could you check it again? Or am I missing any previous patches?
 
-Fixes: 29e5eea06bc1 ("ARM: EXYNOS: Get current parent clock for power domain on/off")
-Reported-by: Vladimir Zapolskiy <vz@mleia.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/pm_domains.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 7c21760f590f..875a2bab64f6 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -92,7 +92,7 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 			if (IS_ERR(pd->clk[i]))
- 				break;
- 
--			if (IS_ERR(pd->clk[i]))
-+			if (IS_ERR(pd->pclk[i]))
- 				continue; /* Skip on first power up */
- 			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
- 				pr_err("%s: error setting parent to clock%d\n",
--- 
-1.9.1
+Sigh.. yaah, it is missed. Dont know how I missed it in my grep result.
+I will recycle the patch. But I like to get review other patches also 
+for V2. External code review is more stronger then self code review.
