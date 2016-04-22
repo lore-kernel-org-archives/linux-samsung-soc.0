@@ -1,58 +1,65 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] drm/exynos/hdmi: Don't print error on deferral due to
- regulators
-Date: Fri, 22 Apr 2016 07:28:14 +0200
-Message-ID: <5719B66E.9000703@samsung.com>
-References: <1461264698-9890-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: set clock parents of registered clocks on
+ power-on
+Date: Fri, 22 Apr 2016 08:55:07 +0200
+Message-ID: <5719CACB.2060702@samsung.com>
+References: <1461270297-31390-1-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48604 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:51254 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470AbcDVF2T (ORCPT
+	with ESMTP id S1751863AbcDVGzM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Apr 2016 01:28:19 -0400
-In-reply-to: <1461264698-9890-1-git-send-email-javier@osg.samsung.com>
+	Fri, 22 Apr 2016 02:55:12 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O60000ASWJW3150@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Apr 2016 07:55:08 +0100 (BST)
+In-reply-to: <1461270297-31390-1-git-send-email-vz@mleia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>
+To: Vladimir Zapolskiy <vz@mleia.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 04/21/2016 08:51 PM, Javier Martinez Canillas wrote:
-> The regulators may not be available just because their driver's probe
-> function was just not executed and so the regulators not registered.
+On 04/21/2016 10:24 PM, Vladimir Zapolskiy wrote:
+> If any of the clocks from stored on power down list are not registered
+> by chance, on power-on the for-loop of reassigning the clock parents
+> back from "oscclk" exits and the remaining clocks don't have a chance
+> to restore an original parent clock.
 > 
-> So, in this case the Exynos HDMI driver should not print logs since
-> a -EPROBE_DEFER is not really an error and that will just pollute
-> the kernel log and confuse users.
-> 
-> This patch prevents the following misleading messages to be printed:
-> 
-> [    1.443638] [drm:hdmi_probe] *ERROR* failed to get regulators
-> [    1.449326] [drm:hdmi_probe] *ERROR* hdmi_resources_init failed
-> 
-> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
+> Fixes: 29e5eea06bc1 ("ARM: EXYNOS: Get current parent clock for power domain on/off")
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 > ---
+> Hi Krzysztof,
 > 
-> The real fix for these kind of issues is to change the device model
-> core to support device dependencies so the number of probe deferral
-> should be minimal or non-existent, instead of fixing on each driver.
+> this is a functional and _untested_ change, but I hope it is okay,
+> please review. Here "if (a) break; if (a) continue;" code is quite
+> confusing.
 > 
-> But there have been different attempts [0,1] to implement this and
-> there doesn't seem that this will be solved in the short term.
+>  arch/arm/mach-exynos/pm_domains.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> [0]: https://lkml.org/lkml/2014/5/12/452
-> [1]: https://lkml.org/lkml/2015/5/25/251
-> 
->  drivers/gpu/drm/exynos/exynos_hdmi.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> index 7c21760..6a9993e 100644
+> --- a/arch/arm/mach-exynos/pm_domains.c
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -90,9 +90,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+>  	if (power_on) {
+>  		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+>  			if (IS_ERR(pd->clk[i]))
+> -				break;
+> -
+> -			if (IS_ERR(pd->clk[i]))
+>  				continue; /* Skip on first power up */
 
-Since I like to look at 'dmesg -l err' then I find this useful:
+Nice finding! It looks like my mistake during rebasing (automatic
+conflict resolution). Anyway I am pretty sure that idea was here to
+continue on pd->pclk (not clk) error.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I will confirm this and send appropriate patch with your reported-by.
 
 Best regards,
 Krzysztof
