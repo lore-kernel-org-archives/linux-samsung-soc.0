@@ -1,40 +1,41 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/5] ARM: dts: exynos: DT for v4.7
-Date: Sun, 24 Apr 2016 23:18:58 +0200
-Message-ID: <5773702.Vl2lnk0PfR@wuerfel>
-References: <1460541682-32417-1-git-send-email-k.kozlowski@samsung.com> <1460541682-32417-3-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH] i2c: s3c2410: fix indentation for better readability
+Date: Sun, 24 Apr 2016 23:28:11 +0200
+Message-ID: <1461533338-17479-1-git-send-email-wsa@the-dreams.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:53604 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753198AbcDXVTg (ORCPT
+Received: from sauhun.de ([89.238.76.85]:41049 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753124AbcDXV3J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 24 Apr 2016 17:19:36 -0400
-In-Reply-To: <1460541682-32417-3-git-send-email-k.kozlowski@samsung.com>
+	Sun, 24 Apr 2016 17:29:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Wednesday 13 April 2016 12:01:19 Krzysztof Kozlowski wrote:
-> Samsung Device Tree updates and improvements for v4.7:
-> 1. Enable accelerated AES (Security SubSystem) on Exynos4412-based boards.
-> 2. Enable HDMI CEC on Exynos4412-based Odroid.
-> 3. Add regulator supplies for eMMC/SD on Odroid XU3/XU4.
-> 4. Fix DTC unit name warnings.
-> 5. Merge topic branch of new Artik5 board.
-> 
+smatch rightfully says:
 
-Pulled into next/dt. Thanks for splitting this into a separate branch
-aside from the Artik5 stuff, that makes sense. Two minor things you
-could have done even better:
+drivers/i2c/busses/i2c-s3c2410.c:1217 s3c24xx_i2c_probe() warn: inconsistent indenting
 
-- split out the DTC unit name warning fixes into yet another branch,
-  as there are lots of them and they are unrelated to the rest
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-- not merge the Artik5 changes into this, but let us deal with
-  any conflicts ourselves.
-
-	Arnd
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 1bc756313cb8e4..315c88ea1fa153 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1214,8 +1214,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 			return ret;
+ 		}
+ 
+-	ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+-				dev_name(&pdev->dev), i2c);
++		ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
++				       dev_name(&pdev->dev), i2c);
+ 
+ 		if (ret != 0) {
+ 			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+-- 
+2.7.0
