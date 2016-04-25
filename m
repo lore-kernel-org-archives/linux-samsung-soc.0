@@ -1,76 +1,57 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v1 6/8] drm/bridge: analogix_dp: introduce connector mode_valid callback to plat driver
-Date: Mon, 25 Apr 2016 19:36:29 +0800
-Message-ID: <1461584189-6252-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v1 7/8] drm: rockchip: analogix_dp: correct the connector
+ display color format and bpc
+Date: Mon, 25 Apr 2016 19:38:32 +0800
+Message-ID: <1461584312-6297-1-git-send-email-ykk@rock-chips.com>
 References: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:40794 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754225AbcDYLii (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 07:38:38 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Mark Yao <yzq@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-It's helpful to expand the mode_valid callback to platform driver,
-so they could valid the display mode or information.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 15 +++++++++++++++
- include/drm/bridge/analogix_dp.h                   |  4 ++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 4a1b3b8..5af9ce4 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -943,6 +943,20 @@ int analogix_dp_get_modes(struct drm_connector *connector)
- 	return num_modes;
- }
- 
-+static enum drm_mode_status
-+analogix_dp_mode_valid(struct drm_connector *connector,
-+		       struct drm_display_mode *mode)
-+{
-+	struct analogix_dp_device *dp = to_dp(connector);
-+	enum drm_mode_status status = MODE_OK;
-+
-+	if (dp->plat_data->mode_valid)
-+		status = dp->plat_data->mode_valid(dp->plat_data, connector,
-+						   mode);
-+
-+	return status;
-+}
-+
- static struct drm_encoder *
- analogix_dp_best_encoder(struct drm_connector *connector)
- {
-@@ -954,6 +968,7 @@ analogix_dp_best_encoder(struct drm_connector *connector)
- static const struct drm_connector_helper_funcs analogix_dp_connector_helper_funcs = {
- 	.get_modes = analogix_dp_get_modes,
- 	.best_encoder = analogix_dp_best_encoder,
-+	.mode_valid = analogix_dp_mode_valid,
- };
- 
- enum drm_connector_status
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 9e5d013..f5348e6 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -29,6 +29,10 @@ struct analogix_dp_plat_data {
- 	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
- 		      struct drm_connector *);
- 	int (*get_modes)(struct analogix_dp_plat_data *);
-+
-+	enum drm_mode_status (*mode_valid)(struct analogix_dp_plat_data *,
-+					   struct drm_connector *,
-+					   struct drm_display_mode *);
- };
- 
- int analogix_dp_resume(struct device *dev);
--- 
-1.9.1
+Um9ja2NoaXAgVk9QIGNvdWxkbid0IG91dHB1dCBZVVYgdmlkZW8gZm9ybWF0IGZvciBlRFAgY29u
+dHJvbGxlciwgc28Kd2hlbiBkcml2ZXIgZGV0ZWN0IGNvbm5lY3RvciBzdXBwb3J0IFlVViB2aWRl
+byBmb3JtYXQsIHdlIG5lZWQgdG8gaGFjawppdCBkb3duIHRvIFJHQjg4OC4KClNpZ25lZC1vZmYt
+Ynk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+cm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyB8IDE5ICsrKysrKysrKysrKysrKysrKysK
+IDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+cm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwppbmRleCBhZGIzOGIyLi5hNTFlMDg2IDEw
+MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAu
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwpA
+QCAtMTAyLDYgKzEwMiwyNCBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX3Bvd2VyZG93bihzdHJ1
+Y3QgYW5hbG9naXhfZHBfcGxhdF9kYXRhICpwbGF0X2RhdGEpCiAJcmV0dXJuIDA7CiB9CiAKK3N0
+YXRpYyBlbnVtIGRybV9tb2RlX3N0YXR1cworcm9ja2NoaXBfZHBfbW9kZV92YWxpZChzdHJ1Y3Qg
+YW5hbG9naXhfZHBfcGxhdF9kYXRhICpwbGF0X2RhdGEsCisJCSAgICAgICBzdHJ1Y3QgZHJtX2Nv
+bm5lY3RvciAqY29ubmVjdG9yLAorCQkgICAgICAgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1v
+ZGUpCit7CisJc3RydWN0IGRybV9kaXNwbGF5X2luZm8gKmRpID0gJmNvbm5lY3Rvci0+ZGlzcGxh
+eV9pbmZvOworCisJaWYgKGRpLT5jb2xvcl9mb3JtYXRzICYgRFJNX0NPTE9SX0ZPUk1BVF9ZQ1JD
+QjQ0NCB8fAorCSAgICBkaS0+Y29sb3JfZm9ybWF0cyAmIERSTV9DT0xPUl9GT1JNQVRfWUNSQ0I0
+MjIpIHsKKwkJZGktPmNvbG9yX2Zvcm1hdHMgJj0gfihEUk1fQ09MT1JfRk9STUFUX1lDUkNCNDIy
+IHwKKwkJCQkgICAgICAgRFJNX0NPTE9SX0ZPUk1BVF9ZQ1JDQjQ0NCk7CisJCWRpLT5jb2xvcl9m
+b3JtYXRzIHw9IERSTV9DT0xPUl9GT1JNQVRfUkdCNDQ0OworCQlkaS0+YnBjID0gODsKKwl9CisK
+KwlyZXR1cm4gTU9ERV9PSzsKK30KKwogc3RhdGljIGJvb2wKIHJvY2tjaGlwX2RwX2RybV9lbmNv
+ZGVyX21vZGVfZml4dXAoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyLAogCQkJCSAgIGNvbnN0
+IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLApAQCAtMzAwLDYgKzMxOCw3IEBAIHN0YXRp
+YyBpbnQgcm9ja2NoaXBfZHBfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2Ug
+Km1hc3RlciwKIAlkcC0+cGxhdF9kYXRhLmRldl90eXBlID0gUk9DS0NISVBfRFA7CiAJZHAtPnBs
+YXRfZGF0YS5wb3dlcl9vbiA9IHJvY2tjaGlwX2RwX3Bvd2Vyb247CiAJZHAtPnBsYXRfZGF0YS5w
+b3dlcl9vZmYgPSByb2NrY2hpcF9kcF9wb3dlcmRvd247CisJZHAtPnBsYXRfZGF0YS5tb2RlX3Zh
+bGlkID0gcm9ja2NoaXBfZHBfbW9kZV92YWxpZDsKIAogCXJldHVybiBhbmFsb2dpeF9kcF9iaW5k
+KGRldiwgZHAtPmRybV9kZXYsICZkcC0+cGxhdF9kYXRhKTsKIH0KLS0gCjEuOS4xCgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
