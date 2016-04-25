@@ -1,39 +1,39 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 5/7] mfd: sec: Use devm_mfd_add_devices and
- devm_regmap_add_irq_chip
-Date: Mon, 25 Apr 2016 14:45:04 +0200
-Message-ID: <571E1150.5030306@samsung.com>
-References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com>
- <1461241558-26983-6-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 0/7] mfd: Use devm_mfd_add_devices and devm_regmap_add_irq_chip
+Date: Mon, 25 Apr 2016 18:22:21 +0530
+Message-ID: <571E1305.6070009@nvidia.com>
+References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com> <571DF7D9.8050500@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1461241558-26983-6-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, lee.jones@linaro.org, milo.kim@ti.com, cw00.choi@samsung.com
-Cc: sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3422 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932174AbcDYNEP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Apr 2016 09:04:15 -0400
+In-Reply-To: <571DF7D9.8050500@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-On 04/21/2016 02:25 PM, Laxman Dewangan wrote:
-> Use devm_mfd_add_devices() for adding MFD child devices and
-> devm_regmap_add_irq_chip() for IRQ chip registration.
-> 
-> This reduces the error code path and .remove callback for removing
-> MFD child devices and deleting IRQ chip data.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Sangbeom Kim <sbkim73@samsung.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: linux-samsung-soc@vger.kernel.org
-> ---
->  drivers/mfd/sec-core.c | 20 +++-----------------
->  drivers/mfd/sec-irq.c  | 14 +++++---------
->  2 files changed, 8 insertions(+), 26 deletions(-)
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, lee.jones@linaro.org, milo.kim@ti.com, cw00.choi@samsung.com
+Cc: sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
 
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Monday 25 April 2016 04:26 PM, Krzysztof Kozlowski wrote:
+> On 04/21/2016 02:25 PM, Laxman Dewangan wrote:
+>> This series is an effort to reduce the code in error path and need of
+>> remove callback by using the devm_mfd_add_devices() and
+>> devm_regmap_add_irq_chip() or devm_request_threaded_irq APIs for interrupt
+>> support.
+>>
+>> This is tested with build and comiplation only with arm64 defconfig and enabling
+>> the required MFD CONFIGs.
+> Please compile it also on ARMv7. The changes look trivial but one
+> compilation without testing might not be sufficient.
+Sure. Thank you very much for testing.
 
-Best regards,
-Krzysztof
+I did build test with the ARMv7 for all patches and testing on actual 
+platform with Jetson-TX1 platform + max77620 which have similar change 
+with bind/unbind. This is what I learn from you for testing the remove 
+callback/unbinding without making =m on RTC patches and this really 
+helps me on my lots of testing.
