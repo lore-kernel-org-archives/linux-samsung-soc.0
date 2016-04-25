@@ -1,85 +1,48 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Enable PRNG and SSS for all Exynos4 devices
-Date: Mon, 25 Apr 2016 11:29:56 +0200
-Message-ID: <1461576596-27844-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 1/2] ARM: exynos_defconfig: Enable Samsung media
+ platform drivers as modules
+Date: Mon, 25 Apr 2016 12:31:04 +0200
+Message-ID: <571DF1E8.8010803@samsung.com>
+References: <1461270946-7825-1-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1461270946-7825-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: vz@mleia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There is no external dependency for Security SubSystem (SSS) block so
-the nodes for Pseudo Random Number Generator and AES hardware
-acceleration can be enabled always for all Exynos4 devices.
+On 04/21/2016 10:35 PM, Javier Martinez Canillas wrote:
+> There are a bunch of media platform drivers under drivers/media/platform/
+> that are for Samsung SoCs but are not being built with exynos_defconfig.
+> 
+> This patch enables them as a module to improve build coverage for these
+> drivers and also to allow people use them with proper hardware if modules
+> are installed. The S5P MFC driver wasn't enabled since it fails to probe.
+> 
+> Only the boolean Kconfig symbols are enabled as built-in, since drivers
+> are not critical and also to keep the kernel binary image size as small
+> as possible.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> 
+> Changes in v3:
+> - Added Krzysztof Kozlowski's reviewed by tag.
+> 
+> Changes in v2:
+> - Remove S5P G2D and GSC symbols since overlaps with Exynos DRM functionality.
+>   Suggested by Tobias Jakobi
+> 
+>  arch/arm/configs/exynos_defconfig | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi                  | 2 --
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ----
- arch/arm/boot/dts/exynos4412-trats2.dts         | 8 --------
- 3 files changed, 14 deletions(-)
+It seems these mails did not reach the mailing lists. I don't see them
+on LKML nor in the patchwork. Could you resend?
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index ffaceea74d79..5495b2bbc006 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -987,7 +987,6 @@
- 		interrupts = <0 112 0>;
- 		clocks = <&clock CLK_SSS>;
- 		clock-names = "secss";
--		status = "disabled";
- 	};
- 
- 	prng: rng@10830400 {
-@@ -995,7 +994,6 @@
- 		reg = <0x10830400 0x200>;
- 		clocks = <&clock CLK_SSS>;
- 		clock-names = "secss";
--		status = "disabled";
- 	};
- 
- 	register-debug {
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index acd7e7b5fd13..cab0f07d7d28 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -496,10 +496,6 @@
- 	status = "okay";
- };
- 
--&sss {
--	status = "okay";
--};
--
- &tmu {
- 	vtmu-supply = <&ldo10_reg>;
- 	status = "okay";
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 27dbf1687754..5d1eaea3f778 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -1234,10 +1234,6 @@
- 	status = "okay";
- };
- 
--&prng {
--	status = "okay";
--};
--
- &rtc {
- 	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
-@@ -1286,10 +1282,6 @@
- 	};
- };
- 
--&sss {
--	status = "okay";
--};
--
- &tmu {
- 	vtmu-supply = <&ldo10_reg>;
- 	status = "okay";
--- 
-1.9.1
+BR,
+Krzysztof
