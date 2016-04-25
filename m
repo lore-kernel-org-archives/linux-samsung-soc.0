@@ -1,48 +1,37 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v1 8/8] drm: bridge: analogix/dp: fix no drm hpd event when
- panel plug in
-Date: Mon, 25 Apr 2016 19:40:35 +0800
-Message-ID: <1461584435-6343-1-git-send-email-ykk@rock-chips.com>
-References: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Mark Yao <yzq@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCHv15 01/15] input.h: add BUS_CEC type
+Date: Mon, 25 Apr 2016 14:24:28 +0200
+Message-ID: <1461587082-48041-2-git-send-email-hverkuil@xs4all.nl>
+References: <1461587082-48041-1-git-send-email-hverkuil@xs4all.nl>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1461587082-48041-1-git-send-email-hverkuil@xs4all.nl>
+Sender: linux-input-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIGVudW0gdmFsdWUgb2YgRFBfSVJRX1RZUEVfSFBfQ0FCTEVfSU4gaXMgemVybywgYnV0IGRy
-aXZlciBvbmx5CnNlbmQgZHJtIGhwIGV2ZW50IHdoZW4gdGhlIGlycV90eXBlIGFuZCB0aGUgZW51
-bSB2YWx1ZSBpcyB0cnVlLgoKaWYgKGlycV90eXBlICYgRFBfSVJRX1RZUEVfSFBfQ0FCTEVfSU4g
-fHwgLi4uKQoJZHJtX2hlbHBlcl9ocGRfaXJxX2V2ZW50KGRwLT5kcm1fZGV2KTsKClNvIHRoZXJl
-IHdvdWxkIG5vIGRybSBocGQgZXZlbnQgd2hlbiBjYWJsZSBwbHVnIGluLCB0byBmaXggdGhhdApq
-dXN0IG5lZWQgdG8gYXNzaWduIGFsbCBob3RwbHVnIGVudW0gd2l0aCBuby16ZXJvIHZhbHVlcy4K
-ClJlcG9ydGVkLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+ClNp
-Z25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaCB8IDggKysrKy0tLS0K
-IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgg
-Yi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaAppbmRl
-eCBmMDkyNzVkLi5iNDU2MzgwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaApAQCAtMTI3LDEwICsxMjcsMTAgQEAgZW51bSBhbmFs
-b2dfcG93ZXJfYmxvY2sgewogfTsKIAogZW51bSBkcF9pcnFfdHlwZSB7Ci0JRFBfSVJRX1RZUEVf
-SFBfQ0FCTEVfSU4sCi0JRFBfSVJRX1RZUEVfSFBfQ0FCTEVfT1VULAotCURQX0lSUV9UWVBFX0hQ
-X0NIQU5HRSwKLQlEUF9JUlFfVFlQRV9VTktOT1dOLAorCURQX0lSUV9UWVBFX0hQX0NBQkxFX0lO
-ICA9IEJJVCgwKSwKKwlEUF9JUlFfVFlQRV9IUF9DQUJMRV9PVVQgPSBCSVQoMSksCisJRFBfSVJR
-X1RZUEVfSFBfQ0hBTkdFICAgID0gQklUKDIpLAorCURQX0lSUV9UWVBFX1VOS05PV04gICAgICA9
-IEJJVCgzKSwKIH07CiAKIHN0cnVjdCB2aWRlb19pbmZvIHsKLS0gCjEuOS4xCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Hans Verkuil <hans.verkuil@cisco.com>
+
+Inputs can come in over the HDMI CEC bus, so add a new type for this.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ include/uapi/linux/input.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+index 0111384..c514941 100644
+--- a/include/uapi/linux/input.h
++++ b/include/uapi/linux/input.h
+@@ -247,6 +247,7 @@ struct input_mask {
+ #define BUS_ATARI		0x1B
+ #define BUS_SPI			0x1C
+ #define BUS_RMI			0x1D
++#define BUS_CEC			0x1E
+ 
+ /*
+  * MT_TOOL types
+-- 
+2.8.1
+
