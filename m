@@ -1,43 +1,59 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 10/41] Documentation: dt: display: fix spelling mistake
-Date: Mon, 25 Apr 2016 08:49:38 -0500
-Message-ID: <20160425134938.GA8194@rob-hp-laptop>
-References: <1461543878-3639-1-git-send-email-eric@engestrom.ch>
- <1461543878-3639-11-git-send-email-eric@engestrom.ch>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 1/5] ARM: dts: exynos: Artik5 topic branch for v4.7
+Date: Mon, 25 Apr 2016 17:53:02 +0200
+Message-ID: <5431726.aFYokxb3m1@wuerfel>
+References: <1460541682-32417-1-git-send-email-k.kozlowski@samsung.com> <7068458.f0qaFCRyGK@wuerfel> <571DDCE5.5020201@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1461543878-3639-11-git-send-email-eric@engestrom.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Engestrom <eric@engestrom.ch>
-Cc: linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Chanho Park <chanho61.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:59071 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751197AbcDYPxl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Apr 2016 11:53:41 -0400
+In-Reply-To: <571DDCE5.5020201@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>
 
-On Mon, Apr 25, 2016 at 01:24:07AM +0100, Eric Engestrom wrote:
-> Signed-off-by: Eric Engestrom <eric@engestrom.ch>
-
-Applied, thanks.
-
-Rob
-
-> ---
->  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Monday 25 April 2016 11:01:25 Krzysztof Kozlowski wrote:
+> On 04/24/2016 11:15 PM, Arnd Bergmann wrote:
+> > On Wednesday 13 April 2016 12:01:18 Krzysztof Kozlowski wrote:
+> >> Topic branch for Device Tree changes for Exynos 3250 for v4.7:
+> >>
+> >> Merge necessary new clocks from Sylwester (used by new board) and add support
+> >> for Exynos3250-based Artik5 board.
+> >>
+> > 
+> > Merged into next/dt, thanks!
+> > 
+> > I see that you have modified the include/dt-bindings/clock/exynos3250.h
+> > file. Two questions about that:
+> > 
+> > - How is this going to get synchronized with the respective driver changes
+> >   in a way that avoids breaking the build of the clk tree? Do you just
+> >   wait another merge window for that?
 > 
-> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> index 22756b3..a782659 100644
-> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> @@ -41,7 +41,7 @@ Video interfaces:
->    endpoint node connected from mic node (reg = 0):
->      - remote-endpoint: specifies the endpoint in mic node. This node is required
->  		       for Exynos5433 mipi dsi. So mic can access to panel node
-> -		       thoughout this dsi node.
-> +		       throughout this dsi node.
->    endpoint node connected to panel node (reg = 1):
->      - remote-endpoint: specifies the endpoint in panel node. This node is
->  		       required in all kinds of exynos mipi dsi to represent
-> -- 
-> 2.8.0
+> Mentioned include/dt-bindings change comes from clk tree, merged here
+> (see "Merge tag 'clk-v4.7-exynos3250' of
+> git://linuxtv.org/snawrocki/samsung into
+> for-v4.7/dt-exynos3250-artik5"). I assume that any driver related
+> changes in clk tree would be on top of that commit.
+
+
+Ok
+
+> > - Are there any other clocks that you should define now so you don't run
+> >   into dependency problems later?
 > 
+> Indeed we might have similar for Exynos5422 and devfreq but I already
+> talked with Sylwester about it. He pushed such changes to clk folks and
+> prepared a tag for me - just in case:
+> https://lkml.org/lkml/2016/4/15/561
+> 
+
+Very good, thanks!
+
+	Arnd
