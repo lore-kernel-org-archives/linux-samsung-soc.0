@@ -1,89 +1,159 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v1 1/8] drm: bridge: analogix_dp: rename RK3288_DP to
- ROCKCHIP_DP
-Date: Mon, 25 Apr 2016 19:32:11 +0800
-Message-ID: <1461583931-6021-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v1 3/8] drm/rockchip: analogix_dp: add rk3399 eDP support
+Date: Mon, 25 Apr 2016 19:34:19 +0800
+Message-ID: <1461584059-6119-1-git-send-email-ykk@rock-chips.com>
 References: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Mark Yao <yzq@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1461583748-5777-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-UmVuYW1lIFJLMzI4OF9EUCBtYXJjb3MgdG8gUk9DS0NISVBfRFAsIHByZXBhcmUgdG8gYWRkIGVE
-UApzdXBwb3J0IGZvciBtb3JlIFJvY2tjaGlwIGNoaXBzLgoKU2lnbmVkLW9mZi1ieTogWWFraXIg
-WWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5h
-bG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgNCArKy0tCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdl
-L2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jICB8IDYgKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-cm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgICB8IDIgKy0KIGluY2x1ZGUvZHJtL2Jy
-aWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAgIHwgMiArLQogNCBmaWxlcyBjaGFu
-Z2VkLCA3IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwppbmRleCA3Njk5NTk3Li40
-YTFiM2I4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
-Z2l4X2RwX2NvcmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
-Z2l4X2RwX2NvcmUuYwpAQCAtMTIwNyw5ICsxMjA3LDkgQEAgc3RhdGljIGludCBhbmFsb2dpeF9k
-cF9kdF9wYXJzZV9wZGF0YShzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKIAlzdHJ1Y3Qg
-dmlkZW9faW5mbyAqdmlkZW9faW5mbyA9ICZkcC0+dmlkZW9faW5mbzsKIAogCXN3aXRjaCAoZHAt
-PnBsYXRfZGF0YS0+ZGV2X3R5cGUpIHsKLQljYXNlIFJLMzI4OF9EUDoKKwljYXNlIFJPQ0tDSElQ
-X0RQOgogCQkvKgotCQkgKiBMaWtlIFJrMzI4OCBEaXNwbGF5UG9ydCBUUk0gaW5kaWNhdGUgdGhh
-dCAiTWFpbiBsaW5rCisJCSAqIExpa2UgUm9ja2NoaXAgRGlzcGxheVBvcnQgVFJNIGluZGljYXRl
-IHRoYXQgIk1haW4gbGluawogCQkgKiBjb250YWluaW5nIDQgcGh5c2ljYWwgbGFuZXMgb2YgMi43
-LzEuNjIgR2Jwcy9sYW5lIi4KIAkJICovCiAJCXZpZGVvX2luZm8tPm1heF9saW5rX3JhdGUgPSAw
-eDBBOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
-eF9kcF9yZWcuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBf
-cmVnLmMKaW5kZXggNDkyMDVlZi4uOTMxYTc2YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
-YnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCkBAIC03NCw3ICs3NCw3IEBAIHZvaWQg
-YW5hbG9naXhfZHBfaW5pdF9hbmFsb2dfcGFyYW0oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAq
-ZHApCiAJcmVnID0gU0VMXzI0TSB8IFRYX0RWRERfQklUXzFfMDYyNVY7CiAJd3JpdGVsKHJlZywg
-ZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfQU5BTE9HX0NUTF8yKTsKIAotCWlmIChkcC0+cGxh
-dF9kYXRhICYmIChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBSSzMyODhfRFApKSB7CisJaWYg
-KGRwLT5wbGF0X2RhdGEgJiYgKGRwLT5wbGF0X2RhdGEtPmRldl90eXBlID09IFJPQ0tDSElQX0RQ
-KSkgewogCQl3cml0ZWwoUkVGX0NMS18yNE0sIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BM
-TF9SRUdfMSk7CiAJCXdyaXRlbCgweDk1LCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QTExf
-UkVHXzIpOwogCQl3cml0ZWwoMHg0MCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JF
-R18zKTsKQEAgLTI0NCw3ICsyNDQsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX3NldF9hbmFsb2dfcG93
-ZXJfZG93bihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKIAl1MzIgcmVnOwogCXUzMiBw
-aHlfcGRfYWRkciA9IEFOQUxPR0lYX0RQX1BIWV9QRDsKIAotCWlmIChkcC0+cGxhdF9kYXRhICYm
-IChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBSSzMyODhfRFApKQorCWlmIChkcC0+cGxhdF9k
-YXRhICYmIChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBST0NLQ0hJUF9EUCkpCiAJCXBoeV9w
-ZF9hZGRyID0gQU5BTE9HSVhfRFBfUEQ7CiAKIAlzd2l0Y2ggKGJsb2NrKSB7CkBAIC00NDgsNyAr
-NDQ4LDcgQEAgdm9pZCBhbmFsb2dpeF9kcF9pbml0X2F1eChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2
-aWNlICpkcCkKIAlhbmFsb2dpeF9kcF9yZXNldF9hdXgoZHApOwogCiAJLyogRGlzYWJsZSBBVVgg
-dHJhbnNhY3Rpb24gSC9XIHJldHJ5ICovCi0JaWYgKGRwLT5wbGF0X2RhdGEgJiYgKGRwLT5wbGF0
-X2RhdGEtPmRldl90eXBlID09IFJLMzI4OF9EUCkpCisJaWYgKGRwLT5wbGF0X2RhdGEgJiYgKGRw
-LT5wbGF0X2RhdGEtPmRldl90eXBlID09IFJPQ0tDSElQX0RQKSkKIAkJcmVnID0gQVVYX0JJVF9Q
-RVJJT0RfRVhQRUNURURfREVMQVkoMCkgfAogCQkgICAgICBBVVhfSFdfUkVUUllfQ09VTlRfU0VM
-KDMpIHwKIAkJICAgICAgQVVYX0hXX1JFVFJZX0lOVEVSVkFMXzYwMF9NSUNST1NFQ09ORFM7CmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCmluZGV4
-IGExZDk0ZDguLjZkYzFiOWIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9h
-bmFsb2dpeF9kcC1yb2NrY2hpcC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFs
-b2dpeF9kcC1yb2NrY2hpcC5jCkBAIC0yNjQsNyArMjY0LDcgQEAgc3RhdGljIGludCByb2NrY2hp
-cF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCiAJ
-ZHAtPnBsYXRfZGF0YS5lbmNvZGVyID0gJmRwLT5lbmNvZGVyOwogCi0JZHAtPnBsYXRfZGF0YS5k
-ZXZfdHlwZSA9IFJLMzI4OF9EUDsKKwlkcC0+cGxhdF9kYXRhLmRldl90eXBlID0gUk9DS0NISVBf
-RFA7CiAJZHAtPnBsYXRfZGF0YS5wb3dlcl9vbiA9IHJvY2tjaGlwX2RwX3Bvd2Vyb247CiAJZHAt
-PnBsYXRfZGF0YS5wb3dlcl9vZmYgPSByb2NrY2hpcF9kcF9wb3dlcmRvd247CiAKZGlmZiAtLWdp
-dCBhL2luY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oIGIvaW5jbHVkZS9kcm0vYnJpZGdl
-L2FuYWxvZ2l4X2RwLmgKaW5kZXggMjVhZmIzMS4uOWU1ZDAxMyAxMDA2NDQKLS0tIGEvaW5jbHVk
-ZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmgKKysrIGIvaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxv
-Z2l4X2RwLmgKQEAgLTE1LDcgKzE1LDcgQEAKIAogZW51bSBhbmFsb2dpeF9kcF9kZXZ0eXBlIHsK
-IAlFWFlOT1NfRFAsCi0JUkszMjg4X0RQLAorCVJPQ0tDSElQX0RQLAogfTsKIAogc3RydWN0IGFu
-YWxvZ2l4X2RwX3BsYXRfZGF0YSB7Ci0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+RK3399 and RK3288 shared the same eDP IP controller, only some light
+difference with VOP configure and GRF configure.
+
+Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+---
+ .../bindings/display/bridge/analogix_dp.txt        |  1 +
+ .../display/rockchip/analogix_dp-rockchip.txt      |  2 +-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 45 +++++++++++++++++++---
+ 3 files changed, 41 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+index 4f2ba8c..4a0f4f7 100644
+--- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
++++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
+@@ -5,6 +5,7 @@ Required properties for dp-controller:
+ 		platform specific such as:
+ 		 * "samsung,exynos5-dp"
+ 		 * "rockchip,rk3288-dp"
++		 * "rockchip,rk3399-edp"
+ 	-reg:
+ 		physical base address of the controller and length
+ 		of memory mapped region.
+diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+index e832ff9..5ae55ca 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
++++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+@@ -2,7 +2,7 @@ Rockchip RK3288 specific extensions to the Analogix Display Port
+ ================================
+ 
+ Required properties:
+-- compatible: "rockchip,rk3288-edp";
++- compatible: "rockchip,rk3288-edp" or "rockchip,rk3399-edp";
+ 
+ - reg: physical base address of the controller and length
+ 
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 4f55bdf..f559b5c 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -36,11 +36,17 @@
+ 
+ #define to_dp(nm)	container_of(nm, struct rockchip_dp_device, nm)
+ 
++enum rockchip_dp_chip_type {
++	RK3288_DP,
++	RK3399_EDP,
++};
++
+ struct rockchip_dp_chip_data {
+ 	u32	lcdsel_grf_reg;
+ 	u32	lcdsel_big;
+ 	u32	lcdsel_lit;
+ 	u32	lcdsel_mask;
++	u32	chip_type;
+ };
+ 
+ struct rockchip_dp_device {
+@@ -115,9 +121,31 @@ static void rockchip_dp_drm_encoder_mode_set(struct drm_encoder *encoder,
+ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder)
+ {
+ 	struct rockchip_dp_device *dp = to_dp(encoder);
++	int out_mode;
+ 	int ret;
+ 	u32 val;
+ 
++	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
++	if (ret < 0)
++		return;
++
++	switch (dp->data->chip_type) {
++	case RK3399_EDP:
++		/*
++		 * For RK3399, VOP Lit must code the out mode to RGB888,
++		 * VOP Big must code the out mode to RGB10.
++		 */
++		if (ret)
++			out_mode = ROCKCHIP_OUT_MODE_P888;
++		else
++			out_mode = ROCKCHIP_OUT_MODE_AAAA;
++		break;
++
++	default:
++		out_mode = ROCKCHIP_OUT_MODE_AAAA;
++		break;
++	}
++
+ 	/*
+ 	 * FIXME(Yakir): driver should configure the CRTC output video
+ 	 * mode with the display information which indicated the monitor
+@@ -132,17 +160,12 @@ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder)
+ 	 * RGB666 input video mode, then screen would works prefect.
+ 	 */
+ 	ret = rockchip_drm_crtc_mode_config(encoder->crtc,
+-					    DRM_MODE_CONNECTOR_eDP,
+-					    ROCKCHIP_OUT_MODE_AAAA);
++					    DRM_MODE_CONNECTOR_eDP, out_mode);
+ 	if (ret < 0) {
+ 		dev_err(dp->dev, "Could not set crtc mode config (%d)\n", ret);
+ 		return;
+ 	}
+ 
+-	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
+-	if (ret < 0)
+-		return;
+-
+ 	if (ret)
+ 		val = dp->data->lcdsel_lit | dp->data->lcdsel_mask;
+ 	else
+@@ -369,15 +392,25 @@ static const struct dev_pm_ops rockchip_dp_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(rockchip_dp_suspend, rockchip_dp_resume)
+ };
+ 
++static const struct rockchip_dp_chip_data rk3399_edp = {
++	.lcdsel_grf_reg = 0x6250,
++	.lcdsel_big = 0,
++	.lcdsel_lit = BIT(5),
++	.lcdsel_mask = BIT(21),
++	.chip_type = RK3399_EDP,
++};
++
+ static const struct rockchip_dp_chip_data rk3288_dp = {
+ 	.lcdsel_grf_reg = 0x025c,
+ 	.lcdsel_big = 0,
+ 	.lcdsel_lit = BIT(5),
+ 	.lcdsel_mask = BIT(21),
++	.chip_type = RK3288_DP,
+ };
+ 
+ static const struct of_device_id rockchip_dp_dt_ids[] = {
+ 	{.compatible = "rockchip,rk3288-dp", .data = &rk3288_dp },
++	{.compatible = "rockchip,rk3399-edp", .data = &rk3399_edp },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, rockchip_dp_dt_ids);
+-- 
+1.9.1
