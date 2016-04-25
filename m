@@ -1,87 +1,41 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v1 2/8] drm: rockchip: analogix_dp: split the lcdc select
- setting into device data
-Date: Mon, 25 Apr 2016 19:34:14 +0800
-Message-ID: <1461584054-6075-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v1 4/8] drm: bridge: analogix_dp: correct the register bit define error in ANALOGIX_DP_PLL_REG_1
+Date: Mon, 25 Apr 2016 19:34:23 +0800
+Message-ID: <1461584063-6162-1-git-send-email-ykk@rock-chips.com>
 References: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1461583748-5777-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Mark Yao <yzq@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-ZURQIGNvbnRyb2xsZXIgbmVlZCB0byBkZWNsYXJlIHdoaWNoIHZvcCBwcm92aWRlIHRoZSB2aWRl
-byBzb3VyY2UsCmFuZCBpdCdzIGRlZmluZWQgaW4gR1JGIHJlZ2lzdGVycy4KCkJ1dCBkaWZmZXJl
-bnQgY2hpcHMgaGF2ZSBkaWZmZXJlbnQgR1JGIHJlZ2lzdGVyIGFkZHJlc3MsIHNvIHdlIG5lZWQg
-dG8KY3JlYXRlIGEgZGV2aWNlIGRhdGEgdG8gZGVjbGFyZSB0aGUgR1JGIG1lc3NhZ2VzIGZvciBl
-YWNoIGNoaXBzLgoKU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29t
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jIHwg
-MzUgKysrKysrKysrKysrKysrKysrLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDI2IGluc2VydGlv
-bnMoKyksIDkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5h
-bG9naXhfZHAtcm9ja2NoaXAuYwppbmRleCA2ZGMxYjliLi40ZjU1YmRmIDEwMDY0NAotLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYworKysgYi9kcml2
-ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwpAQCAtMTQsNiArMTQs
-NyBAQAogCiAjaW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+CiAjaW5jbHVkZSA8bGludXgvbWZk
-L3N5c2Nvbi5oPgorI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPgogI2luY2x1ZGUgPGxpbnV4
-L29mX2dyYXBoLmg+CiAjaW5jbHVkZSA8bGludXgvcmVnbWFwLmg+CiAjaW5jbHVkZSA8bGludXgv
-cmVzZXQuaD4KQEAgLTM1LDExICszNiwxMiBAQAogCiAjZGVmaW5lIHRvX2RwKG5tKQljb250YWlu
-ZXJfb2Yobm0sIHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UsIG5tKQogCi0vKiBkcCBncmYgcmVn
-aXN0ZXIgb2Zmc2V0ICovCi0jZGVmaW5lIEdSRl9TT0NfQ09ONiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAweDAyNWMKLSNkZWZpbmUgR1JGX0VEUF9MQ0RfU0VMX01BU0sgICAgICAgICAgICAg
-ICAgICAgIEJJVCg1KQotI2RlZmluZSBHUkZfRURQX1NFTF9WT1BfTElUICAgICAgICAgICAgICAg
-ICAgICAgQklUKDUpCi0jZGVmaW5lIEdSRl9FRFBfU0VMX1ZPUF9CSUcgICAgICAgICAgICAgICAg
-ICAgICAwCitzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRhIHsKKwl1MzIJbGNkc2VsX2dyZl9y
-ZWc7CisJdTMyCWxjZHNlbF9iaWc7CisJdTMyCWxjZHNlbF9saXQ7CisJdTMyCWxjZHNlbF9tYXNr
-OworfTsKIAogc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7CiAJc3RydWN0IGRybV9kZXZpY2Ug
-ICAgICAgICpkcm1fZGV2OwpAQCAtNTEsNiArNTMsOCBAQCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2
-aWNlIHsKIAlzdHJ1Y3QgcmVnbWFwICAgICAgICAgICAgKmdyZjsKIAlzdHJ1Y3QgcmVzZXRfY29u
-dHJvbCAgICAgKnJzdDsKIAorCWNvbnN0IHN0cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgKmRh
-dGE7CisKIAlzdHJ1Y3QgYW5hbG9naXhfZHBfcGxhdF9kYXRhIHBsYXRfZGF0YTsKIH07CiAKQEAg
-LTE0MCwxMyArMTQ0LDEzIEBAIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX2Vu
-YWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCiAJCXJldHVybjsKIAogCWlmIChyZXQp
-Ci0JCXZhbCA9IEdSRl9FRFBfU0VMX1ZPUF9MSVQgfCAoR1JGX0VEUF9MQ0RfU0VMX01BU0sgPDwg
-MTYpOworCQl2YWwgPSBkcC0+ZGF0YS0+bGNkc2VsX2xpdCB8IGRwLT5kYXRhLT5sY2RzZWxfbWFz
-azsKIAllbHNlCi0JCXZhbCA9IEdSRl9FRFBfU0VMX1ZPUF9CSUcgfCAoR1JGX0VEUF9MQ0RfU0VM
-X01BU0sgPDwgMTYpOworCQl2YWwgPSBkcC0+ZGF0YS0+bGNkc2VsX2JpZyB8IGRwLT5kYXRhLT5s
-Y2RzZWxfbWFzazsKIAogCWRldl9kYmcoZHAtPmRldiwgInZvcCAlcyBvdXRwdXQgdG8gZHBcbiIs
-IChyZXQpID8gIkxJVCIgOiAiQklHIik7CiAKLQlyZXQgPSByZWdtYXBfd3JpdGUoZHAtPmdyZiwg
-R1JGX1NPQ19DT042LCB2YWwpOworCXJldCA9IHJlZ21hcF93cml0ZShkcC0+Z3JmLCBkcC0+ZGF0
-YS0+bGNkc2VsX2dyZl9yZWcsIHZhbCk7CiAJaWYgKHJldCAhPSAwKSB7CiAJCWRldl9lcnIoZHAt
-PmRldiwgIkNvdWxkIG5vdCB3cml0ZSB0byBHUkY6ICVkXG4iLCByZXQpOwogCQlyZXR1cm47CkBA
-IC0yNDAsNiArMjQ0LDcgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZp
-Y2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCQkJICAgIHZvaWQgKmRhdGEpCiB7CiAJ
-c3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKKwlj
-b25zdCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRhICpkcF9kYXRhOwogCXN0cnVjdCBkcm1f
-ZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKIAlpbnQgcmV0OwogCkBAIC0yNTAsMTAgKzI1NSwxNSBA
-QCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qg
-ZGV2aWNlICptYXN0ZXIsCiAJICovCiAJZGV2X3NldF9kcnZkYXRhKGRldiwgTlVMTCk7CiAKKwlk
-cF9kYXRhID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRldik7CisJaWYgKCFkcF9kYXRhKQor
-CQlyZXR1cm4gLUVOT0RFVjsKKwogCXJldCA9IHJvY2tjaGlwX2RwX2luaXQoZHApOwogCWlmIChy
-ZXQgPCAwKQogCQlyZXR1cm4gcmV0OwogCisJZHAtPmRhdGEgPSBkcF9kYXRhOwogCWRwLT5kcm1f
-ZGV2ID0gZHJtX2RldjsKIAogCXJldCA9IHJvY2tjaGlwX2RwX2RybV9jcmVhdGVfZW5jb2Rlcihk
-cCk7CkBAIC0zNTksOCArMzY5LDE1IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBy
-b2NrY2hpcF9kcF9wbV9vcHMgPSB7CiAJU0VUX1NZU1RFTV9TTEVFUF9QTV9PUFMocm9ja2NoaXBf
-ZHBfc3VzcGVuZCwgcm9ja2NoaXBfZHBfcmVzdW1lKQogfTsKIAorc3RhdGljIGNvbnN0IHN0cnVj
-dCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgcmszMjg4X2RwID0geworCS5sY2RzZWxfZ3JmX3JlZyA9
-IDB4MDI1YywKKwkubGNkc2VsX2JpZyA9IDAsCisJLmxjZHNlbF9saXQgPSBCSVQoNSksCisJLmxj
-ZHNlbF9tYXNrID0gQklUKDIxKSwKK307CisKIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNl
-X2lkIHJvY2tjaGlwX2RwX2R0X2lkc1tdID0gewotCXsuY29tcGF0aWJsZSA9ICJyb2NrY2hpcCxy
-azMyODgtZHAiLH0sCisJey5jb21wYXRpYmxlID0gInJvY2tjaGlwLHJrMzI4OC1kcCIsIC5kYXRh
-ID0gJnJrMzI4OF9kcCB9LAogCXt9CiB9OwogTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgcm9ja2No
-aXBfZHBfZHRfaWRzKTsKLS0gCjEuOS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+There're an register define error in ANALOGIX_DP_PLL_REG_1 which introduced
+by commit bcec20fd5ad6 ("drm: bridge: analogix/dp: add some rk3288 special
+registers setting").
+
+The PHY PLL input clock source is selected by ANALOGIX_DP_PLL_REG_1
+BIT 0, not BIT 1.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 337912b..88d56ad 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -163,8 +163,8 @@
+ #define HSYNC_POLARITY_CFG			(0x1 << 0)
+ 
+ /* ANALOGIX_DP_PLL_REG_1 */
+-#define REF_CLK_24M				(0x1 << 1)
+-#define REF_CLK_27M				(0x0 << 1)
++#define REF_CLK_24M				(0x1 << 0)
++#define REF_CLK_27M				(0x0 << 0)
+ 
+ /* ANALOGIX_DP_LANE_MAP */
+ #define LANE3_MAP_LOGIC_LANE_0			(0x0 << 6)
+-- 
+1.9.1
