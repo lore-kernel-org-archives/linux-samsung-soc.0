@@ -1,46 +1,224 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL 2/5] ARM: dts: exynos: DT for v4.7
-Date: Mon, 25 Apr 2016 11:02:15 +0200
-Message-ID: <571DDD17.9090402@samsung.com>
-References: <1460541682-32417-1-git-send-email-k.kozlowski@samsung.com>
- <1460541682-32417-3-git-send-email-k.kozlowski@samsung.com>
- <5773702.Vl2lnk0PfR@wuerfel>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v8] drivers: amba: properly handle devices with power domains
+Date: Mon, 25 Apr 2016 11:19:26 +0200
+Message-ID: <CAPDyKFqnnjdQgXNjA30AAi--+0NP74gWFjuYfrsvUGTV=yK=Hw@mail.gmail.com>
+References: <1460711612-5268-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:19754 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753483AbcDYJCU (ORCPT
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35156 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753619AbcDYJT2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 05:02:20 -0400
-In-reply-to: <5773702.Vl2lnk0PfR@wuerfel>
+	Mon, 25 Apr 2016 05:19:28 -0400
+Received: by mail-wm0-f43.google.com with SMTP id e201so78437228wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2016 02:19:27 -0700 (PDT)
+In-Reply-To: <1460711612-5268-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 04/24/2016 11:18 PM, Arnd Bergmann wrote:
-> On Wednesday 13 April 2016 12:01:19 Krzysztof Kozlowski wrote:
->> Samsung Device Tree updates and improvements for v4.7:
->> 1. Enable accelerated AES (Security SubSystem) on Exynos4412-based boards.
->> 2. Enable HDMI CEC on Exynos4412-based Odroid.
->> 3. Add regulator supplies for eMMC/SD on Odroid XU3/XU4.
->> 4. Fix DTC unit name warnings.
->> 5. Merge topic branch of new Artik5 board.
->>
-> 
-> Pulled into next/dt. Thanks for splitting this into a separate branch
-> aside from the Artik5 stuff, that makes sense. Two minor things you
-> could have done even better:
-> 
-> - split out the DTC unit name warning fixes into yet another branch,
->   as there are lots of them and they are unrelated to the rest
-> 
-> - not merge the Artik5 changes into this, but let us deal with
->   any conflicts ourselves.
+On 15 April 2016 at 11:13, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> To read pid/cid registers, the probed device need to be properly turned on.
+> When it is inside a power domain, the bus code should ensure that the
+> given power domain is enabled before trying to access device's registers.
+> However in some cases power domain (or clocks) might not be yet available.
+> Returning -EPROBE_DEFER is not a solution in such case, because callers
+> don't handle this special error code. Instead such devices are added to the
+> special list and their registration is retried from periodic worker until
+> all resources are available.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Changelog:
+>
+> v8:
+> - replaced notifier with periodic workqueue on Greg request
+>
+> v7: https://lkml.org/lkml/2016/4/13/201
+> - replaced late_initcall approach with a notifier registered to device core
+>
+> v6: https://lkml.org/lkml/2016/4/12/414
+> - got back to v1-style approach on Russell King request to avoid ABI break
+> - use list for storing deferred devices and retry their registration from
+>   late_initcall
+>
+> v5: https://lkml.org/lkml/2016/2/10/179
+> - added 2 more patches to avoid regression with existing drivers (nvdimm and
+>   sa1111), for more information, see https://lkml.org/lkml/2015/12/17/390
+> - changed thread name to "AMBA: add complete support for power domains"
+>
+> v4: https://lkml.org/lkml/2015/12/2/52
+> - fixed more issues pointed by Ulf Hansson and Russell King
+>
+> v3: https://lkml.org/lkml/2015/12/1/334
+> - fixed issues pointed by Ulf Hansson
+> - dropped patch for exynos4210 dts, because it already got queued for merging
+>
+> v2: https://lkml.org/lkml/2015/11/26/229
+> - added 2 patches from 'On-demand device probing' thread
+>   (https://lkml.org/lkml/2015/9/29/189), which move PID/CIR reading
+>   from amba_device_add() to amba_match()
+> - moved dev_pm_domain_attach() to amba_match(), which is allowed to
+>   return -EPROBE_DEFER
+>
+> v1: http://www.spinics.net/lists/arm-kernel/msg463185.html
+> - initial version
+> ---
+>  drivers/amba/bus.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 90 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+> index f0099360039e..a5b5c87e2114 100644
+> --- a/drivers/amba/bus.c
+> +++ b/drivers/amba/bus.c
+> @@ -336,16 +336,7 @@ static void amba_device_release(struct device *dev)
+>         kfree(d);
+>  }
+>
+> -/**
+> - *     amba_device_add - add a previously allocated AMBA device structure
+> - *     @dev: AMBA device allocated by amba_device_alloc
+> - *     @parent: resource parent for this devices resources
+> - *
+> - *     Claim the resource, and read the device cell ID if not already
+> - *     initialized.  Register the AMBA device with the Linux device
+> - *     manager.
+> - */
+> -int amba_device_add(struct amba_device *dev, struct resource *parent)
+> +static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
+>  {
+>         u32 size;
+>         void __iomem *tmp;
+> @@ -373,6 +364,12 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
+>                 goto err_release;
+>         }
+>
+> +       ret = dev_pm_domain_attach(&dev->dev, true);
+> +       if (ret == -EPROBE_DEFER) {
+> +               iounmap(tmp);
+> +               goto err_release;
+> +       }
+> +
+>         ret = amba_get_enable_pclk(dev);
+>         if (ret == 0) {
+>                 u32 pid, cid;
+> @@ -398,6 +395,7 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
+>         }
+>
+>         iounmap(tmp);
+> +       dev_pm_domain_detach(&dev->dev, true);
+>
+>         if (ret)
+>                 goto err_release;
+> @@ -421,6 +419,88 @@ int amba_device_add(struct amba_device *dev, struct resource *parent)
+>   err_out:
+>         return ret;
+>  }
+> +
+> +/*
+> + * Registration of AMBA device require reading its pid and cid registers.
+> + * To do this, the device must be turned on (if it is a part of power domain)
+> + * and have clocks enabled. However in some cases those resources might not be
+> + * yet available. Returning EPROBE_DEFER is not a solution in such case,
+> + * because callers don't handle this special error code. Instead such devices
+> + * are added to the special list and their registration is retried from
+> + * periodic worker, until all resources are available and registration succeeds.
+> + */
+> +struct deferred_device {
+> +       struct amba_device *dev;
+> +       struct resource *parent;
+> +       struct list_head node;
+> +};
+> +
+> +static LIST_HEAD(deferred_devices);
+> +static DEFINE_MUTEX(deferred_devices_lock);
+> +
+> +static void amba_deferred_retry_func(struct work_struct *dummy);
+> +static DECLARE_DELAYED_WORK(deferred_retry_work, amba_deferred_retry_func);
+> +
+> +#define DEFERRED_DEVICE_TIMEOUT (msecs_to_jiffies(5 * 1000))
+> +
+> +static void amba_deferred_retry_func(struct work_struct *dummy)
+> +{
+> +       struct deferred_device *ddev, *tmp;
+> +
+> +       mutex_lock(&deferred_devices_lock);
+> +
+> +       list_for_each_entry_safe(ddev, tmp, &deferred_devices, node) {
+> +               int ret = amba_device_try_add(ddev->dev, ddev->parent);
+> +
+> +               if (ret == -EPROBE_DEFER)
+> +                       continue;
+> +
+> +               list_del_init(&ddev->node);
+> +               kfree(ddev);
+> +       }
+> +
+> +       if (!list_empty(&deferred_devices))
+> +               schedule_delayed_work(&deferred_retry_work,
+> +                                     DEFERRED_DEVICE_TIMEOUT);
+> +
+> +       mutex_unlock(&deferred_devices_lock);
+> +}
+> +
+> +/**
+> + *     amba_device_add - add a previously allocated AMBA device structure
+> + *     @dev: AMBA device allocated by amba_device_alloc
+> + *     @parent: resource parent for this devices resources
+> + *
+> + *     Claim the resource, and read the device cell ID if not already
+> + *     initialized.  Register the AMBA device with the Linux device
+> + *     manager.
+> + */
+> +int amba_device_add(struct amba_device *dev, struct resource *parent)
+> +{
+> +       int ret = amba_device_try_add(dev, parent);
+> +
+> +       if (ret == -EPROBE_DEFER) {
+> +               struct deferred_device *ddev;
+> +
+> +               ddev = kmalloc(sizeof(*ddev), GFP_KERNEL);
+> +               if (!ddev)
+> +                       return -ENOMEM;
+> +
+> +               ddev->dev = dev;
+> +               ddev->parent = parent;
+> +               ret = 0;
+> +
+> +               mutex_lock(&deferred_devices_lock);
+> +
+> +               if (list_empty(&deferred_devices))
+> +                       schedule_delayed_work(&deferred_retry_work,
+> +                                             DEFERRED_DEVICE_TIMEOUT);
+> +               list_add_tail(&ddev->node, &deferred_devices);
+> +
+> +               mutex_unlock(&deferred_devices_lock);
+> +       }
+> +       return ret;
+> +}
+>  EXPORT_SYMBOL_GPL(amba_device_add);
+>
+>  static struct amba_device *
+> --
+> 1.9.2
+>
 
-Thanks for both hints. Noted.
+Overall this looks okay to me! Even if I don't really like the
+approach, it seems like this is the only viable option there is right
+now.
 
-Best regards,
-Krzysztof
+One minor improvement that I could think of, is to use also a late
+initcall in conjunction with the delayed work. So, instead of
+scheduling a work unconditionally when -EPROBE_DEFER is returned from
+amba_device_try_add(), you can postpone the *first* re-try to be done
+from a late initcall.
+
+Of course, as devices may be added also after the late initcall, you
+need to keep a flag which tells amba_device_add() whether it can rely
+on the late initcall to re-try, or if it needs to schedule a work by
+itself.
+
+Kind regards
+Uffe
