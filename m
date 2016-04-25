@@ -1,56 +1,61 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2 2/2] i2c: s3c2410: Check clk_prepare_enable() return
- value
-Date: Tue, 26 Apr 2016 00:20:51 +0200
-Message-ID: <20160425222051.GK1550@katana>
-References: <1461163076-5959-1-git-send-email-javier@osg.samsung.com>
- <1461163076-5959-2-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH v2 1/3] i2c: s3c2410: Add missing clock unprepare on
+ probe() error path
+Date: Tue, 26 Apr 2016 00:23:12 +0200
+Message-ID: <20160425222312.GL1550@katana>
+References: <1461222291-5642-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6K2R/cS9K4qvcBNq"
-Return-path: <linux-i2c-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="nrM5Z5VIJgwP9LWp"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:47335 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751815AbcDYWXU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Apr 2016 18:23:20 -0400
 Content-Disposition: inline
-In-Reply-To: <1461163076-5959-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1461222291-5642-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
 
---6K2R/cS9K4qvcBNq
+--nrM5Z5VIJgwP9LWp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 20, 2016 at 10:37:56AM -0400, Javier Martinez Canillas wrote:
-> The clk_prepare_enable() function can fail so check the return
-> value and propagate the error in case of a failure.
+On Thu, Apr 21, 2016 at 09:04:49AM +0200, Krzysztof Kozlowski wrote:
+> If during probe() the s3c24xx_i2c_init() failed, the clock was left in
+> disabled but prepared state.
 >=20
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 >=20
 
 Applied to for-next, thanks!
 
 
---6K2R/cS9K4qvcBNq
+--nrM5Z5VIJgwP9LWp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXHphDAAoJEBQN5MwUoCm2zN0P/1w8eTUai3hXi54Uzjwecc7T
-CalfxMqAMRog9qzZ9qDrBiY/AyL1vH3yHm0us5SCLez/7DnY2EdlbSVLdbOXMT4D
-U/MzjCPl3jLfWQXAxoKYXDFl806FTqWUKom8LkQAW/UUB7uPiY0tve2mTneNbl9b
-8K2g4TkOg4QvQnF/bpnPKrpe1fBXqmPq8ES9ugbMCLvmwMjV9XC23EkgGy02oMvQ
-DUsjvmnkS+NPic9jtIaWlwHIu1eSMR16lh2hoLmixM4I62g2gQDyss4pHnKlHcwQ
-7xPY6Od8jAFD7O+5R8L2Uf0+Ou0hmC5Hk/MQLngv/TQwDpFU23BQV90mJBc9S0ij
-G/tPl0JBxXYiSvNjNABMH6b083ZHGxW4kEG0M69ymuc+xHZIB0txh7i+k3+4Fcdc
-Vum566CEd02Xqp1phAAgyOUwusPcuo+Ntvgj9rjhyIkhepWqkBZlYpCJYegYcDBT
-1HkKfF5K7SwYU4Vh1gi7qmXf4qANdWsZzPo9I65+AzpCLrHcZA+ArmrLdNdusos+
-8yk0adcH1SvPR/w3+JELQQ4EDiqed2V93ohAi13QTmzrUpgWIepsvft2FTXgY4eO
-CE11FAL1T/XrvWuNOUeQbFfkhyeLp/eCrBEb46jO+w4UZGgnlXz8UuCx4skxGMpc
-gA5gFTespklR3GEU0MNf
-=/fLh
+iQIcBAEBAgAGBQJXHpjQAAoJEBQN5MwUoCm2WiUP/R3Ujj27iJZ+gKGdCEJqG6Vb
+eRSUDP11zfMpS/tpuswKMMDzN00KFFpjMP9kGBWDRgOlJ92XAlk0vzMHEiDCJINL
+JDSvpCOSehkwGG3iBrk3l0JL80M5oNvv344HkcoBPg8TxVA+jdmUzV3ZWZxgG6I1
+Jw0HpaivHbLmoRGggdFIjb9teaOXHMTItpRhcZj23T8bsW/99lWw+YORCLM4yhWQ
+jub9nud6B96kgvKZtQcDv6SDgsAG0Lc01jDPd3qfsvChngSVc4wXxzy/BuG5fUY4
+UUsu1L0g1X6lNUnjM25BOZuRKfxyuyk1XOMvDgBWVudzyQzG2thkqOy8vG43Ajz3
+xd4896zay0jIhbYqjMwsUZ/NSKr+57tTz+YUADUr1PwBbBEFBRhwO9C5dUcuD+xt
+5UGM9xEgFibXHPCiNYY6HtQLf/ML9G77h6HRQ2BVbUo9BPxV7N2J5p9qj81Obw6J
+WmDgO5MxqdHBcUEPaJtTg+S5hdLz+jem9c0gkcatdDtqQOSamutDMXzyM7mNJ+pF
+MnvZ8jEmv8j+bKoz+UXHvh/Gwo+c3lqRL9m8JUpFGL10Ip05RL1R6McGxBekMaeE
+vWHZqeppF9ezcK7DNVQTGNACV1hhtdeGzXSeSQmlDEWMJIj0pVtvlF8sYbk3jX76
+OlPDW3LL6EEtK63QO8DG
+=s2QF
 -----END PGP SIGNATURE-----
 
---6K2R/cS9K4qvcBNq--
+--nrM5Z5VIJgwP9LWp--
