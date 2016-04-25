@@ -1,37 +1,59 @@
-From: Eric Engestrom <eric@engestrom.ch>
-Subject: [PATCH 10/41] Documentation: dt: display: fix spelling mistake
-Date: Mon, 25 Apr 2016 01:24:07 +0100
-Message-ID: <1461543878-3639-11-git-send-email-eric@engestrom.ch>
-References: <1461543878-3639-1-git-send-email-eric@engestrom.ch>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] i2c: s3c2410: fix indentation for better readability
+Date: Mon, 25 Apr 2016 10:55:07 +0200
+Message-ID: <571DDB6B.6000704@samsung.com>
+References: <1461533338-17479-1-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34291 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752159AbcDYA11 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50300 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753966AbcDYIzN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 24 Apr 2016 20:27:27 -0400
-In-Reply-To: <1461543878-3639-1-git-send-email-eric@engestrom.ch>
+	Mon, 25 Apr 2016 04:55:13 -0400
+In-reply-to: <1461533338-17479-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Eric Engestrom <eric@engestrom.ch>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Chanho Park <chanho61.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-Signed-off-by: Eric Engestrom <eric@engestrom.ch>
----
- Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 04/24/2016 11:28 PM, Wolfram Sang wrote:
+> smatch rightfully says:
+> 
+> drivers/i2c/busses/i2c-s3c2410.c:1217 s3c24xx_i2c_probe() warn: inconsistent indenting
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-index 22756b3..a782659 100644
---- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-+++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-@@ -41,7 +41,7 @@ Video interfaces:
-   endpoint node connected from mic node (reg = 0):
-     - remote-endpoint: specifies the endpoint in mic node. This node is required
- 		       for Exynos5433 mipi dsi. So mic can access to panel node
--		       thoughout this dsi node.
-+		       throughout this dsi node.
-   endpoint node connected to panel node (reg = 1):
-     - remote-endpoint: specifies the endpoint in panel node. This node is
- 		       required in all kinds of exynos mipi dsi to represent
--- 
-2.8.0
+Hi,
+
+You could just apply this one:
+i2c: s3c2410: Cleanup indentation and comment style
+https://lkml.org/lkml/2016/4/20/163
+
+I fixed this in that patch. Its trivial so it does not have to be a
+separate patch.
+
+Best regards,
+Krzysztof
+
+> 
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index 1bc756313cb8e4..315c88ea1fa153 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -1214,8 +1214,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  			return ret;
+>  		}
+>  
+> -	ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+> -				dev_name(&pdev->dev), i2c);
+> +		ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+> +				       dev_name(&pdev->dev), i2c);
+>  
+>  		if (ret != 0) {
+>  			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+> 
