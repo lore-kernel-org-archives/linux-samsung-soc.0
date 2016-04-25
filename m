@@ -1,39 +1,43 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 0/7] mfd: Use devm_mfd_add_devices and devm_regmap_add_irq_chip
-Date: Mon, 25 Apr 2016 18:22:21 +0530
-Message-ID: <571E1305.6070009@nvidia.com>
-References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com> <571DF7D9.8050500@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 10/41] Documentation: dt: display: fix spelling mistake
+Date: Mon, 25 Apr 2016 08:49:38 -0500
+Message-ID: <20160425134938.GA8194@rob-hp-laptop>
+References: <1461543878-3639-1-git-send-email-eric@engestrom.ch>
+ <1461543878-3639-11-git-send-email-eric@engestrom.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3422 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932174AbcDYNEP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 09:04:15 -0400
-In-Reply-To: <571DF7D9.8050500@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1461543878-3639-11-git-send-email-eric@engestrom.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Engestrom <eric@engestrom.ch>
+Cc: linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Chanho Park <chanho61.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, lee.jones@linaro.org, milo.kim@ti.com, cw00.choi@samsung.com
-Cc: sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
+On Mon, Apr 25, 2016 at 01:24:07AM +0100, Eric Engestrom wrote:
+> Signed-off-by: Eric Engestrom <eric@engestrom.ch>
 
-On Monday 25 April 2016 04:26 PM, Krzysztof Kozlowski wrote:
-> On 04/21/2016 02:25 PM, Laxman Dewangan wrote:
->> This series is an effort to reduce the code in error path and need of
->> remove callback by using the devm_mfd_add_devices() and
->> devm_regmap_add_irq_chip() or devm_request_threaded_irq APIs for interrupt
->> support.
->>
->> This is tested with build and comiplation only with arm64 defconfig and enabling
->> the required MFD CONFIGs.
-> Please compile it also on ARMv7. The changes look trivial but one
-> compilation without testing might not be sufficient.
-Sure. Thank you very much for testing.
+Applied, thanks.
 
-I did build test with the ARMv7 for all patches and testing on actual 
-platform with Jetson-TX1 platform + max77620 which have similar change 
-with bind/unbind. This is what I learn from you for testing the remove 
-callback/unbinding without making =m on RTC patches and this really 
-helps me on my lots of testing.
+Rob
+
+> ---
+>  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+> index 22756b3..a782659 100644
+> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+> @@ -41,7 +41,7 @@ Video interfaces:
+>    endpoint node connected from mic node (reg = 0):
+>      - remote-endpoint: specifies the endpoint in mic node. This node is required
+>  		       for Exynos5433 mipi dsi. So mic can access to panel node
+> -		       thoughout this dsi node.
+> +		       throughout this dsi node.
+>    endpoint node connected to panel node (reg = 1):
+>      - remote-endpoint: specifies the endpoint in panel node. This node is
+>  		       required in all kinds of exynos mipi dsi to represent
+> -- 
+> 2.8.0
+> 
