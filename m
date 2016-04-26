@@ -1,42 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
-Date: Tue, 26 Apr 2016 15:52:38 +0200
-Message-ID: <CACRpkdYczBP58uS4nVpUGUevb7E+OCXmXA60SydigQo=AzX8Aw@mail.gmail.com>
-References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [RESEND PATCH v3 1/2] ARM: exynos_defconfig: Enable Samsung media
+ platform drivers as modules
+Date: Tue, 26 Apr 2016 12:08:14 -0400
+Message-ID: <fea2a738-a799-b6e4-8ebc-8e1f611d0432@osg.samsung.com>
+References: <1461603086-21288-1-git-send-email-javier@osg.samsung.com>
+ <571F010F.7040209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:36350 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751221AbcDZNwj (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:34276 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751317AbcDZQIY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 09:52:39 -0400
-Received: by mail-ob0-f176.google.com with SMTP id j9so7048895obd.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Apr 2016 06:52:39 -0700 (PDT)
-In-Reply-To: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+	Tue, 26 Apr 2016 12:08:24 -0400
+In-Reply-To: <571F010F.7040209@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-On Wed, Apr 20, 2016 at 3:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+Hello Krzysztof,
 
-> The range is registered into a linked list which can be referenced
-> throughout the lifetime of the driver. Ensure the range's memory is useful
-> for the same lifetime by adding it to the driver's private data structure.
->
-> The bug was introduced in the driver's initial commit, which was present in
-> v3.10.
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
-> Cc: stable@vger.kernel.org
-> ---
-> Since v1:
->
-> * Add range member kerneldoc addressing Tomasz Figa's comment
+On 04/26/2016 01:47 AM, Krzysztof Kozlowski wrote:
+> On 04/25/2016 06:51 PM, Javier Martinez Canillas wrote:
+>> There are a bunch of media platform drivers under drivers/media/platform/
+>> that are for Samsung SoCs but are not being built with exynos_defconfig.
+>>
+>> This patch enables them as a module to improve build coverage for these
+>> drivers and also to allow people use them with proper hardware if modules
+>> are installed. The S5P MFC driver wasn't enabled since it fails to probe.
+>>
+>> Only the boolean Kconfig symbols are enabled as built-in, since drivers
+>> are not critical and also to keep the kernel binary image size as small
+>> as possible.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>
+>> ---
+>>
+>> Changes in v3:
+>> - Added Krzysztof Kozlowski's reviewed by tag.
+>>
+>> Changes in v2:
+>> - Remove S5P G2D and GSC symbols since overlaps with Exynos DRM functionality.
+>>   Suggested by Tobias Jakobi
+>>
+>>  arch/arm/configs/exynos_defconfig | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+> 
+> Still nothing... did not reach any of the mailing lists... I think you
+> need to check your setup or check for any bounces.
+> 
 
-Patch applied with the ACKs.
+Yes, I noticed yesterday and answered in patch 2/2. I'll look at my
+end to see what's going on. Sorry for the inconvenience.
 
-Yours,
-Linus Walleij
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
