@@ -1,54 +1,55 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] phy: Group vendor specific phy drivers
-Date: Tue, 26 Apr 2016 11:36:04 +0530
-Message-ID: <CAFp+6iHGSuTGbyWv4dV3GCNr=7VDRnBpcodwnoeB1i0zocUg5g@mail.gmail.com>
-References: <1459951665-28708-1-git-send-email-gautam.vivek@samsung.com>
-	<1459951665-28708-2-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1459951665-28708-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kishon <kishon-l0cyMroinI0@public.gmane.org>
-Cc: vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Shiraz Hashim <shiraz.linux.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, CPGS <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] crypto: s5p-sss: fix incorrect usage of scatterlists api
+Date: Tue, 26 Apr 2016 09:29:26 +0200
+Message-ID: <1461655766-27346-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kishon,
+sg_dma_len() macro can be used only on scattelists which are mapped, so
+all calls to it before dma_map_sg() are invalid. Replace them by proper
+check for direct sg segment length read.
 
+Fixes: a49e490c7a8a ("crypto: s5p-sss - add S5PV210 advanced crypto engine support")
+Fixes: 9e4a1100a445 ("crypto: s5p-sss - Handle unaligned buffers")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/crypto/s5p-sss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Wed, Apr 6, 2016 at 7:37 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Adding vendor specific directories in phy to group
-> phy drivers under their respective vendor umbrella.
->
-> Also updated the MAINTAINERS file to reflect the correct
-> directory structure for phy drivers.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-> Acked-by: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
->
-> Changes from v1:
->  - Updated the MAINTAINERS file to reflect the same change
->    in directory structure.
->  - Removed PHY_PLAT config as pointed out by Kishon.
->    So we don't require the second patch in the v1 of this series:
->    [PATCH 2/2] arm: mach-spear: Enable PHY_PLAT to meet dependency
->  - Renamed sunxi --> allwinner; rcar --> renesas.
->  - Fixed error coming with qcom Makefile.
-
-Does this change looks okay now ?
-I think you must be planning to take this in after 4.7 rc1 is out, isn't it ?
-
-[skip]
-
-
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index ac6d62b..2b3a0cf 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -327,7 +327,7 @@ static int s5p_set_outdata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ {
+ 	int err;
+ 
+-	if (!sg_dma_len(sg)) {
++	if (!sg->length) {
+ 		err = -EINVAL;
+ 		goto exit;
+ 	}
+@@ -349,7 +349,7 @@ static int s5p_set_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ {
+ 	int err;
+ 
+-	if (!sg_dma_len(sg)) {
++	if (!sg->length) {
+ 		err = -EINVAL;
+ 		goto exit;
+ 	}
+@@ -474,7 +474,7 @@ static void s5p_set_aes(struct s5p_aes_dev *dev,
+ static bool s5p_is_sg_aligned(struct scatterlist *sg)
+ {
+ 	while (sg) {
+-		if (!IS_ALIGNED(sg_dma_len(sg), AES_BLOCK_SIZE))
++		if (!IS_ALIGNED(sg->length, AES_BLOCK_SIZE))
+ 			return false;
+ 		sg = sg_next(sg);
+ 	}
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.2
