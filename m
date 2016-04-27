@@ -1,53 +1,88 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 3/3] ARM: dts: exynos: Lower SD card interface voltage to 2.8v
- on Odroid X/X2/U3
-Date: Wed, 27 Apr 2016 14:19:13 +0200
-Message-ID: <1461759553-10119-3-git-send-email-k.kozlowski@samsung.com>
-References: <1461759553-10119-1-git-send-email-k.kozlowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH RESEND 1/2] media: vb2-dma-contig: add helper for setting
+ dma max seg size
+Date: Wed, 27 Apr 2016 14:23:22 +0200
+Message-ID: <5900d3fc-b17a-875b-e016-ae53442641b0@samsung.com>
+References: <1461758429-12913-1-git-send-email-m.szyprowski@samsung.com>
+ <5720AC3C.8090101@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1461759553-10119-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Anand Moon <linux.amoon@gmail.com>, linux-mmc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49085 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751689AbcD0MX0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Apr 2016 08:23:26 -0400
+In-reply-to: <5720AC3C.8090101@xs4all.nl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Odroid X/X2/U3 schematics say that SD card vmmc regulator
-(LDO21/TFLASH) operates on 2.8 V. Mainline U-Boot uses that value as
-well. 2.8 V is common on Exynos-based boards. Additionally use some
-descriptive name for this regulator.
+Hello,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 55d766f28202..563681c39ec2 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -341,9 +341,9 @@
- 			};
- 
- 			ldo21_reg: LDO21 {
--				regulator-name = "LDO21_3.3V";
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3300000>;
-+				regulator-name = "TFLASH_2.8V";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
- 				regulator-boot-on;
- 			};
- 
+On 2016-04-27 14:10, Hans Verkuil wrote:
+> On 04/27/2016 02:00 PM, Marek Szyprowski wrote:
+>> Add a helper function for device drivers to set DMA's max_seg_size.
+>> Setting it to largest possible value lets DMA-mapping API always create
+>> contiguous mappings in DMA address space. This is essential for all
+>> devices, which use dma-contig videobuf2 memory allocator and shared
+>> buffers.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>> This patch was posted earlier as a part of
+>> http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
+>> thread, but applying it is really needed to get all Exynos multimedia
+>> drivers working with IOMMU enabled.
+>>
+>> Best regards,
+>> Marek Szyprowski
+>> ---
+>>   drivers/media/v4l2-core/videobuf2-dma-contig.c | 15 +++++++++++++++
+>>   include/media/videobuf2-dma-contig.h           |  1 +
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> index 5361197..f611456 100644
+>> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> @@ -753,6 +753,21 @@ void vb2_dma_contig_cleanup_ctx(void *alloc_ctx)
+>>   }
+>>   EXPORT_SYMBOL_GPL(vb2_dma_contig_cleanup_ctx);
+>>   
+>> +int vb2_dma_contig_set_max_seg_size(struct device *dev, unsigned int size)
+>> +{
+>> +	if (!dev->dma_parms) {
+>> +		dev->dma_parms = devm_kzalloc(dev, sizeof(dev->dma_parms),
+>> +					      GFP_KERNEL);
+> The v3 patch from December uses kzalloc here. Is this perhaps on old version?
+
+Right, my fault. I will do another resend (and fix the typo in the 
+second patch).
+
+>> +		if (!dev->dma_parms)
+>> +			return -ENOMEM;
+>> +	}
+>> +	if (dma_get_max_seg_size(dev) < size)
+>> +		return dma_set_max_seg_size(dev, size);
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(vb2_dma_contig_set_max_seg_size);
+> Admittedly I haven't looked closely at this, but is this something that you
+> want for all dma-contig devices? Or to rephrase this question: what type of
+> devices will need this?
+
+This is needed for all devices using vb2-dc, iommu and user-ptr mode, 
+however
+in the previous discussions (see https://patchwork.linuxtv.org/patch/30870/
+) it has been suggested to make it via common helper instead of forcing it
+in vb2-dc.
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
