@@ -1,88 +1,54 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH RESEND 1/2] media: vb2-dma-contig: add helper for setting
- dma max seg size
-Date: Wed, 27 Apr 2016 14:10:36 +0200
-Message-ID: <5720AC3C.8090101@xs4all.nl>
-References: <1461758429-12913-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1461758429-12913-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/3] ARM: dts: exynos: Define vqmmc for SD card and allow
+ disabling regulators on Odroid X/X2/U3
+Date: Wed, 27 Apr 2016 14:19:11 +0200
+Message-ID: <1461759553-10119-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/27/2016 02:00 PM, Marek Szyprowski wrote:
-> Add a helper function for device drivers to set DMA's max_seg_size.
-> Setting it to largest possible value lets DMA-mapping API always create
-> contiguous mappings in DMA address space. This is essential for all
-> devices, which use dma-contig videobuf2 memory allocator and shared
-> buffers.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> This patch was posted earlier as a part of
-> http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
-> thread, but applying it is really needed to get all Exynos multimedia
-> drivers working with IOMMU enabled.
-> 
-> Best regards,
-> Marek Szyprowski
-> ---
->  drivers/media/v4l2-core/videobuf2-dma-contig.c | 15 +++++++++++++++
->  include/media/videobuf2-dma-contig.h           |  1 +
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> index 5361197..f611456 100644
-> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> @@ -753,6 +753,21 @@ void vb2_dma_contig_cleanup_ctx(void *alloc_ctx)
->  }
->  EXPORT_SYMBOL_GPL(vb2_dma_contig_cleanup_ctx);
->  
-> +int vb2_dma_contig_set_max_seg_size(struct device *dev, unsigned int size)
-> +{
-> +	if (!dev->dma_parms) {
-> +		dev->dma_parms = devm_kzalloc(dev, sizeof(dev->dma_parms),
-> +					      GFP_KERNEL);
+The SD-card vmmc-supply contained incorrectly two regulators. The second
+one is ignored. Fix this by defining proper vmmc and vqmmc supplies.
+Additionally these regulators do not have to be always on, so allow
+disabling them to reduce energy consumption.
 
-The v3 patch from December uses kzalloc here. Is this perhaps on old version?
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> +		if (!dev->dma_parms)
-> +			return -ENOMEM;
-> +	}
-> +	if (dma_get_max_seg_size(dev) < size)
-> +		return dma_set_max_seg_size(dev, size);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(vb2_dma_contig_set_max_seg_size);
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index cab0f07d7d28..3d0d44581fbd 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -249,7 +249,6 @@
+ 				regulator-name = "VDDQ_MMC2_2.8V";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
+ 
+@@ -345,7 +344,6 @@
+ 				regulator-name = "LDO21_3.3V";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
+ 
+@@ -482,7 +480,8 @@
+ 	bus-width = <4>;
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+ 	pinctrl-names = "default";
+-	vmmc-supply = <&ldo4_reg &ldo21_reg>;
++	vmmc-supply = <&ldo21_reg>;
++	vqmmc-supply = <&ldo4_reg>;
+ 	cd-gpios = <&gpk2 2 GPIO_ACTIVE_HIGH>;
+ 	cd-inverted;
+ 	status = "okay";
+-- 
+1.9.1
 
-Admittedly I haven't looked closely at this, but is this something that you
-want for all dma-contig devices? Or to rephrase this question: what type of
-devices will need this?
-
-Regards,
-
-	Hans
-
-> +
->  MODULE_DESCRIPTION("DMA-contig memory handling routines for videobuf2");
->  MODULE_AUTHOR("Pawel Osciak <pawel@osciak.com>");
->  MODULE_LICENSE("GPL");
-> diff --git a/include/media/videobuf2-dma-contig.h b/include/media/videobuf2-dma-contig.h
-> index 2087c9a..98857b5 100644
-> --- a/include/media/videobuf2-dma-contig.h
-> +++ b/include/media/videobuf2-dma-contig.h
-> @@ -35,6 +35,7 @@ static inline void *vb2_dma_contig_init_ctx(struct device *dev)
->  }
->  
->  void vb2_dma_contig_cleanup_ctx(void *alloc_ctx);
-> +int vb2_dma_contig_set_max_seg_size(struct device *dev, unsigned int size);
->  
->  extern const struct vb2_mem_ops vb2_dma_contig_memops;
->  
-> 
