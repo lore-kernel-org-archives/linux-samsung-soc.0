@@ -1,27 +1,50 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 0/3] ARM: EXYNOS: Second round for v4.7
-Date: Wed, 27 Apr 2016 11:10:53 +0200
-Message-ID: <1461748256-4394-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37522 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752462AbcD0JLO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 05:11:14 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL 2/3] ARM: dts: exynos: Fixup for SROM controller (v4.7)
+Date: Wed, 27 Apr 2016 11:10:55 +0200
+Message-ID: <1461748256-4394-3-git-send-email-k.kozlowski@samsung.com>
+References: <1461748256-4394-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1461748256-4394-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
 Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-Last round with stuff for v4.7. No external dependencies. Organized as:
-
-1. tags/samsung-dt-4.7-2
-2. tags/samsung-dt-exynos-srom-fixup-4.7
-   DT changes, this is also an internal dependency for SROM driver.
-3. tags/samsung-drivers-exynos-srom-4.7
-   (includes branch #2 above)
+The DTS changes for SROM controller (pull 3/3 here) was pulled during
+previous cycle. The SROM controller itself was delayed due to
+late comments. These late comments introduced changes in the bindings
+which now have to be fixed before merging drivers/memory commits.
 
 Best regards,
 Krzysztof
+
+
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+
+are available in the git repository at:
+
+  kernel.org:/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-exynos-srom-fixup-4.7
+
+for you to fetch changes up to 4d7820b0465a78e6c85a74474b89fb4ab84768ba:
+
+  ARM: dts: change SROM node compatible from generic to model specific (2016-04-18 14:18:31 +0200)
+
+----------------------------------------------------------------
+DeviceTree changes for new SROM controller driver reached mainline
+some time ago, before the driver was accepted (due to very late
+comments). However, after these late comments, the driver expects
+different bindings so we need to fix the DTS.
+
+----------------------------------------------------------------
+Pankaj Dubey (1):
+      ARM: dts: change SROM node compatible from generic to model specific
+
+ arch/arm/boot/dts/exynos4.dtsi            | 4 ++--
+ arch/arm/boot/dts/exynos5.dtsi            | 4 ++--
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 2 +-
+ arch/arm/boot/dts/exynos5410.dtsi         | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
