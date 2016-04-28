@@ -1,59 +1,96 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] media: exynos4-is: fix deadlock on driver probe
-Date: Thu, 28 Apr 2016 12:25:03 +0200
-Message-ID: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:62946 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750923AbcD1KZS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 06:25:18 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/7] mfd: max77686: Use devm_mfd_add_devices and
+ devm_regmap_add_irq_chip
+Date: Thu, 28 Apr 2016 12:39:36 +0200
+Message-ID: <5721E868.6090003@samsung.com>
+References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com>
+ <1461241558-26983-4-git-send-email-ldewangan@nvidia.com>
+ <571DF7FD.8020209@samsung.com> <20160428090102.GM4892@dell>
+ <5721DFC2.4070301@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5721DFC2.4070301@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>
+Cc: milo.kim@ti.com, cw00.choi@samsung.com, sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Commit 0c426c472b5585ed6e59160359c979506d45ae49 ("[media] media: Always
-keep a graph walk large enough around") changed
-media_device_register_entity() function to take mdev->graph_mutex. This
-causes deadlock in driver probe, which calls (indirectly) this function
-with ->graph_mutex taken. This patch removes taking ->graph_mutex in
-driver probe to avoid deadlock. Other drivers don't take ->graph_mutex
-for entity registration, so this change should be safe.
+On 04/28/2016 12:02 PM, Laxman Dewangan wrote:
+> 
+> On Thursday 28 April 2016 02:31 PM, Lee Jones wrote:
+>> On Mon, 25 Apr 2016, Krzysztof Kozlowski wrote:
+>>
+>>> On 04/21/2016 02:25 PM, Laxman Dewangan wrote:
+>>>> Use devm_mfd_add_devices() for adding MFD child devices and
+>>>> devm_regmap_add_irq_chip() for IRQ chip registration.
+>>>>
+>>>> This reduces the error code path and .remove callback for removing
+>>>> MFD child devices and deleting IRQ chip data.
+>>>>
+>>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>>> CC: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> ---
+>>>>   drivers/mfd/max77686.c | 31 ++++++++-----------------------
+>>>>   1 file changed, 8 insertions(+), 23 deletions(-)
+>>> Switching existing code to devm-like interface doesn't bring huge
+>>> benefits but looks okay and I'm fine with it:
+>> This is pretty much my view, but it get's Laxman's patch count up. ;)
+> 
+> Yaah. :-)
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/exynos4-is/media-dev.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 04348b502232..891625e77ef5 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1448,22 +1448,13 @@ static int fimc_md_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, fmd);
- 
--	/* Protect the media graph while we're registering entities */
--	mutex_lock(&fmd->media_dev.graph_mutex);
--
- 	ret = fimc_md_register_platform_entities(fmd, dev->of_node);
--	if (ret) {
--		mutex_unlock(&fmd->media_dev.graph_mutex);
-+	if (ret)
- 		goto err_clk;
--	}
- 
- 	ret = fimc_md_register_sensor_entities(fmd);
--	if (ret) {
--		mutex_unlock(&fmd->media_dev.graph_mutex);
-+	if (ret)
- 		goto err_m_ent;
--	}
--
--	mutex_unlock(&fmd->media_dev.graph_mutex);
- 
- 	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
- 	if (ret)
--- 
-1.9.2
+
+The patch was applied so discussion seems useful only for future work. I
+don't agree with some of your motivation.
+
+> There is some other motivation of doing this:
+> * I got the review comment about the resource leak and sequencing in my
+> max77620. It was silly mistake done by me  and it causes recycle of
+> patch. To avoid this in future, devm_ was better option.
+
+This is new code. You made error in new code... this is not an argument
+to change something in existing well tested code.
+
+> * Spent lots of time on unbinding test during my RTC patch. Although fix
+> was not related to the devm_ but gave the impression that something we
+> are doing on probe. devm_ looks straight forward.
+
+Nope, the opposite. Usage of devm-like interface hides the order of
+cleaning up. With explicit clean it is easy to spot the reverse work of
+probe and to find the differences (like when the code is not in the
+exact reverse order).
+
+> - Some of code quality tools suggest to avoid goto statement. Only
+> possible if we dont have any code in error path i.e. return from any place.
+
+The 'goto' with one exit point is a part of kernel coding style. Of
+course lack of error paths is easier to read... usually.
+
+> - If we have devm_ apis for few resource and some does not support then
+> difficult to use them as this affect the sequence of deallocation.
+> Existing devm_ can be used effectively only if we have all resource
+> allocation using devm_.
+
+Ekhm? I don't understand.
+
+> - Reducing code size always better.
+
+Usually... but (again) introducing such questionable improvements for
+existing code which was well tested and is working fine:
+1. May introduce bugs. Code is already working, error path maybe was or
+was not tested. At least it was reviewed. Your change may break this.
+
+2. Is unnecessary code churn. If there are no clear benefits (and for me
+in case of max77686 there are no benefits) you just used mine and
+maintainer's time.
+
+
+This is even different kind of change than improvements for defensive
+coding (like adding 'consts'). Here, the code does not necessarily
+improve. Error paths and order of cleanup are hidden.
+
+Best regards,
+Krzysztof
