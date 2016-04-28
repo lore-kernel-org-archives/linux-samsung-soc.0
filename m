@@ -1,51 +1,32 @@
-From: Hans Verkuil <hansverk@cisco.com>
-Subject: Re: [PATCH v2] media: vb2-dma-contig: configure DMA max segment size
- properly
-Date: Thu, 28 Apr 2016 15:42:32 +0200
-Message-ID: <57221348.9020306@cisco.com>
-References: <57220299.3000807@xs4all.nl>
- <1461849603-6313-1-git-send-email-m.szyprowski@samsung.com>
- <57221022.5040606@cisco.com>
- <cc31e0a1-f655-2107-a024-58fdf5ba45e4@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 1/3] ARM: dts: exynos: Secound round of DTS for v4.7
+Date: Thu, 28 Apr 2016 16:06:54 +0200
+Message-ID: <1956683.Gv388axJqA@wuerfel>
+References: <1461748256-4394-1-git-send-email-k.kozlowski@samsung.com> <1461748256-4394-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aer-iport-3.cisco.com ([173.38.203.53]:19612 "EHLO
-	aer-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751801AbcD1Nmg (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:55576 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750932AbcD1OHf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 09:42:36 -0400
-In-Reply-To: <cc31e0a1-f655-2107-a024-58fdf5ba45e4@samsung.com>
+	Thu, 28 Apr 2016 10:07:35 -0400
+In-Reply-To: <1461748256-4394-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-
-
-On 04/28/2016 03:39 PM, Marek Szyprowski wrote:
-> Hello,
+On Wednesday 27 April 2016 11:10:54 Krzysztof Kozlowski wrote:
+>   kernel.org:/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.7-2
 > 
-> 
-> On 2016-04-28 15:29, Hans Verkuil wrote:
->> On 04/28/2016 03:20 PM, Marek Szyprowski wrote:
->>> This patch lets vb2-dma-contig memory allocator to configure DMA max
->>> segment size properly for the client device. Setting it is needed to let
->>> DMA-mapping subsystem to create a single, contiguous mapping in DMA
->>> address space. This is essential for all devices, which use dma-contig
->>> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
->>> of operations).
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
->>
->> Should this go in for 4.7? (might be too late) Should this go into older
->> kernels as well?
 
-Oops, typo. I meant 4.6, not 4.7. I gather that committing this for 4.6 is not
-necessary, so I just queue it up for 4.7.
+Pulled into next/dt after I figured out that the URL was wrong.
 
-Regards,
+Please check your git configuration to make sure you send an address
+I can pull from.
 
-	Hans
+Thanks,
+
+	Arnd
