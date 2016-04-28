@@ -1,35 +1,35 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 3/3] ARM: dts: exynos: Lower SD card interface voltage
- to 2.8v on Odroid X/X2/U3
-Date: Wed, 27 Apr 2016 17:30:50 -0400
-Message-ID: <4691605f-545d-b721-af7d-e4b7669bcd79@osg.samsung.com>
-References: <1461765620-6833-1-git-send-email-k.kozlowski@samsung.com>
- <1461765620-6833-3-git-send-email-k.kozlowski@samsung.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: s5p-sss: fix incorrect usage of scatterlists api
+Date: Thu, 28 Apr 2016 09:21:43 +0800
+Message-ID: <20160428012143.GB5940@gondor.apana.org.au>
+References: <1461655766-27346-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461765620-6833-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux.amoon@gmail.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from helcar.hengli.com.au ([209.40.204.226]:43845 "EHLO
+	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751267AbcD1BVw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Apr 2016 21:21:52 -0400
+Content-Disposition: inline
+In-Reply-To: <1461655766-27346-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "David S. Miller" <davem@davemloft.net>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 
-Hello 
-
-On 04/27/2016 10:00 AM, Krzysztof Kozlowski wrote:
-> Odroid X/X2/U3 schematics say that SD card vmmc regulator
-> (LDO21/TFLASH) operates on 2.8 V. Mainline U-Boot uses that value as
-> well. 2.8 V is common on Exynos-based boards. Additionally use some
-> descriptive name for this regulator.
+On Tue, Apr 26, 2016 at 09:29:26AM +0200, Marek Szyprowski wrote:
+> sg_dma_len() macro can be used only on scattelists which are mapped, so
+> all calls to it before dma_map_sg() are invalid. Replace them by proper
+> check for direct sg segment length read.
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
+> Fixes: a49e490c7a8a ("crypto: s5p-sss - add S5PV210 advanced crypto engine support")
+> Fixes: 9e4a1100a445 ("crypto: s5p-sss - Handle unaligned buffers")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+Applied.
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
