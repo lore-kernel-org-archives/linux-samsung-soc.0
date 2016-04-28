@@ -1,85 +1,52 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 7/7] mfd: wl1273-core: Use devm_mfd_add_devices() for
- mfd_device registration
-Date: Thu, 28 Apr 2016 10:11:17 +0100
-Message-ID: <20160428091117.GC19259@dell>
-References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com>
- <1461241558-26983-8-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 3/7] mfd: max77686: Use devm_mfd_add_devices and devm_regmap_add_irq_chip
+Date: Thu, 28 Apr 2016 15:32:42 +0530
+Message-ID: <5721DFC2.4070301@nvidia.com>
+References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com> <1461241558-26983-4-git-send-email-ldewangan@nvidia.com> <571DF7FD.8020209@samsung.com> <20160428090102.GM4892@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:35813 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753786AbcD1JLV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 05:11:21 -0400
-Received: by mail-wm0-f41.google.com with SMTP id e201so68603318wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2016 02:11:15 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1461241558-26983-8-git-send-email-ldewangan@nvidia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160428090102.GM4892@dell>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: milo.kim@ti.com, cw00.choi@samsung.com, sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: milo.kim@ti.com, cw00.choi@samsung.com, k.kozlowski@samsung.com, sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-On Thu, 21 Apr 2016, Laxman Dewangan wrote:
 
-> Use devm_mfd_add_devices() for MFD devices registration and get
-> rid of .remove callback to remove MFD child-devices. This is done
-> by managed device framework.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
->  drivers/mfd/wl1273-core.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
+On Thursday 28 April 2016 02:31 PM, Lee Jones wrote:
+> On Mon, 25 Apr 2016, Krzysztof Kozlowski wrote:
+>
+>> On 04/21/2016 02:25 PM, Laxman Dewangan wrote:
+>>> Use devm_mfd_add_devices() for adding MFD child devices and
+>>> devm_regmap_add_irq_chip() for IRQ chip registration.
+>>>
+>>> This reduces the error code path and .remove callback for removing
+>>> MFD child devices and deleting IRQ chip data.
+>>>
+>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>> CC: Chanwoo Choi <cw00.choi@samsung.com>
+>>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> ---
+>>>   drivers/mfd/max77686.c | 31 ++++++++-----------------------
+>>>   1 file changed, 8 insertions(+), 23 deletions(-)
+>> Switching existing code to devm-like interface doesn't bring huge
+>> benefits but looks okay and I'm fine with it:
+> This is pretty much my view, but it get's Laxman's patch count up. ;)
 
-Applied, thanks.
+Yaah. :-)
 
-> diff --git a/drivers/mfd/wl1273-core.c b/drivers/mfd/wl1273-core.c
-> index f7c52d9..7080465 100644
-> --- a/drivers/mfd/wl1273-core.c
-> +++ b/drivers/mfd/wl1273-core.c
-> @@ -170,15 +170,6 @@ static int wl1273_fm_set_volume(struct wl1273_co=
-re *core, unsigned int volume)
->  	return 0;
->  }
-> =20
-> -static int wl1273_core_remove(struct i2c_client *client)
-> -{
-> -	dev_dbg(&client->dev, "%s\n", __func__);
-> -
-> -	mfd_remove_devices(&client->dev);
-> -
-> -	return 0;
-> -}
-> -
->  static int wl1273_core_probe(struct i2c_client *client,
->  				       const struct i2c_device_id *id)
->  {
-> @@ -237,8 +228,8 @@ static int wl1273_core_probe(struct i2c_client *c=
-lient,
->  	dev_dbg(&client->dev, "%s: number of children: %d.\n",
->  		__func__, children);
-> =20
-> -	r =3D mfd_add_devices(&client->dev, -1, core->cells,
-> -			    children, NULL, 0, NULL);
-> +	r =3D devm_mfd_add_devices(&client->dev, -1, core->cells,
-> +				 children, NULL, 0, NULL);
->  	if (r)
->  		goto err;
-> =20
-> @@ -258,7 +249,6 @@ static struct i2c_driver wl1273_core_driver =3D {
->  	},
->  	.probe =3D wl1273_core_probe,
->  	.id_table =3D wl1273_driver_id_table,
-> -	.remove =3D wl1273_core_remove,
->  };
-> =20
->  static int __init wl1273_core_init(void)
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+There is some other motivation of doing this:
+* I got the review comment about the resource leak and sequencing in my 
+max77620. It was silly mistake done by me  and it causes recycle of 
+patch. To avoid this in future, devm_ was better option.
+* Spent lots of time on unbinding test during my RTC patch. Although fix 
+was not related to the devm_ but gave the impression that something we 
+are doing on probe. devm_ looks straight forward.
+- Some of code quality tools suggest to avoid goto statement. Only 
+possible if we dont have any code in error path i.e. return from any place.
+- If we have devm_ apis for few resource and some does not support then 
+difficult to use them as this affect the sequence of deallocation. 
+Existing devm_ can be used effectively only if we have all resource 
+allocation using devm_.
+- Reducing code size always better.
