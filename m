@@ -1,32 +1,46 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/3] ARM: dts: exynos: Secound round of DTS for v4.7
-Date: Thu, 28 Apr 2016 16:06:54 +0200
-Message-ID: <1956683.Gv388axJqA@wuerfel>
-References: <1461748256-4394-1-git-send-email-k.kozlowski@samsung.com> <1461748256-4394-2-git-send-email-k.kozlowski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: Disable big.LITTLE switcher
+Date: Thu, 28 Apr 2016 16:44:45 +0200
+Message-ID: <1493315.8NlXQFsEtt@amdc1976>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:55576 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932AbcD1OHf (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:38965 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751801AbcD1Oq3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 10:07:35 -0400
-In-Reply-To: <1461748256-4394-2-git-send-email-k.kozlowski@samsung.com>
+	Thu, 28 Apr 2016 10:46:29 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wednesday 27 April 2016 11:10:54 Krzysztof Kozlowski wrote:
->   kernel.org:/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.7-2
-> 
+Disable big.LITTLE switcher in order to allow automatic usage of
+cpufreq-dt driver on Exynos542x/Exynos5800 SoCs based boards.
 
-Pulled into next/dt after I figured out that the URL was wrong.
+This change should not cause any problems as arm_big_little[_dt]
+driver (which is using big.LITTLE switcher support to do the "real"
+big.LITTLE switching work) is not used on any Exynos SoC based
+board currently.
 
-Please check your git configuration to make sure you send an address
-I can pull from.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-
-	Arnd
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index a8cf295..07d4168 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -13,8 +13,6 @@ CONFIG_ARCH_EXYNOS3=y
+ CONFIG_EXYNOS5420_MCPM=y
+ CONFIG_SMP=y
+ CONFIG_BIG_LITTLE=y
+-CONFIG_BL_SWITCHER=y
+-CONFIG_BL_SWITCHER_DUMMY_IF=y
+ CONFIG_NR_CPUS=8
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+-- 
+1.9.1
