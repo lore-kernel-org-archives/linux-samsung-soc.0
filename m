@@ -1,29 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/3] ARM: dts: exynos: Fixup for SROM controller (v4.7)
-Date: Thu, 28 Apr 2016 17:41:06 +0200
-Message-ID: <7052710.l4pDA7Dm1I@wuerfel>
-References: <1461748256-4394-1-git-send-email-k.kozlowski@samsung.com> <1461748256-4394-3-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Disable big.LITTLE switcher
+Date: Thu, 28 Apr 2016 12:04:26 -0400
+Message-ID: <e9259b1f-1cd7-b70f-86c3-cbe02c94be22@osg.samsung.com>
+References: <1493315.8NlXQFsEtt@amdc1976>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.73]:58176 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932AbcD1Plp (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:48780 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752403AbcD1QEh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 11:41:45 -0400
-In-Reply-To: <1461748256-4394-3-git-send-email-k.kozlowski@samsung.com>
+	Thu, 28 Apr 2016 12:04:37 -0400
+In-Reply-To: <1493315.8NlXQFsEtt@amdc1976>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wednesday 27 April 2016 11:10:55 Krzysztof Kozlowski wrote:
-> DeviceTree changes for new SROM controller driver reached mainline
-> some time ago, before the driver was accepted (due to very late
-> comments). However, after these late comments, the driver expects
-> different bindings so we need to fix the DTS.
+Hello Bartlomiej,
 
-Pulled into next/dt, thanks!
+On 04/28/2016 10:44 AM, Bartlomiej Zolnierkiewicz wrote:
+> Disable big.LITTLE switcher in order to allow automatic usage of
+> cpufreq-dt driver on Exynos542x/Exynos5800 SoCs based boards.
+> 
+> This change should not cause any problems as arm_big_little[_dt]
+> driver (which is using big.LITTLE switcher support to do the "real"
+> big.LITTLE switching work) is not used on any Exynos SoC based
+> board currently.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
 
-	Arnd
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+On an Exynos5422 Odroid XU4 and Exynos5800 Peach Pi Chromebook:
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+--
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
