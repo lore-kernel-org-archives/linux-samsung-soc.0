@@ -1,52 +1,70 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 3/7] mfd: max77686: Use devm_mfd_add_devices and devm_regmap_add_irq_chip
-Date: Thu, 28 Apr 2016 15:32:42 +0530
-Message-ID: <5721DFC2.4070301@nvidia.com>
-References: <1461241558-26983-1-git-send-email-ldewangan@nvidia.com> <1461241558-26983-4-git-send-email-ldewangan@nvidia.com> <571DF7FD.8020209@samsung.com> <20160428090102.GM4892@dell>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160428090102.GM4892@dell>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: milo.kim@ti.com, cw00.choi@samsung.com, sbkim73@samsung.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/2] media: s3c-camif: fix deadlock on driver probe()
+Date: Thu, 28 Apr 2016 12:25:04 +0200
+Message-ID: <1461839104-29135-2-git-send-email-m.szyprowski@samsung.com>
+References: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39211 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751070AbcD1KZS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Apr 2016 06:25:18 -0400
+In-reply-to: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+Commit 0c426c472b5585ed6e59160359c979506d45ae49 ("[media] media: Always
+keep a graph walk large enough around") changed
+media_device_register_entity() function to take mdev->graph_mutex. This
+causes deadlock in driver probe, which calls (indirectly) this function
+with ->graph_mutex taken. This patch removes taking ->graph_mutex in
+driver probe to avoid deadlock. Other drivers don't take ->graph_mutex
+for entity registration, so this change should be safe.
 
-On Thursday 28 April 2016 02:31 PM, Lee Jones wrote:
-> On Mon, 25 Apr 2016, Krzysztof Kozlowski wrote:
->
->> On 04/21/2016 02:25 PM, Laxman Dewangan wrote:
->>> Use devm_mfd_add_devices() for adding MFD child devices and
->>> devm_regmap_add_irq_chip() for IRQ chip registration.
->>>
->>> This reduces the error code path and .remove callback for removing
->>> MFD child devices and deleting IRQ chip data.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>> CC: Chanwoo Choi <cw00.choi@samsung.com>
->>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> ---
->>>   drivers/mfd/max77686.c | 31 ++++++++-----------------------
->>>   1 file changed, 8 insertions(+), 23 deletions(-)
->> Switching existing code to devm-like interface doesn't bring huge
->> benefits but looks okay and I'm fine with it:
-> This is pretty much my view, but it get's Laxman's patch count up. ;)
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/s3c-camif/camif-core.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-Yaah. :-)
-
-There is some other motivation of doing this:
-* I got the review comment about the resource leak and sequencing in my 
-max77620. It was silly mistake done by me  and it causes recycle of 
-patch. To avoid this in future, devm_ was better option.
-* Spent lots of time on unbinding test during my RTC patch. Although fix 
-was not related to the devm_ but gave the impression that something we 
-are doing on probe. devm_ looks straight forward.
-- Some of code quality tools suggest to avoid goto statement. Only 
-possible if we dont have any code in error path i.e. return from any place.
-- If we have devm_ apis for few resource and some does not support then 
-difficult to use them as this affect the sequence of deallocation. 
-Existing devm_ can be used effectively only if we have all resource 
-allocation using devm_.
-- Reducing code size always better.
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index 0b44b9accf50..af237af204e2 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -493,21 +493,17 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_sens;
+ 
+-	mutex_lock(&camif->media_dev.graph_mutex);
+-
+ 	ret = v4l2_device_register_subdev_nodes(&camif->v4l2_dev);
+ 	if (ret < 0)
+-		goto err_unlock;
++		goto err_sens;
+ 
+ 	ret = camif_register_video_nodes(camif);
+ 	if (ret < 0)
+-		goto err_unlock;
++		goto err_sens;
+ 
+ 	ret = camif_create_media_links(camif);
+ 	if (ret < 0)
+-		goto err_unlock;
+-
+-	mutex_unlock(&camif->media_dev.graph_mutex);
++		goto err_sens;
+ 
+ 	ret = media_device_register(&camif->media_dev);
+ 	if (ret < 0)
+@@ -516,8 +512,6 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	pm_runtime_put(dev);
+ 	return 0;
+ 
+-err_unlock:
+-	mutex_unlock(&camif->media_dev.graph_mutex);
+ err_sens:
+ 	v4l2_device_unregister(&camif->v4l2_dev);
+ 	media_device_unregister(&camif->media_dev);
+-- 
+1.9.2
