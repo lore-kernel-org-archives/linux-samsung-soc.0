@@ -1,96 +1,150 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: max77686: Configure enable time to properly handle regulator enable" to the regulator tree
-Date: Fri, 29 Apr 2016 12:31:53 +0100
-Message-ID: <E1aw6eH-0003js-IV@debutante>
-References: <1461927591-7864-4-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461927591-7864-4-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] media: vb2-dma-contig: configure DMA max segment size
+ properly
+Date: Fri, 29 Apr 2016 13:39:43 +0200
+Message-ID: <2318434a-176b-82c6-c55a-115778354201@samsung.com>
+References: <57220299.3000807@xs4all.nl>
+ <1461849603-6313-1-git-send-email-m.szyprowski@samsung.com>
+ <20160429112110.GI32125@valkosipuli.retiisi.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <20160429112110.GI32125@valkosipuli.retiisi.org.uk>
+Sender: linux-media-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+Hi Sakari,
 
-   regulator: max77686: Configure enable time to properly handle regulator enable
 
-has been applied to the regulator tree at
+On 2016-04-29 13:21, Sakari Ailus wrote:
+> Hi Marek,
+>
+> Thanks for the patch!
+>
+> On Thu, Apr 28, 2016 at 03:20:03PM +0200, Marek Szyprowski wrote:
+>> This patch lets vb2-dma-contig memory allocator to configure DMA max
+>> segment size properly for the client device. Setting it is needed to let
+>> DMA-mapping subsystem to create a single, contiguous mapping in DMA
+>> address space. This is essential for all devices, which use dma-contig
+>> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
+>> of operations).
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>> Hello,
+>>
+>> This patch is a follow-up of my previous attempts to let Exynos
+>> multimedia devices to work properly with shared buffers when IOMMU is
+>> enabled:
+>> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
+>> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
+>> 3. https://patchwork.linuxtv.org/patch/30870/
+>>
+>> As sugested by Hans, configuring DMA max segment size should be done by
+>> videobuf2-dma-contig module instead of requiring all device drivers to
+>> do it on their own.
+>>
+>> Here is some backgroud why this is done in videobuf2-dc not in the
+>> respective generic bus code:
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
+>>
+>> Best regards,
+>> Marek Szyprowski
+>>
+>> changelog:
+>> v2:
+>> - fixes typos and other language issues in the comments
+>>
+>> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
+>> ---
+>>   drivers/media/v4l2-core/videobuf2-dma-contig.c | 39 ++++++++++++++++++++++++++
+>>   1 file changed, 39 insertions(+)
+>>
+>> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> index 461ae55eaa98..d0382d62954d 100644
+>> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+>> @@ -443,6 +443,36 @@ static void vb2_dc_put_userptr(void *buf_priv)
+>>   }
+>>   
+>>   /*
+>> + * To allow mapping the scatter-list into a single chunk in the DMA
+>> + * address space, the device is required to have the DMA max segment
+>> + * size parameter set to a value larger than the buffer size. Otherwise,
+>> + * the DMA-mapping subsystem will split the mapping into max segment
+>> + * size chunks. This function increases the DMA max segment size
+>> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
+>> + * address space.
+>> + * This code assumes that the DMA-mapping subsystem will merge all
+>> + * scatter-list segments if this is really possible (for example when
+>> + * an IOMMU is available and enabled).
+>> + * Ideally, this parameter should be set by the generic bus code, but it
+>> + * is left with the default 64KiB value due to historical litmiations in
+>> + * other subsystems (like limited USB host drivers) and there no good
+>> + * place to set it to the proper value. It is done here to avoid fixing
+>> + * all the vb2-dc client drivers.
+>> + */
+>> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
+>> +{
+>> +	if (!dev->dma_parms) {
+>> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
+> Doesn't this create a memory leak? Do consider that devices may be also
+> removed from the system at runtime.
+>
+> Looks very nice otherwise.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+Yes it does, but there is completely no way to determine when to do that
+(dma_params might have been already allocated by the bus code). The whole
+dma_params idea and its handling is a bit messy. IMHO we can leave this
+for now until dma_params gets cleaned up (I remember someone said that he
+has this on his todo list, but I don't remember now who it was...).
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+>
+>> +		if (!dev->dma_parms)
+>> +			return -ENOMEM;
+>> +	}
+>> +	if (dma_get_max_seg_size(dev) < size)
+>> +		return dma_set_max_seg_size(dev, size);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>>    * For some kind of reserved memory there might be no struct page available,
+>>    * so all that can be done to support such 'pages' is to try to convert
+>>    * pfn to dma address or at the last resort just assume that
+>> @@ -499,6 +529,10 @@ static void *vb2_dc_get_userptr(struct device *dev, unsigned long vaddr,
+>>   		return ERR_PTR(-EINVAL);
+>>   	}
+>>   
+>> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size + PAGE_SIZE));
+>> +	if (!ret)
+>> +		return ERR_PTR(ret);
+>> +
+>>   	buf = kzalloc(sizeof *buf, GFP_KERNEL);
+>>   	if (!buf)
+>>   		return ERR_PTR(-ENOMEM);
+>> @@ -675,10 +709,15 @@ static void *vb2_dc_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
+>>   {
+>>   	struct vb2_dc_buf *buf;
+>>   	struct dma_buf_attachment *dba;
+>> +	int ret;
+>>   
+>>   	if (dbuf->size < size)
+>>   		return ERR_PTR(-EFAULT);
+>>   
+>> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size));
+>> +	if (!ret)
+>> +		return ERR_PTR(ret);
+>> +
+>>   	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+>>   	if (!buf)
+>>   		return ERR_PTR(-ENOMEM);
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a9597305d97f6cf7c9e89dc1461e834c446d91fd Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Date: Fri, 29 Apr 2016 12:59:51 +0200
-Subject: [PATCH] regulator: max77686: Configure enable time to properly handle
- regulator enable
-
-The enable time for buck regulators was not configured but actually is
-essential: consumers, like usb3503, doing hard reset (regulator off/on)
-should wait for the regulator to settle.
-
-Configure the enable time according to datasheet.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/max77686-regulator.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-index d1ab6a4da88f..ac4fa581e0a5 100644
---- a/drivers/regulator/max77686-regulator.c
-+++ b/drivers/regulator/max77686-regulator.c
-@@ -41,6 +41,8 @@
- #define MAX77686_LDO_LOW_UVSTEP	25000
- #define MAX77686_BUCK_MINUV	750000
- #define MAX77686_BUCK_UVSTEP	50000
-+#define MAX77686_BUCK_ENABLE_TIME	40		/* us */
-+#define MAX77686_DVS_ENABLE_TIME	22		/* us */
- #define MAX77686_RAMP_DELAY	100000			/* uV/us */
- #define MAX77686_DVS_RAMP_DELAY	27500			/* uV/us */
- #define MAX77686_DVS_MINUV	600000
-@@ -422,6 +424,7 @@ static struct regulator_ops max77686_buck_dvs_ops = {
- 	.min_uV		= MAX77686_BUCK_MINUV,				\
- 	.uV_step	= MAX77686_BUCK_UVSTEP,				\
- 	.ramp_delay	= MAX77686_RAMP_DELAY,				\
-+	.enable_time	= MAX77686_BUCK_ENABLE_TIME,			\
- 	.n_voltages	= MAX77686_VSEL_MASK + 1,			\
- 	.vsel_reg	= MAX77686_REG_BUCK5OUT + (num - 5) * 2,	\
- 	.vsel_mask	= MAX77686_VSEL_MASK,				\
-@@ -439,6 +442,7 @@ static struct regulator_ops max77686_buck_dvs_ops = {
- 	.min_uV		= MAX77686_BUCK_MINUV,				\
- 	.uV_step	= MAX77686_BUCK_UVSTEP,				\
- 	.ramp_delay	= MAX77686_RAMP_DELAY,				\
-+	.enable_time	= MAX77686_BUCK_ENABLE_TIME,			\
- 	.n_voltages	= MAX77686_VSEL_MASK + 1,			\
- 	.vsel_reg	= MAX77686_REG_BUCK1OUT,			\
- 	.vsel_mask	= MAX77686_VSEL_MASK,				\
-@@ -456,6 +460,7 @@ static struct regulator_ops max77686_buck_dvs_ops = {
- 	.min_uV		= MAX77686_DVS_MINUV,				\
- 	.uV_step	= MAX77686_DVS_UVSTEP,				\
- 	.ramp_delay	= MAX77686_DVS_RAMP_DELAY,			\
-+	.enable_time	= MAX77686_DVS_ENABLE_TIME,			\
- 	.n_voltages	= MAX77686_DVS_VSEL_MASK + 1,			\
- 	.vsel_reg	= MAX77686_REG_BUCK2DVS1 + (num - 2) * 10,	\
- 	.vsel_mask	= MAX77686_DVS_VSEL_MASK,			\
+Best regards
 -- 
-2.8.0.rc3
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
