@@ -1,68 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/3] regulator: max77686: Configure enable time to properly
- handle regulator enable
-Date: Fri, 29 Apr 2016 12:59:51 +0200
-Message-ID: <1461927591-7864-4-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFT PATCH 2/3] ARM: dts: exynos: Provide regulator for usb3503 on
+ Odroid to fix device detection
+Date: Fri, 29 Apr 2016 12:59:50 +0200
+Message-ID: <1461927591-7864-3-git-send-email-k.kozlowski@samsung.com>
 References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1461927591-7864-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, hverkuil@xs4all.nl, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The enable time for buck regulators was not configured but actually is
-essential: consumers, like usb3503, doing hard reset (regulator off/on)
-should wait for the regulator to settle.
+On Odroid U3 (Exynos4412-based) board if USB was initialized by
+bootloader (in U-Boot "usb start" before tftpboot), the HUB after
+successful probing was not visible in the system ("lsusb"). Connected
+devices were not visible neither.
 
-Configure the enable time according to datasheet.
+The USB3503 takes optional regulator so provide one - buck8 on Odroid
+U3.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Additionally switch the control of buck8 to GPIO mode. It is faster than
+I2C/register mode and it is the easiest way to disable it (regulator
+state is a logical OR state of GPIO and register value).
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/regulator/max77686-regulator.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos4412-odroidu3.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-index d1ab6a4da88f..ac4fa581e0a5 100644
---- a/drivers/regulator/max77686-regulator.c
-+++ b/drivers/regulator/max77686-regulator.c
-@@ -41,6 +41,8 @@
- #define MAX77686_LDO_LOW_UVSTEP	25000
- #define MAX77686_BUCK_MINUV	750000
- #define MAX77686_BUCK_UVSTEP	50000
-+#define MAX77686_BUCK_ENABLE_TIME	40		/* us */
-+#define MAX77686_DVS_ENABLE_TIME	22		/* us */
- #define MAX77686_RAMP_DELAY	100000			/* uV/us */
- #define MAX77686_DVS_RAMP_DELAY	27500			/* uV/us */
- #define MAX77686_DVS_MINUV	600000
-@@ -422,6 +424,7 @@ static struct regulator_ops max77686_buck_dvs_ops = {
- 	.min_uV		= MAX77686_BUCK_MINUV,				\
- 	.uV_step	= MAX77686_BUCK_UVSTEP,				\
- 	.ramp_delay	= MAX77686_RAMP_DELAY,				\
-+	.enable_time	= MAX77686_BUCK_ENABLE_TIME,			\
- 	.n_voltages	= MAX77686_VSEL_MASK + 1,			\
- 	.vsel_reg	= MAX77686_REG_BUCK5OUT + (num - 5) * 2,	\
- 	.vsel_mask	= MAX77686_VSEL_MASK,				\
-@@ -439,6 +442,7 @@ static struct regulator_ops max77686_buck_dvs_ops = {
- 	.min_uV		= MAX77686_BUCK_MINUV,				\
- 	.uV_step	= MAX77686_BUCK_UVSTEP,				\
- 	.ramp_delay	= MAX77686_RAMP_DELAY,				\
-+	.enable_time	= MAX77686_BUCK_ENABLE_TIME,			\
- 	.n_voltages	= MAX77686_VSEL_MASK + 1,			\
- 	.vsel_reg	= MAX77686_REG_BUCK1OUT,			\
- 	.vsel_mask	= MAX77686_VSEL_MASK,				\
-@@ -456,6 +460,7 @@ static struct regulator_ops max77686_buck_dvs_ops = {
- 	.min_uV		= MAX77686_DVS_MINUV,				\
- 	.uV_step	= MAX77686_DVS_UVSTEP,				\
- 	.ramp_delay	= MAX77686_DVS_RAMP_DELAY,			\
-+	.enable_time	= MAX77686_DVS_ENABLE_TIME,			\
- 	.n_voltages	= MAX77686_DVS_VSEL_MASK + 1,			\
- 	.vsel_reg	= MAX77686_REG_BUCK2DVS1 + (num - 2) * 10,	\
- 	.vsel_mask	= MAX77686_DVS_VSEL_MASK,			\
+diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+index d73aa6c58fe3..5308a955ede4 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+@@ -74,6 +74,7 @@
+ 	regulator-name = "BUCK8_P3V3";
+ 	regulator-min-microvolt = <3300000>;
+ 	regulator-max-microvolt = <3300000>;
++	maxim,ena-gpios = <&gpa1 1 GPIO_ACTIVE_HIGH>;
+ };
+ 
+ /* VDDQ for MSHC (eMMC card) */
+@@ -98,6 +99,7 @@
+ 	clock-names = "refclk";
+ 	clocks = <&pmu_system_controller 0>;
+ 	refclk-frequency = <24000000>;
++	vdd33-supply = <&buck8_reg>;
+ };
+ 
+ &ehci {
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
