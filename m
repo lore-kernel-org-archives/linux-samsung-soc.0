@@ -1,229 +1,126 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv16 07/13] cec.txt: add CEC framework documentation
-Date: Fri, 29 Apr 2016 15:52:22 +0200
-Message-ID: <1461937948-22936-8-git-send-email-hverkuil@xs4all.nl>
-References: <1461937948-22936-1-git-send-email-hverkuil@xs4all.nl>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v2] media: vb2-dma-contig: configure DMA max segment size
+ properly
+Date: Fri, 29 Apr 2016 16:56:01 +0300
+Message-ID: <20160429135601.GA26360@valkosipuli.retiisi.org.uk>
+References: <57220299.3000807@xs4all.nl>
+ <1461849603-6313-1-git-send-email-m.szyprowski@samsung.com>
+ <20160429112110.GI32125@valkosipuli.retiisi.org.uk>
+ <2318434a-176b-82c6-c55a-115778354201@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1461937948-22936-1-git-send-email-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Kamil Debski <kamil@wypas.org>, dri-devel@lists.freedesktop.org, Hans Verkuil <hansverk@cisco.com>, lars@opdenkamp.eu, Hans Verkuil <hans.verkuil@cisco.com>, linux-input@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45522 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753367AbcD2N4g (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 Apr 2016 09:56:36 -0400
+Content-Disposition: inline
+In-Reply-To: <2318434a-176b-82c6-c55a-115778354201@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zdmVya0BjaXNjby5jb20+CgpEb2N1bWVudCB0aGUgbmV3
-IEhETUkgQ0VDIGZyYW1ld29yay4KClNpZ25lZC1vZmYtYnk6IEhhbnMgVmVya3VpbCA8aGFuc3Zl
-cmtAY2lzY28uY29tPgpbay5kZWJza2lAc2Ftc3VuZy5jb206IGFkZCBEb2NCb29rIGRvY3VtZW50
-YXRpb24gYnkgSGFucyBWZXJrdWlsLCB3aXRoClNpZ25lZC1vZmYtYnk6IEthbWlsIERlYnNraSA8
-a2FtaWxAd3lwYXMub3JnPgpTaWduZWQtb2ZmLWJ5OiBIYW5zIFZlcmt1aWwgPGhhbnMudmVya3Vp
-bEBjaXNjby5jb20+Ci0tLQogRG9jdW1lbnRhdGlvbi9jZWMudHh0IHwgMjY3ICsrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwg
-MjY3IGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2NlYy50
-eHQKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2NlYy50eHQgYi9Eb2N1bWVudGF0aW9uL2Nl
-Yy50eHQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uNzUxNTVmZQotLS0gL2Rl
-di9udWxsCisrKyBiL0RvY3VtZW50YXRpb24vY2VjLnR4dApAQCAtMCwwICsxLDI2NyBAQAorQ0VD
-IEtlcm5lbCBTdXBwb3J0Cis9PT09PT09PT09PT09PT09PT0KKworVGhlIENFQyBmcmFtZXdvcmsg
-cHJvdmlkZXMgYSB1bmlmaWVkIGtlcm5lbCBpbnRlcmZhY2UgZm9yIHVzZSB3aXRoIEhETUkgQ0VD
-CitoYXJkd2FyZS4gSXQgaXMgZGVzaWduZWQgdG8gaGFuZGxlIGEgbXVsdGlwbGUgdHlwZXMgb2Yg
-aGFyZHdhcmUgKHJlY2VpdmVycywKK3RyYW5zbWl0dGVycywgVVNCIGRvbmdsZXMpLiBUaGUgZnJh
-bWV3b3JrIGFsc28gZ2l2ZXMgdGhlIG9wdGlvbiB0byBkZWNpZGUKK3doYXQgdG8gZG8gaW4gdGhl
-IGtlcm5lbCBkcml2ZXIgYW5kIHdoYXQgc2hvdWxkIGJlIGhhbmRsZWQgYnkgdXNlcnNwYWNlCith
-cHBsaWNhdGlvbnMuIEluIGFkZGl0aW9uIGl0IGludGVncmF0ZXMgdGhlIHJlbW90ZSBjb250cm9s
-IHBhc3N0aHJvdWdoCitmZWF0dXJlIGludG8gdGhlIGtlcm5lbCdzIHJlbW90ZSBjb250cm9sIGZy
-YW1ld29yay4KKworCitUaGUgQ0VDIFByb3RvY29sCistLS0tLS0tLS0tLS0tLS0tCisKK1RoZSBD
-RUMgcHJvdG9jb2wgZW5hYmxlcyBjb25zdW1lciBlbGVjdHJvbmljIGRldmljZXMgdG8gY29tbXVu
-aWNhdGUgd2l0aCBlYWNoCitvdGhlciB0aHJvdWdoIHRoZSBIRE1JIGNvbm5lY3Rpb24uIFRoZSBw
-cm90b2NvbCB1c2VzIGxvZ2ljYWwgYWRkcmVzc2VzIGluIHRoZQorY29tbXVuaWNhdGlvbi4gVGhl
-IGxvZ2ljYWwgYWRkcmVzcyBpcyBzdHJpY3RseSBjb25uZWN0ZWQgd2l0aCB0aGUgZnVuY3Rpb25h
-bGl0eQorcHJvdmlkZWQgYnkgdGhlIGRldmljZS4gVGhlIFRWIGFjdGluZyBhcyB0aGUgY29tbXVu
-aWNhdGlvbiBodWIgaXMgYWx3YXlzCithc3NpZ25lZCBhZGRyZXNzIDAuIFRoZSBwaHlzaWNhbCBh
-ZGRyZXNzIGlzIGRldGVybWluZWQgYnkgdGhlIHBoeXNpY2FsCitjb25uZWN0aW9uIGJldHdlZW4g
-ZGV2aWNlcy4KKworVGhlIENFQyBmcmFtZXdvcmsgZGVzY3JpYmVkIGhlcmUgaXMgdXAgdG8gZGF0
-ZSB3aXRoIHRoZSBDRUMgMi4wIHNwZWNpZmljYXRpb24uCitJdCBpcyBkb2N1bWVudGVkIGluIHRo
-ZSBIRE1JIDEuNCBzcGVjaWZpY2F0aW9uIHdpdGggdGhlIG5ldyAyLjAgYml0cyBkb2N1bWVudGVk
-CitpbiB0aGUgSERNSSAyLjAgc3BlY2lmaWNhdGlvbi4gQnV0IGZvciBtb3N0IG9mIHRoZSBmZWF0
-dXJlcyB0aGUgZnJlZWx5IGF2YWlsYWJsZQorSERNSSAxLjNhIHNwZWNpZmljYXRpb24gaXMgc3Vm
-ZmljaWVudDoKKworaHR0cDovL3d3dy5taWNyb3Byb2Nlc3Nvci5vcmcvSERNSVNwZWNpZmljYXRp
-b24xM2EucGRmCisKKworVGhlIEtlcm5lbCBJbnRlcmZhY2UKKz09PT09PT09PT09PT09PT09PT09
-CisKK0NFQyBBZGFwdGVyCistLS0tLS0tLS0tLQorCitUaGUgc3RydWN0IGNlY19hZGFwdGVyIHJl
-cHJlc2VudHMgdGhlIENFQyBhZGFwdGVyIGhhcmR3YXJlLiBJdCBpcyBjcmVhdGVkIGJ5CitjYWxs
-aW5nIGNlY19hbGxvY2F0ZV9hZGFwdGVyKCkgYW5kIGRlbGV0ZWQgYnkgY2FsbGluZyBjZWNfZGVs
-ZXRlX2FkYXB0ZXIoKToKKworc3RydWN0IGNlY19hZGFwdGVyICpjZWNfYWxsb2NhdGVfYWRhcHRl
-cihjb25zdCBzdHJ1Y3QgY2VjX2FkYXBfb3BzICpvcHMsCisJICAgICAgIHZvaWQgKnByaXYsIGNv
-bnN0IGNoYXIgKm5hbWUsIHUzMiBjYXBzLCB1OCBhdmFpbGFibGVfbGFzLAorCSAgICAgICBzdHJ1
-Y3QgZGV2aWNlICpwYXJlbnQpOwordm9pZCBjZWNfZGVsZXRlX2FkYXB0ZXIoc3RydWN0IGNlY19h
-ZGFwdGVyICphZGFwKTsKKworVG8gY3JlYXRlIGFuIGFkYXB0ZXIgeW91IG5lZWQgdG8gcGFzcyB0
-aGUgZm9sbG93aW5nIGluZm9ybWF0aW9uOgorCitvcHM6IGFkYXB0ZXIgb3BlcmF0aW9ucyB3aGlj
-aCBhcmUgY2FsbGVkIGJ5IHRoZSBDRUMgZnJhbWV3b3JrIGFuZCB0aGF0IHlvdQoraGF2ZSB0byBp
-bXBsZW1lbnQuCisKK3ByaXY6IHdpbGwgYmUgc3RvcmVkIGluIGFkYXAtPnByaXYgYW5kIGNhbiBi
-ZSB1c2VkIGJ5IHRoZSBhZGFwdGVyIG9wcy4KKworbmFtZTogdGhlIG5hbWUgb2YgdGhlIENFQyBh
-ZGFwdGVyLiBOb3RlOiB0aGlzIG5hbWUgd2lsbCBiZSBjb3BpZWQuCisKK2NhcHM6IGNhcGFiaWxp
-dGllcyBvZiB0aGUgQ0VDIGFkYXB0ZXIuIFRoZXNlIGNhcGFiaWxpdGllcyBkZXRlcm1pbmUgdGhl
-CisJY2FwYWJpbGl0aWVzIG9mIHRoZSBoYXJkd2FyZSBhbmQgd2hpY2ggcGFydHMgYXJlIHRvIGJl
-IGhhbmRsZWQKKwlieSB1c2Vyc3BhY2UgYW5kIHdoaWNoIHBhcnRzIGFyZSBoYW5kbGVkIGJ5IGtl
-cm5lbHNwYWNlLiBUaGUKKwljYXBhYmlsaXRpZXMgYXJlIHJldHVybmVkIGJ5IENFQ19BREFQX0df
-Q0FQUy4KKworYXZhaWxhYmxlX2xhczogdGhlIG51bWJlciBvZiBzaW11bHRhbmVvdXMgbG9naWNh
-bCBhZGRyZXNzZXMgdGhhdCB0aGlzCisJYWRhcHRlciBjYW4gaGFuZGxlLiBNdXN0IGJlIDEgPD0g
-YXZhaWxhYmxlX2xhcyA8PSBDRUNfTUFYX0xPR19BRERSUy4KKworcGFyZW50OiB0aGUgcGFyZW50
-IGRldmljZS4KKworCitUbyByZWdpc3RlciB0aGUgL2Rldi9jZWNYIGRldmljZSBub2RlIGFuZCB0
-aGUgcmVtb3RlIGNvbnRyb2wgZGV2aWNlIChpZgorQ0VDX0NBUF9SQyBpcyBzZXQpIHlvdSBjYWxs
-OgorCitpbnQgY2VjX3JlZ2lzdGVyX2FkYXB0ZXIoc3RydWN0IGNlY19hZGFwdGVyICphZGFwKTsK
-KworVG8gdW5yZWdpc3RlciB0aGUgZGV2aWNlcyBjYWxsOgorCit2b2lkIGNlY191bnJlZ2lzdGVy
-X2FkYXB0ZXIoc3RydWN0IGNlY19hZGFwdGVyICphZGFwKTsKKworTm90ZTogaWYgY2VjX3JlZ2lz
-dGVyX2FkYXB0ZXIoKSBmYWlscywgdGhlbiBjYWxsIGNlY19kZWxldGVfYWRhcHRlcigpIHRvCitj
-bGVhbiB1cC4gQnV0IGlmIGNlY19yZWdpc3Rlcl9hZGFwdGVyKCkgc3VjY2VlZGVkLCB0aGVuIG9u
-bHkgY2FsbAorY2VjX3VucmVnaXN0ZXJfYWRhcHRlcigpIHRvIGNsZWFuIHVwLCBuZXZlciBjZWNf
-ZGVsZXRlX2FkYXB0ZXIoKS4gVGhlCit1bnJlZ2lzdGVyIGZ1bmN0aW9uIHdpbGwgZGVsZXRlIHRo
-ZSBhZGFwdGVyIGF1dG9tYXRpY2FsbHkgb25jZSB0aGUgbGFzdCB1c2VyCitvZiB0aGF0IC9kZXYv
-Y2VjWCBkZXZpY2UgaGFzIGNsb3NlZCBpdHMgZmlsZSBoYW5kbGUuCisKKworSW1wbGVtZW50aW5n
-IHRoZSBMb3ctTGV2ZWwgQ0VDIEFkYXB0ZXIKKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tCisKK1RoZSBmb2xsb3dpbmcgbG93LWxldmVsIGFkYXB0ZXIgb3BlcmF0aW9ucyBo
-YXZlIHRvIGJlIGltcGxlbWVudGVkIGluCit5b3VyIGRyaXZlcjoKKworc3RydWN0IGNlY19hZGFw
-X29wcyB7CisJLyogTG93LWxldmVsIGNhbGxiYWNrcyAqLworCWludCAoKmFkYXBfZW5hYmxlKShz
-dHJ1Y3QgY2VjX2FkYXB0ZXIgKmFkYXAsIGJvb2wgZW5hYmxlKTsKKwlpbnQgKCphZGFwX21vbml0
-b3JfYWxsX2VuYWJsZSkoc3RydWN0IGNlY19hZGFwdGVyICphZGFwLCBib29sIGVuYWJsZSk7CisJ
-aW50ICgqYWRhcF9sb2dfYWRkcikoc3RydWN0IGNlY19hZGFwdGVyICphZGFwLCB1OCBsb2dpY2Fs
-X2FkZHIpOworCWludCAoKmFkYXBfdHJhbnNtaXQpKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwg
-dTggYXR0ZW1wdHMsCisJCQkgICAgIHUzMiBzaWduYWxfZnJlZV90aW1lLCBzdHJ1Y3QgY2VjX21z
-ZyAqbXNnKTsKKwl2b2lkICgqYWRhcF9sb2dfc3RhdHVzKShzdHJ1Y3QgY2VjX2FkYXB0ZXIgKmFk
-YXApOworCisJLyogSGlnaC1sZXZlbCBjYWxsYmFja3MgKi8KKwkuLi4KK307CisKK1RoZSB0aHJl
-ZSBsb3ctbGV2ZWwgb3BzIGRlYWwgd2l0aCB2YXJpb3VzIGFzcGVjdHMgb2YgY29udHJvbGxpbmcg
-dGhlIENFQyBhZGFwdGVyCitoYXJkd2FyZToKKworCitUbyBlbmFibGUvZGlzYWJsZSB0aGUgaGFy
-ZHdhcmU6CisKKwlpbnQgKCphZGFwX2VuYWJsZSkoc3RydWN0IGNlY19hZGFwdGVyICphZGFwLCBi
-b29sIGVuYWJsZSk7CisKK1RoaXMgY2FsbGJhY2sgZW5hYmxlcyBvciBkaXNhYmxlcyB0aGUgQ0VD
-IGhhcmR3YXJlLiBFbmFibGluZyB0aGUgQ0VDIGhhcmR3YXJlCittZWFucyBwb3dlcmluZyBpdCB1
-cCBpbiBhIHN0YXRlIHdoZXJlIG5vIGxvZ2ljYWwgYWRkcmVzc2VzIGFyZSBjbGFpbWVkLiBUaGlz
-CitvcCBhc3N1bWVzIHRoYXQgdGhlIHBoeXNpY2FsIGFkZHJlc3MgKGFkYXAtPnBoeXNfYWRkcikg
-aXMgdmFsaWQgd2hlbiBlbmFibGUgaXMKK3RydWUgYW5kIHdpbGwgbm90IGNoYW5nZSB3aGlsZSB0
-aGUgQ0VDIGFkYXB0ZXIgcmVtYWlucyBlbmFibGVkLiBUaGUgaW5pdGlhbAorc3RhdGUgb2YgdGhl
-IENFQyBhZGFwdGVyIGFmdGVyIGNhbGxpbmcgY2VjX2FsbG9jYXRlX2FkYXB0ZXIoKSBpcyBkaXNh
-YmxlZC4KKworTm90ZSB0aGF0IGFkYXBfZW5hYmxlIG11c3QgcmV0dXJuIDAgaWYgZW5hYmxlIGlz
-IGZhbHNlLgorCisKK1RvIGVuYWJsZS9kaXNhYmxlIHRoZSAnbW9uaXRvciBhbGwnIG1vZGU6CisK
-KwlpbnQgKCphZGFwX21vbml0b3JfYWxsX2VuYWJsZSkoc3RydWN0IGNlY19hZGFwdGVyICphZGFw
-LCBib29sIGVuYWJsZSk7CisKK0lmIGVuYWJsZWQsIHRoZW4gdGhlIGFkYXB0ZXIgc2hvdWxkIGJl
-IHB1dCBpbiBhIG1vZGUgdG8gYWxzbyBtb25pdG9yIG1lc3NhZ2VzCit0aGF0IG5vdCBmb3IgdXMu
-IE5vdCBhbGwgaGFyZHdhcmUgc3VwcG9ydHMgdGhpcyBhbmQgdGhpcyBmdW5jdGlvbiBpcyBvbmx5
-CitjYWxsZWQgaWYgdGhlIENFQ19DQVBfTU9OSVRPUl9BTEwgY2FwYWJpbGl0eSBpcyBzZXQuIFRo
-aXMgY2FsbGJhY2sgaXMgb3B0aW9uYWwKKyhzb21lIGhhcmR3YXJlIG1heSBhbHdheXMgYmUgaW4g
-J21vbml0b3IgYWxsJyBtb2RlKS4KKworTm90ZSB0aGF0IGFkYXBfbW9uaXRvcl9hbGxfZW5hYmxl
-IG11c3QgcmV0dXJuIDAgaWYgZW5hYmxlIGlzIGZhbHNlLgorCisKK1RvIHByb2dyYW0gYSBuZXcg
-bG9naWNhbCBhZGRyZXNzOgorCisJaW50ICgqYWRhcF9sb2dfYWRkcikoc3RydWN0IGNlY19hZGFw
-dGVyICphZGFwLCB1OCBsb2dpY2FsX2FkZHIpOworCitJZiBsb2dpY2FsX2FkZHIgPT0gQ0VDX0xP
-R19BRERSX0lOVkFMSUQgdGhlbiBhbGwgcHJvZ3JhbW1lZCBsb2dpY2FsIGFkZHJlc3NlcworYXJl
-IHRvIGJlIGVyYXNlZC4gT3RoZXJ3aXNlIHRoZSBnaXZlbiBsb2dpY2FsIGFkZHJlc3Mgc2hvdWxk
-IGJlIHByb2dyYW1tZWQuCitJZiB0aGUgbWF4aW11bSBudW1iZXIgb2YgYXZhaWxhYmxlIGxvZ2lj
-YWwgYWRkcmVzc2VzIGlzIGV4Y2VlZGVkLCB0aGVuIGl0CitzaG91bGQgcmV0dXJuIC1FTlhJTy4g
-T25jZSBhIGxvZ2ljYWwgYWRkcmVzcyBpcyBwcm9ncmFtbWVkIHRoZSBDRUMgaGFyZHdhcmUKK2Nh
-biByZWNlaXZlIGRpcmVjdGVkIG1lc3NhZ2VzIHRvIHRoYXQgYWRkcmVzcy4KKworTm90ZSB0aGF0
-IGFkYXBfbG9nX2FkZHIgbXVzdCByZXR1cm4gMCBpZiBsb2dpY2FsX2FkZHIgaXMgQ0VDX0xPR19B
-RERSX0lOVkFMSUQuCisKKworVG8gdHJhbnNtaXQgYSBuZXcgbWVzc2FnZToKKworCWludCAoKmFk
-YXBfdHJhbnNtaXQpKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwgdTggYXR0ZW1wdHMsCisJCQkg
-ICAgIHUzMiBzaWduYWxfZnJlZV90aW1lLCBzdHJ1Y3QgY2VjX21zZyAqbXNnKTsKKworVGhpcyB0
-cmFuc21pdHMgYSBuZXcgbWVzc2FnZS4gVGhlIGF0dGVtcHRzIGFyZ3VtZW50IGlzIHRoZSBzdWdn
-ZXN0ZWQgbnVtYmVyIG9mCithdHRlbXB0cyBmb3IgdGhlIHRyYW5zbWl0LgorCitUaGUgc2lnbmFs
-X2ZyZWVfdGltZSBpcyB0aGUgbnVtYmVyIG9mIGRhdGEgYml0IHBlcmlvZHMgdGhhdCB0aGUgYWRh
-cHRlciBzaG91bGQKK3dhaXQgd2hlbiB0aGUgbGluZSBpcyBmcmVlIGJlZm9yZSBhdHRlbXB0aW5n
-IHRvIHNlbmQgYSBtZXNzYWdlLiBUaGlzIHZhbHVlCitkZXBlbmRzIG9uIHdoZXRoZXIgdGhpcyB0
-cmFuc21pdCBpcyBhIHJldHJ5LCBhIG1lc3NhZ2UgZnJvbSBhIG5ldyBpbml0aWF0b3Igb3IKK2Eg
-bmV3IG1lc3NhZ2UgZm9yIHRoZSBzYW1lIGluaXRpYXRvci4gTW9zdCBoYXJkd2FyZSB3aWxsIGhh
-bmRsZSB0aGlzCithdXRvbWF0aWNhbGx5LCBidXQgaW4gc29tZSBjYXNlcyB0aGlzIGluZm9ybWF0
-aW9uIGlzIG5lZWRlZC4KKworVGhlIENFQ19GUkVFX1RJTUVfVE9fVVNFQyBtYWNybyBjYW4gYmUg
-dXNlZCB0byBjb252ZXJ0IHNpZ25hbF9mcmVlX3RpbWUgdG8KK21pY3Jvc2Vjb25kcyAob25lIGRh
-dGEgYml0IHBlcmlvZCBpcyAyLjQgbXMpLgorCisKK1RvIGxvZyB0aGUgY3VycmVudCBDRUMgaGFy
-ZHdhcmUgc3RhdHVzOgorCisJdm9pZCAoKmFkYXBfc3RhdHVzKShzdHJ1Y3QgY2VjX2FkYXB0ZXIg
-KmFkYXAsIHN0cnVjdCBzZXFfZmlsZSAqZmlsZSk7CisKK1RoaXMgb3B0aW9uYWwgY2FsbGJhY2sg
-Y2FuIGJlIHVzZWQgdG8gc2hvdyB0aGUgc3RhdHVzIG9mIHRoZSBDRUMgaGFyZHdhcmUuCitUaGUg
-c3RhdHVzIGlzIGF2YWlsYWJsZSB0aHJvdWdoIGRlYnVnZnM6IGNhdCAvc3lzL2tlcm5lbC9kZWJ1
-Zy9jZWMvY2VjWC9zdGF0dXMKKworCitZb3VyIGFkYXB0ZXIgZHJpdmVyIHdpbGwgYWxzbyBoYXZl
-IHRvIHJlYWN0IHRvIGV2ZW50cyAodHlwaWNhbGx5IGludGVycnVwdAorZHJpdmVuKSBieSBjYWxs
-aW5nIGludG8gdGhlIGZyYW1ld29yayBpbiB0aGUgZm9sbG93aW5nIHNpdHVhdGlvbnM6CisKK1do
-ZW4gYSB0cmFuc21pdCBmaW5pc2hlZCAoc3VjY2Vzc2Z1bGx5IG9yIG90aGVyd2lzZSk6CisKK3Zv
-aWQgY2VjX3RyYW5zbWl0X2RvbmUoc3RydWN0IGNlY19hZGFwdGVyICphZGFwLCB1OCBzdGF0dXMs
-IHU4IGFyYl9sb3N0X2NudCwKKwkJICAgICAgIHU4IG5hY2tfY250LCB1OCBsb3dfZHJpdmVfY250
-LCB1OCBlcnJvcl9jbnQpOworCitUaGUgc3RhdHVzIGNhbiBiZSBvbmUgb2Y6CisKK0NFQ19UWF9T
-VEFUVVNfT0s6IHRoZSB0cmFuc21pdCB3YXMgc3VjY2Vzc2Z1bC4KK0NFQ19UWF9TVEFUVVNfQVJC
-X0xPU1Q6IGFyYml0cmF0aW9uIHdhcyBsb3N0OiBhbm90aGVyIENFQyBpbml0aWF0b3IKK3Rvb2sg
-Y29udHJvbCBvZiB0aGUgQ0VDIGxpbmUgYW5kIHlvdSBsb3N0IHRoZSBhcmJpdHJhdGlvbi4KK0NF
-Q19UWF9TVEFUVVNfTkFDSzogdGhlIG1lc3NhZ2Ugd2FzIG5hY2tlZCAoZm9yIGEgZGlyZWN0ZWQg
-bWVzc2FnZSkgb3IKK2Fja2VkIChmb3IgYSBicm9hZGNhc3QgbWVzc2FnZSkuIEEgcmV0cmFuc21p
-c3Npb24gaXMgbmVlZGVkLgorQ0VDX1RYX1NUQVRVU19MT1dfRFJJVkU6IGxvdyBkcml2ZSB3YXMg
-ZGV0ZWN0ZWQgb24gdGhlIENFQyBidXMuIFRoaXMKK2luZGljYXRlcyB0aGF0IGEgZm9sbG93ZXIg
-ZGV0ZWN0ZWQgYW4gZXJyb3Igb24gdGhlIGJ1cyBhbmQgcmVxdWVzdGVkIGEKK3JldHJhbnNtaXNz
-aW9uLgorQ0VDX1RYX1NUQVRVU19FUlJPUjogc29tZSB1bnNwZWNpZmllZCBlcnJvciBvY2N1cnJl
-ZDogdGhpcyBjYW4gYmUgb25lIG9mCit0aGUgcHJldmlvdXMgdHdvIGlmIHRoZSBoYXJkd2FyZSBj
-YW5ub3QgZGlmZmVyZW50aWF0ZSBvciBzb21ldGhpbmcgZWxzZQorZW50aXJlbHkuCitDRUNfVFhf
-U1RBVFVTX01BWF9SRVRSSUVTOiBjb3VsZCBub3QgdHJhbnNtaXQgdGhlIG1lc3NhZ2UgYWZ0ZXIK
-K3RyeWluZyBtdWx0aXBsZSB0aW1lcy4gU2hvdWxkIG9ubHkgYmUgc2V0IGJ5IHRoZSBkcml2ZXIg
-aWYgaXQgaGFzIGhhcmR3YXJlCitzdXBwb3J0IGZvciByZXRyeWluZyBtZXNzYWdlcy4gSWYgc2V0
-LCB0aGVuIHRoZSBmcmFtZXdvcmsgYXNzdW1lcyB0aGF0IGl0Citkb2Vzbid0IGhhdmUgdG8gbWFr
-ZSBhbm90aGVyIGF0dGVtcHQgdG8gdHJhbnNtaXQgdGhlIG1lc3NhZ2Ugc2luY2UgdGhlCitoYXJk
-d2FyZSBkaWQgdGhhdCBhbHJlYWR5LgorCitUaGUgKl9jbnQgYXJndW1lbnRzIGFyZSB0aGUgbnVt
-YmVyIG9mIGVycm9yIGNvbmRpdGlvbnMgdGhhdCB3ZXJlIHNlZW4uCitUaGlzIG1heSBiZSAwIGlm
-IG5vIGluZm9ybWF0aW9uIGlzIGF2YWlsYWJsZS4gRHJpdmVycyB0aGF0IGRvIG5vdCBzdXBwb3J0
-CitoYXJkd2FyZSByZXRyeSBjYW4ganVzdCBzZXQgdGhlIGNvdW50ZXIgY29ycmVzcG9uZGluZyB0
-byB0aGUgdHJhbnNtaXQgZXJyb3IKK3RvIDEsIGlmIHRoZSBoYXJkd2FyZSBkb2VzIHN1cHBvcnQg
-cmV0cnkgdGhlbiBlaXRoZXIgc2V0IHRoZXNlIGNvdW50ZXJzIHRvCiswIGlmIHRoZSBoYXJkd2Fy
-ZSBwcm92aWRlcyBubyBmZWVkYmFjayBvZiB3aGljaCBlcnJvcnMgb2NjdXJyZWQgYW5kIGhvdyBt
-YW55Cit0aW1lcywgb3IgZmlsbCBpbiB0aGUgY29ycmVjdCB2YWx1ZXMgYXMgcmVwb3J0ZWQgYnkg
-dGhlIGhhcmR3YXJlLgorCitXaGVuIGEgQ0VDIG1lc3NhZ2Ugd2FzIHJlY2VpdmVkOgorCit2b2lk
-IGNlY19yZWNlaXZlZF9tc2coc3RydWN0IGNlY19hZGFwdGVyICphZGFwLCBzdHJ1Y3QgY2VjX21z
-ZyAqbXNnKTsKKworU3BlYWtzIGZvciBpdHNlbGYuCisKK0ltcGxlbWVudGluZyB0aGUgSGlnaC1M
-ZXZlbCBDRUMgQWRhcHRlcgorLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-CisKK1RoZSBsb3ctbGV2ZWwgb3BlcmF0aW9ucyBkcml2ZSB0aGUgaGFyZHdhcmUsIHRoZSBoaWdo
-LWxldmVsIG9wZXJhdGlvbnMgYXJlCitDRUMgcHJvdG9jb2wgZHJpdmVuLiBUaGUgZm9sbG93aW5n
-IGhpZ2gtbGV2ZWwgY2FsbGJhY2tzIGFyZSBhdmFpbGFibGU6CisKK3N0cnVjdCBjZWNfYWRhcF9v
-cHMgeworCS8qIExvdy1sZXZlbCBjYWxsYmFja3MgKi8KKwkuLi4KKworCS8qIEhpZ2gtbGV2ZWwg
-Q0VDIG1lc3NhZ2UgY2FsbGJhY2sgKi8KKwlpbnQgKCpyZWNlaXZlZCkoc3RydWN0IGNlY19hZGFw
-dGVyICphZGFwLCBzdHJ1Y3QgY2VjX21zZyAqbXNnKTsKK307CisKK1RoZSByZWNlaXZlZCgpIGNh
-bGxiYWNrIGFsbG93cyB0aGUgZHJpdmVyIHRvIG9wdGlvbmFsbHkgaGFuZGxlIGEgbmV3bHkKK3Jl
-Y2VpdmVkIENFQyBtZXNzYWdlCisKKwlpbnQgKCpyZWNlaXZlZCkoc3RydWN0IGNlY19hZGFwdGVy
-ICphZGFwLCBzdHJ1Y3QgY2VjX21zZyAqbXNnKTsKKworSWYgdGhlIGRyaXZlciB3YW50cyB0byBw
-cm9jZXNzIGEgQ0VDIG1lc3NhZ2UsIHRoZW4gaXQgY2FuIGltcGxlbWVudCB0aGlzCitjYWxsYmFj
-ay4gSWYgaXQgZG9lc24ndCB3YW50IHRvIGhhbmRsZSB0aGlzIG1lc3NhZ2UsIHRoZW4gaXQgc2hv
-dWxkIHJldHVybgorLUVOT01TRywgb3RoZXJ3aXNlIHRoZSBDRUMgZnJhbWV3b3JrIGFzc3VtZXMg
-aXQgcHJvY2Vzc2VkIHRoaXMgbWVzc2FnZSBhbmQKK2l0IHdpbGwgbm90IG5vIGFueXRoaW5nIHdp
-dGggaXQuCisKKworQ0VDIGZyYW1ld29yayBmdW5jdGlvbnMKKy0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCisKK0NFQyBBZGFwdGVyIGRyaXZlcnMgY2FuIGNhbGwgdGhlIGZvbGxvd2luZyBDRUMgZnJh
-bWV3b3JrIGZ1bmN0aW9uczoKKworaW50IGNlY190cmFuc21pdF9tc2coc3RydWN0IGNlY19hZGFw
-dGVyICphZGFwLCBzdHJ1Y3QgY2VjX21zZyAqbXNnLAorCQkgICAgIGJvb2wgYmxvY2spOworCitU
-cmFuc21pdCBhIENFQyBtZXNzYWdlLiBJZiBibG9jayBpcyB0cnVlLCB0aGVuIHdhaXQgdW50aWwg
-dGhlIG1lc3NhZ2UgaGFzIGJlZW4KK3RyYW5zbWl0dGVkLCBvdGhlcndpc2UganVzdCBxdWV1ZSBp
-dCBhbmQgcmV0dXJuLgorCit2b2lkIGNlY19zX3BoeXNfYWRkcihzdHJ1Y3QgY2VjX2FkYXB0ZXIg
-KmFkYXAsIHUxNiBwaHlzX2FkZHIsIGJvb2wgYmxvY2spOworCitDaGFuZ2UgdGhlIHBoeXNpY2Fs
-IGFkZHJlc3MuIFRoaXMgZnVuY3Rpb24gd2lsbCBzZXQgYWRhcC0+cGh5c19hZGRyIGFuZAorc2Vu
-ZCBhbiBldmVudCBpZiBpdCBoYXMgY2hhbmdlZC4gSWYgY2VjX3NfbG9nX2FkZHJzKCkgaGFzIGJl
-ZW4gY2FsbGVkIGFuZAordGhlIHBoeXNpY2FsIGFkZHJlc3MgaGFzIGJlY29tZSB2YWxpZCwgdGhl
-biB0aGUgQ0VDIGZyYW1ld29yayB3aWxsIHN0YXJ0CitjbGFpbWluZyB0aGUgbG9naWNhbCBhZGRy
-ZXNzZXMuIElmIGJsb2NrIGlzIHRydWUsIHRoZW4gdGhpcyBmdW5jdGlvbiB3b24ndAorcmV0dXJu
-IHVudGlsIHRoaXMgcHJvY2VzcyBoYXMgZmluaXNoZWQuCisKK1doZW4gdGhlIHBoeXNpY2FsIGFk
-ZHJlc3MgaXMgc2V0IHRvIGEgdmFsaWQgdmFsdWUgdGhlIENFQyBhZGFwdGVyIHdpbGwKK2JlIGVu
-YWJsZWQgKHNlZSB0aGUgYWRhcF9lbmFibGUgb3ApLiBXaGVuIGl0IGlzIHNldCB0byBDRUNfUEhZ
-U19BRERSX0lOVkFMSUQsCit0aGVuIHRoZSBDRUMgYWRhcHRlciB3aWxsIGJlIGRpc2FibGVkLiBJ
-ZiB5b3UgY2hhbmdlIGEgdmFsaWQgcGh5c2ljYWwgYWRkcmVzcwordG8gYW5vdGhlciB2YWxpZCBw
-aHlzaWNhbCBhZGRyZXNzLCB0aGVuIHRoaXMgZnVuY3Rpb24gd2lsbCBmaXJzdCBzZXQgdGhlCith
-ZGRyZXNzIHRvIENFQ19QSFlTX0FERFJfSU5WQUxJRCBiZWZvcmUgZW5hYmxpbmcgdGhlIG5ldyBw
-aHlzaWNhbCBhZGRyZXNzLgorCitpbnQgY2VjX3NfbG9nX2FkZHJzKHN0cnVjdCBjZWNfYWRhcHRl
-ciAqYWRhcCwKKwkJICAgIHN0cnVjdCBjZWNfbG9nX2FkZHJzICpsb2dfYWRkcnMsIGJvb2wgYmxv
-Y2spOworCitDbGFpbSB0aGUgQ0VDIGxvZ2ljYWwgYWRkcmVzc2VzLiBTaG91bGQgbmV2ZXIgYmUg
-Y2FsbGVkIGlmIENFQ19DQVBfTE9HX0FERFJTCitpcyBzZXQuIElmIGJsb2NrIGlzIHRydWUsIHRo
-ZW4gd2FpdCB1bnRpbCB0aGUgbG9naWNhbCBhZGRyZXNzZXMgaGF2ZSBiZWVuCitjbGFpbWVkLCBv
-dGhlcndpc2UganVzdCBxdWV1ZSBpdCBhbmQgcmV0dXJuLiBUbyB1bmNvbmZpZ3VyZSBhbGwgbG9n
-aWNhbAorYWRkcmVzc2VzIGNhbGwgdGhpcyBmdW5jdGlvbiB3aXRoIGxvZ19hZGRycyBzZXQgdG8g
-TlVMTCBvciB3aXRoCitsb2dfYWRkcnMtPm51bV9sb2dfYWRkcnMgc2V0IHRvIDAuIFRoZSBibG9j
-ayBhcmd1bWVudCBpcyBpZ25vcmVkIHdoZW4KK3VuY29uZmlndXJpbmcuIFRoaXMgZnVuY3Rpb24g
-d2lsbCBqdXN0IHJldHVybiBpZiB0aGUgcGh5c2ljYWwgYWRkcmVzcyBpcworaW52YWxpZC4gT25j
-ZSB0aGUgcGh5c2ljYWwgYWRkcmVzcyBiZWNvbWVzIHZhbGlkLCB0aGVuIHRoZSBmcmFtZXdvcmsg
-d2lsbAorYXR0ZW1wdCB0byBjbGFpbSB0aGVzZSBsb2dpY2FsIGFkZHJlc3Nlcy4KLS0gCjIuOC4x
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Marek,
+
+On Fri, Apr 29, 2016 at 01:39:43PM +0200, Marek Szyprowski wrote:
+> Hi Sakari,
+> 
+> 
+> On 2016-04-29 13:21, Sakari Ailus wrote:
+> >Hi Marek,
+> >
+> >Thanks for the patch!
+> >
+> >On Thu, Apr 28, 2016 at 03:20:03PM +0200, Marek Szyprowski wrote:
+> >>This patch lets vb2-dma-contig memory allocator to configure DMA max
+> >>segment size properly for the client device. Setting it is needed to let
+> >>DMA-mapping subsystem to create a single, contiguous mapping in DMA
+> >>address space. This is essential for all devices, which use dma-contig
+> >>videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
+> >>of operations).
+> >>
+> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>---
+> >>Hello,
+> >>
+> >>This patch is a follow-up of my previous attempts to let Exynos
+> >>multimedia devices to work properly with shared buffers when IOMMU is
+> >>enabled:
+> >>1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
+> >>2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
+> >>3. https://patchwork.linuxtv.org/patch/30870/
+> >>
+> >>As sugested by Hans, configuring DMA max segment size should be done by
+> >>videobuf2-dma-contig module instead of requiring all device drivers to
+> >>do it on their own.
+> >>
+> >>Here is some backgroud why this is done in videobuf2-dc not in the
+> >>respective generic bus code:
+> >>http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
+> >>
+> >>Best regards,
+> >>Marek Szyprowski
+> >>
+> >>changelog:
+> >>v2:
+> >>- fixes typos and other language issues in the comments
+> >>
+> >>v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
+> >>---
+> >>  drivers/media/v4l2-core/videobuf2-dma-contig.c | 39 ++++++++++++++++++++++++++
+> >>  1 file changed, 39 insertions(+)
+> >>
+> >>diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >>index 461ae55eaa98..d0382d62954d 100644
+> >>--- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >>+++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >>@@ -443,6 +443,36 @@ static void vb2_dc_put_userptr(void *buf_priv)
+> >>  }
+> >>  /*
+> >>+ * To allow mapping the scatter-list into a single chunk in the DMA
+> >>+ * address space, the device is required to have the DMA max segment
+> >>+ * size parameter set to a value larger than the buffer size. Otherwise,
+> >>+ * the DMA-mapping subsystem will split the mapping into max segment
+> >>+ * size chunks. This function increases the DMA max segment size
+> >>+ * parameter to let DMA-mapping map a buffer as a single chunk in DMA
+> >>+ * address space.
+> >>+ * This code assumes that the DMA-mapping subsystem will merge all
+> >>+ * scatter-list segments if this is really possible (for example when
+> >>+ * an IOMMU is available and enabled).
+> >>+ * Ideally, this parameter should be set by the generic bus code, but it
+> >>+ * is left with the default 64KiB value due to historical litmiations in
+> >>+ * other subsystems (like limited USB host drivers) and there no good
+> >>+ * place to set it to the proper value. It is done here to avoid fixing
+> >>+ * all the vb2-dc client drivers.
+> >>+ */
+> >>+static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
+> >>+{
+> >>+	if (!dev->dma_parms) {
+> >>+		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
+> >Doesn't this create a memory leak? Do consider that devices may be also
+> >removed from the system at runtime.
+> >
+> >Looks very nice otherwise.
+> 
+> Yes it does, but there is completely no way to determine when to do that
+> (dma_params might have been already allocated by the bus code). The whole
+> dma_params idea and its handling is a bit messy. IMHO we can leave this
+> for now until dma_params gets cleaned up (I remember someone said that he
+> has this on his todo list, but I don't remember now who it was...).
+
+You could fix this in a V4L2-specific way by storing the information whether
+you've allocated the dma-params e.g. in struct video_device. That's probably
+not worth the trouble, especially if someone's about to have a better
+solution.
+
+I'd add a "FIXME: ..." comment so we won't forget about it.
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
