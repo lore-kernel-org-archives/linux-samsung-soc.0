@@ -1,145 +1,94 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v2] media: vb2-dma-contig: configure DMA max segment size
- properly
-Date: Fri, 29 Apr 2016 14:21:10 +0300
-Message-ID: <20160429112110.GI32125@valkosipuli.retiisi.org.uk>
-References: <57220299.3000807@xs4all.nl>
- <1461849603-6313-1-git-send-email-m.szyprowski@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFT PATCH 1/3] usb: misc: usb3503: Fix HUB mode after
+ bootloader initialization
+Date: Fri, 29 Apr 2016 12:30:59 +0100
+Message-ID: <20160429113059.GX3217@sirena.org.uk>
+References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
+ <1461927591-7864-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jaBcukw8GoX3rwhf"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41880 "EHLO
-	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752960AbcD2LVr (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58972 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751634AbcD2LbY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Apr 2016 07:21:47 -0400
+	Fri, 29 Apr 2016 07:31:24 -0400
 Content-Disposition: inline
-In-Reply-To: <1461849603-6313-1-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1461927591-7864-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Marek,
 
-Thanks for the patch!
+--jaBcukw8GoX3rwhf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Apr 28, 2016 at 03:20:03PM +0200, Marek Szyprowski wrote:
-> This patch lets vb2-dma-contig memory allocator to configure DMA max
-> segment size properly for the client device. Setting it is needed to let
-> DMA-mapping subsystem to create a single, contiguous mapping in DMA
-> address space. This is essential for all devices, which use dma-contig
-> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
-> of operations).
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Hello,
-> 
-> This patch is a follow-up of my previous attempts to let Exynos
-> multimedia devices to work properly with shared buffers when IOMMU is
-> enabled:
-> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
-> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
-> 3. https://patchwork.linuxtv.org/patch/30870/
-> 
-> As sugested by Hans, configuring DMA max segment size should be done by
-> videobuf2-dma-contig module instead of requiring all device drivers to
-> do it on their own.
-> 
-> Here is some backgroud why this is done in videobuf2-dc not in the
-> respective generic bus code:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
-> 
-> Best regards,
-> Marek Szyprowski
-> 
-> changelog:
-> v2:
-> - fixes typos and other language issues in the comments
-> 
-> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
-> ---
->  drivers/media/v4l2-core/videobuf2-dma-contig.c | 39 ++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> index 461ae55eaa98..d0382d62954d 100644
-> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> @@ -443,6 +443,36 @@ static void vb2_dc_put_userptr(void *buf_priv)
->  }
->  
->  /*
-> + * To allow mapping the scatter-list into a single chunk in the DMA
-> + * address space, the device is required to have the DMA max segment
-> + * size parameter set to a value larger than the buffer size. Otherwise,
-> + * the DMA-mapping subsystem will split the mapping into max segment
-> + * size chunks. This function increases the DMA max segment size
-> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
-> + * address space.
-> + * This code assumes that the DMA-mapping subsystem will merge all
-> + * scatter-list segments if this is really possible (for example when
-> + * an IOMMU is available and enabled).
-> + * Ideally, this parameter should be set by the generic bus code, but it
-> + * is left with the default 64KiB value due to historical litmiations in
-> + * other subsystems (like limited USB host drivers) and there no good
-> + * place to set it to the proper value. It is done here to avoid fixing
-> + * all the vb2-dc client drivers.
-> + */
-> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
-> +{
-> +	if (!dev->dma_parms) {
-> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
+On Fri, Apr 29, 2016 at 12:59:49PM +0200, Krzysztof Kozlowski wrote:
 
-Doesn't this create a memory leak? Do consider that devices may be also
-removed from the system at runtime.
+> +++ b/Documentation/devicetree/bindings/usb/usb3503.txt
+> @@ -24,6 +24,7 @@ Optional properties:
+>  	pins (optional, if not provided, driver will not set rate of the
+>  	REFCLK signal and assume that a value from the primary reference
+>  	clock frequencies table is used)
+> +- vdd33-supply: Optional supply for VDD 3.3 V power source.
 
-Looks very nice otherwise.
+Supplies are only optional if they may be physically absent.  In this
+case it's possible that on device regulators may be used instead, a
+pattern more like that used for arizona-ldo1 where we represent those
+regulators might be better as it's more clearly describing the
+situation.  I'm just wondering if the supply lookup stuff there should
+be factored out as this is not an uncommon pattern..
 
-> +		if (!dev->dma_parms)
-> +			return -ENOMEM;
-> +	}
-> +	if (dma_get_max_seg_size(dev) < size)
-> +		return dma_set_max_seg_size(dev, size);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
->   * For some kind of reserved memory there might be no struct page available,
->   * so all that can be done to support such 'pages' is to try to convert
->   * pfn to dma address or at the last resort just assume that
-> @@ -499,6 +529,10 @@ static void *vb2_dc_get_userptr(struct device *dev, unsigned long vaddr,
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size + PAGE_SIZE));
-> +	if (!ret)
-> +		return ERR_PTR(ret);
-> +
->  	buf = kzalloc(sizeof *buf, GFP_KERNEL);
->  	if (!buf)
->  		return ERR_PTR(-ENOMEM);
-> @@ -675,10 +709,15 @@ static void *vb2_dc_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
+It should at least be clearly stated what's going on, ignoring failure
+to get supplies is generally a bug and people will tend to blindly cut
+and paste things (witness all the breakage in graphics drivers with
+this).
+
+>  static int usb3503_reset(struct usb3503 *hub, int state)
 >  {
->  	struct vb2_dc_buf *buf;
->  	struct dma_buf_attachment *dba;
-> +	int ret;
->  
->  	if (dbuf->size < size)
->  		return ERR_PTR(-EFAULT);
->  
-> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size));
-> +	if (!ret)
-> +		return ERR_PTR(ret);
+> +	int err;
 > +
->  	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
->  	if (!buf)
->  		return ERR_PTR(-ENOMEM);
+> +	err = usb3503_regulator(hub, state);
+> +	if (err) {
+> +		dev_err(hub->dev, "unable to %s VDD33 regulator to (%d)\n",
+> +			(state ? "enable" : "disable"), err);
+> +	}
 
--- 
-Kind regards,
+Are we sure that the callers all balance enables and disables and we
+don't ever end up going through reset more than once on the way down?
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+> +		hub->vdd_reg = devm_regulator_get_optional(dev, "vdd33");
+> +		if (IS_ERR(hub->vdd_reg)) {
+> +			if (PTR_ERR(hub->vdd_reg) == -EPROBE_DEFER)
+> +				return -EPROBE_DEFER;
+
+This should explicitly check for -ENODEV and return the error if it gets
+anything else, that will mean that if the supply is needed but lookup
+fails somehow due to a non-deferral error we'll handle it properly.
+
+> +	err = usb3503_regulator(hub, true);
+
+The naming on this function is very obscure (and there's also a couple
+of other supplies).  I'd suggest just folding this into the reset
+function, or at least renaming so the reader can tell what these calls
+do.
+
+--jaBcukw8GoX3rwhf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXI0XyAAoJECTWi3JdVIfQOtUH/3D0V95zG3CwJe52D/fSn5lE
+CybYmPXIvm85iaeS+8OIlyE4j5qD45OlDCvG2GKTRGjtXUJKqc6cIJCi1feM11Cu
+iPi2J6q8QtJCnGkXQFx8G/Fvg3qwUCj8XjJSOBSoe7iseD+ezuLA/er2WXNN3Xf3
+QgBRyTdI3EIY4K2RhJqxV6200XP7TCVYf7MkvBR3i1ibnoPkWnHk60HWFEMy9v8I
+Qmt4sS/YVn6FPsHIjw0rvGLIcyVdByl2AHJqwStZ5Phi7mKh74OfitYXw3zpLWhV
+RpX4FxU5iTBK6LlzQFvrPRfvjmX4faK0gMv+yImqOCFRutg36Y6opn+6Am5f7FQ=
+=eGIR
+-----END PGP SIGNATURE-----
+
+--jaBcukw8GoX3rwhf--
