@@ -1,155 +1,42 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: Re: [RFT PATCH 0/3] usb: misc: usb3503: Fix missing device when TFTP
- booting
-Date: Sat, 30 Apr 2016 11:43:44 +0200
-Message-ID: <57247E50.1020000@xs4all.nl>
-References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: drm/exynos: fimd: vrefresh is zero
+Date: Sat, 30 Apr 2016 23:37:32 +0200
+Message-ID: <5725259C.9020206@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461927591-7864-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 04/29/2016 12:59 PM, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Patches are independent, please pick up as you wish.
-> 
-> However all of them are needed to solve the issue, so I am sending
-> everything together for easier testng.
-> 
-> 
-> Problem
-> =======
-> When Odroid U3 (usb3503 + smsc95xx + max77686) boots from network (TFTP),
-> the usb3503 does not show up in "lsusb". Hard-reset is required, e.g.
-> by suspend to RAM. The actual TFTP boot does not have to happen. Just
-> "usb start" from U-Boot is sufficient.
-> 
-> 
-> Solution
-> ========
-> Perform real hardware reset (including regulator off/on) when probing.
-> 
-> 
-> Tested on Odroid U3 so far. Please kindly test on X2 and other
-> configurations and bootloaders.
-
-Against which kernel git repo is this patch?
-
-I did apply this patch series first:
-
-http://www.spinics.net/lists/arm-kernel/msg500764.html
-
-followed by this patch series.
-
-I've tested with both 4.6.0-rc2 and -rc5, but in all cases (even without
-applying these patches!) the boot sequence hangs here:
-
-...
-[drm] Exynos DRM: using 12c10000.mixer device for DMA mapping operations
-exynos-drm exynos-drm: bound 12c10000.mixer (ops mixer_component_ops)
-exynos-drm exynos-drm: bound 12d00000.hdmi (ops hdmi_component_ops)
-[drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[drm] No driver support for vblank timestamp query.
-Console: switching to colour frame buffer device 240x67
-exynos-drm exynos-drm: fb0:  frame buffer device
-[drm] Initialized exynos 1.0.0 20110530 on minor 0
-brd: module loaded
-loop: module loaded
-s3c64xx-spi 13930000.spi: spi bus clock parent not specified, using clock
-at index 0 as parent
-s3c64xx-spi 13930000.spi: number of chip select lines not specified,
-assuming 1 chip select line
-tun: Universal TUN/TAP device driver, 1.6
-tun: (C) 1999-2004 Max Krasnyansky <maxk-zC7DfRvBq/JWk0Htik3J/w@public.gmane.org>
-usbcore: registered new interface driver asix
-usbcore: registered new interface driver ax88179_178a
-usbcore: registered new interface driver cdc_ether
-usbcore: registered new interface driver smsc95xx
-usbcore: registered new interface driver cdc_ncm
-dwc2 12480000.hsotg: Specified GNPTXFDEP=1024 > 768
-dwc2 12480000.hsotg: EPs: 16, dedicated fifos, 7808 entries in SPRAM
-ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-ehci-exynos: EHCI EXYNOS driver
-exynos-ehci 12580000.ehci: EHCI Host Controller
-exynos-ehci 12580000.ehci: new USB bus registered, assigned bus number 1
-exynos-ehci 12580000.ehci: irq 51, io mem 0x12580000
-exynos-ehci 12580000.ehci: USB 2.0 started, EHCI 1.00
-usb usb1: New USB device found, idVendor=1d6b, idProduct=0002
-usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
-usb usb1: Product: EHCI Host Controller
-usb usb1: Manufacturer: Linux 4.6.0-rc5-odroid ehci_hcd
-usb usb1: SerialNumber: 12580000.ehci
-hub 1-0:1.0: USB hub found
-hub 1-0:1.0: 3 ports detected
-ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-ohci-exynos: OHCI EXYNOS driver
-usbcore: registered new interface driver usb-storage
-usb3503 0-0008: switched to HUB mode
-usb3503 0-0008: usb3503_probe: probed in hub mode
-using random self ethernet address
-using random host ethernet address
-usb0: HOST MAC 66:79:ef:11:72:85
-usb0: MAC 1e:66:f2:66:8e:2a
-using random self ethernet address
-using random host ethernet address
-g_ether gadget: Ethernet Gadget, version: Memorial Day 2008
-g_ether gadget: g_ether ready
-dwc2 12480000.hsotg: bound driver g_ether
-mousedev: PS/2 mouse device common for all mice
-max77686-rtc max77686-rtc: rtc core: registered max77686-rtc as rtc0
-i2c /dev entries driver
-s5p-fimc-md camera: Entity type for entity FIMC.0 was not initialized!
-usb 1-2: new high-speed USB device number 2 using exynos-ehci
-usb 1-2: New USB device found, idVendor=0424, idProduct=9730
-usb 1-2: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-smsc95xx v1.0.4
-smsc95xx 1-2:1.0 eth0: register 'smsc95xx' at usb-12580000.ehci-2, smsc95xx
-USB 2.0 Ethernet, c2:22:09:f2:5f:e8
-usb 1-3: new high-speed USB device number 3 using exynos-ehci
-usb 1-3: New USB device found, idVendor=0424, idProduct=3503
-usb 1-3: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-hub 1-3:1.0: USB hub found
-hub 1-3:1.0: 3 ports detected
-
-No oops, no nothing. It's just sitting there.
-
-Is this a regression that was introduced in 4.6? Or is there some special
-new config that needs to be turned on first in 4.6? I've been running
-4.5.0-rc3 before this, but I can't apply these patches there because there
-is no drivers/regulator/max77686-regulator.c in 4.5.
-
-Regards,
-
-	Hans
-
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (3):
->   usb: misc: usb3503: Fix HUB mode after bootloader initialization
->   ARM: dts: exynos: Provide regulator for usb3503 on Odroid to fix
->     device detection
->   regulator: max77686: Configure enable time to properly handle
->     regulator enable
-> 
->  Documentation/devicetree/bindings/usb/usb3503.txt |  1 +
->  arch/arm/boot/dts/exynos4412-odroidu3.dts         |  2 +
->  drivers/regulator/max77686-regulator.c            |  5 ++
->  drivers/usb/misc/usb3503.c                        | 81 +++++++++++++++++++++++
->  4 files changed, 89 insertions(+)
-> 
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGVsbG8sCgp3aGlsZSBwbGF5aW5nIGFyb3VuZCB3aXRoIEZJTUQgZW5hYmxlZCwgSSBub3RpY2Vk
+IHRoYXQgd2hlbiBmaXJzdCB1c2luZwp0aGUgZGV2aWNlIGEgemVybyBkaXZpc2lvbiB3YXMgdHJp
+Z2dlcmVkIGluIGZpbWRfY2FsY19jbGtkaXYoKS4gSQpyZW1lbWJlcmVkIHRoYXQgSSBoYWQgYSBz
+aW1pbGFyIGlzc3VlIHNvbWUgdGltZSBhZ28uCgpJIGFkZGVkIGEgc3R1YiBmaW1kX2F0b21pY19j
+aGVjaygpIHdoaWNoIHNob3dzIHRoYXQgdnJlZnJlc2ggaXMgemVybwp3aGVuIGZpbWRfY2FsY19j
+bGtkaXYoKSBpcyBjYWxsZWQuCgpbICAxNjQuMDU5MzYxXSBbZHJtOmV4eW5vc19wbGFuZV9tb2Rl
+X3NldF0gcGxhbmUgOiBvZmZzZXRfeC95KDAsMCksCndpZHRoL2hlaWdodCgxMzY2LDc2OCkKWyAg
+MTY0LjA2NzE3NV0gW2RybTpmaW1kX2F0b21pY19jaGVja10geHJlcz0xMzY2LCB5cmVzPTc2OCwg
+cmVmcmVzaD0wLAppbnRsPTAKWyAgMTY0LjA3NDE5OF0gW2RybTpkcm1fYXRvbWljX2hlbHBlcl9j
+aGVja19wbGFuZXNdIFtDUlRDOjI0OmNydGMtMF0KYXRvbWljIGRyaXZlciBjaGVjayBmYWlsZWQK
+Ckkgd2VudCBiYWNrIHRvIHRoZSBnaXQgbG9nIGFuZCBub3RpY2VkIHRoYXQgc29tZSB0aW1lIGFn
+byBpbgo1MGJiZmJmZmE1Yzg5NGRlZjQ0MGNlODE1N2RmZTUzZTYwOTYwZDM1IHRoZSBmaW1kX21v
+ZGVfZml4dXAoKSBjYWxsIHdhcwpyZW1vdmVkLgoKSSdtIG5vdyB3b25kZXJpbmcgd2hlcmUgZXhh
+Y3RseSB2cmVmcmVzaCBpcyBzZXQgdG8gYSBzYW5lIHZhbHVlLiBBcyBmYXIKYXMgSSBjYW4gc2Vl
+IG9mX2dldF92aWRlb21vZGUoKSBpcyB1c2VkIHRvIGZldGNoIHRoZSB2aWRlbyBtb2RlIGZyb20g
+dGhlCkRULCBhbmQgZHJtX2Rpc3BsYXlfbW9kZV9mcm9tX3ZpZGVvbW9kZSgpIGlzIHVzZWQgdG8g
+Y29udmVydCBpdC4gSG93ZXZlcgp2cmVmcmVzaCBpcyBub3doZXJlIHNldC4KClNvIGlzIHNvbWV0
+aGluZyBicm9rZW4gaGVyZSwgb3IgYW0gSSBtaXNzaW5nIHNvbWV0aGluZz8KCldpdGggYmVzdCB3
+aXNoZXMsClRvYmlhcwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
