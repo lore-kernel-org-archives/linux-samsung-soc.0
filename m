@@ -1,66 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFT PATCH 1/3] usb: misc: usb3503: Fix HUB mode after
- bootloader initialization
-Date: Fri, 29 Apr 2016 17:44:48 +0100
-Message-ID: <20160429164448.GY3217@sirena.org.uk>
-References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
- <1461927591-7864-2-git-send-email-k.kozlowski@samsung.com>
- <20160429113059.GX3217@sirena.org.uk>
- <57234BA2.6020304@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Watchdog reset trigger for eMMC
+Date: Sat, 30 Apr 2016 11:36:01 +0530
+Message-ID: <CANAwSgTjQdDtQ1GpWVd6_c=epSG+kTFadimsAk=Hf84JasOhUw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pJWGhKxYz0gFF1YW"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <57234BA2.6020304@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:35394 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751359AbcD3GGW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 30 Apr 2016 02:06:22 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
+Hi All,
 
---pJWGhKxYz0gFF1YW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Using microSD card when I try to write into /dev/watchdog device
+it triggers reboot of the board after timer expires.
+-----------------------------------------------------------------------------------------------
+root@odroidxu4l:~# echo 3 > /dev/watchdog
+[ 1659.021844] watchdog: watchdog0: watchdog did not stop!
+root@odroidxu4l:~#
+root@odroidxu4l:~#
+root@odroidxu4l:~#
+root@odroidxu4l:~#
+root@odroidxu4l:~#
 
-On Fri, Apr 29, 2016 at 01:55:14PM +0200, Krzysztof Kozlowski wrote:
-> On 04/29/2016 01:30 PM, Mark Brown wrote:
+U-Boot 2016.03-00665-g563d8d9-dirty (Apr 04 2016 - 22:27:07 +0930) for
+ODROID-XU
+                3
 
-> > Supplies are only optional if they may be physically absent.  In this
-> > case it's possible that on device regulators may be used instead, a
-> > pattern more like that used for arizona-ldo1 where we represent those
-> > regulators might be better as it's more clearly describing the
-> > situation.  I'm just wondering if the supply lookup stuff there should
-> > be factored out as this is not an uncommon pattern..
+CPU:   Exynos5422 @ 800 MHz
+Model: Odroid XU3 based on EXYNOS5422
+Board: Odroid XU3 based on EXYNOS5422
+Type:  xu4
+DRAM:  2 GiB
+-----------------------------------------------------------------------------------------------
+But when I try this on eMMC it just freezes.
+I know we have to set and unset gpio pin (SD_0.RST) to trigger reset
+before reboot.
+-----------------------------------------------------------------------------------------------
+root@odroidxu4e:~# echo 4 > /dev/watchdog
+[  639.192617] [c3] watchdog watchdog0: watchdog did not stop!
+root@odroidxu4e:~#
+root@odroidxu4e:~#
+root@odroidxu4e:~#
+-----------------------------------------------------------------------------------------------
+I would like to know what is way board reset after watchdog reset after timeout.
 
-> > It should at least be clearly stated what's going on, ignoring failure
-> > to get supplies is generally a bug and people will tend to blindly cut
-> > and paste things (witness all the breakage in graphics drivers with
-> > this).
-
-> The VDD33 is really optional. The device can work in different
-> configuration, e.g. only on VBAT. How the reset logic would work then? I
-> don't know... I would suspect that it could be exactly the same (just
-> replace VDD33 with VBAT) but I am not sure.
-
-What the Arizona example I mentioned does is look for the property
-specifying an external supply in DT and if there isn't one assumes that
-it must be using the internal regulator.  That's a bit icky but it does
-the right thing and is much simpler from a user point of view.
-
---pJWGhKxYz0gFF1YW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXI49/AAoJECTWi3JdVIfQJWkH/RKWxiRKAo28sPRxKp0DzRog
-4TQDH0Y6agkZowh7D5oexH2wyw2PBMni7LFkX7sxrM+1j14gnGwRN4pJ80Zc5tnE
-wZ1MiqFE1FIuDf8JzyM99ZNw9zPP1DO8bvIla+eG2WQx6AslGdY937FA+AzvQh8C
-AjJTQyNmeQHqwGVk5xteIkwT1PYFjBLWGt0KftCeMQN5R3ZLGI2vB3BkuyNnrIad
-j8u8vyTAtfNKog8PuinGCSsz4SnFKAPJUqWJdYUxciHaySO3VWsoerNGtcIX18t8
-7kcXIzZOJByfik2SS92oUyl+5sdcG5OJLPYUdbI+D5fev8sHCmnUhy7FOJPRcaI=
-=7PCN
------END PGP SIGNATURE-----
-
---pJWGhKxYz0gFF1YW--
+Best Regards
+-Anand Moon
