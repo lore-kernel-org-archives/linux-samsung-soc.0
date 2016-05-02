@@ -1,52 +1,66 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH 1/2] media: exynos4-is: fix deadlock on driver probe
-Date: Mon, 2 May 2016 07:52:35 -0300
-Message-ID: <20160502075235.6772fc3a@recife.lan>
-References: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
- <57267C5C.2000403@linux.intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFT PATCH 1/3] usb: misc: usb3503: Fix HUB mode after
+ bootloader initialization
+Date: Mon, 2 May 2016 11:55:01 +0100
+Message-ID: <20160502105501.GE6292@sirena.org.uk>
+References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
+ <1461927591-7864-2-git-send-email-k.kozlowski@samsung.com>
+ <20160429113059.GX3217@sirena.org.uk>
+ <57234BA2.6020304@samsung.com>
+ <20160429164448.GY3217@sirena.org.uk>
+ <57272298.50701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="r7U+bLA8boMOj+mD"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:47940 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753456AbcEBKwq (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41216 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753456AbcEBKzP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 May 2016 06:52:46 -0400
-In-Reply-To: <57267C5C.2000403@linux.intel.com>
+	Mon, 2 May 2016 06:55:15 -0400
+Content-Disposition: inline
+In-Reply-To: <57272298.50701@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Em Mon, 2 May 2016 00:59:56 +0300
-Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 
-> Hi Marek,
-> 
-> Marek Szyprowski wrote:
-> > Commit 0c426c472b5585ed6e59160359c979506d45ae49 ("[media] media: Always
-> > keep a graph walk large enough around") changed
-> > media_device_register_entity() function to take mdev->graph_mutex. This
-> > causes deadlock in driver probe, which calls (indirectly) this function
-> > with ->graph_mutex taken. This patch removes taking ->graph_mutex in
-> > driver probe to avoid deadlock. Other drivers don't take ->graph_mutex
-> > for entity registration, so this change should be safe.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>  
-> 
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> You could also add:
-> 
-> Fixes: 0c426c472b55 ("[media] media: Always keep a graph walk large 
-> enough around")
-> 
-> I guess these should go to fixes, the patches in question are already 
-> heading for v4.6. Cc Mauro.
+--r7U+bLA8boMOj+mD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The patches from Sakari for v4.6 were merged already at -rc6. Just merged
-them back at the master branch.
+On Mon, May 02, 2016 at 11:49:12AM +0200, Krzysztof Kozlowski wrote:
 
-Regards,
-Mauro
+> This VDD regulator supply actually is not a usb3503 USB HUB regulator
+> supply... but a supply to the LAN attached to this HUB. Regulator off/on
+> is needed for LAN to show up. The hub will show up with typical reset
+> (which is also missing before my patchset btw).
+
+> The LAN, as a USB device, is auto-probed so it cannot take the regulator
+> and play with it. The simplest idea I have is to add it as "external
+> supply"  to the parent: usb3503.
+
+This is common enough that that just isn't going to scale well I fear
+without some generic handling, either walking child devices at the bus
+level or at the device level with a pre-probe() callback to get the
+device to power on.  The latter is more appropriate to things like
+Slimbus where the device is more likely to do active management at
+runtime, it's not clear people are building USB devices like that.
+
+--r7U+bLA8boMOj+mD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXJzIDAAoJECTWi3JdVIfQ78MH/RlSSVW3RSGtAAR1VNUptE8B
+QICq6VQWpPQ6P0/brJGA+OoywrvcqUa3mVJQQRdkmeiTcPqPwAXze37i1UJ4Pu0Z
+KYlGZvCAInxV54BhsnD1AfFpLlN/nbOICsgrkIGQ0Ks4eUh5qo9Hpz6+Md50eNGO
+xfdyFikf467TLmkoh6pXB/rXTIdPekqTmXNoqEL3bnI+YB+vkuO+RyQLe2x+LHGy
+ppJof0SKRFVEbZbxOVaozOW3aBiWHMv1QVBJb5kV5xsJw059PpS8TIEtXAIN8sHO
+Rk0uKRciwtT6xaqMhYNPezrpPZJ779+J6th/AXGO5b0FMX7+b40Yt7JSMNrC6lI=
+=jEmB
+-----END PGP SIGNATURE-----
+
+--r7U+bLA8boMOj+mD--
