@@ -1,139 +1,76 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v3] media: vb2-dma-contig: configure DMA max segment size
- properly
-Date: Mon, 2 May 2016 15:16:54 +0200
-Message-ID: <57275346.9040003@xs4all.nl>
-References: <57271235.9030004@xs4all.nl>
- <1462186753-4177-1-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 2/2] media: s3c-camif: fix deadlock on driver probe()
+Date: Mon, 2 May 2016 15:36:48 +0200
+Message-ID: <572757F0.8000904@xs4all.nl>
+References: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
+ <1461839104-29135-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1462186753-4177-1-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1461839104-29135-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/02/16 12:59, Marek Szyprowski wrote:
-> This patch lets vb2-dma-contig memory allocator to configure DMA max
-> segment size properly for the client device. Setting it is needed to let
-> DMA-mapping subsystem to create a single, contiguous mapping in DMA
-> address space. This is essential for all devices, which use dma-contig
-> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
-> of operations).
+On 04/28/16 12:25, Marek Szyprowski wrote:
+> Commit 0c426c472b5585ed6e59160359c979506d45ae49 ("[media] media: Always
+> keep a graph walk large enough around") changed
+> media_device_register_entity() function to take mdev->graph_mutex. This
+> causes deadlock in driver probe, which calls (indirectly) this function
+> with ->graph_mutex taken. This patch removes taking ->graph_mutex in
+> driver probe to avoid deadlock. Other drivers don't take ->graph_mutex
+> for entity registration, so this change should be safe.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Hello,
-> 
-> This patch is a follow-up of my previous attempts to let Exynos
-> multimedia devices to work properly with shared buffers when IOMMU is
-> enabled:
-> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
-> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
-> 3. https://patchwork.linuxtv.org/patch/30870/
-> 
-> As sugested by Hans, configuring DMA max segment size should be done by
-> videobuf2-dma-contig module instead of requiring all device drivers to
-> do it on their own.
-> 
-> Here is some backgroud why this is done in videobuf2-dc not in the
-> respective generic bus code:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
-> 
-> Best regards,
-> Marek Szyprowski
-> 
-> changelog:
-> v3:
-> - added FIXME note about possible memory leak
-> 
-> v2:
-> - fixes typos and other language issues in the comments
-> 
-> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
-> ---
->  drivers/media/v4l2-core/videobuf2-dma-contig.c | 45 ++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> index 461ae55eaa98..2ca7e798f394 100644
-> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> @@ -443,6 +443,42 @@ static void vb2_dc_put_userptr(void *buf_priv)
->  }
->  
->  /*
-> + * To allow mapping the scatter-list into a single chunk in the DMA
-> + * address space, the device is required to have the DMA max segment
-> + * size parameter set to a value larger than the buffer size. Otherwise,
-> + * the DMA-mapping subsystem will split the mapping into max segment
-> + * size chunks. This function increases the DMA max segment size
-> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
-> + * address space.
-> + * This code assumes that the DMA-mapping subsystem will merge all
-> + * scatterlist segments if this is really possible (for example when
-> + * an IOMMU is available and enabled).
-> + * Ideally, this parameter should be set by the generic bus code, but it
-> + * is left with the default 64KiB value due to historical litmiations in
-> + * other subsystems (like limited USB host drivers) and there no good
-> + * place to set it to the proper value. It is done here to avoid fixing
-> + * all the vb2-dc client drivers.
-> + *
-> + * FIXME: the allocated dma_params structure is leaked because there
-> + * is completely no way to determine when to free it (dma_params might have
-> + * been also already allocated by the bus code). However in typical
-> + * use cases this function will be called for platform devices, which are
-> + * not how-plugged and exist all the time in the target system.
 
-how-plugged, hmm. I'll change that to hot-plugged before merging :-)
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+Thanks!
 
 	Hans
 
-> + */
-> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
-> +{
-> +	if (!dev->dma_parms) {
-> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
-> +		if (!dev->dma_parms)
-> +			return -ENOMEM;
-> +	}
-> +	if (dma_get_max_seg_size(dev) < size)
-> +		return dma_set_max_seg_size(dev, size);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
->   * For some kind of reserved memory there might be no struct page available,
->   * so all that can be done to support such 'pages' is to try to convert
->   * pfn to dma address or at the last resort just assume that
-> @@ -499,6 +535,10 @@ static void *vb2_dc_get_userptr(struct device *dev, unsigned long vaddr,
->  		return ERR_PTR(-EINVAL);
->  	}
+> ---
+>  drivers/media/platform/s3c-camif/camif-core.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+> index 0b44b9accf50..af237af204e2 100644
+> --- a/drivers/media/platform/s3c-camif/camif-core.c
+> +++ b/drivers/media/platform/s3c-camif/camif-core.c
+> @@ -493,21 +493,17 @@ static int s3c_camif_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		goto err_sens;
 >  
-> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size + PAGE_SIZE));
-> +	if (!ret)
-> +		return ERR_PTR(ret);
-> +
->  	buf = kzalloc(sizeof *buf, GFP_KERNEL);
->  	if (!buf)
->  		return ERR_PTR(-ENOMEM);
-> @@ -675,10 +715,15 @@ static void *vb2_dc_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
->  {
->  	struct vb2_dc_buf *buf;
->  	struct dma_buf_attachment *dba;
-> +	int ret;
+> -	mutex_lock(&camif->media_dev.graph_mutex);
+> -
+>  	ret = v4l2_device_register_subdev_nodes(&camif->v4l2_dev);
+>  	if (ret < 0)
+> -		goto err_unlock;
+> +		goto err_sens;
 >  
->  	if (dbuf->size < size)
->  		return ERR_PTR(-EFAULT);
+>  	ret = camif_register_video_nodes(camif);
+>  	if (ret < 0)
+> -		goto err_unlock;
+> +		goto err_sens;
 >  
-> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size));
-> +	if (!ret)
-> +		return ERR_PTR(ret);
-> +
->  	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
->  	if (!buf)
->  		return ERR_PTR(-ENOMEM);
+>  	ret = camif_create_media_links(camif);
+>  	if (ret < 0)
+> -		goto err_unlock;
+> -
+> -	mutex_unlock(&camif->media_dev.graph_mutex);
+> +		goto err_sens;
+>  
+>  	ret = media_device_register(&camif->media_dev);
+>  	if (ret < 0)
+> @@ -516,8 +512,6 @@ static int s3c_camif_probe(struct platform_device *pdev)
+>  	pm_runtime_put(dev);
+>  	return 0;
+>  
+> -err_unlock:
+> -	mutex_unlock(&camif->media_dev.graph_mutex);
+>  err_sens:
+>  	v4l2_device_unregister(&camif->v4l2_dev);
+>  	media_device_unregister(&camif->media_dev);
 > 
