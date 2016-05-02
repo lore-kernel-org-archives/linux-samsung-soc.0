@@ -1,39 +1,32 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3] serial: samsung: Reorder the sequence of clock control
- when call s3c24xx_serial_set_termios()
-Date: Mon, 2 May 2016 14:04:40 +0200
-Message-ID: <CAJKOXPf-5QXcdmApzzZgcd=QEn5bVbtB2w90kxMGLTAz3HRoSw@mail.gmail.com>
-References: <1461232711-4159-1-git-send-email-cw00.choi@samsung.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v3] media: vb2-dma-contig: configure DMA max segment size
+ properly
+Date: Mon, 2 May 2016 16:14:04 +0300
+Message-ID: <20160502131403.GJ26360@valkosipuli.retiisi.org.uk>
+References: <57271235.9030004@xs4all.nl>
+ <1462186753-4177-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461232711-4159-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: gregkh@linuxfoundation.org, jslaby@suse.com, kgene@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1462186753-4177-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 21, 2016 at 11:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch fixes the broken serial log when changing the clock source
-> of uart device. Before disabling the original clock source, this patch
-> enables the new clock source to protect the clock off state for a split second.
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Changes from v2:
-> - Add reviewd-by tag from Marek Szyprowski
-> - No changes about operation
->
-> Changes from v1:
-> - Enable the clock before changing the source by s3c24xx_serial_setsource()
-> - Rebase it on Linux v4.6-rc1
->
->  drivers/tty/serial/samsung.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, May 02, 2016 at 12:59:13PM +0200, Marek Szyprowski wrote:
+> This patch lets vb2-dma-contig memory allocator to configure DMA max
+> segment size properly for the client device. Setting it is needed to let
+> DMA-mapping subsystem to create a single, contiguous mapping in DMA
+> address space. This is essential for all devices, which use dma-contig
+> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
+> of operations).
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Fixes synchronous abort on our Exynos5433-based board. This should be
-marked for cc-stable. I'll send a port for that.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-BR,
-Krzysztof
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
