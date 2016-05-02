@@ -1,130 +1,64 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2] media: vb2-dma-contig: configure DMA max segment size
- properly
-Date: Mon, 2 May 2016 10:39:17 +0200
-Message-ID: <57271235.9030004@xs4all.nl>
-References: <57220299.3000807@xs4all.nl>
- <1461849603-6313-1-git-send-email-m.szyprowski@samsung.com>
- <20160429112110.GI32125@valkosipuli.retiisi.org.uk>
- <2318434a-176b-82c6-c55a-115778354201@samsung.com>
- <20160429135601.GA26360@valkosipuli.retiisi.org.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFT PATCH 1/3] usb: misc: usb3503: Fix HUB mode after bootloader
+ initialization
+Date: Mon, 02 May 2016 11:49:12 +0200
+Message-ID: <57272298.50701@samsung.com>
+References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
+ <1461927591-7864-2-git-send-email-k.kozlowski@samsung.com>
+ <20160429113059.GX3217@sirena.org.uk> <57234BA2.6020304@samsung.com>
+ <20160429164448.GY3217@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:58216 "EHLO
-	lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753208AbcEBIjZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 May 2016 04:39:25 -0400
-In-Reply-To: <20160429135601.GA26360@valkosipuli.retiisi.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20160429164448.GY3217@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-On 04/29/16 15:56, Sakari Ailus wrote:
-> Hi Marek,
+On 04/29/2016 06:44 PM, Mark Brown wrote:
+> On Fri, Apr 29, 2016 at 01:55:14PM +0200, Krzysztof Kozlowski wrote:
+>> On 04/29/2016 01:30 PM, Mark Brown wrote:
 > 
-> On Fri, Apr 29, 2016 at 01:39:43PM +0200, Marek Szyprowski wrote:
->> Hi Sakari,
->>
->>
->> On 2016-04-29 13:21, Sakari Ailus wrote:
->>> Hi Marek,
->>>
->>> Thanks for the patch!
->>>
->>> On Thu, Apr 28, 2016 at 03:20:03PM +0200, Marek Szyprowski wrote:
->>>> This patch lets vb2-dma-contig memory allocator to configure DMA max
->>>> segment size properly for the client device. Setting it is needed to let
->>>> DMA-mapping subsystem to create a single, contiguous mapping in DMA
->>>> address space. This is essential for all devices, which use dma-contig
->>>> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
->>>> of operations).
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>> Hello,
->>>>
->>>> This patch is a follow-up of my previous attempts to let Exynos
->>>> multimedia devices to work properly with shared buffers when IOMMU is
->>>> enabled:
->>>> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
->>>> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
->>>> 3. https://patchwork.linuxtv.org/patch/30870/
->>>>
->>>> As sugested by Hans, configuring DMA max segment size should be done by
->>>> videobuf2-dma-contig module instead of requiring all device drivers to
->>>> do it on their own.
->>>>
->>>> Here is some backgroud why this is done in videobuf2-dc not in the
->>>> respective generic bus code:
->>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
->>>>
->>>> Best regards,
->>>> Marek Szyprowski
->>>>
->>>> changelog:
->>>> v2:
->>>> - fixes typos and other language issues in the comments
->>>>
->>>> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
->>>> ---
->>>>  drivers/media/v4l2-core/videobuf2-dma-contig.c | 39 ++++++++++++++++++++++++++
->>>>  1 file changed, 39 insertions(+)
->>>>
->>>> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
->>>> index 461ae55eaa98..d0382d62954d 100644
->>>> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
->>>> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
->>>> @@ -443,6 +443,36 @@ static void vb2_dc_put_userptr(void *buf_priv)
->>>>  }
->>>>  /*
->>>> + * To allow mapping the scatter-list into a single chunk in the DMA
->>>> + * address space, the device is required to have the DMA max segment
->>>> + * size parameter set to a value larger than the buffer size. Otherwise,
->>>> + * the DMA-mapping subsystem will split the mapping into max segment
->>>> + * size chunks. This function increases the DMA max segment size
->>>> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
->>>> + * address space.
->>>> + * This code assumes that the DMA-mapping subsystem will merge all
->>>> + * scatter-list segments if this is really possible (for example when
->>>> + * an IOMMU is available and enabled).
->>>> + * Ideally, this parameter should be set by the generic bus code, but it
->>>> + * is left with the default 64KiB value due to historical litmiations in
->>>> + * other subsystems (like limited USB host drivers) and there no good
->>>> + * place to set it to the proper value. It is done here to avoid fixing
->>>> + * all the vb2-dc client drivers.
->>>> + */
->>>> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
->>>> +{
->>>> +	if (!dev->dma_parms) {
->>>> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
->>> Doesn't this create a memory leak? Do consider that devices may be also
->>> removed from the system at runtime.
->>>
->>> Looks very nice otherwise.
->>
->> Yes it does, but there is completely no way to determine when to do that
->> (dma_params might have been already allocated by the bus code). The whole
->> dma_params idea and its handling is a bit messy. IMHO we can leave this
->> for now until dma_params gets cleaned up (I remember someone said that he
->> has this on his todo list, but I don't remember now who it was...).
+>>> Supplies are only optional if they may be physically absent.  In this
+>>> case it's possible that on device regulators may be used instead, a
+>>> pattern more like that used for arizona-ldo1 where we represent those
+>>> regulators might be better as it's more clearly describing the
+>>> situation.  I'm just wondering if the supply lookup stuff there should
+>>> be factored out as this is not an uncommon pattern..
 > 
-> You could fix this in a V4L2-specific way by storing the information whether
-> you've allocated the dma-params e.g. in struct video_device. That's probably
-> not worth the trouble, especially if someone's about to have a better
-> solution.
+>>> It should at least be clearly stated what's going on, ignoring failure
+>>> to get supplies is generally a bug and people will tend to blindly cut
+>>> and paste things (witness all the breakage in graphics drivers with
+>>> this).
 > 
-> I'd add a "FIXME: ..." comment so we won't forget about it.
+>> The VDD33 is really optional. The device can work in different
+>> configuration, e.g. only on VBAT. How the reset logic would work then? I
+>> don't know... I would suspect that it could be exactly the same (just
+>> replace VDD33 with VBAT) but I am not sure.
 > 
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
+> What the Arizona example I mentioned does is look for the property
+> specifying an external supply in DT and if there isn't one assumes that
+> it must be using the internal regulator.  That's a bit icky but it does
+> the right thing and is much simpler from a user point of view.
 
-I agree with Sakari, please add a FIXME here explaining the issue.
-I'll pick up the v3 patch for a pull request on Wednesday.
+Okay, that indeed looks similar... in case of lack of external supplies
+the usb3503 pins should be tied to the internal regulators.
 
-Regards,
+However it seems I was wrong at the beginning. We've been looking here
+at the schematics and the datasheet. The design is unfortunately a
+little bit confusing but finally I think we got the impression how does
+it work.
 
-	Hans
+This VDD regulator supply actually is not a usb3503 USB HUB regulator
+supply... but a supply to the LAN attached to this HUB. Regulator off/on
+is needed for LAN to show up. The hub will show up with typical reset
+(which is also missing before my patchset btw).
+
+The LAN, as a USB device, is auto-probed so it cannot take the regulator
+and play with it. The simplest idea I have is to add it as "external
+supply"  to the parent: usb3503.
+
+Best regards,
+Krzysztof
