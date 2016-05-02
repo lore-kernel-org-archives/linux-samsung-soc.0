@@ -1,59 +1,39 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [RFT PATCH 0/3] usb: misc: usb3503: Fix missing device when TFTP
  booting
-Date: Mon, 2 May 2016 15:40:01 +0200
-Message-ID: <572758B1.60202@xs4all.nl>
+Date: Mon, 02 May 2016 15:41:51 +0200
+Message-ID: <5727591F.3000100@samsung.com>
 References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
  <57247E50.1020000@xs4all.nl> <20160501131746.GA16766@kozik-lap>
  <57260E1E.70205@xs4all.nl> <57262844.7060809@xs4all.nl>
- <20160501164252.GA3581@kozik-lap>
+ <20160501164252.GA3581@kozik-lap> <572758B1.60202@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160501164252.GA3581@kozik-lap>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56261 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750714AbcEBNl5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 May 2016 09:41:57 -0400
+In-reply-to: <572758B1.60202@xs4all.nl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 05/01/16 18:42, Krzysztof Kozlowski wrote:
-> On Sun, May 01, 2016 at 06:01:08PM +0200, Hans Verkuil wrote:
->>> Sorry, I meant the hanging issue I got in 4.6, not the ethernet issue.
->>> I get the same problem with linux-next. Can you mail me the .config you are using?
->>
->> Never mind.
->>
->>> After some more testing I don't think it is hanging, instead it seems that the mmc
->>> isn't enabled/found and so it just sits waiting for the root partition to appear.
->>
->> That was fun. There are two problems that both caused the boot to end at the same
->> place: first of all the root partition is now called mmcblk1p1 instead of mmcblk0p1
->> in 4.6, so it was just waiting for the root partition to appear. Nothing to do with
->> your patch series, just unexpected.
+On 05/02/2016 03:40 PM, Hans Verkuil wrote:
+>>> Anyway, after disabling that config option I was finally able to test your patch
+>>> series:
+>>>
+>>> Tested-by: Hans Verkuil <hans.verkuil@cisco.com>
 > 
-> Yes, annoying issue and unfortunately this is known... recommended
-> solution is to use root=PARTUUID=xxxx (you can get the PARTUUID with
-> blkid)... or replace the mmc device.
+> BTW, one thing I noticed is that to have u-boot detect the network device I
+> need to call 'usb reset' twice. This is with u-boot 2016.1 release.
 > 
->> The second is that enabling CONFIG_VIDEO_S5P_FIMC causes the boot to hang at that
->> same place. I suspect there is a deadlock somewhere. I'm digging deeper into that
->> but again, unrelated to your patch series.
->>
->> Anyway, after disabling that config option I was finally able to test your patch
->> series:
->>
->> Tested-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+> Not a big deal, but I wondered if you see the same.
 
-BTW, one thing I noticed is that to have u-boot detect the network device I
-need to call 'usb reset' twice. This is with u-boot 2016.1 release.
+Yes, I also have to do it twice.
 
-Not a big deal, but I wondered if you see the same.
-
-Regards,
-
-	Hans
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
