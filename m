@@ -1,72 +1,43 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 1/2] media: exynos4-is: fix deadlock on driver probe
-Date: Mon, 2 May 2016 00:09:54 +0200
-Message-ID: <57267EB2.3050909@xs4all.nl>
-References: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Fwd: [PATCH v2 0/8] PM / devfreq: Add NoCP devfreq-event and support
+ busfreq on exyno5422-odroidxu3
+Date: Mon, 02 May 2016 05:48:50 +0000 (GMT)
+Message-ID: <1894783822.297231462168123817.JavaMail.weblogic@ep2mlwas04a>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud3.xs4all.net ([194.109.24.22]:34274 "EHLO
-	lb1-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752377AbcEAWQ3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 May 2016 18:16:29 -0400
-In-Reply-To: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, =?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?= <k.kozlowski@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: "robh@kernel.org" <robh@kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux.amoon@gmail.com" <linux.amoon@gmail.com>, "m.reichl@fivetechno.de" <m.reichl@fivetechno.de>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 04/28/2016 12:25 PM, Marek Szyprowski wrote:
-> Commit 0c426c472b5585ed6e59160359c979506d45ae49 ("[media] media: Always
-> keep a graph walk large enough around") changed
-> media_device_register_entity() function to take mdev->graph_mutex. This
-> causes deadlock in driver probe, which calls (indirectly) this function
-> with ->graph_mutex taken. This patch removes taking ->graph_mutex in
-> driver probe to avoid deadlock. Other drivers don't take ->graph_mutex
-> for entity registration, so this change should be safe.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-Tested-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Thanks!
-
-	Hans
-
-> ---
->  drivers/media/platform/exynos4-is/media-dev.c | 13 ++-----------
->  1 file changed, 2 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index 04348b502232..891625e77ef5 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -1448,22 +1448,13 @@ static int fimc_md_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, fmd);
->  
-> -	/* Protect the media graph while we're registering entities */
-> -	mutex_lock(&fmd->media_dev.graph_mutex);
-> -
->  	ret = fimc_md_register_platform_entities(fmd, dev->of_node);
-> -	if (ret) {
-> -		mutex_unlock(&fmd->media_dev.graph_mutex);
-> +	if (ret)
->  		goto err_clk;
-> -	}
->  
->  	ret = fimc_md_register_sensor_entities(fmd);
-> -	if (ret) {
-> -		mutex_unlock(&fmd->media_dev.graph_mutex);
-> +	if (ret)
->  		goto err_m_ent;
-> -	}
-> -
-> -	mutex_unlock(&fmd->media_dev.graph_mutex);
->  
->  	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
->  	if (ret)
-> 
+U2VuZGVyIDog7LWc7LCs7JqwPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4gUzUo7LGF7J6EKS9DaGFu
+Z2UgQWdlbnQvVGl6ZW4gUGxhdGZvcm0gTGFiKFMvV+yEvO2EsCkv7IK87ISx7KCE7J6QDQpEYXRl
+IDogMjAxNi0wNC0xNSAxNTozMiAoR01UKzA5OjAwKQ0KPiANCj4gVGhpcyBwYXRjaHNldCBzdXBw
+b3J0IHRoZSBBTUJBIGJ1cyBmcmVxdWVuY3kgc2NhbGluZyBvbiBFeHlub3M1NDIyLWJhc2VkDQo+
+IE9kcm9pZC1YVTMgYm9hcmQuIEJ1dCwgdGhpcyBzZXJpZXMgb25seSBzdXBwb3J0IHRoZSBidXMg
+ZnJlcXVlbmN5IHNjYWxpbmcNCj4gZm9yIElOVCAoSW50ZXJuYWwpIGJsb2NrIHVzaW5nIFZERF9J
+TlQgcG93ZXIgbGluZS4NCg0KQWxvbmcgd2l0aCBEZXZmcmVxL1Bhc3NpdmUgcGF0Y2hzZXQsIHRo
+ZSBwYXRjaHNldCBpcyBtZXJnZWQgaW4NCmRldmZyZXEgZm9yLTQuNyB0cmVlLg0KDQpodHRwczov
+L2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9tengvZGV2ZnJlcS5naXQvbG9n
+Lz9oPWZvci00LjcNCg0KQENoYW53b286IElmIHRoZXJlIGFyZSBjb21taXRzIHRvIGJlIG1lcmdl
+ZCBieSBhIHRyZWUgb3RoZXIgdGhhbiBMaW51eC9QTSwNCnBsZWFzZSBsZXQgbWUga25vdy4gSSds
+bCBzZW5kIG91dCBwdWxsLXJlcXVlc3Qgc29vbi4NCg0KDQpDaGVlcnMsDQpNeXVuZ0pvbw0KDQo+
+IA0KPiBBbHNvLCB0byBzdXBwb3J0IHRoZSBidXMgZnJlcXVlbmN5IHNjYWxpbmcgZm9yIEV4eW5v
+czU0MnggU29DLA0KPiBFeHlub3M1NDJ4IFNvQyBoYXMgdGhlIHNwZWNpZmljICdOb0MgKE5ldHdv
+cmsgb24gQ2hpcCkgUHJvYmUnIGRldmljZQ0KPiB0byBtZWFzdXJlIHRoZSB0cmFuc2ZlcmVkIGRh
+dGEgdHJhZmZpYyBvbiBOb0MgKE5ldHdvcmsgb24gQ2hpcCkNCj4gaW5zdGVhZCBvZiBQUE1VIChQ
+bGF0Zm9ybSBQZXJmb3JtYW5jZSBNb25pdG9yaW5nIFVuaXQpLiBOb0MgUHJvYmUgZGV2aWNlDQo+
+IHByb3ZpZGUgdGhlIHV0aWxpemF0aW9uIGZvciBJTlQgYmxvY2sgb2YgRXh5bm9zNTQyeCBTb0Mu
+DQo+IA0KPiBUaGUgZ2VuZXJpYyBleHlub3MtYnVzIGZyZXF1ZW5jeSBkcml2ZXIgdXNlcyB0aGUg
+J05vQyBQcm9iZScgZGV2ZnJlcS1ldmVudA0KPiBkZXZpY2UgKGRyaXZlcnMvZGV2ZnJlcS9ldmVu
+dC9leHlub3Mtbm9jcC5jKSB3aXRob3V0IGFueSBtb2RpZmljYXRpb24uDQo+IEp1c3QgYWRkIHRo
+ZSBwaGFuZGxlIG9mICdOb0MgUHJvYmUnIGR0IG5vZGUgdG8gYnVzIGR0IG5vZGUuDQo+IA0KPiBE
+ZXBlbmQgb246DQo+IFRoaXMgcGF0Y2hzZXQgZGVwZW5kcyBvbiBwYXRjaFsxXSB3aGljaCBzdXBw
+b3J0IHRoZSBnZW5lcmljIGV4eW5vcy1idXMNCj4gZnJlcXVlbmN5IGRyaXZlci4NCj4gWzFdIGh0
+dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvYXJtLWtlcm5lbC9tc2c0OTU5NzYuaHRtbA0KPiAt
+IFtQQVRDSCB2OSAwMC8yMF0gUE0gLyBkZXZmZXJxOiBBZGQgZ2VuZXJpYyBleHlub3MgYnVzIGZy
+ZXF1ZW5jeSBkcml2ZXIgYW5kIG5ldyBwYXNzaXZlIGdvdmVybm9yDQo+IA0KPiANCg==
