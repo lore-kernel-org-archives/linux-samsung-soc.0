@@ -1,58 +1,39 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 1/2] media: exynos4-is: fix deadlock on driver probe
-Date: Mon, 2 May 2016 13:00:21 +0200
-Message-ID: <57273345.7070104@xs4all.nl>
-References: <1461839104-29135-1-git-send-email-m.szyprowski@samsung.com>
- <57267C5C.2000403@linux.intel.com> <20160502075235.6772fc3a@recife.lan>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3] serial: samsung: Reorder the sequence of clock control
+ when call s3c24xx_serial_set_termios()
+Date: Mon, 2 May 2016 14:04:40 +0200
+Message-ID: <CAJKOXPf-5QXcdmApzzZgcd=QEn5bVbtB2w90kxMGLTAz3HRoSw@mail.gmail.com>
+References: <1461232711-4159-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:54660 "EHLO
-	lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753759AbcEBLAe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 May 2016 07:00:34 -0400
-In-Reply-To: <20160502075235.6772fc3a@recife.lan>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461232711-4159-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: gregkh@linuxfoundation.org, jslaby@suse.com, kgene@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 05/02/16 12:52, Mauro Carvalho Chehab wrote:
-> Em Mon, 2 May 2016 00:59:56 +0300
-> Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
-> 
->> Hi Marek,
->>
->> Marek Szyprowski wrote:
->>> Commit 0c426c472b5585ed6e59160359c979506d45ae49 ("[media] media: Always
->>> keep a graph walk large enough around") changed
->>> media_device_register_entity() function to take mdev->graph_mutex. This
->>> causes deadlock in driver probe, which calls (indirectly) this function
->>> with ->graph_mutex taken. This patch removes taking ->graph_mutex in
->>> driver probe to avoid deadlock. Other drivers don't take ->graph_mutex
->>> for entity registration, so this change should be safe.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>  
->>
->> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->>
->> You could also add:
->>
->> Fixes: 0c426c472b55 ("[media] media: Always keep a graph walk large 
->> enough around")
->>
->> I guess these should go to fixes, the patches in question are already 
->> heading for v4.6. Cc Mauro.
-> 
-> The patches from Sakari for v4.6 were merged already at -rc6. Just merged
-> them back at the master branch.
+On Thu, Apr 21, 2016 at 11:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patch fixes the broken serial log when changing the clock source
+> of uart device. Before disabling the original clock source, this patch
+> enables the new clock source to protect the clock off state for a split second.
+>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Changes from v2:
+> - Add reviewd-by tag from Marek Szyprowski
+> - No changes about operation
+>
+> Changes from v1:
+> - Enable the clock before changing the source by s3c24xx_serial_setsource()
+> - Rebase it on Linux v4.6-rc1
+>
+>  drivers/tty/serial/samsung.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm confused. The two patches from Marek fixing driver probe deadlock are not
-in the master tree (just pulled from it, it's now rc6), so the deadlock still
-happens in kernel 4.6.
+Fixes synchronous abort on our Exynos5433-based board. This should be
+marked for cc-stable. I'll send a port for that.
 
-Regards,
-
-	Hans
+BR,
+Krzysztof
