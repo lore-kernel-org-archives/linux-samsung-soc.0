@@ -1,81 +1,72 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: drm/exynos: fimd: vrefresh is zero
-Date: Mon, 2 May 2016 22:22:57 +0200
-Message-ID: <20160502202257.GW14148@phenom.ffwll.local>
+Date: Mon, 2 May 2016 22:30:30 +0200
+Message-ID: <5727B8E6.6050106@math.uni-bielefeld.de>
 References: <5725259C.9020206@math.uni-bielefeld.de>
  <CADnq5_N_SnzU3Cpc9+w8FJXvmpa=oRKcwNzHrTQwY21ksCbh_A@mail.gmail.com>
  <5727648D.7050603@math.uni-bielefeld.de>
+ <20160502202257.GW14148@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:37096 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754740AbcEBUXA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 May 2016 16:23:00 -0400
-Received: by mail-wm0-f53.google.com with SMTP id a17so4913806wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 May 2016 13:23:00 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <5727648D.7050603@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20160502202257.GW14148@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Alex Deucher <alexdeucher@gmail.com>, linux-samsung-soc@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 
-On Mon, May 02, 2016 at 04:30:37PM +0200, Tobias Jakobi wrote:
-> Hello Alex,
-> 
-> 
-> Alex Deucher wrote:
-> > On Sat, Apr 30, 2016 at 5:37 PM, Tobias Jakobi
-> > <tjakobi@math.uni-bielefeld.de> wrote:
-> >> Hello,
-> >>
-> >> while playing around with FIMD enabled, I noticed that when first using
-> >> the device a zero division was triggered in fimd_calc_clkdiv(). I
-> >> remembered that I had a similar issue some time ago.
-> >>
-> >> I added a stub fimd_atomic_check() which shows that vrefresh is zero
-> >> when fimd_calc_clkdiv() is called.
-> >>
-> >> [  164.059361] [drm:exynos_plane_mode_set] plane : offset_x/y(0,0),
-> >> width/height(1366,768)
-> >> [  164.067175] [drm:fimd_atomic_check] xres=1366, yres=768, refresh=0,
-> >> intl=0
-> >> [  164.074198] [drm:drm_atomic_helper_check_planes] [CRTC:24:crtc-0]
-> >> atomic driver check failed
-> >>
-> >> I went back to the git log and noticed that some time ago in
-> >> 50bbfbffa5c894def440ce8157dfe53e60960d35 the fimd_mode_fixup() call was
-> >> removed.
-> >>
-> >> I'm now wondering where exactly vrefresh is set to a sane value. As far
-> >> as I can see of_get_videomode() is used to fetch the video mode from the
-> >> DT, and drm_display_mode_from_videomode() is used to convert it. However
-> >> vrefresh is nowhere set.
-> >>
-> >> So is something broken here, or am I missing something?
-> >>
-> > 
-> > There is no guarantee that vrefresh is actually set.  I think the only
-> > way to reliably get it is to call drm_mode_vrefresh().
-> Well, my impression from studying the code currently is that vrefresh is
-> _never_ set. In particular the Exynos specific DRM code only ever reads
-> vrefresh.
-> 
-> I was just wondering how this is supposed to function at all.
-
-drm_mode_set_crtcinfo() is meant to be used to fill in all the derived
-values. We might or might not want to have a default call for that in
-atomic helpers actually (before we call down into any of the driver's
-check functions for the first time). There's a bunch of flags to control
-it, but drivers with special needs could simply call it once more and
-overwrite the computed values. No harm done.
-
-Still need to audit all callers to make sure we don't break a driver. But
-shouldn't be too much work.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+SGV5IERhbmllbCwKCgpEYW5pZWwgVmV0dGVyIHdyb3RlOgo+IE9uIE1vbiwgTWF5IDAyLCAyMDE2
+IGF0IDA0OjMwOjM3UE0gKzAyMDAsIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+IEhlbGxvIEFsZXgs
+Cj4+Cj4+Cj4+IEFsZXggRGV1Y2hlciB3cm90ZToKPj4+IE9uIFNhdCwgQXByIDMwLCAyMDE2IGF0
+IDU6MzcgUE0sIFRvYmlhcyBKYWtvYmkKPj4+IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5k
+ZT4gd3JvdGU6Cj4+Pj4gSGVsbG8sCj4+Pj4KPj4+PiB3aGlsZSBwbGF5aW5nIGFyb3VuZCB3aXRo
+IEZJTUQgZW5hYmxlZCwgSSBub3RpY2VkIHRoYXQgd2hlbiBmaXJzdCB1c2luZwo+Pj4+IHRoZSBk
+ZXZpY2UgYSB6ZXJvIGRpdmlzaW9uIHdhcyB0cmlnZ2VyZWQgaW4gZmltZF9jYWxjX2Nsa2Rpdigp
+LiBJCj4+Pj4gcmVtZW1iZXJlZCB0aGF0IEkgaGFkIGEgc2ltaWxhciBpc3N1ZSBzb21lIHRpbWUg
+YWdvLgo+Pj4+Cj4+Pj4gSSBhZGRlZCBhIHN0dWIgZmltZF9hdG9taWNfY2hlY2soKSB3aGljaCBz
+aG93cyB0aGF0IHZyZWZyZXNoIGlzIHplcm8KPj4+PiB3aGVuIGZpbWRfY2FsY19jbGtkaXYoKSBp
+cyBjYWxsZWQuCj4+Pj4KPj4+PiBbICAxNjQuMDU5MzYxXSBbZHJtOmV4eW5vc19wbGFuZV9tb2Rl
+X3NldF0gcGxhbmUgOiBvZmZzZXRfeC95KDAsMCksCj4+Pj4gd2lkdGgvaGVpZ2h0KDEzNjYsNzY4
+KQo+Pj4+IFsgIDE2NC4wNjcxNzVdIFtkcm06ZmltZF9hdG9taWNfY2hlY2tdIHhyZXM9MTM2Niwg
+eXJlcz03NjgsIHJlZnJlc2g9MCwKPj4+PiBpbnRsPTAKPj4+PiBbICAxNjQuMDc0MTk4XSBbZHJt
+OmRybV9hdG9taWNfaGVscGVyX2NoZWNrX3BsYW5lc10gW0NSVEM6MjQ6Y3J0Yy0wXQo+Pj4+IGF0
+b21pYyBkcml2ZXIgY2hlY2sgZmFpbGVkCj4+Pj4KPj4+PiBJIHdlbnQgYmFjayB0byB0aGUgZ2l0
+IGxvZyBhbmQgbm90aWNlZCB0aGF0IHNvbWUgdGltZSBhZ28gaW4KPj4+PiA1MGJiZmJmZmE1Yzg5
+NGRlZjQ0MGNlODE1N2RmZTUzZTYwOTYwZDM1IHRoZSBmaW1kX21vZGVfZml4dXAoKSBjYWxsIHdh
+cwo+Pj4+IHJlbW92ZWQuCj4+Pj4KPj4+PiBJJ20gbm93IHdvbmRlcmluZyB3aGVyZSBleGFjdGx5
+IHZyZWZyZXNoIGlzIHNldCB0byBhIHNhbmUgdmFsdWUuIEFzIGZhcgo+Pj4+IGFzIEkgY2FuIHNl
+ZSBvZl9nZXRfdmlkZW9tb2RlKCkgaXMgdXNlZCB0byBmZXRjaCB0aGUgdmlkZW8gbW9kZSBmcm9t
+IHRoZQo+Pj4+IERULCBhbmQgZHJtX2Rpc3BsYXlfbW9kZV9mcm9tX3ZpZGVvbW9kZSgpIGlzIHVz
+ZWQgdG8gY29udmVydCBpdC4gSG93ZXZlcgo+Pj4+IHZyZWZyZXNoIGlzIG5vd2hlcmUgc2V0Lgo+
+Pj4+Cj4+Pj4gU28gaXMgc29tZXRoaW5nIGJyb2tlbiBoZXJlLCBvciBhbSBJIG1pc3Npbmcgc29t
+ZXRoaW5nPwo+Pj4+Cj4+Pgo+Pj4gVGhlcmUgaXMgbm8gZ3VhcmFudGVlIHRoYXQgdnJlZnJlc2gg
+aXMgYWN0dWFsbHkgc2V0LiAgSSB0aGluayB0aGUgb25seQo+Pj4gd2F5IHRvIHJlbGlhYmx5IGdl
+dCBpdCBpcyB0byBjYWxsIGRybV9tb2RlX3ZyZWZyZXNoKCkuCj4+IFdlbGwsIG15IGltcHJlc3Np
+b24gZnJvbSBzdHVkeWluZyB0aGUgY29kZSBjdXJyZW50bHkgaXMgdGhhdCB2cmVmcmVzaCBpcwo+
+PiBfbmV2ZXJfIHNldC4gSW4gcGFydGljdWxhciB0aGUgRXh5bm9zIHNwZWNpZmljIERSTSBjb2Rl
+IG9ubHkgZXZlciByZWFkcwo+PiB2cmVmcmVzaC4KPj4KPj4gSSB3YXMganVzdCB3b25kZXJpbmcg
+aG93IHRoaXMgaXMgc3VwcG9zZWQgdG8gZnVuY3Rpb24gYXQgYWxsLgo+IAo+IGRybV9tb2RlX3Nl
+dF9jcnRjaW5mbygpIGlzIG1lYW50IHRvIGJlIHVzZWQgdG8gZmlsbCBpbiBhbGwgdGhlIGRlcml2
+ZWQKPiB2YWx1ZXMuIFdlIG1pZ2h0IG9yIG1pZ2h0IG5vdCB3YW50IHRvIGhhdmUgYSBkZWZhdWx0
+IGNhbGwgZm9yIHRoYXQgaW4KPiBhdG9taWMgaGVscGVycyBhY3R1YWxseSAoYmVmb3JlIHdlIGNh
+bGwgZG93biBpbnRvIGFueSBvZiB0aGUgZHJpdmVyJ3MKPiBjaGVjayBmdW5jdGlvbnMgZm9yIHRo
+ZSBmaXJzdCB0aW1lKS4gVGhlcmUncyBhIGJ1bmNoIG9mIGZsYWdzIHRvIGNvbnRyb2wKPiBpdCwg
+YnV0IGRyaXZlcnMgd2l0aCBzcGVjaWFsIG5lZWRzIGNvdWxkIHNpbXBseSBjYWxsIGl0IG9uY2Ug
+bW9yZSBhbmQKPiBvdmVyd3JpdGUgdGhlIGNvbXB1dGVkIHZhbHVlcy4gTm8gaGFybSBkb25lLgpJ
+IGhhZCBhIGxvb2sgYXQgZHJtX21vZGVfc2V0X2NydGNpbmZvKCkgKGZyb20gNC42LXJjNikgYnV0
+IGl0IGFsc28KZG9lc24ndCBzZXQgdGhlIHZyZWZyZXNoIGZpZWxkLiBNYXliZSB5b3UgbWVhbiBh
+IGRpZmZlcmVudCBjYWxsPwoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKPiBTdGlsbCBuZWVk
+IHRvIGF1ZGl0IGFsbCBjYWxsZXJzIHRvIG1ha2Ugc3VyZSB3ZSBkb24ndCBicmVhayBhIGRyaXZl
+ci4gQnV0Cj4gc2hvdWxkbid0IGJlIHRvbyBtdWNoIHdvcmsuCj4gLURhbmllbAo+IAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
