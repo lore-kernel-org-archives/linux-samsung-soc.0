@@ -1,72 +1,52 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: drm/exynos: fimd: vrefresh is zero
-Date: Mon, 2 May 2016 22:30:30 +0200
-Message-ID: <5727B8E6.6050106@math.uni-bielefeld.de>
+Date: Mon, 2 May 2016 23:00:54 +0200
+Message-ID: <CAKMK7uGPx5Pdio2cr+zBTX1NrMr9+nk1MY7bJqziLGNvS93gwA@mail.gmail.com>
 References: <5725259C.9020206@math.uni-bielefeld.de>
- <CADnq5_N_SnzU3Cpc9+w8FJXvmpa=oRKcwNzHrTQwY21ksCbh_A@mail.gmail.com>
- <5727648D.7050603@math.uni-bielefeld.de>
- <20160502202257.GW14148@phenom.ffwll.local>
+	<CADnq5_N_SnzU3Cpc9+w8FJXvmpa=oRKcwNzHrTQwY21ksCbh_A@mail.gmail.com>
+	<5727648D.7050603@math.uni-bielefeld.de>
+	<20160502202257.GW14148@phenom.ffwll.local>
+	<5727B8E6.6050106@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160502202257.GW14148@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:33463 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755198AbcEBVAz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 May 2016 17:00:55 -0400
+Received: by mail-oi0-f51.google.com with SMTP id v145so700435oie.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 May 2016 14:00:54 -0700 (PDT)
+In-Reply-To: <5727B8E6.6050106@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Alex Deucher <alexdeucher@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 
-SGV5IERhbmllbCwKCgpEYW5pZWwgVmV0dGVyIHdyb3RlOgo+IE9uIE1vbiwgTWF5IDAyLCAyMDE2
-IGF0IDA0OjMwOjM3UE0gKzAyMDAsIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+IEhlbGxvIEFsZXgs
-Cj4+Cj4+Cj4+IEFsZXggRGV1Y2hlciB3cm90ZToKPj4+IE9uIFNhdCwgQXByIDMwLCAyMDE2IGF0
-IDU6MzcgUE0sIFRvYmlhcyBKYWtvYmkKPj4+IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5k
-ZT4gd3JvdGU6Cj4+Pj4gSGVsbG8sCj4+Pj4KPj4+PiB3aGlsZSBwbGF5aW5nIGFyb3VuZCB3aXRo
-IEZJTUQgZW5hYmxlZCwgSSBub3RpY2VkIHRoYXQgd2hlbiBmaXJzdCB1c2luZwo+Pj4+IHRoZSBk
-ZXZpY2UgYSB6ZXJvIGRpdmlzaW9uIHdhcyB0cmlnZ2VyZWQgaW4gZmltZF9jYWxjX2Nsa2Rpdigp
-LiBJCj4+Pj4gcmVtZW1iZXJlZCB0aGF0IEkgaGFkIGEgc2ltaWxhciBpc3N1ZSBzb21lIHRpbWUg
-YWdvLgo+Pj4+Cj4+Pj4gSSBhZGRlZCBhIHN0dWIgZmltZF9hdG9taWNfY2hlY2soKSB3aGljaCBz
-aG93cyB0aGF0IHZyZWZyZXNoIGlzIHplcm8KPj4+PiB3aGVuIGZpbWRfY2FsY19jbGtkaXYoKSBp
-cyBjYWxsZWQuCj4+Pj4KPj4+PiBbICAxNjQuMDU5MzYxXSBbZHJtOmV4eW5vc19wbGFuZV9tb2Rl
-X3NldF0gcGxhbmUgOiBvZmZzZXRfeC95KDAsMCksCj4+Pj4gd2lkdGgvaGVpZ2h0KDEzNjYsNzY4
-KQo+Pj4+IFsgIDE2NC4wNjcxNzVdIFtkcm06ZmltZF9hdG9taWNfY2hlY2tdIHhyZXM9MTM2Niwg
-eXJlcz03NjgsIHJlZnJlc2g9MCwKPj4+PiBpbnRsPTAKPj4+PiBbICAxNjQuMDc0MTk4XSBbZHJt
-OmRybV9hdG9taWNfaGVscGVyX2NoZWNrX3BsYW5lc10gW0NSVEM6MjQ6Y3J0Yy0wXQo+Pj4+IGF0
-b21pYyBkcml2ZXIgY2hlY2sgZmFpbGVkCj4+Pj4KPj4+PiBJIHdlbnQgYmFjayB0byB0aGUgZ2l0
-IGxvZyBhbmQgbm90aWNlZCB0aGF0IHNvbWUgdGltZSBhZ28gaW4KPj4+PiA1MGJiZmJmZmE1Yzg5
-NGRlZjQ0MGNlODE1N2RmZTUzZTYwOTYwZDM1IHRoZSBmaW1kX21vZGVfZml4dXAoKSBjYWxsIHdh
-cwo+Pj4+IHJlbW92ZWQuCj4+Pj4KPj4+PiBJJ20gbm93IHdvbmRlcmluZyB3aGVyZSBleGFjdGx5
-IHZyZWZyZXNoIGlzIHNldCB0byBhIHNhbmUgdmFsdWUuIEFzIGZhcgo+Pj4+IGFzIEkgY2FuIHNl
-ZSBvZl9nZXRfdmlkZW9tb2RlKCkgaXMgdXNlZCB0byBmZXRjaCB0aGUgdmlkZW8gbW9kZSBmcm9t
-IHRoZQo+Pj4+IERULCBhbmQgZHJtX2Rpc3BsYXlfbW9kZV9mcm9tX3ZpZGVvbW9kZSgpIGlzIHVz
-ZWQgdG8gY29udmVydCBpdC4gSG93ZXZlcgo+Pj4+IHZyZWZyZXNoIGlzIG5vd2hlcmUgc2V0Lgo+
-Pj4+Cj4+Pj4gU28gaXMgc29tZXRoaW5nIGJyb2tlbiBoZXJlLCBvciBhbSBJIG1pc3Npbmcgc29t
-ZXRoaW5nPwo+Pj4+Cj4+Pgo+Pj4gVGhlcmUgaXMgbm8gZ3VhcmFudGVlIHRoYXQgdnJlZnJlc2gg
-aXMgYWN0dWFsbHkgc2V0LiAgSSB0aGluayB0aGUgb25seQo+Pj4gd2F5IHRvIHJlbGlhYmx5IGdl
-dCBpdCBpcyB0byBjYWxsIGRybV9tb2RlX3ZyZWZyZXNoKCkuCj4+IFdlbGwsIG15IGltcHJlc3Np
-b24gZnJvbSBzdHVkeWluZyB0aGUgY29kZSBjdXJyZW50bHkgaXMgdGhhdCB2cmVmcmVzaCBpcwo+
-PiBfbmV2ZXJfIHNldC4gSW4gcGFydGljdWxhciB0aGUgRXh5bm9zIHNwZWNpZmljIERSTSBjb2Rl
-IG9ubHkgZXZlciByZWFkcwo+PiB2cmVmcmVzaC4KPj4KPj4gSSB3YXMganVzdCB3b25kZXJpbmcg
-aG93IHRoaXMgaXMgc3VwcG9zZWQgdG8gZnVuY3Rpb24gYXQgYWxsLgo+IAo+IGRybV9tb2RlX3Nl
-dF9jcnRjaW5mbygpIGlzIG1lYW50IHRvIGJlIHVzZWQgdG8gZmlsbCBpbiBhbGwgdGhlIGRlcml2
-ZWQKPiB2YWx1ZXMuIFdlIG1pZ2h0IG9yIG1pZ2h0IG5vdCB3YW50IHRvIGhhdmUgYSBkZWZhdWx0
-IGNhbGwgZm9yIHRoYXQgaW4KPiBhdG9taWMgaGVscGVycyBhY3R1YWxseSAoYmVmb3JlIHdlIGNh
-bGwgZG93biBpbnRvIGFueSBvZiB0aGUgZHJpdmVyJ3MKPiBjaGVjayBmdW5jdGlvbnMgZm9yIHRo
-ZSBmaXJzdCB0aW1lKS4gVGhlcmUncyBhIGJ1bmNoIG9mIGZsYWdzIHRvIGNvbnRyb2wKPiBpdCwg
-YnV0IGRyaXZlcnMgd2l0aCBzcGVjaWFsIG5lZWRzIGNvdWxkIHNpbXBseSBjYWxsIGl0IG9uY2Ug
-bW9yZSBhbmQKPiBvdmVyd3JpdGUgdGhlIGNvbXB1dGVkIHZhbHVlcy4gTm8gaGFybSBkb25lLgpJ
-IGhhZCBhIGxvb2sgYXQgZHJtX21vZGVfc2V0X2NydGNpbmZvKCkgKGZyb20gNC42LXJjNikgYnV0
-IGl0IGFsc28KZG9lc24ndCBzZXQgdGhlIHZyZWZyZXNoIGZpZWxkLiBNYXliZSB5b3UgbWVhbiBh
-IGRpZmZlcmVudCBjYWxsPwoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKPiBTdGlsbCBuZWVk
-IHRvIGF1ZGl0IGFsbCBjYWxsZXJzIHRvIG1ha2Ugc3VyZSB3ZSBkb24ndCBicmVhayBhIGRyaXZl
-ci4gQnV0Cj4gc2hvdWxkbid0IGJlIHRvbyBtdWNoIHdvcmsuCj4gLURhbmllbAo+IAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Mon, May 2, 2016 at 10:30 PM, Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+>> drm_mode_set_crtcinfo() is meant to be used to fill in all the derived
+>> values. We might or might not want to have a default call for that in
+>> atomic helpers actually (before we call down into any of the driver's
+>> check functions for the first time). There's a bunch of flags to control
+>> it, but drivers with special needs could simply call it once more and
+>> overwrite the computed values. No harm done.
+> I had a look at drm_mode_set_crtcinfo() (from 4.6-rc6) but it also
+> doesn't set the vrefresh field. Maybe you mean a different call?
+
+I was blind - it fills in everything except vrefresh. If you look at
+drivers most of them use vrefresh purely for debug output or as an
+informational field in general. Most hw wants the actual pixelclock
+anyway, so there's not really a need for vrefresh (e.g. i915 only
+computes vrefresh for the internally used panel modes). The value
+itself is directly taken from userspace, so probably just a bug in
+exynos userspace? Of course the driver should still keep working. From
+a quick look you want to remove any use of vrefresh (except debug
+output), and especially you shouldn't recompute the actual pixelclock
+like decon/fimd seem to do (stored into ideal_clock). Instead use
+mode->clock, that's supposed to be the real value.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
