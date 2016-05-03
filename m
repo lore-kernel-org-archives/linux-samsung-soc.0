@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFC PATCH 08/12] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
-Date: Tue,  3 May 2016 19:52:25 +0200
-Message-ID: <1462297949-13824-9-git-send-email-krzk@kernel.org>
+Subject: [RFC PATCH 06/12] ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+Date: Tue,  3 May 2016 19:52:23 +0200
+Message-ID: <1462297949-13824-7-git-send-email-krzk@kernel.org>
 References: <1462297949-13824-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1462297949-13824-1-git-send-email-krzk@kernel.org>
@@ -10,26 +10,172 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add 'sromc' label to SROM memory controller in common exynos5.dtsi so it
-can be referenced by ihneriting DTSI.
+The LED nodes can be shared between Odroid XU3, XU3-Lite and XU (not yet
+added) thus removing duplication.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 35 +----------------
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 35 +----------------
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi | 50 +++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+), 68 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index fe901152f3ea..7c83dc6ef972 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -31,7 +31,7 @@
- 		reg = <0x10000000 0x100>;
- 	};
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+index 2ae1cf41dcb6..03fa88c45426 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+@@ -14,44 +14,11 @@
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
+ #include "exynos5422-odroidxu3-audio.dtsi"
++#include "exynos54xx-odroidxu-leds.dtsi"
  
--	memory-controller@12250000 {
-+	sromc: memory-controller@12250000 {
- 		compatible = "samsung,exynos4210-srom";
- 		reg = <0x12250000 0x14>;
- 	};
+ / {
+ 	model = "Hardkernel Odroid XU3 Lite";
+ 	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
+-
+-	pwmleds {
+-		compatible = "pwm-leds";
+-
+-		greenled {
+-			label = "green:mmc0";
+-			pwms = <&pwm 1 2000000 0>;
+-			pwm-names = "pwm1";
+-			/*
+-			 * Green LED is much brighter than the others
+-			 * so limit its max brightness
+-			 */
+-			max_brightness = <127>;
+-			linux,default-trigger = "mmc0";
+-		};
+-
+-		blueled {
+-			label = "blue:heartbeat";
+-			pwms = <&pwm 2 2000000 0>;
+-			pwm-names = "pwm2";
+-			max_brightness = <255>;
+-			linux,default-trigger = "heartbeat";
+-		};
+-	};
+-
+-	gpioleds {
+-		compatible = "gpio-leds";
+-		redled {
+-			label = "red:microSD";
+-			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+-			default-state = "off";
+-			linux,default-trigger = "mmc1";
+-		};
+-	};
+ };
+ 
+ &pwm {
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 432406db85de..9ed6564acfb0 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -13,44 +13,11 @@
+ /dts-v1/;
+ #include "exynos5422-odroidxu3-common.dtsi"
+ #include "exynos5422-odroidxu3-audio.dtsi"
++#include "exynos54xx-odroidxu-leds.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3";
+ 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
+-
+-	pwmleds {
+-		compatible = "pwm-leds";
+-
+-		greenled {
+-			label = "green:mmc0";
+-			pwms = <&pwm 1 2000000 0>;
+-			pwm-names = "pwm1";
+-			/*
+-			 * Green LED is much brighter than the others
+-			 * so limit its max brightness
+-			 */
+-			max_brightness = <127>;
+-			linux,default-trigger = "mmc0";
+-		};
+-
+-		blueled {
+-			label = "blue:heartbeat";
+-			pwms = <&pwm 2 2000000 0>;
+-			pwm-names = "pwm2";
+-			max_brightness = <255>;
+-			linux,default-trigger = "heartbeat";
+-		};
+-	};
+-
+-	gpioleds {
+-		compatible = "gpio-leds";
+-		redled {
+-			label = "red:microSD";
+-			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+-			default-state = "off";
+-			linux,default-trigger = "mmc1";
+-		};
+-	};
+ };
+ 
+ &i2c_0 {
+diff --git a/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+new file mode 100644
+index 000000000000..0ed30206625c
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+@@ -0,0 +1,50 @@
++/*
++ * Hardkernel Odroid XU/XU3 LED device tree source
++ *
++ * Copyright (c) 2015,2016 Krzysztof Kozlowski
++ * Copyright (c) 2014 Collabora Ltd.
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	pwmleds {
++		compatible = "pwm-leds";
++
++		greenled {
++			label = "green:mmc0";
++			pwms = <&pwm 1 2000000 0>;
++			pwm-names = "pwm1";
++			/*
++			 * Green LED is much brighter than the others
++			 * so limit its max brightness
++			 */
++			max_brightness = <127>;
++			linux,default-trigger = "mmc0";
++		};
++
++		blueled {
++			label = "blue:heartbeat";
++			pwms = <&pwm 2 2000000 0>;
++			pwm-names = "pwm2";
++			max_brightness = <255>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	gpioleds {
++		compatible = "gpio-leds";
++		redled {
++			label = "red:microSD";
++			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
++			default-state = "off";
++			linux,default-trigger = "mmc1";
++		};
++	};
++};
 -- 
 2.5.0
