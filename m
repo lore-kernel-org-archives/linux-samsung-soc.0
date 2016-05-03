@@ -1,86 +1,78 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 0/8] PM / devfreq: Add NoCP devfreq-event and support
- busfreq on exyno5422-odroidxu3
-Date: Tue, 03 May 2016 19:48:24 +0900
-Message-ID: <572881F8.3020701@samsung.com>
-References: <1460701975-24178-1-git-send-email-cw00.choi@samsung.com>
- <20160503102922.GD3956@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20160503102922.GD3956@kozik-lap>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, kgene@kernel.org, robh@kernel.org, rjw@rjwysocki.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux.amoon@gmail.com, m.reichl@fivetechno.de, tjakobi@math.uni-bielefeld.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RFC PATCH 00/12] ARM: dts: exynos: Reorganize before adding Odroid XU board
+Date: Tue,  3 May 2016 19:52:17 +0200
+Message-ID: <1462297949-13824-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:48195 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933771AbcECRwu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 May 2016 13:52:50 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Hi Krzysztof,
+Hi,
 
-On 2016=EB=85=84 05=EC=9B=94 03=EC=9D=BC 19:29, Krzysztof Kozlowski wro=
-te:
-> On Fri, Apr 15, 2016 at 03:32:47PM +0900, Chanwoo Choi wrote:
->> This patchset support the AMBA bus frequency scaling on Exynos5422-b=
-ased
->> Odroid-XU3 board. But, this series only support the bus frequency sc=
-aling
->> for INT (Internal) block using VDD_INT power line.
->>
->> Also, to support the bus frequency scaling for Exynos542x SoC,
->> Exynos542x SoC has the specific 'NoC (Network on Chip) Probe' device
->> to measure the transfered data traffic on NoC (Network on Chip)
->> instead of PPMU (Platform Performance Monitoring Unit). NoC Probe de=
-vice
->> provide the utilization for INT block of Exynos542x SoC.
->>
->> The generic exynos-bus frequency driver uses the 'NoC Probe' devfreq=
--event
->> device (drivers/devfreq/event/exynos-nocp.c) without any modificatio=
-n.
->> Just add the phandle of 'NoC Probe' dt node to bus dt node.
->>
->> Depend on:
->> This patchset depends on patch[1] which support the generic exynos-b=
-us
->> frequency driver.
->> [1] http://www.spinics.net/lists/arm-kernel/msg495976.html
->> - [PATCH v9 00/20] PM / devferq: Add generic exynos bus frequency dr=
-iver and new passive governor
->>
->>
->> Changse from v1:
->> (https://lkml.org/lkml/2016/4/8/28)
->> - Simplify the documentation of exynos-nocp.txt
->> - Check the return value of regmap function
->> - Modify Device Tree node name using general device name
->>  : nocp_memX_X@ nocp_memX_X -> nocp_memX_X@ nocp
->> - Fix wrong node name about nocp device tree node
->> - Drop the CLK_SET_RATE_PARENT flag
->> - Reorder bus device tree node alpabetically
->> - Add the tested-by tag from Anand Moon and Markus Reichl
->> - Add the reviewed-by tag to patch5/7 from Exynos SoC Maintainer
->> - Add patch2 to modify the devfreq_event_get_edev_by_phandle()
->>   to get the instance of devfreq-event device by using the phandle
->>
->> Chanwoo Choi (8):
->>   PM / devfreq: event: Add new Exynos NoC probe driver
->>   PM / devfreq: event: Find the instance of devfreq-event device by =
-using phandle
->>   PM / devfreq: exynos: Add the detailed correlation for Exynos5422 =
-bus
->>   ARM: dts: Add NoC Probe dt node for Exynos542x SoC
->>   dt-bindings: clock: Add the clock id for ACLK clock of Exynos542x =
-SoC
->>   clk: samsung: exynos542x: Add the clock id for ACLK
->>   ARM: dts: Add bus nodes using VDD_INT for Exynos542x SoC
->>   ARM: dts: Add support of Bus frequency using VDD_INT for exynos542=
-2-odroidxu3
->=20
->=20
-> Applied DTS patches for late v4.7 (hopefully).
 
-Thanks for your review and apply.
+I am in the middle (or beginning) of adding DTS for Odroid XU. This
+patchset is a preparation for that. I still did not figure out two
+things:
+1. clock IDs, should we follow Exynos5420 (or maybe reuse entirely?)
+   see patch 1.
+2. sd0_rclk - see patch 5.
 
-Best Regards,
-Chanwoo Choi
 
+The Odroid XU board is based on Exynos5410: an octal-core design where
+apparently only one cluster (big or little) could be active. The Exynos5410
+is a first big.LITTLE design... with its early child issues (naughty kid).
+
+The board itself is a mix between Odroid U3 (based on Exynos4412) and XU3.
+For example it has usb3503+smsc95xx LAN as Odroid U3 so probably
+same issues as U3 will happen (USB/LAN fails after TFTP boot). On the
+other hand it has size, look (case) and most of components the same
+as in XU3 and XU3-lite.
+
+As for now you can boot it with Hardkernel U-Boot and SMDK5410 DTB.
+
+Comments welcome!
+
+
+BR,
+Krzysztof
+
+
+Krzysztof Kozlowski (12):
+  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+  dt-bindings: clock: Add PWM clock ID to Exynos5410
+  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
+    nodes
+  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+  ARM: dts: exynos: Move common nodes to exynos5.dtsi
+  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
+    exynos5410.dtsi
+  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
+  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+  ARM: dts: exynos: Enable UART3 on Exynos5410
+
+ arch/arm/boot/dts/exynos5.dtsi                  |  171 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi   |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi               | 1718 ++++++++++---------
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi       |   87 +
+ arch/arm/boot/dts/exynos5410-smdk5410.dts       |    6 +-
+ arch/arm/boot/dts/exynos5410.dtsi               |  112 +-
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi       |   12 +-
+ arch/arm/boot/dts/exynos5420.dtsi               | 2058 +++++++++++------------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts |   35 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts      |   35 +-
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi |   50 +
+ include/dt-bindings/clock/exynos5410.h          |   56 +-
+ 12 files changed, 2197 insertions(+), 2145 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+
+-- 
+2.5.0
