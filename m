@@ -1,52 +1,83 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: drm/exynos: fimd: vrefresh is zero
-Date: Mon, 2 May 2016 23:00:54 +0200
-Message-ID: <CAKMK7uGPx5Pdio2cr+zBTX1NrMr9+nk1MY7bJqziLGNvS93gwA@mail.gmail.com>
-References: <5725259C.9020206@math.uni-bielefeld.de>
-	<CADnq5_N_SnzU3Cpc9+w8FJXvmpa=oRKcwNzHrTQwY21ksCbh_A@mail.gmail.com>
-	<5727648D.7050603@math.uni-bielefeld.de>
-	<20160502202257.GW14148@phenom.ffwll.local>
-	<5727B8E6.6050106@math.uni-bielefeld.de>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: Fwd: [PATCH v2 0/8] PM / devfreq: Add NoCP devfreq-event and
+ support busfreq on exyno5422-odroidxu3
+Date: Tue, 03 May 2016 11:17:45 +0900
+Message-ID: <57280A49.6060609@samsung.com>
+References: <1894783822.297231462168123817.JavaMail.weblogic@ep2mlwas04a>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:33463 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755198AbcEBVAz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 May 2016 17:00:55 -0400
-Received: by mail-oi0-f51.google.com with SMTP id v145so700435oie.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 May 2016 14:00:54 -0700 (PDT)
-In-Reply-To: <5727B8E6.6050106@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1894783822.297231462168123817.JavaMail.weblogic@ep2mlwas04a>
+Sender: linux-kernel-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, =?UTF-8?B?7YGs7Ims7Iuc7Yag7ZSE?= <k.kozlowski@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: "robh@kernel.org" <robh@kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux.amoon@gmail.com" <linux.amoon@gmail.com>, "m.reichl@fivetechno.de" <m.reichl@fivetechno.de>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.k
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Alex Deucher <alexdeucher@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 
-On Mon, May 2, 2016 at 10:30 PM, Tobias Jakobi
-<tjakobi@math.uni-bielefeld.de> wrote:
->> drm_mode_set_crtcinfo() is meant to be used to fill in all the derived
->> values. We might or might not want to have a default call for that in
->> atomic helpers actually (before we call down into any of the driver's
->> check functions for the first time). There's a bunch of flags to control
->> it, but drivers with special needs could simply call it once more and
->> overwrite the computed values. No harm done.
-> I had a look at drm_mode_set_crtcinfo() (from 4.6-rc6) but it also
-> doesn't set the vrefresh field. Maybe you mean a different call?
+Dear Myungjoo,
 
-I was blind - it fills in everything except vrefresh. If you look at
-drivers most of them use vrefresh purely for debug output or as an
-informational field in general. Most hw wants the actual pixelclock
-anyway, so there's not really a need for vrefresh (e.g. i915 only
-computes vrefresh for the internally used panel modes). The value
-itself is directly taken from userspace, so probably just a bug in
-exynos userspace? Of course the driver should still keep working. From
-a quick look you want to remove any use of vrefresh (except debug
-output), and especially you shouldn't recompute the actual pixelclock
-like decon/fimd seem to do (stored into ideal_clock). Instead use
-mode->clock, that's supposed to be the real value.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On 2016=EB=85=84 05=EC=9B=94 02=EC=9D=BC 14:48, MyungJoo Ham wrote:
+> Sender : =EC=B5=9C=EC=B0=AC=EC=9A=B0<cw00.choi@samsung.com> S5(=EC=B1=
+=85=EC=9E=84)/Change Agent/Tizen Platform Lab(S/W=EC=84=BC=ED=84=B0)/=EC=
+=82=BC=EC=84=B1=EC=A0=84=EC=9E=90
+> Date : 2016-04-15 15:32 (GMT+09:00)
+>>
+>> This patchset support the AMBA bus frequency scaling on Exynos5422-b=
+ased
+>> Odroid-XU3 board. But, this series only support the bus frequency sc=
+aling
+>> for INT (Internal) block using VDD_INT power line.
+>=20
+> Along with Devfreq/Passive patchset, the patchset is merged in
+> devfreq for-4.7 tree.
+>=20
+> https://git.kernel.org/cgit/linux/kernel/git/mzx/devfreq.git/log/?h=3D=
+for-4.7
+>=20
+> @Chanwoo: If there are commits to be merged by a tree other than Linu=
+x/PM,
+> please let me know. I'll send out pull-request soon.
+
+On Krzysztof Kozlowski's reply, dts patches will be merged on samsung-s=
+oc tree.
+and then the clock patches about exynos5420 was already merged to samsu=
+ng-clk tree
+by Sylwester.
+
+Only devfreq patches should be merged on devfreq tree.
+
+We already discussed this topic on offline. I expect that you will agai=
+n handle
+this patchset according to reply of both Krzysztof and me.
+
+Best Regards,
+Chanwoo Choi
+
+>=20
+>=20
+> Cheers,
+> MyungJoo
+>=20
+>>
+>> Also, to support the bus frequency scaling for Exynos542x SoC,
+>> Exynos542x SoC has the specific 'NoC (Network on Chip) Probe' device
+>> to measure the transfered data traffic on NoC (Network on Chip)
+>> instead of PPMU (Platform Performance Monitoring Unit). NoC Probe de=
+vice
+>> provide the utilization for INT block of Exynos542x SoC.
+>>
+>> The generic exynos-bus frequency driver uses the 'NoC Probe' devfreq=
+-event
+>> device (drivers/devfreq/event/exynos-nocp.c) without any modificatio=
+n.
+>> Just add the phandle of 'NoC Probe' dt node to bus dt node.
+>>
+>> Depend on:
+>> This patchset depends on patch[1] which support the generic exynos-b=
+us
+>> frequency driver.
+>> [1] http://www.spinics.net/lists/arm-kernel/msg495976.html
+>> - [PATCH v9 00/20] PM / devferq: Add generic exynos bus frequency dr=
+iver and new passive governor
+>>
+>>
