@@ -1,158 +1,179 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4] media: vb2-dma-contig: configure DMA max segment size
- properly
-Date: Wed, 04 May 2016 11:00:03 +0200
-Message-ID: <1462352403-27418-1-git-send-email-m.szyprowski@samsung.com>
-References: <5729B396.1020706@xs4all.nl>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <5729B396.1020706@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 3/6] drm/exynos/hdmi: expose HDMI-PHY clock as pipeline
+ clock
+Date: Wed, 4 May 2016 11:52:10 +0200
+Message-ID: <5729C64A.3020708@samsung.com>
+References: <1458739562-32327-1-git-send-email-a.hajda@samsung.com>
+ <1458739562-32327-4-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from plane.gmane.org ([80.91.229.3]:60585 "EHLO plane.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756985AbcEDJw1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 May 2016 05:52:27 -0400
+Received: from list by plane.gmane.org with local (Exim 4.69)
+	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
+	id 1axtTm-0005Mw-1u
+	for linux-samsung-soc@vger.kernel.org; Wed, 04 May 2016 11:52:26 +0200
+Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 May 2016 11:52:26 +0200
+Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 May 2016 11:52:26 +0200
+In-Reply-To: <1458739562-32327-4-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 
-This patch lets vb2-dma-contig memory allocator to configure DMA max
-segment size properly for the client device. Setting it is needed to let
-DMA-mapping subsystem to create a single, contiguous mapping in DMA
-address space. This is essential for all devices, which use dma-contig
-videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
-of operations).
+Hi Inki,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-Hello,
+It looks like this patch felt through the cracks.
+It is a part of "drm/exynos: add pipeline clock support" patchset.
+Other patches from the patchset were taken already.
+Could you queue it to next pull request?
 
-This patch is a follow-up of my previous attempts to let Exynos
-multimedia devices to work properly with shared buffers when IOMMU is
-enabled:
-1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
-2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
-3. https://patchwork.linuxtv.org/patch/30870/
+Regards
+Andrzej
 
-As sugested by Hans, configuring DMA max segment size should be done by
-videobuf2-dma-contig module instead of requiring all device drivers to
-do it on their own.
-
-Here is some backgroud why this is done in videobuf2-dc not in the
-respective generic bus code:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
-
-Best regards,
-Marek Szyprowski
-
-changelog:
-v4:
-- rebased onto media master tree
-- call vb2_dc_set_max_seg_size after allocating vb2 buf object
-
-v3:
-- added FIXME note about possible memory leak
-
-v2:
-- fixes typos and other language issues in the comments
-
-v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
----
- drivers/media/v4l2-core/videobuf2-dma-contig.c | 53 +++++++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-index 5361197f3e57..6291842a889f 100644
---- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-+++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-@@ -448,6 +448,42 @@ static void vb2_dc_put_userptr(void *buf_priv)
- }
- 
- /*
-+ * To allow mapping the scatter-list into a single chunk in the DMA
-+ * address space, the device is required to have the DMA max segment
-+ * size parameter set to a value larger than the buffer size. Otherwise,
-+ * the DMA-mapping subsystem will split the mapping into max segment
-+ * size chunks. This function increases the DMA max segment size
-+ * parameter to let DMA-mapping map a buffer as a single chunk in DMA
-+ * address space.
-+ * This code assumes that the DMA-mapping subsystem will merge all
-+ * scatterlist segments if this is really possible (for example when
-+ * an IOMMU is available and enabled).
-+ * Ideally, this parameter should be set by the generic bus code, but it
-+ * is left with the default 64KiB value due to historical litmiations in
-+ * other subsystems (like limited USB host drivers) and there no good
-+ * place to set it to the proper value. It is done here to avoid fixing
-+ * all the vb2-dc client drivers.
-+ *
-+ * FIXME: the allocated dma_params structure is leaked because there
-+ * is completely no way to determine when to free it (dma_params might have
-+ * been also already allocated by the bus code). However in typical
-+ * use cases this function will be called for platform devices, which are
-+ * not hot-plugged and exist all the time in the target system.
-+ */
-+static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
-+{
-+	if (!dev->dma_parms) {
-+		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
-+		if (!dev->dma_parms)
-+			return -ENOMEM;
-+	}
-+	if (dma_get_max_seg_size(dev) < size)
-+		return dma_set_max_seg_size(dev, size);
-+
-+	return 0;
-+}
-+
-+/*
-  * For some kind of reserved memory there might be no struct page available,
-  * so all that can be done to support such 'pages' is to try to convert
-  * pfn to dma address or at the last resort just assume that
-@@ -509,6 +545,10 @@ static void *vb2_dc_get_userptr(void *alloc_ctx, unsigned long vaddr,
- 	if (!buf)
- 		return ERR_PTR(-ENOMEM);
- 
-+	ret = vb2_dc_set_max_seg_size(conf->dev, PAGE_ALIGN(size + PAGE_SIZE));
-+	if (!ret)
-+		goto fail_buf;
-+
- 	buf->dev = conf->dev;
- 	buf->dma_dir = dma_dir;
- 
-@@ -682,6 +722,7 @@ static void *vb2_dc_attach_dmabuf(void *alloc_ctx, struct dma_buf *dbuf,
- 	struct vb2_dc_conf *conf = alloc_ctx;
- 	struct vb2_dc_buf *buf;
- 	struct dma_buf_attachment *dba;
-+	int ret;
- 
- 	if (dbuf->size < size)
- 		return ERR_PTR(-EFAULT);
-@@ -690,13 +731,17 @@ static void *vb2_dc_attach_dmabuf(void *alloc_ctx, struct dma_buf *dbuf,
- 	if (!buf)
- 		return ERR_PTR(-ENOMEM);
- 
-+	ret = vb2_dc_set_max_seg_size(conf->dev, PAGE_ALIGN(size));
-+	if (!ret)
-+		goto fail_buf;
-+
- 	buf->dev = conf->dev;
- 	/* create attachment for the dmabuf with the user device */
- 	dba = dma_buf_attach(dbuf, buf->dev);
- 	if (IS_ERR(dba)) {
- 		pr_err("failed to attach dmabuf\n");
--		kfree(buf);
--		return dba;
-+		ret = PTR_ERR(dba);
-+		goto fail_buf;
- 	}
- 
- 	buf->dma_dir = dma_dir;
-@@ -704,6 +749,10 @@ static void *vb2_dc_attach_dmabuf(void *alloc_ctx, struct dma_buf *dbuf,
- 	buf->db_attach = dba;
- 
- 	return buf;
-+
-+fail_buf:
-+	kfree(buf);
-+	return ERR_PTR(ret);
- }
- 
- /*********************************************/
--- 
-1.9.2
+On 03/23/2016 02:25 PM, Andrzej Hajda wrote:
+> HDMI-PHY clock should be accessible from other components in the pipeline.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 67 ++++++++++++++++++++++++++----------
+>  1 file changed, 48 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 49a5902..0d1c2f0 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -146,6 +146,7 @@ struct hdmi_context {
+>  	struct clk			**clk_muxes;
+>  	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
+>  	struct regulator		*reg_hdmi_en;
+> +	struct exynos_drm_clk		phy_clk;
+>  };
+>  
+>  static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
+> @@ -1448,7 +1449,6 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+>  
+>  static void hdmi_conf_apply(struct hdmi_context *hdata)
+>  {
+> -	hdmiphy_conf_apply(hdata);
+>  	hdmi_start(hdata, false);
+>  	hdmi_conf_init(hdata);
+>  	hdmi_audio_init(hdata);
+> @@ -1481,10 +1481,8 @@ static void hdmi_set_refclk(struct hdmi_context *hdata, bool on)
+>  			   SYSREG_HDMI_REFCLK_INT_CLK, on ? ~0 : 0);
+>  }
+>  
+> -static void hdmi_enable(struct drm_encoder *encoder)
+> +static void hdmiphy_enable(struct hdmi_context *hdata)
+>  {
+> -	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+> -
+>  	if (hdata->powered)
+>  		return;
+>  
+> @@ -1500,11 +1498,40 @@ static void hdmi_enable(struct drm_encoder *encoder)
+>  
+>  	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0, HDMI_PHY_POWER_OFF_EN);
+>  
+> -	hdmi_conf_apply(hdata);
+> +	hdmiphy_conf_apply(hdata);
+>  
+>  	hdata->powered = true;
+>  }
+>  
+> +static void hdmiphy_disable(struct hdmi_context *hdata)
+> +{
+> +	if (!hdata->powered)
+> +		return;
+> +
+> +	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
+> +
+> +	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0, HDMI_PHY_POWER_OFF_EN);
+> +
+> +	hdmi_set_refclk(hdata, false);
+> +
+> +	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+> +			PMU_HDMI_PHY_ENABLE_BIT, 0);
+> +
+> +	regulator_bulk_disable(ARRAY_SIZE(supply), hdata->regul_bulk);
+> +
+> +	pm_runtime_put_sync(hdata->dev);
+> +
+> +	hdata->powered = false;
+> +}
+> +
+> +static void hdmi_enable(struct drm_encoder *encoder)
+> +{
+> +	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+> +
+> +	hdmiphy_enable(hdata);
+> +	hdmi_conf_apply(hdata);
+> +}
+> +
+>  static void hdmi_disable(struct drm_encoder *encoder)
+>  {
+>  	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+> @@ -1528,22 +1555,9 @@ static void hdmi_disable(struct drm_encoder *encoder)
+>  	if (funcs && funcs->disable)
+>  		(*funcs->disable)(crtc);
+>  
+> -	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
+> -
+>  	cancel_delayed_work(&hdata->hotplug_work);
+>  
+> -	hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0, HDMI_PHY_POWER_OFF_EN);
+> -
+> -	hdmi_set_refclk(hdata, false);
+> -
+> -	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+> -			PMU_HDMI_PHY_ENABLE_BIT, 0);
+> -
+> -	regulator_bulk_disable(ARRAY_SIZE(supply), hdata->regul_bulk);
+> -
+> -	pm_runtime_put_sync(hdata->dev);
+> -
+> -	hdata->powered = false;
+> +	hdmiphy_disable(hdata);
+>  }
+>  
+>  static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+> @@ -1627,6 +1641,17 @@ static int hdmi_clk_init(struct hdmi_context *hdata)
+>  	return hdmi_clks_get(hdata, &drv_data->clk_muxes, hdata->clk_muxes);
+>  }
+>  
+> +static void hdmiphy_clk_enable(struct exynos_drm_clk *clk, bool enable)
+> +{
+> +	struct hdmi_context *hdata = container_of(clk, struct hdmi_context,
+> +						  phy_clk);
+> +
+> +	if (enable)
+> +		hdmiphy_enable(hdata);
+> +	else
+> +		hdmiphy_disable(hdata);
+> +}
+> +
+>  static int hdmi_resources_init(struct hdmi_context *hdata)
+>  {
+>  	struct device *dev = hdata->dev;
+> @@ -1710,6 +1735,10 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+>  	if (pipe < 0)
+>  		return pipe;
+>  
+> +	hdata->phy_clk.enable = hdmiphy_clk_enable;
+> +
+> +	exynos_drm_crtc_from_pipe(drm_dev, pipe)->pipe_clk = &hdata->phy_clk;
+> +
+>  	encoder->possible_crtcs = 1 << pipe;
+>  
+>  	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+> 
