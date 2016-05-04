@@ -1,135 +1,61 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Daniel Stone <daniel@fooishbar.org>
 Subject: Re: [PATCH] drm/exynos: fix cancel page flip code
-Date: Wed, 04 May 2016 11:54:55 +0200
-Message-ID: <5729C6EF.2040801@samsung.com>
+Date: Wed, 4 May 2016 10:56:58 +0100
+Message-ID: <CAPj87rNzGspWQ1msznzU-c1Qxh5iMtVBmkFRdnXWf1=J_dHu+g@mail.gmail.com>
 References: <1458816758-5172-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:52884 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757191AbcEDJzL (ORCPT
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:32819 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751383AbcEDJ47 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 May 2016 05:55:11 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O6N00NKPCVV0N30@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 May 2016 10:55:07 +0100 (BST)
-In-reply-to: <1458816758-5172-1-git-send-email-a.hajda@samsung.com>
+	Wed, 4 May 2016 05:56:59 -0400
+Received: by mail-wm0-f45.google.com with SMTP id g17so33692040wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 May 2016 02:56:59 -0700 (PDT)
+In-Reply-To: <1458816758-5172-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Inki,
+Hi Andrzej,
 
-Gently ping.
-
-Regards
-Andrzej
-
-On 03/24/2016 11:52 AM, Andrzej Hajda wrote:
-> Driver code did not remove event from the list of pending events before destroy.
-> As a result drm core tried later to inspect invalid memory location.
-> The patch replaces removal code with call to core helper.
-> 
-> The bug was detected using KASAN:
-> 
-> [   10.107249] ==================================================================
-> [   10.107518] BUG: KASAN: use-after-free in drm_release+0xe9c/0x1000 at addr ffffffc089154a18
-> [   10.107784] Read of size 8 by task modetest/103
-> [   10.107931] =============================================================================
-> [   10.113191] BUG kmalloc-128 (Not tainted): kasan: bad access detected
-> [   10.119608] -----------------------------------------------------------------------------
-> [   10.119608]
-> [   10.129243] Disabling lock debugging due to kernel taint
-> [   10.134551] INFO: Allocated in drm_mode_page_flip_ioctl+0x500/0xa98 age=4 cpu=0 pid=103
-> [   10.142532] 	alloc_debug_processing+0x18c/0x198
-> [   10.147043] 	___slab_alloc.constprop.28+0x360/0x380
-> [   10.151906] 	__slab_alloc.isra.25.constprop.27+0x54/0xa0
-> [   10.157197] 	kmem_cache_alloc_trace+0x370/0x3b0
-> [   10.161709] 	drm_mode_page_flip_ioctl+0x500/0xa98
-> [   10.166400] 	drm_ioctl+0x4c4/0xb68
-> [   10.169787] 	do_vfs_ioctl+0x16c/0xeb8
-> [   10.173429] 	SyS_ioctl+0x8c/0xa0
-> [   10.176642] 	el0_svc_naked+0x24/0x28
-> [   10.180204] INFO: Freed in exynos_drm_crtc_cancel_page_flip+0xe0/0x160 age=0 cpu=0 pid=103
-> [   10.188447] 	free_debug_processing+0x174/0x388
-> [   10.192871] 	__slab_free+0x2e8/0x438
-> [   10.196431] 	kfree+0x350/0x360
-> [   10.199469] 	exynos_drm_crtc_cancel_page_flip+0xe0/0x160
-> [   10.204762] 	exynos_drm_preclose+0x58/0xa0
-> [   10.208844] 	drm_release+0x1f0/0x1000
-> [   10.212491] 	__fput+0x1c4/0x5b8
-> [   10.215613] 	____fput+0xc/0x18
-> [   10.218654] 	task_work_run+0x130/0x198
-> [   10.222385] 	do_exit+0x700/0x2278
-> [   10.225681] 	do_group_exit+0xe4/0x2c8
-> [   10.229327] 	SyS_exit_group+0x1c/0x20
-> [   10.232973] 	el0_svc_naked+0x24/0x28
-> [   10.236532] INFO: Slab 0xffffffbdc2a45500 objects=32 used=10 fp=0xffffffc089154a00 flags=0x4080
-> [   10.245210] INFO: Object 0xffffffc089154a00 @offset=2560 fp=0xffffffc089157600
-> [   10.245210]
-> ...
-> [   10.384532] CPU: 0 PID: 103 Comm: modetest Tainted: G    B           4.5.0-rc3-00748-gd5e2881 #271
-> [   10.398325] Call trace:
-> [   10.400764] [<ffffffc000091428>] dump_backtrace+0x0/0x328
-> [   10.406141] [<ffffffc000091764>] show_stack+0x14/0x20
-> [   10.411176] [<ffffffc00089c550>] dump_stack+0xb0/0xe8
-> [   10.416210] [<ffffffc000395778>] print_trailer+0xf8/0x160
-> [   10.421592] [<ffffffc00039b5cc>] object_err+0x3c/0x50
-> [   10.426626] [<ffffffc00039d630>] kasan_report_error+0x248/0x550
-> [   10.432527] [<ffffffc00039da50>] __asan_report_load8_noabort+0x40/0x48
-> [   10.439039] [<ffffffc000b5b724>] drm_release+0xe9c/0x1000
-> [   10.444419] [<ffffffc0003d340c>] __fput+0x1c4/0x5b8
-> [   10.449280] [<ffffffc0003d3884>] ____fput+0xc/0x18
-> [   10.454055] [<ffffffc000101aa8>] task_work_run+0x130/0x198
-> [   10.459522] [<ffffffc0000bc058>] do_exit+0x700/0x2278
-> [   10.464557] [<ffffffc0000bdcfc>] do_group_exit+0xe4/0x2c8
-> [   10.469939] [<ffffffc0000bdefc>] SyS_exit_group+0x1c/0x20
-> [   10.475320] [<ffffffc000087530>] el0_svc_naked+0x24/0x28
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 26 +++++++-------------------
->  1 file changed, 7 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index 50dd33d..e78c36d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+On 24 March 2016 at 10:52, Andrzej Hajda <a.hajda@samsung.com> wrote:
 > @@ -229,24 +229,12 @@ void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc,
->  					struct drm_file *file)
+>                                         struct drm_file *file)
 >  {
->  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-> -	struct drm_pending_vblank_event *e;
-> -	unsigned long flags;
-> +	struct drm_pending_vblank_event *e = exynos_crtc->event;
->  
-> -	spin_lock_irqsave(&crtc->dev->event_lock, flags);
-> -	e = exynos_crtc->event;
-> -	if (e && e->base.file_priv == file) {
-> -		exynos_crtc->event = NULL;
-> -		/*
-> -		 * event will be destroyed by core part
-> -		 * so below line should be removed later with core changes
-> -		 */
-> -		e->base.destroy(&e->base);
-> -		/*
-> -		 * event_space will be increased by core part
-> -		 * so below line should be removed later with core changes.
-> -		 */
-> -		file->event_space += sizeof(e->event);
-> -		atomic_dec(&exynos_crtc->pending_update);
-> -	}
-> -	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
-> +	if (!e || e->base.file_priv != file)
-> +		return;
+>         struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+> -       struct drm_pending_vblank_event *e;
+> -       unsigned long flags;
+> +       struct drm_pending_vblank_event *e = exynos_crtc->event;
+>
+> -       spin_lock_irqsave(&crtc->dev->event_lock, flags);
+> -       e = exynos_crtc->event;
+> -       if (e && e->base.file_priv == file) {
+> -               exynos_crtc->event = NULL;
+> -               /*
+> -                * event will be destroyed by core part
+> -                * so below line should be removed later with core changes
+> -                */
+> -               e->base.destroy(&e->base);
+> -               /*
+> -                * event_space will be increased by core part
+> -                * so below line should be removed later with core changes.
+> -                */
+> -               file->event_space += sizeof(e->event);
+> -               atomic_dec(&exynos_crtc->pending_update);
+> -       }
+> -       spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+> +       if (!e || e->base.file_priv != file)
+> +               return;
 > +
-> +	exynos_crtc->event = NULL;
-> +	atomic_dec(&exynos_crtc->pending_update);
-> +	drm_event_cancel_free(crtc->dev, &e->base);
->  }
-> 
+> +       exynos_crtc->event = NULL;
+> +       atomic_dec(&exynos_crtc->pending_update);
+> +       drm_event_cancel_free(crtc->dev, &e->base);
+
+Accessing and manipulating exynos_crtc->event should still be done
+under event_lock, to avoid racing with the IRQ handler.
+
+Cheers,
+Daniel
