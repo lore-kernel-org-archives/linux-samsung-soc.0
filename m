@@ -1,51 +1,156 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFT PATCH 1/3] usb: misc: usb3503: Fix HUB mode after
- bootloader initialization
-Date: Tue, 3 May 2016 13:00:22 -0500
-Message-ID: <20160503180022.GA3008@rob-hp-laptop>
-References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
- <1461927591-7864-2-git-send-email-k.kozlowski@samsung.com>
- <20160429113059.GX3217@sirena.org.uk>
- <57234BA2.6020304@samsung.com>
- <20160429164448.GY3217@sirena.org.uk>
- <57272298.50701@samsung.com>
- <20160502105501.GE6292@sirena.org.uk>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v3] media: vb2-dma-contig: configure DMA max segment size
+ properly
+Date: Wed, 4 May 2016 10:22:29 +0200
+Message-ID: <5729B145.8030208@xs4all.nl>
+References: <57271235.9030004@xs4all.nl>
+ <1462186753-4177-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49710 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932543AbcECSAb (ORCPT
+Received: from lb1-smtp-cloud6.xs4all.net ([194.109.24.24]:34485 "EHLO
+	lb1-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750993AbcEDIWf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 May 2016 14:00:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20160502105501.GE6292@sirena.org.uk>
+	Wed, 4 May 2016 04:22:35 -0400
+In-Reply-To: <1462186753-4177-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-On Mon, May 02, 2016 at 11:55:01AM +0100, Mark Brown wrote:
-> On Mon, May 02, 2016 at 11:49:12AM +0200, Krzysztof Kozlowski wrote:
-> 
-> > This VDD regulator supply actually is not a usb3503 USB HUB regulator
-> > supply... but a supply to the LAN attached to this HUB. Regulator off/on
-> > is needed for LAN to show up. The hub will show up with typical reset
-> > (which is also missing before my patchset btw).
-> 
-> > The LAN, as a USB device, is auto-probed so it cannot take the regulator
-> > and play with it. The simplest idea I have is to add it as "external
-> > supply"  to the parent: usb3503.
-> 
-> This is common enough that that just isn't going to scale well I fear
-> without some generic handling, either walking child devices at the bus
-> level or at the device level with a pre-probe() callback to get the
-> device to power on.  The latter is more appropriate to things like
-> Slimbus where the device is more likely to do active management at
-> runtime, it's not clear people are building USB devices like that.
+Hi Marek,
 
-There's a new binding and support in -next (.../usb/usb-device.txt) for 
-USB devices that should help here. Though, how to handle a hub on USB 
-and I2C buses would need to be worked out.
+On 05/02/2016 12:59 PM, Marek Szyprowski wrote:
+> This patch lets vb2-dma-contig memory allocator to configure DMA max
+> segment size properly for the client device. Setting it is needed to let
+> DMA-mapping subsystem to create a single, contiguous mapping in DMA
+> address space. This is essential for all devices, which use dma-contig
+> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
+> of operations).
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Hello,
+> 
+> This patch is a follow-up of my previous attempts to let Exynos
+> multimedia devices to work properly with shared buffers when IOMMU is
+> enabled:
+> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
+> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
+> 3. https://patchwork.linuxtv.org/patch/30870/
+> 
+> As sugested by Hans, configuring DMA max segment size should be done by
+> videobuf2-dma-contig module instead of requiring all device drivers to
+> do it on their own.
+> 
+> Here is some backgroud why this is done in videobuf2-dc not in the
+> respective generic bus code:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
+> 
+> Best regards,
+> Marek Szyprowski
+> 
+> changelog:
+> v3:
+> - added FIXME note about possible memory leak
+> 
+> v2:
+> - fixes typos and other language issues in the comments
+> 
+> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
+> ---
+>  drivers/media/v4l2-core/videobuf2-dma-contig.c | 45 ++++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> index 461ae55eaa98..2ca7e798f394 100644
+> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> @@ -443,6 +443,42 @@ static void vb2_dc_put_userptr(void *buf_priv)
+>  }
+>  
+>  /*
+> + * To allow mapping the scatter-list into a single chunk in the DMA
+> + * address space, the device is required to have the DMA max segment
+> + * size parameter set to a value larger than the buffer size. Otherwise,
+> + * the DMA-mapping subsystem will split the mapping into max segment
+> + * size chunks. This function increases the DMA max segment size
+> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
+> + * address space.
+> + * This code assumes that the DMA-mapping subsystem will merge all
+> + * scatterlist segments if this is really possible (for example when
+> + * an IOMMU is available and enabled).
+> + * Ideally, this parameter should be set by the generic bus code, but it
+> + * is left with the default 64KiB value due to historical litmiations in
+> + * other subsystems (like limited USB host drivers) and there no good
+> + * place to set it to the proper value. It is done here to avoid fixing
+> + * all the vb2-dc client drivers.
+> + *
+> + * FIXME: the allocated dma_params structure is leaked because there
+> + * is completely no way to determine when to free it (dma_params might have
+> + * been also already allocated by the bus code). However in typical
+> + * use cases this function will be called for platform devices, which are
+> + * not how-plugged and exist all the time in the target system.
+> + */
+> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
+> +{
+> +	if (!dev->dma_parms) {
+> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
+> +		if (!dev->dma_parms)
+> +			return -ENOMEM;
+> +	}
+> +	if (dma_get_max_seg_size(dev) < size)
+> +		return dma_set_max_seg_size(dev, size);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+>   * For some kind of reserved memory there might be no struct page available,
+>   * so all that can be done to support such 'pages' is to try to convert
+>   * pfn to dma address or at the last resort just assume that
+> @@ -499,6 +535,10 @@ static void *vb2_dc_get_userptr(struct device *dev, unsigned long vaddr,
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size + PAGE_SIZE));
 
-Rob
+Huh? Against which kernel do you compile? The get_userptr prototype is different
+from the latest mainline kernel. Specifically, dev is now conf->dev.
+
+> +	if (!ret)
+> +		return ERR_PTR(ret);
+> +
+>  	buf = kzalloc(sizeof *buf, GFP_KERNEL);
+>  	if (!buf)
+>  		return ERR_PTR(-ENOMEM);
+
+I'd move the vb2_dc_set_max_seg_size call to after the buf is allocated. Since this call
+has side-effects I would only call it when it is really needed.
+
+> @@ -675,10 +715,15 @@ static void *vb2_dc_attach_dmabuf(struct device *dev, struct dma_buf *dbuf,
+>  {
+>  	struct vb2_dc_buf *buf;
+>  	struct dma_buf_attachment *dba;
+> +	int ret;
+>  
+>  	if (dbuf->size < size)
+>  		return ERR_PTR(-EFAULT);
+>  
+> +	ret = vb2_dc_set_max_seg_size(dev, PAGE_ALIGN(size));
+
+Ditto for argument and moving to after the buf is allocated.
+
+> +	if (!ret)
+> +		return ERR_PTR(ret);
+> +
+>  	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+>  	if (!buf)
+>  		return ERR_PTR(-ENOMEM);
+> 
+
+Regards,
+
+	Hans
