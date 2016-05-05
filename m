@@ -1,66 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFT PATCH 1/3] usb: misc: usb3503: Fix HUB mode after
- bootloader initialization
-Date: Wed, 4 May 2016 19:25:55 +0100
-Message-ID: <20160504182555.GE6292@sirena.org.uk>
-References: <1461927591-7864-1-git-send-email-k.kozlowski@samsung.com>
- <1461927591-7864-2-git-send-email-k.kozlowski@samsung.com>
- <20160429113059.GX3217@sirena.org.uk>
- <57234BA2.6020304@samsung.com>
- <20160429164448.GY3217@sirena.org.uk>
- <57272298.50701@samsung.com>
- <20160502105501.GE6292@sirena.org.uk>
- <20160503180022.GA3008@rob-hp-laptop>
- <5729E4B5.2090702@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: drm/exynos: fimd: vrefresh is zero
+Date: Thu, 05 May 2016 11:12:28 +0200
+Message-ID: <572B0E7C.6010408@samsung.com>
+References: <5725259C.9020206@math.uni-bielefeld.de>
+ <CADnq5_N_SnzU3Cpc9+w8FJXvmpa=oRKcwNzHrTQwY21ksCbh_A@mail.gmail.com>
+ <5727648D.7050603@math.uni-bielefeld.de>
+ <20160502202257.GW14148@phenom.ffwll.local>
+ <5727B8E6.6050106@math.uni-bielefeld.de>
+ <CAKMK7uGPx5Pdio2cr+zBTX1NrMr9+nk1MY7bJqziLGNvS93gwA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8M+gQFKLhTGBxzRu"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50330 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754689AbcEDS0L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 May 2016 14:26:11 -0400
-Content-Disposition: inline
-In-Reply-To: <5729E4B5.2090702@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAKMK7uGPx5Pdio2cr+zBTX1NrMr9+nk1MY7bJqziLGNvS93gwA@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux.amoon@gmail.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, ulf.hansson@linaro.org
 
-
---8M+gQFKLhTGBxzRu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, May 04, 2016 at 02:01:57PM +0200, Krzysztof Kozlowski wrote:
-
-> This looks like pwrseq for MMC devices so the idea is to:
-> 1. Move drivers/mmc/core/pwrseq* to separate directory
-> (drivers/power/pwrseq ?)
-> 2. Add support for pwrseq to USB core,
-> 3. Add new pwrseq driver (or extend existing one): toggling the regulator.
-> 4. Add pwrseq phandle to the DT node of USB hub (to the binding
-> mentioned by Rob?).
-
-> Does it look sensible?
-
-It certainly seems like a similar problem space, USB seems very much
-like MMC in both the spec and the way it tends to get used.
-
---8M+gQFKLhTGBxzRu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXKj6yAAoJECTWi3JdVIfQDVoIAIQNIIIDVg6dIq4dg7+yaBEa
-9xaqLg3+enIW/2q/p+q7JlQWaEb/WJ68wA8pXZDE6RIItO6bJ0vZiRIYBZMkRIds
-sWsLTAo/0lXKSJYM4ustWLfr8egt+6HSUvRYnkVpeW6SpsQkkpngBIylkxkmRvxb
-iWs1nvOSbV4gyQmdaESPtK9g+YL33cBEWEW8f+kWSUnhbp63gPSdnfBtcdtHr8Fe
-Bm27BYxvpzFuVp+ERwdDz4XhgZUbn+8/gJJ/+DeO4MqGHvbJGDGd6S2fl2efSuZh
-0atErQWoTJG1N95YD0NSjfIlnbu2wDF7E4CdIXOCg8Fqsf4HXXdMmZtt4XxLfB8=
-=/2XA
------END PGP SIGNATURE-----
-
---8M+gQFKLhTGBxzRu--
+SGkgVG9iaWFzLCBEYW5pZWwsCgpMaXR0bGUgbGF0ZSwgYnV0IG1heWJlIGhlbHBmdWwgYW55d2F5
+Li4uCgpPbiAwNS8wMi8yMDE2IDExOjAwIFBNLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+IE9uIE1v
+biwgTWF5IDIsIDIwMTYgYXQgMTA6MzAgUE0sIFRvYmlhcyBKYWtvYmkKPiA8dGpha29iaUBtYXRo
+LnVuaS1iaWVsZWZlbGQuZGU+IHdyb3RlOgo+Pj4gZHJtX21vZGVfc2V0X2NydGNpbmZvKCkgaXMg
+bWVhbnQgdG8gYmUgdXNlZCB0byBmaWxsIGluIGFsbCB0aGUgZGVyaXZlZAo+Pj4gdmFsdWVzLiBX
+ZSBtaWdodCBvciBtaWdodCBub3Qgd2FudCB0byBoYXZlIGEgZGVmYXVsdCBjYWxsIGZvciB0aGF0
+IGluCj4+PiBhdG9taWMgaGVscGVycyBhY3R1YWxseSAoYmVmb3JlIHdlIGNhbGwgZG93biBpbnRv
+IGFueSBvZiB0aGUgZHJpdmVyJ3MKPj4+IGNoZWNrIGZ1bmN0aW9ucyBmb3IgdGhlIGZpcnN0IHRp
+bWUpLiBUaGVyZSdzIGEgYnVuY2ggb2YgZmxhZ3MgdG8gY29udHJvbAo+Pj4gaXQsIGJ1dCBkcml2
+ZXJzIHdpdGggc3BlY2lhbCBuZWVkcyBjb3VsZCBzaW1wbHkgY2FsbCBpdCBvbmNlIG1vcmUgYW5k
+Cj4+PiBvdmVyd3JpdGUgdGhlIGNvbXB1dGVkIHZhbHVlcy4gTm8gaGFybSBkb25lLgo+PiBJIGhh
+ZCBhIGxvb2sgYXQgZHJtX21vZGVfc2V0X2NydGNpbmZvKCkgKGZyb20gNC42LXJjNikgYnV0IGl0
+IGFsc28KPj4gZG9lc24ndCBzZXQgdGhlIHZyZWZyZXNoIGZpZWxkLiBNYXliZSB5b3UgbWVhbiBh
+IGRpZmZlcmVudCBjYWxsPwo+IAo+IEkgd2FzIGJsaW5kIC0gaXQgZmlsbHMgaW4gZXZlcnl0aGlu
+ZyBleGNlcHQgdnJlZnJlc2guIElmIHlvdSBsb29rIGF0Cj4gZHJpdmVycyBtb3N0IG9mIHRoZW0g
+dXNlIHZyZWZyZXNoIHB1cmVseSBmb3IgZGVidWcgb3V0cHV0IG9yIGFzIGFuCj4gaW5mb3JtYXRp
+b25hbCBmaWVsZCBpbiBnZW5lcmFsLiBNb3N0IGh3IHdhbnRzIHRoZSBhY3R1YWwgcGl4ZWxjbG9j
+awo+IGFueXdheSwgc28gdGhlcmUncyBub3QgcmVhbGx5IGEgbmVlZCBmb3IgdnJlZnJlc2ggKGUu
+Zy4gaTkxNSBvbmx5Cj4gY29tcHV0ZXMgdnJlZnJlc2ggZm9yIHRoZSBpbnRlcm5hbGx5IHVzZWQg
+cGFuZWwgbW9kZXMpLiBUaGUgdmFsdWUKPiBpdHNlbGYgaXMgZGlyZWN0bHkgdGFrZW4gZnJvbSB1
+c2Vyc3BhY2UsIHNvIHByb2JhYmx5IGp1c3QgYSBidWcgaW4KPiBleHlub3MgdXNlcnNwYWNlPyBP
+ZiBjb3Vyc2UgdGhlIGRyaXZlciBzaG91bGQgc3RpbGwga2VlcCB3b3JraW5nLiBGcm9tCj4gYSBx
+dWljayBsb29rIHlvdSB3YW50IHRvIHJlbW92ZSBhbnkgdXNlIG9mIHZyZWZyZXNoIChleGNlcHQg
+ZGVidWcKPiBvdXRwdXQpLCBhbmQgZXNwZWNpYWxseSB5b3Ugc2hvdWxkbid0IHJlY29tcHV0ZSB0
+aGUgYWN0dWFsIHBpeGVsY2xvY2sKPiBsaWtlIGRlY29uL2ZpbWQgc2VlbSB0byBkbyAoc3RvcmVk
+IGludG8gaWRlYWxfY2xvY2spLiBJbnN0ZWFkIHVzZQo+IG1vZGUtPmNsb2NrLCB0aGF0J3Mgc3Vw
+cG9zZWQgdG8gYmUgdGhlIHJlYWwgdmFsdWUuCj4gLURhbmllbAo+IAoKUmVnYXJkaW5nIHRoZSBp
+bml0aWFsIHF1ZXN0aW9uLCBtb2RlLT52cmVmcmVzaCBpcyBzZXQgaW4KZHJtX2hlbHBlcl9wcm9i
+ZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLiBJIGd1ZXNzIGRpdmlzaW9uIGJ5IHplcm8gY291bGQK
+YmUgY2F1c2VkIGJ5IGxhY2sgb2YgY2xvY2sgaW4gdGltaW5ncyBwcm92aWRlZCBieSBkdHMgdGlt
+aW5nIG5vZGUuCkFzIEkgcmVtZW1iZXIgaW4gdGhlIHBhc3QgZHRzIHRpbWluZ3Mgd2VyZSBwYXNz
+ZWQgd2l0aG91dCBwcm92aWRlZApjbG9jaywgaW4gc3VjaCBjYXNlIGRyaXZlciBjYWxjdWxhdGVk
+IG1vZGUtPmNsb2NrIGZvciBzb21lIGRlZmF1bHQgdmFsdWUKb2YgdnJlZnJlc2ggKDYwSHogZm9y
+IGZpbWQgaWYgSSByZW1lbWJlciBjb3JyZWN0bHkpLiBMYXRlciB2YWxpZGF0aW9uCmNvZGUgd2Fz
+IGFkZGVkIGFuZCB0aGUgY2xvY2sgc2hvdWxkIGJlIGFsd2F5cyBwcm92aWRlZC4KRFRTIGZpbGVz
+IHdlcmUgdXBkYXRlZCBhZnRlciBzb21lIHRpbWUgYW5kIHRoZSByZWNhbGN1bGF0aW9uIGNvZGUg
+d2FzCnJlbW92ZWQgZnJvbSBmaW1kIGRyaXZlci4gU28gaXQgaXMgcG9zc2libGUgeW91IGFyZSBh
+IHZpY3RpbSBvZiB0aGlzIGNoYW5nZS4KClJlZ2FyZGluZyB1c2FnZSBieSBkcml2ZXJzLCBmcm9t
+IGEgcXVpY2sgbG9vayBpdCBzZWVtcyB0byBiZSB1c2VkIGZvcgpzb21ldGhpbmcgbW9yZSB0aGFu
+IGRlYnVnZ2luZyBieToKLSBhbWRncHUsCi0gZXh5bm9zLAotIGFkdjc1MTEsCi0gaW50ZWxfZHAo
+PyksCi0gbWRwNV9jbWRfZW5jb2Rlcig/KSwKLSBub3V2ZWF1LAotIG9tYXAoPyksCi0gdGlsY2Rj
+LgoKUmVnYXJkcwpBbmRyemVqCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
