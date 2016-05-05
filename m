@@ -1,73 +1,70 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: drm/exynos: fimd: vrefresh is zero
-Date: Thu, 05 May 2016 11:12:28 +0200
-Message-ID: <572B0E7C.6010408@samsung.com>
+Date: Thu, 05 May 2016 11:22:41 +0200
+Message-ID: <572B10E1.4060704@samsung.com>
 References: <5725259C.9020206@math.uni-bielefeld.de>
  <CADnq5_N_SnzU3Cpc9+w8FJXvmpa=oRKcwNzHrTQwY21ksCbh_A@mail.gmail.com>
  <5727648D.7050603@math.uni-bielefeld.de>
  <20160502202257.GW14148@phenom.ffwll.local>
  <5727B8E6.6050106@math.uni-bielefeld.de>
  <CAKMK7uGPx5Pdio2cr+zBTX1NrMr9+nk1MY7bJqziLGNvS93gwA@mail.gmail.com>
+ <572B0E7C.6010408@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAKMK7uGPx5Pdio2cr+zBTX1NrMr9+nk1MY7bJqziLGNvS93gwA@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:45044 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756429AbcEEJW5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 May 2016 05:22:57 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O6P00N8D6263820@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 05 May 2016 10:22:54 +0100 (BST)
+In-reply-to: <572B0E7C.6010408@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Daniel Vetter <daniel@ffwll.ch>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgVG9iaWFzLCBEYW5pZWwsCgpMaXR0bGUgbGF0ZSwgYnV0IG1heWJlIGhlbHBmdWwgYW55d2F5
-Li4uCgpPbiAwNS8wMi8yMDE2IDExOjAwIFBNLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+IE9uIE1v
-biwgTWF5IDIsIDIwMTYgYXQgMTA6MzAgUE0sIFRvYmlhcyBKYWtvYmkKPiA8dGpha29iaUBtYXRo
-LnVuaS1iaWVsZWZlbGQuZGU+IHdyb3RlOgo+Pj4gZHJtX21vZGVfc2V0X2NydGNpbmZvKCkgaXMg
-bWVhbnQgdG8gYmUgdXNlZCB0byBmaWxsIGluIGFsbCB0aGUgZGVyaXZlZAo+Pj4gdmFsdWVzLiBX
-ZSBtaWdodCBvciBtaWdodCBub3Qgd2FudCB0byBoYXZlIGEgZGVmYXVsdCBjYWxsIGZvciB0aGF0
-IGluCj4+PiBhdG9taWMgaGVscGVycyBhY3R1YWxseSAoYmVmb3JlIHdlIGNhbGwgZG93biBpbnRv
-IGFueSBvZiB0aGUgZHJpdmVyJ3MKPj4+IGNoZWNrIGZ1bmN0aW9ucyBmb3IgdGhlIGZpcnN0IHRp
-bWUpLiBUaGVyZSdzIGEgYnVuY2ggb2YgZmxhZ3MgdG8gY29udHJvbAo+Pj4gaXQsIGJ1dCBkcml2
-ZXJzIHdpdGggc3BlY2lhbCBuZWVkcyBjb3VsZCBzaW1wbHkgY2FsbCBpdCBvbmNlIG1vcmUgYW5k
-Cj4+PiBvdmVyd3JpdGUgdGhlIGNvbXB1dGVkIHZhbHVlcy4gTm8gaGFybSBkb25lLgo+PiBJIGhh
-ZCBhIGxvb2sgYXQgZHJtX21vZGVfc2V0X2NydGNpbmZvKCkgKGZyb20gNC42LXJjNikgYnV0IGl0
-IGFsc28KPj4gZG9lc24ndCBzZXQgdGhlIHZyZWZyZXNoIGZpZWxkLiBNYXliZSB5b3UgbWVhbiBh
-IGRpZmZlcmVudCBjYWxsPwo+IAo+IEkgd2FzIGJsaW5kIC0gaXQgZmlsbHMgaW4gZXZlcnl0aGlu
-ZyBleGNlcHQgdnJlZnJlc2guIElmIHlvdSBsb29rIGF0Cj4gZHJpdmVycyBtb3N0IG9mIHRoZW0g
-dXNlIHZyZWZyZXNoIHB1cmVseSBmb3IgZGVidWcgb3V0cHV0IG9yIGFzIGFuCj4gaW5mb3JtYXRp
-b25hbCBmaWVsZCBpbiBnZW5lcmFsLiBNb3N0IGh3IHdhbnRzIHRoZSBhY3R1YWwgcGl4ZWxjbG9j
-awo+IGFueXdheSwgc28gdGhlcmUncyBub3QgcmVhbGx5IGEgbmVlZCBmb3IgdnJlZnJlc2ggKGUu
-Zy4gaTkxNSBvbmx5Cj4gY29tcHV0ZXMgdnJlZnJlc2ggZm9yIHRoZSBpbnRlcm5hbGx5IHVzZWQg
-cGFuZWwgbW9kZXMpLiBUaGUgdmFsdWUKPiBpdHNlbGYgaXMgZGlyZWN0bHkgdGFrZW4gZnJvbSB1
-c2Vyc3BhY2UsIHNvIHByb2JhYmx5IGp1c3QgYSBidWcgaW4KPiBleHlub3MgdXNlcnNwYWNlPyBP
-ZiBjb3Vyc2UgdGhlIGRyaXZlciBzaG91bGQgc3RpbGwga2VlcCB3b3JraW5nLiBGcm9tCj4gYSBx
-dWljayBsb29rIHlvdSB3YW50IHRvIHJlbW92ZSBhbnkgdXNlIG9mIHZyZWZyZXNoIChleGNlcHQg
-ZGVidWcKPiBvdXRwdXQpLCBhbmQgZXNwZWNpYWxseSB5b3Ugc2hvdWxkbid0IHJlY29tcHV0ZSB0
-aGUgYWN0dWFsIHBpeGVsY2xvY2sKPiBsaWtlIGRlY29uL2ZpbWQgc2VlbSB0byBkbyAoc3RvcmVk
-IGludG8gaWRlYWxfY2xvY2spLiBJbnN0ZWFkIHVzZQo+IG1vZGUtPmNsb2NrLCB0aGF0J3Mgc3Vw
-cG9zZWQgdG8gYmUgdGhlIHJlYWwgdmFsdWUuCj4gLURhbmllbAo+IAoKUmVnYXJkaW5nIHRoZSBp
-bml0aWFsIHF1ZXN0aW9uLCBtb2RlLT52cmVmcmVzaCBpcyBzZXQgaW4KZHJtX2hlbHBlcl9wcm9i
-ZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLiBJIGd1ZXNzIGRpdmlzaW9uIGJ5IHplcm8gY291bGQK
-YmUgY2F1c2VkIGJ5IGxhY2sgb2YgY2xvY2sgaW4gdGltaW5ncyBwcm92aWRlZCBieSBkdHMgdGlt
-aW5nIG5vZGUuCkFzIEkgcmVtZW1iZXIgaW4gdGhlIHBhc3QgZHRzIHRpbWluZ3Mgd2VyZSBwYXNz
-ZWQgd2l0aG91dCBwcm92aWRlZApjbG9jaywgaW4gc3VjaCBjYXNlIGRyaXZlciBjYWxjdWxhdGVk
-IG1vZGUtPmNsb2NrIGZvciBzb21lIGRlZmF1bHQgdmFsdWUKb2YgdnJlZnJlc2ggKDYwSHogZm9y
-IGZpbWQgaWYgSSByZW1lbWJlciBjb3JyZWN0bHkpLiBMYXRlciB2YWxpZGF0aW9uCmNvZGUgd2Fz
-IGFkZGVkIGFuZCB0aGUgY2xvY2sgc2hvdWxkIGJlIGFsd2F5cyBwcm92aWRlZC4KRFRTIGZpbGVz
-IHdlcmUgdXBkYXRlZCBhZnRlciBzb21lIHRpbWUgYW5kIHRoZSByZWNhbGN1bGF0aW9uIGNvZGUg
-d2FzCnJlbW92ZWQgZnJvbSBmaW1kIGRyaXZlci4gU28gaXQgaXMgcG9zc2libGUgeW91IGFyZSBh
-IHZpY3RpbSBvZiB0aGlzIGNoYW5nZS4KClJlZ2FyZGluZyB1c2FnZSBieSBkcml2ZXJzLCBmcm9t
-IGEgcXVpY2sgbG9vayBpdCBzZWVtcyB0byBiZSB1c2VkIGZvcgpzb21ldGhpbmcgbW9yZSB0aGFu
-IGRlYnVnZ2luZyBieToKLSBhbWRncHUsCi0gZXh5bm9zLAotIGFkdjc1MTEsCi0gaW50ZWxfZHAo
-PyksCi0gbWRwNV9jbWRfZW5jb2Rlcig/KSwKLSBub3V2ZWF1LAotIG9tYXAoPyksCi0gdGlsY2Rj
-LgoKUmVnYXJkcwpBbmRyemVqCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+On 05/05/2016 11:12 AM, Andrzej Hajda wrote:
+> 
+> Regarding the initial question, mode->vrefresh is set in
+> drm_helper_probe_single_connector_modes. I guess division by zero could
+> be caused by lack of clock in timings provided by dts timing node.
+> As I remember in the past dts timings were passed without provided
+> clock, in such case driver calculated mode->clock for some default value
+> of vrefresh (60Hz for fimd if I remember correctly). Later validation
+> code was added and the clock should be always provided.
+> DTS files were updated after some time and the recalculation code was
+> removed from fimd driver. So it is possible you are a victim of this change.
+
+One more thing, I have looked at Exynos DTS files in mainline. In case
+of exynos5*.dts files clock-frequency is set to 50000, it is of course
+insanely low value and vrefresh calculated for such timings will be 0.
+So please verify if clock-frequency is not too low in your case.
+
+Regards
+Andrzej
+
+> 
+> Regarding usage by drivers, from a quick look it seems to be used for
+> something more than debugging by:
+> - amdgpu,
+> - exynos,
+> - adv7511,
+> - intel_dp(?),
+> - mdp5_cmd_encoder(?),
+> - nouveau,
+> - omap(?),
+> - tilcdc.
+> 
+> Regards
+> Andrzej
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
