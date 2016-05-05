@@ -1,75 +1,84 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [RFC v2 10/13] usb: hub: Power sequence the ports on activation
-Date: Thu, 5 May 2016 10:09:47 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1605051007040.2008-100000@iolanthe.rowland.org>
-References: <1462451666-17945-11-git-send-email-k.kozlowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: drm/exynos: fimd: vrefresh is zero
+Date: Thu, 5 May 2016 18:23:31 +0200
+Message-ID: <572B7383.50607@math.uni-bielefeld.de>
+References: <5725259C.9020206@math.uni-bielefeld.de>
+ <CADnq5_N_SnzU3Cpc9+w8FJXvmpa=oRKcwNzHrTQwY21ksCbh_A@mail.gmail.com>
+ <5727648D.7050603@math.uni-bielefeld.de>
+ <20160502202257.GW14148@phenom.ffwll.local>
+ <5727B8E6.6050106@math.uni-bielefeld.de>
+ <CAKMK7uGPx5Pdio2cr+zBTX1NrMr9+nk1MY7bJqziLGNvS93gwA@mail.gmail.com>
+ <572B0E7C.6010408@samsung.com> <572B10E1.4060704@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462451666-17945-11-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <572B10E1.4060704@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 5 May 2016, Krzysztof Kozlowski wrote:
-
-> The autodetection of attached USB device might not work on certain
-> boards where the power is delivered externally. These devices also might
-> require a hard reset. Use pwrseq for that in USB hub.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/usb/core/hub.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 1c82fcc448f5..0fddaacc62bf 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -26,6 +26,7 @@
->  #include <linux/mutex.h>
->  #include <linux/random.h>
->  #include <linux/pm_qos.h>
-> +#include <linux/pwrseq.h>
->  
->  #include <asm/uaccess.h>
->  #include <asm/byteorder.h>
-> @@ -1661,7 +1662,17 @@ static int hub_configure(struct usb_hub *hub,
->  
->  	usb_hub_adjust_deviceremovable(hdev, hub->descriptor);
->  
-> +	/* FIXME: When do the pre-power-on? */
-
-It's hard to answer this without knowing what pre-power-on involves.
-
-Why not create a pwrseq_power_on() routine that does pre_power_on 
-followed by post_power_on?
-
-> +	/*
-> +	for (i = 0; i < maxchild; i++)
-> +		pwrseq_pre_power_on(hub->ports[i]->pwrseq);
-> +	*/
-> +
-> +	for (i = 0; i < maxchild; i++)
-> +		pwrseq_post_power_on(hub->ports[i]->pwrseq);
-
-This is patch 10/13.  hub->ports[i]->pwrseq doesn't get added until 
-11/13.  Obviously you never tried compiling each patch in the series.
-
-> +
->  	hub_activate(hub, HUB_INIT);
-> +
-
-Unnecessary blank line added.
-
->  	return 0;
->  
->  fail:
-
-Alan Stern
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGVsbG8gQW5kcnplaiwKCgpBbmRyemVqIEhhamRhIHdyb3RlOgo+IE9uIDA1LzA1LzIwMTYgMTE6
+MTIgQU0sIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+Cj4+IFJlZ2FyZGluZyB0aGUgaW5pdGlhbCBx
+dWVzdGlvbiwgbW9kZS0+dnJlZnJlc2ggaXMgc2V0IGluCj4+IGRybV9oZWxwZXJfcHJvYmVfc2lu
+Z2xlX2Nvbm5lY3Rvcl9tb2Rlcy4gSSBndWVzcyBkaXZpc2lvbiBieSB6ZXJvIGNvdWxkCj4+IGJl
+IGNhdXNlZCBieSBsYWNrIG9mIGNsb2NrIGluIHRpbWluZ3MgcHJvdmlkZWQgYnkgZHRzIHRpbWlu
+ZyBub2RlLgo+PiBBcyBJIHJlbWVtYmVyIGluIHRoZSBwYXN0IGR0cyB0aW1pbmdzIHdlcmUgcGFz
+c2VkIHdpdGhvdXQgcHJvdmlkZWQKPj4gY2xvY2ssIGluIHN1Y2ggY2FzZSBkcml2ZXIgY2FsY3Vs
+YXRlZCBtb2RlLT5jbG9jayBmb3Igc29tZSBkZWZhdWx0IHZhbHVlCj4+IG9mIHZyZWZyZXNoICg2
+MEh6IGZvciBmaW1kIGlmIEkgcmVtZW1iZXIgY29ycmVjdGx5KS4gTGF0ZXIgdmFsaWRhdGlvbgo+
+PiBjb2RlIHdhcyBhZGRlZCBhbmQgdGhlIGNsb2NrIHNob3VsZCBiZSBhbHdheXMgcHJvdmlkZWQu
+Cj4+IERUUyBmaWxlcyB3ZXJlIHVwZGF0ZWQgYWZ0ZXIgc29tZSB0aW1lIGFuZCB0aGUgcmVjYWxj
+dWxhdGlvbiBjb2RlIHdhcwo+PiByZW1vdmVkIGZyb20gZmltZCBkcml2ZXIuIFNvIGl0IGlzIHBv
+c3NpYmxlIHlvdSBhcmUgYSB2aWN0aW0gb2YgdGhpcyBjaGFuZ2UuCj4gCj4gT25lIG1vcmUgdGhp
+bmcsIEkgaGF2ZSBsb29rZWQgYXQgRXh5bm9zIERUUyBmaWxlcyBpbiBtYWlubGluZS4gSW4gY2Fz
+ZQo+IG9mIGV4eW5vczUqLmR0cyBmaWxlcyBjbG9jay1mcmVxdWVuY3kgaXMgc2V0IHRvIDUwMDAw
+LCBpdCBpcyBvZiBjb3Vyc2UKPiBpbnNhbmVseSBsb3cgdmFsdWUgYW5kIHZyZWZyZXNoIGNhbGN1
+bGF0ZWQgZm9yIHN1Y2ggdGltaW5ncyB3aWxsIGJlIDAuCj4gU28gcGxlYXNlIHZlcmlmeSBpZiBj
+bG9jay1mcmVxdWVuY3kgaXMgbm90IHRvbyBsb3cgaW4geW91ciBjYXNlLgpJJ20gcHJldHR5IHN1
+cmUgdGhhdCB0aGlzIGlzIG5vdCB0aGUgY2FzZSBmb3IgbWUuCgpUaGlzIGlzIHRoZSBGSU1EIGVu
+dHJ5IGluIG15IERUUzoKJmZpbWQgewogICAgICAgIHN0YXR1cyA9ICJva2F5IjsKCiAgICAgICAg
+cGluY3RybC0wID0gPCZsY2RfY2xrICZsY2RfZGF0YTI0ICZwd20xX291dD47CiAgICAgICAgcGlu
+Y3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCiAgICAgICAgZGlzcGxheS10aW1pbmdzIHsKICAgICAg
+ICAgICAgICAgIG5hdGl2ZS1tb2RlID0gPCZ0aW1pbmcwPjsKCiAgICAgICAgICAgICAgICB0aW1p
+bmcwOiB0aW1pbmcgewogICAgICAgICAgICAgICAgICAgICAgICBjbG9jay1mcmVxdWVuY3kgPSA8
+ODU4NjAwMDA+OwogICAgICAgICAgICAgICAgICAgICAgICBoYWN0aXZlID0gPDEzNjY+OwogICAg
+ICAgICAgICAgICAgICAgICAgICB2YWN0aXZlID0gPDc2OD47CiAgICAgICAgICAgICAgICAgICAg
+ICAgIGhmcm9udC1wb3JjaCA9IDw0OD47CiAgICAgICAgICAgICAgICAgICAgICAgIGhiYWNrLXBv
+cmNoID0gPDgwPjsKICAgICAgICAgICAgICAgICAgICAgICAgaHN5bmMtbGVuID0gPDMyPjsKICAg
+ICAgICAgICAgICAgICAgICAgICAgdmJhY2stcG9yY2ggPSA8MTQ+OwogICAgICAgICAgICAgICAg
+ICAgICAgICB2ZnJvbnQtcG9yY2ggPSA8Mz47CiAgICAgICAgICAgICAgICAgICAgICAgIHZzeW5j
+LWxlbiA9IDw1PjsKICAgICAgICAgICAgICAgICAgICAgICAgcGl4ZWxjbGstYWN0aXZlID0gPDE+
+OwogICAgICAgICAgICAgICAgICAgICAgICBoc3luYy1hY3RpdmUgPSA8MT47CiAgICAgICAgICAg
+ICAgICAgICAgICAgIHZzeW5jLWFjdGl2ZSA9IDwxPjsKICAgICAgICAgICAgICAgICAgICAgICAg
+ZGUtYWN0aXZlID0gPDA+OwogICAgICAgICAgICAgICAgfTsKICAgICAgICB9Owp9OwoKClRoZSBv
+bmx5IHBlY3VsaWFyaXR5IGlzIHRoYXQgdGhlcmUgaXMgbm90aGluZyBhdHRhY2hlZCB0byB0aGUg
+ZXh0ZXJuYWwKY29ubmVjdG9yIG9uIHRoZSBib2FyZCAoT0RST0lELVgyKS4KCldpdGggcmVnYXJk
+IHRvIHVzZSBvZiB0aGUgdnJlZnJlc2ggZmllbGQgYnkgdGhlIHZhcmlvdXMgZHJpdmVycywgSSB3
+YXMKbWFkZSBhd2FyZSBvZiBEYW5pZWwgb24gSVJDIHRoYXQgdGhpcyBpcyBpbmNvcnJlY3QgdXNl
+LgoKSGUgcG9pbnRlZCBtZSB0bzoKaHR0cDovL2x4ci5mcmVlLWVsZWN0cm9ucy5jb20vc291cmNl
+L2luY2x1ZGUvZHJtL2RybV9tb2Rlcy5oI0wzNzQKKC0+ICJOb3QgdXNlZCBpbiBhIGZ1bmN0aW9u
+YWwgd2F5LiIpCgpJJ20gZ29pbmcgdG8gc2VuZCBhIHBhdGNoIHNob3J0bHkuCgpXaXRoIGJlc3Qg
+d2lzaGVzLApUb2JpYXMKClAuUy46IEknbSBhbHNvIGV4cGVyaWVuY2luZyBhbm90aGVyIChtb3Jl
+IHNlcmlvdXMpIGlzc3VlLCBidXQgbW9yZSBhYm91dAp0aGF0IGluIGFub3RoZXIgdGhyZWFkLgoK
+Cgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+Cj4+IFJlZ2FyZGluZyB1c2FnZSBieSBkcml2
+ZXJzLCBmcm9tIGEgcXVpY2sgbG9vayBpdCBzZWVtcyB0byBiZSB1c2VkIGZvcgo+PiBzb21ldGhp
+bmcgbW9yZSB0aGFuIGRlYnVnZ2luZyBieToKPj4gLSBhbWRncHUsCj4+IC0gZXh5bm9zLAo+PiAt
+IGFkdjc1MTEsCj4+IC0gaW50ZWxfZHAoPyksCj4+IC0gbWRwNV9jbWRfZW5jb2Rlcig/KSwKPj4g
+LSBub3V2ZWF1LAo+PiAtIG9tYXAoPyksCj4+IC0gdGlsY2RjLgo+Pgo+PiBSZWdhcmRzCj4+IEFu
+ZHJ6ZWoKPj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+Pj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+PiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCj4+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCj4+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
