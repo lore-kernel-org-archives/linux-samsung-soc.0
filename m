@@ -1,55 +1,60 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [RFC v2 13/13] ARM: dts: exynos: Fix LAN and HUB after bootloader
- initialization on Odroid U3
-Date: Thu, 5 May 2016 16:16:20 -0400
-Message-ID: <9dff13ae-5863-2b45-0e6a-00b345a19019@osg.samsung.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC v2 00/13] usb/mmc/power: Fix USB/LAN when TFTP booting
+Date: Thu, 5 May 2016 17:42:40 -0500
+Message-ID: <20160505224240.GA31429@rob-hp-laptop>
 References: <1462451666-17945-1-git-send-email-k.kozlowski@samsung.com>
- <1462451666-17945-14-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1462451666-17945-14-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>
-Cc: tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, hverkuil@xs4all.nl, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1462451666-17945-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On 05/05/2016 08:34 AM, Krzysztof Kozlowski wrote:
-> On Odroid U3 (Exynos4412-based) board if USB was initialized by
-> bootloader (in U-Boot "usb start" before tftpboot), the HUB (usb3503)
-> and LAN (smsc95xx) after after successful probing were not visible in the
-> system ("lsusb").
+On Thu, May 05, 2016 at 02:34:13PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
 > 
-> In such case the devices had to be fully reset before configuring.
-> Reset by GPIO (called RESET_N pin) and by RESET field in STCD register
-> in usb3503 HUB are not sufficient. Instead full reset has to be done by
-> disabling and enabling regulator.
+> This is a different, second try to fix usb3503+lan on Odroid U3 board
+> if it was initialized by bootloader (e.g. for TFTP boot).
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+> First version:
+> http://www.spinics.net/lists/linux-usb/msg140042.html
+> 
+> 
+> Problem
+> =======
+> When Odroid U3 (usb3503 + smsc95xx + max77686) boots from network (TFTP),
+> the usb3503 and LAN smsc95xx do not show up in "lsusb". Hard-reset
+> is required, e.g. by suspend to RAM. The actual TFTP boot does
+> not have to happen. Just "usb start" from U-Boot is sufficient.
+> 
+> From the schematics, the regulator is a supply only to LAN, however
+> without toggling it off/on, the usb3503 hub won appear neither.
+> 
+> 
+> Solution
+> ========
+> This is very similar to the MMC pwrseq behavior so the idea is to:
+> 1. Move MMC pwrseq drivers to generic place,
 
-[snip]
+You can do that, but I'm going to NAK any use of pwrseq bindings outside 
+of MMC. I think it is the wrong way to do things. The DT should describe 
+the devices. If they happen to be "simple" then the core can walk the 
+tree and do any setup. For example, look for "reset-gpios" and toggle 
+that GPIO. There is no need for a special node.
 
->  
-> +	lan_pwrseq: pwrseq2 {
-> +		compatible = "mmc-pwrseq-simple";
+> 2. Extend the pwrseq-simple with regulator toggling,
+> 3. Add support to USB hub and port core for pwrseq,
 
-It feels strange to have a "mmc-pwrseq-simple" compatible for a USB power
-sequence provider. As I mentioned in the other patch, I think there should
-either be a DT binding for the USB pwrseq-simple with a "usb-pwrseq-simple"
-compatible that binds to the same pwrseq-simple driver or maybe having a
-generic DT binding for any device with a new "pwrseq-simple" compatible.
+We discussed this for USB already[1] and is why we defined how to add 
+USB child devices. The idea is not to add pwrseq to that.
 
-Patch looks good to me though, so after having a DT binding and changing
-the compatible string:
+Rob
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+[1] http://www.spinics.net/lists/linux-usb/msg134082.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
