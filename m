@@ -1,108 +1,120 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add MFC memory banks for Peach boards
-Date: Fri, 06 May 2016 16:13:59 +0200
-Message-ID: <572CA6A7.1040102@samsung.com>
-References: <1461871311-18344-1-git-send-email-javier@osg.samsung.com>
- <cef99c21-3886-c055-05bf-cd04e3b588b3@osg.samsung.com>
- <572CA2F3.4050407@samsung.com>
- <23883a5f-bfed-9474-51a7-14271b6c391f@osg.samsung.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH v4] media: vb2-dma-contig: configure DMA max segment
+ size properly
+Date: Fri, 6 May 2016 15:52:16 -0300
+Message-ID: <20160506155216.60dc910c@recife.lan>
+References: <5729B396.1020706@xs4all.nl>
+	<1462352403-27418-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:50384 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758054AbcEFOOF (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:36294 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756380AbcEFSwX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 May 2016 10:14:05 -0400
-In-reply-to: <23883a5f-bfed-9474-51a7-14271b6c391f@osg.samsung.com>
+	Fri, 6 May 2016 14:52:23 -0400
+In-Reply-To: <1462352403-27418-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 
-On 05/06/2016 04:12 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 05/06/2016 09:58 AM, Krzysztof Kozlowski wrote:
->> On 05/06/2016 03:44 PM, Javier Martinez Canillas wrote:
->>> Hello Krzysztof,
->>>
->>> On 04/28/2016 03:21 PM, Javier Martinez Canillas wrote:
->>>> The MFC nodes with the memory regions reserved for memory allocations
->>>> are missing in the Exynos5420 Peach Pit and Exynos5800 Peach Pi DTS.
->>>>
->>>> This causes the s5p-mfc driver probe to fail with the following error:
->>>>
->>>> [    4.140647] s5p_mfc_alloc_memdevs:1072: Failed to declare coherent memory for MFC device
->>>> [    4.216163] s5p-mfc: probe of 11000000.codec failed with error -12
->>>>
->>>> Add the missing nodes so the driver probes and the {en,de}coder video
->>>> nodes are registered correctly:
->>>>
->>>> [    4.096277] s5p-mfc 11000000.codec: decoder registered as /dev/video4
->>>> [    4.102282] s5p-mfc 11000000.codec: encoder registered as /dev/video5
->>>>
->>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>>
->>>> ---
->>>>
->>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 +++++
->>>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 +++++
->>>>  2 files changed, 10 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>> index b644858231b6..f9d2e4f1a0e0 100644
->>>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>> @@ -694,6 +694,11 @@
->>>>  	status = "okay";
->>>>  };
->>>>  
->>>> +&mfc {
->>>> +	samsung,mfc-r = <0x43000000 0x800000>;
->>>> +	samsung,mfc-l = <0x51000000 0x800000>;
->>>> +};
->>>> +
->>>>  &mmc_0 {
->>>>  	status = "okay";
->>>>  	num-slots = <1>;
->>>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>>> index 6ba9aec15485..62ceb89e073f 100644
->>>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>>> @@ -669,6 +669,11 @@
->>>>  	status = "okay";
->>>>  };
->>>>  
->>>> +&mfc {
->>>> +	samsung,mfc-r = <0x43000000 0x800000>;
->>>> +	samsung,mfc-l = <0x51000000 0x800000>;
->>>> +};
->>>> +
->>>>  &mmc_0 {
->>>>  	status = "okay";
->>>>  	num-slots = <1>;
->>>>
->>>
->>> Any comments about this patch?
->>
->> What is up with the rush now (a week for ping)? As I understand, this
-> 
-> Sorry about that... I should had waited for more time for the ping indeed.
-> I just thought the patch was trivial and you usually answer within days.
-> 
->> was broken for very long time on these boards (since adding DT support
->> in 2012?).
->>
-> 
-> Yes, that's correct. And in fact even the s5p-mfc driver is currently
-> not working in mainline. But I posted some fixes and will post more
-> patches from other people today to get it working. So I thought that
-> would be nice to have this in since one of my test machines is a Peach.
+Em Wed, 04 May 2016 11:00:03 +0200
+Marek Szyprowski <m.szyprowski@samsung.com> escreveu:
 
-Okay, no problem. I have few more not-so-critical fixes. Queued for
-earliest possible release.
+> This patch lets vb2-dma-contig memory allocator to configure DMA max
+> segment size properly for the client device. Setting it is needed to let
+> DMA-mapping subsystem to create a single, contiguous mapping in DMA
+> address space. This is essential for all devices, which use dma-contig
+> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
+> of operations).
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> Hello,
+> 
+> This patch is a follow-up of my previous attempts to let Exynos
+> multimedia devices to work properly with shared buffers when IOMMU is
+> enabled:
+> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
+> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
+> 3. https://patchwork.linuxtv.org/patch/30870/
+> 
+> As sugested by Hans, configuring DMA max segment size should be done by
+> videobuf2-dma-contig module instead of requiring all device drivers to
+> do it on their own.
+> 
+> Here is some backgroud why this is done in videobuf2-dc not in the
+> respective generic bus code:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
+> 
+> Best regards,
+> Marek Szyprowski
+> 
+> changelog:
+> v4:
+> - rebased onto media master tree
+> - call vb2_dc_set_max_seg_size after allocating vb2 buf object
+> 
+> v3:
+> - added FIXME note about possible memory leak
+> 
+> v2:
+> - fixes typos and other language issues in the comments
+> 
+> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
+> ---
+>  drivers/media/v4l2-core/videobuf2-dma-contig.c | 53 +++++++++++++++++++++++++-
+>  1 file changed, 51 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> index 5361197f3e57..6291842a889f 100644
+> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> @@ -448,6 +448,42 @@ static void vb2_dc_put_userptr(void *buf_priv)
+>  }
+>  
+>  /*
+> + * To allow mapping the scatter-list into a single chunk in the DMA
+> + * address space, the device is required to have the DMA max segment
+> + * size parameter set to a value larger than the buffer size. Otherwise,
+> + * the DMA-mapping subsystem will split the mapping into max segment
+> + * size chunks. This function increases the DMA max segment size
+> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
+> + * address space.
+> + * This code assumes that the DMA-mapping subsystem will merge all
+> + * scatterlist segments if this is really possible (for example when
+> + * an IOMMU is available and enabled).
+> + * Ideally, this parameter should be set by the generic bus code, but it
+> + * is left with the default 64KiB value due to historical litmiations in
+> + * other subsystems (like limited USB host drivers) and there no good
+> + * place to set it to the proper value. It is done here to avoid fixing
+> + * all the vb2-dc client drivers.
+> + *
+> + * FIXME: the allocated dma_params structure is leaked because there
+> + * is completely no way to determine when to free it (dma_params might have
+> + * been also already allocated by the bus code). However in typical
+> + * use cases this function will be called for platform devices, which are
+> + * not hot-plugged and exist all the time in the target system.
+> + */
+> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
+> +{
+> +	if (!dev->dma_parms) {
+> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
 
-Best regards,
-Krzysztof
+Why don't you use devm_kzalloc() here? dma_parms will then be freed
+if the device gets hot-unplugged/unbind.
+
+And yes: it is possible to hot-unplug (actually, hot-unbind) a platform
+device via sysfs.
+
+Just assuming that only platform drivers will use dma-contig and adding
+a memory leak here seems really ugly!
+
+Regards,
+Mauro
+-- 
+Thanks,
+Mauro
