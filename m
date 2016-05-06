@@ -1,60 +1,51 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC v2 00/13] usb/mmc/power: Fix USB/LAN when TFTP booting
-Date: Thu, 5 May 2016 17:42:40 -0500
-Message-ID: <20160505224240.GA31429@rob-hp-laptop>
-References: <1462451666-17945-1-git-send-email-k.kozlowski@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fimd: harden fimd_calc_clkdiv()
+Date: Fri, 06 May 2016 07:44:17 +0200
+Message-ID: <572C2F31.7050405@samsung.com>
+References: <1462465418-3769-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1462451666-17945-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1462465418-3769-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 05, 2016 at 02:34:13PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> This is a different, second try to fix usb3503+lan on Odroid U3 board
-> if it was initialized by bootloader (e.g. for TFTP boot).
-> 
-> First version:
-> http://www.spinics.net/lists/linux-usb/msg140042.html
-> 
-> 
-> Problem
-> =======
-> When Odroid U3 (usb3503 + smsc95xx + max77686) boots from network (TFTP),
-> the usb3503 and LAN smsc95xx do not show up in "lsusb". Hard-reset
-> is required, e.g. by suspend to RAM. The actual TFTP boot does
-> not have to happen. Just "usb start" from U-Boot is sufficient.
-> 
-> From the schematics, the regulator is a supply only to LAN, however
-> without toggling it off/on, the usb3503 hub won appear neither.
-> 
-> 
-> Solution
-> ========
-> This is very similar to the MMC pwrseq behavior so the idea is to:
-> 1. Move MMC pwrseq drivers to generic place,
-
-You can do that, but I'm going to NAK any use of pwrseq bindings outside 
-of MMC. I think it is the wrong way to do things. The DT should describe 
-the devices. If they happen to be "simple" then the core can walk the 
-tree and do any setup. For example, look for "reset-gpios" and toggle 
-that GPIO. There is no need for a special node.
-
-> 2. Extend the pwrseq-simple with regulator toggling,
-> 3. Add support to USB hub and port core for pwrseq,
-
-We discussed this for USB already[1] and is why we defined how to add 
-USB child devices. The idea is not to add pwrseq to that.
-
-Rob
-
-[1] http://www.spinics.net/lists/linux-usb/msg134082.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgVG9iaWFzLAoKT24gMDUvMDUvMjAxNiAwNjoyMyBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
+PiBEb24ndCB1c2UgdGhlIHZyZWZyZXNoIGZpZWxkIG9mIHRoZSBEUk0gbW9kZSBzaW5jZSB0aGlz
+Cj4gb25lIGlzIHN1cHBvc2VkIHRvIG9ubHkgYmUgdXNlZCBmb3IgZGVidWcgcHVycG9zZS4KPiBJ
+bnN0ZWFkIHVzZSB0aGUgY2xvY2sgZmllbGQgd2hpY2ggc2hvdWxkIGFsc28gcHJvdmlkZQo+IG11
+Y2ggbW9yZSBwcmVjaXNlIGluZm9ybWF0aW9uLgo+Cj4gQWxzbyBzYW5pdGl6ZSB0aGUgY2FzZSBp
+biB3aGljaCB0aGUgY2xvY2sgdmFsdWUKPiBzaG91bGQgYmUgemVyby4gV2UgdGhlbiBqdXN0IGRl
+ZmF1bHQgdG8gdGhlIG1heGltdW0KPiBjbG9jayBkaXZpc29yLgo+Cj4gU2lnbmVkLW9mZi1ieTog
+VG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+CgpSZXZpZXdlZC1i
+eTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0KUmVnYXJkcwpBbmRyemVq
+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCA5ICsr
+KysrKysrLQo+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
+Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBpbmRleCA1NzAy
+MGY5Li45ZDRjYWU0IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9maW1kLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
+ZC5jCj4gQEAgLTM2Nyw5ICszNjcsMTYgQEAgc3RhdGljIHZvaWQgZmltZF9jbGVhcl9jaGFubmVs
+cyhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+ICBzdGF0aWMgdTMyIGZpbWRfY2FsY19j
+bGtkaXYoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4LAo+ICAJCWNvbnN0IHN0cnVjdCBkcm1fZGlz
+cGxheV9tb2RlICptb2RlKQo+ICB7Cj4gLQl1bnNpZ25lZCBsb25nIGlkZWFsX2NsayA9IG1vZGUt
+Pmh0b3RhbCAqIG1vZGUtPnZ0b3RhbCAqIG1vZGUtPnZyZWZyZXNoOwo+ICsJdW5zaWduZWQgbG9u
+ZyBpZGVhbF9jbGs7Cj4gIAl1MzIgY2xrZGl2Owo+ICAKPiArCWlmIChtb2RlLT5jbG9jayA9PSAw
+KSB7Cj4gKwkJRFJNX0VSUk9SKCJNb2RlIGhhcyB6ZXJvIGNsb2NrIHZhbHVlLlxuIik7Cj4gKwkJ
+cmV0dXJuIDB4ZmY7Cj4gKwl9Cj4gKwo+ICsJaWRlYWxfY2xrID0gbW9kZS0+Y2xvY2sgKiAxMDAw
+Owo+ICsKPiAgCWlmIChjdHgtPmk4MF9pZikgewo+ICAJCS8qCj4gIAkJICogVGhlIGZyYW1lIGRv
+bmUgaW50ZXJydXB0IHNob3VsZCBiZSBvY2N1cnJlZCBwcmlvciB0byB0aGUKCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
+c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
