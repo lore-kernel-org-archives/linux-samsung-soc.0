@@ -1,50 +1,119 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v6 6/9] rtc: max8997: Check for ERRNO of
- regmap_irq_get_virq()
-Date: Sat, 7 May 2016 08:48:45 +0200
-Message-ID: <20160507064845.GD2890@piout.net>
-References: <1462519289-2356-2-git-send-email-k.kozlowski@samsung.com>
- <1462519636-3250-1-git-send-email-k.kozlowski@samsung.com>
- <1462519636-3250-5-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFC PATCH 05/12] ARM: dts: exynos: Configure Exynos5410 pinctrl
+ for eMMC and SD card
+Date: Sat, 7 May 2016 11:49:14 +0200
+Message-ID: <20160507094914.GA3731@kozik-lap>
+References: <1462297949-13824-1-git-send-email-krzk@kernel.org>
+ <1462297949-13824-6-git-send-email-krzk@kernel.org>
+ <CAGOxZ52sH9vcN0MXxhX1ee7wr9Ao6Na=5X1bXxQo+6uvvWCbJA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35282 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750936AbcEGJtV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 7 May 2016 05:49:21 -0400
 Content-Disposition: inline
-In-Reply-To: <1462519636-3250-5-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, rtc-linux@googlegroups.com, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In-Reply-To: <CAGOxZ52sH9vcN0MXxhX1ee7wr9Ao6Na=5X1bXxQo+6uvvWCbJA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 06/05/2016 at 09:27:13 +0200, Krzysztof Kozlowski wrote :
-> The regmap_irq_get_virq() can return zero or negative ERRNO, so it is
-> insufficient to check only for non-zero value.
+On Sat, May 07, 2016 at 10:23:52AM +0530, Alim Akhtar wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> On Tue, May 3, 2016 at 11:22 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > Configure the pinctrl for MMC0 (eMMC) and MMC2 (microSD card).
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >
+> > ---
+> >
+> > I am not sure about sd0_rclk. Also I wonder whether this should go to
+> > board DTS...
+> > ---
+> >  arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 87 +++++++++++++++++++++++++++++++
+> >  1 file changed, 87 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+> > index f9aa6bb55464..dc12a79b8b32 100644
+> > --- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+> > @@ -277,6 +277,93 @@
+> >                 interrupt-controller;
+> >                 #interrupt-cells = <2>;
+> >         };
+> > +
+> > +       sd0_clk: sd0-clk {
+> > +               samsung,pins = "gpc0-0";
+> > +               samsung,pin-function = <2>;
+> > +               samsung,pin-pud = <0>;
+> > +               samsung,pin-drv = <3>;
+> > +       };
+> > +
+> > +       sd0_cmd: sd0-cmd {
+> > +               samsung,pins = "gpc0-1";
+> > +               samsung,pin-function = <2>;
+> > +               samsung,pin-pud = <0>;
+> > +               samsung,pin-drv = <3>;
+> > +       };
+> > +
+> > +       sd0_cd: sd0-cd {
+> > +               samsung,pins = "gpc0-2";
+> > +               samsung,pin-function = <2>;
+> > +               samsung,pin-pud = <3>;
+> > +               samsung,pin-drv = <3>;
+> > +       };
+> > +
+> > +       sd0_bus1: sd0-bus-width1 {
+> > +               samsung,pins = "gpc0-3";
+> > +               samsung,pin-function = <2>;
+> > +               samsung,pin-pud = <3>;
+> > +               samsung,pin-drv = <3>;
+> > +       };
+> > +
+> > +       sd0_bus4: sd0-bus-width4 {
+> > +               samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
+> > +               samsung,pin-function = <2>;
+> > +               samsung,pin-pud = <3>;
+> > +               samsung,pin-drv = <3>;
+> > +       };
+> > +
+> > +       sd0_bus8: sd0-bus-width8 {
+> > +               samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
+> > +               samsung,pin-function = <2>;
+> > +               samsung,pin-pud = <3>;
+> > +               samsung,pin-drv = <3>;
+> > +       };
+> > +
+> > +       /* TODO: What's up with with rclk? On Odroid XU this is missing... */
+> > +       /*
+> > +       sd0_rclk: sd0-rclk {
+> > +               samsung,pins = "gpc0-7";
+> > +               samsung,pin-function = <2>;
+> > +               samsung,pin-pud = <1>;
+> > +               samsung,pin-drv = <3>;
+> > +       };
+> > +       */
+> > +
+> IF Odroid XU is populated with an eMMC5.0+ device && RCLK (Data
+> Strobe) is connected from AP to emmc device, THEN you should configure
+> this dedicated PIN.
+> Otherwise you can remove this TODO and uncomment the node and put a
+> comment saying that this feature (emmc5.0+) is not supported on this
+> SoC.
 
-> ---
->  drivers/rtc/rtc-max8997.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
-> index 4998aee0f07f..1a06e17ebe9b 100644
-> --- a/drivers/rtc/rtc-max8997.c
-> +++ b/drivers/rtc/rtc-max8997.c
-> @@ -497,7 +497,7 @@ static int max8997_rtc_probe(struct platform_device *pdev)
->  	}
->  
->  	virq = regmap_irq_get_virq(max8997->irq_data, MAX8997_PMICIRQ_RTCA1);
-> -	if (!virq) {
-> +	if (virq <= 0) {
->  		dev_err(&pdev->dev, "Failed to create mapping alarm IRQ\n");
->  		ret = -ENXIO;
->  		goto err_out;
-> -- 
-> 1.9.1
-> 
+I double checked and:
+1. Schematics say this pin is not connected,
+2. Hardkernel forum confirms that altough XU could support eMMC5.0 (SoC
+   supports it) but it was not tested and the pin (RCLK) should be wired
+   by consumer.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+With your help it seems solved. I'll remove the TODO and add a comment
+about not supported emmc5.
+
+
+Best regards,
+Krzysztof
