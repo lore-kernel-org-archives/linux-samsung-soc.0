@@ -1,120 +1,154 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH v4] media: vb2-dma-contig: configure DMA max segment
- size properly
-Date: Fri, 6 May 2016 15:52:16 -0300
-Message-ID: <20160506155216.60dc910c@recife.lan>
-References: <5729B396.1020706@xs4all.nl>
-	<1462352403-27418-1-git-send-email-m.szyprowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [RFC PATCH 05/12] ARM: dts: exynos: Configure Exynos5410 pinctrl
+ for eMMC and SD card
+Date: Sat, 7 May 2016 10:23:52 +0530
+Message-ID: <CAGOxZ52sH9vcN0MXxhX1ee7wr9Ao6Na=5X1bXxQo+6uvvWCbJA@mail.gmail.com>
+References: <1462297949-13824-1-git-send-email-krzk@kernel.org> <1462297949-13824-6-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:36294 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756380AbcEFSwX (ORCPT
+Received: from mail-ig0-f195.google.com ([209.85.213.195]:34272 "EHLO
+	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754AbcEGEyc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 May 2016 14:52:23 -0400
-In-Reply-To: <1462352403-27418-1-git-send-email-m.szyprowski@samsung.com>
+	Sat, 7 May 2016 00:54:32 -0400
+In-Reply-To: <1462297949-13824-6-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Em Wed, 04 May 2016 11:00:03 +0200
-Marek Szyprowski <m.szyprowski@samsung.com> escreveu:
+Hi Krzysztof,
 
-> This patch lets vb2-dma-contig memory allocator to configure DMA max
-> segment size properly for the client device. Setting it is needed to let
-> DMA-mapping subsystem to create a single, contiguous mapping in DMA
-> address space. This is essential for all devices, which use dma-contig
-> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
-> of operations).
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+On Tue, May 3, 2016 at 11:22 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Configure the pinctrl for MMC0 (eMMC) and MMC2 (microSD card).
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
 > ---
-> Hello,
-> 
-> This patch is a follow-up of my previous attempts to let Exynos
-> multimedia devices to work properly with shared buffers when IOMMU is
-> enabled:
-> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
-> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
-> 3. https://patchwork.linuxtv.org/patch/30870/
-> 
-> As sugested by Hans, configuring DMA max segment size should be done by
-> videobuf2-dma-contig module instead of requiring all device drivers to
-> do it on their own.
-> 
-> Here is some backgroud why this is done in videobuf2-dc not in the
-> respective generic bus code:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
-> 
-> Best regards,
-> Marek Szyprowski
-> 
-> changelog:
-> v4:
-> - rebased onto media master tree
-> - call vb2_dc_set_max_seg_size after allocating vb2 buf object
-> 
-> v3:
-> - added FIXME note about possible memory leak
-> 
-> v2:
-> - fixes typos and other language issues in the comments
-> 
-> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
+>
+> I am not sure about sd0_rclk. Also I wonder whether this should go to
+> board DTS...
 > ---
->  drivers/media/v4l2-core/videobuf2-dma-contig.c | 53 +++++++++++++++++++++++++-
->  1 file changed, 51 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> index 5361197f3e57..6291842a889f 100644
-> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> @@ -448,6 +448,42 @@ static void vb2_dc_put_userptr(void *buf_priv)
->  }
->  
->  /*
-> + * To allow mapping the scatter-list into a single chunk in the DMA
-> + * address space, the device is required to have the DMA max segment
-> + * size parameter set to a value larger than the buffer size. Otherwise,
-> + * the DMA-mapping subsystem will split the mapping into max segment
-> + * size chunks. This function increases the DMA max segment size
-> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
-> + * address space.
-> + * This code assumes that the DMA-mapping subsystem will merge all
-> + * scatterlist segments if this is really possible (for example when
-> + * an IOMMU is available and enabled).
-> + * Ideally, this parameter should be set by the generic bus code, but it
-> + * is left with the default 64KiB value due to historical litmiations in
-> + * other subsystems (like limited USB host drivers) and there no good
-> + * place to set it to the proper value. It is done here to avoid fixing
-> + * all the vb2-dc client drivers.
-> + *
-> + * FIXME: the allocated dma_params structure is leaked because there
-> + * is completely no way to determine when to free it (dma_params might have
-> + * been also already allocated by the bus code). However in typical
-> + * use cases this function will be called for platform devices, which are
-> + * not hot-plugged and exist all the time in the target system.
-> + */
-> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
-> +{
-> +	if (!dev->dma_parms) {
-> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);
+>  arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 87 +++++++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+> index f9aa6bb55464..dc12a79b8b32 100644
+> --- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+> @@ -277,6 +277,93 @@
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+> +
+> +       sd0_clk: sd0-clk {
+> +               samsung,pins = "gpc0-0";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <0>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd0_cmd: sd0-cmd {
+> +               samsung,pins = "gpc0-1";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <0>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd0_cd: sd0-cd {
+> +               samsung,pins = "gpc0-2";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd0_bus1: sd0-bus-width1 {
+> +               samsung,pins = "gpc0-3";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd0_bus4: sd0-bus-width4 {
+> +               samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd0_bus8: sd0-bus-width8 {
+> +               samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       /* TODO: What's up with with rclk? On Odroid XU this is missing... */
+> +       /*
+> +       sd0_rclk: sd0-rclk {
+> +               samsung,pins = "gpc0-7";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <1>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +       */
+> +
+IF Odroid XU is populated with an eMMC5.0+ device && RCLK (Data
+Strobe) is connected from AP to emmc device, THEN you should configure
+this dedicated PIN.
+Otherwise you can remove this TODO and uncomment the node and put a
+comment saying that this feature (emmc5.0+) is not supported on this
+SoC.
 
-Why don't you use devm_kzalloc() here? dma_parms will then be freed
-if the device gets hot-unplugged/unbind.
+> +       sd2_clk: sd2-clk {
+> +               samsung,pins = "gpc2-0";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <0>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd2_cmd: sd2-cmd {
+> +               samsung,pins = "gpc2-1";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <0>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd2_cd: sd2-cd {
+> +               samsung,pins = "gpc2-2";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd2_bus1: sd2-bus-width1 {
+> +               samsung,pins = "gpc2-3";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <3>;
+> +       };
+> +
+> +       sd2_bus4: sd2-bus-width4 {
+> +               samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
+> +               samsung,pin-function = <2>;
+> +               samsung,pin-pud = <3>;
+> +               samsung,pin-drv = <3>;
+> +       };
+>  };
+>
+>  &pinctrl_1 {
+> --
+> 2.5.0
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-And yes: it is possible to hot-unplug (actually, hot-unbind) a platform
-device via sysfs.
 
-Just assuming that only platform drivers will use dma-contig and adding
-a memory leak here seems really ugly!
 
-Regards,
-Mauro
 -- 
-Thanks,
-Mauro
+Regards,
+Alim
