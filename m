@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
-Date: Sun,  8 May 2016 21:05:51 +0200
-Message-ID: <1462734367-5619-7-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
+Date: Sun,  8 May 2016 21:05:48 +0200
+Message-ID: <1462734367-5619-4-git-send-email-krzk@kernel.org>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
@@ -10,31 +10,32 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All "fin_pll" clock users are switched to the new one, provided by
-Exynos5410 clock driver. Remove old DT node.
+For consistency between Exynos5410 and Exynos542x/5800 switch to similar
+way of defining fin_pll/oscclk. Add a node early, before implementing
+this in driver to preserve bisectability.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 -------
- 1 file changed, 7 deletions(-)
+ arch/arm/boot/dts/exynos5410-smdk5410.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index d7d658deeff4..377a679b454b 100644
+index 0f6429e1b75c..d7d658deeff4 100644
 --- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
 +++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -24,13 +24,6 @@
- 		bootargs = "console=ttySAC2,115200";
+@@ -31,6 +31,13 @@
+ 		#clock-cells = <0>;
  	};
  
--	fin_pll: xxti {
--		compatible = "fixed-clock";
--		clock-frequency = <24000000>;
--		clock-output-names = "fin_pll";
--		#clock-cells = <0>;
--	};
--
- 	fixed-rate-clocks {
- 		oscclk {
- 			compatible = "samsung,exynos5420-oscclk";
++	fixed-rate-clocks {
++		oscclk {
++			compatible = "samsung,exynos5420-oscclk";
++			clock-frequency = <24000000>;
++		};
++	};
++
+ 	firmware@02037000 {
+ 		compatible = "samsung,secure-firmware";
+ 		reg = <0x02037000 0x1000>;
 -- 
 2.5.0
