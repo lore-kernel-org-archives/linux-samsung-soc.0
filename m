@@ -1,235 +1,270 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 22/22] ARM: dts: exynos: Add initial support for Odroid XU board
-Date: Sun,  8 May 2016 21:06:07 +0200
-Message-ID: <1462734367-5619-23-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 20/22] ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+Date: Sun,  8 May 2016 21:06:05 +0200
+Message-ID: <1462734367-5619-21-git-send-email-krzk@kernel.org>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37464 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751661AbcEHTH5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 May 2016 15:07:57 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
-from Samsung: the Exynos5410. Comparing now to more popular Odroid XU3
-the differences are:
-1. Exynos5410 instead of 5422,
-2. DisplayPort,
-3. Main PMIC: Maxim 77802 instead of S2MPS11,
-4. USB3503+LAN9730 instead of integrated LAN9514,
-5. eMMC 4.5 instead of eMMC 5.0,
+The Exynos5410/542x/5800 are very similar designs. Create new new
+DTSI with common nodes to remove DTS duplication. Although currently
+only MCT and SysRAM are shared but in future more nodes will be added to
+common file.
 
-This patch adds initial support for the XU board with working basic
-functions, eMMC/SD and USB (including attached ethernet adapter).
+The patch should not have functional impact.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- .../bindings/arm/samsung/samsung-boards.txt        |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos5410-odroidxu.dts          | 166 +++++++++++++++++++++
- 3 files changed, 168 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ arch/arm/boot/dts/exynos5410.dtsi | 55 ++++---------------------------
+ arch/arm/boot/dts/exynos5420.dtsi | 54 ++++---------------------------
+ arch/arm/boot/dts/exynos54xx.dtsi | 68 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+), 97 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index f5deace2b380..0ea7f14ef294 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -47,6 +47,7 @@ Required root node properties:
- 	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
- 	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
- 	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-+	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
- 	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
- 	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
- 					 Odroid XU3 Lite board.
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5aeb10674370..9ed1c7abedb1 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5250-snow-rev5.dtb \
- 	exynos5250-spring.dtb \
- 	exynos5260-xyref5260.dtb \
-+	exynos5410-odroidxu.dtb \
- 	exynos5410-smdk5410.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-peach-pit.dtb \
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 62dc3b4aef93..850343d3c2af 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -13,8 +13,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-#include "skeleton.dtsi"
+-#include "exynos5.dtsi"
++#include "exynos54xx.dtsi"
+ #include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos5410.h>
+ 
+@@ -73,53 +72,6 @@
+ 			reg = <0x10040000 0x5000>;
+ 		};
+ 
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&interrupt_map>;
+-			interrupts = <0>, <1>, <2>, <3>,
+-				<4>, <5>, <6>, <7>,
+-				<8>, <9>, <10>, <11>;
+-			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			interrupt_map: interrupt-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
+-		};
+-
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
+-		};
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5410-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -194,6 +146,11 @@
+ 	};
+ };
+ 
++&mct {
++	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index ac39e3b8b0e1..750571f838f2 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -13,9 +13,8 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include "exynos54xx.dtsi"
+ #include <dt-bindings/clock/exynos5420.h>
+-#include "exynos5.dtsi"
+-
+ #include <dt-bindings/clock/exynos-audss-clk.h>
+ 
+ / {
+@@ -185,24 +184,6 @@
+ 			};
+ 		};
+ 
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
+-		};
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5420-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -265,34 +246,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&mct_map>;
+-			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+-					<8>, <9>, <10>, <11>;
+-			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			mct_map: mct-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
+-		};
+-
+ 		gsc_pd: power-domain@10044000 {
+ 			compatible = "samsung,exynos4210-pd";
+ 			reg = <0x10044000 0x20>;
+@@ -1194,6 +1147,11 @@
+ 	iommu-names = "m0", "m1";
+ };
+ 
++&mct {
++	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
 new file mode 100644
-index 000000000000..b0cbd53aeea9
+index 000000000000..9ce625bd79c1
 --- /dev/null
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -0,0 +1,166 @@
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -0,0 +1,68 @@
 +/*
-+ * Hardkernel Odroid XU3 board device tree source
++ * Samsung's Exynos54xx SoC series common device tree source
 + *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com
 + * Copyright (c) 2016 Krzysztof Kozlowski
++ *
++ * Device nodes common for Samsung Exynos5410/5420/5422/5800. Specific
++ * Exynos 54xx SoCs should include this file and customize it further
++ * (e.g. with clocks).
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 + */
 +
-+/dts-v1/;
-+#include "exynos5410.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "exynos54xx-odroidxu-leds.dtsi"
++#include "skeleton.dtsi"
++#include "exynos5.dtsi"
 +
 +/ {
-+	model = "Hardkernel Odroid XU";
-+	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
++	compatible = "samsung,exynos5";
 +
-+	memory {
-+		reg = <0x40000000 0x7EA00000>;
-+	};
++	soc: soc {
++		sysram@02020000 {
++			compatible = "mmio-sram";
++			reg = <0x02020000 0x54000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0x02020000 0x54000>;
 +
-+	chosen {
-+		linux,stdout-path = &serial_2;
-+	};
++			smp-sysram@0 {
++				compatible = "samsung,exynos4210-sysram";
++				reg = <0x0 0x1000>;
++			};
 +
-+	/* TODO: these will be the same as in XU3-common file */
-+	emmc_pwrseq: pwrseq {
-+		pinctrl-0 = <&emmc_nrst_pin>;
-+		pinctrl-names = "default";
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>;
-+	};
++			smp-sysram@53000 {
++				compatible = "samsung,exynos4210-sysram-ns";
++				reg = <0x53000 0x1000>;
++			};
++		};
 +
-+	fan0: pwm-fan {
-+		compatible = "pwm-fan";
-+		pwms = <&pwm 0 20972 0>;
-+		cooling-min-state = <0>;
-+		cooling-max-state = <3>;
-+		#cooling-cells = <2>;
-+		cooling-levels = <0 130 170 230>;
-+	};
++		mct: mct@101C0000 {
++			compatible = "samsung,exynos4210-mct";
++			reg = <0x101C0000 0xB00>;
++			interrupt-parent = <&mct_map>;
++			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
++					<8>, <9>, <10>, <11>;
 +
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
++			mct_map: mct-map {
++				#interrupt-cells = <1>;
++				#address-cells = <0>;
++				#size-cells = <0>;
++				interrupt-map = <0 &combiner 23 3>,
++						<1 &combiner 23 4>,
++						<2 &combiner 25 2>,
++						<3 &combiner 25 3>,
++						<4 &gic 0 120 0>,
++						<5 &gic 0 121 0>,
++						<6 &gic 0 122 0>,
++						<7 &gic 0 123 0>,
++						<8 &gic 0 128 0>,
++						<9 &gic 0 129 0>,
++						<10 &gic 0 130 0>,
++						<11 &gic 0 131 0>;
++			};
 +		};
 +	};
-+
-+	firmware@02073000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x02073000 0x1000>;
-+	};
-+};
-+
-+/* TODO:
-+&i2c_4 {
-+	status = "okay";
-+
-+	ina231@40 {
-+		compatible = "ti,ina231";
-+		reg = <0x40>;
-+		shunt-resistor = <10000>;
-+	};
-+
-+	ina231@41 {
-+		compatible = "ti,ina231";
-+		reg = <0x41>;
-+		shunt-resistor = <10000>;
-+	};
-+
-+	ina231@44 {
-+		compatible = "ti,ina231";
-+		reg = <0x44>;
-+		shunt-resistor = <10000>;
-+	};
-+
-+	ina231@45 {
-+		compatible = "ti,ina231";
-+		reg = <0x45>;
-+		shunt-resistor = <10000>;
-+	};
-+};
-+*/
-+
-+&mmc_0 {
-+	status = "okay";
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+	samsung,read-strobe-delay = <90>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	//vmmc-supply = <&ldo18_reg>; // FIXME
-+	//vqmmc-supply = <&ldo3_reg>; // FIXME
-+};
-+
-+&mmc_2 {
-+	status = "okay";
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	//vmmc-supply = <&ldo19_reg>; // FIXME
-+	//vqmmc-supply = <&ldo13_reg>; // Thats gonna be different than XU3 // FIXME
-+};
-+
-+&pinctrl_0 {
-+	emmc_nrst_pin: emmc-nrst {
-+		samsung,pins = "gpd1-0";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&serial_0 {
-+	status = "okay";
-+};
-+
-+&serial_1 {
-+	status = "okay";
-+};
-+
-+&serial_2 {
-+	status = "okay";
-+};
-+
-+&serial_3 {
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_0 {
-+	dr_mode = "host";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "peripheral";
-+};
-+
-+&usbdrd3_0 {
-+//	vdd33-supply = <&ldo9_reg>;
-+//	vdd10-supply = <&ldo11_reg>;
-+};
-+
-+&usbdrd3_1 {
-+//	vdd33-supply = <&ldo9_reg>;
-+//	vdd10-supply = <&ldo11_reg>;
 +};
 -- 
 2.5.0
