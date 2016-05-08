@@ -1,62 +1,34 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: dts: exynos: Non-critical fixes for v4.7
-Date: Sat,  7 May 2016 13:10:28 +0200
-Message-ID: <1462619428-13798-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33830 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751930AbcEGLKz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 May 2016 07:10:55 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] clk: samsung: exynos5420: Remove useless check for return value of samsung_clk_init
+Date: Sun,  8 May 2016 11:24:56 +0200
+Message-ID: <1462699496-16646-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, krzk@kernel.org, k.kozlowski@samsung.com
 
-Hi,
+The samsung_clk_init() cannot return NULL. Either it returns allocated
+memory or it panics.
 
-A bunch of fixes for things probably broken for long time (MFC, regulator
-debugfs) or for stuff which will be broken in next releases (conversion
-of max8997 to regmap).
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 92382cef9f90..770c0f007c6b 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 	exynos5x_soc = soc;
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+-	if (!ctx)
+-		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
+-- 
+2.5.0
 
-Best regards,
-Krzysztof
-
-
-The following changes since commit a0a966b83873f33778710a4fc59240244b0734a5:
-
-  ARM: EXYNOS: Properly skip unitialized parent clock in power domain on (2016-04-25 11:35:37 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-non-critical-4.7
-
-for you to fetch changes up to 330d12764e15f6e3e94ff34cda29db96d2589c24:
-
-  ARM: dts: exynos: Add interrupt line to MAX8997 PMIC on exynos4210-trats (2016-05-06 16:01:32 +0200)
-
-----------------------------------------------------------------
-Samsung DTS non-critical fixes for v4.7:
-1. Fix s5p-mfc driver probe on Exynos542x Peach boards (need to provide MFC
-   memory banks). On these boards this was broken for long time but
-   apparently no one enabled this driver till now.
-2. Fix creation of debugfs entries for one regulator on Exynos4210
-   Trats board.
-3. Fix probing of max8997 MFD driver (and its children) because
-   of missing interrupt. Actually the current version of the driver probes
-   (just without interrupts) but after switching to regmap and regmap-irq,
-   the interrupt will be mandatory.
-
-----------------------------------------------------------------
-Javier Martinez Canillas (1):
-      ARM: dts: exynos: Add MFC memory banks for Peach boards
-
-Marek Szyprowski (2):
-      ARM: dts: exynos: Fix regulator name to avoid forbidden character on exynos4210-trats
-      ARM: dts: exynos: Add interrupt line to MAX8997 PMIC on exynos4210-trats
-
- arch/arm/boot/dts/exynos4210-trats.dts     | 4 +++-
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 +++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 +++++
- 3 files changed, 13 insertions(+), 1 deletion(-)
