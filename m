@@ -1,262 +1,162 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Only Odroid XU3-family boards use DTSI with
- CPU thermal nodes
-Date: Mon, 09 May 2016 08:19:49 +0200
-Message-ID: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:57846 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751010AbcEIGUE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 May 2016 02:20:04 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC PATCH] drm/exynos: fix pending update handling
+Date: Mon, 09 May 2016 09:17:38 +0200
+Message-ID: <57303992.7010004@samsung.com>
+References: <572C4C65.4070501@math.uni-bielefeld.de>
+ <1462521783-4723-1-git-send-email-a.hajda@samsung.com>
+ <572DC47A.3000202@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <572DC47A.3000202@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Include the CPU thermal nodes directly in Odroid XU3-family common DTS
-because it is the only user of it. Keeping it in separate DTSI node does
-not bring benefits because:
-1. It is not re-usable on other non-fan boards (fan is referenced),
-2. It won't be re-used on future Odroid XU board because different
-   CPU cluster behavior.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi      | 103 ---------------------
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  94 ++++++++++++++++++-
- 2 files changed, 92 insertions(+), 105 deletions(-)
- delete mode 100644 arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
-
-diff --git a/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi b/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
-deleted file mode 100644
-index 3e4c4ad96d63..000000000000
---- a/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
-+++ /dev/null
-@@ -1,103 +0,0 @@
--/*
-- * Device tree sources for Exynos5422 thermal zone
-- *
-- * Copyright (c) 2015 Lukasz Majewski <l.majewski@samsung.com>
-- *			Anand Moon <linux.amoon@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- */
--
--#include <dt-bindings/thermal/thermal.h>
--
--/ {
--	thermal-zones {
--		cpu0_thermal: cpu0-thermal {
--			thermal-sensors = <&tmu_cpu0 0>;
--			polling-delay-passive = <250>;
--			polling-delay = <0>;
--			trips {
--				cpu_alert0: cpu-alert-0 {
--					temperature = <50000>; /* millicelsius */
--					hysteresis = <5000>; /* millicelsius */
--					type = "active";
--				};
--				cpu_alert1: cpu-alert-1 {
--					temperature = <60000>; /* millicelsius */
--					hysteresis = <5000>; /* millicelsius */
--					type = "active";
--				};
--				cpu_alert2: cpu-alert-2 {
--					temperature = <70000>; /* millicelsius */
--					hysteresis = <5000>; /* millicelsius */
--					type = "active";
--				};
--				cpu_crit0: cpu-crit-0 {
--					temperature = <120000>; /* millicelsius */
--					hysteresis = <0>; /* millicelsius */
--					type = "critical";
--				};
--				/*
--				 * Exyunos542x support only 4 trip-points
--				 * so for these polling mode is required.
--				 * Start polling at temperature level of last
--				 * interrupt-driven trip: cpu_alert2
--				 */
--				cpu_alert3: cpu-alert-3 {
--					temperature = <70000>; /* millicelsius */
--					hysteresis = <10000>; /* millicelsius */
--					type = "passive";
--				};
--				cpu_alert4: cpu-alert-4 {
--					temperature = <85000>; /* millicelsius */
--					hysteresis = <10000>; /* millicelsius */
--					type = "passive";
--				};
--
--			};
--			cooling-maps {
--				map0 {
--				     trip = <&cpu_alert0>;
--				     cooling-device = <&fan0 0 1>;
--				};
--				map1 {
--				     trip = <&cpu_alert1>;
--				     cooling-device = <&fan0 1 2>;
--				};
--				map2 {
--				     trip = <&cpu_alert2>;
--				     cooling-device = <&fan0 2 3>;
--				};
--				/*
--				 * When reaching cpu_alert3, reduce CPU
--				 * by 2 steps. On Exynos5422/5800 that would
--				 * be: 1500 MHz and 1100 MHz.
--				 */
--				map3 {
--				     trip = <&cpu_alert3>;
--				     cooling-device = <&cpu0 0 2>;
--				};
--				map4 {
--				     trip = <&cpu_alert3>;
--				     cooling-device = <&cpu4 0 2>;
--				};
--
--				/*
--				 * When reaching cpu_alert4, reduce CPU
--				 * further, down to 600 MHz (11 steps for big,
--				 * 7 steps for LITTLE).
--				 */
--				map5 {
--				     trip = <&cpu_alert4>;
--				     cooling-device = <&cpu0 3 7>;
--				};
--				map6 {
--				     trip = <&cpu_alert4>;
--				     cooling-device = <&cpu4 3 11>;
--				};
--			};
--		};
--	};
--};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 2a4e10bc8801..ff05041835e5 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -1,9 +1,11 @@
- /*
-  * Hardkernel Odroid XU3 board device tree source
-  *
-- * Copyright (c) 2014 Collabora Ltd.
-  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-+ * Copyright (c) 2014 Collabora Ltd.
-+ * Copyright (c) 2015 Lukasz Majewski <l.majewski@samsung.com>
-+ *                    Anand Moon <linux.amoon@gmail.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -16,7 +18,6 @@
- #include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
- #include "exynos5422-cpus.dtsi"
--#include "exynos5422-cpu-thermal.dtsi"
- 
- / {
- 	memory {
-@@ -54,6 +55,95 @@
- 		#cooling-cells = <2>;
- 		cooling-levels = <0 130 170 230>;
- 	};
-+
-+	thermal-zones {
-+		cpu0_thermal: cpu0-thermal {
-+			thermal-sensors = <&tmu_cpu0 0>;
-+			polling-delay-passive = <250>;
-+			polling-delay = <0>;
-+			trips {
-+				cpu_alert0: cpu-alert-0 {
-+					temperature = <50000>; /* millicelsius */
-+					hysteresis = <5000>; /* millicelsius */
-+					type = "active";
-+				};
-+				cpu_alert1: cpu-alert-1 {
-+					temperature = <60000>; /* millicelsius */
-+					hysteresis = <5000>; /* millicelsius */
-+					type = "active";
-+				};
-+				cpu_alert2: cpu-alert-2 {
-+					temperature = <70000>; /* millicelsius */
-+					hysteresis = <5000>; /* millicelsius */
-+					type = "active";
-+				};
-+				cpu_crit0: cpu-crit-0 {
-+					temperature = <120000>; /* millicelsius */
-+					hysteresis = <0>; /* millicelsius */
-+					type = "critical";
-+				};
-+				/*
-+				 * Exynos542x supports only 4 trip-points
-+				 * so for these polling mode is required.
-+				 * Start polling at temperature level of last
-+				 * interrupt-driven trip: cpu_alert2
-+				 */
-+				cpu_alert3: cpu-alert-3 {
-+					temperature = <70000>; /* millicelsius */
-+					hysteresis = <10000>; /* millicelsius */
-+					type = "passive";
-+				};
-+				cpu_alert4: cpu-alert-4 {
-+					temperature = <85000>; /* millicelsius */
-+					hysteresis = <10000>; /* millicelsius */
-+					type = "passive";
-+				};
-+
-+			};
-+			cooling-maps {
-+				map0 {
-+				     trip = <&cpu_alert0>;
-+				     cooling-device = <&fan0 0 1>;
-+				};
-+				map1 {
-+				     trip = <&cpu_alert1>;
-+				     cooling-device = <&fan0 1 2>;
-+				};
-+				map2 {
-+				     trip = <&cpu_alert2>;
-+				     cooling-device = <&fan0 2 3>;
-+				};
-+				/*
-+				 * When reaching cpu_alert3, reduce CPU
-+				 * by 2 steps. On Exynos5422/5800 that would
-+				 * be: 1500 MHz and 1100 MHz.
-+				 */
-+				map3 {
-+				     trip = <&cpu_alert3>;
-+				     cooling-device = <&cpu0 0 2>;
-+				};
-+				map4 {
-+				     trip = <&cpu_alert3>;
-+				     cooling-device = <&cpu4 0 2>;
-+				};
-+
-+				/*
-+				 * When reaching cpu_alert4, reduce CPU
-+				 * further, down to 600 MHz (11 steps for big,
-+				 * 7 steps for LITTLE).
-+				 */
-+				map5 {
-+				     trip = <&cpu_alert4>;
-+				     cooling-device = <&cpu0 3 7>;
-+				};
-+				map6 {
-+				     trip = <&cpu_alert4>;
-+				     cooling-device = <&cpu4 3 11>;
-+				};
-+			};
-+		};
-+	};
-+
- };
- 
- &bus_wcore {
--- 
-1.9.1
+T24gMDUvMDcvMjAxNiAxMjozMyBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbyBBbmRy
+emVqLAo+Cj4gSSd2ZSBhcHBsaWVkIHRoaXMgdG8gbXkgNC41LjMgYmFzZWQgdHJlZSwgYnV0IEkn
+bSBzdGlsbCBzZWVpbmcgdGhlIHBhZ2UKPiBmYXVsdC4gCgpUaGF0cyBwaXR5LCBJIGhvcGVkIHRv
+IHNvbHZlIHR3byBpc3N1ZXMgd2l0aCBvbmUgcGF0Y2ggOikKCj4gSW4gZmFjdCB0aGUgY2FsbHMg
+bGVhZGluZyB0byB0aGUgZmF1bHQgaGF2ZW4ndCBjaGFuZ2VkIGF0IGFsbC4KClRoYXQgaXMgbm90
+IHN1cnByaXNpbmcuCgo+Cj4+IFsgIDE1My40Mzc4NzddIFtkcm06ZmltZF91cGRhdGVfcGxhbmVd
+IHN0YXJ0IGFkZHIgPSAweDIwNjAwMDAwLCBlbmQgYWRkciA9IDB4MjBhMDgwMDAsIHNpemUgPSAw
+eDQwODAwMAo+PiBbICAxNTMuNDQ2OTAzXSBbZHJtOmZpbWRfdXBkYXRlX3BsYW5lXSBvdmxfd2lk
+dGggPSAxMzY2LCBvdmxfaGVpZ2h0ID0gNzY4Cj4+IFsgIDE1My40NTM0MDZdIFtkcm06ZmltZF91
+cGRhdGVfcGxhbmVdIG9zZCBwb3M6IHR4ID0gMCwgdHkgPSAwLCBieCA9IDEzNjUsIGJ5ID0gNzY3
+Cj4+IFsgIDE1My40NjA3ODVdIFtkcm06ZmltZF91cGRhdGVfcGxhbmVdIG9zZCBzaXplID0gMHgx
+MDAyMDAKPj4gWyAgMTUzLjQ2NjAwMF0gW2RybTpkcm1fdmJsYW5rX2VuYWJsZV0gZW5hYmxpbmcg
+dmJsYW5rIG9uIGNydGMgMCwgcmV0OiAwCj4+IFsgIDE1My40NzIzOTddIFtkcm06ZHJtX3VwZGF0
+ZV92YmxhbmtfY291bnRdIHVwZGF0aW5nIHZibGFuayBjb3VudCBvbiBjcnRjIDA6IGN1cnJlbnQ9
+NywgZGlmZj0wLCBodz0wIGh3X2xhc3Q9MAo+PiBbICAxNTMuNTI3NzU5XSBbZHJtOmRybV9hdG9t
+aWNfc3RhdGVfZGVmYXVsdF9jbGVhcl0gQ2xlYXJpbmcgYXRvbWljIHN0YXRlIGVkZWYwYzAwCj4+
+IFsgIDE1My41Mjk0MjhdIFtkcm06ZHJtX3Byb3BlcnR5X3VucmVmZXJlbmNlX2Jsb2JdIGVkY2Qy
+MDAwOiBibG9iIElEOiA0NCAoMSkKPj4gWyAgMTUzLjUzNjIzOF0gW2RybTpkcm1fZnJhbWVidWZm
+ZXJfdW5yZWZlcmVuY2VdIGVkZWFhYzAwOiBGQiBJRDogNDIgKDIpCj4+IFsgIDE1My41NDI2NDRd
+IFtkcm06ZHJtX2F0b21pY19zdGF0ZV9mcmVlXSBGcmVlaW5nIGF0b21pYyBzdGF0ZSBlZGVmMGMw
+MAo+PiBbICAxNTMuNTQ5MDgzXSBbZHJtOmRybV9mcmFtZWJ1ZmZlcl9yZWZlcmVuY2VdIGVjZmVl
+MGMwOiBGQiBJRDogNDMgKDMpCj4+IFsgIDE1My41NTUzMTVdIFtkcm06ZHJtX2ZyYW1lYnVmZmVy
+X3VucmVmZXJlbmNlXSBlZGVhYWMwMDogRkIgSUQ6IDQyICgxKQo+PiBbICAxNTMuNTYxNzc2XSBb
+ZHJtOmV4eW5vc19kcm1fZ2VtX2Rlc3Ryb3ldIGhhbmRsZSBjb3VudCA9IDAKPj4gWyAgMTUzLjU2
+NzEyMF0gW2RybTpleHlub3NfZHJtX2ZyZWVfYnVmXSBkbWFfYWRkcigweDIwMTAwMDAwKSwgc2l6
+ZSgweDQwODAwMCkKPj4gWyAgMTUzLjU3NDM0MV0gZXh5bm9zLXN5c21tdSAxMWUyMDAwMC5zeXNt
+bXU6IFBBR0UgRkFVTFQgb2NjdXJyZWQgYXQgMHgyMDNmM2Q4MCAocGFnZSB0YWJsZSBiYXNlOiAw
+eDZlMmRjMDAwKQo+PiBbICAxNTMuNTgzNTg2XSBleHlub3Mtc3lzbW11IDExZTIwMDAwLnN5c21t
+dTogICBMdjEgZW50cnk6IDB4NmVhN2MwMDEKPgo+IEkgc3RpbGwgbmVlZCB0byB0ZXN0IHRoaXMg
+d2l0aCBleHlub3MtZHJtLW5leHQgYW5kIFsxXS4KCk9LLCBpbiBjYXNlIG9mIHBhZ2UgZmF1bHQg
+bGV0IG1lIGtub3cgd2hpY2ggbW9kaWZpY2F0aW9uIHlvdSBoYXZlIG1hZGUKdG8gZHRzIC8gZXh5
+bm9zX2RlZmNvbmZpZywKSSB3aWxsIHRyeSB0byByZXByb2R1Y2UvaW52ZXN0aWdhdGUgaXQgb24g
+c2ltaWxhciBody4KClJlZ2FyZHMKQW5kcnplagoKPgo+IFdpdGggYmVzdCB3aXNoZXMsCj4gVG9i
+aWFzCj4KPgo+Cj4gQW5kcnplaiBIYWpkYSB3cm90ZToKPj4gRXh5bm9zIERSTSBkZXZpY2VzIHVw
+ZGF0ZSB0aGVpciByZWdpc3RlcnMgYXQgdmJsYW5rIHRpbWUuIEV4eW5vcy1EUk0gdXNlcwo+PiBj
+dXN0b20gbWVjaGFuaXNtIHRvIHdhaXQgZm9yIHZibGFuay4gVGhpcyBtZWNoYW5pc20gaXMgZXJy
+b3IgcHJvbmUgLQo+PiB2YXJpYWJsZXMgYXJlIG5vdCB1cGRhdGVkIGF0b21pY2FsbHkuIEFzIGEg
+cmVzdWx0IGluIGNlcnRhaW4gY2lyY3Vtc3RhbmNlcwo+PiB1c2VyIHNwYWNlIGNhbiB0cnkgdG8g
+ZnJlZSBidWZmZXJzIHdoaWNoIGFyZSBzdGlsbCBpbiB1c2UgYnkgaGFyZHdhcmUsCj4+IGluIHN1
+Y2ggY2FzZXMgSU9NTVUgY2FuIHRocm93IE9PUFMuCj4+IFRoZSBwYXRjaCBpbnN0ZWFkIG9mIGZp
+eGluZyB0aGUgbWVjaGFuaXNtIHJlcGxhY2VzIGl0IHdpdGggZHJtIGNvcmUgaGVscGVyLgo+Pgo+
+PiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+PiAt
+LS0KPj4gSGkgVG9iaWFzLAo+Pgo+PiBUaGlzIGlzIGEgcXVpY2svZGlydHkgcGF0Y2gganVzdCBm
+b3IgY2hlY2tpbmcgaWYgaXQgc29sdmVzIHlvdXIgaXNzdWUuCj4+IFN1Y2Nlc3NmdWxseSB0ZXN0
+ZWQgb24gZGVjb241NDMzL2RzaS9pODAgcGF0aC4KPj4KPj4gUGxlYXNlIHZlcmlmeSBpZiBpdCBo
+ZWxwcyBpbiB5b3VyIGNhc2UuCj4+Cj4+IFRoZSBwYXRjaCBpcyBiYXNlZCBvbiBleHlub3MtZHJt
+LW5leHQgYW5kCj4+ICJkcm0vZXh5bm9zOiBmaXggY2FuY2VsIHBhZ2UgZmxpcCBjb2RlIiBbMV0u
+Cj4+Cj4+IFsxXTogaHR0cDovL3Blcm1hbGluay5nbWFuZS5vcmcvZ21hbmUubGludXgua2VybmVs
+LnNhbXN1bmctc29jLzUzODAxCj4+Cj4+IFJlZ2FyZHMKPj4gQW5kcnplago+PiAtLS0KPj4gIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgfCAxNiArLS0tLS0tLS0tLS0K
+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgfCA0NCArLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2Rydi5oICB8ICAyIC0tCj4+ICAzIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
+KSwgNjAgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2NydGMuYwo+PiBpbmRleCA3ODVmZmE2Li41YjY4NDViIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPj4gQEAgLTEzNCw4ICsxMzQsNiBAQCBzdHJ1Y3Qg
+ZXh5bm9zX2RybV9jcnRjICpleHlub3NfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNl
+ICpkcm1fZGV2LAo+PiAgCWV4eW5vc19jcnRjLT5vcHMgPSBvcHM7Cj4+ICAJZXh5bm9zX2NydGMt
+PmN0eCA9IGN0eDsKPj4gIAo+PiAtCWluaXRfd2FpdHF1ZXVlX2hlYWQoJmV4eW5vc19jcnRjLT53
+YWl0X3VwZGF0ZSk7Cj4+IC0KPj4gIAljcnRjID0gJmV4eW5vc19jcnRjLT5iYXNlOwo+PiAgCj4+
+ICAJcHJpdmF0ZS0+Y3J0Y1twaXBlXSA9IGNydGM7Cj4+IEBAIC0xNzUsMTMgKzE3Myw2IEBAIHZv
+aWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYs
+IHVuc2lnbmVkIGludCBwaXBlKQo+PiAgCQlleHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlX3ZibGFu
+ayhleHlub3NfY3J0Yyk7Cj4+ICB9Cj4+ICAKPj4gLXZvaWQgZXh5bm9zX2RybV9jcnRjX3dhaXRf
+cGVuZGluZ191cGRhdGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMpCj4+IC17
+Cj4+IC0Jd2FpdF9ldmVudF90aW1lb3V0KGV4eW5vc19jcnRjLT53YWl0X3VwZGF0ZSwKPj4gLQkJ
+CSAgIChhdG9taWNfcmVhZCgmZXh5bm9zX2NydGMtPnBlbmRpbmdfdXBkYXRlKSA9PSAwKSwKPj4g
+LQkJCSAgIG1zZWNzX3RvX2ppZmZpZXMoNTApKTsKPj4gLX0KPj4gLQo+PiAgdm9pZCBleHlub3Nf
+ZHJtX2NydGNfZmluaXNoX3VwZGF0ZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0
+YywKPj4gIAkJCQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lKQo+PiAgewo+
+PiBAQCAtMTkwLDkgKzE4MSw2IEBAIHZvaWQgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF91cGRhdGUo
+c3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMsCj4+ICAKPj4gIAlleHlub3NfcGxh
+bmUtPnBlbmRpbmdfZmIgPSBOVUxMOwo+PiAgCj4+IC0JaWYgKGF0b21pY19kZWNfYW5kX3Rlc3Qo
+JmV4eW5vc19jcnRjLT5wZW5kaW5nX3VwZGF0ZSkpCj4+IC0JCXdha2VfdXAoJmV4eW5vc19jcnRj
+LT53YWl0X3VwZGF0ZSk7Cj4+IC0KPj4gIAlzcGluX2xvY2tfaXJxc2F2ZSgmY3J0Yy0+ZGV2LT5l
+dmVudF9sb2NrLCBmbGFncyk7Cj4+ICAJaWYgKGV4eW5vc19jcnRjLT5ldmVudCkKPj4gIAkJZHJt
+X2NydGNfc2VuZF92YmxhbmtfZXZlbnQoY3J0YywgZXh5bm9zX2NydGMtPmV2ZW50KTsKPj4gQEAg
+LTIzNSwxMCArMjIzLDggQEAgdm9pZCBleHlub3NfZHJtX2NydGNfY2FuY2VsX3BhZ2VfZmxpcChz
+dHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4+ICAJc3Bpbl9sb2NrX2lycXNhdmUoJmNydGMtPmRldi0+
+ZXZlbnRfbG9jaywgZmxhZ3MpOwo+PiAgCj4+ICAJZSA9IGV4eW5vc19jcnRjLT5ldmVudDsKPj4g
+LQlpZiAoZSAmJiBlLT5iYXNlLmZpbGVfcHJpdiA9PSBmaWxlKSB7Cj4+ICsJaWYgKGUgJiYgZS0+
+YmFzZS5maWxlX3ByaXYgPT0gZmlsZSkKPj4gIAkJZXh5bm9zX2NydGMtPmV2ZW50ID0gTlVMTDsK
+Pj4gLQkJYXRvbWljX2RlYygmZXh5bm9zX2NydGMtPnBlbmRpbmdfdXBkYXRlKTsKPj4gLQl9Cj4+
+ICAKPj4gIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZs
+YWdzKTsKPj4gIAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4+IGlu
+ZGV4IDAyODFiMzAuLmNjOTZlODUgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcnYuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZHJ2LmMKPj4gQEAgLTQ1LDM3ICs0NSwxMSBAQCBzdHJ1Y3QgZXh5bm9zX2F0b21pY19j
+b21taXQgewo+PiAgCXUzMgkJCWNydGNzOwo+PiAgfTsKPj4gIAo+PiAtc3RhdGljIHZvaWQgZXh5
+bm9zX2F0b21pY193YWl0X2Zvcl9jb21taXQoc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRl
+KQo+PiAtewo+PiAtCXN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0Y19zdGF0ZTsKPj4gLQlzdHJ1
+Y3QgZHJtX2NydGMgKmNydGM7Cj4+IC0JaW50IGksIHJldDsKPj4gLQo+PiAtCWZvcl9lYWNoX2Ny
+dGNfaW5fc3RhdGUoc3RhdGUsIGNydGMsIGNydGNfc3RhdGUsIGkpIHsKPj4gLQkJc3RydWN0IGV4
+eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsKPj4gLQo+
+PiAtCQlpZiAoIWNydGMtPnN0YXRlLT5lbmFibGUpCj4+IC0JCQljb250aW51ZTsKPj4gLQo+PiAt
+CQlyZXQgPSBkcm1fY3J0Y192YmxhbmtfZ2V0KGNydGMpOwo+PiAtCQlpZiAocmV0KQo+PiAtCQkJ
+Y29udGludWU7Cj4+IC0KPj4gLQkJZXh5bm9zX2RybV9jcnRjX3dhaXRfcGVuZGluZ191cGRhdGUo
+ZXh5bm9zX2NydGMpOwo+PiAtCQlkcm1fY3J0Y192YmxhbmtfcHV0KGNydGMpOwo+PiAtCX0KPj4g
+LX0KPj4gLQo+PiAgc3RhdGljIHZvaWQgZXh5bm9zX2F0b21pY19jb21taXRfY29tcGxldGUoc3Ry
+dWN0IGV4eW5vc19hdG9taWNfY29tbWl0ICpjb21taXQpCj4+ICB7Cj4+ICAJc3RydWN0IGRybV9k
+ZXZpY2UgKmRldiA9IGNvbW1pdC0+ZGV2Owo+PiAgCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUg
+KnByaXYgPSBkZXYtPmRldl9wcml2YXRlOwo+PiAgCXN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpz
+dGF0ZSA9IGNvbW1pdC0+c3RhdGU7Cj4+IC0Jc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Cj4+IC0J
+c3RydWN0IGRybV9jcnRjICpjcnRjOwo+PiAtCXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnBsYW5l
+X3N0YXRlOwo+PiAtCXN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0Y19zdGF0ZTsKPj4gLQlpbnQg
+aTsKPj4gIAo+PiAgCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVzKGRl
+diwgc3RhdGUpOwo+PiAgCj4+IEBAIC04OSwyNSArNjMsOSBAQCBzdGF0aWMgdm9pZCBleHlub3Nf
+YXRvbWljX2NvbW1pdF9jb21wbGV0ZShzdHJ1Y3QgZXh5bm9zX2F0b21pY19jb21taXQgKmNvbW1p
+dCkKPj4gIAkgKiBoYXZlIHRoZSByZWxldmFudCBjbG9ja3MgZW5hYmxlZCB0byBwZXJmb3JtIHRo
+ZSB1cGRhdGUuCj4+ICAJICovCj4+ICAKPj4gLQlmb3JfZWFjaF9jcnRjX2luX3N0YXRlKHN0YXRl
+LCBjcnRjLCBjcnRjX3N0YXRlLCBpKSB7Cj4+IC0JCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4
+eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4+IC0KPj4gLQkJYXRvbWljX3NldCgm
+ZXh5bm9zX2NydGMtPnBlbmRpbmdfdXBkYXRlLCAwKTsKPj4gLQl9Cj4+IC0KPj4gLQlmb3JfZWFj
+aF9wbGFuZV9pbl9zdGF0ZShzdGF0ZSwgcGxhbmUsIHBsYW5lX3N0YXRlLCBpKSB7Cj4+IC0JCXN0
+cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0KPj4gLQkJCQkJCXRvX2V4eW5vc19j
+cnRjKHBsYW5lLT5jcnRjKTsKPj4gLQo+PiAtCQlpZiAoIXBsYW5lLT5jcnRjKQo+PiAtCQkJY29u
+dGludWU7Cj4+IC0KPj4gLQkJYXRvbWljX2luYygmZXh5bm9zX2NydGMtPnBlbmRpbmdfdXBkYXRl
+KTsKPj4gLQl9Cj4+IC0KPj4gIAlkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfcGxhbmVzKGRldiwg
+c3RhdGUsIGZhbHNlKTsKPj4gIAo+PiAtCWV4eW5vc19hdG9taWNfd2FpdF9mb3JfY29tbWl0KHN0
+YXRlKTsKPj4gKwlkcm1fYXRvbWljX2hlbHBlcl93YWl0X2Zvcl92YmxhbmtzKGRldiwgc3RhdGUp
+Owo+PiAgCj4+ICAJZHJtX2F0b21pY19oZWxwZXJfY2xlYW51cF9wbGFuZXMoZGV2LCBzdGF0ZSk7
+Cj4+ICAKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+cnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+PiBpbmRleCA1
+NjE5MjVmLi4wYmIzNzY2IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmgKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5oCj4+IEBAIC0xNzQsOCArMTc0LDYgQEAgc3RydWN0IGV4eW5vc19kcm1fY3J0YyB7Cj4+
+ICAJZW51bSBleHlub3NfZHJtX291dHB1dF90eXBlCXR5cGU7Cj4+ICAJdW5zaWduZWQgaW50CQkJ
+cGlwZTsKPj4gIAlzdHJ1Y3QgZHJtX3BlbmRpbmdfdmJsYW5rX2V2ZW50CSpldmVudDsKPj4gLQl3
+YWl0X3F1ZXVlX2hlYWRfdAkJd2FpdF91cGRhdGU7Cj4+IC0JYXRvbWljX3QJCQlwZW5kaW5nX3Vw
+ZGF0ZTsKPj4gIAljb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcwkqb3BzOwo+PiAgCXZv
+aWQJCQkJKmN0eDsKPj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9jbGsJCSpwaXBlX2NsazsKPj4KPgo+
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
