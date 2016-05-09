@@ -1,38 +1,43 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH v2 19/22] ARM: dts: exynos: MCT is not an interrupt
- controller and extend length of iomap
-Date: Mon, 9 May 2016 17:44:54 -0400
-Message-ID: <cd2cfef1-f9a8-0daa-e4bc-c00b0943c52e@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 20/22] ARM: dts: exynos: Move common
+ Exynos5410/542x/5800 nodes to new DTSI
+Date: Mon, 9 May 2016 17:53:09 -0400
+Message-ID: <9e642e0d-87e1-4661-0233-acecf0082f24@osg.samsung.com>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-20-git-send-email-krzk@kernel.org>
+ <1462734367-5619-21-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462734367-5619-20-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1462734367-5619-21-git-send-email-krzk@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Krzysztof,
 
 On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
-> Multi-Core Timer generates interrupts but it is not really an interrupt
-> controller so remove the "interrupt-controller" and "interrupt-cells"
-> properties. Additionally extend the length of mapped memory to cover all
-> registers (last SFR is at 0x0A40).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
+> The Exynos5410/542x/5800 are very similar designs. Create new new
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+s/new new/a new
+
+> DTSI with common nodes to remove DTS duplication. Although currently
+> only MCT and SysRAM are shared but in future more nodes will be added to
+> common file.
+> 
+> The patch should not have functional impact.
+> 
+
+A nice way to check this is to diff the disassembled compiled DTBs with
+and without the patch and making sure that the resulted DTS is the same.
+
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+ 
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
