@@ -1,38 +1,52 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Only Odroid XU3-family boards use DTSI
- with CPU thermal nodes
-Date: Mon, 9 May 2016 12:44:50 -0400
-Message-ID: <d7e37f87-c794-f0ad-73d1-8e976c37471b@osg.samsung.com>
-References: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Remove useless check for
+ return value of samsung_clk_init
+Date: Mon, 9 May 2016 19:30:38 +0200
+Message-ID: <20160509173038.GA2507@kozik-lap>
+References: <1462699496-16646-1-git-send-email-krzk@kernel.org>
+ <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4033d4d5-558d-898f-cdc9-07a19654ade6@osg.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On 05/09/2016 02:19 AM, Krzysztof Kozlowski wrote:
-> Include the CPU thermal nodes directly in Odroid XU3-family common DTS
-> because it is the only user of it. Keeping it in separate DTSI node does
-> not bring benefits because:
-> 1. It is not re-usable on other non-fan boards (fan is referenced),
-> 2. It won't be re-used on future Odroid XU board because different
->    CPU cluster behavior.
+On Mon, May 09, 2016 at 09:32:47AM -0400, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+> On 05/08/2016 05:24 AM, Krzysztof Kozlowski wrote:
+> > The samsung_clk_init() cannot return NULL. Either it returns allocated
+> > memory or it panics.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  drivers/clk/samsung/clk-exynos5420.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> > index 92382cef9f90..770c0f007c6b 100644
+> > --- a/drivers/clk/samsung/clk-exynos5420.c
+> > +++ b/drivers/clk/samsung/clk-exynos5420.c
+> > @@ -1356,8 +1356,6 @@ static void __init exynos5x_clk_init(struct device_node *np,
+> >  	exynos5x_soc = soc;
+> >  
+> >  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+> > -	if (!ctx)
+> > -		panic("%s: unable to allocate context.\n", __func__);
+> >
+> 
+> Indeed, the check is superfluous. I see that most callers [0] currently
+> do the same, so probably makes sense to remove those too in this patch.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Agreed with both points and the patch looks good to me.
+Thanks, I'll change this everywhere.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
+
