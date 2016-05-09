@@ -1,81 +1,84 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC v2 00/13] usb/mmc/power: Fix USB/LAN when TFTP booting
-Date: Mon, 9 May 2016 09:46:40 +0200
-Message-ID: <CAPDyKFqpoi03Egfuvd8qJXnn_+FBgPXAb7S4UvkxVs8BA+zwnA@mail.gmail.com>
-References: <1462451666-17945-1-git-send-email-k.kozlowski@samsung.com>
-	<20160505224240.GA31429@rob-hp-laptop>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCH v5 1/5] drm: add generic zpos property
+Date: Mon, 9 May 2016 10:42:45 +0200
+Message-ID: <CA+M3ks5UCaFu2qGWQk-xbvrnVf88m-vgBX8vZ4Rbsz1ypY-jyA@mail.gmail.com>
+References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
+ <1453905883-6807-2-git-send-email-m.szyprowski@samsung.com>
+ <20160229151219.GW15993@intel.com>
+ <CA+M3ks4cg3T_q9Ug1_Uc4yrZKsK97rK+QA0FijDUnUKCMkpcAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160505224240.GA31429@rob-hp-laptop>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CA+M3ks4cg3T_q9Ug1_Uc4yrZKsK97rK+QA0FijDUnUKCMkpcAg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 6 May 2016 at 00:42, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Thu, May 05, 2016 at 02:34:13PM +0200, Krzysztof Kozlowski wrote:
->> Hi,
->>
->> This is a different, second try to fix usb3503+lan on Odroid U3 board
->> if it was initialized by bootloader (e.g. for TFTP boot).
->>
->> First version:
->> http://www.spinics.net/lists/linux-usb/msg140042.html
->>
->>
->> Problem
->> =======
->> When Odroid U3 (usb3503 + smsc95xx + max77686) boots from network (TFTP),
->> the usb3503 and LAN smsc95xx do not show up in "lsusb". Hard-reset
->> is required, e.g. by suspend to RAM. The actual TFTP boot does
->> not have to happen. Just "usb start" from U-Boot is sufficient.
->>
->> From the schematics, the regulator is a supply only to LAN, however
->> without toggling it off/on, the usb3503 hub won appear neither.
->>
->>
->> Solution
->> ========
->> This is very similar to the MMC pwrseq behavior so the idea is to:
->> 1. Move MMC pwrseq drivers to generic place,
->
-> You can do that, but I'm going to NAK any use of pwrseq bindings outside
-> of MMC. I think it is the wrong way to do things. The DT should describe
-
-Huh, I didn't know that was your view of the mmc pwrseq bindings. Why
-didn't you NAK them before?
-
-> the devices. If they happen to be "simple" then the core can walk the
-> tree and do any setup. For example, look for "reset-gpios" and toggle
-> that GPIO. There is no need for a special node.
->
->> 2. Extend the pwrseq-simple with regulator toggling,
->> 3. Add support to USB hub and port core for pwrseq,
->
-> We discussed this for USB already[1] and is why we defined how to add
-> USB child devices. The idea is not to add pwrseq to that.
-
-I am not familiar with the USB discussion.
-
-Still, let me give you some more background to the mmc pwrseq. The
-idea from the mmc pwrseq bindings comes from the power-domain DT
-bindings, as I thought these things were a bit related.
-In both cases they are not directly a property of the device, but more
-describing a HW dependency to allow the device to work.
-
-One could probably use a child node instead of a phandle, but that
-wasn't chosen back then. Of course you are the DT expert, but could
-you perhaps tell me why a child node is better for cases like this?
-
->
-> Rob
->
-> [1] http://www.spinics.net/lists/linux-usb/msg134082.html
-
-Kind regards
-Uffe
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGVsbG8sCgpJIGxpdHRsZSB1cCBpbiB0aGlzIHRvcGljLgpJZiBnZW5lcmljIHotb3JkZXIgcGF0
+Y2hlcyBjYW4ndCBsYW5kIGludG8gZHJtIGNvcmUsCkkgd2lsbGUgaGF2ZSB0byByZXNlbmQgdGhl
+IHBhdGNoIHRvIGVuYWJsZSBpdCB3aXRoaW4gU1RJIGRyaXZlcjoKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJpLWRldmVsLzIwMTYtSmFudWFyeS8wOTgxNDAuaHRtbAoK
+UmVnYXJkcywKQmVuamFtaW4KCjIwMTYtMDQtMDEgMTQ6NDggR01UKzAyOjAwIEJlbmphbWluIEdh
+aWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPjoKPiBUaGlzIHBhdGNoIGFkZHMg
+c3VwcG9ydCBmb3IgZ2VuZXJpYyBwbGFuZSdzIHpwb3MgcHJvcGVydHkgcHJvcGVydHkgd2l0aAo+
+IHdlbGwtZGVmaW5lZCBzZW1hbnRpY3M6Cj4gLSBhZGRlZCB6cG9zIHByb3BlcnRpZXMgdG8gcGxh
+bmUgYW5kIHBsYW5lIHN0YXRlIHN0cnVjdHVyZXMKPiAtIGFkZGVkIGhlbHBlcnMgZm9yIG5vcm1h
+bGl6aW5nIHpwb3MgcHJvcGVydGllcyBvZiBnaXZlbiBzZXQgb2YgcGxhbmVzCj4gLSB3ZWxsIGRl
+ZmluZWQgc2VtYW50aWNzOiBwbGFuZXMgYXJlIHNvcnRlZCBieSB6cG9zIHZhbHVlcyBhbmQgdGhl
+biBwbGFuZQo+ICAgaWQgdmFsdWUgaWYgenBvcyBlcXVhbHMKPgo+IE5vcm1hbGl6ZWQgenBvcyB2
+YWx1ZXMgYXJlIGNhbGN1bGF0ZWQgYXV0b21hdGljYWxseSB3aGVuIGdlbmVyaWMKPiBtdXR0YWJs
+ZSB6cG9zIHByb3BlcnR5IGhhcyBiZWVuIGluaXRpYWxpemVkLiBEcml2ZXJzIGNhbiBzaW1wbHkg
+dXNlCj4gcGxhbmVfc3RhdGUtPm5vcm1hbGl6ZWRfenBvcyBpbiB0aGVpciBhdG9taWNfY2hlY2sg
+YW5kL29yIHBsYW5lX3VwZGF0ZQo+IGNhbGxiYWNrcyB3aXRob3V0IGFueSBhZGRpdGlvbmFsIGNh
+bGxzIHRvIERSTSBjb3JlLgo+Cj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5z
+enlwcm93c2tpQHNhbXN1bmcuY29tPgo+Cj4gQ29tcGFyZSB0byBNYXJlaydzIG9yaWdpbmFsIHBh
+dGNoIHpwb3MgcHJvcGVydHkgaXMgbm93IHNwZWNpZmljIHRvIGVhY2gKPiBwbGFuZSBhbmQgbm8g
+bW9yZSB0byB0aGUgY29yZS4KPiBOb3JtYWxpemUgZnVuY3Rpb24gdGFrZSBjYXJlIG9mIHRoZSBy
+YW5nZSBvZiBwZXIgcGxhbmUgZGVmaW5lZCByYW5nZQo+IGJlZm9yZSBzZXQgbm9ybWFsaXplZF96
+cG9zLgo+Cj4gU2lnbmVkLW9mZi1ieTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWdu
+YXJkQGxpbmFyby5vcmc+Cj4gLS0tCj4gIERvY3VtZW50YXRpb24vRG9jQm9vay9ncHUudG1wbCAg
+ICAgIHwgIDEwICsrCj4gIGRyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAgIHwgICAy
+ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIHwgICA2ICsKPiAgZHJp
+dmVycy9ncHUvZHJtL2RybV9ibGVuZC5jICAgICAgICAgfCAyODMgKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5o
+IHwgICAzICsKPiAgaW5jbHVkZS9kcm0vZHJtX2NydGMuaCAgICAgICAgICAgICAgfCAgMjUgKysr
+Kwo+ICA2IGZpbGVzIGNoYW5nZWQsIDMyOCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4g
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMKPgo+IGRpZmYg
+LS1naXQgYS9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwgYi9Eb2N1bWVudGF0aW9uL0Rv
+Y0Jvb2svZ3B1LnRtcGwKPiBpbmRleCAxNjkyYzRkLi5iN2E1MTYxIDEwMDY0NAo+IC0tLSBhL0Rv
+Y3VtZW50YXRpb24vRG9jQm9vay9ncHUudG1wbAo+ICsrKyBiL0RvY3VtZW50YXRpb24vRG9jQm9v
+ay9ncHUudG1wbAo+IEBAIC0yMTQ3LDYgKzIxNDcsMTYgQEAgdm9pZCBpbnRlbF9jcnRfaW5pdChz
+dHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+ICAgdGhlIHVuZGVybHlpbmcgaGFyZHdhcmUpLjwvdGQ+
+Cj4gICA8L3RyPgo+ICAgPHRyPgo+ICsgPHRkIHZhbGlnbj0idG9wIiA+ICJ6cG9zIiA8L3RkPgo+
+ICsgPHRkIHZhbGlnbj0idG9wIiA+UkFOR0U8L3RkPgo+ICsgPHRkIHZhbGlnbj0idG9wIiA+TWlu
+PSBkcml2ZXIgZGVwZW5kZW50LCBNYXg9IGRyaXZlciBkZXBlbmRlbnQ8L3RkPgo+ICsgPHRkIHZh
+bGlnbj0idG9wIiA+UGxhbmU8L3RkPgo+ICsgPHRkIHZhbGlnbj0idG9wIiA+UGxhbmUncyAneicg
+cG9zaXRpb24gZHVyaW5nIGJsZW5kaW5nIG9wZXJhdGlvbiAoMAo+IGZvciBiYWNrZ3JvdW5kLCBo
+aWdoZXN0IGZvciBmcm9udG1vc3QpLgo+ICsgSWYgdHdvIHBsYW5lcyBhc3NpZ25lZCB0byBzYW1l
+IENSVEMgaGF2ZSBlcXVhbCB6cG9zIHZhbHVlcywgdGhlCj4gcGxhbmUgd2l0aCBoaWdoZXIgcGxh
+bmUKPiArIGlkIGlzIHRyZWF0ZWQgYXMgY2xvc2VyIHRvIGZyb250LiBDYW4gYmUgSU1NVVRBQkxF
+IGlmIGRyaXZlciBkb2Vzbid0Cj4gc3VwcG9ydCBjaGFuZ2luZwo+ICsgcGxhbmVzJyBvcmRlci4g
+RXhhY3QgdmFsdWUgcmFuZ2UgaXMgZHJpdmVyIGRlcGVuZGVudC48L3RkPgo+ICsgPC90cj4KPiAr
+IDx0cj4KPiAgIDx0ZCByb3dzcGFuPSIyMCIgdmFsaWduPSJ0b3AiID5pOTE1PC90ZD4KPiAgIDx0
+ZCByb3dzcGFuPSIyIiB2YWxpZ249InRvcCIgPkdlbmVyaWM8L3RkPgo+ICAgPHRkIHZhbGlnbj0i
+dG9wIiA+IkJyb2FkY2FzdCBSR0IiPC90ZD4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L01ha2VmaWxlIGIvZHJpdmVycy9ncHUvZHJtL01ha2VmaWxlCj4gaW5kZXggNmViOTRmYy4uMThk
+YzU2MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vTWFrZWZpbGUKPiArKysgYi9kcml2
+ZXJzL2dwdS9kcm0vTWFrZWZpbGUKPiBAQCAtMiw3ICsyLDcgQEAKPiAgIyBNYWtlZmlsZSBmb3Ig
+dGhlIGRybSBkZXZpY2UgZHJpdmVyLiAgVGhpcyBkcml2ZXIgcHJvdmlkZXMgc3VwcG9ydCBmb3Ig
+dGhlCgoKCi0tIApCZW5qYW1pbiBHYWlnbmFyZAoKR3JhcGhpYyBXb3JraW5nIEdyb3VwCgpMaW5h
+cm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKCkZvbGxvdyBMaW5h
+cm86IEZhY2Vib29rIHwgVHdpdHRlciB8IEJsb2cKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
