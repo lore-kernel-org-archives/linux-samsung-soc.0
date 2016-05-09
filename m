@@ -1,33 +1,43 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 21/22] ARM: dts: exynos: Add USB to Exynos5410
-Date: Mon, 9 May 2016 17:55:16 -0400
-Message-ID: <419e078b-a0c5-e7a6-0bea-9961147380d5@osg.samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 00/22] ARM: dts: exynos: Add initial support for
+ Odroid XU
+Date: Mon, 9 May 2016 15:00:50 -0700
+Message-ID: <20160509220050.GR3492@codeaurora.org>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-22-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462734367-5619-22-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
-> Move USB 3.0 DWC and 2.0 EHCI/OHCI nodes from exynos5420.dtsi to
-> exynos54xx.dtsi common for entire family. For Exynos542x/5800 this
-> should not have functional impact but for Exynos5410 this effectively
-> adds USB support.
+On 05/08, Krzysztof Kozlowski wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Hi,
 > 
+> Patchset adds necessary clocks, reorganizes existing stuff and finally
+> adds Odroid XU support.
+> 
+> Merging strategy
+> ================
+> Complicated! The clock dt-bindings and driver changes can go to clock
+> tree. However there are three DTS patches in the middle.
+> a. This has to go in before adding "fin_pll_new" to clock driver:
+>    - [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
+> 
+> b. This should go in before renaming "fin_pll_new" back to original name:
+>    - [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+>    - [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+> 
+> The order of patches in the patchset is really how it should go in
+> to reduce any bisectability glitches.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+If you want to just merge them through arm-soc then feel free to
+add my Acked-by to the clk driver and clock dt-binding ones.
 
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
