@@ -1,98 +1,68 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 22/22] ARM: dts: exynos: Add initial support for
- Odroid XU board
-Date: Mon, 9 May 2016 15:09:36 -0500
-Message-ID: <20160509200936.GA24252@rob-hp-laptop>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 04/22] clk: samsung: exynos5410: Provide fin_pll
+ external fixed clock
+Date: Mon, 9 May 2016 16:19:46 -0400
+Message-ID: <e805f0d3-038b-72ce-4464-ac3605e9e5bb@osg.samsung.com>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-23-git-send-email-krzk@kernel.org>
+ <1462734367-5619-5-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1462734367-5619-23-git-send-email-krzk@kernel.org>
+In-Reply-To: <1462734367-5619-5-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, May 08, 2016 at 09:06:07PM +0200, Krzysztof Kozlowski wrote:
-> The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
-> from Samsung: the Exynos5410. Comparing now to more popular Odroid XU3
-> the differences are:
-> 1. Exynos5410 instead of 5422,
-> 2. DisplayPort,
-> 3. Main PMIC: Maxim 77802 instead of S2MPS11,
-> 4. USB3503+LAN9730 instead of integrated LAN9514,
-> 5. eMMC 4.5 instead of eMMC 5.0,
+Hello Krzysztof,
+
+On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+> Just like clock driver for Exynos542x/5800, provide the fixed clock here
+> so the clock bindings and their consumers would be consistent and
+> similar.
 > 
-> This patch adds initial support for the XU board with working basic
-> functions, eMMC/SD and USB (including attached ethernet adapter).
+> However a clock named "fin_pll" is already provided by generic
+> fixed-clock and it is both referenced in the clock driver (by name) and
+> in DT (by phandle). To make the transition smooth, first introduce the
+> new external fixed clock here under temporary, different name and switch
+> internal users to it.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  .../bindings/arm/samsung/samsung-boards.txt        |   1 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos5410-odroidxu.dts          | 166 +++++++++++++++++++++
->  3 files changed, 168 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> index f5deace2b380..0ea7f14ef294 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> @@ -47,6 +47,7 @@ Required root node properties:
->  	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
->  	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
->  	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-> +	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
->  	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
->  	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
->  					 Odroid XU3 Lite board.
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 5aeb10674370..9ed1c7abedb1 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
->  	exynos5250-snow-rev5.dtb \
->  	exynos5250-spring.dtb \
->  	exynos5260-xyref5260.dtb \
-> +	exynos5410-odroidxu.dtb \
->  	exynos5410-smdk5410.dtb \
->  	exynos5420-arndale-octa.dtb \
->  	exynos5420-peach-pit.dtb \
-> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> new file mode 100644
-> index 000000000000..b0cbd53aeea9
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> @@ -0,0 +1,166 @@
-> +/*
-> + * Hardkernel Odroid XU3 board device tree source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + * Copyright (c) 2016 Krzysztof Kozlowski
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos5410.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include "exynos54xx-odroidxu-leds.dtsi"
-> +
-> +/ {
-> +	model = "Hardkernel Odroid XU";
-> +	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
-> +
-> +	memory {
-> +		reg = <0x40000000 0x7EA00000>;
 
-lowercase hex please.
+[snip]
 
-With that,
+>  
+> +/* Same as in Exynos5420 */
+> +static const struct of_device_id ext_clk_match[] __initconst = {
+> +	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
 
-Acked-by: Rob Herring <robh@kernel.org>
+Since using designated initializers, I was about to say that there is no need
+to explicitly set .data to 0 since omitted fields are implicitly initialized...
+
+> +	{ },
+> +};
+> +
+>  /* register exynos5410 clocks */
+>  static void __init exynos5410_clk_init(struct device_node *np)
+>  {
+> @@ -192,6 +204,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>  
+>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+>  
+> +	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
+> +			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
+> +			ext_clk_match);
+> +
+
+... but then I noticed that .data is used as exynos5x_fixed_rate_ext_clks
+array index in samsung_clk_of_register_fixed_ext(). So makes sense to set
+it explicitly to make the intent clear.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
