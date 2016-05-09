@@ -1,101 +1,196 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v5 1/5] drm: add generic zpos property
-Date: Mon, 9 May 2016 11:05:22 +0200
-Message-ID: <20160509090522.GW27098@phenom.ffwll.local>
-References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
- <1453905883-6807-2-git-send-email-m.szyprowski@samsung.com>
- <20160229151219.GW15993@intel.com>
- <CA+M3ks4cg3T_q9Ug1_Uc4yrZKsK97rK+QA0FijDUnUKCMkpcAg@mail.gmail.com>
- <CA+M3ks5UCaFu2qGWQk-xbvrnVf88m-vgBX8vZ4Rbsz1ypY-jyA@mail.gmail.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH v4] media: vb2-dma-contig: configure DMA max segment
+ size properly
+Date: Mon, 9 May 2016 07:09:20 -0300
+Message-ID: <20160509070920.6a09f915@recife.lan>
+References: <5729B396.1020706@xs4all.nl>
+	<1462352403-27418-1-git-send-email-m.szyprowski@samsung.com>
+	<20160506155216.60dc910c@recife.lan>
+	<a8ad2b35-862f-5236-fe16-72b91656ac3a@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CA+M3ks5UCaFu2qGWQk-xbvrnVf88m-vgBX8vZ4Rbsz1ypY-jyA@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <a8ad2b35-862f-5236-fe16-72b91656ac3a@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uLCBNYXkgMDksIDIwMTYgYXQgMTA6NDI6NDVBTSArMDIwMCwgQmVuamFtaW4gR2FpZ25h
-cmQgd3JvdGU6Cj4gSGVsbG8sCj4gCj4gSSBsaXR0bGUgdXAgaW4gdGhpcyB0b3BpYy4KPiBJZiBn
-ZW5lcmljIHotb3JkZXIgcGF0Y2hlcyBjYW4ndCBsYW5kIGludG8gZHJtIGNvcmUsCj4gSSB3aWxs
-ZSBoYXZlIHRvIHJlc2VuZCB0aGUgcGF0Y2ggdG8gZW5hYmxlIGl0IHdpdGhpbiBTVEkgZHJpdmVy
-Ogo+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE2
-LUphbnVhcnkvMDk4MTQwLmh0bWwKCkl0J3MgdGhlIHBhdGNoIGF1dGhvcidzIGR1dHkgdG8gcGlu
-ZyBmb2xrcyBmb3IgcmV2aWV3cyB0byBtb3ZlIGEgcGF0Y2gKZm9yd2FyZC4gVGhhdCBkb2Vzbid0
-IGhhcHBlbiBhdXRvbWF0aWNhbGx5LgoKSXQgaGVscHMgdGhvdWdoIGlmIHlvdSBjYyBldmVyeW9u
-ZSB3aG8gY29tbWVudGVkIG9uIGVhcmxpZXIgaXRlcmF0aW9ucyAoSQpwcmVmZXIgQ2M6IGxpbmVz
-IGluIHRoZSBjb21taXQgbWVzc2FnZSkuIFZpbGxlIHNlZW1zIHRvIGhhdmUgbm90IGJlZW4KYWRk
-ZWQgZm9yIHRoaXMgb25lIGhlcmUuCgpBbHNvIHRoZXJlJ3MgYSBtZXRyaWMgcGlsZSBvZiBkcml2
-ZXIgcGF0Y2hlcyB0aGF0IGZsb2F0ZWQgYXJvdW5kIHRvCmNvbnZlcnQgdGhlbSBvdmVyIHRvIGNv
-cmUgenBvcy4gQ2FuIHlvdSBwbHMgcGljayB0aG9zZSB1cCB0b28/CgpJIGRlZmluaXRlbHkgd2Fu
-dCB0byBsYW5kIHRoaXMgaW4gZHJtIGNvcmUsIHNvIG5vdCBnb2luZyB0byB0YWtlIGEKcmFnZXF1
-aXRlLUknbGwtZG8taXQtaW4tbXktZHJpdmVyIGZvciBhbiBhbnN3ZXIgOy0pCgpUaGFua3MsIERh
-bmllbAoKPiAKPiBSZWdhcmRzLAo+IEJlbmphbWluCj4gCj4gMjAxNi0wNC0wMSAxNDo0OCBHTVQr
-MDI6MDAgQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQGxpbmFyby5vcmc+Ogo+
-ID4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIGdlbmVyaWMgcGxhbmUncyB6cG9zIHByb3Bl
-cnR5IHByb3BlcnR5IHdpdGgKPiA+IHdlbGwtZGVmaW5lZCBzZW1hbnRpY3M6Cj4gPiAtIGFkZGVk
-IHpwb3MgcHJvcGVydGllcyB0byBwbGFuZSBhbmQgcGxhbmUgc3RhdGUgc3RydWN0dXJlcwo+ID4g
-LSBhZGRlZCBoZWxwZXJzIGZvciBub3JtYWxpemluZyB6cG9zIHByb3BlcnRpZXMgb2YgZ2l2ZW4g
-c2V0IG9mIHBsYW5lcwo+ID4gLSB3ZWxsIGRlZmluZWQgc2VtYW50aWNzOiBwbGFuZXMgYXJlIHNv
-cnRlZCBieSB6cG9zIHZhbHVlcyBhbmQgdGhlbiBwbGFuZQo+ID4gICBpZCB2YWx1ZSBpZiB6cG9z
-IGVxdWFscwo+ID4KPiA+IE5vcm1hbGl6ZWQgenBvcyB2YWx1ZXMgYXJlIGNhbGN1bGF0ZWQgYXV0
-b21hdGljYWxseSB3aGVuIGdlbmVyaWMKPiA+IG11dHRhYmxlIHpwb3MgcHJvcGVydHkgaGFzIGJl
-ZW4gaW5pdGlhbGl6ZWQuIERyaXZlcnMgY2FuIHNpbXBseSB1c2UKPiA+IHBsYW5lX3N0YXRlLT5u
-b3JtYWxpemVkX3pwb3MgaW4gdGhlaXIgYXRvbWljX2NoZWNrIGFuZC9vciBwbGFuZV91cGRhdGUK
-PiA+IGNhbGxiYWNrcyB3aXRob3V0IGFueSBhZGRpdGlvbmFsIGNhbGxzIHRvIERSTSBjb3JlLgo+
-ID4KPiA+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1z
-dW5nLmNvbT4KPiA+Cj4gPiBDb21wYXJlIHRvIE1hcmVrJ3Mgb3JpZ2luYWwgcGF0Y2ggenBvcyBw
-cm9wZXJ0eSBpcyBub3cgc3BlY2lmaWMgdG8gZWFjaAo+ID4gcGxhbmUgYW5kIG5vIG1vcmUgdG8g
-dGhlIGNvcmUuCj4gPiBOb3JtYWxpemUgZnVuY3Rpb24gdGFrZSBjYXJlIG9mIHRoZSByYW5nZSBv
-ZiBwZXIgcGxhbmUgZGVmaW5lZCByYW5nZQo+ID4gYmVmb3JlIHNldCBub3JtYWxpemVkX3pwb3Mu
-Cj4gPgo+ID4gU2lnbmVkLW9mZi1ieTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWdu
-YXJkQGxpbmFyby5vcmc+Cj4gPiAtLS0KPiA+ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRt
-cGwgICAgICB8ICAxMCArKwo+ID4gIGRyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAg
-IHwgICAyICstCj4gPiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMgfCAgIDYg
-Kwo+ID4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQuYyAgICAgICAgIHwgMjgzICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ID4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0
-Y19pbnRlcm5hbC5oIHwgICAzICsKPiA+ICBpbmNsdWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAg
-ICAgICB8ICAyNSArKysrCj4gPiAgNiBmaWxlcyBjaGFuZ2VkLCAzMjggaW5zZXJ0aW9ucygrKSwg
-MSBkZWxldGlvbigtKQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZHJt
-X2JsZW5kLmMKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50
-bXBsIGIvRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsCj4gPiBpbmRleCAxNjkyYzRkLi5i
-N2E1MTYxIDEwMDY0NAo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsCj4g
-PiArKysgYi9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwKPiA+IEBAIC0yMTQ3LDYgKzIx
-NDcsMTYgQEAgdm9pZCBpbnRlbF9jcnRfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+ID4g
-ICB0aGUgdW5kZXJseWluZyBoYXJkd2FyZSkuPC90ZD4KPiA+ICAgPC90cj4KPiA+ICAgPHRyPgo+
-ID4gKyA8dGQgdmFsaWduPSJ0b3AiID4gInpwb3MiIDwvdGQ+Cj4gPiArIDx0ZCB2YWxpZ249InRv
-cCIgPlJBTkdFPC90ZD4KPiA+ICsgPHRkIHZhbGlnbj0idG9wIiA+TWluPSBkcml2ZXIgZGVwZW5k
-ZW50LCBNYXg9IGRyaXZlciBkZXBlbmRlbnQ8L3RkPgo+ID4gKyA8dGQgdmFsaWduPSJ0b3AiID5Q
-bGFuZTwvdGQ+Cj4gPiArIDx0ZCB2YWxpZ249InRvcCIgPlBsYW5lJ3MgJ3onIHBvc2l0aW9uIGR1
-cmluZyBibGVuZGluZyBvcGVyYXRpb24gKDAKPiA+IGZvciBiYWNrZ3JvdW5kLCBoaWdoZXN0IGZv
-ciBmcm9udG1vc3QpLgo+ID4gKyBJZiB0d28gcGxhbmVzIGFzc2lnbmVkIHRvIHNhbWUgQ1JUQyBo
-YXZlIGVxdWFsIHpwb3MgdmFsdWVzLCB0aGUKPiA+IHBsYW5lIHdpdGggaGlnaGVyIHBsYW5lCj4g
-PiArIGlkIGlzIHRyZWF0ZWQgYXMgY2xvc2VyIHRvIGZyb250LiBDYW4gYmUgSU1NVVRBQkxFIGlm
-IGRyaXZlciBkb2Vzbid0Cj4gPiBzdXBwb3J0IGNoYW5naW5nCj4gPiArIHBsYW5lcycgb3JkZXIu
-IEV4YWN0IHZhbHVlIHJhbmdlIGlzIGRyaXZlciBkZXBlbmRlbnQuPC90ZD4KPiA+ICsgPC90cj4K
-PiA+ICsgPHRyPgo+ID4gICA8dGQgcm93c3Bhbj0iMjAiIHZhbGlnbj0idG9wIiA+aTkxNTwvdGQ+
-Cj4gPiAgIDx0ZCByb3dzcGFuPSIyIiB2YWxpZ249InRvcCIgPkdlbmVyaWM8L3RkPgo+ID4gICA8
-dGQgdmFsaWduPSJ0b3AiID4iQnJvYWRjYXN0IFJHQiI8L3RkPgo+ID4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9NYWtlZmlsZSBiL2RyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZQo+ID4gaW5k
-ZXggNmViOTRmYy4uMThkYzU2MyAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9NYWtl
-ZmlsZQo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL01ha2VmaWxlCj4gPiBAQCAtMiw3ICsyLDcg
-QEAKPiA+ICAjIE1ha2VmaWxlIGZvciB0aGUgZHJtIGRldmljZSBkcml2ZXIuICBUaGlzIGRyaXZl
-ciBwcm92aWRlcyBzdXBwb3J0IGZvciB0aGUKPiAKPiAKPiAKPiAtLSAKPiBCZW5qYW1pbiBHYWln
-bmFyZAo+IAo+IEdyYXBoaWMgV29ya2luZyBHcm91cAo+IAo+IExpbmFyby5vcmcg4pSCIE9wZW4g
-c291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29Dcwo+IAo+IEZvbGxvdyBMaW5hcm86IEZhY2Vib29r
-IHwgVHdpdHRlciB8IEJsb2cKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJ
-bnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Em Mon, 09 May 2016 08:13:06 +0200
+Marek Szyprowski <m.szyprowski@samsung.com> escreveu:
+
+> Hi Mauro
+> 
+> 
+> On 2016-05-06 20:52, Mauro Carvalho Chehab wrote:
+> > Em Wed, 04 May 2016 11:00:03 +0200
+> > Marek Szyprowski <m.szyprowski@samsung.com> escreveu:
+> >  
+> >> This patch lets vb2-dma-contig memory allocator to configure DMA max
+> >> segment size properly for the client device. Setting it is needed to let
+> >> DMA-mapping subsystem to create a single, contiguous mapping in DMA
+> >> address space. This is essential for all devices, which use dma-contig
+> >> videobuf2 memory allocator and shared buffers (in USERPTR or DMAbuf modes
+> >> of operations).
+> >>
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> >> ---
+> >> Hello,
+> >>
+> >> This patch is a follow-up of my previous attempts to let Exynos
+> >> multimedia devices to work properly with shared buffers when IOMMU is
+> >> enabled:
+> >> 1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
+> >> 2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
+> >> 3. https://patchwork.linuxtv.org/patch/30870/
+> >>
+> >> As sugested by Hans, configuring DMA max segment size should be done by
+> >> videobuf2-dma-contig module instead of requiring all device drivers to
+> >> do it on their own.
+> >>
+> >> Here is some backgroud why this is done in videobuf2-dc not in the
+> >> respective generic bus code:
+> >> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
+> >>
+> >> Best regards,
+> >> Marek Szyprowski
+> >>
+> >> changelog:
+> >> v4:
+> >> - rebased onto media master tree
+> >> - call vb2_dc_set_max_seg_size after allocating vb2 buf object
+> >>
+> >> v3:
+> >> - added FIXME note about possible memory leak
+> >>
+> >> v2:
+> >> - fixes typos and other language issues in the comments
+> >>
+> >> v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
+> >> ---
+> >>   drivers/media/v4l2-core/videobuf2-dma-contig.c | 53 +++++++++++++++++++++++++-
+> >>   1 file changed, 51 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >> index 5361197f3e57..6291842a889f 100644
+> >> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> >> @@ -448,6 +448,42 @@ static void vb2_dc_put_userptr(void *buf_priv)
+> >>   }
+> >>   
+> >>   /*
+> >> + * To allow mapping the scatter-list into a single chunk in the DMA
+> >> + * address space, the device is required to have the DMA max segment
+> >> + * size parameter set to a value larger than the buffer size. Otherwise,
+> >> + * the DMA-mapping subsystem will split the mapping into max segment
+> >> + * size chunks. This function increases the DMA max segment size
+> >> + * parameter to let DMA-mapping map a buffer as a single chunk in DMA
+> >> + * address space.
+> >> + * This code assumes that the DMA-mapping subsystem will merge all
+> >> + * scatterlist segments if this is really possible (for example when
+> >> + * an IOMMU is available and enabled).
+> >> + * Ideally, this parameter should be set by the generic bus code, but it
+> >> + * is left with the default 64KiB value due to historical litmiations in
+> >> + * other subsystems (like limited USB host drivers) and there no good
+> >> + * place to set it to the proper value. It is done here to avoid fixing
+> >> + * all the vb2-dc client drivers.
+> >> + *
+> >> + * FIXME: the allocated dma_params structure is leaked because there
+> >> + * is completely no way to determine when to free it (dma_params might have
+> >> + * been also already allocated by the bus code). However in typical
+> >> + * use cases this function will be called for platform devices, which are
+> >> + * not hot-plugged and exist all the time in the target system.
+> >> + */
+> >> +static int vb2_dc_set_max_seg_size(struct device *dev, unsigned int size)
+> >> +{
+> >> +	if (!dev->dma_parms) {
+> >> +		dev->dma_parms = kzalloc(sizeof(dev->dma_parms), GFP_KERNEL);  
+> > Why don't you use devm_kzalloc() here? dma_parms will then be freed
+> > if the device gets hot-unplugged/unbind.  
+> 
+> Although the structure will be freed, but the pointer in the struct device
+> will still point to the freed resource. 
+
+Then you'll need some other logic (maybe a kref?) both free it and zero
+the pointer when it is safe.
+
+Btw, the only two drivers that seem to dynamically allocate it are
+using devm_*:
+
+drivers/gpu/drm/exynos/exynos_drm_iommu.c:      subdrv_dev->dma_parms = devm_kzalloc(subdrv_dev,
+drivers/gpu/drm/exynos/exynos_drm_iommu.c:                                      sizeof(*subdrv_dev->dma_parms),
+drivers/gpu/drm/exynos/exynos_drm_iommu.c:      if (!subdrv_dev->dma_parms)
+drivers/gpu/drm/rockchip/rockchip_drm_drv.c:    dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms),
+drivers/gpu/drm/rockchip/rockchip_drm_drv.c:    if (!dev->dma_parms) {
+
+On the other drivers, the struct is embed on some other struct
+that is freed only after the need of dma_parms.
+
+> Please note that devm_ allocations
+> are freed on driver removal/unbind not on device removal.
+
+Yes, I know. Personally, I don't like devm_ allocations due to that.
+Yet, it is better to free it later than to keep it leaking.
+
+> That's why I 
+> decided
+> to leak memory instead of allowing to access resource that has been freed.
+
+The problem is that, if a non-platform driver needs to use DMA-CONTIG,
+the leak can be harmful, as things like qemu can unbind the host
+driver in order to use the device by the guest.
+
+Btw, currently, 3 non-platform drivers already use it:
+
+	drivers/media/pci/dt3155/Kconfig:	select VIDEOBUF2_DMA_CONTIG
+	drivers/media/pci/solo6x10/Kconfig:	select VIDEOBUF2_DMA_CONTIG
+	drivers/media/pci/sta2x11/Kconfig:	select VIDEOBUF2_DMA_CONTIG
+
+(and ideally ivtv and cx18 should be converted to VB2 dma-contig some day)
+
+Btw, as the above PCI drivers are not for ARM, I'm wandering if the
+assumptions you took on your patch are also valid on x86 and other 
+architectures that support the PCI bus. In any case, if you want to
+do it generic, for all drivers, all bus controllers, you'll need to
+do lots of tests with non-ARM devices, to be 100% sure that it won't
+cause regressions.
+
+On a quick inspection, though, I suspect it will be doing the wrong
+thing for the above drivers, as drivers/pci/probe.c already sets
+dma_parms during pci_device_add(), and enforces a max segment size of
+64K, by calling	
+	pci_set_dma_max_seg_size(dev, 65536);
+	(with is a wrapper to dma_set_max_seg_size)
+
+> > And yes: it is possible to hot-unplug (actually, hot-unbind) a platform
+> > device via sysfs.
+> >
+> > Just assuming that only platform drivers will use dma-contig and adding
+> > a memory leak here seems really ugly!  
+> 
+> The whole handling of dma_params structure is really ugly and right now 
+> there
+> is no good way of ensuring proper dma parameters.
+
+Yeah, agreed.
+
+Well, there are some alternatives (ordered from the better to the
+worse):
+
+1) Fix the dma_parms core support;
+2) Add a pair of functions to register/unregister dma_parms at
+   include/media/videobuf2-dma-contig.h. The driver needing to set
+   it should call the unregister function if it gets unbind/removed;
+3) Add kref somewhere to do the dma_parms de-allocation in a sane
+   way.
+4) do any dma_parms-related code inside the drivers, and not at
+   the core (probably not the best idea, but at least we confine
+   the troubles);
+
+I think I would go for (2) for now, and try to do (1) for long
+run.
+
+Regards,
+Mauro
